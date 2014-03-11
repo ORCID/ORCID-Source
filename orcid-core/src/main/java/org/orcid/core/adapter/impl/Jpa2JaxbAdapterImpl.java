@@ -1050,6 +1050,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         // worry about null!
         preferences.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(profileEntity.getActivitiesVisibilityDefault()));
 
+        //Set developer tools preference
+        preferences.setDeveloperToolsEnabled(new DeveloperToolsEnabled(profileEntity.getEnableDeveloperTools()));
+        
         return orcidInternal;
     }
 

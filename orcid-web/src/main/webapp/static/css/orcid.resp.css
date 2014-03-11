@@ -3321,6 +3321,14 @@ p.orcid-id-container{
 	font-size: 12px;
 }
 
+.sso-redirect_uris {
+	padding: 10px 0 10px 0;
+}
+
+.sso-add-more-redirect-uris {
+	padding: 0 0 10px 0;
+}
+
 /* Developer Tools Layout */
 
 .developer-tools .label-info-green{

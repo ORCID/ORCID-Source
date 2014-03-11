@@ -106,7 +106,7 @@
 	<div style="padding: 20px;">
 		<h1><@orcid.msg 'manage_clients.add_new'/></h1>
 		
-		<form class="form-horizontal">
+		<div class="form-horizontal">
 			<div class="control-group">
 				<label class="control-label" for="clientname" style="margin-right:10px; text-align:left; width:90px"><@orcid.msg 'manage_clients.display_name'/>: </label>
 				<div class="relative">
@@ -151,7 +151,7 @@
 					</div>
 				</div>
 		    </div>
-		</form>		
+		</div>		
 		<div>
 			<a href ng-click="addUriToNewClientTable()"><span class="glyphicon glyphicon-plus blue"></span><@orcid.msg 'manage_clients.add_redirect_uri'/></a>
 		</div>

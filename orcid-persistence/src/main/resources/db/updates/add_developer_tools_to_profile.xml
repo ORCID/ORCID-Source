@@ -1,0 +1,37 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet author="Angel Montenegro" id="ADD-ENABLE-DEVELOPER-TOOLS">
+		<preConditions>
+			<not><columnExists columnName="enable_developer_tools" tableName="profile"/></not>
+        </preConditions>
+		
+	    <addColumn tableName="profile">
+				<column name="enable_developer_tools" type="BOOLEAN" defaultValue="true" />
+		</addColumn>
+    </changeSet>
+    
+    <changeSet author="Angel Montenegro" id="SET-ALL-TO-FALSE" >
+    	<sql>UPDATE profile SET enable_developer_tools=false;</sql>
+    </changeSet>
+    
+</databaseChangeLog>                   

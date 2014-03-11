@@ -3930,30 +3930,94 @@ function removeSecQuestionCtrl($scope,$compile) {
 	};	
 };
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 function SSOPreferencesCtrl($scope, $compile) {
 	$scope.userCredentials = null;	
 	
-	$scope.getSSOCredentials = function() {
+	$scope.enableDeveloperTools = function() {
 		$.ajax({
-	        url: orcidVar.baseUri+'/account/getSSOCredentials.json',	        
+	        url: orcidVar.baseUri+'/developer-tools/enable-developer-tools.json',	        
 	        contentType: 'application/json;charset=UTF-8',
 	        type: 'POST',	                	      
 	        success: function(data){	        	
-	        	$scope.$apply(function(){ 
-	        		if(data != null && data.clientSecret != null)
-	        			$scope.userCredentials = data;
-				});
+	        	if(data == true){
+	        		window.location.href = orcidVar.baseUri+'/developer-tools';
+	        	};
 	        }
 	    }).fail(function(error) { 
 	    	// something bad is happening!	    	
-	    	console.log("Error obtaining SSO credentials");	    	
+	    	console.log("Error enabling developer tools");	    	
+	    });	
+	};
+	
+	$scope.confirmDisableDeveloperTools = function() {
+		$.colorbox({                      
+			html : $compile($('#confirm-disable-developer-tools').html())($scope),				
+				onLoad: function() {
+				$('#cboxClose').remove();
+			}
+		});				
+	};
+	
+	$scope.disableDeveloperTools = function() {
+		$.ajax({
+	        url: orcidVar.baseUri+'/developer-tools/disable-developer-tools.json',	        
+	        contentType: 'application/json;charset=UTF-8',
+	        type: 'POST',	                	      
+	        success: function(data){	        	
+	        	if(data == true){
+	        		window.location.href = orcidVar.baseUri+'/account';
+	        	};
+	        }
+	    }).fail(function(error) { 
+	    	// something bad is happening!	    	
+	    	console.log("Error enabling developer tools");	    	
+	    });	
+	};
+	
+	$scope.getSSOCredentials = function() {
+		$.ajax({
+	        url: orcidVar.baseUri+'/developer-tools/get-sso-credentials.json',	        
+	        contentType: 'application/json;charset=UTF-8',
+	        type: 'POST',	                	      
+	        success: function(data){	 
+	        	console.log(angular.toJson(data));
+	        	$scope.$apply(function(){ 
+	        		if(data != null && data.clientSecret != null)
+	        			$scope.userCredentials = data;	        		 
+				});
+	        }
+	    }).fail(function(error) { 
+	    	// something bad is happening!	   	    	
+	    	console.log("Error obtaining SSO credentials");
+	    	console.log(error);
 	    });		
 	};
 	
 	// Get an empty modal to add
-	$scope.fetchEmptyCredentials = function(){		
+	$scope.createCredentialsModal = function(){		
 		$.ajax({
-			url: $('body').data('baseurl') + '/account/getEmptySSOCredential.json',
+			url: $('body').data('baseurl') + '/developer-tools/get-empty-sso-credential.json',
 			dataType: 'json',
 			success: function(data) {
 				$scope.userCredentials = data;
@@ -3974,8 +4038,7 @@ function SSOPreferencesCtrl($scope, $compile) {
 				$('#cboxClose').remove();
 			}
 		});
-		
-		$.colorbox.resize({width:"450px" , height:"350px"});
+		$.colorbox.resize({width:"450px" , height:"300px"});
 	};
 	
 	$scope.addRedirectURI = function() {
@@ -3984,7 +4047,7 @@ function SSOPreferencesCtrl($scope, $compile) {
 	
 	$scope.submit = function() {
 		$.ajax({
-	        url: orcidVar.baseUri+'/account/generateSSOCredentials.json',	        
+	        url: orcidVar.baseUri+'/developer-tools/generate-sso-credentials.json',	        
 	        contentType: 'application/json;charset=UTF-8',
 	        type: 'POST',
 	        dataType: 'json',
@@ -4035,7 +4098,7 @@ function SSOPreferencesCtrl($scope, $compile) {
 	
 	$scope.revoke = function() {
 		$.ajax({
-	        url: orcidVar.baseUri+'/account/revokeSSOCredentials.json',	        
+	        url: orcidVar.baseUri+'/developer-tools/revoke-sso-credentials.json',	        
 	        contentType: 'application/json;charset=UTF-8',
 	        type: 'POST',	                	       
 	        success: function(){
@@ -4063,7 +4126,7 @@ function SSOPreferencesCtrl($scope, $compile) {
 	
 	$scope.editRedirectUris = function() {
 		$.ajax({
-	        url: orcidVar.baseUri+'/account/updateRedirectUris.json',	        
+	        url: orcidVar.baseUri+'/developer-tools/update-redirect-uris.json',	        
 	        contentType: 'application/json;charset=UTF-8',
 	        type: 'POST',
 	        dataType: 'json',

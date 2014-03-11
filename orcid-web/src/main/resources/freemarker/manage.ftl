@@ -407,19 +407,40 @@
 		</div>
 		</#if>
 		
-		<#if RequestParameters['sso']??>
-			<div class="sso">
-				<h1><@spring.message "manage.manage_sso_credentials.developerTools.title"/></h1>							
-				<p>
-					<@spring.message "manage.manage_sso_credentials.developerTools.content"/>
-				</p>
-				<ul>
-					<li><a href=""><span class="glyphicon glyphicon-link"></span> <@spring.message "manage.manage_sso_credentials.link_1"/></a></li>
-					<li><a href=""><span class="glyphicon glyphicon-link"></span> <@spring.message "manage.manage_sso_credentials.link_2"/></a></li>
-					<li><a href="<@spring.url "/account/developer-tools" />"><span class="glyphicon glyphicon-link"></span> <@spring.message "manage.manage_sso_credentials.link_3"/></a></li>				
-				</ul>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		<!-- <#if RequestParameters['sso']??> -->
+			<h1 id="manage-permissions"><@spring.message "manage.developer_tools.title"/></h1>		
+			<div class="sso" ng-controller="SSOPreferencesCtrl">
+				<#if profile.orcidInternal?? && profile.orcidInternal.preferences.developerToolsEnabled?? && profile.orcidInternal.preferences.developerToolsEnabled.value == false>
+					<p><@spring.message "manage.developer_tools.enable.description"/></p>
+					<p><@spring.message "manage.developer_tools.enable.text"/>&nbsp;<a href ng-click="enableDeveloperTools()"><@spring.message "manage.developer_tools.enable_disable.link.text"/></a></p>
+				<#else>
+					<p><@spring.message "manage.developer_tools.disable.description"/></p>
+					<p><@spring.message "manage.developer_tools.disable.text"/>&nbsp;<a href ng-click="confirmDisableDeveloperTools()"><@spring.message "manage.developer_tools.enable_disable.link.text"/></a></p>
+				</#if>				
 			</div>
-		</#if>
+		<!-- </#if> -->
+		
+		
+		
+		
+		
+		
+		
+		
 		
 		
 	</div>
@@ -482,75 +503,20 @@
 	<div>
 </script>
 
-<script type="text/ng-template" id="generate-sso-credentials-modal">
+
+
+
+
+
+<script type="text/ng-template" id="confirm-disable-developer-tools">
 	<div style="padding: 20px;">
-		<h3><@orcid.msg 'manage.manage_sso_credentials.create.title'/></h3>
-		<span><@orcid.msg 'manage.manage_sso_credentials.create.instructions'/></span>
-		<label class="control-label" style="margin-right:10px; text-align:left; width:90px"><@orcid.msg 'manage.manage_sso_credentials.redirect_uri'/>:</label>
-		<div class="control-group" ng-repeat='rUri in userCredentials.redirectUris'>									
-			<div class="relative">
-				<input type="text" placeholder="<@orcid.msg 'manage.manage_sso_credentials.redirect_uri.placeholder'/>" class="input-xlarge" ng-model="rUri.value.value">
-				<span class="orcid-error" ng-show="rUri.errors.length > 0">
-					<div ng-repeat='error in rUri.errors' ng-bind-html-unsafe="error"></div>
-				</span>						
-			</div>
-		</div>
-		<div ng-show="!ssoCredentials.redirectUris.length">			
-			<a href ng-click="addRedirectURI()" class="icon-plus-sign blue"><@orcid.msg 'manage.manage_sso_credentials.create.add_redirect_uri'/></a>
-		</div>
-		<button class="btn btn-danger" ng-click="submit()"><@orcid.msg 'manage.manage_sso_credentials.create.generate'/></button>
-		<a href="" ng-click="closeModal()"><@orcid.msg 'manage.manage_sso_credentials.create.cancel'/></a>
+	   <h3><@spring.message "manage.developer_tools.confirm.title"/></h3>
+	   <p><@spring.message "manage.developer_tools.confirm.message"/></p>
+	   <button class="btn btn-danger" ng-click="disableDeveloperTools()"><@spring.message "manage.developer_tools.confirm.button"/></button> 
+	   <a href="" ng-click="closeModal()"><@spring.message "freemarker.btncancel"/></a>
 	</div>
 </script>
 
-<script type="text/ng-template" id="show-sso-credentials-modal">
-	<div style="padding: 20px;">
-		<h3><@orcid.msg 'manage.manage_sso_credentials.view.title'/></h3>
-		<span><@orcid.msg 'manage.manage_sso_credentials.view.instructions'/></span>
-		<br />
-		<br />
-		<span><strong><@orcid.msg 'manage.manage_sso_credentials.view.secret'/></strong></span>
-		<span>{{userCredentials.clientSecret.value}}</span><br />
-		<span><strong><@orcid.msg 'manage.manage_sso_credentials.view.redirect_uri'/>:</strong></span><br />
-		<div class="control-group" ng-repeat='rUri in userCredentials.redirectUris'>									
-			<div style="padding-left:10px;">
-				{{rUri.value.value}}<br />									
-			</div>
-		</div>
-		<a href="" ng-click="closeModal()"><@orcid.msg 'manage.manage_sso_credentials.close'/></a>
-	</div>
-</script>	
 
-<script type="text/ng-template" id="revoke-sso-credentials-modal">
-	<div style="padding: 20px;">
-		<h3><@orcid.msg 'manage.manage_sso_credentials.revoke.title'/></h3>
-		<span><@orcid.msg 'manage.manage_sso_credentials.revoke.instructions'/></span>
-		<div style="padding-top: 5px;">
-			<button class="btn btn-danger" ng-click="revoke()"><@orcid.msg 'manage.manage_sso_credentials.revoke.submit'/></button>
-			<a href="" ng-click="closeModal()"><@orcid.msg 'manage.manage_sso_credentials.create.cancel'/></a>
-		</div>
-	</div>
-</script>	
-
-<script type="text/ng-template" id = "edit-sso-credentials-modal">
-	<div style="padding: 20px;">
-		<h3><@orcid.msg 'manage.manage_sso_credentials.edit.title'/></h3>
-		<label class="control-label" style="margin-right:10px; text-align:left; width:90px"><@orcid.msg 'manage.manage_sso_credentials.redirect_uri'/>:</label>
-		<div class="control-group" ng-repeat='rUri in userCredentials.redirectUris'>									
-			<div class="relative">
-				<input type="text" placeholder="<@orcid.msg 'manage.manage_sso_credentials.redirect_uri.placeholder'/>" class="input-xlarge" ng-model="rUri.value.value">
-				<a href ng-click="deleteRedirectUri($index)" class="glyphicon glyphicon-trash blue"></a>
-				<span class="orcid-error" ng-show="rUri.errors.length > 0">
-					<div ng-repeat='error in rUri.errors' ng-bind-html-unsafe="error"></div>
-				</span>						
-			</div>
-		</div>
-		<div ng-show="!ssoCredentials.redirectUris.length">			
-			<a href ng-click="addRedirectURI()" class="icon-plus-sign blue"><@orcid.msg 'manage.manage_sso_credentials.create.add_redirect_uri'/></a>
-		</div>
-		<button class="btn btn-danger" ng-click="editRedirectUris()"><@orcid.msg 'manage.manage_sso_credentials.update'/></button>
-		<a href="" ng-click="closeModal()"><@orcid.msg 'manage.manage_sso_credentials.create.cancel'/></a>
-	</div>
-</script>
 
 </@protected>

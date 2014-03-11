@@ -21,12 +21,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -35,7 +33,6 @@ import javax.validation.Valid;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.NotificationManager;
-import org.orcid.core.manager.OrcidSSOManager;
 import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.core.manager.OtherNameManager;
 import org.orcid.core.manager.ProfileEntityManager;
@@ -76,7 +73,6 @@ import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.dao.ProfileDao;
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
@@ -85,9 +81,6 @@ import org.orcid.pojo.ChangePassword;
 import org.orcid.pojo.SecurityQuestion;
 import org.orcid.pojo.ajaxForm.Emails;
 import org.orcid.pojo.ajaxForm.Errors;
-import org.orcid.pojo.ajaxForm.RedirectUri;
-import org.orcid.pojo.ajaxForm.SSOCredentials;
-import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.OrcidWebUtils;
 import org.slf4j.Logger;
@@ -142,9 +135,6 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @Resource
     private OtherNameManager otherNameManager;
-
-    @Resource
-    private OrcidSSOManager orcidSSOManager;
 
     @Resource
     private ProfileEntityManager profileEntityManager;
@@ -886,144 +876,4 @@ public class ManageProfileController extends BaseWorkspaceController {
         return upTodateResearcherUrls;
     }
 
-    @RequestMapping(value = "/getEmptySSOCredential.json", method = RequestMethod.GET)
-    public @ResponseBody
-    SSOCredentials getEmptySSOCredentials(HttpServletRequest request) {
-        SSOCredentials emptyObject = new SSOCredentials();
-        emptyObject.setClientSecret(new Text());
-
-        RedirectUri redirectUri = new RedirectUri();
-        redirectUri.setValue(new Text());
-        redirectUri.setType(Text.valueOf("default"));
-
-        Set<RedirectUri> set = new HashSet<RedirectUri>();
-        set.add(redirectUri);
-        emptyObject.setRedirectUris(set);
-        return emptyObject;
-    }
-
-    @RequestMapping(value = "/generateSSOCredentials.json", method = RequestMethod.POST)
-    public @ResponseBody
-    SSOCredentials generateSSOCredentialsJson(HttpServletRequest request, @RequestBody SSOCredentials ssoCredentials) {
-        boolean hasErrors = validateSSoCredentials(ssoCredentials);
-        
-        if (!hasErrors) {
-            OrcidProfile profile = getEffectiveProfile();
-            String orcid = profile.getOrcidIdentifier().getPath();
-            Set<String> redirectUriStrings = new HashSet<String>();
-            for (RedirectUri redirectUri : ssoCredentials.getRedirectUris()) {
-                redirectUriStrings.add(redirectUri.getValue().getValue());
-            }
-            ClientDetailsEntity clientDetails = orcidSSOManager.grantSSOAccess(orcid, redirectUriStrings);
-            ssoCredentials = SSOCredentials.toSSOCredentials(clientDetails);
-        } else {
-            List<String> errors = ssoCredentials.getErrors();
-            if(errors == null)
-                errors = new ArrayList<String>();
-            for (RedirectUri redirectUri : ssoCredentials.getRedirectUris()) {
-                if (redirectUri.getErrors() != null && !redirectUri.getErrors().isEmpty())
-                    errors.addAll(redirectUri.getErrors());
-            }
-            ssoCredentials.setErrors(errors);
-        }
-
-        return ssoCredentials;
-    }
-    
-    @RequestMapping(value = "/updateRedirectUris.json", method = RequestMethod.POST)
-    public @ResponseBody SSOCredentials updateRedirectUris(HttpServletRequest request, @RequestBody SSOCredentials ssoCredentials) {                
-        boolean hasErrors = validateSSoCredentials(ssoCredentials);
-
-        if (!hasErrors) {
-            OrcidProfile profile = getEffectiveProfile();
-            String orcid = profile.getOrcidIdentifier().getPath();
-            Set<String> redirectUriStrings = new HashSet<String>();
-            for (RedirectUri redirectUri : ssoCredentials.getRedirectUris()) {
-                redirectUriStrings.add(redirectUri.getValue().getValue());
-            }
-            ClientDetailsEntity clientDetails = orcidSSOManager.updateRedirectUris(orcid, redirectUriStrings);
-            ssoCredentials = SSOCredentials.toSSOCredentials(clientDetails);
-        } else {
-            List<String> errors = ssoCredentials.getErrors();
-            if(errors == null)
-                errors = new ArrayList<String>();
-            for (RedirectUri redirectUri : ssoCredentials.getRedirectUris()) {
-                if (redirectUri.getErrors() != null && !redirectUri.getErrors().isEmpty())
-                    errors.addAll(redirectUri.getErrors());
-            }
-            ssoCredentials.setErrors(errors);
-        }
-        return ssoCredentials;
-    }
-
-    @RequestMapping(value = "/getSSOCredentials.json", method = RequestMethod.POST)
-    public @ResponseBody
-    SSOCredentials getSSOCredentialsJson(HttpServletRequest request) {
-        SSOCredentials credentials = new SSOCredentials();
-        String userOrcid = getEffectiveUserOrcid();
-        ClientDetailsEntity existingClientDetails = orcidSSOManager.getUserCredentials(userOrcid);
-        if (existingClientDetails != null) {
-            credentials = SSOCredentials.toSSOCredentials(existingClientDetails);
-        }
-        return credentials;
-    }
-
-    @RequestMapping(value = "/revokeSSOCredentials.json", method = RequestMethod.POST)
-    public @ResponseBody
-    SSOCredentials revokeSSOCredentials(HttpServletRequest request) {
-        String userOrcid = getEffectiveUserOrcid();
-        orcidSSOManager.revokeSSOAccess(userOrcid);
-        return this.getEmptySSOCredentials(request);
-    }        
-    
-    /**
-     * Validates the ssoCredentials object
-     * @param ssoCredentials
-     * @return true if any error is found in the ssoCredentials object
-     * */
-    private boolean validateSSoCredentials(SSOCredentials ssoCredentials) {
-        boolean hasErrors = false;
-        Set<RedirectUri> redirectUris = ssoCredentials.getRedirectUris();
-
-        if (redirectUris == null || redirectUris.isEmpty()) {
-            List<String> errors = new ArrayList<String>();
-            errors.add(getMessage("manage.manage_sso_credentials.at_least_one"));
-            ssoCredentials.setErrors(errors);
-            hasErrors = true;
-        } else {
-            for (RedirectUri redirectUri : redirectUris) {
-                List<String> errors = validateRedirectUri(redirectUri);
-                if(errors != null){
-                    redirectUri.setErrors(errors);
-                    hasErrors = true;
-                }
-            }
-        }
-        return hasErrors;
-    }
-    
-    /**
-     * Checks if a redirect uri contains a valid URI associated to it
-     * @param redirectUri
-     * @return null if there are no errors, an List of strings containing error messages if any error happens
-     * */
-    private List<String> validateRedirectUri(RedirectUri redirectUri){
-        List<String> errors = null;
-        try {
-            URI.create(redirectUri.getValue().getValue());
-        } catch (NullPointerException npe) {
-            errors = new ArrayList<String>();
-            errors.add(getMessage("manage.manage_sso_credentials.empty_redirect_uri"));
-        } catch (IllegalArgumentException iae) {
-            errors = new ArrayList<String>();
-            errors.add(getMessage("manage.manage_sso_credentials.invalid_redirect_uri"));
-        }
-        return errors; 
-    }
-    
-    @RequestMapping(value = "/developer-tools", method = RequestMethod.GET)    
-    public ModelAndView renderDeveloperToolsView() {
-        ModelAndView mav = new ModelAndView("developer_tools");
-        return mav;
-    }    
 }
