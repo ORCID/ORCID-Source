@@ -32,6 +32,13 @@
 				<td>{{clientDetails.clientSecret.value}}</td>
 			</tr>
 		</table>
+		<p><@orcid.msg 'manage.developer_tools.group.view.redirect_uris' /></p>
+		<table class="table">
+			<tr ng-repeat="redirect in clientDetails.redirectUris">
+				<td><a href="{{redirect.value.value}}" target="_blank">{{redirect.value.value}}</a></td>
+				<td><@orcid.msg 'manage.developer_tools.group.type' />:{{redirect.type.value}}</td>
+			</tr>
+		</table>
 		<div class="controls pull-left bottom-margin-small">			
 			<a href="" class="cancel-action" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>				
 		</div>  		
@@ -177,8 +184,8 @@
 						<a href=""><span id="label btn-primary cboxElement" ng-click="addClient()" class="btn btn-primary"><@orcid.msg 'manage.developer_tools.group.add'/></span></a>										
 					</@security.authorize>
 					<@security.authorize ifAnyGranted="ROLE_BASIC_INSTITUTION, ROLE_BASIC">
-						<#if (group)?? && (group.orcidClient)?? && !(group.orcidClient?has_content)> 
-							<a href=""><span id="label btn-primary cboxElement" ng-click="addClient()" class="btn btn-primary"><@orcid.msg 'manage.developer_tools.group.add'/></span></a>				
+						<#if (group)?? && (group.orcidClient)?? && !(group.orcidClient?has_content)> 							
+							<a href="" ng-hide="clients.length > 0"><span id="label btn-primary cboxElement" ng-click="addClient()" class="btn btn-primary"><@orcid.msg 'manage.developer_tools.group.add'/></span></a>				
 						</#if>
 					</@security.authorize>
 				</div>	
@@ -187,8 +194,8 @@
 				<div class="col-md-12 client-api">
 					<p><@orcid.msg 'manage.developer_tools.group.description.1' />&nbsp;<a href="<@orcid.msg 'manage.developer_tools.group.description.link.url' />"><@orcid.msg 'manage.developer_tools.group.description.link.text' /></a><@orcid.msg 'manage.developer_tools.group.description.2' /></p>		
 					<div ng-show="clients.length == 0" ng-cloak>
-						<span><@orcid.msg 'manage.developer_tools.group.no_clients'/></span>
-						<span><@orcid.msg 'manage.developer_tools.group.register_now'/>&nbsp;<a href=""><span id="label btn-primary cboxElement" ng-click="addClient()" class="btn btn-primary"><@orcid.msg 'manage.developer_tools.group.add'/></span></a></span>
+						<span><@orcid.msg 'manage.developer_tools.group.no_clients'/></span><br />
+						<span><@orcid.msg 'manage.developer_tools.group.register_now'/>&nbsp;<a href="" ng-click="addClient()"><@orcid.msg 'manage.developer_tools.group.add'/></a></span>
 					</div>	
 					<div ng-show="clients.length > 0" ng-cloak>
 						<table class="table sub-table">

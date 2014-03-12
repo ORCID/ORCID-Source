@@ -3829,7 +3829,6 @@ function SSOPreferencesCtrl($scope, $compile) {
 	        contentType: 'application/json;charset=UTF-8',
 	        type: 'POST',	                	      
 	        success: function(data){	 
-	        	console.log(angular.toJson(data));
 	        	$scope.$apply(function(){ 
 	        		if(data != null && data.clientSecret != null)
 	        			$scope.userCredentials = data;	        		 
@@ -3849,7 +3848,6 @@ function SSOPreferencesCtrl($scope, $compile) {
 			dataType: 'json',
 			success: function(data) {
 				$scope.userCredentials = data;
-				console.log(data);
 				$scope.$apply(function() {
 					$scope.showCreateModal();
 				});
@@ -3881,7 +3879,6 @@ function SSOPreferencesCtrl($scope, $compile) {
 	        dataType: 'json',
 	        data: angular.toJson($scope.userCredentials),	        	       
 	        success: function(data){
-	        	console.log(data);
 	        	$scope.$apply(function(){ 
 	        		$scope.userCredentials = data;
 	        		if(data.errors.length != 0){
@@ -3960,7 +3957,6 @@ function SSOPreferencesCtrl($scope, $compile) {
 	        dataType: 'json',
 	        data: angular.toJson($scope.userCredentials),	        	       
 	        success: function(data){
-	        	console.log(data);
 	        	$scope.$apply(function(){ 
 	        		$scope.userCredentials = data;
 	        		if(data.errors.length != 0){
@@ -4016,7 +4012,6 @@ function ClientEditCtrl($scope, $compile){
 			dataType: 'json',
 			success: function(data) {
 				$scope.newClient = data;
-				console.log(data);
 				$scope.$apply(function() {
 					$scope.showNewClientModal();
 				});
@@ -4076,7 +4071,7 @@ function ClientEditCtrl($scope, $compile){
 			scrolling: true
         });
 		
-        $.colorbox.resize({width:"550px" , height:"225px"});
+        $.colorbox.resize({width:"560px" , height:"275px"});
         
 	};
 	
