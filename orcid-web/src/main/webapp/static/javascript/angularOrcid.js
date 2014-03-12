@@ -3260,10 +3260,18 @@ function languageCtrl($scope, $cookies){
 	        	"value": 'fr',
 	    		"label": 'Français'
 	        },	        
+//	        {
+//	        	"value": 'ko',
+//	    		"label": '한국어'
+//	        },
 	        {
-	        	"value": 'ko',
-	    		"label": '한국어'
-	        },
+	        	"value": 'pt',
+	    		"label": 'Português'
+	        },	        
+//	        {
+//	        	"value": 'ru',
+//	    		"label": 'Русский'
+//	        },
 	        {
 		        "value": 'zh_CN',
 			    "label": '简体中文'
