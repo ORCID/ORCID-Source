@@ -1820,7 +1820,7 @@
 				<xs:element ref="orcid:send-change-notifications" />
 				<xs:element ref="orcid:send-orcid-news" />
 				<xs:element ref="orcid:activities-visibility-default" />
-				<xs:element ref="orcid:developer-tools-enabled" />
+				<xs:element ref="orcid:developer-tools-enabled" minOccurs="0"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
