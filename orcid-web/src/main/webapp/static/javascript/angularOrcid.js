@@ -3771,14 +3771,6 @@ function removeSecQuestionCtrl($scope,$compile) {
 	};	
 };
 
-
-
-
-
-
-
-
-
 function SSOPreferencesCtrl($scope, $compile) {
 	$scope.userCredentials = null;	
 	
