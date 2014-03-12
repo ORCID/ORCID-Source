@@ -61,10 +61,10 @@
 </div>
 
 <script type="text/ng-template" id="generate-sso-credentials-modal">
-	<div style="padding: 20px;" class="sso-api">
+	<div style="margin: 20px;" class="sso-api">
 		<h3><@orcid.msg 'manage.developer_tools.create.title'/></h3>
-		<span><@orcid.msg 'manage.developer_tools.create.instructions'/></span>
-		<label class="control-label" style="margin-right:10px; text-align:left; width:90px"><@orcid.msg 'manage.developer_tools.redirect_uri'/>:</label>		
+		<span><@orcid.msg 'manage.developer_tools.create.instructions'/></span><br />
+		<label class="control-label" style="margin-right:10px; text-align:left; width:120px"><@orcid.msg 'manage.developer_tools.redirect_uri'/>:</label>		
 		
 		<div class="sso-redirect_uris">
 	    	<div class="control-group" ng-repeat="rUri in userCredentials.redirectUris">										

@@ -3376,7 +3376,7 @@ p.orcid-id-container{
 	font-size: 12px;
 }
 
-.sso-api .sso-links span{
+.sso-api .sso-links {
 	margin-right: 5px;
 }
 

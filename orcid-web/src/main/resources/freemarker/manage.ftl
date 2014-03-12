@@ -407,41 +407,20 @@
 		</div>
 		</#if>
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		<@security.authorize ifNotGranted="ROLE_GROUP,ROLE_BASIC,ROLE_PREMIUM,ROLE_BASIC_INSTITUTION,ROLE_PREMIUM_INSTITUTION,ROLE_CREATOR,ROLE_PREMIUM_CREATOR,ROLE_UPDATER,ROLE_PREMIUM_UPDATER">
-			<h1 id="manage-permissions"><@spring.message "manage.developer_tools.title"/></h1>		
-			<div class="sso" ng-controller="SSOPreferencesCtrl">
-				<#if profile.orcidInternal?? && profile.orcidInternal.preferences.developerToolsEnabled?? && profile.orcidInternal.preferences.developerToolsEnabled.value == false>
-					<p><@spring.message "manage.developer_tools.enable.description"/></p>
-					<p><@spring.message "manage.developer_tools.enable.text"/>&nbsp;<a href ng-click="enableDeveloperTools()"><@spring.message "manage.developer_tools.enable_disable.link.text"/></a></p>
-				<#else>
-					<p><@spring.message "manage.developer_tools.disable.description"/></p>
-					<p><@spring.message "manage.developer_tools.disable.text"/>&nbsp;<a href ng-click="confirmDisableDeveloperTools()"><@spring.message "manage.developer_tools.enable_disable.link.text"/></a></p>
-				</#if>				
-			</div>
-		</@security.authorize>
-		
-		
-		
-		
-		
-		
-		
-		
-		
+		<#if RequestParameters['sso']??>
+			<@security.authorize ifNotGranted="ROLE_GROUP,ROLE_BASIC,ROLE_PREMIUM,ROLE_BASIC_INSTITUTION,ROLE_PREMIUM_INSTITUTION,ROLE_CREATOR,ROLE_PREMIUM_CREATOR,ROLE_UPDATER,ROLE_PREMIUM_UPDATER">
+				<h1 id="manage-permissions"><@spring.message "manage.developer_tools.title"/></h1>		
+				<div class="sso" ng-controller="SSOPreferencesCtrl">
+					<#if profile.orcidInternal?? && profile.orcidInternal.preferences.developerToolsEnabled?? && profile.orcidInternal.preferences.developerToolsEnabled.value == false>
+						<p><@spring.message "manage.developer_tools.enable.description"/></p>
+						<p><@spring.message "manage.developer_tools.enable.text"/>&nbsp;<a href ng-click="enableDeveloperTools()"><@spring.message "manage.developer_tools.enable_disable.link.text"/></a></p>
+					<#else>
+						<p><@spring.message "manage.developer_tools.disable.description"/></p>
+						<p><@spring.message "manage.developer_tools.disable.text"/>&nbsp;<a href ng-click="confirmDisableDeveloperTools()"><@spring.message "manage.developer_tools.enable_disable.link.text"/></a></p>
+					</#if>				
+				</div>
+			</@security.authorize>
+		</#if>
 		
 	</div>
 </div>
@@ -517,7 +496,5 @@
 	   <a href="" ng-click="closeModal()"><@spring.message "freemarker.btncancel"/></a>
 	</div>
 </script>
-
-
 
 </@protected>

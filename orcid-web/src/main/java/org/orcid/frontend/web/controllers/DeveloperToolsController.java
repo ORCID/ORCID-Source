@@ -238,7 +238,10 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         if (profile.getOrcidInternal() != null && profile.getOrcidInternal().getPreferences() != null
                 && profile.getOrcidInternal().getPreferences().getDeveloperToolsEnabled() != null
                 && profile.getOrcidInternal().getPreferences().getDeveloperToolsEnabled().isValue()) {
+            //Disable the developer tools
             updated = profileEntityManager.disableDeveloperTools(profile);
+            //Disable the sso access
+            orcidSSOManager.revokeSSOAccess(profile.getOrcidIdentifier().getPath());
         }
         return updated;
     }
