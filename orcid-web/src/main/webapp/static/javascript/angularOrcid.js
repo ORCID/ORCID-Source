@@ -2826,6 +2826,21 @@ function DelegatesCtrl($scope, $compile){
 	$scope.rows = 10;
 	$scope.showLoader = false;
 	
+	$scope.sort = {
+		column: 'delegateSummary.creditName.content',
+		descending: false
+	};
+	
+	$scope.changeSorting = function(column) {
+		var sort = $scope.sort;
+		if (sort.column === column) {
+			sort.descending = !sort.descending;
+		} else {
+			sort.column = column;
+			sort.descending = false;
+		}
+	};
+	
 	$scope.search = function(){
 		$scope.showLoader = true;
 		$scope.results = new Array();
