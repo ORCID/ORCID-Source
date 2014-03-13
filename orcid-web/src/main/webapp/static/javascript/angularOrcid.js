@@ -2896,9 +2896,10 @@ function DelegatesCtrl($scope, $compile){
 		return $scope.numFound != 0;
 	};
 	
-	$scope.confirmAddDelegate = function(delegateName, delegateId){
+	$scope.confirmAddDelegate = function(delegateName, delegateId, delegateIdx){
 		$scope.delegateNameToAdd = delegateName;
 		$scope.delegateToAdd = delegateId;
+		$scope.delegateIdx = delegateIdx;
 		$scope.effectiveUserOrcid = $('body').data('effective-user-orcid');
 		$.colorbox({                      
 			html : $compile($('#confirm-add-delegate-modal').html())($scope),
@@ -2913,6 +2914,7 @@ function DelegatesCtrl($scope, $compile){
 	};
 	
 	$scope.addDelegate = function() {
+		$scope.results.splice($scope.delegateIdx, 1);
 		$.ajax({
 	        url: $('body').data('baseurl') + 'account/addDelegate.json',
 	        type: 'POST',

@@ -393,7 +393,7 @@
 							<td>{{result['orcid-profile']['orcid-bio']['personal-details']['given-names'].value}}</td>
 							<td>{{result['orcid-profile']['orcid-bio']['personal-details']['family-name'].value}}</td>
 							<td>{{concatPropertyValues(result['orcid-profile']['orcid-bio']['affiliations'], 'affiliation-name')}}</td>
-							<td><span ng-click="confirmAddDelegate(result['orcid-profile']['orcid-bio']['personal-details']['given-names'].value + ' ' + result['orcid-profile']['orcid-bio']['personal-details']['family-name'].value, result['orcid-profile']['orcid']['value'])" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span></td>
+							<td><span ng-click="confirmAddDelegate(result['orcid-profile']['orcid-bio']['personal-details']['given-names'].value + ' ' + result['orcid-profile']['orcid-bio']['personal-details']['family-name'].value, result['orcid-profile']['orcid']['value'], $index)" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span></td>
 						</tr>
 					</tbody>
 				</table>
