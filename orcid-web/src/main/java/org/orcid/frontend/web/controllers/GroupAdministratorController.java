@@ -294,6 +294,9 @@ public class GroupAdministratorController extends BaseWorkspaceController {
     }
     
     private void clearCache() {
+        //Updates cache database version
+        thirdPartyImportManager.updateDatabaseCacheVersion();
+        //Evict current cache
         thirdPartyImportManager.evictAll();
     }
 }

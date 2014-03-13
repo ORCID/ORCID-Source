@@ -88,4 +88,5 @@
     <include file="/db/updates/tidy-authorization-code-table.xml" />
     -->
     <include file="/db/updates/activities_default.xml" />
+    <include file="/db/updates/orcid_props_table.xml" />
 </databaseChangeLog>

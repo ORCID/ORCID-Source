@@ -17,17 +17,20 @@
 package org.orcid.core.manager.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.ThirdPartyImportManager;
+import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.clientgroup.RedirectUris;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.ClientRedirectDao;
+import org.orcid.persistence.dao.OrcidPropsDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
 import org.slf4j.Logger;
@@ -38,10 +41,68 @@ import org.springframework.cache.annotation.Cacheable;
 public class ThirdPartyImportManagerImpl implements ThirdPartyImportManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(ThirdPartyImportManagerImpl.class);
 
+    private long localCacheVersion = 0;
 
     @Resource(name = "clientRedirectDao")
     private ClientRedirectDao clientRedirectDao;
 
+    @Resource 
+    private OrcidPropsDao orcidPropsDao;
+    
+    public static class CacheVersion {
+        private String version;
+        private Date createdDate;
+        
+        public CacheVersion() {
+            
+        }
+        
+        public String getVersion() {
+            return version;
+        }
+        public void setVersion(String version) {
+            this.version = version;
+        }
+        public Date getCreatedDate() {
+            return createdDate;
+        }
+        public void setCreatedDate(Date createdDate) {
+            this.createdDate = createdDate;
+        }                
+    }
+    
+    public long getLocalCacheVersion() {
+        return localCacheVersion;
+    }
+
+    public void setLocalCacheVersion(long localCacheVersion) {
+        this.localCacheVersion = localCacheVersion;
+    }
+
+    public long getDatabaseCacheVersion() {
+        String version = orcidPropsDao.getValue(CACHE_VERSION_KEY);
+        long result = 0;
+        if(version != null) { 
+            CacheVersion dbCacheVersion = JsonUtils.readObjectFromJsonString(version, CacheVersion.class);
+            result = Long.valueOf(dbCacheVersion.getVersion());
+        }
+        return result;
+    } 
+    
+    public void updateDatabaseCacheVersion() {
+        long version = getDatabaseCacheVersion();
+        CacheVersion newVersion = new CacheVersion();
+        newVersion.setVersion(String.valueOf(version++));
+        newVersion.setCreatedDate(new Date());
+        String jsonVersion = JsonUtils.convertToJsonString(newVersion);
+        
+        if(orcidPropsDao.exists(CACHE_VERSION_KEY)) {
+            orcidPropsDao.update(CACHE_VERSION_KEY, jsonVersion);
+        } else {
+            orcidPropsDao.create(CACHE_VERSION_KEY, jsonVersion);
+        }                
+    }
+    
     @Cacheable("import-works-clients")
     public List<OrcidClient> findOrcidClientsWithPredefinedOauthScopeWorksImport() {
         return getClients(RedirectUriType.IMPORT_WORKS_WIZARD);

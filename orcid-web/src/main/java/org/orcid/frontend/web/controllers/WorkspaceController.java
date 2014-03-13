@@ -308,6 +308,9 @@ public class WorkspaceController extends BaseWorkspaceController {
             return tpr;
         SourceOrcid sourceOrcid = currentProfile.getOrcidHistory().getSource().getSourceOrcid();
         String sourcStr = sourceOrcid.getPath();
+        //Check that the cache is up to date
+        updateThirdPartyImportManagerCacheIfNeeded();
+        //Get list of clients
         List<OrcidClient> orcidClients = thirdPartyImportManager.findOrcidClientsWithPredefinedOauthScopeReadAccess();
         for (OrcidClient orcidClient : orcidClients) {
             if (sourcStr.equals(orcidClient.getClientId())) {
@@ -323,6 +326,22 @@ public class WorkspaceController extends BaseWorkspaceController {
         return tpr;
     }
 
+    /**
+     * TODO
+     * */
+    private boolean updateThirdPartyImportManagerCacheIfNeeded(){
+        long currentCachedVersion = thirdPartyImportManager.getLocalCacheVersion();
+        long dbCacheVersion = thirdPartyImportManager.getDatabaseCacheVersion();
+        if(currentCachedVersion != dbCacheVersion) {
+            //If version changed, evict the cache
+            thirdPartyImportManager.evictAll();
+            //And update the cached version
+            thirdPartyImportManager.setLocalCacheVersion(dbCacheVersion);
+            return true;
+        }
+        return false;
+    }
+    
     /**
      * Updates the list of external identifiers assigned to a user
      * */
