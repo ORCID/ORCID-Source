@@ -354,6 +354,7 @@
 				<thead>
 					<tr>
 						<th width="35%">${springMacroRequestContext.getMessage("manage.thproxy")}</th>
+						<th>${springMacroRequestContext.getMessage("search_results.thORCIDID")}</th>
 						<th width="5%">${springMacroRequestContext.getMessage("manage.thapprovaldate")}</th>
 						<td width="5%"></td>
 					</tr>
@@ -361,6 +362,7 @@
 				<tbody>
 					<tr ng-repeat="delegationDetails in delegation.givenPermissionTo.delegationDetails | orderBy:'delegateSummary.creditName.content'">
 						<td width="35%"><a href="{{delegationDetails.delegateSummary.orcidIdentifier.uri}}">{{delegationDetails.delegateSummary.creditName.content}}</a></td>
+						<td width="35%"><a href="{{delegationDetails.delegateSummary.orcidIdentifier.uri}}">{{delegationDetails.delegateSummary.orcidIdentifier.path}}</a></td>
 						<td width="35%">{{delegationDetails.approvalDate.value|date}}</td>
 						<td width="5%"><a
 							ng-click="confirmRevoke(delegationDetails.delegateSummary.creditName.content, delegationDetails.delegateSummary.orcidIdentifier.path)"
