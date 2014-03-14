@@ -66,7 +66,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
 
     @Resource
     private ThirdPartyImportManager thirdPartyImportManager;
-    
+
     @RequestMapping
     public ModelAndView manageClients() {
         ModelAndView mav = new ModelAndView("manage_clients");
@@ -111,6 +111,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
         emptyClient.setRedirectUris(redirectUris);
         return emptyClient;
     }
+
     private boolean validateUrl(String url) {
         String urlToCheck = null;
         // To validate the URL we need a string with a protocol, so, check if it
@@ -249,7 +250,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
             OrcidClient result = null;
 
             try {
-                result = orcidClientGroupManager.updateClientProfile(groupOrcid, client.toOrcidClient());                
+                result = orcidClientGroupManager.updateClientProfile(groupOrcid, client.toOrcidClient());
                 clearCache();
             } catch (OrcidClientGroupManagementException e) {
                 LOGGER.error(e.getMessage());
@@ -283,20 +284,24 @@ public class GroupAdministratorController extends BaseWorkspaceController {
 
         return clients;
     }
-    
+
     @ModelAttribute("redirectUriTypes")
-    public Map<String, String> getRedirectUriTypes(){
+    public Map<String, String> getRedirectUriTypes() {
         Map<String, String> redirectUriTypes = new LinkedHashMap<String, String>();
-        for(RedirectUriType rType : RedirectUriType.values()) {
+        for (RedirectUriType rType : RedirectUriType.values()) {
             redirectUriTypes.put(rType.value(), rType.value());
         }
         return redirectUriTypes;
     }
-    
+
+    /**
+     * Since the groups have changed, the cache version must be updated on
+     * database and all caches have to be evicted.
+     * */
     private void clearCache() {
-        //Updates cache database version
+        // Updates cache database version
         thirdPartyImportManager.updateDatabaseCacheVersion();
-        //Evict current cache
+        // Evict current cache
         thirdPartyImportManager.evictAll();
     }
 }

@@ -46,81 +46,112 @@ public class ThirdPartyImportManagerImpl implements ThirdPartyImportManager {
     @Resource(name = "clientRedirectDao")
     private ClientRedirectDao clientRedirectDao;
 
-    @Resource 
+    @Resource
     private OrcidPropsDao orcidPropsDao;
-    
+
     public static class CacheVersion {
         private String version;
-        private Date createdDate;
-        
+        private String createdDate;
+
         public CacheVersion() {
-            
+
         }
-        
+
         public String getVersion() {
             return version;
         }
+
         public void setVersion(String version) {
             this.version = version;
         }
-        public Date getCreatedDate() {
+
+        public String getCreatedDate() {
             return createdDate;
         }
-        public void setCreatedDate(Date createdDate) {
+
+        public void setCreatedDate(String createdDate) {
             this.createdDate = createdDate;
-        }                
+        }
     }
-    
+
     public long getLocalCacheVersion() {
         return localCacheVersion;
     }
 
-    public void setLocalCacheVersion(long localCacheVersion) {
-        this.localCacheVersion = localCacheVersion;
+    public void setLocalCacheVersion(long localCacheVersionParam) {
+        this.localCacheVersion = localCacheVersionParam;
     }
 
+    /**
+     * Get the latest database version.
+     * */
     public long getDatabaseCacheVersion() {
         String version = orcidPropsDao.getValue(CACHE_VERSION_KEY);
         long result = 0;
-        if(version != null) { 
+        if (version != null) {
             CacheVersion dbCacheVersion = JsonUtils.readObjectFromJsonString(version, CacheVersion.class);
             result = Long.valueOf(dbCacheVersion.getVersion());
+        } else {
+            // This case will happen only the first time, it will indicate that
+            // the cache key is not on database, so, it must be created
+            CacheVersion newVersion = new CacheVersion();
+            result = ++localCacheVersion;
+            newVersion.setVersion(String.valueOf(result));
+            newVersion.setCreatedDate(new Date().toString());
+            String jsonVersion = JsonUtils.convertToJsonString(newVersion);
+            orcidPropsDao.create(CACHE_VERSION_KEY, jsonVersion);
         }
         return result;
-    } 
-    
+    }
+
+    /**
+     * Updates the cache version on database
+     * */
     public void updateDatabaseCacheVersion() {
         long version = getDatabaseCacheVersion();
         CacheVersion newVersion = new CacheVersion();
-        newVersion.setVersion(String.valueOf(version++));
-        newVersion.setCreatedDate(new Date());
+        newVersion.setVersion(String.valueOf(++version));
+        newVersion.setCreatedDate(new Date().toString());
         String jsonVersion = JsonUtils.convertToJsonString(newVersion);
-        
-        if(orcidPropsDao.exists(CACHE_VERSION_KEY)) {
+
+        if (orcidPropsDao.exists(CACHE_VERSION_KEY)) {
             orcidPropsDao.update(CACHE_VERSION_KEY, jsonVersion);
         } else {
             orcidPropsDao.create(CACHE_VERSION_KEY, jsonVersion);
-        }                
+        }
     }
-    
+
+    /**
+     * Updates the local cache version with the latest db version
+     * */
+    private void updateLocalCacheVersion() {
+        setLocalCacheVersion(getDatabaseCacheVersion());
+    }
+
     @Cacheable("import-works-clients")
     public List<OrcidClient> findOrcidClientsWithPredefinedOauthScopeWorksImport() {
+        updateLocalCacheVersion();
+        LOGGER.debug("Updating cache for import-works-clients, new version: " + this.localCacheVersion);
         return getClients(RedirectUriType.IMPORT_WORKS_WIZARD);
     }
-    
+
     @Cacheable("import-funding-clients")
     public List<OrcidClient> findOrcidClientsWithPredefinedOauthScopeFundingImport() {
+        updateLocalCacheVersion();
+        LOGGER.debug("Updating cache for import-funding-clients, new version: " + this.localCacheVersion);
         return getClients(RedirectUriType.IMPORT_FUNDING_WIZARD);
     }
 
     @Override
     @Cacheable("read-access-clients")
     public List<OrcidClient> findOrcidClientsWithPredefinedOauthScopeReadAccess() {
+        updateLocalCacheVersion();
+        LOGGER.debug("Updating cache for read-access-clients, new version: " + this.localCacheVersion);
         return getClients(RedirectUriType.GRANT_READ_WIZARD);
     }
-    
+
     @Override
-    @CacheEvict(value = {"read-access-clients","import-works-clients","import-funding-clients"}, allEntries=true)    
+    @CacheEvict(value = { "read-access-clients", "import-works-clients", "import-funding-clients" }, allEntries = true)
     public void evictAll() {
         LOGGER.debug("read-access-clients and import-works-clients all keys  evicted");
     }

@@ -100,21 +100,19 @@ public class WorkspaceController extends BaseWorkspaceController {
 
     @Resource
     private LocaleManager localeManager;
-    
-    @Resource(name="languagesMap")
+
+    @Resource(name = "languagesMap")
     private LanguagesMap lm;
 
     @ModelAttribute("workImportWizards")
     public List<OrcidClient> retrieveWorkImportWizards() {
         return thirdPartyImportManager.findOrcidClientsWithPredefinedOauthScopeWorksImport();
     }
-    
 
     @ModelAttribute("fundingImportWizards")
     public List<OrcidClient> retrieveFundingImportWizards() {
         return thirdPartyImportManager.findOrcidClientsWithPredefinedOauthScopeFundingImport();
     }
-
 
     @ModelAttribute("affiliationTypes")
     public Map<String, String> retrieveAffiliationTypesAsMap() {
@@ -124,26 +122,25 @@ public class WorkspaceController extends BaseWorkspaceController {
         }
         return FunctionsOverCollections.sortMapsByValues(affiliationTypes);
     }
-    
+
     @ModelAttribute("fundingTypes")
     public Map<String, String> retrieveFundingTypesAsMap() {
         Map<String, String> grantTypes = new LinkedHashMap<String, String>();
         for (FundingType fundingType : FundingType.values()) {
-        	grantTypes.put(fundingType.value(), getMessage(buildInternationalizationKey(FundingType.class, fundingType.value())));
+            grantTypes.put(fundingType.value(), getMessage(buildInternationalizationKey(FundingType.class, fundingType.value())));
         }
         return FunctionsOverCollections.sortMapsByValues(grantTypes);
     }
-    
+
     @ModelAttribute("currencyCodeTypes")
     public Map<String, String> retrieveCurrencyCodesTypesAsMap() {
         Map<String, String> currencyCodeTypes = new LinkedHashMap<String, String>();
         for (Currency currency : Currency.getAvailableCurrencies()) {
-        	currencyCodeTypes.put(currency.getCurrencyCode(), currency.getCurrencyCode());
+            currencyCodeTypes.put(currency.getCurrencyCode(), currency.getCurrencyCode());
         }
         return FunctionsOverCollections.sortMapsByValues(currencyCodeTypes);
     }
-    
-    
+
     @ModelAttribute("affiliationLongDescriptionTypes")
     public Map<String, String> retrieveAffiliationLongDescriptionTypesAsMap() {
         Map<String, String> organizationTypes = new LinkedHashMap<String, String>();
@@ -158,11 +155,11 @@ public class WorkspaceController extends BaseWorkspaceController {
         Map<String, String> workCategories = new LinkedHashMap<String, String>();
 
         for (WorkCategory workCategory : WorkCategory.values()) {
-        	workCategories.put(workCategory.value(), getMessage(buildInternationalizationKey(WorkCategory.class, workCategory.value())));
+            workCategories.put(workCategory.value(), getMessage(buildInternationalizationKey(WorkCategory.class, workCategory.value())));
         }
-        
+
         return workCategories;
-    }        
+    }
 
     @ModelAttribute("citationTypes")
     public Map<String, String> retrieveTypesAsMap() {
@@ -185,7 +182,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         }
         return map;
     }
-    
+
     @ModelAttribute("fundingYears")
     public Map<String, String> retrieveFundingYearsAsMap() {
         Map<String, String> map = new LinkedHashMap<String, String>();
@@ -220,8 +217,9 @@ public class WorkspaceController extends BaseWorkspaceController {
     }
 
     /**
-     * Generate a map with ID types.
-     * The map is different from the rest, because it will be ordered in the form: value -> key, to keep the map alpha ordered in UI. 
+     * Generate a map with ID types. The map is different from the rest, because
+     * it will be ordered in the form: value -> key, to keep the map alpha
+     * ordered in UI.
      * */
     @ModelAttribute("idTypes")
     public Map<String, String> retrieveIdTypesAsMap() {
@@ -243,7 +241,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         }
         return FunctionsOverCollections.sortMapsByValues(map);
     }
-    
+
     @ModelAttribute("fundingRoles")
     public Map<String, String> retrieveFundingRolesAsMap() {
         Map<String, String> map = new LinkedHashMap<String, String>();
@@ -308,9 +306,9 @@ public class WorkspaceController extends BaseWorkspaceController {
             return tpr;
         SourceOrcid sourceOrcid = currentProfile.getOrcidHistory().getSource().getSourceOrcid();
         String sourcStr = sourceOrcid.getPath();
-        //Check that the cache is up to date
-        updateThirdPartyImportManagerCacheIfNeeded();
-        //Get list of clients
+        // Check that the cache is up to date
+        evictThirdPartyImportManagerCacheIfNeeded();
+        // Get list of clients
         List<OrcidClient> orcidClients = thirdPartyImportManager.findOrcidClientsWithPredefinedOauthScopeReadAccess();
         for (OrcidClient orcidClient : orcidClients) {
             if (sourcStr.equals(orcidClient.getClientId())) {
@@ -327,21 +325,23 @@ public class WorkspaceController extends BaseWorkspaceController {
     }
 
     /**
-     * TODO
+     * Reads the latest cache version from database, compare it against the
+     * local version; if they are different, evicts all caches.
+     * 
+     * @return true if the local cache version is different than the one on
+     *         database
      * */
-    private boolean updateThirdPartyImportManagerCacheIfNeeded(){
+    private boolean evictThirdPartyImportManagerCacheIfNeeded() {
         long currentCachedVersion = thirdPartyImportManager.getLocalCacheVersion();
         long dbCacheVersion = thirdPartyImportManager.getDatabaseCacheVersion();
-        if(currentCachedVersion != dbCacheVersion) {
-            //If version changed, evict the cache
+        if (currentCachedVersion < dbCacheVersion) {
+            // If version changed, evict the cache
             thirdPartyImportManager.evictAll();
-            //And update the cached version
-            thirdPartyImportManager.setLocalCacheVersion(dbCacheVersion);
             return true;
         }
         return false;
     }
-    
+
     /**
      * Updates the list of external identifiers assigned to a user
      * */
