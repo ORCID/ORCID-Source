@@ -1666,9 +1666,16 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 		if (datum != undefined && datum != null) {
 			$scope.editAffiliation.affiliationName.value = datum.value;
 			$scope.editAffiliation.city.value = datum.city;
+			if(datum.city)
+				$scope.editAffiliation.city.errors = [];
 			$scope.editAffiliation.region.value = datum.region;
-			if(datum.country != undefined && datum.country != null)
+			if(datum.region)
+				$scope.editAffiliation.region.errors = [];	
+			if(datum.country != undefined && datum.country != null) {
 				$scope.editAffiliation.country.value = datum.country;
+				$scope.editAffiliation.country.errors = [];
+			}
+				
 			if (datum.disambiguatedAffiliationIdentifier != undefined && datum.disambiguatedAffiliationIdentifier != null) {
 				$scope.getDisambiguatedAffiliation(datum.disambiguatedAffiliationIdentifier);
 				$scope.unbindTypeahead();
@@ -1995,12 +2002,17 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 		console.log(angular.toJson(datum));
 		if (datum != undefined && datum != null) {
 			$scope.editFunding.fundingName.value = datum.value;
-			$scope.editFunding.fundingName.errors = [];
+			if(datum.value)
+				$scope.editFunding.fundingName.errors = [];
 			$scope.editFunding.city.value = datum.city;
-			$scope.editFunding.city.errors = []; 
+			if(datum.city)
+				$scope.editFunding.city.errors = [];			
 			$scope.editFunding.region.value = datum.region;
-			$scope.editFunding.country.value = datum.country;
-			$scope.editFunding.country.errors = [];
+			
+			if(datum.country != undefined && datum.country != null) {
+				$scope.editFunding.country.value = datum.country;
+				$scope.editFunding.country.errors = [];
+			}
 			
 			if (datum.disambiguatedFundingIdentifier != undefined && datum.disambiguatedFundingIdentifier != null) {
 				$scope.getDisambiguatedFunding(datum.disambiguatedFundingIdentifier);
@@ -2746,6 +2758,10 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		}
 	};
 	
+	$scope.clearErrors = function() {
+		$scope.editWork.workCategory.errors = [];
+		$scope.editWork.workType.errors = [];
+	};
 }
 
 function QuickSearchCtrl($scope, $compile){
