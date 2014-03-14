@@ -72,7 +72,6 @@ import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMeth
  * @author Will Simpson
  */
 @Controller("workspaceController")
-@RequestMapping(value = { "/my-orcid", "/workspace" })
 public class WorkspaceController extends BaseWorkspaceController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WorkspaceController.class);
@@ -270,11 +269,25 @@ public class WorkspaceController extends BaseWorkspaceController {
         return lm.getLanguagesMap(localeManager.getLocale());
     }
 
-    @RequestMapping
+    @RequestMapping(value = { "/my-orcid", "/workspace" })
     public ModelAndView viewWorkspace(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int pageNo,
             @RequestParam(value = "maxResults", defaultValue = "200") int maxResults) {
 
         ModelAndView mav = new ModelAndView("workspace");
+        mav.addObject("showPrivacy", true);
+
+        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid(), LoadOptions.BIO_ONLY);
+        mav.addObject("profile", profile);
+        mav.addObject("currentLocaleKey", localeManager.getLocale().toString());
+        mav.addObject("currentLocaleValue", lm.buildLanguageValue(localeManager.getLocale(), localeManager.getLocale()));
+        return mav;
+    }
+    
+    @RequestMapping(value = "/my-orcid2", method = RequestMethod.GET)
+    public ModelAndView viewWorkspace2(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int pageNo,
+            @RequestParam(value = "maxResults", defaultValue = "200") int maxResults) {
+
+        ModelAndView mav = new ModelAndView("workspace2");
         mav.addObject("showPrivacy", true);
 
         OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid(), LoadOptions.BIO_ONLY);
