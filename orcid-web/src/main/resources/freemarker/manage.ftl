@@ -60,18 +60,28 @@
 								<div class="row">
 									<!-- Primary Email -->
 									<div ng-class="{primaryEmail:email.primary}"
-										ng-bind="email.value" class="col-md-4 col-xs-12 email"></div>
+										ng-bind="email.value" class="col-md-3 col-xs-12 email"></div>
 									<!-- Set Primary options -->
-									<div class="col-md-3 col-xs-12">
+									<div class="col-md-2 col-xs-12">
 										<span ng-hide="email.primary"> <a href=""
 											ng-click="setPrimary($index)">${springMacroRequestContext.getMessage("manage.email.set_primary")}</a>
 										</span> <span ng-show="email.primary" class="muted"
 											style="color: #bd362f;">
 											${springMacroRequestContext.getMessage("manage.email.primary_email")}
 										</span>
-									</div>
+									</div>																		
+									
 									<div class="data-row-group">
-										<div class="col-md-2 col-xs-5">
+										<div class="col-md-3 col-xs-4">
+											<!-- Current -->
+											<div class="left">
+												<select style="width: 100px; margin: 0px;" ng-change="saveEmail()" ng-model="email.current">
+													<option value="true" ng-selected="email.current == true"><@orcid.msg 'manage.email.current.true' /></option>
+													<option value="false" ng-selected="email.current == false"><@orcid.msg 'manage.email.current.false' /></option>              
+												</select>
+											</div>
+										</div>																					
+										<div class="col-md-2 col-xs-4">											
 											<!-- Email verified -->
 											<div class="email-verified left">
 												<span ng-hide="email.verified" class="left"><a href=""
@@ -85,7 +95,7 @@
 													ng-click="confirmDeleteEmail($index)"></a>
 											</div>
 										</div>
-										<div class="col-md-3 col-xs-6">
+										<div class="col-md-2 col-xs-4">
 											<div class="emailVisibility"><@orcid.privacyToggle
 												angularModel="email.visibility" 
 												questionClick="toggleClickPrivacyHelp(email.value)"
