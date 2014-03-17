@@ -3344,7 +3344,7 @@ p.orcid-id-container{
 
 .scrollable-list {
 	height: 120px;
-	width:315px;
+	width:330px;
 	position: absolute;	
 	overflow: scroll;	
 	border: 1px solid #CCCCCC;
@@ -3356,7 +3356,7 @@ p.orcid-id-container{
 	top: 0;
 	left:0;
 	border: none;
-	width:295px;
+	width:310px;
 }
 
 

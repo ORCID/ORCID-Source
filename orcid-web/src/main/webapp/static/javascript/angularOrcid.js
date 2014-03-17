@@ -3053,8 +3053,7 @@ function SwitchUserCtrl($scope, $compile, $document){
 
 function ClientEditCtrl($scope, $compile){	
 	$scope.clients = [];
-	$scope.newClient = null;
-	$scope.emptyRedirectUri = {value: {value: ''},type: {value: 'default'}};
+	$scope.newClient = null;	
 	$scope.scopeSelectorOpen = false;		
 	$scope.selectedScopes = [];
 	$scope.availableRedirectScopes = [];
@@ -3107,12 +3106,12 @@ function ClientEditCtrl($scope, $compile){
 	
 	// Add a new uri input field to a new client
 	$scope.addUriToNewClientTable = function(){		
-		$scope.newClient.redirectUris.push({value: {value: ''},type: {value: 'default'}});	
+		$scope.newClient.redirectUris.push({value: {value: ''},type: {value: 'default'}, scopes: []});	
 	};
 	
 	// Add a new uri input field to a existing client
 	$scope.addUriToExistingClientTable = function(){
-		$scope.clientToEdit.redirectUris.push({value: {value: ''},type: {value: 'default'}});
+		$scope.clientToEdit.redirectUris.push({value: {value: ''},type: {value: 'default'}, scopes: []});
 	};
 	
 	// Display the modal to edit a client
@@ -3259,16 +3258,18 @@ function ClientEditCtrl($scope, $compile){
 		}  
 	};	
 
-	$scope.setSelectedItem = function(){
+	$scope.setSelectedItem = function(rUri){
 	    var scope = this.scope;
-	    if (jQuery.inArray( scope, $scope.selectedScopes ) == -1) {
-	    	$scope.selectedScopes.push(scope);
+	    if (jQuery.inArray( scope, rUri.scopes ) == -1) {
+	    	rUri.scopes.push(scope);
 	    }
+	    console.log(rUri.scopes);
 	    return false;
 	};
 	
-	$scope.isChecked = function (scope) {   
-	    if (jQuery.inArray( scope, $scope.selectedScopes ) != -1) {
+	$scope.isCheckedOnNew = function (rUri) { 
+		var scope = this.scope;
+		if (jQuery.inArray( scope, rUri.scopes ) != -1) {
 	        return 'glyphicon glyphicon-ok pull-right';
 	    }
 	    return false;

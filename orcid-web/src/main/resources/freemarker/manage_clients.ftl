@@ -159,14 +159,14 @@
 						
 						
 						
-						<div ng-show="rUri.type.value == 'grant-read-wizard'">
-							<@orcid.msg 'manage_clients.redirect_uri.scope' />:
+						<div ng-show="rUri.type.value != 'default'">
+							<@orcid.msg 'manage_clients.redirect_uri.scope' />:<br />
 							<div class='btn-group multiple-select'>
-								<button class='btn btn-small'>Select</button>
+								<button class='btn btn-small'><@orcid.msg 'manage_clients.redirect_uri.scopes.label'/></button>
 								<button class='btn btn-small dropdown-toggle' ng-click='scopeSelectorOpen=!scopeSelectorOpen;openDropdown($index)'><span class='caret'></span></button>
 								<div class="scrollable-list" ng-show="scopeSelectorOpen">
 									<ul class="dropdown-menu">		
-										<li ng-repeat='scope in availableRedirectScopes'><a ng-click='setSelectedItem()'>{{scope}}<span ng-class='isChecked(scope)'></span></a></li>
+										<li ng-repeat='scope in availableRedirectScopes'><a ng-click='setSelectedItem(rUri)'>{{scope}}<span ng-class='isCheckedOnNew(rUri)'></span></a></li>
 									</ul>
 								</div>
 							</div>
