@@ -176,7 +176,7 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     
-    // looka like the following is our best best for i18n emails
+    // look like the following is our best best for i18n emails
     // http://stackoverflow.com/questions/9605828/email-internationalization-using-velocity-freemarker-templates
     public void sendVerificationEmail(OrcidProfile orcidProfile, URI baseUri, String email) {
         Map<String, Object> templateParams = new HashMap<String, Object>();
@@ -192,18 +192,31 @@ public class NotificationManagerImpl implements NotificationManager {
 
         // Generate body from template
         String body = templateManager.processTemplate("verification_email.ftl", templateParams);
-//        // Create email message
-//        SimpleMailMessage message = new SimpleMailMessage();
-//        message.setFrom(fromAddress);
-//        message.setTo(email);
-//        message.setSubject(getSubject("email.subject.verification", orcidProfile));
-//        message.setText(body);
-//        // Send message
-//        sendAndLogMessage(message);
         mailGunManager.sendVerifyEmail(verifyFromAddress, email, getSubject("email.subject.verify_reminder", orcidProfile), body, null);       
     }
 
-    private void addMessageParams(Map<String, Object> templateParams, OrcidProfile orcidProfile) {
+    // look like the following is our best best for i18n emails
+    // http://stackoverflow.com/questions/9605828/email-internationalization-using-velocity-freemarker-templates
+    public boolean sendPrivPolicyEmail2014_03(OrcidProfile orcidProfile, URI baseUri) {
+        String email = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+
+        String emailFriendlyName = deriveEmailFriendlyName(orcidProfile);
+        templateParams.put("emailName", emailFriendlyName);
+        String verificationUrl = createVerificationUrl(email, baseUri);
+        templateParams.put("verificationUrl", verificationUrl);
+        templateParams.put("orcid", orcidProfile.getOrcidIdentifier().getPath());
+        templateParams.put("baseUri", baseUri);
+      
+        addMessageParams(templateParams, orcidProfile);
+
+        String text = templateManager.processTemplate("priv_policy_upate_2014_03.ftl", templateParams);
+        String html = templateManager.processTemplate("priv_policy_upate_2014_03_html.ftl", templateParams);
+
+        return mailGunManager.sendVerifyEmail("support@verify.orcid.org", email, "Updates to ORCID Privacy Policy", text, html);
+    }
+
+    private void  addMessageParams(Map<String, Object> templateParams, OrcidProfile orcidProfile) {
         Locale locale = null; new Locale("en");
         if ( orcidProfile.getOrcidPreferences() != null
                 && orcidProfile.getOrcidPreferences().getLocale() != null) {
