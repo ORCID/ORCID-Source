@@ -3055,7 +3055,10 @@ function ClientEditCtrl($scope, $compile){
 	$scope.clients = [];
 	$scope.newClient = null;
 	$scope.emptyRedirectUri = {value: {value: ''},type: {value: 'default'}};
-			
+	$scope.scopeSelectorOpen = false;		
+	$scope.selectedScopes = [];
+	$scope.availableRedirectScopes = [];
+	
 	// Get the list of clients associated with this user
 	$scope.getClients = function(){
 		$.ajax({
@@ -3220,9 +3223,57 @@ function ClientEditCtrl($scope, $compile){
 	    	console.log("Error creating client information.");
 	    });		
 	};
-	    
+	
+	$scope.loadAvailableScopes = function(){
+		$.ajax({
+	        url: $('body').data('baseurl') + 'manage-clients/get-available-scopes.json',
+	        type: 'GET',
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {	        	
+	        	$scope.availableRedirectScopes = data;
+	        }
+	    }).fail(function() { 
+	    	console.log("Unable to fetch redirect uri scopes.");
+	    });		
+	};
+	
 	//init
 	$scope.getClients();
+	$scope.loadAvailableScopes();
+	
+	
+	
+	
+	
+	$scope.openDropdown = function(index){
+		$scope.selectedScopes = [];
+		if($scope.newClient.redirectUris[index].type.value == 'grant-read-wizard'){
+			$scope.selectedScopes.push('/orcid-profile/read-limited');
+		} else if ($scope.newClient.redirectUris[index].type.value == 'import-works-wizard'){
+			$scope.selectedScopes.push('/orcid-profile/read-limited');
+			$scope.selectedScopes.push('/orcid-works/create');
+		} else if ($scope.newClient.redirectUris[index].type.value == 'import-funding-wizard'){
+			$scope.selectedScopes.push('/orcid-profile/read-limited');
+			$scope.selectedScopes.push('/funding/create');
+		}  
+	};	
+
+	$scope.setSelectedItem = function(){
+	    var scope = this.scope;
+	    if (jQuery.inArray( scope, $scope.selectedScopes ) == -1) {
+	    	$scope.selectedScopes.push(scope);
+	    }
+	    return false;
+	};
+	
+	$scope.isChecked = function (scope) {   
+	    if (jQuery.inArray( scope, $scope.selectedScopes ) != -1) {
+	        return 'glyphicon glyphicon-ok pull-right';
+	    }
+	    return false;
+	};
+	
 };
 
 function statisticCtrl($scope){	

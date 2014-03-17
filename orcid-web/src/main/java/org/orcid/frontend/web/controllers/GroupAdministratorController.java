@@ -18,6 +18,8 @@ package org.orcid.frontend.web.controllers;
 
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +38,7 @@ import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.ErrorDesc;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
+import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.pojo.ajaxForm.Client;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RedirectUri;
@@ -66,7 +69,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
 
     @Resource
     private ThirdPartyImportManager thirdPartyImportManager;
-    
+
     @RequestMapping
     public ModelAndView manageClients() {
         ModelAndView mav = new ModelAndView("manage_clients");
@@ -111,6 +114,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
         emptyClient.setRedirectUris(redirectUris);
         return emptyClient;
     }
+
     private boolean validateUrl(String url) {
         String urlToCheck = null;
         // To validate the URL we need a string with a protocol, so, check if it
@@ -249,7 +253,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
             OrcidClient result = null;
 
             try {
-                result = orcidClientGroupManager.updateClientProfile(groupOrcid, client.toOrcidClient());                
+                result = orcidClientGroupManager.updateClientProfile(groupOrcid, client.toOrcidClient());
                 clearCache();
             } catch (OrcidClientGroupManagementException e) {
                 LOGGER.error(e.getMessage());
@@ -283,17 +287,33 @@ public class GroupAdministratorController extends BaseWorkspaceController {
 
         return clients;
     }
-    
+
     @ModelAttribute("redirectUriTypes")
-    public Map<String, String> getRedirectUriTypes(){
+    public Map<String, String> getRedirectUriTypes() {
         Map<String, String> redirectUriTypes = new LinkedHashMap<String, String>();
-        for(RedirectUriType rType : RedirectUriType.values()) {
+        for (RedirectUriType rType : RedirectUriType.values()) {
             redirectUriTypes.put(rType.value(), rType.value());
         }
         return redirectUriTypes;
     }
-    
+
     private void clearCache() {
         thirdPartyImportManager.evictAll();
+    }
+
+    @RequestMapping(value = "/get-available-scopes.json", method = RequestMethod.GET)
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    public @ResponseBody
+    List<String> getAvailableRedirectUriScopes() {
+        List<String> scopes = new ArrayList<String>();
+        // Ignore these scopes
+        List<ScopePathType> ignoreScopes = new<ScopePathType> ArrayList(Arrays.asList(ScopePathType.ORCID_PATENTS_CREATE, ScopePathType.ORCID_PATENTS_READ_LIMITED,
+                ScopePathType.ORCID_PATENTS_UPDATE, ScopePathType.WEBHOOK));
+        for (ScopePathType t : ScopePathType.values()) {
+            if (!ignoreScopes.contains(t))
+                scopes.add(t.value());
+        }
+        Collections.sort(scopes);
+        return scopes;
     }
 }

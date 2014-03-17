@@ -3342,6 +3342,23 @@ p.orcid-id-container{
 }
 
 
+.scrollable-list {
+	height: 120px;
+	width:315px;
+	position: absolute;	
+	overflow: scroll;	
+	border: 1px solid #CCCCCC;
+	top:100%;
+	left:0;		 
+}
+
+.multiple-select .dropdown-menu{
+	top: 0;
+	left:0;
+	border: none;
+	width:295px;
+}
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */

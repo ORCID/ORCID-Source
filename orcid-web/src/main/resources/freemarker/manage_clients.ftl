@@ -82,7 +82,13 @@
 								<#list redirectUriTypes?keys as key>
 									<option value="${key}">${redirectUriTypes[key]}</option>
 								</#list>
-							</select>							
+							</select>
+							
+							
+							
+							
+							
+							
 							<span class="orcid-error" ng-show="rUri.errors.length > 0">
 								<div ng-repeat='error in rUri.errors' ng-bind-html="error"></div>
 							</span>
@@ -106,7 +112,7 @@
 	<div style="padding: 20px;">
 		<h1><@orcid.msg 'manage_clients.add_new'/></h1>
 		
-		<form class="form-horizontal">
+		<div class="form-horizontal">
 			<div class="control-group">
 				<label class="control-label" for="clientname" style="margin-right:10px; text-align:left; width:90px"><@orcid.msg 'manage_clients.display_name'/>: </label>
 				<div class="relative">
@@ -145,13 +151,56 @@
 								<option value="${key}">${redirectUriTypes[key]}</option>
 							</#list>
 						</select>
+						
+						
+						
+						
+						
+						
+						
+						
+						<div ng-show="rUri.type.value == 'grant-read-wizard'">
+							<@orcid.msg 'manage_clients.redirect_uri.scope' />:
+							<div class='btn-group multiple-select'>
+								<button class='btn btn-small'>Select</button>
+								<button class='btn btn-small dropdown-toggle' ng-click='scopeSelectorOpen=!scopeSelectorOpen;openDropdown($index)'><span class='caret'></span></button>
+								<div class="scrollable-list" ng-show="scopeSelectorOpen">
+									<ul class="dropdown-menu">		
+										<li ng-repeat='scope in availableRedirectScopes'><a ng-click='setSelectedItem()'>{{scope}}<span ng-class='isChecked(scope)'></span></a></li>
+									</ul>
+								</div>
+							</div>
+						</div>	
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
 						<span class="orcid-error" ng-show="rUri.errors.length > 0">
 							<div ng-repeat='error in rUri.errors' ng-bind-html="error"></div>
 						</span>						
 					</div>
 				</div>
 		    </div>
-		</form>		
+		</div>		
 		<div>
 			<a href ng-click="addUriToNewClientTable()"><span class="glyphicon glyphicon-plus blue"></span><@orcid.msg 'manage_clients.add_redirect_uri'/></a>
 		</div>
