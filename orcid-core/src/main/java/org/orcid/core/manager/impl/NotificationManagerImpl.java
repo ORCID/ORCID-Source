@@ -213,7 +213,7 @@ public class NotificationManagerImpl implements NotificationManager {
         String text = templateManager.processTemplate("priv_policy_upate_2014_03.ftl", templateParams);
         String html = templateManager.processTemplate("priv_policy_upate_2014_03_html.ftl", templateParams);
 
-        return mailGunManager.sendVerifyEmail("support@verify.orcid.org", email, "Updates to ORCID Privacy Policy", text, html);
+        return mailGunManager.sendVerifyEmail("support@orcid.org", email, "Updates to ORCID Privacy Policy", text, html);
     }
 
     private void  addMessageParams(Map<String, Object> templateParams, OrcidProfile orcidProfile) {
