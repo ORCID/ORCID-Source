@@ -200,7 +200,7 @@ public class NotificationManagerImpl implements NotificationManager {
 //        message.setText(body);
 //        // Send message
 //        sendAndLogMessage(message);
-        mailGunManager.sendVerifyEmail(verifyFromAddress, email, getSubject("email.subject.verify_reminder", orcidProfile), body, null);       
+        mailGunManager.sendEmail(verifyFromAddress, email, getSubject("email.subject.verify_reminder", orcidProfile), body, null);       
     }
 
     private void addMessageParams(Map<String, Object> templateParams, OrcidProfile orcidProfile) {
@@ -253,7 +253,7 @@ public class NotificationManagerImpl implements NotificationManager {
 //        message.setText(body);
 //        // Send message
 //        sendAndLogMessage(message);
-        mailGunManager.sendVerifyEmail(verifyFromAddress, email, getSubject("email.subject.verify_reminder", orcidProfile), body, null);        
+        mailGunManager.sendEmail(verifyFromAddress, email, getSubject("email.subject.verify_reminder", orcidProfile), body, null);        
     }
 
 
