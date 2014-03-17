@@ -194,6 +194,20 @@ function trimAjaxFormText(pojoMember) {
 	  pojoMember.value = pojoMember.value.trim();
 }
 
+function logOffReload() {
+	$.ajax({
+        url: baseUrl + 'userStatus.json?logUserOut=true',
+        type: 'GET',
+        dataType: 'json',
+        success: function(data) {
+        	window.location.reload();
+        }
+	}).fail(function() { 
+    	// something bad is happening!
+    	window.location.reload();
+    });
+};
+
 
 // jquery ready
 $(function () {

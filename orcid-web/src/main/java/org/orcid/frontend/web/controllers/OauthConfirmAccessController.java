@@ -19,6 +19,7 @@ package org.orcid.frontend.web.controllers;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -45,6 +46,8 @@ public class OauthConfirmAccessController extends BaseController {
 
     @RequestMapping(value = "/confirm_access", method = RequestMethod.GET)
     public ModelAndView loginGetHandler(HttpServletRequest request, ModelAndView mav, @RequestParam("client_id") String clientId, @RequestParam("scope") String scope) {
+        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid(), LoadOptions.BIO_ONLY);
+
         // XXX Use T2 API
         OrcidProfile clientProfile = orcidProfileManager.retrieveOrcidProfile(clientId);
         Boolean justRegistered = (Boolean) request.getSession().getAttribute(JUST_REGISTERED);
@@ -65,6 +68,7 @@ public class OauthConfirmAccessController extends BaseController {
                 client_group_name = clientGroupProfile.getOrcidBio().getPersonalDetails().getCreditName().getContent();
         }
 
+        mav.addObject("profile", profile);
         mav.addObject("client_name", client_name);
         mav.addObject("client_group_name", client_group_name);        
         mav.addObject("clientProfile", clientProfile);        

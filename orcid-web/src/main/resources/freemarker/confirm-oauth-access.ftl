@@ -34,8 +34,15 @@
         </div>
         
         <br />
-        <h2 class="oauth-title">${springMacroRequestContext.getMessage("confirm-oauth-access.connecting")}<br /> <span>${clientProfile.orcidBio.personalDetails.creditName.content}</span><br /> ${springMacroRequestContext.getMessage("confirm-oauth-access.withyourrecord")}</h2>
-        
+        <#if RequestParameters['notYou']??>
+            <h2 class="oauth-title">Connecting ${clientProfile.orcidBio.personalDetails.creditName.content} with ORCID record for 
+            ${(profile.orcidBio.personalDetails.givenNames.content)!} ${(profile.orcidBio.personalDetails.familyName.content)!} 
+            (<a href="" onclick="logOffReload(); return false;">Not you?</a>) 
+            </h2>
+        <#else>
+            <h2 class="oauth-title">${springMacroRequestContext.getMessage("confirm-oauth-access.connecting")}<br /> <span>${clientProfile.orcidBio.personalDetails.creditName.content}</span><br /> ${springMacroRequestContext.getMessage("confirm-oauth-access.withyourrecord")}</h2>
+        </#if>
+              
         <hr />
         
     </div>
