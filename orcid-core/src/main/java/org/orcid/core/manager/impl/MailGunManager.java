@@ -61,13 +61,19 @@ public class MailGunManager {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(MailGunManager.class);
 
-    public boolean sendVerifyEmail(String from, String to, String subject, String text, String html) {
+    public boolean sendEmail(String from, String to, String subject, String text, String html) {
         
         Client client = Client.create();
         client.addFilter(new HTTPBasicAuthFilter("api",
                 getApiKey()));
-        WebResource webResource =
-                client.resource(getVerifyApiUrl());
+        
+        // determine correct api based off domain.
+        WebResource webResource = null;
+        if (from.trim().endsWith("@verify.orcid.org")) 
+            webResource = client.resource(getVerifyApiUrl());
+        else
+            webResource = client.resource(getApiUrl());
+        
         MultivaluedMapImpl formData = new MultivaluedMapImpl();
         formData.add("from", from);
         formData.add("to", to);
