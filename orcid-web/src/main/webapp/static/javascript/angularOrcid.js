@@ -3245,8 +3245,8 @@ function statisticCtrl($scope){
 	$scope.getLiveIds();
 };
 
-function languageCtrl($scope, $cookies){		
-	$scope.languages = 
+function languageCtrl($scope, $cookies) {
+	var productionLangList = 
 	    [
 	        {	            
 	            "value": "en",
@@ -3260,18 +3260,6 @@ function languageCtrl($scope, $cookies){
 	        	"value": 'fr',
 	    		"label": 'Français'
 	        },	        
-//	        {
-//	        	"value": 'ko',
-//	    		"label": '한국어'
-//	        },
-	        {
-	        	"value": 'pt',
-	    		"label": 'Português'
-	        },	        
-//	        {
-//	        	"value": 'ru',
-//	    		"label": 'Русский'
-//	        },
 	        {
 		        "value": 'zh_CN',
 			    "label": '简体中文'
@@ -3281,6 +3269,46 @@ function languageCtrl($scope, $cookies){
 			    "label": '繁體中文'
 	        }	        
 	    ];	
+	var testingLangList = 
+	    [
+	        {	            
+	            "value": "en",
+	            "label": "English"
+	        },
+	        {
+	        	"value": 'es',
+	    		"label": 'Español'
+	        },
+	        {
+	        	"value": 'fr',
+	    		"label": 'Français'
+	        },	        
+	        {
+	        	"value": 'ko',
+	    		"label": '한국어'
+	        },
+	        {
+	        	"value": 'pt',
+	    		"label": 'Português'
+	        },	        
+	        {
+	        	"value": 'ru',
+	    		"label": 'Русский'
+	        },
+	        {
+		        "value": 'zh_CN',
+			    "label": '简体中文'
+	        },
+	        {
+		        "value": 'zh_TW',
+			    "label": '繁體中文'
+	        }	        
+	    ];			
+
+	if (location == parent.location && window.location.hostname.toLowerCase() != "orcid.org") 
+		$scope.languages = testingLangList;
+	else
+		$scope.languages = productionLangList;
 	
 	//Load Language that is set in the cookie or set default language to english
 	$scope.getCurrentLanguage = function(){

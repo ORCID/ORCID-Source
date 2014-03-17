@@ -192,7 +192,7 @@ public class NotificationManagerImpl implements NotificationManager {
 
         // Generate body from template
         String body = templateManager.processTemplate("verification_email.ftl", templateParams);
-        mailGunManager.sendVerifyEmail(verifyFromAddress, email, getSubject("email.subject.verify_reminder", orcidProfile), body, null);       
+        mailGunManager.sendEmail(verifyFromAddress, email, getSubject("email.subject.verify_reminder", orcidProfile), body, null);       
     }
 
     // look like the following is our best best for i18n emails
@@ -213,7 +213,7 @@ public class NotificationManagerImpl implements NotificationManager {
         String text = templateManager.processTemplate("priv_policy_upate_2014_03.ftl", templateParams);
         String html = templateManager.processTemplate("priv_policy_upate_2014_03_html.ftl", templateParams);
 
-        return mailGunManager.sendVerifyEmail("support@orcid.org", email, "Updates to ORCID Privacy Policy", text, html);
+        return mailGunManager.sendEmail("support@orcid.org", email, "Updates to ORCID Privacy Policy", text, html);
     }
 
     private void  addMessageParams(Map<String, Object> templateParams, OrcidProfile orcidProfile) {
@@ -266,7 +266,7 @@ public class NotificationManagerImpl implements NotificationManager {
 //        message.setText(body);
 //        // Send message
 //        sendAndLogMessage(message);
-        mailGunManager.sendVerifyEmail(verifyFromAddress, email, getSubject("email.subject.verify_reminder", orcidProfile), body, null);        
+        mailGunManager.sendEmail(verifyFromAddress, email, getSubject("email.subject.verify_reminder", orcidProfile), body, null);        
     }
 
 
