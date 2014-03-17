@@ -501,6 +501,11 @@ function removeBadContributors(dw) {
 	}
 }
 
+function isEmail(email) {
+	var re = /\S+@\S+\.\S+/;
+	return re.test(email);
+}
+
 function EditTableCtrl($scope) {
 	
 	// email edit row
@@ -2858,9 +2863,34 @@ function DelegatesCtrl($scope, $compile){
 	};
 	
 	$scope.search = function(){
-		$scope.showLoader = true;
 		$scope.results = new Array();
-		$scope.getResults();
+		$scope.showLoader = true;
+		if(isEmail($scope.userQuery)){
+			$scope.numFound = 0;
+			$scope.start = 0;
+			$scope.areMoreResults = 0;
+			$scope.searchByEmail();
+		}
+		else{
+			$scope.getResults();
+		}
+	};
+	
+	$scope.searchByEmail = function(){
+		$.ajax({
+			url: $('body').data('baseurl') + "manage/search-for-delegate-by-email/" + encodeURIComponent($scope.userQuery) + '/',      
+			dataType: 'json',
+			headers: { Accept: 'application/json'},
+			success: function(data) {
+				$scope.confirmAddDelegateByEmail(data);
+				$scope.showLoader = false;
+				$scope.$apply();
+			}
+		}).fail(function(){
+			// something bad is happening!
+			console.log("error doing search for delegate by email");
+		});
+		
 	};
 	
 	$scope.getResults = function(rows){
@@ -2927,6 +2957,20 @@ function DelegatesCtrl($scope, $compile){
 		return $scope.numFound != 0;
 	};
 	
+	$scope.confirmAddDelegateByEmail = function(emailSearchResult){
+		$scope.emailSearchResult = emailSearchResult;
+		$.colorbox({                      
+			html : $compile($('#confirm-add-delegate-by-email-modal').html())($scope),
+			transition: 'fade',
+			close: '',
+			onLoad: function() {
+				$('#cboxClose').remove();
+			},
+			onComplete: function() {$.colorbox.resize();},
+			scrolling: true
+		});
+	};
+	
 	$scope.confirmAddDelegate = function(delegateName, delegateId, delegateIdx){
 		$scope.delegateNameToAdd = delegateName;
 		$scope.delegateToAdd = delegateId;
@@ -2942,6 +2986,22 @@ function DelegatesCtrl($scope, $compile){
 			onComplete: function() {$.colorbox.resize();},
 			scrolling: true
 		});
+	};
+	
+	$scope.addDelegateByEmail = function(delegateEmail) {
+		$.ajax({
+	        url: $('body').data('baseurl') + 'account/addDelegateByEmail.json',
+	        type: 'POST',
+	        data: delegateEmail,
+	        contentType: 'application/json;charset=UTF-8',
+	        success: function(data) {
+	        	$scope.getDelegates();
+	        	$scope.$apply();
+	        	$scope.closeModal();
+	        }
+	    }).fail(function() { 
+	    	console.log("Error adding delegate.");
+	    });
 	};
 	
 	$scope.addDelegate = function() {

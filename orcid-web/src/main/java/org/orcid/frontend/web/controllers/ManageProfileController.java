@@ -38,7 +38,6 @@ import org.orcid.core.manager.OtherNameManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.ResearcherUrlManager;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.utils.SolrFieldWeight;
 import org.orcid.core.utils.SolrQueryBuilder;
 import org.orcid.frontend.web.forms.ChangePersonalInfoForm;
@@ -53,15 +52,12 @@ import org.orcid.jaxb.model.message.Delegation;
 import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.EncryptedSecurityAnswer;
-import org.orcid.jaxb.model.message.GivenPermissionBy;
 import org.orcid.jaxb.model.message.GivenPermissionTo;
 import org.orcid.jaxb.model.message.Keywords;
-import org.orcid.jaxb.model.message.Orcid;
 import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidSearchResults;
-import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.OtherNames;
 import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.jaxb.model.message.ResearcherUrl;
@@ -74,8 +70,10 @@ import org.orcid.jaxb.model.message.UrlName;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.password.constants.OrcidPasswordConstants;
+import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
@@ -88,12 +86,12 @@ import org.orcid.utils.DateUtils;
 import org.orcid.utils.OrcidWebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.MapBindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -113,6 +111,10 @@ import schema.constants.SolrConstants;
 @Controller("manageProfileController")
 @RequestMapping(value = { "/account", "/manage" })
 public class ManageProfileController extends BaseWorkspaceController {
+
+    private static final String IS_SELF = "isSelf";
+
+    private static final String FOUND = "found";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ManageProfileController.class);
 
@@ -148,6 +150,9 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @Resource
     private GivenPermissionToDao givenPermissionToDao;
+
+    @Resource
+    private EmailDao emailDao;
 
     public EncryptionManager getEncryptionManager() {
         return encryptionManager;
@@ -257,6 +262,21 @@ public class ManageProfileController extends BaseWorkspaceController {
         return mav;
     }
 
+    @RequestMapping(value = "/search-for-delegate-by-email/{email}/")
+    public @ResponseBody
+    Map<String, Boolean> searchForDelegateByEmail(@PathVariable String email) {
+        Map<String, Boolean> map = new HashMap<>();
+        EmailEntity emailEntity = emailDao.findCaseInsensitive(email);
+        if (emailEntity == null) {
+            map.put(FOUND, Boolean.FALSE);
+            return map;
+        } else {
+            map.put(FOUND, Boolean.TRUE);
+            map.put(IS_SELF, emailEntity.getProfile().getId().equals(getCurrentUserOrcid()));
+            return map;
+        }
+    }
+
     @RequestMapping(value = "/confirm-delegate", method = RequestMethod.POST)
     public ModelAndView confirmDelegate(@ModelAttribute("delegateOrcid") String delegateOrcid) {
         OrcidProfile delegateProfile = orcidProfileManager.retrieveOrcidProfile(delegateOrcid);
@@ -307,6 +327,13 @@ public class ManageProfileController extends BaseWorkspaceController {
         return delegateOrcid;
     }
 
+    @RequestMapping(value = "/addDelegateByEmail.json")
+    public @ResponseBody
+    String addDelegateByEmail(@RequestBody String delegateEmail) {
+        EmailEntity emailEntity = emailDao.findCaseInsensitive(delegateEmail);
+        return addDelegate(emailEntity.getProfile().getId());
+    }
+
     @RequestMapping(value = "/revokeDelegate.json", method = RequestMethod.DELETE)
     public @ResponseBody
     String revokeDelegate(@RequestBody String delegate) {
@@ -345,7 +372,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         // Redirect to the new way of switching user, which includes admin
         // access
         ModelAndView mav = null;
-        if(profileEntityManager.orcidExists(targetOrcid)) {
+        if (profileEntityManager.orcidExists(targetOrcid)) {
             mav = new ModelAndView("redirect:/switch-user?j_username=" + targetOrcid);
         } else {
             redirectAttributes.addFlashAttribute("invalidOrcid", true);
