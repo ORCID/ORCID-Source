@@ -35,8 +35,8 @@
         
         <br />
         <#if RequestParameters['notYou']??>
-            <h2 class="oauth-title">Connecting ${clientProfile.orcidBio.personalDetails.creditName.content} with ORCID record for 
-            ${(profile.orcidBio.personalDetails.givenNames.content)!} ${(profile.orcidBio.personalDetails.familyName.content)!} 
+            <h2 class="oauth-title">Connecting <span>${clientProfile.orcidBio.personalDetails.creditName.content}</span> with ORCID record for 
+            <span>${(profile.orcidBio.personalDetails.givenNames.content)!} ${(profile.orcidBio.personalDetails.familyName.content)!}</span> 
             (<a href="" onclick="logOffReload(); return false;">Not you?</a>) 
             </h2>
         <#else>
