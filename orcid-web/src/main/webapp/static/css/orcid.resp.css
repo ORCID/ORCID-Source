@@ -3349,7 +3349,8 @@ p.orcid-id-container{
 	overflow: scroll;	
 	border: 1px solid #CCCCCC;
 	top:100%;
-	left:0;		 
+	left:0;	
+	z-index:99999;	 
 }
 
 .multiple-select .dropdown-menu{
