@@ -3245,23 +3245,29 @@ function ClientEditCtrl($scope, $compile){
 	
 	
 	
-	$scope.openDropdown = function(index){
+	$scope.openDropdown = function(rUri, edit){
 		$scope.selectedScopes = [];
-		if($scope.newClient.redirectUris[index].type.value == 'grant-read-wizard'){
-			$scope.selectedScopes.push('/orcid-profile/read-limited');
-		} else if ($scope.newClient.redirectUris[index].type.value == 'import-works-wizard'){
-			$scope.selectedScopes.push('/orcid-profile/read-limited');
-			$scope.selectedScopes.push('/orcid-works/create');
-		} else if ($scope.newClient.redirectUris[index].type.value == 'import-funding-wizard'){
-			$scope.selectedScopes.push('/orcid-profile/read-limited');
-			$scope.selectedScopes.push('/funding/create');
-		}  
+		if(edit == false) {
+			if(rUri.type.value == 'grant-read-wizard'){
+				rUri.scopes.push('/orcid-profile/read-limited');
+			} else if (rUri.type.value == 'import-works-wizard'){
+				rUri.scopes.push('/orcid-profile/read-limited');
+				rUri.scopes.push('/orcid-works/create');
+			} else if (rUri.type.value == 'import-funding-wizard'){
+				rUri.scopes.push('/orcid-profile/read-limited');
+				rUri.scopes.push('/funding/create');
+			}  
+		}
 	};	
 
 	$scope.setSelectedItem = function(rUri){
 	    var scope = this.scope;
 	    if (jQuery.inArray( scope, rUri.scopes ) == -1) {
 	    	rUri.scopes.push(scope);
+	    } else {
+	    	rUri.scopes = jQuery.grep(rUri.scopes, function(value) {
+	            return value != scope;
+	          });
 	    }
 	    console.log(rUri.scopes);
 	    return false;
