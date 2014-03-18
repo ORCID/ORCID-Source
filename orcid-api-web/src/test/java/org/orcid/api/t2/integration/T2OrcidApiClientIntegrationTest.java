@@ -41,6 +41,7 @@ import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.FamilyName;
 import org.orcid.jaxb.model.message.OrcidBio;
+import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidSearchResult;
 import org.orcid.jaxb.model.message.OrcidWork;
@@ -75,7 +76,7 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
 
     @After
     public void clearOrcid() {
-        if (orcid != null) {            
+        if (orcid != null) {
             t2Client.deleteProfileXML(orcid);
             orcid = null;
         }
@@ -116,12 +117,12 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
         assertEquals("application/vnd.orcid+xml; charset=UTF-8; qs=5", clientResponse.getType().toString());
         OrcidMessage orcidMessage = clientResponse.getEntity(OrcidMessage.class);
         assertNotNull(orcidMessage);
-        assertEquals(this.orcid, orcidMessage.getOrcidProfile().getOrcid().getValue());
+        assertEquals(this.orcid, orcidMessage.getOrcidProfile().getOrcidIdentifier().getPath());
         assertNotNull(orcidMessage.getOrcidProfile().getOrcidBio());
         assertNull(orcidMessage.getOrcidProfile().retrieveOrcidWorks());
         List<Email> emails = orcidMessage.getOrcidProfile().getOrcidBio().getContactDetails().getEmail();
         assertNotNull(emails);
-        for(Email email : emails){
+        for (Email email : emails) {
             assertTrue(email.getValue().equals(email.getValue().trim()));
         }
     }
@@ -134,12 +135,12 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
         assertEquals(200, clientResponse.getStatus());
         assertEquals("application/vnd.orcid+json; charset=UTF-8; qs=4", clientResponse.getType().toString());
         OrcidMessage orcidMessage = clientResponse.getEntity(OrcidMessage.class);
-        assertEquals(this.orcid, orcidMessage.getOrcidProfile().getOrcid().getValue());
+        assertEquals(this.orcid, orcidMessage.getOrcidProfile().getOrcidIdentifier().getPath());
         assertNotNull(orcidMessage.getOrcidProfile().getOrcidBio());
         assertNull(orcidMessage.getOrcidProfile().retrieveOrcidWorks());
         List<Email> emails = orcidMessage.getOrcidProfile().getOrcidBio().getContactDetails().getEmail();
         assertNotNull(emails);
-        for(Email email : emails){
+        for (Email email : emails) {
             assertTrue(email.getValue().equals(email.getValue().trim()));
         }
     }
@@ -161,7 +162,7 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
         assertTrue(orcidProfileFullDetails.indexOf("<subtitle>Work subtitle 2</subtitle>") != -1);
         assertTrue(orcidProfileFullDetails.indexOf("<orcid-history>") != -1);
         assertTrue(orcidProfileFullDetails.indexOf("<email primary=\"false\" current=\"true\" verified=\"false\" visibility=\"private\">") != -1);
-        assertTrue(orcidProfileFullDetails.indexOf("<email primary=\"true\" current=\"true\" verified=\"false\" visibility=\"private\">") != -1);        
+        assertTrue(orcidProfileFullDetails.indexOf("<email primary=\"true\" current=\"true\" verified=\"false\" visibility=\"private\">") != -1);
     }
 
     @Test
@@ -173,13 +174,13 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
         assertEquals("application/vnd.orcid+xml; charset=UTF-8; qs=5", clientResponse.getType().toString());
         OrcidMessage orcidMessage = clientResponse.getEntity(OrcidMessage.class);
         assertNotNull(orcidMessage);
-        assertEquals(this.orcid, orcidMessage.getOrcidProfile().getOrcid().getValue());
+        assertEquals(this.orcid, orcidMessage.getOrcidProfile().getOrcidIdentifier().getPath());
         assertNotNull(orcidMessage.getOrcidProfile().getOrcidBio());
         assertNotNull(orcidMessage.getOrcidProfile().retrieveOrcidWorks());
         assertNotNull(orcidMessage.getOrcidProfile().getOrcidHistory());
         List<Email> emails = orcidMessage.getOrcidProfile().getOrcidBio().getContactDetails().getEmail();
         assertNotNull(emails);
-        for(Email email : emails){
+        for (Email email : emails) {
             assertTrue(email.getValue().equals(email.getValue().trim()));
         }
     }
@@ -194,13 +195,13 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
         OrcidMessage orcidMessage = clientResponse.getEntity(OrcidMessage.class);
         assertNotNull(orcidMessage);
 
-        assertEquals(this.orcid, orcidMessage.getOrcidProfile().getOrcid().getValue());
+        assertEquals(this.orcid, orcidMessage.getOrcidProfile().getOrcidIdentifier().getPath());
         assertNotNull(orcidMessage.getOrcidProfile().getOrcidBio());
         assertNotNull(orcidMessage.getOrcidProfile().retrieveOrcidWorks());
         assertNotNull(orcidMessage.getOrcidProfile().getOrcidHistory());
         List<Email> emails = orcidMessage.getOrcidProfile().getOrcidBio().getContactDetails().getEmail();
         assertNotNull(emails);
-        for(Email email : emails){
+        for (Email email : emails) {
             assertTrue(email.getValue().equals(email.getValue().trim()));
         }
     }
@@ -233,7 +234,7 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
         assertEquals("application/vnd.orcid+xml; charset=UTF-8; qs=5", clientResponse.getType().toString());
         OrcidMessage orcidMessage = clientResponse.getEntity(OrcidMessage.class);
         assertNotNull(orcidMessage);
-        assertEquals(this.orcid, orcidMessage.getOrcidProfile().getOrcid().getValue());
+        assertEquals(this.orcid, orcidMessage.getOrcidProfile().getOrcidIdentifier().getPath());
         assertNotNull(orcidMessage.getOrcidProfile().retrieveOrcidWorks());
         assertNull(orcidMessage.getOrcidProfile().getOrcidBio());
         assertNotNull(orcidMessage.getOrcidProfile().getOrcidHistory());
@@ -248,12 +249,12 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
         assertEquals("application/vnd.orcid+json; charset=UTF-8; qs=4", clientResponse.getType().toString());
         OrcidMessage orcidMessage = clientResponse.getEntity(OrcidMessage.class);
         assertNotNull(orcidMessage);
-        assertEquals(this.orcid, orcidMessage.getOrcidProfile().getOrcid().getValue());
+        assertEquals(this.orcid, orcidMessage.getOrcidProfile().getOrcidIdentifier().getPath());
         assertNotNull(orcidMessage.getOrcidProfile().retrieveOrcidWorks());
         assertNull(orcidMessage.getOrcidProfile().getOrcidBio());
         assertNotNull(orcidMessage.getOrcidProfile().getOrcidHistory());
     }
-    
+
     @Test
     public void testCreateProfileXML() throws Exception {
         // slightly clumsy -but every other test in this class creates an Orcid
@@ -270,12 +271,12 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
     public void testAddWorksXml() throws Exception {
 
         OrcidMessage message = getInternalFullOrcidMessage(OrcidClientDataHelper.ORCID_INTERNAL_NO_SPONSOR_XML);
-        message.getOrcidProfile().setOrcid(this.orcid);
+        message.getOrcidProfile().setOrcidIdentifier(new OrcidIdentifier(this.orcid));
         OrcidWorks orcidWorks = message.getOrcidProfile().retrieveOrcidWorks();
         assertTrue(orcidWorks != null && orcidWorks.getOrcidWork() != null && orcidWorks.getOrcidWork().size() == 3);
 
         OrcidWork orcidWork = createWork("Single works");
-        orcidWork.setWorkType(WorkType.UNDEFINED);
+        orcidWork.setWorkType(WorkType.ARTISTIC_PERFORMANCE);
 
         orcidWorks = new OrcidWorks();
         // TODO JB electronic resource num
@@ -322,7 +323,7 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
         orcidWorks = message.getOrcidProfile().retrieveOrcidWorks();
         assertTrue(orcidWorks != null && orcidWorks.getOrcidWork() != null && orcidWorks.getOrcidWork().size() == 4);
     }
-    
+
     @Test
     public void testUpdateWorksXml() throws Exception {
 
@@ -439,7 +440,7 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
 
             ExternalIdentifiers newExternalIdentifiers = new ExternalIdentifiers();
             ExternalIdOrcid externalIdOrcid = new ExternalIdOrcid();
-            externalIdOrcid.setValueAsString(sponsorOrcid);
+            externalIdOrcid.setPath(sponsorOrcid);
             ExternalIdentifier additionalIdentifer = new ExternalIdentifier(externalIdOrcid, new ExternalIdReference("abc"));
             newExternalIdentifiers.getExternalIdentifier().add(additionalIdentifer);
             orcidBio.setExternalIdentifiers(newExternalIdentifiers);
@@ -481,7 +482,7 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
 
             ExternalIdentifiers newExternalIdentifiers = new ExternalIdentifiers();
             ExternalIdOrcid externalIdOrcid = new ExternalIdOrcid();
-            externalIdOrcid.setValueAsString(sponsorOrcid);
+            externalIdOrcid.setPath(sponsorOrcid);
             ExternalIdentifier additionalIdentifer = new ExternalIdentifier(externalIdOrcid, new ExternalIdReference("abc"));
             newExternalIdentifiers.getExternalIdentifier().add(additionalIdentifer);
             orcidBio.setExternalIdentifiers(newExternalIdentifiers);
@@ -526,16 +527,16 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
         OrcidMessage responseEntity = response.getEntity(OrcidMessage.class);
         assertNotNull(responseEntity);
         String familyName = responseEntity.getOrcidProfile().getOrcidBio().getPersonalDetails().getFamilyName().getContent();
-        assertEquals("Bowen", familyName);  
+        assertEquals("Bowen", familyName);
         List<Email> updatedEmails = responseEntity.getOrcidProfile().getOrcidBio().getContactDetails().getEmail();
         assertTrue(updatedEmails.contains(email6));
     }
-    
+
     @Test
     public void testUpdateBioDetailsXml() throws Exception {
 
         OrcidMessage message = getInternalFullOrcidMessage(OrcidClientDataHelper.ORCID_INTERNAL_NO_SPONSOR_XML);
-        message.getOrcidProfile().setOrcid(this.orcid);
+        message.getOrcidProfile().setOrcidIdentifier(new OrcidIdentifier(this.orcid));
         message.getOrcidProfile().setOrcidWorks(null);
         message.getOrcidProfile().getOrcidBio().getPersonalDetails().setFamilyName(new FamilyName("Bowen"));
         List<Email> emails = message.getOrcidProfile().getOrcidBio().getContactDetails().getEmail();
@@ -555,7 +556,7 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
         List<Email> updatedEmails = responseEntity.getOrcidProfile().getOrcidBio().getContactDetails().getEmail();
         assertTrue(updatedEmails.contains(email6));
     }
-    
+
     private void createOrcidAndVerifyResponse201() throws Exception {
         ClientResponse clientResponse = createFullOrcid();
         verifyClientResponse201(clientResponse);

@@ -365,17 +365,19 @@
 				<thead>
 					<tr>
 						<th width="35%" ng-click="changeSorting('delegateSummary.creditName.content')">${springMacroRequestContext.getMessage("manage.thproxy")}</th>
-						<th width="25%" ng-click="changeSorting('approvalDate.value')">Access granted</th>
-						<th width="25%" ng-click="changeSorting('delegateSummary.lastModifiedDate.value')">Last modified</th>
-						<td width="5%"></td>
+						<th width="25%" ng-click="changeSorting('delegateSummary.orcidIdentifier.path')">${springMacroRequestContext.getMessage("search_results.thORCIDID")}</th>
+						<th width="15%" ng-click="changeSorting('approvalDate.value')">Access granted</th>
+						<th width="15%" ng-click="changeSorting('delegateSummary.lastModifiedDate.value')">Last modified</th>
+						<td width="10%"></td>
 					</tr>
 				</thead>
 				<tbody>
 					<tr ng-repeat="delegationDetails in delegation.givenPermissionTo.delegationDetails | orderBy:sort.column:sort.descending">
 						<td width="35%"><a href="{{delegationDetails.delegateSummary.orcidIdentifier.uri}}">{{delegationDetails.delegateSummary.creditName.content}}</a></td>
-						<td width="25%">{{delegationDetails.approvalDate.value|date}}</td>
-						<td width="25%">{{delegationDetails.delegateSummary.lastModifiedDate.value|date}}</td>
-						<td width="5%"><a
+						<td width="25%"><a href="{{delegationDetails.delegateSummary.orcidIdentifier.uri}}">{{delegationDetails.delegateSummary.orcidIdentifier.path}}</a></td>
+						<td width="15%">{{delegationDetails.approvalDate.value|date}}</td>
+						<td width="15%">{{delegationDetails.delegateSummary.lastModifiedDate.value|date}}</td>
+						<td width="10%"><a
 							ng-click="confirmRevoke(delegationDetails.delegateSummary.creditName.content, delegationDetails.delegateSummary.orcidIdentifier.path)"
 							class="glyphicon glyphicon-trash grey"
 							title="{springMacroRequestContext.getMessage("manage.revokeaccess")}"></a></td>
@@ -406,7 +408,7 @@
 							<td>{{result['orcid-profile']['orcid-bio']['personal-details']['given-names'].value}}</td>
 							<td>{{result['orcid-profile']['orcid-bio']['personal-details']['family-name'].value}}</td>
 							<td>{{concatPropertyValues(result['orcid-profile']['orcid-bio']['affiliations'], 'affiliation-name')}}</td>
-							<td><span ng-click="confirmAddDelegate(result['orcid-profile']['orcid-bio']['personal-details']['given-names'].value + ' ' + result['orcid-profile']['orcid-bio']['personal-details']['family-name'].value, result['orcid-profile']['orcid']['value'])" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span></td>
+							<td><span ng-click="confirmAddDelegate(result['orcid-profile']['orcid-bio']['personal-details']['given-names'].value + ' ' + result['orcid-profile']['orcid-bio']['personal-details']['family-name'].value, result['orcid-profile']['orcid']['value'], $index)" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span></td>
 						</tr>
 					</tbody>
 				</table>

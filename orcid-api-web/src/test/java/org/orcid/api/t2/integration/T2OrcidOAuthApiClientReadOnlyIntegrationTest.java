@@ -46,7 +46,7 @@ public class T2OrcidOAuthApiClientReadOnlyIntegrationTest extends BaseT2OrcidOAu
         assertEquals("application/vnd.orcid+xml; charset=UTF-8; qs=5", clientResponse.getType().toString());
         OrcidMessage orcidMessage = clientResponse.getEntity(OrcidMessage.class);
         assertNotNull(orcidMessage);
-        assertEquals(this.orcid, orcidMessage.getOrcidProfile().getOrcid().getValue());
+        assertEquals(this.orcid, orcidMessage.getOrcidProfile().getOrcidIdentifier().getPath());
         assertNotNull(orcidMessage.getOrcidProfile().getOrcidBio());
         assertNull(orcidMessage.getOrcidProfile().retrieveOrcidWorks());       
         orcidClientDataHelper.deleteOrcidProfile(this.orcid);
@@ -65,7 +65,7 @@ public class T2OrcidOAuthApiClientReadOnlyIntegrationTest extends BaseT2OrcidOAu
         assertEquals(200, clientResponse.getStatus());
         assertEquals("application/vnd.orcid+json; charset=UTF-8; qs=4", clientResponse.getType().toString());
         OrcidMessage orcidMessage = clientResponse.getEntity(OrcidMessage.class);
-        assertEquals(this.orcid, orcidMessage.getOrcidProfile().getOrcid().getValue());
+        assertEquals(this.orcid, orcidMessage.getOrcidProfile().getOrcidIdentifier().getPath());
         assertNotNull(orcidMessage.getOrcidProfile().getOrcidBio());
         assertNull(orcidMessage.getOrcidProfile().retrieveOrcidWorks());        
         orcidClientDataHelper.deleteOrcidProfile(this.orcid);
@@ -81,7 +81,7 @@ public class T2OrcidOAuthApiClientReadOnlyIntegrationTest extends BaseT2OrcidOAu
         assertEquals("application/vnd.orcid+xml; charset=UTF-8; qs=5", clientResponse.getType().toString());
         OrcidMessage orcidMessage = clientResponse.getEntity(OrcidMessage.class);
         assertNotNull(orcidMessage);
-        assertEquals(this.orcid, orcidMessage.getOrcidProfile().getOrcid().getValue());
+        assertEquals(this.orcid, orcidMessage.getOrcidProfile().getOrcidIdentifier().getPath());
         assertNotNull(orcidMessage.getOrcidProfile().getOrcidBio());
         assertNotNull(orcidMessage.getOrcidProfile().retrieveOrcidWorks());
         assertNotNull(orcidMessage.getOrcidProfile().getOrcidHistory());
@@ -97,7 +97,7 @@ public class T2OrcidOAuthApiClientReadOnlyIntegrationTest extends BaseT2OrcidOAu
         assertEquals("application/vnd.orcid+xml; charset=UTF-8; qs=5", clientResponse.getType().toString());
         OrcidMessage orcidMessage = clientResponse.getEntity(OrcidMessage.class);
         assertNotNull(orcidMessage);
-        assertEquals(this.orcid, orcidMessage.getOrcidProfile().getOrcid().getValue());
+        assertEquals(this.orcid, orcidMessage.getOrcidProfile().getOrcidIdentifier().getPath());
         assertNotNull(orcidMessage.getOrcidProfile().retrieveOrcidWorks());
         assertNull(orcidMessage.getOrcidProfile().getOrcidBio());
         assertNotNull(orcidMessage.getOrcidProfile().getOrcidHistory());
@@ -113,7 +113,7 @@ public class T2OrcidOAuthApiClientReadOnlyIntegrationTest extends BaseT2OrcidOAu
         assertEquals("application/vnd.orcid+json; charset=UTF-8; qs=4", clientResponse.getType().toString());
         OrcidMessage orcidMessage = clientResponse.getEntity(OrcidMessage.class);
         assertNotNull(orcidMessage);
-        assertEquals(this.orcid, orcidMessage.getOrcidProfile().getOrcid().getValue());
+        assertEquals(this.orcid, orcidMessage.getOrcidProfile().getOrcidIdentifier().getPath());
         assertNotNull(orcidMessage.getOrcidProfile().retrieveOrcidWorks());
         assertNull(orcidMessage.getOrcidProfile().getOrcidBio());
         assertNotNull(orcidMessage.getOrcidProfile().getOrcidHistory());
@@ -130,7 +130,7 @@ public class T2OrcidOAuthApiClientReadOnlyIntegrationTest extends BaseT2OrcidOAu
         OrcidMessage orcidMessage = clientResponse.getEntity(OrcidMessage.class);
         assertNotNull(orcidMessage);
 
-        assertEquals(this.orcid, orcidMessage.getOrcidProfile().getOrcid().getValue());
+        assertEquals(this.orcid, orcidMessage.getOrcidProfile().getOrcidIdentifier().getPath());
         assertNotNull(orcidMessage.getOrcidProfile().getOrcidBio());
         assertNotNull(orcidMessage.getOrcidProfile().retrieveOrcidWorks());
         assertNotNull(orcidMessage.getOrcidProfile().getOrcidHistory());
