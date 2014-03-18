@@ -63,7 +63,10 @@ public enum RedirectUriType {
     IMPORT_FUNDING_WIZARD("import-funding-wizard"),
     
     @XmlEnumValue("import-works-wizard")
-    IMPORT_WORKS_WIZARD("import-works-wizard");
+    IMPORT_WORKS_WIZARD("import-works-wizard"),
+    
+    @XmlEnumValue("sso-authentication")
+    SSO_AUTHENTICATION("sso-authentication");
     //@formatter:on
 
     private final String value;

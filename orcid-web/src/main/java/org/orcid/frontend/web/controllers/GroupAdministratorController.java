@@ -56,7 +56,7 @@ import org.springframework.web.servlet.ModelAndView;
  * @author Angel Montenegro Date: 20/06/2013
  */
 @Controller("GroupAdministratorController")
-@RequestMapping(value = "/manage-clients")
+@RequestMapping(value = "/group/developer-tools")
 public class GroupAdministratorController extends BaseWorkspaceController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GroupAdministratorController.class);
@@ -69,7 +69,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
 
     @RequestMapping
     public ModelAndView manageClients() {
-        ModelAndView mav = new ModelAndView("manage_clients");
+        ModelAndView mav = new ModelAndView("group_developer_tools");
         OrcidProfile profile = getEffectiveProfile();
 
         if (profile.getType() == null || !profile.getType().equals(OrcidType.GROUP)) {
@@ -135,9 +135,9 @@ public class GroupAdministratorController extends BaseWorkspaceController {
     private Client validateDisplayName(Client client) {
         client.getDisplayName().setErrors(new ArrayList<String>());
         if (PojoUtil.isEmpty(client.getDisplayName())) {
-            setError(client.getDisplayName(), "manage_clients.error.display_name.empty");
+            setError(client.getDisplayName(), "manage.developer_tools.group.error.display_name.empty");
         } else if (client.getDisplayName().getValue().length() > 150) {
-            setError(client.getDisplayName(), "manage_clients.error.display_name.150");
+            setError(client.getDisplayName(), "manage.developer_tools.group.error.display_name.150");
         }
 
         return client;
@@ -146,9 +146,9 @@ public class GroupAdministratorController extends BaseWorkspaceController {
     private Client validateWebsite(Client client) {
         client.getWebsite().setErrors(new ArrayList<String>());
         if (PojoUtil.isEmpty(client.getWebsite())) {
-            setError(client.getWebsite(), "manage_clients.error.website.empty");
+            setError(client.getWebsite(), "manage.developer_tools.group.error.website.empty");
         } else if (!validateUrl(client.getWebsite().getValue())) {
-            setError(client.getWebsite(), "manage_clients.error.invalid_url");
+            setError(client.getWebsite(), "manage.developer_tools.group.error.invalid_url");
         }
         return client;
     }
@@ -156,7 +156,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
     private Client validateShortDescription(Client client) {
         client.getShortDescription().setErrors(new ArrayList<String>());
         if (PojoUtil.isEmpty(client.getShortDescription()))
-            setError(client.getShortDescription(), "manage_clients.error.short_description.empty");
+            setError(client.getShortDescription(), "manage.developer_tools.group.error.short_description.empty");
         return client;
     }
 
@@ -165,7 +165,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
             for (RedirectUri redirectUri : client.getRedirectUris()) {
                 redirectUri.setErrors(new ArrayList<String>());
                 if (!validateUrl(redirectUri.getValue().getValue())) {
-                    setError(redirectUri, "manage_clients.error.invalid_url");
+                    setError(redirectUri, "manage.developer_tools.group.error.invalid_url");
                 }
             }
         }
@@ -208,7 +208,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
             } catch (OrcidClientGroupManagementException e) {
                 LOGGER.error(e.getMessage());
                 result = new OrcidClient();
-                result.setErrors(new ErrorDesc(getMessage("manage_clients.cannot_create_client")));
+                result.setErrors(new ErrorDesc(getMessage("manage.developer_tools.group.cannot_create_client")));
             }
 
             client = Client.valueOf(result);
@@ -255,7 +255,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
             } catch (OrcidClientGroupManagementException e) {
                 LOGGER.error(e.getMessage());
                 result = new OrcidClient();
-                result.setErrors(new ErrorDesc(getMessage("manage_clients.unable_to_update")));
+                result.setErrors(new ErrorDesc(getMessage("manage.developer_tools.group.unable_to_update")));
             }
 
             client = Client.valueOf(result);
@@ -289,7 +289,8 @@ public class GroupAdministratorController extends BaseWorkspaceController {
     public Map<String, String> getRedirectUriTypes() {
         Map<String, String> redirectUriTypes = new LinkedHashMap<String, String>();
         for (RedirectUriType rType : RedirectUriType.values()) {
-            redirectUriTypes.put(rType.value(), rType.value());
+            if (!RedirectUriType.SSO_AUTHENTICATION.equals(rType))
+                redirectUriTypes.put(rType.value(), rType.value());
         }
         return redirectUriTypes;
     }

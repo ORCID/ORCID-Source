@@ -38,7 +38,6 @@ import org.orcid.core.manager.OtherNameManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.ResearcherUrlManager;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.utils.SolrFieldWeight;
 import org.orcid.core.utils.SolrQueryBuilder;
 import org.orcid.frontend.web.forms.ChangePersonalInfoForm;
@@ -53,15 +52,12 @@ import org.orcid.jaxb.model.message.Delegation;
 import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.EncryptedSecurityAnswer;
-import org.orcid.jaxb.model.message.GivenPermissionBy;
 import org.orcid.jaxb.model.message.GivenPermissionTo;
 import org.orcid.jaxb.model.message.Keywords;
-import org.orcid.jaxb.model.message.Orcid;
 import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidSearchResults;
-import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.OtherNames;
 import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.jaxb.model.message.ResearcherUrl;
@@ -74,6 +70,7 @@ import org.orcid.jaxb.model.message.UrlName;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.password.constants.OrcidPasswordConstants;
+import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
@@ -88,7 +85,6 @@ import org.orcid.utils.DateUtils;
 import org.orcid.utils.OrcidWebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.MapBindingResult;
@@ -145,6 +141,9 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @Resource
     private ProfileDao profileDao;
+
+    @Resource
+    private ClientDetailsDao clientDetailsDao;
 
     @Resource
     private GivenPermissionToDao givenPermissionToDao;
@@ -876,4 +875,5 @@ public class ManageProfileController extends BaseWorkspaceController {
 
         return upTodateResearcherUrls;
     }
+
 }

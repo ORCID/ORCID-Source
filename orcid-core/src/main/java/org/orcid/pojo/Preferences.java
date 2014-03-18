@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.orcid.jaxb.model.message.ActivitiesVisibilityDefault;
+import org.orcid.jaxb.model.message.DeveloperToolsEnabled;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.SendChangeNotifications;
 import org.orcid.jaxb.model.message.SendOrcidNews;
@@ -40,6 +41,7 @@ public class Preferences extends org.orcid.jaxb.model.message.Preferences implem
         this.setSendOrcidNews(new SendOrcidNews());
         this.setWorkVisibilityDefault(new WorkVisibilityDefault());
         this.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault());
+        this.setDeveloperToolsEnabled(new DeveloperToolsEnabled());
     }
 
     public Preferences(org.orcid.jaxb.model.message.Preferences castPreferences) {
@@ -47,6 +49,7 @@ public class Preferences extends org.orcid.jaxb.model.message.Preferences implem
         this.setSendOrcidNews(castPreferences.getSendOrcidNews());
         this.setWorkVisibilityDefault(castPreferences.getWorkVisibilityDefault());
         this.setActivitiesVisibilityDefault(castPreferences.getActivitiesVisibilityDefault());
+        this.setDeveloperToolsEnabled(castPreferences.getDeveloperToolsEnabled());
     }
 
     public List<String> getErrors() {

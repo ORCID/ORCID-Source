@@ -52,6 +52,7 @@ import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.DelegateSummary;
 import org.orcid.jaxb.model.message.Delegation;
 import org.orcid.jaxb.model.message.DelegationDetails;
+import org.orcid.jaxb.model.message.DeveloperToolsEnabled;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.ExternalIdCommonName;
 import org.orcid.jaxb.model.message.ExternalIdReference;
@@ -851,6 +852,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         internal.setPreferences(preferences);
         preferences.setSendChangeNotifications(new SendChangeNotifications(false));
         preferences.setSendOrcidNews(new SendOrcidNews(true));
+        preferences.setDeveloperToolsEnabled(new DeveloperToolsEnabled(true));
         preferences.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(Visibility.PUBLIC));
 
         orcidProfileManager.updatePreferences(profile2);
@@ -858,6 +860,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfile(TEST_ORCID);
         assertEquals(false, retrievedProfile.getOrcidInternal().getPreferences().getSendChangeNotifications().isValue());
         assertEquals(true, retrievedProfile.getOrcidInternal().getPreferences().getSendOrcidNews().isValue());
+        assertEquals(true, retrievedProfile.getOrcidInternal().getPreferences().getDeveloperToolsEnabled().isValue());
         assertEquals(Visibility.PUBLIC, retrievedProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault().getValue());
     }
 
