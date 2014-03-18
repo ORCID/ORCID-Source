@@ -121,10 +121,13 @@
                             ${springMacroRequestContext.getMessage("manage_bio_settings.labelvisibility")}
                             <@spring.formSingleSelect "changePersonalInfoForm.websiteUrlVisibility", visibilities />
                         </label>
-                        <@orcid.privacy "" changePersonalInfoForm.websiteUrlVisibility! />
+                        <div class="privacy-selector">
+	                        <@orcid.privacy "" changePersonalInfoForm.websiteUrlVisibility! />
+                        </div>
                     </div>
+                    
                  	<h3>${springMacroRequestContext.getMessage("manage_bio_settings.h3websites")}</h3>
-                 	<div class="margin-top-bottom-box">
+                 	<div class="">
 	             		<#list changePersonalInfoForm.savedResearcherUrls.researcherUrl as savedResearcherUrl>     		  	
 	             			<p>
 	             		  		<@spring.formHiddenInput "changePersonalInfoForm.savedResearcherUrls.researcherUrl[${savedResearcherUrl_index}].urlName.content"/>
@@ -135,7 +138,7 @@
 	                      		    <a href="${savedResearcherUrl.url.value}">${savedResearcherUrl.url.value}</a>
 	                      		</#if>
 	                      		<a href="" class="glyphicon glyphicon-trash grey delete-url" ng-click="deleteEmail($index)"></a>
-	                      		</p>     		    
+	                      	</p>     		    
 	                    </#list>
                     </div>
              	</#if>

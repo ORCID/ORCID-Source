@@ -50,4 +50,8 @@ public interface ProfileEntityManager {
     public boolean deprecateProfile(ProfileEntity deprecatedProfile, ProfileEntity primaryProfile);
     
     public List<ProfileEntity> findProfilesByOrcidType(OrcidType type);
+    
+    public boolean enableDeveloperTools(OrcidProfile profile);
+    
+    public boolean disableDeveloperTools(OrcidProfile profile);
 }

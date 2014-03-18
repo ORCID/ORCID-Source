@@ -219,7 +219,14 @@ public class OrcidOauth2TokenDetail extends BaseEntity<Long> implements ProfileA
     public int compareTo(OrcidOauth2TokenDetail other) {
         ProfileEntity clientProfileEntity = clientDetailsEntity.getProfile();
         ProfileEntity otherClientProfileEntity = other.getClientDetailsEntity().getProfile();
-        int compareName = clientProfileEntity.getCreditName().compareTo(otherClientProfileEntity.getCreditName());
+        int compareName = 0;
+        if(clientProfileEntity.getCreditName() != null){ 
+            compareName = clientProfileEntity.getCreditName().compareTo(otherClientProfileEntity.getCreditName());
+        } else {
+            String name = (clientProfileEntity.getGivenNames() == null ? "" : clientProfileEntity.getGivenNames()) + (clientProfileEntity.getFamilyName() == null ? "" : clientProfileEntity.getFamilyName());
+            String otherName = (otherClientProfileEntity.getGivenNames() == null ? "" : otherClientProfileEntity.getGivenNames()) + (otherClientProfileEntity.getFamilyName() == null ? "" : otherClientProfileEntity.getFamilyName());
+            compareName = name.compareTo(otherName);            
+        }
         if (compareName != 0) {
             return compareName;
         }

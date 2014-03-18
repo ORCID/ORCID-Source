@@ -91,9 +91,16 @@
                                <@security.authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">
                                <li><a ${(nav=="record")?string('class="active" ', '')}href="<@spring.url '/my-orcid'/>"><@orcid.msg 'public-layout.my_orcid_record'/></a></li>
                                <li><a ${(nav=="settings")?string('class="active" ', '')}href="<@spring.url '/account'/>"><@orcid.msg 'public-layout.account_setting'/></a></li>
-                               <@security.authorize ifAnyGranted="ROLE_ADMIN, ROLE_GROUP, ROLE_BASIC, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM, ROLE_PREMIUM_INSTITUTION">
-	        	 					<li><a ${(nav=="developer")?string('class="active" ', '')}href="<@spring.url "/manage-clients" />">${springMacroRequestContext.getMessage("workspace.ManageClientCredentials")}</a></li>	        	 
+                               
+                               	<@security.authorize ifAnyGranted="ROLE_GROUP, ROLE_BASIC, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM, ROLE_PREMIUM_INSTITUTION">
+	        	 					<li><a ${(nav=="developer-tools")?string('class="active" ', '')}href="<@spring.url "/group/developer-tools" />">${springMacroRequestContext.getMessage("workspace.developer_tools")}</a></li>	        	 
 	        					</@security.authorize>
+	        					<@security.authorize ifAnyGranted="ROLE_USER">
+	        						<#if profile?? && profile.orcidInternal?? && profile.orcidInternal.preferences.developerToolsEnabled?? && profile.orcidInternal.preferences.developerToolsEnabled.value == true>
+										<li><a ${(nav=="developer-tools")?string('class="active" ', '')}href="<@spring.url "/developer-tools" />">${springMacroRequestContext.getMessage("workspace.developer_tools")}</a></li>
+	        						</#if>
+	        					</@security.authorize>
+	        					
                                <@security.authorize ifAnyGranted="ROLE_ADMIN">
 									<li><a ${(nav=="admin")?string('class="active" ', '')}href="<@spring.url "/admin-actions" />"><@orcid.msg 'admin.workspace_link' /></a></li>								
 							   </@security.authorize>							   
@@ -119,9 +126,10 @@
                    <li class="expanded">
                        <a href="${aboutUri}/organizations"><@orcid.msg 'public-layout.for_organizations'/></a>
                        <ul class="menu">
-                           <li class="first leaf"><a href="${aboutUri}/organizations/funders"><@orcid.msg 'public-layout.funders'/></a></li>
+                           <li class="first leaf"><a href="${aboutUri}/organizations/funders"><@orcid.msg 'public-layout.funders'/></a></li>                                                      
                            <li class="leaf"><a href="${aboutUri}/organizations/institutions" title=""><@orcid.msg 'public-layout.research_organizations'/></a></li>
                            <li class="leaf"><a href="${aboutUri}/organizations/publishers"><@orcid.msg 'public-layout.publishers'/></a></li>
+                           <li class="leaf"><a href="${aboutUri}/organizations/associations" title=""><@orcid.msg 'public-layout.associations'/></a></li>
                            <li class="last leaf"><a href="${aboutUri}/organizations/integrators"><@orcid.msg 'public-layout.integrators'/></a></li>
                        </ul>
                    </li>

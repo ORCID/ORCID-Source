@@ -17,7 +17,6 @@
 package org.orcid.core.profileEvent;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -35,8 +34,12 @@ import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
 
-public class CrossRefEmail implements ProfileEvent {
+public class PrivPolicyEmail2014_03 implements ProfileEvent {
+
+    @Resource
+    private MessageSource messages;
 
     @Resource
     private MailGunManager mailGunManager;
@@ -54,14 +57,13 @@ public class CrossRefEmail implements ProfileEvent {
 
     private static Logger LOG = LoggerFactory.getLogger(ProfileEventManager.class);
 
-    private List<ProfileEventType> pes = Collections.unmodifiableList(Arrays.asList(ProfileEventType.EMAIL_VERIFY_CROSSREF_MARKETING_FAIL,
-            ProfileEventType.EMAIL_VERIFY_CROSSREF_MARKETING_SENT, ProfileEventType.EMAIL_VERIFY_CROSSREF_MARKETING_SKIPPED));
+    private List<ProfileEventType> pes = Collections.unmodifiableList(Arrays.asList(ProfileEventType.POLICY_UPDATE_2014_03_SENT, ProfileEventType.POLICY_UPDATE_2014_03_FAIL, ProfileEventType.POLICY_UPDATE_2014_03_SKIPPED));
 
     public List<ProfileEventType> outcomes() {
         return pes;
     }
 
-    public CrossRefEmail(OrcidProfile orcidProfile) {
+    public PrivPolicyEmail2014_03(OrcidProfile orcidProfile) {
         this.orcidProfile = orcidProfile;
     }
 
@@ -70,36 +72,22 @@ public class CrossRefEmail implements ProfileEvent {
                 && orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail() != null
                 && orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue() != null;
 
-        boolean needsVerification = primaryNotNull && !orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().isVerified()
+        boolean isUser = primaryNotNull
                 && orcidProfile.getType().equals(OrcidType.USER) && !orcidProfile.isDeactivated();
 
-        if (needsVerification) {
-            ProfileEventType pet = ProfileEventType.EMAIL_VERIFY_CROSSREF_MARKETING_SENT;
+        if (isUser) {
+            ProfileEventType pet = ProfileEventType.POLICY_UPDATE_2014_03_SENT;
             try {
-                String email = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
-                String emailFriendlyName = notificationManager.deriveEmailFriendlyName(orcidProfile);
-                Map<String, Object> templateParams = new HashMap<String, Object>();
-                templateParams.put("emailName", emailFriendlyName);
-                String verificationUrl = null;
-                try {
-                    verificationUrl = notificationManager.createVerificationUrl(email, new URI(orcidUrlManager.getBaseUrl()));
-                } catch (URISyntaxException e) {
-                    LOG.debug("SendEventEmail exception", e);
-                }
-                templateParams.put("verificationUrl", verificationUrl);
-                templateParams.put("orcid", orcidProfile.getOrcidIdentifier().getPath());
-                templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
-                String text = templateManager.processTemplate("verification_email_w_crossref.ftl", templateParams);
-                String html = templateManager.processTemplate("verification_email_w_crossref_html.ftl", templateParams);
-                if (!mailGunManager.sendEmail("support@verify.orcid.org", email, "Please verify your email", text, html))
-                    pet = ProfileEventType.EMAIL_VERIFY_CROSSREF_MARKETING_FAIL;
+                if (!notificationManager.sendPrivPolicyEmail2014_03(orcidProfile, new URI(orcidUrlManager.getBaseUrl())))
+                    pet = ProfileEventType.POLICY_UPDATE_2014_03_FAIL;
+
             } catch (Exception e) {
                 LOG.error("ProfileEventType exception trying to send email to: " + orcidProfile.retrieveOrcidUriAsString(), e);
-                pet = ProfileEventType.EMAIL_VERIFY_CROSSREF_MARKETING_FAIL;
+                pet = ProfileEventType.POLICY_UPDATE_2014_03_FAIL;
             }
             return pet;
         }
-        return ProfileEventType.EMAIL_VERIFY_CROSSREF_MARKETING_SKIPPED;
+        return ProfileEventType.POLICY_UPDATE_2014_03_FAIL;
     }
 
 }

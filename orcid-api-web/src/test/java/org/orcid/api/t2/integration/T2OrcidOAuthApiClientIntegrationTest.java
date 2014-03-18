@@ -46,6 +46,7 @@ import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.FamilyName;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidHistory;
+import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
@@ -153,7 +154,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         OrcidMessage message = orcidClientDataHelper.createFromXML(OrcidClientDataHelper.ORCID_INTERNAL_NO_SPONSOR_XML);
         String originalFamilyName = message.getOrcidProfile().getOrcidBio().getPersonalDetails().getFamilyName().getContent();
         assertEquals("familyName", originalFamilyName);
-        message.getOrcidProfile().setOrcid(this.orcid);
+        message.getOrcidProfile().setOrcidIdentifier(new OrcidIdentifier(this.orcid));
         message.getOrcidProfile().setOrcidWorks(null);
         message.getOrcidProfile().getOrcidBio().getPersonalDetails().setFamilyName(new FamilyName("Bowen"));
         assertClientResponse401Details(oauthT2Client.updateBioDetailsXml(orcid, message, null));
@@ -237,13 +238,13 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
 
         createNewOrcidUsingAccessToken();
         OrcidMessage message = orcidClientDataHelper.createFromXML(OrcidClientDataHelper.ORCID_INTERNAL_NO_SPONSOR_XML);
-        message.getOrcidProfile().setOrcid(this.orcid);
+        message.getOrcidProfile().setOrcidIdentifier(new OrcidIdentifier(this.orcid));
         OrcidWorks orcidWorks = message.getOrcidProfile().retrieveOrcidWorks();
         assertTrue(orcidWorks != null && orcidWorks.getOrcidWork() != null && orcidWorks.getOrcidWork().size() == 3);
 
         orcidWorks = new OrcidWorks();
         OrcidWork orcidWork = orcidClientDataHelper.createWork("Single works");
-        orcidWork.setWorkType(WorkType.UNDEFINED);
+        orcidWork.setWorkType(WorkType.ARTISTIC_PERFORMANCE);
         orcidWorks.getOrcidWork().add(orcidWork);
         message.getOrcidProfile().setOrcidWorks(orcidWorks);
 
@@ -273,13 +274,13 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         orcidOauthTokenDetailService.saveOrUpdate(orcidOauth2TokenDetail);
 
         OrcidMessage message = orcidClientDataHelper.createFromXML(OrcidClientDataHelper.ORCID_INTERNAL_NO_SPONSOR_XML);
-        message.getOrcidProfile().setOrcid(this.orcid);
+        message.getOrcidProfile().setOrcidIdentifier(new OrcidIdentifier(this.orcid));
         OrcidWorks orcidWorks = message.getOrcidProfile().retrieveOrcidWorks();
         assertTrue(orcidWorks != null && orcidWorks.getOrcidWork() != null && orcidWorks.getOrcidWork().size() == 3);
 
         orcidWorks = new OrcidWorks();
         OrcidWork orcidWork = orcidClientDataHelper.createWork("Single works");
-        orcidWork.setWorkType(WorkType.UNDEFINED);
+        orcidWork.setWorkType(WorkType.ARTISTIC_PERFORMANCE);
         orcidWorks.getOrcidWork().add(orcidWork);
         message.getOrcidProfile().setOrcidWorks(orcidWorks);
         assertClientResponse403SecurityProblem(oauthT2Client.addWorksXml(orcid, message, accessToken));
@@ -325,7 +326,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         OrcidWorks orcidWorks = message.getOrcidProfile().retrieveOrcidWorks();
         orcidWorks = new OrcidWorks();
         OrcidWork orcidWork = orcidClientDataHelper.createWork("Single works");
-        orcidWork.setWorkType(WorkType.UNDEFINED);
+        orcidWork.setWorkType(WorkType.ARTISTIC_PERFORMANCE);
         orcidWorks.getOrcidWork().add(orcidWork);
         message.getOrcidProfile().setOrcidWorks(orcidWorks);
         assertClientResponse403SecurityProblem(oauthT2Client.addWorksXml(orcid, message, accessToken));
@@ -347,11 +348,11 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         // make sure blank scopes return 403
         createNewOrcidUsingAccessToken();
         OrcidMessage message = orcidClientDataHelper.createFromXML(OrcidClientDataHelper.ORCID_INTERNAL_NO_SPONSOR_XML);
-        message.getOrcidProfile().setOrcid(this.orcid);
+        message.getOrcidProfile().setOrcidIdentifier(new OrcidIdentifier(this.orcid));
         OrcidWorks orcidWorks = message.getOrcidProfile().retrieveOrcidWorks();
         orcidWorks = new OrcidWorks();
         OrcidWork orcidWork = orcidClientDataHelper.createWork("Single works");
-        orcidWork.setWorkType(WorkType.UNDEFINED);
+        orcidWork.setWorkType(WorkType.ARTISTIC_PERFORMANCE);
         orcidWorks.getOrcidWork().add(orcidWork);
         message.getOrcidProfile().setOrcidWorks(orcidWorks);
         assertClientResponse403SecurityProblem(oauthT2Client.addWorksXml(orcid, message, blankScopeToken));
@@ -361,7 +362,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
     public void testUpdateBioDetailsXml() throws Exception {
         createNewOrcidUsingAccessToken();
         OrcidMessage message = orcidClientDataHelper.createFromXML(OrcidClientDataHelper.ORCID_INTERNAL_NO_SPONSOR_XML);
-        message.getOrcidProfile().setOrcid(this.orcid);
+        message.getOrcidProfile().setOrcidIdentifier(new OrcidIdentifier(this.orcid));
         message.getOrcidProfile().setOrcidWorks(null);
         message.getOrcidProfile().getOrcidBio().getPersonalDetails().setFamilyName(new FamilyName("Bowen"));
         assertClientResponse401Details(oauthT2Client.updateBioDetailsXml(orcid, message, null));
@@ -382,7 +383,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
     public void testAddWorksJson() throws Exception {
         createNewOrcidUsingAccessToken();
         OrcidMessage message = orcidClientDataHelper.createFromXML(OrcidClientDataHelper.ORCID_INTERNAL_NO_SPONSOR_XML);
-        message.getOrcidProfile().setOrcid(this.orcid);
+        message.getOrcidProfile().setOrcidIdentifier(new OrcidIdentifier(this.orcid));
         OrcidWorks orcidWorks = message.getOrcidProfile().retrieveOrcidWorks();
         assertTrue(orcidWorks != null && orcidWorks.getOrcidWork() != null && orcidWorks.getOrcidWork().size() == 3);
 
@@ -405,7 +406,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
 
             if (workTitle != null && workTitle.getTitle() != null) {
                 if ("Single works with title".equals(workTitle.getTitle().getContent())) {
-                    assertEquals(clientOrcid, work.getWorkSource().getValueAsString());
+                    assertEquals(clientOrcid, work.getWorkSource().getPath());
                     break;
                 }
             }
@@ -468,7 +469,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
 
         assertEquals("Chromosome 5a55.5 microdeletions comprising AB555 and CD5555", workToUpdate.getWorkTitle().getTitle().getContent());
         assertEquals("Chromosome subtitle", workToUpdate.getWorkTitle().getSubtitle().getContent());
-        assertEquals(this.clientId, workToUpdate.getWorkSource().getValueAsString());
+        assertEquals(this.clientId, workToUpdate.getWorkSource().getPath());
 
         // check other works unchanged
         assertEquals("Work title 1", orcidWorks.getOrcidWork().get(1).getWorkTitle().getTitle().getContent());
@@ -497,7 +498,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
             ExternalIdentifiers newExternalIdentifiers = new ExternalIdentifiers();
             newExternalIdentifiers.setVisibility(Visibility.PUBLIC);
             ExternalIdOrcid externalIdOrcid = new ExternalIdOrcid();
-            externalIdOrcid.setValueAsString(clientId);
+            externalIdOrcid.setPath(clientId);
             ExternalIdentifier additionalIdentifer = new ExternalIdentifier(externalIdOrcid, new ExternalIdReference("abc123"));
             newExternalIdentifiers.getExternalIdentifier().add(additionalIdentifer);
             orcidBio.setExternalIdentifiers(newExternalIdentifiers);
@@ -540,7 +541,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         ExternalIdentifiers newExternalIdentifiers = new ExternalIdentifiers();
         newExternalIdentifiers.setVisibility(Visibility.PUBLIC);
         ExternalIdOrcid externalIdOrcid = new ExternalIdOrcid();
-        externalIdOrcid.setValueAsString(clientId);
+        externalIdOrcid.setPath(clientId);
         ExternalIdentifier additionalIdentifer = new ExternalIdentifier(externalIdOrcid, new ExternalIdReference("abc123"));
         newExternalIdentifiers.getExternalIdentifier().add(additionalIdentifer);
         orcidBio.setExternalIdentifiers(newExternalIdentifiers);
@@ -579,7 +580,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         ExternalIdentifiers newExternalIdentifiers = new ExternalIdentifiers();
         newExternalIdentifiers.setVisibility(Visibility.PUBLIC);
         ExternalIdOrcid externalIdOrcid = new ExternalIdOrcid();
-        externalIdOrcid.setValueAsString(clientId);
+        externalIdOrcid.setPath(clientId);
         ExternalIdentifier additionalIdentifer = new ExternalIdentifier(externalIdOrcid, new ExternalIdReference("abc123"));
         newExternalIdentifiers.getExternalIdentifier().add(additionalIdentifer);
         orcidBio.setExternalIdentifiers(newExternalIdentifiers);

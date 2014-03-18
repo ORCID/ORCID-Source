@@ -61,6 +61,7 @@ public class OrcidIdBase implements Serializable {
 
     @XmlMixed
     @JsonSerialize(using=OrcidIdSerializer.class)
+    @Deprecated
     public List<String> getValue() {
         if (values != null) {
             String combinedValues = StringUtils.join(values.toArray());
@@ -76,6 +77,7 @@ public class OrcidIdBase implements Serializable {
     }
 
     @XmlTransient
+    @Deprecated
     public String getValueAsString() {
         if (values != null && !values.isEmpty() && StringUtils.isNotBlank(values.get(0))) {
             return values.get(0);
@@ -83,6 +85,7 @@ public class OrcidIdBase implements Serializable {
         return null;
     }
 
+    @Deprecated
     public void setValueAsString(String value) {
         if (values == null) {
             values = new ArrayList<>(1);

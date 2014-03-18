@@ -55,7 +55,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType( propOrder = { "sendChangeNotifications", "sendOrcidNews", "activitiesVisibilityDefault", "workVisibilityDefault" })
+@XmlType( propOrder = { "sendChangeNotifications", "sendOrcidNews", "activitiesVisibilityDefault", "workVisibilityDefault", "developerToolsEnabled" })
 @XmlRootElement(name = "preferences")
 public class Preferences implements Serializable {
 
@@ -69,6 +69,8 @@ public class Preferences implements Serializable {
     protected WorkVisibilityDefault workVisibilityDefault;
     @XmlElement(name = "activities-visibility-default")
     private ActivitiesVisibilityDefault activitiesVisibilityDefault;
+    @XmlElement(name = "developer-tools-enabled")
+    private DeveloperToolsEnabled developerToolsEnabled;
  
     
     /**
@@ -141,6 +143,13 @@ public class Preferences implements Serializable {
         this.activitiesVisibilityDefault = activitiesVisibilityDefault;
     }
 
+    public DeveloperToolsEnabled getDeveloperToolsEnabled() {
+        return developerToolsEnabled;
+    }
+
+    public void setDeveloperToolsEnabled(DeveloperToolsEnabled developerToolsEnabled) {
+        this.developerToolsEnabled = developerToolsEnabled;
+    }
 
     @Override
     public int hashCode() {

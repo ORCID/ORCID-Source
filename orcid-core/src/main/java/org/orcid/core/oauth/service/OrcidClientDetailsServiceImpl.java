@@ -246,7 +246,7 @@ public class OrcidClientDetailsServiceImpl implements OrcidClientDetailsService 
         return clientAuthorisedGrantTypeEntities;
     }
 
-    private ClientDetailsEntity populateClientDetailsEntity(String clientId, ProfileEntity profileEntity, String clientSecret, Set<String> clientScopes,
+    public ClientDetailsEntity populateClientDetailsEntity(String clientId, ProfileEntity profileEntity, String clientSecret, Set<String> clientScopes,
             Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes, Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities) {
         ClientDetailsEntity clientDetailsEntity = new ClientDetailsEntity();
         clientDetailsEntity.setId(clientId);

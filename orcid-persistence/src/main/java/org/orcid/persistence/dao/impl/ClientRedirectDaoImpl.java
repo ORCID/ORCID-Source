@@ -56,4 +56,13 @@ public class ClientRedirectDaoImpl extends GenericDaoImpl<ClientRedirectUriEntit
         query.executeUpdate();
     }
 
+    @Override
+    @Transactional
+    public void removeClientRedirectUri(String clientId, String redirectUri) {
+        Query query = entityManager
+                .createNativeQuery("delete from client_redirect_uri where client_details_id=:clientId and redirect_uri=:redirectUri");
+        query.setParameter("clientId", clientId);
+        query.setParameter("redirectUri", redirectUri);
+        query.executeUpdate();
+    }
 }

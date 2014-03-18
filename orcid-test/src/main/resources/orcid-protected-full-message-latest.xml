@@ -111,6 +111,7 @@
                                 <path>1111-1111-1111-1115</path>
                                 <host>orcid.org</host>
                             </orcid-identifier>
+                            <last-modified-date>2014-02-12T12:32:41</last-modified-date>
                             <credit-name>Patricia Carberry</credit-name>
                         </delegate-summary>
                     </delegation-details>
@@ -124,6 +125,7 @@
                                 <path>2222-2222-2222-2229</path>
                                 <host>orcid.org</host>
                             </orcid-identifier>
+                            <last-modified-date>2014-01-05T06:28:52</last-modified-date>
                             <credit-name>W. J. R. Simpson</credit-name>
                         </delegate-summary>
                     </delegation-details>

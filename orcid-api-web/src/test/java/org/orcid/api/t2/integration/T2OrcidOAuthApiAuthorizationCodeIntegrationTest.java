@@ -121,6 +121,9 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     @Resource(name="t2OAuthClient")
     private T2OAuthAPIService<ClientResponse> oauthT2Client;
     
+    @Resource(name="t2OAuthClient1_0_22")
+    private T2OAuthAPIService<ClientResponse> oauthT2Client1_0_22;
+    
     @Resource(name="t2OAuthClient1_2_rc2")
     private T2OAuthAPIService<ClientResponse> oauthT2Client1_2_rc2;
 
@@ -332,7 +335,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         orcidWork.setWorkTitle(workTitle);
         orcidWork.setWorkType(WorkType.ADVERTISEMENT);
 
-        ClientResponse clientResponse = oauthT2Client.addWorksJson("4444-4444-4444-4442", orcidMessage, accessToken);
+        ClientResponse clientResponse = oauthT2Client1_0_22.addWorksJson("4444-4444-4444-4442", orcidMessage, accessToken);
         assertEquals(201, clientResponse.getStatus());
     }
 

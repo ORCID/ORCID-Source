@@ -60,18 +60,28 @@
 								<div class="row">
 									<!-- Primary Email -->
 									<div ng-class="{primaryEmail:email.primary}"
-										ng-bind="email.value" class="col-md-4 col-xs-12 email"></div>
+										ng-bind="email.value" class="col-md-3 col-xs-12 email"></div>
 									<!-- Set Primary options -->
-									<div class="col-md-3 col-xs-12">
+									<div class="col-md-2 col-xs-12">
 										<span ng-hide="email.primary"> <a href=""
 											ng-click="setPrimary($index)">${springMacroRequestContext.getMessage("manage.email.set_primary")}</a>
 										</span> <span ng-show="email.primary" class="muted"
 											style="color: #bd362f;">
 											${springMacroRequestContext.getMessage("manage.email.primary_email")}
 										</span>
-									</div>
+									</div>																		
+									
 									<div class="data-row-group">
-										<div class="col-md-2 col-xs-5">
+										<div class="col-md-3 col-xs-4">
+											<!-- Current -->
+											<div class="left">
+												<select style="width: 100px; margin: 0px;" ng-change="saveEmail()" ng-model="email.current">
+													<option value="true" ng-selected="email.current == true"><@orcid.msg 'manage.email.current.true' /></option>
+													<option value="false" ng-selected="email.current == false"><@orcid.msg 'manage.email.current.false' /></option>              
+												</select>
+											</div>
+										</div>																					
+										<div class="col-md-2 col-xs-4">											
 											<!-- Email verified -->
 											<div class="email-verified left">
 												<span ng-hide="email.verified" class="left"><a href=""
@@ -85,7 +95,7 @@
 													ng-click="confirmDeleteEmail($index)"></a>
 											</div>
 										</div>
-										<div class="col-md-3 col-xs-6">
+										<div class="col-md-2 col-xs-4">
 											<div class="emailVisibility"><@orcid.privacyToggle
 												angularModel="email.visibility" 
 												questionClick="toggleClickPrivacyHelp(email.value)"
@@ -260,7 +270,8 @@
 							</p>
 						</div>
 					</td>
-				</tr>
+				</tr>				
+				
 				<tr>
 					<th><a name="editDeactivate"></a>${springMacroRequestContext.getMessage("manage.close_account")}</th>
 					<td><a href="" ng-click="toggleDeactivateEdit()"
@@ -353,16 +364,20 @@
 			<table class="table table-bordered settings-table normal-width" ng-show="delegation.givenPermissionTo.delegationDetails" ng-cloak>
 				<thead>
 					<tr>
-						<th width="35%">${springMacroRequestContext.getMessage("manage.thproxy")}</th>
-						<th width="5%">${springMacroRequestContext.getMessage("manage.thapprovaldate")}</th>
-						<td width="5%"></td>
+						<th width="35%" ng-click="changeSorting('delegateSummary.creditName.content')">${springMacroRequestContext.getMessage("manage.thproxy")}</th>
+						<th width="25%" ng-click="changeSorting('delegateSummary.orcidIdentifier.path')">${springMacroRequestContext.getMessage("search_results.thORCIDID")}</th>
+						<th width="15%" ng-click="changeSorting('approvalDate.value')">Access granted</th>
+						<th width="15%" ng-click="changeSorting('delegateSummary.lastModifiedDate.value')">Last modified</th>
+						<td width="10%"></td>
 					</tr>
 				</thead>
 				<tbody>
-					<tr ng-repeat="delegationDetails in delegation.givenPermissionTo.delegationDetails | orderBy:'delegateSummary.creditName.content'">
+					<tr ng-repeat="delegationDetails in delegation.givenPermissionTo.delegationDetails | orderBy:sort.column:sort.descending">
 						<td width="35%"><a href="{{delegationDetails.delegateSummary.orcidIdentifier.uri}}">{{delegationDetails.delegateSummary.creditName.content}}</a></td>
-						<td width="35%">{{delegationDetails.approvalDate.value|date}}</td>
-						<td width="5%"><a
+						<td width="25%"><a href="{{delegationDetails.delegateSummary.orcidIdentifier.uri}}">{{delegationDetails.delegateSummary.orcidIdentifier.path}}</a></td>
+						<td width="15%">{{delegationDetails.approvalDate.value|date}}</td>
+						<td width="15%">{{delegationDetails.delegateSummary.lastModifiedDate.value|date}}</td>
+						<td width="10%"><a
 							ng-click="confirmRevoke(delegationDetails.delegateSummary.creditName.content, delegationDetails.delegateSummary.orcidIdentifier.path)"
 							class="glyphicon glyphicon-trash grey"
 							title="{springMacroRequestContext.getMessage("manage.revokeaccess")}"></a></td>
@@ -393,7 +408,7 @@
 							<td>{{result['orcid-profile']['orcid-bio']['personal-details']['given-names'].value}}</td>
 							<td>{{result['orcid-profile']['orcid-bio']['personal-details']['family-name'].value}}</td>
 							<td>{{concatPropertyValues(result['orcid-profile']['orcid-bio']['affiliations'], 'affiliation-name')}}</td>
-							<td><span ng-click="confirmAddDelegate(result['orcid-profile']['orcid-bio']['personal-details']['given-names'].value + ' ' + result['orcid-profile']['orcid-bio']['personal-details']['family-name'].value, result['orcid-profile']['orcid']['value'])" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span></td>
+							<td><span ng-click="confirmAddDelegate(result['orcid-profile']['orcid-bio']['personal-details']['given-names'].value + ' ' + result['orcid-profile']['orcid-bio']['personal-details']['family-name'].value, result['orcid-profile']['orcid']['value'], $index)" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span></td>
 						</tr>
 					</tbody>
 				</table>
@@ -405,69 +420,95 @@
 			</div>
 		</div>
 		</#if>
+		
+		<#if RequestParameters['sso']??>
+			<@security.authorize ifNotGranted="ROLE_GROUP,ROLE_BASIC,ROLE_PREMIUM,ROLE_BASIC_INSTITUTION,ROLE_PREMIUM_INSTITUTION,ROLE_CREATOR,ROLE_PREMIUM_CREATOR,ROLE_UPDATER,ROLE_PREMIUM_UPDATER">
+				<h1 id="manage-permissions"><@spring.message "manage.developer_tools.title"/></h1>		
+				<div class="sso" ng-controller="SSOPreferencesCtrl">
+					<#if profile.orcidInternal?? && profile.orcidInternal.preferences.developerToolsEnabled?? && profile.orcidInternal.preferences.developerToolsEnabled.value == false>
+						<p><@spring.message "manage.developer_tools.enable.description"/></p>
+						<p><@spring.message "manage.developer_tools.enable.text"/>&nbsp;<a href ng-click="enableDeveloperTools()"><@spring.message "manage.developer_tools.enable_disable.link.text"/></a></p>
+					<#else>
+						<p><@spring.message "manage.developer_tools.disable.description"/></p>
+						<p><@spring.message "manage.developer_tools.disable.text"/>&nbsp;<a href ng-click="confirmDisableDeveloperTools()"><@spring.message "manage.developer_tools.enable_disable.link.text"/></a></p>
+					</#if>				
+				</div>
+			</@security.authorize>
+		</#if>
+		
 	</div>
 </div>
 
 <script type="text/ng-template" id="deactivate-account-modal">
-		<div style="padding: 20px;"><h3>${springMacroRequestContext.getMessage("manage.deactivateSend")} {{primaryEmail}}</h3>
-		<button class="btn" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.deactivateSend.close")}</button>
-	</script>
+	<div style="padding: 20px;"><h3>${springMacroRequestContext.getMessage("manage.deactivateSend")} {{primaryEmail}}</h3>
+	<button class="btn" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.deactivateSend.close")}</button>
+</script>
 		
-	<script type="text/ng-template" id="verify-email-modal">
-		<div style="padding: 20px;"><h3>${springMacroRequestContext.getMessage("manage.email.verificationEmail")} {{emailsPojo.emails[verifyEmailIdx].value}}</h3>
-		<button class="btn" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.email.verificationEmail.close")}</button>
-	</script>
+<script type="text/ng-template" id="verify-email-modal">
+	<div style="padding: 20px;"><h3>${springMacroRequestContext.getMessage("manage.email.verificationEmail")} {{emailsPojo.emails[verifyEmailIdx].value}}</h3>
+	<button class="btn" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.email.verificationEmail.close")}</button>
+</script>
 
-	<script type="text/ng-template" id="delete-email-modal">
-		<div style="padding: 20px;"><h3>${springMacroRequestContext.getMessage("manage.email.pleaseConfirmDeletion")} {{emailsPojo.emails[deleteEmailIdx].value}}</h3>
-		<button class="btn btn-danger" ng-click="deleteEmail()">${springMacroRequestContext.getMessage("manage.email.deleteEmail")}</button> 
-		<a href="" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.email.cancel")}</a><div>
-	</script>		
+<script type="text/ng-template" id="delete-email-modal">
+	<div style="padding: 20px;"><h3>${springMacroRequestContext.getMessage("manage.email.pleaseConfirmDeletion")} {{emailsPojo.emails[deleteEmailIdx].value}}</h3>
+	<button class="btn btn-danger" ng-click="deleteEmail()">${springMacroRequestContext.getMessage("manage.email.deleteEmail")}</button> 
+	<a href="" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.email.cancel")}</a><div>
+</script>		
+
+<#-- Script that will display a modal to ask for user password 												-->
+<#-- If someone wants to use this modal, it should consider the following: 									-->
+<#-- 1) There should be a password variable in his scope, there we be saved the value of this input.		-->
+<#-- 2) There should be a function submitModal() to submit the form with the desired info and the password.	-->
+<#-- 3) There should be a function closeModal() to close the the modal.										-->
+<script type="text/ng-template" id="check-password-modal">
+	<div style="padding: 20px;"><h2><@orcid.msg 'check_password_modal.confirm_password' /></h2>		
+	   <label for="check_password_modal.password" class=""><@orcid.msg 'check_password_modal.password' /></label>
+       <input id="check_password_modal.password" type="password" name="check_password_modal.password" ng-model="password" class="input-xlarge"/>
+       <br />
+       <button id="bottom-submit" class="btn btn-primary" ng-click="submitModal()"><@orcid.msg 'check_password_modal.submit'/></button>				
+	   <button class="btn" ng-click="closeModal()"><@orcid.msg 'check_password_modal.close'/></button>
+	</div>
+</script>
+
+<script type="text/ng-template" id="confirm-revoke-access-modal">
+	<div style="padding: 20px;">
+	   <h3>${springMacroRequestContext.getMessage("manage.application_access.revoke.confirm_revoke")} {{appName}}</h3>
+	   <button class="btn btn-danger" ng-click="revokeAccess()">${springMacroRequestContext.getMessage("manage.application_access.revoke.confirm")}</button> 
+	   <a href="" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.application_access.revoke.cancel")}</a>
+	</div>
+</script>
+
+<script type="text/ng-template" id="confirm-add-delegate-modal">
+	<div style="padding: 20px;">
+	   <h3>Add delegate</h3>
+	   <div ng-show="effectiveUserOrcid === delegateToAdd">
+	      <p class="alert alert-error">You can't add yourself as a delegate</p>
+	      <a href="" ng-click="closeModal()">Cancel</a>
+	   </div>
+	   <div ng-hide="effectiveUserOrcid === delegateToAdd">
+	      <p>{{delegateNameToAdd}} ({{delegateToAdd}})</p>
+	      <button class="btn btn-primary" ng-click="addDelegate()">Add</button>
+	      <a href="" ng-click="closeModal()">Cancel</a>
+	   </div>
+	</div>
+</script>
 	
-	<#-- Script that will display a modal to ask for user password 												-->
-	<#-- If someone wants to use this modal, it should consider the following: 									-->
-	<#-- 1) There should be a password variable in his scope, there we be saved the value of this input.		-->
-	<#-- 2) There should be a function submitModal() to submit the form with the desired info and the password.	-->
-	<#-- 3) There should be a function closeModal() to close the the modal.										-->
-	<script type="text/ng-template" id="check-password-modal">
-		<div style="padding: 20px;"><h2><@orcid.msg 'check_password_modal.confirm_password' /></h2>		
-		   <label for="check_password_modal.password" class=""><@orcid.msg 'check_password_modal.password' /></label>
-	       <input id="check_password_modal.password" type="password" name="check_password_modal.password" ng-model="password" class="input-xlarge"/>
-	       <br />
-	       <button id="bottom-submit" class="btn btn-primary" ng-click="submitModal()"><@orcid.msg 'check_password_modal.submit'/></button>				
-		   <button class="btn" ng-click="closeModal()"><@orcid.msg 'check_password_modal.close'/></button>
-		</div>
-	</script>
-	
-	<script type="text/ng-template" id="confirm-revoke-access-modal">
-		<div style="padding: 20px;">
-		   <h3>${springMacroRequestContext.getMessage("manage.application_access.revoke.confirm_revoke")} {{appName}}</h3>
-		   <button class="btn btn-danger" ng-click="revokeAccess()">${springMacroRequestContext.getMessage("manage.application_access.revoke.confirm")}</button> 
-		   <a href="" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.application_access.revoke.cancel")}</a>
-		</div>
-	</script>
-	
-	<script type="text/ng-template" id="confirm-add-delegate-modal">
-		<div style="padding: 20px;">
-		   <h3>Add delegate</h3>
-		   <div ng-show="effectiveUserOrcid === delegateToAdd">
-		      <p class="alert alert-error">You can't add yourself as a delegate</p>
-		      <a href="" ng-click="closeModal()">Cancel</a>
-		   </div>
-		   <div ng-hide="effectiveUserOrcid === delegateToAdd">
-		      <p>{{delegateNameToAdd}} ({{delegateToAdd}})</p>
-		      <button class="btn btn-primary" ng-click="addDelegate()">Add</button>
-		      <a href="" ng-click="closeModal()">Cancel</a>
-		   </div>
-		</div>
-	</script>
-	
-	<script type="text/ng-template" id="revoke-delegate-modal">
-		<div style="padding: 20px;">
-			<h3>Please confirm revocation of delegate</h3>
-			<p> {{delegateNameToRevoke}} ({{delegateToRevoke}})</p>
-			<button class="btn btn-danger" ng-click="revoke()">Revoke</button> 
-			<a href="" ng-click="closeModal()">Cancel</a>
-		<div>
-	</script>
+<script type="text/ng-template" id="revoke-delegate-modal">
+	<div style="padding: 20px;">
+		<h3>Please confirm revocation of delegate</h3>
+		<p> {{delegateNameToRevoke}} ({{delegateToRevoke}})</p>
+		<button class="btn btn-danger" ng-click="revoke()">Revoke</button> 
+		<a href="" ng-click="closeModal()">Cancel</a>
+	<div>
+</script>
+
+<script type="text/ng-template" id="confirm-disable-developer-tools">
+	<div style="padding: 20px;">
+	   <h3><@spring.message "manage.developer_tools.confirm.title"/></h3>
+	   <p><@spring.message "manage.developer_tools.confirm.message"/></p>
+	   <button class="btn btn-danger" ng-click="disableDeveloperTools()"><@spring.message "manage.developer_tools.confirm.button"/></button> 
+	   <a href="" ng-click="closeModal()"><@spring.message "freemarker.btncancel"/></a>
+	</div>
+</script>
+
 </@protected>

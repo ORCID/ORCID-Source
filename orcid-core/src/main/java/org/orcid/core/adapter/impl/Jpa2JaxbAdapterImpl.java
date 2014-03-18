@@ -218,11 +218,11 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         if (profileEntity.getLastModified() != null) {
             history.setLastModifiedDate(new LastModifiedDate(toXMLGregorianCalendar(profileEntity.getLastModified())));
         }
-        
+
         boolean verfiedEmail = false;
         boolean verfiedPrimaryEmail = false;
-        if (profileEntity.getEmails() !=null) {
-            for (EmailEntity emailEntity:profileEntity.getEmails()) {
+        if (profileEntity.getEmails() != null) {
+            for (EmailEntity emailEntity : profileEntity.getEmails()) {
                 if (emailEntity != null && emailEntity.getVerified()) {
                     verfiedEmail = true;
                     if (emailEntity.getPrimary()) {
@@ -233,8 +233,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             }
         }
         history.setVerifiedEmail(new VerifiedEmail(verfiedEmail));
-        history.setVerifiedPrimaryEmail(new VerifiedPrimaryEmail(verfiedPrimaryEmail));        
-        
+        history.setVerifiedPrimaryEmail(new VerifiedPrimaryEmail(verfiedPrimaryEmail));
+
         return history;
     }
 
@@ -630,6 +630,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             for (GivenPermissionToEntity givenPermissionToEntity : givenPermissionToEntities) {
                 DelegationDetails delegationDetails = new DelegationDetails();
                 DelegateSummary delegateSummary = new DelegateSummary(new OrcidIdentifier(getOrcidIdBase(givenPermissionToEntity.getReceiver().getId())));
+                delegateSummary
+                        .setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(givenPermissionToEntity.getReceiver().getLastModified())));
                 String receiverCreditName = givenPermissionToEntity.getReceiver().getDisplayName();
                 delegateSummary.setCreditName(StringUtils.isNotBlank(receiverCreditName) ? new CreditName(receiverCreditName) : null);
                 delegationDetails.setDelegateSummary(delegateSummary);
@@ -646,6 +648,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             for (GivenPermissionByEntity givenPermissionByEntity : givenPermissionByEntities) {
                 DelegationDetails delegationDetails = new DelegationDetails();
                 DelegateSummary delegateSummary = new DelegateSummary(new OrcidIdentifier(getOrcidIdBase((givenPermissionByEntity.getGiver().getId()))));
+                delegateSummary.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(givenPermissionByEntity.getGiver().getLastModified())));
                 String creditName = givenPermissionByEntity.getGiver().getDisplayName();
                 delegateSummary.setCreditName(StringUtils.isNotBlank(creditName) ? new CreditName(creditName) : null);
                 delegationDetails.setDelegateSummary(delegateSummary);
@@ -766,7 +769,6 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                         }
                         applicationSummary.setApprovalDate(new ApprovalDate(DateUtils.convertToXMLGregorianCalendar(tokenDetail.getDateCreated())));
 
-                        
                         // add group information
                         if (acceptedClientProfileEntity.getGroupProfile() != null) {
                             applicationSummary.setApplicationGroupOrcid(new ApplicationOrcid(profileEntity.getGroupOrcid()));
@@ -1026,7 +1028,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         OrcidInternal orcidInternal = new OrcidInternal();
 
         orcidInternal.setGroupOrcidIdentifier(new OrcidIdentifier(getOrcidIdBase(profileEntity.getGroupOrcid())));
-        
+
         SecurityDetails securityDetails = new SecurityDetails();
         orcidInternal.setSecurityDetails(securityDetails);
         securityDetails.setEncryptedPassword(profileEntity.getEncryptedPassword() != null ? new EncryptedPassword(profileEntity.getEncryptedPassword()) : null);
@@ -1045,6 +1047,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         // worry about null!
         preferences.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(profileEntity.getActivitiesVisibilityDefault()));
 
+        //Set developer tools preference
+        preferences.setDeveloperToolsEnabled(new DeveloperToolsEnabled(profileEntity.getEnableDeveloperTools()));
+        
         if (profileEntity.getReferredBy() != null) {
             orcidInternal.setReferredBy(new ReferredBy(getOrcidIdBase(profileEntity.getReferredBy())));
         }

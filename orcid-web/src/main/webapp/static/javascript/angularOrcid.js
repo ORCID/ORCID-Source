@@ -1666,9 +1666,16 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 		if (datum != undefined && datum != null) {
 			$scope.editAffiliation.affiliationName.value = datum.value;
 			$scope.editAffiliation.city.value = datum.city;
+			if(datum.city)
+				$scope.editAffiliation.city.errors = [];
 			$scope.editAffiliation.region.value = datum.region;
-			if(datum.country != undefined && datum.country != null)
+			if(datum.region)
+				$scope.editAffiliation.region.errors = [];	
+			if(datum.country != undefined && datum.country != null) {
 				$scope.editAffiliation.country.value = datum.country;
+				$scope.editAffiliation.country.errors = [];
+			}
+				
 			if (datum.disambiguatedAffiliationIdentifier != undefined && datum.disambiguatedAffiliationIdentifier != null) {
 				$scope.getDisambiguatedAffiliation(datum.disambiguatedAffiliationIdentifier);
 				$scope.unbindTypeahead();
@@ -1995,12 +2002,17 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 		console.log(angular.toJson(datum));
 		if (datum != undefined && datum != null) {
 			$scope.editFunding.fundingName.value = datum.value;
-			$scope.editFunding.fundingName.errors = [];
+			if(datum.value)
+				$scope.editFunding.fundingName.errors = [];
 			$scope.editFunding.city.value = datum.city;
-			$scope.editFunding.city.errors = []; 
+			if(datum.city)
+				$scope.editFunding.city.errors = [];			
 			$scope.editFunding.region.value = datum.region;
-			$scope.editFunding.country.value = datum.country;
-			$scope.editFunding.country.errors = [];
+			
+			if(datum.country != undefined && datum.country != null) {
+				$scope.editFunding.country.value = datum.country;
+				$scope.editFunding.country.errors = [];
+			}
 			
 			if (datum.disambiguatedFundingIdentifier != undefined && datum.disambiguatedFundingIdentifier != null) {
 				$scope.getDisambiguatedFunding(datum.disambiguatedFundingIdentifier);
@@ -2746,6 +2758,10 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		}
 	};
 	
+	$scope.clearErrors = function() {
+		$scope.editWork.workCategory.errors = [];
+		$scope.editWork.workType.errors = [];
+	};
 }
 
 function QuickSearchCtrl($scope, $compile){
@@ -2826,6 +2842,21 @@ function DelegatesCtrl($scope, $compile){
 	$scope.rows = 10;
 	$scope.showLoader = false;
 	
+	$scope.sort = {
+		column: 'delegateSummary.creditName.content',
+		descending: false
+	};
+	
+	$scope.changeSorting = function(column) {
+		var sort = $scope.sort;
+		if (sort.column === column) {
+			sort.descending = !sort.descending;
+		} else {
+			sort.column = column;
+			sort.descending = false;
+		}
+	};
+	
 	$scope.search = function(){
 		$scope.showLoader = true;
 		$scope.results = new Array();
@@ -2896,9 +2927,10 @@ function DelegatesCtrl($scope, $compile){
 		return $scope.numFound != 0;
 	};
 	
-	$scope.confirmAddDelegate = function(delegateName, delegateId){
+	$scope.confirmAddDelegate = function(delegateName, delegateId, delegateIdx){
 		$scope.delegateNameToAdd = delegateName;
 		$scope.delegateToAdd = delegateId;
+		$scope.delegateIdx = delegateIdx;
 		$scope.effectiveUserOrcid = $('body').data('effective-user-orcid');
 		$.colorbox({                      
 			html : $compile($('#confirm-add-delegate-modal').html())($scope),
@@ -2913,6 +2945,7 @@ function DelegatesCtrl($scope, $compile){
 	};
 	
 	$scope.addDelegate = function() {
+		$scope.results.splice($scope.delegateIdx, 1);
 		$.ajax({
 	        url: $('body').data('baseurl') + 'account/addDelegate.json',
 	        type: 'POST',
@@ -3061,7 +3094,7 @@ function ClientEditCtrl($scope, $compile){
 	// Get the list of clients associated with this user
 	$scope.getClients = function(){
 		$.ajax({
-	        url: $('body').data('baseurl') + 'manage-clients/get-clients.json',
+	        url: $('body').data('baseurl') + 'group/developer-tools/get-clients.json',
 	        dataType: 'json',
 	        success: function(data) {	        	        					
 				$scope.$apply(function(){
@@ -3077,7 +3110,7 @@ function ClientEditCtrl($scope, $compile){
 	// Get an empty modal to add
 	$scope.addClient = function(){		
 		$.ajax({
-			url: $('body').data('baseurl') + 'manage-clients/client.json',
+			url: $('body').data('baseurl') + 'group/developer-tools/client.json',
 			dataType: 'json',
 			success: function(data) {
 				$scope.newClient = data;
@@ -3141,7 +3174,7 @@ function ClientEditCtrl($scope, $compile){
 			scrolling: true
         });
 		
-        $.colorbox.resize({width:"550px" , height:"225px"});
+        $.colorbox.resize({width:"560px" , height:"275px"});
         
 	};
 	
@@ -3171,7 +3204,7 @@ function ClientEditCtrl($scope, $compile){
 		
 		//Submit the update request
 		$.ajax({
-	        url: $('body').data('baseurl') + 'manage-clients/edit-client.json',
+	        url: $('body').data('baseurl') + 'group/developer-tools/edit-client.json',
 	        type: 'POST',
 	        data: angular.toJson($scope.clientToEdit),
 	        contentType: 'application/json;charset=UTF-8',
@@ -3203,7 +3236,7 @@ function ClientEditCtrl($scope, $compile){
 		
 		//Submit the new client request
 		$.ajax({
-	        url: $('body').data('baseurl') + 'manage-clients/add-client.json',
+	        url: $('body').data('baseurl') + 'group/developer-tools/add-client.json',
 	        type: 'POST',
 	        data: angular.toJson($scope.newClient),
 	        contentType: 'application/json;charset=UTF-8',
@@ -3225,37 +3258,38 @@ function ClientEditCtrl($scope, $compile){
 	
 	//Load the list of scopes for client redirect uris 
 	$scope.loadAvailableScopes = function(){
+		console.log("looking for available scopes");
 		$.ajax({
-	        url: $('body').data('baseurl') + 'manage-clients/get-available-scopes.json',
+	        url: $('body').data('baseurl') + 'group/developer-tools/get-available-scopes.json',
 	        type: 'GET',
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        success: function(data) {	        	
 	        	$scope.availableRedirectScopes = data;
+	        	console.log($scope.availableRedirectScopes);
 	        }
 	    }).fail(function() { 
 	    	console.log("Unable to fetch redirect uri scopes.");
 	    });		
 	};
-	
-	//init
-	$scope.getClients();
-	$scope.loadAvailableScopes();
-		
-	//Open scopes multi select list
-	$scope.openDropdown = function(rUri, edit){
+			
+	//Load the default scopes based n the redirect uri type selected
+	$scope.loadDefaultScopes = function(rUri, edit) {
 		if(edit == false) {
-			if(rUri.type.value == 'grant-read-wizard'){
-				rUri.scopes.push('/orcid-profile/read-limited');
-			} else if (rUri.type.value == 'import-works-wizard'){
-				rUri.scopes.push('/orcid-profile/read-limited');
-				rUri.scopes.push('/orcid-works/create');
-			} else if (rUri.type.value == 'import-funding-wizard'){
-				rUri.scopes.push('/orcid-profile/read-limited');
-				rUri.scopes.push('/funding/create');
-			}  
+			//If the scopes are empty, fill it with the default scopes
+			if(rUri.scopes.length == 0) {
+				if(rUri.type.value == 'grant-read-wizard'){
+					rUri.scopes.push('/orcid-profile/read-limited');
+				} else if (rUri.type.value == 'import-works-wizard'){
+					rUri.scopes.push('/orcid-profile/read-limited');
+					rUri.scopes.push('/orcid-works/create');
+				} else if (rUri.type.value == 'import-funding-wizard'){
+					rUri.scopes.push('/orcid-profile/read-limited');
+					rUri.scopes.push('/funding/create');
+				}  
+			}
 		}
-	};	
+	};		
 
 	//Mark an item as selected
 	$scope.setSelectedItem = function(rUri){
@@ -3280,6 +3314,10 @@ function ClientEditCtrl($scope, $compile){
 	    }
 	    return false;
 	};
+	
+	//init
+	$scope.getClients();
+	$scope.loadAvailableScopes();
 	
 };
 
@@ -4038,3 +4076,209 @@ function removeSecQuestionCtrl($scope,$compile) {
 		$.colorbox.close();
 	};	
 };
+
+function SSOPreferencesCtrl($scope, $compile) {
+	$scope.userCredentials = null;	
+	
+	$scope.enableDeveloperTools = function() {
+		$.ajax({
+	        url: orcidVar.baseUri+'/developer-tools/enable-developer-tools.json',	        
+	        contentType: 'application/json;charset=UTF-8',
+	        type: 'POST',	                	      
+	        success: function(data){	        	
+	        	if(data == true){
+	        		window.location.href = orcidVar.baseUri+'/developer-tools';
+	        	};
+	        }
+	    }).fail(function(error) { 
+	    	// something bad is happening!	    	
+	    	console.log("Error enabling developer tools");	    	
+	    });	
+	};
+	
+	$scope.confirmDisableDeveloperTools = function() {
+		$.colorbox({                      
+			html : $compile($('#confirm-disable-developer-tools').html())($scope),				
+				onLoad: function() {
+				$('#cboxClose').remove();
+			}
+		});				
+	};
+	
+	$scope.disableDeveloperTools = function() {
+		$.ajax({
+	        url: orcidVar.baseUri+'/developer-tools/disable-developer-tools.json',	        
+	        contentType: 'application/json;charset=UTF-8',
+	        type: 'POST',	                	      
+	        success: function(data){	        	
+	        	if(data == true){
+	        		window.location.href = orcidVar.baseUri+'/account';
+	        	};
+	        }
+	    }).fail(function(error) { 
+	    	// something bad is happening!	    	
+	    	console.log("Error enabling developer tools");	    	
+	    });	
+	};
+	
+	$scope.getSSOCredentials = function() {
+		$.ajax({
+	        url: orcidVar.baseUri+'/developer-tools/get-sso-credentials.json',	        
+	        contentType: 'application/json;charset=UTF-8',
+	        type: 'POST',	                	      
+	        success: function(data){	 
+	        	$scope.$apply(function(){ 
+	        		if(data != null && data.clientSecret != null)
+	        			$scope.userCredentials = data;	        		 
+				});
+	        }
+	    }).fail(function(error) { 
+	    	// something bad is happening!	   	    	
+	    	console.log("Error obtaining SSO credentials");
+	    	console.log(error);
+	    });		
+	};
+	
+	// Get an empty modal to add
+	$scope.createCredentialsModal = function(){		
+		$.ajax({
+			url: $('body').data('baseurl') + '/developer-tools/get-empty-sso-credential.json',
+			dataType: 'json',
+			success: function(data) {
+				$scope.userCredentials = data;
+				$scope.$apply(function() {
+					$scope.showCreateModal();
+				});
+			}
+		}).fail(function() { 
+	    	console.log("Error fetching client");
+	    });
+	};
+	
+	$scope.showCreateModal = function() {
+		$.colorbox({                      
+			html : $compile($('#generate-sso-credentials-modal').html())($scope),				
+				onLoad: function() {
+				$('#cboxClose').remove();
+			}
+		});
+		$.colorbox.resize({width:"450px" , height:"300px"});
+	};
+	
+	$scope.addRedirectURI = function() {
+		$scope.userCredentials.redirectUris.push({value: '',type: 'default'});
+	};
+	
+	$scope.submit = function() {
+		$.ajax({
+	        url: orcidVar.baseUri+'/developer-tools/generate-sso-credentials.json',	        
+	        contentType: 'application/json;charset=UTF-8',
+	        type: 'POST',
+	        dataType: 'json',
+	        data: angular.toJson($scope.userCredentials),	        	       
+	        success: function(data){
+	        	$scope.$apply(function(){ 
+	        		$scope.userCredentials = data;
+	        		if(data.errors.length != 0){
+	        			//SHOW ERROR
+	        		} else {	        			
+	        			$scope.closeModal();
+	        		}
+				});
+	        }
+	    }).fail(function(error) { 
+	    	// something bad is happening!	    	
+	    	console.log("Error creating SSO credentials");	    	
+	    });		
+	};
+	
+	$scope.showSuccessModal = function(){
+		console.log("Done: " + angular.toJson($scope.userCredentials));
+	};
+	
+	
+	$scope.showSSOCredentials = function() {		
+		$.colorbox({                      
+			html : $compile($('#show-sso-credentials-modal').html())($scope),				
+				onLoad: function() {
+				$('#cboxClose').remove();
+			}
+		});
+		
+		$.colorbox.resize({width:"450px" , height:"300px"});
+	};
+	
+	$scope.showRevokeModal = function() {		
+		$.colorbox({                      
+			html : $compile($('#revoke-sso-credentials-modal').html())($scope),				
+				onLoad: function() {
+				$('#cboxClose').remove();
+			}
+		});
+		
+		$.colorbox.resize({width:"450px" , height:"230px"});
+	};
+	
+	$scope.revoke = function() {
+		$.ajax({
+	        url: orcidVar.baseUri+'/developer-tools/revoke-sso-credentials.json',	        
+	        contentType: 'application/json;charset=UTF-8',
+	        type: 'POST',	                	       
+	        success: function(){
+	        	$scope.$apply(function(){ 
+	        		$scope.userCredentials = null;
+	        		$scope.closeModal();
+				});
+	        }
+	    }).fail(function(error) { 
+	    	// something bad is happening!	    	
+	    	console.log("Error revoking SSO credentials");	    	
+	    });	
+	};
+	
+	$scope.showEditModal = function() {
+		$.colorbox({                      
+			html : $compile($('#edit-sso-credentials-modal').html())($scope),				
+				onLoad: function() {
+				$('#cboxClose').remove();
+			}
+		});
+		
+		$.colorbox.resize({width:"450px" , height:"230px"});
+	};
+	
+	$scope.editRedirectUris = function() {
+		$.ajax({
+	        url: orcidVar.baseUri+'/developer-tools/update-redirect-uris.json',	        
+	        contentType: 'application/json;charset=UTF-8',
+	        type: 'POST',
+	        dataType: 'json',
+	        data: angular.toJson($scope.userCredentials),	        	       
+	        success: function(data){
+	        	$scope.$apply(function(){ 
+	        		$scope.userCredentials = data;
+	        		if(data.errors.length != 0){
+	        			//SHOW ERROR
+	        		} else {	        			
+	        			$scope.closeModal();
+	        		}
+				});
+	        }
+	    }).fail(function(error) { 
+	    	// something bad is happening!	    	
+	    	console.log("Error updating SSO credentials");	    	
+	    });	
+	};
+	
+	$scope.deleteRedirectUri = function(idx) {
+		$scope.userCredentials.redirectUris.splice(idx, 1);
+	};
+	
+	$scope.closeModal = function() {
+		$.colorbox.close();
+	};
+	
+	//init
+	$scope.getSSOCredentials();	
+};
+

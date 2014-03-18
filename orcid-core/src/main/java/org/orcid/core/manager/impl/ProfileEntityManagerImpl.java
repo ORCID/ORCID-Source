@@ -140,4 +140,28 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     		return new ArrayList<ProfileEntity>();
     	return profileDao.findProfilesByOrcidType(type);
     }
+    
+    /**
+     * Enable developer tools
+     * @param profile
+     *          The profile to update
+     * @return true if the developer tools where enabled on that profile
+     * */
+    @Override    
+    public boolean enableDeveloperTools(OrcidProfile profile) {
+        boolean result = profileDao.updateDeveloperTools(profile.getOrcidIdentifier().getPath(), true);
+        return result;
+    }
+    
+    /**
+     * Disable developer tools
+     * @param profile
+     *          The profile to update
+     * @return true if the developer tools where disabeled on that profile
+     * */
+    @Override    
+    public boolean disableDeveloperTools(OrcidProfile profile) {
+        boolean result = profileDao.updateDeveloperTools(profile.getOrcidIdentifier().getPath(), false);
+        return result;
+    }
 }

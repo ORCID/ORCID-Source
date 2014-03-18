@@ -98,6 +98,7 @@
 				                        <path>8888-8888-8888-8880</path>
 				                        <host>orcid.org</host>
                                     </orcid-identifier>
+                                    <last-modified-date>2011-07-21T15:46:03</last-modified-date>
                                     <credit-name>Bobie Ewing</credit-name>
                                 </delegate-summary>
 							</delegation-details>
@@ -111,6 +112,7 @@
 				                        <path>2222-2222-2222-2229</path>
 				                        <host>orcid.org</host>
 				                    </orcid-identifier>
+				                    <last-modified-date>2014-03-08T11:12:43</last-modified-date>
 									<credit-name>W. J. R. Simpson</credit-name>
 								</delegate-summary>
 							</delegation-details>
