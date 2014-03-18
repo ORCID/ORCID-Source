@@ -1948,6 +1948,13 @@ a:hover {
 	margin-bottom: 15px;
 }
 
+.privacy-selector{
+	width: 150px;
+	height: 40px;
+	display: block;
+	float: right;	
+}
+
 .js .privacy-form,.no-js .privacy-toggle {
 	display: none;
 }
@@ -2576,9 +2583,8 @@ header overrides
 	position: relative;
 }
 
-.websites-vis .privacy-group {
-	left: 370px;
-	top: 0;
+.websites-vis .privacy-group {	
+	margin-right: 15px;
 }
 
 .websites .input-xlarge {
@@ -3925,10 +3931,6 @@ p.orcid-id-container{
 	.manage-bio #websiteUrl,
 	.manage-bio  #websiteUrlText{
 		margin-top: 15px;
-	}
-	
-	.manage-bio .websites-vis .privacy-group{
-		left: 210px;
 	}
 	
 	.manage-bio .websites-vis{

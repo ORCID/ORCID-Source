@@ -1666,9 +1666,16 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 		if (datum != undefined && datum != null) {
 			$scope.editAffiliation.affiliationName.value = datum.value;
 			$scope.editAffiliation.city.value = datum.city;
+			if(datum.city)
+				$scope.editAffiliation.city.errors = [];
 			$scope.editAffiliation.region.value = datum.region;
-			if(datum.country != undefined && datum.country != null)
+			if(datum.region)
+				$scope.editAffiliation.region.errors = [];	
+			if(datum.country != undefined && datum.country != null) {
 				$scope.editAffiliation.country.value = datum.country;
+				$scope.editAffiliation.country.errors = [];
+			}
+				
 			if (datum.disambiguatedAffiliationIdentifier != undefined && datum.disambiguatedAffiliationIdentifier != null) {
 				$scope.getDisambiguatedAffiliation(datum.disambiguatedAffiliationIdentifier);
 				$scope.unbindTypeahead();
@@ -1995,12 +2002,17 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 		console.log(angular.toJson(datum));
 		if (datum != undefined && datum != null) {
 			$scope.editFunding.fundingName.value = datum.value;
-			$scope.editFunding.fundingName.errors = [];
+			if(datum.value)
+				$scope.editFunding.fundingName.errors = [];
 			$scope.editFunding.city.value = datum.city;
-			$scope.editFunding.city.errors = []; 
+			if(datum.city)
+				$scope.editFunding.city.errors = [];			
 			$scope.editFunding.region.value = datum.region;
-			$scope.editFunding.country.value = datum.country;
-			$scope.editFunding.country.errors = [];
+			
+			if(datum.country != undefined && datum.country != null) {
+				$scope.editFunding.country.value = datum.country;
+				$scope.editFunding.country.errors = [];
+			}
 			
 			if (datum.disambiguatedFundingIdentifier != undefined && datum.disambiguatedFundingIdentifier != null) {
 				$scope.getDisambiguatedFunding(datum.disambiguatedFundingIdentifier);
@@ -2746,6 +2758,10 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		}
 	};
 	
+	$scope.clearErrors = function() {
+		$scope.editWork.workCategory.errors = [];
+		$scope.editWork.workType.errors = [];
+	};
 }
 
 function QuickSearchCtrl($scope, $compile){
@@ -2825,6 +2841,21 @@ function DelegatesCtrl($scope, $compile){
 	$scope.start = 0;
 	$scope.rows = 10;
 	$scope.showLoader = false;
+	
+	$scope.sort = {
+		column: 'delegateSummary.creditName.content',
+		descending: false
+	};
+	
+	$scope.changeSorting = function(column) {
+		var sort = $scope.sort;
+		if (sort.column === column) {
+			sort.descending = !sort.descending;
+		} else {
+			sort.column = column;
+			sort.descending = false;
+		}
+	};
 	
 	$scope.search = function(){
 		$scope.showLoader = true;
@@ -3247,8 +3278,8 @@ function statisticCtrl($scope){
 	$scope.getLiveIds();
 };
 
-function languageCtrl($scope, $cookies){		
-	$scope.languages = 
+function languageCtrl($scope, $cookies) {
+	var productionLangList = 
 	    [
 	        {	            
 	            "value": "en",
@@ -3262,18 +3293,6 @@ function languageCtrl($scope, $cookies){
 	        	"value": 'fr',
 	    		"label": 'Français'
 	        },	        
-//	        {
-//	        	"value": 'ko',
-//	    		"label": '한국어'
-//	        },
-	        {
-	        	"value": 'pt',
-	    		"label": 'Português'
-	        },	        
-//	        {
-//	        	"value": 'ru',
-//	    		"label": 'Русский'
-//	        },
 	        {
 		        "value": 'zh_CN',
 			    "label": '简体中文'
@@ -3283,6 +3302,46 @@ function languageCtrl($scope, $cookies){
 			    "label": '繁體中文'
 	        }	        
 	    ];	
+	var testingLangList = 
+	    [
+	        {	            
+	            "value": "en",
+	            "label": "English"
+	        },
+	        {
+	        	"value": 'es',
+	    		"label": 'Español'
+	        },
+	        {
+	        	"value": 'fr',
+	    		"label": 'Français'
+	        },	        
+	        {
+	        	"value": 'ko',
+	    		"label": '한국어'
+	        },
+	        {
+	        	"value": 'pt',
+	    		"label": 'Português'
+	        },	        
+	        {
+	        	"value": 'ru',
+	    		"label": 'Русский'
+	        },
+	        {
+		        "value": 'zh_CN',
+			    "label": '简体中文'
+	        },
+	        {
+		        "value": 'zh_TW',
+			    "label": '繁體中文'
+	        }	        
+	    ];			
+
+	if (location == parent.location && window.location.hostname.toLowerCase() != "orcid.org") 
+		$scope.languages = testingLangList;
+	else
+		$scope.languages = productionLangList;
 	
 	//Load Language that is set in the cookie or set default language to english
 	$scope.getCurrentLanguage = function(){

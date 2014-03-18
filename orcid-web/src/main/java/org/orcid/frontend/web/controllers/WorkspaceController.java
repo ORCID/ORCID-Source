@@ -72,7 +72,6 @@ import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMeth
  * @author Will Simpson
  */
 @Controller("workspaceController")
-@RequestMapping(value = { "/my-orcid", "/workspace" })
 public class WorkspaceController extends BaseWorkspaceController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WorkspaceController.class);
@@ -100,21 +99,19 @@ public class WorkspaceController extends BaseWorkspaceController {
 
     @Resource
     private LocaleManager localeManager;
-    
-    @Resource(name="languagesMap")
+
+    @Resource(name = "languagesMap")
     private LanguagesMap lm;
 
     @ModelAttribute("workImportWizards")
     public List<OrcidClient> retrieveWorkImportWizards() {
         return thirdPartyImportManager.findOrcidClientsWithPredefinedOauthScopeWorksImport();
     }
-    
 
     @ModelAttribute("fundingImportWizards")
     public List<OrcidClient> retrieveFundingImportWizards() {
         return thirdPartyImportManager.findOrcidClientsWithPredefinedOauthScopeFundingImport();
     }
-
 
     @ModelAttribute("affiliationTypes")
     public Map<String, String> retrieveAffiliationTypesAsMap() {
@@ -124,26 +121,25 @@ public class WorkspaceController extends BaseWorkspaceController {
         }
         return FunctionsOverCollections.sortMapsByValues(affiliationTypes);
     }
-    
+
     @ModelAttribute("fundingTypes")
     public Map<String, String> retrieveFundingTypesAsMap() {
         Map<String, String> grantTypes = new LinkedHashMap<String, String>();
         for (FundingType fundingType : FundingType.values()) {
-        	grantTypes.put(fundingType.value(), getMessage(buildInternationalizationKey(FundingType.class, fundingType.value())));
+            grantTypes.put(fundingType.value(), getMessage(buildInternationalizationKey(FundingType.class, fundingType.value())));
         }
         return FunctionsOverCollections.sortMapsByValues(grantTypes);
     }
-    
+
     @ModelAttribute("currencyCodeTypes")
     public Map<String, String> retrieveCurrencyCodesTypesAsMap() {
         Map<String, String> currencyCodeTypes = new LinkedHashMap<String, String>();
         for (Currency currency : Currency.getAvailableCurrencies()) {
-        	currencyCodeTypes.put(currency.getCurrencyCode(), currency.getCurrencyCode());
+            currencyCodeTypes.put(currency.getCurrencyCode(), currency.getCurrencyCode());
         }
         return FunctionsOverCollections.sortMapsByValues(currencyCodeTypes);
     }
-    
-    
+
     @ModelAttribute("affiliationLongDescriptionTypes")
     public Map<String, String> retrieveAffiliationLongDescriptionTypesAsMap() {
         Map<String, String> organizationTypes = new LinkedHashMap<String, String>();
@@ -158,11 +154,11 @@ public class WorkspaceController extends BaseWorkspaceController {
         Map<String, String> workCategories = new LinkedHashMap<String, String>();
 
         for (WorkCategory workCategory : WorkCategory.values()) {
-        	workCategories.put(workCategory.value(), getMessage(buildInternationalizationKey(WorkCategory.class, workCategory.value())));
+            workCategories.put(workCategory.value(), getMessage(buildInternationalizationKey(WorkCategory.class, workCategory.value())));
         }
-        
+
         return workCategories;
-    }        
+    }
 
     @ModelAttribute("citationTypes")
     public Map<String, String> retrieveTypesAsMap() {
@@ -185,7 +181,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         }
         return map;
     }
-    
+
     @ModelAttribute("fundingYears")
     public Map<String, String> retrieveFundingYearsAsMap() {
         Map<String, String> map = new LinkedHashMap<String, String>();
@@ -220,8 +216,9 @@ public class WorkspaceController extends BaseWorkspaceController {
     }
 
     /**
-     * Generate a map with ID types.
-     * The map is different from the rest, because it will be ordered in the form: value -> key, to keep the map alpha ordered in UI. 
+     * Generate a map with ID types. The map is different from the rest, because
+     * it will be ordered in the form: value -> key, to keep the map alpha
+     * ordered in UI.
      * */
     @ModelAttribute("idTypes")
     public Map<String, String> retrieveIdTypesAsMap() {
@@ -243,7 +240,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         }
         return FunctionsOverCollections.sortMapsByValues(map);
     }
-    
+
     @ModelAttribute("fundingRoles")
     public Map<String, String> retrieveFundingRolesAsMap() {
         Map<String, String> map = new LinkedHashMap<String, String>();
@@ -270,11 +267,25 @@ public class WorkspaceController extends BaseWorkspaceController {
         return lm.getLanguagesMap(localeManager.getLocale());
     }
 
-    @RequestMapping
+    @RequestMapping(value = { "/my-orcid", "/workspace" })
     public ModelAndView viewWorkspace(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int pageNo,
             @RequestParam(value = "maxResults", defaultValue = "200") int maxResults) {
 
         ModelAndView mav = new ModelAndView("workspace");
+        mav.addObject("showPrivacy", true);
+
+        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid(), LoadOptions.BIO_ONLY);
+        mav.addObject("profile", profile);
+        mav.addObject("currentLocaleKey", localeManager.getLocale().toString());
+        mav.addObject("currentLocaleValue", lm.buildLanguageValue(localeManager.getLocale(), localeManager.getLocale()));
+        return mav;
+    }
+    
+    @RequestMapping(value = "/my-orcid2", method = RequestMethod.GET)
+    public ModelAndView viewWorkspace2(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int pageNo,
+            @RequestParam(value = "maxResults", defaultValue = "200") int maxResults) {
+
+        ModelAndView mav = new ModelAndView("workspace2");
         mav.addObject("showPrivacy", true);
 
         OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid(), LoadOptions.BIO_ONLY);
@@ -308,6 +319,9 @@ public class WorkspaceController extends BaseWorkspaceController {
             return tpr;
         SourceOrcid sourceOrcid = currentProfile.getOrcidHistory().getSource().getSourceOrcid();
         String sourcStr = sourceOrcid.getPath();
+        // Check that the cache is up to date
+        evictThirdPartyImportManagerCacheIfNeeded();
+        // Get list of clients
         List<OrcidClient> orcidClients = thirdPartyImportManager.findOrcidClientsWithPredefinedOauthScopeReadAccess();
         for (OrcidClient orcidClient : orcidClients) {
             if (sourcStr.equals(orcidClient.getClientId())) {
@@ -321,6 +335,24 @@ public class WorkspaceController extends BaseWorkspaceController {
             }
         }
         return tpr;
+    }
+
+    /**
+     * Reads the latest cache version from database, compare it against the
+     * local version; if they are different, evicts all caches.
+     * 
+     * @return true if the local cache version is different than the one on
+     *         database
+     * */
+    private boolean evictThirdPartyImportManagerCacheIfNeeded() {
+        long currentCachedVersion = thirdPartyImportManager.getLocalCacheVersion();
+        long dbCacheVersion = thirdPartyImportManager.getDatabaseCacheVersion();
+        if (currentCachedVersion < dbCacheVersion) {
+            // If version changed, evict the cache
+            thirdPartyImportManager.evictAll();
+            return true;
+        }
+        return false;
     }
 
     /**
