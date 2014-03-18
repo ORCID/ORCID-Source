@@ -17,7 +17,7 @@
 
 -->
 
-<@protected classes=['developer-tools'] nav="developer-tools">
+<@public nav="developer-tools">
 <div class="row">
 	<div class="col-md-3 lhs override">
 		
@@ -134,4 +134,4 @@
 	</div>
 </script>	
 
-</@protected>
+</@public>
