@@ -353,15 +353,17 @@
 			<table class="table table-bordered settings-table normal-width" ng-show="delegation.givenPermissionTo.delegationDetails" ng-cloak>
 				<thead>
 					<tr>
-						<th width="35%">${springMacroRequestContext.getMessage("manage.thproxy")}</th>
-						<th width="5%">${springMacroRequestContext.getMessage("manage.thapprovaldate")}</th>
+						<th width="35%" ng-click="changeSorting('delegateSummary.creditName.content')">${springMacroRequestContext.getMessage("manage.thproxy")}</th>
+						<th width="25%" ng-click="changeSorting('approvalDate.value')">Access granted</th>
+						<th width="25%" ng-click="changeSorting('delegateSummary.lastModifiedDate.value')">Last modified</th>
 						<td width="5%"></td>
 					</tr>
 				</thead>
 				<tbody>
-					<tr ng-repeat="delegationDetails in delegation.givenPermissionTo.delegationDetails | orderBy:'delegateSummary.creditName.content'">
+					<tr ng-repeat="delegationDetails in delegation.givenPermissionTo.delegationDetails | orderBy:sort.column:sort.descending">
 						<td width="35%"><a href="{{delegationDetails.delegateSummary.orcidIdentifier.uri}}">{{delegationDetails.delegateSummary.creditName.content}}</a></td>
-						<td width="35%">{{delegationDetails.approvalDate.value|date}}</td>
+						<td width="25%">{{delegationDetails.approvalDate.value|date}}</td>
+						<td width="25%">{{delegationDetails.delegateSummary.lastModifiedDate.value|date}}</td>
 						<td width="5%"><a
 							ng-click="confirmRevoke(delegationDetails.delegateSummary.creditName.content, delegationDetails.delegateSummary.orcidIdentifier.path)"
 							class="glyphicon glyphicon-trash grey"

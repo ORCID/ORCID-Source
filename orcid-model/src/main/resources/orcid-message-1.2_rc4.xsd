@@ -546,6 +546,7 @@
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element ref="orcid:orcid-identifier" />
+				<xs:element ref="orcid:last-modified-date" minOccurs="1" maxOccurs="1" />
 				<xs:element minOccurs="0" ref="orcid:credit-name" />
 			</xs:sequence>
 		</xs:complexType>
