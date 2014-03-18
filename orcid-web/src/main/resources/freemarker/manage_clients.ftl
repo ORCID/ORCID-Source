@@ -82,8 +82,7 @@
 								<#list redirectUriTypes?keys as key>
 									<option value="${key}">${redirectUriTypes[key]}</option>
 								</#list>
-							</select>
-							
+							</select>							
 							
 							<div ng-show="rUri.type.value != 'default'">
 								<@orcid.msg 'manage_clients.redirect_uri.scope' />:<br />
@@ -92,13 +91,11 @@
 									<button class='btn btn-small dropdown-toggle' ng-click='scopeSelectorOpen=!scopeSelectorOpen;openDropdown(rUri, true)'><span class='caret'></span></button>
 									<div class="scrollable-list" ng-show="scopeSelectorOpen">
 										<ul class="dropdown-menu">		
-											<li ng-repeat='scope in availableRedirectScopes'><a ng-click='setSelectedItem(rUri)'>{{scope}}<span ng-class='isCheckedOnNew(rUri)'></span></a></li>
+											<li ng-repeat='scope in availableRedirectScopes'><a ng-click='setSelectedItem(rUri)'>{{scope}}<span ng-class='isChecked(rUri)'></span></a></li>
 										</ul>
 									</div>
 								</div>
-							</div>	
-							
-							
+							</div>															
 							
 							<span class="orcid-error" ng-show="rUri.errors.length > 0">
 								<div ng-repeat='error in rUri.errors' ng-bind-html="error"></div>
@@ -163,13 +160,6 @@
 							</#list>
 						</select>
 						
-						
-						
-						
-						
-						
-						
-						
 						<div ng-show="rUri.type.value != 'default'">
 							<@orcid.msg 'manage_clients.redirect_uri.scope' />:<br />
 							<div class='btn-group multiple-select'>
@@ -177,33 +167,11 @@
 								<button class='btn btn-small dropdown-toggle' ng-click='scopeSelectorOpen=!scopeSelectorOpen;openDropdown(rUri, false)'><span class='caret'></span></button>
 								<div class="scrollable-list" ng-show="scopeSelectorOpen">
 									<ul class="dropdown-menu">		
-										<li ng-repeat='scope in availableRedirectScopes'><a ng-click='setSelectedItem(rUri)'>{{scope}}<span ng-class='isCheckedOnNew(rUri)'></span></a></li>
+										<li ng-repeat='scope in availableRedirectScopes'><a ng-click='setSelectedItem(rUri)'>{{scope}}<span ng-class='isChecked(rUri)'></span></a></li>
 									</ul>
 								</div>
 							</div>
 						</div>	
-						
-						
-						
-						
-						
-						
-						
-						
-						
-						
-						
-						
-						
-						
-						
-						
-						
-						
-						
-						
-						
-						
 						
 						<span class="orcid-error" ng-show="rUri.errors.length > 0">
 							<div ng-repeat='error in rUri.errors' ng-bind-html="error"></div>

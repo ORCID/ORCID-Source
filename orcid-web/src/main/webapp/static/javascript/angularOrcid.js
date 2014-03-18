@@ -3223,6 +3223,7 @@ function ClientEditCtrl($scope, $compile){
 	    });		
 	};
 	
+	//Load the list of scopes for client redirect uris 
 	$scope.loadAvailableScopes = function(){
 		$.ajax({
 	        url: $('body').data('baseurl') + 'manage-clients/get-available-scopes.json',
@@ -3240,13 +3241,9 @@ function ClientEditCtrl($scope, $compile){
 	//init
 	$scope.getClients();
 	$scope.loadAvailableScopes();
-	
-	
-	
-	
-	
+		
+	//Open scopes multi select list
 	$scope.openDropdown = function(rUri, edit){
-		$scope.selectedScopes = [];
 		if(edit == false) {
 			if(rUri.type.value == 'grant-read-wizard'){
 				rUri.scopes.push('/orcid-profile/read-limited');
@@ -3260,6 +3257,7 @@ function ClientEditCtrl($scope, $compile){
 		}
 	};	
 
+	//Mark an item as selected
 	$scope.setSelectedItem = function(rUri){
 	    var scope = this.scope;
 	    if (jQuery.inArray( scope, rUri.scopes ) == -1) {
@@ -3273,7 +3271,9 @@ function ClientEditCtrl($scope, $compile){
 	    return false;
 	};
 	
-	$scope.isCheckedOnNew = function (rUri) { 
+	//Checks if an item is selected, if so, returns the css classes that might 
+	//be applied to the object
+	$scope.isChecked = function (rUri) { 
 		var scope = this.scope;
 		if (jQuery.inArray( scope, rUri.scopes ) != -1) {
 	        return 'glyphicon glyphicon-ok pull-right';
