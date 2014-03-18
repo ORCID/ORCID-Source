@@ -89,7 +89,7 @@ public class ProfileEventManager {
             System.err.println(e.getMessage());
             parser.printUsage(System.err);
         }
-
+        System.exit(0);
     }
 
     private void execute(ProfileEventManager pem) {
@@ -121,11 +121,11 @@ public class ProfileEventManager {
                 call(orcid, classStr);
                 doneCount++;
             }
-            LOG.info("Sending crossref verify emails on number: {}", doneCount);
+            LOG.info("Current done count: {}", doneCount);
         } while (!orcids.isEmpty());
         long endTime = System.currentTimeMillis();
         String timeTaken = DurationFormatUtils.formatDurationHMS(endTime - startTime);
-        LOG.info("Sending crossref verify emails: doneCount={}, timeTaken={} (H:m:s.S)", doneCount, timeTaken);
+        LOG.info("Profile Event " + classStr + ": doneCount={}, timeTaken={} (H:m:s.S)", doneCount, timeTaken);
     }
     
     public void call(final String orcid, final String classStr) {
@@ -135,7 +135,7 @@ public class ProfileEventManager {
                 OrcidProfile orcidProfile = getOrcidProfileManager().retrieveOrcidProfile(orcid);
                 try {
                     ProfileEvent pe = (ProfileEvent)context.getBean(classStr,orcidProfile);
-                    getProfileEventDao().persist(new ProfileEventEntity(orcidProfile.retrieveOrcidUriAsString(), pe.call()));
+                    getProfileEventDao().persist(new ProfileEventEntity(orcidProfile.getOrcidIdentifier().getPath(), pe.call()));
                 } catch (Exception e) {
                     LOG.error("Error calling ", e);
                 }

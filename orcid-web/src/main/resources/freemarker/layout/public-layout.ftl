@@ -126,9 +126,10 @@
                    <li class="expanded">
                        <a href="${aboutUri}/organizations"><@orcid.msg 'public-layout.for_organizations'/></a>
                        <ul class="menu">
-                           <li class="first leaf"><a href="${aboutUri}/organizations/funders"><@orcid.msg 'public-layout.funders'/></a></li>
+                           <li class="first leaf"><a href="${aboutUri}/organizations/funders"><@orcid.msg 'public-layout.funders'/></a></li>                                                      
                            <li class="leaf"><a href="${aboutUri}/organizations/institutions" title=""><@orcid.msg 'public-layout.research_organizations'/></a></li>
                            <li class="leaf"><a href="${aboutUri}/organizations/publishers"><@orcid.msg 'public-layout.publishers'/></a></li>
+                           <li class="leaf"><a href="${aboutUri}/organizations/associations" title=""><@orcid.msg 'public-layout.associations'/></a></li>
                            <li class="last leaf"><a href="${aboutUri}/organizations/integrators"><@orcid.msg 'public-layout.integrators'/></a></li>
                        </ul>
                    </li>

@@ -20,7 +20,7 @@
 
 <div class="row">
     <div class="col-md-12">
-        <div ng-controller="QuickSearchCtrl" id="QuickSearchCtrl" data-search-query-url="${searchQueryUrl}">
+        <div ng-controller="QuickSearchCtrl" id="QuickSearchCtrl" data-search-query-url="${searchQueryUrl?html}">
             <h3 class="ng-cloak search-result-head" ng-show="areResults()">${springMacroRequestContext.getMessage("search_results.h3Searchresults")}</h3>
       <table class="ng-cloak table table-striped" ng-show="areResults()">
           <thead>

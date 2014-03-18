@@ -54,7 +54,7 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "orcid", "orcidIdentifier", "creditName" })
+@XmlType(propOrder = { "orcid", "orcidIdentifier", "lastModifiedDate", "creditName" })
 @XmlRootElement(name = "delegate-summary")
 public class DelegateSummary implements Serializable {
 
@@ -66,6 +66,8 @@ public class DelegateSummary implements Serializable {
     protected Orcid orcid;
     @XmlElement(name = "orcid-identifier")
     protected OrcidIdentifier orcidIdentifier;
+    @XmlElement(name = "last-modified-date")
+    protected LastModifiedDate lastModifiedDate;
     @XmlElement(name = "credit-name")
     protected CreditName creditName;
 
@@ -112,6 +114,14 @@ public class DelegateSummary implements Serializable {
 
     public void setOrcidIdentifier(OrcidIdentifier orcidIdentifier) {
         this.orcidIdentifier = orcidIdentifier;
+    }
+
+    public LastModifiedDate getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
     }
 
     /**

@@ -26,7 +26,7 @@
         </preConditions>
 		
 	    <addColumn tableName="profile">
-				<column name="enable_developer_tools" type="BOOLEAN" defaultValue="true" />
+				<column name="enable_developer_tools" type="BOOLEAN" defaultValue="false" />
 		</addColumn>
     </changeSet>
     
