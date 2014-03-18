@@ -3274,20 +3274,18 @@ function ClientEditCtrl($scope, $compile){
 	};
 			
 	//Load the default scopes based n the redirect uri type selected
-	$scope.loadDefaultScopes = function(rUri, edit) {
-		if(edit == false) {
-			//If the scopes are empty, fill it with the default scopes
-			if(rUri.scopes.length == 0) {
-				if(rUri.type.value == 'grant-read-wizard'){
-					rUri.scopes.push('/orcid-profile/read-limited');
-				} else if (rUri.type.value == 'import-works-wizard'){
-					rUri.scopes.push('/orcid-profile/read-limited');
-					rUri.scopes.push('/orcid-works/create');
-				} else if (rUri.type.value == 'import-funding-wizard'){
-					rUri.scopes.push('/orcid-profile/read-limited');
-					rUri.scopes.push('/funding/create');
-				}  
-			}
+	$scope.loadDefaultScopes = function(rUri) {
+		//If the scopes are empty, fill it with the default scopes
+		if(rUri.scopes.length == 0) {
+			if(rUri.type.value == 'grant-read-wizard'){
+				rUri.scopes.push('/orcid-profile/read-limited');
+			} else if (rUri.type.value == 'import-works-wizard'){
+				rUri.scopes.push('/orcid-profile/read-limited');
+				rUri.scopes.push('/orcid-works/create');
+			} else if (rUri.type.value == 'import-funding-wizard'){
+				rUri.scopes.push('/orcid-profile/read-limited');
+				rUri.scopes.push('/funding/create');
+			}  
 		}
 	};		
 

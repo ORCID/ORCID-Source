@@ -58,7 +58,7 @@ import org.springframework.web.servlet.ModelAndView;
  * 
  * @author Angel Montenegro Date: 20/06/2013
  */
-@Controller("GroupAdministratorController")
+@Controller
 @RequestMapping(value = "/group/developer-tools")
 public class GroupAdministratorController extends BaseWorkspaceController {
 
@@ -102,7 +102,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/client.json", method = RequestMethod.GET)
     public @ResponseBody
-    Client getClient(HttpServletRequest request) {
+    Client getClient() {
         Client emptyClient = new Client();
         emptyClient.setDisplayName(Text.valueOf(""));
         emptyClient.setWebsite(Text.valueOf(""));
@@ -192,7 +192,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
     @RequestMapping(value = "/add-client.json", method = RequestMethod.POST)
     @Produces(value = { MediaType.APPLICATION_JSON })
     public @ResponseBody
-    Client createClient(HttpServletRequest request, @RequestBody Client client) {
+    Client createClient(@RequestBody Client client) {
         // Clean the error list
         client.setErrors(new ArrayList<String>());
         // Validate fields
@@ -238,7 +238,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
     @RequestMapping(value = "/edit-client.json", method = RequestMethod.POST)
     @Produces(value = { MediaType.APPLICATION_JSON })
     public @ResponseBody
-    Client editClient(HttpServletRequest request, @RequestBody Client client) {
+    Client editClient(@RequestBody Client client) {
         // Clean the error list
         client.setErrors(new ArrayList<String>());
         // Validate fields

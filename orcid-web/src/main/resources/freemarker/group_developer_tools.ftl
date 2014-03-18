@@ -85,7 +85,7 @@
 						<div class="relative">
 							<@orcid.msg 'manage.developer_tools.group.redirect_uri.value'/>:<input type="text" class="input-xlarge" ng-model="rUri.value.value">
 							<@orcid.msg 'manage.developer_tools.group.redirect_uri.type'/>:
-							<select class="input-xlarge" ng-model="rUri.type.value" ng-change="loadDefaultScopes(rUri, true)">
+							<select class="input-xlarge" ng-model="rUri.type.value" ng-change="loadDefaultScopes(rUri)">
 								<#list redirectUriTypes?keys as key>
 									<option value="${key}">${redirectUriTypes[key]}</option>
 								</#list>
@@ -162,7 +162,7 @@
 					<div class="relative">
 						<@orcid.msg 'manage.developer_tools.group.redirect_uri.value'/>:<input type="text" placeholder="<@orcid.msg 'manage.developer_tools.group.redirect_uri_placeholder'/>" class="input-xlarge" ng-model="rUri.value.value"><br />
 						<@orcid.msg 'manage.developer_tools.group.redirect_uri.type'/>:
-						<select class="input-xlarge" ng-model="rUri.type.value" ng-change="loadDefaultScopes(rUri, false)">
+						<select class="input-xlarge" ng-model="rUri.type.value" ng-change="loadDefaultScopes(rUri)">
 							<#list redirectUriTypes?keys as key>
 								<option value="${key}">${redirectUriTypes[key]}</option>
 							</#list>
