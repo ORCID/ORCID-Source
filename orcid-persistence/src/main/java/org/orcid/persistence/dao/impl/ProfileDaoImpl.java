@@ -509,5 +509,23 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setParameter("type", type);
         return (List<ProfileEntity>) query.getResultList();
     }
+    
+    /**
+     * enable or disable developer tools from a user
+     * 
+     * @param orcid         
+     *          the orcid of the profile to be updated
+     * @param enabled
+     *          the new value of the developer tools            
+     * @return true if the developer tools was successfully updated
+     * */
+    @Override
+    @Transactional
+    public boolean updateDeveloperTools(String orcid, boolean enabled) {
+        Query query = entityManager.createQuery("update ProfileEntity set enableDeveloperTools=:enabled, lastModified=now() where orcid=:orcid");
+        query.setParameter("orcid", orcid);
+        query.setParameter("enabled", enabled);
+        return query.executeUpdate() > 0;
+    }
 
 }

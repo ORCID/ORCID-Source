@@ -14,18 +14,16 @@
  *
  * =============================================================================
  */
-package org.orcid.persistence.dao;
+package org.orcid.core.manager;
 
-import java.util.List;
+import java.util.Set;
 
-import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
-import org.orcid.persistence.jpa.entities.keys.ClientRedirectUriPk;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 
-public interface ClientRedirectDao extends GenericDao<ClientRedirectUriEntity, ClientRedirectUriPk> {
+public interface OrcidSSOManager {
 
-    public List<ClientRedirectUriEntity> findClientDetailsWithRedirectScope();
-
-    void addClientRedirectUri(String clientId, String redirectUri);
-
-    void removeClientRedirectUri(String clientId, String redirectUri);
+    ClientDetailsEntity grantSSOAccess(String orcid, Set<String> redirectUris);
+    ClientDetailsEntity getUserCredentials(String orcid);
+    ClientDetailsEntity updateRedirectUris(String orcid, Set<String> redirectUris);
+    void revokeSSOAccess(String orcid);     
 }

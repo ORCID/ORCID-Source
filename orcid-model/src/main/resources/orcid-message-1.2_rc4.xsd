@@ -1821,6 +1821,7 @@
 				<xs:element ref="orcid:send-change-notifications" />
 				<xs:element ref="orcid:send-orcid-news" />
 				<xs:element ref="orcid:activities-visibility-default" />
+				<xs:element ref="orcid:developer-tools-enabled" minOccurs="0"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -1855,6 +1856,13 @@
 		<xs:complexType mixed="true">
 			<xs:simpleContent>
 				<xs:extension base="orcid:visibility" />
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="developer-tools-enabled">
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:extension base="xs:boolean" />
 			</xs:simpleContent>
 		</xs:complexType>
 	</xs:element>

@@ -18,6 +18,7 @@ package org.orcid.core.version.impl;
 
 import org.orcid.core.version.OrcidMessageVersionConverter;
 import org.orcid.jaxb.model.message.ActivitiesVisibilityDefault;
+import org.orcid.jaxb.model.message.DeveloperToolsEnabled;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Preferences;
@@ -67,10 +68,16 @@ public class OrcidMessageVersionConverterImplV1_2_rc3ToV1_2_rc4 implements Orcid
                 }
             }
             if (orcidProfile.getOrcidInternal() != null) {
-                // earlier versions of the XSD don;t have GroupOrcidIdentifier 
+                // earlier versions of the XSD don't have GroupOrcidIdentifier 
                 if (orcidProfile.getOrcidInternal().getReferredBy() != null) {
                     orcidProfile.getOrcidInternal().setReferredBy(null);
                 }
+                
+                // earlier versions of the XSD don't have 
+                if(orcidProfile.getOrcidInternal().getPreferences() != null && orcidProfile.getOrcidInternal().getPreferences().getDeveloperToolsEnabled() != null) {
+                    orcidProfile.getOrcidInternal().getPreferences().setDeveloperToolsEnabled(null);
+                }
+                
             }
 
             if (orcidProfile.getOrcidInternal() != null) {
@@ -94,6 +101,11 @@ public class OrcidMessageVersionConverterImplV1_2_rc3ToV1_2_rc4 implements Orcid
                         prefs.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(prefs.getWorkVisibilityDefault().getValue()));
                         prefs.setWorkVisibilityDefault(null);
                     }
+                    
+                    if(prefs.getDeveloperToolsEnabled() == null) {
+                        DeveloperToolsEnabled dtn = new DeveloperToolsEnabled(false);                        
+                        prefs.setDeveloperToolsEnabled(dtn);
+                    }
                 }
             }
         }
@@ -114,6 +126,5 @@ public class OrcidMessageVersionConverterImplV1_2_rc3ToV1_2_rc4 implements Orcid
         upgradeProfile(orcidProfile);
 
         return orcidMessage;
-    }
-
+    }    
 }

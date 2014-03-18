@@ -71,6 +71,7 @@ import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.dao.EmailDao;
+import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
@@ -147,6 +148,9 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @Resource
     private ProfileDao profileDao;
+
+    @Resource
+    private ClientDetailsDao clientDetailsDao;
 
     @Resource
     private GivenPermissionToDao givenPermissionToDao;
@@ -903,4 +907,5 @@ public class ManageProfileController extends BaseWorkspaceController {
 
         return upTodateResearcherUrls;
     }
+
 }

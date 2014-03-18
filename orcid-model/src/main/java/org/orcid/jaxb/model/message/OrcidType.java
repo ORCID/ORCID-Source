@@ -40,6 +40,7 @@ import java.io.Serializable;
  * <pre>
  * &lt;simpleType name="orcid-type">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
+ *     &lt;enumeration value="admin"/>
  *     &lt;enumeration value="user"/>
  *     &lt;enumeration value="group"/>
  *     &lt;enumeration value="client"/>
@@ -54,7 +55,7 @@ public enum OrcidType implements Serializable {
     @XmlEnumValue("admin")
     ADMIN("admin"), 
     @XmlEnumValue("user")
-    USER("user"), 
+    USER("user"),   
     @XmlEnumValue("client")
     CLIENT("client"),
     @XmlEnumValue("group")
