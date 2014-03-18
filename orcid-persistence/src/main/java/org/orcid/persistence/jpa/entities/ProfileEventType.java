@@ -25,6 +25,7 @@ public enum ProfileEventType {
 
     CLAIM_REMINDER_SENT, 
     EMAIL_VERIFY_CROSSREF_MARKETING_FAIL, EMAIL_VERIFY_CROSSREF_MARKETING_SENT, EMAIL_VERIFY_CROSSREF_MARKETING_SKIPPED, 
+    POLICY_UPDATE_2014_03_SENT, POLICY_UPDATE_2014_03_FAIL, POLICY_UPDATE_2014_03_SKIPPED, 
     //Indicates that the account is deprecated
     PROFILE_DEPRECATED, 
     //Indicates that an account has been deprecated and you are the primary account
