@@ -4,8 +4,26 @@ We release updates to the Registry regularly. Below is a list of the improvement
 * [2013 Releases](https://trello.com/b/ZgYVAlel)
 * [2012 Releases](https://trello.com/b/vyCDYdvR)
 
+## release-1.1.47.14
+(2014-03-18)
+
+* Clean up Authorization code (remove used metadata)
+
+* Update close modal behavior 
+
+* Add privacy policy link to emails
+
+* Admin group fixes
+
+* RC4 - Add new information to ORCID History: verified email and verified primary email
+
+* RC4 - Add new information to ORCID Internal: referred-by
+
+
+
 ## release-1.1.46.2
 (2014-03-7)
+
 * Fix API call (with PUT) deletes private data
 
 * Add group name to GA tracking for revoke
@@ -16,6 +34,7 @@ We release updates to the Registry regularly. Below is a list of the improvement
 
 ## release-1.1.45.17
 (2014-02-28)
+
 * Release funding
 
 * Added fundref data
@@ -40,6 +59,7 @@ We release updates to the Registry regularly. Below is a list of the improvement
 
 ## release-1.1.44.6
 (2014-02-7)
+
 * Another go at the fonts.
 
 * Require one primary email address in 1.2 APIs.
@@ -54,6 +74,7 @@ We release updates to the Registry regularly. Below is a list of the improvement
 
 ## release-1.1.43.18 
 (2014-01-29)
+
 * Fix issue with grants scope breaking scope authorization.
 
 * Add disk caching 
@@ -80,6 +101,7 @@ We release updates to the Registry regularly. Below is a list of the improvement
  
 ## release-1.1.42.1
 (2014-01-07)
+
 * Place work duplicate check after adding source information
 
 * Make external id source behavior consistent with other source ids 
@@ -88,6 +110,7 @@ We release updates to the Registry regularly. Below is a list of the improvement
 
 ## release-1.1.41.12
 (2014-01-06)
+
 * Change language list in add work modal to include all ISO_639-1_codes
   two letter codes
 
@@ -97,6 +120,7 @@ We release updates to the Registry regularly. Below is a list of the improvement
 
 ## release-1.1.40.6
 (2013-12-19)
+
 * rc2 added granularity to creation method
 
 * Lot of UI changes including using full popup width.
@@ -115,6 +139,7 @@ We release updates to the Registry regularly. Below is a list of the improvement
 
 ## 1.1.39.11
 (2013-10-10)
+
 * 1.2_rc1 - Affiliation's API
 
 * Don't load works more info until mouse over
@@ -125,6 +150,7 @@ We release updates to the Registry regularly. Below is a list of the improvement
 
 ## release-1.1.38.5
 (2013-10-5)
+
 * New ORCID iD structure changed in 1.1!
 
 * Removing the undefined work type form the UI and from the latest orcid-message (1.1)
