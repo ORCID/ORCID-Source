@@ -30,6 +30,11 @@
 		<constructor-arg ref="jerseyClient"/>
 	</bean>
 	
+	<bean id="t2OAuthClient1_0_22" class="org.orcid.api.t2.integration.T2OAuthOrcidApiClientImpl">
+		<constructor-arg value="${org.orcid.t2.client.base_url}/v1.0.22"/>
+		<constructor-arg ref="jerseyClient"/>
+	</bean>
+
 	<bean id="t2OAuthClient1_2_rc1" class="org.orcid.api.t2.integration.T2OAuthOrcidApiClientImpl">
 		<constructor-arg value="${org.orcid.t2.client.base_url}/v1.2_rc1"/>
 		<constructor-arg ref="jerseyClient"/>
