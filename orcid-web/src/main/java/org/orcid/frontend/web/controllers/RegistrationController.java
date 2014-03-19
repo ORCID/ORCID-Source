@@ -415,7 +415,10 @@ public class RegistrationController extends BaseController {
     public @ResponseBody
     Registration regEmailConfirmValidate(@RequestBody Registration reg) {
         reg.getEmailConfirm().setErrors(new ArrayList<String>());
-        if (reg.getEmail().getValue() == null || !reg.getEmailConfirm().getValue().equalsIgnoreCase(reg.getEmail().getValue())) {
+        // normalize to "" sometimes angular sends null
+        if (reg.getEmail().getValue() == null) reg.getEmail().setValue("");
+        if (reg.getEmailConfirm().getValue() == null) reg.getEmailConfirm().setValue("");
+        if (!reg.getEmailConfirm().getValue().equalsIgnoreCase(reg.getEmail().getValue())) {
             setError(reg.getEmailConfirm(), "StringMatchIgnoreCase.registrationForm");
         }
 

@@ -67,7 +67,7 @@ orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
 	    		if( serv.affiliationsToAddIds.length != 0 ) {
 	    			var affiliationIds = serv.affiliationsToAddIds.splice(0,20).join();
 	    			$.ajax({
-	    				url: $('body').data('baseurl') + path + '?affiliationIds=' + affiliationIds,
+	    				url: orcidVar.baseUri + '/' + path + '?affiliationIds=' + affiliationIds,
 	    				dataType: 'json',
 	    				success: function(data) {
 	    						for (i in data) {
@@ -109,7 +109,7 @@ orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
 	    		serv.employments.length = 0;
 	    		//get affiliation ids
 	    		$.ajax({
-	    			url: $('body').data('baseurl') + path,	        
+	    			url: orcidVar.baseUri + '/' + path,	        
 	    	        dataType: 'json',
 	    	        success: function(data) {
 	    	        	serv.affiliationsToAddIds = data;
@@ -123,7 +123,7 @@ orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
 	    	},
 	    	updateProfileAffiliation: function(aff) {
 	    		$.ajax({
-	    	        url: $('body').data('baseurl') + 'affiliations/affiliation.json',
+	    	        url: orcidVar.baseUri + '/affiliations/affiliation.json',
 	    	        type: 'PUT',
 	    	        data: angular.toJson(aff),
 	    	        contentType: 'application/json;charset=UTF-8',
@@ -154,7 +154,7 @@ orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
 				}
 				arr.splice(idx, 1);
 	    		$.ajax({
-	    	        url: $('body').data('baseurl') + 'affiliations/affiliations.json',
+	    	        url: orcidVar.baseUri + '/affiliations/affiliations.json',
 	    	        type: 'DELETE',
 	    	        data: angular.toJson(affiliation),
 	    	        contentType: 'application/json;charset=UTF-8',
@@ -233,7 +233,7 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 	    		if( serv.fundingToAddIds.length != 0 ) {
 	    			var fundingIds = serv.fundingToAddIds.splice(0,20).join();
 	    			$.ajax({
-	    				url: $('body').data('baseurl') + path + '?fundingIds=' + fundingIds,
+	    				url: orcidVar.baseUri + '/' + path + '?fundingIds=' + fundingIds,
 	    				dataType: 'json',
 	    				success: function(data) {
 	    						for (i in data) {	    							
@@ -266,7 +266,7 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 	    		serv.fundings.length = 0;
 	    		//get funding ids
 	    		$.ajax({
-	    			url: $('body').data('baseurl') + path,	        
+	    			url: orcidVar.baseUri + '/'  + path,	        
 	    	        dataType: 'json',
 	    	        success: function(data) {
 	    	        	serv.fundingToAddIds = data;
@@ -280,7 +280,7 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 	    	},
 	    	updateProfileFunding: function(funding) {
 	    		$.ajax({
-	    	        url: $('body').data('baseurl') + 'fundings/funding.json',
+	    	        url: orcidVar.baseUri + '/fundings/funding.json',
 	    	        type: 'PUT',
 	    	        data: angular.toJson(funding),
 	    	        contentType: 'application/json;charset=UTF-8',
@@ -297,7 +297,7 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 	    	},
 	    	deleteFunding: function(funding) {	
 	    		$.ajax({
-	    	        url: $('body').data('baseurl') + 'fundings/funding.json',
+	    	        url: orcidVar.baseUri + '/fundings/funding.json',
 	    	        type: 'DELETE',
 	    	        data: angular.toJson(funding),
 	    	        contentType: 'application/json;charset=UTF-8',
@@ -338,7 +338,7 @@ orcidNgModule.factory("prefsSrvc", function ($rootScope) {
 			prefs: null,
 			getPrivacyPreferences: function() {
 				$.ajax({
-			        url: $('body').data('baseurl') + 'account/preferences.json',
+			        url: orcidVar.baseUri + '/account/preferences.json',
 			        dataType: 'json',
 			        success: function(data) {
 			        	serv.prefs = data;
@@ -351,7 +351,7 @@ orcidNgModule.factory("prefsSrvc", function ($rootScope) {
 			},
 			savePrivacyPreferences: function() {
 				$.ajax({
-			        url: $('body').data('baseurl') + 'account/preferences.json',
+			        url: orcidVar.baseUri + '/account/preferences.json',
 			        type: 'POST',
 			        data: angular.toJson(serv.prefs),
 			        contentType: 'application/json;charset=UTF-8',
@@ -627,7 +627,7 @@ function DeactivateAccountCtrl($scope, $compile) {
 	$scope.sendDeactivateEmail = function() {
 		orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Deactivate_Initiate', 'Website']);
 		$.ajax({
-	        url: $('body').data('baseurl') + 'account/send-deactivate-account.json',
+	        url: orcidVar.baseUri + '/account/send-deactivate-account.json',
 	        dataType: 'json',
 	        success: function(data) {
 	        	$scope.primaryEmail = data.value;
@@ -655,7 +655,7 @@ function SecurityQuestionEditCtrl($scope, $compile) {
 	
 	$scope.getSecurityQuestion = function() {
 		$.ajax({
-	        url: $('body').data('baseurl') + 'account/security-question.json',
+	        url: orcidVar.baseUri + '/account/security-question.json',
 	        dataType: 'json',
 	        success: function(data) {
 	        	$scope.securityQuestionPojo = data;
@@ -681,7 +681,7 @@ function SecurityQuestionEditCtrl($scope, $compile) {
 		$scope.securityQuestionPojo.password=$scope.password;		
 		console.log(angular.toJson($scope.securityQuestionPojo));		
 		$.ajax({
-	        url: $('body').data('baseurl') + 'account/security-question.json',
+	        url: orcidVar.baseUri + '/account/security-question.json',
 	        type: 'POST',
 	        data: angular.toJson($scope.securityQuestionPojo),
 	        contentType: 'application/json;charset=UTF-8',
@@ -713,7 +713,7 @@ function SecurityQuestionEditCtrl($scope, $compile) {
 function PasswordEditCtrl($scope, $http) {
 	$scope.getChangePassword = function() {
 		$.ajax({
-	        url: $('body').data('baseurl') + 'account/change-password.json',
+	        url: orcidVar.baseUri + '/account/change-password.json',
 	        dataType: 'json',
 	        success: function(data) {
 	        	$scope.changePasswordPojo = data;
@@ -735,7 +735,7 @@ function PasswordEditCtrl($scope, $http) {
 	
 	$scope.saveChangePassword = function() {
 		$.ajax({
-	        url: $('body').data('baseurl') + 'account/change-password.json',
+	        url: orcidVar.baseUri + '/account/change-password.json',
 	        type: 'POST',
 	        data: angular.toJson($scope.changePasswordPojo),
 	        contentType: 'application/json;charset=UTF-8',
@@ -761,7 +761,7 @@ function EmailEditCtrl($scope, $compile) {
 	
 	$scope.getEmails = function() {
 		$.ajax({
-	        url: $('body').data('baseurl') + 'account/emails.json',
+	        url: orcidVar.baseUri + '/account/emails.json',
 	        //type: 'POST',
 	        //data: $scope.emailsPojo, 
 	        dataType: 'json',
@@ -834,7 +834,7 @@ function EmailEditCtrl($scope, $compile) {
 	$scope.verifyEmail = function(idx) {
 		$scope.verifyEmailIdx = idx;
 		$.ajax({
-	        url: $('body').data('baseurl') + 'account/verifyEmail.json',
+	        url: orcidVar.baseUri + '/account/verifyEmail.json',
 	        type: 'get',
 	        data:  { "email": $scope.emailsPojo.emails[idx].value },
 	        contentType: 'application/json;charset=UTF-8',
@@ -859,7 +859,7 @@ function EmailEditCtrl($scope, $compile) {
 
 	$scope.saveEmail = function() {
 		$.ajax({
-	        url: $('body').data('baseurl') + 'account/emails.json',
+	        url: orcidVar.baseUri + '/account/emails.json',
 	        type: 'POST',
 	        data: angular.toJson($scope.emailsPojo),
 	        contentType: 'application/json;charset=UTF-8',
@@ -878,7 +878,7 @@ function EmailEditCtrl($scope, $compile) {
 		$scope.inputEmail.password = $scope.password;
 		
 		$.ajax({
-	        url: $('body').data('baseurl') + 'account/addEmail.json',
+	        url: orcidVar.baseUri + '/account/addEmail.json',
 	        type: 'POST',
 	        data:  angular.toJson($scope.inputEmail),
 	        contentType: 'application/json;charset=UTF-8',
@@ -913,7 +913,7 @@ function EmailEditCtrl($scope, $compile) {
 		var email = $scope.emailsPojo.emails[$scope.deleteEmailIdx];
 		$scope.deleteEmailIdx = null;
 		$.ajax({
-	        url: $('body').data('baseurl') + 'account/deleteEmail.json',
+	        url: orcidVar.baseUri + '/account/deleteEmail.json',
 	        type: 'DELETE',
 	        data:  angular.toJson(email),
 	        contentType: 'application/json;charset=UTF-8',
@@ -947,7 +947,7 @@ function EmailEditCtrl($scope, $compile) {
 function ExternalIdentifierCtrl($scope, $compile){		
 	$scope.getExternalIdentifiers = function(){
 		$.ajax({
-			url: $('body').data('baseurl') + 'my-orcid/externalIdentifiers.json',	        
+			url: orcidVar.baseUri + '/my-orcid/externalIdentifiers.json',	        
 	        dataType: 'json',
 	        success: function(data) {
 	        	$scope.externalIdentifiersPojo = data;
@@ -977,7 +977,7 @@ function ExternalIdentifierCtrl($scope, $compile){
 	$scope.removeExternalIdentifier = function() {
 		var externalIdentifier = $scope.externalIdentifiersPojo.externalIdentifiers[$scope.removeExternalIdentifierIndex];
 		$.ajax({
-	        url: $('body').data('baseurl') + 'my-orcid/externalIdentifiers.json',
+	        url: orcidVar.baseUri + '/my-orcid/externalIdentifiers.json',
 	        type: 'DELETE',
 	        data: angular.toJson(externalIdentifier),
 	        contentType: 'application/json;charset=UTF-8',
@@ -1006,7 +1006,7 @@ function ExternalIdentifierCtrl($scope, $compile){
 function ResetPasswordCtrl($scope, $compile) {
 	$scope.getResetPasswordForm = function(){
 		$.ajax({
-			url: $('body').data('baseurl') + 'password-reset.json',	        
+			url: orcidVar.baseUri + '/password-reset.json',	        
 	        dataType: 'json',
 	        success: function(data) {
 	        	console.log(angular.toJson(data));
@@ -1021,7 +1021,7 @@ function ResetPasswordCtrl($scope, $compile) {
 				
 	$scope.serverValidate = function () {
 		$.ajax({
-	        url: $('body').data('baseurl') + 'reset-password-form-validate.json',
+	        url: orcidVar.baseUri + '/reset-password-form-validate.json',
 	        type: 'POST',
 	        data:  angular.toJson($scope.resetPasswordForm),
 	        contentType: 'application/json;charset=UTF-8',
@@ -1064,7 +1064,7 @@ function RegistrationCtrl($scope, $compile) {
 		
 	$scope.getRegister = function(){
 		$.ajax({
-			url: $('body').data('baseurl') + 'register.json',	        
+			url: orcidVar.baseUri + '/register.json',	        
 	        dataType: 'json',
 	        success: function(data) {
 	       	$scope.register = data;
@@ -1100,8 +1100,8 @@ function RegistrationCtrl($scope, $compile) {
 	
 	$scope.getDuplicates = function(){
 		$.ajax({
-			//url: $('body').data('baseurl') + 'dupicateResearcher.json?familyNames=test&givenNames=test',	        
-			url: $('body').data('baseurl') + 'dupicateResearcher.json?familyNames=' + $scope.register.familyNames.value + '&givenNames=' + $scope.register.givenNames.value,	        
+			//url: orcidVar.baseUri + 'dupicateResearcher.json?familyNames=test&givenNames=test',	        
+			url: orcidVar.baseUri + '/dupicateResearcher.json?familyNames=' + $scope.register.familyNames.value + '&givenNames=' + $scope.register.givenNames.value,	        
 	        dataType: 'json',
 	        success: function(data) {
 		       	$scope.duplicates = data;
@@ -1135,7 +1135,7 @@ function RegistrationCtrl($scope, $compile) {
 	    	$scope.register.creationType.value = "Direct";
 		}
 	    $.ajax({
-	        url: $('body').data('baseurl') + 'register.json',
+	        url: orcidVar.baseUri + '/register.json',
 	        type: 'POST',
 	        data:  angular.toJson($scope.register),
 	        contentType: 'application/json;charset=UTF-8',
@@ -1157,7 +1157,7 @@ function RegistrationCtrl($scope, $compile) {
 	$scope.postRegisterConfirm = function () {
 		$scope.showProcessingColorBox();
 		$.ajax({
-	        url: $('body').data('baseurl') + 'registerConfirm.json',
+	        url: orcidVar.baseUri + '/registerConfirm.json',
 	        type: 'POST',
 	        data:  angular.toJson($scope.register),
 	        contentType: 'application/json;charset=UTF-8',
@@ -1183,7 +1183,7 @@ function RegistrationCtrl($scope, $compile) {
 	$scope.serverValidate = function (field) {
 		if (field === undefined) field = '';
 		$.ajax({
-	        url: $('body').data('baseurl') + 'register' + field + 'Validate.json',
+	        url: orcidVar.baseUri + '/register' + field + 'Validate.json',
 	        type: 'POST',
 	        data:  angular.toJson($scope.register),
 	        contentType: 'application/json;charset=UTF-8',
@@ -1315,7 +1315,7 @@ function ClaimCtrl($scope, $compile) {
 	$scope.serverValidate = function (field) {
 		if (field === undefined) field = '';
 		$.ajax({
-	        url: $('body').data('baseurl') + 'claim' + field + 'Validate.json',
+	        url: orcidVar.baseUri + '/claim' + field + 'Validate.json',
 	        type: 'POST',
 	        data:  angular.toJson($scope.register),
 	        contentType: 'application/json;charset=UTF-8',
@@ -1363,7 +1363,7 @@ function ClaimCtrl($scope, $compile) {
 function VerifyEmailCtrl($scope, $compile) {
 	$scope.getEmails = function() {		
 		$.ajax({
-	        url: $('body').data('baseurl') + 'account/emails.json',
+	        url: orcidVar.baseUri + '/account/emails.json',
 	        //type: 'POST',
 	        //data: $scope.emailsPojo, 
 	        dataType: 'json',
@@ -1400,7 +1400,7 @@ function VerifyEmailCtrl($scope, $compile) {
 	
 	$scope.verifyEmail = function() {
 		$.ajax({
-	        url: $('body').data('baseurl') + 'account/verifyEmail.json',
+	        url: orcidVar.baseUri + '/account/verifyEmail.json',
 	        type: 'get',
 	        data:  { "email": $scope.primaryEmail },
 	        contentType: 'application/json;charset=UTF-8',
@@ -1430,7 +1430,7 @@ function VerifyEmailCtrl($scope, $compile) {
 	
 	$scope.closeColorBox = function() {		
 		$.ajax({
-	        url: $('body').data('baseurl') + 'account/delayVerifyEmail.json',
+	        url: orcidVar.baseUri + '/account/delayVerifyEmail.json',
 	        type: 'get',
 	        contentType: 'application/json;charset=UTF-8',
 	        success: function(data) {
@@ -1469,7 +1469,7 @@ function ClaimThanks($scope, $compile) {
 	
 	$scope.getSourceGrantReadWizard = function(){
 		$.ajax({
-			url: $('body').data('baseurl') + 'my-orcid/sourceGrantReadWizard.json',	        
+			url: orcidVar.baseUri + '/my-orcid/sourceGrantReadWizard.json',	        
 	        dataType: 'json',
 	        success: function(data) {
 	        	$scope.sourceGrantReadWizard = data;
@@ -1636,7 +1636,7 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 			name: 'affiliationName',
 			limit: numOfResults,
 			remote: {
-				url: $('body').data('baseurl')+'affiliations/disambiguated/name/%QUERY?limit=' + numOfResults
+				url: orcidVar.baseUri+'/affiliations/disambiguated/name/%QUERY?limit=' + numOfResults
 			},
 			template: function (datum) {
 				   var forDisplay = 
@@ -1685,7 +1685,7 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 	
 	$scope.getDisambiguatedAffiliation = function(id) {
 		$.ajax({
-			url: $('body').data('baseurl') + 'affiliations/disambiguated/id/' + id,
+			url: orcidVar.baseUri + '/affiliations/disambiguated/id/' + id,
 	        dataType: 'json',
 	        type: 'GET',
 	        success: function(data) {
@@ -1712,7 +1712,7 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 		$scope.removeDisambiguatedAffiliation();
 		$scope.addAffType = type;
 		$.ajax({
-			url: $('body').data('baseurl') + 'affiliations/affiliation.json',
+			url: orcidVar.baseUri + '/affiliations/affiliation.json',
 			dataType: 'json',
 			success: function(data) {
 				$scope.editAffiliation = data;
@@ -1732,7 +1732,7 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 		$scope.addingAffiliation = true;
 		$scope.editAffiliation.errors.length = 0;
 		$.ajax({
-			url: $('body').data('baseurl') + 'affiliations/affiliation.json',
+			url: orcidVar.baseUri + '/affiliations/affiliation.json',
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        type: 'POST',
@@ -1800,7 +1800,7 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 	
 	$scope.serverValidate = function (relativePath) {
 		$.ajax({
-	        url: $('body').data('baseurl') + relativePath,
+	        url: orcidVar.baseUri + '/' + relativePath,
 	        type: 'POST',
 	        data:  angular.toJson($scope.editAffiliation),
 	        contentType: 'application/json;charset=UTF-8',
@@ -1886,7 +1886,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	$scope.addFundingModal = function(type){
 		$scope.removeDisambiguatedFunding();
 		$.ajax({
-			url: $('body').data('baseurl') + 'fundings/funding.json',
+			url: orcidVar.baseUri + '/fundings/funding.json',
 			dataType: 'json',
 			success: function(data) {						
 				$scope.$apply(function() {
@@ -1917,7 +1917,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 		$scope.addingFunding = true;		
 		$scope.editFunding.errors.length = 0;
 		$.ajax({
-			url: $('body').data('baseurl') + 'fundings/funding.json',
+			url: orcidVar.baseUri + '/fundings/funding.json',
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        type: 'POST',
@@ -1969,7 +1969,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 			limit: numOfResults,
 			remote: {
 				replace: function () {
-                    var q = $('body').data('baseurl')+'fundings/disambiguated/name/';
+                    var q = orcidVar.baseUri+'/fundings/disambiguated/name/';
                     if ($('#fundingName').val()) {
                         q += encodeURIComponent($('#fundingName').val());
                     }
@@ -2023,7 +2023,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	
 	$scope.getDisambiguatedFunding = function(id) {
 		$.ajax({
-			url: $('body').data('baseurl') + 'fundings/disambiguated/id/' + id,
+			url: orcidVar.baseUri + '/fundings/disambiguated/id/' + id,
 	        dataType: 'json',
 	        type: 'GET',
 	        success: function(data) {
@@ -2091,7 +2091,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	// Server validations
 	$scope.serverValidate = function (relativePath) {		
 		$.ajax({
-	        url: $('body').data('baseurl') + relativePath,
+	        url: orcidVar.baseUri + '/' + relativePath,
 	        type: 'POST',
 	        data:  angular.toJson($scope.editFunding),
 	        contentType: 'application/json;charset=UTF-8',
@@ -2234,7 +2234,7 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 			$scope.worksSrvc.loading = true;
 			var workIds = $scope.worksToAddIds.splice(0,20).join();
 			$.ajax({
-				url: $('body').data('baseurl') + orcidVar.orcidId +'/works.json?workIds=' + workIds,
+				url: orcidVar.baseUri + '/' + orcidVar.orcidId +'/works.json?workIds=' + workIds,
 				dataType: 'json',
 				success: function(data) {
 					$scope.$apply(function(){ 
@@ -2304,7 +2304,7 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 		$(event.target).next().css('display','inline');		
 		if($scope.worksInfo[putCode] == null) {		
 			$.ajax({
-				url: $('body').data('baseurl') + orcidVar.orcidId + '/getWorkInfo.json?workId=' + putCode,	        
+				url: orcidVar.baseUri + '/' + orcidVar.orcidId + '/getWorkInfo.json?workId=' + putCode,	        
 		        dataType: 'json',
 		        success: function(data) {		        	
 		        	$scope.$apply(function () {
@@ -2388,7 +2388,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	
 	$scope.addWorkModal = function(){
 		$.ajax({
-			url: $('body').data('baseurl') + 'works/work.json',
+			url: orcidVar.baseUri + '/works/work.json',
 			dataType: 'json',
 			success: function(data) {
 				$scope.editWork = data;
@@ -2407,7 +2407,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		$scope.addingWork = true;
 		$scope.editWork.errors.length = 0;
 		$.ajax({
-			url: $('body').data('baseurl') + 'works/work.json',	        
+			url: orcidVar.baseUri + '/works/work.json',	        
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        type: 'POST',
@@ -2455,7 +2455,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 			$scope.worksSrvc.loading = true;
 			var workIds = $scope.worksToAddIds.splice(0,20).join();
 			$.ajax({
-				url: $('body').data('baseurl') + 'works/works.json?workIds=' + workIds,
+				url: orcidVar.baseUri + '/works/works.json?workIds=' + workIds,
 				dataType: 'json',
 				success: function(data) {
 					$scope.$apply(function(){ 
@@ -2492,7 +2492,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		$scope.works.length = 0;
 		//get work ids
 		$.ajax({
-			url: $('body').data('baseurl') + 'works/workIds.json',	        
+			url: orcidVar.baseUri + '/works/workIds.json',	        
 	        dataType: 'json',
 	        success: function(data) {
 	        	$scope.worksToAddIds = data;
@@ -2541,7 +2541,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		$(event.target).next().css('display','inline');	
 		if($scope.worksInfo[putCode] == null) {		
 			$.ajax({
-				url: $('body').data('baseurl') + 'works/getWorkInfo.json?workId=' + putCode,	        
+				url: orcidVar.baseUri + '/works/getWorkInfo.json?workId=' + putCode,	        
 		        dataType: 'json',
 		        success: function(data) {
 		        	
@@ -2619,7 +2619,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	
 	$scope.removeWork = function(work) {
 		$.ajax({
-	        url: $('body').data('baseurl') + 'works/works.json',
+	        url: orcidVar.baseUri + '/works/works.json',
 	        type: 'DELETE',
 	        data: angular.toJson(work),
 	        contentType: 'application/json;charset=UTF-8',
@@ -2653,7 +2653,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	
 	$scope.serverValidate = function (relativePath) {
 		$.ajax({
-	        url: $('body').data('baseurl') + relativePath,
+	        url: orcidVar.baseUri + '/' + relativePath,
 	        type: 'POST',
 	        data:  angular.toJson($scope.editWork),
 	        contentType: 'application/json;charset=UTF-8',
@@ -2705,7 +2705,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 			}
 		}
 		$.ajax({
-	        url: $('body').data('baseurl') + 'works/profileWork.json',
+	        url: orcidVar.baseUri + '/works/profileWork.json',
 	        type: 'PUT',
 	        data: angular.toJson(work),
 	        contentType: 'application/json;charset=UTF-8',
@@ -2724,7 +2724,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	$scope.loadWorkTypes = function(){			
 		if($scope.editWork.workCategory.value != null && $scope.editWork.workCategory.value != ""){
 			$.ajax({
-		        url: $('body').data('baseurl') + 'works/loadWorkTypes.json?workCategory=' + $scope.editWork.workCategory.value,
+		        url: orcidVar.baseUri + '/works/loadWorkTypes.json?workCategory=' + $scope.editWork.workCategory.value,
 		        type: 'POST',	        
 		        contentType: 'application/json;charset=UTF-8',
 		        dataType: 'json',
@@ -2947,7 +2947,7 @@ function DelegatesCtrl($scope, $compile){
 	$scope.addDelegate = function() {
 		$scope.results.splice($scope.delegateIdx, 1);
 		$.ajax({
-	        url: $('body').data('baseurl') + 'account/addDelegate.json',
+	        url: orcidVar.baseUri + '/account/addDelegate.json',
 	        type: 'POST',
 	        data: $scope.delegateToAdd,
 	        contentType: 'application/json;charset=UTF-8',
@@ -2973,7 +2973,7 @@ function DelegatesCtrl($scope, $compile){
 
 	$scope.revoke = function () {
 		$.ajax({
-	        url: $('body').data('baseurl') + 'account/revokeDelegate.json',
+	        url: orcidVar.baseUri + '/account/revokeDelegate.json',
 	        type: 'DELETE',
 	        data:  $scope.delegateToRevoke,
 	        contentType: 'application/json;charset=UTF-8',
@@ -2990,7 +2990,7 @@ function DelegatesCtrl($scope, $compile){
 	
 	$scope.getDelegates = function() {
 		$.ajax({
-	        url: $('body').data('baseurl') + 'account/delegates.json',
+	        url: orcidVar.baseUri + '/account/delegates.json',
 	        dataType: 'json',
 	        success: function(data) {
 	        	$scope.delegation = data;
@@ -3016,7 +3016,7 @@ function DelegatorsCtrl($scope, $compile){
 	
 	$scope.getDelegators = function() {
 		$.ajax({
-	        url: $('body').data('baseurl') + 'account/delegates.json',
+	        url: orcidVar.baseUri + '/account/delegates.json',
 	        dataType: 'json',
 	        success: function(data) {
 	        	$scope.delegation = data;
@@ -3029,13 +3029,13 @@ function DelegatorsCtrl($scope, $compile){
 	};
 	
 	$scope.selectDelegator = function(datum) {
-		window.location.href = $('body').data('baseurl') + 'switch-user?j_username=' + datum.orcid;
+		window.location.href = orcidVar.baseUri + '/switch-user?j_username=' + datum.orcid;
 	};
 	
 	$("#delegatorsSearch").typeahead({
 		name: 'delegatorsSearch',
 		remote: {
-			url: $('body').data('baseurl')+'delegators/search/%QUERY?limit=' + 10
+			url: orcidVar.baseUri+'/delegators/search/%QUERY?limit=' + 10
 		},
 		template: function (datum) {
 			   var forDisplay = 
@@ -3065,7 +3065,7 @@ function SwitchUserCtrl($scope, $compile, $document){
 	
 	$scope.getDelegates = function() {
 		$.ajax({
-	        url: $('body').data('baseurl') + 'account/delegates.json',
+	        url: orcidVar.baseUri + '/account/delegates.json',
 	        dataType: 'json',
 	        success: function(data) {
 	        	$scope.delegation = data;
@@ -3084,246 +3084,11 @@ function SwitchUserCtrl($scope, $compile, $document){
 		});
 };
 
-function ClientEditCtrl($scope, $compile){	
-	$scope.clients = [];
-	$scope.newClient = null;	
-	$scope.scopeSelectorOpen = false;		
-	$scope.selectedScopes = [];
-	$scope.availableRedirectScopes = [];
-	
-	// Get the list of clients associated with this user
-	$scope.getClients = function(){
-		$.ajax({
-	        url: $('body').data('baseurl') + 'group/developer-tools/get-clients.json',
-	        dataType: 'json',
-	        success: function(data) {	        	        					
-				$scope.$apply(function(){
-					$scope.clients = data;      		
-				});
-	        }
-	    }).fail(function() { 
-	    	alert("Error fetching clients.");
-	    	console.log("Error fetching clients.");
-	    });				
-	};		
-	
-	// Get an empty modal to add
-	$scope.addClient = function(){		
-		$.ajax({
-			url: $('body').data('baseurl') + 'group/developer-tools/client.json',
-			dataType: 'json',
-			success: function(data) {
-				$scope.newClient = data;
-				console.log(data);
-				$scope.$apply(function() {
-					$scope.showNewClientModal();
-				});
-			}
-		}).fail(function() { 
-	    	console.log("Error fetching client");
-	    });
-	};
-	
-	// Display the modal to add a new client
-	$scope.showNewClientModal = function(){
-		$.colorbox({        	            
-            html : $compile($('#new-client-modal').html())($scope), 
-            transition: 'fade',
-            onLoad: function() {
-			    $('#cboxClose').remove();
-			},
-	        scrolling: true
-        });
-        $.colorbox.resize({width:"400px" , height:"450px"});
-	};
-	
-	// Add a new uri input field to a new client
-	$scope.addUriToNewClientTable = function(){		
-		$scope.newClient.redirectUris.push({value: {value: ''},type: {value: 'default'}, scopes: []});	
-	};
-	
-	// Add a new uri input field to a existing client
-	$scope.addUriToExistingClientTable = function(){
-		$scope.clientToEdit.redirectUris.push({value: {value: ''},type: {value: 'default'}, scopes: []});
-	};
-	
-	// Display the modal to edit a client
-	$scope.editClient = function(idx) {		
-		// Copy the client to edit to a scope variable 
-		$scope.clientToEdit = angular.copy($scope.clients[idx]);		
-		$.colorbox({        	            
-            html : $compile($('#edit-client-modal').html())($scope), 
-            transition: 'fade',            
-	        onLoad: function() {
-			    $('#cboxClose').remove();
-			},
-	        scrolling: true
-        });		
-        $.colorbox.resize({width:"400px" , height:"450px"});   
-	};		
-	
-	// Display client details: Client ID and Client secret
-	$scope.viewDetails = function(idx){
-		$scope.clientDetails = $scope.clients[idx];
-		$.colorbox({        	            
-            html : $compile($('#view-details-modal').html())($scope),
-	        scrolling: true,
-	        onLoad: function() {
-			    $('#cboxClose').remove();
-			},
-			scrolling: true
-        });
-		
-        $.colorbox.resize({width:"560px" , height:"275px"});
-        
-	};
-	
-	$scope.closeModal = function(){
-		$.colorbox.close();	
-	};
-	
-	
-	// Delete an uri input field 
-	$scope.deleteUri = function(idx){
-		$scope.clientToEdit.redirectUris.splice(idx, 1);
-	};		
-	
-	// Delete an uri input field 
-	$scope.deleteJustCreatedUri = function(idx){
-		$scope.newClient.redirectUris.splice(idx, 1);
-	};	
-	
-	//Submits the client update request
-	$scope.submitEditClient = function(){				
-		// Check which redirect uris are empty strings and remove them from the array
-		for(var j = $scope.clientToEdit.length - 1; j >= 0 ; j--)	{
-			if(!$scope.clientToEdit.redirectUris[j].value){
-				$scope.clientToEdit.redirectUris.splice(j, 1);
-			}
-		}				
-		
-		//Submit the update request
-		$.ajax({
-	        url: $('body').data('baseurl') + 'group/developer-tools/edit-client.json',
-	        type: 'POST',
-	        data: angular.toJson($scope.clientToEdit),
-	        contentType: 'application/json;charset=UTF-8',
-	        dataType: 'json',
-	        success: function(data) {
-	        	if(data.errors != null && data.errors.length > 0){
-	        		$scope.clientToEdit = data;
-	        		$scope.$apply();
-	        	} else {
-	        		//If everything worked fine, reload the list of clients
-        			$scope.getClients();
-        			$.colorbox.close();
-	        	} 
-	        }
-	    }).fail(function() { 
-	    	alert("An error occured updating the client");
-	    	console.log("Error updating client information.");
-	    });				
-	};
-	
-	//Submits the new client request
-	$scope.submitAddClient = function(){		
-		// Check which redirect uris are empty strings and remove them from the array
-		for(var j = $scope.newClient.redirectUris.length - 1; j >= 0 ; j--)	{
-			if(!$scope.newClient.redirectUris[j].value){
-				$scope.newClient.redirectUris.splice(j, 1);
-			}
-		}
-		
-		//Submit the new client request
-		$.ajax({
-	        url: $('body').data('baseurl') + 'group/developer-tools/add-client.json',
-	        type: 'POST',
-	        data: angular.toJson($scope.newClient),
-	        contentType: 'application/json;charset=UTF-8',
-	        dataType: 'json',
-	        success: function(data) {	        	
-	        	if(data.errors != null && data.errors.length > 0){
-	        		$scope.newClient = data;
-	        		$scope.$apply();
-	        	} else {
-	        		//If everything worked fine, reload the list of clients
-	        		$scope.getClients();
-	        		$.colorbox.close();
-	        	}
-	        }
-	    }).fail(function() { 
-	    	console.log("Error creating client information.");
-	    });		
-	};
-	
-	//Load the list of scopes for client redirect uris 
-	$scope.loadAvailableScopes = function(){
-		console.log("looking for available scopes");
-		$.ajax({
-	        url: $('body').data('baseurl') + 'group/developer-tools/get-available-scopes.json',
-	        type: 'GET',
-	        contentType: 'application/json;charset=UTF-8',
-	        dataType: 'json',
-	        success: function(data) {	        	
-	        	$scope.availableRedirectScopes = data;
-	        	console.log($scope.availableRedirectScopes);
-	        }
-	    }).fail(function() { 
-	    	console.log("Unable to fetch redirect uri scopes.");
-	    });		
-	};
-			
-	//Load the default scopes based n the redirect uri type selected
-	$scope.loadDefaultScopes = function(rUri) {
-		//If the scopes are empty, fill it with the default scopes
-		if(rUri.scopes.length == 0) {
-			if(rUri.type.value == 'grant-read-wizard'){
-				rUri.scopes.push('/orcid-profile/read-limited');
-			} else if (rUri.type.value == 'import-works-wizard'){
-				rUri.scopes.push('/orcid-profile/read-limited');
-				rUri.scopes.push('/orcid-works/create');
-			} else if (rUri.type.value == 'import-funding-wizard'){
-				rUri.scopes.push('/orcid-profile/read-limited');
-				rUri.scopes.push('/funding/create');
-			}  
-		}
-	};		
-
-	//Mark an item as selected
-	$scope.setSelectedItem = function(rUri){
-	    var scope = this.scope;
-	    if (jQuery.inArray( scope, rUri.scopes ) == -1) {
-	    	rUri.scopes.push(scope);
-	    } else {
-	    	rUri.scopes = jQuery.grep(rUri.scopes, function(value) {
-	            return value != scope;
-	          });
-	    }
-	    console.log(rUri.scopes);
-	    return false;
-	};
-	
-	//Checks if an item is selected, if so, returns the css classes that might 
-	//be applied to the object
-	$scope.isChecked = function (rUri) { 
-		var scope = this.scope;
-		if (jQuery.inArray( scope, rUri.scopes ) != -1) {
-	        return 'glyphicon glyphicon-ok pull-right';
-	    }
-	    return false;
-	};
-	
-	//init
-	$scope.getClients();
-	$scope.loadAvailableScopes();
-	
-};
-
 function statisticCtrl($scope){	
 	$scope.liveIds = 0;	
 	$scope.getLiveIds = function(){
 		$.ajax({
-	        url: $('body').data('baseurl')+'statistics/liveids.json',	        
+	        url: orcidVar.baseUri+'/statistics/liveids.json',	        
 	        type: 'GET',
 	        dataType: 'html',
 	        success: function(data){
@@ -4140,7 +3905,7 @@ function SSOPreferencesCtrl($scope, $compile) {
 	// Get an empty modal to add
 	$scope.createCredentialsModal = function(){		
 		$.ajax({
-			url: $('body').data('baseurl') + '/developer-tools/get-empty-sso-credential.json',
+			url: orcidVar.baseUri + '/developer-tools/get-empty-sso-credential.json',
 			dataType: 'json',
 			success: function(data) {
 				$scope.userCredentials = data;
@@ -4280,3 +4045,237 @@ function SSOPreferencesCtrl($scope, $compile) {
 	$scope.getSSOCredentials();	
 };
 
+function ClientEditCtrl($scope, $compile){	
+	$scope.clients = [];
+	$scope.newClient = null;	
+	$scope.scopeSelectorOpen = false;		
+	$scope.selectedScopes = [];
+	$scope.availableRedirectScopes = [];
+	
+	// Get the list of clients associated with this user
+	$scope.getClients = function(){
+		$.ajax({
+	        url: orcidVar.baseUri + '/group/developer-tools/get-clients.json',
+	        dataType: 'json',
+	        success: function(data) {	        	        					
+				$scope.$apply(function(){
+					$scope.clients = data;      		
+				});
+	        }
+	    }).fail(function() { 
+	    	alert("Error fetching clients.");
+	    	console.log("Error fetching clients.");
+	    });				
+	};		
+	
+	// Get an empty modal to add
+	$scope.addClient = function(){		
+		$.ajax({
+			url: orcidVar.baseUri + '/group/developer-tools/client.json',
+			dataType: 'json',
+			success: function(data) {
+				$scope.newClient = data;
+				console.log(data);
+				$scope.$apply(function() {
+					$scope.showNewClientModal();
+				});
+			}
+		}).fail(function() { 
+	    	console.log("Error fetching client");
+	    });
+	};
+	
+	// Display the modal to add a new client
+	$scope.showNewClientModal = function(){
+		$.colorbox({        	            
+            html : $compile($('#new-client-modal').html())($scope), 
+            transition: 'fade',
+            onLoad: function() {
+			    $('#cboxClose').remove();
+			},
+	        scrolling: true
+        });
+        $.colorbox.resize({width:"400px" , height:"450px"});
+	};
+	
+	// Add a new uri input field to a new client
+	$scope.addUriToNewClientTable = function(){		
+		$scope.newClient.redirectUris.push({value: {value: ''},type: {value: 'default'}, scopes: []});	
+	};
+	
+	// Add a new uri input field to a existing client
+	$scope.addUriToExistingClientTable = function(){
+		$scope.clientToEdit.redirectUris.push({value: {value: ''},type: {value: 'default'}, scopes: []});
+	};
+	
+	// Display the modal to edit a client
+	$scope.editClient = function(idx) {		
+		// Copy the client to edit to a scope variable 
+		$scope.clientToEdit = angular.copy($scope.clients[idx]);		
+		$.colorbox({        	            
+            html : $compile($('#edit-client-modal').html())($scope), 
+            transition: 'fade',            
+	        onLoad: function() {
+			    $('#cboxClose').remove();
+			},
+	        scrolling: true
+        });		
+        $.colorbox.resize({width:"400px" , height:"450px"});   
+	};		
+	
+	// Display client details: Client ID and Client secret
+	$scope.viewDetails = function(idx){
+		$scope.clientDetails = $scope.clients[idx];
+		$.colorbox({        	            
+            html : $compile($('#view-details-modal').html())($scope),
+	        scrolling: true,
+	        onLoad: function() {
+			    $('#cboxClose').remove();
+			},
+			scrolling: true
+        });
+		
+        $.colorbox.resize({width:"560px" , height:"275px"});
+        
+	};
+	
+	$scope.closeModal = function(){
+		$.colorbox.close();	
+	};
+	
+	
+	// Delete an uri input field 
+	$scope.deleteUri = function(idx){
+		$scope.clientToEdit.redirectUris.splice(idx, 1);
+	};		
+	
+	// Delete an uri input field 
+	$scope.deleteJustCreatedUri = function(idx){
+		$scope.newClient.redirectUris.splice(idx, 1);
+	};	
+	
+	//Submits the client update request
+	$scope.submitEditClient = function(){				
+		// Check which redirect uris are empty strings and remove them from the array
+		for(var j = $scope.clientToEdit.length - 1; j >= 0 ; j--)	{
+			if(!$scope.clientToEdit.redirectUris[j].value){
+				$scope.clientToEdit.redirectUris.splice(j, 1);
+			}
+		}				
+		
+		//Submit the update request
+		$.ajax({
+	        url: orcidVar.baseUri + '/group/developer-tools/edit-client.json',
+	        type: 'POST',
+	        data: angular.toJson($scope.clientToEdit),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	if(data.errors != null && data.errors.length > 0){
+	        		$scope.clientToEdit = data;
+	        		$scope.$apply();
+	        	} else {
+	        		//If everything worked fine, reload the list of clients
+        			$scope.getClients();
+        			$.colorbox.close();
+	        	} 
+	        }
+	    }).fail(function() { 
+	    	alert("An error occured updating the client");
+	    	console.log("Error updating client information.");
+	    });				
+	};
+	
+	//Submits the new client request
+	$scope.submitAddClient = function(){		
+		// Check which redirect uris are empty strings and remove them from the array
+		for(var j = $scope.newClient.redirectUris.length - 1; j >= 0 ; j--)	{
+			if(!$scope.newClient.redirectUris[j].value){
+				$scope.newClient.redirectUris.splice(j, 1);
+			}
+		}
+		
+		//Submit the new client request
+		$.ajax({
+	        url: orcidVar.baseUri + '/group/developer-tools/add-client.json',
+	        type: 'POST',
+	        data: angular.toJson($scope.newClient),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {	        	
+	        	if(data.errors != null && data.errors.length > 0){
+	        		$scope.newClient = data;
+	        		$scope.$apply();
+	        	} else {
+	        		//If everything worked fine, reload the list of clients
+	        		$scope.getClients();
+	        		$.colorbox.close();
+	        	}
+	        }
+	    }).fail(function() { 
+	    	console.log("Error creating client information.");
+	    });		
+	};
+	
+	//Load the list of scopes for client redirect uris 
+	$scope.loadAvailableScopes = function(){
+		console.log("looking for available scopes");
+		$.ajax({
+	        url: orcidVar.baseUri + '/group/developer-tools/get-available-scopes.json',
+	        type: 'GET',
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {	        	
+	        	$scope.availableRedirectScopes = data;
+	        	console.log($scope.availableRedirectScopes);
+	        }
+	    }).fail(function() { 
+	    	console.log("Unable to fetch redirect uri scopes.");
+	    });		
+	};
+			
+	//Load the default scopes based n the redirect uri type selected
+	$scope.loadDefaultScopes = function(rUri) {
+		//If the scopes are empty, fill it with the default scopes
+		if(rUri.scopes.length == 0) {
+			if(rUri.type.value == 'grant-read-wizard'){
+				rUri.scopes.push('/orcid-profile/read-limited');
+			} else if (rUri.type.value == 'import-works-wizard'){
+				rUri.scopes.push('/orcid-profile/read-limited');
+				rUri.scopes.push('/orcid-works/create');
+			} else if (rUri.type.value == 'import-funding-wizard'){
+				rUri.scopes.push('/orcid-profile/read-limited');
+				rUri.scopes.push('/funding/create');
+			}  
+		}
+	};		
+
+	//Mark an item as selected
+	$scope.setSelectedItem = function(rUri){
+	    var scope = this.scope;
+	    if (jQuery.inArray( scope, rUri.scopes ) == -1) {
+	    	rUri.scopes.push(scope);
+	    } else {
+	    	rUri.scopes = jQuery.grep(rUri.scopes, function(value) {
+	            return value != scope;
+	          });
+	    }
+	    console.log(rUri.scopes);
+	    return false;
+	};
+	
+	//Checks if an item is selected, if so, returns the css classes that might 
+	//be applied to the object
+	$scope.isChecked = function (rUri) { 
+		var scope = this.scope;
+		if (jQuery.inArray( scope, rUri.scopes ) != -1) {
+	        return 'glyphicon glyphicon-ok pull-right';
+	    }
+	    return false;
+	};
+	
+	//init
+	$scope.getClients();
+	$scope.loadAvailableScopes();
+	
+};

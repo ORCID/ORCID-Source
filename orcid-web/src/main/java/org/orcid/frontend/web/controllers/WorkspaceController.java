@@ -299,7 +299,7 @@ public class WorkspaceController extends BaseWorkspaceController {
      * Retrieve all external identifiers as a json string
      * */
     @SuppressWarnings("unchecked")
-    @RequestMapping(value = "/externalIdentifiers.json", method = RequestMethod.GET)
+    @RequestMapping(value = "/my-orcid/externalIdentifiers.json", method = RequestMethod.GET)
     public @ResponseBody
     org.orcid.pojo.ExternalIdentifiers getExternalIdentifiersJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
         OrcidProfile currentProfile = getEffectiveProfile();
@@ -309,7 +309,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         return externalIdentifiers;
     }
 
-    @RequestMapping(value = "/sourceGrantReadWizard.json", method = RequestMethod.GET)
+    @RequestMapping(value = "/my-orcid/sourceGrantReadWizard.json", method = RequestMethod.GET)
     public @ResponseBody
     ThirdPartyRedirect getSourceGrantReadWizard() {
         ThirdPartyRedirect tpr = new ThirdPartyRedirect();
@@ -358,7 +358,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     /**
      * Updates the list of external identifiers assigned to a user
      * */
-    @RequestMapping(value = "/externalIdentifiers.json", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/my-orcid/externalIdentifiers.json", method = RequestMethod.DELETE)
     public @ResponseBody
     org.orcid.pojo.ExternalIdentifier removeExternalIdentifierJson(HttpServletRequest request, @RequestBody org.orcid.pojo.ExternalIdentifier externalIdentifier) {
         List<String> errors = new ArrayList<String>();
