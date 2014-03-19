@@ -19,6 +19,7 @@ package org.orcid.frontend.web.controllers;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -57,12 +58,25 @@ public class OauthConfirmAccessController extends BaseController {
         if (clientProfile.getOrcidBio() != null && clientProfile.getOrcidBio().getPersonalDetails() != null
                 && clientProfile.getOrcidBio().getPersonalDetails().getCreditName() != null)
             client_name = clientProfile.getOrcidBio().getPersonalDetails().getCreditName().getContent();
-        if (clientProfile.getOrcidInternal() != null && clientProfile.getOrcidInternal().getGroupOrcidIdentifier() != null) {
+                
+        //If the client name is empty, it is probably a user using the SSO interface, so, use the given and familiy name
+        if(StringUtils.isBlank(client_name)){
+            String familyName = clientProfile.getOrcidBio().getPersonalDetails().getFamilyName() == null ? "" : clientProfile.getOrcidBio().getPersonalDetails().getFamilyName().getContent();
+            String givenName = clientProfile.getOrcidBio().getPersonalDetails().getGivenNames() == null ? "" : clientProfile.getOrcidBio().getPersonalDetails().getGivenNames().getContent();
+            client_name = familyName + givenName;
+        }
+        
+        if (clientProfile.getOrcidInternal() != null && clientProfile.getOrcidInternal().getGroupOrcidIdentifier() != null && StringUtils.isNotBlank(clientProfile.getOrcidInternal().getGroupOrcidIdentifier().getPath())) {
             String client_group_id = clientProfile.getOrcidInternal().getGroupOrcidIdentifier().getPath();
             OrcidProfile clientGroupProfile = orcidProfileManager.retrieveOrcidProfile(client_group_id);
             if (clientGroupProfile.getOrcidBio() != null && clientGroupProfile.getOrcidBio().getPersonalDetails() != null
                     && clientGroupProfile.getOrcidBio().getPersonalDetails().getCreditName() != null)
                 client_group_name = clientGroupProfile.getOrcidBio().getPersonalDetails().getCreditName().getContent();
+        }
+        
+        //If the group name is empty, use the same as the client name, since it should be a SSO user 
+        if(StringUtils.isBlank(client_group_name)) {
+            client_group_name = client_name;
         }
 
         mav.addObject("client_name", client_name);
