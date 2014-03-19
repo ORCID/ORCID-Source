@@ -24,6 +24,7 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.orcid.frontend.web.forms.LoginForm;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
@@ -71,12 +72,28 @@ public class LoginController extends BaseController {
                     if (clientProfile.getOrcidBio() != null && clientProfile.getOrcidBio().getPersonalDetails() != null
                             && clientProfile.getOrcidBio().getPersonalDetails().getCreditName() != null)
                         client_name = clientProfile.getOrcidBio().getPersonalDetails().getCreditName().getContent();
-                    if (clientProfile.getOrcidInternal() != null && clientProfile.getOrcidInternal().getGroupOrcidIdentifier() != null) {
+                    //If the client name is empty, it is probably a user using the SSO interface, so, use the given and familiy name
+                    if(StringUtils.isBlank(client_name)){
+                        String familyName = clientProfile.getOrcidBio().getPersonalDetails().getFamilyName() == null ? "" : clientProfile.getOrcidBio().getPersonalDetails().getFamilyName().getContent();
+                        String givenName = clientProfile.getOrcidBio().getPersonalDetails().getGivenNames() == null ? "" : clientProfile.getOrcidBio().getPersonalDetails().getGivenNames().getContent();
+                        client_name = familyName + givenName;
+                    }
+                    
+                    
+                    
+                    //Get the group credit name
+                    if (clientProfile.getOrcidInternal() != null && clientProfile.getOrcidInternal().getGroupOrcidIdentifier() != null && StringUtils.isNotBlank(clientProfile.getOrcidInternal().getGroupOrcidIdentifier().getPath())) {
                         String client_group_id = clientProfile.getOrcidInternal().getGroupOrcidIdentifier().getPath();
+                        if(StringUtils.isNotBlank(client_group_id)) {
                         OrcidProfile clientGroupProfile = orcidProfileManager.retrieveOrcidProfile(client_group_id);
                         if (clientGroupProfile.getOrcidBio() != null && clientGroupProfile.getOrcidBio().getPersonalDetails() != null
                                 && clientGroupProfile.getOrcidBio().getPersonalDetails().getCreditName() != null)
                             client_group_name = clientGroupProfile.getOrcidBio().getPersonalDetails().getCreditName().getContent();
+                        }
+                    } 
+                    //If the group name is empty, use the same as the client name, since it should be a SSO user 
+                    if(StringUtils.isBlank(client_group_name)) {
+                        client_group_name = client_name;
                     }
                 }
             }
