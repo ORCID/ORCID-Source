@@ -111,10 +111,16 @@
 		<span><@orcid.msg 'manage.developer_tools.view.instructions'/></span>
 		<br />
 		<br />
-		<span><strong><@orcid.msg 'manage.developer_tools.view.secret'/></strong></span>
-		<span>{{userCredentials.clientSecret.value}}</span><br />
+		<div class="row">
+			<span class="col-xs-12 col-md-3"><strong><@orcid.msg 'manage.developer_tools.view.orcid'/></strong></span>
+			<span class="col-xs-12 col-md-9">{{userCredentials.clientOrcid.value}}</span><br />
+		</div>
 		
-		
+		<div class="row">
+			<span class="col-xs-12 col-md-3"><strong><@orcid.msg 'manage.developer_tools.view.secret'/></strong></span>
+			<span class="col-xs-12 col-md-9">{{userCredentials.clientSecret.value}}</span><br />
+		</div>
+		<br />
 		<span><strong><@orcid.msg 'manage.developer_tools.view.redirect_uri'/>:</strong></span><br />
 		<div class="control-group" ng-repeat='rUri in userCredentials.redirectUris'>									
 			<div style="padding-left:10px;">
