@@ -3968,7 +3968,7 @@ function SSOPreferencesCtrl($scope, $compile) {
 			}
 		});
 		
-		$.colorbox.resize({width:"510px" , height:"350px"});
+		$.colorbox.resize({width:"550px" , height:"350px"});
 	};
 	
 	$scope.showRevokeModal = function() {		

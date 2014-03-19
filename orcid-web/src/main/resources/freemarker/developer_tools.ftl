@@ -122,11 +122,12 @@
 		</div>
 		<br />
 		<span><strong><@orcid.msg 'manage.developer_tools.view.redirect_uri'/>:</strong></span><br />
-		<div class="control-group" ng-repeat='rUri in userCredentials.redirectUris'>									
-			<div style="padding-left:10px;">
-				{{rUri.value.value}}<br />									
+		<div class="row">												
+			<div class="col-xs-12 col-md-12" ng-repeat='rUri in userCredentials.redirectUris'>
+				<a href="{{rUri.value.value}}">{{rUri.value.value}}</a>									
 			</div>
 		</div>
+		<br />
 		<a href="" ng-click="closeModal()"><@orcid.msg 'manage.developer_tools.close'/></a>
 	</div>
 </script>	
