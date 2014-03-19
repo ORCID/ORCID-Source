@@ -358,7 +358,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     /**
      * Updates the list of external identifiers assigned to a user
      * */
-    @RequestMapping(value = "/externalIdentifiers.json", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/my-orcid/externalIdentifiers.json", method = RequestMethod.DELETE)
     public @ResponseBody
     org.orcid.pojo.ExternalIdentifier removeExternalIdentifierJson(HttpServletRequest request, @RequestBody org.orcid.pojo.ExternalIdentifier externalIdentifier) {
         List<String> errors = new ArrayList<String>();
