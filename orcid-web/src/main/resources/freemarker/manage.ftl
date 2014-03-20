@@ -404,11 +404,11 @@
 					</thead>
 					<tbody>
 						<tr ng-repeat='result in results' class="new-search-result">
-							<td class='search-result-orcid-id'><a href="{{result['orcid-profile']['orcid-id']}}">{{result['orcid-profile'].orcid.value}}</td>
+							<td class='search-result-orcid-id'><a href="{{result['orcid-profile']['orcid-identifier'].uri}}">{{result['orcid-profile']['orcid-identifier'].path}}</td>
 							<td>{{result['orcid-profile']['orcid-bio']['personal-details']['given-names'].value}}</td>
 							<td>{{result['orcid-profile']['orcid-bio']['personal-details']['family-name'].value}}</td>
 							<td>{{concatPropertyValues(result['orcid-profile']['orcid-bio']['affiliations'], 'affiliation-name')}}</td>
-							<td><span ng-click="confirmAddDelegate(result['orcid-profile']['orcid-bio']['personal-details']['given-names'].value + ' ' + result['orcid-profile']['orcid-bio']['personal-details']['family-name'].value, result['orcid-profile']['orcid']['value'], $index)" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span></td>
+							<td><span ng-click="confirmAddDelegate(result['orcid-profile']['orcid-bio']['personal-details']['given-names'].value + ' ' + result['orcid-profile']['orcid-bio']['personal-details']['family-name'].value, result['orcid-profile']['orcid-identifier'].path, $index)" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span></td>
 						</tr>
 					</tbody>
 				</table>
