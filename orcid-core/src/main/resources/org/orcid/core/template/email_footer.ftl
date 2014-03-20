@@ -16,4 +16,4 @@
     =============================================================================
 
 -->
-<@emailMacros.msg "email.common.email.preferences" />${baseUri}/account<@emailMacros.msg "email.common.privacy_policy" />${baseUri}/privacy-policy<@emailMacros.msg "email.common.privacy_policy_2"/><@emailMacros.msg "email.common.address" />${baseUri}
+<@emailMacros.msg "email.common.email.preferences" /> ${baseUri}/account <@emailMacros.msg "email.common.privacy_policy" /> ${baseUri}/privacy-policy <@emailMacros.msg "email.common.privacy_policy_2"/><@emailMacros.msg "email.common.address" /> ${baseUri}
