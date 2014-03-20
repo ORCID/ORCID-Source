@@ -23,14 +23,14 @@
 ${email}.
 
 <@emailMacros.msg "email.verify.to_verify" />
-${verificationUrl}?lang=${locale}
+${verificationUrl}?locale_v3=${locale}
 
-<@emailMacros.msg "email.common.did_you_know" />${baseUri}/about/news?lang=${locale}
+<@emailMacros.msg "email.common.did_you_know" />${baseUri}/about/news?locale_v3=${locale}
 
 <@emailMacros.msg "email.common.if_you_have_any" />
 
 <@emailMacros.msg "email.common.kind_regards" />
-${baseUri}/home?lang=${locale}
+${baseUri}/?locale_v3=${locale}
 
 <@emailMacros.msg "email.common.you_have_received_this_email" />
 <#include "email_footer.ftl"/>
