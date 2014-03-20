@@ -501,6 +501,11 @@ function removeBadContributors(dw) {
 	}
 }
 
+function isEmail(email) {
+	var re = /\S+@\S+\.\S+/;
+	return re.test(email);
+}
+
 function EditTableCtrl($scope) {
 	
 	// email edit row
@@ -2858,9 +2863,34 @@ function DelegatesCtrl($scope, $compile){
 	};
 	
 	$scope.search = function(){
-		$scope.showLoader = true;
 		$scope.results = new Array();
-		$scope.getResults();
+		$scope.showLoader = true;
+		if(isEmail($scope.userQuery)){
+			$scope.numFound = 0;
+			$scope.start = 0;
+			$scope.areMoreResults = 0;
+			$scope.searchByEmail();
+		}
+		else{
+			$scope.getResults();
+		}
+	};
+	
+	$scope.searchByEmail = function(){
+		$.ajax({
+			url: $('body').data('baseurl') + "manage/search-for-delegate-by-email/" + encodeURIComponent($scope.userQuery) + '/',      
+			dataType: 'json',
+			headers: { Accept: 'application/json'},
+			success: function(data) {
+				$scope.confirmAddDelegateByEmail(data);
+				$scope.showLoader = false;
+				$scope.$apply();
+			}
+		}).fail(function(){
+			// something bad is happening!
+			console.log("error doing search for delegate by email");
+		});
+		
 	};
 	
 	$scope.getResults = function(rows){
@@ -2927,6 +2957,20 @@ function DelegatesCtrl($scope, $compile){
 		return $scope.numFound != 0;
 	};
 	
+	$scope.confirmAddDelegateByEmail = function(emailSearchResult){
+		$scope.emailSearchResult = emailSearchResult;
+		$.colorbox({                      
+			html : $compile($('#confirm-add-delegate-by-email-modal').html())($scope),
+			transition: 'fade',
+			close: '',
+			onLoad: function() {
+				$('#cboxClose').remove();
+			},
+			onComplete: function() {$.colorbox.resize();},
+			scrolling: true
+		});
+	};
+	
 	$scope.confirmAddDelegate = function(delegateName, delegateId, delegateIdx){
 		$scope.delegateNameToAdd = delegateName;
 		$scope.delegateToAdd = delegateId;
@@ -2942,6 +2986,22 @@ function DelegatesCtrl($scope, $compile){
 			onComplete: function() {$.colorbox.resize();},
 			scrolling: true
 		});
+	};
+	
+	$scope.addDelegateByEmail = function(delegateEmail) {
+		$.ajax({
+	        url: $('body').data('baseurl') + 'account/addDelegateByEmail.json',
+	        type: 'POST',
+	        data: delegateEmail,
+	        contentType: 'application/json;charset=UTF-8',
+	        success: function(data) {
+	        	$scope.getDelegates();
+	        	$scope.$apply();
+	        	$scope.closeModal();
+	        }
+	    }).fail(function() { 
+	    	console.log("Error adding delegate.");
+	    });
 	};
 	
 	$scope.addDelegate = function() {
@@ -4047,9 +4107,11 @@ function SSOPreferencesCtrl($scope, $compile) {
 
 function ClientEditCtrl($scope, $compile){	
 	$scope.clients = [];
-	$scope.newClient = null;
-	$scope.emptyRedirectUri = {value: {value: ''},type: {value: 'default'}};
-			
+	$scope.newClient = null;	
+	$scope.scopeSelectorOpen = false;		
+	$scope.selectedScopes = [];
+	$scope.availableRedirectScopes = [];
+	
 	// Get the list of clients associated with this user
 	$scope.getClients = function(){
 		$.ajax({
@@ -4073,6 +4135,7 @@ function ClientEditCtrl($scope, $compile){
 			dataType: 'json',
 			success: function(data) {
 				$scope.newClient = data;
+				console.log(data);
 				$scope.$apply(function() {
 					$scope.showNewClientModal();
 				});
@@ -4097,12 +4160,12 @@ function ClientEditCtrl($scope, $compile){
 	
 	// Add a new uri input field to a new client
 	$scope.addUriToNewClientTable = function(){		
-		$scope.newClient.redirectUris.push({value: {value: ''},type: {value: 'default'}});	
+		$scope.newClient.redirectUris.push({value: {value: ''},type: {value: 'default'}, scopes: []});	
 	};
 	
 	// Add a new uri input field to a existing client
 	$scope.addUriToExistingClientTable = function(){
-		$scope.clientToEdit.redirectUris.push({value: {value: ''},type: {value: 'default'}});
+		$scope.clientToEdit.redirectUris.push({value: {value: ''},type: {value: 'default'}, scopes: []});
 	};
 	
 	// Display the modal to edit a client
@@ -4213,8 +4276,66 @@ function ClientEditCtrl($scope, $compile){
 	    	console.log("Error creating client information.");
 	    });		
 	};
-	    
+	
+	//Load the list of scopes for client redirect uris 
+	$scope.loadAvailableScopes = function(){
+		console.log("looking for available scopes");
+		$.ajax({
+	        url: orcidVar.baseUri + '/group/developer-tools/get-available-scopes.json',
+	        type: 'GET',
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {	        	
+	        	$scope.availableRedirectScopes = data;
+	        	console.log($scope.availableRedirectScopes);
+	        }
+	    }).fail(function() { 
+	    	console.log("Unable to fetch redirect uri scopes.");
+	    });		
+	};
+			
+	//Load the default scopes based n the redirect uri type selected
+	$scope.loadDefaultScopes = function(rUri) {
+		//If the scopes are empty, fill it with the default scopes
+		if(rUri.scopes.length == 0) {
+			if(rUri.type.value == 'grant-read-wizard'){
+				rUri.scopes.push('/orcid-profile/read-limited');
+			} else if (rUri.type.value == 'import-works-wizard'){
+				rUri.scopes.push('/orcid-profile/read-limited');
+				rUri.scopes.push('/orcid-works/create');
+			} else if (rUri.type.value == 'import-funding-wizard'){
+				rUri.scopes.push('/orcid-profile/read-limited');
+				rUri.scopes.push('/funding/create');
+			}  
+		}
+	};		
+
+	//Mark an item as selected
+	$scope.setSelectedItem = function(rUri){
+	    var scope = this.scope;
+	    if (jQuery.inArray( scope, rUri.scopes ) == -1) {
+	    	rUri.scopes.push(scope);
+	    } else {
+	    	rUri.scopes = jQuery.grep(rUri.scopes, function(value) {
+	            return value != scope;
+	          });
+	    }
+	    console.log(rUri.scopes);
+	    return false;
+	};
+	
+	//Checks if an item is selected, if so, returns the css classes that might 
+	//be applied to the object
+	$scope.isChecked = function (rUri) { 
+		var scope = this.scope;
+		if (jQuery.inArray( scope, rUri.scopes ) != -1) {
+	        return 'glyphicon glyphicon-ok pull-right';
+	    }
+	    return false;
+	};
+	
 	//init
 	$scope.getClients();
+	$scope.loadAvailableScopes();
+	
 };
-

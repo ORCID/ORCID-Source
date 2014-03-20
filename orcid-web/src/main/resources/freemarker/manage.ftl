@@ -387,7 +387,7 @@
 			<p>Search for trusted individuals to add.</p>
 			<div>
 				<form ng-submit="search()">
-					<input type="text" placeholder="ORCID or names" class="input-xlarge inline-input" ng-model="userQuery"></input>
+					<input type="text" placeholder="ORCID iD, email address, or names" class="input-xlarge inline-input" ng-model="userQuery"></input>
 					<input type="submit" class="btn btn-primary" value="Search"></input>
 				</form>
 			</div>
@@ -404,11 +404,11 @@
 					</thead>
 					<tbody>
 						<tr ng-repeat='result in results' class="new-search-result">
-							<td class='search-result-orcid-id'><a href="{{result['orcid-profile']['orcid-id']}}">{{result['orcid-profile'].orcid.value}}</td>
+							<td class='search-result-orcid-id'><a href="{{result['orcid-profile']['orcid-identifier'].uri}}">{{result['orcid-profile']['orcid-identifier'].path}}</td>
 							<td>{{result['orcid-profile']['orcid-bio']['personal-details']['given-names'].value}}</td>
 							<td>{{result['orcid-profile']['orcid-bio']['personal-details']['family-name'].value}}</td>
 							<td>{{concatPropertyValues(result['orcid-profile']['orcid-bio']['affiliations'], 'affiliation-name')}}</td>
-							<td><span ng-click="confirmAddDelegate(result['orcid-profile']['orcid-bio']['personal-details']['given-names'].value + ' ' + result['orcid-profile']['orcid-bio']['personal-details']['family-name'].value, result['orcid-profile']['orcid']['value'], $index)" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span></td>
+							<td><span ng-click="confirmAddDelegate(result['orcid-profile']['orcid-bio']['personal-details']['given-names'].value + ' ' + result['orcid-profile']['orcid-bio']['personal-details']['family-name'].value, result['orcid-profile']['orcid-identifier'].path, $index)" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span></td>
 						</tr>
 					</tbody>
 				</table>
@@ -488,6 +488,26 @@
 	   <div ng-hide="effectiveUserOrcid === delegateToAdd">
 	      <p>{{delegateNameToAdd}} ({{delegateToAdd}})</p>
 	      <button class="btn btn-primary" ng-click="addDelegate()">Add</button>
+	      <a href="" ng-click="closeModal()">Cancel</a>
+	   </div>
+	</div>
+</script>
+	
+<script type="text/ng-template" id="confirm-add-delegate-by-email-modal">
+	<div style="padding: 20px;">
+	   <h3>Add delegate</h3>
+	   <div ng-show="emailSearchResult.isSelf">
+	      <p class="alert alert-error">You can't add yourself as a delegate</p>
+	      <a href="" ng-click="closeModal()">Cancel</a>
+	   </div>
+	   <div ng-show="!emailSearchResult.found" >
+	       <p class="alert alert-error">Sorry, {{userQuery}} doesn't seem to have an ORCID Account.</p>
+	       <p>Account Delegates must have an ORCID Account to manage yours.</p>
+	       <a href="" ng-click="closeModal()">Cancel</a>
+	   </div>
+	   <div ng-show="!emailSearchResult.isSelf && emailSearchResult.found">
+	      <p>{{userQuery}}</p>
+	      <button class="btn btn-primary" ng-click="addDelegateByEmail(userQuery)">Add</button>
 	      <a href="" ng-click="closeModal()">Cancel</a>
 	   </div>
 	</div>

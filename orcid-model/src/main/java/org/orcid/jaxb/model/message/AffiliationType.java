@@ -30,40 +30,11 @@ import java.io.Serializable;
 @XmlEnum
 public enum AffiliationType implements Serializable {
 
-    /**
-     * Current primary institution
-     * 
-     */
     @XmlEnumValue("education")
     EDUCATION("education"),
 
-    /**
-     * Past institution
-     * 
-     */
     @XmlEnumValue("employment")
-    EMPLOYMENT("employment"),
-
-    /**
-     * Published here
-     * 
-     */
-    @XmlEnumValue("distinction")
-    DISTINCTION("distinction"),
-
-    /**
-     * Current institution
-     * 
-     */
-    @XmlEnumValue("funding")
-    FUNDING("funding"),
-
-    /**
-     * Funded by
-     * 
-     */
-    @XmlEnumValue("contribution")
-    CONTRIBUTION("contribution");
+    EMPLOYMENT("employment");
     
     private final String value;
 

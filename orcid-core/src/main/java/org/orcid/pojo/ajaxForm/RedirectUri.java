@@ -21,12 +21,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
+import org.orcid.jaxb.model.message.ScopePathType;
 
 public class RedirectUri implements ErrorsInterface, Serializable {
 
     private static final long serialVersionUID = 2L;
     
-    private List<String> errors = new ArrayList<String>();    
+    private List<String> errors = new ArrayList<String>(); 
+    private List<String> scopes = new ArrayList<String>();
     protected Text value;
     private Text type;
     
@@ -34,6 +36,12 @@ public class RedirectUri implements ErrorsInterface, Serializable {
         RedirectUri redirectUri = new RedirectUri();
         redirectUri.setType(Text.valueOf(orcidRedirectUri.getType().value()));
         redirectUri.setValue(Text.valueOf(orcidRedirectUri.getValue()));
+        if(orcidRedirectUri.getScope() != null) {
+            List<String> scopes = redirectUri.getScopes();
+            for(ScopePathType scope : orcidRedirectUri.getScope()) {
+                scopes.add(scope.value());
+            }
+        }
         return redirectUri;
     }
     
@@ -42,6 +50,14 @@ public class RedirectUri implements ErrorsInterface, Serializable {
         orcidRedirectUri.setValue(this.value.getValue());
         if(this.type != null && this.type.getValue() != null)
             orcidRedirectUri.setType(RedirectUriType.fromValue(this.type.getValue()));
+        if(this.scopes != null){
+            List<ScopePathType> scopes = new ArrayList<ScopePathType>();
+            for(String scope : this.scopes) {
+                scopes.add(ScopePathType.fromValue(scope));
+            }
+            
+            orcidRedirectUri.setScope(scopes);
+        }
         return orcidRedirectUri;
     }
     
@@ -63,4 +79,10 @@ public class RedirectUri implements ErrorsInterface, Serializable {
     public void setType(Text type) {
         this.type = type;
     }        
+    public List<String> getScopes() {
+        return scopes;
+    }
+    public void setScopes(List<String> scopes) {
+        this.scopes = scopes;
+    } 
 }
