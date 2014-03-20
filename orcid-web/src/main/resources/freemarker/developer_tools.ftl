@@ -35,11 +35,11 @@
 			</div>
 			<div class="row">
 				<div class="col-md-12" ng-hide="userCredentials.clientSecret.value">
-					<p><@orcid.msg 'manage.developer_tools.user.register_to.info.1'/>&nbsp;<a href='<@orcid.msg 'manage.developer_tools.user.register_to.info.link_url' />'><@orcid.msg 'manage.developer_tools.user.register_to.info.link_text'/></a><@orcid.msg 'manage.developer_tools.user.register_to.info.2'/>&nbsp;<@orcid.msg 'manage.developer_tools.user.register_to.info.3'/></p>
+					<p><@orcid.msg 'manage.developer_tools.user.register_to.info.1'/>&nbsp;<a href="<@orcid.msg 'manage.developer_tools.user.register_to.info.link_url' />"><@orcid.msg 'manage.developer_tools.user.register_to.info.link_text'/></a><@orcid.msg 'manage.developer_tools.user.register_to.info.2'/>&nbsp;<@orcid.msg 'manage.developer_tools.user.register_to.info.3'/></p>
 					<ul>
 						<li><a href="<@orcid.msg 'manage.developer_tools.user.register_to.link.1.url'/>"><span class="glyphicon glyphicon-link"></span><@orcid.msg 'manage.developer_tools.user.register_to.link.1.text'/></a></li>
 						<li><a href="<@orcid.msg 'manage.developer_tools.user.register_to.link.2.url'/>"><span class="glyphicon glyphicon-link"></span><@orcid.msg 'manage.developer_tools.user.register_to.link.2.text'/></a></li>
-						<li><a href="<@orcid.msg 'manage.developer_tools.user.register_to.link.3.url'/>"><span class="glyphicon glyphicon-link"></span><@orcid.msg 'manage.developer_tools.user.register_to.link.2.text'/></a></li>
+						<li><a href="<@orcid.msg 'manage.developer_tools.user.register_to.link.3.url'/>"><span class="glyphicon glyphicon-link"></span><@orcid.msg 'manage.developer_tools.user.register_to.link.3.text'/></a></li>
 					</ul>
 				</div>
 				<div class="col-md-12" ng-show="userCredentials.clientSecret.value">
@@ -48,11 +48,11 @@
 						<li><a href ng-click="showEditModal()"><span class="glyphicon glyphicon-pencil"></span><@orcid.msg 'manage.developer_tools.manage_sso_credentials.edit_credentials_link' /></a></li>
 						<li><a href ng-click="showRevokeModal()"><span class="glyphicon glyphicon-remove"></span><@orcid.msg 'manage.developer_tools.manage_sso_credentials.revoke_credentials_link' /></a></li>
 					</ul>
-					<p><@orcid.msg 'manage.developer_tools.user.registered.info.1' />&nbsp;<a href='manage.developer_tools.user.register_to.info.link_url'><@orcid.msg 'manage.developer_tools.user.register_to.info.link_text'/></a>&nbsp;<@orcid.msg 'manage.developer_tools.user.registered.info.2' /></p>
+					<p><@orcid.msg 'manage.developer_tools.user.registered.info.1' />&nbsp;<a href="<@orcid.msg 'manage.developer_tools.user.register_to.info.link_url' />"><@orcid.msg 'manage.developer_tools.user.register_to.info.link_text'/></a>&nbsp;<@orcid.msg 'manage.developer_tools.user.registered.info.2' /></p>
 					<ul class="sso-links">
 						<li><a href="<@orcid.msg 'manage.developer_tools.user.register_to.link.1.url'/>"><span class="glyphicon glyphicon-link"></span><@orcid.msg 'manage.developer_tools.user.register_to.link.1.text'/></a></li>
 						<li><a href="<@orcid.msg 'manage.developer_tools.user.register_to.link.2.url'/>"><span class="glyphicon glyphicon-link"></span><@orcid.msg 'manage.developer_tools.user.register_to.link.2.text'/></a></li>
-						<li><a href="<@orcid.msg 'manage.developer_tools.user.register_to.link.3.url'/>"><span class="glyphicon glyphicon-link"></span><@orcid.msg 'manage.developer_tools.user.register_to.link.2.text'/></a></li>
+						<li><a href="<@orcid.msg 'manage.developer_tools.user.register_to.link.3.url'/>"><span class="glyphicon glyphicon-link"></span><@orcid.msg 'manage.developer_tools.user.register_to.link.3.text'/></a></li>
 					</ul>
 				</div>
 			</div>
@@ -111,14 +111,23 @@
 		<span><@orcid.msg 'manage.developer_tools.view.instructions'/></span>
 		<br />
 		<br />
-		<span><strong><@orcid.msg 'manage.developer_tools.view.secret'/></strong></span>
-		<span>{{userCredentials.clientSecret.value}}</span><br />
+		<div class="row">
+			<span class="col-xs-12 col-md-3"><strong><@orcid.msg 'manage.developer_tools.view.orcid'/></strong></span>
+			<span class="col-xs-12 col-md-9">{{userCredentials.clientOrcid.value}}</span><br />
+		</div>
+		
+		<div class="row">
+			<span class="col-xs-12 col-md-3"><strong><@orcid.msg 'manage.developer_tools.view.secret'/></strong></span>
+			<span class="col-xs-12 col-md-9">{{userCredentials.clientSecret.value}}</span><br />
+		</div>
+		<br />
 		<span><strong><@orcid.msg 'manage.developer_tools.view.redirect_uri'/>:</strong></span><br />
-		<div class="control-group" ng-repeat='rUri in userCredentials.redirectUris'>									
-			<div style="padding-left:10px;">
-				{{rUri.value.value}}<br />									
+		<div class="row">												
+			<div class="col-xs-12 col-md-12" ng-repeat='rUri in userCredentials.redirectUris'>
+				<a href="{{rUri.value.value}}">{{rUri.value.value}}</a>									
 			</div>
 		</div>
+		<br />
 		<a href="" ng-click="closeModal()"><@orcid.msg 'manage.developer_tools.close'/></a>
 	</div>
 </script>	

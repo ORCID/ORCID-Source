@@ -32,6 +32,7 @@ public class SSOCredentials implements ErrorsInterface, Serializable {
     
     private List<String> errors = new ArrayList<String>();       
     
+    Text clientOrcid;
     Text clientSecret;
     Set<RedirectUri> redirectUris;
     
@@ -39,6 +40,7 @@ public class SSOCredentials implements ErrorsInterface, Serializable {
         SSOCredentials result = new SSOCredentials();
         if(clientDetails != null) {
             result.setClientSecret(Text.valueOf(clientDetails.getClientSecret()));
+            result.setClientOrcid(Text.valueOf(clientDetails.getClientId()));            
             if(clientDetails.getClientRegisteredRedirectUris() != null && !clientDetails.getClientRegisteredRedirectUris().isEmpty()) {
                 result.redirectUris = new HashSet<RedirectUri>();
                 for(ClientRedirectUriEntity redirectUri : clientDetails.getClientRegisteredRedirectUris()) {
@@ -64,6 +66,12 @@ public class SSOCredentials implements ErrorsInterface, Serializable {
     }
     public void setRedirectUris(Set<RedirectUri> redirectUris) {
         this.redirectUris = redirectUris;
+    }
+    public Text getClientOrcid() {
+        return clientOrcid;
+    }
+    public void setClientOrcid(Text clientOrcid) {
+        this.clientOrcid = clientOrcid;
     }
     public List<String> getErrors() {
         return errors;
