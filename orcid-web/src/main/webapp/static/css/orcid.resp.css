@@ -3439,6 +3439,24 @@ p.orcid-id-container{
 	padding-right: 0;	
 }
 
+.scrollable-list {
+	height: 120px;
+	width:330px;
+	position: absolute;	
+	overflow: scroll;	
+	border: 1px solid #CCCCCC;
+	top:100%;
+	left:0;	
+	z-index:99999;	 
+}
+
+.multiple-select .dropdown-menu{
+	top: 0;
+	left:0;
+	border: none;
+	width:315px;
+}
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */

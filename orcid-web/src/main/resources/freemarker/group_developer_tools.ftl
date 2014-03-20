@@ -85,11 +85,25 @@
 						<div class="relative">
 							<@orcid.msg 'manage.developer_tools.group.redirect_uri.value'/>:<input type="text" class="input-xlarge" ng-model="rUri.value.value">
 							<@orcid.msg 'manage.developer_tools.group.redirect_uri.type'/>:
-							<select class="input-xlarge" ng-model="rUri.type.value">
+							<select class="input-xlarge" ng-model="rUri.type.value" ng-change="loadDefaultScopes(rUri)">
 								<#list redirectUriTypes?keys as key>
 									<option value="${key}">${redirectUriTypes[key]}</option>
 								</#list>
 							</select>							
+							
+							<div ng-show="rUri.type.value != 'default'">
+								<@orcid.msg 'manage_clients.redirect_uri.scope' />:<br />
+								<div class='btn-group multiple-select'>
+									<button class='btn btn-small'><@orcid.msg 'manage_clients.redirect_uri.scopes.label'/></button>
+									<button class='btn btn-small dropdown-toggle' ng-click='scopeSelectorOpen=!scopeSelectorOpen;openDropdown(rUri, true)'><span class='caret'></span></button>
+									<div class="scrollable-list" ng-show="scopeSelectorOpen">
+										<ul class="dropdown-menu">		
+											<li ng-repeat='scope in availableRedirectScopes'><a ng-click='setSelectedItem(rUri)'>{{scope}}<span ng-class='isChecked(rUri)'></span></a></li>
+										</ul>
+									</div>
+								</div>
+							</div>															
+							
 							<span class="orcid-error" ng-show="rUri.errors.length > 0">
 								<div ng-repeat='error in rUri.errors' ng-bind-html="error"></div>
 							</span>
@@ -147,11 +161,26 @@
 					<a href ng-click="deleteJustCreatedUri($index)" class="glyphicon glyphicon-trash grey"></a>										
 					<div class="relative">
 						<@orcid.msg 'manage.developer_tools.group.redirect_uri.value'/>:<input type="text" placeholder="<@orcid.msg 'manage.developer_tools.group.redirect_uri_placeholder'/>" class="input-xlarge" ng-model="rUri.value.value"><br />
-						<@orcid.msg 'manage.developer_tools.group.redirect_uri.type'/>:<select class="input-xlarge" ng-model="rUri.type.value">
+						<@orcid.msg 'manage.developer_tools.group.redirect_uri.type'/>:
+						<select class="input-xlarge" ng-model="rUri.type.value" ng-change="loadDefaultScopes(rUri)">
 							<#list redirectUriTypes?keys as key>
 								<option value="${key}">${redirectUriTypes[key]}</option>
 							</#list>
 						</select>
+						
+						<div ng-show="rUri.type.value != 'default'">
+							<@orcid.msg 'manage_clients.redirect_uri.scope' />:<br />
+							<div class='btn-group multiple-select'>
+								<button class='btn btn-small'><@orcid.msg 'manage_clients.redirect_uri.scopes.label'/></button>
+								<button class='btn btn-small dropdown-toggle' ng-click='scopeSelectorOpen=!scopeSelectorOpen;openDropdown(rUri, false)'><span class='caret'></span></button>
+								<div class="scrollable-list" ng-show="scopeSelectorOpen">
+									<ul class="dropdown-menu">		
+										<li ng-repeat='scope in availableRedirectScopes'><a ng-click='setSelectedItem(rUri)'>{{scope}}<span ng-class='isChecked(rUri)'></span></a></li>
+									</ul>
+								</div>
+							</div>
+						</div>	
+						
 						<span class="orcid-error" ng-show="rUri.errors.length > 0">
 							<div ng-repeat='error in rUri.errors' ng-bind-html="error"></div>
 						</span>						
