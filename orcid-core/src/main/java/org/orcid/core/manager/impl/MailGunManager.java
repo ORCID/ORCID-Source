@@ -53,6 +53,9 @@ public class MailGunManager {
     @Value("${com.mailgun.verify.apiUrl:https://api.mailgun.net/v2/samples.mailgun.org/messages}")
     private String verifyApiUrl;
 
+    @Value("${com.mailgun.notify.apiUrl:https://api.mailgun.net/v2/samples.mailgun.org/messages}")
+    private String notifyApiUrl;
+
     @Value("${com.mailgun.testmode:yes}")
     private String testmode;
     
@@ -71,6 +74,8 @@ public class MailGunManager {
         WebResource webResource = null;
         if (from.trim().endsWith("@verify.orcid.org")) 
             webResource = client.resource(getVerifyApiUrl());
+        else if (from.trim().endsWith("@notify.orcid.org")) 
+            webResource = client.resource(getNotifyApiUrl());
         else
             webResource = client.resource(getApiUrl());
         
@@ -117,6 +122,14 @@ public class MailGunManager {
 
     public void setVerifyApiUrl(String verifyApiUrl) {
         this.verifyApiUrl = verifyApiUrl;
+    }
+
+    public String getNotifyApiUrl() {
+        return notifyApiUrl;
+    }
+
+    public void setNotifyApiUrl(String notifyApiUrl) {
+        this.notifyApiUrl = notifyApiUrl;
     }
 
 }

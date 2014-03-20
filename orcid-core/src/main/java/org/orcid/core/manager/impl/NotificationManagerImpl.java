@@ -80,6 +80,8 @@ public class NotificationManagerImpl implements NotificationManager {
     private String supportAddress;
 
     private String LAST_RESORT_ORCID_USER_EMAIL_NAME = "ORCID Registry User";
+    
+    private String ORCID_PRIVACY_POLICY_UPDATES = "ORCID - Privacy Policy Updates";
 
     private URI baseUri;
 
@@ -203,8 +205,10 @@ public class NotificationManagerImpl implements NotificationManager {
 
         String emailFriendlyName = deriveEmailFriendlyName(orcidProfile);
         templateParams.put("emailName", emailFriendlyName);
-        String verificationUrl = createVerificationUrl(email, baseUri);
-        templateParams.put("verificationUrl", verificationUrl);
+        if (!orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().isVerified()) {
+            String verificationUrl = createVerificationUrl(email, baseUri);
+            templateParams.put("verificationUrl", verificationUrl);
+        }
         templateParams.put("orcid", orcidProfile.getOrcidIdentifier().getPath());
         templateParams.put("baseUri", baseUri);
       
@@ -213,7 +217,7 @@ public class NotificationManagerImpl implements NotificationManager {
         String text = templateManager.processTemplate("priv_policy_upate_2014_03.ftl", templateParams);
         String html = templateManager.processTemplate("priv_policy_upate_2014_03_html.ftl", templateParams);
 
-        return mailGunManager.sendEmail("support@orcid.org", email, "Updates to ORCID Privacy Policy", text, html);
+        return mailGunManager.sendEmail("update@notify.orcid.org", email, ORCID_PRIVACY_POLICY_UPDATES, text, html);
     }
 
     private void  addMessageParams(Map<String, Object> templateParams, OrcidProfile orcidProfile) {
