@@ -523,6 +523,10 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidProfile.setType(OrcidType.CLIENT);
         orcidProfile.setClientType(orcidClient.getType());
+        OrcidHistory orcidHistory = new OrcidHistory();
+        orcidProfile.setOrcidHistory(orcidHistory);
+        orcidHistory.setClaimed(new Claimed(true));
+        orcidHistory.setSubmissionDate(new SubmissionDate(DateUtils.convertToXMLGregorianCalendar(new Date())));
         OrcidBio orcidBio = new OrcidBio();
         orcidProfile.setOrcidBio(orcidBio);
         PersonalDetails personalDetails = new PersonalDetails();
