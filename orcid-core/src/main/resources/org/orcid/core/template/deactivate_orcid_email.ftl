@@ -20,8 +20,8 @@
 <@emailMacros.msg "email.common.dear" /> ${emailName}<@emailMacros.msg "email.common.dear.comma" />
 
 <@emailMacros.msg "email.deactivate.you_have_requested.1" /> 
-${baseUri}/${orcid}?lang=${locale} <@emailMacros.msg "email.deactivate.you_have_requested.2" />
-${baseUri}${deactivateUrlEndpoint}?lang=${locale}
+${baseUri}/${orcid}?locale_v3=${locale} <@emailMacros.msg "email.deactivate.you_have_requested.2" />
+${baseUri}${deactivateUrlEndpoint}?locale_v3=${locale}
 
 
 <@emailMacros.msg "email.deactivate.once_an_account" />
@@ -29,7 +29,7 @@ ${baseUri}${deactivateUrlEndpoint}?lang=${locale}
 <@emailMacros.msg "email.deactivate.if_you_did" />
 
 <@emailMacros.msg "email.common.kind_regards" />
-${baseUri}/home?lang=${locale}
+${baseUri}/?locale_v3=${locale}
 
 <@emailMacros.msg "email.common.you_have_received_this_email" />
 <#include "email_footer.ftl"/>

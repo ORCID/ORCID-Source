@@ -23,10 +23,10 @@
 
 <@emailMacros.msg "email.amend.please_click" />
 
-    ${baseUri}/my-orcid?lang=${locale}
+    ${baseUri}/my-orcid?locale_v3=${locale}
 
 <@emailMacros.msg "email.common.kind_regards" />
-${baseUri}/home?lang=${locale}
+${baseUri}/?locale_v3=${locale}
 
-<@emailMacros.msg "email.common.you_have_received_this_email_opt_out.1" />${baseUri}/home?lang=${locale}<@emailMacros.msg "email.common.you_have_received_this_email_opt_out.2" />
+<@emailMacros.msg "email.common.you_have_received_this_email_opt_out.1" />${baseUri}/?locale_v3=${locale}<@emailMacros.msg "email.common.you_have_received_this_email_opt_out.2" />
 <#include "email_footer.ftl"/>

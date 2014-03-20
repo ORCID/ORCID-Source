@@ -25,7 +25,7 @@
 
 <@emailMacros.msg "email.api_record_creation.within.1" />${creatorName}<@emailMacros.msg "email.api_record_creation.within.2" />
 
-${verificationUrl}?lang=${locale}
+${verificationUrl}?locale_v3=${locale}
 
 <@emailMacros.msg "email.api_record_creation.what_happens" />
 
@@ -33,12 +33,12 @@ ${verificationUrl}?lang=${locale}
 
 <@emailMacros.msg "email.api_record_creation.what_is_orcid" />
 
-<@emailMacros.msg "email.api_record_creation.launched.1" />${baseUri}/home?lang=${locale}<@emailMacros.msg "email.api_record_creation.launched.2" />
+<@emailMacros.msg "email.api_record_creation.launched.1" />${baseUri}/?locale_v3=${locale}<@emailMacros.msg "email.api_record_creation.launched.2" />
 
-<@emailMacros.msg "email.api_record_creation.read_privacy.1" />${baseUri}/home?lang=${locale}<@emailMacros.msg "email.api_record_creation.read_privacy.2" />
+<@emailMacros.msg "email.api_record_creation.read_privacy.1" />${baseUri}/privacy-policy/?locale_v3=${locale}<@emailMacros.msg "email.api_record_creation.read_privacy.2" />
 
 <@emailMacros.msg "email.common.kind_regards" />
 ${baseUri}
 
-<@emailMacros.msg "email.api_record_creation.you_have_received.1" />${baseUri}/home?lang=${locale}<@emailMacros.msg "email.api_record_creation.you_have_received.2" />
+<@emailMacros.msg "email.api_record_creation.you_have_received.1" />${baseUri}/?locale_v3=${locale}<@emailMacros.msg "email.api_record_creation.you_have_received.2" />
 <#include "email_footer.ftl"/>
