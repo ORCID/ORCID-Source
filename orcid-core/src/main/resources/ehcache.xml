@@ -122,4 +122,25 @@
 		<persistence strategy="localTempSwap" />
 	</cache>
 
+
+
+
+
+
+	<cache name="credit-name" maxElementsInMemory="5000" timeToLiveSeconds="43200" copyOnRead="false"
+		copyOnWrite="false" eternal="false">
+		<persistence strategy="none" />
+	</cache>
+
+
+
+
+
+
+
+
+
+
+
+
 </ehcache>

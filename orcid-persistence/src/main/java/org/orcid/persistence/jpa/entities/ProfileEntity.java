@@ -38,6 +38,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
 import org.orcid.jaxb.model.message.Iso3166Country;
@@ -47,6 +48,7 @@ import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.utils.DateUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 
 /**
@@ -978,5 +980,17 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
 
     public void setReferredBy(String referredBy) {
         this.referredBy = referredBy;
+    }
+    
+    /**
+     * Generates a string that will be used for caching proposes
+     * @param profile
+     * @return a string containing the orcid id and the last modified day, concatenated by '_' 
+     * */
+    public static String createCacheKey(ProfileEntity profile) {
+        String orcid = profile.getId();
+        Date lastModified = profile.getLastModified() == null ? new Date() : profile.getLastModified();
+        String lastModifiedString = DateUtils.convertToXMLGregorianCalendar(lastModified).toXMLFormat();
+        return StringUtils.join(new String[] { orcid, lastModifiedString }, "_");
     }
 }

@@ -44,12 +44,14 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.pojo.ajaxForm.AffiliationForm;
 import org.orcid.pojo.ajaxForm.FundingForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Work;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -282,4 +284,39 @@ public class PublicProfileController extends BaseWorkspaceController {
         return activityCacheManager.pubMinWorksMap(profile);
     }
 
+    /**
+     * Return the current user credit name
+     * @param The profile
+     * @return The credit name of that profile, or, the given name + family name if the credit name is not public or is empty
+     * */
+    @Cacheable(value = "public-profile", key = "T(org.orcid.jaxb.model.message.OrcidProfile).createCacheKey(#profile)")
+    private String getCreditName(ProfileEntity profile) {
+        
+        System.out.println("----------------------------------------------------------------------------------------------------------");
+        System.out.println("----------------------------------------------------------------------------------------------------------");
+        System.out.println("----------------------------------------------------------------------------------------------------------");
+        System.out.println("----------------------------------------------------------------------------------------------------------");
+        System.out.println("Cache not abailable");
+        System.out.println("----------------------------------------------------------------------------------------------------------");
+        System.out.println("----------------------------------------------------------------------------------------------------------");
+        System.out.println("----------------------------------------------------------------------------------------------------------");
+        System.out.println("----------------------------------------------------------------------------------------------------------");
+        
+        
+        if (profile != null) {
+            profile.getCreditName();
+            if (Visibility.PUBLIC.equals(profile.getCreditNameVisibility()) && StringUtils.isNotBlank(profile.getCreditName())) {
+                return profile.getCreditName();
+            } else {
+                String givenName = profile.getGivenNames();
+                String familyName = profile.getFamilyName();
+                String composedCreditName = givenName == null ? "" : givenName + " " + familyName == null ? "" : familyName;
+                return composedCreditName;
+            }
+            
+        }
+
+        return null;
+    }
+    
 }
