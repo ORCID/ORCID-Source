@@ -377,6 +377,9 @@ public class WorksController extends BaseWorkspaceController {
         if (work.getErrors().size() == 0) {
             // Get current profile
             OrcidProfile currentProfile = getEffectiveProfile();
+            
+            //Set the credit name to the work
+            
             OrcidWork newOw = work.toOrcidWork();
             newOw.setPutCode("-1"); // put codes of -1 override new works
                                     // visibility filtering settings.
