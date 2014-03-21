@@ -59,10 +59,7 @@
 			<div class="row">
 				<div class="col-md-12 col-xs-12">
 					<span>
-						<@orcid.msg 'manage.developer_tools.user.join.link.text.1'/>&nbsp;
-						<a href="<@orcid.msg 'manage.developer_tools.user.join.link.url'/>" target="_blank">
-						<@orcid.msg 'manage.developer_tools.user.join.link.text.2'/>
-						</a>						
+						<@orcid.msg 'manage.developer_tools.user.join.link.text.1'/>&nbsp;<a href="<@orcid.msg 'manage.developer_tools.user.join.link.url'/>" target="_blank"><@orcid.msg 'manage.developer_tools.user.join.link.text.2'/></a>						
 					</span>
 				</div>
 			</div>
