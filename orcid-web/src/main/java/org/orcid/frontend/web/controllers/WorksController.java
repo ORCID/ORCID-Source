@@ -33,6 +33,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.ActivityCacheManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.ThirdPartyImportManager;
@@ -50,7 +51,6 @@ import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.PublicationDate;
 import org.orcid.jaxb.model.message.SequenceType;
-import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkCategory;
 import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkType;
@@ -72,7 +72,6 @@ import org.orcid.pojo.ajaxForm.WorkTitle;
 import org.orcid.utils.FunctionsOverCollections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -119,6 +118,9 @@ public class WorksController extends BaseWorkspaceController {
 
     @Resource
     private LocaleManager localeManager;
+    
+    @Resource
+    private ActivityCacheManager cacheManager;
 
     @Resource(name = "languagesMap")
     private LanguagesMap lm;
@@ -335,9 +337,13 @@ public class WorksController extends BaseWorkspaceController {
                 if(!PojoUtil.isEmpty(work.getWorkSource()) && profileWork.getProfile().getId().equals(work.getWorkSource().getValue())){
                     List<Contributor> contributors = work.getContributors();
                     if(work.getContributors() != null) {
-                        for(Contributor contributor : contributors){                            
-                            Text creditName = Text.valueOf(getCreditName(profileWork.getProfile()));
-                            contributor.setCreditName(creditName);
+                        for(Contributor contributor : contributors){  
+                            if(!PojoUtil.isEmpty(contributor.getContributorRole()) || !PojoUtil.isEmpty(contributor.getContributorSequence())) {
+                                ProfileEntity profile = profileWork.getProfile();
+                                String creditNameString = cacheManager.getCreditName(profile);
+                                Text creditName = Text.valueOf(creditNameString);
+                                contributor.setCreditName(creditName);
+                            }
                         }
                     }
                 }
@@ -824,42 +830,5 @@ public class WorksController extends BaseWorkspaceController {
         }
 
         return FunctionsOverCollections.sortMapsByValues(workTypes);
-    }
-
-    
-    /**
-     * Return the current user credit name
-     * @param The profile
-     * @return The credit name of that profile, or, the given name + family name if the credit name is not public or is empty
-     * */
-    @Cacheable(value = "credit-name", key = "T(org.orcid.persistence.jpa.entities.ProfileEntity).createCacheKey(#profile)")
-    private String getCreditName(ProfileEntity profile) {
-        
-        System.out.println("----------------------------------------------------------------------------------------------------------");
-        System.out.println("----------------------------------------------------------------------------------------------------------");
-        System.out.println("----------------------------------------------------------------------------------------------------------");
-        System.out.println("----------------------------------------------------------------------------------------------------------");
-        System.out.println("Cache not abailable: key: " + ProfileEntity.createCacheKey(profile));
-        System.out.println("----------------------------------------------------------------------------------------------------------");
-        System.out.println("----------------------------------------------------------------------------------------------------------");
-        System.out.println("----------------------------------------------------------------------------------------------------------");
-        System.out.println("----------------------------------------------------------------------------------------------------------");
-        
-        
-        if (profile != null) {
-            profile.getCreditName();
-            if (StringUtils.isNotBlank(profile.getCreditName())) {
-                return profile.getCreditName();
-            } else {
-                String givenName = profile.getGivenNames();
-                String familyName = profile.getFamilyName();
-                String composedCreditName = givenName == null ? "" : givenName + " " + familyName == null ? "" : familyName;
-                return composedCreditName;
-            }
-            
-        }
-
-        return null;
-    }
-
+    }        
 }

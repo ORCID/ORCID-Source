@@ -987,9 +987,10 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
      * @param profile
      * @return a string containing the orcid id and the last modified day, concatenated by '_' 
      * */
-    public static String createCacheKey(ProfileEntity profile) {
-        String orcid = profile.getId();
-        Date lastModified = profile.getLastModified() == null ? new Date() : profile.getLastModified();
+    @Transient
+    public String getCacheKey() {
+        String orcid = this.getId();
+        Date lastModified = this.getLastModified() == null ? new Date() : this.getLastModified();
         String lastModifiedString = DateUtils.convertToXMLGregorianCalendar(lastModified).toXMLFormat();
         return StringUtils.join(new String[] { orcid, lastModifiedString }, "_");
     }
