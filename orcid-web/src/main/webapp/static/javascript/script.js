@@ -160,9 +160,14 @@ var om = new OrcidMessage();
  * out (server restart ect...) it will redir 
  * them to the signin page.
  */
+function getBaseUri() {
+	return 'https:' == document.location.protocol ? orcidVar.baseUri : orcidVar.baseUriHttp;
+}
+
+
 function checkOrcidLoggedIn() {
 	$.ajax({
-		url: orcidVar.baseUri + '/userStatus.json?callback=?',
+		url: getBaseUri() + '/userStatus.json?callback=?',
         type: 'GET',
         dataType: 'json',
         success: function(data) {
@@ -180,6 +185,7 @@ function checkOrcidLoggedIn() {
     });
 
 }
+
 
 var OM = OrcidMessage;
 
