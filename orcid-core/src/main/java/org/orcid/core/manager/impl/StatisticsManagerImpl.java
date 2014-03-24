@@ -16,7 +16,7 @@
  */
 package org.orcid.core.manager.impl;
 
-import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
 
@@ -116,9 +116,9 @@ public class StatisticsManagerImpl implements StatisticsManager {
     @Cacheable("statistics")
     public String getLiveIds(Locale locale) {
         StatisticValuesEntity entity = getLatestStatistics(StatisticsEnum.KEY_LIVE_IDS.value());        
-        double amount = (entity == null)? 0 : Double.parseDouble(String.valueOf(entity.getStatisticValue()));        
-        DecimalFormat formatter = new DecimalFormat(messageSource.getMessage("public-layout.number_format",null, locale));        
-        return formatter.format(amount);
+        long amount = entity == null ? 0 : entity.getStatisticValue();        
+        NumberFormat nf = NumberFormat.getInstance(locale);
+        return nf.format(amount);
     }
 
     
