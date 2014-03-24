@@ -21,6 +21,9 @@ ORCID appreciates the several significant contributions from the Open Source com
     * [Site Label Translations](https://github.com/ORCID/ORCID-Source/blob/master/orcid-core/src/main/resources/i18n/javascript_ko.properties)
 
 ## Special Thanks
+Many thanks to SyncRO Soft for their support in the donation of the oXygen XML Editor.
+<a href="http://www.oxygenxml.com" title="Oxygen XML Editor"><img src="http://www.oxygenxml.com/img/resources/oxygen190x62.png" width="190" height="62" alt="Oxygen XML Editor" border="0"/></a> 
+
 ORCID would like to extend its appreciation to *Semantico* which performed the initial development for the October 2012-launch-version of the ORCID Registry. Thanks to Will, James, Declan, Phil, Gib, Andrew, Rob, Dan, Mike, Richard, Liam, Richard, and many others who helped behind the scenes.
 
 Thanks also to [Villu Ruusmann](https://masterbranch.com/villu.ruusmann), the author of [Java BibTeX API](http://code.google.com/p/java-bibtex/) who has been so helpful and responsive in updating this package.
