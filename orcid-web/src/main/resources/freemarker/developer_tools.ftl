@@ -26,15 +26,15 @@
 		<!-- Developer public API Applications -->
 		<div ng-controller="SSOPreferencesCtrl" class="sso-api">
 			<div class="row box">
-				<div class="col-md-10">
+				<div class="col-md-10 col-xs-12">
 					<h2><@orcid.msg 'manage.developer_tools.user.title' /></h2>
 				</div>
-				<div class="col-md-2" ng-hide="userCredentials.clientSecret.value">
+				<div class="col-md-2 col-xs-12" ng-hide="userCredentials.clientSecret.value">
 					<a ng-click="createCredentialsModal()"><span class="label btn-primary cboxElement"><@orcid.msg 'manage.developer_tools.button.register_now' /></span></a>
 				</div>	
 			</div>
 			<div class="row">
-				<div class="col-md-12" ng-hide="userCredentials.clientSecret.value">
+				<div class="col-md-12  col-xs-12" ng-hide="userCredentials.clientSecret.value">
 					<p><@orcid.msg 'manage.developer_tools.user.register_to.info.1'/>&nbsp;<a href="<@orcid.msg 'manage.developer_tools.user.register_to.info.link_url' />"><@orcid.msg 'manage.developer_tools.user.register_to.info.link_text'/></a><@orcid.msg 'manage.developer_tools.user.register_to.info.2'/>&nbsp;<@orcid.msg 'manage.developer_tools.user.register_to.info.3'/></p>
 					<ul>
 						<li><a href="<@orcid.msg 'manage.developer_tools.user.register_to.link.1.url'/>"><span class="glyphicon glyphicon-link"></span><@orcid.msg 'manage.developer_tools.user.register_to.link.1.text'/></a></li>
@@ -42,7 +42,7 @@
 						<li><a href="<@orcid.msg 'manage.developer_tools.user.register_to.link.3.url'/>"><span class="glyphicon glyphicon-link"></span><@orcid.msg 'manage.developer_tools.user.register_to.link.3.text'/></a></li>
 					</ul>
 				</div>
-				<div class="col-md-12" ng-show="userCredentials.clientSecret.value">
+				<div class="col-md-12 col-xs-12" ng-show="userCredentials.clientSecret.value">
 					<ul class="sso-options">
 						<li><a href ng-click="showSSOCredentials()"><span class="glyphicon glyphicon-eye-open"></span><@orcid.msg 'manage.developer_tools.manage_sso_credentials.view_credentials_link' /></a></li>	
 						<li><a href ng-click="showEditModal()"><span class="glyphicon glyphicon-pencil"></span><@orcid.msg 'manage.developer_tools.manage_sso_credentials.edit_credentials_link' /></a></li>
@@ -54,6 +54,13 @@
 						<li><a href="<@orcid.msg 'manage.developer_tools.user.register_to.link.2.url'/>"><span class="glyphicon glyphicon-link"></span><@orcid.msg 'manage.developer_tools.user.register_to.link.2.text'/></a></li>
 						<li><a href="<@orcid.msg 'manage.developer_tools.user.register_to.link.3.url'/>"><span class="glyphicon glyphicon-link"></span><@orcid.msg 'manage.developer_tools.user.register_to.link.3.text'/></a></li>
 					</ul>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12 col-xs-12">
+					<span>
+						<@orcid.msg 'manage.developer_tools.user.join.link.text.1'/>&nbsp;<a href="<@orcid.msg 'manage.developer_tools.user.join.link.url'/>" target="_blank"><@orcid.msg 'manage.developer_tools.user.join.link.text.2'/></a>						
+					</span>
 				</div>
 			</div>
 		</div>
