@@ -29,7 +29,7 @@ ${baseUri}${deactivateUrlEndpoint}?lang=${locale}
 <@emailMacros.msg "email.deactivate.if_you_did" />
 
 <@emailMacros.msg "email.common.kind_regards" />
-${baseUri}/home?lang=${locale}
+${baseUri}/?lang=${locale}
 
 <@emailMacros.msg "email.common.you_have_received_this_email" />
 <#include "email_footer.ftl"/>
