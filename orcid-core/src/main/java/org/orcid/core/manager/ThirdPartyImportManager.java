@@ -27,6 +27,8 @@ import org.orcid.jaxb.model.clientgroup.OrcidClient;
  */
 public interface ThirdPartyImportManager {
 
+    public static String CACHE_VERSION_KEY="import-wizard-cache-version";
+    
     public List<OrcidClient> findOrcidClientsWithPredefinedOauthScopeWorksImport();
     
     public List<OrcidClient> findOrcidClientsWithPredefinedOauthScopeFundingImport();
@@ -35,4 +37,11 @@ public interface ThirdPartyImportManager {
 
     void evictAll();
 
+    public long getLocalCacheVersion();
+
+    public void setLocalCacheVersion(long localCacheVersion);
+    
+    public long getDatabaseCacheVersion(); 
+    
+    void updateDatabaseCacheVersion();
 }

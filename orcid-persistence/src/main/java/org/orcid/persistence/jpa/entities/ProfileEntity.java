@@ -135,7 +135,8 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     private SortedSet<OrcidOauth2TokenDetail> tokenDetails;
     private IndexingStatus indexingStatus = IndexingStatus.PENDING;
     private Set<ProfileEventEntity> profileEvents;
-
+    private boolean enableDeveloperTools;
+    
     // Visibility settings
     private Visibility creditNameVisibility;
     private Visibility otherNamesVisibility;
@@ -794,6 +795,16 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
         this.profileEvents = profileEvents;
     }
 
+    @Basic
+    @Column(name="enable_developer_tools")
+    public boolean getEnableDeveloperTools() {
+        return this.enableDeveloperTools;
+    }
+    
+    public void setEnableDeveloperTools(boolean enableDeveloperTools) {
+        this.enableDeveloperTools = enableDeveloperTools;
+    }
+    
     @Basic
     @Enumerated(EnumType.STRING)
     @Column(name = "credit_name_visibility")

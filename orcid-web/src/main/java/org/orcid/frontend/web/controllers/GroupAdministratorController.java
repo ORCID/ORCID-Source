@@ -18,6 +18,8 @@ package org.orcid.frontend.web.controllers;
 
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +38,7 @@ import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.ErrorDesc;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
+import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.pojo.ajaxForm.Client;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RedirectUri;
@@ -55,8 +58,8 @@ import org.springframework.web.servlet.ModelAndView;
  * 
  * @author Angel Montenegro Date: 20/06/2013
  */
-@Controller("GroupAdministratorController")
-@RequestMapping(value = "/manage-clients")
+@Controller
+@RequestMapping(value = "/group/developer-tools")
 public class GroupAdministratorController extends BaseWorkspaceController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GroupAdministratorController.class);
@@ -66,14 +69,14 @@ public class GroupAdministratorController extends BaseWorkspaceController {
 
     @Resource
     private ThirdPartyImportManager thirdPartyImportManager;
-    
+
     @RequestMapping
     public ModelAndView manageClients() {
-        ModelAndView mav = new ModelAndView("manage_clients");
+        ModelAndView mav = new ModelAndView("group_developer_tools");
         OrcidProfile profile = getEffectiveProfile();
 
         if (profile.getType() == null || !profile.getType().equals(OrcidType.GROUP)) {
-            LOGGER.warn("Trying to access manage-clients page with user {} which is not a group", profile.getOrcidIdentifier().getPath());
+            LOGGER.warn("Trying to access group/developer-tools page with user {} which is not a group", profile.getOrcidIdentifier().getPath());
             return new ModelAndView("redirect:/my-orcid");
         }
 
@@ -99,7 +102,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/client.json", method = RequestMethod.GET)
     public @ResponseBody
-    Client getClient(HttpServletRequest request) {
+    Client getClient() {
         Client emptyClient = new Client();
         emptyClient.setDisplayName(Text.valueOf(""));
         emptyClient.setWebsite(Text.valueOf(""));
@@ -111,8 +114,11 @@ public class GroupAdministratorController extends BaseWorkspaceController {
         emptyClient.setRedirectUris(redirectUris);
         return emptyClient;
     }
+
     private boolean validateUrl(String url) {
         String urlToCheck = null;
+        if (PojoUtil.isEmpty(url))
+            return false;
         // To validate the URL we need a string with a protocol, so, check if it
         // have it, if it doesn't, add it.
         // Check if the URL begins with the protocol
@@ -134,9 +140,9 @@ public class GroupAdministratorController extends BaseWorkspaceController {
     private Client validateDisplayName(Client client) {
         client.getDisplayName().setErrors(new ArrayList<String>());
         if (PojoUtil.isEmpty(client.getDisplayName())) {
-            setError(client.getDisplayName(), "manage_clients.error.display_name.empty");
+            setError(client.getDisplayName(), "manage.developer_tools.group.error.display_name.empty");
         } else if (client.getDisplayName().getValue().length() > 150) {
-            setError(client.getDisplayName(), "manage_clients.error.display_name.150");
+            setError(client.getDisplayName(), "manage.developer_tools.group.error.display_name.150");
         }
 
         return client;
@@ -145,9 +151,9 @@ public class GroupAdministratorController extends BaseWorkspaceController {
     private Client validateWebsite(Client client) {
         client.getWebsite().setErrors(new ArrayList<String>());
         if (PojoUtil.isEmpty(client.getWebsite())) {
-            setError(client.getWebsite(), "manage_clients.error.website.empty");
+            setError(client.getWebsite(), "manage.developer_tools.group.error.website.empty");
         } else if (!validateUrl(client.getWebsite().getValue())) {
-            setError(client.getWebsite(), "manage_clients.error.invalid_url");
+            setError(client.getWebsite(), "manage.developer_tools.group.error.invalid_url");
         }
         return client;
     }
@@ -155,7 +161,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
     private Client validateShortDescription(Client client) {
         client.getShortDescription().setErrors(new ArrayList<String>());
         if (PojoUtil.isEmpty(client.getShortDescription()))
-            setError(client.getShortDescription(), "manage_clients.error.short_description.empty");
+            setError(client.getShortDescription(), "manage.developer_tools.group.error.short_description.empty");
         return client;
     }
 
@@ -164,7 +170,19 @@ public class GroupAdministratorController extends BaseWorkspaceController {
             for (RedirectUri redirectUri : client.getRedirectUris()) {
                 redirectUri.setErrors(new ArrayList<String>());
                 if (!validateUrl(redirectUri.getValue().getValue())) {
-                    setError(redirectUri, "manage_clients.error.invalid_url");
+                    setError(redirectUri, "manage.developer_tools.group.error.invalid_url");
+                }
+
+                if (RedirectUriType.DEFAULT.value().equals(redirectUri.getType().getValue())) {
+                    // Clean all scopes from default redirect uri type
+                    if (redirectUri.getScopes() != null && !redirectUri.getScopes().isEmpty()) {
+                        redirectUri.setScopes(new ArrayList<String>());
+                    }
+                } else {
+                    if (redirectUri.getScopes() != null && redirectUri.getScopes().isEmpty()) {
+                        //If the redirect type is not default, the scopes must not be emtpy
+                        setError(redirectUri, "manage.developer_tools.group.error.empty_scopes");
+                    }
                 }
             }
         }
@@ -174,7 +192,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
     @RequestMapping(value = "/add-client.json", method = RequestMethod.POST)
     @Produces(value = { MediaType.APPLICATION_JSON })
     public @ResponseBody
-    Client createClient(HttpServletRequest request, @RequestBody Client client) {
+    Client createClient(@RequestBody Client client) {
         // Clean the error list
         client.setErrors(new ArrayList<String>());
         // Validate fields
@@ -207,7 +225,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
             } catch (OrcidClientGroupManagementException e) {
                 LOGGER.error(e.getMessage());
                 result = new OrcidClient();
-                result.setErrors(new ErrorDesc(getMessage("manage_clients.cannot_create_client")));
+                result.setErrors(new ErrorDesc(getMessage("manage.developer_tools.group.cannot_create_client")));
             }
 
             client = Client.valueOf(result);
@@ -220,7 +238,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
     @RequestMapping(value = "/edit-client.json", method = RequestMethod.POST)
     @Produces(value = { MediaType.APPLICATION_JSON })
     public @ResponseBody
-    Client editClient(HttpServletRequest request, @RequestBody Client client) {
+    Client editClient(@RequestBody Client client) {
         // Clean the error list
         client.setErrors(new ArrayList<String>());
         // Validate fields
@@ -249,12 +267,12 @@ public class GroupAdministratorController extends BaseWorkspaceController {
             OrcidClient result = null;
 
             try {
-                result = orcidClientGroupManager.updateClientProfile(groupOrcid, client.toOrcidClient());                
+                result = orcidClientGroupManager.updateClientProfile(groupOrcid, client.toOrcidClient());
                 clearCache();
             } catch (OrcidClientGroupManagementException e) {
                 LOGGER.error(e.getMessage());
                 result = new OrcidClient();
-                result.setErrors(new ErrorDesc(getMessage("manage_clients.unable_to_update")));
+                result.setErrors(new ErrorDesc(getMessage("manage.developer_tools.group.unable_to_update")));
             }
 
             client = Client.valueOf(result);
@@ -283,17 +301,42 @@ public class GroupAdministratorController extends BaseWorkspaceController {
 
         return clients;
     }
-    
+
     @ModelAttribute("redirectUriTypes")
-    public Map<String, String> getRedirectUriTypes(){
+    public Map<String, String> getRedirectUriTypes() {
         Map<String, String> redirectUriTypes = new LinkedHashMap<String, String>();
-        for(RedirectUriType rType : RedirectUriType.values()) {
-            redirectUriTypes.put(rType.value(), rType.value());
+        for (RedirectUriType rType : RedirectUriType.values()) {
+            if (!RedirectUriType.SSO_AUTHENTICATION.equals(rType))
+                redirectUriTypes.put(rType.value(), rType.value());
         }
         return redirectUriTypes;
     }
-    
+
+    /**
+     * Since the groups have changed, the cache version must be updated on
+     * database and all caches have to be evicted.
+     * */
     private void clearCache() {
+        // Updates cache database version
+        thirdPartyImportManager.updateDatabaseCacheVersion();
+        // Evict current cache
         thirdPartyImportManager.evictAll();
     }
+
+    @RequestMapping(value = "/get-available-scopes.json", method = RequestMethod.GET)
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    public @ResponseBody
+    List<String> getAvailableRedirectUriScopes() {
+        List<String> scopes = new ArrayList<String>();
+        // Ignore these scopes
+        List<ScopePathType> ignoreScopes = new ArrayList<ScopePathType>(Arrays.asList(ScopePathType.ORCID_PATENTS_CREATE, ScopePathType.ORCID_PATENTS_READ_LIMITED,
+                ScopePathType.ORCID_PATENTS_UPDATE, ScopePathType.WEBHOOK));
+        for (ScopePathType t : ScopePathType.values()) {
+            if (!ignoreScopes.contains(t))
+                scopes.add(t.value());
+        }
+        Collections.sort(scopes);
+        return scopes;
+    }
+
 }

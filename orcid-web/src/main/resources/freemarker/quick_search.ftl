@@ -20,7 +20,7 @@
 
 <div class="row">
     <div class="col-md-12">
-        <div ng-controller="QuickSearchCtrl" id="QuickSearchCtrl" data-search-query-url="${searchQueryUrl}">
+        <div ng-controller="QuickSearchCtrl" id="QuickSearchCtrl" data-search-query-url="${searchQueryUrl?html}">
             <h3 class="ng-cloak search-result-head" ng-show="areResults()">${springMacroRequestContext.getMessage("search_results.h3Searchresults")}</h3>
       <table class="ng-cloak table table-striped" ng-show="areResults()">
           <thead>
@@ -36,7 +36,7 @@
           <tbody>
               <tr ng-repeat='result in results' class="new-search-result">
                   <td>{{result['relevancy-score'].value | number:3}}</td>
-                  <td class='search-result-orcid-id'><a href="{{result['orcid-profile']['orcid-id']}}">{{result['orcid-profile'].orcid.value}}</td>
+                  <td class='search-result-orcid-id'><a href="{{result['orcid-profile']['orcid-identifier'].uri}}">{{result['orcid-profile']['orcid-identifier'].path}}</td>
                   <td>{{result['orcid-profile']['orcid-bio']['personal-details']['given-names'].value}}</td>
                   <td>{{result['orcid-profile']['orcid-bio']['personal-details']['family-name'].value}}</td>
                   <td>{{concatPropertyValues(result['orcid-profile']['orcid-bio']['personal-details']['other-names']['other-name'], 'value')}}</td>

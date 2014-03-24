@@ -42,7 +42,7 @@
 				<div class="control-group">
 		    		<label class="relative"><@orcid.msg 'manual_work_form_contents.labelworkcategory'/></label>
 		    		<div class="relative">
-			    		<select id="workCategory" name="workCategory" class="input-xlarge" ng-model="editWork.workCategory.value" ng-change="loadWorkTypes()">
+			    		<select id="workCategory" name="workCategory" class="input-xlarge" ng-model="editWork.workCategory.value" ng-change="loadWorkTypes();clearErrors()">
 			    			<option value=""><@orcid.msg 'org.orcid.jaxb.model.message.WorkCategory.empty' /></option>
 							<#list workCategories?keys as key>
 								<option value="${key}">${workCategories[key]}</option>
@@ -57,7 +57,7 @@
 
 				<div class="control-group">
 		    		<label class="relative"><@orcid.msg 'manual_work_form_contents.labelworktype'/></label>
-					<select id="workType" name="workType" class="input-xlarge" ng-model="editWork.workType.value" ng-options="key as value for (key , value) in types">						
+					<select id="workType" name="workType" class="input-xlarge" ng-model="editWork.workType.value" ng-options="key as value for (key , value) in types" ng-change="clearErrors()">						
 					</select>
 					<span class="required" ng-class="isValidClass(editWork.workType)">*</span>
 					<span class="orcid-error" ng-show="editWork.workType.errors.length > 0">

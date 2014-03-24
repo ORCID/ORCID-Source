@@ -17,6 +17,15 @@
 
 -->
 <@base>
+<#assign displayName = "">
+<#if clientProfile.orcidBio.personalDetails.creditName??>
+	<#assign displayName = clientProfile.orcidBio.personalDetails.creditName.content>
+<#else>
+	<#assign displayName = clientProfile.orcidBio.personalDetails.givenNames.content>
+	<#if clientProfile.orcidBio.personalDetails.familyName??>
+		<#assign displayName = displayName + " " + clientProfile.orcidBio.personalDetails.familyName.content>
+	</#if>
+</#if>
 <!-- colorbox-content -->
 <div class="container top-green-border">
 <div class="row">
@@ -40,9 +49,8 @@
             (<a href="" onclick="logOffReload(); return false;">Not you?</a>) 
             </h2>
         <#else>
-            <h2 class="oauth-title">${springMacroRequestContext.getMessage("confirm-oauth-access.connecting")}<br /> <span>${clientProfile.orcidBio.personalDetails.creditName.content}</span><br /> ${springMacroRequestContext.getMessage("confirm-oauth-access.withyourrecord")}</h2>
+            <h2 class="oauth-title">${springMacroRequestContext.getMessage("confirm-oauth-access.connecting")}<br /><span>${displayName}</span><br />${springMacroRequestContext.getMessage("confirm-oauth-access.withyourrecord")}</h2>
         </#if>
-              
         <hr />
         
     </div>
@@ -55,7 +63,9 @@
     </div>
     
     <div class="col-md-6 col-md-pull-6 col-sm-12 margin-bottom-box">
-         <h3>${clientProfile.orcidBio.personalDetails.creditName.content}</h3>
+         <h3>
+         	${displayName}
+         </h3>
          <p>${springMacroRequestContext.getMessage("confirm-oauth-access.hasaskedforthefollowing")}</p>
          <#list scopes as scope>
              <div class="alert">
@@ -68,8 +78,7 @@
 	        <#list scopes as scope>
 	           <#assign authOnClick = authOnClick + " orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Authorize_" + scope.name()?replace("ORCID_", "") + "', 'OAuth " + client_group_name?js_string + " - " + client_name?js_string + "']);">     
 	        </#list>
-	
-	    	<#assign denyOnClick = " orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Authorize_Deny', 'OAuth " + client_group_name?js_string + " - " + client_name?js_string + "']);">
+	    	<#assign denyOnClick = " orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Authorize_Deny', 'OAuth " + client_group_name?js_string + " - " + client_name?js_string + "']);">	    	
 	    	<div class="col-md-3 col-sm-2">     
 	            <span class="span">
 	                <form id="denialForm" class="form-inline" name="denialForm" action="<@spring.url '/oauth/authorize'/>" onsubmit="${denyOnClick} orcidGA.gaFormSumbitDelay(this); return false;" method="post">

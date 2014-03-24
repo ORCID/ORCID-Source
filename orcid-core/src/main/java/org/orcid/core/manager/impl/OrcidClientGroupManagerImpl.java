@@ -469,7 +469,14 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         redirectUrisToAdd.addAll(client.getRedirectUris().getRedirectUri());
         for (RedirectUri redirectUri : redirectUrisToAdd) {
             if (clientRedirectUriEntitiesMap.containsKey(redirectUri.getValue())) {
-                clientRedirectUriEntities.add(clientRedirectUriEntitiesMap.get(redirectUri.getValue()));
+                ClientRedirectUriEntity existingEntity = clientRedirectUriEntitiesMap.get(redirectUri.getValue());
+                //Update the scopes
+                List<ScopePathType> clientPredefinedScopes = redirectUri.getScope();
+                if (clientPredefinedScopes != null) {
+                    existingEntity.setPredefinedClientScope(ScopePathType.getScopesAsSingleString(clientPredefinedScopes));
+                }
+                //Add the the list
+                clientRedirectUriEntities.add(existingEntity);
             } else {
                 ClientRedirectUriEntity clientRedirectUriEntity = new ClientRedirectUriEntity(redirectUri.getValue(), clientDetailsEntity);
                 List<ScopePathType> clientPredefinedScopes = redirectUri.getScope();
@@ -523,6 +530,10 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidProfile.setType(OrcidType.CLIENT);
         orcidProfile.setClientType(orcidClient.getType());
+        OrcidHistory orcidHistory = new OrcidHistory();
+        orcidProfile.setOrcidHistory(orcidHistory);
+        orcidHistory.setClaimed(new Claimed(true));
+        orcidHistory.setSubmissionDate(new SubmissionDate(DateUtils.convertToXMLGregorianCalendar(new Date())));
         OrcidBio orcidBio = new OrcidBio();
         orcidProfile.setOrcidBio(orcidBio);
         PersonalDetails personalDetails = new PersonalDetails();

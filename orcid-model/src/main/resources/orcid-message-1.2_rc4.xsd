@@ -546,6 +546,7 @@
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element ref="orcid:orcid-identifier" />
+				<xs:element ref="orcid:last-modified-date" minOccurs="1" maxOccurs="1" />
 				<xs:element minOccurs="0" ref="orcid:credit-name" />
 			</xs:sequence>
 		</xs:complexType>
@@ -644,7 +645,7 @@
 					minOccurs="0" maxOccurs="1" />
 				<xs:element name="start-date" type="orcid:fuzzy-date"
 					minOccurs="0" maxOccurs="1" />
-				<xs:element name="end-date" minOccurs="0" maxOccurs="1" />
+				<xs:element name="end-date" type="orcid:fuzzy-date" minOccurs="0" maxOccurs="1" />
 				<xs:element ref="orcid:organization" minOccurs="1" maxOccurs="1"/>
 				<xs:element ref="orcid:source" minOccurs="0"  maxOccurs="1" />
 			</xs:sequence>
@@ -661,9 +662,6 @@
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="education" />
 			<xs:enumeration value="employment" />
-			<xs:enumeration value="distinction" />
-			<xs:enumeration value="funding" />
-			<xs:enumeration value="contribution" />
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:element name="organization">
@@ -1820,6 +1818,7 @@
 				<xs:element ref="orcid:send-change-notifications" />
 				<xs:element ref="orcid:send-orcid-news" />
 				<xs:element ref="orcid:activities-visibility-default" />
+				<xs:element ref="orcid:developer-tools-enabled" minOccurs="0"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -1854,6 +1853,13 @@
 		<xs:complexType mixed="true">
 			<xs:simpleContent>
 				<xs:extension base="orcid:visibility" />
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="developer-tools-enabled">
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:extension base="xs:boolean" />
 			</xs:simpleContent>
 		</xs:complexType>
 	</xs:element>

@@ -18,8 +18,8 @@ package org.orcid.core.utils;
 
 import java.io.IOException;
 
-import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.DeserializationConfig.Feature;
+import org.codehaus.jackson.map.ObjectMapper;
 
 /**
  * 
@@ -45,5 +45,5 @@ public class JsonUtils {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
+    }        
 }

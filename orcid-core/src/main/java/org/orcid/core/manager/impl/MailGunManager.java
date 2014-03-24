@@ -53,6 +53,9 @@ public class MailGunManager {
     @Value("${com.mailgun.verify.apiUrl:https://api.mailgun.net/v2/samples.mailgun.org/messages}")
     private String verifyApiUrl;
 
+    @Value("${com.mailgun.notify.apiUrl:https://api.mailgun.net/v2/samples.mailgun.org/messages}")
+    private String notifyApiUrl;
+
     @Value("${com.mailgun.testmode:yes}")
     private String testmode;
     
@@ -61,13 +64,21 @@ public class MailGunManager {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(MailGunManager.class);
 
-    public boolean sendVerifyEmail(String from, String to, String subject, String text, String html) {
+    public boolean sendEmail(String from, String to, String subject, String text, String html) {
         
         Client client = Client.create();
         client.addFilter(new HTTPBasicAuthFilter("api",
                 getApiKey()));
-        WebResource webResource =
-                client.resource(getVerifyApiUrl());
+        
+        // determine correct api based off domain.
+        WebResource webResource = null;
+        if (from.trim().endsWith("@verify.orcid.org")) 
+            webResource = client.resource(getVerifyApiUrl());
+        else if (from.trim().endsWith("@notify.orcid.org")) 
+            webResource = client.resource(getNotifyApiUrl());
+        else
+            webResource = client.resource(getApiUrl());
+        
         MultivaluedMapImpl formData = new MultivaluedMapImpl();
         formData.add("from", from);
         formData.add("to", to);
@@ -111,6 +122,14 @@ public class MailGunManager {
 
     public void setVerifyApiUrl(String verifyApiUrl) {
         this.verifyApiUrl = verifyApiUrl;
+    }
+
+    public String getNotifyApiUrl() {
+        return notifyApiUrl;
+    }
+
+    public void setNotifyApiUrl(String notifyApiUrl) {
+        this.notifyApiUrl = notifyApiUrl;
     }
 
 }

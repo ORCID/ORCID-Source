@@ -816,6 +816,10 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 if (preferences.getActivitiesVisibilityDefault() != null) {
                     profileEntity.setActivitiesVisibilityDefault(preferences.getActivitiesVisibilityDefault().getValue());
                 } 
+                
+                if(preferences.getDeveloperToolsEnabled() != null) {
+                    profileEntity.setEnableDeveloperTools(preferences.getDeveloperToolsEnabled().isValue());
+                }
             }
 
         }

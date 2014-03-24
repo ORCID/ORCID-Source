@@ -184,6 +184,10 @@
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/orgs/.*" 
 			access="ROLE_USER"/>
+		<sec:intercept-url pattern="/developer-tools" 
+			access="ROLE_USER"/>
+		<sec:intercept-url pattern="/developer-tools/.*" 
+			access="ROLE_USER"/>
 		<sec:intercept-url pattern="/oauth/.*" access="ROLE_USER" />
 		<sec:intercept-url pattern="/eula/accept(\?.*)?"
 			method="POST" access="DENY_OAUTH,ROLE_USER" />

@@ -23,7 +23,7 @@
 			<!-- Info -->
 			<div class="col-md-8 col-sm-8">
 		        <h3 class="work-title">
-		        	<strong ng-bind="work.workTitle.title.value"></strong><span class="work-subtitle" ng-show="work.workTitle.subtitle.value" ng-bind-html="':&nbsp;'.concat(work.workTitle.subtitle.value)"></span>
+		        	<strong ng-bind="work.workTitle.title.value"></strong><span class="work-subtitle" ng-show="work.workTitle.subtitle.value" ng-bind="':&nbsp;'.concat(work.workTitle.subtitle.value)"></span>
 		        	<span ng-show="work.publicationDate.year">{{work.publicationDate.year}}</span><span ng-show="work.publicationDate.month">-{{work.publicationDate.month}}</span>
 		        </h3> 
 	        </div>
