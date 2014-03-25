@@ -20,6 +20,7 @@ import java.util.HashMap;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.ActivityCacheManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.jaxb.model.message.Affiliation;
@@ -27,6 +28,8 @@ import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Work;
 import org.springframework.cache.annotation.Cacheable;
 
@@ -76,4 +79,37 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
         return affiliationMap;
     }
 
+    @Cacheable(value = "credit-name", key = "#profile.getCacheKey()")
+    public String getCreditName(ProfileEntity profile) {
+        if (profile != null) {            
+            if (StringUtils.isNotBlank(profile.getCreditName())) {
+                return profile.getCreditName();
+            } else {
+                String givenName = profile.getGivenNames();
+                String familyName = profile.getFamilyName();
+                String composedCreditName = (PojoUtil.isEmpty(givenName) ? "" : givenName) + " " + (PojoUtil.isEmpty(familyName) ? "" : familyName);
+                return composedCreditName;
+            }
+            
+        }
+
+        return null;
+    }
+    
+    @Cacheable(value = "pub-credit-name", key = "#profile.getCacheKey()")
+    public String getPublicCreditName(ProfileEntity profile) {
+        if(profile != null) {
+            if (Visibility.PUBLIC.equals(profile.getCreditNameVisibility()) && StringUtils.isNotBlank(profile.getCreditName())) {
+                return profile.getCreditName();
+            } else {
+                String givenName = profile.getGivenNames();
+                String familyName = profile.getFamilyName();
+                String composedCreditName = (PojoUtil.isEmpty(givenName) ? "" : givenName) + " " + (PojoUtil.isEmpty(familyName) ? "" : familyName);
+                return composedCreditName;
+            }
+        }
+        
+        return null;
+    }
+    
 }
