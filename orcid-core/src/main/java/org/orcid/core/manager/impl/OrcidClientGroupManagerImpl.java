@@ -537,15 +537,13 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         OrcidBio orcidBio = new OrcidBio();
         orcidProfile.setOrcidBio(orcidBio);
         PersonalDetails personalDetails = new PersonalDetails();
-        orcidBio.setPersonalDetails(personalDetails);
-        personalDetails.setCreditName(new CreditName(orcidClient.getDisplayName()));
+        orcidBio.setPersonalDetails(personalDetails);        
         // Add website as researcher url
         if (StringUtils.isNotBlank(orcidClient.getWebsite())) {
             ResearcherUrls researcherUrls = new ResearcherUrls();
             researcherUrls.getResearcherUrl().add(new ResearcherUrl(new Url(orcidClient.getWebsite())));
             orcidBio.setResearcherUrls(researcherUrls);
-        }
-        orcidBio.setBiography(new Biography(orcidClient.getShortDescription()));
+        }        
         return orcidProfile;
     }
 
@@ -563,7 +561,10 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         List<String> clientGrantedAuthorities = new ArrayList<String>();
         clientGrantedAuthorities.add("ROLE_CLIENT");
 
-        ClientDetailsEntity clientDetails = orcidClientDetailsService.createClientDetails(orcid, createScopes(clientType), clientResourceIds, clientAuthorizedGrantTypes,
+        String name = orcidClient.getDisplayName();
+        String description = orcidClient.getShortDescription();
+        
+        ClientDetailsEntity clientDetails = orcidClientDetailsService.createClientDetails(orcid, name, description, createScopes(clientType), clientResourceIds, clientAuthorizedGrantTypes,
                 redirectUrisToAdd, clientGrantedAuthorities);
         return clientDetails;
     }

@@ -49,6 +49,10 @@ public interface OrcidClientDetailsService extends ClientDetailsService {
      * @param orcid
      *            the ORCID that will be the owner of this client. Each client
      *            can have one, and one only profile associated with it
+     * @param name
+     *          The client name
+     * @param description
+     *          The client description          
      * @param clientScopes
      *            the scopes that this client can request
      * @param clientResourceIds
@@ -64,7 +68,7 @@ public interface OrcidClientDetailsService extends ClientDetailsService {
      *            only "ROLE_CLIENT"
      * @return
      */
-    ClientDetailsEntity createClientDetails(String orcid, Set<String> clientScopes, Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes,
+    ClientDetailsEntity createClientDetails(String orcid, String name, String description, Set<String> clientScopes, Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes,
             Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities);
 
     /**
@@ -74,6 +78,10 @@ public interface OrcidClientDetailsService extends ClientDetailsService {
      * @param orcid
      *            the ORCID that will be the owner of this client. Each client
      *            can have one, and one only profile associated with it
+     * @param name
+     *          The client name
+     * @param description
+     *          The client description 
      * @param clientId
      *            the client id that will be used to retrieve this entity from
      *            the database
@@ -94,7 +102,7 @@ public interface OrcidClientDetailsService extends ClientDetailsService {
      *            only "ROLE_CLIENT"
      * @return
      */
-    ClientDetailsEntity createClientDetails(String orcid, String clientId, String clientSecret, Set<String> clientScopes, Set<String> clientResourceIds,
+    ClientDetailsEntity createClientDetails(String orcid, String name, String description, String clientId, String clientSecret, Set<String> clientScopes, Set<String> clientResourceIds,
             Set<String> clientAuthorizedGrantTypes, Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities);
 
     /**

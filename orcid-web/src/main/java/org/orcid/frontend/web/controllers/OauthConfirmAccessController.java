@@ -55,6 +55,7 @@ public class OauthConfirmAccessController extends BaseController {
         }
         String client_name = "";
         String client_group_name = "";
+        String client_type = "";
         if (clientProfile.getOrcidBio() != null && clientProfile.getOrcidBio().getPersonalDetails() != null
                 && clientProfile.getOrcidBio().getPersonalDetails().getCreditName() != null)
             client_name = clientProfile.getOrcidBio().getPersonalDetails().getCreditName().getContent();
@@ -78,6 +79,11 @@ public class OauthConfirmAccessController extends BaseController {
         if(StringUtils.isBlank(client_group_name)) {
             client_group_name = client_name;
         }
+        
+        if(clientProfile.getType() != null)
+            client_type="client";
+        else
+            client_type="sso";
 
         mav.addObject("client_name", client_name);
         mav.addObject("client_group_name", client_group_name);        

@@ -18,6 +18,7 @@ package org.orcid.frontend.web.controllers;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -31,6 +32,7 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RedirectUri;
 import org.orcid.pojo.ajaxForm.SSOCredentials;
 import org.orcid.pojo.ajaxForm.Text;
@@ -45,6 +47,8 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping(value = { "/developer-tools" })
 public class DeveloperToolsController extends BaseWorkspaceController {
 
+    private static int CLIENT_NAME_LENGTH = 255;
+    
     @Resource
     private OrcidSSOManager orcidSSOManager;
 
@@ -90,7 +94,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
     @RequestMapping(value = "/generate-sso-credentials.json", method = RequestMethod.POST)
     public @ResponseBody
     SSOCredentials generateSSOCredentialsJson(HttpServletRequest request, @RequestBody SSOCredentials ssoCredentials) {
-        boolean hasErrors = validateSSoCredentials(ssoCredentials);
+        boolean hasErrors = validateSSOCredentials(ssoCredentials);
 
         if (!hasErrors) {
             OrcidProfile profile = getEffectiveProfile();
@@ -99,12 +103,21 @@ public class DeveloperToolsController extends BaseWorkspaceController {
             for (RedirectUri redirectUri : ssoCredentials.getRedirectUris()) {
                 redirectUriStrings.add(redirectUri.getValue().getValue());
             }
-            ClientDetailsEntity clientDetails = orcidSSOManager.grantSSOAccess(orcid, redirectUriStrings);
+            String clientName = ssoCredentials.getClientName().getValue();
+            String clientDescription = ssoCredentials.getClientDescription().getValue();
+            ClientDetailsEntity clientDetails = orcidSSOManager.grantSSOAccess(orcid, clientName, clientDescription, redirectUriStrings);
             ssoCredentials = SSOCredentials.toSSOCredentials(clientDetails);
         } else {
             List<String> errors = ssoCredentials.getErrors();
             if (errors == null)
                 errors = new ArrayList<String>();
+            
+            if(ssoCredentials.getClientName().getErrors() != null && !ssoCredentials.getClientName().getErrors().isEmpty())
+                errors.addAll(ssoCredentials.getClientName().getErrors());
+            
+            if(ssoCredentials.getClientDescription().getErrors() != null && !ssoCredentials.getClientDescription().getErrors().isEmpty())
+                errors.addAll(ssoCredentials.getClientDescription().getErrors());
+            
             for (RedirectUri redirectUri : ssoCredentials.getRedirectUris()) {
                 if (redirectUri.getErrors() != null && !redirectUri.getErrors().isEmpty())
                     errors.addAll(redirectUri.getErrors());
@@ -115,10 +128,10 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         return ssoCredentials;
     }
 
-    @RequestMapping(value = "/update-redirect-uris.json", method = RequestMethod.POST)
+    @RequestMapping(value = "/update-user-credentials.json", method = RequestMethod.POST)
     public @ResponseBody
-    SSOCredentials updateRedirectUris(HttpServletRequest request, @RequestBody SSOCredentials ssoCredentials) {
-        boolean hasErrors = validateSSoCredentials(ssoCredentials);
+    SSOCredentials updateUserCredentials(HttpServletRequest request, @RequestBody SSOCredentials ssoCredentials) {
+        boolean hasErrors = validateSSOCredentials(ssoCredentials);
 
         if (!hasErrors) {
             OrcidProfile profile = getEffectiveProfile();
@@ -127,12 +140,21 @@ public class DeveloperToolsController extends BaseWorkspaceController {
             for (RedirectUri redirectUri : ssoCredentials.getRedirectUris()) {
                 redirectUriStrings.add(redirectUri.getValue().getValue());
             }
-            ClientDetailsEntity clientDetails = orcidSSOManager.updateRedirectUris(orcid, redirectUriStrings);
+            String clientName = ssoCredentials.getClientName().getValue();
+            String clientDescription = ssoCredentials.getClientDescription().getValue();
+            ClientDetailsEntity clientDetails = orcidSSOManager.updateUserCredentials(orcid, clientName, clientDescription, redirectUriStrings);
             ssoCredentials = SSOCredentials.toSSOCredentials(clientDetails);
         } else {
             List<String> errors = ssoCredentials.getErrors();
             if (errors == null)
                 errors = new ArrayList<String>();
+            
+            if(ssoCredentials.getClientName().getErrors() != null && !ssoCredentials.getClientName().getErrors().isEmpty())
+                errors.addAll(ssoCredentials.getClientName().getErrors());
+            
+            if(ssoCredentials.getClientDescription().getErrors() != null && !ssoCredentials.getClientDescription().getErrors().isEmpty())
+                errors.addAll(ssoCredentials.getClientDescription().getErrors());
+            
             for (RedirectUri redirectUri : ssoCredentials.getRedirectUris()) {
                 if (redirectUri.getErrors() != null && !redirectUri.getErrors().isEmpty())
                     errors.addAll(redirectUri.getErrors());
@@ -168,10 +190,39 @@ public class DeveloperToolsController extends BaseWorkspaceController {
      * @param ssoCredentials
      * @return true if any error is found in the ssoCredentials object
      * */
-    private boolean validateSSoCredentials(SSOCredentials ssoCredentials) {
+    private boolean validateSSOCredentials(SSOCredentials ssoCredentials) {
         boolean hasErrors = false;
-        Set<RedirectUri> redirectUris = ssoCredentials.getRedirectUris();
-
+        Set<RedirectUri> redirectUris = ssoCredentials.getRedirectUris();        
+        if(PojoUtil.isEmpty(ssoCredentials.getClientName())) {
+            if(ssoCredentials.getClientName() == null) {
+                ssoCredentials.setClientName(new Text());
+            }
+            ssoCredentials.getClientName().setErrors(Arrays.asList(getMessage("manage.developer_tools.name_not_empty")));
+            hasErrors = true;
+        } else if(ssoCredentials.getClientName().getValue().length() > CLIENT_NAME_LENGTH) {            
+            ssoCredentials.getClientName().setErrors(Arrays.asList(getMessage("manage.developer_tools.name_too_long")));
+            hasErrors = true;
+        } else {
+            if(ssoCredentials.getClientName() == null) {
+                ssoCredentials.setClientName(new Text());
+            }            
+            ssoCredentials.getClientName().setErrors(new ArrayList<String>());
+        }
+        
+        if(PojoUtil.isEmpty(ssoCredentials.getClientDescription())) {
+            if(ssoCredentials.getClientDescription() == null){
+                ssoCredentials.setClientDescription(new Text());
+            }
+            ssoCredentials.getClientDescription().setErrors(Arrays.asList(getMessage("manage.developer_tools.description_not_empty")));
+            hasErrors = true;
+        } else {
+            if(ssoCredentials.getClientDescription() == null){
+                ssoCredentials.setClientDescription(new Text());
+            }
+            
+            ssoCredentials.getClientDescription().setErrors(new ArrayList<String>());
+        }
+        
         if (redirectUris == null || redirectUris.isEmpty()) {
             List<String> errors = new ArrayList<String>();
             errors.add(getMessage("manage.developer_tools.at_least_one"));

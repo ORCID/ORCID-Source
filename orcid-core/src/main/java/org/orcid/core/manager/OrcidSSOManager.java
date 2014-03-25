@@ -22,8 +22,8 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 
 public interface OrcidSSOManager {
 
-    ClientDetailsEntity grantSSOAccess(String orcid, Set<String> redirectUris);
+    ClientDetailsEntity grantSSOAccess(String orcid, String name, String description, Set<String> redirectUris);
     ClientDetailsEntity getUserCredentials(String orcid);
-    ClientDetailsEntity updateRedirectUris(String orcid, Set<String> redirectUris);
+    ClientDetailsEntity updateUserCredentials(String orcid, String name, String description, Set<String> redirectUris);
     void revokeSSOAccess(String orcid);     
 }

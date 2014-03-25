@@ -65,7 +65,7 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
     private final static String SSO_ROLE = "ROLE_PUBLIC";
 
     @Override
-    public ClientDetailsEntity grantSSOAccess(String orcid, Set<String> redirectUris) {
+    public ClientDetailsEntity grantSSOAccess(String orcid, String name, String description, Set<String> redirectUris) {
         ProfileEntity profileEntity = profileEntityManager.findByOrcid(orcid);
         if (profileEntity == null) {
             throw new IllegalArgumentException("ORCID does not exist for " + orcid + " cannot continue");
@@ -98,7 +98,7 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
                 for (String uri : redirectUris) {
                     redirectUrisSet.add(uri);
                 }
-                ClientDetailsEntity clientDetailsEntity = populateClientDetailsEntity(clientId, clientSecret, redirectUrisSet);
+                ClientDetailsEntity clientDetailsEntity = populateClientDetailsEntity(clientId, name, description, clientSecret, redirectUrisSet);
                 clientDetailsDao.persist(clientDetailsEntity);
                 return clientDetailsDao.findByClientId(clientDetailsEntity.getId());
             }
@@ -175,7 +175,7 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
         return false;
     }
 
-    private ClientDetailsEntity populateClientDetailsEntity(String clientId, String clientSecret, Set<String> clientRegisteredRedirectUris) {
+    private ClientDetailsEntity populateClientDetailsEntity(String clientId, String name, String description, String clientSecret, Set<String> clientRegisteredRedirectUris) {
         ClientDetailsEntity clientDetailsEntity = new ClientDetailsEntity();
         clientDetailsEntity.setId(clientId);
         clientDetailsEntity.setClientSecretForJpa(clientSecret);
@@ -237,7 +237,7 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
     }
 
     @Override
-    public ClientDetailsEntity updateRedirectUris(String orcid, Set<String> redirectUris) {
+    public ClientDetailsEntity updateUserCredentials(String orcid, String name, String description, Set<String> redirectUris) {
         ProfileEntity profileEntity = profileEntityManager.findByOrcid(orcid);
         if (profileEntity == null) {
             throw new IllegalArgumentException("ORCID does not exist for " + orcid + " cannot continue");
@@ -246,6 +246,10 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
             if (clientDetailsEntity != null) {
                 // Set the decrypted secret
                 clientDetailsEntity.setDecryptedClientSecret(encryptionManager.decryptForInternalUse(clientDetailsEntity.getClientSecretForJpa()));
+                //Update the name
+                clientDetailsEntity.setClientName(name);
+                //Update the description
+                clientDetailsEntity.setClientDescription(description);
                 // Get the existing redirect uris
                 SortedSet<ClientRedirectUriEntity> clientRedirectUriEntities = clientDetailsEntity.getClientRegisteredRedirectUris();
 

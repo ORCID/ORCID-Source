@@ -327,7 +327,9 @@
 						class="revokeApplicationForm"
 						id="revokeApplicationForm${applicationSummary_index}">
 						<td class="revokeApplicationName">${(applicationSummary.applicationName.content)!}<br />
-						<a href="<@orcid.absUrl applicationSummary.applicationWebsite/>">${applicationSummary.applicationWebsite.value}</a></td>
+						<#if (applicationSummary.applicationWebsite)??>
+							<a href="<@orcid.absUrl applicationSummary.applicationWebsite/>">${applicationSummary.applicationWebsite.value}</a></td>
+						</#if>
 						<td width="35%">${applicationSummary.approvalDate.value.toGregorianCalendar().time?date}</td>
 						<td width="5%"><input type="hidden" name="applicationOrcid"
 							value="${applicationSummary.applicationOrcid.path}" /> <input

@@ -70,45 +70,98 @@
 <script type="text/ng-template" id="generate-sso-credentials-modal">
 	<div style="margin: 20px;" class="sso-api">
 		<h3><@orcid.msg 'manage.developer_tools.create.title'/></h3>
-		<span><@orcid.msg 'manage.developer_tools.create.instructions'/></span><br />
-		<label class="control-label" style="margin-right:10px; text-align:left; width:120px"><@orcid.msg 'manage.developer_tools.redirect_uri'/>:</label>		
+		<span><@orcid.msg 'manage.developer_tools.create.instructions'/></span><br />			
 		
 		<div class="sso-redirect_uris">
-	    	<div class="control-group" ng-repeat="rUri in userCredentials.redirectUris">										
-				<input type="text" placeholder="<@orcid.msg 'manage.developer_tools.redirect_uri.placeholder'/>" class="input-xlarge" ng-model="rUri.value.value"><a href ng-click="deleteRedirectUri($index)" class="glyphicon glyphicon-trash grey"></a><br />					
-				<span class="orcid-error" ng-show="rUri.errors.length > 0">
-					<div ng-repeat='error in rUri.errors' ng-bind-html="error"></div>
-				</span>						
+			<div class="row">
+				<span class="col-xs-12 col-md-12"><strong><@orcid.msg 'manage.developer_tools.generate.name'/></strong></span>
+				<span class="col-xs-12 col-md-12"><input type="text" placeholder="<@orcid.msg 'manage.developer_tools.generate.name.placeholder'/>" class="input-xlarge" ng-model="userCredentials.clientName.value"></span><br />
+				<span class="col-xs-12 col-md-12 orcid-error" ng-show="userCredentials.clientName.errors.length > 0">
+					<div ng-repeat='error in userCredentials.clientName.errors' ng-bind-html="error"></div>
+				</span>	
+			</div>
+
+			<div class="row">
+				<span class="col-xs-12 col-md-12"><strong><@orcid.msg 'manage.developer_tools.generate.description'/></strong></span>
+				<span class="col-xs-12 col-md-12"><input type="text" placeholder="<@orcid.msg 'manage.developer_tools.generate.description.placeholder'/>" class="input-xlarge" ng-model="userCredentials.clientDescription.value"></span><br />
+				<span class="col-xs-12 col-md-12 orcid-error" ng-show="userCredentials.clientDescription.errors.length > 0">
+					<div ng-repeat='error in userCredentials.clientDescription.errors' ng-bind-html="error"></div>
+				</span>	
+			</div>
+
+			<div class="row">
+				<span class="col-xs-12 col-md-12"><strong><@orcid.msg 'manage.developer_tools.redirect_uri'/>:</strong></span>
+	    		<div class="col-xs-12 col-md-12" ng-repeat="rUri in userCredentials.redirectUris">										
+					<input type="text" placeholder="<@orcid.msg 'manage.developer_tools.redirect_uri.placeholder'/>" class="input-xlarge" ng-model="rUri.value.value">
+					<a href ng-click="deleteRedirectUri($index)" class="glyphicon glyphicon-trash grey"></a><br />					
+					<span class="col-xs-12 col-md-12 orcid-error" ng-show="rUri.errors.length > 0">
+						<div ng-repeat='error in rUri.errors' ng-bind-html="error"></div>
+					</span>						
+				</div>
+			</div>
+		
+			<div class="row">
+				<div class="col-xs-12 col-md-12" ng-show="!ssoCredentials.redirectUris.length">			
+					<a href ng-click="addRedirectURI()"><span class="glyphicon glyphicon-plus blue"></span><@orcid.msg 'manage.developer_tools.create.add_redirect_uri'/></a>
+				</div>
+			</div>
+	
+			<div class="row">
+				<span class="col-xs-12 col-md-12 small-row">
+					<button class="btn btn-danger" ng-click="submit()"><@orcid.msg 'manage.developer_tools.create.generate'/></button>
+					<a href="" ng-click="closeModal()"><@orcid.msg 'manage.developer_tools.create.cancel'/></a>
+				</span>
 			</div>
 		</div>
-		
-		<div class="sso-add-more-redirect-uris" ng-show="!ssoCredentials.redirectUris.length">			
-			<a href ng-click="addRedirectURI()"><span class="glyphicon glyphicon-plus blue"></span><@orcid.msg 'manage.developer_tools.create.add_redirect_uri'/></a>
-		</div>
-				
-		<button class="btn btn-danger" ng-click="submit()"><@orcid.msg 'manage.developer_tools.create.generate'/></button>
-		<a href="" ng-click="closeModal()"><@orcid.msg 'manage.developer_tools.create.cancel'/></a>
 	</div>
 </script>
 
 <script type="text/ng-template" id = "edit-sso-credentials-modal">
 	<div style="padding: 20px;" class="sso-api">
 		<h3><@orcid.msg 'manage.developer_tools.edit.title'/></h3>
-		<label class="control-label" style="margin-right:10px; text-align:left; width:90px"><@orcid.msg 'manage.developer_tools.redirect_uri'/>:</label>
-		<div class="control-group" ng-repeat='rUri in userCredentials.redirectUris'>									
-			<div class="relative">
-				<input type="text" placeholder="<@orcid.msg 'manage.developer_tools.redirect_uri.placeholder'/>" class="input-xlarge" ng-model="rUri.value.value">
-				<a href ng-click="deleteRedirectUri($index)" class="glyphicon glyphicon-trash blue"></a>
-				<span class="orcid-error" ng-show="rUri.errors.length > 0">
-					<div ng-repeat='error in rUri.errors' ng-bind-html-unsafe="error"></div>
-				</span>						
+		<span><@orcid.msg 'manage.developer_tools.create.instructions'/></span><br />
+
+		<div class="sso-redirect_uris">
+			<div class="row">
+				<span class="col-xs-12 col-md-12"><strong><@orcid.msg 'manage.developer_tools.generate.name'/></strong></span>
+				<span class="col-xs-12 col-md-12"><input type="text" placeholder="<@orcid.msg 'manage.developer_tools.generate.name.placeholder'/>" class="input-xlarge" ng-model="userCredentials.clientName.value"></span><br />
+				<span class="col-xs-12 col-md-12 orcid-error" ng-show="userCredentials.clientName.errors.length > 0">
+					<div ng-repeat='error in userCredentials.clientName.errors' ng-bind-html="error"></div>
+				</span>	
+			</div>
+
+			<div class="row">
+				<span class="col-xs-12 col-md-12"><strong><@orcid.msg 'manage.developer_tools.generate.description'/></strong></span>
+				<span class="col-xs-12 col-md-12"><input type="text" placeholder="<@orcid.msg 'manage.developer_tools.generate.description.placeholder'/>" class="input-xlarge" ng-model="userCredentials.clientDescription.value"></span><br />
+				<span class="col-xs-12 col-md-12 orcid-error" ng-show="userCredentials.clientDescription.errors.length > 0">
+					<div ng-repeat='error in userCredentials.clientDescription.errors' ng-bind-html="error"></div>
+				</span>	
+			</div>
+
+			<div class="row">
+				<span class="col-xs-12 col-md-12"><strong><@orcid.msg 'manage.developer_tools.redirect_uri'/>:</strong></span>
+	    		<div class="col-xs-12 col-md-12" ng-repeat="rUri in userCredentials.redirectUris">										
+					<input type="text" placeholder="<@orcid.msg 'manage.developer_tools.redirect_uri.placeholder'/>" class="input-xlarge" ng-model="rUri.value.value">					
+					<a href ng-click="deleteRedirectUri($index)" class="glyphicon glyphicon-trash blue"></a>
+					<span class="col-xs-12 col-md-12 orcid-error" ng-show="rUri.errors.length > 0">
+						<div ng-repeat='error in rUri.errors' ng-bind-html-unsafe="error"></div>
+					</span>							
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-xs-12 col-md-12" ng-show="!ssoCredentials.redirectUris.length">					
+					<a href ng-click="addRedirectURI()"><span class="glyphicon glyphicon-plus blue"></span><@orcid.msg 'manage.developer_tools.create.add_redirect_uri'/></a>
+				</div>
+			</div>
+
+			<div class="row">
+				<span class="col-xs-12 col-md-12 small-row">
+					<button class="btn btn-danger" ng-click="editClientCredentials()"><@orcid.msg 'manage.developer_tools.update'/></button>
+					<a href="" ng-click="closeModal()"><@orcid.msg 'manage.developer_tools.create.cancel'/></a>
+				</span>
 			</div>
 		</div>
-		<div class="sso-add-more-redirect-uris" ng-show="!ssoCredentials.redirectUris.length">			
-			<a href ng-click="addRedirectURI()"><span class="glyphicon glyphicon-plus blue"></span><@orcid.msg 'manage.developer_tools.create.add_redirect_uri'/></a>
-		</div>
-		<button class="btn btn-danger" ng-click="editRedirectUris()"><@orcid.msg 'manage.developer_tools.update'/></button>
-		<a href="" ng-click="closeModal()"><@orcid.msg 'manage.developer_tools.create.cancel'/></a>
 	</div>
 </script>
 
@@ -124,12 +177,22 @@
 		</div>
 		
 		<div class="row">
+			<span class="col-xs-12 col-md-3"><strong><@orcid.msg 'manage.developer_tools.view.name'/></strong></span>
+			<span class="col-xs-12 col-md-9">{{userCredentials.clientName.value}}</span><br />
+		</div>
+
+		<div class="row">
+			<span class="col-xs-12 col-md-3"><strong><@orcid.msg 'manage.developer_tools.view.description'/></strong></span>
+			<span class="col-xs-12 col-md-9">{{userCredentials.clientDescription.value}}</span><br />
+		</div>
+
+		<div class="row">
 			<span class="col-xs-12 col-md-3"><strong><@orcid.msg 'manage.developer_tools.view.secret'/></strong></span>
 			<span class="col-xs-12 col-md-9">{{userCredentials.clientSecret.value}}</span><br />
 		</div>
-		<br />
-		<span><strong><@orcid.msg 'manage.developer_tools.view.redirect_uri'/>:</strong></span><br />
-		<div class="row">												
+		<br />		
+		<div class="row">
+			<span class="col-xs-12 col-md-12"><strong><@orcid.msg 'manage.developer_tools.view.redirect_uri'/>:</strong></span><br />						
 			<div class="col-xs-12 col-md-12" ng-repeat='rUri in userCredentials.redirectUris'>
 				<a href="{{rUri.value.value}}">{{rUri.value.value}}</a>									
 			</div>

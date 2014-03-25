@@ -55,6 +55,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
 
     private String clientId;
     private String clientName;
+    private String clientDescription;
     private String clientSecret;
     private String decryptedClientSecret;
     private Set<ClientScopeEntity> clientScopes = Collections.emptySet();
@@ -89,6 +90,15 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
 
     public void setClientName(String clientName) {
         this.clientName = clientName;
+    }
+
+    @Column(name = "client_description")
+    public String getClientDescription() {
+        return clientDescription;
+    }
+
+    public void setClientDescription(String clientDescription) {
+        this.clientDescription = clientDescription;
     }
 
     @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientDetailsEntity", orphanRemoval = true)
