@@ -21,7 +21,7 @@
 <!DOCTYPE html>
 <html class="no-js oldie ng-app:orcidApp"  ng-app="orcidApp" id="ng-app" lang="en">
 <#include "/common/html-head.ftl" />
-<body data-baseurl="<@spring.url '/'/>" data-effective-user-orcid="${effectiveUserOrcid!}" class="<#if inDelegationMode>delegation-mode</#if>">
+<body data-baseurl="<@spring.url '/'/>" data-effective-user-orcid="${effectiveUserOrcid!}">
 <#nested />
 <#include "/common/scripts.ftl" />
 <#if !hideUserVoiceScript??> 
@@ -194,10 +194,15 @@
             <div class="col-md-3 col-sm-3 col-sm-pull-9 col-md-pull-9 reset logo">                
                     <h1><a href="${aboutUri}"><img src="${staticCdn}/img/orcid-logo.png" alt="ORCID logo" /></a></h1>
                     <p><@orcid.msg 'public-layout.logo.tagline'/></p>                
-            </div>
+            </div>            
             <span class="see-more">${liveIds} <@orcid.msg 'public-layout.amount_ids'/>
                 <a href="<@spring.url "/statistics" />" title=""><@orcid.msg 'public-layout.see_more'/></a>
             </span>
+            <#if inDelegationMode>
+            	<div class="delegation-label">            	
+            		<span class="label label-danger"><@orcid.msg 'delegate.global_status_label'/></span>
+            	</div>
+            </#if>
         </div> <!-- .row -->
     </div><!-- .header -->
     <div id="main" role="main" class="main">
