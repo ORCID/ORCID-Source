@@ -3985,7 +3985,7 @@ function SSOPreferencesCtrl($scope, $compile) {
 				$('#cboxClose').remove();
 			}
 		});
-		$.colorbox.resize({width:"450px" , height:"300px"});
+		$.colorbox.resize({width:"460px" , height:"425px"});
 	};
 	
 	$scope.addRedirectURI = function() {
@@ -4028,7 +4028,7 @@ function SSOPreferencesCtrl($scope, $compile) {
 			}
 		});
 		
-		$.colorbox.resize({width:"550px" , height:"350px"});
+		$.colorbox.resize({width:"575px" , height:"425px"});
 	};
 	
 	$scope.showRevokeModal = function() {		
@@ -4067,12 +4067,12 @@ function SSOPreferencesCtrl($scope, $compile) {
 			}
 		});
 		
-		$.colorbox.resize({width:"450px" , height:"230px"});
+		$.colorbox.resize({width:"460px" , height:"425px"});
 	};
 	
-	$scope.editRedirectUris = function() {
+	$scope.editClientCredentials = function() {
 		$.ajax({
-	        url: getBaseUri()+'/developer-tools/update-redirect-uris.json',	        
+	        url: getBaseUri()+'/developer-tools/update-user-credentials.json',	        
 	        contentType: 'application/json;charset=UTF-8',
 	        type: 'POST',
 	        dataType: 'json',

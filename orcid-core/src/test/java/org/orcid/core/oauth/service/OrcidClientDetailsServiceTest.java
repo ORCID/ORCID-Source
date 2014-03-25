@@ -55,6 +55,9 @@ public class OrcidClientDetailsServiceTest extends DBUnitTest {
     @Resource
     private GenericDao<ClientDetailsEntity, String> clientDetailsDao;
 
+    private static String CLIENT_NAME = "the name";
+    private static String CLIENT_DESCRIPTION = "the description";
+    
     @Resource(name = "orcidClientDetailsService")
     private OrcidClientDetailsService clientDetailsService;
 
@@ -100,7 +103,7 @@ public class OrcidClientDetailsServiceTest extends DBUnitTest {
         List<String> clientGrantedAuthorities = new ArrayList<String>();
         clientGrantedAuthorities.add("ROLE_ADMIN");
 
-        ClientDetailsEntity clientDetails = clientDetailsService.createClientDetails("4444-4444-4444-4441", clientId, clientSecret, clientScopes, clientResourceIds,
+        ClientDetailsEntity clientDetails = clientDetailsService.createClientDetails("4444-4444-4444-4441", CLIENT_NAME, CLIENT_DESCRIPTION, clientId, clientSecret, clientScopes, clientResourceIds,
                 clientAuthorizedGrantTypes, clientRegisteredRedirectUris, clientGrantedAuthorities);
         assertNotNull(clientDetails);
         checkClientDetails(clientDetails);
@@ -123,7 +126,7 @@ public class OrcidClientDetailsServiceTest extends DBUnitTest {
         List<String> clientGrantedAuthorities = new ArrayList<String>();
         clientGrantedAuthorities.add("ROLE_ADMIN");
 
-        ClientDetailsEntity clientDetails = clientDetailsService.createClientDetails("4444-4444-4444-4446", clientScopes, clientResourceIds, clientAuthorizedGrantTypes,
+        ClientDetailsEntity clientDetails = clientDetailsService.createClientDetails("4444-4444-4444-4446", CLIENT_NAME, CLIENT_DESCRIPTION, clientScopes, clientResourceIds, clientAuthorizedGrantTypes,
                 clientRegisteredRedirectUris, clientGrantedAuthorities);
         assertNotNull(clientDetails);
         checkClientDetails(clientDetails);
@@ -146,7 +149,7 @@ public class OrcidClientDetailsServiceTest extends DBUnitTest {
         List<String> clientGrantedAuthorities = new ArrayList<String>();
         clientGrantedAuthorities.add("ROLE_ADMIN");
 
-        clientDetailsService.createClientDetails("8888-9999-9999-9999", clientScopes, clientResourceIds, clientAuthorizedGrantTypes, clientRegisteredRedirectUris,
+        clientDetailsService.createClientDetails("8888-9999-9999-9999", CLIENT_NAME, CLIENT_DESCRIPTION, clientScopes, clientResourceIds, clientAuthorizedGrantTypes, clientRegisteredRedirectUris,
                 clientGrantedAuthorities);
     }
 
@@ -161,6 +164,13 @@ public class OrcidClientDetailsServiceTest extends DBUnitTest {
         }
         all = clientDetailsDao.getAll();
         assertEquals(0, all.size());
+    }
+
+    private void checkClientDetails(ClientDetailsEntity clientDetails) {
+        assertNotNull(clientDetails);
+        assertEquals(clientDetails.getClientDescription(), CLIENT_DESCRIPTION);
+        assertEquals(clientDetails.getClientName(), CLIENT_NAME);
+        checkClientDetails((ClientDetails)clientDetails);
     }
 
     private void checkClientDetails(ClientDetails clientDetails) {
@@ -185,5 +195,4 @@ public class OrcidClientDetailsServiceTest extends DBUnitTest {
         int expectedNumberOfScopes = "4444-4444-4444-4445".equals(clientDetails.getClientId()) ? 4 : 1;
         assertEquals(expectedNumberOfScopes, scope.size());
     }
-
 }
