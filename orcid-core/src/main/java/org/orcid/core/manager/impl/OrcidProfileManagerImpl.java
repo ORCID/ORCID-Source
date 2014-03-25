@@ -632,7 +632,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     public OrcidProfile retrieveClaimedOrcidProfile(String orcid) {
         OrcidProfile orcidProfile = retrieveOrcidProfile(orcid);
         if (orcidProfile != null) {
-            if (Boolean.TRUE.equals(orcidProfile.getOrcidHistory().getClaimed().isValue()) || isOldEnough(orcidProfile) || isBeingAccessedByCreator(orcidProfile)
+            if (Boolean.TRUE.equals(orcidProfile.getOrcidHistory().getClaimed().isValue()) || orcidProfile.isDeactivated() || isOldEnough(orcidProfile) || isBeingAccessedByCreator(orcidProfile)
                     || haveSystemRole()) {
                 return orcidProfile;
             } else {
