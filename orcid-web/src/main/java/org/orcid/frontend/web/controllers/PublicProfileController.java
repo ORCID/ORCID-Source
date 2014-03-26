@@ -52,6 +52,7 @@ import org.orcid.pojo.ajaxForm.FundingForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Work;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -59,6 +60,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
 public class PublicProfileController extends BaseWorkspaceController {
@@ -86,6 +88,15 @@ public class PublicProfileController extends BaseWorkspaceController {
 
     @Resource
     private ActivityCacheManager cacheManager;
+    
+    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dx]}")
+    public ModelAndView publicPreviewRedir(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int pageNo,
+            @RequestParam(value = "maxResults", defaultValue = "15") int maxResults, @PathVariable("orcid") String orcid) {
+        RedirectView rv = new RedirectView();
+        rv.setStatusCode(HttpStatus.MOVED_PERMANENTLY);
+        rv.setUrl(getBasePath() + orcid.toUpperCase());
+        return new ModelAndView(rv);
+    }
     
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}")
     public ModelAndView publicPreview(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int pageNo,
