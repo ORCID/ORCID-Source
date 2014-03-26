@@ -89,7 +89,7 @@ public class PublicProfileController extends BaseWorkspaceController {
     @Resource
     private ActivityCacheManager cacheManager;
     
-    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dx]}")
+    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[x]}")
     public ModelAndView publicPreviewRedir(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int pageNo,
             @RequestParam(value = "maxResults", defaultValue = "15") int maxResults, @PathVariable("orcid") String orcid) {
         RedirectView rv = new RedirectView();
