@@ -18,6 +18,7 @@ package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -78,6 +79,12 @@ public class ManageDelegatorsController extends BaseWorkspaceController {
         OrcidProfile realProfile = getRealProfile();
         Delegation delegation = realProfile.getOrcidBio().getDelegation();
         GivenPermissionBy givenPermissionBy = delegation.getGivenPermissionBy();
+        String currentOrcid = getEffectiveUserOrcid();
+        for (Iterator<DelegationDetails> delegationDetailsIterator = givenPermissionBy.getDelegationDetails().iterator(); delegationDetailsIterator.hasNext();) {
+            if (currentOrcid.equals(delegationDetailsIterator.next().getDelegateSummary().getOrcidIdentifier().getPath())) {
+                delegationDetailsIterator.remove();
+            }
+        }
         map.put("delegators", givenPermissionBy);
         if (sourceManager.isInDelegationMode()) {
             // Add me, so I can switch back to me
