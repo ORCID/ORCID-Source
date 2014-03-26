@@ -185,6 +185,7 @@ public class NotificationManagerImpl implements NotificationManager {
 
         String emailFriendlyName = deriveEmailFriendlyName(orcidProfile);
         templateParams.put("emailName", emailFriendlyName);
+        templateParams.put("subject",getSubject("email.subject.verify_reminder", orcidProfile));
         String verificationUrl = createVerificationUrl(email, baseUri);
         templateParams.put("verificationUrl", verificationUrl);
         templateParams.put("orcid", orcidProfile.getOrcidIdentifier().getPath());
@@ -194,7 +195,8 @@ public class NotificationManagerImpl implements NotificationManager {
 
         // Generate body from template
         String body = templateManager.processTemplate("verification_email.ftl", templateParams);
-        mailGunManager.sendEmail(verifyFromAddress, email, getSubject("email.subject.verify_reminder", orcidProfile), body, null);       
+        String htmlBody = templateManager.processTemplate("verification_email_html.ftl", templateParams);
+        mailGunManager.sendEmail(verifyFromAddress, email, getSubject("email.subject.verify_reminder", orcidProfile), body, htmlBody);       
     }
 
     // look like the following is our best best for i18n emails
