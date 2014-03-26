@@ -3456,6 +3456,15 @@ p.orcid-id-container{
 	width:315px;
 }
 
+.delegation-label{
+	float:right;
+	clear: both;
+	display: block;
+	margin-top: 5px;		
+}
+
+
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
@@ -4312,6 +4321,12 @@ p.orcid-id-container{
 	.admin-options .workspace-accordion-item p{
 		margin-top: 15px;
 	}
+	
+	.delegation-label{
+		margin-right: 15px;
+	}	
+	
+	
 }
 
 @media (min-width : 768px) and (max-width : 991px) { /* Tablet */

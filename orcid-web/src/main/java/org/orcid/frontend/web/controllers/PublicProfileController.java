@@ -38,18 +38,21 @@ import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.message.Affiliation;
-import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.Funding;
+import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.pojo.ajaxForm.AffiliationForm;
+import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.FundingForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Work;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -57,6 +60,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
 public class PublicProfileController extends BaseWorkspaceController {
@@ -82,6 +86,18 @@ public class PublicProfileController extends BaseWorkspaceController {
     @Resource
     private OrcidProfileCacheManager orcidProfileCacheManager;
 
+    @Resource
+    private ActivityCacheManager cacheManager;
+    
+    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dx]}")
+    public ModelAndView publicPreviewRedir(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int pageNo,
+            @RequestParam(value = "maxResults", defaultValue = "15") int maxResults, @PathVariable("orcid") String orcid) {
+        RedirectView rv = new RedirectView();
+        rv.setStatusCode(HttpStatus.MOVED_PERMANENTLY);
+        rv.setUrl(getBasePath() + orcid.toUpperCase());
+        return new ModelAndView(rv);
+    }
+    
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}")
     public ModelAndView publicPreview(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int pageNo,
             @RequestParam(value = "maxResults", defaultValue = "15") int maxResults, @PathVariable("orcid") String orcid) {
@@ -274,6 +290,21 @@ public class PublicProfileController extends BaseWorkspaceController {
                     work.getWorkTitle().getTranslatedTitle().setLanguageName(languageName);
                 }
 
+                //If the work source is the user himself, fill the work source name
+                if(!PojoUtil.isEmpty(work.getWorkSource()) && profileWork.getProfile().getId().equals(work.getWorkSource().getValue())){
+                    List<Contributor> contributors = work.getContributors();
+                    if(work.getContributors() != null) {
+                        for(Contributor contributor : contributors){  
+                            //If it is not an empty contributor
+                            if(!PojoUtil.isEmpty(contributor.getContributorRole()) || !PojoUtil.isEmpty(contributor.getContributorSequence())) {
+                                ProfileEntity profile = profileWork.getProfile();
+                                String creditNameString = cacheManager.getPublicCreditName(profile);   
+                                Text creditName = Text.valueOf(creditNameString);
+                                contributor.setCreditName(creditName);
+                            }                            
+                        }
+                    }
+                }
                 return work;
             }
         }
@@ -301,5 +332,4 @@ public class PublicProfileController extends BaseWorkspaceController {
             return null;
         return activityCacheManager.pubMinWorksMap(profile);
     }
-
 }
