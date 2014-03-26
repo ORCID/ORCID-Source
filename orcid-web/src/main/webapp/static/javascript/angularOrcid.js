@@ -3116,6 +3116,7 @@ function DelegatorsCtrl($scope, $compile){
 
 function SwitchUserCtrl($scope, $compile, $document){
 	$scope.isDroppedDown = false;
+	$scope.searchResultsCache = new Object();
 	
 	$scope.openMenu = function(event){
 		$scope.isDroppedDown = true;
@@ -3128,6 +3129,7 @@ function SwitchUserCtrl($scope, $compile, $document){
 	        dataType: 'json',
 	        success: function(data) {
 	        	$scope.delegators = data.delegators;
+				$scope.searchResultsCache[''] = $scope.delegators;
 	        	$scope.me = data.me;
 	        	$scope.unfilteredLength = $scope.delegators.delegationDetails.length;
 	        	$scope.$apply();
@@ -3139,21 +3141,27 @@ function SwitchUserCtrl($scope, $compile, $document){
 	};
 	
 	$scope.search = function() {
-		if($scope.searchTerm === ''){
-			$scope.getDelegates();
-		}
-		else {
-			$.ajax({
-		        url: getBaseUri() + '/delegators/search/' + $scope.searchTerm + '?limit=10',
-		        dataType: 'json',
-		        success: function(data) {
-		        	$scope.delegators = data;
-		        	$scope.$apply();
-		        }
-		    }).fail(function() { 
-		    	// something bad is happening!
-		    	console.log("error searching for delegates");
-		    });
+		if($scope.searchResultsCache[$scope.searchTerm] === undefined) {
+			if($scope.searchTerm === ''){
+				$scope.getDelegates();
+				$scope.searchResultsCache[$scope.searchTerm] = $scope.delegators;
+			}
+			else {
+				$.ajax({
+			        url: getBaseUri() + '/delegators/search/' + encodeURIComponent($scope.searchTerm) + '?limit=10',
+			        dataType: 'json',
+			        success: function(data) {
+			        	$scope.delegators = data;
+			        	$scope.searchResultsCache[$scope.searchTerm] = $scope.delegators;
+			        	$scope.$apply();
+			        }
+			    }).fail(function() { 
+			    	// something bad is happening!
+			    	console.log("error searching for delegates");
+			    });
+			}
+		} else {
+			$scope.delegators = $scope.searchResultsCache[$scope.searchTerm];
 		}
 	};
 	
