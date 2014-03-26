@@ -23,7 +23,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
 import org.orcid.core.manager.SourceManager;
 import org.orcid.jaxb.model.message.CreditName;
