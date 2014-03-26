@@ -3118,7 +3118,6 @@ function SwitchUserCtrl($scope, $compile, $document){
 	$scope.isDroppedDown = false;
 	
 	$scope.openMenu = function(event){
-		$scope.getDelegates();
 		$scope.isDroppedDown = true;
 		event.stopPropagation();
 	};
