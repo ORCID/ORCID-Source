@@ -72,7 +72,7 @@ public class ManageDelegatorsController extends BaseWorkspaceController {
         return delegation;
     }
 
-    @RequestMapping(value = "/delegatorsPlusMe.json", method = RequestMethod.GET)
+    @RequestMapping(value = "/delegators-and-me.json", method = RequestMethod.GET)
     public @ResponseBody
     Map<String, Object> getDelegatorsPlusMeJson() throws NoSuchRequestHandlingMethodException {
         Map<String, Object> map = new HashMap<>();
@@ -100,11 +100,11 @@ public class ManageDelegatorsController extends BaseWorkspaceController {
     }
 
     /**
-     * Search DB for disambiguated affiliations to suggest to user
+     * Search delegators to suggest to user
      */
-    @RequestMapping(value = "/search/{query}", method = RequestMethod.GET)
+    @RequestMapping(value = "/search-for-data/{query}", method = RequestMethod.GET)
     public @ResponseBody
-    List<Map<String, String>> searchDisambiguated(@PathVariable("query") String query, @RequestParam(value = "limit") int limit) {
+    List<Map<String, String>> searchDelegatorsForData(@PathVariable("query") String query, @RequestParam(value = "limit") int limit) {
         List<Map<String, String>> datums = new ArrayList<>();
         Locale locale = new Locale(getLocale());
         query = query.toLowerCase(locale);
@@ -118,6 +118,28 @@ public class ManageDelegatorsController extends BaseWorkspaceController {
             }
         }
         return datums;
+    }
+
+    /**
+     * Search DB for disambiguated affiliations to suggest to user
+     */
+    @RequestMapping(value = "/search/{query}", method = RequestMethod.GET)
+    public @ResponseBody
+    GivenPermissionBy searchDelegators(@PathVariable("query") String query, @RequestParam(value = "limit") int limit) {
+        Locale locale = new Locale(getLocale());
+        query = query.toLowerCase(locale);
+        GivenPermissionBy result = new GivenPermissionBy();
+        String currentOrcid = getEffectiveUserOrcid();
+        for (DelegationDetails delegationDetails : getRealProfile().getOrcidBio().getDelegation().getGivenPermissionBy().getDelegationDetails()) {
+            DelegateSummary delegateSummary = delegationDetails.getDelegateSummary();
+            String creditName = delegateSummary.getCreditName().getContent().toLowerCase(locale);
+            String orcidUri = delegateSummary.getOrcidIdentifier().getUri();
+            String orcidPath = delegateSummary.getOrcidIdentifier().getPath();
+            if (creditName.contains(query) || orcidUri.contains(query) && !(currentOrcid.equals(orcidPath))) {
+                result.getDelegationDetails().add(delegationDetails);
+            }
+        }
+        return result;
     }
 
     private Map<String, String> createDatumFromOrgDisambiguated(DelegationDetails delegationDetails) {

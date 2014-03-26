@@ -3076,10 +3076,10 @@ function DelegatorsCtrl($scope, $compile){
 	
 	$scope.getDelegators = function() {
 		$.ajax({
-	        url: getBaseUri() + '/account/delegates.json',
+	        url: getBaseUri() + '/delegators/delegators-and-me.json',
 	        dataType: 'json',
 	        success: function(data) {
-	        	$scope.delegation = data;
+	        	$scope.delegators = data.delegators;
 	        	$scope.$apply();
 	        }
 	    }).fail(function() { 
@@ -3095,7 +3095,7 @@ function DelegatorsCtrl($scope, $compile){
 	$("#delegatorsSearch").typeahead({
 		name: 'delegatorsSearch',
 		remote: {
-			url: getBaseUri()+'/delegators/search/%QUERY?limit=' + 10
+			url: getBaseUri()+'/delegators/search-for-data/%QUERY?limit=' + 10
 		},
 		template: function (datum) {
 			   var forDisplay = 
@@ -3124,11 +3124,12 @@ function SwitchUserCtrl($scope, $compile, $document){
 	
 	$scope.getDelegates = function() {
 		$.ajax({
-	        url: getBaseUri() + '/delegators/delegatorsPlusMe.json',
+	        url: getBaseUri() + '/delegators/delegators-and-me.json',
 	        dataType: 'json',
 	        success: function(data) {
 	        	$scope.delegators = data.delegators;
 	        	$scope.me = data.me;
+	        	$scope.unfilteredLength = $scope.delegators.delegationDetails.length;
 	        	$scope.$apply();
 	        }
 	    }).fail(function() { 
@@ -3137,10 +3138,31 @@ function SwitchUserCtrl($scope, $compile, $document){
 	    });
 	};
 	
+	$scope.search = function() {
+		if($scope.searchTerm === ''){
+			$scope.getDelegates();
+		}
+		else {
+			$.ajax({
+		        url: getBaseUri() + '/delegators/search/' + $scope.searchTerm + '?limit=10',
+		        dataType: 'json',
+		        success: function(data) {
+		        	$scope.delegators = data;
+		        	$scope.$apply();
+		        }
+		    }).fail(function() { 
+		    	// something bad is happening!
+		    	console.log("error searching for delegates");
+		    });
+		}
+	};
+	
 	$document.bind('click',
 		function(event){
-			$scope.isDroppedDown = false;
-			$scope.$apply();
+			if(event.target.id !== "delegators-search"){
+				$scope.isDroppedDown = false;
+				$scope.$apply();
+			}
 		});
 	
 	// init

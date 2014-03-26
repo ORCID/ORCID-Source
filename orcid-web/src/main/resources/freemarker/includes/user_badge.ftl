@@ -33,10 +33,11 @@
 	</div>
 </div>
 <#if RequestParameters['delegates']??>
-   <div ng-controller="SwitchUserCtrl" class="dropdown" ng-show="delegators.delegationDetails" ng-cloak>
+   <div ng-controller="SwitchUserCtrl" class="dropdown" ng-show="unfilteredLength" ng-cloak>
        <a ng-click="openMenu($event)" ><@orcid.msg 'public-layout.manage_proxy_account'/></a>
        <ul class="dropdown-menu" ng-show="isDroppedDown" ng-cloak>
-           <li ng-show="me">
+           <input id="delegators-search" type="text" ng-model="searchTerm" ng-change="search()" placeholder="ORCID or names"></input>
+           <li ng-show="me && !searchTerm">
                <a href="<@spring.url '/switch-user?j_username='/>{{me.delegateSummary.orcidIdentifier.path}}">
                    <div>{{me.delegateSummary.creditName.content}} (me)</div>
                    <div>{{me.delegateSummary.orcidIdentifier.uri}}</div>
