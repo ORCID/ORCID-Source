@@ -158,6 +158,19 @@ public class PersonalDetails implements Serializable {
         this.otherNames = value;
     }
 
+    public String retrieveDisplayNameIgnoringVisibility() {
+        if (creditName != null) {
+            return creditName.getContent();
+        }
+        StringBuilder builder = new StringBuilder();
+        builder.append(givenNames.getContent());
+        if (familyName != null) {
+            builder.append(" ");
+            builder.append(familyName.getContent());
+        }
+        return builder.toString();
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;

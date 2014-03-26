@@ -3125,10 +3125,11 @@ function SwitchUserCtrl($scope, $compile, $document){
 	
 	$scope.getDelegates = function() {
 		$.ajax({
-	        url: getBaseUri() + '/account/delegates.json',
+	        url: getBaseUri() + '/delegators/delegatorsPlusMe.json',
 	        dataType: 'json',
 	        success: function(data) {
-	        	$scope.delegation = data;
+	        	$scope.delegators = data.delegators;
+	        	$scope.me = data.me;
 	        	$scope.$apply();
 	        }
 	    }).fail(function() { 
@@ -3142,6 +3143,9 @@ function SwitchUserCtrl($scope, $compile, $document){
 			$scope.isDroppedDown = false;
 			$scope.$apply();
 		});
+	
+	// init
+	$scope.getDelegates();
 };
 
 function statisticCtrl($scope){	
