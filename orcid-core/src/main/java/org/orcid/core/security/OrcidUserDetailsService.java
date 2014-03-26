@@ -74,8 +74,13 @@ public class OrcidUserDetailsService implements UserDetailsService {
         }
         if (profile.getDeactivationDate() != null) {
             throw new DisabledException("Account not active, please call helpdesk");
-        }        
-        String primaryEmail = profile.getPrimaryEmail().getId();
+        }
+        
+        String primaryEmail = null;
+        
+        //Clients doesnt have primary email, so, we need to cover that case.
+        if(profile.getPrimaryEmail() != null)
+            primaryEmail = profile.getPrimaryEmail().getId();
 
         OrcidProfileUserDetails userDetails = null;
         
