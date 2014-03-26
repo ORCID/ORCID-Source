@@ -3169,6 +3169,7 @@ function SwitchUserCtrl($scope, $compile, $document){
 		function(event){
 			if(event.target.id !== "delegators-search"){
 				$scope.isDroppedDown = false;
+				$scope.searchTerm = '';
 				$scope.$apply();
 			}
 		});
