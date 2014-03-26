@@ -104,6 +104,8 @@ public class PublicProfileController extends BaseWorkspaceController {
         ModelAndView mav = new ModelAndView("public_profile");
         mav.addObject("isPublicProfile", true);
 
+        boolean isProfileEmtpy = true;
+        
         request.getSession().removeAttribute(PUBLIC_WORKS_RESULTS_ATTRIBUTE);
         OrcidProfile profile = orcidProfileCacheManager.retrievePublicOrcidProfile(orcid);
 
@@ -113,20 +115,37 @@ public class PublicProfileController extends BaseWorkspaceController {
         HashMap<String, Affiliation> affiliationMap = new HashMap<String, Affiliation>();
         HashMap<String, Funding> fundingMap = new HashMap<String, Funding>();
 
+        if(profile != null && profile.getOrcidBio() != null && profile.getOrcidBio().getBiography() != null && StringUtils.isNotBlank(profile.getOrcidBio().getBiography().getContent())){
+            isProfileEmtpy = false;
+        }
+        
         if (profile.getOrcidDeprecated() != null) {
             String primaryRecord = profile.getOrcidDeprecated().getPrimaryRecord().getOrcidIdentifier().getPath();
             mav.addObject("deprecated", true);
             mav.addObject("primaryRecord", primaryRecord);
         } else {
             minimizedWorksMap = minimizedWorksMap(orcid);
-            if (minimizedWorksMap.size() > 0)
+            if (minimizedWorksMap.size() > 0) {
                 mav.addObject("works", minimizedWorksMap.values());
+                isProfileEmtpy = false;
+            } else {
+                mav.addObject("worksEmpty", true);
+            }
 
             affiliationMap = affiliationMap(orcid);
-            if (affiliationMap.size() > 0)
+            if (affiliationMap.size() > 0) {
                 mav.addObject("affilations", affiliationMap.values());
-
-            fundingMap = fundingMap(orcid);
+                isProfileEmtpy = false;
+            } else {
+                mav.addObject("affiliationsEmpty", true);
+            }
+            
+            fundingMap = fundingMap(orcid);            
+            if(fundingMap.size() > 0)
+                isProfileEmtpy = false;
+            else {
+                mav.addObject("fundingEmpty", true);
+            }
 
         }
         ObjectMapper mapper = new ObjectMapper();
@@ -138,6 +157,7 @@ public class PublicProfileController extends BaseWorkspaceController {
             mav.addObject("workIdsJson", StringEscapeUtils.escapeEcmaScript(worksIdsJson));
             mav.addObject("affiliationIdsJson", StringEscapeUtils.escapeEcmaScript(affiliationIdsJson));
             mav.addObject("fundingIdsJson", StringEscapeUtils.escapeEcmaScript(fundingIdsJson));
+            mav.addObject("isProfileEmpty", isProfileEmtpy);
         } catch (JsonGenerationException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
