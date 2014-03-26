@@ -35,12 +35,14 @@ import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.ClientRedirectDao;
 import org.orcid.persistence.dao.GenericDao;
+import org.orcid.persistence.dao.ResearcherUrlDao;
 import org.orcid.persistence.jpa.entities.ClientAuthorisedGrantTypeEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientGrantedAuthorityEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
 import org.orcid.persistence.jpa.entities.ClientScopeEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.keys.ClientScopePk;
 
 public class OrcidSSOManagerImpl implements OrcidSSOManager {
@@ -54,6 +56,9 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
     @Resource
     private ClientDetailsDao clientDetailsDao;
 
+    @Resource 
+    private ResearcherUrlDao researcherUrlDao;
+    
     @Resource(name = "clientScopeDao")
     private GenericDao<ClientScopeEntity, ClientScopePk> clientScopeDao;
 
@@ -65,7 +70,7 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
     private final static String SSO_ROLE = "ROLE_PUBLIC";
 
     @Override
-    public ClientDetailsEntity grantSSOAccess(String orcid, String name, String description, Set<String> redirectUris) {
+    public ClientDetailsEntity grantSSOAccess(String orcid, String name, String description, String website, Set<String> redirectUris) {
         ProfileEntity profileEntity = profileEntityManager.findByOrcid(orcid);
         if (profileEntity == null) {
             throw new IllegalArgumentException("ORCID does not exist for " + orcid + " cannot continue");
@@ -100,6 +105,7 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
                 }
                 ClientDetailsEntity clientDetailsEntity = populateClientDetailsEntity(clientId, name, description, clientSecret, redirectUrisSet);
                 clientDetailsDao.persist(clientDetailsEntity);
+                researcherUrlDao.addResearcherUrls(clientId, website, null, true);
                 return clientDetailsDao.findByClientId(clientDetailsEntity.getId());
             }
         }
@@ -121,7 +127,7 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
             }
             existingClientDetails.setClientRegisteredRedirectUris(onlySSORedirectUris);
             if (existingClientDetails != null)
-                existingClientDetails.setDecryptedClientSecret(encryptionManager.decryptForInternalUse(existingClientDetails.getClientSecretForJpa()));
+                existingClientDetails.setDecryptedClientSecret(encryptionManager.decryptForInternalUse(existingClientDetails.getClientSecretForJpa()));                        
         }
         return existingClientDetails;
     }
@@ -157,6 +163,16 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
                                     clientRedirectDao.removeClientRedirectUri(orcid, redirectUri.getRedirectUri());
                                 }
                             }
+                        }                                                
+                    }
+                }
+                
+                //Now check that there are sso researcher urls
+                List<ResearcherUrlEntity> researcherUrls = researcherUrlDao.getResearcherUrls(orcid);
+                if(researcherUrls != null && !researcherUrls.isEmpty()) {
+                    for(ResearcherUrlEntity rUrl : researcherUrls) {
+                        if(rUrl.isSSO()){
+                            researcherUrlDao.deleteResearcherUrl(rUrl.getId());
                         }
                     }
                 }
@@ -179,6 +195,8 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
         ClientDetailsEntity clientDetailsEntity = new ClientDetailsEntity();
         clientDetailsEntity.setId(clientId);
         clientDetailsEntity.setClientSecretForJpa(clientSecret);
+        clientDetailsEntity.setClientName(name);
+        clientDetailsEntity.setClientDescription(description);
         clientDetailsEntity.setDecryptedClientSecret(encryptionManager.decryptForInternalUse(clientSecret));
         Set<ClientScopeEntity> clientScopes = new HashSet<ClientScopeEntity>();
         clientScopes.add(getClientScopeEntity(SSO_SCOPE, clientDetailsEntity));
@@ -237,7 +255,7 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
     }
 
     @Override
-    public ClientDetailsEntity updateUserCredentials(String orcid, String name, String description, Set<String> redirectUris) {
+    public ClientDetailsEntity updateUserCredentials(String orcid, String name, String description, String website, Set<String> redirectUris) {
         ProfileEntity profileEntity = profileEntityManager.findByOrcid(orcid);
         if (profileEntity == null) {
             throw new IllegalArgumentException("ORCID does not exist for " + orcid + " cannot continue");
@@ -250,6 +268,26 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
                 clientDetailsEntity.setClientName(name);
                 //Update the description
                 clientDetailsEntity.setClientDescription(description);
+                //Update the website if needed
+                List<ResearcherUrlEntity> researcherUrls = researcherUrlDao.getResearcherUrls(orcid);
+                //If the website exists, update it
+                boolean updated = false;
+                if(researcherUrls != null && !researcherUrls.isEmpty()) {
+                    for(ResearcherUrlEntity rUrl : researcherUrls){
+                        if(rUrl.isSSO()){
+                            if(!rUrl.getUrl().equals(website)){
+                                researcherUrlDao.updateResearcherUrl(rUrl.getId(), website);
+                                updated = true;
+                                break;
+                            }
+                        }
+                    }                                                            
+                } 
+
+                //If no url was updated, create it
+                if(!updated){                    
+                    researcherUrlDao.addResearcherUrls(orcid, website, null, true);
+                }
                 // Get the existing redirect uris
                 SortedSet<ClientRedirectUriEntity> clientRedirectUriEntities = clientDetailsEntity.getClientRegisteredRedirectUris();
 

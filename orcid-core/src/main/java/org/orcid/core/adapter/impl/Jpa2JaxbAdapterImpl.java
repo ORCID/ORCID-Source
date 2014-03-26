@@ -147,18 +147,20 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
     @Override
     public OrcidClient toOrcidClient(ProfileEntity profileEntity) {
-        OrcidClient client = new OrcidClient();
-        client.setDisplayName(profileEntity.getCreditName());
-        client.setClientId(profileEntity.getId());
-        client.setShortDescription(profileEntity.getBiography());
+        OrcidClient client = new OrcidClient();        
+        client.setClientId(profileEntity.getId());        
         client.setType(profileEntity.getClientType());
         Set<ResearcherUrlEntity> researcherUrls = profileEntity.getResearcherUrls();
         if (researcherUrls != null && !researcherUrls.isEmpty()) {
-            client.setWebsite(researcherUrls.iterator().next().getUrl());
+            ResearcherUrlEntity rUrl = researcherUrls.iterator().next();
+            if(!rUrl.isSSO())
+                client.setWebsite(researcherUrls.iterator().next().getUrl());
         }
         ClientDetailsEntity clientDetailsEntity = profileEntity.getClientDetails();
         if (clientDetailsEntity != null) {
             client.setClientSecret(clientDetailsEntity.getClientSecretForJpa());
+            client.setDisplayName(clientDetailsEntity.getClientName());
+            client.setShortDescription(clientDetailsEntity.getClientDescription());
             Set<ClientRedirectUriEntity> redirectUriEntities = clientDetailsEntity.getClientRegisteredRedirectUris();
             RedirectUris redirectUris = new RedirectUris();
             client.setRedirectUris(redirectUris);
@@ -588,10 +590,12 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             ResearcherUrls researcherUrls = new ResearcherUrls();
             researcherUrls.setVisibility(profileEntity.getResearcherUrlsVisibility());
             for (ResearcherUrlEntity researcherUrl : researcherUrlEntities) {
-                ResearcherUrl url = new ResearcherUrl(new Url(researcherUrl.getUrl()));
-                if (!StringUtils.isBlank(researcherUrl.getUrlName()))
-                    url.setUrlName(new UrlName(researcherUrl.getUrlName()));
-                researcherUrls.getResearcherUrl().add(url);
+                if(!researcherUrl.isSSO()) {
+                    ResearcherUrl url = new ResearcherUrl(new Url(researcherUrl.getUrl()));
+                    if (!StringUtils.isBlank(researcherUrl.getUrlName()))
+                        url.setUrlName(new UrlName(researcherUrl.getUrlName()));
+                    researcherUrls.getResearcherUrl().add(url);
+                }                
             }
             return researcherUrls;
         }

@@ -1,0 +1,58 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet id="ADD-DESCRIPTION-TO-CLIENT-DETAILS" author="Angel Montenegro">
+	    <addColumn tableName="client_details">
+			<column name="client_description" type="TEXT" />				
+		</addColumn>
+    </changeSet>
+    
+    <changeSet id="COPY-CREDIT-NAME-AND-DESCRIPTION-FROM-PROFILE-TABLE" author="Angel Montenegro" dbms="postgresql">
+    	<sql>update client_details cd set client_name=p.credit_name, client_description=p.biography from profile p where p.orcid=cd.client_details_id and p.orcid_type = 'CLIENT'</sql>
+    </changeSet>
+    
+    <changeSet id="ADD-SSO-FLAG-TO-RESEARCHER-URL" author="Angel Montenegro">
+    	<addColumn tableName="researcher_url">
+    		<column name="is_sso" type="BOOLEAN" defaultValue="false"/>
+    	</addColumn>
+    </changeSet>
+    
+    <changeSet id="DROP-EXISTING-CONSTRAINT-ON-RESEARCH-URL" author="Angel Montenegro" dbms="postgresql">
+		<preConditions onFail="MARK_RAN">
+			<indexExists tableName="researcher_url" indexName="researcher_url_orcid_unique_key" />
+		</preConditions>
+		<dropUniqueConstraint 
+            constraintName="researcher_url_orcid_unique_key"            
+            tableName="researcher_url" />			            			
+	</changeSet>
+	
+	<changeSet id="ADD-CONSTRAINT-ON-RESEARCH-URL" author="Angel Montenegro" dbms="postgresql">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists tableName="researcher_url" indexName="researcher_url_orcid_unique_key" />
+			</not>
+		</preConditions>
+		<addUniqueConstraint constraintName="researcher_url_orcid_unique_key" tableName="researcher_url" columnNames="url,orcid,is_sso"/>
+	</changeSet>
+    
+        
+</databaseChangeLog>	

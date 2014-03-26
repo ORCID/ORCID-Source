@@ -79,12 +79,43 @@ public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Lo
      * */
     @Override
     @Transactional
-    public boolean addResearcherUrls(String orcid, String url, String urlName) {
+    public boolean addResearcherUrls(String orcid, String url, String urlName) {       
+        return addResearcherUrls(orcid, url, urlName, false);
+    }
+    
+    /**
+     * Adds a researcher url to a specific profile
+     * @param orcid
+     * @param url
+     * @param urlName
+     * @param isSSO
+     * @return true if the researcher url was successfully created on database
+     * */
+    @Override
+    @Transactional
+    public boolean addResearcherUrls(String orcid, String url, String urlName, boolean isSSO) {
         Query query = entityManager
-                .createNativeQuery("INSERT INTO researcher_url (date_created, last_modified, orcid, url, url_name) VALUES (now(), now(), :orcid, :url, :url_name)");
+                .createNativeQuery("INSERT INTO researcher_url (date_created, last_modified, orcid, url, url_name, is_sso) VALUES (now(), now(), :orcid, :url, :url_name, :isSSO)");
         query.setParameter("orcid", orcid);
         query.setParameter("url", url);
         query.setParameter("url_name", urlName);
+        query.setParameter("isSSO", isSSO);
+        return query.executeUpdate() > 0 ? true : false;
+    }
+    
+    /**
+     * Updates an existing researcher url
+     * @param orcid
+     * @param oldUrl
+     * @param newUrl
+     * @return true if the researcher url was updated
+     * */
+    @Override
+    @Transactional
+    public boolean updateResearcherUrl(long id, String newUrl) {
+        Query query = entityManager.createNativeQuery("UPDATE researcher_url SET url=:newUrl WHERE id=:id");
+        query.setParameter("newUrl", newUrl);
+        query.setParameter("id", id);
         return query.executeUpdate() > 0 ? true : false;
     }
 
