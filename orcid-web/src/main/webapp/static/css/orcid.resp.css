@@ -2632,7 +2632,10 @@ header overrides
 
 .oauth-title span {
 	text-transform: capitalize;
+	font-weight: normal;
 	color: #a6ce39;
+	display: block;
+	font-size: 22px;		
 }
 
 .logo h1 {
@@ -3455,6 +3458,15 @@ p.orcid-id-container{
 	left:0;
 	border: none;
 	width:315px;
+}
+
+.oauth-title span.researcher-name{
+	color: #939598;
+	font-weight: bold;
+}
+
+.oauth-title span:last-of-type a{
+	font-size: 16px;	
 }
 
 

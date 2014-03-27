@@ -44,9 +44,11 @@
         
         <br />
         <#if RequestParameters['notYou']??>
-            <h2 class="oauth-title">Connecting <span>${clientProfile.orcidBio.personalDetails.creditName.content}</span> with ORCID record for 
-            <span>${(profile.orcidBio.personalDetails.givenNames.content)!} ${(profile.orcidBio.personalDetails.familyName.content)!}</span> 
-            (<a href="" onclick="logOffReload(); return false;">Not you?</a>) 
+            <h2 class="oauth-title">Connecting 
+	            <span>${clientProfile.orcidBio.personalDetails.creditName.content}</span>
+	             with ORCID record for 
+	            <span class="researcher-name">${(profile.orcidBio.personalDetails.givenNames.content)!} ${(profile.orcidBio.personalDetails.familyName.content)!}</span> 
+	            <span><a href="" onclick="logOffReload(); return false;">(Not you?)</a></span> 
             </h2>
         <#else>
             <h2 class="oauth-title">${springMacroRequestContext.getMessage("confirm-oauth-access.connecting")}<br /><span>${displayName}</span><br />${springMacroRequestContext.getMessage("confirm-oauth-access.withyourrecord")}</h2>
