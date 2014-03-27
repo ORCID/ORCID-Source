@@ -27,6 +27,7 @@ import java.util.UUID;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.OrcidSSOManager;
 import org.orcid.core.manager.ProfileEntityManager;
@@ -53,8 +54,8 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
     @Resource
     private EncryptionManager encryptionManager;
 
-    @Resource
-    private ClientDetailsDao clientDetailsDao;
+    @Resource(name = "clientDetailsManager")
+    private ClientDetailsManager clientDetailsManager;
 
     @Resource 
     private ResearcherUrlDao researcherUrlDao;
@@ -93,9 +94,9 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
                     ClientScopeEntity ssoScope = getClientScopeEntity(SSO_SCOPE, existingClientDetails);
                     existingScopes.add(ssoScope);
                     existingClientDetails.setClientScopes(existingScopes);
-                    clientDetailsDao.merge(existingClientDetails);
+                    clientDetailsManager.merge(existingClientDetails);
                 }
-                return clientDetailsDao.findByClientId(existingClientDetails.getId());
+                return clientDetailsManager.findByClientId(existingClientDetails.getId());
             } else {
                 String clientSecret = encryptionManager.encryptForInternalUse(UUID.randomUUID().toString());
                 String clientId = profileEntity.getId();
@@ -104,16 +105,16 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
                     redirectUrisSet.add(uri);
                 }
                 ClientDetailsEntity clientDetailsEntity = populateClientDetailsEntity(clientId, name, description, clientSecret, redirectUrisSet);
-                clientDetailsDao.persist(clientDetailsEntity);
+                clientDetailsManager.persist(clientDetailsEntity);
                 researcherUrlDao.addResearcherUrls(clientId, website, null, true);
-                return clientDetailsDao.findByClientId(clientDetailsEntity.getId());
+                return clientDetailsManager.findByClientId(clientDetailsEntity.getId());
             }
         }
     }
 
     @Override
     public ClientDetailsEntity getUserCredentials(String orcid) {
-        ClientDetailsEntity existingClientDetails = clientDetailsDao.findByClientId(orcid);
+        ClientDetailsEntity existingClientDetails = clientDetailsManager.findByClientId(orcid);
         if (existingClientDetails != null) {
             SortedSet<ClientRedirectUriEntity> allRedirectUris = existingClientDetails.getClientRegisteredRedirectUris();
             SortedSet<ClientRedirectUriEntity> onlySSORedirectUris = new TreeSet<ClientRedirectUriEntity>();
@@ -146,7 +147,7 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
                     // client details entity
                     if (existingScopes.size() == 1) {
                         // Delete the client details entity
-                        clientDetailsDao.removeByClientId(orcid);
+                        clientDetailsManager.removeByClientId(orcid);
                     } else {
                         // If the user have more that the SSO scope
                         // Delete the SSO scope
@@ -324,7 +325,7 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
                 // kept
                 clientRedirectUriEntities.addAll(redirectUrisToAdd);
 
-                clientDetailsDao.merge(clientDetailsEntity);
+                clientDetailsManager.merge(clientDetailsEntity);
                 return clientDetailsEntity;
             }
         }
