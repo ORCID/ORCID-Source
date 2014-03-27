@@ -850,8 +850,7 @@ select {
 	font-weight: normal;
 	background: #fff;
 	display: inline-block;
-	border-left: 1px solid #C9CACB;
-	/*border-top: 1px solid #C9CACB;*/
+	border-left: 1px solid #C9CACB;	
 	padding: 10px;
 	height: 30px;
 	margin: 0;
@@ -901,7 +900,7 @@ select {
 	border: none;
 	padding: 0;
 	font-size: 14px;
-	line-height: 20px;
+	line-height: 20px;	
 }
 
 .header .navigation>.menu>li>.menu>li.active-trail>.menu>li a.active {
@@ -2652,7 +2651,7 @@ header overrides
 	width: 330px;
 }
 
-.inline-input{
+.inline-input{ 
 	margin-bottom: 0px !important;
 }
 
@@ -2858,8 +2857,7 @@ a.btn-primary:hover {
 }
 
 #loginForm #form-sign-in-button{
-	z-index: 1001;
-	width: 98px;
+	z-index: 1001;	
 }
 
 .oauth-login #loginForm #userId,
@@ -3456,6 +3454,11 @@ p.orcid-id-container{
 	border: none;
 	width:315px;
 }
+
+.russian-fix{
+	font-size: 11px !important;	
+}
+
 
 
 /* Media Queries */

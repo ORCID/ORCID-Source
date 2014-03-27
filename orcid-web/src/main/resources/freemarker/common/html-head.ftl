@@ -55,7 +55,8 @@
       orcidVar.jsMessages = JSON.parse("${jsMessagesJson}");
     </script>    
     
-	<link rel="stylesheet" href="${staticLoc}/css/fonts.css?v=${ver}"/>
+	<link rel="stylesheet" href="${staticLoc}/css/fonts.css?v=${ver}"/>	
+	
 	<!-- Always remember to remove Glyphicons font reference when bootstrap is updated -->
     <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.1.0/css/bootstrap.min.css?v=${ver}"/>
     <!--[if lt IE 8]>
@@ -89,11 +90,10 @@
 		[ng\:cloak], [ng-cloak], .ng-cloak {
 	  		display: none !important;
 		}
-	</style> 
+	</style>	
 
     <link rel="shortcut icon" href="${staticCdn}/img/favicon.ico"/>
-    <link rel="apple-touch-icon" href="${staticCdn}/img/apple-touch-icon.png" />
-
+    <link rel="apple-touch-icon" href="${staticCdn}/img/apple-touch-icon.png" />	
 
     <#include "/layout/google_analytics.ftl">
      <script type="text/javascript">

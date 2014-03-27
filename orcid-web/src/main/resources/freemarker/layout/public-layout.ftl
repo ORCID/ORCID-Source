@@ -82,7 +82,7 @@
                	<ul class="menu">
                    <li class="first expanded active-trail">
                        <a href="<@spring.url "/" />" title=""><@orcid.msg 'public-layout.for_researchers'/></a>
-                       <ul class="menu">                            
+                       <ul class="menu lang-fixes">                            
                            <@security.authorize ifNotGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">
                                <li class="leaf last"><a ${(nav=="signin")?string('class="active" ', '')} href="<@spring.url "/signin" />"><@orcid.msg 'public-layout.sign_in'/></a></li>
                                <li class="leaf last"><a ${(nav=="register")?string('class="active" ', '')} href="<@spring.url "/register" />"><@orcid.msg 'public-layout.register'/></a></li>                               
@@ -125,8 +125,8 @@
                    </li>
                    <li class="expanded">
                        <a href="${aboutUri}/organizations"><@orcid.msg 'public-layout.for_organizations'/></a>
-                       <ul class="menu">
-                           <li class="first leaf"><a href="${aboutUri}/organizations/funders"><@orcid.msg 'public-layout.funders'/></a></li>                                                      
+                       <ul class="menu lang-fixes">
+                           <li class="first leaf"><a href="${aboutUri}/organizations/funders" class="russian-fix"><@orcid.msg 'public-layout.funders'/></a></li>                                                      
                            <li class="leaf"><a href="${aboutUri}/organizations/institutions" title=""><@orcid.msg 'public-layout.research_organizations'/></a></li>
                            <li class="leaf"><a href="${aboutUri}/organizations/publishers"><@orcid.msg 'public-layout.publishers'/></a></li>
                            <li class="leaf"><a href="${aboutUri}/organizations/associations" title=""><@orcid.msg 'public-layout.associations'/></a></li>
@@ -134,7 +134,7 @@
                        </ul>
                    </li>
                    <li class="expanded"><a href="${aboutUri}/about"><@orcid.msg 'public-layout.about'/></a>
-                       <ul class="menu">
+                       <ul class="menu lang-fixes">
                            <li class="first expanded"><a href="${aboutUri}/about/what-is-orcid" title=""><@orcid.msg 'public-layout.what_is_orcid'/></a>
                                <ul class="menu">
                                <li class="first leaf"><a href="${aboutUri}/about/what-is-orcid/mission" title=""><@orcid.msg 'public-layout.our_mission'/></a></li>
@@ -169,7 +169,7 @@
                    </li>
                    <li class="expanded">
                        <a href="${aboutUri}/help"><@orcid.msg 'public-layout.help'/></a>
-                       <ul class="menu">
+                       <ul class="menu lang-fixes">
                            <li class="first leaf"><a href="${aboutUri}/faq-page" title=""><@orcid.msg 'public-layout.faq'/></a></li>
                            <li class="leaf"><a href="${aboutUri}/help/contact-us" title=""><@orcid.msg 'public-layout.contact_us'/></a></li>
                            <li class="leaf"><a href="http://orcid.uservoice.com/forums/175591-general" title=""><@orcid.msg 'public-layout.give_feedback'/></a></li>
@@ -214,7 +214,7 @@
 	                <li class=""><a href="${aboutUri}/help/contact-us"><@orcid.msg 'public-layout.contact_us'/></a></li>
 	                <li class=""><a href="${aboutUri}/footer/privacy-policy"><@orcid.msg 'public-layout.privacy_policy'/></a></li>
 	                <li class=""><a href="${aboutUri}/content/orcid-terms-use"><@orcid.msg 'public-layout.terms_of_use'/></a></li>
-	                <li class=""><a href="${aboutUri}/open-source-license"><@orcid.msg 'footer.openSource'/></a></li>
+	                <li class=""><a href="${aboutUri}/open-source-license"><@orcid.msg 'footer.openSource'/></a></li>	                
 	            </ul>
 	        </div>
 	    </div>

@@ -141,7 +141,11 @@
     };
     
     /* Menu Handler Mobile / Desktop - Prototype implementation */
-    var menuHandler = function(){        
+    var menuHandler = function(){
+    	
+    	var language = $('#language-codes option:selected').text();        	
+        if(language == 'Русский') $('.header .navigation > .menu > li > .menu > li > a').addClass('russian-fix');
+        console.log('fix');        
         
         var menu = function(menu){
             this.menu = menu;
@@ -149,7 +153,11 @@
         
         menu.prototype.data = function(){
             return this.menu;
-        };        
+        };
+        	
+        
+        
+        
         
         originalMenu = new menu($('.header .navigation').html()); //Desktop menu data
          
@@ -160,7 +168,8 @@
                 if (ww > 767){ //Tablet ~ PC
                     $(".container .header .search form input[type='search']").blur();
                     
-                    $('.header .navigation ul li ul > li.expanded > a').removeClass('slideDown'); //For handling menu animation for third level menus, only on mobile
+                    $('.header .navigation ul li ul > li.expanded > a').removeClass('slideDown'); //For handling menu animation for third level menus, only on mobile                    
+                    
                     
                     restoreDesktopMenu();                                                           
                 }else{
