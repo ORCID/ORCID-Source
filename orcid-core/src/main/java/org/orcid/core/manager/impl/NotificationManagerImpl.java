@@ -65,6 +65,12 @@ public class NotificationManagerImpl implements NotificationManager {
     
     //ResourceBundle resources = ResourceBundle.getBundle("i18n/email", new Locale("en"), new UTF8Control());
 
+    private static final String UPDATE_NOTIFY_ORCID_ORG = "update@notify.orcid.org";
+
+    private static final String SUPPORT_VERIFY_ORCID_ORG = "support@verify.orcid.org";
+    
+    private static final String RESET_NOTIFY_ORCID_ORG = "reset@notify.orcid.org";
+    
     @Resource
     private MessageSource messages;
 
@@ -75,7 +81,6 @@ public class NotificationManagerImpl implements NotificationManager {
 
     private String fromAddress;
     
-    private String verifyFromAddress = "support@verify.orcid.org";
 
     private String supportAddress;
 
@@ -196,7 +201,7 @@ public class NotificationManagerImpl implements NotificationManager {
         // Generate body from template
         String body = templateManager.processTemplate("verification_email.ftl", templateParams);
         String htmlBody = templateManager.processTemplate("verification_email_html.ftl", templateParams);
-        mailGunManager.sendEmail(verifyFromAddress, email, getSubject("email.subject.verify_reminder", orcidProfile), body, htmlBody);       
+        mailGunManager.sendEmail(SUPPORT_VERIFY_ORCID_ORG, email, getSubject("email.subject.verify_reminder", orcidProfile), body, htmlBody);       
     }
 
     // look like the following is our best best for i18n emails
@@ -219,7 +224,7 @@ public class NotificationManagerImpl implements NotificationManager {
         String text = templateManager.processTemplate("priv_policy_upate_2014_03.ftl", templateParams);
         String html = templateManager.processTemplate("priv_policy_upate_2014_03_html.ftl", templateParams);
 
-        return mailGunManager.sendEmail("update@notify.orcid.org", email, ORCID_PRIVACY_POLICY_UPDATES, text, html);
+        return mailGunManager.sendEmail(UPDATE_NOTIFY_ORCID_ORG, email, ORCID_PRIVACY_POLICY_UPDATES, text, html);
     }
 
     private void  addMessageParams(Map<String, Object> templateParams, OrcidProfile orcidProfile) {
@@ -266,7 +271,7 @@ public class NotificationManagerImpl implements NotificationManager {
         // Generate body from template
         String body = templateManager.processTemplate("verification_reminder_email.ftl", templateParams);
         String htmlBody = templateManager.processTemplate("verification_reminder_email_html.ftl", templateParams);
-        mailGunManager.sendEmail(verifyFromAddress, email, getSubject("email.subject.verify_reminder", orcidProfile), body, htmlBody);        
+        mailGunManager.sendEmail(SUPPORT_VERIFY_ORCID_ORG, email, getSubject("email.subject.verify_reminder", orcidProfile), body, htmlBody);        
     }
 
 
@@ -293,6 +298,7 @@ public class NotificationManagerImpl implements NotificationManager {
         Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put("emailName", deriveEmailFriendlyName(orcidProfile));
         templateParams.put("orcid", orcidProfile.getOrcidIdentifier().getPath());
+        templateParams.put("subject", getSubject("email.subject.reset", orcidProfile));
         templateParams.put("baseUri", baseUri);
         // Generate body from template
         String resetUrl = createResetEmail(orcidProfile, baseUri);
@@ -300,16 +306,12 @@ public class NotificationManagerImpl implements NotificationManager {
         
         addMessageParams(templateParams, orcidProfile);
         
+        String primaryEmail = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+        
+        // Generate body from template
         String body = templateManager.processTemplate("reset_password_email.ftl", templateParams);
-
-        // Create email message
-
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(fromAddress);
-        message.setTo(submittedEmail);
-        message.setSubject(getSubject("email.subject.reset", orcidProfile));
-        message.setText(body);
-        sendAndLogMessage(message);
+        String htmlBody = templateManager.processTemplate("reset_password_email_html.ftl", templateParams);
+        mailGunManager.sendEmail(RESET_NOTIFY_ORCID_ORG, primaryEmail, getSubject("email.subject.reset", orcidProfile), body, htmlBody);       
 
     }
 
