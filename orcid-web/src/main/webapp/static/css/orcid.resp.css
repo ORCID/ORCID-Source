@@ -3463,6 +3463,67 @@ p.orcid-id-container{
 	margin-top: 5px;		
 }
 
+/* Userbadge Style */
+
+.user-badge .user-badge-container a.user-badge-switch{
+	display: block;	
+	background: #a6ce39;
+	width: 100%;
+	padding: 5px;
+	text-align: right;
+	color: white; 
+	text-decoration: none;
+}
+
+.user-badge .user-badge-container a.user-badge-switch span{
+	margin: 0 5px;
+	line-height: -1px;
+	font-size: 11px; 
+}
+
+.user-badge .user-badge-container ul.user-bagde-dropdown{
+	margin:0;
+	padding: 0;
+	width: 240px;
+}
+
+.user-badge .user-badge-container ul.user-bagde-dropdown > li{
+	border-top: 1px solid #FFF;
+	background: #a6ce39;
+	height: auto;
+	width: 240px;
+	padding: 0;
+	margin: 0;				
+}
+
+.user-badge .user-badge-container ul.user-bagde-dropdown > li:first-of-type{
+	padding:5px 5px 0 5px;
+	background:#C9CACB; 	
+}
+
+.user-badge .user-badge-container ul.user-bagde-dropdown > li:first-of-type > input{
+	width: 100%;	
+}
+
+.user-badge .user-badge-container ul.user-bagde-dropdown > li > a{	
+	text-align: right;
+	text-overflow: ellipsis;	
+	color: #FFF;
+	margin: 0;
+	padding: 5px 10px;
+}
+.user-badge .user-badge-container ul.user-bagde-dropdown > li > a:hover{	
+	background: #338caf;	
+}
+
+.user-badge .user-badge-container ul.user-bagde-dropdown > li ul,
+.user-badge .user-badge-container ul.user-bagde-dropdown > li ul > li
+{
+	margin: 0;
+	padding: 0;
+	text-overflow: ellipsis;
+	overflow: hidden;	
+}
 
 
 
