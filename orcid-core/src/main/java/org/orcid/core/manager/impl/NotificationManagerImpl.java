@@ -258,21 +258,15 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("verificationUrl", verificationUrl);
         templateParams.put("orcid", orcidProfile.getOrcidIdentifier().getPath());
         templateParams.put("email", email);
+        templateParams.put("subject", getSubject("email.subject.verify_reminder", orcidProfile));
         templateParams.put("baseUri", baseUri);
         
         addMessageParams(templateParams, orcidProfile);
         
         // Generate body from template
         String body = templateManager.processTemplate("verification_reminder_email.ftl", templateParams);
-        // Create email message
-//        SimpleMailMessage message = new SimpleMailMessage();
-//        message.setFrom(fromAddress);
-//        message.setTo(email);
-//        message.setSubject(getSubject("email.subject.verify_reminder", orcidProfile));
-//        message.setText(body);
-//        // Send message
-//        sendAndLogMessage(message);
-        mailGunManager.sendEmail(verifyFromAddress, email, getSubject("email.subject.verify_reminder", orcidProfile), body, null);        
+        String htmlBody = templateManager.processTemplate("verification_reminder_email_html.ftl", templateParams);
+        mailGunManager.sendEmail(verifyFromAddress, email, getSubject("email.subject.verify_reminder", orcidProfile), body, htmlBody);        
     }
 
 
