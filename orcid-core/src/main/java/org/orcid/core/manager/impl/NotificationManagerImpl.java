@@ -71,6 +71,8 @@ public class NotificationManagerImpl implements NotificationManager {
     
     private static final String RESET_NOTIFY_ORCID_ORG = "reset@notify.orcid.org";
     
+    private static final String CLAIM_NOTIFY_ORCID_ORG = "claim@notify.orcid.org";
+    
     @Resource
     private MessageSource messages;
 
@@ -430,6 +432,7 @@ public class NotificationManagerImpl implements NotificationManager {
         Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put("emailName", deriveEmailFriendlyName(createdProfile));
         templateParams.put("orcid", createdProfile.getOrcidIdentifier().getPath());
+        templateParams.put("subject", getSubject("email.subject.api_record_creation", createdProfile));
         Source source = createdProfile.getOrcidHistory().getSource();
         templateParams.put("creatorName", source == null ? "" : source.getSourceName().getContent());
         templateParams.put("baseUri", baseUri);
@@ -438,19 +441,16 @@ public class NotificationManagerImpl implements NotificationManager {
         
         addMessageParams(templateParams, createdProfile);
         
+        String email = createdProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
         // Generate body from template
         String body = templateManager.processTemplate("api_record_creation_email.ftl", templateParams);
-        // Create email message
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(fromAddress);
-        message.setTo(toEmail);
-        message.setSubject(getSubject("email.subject.api_record_creation", createdProfile));
-        message.setText(body);
+        String htmlBody = templateManager.processTemplate("api_record_creation_email_html.ftl", templateParams);
+
         // Send message
         if (apiRecordCreationEmailEnabled) {
-            sendAndLogMessage(message);
+            mailGunManager.sendEmail(CLAIM_NOTIFY_ORCID_ORG, email, getSubject("email.subject.api_record_creation", createdProfile), body, htmlBody);       
         } else {
-            LOGGER.debug("Not sending API record creation email, because option is disabled. Message would have been: {}", message);
+            LOGGER.debug("Not sending API record creation email, because option is disabled. Message would have been: {}", body);
         }
     }
 
@@ -461,6 +461,7 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("emailName", deriveEmailFriendlyName(orcidProfile));
         String orcid = orcidProfile.getOrcidIdentifier().getPath();
         templateParams.put("orcid", orcid);
+        templateParams.put("subject", getSubject("email.subject.claim_reminder", orcidProfile));
         Source source = orcidProfile.getOrcidHistory().getSource();
         templateParams.put("creatorName", source == null ? "" : source.getSourceName().getContent());
         templateParams.put("baseUri", baseUri);
@@ -475,20 +476,17 @@ public class NotificationManagerImpl implements NotificationManager {
         
         addMessageParams(templateParams, orcidProfile);
         
+        String email = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
         // Generate body from template
-        String body = templateManager.processTemplate("claim_reminder_email.ftl", templateParams);
-        // Create email message
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(fromAddress);
-        message.setTo(primaryEmail.getValue());
-        message.setSubject(getSubject("email.subject.claim_reminder", orcidProfile));
-        message.setText(body);
+        String body = templateManager.processTemplate("api_record_creation_email.ftl", templateParams);
+        String htmlBody = templateManager.processTemplate("api_record_creation_email_html.ftl", templateParams);
+
         // Send message
         if (apiRecordCreationEmailEnabled) {
-            sendAndLogMessage(message);
-            profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.CLAIM_REMINDER_SENT));
+             mailGunManager.sendEmail(CLAIM_NOTIFY_ORCID_ORG, email, getSubject("email.subject.claim_reminder", orcidProfile), body, htmlBody);       
+             profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.CLAIM_REMINDER_SENT));
         } else {
-            LOGGER.debug("Not sending claim reminder email, because API record creation email option is disabled. Message would have been: {}", message);
+            LOGGER.debug("Not sending claim reminder email, because API record creation email option is disabled. Message would have been: {}", body);
         }
 
     }
