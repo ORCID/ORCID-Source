@@ -20,7 +20,7 @@
 <@emailMacros.msg "email.common.dear" /> ${emailName}<@emailMacros.msg "email.common.dear.comma" />
 
 <@emailMacros.msg "email.verify.thank_you" /> 
-${email}.
+${baseUri}/${orcid}?lang=${locale}.
 
 <@emailMacros.msg "email.verify.to_verify" />
 ${verificationUrl}?lang=${locale}
