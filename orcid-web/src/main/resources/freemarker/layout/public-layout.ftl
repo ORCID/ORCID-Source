@@ -186,11 +186,14 @@
             <span class="see-more">${liveIds} <@orcid.msg 'public-layout.amount_ids'/>
                 <a href="<@spring.url "/statistics" />" title=""><@orcid.msg 'public-layout.see_more'/></a>
             </span>
+            <!-- 
             <#if inDelegationMode>
+            
             	<div class="delegation-label">            	
             		<span class="label label-danger"><@orcid.msg 'delegate.global_status_label'/></span>
             	</div>
             </#if>
+             -->
         </div> <!-- .row -->
     </div><!-- .header -->
     <div id="main" role="main" class="main">
