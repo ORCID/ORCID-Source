@@ -205,69 +205,6 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         assertTrue(StringUtils.isNotBlank(accessToken));
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    @Test
-    public void testGetAuthenticateOnSSOUser() throws JSONException, InterruptedException {
-        HashSet<String> uris = new HashSet<String>();
-        uris.add("http://1.com");
-        uris.add("http://2.com");
-        ssoManager.grantSSOAccess("4444-4444-4444-4440", uris);
-        
-        String authCode = obtainAuthorizationCode("/authenticate","4444-4444-4444-4440","http://1.com");
-        assertNotNull(authCode);
-        assertTrue(StringUtils.isNotBlank(authCode));
-        
-        
-        MultivaluedMap<String, String> params = new MultivaluedMapImpl();
-        params.add("client_id", "4444-4444-4444-4440");
-        params.add("client_secret", "client-secret");
-        params.add("grant_type", "authorization_code");
-        params.add("scope", "/authenticate");
-        params.add("redirect_uri", redirectUri);
-        params.add("code", authCode);
-        ClientResponse tokenResponse = oauthT2Client.obtainOauth2TokenPost("client_credentials", params);
-        
-        
-        
-        
-        
-    }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     @Test
     public void testInvalidCodesFail() throws JSONException, InterruptedException {
         String scopes = "/orcid-bio/read-limited";
@@ -303,8 +240,6 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         ClientResponse tokenResponse = oauthT2Client.obtainOauth2TokenPost("client_credentials", params);
         assertEquals(200, tokenResponse.getStatus());        
     }
-    
-    
     
     @Test
     public void testAddWork() throws InterruptedException, JSONException {
