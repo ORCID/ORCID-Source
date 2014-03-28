@@ -45,7 +45,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-t1-web-context.xml" })
+@ContextConfiguration(locations = { "classpath:/orcid-t1-web-context.xml", "classpath:/orcid-t1-security-context.xml" })
 public class T1OrcidApiServiceImplLatestMetricsTest {
 
     @Resource
