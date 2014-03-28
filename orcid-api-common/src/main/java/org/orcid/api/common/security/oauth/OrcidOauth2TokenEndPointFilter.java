@@ -23,8 +23,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.orcid.core.security.MethodNotAllowedException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
 import org.springframework.security.oauth2.provider.client.ClientCredentialsTokenEndpointFilter;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -36,6 +40,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
  */
 public class OrcidOauth2TokenEndPointFilter extends ClientCredentialsTokenEndpointFilter {
 
+    private final static String PUBLIC_ROLE = "ROLE_PUBLIC";
+    
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException, ServletException {
         if (request.getMethod().equals(RequestMethod.GET.name())) {
@@ -44,7 +50,41 @@ public class OrcidOauth2TokenEndPointFilter extends ClientCredentialsTokenEndpoi
             InvalidRequestException ire = new InvalidRequestException(message);
             throw new MethodNotAllowedException(message, ire);
         }
-        return super.attemptAuthentication(request, response);
+        
+        String clientId = request.getParameter("client_id");
+        String clientSecret = request.getParameter("client_secret");
+
+        // If the request is already authenticated we can assume that this filter is not needed
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+                return authentication;
+        }
+        
+        if (clientId == null) {
+                throw new BadCredentialsException("No client credentials presented");
+        }
+
+        if (clientSecret == null) {
+                clientSecret = "";
+        }
+
+        clientId = clientId.trim();
+        UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(clientId,
+                        clientSecret);
+
+        authentication = this.getAuthenticationManager().authenticate(authRequest); 
+                        
+        if(authentication != null){
+            for(GrantedAuthority auth : authentication.getAuthorities()) {
+                if(PUBLIC_ROLE.equals(auth.getAuthority())){
+                    String message = "Public members are not allowed to use the Members API";
+                    InvalidRequestException ire = new InvalidRequestException(message);
+                    throw new MethodNotAllowedException(message, ire);
+                }
+            }
+        }
+        
+        return authentication;
     }
 
 }

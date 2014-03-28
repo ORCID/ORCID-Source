@@ -26,6 +26,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.Date;
 
 /**
@@ -217,11 +220,13 @@ public class OrcidOauth2TokenDetail extends BaseEntity<Long> implements ProfileA
 
     @Override
     public int compareTo(OrcidOauth2TokenDetail other) {
-        ProfileEntity clientProfileEntity = clientDetailsEntity.getProfile();
+        ProfileEntity clientProfileEntity = clientDetailsEntity.getProfile();        
         ProfileEntity otherClientProfileEntity = other.getClientDetailsEntity().getProfile();
+        String clientName = clientDetailsEntity.getClientName();
+        String otherClientName = other.getClientDetailsEntity() == null ? "" : other.getClientDetailsEntity().getClientName();
         int compareName = 0;
-        if(clientProfileEntity.getCreditName() != null){ 
-            compareName = clientProfileEntity.getCreditName().compareTo(otherClientProfileEntity.getCreditName());
+        if(StringUtils.isNotBlank(clientName)){ 
+            compareName = clientName.compareTo(otherClientName);            
         } else {
             String name = (clientProfileEntity.getGivenNames() == null ? "" : clientProfileEntity.getGivenNames()) + (clientProfileEntity.getFamilyName() == null ? "" : clientProfileEntity.getFamilyName());
             String otherName = (otherClientProfileEntity.getGivenNames() == null ? "" : otherClientProfileEntity.getGivenNames()) + (otherClientProfileEntity.getFamilyName() == null ? "" : otherClientProfileEntity.getFamilyName());
