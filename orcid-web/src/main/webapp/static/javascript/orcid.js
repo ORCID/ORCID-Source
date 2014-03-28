@@ -203,6 +203,8 @@
         var prepareMobileMenu = function(){
             var topItems = $('.header .navigation > .menu > li > a');
             var topItemsLi = $('.header .navigation > .menu > li');
+            $('.header .navigation > .menu > li.last.leaf').hide();
+            
 
             var links = $('.header .navigation > .menu > li > .menu > li').has('ul').children('a');
             var toInject = $('.header .navigation > .menu > li > .menu > li > ul.menu');                           
