@@ -3985,7 +3985,7 @@ function SSOPreferencesCtrl($scope, $compile) {
 				$('#cboxClose').remove();
 			}
 		});
-		$.colorbox.resize({width:"460px" , height:"425px"});
+		$.colorbox.resize({width:"460px" , height:"460px"});
 	};
 	
 	$scope.addRedirectURI = function() {
@@ -4028,7 +4028,7 @@ function SSOPreferencesCtrl($scope, $compile) {
 			}
 		});
 		
-		$.colorbox.resize({width:"575px" , height:"425px"});
+		$.colorbox.resize({width:"575px" , height:"460px"});
 	};
 	
 	$scope.showRevokeModal = function() {		
@@ -4067,7 +4067,7 @@ function SSOPreferencesCtrl($scope, $compile) {
 			}
 		});
 		
-		$.colorbox.resize({width:"460px" , height:"425px"});
+		$.colorbox.resize({width:"460px" , height:"460px"});
 	};
 	
 	$scope.editClientCredentials = function() {

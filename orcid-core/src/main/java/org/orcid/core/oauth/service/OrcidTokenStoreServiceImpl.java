@@ -27,6 +27,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
@@ -65,8 +66,8 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
     @Resource
     private OrcidOauth2TokenDetailService orcidOauthTokenDetailService;
 
-    @Resource
-    private ClientDetailsDao clientDetailsDao;
+    @Resource(name = "clientDetailsManager")
+    private ClientDetailsManager clientDetailsManager;
 
     @Resource
     private ProfileEntityManager profileEntityManager;
@@ -307,7 +308,7 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
         if (detail == null) {
             detail = new OrcidOauth2TokenDetail();
         }
-        ClientDetailsEntity clientDetails = clientDetailsDao.findByClientId(authorizationRequest.getClientId());
+        ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(authorizationRequest.getClientId());
         String authKey = KEY_GENERATOR.extractKey(authentication);
         detail.setAuthenticationKey(authKey);
         detail.setClientDetailsEntity(clientDetails);

@@ -26,6 +26,7 @@ import java.util.UUID;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.OrcidClientDetailsService;
 import org.orcid.core.manager.ProfileEntityManager;
@@ -64,8 +65,8 @@ import org.springframework.stereotype.Service;
 @Service("orcidClientDetailsService")
 public class OrcidClientDetailsServiceImpl implements OrcidClientDetailsService {
 
-    @Resource
-    private ClientDetailsDao clientDetailsDao;
+    @Resource(name = "clientDetailsManager")
+    private ClientDetailsManager clientDetailsManager;
 
     @Resource
     private ProfileEntityManager profileEntityManager;
@@ -85,7 +86,7 @@ public class OrcidClientDetailsServiceImpl implements OrcidClientDetailsService 
      */
     @Override
     public ClientDetailsEntity loadClientByClientId(String clientId) throws OAuth2Exception {
-        ClientDetailsEntity clientDetails = clientDetailsDao.findByClientId(clientId);
+        ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
         if (clientDetails != null) {
             clientDetails.setDecryptedClientSecret(encryptionManager.decryptForInternalUse(clientDetails.getClientSecretForJpa()));
             return clientDetails;
@@ -186,13 +187,13 @@ public class OrcidClientDetailsServiceImpl implements OrcidClientDetailsService 
      */
     @Override
     public ClientDetailsEntity createClientDetails(ClientDetailsEntity clientDetailsEntity) {
-        clientDetailsDao.persist(clientDetailsEntity);
-        return clientDetailsDao.findByClientId(clientDetailsEntity.getId());
+        clientDetailsManager.persist(clientDetailsEntity);
+        return clientDetailsManager.findByClientId(clientDetailsEntity.getId());
     }
 
     @Override
     public void deleteClientDetail(String clientId) {
-        clientDetailsDao.removeByClientId(clientId);
+        clientDetailsManager.removeByClientId(clientId);
     }
 
     private Set<ClientScopeEntity> getClientScopeEntities(Set<String> clientScopeStrings, ClientDetailsEntity clientDetailsEntity) {

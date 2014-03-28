@@ -89,6 +89,17 @@
 				</span>	
 			</div>
 
+
+			<div class="row">
+				<span class="col-xs-12 col-md-12"><strong><@orcid.msg 'manage.developer_tools.generate.website'/></strong></span>
+				<span class="col-xs-12 col-md-12"><input type="text" placeholder="<@orcid.msg 'manage.developer_tools.generate.website.placeholder'/>" class="input-xlarge" ng-model="userCredentials.clientWebsite.value"></span><br />
+				<span class="col-xs-12 col-md-12 orcid-error" ng-show="userCredentials.clientWebsite.errors.length > 0">
+					<div ng-repeat='error in userCredentials.clientWebsite.errors' ng-bind-html="error"></div>
+				</span>	
+			</div>
+
+
+
 			<div class="row">
 				<span class="col-xs-12 col-md-12"><strong><@orcid.msg 'manage.developer_tools.redirect_uri'/>:</strong></span>
 	    		<div class="col-xs-12 col-md-12" ng-repeat="rUri in userCredentials.redirectUris">										
@@ -139,6 +150,14 @@
 			</div>
 
 			<div class="row">
+				<span class="col-xs-12 col-md-12"><strong><@orcid.msg 'manage.developer_tools.generate.website'/></strong></span>
+				<span class="col-xs-12 col-md-12"><input type="text" placeholder="<@orcid.msg 'manage.developer_tools.generate.website.placeholder'/>" class="input-xlarge" ng-model="userCredentials.clientWebsite.value"></span><br />
+				<span class="col-xs-12 col-md-12 orcid-error" ng-show="userCredentials.clientWebsite.errors.length > 0">
+					<div ng-repeat='error in userCredentials.clientWebsite.errors' ng-bind-html="error"></div>
+				</span>	
+			</div>
+
+			<div class="row">
 				<span class="col-xs-12 col-md-12"><strong><@orcid.msg 'manage.developer_tools.redirect_uri'/>:</strong></span>
 	    		<div class="col-xs-12 col-md-12" ng-repeat="rUri in userCredentials.redirectUris">										
 					<input type="text" placeholder="<@orcid.msg 'manage.developer_tools.redirect_uri.placeholder'/>" class="input-xlarge" ng-model="rUri.value.value">					
@@ -184,6 +203,11 @@
 		<div class="row">
 			<span class="col-xs-12 col-md-3"><strong><@orcid.msg 'manage.developer_tools.view.description'/></strong></span>
 			<span class="col-xs-12 col-md-9">{{userCredentials.clientDescription.value}}</span><br />
+		</div>
+
+		<div class="row">
+			<span class="col-xs-12 col-md-3"><strong><@orcid.msg 'manage.developer_tools.view.website'/></strong></span>
+			<span class="col-xs-12 col-md-9">{{userCredentials.clientWebsite.value}}</span><br />
 		</div>
 
 		<div class="row">

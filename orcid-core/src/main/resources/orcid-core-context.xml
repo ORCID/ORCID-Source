@@ -146,6 +146,8 @@
 
 	<bean id="orcidSSOManager" class="org.orcid.core.manager.impl.OrcidSSOManagerImpl" />
 
+	<bean id="clientDetailsManager" class="org.orcid.core.manager.impl.ClientDetailsManagerImpl" />
+
 	<bean id="passwordGenerationManager"
 		class="org.orcid.core.manager.impl.PasswordGenerationManagerImpl">
 		<constructor-arg value="12"></constructor-arg>
