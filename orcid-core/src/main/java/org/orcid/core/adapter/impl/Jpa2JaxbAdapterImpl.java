@@ -762,7 +762,18 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                     ProfileEntity acceptedClientProfileEntity = acceptedClient != null ? acceptedClient.getProfileEntity() : null;
                     if (acceptedClientProfileEntity != null) {
                         applicationSummary.setApplicationOrcid(new ApplicationOrcid(getOrcidIdBase(acceptedClient.getClientId())));
-                        applicationSummary.setApplicationName(new ApplicationName(acceptedClientProfileEntity.getCreditName()));
+                        
+                        
+                        //TODO: This must be removed as soon as we move the application name and description to the client_details table
+                        //TODO: Then, the credit name should be taken from the client_details table
+                        if(StringUtils.isNotBlank(acceptedClientProfileEntity.getCreditName())){
+                            applicationSummary.setApplicationName(new ApplicationName(acceptedClientProfileEntity.getCreditName()));
+                        } else {
+                            String givenName = StringUtils.isNotBlank(acceptedClientProfileEntity.getGivenNames()) ? acceptedClientProfileEntity.getGivenNames() : "";
+                            String lastName = StringUtils.isNotBlank(acceptedClientProfileEntity.getFamilyName()) ? acceptedClientProfileEntity.getFamilyName() : "";
+                            applicationSummary.setApplicationName(new ApplicationName((givenName + ' ' + lastName)));
+                        }                        
+                        
                         SortedSet<ResearcherUrlEntity> researcherUrls = acceptedClient.getProfileEntity().getResearcherUrls();
                         if (researcherUrls != null && !researcherUrls.isEmpty()) {
                             applicationSummary.setApplicationWebsite(new ApplicationWebsite(researcherUrls.first().getUrl()));

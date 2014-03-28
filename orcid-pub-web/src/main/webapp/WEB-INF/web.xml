@@ -39,7 +39,8 @@
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>
-            classpath:orcid-t1-web-context.xml
+            classpath:/orcid-t1-web-context.xml
+            classpath:/orcid-t1-security-context.xml
         </param-value>
     </context-param>
     
@@ -66,22 +67,7 @@
 	<filter-mapping>
 		<filter-name>corsFilter</filter-name>
 		<url-pattern>*</url-pattern>
-	</filter-mapping>
-
-
-    <filter>
-        <filter-name>jersey</filter-name>
-        <filter-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</filter-class>
-        <init-param>
-            <param-name>com.sun.jersey.config.property.packages</param-name>
-            <param-value>org.orcid.api.t1;org.orcid.api.client;org.orcid.api.common;org.codehaus.jackson.jaxrs</param-value>
-        </init-param>
-    </filter>
-
-    <filter-mapping>
-        <filter-name>jersey</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
+	</filter-mapping>   
 
     <filter>
         <filter-name>encodingFilter</filter-name>
@@ -95,6 +81,16 @@
             <param-value>true</param-value>
         </init-param>
     </filter>
+
+	<filter>
+        <filter-name>clientCredentialsTokenEndpointFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>clientCredentialsTokenEndpointFilter</filter-name>
+        <url-pattern>/oauth/token</url-pattern>
+    </filter-mapping>
 
     <filter-mapping>
         <filter-name>encodingFilter</filter-name>
@@ -113,6 +109,20 @@
         <dispatcher>INCLUDE</dispatcher>
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>ERROR</dispatcher>
+    </filter-mapping>	
+
+ 	<filter>
+        <filter-name>jersey</filter-name>
+        <filter-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</filter-class>
+        <init-param>
+            <param-name>com.sun.jersey.config.property.packages</param-name>
+            <param-value>org.orcid.api.t1;org.orcid.api.client;org.orcid.api.common;org.codehaus.jackson.jaxrs</param-value>
+        </init-param>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>jersey</filter-name>
+        <url-pattern>/*</url-pattern>
     </filter-mapping>
 
 </web-app>

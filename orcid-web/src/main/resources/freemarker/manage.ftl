@@ -327,7 +327,10 @@
 						class="revokeApplicationForm"
 						id="revokeApplicationForm${applicationSummary_index}">
 						<td class="revokeApplicationName">${(applicationSummary.applicationName.content)!}<br />
-						<a href="<@orcid.absUrl applicationSummary.applicationWebsite/>">${applicationSummary.applicationWebsite.value}</a></td>
+						<#if (applicationSummary.applicationWebsite)??>
+						<a href="<@orcid.absUrl applicationSummary.applicationWebsite/>">${applicationSummary.applicationWebsite.value}</a>
+						</#if>
+						</td>
 						<td width="35%">${applicationSummary.approvalDate.value.toGregorianCalendar().time?date}</td>
 						<td width="5%"><input type="hidden" name="applicationOrcid"
 							value="${applicationSummary.applicationOrcid.path}" /> <input
@@ -340,10 +343,17 @@
 							value="${scopePath.value.value()}" /> <@spring.message
 							"${scopePath.value.declaringClass.name}.${scopePath.value}"/>
 							<#if scopePath_has_next>;&nbsp;</#if> </#list> </#if></td width="35%">
-						<td width="5%"><a
-							ng-click="confirmRevoke('${applicationSummary.applicationName.content?js_string}','${applicationSummary.applicationGroupName.content?js_string}', '${applicationSummary_index}')"
-							class="glyphicon glyphicon-trash grey"
-							title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a></td>
+						<td width="5%">
+							<#if (applicationSummary.applicationGroupName)??>
+								<a ng-click="confirmRevoke('${applicationSummary.applicationName.content?js_string}','${applicationSummary.applicationGroupName.content?js_string}', '${applicationSummary_index}')"
+								class="glyphicon glyphicon-trash grey"
+								title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a>
+							<#else>
+								<a ng-click="confirmRevoke('${applicationSummary.applicationName.content?js_string}','', '${applicationSummary_index}')"
+								class="glyphicon glyphicon-trash grey"
+								title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a>
+							</#if>
+						</td>
 					</form>
 				</tr>
 				</#list>

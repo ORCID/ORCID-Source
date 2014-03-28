@@ -26,7 +26,7 @@
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
 
     <import resource="orcid-core-context.xml"/>
-    <context:component-scan base-package="org.orcid.api.t1, org.orcid.api.common"/>
+    <context:component-scan base-package="org.orcid.api.t1, org.orcid.api.common, org.orcid.core.security"/>
     <aop:aspectj-autoproxy />
 
 	<bean id="corsFilter" class="org.orcid.core.web.filters.CorsFilter" />
