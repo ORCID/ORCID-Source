@@ -65,6 +65,14 @@ public class NotificationManagerImpl implements NotificationManager {
     
     //ResourceBundle resources = ResourceBundle.getBundle("i18n/email", new Locale("en"), new UTF8Control());
 
+    private static final String UPDATE_NOTIFY_ORCID_ORG = "update@notify.orcid.org";
+
+    private static final String SUPPORT_VERIFY_ORCID_ORG = "support@verify.orcid.org";
+    
+    private static final String RESET_NOTIFY_ORCID_ORG = "reset@notify.orcid.org";
+    
+    private static final String CLAIM_NOTIFY_ORCID_ORG = "claim@notify.orcid.org";
+    
     @Resource
     private MessageSource messages;
 
@@ -75,7 +83,6 @@ public class NotificationManagerImpl implements NotificationManager {
 
     private String fromAddress;
     
-    private String verifyFromAddress = "support@verify.orcid.org";
 
     private String supportAddress;
 
@@ -185,6 +192,7 @@ public class NotificationManagerImpl implements NotificationManager {
 
         String emailFriendlyName = deriveEmailFriendlyName(orcidProfile);
         templateParams.put("emailName", emailFriendlyName);
+        templateParams.put("subject",getSubject("email.subject.verify_reminder", orcidProfile));
         String verificationUrl = createVerificationUrl(email, baseUri);
         templateParams.put("verificationUrl", verificationUrl);
         templateParams.put("orcid", orcidProfile.getOrcidIdentifier().getPath());
@@ -194,7 +202,8 @@ public class NotificationManagerImpl implements NotificationManager {
 
         // Generate body from template
         String body = templateManager.processTemplate("verification_email.ftl", templateParams);
-        mailGunManager.sendEmail(verifyFromAddress, email, getSubject("email.subject.verify_reminder", orcidProfile), body, null);       
+        String htmlBody = templateManager.processTemplate("verification_email_html.ftl", templateParams);
+        mailGunManager.sendEmail(SUPPORT_VERIFY_ORCID_ORG, email, getSubject("email.subject.verify_reminder", orcidProfile), body, htmlBody);       
     }
 
     // look like the following is our best best for i18n emails
@@ -217,7 +226,7 @@ public class NotificationManagerImpl implements NotificationManager {
         String text = templateManager.processTemplate("priv_policy_upate_2014_03.ftl", templateParams);
         String html = templateManager.processTemplate("priv_policy_upate_2014_03_html.ftl", templateParams);
 
-        return mailGunManager.sendEmail("update@notify.orcid.org", email, ORCID_PRIVACY_POLICY_UPDATES, text, html);
+        return mailGunManager.sendEmail(UPDATE_NOTIFY_ORCID_ORG, email, ORCID_PRIVACY_POLICY_UPDATES, text, html);
     }
 
     private void  addMessageParams(Map<String, Object> templateParams, OrcidProfile orcidProfile) {
@@ -256,21 +265,15 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("verificationUrl", verificationUrl);
         templateParams.put("orcid", orcidProfile.getOrcidIdentifier().getPath());
         templateParams.put("email", email);
+        templateParams.put("subject", getSubject("email.subject.verify_reminder", orcidProfile));
         templateParams.put("baseUri", baseUri);
         
         addMessageParams(templateParams, orcidProfile);
         
         // Generate body from template
         String body = templateManager.processTemplate("verification_reminder_email.ftl", templateParams);
-        // Create email message
-//        SimpleMailMessage message = new SimpleMailMessage();
-//        message.setFrom(fromAddress);
-//        message.setTo(email);
-//        message.setSubject(getSubject("email.subject.verify_reminder", orcidProfile));
-//        message.setText(body);
-//        // Send message
-//        sendAndLogMessage(message);
-        mailGunManager.sendEmail(verifyFromAddress, email, getSubject("email.subject.verify_reminder", orcidProfile), body, null);        
+        String htmlBody = templateManager.processTemplate("verification_reminder_email_html.ftl", templateParams);
+        mailGunManager.sendEmail(SUPPORT_VERIFY_ORCID_ORG, email, getSubject("email.subject.verify_reminder", orcidProfile), body, htmlBody);        
     }
 
 
@@ -297,6 +300,7 @@ public class NotificationManagerImpl implements NotificationManager {
         Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put("emailName", deriveEmailFriendlyName(orcidProfile));
         templateParams.put("orcid", orcidProfile.getOrcidIdentifier().getPath());
+        templateParams.put("subject", getSubject("email.subject.reset", orcidProfile));
         templateParams.put("baseUri", baseUri);
         // Generate body from template
         String resetUrl = createResetEmail(orcidProfile, baseUri);
@@ -304,16 +308,12 @@ public class NotificationManagerImpl implements NotificationManager {
         
         addMessageParams(templateParams, orcidProfile);
         
+        String primaryEmail = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+        
+        // Generate body from template
         String body = templateManager.processTemplate("reset_password_email.ftl", templateParams);
-
-        // Create email message
-
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(fromAddress);
-        message.setTo(submittedEmail);
-        message.setSubject(getSubject("email.subject.reset", orcidProfile));
-        message.setText(body);
-        sendAndLogMessage(message);
+        String htmlBody = templateManager.processTemplate("reset_password_email_html.ftl", templateParams);
+        mailGunManager.sendEmail(RESET_NOTIFY_ORCID_ORG, primaryEmail, getSubject("email.subject.reset", orcidProfile), body, htmlBody);       
 
     }
 
@@ -432,6 +432,7 @@ public class NotificationManagerImpl implements NotificationManager {
         Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put("emailName", deriveEmailFriendlyName(createdProfile));
         templateParams.put("orcid", createdProfile.getOrcidIdentifier().getPath());
+        templateParams.put("subject", getSubject("email.subject.api_record_creation", createdProfile));
         Source source = createdProfile.getOrcidHistory().getSource();
         templateParams.put("creatorName", source == null ? "" : source.getSourceName().getContent());
         templateParams.put("baseUri", baseUri);
@@ -440,19 +441,16 @@ public class NotificationManagerImpl implements NotificationManager {
         
         addMessageParams(templateParams, createdProfile);
         
+        String email = createdProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
         // Generate body from template
         String body = templateManager.processTemplate("api_record_creation_email.ftl", templateParams);
-        // Create email message
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(fromAddress);
-        message.setTo(toEmail);
-        message.setSubject(getSubject("email.subject.api_record_creation", createdProfile));
-        message.setText(body);
+        String htmlBody = templateManager.processTemplate("api_record_creation_email_html.ftl", templateParams);
+
         // Send message
         if (apiRecordCreationEmailEnabled) {
-            sendAndLogMessage(message);
+            mailGunManager.sendEmail(CLAIM_NOTIFY_ORCID_ORG, email, getSubject("email.subject.api_record_creation", createdProfile), body, htmlBody);       
         } else {
-            LOGGER.debug("Not sending API record creation email, because option is disabled. Message would have been: {}", message);
+            LOGGER.debug("Not sending API record creation email, because option is disabled. Message would have been: {}", body);
         }
     }
 
@@ -463,6 +461,7 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("emailName", deriveEmailFriendlyName(orcidProfile));
         String orcid = orcidProfile.getOrcidIdentifier().getPath();
         templateParams.put("orcid", orcid);
+        templateParams.put("subject", getSubject("email.subject.claim_reminder", orcidProfile));
         Source source = orcidProfile.getOrcidHistory().getSource();
         templateParams.put("creatorName", source == null ? "" : source.getSourceName().getContent());
         templateParams.put("baseUri", baseUri);
@@ -477,20 +476,17 @@ public class NotificationManagerImpl implements NotificationManager {
         
         addMessageParams(templateParams, orcidProfile);
         
+        String email = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
         // Generate body from template
-        String body = templateManager.processTemplate("claim_reminder_email.ftl", templateParams);
-        // Create email message
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(fromAddress);
-        message.setTo(primaryEmail.getValue());
-        message.setSubject(getSubject("email.subject.claim_reminder", orcidProfile));
-        message.setText(body);
+        String body = templateManager.processTemplate("api_record_creation_email.ftl", templateParams);
+        String htmlBody = templateManager.processTemplate("api_record_creation_email_html.ftl", templateParams);
+
         // Send message
         if (apiRecordCreationEmailEnabled) {
-            sendAndLogMessage(message);
-            profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.CLAIM_REMINDER_SENT));
+             mailGunManager.sendEmail(CLAIM_NOTIFY_ORCID_ORG, email, getSubject("email.subject.claim_reminder", orcidProfile), body, htmlBody);       
+             profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.CLAIM_REMINDER_SENT));
         } else {
-            LOGGER.debug("Not sending claim reminder email, because API record creation email option is disabled. Message would have been: {}", message);
+            LOGGER.debug("Not sending claim reminder email, because API record creation email option is disabled. Message would have been: {}", body);
         }
 
     }

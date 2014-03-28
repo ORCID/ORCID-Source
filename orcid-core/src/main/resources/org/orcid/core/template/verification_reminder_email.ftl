@@ -20,14 +20,14 @@
 <@emailMacros.msg "email.common.dear" /> ${emailName}<@emailMacros.msg "email.common.dear.comma" />
 
 <@emailMacros.msg "email.verify.thank_you" /> 
-${email}.
+${baseUri}/${orcid}?lang=${locale}.
 
 <@emailMacros.msg "email.verify.to_verify" />
 ${verificationUrl}?lang=${locale}
 
 <@emailMacros.msg "email.common.did_you_know" />${baseUri}/about/news?lang=${locale}
 
-<@emailMacros.msg "email.common.if_you_have_any" />
+<@emailMacros.msg "email.common.if_you_have_any1" />http://support.orcid.org<@emailMacros.msg "email.common.if_you_have_any2" />
 
 <@emailMacros.msg "email.common.kind_regards" />
 ${baseUri}/?lang=${locale}
