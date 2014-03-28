@@ -21,6 +21,7 @@ import java.util.HashMap;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.Work;
 
 public interface ActivityCacheManager {
@@ -31,4 +32,7 @@ public interface ActivityCacheManager {
     
     public HashMap<String, Affiliation> affiliationMap(OrcidProfile profile);
     
+    public String getCreditName(ProfileEntity profile);
+    
+    public String getPublicCreditName(ProfileEntity profile);
 }

@@ -998,7 +998,7 @@ select {
 /*
     bold fonts
 */
-h1,h2,h3,h4,h5,h6,b,strong,.table th,.close,.nav-header,.label,.badge,.header .search form input[type="search"],.header .main>.menu>li>a,.btn-update,.btn-update:visited,.overview-count,.overview-count:visited,.overview-title,.workspace-accordion-header a,.workspace-accordion-header a:visited,.workspace-accordion-header a:hover,.workspace-header-public,.workspace-help a,.full-name,.tabs a,.tabs a:visited
+h1,h2,h3,h4,h5,h6,b,strong,.table th,.close,.nav-header,.label,.badge,.header .search form input[type="search"],.header .main>.menu>li>a,.btn-update,.btn-update:visited,.overview-count,.overview-count:visited,.overview-title,.workspace-accordion-header a,.workspace-accordion-header a:visited,.workspace-accordion-header a:hover,.workspace-header-public h3,.workspace-help a,.full-name,.tabs a,.tabs a:visited
 {	
 	font-family: 'Gill Sans W02', 'Helvetica', sans-serif;
 	font-weight: bold;
@@ -1683,7 +1683,7 @@ a:hover {
 	color:#A6CE39;
 }
 
-.workspace-accordion-header a,.workspace-accordion-header a:visited,.workspace-accordion-header a:hover,.workspace-header-public
+.workspace-accordion-header a,.workspace-accordion-header a:visited,.workspace-accordion-header a:hover,.workspace-header-public > h3
 	{
 	font-family: 'Gill Sans W02', 'Helvetica', sans-serif;
 	font-weight: bold;
@@ -1704,8 +1704,7 @@ a:hover {
 	display: inline-block;
 }
 
-.workspace-accordion-active .workspace-accordion-header,.workspace-header-public
-	{
+.workspace-accordion-active .workspace-accordion-header{
 	border: 0;
 }
 
@@ -1792,8 +1791,8 @@ a:hover {
 	margin: 15px 15px 0 0;	
 }
 
-.workspace-header-public {
-	padding-top: 10px;
+
+.workspace-header-public h3{
 	line-height: 1.2;
 }
 
@@ -3455,11 +3454,12 @@ p.orcid-id-container{
 	width:315px;
 }
 
-.russian-fix{
-	font-size: 11px !important;	
+.delegation-label{
+	float:right;
+	clear: both;
+	display: block;
+	margin-top: 5px;		
 }
-
-
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
@@ -4316,6 +4316,12 @@ p.orcid-id-container{
 	.admin-options .workspace-accordion-item p{
 		margin-top: 15px;
 	}
+	
+	.delegation-label{
+		margin-right: 15px;
+	}	
+	
+	
 }
 
 @media (min-width : 768px) and (max-width : 991px) { /* Tablet */

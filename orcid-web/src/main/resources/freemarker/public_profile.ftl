@@ -78,14 +78,20 @@
 	        		<p><b><@orcid.msg 'public_profile.deprecated_account.1'/>&nbsp;<a href="${baseUriHttp}/${primaryRecord}">${baseUriHttp}/${primaryRecord}</a>&nbsp;<@orcid.msg 'public_profile.deprecated_account.2'/></b></p>
 	        	</div>
         	</#if>
-            <div class="workspace-inner workspace-public">            	
-                <h3 class="workspace-header-public no-border">${springMacroRequestContext.getMessage("public_profile.h3PersonalInformation")}</h3>
-                <#if (profile.orcidBio.biography.content)?? && (profile.orcidBio.biography.content)?has_content>
-                    <p><b>${springMacroRequestContext.getMessage("public_profile.labelBiography")}</b><br /><div style="white-space: pre-wrap;">${(profile.orcidBio.biography.content)!}</div></p>
-                </#if>
-                <#assign publicProfile = true />
-                <#include "workspace_preview_activities.ftl"/>
-            </div>
+        	<div class="workspace-inner workspace-public">
+        		<#if (isProfileEmpty)?? && isProfileEmpty>
+        			<p class="margin-top-box"><b><@orcid.msg 'public_profile.empty_profile'/></b></p>
+        		<#else>	            
+	                <#if (profile.orcidBio.biography.content)?? && (profile.orcidBio.biography.content)?has_content>
+	                	<div class="workspace-header-public no-border">
+	                		<h3>${springMacroRequestContext.getMessage("public_profile.h3PersonalInformation")}</h3>
+	                    	<p><b>${springMacroRequestContext.getMessage("public_profile.labelBiography")}</b><br /><div style="white-space: pre-wrap;">${(profile.orcidBio.biography.content)!}</div></p>
+	                    </div>
+	                </#if>
+	                <#assign publicProfile = true />
+	                <#include "workspace_preview_activities.ftl"/>	                    	
+        		</#if>
+        	</div>            
         </div>
     </div>
 </div>

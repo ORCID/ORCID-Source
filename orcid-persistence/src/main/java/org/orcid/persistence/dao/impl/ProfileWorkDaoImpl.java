@@ -134,5 +134,24 @@ public class ProfileWorkDaoImpl extends GenericDaoImpl<ProfileWorkEntity, Profil
         query.setMaxResults(chunkSize);
         return query.getResultList();
     }
+    
+    /**
+     * Find the list of orcids where at least one of his works have contributors
+     * but the credit name is null
+     * 
+     * @param chunkSize
+     *            the number of orcids to fetch
+     * @return A list of orcid's where at least one of his works have
+     *         contributors but the credit name is null
+     * */
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<String> findOrcidsWhereWorkContributorCreditNameIsNull(int chunkSize) {
+        StringBuilder builder = new StringBuilder("SELECT DISTINCT pw.orcid FROM profile_work pw");
+        builder.append(" JOIN work w ON w.work_id = pw.work_id AND w.contributors_json IS NOT NULL AND w.contributors_json like '\"creditName\":null'");        
+        Query query = entityManager.createNativeQuery(builder.toString());
+        query.setMaxResults(chunkSize);
+        return query.getResultList();
+    }
 
 }
