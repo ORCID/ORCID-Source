@@ -2882,9 +2882,10 @@ a.btn-primary:hover {
 	margin: 10px 0;
 }
 
-#loginForm #login-reset {
+#loginForm #login-reset,
+#loginForm #login-register{
 	padding-left: 0;
-	margin-top: 25px;
+	margin-top: 10px;
 }
 
 #loginForm #login-error-mess {
@@ -2895,10 +2896,6 @@ a.btn-primary:hover {
 	overflow: hidden;
 	width: 100%;
 	padding-left: 330px;	
-}
-
-#loginForm #login-register{
-	padding-left: 0;
 }
 
 /* Personal Profile */
@@ -4241,9 +4238,14 @@ p.orcid-id-container{
 	}
 	
 	#loginForm #login-reset{
-		margin-top: 65px;
-	}	
-
+		margin-top: 80px;
+	}
+	
+	#loginForm #login-reset,
+	#loginForm #login-register{
+		padding-left: 0;		
+	}
+	
 	.workspace-header-public{
 		border-top: 0;
 	}
