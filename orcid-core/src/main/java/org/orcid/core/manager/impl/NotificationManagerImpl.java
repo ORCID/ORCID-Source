@@ -30,6 +30,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.LocaleUtils;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.TemplateManager;
@@ -230,11 +231,11 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     private void  addMessageParams(Map<String, Object> templateParams, OrcidProfile orcidProfile) {
-        Locale locale = null; new Locale("en");
+        Locale locale = null;
         if ( orcidProfile.getOrcidPreferences() != null
                 && orcidProfile.getOrcidPreferences().getLocale() != null) {
             orcidProfile.getOrcidPreferences().getLocale().value();
-            locale = new Locale(orcidProfile.getOrcidPreferences().getLocale().value());
+            locale = LocaleUtils.toLocale(orcidProfile.getOrcidPreferences().getLocale().value());
         } else {
             locale = new Locale("en");
         }
