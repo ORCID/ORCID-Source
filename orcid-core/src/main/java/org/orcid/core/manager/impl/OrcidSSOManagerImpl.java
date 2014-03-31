@@ -17,6 +17,7 @@
 package org.orcid.core.manager.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -33,9 +34,9 @@ import org.orcid.core.manager.OrcidSSOManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.ClientRedirectDao;
 import org.orcid.persistence.dao.GenericDao;
+import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.ResearcherUrlDao;
 import org.orcid.persistence.jpa.entities.ClientAuthorisedGrantTypeEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -65,6 +66,9 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
 
     @Resource
     private ClientRedirectDao clientRedirectDao;
+    
+    @Resource
+    private ProfileDao profileDao;
 
     private final static String SSO_REDIRECT_URI_TYPE = RedirectUriType.SSO_AUTHENTICATION.value();
     private final static String SSO_SCOPE = ScopePathType.AUTHENTICATE.value();
@@ -96,7 +100,9 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
                     existingClientDetails.setClientScopes(existingScopes);
                     clientDetailsManager.merge(existingClientDetails);
                 }
-                return clientDetailsManager.findByClientId(existingClientDetails.getId());
+                String clientId = existingClientDetails.getId();
+                Date lastModified = profileDao.retrieveLastModifiedDate(clientId);
+                return clientDetailsManager.findByClientId(clientId, lastModified);
             } else {
                 String clientSecret = encryptionManager.encryptForInternalUse(UUID.randomUUID().toString());
                 String clientId = profileEntity.getId();
@@ -106,15 +112,17 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
                 }
                 ClientDetailsEntity clientDetailsEntity = populateClientDetailsEntity(clientId, name, description, clientSecret, redirectUrisSet);
                 clientDetailsManager.persist(clientDetailsEntity);
-                researcherUrlDao.addResearcherUrls(clientId, website, null, true);
-                return clientDetailsManager.findByClientId(clientDetailsEntity.getId());
+                researcherUrlDao.addResearcherUrls(clientId, website, null, true);                
+                Date lastModified = profileDao.retrieveLastModifiedDate(clientId);
+                return clientDetailsManager.findByClientId(clientId, lastModified);
             }
         }
     }
 
     @Override
     public ClientDetailsEntity getUserCredentials(String orcid) {
-        ClientDetailsEntity existingClientDetails = clientDetailsManager.findByClientId(orcid);
+        Date lastModified = profileDao.retrieveLastModifiedDate(orcid);
+        ClientDetailsEntity existingClientDetails = clientDetailsManager.findByClientId(orcid, lastModified);
         if (existingClientDetails != null) {
             SortedSet<ClientRedirectUriEntity> allRedirectUris = existingClientDetails.getClientRegisteredRedirectUris();
             SortedSet<ClientRedirectUriEntity> onlySSORedirectUris = new TreeSet<ClientRedirectUriEntity>();

@@ -17,6 +17,7 @@
 package org.orcid.core.oauth.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -32,7 +33,7 @@ import org.orcid.core.manager.OrcidClientDetailsService;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.persistence.dao.ClientDetailsDao;
+import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientAuthorisedGrantTypeEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientGrantedAuthorityEntity;
@@ -73,6 +74,9 @@ public class OrcidClientDetailsServiceImpl implements OrcidClientDetailsService 
 
     @Resource
     private EncryptionManager encryptionManager;
+    
+    @Resource
+    private ProfileDao profileDao;
 
     /**
      * Load a client by the client id. This method must NOT return null.
@@ -86,7 +90,8 @@ public class OrcidClientDetailsServiceImpl implements OrcidClientDetailsService 
      */
     @Override
     public ClientDetailsEntity loadClientByClientId(String clientId) throws OAuth2Exception {
-        ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
+        Date lastModified = profileDao.retrieveLastModifiedDate(clientId);
+        ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId, lastModified);
         if (clientDetails != null) {
             clientDetails.setDecryptedClientSecret(encryptionManager.decryptForInternalUse(clientDetails.getClientSecretForJpa()));
             return clientDetails;
@@ -188,7 +193,8 @@ public class OrcidClientDetailsServiceImpl implements OrcidClientDetailsService 
     @Override
     public ClientDetailsEntity createClientDetails(ClientDetailsEntity clientDetailsEntity) {
         clientDetailsManager.persist(clientDetailsEntity);
-        return clientDetailsManager.findByClientId(clientDetailsEntity.getId());
+        Date lastModified = profileDao.retrieveLastModifiedDate(clientDetailsEntity.getId());
+        return clientDetailsManager.findByClientId(clientDetailsEntity.getId(), lastModified);
     }
 
     @Override

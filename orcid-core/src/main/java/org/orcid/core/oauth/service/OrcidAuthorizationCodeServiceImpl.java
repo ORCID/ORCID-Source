@@ -17,6 +17,7 @@
 package org.orcid.core.oauth.service;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -30,6 +31,7 @@ import org.orcid.core.oauth.OrcidOauth2AuthInfo;
 import org.orcid.core.oauth.OrcidOauth2UserAuthentication;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
+import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2AuthoriziationCodeDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -72,6 +74,9 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
 
     @Resource(name = "profileEntityManager")
     private ProfileEntityManager profileEntityManager;
+    
+    @Resource
+    private ProfileDao profileDao;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidAuthorizationCodeServiceImpl.class);
 
@@ -184,7 +189,8 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
 
     private ClientDetailsEntity getClientDetails(String clientId) {
         try {
-            return clientDetailsManager.findByClientId(clientId);
+            Date lastModified = profileDao.retrieveLastModifiedDate(clientId);
+            return clientDetailsManager.findByClientId(clientId, lastModified);
         } catch (NoResultException e) {
             return null;
         }

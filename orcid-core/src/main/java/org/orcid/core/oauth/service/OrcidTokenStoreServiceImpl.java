@@ -18,6 +18,7 @@ package org.orcid.core.oauth.service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -32,7 +33,7 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.oauth.OrcidOauth2UserAuthentication;
-import org.orcid.persistence.dao.ClientDetailsDao;
+import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -72,6 +73,9 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
     @Resource
     private ProfileEntityManager profileEntityManager;
 
+    @Resource
+    private ProfileDao profileDao;
+    
     private static final AuthenticationKeyGenerator KEY_GENERATOR = new DefaultAuthenticationKeyGenerator();
 
     /**
@@ -308,7 +312,9 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
         if (detail == null) {
             detail = new OrcidOauth2TokenDetail();
         }
-        ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(authorizationRequest.getClientId());
+        String clientId = authorizationRequest.getClientId();
+        Date lastModified = profileDao.retrieveLastModifiedDate(clientId);
+        ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId, lastModified);
         String authKey = KEY_GENERATOR.extractKey(authentication);
         detail.setAuthenticationKey(authKey);
         detail.setClientDetailsEntity(clientDetails);
