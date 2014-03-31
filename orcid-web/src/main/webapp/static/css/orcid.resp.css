@@ -784,6 +784,7 @@ select {
 
 .header .navigation>.menu>li a {
 	cursor: pointer; /* iPhone fix */
+	
 }
 
 .header .navigation>.menu>li.active-trail>.menu {
@@ -850,12 +851,11 @@ select {
 	font-weight: normal;
 	background: #fff;
 	display: inline-block;
-	border-left: 1px solid #C9CACB;
-	/*border-top: 1px solid #C9CACB;*/
+	border-left: 1px solid #C9CACB;	
 	padding: 10px;
 	height: 30px;
 	margin: 0;
-	font-size: 12px;
+	font-size: 11px;
 	text-transform: uppercase;
 	text-decoration: none;
 	color: #338caf;
@@ -901,7 +901,7 @@ select {
 	border: none;
 	padding: 0;
 	font-size: 14px;
-	line-height: 20px;
+	line-height: 20px;	
 }
 
 .header .navigation>.menu>li>.menu>li.active-trail>.menu>li a.active {
@@ -2651,7 +2651,7 @@ header overrides
 	width: 330px;
 }
 
-.inline-input{
+.inline-input{ 
 	margin-bottom: 0px !important;
 }
 
@@ -2857,8 +2857,7 @@ a.btn-primary:hover {
 }
 
 #loginForm #form-sign-in-button{
-	z-index: 1001;
-	width: 98px;
+	z-index: 1001;	
 }
 
 .oauth-login #loginForm #userId,
@@ -3460,9 +3459,6 @@ p.orcid-id-container{
 	margin-top: 5px;		
 }
 
-
-
-
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 		
@@ -3695,6 +3691,7 @@ p.orcid-id-container{
 	}
 	.header .navigation>.menu>li a.last.leaf {
 		width: 100%;
+		font-weight: normal;
 	}
 
 	/* Not showing Third level*/
