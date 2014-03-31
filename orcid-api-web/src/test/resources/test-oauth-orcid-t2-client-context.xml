@@ -54,6 +54,8 @@
 	<!-- wire up helper class for testing -->
 	<bean id="orcidClientDataHelper" class="org.orcid.api.t2.integration.OrcidClientDataHelper">
 		<property name="OrcidClientGroupManager" ref="orcidClientGroupManager" />
+		<property name="ClientDetailsManager" ref="clientDetailsManager" />
+		<property name="OrcidProfileManager" ref="orcidProfileManager" />		
 	</bean>
 	
 </beans>

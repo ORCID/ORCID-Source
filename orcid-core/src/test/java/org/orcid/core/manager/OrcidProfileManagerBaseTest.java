@@ -66,7 +66,6 @@ import org.orcid.jaxb.model.message.WorkExternalIdentifierId;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.message.WorkTitle;
-import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.dao.ProfileDao;
@@ -88,9 +87,6 @@ public class OrcidProfileManagerBaseTest extends BaseTest {
 
     @Resource
     protected ProfileDao profileDao;
-
-    @Resource
-    protected ClientDetailsDao clientDetailsDao;
 
     @Resource
     protected OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDao;

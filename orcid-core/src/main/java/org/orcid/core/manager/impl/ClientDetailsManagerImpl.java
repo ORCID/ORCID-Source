@@ -1,6 +1,7 @@
 package org.orcid.core.manager.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -33,5 +34,20 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
     @Override
     public ClientDetailsEntity merge(ClientDetailsEntity clientDetails) {
         return clientDetailsDao.merge(clientDetails);
+    }
+    
+    @Override
+    public void remove(String clientId){
+        clientDetailsDao.remove(clientId);        
+    }
+    
+    @Override
+    public ClientDetailsEntity find(String clientId) {
+        return clientDetailsDao.find(clientId);
+    }
+    
+    @Override
+    public List<ClientDetailsEntity> getAll() {
+        return clientDetailsDao.getAll();
     }
 }

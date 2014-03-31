@@ -66,7 +66,7 @@ import org.springframework.stereotype.Service;
 @Service("orcidClientDetailsService")
 public class OrcidClientDetailsServiceImpl implements OrcidClientDetailsService {
 
-    @Resource(name = "clientDetailsManager")
+    @Resource
     private ClientDetailsManager clientDetailsManager;
 
     @Resource

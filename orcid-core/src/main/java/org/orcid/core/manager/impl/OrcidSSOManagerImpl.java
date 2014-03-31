@@ -55,7 +55,7 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
     @Resource
     private EncryptionManager encryptionManager;
 
-    @Resource(name = "clientDetailsManager")
+    @Resource
     private ClientDetailsManager clientDetailsManager;
 
     @Resource 
@@ -280,21 +280,23 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
                 //Update the website if needed
                 List<ResearcherUrlEntity> researcherUrls = researcherUrlDao.getResearcherUrls(orcid);
                 //If the website exists, update it
-                boolean updated = false;
+                boolean foundAndUpdated = false;
                 if(researcherUrls != null && !researcherUrls.isEmpty()) {
                     for(ResearcherUrlEntity rUrl : researcherUrls){
                         if(rUrl.isSSO()){
+                            foundAndUpdated = true;
                             if(!rUrl.getUrl().equals(website)){
                                 researcherUrlDao.updateResearcherUrl(rUrl.getId(), website);
-                                updated = true;
                                 break;
+                            } else {
+                                
                             }
                         }
                     }                                                            
                 } 
 
                 //If no url was updated, create it
-                if(!updated){                    
+                if(!foundAndUpdated){                    
                     researcherUrlDao.addResearcherUrls(orcid, website, null, true);
                 }
                 // Get the existing redirect uris

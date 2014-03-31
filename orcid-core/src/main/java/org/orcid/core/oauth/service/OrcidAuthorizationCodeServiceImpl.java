@@ -69,7 +69,7 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
     @Resource(name = "orcidOauth2AuthoriziationCodeDetailDao")
     private OrcidOauth2AuthoriziationCodeDetailDao orcidOauth2AuthoriziationCodeDetailDao;
 
-    @Resource(name = "clientDetailsManager")
+    @Resource
     private ClientDetailsManager clientDetailsManager;
 
     @Resource(name = "profileEntityManager")

@@ -67,7 +67,7 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
     @Resource
     private OrcidOauth2TokenDetailService orcidOauthTokenDetailService;
 
-    @Resource(name = "clientDetailsManager")
+    @Resource
     private ClientDetailsManager clientDetailsManager;
 
     @Resource
