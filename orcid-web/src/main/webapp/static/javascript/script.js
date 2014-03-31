@@ -690,7 +690,7 @@ $(function (){
 	});
 });
 
-/* start bibtexParse 0.0.5 */
+/* start bibtexParse 0.0.7 */
 
 //Original work by Henrik Muehe (c) 2010
 //
@@ -858,7 +858,7 @@ $(function (){
 				return this.value_quotes();
 			} else {
 				var k = this.key();
-				if (this.strings[k.toUpperCase()]) {
+				if (this.strings[k]) {
 					return this.strings[k];
 				} else if (k.match("^[0-9]+$")) {
 					return k;
@@ -888,7 +888,7 @@ $(function (){
 				if (this.input[this.pos].match("[a-zA-Z0-9+_:\\./-]")) {
 					this.pos++;
 				} else {
-					return this.input.substring(start, this.pos).toUpperCase();
+					return this.input.substring(start, this.pos);
 				};
 			};
 		};
@@ -936,7 +936,7 @@ $(function (){
 
 		this.string = function() {
 			var kv = this.key_equals_value();
-			this.strings[kv[0].toUpperCase()] = kv[1];
+			this.strings[kv[0]] = kv[1];
 		};
 
 		this.preamble = function() {
@@ -959,7 +959,7 @@ $(function (){
 
 		this.bibtex = function() {
 			while (this.matchAt()) {
-				var d = this.directive().toUpperCase();
+				var d = this.directive();
 				this.match("{");
 				if (d == "@STRING") {
 					this.string();
@@ -985,6 +985,8 @@ $(function (){
 })(typeof exports === 'undefined' ? this['bibtexParse'] = {} : exports);
 
 /* end bibtexParse */
+
+
 
 /* Mobile detection, useful for colorbox lightboxes resizing */
 function isMobile(){	
