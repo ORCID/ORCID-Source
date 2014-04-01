@@ -25,6 +25,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.LocaleUtils;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.DelegateSummary;
@@ -106,7 +107,7 @@ public class ManageDelegatorsController extends BaseWorkspaceController {
     public @ResponseBody
     List<Map<String, String>> searchDelegatorsForData(@PathVariable("query") String query, @RequestParam(value = "limit") int limit) {
         List<Map<String, String>> datums = new ArrayList<>();
-        Locale locale = new Locale(getLocale());
+        Locale locale =  LocaleUtils.toLocale(getLocale());
         query = query.toLowerCase(locale);
         for (DelegationDetails delegationDetails : getRealProfile().getOrcidBio().getDelegation().getGivenPermissionBy().getDelegationDetails()) {
             DelegateSummary delegateSummary = delegationDetails.getDelegateSummary();

@@ -27,7 +27,7 @@ ${passwordResetUrl}
 
 <@emailMacros.msg "email.reset_password.after" />
 
-<@emailMacros.msg "email.common.if_you_have_any" />
+<@emailMacros.msg "email.common.if_you_have_any1" />http://support.orcid.org<@emailMacros.msg "email.common.if_you_have_any2" />
 
 <@emailMacros.msg "email.common.kind_regards" />
 ${baseUri}/?lang=${locale}

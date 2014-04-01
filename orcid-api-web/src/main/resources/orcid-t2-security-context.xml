@@ -171,7 +171,7 @@
     <bean id="orcidAuthorizationCodeService" class="org.orcid.core.oauth.service.OrcidAuthorizationCodeServiceImpl"/>
 
     <!-- As we have a Jersey endpoint, we need to create an extension to the Spring MVC, so we use a delegator -->
-    <bean id="orcidClientCredentialEndPointDelegator" class="org.orcid.api.t2.server.delegator.impl.OrcidClientCredentialEndPointDelegatorImpl">
+    <bean id="orcidClientCredentialEndPointDelegator" class="com.orcid.api.common.server.delegator.impl.OrcidClientCredentialEndPointDelegatorImpl">
         <property name="tokenGranter" ref="tokenGranter"/>
         <property name="clientDetailsService" ref="orcidClientDetailsService"/>
     </bean>

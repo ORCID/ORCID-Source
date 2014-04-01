@@ -41,7 +41,7 @@
             client_details_id="4444-4444-4444-4445"
             is_approved="true"
             redirect_uri="http://www.google.com"
-            scope_type="/orcid-profile/read-limited"
+            scope_type="/authenticate /orcid-profile/read-limited"
             resource_id="orcid"
             date_created="2012-07-23 08:16:00.00"
             last_modified="2012-07-24 09:20:00.00"

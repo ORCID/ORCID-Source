@@ -22,6 +22,7 @@ import static org.orcid.api.common.OrcidApiConstants.BIO_PATH;
 import static org.orcid.api.common.OrcidApiConstants.BIO_SEARCH_PATH;
 import static org.orcid.api.common.OrcidApiConstants.EXPERIMENTAL_RDF_V1;
 import static org.orcid.api.common.OrcidApiConstants.EXTERNAL_IDENTIFIER_PATH;
+import static org.orcid.api.common.OrcidApiConstants.FUNDING_PATH;
 import static org.orcid.api.common.OrcidApiConstants.ORCID_JSON;
 import static org.orcid.api.common.OrcidApiConstants.ORCID_XML;
 import static org.orcid.api.common.OrcidApiConstants.PROFILE_GET_PATH;
@@ -31,23 +32,29 @@ import static org.orcid.api.common.OrcidApiConstants.TEXT_TURTLE;
 import static org.orcid.api.common.OrcidApiConstants.VND_ORCID_JSON;
 import static org.orcid.api.common.OrcidApiConstants.VND_ORCID_XML;
 import static org.orcid.api.common.OrcidApiConstants.WORKS_PATH;
-import static org.orcid.api.common.OrcidApiConstants.FUNDING_PATH;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.commons.lang.StringUtils;
 import org.orcid.api.common.OrcidApiService;
 import org.orcid.api.common.delegator.OrcidApiServiceDelegator;
 import org.orcid.api.common.delegator.impl.OrcidApiServiceVersionedDelegatorImpl;
@@ -55,7 +62,9 @@ import org.orcid.core.manager.impl.ValidationManagerImpl;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.oauth2.common.util.OAuth2Utils;
 
+import com.orcid.api.common.server.delegator.OrcidClientCredentialEndPointDelegator;
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Counter;
 
@@ -66,6 +75,8 @@ import com.yammer.metrics.core.Counter;
  */
 abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Response>, InitializingBean {
 
+    public static final String OAUTH_TOKEN = "/oauth/token";
+    
     @Value("${org.orcid.core.pubBaseUri:http://orcid.org}")
     private String pubBaseUri;
 
@@ -98,6 +109,9 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
     @Resource(name = "t1OrcidApiServiceDelegatorLatest")
     private OrcidApiServiceDelegator orcidApiServiceDelegatorLatest;
 
+    @Resource
+    private OrcidClientCredentialEndPointDelegator orcidClientCredentialEndPointDelegator;
+    
     public void setUriInfo(UriInfo uriInfo) {
         this.uriInfo = uriInfo;
     }
@@ -565,6 +579,31 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
         }
 
         T1_SEARCH_RESULTS_NONE_FOUND.inc();
+    }
+    
+    /**
+     * 
+     * @param formParams
+     * @return
+     */
+    @POST
+    @Path(OAUTH_TOKEN)
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    public Response obtainOauth2TokenPost(@FormParam("grant_type") String grantType, MultivaluedMap<String, String> formParams) {
+        String clientId = formParams.getFirst("client_id");
+        String clientSecret = formParams.getFirst("client_secret");
+        String code = formParams.getFirst("code");
+        String state = formParams.getFirst("state");
+        String redirectUri = formParams.getFirst("redirect_uri");
+        String resourceId = formParams.getFirst("resource_id");
+        String refreshToken = formParams.getFirst("refresh_token");
+        String scopeList = formParams.getFirst("scope");
+        Set<String> scopes = new HashSet<String>();
+        if (StringUtils.isNotEmpty(scopeList)) {
+            scopes = OAuth2Utils.parseParameterList(scopeList);
+        }
+        return orcidClientCredentialEndPointDelegator.obtainOauth2Token(clientId, clientSecret, grantType, refreshToken, code, scopes, state, redirectUri, resourceId);
     }
 
 }
