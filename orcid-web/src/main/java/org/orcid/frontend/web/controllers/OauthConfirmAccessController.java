@@ -58,10 +58,13 @@ public class OauthConfirmAccessController extends BaseController {
             mav.addObject(JUST_REGISTERED, justRegistered);
         }
         String client_name = "";
+        String client_description = "";
         String client_group_name = "";
+        
         
         ClientDetailsEntity clientDetails = clientDetailsManager.find(clientId);
         client_name = clientDetails.getClientName();
+        client_description = clientDetails.getClientDescription();
         
         if (clientProfile.getOrcidInternal() != null && clientProfile.getOrcidInternal().getGroupOrcidIdentifier() != null && StringUtils.isNotBlank(clientProfile.getOrcidInternal().getGroupOrcidIdentifier().getPath())) {
             String client_group_id = clientProfile.getOrcidInternal().getGroupOrcidIdentifier().getPath();
@@ -77,6 +80,7 @@ public class OauthConfirmAccessController extends BaseController {
         }
         
         mav.addObject("client_name", client_name);
+        mav.addObject("client_description", client_description);
         mav.addObject("client_group_name", client_group_name);        
         mav.addObject("clientProfile", clientProfile);        
         mav.addObject("scopes", ScopePathType.getScopesFromSpaceSeparatedString(scope));

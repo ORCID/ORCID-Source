@@ -18,13 +18,8 @@
 -->
 <@base>
 <#assign displayName = "">
-<#if clientProfile.orcidBio.personalDetails.creditName??>
-	<#assign displayName = clientProfile.orcidBio.personalDetails.creditName.content>
-<#else>
-	<#assign displayName = clientProfile.orcidBio.personalDetails.givenNames.content>
-	<#if clientProfile.orcidBio.personalDetails.familyName??>
-		<#assign displayName = displayName + " " + clientProfile.orcidBio.personalDetails.familyName.content>
-	</#if>
+<#if client_name??>
+	<#assign displayName = client_name>
 </#if>
 <!-- colorbox-content -->
 <div class="container top-green-border">
@@ -51,8 +46,16 @@
    <div class="row">
    	
    	<div class="col-md-6 col-md-push-6 col-sm-12 margin-top-box">
-         <h5><#if (clientProfile.orcidBio.researcherUrls.url[0].value)??><a href="${(clientProfile.orcidBio.researcherUrls.url[0].value)!}" target="_blank"></#if>${(clientProfile.orcidBio.personalDetails.creditName.content)!}<#if (clientProfile.orcidBio.researcherUrls.url[0].value)??></a></#if></h5>
-         ${(clientProfile.orcidBio.biography.content)!}
+         <h5>
+         	<#if (clientProfile.orcidBio.researcherUrls.researcherUrl[0].url.value)??>
+         		<a href="${(clientProfile.orcidBio.researcherUrls.researcherUrl[0].url.value)!}" target="_blank">
+         	</#if>
+         	${displayName}
+        	<#if (clientProfile.orcidBio.researcherUrls.researcherUrl[0].url.value)??>
+        		</a>
+        	</#if>
+        	</h5>
+			${client_description!}
     </div>
     
     <div class="col-md-6 col-md-pull-6 col-sm-12 margin-bottom-box">
