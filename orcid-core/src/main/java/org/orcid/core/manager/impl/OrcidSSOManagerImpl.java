@@ -101,8 +101,7 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
                     clientDetailsManager.merge(existingClientDetails);
                 }
                 String clientId = existingClientDetails.getId();
-                Date lastModified = profileDao.retrieveLastModifiedDate(clientId);
-                return clientDetailsManager.findByClientId(clientId, lastModified);
+                return clientDetailsManager.findByClientId(clientId);
             } else {
                 String clientSecret = encryptionManager.encryptForInternalUse(UUID.randomUUID().toString());
                 String clientId = profileEntity.getId();
@@ -113,16 +112,14 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
                 ClientDetailsEntity clientDetailsEntity = populateClientDetailsEntity(clientId, name, description, clientSecret, redirectUrisSet);
                 clientDetailsManager.persist(clientDetailsEntity);
                 researcherUrlDao.addResearcherUrls(clientId, website, null, true);                
-                Date lastModified = profileDao.retrieveLastModifiedDate(clientId);
-                return clientDetailsManager.findByClientId(clientId, lastModified);
+                return clientDetailsManager.findByClientId(clientId);
             }
         }
     }
 
     @Override
     public ClientDetailsEntity getUserCredentials(String orcid) {
-        Date lastModified = profileDao.retrieveLastModifiedDate(orcid);
-        ClientDetailsEntity existingClientDetails = clientDetailsManager.findByClientId(orcid, lastModified);
+        ClientDetailsEntity existingClientDetails = clientDetailsManager.findByClientId(orcid);
         if (existingClientDetails != null) {
             SortedSet<ClientRedirectUriEntity> allRedirectUris = existingClientDetails.getClientRegisteredRedirectUris();
             SortedSet<ClientRedirectUriEntity> onlySSORedirectUris = new TreeSet<ClientRedirectUriEntity>();

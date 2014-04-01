@@ -32,8 +32,7 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
     ClientDetailsDao clientDetailsDao;
 
     @Override    
-    @Cacheable(value = "client-details", key = "#orcid.concat('-').concat(#lastModified)")
-    public ClientDetailsEntity findByClientId(String orcid, Date lastModified) {
+    public ClientDetailsEntity findByClientId(String orcid) {
         return clientDetailsDao.findByClientId(orcid);
     }
 

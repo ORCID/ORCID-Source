@@ -20,9 +20,11 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -43,6 +45,8 @@ public class OauthConfirmAccessController extends BaseController {
     private static final String JUST_REGISTERED = "justRegistered";
     @Resource
     private OrcidProfileManager orcidProfileManager;
+    @Resource
+    private ClientDetailsManager clientDetailsManager;
 
     @RequestMapping(value = "/confirm_access", method = RequestMethod.GET)
     public ModelAndView loginGetHandler(HttpServletRequest request, ModelAndView mav, @RequestParam("client_id") String clientId, @RequestParam("scope") String scope) {
@@ -55,17 +59,9 @@ public class OauthConfirmAccessController extends BaseController {
         }
         String client_name = "";
         String client_group_name = "";
-        String client_type = "";
-        if (clientProfile.getOrcidBio() != null && clientProfile.getOrcidBio().getPersonalDetails() != null
-                && clientProfile.getOrcidBio().getPersonalDetails().getCreditName() != null)
-            client_name = clientProfile.getOrcidBio().getPersonalDetails().getCreditName().getContent();
-                
-        //If the client name is empty, it is probably a user using the SSO interface, so, use the given and familiy name
-        if(StringUtils.isBlank(client_name)){
-            String familyName = clientProfile.getOrcidBio().getPersonalDetails().getFamilyName() == null ? "" : clientProfile.getOrcidBio().getPersonalDetails().getFamilyName().getContent();
-            String givenName = clientProfile.getOrcidBio().getPersonalDetails().getGivenNames() == null ? "" : clientProfile.getOrcidBio().getPersonalDetails().getGivenNames().getContent();
-            client_name = familyName + givenName;
-        }
+        
+        ClientDetailsEntity clientDetails = clientDetailsManager.find(clientId);
+        client_name = clientDetails.getClientName();
         
         if (clientProfile.getOrcidInternal() != null && clientProfile.getOrcidInternal().getGroupOrcidIdentifier() != null && StringUtils.isNotBlank(clientProfile.getOrcidInternal().getGroupOrcidIdentifier().getPath())) {
             String client_group_id = clientProfile.getOrcidInternal().getGroupOrcidIdentifier().getPath();
@@ -80,11 +76,6 @@ public class OauthConfirmAccessController extends BaseController {
             client_group_name = client_name;
         }
         
-        if(clientProfile.getType() != null)
-            client_type="client";
-        else
-            client_type="sso";
-
         mav.addObject("client_name", client_name);
         mav.addObject("client_group_name", client_group_name);        
         mav.addObject("clientProfile", clientProfile);        

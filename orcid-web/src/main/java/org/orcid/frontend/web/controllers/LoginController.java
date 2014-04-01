@@ -21,12 +21,14 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.orcid.frontend.web.forms.LoginForm;
+import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Controller;
@@ -38,6 +40,9 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller("loginController")
 public class LoginController extends BaseController {
     Pattern clientIdPattern = Pattern.compile("client_id=([^&]*)");
+    
+    @Resource
+    ClientDetailsManager clientDetailsManager;
     
     @ModelAttribute("yesNo")
     public Map<String, String> retrieveYesNoMap() {
@@ -68,20 +73,14 @@ public class LoginController extends BaseController {
             if (matcher.find()) {
                 client_id = matcher.group(1);
                 if (client_id != null) {
-                    OrcidProfile clientProfile = orcidProfileManager.retrieveOrcidProfile(client_id);
-                    if (clientProfile.getOrcidBio() != null && clientProfile.getOrcidBio().getPersonalDetails() != null
-                            && clientProfile.getOrcidBio().getPersonalDetails().getCreditName() != null)
-                        client_name = clientProfile.getOrcidBio().getPersonalDetails().getCreditName().getContent();
-                    //If the client name is empty, it is probably a user using the SSO interface, so, use the given and familiy name
-                    if(StringUtils.isBlank(client_name)){
-                        String familyName = clientProfile.getOrcidBio().getPersonalDetails().getFamilyName() == null ? "" : clientProfile.getOrcidBio().getPersonalDetails().getFamilyName().getContent();
-                        String givenName = clientProfile.getOrcidBio().getPersonalDetails().getGivenNames() == null ? "" : clientProfile.getOrcidBio().getPersonalDetails().getGivenNames().getContent();
-                        client_name = familyName + givenName;
-                    }
                     
-                    
+                    //Get client name
+                    ClientDetailsEntity clientDetails = clientDetailsManager.find(client_id);
+                    client_name = clientDetails.getClientName();
                     
                     //Get the group credit name
+                    OrcidProfile clientProfile = orcidProfileManager.retrieveOrcidProfile(client_id);                    
+                    
                     if (clientProfile.getOrcidInternal() != null && clientProfile.getOrcidInternal().getGroupOrcidIdentifier() != null && StringUtils.isNotBlank(clientProfile.getOrcidInternal().getGroupOrcidIdentifier().getPath())) {
                         String client_group_id = clientProfile.getOrcidInternal().getGroupOrcidIdentifier().getPath();
                         if(StringUtils.isNotBlank(client_group_id)) {

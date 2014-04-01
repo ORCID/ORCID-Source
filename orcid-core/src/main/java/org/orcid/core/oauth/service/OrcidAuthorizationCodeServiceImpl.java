@@ -189,8 +189,7 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
 
     private ClientDetailsEntity getClientDetails(String clientId) {
         try {
-            Date lastModified = profileDao.retrieveLastModifiedDate(clientId);
-            return clientDetailsManager.findByClientId(clientId, lastModified);
+            return clientDetailsManager.findByClientId(clientId);
         } catch (NoResultException e) {
             return null;
         }

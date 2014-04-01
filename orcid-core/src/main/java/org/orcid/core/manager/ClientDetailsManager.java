@@ -16,13 +16,12 @@
  */
 package org.orcid.core.manager;
 
-import java.util.Date;
 import java.util.List;
 
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 
 public interface ClientDetailsManager {
-    ClientDetailsEntity findByClientId(String orcid, Date lastModified);
+    ClientDetailsEntity findByClientId(String orcid);
 
     void removeByClientId(String clientId);
 

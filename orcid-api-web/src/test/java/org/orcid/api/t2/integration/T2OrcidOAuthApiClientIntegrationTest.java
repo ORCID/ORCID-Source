@@ -36,6 +36,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.api.common.OrcidApiConstants;
+import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.security.DefaultPermissionChecker;
 import org.orcid.core.security.PermissionChecker;
@@ -56,6 +57,7 @@ import org.orcid.jaxb.model.message.Title;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.jaxb.model.message.WorkType;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,6 +77,9 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
 
     @Resource(name = "defaultPermissionChecker")
     private PermissionChecker permissionChecker;
+    
+    @Resource
+    private ClientDetailsManager clientDetailsManager;
 
     public T2OrcidOAuthApiClientIntegrationTest() {
         super();
@@ -530,10 +535,14 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         createAccessTokenFromCredentials();
         ClientResponse bioResponse = oauthT2Client.viewBioDetailsXml(this.orcid, accessToken);
         OrcidMessage message = bioResponse.getEntity(OrcidMessage.class);
-        OrcidBio orcidBio = message.getOrcidProfile().getOrcidBio();
+        OrcidBio orcidBio = message.getOrcidProfile().getOrcidBio();                
+        
         OrcidHistory orcidHistory = message.getOrcidProfile().getOrcidHistory();
         assertTrue(orcidHistory != null && orcidHistory.getSource() != null);
-        assertEquals("Ecological Complexity", orcidHistory.getSource().getSourceName().getContent());
+        String orcid = orcidHistory.getSource().getSourceOrcid().getPath();
+        ClientDetailsEntity clientDetails = clientDetailsManager.find(orcid);
+        assertNotNull(clientDetails);
+        assertEquals("Ecological Complexity", clientDetails.getClientName());
 
         ExternalIdentifiers externalIdentifiers = orcidBio.getExternalIdentifiers();
         assertNull(externalIdentifiers);
@@ -572,7 +581,9 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         OrcidBio orcidBio = message.getOrcidProfile().getOrcidBio();
         OrcidHistory orcidHistory = message.getOrcidProfile().getOrcidHistory();
         assertTrue(orcidHistory != null && orcidHistory.getSource() != null);
-        assertEquals("Ecological Complexity", orcidHistory.getSource().getSourceName().getContent());
+        String clientOrcid = orcidHistory.getSource().getSourceOrcid().getPath();
+        ClientDetailsEntity clientDetails = clientDetailsManager.find(clientOrcid);
+        assertEquals("Ecological Complexity", clientDetails.getClientName());
 
         ExternalIdentifiers externalIdentifiers = orcidBio.getExternalIdentifiers();
         assertNull(externalIdentifiers);

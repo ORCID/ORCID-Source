@@ -90,8 +90,7 @@ public class OrcidClientDetailsServiceImpl implements OrcidClientDetailsService 
      */
     @Override
     public ClientDetailsEntity loadClientByClientId(String clientId) throws OAuth2Exception {
-        Date lastModified = profileDao.retrieveLastModifiedDate(clientId);
-        ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId, lastModified);
+        ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
         if (clientDetails != null) {
             clientDetails.setDecryptedClientSecret(encryptionManager.decryptForInternalUse(clientDetails.getClientSecretForJpa()));
             return clientDetails;
@@ -193,8 +192,7 @@ public class OrcidClientDetailsServiceImpl implements OrcidClientDetailsService 
     @Override
     public ClientDetailsEntity createClientDetails(ClientDetailsEntity clientDetailsEntity) {
         clientDetailsManager.persist(clientDetailsEntity);
-        Date lastModified = profileDao.retrieveLastModifiedDate(clientDetailsEntity.getId());
-        return clientDetailsManager.findByClientId(clientDetailsEntity.getId(), lastModified);
+        return clientDetailsManager.findByClientId(clientDetailsEntity.getId());
     }
 
     @Override
