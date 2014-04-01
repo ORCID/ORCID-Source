@@ -26,7 +26,7 @@
 	    </#if>                
 	</h2>
 	<div class="oid">
-		<p class="orcid-id-container">		
+		<p class="orcid-id-container">
 	    	<span class="mini-orcid-icon"></span>
 	    	<a href="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" id="orcid-id" class="orcid-id" title="Click for public view of ORCID iD">${baseUriHttp}/${(profile.orcidIdentifier.path)!}</a>
 		</p>

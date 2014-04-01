@@ -312,7 +312,7 @@
 <!-- Admin main Layout -->
 <div class="row">
 	<!-- Left menu bar -->	
-	<div class="col-md-3 col-sm-3 col-xs-12 lhs override">
+	<div class="col-md-3 col-sm-3 col-xs-12 lhs">
 		<#include "includes/id_banner.ftl"/>
 	</div>
 	<!-- Right menu bar -->
