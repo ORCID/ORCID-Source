@@ -20,7 +20,7 @@
 <@public nav="developer-tools">
 <div class="row">
 	<div class="col-md-3 lhs override">
-		
+		<#include "includes/id_banner.ftl"/>
 	</div>
 	<div class="col-md-9 developer-tools">
 		<!-- Developer public API Applications -->

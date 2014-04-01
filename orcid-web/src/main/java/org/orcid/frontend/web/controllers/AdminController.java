@@ -31,6 +31,7 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
+import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidClientGroupManager;
 import org.orcid.core.manager.ProfileEntityManager;
@@ -141,7 +142,10 @@ public class AdminController extends BaseController {
     
     @RequestMapping
     public ModelAndView getDeprecatedProfilesPage() {
-        return new ModelAndView("admin_actions");
+        ModelAndView mav = new ModelAndView("admin_actions");
+        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid(), LoadOptions.BIO_ONLY);
+        mav.addObject("profile", profile);
+        return mav;
     }
 
     @RequestMapping(value = { "/deprecate-profile/get-empty-deprecation-request.json" }, method = RequestMethod.GET)
