@@ -64,8 +64,6 @@ import org.springframework.mail.SimpleMailMessage;
  */
 public class NotificationManagerImpl implements NotificationManager {
     
-    //ResourceBundle resources = ResourceBundle.getBundle("i18n/email", new Locale("en"), new UTF8Control());
-
     private static final String UPDATE_NOTIFY_ORCID_ORG = "update@notify.orcid.org";
 
     private static final String SUPPORT_VERIFY_ORCID_ORG = "support@verify.orcid.org";
@@ -237,7 +235,7 @@ public class NotificationManagerImpl implements NotificationManager {
             orcidProfile.getOrcidPreferences().getLocale().value();
             locale = LocaleUtils.toLocale(orcidProfile.getOrcidPreferences().getLocale().value());
         } else {
-            locale = new Locale("en");
+            locale = LocaleUtils.toLocale("en");
         }
         templateParams.put("messages", this.messages);
         templateParams.put("messageArgs", new Object[0]);
@@ -245,13 +243,13 @@ public class NotificationManagerImpl implements NotificationManager {
     }
     
     private String getSubject(String code, OrcidProfile orcidProfile) {
-        Locale locale = null; new Locale("en");
+        Locale locale = null;
         if ( orcidProfile.getOrcidPreferences() != null
                 && orcidProfile.getOrcidPreferences().getLocale() != null) {
             orcidProfile.getOrcidPreferences().getLocale().value();
-            locale = new Locale(orcidProfile.getOrcidPreferences().getLocale().value());
+            locale = LocaleUtils.toLocale(orcidProfile.getOrcidPreferences().getLocale().value());
         } else {
-            locale = new Locale("en");
+            locale = LocaleUtils.toLocale("en");
         }
         return messages.getMessage(code, null, locale);
     }
@@ -511,11 +509,11 @@ public class NotificationManagerImpl implements NotificationManager {
      * TODO
      * */
     private void addMessageParams(Map<String, Object> templateParams, ProfileEntity profileEntity) {
-        Locale locale = null; new Locale("en");
+        Locale locale = null; 
         if ( profileEntity.getLocale() != null) {            
-            locale = new Locale(profileEntity.getLocale().value());
+            locale = LocaleUtils.toLocale(profileEntity.getLocale().value());
         } else {
-            locale = new Locale("en");
+            locale = LocaleUtils.toLocale("en");
         }
         templateParams.put("messages", this.messages);
         templateParams.put("messageArgs", new Object[0]);
@@ -528,9 +526,9 @@ public class NotificationManagerImpl implements NotificationManager {
     private String getSubject(String code, ProfileEntity profileEntity) {
         Locale locale = null;
         if (profileEntity.getLocale() != null) {
-            locale = new Locale(profileEntity.getLocale().value());
+            locale = LocaleUtils.toLocale(profileEntity.getLocale().value());
         } else {
-            locale = new Locale("en");
+            locale = LocaleUtils.toLocale("en");
         }
         return messages.getMessage(code, null, locale);
     }
