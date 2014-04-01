@@ -89,7 +89,7 @@ public class OrcidClientDetailsServiceTest extends DBUnitTest {
     @Rollback
     @Transactional
     public void testCreateClientDetailsFromStrings() throws Exception {
-        String clientId = "4444-4444-4444-4441-10";
+        String clientId = "4444-4444-4444-4499";
         String clientSecret = "Zq7ldGbUvzbEMNysSbbUq4dLRrxEUApgdcofn8xDke4=";
         Set<String> clientScopes = new HashSet<String>();
         clientScopes.add("/orcid-profile/create");
@@ -104,7 +104,7 @@ public class OrcidClientDetailsServiceTest extends DBUnitTest {
         List<String> clientGrantedAuthorities = new ArrayList<String>();
         clientGrantedAuthorities.add("ROLE_ADMIN");
 
-        ClientDetailsEntity clientDetails = clientDetailsService.createClientDetails("4444-4444-4444-4441", CLIENT_NAME, CLIENT_DESCRIPTION, clientId, clientSecret, clientScopes, clientResourceIds,
+        ClientDetailsEntity clientDetails = clientDetailsService.createClientDetails("4444-4444-4444-4499", CLIENT_NAME, CLIENT_DESCRIPTION, clientId, clientSecret, clientScopes, clientResourceIds,
                 clientAuthorizedGrantTypes, clientRegisteredRedirectUris, clientGrantedAuthorities);
         assertNotNull(clientDetails);
         checkClientDetails(clientDetails);

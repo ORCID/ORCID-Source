@@ -1,3 +1,19 @@
+/**
+ * =============================================================================
+ *
+ * ORCID (R) Open Source
+ * http://orcid.org
+ *
+ * Copyright (c) 2012-2013 ORCID, Inc.
+ * Licensed under an MIT-Style License (MIT)
+ * http://orcid.org/open-source-license
+ *
+ * This copyright and license information (including a link to the full license)
+ * shall be included in its entirety in all copies or substantial portion of
+ * the software.
+ *
+ * =============================================================================
+ */
 package org.orcid.core.manager.impl;
 
 import java.util.Date;
@@ -9,7 +25,6 @@ import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.transaction.annotation.Transactional;
 
 public class ClientDetailsManagerImpl implements ClientDetailsManager {
 
@@ -22,26 +37,22 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
         return clientDetailsDao.findByClientId(orcid);
     }
 
-    @Override
-    @Transactional
+    @Override    
     public void removeByClientId(String clientId) {
         clientDetailsDao.removeByClientId(clientId);
     }
 
     @Override
-    @Transactional
     public void persist(ClientDetailsEntity clientDetails) {
         clientDetailsDao.persist(clientDetails);
     }
 
     @Override
-    @Transactional
     public ClientDetailsEntity merge(ClientDetailsEntity clientDetails) {
         return clientDetailsDao.merge(clientDetails);
     }
     
     @Override
-    @Transactional
     public void remove(String clientId){
         clientDetailsDao.remove(clientId);        
     }
