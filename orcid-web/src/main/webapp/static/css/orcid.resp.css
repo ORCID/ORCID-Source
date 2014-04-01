@@ -3457,7 +3457,7 @@ p.orcid-id-container{
 
 /* Userbadge Style */
 
-.user-badge .user-badge-container a.user-badge-switch{
+.id-banner .id-banner-container a.id-banner-switch{
 	display: block;	
 	background: #338caf;
 	width: 100%;
@@ -3468,23 +3468,23 @@ p.orcid-id-container{
 	margin-bottom: 5px;
 }
 
-.user-badge .user-badge-container a.user-badge-switch:hover{
+.id-banner .id-banner-container a.id-banner-switch:hover{
 	background: #a6ce39;
 }
 
-.user-badge .user-badge-container a.user-badge-switch span{
+.id-banner .id-banner-container a.id-banner-switch span{
 	margin: 0 5px;
 	line-height: -1px;
 	font-size: 11px; 
 }
 
-.user-badge .user-badge-container ul.user-bagde-dropdown{
+.id-banner .id-banner-container ul.user-bagde-dropdown{
 	margin:0;
 	padding: 0;
 	width: 240px;
 }
 
-.user-badge .user-badge-container ul.user-bagde-dropdown > li{
+.id-banner .id-banner-container ul.user-bagde-dropdown > li{
 	border-top: 1px solid #FFF;
 	background: #a6ce39;
 	height: auto;
@@ -3493,28 +3493,28 @@ p.orcid-id-container{
 	margin: 0;				
 }
 
-.user-badge .user-badge-container ul.user-bagde-dropdown > li:first-of-type{
+.id-banner .id-banner-container ul.user-bagde-dropdown > li:first-of-type{
 	padding:5px 5px 0 5px;
 	background:#C9CACB; 	
 }
 
-.user-badge .user-badge-container ul.user-bagde-dropdown > li:first-of-type > input{
+.id-banner .id-banner-container ul.user-bagde-dropdown > li:first-of-type > input{
 	width: 100%;	
 }
 
-.user-badge .user-badge-container ul.user-bagde-dropdown > li > a{	
+.id-banner .id-banner-container ul.user-bagde-dropdown > li > a{	
 	text-align: right;
 	text-overflow: ellipsis;	
 	color: #FFF;
 	margin: 0;
 	padding: 5px 10px;
 }
-.user-badge .user-badge-container ul.user-bagde-dropdown > li > a:hover{	
+.id-banner .id-banner-container ul.user-bagde-dropdown > li > a:hover{	
 	background: #338caf;	
 }
 
-.user-badge .user-badge-container ul.user-bagde-dropdown > li ul,
-.user-badge .user-badge-container ul.user-bagde-dropdown > li ul > li
+.id-banner .id-banner-container ul.user-bagde-dropdown > li ul,
+.id-banner .id-banner-container ul.user-bagde-dropdown > li ul > li
 {
 	margin: 0;
 	padding: 0;
@@ -3562,11 +3562,11 @@ p.orcid-id-container{
 	padding: 0;
 }
 
-.delegation-mode .user-badge-container{
+.delegation-mode .id-banner-container{
 	display: block !important;
 }
 
-.delegation-mode a.user-badge-switch{
+.delegation-mode a.id-banner-switch{
 	border-top: 1px solid #FFF;
 }
 

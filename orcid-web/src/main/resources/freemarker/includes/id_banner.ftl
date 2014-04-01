@@ -16,7 +16,7 @@
     =============================================================================
 
 -->
-<div class="user-badge <#if inDelegationMode>delegation-mode</#if>">
+<div class="id-banner <#if inDelegationMode>delegation-mode</#if>">
     <#if inDelegationMode><span class="delegation-mode-warning">${springMacroRequestContext.getMessage("delegate.managing_record")}</span></#if>
 	<h2 class="full-name">
 	    <#if (profile.orcidBio.personalDetails.creditName.content)??>
@@ -31,8 +31,8 @@
 	    	<a href="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" id="orcid-id" class="orcid-id" title="Click for public view of ORCID iD">${baseUriHttp}/${(profile.orcidIdentifier.path)!}</a>
 		</p>
 		<#if RequestParameters['delegates']??>
-	   <div ng-controller="SwitchUserCtrl" class="dropdown user-badge-container" ng-show="unfilteredLength" ng-cloak>
-	       <a ng-click="openMenu($event)" class="user-badge-switch"><@orcid.msg 'public-layout.manage_proxy_account'/><span class="glyphicon glyphicon-chevron-right"></span></a>
+	   <div ng-controller="SwitchUserCtrl" class="dropdown id-banner-container" ng-show="unfilteredLength" ng-cloak>
+	       <a ng-click="openMenu($event)" class="id-banner-switch"><@orcid.msg 'public-layout.manage_proxy_account'/><span class="glyphicon glyphicon-chevron-right"></span></a>
 	       <ul class="dropdown-menu user-bagde-dropdown" ng-show="isDroppedDown" ng-cloak>
 	       	   <li>
 				   <input id="delegators-search" type="text" ng-model="searchTerm" ng-change="search()" placeholder="ORCID or names"></input>

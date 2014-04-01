@@ -49,7 +49,7 @@
 
     <div class="col-md-3 lhs left-aside">
     	<div class="workspace-profile">
-            <#include "includes/user_badge.ftl"/>
+            <#include "includes/id_banner.ftl"/>
 	        <#if ((profile.orcidBio.personalDetails.otherNames.otherName)?size != 0)>
 	        	<p><strong><@orcid.msg 'workspace.Alsoknownas'/></strong><br />
 		       		<#list profile.orcidBio.personalDetails.otherNames.otherName as otherName>
