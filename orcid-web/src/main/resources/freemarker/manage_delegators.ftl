@@ -39,7 +39,7 @@
 					<input id="delegatorsSearch" type="text" placeholder="ORCID or names" class="input-xlarge inline-input"></input>
 				</form>
 			</p>
-			<table class="table table-bordered settings-table normal-width" ng-show="delegation.givenPermissionBy.delegationDetails" ng-cloak>
+			<table class="table table-bordered settings-table normal-width" ng-show="delegators.delegationDetails" ng-cloak>
 				<thead>
 					<tr>
 						<th width="35%">${springMacroRequestContext.getMessage("manage.thproxy")}</th>
@@ -47,7 +47,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr ng-repeat="delegationDetails in delegation.givenPermissionBy.delegationDetails | orderBy:'delegateSummary.creditName.content'">
+					<tr ng-repeat="delegationDetails in delegators.delegationDetails | orderBy:'delegateSummary.creditName.content'">
 						<td width="35%"><a href="<@spring.url '/switch-user?j_username='/>{{delegationDetails.delegateSummary.orcidIdentifier.path}}" target="_blank">{{delegationDetails.delegateSummary.creditName.content}}</a></td>
 						<td width="35%">{{delegationDetails.approvalDate.value|date}}</td>
 					</tr>

@@ -16,6 +16,9 @@
     =============================================================================
 
 -->
+<div class="lhs">
+	<#include "includes/id_banner.ftl"/>
+</div>
 <div class="lhs override">
 	<ul class="settings-nav">
 		<li><a href="#account-settings">${springMacroRequestContext.getMessage("manage.accountsettings")}</a></li>
