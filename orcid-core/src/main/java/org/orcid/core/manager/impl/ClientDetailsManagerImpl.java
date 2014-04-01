@@ -9,6 +9,7 @@ import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.transaction.annotation.Transactional;
 
 public class ClientDetailsManagerImpl implements ClientDetailsManager {
 
@@ -22,26 +23,30 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
     }
 
     @Override
+    @Transactional
     public void removeByClientId(String clientId) {
         clientDetailsDao.removeByClientId(clientId);
     }
 
     @Override
+    @Transactional
     public void persist(ClientDetailsEntity clientDetails) {
         clientDetailsDao.persist(clientDetails);
     }
 
     @Override
+    @Transactional
     public ClientDetailsEntity merge(ClientDetailsEntity clientDetails) {
         return clientDetailsDao.merge(clientDetails);
     }
     
     @Override
+    @Transactional
     public void remove(String clientId){
         clientDetailsDao.remove(clientId);        
     }
     
-    @Override
+    @Override    
     public ClientDetailsEntity find(String clientId) {
         return clientDetailsDao.find(clientId);
     }
