@@ -3478,13 +3478,13 @@ p.orcid-id-container{
 	font-size: 11px; 
 }
 
-.id-banner .id-banner-container ul.user-bagde-dropdown{
+.id-banner .id-banner-container ul.id-banner-dropdown{
 	margin:0;
 	padding: 0;
 	width: 240px;
 }
 
-.id-banner .id-banner-container ul.user-bagde-dropdown > li{
+.id-banner .id-banner-container ul.id-banner-dropdown > li{
 	border-top: 1px solid #FFF;
 	background: #a6ce39;
 	height: auto;
@@ -3493,28 +3493,28 @@ p.orcid-id-container{
 	margin: 0;				
 }
 
-.id-banner .id-banner-container ul.user-bagde-dropdown > li:first-of-type{
+.id-banner .id-banner-container ul.id-banner-dropdown > li:first-of-type{
 	padding:5px 5px 0 5px;
 	background:#C9CACB; 	
 }
 
-.id-banner .id-banner-container ul.user-bagde-dropdown > li:first-of-type > input{
+.id-banner .id-banner-container ul.id-banner-dropdown > li:first-of-type > input{
 	width: 100%;	
 }
 
-.id-banner .id-banner-container ul.user-bagde-dropdown > li > a{	
+.id-banner .id-banner-container ul.id-banner-dropdown > li > a{	
 	text-align: right;
 	text-overflow: ellipsis;	
 	color: #FFF;
 	margin: 0;
 	padding: 5px 10px;
 }
-.id-banner .id-banner-container ul.user-bagde-dropdown > li > a:hover{	
+.id-banner .id-banner-container ul.id-banner-dropdown > li > a:hover{	
 	background: #338caf;	
 }
 
-.id-banner .id-banner-container ul.user-bagde-dropdown > li ul,
-.id-banner .id-banner-container ul.user-bagde-dropdown > li ul > li
+.id-banner .id-banner-container ul.id-banner-dropdown > li ul,
+.id-banner .id-banner-container ul.id-banner-dropdown > li ul > li
 {
 	margin: 0;
 	padding: 0;
