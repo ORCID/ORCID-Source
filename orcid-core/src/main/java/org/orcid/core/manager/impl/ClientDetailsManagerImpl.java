@@ -23,17 +23,20 @@ import javax.annotation.Resource;
 
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.persistence.dao.ClientDetailsDao;
+import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.springframework.cache.annotation.Cacheable;
 
 public class ClientDetailsManagerImpl implements ClientDetailsManager {
 
     @Resource
     ClientDetailsDao clientDetailsDao;
+    @Resource 
+    ProfileDao profileDao;
 
     @Override    
     public ClientDetailsEntity findByClientId(String orcid) {
-        return clientDetailsDao.findByClientId(orcid);
+        Date lastModified = profileDao.retrieveLastModifiedDate(orcid);
+        return clientDetailsDao.findByClientId(orcid, lastModified);
     }
 
     @Override    

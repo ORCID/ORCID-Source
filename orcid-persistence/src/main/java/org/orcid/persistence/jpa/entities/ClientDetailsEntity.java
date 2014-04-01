@@ -19,6 +19,7 @@ package org.orcid.persistence.jpa.entities;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +59,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
     private String clientDescription;
     private String clientSecret;
     private String decryptedClientSecret;
+    private Date lastModified;
     private Set<ClientScopeEntity> clientScopes = Collections.emptySet();
     private Set<ClientResourceIdEntity> clientResourceIds = Collections.emptySet();
     private Set<ClientAuthorisedGrantTypeEntity> clientAuthorizedGrantTypes = Collections.emptySet();
@@ -339,6 +341,25 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
         return accessTokenValiditySeconds;
     }
 
+    
+    
+    
+    
+    
+    @Column(name = "last_modified")
+    public Date getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(Date lastModified) {
+        this.lastModified = lastModified;
+    }
+
+    
+    
+    
+    
+    
     @Override
     public boolean equals(Object o) {
         if (this == o)

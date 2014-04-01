@@ -16,6 +16,8 @@
  */
 package org.orcid.persistence.dao.impl;
 
+import java.util.Date;
+
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -26,6 +28,7 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.cache.annotation.Cacheable;
 
 /**
  * @author Declan Newman
@@ -40,7 +43,17 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     }
 
     @Override
-    public ClientDetailsEntity findByClientId(String orcid) {
+    @Cacheable(value="client-details", key="#orcid.concat('-').concat(#lastModified)")
+    public ClientDetailsEntity findByClientId(String orcid, Date lastModified) {
+        System.out.println("----------------------------------------------------------------------------------------------------------");
+        System.out.println("----------------------------------------------------------------------------------------------------------");
+        System.out.println("----------------------------------------------------------------------------------------------------------");
+        System.out.println("----------------------------------------------------------------------------------------------------------");
+        System.out.println("NOT USING CACHE");
+        System.out.println("----------------------------------------------------------------------------------------------------------");
+        System.out.println("----------------------------------------------------------------------------------------------------------");
+        System.out.println("----------------------------------------------------------------------------------------------------------");
+        System.out.println("----------------------------------------------------------------------------------------------------------");
         TypedQuery<ClientDetailsEntity> query = entityManager.createQuery("from ClientDetailsEntity where id = :orcid", ClientDetailsEntity.class);
         query.setParameter("orcid", orcid);
         try {
@@ -50,7 +63,7 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
             return null;
         }
     }
-
+        
     @Override
     @Transactional
     public void removeByClientId(String orcid) {
