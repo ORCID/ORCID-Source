@@ -3368,13 +3368,11 @@ p.orcid-id-container{
 }
 
 .sso-api ul.sso-options li{
-	display: inline-block;
-	margin-right: 20px;
+	display: inline-block;	
 }
 
-.sso-api ul.sso-options span{
-	margin-right: 5px;
-	font-size: 12px;
+.sso-api ul.sso-options span{	
+	font-size: 16px;
 }
 
 .sso-api .sso-links {
@@ -3424,14 +3422,70 @@ p.orcid-id-container{
 	border: 0;
 }
 
+
 .developer-tools .box{
 	margin-top: 20px;
 	margin-left: 0;
 }
 
+.developer-tools p.developer-tools-instructions{
+	border-bottom: 1px solid #CCC;
+	padding-bottom: 10px;
+}
+
 .developer-tools .col-md-10{
 	padding-left: 0;
-	padding-right: 0;	
+	padding-right: 0;
+}
+
+.developer-tools .sso-options a{
+	display: block;
+	-webkit-border-radius: 50%;
+	border-radius: 50%;
+	background: #949599;
+	color: #FFF;
+	width: 35px;
+	height: 35px;
+	padding: 9px 10px;
+}
+
+.developer-tools .sso-options a:hover{
+	background: #338caf;	
+}
+
+.developer-tools ul.uris{	
+	padding-left: 0;	
+}
+
+.grey-box{
+	background: #EBEBEB;
+	padding: 15px;	
+}
+
+.developer-tools .tab-container{	
+	height: 30px;	 
+	background: #EBEBEB;
+	display: block;
+	text-align: center;
+}
+
+.developer-tools .tab-container .tab{	
+	padding: 10px;	
+	text-align: center;
+	background: #949599;	
+	color: #FFF;
+}
+
+.developer-tools .tab-container .tab.collapsed{
+	display: none;
+}
+
+.developer-tools .tab-container a span{
+	margin-right: 5px;
+}
+
+.developer-tools .slide{
+	margin-bottom: 15px;
 }
 
 .scrollable-list {
