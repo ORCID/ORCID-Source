@@ -3516,10 +3516,10 @@ p.orcid-id-container{
 
 
 .developer-tools .edit-details{
-	display: none;
+	/* display: none;*/
 }
 .developer-tools .details{
-	/*display: none;*/
+	display: none;
 }
 
 .scrollable-list {
@@ -4411,8 +4411,15 @@ p.orcid-id-container{
 	
 	.delegation-label{
 		margin-right: 15px;
-	}	
+	}
 	
+	.developer-tools .redirectUris input{
+		width: 90%;
+	}
+	
+	.developer-tools .edit-details .dt-description textarea{
+		width: 96%;
+	}
 	
 }
 
