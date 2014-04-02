@@ -43,17 +43,8 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     }
 
     @Override
-    //@Cacheable(value="client-details", key="#orcid.concat('-').concat(#lastModified)")
-    public ClientDetailsEntity findByClientId(String orcid) {
-        System.out.println("----------------------------------------------------------------------------------------------------------");
-        System.out.println("----------------------------------------------------------------------------------------------------------");
-        System.out.println("----------------------------------------------------------------------------------------------------------");
-        System.out.println("----------------------------------------------------------------------------------------------------------");
-        System.out.println("NOT USING CACHE");
-        System.out.println("----------------------------------------------------------------------------------------------------------");
-        System.out.println("----------------------------------------------------------------------------------------------------------");
-        System.out.println("----------------------------------------------------------------------------------------------------------");
-        System.out.println("----------------------------------------------------------------------------------------------------------");
+    @Cacheable(value="client-details", key="#orcid.concat('-').concat(#lastModified)")
+    public ClientDetailsEntity findByClientId(String orcid, Date lastModified) {
         TypedQuery<ClientDetailsEntity> query = entityManager.createQuery("from ClientDetailsEntity where id = :orcid", ClientDetailsEntity.class);
         query.setParameter("orcid", orcid);
         try {
@@ -74,8 +65,16 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
 
     @Override
     public Date getLastModified(String orcid) {
-        TypedQuery<Date> query = entityManager.createQuery("select lastModified from ClientDetailsEntity where clientId = :orcid", Date.class);
+        TypedQuery<Date> query = entityManager.createQuery("select lastModified from ClientDetailsEntity where id = :orcid", Date.class);
         query.setParameter("orcid", orcid);
         return query.getSingleResult();
+    }
+    
+    @Override
+    @Transactional
+    public void updateLastModified(String orcid) {
+        Query updateQuery = entityManager.createQuery("update ClientDetailsEntity set lastModified = now() where id = :orcid");
+        updateQuery.setParameter("orcid", orcid);
+        updateQuery.executeUpdate();
     }
 }
