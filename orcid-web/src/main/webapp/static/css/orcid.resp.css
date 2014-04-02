@@ -3459,14 +3459,32 @@ p.orcid-id-container{
 
 .grey-box{
 	background: #EBEBEB;
-	padding: 15px;	
+	padding: 15px;		
+}
+
+.developer-tools .inner-row input,
+.developer-tools .edit-details .dt-description textarea{
+	width: 100%;
+}
+
+.developer-tools .edit-details .dt-description textarea{
+	height: 150px;
+}
+
+.developer-tools .redirectUris input{
+	width: 96%;
+}
+
+.inner-row{
+	margin-left: 15px;
 }
 
 .developer-tools .tab-container{	
-	height: 30px;	 
-	background: #EBEBEB;
+	height: 32px;	 
+	background: #FFF;
 	display: block;
 	text-align: center;
+	border-bottom: 1px solid #CCC;
 }
 
 .developer-tools .tab-container .tab{	
@@ -3476,8 +3494,12 @@ p.orcid-id-container{
 	color: #FFF;
 }
 
-.developer-tools .tab-container .tab.collapsed{
+.developer-tools .tab-container .tab.expanded{
 	display: none;
+}
+
+.developer-tools .slidebox{
+	display: none;		
 }
 
 .developer-tools .tab-container a span{
@@ -3485,7 +3507,19 @@ p.orcid-id-container{
 }
 
 .developer-tools .slide{
-	margin-bottom: 15px;
+	margin-bottom: 15px;	
+}
+
+.developer-tools .dt-description{
+	margin-bottom: 5px;
+}
+
+
+.developer-tools .edit-details{
+	display: none;
+}
+.developer-tools .details{
+	/*display: none;*/
 }
 
 .scrollable-list {

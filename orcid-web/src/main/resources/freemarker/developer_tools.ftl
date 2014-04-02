@@ -26,10 +26,12 @@
 		<!-- Developer public API Applications -->
 		<div ng-controller="SSOPreferencesCtrl" class="sso-api">
 			<!-- Top content, instructions -->
-			<div class="row box">
+			<div class="row">				
 				<div class="col-md-10 col-sm-10 col-xs-8">
-					<h2><@orcid.msg 'manage.developer_tools.user.title' /></h2>					
-				</div>				
+					<div class="inner-row">
+						<h2><@orcid.msg 'manage.developer_tools.user.title' /></h2>
+					</div>					
+				</div>
 				<div class="col-md-2 col-sm-2 col-xs-4" ng-hide="userCredentials.clientSecret.value">
 					<a ng-click="createCredentialsModal()" class="pull-right"><span class="label btn-primary cboxElement"><@orcid.msg 'manage.developer_tools.button.register_now' /></span></a>
 				</div>	
@@ -40,70 +42,169 @@
 				</div>
 			</div>
 			
+			<!-- 
+				/* Show edit options */
+				.developer-tools .edit-details{
+					display: none;
+				}
+				
+				/* Show details */
+				.developer-tools .details{
+					/*display: none;*/
+				}
+			
+			-->
 			
 			<!-- App details -->
-			<div class="row" ng-show="userCredentials.clientSecret.value">
-				<!-- 
-				<div class="col-md-12  col-xs-12" ng-hide="userCredentials.clientSecret.value">
-					<p><@orcid.msg 'manage.developer_tools.user.register_to.info.1'/>&nbsp;<a href="<@orcid.msg 'manage.developer_tools.user.register_to.info.link_url' />"><@orcid.msg 'manage.developer_tools.user.register_to.info.link_text'/></a><@orcid.msg 'manage.developer_tools.user.register_to.info.2'/>&nbsp;<@orcid.msg 'manage.developer_tools.user.register_to.info.3'/></p>
-					<ul>
-						<li><a href="<@orcid.msg 'manage.developer_tools.user.register_to.link.1.url'/>"><span class="glyphicon glyphicon-link"></span><@orcid.msg 'manage.developer_tools.user.register_to.link.1.text'/></a></li>
-						<li><a href="<@orcid.msg 'manage.developer_tools.user.register_to.link.2.url'/>"><span class="glyphicon glyphicon-link"></span><@orcid.msg 'manage.developer_tools.user.register_to.link.2.text'/></a></li>
-						<li><a href="<@orcid.msg 'manage.developer_tools.user.register_to.link.3.url'/>"><span class="glyphicon glyphicon-link"></span><@orcid.msg 'manage.developer_tools.user.register_to.link.3.text'/></a></li>
-					</ul>
-				</div>
-				 -->
-				<div class="col-md-9 col-sm-9 col-xs-8">
-					<h4>{{userCredentials.clientName.value}}</span>				
-				</div>
-				<div class="col-md-3 col-sm-3 col-xs-4">				
-					<ul class="sso-options pull-right">							
-						<li><a href ng-click="showEditModal()"><span class="glyphicon glyphicon-pencil"></span></a></li>
-						<li><a href ng-click="showRevokeModal()"><span class="glyphicon glyphicon-trash"></span></a></li>
-					</ul>					
-				</div>				
-			</div>			
-			<div class="row">
-				<!-- Description -->
-				<div class="col-md-12 col-sm-12 col-xs-12">
-					<p>{{userCredentials.clientDescription.value}}</p>														
-				</div>							
-			</div>
-			<div class="row slidebox">
-				<!-- SLIDE BOX  -->
-				<!-- Redirect URIS -->
-				<div class="col-md-12 col-sm-12 col-xs-12">
-					<h4><@orcid.msg 'manage.developer_tools.redirect_uri'/>:</h4>						
-					<ul class="uris" ng-repeat='rUri in userCredentials.redirectUris'>
-						<li><a href="{{rUri.value.value}}">{{rUri.value.value}}</a></li>									
-					</ul>
-				</div>	
-				<!-- Client ID - Client Secret -->
-				<div class="col-md-12 col-sm-12 col-xs-12">
-					<div class="grey-box">
-						<div class="table-responsive">
-						  <table class="table">
-						    <tr>
-						    	<td><strong><@orcid.msg 'manage.developer_tools.view.secret'/></strong></td>
-						    	<td>{{userCredentials.clientSecret.value}}</td>
-						    </tr>
-						    <tr>
-						    	<td><strong><@orcid.msg 'manage.developer_tools.view.orcid'/></strong></td>
-						    	<td>{{userCredentials.clientOrcid.value}}</td>
-						    </tr>
-						  </table>
-						</div>									
+			<div class="details" ng-show="userCredentials.clientSecret.value">
+			
+				<!-- Name and Edit/Delete options -->
+				<div class="row">					
+					<div class="col-md-10 col-sm-10 col-xs-9">
+						<div class="inner-row">
+							<h4>{{userCredentials.clientName.value}}</h4>
+						</div>							
 					</div>
-				</div>	 
-			</div>
-			<div class="row slide">
-				<div class="col-md-12 col-sm-12 col-xs-12">
-					<div class="tab-container">
-						<a href="#" class="tab collapsed"><span class="glyphicon glyphicon-chevron-down"></span>Show Details</a>
-						<a href="#" class="tab expanded"><span class="glyphicon glyphicon-chevron-up"></span>Hide Details</a>
-					</div>
+					<div class="col-md-2 col-sm-2 col-xs-3">				
+						<ul class="sso-options pull-right">							
+							<li><a href ng-click="showEditModal()"><span class="glyphicon glyphicon-pencil"></span></a></li>
+							<li><a href ng-click="showRevokeModal()"><span class="glyphicon glyphicon-trash"></span></a></li>
+						</ul>					
+					</div>				
 				</div>			
-			</div>				
+				
+				<div class="row">
+					<!-- Description -->
+					<div class="col-md-12 col-sm-12 col-xs-12 dt-description">
+						<p>{{userCredentials.clientDescription.value}}</p>														
+					</div>							
+				</div>
+				<div class="slidebox">
+					<div class="row">
+						<!-- SLIDE BOX  -->
+						<!-- Redirect URIS -->
+						<div class="col-md-12 col-sm-12 col-xs-12">
+							<h4><@orcid.msg 'manage.developer_tools.redirect_uri'/>:</h4>						
+							<ul class="uris" ng-repeat='rUri in userCredentials.redirectUris'>
+								<li><a href="{{rUri.value.value}}">{{rUri.value.value}}</a></li>									
+							</ul>
+						</div>
+					</div>
+					<div class="row">
+						<!-- Client ID - Client Secret -->
+						<div class="col-md-12 col-sm-12 col-xs-12">
+							<div class="grey-box">
+								<div class="table-responsive">
+								  <table class="table">
+								    <tr>
+								    	<td><strong><@orcid.msg 'manage.developer_tools.view.secret'/></strong></td>
+								    	<td>{{userCredentials.clientSecret.value}}</td>
+								    </tr>
+								    <tr>
+								    	<td><strong><@orcid.msg 'manage.developer_tools.view.orcid'/></strong></td>
+								    	<td>{{userCredentials.clientOrcid.value}}</td>
+								    </tr>
+								  </table>
+								</div>									
+							</div>
+						</div>	 
+					</div>
+				</div>
+				<div class="row slide">
+					<div class="col-md-12 col-sm-12 col-xs-12">
+						<div class="tab-container">
+							<a href="#" class="tab collapsed"><span class="glyphicon glyphicon-chevron-down"></span>Show Details</a>
+							<a href="#" class="tab expanded"><span class="glyphicon glyphicon-chevron-up"></span>Hide Details</a>
+						</div>
+					</div>			
+				</div>	
+			</div>
+			
+			
+			
+			
+			
+			<!-- Edit form -->
+			<div class="edit-details" ng-show="userCredentials.clientSecret.value">			
+				<!-- Name and Edit/Delete options -->
+				<div class="row">					
+					<div class="col-md-10 col-sm-10 col-xs-9">
+						<div class="inner-row">
+							<input type="text" placeholder="<@orcid.msg 'manage.developer_tools.generate.name.placeholder'/>" class="input-xlarge" ng-model="userCredentials.clientName.value">
+							<span class="col-xs-12 col-md-12 orcid-error" ng-show="userCredentials.clientName.errors.length > 0">
+								<div ng-repeat='error in userCredentials.clientName.errors' ng-bind-html="error"></div>
+							</span>					
+						</div>		
+					</div>
+					<div class="col-md-2 col-sm-2 col-xs-3">				
+						<ul class="sso-options pull-right">							
+							<li><a href ng-click=""><span class="glyphicon glyphicon-floppy-save"></span></a></li>
+							<li><a href ng-click="showRevokeModal()"><span class="glyphicon glyphicon-trash"></span></a></li>
+						</ul>					
+					</div>				
+				</div>
+							
+				<div class="row">
+					<!-- Description -->
+					<div class="col-md-10 col-sm-10 col-xs-12 dt-description">
+						<div class="inner-row">
+							<textarea placeholder="<@orcid.msg 'manage.developer_tools.generate.description.placeholder'/>" ng-model="userCredentials.clientDescription.value"></textarea>						
+							<span class="orcid-error" ng-show="userCredentials.clientDescription.errors.length > 0">
+									<div ng-repeat='error in userCredentials.clientDescription.errors' ng-bind-html="error"></div>
+							</span>
+						</div>															
+					</div>			
+					<div class="col-md-2 col-sm-2"></div>									
+				</div>
+				
+				<div class="slidebox">
+					<div class="row">
+						<!-- SLIDE BOX  -->
+						<!-- Redirect URIS -->
+						<div class="col-md-10 col-sm-10 col-xs-12">
+							<div class="inner-row redirectUris">
+								<h4><@orcid.msg 'manage.developer_tools.redirect_uri'/>:</h4>						
+								<div ng-repeat="rUri in userCredentials.redirectUris">										
+									<input type="text" placeholder="<@orcid.msg 'manage.developer_tools.redirect_uri.placeholder'/>" ng-model="rUri.value.value">					
+									<a href ng-click="deleteRedirectUri($index)" class="glyphicon glyphicon-trash blue"></a>
+									<span class="orcid-error" ng-show="rUri.errors.length > 0">
+										<div ng-repeat='error in rUri.errors' ng-bind-html-unsafe="error"></div>
+									</span>	
+								</div>
+							</div>
+						</div>	
+						<div class="col-md-2 col-sm-2"></div>
+						<!-- Client ID - Client Secret -->
+					</div>					
+					<div class="row">
+						<div class="col-md-12 col-sm-12 col-xs-12">
+						
+							<div class="grey-box">
+								<div class="table-responsive">
+								  <table class="table">
+								    <tr>
+								    	<td><strong><@orcid.msg 'manage.developer_tools.view.secret'/></strong></td>
+								    	<td>{{userCredentials.clientSecret.value}}</td>
+								    </tr>
+								    <tr>
+								    	<td><strong><@orcid.msg 'manage.developer_tools.view.orcid'/></strong></td>
+								    	<td>{{userCredentials.clientOrcid.value}}</td>
+								    </tr>
+								  </table>
+								</div>									
+							</div>
+						</div>	 
+					</div>
+				</div>
+				<div class="row slide">
+					<div class="col-md-12 col-sm-12 col-xs-12">
+						<div class="tab-container">
+							<a href="#" class="tab collapsed"><span class="glyphicon glyphicon-chevron-down"></span>Show Details</a>
+							<a href="#" class="tab expanded"><span class="glyphicon glyphicon-chevron-up"></span>Hide Details</a>
+						</div>
+					</div>			
+				</div>
+			</div>					
 			<div class="row">
 				<div class="col-md-12 col-sm-12 col-xs-12">
 					<p><@orcid.msg 'manage.developer_tools.user.registered.info.1' />&nbsp;<a href="<@orcid.msg 'manage.developer_tools.user.register_to.info.link_url' />"><@orcid.msg 'manage.developer_tools.user.register_to.info.link_text'/></a>&nbsp;<@orcid.msg 'manage.developer_tools.user.registered.info.2' /></p>
@@ -194,7 +295,8 @@
 		<span><@orcid.msg 'manage.developer_tools.create.instructions'/></span><br />
 
 		<div class="sso-redirect_uris">
-			<div class="row">
+			<!-- Name -->
+			<div class="row">			
 				<span class="col-xs-12 col-md-12"><strong><@orcid.msg 'manage.developer_tools.generate.name'/></strong></span>
 				<span class="col-xs-12 col-md-12"><input type="text" placeholder="<@orcid.msg 'manage.developer_tools.generate.name.placeholder'/>" class="input-xlarge" ng-model="userCredentials.clientName.value"></span><br />
 				<span class="col-xs-12 col-md-12 orcid-error" ng-show="userCredentials.clientName.errors.length > 0">
