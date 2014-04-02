@@ -301,6 +301,7 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
                 clientRedirectUriEntities.addAll(redirectUrisToAdd);
 
                 clientDetailsManager.merge(clientDetailsEntity);
+                
                 return clientDetailsEntity;
             }
         }
