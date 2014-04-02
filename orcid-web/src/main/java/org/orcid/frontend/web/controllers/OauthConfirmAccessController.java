@@ -57,31 +57,33 @@ public class OauthConfirmAccessController extends BaseController {
             request.getSession().removeAttribute(JUST_REGISTERED);
             mav.addObject(JUST_REGISTERED, justRegistered);
         }
-        String client_name = "";
-        String client_description = "";
-        String client_group_name = "";
-        
+        String clientName = "";
+        String clientDescription = "";
+        String clientGroupName = "";
+        String clientWebsite = "";
         
         ClientDetailsEntity clientDetails = clientDetailsManager.find(clientId);
-        client_name = clientDetails.getClientName();
-        client_description = clientDetails.getClientDescription();
+        clientName = clientDetails.getClientName() == null ? "" : clientDetails.getClientName();
+        clientDescription = clientDetails.getClientDescription() == null ? "" : clientDetails.getClientDescription();
+        clientWebsite = clientDetails.getClientWebsite() == null ? "" : clientDetails.getClientWebsite();
         
         if (clientProfile.getOrcidInternal() != null && clientProfile.getOrcidInternal().getGroupOrcidIdentifier() != null && StringUtils.isNotBlank(clientProfile.getOrcidInternal().getGroupOrcidIdentifier().getPath())) {
             String client_group_id = clientProfile.getOrcidInternal().getGroupOrcidIdentifier().getPath();
             OrcidProfile clientGroupProfile = orcidProfileManager.retrieveOrcidProfile(client_group_id);
             if (clientGroupProfile.getOrcidBio() != null && clientGroupProfile.getOrcidBio().getPersonalDetails() != null
                     && clientGroupProfile.getOrcidBio().getPersonalDetails().getCreditName() != null)
-                client_group_name = clientGroupProfile.getOrcidBio().getPersonalDetails().getCreditName().getContent();
+                clientGroupName = clientGroupProfile.getOrcidBio().getPersonalDetails().getCreditName().getContent();
         }
         
         //If the group name is empty, use the same as the client name, since it should be a SSO user 
-        if(StringUtils.isBlank(client_group_name)) {
-            client_group_name = client_name;
+        if(StringUtils.isBlank(clientGroupName)) {
+            clientGroupName = clientName;
         }
         
-        mav.addObject("client_name", client_name);
-        mav.addObject("client_description", client_description);
-        mav.addObject("client_group_name", client_group_name);        
+        mav.addObject("client_name", clientName);
+        mav.addObject("client_description", clientDescription);
+        mav.addObject("client_group_name", clientGroupName);
+        mav.addObject("client_website", clientWebsite);
         mav.addObject("clientProfile", clientProfile);        
         mav.addObject("scopes", ScopePathType.getScopesFromSpaceSeparatedString(scope));
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

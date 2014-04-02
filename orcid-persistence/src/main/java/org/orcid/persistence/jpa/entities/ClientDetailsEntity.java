@@ -57,9 +57,9 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
     private String clientId;
     private String clientName;
     private String clientDescription;
+    private String clientWebsite;
     private String clientSecret;
     private String decryptedClientSecret;
-    private Date lastModified;
     private Set<ClientScopeEntity> clientScopes = Collections.emptySet();
     private Set<ClientResourceIdEntity> clientResourceIds = Collections.emptySet();
     private Set<ClientAuthorisedGrantTypeEntity> clientAuthorizedGrantTypes = Collections.emptySet();
@@ -101,6 +101,15 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
 
     public void setClientDescription(String clientDescription) {
         this.clientDescription = clientDescription;
+    }
+
+    @Column(name = "client_website")
+    public String getClientWebsite() {
+        return clientWebsite;
+    }
+
+    public void setClientWebsite(String clientWebsite) {
+        this.clientWebsite = clientWebsite;
     }
 
     @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientDetailsEntity", orphanRemoval = true)
@@ -340,25 +349,6 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
     public Integer getAccessTokenValiditySeconds() {
         return accessTokenValiditySeconds;
     }
-
-    
-    
-    
-    
-    
-    @Column(name = "last_modified")
-    public Date getLastModified() {
-        return lastModified;
-    }
-
-    public void setLastModified(Date lastModified) {
-        this.lastModified = lastModified;
-    }
-
-    
-    
-    
-    
     
     @Override
     public boolean equals(Object o) {

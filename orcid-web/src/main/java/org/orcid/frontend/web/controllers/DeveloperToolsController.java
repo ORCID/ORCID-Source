@@ -113,8 +113,6 @@ public class DeveloperToolsController extends BaseWorkspaceController {
             String clientWebsite = ssoCredentials.getClientWebsite().getValue();
             ClientDetailsEntity clientDetails = orcidSSOManager.grantSSOAccess(orcid, clientName, clientDescription, clientWebsite, redirectUriStrings);
             ssoCredentials = SSOCredentials.toSSOCredentials(clientDetails);
-            
-            ssoCredentials.setClientWebsite(Text.valueOf(clientWebsite));
         } else {
             List<String> errors = ssoCredentials.getErrors();
             if (errors == null)
@@ -186,19 +184,8 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         SSOCredentials credentials = new SSOCredentials();
         String userOrcid = getEffectiveUserOrcid();
         ClientDetailsEntity existingClientDetails = orcidSSOManager.getUserCredentials(userOrcid);
-        if (existingClientDetails != null) {
-            credentials = SSOCredentials.toSSOCredentials(existingClientDetails);
-            
-            List<ResearcherUrlEntity> researcherUrls = researcherUrlDao.getResearcherUrls(userOrcid);
-            if(researcherUrls != null && !researcherUrls.isEmpty()) {
-                for(ResearcherUrlEntity rUrl : researcherUrls) {
-                    if(rUrl.isSSO()){
-                        credentials.setClientWebsite(Text.valueOf(rUrl.getUrl()));
-                        break;
-                    }
-                }
-            }
-        }              
+        if (existingClientDetails != null)
+            credentials = SSOCredentials.toSSOCredentials(existingClientDetails);                        
         
         return credentials;
     }

@@ -27,7 +27,9 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
  */
 public interface ClientDetailsDao extends GenericDao<ClientDetailsEntity, String> {
 
-    ClientDetailsEntity findByClientId(String orcid, Date lastModified);
+    ClientDetailsEntity findByClientId(String orcid);
 
     void removeByClientId(String clientId);
+    
+    Date getLastModified(String orcid);
 }

@@ -16,7 +16,6 @@
  */
 package org.orcid.core.manager.impl;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -35,8 +34,7 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
 
     @Override    
     public ClientDetailsEntity findByClientId(String orcid) {
-        Date lastModified = profileDao.retrieveLastModifiedDate(orcid);
-        return clientDetailsDao.findByClientId(orcid, lastModified);
+        return clientDetailsDao.findByClientId(orcid);
     }
 
     @Override    

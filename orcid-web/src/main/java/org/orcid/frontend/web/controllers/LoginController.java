@@ -76,7 +76,7 @@ public class LoginController extends BaseController {
                     
                     //Get client name
                     ClientDetailsEntity clientDetails = clientDetailsManager.find(client_id);
-                    client_name = clientDetails.getClientName();
+                    client_name = clientDetails.getClientName() == null ? "" : clientDetails.getClientName();
                     
                     //Get the group credit name
                     OrcidProfile clientProfile = orcidProfileManager.retrieveOrcidProfile(client_id);                    

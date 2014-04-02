@@ -68,7 +68,7 @@ public interface OrcidClientDetailsService extends ClientDetailsService {
      *            only "ROLE_CLIENT"
      * @return
      */
-    ClientDetailsEntity createClientDetails(String orcid, String name, String description, Set<String> clientScopes, Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes,
+    ClientDetailsEntity createClientDetails(String orcid, String name, String description, String website, Set<String> clientScopes, Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes,
             Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities);
 
     /**
@@ -102,7 +102,7 @@ public interface OrcidClientDetailsService extends ClientDetailsService {
      *            only "ROLE_CLIENT"
      * @return
      */
-    ClientDetailsEntity createClientDetails(String orcid, String name, String description, String clientId, String clientSecret, Set<String> clientScopes, Set<String> clientResourceIds,
+    ClientDetailsEntity createClientDetails(String orcid, String name, String description, String website, String clientId, String clientSecret, Set<String> clientScopes, Set<String> clientResourceIds,
             Set<String> clientAuthorizedGrantTypes, Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities);
 
     /**

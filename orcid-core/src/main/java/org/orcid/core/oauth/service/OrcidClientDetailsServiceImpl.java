@@ -110,6 +110,8 @@ public class OrcidClientDetailsServiceImpl implements OrcidClientDetailsService 
      *          The client name
      * @param description
      *          The client description
+     * @param website
+     *          The client website        
      * @param clientScopes
      *            the scopes that this client can request
      * @param clientResourceIds
@@ -126,7 +128,7 @@ public class OrcidClientDetailsServiceImpl implements OrcidClientDetailsService 
      * @return
      */
     @Override
-    public ClientDetailsEntity createClientDetails(String orcid, String name, String description, Set<String> clientScopes, Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes,
+    public ClientDetailsEntity createClientDetails(String orcid, String name, String description, String website, Set<String> clientScopes, Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes,
             Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities) {
         ProfileEntity profileEntity = profileEntityManager.findByOrcid(orcid);
         if (profileEntity == null) {
@@ -134,7 +136,7 @@ public class OrcidClientDetailsServiceImpl implements OrcidClientDetailsService 
         } else {
             String clientSecret = encryptionManager.encryptForInternalUse(UUID.randomUUID().toString());
             StringBuilder clientId = new StringBuilder(profileEntity.getId());
-            return populateClientDetailsEntity(clientId.toString(), profileEntity, name, description, clientSecret, clientScopes, clientResourceIds, clientAuthorizedGrantTypes,
+            return populateClientDetailsEntity(clientId.toString(), profileEntity, name, description, website, clientSecret, clientScopes, clientResourceIds, clientAuthorizedGrantTypes,
                     clientRegisteredRedirectUris, clientGrantedAuthorities);
         }
     }
@@ -147,6 +149,8 @@ public class OrcidClientDetailsServiceImpl implements OrcidClientDetailsService 
      *          The client name
      * @param description
      *          The client description
+     * @param website
+     *          The client website
      * @param clientId
      *            the client id that will be used to retrieve this entity from
      *            the database
@@ -168,7 +172,7 @@ public class OrcidClientDetailsServiceImpl implements OrcidClientDetailsService 
      * @return
      */
     @Override
-    public ClientDetailsEntity createClientDetails(String orcid, String name, String description, String clientId, String clientSecret, Set<String> clientScopes, Set<String> clientResourceIds,
+    public ClientDetailsEntity createClientDetails(String orcid, String name, String description, String website, String clientId, String clientSecret, Set<String> clientScopes, Set<String> clientResourceIds,
             Set<String> clientAuthorizedGrantTypes, Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities) {
 
         ProfileEntity profileEntity = profileEntityManager.findByOrcid(orcid);
@@ -176,7 +180,7 @@ public class OrcidClientDetailsServiceImpl implements OrcidClientDetailsService 
             throw new IllegalArgumentException("The ORCID does not exist for " + orcid);
         }
 
-        return populateClientDetailsEntity(clientId, profileEntity, name, description, clientSecret, clientScopes, clientResourceIds, clientAuthorizedGrantTypes,
+        return populateClientDetailsEntity(clientId, profileEntity, name, description, website, clientSecret, clientScopes, clientResourceIds, clientAuthorizedGrantTypes,
                 clientRegisteredRedirectUris, clientGrantedAuthorities);
     }
 
@@ -259,12 +263,13 @@ public class OrcidClientDetailsServiceImpl implements OrcidClientDetailsService 
         return clientAuthorisedGrantTypeEntities;
     }
 
-    public ClientDetailsEntity populateClientDetailsEntity(String clientId, ProfileEntity profileEntity, String name, String description, String clientSecret, Set<String> clientScopes,
+    public ClientDetailsEntity populateClientDetailsEntity(String clientId, ProfileEntity profileEntity, String name, String description, String website, String clientSecret, Set<String> clientScopes,
             Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes, Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities) {
         ClientDetailsEntity clientDetailsEntity = new ClientDetailsEntity();
         clientDetailsEntity.setId(clientId);
         clientDetailsEntity.setClientName(name);
         clientDetailsEntity.setClientDescription(description);
+        clientDetailsEntity.setClientWebsite(website);
         clientDetailsEntity.setClientSecretForJpa(clientSecret);
         clientDetailsEntity.setDecryptedClientSecret(encryptionManager.decryptForInternalUse(clientSecret));
         clientDetailsEntity.setClientScopes(getClientScopeEntities(clientScopes, clientDetailsEntity));

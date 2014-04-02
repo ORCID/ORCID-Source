@@ -58,9 +58,6 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
     @Resource
     private ClientDetailsManager clientDetailsManager;
 
-    @Resource 
-    private ResearcherUrlDao researcherUrlDao;
-    
     @Resource(name = "clientScopeDao")
     private GenericDao<ClientScopeEntity, ClientScopePk> clientScopeDao;
 
@@ -109,9 +106,8 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
                 for (String uri : redirectUris) {
                     redirectUrisSet.add(uri);
                 }
-                ClientDetailsEntity clientDetailsEntity = populateClientDetailsEntity(clientId, name, description, clientSecret, redirectUrisSet);
-                clientDetailsManager.persist(clientDetailsEntity);
-                researcherUrlDao.addResearcherUrls(clientId, website, null, true);                
+                ClientDetailsEntity clientDetailsEntity = populateClientDetailsEntity(clientId, name, description, website, clientSecret, redirectUrisSet);
+                clientDetailsManager.persist(clientDetailsEntity);                               
                 return clientDetailsManager.findByClientId(clientId);
             }
         }
@@ -171,17 +167,7 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
                             }
                         }                                                
                     }
-                }
-                
-                //Now check that there are sso researcher urls
-                List<ResearcherUrlEntity> researcherUrls = researcherUrlDao.getResearcherUrls(orcid);
-                if(researcherUrls != null && !researcherUrls.isEmpty()) {
-                    for(ResearcherUrlEntity rUrl : researcherUrls) {
-                        if(rUrl.isSSO()){
-                            researcherUrlDao.deleteResearcherUrl(rUrl.getId());
-                        }
-                    }
-                }
+                }                                
             }
         }
     }
@@ -197,12 +183,13 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
         return false;
     }
 
-    private ClientDetailsEntity populateClientDetailsEntity(String clientId, String name, String description, String clientSecret, Set<String> clientRegisteredRedirectUris) {
+    private ClientDetailsEntity populateClientDetailsEntity(String clientId, String name, String description, String website, String clientSecret, Set<String> clientRegisteredRedirectUris) {
         ClientDetailsEntity clientDetailsEntity = new ClientDetailsEntity();
         clientDetailsEntity.setId(clientId);
         clientDetailsEntity.setClientSecretForJpa(clientSecret);
         clientDetailsEntity.setClientName(name);
         clientDetailsEntity.setClientDescription(description);
+        clientDetailsEntity.setClientWebsite(website);
         clientDetailsEntity.setDecryptedClientSecret(encryptionManager.decryptForInternalUse(clientSecret));
         Set<ClientScopeEntity> clientScopes = new HashSet<ClientScopeEntity>();
         clientScopes.add(getClientScopeEntity(SSO_SCOPE, clientDetailsEntity));
@@ -275,27 +262,8 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
                 //Update the description
                 clientDetailsEntity.setClientDescription(description);
                 //Update the website if needed
-                List<ResearcherUrlEntity> researcherUrls = researcherUrlDao.getResearcherUrls(orcid);
-                //If the website exists, update it
-                boolean foundAndUpdated = false;
-                if(researcherUrls != null && !researcherUrls.isEmpty()) {
-                    for(ResearcherUrlEntity rUrl : researcherUrls){
-                        if(rUrl.isSSO()){
-                            foundAndUpdated = true;
-                            if(!rUrl.getUrl().equals(website)){
-                                researcherUrlDao.updateResearcherUrl(rUrl.getId(), website);
-                                break;
-                            } else {
-                                
-                            }
-                        }
-                    }                                                            
-                } 
-
-                //If no url was updated, create it
-                if(!foundAndUpdated){                    
-                    researcherUrlDao.addResearcherUrls(orcid, website, null, true);
-                }
+                clientDetailsEntity.setClientWebsite(website);
+                                               
                 // Get the existing redirect uris
                 SortedSet<ClientRedirectUriEntity> clientRedirectUriEntities = clientDetailsEntity.getClientRegisteredRedirectUris();
 

@@ -47,11 +47,11 @@
    	
    	<div class="col-md-6 col-md-push-6 col-sm-12 margin-top-box">
          <h5>
-         	<#if (clientProfile.orcidBio.researcherUrls.researcherUrl[0].url.value)??>
-         		<a href="${(clientProfile.orcidBio.researcherUrls.researcherUrl[0].url.value)!}" target="_blank">
+         	<#if (client_website)??>
+         		<a href="${(client_website)!}" target="_blank">
          	</#if>
          	${displayName}
-        	<#if (clientProfile.orcidBio.researcherUrls.researcherUrl[0].url.value)??>
+        	<#if (client_website)??>
         		</a>
         	</#if>
         	</h5>

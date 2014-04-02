@@ -455,13 +455,11 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
      *            Indicates if this will be an update or is a new client
      * */
     private void updateProfileEntityFromClient(OrcidClient client, ProfileEntity clientProfileEntity, boolean isUpdate) {
-        clientProfileEntity.setCreditName(client.getDisplayName());
-        clientProfileEntity.setBiography(client.getShortDescription());
         clientProfileEntity.setClientType(client.getType());
-        SortedSet<ResearcherUrlEntity> researcherUrls = new TreeSet<ResearcherUrlEntity>();
-        researcherUrls.add(new ResearcherUrlEntity(client.getWebsite(), clientProfileEntity));
-        clientProfileEntity.setResearcherUrls(researcherUrls);
         ClientDetailsEntity clientDetailsEntity = clientProfileEntity.getClientDetails();
+        clientDetailsEntity.setClientName(client.getDisplayName());
+        clientDetailsEntity.setClientDescription(client.getShortDescription());
+        clientDetailsEntity.setClientWebsite(client.getWebsite());
         Set<ClientRedirectUriEntity> clientRedirectUriEntities = clientDetailsEntity.getClientRegisteredRedirectUris();
         Map<String, ClientRedirectUriEntity> clientRedirectUriEntitiesMap = ClientRedirectUriEntity.mapByUri(clientRedirectUriEntities);
         clientRedirectUriEntities.clear();
@@ -537,13 +535,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         OrcidBio orcidBio = new OrcidBio();
         orcidProfile.setOrcidBio(orcidBio);
         PersonalDetails personalDetails = new PersonalDetails();
-        orcidBio.setPersonalDetails(personalDetails);        
-        // Add website as researcher url
-        if (StringUtils.isNotBlank(orcidClient.getWebsite())) {
-            ResearcherUrls researcherUrls = new ResearcherUrls();
-            researcherUrls.getResearcherUrl().add(new ResearcherUrl(new Url(orcidClient.getWebsite())));
-            orcidBio.setResearcherUrls(researcherUrls);
-        }        
+        orcidBio.setPersonalDetails(personalDetails);               
         return orcidProfile;
     }
 
@@ -563,8 +555,9 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
 
         String name = orcidClient.getDisplayName();
         String description = orcidClient.getShortDescription();
+        String website = orcidClient.getWebsite();
         
-        ClientDetailsEntity clientDetails = orcidClientDetailsService.createClientDetails(orcid, name, description, createScopes(clientType), clientResourceIds, clientAuthorizedGrantTypes,
+        ClientDetailsEntity clientDetails = orcidClientDetailsService.createClientDetails(orcid, name, description, website, createScopes(clientType), clientResourceIds, clientAuthorizedGrantTypes,
                 redirectUrisToAdd, clientGrantedAuthorities);
         return clientDetails;
     }

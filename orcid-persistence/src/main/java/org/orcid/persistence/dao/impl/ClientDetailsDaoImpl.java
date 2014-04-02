@@ -43,8 +43,8 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     }
 
     @Override
-    @Cacheable(value="client-details", key="#orcid.concat('-').concat(#lastModified)")
-    public ClientDetailsEntity findByClientId(String orcid, Date lastModified) {
+    //@Cacheable(value="client-details", key="#orcid.concat('-').concat(#lastModified)")
+    public ClientDetailsEntity findByClientId(String orcid) {
         System.out.println("----------------------------------------------------------------------------------------------------------");
         System.out.println("----------------------------------------------------------------------------------------------------------");
         System.out.println("----------------------------------------------------------------------------------------------------------");
@@ -72,4 +72,10 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
         query.executeUpdate();
     }
 
+    @Override
+    public Date getLastModified(String orcid) {
+        TypedQuery<Date> query = entityManager.createQuery("select lastModified from ClientDetailsEntity where clientId = :orcid", Date.class);
+        query.setParameter("orcid", orcid);
+        return query.getSingleResult();
+    }
 }
