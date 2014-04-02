@@ -313,8 +313,7 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
             detail = new OrcidOauth2TokenDetail();
         }
         String clientId = authorizationRequest.getClientId();
-        Date lastModified = profileDao.retrieveLastModifiedDate(clientId);
-        ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId, lastModified);
+        ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
         String authKey = KEY_GENERATOR.extractKey(authentication);
         detail.setAuthenticationKey(authKey);
         detail.setClientDetailsEntity(clientDetails);

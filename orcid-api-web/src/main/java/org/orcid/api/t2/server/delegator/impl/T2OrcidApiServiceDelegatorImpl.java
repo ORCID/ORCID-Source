@@ -42,6 +42,7 @@ import org.orcid.api.common.exception.OrcidBadRequestException;
 import org.orcid.api.common.exception.OrcidForbiddenException;
 import org.orcid.api.common.exception.OrcidNotFoundException;
 import org.orcid.api.t2.server.delegator.T2OrcidApiServiceDelegator;
+import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.core.manager.ProfileEntityManager;
@@ -63,6 +64,7 @@ import org.orcid.jaxb.model.message.SourceOrcid;
 import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.WebhookDao;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.WebhookEntity;
 import org.orcid.persistence.jpa.entities.keys.WebhookEntityPk;
@@ -95,6 +97,9 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
     @Resource(name = "orcidSearchManager")
     private OrcidSearchManager orcidSearchManager;
 
+    @Resource
+    private ClientDetailsManager clientDetailsManager; 
+    
     @Resource
     private ProfileEntityManager profileEntityManager;
 
@@ -444,8 +449,13 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
             AuthorizationRequest authorizationRequest = ((OAuth2Authentication) authentication).getAuthorizationRequest();
             Source sponsor = new Source();
             String sponsorOrcid = authorizationRequest.getClientId();
-            OrcidProfile sponsorProfile = orcidProfileManager.retrieveOrcidProfile(sponsorOrcid);
-            sponsor.setSourceName(new SourceName(sponsorProfile.getOrcidBio().getPersonalDetails().getCreditName().getContent()));
+            ClientDetailsEntity clientDetails = clientDetailsManager.find(sponsorOrcid);
+            if(clientDetails != null) {
+                sponsor.setSourceName(new SourceName(clientDetails.getClientName()));
+            } else {
+                OrcidProfile sponsorProfile = orcidProfileManager.retrieveOrcidProfile(sponsorOrcid);
+                sponsor.setSourceName(new SourceName(sponsorProfile.getOrcidBio().getPersonalDetails().getCreditName().getContent()));                
+            }
             sponsor.setSourceOrcid(new SourceOrcid(sponsorOrcid));
             profile.getOrcidHistory().setSource(sponsor);
         }

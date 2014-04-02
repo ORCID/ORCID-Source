@@ -41,7 +41,6 @@ public class ResearcherUrlEntity extends BaseEntity<Long> implements Comparable<
     private Long id;
     private String url;
     private String urlName;
-    private boolean isSSO;
     private ProfileEntity user;
 
     public ResearcherUrlEntity() {
@@ -106,15 +105,6 @@ public class ResearcherUrlEntity extends BaseEntity<Long> implements Comparable<
         this.user = user;
     }
     
-    @Column(name = "is_sso", columnDefinition = "boolean default false")
-    public boolean isSSO() {
-        return isSSO;
-    }
-
-    public void setSSO(boolean isSSO) {
-        this.isSSO = isSSO;
-    }
-
     @Override
     public int compareTo(ResearcherUrlEntity other) {
         String otherUrl = other.getUrl();

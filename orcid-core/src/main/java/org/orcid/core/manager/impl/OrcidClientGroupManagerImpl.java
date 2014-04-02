@@ -27,11 +27,10 @@ import java.util.TreeSet;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang.StringUtils;
 import org.orcid.core.adapter.JpaJaxbEntityAdapter;
 import org.orcid.core.exception.OrcidClientGroupManagementException;
+import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EncryptionManager;
-import org.orcid.core.manager.OrcidClientDetailsService;
 import org.orcid.core.manager.OrcidClientGroupManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.jaxb.model.clientgroup.ClientType;
@@ -39,7 +38,6 @@ import org.orcid.jaxb.model.clientgroup.GroupType;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
-import org.orcid.jaxb.model.message.Biography;
 import org.orcid.jaxb.model.message.Claimed;
 import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.CreditName;
@@ -49,11 +47,8 @@ import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.PersonalDetails;
-import org.orcid.jaxb.model.message.ResearcherUrl;
-import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.SubmissionDate;
-import org.orcid.jaxb.model.message.Url;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -61,7 +56,6 @@ import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.OrcidEntityIdComparator;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.utils.DateUtils;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -82,7 +76,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
     private JpaJaxbEntityAdapter adapter;
 
     @Resource
-    private OrcidClientDetailsService orcidClientDetailsService;
+    private ClientDetailsManager clientDetailsManager;
 
     @Resource
     private EncryptionManager encryptionManager;
@@ -373,6 +367,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
                 profileDao.removeChildrenWithGeneratedIds(clientProfileEntity);
                 updateProfileEntityFromClient(client, clientProfileEntity, true);
                 profileDao.merge(clientProfileEntity);
+                clientDetailsManager.updateLastModified(clientProfileEntity.getId());
             }
 
         }
@@ -437,8 +432,8 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
                 // details from the incoming client, and save using the profile
                 // DAO.
                 profileDao.removeChildrenWithGeneratedIds(clientProfileEntity);
-                updateProfileEntityFromClient(client, clientProfileEntity, true);
-                profileDao.merge(clientProfileEntity);
+                updateProfileEntityFromClient(client, clientProfileEntity, true);                 
+                profileDao.merge(clientProfileEntity);                
             }
         }
     }
@@ -455,13 +450,11 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
      *            Indicates if this will be an update or is a new client
      * */
     private void updateProfileEntityFromClient(OrcidClient client, ProfileEntity clientProfileEntity, boolean isUpdate) {
-        clientProfileEntity.setCreditName(client.getDisplayName());
-        clientProfileEntity.setBiography(client.getShortDescription());
         clientProfileEntity.setClientType(client.getType());
-        SortedSet<ResearcherUrlEntity> researcherUrls = new TreeSet<ResearcherUrlEntity>();
-        researcherUrls.add(new ResearcherUrlEntity(client.getWebsite(), clientProfileEntity));
-        clientProfileEntity.setResearcherUrls(researcherUrls);
         ClientDetailsEntity clientDetailsEntity = clientProfileEntity.getClientDetails();
+        clientDetailsEntity.setClientName(client.getDisplayName());
+        clientDetailsEntity.setClientDescription(client.getShortDescription());
+        clientDetailsEntity.setClientWebsite(client.getWebsite());
         Set<ClientRedirectUriEntity> clientRedirectUriEntities = clientDetailsEntity.getClientRegisteredRedirectUris();
         Map<String, ClientRedirectUriEntity> clientRedirectUriEntitiesMap = ClientRedirectUriEntity.mapByUri(clientRedirectUriEntities);
         clientRedirectUriEntities.clear();
@@ -537,13 +530,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         OrcidBio orcidBio = new OrcidBio();
         orcidProfile.setOrcidBio(orcidBio);
         PersonalDetails personalDetails = new PersonalDetails();
-        orcidBio.setPersonalDetails(personalDetails);        
-        // Add website as researcher url
-        if (StringUtils.isNotBlank(orcidClient.getWebsite())) {
-            ResearcherUrls researcherUrls = new ResearcherUrls();
-            researcherUrls.getResearcherUrl().add(new ResearcherUrl(new Url(orcidClient.getWebsite())));
-            orcidBio.setResearcherUrls(researcherUrls);
-        }        
+        orcidBio.setPersonalDetails(personalDetails);               
         return orcidProfile;
     }
 
@@ -563,8 +550,9 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
 
         String name = orcidClient.getDisplayName();
         String description = orcidClient.getShortDescription();
+        String website = orcidClient.getWebsite();
         
-        ClientDetailsEntity clientDetails = orcidClientDetailsService.createClientDetails(orcid, name, description, createScopes(clientType), clientResourceIds, clientAuthorizedGrantTypes,
+        ClientDetailsEntity clientDetails = clientDetailsManager.createClientDetails(orcid, name, description, website, createScopes(clientType), clientResourceIds, clientAuthorizedGrantTypes,
                 redirectUrisToAdd, clientGrantedAuthorities);
         return clientDetails;
     }

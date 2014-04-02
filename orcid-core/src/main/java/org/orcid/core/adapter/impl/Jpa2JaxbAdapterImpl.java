@@ -149,18 +149,13 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     public OrcidClient toOrcidClient(ProfileEntity profileEntity) {
         OrcidClient client = new OrcidClient();        
         client.setClientId(profileEntity.getId());        
-        client.setType(profileEntity.getClientType());
-        Set<ResearcherUrlEntity> researcherUrls = profileEntity.getResearcherUrls();
-        if (researcherUrls != null && !researcherUrls.isEmpty()) {
-            ResearcherUrlEntity rUrl = researcherUrls.iterator().next();
-            if(!rUrl.isSSO())
-                client.setWebsite(researcherUrls.iterator().next().getUrl());
-        }
+        client.setType(profileEntity.getClientType());        
         ClientDetailsEntity clientDetailsEntity = profileEntity.getClientDetails();
         if (clientDetailsEntity != null) {
             client.setClientSecret(clientDetailsEntity.getClientSecretForJpa());
             client.setDisplayName(clientDetailsEntity.getClientName());
             client.setShortDescription(clientDetailsEntity.getClientDescription());
+            client.setWebsite(clientDetailsEntity.getClientWebsite());
             Set<ClientRedirectUriEntity> redirectUriEntities = clientDetailsEntity.getClientRegisteredRedirectUris();
             RedirectUris redirectUris = new RedirectUris();
             client.setRedirectUris(redirectUris);
@@ -589,13 +584,11 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         if (researcherUrlEntities != null) {
             ResearcherUrls researcherUrls = new ResearcherUrls();
             researcherUrls.setVisibility(profileEntity.getResearcherUrlsVisibility());
-            for (ResearcherUrlEntity researcherUrl : researcherUrlEntities) {
-                if(!researcherUrl.isSSO()) {
-                    ResearcherUrl url = new ResearcherUrl(new Url(researcherUrl.getUrl()));
-                    if (!StringUtils.isBlank(researcherUrl.getUrlName()))
-                        url.setUrlName(new UrlName(researcherUrl.getUrlName()));
-                    researcherUrls.getResearcherUrl().add(url);
-                }                
+            for (ResearcherUrlEntity researcherUrl : researcherUrlEntities) {                
+                ResearcherUrl url = new ResearcherUrl(new Url(researcherUrl.getUrl()));
+                if (!StringUtils.isBlank(researcherUrl.getUrlName()))
+                    url.setUrlName(new UrlName(researcherUrl.getUrlName()));
+                researcherUrls.getResearcherUrl().add(url);                               
             }
             return researcherUrls;
         }
@@ -769,11 +762,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                         
                         //Set the name application name
                         applicationSummary.setApplicationName(new ApplicationName(acceptedClient.getClientName()));
-                        
-                        SortedSet<ResearcherUrlEntity> researcherUrls = acceptedClient.getProfileEntity().getResearcherUrls();
-                        if (researcherUrls != null && !researcherUrls.isEmpty()) {
-                            applicationSummary.setApplicationWebsite(new ApplicationWebsite(researcherUrls.first().getUrl()));
-                        }
+                        //Set application website
+                        applicationSummary.setApplicationWebsite(new ApplicationWebsite(acceptedClient.getClientWebsite()));
                         applicationSummary.setApprovalDate(new ApprovalDate(DateUtils.convertToXMLGregorianCalendar(tokenDetail.getDateCreated())));
 
                         // add group information

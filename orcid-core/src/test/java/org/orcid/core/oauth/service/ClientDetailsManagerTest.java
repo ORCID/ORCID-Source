@@ -33,7 +33,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.manager.ClientDetailsManager;
-import org.orcid.core.manager.OrcidClientDetailsService;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.test.DBUnitTest;
@@ -51,17 +50,15 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
-public class OrcidClientDetailsServiceTest extends DBUnitTest {
+public class ClientDetailsManagerTest extends DBUnitTest {
 
     @Resource
     private ClientDetailsManager clientDetailsManager;
 
     private static String CLIENT_NAME = "the name";
     private static String CLIENT_DESCRIPTION = "the description";
+    private static String CLIENT_WEBSITE = "http://website.com";
     
-    @Resource(name = "orcidClientDetailsService")
-    private OrcidClientDetailsService clientDetailsService;
-
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml"), null);
@@ -79,7 +76,7 @@ public class OrcidClientDetailsServiceTest extends DBUnitTest {
         List<ClientDetailsEntity> all = clientDetailsManager.getAll();
         assertEquals(5, all.size());
         for (ClientDetailsEntity clientDetailsEntity : all) {
-            ClientDetails clientDetails = clientDetailsService.loadClientByClientId(clientDetailsEntity.getId());
+            ClientDetails clientDetails = clientDetailsManager.loadClientByClientId(clientDetailsEntity.getId());
             assertNotNull(clientDetails);
             checkClientDetails(clientDetails);
         }
@@ -89,7 +86,7 @@ public class OrcidClientDetailsServiceTest extends DBUnitTest {
     @Rollback
     @Transactional
     public void testCreateClientDetailsFromStrings() throws Exception {
-        String clientId = "4444-4444-4444-4441-10";
+        String clientId = "4444-4444-4444-4499";
         String clientSecret = "Zq7ldGbUvzbEMNysSbbUq4dLRrxEUApgdcofn8xDke4=";
         Set<String> clientScopes = new HashSet<String>();
         clientScopes.add("/orcid-profile/create");
@@ -104,7 +101,7 @@ public class OrcidClientDetailsServiceTest extends DBUnitTest {
         List<String> clientGrantedAuthorities = new ArrayList<String>();
         clientGrantedAuthorities.add("ROLE_ADMIN");
 
-        ClientDetailsEntity clientDetails = clientDetailsService.createClientDetails("4444-4444-4444-4441", CLIENT_NAME, CLIENT_DESCRIPTION, clientId, clientSecret, clientScopes, clientResourceIds,
+        ClientDetailsEntity clientDetails = clientDetailsManager.createClientDetails("4444-4444-4444-4499", CLIENT_NAME, CLIENT_DESCRIPTION, CLIENT_WEBSITE, clientId, clientSecret, clientScopes, clientResourceIds,
                 clientAuthorizedGrantTypes, clientRegisteredRedirectUris, clientGrantedAuthorities);
         assertNotNull(clientDetails);
         checkClientDetails(clientDetails);
@@ -127,7 +124,7 @@ public class OrcidClientDetailsServiceTest extends DBUnitTest {
         List<String> clientGrantedAuthorities = new ArrayList<String>();
         clientGrantedAuthorities.add("ROLE_ADMIN");
 
-        ClientDetailsEntity clientDetails = clientDetailsService.createClientDetails("4444-4444-4444-4446", CLIENT_NAME, CLIENT_DESCRIPTION, clientScopes, clientResourceIds, clientAuthorizedGrantTypes,
+        ClientDetailsEntity clientDetails = clientDetailsManager.createClientDetails("4444-4444-4444-4446", CLIENT_NAME, CLIENT_DESCRIPTION, CLIENT_WEBSITE, clientScopes, clientResourceIds, clientAuthorizedGrantTypes,
                 clientRegisteredRedirectUris, clientGrantedAuthorities);
         assertNotNull(clientDetails);
         checkClientDetails(clientDetails);
@@ -150,7 +147,7 @@ public class OrcidClientDetailsServiceTest extends DBUnitTest {
         List<String> clientGrantedAuthorities = new ArrayList<String>();
         clientGrantedAuthorities.add("ROLE_ADMIN");
 
-        clientDetailsService.createClientDetails("8888-9999-9999-9999", CLIENT_NAME, CLIENT_DESCRIPTION, clientScopes, clientResourceIds, clientAuthorizedGrantTypes, clientRegisteredRedirectUris,
+        clientDetailsManager.createClientDetails("8888-9999-9999-9999", CLIENT_NAME, CLIENT_DESCRIPTION, CLIENT_WEBSITE, clientScopes, clientResourceIds, clientAuthorizedGrantTypes, clientRegisteredRedirectUris,
                 clientGrantedAuthorities);
     }
 
@@ -161,7 +158,7 @@ public class OrcidClientDetailsServiceTest extends DBUnitTest {
         List<ClientDetailsEntity> all = clientDetailsManager.getAll();
         assertEquals(5, all.size());
         for (ClientDetailsEntity clientDetailsEntity : all) {
-            clientDetailsService.deleteClientDetail(clientDetailsEntity.getId());
+            clientDetailsManager.deleteClientDetail(clientDetailsEntity.getId());
         }
         all = clientDetailsManager.getAll();
         assertEquals(0, all.size());
