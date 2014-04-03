@@ -20,11 +20,11 @@
 
 <dataset>
 
-    <client_details client_details_id="4444-4444-4444-4441" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25"/>
-    <client_details client_details_id="4444-4444-4444-4442" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25"/>
-    <client_details client_details_id="4444-4444-4444-4443" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25"/>
-    <client_details client_details_id="4444-4444-4444-4444" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25"/>
-    <client_details client_details_id="4444-4444-4444-4445" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25"/>
+    <client_details client_details_id="4444-4444-4444-4441" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25" client_name="S. Milligan" client_description="Terence Alan Patrick Seán 'Spike' Milligan KBE (16 April 1918 – 27 February 2002) was a comedian, writer, musician, poet, playwright, soldier and actor." client_website="www.4444-4444-4444-4441.com"/>
+    <client_details client_details_id="4444-4444-4444-4442" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25" client_name="T. Edison" client_description="" client_website="www.4444-4444-4444-4442.com"/>
+    <client_details client_details_id="4444-4444-4444-4443" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25" client_name="P. Sellers III" client_description="Richard Henry Sellers, CBE (8 September 1925 – 24 July 1980), known as Peter Sellers, was a British film actor, comedian and singer." client_website="www.4444-4444-4444-4443.com"/>
+    <client_details client_details_id="4444-4444-4444-4444" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25" client_name="H. Secombe" client_description="Sir Harry Donald Secombe, CBE (8 September 1921 – 11 April 2001) was a Welsh entertainer with a talent for comedy and a noted fine tenor singing voice." client_website="www.4444-4444-4444-4443.com"/>
+    <client_details client_details_id="4444-4444-4444-4445" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25" client_name="A. Timothy" client_description="Andrew Timothy (1912–9 December 1990) was an Anglican priest and BBC Radio announcer, who is best remembered for being the original announcer of the comedy series The Goon Show." client_website="www.4444-4444-4444-4445.com"/>
 
     <client_authorised_grant_type client_details_id="4444-4444-4444-4441" grant_type="authorization_code" />
     <client_authorised_grant_type client_details_id="4444-4444-4444-4441" grant_type="refresh_token" />

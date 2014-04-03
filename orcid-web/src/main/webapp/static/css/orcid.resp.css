@@ -3364,13 +3364,11 @@ p.orcid-id-container{
 }
 
 .sso-api ul.sso-options li{
-	display: inline-block;
-	margin-right: 20px;
+	display: inline-block;	
 }
 
-.sso-api ul.sso-options span{
-	margin-right: 5px;
-	font-size: 12px;
+.sso-api ul.sso-options span{	
+	font-size: 16px;
 }
 
 .sso-api .sso-links {
@@ -3420,14 +3418,104 @@ p.orcid-id-container{
 	border: 0;
 }
 
+
 .developer-tools .box{
 	margin-top: 20px;
 	margin-left: 0;
 }
 
+.developer-tools p.developer-tools-instructions{
+	border-bottom: 1px solid #CCC;
+	padding-bottom: 10px;
+}
+
 .developer-tools .col-md-10{
 	padding-left: 0;
-	padding-right: 0;	
+	padding-right: 0;
+}
+
+.developer-tools .sso-options a{
+	display: block;
+	-webkit-border-radius: 50%;
+	border-radius: 50%;
+	background: #949599;
+	color: #FFF;
+	width: 35px;
+	height: 35px;
+	padding: 9px 10px;
+}
+
+.developer-tools .sso-options a:hover{
+	background: #338caf;	
+}
+
+.developer-tools ul.uris{	
+	padding-left: 0;	
+}
+
+.grey-box{
+	background: #EBEBEB;
+	padding: 15px;		
+}
+
+.developer-tools .inner-row input,
+.developer-tools .edit-details .dt-description textarea{
+	width: 100%;
+}
+
+.developer-tools .edit-details .dt-description textarea{
+	height: 150px;
+}
+
+.developer-tools .redirectUris input{
+	width: 96%;
+}
+
+.inner-row{
+	margin-left: 15px;
+}
+
+.developer-tools .tab-container{	
+	height: 32px;	 
+	background: #FFF;
+	display: block;
+	text-align: center;
+	border-bottom: 1px solid #CCC;
+}
+
+.developer-tools .tab-container .tab{	
+	padding: 10px;	
+	text-align: center;
+	background: #949599;	
+	color: #FFF;
+}
+
+.developer-tools .tab-container .tab.expanded{
+	display: none;
+}
+
+.developer-tools .slidebox{
+	display: none;		
+}
+
+.developer-tools .tab-container a span{
+	margin-right: 5px;
+}
+
+.developer-tools .slide{
+	margin-bottom: 15px;	
+}
+
+.developer-tools .dt-description{
+	margin-bottom: 5px;
+}
+
+
+.developer-tools .edit-details{
+	
+}
+.developer-tools .details{
+	
 }
 
 .scrollable-list {
@@ -4437,8 +4525,15 @@ p.orcid-id-container{
 	
 	.delegation-label{
 		margin-right: 15px;
-	}	
+	}
 	
+	.developer-tools .redirectUris input{
+		width: 90%;
+	}
+	
+	.developer-tools .edit-details .dt-description textarea{
+		width: 96%;
+	}
 	
 }
 

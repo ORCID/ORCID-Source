@@ -106,7 +106,7 @@
     <!-- As we have a Jersey endpoint, we need to create an extension to the Spring MVC, so we use a delegator -->
     <bean id="orcidClientCredentialEndPointDelegator" class="com.orcid.api.common.server.delegator.impl.OrcidClientCredentialEndPointDelegatorImpl">
         <property name="tokenGranter" ref="tokenGranter"/>
-        <property name="clientDetailsService" ref="orcidClientDetailsService"/>
+        <property name="clientDetailsService" ref="clientDetailsManager"/>
     </bean>
     
     <!-- Use the composite granter to enable granting of tokens for both client credentials and auth codes -->
@@ -127,14 +127,14 @@
     </bean>
     
     <bean id="orcidClientCredentialsChecker" class="org.orcid.core.oauth.OrcidClientCredentialsChecker">
-        <constructor-arg ref="orcidClientDetailsService"/>
+        <constructor-arg ref="clientDetailsManager"/>
     </bean>
     
     <!-- The 'granter responsible for returning and removing the auth codes -->
     <bean id="authorizationCodeTokenGranter" class="org.springframework.security.oauth2.provider.code.AuthorizationCodeTokenGranter">
         <constructor-arg ref="orcidAuthorizationCodeService"/>
         <constructor-arg ref="tokenServices"/>
-        <constructor-arg ref="orcidClientDetailsService"/>
+        <constructor-arg ref="clientDetailsManager"/>
     </bean>
     
     <!-- An extension of RandomValueAuthorizationCodeServices to create and remove authorisation codes -->
@@ -142,6 +142,6 @@
     
     <bean id="refreshTokenGranter" class="org.springframework.security.oauth2.provider.refresh.RefreshTokenGranter">
         <constructor-arg ref="tokenServices"/>
-        <constructor-arg ref="orcidClientDetailsService"/>
+        <constructor-arg ref="clientDetailsManager"/>
     </bean>
 </beans>      

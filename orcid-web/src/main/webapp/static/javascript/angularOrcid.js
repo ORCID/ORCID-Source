@@ -3936,6 +3936,7 @@ function removeSecQuestionCtrl($scope,$compile) {
 
 function SSOPreferencesCtrl($scope, $compile) {
 	$scope.userCredentials = null;	
+	$scope.editing = false;
 	
 	$scope.enableDeveloperTools = function() {
 		$.ajax({
@@ -4019,7 +4020,7 @@ function SSOPreferencesCtrl($scope, $compile) {
 				$('#cboxClose').remove();
 			}
 		});
-		$.colorbox.resize({width:"450px" , height:"300px"});
+		$.colorbox.resize({width:"460px" , height:"460px"});
 	};
 	
 	$scope.addRedirectURI = function() {
@@ -4047,22 +4048,6 @@ function SSOPreferencesCtrl($scope, $compile) {
 	    	// something bad is happening!	    	
 	    	console.log("Error creating SSO credentials");	    	
 	    });		
-	};
-	
-	$scope.showSuccessModal = function(){
-		console.log("Done: " + angular.toJson($scope.userCredentials));
-	};
-	
-	
-	$scope.showSSOCredentials = function() {		
-		$.colorbox({                      
-			html : $compile($('#show-sso-credentials-modal').html())($scope),				
-				onLoad: function() {
-				$('#cboxClose').remove();
-			}
-		});
-		
-		$.colorbox.resize({width:"550px" , height:"350px"});
 	};
 	
 	$scope.showRevokeModal = function() {		
@@ -4093,20 +4078,18 @@ function SSOPreferencesCtrl($scope, $compile) {
 	    });	
 	};
 	
-	$scope.showEditModal = function() {
-		$.colorbox({                      
-			html : $compile($('#edit-sso-credentials-modal').html())($scope),				
-				onLoad: function() {
-				$('#cboxClose').remove();
-			}
-		});
-		
-		$.colorbox.resize({width:"450px" , height:"230px"});
+	$scope.showEditLayout = function() {		
+		$('.tab-container').click();
+		$scope.editing = true;			
 	};
 	
-	$scope.editRedirectUris = function() {
+	$scope.showViewLayout = function() {		
+		$scope.editing = false;		
+	};
+	
+	$scope.editClientCredentials = function() {
 		$.ajax({
-	        url: getBaseUri()+'/developer-tools/update-redirect-uris.json',	        
+	        url: getBaseUri()+'/developer-tools/update-user-credentials.json',	        
 	        contentType: 'application/json;charset=UTF-8',
 	        type: 'POST',
 	        dataType: 'json',
@@ -4117,7 +4100,7 @@ function SSOPreferencesCtrl($scope, $compile) {
 	        		if(data.errors.length != 0){
 	        			//SHOW ERROR
 	        		} else {	        			
-	        			$scope.closeModal();
+	        			$scope.editing = false;
 	        		}
 				});
 	        }

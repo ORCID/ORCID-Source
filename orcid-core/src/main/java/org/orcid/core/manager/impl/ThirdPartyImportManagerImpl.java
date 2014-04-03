@@ -172,8 +172,8 @@ public class ThirdPartyImportManagerImpl implements ThirdPartyImportManager {
                 redirectUris.getRedirectUri().add(redirectUri);
 
                 OrcidClient minimalClientDetails = new OrcidClient();
-                minimalClientDetails.setDisplayName(clientDetails.getProfileEntity().getCreditName());
-                minimalClientDetails.setShortDescription(clientDetails.getProfileEntity().getBiography());
+                minimalClientDetails.setDisplayName(clientDetails.getClientName());
+                minimalClientDetails.setShortDescription(clientDetails.getClientDescription());
                 minimalClientDetails.setClientId(clientDetails.getClientId());
                 minimalClientDetails.setRedirectUris(redirectUris);
                 orcidClients.add(minimalClientDetails);

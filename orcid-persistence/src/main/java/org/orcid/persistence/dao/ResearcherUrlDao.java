@@ -52,4 +52,12 @@ public interface ResearcherUrlDao {
      * @return true if the researcher url was successfully created on database
      * */
     public boolean addResearcherUrls(String orcid, String url, String urlName);
+    
+    /**
+     * Updates an existing researcher url
+     * @param id
+     * @param newUrl
+     * @return true if the researcher url was updated
+     * */
+    public boolean updateResearcherUrl(long id, String newUrl);
 }

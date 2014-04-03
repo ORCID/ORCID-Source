@@ -55,6 +55,8 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
 
     private String clientId;
     private String clientName;
+    private String clientDescription;
+    private String clientWebsite;
     private String clientSecret;
     private String decryptedClientSecret;
     private Set<ClientScopeEntity> clientScopes = Collections.emptySet();
@@ -89,6 +91,24 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
 
     public void setClientName(String clientName) {
         this.clientName = clientName;
+    }
+
+    @Column(name = "client_description")
+    public String getClientDescription() {
+        return clientDescription;
+    }
+
+    public void setClientDescription(String clientDescription) {
+        this.clientDescription = clientDescription;
+    }
+
+    @Column(name = "client_website")
+    public String getClientWebsite() {
+        return clientWebsite;
+    }
+
+    public void setClientWebsite(String clientWebsite) {
+        this.clientWebsite = clientWebsite;
     }
 
     @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientDetailsEntity", orphanRemoval = true)
@@ -328,7 +348,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
     public Integer getAccessTokenValiditySeconds() {
         return accessTokenValiditySeconds;
     }
-
+    
     @Override
     public boolean equals(Object o) {
         if (this == o)

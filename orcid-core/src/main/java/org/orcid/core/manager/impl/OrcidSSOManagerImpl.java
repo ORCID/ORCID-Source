@@ -17,6 +17,7 @@
 package org.orcid.core.manager.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -27,20 +28,23 @@ import java.util.UUID;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.OrcidSSOManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.ClientRedirectDao;
 import org.orcid.persistence.dao.GenericDao;
+import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.dao.ResearcherUrlDao;
 import org.orcid.persistence.jpa.entities.ClientAuthorisedGrantTypeEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientGrantedAuthorityEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
 import org.orcid.persistence.jpa.entities.ClientScopeEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.keys.ClientScopePk;
 
 public class OrcidSSOManagerImpl implements OrcidSSOManager {
@@ -52,20 +56,23 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
     private EncryptionManager encryptionManager;
 
     @Resource
-    private ClientDetailsDao clientDetailsDao;
+    private ClientDetailsManager clientDetailsManager;
 
     @Resource(name = "clientScopeDao")
     private GenericDao<ClientScopeEntity, ClientScopePk> clientScopeDao;
 
     @Resource
     private ClientRedirectDao clientRedirectDao;
+    
+    @Resource
+    private ProfileDao profileDao;
 
     private final static String SSO_REDIRECT_URI_TYPE = RedirectUriType.SSO_AUTHENTICATION.value();
     private final static String SSO_SCOPE = ScopePathType.AUTHENTICATE.value();
     private final static String SSO_ROLE = "ROLE_PUBLIC";
 
     @Override
-    public ClientDetailsEntity grantSSOAccess(String orcid, Set<String> redirectUris) {
+    public ClientDetailsEntity grantSSOAccess(String orcid, String name, String description, String website, Set<String> redirectUris) {
         ProfileEntity profileEntity = profileEntityManager.findByOrcid(orcid);
         if (profileEntity == null) {
             throw new IllegalArgumentException("ORCID does not exist for " + orcid + " cannot continue");
@@ -88,9 +95,10 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
                     ClientScopeEntity ssoScope = getClientScopeEntity(SSO_SCOPE, existingClientDetails);
                     existingScopes.add(ssoScope);
                     existingClientDetails.setClientScopes(existingScopes);
-                    clientDetailsDao.merge(existingClientDetails);
+                    clientDetailsManager.merge(existingClientDetails);
                 }
-                return clientDetailsDao.findByClientId(existingClientDetails.getId());
+                String clientId = existingClientDetails.getId();
+                return clientDetailsManager.findByClientId(clientId);
             } else {
                 String clientSecret = encryptionManager.encryptForInternalUse(UUID.randomUUID().toString());
                 String clientId = profileEntity.getId();
@@ -98,16 +106,16 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
                 for (String uri : redirectUris) {
                     redirectUrisSet.add(uri);
                 }
-                ClientDetailsEntity clientDetailsEntity = populateClientDetailsEntity(clientId, clientSecret, redirectUrisSet);
-                clientDetailsDao.persist(clientDetailsEntity);
-                return clientDetailsDao.findByClientId(clientDetailsEntity.getId());
+                ClientDetailsEntity clientDetailsEntity = populateClientDetailsEntity(clientId, name, description, website, clientSecret, redirectUrisSet);
+                clientDetailsManager.persist(clientDetailsEntity);                               
+                return clientDetailsManager.findByClientId(clientId);
             }
         }
     }
 
     @Override
     public ClientDetailsEntity getUserCredentials(String orcid) {
-        ClientDetailsEntity existingClientDetails = clientDetailsDao.findByClientId(orcid);
+        ClientDetailsEntity existingClientDetails = clientDetailsManager.findByClientId(orcid);
         if (existingClientDetails != null) {
             SortedSet<ClientRedirectUriEntity> allRedirectUris = existingClientDetails.getClientRegisteredRedirectUris();
             SortedSet<ClientRedirectUriEntity> onlySSORedirectUris = new TreeSet<ClientRedirectUriEntity>();
@@ -121,7 +129,7 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
             }
             existingClientDetails.setClientRegisteredRedirectUris(onlySSORedirectUris);
             if (existingClientDetails != null)
-                existingClientDetails.setDecryptedClientSecret(encryptionManager.decryptForInternalUse(existingClientDetails.getClientSecretForJpa()));
+                existingClientDetails.setDecryptedClientSecret(encryptionManager.decryptForInternalUse(existingClientDetails.getClientSecretForJpa()));                        
         }
         return existingClientDetails;
     }
@@ -140,7 +148,7 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
                     // client details entity
                     if (existingScopes.size() == 1) {
                         // Delete the client details entity
-                        clientDetailsDao.removeByClientId(orcid);
+                        clientDetailsManager.removeByClientId(orcid);
                     } else {
                         // If the user have more that the SSO scope
                         // Delete the SSO scope
@@ -157,9 +165,9 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
                                     clientRedirectDao.removeClientRedirectUri(orcid, redirectUri.getRedirectUri());
                                 }
                             }
-                        }
+                        }                                                
                     }
-                }
+                }                                
             }
         }
     }
@@ -175,10 +183,13 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
         return false;
     }
 
-    private ClientDetailsEntity populateClientDetailsEntity(String clientId, String clientSecret, Set<String> clientRegisteredRedirectUris) {
+    private ClientDetailsEntity populateClientDetailsEntity(String clientId, String name, String description, String website, String clientSecret, Set<String> clientRegisteredRedirectUris) {
         ClientDetailsEntity clientDetailsEntity = new ClientDetailsEntity();
         clientDetailsEntity.setId(clientId);
         clientDetailsEntity.setClientSecretForJpa(clientSecret);
+        clientDetailsEntity.setClientName(name);
+        clientDetailsEntity.setClientDescription(description);
+        clientDetailsEntity.setClientWebsite(website);
         clientDetailsEntity.setDecryptedClientSecret(encryptionManager.decryptForInternalUse(clientSecret));
         Set<ClientScopeEntity> clientScopes = new HashSet<ClientScopeEntity>();
         clientScopes.add(getClientScopeEntity(SSO_SCOPE, clientDetailsEntity));
@@ -237,7 +248,7 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
     }
 
     @Override
-    public ClientDetailsEntity updateRedirectUris(String orcid, Set<String> redirectUris) {
+    public ClientDetailsEntity updateUserCredentials(String orcid, String name, String description, String website, Set<String> redirectUris) {
         ProfileEntity profileEntity = profileEntityManager.findByOrcid(orcid);
         if (profileEntity == null) {
             throw new IllegalArgumentException("ORCID does not exist for " + orcid + " cannot continue");
@@ -246,6 +257,13 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
             if (clientDetailsEntity != null) {
                 // Set the decrypted secret
                 clientDetailsEntity.setDecryptedClientSecret(encryptionManager.decryptForInternalUse(clientDetailsEntity.getClientSecretForJpa()));
+                //Update the name
+                clientDetailsEntity.setClientName(name);
+                //Update the description
+                clientDetailsEntity.setClientDescription(description);
+                //Update the website if needed
+                clientDetailsEntity.setClientWebsite(website);
+                                               
                 // Get the existing redirect uris
                 SortedSet<ClientRedirectUriEntity> clientRedirectUriEntities = clientDetailsEntity.getClientRegisteredRedirectUris();
 
@@ -282,7 +300,8 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
                 // kept
                 clientRedirectUriEntities.addAll(redirectUrisToAdd);
 
-                clientDetailsDao.merge(clientDetailsEntity);
+                clientDetailsManager.merge(clientDetailsEntity);
+                
                 return clientDetailsEntity;
             }
         }

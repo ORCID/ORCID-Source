@@ -29,9 +29,9 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.OrcidClientGroupManager;
 import org.orcid.core.manager.OrcidProfileManager;
-import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
@@ -42,7 +42,6 @@ import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.Title;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkTitle;
-import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.beans.factory.InitializingBean;
@@ -62,7 +61,7 @@ public class OrcidClientDataHelper implements InitializingBean {
     private OrcidProfileManager orcidProfileManager;
 
     @Resource
-    private ClientDetailsDao clientDetailsDao;
+    private ClientDetailsManager clientDetailsManager;
 
     private Unmarshaller unmarshaller;
 
@@ -80,6 +79,14 @@ public class OrcidClientDataHelper implements InitializingBean {
         this.orcidClientGroupManager = orcidClientGroupManager;
     }
 
+    public void setClientDetailsManager(ClientDetailsManager clientDetailsManager) {
+        this.clientDetailsManager = clientDetailsManager;
+    }
+    
+    public void setOrcidProfileManager(OrcidProfileManager orcidProfilerManager) {
+        this.orcidProfileManager = orcidProfilerManager;
+    } 
+    
     private void init() throws Exception {
         JAXBContext context = JAXBContext.newInstance(OrcidMessage.class);
         unmarshaller = context.createUnmarshaller();
@@ -138,7 +145,7 @@ public class OrcidClientDataHelper implements InitializingBean {
         assertEquals("http://www.journals.elsevier.com/ecological-complexity/orcid-callback", createdRedirectUris.get(0));
 
         // Look up client details directly to check scopes
-        ClientDetailsEntity complexityEntity = clientDetailsDao.find(complexityClient.getClientId());
+        ClientDetailsEntity complexityEntity = clientDetailsManager.find(complexityClient.getClientId());
         Set<String> clientScopeTypes = complexityEntity.getScope();
         assertNotNull(clientScopeTypes);
         assertTrue(clientScopeTypes.contains("/orcid-bio/update"));
@@ -159,7 +166,7 @@ public class OrcidClientDataHelper implements InitializingBean {
 
     protected void deleteClientId(String clientId) {
         if (!StringUtils.isBlank(clientId)) {
-            clientDetailsDao.remove(clientId);
+            clientDetailsManager.remove(clientId);
         }
     }
 

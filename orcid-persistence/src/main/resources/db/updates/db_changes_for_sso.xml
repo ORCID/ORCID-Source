@@ -1,0 +1,47 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet id="ADD-DESCRIPTION-AND-WEBSITE-TO-CLIENT-DETAILS" author="Angel Montenegro">
+		
+	    <addColumn tableName="client_details">
+			<column name="client_description" type="TEXT" />
+			<column name="client_website" type="VARCHAR(350)" />
+		</addColumn>
+    </changeSet>
+    
+    <changeSet id="COPY-CREDIT-NAME-AND-DESCRIPTION-FROM-PROFILE-TABLE" author="Angel Montenegro" dbms="postgresql">
+    	<sql>update client_details cd set client_name=p.credit_name, client_description=p.biography from profile p where p.orcid=cd.client_details_id and p.orcid_type = 'CLIENT'</sql>
+    </changeSet>
+    
+    <changeSet id="COPY-RESEARCHER-URL-TO-CLIENT-DETAILS-TABLE" author="Angel Montenegro" dbms="postgresql">
+    	<sql>update client_details cd set client_website=ru.url from researcher_url ru where ru.orcid=cd.client_details_id</sql>
+    </changeSet>
+            
+	<changeSet id="SET-EMPTY-CLIENT-NAME-AND-DESCRIPTION-TO-UNDEFINED" author="Angel Montenegro" dbms="postgresql">
+    	<sql>update client_details set client_name='UNDEFINED', client_description='UNDEFINED' where client_name is NULL</sql>
+    </changeSet>            
+       
+	<changeSet id="SET-EMPTY-WEBSITE-TO-UNDEFINED" author="Angel Montenegro" dbms="postgresql">
+    	<sql>update client_details set client_website='UNDEFINED' where client_website is NULL</sql>
+    </changeSet>       
+       
+</databaseChangeLog>	

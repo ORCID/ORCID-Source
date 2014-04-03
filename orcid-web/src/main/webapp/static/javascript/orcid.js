@@ -73,6 +73,22 @@
         $(".orcid-id").tooltip({
             placement: "top"
         });
+        
+        $(".back").tooltip({
+            placement: "bottom"
+        });
+        
+        $(".save").tooltip({
+            placement: "bottom"
+        });
+        
+        $(".edit").tooltip({
+            placement: "bottom"
+        });
+        
+        $(".revoke").tooltip({
+            placement: "bottom"
+        });
     };
 
     var secondaryNavCleanup = function() {
@@ -358,7 +374,25 @@
 	    	// something bad is happening!
 	    	console.log("error with loggin check on :" + window.location.href);
 	    });	
-	}	
+	};	
+	
+	
+	var developerToolsTabs =  function(){
+		$('.developer-tools .tab').click(function(e){
+			e.preventDefault();
+			if($(this).hasClass('expanded')){
+				$(this).css('display', 'none');
+				$('.slidebox').slideUp();
+				$('.developer-tools .tab-container .collapsed').css('display','inline');
+				$('.developer-tools .tab-container').css('background', '#FFF');
+			}else{
+				$(this).css('display', 'none'); //show collapsed								
+				$('.slidebox').slideDown();
+				$('.developer-tools .tab-container .expanded').css('display','inline');
+				$('.developer-tools .tab-container').css('background', '#EBEBEB');
+			}
+		});
+	};
     
     /*============================================================
         Page initialisation
@@ -372,6 +406,7 @@
         popupHandler();
         menuHack();        
         menuHandler();
+        developerToolsTabs();
         //setLoginStatusIcon();
     };
 
