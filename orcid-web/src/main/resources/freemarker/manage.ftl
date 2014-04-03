@@ -402,23 +402,21 @@
 				</form>
 			</div>
 			<div>
-				<table class="ng-cloak table table-striped" ng-show="areResults()">
+				<table class="ng-cloak table" ng-show="areResults()">
 					<thead>
 						<tr>
-							<th>${springMacroRequestContext.getMessage("search_results.thORCIDID")}</th>
-							<th>${springMacroRequestContext.getMessage("search_results.thGivenname")}</th>
-							<th>${springMacroRequestContext.getMessage("search_results.thFamilynames")}</th>
-							<th>${springMacroRequestContext.getMessage("search_results.thInstitutions")}</th>
-							<th></th>
+							<th width="20%">${springMacroRequestContext.getMessage("manage.thproxy")}</th>
+							<th width="25%">${springMacroRequestContext.getMessage("search_results.thORCIDID")}</th>
+							<th width="45%">${springMacroRequestContext.getMessage("search_results.thInstitutions")}</th>
+							<th width="10%"></th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr ng-repeat='result in results' class="new-search-result">
-							<td class='search-result-orcid-id'><a href="{{result['orcid-profile']['orcid-identifier'].uri}}" target="_blank">{{result['orcid-profile']['orcid-identifier'].path}}</td>
-							<td>{{result['orcid-profile']['orcid-bio']['personal-details']['given-names'].value}}</td>
-							<td>{{result['orcid-profile']['orcid-bio']['personal-details']['family-name'].value}}</td>
-							<td>{{concatPropertyValues(result['orcid-profile']['orcid-bio']['affiliations'], 'affiliation-name')}}</td>
-							<td><span ng-click="confirmAddDelegate(result['orcid-profile']['orcid-bio']['personal-details']['given-names'].value + ' ' + result['orcid-profile']['orcid-bio']['personal-details']['family-name'].value, result['orcid-profile']['orcid-identifier'].path, $index)" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span></td>
+							<td width="20%"><a href="{{result['orcid-profile']['orcid-identifier'].uri}}" target="_blank" ng-bind="getDisplayName(result)"></a></td>
+							<td width="25%" class='search-result-orcid-id'><a href="{{result['orcid-profile']['orcid-identifier'].uri}}" target="_blank">{{result['orcid-profile']['orcid-identifier'].path}}</td>
+							<td width="45%">{{concatPropertyValues(result['orcid-profile']['orcid-bio']['affiliations'], 'affiliation-name')}}</td>
+							<td width="10%"><span ng-click="confirmAddDelegate(result['orcid-profile']['orcid-bio']['personal-details']['given-names'].value + ' ' + result['orcid-profile']['orcid-bio']['personal-details']['family-name'].value, result['orcid-profile']['orcid-identifier'].path, $index)" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span></td>
 						</tr>
 					</tbody>
 				</table>

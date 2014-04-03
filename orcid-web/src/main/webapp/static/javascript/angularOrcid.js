@@ -2957,6 +2957,15 @@ function DelegatesCtrl($scope, $compile){
 		return $scope.numFound != 0;
 	};
 	
+	$scope.getDisplayName = function(result){
+		var personalDetails = result['orcid-profile']['orcid-bio']['personal-details'];
+		var creditName = personalDetails['credit-name'];
+		if(creditName !== undefined){
+			return creditName.value;
+		}
+		return personalDetails['given-names'].value + ' ' + personalDetails['family-name'].value;
+	}
+	
 	$scope.confirmAddDelegateByEmail = function(emailSearchResult){
 		$scope.emailSearchResult = emailSearchResult;
 		$.colorbox({                      
