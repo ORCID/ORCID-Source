@@ -3936,6 +3936,7 @@ function removeSecQuestionCtrl($scope,$compile) {
 
 function SSOPreferencesCtrl($scope, $compile) {
 	$scope.userCredentials = null;	
+	$scope.editing = false;
 	
 	$scope.enableDeveloperTools = function() {
 		$.ajax({
@@ -4049,22 +4050,6 @@ function SSOPreferencesCtrl($scope, $compile) {
 	    });		
 	};
 	
-	$scope.showSuccessModal = function(){
-		console.log("Done: " + angular.toJson($scope.userCredentials));
-	};
-	
-	
-	$scope.showSSOCredentials = function() {		
-		$.colorbox({                      
-			html : $compile($('#show-sso-credentials-modal').html())($scope),				
-				onLoad: function() {
-				$('#cboxClose').remove();
-			}
-		});
-		
-		$.colorbox.resize({width:"575px" , height:"460px"});
-	};
-	
 	$scope.showRevokeModal = function() {		
 		$.colorbox({                      
 			html : $compile($('#revoke-sso-credentials-modal').html())($scope),				
@@ -4093,15 +4078,13 @@ function SSOPreferencesCtrl($scope, $compile) {
 	    });	
 	};
 	
-	$scope.showEditModal = function() {
-		$.colorbox({                      
-			html : $compile($('#edit-sso-credentials-modal').html())($scope),				
-				onLoad: function() {
-				$('#cboxClose').remove();
-			}
-		});
-		
-		$.colorbox.resize({width:"460px" , height:"460px"});
+	$scope.showEditLayout = function() {		
+		$('.tab-container').click();
+		$scope.editing = true;			
+	};
+	
+	$scope.showViewLayout = function() {		
+		$scope.editing = false;		
 	};
 	
 	$scope.editClientCredentials = function() {
@@ -4117,7 +4100,7 @@ function SSOPreferencesCtrl($scope, $compile) {
 	        		if(data.errors.length != 0){
 	        			//SHOW ERROR
 	        		} else {	        			
-	        			$scope.closeModal();
+	        			$scope.editing = false;
 	        		}
 				});
 	        }

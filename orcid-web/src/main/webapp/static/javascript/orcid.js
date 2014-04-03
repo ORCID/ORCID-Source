@@ -73,6 +73,22 @@
         $(".orcid-id").tooltip({
             placement: "top"
         });
+        
+        $(".back").tooltip({
+            placement: "bottom"
+        });
+        
+        $(".save").tooltip({
+            placement: "bottom"
+        });
+        
+        $(".edit").tooltip({
+            placement: "bottom"
+        });
+        
+        $(".revoke").tooltip({
+            placement: "bottom"
+        });
     };
 
     var secondaryNavCleanup = function() {

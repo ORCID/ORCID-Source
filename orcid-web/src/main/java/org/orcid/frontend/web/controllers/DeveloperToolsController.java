@@ -33,7 +33,6 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.persistence.dao.ResearcherUrlDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RedirectUri;
 import org.orcid.pojo.ajaxForm.SSOCredentials;
@@ -266,21 +265,28 @@ public class DeveloperToolsController extends BaseWorkspaceController {
      * */
     private List<String> validateRedirectUri(RedirectUri redirectUri) {
         List<String> errors = null;
-        try {
-            URI.create(redirectUri.getValue().getValue());
-        } catch (NullPointerException npe) {
+        if(!PojoUtil.isEmpty(redirectUri.getValue())) {
+            try {
+                URI.create(redirectUri.getValue().getValue());
+            } catch (NullPointerException npe) {
+                errors = new ArrayList<String>();
+                errors.add(getMessage("manage.developer_tools.empty_redirect_uri"));
+            } catch (IllegalArgumentException iae) {
+                errors = new ArrayList<String>();
+                errors.add(getMessage("manage.developer_tools.invalid_redirect_uri"));
+            }
+        } else {
             errors = new ArrayList<String>();
             errors.add(getMessage("manage.developer_tools.empty_redirect_uri"));
-        } catch (IllegalArgumentException iae) {
-            errors = new ArrayList<String>();
-            errors.add(getMessage("manage.developer_tools.invalid_redirect_uri"));
-        }
+        }            
+        
         return errors;
     }
 
     
     /**
-     * TODO
+     * Enable developer tools on the current profile
+     * @return true if the developer tools where enabled on the profile
      * */
     @RequestMapping(value = "/enable-developer-tools.json", method = RequestMethod.POST)
     public @ResponseBody
@@ -296,7 +302,8 @@ public class DeveloperToolsController extends BaseWorkspaceController {
     }
 
     /**
-     * TODO
+     * Disable developer tools on the current profile
+     * @return true if the developer tools were disabled on the profile
      * */
     @RequestMapping(value = "/disable-developer-tools.json", method = RequestMethod.POST)
     public @ResponseBody
