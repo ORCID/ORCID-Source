@@ -45,6 +45,7 @@ import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.message.CitationType;
 import org.orcid.jaxb.model.message.ContributorAttributes;
 import org.orcid.jaxb.model.message.ContributorRole;
+import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
@@ -118,7 +119,7 @@ public class WorksController extends BaseWorkspaceController {
 
     @Resource
     private LocaleManager localeManager;
-    
+
     @Resource
     private ActivityCacheManager cacheManager;
 
@@ -192,8 +193,8 @@ public class WorksController extends BaseWorkspaceController {
                         && !StringUtils.isEmpty(work.getWorkTitle().getTranslatedTitle().getLanguageCode())) {
                     String languageName = languages.get(work.getWorkTitle().getTranslatedTitle().getLanguageCode());
                     work.getWorkTitle().getTranslatedTitle().setLanguageName(languageName);
-                }                                
-                
+                }
+
                 workList.add(work);
             }
         }
@@ -332,13 +333,14 @@ public class WorksController extends BaseWorkspaceController {
                     String languageName = languages.get(work.getWorkTitle().getTranslatedTitle().getLanguageCode());
                     work.getWorkTitle().getTranslatedTitle().setLanguageName(languageName);
                 }
-                
-                //If the work source is the user himself, fill the work source name
-                if(!PojoUtil.isEmpty(work.getWorkSource()) && profileWork.getProfile().getId().equals(work.getWorkSource().getValue())){
+
+                // If the work source is the user himself, fill the work source
+                // name
+                if (!PojoUtil.isEmpty(work.getWorkSource()) && profileWork.getProfile().getId().equals(work.getWorkSource().getValue())) {
                     List<Contributor> contributors = work.getContributors();
-                    if(work.getContributors() != null) {
-                        for(Contributor contributor : contributors){  
-                            if(!PojoUtil.isEmpty(contributor.getContributorRole()) || !PojoUtil.isEmpty(contributor.getContributorSequence())) {
+                    if (work.getContributors() != null) {
+                        for (Contributor contributor : contributors) {
+                            if (!PojoUtil.isEmpty(contributor.getContributorRole()) || !PojoUtil.isEmpty(contributor.getContributorSequence())) {
                                 ProfileEntity profile = profileWork.getProfile();
                                 String creditNameString = cacheManager.getCreditName(profile);
                                 Text creditName = Text.valueOf(creditNameString);
@@ -347,7 +349,7 @@ public class WorksController extends BaseWorkspaceController {
                         }
                     }
                 }
-                
+
                 return work;
             }
         }
@@ -502,6 +504,9 @@ public class WorksController extends BaseWorkspaceController {
 
         WorkContributors workContributors = orcidWork.getWorkContributors();
         if (workContributors != null) {
+            for (org.orcid.jaxb.model.message.Contributor workContributor : workContributors.getContributor()) {
+                workContributor.setCreditName(new CreditName(getEffectiveProfile().getOrcidBio().getPersonalDetails().retrievePublicDisplayName()));
+            }
             workEntity.setContributorsJson(JsonUtils.convertToJsonString(workContributors));
         }
 
@@ -830,5 +835,5 @@ public class WorksController extends BaseWorkspaceController {
         }
 
         return FunctionsOverCollections.sortMapsByValues(workTypes);
-    }        
+    }
 }
