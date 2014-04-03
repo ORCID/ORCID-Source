@@ -103,11 +103,6 @@
 								<@security.authorize ifAnyGranted="ROLE_ADMIN">
 									<li><a ${(nav=="admin")?string('class="active" ', '')}href="<@spring.url "/admin-actions" />"><@orcid.msg 'admin.workspace_link' /></a></li>
 								</@security.authorize>
-								<#if inDelegationMode>
-									<li><a href="<@spring.url '/switch-user?j_username='/>${realUserOrcid}">Switch back to me</a></li>
-								<#else>
-									<li><a href="<@spring.url '/signout'/>"><@orcid.msg 'public-layout.sign_out'/></a></li>
-								</#if>
 							</@security.authorize>
 						</ul>
 					</li>
