@@ -159,6 +159,8 @@
     /* Menu Handler Mobile / Desktop - Prototype implementation */
     var menuHandler = function(){
     	
+    	var language = $('#language-codes option:selected').text();
+        
         var menu = function(menu){
             this.menu = menu;
         };
@@ -374,7 +376,7 @@
 	
 	
 	var developerToolsTabs =  function(){
-		$('.developer-tools .tab').click(function(e){
+		$('.developer-tools .tab').click(function(e){			
 			e.preventDefault();
 			if($(this).hasClass('expanded')){
 				$(this).css('display', 'none');
@@ -387,7 +389,7 @@
 				$('.developer-tools .tab-container .expanded').css('display','inline');
 				$('.developer-tools .tab-container').css('background', '#EBEBEB');
 			}
-		});
+		});		
 	};
     
     /*============================================================
