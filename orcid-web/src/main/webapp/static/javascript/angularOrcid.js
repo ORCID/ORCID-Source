@@ -3076,10 +3076,10 @@ function DelegatorsCtrl($scope, $compile){
 	
 	$scope.getDelegators = function() {
 		$.ajax({
-	        url: getBaseUri() + '/account/delegates.json',
+	        url: getBaseUri() + '/delegators/delegators-and-me.json',
 	        dataType: 'json',
 	        success: function(data) {
-	        	$scope.delegation = data;
+	        	$scope.delegators = data.delegators;
 	        	$scope.$apply();
 	        }
 	    }).fail(function() { 
@@ -3095,7 +3095,7 @@ function DelegatorsCtrl($scope, $compile){
 	$("#delegatorsSearch").typeahead({
 		name: 'delegatorsSearch',
 		remote: {
-			url: getBaseUri()+'/delegators/search/%QUERY?limit=' + 10
+			url: getBaseUri()+'/delegators/search-for-data/%QUERY?limit=' + 10
 		},
 		template: function (datum) {
 			   var forDisplay = 
@@ -3116,19 +3116,22 @@ function DelegatorsCtrl($scope, $compile){
 
 function SwitchUserCtrl($scope, $compile, $document){
 	$scope.isDroppedDown = false;
+	$scope.searchResultsCache = new Object();
 	
 	$scope.openMenu = function(event){
-		$scope.getDelegates();
 		$scope.isDroppedDown = true;
 		event.stopPropagation();
 	};
 	
 	$scope.getDelegates = function() {
 		$.ajax({
-	        url: getBaseUri() + '/account/delegates.json',
+	        url: getBaseUri() + '/delegators/delegators-and-me.json',
 	        dataType: 'json',
 	        success: function(data) {
-	        	$scope.delegation = data;
+	        	$scope.delegators = data.delegators;
+				$scope.searchResultsCache[''] = $scope.delegators;
+	        	$scope.me = data.me;
+	        	$scope.unfilteredLength = $scope.delegators.delegationDetails.length;
 	        	$scope.$apply();
 	        }
 	    }).fail(function() { 
@@ -3137,11 +3140,42 @@ function SwitchUserCtrl($scope, $compile, $document){
 	    });
 	};
 	
+	$scope.search = function() {
+		if($scope.searchResultsCache[$scope.searchTerm] === undefined) {
+			if($scope.searchTerm === ''){
+				$scope.getDelegates();
+				$scope.searchResultsCache[$scope.searchTerm] = $scope.delegators;
+			}
+			else {
+				$.ajax({
+			        url: getBaseUri() + '/delegators/search/' + encodeURIComponent($scope.searchTerm) + '?limit=10',
+			        dataType: 'json',
+			        success: function(data) {
+			        	$scope.delegators = data;
+			        	$scope.searchResultsCache[$scope.searchTerm] = $scope.delegators;
+			        	$scope.$apply();
+			        }
+			    }).fail(function() { 
+			    	// something bad is happening!
+			    	console.log("error searching for delegates");
+			    });
+			}
+		} else {
+			$scope.delegators = $scope.searchResultsCache[$scope.searchTerm];
+		}
+	};
+	
 	$document.bind('click',
 		function(event){
-			$scope.isDroppedDown = false;
-			$scope.$apply();
+			if(event.target.id !== "delegators-search"){
+				$scope.isDroppedDown = false;
+				$scope.searchTerm = '';
+				$scope.$apply();
+			}
 		});
+	
+	// init
+	$scope.getDelegates();
 };
 
 function statisticCtrl($scope){	

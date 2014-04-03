@@ -49,19 +49,7 @@
 
     <div class="col-md-3 lhs left-aside">
     	<div class="workspace-profile">
-            <h2 class="full-name">
-                <#if (profile.orcidBio.personalDetails.creditName.content)??>
-                    ${(profile.orcidBio.personalDetails.creditName.content)!}
-                <#else>
-                    ${(profile.orcidBio.personalDetails.givenNames.content)!} ${(profile.orcidBio.personalDetails.familyName.content)!}
-                </#if>                
-            </h2>
-            <div class="oid">
-            	<p class="orcid-id-container">		
-	            	<span class="mini-orcid-icon"></span>
-	            	<a href="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" id="orcid-id" class="orcid-id" title="Click for public view of ORCID iD">${baseUriHttp}/${(profile.orcidIdentifier.path)!}</a>
-            	<p>
-            </div>
+            <#include "includes/id_banner.ftl"/>
 	        <#if ((profile.orcidBio.personalDetails.otherNames.otherName)?size != 0)>
 	        	<p><strong><@orcid.msg 'workspace.Alsoknownas'/></strong><br />
 		       		<#list profile.orcidBio.personalDetails.otherNames.otherName as otherName>
@@ -124,9 +112,8 @@
 		                <br />
 		                <a href="#workspace-employments" class="btn-update no-icon" ng-click="workspaceSrvc.openEmployment()"><@orcid.msg 'workspace.view'/></a>
 		             </div>
-	                <!-- fundings -->
-					<div class="workspace-overview  col-md-3 col-sm-3 col-xs-6">
-        				<a href="#workspace-fundings" class="overview-count" ng-click="workspaceSrvc.openFunding()"><span ng-bind="fundingSrvc.fundings.length"></a>
+					<div class="workspace-overview col-md-3 col-sm-3 col-xs-6">
+        				<a href="#workspace-fundings" class="overview-count" ng-click="workspaceSrvc.openFunding()"><span ng-bind="fundingSrvc.fundings.length"></span></a>
         				<a href="#workspace-fundings" class="overview-title" ng-click="workspaceSrvc.openFunding()"><@orcid.msg 'workspace.Funding'/></a>
         				<br />
         				<a href="#workspace-employments" class="btn-update no-icon" ng-click="workspaceSrvc.openFunding()"><@orcid.msg 'workspace.view'/></a>

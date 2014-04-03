@@ -87,7 +87,6 @@
                                <li class="leaf last"><a ${(nav=="signin")?string('class="active" ', '')} href="<@spring.url "/signin" />"><@orcid.msg 'public-layout.sign_in'/></a></li>
                                <li class="leaf last"><a ${(nav=="register")?string('class="active" ', '')} href="<@spring.url "/register" />"><@orcid.msg 'public-layout.register'/></a></li>                               
                                </@security.authorize>                            
-                               <#assign isProxy = (profile.orcidBio.delegation.givenPermissionBy)?? && profile.orcidBio.delegation.givenPermissionBy.delegationDetails?size != 0>
                                <@security.authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">
                                <li><a ${(nav=="record")?string('class="active" ', '')}href="<@spring.url '/my-orcid'/>"><@orcid.msg 'public-layout.my_orcid_record'/></a></li>
                                <li><a ${(nav=="settings")?string('class="active" ', '')}href="<@spring.url '/account'/>"><@orcid.msg 'public-layout.account_setting'/></a></li>
@@ -104,17 +103,6 @@
                                <@security.authorize ifAnyGranted="ROLE_ADMIN">
 									<li><a ${(nav=="admin")?string('class="active" ', '')}href="<@spring.url "/admin-actions" />"><@orcid.msg 'admin.workspace_link' /></a></li>								
 							   </@security.authorize>							   
-                               <#if RequestParameters['delegates']?? && isProxy>
-                                   <li ng-controller="SwitchUserCtrl" class="dropdown">
-                                       <a ng-click="openMenu($event)" ><@orcid.msg 'public-layout.manage_proxy_account'/></a>
-                                       <ul class="dropdown-menu" ng-show="isDroppedDown" ng-cloak>
-                                           <li ng-repeat="delegationDetails in delegation.givenPermissionBy.delegationDetails | orderBy:'delegateSummary.creditName.content' | limitTo:10">
-                                               <a href="<@spring.url '/switch-user?j_username='/>{{delegationDetails.delegateSummary.orcidIdentifier.path}}">{{delegationDetails.delegateSummary.creditName.content}} ({{delegationDetails.delegateSummary.orcidIdentifier.path}})</a>
-                                           </li>
-                                           <li><a href="<@spring.url '/delegators?delegates'/>">More...</a></li>
-                                       </ul>
-                                    </li>
-                               </#if>
                                <#if inDelegationMode>
                                    <li><a href="<@spring.url '/switch-user?j_username='/>${realUserOrcid}">Switch back to me</a></li>
                                <#else>
@@ -198,11 +186,14 @@
             <span class="see-more">${liveIds} <@orcid.msg 'public-layout.amount_ids'/>
                 <a href="<@spring.url "/statistics" />" title=""><@orcid.msg 'public-layout.see_more'/></a>
             </span>
+            <!-- 
             <#if inDelegationMode>
+            
             	<div class="delegation-label">            	
             		<span class="label label-danger"><@orcid.msg 'delegate.global_status_label'/></span>
             	</div>
             </#if>
+             -->
         </div> <!-- .row -->
     </div><!-- .header -->
     <div id="main" role="main" class="main">

@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.commons.lang.WordUtils;
+import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.cache.annotation.Cacheable;
 
@@ -51,8 +52,8 @@ public class LanguagesMap {
                 orcidCodes[i+1] =  Locale.TRADITIONAL_CHINESE;
                 postCh = true;
             } else {
-                if (postCh) orcidCodes[i+1] = new Locale(codes[i]);
-                else orcidCodes[i] = new Locale(codes[i]);
+                if (postCh) orcidCodes[i+1] = LocaleUtils.toLocale(codes[i]);
+                else orcidCodes[i] = LocaleUtils.toLocale(codes[i]);
             }
         }
         return orcidCodes;
