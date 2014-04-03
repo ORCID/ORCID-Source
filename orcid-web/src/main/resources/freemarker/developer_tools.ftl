@@ -99,7 +99,7 @@
 								  </table>
 								</div>									
 							</div>
-						</div>	 
+						</div>
 					</div>
 				</div>				
 			</div>
@@ -169,6 +169,18 @@
 						</div>	
 						<div class="col-md-2 col-sm-2"></div>
 						<!-- Client ID - Client Secret -->
+					</div>
+					<div class="row">
+						<div class="col-md-12 col-sm-12 col-xs-12">
+							<div class="add-options">
+								<a href="" class="icon-href-bg"><span class="glyphicon glyphicon-plus"></span>Add another redirect URI</a>
+								<h4>Test redirect URIs</h4>
+								<ul class="pullleft-list">
+									<li><a href="" class="icon-href"><span class="glyphicon glyphicon-plus"></span>Google OAuth2 Playground</a></li>
+									<li><a href="" class="icon-href"><span class="glyphicon glyphicon-trash"></span>Ruscope</a></li>
+								</ul>								
+							</div>
+						</div>					
 					</div>					
 					<div class="row">
 						<div class="col-md-12 col-sm-12 col-xs-12">
@@ -188,7 +200,7 @@
 								</div>									
 							</div>
 						</div>	 
-					</div>
+					</div>					
 				</div>				
 			</div>		
 			
@@ -196,7 +208,7 @@
 			<div class="row slide" ng-show="userCredentials.clientSecret.value" ng-cloak>
 				<div class="col-md-12 col-sm-12 col-xs-12">
 					<div class="tab-container">
-						<a href="#" class="tab collapsed"><span class="glyphicon glyphicon-chevron-down"></span>Show Details</a>
+						<a href="#" class="tab collapsed" data-tab="collapsed"><span class="glyphicon glyphicon-chevron-down"></span>Show Details</a>
 						<a href="#" class="tab expanded"><span class="glyphicon glyphicon-chevron-up"></span>Hide Details</a>
 					</div>
 				</div>			

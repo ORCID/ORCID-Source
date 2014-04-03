@@ -2343,6 +2343,11 @@ ul {
 	list-style: none;
 }
 
+ul.pullleft-list{
+	margin: 0;
+	padding: 0;
+}
+
 label.error,span.orcid-error {
 	color: red;
 }
@@ -3453,6 +3458,27 @@ p.orcid-id-container{
 	padding-left: 0;	
 }
 
+.developer-tools .icon-href-bg{
+	display: inline-block;
+	padding: 5px 10px;
+	background: #949599;
+	color: #FFF;	
+}
+
+.developer-tools .slidebox .add-options{
+	margin-bottom: 15px;
+	display: block;
+}
+
+.developer-tools .icon-href span{
+	margin: 0 5px 0 0;	
+}
+
+.developer-tools .icon-href{
+	margin: 0;
+	padding: 0;
+}
+
 .grey-box{
 	background: #EBEBEB;
 	padding: 15px;		
@@ -3508,14 +3534,6 @@ p.orcid-id-container{
 
 .developer-tools .dt-description{
 	margin-bottom: 5px;
-}
-
-
-.developer-tools .edit-details{
-	
-}
-.developer-tools .details{
-	
 }
 
 .scrollable-list {

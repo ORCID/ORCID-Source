@@ -4078,13 +4078,14 @@ function SSOPreferencesCtrl($scope, $compile) {
 	    });	
 	};
 	
-	$scope.showEditLayout = function() {		
-		$('.tab-container').click();
+	$scope.showEditLayout = function() {
 		$scope.editing = true;			
+		$('.tab-container .tab[data-tab="collapsed"]').click('expanded');
+		
 	};
 	
 	$scope.showViewLayout = function() {		
-		$scope.editing = false;		
+		$scope.editing = false;
 	};
 	
 	$scope.editClientCredentials = function() {

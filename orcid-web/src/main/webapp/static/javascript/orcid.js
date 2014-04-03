@@ -159,10 +159,6 @@
     /* Menu Handler Mobile / Desktop - Prototype implementation */
     var menuHandler = function(){
     	
-    	var language = $('#language-codes option:selected').text();        	
-        if(language == 'Русский') $('.header .navigation > .menu > li > .menu > li > a').addClass('russian-fix');
-        console.log('fix');        
-        
         var menu = function(menu){
             this.menu = menu;
         };
