@@ -31,7 +31,7 @@
     <aop:aspectj-autoproxy />
     
     <bean id="t2OrcidApiServiceImplRoot" class="org.orcid.api.t2.server.T2OrcidApiServiceImplRoot">
-        <property name="serviceDelegator" ref="t2OrcidApiServiceDelegatorV1_0_23"/>
+        <property name="serviceDelegator" ref="t2OrcidApiServiceDelegatorV1_1"/>
     </bean>
     
     <bean id="t2OrcidApiServiceDelegatorLatest" class="org.orcid.api.t2.server.delegator.impl.T2OrcidApiServiceVersionedDelegatorImpl"/>
