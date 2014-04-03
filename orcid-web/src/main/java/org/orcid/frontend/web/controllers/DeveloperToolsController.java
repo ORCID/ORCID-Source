@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.OrcidSSOManager;
 import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.persistence.dao.ResearcherUrlDao;
@@ -79,6 +80,16 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         return mav;
     }
 
+    @RequestMapping(value = "/get-empty-redirect-uri.json", method = RequestMethod.GET)
+    public @ResponseBody
+    RedirectUri getEmptyRedirectUri(HttpServletRequest request) {
+        RedirectUri result = new RedirectUri();
+        result.setValue(new Text());
+        result.setType(Text.valueOf(RedirectUriType.DEFAULT.name()));
+        return result;
+    }
+    
+    
     @RequestMapping(value = "/get-empty-sso-credential.json", method = RequestMethod.GET)
     public @ResponseBody
     SSOCredentials getEmptySSOCredentials(HttpServletRequest request) {

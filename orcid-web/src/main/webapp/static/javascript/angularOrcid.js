@@ -3937,6 +3937,10 @@ function removeSecQuestionCtrl($scope,$compile) {
 function SSOPreferencesCtrl($scope, $compile) {
 	$scope.userCredentials = null;	
 	$scope.editing = false;
+	$scope.hideGoogleUri = false;
+	$scope.hideRunscopeUri = false;
+	$scope.googleUri = 'https://developers.google.com/oauthplayground';
+	$scope.runscopeUri = 'https://www.runscope.com/oauth_tool/callback';
 	
 	$scope.enableDeveloperTools = function() {
 		$.ajax({
@@ -3986,8 +3990,8 @@ function SSOPreferencesCtrl($scope, $compile) {
 	        type: 'POST',	                	      
 	        success: function(data){	 
 	        	$scope.$apply(function(){ 
-	        		if(data != null && data.clientSecret != null)
-	        			$scope.userCredentials = data;	        		 
+	        		if(data != null && data.clientSecret != null)	        			
+	        			$scope.userCredentials = data;		        		
 				});
 	        }
 	    }).fail(function(error) { 
@@ -3997,8 +4001,7 @@ function SSOPreferencesCtrl($scope, $compile) {
 	    });		
 	};
 	
-	// Get an empty modal to add
-	$scope.createCredentialsModal = function(){		
+	$scope.getEmptyCredentials = function() {
 		$.ajax({
 			url: getBaseUri() + '/developer-tools/get-empty-sso-credential.json',
 			dataType: 'json',
@@ -4011,6 +4014,14 @@ function SSOPreferencesCtrl($scope, $compile) {
 		}).fail(function() { 
 	    	console.log("Error fetching client");
 	    });
+	};
+	
+	// Get an empty modal to add
+	$scope.createCredentialsModal = function(){		
+		$scope.userCredentials = $scope.getEmptyCredentials();
+		$scope.$apply(function() {
+			$scope.showCreateModal();
+		});
 	};
 	
 	$scope.showCreateModal = function() {
@@ -4117,6 +4128,33 @@ function SSOPreferencesCtrl($scope, $compile) {
 	
 	$scope.closeModal = function() {
 		$.colorbox.close();
+	};
+	
+	$scope.addTestRedirectUri = function(type) {
+		var rUri = $scope.runscopeUri;		
+		if(type == 'google'){
+			rUri = $scope.googleUri;
+		}
+								
+		$.ajax({
+			url: getBaseUri() + '/developer-tools/get-empty-redirect-uri.json',
+			dataType: 'json',
+			success: function(data) {
+				data.value.value=rUri;
+				$scope.$apply(function(){ 
+					$scope.userCredentials.redirectUris.push(data);
+					if(type == 'google') {
+						$scope.hideGoogleUri = true; 
+						$('#google-ruir').hide();
+					} else {
+						$scope.hideRunscopeUri = true;
+						$('#runscope-ruir').hide();
+					}
+				});
+			}
+		}).fail(function() { 
+	    	console.log("Error fetching empty redirect uri");
+	    });
 	};
 	
 	//init

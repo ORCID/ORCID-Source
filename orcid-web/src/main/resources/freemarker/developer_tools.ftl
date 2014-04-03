@@ -170,14 +170,14 @@
 						<div class="col-md-2 col-sm-2"></div>
 						<!-- Client ID - Client Secret -->
 					</div>
-					<div class="row">
+					<div class="row" ng-show="!hideGoogleUri || !hideRunscopeUri">
 						<div class="col-md-12 col-sm-12 col-xs-12">
 							<div class="add-options">
-								<a href="" class="icon-href-bg"><span class="glyphicon glyphicon-plus"></span>Add another redirect URI</a>
+								<a href="" class="icon-href-bg" ng-click="addRedirectURI()"><span class="glyphicon glyphicon-plus"></span>Add another redirect URI</a>
 								<h4>Test redirect URIs</h4>
 								<ul class="pullleft-list">
-									<li><a href="" class="icon-href"><span class="glyphicon glyphicon-plus"></span>Google OAuth2 Playground</a></li>
-									<li><a href="" class="icon-href"><span class="glyphicon glyphicon-trash"></span>Ruscope</a></li>
+									<li id="google-ruir"><a href="" class="icon-href" ng-click="addTestRedirectUri('google')"><span class="glyphicon glyphicon-plus"></span>Google OAuth2 Playground</a></li>
+									<li id="runscope-ruir"><a href="" class="icon-href" ng-click="addTestRedirectUri('runscope')"><span class="glyphicon glyphicon-trash"></span>Ruscope</a></li>
 								</ul>								
 							</div>
 						</div>					
