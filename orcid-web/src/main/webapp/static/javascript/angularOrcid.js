@@ -3074,6 +3074,21 @@ function DelegatesCtrl($scope, $compile){
 // Controller for delegate permissions that have been granted TO the current user
 function DelegatorsCtrl($scope, $compile){
 	
+	$scope.sort = {
+			column: 'delegateSummary.creditName.content',
+			descending: false
+	};
+	
+	$scope.changeSorting = function(column) {
+		var sort = $scope.sort;
+		if (sort.column === column) {
+			sort.descending = !sort.descending;
+		} else {
+			sort.column = column;
+			sort.descending = false;
+		}
+	};
+	
 	$scope.getDelegators = function() {
 		$.ajax({
 	        url: getBaseUri() + '/delegators/delegators-and-me.json',
