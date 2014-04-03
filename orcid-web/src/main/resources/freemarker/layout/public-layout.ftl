@@ -90,14 +90,16 @@
 								<@security.authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">
 								<li><a ${(nav=="record")?string('class="active" ', '')}href="<@spring.url '/my-orcid'/>"><@orcid.msg 'public-layout.my_orcid_record'/></a></li>
 								<li><a ${(nav=="settings")?string('class="active" ', '')}href="<@spring.url '/account'/>"><@orcid.msg 'public-layout.account_setting'/></a></li>
-							 	<@security.authorize ifAnyGranted="ROLE_GROUP, ROLE_BASIC, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM, ROLE_PREMIUM_INSTITUTION">
-				 					<li><a ${(nav=="developer-tools")?string('class="active" ', '')}href="<@spring.url "/group/developer-tools" />">${springMacroRequestContext.getMessage("workspace.developer_tools")}</a></li>
-								</@security.authorize>
-								<@security.authorize ifAnyGranted="ROLE_USER">
-									<#if profile?? && profile.orcidInternal?? && profile.orcidInternal.preferences.developerToolsEnabled?? && profile.orcidInternal.preferences.developerToolsEnabled.value == true>
-										<li><a ${(nav=="developer-tools")?string('class="active" ', '')}href="<@spring.url "/developer-tools" />">${springMacroRequestContext.getMessage("workspace.developer_tools")}</a></li>
-									</#if>
-								</@security.authorize>
+								<#if !inDelegationMode>
+									<@security.authorize ifAnyGranted="ROLE_GROUP, ROLE_BASIC, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM, ROLE_PREMIUM_INSTITUTION">
+					 					<li><a ${(nav=="developer-tools")?string('class="active" ', '')}href="<@spring.url "/group/developer-tools" />">${springMacroRequestContext.getMessage("workspace.developer_tools")}</a></li>
+									</@security.authorize>
+									<@security.authorize ifAnyGranted="ROLE_USER">
+										<#if profile?? && profile.orcidInternal?? && profile.orcidInternal.preferences.developerToolsEnabled?? && profile.orcidInternal.preferences.developerToolsEnabled.value == true>
+											<li><a ${(nav=="developer-tools")?string('class="active" ', '')}href="<@spring.url "/developer-tools" />">${springMacroRequestContext.getMessage("workspace.developer_tools")}</a></li>
+										</#if>
+									</@security.authorize>
+								</#if>
 								<@security.authorize ifAnyGranted="ROLE_ADMIN">
 									<li><a ${(nav=="admin")?string('class="active" ', '')}href="<@spring.url "/admin-actions" />"><@orcid.msg 'admin.workspace_link' /></a></li>
 								</@security.authorize>
