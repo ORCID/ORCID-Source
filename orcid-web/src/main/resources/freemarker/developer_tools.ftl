@@ -196,6 +196,10 @@
 								    	<td><strong><@orcid.msg 'manage.developer_tools.view.orcid'/></strong></td>
 								    	<td>{{userCredentials.clientOrcid.value}}</td>
 								    </tr>
+								    <tr>
+								    	<td><strong>Playground example</strong></td>
+								    	<td>{{playgroundExample}}</td>
+								    </tr>
 								  </table>
 								</div>									
 							</div>
