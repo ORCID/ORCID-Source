@@ -4079,13 +4079,18 @@ function SSOPreferencesCtrl($scope, $compile) {
 	};
 	
 	$scope.showEditLayout = function() {
-		$scope.editing = true;			
-		$('.tab-container .tab[data-tab="collapsed"]').click('expanded');
-		
+		$scope.editing = true;
+		$('.developer-tools .slidebox').slideDown();
+		$('.developer-tools .slidebox').slideDown();
+		$('.collapsed').css('display', 'none');
+		$('.expanded').css('display', 'inline').parent().css('background','#EBEBEB');
 	};
 	
 	$scope.showViewLayout = function() {		
 		$scope.editing = false;
+		$('.edit-details .slidebox').slideDown();
+		
+		
 	};
 	
 	$scope.editClientCredentials = function() {
