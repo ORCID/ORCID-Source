@@ -3469,6 +3469,10 @@ p.orcid-id-container{
 	background-color: #338caf;
 }
 
+.developer-tools a.icon-href-bg span{
+	margin-right: 5px;
+}
+
 .developer-tools .slidebox .add-options{
 	margin-bottom: 15px;
 	display: block;
