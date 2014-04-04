@@ -56,9 +56,9 @@
 		       			${otherName.content}<#if otherName_has_next><br /></#if>
 		       		</#list></p>
 	       	</#if>
-            <#if (profile.orcidBio.contactDetails.address.country.content)??>
+            <#if (countryName)??>
                 <p><strong><@orcid.msg 'public_profile.labelCountry'/></strong>
-                ${(profile.orcidBio.contactDetails.address.country.content)!}
+                ${(countryName)!}
                 </p>
             </#if>
 	       	<#if (profile.orcidBio.keywords)?? && (profile.orcidBio.keywords.keyword?size != 0)>
