@@ -3536,6 +3536,10 @@ p.orcid-id-container{
 	margin-bottom: 5px;
 }
 
+.developer-tools .table-row-border-bottom{
+	border-bottom: 1px solid #CCCCCC;
+}
+
 .scrollable-list {
 	height: 120px;
 	width:330px;

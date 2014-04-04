@@ -82,86 +82,52 @@
 							</ul>
 						</div>
 					</div>
-					<div class="row">
-						<!-- Client ID - Client Secret -->
+					<div class="row">						
 						<div class="col-md-12 col-sm-12 col-xs-12">
 							<div class="grey-box">
 								<div class="table-responsive">
+								  <!-- Client ID - Client Secret -->
 								  <table class="table">
-								    <tr>
-								    	<td><strong><@orcid.msg 'manage.developer_tools.view.secret'/></strong></td>
-								    	<td>{{userCredentials.clientSecret.value}}</td>
-								    </tr>
-								    <tr>
-								    	<td><strong><@orcid.msg 'manage.developer_tools.view.orcid'/></strong></td>
-								    	<td>{{userCredentials.clientOrcid.value}}</td>
-								    </tr>								    							    								    								    								 
-								  </table>
+									    <tr>
+									    	<td><strong><@orcid.msg 'manage.developer_tools.view.secret'/></strong></td>
+									    	<td>{{userCredentials.clientSecret.value}}</td>
+									    </tr>
+									    <tr class="table-row-border-bottom">
+									    	<td><strong><@orcid.msg 'manage.developer_tools.view.orcid'/></strong></td>
+									    	<td>{{userCredentials.clientOrcid.value}}</td>
+									    </tr>
+									    <!-- Authorize URl and Token URL -->
+									    <tr>
+									    	<td><strong><@orcid.msg 'manage.developer_tools.view.example.authorize'/></strong></td>
+									    	<td>{{authorizeURL}}</td>
+									    </tr>
+									    <tr class="table-row-border-bottom">
+									    	<td><strong><@orcid.msg 'manage.developer_tools.view.example.token'/></strong></td>
+									    	<td>{{tokenURL}}</td>
+									    </tr>
+									    <!-- Available scopes -->
+									    <tr>
+									    	<td><strong><@orcid.msg 'manage.developer_tools.view.available_scopes.title'/></strong></td>
+									    	<td><a href="<@orcid.msg 'manage.developer_tools.view.available_scopes.link.url'/>"><@orcid.msg 'manage.developer_tools.view.available_scopes.link.text'/></a></td>
+									    </tr>
+									    <tr  class="table-row-border-bottom">
+									    	<td></td>
+									    	<td><strong><@orcid.msg 'manage.developer_tools.view.available_scopes.authorize'/></strong><@orcid.msg 'manage.developer_tools.view.available_scopes.authorize.description'/></td>
+									    </tr>
+									    <!-- Testing tools -->
+									    <tr ng-hide="playgroundExample == '' && runscopeExample == ''">
+									    		<td ng-hide="playgroundExample == ''"><strong><@orcid.msg 'manage.developer_tools.view.example.title'/></strong></td>
+									    		<td ng-hide="playgroundExample == ''"><a href="{{playgroundExample}}"><@orcid.msg 'manage.developer_tools.view.example.google'/></a></td>
+									    </tr>
+									    <tr ng-hide="runscopeExample == ''">
+											   	<td><strong ng-hide="playgroundExample != ''"><@orcid.msg 'manage.developer_tools.view.example.title'/></strong></td>
+										   	<td><a href="{{runscopeExample}}"><@orcid.msg 'manage.developer_tools.view.example.runscope'/></a></td>
+										 </tr>							    							    								    								    								 
+								   </table>
 								</div>									
 							</div>
 						</div>
 					</div>
-					
-					<div class="row">
-						<!-- Authorize URl and Token URL -->
-						<div class="col-md-12 col-sm-12 col-xs-12">
-							<div class="grey-box">
-								<div class="table-responsive">
-								  <table class="table">
-								    <tr>
-								    	<td><strong><@orcid.msg 'manage.developer_tools.view.example.authorize'/></strong></td>
-								    	<td>{{authorizeURL}}</td>
-								    </tr>
-								    <tr>
-								    	<td><strong><@orcid.msg 'manage.developer_tools.view.example.token'/></strong></td>
-								    	<td>{{tokenURL}}</td>
-								    </tr>								    							    								    								    								 
-								  </table>
-								</div>									
-							</div>
-						</div>
-					</div>
-					
-					<div class="row">
-						<!-- Available scopes -->
-						<div class="col-md-12 col-sm-12 col-xs-12">
-							<div class="grey-box">
-								<div class="table-responsive">
-								  <table class="table">
-								    <tr>
-								    	<td><strong><@orcid.msg 'manage.developer_tools.view.available_scopes.title'/></strong></td>
-								    	<td><a href="<@orcid.msg 'manage.developer_tools.view.available_scopes.link.url'/>"><@orcid.msg 'manage.developer_tools.view.available_scopes.link.text'/></a></td>
-								    </tr>
-								    <tr>
-								    	<td></td>
-								    	<td><strong><@orcid.msg 'manage.developer_tools.view.available_scopes.authorize'/></strong>&nbsp;&nbsp;&nbsp;<@orcid.msg 'manage.developer_tools.view.available_scopes.authorize.description'/></td>
-								    </tr>								    							    								    								    								 
-								  </table>
-								</div>									
-							</div>
-						</div>
-					</div>
-					
-					<div class="row" ng-hide="playgroundExample == '' && runscopeExample == ''">
-						<!-- Testing tools -->
-						<div class="col-md-12 col-sm-12 col-xs-12">
-							<div class="grey-box">
-								<div class="table-responsive">
-								  <table class="table">
-										<tr ng-hide="playgroundExample == ''">
-								    		<td><strong><@orcid.msg 'manage.developer_tools.view.example.title'/></strong></td>
-								    		<td><a href="{{playgroundExample}}"><@orcid.msg 'manage.developer_tools.view.example.google'/></a></td>
-								    	</tr>
-								    	<tr ng-hide="runscopeExample == ''">
-									    	<td><strong ng-hide="playgroundExample != ''"><@orcid.msg 'manage.developer_tools.view.example.title'/></strong></td>
-									    	<td><a href="{{runscopeExample}}"><@orcid.msg 'manage.developer_tools.view.example.runscope'/></a></td>
-									    </tr>						    							    								    								    								 
-								  </table>
-								</div>									
-							</div>
-						</div>
-					</div>
-					
 				</div>				
 			</div>
 			
