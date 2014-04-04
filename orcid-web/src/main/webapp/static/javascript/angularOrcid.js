@@ -4118,10 +4118,9 @@ function SSOPreferencesCtrl($scope, $compile) {
 			}
 		}
 		$scope.editing = true;
-		$('.developer-tools .slidebox').slideDown();
-		$('.developer-tools .slidebox').slideDown();
-		$('.collapsed').css('display', 'none');
-		$('.expanded').css('display', 'inline').parent().css('background','#EBEBEB');							  			
+		$('.developer-tools .slidebox').slideDown();		
+		$('.tab-container .collapsed').css('display', 'none');
+		$('.tab-container .expanded').css('display', 'inline').parent().css('background','#EBEBEB');
 	};
 	
 	$scope.showViewLayout = function() {	
