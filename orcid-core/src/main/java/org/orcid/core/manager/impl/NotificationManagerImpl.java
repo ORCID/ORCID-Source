@@ -156,6 +156,10 @@ public class NotificationManagerImpl implements NotificationManager {
         this.profileEventDao = profileEventDao;
     }
 
+    public void setProfileDao(ProfileDao profileDao) {
+        this.profileDao = profileDao;
+    }
+
     @Override
     public void sendOrcidDeactivateEmail(OrcidProfile orcidToDeactivate, URI baseUri) {
         // Create verification url
@@ -359,34 +363,26 @@ public class NotificationManagerImpl implements NotificationManager {
         // LADP, Please Check, can't test yet
         // Would prefer if this email came from ORCID user granting permission -
         // parameter also needed for the body of the email
-        // Add parameter to get the email address of the ORCID user granting
-        // permssion
-        // String grantingOrcidEmail = orcidUserGrantingPermission.getEmail();
-
         // message.setFrom(grantingOrcidEmail);
         message.setFrom(fromAddress);
         message.setSubject(getSubject("email.subject.added_as_delegate", orcidUserGrantingPermission));
 
         for (DelegationDetails newDelegation : delegatesGrantedByUser) {
-            // LADP, suggest swapping out this statement to use the
-            // deriveEmailFriendlyName() function instead
-            // (pretty sure the line below won't work...)
-            // String emailNameForDelegate =
-            // deriveEmailFriendlyName(newDelegation.getDelegateSummary());
-            String emailNameForDelegate = newDelegation.getDelegateSummary() != null && newDelegation.getDelegateSummary().getCreditName() != null ? newDelegation
-                    .getDelegateSummary().getCreditName().getContent() : LAST_RESORT_ORCID_USER_EMAIL_NAME;
+            String grantingOrcidEmail = orcidUserGrantingPermission.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+            ProfileEntity delegateProfileEntity = profileDao.find(newDelegation.getDelegateSummary().getOrcidIdentifier().getPath());
+            String emailNameForDelegate = deriveEmailFriendlyName(delegateProfileEntity);
 
             templateParams.put("emailNameForDelegate", emailNameForDelegate);
             templateParams.put("grantingOrcidValue", orcidUserGrantingPermission.getOrcidIdentifier().getPath());
             templateParams.put("grantingOrcidName", deriveEmailFriendlyName(orcidUserGrantingPermission));
             templateParams.put("baseUri", baseUri);
-            // templateParams.put("grantingOrcidEmail", grantingOrcidEmail);
+            templateParams.put("grantingOrcidEmail", grantingOrcidEmail);
 
             addMessageParams(templateParams, orcidUserGrantingPermission);
 
             String body = templateManager.processTemplate("added_as_delegate_email.ftl", templateParams);
-            String toAddress = orcidUserGrantingPermission.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
-            message.setTo(toAddress);
+
+            message.setTo(delegateProfileEntity.getPrimaryEmail().getId());
             message.setText(body);
             // Send message
             sendAndLogMessage(message);
