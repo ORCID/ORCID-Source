@@ -4108,13 +4108,7 @@ function SSOPreferencesCtrl($scope, $compile) {
 	    });	
 	};
 	
-	$scope.showEditLayout = function() {
-		$scope.editing = true;
-		$('.developer-tools .slidebox').slideDown();
-		$('.developer-tools .slidebox').slideDown();
-		$('.collapsed').css('display', 'none');
-		$('.expanded').css('display', 'inline').parent().css('background','#EBEBEB');
-		
+	$scope.showEditLayout = function() {		
 		//Hide the testing tools if they are already added
 		for(var i = 0; i < $scope.userCredentials.redirectUris.length; i++) {
 			if($scope.googleUri == $scope.userCredentials.redirectUris[i].value.value) {
@@ -4122,11 +4116,17 @@ function SSOPreferencesCtrl($scope, $compile) {
 			} else if($scope.runscopeUri == $scope.userCredentials.redirectUris[i].value.value) {
 				$scope.hideRunscopeUri=true;
 			}
-		}	  
-		
+		}
+		$scope.editing = true;
+		$('.developer-tools .slidebox').slideDown();
+		$('.developer-tools .slidebox').slideDown();
+		$('.collapsed').css('display', 'none');
+		$('.expanded').css('display', 'inline').parent().css('background','#EBEBEB');							  			
 	};
 	
-	$scope.showViewLayout = function() {		
+	$scope.showViewLayout = function() {	
+		//Reset the credentials
+		$scope.getSSOCredentials();	
 		$scope.editing = false;
 		$('.edit-details .slidebox').slideDown();				
 	};

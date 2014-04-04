@@ -117,11 +117,11 @@
 									    <!-- Testing tools -->
 									    <tr ng-hide="playgroundExample == '' && runscopeExample == ''">
 									    		<td ng-hide="playgroundExample == ''"><strong><@orcid.msg 'manage.developer_tools.view.example.title'/></strong></td>
-									    		<td ng-hide="playgroundExample == ''"><a href="{{playgroundExample}}"><@orcid.msg 'manage.developer_tools.view.example.google'/></a></td>
+									    		<td ng-hide="playgroundExample == ''"><a href="{{playgroundExample}}" target="_blank"><@orcid.msg 'manage.developer_tools.view.example.google'/></a></td>
 									    </tr>
 									    <tr ng-hide="runscopeExample == ''">
 											   	<td><strong ng-hide="playgroundExample != ''"><@orcid.msg 'manage.developer_tools.view.example.title'/></strong></td>
-										   	<td><a href="{{runscopeExample}}"><@orcid.msg 'manage.developer_tools.view.example.runscope'/></a></td>
+										   	<td><a href="{{runscopeExample}}" target="_blank"><@orcid.msg 'manage.developer_tools.view.example.runscope'/></a></td>
 										 </tr>							    							    								    								    								 
 								   </table>
 								</div>									
@@ -197,15 +197,17 @@
 						<div class="col-md-2 col-sm-2"></div>
 						<!-- Client ID - Client Secret -->
 					</div>
-					<div class="row" ng-show="!hideGoogleUri || !hideRunscopeUri">
+					<div class="row">
 						<div class="col-md-12 col-sm-12 col-xs-12">
 							<div class="add-options">
-								<a href="" class="icon-href-bg" ng-click="addRedirectURI()"><span class="glyphicon glyphicon-plus"></span>Add another redirect URI</a>
-								<h4>Test redirect URIs</h4>
-								<ul class="pullleft-list">
-									<li id="google-ruir"><a href="" class="icon-href" ng-click="addTestRedirectUri('google')"><span class="glyphicon glyphicon-plus"></span>Google OAuth2 Playground</a></li>
-									<li id="runscope-ruir"><a href="" class="icon-href" ng-click="addTestRedirectUri('runscope')"><span class="glyphicon glyphicon-trash"></span>Ruscope</a></li>
-								</ul>								
+								<a href="" class="icon-href-bg" ng-click="addRedirectURI()"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.add_redirect_uri' /></a>
+								<div ng-show="!hideGoogleUri || !hideRunscopeUri">
+									<h4>Test redirect URIs</h4>
+									<ul class="pullleft-list">
+										<li id="google-ruir" ng-hide="hideGoogleUri"><a href="" class="icon-href" ng-click="addTestRedirectUri('google')"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.google'/></a></li>
+										<li id="runscope-ruir" ng-hide="hideRunscopeUri"><a href="" class="icon-href" ng-click="addTestRedirectUri('runscope')"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.runscope'/></a></li>
+									</ul>								
+								</div>
 							</div>
 						</div>					
 					</div>					
@@ -234,8 +236,8 @@
 			<div class="row slide" ng-show="userCredentials.clientSecret.value" ng-cloak>
 				<div class="col-md-12 col-sm-12 col-xs-12">
 					<div class="tab-container">
-						<a href="#" class="tab collapsed" data-tab="collapsed"><span class="glyphicon glyphicon-chevron-down"></span>Show Details</a>
-						<a href="#" class="tab expanded"><span class="glyphicon glyphicon-chevron-up"></span>Hide Details</a>
+						<a href="#" class="tab collapsed" data-tab="collapsed"><span class="glyphicon glyphicon-chevron-down"></span><@orcid.msg 'manage.developer_tools.show_details' /></a>
+						<a href="#" class="tab expanded"><span class="glyphicon glyphicon-chevron-up"></span><@orcid.msg 'manage.developer_tools.hide_details' /></a>
 					</div>
 				</div>			
 			</div>
@@ -292,8 +294,6 @@
 					<div ng-repeat='error in userCredentials.clientWebsite.errors' ng-bind-html="error"></div>
 				</span>	
 			</div>
-
-
 
 			<div class="row">
 				<span class="col-xs-12 col-md-12"><strong><@orcid.msg 'manage.developer_tools.redirect_uri'/>:</strong></span>
