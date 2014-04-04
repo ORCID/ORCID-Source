@@ -95,12 +95,73 @@
 								    <tr>
 								    	<td><strong><@orcid.msg 'manage.developer_tools.view.orcid'/></strong></td>
 								    	<td>{{userCredentials.clientOrcid.value}}</td>
-								    </tr>
+								    </tr>								    							    								    								    								 
 								  </table>
 								</div>									
 							</div>
 						</div>
 					</div>
+					
+					<div class="row">
+						<!-- Authorize URl and Token URL -->
+						<div class="col-md-12 col-sm-12 col-xs-12">
+							<div class="grey-box">
+								<div class="table-responsive">
+								  <table class="table">
+								    <tr>
+								    	<td><strong><@orcid.msg 'manage.developer_tools.view.example.authorize'/></strong></td>
+								    	<td>{{authorizeURL}}</td>
+								    </tr>
+								    <tr>
+								    	<td><strong><@orcid.msg 'manage.developer_tools.view.example.token'/></strong></td>
+								    	<td>{{tokenURL}}</td>
+								    </tr>								    							    								    								    								 
+								  </table>
+								</div>									
+							</div>
+						</div>
+					</div>
+					
+					<div class="row">
+						<!-- Available scopes -->
+						<div class="col-md-12 col-sm-12 col-xs-12">
+							<div class="grey-box">
+								<div class="table-responsive">
+								  <table class="table">
+								    <tr>
+								    	<td><strong><@orcid.msg 'manage.developer_tools.view.available_scopes.title'/></strong></td>
+								    	<td><a href="<@orcid.msg 'manage.developer_tools.view.available_scopes.link.url'/>"><@orcid.msg 'manage.developer_tools.view.available_scopes.link.text'/></a></td>
+								    </tr>
+								    <tr>
+								    	<td></td>
+								    	<td><strong><@orcid.msg 'manage.developer_tools.view.available_scopes.authorize'/></strong>&nbsp;&nbsp;&nbsp;<@orcid.msg 'manage.developer_tools.view.available_scopes.authorize.description'/></td>
+								    </tr>								    							    								    								    								 
+								  </table>
+								</div>									
+							</div>
+						</div>
+					</div>
+					
+					<div class="row" ng-hide="playgroundExample == '' && runscopeExample == ''">
+						<!-- Available scopes -->
+						<div class="col-md-12 col-sm-12 col-xs-12">
+							<div class="grey-box">
+								<div class="table-responsive">
+								  <table class="table">
+										<tr ng-hide="playgroundExample == ''">
+								    		<td><strong><@orcid.msg 'manage.developer_tools.view.example.title'/></strong></td>
+								    		<td><a href="{{playgroundExample}}"><@orcid.msg 'manage.developer_tools.view.example.google'/></a></td>
+								    	</tr>
+								    	<tr ng-hide="runscopeExample == ''">
+									    	<td><strong ng-hide="playgroundExample != ''"><@orcid.msg 'manage.developer_tools.view.example.title'/></strong></td>
+									    	<td><a href="{{runscopeExample}}"><@orcid.msg 'manage.developer_tools.view.example.runscope'/></a></td>
+									    </tr>						    							    								    								    								 
+								  </table>
+								</div>									
+							</div>
+						</div>
+					</div>
+					
 				</div>				
 			</div>
 			
@@ -195,11 +256,7 @@
 								    <tr>
 								    	<td><strong><@orcid.msg 'manage.developer_tools.view.orcid'/></strong></td>
 								    	<td>{{userCredentials.clientOrcid.value}}</td>
-								    </tr>
-								    <tr>
-								    	<td><strong>Playground example</strong></td>
-								    	<td>{{playgroundExample}}</td>
-								    </tr>
+								    </tr>								    
 								  </table>
 								</div>									
 							</div>
@@ -207,8 +264,7 @@
 					</div>					
 				</div>				
 			</div>		
-			
-			
+						
 			<div class="row slide" ng-show="userCredentials.clientSecret.value" ng-cloak>
 				<div class="col-md-12 col-sm-12 col-xs-12">
 					<div class="tab-container">

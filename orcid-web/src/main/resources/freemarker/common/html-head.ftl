@@ -38,6 +38,7 @@
         var orcidVar = {};
         orcidVar.baseUri = '${baseUri}';
         orcidVar.baseUriHttp = '${baseUriHttp}';
+        orcidVar.pubBaseUri = '${pubBaseUri}';
       <#if (workIdsJson)??>
         orcidVar.workIds = JSON.parse("${workIdsJson}");
       </#if>

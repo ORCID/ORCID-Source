@@ -106,6 +106,9 @@ public class BaseController {
     @Value("${org.orcid.core.baseUri:http://orcid.org}")
     private String baseUri;
 
+    @Value("${org.orcid.core.pubBaseUri:https://pub.orcid.org}")
+    private String pubBaseUri;
+    
     @Resource
     private String cdnConfigFile;
 
@@ -435,6 +438,15 @@ public class BaseController {
 
     public void setBaseUri(String baseUri) {
         this.baseUri = baseUri;
+    }
+    
+    @ModelAttribute("pubBaseUri")
+    public String getPubBaseUri() {
+        return pubBaseUri;
+    }
+
+    public void setPubBaseUri(String pubBaseUri) {
+        this.pubBaseUri = pubBaseUri;
     }
 
     /**

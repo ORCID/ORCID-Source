@@ -3941,8 +3941,12 @@ function SSOPreferencesCtrl($scope, $compile) {
 	$scope.hideRunscopeUri = false;
 	$scope.googleUri = 'https://developers.google.com/oauthplayground';
 	$scope.runscopeUri = 'https://www.runscope.com/oauth_tool/callback';
-	$scope.playgroundExample = null;
-	$scope.googleExample = 'https://developers.google.com/oauthplayground/#step1&scopes=/authenticate&oauthEndpointSelect=Custom&oauthAuthEndpointValue=http%3A//qa.orcid.org/oauth/authorize&oauthTokenEndpointValue=http%3A//pub.qa.orcid.org/oauth/token&oauthClientId=[CLIENT_ID]&oauthClientSecret=[CLIENT_SECRET]&accessTokenType=bearer';
+	$scope.playgroundExample = '';
+	$scope.googleExampleLink = 'https://developers.google.com/oauthplayground/#step1&scopes=/authenticate&oauthEndpointSelect=Custom&oauthAuthEndpointValue=http%3A//qa.orcid.org/oauth/authorize&oauthTokenEndpointValue=http%3A//pub.qa.orcid.org/oauth/token&oauthClientId=[CLIENT_ID]&oauthClientSecret=[CLIENT_SECRET]&accessTokenType=bearer';
+	$scope.runscopeExample = '';
+	$scope.runscopeExampleLink = 'https://www.runscope.com/oauth2_tool';
+	$scope.authorizeURL = getBaseUri() + '/oauth/authorize';
+	$scope.tokenURL = orcidVar.pubBaseUri + '/oauth/token';
 	
 	$scope.enableDeveloperTools = function() {
 		$.ajax({
@@ -3997,12 +4001,14 @@ function SSOPreferencesCtrl($scope, $compile) {
 	        			//Build the google playground url example
 	        			for(var i = 0; i < $scope.userCredentials.redirectUris.length; i++) {
 	        				if($scope.googleUri == $scope.userCredentials.redirectUris[i].value.value) {
-	        					var example = $scope.googleExample;
+	        					var example = $scope.googleExampleLink;
 	        					example = example.replace('[CLIENT_ID]', $scope.userCredentials.clientOrcid.value);
 	        					example = example.replace('[CLIENT_SECRET]', $scope.userCredentials.clientSecret.value);
 	        					console.log(example);
 	        					$scope.playgroundExample = example;
-	        				} 
+	        				} else if($scope.runscopeUri == $scope.userCredentials.redirectUris[i].value.value) {
+	        					$scope.runscopeExample = $scope.runscopeExampleLink;
+	        				}
 	        			}
 	        		}	        				        					        	
 				});
