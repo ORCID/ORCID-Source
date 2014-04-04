@@ -3251,7 +3251,7 @@ p.orcid-id-container{
 	padding:0;
 }
 
-.public-profile .mini-orcid-icon{
+.mini-orcid-icon{
 	background: url('../img/mini-icon.png') transparent no-repeat;
 	background-size: 20px 20px;	
 	width: 20px;
