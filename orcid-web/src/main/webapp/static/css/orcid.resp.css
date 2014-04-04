@@ -4569,6 +4569,10 @@ p.orcid-id-container{
 		margin-top: 15px
 	}
 	
+	.developer-tools .table-responsive{
+		border: 0 none;
+	}
+	
 }
 
 @media (min-width : 768px) and (max-width : 991px) { /* Tablet */
