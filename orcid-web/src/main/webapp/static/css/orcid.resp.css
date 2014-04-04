@@ -3465,6 +3465,10 @@ p.orcid-id-container{
 	color: #FFF;	
 }
 
+.developer-tools a.icon-href-bg:hover{
+	background-color: #338caf;
+}
+
 .developer-tools .slidebox .add-options{
 	margin-bottom: 15px;
 	display: block;
