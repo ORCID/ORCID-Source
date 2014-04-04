@@ -91,4 +91,5 @@
     <include file="/db/updates/add_developer_tools_to_profile.xml" />
     <include file="/db/updates/orcid_props_table.xml" />
     <include file="/db/updates/claim_all_clients.xml" />
+    <include file="/db/updates/drop_work_contributors.xml" />
 </databaseChangeLog>
