@@ -143,7 +143,7 @@
 					</div>
 					
 					<div class="row" ng-hide="playgroundExample == '' && runscopeExample == ''">
-						<!-- Available scopes -->
+						<!-- Testing tools -->
 						<div class="col-md-12 col-sm-12 col-xs-12">
 							<div class="grey-box">
 								<div class="table-responsive">

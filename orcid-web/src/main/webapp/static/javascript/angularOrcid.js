@@ -4114,6 +4114,16 @@ function SSOPreferencesCtrl($scope, $compile) {
 		$('.developer-tools .slidebox').slideDown();
 		$('.collapsed').css('display', 'none');
 		$('.expanded').css('display', 'inline').parent().css('background','#EBEBEB');
+		
+		//Hide the testing tools if they are already added
+		for(var i = 0; i < $scope.userCredentials.redirectUris.length; i++) {
+			if($scope.googleUri == $scope.userCredentials.redirectUris[i].value.value) {
+				$scope.hideGoogleUri=true;				
+			} else if($scope.runscopeUri == $scope.userCredentials.redirectUris[i].value.value) {
+				$scope.hideRunscopeUri=true;
+			}
+		}	  
+		
 	};
 	
 	$scope.showViewLayout = function() {		
@@ -4135,6 +4145,19 @@ function SSOPreferencesCtrl($scope, $compile) {
 	        			//SHOW ERROR
 	        		} else {	        			
 	        			$scope.editing = false;
+	        			
+	        			//Build the google playground url example
+	        			for(var i = 0; i < $scope.userCredentials.redirectUris.length; i++) {
+	        				if($scope.googleUri == $scope.userCredentials.redirectUris[i].value.value) {
+	        					var example = $scope.googleExampleLink;
+	        					example = example.replace('[CLIENT_ID]', $scope.userCredentials.clientOrcid.value);
+	        					example = example.replace('[CLIENT_SECRET]', $scope.userCredentials.clientSecret.value);
+	        					console.log(example);
+	        					$scope.playgroundExample = example;
+	        				} else if($scope.runscopeUri == $scope.userCredentials.redirectUris[i].value.value) {
+	        					$scope.runscopeExample = $scope.runscopeExampleLink;
+	        				}
+	        			}	        			
 	        		}
 				});
 	        }
