@@ -4565,6 +4565,10 @@ p.orcid-id-container{
 		width: 96%;
 	}
 	
+	.developer-tools{
+		margin-top: 15px
+	}
+	
 }
 
 @media (min-width : 768px) and (max-width : 991px) { /* Tablet */
