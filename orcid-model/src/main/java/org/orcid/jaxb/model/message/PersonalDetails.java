@@ -158,6 +158,21 @@ public class PersonalDetails implements Serializable {
         this.otherNames = value;
     }
 
+    public String retrievePublicDisplayName() {
+        if (creditName != null) {
+            if (Visibility.PUBLIC.equals(creditName.getVisibility())) {
+                return creditName.getContent();
+            }
+        }
+        StringBuilder builder = new StringBuilder();
+        builder.append(givenNames.getContent());
+        if (familyName != null) {
+            builder.append(" ");
+            builder.append(familyName.getContent());
+        }
+        return builder.toString();
+    }
+
     public String retrieveDisplayNameIgnoringVisibility() {
         if (creditName != null) {
             return creditName.getContent();
