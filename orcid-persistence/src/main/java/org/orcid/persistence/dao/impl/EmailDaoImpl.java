@@ -125,7 +125,10 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
 
     @Override
     @SuppressWarnings("rawtypes")
-    public List findIdByCaseInsensitiveEmail(List<String> emails) {        
+    public List findIdByCaseInsensitiveEmail(List<String> emails) {
+        for (int i=0; i < emails.size(); i++) {
+            if (emails.get(i) != emails.get(i).toLowerCase().trim()) emails.set(i, emails.get(i).toLowerCase().trim());
+        }
         Query query = entityManager.createNativeQuery("select orcid, email from email where trim(lower(email)) in :emails");        
         query.setParameter("emails", emails);
         return query.getResultList();
