@@ -242,6 +242,7 @@
 		<property name="switchUserUrl" value="/switch-user" />
 		<property name="exitUserUrl" value="/exit-user" />
 		<property name="targetUrl" value="/my-orcid?delegates" />
+		<property name="switchFailureUrl" value="/signin" />
 	</bean>
 		
 	<bean id="authorizationCodeTokenGranter"
