@@ -3238,6 +3238,10 @@ function languageCtrl($scope, $cookies) {
 	    		"label": 'Français'
 	        },	        
 	        {
+	        	"value": 'ko',
+	    		"label": '한국어'
+	        },
+	        {
 		        "value": 'zh_CN',
 			    "label": '简体中文'
 	        },
