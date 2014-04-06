@@ -2957,6 +2957,15 @@ function DelegatesCtrl($scope, $compile){
 		return $scope.numFound != 0;
 	};
 	
+	$scope.getDisplayName = function(result){
+		var personalDetails = result['orcid-profile']['orcid-bio']['personal-details'];
+		var creditName = personalDetails['credit-name'];
+		if(creditName !== undefined){
+			return creditName.value;
+		}
+		return personalDetails['given-names'].value + ' ' + personalDetails['family-name'].value;
+	}
+	
 	$scope.confirmAddDelegateByEmail = function(emailSearchResult){
 		$scope.emailSearchResult = emailSearchResult;
 		$.colorbox({                      
@@ -3073,6 +3082,21 @@ function DelegatesCtrl($scope, $compile){
 
 // Controller for delegate permissions that have been granted TO the current user
 function DelegatorsCtrl($scope, $compile){
+	
+	$scope.sort = {
+			column: 'delegateSummary.creditName.content',
+			descending: false
+	};
+	
+	$scope.changeSorting = function(column) {
+		var sort = $scope.sort;
+		if (sort.column === column) {
+			sort.descending = !sort.descending;
+		} else {
+			sort.column = column;
+			sort.descending = false;
+		}
+	};
 	
 	$scope.getDelegators = function() {
 		$.ajax({
