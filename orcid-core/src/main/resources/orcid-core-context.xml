@@ -367,8 +367,6 @@
 	
 	<bean id="workManager" class="org.orcid.core.manager.impl.WorkManagerImpl" />
 	
-	<bean id="workContributorManager" class="org.orcid.core.manager.impl.WorkContributorManagerImpl" />
-	
 	<bean id="workExternalIdentifierManager" class="org.orcid.core.manager.impl.WorkExternalIdentifierManagerImpl" />
 	
 	<bean id="orgManager" class="org.orcid.core.manager.impl.OrgManagerImpl" />

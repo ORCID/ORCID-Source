@@ -82,8 +82,6 @@ public interface ProfileWorkDao extends GenericDao<ProfileWorkEntity, ProfileWor
      * */
     boolean addProfileWork(String clientOrcid, long workId, Visibility visibility, String sourceOrcid);
 
-    List<String> findOrcidsNeedingWorkContributorMigration(int chunkSize);
-
     /**
      * Find the list of orcids where at least one of his works have contributors
      * but the credit name is null

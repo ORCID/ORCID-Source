@@ -35,7 +35,6 @@ import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.ThirdPartyImportManager;
-import org.orcid.core.manager.WorkContributorManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.frontend.web.util.NumberList;
@@ -93,9 +92,6 @@ public class WorkspaceController extends BaseWorkspaceController {
 
     @Resource
     private WorkManager workManager;
-
-    @Resource
-    private WorkContributorManager workContributorManager;
 
     @Resource
     private LocaleManager localeManager;
