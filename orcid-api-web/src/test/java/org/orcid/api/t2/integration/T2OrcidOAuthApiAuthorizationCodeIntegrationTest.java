@@ -93,7 +93,7 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-oauth-orcid-t2-client-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-oauth-orcid-api-client-context.xml" })
 /**
  * 
  * @author Will Simpson

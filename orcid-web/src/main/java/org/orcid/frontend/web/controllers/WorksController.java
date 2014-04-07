@@ -37,7 +37,6 @@ import org.orcid.core.manager.ActivityCacheManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.ThirdPartyImportManager;
-import org.orcid.core.manager.WorkContributorManager;
 import org.orcid.core.manager.WorkExternalIdentifierManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.utils.JsonUtils;
@@ -45,6 +44,7 @@ import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.message.CitationType;
 import org.orcid.jaxb.model.message.ContributorAttributes;
 import org.orcid.jaxb.model.message.ContributorRole;
+import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
@@ -57,7 +57,6 @@ import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
-import org.orcid.persistence.jpa.entities.WorkContributorEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
 import org.orcid.pojo.ajaxForm.Citation;
@@ -110,15 +109,13 @@ public class WorksController extends BaseWorkspaceController {
     @Resource
     private WorkManager workManager;
 
-    @Resource
-    private WorkContributorManager workContributorManager;
 
     @Resource
     private WorkExternalIdentifierManager workExternalIdentifierManager;
 
     @Resource
     private LocaleManager localeManager;
-    
+
     @Resource
     private ActivityCacheManager cacheManager;
 
@@ -192,8 +189,8 @@ public class WorksController extends BaseWorkspaceController {
                         && !StringUtils.isEmpty(work.getWorkTitle().getTranslatedTitle().getLanguageCode())) {
                     String languageName = languages.get(work.getWorkTitle().getTranslatedTitle().getLanguageCode());
                     work.getWorkTitle().getTranslatedTitle().setLanguageName(languageName);
-                }                                
-                
+                }
+
                 workList.add(work);
             }
         }
@@ -332,13 +329,14 @@ public class WorksController extends BaseWorkspaceController {
                     String languageName = languages.get(work.getWorkTitle().getTranslatedTitle().getLanguageCode());
                     work.getWorkTitle().getTranslatedTitle().setLanguageName(languageName);
                 }
-                
-                //If the work source is the user himself, fill the work source name
-                if(!PojoUtil.isEmpty(work.getWorkSource()) && profileWork.getProfile().getId().equals(work.getWorkSource().getValue())){
+
+                // If the work source is the user himself, fill the work source
+                // name
+                if (!PojoUtil.isEmpty(work.getWorkSource()) && profileWork.getProfile().getId().equals(work.getWorkSource().getValue())) {
                     List<Contributor> contributors = work.getContributors();
-                    if(work.getContributors() != null) {
-                        for(Contributor contributor : contributors){  
-                            if(!PojoUtil.isEmpty(contributor.getContributorRole()) || !PojoUtil.isEmpty(contributor.getContributorSequence())) {
+                    if (work.getContributors() != null) {
+                        for (Contributor contributor : contributors) {
+                            if (!PojoUtil.isEmpty(contributor.getContributorRole()) || !PojoUtil.isEmpty(contributor.getContributorSequence())) {
                                 ProfileEntity profile = profileWork.getProfile();
                                 String creditNameString = cacheManager.getCreditName(profile);
                                 Text creditName = Text.valueOf(creditNameString);
@@ -347,7 +345,7 @@ public class WorksController extends BaseWorkspaceController {
                         }
                     }
                 }
-                
+
                 return work;
             }
         }
@@ -502,6 +500,9 @@ public class WorksController extends BaseWorkspaceController {
 
         WorkContributors workContributors = orcidWork.getWorkContributors();
         if (workContributors != null) {
+            for (org.orcid.jaxb.model.message.Contributor workContributor : workContributors.getContributor()) {
+                workContributor.setCreditName(new CreditName(getEffectiveProfile().getOrcidBio().getPersonalDetails().retrievePublicDisplayName()));
+            }
             workEntity.setContributorsJson(JsonUtils.convertToJsonString(workContributors));
         }
 
@@ -510,57 +511,7 @@ public class WorksController extends BaseWorkspaceController {
 
         return workEntity;
     }
-
-    /**
-     * Old way of doing work contributors
-     * 
-     * Generate a list of work contributors entities based on the current
-     * profile and the list of work contributors that comes from the user
-     * request.
-     * 
-     * @param currentProfile
-     *            The current logged in user
-     * @param workContributors
-     *            The work contributors that comes from the user request
-     * @param workEntity
-     *            The work is just created as part of the request
-     * 
-     * @return a list of work contributor entities
-     * */
-    private Set<WorkContributorEntity> toWorkContributorEntityList(OrcidProfile currentProfile, WorkContributors workContributors, WorkEntity workEntity) {
-        if (workContributors == null || workContributors.getContributor() == null)
-            return new TreeSet<WorkContributorEntity>();
-
-        TreeSet<WorkContributorEntity> result = new TreeSet<WorkContributorEntity>();
-
-        ContributorAttributes emptyContributorAttributes = new ContributorAttributes();
-        org.orcid.jaxb.model.message.Contributor emptyContributor = new org.orcid.jaxb.model.message.Contributor();
-        emptyContributor.setContributorAttributes(emptyContributorAttributes);
-
-        for (org.orcid.jaxb.model.message.Contributor contributor : workContributors.getContributor()) {
-            if (!contributor.equals(emptyContributor)) {
-                WorkContributorEntity workContributorEntity = new WorkContributorEntity();
-                workContributorEntity.setContributorEmail(currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail() != null ? currentProfile.getOrcidBio()
-                        .getContactDetails().retrievePrimaryEmail().getValue() : null);
-                workContributorEntity.setProfile(new ProfileEntity(currentProfile.getOrcidIdentifier().getPath()));
-                workContributorEntity.setWork(workEntity);
-                workContributorEntity.setCreditName(currentProfile.getOrcidBio().getPersonalDetails().getCreditName() != null ? currentProfile.getOrcidBio()
-                        .getPersonalDetails().getCreditName().getContent() : null);
-
-                ContributorAttributes contributorAttributes = contributor.getContributorAttributes();
-                if (contributorAttributes != null) {
-                    ContributorRole contributorRole = contributorAttributes.getContributorRole();
-                    SequenceType contributorSequence = contributorAttributes.getContributorSequence();
-                    workContributorEntity.setContributorRole(contributorRole);
-                    workContributorEntity.setSequence(contributorSequence);
-                }
-                result.add(workContributorEntity);
-            }
-        }
-
-        return result;
-    }
-
+ 
     /**
      * Transform a PublicationDate into a PuzzyDate
      * 
@@ -830,5 +781,5 @@ public class WorksController extends BaseWorkspaceController {
         }
 
         return FunctionsOverCollections.sortMapsByValues(workTypes);
-    }        
+    }
 }

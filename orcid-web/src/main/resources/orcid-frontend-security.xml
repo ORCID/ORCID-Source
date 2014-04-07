@@ -27,6 +27,8 @@
        http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2-1.0.xsd">
 
 	<context:annotation-config />
+	
+	<sec:global-method-security pre-post-annotations="enabled" />
 
 	<bean id="authorizationEndpoint" class="org.orcid.core.oauth.service.OrcidAuthorizationEndpoint">
 		<property name="authorizationCodeServices" ref="orcidAuthorizationCodeService" />
@@ -241,6 +243,7 @@
 		<property name="switchUserUrl" value="/switch-user" />
 		<property name="exitUserUrl" value="/exit-user" />
 		<property name="targetUrl" value="/my-orcid?delegates" />
+		<property name="switchFailureUrl" value="/signin" />
 	</bean>
 		
 	<bean id="authorizationCodeTokenGranter"

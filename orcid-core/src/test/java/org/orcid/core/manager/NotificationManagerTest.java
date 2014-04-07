@@ -40,9 +40,13 @@ import org.orcid.jaxb.model.message.DelegateSummary;
 import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.Locale;
+import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.dao.GenericDao;
+import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.EmailEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,6 +70,9 @@ public class NotificationManagerTest extends BaseTest {
     @Mock
     private GenericDao<ProfileEventEntity, Long> profileEventDao;
 
+    @Mock
+    private ProfileDao profileDao;
+
     @Resource
     private EncryptionManager encryptionManager;
 
@@ -85,6 +92,7 @@ public class NotificationManagerTest extends BaseTest {
         NotificationManagerImpl notificationManagerImpl = getTargetObject(notificationManager, NotificationManagerImpl.class);
         notificationManagerImpl.setEncryptionManager(encryptionManager);
         notificationManagerImpl.setProfileEventDao(profileEventDao);
+        notificationManagerImpl.setProfileDao(profileDao);
     }
 
     @Test
@@ -138,6 +146,14 @@ public class NotificationManagerTest extends BaseTest {
             DelegateSummary firstNewDelegateSummary = new DelegateSummary();
             firstNewDelegateSummary.setCreditName(new CreditName("Jimmy Dove"));
             firstNewDelegate.setDelegateSummary(firstNewDelegateSummary);
+            String delegateOrcid = "1234-5678-1234-5678";
+            firstNewDelegateSummary.setOrcidIdentifier(new OrcidIdentifier(delegateOrcid));
+
+            ProfileEntity delegateProfileEntity = new ProfileEntity(delegateOrcid);
+            EmailEntity delegateEmail = new EmailEntity();
+            delegateEmail.setId("jimmy@dove.com");
+            delegateProfileEntity.setPrimaryEmail(delegateEmail);
+            when(profileDao.find(delegateOrcid)).thenReturn(delegateProfileEntity);
 
             DelegationDetails secondNewDelegate = new DelegationDetails();
             DelegateSummary secondNewDelegateSummary = new DelegateSummary();

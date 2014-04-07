@@ -53,7 +53,6 @@
         <class>org.orcid.persistence.jpa.entities.SecurityQuestionEntity</class>
         <class>org.orcid.persistence.jpa.entities.SubjectEntity</class>
         <class>org.orcid.persistence.jpa.entities.WebhookEntity</class>
-        <class>org.orcid.persistence.jpa.entities.WorkContributorEntity</class>
         <class>org.orcid.persistence.jpa.entities.WorkEntity</class>
         <class>org.orcid.persistence.jpa.entities.WorkExternalIdentifierEntity</class>
         <class>org.orcid.persistence.jpa.entities.WorkSourceEntity</class>

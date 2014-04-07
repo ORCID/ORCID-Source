@@ -16,9 +16,7 @@
  */
 package org.orcid.persistence.dao.impl;
 
-import org.orcid.persistence.dao.WorkContributorDao;
 import org.orcid.persistence.dao.WorkExternalIdentifierDao;
-import org.orcid.persistence.jpa.entities.WorkContributorEntity;
 import org.orcid.persistence.jpa.entities.WorkExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.keys.WorkExternalIdentifierEntityPk;
 import org.springframework.transaction.annotation.Transactional;

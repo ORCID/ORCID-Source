@@ -60,7 +60,7 @@ import com.sun.jersey.api.client.ClientResponse.Status;
  */
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-t2-client-context.xml" })
+@ContextConfiguration(locations = { "classpath:orcid-api-client-context.xml" })
 public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegrationTest {
 
     @Resource

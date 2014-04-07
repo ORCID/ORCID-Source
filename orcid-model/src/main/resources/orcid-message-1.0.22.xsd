@@ -698,11 +698,14 @@
         </xs:annotation>
         <xs:simpleType>
             <xs:restriction base="xs:string">
-                <xs:enumeration value="en"/>
-                <xs:enumeration value="es"/>
-                <xs:enumeration value="fr"/>
-                <xs:enumeration value="zh_CN"/>
-                <xs:enumeration value="zh_TW"/>
+				<xs:enumeration value="en" />
+				<xs:enumeration value="es" />
+				<xs:enumeration value="fr" />
+				<xs:enumeration value="ko" />
+				<xs:enumeration value="pt" />
+				<xs:enumeration value="ru" />
+				<xs:enumeration value="zh_CN" />
+				<xs:enumeration value="zh_TW" />
  			</xs:restriction>
  		</xs:simpleType>
  	</xs:element>

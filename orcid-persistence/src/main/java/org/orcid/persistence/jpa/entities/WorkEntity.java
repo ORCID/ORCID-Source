@@ -68,7 +68,6 @@ public class WorkEntity extends BaseEntity<Long> implements Comparable<WorkEntit
     private WorkType workType;
     private PublicationDateEntity publicationDate;
     private String contributorsJson;
-    private SortedSet<WorkContributorEntity> contributors;
     private SortedSet<WorkExternalIdentifierEntity> externalIdentifiers;
 
     @Id
@@ -222,20 +221,6 @@ public class WorkEntity extends BaseEntity<Long> implements Comparable<WorkEntit
     /**
      * @return the authors
      */
-    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = WORK, orphanRemoval = true)
-    @Fetch(FetchMode.SUBSELECT)
-    @Sort(type = SortType.NATURAL)
-    public SortedSet<WorkContributorEntity> getContributors() {
-        return contributors;
-    }
-
-    /**
-     * @param contributors
-     *            the authors to set
-     */
-    public void setContributors(SortedSet<WorkContributorEntity> contributors) {
-        this.contributors = contributors;
-    }
 
     @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = WORK, orphanRemoval = true)
     @Fetch(FetchMode.SUBSELECT)

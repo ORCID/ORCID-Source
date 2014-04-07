@@ -45,6 +45,10 @@ public class OrcidSwitchUserFilter extends SwitchUserFilter {
         if (OrcidType.ADMIN.equals(profileEntity.getOrcidType())) {
             return super.attemptSwitchUser(request);
         }
+        // If we are switching back to me it is OK
+        if(targetUserOrcid.equals(profileEntity.getId())){
+            return super.attemptSwitchUser(request);
+        }
         for (GivenPermissionByEntity gpbe : profileEntity.getGivenPermissionBy()) {
             if (gpbe.getGiver().getId().equals(targetUserOrcid)) {
                 return super.attemptSwitchUser(request);

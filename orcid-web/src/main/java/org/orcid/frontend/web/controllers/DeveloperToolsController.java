@@ -38,6 +38,7 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RedirectUri;
 import org.orcid.pojo.ajaxForm.SSOCredentials;
 import org.orcid.pojo.ajaxForm.Text;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,6 +48,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller("developerToolsController")
 @RequestMapping(value = { "/developer-tools" })
+@PreAuthorize("!@sourceManager.isInDelegationMode()")
 public class DeveloperToolsController extends BaseWorkspaceController {
 
     private static int CLIENT_NAME_LENGTH = 255;

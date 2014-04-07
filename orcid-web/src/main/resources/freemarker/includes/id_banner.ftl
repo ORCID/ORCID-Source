@@ -40,7 +40,7 @@
 	           <li ng-show="me && !searchTerm">
 	               <a href="<@spring.url '/switch-user?j_username='/>{{me.delegateSummary.orcidIdentifier.path}}">
 					   <ul>
-						   <li>{{me.delegateSummary.creditName.content}} (me)</li>
+						   <li>Switch back to me</li>
 						   <li>{{me.delegateSummary.orcidIdentifier.uri}}</li>
 					   </ul>
 	               </a>

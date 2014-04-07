@@ -124,16 +124,6 @@ public class ProfileWorkDaoImpl extends GenericDaoImpl<ProfileWorkEntity, Profil
         return query.executeUpdate() > 0 ? true : false;
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public List<String> findOrcidsNeedingWorkContributorMigration(int chunkSize) {
-        StringBuilder builder = new StringBuilder("SELECT DISTINCT pw.orcid FROM profile_work pw");
-        builder.append(" JOIN work w ON w.work_id = pw.work_id AND w.contributors_json IS NULL");
-        builder.append(" JOIN work_contributor wc ON wc.work_id = pw.work_id");
-        Query query = entityManager.createNativeQuery(builder.toString());
-        query.setMaxResults(chunkSize);
-        return query.getResultList();
-    }
     
     /**
      * Find the list of orcids where at least one of his works have contributors
