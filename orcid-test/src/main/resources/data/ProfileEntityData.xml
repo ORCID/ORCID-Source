@@ -333,6 +333,39 @@
             orcid_type="ADMIN"            
             />            
 
+	<profile
+            orcid="4444-4444-4444-4499"
+            creation_method="API"
+            completed_date="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            submission_date="2011-06-29 15:31:00.00"
+            last_indexed_date="2011-07-02 15:31:00.00"
+            last_modified="2011-07-02 15:31:00.00"
+            claimed="true"
+            given_names="Michael"
+            family_name="Bentine"
+            vocative_name="Michael Bentine"
+            credit_name="M. Bentine"
+            external_identifiers_visibility="LIMITED"
+            biography_visibility="PUBLIC"
+            keywords_visibility="REGISTERED_ONLY"
+            other_names_visibility="PRIVATE"
+            researcher_urls_visibility="PUBLIC"           
+            source_id="4444-4444-4444-4441"
+            is_selectable_sponsor="false"
+            encrypted_password="e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA="
+            security_question_id="1"
+            encrypted_security_answer="iTlIoR2JsFl5guE56cazmg=="
+            encrypted_verification_code="1vLkD2Lm8c24TyALcW0Brg=="
+            send_change_notifications="false"
+            send_orcid_news="false"
+            activities_visibility_default='PRIVATE'
+            credentials_expiry="2013-02-01"
+            biography="Michael Bentine CBE (26 January 1922[1] – 26 November 1996[2]) was a British comedian, comic actor and founding member of the Goons."
+            indexing_status="DONE"
+            orcid_type="USER"            
+            />
+
     <granted_authority
             authority="USER_ROLE"
             orcid="4444-4444-4444-4441"
@@ -628,6 +661,17 @@
         is_primary="false"
         is_current="false"
         is_verified="false"
+        visibility="PRIVATE"
+        source_id="4444-4444-4444-4441"
+    />
+    
+    
+    <email
+        orcid="4444-4444-4444-4499"
+        email="4441-10@milligan.com"
+        is_primary="true"
+        is_current="true"
+        is_verified="true"
         visibility="PRIVATE"
         source_id="4444-4444-4444-4441"
     />

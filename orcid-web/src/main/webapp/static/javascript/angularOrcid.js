@@ -3964,6 +3964,17 @@ function removeSecQuestionCtrl($scope,$compile) {
 
 function SSOPreferencesCtrl($scope, $compile) {
 	$scope.userCredentials = null;	
+	$scope.editing = false;
+	$scope.hideGoogleUri = false;
+	$scope.hideRunscopeUri = false;
+	$scope.googleUri = 'https://developers.google.com/oauthplayground';
+	$scope.runscopeUri = 'https://www.runscope.com/oauth_tool/callback';
+	$scope.playgroundExample = '';
+	$scope.googleExampleLink = 'https://developers.google.com/oauthplayground/#step1&scopes=/authenticate&oauthEndpointSelect=Custom&oauthAuthEndpointValue=http%3A//qa.orcid.org/oauth/authorize&oauthTokenEndpointValue=http%3A//pub.qa.orcid.org/oauth/token&oauthClientId=[CLIENT_ID]&oauthClientSecret=[CLIENT_SECRET]&accessTokenType=bearer';
+	$scope.runscopeExample = '';
+	$scope.runscopeExampleLink = 'https://www.runscope.com/oauth2_tool';
+	$scope.authorizeURL = getBaseUri() + '/oauth/authorize';
+	$scope.tokenURL = orcidVar.pubBaseUri + '/oauth/token';
 	
 	$scope.enableDeveloperTools = function() {
 		$.ajax({
@@ -4013,8 +4024,21 @@ function SSOPreferencesCtrl($scope, $compile) {
 	        type: 'POST',	                	      
 	        success: function(data){	 
 	        	$scope.$apply(function(){ 
-	        		if(data != null && data.clientSecret != null)
-	        			$scope.userCredentials = data;	        		 
+	        		if(data != null && data.clientSecret != null) {
+	        			$scope.userCredentials = data;
+	        			//Build the google playground url example
+	        			for(var i = 0; i < $scope.userCredentials.redirectUris.length; i++) {
+	        				if($scope.googleUri == $scope.userCredentials.redirectUris[i].value.value) {
+	        					var example = $scope.googleExampleLink;
+	        					example = example.replace('[CLIENT_ID]', $scope.userCredentials.clientOrcid.value);
+	        					example = example.replace('[CLIENT_SECRET]', $scope.userCredentials.clientSecret.value);
+	        					console.log(example);
+	        					$scope.playgroundExample = example;
+	        				} else if($scope.runscopeUri == $scope.userCredentials.redirectUris[i].value.value) {
+	        					$scope.runscopeExample = $scope.runscopeExampleLink;
+	        				}
+	        			}
+	        		}	        				        					        	
 				});
 	        }
 	    }).fail(function(error) { 
@@ -4024,8 +4048,7 @@ function SSOPreferencesCtrl($scope, $compile) {
 	    });		
 	};
 	
-	// Get an empty modal to add
-	$scope.createCredentialsModal = function(){		
+	$scope.getEmptyCredentials = function() {
 		$.ajax({
 			url: getBaseUri() + '/developer-tools/get-empty-sso-credential.json',
 			dataType: 'json',
@@ -4040,6 +4063,14 @@ function SSOPreferencesCtrl($scope, $compile) {
 	    });
 	};
 	
+	// Get an empty modal to add
+	$scope.createCredentialsModal = function(){		
+		$scope.userCredentials = $scope.getEmptyCredentials();
+		$scope.$apply(function() {
+			$scope.showCreateModal();
+		});
+	};
+	
 	$scope.showCreateModal = function() {
 		$.colorbox({                      
 			html : $compile($('#generate-sso-credentials-modal').html())($scope),				
@@ -4047,7 +4078,7 @@ function SSOPreferencesCtrl($scope, $compile) {
 				$('#cboxClose').remove();
 			}
 		});
-		$.colorbox.resize({width:"450px" , height:"300px"});
+		$.colorbox.resize({width:"460px" , height:"460px"});
 	};
 	
 	$scope.addRedirectURI = function() {
@@ -4075,22 +4106,6 @@ function SSOPreferencesCtrl($scope, $compile) {
 	    	// something bad is happening!	    	
 	    	console.log("Error creating SSO credentials");	    	
 	    });		
-	};
-	
-	$scope.showSuccessModal = function(){
-		console.log("Done: " + angular.toJson($scope.userCredentials));
-	};
-	
-	
-	$scope.showSSOCredentials = function() {		
-		$.colorbox({                      
-			html : $compile($('#show-sso-credentials-modal').html())($scope),				
-				onLoad: function() {
-				$('#cboxClose').remove();
-			}
-		});
-		
-		$.colorbox.resize({width:"550px" , height:"350px"});
 	};
 	
 	$scope.showRevokeModal = function() {		
@@ -4121,20 +4136,31 @@ function SSOPreferencesCtrl($scope, $compile) {
 	    });	
 	};
 	
-	$scope.showEditModal = function() {
-		$.colorbox({                      
-			html : $compile($('#edit-sso-credentials-modal').html())($scope),				
-				onLoad: function() {
-				$('#cboxClose').remove();
+	$scope.showEditLayout = function() {		
+		//Hide the testing tools if they are already added
+		for(var i = 0; i < $scope.userCredentials.redirectUris.length; i++) {
+			if($scope.googleUri == $scope.userCredentials.redirectUris[i].value.value) {
+				$scope.hideGoogleUri=true;				
+			} else if($scope.runscopeUri == $scope.userCredentials.redirectUris[i].value.value) {
+				$scope.hideRunscopeUri=true;
 			}
-		});
-		
-		$.colorbox.resize({width:"450px" , height:"230px"});
+		}
+		$scope.editing = true;
+		$('.developer-tools .slidebox').slideDown();		
+		$('.tab-container .collapsed').css('display', 'none');
+		$('.tab-container .expanded').css('display', 'inline').parent().css('background','#EBEBEB');
 	};
 	
-	$scope.editRedirectUris = function() {
+	$scope.showViewLayout = function() {	
+		//Reset the credentials
+		$scope.getSSOCredentials();	
+		$scope.editing = false;
+		$('.edit-details .slidebox').slideDown();				
+	};
+	
+	$scope.editClientCredentials = function() {
 		$.ajax({
-	        url: getBaseUri()+'/developer-tools/update-redirect-uris.json',	        
+	        url: getBaseUri()+'/developer-tools/update-user-credentials.json',	        
 	        contentType: 'application/json;charset=UTF-8',
 	        type: 'POST',
 	        dataType: 'json',
@@ -4145,7 +4171,20 @@ function SSOPreferencesCtrl($scope, $compile) {
 	        		if(data.errors.length != 0){
 	        			//SHOW ERROR
 	        		} else {	        			
-	        			$scope.closeModal();
+	        			$scope.editing = false;
+	        			
+	        			//Build the google playground url example
+	        			for(var i = 0; i < $scope.userCredentials.redirectUris.length; i++) {
+	        				if($scope.googleUri == $scope.userCredentials.redirectUris[i].value.value) {
+	        					var example = $scope.googleExampleLink;
+	        					example = example.replace('[CLIENT_ID]', $scope.userCredentials.clientOrcid.value);
+	        					example = example.replace('[CLIENT_SECRET]', $scope.userCredentials.clientSecret.value);
+	        					console.log(example);
+	        					$scope.playgroundExample = example;
+	        				} else if($scope.runscopeUri == $scope.userCredentials.redirectUris[i].value.value) {
+	        					$scope.runscopeExample = $scope.runscopeExampleLink;
+	        				}
+	        			}	        			
 	        		}
 				});
 	        }
@@ -4161,6 +4200,33 @@ function SSOPreferencesCtrl($scope, $compile) {
 	
 	$scope.closeModal = function() {
 		$.colorbox.close();
+	};
+	
+	$scope.addTestRedirectUri = function(type) {
+		var rUri = $scope.runscopeUri;		
+		if(type == 'google'){
+			rUri = $scope.googleUri;
+		}
+								
+		$.ajax({
+			url: getBaseUri() + '/developer-tools/get-empty-redirect-uri.json',
+			dataType: 'json',
+			success: function(data) {
+				data.value.value=rUri;
+				$scope.$apply(function(){ 
+					$scope.userCredentials.redirectUris.push(data);
+					if(type == 'google') {
+						$scope.hideGoogleUri = true; 
+						$('#google-ruir').hide();
+					} else {
+						$scope.hideRunscopeUri = true;
+						$('#runscope-ruir').hide();
+					}
+				});
+			}
+		}).fail(function() { 
+	    	console.log("Error fetching empty redirect uri");
+	    });
 	};
 	
 	//init

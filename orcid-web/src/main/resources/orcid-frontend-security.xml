@@ -32,7 +32,7 @@
 
 	<bean id="authorizationEndpoint" class="org.orcid.core.oauth.service.OrcidAuthorizationEndpoint">
 		<property name="authorizationCodeServices" ref="orcidAuthorizationCodeService" />
-		<property name="clientDetailsService" ref="orcidClientDetailsService" />
+		<property name="clientDetailsService" ref="clientDetailsManager" />
 		<property name="tokenGranter" ref="authorizationCodeTokenGranter" />
 	</bean>
 
@@ -223,8 +223,7 @@
 
 	<oauth2:web-expression-handler id="oauthWebExpressionHandler" />
 
-	<bean id="orcidClientDetailsService"
-		class="org.orcid.core.oauth.service.OrcidClientDetailsServiceImpl" />
+	<bean id="clientDetailsManager" class="org.orcid.core.manager.impl.ClientDetailsManagerImpl" />
 
 	<bean id="oauthAuthenticationEntryPoint"
 		class="org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint">
@@ -251,7 +250,7 @@
 		class="org.springframework.security.oauth2.provider.code.AuthorizationCodeTokenGranter">
 		<constructor-arg ref="orcidAuthorizationCodeService" />
 		<constructor-arg ref="tokenServices" />
-		<constructor-arg ref="orcidClientDetailsService" />
+		<constructor-arg ref="clientDetailsManager" />
 	</bean>
 
 	<bean id="orcidAuthorizationCodeService"
@@ -262,7 +261,7 @@
 
 	<oauth2:authorization-server
 		token-granter-ref="authorizationCodeTokenGranter"
-		client-details-service-ref="orcidClientDetailsService"
+		client-details-service-ref="clientDetailsManager"
 		token-services-ref="tokenServices">
 		<oauth2:client-credentials />
 	</oauth2:authorization-server>
@@ -274,7 +273,7 @@
 
 	<bean id="clientDetailsUserService"
 		class="org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService">
-		<constructor-arg ref="orcidClientDetailsService" />
+		<constructor-arg ref="clientDetailsManager" />
 	</bean>
 
 	<!-- Simple listener that gets fired when successful login occurs -->

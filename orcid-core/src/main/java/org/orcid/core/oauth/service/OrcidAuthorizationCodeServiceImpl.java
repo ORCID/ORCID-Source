@@ -16,13 +16,22 @@
  */
 package org.orcid.core.oauth.service;
 
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import javax.annotation.Resource;
+import javax.persistence.NoResultException;
+
+import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidOauth2AuthInfo;
 import org.orcid.core.oauth.OrcidOauth2UserAuthentication;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
-import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
+import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2AuthoriziationCodeDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -38,13 +47,6 @@ import org.springframework.security.oauth2.provider.code.AuthorizationRequestHol
 import org.springframework.security.oauth2.provider.code.RandomValueAuthorizationCodeServices;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
-import javax.persistence.NoResultException;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * 2011-2012 ORCID
@@ -67,11 +69,14 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
     @Resource(name = "orcidOauth2AuthoriziationCodeDetailDao")
     private OrcidOauth2AuthoriziationCodeDetailDao orcidOauth2AuthoriziationCodeDetailDao;
 
-    @Resource(name = "clientDetailsDao")
-    private ClientDetailsDao clientDetailsDao;
+    @Resource
+    private ClientDetailsManager clientDetailsManager;
 
     @Resource(name = "profileEntityManager")
     private ProfileEntityManager profileEntityManager;
+    
+    @Resource
+    private ProfileDao profileDao;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidAuthorizationCodeServiceImpl.class);
 
@@ -184,7 +189,7 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
 
     private ClientDetailsEntity getClientDetails(String clientId) {
         try {
-            return clientDetailsDao.findByClientId(clientId);
+            return clientDetailsManager.findByClientId(clientId);
         } catch (NoResultException e) {
             return null;
         }
