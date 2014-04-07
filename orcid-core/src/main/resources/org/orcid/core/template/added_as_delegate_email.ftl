@@ -16,16 +16,6 @@
     =============================================================================
 
 -->
-<#-- 
-    NOTE from LADP
-    In the original email there was what was supposed to be placeholder text for 
-    the Granting ORCID User's email address but in NotificationManagerImpl.java 
-    there was no parameter. Code was added (by Laura, commented out, needs to be
-    reviewed) to add this parameter (and suggest that this particular email come 
-    from the ORCID user instead of support). If all is okay in the the manager, 
-    usersEmail@domain.com in the last paragraph below should be changed to 
-    something like ${grantingOrcidEmail}
--->
 <#import "email_macros.ftl" as emailMacros />
 <@emailMacros.msg "email.common.dear" /> ${emailNameForDelegate}<@emailMacros.msg "email.common.dear.comma" />
 
@@ -33,7 +23,7 @@
 
 <@emailMacros.msg "email.added_as_delegate.for_a_tutorial" />
 
-<@emailMacros.msg "email.added_as_delegate.if_you_have.1" />${grantingOrcidName}<@emailMacros.msg "email.added_as_delegate.if_you_have.2" />
+<@emailMacros.msg "email.added_as_delegate.if_you_have.1" />${grantingOrcidName}<@emailMacros.msg "email.added_as_delegate.if_you_have.2" />${grantingOrcidEmail}<@emailMacros.msg "email.added_as_delegate.if_you_have.3" />
 
 
 <@emailMacros.msg "email.common.kind_regards" />
