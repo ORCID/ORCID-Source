@@ -49,8 +49,6 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     boolean orcidExists(String orcid);
 
-    boolean emailExists(String email);
-
     void remove(String giverOrcid, String receiverOrcid);
 
     void removeChildrenWithGeneratedIds(ProfileEntity profileEntity);

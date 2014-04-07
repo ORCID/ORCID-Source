@@ -67,12 +67,20 @@ public class LoginController extends BaseController {
         String client_name = "";
         String client_id = "";
         String client_group_name = "";
+        String email = "";
         if (savedRequest != null) {
             String url = savedRequest.getRedirectUrl();
             Matcher matcher = clientIdPattern.matcher(url);
             if (matcher.find()) {
                 client_id = matcher.group(1);
                 if (client_id != null) {
+
+                    Matcher emailMatcher = RegistrationController.emailPattern.matcher(url);
+                    if (emailMatcher.find()) {
+                        String tempEmail = emailMatcher.group(1);
+                        if (orcidProfileManager.emailExists(tempEmail))
+                            email = tempEmail;
+                    }
                     
                     //Get client name
                     ClientDetailsEntity clientDetails = clientDetailsManager.find(client_id);
@@ -100,6 +108,7 @@ public class LoginController extends BaseController {
         mav.addObject("client_name", client_name);
         mav.addObject("client_id", client_id);
         mav.addObject("client_group_name", client_group_name);
+        mav.addObject("email", email);
         mav.setViewName("oauth_login");
         mav.addObject("hideUserVoiceScript", true);
         return mav;

@@ -20,12 +20,15 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -118,6 +121,10 @@ import org.springframework.web.servlet.support.RequestContextUtils;
  */
 @Controller
 public class RegistrationController extends BaseController {
+    
+    public static Pattern givenNamesPattern = Pattern.compile("given_names=([^&]*)");
+    public static Pattern familyNamesPattern = Pattern.compile("family_names=([^&]*)");
+    public static Pattern emailPattern = Pattern.compile("email=([^&]*)");
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RegistrationController.class);
 
@@ -189,7 +196,7 @@ public class RegistrationController extends BaseController {
 
     @RequestMapping(value = "/register.json", method = RequestMethod.GET)
     public @ResponseBody
-    Registration getRegister(HttpServletRequest request) {
+    Registration getRegister(HttpServletRequest request, HttpServletResponse response) {
         Registration reg = new Registration();
 
         reg.getEmail().setRequired(true);
@@ -208,6 +215,35 @@ public class RegistrationController extends BaseController {
         reg.getSendOrcidNews().setValue(true);
         reg.getTermsOfUse().setValue(false);
         setError(reg.getTermsOfUse(), "AssertTrue.registrationForm.acceptTermsAndConditions");
+        
+        SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
+        if (savedRequest != null) {
+            String url = savedRequest.getRedirectUrl();
+            
+            Matcher emailMatcher = emailPattern.matcher(url);
+            if (emailMatcher.find())
+                reg.getEmail().setValue(emailMatcher.group(1));
+            
+            Matcher givenNamesMatcher = givenNamesPattern.matcher(url);
+            if (givenNamesMatcher.find())
+                try {
+                    reg.getGivenNames().setValue(URLDecoder.decode(givenNamesMatcher.group(1), "UTF-8"));
+                } catch (UnsupportedEncodingException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            
+            Matcher familyNamesMatcher = familyNamesPattern.matcher(url);
+            if (familyNamesMatcher.find())
+                try {
+                    reg.getFamilyNames().setValue(URLDecoder.decode(familyNamesMatcher.group(1), "UTF-8"));
+                } catch (UnsupportedEncodingException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+
+        }
+
         return reg;
     }
 

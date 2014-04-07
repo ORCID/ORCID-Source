@@ -251,26 +251,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         return query.getResultList();
     }
 
-    /**
-     * Similar to that of {@link #findByEmail}, but in this case it will simply
-     * return true or false dependent on the count returned by the query
-     * <p/>
-     * The email address to check CANNOT be null
-     * 
-     * @param email
-     *            the ORCID to limit the query to
-     * @return true if the count of the query is greater than 0 (should only
-     *         ever be 0 or 1)
-     */
-    @Override
-    public boolean emailExists(String email) {
-        Assert.hasText(email, "Cannot check for an empty email address");
-        TypedQuery<Long> query = entityManager.createQuery("select count(pe.email) from ProfileEntity pe where lower(pe.email) = :email", Long.class);
-        query.setParameter("email", email.toLowerCase());
-        Long result = query.getSingleResult();
-        return (result != null && result > 0);
-    }
-
+ 
     @Override
     public boolean orcidExists(String orcid) {
         TypedQuery<Long> query = entityManager.createQuery("select count(pe.id) from ProfileEntity pe where pe.id=:orcid", Long.class);
