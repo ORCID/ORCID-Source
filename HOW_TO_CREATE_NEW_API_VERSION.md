@@ -16,7 +16,7 @@ You now have a new version of the public API configured!
 
 ## The member API
 
-Look for a recent service bean in orcid-t2-web-context.xml. For example, t2OrcidApiServiceImplV1_2_rc1.
+Look for a recent service bean in orcid-api-web-context.xml. For example, t2OrcidApiServiceImplV1_2_rc1.
 
 Create a new bean definition for your new API version, similar to the existing one. Set the external version property of the bean to your new version number.
 

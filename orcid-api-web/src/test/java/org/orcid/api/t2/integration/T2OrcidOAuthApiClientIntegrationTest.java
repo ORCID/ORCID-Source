@@ -100,7 +100,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
     // need a trust manager that allows us to establish an SSL connection with
     // tomcat, but WITHOUT
     // a certificate with CN of ORCID-T2-CLIENT-V1' -
-    // (orcid-t2-security-context.xml) which will then
+    // (orcid-api-security-context.xml) which will then
     // make us hit the OAuth end point and go through the OAuth flow
 
     // NB:
