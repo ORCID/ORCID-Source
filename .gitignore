@@ -11,6 +11,7 @@ orcid-solr/src/main/webapp/solr/data/*
 *.DS_Store
 orcid-solr-web/bin/
 rebel.xml
+deploy.log
 orcid-solr-web/src/main/webapp/solr/data/
 orcid-solr-web/src/main/webapp/solr/org/data/
 orcid-solr-web/src/main/webapp/solr/profile/data/
