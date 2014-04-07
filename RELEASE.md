@@ -4,6 +4,25 @@ We release updates to the Registry regularly. Below is a list of the improvement
 * [2013 Releases](https://trello.com/b/ZgYVAlel)
 * [2012 Releases](https://trello.com/b/vyCDYdvR)
 
+## release-1.1.48.23
+(2014-04-01)
+
+* Improve search with phrases (help find names with Chinese characters)
+
+* Fix Current/past email selector
+
+* Add delegates by email (hidden)
+
+* Refactor import wizard clear cache to work across load balanced machines
+
+* Delegates trusted list improvements (hidden)
+
+* Public Client Authentication Hidden
+
+* UI Improvements
+
+
+
 ## release-1.1.47.14
 (2014-03-18)
 
