@@ -3973,8 +3973,9 @@ function SSOPreferencesCtrl($scope, $compile) {
 	$scope.googleExampleLink = 'https://developers.google.com/oauthplayground/#step1&scopes=/authenticate&oauthEndpointSelect=Custom&oauthAuthEndpointValue=http%3A//qa.orcid.org/oauth/authorize&oauthTokenEndpointValue=http%3A//pub.qa.orcid.org/oauth/token&oauthClientId=[CLIENT_ID]&oauthClientSecret=[CLIENT_SECRET]&accessTokenType=bearer';
 	$scope.runscopeExample = '';
 	$scope.runscopeExampleLink = 'https://www.runscope.com/oauth2_tool';
-	$scope.authorizeURL = getBaseUri() + '/oauth/authorize';
+	$scope.authorizeURLTemplate = getBaseUri() + '/oauth/authorize?client_id=[CLIENT_ID]&response_type=code&scope=/authenticate&redirect_uri=[REDIRECT_URI]';
 	$scope.tokenURL = orcidVar.pubBaseUri + '/oauth/token';
+	$scope.authorizeURL = '';
 	
 	$scope.enableDeveloperTools = function() {
 		$.ajax({
@@ -4026,18 +4027,31 @@ function SSOPreferencesCtrl($scope, $compile) {
 	        	$scope.$apply(function(){ 
 	        		if(data != null && data.clientSecret != null) {
 	        			$scope.userCredentials = data;
+	        			var defaultRedirectUri = '';
+	        			var clientId = $scope.userCredentials.clientOrcid.value;
 	        			//Build the google playground url example
 	        			for(var i = 0; i < $scope.userCredentials.redirectUris.length; i++) {
 	        				if($scope.googleUri == $scope.userCredentials.redirectUris[i].value.value) {
 	        					var example = $scope.googleExampleLink;
-	        					example = example.replace('[CLIENT_ID]', $scope.userCredentials.clientOrcid.value);
-	        					example = example.replace('[CLIENT_SECRET]', $scope.userCredentials.clientSecret.value);
-	        					console.log(example);
+	        					example = example.replace('[CLIENT_ID]', clientId);
+	        					example = example.replace('[CLIENT_SECRET]', $scope.userCredentials.clientSecret.value);	        					
 	        					$scope.playgroundExample = example;
+	        					defaultRedirectUri = $scope.userCredentials.redirectUris[i].value.value;
 	        				} else if($scope.runscopeUri == $scope.userCredentials.redirectUris[i].value.value) {
 	        					$scope.runscopeExample = $scope.runscopeExampleLink;
+	        					defaultRedirectUri = $scope.userCredentials.redirectUris[i].value.value;
 	        				}
 	        			}
+	        			
+	        			//Build the authorize uri with parameters
+	        			if(defaultRedirectUri == '') {
+	        				//If there are no test redirect uri (google or runscope for now), lets use the first redirect uri
+	        				defaultRedirectUri = $scope.userCredentials.redirectUris[0].value.value;
+	        			}
+	        			var example = $scope.authorizeURLTemplate;
+	        			example = example.replace('[CLIENT_ID]', clientId);
+	        			example = example.replace('[REDIRECT_URI]', defaultRedirectUri);
+	        			$scope.authorizeURL = example;
 	        		}	        				        					        	
 				});
 	        }
