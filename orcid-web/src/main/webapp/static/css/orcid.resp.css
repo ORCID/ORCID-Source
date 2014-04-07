@@ -3548,6 +3548,10 @@ p.orcid-id-container{
 	border-bottom: 1px solid #CCCCCC;
 }
 
+.padding-fix{
+	padding: 0;	
+}
+
 .scrollable-list {
 	height: 120px;
 	width:330px;
@@ -4573,6 +4577,10 @@ p.orcid-id-container{
 		border: 0 none;
 	}
 	
+	.padding-fix{
+		padding: 15px;
+	}
+	
 }
 
 @media (min-width : 768px) and (max-width : 991px) { /* Tablet */
@@ -4715,6 +4723,14 @@ p.orcid-id-container{
 	
 	.workspace-profile{
 		margin-bottom: 30px;				
+	}
+	
+	.developer-tools{
+		margin-top: 15px;
+	}
+	
+	.padding-fix{
+		padding: 15px;
 	}
 }
 
