@@ -30,6 +30,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.jsoup.helper.StringUtil;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ActivityCacheManager;
@@ -111,6 +112,10 @@ public class PublicProfileController extends BaseWorkspaceController {
 
         mav.addObject("profile", profile);
 
+        String countryName = getCountryName(profile, true);
+        if(!StringUtil.isBlank(countryName))
+            mav.addObject("countryName", countryName);
+        
         HashMap<String, Work> minimizedWorksMap = new HashMap<String, Work>();
         HashMap<String, Affiliation> affiliationMap = new HashMap<String, Affiliation>();
         HashMap<String, Funding> fundingMap = new HashMap<String, Funding>();

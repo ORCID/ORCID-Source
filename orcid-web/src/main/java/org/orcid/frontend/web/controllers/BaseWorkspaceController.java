@@ -31,6 +31,7 @@ import org.orcid.core.manager.SecurityQuestionManager;
 import org.orcid.core.manager.SponsorManager;
 import org.orcid.core.security.visibility.filter.VisibilityFilter;
 import org.orcid.frontend.web.util.YearsList;
+import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.utils.FunctionsOverCollections;
@@ -107,4 +108,20 @@ public class BaseWorkspaceController extends BaseController {
         return map;
     }
 
+    public String getCountryName(OrcidProfile profile) {
+        return getCountryName(profile, false);
+    }
+    
+    public String getCountryName(OrcidProfile profile, boolean checkVisibility) {        
+        if(profile.getOrcidBio() != null && profile.getOrcidBio().getContactDetails() != null && profile.getOrcidBio().getContactDetails().getAddress() != null && profile.getOrcidBio().getContactDetails().getAddress().getCountry() != null) {
+            if(checkVisibility) {
+                if(!Visibility.PUBLIC.equals(profile.getOrcidBio().getContactDetails().getAddress().getCountry().getVisibility()))
+                    return null;
+            }
+            Map<String, String> countries = retrieveIsoCountries();
+            return countries.get(profile.getOrcidBio().getContactDetails().getAddress().getCountry().getValue().value());
+        }
+        return null;
+    }
+    
 }
