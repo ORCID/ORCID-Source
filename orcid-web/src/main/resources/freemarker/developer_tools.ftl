@@ -76,7 +76,7 @@
 						<!-- SLIDE BOX  -->
 						<!-- Redirect URIS -->
 						<div class="col-md-12 col-sm-12 col-xs-12">
-							<h4><@orcid.msg 'manage.developer_tools.redirect_uri'/>:</h4>																			
+							<h4><@orcid.msg 'manage.developer_tools.redirect_uri'/>:</h4>																		
 							<select ng-model="selectedRedirectUri" ng-options="rUri.value.value for rUri in userCredentials.redirectUris | orderBy:'value.value'" ng-change="updateSelectedRedirectUri()">
 							</select>														
 						</div>
@@ -190,6 +190,9 @@
 									<div ng-repeat='error in rUri.errors' ng-bind-html="error"></div>
 								</span>	
 							</div>
+							<span class="orcid-error" ng-show="userCredentials.redirectUris.length == 0">
+								<div><@orcid.msg 'manage.developer_tools.at_least_one' /></div>
+							</span>
 						</div>
 					</div>	
 					<div class="col-md-2 col-sm-2"></div>
@@ -287,7 +290,6 @@
 				</span>	
 			</div>
 
-
 			<div class="row">
 				<span class="col-xs-12 col-md-12"><strong><@orcid.msg 'manage.developer_tools.generate.website'/></strong></span>
 				<span class="col-xs-12 col-md-12"><input type="text" placeholder="<@orcid.msg 'manage.developer_tools.generate.website.placeholder'/>" class="input-xlarge" ng-model="userCredentials.clientWebsite.value"></span><br />
@@ -301,10 +303,13 @@
 	    		<div class="col-xs-12 col-md-12" ng-repeat="rUri in userCredentials.redirectUris">										
 					<input type="text" placeholder="<@orcid.msg 'manage.developer_tools.redirect_uri.placeholder'/>" class="input-xlarge" ng-model="rUri.value.value">
 					<a href ng-click="deleteRedirectUri($index)" class="glyphicon glyphicon-trash grey"></a><br />					
-					<span class="col-xs-12 col-md-12 orcid-error" ng-show="rUri.errors.length > 0">
+					<span class="orcid-error" ng-show="rUri.errors.length > 0">
 						<div ng-repeat='error in rUri.errors' ng-bind-html="error"></div>
-					</span>						
+					</span>							
 				</div>
+				<span class="col-xs-12 col-md-12 orcid-error" ng-show="userCredentials.redirectUris.length == 0">
+					<div><@orcid.msg 'manage.developer_tools.at_least_one' /></div>
+				</span>		
 			</div>
 		
 			<div class="row">

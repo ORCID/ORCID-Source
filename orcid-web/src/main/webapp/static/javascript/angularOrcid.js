@@ -4029,13 +4029,18 @@ function SSOPreferencesCtrl($scope, $compile) {
 	        		if(data != null && data.clientSecret != null) {
 	        			$scope.playgroundExample = '';
 	        			$scope.userCredentials = data;	
-	        			$scope.hideGoogleUri = false;
+	        			$scope.hideGoogleUri = false;	
+	        			$scope.selectedRedirectUri = $scope.userCredentials.redirectUris[0];
 	        			for(var i = 0; i < $scope.userCredentials.redirectUris.length; i++) {
 	        				if($scope.googleUri == $scope.userCredentials.redirectUris[i].value.value) {
 	        					$scope.hideGoogleUri = true;
-	        					break;
+	        				}
+	        				
+	        				if($scope.userCredentials.redirectUris[i].value.value < $scope.selectedRedirectUri.value.value) {	        					
+	        					$scope.selectedRedirectUri = $scope.userCredentials.redirectUris[i];
 	        				}
 	        			}
+	        			$scope.updateSelectedRedirectUri();
 	        		}	        				        					        	
 				});
 	        }
@@ -4063,10 +4068,8 @@ function SSOPreferencesCtrl($scope, $compile) {
 	
 	// Get an empty modal to add
 	$scope.createCredentialsModal = function(){		
-		$scope.userCredentials = $scope.getEmptyCredentials();
-		$scope.$apply(function() {
-			$scope.showCreateModal();
-		});
+		$scope.userCredentials = $scope.getEmptyCredentials();		
+		$scope.showCreateModal();		
 	};
 	
 	$scope.showCreateModal = function() {
@@ -4092,12 +4095,24 @@ function SSOPreferencesCtrl($scope, $compile) {
 	        data: angular.toJson($scope.userCredentials),	        	       
 	        success: function(data){
 	        	$scope.$apply(function(){ 
-	        		$scope.playgroundExample = '';
-	        		$scope.selectedRedirectUri = '';
+	        		$scope.playgroundExample = '';	        		
 	        		$scope.userCredentials = data;
 	        		if(data.errors.length != 0){
 	        			//SHOW ERROR
-	        		} else {	        			
+	        		} else {	        	        				        				        				        			
+	        			$scope.hideGoogleUri = false;	
+	        			$scope.selectedRedirectUri = $scope.userCredentials.redirectUris[0];
+	        			for(var i = 0; i < $scope.userCredentials.redirectUris.length; i++) {
+	        				if($scope.googleUri == $scope.userCredentials.redirectUris[i].value.value) {
+	        					$scope.hideGoogleUri = true;
+	        				}
+	        				
+	        				if($scope.userCredentials.redirectUris[i].value.value < $scope.selectedRedirectUri.value.value) {	        					
+	        					$scope.selectedRedirectUri = $scope.userCredentials.redirectUris[i];
+	        				}
+	        			}
+	        			$scope.updateSelectedRedirectUri();
+	        			
 	        			$scope.closeModal();
 	        		}
 				});
@@ -4167,7 +4182,6 @@ function SSOPreferencesCtrl($scope, $compile) {
 	        data: angular.toJson($scope.userCredentials),	        	       
 	        success: function(data){
 	        	$scope.$apply(function(){ 
-	        		$scope.selectedRedirectUri = '';
 	        		$scope.playgroundExample = '';
 	        		$scope.userCredentials = data;
 	        		if(data.errors.length != 0){
@@ -4175,12 +4189,18 @@ function SSOPreferencesCtrl($scope, $compile) {
 	        		} else {	        			
 	        			$scope.editing = false;
 	        			$scope.hideGoogleUri = false;
+	        			$scope.selectedRedirectUri = $scope.userCredentials.redirectUris[0];
 	        			for(var i = 0; i < $scope.userCredentials.redirectUris.length; i++) {
 	        				if($scope.googleUri == $scope.userCredentials.redirectUris[i].value.value) {
 	        					$scope.hideGoogleUri = true;
-	        					break;
 	        				}
+	        				
+	        				if($scope.userCredentials.redirectUris[i].value.value < $scope.selectedRedirectUri.value.value) {
+	        					$scope.selectedRedirectUri = $scope.userCredentials.redirectUris[i];
+	        				}	        				
 	        			}
+	        			
+	        			$scope.updateSelectedRedirectUri();
 	        		}
 				});
 	        }
