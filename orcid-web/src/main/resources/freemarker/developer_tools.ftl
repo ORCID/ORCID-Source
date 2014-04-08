@@ -76,10 +76,9 @@
 						<!-- SLIDE BOX  -->
 						<!-- Redirect URIS -->
 						<div class="col-md-12 col-sm-12 col-xs-12">
-							<h4><@orcid.msg 'manage.developer_tools.redirect_uri'/>:</h4>						
-							<ul class="uris" ng-repeat='rUri in userCredentials.redirectUris'>
-								<li><a href="{{rUri.value.value}}">{{rUri.value.value}}</a></li>									
-							</ul>
+							<h4><@orcid.msg 'manage.developer_tools.redirect_uri'/>:</h4>																			
+							<select ng-model="selectedRedirectUri" ng-options="rUri.value.value for rUri in userCredentials.redirectUris | orderBy:'value.value'" ng-change="updateSelectedRedirectUri()">
+							</select>														
 						</div>
 					</div>
 					<div class="row">						
@@ -88,6 +87,15 @@
 								<div class="table-responsive">
 								  <!-- Client ID - Client Secret -->
 								  <table class="table">
+								  		<!-- Available scopes -->
+									    <tr class="table-row-border-bottom">
+									    	<td><strong><@orcid.msg 'manage.developer_tools.view.available_scopes.title'/></strong></td>
+									    	<td>
+									    		<a href="<@orcid.msg 'manage.developer_tools.view.available_scopes.link.url'/>"><@orcid.msg 'manage.developer_tools.view.available_scopes.link.text'/></a><br />
+									    		<strong><@orcid.msg 'manage.developer_tools.view.available_scopes.authorize'/></strong>&nbsp;<@orcid.msg 'manage.developer_tools.view.available_scopes.authorize.description'/>
+									    	</td>
+									    </tr>									    
+									    <!-- Client details-->
 									    <tr>
 									    	<td><strong><@orcid.msg 'manage.developer_tools.view.secret'/></strong></td>
 									    	<td>{{userCredentials.clientSecret.value}}</td>
@@ -99,30 +107,20 @@
 									    <!-- Authorize URl and Token URL -->
 									    <tr>
 									    	<td><strong><@orcid.msg 'manage.developer_tools.view.example.authorize'/></strong></td>
-									    	<td>{{authorizeURL}}</td>
+									    	<td>
+									    		<span ng-show="selectedRedirectUri != ''">{{authorizeURL}}</span>
+									    		<span ng-show="selectedRedirectUri == ''"><@orcid.msg 'manage.developer_tools.view.example.authorize.pick_one_from_the_list' /></span>
+									    	</td>
 									    </tr>
 									    <tr class="table-row-border-bottom">
 									    	<td><strong><@orcid.msg 'manage.developer_tools.view.example.token'/></strong></td>
 									    	<td>{{tokenURL}}</td>
-									    </tr>
-									    <!-- Available scopes -->
-									    <tr>
-									    	<td><strong><@orcid.msg 'manage.developer_tools.view.available_scopes.title'/></strong></td>
-									    	<td><a href="<@orcid.msg 'manage.developer_tools.view.available_scopes.link.url'/>"><@orcid.msg 'manage.developer_tools.view.available_scopes.link.text'/></a></td>
-									    </tr>
-									    <tr  class="table-row-border-bottom">
-									    	<td></td>
-									    	<td><strong><@orcid.msg 'manage.developer_tools.view.available_scopes.authorize'/></strong>&nbsp;<@orcid.msg 'manage.developer_tools.view.available_scopes.authorize.description'/></td>
-									    </tr>
+									    </tr>									    
 									    <!-- Testing tools -->
-									    <tr ng-hide="playgroundExample == '' && runscopeExample == ''">
-									    		<td ng-hide="playgroundExample == ''"><strong><@orcid.msg 'manage.developer_tools.view.example.title'/></strong></td>
-									    		<td ng-hide="playgroundExample == ''"><a href="{{playgroundExample}}" target="_blank"><@orcid.msg 'manage.developer_tools.view.example.google'/></a></td>
+									    <tr ng-hide="playgroundExample == ''">
+									    		<td><strong><@orcid.msg 'manage.developer_tools.view.example.title'/></strong></td>
+									    		<td><a href="{{playgroundExample}}" target="_blank"><@orcid.msg 'manage.developer_tools.view.example.google'/></a></td>
 									    </tr>
-									    <tr ng-hide="runscopeExample == ''">
-											   	<td><strong ng-hide="playgroundExample != ''"><@orcid.msg 'manage.developer_tools.view.example.title'/></strong></td>
-										   	<td><a href="{{runscopeExample}}" target="_blank"><@orcid.msg 'manage.developer_tools.view.example.runscope'/></a></td>
-										 </tr>							    							    								    								    								 
 								   </table>
 								</div>									
 							</div>
@@ -137,6 +135,7 @@
 				<div class="row">					
 					<div class="col-md-10 col-sm-10 col-xs-9">
 						<div class="inner-row">
+							<span><strong><@orcid.msg 'manage.developer_tools.generate.name'/></strong></span>
 							<input type="text" placeholder="<@orcid.msg 'manage.developer_tools.generate.name.placeholder'/>" class="input-xlarge" ng-model="userCredentials.clientName.value">
 							<span class="orcid-error" ng-show="userCredentials.clientName.errors.length > 0">
 								<div ng-repeat='error in userCredentials.clientName.errors' ng-bind-html="error"></div>
@@ -155,6 +154,7 @@
 					<!-- Website -->
 					<div class="col-md-10 col-sm-10 col-xs-12 dt-website">
 						<div class="inner-row">
+							<span><strong><@orcid.msg 'manage.developer_tools.generate.website'/></strong></span>
 							<input type="text" placeholder="<@orcid.msg 'manage.developer_tools.generate.website.placeholder'/>" class="input-xlarge" ng-model="userCredentials.clientWebsite.value">
 							<span class="orcid-error" ng-show="userCredentials.clientWebsite.errors.length > 0">
 								<div ng-repeat='error in userCredentials.clientWebsite.errors' ng-bind-html="error"></div>
@@ -163,12 +163,12 @@
 					</div>			
 					<div class="col-md-2 col-sm-2"></div>									
 				</div>
-							
-							
+														
 				<div class="row">
 					<!-- Description -->
 					<div class="col-md-10 col-sm-10 col-xs-12 dt-description">
 						<div class="inner-row">
+							<span><strong><@orcid.msg 'manage.developer_tools.generate.description'/></strong></span>
 							<textarea placeholder="<@orcid.msg 'manage.developer_tools.generate.description.placeholder'/>" ng-model="userCredentials.clientDescription.value"></textarea>						
 							<span class="orcid-error" ng-show="userCredentials.clientDescription.errors.length > 0">
 								<div ng-repeat='error in userCredentials.clientDescription.errors' ng-bind-html="error"></div>
@@ -176,44 +176,45 @@
 						</div>															
 					</div>			
 					<div class="col-md-2 col-sm-2"></div>									
+				</div>				
+				<div class="row">
+					<!-- SLIDE BOX  -->
+					<!-- Redirect URIS -->
+					<div class="col-md-10 col-sm-10 col-xs-12">
+						<div class="inner-row redirectUris">
+							<h4><@orcid.msg 'manage.developer_tools.redirect_uri'/></h4>						
+							<div ng-repeat="rUri in userCredentials.redirectUris">										
+								<input type="text" placeholder="<@orcid.msg 'manage.developer_tools.redirect_uri.placeholder'/>" ng-model="rUri.value.value">					
+								<a href ng-click="deleteRedirectUri($index)" class="glyphicon glyphicon-trash blue"></a>
+								<span class="orcid-error" ng-show="rUri.errors.length > 0">
+									<div ng-repeat='error in rUri.errors' ng-bind-html="error"></div>
+								</span>	
+							</div>
+						</div>
+					</div>	
+					<div class="col-md-2 col-sm-2"></div>
+					<!-- Client ID - Client Secret -->
 				</div>
-				
+				<div class="row">
+					<div class="col-md-12 col-sm-12 col-xs-12 add-options">
+						<a href="" class="icon-href-bg" ng-click="addRedirectURI()"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.add_redirect_uri' /></a>
+					</div>
+				</div>
 				<div class="slidebox">
 					<div class="row">
-						<!-- SLIDE BOX  -->
-						<!-- Redirect URIS -->
-						<div class="col-md-10 col-sm-10 col-xs-12">
-							<div class="inner-row redirectUris">
-								<h4><@orcid.msg 'manage.developer_tools.redirect_uri'/>:</h4>						
-								<div ng-repeat="rUri in userCredentials.redirectUris">										
-									<input type="text" placeholder="<@orcid.msg 'manage.developer_tools.redirect_uri.placeholder'/>" ng-model="rUri.value.value">					
-									<a href ng-click="deleteRedirectUri($index)" class="glyphicon glyphicon-trash blue"></a>
-									<span class="orcid-error" ng-show="rUri.errors.length > 0">
-										<div ng-repeat='error in rUri.errors' ng-bind-html="error"></div>
-									</span>	
-								</div>
-							</div>
-						</div>	
-						<div class="col-md-2 col-sm-2"></div>
-						<!-- Client ID - Client Secret -->
-					</div>
-					<div class="row">
 						<div class="col-md-12 col-sm-12 col-xs-12">
-							<div class="add-options">
-								<a href="" class="icon-href-bg" ng-click="addRedirectURI()"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.add_redirect_uri' /></a>
-								<div ng-show="!hideGoogleUri || !hideRunscopeUri">
-									<h4>Test redirect URIs</h4>
+							<div class="add-options">								
+								<div ng-show="!hideGoogleUri">
+									<h4><@orcid.msg 'manage.developer_tools.test_redirect_uris.title' /></h4>
 									<ul class="pullleft-list">
-										<li id="google-ruir" ng-hide="hideGoogleUri"><a href="" class="icon-href" ng-click="addTestRedirectUri('google')"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.google'/></a></li>
-										<li id="runscope-ruir" ng-hide="hideRunscopeUri"><a href="" class="icon-href" ng-click="addTestRedirectUri('runscope')"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.runscope'/></a></li>
+										<li id="google-ruir"><a href="" class="icon-href" ng-click="addTestRedirectUri('google')"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.google'/></a></li>										
 									</ul>								
 								</div>
 							</div>
 						</div>					
 					</div>					
 					<div class="row">
-						<div class="col-md-12 col-sm-12 col-xs-12">
-						
+						<div class="col-md-12 col-sm-12 col-xs-12">						
 							<div class="grey-box">
 								<div class="table-responsive">
 								  <table class="table">
