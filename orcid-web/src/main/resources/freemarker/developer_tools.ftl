@@ -92,7 +92,7 @@
 									    	<td><strong><@orcid.msg 'manage.developer_tools.view.available_scopes.title'/></strong></td>
 									    	<td>
 									    		<a href="<@orcid.msg 'manage.developer_tools.view.available_scopes.link.url'/>"><@orcid.msg 'manage.developer_tools.view.available_scopes.link.text'/></a><br />
-									    		<strong><@orcid.msg 'manage.developer_tools.view.available_scopes.authorize'/></strong>&nbsp;&nbsp;&nbsp;&nbsp;<@orcid.msg 'manage.developer_tools.view.available_scopes.authorize.description'/>
+									    		<strong><@orcid.msg 'manage.developer_tools.view.available_scopes.authenticate'/></strong>&nbsp;&nbsp;&nbsp;&nbsp;<@orcid.msg 'manage.developer_tools.view.available_scopes.authenticate.description'/>
 									    	</td>
 									    </tr>									    
 									    <!-- Client details-->
