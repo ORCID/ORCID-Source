@@ -18,9 +18,9 @@ package org.orcid.pojo.ajaxForm;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -48,7 +48,7 @@ public class SSOCredentials implements ErrorsInterface, Serializable {
             result.setClientSecret(Text.valueOf(clientDetails.getClientSecret()));
             result.setClientOrcid(Text.valueOf(clientDetails.getClientId()));            
             if(clientDetails.getClientRegisteredRedirectUris() != null && !clientDetails.getClientRegisteredRedirectUris().isEmpty()) {
-                result.redirectUris = new HashSet<RedirectUri>();
+                result.redirectUris = new TreeSet<RedirectUri>();
                 for(ClientRedirectUriEntity redirectUri : clientDetails.getClientRegisteredRedirectUris()) {
                     if(RedirectUriType.SSO_AUTHENTICATION.value().equals(redirectUri.getRedirectUriType())) {
                         RedirectUri rUri = new RedirectUri();

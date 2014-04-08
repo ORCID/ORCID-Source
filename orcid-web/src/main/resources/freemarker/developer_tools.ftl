@@ -92,17 +92,17 @@
 									    	<td><strong><@orcid.msg 'manage.developer_tools.view.available_scopes.title'/></strong></td>
 									    	<td>
 									    		<a href="<@orcid.msg 'manage.developer_tools.view.available_scopes.link.url'/>"><@orcid.msg 'manage.developer_tools.view.available_scopes.link.text'/></a><br />
-									    		<strong><@orcid.msg 'manage.developer_tools.view.available_scopes.authorize'/></strong>&nbsp;<@orcid.msg 'manage.developer_tools.view.available_scopes.authorize.description'/>
+									    		<strong><@orcid.msg 'manage.developer_tools.view.available_scopes.authenticate'/></strong>&nbsp;&nbsp;&nbsp;&nbsp;<@orcid.msg 'manage.developer_tools.view.available_scopes.authenticate.description'/>
 									    	</td>
 									    </tr>									    
 									    <!-- Client details-->
 									    <tr>
-									    	<td><strong><@orcid.msg 'manage.developer_tools.view.secret'/></strong></td>
-									    	<td>{{userCredentials.clientSecret.value}}</td>
+									    	<td><strong><@orcid.msg 'manage.developer_tools.view.orcid'/></strong></td>
+									    	<td>{{userCredentials.clientOrcid.value}}</td>									    	
 									    </tr>
 									    <tr class="table-row-border-bottom">
-									    	<td><strong><@orcid.msg 'manage.developer_tools.view.orcid'/></strong></td>
-									    	<td>{{userCredentials.clientOrcid.value}}</td>
+									    	<td><strong><@orcid.msg 'manage.developer_tools.view.secret'/></strong></td>
+									    	<td>{{userCredentials.clientSecret.value}}</td>
 									    </tr>
 									    <!-- Authorize URl and Token URL -->
 									    <tr>
@@ -222,12 +222,12 @@
 								<div class="table-responsive">
 								  <table class="table">
 								    <tr>
-								    	<td><strong><@orcid.msg 'manage.developer_tools.view.secret'/></strong></td>
-								    	<td>{{userCredentials.clientSecret.value}}</td>
-								    </tr>
-								    <tr>
 								    	<td><strong><@orcid.msg 'manage.developer_tools.view.orcid'/></strong></td>
 								    	<td>{{userCredentials.clientOrcid.value}}</td>
+								    </tr>
+								    <tr>
+								    	<td><strong><@orcid.msg 'manage.developer_tools.view.secret'/></strong></td>
+								    	<td>{{userCredentials.clientSecret.value}}</td>								    	
 								    </tr>								    
 								  </table>
 								</div>									
