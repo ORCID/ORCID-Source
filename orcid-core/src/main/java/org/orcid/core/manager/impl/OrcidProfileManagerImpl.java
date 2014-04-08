@@ -1247,7 +1247,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
      */
     @Override
     public boolean emailExists(String email) {
-        return profileDao.emailExists(email) || emailDao.emailExists(email);
+        return emailDao.emailExists(email);
     }
 
     /**
