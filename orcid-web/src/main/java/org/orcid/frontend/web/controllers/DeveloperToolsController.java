@@ -288,16 +288,11 @@ public class DeveloperToolsController extends BaseWorkspaceController {
      * */
     private List<String> validateRedirectUri(RedirectUri redirectUri) {
         List<String> errors = null;
-        String[] schemes = { "http", "https", "ftp" }; // DEFAULT schemes =
-                                                       // "http", "https", "ftp"
+        String[] schemes = { "http", "https" }; 
         UrlValidator urlValidator = new UrlValidator(schemes);
         if (!PojoUtil.isEmpty(redirectUri.getValue())) {
             try {
                 String redirectUriString = redirectUri.getValue().getValue();
-                if (!urlValidator.isValid(redirectUriString))
-                    redirectUriString = "http://" + redirectUriString;
-
-                // test validity again
                 if (!urlValidator.isValid(redirectUriString)) {
                     errors = new ArrayList<String>();
                     errors.add(getMessage("manage.developer_tools.invalid_redirect_uri"));
