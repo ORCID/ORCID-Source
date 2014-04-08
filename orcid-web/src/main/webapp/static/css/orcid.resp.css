@@ -3380,6 +3380,11 @@ p.orcid-id-container{
 	margin-right: 5px;
 }
 
+.developer-tools .details .table tr td:last-child{
+	word-break: break-all;
+} 
+
+
 /* Group Developer Tools Layout*/
 
 .client-api ul.client-options{

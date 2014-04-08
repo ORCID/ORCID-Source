@@ -32,7 +32,7 @@
 						<h2><@orcid.msg 'manage.developer_tools.user.title' /></h2>
 					</div>					
 				</div>
-				<div class="col-md-2 col-sm-2 col-xs-4" ng-hide="userCredentials.clientSecret.value">
+				<div class="col-md-2 col-sm-2 col-xs-4" ng-hide="userCredentials.clientSecret.value" ng-cloak>
 					<a ng-click="createCredentialsModal()" class="pull-right"><span class="label btn-primary cboxElement"><@orcid.msg 'manage.developer_tools.button.register_now' /></span></a>
 				</div>	
 			</div>
@@ -112,7 +112,7 @@
 									    </tr>
 									    <tr  class="table-row-border-bottom">
 									    	<td></td>
-									    	<td><strong><@orcid.msg 'manage.developer_tools.view.available_scopes.authorize'/></strong><@orcid.msg 'manage.developer_tools.view.available_scopes.authorize.description'/></td>
+									    	<td><strong><@orcid.msg 'manage.developer_tools.view.available_scopes.authorize'/></strong>&nbsp;<@orcid.msg 'manage.developer_tools.view.available_scopes.authorize.description'/></td>
 									    </tr>
 									    <!-- Testing tools -->
 									    <tr ng-hide="playgroundExample == '' && runscopeExample == ''">
