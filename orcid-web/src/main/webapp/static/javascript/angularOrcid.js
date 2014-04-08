@@ -3976,6 +3976,7 @@ function SSOPreferencesCtrl($scope, $compile) {
 	$scope.authorizeURLTemplate = getBaseUri() + '/oauth/authorize?client_id=[CLIENT_ID]&response_type=code&scope=/authenticate&redirect_uri=[REDIRECT_URI]';
 	$scope.tokenURL = orcidVar.pubBaseUri + '/oauth/token';
 	$scope.authorizeURL = '';
+	$scope.selectedRedirectUri = '';
 	
 	$scope.enableDeveloperTools = function() {
 		$.ajax({
@@ -4026,32 +4027,15 @@ function SSOPreferencesCtrl($scope, $compile) {
 	        success: function(data){	 
 	        	$scope.$apply(function(){ 
 	        		if(data != null && data.clientSecret != null) {
-	        			$scope.userCredentials = data;
-	        			var defaultRedirectUri = '';
-	        			var clientId = $scope.userCredentials.clientOrcid.value;
-	        			//Build the google playground url example
+	        			$scope.playgroundExample = '';
+	        			$scope.userCredentials = data;	
+	        			$scope.hideGoogleUri = false;
 	        			for(var i = 0; i < $scope.userCredentials.redirectUris.length; i++) {
 	        				if($scope.googleUri == $scope.userCredentials.redirectUris[i].value.value) {
-	        					var example = $scope.googleExampleLink;
-	        					example = example.replace('[CLIENT_ID]', clientId);
-	        					example = example.replace('[CLIENT_SECRET]', $scope.userCredentials.clientSecret.value);	        					
-	        					$scope.playgroundExample = example;
-	        					defaultRedirectUri = $scope.userCredentials.redirectUris[i].value.value;
-	        				} else if($scope.runscopeUri == $scope.userCredentials.redirectUris[i].value.value) {
-	        					$scope.runscopeExample = $scope.runscopeExampleLink;
-	        					defaultRedirectUri = $scope.userCredentials.redirectUris[i].value.value;
+	        					$scope.hideGoogleUri = true;
+	        					break;
 	        				}
 	        			}
-	        			
-	        			//Build the authorize uri with parameters
-	        			if(defaultRedirectUri == '') {
-	        				//If there are no test redirect uri (google or runscope for now), lets use the first redirect uri
-	        				defaultRedirectUri = $scope.userCredentials.redirectUris[0].value.value;
-	        			}
-	        			var example = $scope.authorizeURLTemplate;
-	        			example = example.replace('[CLIENT_ID]', clientId);
-	        			example = example.replace('[REDIRECT_URI]', defaultRedirectUri);
-	        			$scope.authorizeURL = example;
 	        		}	        				        					        	
 				});
 	        }
@@ -4108,6 +4092,8 @@ function SSOPreferencesCtrl($scope, $compile) {
 	        data: angular.toJson($scope.userCredentials),	        	       
 	        success: function(data){
 	        	$scope.$apply(function(){ 
+	        		$scope.playgroundExample = '';
+	        		$scope.selectedRedirectUri = '';
 	        		$scope.userCredentials = data;
 	        		if(data.errors.length != 0){
 	        			//SHOW ERROR
@@ -4181,24 +4167,20 @@ function SSOPreferencesCtrl($scope, $compile) {
 	        data: angular.toJson($scope.userCredentials),	        	       
 	        success: function(data){
 	        	$scope.$apply(function(){ 
+	        		$scope.selectedRedirectUri = '';
+	        		$scope.playgroundExample = '';
 	        		$scope.userCredentials = data;
 	        		if(data.errors.length != 0){
 	        			//SHOW ERROR
 	        		} else {	        			
 	        			$scope.editing = false;
-	        			
-	        			//Build the google playground url example
+	        			$scope.hideGoogleUri = false;
 	        			for(var i = 0; i < $scope.userCredentials.redirectUris.length; i++) {
 	        				if($scope.googleUri == $scope.userCredentials.redirectUris[i].value.value) {
-	        					var example = $scope.googleExampleLink;
-	        					example = example.replace('[CLIENT_ID]', $scope.userCredentials.clientOrcid.value);
-	        					example = example.replace('[CLIENT_SECRET]', $scope.userCredentials.clientSecret.value);
-	        					console.log(example);
-	        					$scope.playgroundExample = example;
-	        				} else if($scope.runscopeUri == $scope.userCredentials.redirectUris[i].value.value) {
-	        					$scope.runscopeExample = $scope.runscopeExampleLink;
+	        					$scope.hideGoogleUri = true;
+	        					break;
 	        				}
-	        			}	        			
+	        			}
 	        		}
 				});
 	        }
@@ -4231,16 +4213,32 @@ function SSOPreferencesCtrl($scope, $compile) {
 					$scope.userCredentials.redirectUris.push(data);
 					if(type == 'google') {
 						$scope.hideGoogleUri = true; 
-						$('#google-ruir').hide();
-					} else {
-						$scope.hideRunscopeUri = true;
-						$('#runscope-ruir').hide();
-					}
+					} 
 				});
 			}
 		}).fail(function() { 
 	    	console.log("Error fetching empty redirect uri");
 	    });
+	};
+	
+	
+	$scope.updateSelectedRedirectUri = function() {		
+		var clientId = $scope.userCredentials.clientOrcid.value;
+		var selectedRedirectUriValue = $scope.selectedRedirectUri.value.value;
+		//Build the google playground url example
+		$scope.playgroundExample = '';
+		
+		if($scope.googleUri == selectedRedirectUriValue) {
+			var example = $scope.googleExampleLink;
+			example = example.replace('[CLIENT_ID]', clientId);
+			example = example.replace('[CLIENT_SECRET]', $scope.userCredentials.clientSecret.value);	        					
+			$scope.playgroundExample = example;
+		}		
+				
+		var example = $scope.authorizeURLTemplate;
+		example = example.replace('[CLIENT_ID]', clientId);
+		example = example.replace('[REDIRECT_URI]', selectedRedirectUriValue);
+		$scope.authorizeURL = example;
 	};
 	
 	//init
