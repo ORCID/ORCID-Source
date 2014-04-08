@@ -114,7 +114,7 @@ public class GroupAdministratorControllerTest extends BaseControllerTest {
         client = controller.createClient(client);
         errors = client.getErrors(); 
         assertEquals(1, errors.size());
-        assertTrue(errors.contains(controller.getMessage("manage.developer_tools.group.error.invalid_url")));        
+        assertTrue(errors.contains(controller.getMessage("common.invalid_url")));        
         
         RedirectUri two = new RedirectUri();
         two.setType(Text.valueOf("grant-read-wizard"));
@@ -126,7 +126,7 @@ public class GroupAdministratorControllerTest extends BaseControllerTest {
         client = controller.createClient(client);
         errors = client.getErrors(); 
         assertEquals(2, errors.size());
-        assertTrue(errors.contains(controller.getMessage("manage.developer_tools.group.error.invalid_url")));
+        assertTrue(errors.contains(controller.getMessage("common.invalid_url")));
         assertTrue(errors.contains(controller.getMessage("manage.developer_tools.group.error.empty_scopes")));
     }
 }

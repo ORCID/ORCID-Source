@@ -152,7 +152,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
         if (PojoUtil.isEmpty(client.getWebsite())) {
             setError(client.getWebsite(), "manage.developer_tools.group.error.website.empty");
         } else if (!validateUrl(client.getWebsite().getValue())) {
-            setError(client.getWebsite(), "manage.developer_tools.group.error.invalid_url");
+            setError(client.getWebsite(), "common.invalid_url");
         }
         return client;
     }
@@ -169,7 +169,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
             for (RedirectUri redirectUri : client.getRedirectUris()) {
                 redirectUri.setErrors(new ArrayList<String>());
                 if (!validateUrl(redirectUri.getValue().getValue())) {
-                    setError(redirectUri, "manage.developer_tools.group.error.invalid_url");
+                    setError(redirectUri, "common.invalid_url");
                 }
 
                 if (RedirectUriType.DEFAULT.value().equals(redirectUri.getType().getValue())) {

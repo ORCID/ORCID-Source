@@ -593,7 +593,7 @@ public class WorksController extends BaseWorkspaceController {
     public @ResponseBody
     Work workUrlValidate(@RequestBody Work work) {
         work.getUrl().setErrors(new ArrayList<String>());
-        if (work.getUrl().getValue() != null) {
+        if (!PojoUtil.isEmpty(work.getUrl().getValue())) {
            // trim if required
            if (!work.getUrl().getValue().equals(work.getUrl().getValue().trim())) 
                work.getUrl().setValue(work.getUrl().getValue().trim());
@@ -610,7 +610,7 @@ public class WorksController extends BaseWorkspaceController {
            
            // test validity again
            if (!urlValidator.isValid(work.getUrl().getValue()))
-               setError(work.getUrl(), "manualWork.invalid_url");
+               setError(work.getUrl(), "common.invalid_url");
         }
         return work;
     }
