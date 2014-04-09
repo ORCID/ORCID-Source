@@ -3354,7 +3354,7 @@ p.orcid-id-container{
 	font-size: 12px;	
 }
 
-.sso-api .sso-redirect_uris {
+.sso-api .generate-public-client {
 	padding: 10px 0 10px 0;
 }
 
@@ -3384,6 +3384,18 @@ p.orcid-id-container{
 	word-break: break-all;
 } 
 
+.authorizeURL {
+	width: 465px;
+	height: 95px;
+}
+
+.client-description {
+	height: 200px;
+}
+
+.generate-public-client .input-xlarge {
+	width: 375px;
+}
 
 /* Group Developer Tools Layout*/
 
