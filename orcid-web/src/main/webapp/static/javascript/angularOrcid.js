@@ -4079,7 +4079,7 @@ function SSOPreferencesCtrl($scope, $compile) {
 				$('#cboxClose').remove();
 			}
 		});
-		$.colorbox.resize({width:"460px" , height:"460px"});
+		$.colorbox.resize({width:"440px" , height:"675px"});
 	};
 	
 	$scope.addRedirectURI = function() {
@@ -4212,6 +4212,12 @@ function SSOPreferencesCtrl($scope, $compile) {
 	
 	$scope.deleteRedirectUri = function(idx) {
 		$scope.userCredentials.redirectUris.splice(idx, 1);
+		$scope.hideGoogleUri = false;
+		for(var i = 0; i < $scope.userCredentials.redirectUris.length; i++) {
+			if($scope.googleUri == $scope.userCredentials.redirectUris[i].value.value) {
+				$scope.hideGoogleUri = true;
+			}
+		}
 	};
 	
 	$scope.closeModal = function() {

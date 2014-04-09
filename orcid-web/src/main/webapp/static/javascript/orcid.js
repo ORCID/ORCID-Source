@@ -406,8 +406,15 @@
         menuHandler();
         developerToolsTabs();
         //setLoginStatusIcon();
+        selectableInputs();
     };
 
+    var selectableInputs = function(){
+    	$(".selectable").click(function () {
+    		$(this).select();
+    	});
+    };
+    
     init();
 
 })(jQuery);
