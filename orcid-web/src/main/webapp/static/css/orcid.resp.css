@@ -753,7 +753,7 @@ select {
 	margin: 0;
 }
 
-.header .navigation>.menu {
+.header .navigation > .menu{
 	position: relative;
 	width: auto;
 	padding: 0;
@@ -768,7 +768,7 @@ select {
 	font-style: normal;	   
 }
 
-.header .navigation>.menu>li {
+.header .navigation >.menu >li {
 	list-style: none;
 	float: left;
 	border-left: 1px solid #fff;
