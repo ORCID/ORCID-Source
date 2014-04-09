@@ -25,6 +25,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.OrcidSSOManager;
@@ -204,9 +205,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
     @RequestMapping(value = "/revoke-sso-credentials.json", method = RequestMethod.POST)
     public @ResponseBody
     SSOCredentials revokeSSOCredentials(HttpServletRequest request) {
-        String userOrcid = getEffectiveUserOrcid();
-        orcidSSOManager.revokeSSOAccess(userOrcid);
-        return this.getEmptySSOCredentials(request);
+        throw new NotImplementedException();
     }
 
     /**

@@ -54,8 +54,7 @@
 					</div>
 					<div class="col-md-2 col-sm-2 col-xs-3">				
 						<ul class="sso-options pull-right">							
-							<li><a href ng-click="showEditLayout()" class="edit" title="<@orcid.msg 'manage.developer_tools.tooltip.edit' />"><span class="glyphicon glyphicon-pencil"></span></a></li>
-							<li><a href ng-click="showRevokeModal()" class="revoke" title="<@orcid.msg 'manage.developer_tools.tooltip.revoke' />"><span class="glyphicon glyphicon-trash"></span></a></li>
+							<li><a href ng-click="showEditLayout()" class="edit" title="<@orcid.msg 'manage.developer_tools.tooltip.edit' />"><span class="glyphicon glyphicon-pencil"></span></a></li>							
 						</ul>					
 					</div>				
 				</div>			
@@ -327,16 +326,5 @@
 		</div>
 	</div>
 </script>
-
-<script type="text/ng-template" id="revoke-sso-credentials-modal">
-	<div style="padding: 20px;" class="sso-api">
-		<h3><@orcid.msg 'manage.developer_tools.revoke.title'/></h3>
-		<span><@orcid.msg 'manage.developer_tools.revoke.instructions'/></span>
-		<div style="padding-top: 5px;">
-			<button class="btn btn-danger" ng-click="revoke()"><@orcid.msg 'manage.developer_tools.revoke.submit'/></button>
-			<a href="" ng-click="closeModal()"><@orcid.msg 'manage.developer_tools.create.cancel'/></a>
-		</div>
-	</div>
-</script>	
 
 </@public>
