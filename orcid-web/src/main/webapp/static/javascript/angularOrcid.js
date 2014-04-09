@@ -4041,7 +4041,7 @@ function SSOPreferencesCtrl($scope, $compile) {
 	        				}
 	        			}
 	        			$scope.updateSelectedRedirectUri();
-	        		}	        				        					        	
+	        		}	        		
 				});
 	        }
 	    }).fail(function(error) { 
