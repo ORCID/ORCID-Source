@@ -308,6 +308,11 @@ public class BaseController {
         return sourceManager.isInDelegationMode();
     }
 
+    @ModelAttribute("isDelegatedByAdmin")
+    public boolean isDelegatedByAdmin() {
+        return sourceManager.isDelegatedByAnAdmin();
+    }
+     
     @ModelAttribute("request")
     public HttpServletRequest getRequest(HttpServletRequest request) {
         return request;
