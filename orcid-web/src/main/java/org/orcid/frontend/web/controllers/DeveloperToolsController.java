@@ -49,7 +49,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller("developerToolsController")
 @RequestMapping(value = { "/developer-tools" })
-@PreAuthorize("!@sourceManager.isInDelegationMode()")
+@PreAuthorize("!@sourceManager.isInDelegationMode() OR @sourceManager.isDelegatedByAnAdmin()")
 public class DeveloperToolsController extends BaseWorkspaceController {
 
     private static int CLIENT_NAME_LENGTH = 255;
