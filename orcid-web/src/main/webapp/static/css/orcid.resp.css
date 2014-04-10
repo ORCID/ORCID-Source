@@ -3514,11 +3514,13 @@ p.orcid-id-container{
 }
 
 .developer-tools .inner-row input,
-.developer-tools .edit-details .dt-description textarea{
+.developer-tools .edit-details .dt-description textarea, 
+.developer-tools .create-client .dt-description textarea{
 	width: 100%;
 }
 
-.developer-tools .edit-details .dt-description textarea{
+.developer-tools .edit-details .dt-description textarea,
+.developer-tools .create-client .dt-description textarea{
 	height: 150px;
 }
 

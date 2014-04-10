@@ -3978,6 +3978,7 @@ function SSOPreferencesCtrl($scope, $compile) {
 	$scope.tokenURL = orcidVar.pubBaseUri + '/oauth/token';
 	$scope.authorizeURL = '';
 	$scope.selectedRedirectUri = '';
+	$scope.creating = false;
 	
 	$scope.enableDeveloperTools = function() {
 		$.ajax({
@@ -4054,39 +4055,31 @@ function SSOPreferencesCtrl($scope, $compile) {
 	    });		
 	};
 	
-	$scope.getEmptyCredentials = function() {
+	// Get an empty modal to add
+	$scope.createCredentialsLayout = function(){		
 		$.ajax({
 			url: getBaseUri() + '/developer-tools/get-empty-sso-credential.json',
 			dataType: 'json',
 			success: function(data) {
-				$scope.userCredentials = data;
-				$scope.$apply(function() {
-					$scope.showCreateModal();
-				});
+				$scope.$apply(function(){
+					$scope.hideGoogleUri = false;
+					$scope.creating = true;
+					$scope.userCredentials = data;
+				});				
 			}
 		}).fail(function() { 
 	    	console.log("Error fetching client");
-	    });
-	};
-	
-	// Get an empty modal to add
-	$scope.createCredentialsModal = function(){		
-		$scope.userCredentials = $scope.getEmptyCredentials();		
-		$scope.showCreateModal();		
-	};
-	
-	$scope.showCreateModal = function() {
-		$.colorbox({                      
-			html : $compile($('#generate-sso-credentials-modal').html())($scope),				
-				onLoad: function() {
-				$('#cboxClose').remove();
-			}
-		});
-		$.colorbox.resize({width:"440px" , height:"675px"});
-	};
+	    });				
+	};		
 	
 	$scope.addRedirectURI = function() {
 		$scope.userCredentials.redirectUris.push({value: '',type: 'default'});
+		$scope.hideGoogleUri = false;
+		for(var i = 0; i < $scope.userCredentials.redirectUris.length; i++) {
+			if($scope.googleUri == $scope.userCredentials.redirectUris[i].value.value) {
+				$scope.hideGoogleUri = true;
+			}
+		}
 	};
 	
 	$scope.submit = function() {
@@ -4115,8 +4108,7 @@ function SSOPreferencesCtrl($scope, $compile) {
 	        				}
 	        			}
 	        			$scope.updateSelectedRedirectUri();
-	        			
-	        			$scope.closeModal();
+	        			$scope.creating = false;	        			
 	        			$scope.showReg = false;
 	        		}
 				});
@@ -4175,6 +4167,7 @@ function SSOPreferencesCtrl($scope, $compile) {
 		//Reset the credentials
 		$scope.getSSOCredentials();	
 		$scope.editing = false;
+		$scope.creating = false;
 		$('.edit-details .slidebox').slideDown();				
 	};
 	
@@ -4224,11 +4217,7 @@ function SSOPreferencesCtrl($scope, $compile) {
 			}
 		}
 	};
-	
-	$scope.closeModal = function() {
-		$.colorbox.close();
-	};
-	
+		
 	$scope.addTestRedirectUri = function(type) {
 		var rUri = $scope.runscopeUri;		
 		if(type == 'google'){
@@ -4241,7 +4230,11 @@ function SSOPreferencesCtrl($scope, $compile) {
 			success: function(data) {
 				data.value.value=rUri;
 				$scope.$apply(function(){ 
-					$scope.userCredentials.redirectUris.push(data);
+					if($scope.userCredentials.redirectUris.length == 1 && $scope.userCredentials.redirectUris[0].value.value == null) {						
+						$scope.userCredentials.redirectUris[0].value.value = rUri;						
+					} else {
+						$scope.userCredentials.redirectUris.push(data);
+					}					
 					if(type == 'google') {
 						$scope.hideGoogleUri = true; 
 					} 
