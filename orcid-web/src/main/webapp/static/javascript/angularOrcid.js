@@ -4059,8 +4059,9 @@ function SSOPreferencesCtrl($scope, $compile) {
 			dataType: 'json',
 			success: function(data) {
 				$scope.$apply(function(){
-					$scope.userCredentials = data;
+					$scope.hideGoogleUri = false;
 					$scope.creating = true;
+					$scope.userCredentials = data;
 				});				
 			}
 		}).fail(function() { 
@@ -4225,7 +4226,11 @@ function SSOPreferencesCtrl($scope, $compile) {
 			success: function(data) {
 				data.value.value=rUri;
 				$scope.$apply(function(){ 
-					$scope.userCredentials.redirectUris.push(data);
+					if($scope.userCredentials.redirectUris.length == 1 && $scope.userCredentials.redirectUris[0].value.value == null) {						
+						$scope.userCredentials.redirectUris[0].value.value = rUri;						
+					} else {
+						$scope.userCredentials.redirectUris.push(data);
+					}					
 					if(type == 'google') {
 						$scope.hideGoogleUri = true; 
 					} 
