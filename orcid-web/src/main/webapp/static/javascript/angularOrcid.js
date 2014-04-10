@@ -3963,6 +3963,7 @@ function removeSecQuestionCtrl($scope,$compile) {
 };
 
 function SSOPreferencesCtrl($scope, $compile) {
+	$scope.showReg = false;
 	$scope.userCredentials = null;	
 	$scope.editing = false;
 	$scope.hideGoogleUri = false;
@@ -4041,7 +4042,9 @@ function SSOPreferencesCtrl($scope, $compile) {
 	        				}
 	        			}
 	        			$scope.updateSelectedRedirectUri();
-	        		}	        				        					        	
+	        		} else {
+	        			$scope.showReg = true;
+	        		}        					        	
 				});
 	        }
 	    }).fail(function(error) { 
@@ -4114,6 +4117,7 @@ function SSOPreferencesCtrl($scope, $compile) {
 	        			$scope.updateSelectedRedirectUri();
 	        			
 	        			$scope.closeModal();
+	        			$scope.showReg = false;
 	        		}
 				});
 	        }
@@ -4143,6 +4147,7 @@ function SSOPreferencesCtrl($scope, $compile) {
 	        	$scope.$apply(function(){ 
 	        		$scope.userCredentials = null;
 	        		$scope.closeModal();
+	        		$scope.showReg = true;
 				});
 	        }
 	    }).fail(function(error) { 
