@@ -592,28 +592,10 @@ public class WorksController extends BaseWorkspaceController {
     @RequestMapping(value = "/work/urlValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     Work workUrlValidate(@RequestBody Work work) {
-        work.getUrl().setErrors(new ArrayList<String>());
-        if (!PojoUtil.isEmpty(work.getUrl().getValue())) {
-           // trim if required
-           if (!work.getUrl().getValue().equals(work.getUrl().getValue().trim())) 
-               work.getUrl().setValue(work.getUrl().getValue().trim());
-           
-           // check length
-           if (work.getUrl().getValue().length() > 350)
-              setError(work.getUrl(), "manualWork.length_less_350");
-           
-           // add protocall if missing
-           String[] schemes = {"http","https", "ftp"}; // DEFAULT schemes = "http", "https", "ftp"
-           UrlValidator urlValidator = new UrlValidator(schemes);
-           if (!urlValidator.isValid(work.getUrl().getValue()))
-              work.getUrl().setValue("http://" + work.getUrl().getValue());   
-           
-           // test validity again
-           if (!urlValidator.isValid(work.getUrl().getValue()))
-               setError(work.getUrl(), "common.invalid_url");
-        }
+        validateUrl(work.getUrl());
         return work;
     }
+
 
     @RequestMapping(value = "/work/journalTitleValidate.json", method = RequestMethod.POST)
     public @ResponseBody
