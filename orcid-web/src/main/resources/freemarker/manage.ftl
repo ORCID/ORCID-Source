@@ -19,10 +19,10 @@
 
 <@protected classes=['manage'] nav="settings">
 <div class="row">
-	<div class="col-md-3 col-sm-3 col-xs-12">
+	<div class="col-md-3 col-sm-12 col-xs-12 padding-fix">
 		<#include "admin_menu.ftl"/>
 	</div>	
-	<div class="col-md-9">
+	<div class="col-md-9 col-sm-12 col-xs-12">
 		<h1 id="account-settings">${springMacroRequestContext.getMessage("manage.account_settings")}</h1>
 		<#assign open = "" />
 

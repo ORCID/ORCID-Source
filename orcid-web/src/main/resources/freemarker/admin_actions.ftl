@@ -312,11 +312,11 @@
 <!-- Admin main Layout -->
 <div class="row">
 	<!-- Left menu bar -->	
-	<div class="col-md-3 col-sm-3 col-xs-12 lhs">
+	<div class="col-md-3 col-sm-12 col-xs-12 lhs padding-fix">
 		<#include "includes/id_banner.ftl"/>
 	</div>
 	<!-- Right menu bar -->
-	<div class="col-md-9 col-sm-9 col-xs-12 admin-options">	
+	<div class="col-md-9 col-sm-12 col-xs-12 admin-options">	
 		<!-- Find Ids by email -->
 		<a name="find-ids"></a>
 		<div ng-controller="findIdsCtrl" class="workspace-accordion-item" ng-cloak>

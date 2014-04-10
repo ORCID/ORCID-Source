@@ -533,26 +533,7 @@ public class FundingsController extends BaseWorkspaceController {
     @RequestMapping(value = "/funding/urlValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     FundingForm validateUrl(@RequestBody FundingForm funding) {
-        funding.getUrl().setErrors(new ArrayList<String>());
-        if (!PojoUtil.isEmpty(funding.getUrl())) {
-           if (funding.getUrl().getValue().length() > 350)
-              setError(funding.getUrl(), "fundings.length_less_350");
-           
-           // trim if required
-           if (!funding.getUrl().getValue().equals(funding.getUrl().getValue().trim())) 
-               funding.getUrl().setValue(funding.getUrl().getValue().trim());
-
-           // add protocall if missing
-           String[] schemes = {"http","https", "ftp"}; // DEFAULT schemes = "http", "https", "ftp"
-           UrlValidator urlValidator = new UrlValidator(schemes);
-           if (!urlValidator.isValid(funding.getUrl().getValue()))
-               funding.getUrl().setValue("http://" + funding.getUrl().getValue());   
-           
-           // test validity again
-           if (!urlValidator.isValid(funding.getUrl().getValue()))
-               setError(funding.getUrl(), "common.invalid_url");
-
-        }
+        validateUrl(funding.getUrl());
         return funding;
     }
 

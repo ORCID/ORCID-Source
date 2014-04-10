@@ -753,7 +753,7 @@ select {
 	margin: 0;
 }
 
-.header .navigation>.menu {
+.header .navigation > .menu{
 	position: relative;
 	width: auto;
 	padding: 0;
@@ -768,7 +768,7 @@ select {
 	font-style: normal;	   
 }
 
-.header .navigation>.menu>li {
+.header .navigation >.menu >li {
 	list-style: none;
 	float: left;
 	border-left: 1px solid #fff;
@@ -3468,7 +3468,7 @@ p.orcid-id-container{
 }
 
 .developer-tools .sso-options a:hover{
-	background: #338caf;	
+	background: #a6ce39;	
 }
 
 .developer-tools ul.uris{	
@@ -3483,7 +3483,11 @@ p.orcid-id-container{
 }
 
 .developer-tools a.icon-href-bg:hover{
-	background-color: #338caf;
+	background-color: #a6ce39;
+}
+
+.developer-tools .tab-container a.tab:hover{
+	background-color: #a6ce39;
 }
 
 .developer-tools a.icon-href-bg span{
@@ -3565,6 +3569,10 @@ p.orcid-id-container{
 
 .developer-tools .table-row-border-bottom{
 	border-bottom: 1px solid #CCCCCC;
+}
+
+.padding-fix{
+	padding: 0;	
 }
 
 .scrollable-list {
@@ -4592,6 +4600,10 @@ p.orcid-id-container{
 		border: 0 none;
 	}
 	
+	.padding-fix{
+		padding: 15px;
+	}
+	
 }
 
 @media (min-width : 768px) and (max-width : 991px) { /* Tablet */
@@ -4734,6 +4746,14 @@ p.orcid-id-container{
 	
 	.workspace-profile{
 		margin-bottom: 30px;				
+	}
+	
+	.developer-tools{
+		margin-top: 15px;
+	}
+	
+	.padding-fix{
+		padding: 15px;
 	}
 }
 

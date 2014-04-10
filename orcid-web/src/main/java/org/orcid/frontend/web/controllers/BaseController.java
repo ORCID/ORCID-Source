@@ -23,6 +23,7 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -42,6 +43,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.validator.routines.UrlValidator;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EmailManager;
@@ -55,6 +57,8 @@ import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.pojo.ajaxForm.ErrorsInterface;
+import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.utils.OrcidStringUtils;
 import org.orcid.utils.OrcidWebUtils;
 import org.orcid.utils.UTF8Control;
@@ -74,6 +78,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 public class BaseController {
+    
+    String[] urlValschemes = {"http","https", "ftp"}; // DEFAULT schemes = "http", "https", "ftp"
+    UrlValidator urlValidator = new UrlValidator(urlValschemes);
 
     private String devSandboxUrl;
 
@@ -541,6 +548,31 @@ public class BaseController {
     protected void setError(ErrorsInterface ei, String msg) {
         ei.getErrors().add(getMessage(msg));
     }
+    
+    protected void validateUrl(Text url) {
+        url.setErrors(new ArrayList<String>());
+        if (!PojoUtil.isEmpty(url.getValue())) {
+           // trim if required
+           if (!url.getValue().equals(url.getValue().trim())) 
+               url.setValue(url.getValue().trim());
+           
+           // check length
+           if (url.getValue().length() > 350)
+              setError(url, "manualWork.length_less_350");
+           
+           // add protocall if missing
+           if (!urlValidator.isValid(url.getValue())) {
+              String tempUrl = "http://" + url.getValue();   
+              // test validity again
+              if (urlValidator.isValid(tempUrl))
+                  url.setValue("http://" + url.getValue());
+              else
+                  setError(url, "common.invalid_url");
+                  
+           }
+        }
+    }
+
 
     @ModelAttribute("searchBaseUrl")
     protected String createSearchBaseUrl() {
