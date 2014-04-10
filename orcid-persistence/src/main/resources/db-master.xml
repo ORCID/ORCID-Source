@@ -96,4 +96,5 @@
      enable this after all java the java has been removed in release 1.48.X
     <include file="/db/updates/drop_work_contributors.xml" />
      -->
+     <include file="/db/updates/multi_client_secret.xml" />
 </databaseChangeLog>

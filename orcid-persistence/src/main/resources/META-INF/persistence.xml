@@ -65,6 +65,7 @@
         <class>org.orcid.persistence.jpa.entities.ClientRedirectUriEntity</class>
         <class>org.orcid.persistence.jpa.entities.ClientResourceIdEntity</class>
         <class>org.orcid.persistence.jpa.entities.ClientScopeEntity</class>
+        <class>org.orcid.persistence.jpa.entities.ClientSecretEntity</class>
         <class>org.orcid.persistence.jpa.entities.OrcidGrantedAuthority</class>
         <class>org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail</class>
         <class>org.orcid.persistence.jpa.entities.OrcidOauth2AuthoriziationCodeDetail</class>

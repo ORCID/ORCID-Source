@@ -276,7 +276,7 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
 
     @Override    
     public void removeByClientId(String clientId) {
-        clientDetailsDao.removeByClientId(clientId);
+        clientDetailsDao.remove(clientId);
     }
 
     @Override

@@ -75,5 +75,11 @@
     <client_scope client_details_id="4444-4444-4444-4445" scope_type="/funding/create"/>    
     <client_scope client_details_id="4444-4444-4444-4445" scope_type="/affiliations/create"/>
     <client_scope client_details_id="4444-4444-4444-4445" scope_type="/authenticate"/>
+    
+    <client_secret client_details_id="4444-4444-4444-4441" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25"/>
+    <client_secret client_details_id="4444-4444-4444-4442" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25"/>
+    <client_secret client_details_id="4444-4444-4444-4443" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25"/>
+    <client_secret client_details_id="4444-4444-4444-4444" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25"/>
+    <client_secret client_details_id="4444-4444-4444-4445" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25"/>
 
 </dataset>

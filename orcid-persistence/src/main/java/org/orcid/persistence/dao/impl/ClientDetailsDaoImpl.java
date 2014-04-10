@@ -43,7 +43,7 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     }
 
     @Override
-    @Cacheable(value="client-details", key="#orcid.concat('-').concat(#lastModified)")
+    @Cacheable(value = "client-details", key = "#orcid.concat('-').concat(#lastModified)")
     public ClientDetailsEntity findByClientId(String orcid, Date lastModified) {
         TypedQuery<ClientDetailsEntity> query = entityManager.createQuery("from ClientDetailsEntity where id = :orcid", ClientDetailsEntity.class);
         query.setParameter("orcid", orcid);
@@ -54,14 +54,6 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
             return null;
         }
     }
-        
-    @Override
-    @Transactional
-    public void removeByClientId(String orcid) {
-        Query query = entityManager.createQuery("delete from ClientDetailsEntity  where id = :orcid");
-        query.setParameter("orcid", orcid);
-        query.executeUpdate();
-    }
 
     @Override
     public Date getLastModified(String orcid) {
@@ -69,7 +61,7 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
         query.setParameter("orcid", orcid);
         return query.getSingleResult();
     }
-    
+
     @Override
     @Transactional
     public void updateLastModified(String orcid) {

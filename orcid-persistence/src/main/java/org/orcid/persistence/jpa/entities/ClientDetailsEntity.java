@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -59,6 +60,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
     private String clientWebsite;
     private String clientSecret;
     private String decryptedClientSecret;
+    private SortedSet<ClientSecretEntity> clientSecrets;
     private Set<ClientScopeEntity> clientScopes = Collections.emptySet();
     private Set<ClientResourceIdEntity> clientResourceIds = Collections.emptySet();
     private Set<ClientAuthorisedGrantTypeEntity> clientAuthorizedGrantTypes = Collections.emptySet();
@@ -235,13 +237,29 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
         return getDecryptedClientSecret();
     }
 
-    @Column(name = "client_secret", length = 150)
+    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientDetailsEntity", orphanRemoval = true)
+    @Sort(type = SortType.NATURAL)
+    public Set<ClientSecretEntity> getClientSecrets() {
+        return clientSecrets;
+    }
+
+    public void setClientSecrets(SortedSet<ClientSecretEntity> clientSecrets) {
+        this.clientSecrets = clientSecrets;
+    }
+
+    @Transient
     public String getClientSecretForJpa() {
-        return clientSecret;
+        if (clientSecrets == null || clientSecrets.isEmpty()) {
+            return null;
+        }
+        return clientSecrets.first().getClientSecret();
     }
 
     public void setClientSecretForJpa(String clientSecret) {
-        this.clientSecret = clientSecret;
+        if (clientSecrets == null) {
+            clientSecrets = new TreeSet<>();
+        }
+        clientSecrets.add(new ClientSecretEntity(clientSecret, this));
     }
 
     @Transient
@@ -348,7 +366,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
     public Integer getAccessTokenValiditySeconds() {
         return accessTokenValiditySeconds;
     }
-    
+
     @Override
     public boolean equals(Object o) {
         if (this == o)
