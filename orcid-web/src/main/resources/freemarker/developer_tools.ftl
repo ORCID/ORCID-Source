@@ -120,12 +120,6 @@
 				</div>				
 			</div>
 			
-			
-			
-			
-			
-			
-			
 			<!-- Create form -->
 			<div class="create-client" ng-show="creating" ng-cloak>	
 				<!-- Name -->
@@ -211,20 +205,6 @@
 					</div>	
 				</div>				
 			</div>
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
 			
 			<!-- Edit form -->
 			<div class="edit-details" ng-show="userCredentials.clientSecret.value && editing" ng-cloak>			
