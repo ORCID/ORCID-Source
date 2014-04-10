@@ -24,10 +24,10 @@
 		<li><a href="#account-settings">${springMacroRequestContext.getMessage("manage.accountsettings")}</a></li>
 		<li><a href="#manage-permissions">${springMacroRequestContext.getMessage("manage.managepermission")}</a></li>			
 		<#if (profile.groupType)?? && ((profile.groupType) = "BASIC" ||	(profile.groupType) = "PREMIUM" || (profile.groupType) = "BASIC_INSTITUTION" || (profile.groupType) = "PREMIUM_INSTITUTION")>
-			<li><a href="<@spring.url "/manage-clients" />">${springMacroRequestContext.getMessage("workspace.ManageClientCredentials")}</a></li>
+			<li><a href="<@spring.url "/manage-clients" />">${springMacroRequestContext.getMessage("workspace.developer_tools")}</a></li>
 		</#if>
-		<#if profile?? && profile.orcidInternal?? && profile.orcidInternal.preferences.developerToolsEnabled?? && profile.orcidInternal.preferences.developerToolsEnabled.value == true>
-			<li><a href="<@spring.url "/developer-tools" />">${springMacroRequestContext.getMessage("workspace.developerTools")}</a></li>
-		</#if>	
+		<#if RequestParameters['PublicClient']??>			
+			<li><a href="#manage-developer-tools">${springMacroRequestContext.getMessage("workspace.developer_tools")}</a></li>
+		</#if>
 	</ul>
 </div>

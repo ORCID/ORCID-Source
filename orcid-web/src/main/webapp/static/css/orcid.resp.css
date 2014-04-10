@@ -753,7 +753,7 @@ select {
 	margin: 0;
 }
 
-.header .navigation>.menu {
+.header .navigation > .menu{
 	position: relative;
 	width: auto;
 	padding: 0;
@@ -768,7 +768,7 @@ select {
 	font-style: normal;	   
 }
 
-.header .navigation>.menu>li {
+.header .navigation >.menu >li {
 	list-style: none;
 	float: left;
 	border-left: 1px solid #fff;
@@ -3354,7 +3354,7 @@ p.orcid-id-container{
 	font-size: 12px;	
 }
 
-.sso-api .sso-redirect_uris {
+.sso-api .generate-public-client {
 	padding: 10px 0 10px 0;
 }
 
@@ -3384,6 +3384,18 @@ p.orcid-id-container{
 	word-break: break-all;
 } 
 
+.authorizeURL {
+	width: 465px;
+	height: 95px;
+}
+
+.client-description {
+	height: 200px;
+}
+
+.generate-public-client .input-xlarge {
+	width: 375px;
+}
 
 /* Group Developer Tools Layout*/
 
@@ -3551,6 +3563,10 @@ p.orcid-id-container{
 
 .developer-tools .table-row-border-bottom{
 	border-bottom: 1px solid #CCCCCC;
+}
+
+.padding-fix{
+	padding: 0;	
 }
 
 .scrollable-list {
@@ -4578,6 +4594,10 @@ p.orcid-id-container{
 		border: 0 none;
 	}
 	
+	.padding-fix{
+		padding: 15px;
+	}
+	
 }
 
 @media (min-width : 768px) and (max-width : 991px) { /* Tablet */
@@ -4720,6 +4740,14 @@ p.orcid-id-container{
 	
 	.workspace-profile{
 		margin-bottom: 30px;				
+	}
+	
+	.developer-tools{
+		margin-top: 15px;
+	}
+	
+	.padding-fix{
+		padding: 15px;
 	}
 }
 

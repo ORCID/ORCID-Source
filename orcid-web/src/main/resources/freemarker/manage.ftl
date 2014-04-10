@@ -19,10 +19,10 @@
 
 <@protected classes=['manage'] nav="settings">
 <div class="row">
-	<div class="col-md-3 col-sm-3 col-xs-12">
+	<div class="col-md-3 col-sm-12 col-xs-12 padding-fix">
 		<#include "admin_menu.ftl"/>
 	</div>	
-	<div class="col-md-9">
+	<div class="col-md-9 col-sm-12 col-xs-12">
 		<h1 id="account-settings">${springMacroRequestContext.getMessage("manage.account_settings")}</h1>
 		<#assign open = "" />
 
@@ -429,16 +429,21 @@
 		</div>
 		</#if>
 		
-		<#if RequestParameters['sso']??>
+		<#if RequestParameters['PublicClient']??>
 			<@security.authorize ifNotGranted="ROLE_GROUP,ROLE_BASIC,ROLE_PREMIUM,ROLE_BASIC_INSTITUTION,ROLE_PREMIUM_INSTITUTION,ROLE_CREATOR,ROLE_PREMIUM_CREATOR,ROLE_UPDATER,ROLE_PREMIUM_UPDATER">
-				<h1 id="manage-permissions"><@spring.message "manage.developer_tools.title"/></h1>		
+				<h1 id="manage-developer-tools">
+					<#if profile.orcidInternal?? && profile.orcidInternal.preferences.developerToolsEnabled?? && profile.orcidInternal.preferences.developerToolsEnabled.value == false>
+						<span><@spring.message "manage.developer_tools.title"/></span>
+					<#else>
+						<span><@spring.message "manage.developer_tools.title.enabled"/></span>
+					</#if>
+				</h1>		
 				<div class="sso" ng-controller="SSOPreferencesCtrl">
 					<#if profile.orcidInternal?? && profile.orcidInternal.preferences.developerToolsEnabled?? && profile.orcidInternal.preferences.developerToolsEnabled.value == false>
 						<p><@spring.message "manage.developer_tools.enable.description"/></p>
 						<p><@spring.message "manage.developer_tools.enable.text"/>&nbsp;<a href ng-click="enableDeveloperTools()"><@spring.message "manage.developer_tools.enable_disable.link.text"/></a></p>
 					<#else>
-						<p><@spring.message "manage.developer_tools.disable.description"/></p>
-						<p><@spring.message "manage.developer_tools.disable.text"/>&nbsp;<a href ng-click="confirmDisableDeveloperTools()"><@spring.message "manage.developer_tools.enable_disable.link.text"/></a></p>
+						<p><@spring.message "manage.developer_tools.enabled.description"/>&nbsp;<a href="<@spring.url "/developer-tools"/>"><@spring.message "manage.developer_tools.enabled.link"/></a></p>						
 					</#if>				
 				</div>
 			</@security.authorize>
