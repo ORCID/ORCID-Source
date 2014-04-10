@@ -26,6 +26,7 @@ import java.net.URISyntaxException;
  * @author Declan Newman (declan) Date: 29/03/2012
  */
 public class OrcidWebUtils {
+    
 
     public static URI getServerUriWithContextPath(HttpServletRequest request) {
         try {
