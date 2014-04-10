@@ -3468,7 +3468,7 @@ p.orcid-id-container{
 }
 
 .developer-tools .sso-options a:hover{
-	background: #338caf;	
+	background: #a6ce39;	
 }
 
 .developer-tools ul.uris{	
@@ -3483,7 +3483,11 @@ p.orcid-id-container{
 }
 
 .developer-tools a.icon-href-bg:hover{
-	background-color: #338caf;
+	background-color: #a6ce39;
+}
+
+.developer-tools .tab-container a.tab:hover{
+	background-color: #a6ce39;
 }
 
 .developer-tools a.icon-href-bg span{
