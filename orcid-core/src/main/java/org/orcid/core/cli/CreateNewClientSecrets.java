@@ -17,11 +17,14 @@
 package org.orcid.core.cli;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Date;
 import java.util.UUID;
 
 import org.kohsuke.args4j.CmdLineException;
@@ -31,6 +34,7 @@ import org.orcid.core.manager.EncryptionManager;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientSecretEntity;
+import org.orcid.utils.DateUtils;
 import org.orcid.utils.NullUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -45,6 +49,10 @@ import org.springframework.transaction.support.TransactionTemplate;
  */
 public class CreateNewClientSecrets {
 
+    private Date now = new Date();
+
+    private String dateString = DateUtils.convertToXMLGregorianCalendar(now).toXMLFormat();
+
     @Option(name = "-c", usage = "Client details id for which to create new secret")
     private String clientDetailsId;
 
@@ -53,6 +61,11 @@ public class CreateNewClientSecrets {
 
     @Option(name = "-f", usage = "File from which to read client ids to create new secrets for (one per line)")
     private File clientIdsFile;
+
+    @Option(name = "-o", usage = "File to write the results to (default is client_secrets_DATETIME)")
+    private File outputFile = new File("client_secrets_" + dateString);
+
+    private BufferedWriter outputWriter;
 
     private EncryptionManager encryptionManager;
 
@@ -70,6 +83,8 @@ public class CreateNewClientSecrets {
         } catch (CmdLineException e) {
             System.err.println(e.getMessage());
             parser.printUsage(System.err);
+        } finally {
+            System.exit(0);
         }
     }
 
@@ -81,7 +96,17 @@ public class CreateNewClientSecrets {
 
     public void execute() {
         init();
-        createNewSecrets();
+        openOutputFileAndCreateNewSecrets();
+        finish();
+    }
+
+    private void openOutputFileAndCreateNewSecrets() {
+        try (FileWriter fr = new FileWriter(outputFile); BufferedWriter br = new BufferedWriter(fr)) {
+            outputWriter = br;
+            createNewSecrets();
+        } catch (IOException e) {
+            throw new RuntimeException("Problem opening output file " + outputFile.getAbsolutePath(), e);
+        }
     }
 
     private void createNewSecrets() {
@@ -137,8 +162,10 @@ public class CreateNewClientSecrets {
     private void createNewClientSecret(ClientDetailsEntity clientDetails) {
         String clientSecret = UUID.randomUUID().toString();
         clientDetails.getClientSecrets().add(new ClientSecretEntity(encryptionManager.encryptForInternalUse(clientSecret), clientDetails));
+        clientDetails.setLastModified(now);
         clientDetailsDao.merge(clientDetails);
-        System.out.println(String.format("%s\t%s\t%s", clientDetails.getId(), clientDetails.getClientName(), clientSecret));
+        String output = String.format("%s\t%s\t%s\n", clientDetails.getId(), clientDetails.getClientName(), clientSecret);
+        output(output);
     }
 
     private void init() {
@@ -146,6 +173,19 @@ public class CreateNewClientSecrets {
         encryptionManager = (EncryptionManager) context.getBean("encryptionManager");
         clientDetailsDao = (ClientDetailsDao) context.getBean("clientDetailsDao");
         transactionTemplate = (TransactionTemplate) context.getBean("transactionTemplate");
+    }
+
+    private void output(String output) {
+        System.out.print(output);
+        try {
+            outputWriter.append(output);
+        } catch (IOException e) {
+            throw new RuntimeException("Error writing to output file", e);
+        }
+    }
+
+    private void finish() {
+        System.out.println(">>>>>>>> Results output to " + outputFile.getAbsolutePath());
     }
 
 }
