@@ -16,12 +16,22 @@
  */
 package org.orcid.core.cli;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
 import java.util.UUID;
 
+import org.kohsuke.args4j.CmdLineException;
+import org.kohsuke.args4j.CmdLineParser;
+import org.kohsuke.args4j.Option;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientSecretEntity;
+import org.orcid.utils.NullUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.transaction.TransactionStatus;
@@ -35,23 +45,107 @@ import org.springframework.transaction.support.TransactionTemplate;
  */
 public class CreateNewClientSecrets {
 
+    @Option(name = "-c", usage = "Client details id for which to create new secret")
+    private String clientDetailsId;
+
+    @Option(name = "-a", usage = "Create new client secret for all clients")
+    private Boolean doAll;
+
+    @Option(name = "-f", usage = "File from which to read client ids to create new secrets for (one per line)")
+    private File clientIdsFile;
+
+    private EncryptionManager encryptionManager;
+
+    private ClientDetailsDao clientDetailsDao;
+
+    private TransactionTemplate transactionTemplate;
+
     public static void main(String[] args) {
-        ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
-        final EncryptionManager encryptionManager = (EncryptionManager) context.getBean("encryptionManager");
-        final ClientDetailsDao clientDetailsDao = (ClientDetailsDao) context.getBean("clientDetailsDao");
-        TransactionTemplate transactionTemplate = (TransactionTemplate) context.getBean("transactionTemplate");
+        CreateNewClientSecrets createNewClientSecrets = new CreateNewClientSecrets();
+        CmdLineParser parser = new CmdLineParser(createNewClientSecrets);
+        try {
+            parser.parseArgument(args);
+            createNewClientSecrets.validateArgs(parser);
+            createNewClientSecrets.execute();
+        } catch (CmdLineException e) {
+            System.err.println(e.getMessage());
+            parser.printUsage(System.err);
+        }
+    }
+
+    private void validateArgs(CmdLineParser parser) throws CmdLineException {
+        if (NullUtils.allNull(clientDetailsId, doAll, clientIdsFile)) {
+            throw new CmdLineException(parser, "At least one of -c | -a | -f must be specificed");
+        }
+    }
+
+    public void execute() {
+        init();
+        createNewSecrets();
+    }
+
+    private void createNewSecrets() {
+        if (Boolean.TRUE.equals(doAll)) {
+            createForAll();
+        } else {
+            if (clientDetailsId != null) {
+                createForOne(clientDetailsId);
+            } else if (clientIdsFile != null) {
+                createFromFile();
+            }
+        }
+
+    }
+
+    private void createForOne(final String clientDetailsId) {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
-            protected void doInTransactionWithoutResult(TransactionStatus arg0) {
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                ClientDetailsEntity clientDetails = clientDetailsDao.find(clientDetailsId);
+                createNewClientSecret(clientDetails);
+            }
+        });
+
+    }
+
+    private void createForAll() {
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
                 for (ClientDetailsEntity clientDetails : clientDetailsDao.getAll()) {
-                    String clientSecret = UUID.randomUUID().toString();
-                    clientDetails.getClientSecrets().add(new ClientSecretEntity(encryptionManager.encryptForInternalUse(clientSecret), clientDetails));
-                    clientDetailsDao.merge(clientDetails);
-                    System.out.println(String.format("%s\t%s\t%s", clientDetails.getId(), clientDetails.getClientName(), clientSecret));
+                    createNewClientSecret(clientDetails);
                 }
             }
         });
-        System.exit(0);
+    }
+
+    private void createFromFile() {
+        try (Reader fr = new FileReader(clientIdsFile); BufferedReader br = new BufferedReader(fr);) {
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                String clientDetailsId = line.trim();
+                createForOne(clientDetailsId);
+            }
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("Client IDs file " + clientIdsFile.getAbsolutePath() + " not found", e);
+        } catch (IOException e) {
+            throw new RuntimeException("Error reading client IDs file " + clientIdsFile.getAbsolutePath() + " not found", e);
+        }
+
+    }
+
+    private void createNewClientSecret(ClientDetailsEntity clientDetails) {
+        String clientSecret = UUID.randomUUID().toString();
+        clientDetails.getClientSecrets().add(new ClientSecretEntity(encryptionManager.encryptForInternalUse(clientSecret), clientDetails));
+        clientDetailsDao.merge(clientDetails);
+        System.out.println(String.format("%s\t%s\t%s", clientDetails.getId(), clientDetails.getClientName(), clientSecret));
+    }
+
+    private void init() {
+        ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
+        encryptionManager = (EncryptionManager) context.getBean("encryptionManager");
+        clientDetailsDao = (ClientDetailsDao) context.getBean("clientDetailsDao");
+        transactionTemplate = (TransactionTemplate) context.getBean("transactionTemplate");
     }
 
 }
