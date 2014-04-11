@@ -63,7 +63,7 @@ public class CreateNewClientSecrets {
     private File clientIdsFile;
 
     @Option(name = "-o", usage = "File to write the results to (default is client_secrets_DATETIME)")
-    private File outputFile = new File("client_secrets_" + dateString);
+    private File outputFile = new File(System.getProperty("java.io.tmpdir"), "client_secrets_" + dateString);
 
     private BufferedWriter outputWriter;
 
@@ -102,6 +102,7 @@ public class CreateNewClientSecrets {
 
     private void openOutputFileAndCreateNewSecrets() {
         try (FileWriter fr = new FileWriter(outputFile); BufferedWriter br = new BufferedWriter(fr)) {
+            makeOutputFileReadableToOwnerOnly();
             outputWriter = br;
             createNewSecrets();
         } catch (IOException e) {
@@ -175,6 +176,12 @@ public class CreateNewClientSecrets {
         transactionTemplate = (TransactionTemplate) context.getBean("transactionTemplate");
     }
 
+    private void makeOutputFileReadableToOwnerOnly() throws IOException {
+        outputFile.createNewFile();
+        outputFile.setReadable(false, false);
+        outputFile.setReadable(true, true);
+    }
+
     private void output(String output) {
         System.out.print(output);
         try {
@@ -186,6 +193,7 @@ public class CreateNewClientSecrets {
 
     private void finish() {
         System.out.println(">>>>>>>> Results output to " + outputFile.getAbsolutePath());
+        System.out.println(">>>>>>>> MAKE SURE YOU CLEAN UP THE OUTPUT FILE WHEN YOU HAVE FINISHED!!!!!");
     }
 
 }
