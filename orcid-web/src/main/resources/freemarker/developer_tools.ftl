@@ -96,17 +96,21 @@
 									    	<td>{{userCredentials.clientSecret.value}}</td>
 									    </tr>
 									    <!-- Authorize URl and Token URL -->
-									    <tr>
+									    <tr ng-hide="playgroundExample != ''">
 									    	<td><strong><@orcid.msg 'manage.developer_tools.view.example.authorize'/></strong></td>
 									    	<td>
 									    		<strong><@orcid.msg 'manage.developer_tools.view.available_scopes.authenticate'/></strong>&nbsp;&nbsp;&nbsp;&nbsp;<@orcid.msg 'manage.developer_tools.view.available_scopes.authenticate.description'/><br/>
 									    		<textarea class="input-xlarge selectable authorizeURL" ng-model="authorizeURL" readonly="readonly"></textarea>									    		
 									    	</td>
 									    </tr>
-									    <tr class="table-row-border-bottom">
+									    <tr  ng-hide="playgroundExample != ''" class="table-row-border-bottom">
 									    	<td><strong><@orcid.msg 'manage.developer_tools.view.example.token'/></strong></td>
-									    	<td>{{tokenURL}}</td>
-									    </tr>									    
+									    	<td>{{tokenURL}}<br />
+									    	Sample <a href="http://en.wikipedia.org/wiki/CURL" target="curlWiki">cURL</a> 
+									    	<textarea class="input-xlarge selectable authorizeURL" ng-model="sampleAuthCurl" readonly="readonly"></textarea>
+									    	</td>
+									    </tr>
+									    									    
 									    <!-- Testing tools -->
 									    <tr ng-hide="playgroundExample == ''">
 									    		<td><strong><@orcid.msg 'manage.developer_tools.view.example.title'/></strong></td>

@@ -3971,7 +3971,9 @@ function SSOPreferencesCtrl($scope, $compile) {
 	$scope.googleUri = 'https://developers.google.com/oauthplayground';
 	$scope.runscopeUri = 'https://www.runscope.com/oauth_tool/callback';
 	$scope.playgroundExample = '';
-	$scope.googleExampleLink = 'https://developers.google.com/oauthplayground/#step1&scopes=/authenticate&oauthEndpointSelect=Custom&oauthAuthEndpointValue=http%3A//qa.orcid.org/oauth/authorize&oauthTokenEndpointValue=http%3A//pub.qa.orcid.org/oauth/token&oauthClientId=[CLIENT_ID]&oauthClientSecret=[CLIENT_SECRET]&accessTokenType=bearer';
+	$scope.googleExampleLink = 'https://developers.google.com/oauthplayground/#step1&scopes=/authenticate&oauthEndpointSelect=Custom&oauthAuthEndpointValue=[PUB_BASE_URI_ENCODE]/oauth/authorize&oauthTokenEndpointValue=[PUB_BASE_URI_ENCODE]/oauth/token&oauthClientId=[CLIENT_ID]&oauthClientSecret=[CLIENT_SECRET]&accessTokenType=bearer';
+	$scope.sampleAuthCurl = '';
+	$scope.sampleAuthCurlTemplate = "curl -i -L -k -H 'Accept: application/json' --data 'client_id=[CLIENT_ID]&client_secret=[CLIENT_SECRET]&grant_type=authorization_code&redirect_uri=[REDIRECT_URI]&code=REPLACE WITH OAUTH CODE' [PUB_BASE_URI]/oauth/token";
 	$scope.runscopeExample = '';
 	$scope.runscopeExampleLink = 'https://www.runscope.com/oauth2_tool';
 	$scope.authorizeURLTemplate = getBaseUri() + '/oauth/authorize?client_id=[CLIENT_ID]&response_type=code&scope=/authenticate&redirect_uri=[REDIRECT_URI]';
@@ -4249,20 +4251,31 @@ function SSOPreferencesCtrl($scope, $compile) {
 	$scope.updateSelectedRedirectUri = function() {		
 		var clientId = $scope.userCredentials.clientOrcid.value;
 		var selectedRedirectUriValue = $scope.selectedRedirectUri.value.value;
+		
 		//Build the google playground url example
 		$scope.playgroundExample = '';
 		
 		if($scope.googleUri == selectedRedirectUriValue) {
 			var example = $scope.googleExampleLink;
+			example = example.replace('[PUB_BASE_URI_ENCODE]', encodeURI(orcidVar.pubBaseUri));
 			example = example.replace('[CLIENT_ID]', clientId);
 			example = example.replace('[CLIENT_SECRET]', $scope.userCredentials.clientSecret.value);	        					
 			$scope.playgroundExample = example;
 		}		
 				
 		var example = $scope.authorizeURLTemplate;
+		example = example.replace('[PUB_BASE_URI]', orcidVar.pubBaseUri);
 		example = example.replace('[CLIENT_ID]', clientId);
 		example = example.replace('[REDIRECT_URI]', selectedRedirectUriValue);
 		$scope.authorizeURL = example;
+		
+		// rebuild sampel Auhtroization Curl
+		var sampeleCurl = $scope.sampleAuthCurlTemplate;
+		$scope.sampleAuthCurl = sampeleCurl.replace('[CLIENT_ID]', clientId)
+		    .replace('[CLIENT_SECRET]', $scope.userCredentials.clientSecret.value)
+		    .replace('[PUB_BASE_URI]', orcidVar.pubBaseUri)
+		    .replace('[REDIRECT_URI]', selectedRedirectUriValue);
+       
 	};
 	
 	//init
