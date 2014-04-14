@@ -524,7 +524,7 @@ $(function () {
 	
 });
 
-/* START: workIdLinkJs v0.0.4 */
+/* START: workIdLinkJs v0.0.5 */
 /* https://github.com/ORCID/workIdLinkJs */
 
 /* browser and NodeJs compatible */
@@ -620,6 +620,7 @@ $(function () {
    };
 
    typeMap['pmc'] = function (id) {
+      if (id.toLowerCase().startsWith('pmc')) return 'http://europepmc.org/articles/' + id;
       if (id.toLowerCase().startsWith('www.ncbi.nlm.nih.gov')) return 'http://' + id;
       return 'http://www.ncbi.nlm.nih.gov/pubmed/' + id;
    };
@@ -675,6 +676,8 @@ $(function () {
 })(typeof exports === 'undefined'? this['workIdLinkJs']={}: exports);
 
 /* END: workIdLinkJs */
+
+
 
 
 $(function (){
