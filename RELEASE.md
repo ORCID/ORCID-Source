@@ -4,6 +4,19 @@ We release updates to the Registry regularly. Below is a list of the improvement
 * [2013 Releases](https://trello.com/b/ZgYVAlel)
 * [2012 Releases](https://trello.com/b/vyCDYdvR)
 
+## release-1.1.49.11
+(2014-04-10)
+
+* Tons of improvements to delegation
+
+* Tons of improvements to public client
+
+* Move client details out of profile to it's own table
+
+* Other small improvements
+
+
+
 ## release-1.1.48.23
 (2014-04-01)
 
