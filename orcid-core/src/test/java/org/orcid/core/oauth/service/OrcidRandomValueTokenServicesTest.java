@@ -59,7 +59,7 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
 
     @Resource(name = "tokenServices")
     private OrcidRandomValueTokenServices tokenServices;
-    
+
     @Resource
     private OrcidOauth2TokenDetailService orcidOauthTokenDetailService;
 
@@ -83,7 +83,7 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
     @Rollback
     public void testCreateReadLimitedAccessToken() {
         Date earliestExpiry = twentyYearsTime();
-        Date earliestRefreshExpiry = oneMonthsTime();
+        Date earliestRefreshExpiry = earliestExpiry;
 
         Map<String, String> authorizationParameters = new HashMap<>();
         String clientId = "4444-4444-4444-4441";
@@ -96,25 +96,25 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
         OAuth2AccessToken oauth2AccessToken = tokenServices.createAccessToken(authentication);
 
         Date latestExpiry = twentyYearsTime();
-        Date latestRefreshExpiry = oneMonthsTime();
+        Date latestRefreshExpiry = latestExpiry;
 
         assertNotNull(oauth2AccessToken);
         assertFalse(oauth2AccessToken.getExpiration().before(earliestExpiry));
         assertFalse(oauth2AccessToken.getExpiration().after(latestExpiry));
-        
+
         OrcidOauth2TokenDetail tokenDetail = orcidOauthTokenDetailService.findByRefreshTokenValue(oauth2AccessToken.getRefreshToken().getValue());
         assertNotNull(tokenDetail);
         Date refreshTokenExpiration = tokenDetail.getRefreshTokenExpiration();
         assertFalse(refreshTokenExpiration.before(earliestRefreshExpiry));
         assertFalse(refreshTokenExpiration.after(latestRefreshExpiry));
     }
-    
+
     @Test
     @Transactional
     @Rollback
     public void testCreateAddWorkAccessToken() {
         Date earliestExpiry = oneHoursTime();
-        Date earliestRefreshExpiry = oneMonthsTime();
+        Date earliestRefreshExpiry = earliestExpiry;
 
         Map<String, String> authorizationParameters = new HashMap<>();
         String clientId = "4444-4444-4444-4441";
@@ -127,12 +127,12 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
         OAuth2AccessToken oauth2AccessToken = tokenServices.createAccessToken(authentication);
 
         Date latestExpiry = oneHoursTime();
-        Date latestRefreshExpiry = oneMonthsTime();
+        Date latestRefreshExpiry = latestExpiry;
 
         assertNotNull(oauth2AccessToken);
         assertFalse(oauth2AccessToken.getExpiration().before(earliestExpiry));
         assertFalse(oauth2AccessToken.getExpiration().after(latestExpiry));
-        
+
         OrcidOauth2TokenDetail tokenDetail = orcidOauthTokenDetailService.findByRefreshTokenValue(oauth2AccessToken.getRefreshToken().getValue());
         assertNotNull(tokenDetail);
         Date refreshTokenExpiration = tokenDetail.getRefreshTokenExpiration();
@@ -142,16 +142,12 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
 
     private Date twentyYearsTime() {
         Calendar earliestExpiry = new GregorianCalendar();
+        // This is roughly 2 years in seconds - used in the implementation, but
+        // not sure how was calculated now.
         earliestExpiry.add(Calendar.SECOND, 631138519);
         return earliestExpiry.getTime();
     }
-    
-    private Date oneMonthsTime() {
-        Calendar earliestExpiry = new GregorianCalendar();
-        earliestExpiry.add(Calendar.MONTH, 1);
-        return earliestExpiry.getTime();
-    }
-    
+
     private Date oneHoursTime() {
         Calendar earliestExpiry = new GregorianCalendar();
         earliestExpiry.add(Calendar.HOUR, 1);
