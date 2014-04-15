@@ -38,9 +38,8 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller("oauthConfirmAccessController")
 @RequestMapping(value = "/oauth", method = RequestMethod.GET)
 public class OauthConfirmAccessController extends BaseController {
-    
-    private static final Logger LOGGER = LoggerFactory.getLogger(OauthConfirmAccessController.class);
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(OauthConfirmAccessController.class);
 
     private static final String JUST_REGISTERED = "justRegistered";
     @Resource
@@ -50,7 +49,6 @@ public class OauthConfirmAccessController extends BaseController {
 
     @RequestMapping(value = "/confirm_access", method = RequestMethod.GET)
     public ModelAndView loginGetHandler(HttpServletRequest request, ModelAndView mav, @RequestParam("client_id") String clientId, @RequestParam("scope") String scope) {
-        // XXX Use T2 API
         OrcidProfile clientProfile = orcidProfileManager.retrieveOrcidProfile(clientId);
         Boolean justRegistered = (Boolean) request.getSession().getAttribute(JUST_REGISTERED);
         if (justRegistered != null) {
@@ -61,30 +59,32 @@ public class OauthConfirmAccessController extends BaseController {
         String clientDescription = "";
         String clientGroupName = "";
         String clientWebsite = "";
-        
+
         ClientDetailsEntity clientDetails = clientDetailsManager.find(clientId);
         clientName = clientDetails.getClientName() == null ? "" : clientDetails.getClientName();
         clientDescription = clientDetails.getClientDescription() == null ? "" : clientDetails.getClientDescription();
         clientWebsite = clientDetails.getClientWebsite() == null ? "" : clientDetails.getClientWebsite();
-        
-        if (clientProfile.getOrcidInternal() != null && clientProfile.getOrcidInternal().getGroupOrcidIdentifier() != null && StringUtils.isNotBlank(clientProfile.getOrcidInternal().getGroupOrcidIdentifier().getPath())) {
+
+        if (clientProfile.getOrcidInternal() != null && clientProfile.getOrcidInternal().getGroupOrcidIdentifier() != null
+                && StringUtils.isNotBlank(clientProfile.getOrcidInternal().getGroupOrcidIdentifier().getPath())) {
             String client_group_id = clientProfile.getOrcidInternal().getGroupOrcidIdentifier().getPath();
             OrcidProfile clientGroupProfile = orcidProfileManager.retrieveOrcidProfile(client_group_id);
             if (clientGroupProfile.getOrcidBio() != null && clientGroupProfile.getOrcidBio().getPersonalDetails() != null
                     && clientGroupProfile.getOrcidBio().getPersonalDetails().getCreditName() != null)
                 clientGroupName = clientGroupProfile.getOrcidBio().getPersonalDetails().getCreditName().getContent();
         }
-        
-        //If the group name is empty, use the same as the client name, since it should be a SSO user 
-        if(StringUtils.isBlank(clientGroupName)) {
+
+        // If the group name is empty, use the same as the client name, since it
+        // should be a SSO user
+        if (StringUtils.isBlank(clientGroupName)) {
             clientGroupName = clientName;
         }
-        
+
         mav.addObject("client_name", clientName);
         mav.addObject("client_description", clientDescription);
         mav.addObject("client_group_name", clientGroupName);
         mav.addObject("client_website", clientWebsite);
-        mav.addObject("clientProfile", clientProfile);        
+        mav.addObject("clientProfile", clientProfile);
         mav.addObject("scopes", ScopePathType.getScopesFromSpaceSeparatedString(scope));
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         mav.addObject("auth", authentication);
