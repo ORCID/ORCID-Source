@@ -90,6 +90,7 @@ public class OauthConfirmAccessController extends BaseController {
         mav.addObject("auth", authentication);
         mav.setViewName("confirm-oauth-access");
         mav.addObject("hideUserVoiceScript", true);
+        mav.addObject("profile", getEffectiveProfile());
         return mav;
     }
 

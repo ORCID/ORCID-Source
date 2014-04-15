@@ -31,12 +31,13 @@
                 <strong><@spring.message "orcid.frontend.web.just_registered"/></strong>
             </div>
         </#if>
-        
         <div class="logo">
             <h1><a href="${aboutUri}"><img src="${staticCdn}/img/orcid-logo.png" alt="ORCID logo" /></a></h1>
             <p>${springMacroRequestContext.getMessage("confirm-oauth-access.connectingresearchandresearchers")}</p>
         </div>
-        
+        <div class="row">
+            <#include "includes/mini_id_banner.ftl"/>
+        </div>
         <br />
         <h2 class="oauth-title">${springMacroRequestContext.getMessage("confirm-oauth-access.connecting")}<br /><span>${displayName}</span><br />${springMacroRequestContext.getMessage("confirm-oauth-access.withyourrecord")}</h2>        
         <hr />
