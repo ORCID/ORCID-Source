@@ -3122,14 +3122,22 @@ function DelegatorsCtrl($scope, $compile){
 			url: getBaseUri()+'/delegators/search-for-data/%QUERY?limit=' + 10
 		},
 		template: function (datum) {
-			   var forDisplay = 
-			       '<span style=\'white-space: nowrap; font-weight: bold;\'>' + datum.value + '</span>'
-			      +'<span style=\'font-size: 80%;\'> (' + datum.orcid + ')</span>';
-			   return forDisplay;
+			var forDisplay;
+			if(datum.noResults){
+				forDisplay = "<span>no matches, please search again</span>";
+			}
+			else{
+				forDisplay = 
+					'<span style=\'white-space: nowrap; font-weight: bold;\'>' + datum.value + '</span>'
+					+'<span style=\'font-size: 80%;\'> (' + datum.orcid + ')</span>';
+			}
+			return forDisplay;
 		}
 	});
 	$("#delegatorsSearch").bind("typeahead:selected", function(obj, datum) {        
-		$scope.selectDelegator(datum);
+		if(!datum.noResults){
+			$scope.selectDelegator(datum);
+		}
 		$scope.$apply();
 	});
 	
