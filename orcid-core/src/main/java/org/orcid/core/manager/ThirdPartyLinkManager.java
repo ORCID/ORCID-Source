@@ -25,7 +25,7 @@ import org.orcid.jaxb.model.clientgroup.OrcidClient;
  * @author jamesb
  *
  */
-public interface ThirdPartyImportManager {
+public interface ThirdPartyLinkManager {
 
     public static String CACHE_VERSION_KEY="import-wizard-cache-version";
     
