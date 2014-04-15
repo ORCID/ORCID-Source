@@ -219,29 +219,29 @@ public class RegistrationController extends BaseController {
         SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
         if (savedRequest != null) {
             String url = savedRequest.getRedirectUrl();
-            
-            Matcher emailMatcher = emailPattern.matcher(url);
-            if (emailMatcher.find())
-                reg.getEmail().setValue(emailMatcher.group(1));
-            
-            Matcher givenNamesMatcher = givenNamesPattern.matcher(url);
-            if (givenNamesMatcher.find())
-                try {
-                    reg.getGivenNames().setValue(URLDecoder.decode(givenNamesMatcher.group(1), "UTF-8"));
-                } catch (UnsupportedEncodingException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            
-            Matcher familyNamesMatcher = familyNamesPattern.matcher(url);
-            if (familyNamesMatcher.find())
-                try {
-                    reg.getFamilyNames().setValue(URLDecoder.decode(familyNamesMatcher.group(1), "UTF-8"));
-                } catch (UnsupportedEncodingException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
 
+            Matcher emailMatcher = emailPattern.matcher(url);
+            if (emailMatcher.find()) {
+                String tempEmail = emailMatcher.group(1);
+                if (!orcidProfileManager.emailExists(tempEmail)) {
+                    reg.getEmail().setValue(tempEmail);
+                    Matcher givenNamesMatcher = givenNamesPattern.matcher(url);
+                    if (givenNamesMatcher.find())
+                        try {
+                            reg.getGivenNames().setValue(URLDecoder.decode(givenNamesMatcher.group(1), "UTF-8"));
+                        } catch (UnsupportedEncodingException e) {
+                            LOGGER.info("error parsing users family name from oauth url",e);
+                        }
+    
+                    Matcher familyNamesMatcher = familyNamesPattern.matcher(url);
+                    if (familyNamesMatcher.find())
+                        try {
+                            reg.getFamilyNames().setValue(URLDecoder.decode(familyNamesMatcher.group(1), "UTF-8"));
+                        } catch (UnsupportedEncodingException e) {
+                            LOGGER.info("error parsing users family name from oauth url",e);
+                        }
+                }
+            }
         }
 
         return reg;
