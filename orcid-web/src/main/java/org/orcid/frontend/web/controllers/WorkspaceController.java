@@ -35,7 +35,7 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.ProfileWorkManager;
-import org.orcid.core.manager.ThirdPartyImportManager;
+import org.orcid.core.manager.ThirdPartyLinkManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.frontend.web.util.NumberList;
@@ -78,7 +78,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     private static final Logger LOGGER = LoggerFactory.getLogger(WorkspaceController.class);
 
     @Resource
-    private ThirdPartyImportManager thirdPartyImportManager;
+    private ThirdPartyLinkManager thirdPartyLinkManager;
 
     @Resource
     private ExternalIdentifierManager externalIdentifierManager;
@@ -103,12 +103,12 @@ public class WorkspaceController extends BaseWorkspaceController {
 
     @ModelAttribute("workImportWizards")
     public List<OrcidClient> retrieveWorkImportWizards() {
-        return thirdPartyImportManager.findOrcidClientsWithPredefinedOauthScopeWorksImport();
+        return thirdPartyLinkManager.findOrcidClientsWithPredefinedOauthScopeWorksImport();
     }
 
     @ModelAttribute("fundingImportWizards")
     public List<OrcidClient> retrieveFundingImportWizards() {
-        return thirdPartyImportManager.findOrcidClientsWithPredefinedOauthScopeFundingImport();
+        return thirdPartyLinkManager.findOrcidClientsWithPredefinedOauthScopeFundingImport();
     }
 
     @ModelAttribute("affiliationTypes")
@@ -320,9 +320,9 @@ public class WorkspaceController extends BaseWorkspaceController {
         SourceOrcid sourceOrcid = currentProfile.getOrcidHistory().getSource().getSourceOrcid();
         String sourcStr = sourceOrcid.getPath();
         // Check that the cache is up to date
-        evictThirdPartyImportManagerCacheIfNeeded();
+        evictThirdPartyLinkManagerCacheIfNeeded();
         // Get list of clients
-        List<OrcidClient> orcidClients = thirdPartyImportManager.findOrcidClientsWithPredefinedOauthScopeReadAccess();
+        List<OrcidClient> orcidClients = thirdPartyLinkManager.findOrcidClientsWithPredefinedOauthScopeReadAccess();
         for (OrcidClient orcidClient : orcidClients) {
             if (sourcStr.equals(orcidClient.getClientId())) {
                 RedirectUri ru = orcidClient.getRedirectUris().getRedirectUri().get(0);
@@ -344,12 +344,12 @@ public class WorkspaceController extends BaseWorkspaceController {
      * @return true if the local cache version is different than the one on
      *         database
      * */
-    private boolean evictThirdPartyImportManagerCacheIfNeeded() {
-        long currentCachedVersion = thirdPartyImportManager.getLocalCacheVersion();
-        long dbCacheVersion = thirdPartyImportManager.getDatabaseCacheVersion();
+    private boolean evictThirdPartyLinkManagerCacheIfNeeded() {
+        long currentCachedVersion = thirdPartyLinkManager.getLocalCacheVersion();
+        long dbCacheVersion = thirdPartyLinkManager.getDatabaseCacheVersion();
         if (currentCachedVersion < dbCacheVersion) {
             // If version changed, evict the cache
-            thirdPartyImportManager.evictAll();
+            thirdPartyLinkManager.evictAll();
             return true;
         }
         return false;

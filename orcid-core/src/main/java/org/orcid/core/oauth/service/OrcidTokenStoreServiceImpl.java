@@ -75,7 +75,7 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
 
     @Resource
     private ProfileDao profileDao;
-    
+
     private static final AuthenticationKeyGenerator KEY_GENERATOR = new DefaultAuthenticationKeyGenerator();
 
     /**
@@ -321,7 +321,9 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
         OAuth2RefreshToken refreshToken = token.getRefreshToken();
         if (refreshToken != null && StringUtils.isNotBlank(refreshToken.getValue())) {
             if (refreshToken instanceof ExpiringOAuth2RefreshToken) {
-                detail.setRefreshTokenExpiration(((ExpiringOAuth2RefreshToken) refreshToken).getExpiration());
+                // Override the refresh token expiration from the client
+                // details, and make it the same as the token itself
+                detail.setRefreshTokenExpiration(token.getExpiration());
             }
             detail.setRefreshTokenValue(refreshToken.getValue());
         }

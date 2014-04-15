@@ -22,7 +22,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.orcid.core.manager.ThirdPartyImportManager;
+import org.orcid.core.manager.ThirdPartyLinkManager;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
@@ -38,8 +38,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 
-public class ThirdPartyImportManagerImpl implements ThirdPartyImportManager {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ThirdPartyImportManagerImpl.class);
+public class ThirdPartyLinkManagerImpl implements ThirdPartyLinkManager {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ThirdPartyLinkManagerImpl.class);
 
     private long localCacheVersion = 0;
 

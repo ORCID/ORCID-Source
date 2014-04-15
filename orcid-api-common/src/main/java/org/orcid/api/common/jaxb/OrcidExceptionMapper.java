@@ -33,6 +33,7 @@ import org.orcid.jaxb.model.message.OrcidMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 
 /**
  * orcid-api - Nov 8, 2011 - OrcidExceptionMapper
@@ -60,6 +61,9 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
             return Response.status(webException.getResponse().getStatus()).entity(entity).build();
         } else if (AuthenticationException.class.isAssignableFrom(e.getClass())) {
             OrcidMessage entity = getOrcidEntity("Authentication problem", e);
+            return Response.status(Response.Status.UNAUTHORIZED).entity(entity).build();
+        } else if (OAuth2Exception.class.isAssignableFrom(e.getClass())) {
+            OrcidMessage entity = getOrcidEntity("OAuth2 problem", e);
             return Response.status(Response.Status.UNAUTHORIZED).entity(entity).build();
         } else if (SecurityException.class.isAssignableFrom(e.getClass())) {
             OrcidMessage entity = getOrcidEntity("Security problem", e);

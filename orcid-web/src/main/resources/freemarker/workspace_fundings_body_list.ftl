@@ -29,7 +29,7 @@
 		   	</a>		   	
 			<a href="" ng-click="workspaceSrvc.toggleFunding()" class="toggle-text"><@orcid.msg 'workspace.Funding'/></a>
 			<#if fundingImportWizards?size != 0>
-				<a class="label btn-primary" ng-click="showTemplateInModal('import-funding-modal')"><@orcid.msg 'workspace.import_funding'/></a>
+				<a class="label btn-primary" ng-click="showTemplateInModal('import-funding-modal')"><@orcid.msg 'workspace.link_funding'/></a>
 			</#if>			
 			<a href="" class="label btn-primary" ng-click="addFundingModal()"><@orcid.msg 'manual_funding_form_contents.add_grant_manually'/></a>
 		</div>

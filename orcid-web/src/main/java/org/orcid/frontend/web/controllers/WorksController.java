@@ -38,7 +38,7 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ActivityCacheManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.ProfileWorkManager;
-import org.orcid.core.manager.ThirdPartyImportManager;
+import org.orcid.core.manager.ThirdPartyLinkManager;
 import org.orcid.core.manager.WorkExternalIdentifierManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.utils.JsonUtils;
@@ -94,7 +94,7 @@ public class WorksController extends BaseWorkspaceController {
     private static final Pattern LANGUAGE_CODE = Pattern.compile("([a-zA-Z]{2})(_[a-zA-Z]{2}){0,2}");
 
     @Resource
-    private ThirdPartyImportManager thirdPartyImportManager;
+    private ThirdPartyLinkManager thirdPartyLinkManager;
 
     @Resource
     private ExternalIdentifierManager externalIdentifierManager;

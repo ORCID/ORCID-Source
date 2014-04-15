@@ -148,7 +148,7 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional
     @ExcludeFromProfileLastModifiedUpdate
     public void removeByAuthenticationKeyOrTokenValueOrRefreshTokenValue(String authenticationKey, String tokenValue, String refreshTokenValue) {
         String or = " or ";

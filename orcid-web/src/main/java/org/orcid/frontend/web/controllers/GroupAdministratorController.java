@@ -30,7 +30,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.orcid.core.exception.OrcidClientGroupManagementException;
 import org.orcid.core.manager.OrcidClientGroupManager;
-import org.orcid.core.manager.ThirdPartyImportManager;
+import org.orcid.core.manager.ThirdPartyLinkManager;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
@@ -69,7 +69,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
     OrcidClientGroupManager orcidClientGroupManager;
 
     @Resource
-    private ThirdPartyImportManager thirdPartyImportManager;
+    private ThirdPartyLinkManager thirdPartyLinkManager;
 
     @RequestMapping
     public ModelAndView manageClients() {
@@ -319,9 +319,9 @@ public class GroupAdministratorController extends BaseWorkspaceController {
      * */
     private void clearCache() {
         // Updates cache database version
-        thirdPartyImportManager.updateDatabaseCacheVersion();
+        thirdPartyLinkManager.updateDatabaseCacheVersion();
         // Evict current cache
-        thirdPartyImportManager.evictAll();
+        thirdPartyLinkManager.evictAll();
     }
 
     @RequestMapping(value = "/get-available-scopes.json", method = RequestMethod.GET)
