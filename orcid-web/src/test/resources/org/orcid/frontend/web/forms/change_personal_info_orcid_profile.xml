@@ -24,7 +24,7 @@
         <contact-details>
             <email primary="true" visibility="limited"/>
             <address>
-                <country visibility="limited">GB</country>
+                <country visibility="public">GB</country>
             </address>
         </contact-details>
         <keywords visibility="public">

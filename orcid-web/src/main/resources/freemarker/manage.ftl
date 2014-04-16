@@ -437,15 +437,19 @@
 					<#else>
 						<span><@spring.message "manage.developer_tools.title.enabled"/></span>
 					</#if>
-				</h1>		
-				<div class="sso" ng-controller="SSOPreferencesCtrl">
-					<#if profile.orcidInternal?? && profile.orcidInternal.preferences.developerToolsEnabled?? && profile.orcidInternal.preferences.developerToolsEnabled.value == false>
-						<p><@spring.message "manage.developer_tools.enable.description"/></p>
-						<p><@spring.message "manage.developer_tools.enable.text"/>&nbsp;<a href ng-click="enableDeveloperTools()"><@spring.message "manage.developer_tools.enable_disable.link.text"/></a></p>
-					<#else>
-						<p><@spring.message "manage.developer_tools.enabled.description"/>&nbsp;<a href="<@spring.url "/developer-tools"/>"><@spring.message "manage.developer_tools.enabled.link"/></a></p>						
-					</#if>				
-				</div>
+				</h1>
+				<#if !inDelegationMode || isDelegatedByAdmin>
+					<div class="sso" ng-controller="SSOPreferencesCtrl">
+						<#if profile.orcidInternal?? && profile.orcidInternal.preferences.developerToolsEnabled?? && profile.orcidInternal.preferences.developerToolsEnabled.value == false>
+							<p><@spring.message "manage.developer_tools.enable.description"/></p>
+							<p><@spring.message "manage.developer_tools.enable.text"/>&nbsp;<a href ng-click="enableDeveloperTools()"><@spring.message "manage.developer_tools.enable_disable.link.text"/></a></p>
+						<#else>
+							<p><@spring.message "manage.developer_tools.enabled.description"/>&nbsp;<a href="<@spring.url "/developer-tools"/>"><@spring.message "manage.developer_tools.enabled.link"/></a></p>						
+						</#if>				
+					</div>
+				<#else>
+					(unavailable to account delegates)
+				</#if>
 			</@security.authorize>
 		</#if>
 		
