@@ -2895,6 +2895,12 @@ function DelegatesCtrl($scope, $compile){
 	
 	$scope.getResults = function(rows){
 		var query = "{!edismax qf='given-and-family-names^50.0 family-name^10.0 given-names^5.0 credit-name^10.0 other-names^5.0 text^1.0' pf='given-and-family-names^50.0' mm=1}" + $scope.userQuery;
+		if($scope.delegation.givenPermissionTo != null){
+			var delegates = $.map($scope.delegation.givenPermissionTo.delegationDetails, function(delegationDetail){ return delegationDetail.delegateSummary.orcidIdentifier.path; }).join(' ');
+			if(delegates !== ''){
+				query += '&fq=!orcid:(' + delegates + ')';
+			}
+		}
 		var orcidRegex = new RegExp("(\\d{4}-){3,}\\d{3}[\\dX]");
 		var regexResult = orcidRegex.exec($scope.userQuery);
 		if(regexResult){
