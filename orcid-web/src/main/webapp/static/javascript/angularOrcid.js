@@ -2846,6 +2846,7 @@ function DelegatesCtrl($scope, $compile){
 	$scope.start = 0;
 	$scope.rows = 10;
 	$scope.showLoader = false;
+	$scope.effectiveUserOrcid = $('body').data('effective-user-orcid');
 	
 	$scope.sort = {
 		column: 'delegateSummary.creditName.content',
@@ -2968,7 +2969,7 @@ function DelegatesCtrl($scope, $compile){
 			return creditName.value;
 		}
 		return personalDetails['given-names'].value + ' ' + personalDetails['family-name'].value;
-	}
+	};
 	
 	$scope.confirmAddDelegateByEmail = function(emailSearchResult){
 		$scope.emailSearchResult = emailSearchResult;
@@ -2988,7 +2989,6 @@ function DelegatesCtrl($scope, $compile){
 		$scope.delegateNameToAdd = delegateName;
 		$scope.delegateToAdd = delegateId;
 		$scope.delegateIdx = delegateIdx;
-		$scope.effectiveUserOrcid = $('body').data('effective-user-orcid');
 		$.colorbox({                      
 			html : $compile($('#confirm-add-delegate-modal').html())($scope),
 			transition: 'fade',
@@ -3066,7 +3066,14 @@ function DelegatesCtrl($scope, $compile){
 	        url: getBaseUri() + '/account/delegates.json',
 	        dataType: 'json',
 	        success: function(data) {
+	        	$scope.delegatesByOrcid = {};
 	        	$scope.delegation = data;
+	        	if(data.givenPermissionTo != null){
+		        	for(var i=0; i < data.givenPermissionTo.delegationDetails.length; i++){
+		        		var delegate = data.givenPermissionTo.delegationDetails[i];
+		        		$scope.delegatesByOrcid[delegate.delegateSummary.orcidIdentifier.path] = delegate;
+		        	}
+	        	}
 	        	$scope.$apply();
 	        }
 	    }).fail(function() { 
