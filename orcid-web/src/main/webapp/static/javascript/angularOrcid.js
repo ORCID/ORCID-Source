@@ -2865,6 +2865,7 @@ function DelegatesCtrl($scope, $compile){
 	$scope.search = function(){
 		$scope.results = new Array();
 		$scope.showLoader = true;
+		$('#no-results-alert').hide();
 		if(isEmail($scope.userQuery)){
 			$scope.numFound = 0;
 			$scope.start = 0;
@@ -2895,6 +2896,12 @@ function DelegatesCtrl($scope, $compile){
 	
 	$scope.getResults = function(rows){
 		var query = "{!edismax qf='given-and-family-names^50.0 family-name^10.0 given-names^5.0 credit-name^10.0 other-names^5.0 text^1.0' pf='given-and-family-names^50.0' mm=1}" + $scope.userQuery;
+		if($scope.delegation.givenPermissionTo != null){
+			var delegates = $.map($scope.delegation.givenPermissionTo.delegationDetails, function(delegationDetail){ return delegationDetail.delegateSummary.orcidIdentifier.path; }).join(' ');
+			if(delegates !== ''){
+				query += '&fq=!orcid:(' + delegates + ')';
+			}
+		}
 		var orcidRegex = new RegExp("(\\d{4}-){3,}\\d{3}[\\dX]");
 		var regexResult = orcidRegex.exec($scope.userQuery);
 		if(regexResult){
@@ -2905,31 +2912,34 @@ function DelegatesCtrl($scope, $compile){
 			dataType: 'json',
 			headers: { Accept: 'application/json'},
 			success: function(data) {
-				var resultsContainer = data['orcid-search-results']; 
-				if(typeof resultsContainer !== 'undefined'){
+				var resultsContainer = data['orcid-search-results'];
+				$scope.numFound = resultsContainer['num-found'];
+				if(resultsContainer['orcid-search-result']){
 					$scope.numFound = resultsContainer['num-found'];
 					$scope.results = $scope.results.concat(resultsContainer['orcid-search-result']);
 				}
-				else{
+				if(!$scope.numFound){
 					$('#no-results-alert').fadeIn(1200);
 				}
 				$scope.areMoreResults = $scope.numFound >= ($scope.start + $scope.rows);
 				$scope.showLoader = false;
 				$scope.$apply();
 				var newSearchResults = $('.new-search-result');
-				newSearchResults.fadeIn(1200);
-				newSearchResults.removeClass('new-search-result');
-				var newSearchResultsTop = newSearchResults.offset().top;
-				var showMoreButtonTop = $('#show-more-button-container').offset().top;
-				var bottom = $(window).height();
-				if(showMoreButtonTop > bottom){
-					$('html, body').animate(
-						{ 
-							scrollTop: newSearchResultsTop
-						},
-						1000, 
-						'easeOutQuint'
-					);
+				if(newSearchResults.length > 0){
+					newSearchResults.fadeIn(1200);
+					newSearchResults.removeClass('new-search-result');
+					var newSearchResultsTop = newSearchResults.offset().top;
+					var showMoreButtonTop = $('#show-more-button-container').offset().top;
+					var bottom = $(window).height();
+					if(showMoreButtonTop > bottom){
+						$('html, body').animate(
+							{ 
+								scrollTop: newSearchResultsTop
+							},
+							1000, 
+							'easeOutQuint'
+						);
+					}
 				}
 			}
 		}).fail(function(){
