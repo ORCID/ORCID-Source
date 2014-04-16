@@ -183,7 +183,7 @@
 				</div>
 		    	<div class="control-group">					
 					<button class="btn btn-primary" ng-click="addAffiliation()" ng-disabled="addingAffiliation" ng-class="{disabled:addingAffiliation}"><@orcid.msg 'manual_affiliation_form_contents.btnaddtolist'/></button>
-					<button id="" class="btn close-button" ng-click="closeModal()" type="reset">Cancel</button>
+					<button id="" class="btn close-button" ng-click="closeModal()" type="reset"><@orcid.msg 'freemarker.btncancel' /></button>
 				</div>	    				
 		</div>
 </script>

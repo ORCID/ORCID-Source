@@ -20,12 +20,12 @@
 	<div class="lightbox-container">
 		<div class="row">
 			<div class="col-md-12 col-xs-12 col-sm-12">
-				<h3>${springMacroRequestContext.getMessage("manage.deleteAffiliation.pleaseConfirm")}</h3>
+				<h3><@orcid.msg 'manage.deleteAffiliation.pleaseConfirm' /></h3>
 				<p>{{fixedTitle}}</p>		
     			<div class="btn btn-danger" ng-click="deleteAff(deleAff)">
-    				${springMacroRequestContext.getMessage("manage.deleteAffiliation.delete")}
+    				<@orcid.msg 'manage.deleteAffiliation.delete' />
     			</div>
-    			<a href="" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.deleteAffiliation.cancel")}</a>
+    			<a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
 			</div>
 		</div>
     </div>
