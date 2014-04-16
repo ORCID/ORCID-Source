@@ -3715,7 +3715,9 @@ p.orcid-id-container{
 	border-top: 1px solid #FFF;
 }
 
-
+.no-delegator-matches {
+	color: #949599;
+}
 
 
 /* Media Queries */
