@@ -235,7 +235,7 @@
 									changes</button>
 								<button id="bottom-reset-security-question"
 									class="btn close-parent-popover"
-									ng-click="getSecurityQuestion()">Cancel</button>
+									ng-click="getSecurityQuestion()"><@orcid.msg 'freemarker.btncancel' /></button>
 							</div>
 						</div>
 					</td>
@@ -463,9 +463,9 @@
 </script>
 
 <script type="text/ng-template" id="delete-email-modal">
-	<div style="padding: 20px;"><h3>${springMacroRequestContext.getMessage("manage.email.pleaseConfirmDeletion")} {{emailsPojo.emails[deleteEmailIdx].value}}</h3>
-	<button class="btn btn-danger" ng-click="deleteEmail()">${springMacroRequestContext.getMessage("manage.email.deleteEmail")}</button> 
-	<a href="" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.email.cancel")}</a><div>
+	<div style="padding: 20px;"><h3><@orcid.msg 'manage.email.pleaseConfirmDeletion' /> {{emailsPojo.emails[deleteEmailIdx].value}}</h3>
+	<button class="btn btn-danger" ng-click="deleteEmail()"><@orcid.msg 'manage.email.deleteEmail' /></button> 
+	<a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a><div>
 </script>		
 
 <#-- Script that will display a modal to ask for user password 												-->
@@ -485,9 +485,9 @@
 
 <script type="text/ng-template" id="confirm-revoke-access-modal">
 	<div style="padding: 20px;">
-	   <h3>${springMacroRequestContext.getMessage("manage.application_access.revoke.confirm_revoke")} {{appName}}</h3>
-	   <button class="btn btn-danger" ng-click="revokeAccess()">${springMacroRequestContext.getMessage("manage.application_access.revoke.confirm")}</button> 
-	   <a href="" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.application_access.revoke.cancel")}</a>
+	   <h3><@orcid.msg 'manage.application_access.revoke.confirm_revoke' /> {{appName}}</h3>
+	   <button class="btn btn-danger" ng-click="revokeAccess()"><@orcid.msg 'manage.application_access.revoke.confirm' /></button> 
+	   <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
 	</div>
 </script>
 
@@ -496,12 +496,12 @@
 	   <h3>Add delegate</h3>
 	   <div ng-show="effectiveUserOrcid === delegateToAdd">
 	      <p class="alert alert-error">You can't add yourself as a delegate</p>
-	      <a href="" ng-click="closeModal()">Cancel</a>
+	      <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
 	   </div>
 	   <div ng-hide="effectiveUserOrcid === delegateToAdd">
 	      <p>{{delegateNameToAdd}} ({{delegateToAdd}})</p>
 	      <button class="btn btn-primary" ng-click="addDelegate()">Add</button>
-	      <a href="" ng-click="closeModal()">Cancel</a>
+	      <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
 	   </div>
 	</div>
 </script>
@@ -511,17 +511,17 @@
 	   <h3>Add delegate</h3>
 	   <div ng-show="emailSearchResult.isSelf">
 	      <p class="alert alert-error">You can't add yourself as a delegate</p>
-	      <a href="" ng-click="closeModal()">Cancel</a>
+	      <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
 	   </div>
 	   <div ng-show="!emailSearchResult.found" >
 	       <p class="alert alert-error">Sorry, {{userQuery}} doesn't seem to have an ORCID Account.</p>
 	       <p>Account Delegates must have an ORCID Account to manage yours.</p>
-	       <a href="" ng-click="closeModal()">Cancel</a>
+	       <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
 	   </div>
 	   <div ng-show="!emailSearchResult.isSelf && emailSearchResult.found">
 	      <p>{{userQuery}}</p>
 	      <button class="btn btn-primary" ng-click="addDelegateByEmail(userQuery)">Add</button>
-	      <a href="" ng-click="closeModal()">Cancel</a>
+	      <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
 	   </div>
 	</div>
 </script>
@@ -531,7 +531,7 @@
 		<h3>Please confirm revocation of delegate</h3>
 		<p> {{delegateNameToRevoke}} ({{delegateToRevoke}})</p>
 		<button class="btn btn-danger" ng-click="revoke()">Revoke</button> 
-		<a href="" ng-click="closeModal()">Cancel</a>
+		<a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
 	<div>
 </script>
 
