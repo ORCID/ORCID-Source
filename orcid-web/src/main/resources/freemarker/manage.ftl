@@ -231,8 +231,7 @@
 							</div>
 							<div class="control-group">
 								<button id="bottom-submit-security-question"
-									class="btn btn-primary" ng-click="checkCredentials()">Save
-									changes</button>
+									class="btn btn-primary" ng-click="checkCredentials()"><@orcid.msg 'freemarker.btnsavechanges' /></button>
 								<button id="bottom-reset-security-question"
 									class="btn close-parent-popover"
 									ng-click="getSecurityQuestion()"><@orcid.msg 'freemarker.btncancel' /></button>

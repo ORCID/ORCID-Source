@@ -47,7 +47,7 @@
 						   		</span>                           
 	                        </div>    
 	                        <div class="controls">
-	        					<button id="bottom-submit-password-change" class="btn btn-primary" type="submit">${springMacroRequestContext.getMessage("password_one_time_reset.btnsavechanges")}</button>    
+	        					<button id="bottom-submit-password-change" class="btn btn-primary" type="submit"><@orcid.msg 'freemarker.btnsavechanges' /></button>    
 	        				</div>
 	    				</div>	
 		         </form>

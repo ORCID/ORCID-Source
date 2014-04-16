@@ -155,7 +155,7 @@
                     </div>
                 </div>             	 		
              	<div class="control-group save-btns left">
-                    <button id="bottom-submit-affiliates" class="btn btn-primary" type="submit"><@orcid.msg 'manage_bio_settings.btnsavechanges' /></button>
+                    <button id="bottom-submit-affiliates" class="btn btn-primary" type="submit"><@orcid.msg 'freemarker.btnsavechanges' /></button>
                     <button id="bottom-clear-affiliates" class="btn close-button" type="reset"><@orcid.msg 'freemarker.btncancel' /></button>
                 </div>
             </div>
