@@ -342,7 +342,7 @@ orcidNgModule.factory("prefsSrvc", function ($rootScope) {
 			        dataType: 'json',
 			        success: function(data) {
 			        	serv.prefs = data;
-			        	$rootScope.$apply;
+			        	$rootScope.$apply();
 			        }
 			    }).fail(function() { 
 			    	// something bad is happening!
@@ -358,7 +358,7 @@ orcidNgModule.factory("prefsSrvc", function ($rootScope) {
 			        dataType: 'json',
 			        success: function(data) {
 			        	serv.prefs = data;
-			        	$rootScope.$apply;
+			        	$rootScope.$apply();
 			        }
 			    }).fail(function() { 
 			    	// something bad is happening!
