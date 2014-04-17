@@ -43,7 +43,7 @@
 	<#-- hidden divs that trigger angular -->
 	<#if RequestParameters['recordClaimed']??>
 	    <div ng-controller="ClaimThanks" style="display: hidden;"></div>	    
-	<#elseif !Session.CHECK_EMAIL_VALIDATED?exists>
+	<#elseif !Session.CHECK_EMAIL_VALIDATED?exists && !inDelegationMode>
     	<div ng-controller="VerifyEmailCtrl" style="display: hidden;"></div>
 	</#if>
 
