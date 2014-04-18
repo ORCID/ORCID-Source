@@ -415,7 +415,18 @@
 							<td width="20%"><a href="{{result['orcid-profile']['orcid-identifier'].uri}}" target="_blank" ng-bind="getDisplayName(result)"></a></td>
 							<td width="25%" class='search-result-orcid-id'><a href="{{result['orcid-profile']['orcid-identifier'].uri}}" target="_blank">{{result['orcid-profile']['orcid-identifier'].path}}</td>
 							<td width="45%">{{concatPropertyValues(result['orcid-profile']['orcid-bio']['affiliations'], 'affiliation-name')}}</td>
-							<td width="10%"><span ng-click="confirmAddDelegate(result['orcid-profile']['orcid-bio']['personal-details']['given-names'].value + ' ' + result['orcid-profile']['orcid-bio']['personal-details']['family-name'].value, result['orcid-profile']['orcid-identifier'].path, $index)" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span></td>
+							<td width="10%">
+								<span ng-show="effectiveUserOrcid !== result['orcid-profile']['orcid-identifier'].path">							
+									<span ng-show="!delegatesByOrcid[result['orcid-profile']['orcid-identifier'].path]"
+										ng-click="confirmAddDelegate(result['orcid-profile']['orcid-bio']['personal-details']['given-names'].value + ' ' + result['orcid-profile']['orcid-bio']['personal-details']['family-name'].value, result['orcid-profile']['orcid-identifier'].path, $index)"
+										class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span>
+									<a ng-show="delegatesByOrcid[result['orcid-profile']['orcid-identifier'].path]"
+										ng-click="confirmRevoke(result['orcid-profile']['orcid-bio']['personal-details']['given-names'].value + ' ' + result['orcid-profile']['orcid-bio']['personal-details']['family-name'].value, result['orcid-profile']['orcid-identifier'].path, $index)"
+										class="glyphicon glyphicon-trash grey"
+										title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a>
+								</span>
+								<span ng-show="effectiveUserOrcid === result['orcid-profile']['orcid-identifier'].path">You</span>
+							</td>
 						</tr>
 					</tbody>
 				</table>
@@ -423,8 +434,8 @@
 					<button id="show-more-button" type="submit" class="ng-cloak btn" ng-click="getMoreResults()" ng-show="areMoreResults">Show more</button>
 					<span id="ajax-loader" class="ng-cloak" ng-show="showLoader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span>
 				</div>
-				<div id="no-results-alert" class="hide alert alert-error"><@spring.message "orcid.frontend.web.no_results"/></div>
 			</div>
+			<div id="no-results-alert" class="orcid-hide alert alert-error no-delegate-matches"><@spring.message "orcid.frontend.web.no_results"/></div>
 		</div>
 		</#if>
 		
