@@ -252,12 +252,12 @@
 								id="sendOrcidChangeNotifcations"
 								name="sendOrcidChangeNotifcations"
 								ng-model="prefsSrvc.prefs.sendChangeNotifications.value"
-								ng-click="prefsSrvc.savePrivacyPreferences()" />
+								ng-change="prefsSrvc.savePrivacyPreferences()" />
 								${springMacroRequestContext.getMessage("change_email_preferences.sendnotification")}
 							</label> <label class="checkbox"> <input type="checkbox"
 								id="sendOrcidNews" name="sendOrcidNews"
 								ng-model="prefsSrvc.prefs.sendOrcidNews.value"
-								ng-click="prefsSrvc.savePrivacyPreferences()" />
+								ng-change="prefsSrvc.savePrivacyPreferences()" />
 								${springMacroRequestContext.getMessage("change_email_preferences.sendinformation")}
 							</label>
 							<p>

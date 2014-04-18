@@ -853,7 +853,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         preferences.setDeveloperToolsEnabled(new DeveloperToolsEnabled(true));
         preferences.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(Visibility.PUBLIC));
 
-        orcidProfileManager.updatePreferences(profile2);
+        orcidProfileManager.updatePreferences(profile2.getOrcidIdentifier().getPath(), profile2.getOrcidInternal().getPreferences());
 
         OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfile(TEST_ORCID);
         assertEquals(false, retrievedProfile.getOrcidInternal().getPreferences().getSendChangeNotifications().isValue());
