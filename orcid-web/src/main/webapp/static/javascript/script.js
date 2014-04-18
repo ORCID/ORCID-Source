@@ -507,7 +507,7 @@ $(function () {
 	$('#form-search').on('submit', function (e){
 		if ($('[name="huh_radio"]:checked', this).val() === "registry") {
 			e.preventDefault();
-			window.location = baseUrl + "orcid-search/quick-search/?searchQuery=" + $('[type="search"]', this).val();
+			window.location = baseUrl + "orcid-search/quick-search/?searchQuery=" + encodeURIComponent($('[type="search"]', this).val());
 		}
 	});
 			
