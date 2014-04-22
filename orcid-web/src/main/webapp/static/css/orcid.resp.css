@@ -1581,8 +1581,7 @@ a:hover {
 	min-height: 500px;
 }
 
-.workspace-header {
-	border-bottom: 1px solid #c9c9c9;
+.workspace-header {	
 	padding-left: 10px;
 }
 
@@ -1664,7 +1663,7 @@ a:hover {
 	font-style: normal;
 }
 
-.workspace-accordion-header,.workspace-accordion-content {
+.workspace-accordion-content {
 	padding-left: 10px;
 }
 
@@ -1677,7 +1676,8 @@ a:hover {
 }
 
 .toggle-text{	
-	font-size: 20px;	
+	font-size: 14px;
+	color: #FFF;	
 }
  
 .toggle-text:hover{
@@ -2907,11 +2907,20 @@ a.btn-primary:hover {
 
 ul.personal-inf-display{
 	margin:0;
-	padding:0;
+	padding: 0;	
+	background: #939598; 	
 }
 
 ul.personal-inf-display li{
-	display: inline;
+	display: inline-block;
+	padding: 5px;
+}
+
+ul.personal-inf-display li a{	
+}
+
+ul.personal-inf-display li:last-child{
+	background: #C9CACB;	
 }
 
 /* Add Work */

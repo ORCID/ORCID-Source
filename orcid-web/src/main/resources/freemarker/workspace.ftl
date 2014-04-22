@@ -54,7 +54,8 @@
 	        	<p><strong><@orcid.msg 'workspace.Alsoknownas'/></strong><br />
 		       		<#list profile.orcidBio.personalDetails.otherNames.otherName as otherName>
 		       			${otherName.content}<#if otherName_has_next><br /></#if>
-		       		</#list></p>
+		       		</#list>
+		       	</p>
 	       	</#if>
             <#if (countryName)??>
                 <p><strong><@orcid.msg 'public_profile.labelCountry'/></strong>
@@ -92,8 +93,10 @@
         <div class="workspace-right">
         	<div class="workspace-inner workspace-header" ng-controller="WorkspaceSummaryCtrl">
                 <div class="alert alert-info" ng-show="showAddAlert()" ng-cloak><strong><@orcid.msg 'workspace.addinformationaboutyou'/></strong></div>
+                <!-- Summary 
         		<div class="row">
-        			<!-- Works -->
+        			
+        			
 	        		<div class="workspace-overview col-md-3 col-sm-3 col-xs-6" id="works-overview">
 	        			<a href="#workspace-publications" class="overview-count" ng-click="workspaceSrvc.openWorks()"><span ng-bind="worksSrvc.works.length"></span></a>
 	        			<a href="#workspace-publications" class="overview-title" ng-click="workspaceSrvc.openWorks()"><@orcid.msg 'workspace.Works'/></a>
@@ -119,6 +122,10 @@
         				<a href="#workspace-employments" class="btn-update no-icon" ng-click="workspaceSrvc.openFunding()"><@orcid.msg 'workspace.view'/></a>
         			</div>
 	        	</div>
+	        	 -->
+	        	 <!-- Personal information will be here now -->
+	        	 
+	        	 
         	</div>
         	<div class="workspace-accordion" id="workspace-accordion">
         		<!-- Personal Information -->
@@ -129,8 +136,15 @@
         			   			<a href="" ng-click="toggleDisplayInfo()" class="toggle-text">
 	        			   			<i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':displayInfo==false}"></i></a>
 	        			   		</a>
-        			   			<a href="" ng-click="toggleDisplayInfo()" class="toggle-text"><@orcid.msg 'workspace.personal_information'/></a></li>
-        			   		<li><a href="<@spring.url '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a></li>        			   		
+        			   			<a href="" ng-click="toggleDisplayInfo()" class="toggle-text">
+        			   				<@orcid.msg 'workspace.personal_information'/>
+        			   			</a>
+        			   		</li>
+        			   		<li class="pull-right">
+        			   			<a href="<@spring.url '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary">
+        			   				<@orcid.msg 'workspace.Update'/>
+        			   			</a>
+        			   		</li>        			   		
         			   </ul>
         			</div>
             		<div class="workspace-accordion-content" ng-show="displayInfo">
