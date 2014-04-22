@@ -631,7 +631,6 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
     private void setDelegations(ProfileEntity profileEntity, Delegation delegation) {
         profileEntity.setGivenPermissionTo(getGivenPermissionsTo(profileEntity, delegation));
-        profileEntity.setGivenPermissionBy(getGivenPermissionsBy(profileEntity, delegation));
     }
 
     private void setContactDetails(ProfileEntity profileEntity, ContactDetails contactDetails) {
@@ -855,32 +854,6 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                     givenPermissionToEntities.add(givenPermissionToEntity);
                 }
                 return givenPermissionToEntities;
-            }
-        }
-        return null;
-    }
-
-    private Set<GivenPermissionByEntity> getGivenPermissionsBy(ProfileEntity profileEntity, Delegation delegation) {
-        if (delegation != null) {
-            GivenPermissionBy givenPermissionBy = delegation.getGivenPermissionBy();
-            if (givenPermissionBy != null && givenPermissionBy.getDelegationDetails() != null && !givenPermissionBy.getDelegationDetails().isEmpty()) {
-                Set<GivenPermissionByEntity> givenPermissionByEntities = new HashSet<GivenPermissionByEntity>();
-                for (DelegationDetails delegationDetails : givenPermissionBy.getDelegationDetails()) {
-                    GivenPermissionByEntity givenPermissionByEntity = new GivenPermissionByEntity();
-                    DelegateSummary profileSummary = delegationDetails.getDelegateSummary();
-                    ProfileSummaryEntity profileSummaryEntity = new ProfileSummaryEntity(profileSummary.getOrcidIdentifier().getPath());
-                    profileSummaryEntity.setCreditName(profileSummary.getCreditName().getContent());
-                    givenPermissionByEntity.setGiver(profileSummaryEntity);
-                    givenPermissionByEntity.setReceiver(profileEntity.getId());
-                    ApprovalDate approvalDate = delegationDetails.getApprovalDate();
-                    if (approvalDate == null) {
-                        givenPermissionByEntity.setApprovalDate(new Date());
-                    } else {
-                        givenPermissionByEntity.setApprovalDate(DateUtils.convertToDate(approvalDate.getValue()));
-                    }
-                    givenPermissionByEntities.add(givenPermissionByEntity);
-                }
-                return givenPermissionByEntities;
             }
         }
         return null;
