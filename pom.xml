@@ -960,17 +960,6 @@ the software.
 
     <repositories>
         <repository>
-            <id>orcid-maven-repo</id>
-            <name>Orcid Maven Repository</name>
-            <url>https://raw.github.com/ORCID/ORCID-Maven-Repo/master</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
             <id>spring-s3</id>
             <name>Spring S3</name>
             <url>http://maven.springframework.org/milestone</url>
