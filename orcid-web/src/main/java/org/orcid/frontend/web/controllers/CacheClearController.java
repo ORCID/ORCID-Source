@@ -18,7 +18,7 @@ package org.orcid.frontend.web.controllers;
 
 
 import javax.annotation.Resource;
-import org.orcid.core.manager.ThirdPartyImportManager;
+import org.orcid.core.manager.ThirdPartyLinkManager;
 import org.orcid.pojo.ajaxForm.Errors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,13 +37,13 @@ public class CacheClearController extends BaseWorkspaceController {
     private static final Logger LOGGER = LoggerFactory.getLogger(CacheClearController.class);
 
     @Resource
-    private ThirdPartyImportManager thirdPartyImportManager;
+    private ThirdPartyLinkManager thirdPartyLinkManager;
 
 
-    @RequestMapping(value = "/thirdPartyImportManager.json", method = RequestMethod.GET)
+    @RequestMapping(value = "/thirdPartyLinkManager.json", method = RequestMethod.GET)
     public @ResponseBody
-    Errors clearThirdPartyImportManager() {
-        thirdPartyImportManager.evictAll();
+    Errors clearThirdPartyLinkManager() {
+        thirdPartyLinkManager.evictAll();
         return new Errors();
     }
 

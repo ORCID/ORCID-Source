@@ -22,29 +22,26 @@
 	<div class="col-md-3 lhs override">
 	</div>
 	<div class="col-md-9">
-		<h1 id="manage-delegators">Delegators</h1>
-		
-		<h3>
-			<b>Individuals who have given you delegate permission</b>
-		</h3>
+		<h1 id="manage-delegators"><@orcid.msg 'manage_delegators.title' /></h1>			
 		<p>
-			Other ORCID users can allow permission for their ORCID Record to be updated by you<br />
-			<a href="http://support.orcid.org/knowledgebase/articles/delegation"
-				target=_blank"">${springMacroRequestContext.getMessage("manage.findoutmore")}</a>
+			<@orcid.msg 'manage_delegators.description' />
+		</p>
+		<p>
+			<strong></strong><a href="<@orcid.msg 'manage_delegators.learn_more.link.url' />" target="_blank"><@orcid.msg 'manage_delegators.learn_more.link.text' /></a></strong>&nbsp;<@orcid.msg 'manage_delegators.learn_more.text' />
 		</p>
 		<div ng-controller="DelegatorsCtrl" id="DelegatorsCtrl" data-search-query-url="${searchBaseUrl}">
-		    <p>Search for individuals who have given you delegate access</p>
+		    <p><@orcid.msg 'manage_delegators.search'/></p>
 			<p>
 				<form id="delegatorsSearchForm">
-					<input id="delegatorsSearch" type="text" placeholder="ORCID or names" class="input-xlarge inline-input"></input>
+					<input id="delegatorsSearch" type="text" placeholder="<@orcid.msg 'manage_delegators.search.placeholder' />" class="input-xlarge inline-input"></input>
 				</form>
 			</p>
 			<table class="table table-bordered settings-table normal-width" ng-show="delegators.delegationDetails" ng-cloak>
 				<thead>
 					<tr>
 						<th width="35%" ng-click="changeSorting('delegateSummary.creditName.content')">${springMacroRequestContext.getMessage("manage.thproxy")}</th>
-						<th width="15%" ng-click="changeSorting('approvalDate.value')">Access granted</th>
-						<th width="15%" ng-click="changeSorting('delegateSummary.lastModifiedDate.value')">Last modified</th>
+						<th width="15%" ng-click="changeSorting('approvalDate.value')"><@orcid.msg 'manage_delegators.delegates_table.access_granted' /></th>
+						<th width="15%" ng-click="changeSorting('delegateSummary.lastModifiedDate.value')"><@orcid.msg 'manage_delegators.delegates_table.last_modified' /></th>
 					</tr>
 				</thead>
 				<tbody>

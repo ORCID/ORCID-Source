@@ -43,7 +43,7 @@
 	<#-- hidden divs that trigger angular -->
 	<#if RequestParameters['recordClaimed']??>
 	    <div ng-controller="ClaimThanks" style="display: hidden;"></div>	    
-	<#elseif !Session.CHECK_EMAIL_VALIDATED?exists>
+	<#elseif !Session.CHECK_EMAIL_VALIDATED?exists && !inDelegationMode>
     	<div ng-controller="VerifyEmailCtrl" style="display: hidden;"></div>
 	</#if>
 
@@ -152,7 +152,7 @@
 		        				<a href="" ng-click="workspaceSrvc.toggleWorks()" class="toggle-text"><@orcid.msg 'workspace.Works'/></a>
 		        			</li>		        			
 							<li>
-								<a class="label btn-primary" ng-click="showWorkImportWizard()"><@orcid.msg 'workspace.import_works'/></a>
+								<a class="label btn-primary" ng-click="showWorkImportWizard()"><@orcid.msg 'workspace.link_works'/></a>
 							</li>	
 							<li>
 								<a href="" class="label btn-primary" ng-click="addWorkModal()"><@orcid.msg 'manual_work_form_contents.add_work_manually'/></a>
@@ -247,7 +247,7 @@
 			<div class="col-md-12 col-sm-12 col-xs-12">
 				<h3><@orcid.msg 'manage.deleteExternalIdentifier.pleaseConfirm'/> {{removeExternalModalText}} </h3>
 				<button class="btn btn-danger" ng-click="removeExternalIdentifier()"><@orcid.msg 'manage.deleteExternalIdentifier.delete'/></button> 
-				<a ng-click="closeModal()"><@orcid.msg 'manage.deleteExternalIdentifier.cancel'/></a>
+				<a ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel'/></a>
 			<div>
 		<div>
 	<div>	
@@ -260,13 +260,13 @@
 			<div class="row">	
 				<div class="col-md-12 col-sm-12 col-xs-12">					
 					<a class="btn pull-right close-button" ng-click="closeModal()">X</a>
-	           		<h1 class="lightbox-title" style="text-transform: uppercase;"><@orcid.msg 'workspace.import_works'/></h1>
+	           		<h1 class="lightbox-title" style="text-transform: uppercase;"><@orcid.msg 'workspace.link_works'/></h1>
 				</div>
 			</div>
 			<div class="row">
 				<div class="col-md-12 col-sm-12 col-xs-12">
 	    	    	<div class="justify">
-						<p><@orcid.msg 'workspace.ImportResearchActivities.description'/></p>
+						<p><@orcid.msg 'workspace.LinkResearchActivitiess.description'/></p>
 					</div>            	    	           	
     		    	<#list workImportWizards?sort_by("displayName") as thirdPartyDetails>
 	        	       	<#assign redirect = (thirdPartyDetails.redirectUris.redirectUri[0].value) >
@@ -286,8 +286,8 @@
             <div class="row footer">
 				<div class="col-md-12 col-sm-12 col-xs-12">
 					<p>
-				   		<strong><@orcid.msg 'workspace.ImportResearchActivities.footer.title'/></strong>	    
-	        			<@orcid.msg 'workspace.ImportResearchActivities.footer.description1'/> <a href="<@orcid.msg 'workspace.ImportResearchActivities.footer.description.url'/>"><@orcid.msg 'workspace.ImportResearchActivities.footer.description.link'/></a> <@orcid.msg 'workspace.ImportResearchActivities.footer.description2'/>
+				   		<strong><@orcid.msg 'workspace.LinkResearchActivitiess.footer.title'/></strong>	    
+	        			<@orcid.msg 'workspace.LinkResearchActivitiess.footer.description1'/> <a href="<@orcid.msg 'workspace.LinkResearchActivitiess.footer.description.url'/>"><@orcid.msg 'workspace.LinkResearchActivitiess.footer.description.link'/></a> <@orcid.msg 'workspace.LinkResearchActivitiess.footer.description2'/>
 			    	</p>
 				</div>
 	        </div>
@@ -303,13 +303,13 @@
 			<div class="row">	
 				<div class="col-md-12 col-sm-12 col-xs-12">					
 					<a class="btn pull-right close-button" ng-click="closeModal()">X</a>
-	           		<h1 class="lightbox-title" style="text-transform: uppercase;"><@orcid.msg 'workspace.import_funding'/></h1>
+	           		<h1 class="lightbox-title" style="text-transform: uppercase;"><@orcid.msg 'workspace.link_funding'/></h1>
 				</div>
 			</div>
 			<div class="row">
 				<div class="col-md-12 col-sm-12 col-xs-12">
 	    	    	<div class="justify">
-						<p><@orcid.msg 'workspace.ImportResearchActivities.description'/></p>
+						<p><@orcid.msg 'workspace.LinkResearchActivitiess.description'/></p>
 					</div>            	    	           	
     		    	<#list fundingImportWizards?sort_by("displayName") as thirdPartyDetails>
 	        	       	<#assign redirect = (thirdPartyDetails.redirectUris.redirectUri[0].value) >
@@ -329,8 +329,8 @@
             <div class="row footer">
 				<div class="col-md-12 col-sm-12 col-xs-12">
 					<p>
-				   		<strong><@orcid.msg 'workspace.ImportResearchActivities.footer.title'/></strong>	    
-	        			<@orcid.msg 'workspace.ImportResearchActivities.footer.description1'/> <a href="<@orcid.msg 'workspace.ImportResearchActivities.footer.description.url'/>"><@orcid.msg 'workspace.ImportResearchActivities.footer.description.link'/></a> <@orcid.msg 'workspace.ImportResearchActivities.footer.description2'/>
+				   		<strong><@orcid.msg 'workspace.LinkResearchActivitiess.footer.title'/></strong>	    
+	        			<@orcid.msg 'workspace.LinkResearchActivitiess.footer.description1'/> <a href="<@orcid.msg 'workspace.LinkResearchActivitiess.footer.description.url'/>"><@orcid.msg 'workspace.LinkResearchActivitiess.footer.description.link'/></a> <@orcid.msg 'workspace.LinkResearchActivitiess.footer.description2'/>
 			    	</p>
 				</div>
 	        </div>

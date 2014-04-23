@@ -3715,6 +3715,14 @@ p.orcid-id-container{
 	border-top: 1px solid #FFF;
 }
 
+.no-delegator-matches {
+	color: #949599;
+}
+
+.no-delegate-matches {
+	margin-top: 5px;
+}
+
 /* OAuth Confirm Access Page */
 
 .confirm-oauth-access .id-banner{
@@ -3746,6 +3754,8 @@ p.orcid-id-container{
 .confirm-oauth-access .id-banner .id-banner-container ul.id-banner-dropdown > li{
 		width: 100%;
 }
+
+
 
 
 /* Media Queries */

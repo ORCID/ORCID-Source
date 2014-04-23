@@ -211,15 +211,6 @@ public class ManageProfileController extends BaseWorkspaceController {
         return mav;
     }
 
-    @RequestMapping(value = "/preferences", method = RequestMethod.POST)
-    public ModelAndView updatePreferences(@ModelAttribute("preferencesForm") PreferencesForm preferencesForm, RedirectAttributes redirectAttributes) {
-        ModelAndView mav = new ModelAndView("redirect:/account?activeTab=options-tab");
-        LOGGER.debug("Got preferences: {}", preferencesForm);
-        orcidProfileManager.updatePreferences(preferencesForm.getOrcidProfile());
-        redirectAttributes.addFlashAttribute("optionsSaved", true);
-        return mav;
-    }
-
     @RequestMapping(value = "/search-for-delegates", method = RequestMethod.GET)
     public ModelAndView viewSearchForDelegates() {
         ModelAndView mav = new ModelAndView("search_for_delegates");
@@ -545,10 +536,8 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/preferences.json", method = RequestMethod.POST)
     public @ResponseBody
     Preferences setDefaultPreference(HttpServletRequest request, @RequestBody Preferences preferences) {
-        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid());
-        profile.getOrcidInternal().setPreferences(preferences);
-        OrcidProfile updatedProfile = orcidProfileManager.updateOrcidProfile(profile);
-        return updatedProfile.getOrcidInternal().getPreferences();
+        orcidProfileManager.updatePreferences(getCurrentUserOrcid(), preferences);
+        return preferences;
     }
 
     private ModelAndView populateChangeSecurityDetailsViewFromUserProfile(ChangeSecurityQuestionForm changeSecurityQuestionForm) {

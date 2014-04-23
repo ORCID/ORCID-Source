@@ -231,11 +231,10 @@
 							</div>
 							<div class="control-group">
 								<button id="bottom-submit-security-question"
-									class="btn btn-primary" ng-click="checkCredentials()">Save
-									changes</button>
+									class="btn btn-primary" ng-click="checkCredentials()"><@orcid.msg 'freemarker.btnsavechanges' /></button>
 								<button id="bottom-reset-security-question"
 									class="btn close-parent-popover"
-									ng-click="getSecurityQuestion()">Cancel</button>
+									ng-click="getSecurityQuestion()"><@orcid.msg 'freemarker.btncancel' /></button>
 							</div>
 						</div>
 					</td>
@@ -253,12 +252,12 @@
 								id="sendOrcidChangeNotifcations"
 								name="sendOrcidChangeNotifcations"
 								ng-model="prefsSrvc.prefs.sendChangeNotifications.value"
-								ng-click="prefsSrvc.savePrivacyPreferences()" />
+								ng-change="prefsSrvc.savePrivacyPreferences()" />
 								${springMacroRequestContext.getMessage("change_email_preferences.sendnotification")}
 							</label> <label class="checkbox"> <input type="checkbox"
 								id="sendOrcidNews" name="sendOrcidNews"
 								ng-model="prefsSrvc.prefs.sendOrcidNews.value"
-								ng-click="prefsSrvc.savePrivacyPreferences()" />
+								ng-change="prefsSrvc.savePrivacyPreferences()" />
 								${springMacroRequestContext.getMessage("change_email_preferences.sendinformation")}
 							</label>
 							<p>
@@ -416,7 +415,18 @@
 							<td width="20%"><a href="{{result['orcid-profile']['orcid-identifier'].uri}}" target="_blank" ng-bind="getDisplayName(result)"></a></td>
 							<td width="25%" class='search-result-orcid-id'><a href="{{result['orcid-profile']['orcid-identifier'].uri}}" target="_blank">{{result['orcid-profile']['orcid-identifier'].path}}</td>
 							<td width="45%">{{concatPropertyValues(result['orcid-profile']['orcid-bio']['affiliations'], 'affiliation-name')}}</td>
-							<td width="10%"><span ng-click="confirmAddDelegate(result['orcid-profile']['orcid-bio']['personal-details']['given-names'].value + ' ' + result['orcid-profile']['orcid-bio']['personal-details']['family-name'].value, result['orcid-profile']['orcid-identifier'].path, $index)" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span></td>
+							<td width="10%">
+								<span ng-show="effectiveUserOrcid !== result['orcid-profile']['orcid-identifier'].path">							
+									<span ng-show="!delegatesByOrcid[result['orcid-profile']['orcid-identifier'].path]"
+										ng-click="confirmAddDelegate(result['orcid-profile']['orcid-bio']['personal-details']['given-names'].value + ' ' + result['orcid-profile']['orcid-bio']['personal-details']['family-name'].value, result['orcid-profile']['orcid-identifier'].path, $index)"
+										class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span>
+									<a ng-show="delegatesByOrcid[result['orcid-profile']['orcid-identifier'].path]"
+										ng-click="confirmRevoke(result['orcid-profile']['orcid-bio']['personal-details']['given-names'].value + ' ' + result['orcid-profile']['orcid-bio']['personal-details']['family-name'].value, result['orcid-profile']['orcid-identifier'].path, $index)"
+										class="glyphicon glyphicon-trash grey"
+										title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a>
+								</span>
+								<span ng-show="effectiveUserOrcid === result['orcid-profile']['orcid-identifier'].path">You</span>
+							</td>
 						</tr>
 					</tbody>
 				</table>
@@ -424,8 +434,8 @@
 					<button id="show-more-button" type="submit" class="ng-cloak btn" ng-click="getMoreResults()" ng-show="areMoreResults">Show more</button>
 					<span id="ajax-loader" class="ng-cloak" ng-show="showLoader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span>
 				</div>
-				<div id="no-results-alert" class="hide alert alert-error"><@spring.message "orcid.frontend.web.no_results"/></div>
 			</div>
+			<div id="no-results-alert" class="orcid-hide alert alert-error no-delegate-matches"><@spring.message "orcid.frontend.web.no_results"/></div>
 		</div>
 		</#if>
 		
@@ -437,15 +447,19 @@
 					<#else>
 						<span><@spring.message "manage.developer_tools.title.enabled"/></span>
 					</#if>
-				</h1>		
-				<div class="sso" ng-controller="SSOPreferencesCtrl">
-					<#if profile.orcidInternal?? && profile.orcidInternal.preferences.developerToolsEnabled?? && profile.orcidInternal.preferences.developerToolsEnabled.value == false>
-						<p><@spring.message "manage.developer_tools.enable.description"/></p>
-						<p><@spring.message "manage.developer_tools.enable.text"/>&nbsp;<a href ng-click="enableDeveloperTools()"><@spring.message "manage.developer_tools.enable_disable.link.text"/></a></p>
-					<#else>
-						<p><@spring.message "manage.developer_tools.enabled.description"/>&nbsp;<a href="<@spring.url "/developer-tools"/>"><@spring.message "manage.developer_tools.enabled.link"/></a></p>						
-					</#if>				
-				</div>
+				</h1>
+				<#if !inDelegationMode || isDelegatedByAdmin>
+					<div class="sso" ng-controller="SSOPreferencesCtrl">
+						<#if profile.orcidInternal?? && profile.orcidInternal.preferences.developerToolsEnabled?? && profile.orcidInternal.preferences.developerToolsEnabled.value == false>
+							<p><@spring.message "manage.developer_tools.enable.description"/></p>
+							<p><@spring.message "manage.developer_tools.enable.text"/>&nbsp;<a href ng-click="enableDeveloperTools()"><@spring.message "manage.developer_tools.enable_disable.link.text"/></a></p>
+						<#else>
+							<p><@spring.message "manage.developer_tools.enabled.description"/>&nbsp;<a href="<@spring.url "/developer-tools"/>"><@spring.message "manage.developer_tools.enabled.link"/></a></p>						
+						</#if>				
+					</div>
+				<#else>
+					(unavailable to account delegates)
+				</#if>
 			</@security.authorize>
 		</#if>
 		
@@ -463,9 +477,9 @@
 </script>
 
 <script type="text/ng-template" id="delete-email-modal">
-	<div style="padding: 20px;"><h3>${springMacroRequestContext.getMessage("manage.email.pleaseConfirmDeletion")} {{emailsPojo.emails[deleteEmailIdx].value}}</h3>
-	<button class="btn btn-danger" ng-click="deleteEmail()">${springMacroRequestContext.getMessage("manage.email.deleteEmail")}</button> 
-	<a href="" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.email.cancel")}</a><div>
+	<div style="padding: 20px;"><h3><@orcid.msg 'manage.email.pleaseConfirmDeletion' /> {{emailsPojo.emails[deleteEmailIdx].value}}</h3>
+	<button class="btn btn-danger" ng-click="deleteEmail()"><@orcid.msg 'manage.email.deleteEmail' /></button> 
+	<a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a><div>
 </script>		
 
 <#-- Script that will display a modal to ask for user password 												-->
@@ -485,9 +499,9 @@
 
 <script type="text/ng-template" id="confirm-revoke-access-modal">
 	<div style="padding: 20px;">
-	   <h3>${springMacroRequestContext.getMessage("manage.application_access.revoke.confirm_revoke")} {{appName}}</h3>
-	   <button class="btn btn-danger" ng-click="revokeAccess()">${springMacroRequestContext.getMessage("manage.application_access.revoke.confirm")}</button> 
-	   <a href="" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.application_access.revoke.cancel")}</a>
+	   <h3><@orcid.msg 'manage.application_access.revoke.confirm_revoke' /> {{appName}}</h3>
+	   <button class="btn btn-danger" ng-click="revokeAccess()"><@orcid.msg 'manage.application_access.revoke.confirm' /></button> 
+	   <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
 	</div>
 </script>
 
@@ -496,12 +510,12 @@
 	   <h3>Add delegate</h3>
 	   <div ng-show="effectiveUserOrcid === delegateToAdd">
 	      <p class="alert alert-error">You can't add yourself as a delegate</p>
-	      <a href="" ng-click="closeModal()">Cancel</a>
+	      <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
 	   </div>
 	   <div ng-hide="effectiveUserOrcid === delegateToAdd">
 	      <p>{{delegateNameToAdd}} ({{delegateToAdd}})</p>
 	      <button class="btn btn-primary" ng-click="addDelegate()">Add</button>
-	      <a href="" ng-click="closeModal()">Cancel</a>
+	      <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
 	   </div>
 	</div>
 </script>
@@ -511,17 +525,17 @@
 	   <h3>Add delegate</h3>
 	   <div ng-show="emailSearchResult.isSelf">
 	      <p class="alert alert-error">You can't add yourself as a delegate</p>
-	      <a href="" ng-click="closeModal()">Cancel</a>
+	      <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
 	   </div>
 	   <div ng-show="!emailSearchResult.found" >
 	       <p class="alert alert-error">Sorry, {{userQuery}} doesn't seem to have an ORCID Account.</p>
 	       <p>Account Delegates must have an ORCID Account to manage yours.</p>
-	       <a href="" ng-click="closeModal()">Cancel</a>
+	       <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
 	   </div>
 	   <div ng-show="!emailSearchResult.isSelf && emailSearchResult.found">
 	      <p>{{userQuery}}</p>
 	      <button class="btn btn-primary" ng-click="addDelegateByEmail(userQuery)">Add</button>
-	      <a href="" ng-click="closeModal()">Cancel</a>
+	      <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
 	   </div>
 	</div>
 </script>
@@ -531,7 +545,7 @@
 		<h3>Please confirm revocation of delegate</h3>
 		<p> {{delegateNameToRevoke}} ({{delegateToRevoke}})</p>
 		<button class="btn btn-danger" ng-click="revoke()">Revoke</button> 
-		<a href="" ng-click="closeModal()">Cancel</a>
+		<a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
 	<div>
 </script>
 

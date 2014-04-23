@@ -32,6 +32,7 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidType;
+import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.BaseEntity;
 import org.orcid.persistence.jpa.entities.EmailEventType;
@@ -42,7 +43,6 @@ import org.orcid.persistence.jpa.entities.ProfileEventType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 
 @PersistenceContext(unitName = "orcid")
 public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implements ProfileDao {
@@ -137,7 +137,8 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
                   "SELECT e.email FROM email e "
                 + "LEFT JOIN email_event ev ON e.email = ev.email "
                 + "AND (ev.email_event_type = :evt or ev.email_event_type='VERIFY_EMAIL_7_DAYS_SENT_SKIPPED') "
-                + "JOIN profile p on p.orcid = e.orcid and p.claimed = true and p.account_expiry is null "
+                + "JOIN profile p on p.orcid = e.orcid and p.claimed = true " 
+                + "AND p.deprecated_date is null AND p.profile_deactivation_date is null AND p.account_expiry is null "
                 + "where ev.email IS NULL "
                 +    "and e.is_verified = false "
                 +    "and e.date_created < (now() - CAST('" + daysUnverified + "' AS INTERVAL DAY)) "
@@ -251,7 +252,6 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         return query.getResultList();
     }
 
- 
     @Override
     public boolean orcidExists(String orcid) {
         TypedQuery<Long> query = entityManager.createQuery("select count(pe.id) from ProfileEntity pe where pe.id=:orcid", Long.class);
@@ -475,6 +475,20 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         updateQuery.executeUpdate();
     }
 
+    @Override
+    @Transactional
+    public void updatePreferences(String orcid, boolean sendChangeNotifications, boolean sendOrcidNews, Visibility activitiesVisibilityDefault,
+            boolean enableDeveloperTools) {
+        Query updateQuery = entityManager
+                .createQuery("update ProfileEntity set lastModified = now(), sendChangeNotifications = :sendChangeNotifications, sendOrcidNews = :sendOrcidNews, activitiesVisibilityDefault = :activitiesVisibilityDefault, enableDeveloperTools = :enableDeveloperTools where orcid = :orcid");
+        updateQuery.setParameter("orcid", orcid);
+        updateQuery.setParameter("sendChangeNotifications", sendChangeNotifications);
+        updateQuery.setParameter("sendOrcidNews", sendOrcidNews);
+        updateQuery.setParameter("activitiesVisibilityDefault", activitiesVisibilityDefault);
+        updateQuery.setParameter("enableDeveloperTools", enableDeveloperTools);
+        updateQuery.executeUpdate();
+    }
+
     /**
      * Return the list of profiles that belongs to the provided OrcidType
      * 
@@ -490,14 +504,14 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setParameter("type", type);
         return (List<ProfileEntity>) query.getResultList();
     }
-    
+
     /**
      * enable or disable developer tools from a user
      * 
-     * @param orcid         
-     *          the orcid of the profile to be updated
+     * @param orcid
+     *            the orcid of the profile to be updated
      * @param enabled
-     *          the new value of the developer tools            
+     *            the new value of the developer tools
      * @return true if the developer tools was successfully updated
      * */
     @Override

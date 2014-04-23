@@ -25,7 +25,7 @@
     			<div class="btn btn-danger" ng-click="confirmDeleteFunding(delFunding)">
     				<@orcid.msg 'manage.deleteFunding.delete' />
     			</div>
-    			<a href="" ng-click="closeModal()"><@orcid.msg 'manage.deleteFunding.cancel' /></a>
+    			<a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
 			</div>
 		</div>
     </div>

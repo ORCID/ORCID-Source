@@ -342,7 +342,7 @@ orcidNgModule.factory("prefsSrvc", function ($rootScope) {
 			        dataType: 'json',
 			        success: function(data) {
 			        	serv.prefs = data;
-			        	$rootScope.$apply;
+			        	$rootScope.$apply();
 			        }
 			    }).fail(function() { 
 			    	// something bad is happening!
@@ -358,7 +358,7 @@ orcidNgModule.factory("prefsSrvc", function ($rootScope) {
 			        dataType: 'json',
 			        success: function(data) {
 			        	serv.prefs = data;
-			        	$rootScope.$apply;
+			        	$rootScope.$apply();
 			        }
 			    }).fail(function() { 
 			    	// something bad is happening!
@@ -2846,6 +2846,7 @@ function DelegatesCtrl($scope, $compile){
 	$scope.start = 0;
 	$scope.rows = 10;
 	$scope.showLoader = false;
+	$scope.effectiveUserOrcid = $('body').data('effective-user-orcid');
 	
 	$scope.sort = {
 		column: 'delegateSummary.creditName.content',
@@ -2865,6 +2866,7 @@ function DelegatesCtrl($scope, $compile){
 	$scope.search = function(){
 		$scope.results = new Array();
 		$scope.showLoader = true;
+		$('#no-results-alert').hide();
 		if(isEmail($scope.userQuery)){
 			$scope.numFound = 0;
 			$scope.start = 0;
@@ -2905,31 +2907,34 @@ function DelegatesCtrl($scope, $compile){
 			dataType: 'json',
 			headers: { Accept: 'application/json'},
 			success: function(data) {
-				var resultsContainer = data['orcid-search-results']; 
-				if(typeof resultsContainer !== 'undefined'){
+				var resultsContainer = data['orcid-search-results'];
+				$scope.numFound = resultsContainer['num-found'];
+				if(resultsContainer['orcid-search-result']){
 					$scope.numFound = resultsContainer['num-found'];
 					$scope.results = $scope.results.concat(resultsContainer['orcid-search-result']);
 				}
-				else{
+				if(!$scope.numFound){
 					$('#no-results-alert').fadeIn(1200);
 				}
 				$scope.areMoreResults = $scope.numFound >= ($scope.start + $scope.rows);
 				$scope.showLoader = false;
 				$scope.$apply();
 				var newSearchResults = $('.new-search-result');
-				newSearchResults.fadeIn(1200);
-				newSearchResults.removeClass('new-search-result');
-				var newSearchResultsTop = newSearchResults.offset().top;
-				var showMoreButtonTop = $('#show-more-button-container').offset().top;
-				var bottom = $(window).height();
-				if(showMoreButtonTop > bottom){
-					$('html, body').animate(
-						{ 
-							scrollTop: newSearchResultsTop
-						},
-						1000, 
-						'easeOutQuint'
-					);
+				if(newSearchResults.length > 0){
+					newSearchResults.fadeIn(1200);
+					newSearchResults.removeClass('new-search-result');
+					var newSearchResultsTop = newSearchResults.offset().top;
+					var showMoreButtonTop = $('#show-more-button-container').offset().top;
+					var bottom = $(window).height();
+					if(showMoreButtonTop > bottom){
+						$('html, body').animate(
+							{ 
+								scrollTop: newSearchResultsTop
+							},
+							1000, 
+							'easeOutQuint'
+						);
+					}
 				}
 			}
 		}).fail(function(){
@@ -2964,7 +2969,7 @@ function DelegatesCtrl($scope, $compile){
 			return creditName.value;
 		}
 		return personalDetails['given-names'].value + ' ' + personalDetails['family-name'].value;
-	}
+	};
 	
 	$scope.confirmAddDelegateByEmail = function(emailSearchResult){
 		$scope.emailSearchResult = emailSearchResult;
@@ -2984,7 +2989,6 @@ function DelegatesCtrl($scope, $compile){
 		$scope.delegateNameToAdd = delegateName;
 		$scope.delegateToAdd = delegateId;
 		$scope.delegateIdx = delegateIdx;
-		$scope.effectiveUserOrcid = $('body').data('effective-user-orcid');
 		$.colorbox({                      
 			html : $compile($('#confirm-add-delegate-modal').html())($scope),
 			transition: 'fade',
@@ -3062,7 +3066,14 @@ function DelegatesCtrl($scope, $compile){
 	        url: getBaseUri() + '/account/delegates.json',
 	        dataType: 'json',
 	        success: function(data) {
+	        	$scope.delegatesByOrcid = {};
 	        	$scope.delegation = data;
+	        	if(data.givenPermissionTo != null){
+		        	for(var i=0; i < data.givenPermissionTo.delegationDetails.length; i++){
+		        		var delegate = data.givenPermissionTo.delegationDetails[i];
+		        		$scope.delegatesByOrcid[delegate.delegateSummary.orcidIdentifier.path] = delegate;
+		        	}
+	        	}
 	        	$scope.$apply();
 	        }
 	    }).fail(function() { 
@@ -3122,14 +3133,22 @@ function DelegatorsCtrl($scope, $compile){
 			url: getBaseUri()+'/delegators/search-for-data/%QUERY?limit=' + 10
 		},
 		template: function (datum) {
-			   var forDisplay = 
-			       '<span style=\'white-space: nowrap; font-weight: bold;\'>' + datum.value + '</span>'
-			      +'<span style=\'font-size: 80%;\'> (' + datum.orcid + ')</span>';
-			   return forDisplay;
+			var forDisplay;
+			if(datum.noResults){
+				forDisplay = "<span class=\'no-delegator-matches\'>no matches, please search again</span>";
+			}
+			else{
+				forDisplay = 
+					'<span style=\'white-space: nowrap; font-weight: bold;\'>' + datum.value + '</span>'
+					+'<span style=\'font-size: 80%;\'> (' + datum.orcid + ')</span>';
+			}
+			return forDisplay;
 		}
 	});
 	$("#delegatorsSearch").bind("typeahead:selected", function(obj, datum) {        
-		$scope.selectDelegator(datum);
+		if(!datum.noResults){
+			$scope.selectDelegator(datum);
+		}
 		$scope.$apply();
 	});
 	

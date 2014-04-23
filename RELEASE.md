@@ -4,6 +4,18 @@ We release updates to the Registry regularly. Below is a list of the improvement
 * [2013 Releases](https://trello.com/b/ZgYVAlel)
 * [2012 Releases](https://trello.com/b/vyCDYdvR)
 
+
+## release-1.1.50.5
+(2014-05-15)
+
+* Move APIs to 1.1
+
+* Push out ability to have multiple client secrets allowing us to rotate secrets when needed
+
+* Update how we handle PMC identifiers
+
+
+
 ## release-1.1.49.11
 (2014-04-10)
 

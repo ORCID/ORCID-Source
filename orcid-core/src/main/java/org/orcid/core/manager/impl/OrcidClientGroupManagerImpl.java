@@ -515,6 +515,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         orcidBio.setContactDetails(contactDetails);
         Email primaryEmail = new Email(orcidClientGroup.getEmail());
         primaryEmail.setVisibility(Visibility.PRIVATE);
+        primaryEmail.setVerified(true);
         contactDetails.addOrReplacePrimaryEmail(primaryEmail);
         return orcidProfile;
     }

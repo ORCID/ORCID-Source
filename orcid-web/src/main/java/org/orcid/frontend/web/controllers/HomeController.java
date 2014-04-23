@@ -84,7 +84,7 @@ public class HomeController extends BaseController {
     public @ResponseBody
     org.orcid.pojo.Local langJson(HttpServletRequest request, @RequestParam(value = "lang", required = false) String lang) throws NoSuchRequestHandlingMethodException {
         if (lang != null) {
-            String orcid = getCurrentUserOrcid();
+            String orcid = getRealUserOrcid();
             if (orcid != null) {
                 OrcidProfile existingProfile = orcidProfileManager.retrieveOrcidProfile(orcid);
                 org.orcid.jaxb.model.message.Locale locale = existingProfile.getOrcidPreferences().getLocale();

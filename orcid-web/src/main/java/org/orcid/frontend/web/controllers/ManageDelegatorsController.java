@@ -105,18 +105,23 @@ public class ManageDelegatorsController extends BaseWorkspaceController {
      */
     @RequestMapping(value = "/search-for-data/{query}", method = RequestMethod.GET)
     public @ResponseBody
-    List<Map<String, String>> searchDelegatorsForData(@PathVariable("query") String query, @RequestParam(value = "limit") int limit) {
-        List<Map<String, String>> datums = new ArrayList<>();
-        Locale locale =  LocaleUtils.toLocale(getLocale());
+    List<Map<String, Object>> searchDelegatorsForData(@PathVariable("query") String query, @RequestParam(value = "limit") int limit) {
+        List<Map<String, Object>> datums = new ArrayList<>();
+        Locale locale = LocaleUtils.toLocale(getLocale());
         query = query.toLowerCase(locale);
         for (DelegationDetails delegationDetails : getRealProfile().getOrcidBio().getDelegation().getGivenPermissionBy().getDelegationDetails()) {
             DelegateSummary delegateSummary = delegationDetails.getDelegateSummary();
             String creditName = delegateSummary.getCreditName().getContent().toLowerCase(locale);
             String orcid = delegateSummary.getOrcidIdentifier().getUri();
             if (creditName.contains(query) || orcid.contains(query)) {
-                Map<String, String> datum = createDatumFromOrgDisambiguated(delegationDetails);
+                Map<String, Object> datum = createDatumFromOrgDisambiguated(delegationDetails);
                 datums.add(datum);
             }
+        }
+        if (datums.isEmpty()) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("noResults", true);
+            datums.add(map);
         }
         return datums;
     }
@@ -143,8 +148,8 @@ public class ManageDelegatorsController extends BaseWorkspaceController {
         return result;
     }
 
-    private Map<String, String> createDatumFromOrgDisambiguated(DelegationDetails delegationDetails) {
-        Map<String, String> datum = new HashMap<>();
+    private Map<String, Object> createDatumFromOrgDisambiguated(DelegationDetails delegationDetails) {
+        Map<String, Object> datum = new HashMap<>();
         datum.put("value", delegationDetails.getDelegateSummary().getCreditName().getContent());
         datum.put("orcid", delegationDetails.getDelegateSummary().getOrcidIdentifier().getPath());
         return datum;

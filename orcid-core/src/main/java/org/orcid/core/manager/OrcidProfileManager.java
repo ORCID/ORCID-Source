@@ -22,6 +22,7 @@ import java.util.Locale;
 
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWorks;
+import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.Visibility;
 
@@ -191,10 +192,7 @@ public interface OrcidProfileManager {
      */
     void updateSecurityQuestionInformation(OrcidProfile updatedOrcidProfile);
 
-    /**
-     * Overwrites preferences in the DB with the values in updatedProfile.
-     */
-    OrcidProfile updatePreferences(OrcidProfile updatedOrcidProfile);
+    void updatePreferences(String orcid, Preferences preferences);
 
     /**
      * Overwrites preferences in the DB with the values in updatedProfile.

@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidType;
+import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.EmailEventType;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -90,6 +91,8 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     void updateEncryptedPassword(String orcid, String encryptedPassword);
 
     void updateSecurityQuestion(String orcid, Integer securityQuestionId, String encryptedSecurityAnswer);
+    
+    void updatePreferences(String orcid, boolean sendChangeNotifications, boolean sendOrcidNews, Visibility activitiesVisibilityDefault, boolean enableDeveloperTools);
 
     List<ProfileEntity> findProfilesByOrcidType(OrcidType type);
     

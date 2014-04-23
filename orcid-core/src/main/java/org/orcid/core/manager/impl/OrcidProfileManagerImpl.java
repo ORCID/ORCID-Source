@@ -62,6 +62,7 @@ import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.core.security.visibility.aop.VisibilityControl;
+import org.orcid.jaxb.model.message.ActivitiesVisibilityDefault;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.Biography;
@@ -73,6 +74,7 @@ import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.DeactivationDate;
 import org.orcid.jaxb.model.message.Delegation;
 import org.orcid.jaxb.model.message.DelegationDetails;
+import org.orcid.jaxb.model.message.DeveloperToolsEnabled;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.EncryptedPassword;
 import org.orcid.jaxb.model.message.EncryptedSecurityAnswer;
@@ -95,9 +97,12 @@ import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.PersonalDetails;
+import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.SecurityDetails;
 import org.orcid.jaxb.model.message.SecurityQuestionId;
+import org.orcid.jaxb.model.message.SendChangeNotifications;
+import org.orcid.jaxb.model.message.SendOrcidNews;
 import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.VisibilityType;
@@ -632,8 +637,8 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     public OrcidProfile retrieveClaimedOrcidProfile(String orcid) {
         OrcidProfile orcidProfile = retrieveOrcidProfile(orcid);
         if (orcidProfile != null) {
-            if (Boolean.TRUE.equals(orcidProfile.getOrcidHistory().getClaimed().isValue()) || orcidProfile.isDeactivated() || isOldEnough(orcidProfile) || isBeingAccessedByCreator(orcidProfile)
-                    || haveSystemRole()) {
+            if (Boolean.TRUE.equals(orcidProfile.getOrcidHistory().getClaimed().isValue()) || orcidProfile.isDeactivated() || isOldEnough(orcidProfile)
+                    || isBeingAccessedByCreator(orcidProfile) || haveSystemRole()) {
                 return orcidProfile;
             } else {
                 if (orcidProfile.getOrcidDeprecated() != null && orcidProfile.getOrcidDeprecated().getPrimaryRecord() != null)
@@ -975,14 +980,22 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
     @Override
     @Transactional
-    public OrcidProfile updatePreferences(OrcidProfile updatedOrcidProfile) {
-        OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcidIdentifier().getPath());
-        if (existingProfile == null) {
-            return null;
+    public void updatePreferences(String orcid, Preferences preferences) {
+        boolean sendChangeNotifications = preferences.getSendChangeNotifications().isValue();
+        boolean sendOrcidNews = preferences.getSendOrcidNews().isValue();
+        Visibility activitiesVisibilityDefault = preferences.getActivitiesVisibilityDefault().getValue();
+        boolean developerToolsEnabled = preferences.getDeveloperToolsEnabled().isValue();
+        profileDao.updatePreferences(orcid, sendChangeNotifications, sendOrcidNews, activitiesVisibilityDefault, developerToolsEnabled);
+        OrcidProfile cachedProfile = getOrcidProfileFromCache(orcid);
+        if (cachedProfile != null) {
+            profileDao.flush();
+            Preferences cachedPreferences = cachedProfile.getOrcidInternal().getPreferences();
+            cachedPreferences.setSendChangeNotifications(new SendChangeNotifications(sendChangeNotifications));
+            cachedPreferences.setSendOrcidNews(new SendOrcidNews(sendOrcidNews));
+            cachedPreferences.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(activitiesVisibilityDefault));
+            cachedPreferences.setDeveloperToolsEnabled(new DeveloperToolsEnabled(developerToolsEnabled));
+            putInCache(cachedProfile);
         }
-        org.orcid.jaxb.model.message.Preferences preferences = updatedOrcidProfile.getOrcidInternal().getPreferences();
-        existingProfile.getOrcidInternal().setPreferences(preferences);
-        return updateOrcidProfile(existingProfile);
     }
 
     @Override
