@@ -325,9 +325,9 @@
 					<form action="manage/revoke-application" method="post"
 						class="revokeApplicationForm"
 						id="revokeApplicationForm${applicationSummary_index}">
-						<td class="revokeApplicationName">${(applicationSummary.applicationName.content)!}<br />
+						<td class="revokeApplicationName">${(applicationSummary.applicationName.content)!?html}<br />
 						<#if (applicationSummary.applicationWebsite)??>
-						<a href="<@orcid.absUrl applicationSummary.applicationWebsite/>">${applicationSummary.applicationWebsite.value}</a>
+						<a href="<@orcid.absUrl applicationSummary.applicationWebsite/>">${applicationSummary.applicationWebsite.value?html}</a>
 						</#if>
 						</td>
 						<td width="35%">${applicationSummary.approvalDate.value.toGregorianCalendar().time?date}</td>
@@ -335,7 +335,7 @@
 							value="${applicationSummary.applicationOrcid.path}" /> <input
 							type="hidden" name="confirmed" value="no" /> <input type="hidden"
 							name="revokeApplicationName"
-							value="${applicationSummary.applicationName.content}" /> <#if
+							value="${applicationSummary.applicationName.content?html}" /> <#if
 							applicationSummary.scopePaths??> <#list
 							applicationSummary.scopePaths.scopePath as scopePath> <input
 							type="hidden" name="scopePaths"
