@@ -3208,6 +3208,16 @@ function SwitchUserCtrl($scope, $compile, $document){
 		}
 	};
 	
+	$scope.switchUser = function(targetOrcid){
+		$.ajax({
+	        url: getBaseUri() + '/switch-user?j_username=' + targetOrcid,
+	        dataType: 'json',
+	        complete: function(data) {
+	        	window.location.reload();
+	        }
+	    });
+	};
+	
 	$document.bind('click',
 		function(event){
 			if(event.target.id !== "delegators-search"){
