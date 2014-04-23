@@ -49,7 +49,7 @@
 	</div>
 	<div class="row">
 		<div class="col-md-12 col-sm-12 col-xs-12">
-			<h2 class="oauth-title">${springMacroRequestContext.getMessage("confirm-oauth-access.connecting")}<br /><span>${displayName}</span><br />${springMacroRequestContext.getMessage("confirm-oauth-access.withyourrecord")}</h2>
+			<h2 class="oauth-title">${springMacroRequestContext.getMessage("confirm-oauth-access.connecting")}<br /><span>${displayName?html}</span><br />${springMacroRequestContext.getMessage("confirm-oauth-access.withyourrecord")}</h2>
 		</div>
 	</div>
 	<div class="row">
@@ -58,17 +58,17 @@
 	         	<#if (client_website)??>
 	         		<a href="${(client_website)!}" target="_blank">
 	         	</#if>
-	         	${displayName}
+	         	${displayName?html}
 	        	<#if (client_website)??>
 	        		</a>
 	        	</#if>
 	        	</h5>
-				${client_description!}
+				${client_description!?html}
 	    </div>
 	    
 	    <div class="col-md-6 col-md-pull-6 col-sm-12 margin-bottom-box">
 	         <h3>
-	         	${displayName}
+	         	${displayName?html}
 	         </h3>
 	         <p>${springMacroRequestContext.getMessage("confirm-oauth-access.hasaskedforthefollowing")}</p>
 	         <#list scopes as scope>
