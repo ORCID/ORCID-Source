@@ -35,12 +35,12 @@
 	       </a>
 	       <ul class="dropdown-menu id-banner-dropdown" ng-show="isDroppedDown" ng-cloak>
 	       	   <li>
-				   <input id="delegators-search" type="text" ng-model="searchTerm" ng-change="search()" placeholder="ORCID or names"></input>
+				   <input id="delegators-search" type="text" ng-model="searchTerm" ng-change="search()" placeholder="<@orcid.msg 'manage_delegators.search.placeholder'/>"></input>
 	           </li>
 	           <li ng-show="me && !searchTerm">
 	               <a  ng-click="switchUser(me.delegateSummary.orcidIdentifier.path)">
 					   <ul>
-						   <li>Switch back to me</li>
+						   <li><@orcid.msg 'id_banner.switchbacktome'/></li>
 						   <li>{{me.delegateSummary.orcidIdentifier.uri}}</li>
 					   </ul>
 	               </a>

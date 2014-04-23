@@ -3135,7 +3135,7 @@ function DelegatorsCtrl($scope, $compile){
 		template: function (datum) {
 			var forDisplay;
 			if(datum.noResults){
-				forDisplay = "<span class=\'no-delegator-matches\'>no matches, please search again</span>";
+				forDisplay = "<span class=\'no-delegator-matches\'>" + om.get('delegators.nomatches') + "</span>";
 			}
 			else{
 				forDisplay = 

@@ -375,8 +375,8 @@
 					<tr>
 						<th width="35%" ng-click="changeSorting('delegateSummary.creditName.content')">${springMacroRequestContext.getMessage("manage.thproxy")}</th>
 						<th width="25%" ng-click="changeSorting('delegateSummary.orcidIdentifier.path')">${springMacroRequestContext.getMessage("search_results.thORCIDID")}</th>
-						<th width="15%" ng-click="changeSorting('approvalDate.value')">Access granted</th>
-						<th width="15%" ng-click="changeSorting('delegateSummary.lastModifiedDate.value')">Last modified</th>
+						<th width="15%" ng-click="changeSorting('approvalDate.value')"><@orcid.msg 'manage_delegators.delegates_table.access_granted' /></th>
+						<th width="15%" ng-click="changeSorting('delegateSummary.lastModifiedDate.value')"><@orcid.msg 'manage_delegators.delegates_table.last_modified' /></th>
 						<td width="10%"></td>
 					</tr>
 				</thead>
@@ -389,14 +389,14 @@
 						<td width="10%"><a
 							ng-click="confirmRevoke(delegationDetails.delegateSummary.creditName.content, delegationDetails.delegateSummary.orcidIdentifier.path)"
 							class="glyphicon glyphicon-trash grey"
-							title="{springMacroRequestContext.getMessage("manage.revokeaccess")}"></a></td>
+							title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a></td>
 					</tr>
 				</tbody>
 			</table>
-			<p>Search for trusted individuals to add.</p>
+			<p>${springMacroRequestContext.getMessage("manage_delegation.searchfortrustedindividuals")}</p>
 			<div>
 				<form ng-submit="search()">
-					<input type="text" placeholder="ORCID iD, email address, or names" class="input-xlarge inline-input" ng-model="userQuery"></input>
+					<input type="text" placeholder="${springMacroRequestContext.getMessage("manage_delegation.searchplaceholder")}" class="input-xlarge inline-input" ng-model="userQuery"></input>
 					<input type="submit" class="btn btn-primary" value="Search"></input>
 				</form>
 			</div>
