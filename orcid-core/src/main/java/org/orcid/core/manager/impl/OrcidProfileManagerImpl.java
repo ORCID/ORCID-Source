@@ -978,6 +978,14 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         }
     }
 
+    @Override 
+    @Transactional
+    public void updateCountry(OrcidProfile orcidProfile) {
+        profileDao.updateCountry(orcidProfile.getOrcidId()
+                , orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().getValue()
+                , orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().getVisibility());        
+    }
+    
     @Override
     @Transactional
     public void updatePreferences(String orcid, Preferences preferences) {

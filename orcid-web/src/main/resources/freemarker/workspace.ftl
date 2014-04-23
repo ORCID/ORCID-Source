@@ -56,11 +56,39 @@
 		       			${otherName.content}<#if otherName_has_next><br /></#if>
 		       		</#list></p>
 	       	</#if>
-            <#if (countryName)??>
-                <p><strong><@orcid.msg 'public_profile.labelCountry'/></strong>
-                ${(countryName)!}
-                </p>
-            </#if>
+            
+            <div ng-controller="CountryCtrl">
+	            <p><strong><@orcid.msg 'public_profile.labelCountry'/></strong>
+	               <span ng-hide="showEdit == true" ng-click="toggleEdit()">
+	                  <span ng-show="countryForm != null && countryForm.iso2Country != null" ng-bind="countryForm.iso2Country.value">
+	                  </span>  
+	                  <span ng-show="countryForm != null && countryForm.iso2Country == null">
+	                     <@spring.message "workspace.select_country"/>
+	                  </span>
+	               </span>
+	               <div ng-show="showEdit == true" ng-cloak>
+	               	  
+	               	  <@orcid.privacyToggle  angularModel="countryForm.profileAddressVisibility.visibility"
+				         questionClick="toggleClickPrivacyHelp()"
+				         clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
+				         publicClick="setPrivacy('PUBLIC', $event)" 
+                  	     limitedClick="setPrivacy('LIMITED', $event)" 
+                  	     privateClick="setPrivacy('PRIVATE', $event)" />
+                  	     <br />
+	                  <select id="country" name="country" ng-model="countryForm.iso2Country.value" ng-change="setCountryForm()">
+			    			<option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
+							<#list isoCountries?keys as key>
+								    <option value="${key}">${isoCountries[key]}</option>
+							</#list>
+					  </select> 
+					  <br />
+					  <a ng-click="toggleEdit()" class="glyphicon glyphicon-refresh grey"></a>
+					  
+	               </div>
+	            </p>
+            </div>
+            
+           
 	       	<#if (profile.orcidBio.keywords)?? && (profile.orcidBio.keywords.keyword?size != 0)>
 	        	<p><strong><@orcid.msg 'public_profile.labelKeywords'/></strong> 
 		       		<#list profile.orcidBio.keywords.keyword as keyword>
