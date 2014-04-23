@@ -434,8 +434,12 @@ public class BaseController {
     }
 
     @ModelAttribute("locale")
-    public String getLocale() {
+    public String getLocaleAsString() {
         return localeManager.getLocale().toString();
+    }
+    
+    public Locale getLocale() {
+        return localeManager.getLocale();
     }
 
     @ModelAttribute("liveIds")
