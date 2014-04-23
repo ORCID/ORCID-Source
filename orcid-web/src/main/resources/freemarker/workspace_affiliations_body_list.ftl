@@ -28,7 +28,10 @@
 		  		<i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayEducation==false}"></i></a>
 		   	</a> 
 		    <a href="" ng-click="workspaceSrvc.toggleEducation()" class="toggle-text"><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education'/></a>
-			<a href="" class="label btn-primary" ng-click="addAffiliationModal('education')"><@orcid.msg 'manual_affiliation_form_contents.add_education_manually'/></a>
+			<a href="" class="action-option manage-button" ng-click="addAffiliationModal('education')">
+				<span class="glyphicon glyphicon-plus"></span>
+				<@orcid.msg 'manual_affiliation_form_contents.add_education_manually'/>
+			</a>
 		</div>
 		<div ng-show="workspaceSrvc.displayEducation" class="workspace-accordion-content">
 			<#include "includes/affiliate/edu_body_inc.ftl" />
@@ -41,7 +44,10 @@
 		  		<i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayEmployment==false}"></i></a>
 		   	</a> 
 		    <a href="" ng-click="workspaceSrvc.toggleEmployment()" class="toggle-text"><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.employment'/></a>
-			<a href="" class="label btn-primary" ng-click="addAffiliationModal('employment')"><@orcid.msg 'manual_affiliation_form_contents.add_employment_manually'/></a>
+			<a href="" class="action-option manage-button" ng-click="addAffiliationModal('employment')">
+				<span class="glyphicon glyphicon-plus"></span>
+				<@orcid.msg 'manual_affiliation_form_contents.add_employment_manually'/>
+			</a>
 		</div>
 		<div ng-show="workspaceSrvc.displayEmployment" class="workspace-accordion-content">
 			<#include "includes/affiliate/emp_body_inc.ftl" />

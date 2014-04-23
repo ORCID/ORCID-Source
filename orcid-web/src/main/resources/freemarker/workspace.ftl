@@ -77,16 +77,12 @@
        		<div ng-controller="ExternalIdentifierCtrl" ng-hide="!externalIdentifiersPojo.externalIdentifiers.length" ng-cloak>	       			
        			<p><strong><@orcid.msg 'public_profile.labelOtherIDs'/></strong></p>
        			<div ng-repeat='externalIdentifier in externalIdentifiersPojo.externalIdentifiers'>
-		        			<span ng-hide="externalIdentifier.externalIdUrl">{{externalIdentifier.externalIdCommonName.content}} {{externalIdentifier.externalIdReference.content}}</span>
-		        			<span ng-show="externalIdentifier.externalIdUrl"><a href="{{externalIdentifier.externalIdUrl.value}}" target="_blank">{{externalIdentifier.externalIdCommonName.content}} {{externalIdentifier.externalIdReference.content}}</a></span>
-			   				<a ng-click="deleteExternalIdentifier($index)" class="glyphicon glyphicon-trash grey"></a>       			
+		        	<span ng-hide="externalIdentifier.externalIdUrl">{{externalIdentifier.externalIdCommonName.content}} {{externalIdentifier.externalIdReference.content}}</span>
+		        	<span ng-show="externalIdentifier.externalIdUrl"><a href="{{externalIdentifier.externalIdUrl.value}}" target="_blank">{{externalIdentifier.externalIdCommonName.content}} {{externalIdentifier.externalIdReference.content}}</a></span>
+			   		<a ng-click="deleteExternalIdentifier($index)" class="glyphicon glyphicon-trash grey"></a>       			
        			</div>
-			</div>													    
-	        	        
-			<p class="hoover-white-fonts">	       
-	       		<a href="<@spring.url '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a>
-	        </p>
-			
+			</div>     
+	       	<a href="<@spring.url '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a>
         </div>
     </div>
     <div class="col-md-9 right-aside">
@@ -130,22 +126,14 @@
         	<div class="workspace-accordion" id="workspace-accordion">
         		<!-- Personal Information -->
         	   <div id="workspace-personal" class="workspace-accordion-item workspace-accordion-active" ng-controller="PersonalInfoCtrl">
-        			<div class="workspace-accordion-header" style="position: relative;">
-        			   <ul class="personal-inf-display">        			   		
-        			   		<li>
-        			   			<a href="" ng-click="toggleDisplayInfo()" class="toggle-text">
-	        			   			<i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':displayInfo==false}"></i></a>
-	        			   		</a>
-        			   			<a href="" ng-click="toggleDisplayInfo()" class="toggle-text">
-        			   				<@orcid.msg 'workspace.personal_information'/>
-        			   			</a>
-        			   		</li>
-        			   		<li class="pull-right">
-        			   			<a href="<@spring.url '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary">
-        			   				<@orcid.msg 'workspace.Update'/>
-        			   			</a>
-        			   		</li>        			   		
-        			   </ul>
+        			<div class="workspace-accordion-header">
+ 			   			<a href="" ng-click="toggleDisplayInfo()" class="toggle-text">
+  			   				<i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':displayInfo==false}"></i>  			   			
+ 			   				<@orcid.msg 'workspace.personal_information'/>
+ 			   			</a>
+   			   			<a href="<@spring.url '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="action-option manage-button">
+   			   				<span class="glyphicon glyphicon-pencil"></span><@orcid.msg 'workspace.Update'/>
+   			   			</a>
         			</div>
             		<div class="workspace-accordion-content" ng-show="displayInfo">
             			<#include "workspace_personal.ftl"/>

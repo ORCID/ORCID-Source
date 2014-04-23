@@ -29,9 +29,15 @@
 		   	</a>		   	
 			<a href="" ng-click="workspaceSrvc.toggleFunding()" class="toggle-text"><@orcid.msg 'workspace.Funding'/></a>
 			<#if fundingImportWizards?size != 0>
-				<a class="label btn-primary" ng-click="showTemplateInModal('import-funding-modal')"><@orcid.msg 'workspace.link_funding'/></a>
+				<a class="action-option manage-button" ng-click="showTemplateInModal('import-funding-modal')">
+					<span class="glyphicon glyphicon-plus"></span>
+					<@orcid.msg 'workspace.link_funding'/>
+				</a>
 			</#if>			
-			<a href="" class="label btn-primary" ng-click="addFundingModal()"><@orcid.msg 'manual_funding_form_contents.add_grant_manually'/></a>
+			<a href="" class="action-option manage-button" ng-click="addFundingModal()">
+				<span class="glyphicon glyphicon-plus"></span>
+				<@orcid.msg 'manual_funding_form_contents.add_grant_manually'/>
+			</a>
 		</div>
 		<div ng-show="workspaceSrvc.displayFunding" class="workspace-accordion-content">
 			<#include "includes/funding/body_funding_inc.ftl" />

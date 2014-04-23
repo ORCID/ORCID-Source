@@ -999,7 +999,7 @@ select {
 /*
     bold fonts
 */
-h1,h2,h3,h4,h5,h6,b,strong,.table th,.close,.nav-header,.label,.badge,.header .search form input[type="search"],.header .main>.menu>li>a,.btn-update,.btn-update:visited,.overview-count,.overview-count:visited,.overview-title,.workspace-accordion-header a,.workspace-accordion-header a:visited,.workspace-accordion-header a:hover,.workspace-header-public h3,.workspace-help a,.full-name,.tabs a,.tabs a:visited
+h1,h2,h3,h4,h5,h6,b,strong,.table th,.close,.nav-header,.label,.badge,.header .search form input[type="search"],.header .main>.menu>li>a,.btn-update,.btn-update:visited,.overview-count,.overview-count:visited,.overview-title,.workspace-header-public h3,.workspace-help a,.full-name,.tabs a,.tabs a:visited
 {	
 	font-family: 'Gill Sans W02', 'Helvetica', sans-serif;
 	font-weight: bold;
@@ -1664,27 +1664,40 @@ a:hover {
 }
 
 .workspace-accordion-content {
-	padding-left: 10px;
+	padding: 10px;
 }
 
-.workspace-accordion-header {
+.workspace-accordion-header{
 	position: relative;	
-	margin-top: 10px;
-	margin-bottom: 10px;	
-	font-family: 'Gill Sans W02', 'Helvetica', sans-serif;
-	font-weight: bold;	
+	background: #8A8A8A;
+	height: 30px;
+	padding: 0 0 0 15px;	
 }
 
-.toggle-text{	
-	font-size: 14px;
+.workspace-accordion-header a.action-option{
+	display: block;
+	height: 30px;	
+	border-left: 1px solid #FFF;
+}
+
+.workspace-accordion-header a.action-option:hover{
+	background: #a6ce39;
+	color: #FFF;
+}
+
+.workspace-accordion-header a.toggle-text{
 	color: #FFF;	
+	line-height: 31px;
+	display: inline-block;
+	font-size: 16px;
+	font-weight: bold;
 }
  
 .toggle-text:hover{
 	color:#A6CE39;
 }
 
-.workspace-accordion-header a,.workspace-accordion-header a:visited,.workspace-accordion-header a:hover,.workspace-header-public > h3
+.workspace-header-public > h3
 	{
 	font-family: 'Gill Sans W02', 'Helvetica', sans-serif;
 	font-weight: bold;
@@ -1722,7 +1735,7 @@ a:hover {
 }
 
 .workspace-top .alert {
-	margin-bottom: 10px;
+	margin: 0;
 }
 
 .workspace-help {
@@ -2676,7 +2689,7 @@ header overrides
 }
 
 .public-profile .workspace-inner .alert {
-	margin-left: 10px;
+	margin: 10px;
 }
 
 .workspace-header-public.no-border {
@@ -3730,6 +3743,33 @@ p.orcid-id-container{
 
 .no-delegate-matches {
 	margin-top: 5px;
+}
+
+/* New workspace styles */
+
+.manage-button{
+	display: block;
+	float: right;
+	background: #C9CACB;
+	line-height: 27px;
+	padding: 0 10px;
+	font-size: 14px;
+	color: #FFF;	
+	text-decoration: none;
+}
+
+
+.manage-button:hover{ 
+	color: #8A8A8A;	
+}
+
+.manage-button span{	
+	padding: 0 5px 0 0;
+	font-size: 12px;
+}
+
+ul.personal-inf-display li:first-child a{
+	font-size: 18px;
 }
 
 
