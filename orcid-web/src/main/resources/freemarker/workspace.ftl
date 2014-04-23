@@ -62,7 +62,7 @@
 	               <span ng-hide="showEdit == true" ng-click="toggleEdit()">
 	                  <span ng-show="countryForm != null && countryForm.iso2Country != null" ng-bind="countryForm.iso2Country.value">
 	                  </span>  
-	                  <span ng-show="countryForm != null && countryForm.iso2Country == null">
+	                  <span ng-show="countryForm != null && countryForm.iso2Country == null" ng-cloak>
 	                     <@spring.message "workspace.select_country"/>
 	                  </span>
 	               </span>
@@ -82,7 +82,7 @@
 							</#list>
 					  </select> 
 					  <br />
-					  <a ng-click="toggleEdit()" class="glyphicon glyphicon-refresh grey"></a>
+					  <a ng-click="close()"><@orcid.msg 'freemarker.btnclose'/></a>
 					  
 	               </div>
 	            </p>

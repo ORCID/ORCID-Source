@@ -981,7 +981,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     @Override 
     @Transactional
     public void updateCountry(OrcidProfile orcidProfile) {
-        profileDao.updateCountry(orcidProfile.getOrcidId()
+        profileDao.updateCountry(orcidProfile.getOrcidIdentifier().getPath()
                 , orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().getValue()
                 , orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().getVisibility());        
     }

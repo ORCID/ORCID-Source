@@ -958,6 +958,11 @@ function CountryCtrl($scope, $compile) {
 	$scope.toggleEdit = function() {
 		$scope.showEdit = !$scope.showEdit;
 	};
+
+	$scope.close = function() {
+		$scope.showEdit = false;
+	};
+
 	
 	$scope.getCountryForm = function(){
 		$.ajax({
@@ -978,7 +983,10 @@ function CountryCtrl($scope, $compile) {
 			$scope.privacyHelp=!$scope.privacyHelp;
 	};
 	
-	$scope.setCountryForm = function(){  
+	$scope.setCountryForm = function(){
+		
+		if ($scope.countryForm.iso2Country.value == '')
+		   $scope.countryForm.iso2Country = null;
 		$.ajax({
 	        url: getBaseUri() + '/account/countryForm.json',
 	        type: 'POST',
@@ -987,6 +995,7 @@ function CountryCtrl($scope, $compile) {
 	        dataType: 'json',
 	        success: function(data) {
 	        	$scope.countryForm = data;
+	        	$scope.close();
 	        	$scope.$apply();
 	        }
 	    }).fail(function() { 
