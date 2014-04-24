@@ -291,9 +291,13 @@ public class ManageProfileController extends BaseWorkspaceController {
         String currentUserOrcid = getCurrentUserOrcid();
         GivenPermissionToEntity existing = givenPermissionToDao.findByGiverAndReceiverOrcid(currentUserOrcid, delegateOrcid);
         if (existing == null) {
+            // Clear the delegate's profile from the cache so that the granting
+            // user is visible to them immediately
+            Date delegateLastModified = profileDao.updateLastModifiedDate(delegateOrcid);
             GivenPermissionToEntity permission = new GivenPermissionToEntity();
             permission.setGiver(currentUserOrcid);
             ProfileSummaryEntity receiver = new ProfileSummaryEntity(delegateOrcid);
+            receiver.setLastModified(delegateLastModified);
             permission.setReceiver(receiver);
             permission.setApprovalDate(new Date());
             givenPermissionToDao.merge(permission);
@@ -311,10 +315,6 @@ public class ManageProfileController extends BaseWorkspaceController {
             List<DelegationDetails> detailsList = new ArrayList<>(1);
             detailsList.add(details);
             notificationManager.sendNotificationToAddedDelegate(currentUser, detailsList);
-            // Clear the delegate's profile from the cache so that the granting
-            // user
-            // is visible to them immediately
-            profileDao.updateLastModifiedDate(delegateOrcid);
         }
         return delegateOrcid;
     }

@@ -16,29 +16,29 @@
     =============================================================================
 
 -->
+<#if RequestParameters['delegates']??>
 <div class="id-banner <#if inDelegationMode>delegation-mode</#if>">
-    <#if inDelegationMode><span class="delegation-mode-warning">${springMacroRequestContext.getMessage("delegate.managing_record")}</span></#if>
-	<h2 class="full-name">
+	<div class="full-name">
 	    <#if (profile.orcidBio.personalDetails.creditName.content)??>
 	        ${(profile.orcidBio.personalDetails.creditName.content)!}
 	    <#else>
 	        ${(profile.orcidBio.personalDetails.givenNames.content)!} ${(profile.orcidBio.personalDetails.familyName.content)!}
 	    </#if>                
-	</h2>
+	</div>
 	<div class="oid">
-		<p class="orcid-id-container">
-	    	<span class="mini-orcid-icon"></span>
-	    	<a href="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" id="orcid-id" class="orcid-id" title="Click for public view of ORCID iD">${baseUriHttp}/${(profile.orcidIdentifier.path)!}</a>
-		</p>
-		<#if RequestParameters['delegates']??>
 	   <div ng-controller="SwitchUserCtrl" class="dropdown id-banner-container" ng-show="unfilteredLength" ng-cloak>
-	       <a ng-click="openMenu($event)" class="id-banner-switch"><@orcid.msg 'public-layout.manage_proxy_account'/><span class="glyphicon glyphicon-chevron-right"></span></a>
+	       <a ng-click="openMenu($event)" class="id-banner-switch">
+	           <div class="orcid-id-container">
+	    	        ${baseUriHttp}/${(profile.orcidIdentifier.path)!}
+	    	        <span class="glyphicon glyphicon-chevron-down"></span>
+		       </div>
+	       </a>
 	       <ul class="dropdown-menu id-banner-dropdown" ng-show="isDroppedDown" ng-cloak>
 	       	   <li>
 				   <input id="delegators-search" type="text" ng-model="searchTerm" ng-change="search()" placeholder="<@orcid.msg 'manage_delegators.search.placeholder'/>"></input>
 	           </li>
 	           <li ng-show="me && !searchTerm">
-	               <a href="<@spring.url '/switch-user?j_username='/>{{me.delegateSummary.orcidIdentifier.path}}">
+	               <a  ng-click="switchUser(me.delegateSummary.orcidIdentifier.path)">
 					   <ul>
 						   <li><@orcid.msg 'id_banner.switchbacktome'/></li>
 						   <li>{{me.delegateSummary.orcidIdentifier.uri}}</li>
@@ -46,16 +46,15 @@
 	               </a>
 	           </li>
 	           <li ng-repeat="delegationDetails in delegators.delegationDetails | orderBy:'delegateSummary.creditName.content' | limitTo:10">
-	               <a href="<@spring.url '/switch-user?j_username='/>{{delegationDetails.delegateSummary.orcidIdentifier.path}}">
+	               <a ng-click="switchUser(delegationDetails.delegateSummary.orcidIdentifier.path)">
 	               	   <ul>
 	               	   	 <li>{{delegationDetails.delegateSummary.creditName.content}}</li>
 	               	   	 <li>{{delegationDetails.delegateSummary.orcidIdentifier.uri}}</li>
 	               	   </ul>
 	               </a>
 	           </li>
-	           <li><a href="<@spring.url '/delegators?delegates'/>"><@orcid.msg 'id_banner.more'/></a></li>
 	       </ul>
 	    </div>
-	</#if>
-	</div>	
+	</div>
 </div>
+</#if>

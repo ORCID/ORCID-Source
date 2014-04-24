@@ -325,9 +325,9 @@
 					<form action="manage/revoke-application" method="post"
 						class="revokeApplicationForm"
 						id="revokeApplicationForm${applicationSummary_index}">
-						<td class="revokeApplicationName">${(applicationSummary.applicationName.content)!}<br />
+						<td class="revokeApplicationName">${(applicationSummary.applicationName.content)!?html}<br />
 						<#if (applicationSummary.applicationWebsite)??>
-						<a href="<@orcid.absUrl applicationSummary.applicationWebsite/>">${applicationSummary.applicationWebsite.value}</a>
+						<a href="<@orcid.absUrl applicationSummary.applicationWebsite/>">${applicationSummary.applicationWebsite.value?html}</a>
 						</#if>
 						</td>
 						<td width="35%">${applicationSummary.approvalDate.value.toGregorianCalendar().time?date}</td>
@@ -335,7 +335,7 @@
 							value="${applicationSummary.applicationOrcid.path}" /> <input
 							type="hidden" name="confirmed" value="no" /> <input type="hidden"
 							name="revokeApplicationName"
-							value="${applicationSummary.applicationName.content}" /> <#if
+							value="${applicationSummary.applicationName.content?html}" /> <#if
 							applicationSummary.scopePaths??> <#list
 							applicationSummary.scopePaths.scopePath as scopePath> <input
 							type="hidden" name="scopePaths"
@@ -375,8 +375,8 @@
 					<tr>
 						<th width="35%" ng-click="changeSorting('delegateSummary.creditName.content')">${springMacroRequestContext.getMessage("manage.thproxy")}</th>
 						<th width="25%" ng-click="changeSorting('delegateSummary.orcidIdentifier.path')">${springMacroRequestContext.getMessage("search_results.thORCIDID")}</th>
-						<th width="15%" ng-click="changeSorting('approvalDate.value')">Access granted</th>
-						<th width="15%" ng-click="changeSorting('delegateSummary.lastModifiedDate.value')">Last modified</th>
+						<th width="15%" ng-click="changeSorting('approvalDate.value')"><@orcid.msg 'manage_delegators.delegates_table.access_granted' /></th>
+						<th width="15%" ng-click="changeSorting('delegateSummary.lastModifiedDate.value')"><@orcid.msg 'manage_delegators.delegates_table.last_modified' /></th>
 						<td width="10%"></td>
 					</tr>
 				</thead>
@@ -389,14 +389,14 @@
 						<td width="10%"><a
 							ng-click="confirmRevoke(delegationDetails.delegateSummary.creditName.content, delegationDetails.delegateSummary.orcidIdentifier.path)"
 							class="glyphicon glyphicon-trash grey"
-							title="{springMacroRequestContext.getMessage("manage.revokeaccess")}"></a></td>
+							title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a></td>
 					</tr>
 				</tbody>
 			</table>
-			<p>Search for trusted individuals to add.</p>
+			<p>${springMacroRequestContext.getMessage("manage_delegation.searchfortrustedindividuals")}</p>
 			<div>
 				<form ng-submit="search()">
-					<input type="text" placeholder="ORCID iD, email address, or names" class="input-xlarge inline-input" ng-model="userQuery"></input>
+					<input type="text" placeholder="${springMacroRequestContext.getMessage("manage_delegation.searchplaceholder")}" class="input-xlarge inline-input" ng-model="userQuery"></input>
 					<input type="submit" class="btn btn-primary" value="Search"></input>
 				</form>
 			</div>

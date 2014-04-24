@@ -3202,7 +3202,7 @@ function DelegatorsCtrl($scope, $compile){
 		template: function (datum) {
 			var forDisplay;
 			if(datum.noResults){
-				forDisplay = "<span class=\'no-delegator-matches\'>no matches, please search again</span>";
+				forDisplay = "<span class=\'no-delegator-matches\'>" + om.get('delegators.nomatches') + "</span>";
 			}
 			else{
 				forDisplay = 
@@ -3273,6 +3273,16 @@ function SwitchUserCtrl($scope, $compile, $document){
 		} else {
 			$scope.delegators = $scope.searchResultsCache[$scope.searchTerm];
 		}
+	};
+	
+	$scope.switchUser = function(targetOrcid){
+		$.ajax({
+	        url: getBaseUri() + '/switch-user?j_username=' + targetOrcid,
+	        dataType: 'json',
+	        complete: function(data) {
+	        	window.location.reload();
+	        }
+	    });
 	};
 	
 	$document.bind('click',
