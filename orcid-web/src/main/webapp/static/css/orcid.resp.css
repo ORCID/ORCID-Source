@@ -3772,6 +3772,66 @@ ul.personal-inf-display li:first-child a{
 	font-size: 18px;
 }
 
+.work-menu{
+	position: relative;
+	height: 30px;
+	width: auto;
+	
+}
+
+.work-title{
+	display: block;
+	float: left;
+}
+
+ul.works-menu{
+	position: relative;
+	padding: 0;
+	margin: 0;
+	float: right; 
+}
+
+ul.works-menu li{
+	display: inline;
+	margin: 0;
+	padding: 0;
+}
+
+
+
+ul.sort-menu-options{
+	position: absolute;
+	right: 0;
+	top: 31px;
+	background: #a6ce39;
+	margin: 0; 
+	padding: 0;
+	width: inherit;
+	color: #FFF;
+}
+
+ul.sort-menu-options li{
+	border-bottom: 1px solid #FFF;	
+	display: block;
+	min-width: 100px;		
+}
+
+ul.sort-menu-options li a{
+	display: block;
+	padding: 7px 10px;
+	color: #FFF;
+	background: #C9CACB;
+	font-size: 12px;
+	font-weight: bold;
+}
+
+ul.sort-menu-options li a:hover{	 
+	background:#a6ce39; 
+}
+
+.checked{
+	background: #a6ce39 !important;
+}
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */

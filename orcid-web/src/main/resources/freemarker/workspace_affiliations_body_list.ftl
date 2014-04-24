@@ -36,7 +36,7 @@
 		<div ng-show="workspaceSrvc.displayEducation" class="workspace-accordion-content">
 			<#include "includes/affiliate/edu_body_inc.ftl" />
 		</div>
-	</div>	
+	</div>
 	<!-- Employment -->
 	<div id="workspace-employment" class="workspace-accordion-item workspace-accordion-active" >
 		<div class="workspace-accordion-header"><a name='workspace-employments' />
@@ -52,7 +52,7 @@
 		<div ng-show="workspaceSrvc.displayEmployment" class="workspace-accordion-content">
 			<#include "includes/affiliate/emp_body_inc.ftl" />
 		</div>
-	</div>	
+	</div>
 	<!-- Affiliations -->
 	<div ng-show='affiliationsSrvc.affiliations.length != 0' id="workspace-affiliations" class="workspace-accordion-item workspace-accordion-active" ng-cloak>
 		<div class="workspace-accordion-header"><a name='workspace-affiliations' />
