@@ -56,11 +56,42 @@
 		       			${otherName.content}<#if otherName_has_next><br /></#if>
 		       		</#list></p>
 	       	</#if>
-            <#if (countryName)??>
-                <p><strong><@orcid.msg 'public_profile.labelCountry'/></strong>
-                ${(countryName)!}
-                </p>
-            </#if>
+            
+            <div ng-controller="CountryCtrl" class="country-controller">
+	        	<strong><@orcid.msg 'public_profile.labelCountry'/></strong>
+	               
+                <span ng-hide="showEdit == true">
+	                <span ng-show="countryForm != null && countryForm.iso2Country != null" ng-bind="countryForm.iso2Country.value">
+	                </span>
+                    
+	                <span ng-show="countryForm != null && countryForm.iso2Country == null" ng-cloak>
+	                   <@spring.message "workspace.select_country"/>
+	                </span>
+	                
+	                <span class="glyphicon glyphicon-pencil edit-country edit-option" ng-click="toggleEdit()" title=""></span>
+               </span>
+               
+               <div ng-show="showEdit == true" ng-cloak class="country-edit">
+               	  <a ng-click="close()" class="pull-right"><@orcid.msg 'freemarker.btnclose'/></a>               	  
+               	  <@orcid.privacyToggle  angularModel="countryForm.profileAddressVisibility.visibility"
+			         questionClick="toggleClickPrivacyHelp()"
+			         clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
+			         publicClick="setPrivacy('PUBLIC', $event)" 
+                 	     limitedClick="setPrivacy('LIMITED', $event)" 
+                 	     privateClick="setPrivacy('PRIVATE', $event)" />
+                  
+                  <select id="country" name="country" ng-model="countryForm.iso2Country.value" ng-change="setCountryForm()">
+		    			<option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
+						<#list isoCountries?keys as key>
+							<option value="${key}">${isoCountries[key]}</option>
+						</#list>
+				  </select>				  
+				  				  
+				</div>
+				
+            </div>
+            
+           
 	       	<#if (profile.orcidBio.keywords)?? && (profile.orcidBio.keywords.keyword?size != 0)>
 	        	<p><strong><@orcid.msg 'public_profile.labelKeywords'/></strong> 
 		       		<#list profile.orcidBio.keywords.keyword as keyword>

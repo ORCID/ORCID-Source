@@ -2713,7 +2713,7 @@ header overrides
 
 .workspace-profile p {
 	margin-bottom: 5px;
-	word-break: break-all;
+	word-break: break-word;
 }
 
 .work-title {
@@ -3721,6 +3721,37 @@ p.orcid-id-container{
 
 .no-delegate-matches {
 	margin-top: 5px;
+}
+
+.country-edit{
+	background: #EFEFEF;
+	padding: 10px;
+	margin-bottom: 10px;
+}
+
+.country-controller #country{
+	margin: 10px 0;
+}
+
+.country-controller .edit-option:hover{
+	cursor: pointer;
+	color: #a6ce39;
+}
+
+.country-controller span.edit-country{
+	font-size: 12px;
+}
+
+.country-controller #privacy-bar{
+	float: left;
+}
+
+.country-controller .popover-help-container .popover{
+	left: -120px !important;
+}
+
+.country-controller .popover.bottom .arrow{
+	left: 127px !important;
 }
 
 /* OAuth Confirm Access Page */
@@ -4806,7 +4837,11 @@ p.orcid-id-container{
 		padding: 15px;
 	}
 	
-	.id-banner .id-banner-container ul.id-banner-dropdown,
+	.country-controller #country{
+		margin: 0 0 0 50px;
+	}
+	
+    .id-banner .id-banner-container ul.id-banner-dropdown,
 	.id-banner .id-banner-container ul.id-banner-dropdown > li{
 		width: 100%;
 	}

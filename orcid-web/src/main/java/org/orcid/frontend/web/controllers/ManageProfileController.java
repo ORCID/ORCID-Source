@@ -80,6 +80,7 @@ import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.pojo.ChangePassword;
 import org.orcid.pojo.SecurityQuestion;
+import org.orcid.pojo.ajaxForm.CountryForm;
 import org.orcid.pojo.ajaxForm.Emails;
 import org.orcid.pojo.ajaxForm.Errors;
 import org.orcid.utils.DateUtils;
@@ -803,6 +804,26 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
         return emails;
     }
+    
+
+    @RequestMapping(value = "/countryForm.json", method = RequestMethod.GET)
+    public @ResponseBody
+    CountryForm getProfileCountryJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
+        OrcidProfile currentProfile = getEffectiveProfile();
+        CountryForm countryForm = CountryForm.valueOf(currentProfile);
+        return countryForm;
+    }
+    
+    
+    @RequestMapping(value = "/countryForm.json", method = RequestMethod.POST)
+    public @ResponseBody CountryForm setProfileCountryJson(HttpServletRequest request, @RequestBody CountryForm countryForm) throws NoSuchRequestHandlingMethodException {
+        OrcidProfile currentProfile = getEffectiveProfile();
+        countryForm.populateProfile(currentProfile);
+        // only update entity attributes
+        orcidProfileManager.updateCountry(currentProfile);
+        return countryForm;
+    }
+
 
     @RequestMapping(value = "/save-bio-settings", method = RequestMethod.POST)
     public ModelAndView saveEditedBio(HttpServletRequest request, @Valid @ModelAttribute("changePersonalInfoForm") ChangePersonalInfoForm changePersonalInfoForm,

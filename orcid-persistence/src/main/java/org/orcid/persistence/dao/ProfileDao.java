@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.Visibility;
@@ -61,6 +62,8 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     void updateIndexingStatus(String orcid, IndexingStatus indexingStatus);
 
     Long getConfirmedProfileCount();
+    
+    public void updateCountry(String orcid, Iso3166Country country, Visibility activitiesVisibilityDefault);
 
     boolean updateProfile(ProfileEntity profile);
 

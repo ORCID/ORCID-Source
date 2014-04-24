@@ -488,6 +488,19 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         updateQuery.setParameter("enableDeveloperTools", enableDeveloperTools);
         updateQuery.executeUpdate();
     }
+    
+
+    @Override
+    @Transactional
+    public void updateCountry(String orcid, Iso3166Country iso2Country, Visibility profileAddressVisibility) {
+        Query updateQuery = entityManager
+                .createQuery("update ProfileEntity set lastModified = now(), iso2_country = :iso2Country,  profile_address_visibility = :profileAddressVisibility where orcid = :orcid");
+        updateQuery.setParameter("orcid", orcid);
+        updateQuery.setParameter("iso2Country", iso2Country != null ? iso2Country.value() : null);
+        updateQuery.setParameter("profileAddressVisibility", StringUtils.upperCase(profileAddressVisibility.value()));
+        updateQuery.executeUpdate();
+    }
+
 
     /**
      * Return the list of profiles that belongs to the provided OrcidType
@@ -522,5 +535,5 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setParameter("enabled", enabled);
         return query.executeUpdate() > 0;
     }
-
+    
 }
