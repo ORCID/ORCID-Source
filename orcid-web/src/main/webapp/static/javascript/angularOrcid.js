@@ -949,6 +949,73 @@ function EmailEditCtrl($scope, $compile) {
 	
 };
 
+
+function CountryCtrl($scope, $compile) {
+    $scope.showEdit = false;
+	$scope.countryForm = null;
+	$scope.privacyHelp = false;
+	
+	$scope.toggleEdit = function() {
+		$scope.showEdit = !$scope.showEdit;
+	};
+
+	$scope.close = function() {
+		$scope.showEdit = false;
+	};
+
+	
+	$scope.getCountryForm = function(){
+		$.ajax({
+			url: getBaseUri() + '/account/countryForm.json',	        
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.countryForm = data;
+	        	$scope.$apply();
+	        }
+		}).fail(function(){
+			// something bad is happening!
+	    	console.log("error fetching external identifiers");
+		});
+	};
+	
+	$scope.toggleClickPrivacyHelp = function() {
+		if (!document.documentElement.className.contains('no-touch'))
+			$scope.privacyHelp=!$scope.privacyHelp;
+	};
+	
+	$scope.setCountryForm = function(){
+		
+		if ($scope.countryForm.iso2Country.value == '')
+		   $scope.countryForm.iso2Country = null;
+		$.ajax({
+	        url: getBaseUri() + '/account/countryForm.json',
+	        type: 'POST',
+	        data:  angular.toJson($scope.countryForm),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.countryForm = data;
+	        	$scope.close();
+	        	$scope.$apply();
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("CountryCtrl.serverValidate() error");
+	    });
+	};
+
+	
+	$scope.setPrivacy = function(priv, $event) {
+		$event.preventDefault();
+		$scope.countryForm.profileAddressVisibility.visibility = priv;
+		$scope.setCountryForm();
+	};
+	
+	$scope.getCountryForm();
+
+};
+
+
 function ExternalIdentifierCtrl($scope, $compile){		
 	$scope.getExternalIdentifiers = function(){
 		$.ajax({
