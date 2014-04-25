@@ -80,9 +80,11 @@ public class ManageDelegatorsController extends BaseWorkspaceController {
         Delegation delegation = realProfile.getOrcidBio().getDelegation();
         GivenPermissionBy givenPermissionBy = delegation.getGivenPermissionBy();
         String currentOrcid = getEffectiveUserOrcid();
-        for (Iterator<DelegationDetails> delegationDetailsIterator = givenPermissionBy.getDelegationDetails().iterator(); delegationDetailsIterator.hasNext();) {
-            if (currentOrcid.equals(delegationDetailsIterator.next().getDelegateSummary().getOrcidIdentifier().getPath())) {
-                delegationDetailsIterator.remove();
+        if (givenPermissionBy != null) {
+            for (Iterator<DelegationDetails> delegationDetailsIterator = givenPermissionBy.getDelegationDetails().iterator(); delegationDetailsIterator.hasNext();) {
+                if (currentOrcid.equals(delegationDetailsIterator.next().getDelegateSummary().getOrcidIdentifier().getPath())) {
+                    delegationDetailsIterator.remove();
+                }
             }
         }
         map.put("delegators", givenPermissionBy);

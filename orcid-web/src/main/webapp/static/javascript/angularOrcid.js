@@ -3241,7 +3241,7 @@ function SwitchUserCtrl($scope, $compile, $document){
 	        	$scope.delegators = data.delegators;
 				$scope.searchResultsCache[''] = $scope.delegators;
 	        	$scope.me = data.me;
-	        	$scope.unfilteredLength = $scope.delegators.delegationDetails.length;
+	        	$scope.unfilteredLength = $scope.delegators != null ? $scope.delegators.delegationDetails.length : 0;
 	        	$scope.$apply();
 	        }
 	    }).fail(function() { 
