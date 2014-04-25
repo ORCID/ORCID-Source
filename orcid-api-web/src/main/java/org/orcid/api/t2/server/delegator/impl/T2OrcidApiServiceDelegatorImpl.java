@@ -227,6 +227,23 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
     }
 
     /**
+     * finds and returns the {@link org.orcid.jaxb.model.message.OrcidMessage}
+     * wrapped in a {@link javax.xml.ws.Response} with only the funding
+     * details
+     * 
+     * @param orcid
+     *            the ORCID to be used to identify the record
+     * @return the {@link javax.xml.ws.Response} with the
+     *         {@link org.orcid.jaxb.model.message.OrcidMessage} within it
+     */
+    @Override
+    @AccessControl(requiredScope = ScopePathType.FUNDING_READ_LIMITED)
+    public Response findFundingDetails(String orcid) {
+        OrcidProfile profile = orcidProfileManager.retrieveClaimedFundings(orcid);
+        return getOrcidMessageResponse(profile, orcid);
+    }
+    
+    /**
      * Creates a new profile and returns the saved representation of it. The
      * response should include the 'location' to retrieve the newly created
      * profile from.
