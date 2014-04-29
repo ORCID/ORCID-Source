@@ -264,43 +264,5 @@ public class DeveloperToolsControllerTest extends BaseControllerTest {
         assertEquals(updatedResult.getClientWebsite().getValue(), "http://updated.com");
         assertNotNull(updatedResult.getRedirectUris());
         assertEquals(updatedResult.getRedirectUris().size(), 2);
-    }
-    
-    @Test      
-    @Transactional("transactionManager")
-    public void testAddMultipleClientSecret() {
-        SSOCredentials ssoCredentials = new SSOCredentials();
-        ssoCredentials.setClientName(Text.valueOf("Client Name"));
-        ssoCredentials.setClientDescription(Text.valueOf("This is a test to show that html is stripped<script>alert('name')</script>"));
-        ssoCredentials.setClientWebsite(Text.valueOf("http://client.com"));
-        Set<RedirectUri> redirectUris = new HashSet<RedirectUri>();
-        RedirectUri rUri = new RedirectUri();
-        rUri.setType(Text.valueOf("default"));
-        rUri.setValue(Text.valueOf("http://test.com"));
-        redirectUris.add(rUri);
-        ssoCredentials.setRedirectUris(redirectUris);
-        SSOCredentials initialCredentials = developerToolsController.generateSSOCredentialsJson(null, ssoCredentials);
-        
-        assertNotNull(initialCredentials);
-        assertNotNull(initialCredentials.getClientSecrets());
-        assertEquals(initialCredentials.getClientSecrets().size(), 1);
-        
-        String secret1 = initialCredentials.getClientSecrets().iterator().next().getValue();
-        
-        assertTrue(developerToolsController.addClientSecret());
-        SSOCredentials updatedCredentials = developerToolsController.getSSOCredentialsJson(null);
-        
-        assertNotNull(updatedCredentials);
-        assertNotNull(updatedCredentials.getClientSecrets());
-        assertEquals(updatedCredentials.getClientSecrets().size(), 2);
-        
-        boolean exists = false;
-        
-        for(Text text : updatedCredentials.getClientSecrets()) {
-            if(text.getValue().equals(secret1))
-                exists = true;
-        }
-        
-        assertTrue(exists);                
-    }
+    }       
 }
