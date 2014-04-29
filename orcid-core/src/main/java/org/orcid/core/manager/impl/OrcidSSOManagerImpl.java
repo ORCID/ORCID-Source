@@ -73,6 +73,7 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
     @Override
     public ClientDetailsEntity grantSSOAccess(String orcid, String name, String description, String website, Set<String> redirectUris) {
         ProfileEntity profileEntity = profileEntityManager.findByOrcid(orcid);
+        String clientId = profileEntity.getId();
         if (profileEntity == null) {
             throw new IllegalArgumentException("ORCID does not exist for " + orcid + " cannot continue");
         } else {
@@ -95,20 +96,24 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
                     existingScopes.add(ssoScope);
                     existingClientDetails.setClientScopes(existingScopes);
                     clientDetailsManager.merge(existingClientDetails);
-                }
-                String clientId = existingClientDetails.getId();
-                return getUserCredentials(clientId);
+                }                                
             } else {
-                String clientSecret = encryptionManager.encryptForInternalUse(UUID.randomUUID().toString());
-                String clientId = profileEntity.getId();
+                String clientSecret = encryptionManager.encryptForInternalUse(UUID.randomUUID().toString());                
                 Set<String> redirectUrisSet = new HashSet<String>();
                 for (String uri : redirectUris) {
                     redirectUrisSet.add(uri);
                 }
                 ClientDetailsEntity clientDetailsEntity = populateClientDetailsEntity(clientId, name, description, website, clientSecret, redirectUrisSet);
-                clientDetailsManager.persist(clientDetailsEntity);
-                return getUserCredentials(clientId);
+                clientDetailsManager.persist(clientDetailsEntity);                
             }
+            
+            ClientDetailsEntity clientDetailsEntity = clientDetailsManager.findByClientId(clientId); 
+            if (clientDetailsEntity.getClientSecrets() != null) {
+                for(ClientSecretEntity updatedClientSecret : clientDetailsEntity.getClientSecrets()) {                                        
+                    updatedClientSecret.setDecryptedClientSecret(encryptionManager.decryptForInternalUse(updatedClientSecret.getClientSecret()));
+                }
+            } 
+            return clientDetailsEntity;                                    
         }
     }
 
@@ -176,8 +181,7 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
     
     @Override
     public boolean addClientSecret(String clientDetailsId) {        
-        ProfileEntity profileEntity = profileEntityManager.findByOrcid(clientDetailsId);
-        ClientDetailsEntity clientDetailsEntity = profileEntity.getClientDetails();
+        ClientDetailsEntity clientDetailsEntity = clientDetailsManager.findByClientId(clientDetailsId);
         if (clientDetailsEntity == null) {
             throw new IllegalArgumentException("ORCID " + clientDetailsId + " doesnt have client details assigned yet");
         }

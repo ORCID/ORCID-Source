@@ -279,7 +279,13 @@ public class DeveloperToolsControllerTest extends BaseControllerTest {
         rUri.setValue(Text.valueOf("http://test.com"));
         redirectUris.add(rUri);
         ssoCredentials.setRedirectUris(redirectUris);
-        developerToolsController.generateSSOCredentialsJson(null, ssoCredentials);
+        SSOCredentials initialCredentials = developerToolsController.generateSSOCredentialsJson(null, ssoCredentials);
+        
+        assertNotNull(initialCredentials);
+        assertNotNull(initialCredentials.getClientSecrets());
+        assertEquals(initialCredentials.getClientSecrets().size(), 1);
+        
+        String secret1 = initialCredentials.getClientSecrets().iterator().next().getValue();
         
         assertTrue(developerToolsController.addClientSecret());
         SSOCredentials updatedCredentials = developerToolsController.getSSOCredentialsJson(null);
@@ -288,11 +294,13 @@ public class DeveloperToolsControllerTest extends BaseControllerTest {
         assertNotNull(updatedCredentials.getClientSecrets());
         assertEquals(updatedCredentials.getClientSecrets().size(), 2);
         
-        assertTrue(developerToolsController.addClientSecret());
-        updatedCredentials = developerToolsController.getSSOCredentialsJson(null);
+        boolean exists = false;
         
-        assertNotNull(updatedCredentials);
-        assertNotNull(updatedCredentials.getClientSecrets());
-        assertEquals(updatedCredentials.getClientSecrets().size(), 3);
+        for(Text text : updatedCredentials.getClientSecrets()) {
+            if(text.getValue().equals(secret1))
+                exists = true;
+        }
+        
+        assertTrue(exists);                
     }
 }

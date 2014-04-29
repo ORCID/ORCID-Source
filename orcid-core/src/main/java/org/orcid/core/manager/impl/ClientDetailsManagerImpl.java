@@ -344,7 +344,7 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
     @Override
     @Transactional
     public boolean addClientSecret(String clientId, String clientSecret) {
-        // Creates the new client secret
+     // Creates the new client secret
         boolean result = clientDetailsDao.createClientSecret(clientId, clientSecret);
         // Update last modified
         if (result)
