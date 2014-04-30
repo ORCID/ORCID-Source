@@ -33,6 +33,11 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+/**
+ * This CLI will be in charge of inserting the /read-public scope to all non institution client that already exists
+ * 
+ * @author Angel Montenegro
+ * */
 public class AddReadPublicScopeToNoneInstitutionMembers {
 
     private ClientDetailsDao clientDetailsDao;
