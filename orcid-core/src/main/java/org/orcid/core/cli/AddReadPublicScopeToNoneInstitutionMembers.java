@@ -1,3 +1,19 @@
+/**
+ * =============================================================================
+ *
+ * ORCID (R) Open Source
+ * http://orcid.org
+ *
+ * Copyright (c) 2012-2013 ORCID, Inc.
+ * Licensed under an MIT-Style License (MIT)
+ * http://orcid.org/open-source-license
+ *
+ * This copyright and license information (including a link to the full license)
+ * shall be included in its entirety in all copies or substantial portion of
+ * the software.
+ *
+ * =============================================================================
+ */
 package org.orcid.core.cli;
 
 import java.util.Date;
@@ -20,11 +36,11 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class AddReadPublicScopeToNoneInstitutionMembers {
 
     private ClientDetailsDao clientDetailsDao;
-    private ProfileDao profileDao;        
+    private ProfileDao profileDao;
     private TransactionTemplate transactionTemplate;
-    
+
     private int clientsUpdated = 0;
-    
+
     /**
      * @param args
      */
@@ -33,41 +49,41 @@ public class AddReadPublicScopeToNoneInstitutionMembers {
         mine.execute();
 
     }
-    
+
     private void init() {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         clientDetailsDao = (ClientDetailsDao) context.getBean("clientDetailsDao");
         profileDao = (ProfileDao) context.getBean("profileDao");
         transactionTemplate = (TransactionTemplate) context.getBean("transactionTemplate");
     }
-    
-    private void processClients() {        
+
+    private void processClients() {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 List<ProfileEntity> clients = profileDao.findProfilesByOrcidType(OrcidType.CLIENT);
-                for(ProfileEntity client : clients) {
-                    //Only updater clients should be updated
-                    if(client.getClientType().equals(ClientType.PREMIUM_UPDATER) || client.getClientType().equals(ClientType.UPDATER)) {
+                for (ProfileEntity client : clients) {
+                    // Only updater clients should be updated
+                    if (client.getClientType().equals(ClientType.PREMIUM_UPDATER) || client.getClientType().equals(ClientType.UPDATER)) {
                         ClientDetailsEntity clientDetails = clientDetailsDao.find(client.getId());
-                        updateScopes(clientDetails);         
+                        updateScopes(clientDetails);
                     }
                 }
             }
         });
     }
-    
+
     private void updateScopes(ClientDetailsEntity clientDetails) {
         String readPublicScope = ScopePathType.READ_PUBLIC.value();
         boolean alreadyHaveReadPublicScope = false;
-        for(ClientScopeEntity scope : clientDetails.getClientScopes()) {
-            if(readPublicScope.equals(scope.getScopeType())) {
+        for (ClientScopeEntity scope : clientDetails.getClientScopes()) {
+            if (readPublicScope.equals(scope.getScopeType())) {
                 alreadyHaveReadPublicScope = true;
                 break;
             }
         }
-        
-        if(!alreadyHaveReadPublicScope) {
+
+        if (!alreadyHaveReadPublicScope) {
             ClientScopeEntity clientScope = new ClientScopeEntity();
             clientScope.setClientDetailsEntity(clientDetails);
             clientScope.setScopeType(ScopePathType.READ_PUBLIC.value());
@@ -80,18 +96,14 @@ public class AddReadPublicScopeToNoneInstitutionMembers {
         } else {
             System.out.println("Client " + clientDetails.getId() + " already have the /read-public scope");
         }
-        
-        
     }
-    
-    
-    
+
     private void finish() {
-        System.out.println("Number of clients updated:" + clientsUpdated);  
+        System.out.println("Number of clients updated:" + clientsUpdated);
         System.exit(0);
     }
-    
-    public void execute(){
+
+    public void execute() {
         init();
         processClients();
         finish();
