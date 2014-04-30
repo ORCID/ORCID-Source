@@ -164,6 +164,9 @@ function getBaseUri() {
 	return 'https:' == document.location.protocol ? orcidVar.baseUri : orcidVar.baseUriHttp;
 }
 
+function myTest(){
+	return 'a success';
+}
 
 function checkOrcidLoggedIn() {
 	$.ajax({
@@ -436,26 +439,29 @@ $(function () {
 
 
 	
-	var ps = $(".password-strength").passStrength();
-	ps.on('keyup', function (e) {
-		if ((location != parent.location) && !this.changed) {
-			var i = $('.popover.show iframe', parent.document);
-			i.height(i.contents().height());
-			this.changed = 1;
-		}
-	});
+	var passwordStrengthContainer = $(".password-strength");
+	if(typeof passwordStrength !== 'undefined'){
+		var ps = passwordStrengthContainer.passStrength();
+		ps.on('keyup', function (e) {
+			if ((location != parent.location) && !this.changed) {
+				var i = $('.popover.show iframe', parent.document);
+				i.height(i.contents().height());
+				this.changed = 1;
+			}
+		});
+	}
 
 	// Manage
 	
 	// Popovers
-		
 	if (parent !== window) {
-		var popover = parent.$('.popover-large:visible');
-		if (popover.length) {
-			popover.find('iframe').height($('body').outerHeight());
+		if(typeof parent.$ !== 'undefined'){
+			var popover = parent.$('.popover-large:visible');
+			if (popover.length) {
+				popover.find('iframe').height($('body').outerHeight());
+			}
 		}
 	}
-	
 	
 	// Workspace
 	
