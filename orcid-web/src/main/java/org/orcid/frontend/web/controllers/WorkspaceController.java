@@ -18,6 +18,7 @@ package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
 import java.util.Currency;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -35,6 +36,7 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.ProfileWorkManager;
+import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.ThirdPartyLinkManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.frontend.web.util.LanguagesMap;
@@ -57,6 +59,8 @@ import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.pojo.ThirdPartyRedirect;
 import org.orcid.pojo.ajaxForm.CountryForm;
 import org.orcid.pojo.ajaxForm.Text;
+import org.orcid.pojo.ajaxForm.Website;
+import org.orcid.pojo.ajaxForm.WebsitesForm;
 import org.orcid.utils.FunctionsOverCollections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,6 +99,9 @@ public class WorkspaceController extends BaseWorkspaceController {
 
     @Resource
     private WorkManager workManager;
+    
+    @Resource
+    private ResearcherUrlManager researcherUrlManager;
 
     @Resource
     private LocaleManager localeManager;
@@ -295,6 +302,43 @@ public class WorkspaceController extends BaseWorkspaceController {
         mav.addObject("currentLocaleValue", lm.buildLanguageValue(localeManager.getLocale(), localeManager.getLocale()));
         return mav;
     }
+    
+
+
+    /**
+     * Retrieve all external identifiers as a json string
+     * */
+    @SuppressWarnings("unchecked")
+    @RequestMapping(value = "/my-orcid/websitesForms.json", method = RequestMethod.GET)
+    public @ResponseBody
+    WebsitesForm getWebsitesFormJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
+        OrcidProfile currentProfile = getEffectiveProfile();
+        WebsitesForm wf = WebsitesForm.valueOf(currentProfile.getOrcidBio().getResearcherUrls());
+        return wf;
+    }
+    
+    /**
+     * Retrieve all external identifiers as a json string
+     * */
+    @RequestMapping(value = "/my-orcid/websitesForms.json", method = RequestMethod.POST)
+    public @ResponseBody
+    WebsitesForm setWebsitesFormJson(HttpServletRequest request, @RequestBody WebsitesForm ws) throws NoSuchRequestHandlingMethodException {
+        ws.setErrors(new ArrayList<String>());
+        HashMap<String, Website> websitesHm = new HashMap<String, Website>(); 
+        for (Website w:ws.getWebsites()) {
+            validateUrl(w.getUrl());
+            if (websitesHm.containsKey(w.getUrl().getValue()))
+                setError(w.getUrl(), "common.duplicate_url");
+            else
+                websitesHm.put(w.getUrl().getValue(), w);
+            copyErrors(w.getUrl(), ws);
+        }   
+        if (ws.getErrors().size()>0) return ws;        
+        OrcidProfile currentProfile = getEffectiveProfile();
+        researcherUrlManager.updateResearcherUrls(currentProfile.getOrcidIdentifier().getPath(), ws.toResearcherUrls());
+        return ws;
+    }
+
 
     /**
      * Retrieve all external identifiers as a json string

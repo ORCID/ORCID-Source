@@ -536,4 +536,19 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         return query.executeUpdate() > 0;
     }
     
+    
+    @Override
+    @Transactional
+    public boolean updateResearcherUrlsVisibility(String orcid, Visibility visibility) {
+        Query query = entityManager
+                .createNativeQuery("update profile set last_modified=now(), researcher_urls_visibility=:researcher_urls_visibility, indexing_status='PENDING' where orcid=:orcid");
+        query.setParameter("researcher_urls_visibility", StringUtils.upperCase(visibility.value()));
+        query.setParameter("orcid", orcid);
+
+        boolean result = query.executeUpdate() > 0 ? true : false;
+
+        return result;
+    }
+
+    
 }
