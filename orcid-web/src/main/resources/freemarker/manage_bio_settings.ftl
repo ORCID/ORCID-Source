@@ -133,9 +133,9 @@
 	             		  		<@spring.formHiddenInput "changePersonalInfoForm.savedResearcherUrls.researcherUrl[${savedResearcherUrl_index}].urlName.content"/>
 	             		  		<@spring.formHiddenInput "changePersonalInfoForm.savedResearcherUrls.researcherUrl[${savedResearcherUrl_index}].url.value"/>
 	                      		<#if savedResearcherUrl.urlName?? && savedResearcherUrl.urlName.content?? && savedResearcherUrl.urlName.content != ''>
-	                      		    ${savedResearcherUrl.urlName.content} (<a href="${savedResearcherUrl.url.value}">${savedResearcherUrl.url.value}</a>)
+	                      		    ${savedResearcherUrl.urlName.content?html} (<a href="${savedResearcherUrl.url.value?html}">${savedResearcherUrl.url.value?html}</a>)
 	                      		<#else> 
-	                      		    <a href="${savedResearcherUrl.url.value}">${savedResearcherUrl.url.value}</a>
+	                      		    <a href="${savedResearcherUrl.url.value?html}">${savedResearcherUrl.url.value?html}</a>
 	                      		</#if>
 	                      		<a href="" class="glyphicon glyphicon-trash grey delete-url" ng-click="deleteEmail($index)"></a>
 	                      	</p>     		    
