@@ -17,6 +17,7 @@
 
 -->
 <@base>
+<#escape x as x?html>
 <div class="colorbox-content manage-bio" id="manage-bio">
     <form id="bio-settings-form" class="" action="<@spring.url '/account/save-bio-settings'/>" method="post" autocomplete="off">
         <div class="row">
@@ -133,9 +134,9 @@
 	             		  		<@spring.formHiddenInput "changePersonalInfoForm.savedResearcherUrls.researcherUrl[${savedResearcherUrl_index}].urlName.content"/>
 	             		  		<@spring.formHiddenInput "changePersonalInfoForm.savedResearcherUrls.researcherUrl[${savedResearcherUrl_index}].url.value"/>
 	                      		<#if savedResearcherUrl.urlName?? && savedResearcherUrl.urlName.content?? && savedResearcherUrl.urlName.content != ''>
-	                      		    ${savedResearcherUrl.urlName.content?html} (<a href="${savedResearcherUrl.url.value?html}">${savedResearcherUrl.url.value?html}</a>)
+	                      		    ${savedResearcherUrl.urlName.content} (<a href="${savedResearcherUrl.url.value}">${savedResearcherUrl.url.value}</a>)
 	                      		<#else> 
-	                      		    <a href="${savedResearcherUrl.url.value?html}">${savedResearcherUrl.url.value?html}</a>
+	                      		    <a href="${savedResearcherUrl.url.value}">${savedResearcherUrl.url.value}</a>
 	                      		</#if>
 	                      		<a href="" class="glyphicon glyphicon-trash grey delete-url" ng-click="deleteEmail($index)"></a>
 	                      	</p>     		    
@@ -163,4 +164,6 @@
     </form>
 </div>
 <div id="confirm-dialog"></div>
+</#escape>
 </@base>
+
