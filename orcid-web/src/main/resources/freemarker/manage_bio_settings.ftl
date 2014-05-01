@@ -17,6 +17,7 @@
 
 -->
 <@base>
+<#escape x as x?html>
 <div class="colorbox-content manage-bio" id="manage-bio">
     <form id="bio-settings-form" class="" action="<@spring.url '/account/save-bio-settings'/>" method="post" autocomplete="off">
         <div class="row">
@@ -163,4 +164,6 @@
     </form>
 </div>
 <div id="confirm-dialog"></div>
+</#escape>
 </@base>
+

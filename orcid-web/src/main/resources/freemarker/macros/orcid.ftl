@@ -98,7 +98,7 @@ kind of variable. This temp value is only used in this macro lib -->
 
 <#macro absUrl url>
 	<#if (url.value)?? && !url.value?starts_with("http")>
-  		http://${url.value}
+  		http://${url.value?html}
 	<#else>
 	${url.value}	
 	</#if>      

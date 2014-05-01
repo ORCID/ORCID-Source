@@ -16,6 +16,7 @@
     =============================================================================
 
 -->
+<#escape x as x?html>
 <div class="id-banner <#if inDelegationMode>delegation-mode</#if>">
     <#if inDelegationMode><span class="delegation-mode-warning">${springMacroRequestContext.getMessage("delegate.managing_record")}</span></#if>
 	<h2 class="full-name">
@@ -59,3 +60,4 @@
 	</#if>
 	</div>	
 </div>
+</#escape>
