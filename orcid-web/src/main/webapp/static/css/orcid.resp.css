@@ -1415,6 +1415,10 @@ ul.privacyHelp li.private {
 	content: "";
 }
 
+.privacy-tool .dropup .caret {
+	border-bottom: 4px solid #FFFFFF;
+}
+
 .dropup .dropdown-menu,.navbar-fixed-bottom .dropdown .dropdown-menu {
 	top: auto;
 	bottom: 100%;

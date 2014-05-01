@@ -88,7 +88,7 @@
                             ${springMacroRequestContext.getMessage("manage_bio_settings.labelvisibility")}
                             <@spring.formSingleSelect "changePersonalInfoForm.keywordsVisibility", visibilities />
                         </label>
-                        <@orcid.privacy "" changePersonalInfoForm.keywordsVisibility! />
+                        <@orcid.privacy thing="" selected=changePersonalInfoForm.keywordsVisibility! btnContainerClass="btn-group privacy-group abs-left-top dropup" />
                 	</div>
                 </div>
                 
@@ -109,7 +109,7 @@
                             ${springMacroRequestContext.getMessage("manage_bio_settings.labelvisibility")}
                             <@spring.formSingleSelect "changePersonalInfoForm.isoCountryVisibility", visibilities />
                         </label>
-                        <@orcid.privacy "" changePersonalInfoForm.isoCountryVisibility! />
+                        <@orcid.privacy thing="" selected=changePersonalInfoForm.isoCountryVisibility! btnContainerClass="btn-group privacy-group abs-left-top dropup" />
                     </div>
                 </div>
                 
