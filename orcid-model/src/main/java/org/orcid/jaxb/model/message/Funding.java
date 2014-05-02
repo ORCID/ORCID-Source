@@ -45,6 +45,7 @@ import java.io.Serializable;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element ref="orcid:funding-type" minOccurs="1" maxOccurs="1" />
+ *         &lt;element ref="orcid:organization-defined-type" minOccurs="1" maxOccurs="1" />
  * 		&lt;element ref="orcid:funding-title" minOccurs="0" /> *						
  * 		&lt;element ref="orcid:short-description" minOccurs="0"/>			
  * 		&lt;element ref="orcid:amount" minOccurs="0" maxOccurs="1"/>
@@ -66,7 +67,7 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "putCode", "type", "title", "description", "amount", "url", "startDate", "endDate", "fundingExternalIdentifiers", "fundingContributors",
+@XmlType(propOrder = { "putCode", "type", "organizationDefinedFundingType", "title", "description", "amount", "url", "startDate", "endDate", "fundingExternalIdentifiers", "fundingContributors",
         "organization", "source" })
 @XmlRootElement(name = "funding")
 public class Funding implements VisibilityType, Activity, Serializable {
@@ -75,8 +76,10 @@ public class Funding implements VisibilityType, Activity, Serializable {
 
     @XmlElement(name = "funding-type", required = true)
     protected FundingType type;
+    @XmlElement(name = "organization-defined-type")
+    protected OrganizationDefinedFundingType organizationDefinedFundingType;
     @XmlElement(name = "funding-title", required = true)
-    protected FundingTitle title;
+    protected FundingTitle title;    
     @XmlElement(required = true)
     protected Organization organization;
     @XmlElement(name = "short-description")
@@ -121,6 +124,14 @@ public class Funding implements VisibilityType, Activity, Serializable {
 
     public void setType(FundingType type) {
         this.type = type;
+    }
+
+    public OrganizationDefinedFundingType getOrganizationDefinedFundingType() {
+        return organizationDefinedFundingType;
+    }
+
+    public void setOrganizationDefinedFundingType(OrganizationDefinedFundingType organizationDefinedFundingType) {
+        this.organizationDefinedFundingType = organizationDefinedFundingType;
     }
 
     public Amount getAmount() {
@@ -252,6 +263,7 @@ public class Funding implements VisibilityType, Activity, Serializable {
         result = prime * result + ((title == null) ? 0 : title.hashCode());
         result = prime * result + ((description == null) ? 0 : description.hashCode());
         result = prime * result + ((type == null) ? 0 : type.hashCode());
+        result = prime * result + ((organizationDefinedFundingType == null) ? 0 : organizationDefinedFundingType.hashCode());
         result = prime * result + ((amount == null) ? 0 : amount.hashCode());
         result = prime * result + ((url == null) ? 0 : url.hashCode());
         result = prime * result + ((organization == null) ? 0 : organization.hashCode());
@@ -321,6 +333,14 @@ public class Funding implements VisibilityType, Activity, Serializable {
             if (!type.equals(other.type))
                 return false;
         }
+        
+        if(organizationDefinedFundingType == null) {
+            if(other.organizationDefinedFundingType != null)
+                return false;
+        } else {
+            if(!organizationDefinedFundingType.equals(other.organizationDefinedFundingType))
+                return false;
+        }
         if (amount == null) {
             if (other.amount != null)
                 return false;
@@ -373,6 +393,14 @@ public class Funding implements VisibilityType, Activity, Serializable {
                 return false;
         }
 
+        if(organizationDefinedFundingType == null) {
+            if(other.organizationDefinedFundingType != null)
+                return false;
+        } else {
+            if(!organizationDefinedFundingType.equals(other.organizationDefinedFundingType))
+                return false;
+        }
+        
         if (title == null) {
             if (other.title != null)
                 return false;

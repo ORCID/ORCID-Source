@@ -5,3 +5,5 @@
 * Add verified-email
 
 * Add verified-primary-email
+
+* Add organization-defined-type to the funding element

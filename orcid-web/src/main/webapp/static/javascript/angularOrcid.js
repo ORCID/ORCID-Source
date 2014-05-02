@@ -2249,7 +2249,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	        data:  angular.toJson($scope.editFunding),
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
-	        success: function(data) {
+	        success: function(data) {	        	
 	        	$scope.copyErrorsLeft($scope.editFunding, data);
 	        	$scope.$apply();
 	        }
@@ -2262,7 +2262,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	$scope.copyErrorsLeft = function (data1, data2) {
 		for (var key in data1) {
 			if (key == null) continue;
-			if (key == 'errors') {
+			if (key == 'errors') {				
 				data1.errors = data2.errors;
 			} else {
 				if (typeof(data1[key])=="object") {

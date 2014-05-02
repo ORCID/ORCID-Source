@@ -33,6 +33,7 @@ import org.orcid.jaxb.model.message.FuzzyDate;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Organization;
 import org.orcid.jaxb.model.message.OrganizationAddress;
+import org.orcid.jaxb.model.message.OrganizationDefinedFundingType;
 import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.message.Url;
 
@@ -49,6 +50,8 @@ public class FundingForm implements ErrorsInterface, Serializable {
     private Text fundingName;
 
     private Text fundingType;
+    
+    private Text organizationDefinedFundingType;
 
     private Text currencyCode;
 
@@ -140,6 +143,14 @@ public class FundingForm implements ErrorsInterface, Serializable {
 
     public void setFundingType(Text fundingType) {
         this.fundingType = fundingType;
+    }
+
+    public Text getOrganizationDefinedFundingType() {
+        return organizationDefinedFundingType;
+    }
+
+    public void setOrganizationDefinedFundingType(Text organizationDefinedFundingType) {
+        this.organizationDefinedFundingType = organizationDefinedFundingType;
     }
 
     public Text getCurrencyCode() {
@@ -283,6 +294,10 @@ public class FundingForm implements ErrorsInterface, Serializable {
         }
         if (!PojoUtil.isEmpty(fundingType))
             result.setType(FundingType.fromValue(fundingType.getValue()));
+        
+        if(!PojoUtil.isEmpty(organizationDefinedFundingType))
+            result.setOrganizationDefinedFundingType(new OrganizationDefinedFundingType(organizationDefinedFundingType.getValue()));
+        
         if (!PojoUtil.isEmpty(url))
             result.setUrl(new Url(url.getValue()));
         else
@@ -359,6 +374,9 @@ public class FundingForm implements ErrorsInterface, Serializable {
         if (funding.getType() != null)
             result.setFundingType(Text.valueOf(funding.getType().value()));
 
+        if(funding.getOrganizationDefinedFundingType() != null)
+            result.setOrganizationDefinedFundingType(Text.valueOf(funding.getOrganizationDefinedFundingType().getContent()));
+        
         Source source = funding.getSource();
         if (source != null && source.getSourceName() != null)
             result.setSourceName(source.getSourceName().getContent());
