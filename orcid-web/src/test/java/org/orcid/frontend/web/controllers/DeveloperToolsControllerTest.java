@@ -24,6 +24,7 @@ package org.orcid.frontend.web.controllers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -207,7 +208,8 @@ public class DeveloperToolsControllerTest extends BaseControllerTest {
         assertNotNull(result);
         assertNotNull(result.getErrors());
         assertEquals(result.getErrors().size(), 0);
-        assertFalse(PojoUtil.isEmpty(result.getClientSecret()));
+        assertNotNull(result.getClientSecrets());
+        assertFalse(result.getClientSecrets().isEmpty());
         assertFalse(PojoUtil.isEmpty(result.getClientOrcid()));
     }
     
@@ -228,8 +230,13 @@ public class DeveloperToolsControllerTest extends BaseControllerTest {
         assertNotNull(result);
         assertNotNull(result.getErrors());
         assertEquals(result.getErrors().size(), 0);
-        String clientSecret = result.getClientSecret().getValue();
+        Set<Text> clientSecrets = result.getClientSecrets();
         
+        String clientSecret = "";
+        for (Text clientSecretText : clientSecrets){
+            clientSecret = clientSecretText.getValue();
+        }        
+                
         //Update values
         ssoCredentials.setClientName(Text.valueOf("Updated client name"));
         ssoCredentials.setClientDescription(Text.valueOf("Updated client description"));
@@ -243,11 +250,19 @@ public class DeveloperToolsControllerTest extends BaseControllerTest {
         assertNotNull(updatedResult);
         assertNotNull(updatedResult.getErrors());
         assertEquals(updatedResult.getErrors().size(), 0);
-        assertEquals(updatedResult.getClientSecret().getValue(), clientSecret);
+        
+        Set<Text> updatedClientSecrets =updatedResult.getClientSecrets();
+        
+        String updatedClientSecret = "";
+        for (Text clientSecretText : updatedClientSecrets){
+            updatedClientSecret = clientSecretText.getValue();
+        }  
+                
+        assertEquals(updatedClientSecret, clientSecret);
         assertEquals(updatedResult.getClientName().getValue(), "Updated client name");
         assertEquals(updatedResult.getClientDescription().getValue(), "Updated client description");
         assertEquals(updatedResult.getClientWebsite().getValue(), "http://updated.com");
         assertNotNull(updatedResult.getRedirectUris());
         assertEquals(updatedResult.getRedirectUris().size(), 2);
-    }
+    }       
 }

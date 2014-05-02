@@ -34,7 +34,6 @@
         <class>org.orcid.persistence.jpa.entities.GivenPermissionByEntity</class>
         <class>org.orcid.persistence.jpa.entities.GivenPermissionToEntity</class>
         <class>org.orcid.persistence.jpa.entities.HearAboutEntity</class>
-        <class>org.orcid.persistence.jpa.entities.KeywordViewEntity</class>
         <class>org.orcid.persistence.jpa.entities.OtherNameEntity</class>
         <class>org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity</class>        
         <class>org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity</class>

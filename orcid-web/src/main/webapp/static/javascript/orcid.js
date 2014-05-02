@@ -89,6 +89,14 @@
         $(".revoke").tooltip({
             placement: "bottom"
         });
+        
+        $(".add").tooltip({
+            placement: "bottom"
+        });
+        
+        $(".delete").tooltip({
+            placement: "bottom"
+        });
     };
 
     var secondaryNavCleanup = function() {

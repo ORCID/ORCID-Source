@@ -41,21 +41,23 @@ import org.orcid.persistence.jpa.entities.ClientGrantedAuthorityEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
 import org.orcid.persistence.jpa.entities.ClientResourceIdEntity;
 import org.orcid.persistence.jpa.entities.ClientScopeEntity;
+import org.orcid.persistence.jpa.entities.ClientSecretEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.security.oauth2.common.exceptions.InvalidClientException;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
+import org.springframework.transaction.annotation.Transactional;
 
 public class ClientDetailsManagerImpl implements ClientDetailsManager {
 
     @Resource
     ClientDetailsDao clientDetailsDao;
-            
+
     @Resource
     private ProfileEntityManager profileEntityManager;
 
     @Resource
     private EncryptionManager encryptionManager;
-    
+
     @Resource
     private ProfileDao profileDao;
 
@@ -88,11 +90,11 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
      * {@link ClientDetailsEntity}
      * 
      * @param name
-     *          The client name
+     *            The client name
      * @param description
-     *          The client description
+     *            The client description
      * @param website
-     *          The client website        
+     *            The client website
      * @param clientScopes
      *            the scopes that this client can request
      * @param clientResourceIds
@@ -109,16 +111,16 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
      * @return
      */
     @Override
-    public ClientDetailsEntity createClientDetails(String orcid, String name, String description, String website, Set<String> clientScopes, Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes,
-            Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities) {
+    public ClientDetailsEntity createClientDetails(String orcid, String name, String description, String website, Set<String> clientScopes,
+            Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes, Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities) {
         ProfileEntity profileEntity = profileEntityManager.findByOrcid(orcid);
         if (profileEntity == null) {
             throw new IllegalArgumentException("ORCID does not exist for " + orcid + " cannot continue");
         } else {
             String clientSecret = encryptionManager.encryptForInternalUse(UUID.randomUUID().toString());
             StringBuilder clientId = new StringBuilder(profileEntity.getId());
-            return populateClientDetailsEntity(clientId.toString(), profileEntity, name, description, website, clientSecret, clientScopes, clientResourceIds, clientAuthorizedGrantTypes,
-                    clientRegisteredRedirectUris, clientGrantedAuthorities);
+            return populateClientDetailsEntity(clientId.toString(), profileEntity, name, description, website, clientSecret, clientScopes, clientResourceIds,
+                    clientAuthorizedGrantTypes, clientRegisteredRedirectUris, clientGrantedAuthorities);
         }
     }
 
@@ -127,11 +129,11 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
      * not the underyling entity directly.
      * 
      * @param name
-     *          The client name
+     *            The client name
      * @param description
-     *          The client description
+     *            The client description
      * @param website
-     *          The client website
+     *            The client website
      * @param clientId
      *            the client id that will be used to retrieve this entity from
      *            the database
@@ -153,16 +155,17 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
      * @return
      */
     @Override
-    public ClientDetailsEntity createClientDetails(String orcid, String name, String description, String website, String clientId, String clientSecret, Set<String> clientScopes, Set<String> clientResourceIds,
-            Set<String> clientAuthorizedGrantTypes, Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities) {
+    public ClientDetailsEntity createClientDetails(String orcid, String name, String description, String website, String clientId, String clientSecret,
+            Set<String> clientScopes, Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes, Set<RedirectUri> clientRegisteredRedirectUris,
+            List<String> clientGrantedAuthorities) {
 
         ProfileEntity profileEntity = profileEntityManager.findByOrcid(orcid);
         if (profileEntity == null) {
             throw new IllegalArgumentException("The ORCID does not exist for " + orcid);
         }
 
-        return populateClientDetailsEntity(clientId, profileEntity, name, description, website, clientSecret, clientScopes, clientResourceIds, clientAuthorizedGrantTypes,
-                clientRegisteredRedirectUris, clientGrantedAuthorities);
+        return populateClientDetailsEntity(clientId, profileEntity, name, description, website, clientSecret, clientScopes, clientResourceIds,
+                clientAuthorizedGrantTypes, clientRegisteredRedirectUris, clientGrantedAuthorities);
     }
 
     /**
@@ -244,8 +247,9 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
         return clientAuthorisedGrantTypeEntities;
     }
 
-    public ClientDetailsEntity populateClientDetailsEntity(String clientId, ProfileEntity profileEntity, String name, String description, String website, String clientSecret, Set<String> clientScopes,
-            Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes, Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities) {
+    public ClientDetailsEntity populateClientDetailsEntity(String clientId, ProfileEntity profileEntity, String name, String description, String website,
+            String clientSecret, Set<String> clientScopes, Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes,
+            Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities) {
         ClientDetailsEntity clientDetailsEntity = new ClientDetailsEntity();
         clientDetailsEntity.setId(clientId);
         clientDetailsEntity.setClientName(name);
@@ -261,27 +265,27 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
 
         return createClientDetails(clientDetailsEntity);
     }
-    
-    @Override    
+
+    @Override
     public ClientDetailsEntity findByClientId(String orcid) {
         ClientDetailsEntity result = null;
         try {
             Date lastModified = clientDetailsDao.getLastModified(orcid);
             result = clientDetailsDao.findByClientId(orcid, lastModified);
-        } catch(NoResultException nre) {
-            
+        } catch (NoResultException nre) {
+
         }
         return result;
     }
 
-    @Override    
+    @Override
     public void removeByClientId(String clientId) {
         clientDetailsDao.remove(clientId);
     }
 
     @Override
     public void persist(ClientDetailsEntity clientDetails) {
-        clientDetailsDao.persist(clientDetails); 
+        clientDetailsDao.persist(clientDetails);
         clientDetailsDao.updateLastModified(clientDetails.getId());
     }
 
@@ -291,23 +295,61 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
         clientDetailsDao.updateLastModified(result.getId());
         return result;
     }
-    
+
     @Override
-    public void remove(String clientId){
-        clientDetailsDao.remove(clientId);        
+    public void remove(String clientId) {
+        clientDetailsDao.remove(clientId);
     }
-    
-    @Override    
+
+    @Override
     public ClientDetailsEntity find(String clientId) {
         return clientDetailsDao.find(clientId);
     }
-    
+
     @Override
     public List<ClientDetailsEntity> getAll() {
         return clientDetailsDao.getAll();
     }
+
     @Override
     public void updateLastModified(String clientId) {
         clientDetailsDao.updateLastModified(clientId);
+    }
+
+    @Override
+    @Transactional
+    public boolean removeClientSecret(String clientId, String clientSecret) {
+        boolean result = false;
+        // Look for the list of client secrets
+        List<ClientSecretEntity> clientSecrets = clientDetailsDao.getClientSecretsByClientId(clientId);
+        if (clientSecrets != null) {
+
+            for (ClientSecretEntity clientSecretEntity : clientSecrets) {
+                String decryptedSecret = encryptionManager.decryptForInternalUse(clientSecretEntity.getClientSecret());
+                if (clientSecret.equals(decryptedSecret)) {
+                    // Remove client secret
+                    result = clientDetailsDao.removeClientSecret(clientId, clientSecretEntity.getClientSecret());
+                    break;
+                }
+            }
+
+            // Update last modified if a secret code was deleted
+            if (result)
+                clientDetailsDao.updateLastModified(clientId);
+        }
+
+        return result;
+    }
+
+    @Override
+    @Transactional
+    public boolean addClientSecret(String clientId, String clientSecret) {
+     // Creates the new client secret
+        boolean result = clientDetailsDao.createClientSecret(clientId, clientSecret);
+        // Update last modified
+        if (result)
+            clientDetailsDao.updateLastModified(clientId);
+
+        return result;
     }
 }
