@@ -507,45 +507,45 @@
 
 <script type="text/ng-template" id="confirm-add-delegate-modal">
 	<div style="padding: 20px;">
-	   <h3>Add delegate</h3>
+	   <h3><@orcid.msg 'manage_delegation.addtrustedindividual'/></h3>
 	   <div ng-show="effectiveUserOrcid === delegateToAdd">
-	      <p class="alert alert-error">You can't add yourself as a delegate</p>
-	      <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
+	      <p class="alert alert-error"><@orcid.msg 'manage_delegation.youcantaddyourself'/></p>
+	      <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
 	   </div>
 	   <div ng-hide="effectiveUserOrcid === delegateToAdd">
 	      <p>{{delegateNameToAdd}} ({{delegateToAdd}})</p>
-	      <button class="btn btn-primary" ng-click="addDelegate()">Add</button>
-	      <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
+	      <button class="btn btn-primary" ng-click="addDelegate()"><@orcid.msg 'manage.spanadd'/></button>
+	      <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
 	   </div>
 	</div>
 </script>
 	
 <script type="text/ng-template" id="confirm-add-delegate-by-email-modal">
 	<div style="padding: 20px;">
-	   <h3>Add delegate</h3>
+	   <h3><@orcid.msg 'manage_delegation.addtrustedindividual'/></h3>
 	   <div ng-show="emailSearchResult.isSelf">
-	      <p class="alert alert-error">You can't add yourself as a delegate</p>
-	      <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
+	      <p class="alert alert-error"><@orcid.msg 'manage_delegation.youcantaddyourself'/></p>
+	      <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
 	   </div>
 	   <div ng-show="!emailSearchResult.found" >
-	       <p class="alert alert-error">Sorry, {{userQuery}} doesn't seem to have an ORCID Account.</p>
-	       <p>Account Delegates must have an ORCID Account to manage yours.</p>
-	       <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
+	       <p class="alert alert-error"><@orcid.msg 'manage_delegation.sorrynoaccount1'/>{{userQuery}}<@orcid.msg 'manage_delegation.sorrynoaccount2'/></p>
+	       <p><@orcid.msg 'manage.musthaveanaccount'/></p>
+	       <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
 	   </div>
 	   <div ng-show="!emailSearchResult.isSelf && emailSearchResult.found">
 	      <p>{{userQuery}}</p>
-	      <button class="btn btn-primary" ng-click="addDelegateByEmail(userQuery)">Add</button>
-	      <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
+	      <button class="btn btn-primary" ng-click="addDelegateByEmail(userQuery)"><@orcid.msg 'manage.spanadd'/></button>
+	      <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
 	   </div>
 	</div>
 </script>
 	
 <script type="text/ng-template" id="revoke-delegate-modal">
 	<div style="padding: 20px;">
-		<h3>Please confirm revocation of delegate</h3>
+		<h3><@orcid.msg 'manage_delegation.confirmrevoketrustedindividual'/></h3>
 		<p> {{delegateNameToRevoke}} ({{delegateToRevoke}})</p>
-		<button class="btn btn-danger" ng-click="revoke()">Revoke</button> 
-		<a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
+		<button class="btn btn-danger" ng-click="revoke()"><@orcid.msg 'manage_delegation.btnrevokeaccess'/></button> 
+		<a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
 	<div>
 </script>
 
