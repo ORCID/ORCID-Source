@@ -3575,6 +3575,18 @@ p.orcid-id-container{
 	border-bottom: 1px solid #CCCCCC;
 }
 
+.developer-tools .client_secret_table .c1 {
+	width: 20%;
+}
+
+.developer-tools .client_secret_table .c2 {
+	width: 45%;
+}
+
+.developer-tools .client_secret_table .c3 {
+	width: 5%;
+}
+
 .padding-fix{
 	padding: 0;	
 }

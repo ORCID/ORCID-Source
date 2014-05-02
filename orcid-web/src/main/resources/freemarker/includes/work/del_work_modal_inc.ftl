@@ -25,7 +25,7 @@
 					{{fixedTitle}}<br />
 					<br />
     				<div class="btn btn-danger" ng-click="deleteByPutCode()">
-			    		<@orcid.msg 'manage.deleteWork.delete' />
+			    		<@orcid.msg 'freemarker.btnDelete' />
     				</div>
     				<a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
     			</div>

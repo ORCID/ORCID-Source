@@ -123,4 +123,8 @@ public interface ClientDetailsManager extends ClientDetailsService {
     List<ClientDetailsEntity> getAll();
     
     void updateLastModified(String clientId);
+    
+    boolean removeClientSecret(String clientId, String clientSecret);
+    
+    boolean addClientSecret(String clientId, String clientSecret);
 }

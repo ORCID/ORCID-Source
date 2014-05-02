@@ -18,6 +18,7 @@ package org.orcid.pojo.ajaxForm;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -25,6 +26,7 @@ import java.util.TreeSet;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
+import org.orcid.persistence.jpa.entities.ClientSecretEntity;
 
 public class SSOCredentials implements ErrorsInterface, Serializable {
 
@@ -36,7 +38,7 @@ public class SSOCredentials implements ErrorsInterface, Serializable {
     Text clientDescription;
     Text clientWebsite;
     Text clientOrcid;
-    Text clientSecret;
+    Set<Text> clientSecrets;
     Set<RedirectUri> redirectUris;
     
     public static SSOCredentials toSSOCredentials(ClientDetailsEntity clientDetails) {
@@ -45,7 +47,11 @@ public class SSOCredentials implements ErrorsInterface, Serializable {
             result.setClientName(Text.valueOf(clientDetails.getClientName()));
             result.setClientDescription(Text.valueOf(clientDetails.getClientDescription()));
             result.setClientWebsite(Text.valueOf(clientDetails.getClientWebsite()));
-            result.setClientSecret(Text.valueOf(clientDetails.getClientSecret()));
+            if(clientDetails.getClientSecrets() != null) {
+                for(ClientSecretEntity clientSecret : clientDetails.getClientSecrets()){
+                    result.addClientSecret(Text.valueOf(clientSecret.getDecryptedClientSecret()));
+                }
+            }
             result.setClientOrcid(Text.valueOf(clientDetails.getClientId()));            
             if(clientDetails.getClientRegisteredRedirectUris() != null && !clientDetails.getClientRegisteredRedirectUris().isEmpty()) {
                 result.redirectUris = new TreeSet<RedirectUri>();
@@ -82,12 +88,19 @@ public class SSOCredentials implements ErrorsInterface, Serializable {
         this.clientWebsite = clientWebsite;
     }
 
-    public Text getClientSecret() {
-        return clientSecret;
+    public Set<Text> getClientSecrets() {
+        return clientSecrets;
     }
-    public void setClientSecret(Text clientSecret) {
-        this.clientSecret = clientSecret;
+    public void setClientSecret(Set<Text> clientSecrets) {
+        this.clientSecrets = clientSecrets;
     }
+    
+    public void addClientSecret(Text clientSecret) {
+        if(this.clientSecrets == null)
+            this.clientSecrets = new HashSet<Text>();
+        this.clientSecrets.add(clientSecret);
+    }
+    
     public Set<RedirectUri> getRedirectUris() {
         return redirectUris;
     }
