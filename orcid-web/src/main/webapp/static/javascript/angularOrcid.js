@@ -949,6 +949,87 @@ function EmailEditCtrl($scope, $compile) {
 	
 };
 
+function WebsitesCtrl($scope, $compile) {
+    $scope.showEdit = false;
+    $scope.websitesForm = null;
+    $scope.privacyHelp = false;
+    
+	$scope.toggleEdit = function() {
+		$scope.showEdit = !$scope.showEdit;
+	};
+
+	$scope.close = function() {
+		$scope.getWebsitesForm();
+		$scope.showEdit = false;
+	};
+	
+	$scope.addNew = function() {
+		$scope.websitesForm.websites.push({ name: {value: ""}, url: {value: ""} });
+	};
+    
+    $scope.getWebsitesForm = function(){
+		$.ajax({
+			url: getBaseUri() + '/my-orcid/websitesForms.json',	        
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.websitesForm = data;
+	        	var websites = $scope.websitesForm.websites;
+	        	var len = websites.length;
+	        	while (len--) {
+	        		if (!websites[len].url.value.toLowerCase().startsWith('http'))
+	        			websites[len].url.value = 'http://' + websites[len].url.value;
+	        	}
+	        	$scope.$apply();
+	        }
+		}).fail(function(){
+			// something bad is happening!
+	    	console.log("error fetching websites");
+		});
+	};
+
+	$scope.deleteWebsite = function(website){
+		var websites = $scope.websitesForm.websites;
+		var websites = $scope.websitesForm.websites;
+    	var len = websites.length;
+    	while (len--) {
+    		if (websites[len] == website)
+    			websites.splice(len,1);
+    	}
+	}
+	
+	$scope.setWebsitesForm = function(){
+		var websites = $scope.websitesForm.websites;
+    	var len = websites.length;
+    	while (len--) {
+    		if (websites[len].url.value == null || websites[len].url.value.trim() == '')
+    			websites.splice(len,1);
+    	}
+		$.ajax({
+	        url: getBaseUri() + '/my-orcid/websitesForms.json',
+	        type: 'POST',
+	        data:  angular.toJson($scope.websitesForm),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.websitesForm = data;
+	        	if(data.errors.length == 0)
+	        	   $scope.close();
+	        	$scope.$apply();
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("WebsiteCtrl.serverValidate() error");
+	    });
+	};
+	
+	$scope.setPrivacy = function(priv, $event) {
+		$event.preventDefault();
+		$scope.websitesForm.visibility.visibility = priv;
+	};
+
+	$scope.getWebsitesForm();
+};
+
 
 function CountryCtrl($scope, $compile) {
     $scope.showEdit = false;

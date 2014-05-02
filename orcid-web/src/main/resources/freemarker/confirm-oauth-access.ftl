@@ -87,7 +87,8 @@
 		            <span class="span">
 		                <form id="denialForm" class="form-inline" name="denialForm" action="<@spring.url '/oauth/authorize'/>" onsubmit="${denyOnClick} orcidGA.gaFormSumbitDelay(this); return false;" method="post">
 		                    <input name="user_oauth_approval" value="false" type="hidden"/>
-		                    <button class="btn btn-primary" name="deny" value="${springMacroRequestContext.getMessage('confirm-oauth-access.Deny')}" type="submit">Deny
+		                    <button class="btn btn-primary" name="deny" value="${springMacroRequestContext.getMessage('confirm-oauth-access.Deny')}" type="submit">
+		                    	<@orcid.msg 'confirm-oauth-access.Deny' />
 		                    </button>	
 		                </form>        
 		            </span>
@@ -97,7 +98,7 @@
 		                <form id="confirmationForm" class="form-inline" name="confirmationForm" action="<@spring.url '/oauth/authorize'/>" onsubmit="${authOnClick} orcidGA.gaFormSumbitDelay(this); return false;" method="post">
 		                    <input name="user_oauth_approval" value="true" type="hidden"/>
 		                    <button class="btn btn-primary" name="authorize" value="${springMacroRequestContext.getMessage('confirm-oauth-access.Authorize')}" type="submit">
-		                    	Authorize
+		                    	<@orcid.msg 'confirm-oauth-access.Authorize' />
 		                    </button>
 		                </form>
 		            </span>	            

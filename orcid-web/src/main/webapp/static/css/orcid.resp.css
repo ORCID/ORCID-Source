@@ -1415,6 +1415,10 @@ ul.privacyHelp li.private {
 	content: "";
 }
 
+.privacy-tool .dropup .caret {
+	border-bottom: 4px solid #FFFFFF;
+}
+
 .dropup .dropdown-menu,.navbar-fixed-bottom .dropdown .dropdown-menu {
 	top: auto;
 	bottom: 100%;
@@ -3735,7 +3739,17 @@ p.orcid-id-container{
 	margin-top: 5px;
 }
 
-.country-edit{
+.websites-edit {
+	background: #EFEFEF;
+	padding: 10px;
+	margin-bottom: 10px;
+}
+
+.websites-edit input {
+	width: 95px;
+}
+
+.country-edit {
 	background: #EFEFEF;
 	padding: 10px;
 	margin-bottom: 10px;
@@ -3745,12 +3759,14 @@ p.orcid-id-container{
 	margin: 10px 0;
 }
 
-.country-controller .edit-option:hover{
+.country-controller .edit-option:hover,
+.websites-controller .edit-option:hover {
 	cursor: pointer;
 	color: #a6ce39;
 }
 
-.country-controller span.edit-country{
+.country-controller span.edit-country,
+.websites-controller span.edit-country {
 	font-size: 12px;
 }
 
@@ -3758,11 +3774,13 @@ p.orcid-id-container{
 	float: left;
 }
 
-.country-controller .popover-help-container .popover{
+.country-controller .popover-help-container .popover, 
+.websites-controller .popover-help-container .popover {
 	left: -120px !important;
 }
 
-.country-controller .popover.bottom .arrow{
+.country-controller .popover.bottom .arrow,
+.websites-controller .popover.bottom .arrow{
 	left: 127px !important;
 }
 

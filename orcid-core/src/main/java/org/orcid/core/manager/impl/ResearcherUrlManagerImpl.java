@@ -29,6 +29,7 @@ import org.orcid.jaxb.model.message.ResearcherUrl;
 import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.jaxb.model.message.Url;
 import org.orcid.jaxb.model.message.UrlName;
+import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.ResearcherUrlDao;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.slf4j.Logger;
@@ -40,6 +41,10 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
 
     @Resource
     private ResearcherUrlDao researcherUrlDao;
+    
+    @Resource
+    private ProfileDao profileDao;
+
 
     /**
      * Return the list of researcher urls associated to a specific profile
@@ -127,6 +132,8 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
                 }
             }
         }
+        
+        profileDao.updateResearcherUrlsVisibility(orcid, researcherUrls.getVisibility());
         return hasErrors;
     }
 

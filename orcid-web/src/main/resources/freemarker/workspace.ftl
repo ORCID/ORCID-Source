@@ -98,12 +98,44 @@
 		       			${keyword.content}<#if keyword_has_next>,</#if>
 		       		</#list></p>
 	       	</#if>
-	       	<#if (profile.orcidBio.researcherUrls)?? && (profile.orcidBio.researcherUrls.researcherUrl?size != 0)>
-	        	<p><strong><@orcid.msg 'public_profile.labelWebsites'/></strong> <br/>
-		       		<#list profile.orcidBio.researcherUrls.researcherUrl as url>
-		       		   <a href="<@orcid.absUrl url.url/>" target="_blank" rel="nofollow"><#if (url.urlName.content)! != "">${url.urlName.content}<#else>${url.url.value}</#if></a><#if url_has_next><br/></#if>
-		       		</#list></p>
-	       	</#if>
+	       	
+	       	<div ng-controller="WebsitesCtrl" class="websites-controller">
+	        	<div>
+	        	   <strong><@orcid.msg 'public_profile.labelWebsites'/></strong>
+	        	   <span ng-hide="showEdit == true">
+	        	      <span class="glyphicon glyphicon-pencil edit-country edit-option" ng-click="toggleEdit()" title=""></span><br />
+	        	      <div ng-repeat="website in websitesForm.websites" ng-cloak>
+	        	         <a href="{{website.url.value}}" target="_blank" rel="nofollow">{{website.name.value != null? website.name.value : website.url.value}}</a>
+	        	      </div>
+	        	   </span>
+	        	   <div ng-show="showEdit == true" ng-cloak class="websites-edit">
+	        	      <@orcid.privacyToggle  angularModel="websitesForm.visibility.visibility"
+			             questionClick="toggleClickPrivacyHelp()"
+			             clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
+			             publicClick="setPrivacy('PUBLIC', $event)" 
+                 	     limitedClick="setPrivacy('LIMITED', $event)" 
+                 	     privateClick="setPrivacy('PRIVATE', $event)" />
+	        	   
+	        	      <div ng-repeat="website in websitesForm.websites">
+	        	          <input type="text" ng-model="website.url.value" placeholder="${springMacroRequestContext.getMessage("manual_work_form_contents.labelURL")}"></input>
+	        	          <input type="text" ng-model="website.name.value" placeholder="${springMacroRequestContext.getMessage("manual_work_form_contents.labeldescription")}"></input>
+	        	          <a ng-click="deleteWebsite(website)" class="glyphicon glyphicon-trash grey"></a>
+	        	          <br />
+	        	          <span class="orcid-error" ng-show="website.url.errors.length > 0">
+						     <div ng-repeat='error in website.url.errors' ng-bind-html="error"></div>
+					      </span>
+	        	          <span class="orcid-error" ng-show="website.name.errors.length > 0">
+						     <div ng-repeat='error in website.name.errors' ng-bind-html="error"></div>
+					      </span>
+	        	      </div>
+	        	      <a class="glyphicon glyphicon-plus" ng-click="addNew()"></a><br />
+	        	      <button class="btn btn-primary" ng-click="setWebsitesForm()"><@spring.message "freemarker.btnsavechanges"/></button>
+	        	      <button class="btn" ng-click="close()"><@spring.message "freemarker.btncancel"/></button>
+	        	   </div>
+	        	   
+	           </div>
+	       	</div>
+	       	
        		<div ng-controller="ExternalIdentifierCtrl" ng-hide="!externalIdentifiersPojo.externalIdentifiers.length" ng-cloak>	       			
        			<p><strong><@orcid.msg 'public_profile.labelOtherIDs'/></strong></p>
        			<div ng-repeat='externalIdentifier in externalIdentifiersPojo.externalIdentifiers'>
