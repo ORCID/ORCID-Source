@@ -38,7 +38,7 @@
         <task:scheduled ref="statisticsCronJob" method="generateStatistics" cron="${org.orcid.scheduler.web.processStatisticsGeneratorManager:0 */5 * * * *}"/>
         <task:scheduled ref="orgDisambiguatedManager" method="processOrgsWithIncorrectPopularity" cron="${org.orcid.scheduler.web.processOrgsWithIncorrectPopularity:45 45 0-2 * * *}"/>
         <task:scheduled ref="orgDisambiguatedManager" method="processOrgsForIndexing" cron="${org.orcid.scheduler.web.processOrgsForIndexing:55 55 0-2 * * *}"/>
-        
+        <task:scheduled ref="profileFundingManager" method="indexFundingSubTypes" fixed-delay="${org.orcid.scheduler.web.processFundingSubtypes:60}000" />
     </task:scheduled-tasks>
 
     <task:scheduler id="scheduler" pool-size="10"/>

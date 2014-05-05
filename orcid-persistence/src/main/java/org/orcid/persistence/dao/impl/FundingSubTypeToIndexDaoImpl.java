@@ -9,6 +9,7 @@ import javax.persistence.Query;
 import org.orcid.persistence.dao.FundingSubTypeToIndexDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 
@@ -22,6 +23,7 @@ public class FundingSubTypeToIndexDaoImpl implements FundingSubTypeToIndexDao {
     @PersistenceContext(unitName = "orcid")
     protected EntityManager entityManager;
     
+    @Transactional
     public void addSubTypes(String subtype, String orcid) {
         if(!exists(subtype)) {
             Query query = entityManager.createNativeQuery("INSERT INTO funding_subtype_to_index(orcid, subtype) values(orcid=:orcid, subtype=:subtype)");
@@ -33,12 +35,14 @@ public class FundingSubTypeToIndexDaoImpl implements FundingSubTypeToIndexDao {
         }
     }
     
+    @Transactional
     public void removeSubTypes(String subtype) {
         Query query = entityManager.createNativeQuery("DELETE FROM funding_subtype_to_index WHERE subtype=:subtype");
         query.setParameter("subtype", subtype.trim());
         query.executeUpdate();
     }
     
+    @Transactional
     public void removeSubTypes(String subtype, String orcid) {
         Query query = entityManager.createNativeQuery("DELETE FROM funding_subtype_to_index WHERE subtype=:subtype and orcid=:orcid");
         query.setParameter("subtype", subtype.trim());
@@ -55,7 +59,7 @@ public class FundingSubTypeToIndexDaoImpl implements FundingSubTypeToIndexDao {
     @SuppressWarnings("unchecked")
     public List<String> getSubTypes() {
         Query query = entityManager
-                .createNativeQuery("SELECT subtype FROM funding_subtype_to_index", String.class);
+                .createNativeQuery("SELECT subtype FROM funding_subtype_to_index");
         return query.getResultList(); 
     }
 }

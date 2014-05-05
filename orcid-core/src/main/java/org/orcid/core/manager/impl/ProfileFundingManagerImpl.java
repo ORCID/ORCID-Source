@@ -78,10 +78,22 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
             throw new RuntimeException("Problem reading countries.txt from classpath", e);
         }
         for(String subtype : subtypes) {            
+            subtype = subtype.toLowerCase();
+            boolean isInappropriate = false;
             //All filter words are in lower case, so, lowercase the subtype before comparing
-            if(!wordsToFilter.contains(subtype.toLowerCase())){
-                
-            }            
-        }
+            for(String wordToFilter : wordsToFilter) {
+                if(wordToFilter.matches(".*\\b" + subtype + "\\b.*")) {
+                    isInappropriate = true;
+                    break;
+                }
+                    
+            }
+            if(!isInappropriate){
+                System.out.println(subtype + " will be sent to solr");                
+            } else {
+                System.out.println(subtype + " is filtered");
+            }           
+            fundingSubTypeToIndexDao.removeSubTypes(subtype);
+        }        
     }
 }

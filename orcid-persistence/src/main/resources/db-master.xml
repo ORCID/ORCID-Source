@@ -98,4 +98,5 @@
      -->
      <include file="/db/updates/multi_client_secret.xml" />
      <include file="/db/updates/verify_all_group_emails.xml" />
+     <include file="/db/updates/funding_sub_type_to_index_table.xml" />
 </databaseChangeLog>
