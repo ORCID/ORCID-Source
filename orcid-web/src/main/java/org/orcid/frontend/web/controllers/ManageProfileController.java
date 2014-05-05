@@ -80,6 +80,7 @@ import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.pojo.ChangePassword;
 import org.orcid.pojo.SecurityQuestion;
+import org.orcid.pojo.ajaxForm.BiographyForm;
 import org.orcid.pojo.ajaxForm.CountryForm;
 import org.orcid.pojo.ajaxForm.Emails;
 import org.orcid.pojo.ajaxForm.Errors;
@@ -823,6 +824,35 @@ public class ManageProfileController extends BaseWorkspaceController {
         orcidProfileManager.updateCountry(currentProfile);
         return countryForm;
     }
+    
+
+    /**
+     * Retrieve all external identifiers as a json string
+     * */
+    @RequestMapping(value = "biographyForm.json", method = RequestMethod.GET)
+    public @ResponseBody
+    BiographyForm getBiographyForm(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
+        OrcidProfile currentProfile = getEffectiveProfile();
+        BiographyForm bf = BiographyForm.valueOf(currentProfile);
+        return bf;
+    }
+
+    /**
+     * Retrieve all external identifiers as a json string
+     * */
+    @RequestMapping(value = "biographyForm.json", method = RequestMethod.POST)
+    public @ResponseBody
+    BiographyForm setBiographyFormJson(HttpServletRequest request, @RequestBody BiographyForm bf) throws NoSuchRequestHandlingMethodException {
+        bf.setErrors(new ArrayList<String>());
+        validateBiography(bf.getBiography());
+        copyErrors(bf.getBiography(), bf);
+        if (bf.getErrors().size()>0) return bf;        
+        OrcidProfile currentProfile = getEffectiveProfile();
+        bf.populateProfile(currentProfile);
+        orcidProfileManager.updateBiography(currentProfile);
+        return bf;
+    }
+
 
 
     @RequestMapping(value = "/save-bio-settings", method = RequestMethod.POST)

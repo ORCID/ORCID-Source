@@ -557,7 +557,20 @@ public class BaseController {
     protected void setError(ErrorsInterface ei, String msg) {
         ei.getErrors().add(getMessage(msg));
     }
-    
+
+    protected void validateBiography(Text text) {
+        text.setErrors(new ArrayList<String>());
+        if (!PojoUtil.isEmpty(text.getValue())) {
+           // trim if required
+           if (!text.getValue().equals(text.getValue().trim())) 
+               text.setValue(text.getValue().trim());
+           
+           // check length
+           if (text.getValue().length() > 5000)
+              setError(text, "Length.changePersonalInfoForm.biograph");
+        }
+    }
+
     protected void validateUrl(Text url) {
         url.setErrors(new ArrayList<String>());
         if (!PojoUtil.isEmpty(url.getValue())) {

@@ -162,6 +162,16 @@ public interface OrcidProfileManager {
     void updateCountry(OrcidProfile orcidProfile);
     
     /**
+     *  Persist the biography 
+     * 
+     *  * @param orcidProfile
+     *            Profile containing the personal details, contact details and
+     *            identifiers to replace those in the DB.
+
+     */    
+    public void updateBiography(OrcidProfile orcidProfile);
+
+    /**
      * Overwrites the history of the of the profile.
      * 
      * @param orcidProfile

@@ -1002,6 +1002,13 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         profileDao.updateCountry(orcidProfile.getOrcidIdentifier().getPath(), orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().getValue(),
                 orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().getVisibility());
     }
+    
+    @Override
+    @Transactional
+    public void updateBiography(OrcidProfile orcidProfile) {
+        profileDao.updateBiography(orcidProfile.getOrcidIdentifier().getPath(), orcidProfile.getOrcidBio().getBiography().getContent());
+    }
+
 
     @Override
     @Transactional

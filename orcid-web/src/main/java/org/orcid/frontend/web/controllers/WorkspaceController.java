@@ -57,6 +57,7 @@ import org.orcid.jaxb.model.message.SourceOrcid;
 import org.orcid.jaxb.model.message.WorkCategory;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.pojo.ThirdPartyRedirect;
+import org.orcid.pojo.ajaxForm.BiographyForm;
 import org.orcid.pojo.ajaxForm.CountryForm;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Website;
@@ -304,11 +305,9 @@ public class WorkspaceController extends BaseWorkspaceController {
     }
     
 
-
     /**
      * Retrieve all external identifiers as a json string
      * */
-    @SuppressWarnings("unchecked")
     @RequestMapping(value = "/my-orcid/websitesForms.json", method = RequestMethod.GET)
     public @ResponseBody
     WebsitesForm getWebsitesFormJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
