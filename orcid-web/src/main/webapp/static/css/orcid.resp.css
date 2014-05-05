@@ -3733,7 +3733,8 @@ p.orcid-id-container{
 	width: 95px;
 }
 
-.country-edit {
+.country-edit,
+.website-edit {
 	background: #EFEFEF;
 	padding: 10px;
 	margin-bottom: 10px;
@@ -3800,8 +3801,16 @@ p.orcid-id-container{
 		width: 100%;
 }
 
+/* Website edit */
 
+.websites-box,
+.websites-box input{
+	margin: 10px 0 0 0;
+}
 
+.websites-box a.glyphicon-trash{
+	vertical-align: -7px;
+}
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
@@ -4699,9 +4708,23 @@ p.orcid-id-container{
 		width: 100%;
 	}
 	
+	/* Website edit*/
+	.websites-box input{
+		width: 45% !important;
+	}
+	
+	.websites-box a.glyphicon-plus{
+		font-size: 20px;
+	}
+	
 }
 
 @media (min-width : 768px) and (max-width : 991px) { /* Tablet */
+
+	.websites-box input{
+		width: 45% !important;
+	}
+
 	/*Header*/
 	
 	.container .header .search form input[type='search'] {

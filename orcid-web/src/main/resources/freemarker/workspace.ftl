@@ -115,24 +115,28 @@
 			             publicClick="setPrivacy('PUBLIC', $event)" 
                  	     limitedClick="setPrivacy('LIMITED', $event)" 
                  	     privateClick="setPrivacy('PRIVATE', $event)" />
-	        	   
-	        	      <div ng-repeat="website in websitesForm.websites">
-	        	          <input type="text" ng-model="website.url.value" placeholder="${springMacroRequestContext.getMessage("manual_work_form_contents.labelURL")}"></input>
-	        	          <input type="text" ng-model="website.name.value" placeholder="${springMacroRequestContext.getMessage("manual_work_form_contents.labeldescription")}"></input>
-	        	          <a ng-click="deleteWebsite(website)" class="glyphicon glyphicon-trash grey"></a>
-	        	          <br />
-	        	          <span class="orcid-error" ng-show="website.url.errors.length > 0">
-						     <div ng-repeat='error in website.url.errors' ng-bind-html="error"></div>
-					      </span>
-	        	          <span class="orcid-error" ng-show="website.name.errors.length > 0">
-						     <div ng-repeat='error in website.name.errors' ng-bind-html="error"></div>
-					      </span>
+	        	   	  <div class="websites-box">	        	   	  	  		
+		        	      <div ng-repeat="website in websitesForm.websites">
+		        	          
+		        	          <input type="text" ng-model="website.url.value" placeholder="${springMacroRequestContext.getMessage("manual_work_form_contents.labelURL")}"></input>
+		        	          <input type="text" ng-model="website.name.value" placeholder="${springMacroRequestContext.getMessage("manual_work_form_contents.labeldescription")}"></input>
+		        	          <a ng-click="deleteWebsite(website)" class="glyphicon glyphicon-trash grey"></a>
+		        	          
+		        	          <span class="orcid-error" ng-show="website.url.errors.length > 0">
+							     <div ng-repeat='error in website.url.errors' ng-bind-html="error"></div>
+						      </span>
+		        	          
+		        	          <span class="orcid-error" ng-show="website.name.errors.length > 0">
+							     <div ng-repeat='error in website.name.errors' ng-bind-html="error"></div>
+						      </span>
+		        	      </div>	        
+		        	      <div class="websites-box">
+			        	      <a class="glyphicon glyphicon-plus" ng-click="addNew()"></a>
+			        	      <button class="btn btn-primary" ng-click="setWebsitesForm()"><@spring.message "freemarker.btnsavechanges"/></button>
+			        	      <button class="btn" ng-click="close()"><@spring.message "freemarker.btncancel"/></button>
+		        	      </div>
 	        	      </div>
-	        	      <a class="glyphicon glyphicon-plus" ng-click="addNew()"></a><br />
-	        	      <button class="btn btn-primary" ng-click="setWebsitesForm()"><@spring.message "freemarker.btnsavechanges"/></button>
-	        	      <button class="btn" ng-click="close()"><@spring.message "freemarker.btncancel"/></button>
 	        	   </div>
-	        	   
 	           </div>
 	       	</div>
 	       	
