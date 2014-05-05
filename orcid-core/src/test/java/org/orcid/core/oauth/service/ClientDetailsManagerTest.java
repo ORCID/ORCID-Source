@@ -16,13 +16,24 @@
  */
 package org.orcid.core.oauth.service;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.annotation.Resource;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.core.manager.OrcidClientDetailsService;
+import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
-import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.test.DBUnitTest;
 import org.springframework.security.core.GrantedAuthority;
@@ -32,17 +43,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 /**
  * 2011-2012 ORCID
  * 
@@ -50,14 +50,15 @@ import static org.junit.Assert.assertNotNull;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
-public class OrcidClientDetailsServiceTest extends DBUnitTest {
+public class ClientDetailsManagerTest extends DBUnitTest {
 
     @Resource
-    private GenericDao<ClientDetailsEntity, String> clientDetailsDao;
+    private ClientDetailsManager clientDetailsManager;
 
-    @Resource(name = "orcidClientDetailsService")
-    private OrcidClientDetailsService clientDetailsService;
-
+    private static String CLIENT_NAME = "the name";
+    private static String CLIENT_DESCRIPTION = "the description";
+    private static String CLIENT_WEBSITE = "http://website.com";
+    
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml"), null);
@@ -72,10 +73,10 @@ public class OrcidClientDetailsServiceTest extends DBUnitTest {
     @Rollback
     @Transactional
     public void testLoadClientByClientId() throws Exception {
-        List<ClientDetailsEntity> all = clientDetailsDao.getAll();
+        List<ClientDetailsEntity> all = clientDetailsManager.getAll();
         assertEquals(5, all.size());
         for (ClientDetailsEntity clientDetailsEntity : all) {
-            ClientDetails clientDetails = clientDetailsService.loadClientByClientId(clientDetailsEntity.getId());
+            ClientDetails clientDetails = clientDetailsManager.loadClientByClientId(clientDetailsEntity.getId());
             assertNotNull(clientDetails);
             checkClientDetails(clientDetails);
         }
@@ -85,7 +86,7 @@ public class OrcidClientDetailsServiceTest extends DBUnitTest {
     @Rollback
     @Transactional
     public void testCreateClientDetailsFromStrings() throws Exception {
-        String clientId = "4444-4444-4444-4441-10";
+        String clientId = "4444-4444-4444-4499";
         String clientSecret = "Zq7ldGbUvzbEMNysSbbUq4dLRrxEUApgdcofn8xDke4=";
         Set<String> clientScopes = new HashSet<String>();
         clientScopes.add("/orcid-profile/create");
@@ -100,7 +101,7 @@ public class OrcidClientDetailsServiceTest extends DBUnitTest {
         List<String> clientGrantedAuthorities = new ArrayList<String>();
         clientGrantedAuthorities.add("ROLE_ADMIN");
 
-        ClientDetailsEntity clientDetails = clientDetailsService.createClientDetails("4444-4444-4444-4441", clientId, clientSecret, clientScopes, clientResourceIds,
+        ClientDetailsEntity clientDetails = clientDetailsManager.createClientDetails("4444-4444-4444-4499", CLIENT_NAME, CLIENT_DESCRIPTION, CLIENT_WEBSITE, clientId, clientSecret, clientScopes, clientResourceIds,
                 clientAuthorizedGrantTypes, clientRegisteredRedirectUris, clientGrantedAuthorities);
         assertNotNull(clientDetails);
         checkClientDetails(clientDetails);
@@ -123,7 +124,7 @@ public class OrcidClientDetailsServiceTest extends DBUnitTest {
         List<String> clientGrantedAuthorities = new ArrayList<String>();
         clientGrantedAuthorities.add("ROLE_ADMIN");
 
-        ClientDetailsEntity clientDetails = clientDetailsService.createClientDetails("4444-4444-4444-4446", clientScopes, clientResourceIds, clientAuthorizedGrantTypes,
+        ClientDetailsEntity clientDetails = clientDetailsManager.createClientDetails("4444-4444-4444-4446", CLIENT_NAME, CLIENT_DESCRIPTION, CLIENT_WEBSITE, clientScopes, clientResourceIds, clientAuthorizedGrantTypes,
                 clientRegisteredRedirectUris, clientGrantedAuthorities);
         assertNotNull(clientDetails);
         checkClientDetails(clientDetails);
@@ -146,7 +147,7 @@ public class OrcidClientDetailsServiceTest extends DBUnitTest {
         List<String> clientGrantedAuthorities = new ArrayList<String>();
         clientGrantedAuthorities.add("ROLE_ADMIN");
 
-        clientDetailsService.createClientDetails("8888-9999-9999-9999", clientScopes, clientResourceIds, clientAuthorizedGrantTypes, clientRegisteredRedirectUris,
+        clientDetailsManager.createClientDetails("8888-9999-9999-9999", CLIENT_NAME, CLIENT_DESCRIPTION, CLIENT_WEBSITE, clientScopes, clientResourceIds, clientAuthorizedGrantTypes, clientRegisteredRedirectUris,
                 clientGrantedAuthorities);
     }
 
@@ -154,13 +155,20 @@ public class OrcidClientDetailsServiceTest extends DBUnitTest {
     @Rollback
     @Transactional
     public void testDeleteClientDetail() throws Exception {
-        List<ClientDetailsEntity> all = clientDetailsDao.getAll();
+        List<ClientDetailsEntity> all = clientDetailsManager.getAll();
         assertEquals(5, all.size());
         for (ClientDetailsEntity clientDetailsEntity : all) {
-            clientDetailsService.deleteClientDetail(clientDetailsEntity.getId());
+            clientDetailsManager.deleteClientDetail(clientDetailsEntity.getId());
         }
-        all = clientDetailsDao.getAll();
+        all = clientDetailsManager.getAll();
         assertEquals(0, all.size());
+    }
+
+    private void checkClientDetails(ClientDetailsEntity clientDetails) {
+        assertNotNull(clientDetails);
+        assertEquals(clientDetails.getClientDescription(), CLIENT_DESCRIPTION);
+        assertEquals(clientDetails.getClientName(), CLIENT_NAME);
+        checkClientDetails((ClientDetails)clientDetails);
     }
 
     private void checkClientDetails(ClientDetails clientDetails) {
@@ -182,8 +190,7 @@ public class OrcidClientDetailsServiceTest extends DBUnitTest {
         assertEquals(1, resourceIds.size());
         Set<String> scope = clientDetails.getScope();
         assertNotNull(scope);
-        int expectedNumberOfScopes = "4444-4444-4444-4445".equals(clientDetails.getClientId()) ? 4 : 1;
+        int expectedNumberOfScopes = "4444-4444-4444-4445".equals(clientDetails.getClientId()) ? 5 : 1;
         assertEquals(expectedNumberOfScopes, scope.size());
     }
-
 }

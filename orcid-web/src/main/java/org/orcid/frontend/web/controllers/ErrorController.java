@@ -44,4 +44,18 @@ public class ErrorController extends BaseController {
         return mav;
     }
 
+    @RequestMapping(value = "/oauth/error/redirect-uri-mismatch")
+    public ModelAndView oauthErrorInvalidRedirectUri(ModelAndView mav, Exception e) {
+        mav.setViewName("oauth-error");
+        mav.addObject("error", getMessage("oauth.errors.redirect_mismatch_exception"));        
+        return mav;
+    }
+    
+    @RequestMapping(value = "/oauth/error")
+    public ModelAndView oauthError(ModelAndView mav, Exception e) {
+        mav.setViewName("oauth-error");
+        mav.addObject("error", getMessage("oauth.errors.other"));        
+        return mav;
+    }
+    
 }

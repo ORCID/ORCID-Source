@@ -339,7 +339,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
         if (isProfileDeprecated) {
             // TODO: internationalize these messages
             throw new DeprecatedException("This account is deprecated. Please refer to account: "
-                    + orcidProfile.getOrcidDeprecated().getPrimaryRecord().getOrcid().getValue());
+                    + orcidProfile.getOrcidDeprecated().getPrimaryRecord().getOrcidIdentifier().getUri());
         } else {
             response = Response.ok(orcidMessage).build();
         }

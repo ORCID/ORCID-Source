@@ -31,9 +31,12 @@ import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>
+ * Java class for anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType>
@@ -54,7 +57,7 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType( propOrder = { "givenNames", "familyName", "creditName", "otherNames" })
+@XmlType(propOrder = { "givenNames", "familyName", "creditName", "otherNames" })
 @XmlRootElement(name = "personal-details")
 public class PersonalDetails implements Serializable {
 
@@ -74,10 +77,8 @@ public class PersonalDetails implements Serializable {
     /**
      * Gets the value of the givenNames property.
      * 
-     * @return
-     *     possible object is
-     *     {@link GivenNames }
-     *     
+     * @return possible object is {@link GivenNames }
+     * 
      */
     public GivenNames getGivenNames() {
         return givenNames;
@@ -87,9 +88,8 @@ public class PersonalDetails implements Serializable {
      * Sets the value of the givenNames property.
      * 
      * @param value
-     *     allowed object is
-     *     {@link GivenNames }
-     *     
+     *            allowed object is {@link GivenNames }
+     * 
      */
     public void setGivenNames(GivenNames value) {
         this.givenNames = value;
@@ -98,10 +98,8 @@ public class PersonalDetails implements Serializable {
     /**
      * Gets the value of the familyName property.
      * 
-     * @return
-     *     possible object is
-     *     {@link FamilyName }
-     *     
+     * @return possible object is {@link FamilyName }
+     * 
      */
     public FamilyName getFamilyName() {
         return familyName;
@@ -111,9 +109,8 @@ public class PersonalDetails implements Serializable {
      * Sets the value of the familyName property.
      * 
      * @param value
-     *     allowed object is
-     *     {@link FamilyName }
-     *     
+     *            allowed object is {@link FamilyName }
+     * 
      */
     public void setFamilyName(FamilyName value) {
         this.familyName = value;
@@ -122,10 +119,8 @@ public class PersonalDetails implements Serializable {
     /**
      * Gets the value of the creditName property.
      * 
-     * @return
-     *     possible object is
-     *     {@link CreditName }
-     *     
+     * @return possible object is {@link CreditName }
+     * 
      */
     public CreditName getCreditName() {
         return creditName;
@@ -135,9 +130,8 @@ public class PersonalDetails implements Serializable {
      * Sets the value of the creditName property.
      * 
      * @param value
-     *     allowed object is
-     *     {@link CreditName }
-     *     
+     *            allowed object is {@link CreditName }
+     * 
      */
     public void setCreditName(CreditName value) {
         this.creditName = value;
@@ -146,10 +140,8 @@ public class PersonalDetails implements Serializable {
     /**
      * Gets the value of the otherNames property.
      * 
-     * @return
-     *     possible object is
-     *     {@link OtherNames }
-     *     
+     * @return possible object is {@link OtherNames }
+     * 
      */
     public OtherNames getOtherNames() {
         return otherNames;
@@ -159,12 +151,39 @@ public class PersonalDetails implements Serializable {
      * Sets the value of the otherNames property.
      * 
      * @param value
-     *     allowed object is
-     *     {@link OtherNames }
-     *     
+     *            allowed object is {@link OtherNames }
+     * 
      */
     public void setOtherNames(OtherNames value) {
         this.otherNames = value;
+    }
+
+    public String retrievePublicDisplayName() {
+        if (creditName != null) {
+            if (Visibility.PUBLIC.equals(creditName.getVisibility())) {
+                return creditName.getContent();
+            }
+        }
+        StringBuilder builder = new StringBuilder();
+        builder.append(givenNames.getContent());
+        if (familyName != null) {
+            builder.append(" ");
+            builder.append(familyName.getContent());
+        }
+        return builder.toString();
+    }
+
+    public String retrieveDisplayNameIgnoringVisibility() {
+        if (creditName != null) {
+            return creditName.getContent();
+        }
+        StringBuilder builder = new StringBuilder();
+        builder.append(givenNames.getContent());
+        if (familyName != null) {
+            builder.append(" ");
+            builder.append(familyName.getContent());
+        }
+        return builder.toString();
     }
 
     @Override

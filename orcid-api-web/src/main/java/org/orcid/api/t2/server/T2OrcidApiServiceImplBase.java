@@ -17,11 +17,11 @@
 package org.orcid.api.t2.server;
 
 import static org.orcid.api.common.OrcidApiConstants.AFFILIATIONS_PATH;
-import static org.orcid.api.common.OrcidApiConstants.FUNDING_PATH;
 import static org.orcid.api.common.OrcidApiConstants.APPLICATION_RDFXML;
 import static org.orcid.api.common.OrcidApiConstants.BIO_PATH;
 import static org.orcid.api.common.OrcidApiConstants.BIO_SEARCH_PATH;
 import static org.orcid.api.common.OrcidApiConstants.EXTERNAL_IDENTIFIER_PATH;
+import static org.orcid.api.common.OrcidApiConstants.FUNDING_PATH;
 import static org.orcid.api.common.OrcidApiConstants.ORCID_JSON;
 import static org.orcid.api.common.OrcidApiConstants.ORCID_XML;
 import static org.orcid.api.common.OrcidApiConstants.PROFILE_DELETE_PATH;
@@ -60,13 +60,13 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.api.t2.T2OrcidApiService;
-import org.orcid.api.t2.server.delegator.OrcidClientCredentialEndPointDelegator;
 import org.orcid.api.t2.server.delegator.T2OrcidApiServiceDelegator;
 import org.orcid.api.t2.server.delegator.impl.T2OrcidApiServiceVersionedDelegatorImpl;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
 
+import com.orcid.api.common.server.delegator.OrcidClientCredentialEndPointDelegator;
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Counter;
 

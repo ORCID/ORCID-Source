@@ -22,6 +22,7 @@ import java.util.Locale;
 
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWorks;
+import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.Visibility;
 
@@ -151,6 +152,16 @@ public interface OrcidProfileManager {
     OrcidProfile updatePersonalInformation(OrcidProfile orcidProfile);
 
     /**
+     *  Persist the country and country visibility 
+     * 
+     *  * @param orcidProfile
+     *            Profile containing the personal details, contact details and
+     *            identifiers to replace those in the DB.
+
+     */
+    void updateCountry(OrcidProfile orcidProfile);
+    
+    /**
      * Overwrites the history of the of the profile.
      * 
      * @param orcidProfile
@@ -191,10 +202,7 @@ public interface OrcidProfileManager {
      */
     void updateSecurityQuestionInformation(OrcidProfile updatedOrcidProfile);
 
-    /**
-     * Overwrites preferences in the DB with the values in updatedProfile.
-     */
-    OrcidProfile updatePreferences(OrcidProfile updatedOrcidProfile);
+    void updatePreferences(String orcid, Preferences preferences);
 
     /**
      * Overwrites preferences in the DB with the values in updatedProfile.

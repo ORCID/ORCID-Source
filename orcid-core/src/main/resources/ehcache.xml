@@ -122,4 +122,22 @@
 		<persistence strategy="localTempSwap" />
 	</cache>
 
+	<cache name="credit-name" maxElementsInMemory="5000"
+		maxElementsOnDisk="50000" timeToLiveSeconds="86400" copyOnRead="false"
+		copyOnWrite="false" eternal="false">
+		<persistence strategy="localTempSwap" />
+	</cache>
+
+	<cache name="pub-credit-name" maxElementsInMemory="5000"
+		maxElementsOnDisk="50000" timeToLiveSeconds="86400" copyOnRead="false"
+		copyOnWrite="false" eternal="false">
+		<persistence strategy="localTempSwap" />
+	</cache>
+
+	<cache name="client-details" maxElementsInMemory="2000" timeToLiveSeconds="86400"
+		copyOnRead="false" copyOnWrite="false"
+		eternal="false">
+		<persistence strategy="none" />
+	</cache>
+
 </ehcache>

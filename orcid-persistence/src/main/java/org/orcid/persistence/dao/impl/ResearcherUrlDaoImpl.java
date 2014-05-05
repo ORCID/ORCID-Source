@@ -21,7 +21,10 @@ import java.util.List;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.apache.commons.lang.StringUtils;
+import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.persistence.dao.ResearcherUrlDao;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -75,6 +78,7 @@ public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Lo
      * @param orcid
      * @param url
      * @param urlName
+     * @param isSSO
      * @return true if the researcher url was successfully created on database
      * */
     @Override
@@ -85,6 +89,22 @@ public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Lo
         query.setParameter("orcid", orcid);
         query.setParameter("url", url);
         query.setParameter("url_name", urlName);
+        return query.executeUpdate() > 0 ? true : false;
+    }
+    
+    /**
+     * Updates an existing researcher url
+     * @param orcid
+     * @param oldUrl
+     * @param newUrl
+     * @return true if the researcher url was updated
+     * */
+    @Override
+    @Transactional
+    public boolean updateResearcherUrl(long id, String newUrl) {
+        Query query = entityManager.createNativeQuery("UPDATE researcher_url SET url=:newUrl WHERE id=:id");
+        query.setParameter("newUrl", newUrl);
+        query.setParameter("id", id);
         return query.executeUpdate() > 0 ? true : false;
     }
 

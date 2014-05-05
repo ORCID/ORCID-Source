@@ -18,6 +18,7 @@ package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
 import java.util.Currency;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -28,14 +29,15 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
+import org.jsoup.helper.StringUtil;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.ProfileWorkManager;
-import org.orcid.core.manager.ThirdPartyImportManager;
-import org.orcid.core.manager.WorkContributorManager;
+import org.orcid.core.manager.ResearcherUrlManager;
+import org.orcid.core.manager.ThirdPartyLinkManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.frontend.web.util.NumberList;
@@ -55,6 +57,10 @@ import org.orcid.jaxb.model.message.SourceOrcid;
 import org.orcid.jaxb.model.message.WorkCategory;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.pojo.ThirdPartyRedirect;
+import org.orcid.pojo.ajaxForm.CountryForm;
+import org.orcid.pojo.ajaxForm.Text;
+import org.orcid.pojo.ajaxForm.Website;
+import org.orcid.pojo.ajaxForm.WebsitesForm;
 import org.orcid.utils.FunctionsOverCollections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,7 +83,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     private static final Logger LOGGER = LoggerFactory.getLogger(WorkspaceController.class);
 
     @Resource
-    private ThirdPartyImportManager thirdPartyImportManager;
+    private ThirdPartyLinkManager thirdPartyLinkManager;
 
     @Resource
     private ExternalIdentifierManager externalIdentifierManager;
@@ -93,9 +99,9 @@ public class WorkspaceController extends BaseWorkspaceController {
 
     @Resource
     private WorkManager workManager;
-
+    
     @Resource
-    private WorkContributorManager workContributorManager;
+    private ResearcherUrlManager researcherUrlManager;
 
     @Resource
     private LocaleManager localeManager;
@@ -105,12 +111,12 @@ public class WorkspaceController extends BaseWorkspaceController {
 
     @ModelAttribute("workImportWizards")
     public List<OrcidClient> retrieveWorkImportWizards() {
-        return thirdPartyImportManager.findOrcidClientsWithPredefinedOauthScopeWorksImport();
+        return thirdPartyLinkManager.findOrcidClientsWithPredefinedOauthScopeWorksImport();
     }
 
     @ModelAttribute("fundingImportWizards")
     public List<OrcidClient> retrieveFundingImportWizards() {
-        return thirdPartyImportManager.findOrcidClientsWithPredefinedOauthScopeFundingImport();
+        return thirdPartyLinkManager.findOrcidClientsWithPredefinedOauthScopeFundingImport();
     }
 
     @ModelAttribute("affiliationTypes")
@@ -269,13 +275,15 @@ public class WorkspaceController extends BaseWorkspaceController {
 
     @RequestMapping(value = { "/my-orcid", "/workspace" })
     public ModelAndView viewWorkspace(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int pageNo,
-            @RequestParam(value = "maxResults", defaultValue = "200") int maxResults) {
-
+            @RequestParam(value = "maxResults", defaultValue = "200") int maxResults) {        
         ModelAndView mav = new ModelAndView("workspace");
         mav.addObject("showPrivacy", true);
 
         OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid(), LoadOptions.BIO_AND_INTERNAL_ONLY);
         mav.addObject("profile", profile);
+        String countryName = getCountryName(profile);
+        if(!StringUtil.isBlank(countryName))
+            mav.addObject("countryName", countryName);
         mav.addObject("currentLocaleKey", localeManager.getLocale().toString());
         mav.addObject("currentLocaleValue", lm.buildLanguageValue(localeManager.getLocale(), localeManager.getLocale()));
         return mav;
@@ -294,6 +302,43 @@ public class WorkspaceController extends BaseWorkspaceController {
         mav.addObject("currentLocaleValue", lm.buildLanguageValue(localeManager.getLocale(), localeManager.getLocale()));
         return mav;
     }
+    
+
+
+    /**
+     * Retrieve all external identifiers as a json string
+     * */
+    @SuppressWarnings("unchecked")
+    @RequestMapping(value = "/my-orcid/websitesForms.json", method = RequestMethod.GET)
+    public @ResponseBody
+    WebsitesForm getWebsitesFormJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
+        OrcidProfile currentProfile = getEffectiveProfile();
+        WebsitesForm wf = WebsitesForm.valueOf(currentProfile.getOrcidBio().getResearcherUrls());
+        return wf;
+    }
+    
+    /**
+     * Retrieve all external identifiers as a json string
+     * */
+    @RequestMapping(value = "/my-orcid/websitesForms.json", method = RequestMethod.POST)
+    public @ResponseBody
+    WebsitesForm setWebsitesFormJson(HttpServletRequest request, @RequestBody WebsitesForm ws) throws NoSuchRequestHandlingMethodException {
+        ws.setErrors(new ArrayList<String>());
+        HashMap<String, Website> websitesHm = new HashMap<String, Website>(); 
+        for (Website w:ws.getWebsites()) {
+            validateUrl(w.getUrl());
+            if (websitesHm.containsKey(w.getUrl().getValue()))
+                setError(w.getUrl(), "common.duplicate_url");
+            else
+                websitesHm.put(w.getUrl().getValue(), w);
+            copyErrors(w.getUrl(), ws);
+        }   
+        if (ws.getErrors().size()>0) return ws;        
+        OrcidProfile currentProfile = getEffectiveProfile();
+        researcherUrlManager.updateResearcherUrls(currentProfile.getOrcidIdentifier().getPath(), ws.toResearcherUrls());
+        return ws;
+    }
+
 
     /**
      * Retrieve all external identifiers as a json string
@@ -320,9 +365,9 @@ public class WorkspaceController extends BaseWorkspaceController {
         SourceOrcid sourceOrcid = currentProfile.getOrcidHistory().getSource().getSourceOrcid();
         String sourcStr = sourceOrcid.getPath();
         // Check that the cache is up to date
-        evictThirdPartyImportManagerCacheIfNeeded();
+        evictThirdPartyLinkManagerCacheIfNeeded();
         // Get list of clients
-        List<OrcidClient> orcidClients = thirdPartyImportManager.findOrcidClientsWithPredefinedOauthScopeReadAccess();
+        List<OrcidClient> orcidClients = thirdPartyLinkManager.findOrcidClientsWithPredefinedOauthScopeReadAccess();
         for (OrcidClient orcidClient : orcidClients) {
             if (sourcStr.equals(orcidClient.getClientId())) {
                 RedirectUri ru = orcidClient.getRedirectUris().getRedirectUri().get(0);
@@ -335,8 +380,9 @@ public class WorkspaceController extends BaseWorkspaceController {
             }
         }
         return tpr;
-    }
-
+    }    
+    
+    
     /**
      * Reads the latest cache version from database, compare it against the
      * local version; if they are different, evicts all caches.
@@ -344,12 +390,12 @@ public class WorkspaceController extends BaseWorkspaceController {
      * @return true if the local cache version is different than the one on
      *         database
      * */
-    private boolean evictThirdPartyImportManagerCacheIfNeeded() {
-        long currentCachedVersion = thirdPartyImportManager.getLocalCacheVersion();
-        long dbCacheVersion = thirdPartyImportManager.getDatabaseCacheVersion();
+    private boolean evictThirdPartyLinkManagerCacheIfNeeded() {
+        long currentCachedVersion = thirdPartyLinkManager.getLocalCacheVersion();
+        long dbCacheVersion = thirdPartyLinkManager.getDatabaseCacheVersion();
         if (currentCachedVersion < dbCacheVersion) {
             // If version changed, evict the cache
-            thirdPartyImportManager.evictAll();
+            thirdPartyLinkManager.evictAll();
             return true;
         }
         return false;

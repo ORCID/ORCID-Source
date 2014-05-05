@@ -25,13 +25,12 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.orcid.core.exception.OrcidClientGroupManagementException;
 import org.orcid.core.manager.OrcidClientGroupManager;
-import org.orcid.core.manager.ThirdPartyImportManager;
+import org.orcid.core.manager.ThirdPartyLinkManager;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
@@ -45,6 +44,7 @@ import org.orcid.pojo.ajaxForm.RedirectUri;
 import org.orcid.pojo.ajaxForm.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -60,6 +60,7 @@ import org.springframework.web.servlet.ModelAndView;
  */
 @Controller
 @RequestMapping(value = "/group/developer-tools")
+@PreAuthorize("!@sourceManager.isInDelegationMode() OR @sourceManager.isDelegatedByAnAdmin()")
 public class GroupAdministratorController extends BaseWorkspaceController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GroupAdministratorController.class);
@@ -68,7 +69,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
     OrcidClientGroupManager orcidClientGroupManager;
 
     @Resource
-    private ThirdPartyImportManager thirdPartyImportManager;
+    private ThirdPartyLinkManager thirdPartyLinkManager;
 
     @RequestMapping
     public ModelAndView manageClients() {
@@ -153,7 +154,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
         if (PojoUtil.isEmpty(client.getWebsite())) {
             setError(client.getWebsite(), "manage.developer_tools.group.error.website.empty");
         } else if (!validateUrl(client.getWebsite().getValue())) {
-            setError(client.getWebsite(), "manage.developer_tools.group.error.invalid_url");
+            setError(client.getWebsite(), "common.invalid_url");
         }
         return client;
     }
@@ -170,7 +171,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
             for (RedirectUri redirectUri : client.getRedirectUris()) {
                 redirectUri.setErrors(new ArrayList<String>());
                 if (!validateUrl(redirectUri.getValue().getValue())) {
-                    setError(redirectUri, "manage.developer_tools.group.error.invalid_url");
+                    setError(redirectUri, "common.invalid_url");
                 }
 
                 if (RedirectUriType.DEFAULT.value().equals(redirectUri.getType().getValue())) {
@@ -318,9 +319,9 @@ public class GroupAdministratorController extends BaseWorkspaceController {
      * */
     private void clearCache() {
         // Updates cache database version
-        thirdPartyImportManager.updateDatabaseCacheVersion();
+        thirdPartyLinkManager.updateDatabaseCacheVersion();
         // Evict current cache
-        thirdPartyImportManager.evictAll();
+        thirdPartyLinkManager.evictAll();
     }
 
     @RequestMapping(value = "/get-available-scopes.json", method = RequestMethod.GET)

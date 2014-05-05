@@ -66,13 +66,15 @@
 		win.setTimeout(checkFrameName, 500);
 	}
 
+    // http://stackoverflow.com/a/472729
 	function checkBaseURL(href) {
-		if (baseElem && href.indexOf(baseElem.href) === -1) {
-			bref = (/\/$/).test(baseElem.href) ? baseElem.href : (baseElem.href + "/");
-			href = bref + href;
-		}
+        var el = document.createElement('div'),
+        escapedURL = href.split('&').join('&amp;').
+            split('<').join('&lt;').
+            split('"').join('&quot;');
 
-		return href;
+        el.innerHTML = '<a href="' + escapedURL + '">x</a>';
+        return el.firstChild.href;
 	}
 	
 	function checkRedirectURL() {
@@ -102,18 +104,25 @@
 			
 			var thislink	= links[i],
 				href		= links[i].href,
-				extreg		= (/^([a-zA-Z]+?:(\/\/)?(www\.)?)/).test( href ),
+				extreg		= (/^([a-zA-Z:]*\/\/(www\.)?)/).test( href ),
 				ext			= (baseElem && !extreg) || extreg;
 
 			//make sure it's an external stylesheet
-			if( thislink.rel.indexOf( "stylesheet" ) >= 0 && ext ){
-				(function( link ){			
-					fakejax( href, function( css ){
-						link.styleSheet.rawCssText = css;
-						respond.update();
-					} );
+			if(thislink.rel.indexOf( "stylesheet" ) >= 0 && ext ){
+				(function( link ){
+					if(thislink.href.indexOf(window.location.host) === -1){
+						fakejax( href, function( css ){
+							link.styleSheet.rawCssText = css;
+							respond.update();
+						} );
+					}
+					else {
+						respond.ajax(thislink.href, function(css){
+							link.styleSheet.rawCssText = css;
+						});
+					}
 				})( thislink );
-			}	
+			}
 		}
 
 		

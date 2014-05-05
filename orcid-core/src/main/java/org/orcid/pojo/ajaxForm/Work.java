@@ -85,6 +85,8 @@ public class Work implements ErrorsInterface, Serializable {
 	private Text workType;
 
 	protected String citationForDisplay;
+	
+	private String dateSortString;
 
 	public static Work valueOf(MinimizedWorkEntity minimizedWorkEntity) {
 		Work w = new Work();
@@ -97,7 +99,10 @@ public class Work implements ErrorsInterface, Serializable {
 				: minimizedWorkEntity.getPublicationMonth();
 		Integer day = (minimizedWorkEntity.getPublicationDay() <= 0) ? null
 				: minimizedWorkEntity.getPublicationDay();
-		w.setPublicationDate(Date.valueOf(new FuzzyDate(year, month, day)));
+		FuzzyDate fuzz = new FuzzyDate(year, month, day);
+		w.setPublicationDate(Date.valueOf(fuzz));
+		w.setDateSortString(PojoUtil.createDateSortString(null, fuzz));
+                
 		// Set title and subtitle
 		if (!StringUtils.isEmpty(minimizedWorkEntity.getTitle())) {
 			WorkTitle workTitle = new WorkTitle();
@@ -123,8 +128,9 @@ public class Work implements ErrorsInterface, Serializable {
 	
 	public static Work valueOf(OrcidWork orcidWork) {
 		Work w = new Work();
-		if (orcidWork.getPublicationDate() != null)
-			w.setPublicationDate(Date.valueOf(orcidWork.getPublicationDate()));
+		if (orcidWork.getPublicationDate() != null) 
+		    w.setPublicationDate(Date.valueOf(orcidWork.getPublicationDate()));
+		w.setDateSortString(PojoUtil.createDateSortString(null, orcidWork.getPublicationDate()));
 		if (orcidWork.getPutCode() != null)
 			w.setPutCode(Text.valueOf(orcidWork.getPutCode()));
 		if (orcidWork.getShortDescription() != null)
@@ -184,6 +190,7 @@ public class Work implements ErrorsInterface, Serializable {
 		Work w = new Work();
 		if (orcidWork.getPublicationDate() != null)
 			w.setPublicationDate(Date.valueOf(orcidWork.getPublicationDate()));
+		w.setDateSortString(PojoUtil.createDateSortString(null, orcidWork.getPublicationDate()));
 		if (orcidWork.getPutCode() != null)
 			w.setPutCode(Text.valueOf(orcidWork.getPutCode()));
 		if (orcidWork.getShortDescription() != null)
@@ -411,4 +418,12 @@ public class Work implements ErrorsInterface, Serializable {
 	public void setWorkSourceName(Text workSourceName) {
 		this.workSourceName = workSourceName;
 	}
+
+    public String getDateSortString() {
+        return dateSortString;
+    }
+
+    public void setDateSortString(String dateSortString) {
+        this.dateSortString = dateSortString;
+    }
 }

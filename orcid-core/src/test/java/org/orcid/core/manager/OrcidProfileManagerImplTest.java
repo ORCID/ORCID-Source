@@ -85,8 +85,6 @@ import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkExternalIdentifier;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.message.WorkTitle;
-import org.orcid.jaxb.model.message.WorkVisibilityDefault;
-import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.dao.ProfileDao;
@@ -124,7 +122,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
     private ProfileDao profileDao;
 
     @Resource
-    private ClientDetailsDao clientDetailsDao;
+    private ClientDetailsManager clientDetailsManager;
 
     @Resource
     private OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDao;
@@ -183,7 +181,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         ProfileEntity applicationProfileEntity = profileDao.find(applicationProfile.getOrcidIdentifier().getPath());
         profileDao.refresh(applicationProfileEntity);
         clientDetails.setProfileEntity(applicationProfileEntity);
-        clientDetailsDao.merge(clientDetails);
+        clientDetailsManager.merge(clientDetails);
 
         OrcidOauth2TokenDetail token = new OrcidOauth2TokenDetail();
         token.setTokenValue("1234");
@@ -855,7 +853,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         preferences.setDeveloperToolsEnabled(new DeveloperToolsEnabled(true));
         preferences.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(Visibility.PUBLIC));
 
-        orcidProfileManager.updatePreferences(profile2);
+        orcidProfileManager.updatePreferences(profile2.getOrcidIdentifier().getPath(), profile2.getOrcidInternal().getPreferences());
 
         OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfile(TEST_ORCID);
         assertEquals(false, retrievedProfile.getOrcidInternal().getPreferences().getSendChangeNotifications().isValue());

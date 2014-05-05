@@ -16,6 +16,8 @@
  */
 package org.orcid.frontend.web.controllers;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -28,6 +30,8 @@ import org.orcid.frontend.web.forms.SearchOrcidBioForm;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidSearchResult;
 import org.orcid.utils.OrcidStringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -46,6 +50,8 @@ public class SearchOrcidController extends BaseController {
     final static Counter FRONTEND_WEB_SEARCH_REQUESTS = Metrics.newCounter(SearchOrcidController.class, "FRONTEND-WEB-SEARCH-REQUESTS");
     final static Counter FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND = Metrics.newCounter(SearchOrcidController.class, "FRONTEND-WEB-SEARCH-RESULTS-NONE-FOUND");
     final static Counter FRONTEND_WEB_SEARCH_RESULTS_FOUND = Metrics.newCounter(SearchOrcidController.class, "FRONTEND-WEB-SEARCH-RESULTS-FOUND");
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(SearchOrcidController.class);
 
     @Resource
     private OrcidSearchManager orcidSearchManager;
@@ -129,8 +135,12 @@ public class SearchOrcidController extends BaseController {
         } else if (OrcidStringUtils.isValidOrcid(queryFromUser)) {
             searchQueryUrl += "orcid:" + queryFromUser;
         } else {
-            searchQueryUrl += "{!edismax qf='given-and-family-names^50.0 family-name^10.0 given-names^5.0 credit-name^10.0 other-names^5.0 text^1.0' pf='given-and-family-names^50.0' mm=1}"
-                    + queryFromUser;
+            try {
+                searchQueryUrl += URLEncoder.encode("{!edismax qf='given-and-family-names^50.0 family-name^10.0 given-names^5.0 credit-name^10.0 other-names^5.0 text^1.0' pf='given-and-family-names^50.0' mm=1}"
+                        + queryFromUser,"UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                LOGGER.error("Issue encoding SearchUrl", e);
+            }
         }
         return searchQueryUrl;
     }

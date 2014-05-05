@@ -51,17 +51,14 @@
 	
 	    <!-- Effectively a wrapper around the client details service, converting client to user details -->
     <bean id="clientDetailsUserService" class="org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService">
-        <constructor-arg ref="orcidClientDetailsService"/>
+        <constructor-arg ref="clientDetailsManager"/>
     </bean>
 
-    <!-- The client details service to use when looking up clients in the db -->
-    <bean id="orcidClientDetailsService" class="org.orcid.core.oauth.service.OrcidClientDetailsServiceImpl"/>
-
-	<bean id="orcidTokenStore" class="org.orcid.core.oauth.service.OrcidTokenStoreServiceImpl" />
+    <bean id="orcidTokenStore" class="org.orcid.core.oauth.service.OrcidTokenStoreServiceImpl" />
 
     <!-- Use the provided token random token services to actually create the values, and plugin our tokenStore etc -->
     <bean id="tokenServices" class="org.orcid.core.oauth.service.OrcidRandomValueTokenServices">
-        <constructor-arg ref="orcidClientDetailsService"/>
+        <constructor-arg ref="clientDetailsManager"/>
         <constructor-arg value="3600"/>
         <constructor-arg value="631138519"/>
         <property name="tokenStore" ref="orcidTokenStore" />
@@ -142,9 +139,11 @@
 
 	<bean id="orcidIndexManager" class="org.orcid.core.manager.impl.OrcidIndexManagerImpl" />
 
-	<bean id="thirdPartyImportManager" class="org.orcid.core.manager.impl.ThirdPartyImportManagerImpl" />
+	<bean id="thirdPartyLinkManager" class="org.orcid.core.manager.impl.ThirdPartyLinkManagerImpl" />
 
 	<bean id="orcidSSOManager" class="org.orcid.core.manager.impl.OrcidSSOManagerImpl" />
+
+	<bean id="clientDetailsManager" class="org.orcid.core.manager.impl.ClientDetailsManagerImpl" />
 
 	<bean id="passwordGenerationManager"
 		class="org.orcid.core.manager.impl.PasswordGenerationManagerImpl">
@@ -366,8 +365,6 @@
 	<bean id="profileEventManager" class="org.orcid.core.profileEvent.ProfileEventManager" />
 	
 	<bean id="workManager" class="org.orcid.core.manager.impl.WorkManagerImpl" />
-	
-	<bean id="workContributorManager" class="org.orcid.core.manager.impl.WorkContributorManagerImpl" />
 	
 	<bean id="workExternalIdentifierManager" class="org.orcid.core.manager.impl.WorkExternalIdentifierManagerImpl" />
 	

@@ -53,6 +53,8 @@ public class OrcidSSOManagerImplTest extends BaseTest {
             "/data/ProfileWorksEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml");
     
     private String orcid1 = "4444-4444-4444-444X"; 
+    private String name = "SSO Name";
+    private String description = "SSO Description";
     
     @Resource
     OrcidSSOManagerImpl ssoManager;
@@ -78,7 +80,7 @@ public class OrcidSSOManagerImplTest extends BaseTest {
         HashSet<String> uris = new HashSet<String>();
         uris.add("http://1.com");
         uris.add("http://2.com");
-        ssoManager.grantSSOAccess(orcid1, uris);
+        ssoManager.grantSSOAccess(orcid1, "My App", "My Description", "MyWebsite", uris);
         ClientDetailsEntity clientDetails = ssoManager.getUserCredentials(orcid1);
         assertNotNull(clientDetails);
         assertNotNull(clientDetails.getAuthorizedGrantTypes());
@@ -110,7 +112,7 @@ public class OrcidSSOManagerImplTest extends BaseTest {
         uris.add("http://1.com");
         uris.add("http://2.com");
         //Grant SSO
-        ssoManager.grantSSOAccess(orcid1, uris);
+        ssoManager.grantSSOAccess(orcid1, "My App", "My Description", "MyWebsite", uris);
         ClientDetailsEntity clientDetails = ssoManager.getUserCredentials(orcid1);
         //Check the client details have been granted
         assertNotNull(clientDetails);

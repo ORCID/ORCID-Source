@@ -180,7 +180,7 @@ public class WorksControllerTest extends BaseControllerTest {
         assertEquals(2, work.getWorkTitle().getTranslatedTitle().getErrors().size());
 
         worksController.workUrlValidate(work);
-        assertEquals(1, work.getUrl().getErrors().size());
+        assertEquals(2, work.getUrl().getErrors().size());
 
         worksController.workJournalTitleValidate(work);
         assertEquals(1, work.getJournalTitle().getErrors().size());

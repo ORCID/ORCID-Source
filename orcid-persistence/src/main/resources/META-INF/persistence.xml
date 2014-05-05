@@ -34,7 +34,6 @@
         <class>org.orcid.persistence.jpa.entities.GivenPermissionByEntity</class>
         <class>org.orcid.persistence.jpa.entities.GivenPermissionToEntity</class>
         <class>org.orcid.persistence.jpa.entities.HearAboutEntity</class>
-        <class>org.orcid.persistence.jpa.entities.KeywordViewEntity</class>
         <class>org.orcid.persistence.jpa.entities.OtherNameEntity</class>
         <class>org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity</class>        
         <class>org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity</class>
@@ -53,7 +52,6 @@
         <class>org.orcid.persistence.jpa.entities.SecurityQuestionEntity</class>
         <class>org.orcid.persistence.jpa.entities.SubjectEntity</class>
         <class>org.orcid.persistence.jpa.entities.WebhookEntity</class>
-        <class>org.orcid.persistence.jpa.entities.WorkContributorEntity</class>
         <class>org.orcid.persistence.jpa.entities.WorkEntity</class>
         <class>org.orcid.persistence.jpa.entities.WorkExternalIdentifierEntity</class>
         <class>org.orcid.persistence.jpa.entities.WorkSourceEntity</class>
@@ -66,6 +64,7 @@
         <class>org.orcid.persistence.jpa.entities.ClientRedirectUriEntity</class>
         <class>org.orcid.persistence.jpa.entities.ClientResourceIdEntity</class>
         <class>org.orcid.persistence.jpa.entities.ClientScopeEntity</class>
+        <class>org.orcid.persistence.jpa.entities.ClientSecretEntity</class>
         <class>org.orcid.persistence.jpa.entities.OrcidGrantedAuthority</class>
         <class>org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail</class>
         <class>org.orcid.persistence.jpa.entities.OrcidOauth2AuthoriziationCodeDetail</class>

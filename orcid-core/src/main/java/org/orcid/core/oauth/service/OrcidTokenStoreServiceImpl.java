@@ -18,6 +18,7 @@ package org.orcid.core.oauth.service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -27,11 +28,12 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.oauth.OrcidOauth2UserAuthentication;
-import org.orcid.persistence.dao.ClientDetailsDao;
+import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -66,10 +68,13 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
     private OrcidOauth2TokenDetailService orcidOauthTokenDetailService;
 
     @Resource
-    private ClientDetailsDao clientDetailsDao;
+    private ClientDetailsManager clientDetailsManager;
 
     @Resource
     private ProfileEntityManager profileEntityManager;
+
+    @Resource
+    private ProfileDao profileDao;
 
     private static final AuthenticationKeyGenerator KEY_GENERATOR = new DefaultAuthenticationKeyGenerator();
 
@@ -307,7 +312,8 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
         if (detail == null) {
             detail = new OrcidOauth2TokenDetail();
         }
-        ClientDetailsEntity clientDetails = clientDetailsDao.findByClientId(authorizationRequest.getClientId());
+        String clientId = authorizationRequest.getClientId();
+        ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
         String authKey = KEY_GENERATOR.extractKey(authentication);
         detail.setAuthenticationKey(authKey);
         detail.setClientDetailsEntity(clientDetails);
@@ -315,7 +321,9 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
         OAuth2RefreshToken refreshToken = token.getRefreshToken();
         if (refreshToken != null && StringUtils.isNotBlank(refreshToken.getValue())) {
             if (refreshToken instanceof ExpiringOAuth2RefreshToken) {
-                detail.setRefreshTokenExpiration(((ExpiringOAuth2RefreshToken) refreshToken).getExpiration());
+                // Override the refresh token expiration from the client
+                // details, and make it the same as the token itself
+                detail.setRefreshTokenExpiration(token.getExpiration());
             }
             detail.setRefreshTokenValue(refreshToken.getValue());
         }

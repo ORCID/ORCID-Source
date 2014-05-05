@@ -293,7 +293,7 @@
 				</div>
 				<div class="control-group">
 					<button class="btn btn-primary" ng-click="addWork()" ng-disabled="addingWork" ng-class="{disabled:addingWork}"><@orcid.msg 'manual_work_form_contents.btnaddtolist'/></button>
-					<button id="" class="btn close-button" type="reset"  ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.deleteExternalIdentifier.cancel")}</button>					
+					<button id="" class="btn close-button" type="reset"  ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></button>					
 				</div>
 			</div>			
 		</div>		

@@ -42,6 +42,7 @@ import org.orcid.api.common.exception.OrcidBadRequestException;
 import org.orcid.api.common.exception.OrcidForbiddenException;
 import org.orcid.api.common.exception.OrcidNotFoundException;
 import org.orcid.api.t2.server.delegator.T2OrcidApiServiceDelegator;
+import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.core.manager.ProfileEntityManager;
@@ -63,6 +64,7 @@ import org.orcid.jaxb.model.message.SourceOrcid;
 import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.WebhookDao;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.WebhookEntity;
 import org.orcid.persistence.jpa.entities.keys.WebhookEntityPk;
@@ -95,6 +97,9 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
     @Resource(name = "orcidSearchManager")
     private OrcidSearchManager orcidSearchManager;
 
+    @Resource
+    private ClientDetailsManager clientDetailsManager; 
+    
     @Resource
     private ProfileEntityManager profileEntityManager;
 
@@ -221,6 +226,23 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
         return getOrcidMessageResponse(profile, orcid);
     }
 
+    /**
+     * finds and returns the {@link org.orcid.jaxb.model.message.OrcidMessage}
+     * wrapped in a {@link javax.xml.ws.Response} with only the funding
+     * details
+     * 
+     * @param orcid
+     *            the ORCID to be used to identify the record
+     * @return the {@link javax.xml.ws.Response} with the
+     *         {@link org.orcid.jaxb.model.message.OrcidMessage} within it
+     */
+    @Override
+    @AccessControl(requiredScope = ScopePathType.FUNDING_READ_LIMITED)
+    public Response findFundingDetails(String orcid) {
+        OrcidProfile profile = orcidProfileManager.retrieveClaimedFundings(orcid);
+        return getOrcidMessageResponse(profile, orcid);
+    }
+    
     /**
      * Creates a new profile and returns the saved representation of it. The
      * response should include the 'location' to retrieve the newly created
@@ -444,8 +466,13 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
             AuthorizationRequest authorizationRequest = ((OAuth2Authentication) authentication).getAuthorizationRequest();
             Source sponsor = new Source();
             String sponsorOrcid = authorizationRequest.getClientId();
-            OrcidProfile sponsorProfile = orcidProfileManager.retrieveOrcidProfile(sponsorOrcid);
-            sponsor.setSourceName(new SourceName(sponsorProfile.getOrcidBio().getPersonalDetails().getCreditName().getContent()));
+            ClientDetailsEntity clientDetails = clientDetailsManager.find(sponsorOrcid);
+            if(clientDetails != null) {
+                sponsor.setSourceName(new SourceName(clientDetails.getClientName()));
+            } else {
+                OrcidProfile sponsorProfile = orcidProfileManager.retrieveOrcidProfile(sponsorOrcid);
+                sponsor.setSourceName(new SourceName(sponsorProfile.getOrcidBio().getPersonalDetails().getCreditName().getContent()));                
+            }
             sponsor.setSourceOrcid(new SourceOrcid(sponsorOrcid));
             profile.getOrcidHistory().setSource(sponsor);
         }

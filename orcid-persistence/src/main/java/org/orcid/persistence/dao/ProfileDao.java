@@ -20,12 +20,18 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Query;
+
+import org.apache.commons.lang.StringUtils;
+import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidType;
+import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.EmailEventType;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
@@ -49,8 +55,6 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     boolean orcidExists(String orcid);
 
-    boolean emailExists(String email);
-
     void remove(String giverOrcid, String receiverOrcid);
 
     void removeChildrenWithGeneratedIds(ProfileEntity profileEntity);
@@ -62,6 +66,8 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     void updateIndexingStatus(String orcid, IndexingStatus indexingStatus);
 
     Long getConfirmedProfileCount();
+    
+    public void updateCountry(String orcid, Iso3166Country country, Visibility activitiesVisibilityDefault);
 
     boolean updateProfile(ProfileEntity profile);
 
@@ -92,9 +98,13 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     void updateEncryptedPassword(String orcid, String encryptedPassword);
 
     void updateSecurityQuestion(String orcid, Integer securityQuestionId, String encryptedSecurityAnswer);
+    
+    void updatePreferences(String orcid, boolean sendChangeNotifications, boolean sendOrcidNews, Visibility activitiesVisibilityDefault, boolean enableDeveloperTools);
 
     List<ProfileEntity> findProfilesByOrcidType(OrcidType type);
     
     boolean updateDeveloperTools(String orcid, boolean enabled);
+   
+    public boolean updateResearcherUrlsVisibility(String orcid, Visibility visibility);
 
 }

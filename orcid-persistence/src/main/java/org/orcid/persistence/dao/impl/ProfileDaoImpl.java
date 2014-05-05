@@ -32,6 +32,7 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidType;
+import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.BaseEntity;
 import org.orcid.persistence.jpa.entities.EmailEventType;
@@ -42,7 +43,6 @@ import org.orcid.persistence.jpa.entities.ProfileEventType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 
 @PersistenceContext(unitName = "orcid")
 public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implements ProfileDao {
@@ -137,7 +137,8 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
                   "SELECT e.email FROM email e "
                 + "LEFT JOIN email_event ev ON e.email = ev.email "
                 + "AND (ev.email_event_type = :evt or ev.email_event_type='VERIFY_EMAIL_7_DAYS_SENT_SKIPPED') "
-                + "JOIN profile p on p.orcid = e.orcid and p.claimed = true and p.account_expiry is null "
+                + "JOIN profile p on p.orcid = e.orcid and p.claimed = true " 
+                + "AND p.deprecated_date is null AND p.profile_deactivation_date is null AND p.account_expiry is null "
                 + "where ev.email IS NULL "
                 +    "and e.is_verified = false "
                 +    "and e.date_created < (now() - CAST('" + daysUnverified + "' AS INTERVAL DAY)) "
@@ -249,26 +250,6 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         TypedQuery<String> query = entityManager.createQuery("select p.id from ProfileEntity p where email is not null and orcidType != 'CLIENT'", String.class);
         query.setMaxResults(maxResults);
         return query.getResultList();
-    }
-
-    /**
-     * Similar to that of {@link #findByEmail}, but in this case it will simply
-     * return true or false dependent on the count returned by the query
-     * <p/>
-     * The email address to check CANNOT be null
-     * 
-     * @param email
-     *            the ORCID to limit the query to
-     * @return true if the count of the query is greater than 0 (should only
-     *         ever be 0 or 1)
-     */
-    @Override
-    public boolean emailExists(String email) {
-        Assert.hasText(email, "Cannot check for an empty email address");
-        TypedQuery<Long> query = entityManager.createQuery("select count(pe.email) from ProfileEntity pe where lower(pe.email) = :email", Long.class);
-        query.setParameter("email", email.toLowerCase());
-        Long result = query.getSingleResult();
-        return (result != null && result > 0);
     }
 
     @Override
@@ -494,6 +475,33 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         updateQuery.executeUpdate();
     }
 
+    @Override
+    @Transactional
+    public void updatePreferences(String orcid, boolean sendChangeNotifications, boolean sendOrcidNews, Visibility activitiesVisibilityDefault,
+            boolean enableDeveloperTools) {
+        Query updateQuery = entityManager
+                .createQuery("update ProfileEntity set lastModified = now(), sendChangeNotifications = :sendChangeNotifications, sendOrcidNews = :sendOrcidNews, activitiesVisibilityDefault = :activitiesVisibilityDefault, enableDeveloperTools = :enableDeveloperTools where orcid = :orcid");
+        updateQuery.setParameter("orcid", orcid);
+        updateQuery.setParameter("sendChangeNotifications", sendChangeNotifications);
+        updateQuery.setParameter("sendOrcidNews", sendOrcidNews);
+        updateQuery.setParameter("activitiesVisibilityDefault", activitiesVisibilityDefault);
+        updateQuery.setParameter("enableDeveloperTools", enableDeveloperTools);
+        updateQuery.executeUpdate();
+    }
+    
+
+    @Override
+    @Transactional
+    public void updateCountry(String orcid, Iso3166Country iso2Country, Visibility profileAddressVisibility) {
+        Query updateQuery = entityManager
+                .createQuery("update ProfileEntity set lastModified = now(), iso2_country = :iso2Country,  profile_address_visibility = :profileAddressVisibility where orcid = :orcid");
+        updateQuery.setParameter("orcid", orcid);
+        updateQuery.setParameter("iso2Country", iso2Country != null ? iso2Country.value() : null);
+        updateQuery.setParameter("profileAddressVisibility", StringUtils.upperCase(profileAddressVisibility.value()));
+        updateQuery.executeUpdate();
+    }
+
+
     /**
      * Return the list of profiles that belongs to the provided OrcidType
      * 
@@ -509,14 +517,14 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setParameter("type", type);
         return (List<ProfileEntity>) query.getResultList();
     }
-    
+
     /**
      * enable or disable developer tools from a user
      * 
-     * @param orcid         
-     *          the orcid of the profile to be updated
+     * @param orcid
+     *            the orcid of the profile to be updated
      * @param enabled
-     *          the new value of the developer tools            
+     *            the new value of the developer tools
      * @return true if the developer tools was successfully updated
      * */
     @Override
@@ -527,5 +535,20 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setParameter("enabled", enabled);
         return query.executeUpdate() > 0;
     }
+    
+    
+    @Override
+    @Transactional
+    public boolean updateResearcherUrlsVisibility(String orcid, Visibility visibility) {
+        Query query = entityManager
+                .createNativeQuery("update profile set last_modified=now(), researcher_urls_visibility=:researcher_urls_visibility, indexing_status='PENDING' where orcid=:orcid");
+        query.setParameter("researcher_urls_visibility", StringUtils.upperCase(visibility.value()));
+        query.setParameter("orcid", orcid);
 
+        boolean result = query.executeUpdate() > 0 ? true : false;
+
+        return result;
+    }
+
+    
 }

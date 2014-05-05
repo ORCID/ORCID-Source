@@ -43,48 +43,99 @@
 	<#-- hidden divs that trigger angular -->
 	<#if RequestParameters['recordClaimed']??>
 	    <div ng-controller="ClaimThanks" style="display: hidden;"></div>	    
-	<#elseif !Session.CHECK_EMAIL_VALIDATED?exists>
+	<#elseif !Session.CHECK_EMAIL_VALIDATED?exists && !inDelegationMode>
     	<div ng-controller="VerifyEmailCtrl" style="display: hidden;"></div>
 	</#if>
 
     <div class="col-md-3 lhs left-aside">
     	<div class="workspace-profile">
-            <h2 class="full-name">
-                <#if (profile.orcidBio.personalDetails.creditName.content)??>
-                    ${(profile.orcidBio.personalDetails.creditName.content)!}
-                <#else>
-                    ${(profile.orcidBio.personalDetails.givenNames.content)!} ${(profile.orcidBio.personalDetails.familyName.content)!}
-                </#if>                
-            </h2>
-            <div class="oid">
-            	<p class="orcid-id-container">		
-	            	<span class="mini-orcid-icon"></span>
-	            	<a href="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" id="orcid-id" class="orcid-id" title="Click for public view of ORCID iD">${baseUriHttp}/${(profile.orcidIdentifier.path)!}</a>
-            	<p>
-            </div>
+            <#include "includes/id_banner.ftl"/>
 	        <#if ((profile.orcidBio.personalDetails.otherNames.otherName)?size != 0)>
 	        	<p><strong><@orcid.msg 'workspace.Alsoknownas'/></strong><br />
 		       		<#list profile.orcidBio.personalDetails.otherNames.otherName as otherName>
 		       			${otherName.content}<#if otherName_has_next><br /></#if>
 		       		</#list></p>
 	       	</#if>
-            <#if (profile.orcidBio.contactDetails.address.country.content)??>
-                <p><strong><@orcid.msg 'public_profile.labelCountry'/></strong>
-                ${(profile.orcidBio.contactDetails.address.country.content)!}
-                </p>
-            </#if>
+            
+            <div ng-controller="CountryCtrl" class="country-controller">
+	        	<strong><@orcid.msg 'public_profile.labelCountry'/></strong>
+	               
+                <span ng-hide="showEdit == true">
+	                <span ng-show="countryForm != null && countryForm.iso2Country != null" ng-bind="countryForm.iso2Country.value">
+	                </span>
+                    
+	                <span ng-show="countryForm != null && countryForm.iso2Country == null" ng-cloak>
+	                   <@spring.message "workspace.select_country"/>
+	                </span>
+	                
+	                <span class="glyphicon glyphicon-pencil edit-country edit-option" ng-click="toggleEdit()" title=""></span>
+               </span>
+               
+               <div ng-show="showEdit == true" ng-cloak class="country-edit">
+               	  <a ng-click="close()" class="pull-right"><@orcid.msg 'freemarker.btnclose'/></a>               	  
+               	  <@orcid.privacyToggle  angularModel="countryForm.profileAddressVisibility.visibility"
+			         questionClick="toggleClickPrivacyHelp()"
+			         clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
+			         publicClick="setPrivacy('PUBLIC', $event)" 
+                 	     limitedClick="setPrivacy('LIMITED', $event)" 
+                 	     privateClick="setPrivacy('PRIVATE', $event)" />
+                  
+                  <select id="country" name="country" ng-model="countryForm.iso2Country.value" ng-change="setCountryForm()">
+		    			<option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
+						<#list isoCountries?keys as key>
+							<option value="${key}">${isoCountries[key]}</option>
+						</#list>
+				  </select>				  
+				  				  
+				</div>
+				
+            </div>
+            
+           
 	       	<#if (profile.orcidBio.keywords)?? && (profile.orcidBio.keywords.keyword?size != 0)>
 	        	<p><strong><@orcid.msg 'public_profile.labelKeywords'/></strong> 
 		       		<#list profile.orcidBio.keywords.keyword as keyword>
 		       			${keyword.content}<#if keyword_has_next>,</#if>
 		       		</#list></p>
 	       	</#if>
-	       	<#if (profile.orcidBio.researcherUrls)?? && (profile.orcidBio.researcherUrls.researcherUrl?size != 0)>
-	        	<p><strong><@orcid.msg 'public_profile.labelWebsites'/></strong> <br/>
-		       		<#list profile.orcidBio.researcherUrls.researcherUrl as url>
-		       		   <a href="<@orcid.absUrl url.url/>" target="_blank" rel="nofollow"><#if (url.urlName.content)! != "">${url.urlName.content}<#else>${url.url.value}</#if></a><#if url_has_next><br/></#if>
-		       		</#list></p>
-	       	</#if>
+	       	
+	       	<div ng-controller="WebsitesCtrl" class="websites-controller">
+	        	<div>
+	        	   <strong><@orcid.msg 'public_profile.labelWebsites'/></strong>
+	        	   <span ng-hide="showEdit == true">
+	        	      <span class="glyphicon glyphicon-pencil edit-country edit-option" ng-click="toggleEdit()" title=""></span><br />
+	        	      <div ng-repeat="website in websitesForm.websites" ng-cloak>
+	        	         <a href="{{website.url.value}}" target="_blank" rel="nofollow">{{website.name.value != null? website.name.value : website.url.value}}</a>
+	        	      </div>
+	        	   </span>
+	        	   <div ng-show="showEdit == true" ng-cloak class="websites-edit">
+	        	      <@orcid.privacyToggle  angularModel="websitesForm.visibility.visibility"
+			             questionClick="toggleClickPrivacyHelp()"
+			             clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
+			             publicClick="setPrivacy('PUBLIC', $event)" 
+                 	     limitedClick="setPrivacy('LIMITED', $event)" 
+                 	     privateClick="setPrivacy('PRIVATE', $event)" />
+	        	   
+	        	      <div ng-repeat="website in websitesForm.websites">
+	        	          <input type="text" ng-model="website.url.value" placeholder="${springMacroRequestContext.getMessage("manual_work_form_contents.labelURL")}"></input>
+	        	          <input type="text" ng-model="website.name.value" placeholder="${springMacroRequestContext.getMessage("manual_work_form_contents.labeldescription")}"></input>
+	        	          <a ng-click="deleteWebsite(website)" class="glyphicon glyphicon-trash grey"></a>
+	        	          <br />
+	        	          <span class="orcid-error" ng-show="website.url.errors.length > 0">
+						     <div ng-repeat='error in website.url.errors' ng-bind-html="error"></div>
+					      </span>
+	        	          <span class="orcid-error" ng-show="website.name.errors.length > 0">
+						     <div ng-repeat='error in website.name.errors' ng-bind-html="error"></div>
+					      </span>
+	        	      </div>
+	        	      <a class="glyphicon glyphicon-plus" ng-click="addNew()"></a><br />
+	        	      <button class="btn btn-primary" ng-click="setWebsitesForm()"><@spring.message "freemarker.btnsavechanges"/></button>
+	        	      <button class="btn" ng-click="close()"><@spring.message "freemarker.btncancel"/></button>
+	        	   </div>
+	        	   
+	           </div>
+	       	</div>
+	       	
        		<div ng-controller="ExternalIdentifierCtrl" ng-hide="!externalIdentifiersPojo.externalIdentifiers.length" ng-cloak>	       			
        			<p><strong><@orcid.msg 'public_profile.labelOtherIDs'/></strong></p>
        			<div ng-repeat='externalIdentifier in externalIdentifiersPojo.externalIdentifiers'>
@@ -124,9 +175,8 @@
 		                <br />
 		                <a href="#workspace-employments" class="btn-update no-icon" ng-click="workspaceSrvc.openEmployment()"><@orcid.msg 'workspace.view'/></a>
 		             </div>
-	                <!-- fundings -->
-					<div class="workspace-overview  col-md-3 col-sm-3 col-xs-6">
-        				<a href="#workspace-fundings" class="overview-count" ng-click="workspaceSrvc.openFunding()"><span ng-bind="fundingSrvc.fundings.length"></a>
+					<div class="workspace-overview col-md-3 col-sm-3 col-xs-6">
+        				<a href="#workspace-fundings" class="overview-count" ng-click="workspaceSrvc.openFunding()"><span ng-bind="fundingSrvc.fundings.length"></span></a>
         				<a href="#workspace-fundings" class="overview-title" ng-click="workspaceSrvc.openFunding()"><@orcid.msg 'workspace.Funding'/></a>
         				<br />
         				<a href="#workspace-employments" class="btn-update no-icon" ng-click="workspaceSrvc.openFunding()"><@orcid.msg 'workspace.view'/></a>
@@ -165,7 +215,7 @@
 		        				<a href="" ng-click="workspaceSrvc.toggleWorks()" class="toggle-text"><@orcid.msg 'workspace.Works'/></a>
 		        			</li>		        			
 							<li>
-								<a class="label btn-primary" ng-click="showWorkImportWizard()"><@orcid.msg 'workspace.import_works'/></a>
+								<a class="label btn-primary" ng-click="showWorkImportWizard()"><@orcid.msg 'workspace.link_works'/></a>
 							</li>	
 							<li>
 								<a href="" class="label btn-primary" ng-click="addWorkModal()"><@orcid.msg 'manual_work_form_contents.add_work_manually'/></a>
@@ -259,8 +309,8 @@
 		<div class="row">
 			<div class="col-md-12 col-sm-12 col-xs-12">
 				<h3><@orcid.msg 'manage.deleteExternalIdentifier.pleaseConfirm'/> {{removeExternalModalText}} </h3>
-				<button class="btn btn-danger" ng-click="removeExternalIdentifier()"><@orcid.msg 'manage.deleteExternalIdentifier.delete'/></button> 
-				<a ng-click="closeModal()"><@orcid.msg 'manage.deleteExternalIdentifier.cancel'/></a>
+				<button class="btn btn-danger" ng-click="removeExternalIdentifier()"><@orcid.msg 'freemarker.btnDelete'/></button> 
+				<a ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel'/></a>
 			<div>
 		<div>
 	<div>	
@@ -273,13 +323,13 @@
 			<div class="row">	
 				<div class="col-md-12 col-sm-12 col-xs-12">					
 					<a class="btn pull-right close-button" ng-click="closeModal()">X</a>
-	           		<h1 class="lightbox-title" style="text-transform: uppercase;"><@orcid.msg 'workspace.import_works'/></h1>
+	           		<h1 class="lightbox-title" style="text-transform: uppercase;"><@orcid.msg 'workspace.link_works'/></h1>
 				</div>
 			</div>
 			<div class="row">
 				<div class="col-md-12 col-sm-12 col-xs-12">
 	    	    	<div class="justify">
-						<p><@orcid.msg 'workspace.ImportResearchActivities.description'/></p>
+						<p><@orcid.msg 'workspace.LinkResearchActivitiess.description'/></p>
 					</div>            	    	           	
     		    	<#list workImportWizards?sort_by("displayName") as thirdPartyDetails>
 	        	       	<#assign redirect = (thirdPartyDetails.redirectUris.redirectUri[0].value) >
@@ -299,8 +349,8 @@
             <div class="row footer">
 				<div class="col-md-12 col-sm-12 col-xs-12">
 					<p>
-				   		<strong><@orcid.msg 'workspace.ImportResearchActivities.footer.title'/></strong>	    
-	        			<@orcid.msg 'workspace.ImportResearchActivities.footer.description1'/> <a href="<@orcid.msg 'workspace.ImportResearchActivities.footer.description.url'/>"><@orcid.msg 'workspace.ImportResearchActivities.footer.description.link'/></a> <@orcid.msg 'workspace.ImportResearchActivities.footer.description2'/>
+				   		<strong><@orcid.msg 'workspace.LinkResearchActivitiess.footer.title'/></strong>	    
+	        			<@orcid.msg 'workspace.LinkResearchActivitiess.footer.description1'/> <a href="<@orcid.msg 'workspace.LinkResearchActivitiess.footer.description.url'/>"><@orcid.msg 'workspace.LinkResearchActivitiess.footer.description.link'/></a> <@orcid.msg 'workspace.LinkResearchActivitiess.footer.description2'/>
 			    	</p>
 				</div>
 	        </div>
@@ -316,13 +366,13 @@
 			<div class="row">	
 				<div class="col-md-12 col-sm-12 col-xs-12">					
 					<a class="btn pull-right close-button" ng-click="closeModal()">X</a>
-	           		<h1 class="lightbox-title" style="text-transform: uppercase;"><@orcid.msg 'workspace.import_funding'/></h1>
+	           		<h1 class="lightbox-title" style="text-transform: uppercase;"><@orcid.msg 'workspace.link_funding'/></h1>
 				</div>
 			</div>
 			<div class="row">
 				<div class="col-md-12 col-sm-12 col-xs-12">
 	    	    	<div class="justify">
-						<p><@orcid.msg 'workspace.ImportResearchActivities.description'/></p>
+						<p><@orcid.msg 'workspace.LinkResearchActivitiess.description'/></p>
 					</div>            	    	           	
     		    	<#list fundingImportWizards?sort_by("displayName") as thirdPartyDetails>
 	        	       	<#assign redirect = (thirdPartyDetails.redirectUris.redirectUri[0].value) >
@@ -342,8 +392,8 @@
             <div class="row footer">
 				<div class="col-md-12 col-sm-12 col-xs-12">
 					<p>
-				   		<strong><@orcid.msg 'workspace.ImportResearchActivities.footer.title'/></strong>	    
-	        			<@orcid.msg 'workspace.ImportResearchActivities.footer.description1'/> <a href="<@orcid.msg 'workspace.ImportResearchActivities.footer.description.url'/>"><@orcid.msg 'workspace.ImportResearchActivities.footer.description.link'/></a> <@orcid.msg 'workspace.ImportResearchActivities.footer.description2'/>
+				   		<strong><@orcid.msg 'workspace.LinkResearchActivitiess.footer.title'/></strong>	    
+	        			<@orcid.msg 'workspace.LinkResearchActivitiess.footer.description1'/> <a href="<@orcid.msg 'workspace.LinkResearchActivitiess.footer.description.url'/>"><@orcid.msg 'workspace.LinkResearchActivitiess.footer.description.link'/></a> <@orcid.msg 'workspace.LinkResearchActivitiess.footer.description2'/>
 			    	</p>
 				</div>
 	        </div>

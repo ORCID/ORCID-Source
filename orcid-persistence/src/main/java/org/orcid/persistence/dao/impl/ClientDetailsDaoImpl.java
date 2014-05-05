@@ -16,16 +16,21 @@
  */
 package org.orcid.persistence.dao.impl;
 
-import org.orcid.persistence.dao.ClientDetailsDao;
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
+import java.util.Date;
+import java.util.List;
 
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+
+import org.orcid.persistence.dao.ClientDetailsDao;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.ClientSecretEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Declan Newman
@@ -40,8 +45,8 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     }
 
     @Override
-    @Transactional("transactionManager")
-    public ClientDetailsEntity findByClientId(String orcid) {
+    @Cacheable(value = "client-details", key = "#orcid.concat('-').concat(#lastModified)")
+    public ClientDetailsEntity findByClientId(String orcid, Date lastModified) {
         TypedQuery<ClientDetailsEntity> query = entityManager.createQuery("from ClientDetailsEntity where id = :orcid", ClientDetailsEntity.class);
         query.setParameter("orcid", orcid);
         try {
@@ -53,11 +58,42 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     }
 
     @Override
-    @Transactional("transactionManager")
-    public void removeByClientId(String orcid) {
-        Query query = entityManager.createQuery("delete from ClientDetailsEntity  where id = :orcid");
+    public Date getLastModified(String orcid) {
+        TypedQuery<Date> query = entityManager.createQuery("select lastModified from ClientDetailsEntity where id = :orcid", Date.class);
         query.setParameter("orcid", orcid);
-        query.executeUpdate();
+        return query.getSingleResult();
     }
 
+    @Override
+    @Transactional
+    public void updateLastModified(String orcid) {
+        Query updateQuery = entityManager.createQuery("update ClientDetailsEntity set lastModified = now() where id = :orcid");
+        updateQuery.setParameter("orcid", orcid);
+        updateQuery.executeUpdate();
+    }
+    
+    @Override
+    @Transactional
+    public boolean removeClientSecret(String clientId, String clientSecret) {
+        Query deleteQuery = entityManager.createNativeQuery("delete from client_secret where client_details_id=:clientId and client_secret=:clientSecret");
+        deleteQuery.setParameter("clientId", clientId);
+        deleteQuery.setParameter("clientSecret", clientSecret);
+        return deleteQuery.executeUpdate() > 0;
+    }
+    
+    @Override
+    @Transactional
+    public boolean createClientSecret(String clientId, String clientSecret) {
+        Query deleteQuery = entityManager.createNativeQuery("INSERT INTO client_secret (client_details_id, client_secret, date_created, last_modified) VALUES (:clientId, :clientSecret, now(), now())");
+        deleteQuery.setParameter("clientId", clientId);
+        deleteQuery.setParameter("clientSecret", clientSecret);
+        return deleteQuery.executeUpdate() > 0;
+    }
+    
+    @Override
+    public List<ClientSecretEntity> getClientSecretsByClientId(String clientId) {
+        TypedQuery<ClientSecretEntity> query = entityManager.createQuery("From ClientSecretEntity WHERE client_details_id=:clientId", ClientSecretEntity.class);
+        query.setParameter("clientId", clientId);
+        return query.getResultList();
+    }
 }

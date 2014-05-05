@@ -23,7 +23,7 @@
 	                    http://www.springframework.org/schema/beans/spring-beans-3.1.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
 
 	<import resource="classpath*:orcid-core-context.xml" />
-	<import resource="classpath*:orcid-t2-client-context.xml" />
+	<import resource="classpath*:orcid-api-client-context.xml" />
 	
 	<bean id="t2OAuthClient" class="org.orcid.api.t2.integration.T2OAuthOrcidApiClientImpl">
 		<constructor-arg value="${org.orcid.t2.client.base_url}"/>
@@ -54,6 +54,8 @@
 	<!-- wire up helper class for testing -->
 	<bean id="orcidClientDataHelper" class="org.orcid.api.t2.integration.OrcidClientDataHelper">
 		<property name="OrcidClientGroupManager" ref="orcidClientGroupManager" />
+		<property name="ClientDetailsManager" ref="clientDetailsManager" />
+		<property name="OrcidProfileManager" ref="orcidProfileManager" />		
 	</bean>
 	
 </beans>

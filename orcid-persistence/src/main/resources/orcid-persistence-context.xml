@@ -74,8 +74,6 @@
     
     <bean id="workExternalIdentifierDao" class="org.orcid.persistence.dao.impl.WorkExternalIdentifierDaoImpl" />
     
-    <bean id="workContributorDao" class="org.orcid.persistence.dao.impl.WorkContributorDaoImpl" />
-
     <bean id="clientDetailsDao" class="org.orcid.persistence.dao.impl.ClientDetailsDaoImpl" />
 
     <bean id="clientAuthorisedGrantTypeDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">

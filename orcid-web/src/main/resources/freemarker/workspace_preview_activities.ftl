@@ -16,21 +16,34 @@
     =============================================================================
 
 -->
-    <h3 class="workspace-header-public">${springMacroRequestContext.getMessage("org.orcid.jaxb.model.message.AffiliationType.education")}</h3>
-    <div ng-controller="PublicEduAffiliation">
-    	<#include "includes/affiliate/edu_body_inc.ftl" />
-    </div>
-    <h3 class="workspace-header-public">${springMacroRequestContext.getMessage("org.orcid.jaxb.model.message.AffiliationType.employment")}</h3>
-    <div ng-controller="PublicEmpAffiliation">
-    	<#include "includes/affiliate/emp_body_inc.ftl" />
-	</div>
-	<h3 class="workspace-header-public">${springMacroRequestContext.getMessage("workspace.Funding")}</h3>
-	<div ng-controller="PublicFundingCtrl">
-   		<#include "includes/funding/body_funding_inc.ftl" />
-	</div>
+    <#if !(affiliationsEmpty)??>
+		<!-- Education -->
+		<div class="workspace-header-public" ng-controller="PublicEduAffiliation" ng-hide="!affiliationsSrvc.educations.length" ng-cloack>
+	    	<h3>${springMacroRequestContext.getMessage("org.orcid.jaxb.model.message.AffiliationType.education")}</h3>
+    		<#include "includes/affiliate/edu_body_inc.ftl" />
+    	</div>
+    	<!-- Employment -->
+    	<div class="workspace-header-public" ng-controller="PublicEmpAffiliation" ng-hide="!affiliationsSrvc.employments.length" ng-cloack>
+	    	<h3>${springMacroRequestContext.getMessage("org.orcid.jaxb.model.message.AffiliationType.employment")}</h3>		    
+	    	<#include "includes/affiliate/emp_body_inc.ftl" />			
+		</div>    
+    </#if>
+    
+	<#if !(fundingEmpty)??>
+		<!-- Funding -->
+		<div class="workspace-header-public" ng-controller="PublicFundingCtrl">      
+			<h3>${springMacroRequestContext.getMessage("workspace.Funding")}</h3>		
+   			<#include "includes/funding/body_funding_inc.ftl" />
+		</div>
+	</#if>
 		
-    <h3 class="workspace-header-public">${springMacroRequestContext.getMessage("workspace.Works")}</h3>
-    <#include "includes/work/public_works_body_list.ftl" />
+	<#if !(worksEmpty)??>
+		<!-- Works -->
+		<div class="workspace-header-public">
+    		<h3>${springMacroRequestContext.getMessage("workspace.Works")}</h3>
+    		<#include "includes/work/public_works_body_list.ftl" />
+    	</div>
+    </#if>
     
     
     

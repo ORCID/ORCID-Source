@@ -218,9 +218,7 @@ the software.
                         	<exclude>**/src/main/webapp/static/javascript/angularjs/**</exclude>
                         	<exclude>**/src/main/webapp/static/javascript/json3/**</exclude>
                         	<exclude>**/src/main/webapp/static/javascript/typeahead/**</exclude>
-                        	<exclude>**/src/main/webapp/static/javascript/respond.min.js</exclude>
-                        	<exclude>**/src/main/webapp/static/javascript/respond.src.js</exclude>
-                        	<exclude>**/src/main/webapp/static/javascript/respond.proxy.js</exclude>
+                        	<exclude>**/src/main/webapp/static/javascript/respond.*.js</exclude>
                         	<exclude>**/src/main/webapp/static/css/jquery-*.css</exclude>
                         	<exclude>**/src/main/webapp/static/css/bootstrap*</exclude>
                         	<exclude>**/src/main/webapp/static/twitter-bootstrap/**</exclude>
@@ -961,17 +959,6 @@ the software.
     </dependencyManagement>
 
     <repositories>
-        <repository>
-            <id>orcid-maven-repo</id>
-            <name>Orcid Maven Repository</name>
-            <url>https://raw.github.com/ORCID/ORCID-Maven-Repo/master</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
         <repository>
             <id>spring-s3</id>
             <name>Spring S3</name>

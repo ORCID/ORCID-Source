@@ -521,7 +521,7 @@ $(function () {
 	$('#form-search').on('submit', function (e){
 		if ($('[name="huh_radio"]:checked', this).val() === "registry") {
 			e.preventDefault();
-			window.location = baseUrl + "orcid-search/quick-search/?searchQuery=" + $('[type="search"]', this).val();
+			window.location = baseUrl + "orcid-search/quick-search/?searchQuery=" + encodeURIComponent($('[type="search"]', this).val());
 		}
 	});
 			
@@ -538,7 +538,7 @@ $(function () {
 	
 });
 
-/* START: workIdLinkJs v0.0.4 */
+/* START: workIdLinkJs v0.0.5 */
 /* https://github.com/ORCID/workIdLinkJs */
 
 /* browser and NodeJs compatible */
@@ -634,6 +634,7 @@ $(function () {
    };
 
    typeMap['pmc'] = function (id) {
+      if (id.toLowerCase().startsWith('pmc')) return 'http://europepmc.org/articles/' + id;
       if (id.toLowerCase().startsWith('www.ncbi.nlm.nih.gov')) return 'http://' + id;
       return 'http://www.ncbi.nlm.nih.gov/pubmed/' + id;
    };
@@ -691,6 +692,8 @@ $(function () {
 /* END: workIdLinkJs */
 
 
+
+
 $(function (){
 	$('*[wiJs-data]').each(function(index) {
 		var $this = $(this);
@@ -704,7 +707,7 @@ $(function (){
 	});
 });
 
-/* start bibtexParse 0.0.5 */
+/* start bibtexParse 0.0.7 */
 
 //Original work by Henrik Muehe (c) 2010
 //
@@ -872,7 +875,7 @@ $(function (){
 				return this.value_quotes();
 			} else {
 				var k = this.key();
-				if (this.strings[k.toUpperCase()]) {
+				if (this.strings[k]) {
 					return this.strings[k];
 				} else if (k.match("^[0-9]+$")) {
 					return k;
@@ -902,7 +905,7 @@ $(function (){
 				if (this.input[this.pos].match("[a-zA-Z0-9+_:\\./-]")) {
 					this.pos++;
 				} else {
-					return this.input.substring(start, this.pos).toUpperCase();
+					return this.input.substring(start, this.pos);
 				};
 			};
 		};
@@ -950,7 +953,7 @@ $(function (){
 
 		this.string = function() {
 			var kv = this.key_equals_value();
-			this.strings[kv[0].toUpperCase()] = kv[1];
+			this.strings[kv[0]] = kv[1];
 		};
 
 		this.preamble = function() {
@@ -973,7 +976,7 @@ $(function (){
 
 		this.bibtex = function() {
 			while (this.matchAt()) {
-				var d = this.directive().toUpperCase();
+				var d = this.directive();
 				this.match("{");
 				if (d == "@STRING") {
 					this.string();
@@ -999,6 +1002,8 @@ $(function (){
 })(typeof exports === 'undefined' ? this['bibtexParse'] = {} : exports);
 
 /* end bibtexParse */
+
+
 
 /* Mobile detection, useful for colorbox lightboxes resizing */
 function isMobile(){	

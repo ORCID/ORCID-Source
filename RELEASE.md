@@ -4,6 +4,50 @@ We release updates to the Registry regularly. Below is a list of the improvement
 * [2013 Releases](https://trello.com/b/ZgYVAlel)
 * [2012 Releases](https://trello.com/b/vyCDYdvR)
 
+
+## release-1.1.50.5
+(2014-05-15)
+
+* Move APIs to 1.1
+
+* Push out ability to have multiple client secrets allowing us to rotate secrets when needed
+
+* Update how we handle PMC identifiers
+
+
+
+## release-1.1.49.11
+(2014-04-10)
+
+* Tons of improvements to delegation
+
+* Tons of improvements to public client
+
+* Move client details out of profile to it's own table
+
+* Other small improvements
+
+
+
+## release-1.1.48.23
+(2014-04-01)
+
+* Improve search with phrases (help find names with Chinese characters)
+
+* Fix Current/past email selector
+
+* Add delegates by email (hidden)
+
+* Refactor import wizard clear cache to work across load balanced machines
+
+* Delegates trusted list improvements (hidden)
+
+* Public Client Authentication Hidden
+
+* UI Improvements
+
+
+
 ## release-1.1.47.14
 (2014-03-18)
 

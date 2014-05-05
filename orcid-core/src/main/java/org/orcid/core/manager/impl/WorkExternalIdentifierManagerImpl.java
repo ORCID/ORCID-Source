@@ -18,11 +18,8 @@ package org.orcid.core.manager.impl;
 
 import javax.annotation.Resource;
 
-import org.orcid.core.manager.WorkContributorManager;
 import org.orcid.core.manager.WorkExternalIdentifierManager;
-import org.orcid.persistence.dao.WorkContributorDao;
 import org.orcid.persistence.dao.WorkExternalIdentifierDao;
-import org.orcid.persistence.jpa.entities.WorkContributorEntity;
 import org.orcid.persistence.jpa.entities.WorkExternalIdentifierEntity;
 
 public class WorkExternalIdentifierManagerImpl implements WorkExternalIdentifierManager {

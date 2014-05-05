@@ -19,7 +19,6 @@ package org.orcid.core.manager;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -44,7 +43,6 @@ import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.jaxb.model.clientgroup.RedirectUris;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.TransactionStatus;
@@ -75,7 +73,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
     private TransactionTemplate transactionTemplate;
 
     @Resource
-    private ClientDetailsDao clientDetailsDao;
+    private ClientDetailsManager clientDetailsManager;
 
     @Mock
     private OrcidIndexManager orcidIndexManager;
@@ -124,7 +122,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         assertEquals("http://www.journals.elsevier.com/ecological-complexity/orcid-callback", createdRedirectUris.get(0).getValue());
         assertEquals("grant-read-wizard", createdRedirectUris.get(0).getType().value());
         // Look up client details directly to check scopes
-        ClientDetailsEntity complexityEntity = clientDetailsDao.find(complexityClient.getClientId());
+        ClientDetailsEntity complexityEntity = clientDetailsManager.find(complexityClient.getClientId());
         Set<String> clientScopeTypes = complexityEntity.getScope();
         assertNotNull(clientScopeTypes);
         assertTrue(clientScopeTypes.contains("/orcid-bio/update"));
@@ -164,7 +162,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         assertEquals(1, createdRedirectUris.size());
         assertEquals("http://www.journals.elsevier.com/ecological-complexity/orcid-callback", createdRedirectUris.get(0).getValue());        
         // Look up client details directly to check scopes
-        ClientDetailsEntity complexityEntity = clientDetailsDao.find(complexityClient.getClientId());
+        ClientDetailsEntity complexityEntity = clientDetailsManager.find(complexityClient.getClientId());
         Set<String> clientScopeTypes = complexityEntity.getScope();
         assertNotNull(clientScopeTypes);
         assertTrue(clientScopeTypes.contains("/orcid-profile/read-limited"));

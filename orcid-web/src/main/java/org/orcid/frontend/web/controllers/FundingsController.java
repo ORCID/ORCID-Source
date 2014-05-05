@@ -29,6 +29,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.validator.routines.UrlValidator;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.locale.LocaleManager;
@@ -532,9 +533,7 @@ public class FundingsController extends BaseWorkspaceController {
     @RequestMapping(value = "/funding/urlValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     FundingForm validateUrl(@RequestBody FundingForm funding) {
-        funding.getUrl().setErrors(new ArrayList<String>());
-        if (!PojoUtil.isEmpty(funding.getUrl()) && funding.getUrl().getValue().length() > 350)
-            setError(funding.getUrl(), "fundings.length_less_350");
+        validateUrl(funding.getUrl());
         return funding;
     }
 

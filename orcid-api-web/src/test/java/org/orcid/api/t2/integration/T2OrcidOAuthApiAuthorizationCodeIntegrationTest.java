@@ -21,6 +21,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,6 +29,7 @@ import java.util.regex.Pattern;
 import javax.annotation.Resource;
 import javax.ws.rs.core.MultivaluedMap;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.After;
@@ -42,6 +44,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.api.t2.T2OAuthAPIService;
+import org.orcid.core.manager.impl.OrcidSSOManagerImpl;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.Affiliations;
@@ -90,7 +93,7 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-oauth-orcid-t2-client-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-oauth-orcid-api-client-context.xml" })
 /**
  * 
  * @author Will Simpson
@@ -130,6 +133,9 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     @Resource
     private ProfileDao profileDao;
 
+    @Resource
+    OrcidSSOManagerImpl ssoManager;
+    
     @Value("${org.orcid.web.base.url:http://localhost:8080/orcid-web}")
     private String webBaseUrl;
 
@@ -190,6 +196,14 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         assertNotNull(orcidMessage2);
     }
 
+    @Test
+    public void testGetAuthenticate() throws JSONException, InterruptedException {
+        String scopes = "/authenticate";
+        String authorizationCode = obtainAuthorizationCode(scopes);
+        String accessToken = obtainAccessToken(authorizationCode, scopes);        
+        assertNotNull(accessToken);
+        assertTrue(StringUtils.isNotBlank(accessToken));
+    }
     
     @Test
     public void testInvalidCodesFail() throws JSONException, InterruptedException {
@@ -226,8 +240,6 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         ClientResponse tokenResponse = oauthT2Client.obtainOauth2TokenPost("client_credentials", params);
         assertEquals(200, tokenResponse.getStatus());        
     }
-    
-    
     
     @Test
     public void testAddWork() throws InterruptedException, JSONException {
@@ -499,7 +511,13 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     }
 
     private String obtainAuthorizationCode(String scopes) throws InterruptedException {
-        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, CLIENT_DETAILS_ID, scopes, redirectUri));
+        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, CLIENT_DETAILS_ID, scopes, redirectUri));       
+        return obtainAuthorizationCode(CLIENT_DETAILS_ID, scopes, redirectUri);
+    }
+    
+    
+    private String obtainAuthorizationCode(String orcid, String scopes, String redirectUri) throws InterruptedException {
+        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, orcid, scopes, redirectUri));
         WebElement userId = webDriver.findElement(By.id("userId"));
         userId.sendKeys("michael@bentine.com");
         WebElement password = webDriver.findElement(By.id("password"));

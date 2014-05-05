@@ -71,10 +71,10 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
                 if (validitySeconds > 0) {
                     updatedAccessToken.setExpiration(new Date(System.currentTimeMillis() + (validitySeconds * 1000L)));
                 }
-                tokenStore.storeAccessToken(existingAccessToken, authentication);
+                tokenStore.storeAccessToken(updatedAccessToken, authentication);
                 LOGGER.info("Existing reusable access token found: clientId={}, scopes={}, userOrcid={}", new Object[] { authInfo.getClientId(), authInfo.getScopes(),
                         authInfo.getUserOrcid() });
-                return existingAccessToken;
+                return updatedAccessToken;
             }
         }
 

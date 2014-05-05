@@ -33,7 +33,6 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.manager.LoadOptions;
-import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.security.DefaultPermissionChecker;
 import org.orcid.core.security.PermissionChecker;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
@@ -50,10 +49,10 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
+import org.orcid.persistence.jpa.entities.FundingExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.FuzzyDateEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
-import org.orcid.persistence.jpa.entities.FundingExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
@@ -73,6 +72,7 @@ import org.orcid.utils.NullUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.oauth2.provider.ClientDetails;
 
 /**
  * <p/>
@@ -147,18 +147,15 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
     @Override
     public OrcidClient toOrcidClient(ProfileEntity profileEntity) {
-        OrcidClient client = new OrcidClient();
-        client.setDisplayName(profileEntity.getCreditName());
-        client.setClientId(profileEntity.getId());
-        client.setShortDescription(profileEntity.getBiography());
-        client.setType(profileEntity.getClientType());
-        Set<ResearcherUrlEntity> researcherUrls = profileEntity.getResearcherUrls();
-        if (researcherUrls != null && !researcherUrls.isEmpty()) {
-            client.setWebsite(researcherUrls.iterator().next().getUrl());
-        }
+        OrcidClient client = new OrcidClient();        
+        client.setClientId(profileEntity.getId());        
+        client.setType(profileEntity.getClientType());        
         ClientDetailsEntity clientDetailsEntity = profileEntity.getClientDetails();
         if (clientDetailsEntity != null) {
             client.setClientSecret(clientDetailsEntity.getClientSecretForJpa());
+            client.setDisplayName(clientDetailsEntity.getClientName());
+            client.setShortDescription(clientDetailsEntity.getClientDescription());
+            client.setWebsite(clientDetailsEntity.getClientWebsite());
             Set<ClientRedirectUriEntity> redirectUriEntities = clientDetailsEntity.getClientRegisteredRedirectUris();
             RedirectUris redirectUris = new RedirectUris();
             client.setRedirectUris(redirectUris);
@@ -520,11 +517,14 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         // Set the source name
         // If it is a client, lets use the source_name if it is public
         if (OrcidType.CLIENT.equals(sourceEntity.getOrcidType())) {
-            Visibility affiliationSourceVisibility = (sourceEntity.getCreditNameVisibility() == null) ? OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT.getVisibility()
-                    : sourceEntity.getCreditNameVisibility();
-            if (Visibility.PUBLIC.equals(affiliationSourceVisibility)) {
+            ClientDetailsEntity clientDetails = sourceEntity.getClientDetails();
+            if(clientDetails != null) {
+                source.setSourceName(new SourceName(clientDetails.getClientName()));
+            } else {
+                //This should never happen since the client name in client_details must not be empty
                 source.setSourceName(new SourceName(sourceEntity.getCreditName()));
-            }
+            }  
+            
         } else {
             // If it is a user, check if it have a credit name and is visible
             if (!StringUtils.isEmpty(sourceEntity.getCreditName()) && Visibility.PUBLIC.equals(sourceEntity.getCreditNameVisibility())) {
@@ -587,11 +587,11 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         if (researcherUrlEntities != null) {
             ResearcherUrls researcherUrls = new ResearcherUrls();
             researcherUrls.setVisibility(profileEntity.getResearcherUrlsVisibility());
-            for (ResearcherUrlEntity researcherUrl : researcherUrlEntities) {
+            for (ResearcherUrlEntity researcherUrl : researcherUrlEntities) {                
                 ResearcherUrl url = new ResearcherUrl(new Url(researcherUrl.getUrl()));
                 if (!StringUtils.isBlank(researcherUrl.getUrlName()))
                     url.setUrlName(new UrlName(researcherUrl.getUrlName()));
-                researcherUrls.getResearcherUrl().add(url);
+                researcherUrls.getResearcherUrl().add(url);                               
             }
             return researcherUrls;
         }
@@ -762,11 +762,11 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                     ProfileEntity acceptedClientProfileEntity = acceptedClient != null ? acceptedClient.getProfileEntity() : null;
                     if (acceptedClientProfileEntity != null) {
                         applicationSummary.setApplicationOrcid(new ApplicationOrcid(getOrcidIdBase(acceptedClient.getClientId())));
-                        applicationSummary.setApplicationName(new ApplicationName(acceptedClientProfileEntity.getCreditName()));
-                        SortedSet<ResearcherUrlEntity> researcherUrls = acceptedClient.getProfileEntity().getResearcherUrls();
-                        if (researcherUrls != null && !researcherUrls.isEmpty()) {
-                            applicationSummary.setApplicationWebsite(new ApplicationWebsite(researcherUrls.first().getUrl()));
-                        }
+                        
+                        //Set the name application name
+                        applicationSummary.setApplicationName(new ApplicationName(acceptedClient.getClientName()));
+                        //Set application website
+                        applicationSummary.setApplicationWebsite(new ApplicationWebsite(acceptedClient.getClientWebsite()));
                         applicationSummary.setApprovalDate(new ApprovalDate(DateUtils.convertToXMLGregorianCalendar(tokenDetail.getDateCreated())));
 
                         // add group information
@@ -872,13 +872,15 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         WorkSource workSource = new WorkSource(getOrcidIdBase(sourceProfile.getId()));
 
         // Set the source name
-        // If it is a client, lets use the source_name if it is public
-        if (sourceProfile.getOrcidType() != null && sourceProfile.getOrcidType().equals(OrcidType.CLIENT)) {
-            Visibility workSourceVisibility = (sourceProfile.getCreditNameVisibility() == null) ? OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT.getVisibility()
-                    : sourceProfile.getCreditNameVisibility();
-            if (Visibility.PUBLIC.equals(workSourceVisibility)) {
+        // If it is a client, use the client_name from the client_details table
+        if (OrcidType.CLIENT.equals(sourceProfile.getOrcidType())) {            
+            ClientDetailsEntity clientDetails = sourceProfile.getClientDetails();
+            if(clientDetails != null) {
+                workSource.setSourceName(clientDetails.getClientName());
+            } else {
+                //This should never happen since the client name in client_details must not be empty
                 workSource.setSourceName(sourceProfile.getCreditName());
-            }
+            }            
         } else {
             // If it is a user, check if it have a credit name and is visible
             if (!StringUtils.isEmpty(sourceProfile.getCreditName()) && Visibility.PUBLIC.equals(sourceProfile.getCreditNameVisibility())) {

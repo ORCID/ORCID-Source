@@ -73,6 +73,30 @@
         $(".orcid-id").tooltip({
             placement: "top"
         });
+        
+        $(".back").tooltip({
+            placement: "bottom"
+        });
+        
+        $(".save").tooltip({
+            placement: "bottom"
+        });
+        
+        $(".edit").tooltip({
+            placement: "bottom"
+        });
+        
+        $(".revoke").tooltip({
+            placement: "bottom"
+        });
+        
+        $(".add").tooltip({
+            placement: "bottom"
+        });
+        
+        $(".delete").tooltip({
+            placement: "bottom"
+        });
     };
 
     var secondaryNavCleanup = function() {
@@ -141,7 +165,9 @@
     };
     
     /* Menu Handler Mobile / Desktop - Prototype implementation */
-    var menuHandler = function(){        
+    var menuHandler = function(){
+    	
+    	var language = $('#language-codes option:selected').text();
         
         var menu = function(menu){
             this.menu = menu;
@@ -149,7 +175,11 @@
         
         menu.prototype.data = function(){
             return this.menu;
-        };        
+        };
+        	
+        
+        
+        
         
         originalMenu = new menu($('.header .navigation').html()); //Desktop menu data
          
@@ -160,7 +190,8 @@
                 if (ww > 767){ //Tablet ~ PC
                     $(".container .header .search form input[type='search']").blur();
                     
-                    $('.header .navigation ul li ul > li.expanded > a').removeClass('slideDown'); //For handling menu animation for third level menus, only on mobile
+                    $('.header .navigation ul li ul > li.expanded > a').removeClass('slideDown'); //For handling menu animation for third level menus, only on mobile                    
+                    
                     
                     restoreDesktopMenu();                                                           
                 }else{
@@ -194,6 +225,8 @@
         var prepareMobileMenu = function(){
             var topItems = $('.header .navigation > .menu > li > a');
             var topItemsLi = $('.header .navigation > .menu > li');
+            $('.header .navigation > .menu > li.last.leaf').hide();
+            
 
             var links = $('.header .navigation > .menu > li > .menu > li').has('ul').children('a');
             var toInject = $('.header .navigation > .menu > li > .menu > li > ul.menu');                           
@@ -347,7 +380,25 @@
 	    	// something bad is happening!
 	    	console.log("error with loggin check on :" + window.location.href);
 	    });	
-	}	
+	};	
+	
+	
+	var developerToolsTabs =  function(){
+		$('.developer-tools .tab').click(function(e){			
+			e.preventDefault();
+			if($(this).hasClass('expanded')){
+				$(this).css('display', 'none');
+				$('.slidebox').slideUp();
+				$('.developer-tools .tab-container .collapsed').css('display','inline');
+				$('.developer-tools .tab-container').css('background', '#FFF');
+			}else{
+				$(this).css('display', 'none'); //show collapsed								
+				$('.slidebox').slideDown();
+				$('.developer-tools .tab-container .expanded').css('display','inline');
+				$('.developer-tools .tab-container').css('background', '#EBEBEB');
+			}
+		});		
+	};
     
     /*============================================================
         Page initialisation
@@ -361,9 +412,17 @@
         popupHandler();
         menuHack();        
         menuHandler();
+        developerToolsTabs();
         //setLoginStatusIcon();
+        selectableInputs();
     };
 
+    var selectableInputs = function(){
+    	$(".selectable").click(function () {
+    		$(this).select();
+    	});
+    };
+    
     init();
 
 })(jQuery);

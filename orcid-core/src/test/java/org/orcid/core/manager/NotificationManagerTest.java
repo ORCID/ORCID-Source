@@ -39,9 +39,14 @@ import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.DelegateSummary;
 import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
+import org.orcid.jaxb.model.message.Locale;
+import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.dao.GenericDao;
+import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.EmailEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,6 +70,9 @@ public class NotificationManagerTest extends BaseTest {
     @Mock
     private GenericDao<ProfileEventEntity, Long> profileEventDao;
 
+    @Mock
+    private ProfileDao profileDao;
+
     @Resource
     private EncryptionManager encryptionManager;
 
@@ -84,6 +92,7 @@ public class NotificationManagerTest extends BaseTest {
         NotificationManagerImpl notificationManagerImpl = getTargetObject(notificationManager, NotificationManagerImpl.class);
         notificationManagerImpl.setEncryptionManager(encryptionManager);
         notificationManagerImpl.setProfileEventDao(profileEventDao);
+        notificationManagerImpl.setProfileDao(profileDao);
     }
 
     @Test
@@ -101,87 +110,102 @@ public class NotificationManagerTest extends BaseTest {
     public void testResetEmail() throws Exception {
         URI baseUri = new URI("http://testserver.orcid.org");
 
+        for (Locale locale : Locale.values()) {
+            OrcidProfile orcidProfile = getProfile(locale);
+            orcidProfile.setPassword("r$nd0m");
+            EncryptionManager mockEncypter = mock(EncryptionManager.class);
+            getTargetObject(notificationManager, NotificationManagerImpl.class).setEncryptionManager(mockEncypter);
+            when(mockEncypter.encryptForExternalUse(any(String.class))).thenReturn(
+                    "Ey+qsh7G2BFGEuqqkzlYRidL4NokGkIgDE+1KOv6aLTmIyrppdVA6WXFIaQ3KsQpKEb9FGUFRqiWorOfhbB2ww==");
+            notificationManager.sendPasswordResetEmail(orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), orcidProfile, baseUri);
+        }
+    }
+
+    private OrcidProfile getProfile(Locale locale) throws JAXBException {
         OrcidMessage orcidMessage = (OrcidMessage) unmarshaller.unmarshal(getClass().getResourceAsStream(ORCID_INTERNAL_FULL_XML));
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
-        orcidProfile.setPassword("r$nd0m");
-        EncryptionManager mockEncypter = mock(EncryptionManager.class);
-        getTargetObject(notificationManager, NotificationManagerImpl.class).setEncryptionManager(mockEncypter);
-        when(mockEncypter.encryptForExternalUse(any(String.class)))
-                .thenReturn("Ey+qsh7G2BFGEuqqkzlYRidL4NokGkIgDE+1KOv6aLTmIyrppdVA6WXFIaQ3KsQpKEb9FGUFRqiWorOfhbB2ww==");
-        notificationManager.sendPasswordResetEmail(
-                orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(),orcidProfile, baseUri);
+        orcidProfile.getOrcidPreferences().setLocale(locale);
+        return orcidProfile;
     }
 
     @Test
     @Rollback
     public void testAmendEmail() throws JAXBException, IOException, URISyntaxException {
-
-        OrcidMessage orcidMessage = (OrcidMessage) unmarshaller.unmarshal(getClass().getResourceAsStream(ORCID_INTERNAL_FULL_XML));
-        OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
-        notificationManager.sendAmendEmail(orcidProfile, "8888-8888-8888-8880");
+        for (Locale locale : Locale.values()) {
+            OrcidProfile orcidProfile = getProfile(locale);
+            notificationManager.sendAmendEmail(orcidProfile, "8888-8888-8888-8880");
+        }
     }
 
     @Test
     @Rollback
     public void testAddedDelegatesSentCorrectEmail() throws JAXBException, IOException, URISyntaxException {
+        for (Locale locale : Locale.values()) {
+            OrcidProfile orcidProfile = getProfile(locale);
+            DelegationDetails firstNewDelegate = new DelegationDetails();
+            DelegateSummary firstNewDelegateSummary = new DelegateSummary();
+            firstNewDelegateSummary.setCreditName(new CreditName("Jimmy Dove"));
+            firstNewDelegate.setDelegateSummary(firstNewDelegateSummary);
+            String delegateOrcid = "1234-5678-1234-5678";
+            firstNewDelegateSummary.setOrcidIdentifier(new OrcidIdentifier(delegateOrcid));
 
-        OrcidMessage orcidMessage = (OrcidMessage) unmarshaller.unmarshal(getClass().getResourceAsStream(ORCID_INTERNAL_FULL_XML));
-        OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
-        DelegationDetails firstNewDelegate = new DelegationDetails();
-        DelegateSummary firstNewDelegateSummary = new DelegateSummary();
-        firstNewDelegateSummary.setCreditName(new CreditName("Jimmy Dove"));
-        firstNewDelegate.setDelegateSummary(firstNewDelegateSummary);
+            ProfileEntity delegateProfileEntity = new ProfileEntity(delegateOrcid);
+            EmailEntity delegateEmail = new EmailEntity();
+            delegateEmail.setId("jimmy@dove.com");
+            delegateProfileEntity.setPrimaryEmail(delegateEmail);
+            when(profileDao.find(delegateOrcid)).thenReturn(delegateProfileEntity);
 
-        DelegationDetails secondNewDelegate = new DelegationDetails();
-        DelegateSummary secondNewDelegateSummary = new DelegateSummary();
-        secondNewDelegate.setDelegateSummary(secondNewDelegateSummary);
+            DelegationDetails secondNewDelegate = new DelegationDetails();
+            DelegateSummary secondNewDelegateSummary = new DelegateSummary();
+            secondNewDelegate.setDelegateSummary(secondNewDelegateSummary);
 
-        notificationManager.sendNotificationToAddedDelegate(orcidProfile, Arrays.asList(new DelegationDetails[] { firstNewDelegate }));
+            notificationManager.sendNotificationToAddedDelegate(orcidProfile, Arrays.asList(new DelegationDetails[] { firstNewDelegate }));
+        }
     }
 
     @Test
     @Rollback
     public void testSendDeactivateEmail() throws JAXBException, IOException, URISyntaxException {
-        OrcidMessage orcidMessage = (OrcidMessage) unmarshaller.unmarshal(getClass().getResourceAsStream(ORCID_INTERNAL_FULL_XML));
-        OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
-        notificationManager.sendOrcidDeactivateEmail(orcidProfile, new URI("http://testserver.orcid.org"));
+        for (Locale locale : Locale.values()) {
+            OrcidProfile orcidProfile = getProfile(locale);
+            notificationManager.sendOrcidDeactivateEmail(orcidProfile, new URI("http://testserver.orcid.org"));
+
+        }
     }
 
     @Test
     @Rollback
     public void testApiCreatedRecordEmail() throws JAXBException, IOException, URISyntaxException {
-
-        OrcidMessage orcidMessage = (OrcidMessage) unmarshaller.unmarshal(getClass().getResourceAsStream(ORCID_INTERNAL_FULL_XML));
-        OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
-        notificationManager.sendApiRecordCreationEmail(
-                orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(),orcidProfile);
+        for (Locale locale : Locale.values()) {
+            OrcidProfile orcidProfile = getProfile(locale);
+            notificationManager.sendApiRecordCreationEmail(orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), orcidProfile);
+        }
     }
 
-    
     @Test
     public void testSendVerificationReminderEmail() throws JAXBException, IOException, URISyntaxException {
-
-        OrcidMessage orcidMessage = (OrcidMessage) unmarshaller.unmarshal(getClass().getResourceAsStream(ORCID_INTERNAL_FULL_XML));
-        OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
-        notificationManager.sendVerificationReminderEmail(orcidProfile, orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
+        for (Locale locale : Locale.values()) {
+            OrcidProfile orcidProfile = getProfile(locale);
+            notificationManager.sendVerificationReminderEmail(orcidProfile, orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
+        }
     }
-    
+
     @Test
     @Rollback
     public void testClaimReminderEmail() throws JAXBException, IOException, URISyntaxException {
-
-        OrcidMessage orcidMessage = (OrcidMessage) unmarshaller.unmarshal(getClass().getResourceAsStream(ORCID_INTERNAL_FULL_XML));
-        OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
-        notificationManager.sendClaimReminderEmail(orcidProfile, 2);
+        for (Locale locale : Locale.values()) {
+            OrcidProfile orcidProfile = getProfile(locale);
+            notificationManager.sendClaimReminderEmail(orcidProfile, 2);
+        }
     }
-
 
     @Test
     public void testChangeEmailAddress() throws Exception {
-        OrcidMessage orcidMessage = (OrcidMessage) unmarshaller.unmarshal(getClass().getResourceAsStream(ORCID_INTERNAL_FULL_XML));
-        OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
-        Email originalEmail = new Email("original@email.com");
-        notificationManager.sendEmailAddressChangedNotification(orcidProfile, originalEmail, new URI("http://testserver.orcid.org"));
+        for (Locale locale : Locale.values()) {
+            OrcidProfile orcidProfile = getProfile(locale);
+            Email originalEmail = new Email("original@email.com");
+            notificationManager.sendEmailAddressChangedNotification(orcidProfile, originalEmail, new URI("http://testserver.orcid.org"));
+        }
     }
 
 }

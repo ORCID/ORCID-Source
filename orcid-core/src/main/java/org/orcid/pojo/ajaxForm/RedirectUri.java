@@ -23,7 +23,7 @@ import java.util.List;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.ScopePathType;
 
-public class RedirectUri implements ErrorsInterface, Serializable {
+public class RedirectUri implements ErrorsInterface, Serializable, Comparable<RedirectUri> {
 
     private static final long serialVersionUID = 2L;
     
@@ -84,5 +84,23 @@ public class RedirectUri implements ErrorsInterface, Serializable {
     }
     public void setScopes(List<String> scopes) {
         this.scopes = scopes;
-    } 
+    }
+
+    @Override
+    public int compareTo(RedirectUri other) {
+        if(other == null) {
+            return 1;
+        } else {
+            if(PojoUtil.isEmpty(this.value)) {
+                if(PojoUtil.isEmpty(other.getValue()))
+                    return 0;
+                else 
+                    return -1;
+            } else {
+                String s1 = this.value.getValue();
+                String s2 = PojoUtil.isEmpty(other.getValue()) ? "" : other.getValue().getValue();
+                return s1.compareTo(s2);
+            }
+        }
+    }         
 }

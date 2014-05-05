@@ -66,10 +66,12 @@ public class HomeController extends BaseController {
 
     @RequestMapping(value = "/tomcatUp.json")
     @Produces(value = { MediaType.APPLICATION_JSON })
-    public @ResponseBody String tomcatUp(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
+    public @ResponseBody
+    String tomcatUp(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
+        request.setAttribute("isMonitoring", true);
         return "{tomcatUp:true}";
     }
-    
+
     @RequestMapping(value = "/robots.txt")
     public String dynamicRobots(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
         String requestedDomain = request.getServerName();
@@ -84,7 +86,7 @@ public class HomeController extends BaseController {
     public @ResponseBody
     org.orcid.pojo.Local langJson(HttpServletRequest request, @RequestParam(value = "lang", required = false) String lang) throws NoSuchRequestHandlingMethodException {
         if (lang != null) {
-            String orcid = getCurrentUserOrcid();
+            String orcid = getRealUserOrcid();
             if (orcid != null) {
                 OrcidProfile existingProfile = orcidProfileManager.retrieveOrcidProfile(orcid);
                 org.orcid.jaxb.model.message.Locale locale = existingProfile.getOrcidPreferences().getLocale();
@@ -100,7 +102,7 @@ public class HomeController extends BaseController {
                 }
             }
         }
-        
+
         Locale locale = RequestContextUtils.getLocale(request);
         return localeManager.getJavascriptMessages(locale);
 
