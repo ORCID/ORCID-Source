@@ -1042,6 +1042,11 @@ function BiographyCtrl($scope, $compile) {
 		$scope.showEdit = false;
 	};
 
+	$scope.cancel = function() {
+		$scope.getBiographyForm();
+		$scope.showEdit = false;
+	};
+
 	
 	$scope.getBiographyForm = function(){
 		$.ajax({

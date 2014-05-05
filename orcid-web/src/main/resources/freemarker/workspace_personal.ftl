@@ -29,7 +29,7 @@
 				</span>
    			    <br />
    	            <button class="btn btn-primary" ng-click="setBiographyForm()"><@spring.message "freemarker.btnsavechanges"/></button>
-	        	<button class="btn" ng-click="close()"><@spring.message "freemarker.btncancel"/></button>
+	        	<button class="btn" ng-click="cancel()"><@spring.message "freemarker.btncancel"/></button>
 	        	
    			</div>
    	</div>
