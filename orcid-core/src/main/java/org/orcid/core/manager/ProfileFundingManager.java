@@ -1,25 +1,9 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2013 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
-package org.orcid.persistence.dao;
+package org.orcid.core.manager;
 
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 
-public interface ProfileFundingDao extends GenericDao<ProfileFundingEntity, Long> {
+public interface ProfileFundingManager {
 
     /**
      * Removes the relationship that exists between a funding and a profile.
@@ -59,27 +43,10 @@ public interface ProfileFundingDao extends GenericDao<ProfileFundingEntity, Long
      *         database
      * */
     ProfileFundingEntity addProfileFunding(ProfileFundingEntity newProfileFundingEntity);
-
+        
     /**
-     * Get the funding associated with the client orcid and the organization id
-     * 
-     * @param clientOrcid
-     *            The client orcid
-     * 
-     * @param orgId
-     *            The id of the organization
-     * 
-     * @return the ProfileFundingEntity object
+     * A process that will process all funding subtypes, filter and index them. 
      * */
-    ProfileFundingEntity getProfileFundingEntity(String orgId, String clientOrcid);
-
-    /**
-     * Get the funding associated with the given profileFunding id
-     * 
-     * @param profileFundingId
-     *            The id of the ProfileFundingEntity object
-     * 
-     * @return the ProfileFundingEntity object
-     * */
-    ProfileFundingEntity getProfileFundingEntity(String profileFundingId);
+    void indexFundingSubTypes();
+    
 }

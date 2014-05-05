@@ -144,7 +144,9 @@
         <constructor-arg value="org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity" />
     </bean>                
                 
-	<bean id="orcidPropsDao" class="org.orcid.persistence.dao.impl.OrcidPropsDaoImpl" />                
+	<bean id="orcidPropsDao" class="org.orcid.persistence.dao.impl.OrcidPropsDaoImpl" />      
+	
+	<bean id="fundingSubTypeToIndexDao" class="org.orcid.persistence.dao.impl.FundingSubTypeToIndexDaoImpl" />          
                 
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="liquibase">
         <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />

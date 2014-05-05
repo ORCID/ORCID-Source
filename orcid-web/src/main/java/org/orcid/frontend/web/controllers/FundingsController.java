@@ -29,10 +29,10 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.validator.routines.UrlValidator;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.message.Funding;
@@ -44,7 +44,6 @@ import org.orcid.persistence.dao.FundingExternalIdentifierDao;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.dao.OrgDisambiguatedSolrDao;
 import org.orcid.persistence.dao.ProfileDao;
-import org.orcid.persistence.dao.ProfileFundingDao;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.FundingExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
@@ -86,7 +85,7 @@ public class FundingsController extends BaseWorkspaceController {
     private ProfileDao profileDao;
 
     @Resource
-    ProfileFundingDao profileFundingDao;
+    ProfileFundingManager profileFundingManager;
 
     @Resource
     FundingExternalIdentifierDao fundingExternalIdentifierDao;
@@ -195,7 +194,7 @@ public class FundingsController extends BaseWorkspaceController {
             }
             fundings.setFundings(fundingList);
             currentProfile.getOrcidActivities().setFundings(fundings);
-            profileFundingDao.removeProfileFunding(currentProfile.getOrcidIdentifier().getPath(), funding.getPutCode().getValue());
+            profileFundingManager.removeProfileFunding(currentProfile.getOrcidIdentifier().getPath(), funding.getPutCode().getValue());
         }
         return deletedFunding;
     }
@@ -327,7 +326,7 @@ public class FundingsController extends BaseWorkspaceController {
             ProfileFundingEntity profileGrantEntity = jaxb2JpaAdapter.getNewProfileFundingEntity(funding.toOrcidFunding(), userProfile);
             profileGrantEntity.setSource(userProfile);
             // Persists the profile funding object
-            ProfileFundingEntity newProfileGrant = profileFundingDao.addProfileFunding(profileGrantEntity);
+            ProfileFundingEntity newProfileGrant = profileFundingManager.addProfileFunding(profileGrantEntity);
 
             // Persist the external identifiers
             SortedSet<FundingExternalIdentifierEntity> externalIdentifiers = profileGrantEntity.getExternalIdentifiers();
@@ -420,7 +419,7 @@ public class FundingsController extends BaseWorkspaceController {
                 for (Funding funding : fundings) {
                     if (funding.getPutCode().equals(fundingForm.getPutCode().getValue())) {
                         // Update the privacy of the funding
-                        profileFundingDao.updateProfileFunding(currentProfile.getOrcidIdentifier().getPath(), fundingForm.getPutCode().getValue(), fundingForm
+                        profileFundingManager.updateProfileFunding(currentProfile.getOrcidIdentifier().getPath(), fundingForm.getPutCode().getValue(), fundingForm
                                 .getVisibility().getVisibility());
                     }
                 }
