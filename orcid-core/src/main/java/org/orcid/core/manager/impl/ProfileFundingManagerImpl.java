@@ -30,8 +30,12 @@ import org.orcid.persistence.dao.FundingSubTypeToIndexDao;
 import org.orcid.persistence.dao.ProfileFundingDao;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.solr.entities.OrgDefinedFundingTypeSolrDocument;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ProfileFundingManagerImpl implements ProfileFundingManager {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProfileFundingManagerImpl.class);
     
     @Resource
     private ProfileFundingDao profileFundingDao;
@@ -113,6 +117,7 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
      * A process that will process all funding subtypes, filter and index them. 
      * */
     public void indexFundingSubTypes() {
+        LOGGER.info("Indexing funding subtypes");
         List<String> subtypes = fundingSubTypeToIndexDao.getSubTypes();
         List<String> wordsToFilter = new ArrayList<String>();
         try {
@@ -133,8 +138,11 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
                 OrgDefinedFundingTypeSolrDocument document = new OrgDefinedFundingTypeSolrDocument();
                 document.setOrgDefinedFundingType(subtype);
                 fundingSubTypeSolrDao.persist(document);              
-            }           
+            } else {
+                LOGGER.warn("A word have been flaged as inappropiate: " + subtype);
+            }
             fundingSubTypeToIndexDao.removeSubTypes(subtype);
-        }        
+        }
+        LOGGER.info("Funding subtypes have been correcly indexed");
     }
 }

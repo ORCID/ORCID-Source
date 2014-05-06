@@ -55,6 +55,7 @@ import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.FundingExternalIdentifierForm;
 import org.orcid.pojo.ajaxForm.FundingForm;
 import org.orcid.pojo.ajaxForm.FundingTitleForm;
+import org.orcid.pojo.ajaxForm.OrgDefinedFundingSubType;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.TranslatedTitle;
@@ -121,7 +122,12 @@ public class FundingsController extends BaseWorkspaceController {
         result.setFundingName(new Text());
         result.setFundingType(Text.valueOf(""));
         result.setSourceName(new String());
-        result.setOrganizationDefinedFundingType(Text.valueOf(""));
+        
+        OrgDefinedFundingSubType subtype = new OrgDefinedFundingSubType();
+        subtype.setAlreadyIndexed(false);
+        subtype.setSubtype(Text.valueOf(""));        
+        result.setOrganizationDefinedFundingSubType(subtype);
+        
         FundingTitleForm title = new FundingTitleForm();
         title.setTitle(new Text());
         TranslatedTitle tt = new TranslatedTitle();
@@ -310,7 +316,8 @@ public class FundingsController extends BaseWorkspaceController {
         copyErrors(funding.getUrl(), funding);
         copyErrors(funding.getEndDate(), funding);
         copyErrors(funding.getFundingType(), funding);
-        copyErrors(funding.getOrganizationDefinedFundingType(), funding);
+        if(funding.getOrganizationDefinedFundingSubType() != null)
+            copyErrors(funding.getOrganizationDefinedFundingSubType().getSubtype(), funding);
 
         for (FundingExternalIdentifierForm extId : funding.getExternalIdentifiers()) {
             copyErrors(extId.getType(), funding);
@@ -359,8 +366,8 @@ public class FundingsController extends BaseWorkspaceController {
             currentProfile.getOrcidActivities().getFundings().getFundings().add(newFunding);
             
             //Send the new funding sub type for indexing
-            if(!PojoUtil.isEmpty(newProfileFunding.getOrganizationDefinedType()))
-                profileFundingManager.addFundingSubType(newProfileFunding.getOrganizationDefinedType(), getEffectiveUserOrcid());
+            if(funding.getOrganizationDefinedFundingSubType() != null && !PojoUtil.isEmpty(funding.getOrganizationDefinedFundingSubType().getSubtype()) && !funding.getOrganizationDefinedFundingSubType().isAlreadyIndexed())
+                profileFundingManager.addFundingSubType(funding.getOrganizationDefinedFundingSubType().getSubtype().getValue(), getEffectiveUserOrcid());
         }
 
         return funding;
@@ -590,11 +597,15 @@ public class FundingsController extends BaseWorkspaceController {
     @RequestMapping(value = "/funding/organizationDefinedTypeValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     FundingForm validateOrganizationDefinedType(@RequestBody FundingForm funding) {
-        funding.getOrganizationDefinedFundingType().setErrors(new ArrayList<String>());
-        if (!PojoUtil.isEmpty(funding.getOrganizationDefinedFundingType())) {
-            String value = funding.getOrganizationDefinedFundingType().getValue();
+        if(funding.getOrganizationDefinedFundingSubType() == null)
+            funding.setOrganizationDefinedFundingSubType(new OrgDefinedFundingSubType());
+        if(funding.getOrganizationDefinedFundingSubType().getSubtype() == null)
+            funding.getOrganizationDefinedFundingSubType().setSubtype(Text.valueOf(""));
+        funding.getOrganizationDefinedFundingSubType().getSubtype().setErrors(new ArrayList<String>());
+        if (!PojoUtil.isEmpty(funding.getOrganizationDefinedFundingSubType().getSubtype())) {
+            String value = funding.getOrganizationDefinedFundingSubType().getSubtype().getValue();
             if(value.length() > 255)
-                setError(funding.getOrganizationDefinedFundingType(), "fundings.lenght_less_255");            
+                setError(funding.getOrganizationDefinedFundingSubType().getSubtype(), "fundings.lenght_less_255");            
         }
         return funding;
     }

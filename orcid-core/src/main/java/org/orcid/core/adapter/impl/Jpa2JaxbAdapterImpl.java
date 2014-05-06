@@ -389,7 +389,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         }
         funding.setTitle(title);
         funding.setType(profileFundingEntity.getType() != null ? profileFundingEntity.getType() : null);
-        funding.setOrganizationDefinedFundingType(profileFundingEntity.getOrganizationDefinedType() != null ? new OrganizationDefinedFundingType(profileFundingEntity.getOrganizationDefinedType()) : null);
+        funding.setOrganizationDefinedFundingType(profileFundingEntity.getOrganizationDefinedType() != null ? new OrganizationDefinedFundingSubType(profileFundingEntity.getOrganizationDefinedType()) : null);
         funding.setUrl(StringUtils.isNotEmpty(profileFundingEntity.getUrl()) ? new Url(profileFundingEntity.getUrl()) : new Url(new String()));
         funding.setVisibility(profileFundingEntity.getVisibility() != null ? profileFundingEntity.getVisibility() : Visibility.PRIVATE);
         funding.setPutCode(Long.toString(profileFundingEntity.getId()));

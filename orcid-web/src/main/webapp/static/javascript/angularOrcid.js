@@ -2008,6 +2008,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	$scope.moreInfo = {};
 	$scope.privacyHelp = {};
 	$scope.editTranslatedTitle = false; 	
+	$scope.lastIndexedTerm = null;
 	
 	$scope.toggleClickMoreInfo = function(key) {
 		if (!document.documentElement.className.contains('no-touch')) {
@@ -2043,7 +2044,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 			dataType: 'json',
 			success: function(data) {						
 				$scope.$apply(function() {
-					$scope.editFunding = data;
+					$scope.editFunding = data;					
 					$scope.showAddModal();
 				});
 			}
@@ -2179,9 +2180,19 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 		});
 	};
 	
+	$scope.setSubTypeAsNotIndexed = function() {
+		if($scope.lastIndexedTerm != $.trim($('#organizationDefinedType').val())) {
+			console.log("value changed: " + $scope.lastIndexedTerm + " <-> " + $('#organizationDefinedType').val());
+			$scope.editFunding.organizationDefinedFundingSubType.alreadyIndexed = false;
+		}			
+	};
+	
+	
 	$scope.selectOrgDefinedFundingSubType = function(subtype) {
 		if (subtype != undefined && subtype != null) {
-			$scope.editFunding.organizationDefinedFundingType.value = subtype.value;
+			$scope.editFunding.organizationDefinedFundingSubType.subtype.value = subtype.value;
+			$scope.editFunding.organizationDefinedFundingSubType.alreadyIndexed = true;	
+			$scope.lastIndexedTerm = subtype.value;
 			$scope.unbindTypeaheadForSubTypes();
 		}
 	};

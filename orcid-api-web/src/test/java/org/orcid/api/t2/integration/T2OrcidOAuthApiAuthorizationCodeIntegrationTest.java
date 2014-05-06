@@ -73,7 +73,7 @@ import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.Organization;
 import org.orcid.jaxb.model.message.OrganizationAddress;
-import org.orcid.jaxb.model.message.OrganizationDefinedFundingType;
+import org.orcid.jaxb.model.message.OrganizationDefinedFundingSubType;
 import org.orcid.jaxb.model.message.Title;
 import org.orcid.jaxb.model.message.TranslatedTitle;
 import org.orcid.jaxb.model.message.Url;
@@ -492,7 +492,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         title.setTitle(new Title(FUNDING_TITLE_2));
         funding.setTitle(title);
         funding.setType(FundingType.SALARY_AWARD);
-        funding.setOrganizationDefinedFundingType(new OrganizationDefinedFundingType("My Org Type"));
+        funding.setOrganizationDefinedFundingType(new OrganizationDefinedFundingSubType("My Org Type"));
         funding.setVisibility(Visibility.PUBLIC);
         Amount amount = new Amount();
         amount.setCurrencyCode("CRC");

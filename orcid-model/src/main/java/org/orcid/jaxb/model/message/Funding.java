@@ -77,7 +77,7 @@ public class Funding implements VisibilityType, Activity, Serializable {
     @XmlElement(name = "funding-type", required = true)
     protected FundingType type;
     @XmlElement(name = "organization-defined-type")
-    protected OrganizationDefinedFundingType organizationDefinedFundingType;
+    protected OrganizationDefinedFundingSubType organizationDefinedFundingType;
     @XmlElement(name = "funding-title", required = true)
     protected FundingTitle title;    
     @XmlElement(required = true)
@@ -126,11 +126,11 @@ public class Funding implements VisibilityType, Activity, Serializable {
         this.type = type;
     }
 
-    public OrganizationDefinedFundingType getOrganizationDefinedFundingType() {
+    public OrganizationDefinedFundingSubType getOrganizationDefinedFundingType() {
         return organizationDefinedFundingType;
     }
 
-    public void setOrganizationDefinedFundingType(OrganizationDefinedFundingType organizationDefinedFundingType) {
+    public void setOrganizationDefinedFundingType(OrganizationDefinedFundingSubType organizationDefinedFundingType) {
         this.organizationDefinedFundingType = organizationDefinedFundingType;
     }
 

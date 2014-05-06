@@ -33,7 +33,7 @@ import org.orcid.jaxb.model.message.FuzzyDate;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Organization;
 import org.orcid.jaxb.model.message.OrganizationAddress;
-import org.orcid.jaxb.model.message.OrganizationDefinedFundingType;
+import org.orcid.jaxb.model.message.OrganizationDefinedFundingSubType;
 import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.message.Url;
 
@@ -51,7 +51,7 @@ public class FundingForm implements ErrorsInterface, Serializable {
 
     private Text fundingType;
     
-    private Text organizationDefinedFundingType;
+    private OrgDefinedFundingSubType organizationDefinedFundingSubType;
 
     private Text currencyCode;
 
@@ -87,7 +87,7 @@ public class FundingForm implements ErrorsInterface, Serializable {
 
     private String fundingTypeForDisplay;
     
-    private String dateSortString;
+    private String dateSortString;        
 
     public List<String> getErrors() {
         return errors;
@@ -145,12 +145,12 @@ public class FundingForm implements ErrorsInterface, Serializable {
         this.fundingType = fundingType;
     }
 
-    public Text getOrganizationDefinedFundingType() {
-        return organizationDefinedFundingType;
+    public OrgDefinedFundingSubType getOrganizationDefinedFundingSubType() {
+        return organizationDefinedFundingSubType;
     }
 
-    public void setOrganizationDefinedFundingType(Text organizationDefinedFundingType) {
-        this.organizationDefinedFundingType = organizationDefinedFundingType;
+    public void setOrganizationDefinedFundingSubType(OrgDefinedFundingSubType organizationDefinedFundingSubType) {
+        this.organizationDefinedFundingSubType = organizationDefinedFundingSubType;
     }
 
     public Text getCurrencyCode() {
@@ -295,8 +295,8 @@ public class FundingForm implements ErrorsInterface, Serializable {
         if (!PojoUtil.isEmpty(fundingType))
             result.setType(FundingType.fromValue(fundingType.getValue()));
         
-        if(!PojoUtil.isEmpty(organizationDefinedFundingType))
-            result.setOrganizationDefinedFundingType(new OrganizationDefinedFundingType(organizationDefinedFundingType.getValue()));
+        if(organizationDefinedFundingSubType != null && !PojoUtil.isEmpty(organizationDefinedFundingSubType.getSubtype()))
+            result.setOrganizationDefinedFundingType(new OrganizationDefinedFundingSubType(organizationDefinedFundingSubType.getSubtype().getValue()));
         
         if (!PojoUtil.isEmpty(url))
             result.setUrl(new Url(url.getValue()));
@@ -374,8 +374,11 @@ public class FundingForm implements ErrorsInterface, Serializable {
         if (funding.getType() != null)
             result.setFundingType(Text.valueOf(funding.getType().value()));
 
-        if(funding.getOrganizationDefinedFundingType() != null)
-            result.setOrganizationDefinedFundingType(Text.valueOf(funding.getOrganizationDefinedFundingType().getContent()));
+        if(funding.getOrganizationDefinedFundingType() != null) {
+            OrgDefinedFundingSubType OrgDefinedFundingSubType = new OrgDefinedFundingSubType();
+            OrgDefinedFundingSubType.setSubtype(Text.valueOf(funding.getOrganizationDefinedFundingType().getContent()));
+            result.setOrganizationDefinedFundingSubType(OrgDefinedFundingSubType);
+        }            
         
         Source source = funding.getSource();
         if (source != null && source.getSourceName() != null)
