@@ -46,7 +46,8 @@ public class OtherNamesForm implements ErrorsInterface, Serializable {
                 if (otherName.getContent() != null)
                     on.getOtherNames().add(Text.valueOf(otherName.getContent()));
         }
-        on.setVisibility(Visibility.valueOf(otherNames.getVisibility()));
+        if (otherNames.getVisibility() == null) on.setVisibility(new Visibility());
+        else on.setVisibility(Visibility.valueOf(otherNames.getVisibility()));
         return on;
     }
 
@@ -73,8 +74,8 @@ public class OtherNamesForm implements ErrorsInterface, Serializable {
         return otherNames;
     }
 
-    public void setOtherNames(List<Text> otherNames) {
-        this.otherNames = otherNames;
+    public void setOtherNames(List<Text> othernames) {
+        this.otherNames = othernames;
     }
     
     public List<String> getErrors() {
