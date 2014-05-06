@@ -3866,6 +3866,17 @@ p.orcid-id-container{
 	color: #9FC836;
 }
 
+.confirm-oauth-access .id-banner .id-banner-container div.id-banner-header{
+	background: #338caf;
+	padding: 5px;
+	color: #FFF;
+}
+
+.confirm-oauth-access .id-banner .id-banner-container div.id-banner-dropdown{
+	width: 100%;
+	padding: 0;
+}
+
 .confirm-oauth-access .id-banner .id-banner-container ul.id-banner-dropdown,
 .confirm-oauth-access .id-banner .id-banner-container ul.id-banner-dropdown > li{
 		width: 100%;
