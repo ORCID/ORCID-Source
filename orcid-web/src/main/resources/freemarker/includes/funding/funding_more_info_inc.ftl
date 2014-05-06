@@ -30,6 +30,13 @@
 					<div ng-bind="funding.fundingTypeForDisplay"></div>
 				</div>
 			</div>
+			<div class="row bottomBuffer" ng-show="funding.organizationDefinedFundingType.value"
+				ng-cloak>
+				<div class="col-md-8">					
+					<strong><@orcid.msg 'manual_funding_form_contents.organization_defined_type.label'/></strong>
+					<div ng-bind="funding.organizationDefinedFundingType.value"></div>
+				</div>
+			</div>
 			<div class="row bottomBuffer" ng-show="funding.fundingTitle.title.value"
 				ng-cloak>
 				<div class="col-md-8">

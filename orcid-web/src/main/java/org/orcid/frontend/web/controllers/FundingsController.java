@@ -121,6 +121,7 @@ public class FundingsController extends BaseWorkspaceController {
         result.setFundingName(new Text());
         result.setFundingType(Text.valueOf(""));
         result.setSourceName(new String());
+        result.setOrganizationDefinedFundingType(Text.valueOf(""));
         FundingTitleForm title = new FundingTitleForm();
         title.setTitle(new Text());
         TranslatedTitle tt = new TranslatedTitle();
@@ -292,6 +293,7 @@ public class FundingsController extends BaseWorkspaceController {
         validateDates(funding);
         validateExternalIdentifiers(funding);
         validateType(funding);
+        validateOrganizationDefinedType(funding);
         validateCity(funding);
         validateRegion(funding);
         validateCountry(funding);
@@ -308,6 +310,7 @@ public class FundingsController extends BaseWorkspaceController {
         copyErrors(funding.getUrl(), funding);
         copyErrors(funding.getEndDate(), funding);
         copyErrors(funding.getFundingType(), funding);
+        copyErrors(funding.getOrganizationDefinedFundingType(), funding);
 
         for (FundingExternalIdentifierForm extId : funding.getExternalIdentifiers()) {
             copyErrors(extId.getType(), funding);
@@ -579,7 +582,19 @@ public class FundingsController extends BaseWorkspaceController {
         }
         return funding;
     }
-
+    
+    @RequestMapping(value = "/funding/organizationDefinedTypeValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    FundingForm validateOrganizationDefinedType(@RequestBody FundingForm funding) {
+        funding.getOrganizationDefinedFundingType().setErrors(new ArrayList<String>());
+        if (!PojoUtil.isEmpty(funding.getOrganizationDefinedFundingType())) {
+            String value = funding.getOrganizationDefinedFundingType().getValue();
+            if(value.length() > 255)
+                setError(funding.getOrganizationDefinedFundingType(), "fundings.lenght_less_255");            
+        }
+        return funding;
+    }
+    
     @RequestMapping(value = "/funding/cityValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     FundingForm validateCity(@RequestBody FundingForm funding) {

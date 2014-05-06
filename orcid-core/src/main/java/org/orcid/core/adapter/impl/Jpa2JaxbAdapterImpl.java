@@ -72,7 +72,6 @@ import org.orcid.utils.NullUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.oauth2.provider.ClientDetails;
 
 /**
  * <p/>
@@ -390,6 +389,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         }
         funding.setTitle(title);
         funding.setType(profileFundingEntity.getType() != null ? profileFundingEntity.getType() : null);
+        funding.setOrganizationDefinedFundingType(profileFundingEntity.getOrganizationDefinedType() != null ? new OrganizationDefinedFundingType(profileFundingEntity.getOrganizationDefinedType()) : null);
         funding.setUrl(StringUtils.isNotEmpty(profileFundingEntity.getUrl()) ? new Url(profileFundingEntity.getUrl()) : new Url(new String()));
         funding.setVisibility(profileFundingEntity.getVisibility() != null ? profileFundingEntity.getVisibility() : Visibility.PRIVATE);
         funding.setPutCode(Long.toString(profileFundingEntity.getId()));

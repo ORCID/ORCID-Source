@@ -19,6 +19,9 @@ package org.orcid.core.version.impl;
 import org.orcid.core.version.OrcidMessageVersionConverter;
 import org.orcid.jaxb.model.message.ActivitiesVisibilityDefault;
 import org.orcid.jaxb.model.message.DeveloperToolsEnabled;
+import org.orcid.jaxb.model.message.Funding;
+import org.orcid.jaxb.model.message.FundingList;
+import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Preferences;
@@ -88,6 +91,18 @@ public class OrcidMessageVersionConverterImplV1_2_rc3ToV1_2_rc4 implements Orcid
                         prefs.setActivitiesVisibilityDefault(null);
                     }
                 }
+            }
+            
+            //Previews versions doesnt have organization defined funding type
+            if(orcidProfile.getOrcidActivities() != null) {
+                OrcidActivities activities = orcidProfile.getOrcidActivities();
+                if(activities.getFundings() != null) {
+                    FundingList fundingList = activities.getFundings();
+                    for(Funding funding : fundingList.getFundings()) {
+                        funding.setOrganizationDefinedFundingType(null);
+                    }
+                }
+                
             }
         }
     }

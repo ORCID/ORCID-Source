@@ -524,6 +524,8 @@
 			multiValued="false" />
 		<field name="org-names" type="orcid_text_name" indexed="true" stored="true"
 			multiValued="true" />
+		<field name="org-defined-funding-type" type="string" indexed="true" stored="true"
+			multiValued="false" />
 		<field name="is-funding-org" type="boolean" indexed="true" stored="true"
 			multiValued="false" />
 			
