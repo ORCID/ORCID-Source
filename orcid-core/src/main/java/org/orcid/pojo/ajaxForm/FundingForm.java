@@ -377,6 +377,7 @@ public class FundingForm implements ErrorsInterface, Serializable {
         if(funding.getOrganizationDefinedFundingType() != null) {
             OrgDefinedFundingSubType OrgDefinedFundingSubType = new OrgDefinedFundingSubType();
             OrgDefinedFundingSubType.setSubtype(Text.valueOf(funding.getOrganizationDefinedFundingType().getContent()));
+            OrgDefinedFundingSubType.setAlreadyIndexed(false);
             result.setOrganizationDefinedFundingSubType(OrgDefinedFundingSubType);
         }            
         
