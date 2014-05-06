@@ -3751,7 +3751,7 @@ p.orcid-id-container{
 	margin-top: 5px;
 }
 
-.websites-edit, .keywords-edit {
+.websites-edit, .keywords-edit, .other-names-edit {
 	background: #EFEFEF;
 	padding: 10px;
 	margin-bottom: 10px;
@@ -3761,11 +3761,11 @@ p.orcid-id-container{
 	width: 95px;
 }
 
-.keywords-edit input {
+.keywords-edit input, .other-names-edit input {
 	width: 190px;
 }
 
-.keywords-edit #privacy-bar {
+.keywords-edit #privacy-bar, .other-names-edit #privacy-bar {
 	padding-bottom: 10px;
 }
 
@@ -3782,6 +3782,7 @@ p.orcid-id-container{
 .biography-controller .edit-option:hover,
 .country-controller .edit-option:hover,
 .keywords-controller .edit-option:hover,
+.other-names-controller .edit-option:hover,
 .websites-controller .edit-option:hover {
 	cursor: pointer;
 	color: #a6ce39;
@@ -3801,6 +3802,7 @@ p.orcid-id-container{
 
 .country-controller span.edit-country,
 .keywords-controller span.edit-keywords,
+.other-names-controller span.edit-other-names,
 .websites-controller span.edit-websites {
 	font-size: 12px;
   	margin-bottom: 10px;
@@ -3813,13 +3815,14 @@ p.orcid-id-container{
  	margin: 10px 0 0 0;
  }
 
- .keywords-box,
- .keywords-box input{
+ .keywords-box, .keywords-box input,
+ .other-names-box, .other-names-box input {
  	margin: 10px 0 0 0;
  }
 
  .websites-box a.glyphicon-trash,
- .keywordss-box a.glyphicon-trash{
+ .keywords-box a.glyphicon-trash,
+ .other-names-box a.glyphicon-trash {
  	vertical-align: -7px;
  }
 
@@ -3829,13 +3832,15 @@ p.orcid-id-container{
 
 .country-controller .popover-help-container .popover, 
 .websites-controller .popover-help-container .popover,
-.keywords-controller .popover-help-container .popover {
+.keywords-controller .popover-help-container .popover,
+.other-names-controller .popover-help-container .popover {
 	left: -120px !important;
 }
 
 .country-controller .popover.bottom .arrow,
 .websites-controller .popover.bottom .arrow,
-.keywords-controller .popover.bottom .arrow{
+.keywords-controller .popover.bottom .arrow,
+.other-names-controller .popover.bottom .arrow{
 	left: 127px !important;
 }
 

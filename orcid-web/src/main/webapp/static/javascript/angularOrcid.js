@@ -1099,6 +1099,77 @@ function KeywordsCtrl($scope, $compile) {
 
 	$scope.getKeywordsForm();
 };
+
+function OtherNamesCtrl($scope, $compile) {
+    $scope.showEdit = false;
+    $scope.otherNamesForm = null;
+    $scope.privacyHelp = false;
+    
+	$scope.toggleEdit = function() {
+		$scope.showEdit = !$scope.showEdit;
+	};
+
+	$scope.close = function() {
+		$scope.getOtherNamesForm();
+		$scope.showEdit = false;
+	};
+	
+	$scope.addNew = function() {
+		$scope.otherNamesForm.otherNames.push({value: ""});
+	};
+    
+    $scope.getOtherNamesForm = function(){
+		$.ajax({
+			url: getBaseUri() + '/my-orcid/otherNamesForms.json',	        
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.otherNamesForm = data;
+	        	var otherNames = $scope.otherNamesForm.otherNames;
+	        	$scope.$apply();
+	        }
+		}).fail(function(){
+			// something bad is happening!
+	    	console.log("error fetching otherNames");
+		});
+	};
+
+	$scope.deleteKeyword = function(keyword){
+		var otherNames = $scope.otherNamesForm.otherNames;
+    	var len = otherNames.length;
+    	while (len--) {
+    		if (otherNames[len] == keyword)
+    			otherNames.splice(len,1);
+    	}
+	};
+	
+	$scope.setOtherNamesForm = function(){
+		var otherNames = $scope.otherNamesForm.otherNames;
+		$.ajax({
+	        url: getBaseUri() + '/my-orcid/otherNamesForms.json',
+	        type: 'POST',
+	        data:  angular.toJson($scope.otherNamesForm),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.otherNamesForm = data;
+	        	if(data.errors.length == 0)
+	        	   $scope.close();
+	        	$scope.$apply();
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("OtherNames.serverValidate() error");
+	    });
+	};
+	
+	$scope.setPrivacy = function(priv, $event) {
+		$event.preventDefault();
+		$scope.otherNamesForm.visibility.visibility = priv;
+	};
+
+	$scope.getOtherNamesForm();
+};
+
 function BiographyCtrl($scope, $compile) {
     $scope.showEdit = false;
 	$scope.biographyForm = null;

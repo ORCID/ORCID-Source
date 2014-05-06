@@ -18,6 +18,7 @@ package org.orcid.persistence.dao;
 
 import java.util.List;
 
+import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 
 public interface OtherNameDao {
@@ -54,4 +55,6 @@ public interface OtherNameDao {
      *          true if the other name was successfully deleted, false otherwise
      * */
     public boolean deleteOtherName(OtherNameEntity otherName);
+    
+    public boolean updateOtherNamesVisibility(String orcid, Visibility visibility);
 }

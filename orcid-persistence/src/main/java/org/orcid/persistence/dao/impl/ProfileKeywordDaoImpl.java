@@ -73,7 +73,6 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
         query.setParameter("orcid", orcid);
         boolean result = query.executeUpdate() > 0 ? true : false;
         return result;
-
     }
     
     /**
