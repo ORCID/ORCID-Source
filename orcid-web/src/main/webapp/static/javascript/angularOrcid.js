@@ -995,7 +995,7 @@ function WebsitesCtrl($scope, $compile) {
     		if (websites[len] == website)
     			websites.splice(len,1);
     	}
-	}
+	};
 	
 	$scope.setWebsitesForm = function(){
 		var websites = $scope.websitesForm.websites;
@@ -1099,7 +1099,62 @@ function KeywordsCtrl($scope, $compile) {
 
 	$scope.getKeywordsForm();
 };
+function BiographyCtrl($scope, $compile) {
+    $scope.showEdit = false;
+	$scope.biographyForm = null;
 
+	$scope.toggleEdit = function() {
+		$scope.showEdit = !$scope.showEdit;
+	};
+
+	$scope.close = function() {
+		$scope.showEdit = false;
+	};
+
+	$scope.cancel = function() {
+		$scope.getBiographyForm();
+		$scope.showEdit = false;
+	};
+
+	
+	$scope.getBiographyForm = function(){
+		$.ajax({
+			url: getBaseUri() + '/account/biographyForm.json',	        
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.biographyForm = data;
+	        	$scope.$apply();
+	        }
+		}).fail(function(){
+			// something bad is happening!
+	    	console.log("error fetching BiographyForm");
+		});
+	};
+	
+	$scope.setBiographyForm = function(){
+		
+		$.ajax({
+	        url: getBaseUri() + '/account/biographyForm.json',
+	        type: 'POST',
+	        data:  angular.toJson($scope.biographyForm),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.biographyForm = data;
+	        	if(data.errors.length == 0)
+	        	    $scope.close();
+	        	$scope.$apply();
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("BiographyCtrl.serverValidate() error");
+	    });
+	};
+
+		
+	$scope.getBiographyForm();
+
+};
 
 function CountryCtrl($scope, $compile) {
     $scope.showEdit = false;

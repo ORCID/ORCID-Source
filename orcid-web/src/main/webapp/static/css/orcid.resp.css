@@ -3779,11 +3779,24 @@ p.orcid-id-container{
 	margin: 10px 0;
 }
 
+.biography-controller .edit-option:hover,
 .country-controller .edit-option:hover,
 .keywords-controller .edit-option:hover,
 .websites-controller .edit-option:hover {
 	cursor: pointer;
 	color: #a6ce39;
+}
+
+.biography-controller .biography-edit {
+    background: #EFEFEF;
+	padding: 10px;
+	margin-bottom: 10px;
+
+}
+
+.biography-controller textarea {
+	height: 120px;
+	width: 100%;
 }
 
 .country-controller span.edit-country,
