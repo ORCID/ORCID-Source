@@ -35,6 +35,7 @@ import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.LoadOptions;
+import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.ThirdPartyLinkManager;
@@ -57,8 +58,8 @@ import org.orcid.jaxb.model.message.SourceOrcid;
 import org.orcid.jaxb.model.message.WorkCategory;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.pojo.ThirdPartyRedirect;
-import org.orcid.pojo.ajaxForm.BiographyForm;
-import org.orcid.pojo.ajaxForm.CountryForm;
+import org.orcid.pojo.ajaxForm.KeywordsForm;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Website;
 import org.orcid.pojo.ajaxForm.WebsitesForm;
@@ -91,6 +92,10 @@ public class WorkspaceController extends BaseWorkspaceController {
 
     @Resource
     private ProfileWorkManager profileWorkManager;
+    
+
+    @Resource
+    private ProfileKeywordManager profileKeywordManager;
 
     @Resource
     private Jpa2JaxbAdapter jpa2JaxbAdapter;
@@ -304,6 +309,35 @@ public class WorkspaceController extends BaseWorkspaceController {
         return mav;
     }
     
+    /**
+     * Retrieve all external identifiers as a json string
+     * */
+    @RequestMapping(value = "/my-orcid/keywordsForms.json", method = RequestMethod.GET)
+    public @ResponseBody
+    KeywordsForm getKeywordsFormJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
+        OrcidProfile currentProfile = getEffectiveProfile();
+        return KeywordsForm.valueOf(currentProfile.getOrcidBio().getKeywords());
+    }
+    
+    /**
+     * Retrieve all external identifiers as a json string
+     * */
+    @RequestMapping(value = "/my-orcid/keywordsForms.json", method = RequestMethod.POST)
+    public @ResponseBody
+    KeywordsForm setKeywordsFormJson(HttpServletRequest request, @RequestBody KeywordsForm kf) throws NoSuchRequestHandlingMethodException {
+        kf.setErrors(new ArrayList<String>());
+        for (int i = kf.getKeywords().size() - 1; i > 0; i--) {
+            Text t = kf.getKeywords().get(i);
+            if (PojoUtil.isEmpty(t))
+                kf.getKeywords().remove(i);
+            else if (t.getValue().length() > 100)
+                t.setValue(t.getValue().substring(0,100));
+        }
+        if (kf.getErrors().size()>0) return kf;        
+        OrcidProfile currentProfile = getEffectiveProfile();
+        profileKeywordManager.updateProfileKeyword(currentProfile.getOrcidIdentifier().getPath(), kf.toKeywords());
+        return kf;
+    }
 
     /**
      * Retrieve all external identifiers as a json string

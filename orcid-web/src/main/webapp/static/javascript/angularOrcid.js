@@ -995,7 +995,7 @@ function WebsitesCtrl($scope, $compile) {
     		if (websites[len] == website)
     			websites.splice(len,1);
     	}
-	}
+	};
 	
 	$scope.setWebsitesForm = function(){
 		var websites = $scope.websitesForm.websites;
@@ -1030,6 +1030,75 @@ function WebsitesCtrl($scope, $compile) {
 	$scope.getWebsitesForm();
 };
 
+function KeywordsCtrl($scope, $compile) {
+    $scope.showEdit = false;
+    $scope.keywordsForm = null;
+    $scope.privacyHelp = false;
+    
+	$scope.toggleEdit = function() {
+		$scope.showEdit = !$scope.showEdit;
+	};
+
+	$scope.close = function() {
+		$scope.getKeywordsForm();
+		$scope.showEdit = false;
+	};
+	
+	$scope.addNew = function() {
+		$scope.keywordsForm.keywords.push({value: ""});
+	};
+    
+    $scope.getKeywordsForm = function(){
+		$.ajax({
+			url: getBaseUri() + '/my-orcid/keywordsForms.json',	        
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.keywordsForm = data;
+	        	var keywords = $scope.keywordsForm.keywords;
+	        	$scope.$apply();
+	        }
+		}).fail(function(){
+			// something bad is happening!
+	    	console.log("error fetching keywords");
+		});
+	};
+
+	$scope.deleteKeyword = function(keyword){
+		var keywords = $scope.keywordsForm.keywords;
+    	var len = keywords.length;
+    	while (len--) {
+    		if (keywords[len] == keyword)
+    			keywords.splice(len,1);
+    	}
+	};
+	
+	$scope.setKeywordsForm = function(){
+		var keywords = $scope.keywordsForm.keywords;
+		$.ajax({
+	        url: getBaseUri() + '/my-orcid/keywordsForms.json',
+	        type: 'POST',
+	        data:  angular.toJson($scope.keywordsForm),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.keywordsForm = data;
+	        	if(data.errors.length == 0)
+	        	   $scope.close();
+	        	$scope.$apply();
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("WebsiteCtrl.serverValidate() error");
+	    });
+	};
+	
+	$scope.setPrivacy = function(priv, $event) {
+		$event.preventDefault();
+		$scope.keywordsForm.visibility.visibility = priv;
+	};
+
+	$scope.getKeywordsForm();
+};
 function BiographyCtrl($scope, $compile) {
     $scope.showEdit = false;
 	$scope.biographyForm = null;
@@ -1086,7 +1155,6 @@ function BiographyCtrl($scope, $compile) {
 	$scope.getBiographyForm();
 
 };
-
 
 function CountryCtrl($scope, $compile) {
     $scope.showEdit = false;

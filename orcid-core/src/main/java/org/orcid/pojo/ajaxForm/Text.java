@@ -20,6 +20,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.orcid.jaxb.model.message.Keyword;
+
 public class Text implements ErrorsInterface, Required, Serializable {
     
     private static final long serialVersionUID = 1L;
@@ -35,6 +37,10 @@ public class Text implements ErrorsInterface, Required, Serializable {
        return t;
     }
 
+    public Keyword toKeyword() {
+        return new Keyword(this.value);
+    }
+    
     public List<String> getErrors() {
         return errors;
     }
