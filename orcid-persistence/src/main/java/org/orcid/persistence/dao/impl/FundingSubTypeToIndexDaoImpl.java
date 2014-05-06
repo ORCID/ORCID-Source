@@ -1,5 +1,6 @@
 package org.orcid.persistence.dao.impl;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -26,7 +27,7 @@ public class FundingSubTypeToIndexDaoImpl implements FundingSubTypeToIndexDao {
     @Transactional
     public void addSubTypes(String subtype, String orcid) {
         if(!exists(subtype)) {
-            Query query = entityManager.createNativeQuery("INSERT INTO funding_subtype_to_index(orcid, subtype) values(orcid=:orcid, subtype=:subtype)");
+            Query query = entityManager.createNativeQuery("INSERT INTO funding_subtype_to_index(orcid, subtype) values(:orcid, :subtype)");
             query.setParameter("orcid", orcid);
             query.setParameter("subtype", subtype.trim());
             query.executeUpdate();
@@ -53,7 +54,8 @@ public class FundingSubTypeToIndexDaoImpl implements FundingSubTypeToIndexDao {
     private boolean exists(String subtype) {
         Query query = entityManager.createNativeQuery("SELECT count(*) FROM funding_subtype_to_index WHERE subtype=:subtype");
         query.setParameter("subtype", subtype.trim());
-        return query.getFirstResult() > 0;
+        BigInteger result = (BigInteger)query.getSingleResult();
+        return result.longValue() > 0;
     } 
     
     @SuppressWarnings("unchecked")

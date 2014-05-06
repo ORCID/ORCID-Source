@@ -45,6 +45,11 @@ public interface ProfileFundingManager {
     ProfileFundingEntity addProfileFunding(ProfileFundingEntity newProfileFundingEntity);
         
     /**
+     * Add a new funding subtype to the list of pending for indexing subtypes
+     * */
+    void addFundingSubType(String subtype, String orcid);
+    
+    /**
      * A process that will process all funding subtypes, filter and index them. 
      * */
     void indexFundingSubTypes();

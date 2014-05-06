@@ -279,7 +279,7 @@ public class FundingsController extends BaseWorkspaceController {
      * */
     @RequestMapping(value = "/funding.json", method = RequestMethod.POST)
     public @ResponseBody
-    FundingForm postGrant(HttpServletRequest request, @RequestBody FundingForm funding) {
+    FundingForm postFunding(HttpServletRequest request, @RequestBody FundingForm funding) {
         // Remove empty external identifiers
         removeEmptyExternalIds(funding);
 
@@ -329,21 +329,21 @@ public class FundingsController extends BaseWorkspaceController {
             ProfileFundingEntity profileGrantEntity = jaxb2JpaAdapter.getNewProfileFundingEntity(funding.toOrcidFunding(), userProfile);
             profileGrantEntity.setSource(userProfile);
             // Persists the profile funding object
-            ProfileFundingEntity newProfileGrant = profileFundingManager.addProfileFunding(profileGrantEntity);
+            ProfileFundingEntity newProfileFunding = profileFundingManager.addProfileFunding(profileGrantEntity);
 
             // Persist the external identifiers
             SortedSet<FundingExternalIdentifierEntity> externalIdentifiers = profileGrantEntity.getExternalIdentifiers();
 
             if (externalIdentifiers != null && !externalIdentifiers.isEmpty()) {
                 for (FundingExternalIdentifierEntity externalIdentifier : externalIdentifiers) {
-                    externalIdentifier.setProfileFunding(newProfileGrant);
+                    externalIdentifier.setProfileFunding(newProfileFunding);
                     fundingExternalIdentifierDao.createFundingExternalIdentifier(externalIdentifier);
                 }
             }
 
             // Transform it back into a OrcidGrant to add it into the cached
             // object
-            Funding newFunding = jpa2JaxbAdapter.getFunding(newProfileGrant);
+            Funding newFunding = jpa2JaxbAdapter.getFunding(newProfileFunding);
             // Update the fundings on the cached object
             OrcidProfile currentProfile = getEffectiveProfile();
             // Initialize activities if needed
@@ -357,6 +357,10 @@ public class FundingsController extends BaseWorkspaceController {
 
             // Set the new funding into the cached object
             currentProfile.getOrcidActivities().getFundings().getFundings().add(newFunding);
+            
+            //Send the new funding sub type for indexing
+            if(!PojoUtil.isEmpty(newProfileFunding.getOrganizationDefinedType()))
+                profileFundingManager.addFundingSubType(newProfileFunding.getOrganizationDefinedType(), getEffectiveUserOrcid());
         }
 
         return funding;

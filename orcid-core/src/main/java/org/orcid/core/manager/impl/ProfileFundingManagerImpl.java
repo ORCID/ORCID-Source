@@ -67,6 +67,13 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
     }
     
     /**
+     * Add a new funding subtype to the list of pending for indexing subtypes
+     * */
+    public void addFundingSubType(String subtype, String orcid) {
+        fundingSubTypeToIndexDao.addSubTypes(subtype, orcid);
+    }
+    
+    /**
      * A process that will process all funding subtypes, filter and index them. 
      * */
     public void indexFundingSubTypes() {
