@@ -20,6 +20,9 @@ import java.util.List;
 
 import javax.persistence.Query;
 
+import org.apache.commons.lang.StringUtils;
+import org.orcid.jaxb.model.message.Iso3166Country;
+import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.dao.ProfileKeywordDao;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.persistence.jpa.entities.keys.ProfileKeywordEntityPk;
@@ -44,7 +47,8 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
         query.setParameter("orcid", orcid);
         return query.getResultList();
     }
-
+    
+    
     /**
      * Deleted a keyword from database
      * @param orcid
@@ -60,6 +64,18 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
         return query.executeUpdate() > 0 ? true : false;
     }
 
+    @Override
+    @Transactional
+    public boolean updateKeywordsVisibility(String orcid, Visibility visibility) {
+        Query query = entityManager
+                .createNativeQuery("update profile set last_modified=now(), keywords_visibility=:keywords_visibility, indexing_status='PENDING' where orcid=:orcid");
+        query.setParameter("keywords_visibility", StringUtils.upperCase(visibility.value()));
+        query.setParameter("orcid", orcid);
+        boolean result = query.executeUpdate() > 0 ? true : false;
+        return result;
+
+    }
+    
     /**
      * Adds a keyword to a specific profile
      * @param orcid
