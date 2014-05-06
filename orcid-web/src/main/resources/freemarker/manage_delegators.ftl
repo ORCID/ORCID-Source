@@ -18,8 +18,11 @@
 -->
 
 <@protected classes=['manage'] nav="settings">
-<div class="row">
-	<div class="col-md-3 lhs override">
+	<div class="row">
+		<div class="col-md-3 col-sm-12 col-xs-12 padding-fix">
+			<div class="lhs">
+		<#include "includes/id_banner.ftl"/>
+	</div>
 	</div>
 	<div class="col-md-9">
 		<h1 id="manage-delegators"><@orcid.msg 'manage_delegators.title' /></h1>			
@@ -49,8 +52,8 @@
 					<tr ng-repeat="delegationDetails in delegators.delegationDetails | orderBy:sort.column:sort.descending">
 						<td width="35%"><a href="<@spring.url '/switch-user?j_username='/>{{delegationDetails.delegateSummary.orcidIdentifier.path}}" target="_blank">{{delegationDetails.delegateSummary.creditName.content}}</a></td>
 						<td width="35%"><a href="{{delegationDetails.delegateSummary.orcidIdentifier.uri}}" target="_blank">{{delegationDetails.delegateSummary.orcidIdentifier.path}}</a></td>
-						<td width="15%">{{delegationDetails.approvalDate.value|date}}</td>
-						<td width="15%">{{delegationDetails.delegateSummary.lastModifiedDate.value|date}}</td>
+						<td width="15%">{{delegationDetails.approvalDate.value|date:'yyyy-MM-dd'}}</td>
+						<td width="15%">{{delegationDetails.delegateSummary.lastModifiedDate.value|date:'yyyy-MM-dd'}}</td>
 					</tr>
 				</tbody>
 			</table>

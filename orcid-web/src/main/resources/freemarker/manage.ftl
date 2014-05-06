@@ -330,7 +330,7 @@
 						<a href="<@orcid.absUrl applicationSummary.applicationWebsite/>">${applicationSummary.applicationWebsite.value?html}</a>
 						</#if>
 						</td>
-						<td width="35%">${applicationSummary.approvalDate.value.toGregorianCalendar().time?date}</td>
+						<td width="35%">${applicationSummary.approvalDate.value.toGregorianCalendar().time?date?iso_local}</td>
 						<td width="5%"><input type="hidden" name="applicationOrcid"
 							value="${applicationSummary.applicationOrcid.path}" /> <input
 							type="hidden" name="confirmed" value="no" /> <input type="hidden"
@@ -383,7 +383,7 @@
 					<tr ng-repeat="delegationDetails in delegation.givenPermissionTo.delegationDetails | orderBy:sort.column:sort.descending">
 						<td width="40%"><a href="{{delegationDetails.delegateSummary.orcidIdentifier.uri}}" target="_blank">{{delegationDetails.delegateSummary.creditName.content}}</a></td>
 						<td width="30%"><a href="{{delegationDetails.delegateSummary.orcidIdentifier.uri}}" target="_blank">{{delegationDetails.delegateSummary.orcidIdentifier.path}}</a></td>
-						<td width="20%">{{delegationDetails.approvalDate.value|date}}</td>
+						<td width="20%">{{delegationDetails.approvalDate.value|date:'yyyy-MM-dd'}}</td>
 						<td width="10%"><a
 							ng-click="confirmRevoke(delegationDetails.delegateSummary.creditName.content, delegationDetails.delegateSummary.orcidIdentifier.path)"
 							class="glyphicon glyphicon-trash grey"
