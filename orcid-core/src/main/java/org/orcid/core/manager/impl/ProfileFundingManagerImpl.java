@@ -1,3 +1,19 @@
+/**
+ * =============================================================================
+ *
+ * ORCID (R) Open Source
+ * http://orcid.org
+ *
+ * Copyright (c) 2012-2013 ORCID, Inc.
+ * Licensed under an MIT-Style License (MIT)
+ * http://orcid.org/open-source-license
+ *
+ * This copyright and license information (including a link to the full license)
+ * shall be included in its entirety in all copies or substantial portion of
+ * the software.
+ *
+ * =============================================================================
+ */
 package org.orcid.core.manager.impl;
 
 import java.io.IOException;
@@ -78,9 +94,19 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
         fundingSubTypeToIndexDao.addSubTypes(subtype, orcid);
     }
     
-    
-    public List<OrgDefinedFundingTypeSolrDocument> getIndexedFundingSubTypes(String subtype) {
-        return fundingSubTypeSolrDao.getFundingTypes(subtype, 0, 100);
+    /**
+     * Looks for the org defined funding subtypes that matches a given pattern
+     * @param subtype pattern to look for
+     * @param limit the max number of results to look for
+     * @return a list of all org defined funding subtypes that matches the given pattern
+     * */
+    public List<String> getIndexedFundingSubTypes(String subtype, int limit) {
+        List<OrgDefinedFundingTypeSolrDocument> types = fundingSubTypeSolrDao.getFundingTypes(subtype, 0, 100); 
+        List<String> result = new ArrayList<String>();
+        for (OrgDefinedFundingTypeSolrDocument type : types) {
+            result.add(type.getOrgDefinedFundingType());
+        }
+        return result; 
     }
     
     /**

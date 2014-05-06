@@ -55,7 +55,7 @@
 				<div class="control-group">
 					<label><@orcid.msg 'manual_funding_form_contents.organization_defined_type.label'/></label>
 					<div class="relative">						
-						<input id="organizationDefinedTitle" class="input-xlarge" name="organizationDefinedTitle" type="text" ng-model="editFunding.organizationDefinedFundingType.value" placeholder="<@orcid.msg 'manual_funding_form_contents.organization_defined_type.placeholder'/>" ng-change="serverValidate('fundings/funding/organizationDefinedTypeValidate.json')" ng-model-onblur/>						
+						<input id="organizationDefinedType" class="input-xlarge" name="organizationDefinedTitle" type="text" ng-model="editFunding.organizationDefinedFundingType.value" placeholder="<@orcid.msg 'manual_funding_form_contents.organization_defined_type.placeholder'/>" ng-change="serverValidate('fundings/funding/organizationDefinedTypeValidate.json')" ng-model-onblur/>						
 						<span class="orcid-error" ng-show="editFunding.organizationDefinedFundingType.errors.length > 0">
 							<div ng-repeat='error in editFunding.organizationDefinedFundingType.errors' ng-bind-html="error"></div>
 						</span>				

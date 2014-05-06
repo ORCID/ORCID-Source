@@ -1,10 +1,25 @@
+/**
+ * =============================================================================
+ *
+ * ORCID (R) Open Source
+ * http://orcid.org
+ *
+ * Copyright (c) 2012-2013 ORCID, Inc.
+ * Licensed under an MIT-Style License (MIT)
+ * http://orcid.org/open-source-license
+ *
+ * This copyright and license information (including a link to the full license)
+ * shall be included in its entirety in all copies or substantial portion of
+ * the software.
+ *
+ * =============================================================================
+ */
 package org.orcid.core.manager;
 
 import java.util.List;
 
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
-import org.orcid.persistence.solr.entities.OrgDefinedFundingTypeSolrDocument;
 
 public interface ProfileFundingManager {
 
@@ -50,13 +65,19 @@ public interface ProfileFundingManager {
     /**
      * Add a new funding subtype to the list of pending for indexing subtypes
      * */
-    void addFundingSubType(String subtype, String orcid);
-    
-    List<OrgDefinedFundingTypeSolrDocument> getIndexedFundingSubTypes(String subtype);
+    void addFundingSubType(String subtype, String orcid);        
     
     /**
      * A process that will process all funding subtypes, filter and index them. 
      * */
     void indexFundingSubTypes();
+    
+    /**
+     * Looks for the org defined funding subtypes that matches a given pattern
+     * @param subtype pattern to look for
+     * @param limit the max number of results to look for
+     * @return a list of all org defined funding subtypes that matches the given pattern
+     * */
+    List<String> getIndexedFundingSubTypes(String subtype, int limit);
     
 }

@@ -235,6 +235,7 @@ the software.
                             <exclude>**/src/test/resources/org/orcid/frontend/web/forms/**</exclude>
                             <exclude>**.md</exclude>
                         	<exclude>**/src/main/resources/**/*countries.txt</exclude>
+                        	<exclude>**/src/main/resources/**/*words_to_filter.txt</exclude>
                         	<exclude>**/.gitignore</exclude>
                         	<exclude>**/rebel.xml</exclude>
                             <exclude>**/src/main/webapp/**/**.xml</exclude>

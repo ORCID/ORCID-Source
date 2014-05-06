@@ -680,4 +680,13 @@ public class FundingsController extends BaseWorkspaceController {
         datum.put("sourceType", orgDisambiguatedEntity.getSourceType());
         return datum;
     }
+    
+    /**
+     * Search DB for org defined funding types
+     */
+    @RequestMapping(value = "/orgDefinedSubType/{query}", method = RequestMethod.GET)
+    public @ResponseBody
+    List<String> searchOrgDefinedFundingSubTypes(@PathVariable("query") String query, @RequestParam(value = "limit") int limit) {
+        return profileFundingManager.getIndexedFundingSubTypes(query, limit);
+    }
 }
