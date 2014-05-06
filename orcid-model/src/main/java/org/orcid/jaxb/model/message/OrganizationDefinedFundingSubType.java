@@ -44,18 +44,18 @@ import javax.xml.bind.annotation.XmlValue;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "content" })
 @XmlRootElement(name = "organization-defined-type")
-public class OrganizationDefinedFundingType implements Serializable {
+public class OrganizationDefinedFundingSubType implements Serializable {
         
     private static final long serialVersionUID = 1L;
     
     @XmlValue
     protected String content;
 
-    public OrganizationDefinedFundingType() {
+    public OrganizationDefinedFundingSubType() {
         
     }
     
-    public OrganizationDefinedFundingType(String content) {
+    public OrganizationDefinedFundingSubType(String content) {
         this.content = content;       
     }
     
@@ -99,7 +99,7 @@ public class OrganizationDefinedFundingType implements Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        OrganizationDefinedFundingType other = (OrganizationDefinedFundingType) obj;
+        OrganizationDefinedFundingSubType other = (OrganizationDefinedFundingSubType) obj;
         if (content == null) {
             if (other.content != null)
                 return false;
