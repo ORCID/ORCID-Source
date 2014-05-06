@@ -40,6 +40,7 @@
 				<thead>
 					<tr>
 						<th width="35%" ng-click="changeSorting('delegateSummary.creditName.content')">${springMacroRequestContext.getMessage("manage.thproxy")}</th>
+						<th width="35%" ng-click="changeSorting('delegateSummary.orcidIdentifier.path')">${springMacroRequestContext.getMessage("search_results.thORCIDID")}</th>
 						<th width="15%" ng-click="changeSorting('approvalDate.value')"><@orcid.msg 'manage_delegators.delegates_table.access_granted' /></th>
 						<th width="15%" ng-click="changeSorting('delegateSummary.lastModifiedDate.value')"><@orcid.msg 'manage_delegators.delegates_table.last_modified' /></th>
 					</tr>
@@ -47,6 +48,7 @@
 				<tbody>
 					<tr ng-repeat="delegationDetails in delegators.delegationDetails | orderBy:sort.column:sort.descending">
 						<td width="35%"><a href="<@spring.url '/switch-user?j_username='/>{{delegationDetails.delegateSummary.orcidIdentifier.path}}" target="_blank">{{delegationDetails.delegateSummary.creditName.content}}</a></td>
+						<td width="35%"><a href="{{delegationDetails.delegateSummary.orcidIdentifier.uri}}" target="_blank">{{delegationDetails.delegateSummary.orcidIdentifier.path}}</a></td>
 						<td width="15%">{{delegationDetails.approvalDate.value|date}}</td>
 						<td width="15%">{{delegationDetails.delegateSummary.lastModifiedDate.value|date}}</td>
 					</tr>
