@@ -41,7 +41,9 @@ public class WebsitesForm implements ErrorsInterface, Serializable {
             for (ResearcherUrl ru : researcherUrls.getResearcherUrl()) {
                 w.websites.add(Website.valueOf(ru));
             }
-        if (researcherUrls.getVisibility() != null)
+        if (researcherUrls == null || researcherUrls.getVisibility() == null)
+            w.setVisibility(new Visibility());
+        else
             w.setVisibility(Visibility.valueOf(researcherUrls.getVisibility()));
         return w;
     }
