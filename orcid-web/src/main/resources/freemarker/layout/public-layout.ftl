@@ -166,11 +166,7 @@
 							<a href="<@spring.url "/signin" />" title=""><@orcid.msg 'public-layout.sign_in'/></a>
 						</@security.authorize>
 						<@security.authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">
-							<#if inDelegationMode>
-								<li><a href="<@spring.url '/switch-user?j_username='/>${realUserOrcid}">Switch back</a></li>
-							<#else>
-								<li><a href="<@spring.url '/signout'/>"><@orcid.msg 'public-layout.sign_out'/></a></li>
-							</#if>
+							<li><a href="<@spring.url '/signout'/>"><@orcid.msg 'public-layout.sign_out'/></a></li>
 						</@security.authorize>
 					</li>
 				</ul>
