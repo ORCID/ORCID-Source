@@ -500,6 +500,17 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         updateQuery.setParameter("profileAddressVisibility", StringUtils.upperCase(profileAddressVisibility.value()));
         updateQuery.executeUpdate();
     }
+    
+    @Override
+    @Transactional
+    public void updateBiography(String orcid, String biography) {
+        Query updateQuery = entityManager
+                .createQuery("update ProfileEntity set lastModified = now(), biography = :biography where orcid = :orcid");
+        updateQuery.setParameter("orcid", orcid);
+        updateQuery.setParameter("biography", biography);
+        updateQuery.executeUpdate();
+    }
+
 
 
     /**

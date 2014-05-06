@@ -17,10 +17,21 @@
 
 -->
 <#escape x as x?html>
-	<#if (profile.orcidBio.biography.content)?? && (profile.orcidBio.biography.content)?has_content>
-   		<p>
-   			<strong>${springMacroRequestContext.getMessage("manage_bio_settings.labelbiography")}</strong><br />
-   			<div style="white-space: pre-wrap">${(profile.orcidBio.biography.content)}</div>
-   		</p>
-   	</#if>
+   	<div class="biography-controller" ng-controller="BiographyCtrl">
+   			<strong ng-click="toggleEdit()">${springMacroRequestContext.getMessage("manage_bio_settings.labelbiography")}</strong>
+   			<span class="glyphicon glyphicon-pencil edit-country edit-option" ng-click="toggleEdit()" ng-hide="showEdit == true" title=""></span><br />
+   			<div style="white-space: pre-wrap" ng-hide="showEdit == true" ng-bind="biographyForm.biography.value" ng-click="toggleEdit()"></div>
+   			<div ng-hide="showEdit == false"  class="biography-edit" ng-cloak>
+   			    <textarea id="biography" name="biography" class="input-xlarge" maxlength="5000" rows="20" ng-model="biographyForm.biography.value">
+   			    </textarea>
+   			    <span class="orcid-error" ng-show="website.url.errors.length > 0">
+						     <div ng-repeat='error in biographyForm.biography.errors' ng-bind-html="error"></div>
+				</span>
+   			    <br />
+   	            <button class="btn btn-primary" ng-click="setBiographyForm()"><@spring.message "freemarker.btnsavechanges"/></button>
+	        	<button class="btn" ng-click="cancel()"><@spring.message "freemarker.btncancel"/></button>
+	        	
+   			</div>
+   	</div>
+   	<br />
 </#escape>
