@@ -50,12 +50,45 @@
     <div class="col-md-3 lhs left-aside">
     	<div class="workspace-profile">
             <#include "includes/id_banner.ftl"/>
-	        <#if ((profile.orcidBio.personalDetails.otherNames.otherName)?size != 0)>
-	        	<p><strong><@orcid.msg 'workspace.Alsoknownas'/></strong><br />
-		       		<#list profile.orcidBio.personalDetails.otherNames.otherName as otherName>
-		       			${otherName.content}<#if otherName_has_next><br /></#if>
-		       		</#list></p>
-	       	</#if>
+	       	<div class="other-names-box">
+		       	<div ng-controller="OtherNamesCtrl" class="other-names-controller">
+		        	<div>
+		        	   <strong><@orcid.msg 'workspace.Alsoknownas'/></strong>
+		        	   <span ng-hide="showEdit == true">
+		        	      <span class="glyphicon glyphicon-pencil edit-other-names edit-option" ng-click="toggleEdit()" title=""></span><br />
+		        	      <span ng-repeat="otherNames in otherNamesForm.otherNames" ng-cloak>
+		        	         {{ $last?otherNames.value:otherNames.value+ ", "}}
+		        	      </span>
+		        	   </span>
+		        	   <div ng-show="showEdit == true" ng-cloak class="other-names-edit">
+		        	      <@orcid.privacyToggle  angularModel="otherNamesForm.visibility.visibility"
+				             questionClick="toggleClickPrivacyHelp()"
+				             clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
+				             publicClick="setPrivacy('PUBLIC', $event)" 
+	                 	     limitedClick="setPrivacy('LIMITED', $event)" 
+	                 	     privateClick="setPrivacy('PRIVATE', $event)" />
+		        	   
+		        	      <div ng-repeat="otherNames in otherNamesForm.otherNames">
+		        	          <input type="text" ng-model="otherNames.value"></input>
+		        	          <a ng-click="deleteKeyword(otherNames)" class="glyphicon glyphicon-trash grey"></a>
+		        	          <br />
+		        	          <span class="orcid-error" ng-show="otherNames.url.errors.length > 0">
+							     <div ng-repeat='error in otherNames.url.errors' ng-bind-html="error"></div>
+						      </span>
+		        	          <span class="orcid-error" ng-show="otherNames.name.errors.length > 0">
+							     <div ng-repeat='error in otherNames.name.errors' ng-bind-html="error"></div>
+						      </span>
+		        	      </div>
+		        	      <a class="glyphicon glyphicon-plus" ng-click="addNew()"></a><br />
+		        	      <button class="btn btn-primary" ng-click="setOtherNamesForm()"><@spring.message "freemarker.btnsavechanges"/></button>
+		        	      <button class="btn" ng-click="close()"><@spring.message "freemarker.btncancel"/></button>
+		        	   </div> 
+		           </div>
+		       	</div>
+	       	</div>
+            
+            
+            
             
             <div ng-controller="CountryCtrl" class="country-controller">
 	        	<strong><@orcid.msg 'public_profile.labelCountry'/></strong>

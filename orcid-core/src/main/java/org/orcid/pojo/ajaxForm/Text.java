@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.orcid.jaxb.model.message.Keyword;
+import org.orcid.jaxb.model.message.OtherName;
 
 public class Text implements ErrorsInterface, Required, Serializable {
     
@@ -40,7 +41,11 @@ public class Text implements ErrorsInterface, Required, Serializable {
     public Keyword toKeyword() {
         return new Keyword(this.value);
     }
-    
+
+    public OtherName toOtherName() {
+        return new OtherName(this.value);
+    }
+
     public List<String> getErrors() {
         return errors;
     }

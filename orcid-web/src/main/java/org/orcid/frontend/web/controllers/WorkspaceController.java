@@ -35,6 +35,7 @@ import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.LoadOptions;
+import org.orcid.core.manager.OtherNameManager;
 import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.ResearcherUrlManager;
@@ -59,6 +60,7 @@ import org.orcid.jaxb.model.message.WorkCategory;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.pojo.ThirdPartyRedirect;
 import org.orcid.pojo.ajaxForm.KeywordsForm;
+import org.orcid.pojo.ajaxForm.OtherNamesForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Website;
@@ -93,9 +95,11 @@ public class WorkspaceController extends BaseWorkspaceController {
     @Resource
     private ProfileWorkManager profileWorkManager;
     
-
     @Resource
     private ProfileKeywordManager profileKeywordManager;
+    
+    @Resource
+    private OtherNameManager otherNameManager;
 
     @Resource
     private Jpa2JaxbAdapter jpa2JaxbAdapter;
@@ -309,9 +313,6 @@ public class WorkspaceController extends BaseWorkspaceController {
         return mav;
     }
     
-    /**
-     * Retrieve all external identifiers as a json string
-     * */
     @RequestMapping(value = "/my-orcid/keywordsForms.json", method = RequestMethod.GET)
     public @ResponseBody
     KeywordsForm getKeywordsFormJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
@@ -319,9 +320,6 @@ public class WorkspaceController extends BaseWorkspaceController {
         return KeywordsForm.valueOf(currentProfile.getOrcidBio().getKeywords());
     }
     
-    /**
-     * Retrieve all external identifiers as a json string
-     * */
     @RequestMapping(value = "/my-orcid/keywordsForms.json", method = RequestMethod.POST)
     public @ResponseBody
     KeywordsForm setKeywordsFormJson(HttpServletRequest request, @RequestBody KeywordsForm kf) throws NoSuchRequestHandlingMethodException {
@@ -339,6 +337,33 @@ public class WorkspaceController extends BaseWorkspaceController {
         return kf;
     }
 
+    
+    @RequestMapping(value = "/my-orcid/otherNamesForms.json", method = RequestMethod.GET)
+    public @ResponseBody
+    OtherNamesForm getOtherNamesFormJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
+        OrcidProfile currentProfile = getEffectiveProfile();
+        return OtherNamesForm.valueOf(currentProfile.getOrcidBio().getPersonalDetails().getOtherNames());
+    }
+    
+    @RequestMapping(value = "/my-orcid/otherNamesForms.json", method = RequestMethod.POST)
+    public @ResponseBody
+    OtherNamesForm setOtherNamesFormJson(HttpServletRequest request, @RequestBody OtherNamesForm onf) throws NoSuchRequestHandlingMethodException {
+        onf.setErrors(new ArrayList<String>());
+        for (int i = onf.getOtherNames().size() - 1; i > 0; i--) {
+            Text t = onf.getOtherNames().get(i);
+            if (PojoUtil.isEmpty(t))
+                onf.getOtherNames().remove(i);
+            else if (t.getValue().length() > 255)
+                t.setValue(t.getValue().substring(0,255));
+        }
+        if (onf.getErrors().size()>0) return onf;        
+        OrcidProfile currentProfile = getEffectiveProfile();
+        
+        otherNameManager.updateOtherNames(currentProfile.getOrcidIdentifier().getPath(), onf.toOtherNames());
+        return onf;
+    }
+
+    
     /**
      * Retrieve all external identifiers as a json string
      * */

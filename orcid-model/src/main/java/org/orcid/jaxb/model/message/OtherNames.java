@@ -63,7 +63,7 @@ public class OtherNames implements Serializable, VisibilityType {
 
     private final static long serialVersionUID = 1L;
     @XmlElement(name = "other-name")
-    protected List<OtherName> otherName;
+    private List<OtherName> otherName;
     @XmlAttribute
     protected Visibility visibility;
 
@@ -128,10 +128,10 @@ public class OtherNames implements Serializable, VisibilityType {
     }
 
     public void addOtherName(String value) {
-        if (otherName == null) {
-            otherName = new ArrayList<OtherName>();
+        if (getOtherName() == null) {
+            setOtherName(new ArrayList<OtherName>());
         }
-        otherName.add(new OtherName(value));
+        getOtherName().add(new OtherName(value));
     }
 
     @Override
@@ -143,7 +143,7 @@ public class OtherNames implements Serializable, VisibilityType {
 
         OtherNames that = (OtherNames) o;
 
-        if (otherName != null ? !otherName.equals(that.otherName) : that.otherName != null)
+        if (getOtherName() != null ? !getOtherName().equals(that.getOtherName()) : that.getOtherName() != null)
             return false;
         if (visibility != that.visibility)
             return false;
@@ -153,8 +153,12 @@ public class OtherNames implements Serializable, VisibilityType {
 
     @Override
     public int hashCode() {
-        int result = otherName != null ? otherName.hashCode() : 0;
+        int result = getOtherName() != null ? getOtherName().hashCode() : 0;
         result = 31 * result + (visibility != null ? visibility.hashCode() : 0);
         return result;
+    }
+
+    public void setOtherName(List<OtherName> otherName) {
+        this.otherName = otherName;
     }
 }
