@@ -9,9 +9,11 @@ import javax.annotation.Resource;
 import org.apache.commons.io.IOUtils;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.persistence.dao.FundingSubTypeSolrDao;
 import org.orcid.persistence.dao.FundingSubTypeToIndexDao;
 import org.orcid.persistence.dao.ProfileFundingDao;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
+import org.orcid.persistence.solr.entities.OrgDefinedFundingTypeSolrDocument;
 
 public class ProfileFundingManagerImpl implements ProfileFundingManager {
     
@@ -20,6 +22,9 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
     
     @Resource 
     private FundingSubTypeToIndexDao fundingSubTypeToIndexDao;
+    
+    @Resource
+    private FundingSubTypeSolrDao fundingSubTypeSolrDao;
     
     /**
      * Removes the relationship that exists between a funding and a profile.
@@ -73,6 +78,11 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
         fundingSubTypeToIndexDao.addSubTypes(subtype, orcid);
     }
     
+    
+    public List<OrgDefinedFundingTypeSolrDocument> getIndexedFundingSubTypes(String subtype) {
+        return fundingSubTypeSolrDao.getFundingTypes(subtype, 0, 100);
+    }
+    
     /**
      * A process that will process all funding subtypes, filter and index them. 
      * */
@@ -82,10 +92,9 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
         try {
             wordsToFilter = IOUtils.readLines(getClass().getResourceAsStream("words_to_filter.txt"));
         } catch (IOException e) {
-            throw new RuntimeException("Problem reading countries.txt from classpath", e);
+            throw new RuntimeException("Problem reading words_to_filter.txt from classpath", e);
         }
-        for(String subtype : subtypes) {            
-            subtype = subtype.toLowerCase();
+        for(String subtype : subtypes) {       
             boolean isInappropriate = false;
             //All filter words are in lower case, so, lowercase the subtype before comparing
             for(String wordToFilter : wordsToFilter) {
@@ -93,12 +102,11 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
                     isInappropriate = true;
                     break;
                 }
-                    
             }
             if(!isInappropriate){
-                System.out.println(subtype + " will be sent to solr");                
-            } else {
-                System.out.println(subtype + " is filtered");
+                OrgDefinedFundingTypeSolrDocument document = new OrgDefinedFundingTypeSolrDocument();
+                document.setOrgDefinedFundingType(subtype);
+                fundingSubTypeSolrDao.persist(document);              
             }           
             fundingSubTypeToIndexDao.removeSubTypes(subtype);
         }        

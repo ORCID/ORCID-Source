@@ -22,7 +22,7 @@ import schema.constants.SolrConstants;
 
 /**
  * 
- * @author Will Simpson
+ * @author Angel Montenegro
  * 
  */
 public class OrgDefinedFundingTypeSolrDocument {

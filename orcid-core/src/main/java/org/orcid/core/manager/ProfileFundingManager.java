@@ -1,7 +1,10 @@
 package org.orcid.core.manager;
 
+import java.util.List;
+
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
+import org.orcid.persistence.solr.entities.OrgDefinedFundingTypeSolrDocument;
 
 public interface ProfileFundingManager {
 
@@ -48,6 +51,8 @@ public interface ProfileFundingManager {
      * Add a new funding subtype to the list of pending for indexing subtypes
      * */
     void addFundingSubType(String subtype, String orcid);
+    
+    List<OrgDefinedFundingTypeSolrDocument> getIndexedFundingSubTypes(String subtype);
     
     /**
      * A process that will process all funding subtypes, filter and index them. 
