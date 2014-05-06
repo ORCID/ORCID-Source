@@ -22,10 +22,6 @@ import java.util.List;
 
 import org.orcid.jaxb.model.message.Keyword;
 import org.orcid.jaxb.model.message.Keywords;
-import org.orcid.jaxb.model.message.ResearcherUrl;
-import org.orcid.jaxb.model.message.ResearcherUrls;
-import org.orcid.jaxb.model.message.WorkExternalIdentifierId;
-import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 
 public class KeywordsForm implements ErrorsInterface, Serializable {
 
@@ -39,6 +35,10 @@ public class KeywordsForm implements ErrorsInterface, Serializable {
 
     public static KeywordsForm valueOf(Keywords keywords) {
         KeywordsForm kf = new KeywordsForm();
+        if (keywords ==  null) {
+            kf.setVisibility(new Visibility());
+            return kf;
+        }
         if (keywords.getKeyword() != null) {
             for (Keyword keyword:keywords.getKeyword())
                 if (keyword.getContent() != null)
