@@ -945,7 +945,7 @@ select {
 	width: 100%;
 }
 
-/* Mobile menu icon */
+/* Mbile menu icon */
 .header .navigation>.mobile-button {
 	display: none;
 }
@@ -3833,6 +3833,10 @@ ul.sort-menu-options li a:hover{
 	background: #a6ce39 !important;
 }
 
+.tablet-desktop-display{
+	display: block !important; 
+}
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 		
@@ -4278,6 +4282,7 @@ ul.sort-menu-options li a:hover{
 	.workspace-accordion-header, 
 	.workspace-accordion-content{
 		padding-left:0;
+		/*overflow: hidden;*/
 	}
 	
 	.workspace-accordion-item{
@@ -4719,6 +4724,13 @@ ul.sort-menu-options li a:hover{
 		padding: 15px;
 	}
 	
+	.action-option{
+		width: 100%;
+	}
+	
+	.toggle-text{
+		padding-left: 5px;
+	}
 }
 
 @media (min-width : 768px) and (max-width : 991px) { /* Tablet */
@@ -4818,10 +4830,6 @@ ul.sort-menu-options li a:hover{
 	
 	#login-register{
 		padding-left: 0;
-	}
-	
-	.workspace-profile{	
-		margin-left: 15px;
 	}
 	
 	/* Add works */

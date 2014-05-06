@@ -182,7 +182,7 @@ orcidNgModule.factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
 			displayPersonalInfo: true,
 			displayWorks: true,
 			toggleAffiliations: function() {
-				displayAffiliations = !displayAffiliations;
+				serv.displayAffiliations = !serv.displayAffiliations;				
 			},
 			toggleEducation: function() {
 				serv.displayEducation = !serv.displayEducation;
@@ -193,8 +193,8 @@ orcidNgModule.factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
 			toggleFunding: function() {
 				serv.displayFunding = !serv.displayFunding;
 			},
-			togglePersonalInfo: function() {
-				serv.displayPersonalInfo = !serv.displayPersonalInfo;
+			togglePersonalInfo: function() {				
+				serv.displayPersonalInfo = !serv.displayPersonalInfo;				
 			},
 			toggleWorks: function() {
 				serv.displayWorks = !serv.displayWorks;
@@ -213,6 +213,7 @@ orcidNgModule.factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
 			},
 			openPersonalInfo: function() {
 				serv.displayPersonalInfo = true;
+				console.log('sdafasdf');
 			},
 			openWorks: function() {
 				serv.displayWorks = true;
@@ -1506,8 +1507,9 @@ function ClaimThanks($scope, $compile) {
 
 function PersonalInfoCtrl($scope, $compile, workspaceSrvc){
 	$scope.displayInfo = workspaceSrvc.displayPersonalInfo;
-	$scope.toggleDisplayInfo = function () {
+	$scope.toggleDisplayInfo = function ($event) {
 		$scope.displayInfo = !$scope.displayInfo;
+		//Add workaround to manage button visibility on Desktop and Mobile
 	};
 };
 

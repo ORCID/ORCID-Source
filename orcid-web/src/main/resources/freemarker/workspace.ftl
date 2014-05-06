@@ -123,17 +123,23 @@
 	        	 
 	        	 
         	</div>
-        	<div class="workspace-accordion" id="workspace-accordion">
+        	<div class="workspace-accordion" id="workspace-accordion">        		
         		<!-- Personal Information -->
-        	   <div id="workspace-personal" class="workspace-accordion-item workspace-accordion-active" ng-controller="PersonalInfoCtrl">
+            	<div id="workspace-personal" class="workspace-accordion-item workspace-accordion-active" ng-controller="PersonalInfoCtrl">
         			<div class="workspace-accordion-header">
- 			   			<a href="" ng-click="toggleDisplayInfo()" class="toggle-text">
-  			   				<i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':displayInfo==false}"></i>  			   			
- 			   				<@orcid.msg 'workspace.personal_information'/>
- 			   			</a>
-   			   			<a href="<@spring.url '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="action-option manage-button">
-   			   				<span class="glyphicon glyphicon-pencil"></span><@orcid.msg 'workspace.Update'/>
-   			   			</a>
+        				<div class="row">
+        					<div class="col-md-6 col-sm-6 col-xs-12">
+		 			   			<a href="" ng-click="toggleDisplayInfo($event)" class="toggle-text">
+		  			   				<i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':displayInfo==false}"></i>  			   			
+		 			   				<@orcid.msg 'workspace.personal_information'/>
+		 			   			</a>
+	 			   			</div>
+	 			   			<div class="col-md-6 col-sm-6 col-xs-12" ng-show="displayInfo">
+		   			   			<a href="<@spring.url '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="action-option manage-button">
+		   			   				<span class="glyphicon glyphicon-pencil"></span><@orcid.msg 'workspace.Update'/>
+		   			   			</a>
+		   			   		</div>
+   			   			</div>
         			</div>
             		<div class="workspace-accordion-content" ng-show="displayInfo">
             			<#include "workspace_personal.ftl"/>
@@ -146,44 +152,51 @@
 		        <!-- Works -->                
                 <div id="workspace-publications" class="workspace-accordion-item workspace-accordion-active" ng-controller="WorkCtrl">
                 	<div class="workspace-accordion-header">
-                		<div class="work-title" ng-controller="WorkspaceSummaryCtrl">
-	                		<a href="" ng-click="workspaceSrvc.toggleWorks()" class="toggle-text">
-		       			       <i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayWorks==false}"></i>
-		       			    </a>	       			    
-		       				<a href="" ng-click="workspaceSrvc.toggleWorks()" class="toggle-text"><@orcid.msg 'workspace.Works'/> (<span ng-bind="worksSrvc.works.length"></span>)</a>
-	       				</div>
-                		<ul class="works-menu">
-	        				<li>
-	        					<a class="action-option manage-button sort-menu" ng-click="">
+                		<div class="row">
+                			<div class="col-md-3 col-sm-3 col-xs-12">
+		                		<div class="work-title" ng-controller="WorkspaceSummaryCtrl">
+			                		<a href="" ng-click="workspaceSrvc.toggleWorks()" class="toggle-text">
+				       			       <i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayWorks==false}"></i>
+				       			    </a>	       			    
+				       				<a href="" ng-click="workspaceSrvc.toggleWorks()" class="toggle-text"><@orcid.msg 'workspace.Works'/> (<span ng-bind="worksSrvc.works.length"></span>)</a>
+			       				</div>
+			       			</div>	
+			       			<div class="col-md-9 col-sm-9 col-xs-12" ng-show="workspaceSrvc.displayWorks">
+			       				<a class="action-option manage-button sort-menu" ng-click="">
 									<span class="glyphicon glyphicon-sort"></span>							
 									<@orcid.msg ''/>Sort Items							
-								</a>							
-								<ul class="sort-menu-options">
-									<li><a href="" class="checked">Title <span class="glyphicon glyphicon-ok pull-right"></span></a></li>
-									<li><a href="">Data <span class=""></span></a></li>
-									<li><a href="">Type <span class=""></span></a></li>
-									<li><a href="">Source <span class=""></span></a></li>
-								</ul>
-	        				</li>
-	        				<li>
-	        					<a href="" class="action-option manage-button" ng-click="">
-									<span class="glyphicon glyphicon-cog"></span>
-									Manage View
-								</a>	        				
-	        				</li>
-	        				<li>
-		        				<a href="" class="action-option manage-button" ng-click="addWorkModal()">
-									<span class="glyphicon glyphicon-plus"></span>
-									<@orcid.msg 'manual_work_form_contents.add_work_manually'/>
 								</a>
-	        				</li>
-	        				<li>
-		        				<a class="action-option manage-button" ng-click="showWorkImportWizard()">
-									<span class="glyphicon glyphicon-cloud-upload"></span>							
-									<@orcid.msg 'workspace.link_works'/>
-								</a>	        				
-	        				</li>
-						</ul>					
+		                		<ul class="works-menu">		                			
+			        				<li>			        												
+										<ul class="sort-menu-options">
+											<li><a href="" class="checked">Title <span class="glyphicon glyphicon-ok pull-right"></span></a></li>
+											<li><a href="">Data <span class=""></span></a></li>
+											<li><a href="">Type <span class=""></span></a></li>
+											<li><a href="">Source <span class=""></span></a></li>
+										</ul>
+			        				</li>
+			        				<li>
+			        					<a href="" class="action-option manage-button" ng-click="">
+											<span class="glyphicon glyphicon-cog"></span>
+											Manage View
+										</a>	        				
+			        				</li>
+			        				<li>
+				        				<a href="" class="action-option manage-button" ng-click="addWorkModal()">
+											<span class="glyphicon glyphicon-plus"></span>
+											<@orcid.msg 'manual_work_form_contents.add_work_manually'/>
+										</a>
+			        				</li>
+			        				<li>
+				        				<a class="action-option manage-button" ng-click="showWorkImportWizard()">
+											<span class="glyphicon glyphicon-cloud-upload"></span>							
+											<@orcid.msg 'workspace.link_works'/>
+										</a>	        				
+			        				</li>
+								</ul>
+							
+							</div>
+						</div>					
 					</div>
 					
       	            <div ng-show="workspaceSrvc.displayWorks" class="workspace-accordion-content">
