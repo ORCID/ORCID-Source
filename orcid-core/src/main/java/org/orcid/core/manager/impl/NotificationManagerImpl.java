@@ -368,8 +368,14 @@ public class NotificationManagerImpl implements NotificationManager {
         message.setSubject(getSubject("email.subject.added_as_delegate", orcidUserGrantingPermission));
 
         for (DelegationDetails newDelegation : delegatesGrantedByUser) {
-            String grantingOrcidEmail = orcidUserGrantingPermission.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
             ProfileEntity delegateProfileEntity = profileDao.find(newDelegation.getDelegateSummary().getOrcidIdentifier().getPath());
+            Boolean sendChangeNotifications = delegateProfileEntity.getSendChangeNotifications();
+            if (sendChangeNotifications == null || !sendChangeNotifications) {
+                LOGGER.debug("Not sending added delegate email, because option to send change notifications not set to true for delegate: {}", delegateProfileEntity.getId());
+                return;
+            }
+            
+            String grantingOrcidEmail = orcidUserGrantingPermission.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
             String emailNameForDelegate = deriveEmailFriendlyName(delegateProfileEntity);
 
             templateParams.put("emailNameForDelegate", emailNameForDelegate);
