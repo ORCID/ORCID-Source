@@ -166,15 +166,13 @@
 									<span class="glyphicon glyphicon-sort"></span>							
 									<@orcid.msg ''/>Sort Items							
 								</a>
-		                		<ul class="works-menu">		                			
-			        				<li>			        												
-										<ul class="sort-menu-options">
-											<li><a href="" class="checked">Title <span class="glyphicon glyphicon-ok pull-right"></span></a></li>
-											<li><a href="">Data <span class=""></span></a></li>
-											<li><a href="">Type <span class=""></span></a></li>
-											<li><a href="">Source <span class=""></span></a></li>
-										</ul>
-			        				</li>
+								<ul class="sort-menu-options">
+									<li><a href="">Title <span class=""></span></a></li>
+									<li><a href="" class="checked">Data <span class="glyphicon glyphicon-ok pull-right"></span></a></li>
+									<li><a href="">Type <span class=""></span></a></li>
+									<li><a href="">Source <span class=""></span></a></li>
+								</ul>
+		                		<ul class="works-menu">
 			        				<li>
 			        					<a href="" class="action-option manage-button" ng-click="">
 											<span class="glyphicon glyphicon-cog"></span>

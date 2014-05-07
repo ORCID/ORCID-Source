@@ -3784,7 +3784,7 @@ ul.personal-inf-display li:first-child a{
 	float: left;
 }
 
-ul.works-menu{
+ul.works-menu{	
 	position: relative;
 	padding: 0;
 	margin: 0;
@@ -3801,19 +3801,33 @@ ul.works-menu li{
 
 ul.sort-menu-options{
 	position: absolute;
-	right: 0;
+	right: 15px;
 	top: 31px;
 	background: #a6ce39;
 	margin: 0; 
 	padding: 0;
-	width: inherit;
+	width: auto;	 
 	color: #FFF;
+	z-index: 500;
+	display: none;
+}
+
+a.sort-menu{
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;	
 }
 
 ul.sort-menu-options li{
 	border-bottom: 1px solid #FFF;	
 	display: block;
-	min-width: 100px;		
+	min-width: 100px;
+	height: 30px; 
+	width: auto;	
+	background: #C9CACB;
 }
 
 ul.sort-menu-options li a{
@@ -3823,6 +3837,13 @@ ul.sort-menu-options li a{
 	background: #C9CACB;
 	font-size: 12px;
 	font-weight: bold;
+	width: auto;
+	height: 30px;	 
+}
+
+ul.sort-menu-options li a span{
+	margin-left: 5px;
+	display: block;
 }
 
 ul.sort-menu-options li a:hover{	 
@@ -3831,6 +3852,14 @@ ul.sort-menu-options li a:hover{
 
 .checked{
 	background: #a6ce39 !important;
+	display: block;
+	float: left;
+	min-width: 100px;
+	width: auto;
+}
+
+.checked span{
+	margin-right: 5px;
 }
 
 .tablet-desktop-display{
@@ -4730,6 +4759,37 @@ ul.sort-menu-options li a:hover{
 	
 	.toggle-text{
 		padding-left: 5px;
+	}
+	
+	.workspace-accordion-header ul.works-menu{
+		width: 100%;
+	}
+	
+	.workspace-accordion-header ul>li>a.action-option{
+		width: 33.33%;		
+		color: transparent;
+		overflow: hidden;		
+		padding: 15px 0;
+		height: 60px;
+		text-align: center;
+		font-size: 0px;
+	}
+	
+	.workspace-accordion-header ul>li>a.action-option{
+		content: " ";
+	}
+	
+	.workspace-accordion-header a.sort-menu{
+		border-bottom: 1px solid #FFF;		
+	}
+	
+	.workspace-accordion-header ul>li>a.action-option>span{		
+		color: #FFF;
+		font-size: 22px;						
+	}
+	
+	#workspace-publications .alert{
+		margin-top: 90px;
 	}
 }
 

@@ -391,6 +391,25 @@
 			}
 		});		
 	};
+	
+	var sortMenu =  function(){
+		$('#workspace-publications .sort-menu').click(function(event){
+			event.stopPropagation();
+			var status = $('#workspace-publications .sort-menu-options').css('display');
+			console.log(status);
+			if(status == 'none' ){
+				$('#workspace-publications .sort-menu-options').css('display','block');	
+			}else{
+				$('#workspace-publications .sort-menu-options').css('display','none');
+			}
+		});
+	}
+	
+	var selectableInputs = function(){
+    	$(".selectable").click(function () {
+    		$(this).select();
+    	});
+    };
     
     /*============================================================
         Page initialisation
@@ -407,13 +426,10 @@
         developerToolsTabs();
         //setLoginStatusIcon();
         selectableInputs();
+        sortMenu();
     };
 
-    var selectableInputs = function(){
-    	$(".selectable").click(function () {
-    		$(this).select();
-    	});
-    };
+    
     
     init();
 
