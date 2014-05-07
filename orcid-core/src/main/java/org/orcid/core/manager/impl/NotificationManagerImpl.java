@@ -50,7 +50,6 @@ import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
-import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
 import org.orcid.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,8 +94,7 @@ public class NotificationManagerImpl implements NotificationManager {
     private TemplateManager templateManager;
 
     private EncryptionManager encryptionManager;
-
-    private GenericDao<SecurityQuestionEntity, Integer> securityQuestionDao;
+    
 
     @Resource
     private GenericDao<ProfileEventEntity, Long> profileEventDao;
@@ -143,14 +141,7 @@ public class NotificationManagerImpl implements NotificationManager {
     @Required
     public void setEncryptionManager(EncryptionManager encryptionManager) {
         this.encryptionManager = encryptionManager;
-    }
-
-    @Required
-    @Resource(name = "securityQuestionDao")
-    @Override
-    public void setSecurityQuestionDao(GenericDao<SecurityQuestionEntity, Integer> securityQuestionDao) {
-        this.securityQuestionDao = securityQuestionDao;
-    }
+    }    
 
     public void setProfileEventDao(GenericDao<ProfileEventEntity, Long> profileEventDao) {
         this.profileEventDao = profileEventDao;
@@ -311,7 +302,6 @@ public class NotificationManagerImpl implements NotificationManager {
         String body = templateManager.processTemplate("reset_password_email.ftl", templateParams);
         String htmlBody = templateManager.processTemplate("reset_password_email_html.ftl", templateParams);
         mailGunManager.sendEmail(RESET_NOTIFY_ORCID_ORG, primaryEmail, getSubject("email.subject.reset", orcidProfile), body, htmlBody);
-
     }
 
     @Override
@@ -333,25 +323,27 @@ public class NotificationManagerImpl implements NotificationManager {
             LOGGER.debug("Not sending amend email, because modified by admin ({}): {}", amenderOrcid, amendedProfile);
             return;
         }
+        
+        String subject = getSubject("email.subject.amend", amendedProfile);
+        String email = amendedProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+        
         // Create map of template params
         Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put("emailName", deriveEmailFriendlyName(amendedProfile));
         templateParams.put("orcid", amendedProfile.getOrcidIdentifier().getPath());
         templateParams.put("amenderName", extractAmenderName(amendedProfile, amenderOrcid));
         templateParams.put("baseUri", baseUri);
+        templateParams.put("subject", subject);
 
         addMessageParams(templateParams, amendedProfile);
 
         // Generate body from template
         String body = templateManager.processTemplate("amend_email.ftl", templateParams);
-        // Create email message
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(fromAddress);
-        message.setTo(amendedProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
-        message.setSubject(getSubject("email.subject.amend", amendedProfile));
-        message.setText(body);
-        // Send message
-        sendAndLogMessage(message);
+        // Generate html from template
+        String html = templateManager.processTemplate("amend_email_html.ftl", templateParams);
+        
+        mailGunManager.sendEmail(fromAddress, email, subject, body, html);
+        
     }
 
     @Override

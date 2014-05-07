@@ -31,7 +31,7 @@ public interface NotificationManager {
 
     void setMailSender(MailSender mailSender);
 
-    void setSecurityQuestionDao(GenericDao<SecurityQuestionEntity, Integer> securityQuestionDao);
+    //void setSecurityQuestionDao(GenericDao<SecurityQuestionEntity, Integer> securityQuestionDao);
 
     // void sendRegistrationEmail(RegistrationEntity registration, URI baseUri);
 
