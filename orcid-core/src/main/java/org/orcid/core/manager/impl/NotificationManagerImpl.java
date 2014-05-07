@@ -165,25 +165,25 @@ public class NotificationManagerImpl implements NotificationManager {
         // Create verification url
 
         Map<String, Object> templateParams = new HashMap<String, Object>();
-
+        
+        String subject = getSubject("email.subject.deactivate", orcidToDeactivate);
+        String email = orcidToDeactivate.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+        
         String emailFriendlyName = deriveEmailFriendlyName(orcidToDeactivate);
         templateParams.put("emailName", emailFriendlyName);
         templateParams.put("orcid", orcidToDeactivate.getOrcidIdentifier().getPath());
         templateParams.put("baseUri", baseUri);
         templateParams.put("deactivateUrlEndpoint", "/account/confirm-deactivate-orcid");
+        templateParams.put("subject", subject);
 
         addMessageParams(templateParams, orcidToDeactivate);
 
         // Generate body from template
         String body = templateManager.processTemplate("deactivate_orcid_email.ftl", templateParams);
-        // Create email message
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(fromAddress);
-        message.setTo(orcidToDeactivate.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
-        message.setSubject(getSubject("email.subject.deactivate", orcidToDeactivate));
-        message.setText(body);
-        // Send message
-        sendAndLogMessage(message);
+        // Generate html from template
+        String html = templateManager.processTemplate("deactivate_orcid_email_html.ftl", templateParams);
+        
+        mailGunManager.sendEmail(fromAddress, email, subject, body, html);
     }
 
     // look like the following is our best best for i18n emails
