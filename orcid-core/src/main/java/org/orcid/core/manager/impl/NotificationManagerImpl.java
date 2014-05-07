@@ -346,34 +346,6 @@ public class NotificationManagerImpl implements NotificationManager {
         
     }
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     @Override
     public void sendNotificationToAddedDelegate(OrcidProfile orcidUserGrantingPermission, List<DelegationDetails> delegatesGrantedByUser) {
         // Create map of template params
@@ -402,20 +374,18 @@ public class NotificationManagerImpl implements NotificationManager {
             
             mailGunManager.sendEmail(fromAddress, email, subject, body, html);
         }
-
     }
-
+    
     @Override
     public void sendEmailAddressChangedNotification(OrcidProfile updatedProfile, Email oldEmail, URI baseUri) {
 
         // build up old template
         Map<String, Object> templateParams = new HashMap<String, Object>();
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(supportAddress);
-        message.setTo(oldEmail.getValue());
-        message.setSubject(getSubject("email.subject.email_removed", updatedProfile));
-
-        String emailFriendlyName = deriveEmailFriendlyName(updatedProfile);
+        
+        String subject = getSubject("email.subject.email_removed", updatedProfile);
+        String email = oldEmail.getValue();
+        String from = supportAddress;
+                String emailFriendlyName = deriveEmailFriendlyName(updatedProfile);
         templateParams.put("emailName", emailFriendlyName);
         String verificationUrl = createVerificationUrl(updatedProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), baseUri);
         templateParams.put("verificationUrl", verificationUrl);
@@ -423,15 +393,16 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("newEmail", updatedProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
         templateParams.put("orcid", updatedProfile.getOrcidIdentifier().getPath());
         templateParams.put("baseUri", baseUri);
+        templateParams.put("subject", subject);
 
         addMessageParams(templateParams, updatedProfile);
 
         // Generate body from template
         String body = templateManager.processTemplate("email_removed.ftl", templateParams);
-        // Create email message
-        message.setText(body);
-        // Send message
-        sendAndLogMessage(message);
+        // Generate html from template
+        String html = templateManager.processTemplate("email_removed_html.ftl", templateParams);
+        
+        mailGunManager.sendEmail(from, email, subject, body, html);
     }
 
     @Override
