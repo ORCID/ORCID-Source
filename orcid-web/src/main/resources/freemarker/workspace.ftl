@@ -162,16 +162,18 @@
 			       				</div>
 			       			</div>	
 			       			<div class="col-md-9 col-sm-9 col-xs-12" ng-show="workspaceSrvc.displayWorks">
-			       				<a class="action-option manage-button sort-menu" ng-click="">
-									<span class="glyphicon glyphicon-sort"></span>							
-									<@orcid.msg ''/>Sort Items							
-								</a>
-								<ul class="sort-menu-options">
-									<li><a href="">Title <span class=""></span></a></li>
-									<li><a href="" class="checked">Data <span class="glyphicon glyphicon-ok pull-right"></span></a></li>
-									<li><a href="">Type <span class=""></span></a></li>
-									<li><a href="">Source <span class=""></span></a></li>
-								</ul>
+			       				<div class="sort-menu-container">
+				       				<a class="action-option manage-button sort-menu" ng-click="">
+										<span class="glyphicon glyphicon-sort"></span>							
+										<@orcid.msg ''/>Sort Items							
+									</a>
+									<ul class="sort-menu-options">
+										<li><a href="">Title <span class=""></span></a></li>
+										<li><a href="" class="checked">Data <span class="glyphicon glyphicon-ok pull-right"></span></a></li>
+										<li><a href="">Type <span class=""></span></a></li>
+										<li><a href="">Source <span class=""></span></a></li>
+									</ul>
+								</div>
 		                		<ul class="works-menu">
 			        				<li>
 			        					<a href="" class="action-option manage-button" ng-click="">
