@@ -55,7 +55,7 @@
 		        	<div>
 		        	   <strong><@orcid.msg 'workspace.Alsoknownas'/></strong>
 		        	   <span ng-hide="showEdit == true" ng-click="toggleEdit()">
-		        	      <span class="glyphicon glyphicon-pencil edit-other-names edit-option" ng-click="toggleEdit()" title=""></span><br />
+		        	      <span class="glyphicon glyphicon-pencil edit-other-names edit-option" title=""></span><br />
 		        	      <span ng-repeat="otherNames in otherNamesForm.otherNames" ng-cloak>
 		        	         {{ $last?otherNames.value:otherNames.value+ ", "}}
 		        	      </span>
@@ -130,7 +130,7 @@
 		        	<div>
 		        	   <strong><@orcid.msg 'public_profile.labelKeywords'/></strong>
 		        	   <span ng-hide="showEdit == true" ng-click="toggleEdit()">
-		        	      <span class="glyphicon glyphicon-pencil edit-keywords edit-option" ng-click="toggleEdit()" title=""></span><br />
+		        	      <span class="glyphicon glyphicon-pencil edit-keywords edit-option" title=""></span><br />
 		        	      <span ng-repeat="keyword in keywordsForm.keywords" ng-cloak>
 		        	         {{ $last?keyword.value:keyword.value+ ", "}}
 		        	      </span>
@@ -176,9 +176,9 @@
 		        	      <@orcid.privacyToggle  angularModel="websitesForm.visibility.visibility"
 				             questionClick="toggleClickPrivacyHelp()"
 				             clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
-				             publicClick="setCreditNameVisibility('PUBLIC', $event)" 
-	                 	     limitedClick="setCreditNameVisibility('LIMITED', $event)" 
-	                 	     privateClick="setCreditNameVisibility('PRIVATE', $event)" />
+				             publicClick="setPrivacy('PUBLIC', $event)" 
+	                 	     limitedClick="setPrivacy('LIMITED', $event)" 
+	                 	     privateClick="setPrivacy('PRIVATE', $event)" />
 		        	   
 		        	      <div ng-repeat="website in websitesForm.websites">
 		        	          <input type="text" ng-model="website.url.value" placeholder="${springMacroRequestContext.getMessage("manual_work_form_contents.labelURL")}"></input>
