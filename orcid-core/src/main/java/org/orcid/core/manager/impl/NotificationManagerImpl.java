@@ -346,38 +346,61 @@ public class NotificationManagerImpl implements NotificationManager {
         
     }
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     @Override
     public void sendNotificationToAddedDelegate(OrcidProfile orcidUserGrantingPermission, List<DelegationDetails> delegatesGrantedByUser) {
-
         // Create map of template params
         Map<String, Object> templateParams = new HashMap<String, Object>();
-        SimpleMailMessage message = new SimpleMailMessage();
-        // LADP, Please Check, can't test yet
-        // Would prefer if this email came from ORCID user granting permission -
-        // parameter also needed for the body of the email
-        // message.setFrom(grantingOrcidEmail);
-        message.setFrom(fromAddress);
-        message.setSubject(getSubject("email.subject.added_as_delegate", orcidUserGrantingPermission));
-
+        String subject = getSubject("email.subject.added_as_delegate", orcidUserGrantingPermission);
+        
         for (DelegationDetails newDelegation : delegatesGrantedByUser) {
-            String grantingOrcidEmail = orcidUserGrantingPermission.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+            String grantingOrcidEmail = orcidUserGrantingPermission.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();            
             ProfileEntity delegateProfileEntity = profileDao.find(newDelegation.getDelegateSummary().getOrcidIdentifier().getPath());
             String emailNameForDelegate = deriveEmailFriendlyName(delegateProfileEntity);
+            String email = delegateProfileEntity.getPrimaryEmail().getId();
 
             templateParams.put("emailNameForDelegate", emailNameForDelegate);
             templateParams.put("grantingOrcidValue", orcidUserGrantingPermission.getOrcidIdentifier().getPath());
             templateParams.put("grantingOrcidName", deriveEmailFriendlyName(orcidUserGrantingPermission));
             templateParams.put("baseUri", baseUri);
             templateParams.put("grantingOrcidEmail", grantingOrcidEmail);
+            templateParams.put("subject", subject);
 
             addMessageParams(templateParams, orcidUserGrantingPermission);
 
+            // Generate body from template
             String body = templateManager.processTemplate("added_as_delegate_email.ftl", templateParams);
-
-            message.setTo(delegateProfileEntity.getPrimaryEmail().getId());
-            message.setText(body);
-            // Send message
-            sendAndLogMessage(message);
+            // Generate html from template
+            String html = templateManager.processTemplate("added_as_delegate_email_html.ftl", templateParams);
+            
+            mailGunManager.sendEmail(fromAddress, email, subject, body, html);
         }
 
     }
