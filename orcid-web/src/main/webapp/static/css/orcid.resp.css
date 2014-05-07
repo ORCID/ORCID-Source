@@ -3757,6 +3757,13 @@ p.orcid-id-container{
 	margin-bottom: 10px;
 }
 
+.websites-edit, .keywords-edit, .other-names-edit, .names-edit {
+	background: #EFEFEF;
+	padding: 10px;
+	margin-bottom: 10px;
+}
+
+
 .websites-edit input {
 	width: 95px;
 }
@@ -3765,7 +3772,7 @@ p.orcid-id-container{
 	width: 190px;
 }
 
-.keywords-edit #privacy-bar, .other-names-edit #privacy-bar {
+.keywords-edit #privacy-bar, .other-names-edit #privacy-bar, .names-edit #privacy-bar {
 	padding-bottom: 10px;
 }
 
@@ -3783,6 +3790,7 @@ p.orcid-id-container{
 .country-controller .edit-option:hover,
 .keywords-controller .edit-option:hover,
 .other-names-controller .edit-option:hover,
+.name-controller .edit-option:hover,
 .websites-controller .edit-option:hover {
 	cursor: pointer;
 	color: #a6ce39;
@@ -3832,6 +3840,7 @@ p.orcid-id-container{
 
 .country-controller .popover-help-container .popover, 
 .websites-controller .popover-help-container .popover,
+.name-controller .popover-help-container .popover,
 .keywords-controller .popover-help-container .popover,
 .other-names-controller .popover-help-container .popover {
 	left: -120px !important;
@@ -3839,6 +3848,7 @@ p.orcid-id-container{
 
 .country-controller .popover.bottom .arrow,
 .websites-controller .popover.bottom .arrow,
+.name-controller .popover.bottom .arrow,
 .keywords-controller .popover.bottom .arrow,
 .other-names-controller .popover.bottom .arrow{
 	left: 127px !important;

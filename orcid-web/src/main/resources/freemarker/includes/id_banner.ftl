@@ -19,13 +19,39 @@
 <#escape x as x?html>
 <div class="id-banner <#if inDelegationMode>delegation-mode</#if>">
     <#if inDelegationMode><span class="delegation-mode-warning">${springMacroRequestContext.getMessage("delegate.managing_record")}</span></#if>
-	<h2 class="full-name">
-	    <#if (profile.orcidBio.personalDetails.creditName.content)??>
-	        ${(profile.orcidBio.personalDetails.creditName.content)!}
-	    <#else>
-	        ${(profile.orcidBio.personalDetails.givenNames.content)!} ${(profile.orcidBio.personalDetails.familyName.content)!}
-	    </#if>                
-	</h2>
+	<div ng-controller="NameCtrl" class="name-controller">
+		<div ng-show="showEdit == false" ng-click="toggleEdit()">
+			<h2 class="full-name">
+				<span ng-hide="nameForm != null && nameForm.creditName == null" ng-cloak>
+				    {{nameForm.creditName.value}}
+				</span>
+				<span ng-show="nameForm != null && nameForm.creditName == null" ng-cloak>
+				    {{nameForm.givenNames.value}} {{nameForm.familyName.value}}
+				</span>
+				 <span class="glyphicon glyphicon-pencil edit-name edit-option" title="" ng-hide="showEdit == true"></span> 
+			</h2>
+		</div>
+		<div class="names-edit" ng-show="showEdit == true" ng-cloak>
+		   <label for="firstName">${springMacroRequestContext.getMessage("manage_bio_settings.labelfirstname")}</label><br />
+		   <input type="text" ng-model="nameForm.givenNames.value"></input><br />
+		   <label for="lastName">${springMacroRequestContext.getMessage("manage_bio_settings.labellastname")}</label><br />
+		   <input type="text" ng-model="nameForm.familyName.value"></input><br />
+		   <label for="creditName">${springMacroRequestContext.getMessage("manage_bio_settings.labelpublishedname")}</label><br/ >
+		   <@orcid.privacyToggle  angularModel="nameForm.creditNameVisibility.visibility"
+				             questionClick="toggleClickPrivacyHelp()"
+				             clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
+				             publicClick="setCreditNameVisibility('PUBLIC', $event)" 
+	                 	     limitedClick="setCreditNameVisibility('LIMITED', $event)" 
+	                 	     privateClick="setCreditNameVisibility('PRIVATE', $event)" />
+		        	   
+		   <input type="text" ng-model="nameForm.creditName.value"></input>
+		   <button class="btn btn-primary" ng-click="setNameForm()"><@spring.message "freemarker.btnsavechanges"/></button>
+		   <button class="btn" ng-click="close()"><@spring.message "freemarker.btncancel"/></button>
+		   
+		</div>
+		
+	</div>
+	
 	<div class="oid">
 		<p class="orcid-id-container">
 	    	<span class="mini-orcid-icon"></span>

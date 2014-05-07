@@ -54,8 +54,8 @@
 		       	<div ng-controller="OtherNamesCtrl" class="other-names-controller">
 		        	<div>
 		        	   <strong><@orcid.msg 'workspace.Alsoknownas'/></strong>
-		        	   <span ng-hide="showEdit == true">
-		        	      <span class="glyphicon glyphicon-pencil edit-other-names edit-option" ng-click="toggleEdit()" title=""></span><br />
+		        	   <span ng-hide="showEdit == true" ng-click="toggleEdit()">
+		        	      <span class="glyphicon glyphicon-pencil edit-other-names edit-option" title=""></span><br />
 		        	      <span ng-repeat="otherNames in otherNamesForm.otherNames" ng-cloak>
 		        	         {{ $last?otherNames.value:otherNames.value+ ", "}}
 		        	      </span>
@@ -92,8 +92,9 @@
             
             <div ng-controller="CountryCtrl" class="country-controller">
 	        	<strong><@orcid.msg 'public_profile.labelCountry'/></strong>
-	               
-                <span ng-hide="showEdit == true">
+	            <span class="glyphicon glyphicon-pencil edit-country edit-option" ng-click="toggleEdit()" title="" ng-hide="showEdit == true"></span>
+	            <br />   
+                <span ng-hide="showEdit == true" ng-click="toggleEdit()">
 	                <span ng-show="countryForm != null && countryForm.iso2Country != null" ng-bind="countryForm.iso2Country.value">
 	                </span>
                     
@@ -101,7 +102,7 @@
 	                   <@spring.message "workspace.select_country"/>
 	                </span>
 	                
-	                <span class="glyphicon glyphicon-pencil edit-country edit-option" ng-click="toggleEdit()" title=""></span>
+	                
                </span>
                
                <div ng-show="showEdit == true" ng-cloak class="country-edit">
@@ -128,8 +129,8 @@
 		       	<div ng-controller="KeywordsCtrl" class="keywords-controller">
 		        	<div>
 		        	   <strong><@orcid.msg 'public_profile.labelKeywords'/></strong>
-		        	   <span ng-hide="showEdit == true">
-		        	      <span class="glyphicon glyphicon-pencil edit-keywords edit-option" ng-click="toggleEdit()" title=""></span><br />
+		        	   <span ng-hide="showEdit == true" ng-click="toggleEdit()">
+		        	      <span class="glyphicon glyphicon-pencil edit-keywords edit-option" title=""></span><br />
 		        	      <span ng-repeat="keyword in keywordsForm.keywords" ng-cloak>
 		        	         {{ $last?keyword.value:keyword.value+ ", "}}
 		        	      </span>
