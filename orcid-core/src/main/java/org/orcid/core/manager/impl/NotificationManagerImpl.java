@@ -486,7 +486,9 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     /**
-     * TODO
+     * Substitute the message params with his real values
+     * @param templateParams
+     * @param profileEntity
      * */
     private void addMessageParams(Map<String, Object> templateParams, ProfileEntity profileEntity) {
         Locale locale = null;
@@ -501,7 +503,9 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     /**
-     * TODO
+     * Get the subject of a message given a code and a profile entity
+     * @param code
+     * @param profileEntity
      * */
     private String getSubject(String code, ProfileEntity profileEntity) {
         Locale locale = null;
@@ -525,62 +529,67 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     /**
-     * TODO
+     * Sends an email to the depreciated account owner
+     * @param deprecatedProfile
+     * @param primaryProfile 
      * */
     private void sendProfileDeprecationEmailToDeprecatedAccount(ProfileEntity deprecatedProfile, ProfileEntity primaryProfile) {
+        String subject = getSubject("email.subject.deprecated_profile", deprecatedProfile);
+        String from = fromAddress;
+        String email = deprecatedProfile.getPrimaryEmail().getId();
         // Create map of template params
         Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put("emailName", deriveEmailFriendlyName(deprecatedProfile));
         templateParams.put("deprecatedAccount", deprecatedProfile.getId());
         templateParams.put("primaryAccount", deprecatedProfile.getId());
-
+        templateParams.put("subject", subject);
+        
         addMessageParams(templateParams, deprecatedProfile);
 
         // Generate body from template
         String body = templateManager.processTemplate("profile_deprecation_deprecated_profile_email.ftl", templateParams);
-        // Create email message
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(fromAddress);
-        message.setTo(deprecatedProfile.getPrimaryEmail().getId());
-        message.setSubject(getSubject("email.subject.deprecated_profile", deprecatedProfile));
-        message.setText(body);
-
+        // Generate html from template
+        String html = templateManager.processTemplate("profile_deprecation_deprecated_profile_email_html.ftl", templateParams);
+        
         // Send message
         if (apiRecordCreationEmailEnabled) {
-            sendAndLogMessage(message);
+            mailGunManager.sendEmail(from, email, subject, body, html);
             profileEventDao.persist(new ProfileEventEntity(deprecatedProfile.getId(), ProfileEventType.PROFILE_DEPRECATED));
         } else {
-            LOGGER.debug("Not sending profile deprecated email, because API record creation email option is disabled. Message would have been: {}", message);
+            LOGGER.debug("Not sending profile deprecated email, because API record creation email option is disabled. Message would have been: {}", body);
         }
     }
 
     /**
-     * TODO
+     * Send an email to the primary account indicating that an account has been deprecated to his account
+     * @param deprecatedProfile
+     * @param primaryProfile
      * */
     private void sendProfileDeprecationEmailToPrimaryAccount(ProfileEntity deprecatedProfile, ProfileEntity primaryProfile) {
+        String subject = getSubject("email.subject.deprecated_profile_primary", primaryProfile);
+        String from = fromAddress;
+        String email = deprecatedProfile.getPrimaryEmail().getId();
+        
         // Create map of template params
         Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put("emailName", deriveEmailFriendlyName(primaryProfile));
         templateParams.put("deprecatedAccount", deprecatedProfile.getId());
         templateParams.put("primaryAccount", deprecatedProfile.getId());
-
-        addMessageParams(templateParams, primaryProfile);
+        templateParams.put("subject", subject);
+        
+        addMessageParams(templateParams, deprecatedProfile);
 
         // Generate body from template
         String body = templateManager.processTemplate("profile_deprecation_primary_profile_email.ftl", templateParams);
-        // Create email message
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(fromAddress);
-        message.setTo(primaryProfile.getPrimaryEmail().getId());
-        message.setSubject(getSubject("email.subject.deprecated_profile_primary", primaryProfile));
-        message.setText(body);
-
+        // Generate html from template
+        String html = templateManager.processTemplate("profile_deprecation_primary_profile_email_html.ftl", templateParams);
+        
         // Send message
         if (apiRecordCreationEmailEnabled) {
-            sendAndLogMessage(message);
-            profileEventDao.persist(new ProfileEventEntity(deprecatedProfile.getId(), ProfileEventType.PROFILE_DEPRECATION));
+            mailGunManager.sendEmail(from, email, subject, body, html);
+            profileEventDao.persist(new ProfileEventEntity(deprecatedProfile.getId(), ProfileEventType.PROFILE_DEPRECATED));
         } else {
-            LOGGER.debug("Not sending profile deprecated email, because API record creation email option is disabled. Message would have been: {}", message);
+            LOGGER.debug("Not sending profile deprecated email, because API record creation email option is disabled. Message would have been: {}", body);
         }
     }
 
@@ -631,14 +640,4 @@ public class NotificationManagerImpl implements NotificationManager {
         }
         return String.format("%s/%s/%s", baseUri.toString(), path, base64EncodedParams);
     }
-
-    private void sendAndLogMessage(SimpleMailMessage message) {
-        LOGGER.info("Sending email message: {}", message);
-        try {
-            mailSender.send(message);
-        } catch (RuntimeException e) {
-            LOGGER.error("Error sending email: {}", message, e);
-        }
-    }
-
 }

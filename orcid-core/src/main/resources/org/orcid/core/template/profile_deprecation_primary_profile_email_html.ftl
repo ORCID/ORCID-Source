@@ -27,21 +27,14 @@
 			<img src="http://orcid.org/sites/all/themes/orcid/img/orcid-logo.png" alt="ORCID.org"/>
 		    <hr />
 		  	<span style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666; font-weight: bold;">
-		    <@emailMacros.msg "email.common.dear" /> ${emailName}<@emailMacros.msg "email.common.dear.comma" />
+		    	<@emailMacros.msg "email.common.dear" /> ${emailName}<@emailMacros.msg "email.common.dear.comma" />
 		    </span>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-                <@emailMacros.msg "email.amend.thought_you.1" /> ${amenderName} <@emailMacros.msg "email.amend.thought_you.2" />
-		    </p>		    
-		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-                <@emailMacros.msg "email.amend.please_click" />
-                ${baseUri}/my-orcid?lang=${locale}
-		    </p>		    
-		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-		    	<@emailMacros.msg "email.common.kind_regards" />
-				${baseUri}/?lang=${locale}
-		    </p>
+                <@emailMacros.msg "email.deprecated_account.primary_account.message.1" />${deprecatedAccount}<@emailMacros.msg "email.deprecated_account.primary_account.message.2" />
+				<@emailMacros.msg "email.deprecated_account.primary_account.message.3" />${primaryAccount}<@emailMacros.msg "email.deprecated_account.primary_account.message.4" />
+		    </p>		    		    
 			<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">
-				<@emailMacros.msg "email.common.you_have_received_this_email_opt_out.1" />${baseUri}/?lang=${locale}<@emailMacros.msg "email.common.you_have_received_this_email_opt_out.2" />
+				<@emailMacros.msg "email.common.you_have_received_this_email" />
 			</p>					   
 			<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">
 			   <#include "email_footer_html.ftl"/>
