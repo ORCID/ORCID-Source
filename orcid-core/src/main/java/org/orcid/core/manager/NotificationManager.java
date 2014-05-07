@@ -22,16 +22,12 @@ import java.util.List;
 import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
 import org.springframework.mail.MailSender;
 
 public interface NotificationManager {
 
     void setMailSender(MailSender mailSender);
-
-    //void setSecurityQuestionDao(GenericDao<SecurityQuestionEntity, Integer> securityQuestionDao);
 
     // void sendRegistrationEmail(RegistrationEntity registration, URI baseUri);
 
