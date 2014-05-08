@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.orcid.jaxb.model.message.CreditName;
+import org.orcid.jaxb.model.message.FamilyName;
+import org.orcid.jaxb.model.message.GivenNames;
 import org.orcid.jaxb.model.message.Keyword;
 import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.jaxb.model.message.OrcidBio;
@@ -58,10 +60,14 @@ public class NamesForm implements ErrorsInterface, Serializable {
     }
 
     public void populatePersonalDetails (PersonalDetails personalDetails) {
-        if (this.givenNames != null)
+        if (this.givenNames != null) {
+            if (personalDetails.getGivenNames() == null) personalDetails.setGivenNames(new GivenNames());
             personalDetails.getGivenNames().setContent(this.givenNames.getValue());
-        if (this.familyName != null)
+        }
+        if (this.familyName != null) {
+            if (personalDetails.getFamilyName() == null) personalDetails.setFamilyName(new FamilyName());
             personalDetails.getFamilyName().setContent(this.familyName.getValue());
+        }
         if (this.creditName != null) {
             if (personalDetails.getCreditName() == null)
                 personalDetails.setCreditName(new CreditName());     
