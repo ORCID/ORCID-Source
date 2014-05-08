@@ -134,7 +134,7 @@
 		 			   				<@orcid.msg 'workspace.personal_information'/>
 		 			   			</a>
 	 			   			</div>
-	 			   			<div class="col-md-6 col-sm-6 col-xs-12" ng-show="displayInfo">
+	 			   			<div class="col-md-6 col-sm-6 col-xs-12 action-button-bar" ng-show="displayInfo">
 		   			   			<a href="<@spring.url '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="action-option manage-button">
 		   			   				<span class="glyphicon glyphicon-pencil"></span><@orcid.msg 'workspace.Update'/>
 		   			   			</a>
@@ -153,15 +153,15 @@
                 <div id="workspace-publications" class="workspace-accordion-item workspace-accordion-active" ng-controller="WorkCtrl">
                 	<div class="workspace-accordion-header">
                 		<div class="row">
-                			<div class="col-md-3 col-sm-3 col-xs-12">
+                			<div class="col-md-2 col-sm-2 col-xs-12">
 		                		<div class="work-title" ng-controller="WorkspaceSummaryCtrl">
-			                		<a href="" ng-click="workspaceSrvc.toggleWorks()" class="toggle-text">
+			                		<a href="" ng-click="workspaceSrvc.toggleWorks($event)" class="toggle-text">
 				       			       <i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayWorks==false}"></i>
-				       			    </a>	       			    
-				       				<a href="" ng-click="workspaceSrvc.toggleWorks()" class="toggle-text"><@orcid.msg 'workspace.Works'/> (<span ng-bind="worksSrvc.works.length"></span>)</a>
+				       			       <@orcid.msg 'workspace.Works'/> (<span ng-bind="worksSrvc.works.length"></span>)
+				       			    </a>
 			       				</div>
 			       			</div>	
-			       			<div class="col-md-9 col-sm-9 col-xs-12" ng-show="workspaceSrvc.displayWorks">
+			       			<div class="col-md-10 col-sm-10 col-xs-12 action-button-bar" ng-show="workspaceSrvc.displayWorks">
 			       				<div class="sort-menu-container">
 				       				<a class="action-option manage-button sort-menu" ng-click="">
 										<span class="glyphicon glyphicon-sort"></span>							
@@ -194,7 +194,6 @@
 										</a>	        				
 			        				</li>
 								</ul>
-							
 							</div>
 						</div>					
 					</div>

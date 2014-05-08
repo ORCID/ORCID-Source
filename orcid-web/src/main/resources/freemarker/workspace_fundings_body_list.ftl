@@ -27,14 +27,12 @@
 			<div class="row">
 				<div class="col-md-6 col-sm-6 col-xs-12">
 					<a name='workspace-fundings' />
-				    <a href="" ng-click="workspaceSrvc.toggleFunding()" class="toggle-text">
-				  		<i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayFunding==false}"></i></a>
-				   	</a>		   	
-					<a href="" ng-click="workspaceSrvc.toggleFunding()" class="toggle-text">
-						<@orcid.msg 'workspace.Funding'/>
-					</a>
+				    <a href="" ng-click="workspaceSrvc.toggleFunding($event)" class="toggle-text">
+				  		<i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayFunding==false}"></i>
+				  		<@orcid.msg 'workspace.Funding'/>
+				   	</a>
 				</div>
-				<div class="col-md-6 col-sm-6 col-xs-12" ng-show="workspaceSrvc.displayFunding">				
+				<div class="col-md-6 col-sm-6 col-xs-12 action-button-bar" ng-show="workspaceSrvc.displayFunding">				
 					<#if fundingImportWizards?size != 0>
 						<a class="action-option manage-button" ng-click="showTemplateInModal('import-funding-modal')">
 							<span class="glyphicon glyphicon-plus"></span>

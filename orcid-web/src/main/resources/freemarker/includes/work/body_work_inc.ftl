@@ -23,9 +23,11 @@
 			<!-- Info -->
 			<div class="col-md-8 col-sm-8">
 		        <h3 class="work-title">
-		        	<strong ng-bind="work.workTitle.title.value"></strong><span class="work-subtitle" ng-show="work.workTitle.subtitle.value" ng-bind="':&nbsp;'.concat(work.workTitle.subtitle.value)"></span>
+		        	<strong ng-bind="work.workTitle.title.value"></strong><span class="work-subtitle" ng-show="work.workTitle.subtitle.value" ng-bind="':&nbsp;'.concat(work.workTitle.subtitle.value)"></span>		        	
+		        </h3>
+		        <div class="works-date">
 		        	<span ng-show="work.publicationDate.year">{{work.publicationDate.year}}</span><span ng-show="work.publicationDate.month">-{{work.publicationDate.month}}</span>
-		        </h3> 
+		        </div>		        
 	        </div>
 	        <!-- Settings -->
 	        <div class="col-md-4 col-sm-4 workspace-toolbar">
@@ -49,6 +51,9 @@
 					</ul>				
 				</#if>				
 			</div>
+        </div>
+        <div class="more-info">
+        	        
         </div>
     </li><!-- bottom-margin-small -->
 </ul>

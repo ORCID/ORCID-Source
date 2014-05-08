@@ -1685,12 +1685,15 @@ a:hover {
 	color: #FFF;
 }
 
-.workspace-accordion-header a.toggle-text{
+.workspace-accordion-header a.toggle-text,
+.work-title a.toggle-text{
 	color: #FFF;	
 	line-height: 31px;
 	display: inline-block;
 	font-size: 16px;
 	font-weight: bold;
+	width: 100%;
+	height: 30px;		
 }
  
 .toggle-text:hover{
@@ -3874,6 +3877,13 @@ ul.sort-menu-options li a:hover{
 	padding: 0;
 }
 
+.works-date{
+	float:left;
+	display: block;
+	clear: both;
+}
+
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 		
@@ -4815,9 +4825,6 @@ ul.sort-menu-options li a:hover{
 	.orcid-id{
 		font-size: 15px;
 	}
-	
-	
-	
 	
 }
 

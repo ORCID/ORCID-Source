@@ -1012,8 +1012,7 @@ function getWindowWidth() {
 	else {
 		if (document.documentElement && document.documentElement.clientWidth) {
 			windowWidth = document.documentElement.clientWidth;
-		}
-		else {
+		} else {
 			if (document.body && document.body.clientWidth) {
 				windowWidth = document.body.clientWidth;
 			}
@@ -1021,3 +1020,13 @@ function getWindowWidth() {
 	}
 	return windowWidth;
 };
+
+
+function tabletDesktopActionButtons($event){
+	var thisWidth = getWindowWidth();	
+	if(thisWidth >= 767){
+		$('.action-button-bar').addClass('tablet-desktop-display');
+	}else{ //Mobile
+		$('.action-button-bar').removeClass('tablet-desktop-display');		
+	}
+}

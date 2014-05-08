@@ -181,23 +181,29 @@ orcidNgModule.factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
 			displayFunding: true, 
 			displayPersonalInfo: true,
 			displayWorks: true,
-			toggleAffiliations: function() {
-				serv.displayAffiliations = !serv.displayAffiliations;				
+			toggleAffiliations: function($event) {
+				serv.displayAffiliations = !serv.displayAffiliations;
+				tabletDesktopActionButtons($event);
 			},
-			toggleEducation: function() {
+			toggleEducation: function($event) {
 				serv.displayEducation = !serv.displayEducation;
+				tabletDesktopActionButtons($event);
 			},
-			toggleEmployment: function() {
+			toggleEmployment: function($event) {
 				serv.displayEmployment = !serv.displayEmployment;
+				tabletDesktopActionButtons($event);
 			},
-			toggleFunding: function() {
+			toggleFunding: function($event) {
 				serv.displayFunding = !serv.displayFunding;
+				tabletDesktopActionButtons($event);
 			},
-			togglePersonalInfo: function() {				
-				serv.displayPersonalInfo = !serv.displayPersonalInfo;				
+			togglePersonalInfo: function($event) {
+				serv.displayPersonalInfo = !serv.displayPersonalInfo;
+				tabletDesktopActionButtons($event);
 			},
-			toggleWorks: function() {
+			toggleWorks: function($event) {
 				serv.displayWorks = !serv.displayWorks;
+				tabletDesktopActionButtons($event);
 			},
 			openAffiliations: function() {
 				serv.displayAffiliations = true;
@@ -1509,9 +1515,12 @@ function PersonalInfoCtrl($scope, $compile, workspaceSrvc){
 	$scope.displayInfo = workspaceSrvc.displayPersonalInfo;
 	$scope.toggleDisplayInfo = function ($event) {
 		$scope.displayInfo = !$scope.displayInfo;
-		//Add workaround to manage button visibility on Desktop and Mobile
+		tabletDesktopActionButtons($event); //Workaround to show always the actions buttons on Tablet and Desktop, but Mobile
 	};
 };
+
+ 
+
 
 function WorkspaceSummaryCtrl($scope, $compile, affiliationsSrvc, fundingSrvc, worksSrvc, workspaceSrvc){
 	$scope.workspaceSrvc = workspaceSrvc;
