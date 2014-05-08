@@ -22,15 +22,35 @@
    			<span class="glyphicon glyphicon-pencil edit-country edit-option" ng-click="toggleEdit()" ng-hide="showEdit == true" title=""></span><br />
    			<div style="white-space: pre-wrap" ng-hide="showEdit == true" ng-bind="biographyForm.biography.value" ng-click="toggleEdit()"></div>
    			<div ng-hide="showEdit == false"  class="biography-edit" ng-cloak>
-   			    <textarea id="biography" name="biography" class="input-xlarge" maxlength="5000" rows="20" ng-model="biographyForm.biography.value">
-   			    </textarea>
-   			    <span class="orcid-error" ng-show="website.url.errors.length > 0">
+   				<div class="row">
+	   			    <div class="col-md-12 col-sm-12 col-xs-12">
+	   			    	<textarea id="biography" name="biography" class="input-xlarge" maxlength="5000" rows="20" ng-model="biographyForm.biography.value">
+	   			    	</textarea>
+	   			    </div>
+   			    </div>
+   			    <div class="row">
+	   			    <div class="col-md-12 col-sm-12 col-xs-12">
+	   			    	<span class="orcid-error" ng-show="website.url.errors.length > 0">
 						     <div ng-repeat='error in biographyForm.biography.errors' ng-bind-html="error"></div>
-				</span>
-   			    <br />
-   	            <button class="btn btn-primary" ng-click="setBiographyForm()"><@spring.message "freemarker.btnsavechanges"/></button>
-	        	<button class="btn" ng-click="cancel()"><@spring.message "freemarker.btncancel"/></button>
-	        	
+						</span>
+					</div>   		
+				</div>
+				<div class="row">
+		        	<div class="col-md-4 col-sm-4 col-xs-12">
+		        		<@orcid.privacyToggle  angularModel="biographyForm.visiblity.visibility"
+					             questionClick="toggleClickPrivacyHelp()"
+					             clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
+					             publicClick="setPrivacy('PUBLIC', $event)" 
+		                 	     limitedClick="setPrivacy('LIMITED', $event)" 
+		                 	     privateClick="setPrivacy('PRIVATE', $event)" />
+					</div>				
+					<div class="col-md-8 col-sm-8 col-xs-12">
+						<div class="pull-right">
+		   			    	<button class="btn btn-primary" ng-click="setBiographyForm()"><@spring.message "freemarker.btnsavechanges"/></button>
+			        		<button class="btn" ng-click="cancel()"><@spring.message "freemarker.btncancel"/></button>
+		        		</div>
+	   			    </div>
+   			    </div>													        
    			</div>
    	</div>
    	<br />
