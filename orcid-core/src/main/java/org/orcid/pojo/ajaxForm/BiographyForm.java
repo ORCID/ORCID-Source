@@ -41,12 +41,12 @@ public class BiographyForm implements ErrorsInterface, Serializable {
             if (op.getOrcidBio().getBiography() != null)
                 if (op.getOrcidBio().getBiography().getContent() != null) {
                     bf.setBiography(Text.valueOf(op.getOrcidBio().getBiography().getContent()));
-                    if (op.getOrcidBio().getBiography().getVisibility() != null) {
-                        bf.setVisiblity(Visibility.valueOf(op.getOrcidBio().getBiography().getVisibility()));
-                    } else {
-                        bf.setVisiblity(Visibility.valueOf(OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility()));
-                    }
-                }
+            }
+        if (op.getOrcidBio() == null || op.getOrcidBio().getBiography() == null || op.getOrcidBio().getBiography().getVisibility() == null) {
+            bf.setVisiblity(Visibility.valueOf(OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility()));            
+        } else {
+            bf.setVisiblity(Visibility.valueOf(op.getOrcidBio().getBiography().getVisibility()));
+        }
         return bf;
     }
 
