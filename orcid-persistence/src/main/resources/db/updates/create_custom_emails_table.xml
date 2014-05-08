@@ -1,0 +1,46 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet author="Angel Montenegro" id="CREATE-CUSTOM-EMAILS-TABLE">
+		
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="custom_emails" />
+			</not>
+		</preConditions>
+		
+		<createTable tableName="custom_emails">
+			<column name="client_details_id" type="VARCHAR(255)">
+				<constraints nullable="false" primaryKey="true"/>
+			</column>
+			<column name="email_type" type="VARCHAR(255)">
+				<constraints nullable="false" primaryKey="true"/>
+			</column>
+			<column name="content" type="TEXT">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		
+		<addForeignKeyConstraint constraintName="member_custom_email_fk" baseTableName="custom_emails" baseColumnNames="client_details_id" referencedTableName="client_details" referencedColumnNames="client_details_id" />
+	</changeSet>
+	   
+</databaseChangeLog>	
