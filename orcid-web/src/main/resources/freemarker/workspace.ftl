@@ -102,11 +102,9 @@
 	                   <@spring.message "workspace.select_country"/>
 	                </span>
 	                
-	                
                </span>
                
                <div ng-show="showEdit == true" ng-cloak class="country-edit">
-               	  <a ng-click="close()" class="pull-right"><@orcid.msg 'freemarker.btnclose'/></a>               	  
                	  <@orcid.privacyToggle  angularModel="countryForm.profileAddressVisibility.visibility"
 			         questionClick="toggleClickPrivacyHelp()"
 			         clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
@@ -114,13 +112,16 @@
                  	     limitedClick="setPrivacy('LIMITED', $event)" 
                  	     privateClick="setPrivacy('PRIVATE', $event)" />
                   
-                  <select id="country" name="country" ng-model="countryForm.iso2Country.value" ng-change="setCountryForm()">
+                  <select id="country" name="country" ng-model="countryForm.iso2Country.value">
 		    			<option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
 						<#list isoCountries?keys as key>
 							<option value="${key}">${isoCountries[key]}</option>
 						</#list>
 				  </select>				  
-				  				  
+				  
+	             <button class="btn btn-primary" ng-click="setCountryForm()"><@spring.message "freemarker.btnsavechanges"/></button>
+		         <button class="btn" ng-click="close()"><@spring.message "freemarker.btncancel"/></button>
+	              			  
 				</div>
 				
             </div>

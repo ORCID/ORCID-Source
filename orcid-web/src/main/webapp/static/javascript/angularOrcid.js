@@ -1342,7 +1342,6 @@ function CountryCtrl($scope, $compile) {
 	$scope.setPrivacy = function(priv, $event) {
 		$event.preventDefault();
 		$scope.countryForm.profileAddressVisibility.visibility = priv;
-		$scope.setCountryForm();
 	};
 	
 	$scope.getCountryForm();
