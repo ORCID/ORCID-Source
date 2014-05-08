@@ -22,13 +22,18 @@
 	<div ng-controller="NameCtrl" class="name-controller">
 		<div ng-show="showEdit == false" ng-click="toggleEdit()">
 			<h2 class="full-name">
-				<span ng-hide="nameForm != null && nameForm.creditName == null" ng-cloak>
-				    {{nameForm.creditName.value}}
+				<span ng-hide="nameForm != null && nameForm.creditName == null">
+				    <!-- populate the name old way just to display until angular loads -->
+				    <#if (profile.orcidBio.personalDetails.creditName.content)??>
+                         ${(profile.orcidBio.personalDetails.creditName.content)!}
+                    <#else>
+                         ${(profile.orcidBio.personalDetails.givenNames.content)!} ${(profile.orcidBio.personalDetails.familyName.content)!}
+                    </#if> 
 				</span>
 				<span ng-show="nameForm != null && nameForm.creditName == null" ng-cloak>
 				    {{nameForm.givenNames.value}} {{nameForm.familyName.value}}
 				</span>
-				 <span class="glyphicon glyphicon-pencil edit-name edit-option" title="" ng-hide="showEdit == true"></span> 
+				<span class="glyphicon glyphicon-pencil edit-name edit-option" title="" ng-hide="showEdit == true"></span> 
 			</h2>
 		</div>
 		<div class="names-edit" ng-show="showEdit == true" ng-cloak>

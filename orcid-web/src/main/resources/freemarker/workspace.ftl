@@ -208,10 +208,11 @@
 			   				<a ng-click="deleteExternalIdentifier($index)" class="glyphicon glyphicon-trash grey"></a>       			
        			</div>
 			</div>													    
-	        	        
-			<p class="hoover-white-fonts">	       
-	       		<a href="<@spring.url '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a>
-	        </p>
+	        <#if RequestParameters['OldPersonal']??>	        
+				<p class="hoover-white-fonts">	       
+		       		<a href="<@spring.url '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a>
+		        </p>
+	        </#if>
 			
         </div>
     </div>
@@ -257,7 +258,9 @@
 	        			   			<i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':displayInfo==false}"></i></a>
 	        			   		</a>
         			   			<a href="" ng-click="toggleDisplayInfo()" class="toggle-text"><@orcid.msg 'workspace.personal_information'/></a></li>
-        			   		<li><a href="<@spring.url '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a></li>        			   		
+        			   		<#if RequestParameters['OldPersonal']??>	        
+        			   		   <li><a href="<@spring.url '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a></li>        			   		
+        			        </#if>
         			   </ul>
         			</div>
             		<div class="workspace-accordion-content" ng-show="displayInfo">
