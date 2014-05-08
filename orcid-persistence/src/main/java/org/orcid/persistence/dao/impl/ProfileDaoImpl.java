@@ -511,7 +511,20 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         updateQuery.executeUpdate();
     }
 
+    @Override
+    @Transactional
+    public void updateNames(String orcid, String givenNames, String familyName, String creditName, Visibility creditNameVisibility) {
+        Query updateQuery = entityManager
+                .createQuery("update ProfileEntity set lastModified = now(), family_name = :familyName, given_names = :givenNames, credit_name = :creditName, credit_name_visibility=:creditNameVisibility where orcid = :orcid");
+        updateQuery.setParameter("orcid", orcid);
+        updateQuery.setParameter("givenNames", givenNames);
+        updateQuery.setParameter("familyName", familyName);
+        updateQuery.setParameter("creditName", creditName);
+        updateQuery.setParameter("creditNameVisibility", creditNameVisibility == null ? null : StringUtils.upperCase(creditNameVisibility.value()));
+        updateQuery.executeUpdate();
+    }
 
+    
 
     /**
      * Return the list of profiles that belongs to the provided OrcidType

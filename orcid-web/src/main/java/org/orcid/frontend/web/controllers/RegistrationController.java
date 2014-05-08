@@ -415,7 +415,8 @@ public class RegistrationController extends BaseController {
     @RequestMapping(value = "/registerGivenNamesValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     Registration registerGivenNameValidate(@RequestBody Registration reg) {
-        return super.registerGivenNameValidate(reg);
+        super.givenNameValidate(reg.getGivenNames());
+        return reg;
     }
 
     @RequestMapping(value = "/registerEmailValidate.json", method = RequestMethod.POST)

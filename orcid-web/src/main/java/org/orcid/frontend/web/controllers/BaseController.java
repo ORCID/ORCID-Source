@@ -597,13 +597,12 @@ public class BaseController {
         }
     }
     
-    Registration registerGivenNameValidate(@RequestBody Registration reg) {
+    void givenNameValidate(Text givenName) {
         // validate given name isn't blank
-        reg.getGivenNames().setErrors(new ArrayList<String>());
-        if (reg.getGivenNames().getValue() == null || reg.getGivenNames().getValue().trim().isEmpty()) {
-            setError(reg.getGivenNames(), "NotBlank.registrationForm.givenNames");
+        givenName.setErrors(new ArrayList<String>());
+        if (givenName.getValue() == null || givenName.getValue().trim().isEmpty()) {
+            setError(givenName, "NotBlank.registrationForm.givenNames");
         }
-        return reg;
     }
 
 

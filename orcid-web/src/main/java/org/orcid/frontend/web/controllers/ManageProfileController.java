@@ -85,6 +85,7 @@ import org.orcid.pojo.ajaxForm.CountryForm;
 import org.orcid.pojo.ajaxForm.Emails;
 import org.orcid.pojo.ajaxForm.Errors;
 import org.orcid.pojo.ajaxForm.NamesForm;
+import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.OrcidWebUtils;
 import org.slf4j.Logger;
@@ -838,11 +839,13 @@ public class ManageProfileController extends BaseWorkspaceController {
     public @ResponseBody
     NamesForm setNameFormJson(HttpServletRequest request, @RequestBody NamesForm nf) throws NoSuchRequestHandlingMethodException {
         nf.setErrors(new ArrayList<String>());
-        copyErrors(nf.getFamilyName(), nf);
+        if (nf.getGivenNames() == null) nf.setGivenNames(new Text()); 
+        givenNameValidate(nf.getGivenNames());
+        copyErrors(nf.getGivenNames(), nf);
         if (nf.getErrors().size()>0) return nf;        
         OrcidProfile currentProfile = getEffectiveProfile();
         nf.populatePersonalDetails(currentProfile.getOrcidBio().getPersonalDetails());
-        orcidProfileManager.updatePersonalInformation(currentProfile);
+        orcidProfileManager.updateNames(currentProfile);
         return nf;
     }
 

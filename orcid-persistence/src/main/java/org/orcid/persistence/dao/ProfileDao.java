@@ -104,6 +104,8 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     void updatePreferences(String orcid, boolean sendChangeNotifications, boolean sendOrcidNews, Visibility activitiesVisibilityDefault, boolean enableDeveloperTools);
 
     List<ProfileEntity> findProfilesByOrcidType(OrcidType type);
+
+    public void updateNames(String orcid, String givenName, String familyName, String creditName, Visibility creditNameVisibility);
     
     boolean updateDeveloperTools(String orcid, boolean enabled);
    
