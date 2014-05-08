@@ -24,16 +24,19 @@
    			<div ng-hide="showEdit == false"  class="biography-edit" ng-cloak>
    				<div class="row">
 	   			    <div class="col-md-12 col-sm-12 col-xs-12">
-	   			    	<textarea id="biography" name="biography" class="input-xlarge" maxlength="5000" rows="20" ng-model="biographyForm.biography.value">
+	   			    	<textarea id="biography" name="biography" class="input-xlarge" rows="20" ng-model="biographyForm.biography.value" ng-change="checkLength()">
 	   			    	</textarea>
 	   			    </div>
    			    </div>
    			    <div class="row">
-	   			    <div class="col-md-12 col-sm-12 col-xs-12">
-	   			    	<span class="orcid-error" ng-show="website.url.errors.length > 0">
-						     <div ng-repeat='error in biographyForm.biography.errors' ng-bind-html="error"></div>
+   			        <div class="col-md-12 col-sm-12 col-xs-12">
+   			            <span class="orcid-error" ng-show="lengthError">
+							<div>${springMacroRequestContext.getMessage("Length.changePersonalInfoForm.biography")}</div>
 						</span>
-					</div>   		
+						<span class="orcid-error" ng-show="biographyForm.biography.errors.length > 0">
+							<div ng-repeat='error in biographyForm.biography.errors' ng-bind-html="error"></div>
+						</span>
+					</div>
 				</div>
 				<div class="row">
 		        	<div class="col-md-4 col-sm-4 col-xs-12">

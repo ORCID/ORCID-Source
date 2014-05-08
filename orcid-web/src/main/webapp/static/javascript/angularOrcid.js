@@ -1234,6 +1234,7 @@ function OtherNamesCtrl($scope, $compile) {
 function BiographyCtrl($scope, $compile) {
     $scope.showEdit = false;
 	$scope.biographyForm = null;
+	$scope.lengthError = false;
 
 	$scope.toggleEdit = function() {
 		$scope.showEdit = !$scope.showEdit;
@@ -1246,6 +1247,18 @@ function BiographyCtrl($scope, $compile) {
 	$scope.cancel = function() {
 		$scope.getBiographyForm();
 		$scope.showEdit = false;
+	};
+	
+	$scope.checkLength = function () {
+		if ($scope.biographyForm != null)
+			if ($scope.biographyForm.biography != null)
+				if ($scope.biographyForm.biography.value != null)
+					if ($scope.biographyForm.biography.value.length > 5000) {
+						$scope.lengthError = true;
+					} else {
+						$scope.lengthError = false;
+					}	
+		return $scope.lengthError;
 	};
 
 	
@@ -1264,7 +1277,7 @@ function BiographyCtrl($scope, $compile) {
 	};
 	
 	$scope.setBiographyForm = function(){
-		
+		if ($scope.checkLength()) return; // do nothing if there is a length error
 		$.ajax({
 	        url: getBaseUri() + '/account/biographyForm.json',
 	        type: 'POST',
