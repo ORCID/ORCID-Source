@@ -569,7 +569,7 @@ public class BaseController {
            
            // check length
            if (text.getValue().length() > 5000)
-              setError(text, "Length.changePersonalInfoForm.biograph");
+              setError(text, "Length.changePersonalInfoForm.biography");
         }
     }
 
