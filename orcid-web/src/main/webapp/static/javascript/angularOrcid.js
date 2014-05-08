@@ -954,8 +954,9 @@ function WebsitesCtrl($scope, $compile) {
     $scope.websitesForm = null;
     $scope.privacyHelp = false;
     
-	$scope.toggleEdit = function() {
-		$scope.showEdit = !$scope.showEdit;
+	$scope.openEdit = function() {
+		$scope.addNew();	
+		$scope.showEdit = true;
 	};
 
 	$scope.close = function() {
@@ -1035,9 +1036,11 @@ function KeywordsCtrl($scope, $compile) {
     $scope.keywordsForm = null;
     $scope.privacyHelp = false;
     
-	$scope.toggleEdit = function() {
-		$scope.showEdit = !$scope.showEdit;
+	$scope.openEdit = function() {
+		$scope.addNew();	
+		$scope.showEdit = true;
 	};
+
 
 	$scope.close = function() {
 		$scope.getKeywordsForm();
@@ -1162,8 +1165,9 @@ function OtherNamesCtrl($scope, $compile) {
     $scope.otherNamesForm = null;
     $scope.privacyHelp = false;
     
-	$scope.toggleEdit = function() {
-		$scope.showEdit = !$scope.showEdit;
+	$scope.openEdit = function() {
+		$scope.addNew();	
+		$scope.showEdit = true;
 	};
 
 	$scope.close = function() {
@@ -1190,11 +1194,11 @@ function OtherNamesCtrl($scope, $compile) {
 		});
 	};
 
-	$scope.deleteKeyword = function(keyword){
+	$scope.deleteKeyword = function(otherName){
 		var otherNames = $scope.otherNamesForm.otherNames;
     	var len = otherNames.length;
     	while (len--) {
-    		if (otherNames[len] == keyword)
+    		if (otherNames[len] == otherName)
     			otherNames.splice(len,1);
     	}
 	};
@@ -1289,8 +1293,8 @@ function CountryCtrl($scope, $compile) {
 	$scope.countryForm = null;
 	$scope.privacyHelp = false;
 	
-	$scope.toggleEdit = function() {
-		$scope.showEdit = !$scope.showEdit;
+	$scope.openEdit = function() {
+		$scope.showEdit = true;
 	};
 
 	$scope.close = function() {
