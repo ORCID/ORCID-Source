@@ -503,11 +503,12 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     
     @Override
     @Transactional
-    public void updateBiography(String orcid, String biography) {
+    public void updateBiography(String orcid, String biography, Visibility visibility) {
         Query updateQuery = entityManager
-                .createQuery("update ProfileEntity set lastModified = now(), biography = :biography where orcid = :orcid");
+                .createQuery("update ProfileEntity set lastModified = now(), biography = :biography, biography_visibility = :visibility where orcid = :orcid");
         updateQuery.setParameter("orcid", orcid);
         updateQuery.setParameter("biography", biography);
+        updateQuery.setParameter("visibility", visibility == null ? null : StringUtils.upperCase(visibility.value()));
         updateQuery.executeUpdate();
     }
 

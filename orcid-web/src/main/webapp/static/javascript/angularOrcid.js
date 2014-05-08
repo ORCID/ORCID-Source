@@ -1279,7 +1279,12 @@ function BiographyCtrl($scope, $compile) {
 	    });
 	};
 
-		
+	$scope.setPrivacy = function(priv, $event) {
+		$event.preventDefault();
+		$scope.biographyForm.visiblity.visibility = priv;
+	};	
+	
+	
 	$scope.getBiographyForm();
 
 };
