@@ -54,7 +54,7 @@
 		       	<div ng-controller="OtherNamesCtrl" class="other-names-controller">
 		        	<div>
 		        	   <strong><@orcid.msg 'workspace.Alsoknownas'/></strong>
-		        	   <span ng-hide="showEdit == true" ng-click="toggleEdit()">
+		        	   <span ng-hide="showEdit == true" ng-click="openEdit()">
 		        	      <span class="glyphicon glyphicon-pencil edit-other-names edit-option" title=""></span><br />
 		        	      <span ng-repeat="otherNames in otherNamesForm.otherNames" ng-cloak>
 		        	         {{ $last?otherNames.value:otherNames.value+ ", "}}
@@ -92,7 +92,7 @@
             
             <div ng-controller="CountryCtrl" class="country-controller">
 	        	<strong><@orcid.msg 'public_profile.labelCountry'/></strong>
-	            <span class="glyphicon glyphicon-pencil edit-country edit-option" ng-click="toggleEdit()" title="" ng-hide="showEdit == true"></span>
+	            <span class="glyphicon glyphicon-pencil edit-country edit-option" ng-click="openEdit()" title="" ng-hide="showEdit == true"></span>
 	            <br />   
                 <span ng-hide="showEdit == true" ng-click="toggleEdit()">
 	                <span ng-show="countryForm != null && countryForm.iso2Country != null" ng-bind="countryForm.iso2Country.value">
@@ -130,7 +130,7 @@
 		       	<div ng-controller="KeywordsCtrl" class="keywords-controller">
 		        	<div>
 		        	   <strong><@orcid.msg 'public_profile.labelKeywords'/></strong>
-		        	   <span ng-hide="showEdit == true" ng-click="toggleEdit()">
+		        	   <span ng-hide="showEdit == true" ng-click="openEdit()">
 		        	      <span class="glyphicon glyphicon-pencil edit-keywords edit-option" title=""></span><br />
 		        	      <span ng-repeat="keyword in keywordsForm.keywords" ng-cloak>
 		        	         {{ $last?keyword.value:keyword.value+ ", "}}
@@ -168,7 +168,7 @@
 		        	<div>
 		        	   <strong><@orcid.msg 'public_profile.labelWebsites'/></strong>
 		        	   <span ng-hide="showEdit == true">
-		        	      <span class="glyphicon glyphicon-pencil edit-websites edit-option" ng-click="toggleEdit()" title=""></span><br />
+		        	      <span class="glyphicon glyphicon-pencil edit-websites edit-option" ng-click="openEdit()" title=""></span><br />
 		        	      <div ng-repeat="website in websitesForm.websites" ng-cloak>
 		        	         <a href="{{website.url.value}}" target="_blank" rel="nofollow">{{website.name.value != null? website.name.value : website.url.value}}</a>
 		        	      </div>
