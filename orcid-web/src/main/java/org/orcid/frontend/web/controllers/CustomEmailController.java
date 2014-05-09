@@ -1,6 +1,7 @@
 package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.mail.internet.AddressException;
@@ -11,6 +12,7 @@ import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.CustomEmailManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.persistence.jpa.entities.CustomEmailEntity;
 import org.orcid.persistence.jpa.entities.EmailType;
 import org.orcid.pojo.ajaxForm.CustomEmailForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -152,6 +154,20 @@ public class CustomEmailController extends BaseController {
         return false;
     }
     
+    @RequestMapping(value = "/get.json", method = RequestMethod.GET)
+    public @ResponseBody
+    List<CustomEmailForm> getCustomEmails(HttpServletRequest request){
+        String currentOrcid = getEffectiveUserOrcid();
+        List<CustomEmailForm> result = new ArrayList<CustomEmailForm>();
+        if(clientDetailsManager.exists(currentOrcid)) {
+            List<CustomEmailEntity> customEmails = customEmailManager.getCustomEmails(currentOrcid);
+            for(CustomEmailEntity entity : customEmails) {
+                CustomEmailForm form = CustomEmailForm.valueOf(entity);
+                result.add(form);
+            }
+        }
+        return result;
+    }
     
     /******
      * Validators 

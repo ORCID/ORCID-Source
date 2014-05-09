@@ -44,7 +44,7 @@
 			<column name="last_modified" type="TIMESTAMP WITH TIME ZONE" />	
 		</createTable>
 		
-		<addForeignKeyConstraint constraintName="member_custom_email_fk" baseTableName="custom_emails" baseColumnNames="client_details_id" referencedTableName="client_details" referencedColumnNames="client_details_id" />
+		<addForeignKeyConstraint constraintName="member_custom_email_fk" baseTableName="custom_email" baseColumnNames="client_details_id" referencedTableName="client_details" referencedColumnNames="client_details_id" />
 	</changeSet>
 	   
 </databaseChangeLog>	

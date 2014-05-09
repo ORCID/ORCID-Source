@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.orcid.persistence.jpa.entities.keys.CustomEmailPk;
 
@@ -25,6 +26,7 @@ public class CustomEmailEntity extends BaseEntity<CustomEmailPk>{
     private String content; 
     
     @Override
+    @Transient
     public CustomEmailPk getId() {        
         return new CustomEmailPk(clientDetailsEntity.getClientId(), emailType);
     }    

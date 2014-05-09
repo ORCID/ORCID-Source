@@ -5033,3 +5033,47 @@ function ClientEditCtrl($scope, $compile){
 	$scope.loadAvailableScopes();
 	
 };
+
+function CustomEmailCtrl($scope, $compile) {	
+	$scope.customEmail = null;
+	$scope.customEmailList = {};
+	$scope.showCreateButton = false;
+	$scope.showCreateForm = false;
+	
+	$scope.getCustomEmails = function() {
+		$.ajax({
+			url: getBaseUri() + '/custom-emails/get.json',
+			type: 'GET',
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {	        	
+	        	if(data.errors != null && data.errors.length > 0){
+	        		$scope.customEmailList = data;
+	        		if($scope.customEmailList.length == 0)
+	        			$scope.showCreateButton = true;
+	        		$scope.$apply();
+	        	} 
+	        }
+		});
+	};		
+	
+	$scope.showCreateForm = function() {
+		$.ajax({
+	        url: getBaseUri() + '/custom-emails/get-empty.json',
+	        type: 'GET',
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {	        	
+	        	if(data.errors != null && data.errors.length > 0){
+	        		$scope.customEmail = data;
+	        		$scope.showCreateForm = true;
+	        		$scope.$apply();
+	        	} 
+	        }
+	    }).fail(function() { 
+	    	console.log("Error getting empty custom email.");
+	    });	
+	};
+	
+	$scope.getCustomEmails();
+};
