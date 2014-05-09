@@ -24,7 +24,10 @@ public class CustomEmailManagerImpl implements CustomEmailManager {
 
     @Override
     public boolean updateCustomEmail(String clientDetailsId, EmailType emailType, String sender, String subject, String content) {
-        return customEmailDao.updateCustomEmail(clientDetailsId, emailType, sender, subject, content);
+        if(customEmailDao.exists(clientDetailsId, emailType)) {
+            return customEmailDao.updateCustomEmail(clientDetailsId, emailType, sender, subject, content);
+        }
+        return false;
     }
 
     @Override

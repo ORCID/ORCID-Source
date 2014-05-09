@@ -48,4 +48,13 @@ public interface CustomEmailDao extends GenericDao<CustomEmailEntity, CustomEmai
      * @return true if it was able to delete the custom email
      * */
     boolean deleteCustomEmail(String clientDetailsId, EmailType emailType);
+    
+    
+    /**
+     * Checks if a custom email exists
+     * @param clientDetailsId
+     * @param emailType
+     * @return true if a custom email with id=clientDetailsId and email type=emailType exists
+     * */
+    boolean exists(String clientDetailsId, EmailType emailType);
 }

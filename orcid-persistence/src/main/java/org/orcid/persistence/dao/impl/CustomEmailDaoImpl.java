@@ -56,6 +56,13 @@ public class CustomEmailDaoImpl extends GenericDaoImpl<CustomEmailEntity, Custom
         return query.executeUpdate() > 0;
     }
 
-    
+    @Override
+    public boolean exists(String clientDetailsId, EmailType emailType) {
+        TypedQuery<Long> query = entityManager.createQuery("SELECT count(*) FROM CustomEmailEntity WHERE clientDetailsEntity=:clientDetailsId and emailType=:emailType", Long.class);
+        query.setParameter("clientDetailsId", clientDetailsId);
+        query.setParameter("emailType", emailType.name());
+        Long result = query.getSingleResult();
+        return (result != null && result > 0);
+    }
 
 }
