@@ -24,11 +24,11 @@
 		
 		<preConditions onFail="MARK_RAN">
 			<not>
-				<tableExists tableName="custom_emails" />
+				<tableExists tableName="custom_email" />
 			</not>
 		</preConditions>
 		
-		<createTable tableName="custom_emails">
+		<createTable tableName="custom_email">
 			<column name="client_details_id" type="VARCHAR(255)">
 				<constraints nullable="false" primaryKey="true"/>
 			</column>
@@ -38,6 +38,8 @@
 			<column name="content" type="TEXT">
 				<constraints nullable="false" />
 			</column>
+			<column name="date_created" type="TIMESTAMP WITH TIME ZONE" />			
+			<column name="last_modified" type="TIMESTAMP WITH TIME ZONE" />	
 		</createTable>
 		
 		<addForeignKeyConstraint constraintName="member_custom_email_fk" baseTableName="custom_emails" baseColumnNames="client_details_id" referencedTableName="client_details" referencedColumnNames="client_details_id" />
