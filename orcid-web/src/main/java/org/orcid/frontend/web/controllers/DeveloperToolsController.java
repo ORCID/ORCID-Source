@@ -39,11 +39,13 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RedirectUri;
 import org.orcid.pojo.ajaxForm.SSOCredentials;
 import org.orcid.pojo.ajaxForm.Text;
+import org.orcid.utils.OrcidStringUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -96,7 +98,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
     public @ResponseBody
     SSOCredentials getEmptySSOCredentials(HttpServletRequest request) {
         SSOCredentials emptyObject = new SSOCredentials();
-        emptyObject.setClientSecret(new Text());
+        emptyObject.setClientSecret(new HashSet<Text>());
 
         RedirectUri redirectUri = new RedirectUri();
         redirectUri.setValue(new Text());
@@ -114,6 +116,8 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         boolean hasErrors = validateSSOCredentials(ssoCredentials);
 
         if (!hasErrors) {
+            //Strips html content from ssoCredentials object
+            this.stripHtml(ssoCredentials);
             OrcidProfile profile = getEffectiveProfile();
             String orcid = profile.getOrcidIdentifier().getPath();
             Set<String> redirectUriStrings = new HashSet<String>();
@@ -139,9 +143,11 @@ public class DeveloperToolsController extends BaseWorkspaceController {
             if (ssoCredentials.getClientWebsite().getErrors() != null && !ssoCredentials.getClientWebsite().getErrors().isEmpty())
                 errors.addAll(ssoCredentials.getClientWebsite().getErrors());
 
-            for (RedirectUri redirectUri : ssoCredentials.getRedirectUris()) {
-                if (redirectUri.getErrors() != null && !redirectUri.getErrors().isEmpty())
-                    errors.addAll(redirectUri.getErrors());
+            if(ssoCredentials.getRedirectUris() != null) {
+                for (RedirectUri redirectUri : ssoCredentials.getRedirectUris()) {
+                    if (redirectUri.getErrors() != null && !redirectUri.getErrors().isEmpty())
+                        errors.addAll(redirectUri.getErrors());
+                }
             }
             ssoCredentials.setErrors(errors);
         }
@@ -155,6 +161,8 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         boolean hasErrors = validateSSOCredentials(ssoCredentials);
 
         if (!hasErrors) {
+            //Strips html content from ssoCredentials object
+            this.stripHtml(ssoCredentials);
             OrcidProfile profile = getEffectiveProfile();
             String orcid = profile.getOrcidIdentifier().getPath();
             Set<String> redirectUriStrings = new HashSet<String>();
@@ -190,6 +198,17 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         return ssoCredentials;
     }
 
+    @RequestMapping(value = "/add-client-secret", method = RequestMethod.POST)
+    public @ResponseBody boolean addClientSecret(){    
+        return orcidSSOManager.addClientSecret(getEffectiveUserOrcid());         
+    }
+    
+    @RequestMapping(value = "/delete-client-secret", method = RequestMethod.POST)
+    public @ResponseBody boolean deleteClientSecret(@RequestParam(value = "clientSecret") String clientSecret){
+        String userOrcid = getEffectiveUserOrcid();
+        return orcidSSOManager.removeClientSecret(userOrcid, clientSecret);        
+    }
+    
     @RequestMapping(value = "/get-sso-credentials.json", method = RequestMethod.POST)
     public @ResponseBody
     SSOCredentials getSSOCredentialsJson(HttpServletRequest request) {
@@ -208,6 +227,18 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         throw new NotImplementedException();
     }
 
+    /**
+     * Strip html from client name and client description to prevent cross site scripting attacks
+     * @param ssoCredentials
+     * @return the ssoCredentials object with stripped client name and client description
+     * */
+    private void stripHtml(SSOCredentials ssoCredentials) {
+        String strippedClientName = PojoUtil.isEmpty(ssoCredentials.getClientName()) ? "" : OrcidStringUtils.stripHtml(ssoCredentials.getClientName().getValue());
+        String strippedDescription = PojoUtil.isEmpty(ssoCredentials.getClientDescription()) ? "" : OrcidStringUtils.stripHtml(ssoCredentials.getClientDescription().getValue());
+        ssoCredentials.setClientName(Text.valueOf(strippedClientName));
+        ssoCredentials.setClientDescription(Text.valueOf(strippedDescription));                
+    }
+    
     /**
      * Validates the ssoCredentials object
      * 

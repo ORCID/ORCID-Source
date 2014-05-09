@@ -20,30 +20,28 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.message.Keyword;
-import org.orcid.jaxb.model.message.OtherName;
-
-public class Text implements ErrorsInterface, Required, Serializable {
-    
+public class Iso2Country implements ErrorsInterface, Required, Serializable {
+    /**
+     * 
+     */
     private static final long serialVersionUID = 1L;
 
     private List<String> errors = new ArrayList<String>();
-    private String value;
+
     private boolean required = true;
+
     private String getRequiredMessage;
 
-    public static Text valueOf(String value) {
-        Text t = new Text();
-        t.setValue(value);
-       return t;
+    private org.orcid.jaxb.model.message.Iso3166Country value;
+    
+    public Iso2Country() {
+        setValue(null);
     }
-
-    public Keyword toKeyword() {
-        return new Keyword(this.value);
-    }
-
-    public OtherName toOtherName() {
-        return new OtherName(this.value);
+    
+    public static Iso2Country valueOf(org.orcid.jaxb.model.message.Iso3166Country country) {
+        Iso2Country c = new Iso2Country();
+        c.setValue(country);
+      return c;
     }
 
     public List<String> getErrors() {
@@ -52,14 +50,6 @@ public class Text implements ErrorsInterface, Required, Serializable {
 
     public void setErrors(List<String> errors) {
         this.errors = errors;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
     }
 
     public boolean isRequired() {
@@ -78,8 +68,12 @@ public class Text implements ErrorsInterface, Required, Serializable {
         this.getRequiredMessage = getRequiredMessage;
     }
 
-    @Override
-    public String toString(){
-        return this.value;
-    }    
+    public org.orcid.jaxb.model.message.Iso3166Country getValue() {
+        return value;
+    }
+
+    public void setValue(org.orcid.jaxb.model.message.Iso3166Country country) {
+        this.value = country;
+    }
+
 }

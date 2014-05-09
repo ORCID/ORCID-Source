@@ -92,6 +92,8 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
         for (String newKeyword : newKeywords) {
             profileKeywordDao.addProfileKeyword(orcid, newKeyword);
         }
+        if (keywords.getVisibility() != null)
+            profileKeywordDao.updateKeywordsVisibility(orcid, keywords.getVisibility());
     }
 
 }

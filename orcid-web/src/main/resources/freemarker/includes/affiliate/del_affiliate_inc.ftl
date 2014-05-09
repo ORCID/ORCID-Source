@@ -23,7 +23,7 @@
 				<h3><@orcid.msg 'manage.deleteAffiliation.pleaseConfirm' /></h3>
 				<p>{{fixedTitle}}</p>		
     			<div class="btn btn-danger" ng-click="deleteAff(deleAff)">
-    				<@orcid.msg 'manage.deleteAffiliation.delete' />
+    				<@orcid.msg 'freemarker.btnDelete' />
     			</div>
     			<a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
 			</div>

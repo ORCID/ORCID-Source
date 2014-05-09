@@ -16,15 +16,46 @@
     =============================================================================
 
 -->
+<#escape x as x?html>
 <div class="id-banner <#if inDelegationMode>delegation-mode</#if>">
     <#if inDelegationMode><span class="delegation-mode-warning">${springMacroRequestContext.getMessage("delegate.managing_record")}</span></#if>
-	<h2 class="full-name">
-	    <#if (profile.orcidBio.personalDetails.creditName.content)??>
-	        ${(profile.orcidBio.personalDetails.creditName.content)!}
-	    <#else>
-	        ${(profile.orcidBio.personalDetails.givenNames.content)!} ${(profile.orcidBio.personalDetails.familyName.content)!}
-	    </#if>                
-	</h2>
+	<div ng-controller="NameCtrl" class="name-controller">
+		<div ng-show="showEdit == false" ng-click="toggleEdit()">
+			<h2 class="full-name">
+				<span ng-hide="nameForm != null 
+				    && (nameForm.creditName == null || nameForm.creditNameVisibility.visibility != 'PUBLIC')" ng-bind="nameForm.creditName.value" ng-cloak>
+				</span>
+				<span ng-show="nameForm != null 
+				    && (nameForm.creditName == null || nameForm.creditNameVisibility.visibility != 'PUBLIC')" ng-cloak>
+				    {{nameForm.givenNames.value}} {{nameForm.familyName.value}}
+				</span>
+				<span class="glyphicon glyphicon-pencil edit-name edit-option" title="" ng-hide="showEdit == true"></span> 
+			</h2>
+		</div>
+		<div class="names-edit" ng-show="showEdit == true" ng-cloak>
+		   <label for="firstName">${springMacroRequestContext.getMessage("manage_bio_settings.labelfirstname")}</label><br />
+		   <input type="text" ng-model="nameForm.givenNames.value"></input><br />
+		   <span class="orcid-error" ng-show="nameForm.givenNames.errors.length > 0">
+			   <div ng-repeat='error in nameForm.givenNames.errors' ng-bind-html="error"></div>
+		   </span>
+		   <label for="lastName">${springMacroRequestContext.getMessage("manage_bio_settings.labellastname")}</label><br />
+		   <input type="text" ng-model="nameForm.familyName.value"></input><br />
+		   <label for="creditName">${springMacroRequestContext.getMessage("manage_bio_settings.labelpublishedname")}</label><br/ >
+		   <@orcid.privacyToggle  angularModel="nameForm.creditNameVisibility.visibility"
+				             questionClick="toggleClickPrivacyHelp()"
+				             clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
+				             publicClick="setCreditNameVisibility('PUBLIC', $event)" 
+	                 	     limitedClick="setCreditNameVisibility('LIMITED', $event)" 
+	                 	     privateClick="setCreditNameVisibility('PRIVATE', $event)" />
+		        	   
+		   <input type="text" ng-model="nameForm.creditName.value"></input>
+		   <button class="btn btn-primary" ng-click="setNameForm()"><@spring.message "freemarker.btnsavechanges"/></button>
+		   <button class="btn" ng-click="close()"><@spring.message "freemarker.btncancel"/></button>
+		   
+		</div>
+		
+	</div>
+	
 	<div class="oid">
 		<p class="orcid-id-container">
 	    	<span class="mini-orcid-icon"></span>
@@ -35,12 +66,12 @@
 	       <a ng-click="openMenu($event)" class="id-banner-switch"><@orcid.msg 'public-layout.manage_proxy_account'/><span class="glyphicon glyphicon-chevron-right"></span></a>
 	       <ul class="dropdown-menu id-banner-dropdown" ng-show="isDroppedDown" ng-cloak>
 	       	   <li>
-				   <input id="delegators-search" type="text" ng-model="searchTerm" ng-change="search()" placeholder="ORCID or names"></input>
+				   <input id="delegators-search" type="text" ng-model="searchTerm" ng-change="search()" placeholder="<@orcid.msg 'manage_delegators.search.placeholder'/>"></input>
 	           </li>
 	           <li ng-show="me && !searchTerm">
 	               <a href="<@spring.url '/switch-user?j_username='/>{{me.delegateSummary.orcidIdentifier.path}}">
 					   <ul>
-						   <li>Switch back to me</li>
+						   <li><@orcid.msg 'id_banner.switchbacktome'/></li>
 						   <li>{{me.delegateSummary.orcidIdentifier.uri}}</li>
 					   </ul>
 	               </a>
@@ -53,9 +84,10 @@
 	               	   </ul>
 	               </a>
 	           </li>
-	           <li><a href="<@spring.url '/delegators?delegates'/>">More...</a></li>
+	           <li><a href="<@spring.url '/delegators?delegates'/>"><@orcid.msg 'id_banner.more'/></a></li>
 	       </ul>
 	    </div>
 	</#if>
 	</div>	
 </div>
+</#escape>

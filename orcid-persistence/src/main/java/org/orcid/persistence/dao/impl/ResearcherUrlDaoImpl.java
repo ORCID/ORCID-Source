@@ -21,7 +21,10 @@ import java.util.List;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.apache.commons.lang.StringUtils;
+import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.persistence.dao.ResearcherUrlDao;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.springframework.transaction.annotation.Transactional;
 
