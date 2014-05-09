@@ -25,24 +25,28 @@ public class CustomEmailDaoImpl extends GenericDaoImpl<CustomEmailEntity, Custom
 
     @Override
     @Transactional
-    public boolean createCustomEmail(String clientDetailsId, EmailType emailType, String content) {
-        Query query = entityManager.createNativeQuery("INSERT INTO custom_email(client_details_id, email_type, content, date_created, last_modified) values(:clientDetailsId, :emailType, :content, now(), now())");
+    public boolean createCustomEmail(String clientDetailsId, EmailType emailType, String subject, String content) {
+        Query query = entityManager.createNativeQuery("INSERT INTO custom_email(client_details_id, email_type, subject, content, date_created, last_modified) values(:clientDetailsId, :emailType, :subject, :content, now(), now())");
         query.setParameter("clientDetailsId", clientDetailsId);
         query.setParameter("emailType", emailType.name());
+        query.setParameter("subject", content);
         query.setParameter("content", content);
         return query.executeUpdate() > 0;
     }
 
     @Override
-    public boolean updateCustomEmail(String clientDetailsId, EmailType emailType, String content) {
-        Query query = entityManager.createNativeQuery("UPDATE custom_email SET email_type=:emailType, content=:content WHERE client_details_id=:client_details_id");
+    @Transactional
+    public boolean updateCustomEmail(String clientDetailsId, EmailType emailType, String subject, String content) {
+        Query query = entityManager.createNativeQuery("UPDATE custom_email SET email_type=:emailType, subject=:subject, content=:content WHERE client_details_id=:client_details_id");
         query.setParameter("clientDetailsId", clientDetailsId);
         query.setParameter("emailType", emailType.name());
         query.setParameter("content", content);
+        query.setParameter("subject", content);
         return query.executeUpdate() > 0;
     }
 
     @Override
+    @Transactional
     public boolean deleteCustomEmail(String clientDetailsId, EmailType emailType) {
         Query query = entityManager.createNativeQuery("DELETE FROM custom_email WHERE client_details_id=:clientDetailsId AND email_type=:emailType");
         query.setParameter("clientDetailsId", clientDetailsId);

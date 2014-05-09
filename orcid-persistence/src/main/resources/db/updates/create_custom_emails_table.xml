@@ -38,6 +38,7 @@
 			<column name="content" type="TEXT">
 				<constraints nullable="false" />
 			</column>
+			<column name="subject" type="varchar(255)" />				
 			<column name="date_created" type="TIMESTAMP WITH TIME ZONE" />			
 			<column name="last_modified" type="TIMESTAMP WITH TIME ZONE" />	
 		</createTable>

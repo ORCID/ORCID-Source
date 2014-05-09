@@ -1,15 +1,9 @@
-package org.orcid.persistence.dao;
+package org.orcid.core.manager;
 
 import org.orcid.persistence.jpa.entities.CustomEmailEntity;
 import org.orcid.persistence.jpa.entities.EmailType;
-import org.orcid.persistence.jpa.entities.keys.CustomEmailPk;
 
-/**
- * 
- * @author Angel Montenegro
- * 
- */
-public interface CustomEmailDao extends GenericDao<CustomEmailEntity, CustomEmailPk> {
+public interface CustomEmailManager {
 
     /**
      * Finds a custom email given his client id and the email type
@@ -25,7 +19,7 @@ public interface CustomEmailDao extends GenericDao<CustomEmailEntity, CustomEmai
      * @param emailType
      * @param subject
      * @param content
-     * @retun true if it was able to create the custom email      
+     * @return true if it was able to create the custom email      
      * */
     boolean createCustomEmail(String clientDetailsId, EmailType emailType, String subject, String content);
     
@@ -35,7 +29,7 @@ public interface CustomEmailDao extends GenericDao<CustomEmailEntity, CustomEmai
      * @param emailType
      * @param subject
      * @param content
-     * @retun true if it was able to update the custom email
+     * @return true if it was able to update the custom email
      * */
     boolean updateCustomEmail(String clientDetailsId, EmailType emailType, String subject, String content);
     
@@ -46,4 +40,5 @@ public interface CustomEmailDao extends GenericDao<CustomEmailEntity, CustomEmai
      * @return true if it was able to delete the custom email
      * */
     boolean deleteCustomEmail(String clientDetailsId, EmailType emailType);
+
 }

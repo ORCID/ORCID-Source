@@ -21,6 +21,7 @@ public class CustomEmailEntity extends BaseEntity<CustomEmailPk>{
     private ClientDetailsEntity clientDetailsEntity;
     private EmailType emailType;
     private String content; 
+    private String subject;
     
     
     @Override
@@ -57,5 +58,14 @@ public class CustomEmailEntity extends BaseEntity<CustomEmailPk>{
 
     public void setContent(String content) {
         this.content = content;
-    }        
+    }
+
+    @Column(name = "subject")
+    public String getSubject() {
+        return subject;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }          
 }
