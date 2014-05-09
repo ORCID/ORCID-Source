@@ -20,9 +20,9 @@ public class CustomEmailEntity extends BaseEntity<CustomEmailPk>{
     private static final long serialVersionUID = 1L;
     private ClientDetailsEntity clientDetailsEntity;
     private EmailType emailType;
-    private String content; 
+    private String sender;
     private String subject;
-    
+    private String content; 
     
     @Override
     public CustomEmailPk getId() {        
@@ -60,6 +60,15 @@ public class CustomEmailEntity extends BaseEntity<CustomEmailPk>{
         this.content = content;
     }
 
+    @Column(name = "sender")
+    public String getSender() {
+        return sender;
+    }
+
+    public void setSender(String sender) {
+        this.sender = sender;
+    }
+    
     @Column(name = "subject")
     public String getSubject() {
         return subject;

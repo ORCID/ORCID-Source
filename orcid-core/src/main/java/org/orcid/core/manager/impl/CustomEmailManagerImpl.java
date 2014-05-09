@@ -18,13 +18,13 @@ public class CustomEmailManagerImpl implements CustomEmailManager {
     }
 
     @Override
-    public boolean createCustomEmail(String clientDetailsId, EmailType emailType, String subject, String content) {
-        return customEmailDao.createCustomEmail(clientDetailsId, emailType, subject, content);
+    public boolean createCustomEmail(String clientDetailsId, EmailType emailType, String sender, String subject, String content) {
+        return customEmailDao.createCustomEmail(clientDetailsId, emailType, sender, subject, content);
     }
 
     @Override
-    public boolean updateCustomEmail(String clientDetailsId, EmailType emailType, String subject, String content) {
-        return customEmailDao.updateCustomEmail(clientDetailsId, emailType, subject, content);
+    public boolean updateCustomEmail(String clientDetailsId, EmailType emailType, String sender, String subject, String content) {
+        return customEmailDao.updateCustomEmail(clientDetailsId, emailType, sender, subject, content);
     }
 
     @Override

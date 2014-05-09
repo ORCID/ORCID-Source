@@ -23,21 +23,23 @@ public interface CustomEmailDao extends GenericDao<CustomEmailEntity, CustomEmai
      * Creates a custom email on database
      * @param clientDetailsId
      * @param emailType
+     * @param sender
      * @param subject
      * @param content
      * @retun true if it was able to create the custom email      
      * */
-    boolean createCustomEmail(String clientDetailsId, EmailType emailType, String subject, String content);
+    boolean createCustomEmail(String clientDetailsId, EmailType emailType, String sender, String subject, String content);
     
     /**
      * Updated an existing custom email
      * @param clientDetailsId
      * @param emailType
+     * @param sender
      * @param subject
      * @param content
      * @retun true if it was able to update the custom email
      * */
-    boolean updateCustomEmail(String clientDetailsId, EmailType emailType, String subject, String content);
+    boolean updateCustomEmail(String clientDetailsId, EmailType emailType, String sender, String subject, String content);
     
     /**
      * Deletes a custom email

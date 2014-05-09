@@ -96,4 +96,12 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
         query.setParameter("clientId", clientId);
         return query.getResultList();
     }
+    
+    @Override
+    public boolean exists(String clientId) {
+        TypedQuery<Long> query = entityManager.createQuery("select count(*) from ClientDetailsEntity where clientId=:clientId", Long.class);
+        query.setParameter("clientId", clientId);
+        Long result = query.getSingleResult();
+        return (result != null && result > 0);
+    }
 }

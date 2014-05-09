@@ -11,13 +11,16 @@ public class CustomEmailForm implements ErrorsInterface, Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private List<String> errors = new ArrayList<String>();    
+    private List<String> errors = new ArrayList<String>();   
+    private Text sender;
     private Text subject;
     private Text content;
     private Text emailType;
     
     public CustomEmailEntity toCustomEmailEntity() {
         CustomEmailEntity entity = new CustomEmailEntity();
+        if(this.sender != null)
+            entity.setSender(this.sender.getValue());
         if(this.content != null)
             entity.setContent(this.content.getValue());
         if(this.subject != null)
@@ -29,8 +32,9 @@ public class CustomEmailForm implements ErrorsInterface, Serializable {
     
     public static CustomEmailForm valueOf(CustomEmailEntity entity) {
         CustomEmailForm result = new CustomEmailForm();
-        result.setContent(Text.valueOf(entity.getContent()));
+        result.setSender(Text.valueOf(entity.getSender()));
         result.setSubject(Text.valueOf(entity.getSubject()));
+        result.setContent(Text.valueOf(entity.getContent()));
         result.setEmailType(Text.valueOf(entity.getEmailType().name()));
         return result;
     }
@@ -40,7 +44,15 @@ public class CustomEmailForm implements ErrorsInterface, Serializable {
     }
     public void setErrors(List<String> errors) {
         this.errors = errors;
+    }        
+    public Text getSender() {
+        return sender;
     }
+
+    public void setSender(Text sender) {
+        this.sender = sender;
+    }
+
     public Text getSubject() {
         return subject;
     }

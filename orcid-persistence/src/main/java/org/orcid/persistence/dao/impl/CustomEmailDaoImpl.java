@@ -25,10 +25,11 @@ public class CustomEmailDaoImpl extends GenericDaoImpl<CustomEmailEntity, Custom
 
     @Override
     @Transactional
-    public boolean createCustomEmail(String clientDetailsId, EmailType emailType, String subject, String content) {
-        Query query = entityManager.createNativeQuery("INSERT INTO custom_email(client_details_id, email_type, subject, content, date_created, last_modified) values(:clientDetailsId, :emailType, :subject, :content, now(), now())");
+    public boolean createCustomEmail(String clientDetailsId, EmailType emailType, String sender, String subject, String content) {
+        Query query = entityManager.createNativeQuery("INSERT INTO custom_email(client_details_id, email_type, sender, subject, content, date_created, last_modified) values(:clientDetailsId, :emailType, :sender, :subject, :content, now(), now())");
         query.setParameter("clientDetailsId", clientDetailsId);
         query.setParameter("emailType", emailType.name());
+        query.setParameter("sender", sender);
         query.setParameter("subject", content);
         query.setParameter("content", content);
         return query.executeUpdate() > 0;
@@ -36,12 +37,13 @@ public class CustomEmailDaoImpl extends GenericDaoImpl<CustomEmailEntity, Custom
 
     @Override
     @Transactional
-    public boolean updateCustomEmail(String clientDetailsId, EmailType emailType, String subject, String content) {
-        Query query = entityManager.createNativeQuery("UPDATE custom_email SET email_type=:emailType, subject=:subject, content=:content WHERE client_details_id=:client_details_id");
+    public boolean updateCustomEmail(String clientDetailsId, EmailType emailType, String sender, String subject, String content) {
+        Query query = entityManager.createNativeQuery("UPDATE custom_email SET email_type=:emailType, sender=:sender, subject=:subject, content=:content, last_modified=now() WHERE client_details_id=:client_details_id");
         query.setParameter("clientDetailsId", clientDetailsId);
         query.setParameter("emailType", emailType.name());
-        query.setParameter("content", content);
+        query.setParameter("sender", sender);
         query.setParameter("subject", content);
+        query.setParameter("content", content);       
         return query.executeUpdate() > 0;
     }
 
