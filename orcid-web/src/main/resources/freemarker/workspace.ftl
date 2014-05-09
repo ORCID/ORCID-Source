@@ -226,9 +226,7 @@
                 <div class="alert alert-info" ng-show="showAddAlert()" ng-cloak><strong><@orcid.msg 'workspace.addinformationaboutyou'/></strong></div>
                 <!-- Summary 
         		<div class="row">
-        			
-        			
-	        		<div class="workspace-overview col-md-3 col-sm-3 col-xs-6" id="works-overview">
+        			<div class="workspace-overview col-md-3 col-sm-3 col-xs-6" id="works-overview">
 	        			<a href="#workspace-publications" class="overview-count" ng-click="workspaceSrvc.openWorks()"><span ng-bind="worksSrvc.works.length"></span></a>
 	        			<a href="#workspace-publications" class="overview-title" ng-click="workspaceSrvc.openWorks()"><@orcid.msg 'workspace.Works'/></a>
 	                    <br />	                    	
@@ -254,14 +252,10 @@
         			</div>
 	        	</div>
 	        	 -->
-	        	 <!-- Personal information will be here now -->
-	        	 
-	        	 
         	</div>
         	<div class="workspace-accordion" id="workspace-accordion">        		
         		<!-- Personal Information -->
-
-            	<div id="workspace-personal" class="workspace-accordion-item workspace-accordion-active" ng-controller="PersonalInfoCtrl">
+				<div id="workspace-personal" class="workspace-accordion-item workspace-accordion-active" ng-controller="PersonalInfoCtrl">
         			<div class="workspace-accordion-header">
         				<div class="row">
         					<div class="col-md-12 col-sm-12 col-xs-12">
@@ -293,6 +287,7 @@
 			       				</div>
 			       			</div>	
 			       			<div class="col-md-10 col-sm-10 col-xs-12 action-button-bar" ng-show="workspaceSrvc.displayWorks">
+			       				<!-- 
 			       				<div class="sort-menu-container">
 				       				<a class="action-option manage-button sort-menu" ng-click="">
 										<span class="glyphicon glyphicon-sort"></span>							
@@ -305,13 +300,16 @@
 										<li><a href="">Source <span class=""></span></a></li>
 									</ul>
 								</div>
+								 -->
 		                		<ul class="works-menu">
+		                			<!-- 
 			        				<li>
 			        					<a href="" class="action-option manage-button" ng-click="">
 											<span class="glyphicon glyphicon-cog"></span>
 											Manage View
 										</a>	        				
 			        				</li>
+			        				 -->
 			        				<li>
 				        				<a href="" class="action-option manage-button" ng-click="addWorkModal()">
 											<span class="glyphicon glyphicon-plus"></span>

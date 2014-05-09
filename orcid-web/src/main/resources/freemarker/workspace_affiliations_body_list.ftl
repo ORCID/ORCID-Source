@@ -29,7 +29,7 @@
 					<a name='workspace-educations' />
 				    <a href="" ng-click="workspaceSrvc.toggleEducation($event)" ng-click="workspaceSrvc.toggleEducation($event)" class="toggle-text">
 				  		<i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayEducation==false}"></i>
-				  		<@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education'/>
+				  		<@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education'/> (<span ng-bind="affiliationsSrvc.educations.length"></span>)
 				  	</a>
 				  	<!-- 
 				   	<a href="" ng-click="workspaceSrvc.toggleEducation($event)" class="toggle-text"><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education'/></a>
@@ -55,7 +55,7 @@
 					<a name='workspace-employments' />
 				    <a href="" ng-click="workspaceSrvc.toggleEmployment($event)" ng-click="workspaceSrvc.toggleEmployment($event)" class="toggle-text">
 				  		<i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayEmployment==false}"></i>
-				  		<@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.employment'/>
+				  		<@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.employment'/> (<span ng-bind="affiliationsSrvc.employments.length"></span>)
 				   	</a>				   	
 				</div>
 				<div class="col-md-6 col-sm-6 col-xs-12 action-button-bar" ng-show="workspaceSrvc.displayEmployment">

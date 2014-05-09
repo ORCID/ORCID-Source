@@ -29,7 +29,7 @@
 					<a name='workspace-fundings' />
 				    <a href="" ng-click="workspaceSrvc.toggleFunding($event)" class="toggle-text">
 				  		<i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayFunding==false}"></i>
-				  		<@orcid.msg 'workspace.Funding'/>
+				  		<@orcid.msg 'workspace.Funding'/> (<span ng-bind="fundingSrvc.fundings.length"></span>)
 				   	</a>
 				</div>
 				<div class="col-md-6 col-sm-6 col-xs-12 action-button-bar" ng-show="workspaceSrvc.displayFunding">				

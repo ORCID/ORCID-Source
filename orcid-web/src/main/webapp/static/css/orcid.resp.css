@@ -3972,7 +3972,9 @@ ul.sort-menu-options li a:hover{
 .country-controller span.edit-country,
 .keywords-controller span.edit-keywords,
 .other-names-controller span.edit-other-names,
-.websites-controller span.edit-websites {
+.websites-controller span.edit-websites,
+.name-controller span.edit-name,
+.biography-controller span.edit-biography{
 	font-size: 12px;
   	margin-bottom: 10px;
 }
@@ -4960,7 +4962,8 @@ ul.sort-menu-options li a:hover{
 	}
 	
 	.workspace-accordion-header ul>li>a.action-option{
-		width: 33.33%;		
+		/* width: 33.33%; */
+		width: 50%;		
 		color: transparent;
 		overflow: hidden;		
 		padding: 15px 0;
