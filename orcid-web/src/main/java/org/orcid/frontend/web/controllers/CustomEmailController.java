@@ -156,8 +156,7 @@ public class CustomEmailController extends BaseController {
     /******
      * Validators 
      * ****/
-    
-    
+        
     @RequestMapping(value = "/validate-email-type.json", method = RequestMethod.POST)
     public @ResponseBody
     CustomEmailForm validateEmailType(@RequestBody CustomEmailForm customEmailForm){
