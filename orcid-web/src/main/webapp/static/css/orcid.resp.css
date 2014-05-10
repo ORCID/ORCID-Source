@@ -1605,7 +1605,8 @@ a:hover {
 
 .workspace-toolbar{
     line-height: 30px;
-	margin-top: 15px;	
+	margin-top: 15px;
+	padding-left: 3px;	
 }
 
 .workspace-private-toolbar{
@@ -3125,7 +3126,6 @@ ul.personal-inf-display li:last-child{
 	left: 50%;
 }
 
-
 .more-info .popover.bottom .arrow{
 	left: 484px !important;
 }
@@ -3904,12 +3904,6 @@ ul.sort-menu-options li a:hover{
 #body-work-list{
 	margin: 0;
 	padding: 0;
-}
-
-.works-date{
-	float:left;
-	display: block;
-	clear: both;
 }
 
 .websites-edit, .keywords-edit, .other-names-edit {
@@ -5013,6 +5007,15 @@ ul.sort-menu-options li a:hover{
 	.id-banner .id-banner-container ul.id-banner-dropdown,
 	.id-banner .id-banner-container ul.id-banner-dropdown > li{
 		width: 100%;
+	}
+	
+	.more-info{
+		margin-left: 5px;
+	}
+	
+	.work-title,
+	.work-title a.toggle-text{
+		width:100%;
 	}
 	
 }
