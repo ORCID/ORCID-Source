@@ -21,18 +21,19 @@ import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 
 public interface ProfileFundingDao extends GenericDao<ProfileFundingEntity, Long> {
 
-	 /**
+    /**
      * Removes the relationship that exists between a funding and a profile.
      * 
      * @param profileFundingId
-     *            The id of the profileFunding that will be removed from the client
-     *            profile
+     *            The id of the profileFunding that will be removed from the
+     *            client profile
      * @param clientOrcid
      *            The client orcid
      * @return true if the relationship was deleted
      * */
-	boolean removeProfileFunding(String clientOrcid, String profileFundingId);
-	/**
+    boolean removeProfileFunding(String clientOrcid, String profileFundingId);
+
+    /**
      * Updates the visibility of an existing profile funding relationship
      * 
      * @param clientOrcid
@@ -46,16 +47,20 @@ public interface ProfileFundingDao extends GenericDao<ProfileFundingEntity, Long
      * 
      * @return true if the relationship was updated
      * */
-	boolean updateProfileFunding(String clientOrcid, String profileFundingId, Visibility visibility);
-	/**
-	 * Creates a new profile funding relationship between an organization and a profile.
-	 * 
-	 * @param newProfileFundingEntity
-	 * 		The object to be persisted
-	 * @return the created newProfileFundingEntity with the id assigned on database
-	 * */
-	ProfileFundingEntity addProfileFunding(ProfileFundingEntity newProfileFundingEntity);
-	/**
+    boolean updateProfileFunding(String clientOrcid, String profileFundingId, Visibility visibility);
+
+    /**
+     * Creates a new profile funding relationship between an organization and a
+     * profile.
+     * 
+     * @param newProfileFundingEntity
+     *            The object to be persisted
+     * @return the created newProfileFundingEntity with the id assigned on
+     *         database
+     * */
+    ProfileFundingEntity addProfileFunding(ProfileFundingEntity newProfileFundingEntity);
+
+    /**
      * Get the funding associated with the client orcid and the organization id
      * 
      * @param clientOrcid
@@ -66,8 +71,9 @@ public interface ProfileFundingDao extends GenericDao<ProfileFundingEntity, Long
      * 
      * @return the ProfileFundingEntity object
      * */
-	ProfileFundingEntity getProfileFundingEntity(String orgId, String clientOrcid);
-	/**
+    ProfileFundingEntity getProfileFundingEntity(String orgId, String clientOrcid);
+
+    /**
      * Get the funding associated with the given profileFunding id
      * 
      * @param profileFundingId
@@ -75,5 +81,5 @@ public interface ProfileFundingDao extends GenericDao<ProfileFundingEntity, Long
      * 
      * @return the ProfileFundingEntity object
      * */
-	ProfileFundingEntity getProfileFundingEntity(String profileFundingId);
+    ProfileFundingEntity getProfileFundingEntity(String profileFundingId);
 }

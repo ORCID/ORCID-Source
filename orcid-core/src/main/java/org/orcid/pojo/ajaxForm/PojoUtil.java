@@ -19,6 +19,8 @@ package org.orcid.pojo.ajaxForm;
 import org.orcid.jaxb.model.message.Day;
 import org.orcid.jaxb.model.message.FuzzyDate;
 import org.orcid.jaxb.model.message.Month;
+import org.orcid.jaxb.model.message.Url;
+import org.orcid.jaxb.model.message.UrlName;
 import org.orcid.jaxb.model.message.Year;
 
 public class PojoUtil {
@@ -41,12 +43,21 @@ public class PojoUtil {
     	return true;
     }
 	
-	public static boolean isEmpty(Text text) {
+    public static boolean isEmpty(Text text) {
         if (text == null || text.getValue() == null || text.getValue().trim().isEmpty()) return true;
         return false;
     }
 
-    
+    public static boolean isEmpty(Url url) {
+        if (url == null || url.getValue() == null || url.getValue().trim().isEmpty()) return true;
+        return false;
+    }
+
+    public static boolean isEmpty(UrlName urlName) {
+        if (urlName == null || urlName.getContent() == null) return true;
+        return false;
+    }
+
     public static boolean isEmpty(String string) {
         if (string == null || string.trim().isEmpty()) return true;
         return false;

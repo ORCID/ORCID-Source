@@ -18,6 +18,7 @@ package org.orcid.persistence.dao;
 
 import java.util.List;
 
+import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 
 public interface ProfileKeywordDao {
@@ -37,6 +38,8 @@ public interface ProfileKeywordDao {
      * @return true if the keyword was successfully deleted
      * */
     public boolean deleteProfileKeyword(String orcid, String keyword);
+    
+    public boolean updateKeywordsVisibility(String orcid, Visibility visibility);
 
     /**
      * Adds a keyword to a specific profile

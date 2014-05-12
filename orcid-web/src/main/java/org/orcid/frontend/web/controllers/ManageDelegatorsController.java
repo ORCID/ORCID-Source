@@ -25,7 +25,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang.LocaleUtils;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.DelegateSummary;
@@ -81,9 +80,11 @@ public class ManageDelegatorsController extends BaseWorkspaceController {
         Delegation delegation = realProfile.getOrcidBio().getDelegation();
         GivenPermissionBy givenPermissionBy = delegation.getGivenPermissionBy();
         String currentOrcid = getEffectiveUserOrcid();
-        for (Iterator<DelegationDetails> delegationDetailsIterator = givenPermissionBy.getDelegationDetails().iterator(); delegationDetailsIterator.hasNext();) {
-            if (currentOrcid.equals(delegationDetailsIterator.next().getDelegateSummary().getOrcidIdentifier().getPath())) {
-                delegationDetailsIterator.remove();
+        if (givenPermissionBy != null) {
+            for (Iterator<DelegationDetails> delegationDetailsIterator = givenPermissionBy.getDelegationDetails().iterator(); delegationDetailsIterator.hasNext();) {
+                if (currentOrcid.equals(delegationDetailsIterator.next().getDelegateSummary().getOrcidIdentifier().getPath())) {
+                    delegationDetailsIterator.remove();
+                }
             }
         }
         map.put("delegators", givenPermissionBy);
@@ -107,7 +108,7 @@ public class ManageDelegatorsController extends BaseWorkspaceController {
     public @ResponseBody
     List<Map<String, Object>> searchDelegatorsForData(@PathVariable("query") String query, @RequestParam(value = "limit") int limit) {
         List<Map<String, Object>> datums = new ArrayList<>();
-        Locale locale = LocaleUtils.toLocale(getLocale());
+        Locale locale = getLocale();
         query = query.toLowerCase(locale);
         for (DelegationDetails delegationDetails : getRealProfile().getOrcidBio().getDelegation().getGivenPermissionBy().getDelegationDetails()) {
             DelegateSummary delegateSummary = delegationDetails.getDelegateSummary();
@@ -132,7 +133,7 @@ public class ManageDelegatorsController extends BaseWorkspaceController {
     @RequestMapping(value = "/search/{query}", method = RequestMethod.GET)
     public @ResponseBody
     GivenPermissionBy searchDelegators(@PathVariable("query") String query, @RequestParam(value = "limit") int limit) {
-        Locale locale = new Locale(getLocale());
+        Locale locale = getLocale();
         query = query.toLowerCase(locale);
         GivenPermissionBy result = new GivenPermissionBy();
         String currentOrcid = getEffectiveUserOrcid();

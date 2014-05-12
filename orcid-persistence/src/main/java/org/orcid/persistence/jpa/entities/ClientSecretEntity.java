@@ -44,6 +44,7 @@ public class ClientSecretEntity extends BaseEntity<ClientSecretPk> implements Co
     private static final long serialVersionUID = 1L;
 
     private String clientSecret;
+    private String decryptedClientSecret;
     private ClientDetailsEntity clientDetailsEntity;
 
     public ClientSecretEntity() {
@@ -87,6 +88,15 @@ public class ClientSecretEntity extends BaseEntity<ClientSecretPk> implements Co
         this.clientDetailsEntity = clientDetailsEntity;
     }
 
+    @Transient
+    public String getDecryptedClientSecret() {
+        return decryptedClientSecret;
+    }
+
+    public void setDecryptedClientSecret(String decryptedClientSecret) {
+        this.decryptedClientSecret = decryptedClientSecret;
+    }
+    
     @Override
     public int compareTo(ClientSecretEntity other) {
         Date otherLastModified = other.getLastModified();

@@ -64,7 +64,7 @@ public class ResearcherUrls implements VisibilityType, Serializable {
     private static final long serialVersionUID = 1L;
 
     @XmlElement(name = "researcher-url")
-    protected List<ResearcherUrl> researcherUrl;
+    private List<ResearcherUrl> researcherUrl;
 
     @XmlAttribute
     protected Visibility visibility;
@@ -117,7 +117,7 @@ public class ResearcherUrls implements VisibilityType, Serializable {
 
         ResearcherUrls that = (ResearcherUrls) o;
 
-        if (researcherUrl != null ? !researcherUrl.equals(that.researcherUrl) : that.researcherUrl != null) {
+        if (getResearcherUrl() != null ? !getResearcherUrl().equals(that.getResearcherUrl()) : that.getResearcherUrl() != null) {
             return false;
         }
         if (visibility != that.visibility) {
@@ -129,8 +129,12 @@ public class ResearcherUrls implements VisibilityType, Serializable {
 
     @Override
     public int hashCode() {
-        int result = researcherUrl != null ? researcherUrl.hashCode() : 0;
+        int result = getResearcherUrl() != null ? getResearcherUrl().hashCode() : 0;
         result = 31 * result + (visibility != null ? visibility.hashCode() : 0);
         return result;
+    }
+
+    public void setResearcherUrl(List<ResearcherUrl> researcherUrl) {
+        this.researcherUrl = researcherUrl;
     }
 }

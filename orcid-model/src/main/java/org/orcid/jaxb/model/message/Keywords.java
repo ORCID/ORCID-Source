@@ -94,6 +94,11 @@ public class Keywords implements VisibilityType, Serializable {
         return this.keyword;
     }
 
+    
+    public void setKeyword(List<Keyword> keywords) {
+        this.keyword = keywords;
+    }
+
     /**
      * Gets the value of the visibility property.
      * 

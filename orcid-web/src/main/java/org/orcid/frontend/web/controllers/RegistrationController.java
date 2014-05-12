@@ -415,11 +415,7 @@ public class RegistrationController extends BaseController {
     @RequestMapping(value = "/registerGivenNamesValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     Registration registerGivenNameValidate(@RequestBody Registration reg) {
-        // validate given name isn't blank
-        reg.getGivenNames().setErrors(new ArrayList<String>());
-        if (reg.getGivenNames().getValue() == null || reg.getGivenNames().getValue().trim().isEmpty()) {
-            setError(reg.getGivenNames(), "NotBlank.registrationForm.givenNames");
-        }
+        super.givenNameValidate(reg.getGivenNames());
         return reg;
     }
 

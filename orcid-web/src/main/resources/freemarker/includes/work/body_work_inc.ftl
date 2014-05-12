@@ -16,9 +16,8 @@
     =============================================================================
 
 -->
-<ul ng-hide="!works.length" class="workspace-publications workspace-body-list bottom-margin-medium" id="body-work-list" ng-cloak>
-        
-    <li class="bottom-margin-small" ng-repeat="work in works | orderBy:['-dateSortString', 'workTitle.title.value']">        
+<ul ng-hide="!worksSrvc.works.length" class="workspace-publications workspace-body-list bottom-margin-medium" id="body-work-list" ng-cloak>
+    <li class="bottom-margin-small" ng-repeat="work in worksSrvc.works | orderBy:['-dateSortString', 'workTitle.title.value']">        
 		<div class="row"> 
 			<!-- Info -->
 			<div class="col-md-8 col-sm-8">

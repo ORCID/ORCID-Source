@@ -152,6 +152,26 @@ public interface OrcidProfileManager {
     OrcidProfile updatePersonalInformation(OrcidProfile orcidProfile);
 
     /**
+     *  Persist the country and country visibility 
+     * 
+     *  * @param orcidProfile
+     *            Profile containing the personal details, contact details and
+     *            identifiers to replace those in the DB.
+
+     */
+    void updateCountry(OrcidProfile orcidProfile);
+    
+    /**
+     *  Persist the biography 
+     * 
+     *  * @param orcidProfile
+     *            Profile containing the personal details, contact details and
+     *            identifiers to replace those in the DB.
+
+     */    
+    public void updateBiography(OrcidProfile orcidProfile);
+
+    /**
      * Overwrites the history of the of the profile.
      * 
      * @param orcidProfile
@@ -357,6 +377,8 @@ public interface OrcidProfileManager {
     OrcidWorks dedupeWorks(OrcidWorks orcidWorks);
 
     OrcidProfile retrieveClaimedOrcidProfile(String orcid);
+    
+    public void updateNames(OrcidProfile orcidProfile);
 
     Date retrieveLastModifiedDate(String orcid);
 

@@ -144,8 +144,44 @@
         <constructor-arg value="org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity" />
     </bean>                
                 
-	<bean id="orcidPropsDao" class="org.orcid.persistence.dao.impl.OrcidPropsDaoImpl" />                
+	<bean id="orcidPropsDao" class="org.orcid.persistence.dao.impl.OrcidPropsDaoImpl" />      
+	
+	<bean id="fundingSubTypeToIndexDao" class="org.orcid.persistence.dao.impl.FundingSubTypeToIndexDaoImpl" />          
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<bean id="FundingSubTypeSolrDao" class="org.orcid.persistence.dao.impl.FundingSubtypeSolrDaoImpl" />
                 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="liquibase">
         <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
         <property name="dataSource" ref="\${org.orcid.persistence.db.dataSource}" />
@@ -280,6 +316,35 @@
         <property name="maxTotalConnections" value="\${org.orcid.persistence.solr.defaultMaxConnectionsPerHost}" />
         <property name="parser" ref="responseParser" />
     </bean>
+    
+    
+    
+    
+    <bean id="orgFundingSubTypeSolrServer" class="org.apache.solr.client.solrj.impl.HttpSolrServer">
+        <constructor-arg value="\${org.orcid.persistence.solr.url}/fundingSubType" />
+        <property name="soTimeout" value="\${org.orcid.persistence.solr.socketTimeout}" />
+        <property name="connectionTimeout" value="\${org.orcid.persistence.solr.connectionTimeout}" />
+        <property name="allowCompression" value="\${org.orcid.persistence.solr.allowCompression}" />
+        <property name="maxRetries" value="\${org.orcid.persistence.solr.maxRetries}" />
+        <property name="defaultMaxConnectionsPerHost" value="\${org.orcid.persistence.solr.maxTotalConnections}" />
+        <property name="maxTotalConnections" value="\${org.orcid.persistence.solr.defaultMaxConnectionsPerHost}" />
+        <property name="parser" ref="responseParser" />
+    </bean>
+    <bean id="orgFundingSubTypeSolrServerReadOnly" class="org.apache.solr.client.solrj.impl.HttpSolrServer">
+        <constructor-arg value="\${org.orcid.persistence.solr.read.only.url}/fundingSubType" />
+        <property name="soTimeout" value="\${org.orcid.persistence.solr.socketTimeout}" />
+        <property name="connectionTimeout" value="\${org.orcid.persistence.solr.connectionTimeout}" />
+        <property name="allowCompression" value="\${org.orcid.persistence.solr.allowCompression}" />
+        <property name="maxRetries" value="\${org.orcid.persistence.solr.maxRetries}" />
+        <property name="defaultMaxConnectionsPerHost" value="\${org.orcid.persistence.solr.maxTotalConnections}" />
+        <property name="maxTotalConnections" value="\${org.orcid.persistence.solr.defaultMaxConnectionsPerHost}" />
+        <property name="parser" ref="responseParser" />
+    </bean>
+    
+    
+    
+    
+    
     <bean name="responseParser" class="org.apache.solr.client.solrj.impl.XMLResponseParser"></bean>
 
     <bean id="externalEncryptor" class="org.jasypt.encryption.pbe.PooledPBEStringEncryptor">

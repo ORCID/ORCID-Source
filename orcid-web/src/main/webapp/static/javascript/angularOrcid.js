@@ -332,13 +332,64 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 	return serv;
 }]);
 
-orcidNgModule.factory("worksSrvc", function () {
+orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 	var serv = {
 		    loading: false,
-			works: new Array()
+			works: new Array(),
+			worksToAddIds: null,
+			worksInfo: {},
+			bibtexJson: {},
+			addBibtexJson: function(dw) {
+				if (dw.citation && dw.citation.citationType && dw.citation.citationType.value == 'bibtex') {
+					try {
+						serv.bibtexJson[dw.putCode.value] = bibtexParse.toJSON(dw.citation.citation.value);
+					} catch (err) {
+						serv.bibtexJson[dw.putCode.value] = null;
+						console.log("couldn't parse bibtex: " + dw.citation.citation.value);
+					}
+				}
+			},
+		    addWorkToScope: function(worksUrl) {
+				if(serv.worksToAddIds.length != 0 ) {
+					serv.loading = true;
+					var workIds = serv.worksToAddIds.splice(0,20).join();
+					$.ajax({
+						url: worksUrl + workIds,
+						dataType: 'json',
+						success: function(data) {
+							$rootScope.$apply(function(){ 
+								for (i in data) {
+									var dw = data[i];                            
+									removeBadContributors(dw);							
+									serv.addBibtexJson(dw);							
+									serv.works.push(dw);
+								}
+							});
+							if(serv.worksToAddIds.length == 0 ) {
+								serv.loading = false;
+								$rootScope.$apply();					
+								fixZindexIE7('.workspace-public workspace-body-list li',99999);
+								fixZindexIE7('.workspace-toolbar',9999);						
+							} else {
+								$rootScope.$apply();					
+								setTimeout(function(){
+									serv.addWorkToScope();
+								},50);
+							}
+						}
+					}).fail(function() { 
+						$scope.$apply(function() {
+							serv.loading = false;
+						});
+				    	console.log("Error fetching works: " + workIds);
+				    });
+				} else {
+					serv.loading = false;
+				};
+			} 
 	}; 
 	return serv;
-});
+}]);
 
 orcidNgModule.factory("prefsSrvc", function ($rootScope) {
 	var serv = {
@@ -483,17 +534,6 @@ orcidNgModule.filter('externalIdentifierHtml', function(){
 	    return output;
 	};
 });
-
-function addBibtexCitation($scope, dw) {
-	if (dw.citation && dw.citation.citationType && dw.citation.citationType.value == 'bibtex') {
-		try {
-			$scope.bibtexCitations[dw.putCode.value] = bibtexParse.toJSON(dw.citation.citation.value);
-		} catch (err) {
-			$scope.bibtexCitations[dw.putCode.value] = null;
-			console.log("couldn't parse bibtex: " + dw.citation.citation.value);
-		}
-	}
-}
 
 function removeBadContributors(dw) {
 	for (idx in dw.contributors) {
@@ -955,6 +995,428 @@ function EmailEditCtrl($scope, $compile) {
 	};
 	
 };
+
+function WebsitesCtrl($scope, $compile) {
+    $scope.showEdit = false;
+    $scope.websitesForm = null;
+    $scope.privacyHelp = false;
+    
+	$scope.openEdit = function() {
+		$scope.addNew();	
+		$scope.showEdit = true;
+	};
+
+	$scope.close = function() {
+		$scope.getWebsitesForm();
+		$scope.showEdit = false;
+	};
+	
+	$scope.addNew = function() {
+		$scope.websitesForm.websites.push({ name: {value: ""}, url: {value: ""} });
+	};
+    
+    $scope.getWebsitesForm = function(){
+		$.ajax({
+			url: getBaseUri() + '/my-orcid/websitesForms.json',	        
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.websitesForm = data;
+	        	var websites = $scope.websitesForm.websites;
+	        	var len = websites.length;
+	        	while (len--) {
+	        		if (!websites[len].url.value.toLowerCase().startsWith('http'))
+	        			websites[len].url.value = 'http://' + websites[len].url.value;
+	        	}
+	        	$scope.$apply();
+	        }
+		}).fail(function(){
+			// something bad is happening!
+	    	console.log("error fetching websites");
+		});
+	};
+
+	$scope.deleteWebsite = function(website){
+		var websites = $scope.websitesForm.websites;
+		var websites = $scope.websitesForm.websites;
+    	var len = websites.length;
+    	while (len--) {
+    		if (websites[len] == website)
+    			websites.splice(len,1);
+    	}
+	};
+	
+	$scope.setWebsitesForm = function(){
+		var websites = $scope.websitesForm.websites;
+    	var len = websites.length;
+    	while (len--) {
+    		if (websites[len].url.value == null || websites[len].url.value.trim() == '')
+    			websites.splice(len,1);
+    	}
+		$.ajax({
+	        url: getBaseUri() + '/my-orcid/websitesForms.json',
+	        type: 'POST',
+	        data:  angular.toJson($scope.websitesForm),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.websitesForm = data;
+	        	if(data.errors.length == 0)
+	        	   $scope.close();
+	        	$scope.$apply();
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("WebsiteCtrl.serverValidate() error");
+	    });
+	};
+	
+	$scope.setPrivacy = function(priv, $event) {
+		$event.preventDefault();
+		$scope.websitesForm.visibility.visibility = priv;
+	};
+
+	$scope.getWebsitesForm();
+};
+
+function KeywordsCtrl($scope, $compile) {
+    $scope.showEdit = false;
+    $scope.keywordsForm = null;
+    $scope.privacyHelp = false;
+    
+	$scope.openEdit = function() {
+		$scope.addNew();	
+		$scope.showEdit = true;
+	};
+
+
+	$scope.close = function() {
+		$scope.getKeywordsForm();
+		$scope.showEdit = false;
+	};
+	
+	$scope.addNew = function() {
+		$scope.keywordsForm.keywords.push({value: ""});
+	};
+    
+    $scope.getKeywordsForm = function(){
+		$.ajax({
+			url: getBaseUri() + '/my-orcid/keywordsForms.json',	        
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.keywordsForm = data;
+	        	var keywords = $scope.keywordsForm.keywords;
+	        	$scope.$apply();
+	        }
+		}).fail(function(){
+			// something bad is happening!
+	    	console.log("error fetching keywords");
+		});
+	};
+
+	$scope.deleteKeyword = function(keyword){
+		var keywords = $scope.keywordsForm.keywords;
+    	var len = keywords.length;
+    	while (len--) {
+    		if (keywords[len] == keyword)
+    			keywords.splice(len,1);
+    	}
+	};
+	
+	$scope.setKeywordsForm = function(){
+		var keywords = $scope.keywordsForm.keywords;
+		$.ajax({
+	        url: getBaseUri() + '/my-orcid/keywordsForms.json',
+	        type: 'POST',
+	        data:  angular.toJson($scope.keywordsForm),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.keywordsForm = data;
+	        	if(data.errors.length == 0)
+	        	   $scope.close();
+	        	$scope.$apply();
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("WebsiteCtrl.serverValidate() error");
+	    });
+	};
+	
+	$scope.setPrivacy = function(priv, $event) {
+		$event.preventDefault();
+		$scope.keywordsForm.visibility.visibility = priv;
+	};
+
+	$scope.getKeywordsForm();
+};
+
+function NameCtrl($scope, $compile) {
+    $scope.showEdit = false;
+    $scope.nameForm = null;
+    $scope.privacyHelp = false;
+    
+	$scope.toggleEdit = function() {
+		$scope.showEdit = !$scope.showEdit;
+	};
+
+	$scope.close = function() {
+		$scope.getNameForm();
+		$scope.showEdit = false;
+	};
+	
+	
+    $scope.getNameForm = function(){
+		$.ajax({
+			url: getBaseUri() + '/account/nameForm.json',	        
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.nameForm = data;
+	        	$scope.$apply();
+	        }
+		}).fail(function(){
+			// something bad is happening!
+	    	console.log("error fetching otherNames");
+		});
+	};
+	
+	$scope.setNameForm = function(){
+		$.ajax({
+	        url: getBaseUri() + '/account/nameForm.json',
+	        type: 'POST',
+	        data:  angular.toJson($scope.nameForm),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.nameForm = data;
+	        	if(data.errors.length == 0)
+	        	   $scope.close();
+	        	$scope.$apply();
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("OtherNames.serverValidate() error");
+	    });
+	};
+	
+	$scope.setCreditNameVisibility = function(priv, $event) {
+		$event.preventDefault();
+		$scope.nameForm.creditNameVisibility.visibility = priv;
+	};
+
+	$scope.getNameForm();
+};
+
+
+function OtherNamesCtrl($scope, $compile) {
+    $scope.showEdit = false;
+    $scope.otherNamesForm = null;
+    $scope.privacyHelp = false;
+    
+	$scope.openEdit = function() {
+		$scope.addNew();	
+		$scope.showEdit = true;
+	};
+
+	$scope.close = function() {
+		$scope.getOtherNamesForm();
+		$scope.showEdit = false;
+	};
+	
+	$scope.addNew = function() {
+		$scope.otherNamesForm.otherNames.push({value: ""});
+	};
+    
+    $scope.getOtherNamesForm = function(){
+		$.ajax({
+			url: getBaseUri() + '/my-orcid/otherNamesForms.json',	        
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.otherNamesForm = data;
+	        	var otherNames = $scope.otherNamesForm.otherNames;
+	        	$scope.$apply();
+	        }
+		}).fail(function(){
+			// something bad is happening!
+	    	console.log("error fetching otherNames");
+		});
+	};
+
+	$scope.deleteKeyword = function(otherName){
+		var otherNames = $scope.otherNamesForm.otherNames;
+    	var len = otherNames.length;
+    	while (len--) {
+    		if (otherNames[len] == otherName)
+    			otherNames.splice(len,1);
+    	}
+	};
+	
+	$scope.setOtherNamesForm = function(){
+		var otherNames = $scope.otherNamesForm.otherNames;
+		$.ajax({
+	        url: getBaseUri() + '/my-orcid/otherNamesForms.json',
+	        type: 'POST',
+	        data:  angular.toJson($scope.otherNamesForm),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.otherNamesForm = data;
+	        	if(data.errors.length == 0)
+	        	   $scope.close();
+	        	$scope.$apply();
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("OtherNames.serverValidate() error");
+	    });
+	};
+	
+	$scope.setPrivacy = function(priv, $event) {
+		$event.preventDefault();
+		$scope.otherNamesForm.visibility.visibility = priv;
+	};
+
+	$scope.getOtherNamesForm();
+};
+
+function BiographyCtrl($scope, $compile) {
+    $scope.showEdit = false;
+	$scope.biographyForm = null;
+	$scope.lengthError = false;
+
+	$scope.toggleEdit = function() {
+		$scope.showEdit = !$scope.showEdit;
+	};
+
+	$scope.close = function() {
+		$scope.showEdit = false;
+	};
+
+	$scope.cancel = function() {
+		$scope.getBiographyForm();
+		$scope.showEdit = false;
+	};
+	
+	$scope.checkLength = function () {
+		if ($scope.biographyForm != null)
+			if ($scope.biographyForm.biography != null)
+				if ($scope.biographyForm.biography.value != null)
+					if ($scope.biographyForm.biography.value.length > 5000) {
+						$scope.lengthError = true;
+					} else {
+						$scope.lengthError = false;
+					}	
+		return $scope.lengthError;
+	};
+
+	
+	$scope.getBiographyForm = function(){
+		$.ajax({
+			url: getBaseUri() + '/account/biographyForm.json',	        
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.biographyForm = data;
+	        	$scope.$apply();
+	        }
+		}).fail(function(){
+			// something bad is happening!
+	    	console.log("error fetching BiographyForm");
+		});
+	};
+	
+	$scope.setBiographyForm = function(){
+		if ($scope.checkLength()) return; // do nothing if there is a length error
+		$.ajax({
+	        url: getBaseUri() + '/account/biographyForm.json',
+	        type: 'POST',
+	        data:  angular.toJson($scope.biographyForm),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.biographyForm = data;
+	        	if(data.errors.length == 0)
+	        	    $scope.close();
+	        	$scope.$apply();
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("BiographyCtrl.serverValidate() error");
+	    });
+	};
+
+	$scope.setPrivacy = function(priv, $event) {
+		$event.preventDefault();
+		$scope.biographyForm.visiblity.visibility = priv;
+	};	
+	
+	
+	$scope.getBiographyForm();
+
+};
+
+function CountryCtrl($scope, $compile) {
+    $scope.showEdit = false;
+	$scope.countryForm = null;
+	$scope.privacyHelp = false;
+	
+	$scope.openEdit = function() {
+		$scope.showEdit = true;
+	};
+
+	$scope.close = function() {
+		$scope.showEdit = false;
+	};
+
+	
+	$scope.getCountryForm = function(){
+		$.ajax({
+			url: getBaseUri() + '/account/countryForm.json',	        
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.countryForm = data;
+	        	$scope.$apply();
+	        }
+		}).fail(function(){
+			// something bad is happening!
+	    	console.log("error fetching external identifiers");
+		});
+	};
+	
+	$scope.toggleClickPrivacyHelp = function() {
+		if (!document.documentElement.className.contains('no-touch'))
+			$scope.privacyHelp=!$scope.privacyHelp;
+	};
+	
+	$scope.setCountryForm = function(){
+		
+		if ($scope.countryForm.iso2Country.value == '')
+		   $scope.countryForm.iso2Country = null;
+		$.ajax({
+	        url: getBaseUri() + '/account/countryForm.json',
+	        type: 'POST',
+	        data:  angular.toJson($scope.countryForm),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.countryForm = data;
+	        	$scope.close();
+	        	$scope.$apply();
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("CountryCtrl.serverValidate() error");
+	    });
+	};
+
+	
+	$scope.setPrivacy = function(priv, $event) {
+		$event.preventDefault();
+		$scope.countryForm.profileAddressVisibility.visibility = priv;
+	};
+	
+	$scope.getCountryForm();
+
+};
+
 
 function ExternalIdentifierCtrl($scope, $compile){		
 	$scope.getExternalIdentifiers = function(){
@@ -1871,6 +2333,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	$scope.moreInfo = {};
 	$scope.privacyHelp = {};
 	$scope.editTranslatedTitle = false; 	
+	$scope.lastIndexedTerm = null;
 	
 	$scope.toggleClickMoreInfo = function(key) {
 		if (!document.documentElement.className.contains('no-touch')) {
@@ -1906,7 +2369,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 			dataType: 'json',
 			success: function(data) {						
 				$scope.$apply(function() {
-					$scope.editFunding = data;
+					$scope.editFunding = data;					
 					$scope.showAddModal();
 				});
 			}
@@ -1923,7 +2386,8 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 			onComplete: function() {
 				//resize to insure content fits
 				formColorBoxResize();
-				$scope.bindTypeahead();
+				$scope.bindTypeaheadForOrgs();
+				$scope.bindTypeaheadForSubTypes();
 			}
 	    });
 	};
@@ -1978,7 +2442,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	};
 
 
-	$scope.bindTypeahead = function () {
+	$scope.bindTypeaheadForOrgs = function () {
 		var numOfResults = 100;
 		$("#fundingName").typeahead({
 			name: 'fundingName',
@@ -2014,8 +2478,51 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 		});		
 	};
 	
-	$scope.selectFunding = function(datum) {
-		console.log(angular.toJson(datum));
+	$scope.bindTypeaheadForSubTypes = function() {
+		var numOfResults = 20;
+		$("#organizationDefinedType").typeahead({
+			name: 'organizationDefinedType',
+			limit: numOfResults,
+			remote: {
+				replace: function () {
+                    var q = getBaseUri()+'/fundings/orgDefinedSubType/';
+                    if ($('#organizationDefinedType').val()) {
+                        q += encodeURIComponent($('#organizationDefinedType').val());
+                    }
+                    q += '?limit=' + numOfResults;
+                    return q;
+                }
+			},
+			template: function (datum) {					
+				   var forDisplay = 
+				       '<span style=\'white-space: nowrap; font-weight: bold;\'>' + datum.value + '</span><hr />';
+				   return forDisplay;
+			}
+		});
+		$("#organizationDefinedType").bind("typeahead:selected", function(obj, datum){
+			$scope.selectOrgDefinedFundingSubType(datum);
+			$scope.$apply();
+		});
+	};
+	
+	$scope.setSubTypeAsNotIndexed = function() {
+		if($scope.lastIndexedTerm != $.trim($('#organizationDefinedType').val())) {
+			console.log("value changed: " + $scope.lastIndexedTerm + " <-> " + $('#organizationDefinedType').val());
+			$scope.editFunding.organizationDefinedFundingSubType.alreadyIndexed = false;
+		}			
+	};
+	
+	
+	$scope.selectOrgDefinedFundingSubType = function(subtype) {
+		if (subtype != undefined && subtype != null) {
+			$scope.editFunding.organizationDefinedFundingSubType.subtype.value = subtype.value;
+			$scope.editFunding.organizationDefinedFundingSubType.alreadyIndexed = true;	
+			$scope.lastIndexedTerm = subtype.value;
+			$scope.unbindTypeaheadForSubTypes();
+		}
+	};
+	
+	$scope.selectFunding = function(datum) {		
 		if (datum != undefined && datum != null) {
 			$scope.editFunding.fundingName.value = datum.value;
 			if(datum.value)
@@ -2032,10 +2539,10 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 			
 			if (datum.disambiguatedFundingIdentifier != undefined && datum.disambiguatedFundingIdentifier != null) {
 				$scope.getDisambiguatedFunding(datum.disambiguatedFundingIdentifier);
-				$scope.unbindTypeahead();
+				$scope.unbindTypeaheadForOrgs();
 			}
 		}
-	};
+	};	
 	
 	$scope.getDisambiguatedFunding = function(id) {
 		$.ajax({
@@ -2091,7 +2598,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	};
 	
 	$scope.removeDisambiguatedFunding = function() {
-		$scope.bindTypeahead();
+		$scope.bindTypeaheadForOrgs();
 		if ($scope.disambiguatedFunding != undefined) delete $scope.disambiguatedFunding;
 		if ($scope.editFunding != undefined && $scope.editFunding.disambiguatedFundingSourceId != undefined) delete $scope.editFunding.disambiguatedFundingSourceId;
 	};
@@ -2112,7 +2619,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	        data:  angular.toJson($scope.editFunding),
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
-	        success: function(data) {
+	        success: function(data) {	        	
 	        	$scope.copyErrorsLeft($scope.editFunding, data);
 	        	$scope.$apply();
 	        }
@@ -2125,7 +2632,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	$scope.copyErrorsLeft = function (data1, data2) {
 		for (var key in data1) {
 			if (key == null) continue;
-			if (key == 'errors') {
+			if (key == 'errors') {				
 				data1.errors = data2.errors;
 			} else {
 				if (typeof(data1[key])=="object") {
@@ -2135,8 +2642,12 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 		};
 	};
 	
-	$scope.unbindTypeahead = function () {
+	$scope.unbindTypeaheadForOrgs = function () {
 		$('#fundingName').typeahead('destroy');
+	};
+	
+	$scope.unbindTypeaheadForSubTypes = function () {		
+		$('#organizationDefinedType').typeahead('destroy');
 	};
 	
 	$scope.addExternalIdentifier = function () {
@@ -2233,69 +2744,28 @@ function PublicFundingCtrl($scope, $compile, $filter, fundingSrvc){
 }
 
 function PublicWorkCtrl($scope, $compile, worksSrvc) {
-	$scope.works = worksSrvc.works;
 	$scope.worksSrvc = worksSrvc;
 	$scope.showBibtex = true;
 	$scope.loadingInfo = false;
-	$scope.bibtexCitations = {};
-	$scope.worksInfo = {};
 	$scope.moreInfoOpen = false;
 
     $scope.bibtexShowToggle = function () {
     	$scope.showBibtex = !($scope.showBibtex);
     };   
 
-    $scope.addWorkToScope = function() {
-		if($scope.worksToAddIds.length != 0 ) {
-			$scope.worksSrvc.loading = true;
-			var workIds = $scope.worksToAddIds.splice(0,20).join();
-			$.ajax({
-				url: getBaseUri() + '/' + orcidVar.orcidId +'/works.json?workIds=' + workIds,
-				dataType: 'json',
-				success: function(data) {
-					$scope.$apply(function(){ 
-						for (i in data) {
-							var dw = data[i];                            
-							removeBadContributors(dw);							
-							addBibtexCitation($scope,dw);							
-							$scope.works.push(dw);
-						}
-					});
-					if($scope.worksToAddIds.length == 0 ) {
-						$scope.worksSrvc.loading = false;
-						$scope.$apply();					
-						fixZindexIE7('.workspace-public workspace-body-list li',99999);
-						fixZindexIE7('.workspace-toolbar',9999);						
-					} else {
-						$scope.$apply();					
-						setTimeout(function(){
-							$scope.addWorkToScope();
-						},50);
-					}
-				}
-			}).fail(function() { 
-				$scope.$apply(function() {
-					$scope.worksSrvc.loading = false;
-				});
-		    	console.log("Error fetching works: " + workIds);
-		    });
-		} else {
-			$scope.worksSrvc.loading = false;
-		}
-	};     
 	  
 	$scope.renderTranslatedTitleInfo = function(putCode) {		
 		var info = null; 
 		
-		if(putCode != null && $scope.worksInfo[putCode] != null && $scope.worksInfo[putCode].workTitle != null && $scope.worksInfo[putCode].workTitle.translatedTitle != null) {
-			info = $scope.worksInfo[putCode].workTitle.translatedTitle.content + ' - ' + $scope.worksInfo[putCode].workTitle.translatedTitle.languageName;										
+		if(putCode != null && $scope.worksSrvc.worksInfo[putCode] != null && $scope.worksSrvc.worksInfo[putCode].workTitle != null && $scope.worksSrvc.worksInfo[putCode].workTitle.translatedTitle != null) {
+			info = $scope.worksSrvc.worksInfo[putCode].workTitle.translatedTitle.content + ' - ' + $scope.worksSrvc.worksInfo[putCode].workTitle.translatedTitle.languageName;										
 		}		
 		
 		return info;
 	};
 		
-	$scope.worksToAddIds = orcidVar.workIds;	
-	$scope.addWorkToScope();
+	$scope.worksSrvc.worksToAddIds = orcidVar.workIds;	
+	$scope.worksSrvc.addWorkToScope(getBaseUri() + '/' + orcidVar.orcidId +'/works.json?workIds=');
 	
 
 	$scope.moreInfoClick = function(work, $event) {
@@ -2318,15 +2788,15 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 		//Display the popover
 		$scope.loadingInfo = true;
 		$(event.target).next().css('display','inline');		
-		if($scope.worksInfo[putCode] == null) {		
+		if($scope.worksSrvc.worksInfo[putCode] == null) {		
 			$.ajax({
 				url: getBaseUri() + '/' + orcidVar.orcidId + '/getWorkInfo.json?workId=' + putCode,	        
 		        dataType: 'json',
 		        success: function(data) {		        	
 		        	$scope.$apply(function () {
 		        		removeBadContributors(data);
-						addBibtexCitation($scope,data);
-						$scope.worksInfo[putCode] = data;
+						$scope.worksSrvc.addBibtexJson(data);
+						$scope.worksSrvc.worksInfo[putCode] = data;
 						$scope.loadingInfo = false;
 		        	});		        	
 		        }
@@ -2351,13 +2821,10 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	$scope.workspaceSrvc = workspaceSrvc;
 	$scope.worksSrvc = worksSrvc;
-	$scope.works = worksSrvc.works;
 	$scope.showBibtex = true;
 	$scope.loadingInfo = false;
-	$scope.bibtexCitations = {};
 	$scope.editTranslatedTitle = false;
 	$scope.types = null;
-	$scope.worksInfo = {};
 	$scope.privacyHelp = {};
 	$scope.moreInfoOpen = false;
 	
@@ -2466,53 +2933,19 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		};
 	};
 		
-	$scope.addWorkToScope = function() {
-		if($scope.worksToAddIds.length != 0 ) {
-			$scope.worksSrvc.loading = true;
-			var workIds = $scope.worksToAddIds.splice(0,20).join();
-			$.ajax({
-				url: getBaseUri() + '/works/works.json?workIds=' + workIds,
-				dataType: 'json',
-				success: function(data) {
-					$scope.$apply(function(){ 
-						for (i in data) {
-							var dw = data[i];													
-							$scope.works.push(dw);
-						}
-					});
-					if($scope.worksToAddIds.length == 0 ) {
-						$scope.worksSrvc.loading = false;
-						$scope.$apply();
-						fixZindexIE7('.workspace-toolbar', 999999);
-						fixZindexIE7('.workspace-private-toolbar', 500);
-						fixZindexIE7('#privacy-bar', 400);						
-					} else {
-						$scope.$apply();
-						setTimeout(function () {
-							$scope.addWorkToScope(); 
-						},50);
-					}
-				}
-			}).fail(function() { 
-		    	console.log("Error fetching work: " + value);
-		    });
-		} else {
-			$scope.worksSrvc.loading = false;
-		}
-	}; 	
 
 	$scope.getWorks = function() {
 		//clear out current works
-		$scope.worksToAddIds = null;
+		$scope.worksSrvc.worksToAddIds = null;
 		$scope.worksSrvc.loading = true;
-		$scope.works.length = 0;
+		$scope.worksSrvc.works.length = 0;
 		//get work ids
 		$.ajax({
 			url: getBaseUri() + '/works/workIds.json',	        
 	        dataType: 'json',
 	        success: function(data) {
-	        	$scope.worksToAddIds = data;
-	        	$scope.addWorkToScope();
+	        	$scope.worksSrvc.worksToAddIds = data;
+	        	$scope.worksSrvc.addWorkToScope(getBaseUri() + '/works/works.json?workIds=');
 	        	$scope.$apply();
 	        }
 		}).fail(function(){
@@ -2525,8 +2958,8 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	$scope.renderTranslatedTitleInfo = function(putCode) {		
 		var info = null; 
 		
-		if(putCode != null && $scope.worksInfo[putCode] != null && $scope.worksInfo[putCode].workTitle != null && $scope.worksInfo[putCode].workTitle.translatedTitle != null) {
-			info = $scope.worksInfo[putCode].workTitle.translatedTitle.content + ' - ' + $scope.worksInfo[putCode].workTitle.translatedTitle.languageName;										
+		if(putCode != null && $scope.worksSrvc.worksInfo[putCode] != null && $scope.worksSrvc.worksInfo[putCode].workTitle != null && $scope.worksSrvc.worksInfo[putCode].workTitle.translatedTitle != null) {
+			info = $scope.worksSrvc.worksInfo[putCode].workTitle.translatedTitle.content + ' - ' + $scope.worksSrvc.worksInfo[putCode].workTitle.translatedTitle.languageName;										
 		}		
 		
 		return info;
@@ -2555,7 +2988,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		//Display the popover
 		$scope.loadingInfo = true;		
 		$(event.target).next().css('display','inline');	
-		if($scope.worksInfo[putCode] == null) {		
+		if($scope.worksSrvc.worksInfo[putCode] == null) {		
 			$.ajax({
 				url: getBaseUri() + '/works/getWorkInfo.json?workId=' + putCode,	        
 		        dataType: 'json',
@@ -2563,8 +2996,8 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		        	
 		        	$scope.$apply(function () {
 		        		removeBadContributors(data);
-						addBibtexCitation($scope,data);
-						$scope.worksInfo[putCode] = data;
+		        		$scope.worksSrvc.addBibtexJson(data);
+						$scope.worksSrvc.worksInfo[putCode] = data;
 						$scope.loadingInfo = false;
 		        	});		        	
 		        }
@@ -2587,9 +3020,9 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	$scope.deleteWork = function(putCode) {
 		$scope.deletePutCode = putCode;
 		var work;
-		for (idx in $scope.works) {
-			if ($scope.works[idx].putCode.value == putCode) {
-				work = $scope.works[idx];
+		for (idx in $scope.worksSrvc.works) {
+			if ($scope.worksSrvc.works[idx].putCode.value == putCode) {
+				work = $scope.worksSrvc.works[idx];
 				break;
 			}
 		}
@@ -2608,16 +3041,16 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	$scope.deleteByPutCode = function() {		
 		var work;
 		var idx;
-		for (idx in $scope.works) {
-			if ($scope.works[idx].putCode.value == $scope.deletePutCode) {
-				work = $scope.works[idx];
+		for (idx in $scope.worksSrvc.works) {
+			if ($scope.worksSrvc.works[idx].putCode.value == $scope.deletePutCode) {
+				work = $scope.worksSrvc.works[idx];
 				break;
 			}
 		}
 		// remove work on server
 		$scope.removeWork(work);
 		// remove the work from the UI
-    	$scope.works.splice(idx, 1);
+    	$scope.worksSrvc.works.splice(idx, 1);
     	// apply changes on scope
 		// close box
 		$.colorbox.close(); 
@@ -2658,11 +3091,11 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	$scope.setPrivacy = function(putCode, priv, $event) {
 		$event.preventDefault();
 		var idx;
-		for (idx in $scope.works) {
-			if ($scope.works[idx].putCode.value == putCode)
+		for (idx in $scope.worksSrvc.works) {
+			if ($scope.worksSrvc.works[idx].putCode.value == putCode)
 				break;
 		}
-		$scope.works[idx].visibility = priv;
+		$scope.worksSrvc.works[idx].visibility = priv;
 		$scope.curPrivToggle = null;
 		$scope.updateProfileWork(putCode);
 	};
@@ -2714,9 +3147,9 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	
 	$scope.updateProfileWork = function(putCode) {
 		var work;
-		for (idx in $scope.works) {
-			if ($scope.works[idx].putCode.value == putCode) {
-				work = $scope.works[idx];
+		for (idx in $scope.worksSrvc.works) {
+			if ($scope.worksSrvc.works[idx].putCode.value == putCode) {
+				work = $scope.worksSrvc.works[idx];
 				break;
 			}
 		}
@@ -3146,7 +3579,7 @@ function DelegatorsCtrl($scope, $compile){
 		template: function (datum) {
 			var forDisplay;
 			if(datum.noResults){
-				forDisplay = "<span class=\'no-delegator-matches\'>no matches, please search again</span>";
+				forDisplay = "<span class=\'no-delegator-matches\'>" + om.get('delegators.nomatches') + "</span>";
 			}
 			else{
 				forDisplay = 
@@ -3185,7 +3618,7 @@ function SwitchUserCtrl($scope, $compile, $document){
 	        	$scope.delegators = data.delegators;
 				$scope.searchResultsCache[''] = $scope.delegators;
 	        	$scope.me = data.me;
-	        	$scope.unfilteredLength = $scope.delegators.delegationDetails.length;
+	        	$scope.unfilteredLength = $scope.delegators != null ? $scope.delegators.delegationDetails.length : 0;
 	        	$scope.$apply();
 	        }
 	    }).fail(function() { 
@@ -3217,6 +3650,16 @@ function SwitchUserCtrl($scope, $compile, $document){
 		} else {
 			$scope.delegators = $scope.searchResultsCache[$scope.searchTerm];
 		}
+	};
+	
+	$scope.switchUser = function(targetOrcid){
+		$.ajax({
+	        url: getBaseUri() + '/switch-user?j_username=' + targetOrcid,
+	        dataType: 'json',
+	        complete: function(data) {
+	        	window.location.reload();
+	        }
+	    });
 	};
 	
 	$document.bind('click',
@@ -4010,6 +4453,7 @@ function SSOPreferencesCtrl($scope, $compile) {
 	$scope.tokenURL = orcidVar.pubBaseUri + '/oauth/token';
 	$scope.authorizeURL = '';
 	$scope.selectedRedirectUri = '';
+	$scope.selectedClientSecret = null;
 	$scope.creating = false;
 	
 	$scope.enableDeveloperTools = function() {
@@ -4058,13 +4502,14 @@ function SSOPreferencesCtrl($scope, $compile) {
 	        url: getBaseUri()+'/developer-tools/get-sso-credentials.json',	        
 	        contentType: 'application/json;charset=UTF-8',
 	        type: 'POST',	                	      
-	        success: function(data){	 
+	        success: function(data){	        	
 	        	$scope.$apply(function(){ 
-	        		if(data != null && data.clientSecret != null) {
+	        		if(data != null && data.clientSecrets != null) {
 	        			$scope.playgroundExample = '';
 	        			$scope.userCredentials = data;	
 	        			$scope.hideGoogleUri = false;	
 	        			$scope.selectedRedirectUri = $scope.userCredentials.redirectUris[0];
+	        			$scope.selectedClientSecret = $scope.userCredentials.clientSecrets[0];
 	        			for(var i = 0; i < $scope.userCredentials.redirectUris.length; i++) {
 	        				if($scope.googleUri == $scope.userCredentials.redirectUris[i].value.value) {
 	        					$scope.hideGoogleUri = true;
@@ -4143,13 +4588,13 @@ function SSOPreferencesCtrl($scope, $compile) {
 	        			$scope.creating = false;	        			
 	        			$scope.showReg = false;
 	        		}
-				});
+	    		});
 	        }
 	    }).fail(function(error) { 
 	    	// something bad is happening!	    	
 	    	console.log("Error creating SSO credentials");	    	
 	    });		
-	};
+	};		
 	
 	$scope.showRevokeModal = function() {		
 		$.colorbox({                      
@@ -4279,8 +4724,15 @@ function SSOPreferencesCtrl($scope, $compile) {
 	
 	
 	$scope.updateSelectedRedirectUri = function() {		
+		//Initialize client secret if needed
+		if($scope.selectedClientSecret == null) {
+			$scope.selectedClientSecret = $scope.userCredentials.clientSecrets[0];
+		}
 		var clientId = $scope.userCredentials.clientOrcid.value;
 		var selectedRedirectUriValue = $scope.selectedRedirectUri.value.value;
+		var selectedClientSecret = $scope.selectedClientSecret.value;
+		
+		console.log("Selected secret: " + angular.toJson($scope.selectedClientSecret));
 		
 		//Build the google playground url example
 		$scope.playgroundExample = '';
@@ -4288,9 +4740,9 @@ function SSOPreferencesCtrl($scope, $compile) {
 		if($scope.googleUri == selectedRedirectUriValue) {
 			var example = $scope.googleExampleLink;
 			example = example.replace('[PUB_BASE_URI_ENCODE]', encodeURI(orcidVar.pubBaseUri));
-			example = example.replace('[BASE_URI_ENCODE]', encodeURI(getBaseUri()))
+			example = example.replace('[BASE_URI_ENCODE]', encodeURI(getBaseUri()));
 			example = example.replace('[CLIENT_ID]', clientId);
-			example = example.replace('[CLIENT_SECRET]', $scope.userCredentials.clientSecret.value);	        					
+			example = example.replace('[CLIENT_SECRET]', selectedClientSecret);	        					
 			$scope.playgroundExample = example;
 		}		
 				
@@ -4303,10 +4755,66 @@ function SSOPreferencesCtrl($scope, $compile) {
 		// rebuild sampel Auhtroization Curl
 		var sampeleCurl = $scope.sampleAuthCurlTemplate;
 		$scope.sampleAuthCurl = sampeleCurl.replace('[CLIENT_ID]', clientId)
-		    .replace('[CLIENT_SECRET]', $scope.userCredentials.clientSecret.value)
+		    .replace('[CLIENT_SECRET]', selectedClientSecret)
 		    .replace('[PUB_BASE_URI]', orcidVar.pubBaseUri)
 		    .replace('[REDIRECT_URI]', selectedRedirectUriValue);
        
+	};
+	
+	$scope.updateSelectedClientSecret = function(){
+		$scope.updateSelectedRedirectUri();
+	};
+	
+	$scope.confirmDeleteClientSecret = function(index) {
+		$scope.clientSecretToDelete = $scope.userCredentials.clientSecrets[index];
+		$.colorbox({        	            
+            html : $compile($('#delete-secret-modal').html())($scope), 
+            transition: 'fade',
+            onLoad: function() {
+			    $('#cboxClose').remove();
+			},
+	        scrolling: true
+        });
+        $.colorbox.resize({width:"400px" , height:"175px"});
+	};
+	
+	$scope.deleteClientSecret = function(secretToDelete) {		
+		$.ajax({
+			url: getBaseUri() + '/developer-tools/delete-client-secret.json',
+			type: 'POST',
+			dataType: 'text',
+			data: 'clientSecret=' + secretToDelete, 
+			success: function(data) {
+				if(data) {
+					$scope.getSSOCredentials();
+					$scope.closeModal();
+				} else
+					console.log('Unable to delete client secret');
+			}
+		}).fail(function() { 
+	    	console.log("Error fetching empty redirect uri");
+	    });
+		
+		
+	};
+	
+	$scope.addClientSecret = function() {
+		$.ajax({
+			url: getBaseUri() + '/developer-tools/add-client-secret.json',
+			type: 'POST',			
+			success: function(data) {
+				if(data)
+					$scope.getSSOCredentials();
+				else
+					console.log('Unable to delete client secret');
+			}
+		}).fail(function() { 
+	    	console.log("Error fetching empty redirect uri");
+	    });
+	};
+	
+	$scope.closeModal = function(){
+		$.colorbox.close();	
 	};
 	
 	//init

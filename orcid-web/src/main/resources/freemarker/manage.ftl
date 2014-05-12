@@ -29,16 +29,18 @@
 		<table class="table table-bordered settings-table"
 			ng-controller="EditTableCtrl" style="margin: 0px, padding:  0px;">
 			<tbody>
-				<tr>
-					<!-- Personal Information -->
-					<th>${springMacroRequestContext.getMessage("public_profile.h3PersonalInformation")}</th>
-					<td>
-						<div>
-							<a href="<@spring.url '/account/manage-bio-settings'/>"
-								class="update">${springMacroRequestContext.getMessage("settings.tdEdit")}</a>
-						</div>
-					</td>
-				</tr>
+				<#if RequestParameters['OldPersonal']??>	        
+					<tr>
+						<!-- Personal Information -->
+						<th>${springMacroRequestContext.getMessage("public_profile.h3PersonalInformation")}</th>
+						<td>
+							<div>
+								<a href="<@spring.url '/account/manage-bio-settings'/>"
+									class="update">${springMacroRequestContext.getMessage("settings.tdEdit")}</a>
+							</div>
+						</td>
+					</tr>
+				</#if>
 				<tr>
 					<!-- Email header -->
 					<th><a name="editEmail"></a>${springMacroRequestContext.getMessage("manage.thEmail")}</th>
@@ -325,17 +327,17 @@
 					<form action="manage/revoke-application" method="post"
 						class="revokeApplicationForm"
 						id="revokeApplicationForm${applicationSummary_index}">
-						<td class="revokeApplicationName">${(applicationSummary.applicationName.content)!}<br />
+						<td class="revokeApplicationName">${(applicationSummary.applicationName.content)!?html}<br />
 						<#if (applicationSummary.applicationWebsite)??>
-						<a href="<@orcid.absUrl applicationSummary.applicationWebsite/>">${applicationSummary.applicationWebsite.value}</a>
+						<a href="<@orcid.absUrl applicationSummary.applicationWebsite/>">${applicationSummary.applicationWebsite.value?html}</a>
 						</#if>
 						</td>
-						<td width="35%">${applicationSummary.approvalDate.value.toGregorianCalendar().time?date}</td>
+						<td width="35%">${applicationSummary.approvalDate.value.toGregorianCalendar().time?date?iso_local}</td>
 						<td width="5%"><input type="hidden" name="applicationOrcid"
 							value="${applicationSummary.applicationOrcid.path}" /> <input
 							type="hidden" name="confirmed" value="no" /> <input type="hidden"
 							name="revokeApplicationName"
-							value="${applicationSummary.applicationName.content}" /> <#if
+							value="${applicationSummary.applicationName.content?html}" /> <#if
 							applicationSummary.scopePaths??> <#list
 							applicationSummary.scopePaths.scopePath as scopePath> <input
 							type="hidden" name="scopePaths"
@@ -373,30 +375,28 @@
 			<table class="table table-bordered settings-table normal-width" ng-show="delegation.givenPermissionTo.delegationDetails" ng-cloak>
 				<thead>
 					<tr>
-						<th width="35%" ng-click="changeSorting('delegateSummary.creditName.content')">${springMacroRequestContext.getMessage("manage.thproxy")}</th>
-						<th width="25%" ng-click="changeSorting('delegateSummary.orcidIdentifier.path')">${springMacroRequestContext.getMessage("search_results.thORCIDID")}</th>
-						<th width="15%" ng-click="changeSorting('approvalDate.value')">Access granted</th>
-						<th width="15%" ng-click="changeSorting('delegateSummary.lastModifiedDate.value')">Last modified</th>
+						<th width="40%" ng-click="changeSorting('delegateSummary.creditName.content')">${springMacroRequestContext.getMessage("manage.thproxy")}</th>
+						<th width="30%" ng-click="changeSorting('delegateSummary.orcidIdentifier.path')">${springMacroRequestContext.getMessage("search_results.thORCIDID")}</th>
+						<th width="20%" ng-click="changeSorting('approvalDate.value')"><@orcid.msg 'manage_delegators.delegates_table.access_granted' /></th>
 						<td width="10%"></td>
 					</tr>
 				</thead>
 				<tbody>
 					<tr ng-repeat="delegationDetails in delegation.givenPermissionTo.delegationDetails | orderBy:sort.column:sort.descending">
-						<td width="35%"><a href="{{delegationDetails.delegateSummary.orcidIdentifier.uri}}" target="_blank">{{delegationDetails.delegateSummary.creditName.content}}</a></td>
-						<td width="25%"><a href="{{delegationDetails.delegateSummary.orcidIdentifier.uri}}" target="_blank">{{delegationDetails.delegateSummary.orcidIdentifier.path}}</a></td>
-						<td width="15%">{{delegationDetails.approvalDate.value|date}}</td>
-						<td width="15%">{{delegationDetails.delegateSummary.lastModifiedDate.value|date}}</td>
+						<td width="40%"><a href="{{delegationDetails.delegateSummary.orcidIdentifier.uri}}" target="_blank">{{delegationDetails.delegateSummary.creditName.content}}</a></td>
+						<td width="30%"><a href="{{delegationDetails.delegateSummary.orcidIdentifier.uri}}" target="_blank">{{delegationDetails.delegateSummary.orcidIdentifier.path}}</a></td>
+						<td width="20%">{{delegationDetails.approvalDate.value|date:'yyyy-MM-dd'}}</td>
 						<td width="10%"><a
 							ng-click="confirmRevoke(delegationDetails.delegateSummary.creditName.content, delegationDetails.delegateSummary.orcidIdentifier.path)"
 							class="glyphicon glyphicon-trash grey"
-							title="{springMacroRequestContext.getMessage("manage.revokeaccess")}"></a></td>
+							title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a></td>
 					</tr>
 				</tbody>
 			</table>
-			<p>Search for trusted individuals to add.</p>
+			<p>${springMacroRequestContext.getMessage("manage_delegation.searchfortrustedindividuals")}</p>
 			<div>
 				<form ng-submit="search()">
-					<input type="text" placeholder="ORCID iD, email address, or names" class="input-xlarge inline-input" ng-model="userQuery"></input>
+					<input type="text" placeholder="${springMacroRequestContext.getMessage("manage_delegation.searchplaceholder")}" class="input-xlarge inline-input" ng-model="userQuery"></input>
 					<input type="submit" class="btn btn-primary" value="Search"></input>
 				</form>
 			</div>
@@ -507,45 +507,45 @@
 
 <script type="text/ng-template" id="confirm-add-delegate-modal">
 	<div style="padding: 20px;">
-	   <h3>Add delegate</h3>
+	   <h3><@orcid.msg 'manage_delegation.addtrustedindividual'/></h3>
 	   <div ng-show="effectiveUserOrcid === delegateToAdd">
-	      <p class="alert alert-error">You can't add yourself as a delegate</p>
-	      <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
+	      <p class="alert alert-error"><@orcid.msg 'manage_delegation.youcantaddyourself'/></p>
+	      <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
 	   </div>
 	   <div ng-hide="effectiveUserOrcid === delegateToAdd">
 	      <p>{{delegateNameToAdd}} ({{delegateToAdd}})</p>
-	      <button class="btn btn-primary" ng-click="addDelegate()">Add</button>
-	      <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
+	      <button class="btn btn-primary" ng-click="addDelegate()"><@orcid.msg 'manage.spanadd'/></button>
+	      <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
 	   </div>
 	</div>
 </script>
 	
 <script type="text/ng-template" id="confirm-add-delegate-by-email-modal">
 	<div style="padding: 20px;">
-	   <h3>Add delegate</h3>
+	   <h3><@orcid.msg 'manage_delegation.addtrustedindividual'/></h3>
 	   <div ng-show="emailSearchResult.isSelf">
-	      <p class="alert alert-error">You can't add yourself as a delegate</p>
-	      <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
+	      <p class="alert alert-error"><@orcid.msg 'manage_delegation.youcantaddyourself'/></p>
+	      <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
 	   </div>
 	   <div ng-show="!emailSearchResult.found" >
-	       <p class="alert alert-error">Sorry, {{userQuery}} doesn't seem to have an ORCID Account.</p>
-	       <p>Account Delegates must have an ORCID Account to manage yours.</p>
-	       <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
+	       <p class="alert alert-error"><@orcid.msg 'manage_delegation.sorrynoaccount1'/>{{userQuery}}<@orcid.msg 'manage_delegation.sorrynoaccount2'/></p>
+	       <p><@orcid.msg 'manage.musthaveanaccount'/></p>
+	       <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
 	   </div>
 	   <div ng-show="!emailSearchResult.isSelf && emailSearchResult.found">
 	      <p>{{userQuery}}</p>
-	      <button class="btn btn-primary" ng-click="addDelegateByEmail(userQuery)">Add</button>
-	      <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
+	      <button class="btn btn-primary" ng-click="addDelegateByEmail(userQuery)"><@orcid.msg 'manage.spanadd'/></button>
+	      <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
 	   </div>
 	</div>
 </script>
 	
 <script type="text/ng-template" id="revoke-delegate-modal">
 	<div style="padding: 20px;">
-		<h3>Please confirm revocation of delegate</h3>
+		<h3><@orcid.msg 'manage_delegation.confirmrevoketrustedindividual'/></h3>
 		<p> {{delegateNameToRevoke}} ({{delegateToRevoke}})</p>
-		<button class="btn btn-danger" ng-click="revoke()">Revoke</button> 
-		<a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
+		<button class="btn btn-danger" ng-click="revoke()"><@orcid.msg 'manage_delegation.btnrevokeaccess'/></button> 
+		<a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
 	<div>
 </script>
 

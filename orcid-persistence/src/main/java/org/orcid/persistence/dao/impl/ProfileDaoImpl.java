@@ -488,6 +488,44 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         updateQuery.setParameter("enableDeveloperTools", enableDeveloperTools);
         updateQuery.executeUpdate();
     }
+    
+
+    @Override
+    @Transactional
+    public void updateCountry(String orcid, Iso3166Country iso2Country, Visibility profileAddressVisibility) {
+        Query updateQuery = entityManager
+                .createQuery("update ProfileEntity set lastModified = now(), iso2_country = :iso2Country,  profile_address_visibility = :profileAddressVisibility where orcid = :orcid");
+        updateQuery.setParameter("orcid", orcid);
+        updateQuery.setParameter("iso2Country", iso2Country != null ? iso2Country.value() : null);
+        updateQuery.setParameter("profileAddressVisibility", StringUtils.upperCase(profileAddressVisibility.value()));
+        updateQuery.executeUpdate();
+    }
+    
+    @Override
+    @Transactional
+    public void updateBiography(String orcid, String biography, Visibility visibility) {
+        Query updateQuery = entityManager
+                .createQuery("update ProfileEntity set lastModified = now(), biography = :biography, biography_visibility = :visibility where orcid = :orcid");
+        updateQuery.setParameter("orcid", orcid);
+        updateQuery.setParameter("biography", biography);
+        updateQuery.setParameter("visibility", visibility == null ? null : StringUtils.upperCase(visibility.value()));
+        updateQuery.executeUpdate();
+    }
+
+    @Override
+    @Transactional
+    public void updateNames(String orcid, String givenNames, String familyName, String creditName, Visibility creditNameVisibility) {
+        Query updateQuery = entityManager
+                .createQuery("update ProfileEntity set lastModified = now(), family_name = :familyName, given_names = :givenNames, credit_name = :creditName, credit_name_visibility=:creditNameVisibility where orcid = :orcid");
+        updateQuery.setParameter("orcid", orcid);
+        updateQuery.setParameter("givenNames", givenNames);
+        updateQuery.setParameter("familyName", familyName);
+        updateQuery.setParameter("creditName", creditName);
+        updateQuery.setParameter("creditNameVisibility", creditNameVisibility == null ? null : StringUtils.upperCase(creditNameVisibility.value()));
+        updateQuery.executeUpdate();
+    }
+
+    
 
     /**
      * Return the list of profiles that belongs to the provided OrcidType
@@ -522,5 +560,20 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setParameter("enabled", enabled);
         return query.executeUpdate() > 0;
     }
+    
+    
+    @Override
+    @Transactional
+    public boolean updateResearcherUrlsVisibility(String orcid, Visibility visibility) {
+        Query query = entityManager
+                .createNativeQuery("update profile set last_modified=now(), researcher_urls_visibility=:researcher_urls_visibility, indexing_status='PENDING' where orcid=:orcid");
+        query.setParameter("researcher_urls_visibility", StringUtils.upperCase(visibility.value()));
+        query.setParameter("orcid", orcid);
 
+        boolean result = query.executeUpdate() > 0 ? true : false;
+
+        return result;
+    }
+
+    
 }

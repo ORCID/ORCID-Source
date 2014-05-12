@@ -18,6 +18,7 @@ package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
 import java.util.Currency;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -34,7 +35,10 @@ import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.LoadOptions;
+import org.orcid.core.manager.OtherNameManager;
+import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.ProfileWorkManager;
+import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.ThirdPartyLinkManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.frontend.web.util.LanguagesMap;
@@ -55,7 +59,12 @@ import org.orcid.jaxb.model.message.SourceOrcid;
 import org.orcid.jaxb.model.message.WorkCategory;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.pojo.ThirdPartyRedirect;
+import org.orcid.pojo.ajaxForm.KeywordsForm;
+import org.orcid.pojo.ajaxForm.OtherNamesForm;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
+import org.orcid.pojo.ajaxForm.Website;
+import org.orcid.pojo.ajaxForm.WebsitesForm;
 import org.orcid.utils.FunctionsOverCollections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,6 +94,12 @@ public class WorkspaceController extends BaseWorkspaceController {
 
     @Resource
     private ProfileWorkManager profileWorkManager;
+    
+    @Resource
+    private ProfileKeywordManager profileKeywordManager;
+    
+    @Resource
+    private OtherNameManager otherNameManager;
 
     @Resource
     private Jpa2JaxbAdapter jpa2JaxbAdapter;
@@ -94,6 +109,9 @@ public class WorkspaceController extends BaseWorkspaceController {
 
     @Resource
     private WorkManager workManager;
+    
+    @Resource
+    private ResearcherUrlManager researcherUrlManager;
 
     @Resource
     private LocaleManager localeManager;
@@ -294,6 +312,91 @@ public class WorkspaceController extends BaseWorkspaceController {
         mav.addObject("currentLocaleValue", lm.buildLanguageValue(localeManager.getLocale(), localeManager.getLocale()));
         return mav;
     }
+    
+    @RequestMapping(value = "/my-orcid/keywordsForms.json", method = RequestMethod.GET)
+    public @ResponseBody
+    KeywordsForm getKeywordsFormJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
+        OrcidProfile currentProfile = getEffectiveProfile();
+        return KeywordsForm.valueOf(currentProfile.getOrcidBio().getKeywords());
+    }
+    
+    @RequestMapping(value = "/my-orcid/keywordsForms.json", method = RequestMethod.POST)
+    public @ResponseBody
+    KeywordsForm setKeywordsFormJson(HttpServletRequest request, @RequestBody KeywordsForm kf) throws NoSuchRequestHandlingMethodException {
+        kf.setErrors(new ArrayList<String>());
+        for (int i = kf.getKeywords().size() - 1; i > 0; i--) {
+            Text t = kf.getKeywords().get(i);
+            if (PojoUtil.isEmpty(t))
+                kf.getKeywords().remove(i);
+            else if (t.getValue().length() > 100)
+                t.setValue(t.getValue().substring(0,100));
+        }
+        if (kf.getErrors().size()>0) return kf;        
+        OrcidProfile currentProfile = getEffectiveProfile();
+        profileKeywordManager.updateProfileKeyword(currentProfile.getOrcidIdentifier().getPath(), kf.toKeywords());
+        return kf;
+    }
+
+    
+    @RequestMapping(value = "/my-orcid/otherNamesForms.json", method = RequestMethod.GET)
+    public @ResponseBody
+    OtherNamesForm getOtherNamesFormJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
+        OrcidProfile currentProfile = getEffectiveProfile();
+        return OtherNamesForm.valueOf(currentProfile.getOrcidBio().getPersonalDetails().getOtherNames());
+    }
+    
+    @RequestMapping(value = "/my-orcid/otherNamesForms.json", method = RequestMethod.POST)
+    public @ResponseBody
+    OtherNamesForm setOtherNamesFormJson(HttpServletRequest request, @RequestBody OtherNamesForm onf) throws NoSuchRequestHandlingMethodException {
+        onf.setErrors(new ArrayList<String>());
+        for (int i = onf.getOtherNames().size() - 1; i > 0; i--) {
+            Text t = onf.getOtherNames().get(i);
+            if (PojoUtil.isEmpty(t))
+                onf.getOtherNames().remove(i);
+            else if (t.getValue().length() > 255)
+                t.setValue(t.getValue().substring(0,255));
+        }
+        if (onf.getErrors().size()>0) return onf;        
+        OrcidProfile currentProfile = getEffectiveProfile();
+        
+        otherNameManager.updateOtherNames(currentProfile.getOrcidIdentifier().getPath(), onf.toOtherNames());
+        return onf;
+    }
+
+    
+    /**
+     * Retrieve all external identifiers as a json string
+     * */
+    @RequestMapping(value = "/my-orcid/websitesForms.json", method = RequestMethod.GET)
+    public @ResponseBody
+    WebsitesForm getWebsitesFormJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
+        OrcidProfile currentProfile = getEffectiveProfile();
+        WebsitesForm wf = WebsitesForm.valueOf(currentProfile.getOrcidBio().getResearcherUrls());
+        return wf;
+    }
+    
+    /**
+     * Retrieve all external identifiers as a json string
+     * */
+    @RequestMapping(value = "/my-orcid/websitesForms.json", method = RequestMethod.POST)
+    public @ResponseBody
+    WebsitesForm setWebsitesFormJson(HttpServletRequest request, @RequestBody WebsitesForm ws) throws NoSuchRequestHandlingMethodException {
+        ws.setErrors(new ArrayList<String>());
+        HashMap<String, Website> websitesHm = new HashMap<String, Website>(); 
+        for (Website w:ws.getWebsites()) {
+            validateUrl(w.getUrl());
+            if (websitesHm.containsKey(w.getUrl().getValue()))
+                setError(w.getUrl(), "common.duplicate_url");
+            else
+                websitesHm.put(w.getUrl().getValue(), w);
+            copyErrors(w.getUrl(), ws);
+        }   
+        if (ws.getErrors().size()>0) return ws;        
+        OrcidProfile currentProfile = getEffectiveProfile();
+        researcherUrlManager.updateResearcherUrls(currentProfile.getOrcidIdentifier().getPath(), ws.toResearcherUrls());
+        return ws;
+    }
+
 
     /**
      * Retrieve all external identifiers as a json string
@@ -335,8 +438,9 @@ public class WorkspaceController extends BaseWorkspaceController {
             }
         }
         return tpr;
-    }
-
+    }    
+    
+    
     /**
      * Reads the latest cache version from database, compare it against the
      * local version; if they are different, evicts all caches.
