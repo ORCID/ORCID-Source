@@ -17,6 +17,7 @@
 
 -->
 <#import "email_macros.ftl" as emailMacros />
+
 <!DOCTYPE html>
 <html>
 	<head>
@@ -27,23 +28,19 @@
 			<img src="http://orcid.org/sites/all/themes/orcid/img/orcid-logo.png" alt="ORCID.org"/>
 		    <hr />
 		  	<span style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666; font-weight: bold;">
-		    <@emailMacros.msg "email.common.dear" /> ${emailName}<@emailMacros.msg "email.common.dear.comma" />
+		    	<@emailMacros.msg "email.common.dear" /> ${emailName}<@emailMacros.msg "email.common.dear.comma" />
 		    </span>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-		        <@emailMacros.msg "email.verify.thank_you" /><br /> 
-                <a href="${baseUri}/${orcid}?lang=${locale}">${baseUri}/${orcid}</a>.
+		    	<@emailMacros.msg "email.deactivate.you_have_requested.1" />
+		    	${baseUri}/${orcid}?lang=${locale}<@emailMacros.msg "email.deactivate.you_have_requested.2" />
+		    	${baseUri}${deactivateUrlEndpoint}?lang=${locale} 
 		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-				<@emailMacros.msg "email.verify.to_verify" /><br />
-				<a href="${verificationUrl}?lang=${locale}">${verificationUrl}</a>
- 		    </p>
-		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">		  
-				<@emailMacros.msg "email.common.did_you_know" /><a href="${baseUri}/about/news">${baseUri}/about/news</a>
+		    	<@emailMacros.msg "email.deactivate.once_an_account" />
 		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-		  		<@emailMacros.msg "email.common.if_you_have_any1" />
-		  		<a href="http://support.orcid.org">http://support.orcid.org</a><@emailMacros.msg "email.common.if_you_have_any2" />
-		    </p>		    
+		  		<@emailMacros.msg "email.deactivate.if_you_did" />
+		    </p>	
 		  	<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666; white-space: pre;">
 				<@emailMacros.msg "email.common.kind_regards" />
 				<a href="${baseUri}/?lang=${locale}">${baseUri}/</a>
