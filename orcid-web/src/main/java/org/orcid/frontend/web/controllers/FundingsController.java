@@ -440,26 +440,28 @@ public class FundingsController extends BaseWorkspaceController {
             }
         }
         return fundingForm;
-    }
-
+    }       
+    
     /**
      * Validators
      * */
     @RequestMapping(value = "/funding/amountValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     FundingForm validateAmount(@RequestBody FundingForm funding) {
-        funding.getAmount().setErrors(new ArrayList<String>());
+        funding.getAmount().setErrors(new ArrayList<String>());        
         if (!PojoUtil.isEmpty(funding.getAmount())) {            
             String amount = funding.getAmount().getValue();
-            long lAmount = 0;
-            // TODO Chck this regex
-            String pattern = "((\\d{1,3}(\\,(\\d){3})*)|\\d*)(.\\d{1,3})?";
-            if (!amount.matches(pattern)) {
+            
+            String onlyNumbersPattern = "[0-9]+";
+            String withCentsPattern = "[0-9]+(\\.|\\,)[0-9]{1,2}";
+            String thousandsSeparatorPattern = "[0-9]{1,3}((\\,[0-9]{3})*|(\\.[0-9]{3})*)";
+            String thousandsSeparatorWithCentsPattern = "[0-9]{1,3}(\\,[0-9]{3})*(\\.|\\,)[0-9]{1,2}";
+                                                
+            if (!(amount.matches(onlyNumbersPattern) || amount.matches(withCentsPattern) || amount.matches(thousandsSeparatorPattern) || amount.matches(thousandsSeparatorWithCentsPattern))) {                
                 setError(funding.getAmount(), "Invalid.fundings.amount");
-            }
-
-            if (lAmount < 0)
-                setError(funding.getAmount(), "Invalid.fundings.amount");
+            }                                    
+        } else if(!PojoUtil.isEmpty(funding.getCurrencyCode())) {
+            setError(funding.getAmount(), "Invalid.fundings.currency_not_empty");
         }
         return funding;
     }
@@ -701,3 +703,4 @@ public class FundingsController extends BaseWorkspaceController {
         return profileFundingManager.getIndexedFundingSubTypes(query, limit);
     }
 }
+
