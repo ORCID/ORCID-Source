@@ -21,7 +21,7 @@
 <!DOCTYPE html>
 <html class="no-js oldie ng-app:orcidApp"  ng-app="orcidApp" id="ng-app" lang="en">
 <#include "/common/html-head.ftl" />
-<body data-baseurl="<@spring.url '/'/>" data-effective-user-orcid="${effectiveUserOrcid!}">
+<body data-baseurl="<@spring.url '/'/>">
 <#nested />
 <#include "/common/scripts.ftl" />
 <#if !hideUserVoiceScript??> 
