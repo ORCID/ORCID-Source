@@ -64,6 +64,7 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
     private String translatedTitleLanguageCode;
     private String description;
     private FundingType type;
+    private String organizationDefinedType;
     private String currencyCode;
     private String amount;
     private String url;
@@ -152,6 +153,16 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
 
     public void setType(FundingType type) {
         this.type = type;
+    }
+
+    @Basic
+    @Column(name = "organization_defined_type")
+    public String getOrganizationDefinedType() {
+        return organizationDefinedType;
+    }
+
+    public void setOrganizationDefinedType(String organizationDefinedType) {
+        this.organizationDefinedType = organizationDefinedType;
     }
 
     @Basic

@@ -2282,6 +2282,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	$scope.moreInfo = {};
 	$scope.privacyHelp = {};
 	$scope.editTranslatedTitle = false; 	
+	$scope.lastIndexedTerm = null;
 	
 	$scope.toggleClickMoreInfo = function(key) {
 		if (!document.documentElement.className.contains('no-touch')) {
@@ -2317,7 +2318,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 			dataType: 'json',
 			success: function(data) {						
 				$scope.$apply(function() {
-					$scope.editFunding = data;
+					$scope.editFunding = data;					
 					$scope.showAddModal();
 				});
 			}
@@ -2334,7 +2335,8 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 			onComplete: function() {
 				//resize to insure content fits
 				formColorBoxResize();
-				$scope.bindTypeahead();
+				$scope.bindTypeaheadForOrgs();
+				$scope.bindTypeaheadForSubTypes();
 			}
 	    });
 	};
@@ -2389,7 +2391,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	};
 
 
-	$scope.bindTypeahead = function () {
+	$scope.bindTypeaheadForOrgs = function () {
 		var numOfResults = 100;
 		$("#fundingName").typeahead({
 			name: 'fundingName',
@@ -2425,8 +2427,51 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 		});		
 	};
 	
-	$scope.selectFunding = function(datum) {
-		console.log(angular.toJson(datum));
+	$scope.bindTypeaheadForSubTypes = function() {
+		var numOfResults = 20;
+		$("#organizationDefinedType").typeahead({
+			name: 'organizationDefinedType',
+			limit: numOfResults,
+			remote: {
+				replace: function () {
+                    var q = getBaseUri()+'/fundings/orgDefinedSubType/';
+                    if ($('#organizationDefinedType').val()) {
+                        q += encodeURIComponent($('#organizationDefinedType').val());
+                    }
+                    q += '?limit=' + numOfResults;
+                    return q;
+                }
+			},
+			template: function (datum) {					
+				   var forDisplay = 
+				       '<span style=\'white-space: nowrap; font-weight: bold;\'>' + datum.value + '</span><hr />';
+				   return forDisplay;
+			}
+		});
+		$("#organizationDefinedType").bind("typeahead:selected", function(obj, datum){
+			$scope.selectOrgDefinedFundingSubType(datum);
+			$scope.$apply();
+		});
+	};
+	
+	$scope.setSubTypeAsNotIndexed = function() {
+		if($scope.lastIndexedTerm != $.trim($('#organizationDefinedType').val())) {
+			console.log("value changed: " + $scope.lastIndexedTerm + " <-> " + $('#organizationDefinedType').val());
+			$scope.editFunding.organizationDefinedFundingSubType.alreadyIndexed = false;
+		}			
+	};
+	
+	
+	$scope.selectOrgDefinedFundingSubType = function(subtype) {
+		if (subtype != undefined && subtype != null) {
+			$scope.editFunding.organizationDefinedFundingSubType.subtype.value = subtype.value;
+			$scope.editFunding.organizationDefinedFundingSubType.alreadyIndexed = true;	
+			$scope.lastIndexedTerm = subtype.value;
+			$scope.unbindTypeaheadForSubTypes();
+		}
+	};
+	
+	$scope.selectFunding = function(datum) {		
 		if (datum != undefined && datum != null) {
 			$scope.editFunding.fundingName.value = datum.value;
 			if(datum.value)
@@ -2443,10 +2488,10 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 			
 			if (datum.disambiguatedFundingIdentifier != undefined && datum.disambiguatedFundingIdentifier != null) {
 				$scope.getDisambiguatedFunding(datum.disambiguatedFundingIdentifier);
-				$scope.unbindTypeahead();
+				$scope.unbindTypeaheadForOrgs();
 			}
 		}
-	};
+	};	
 	
 	$scope.getDisambiguatedFunding = function(id) {
 		$.ajax({
@@ -2502,7 +2547,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	};
 	
 	$scope.removeDisambiguatedFunding = function() {
-		$scope.bindTypeahead();
+		$scope.bindTypeaheadForOrgs();
 		if ($scope.disambiguatedFunding != undefined) delete $scope.disambiguatedFunding;
 		if ($scope.editFunding != undefined && $scope.editFunding.disambiguatedFundingSourceId != undefined) delete $scope.editFunding.disambiguatedFundingSourceId;
 	};
@@ -2523,7 +2568,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	        data:  angular.toJson($scope.editFunding),
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
-	        success: function(data) {
+	        success: function(data) {	        	
 	        	$scope.copyErrorsLeft($scope.editFunding, data);
 	        	$scope.$apply();
 	        }
@@ -2536,7 +2581,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	$scope.copyErrorsLeft = function (data1, data2) {
 		for (var key in data1) {
 			if (key == null) continue;
-			if (key == 'errors') {
+			if (key == 'errors') {				
 				data1.errors = data2.errors;
 			} else {
 				if (typeof(data1[key])=="object") {
@@ -2546,8 +2591,12 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 		};
 	};
 	
-	$scope.unbindTypeahead = function () {
+	$scope.unbindTypeaheadForOrgs = function () {
 		$('#fundingName').typeahead('destroy');
+	};
+	
+	$scope.unbindTypeaheadForSubTypes = function () {		
+		$('#organizationDefinedType').typeahead('destroy');
 	};
 	
 	$scope.addExternalIdentifier = function () {

@@ -14,12 +14,14 @@
  *
  * =============================================================================
  */
-package org.orcid.persistence.dao;
+package org.orcid.core.manager;
+
+import java.util.List;
 
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 
-public interface ProfileFundingDao extends GenericDao<ProfileFundingEntity, Long> {
+public interface ProfileFundingManager {
 
     /**
      * Removes the relationship that exists between a funding and a profile.
@@ -59,27 +61,23 @@ public interface ProfileFundingDao extends GenericDao<ProfileFundingEntity, Long
      *         database
      * */
     ProfileFundingEntity addProfileFunding(ProfileFundingEntity newProfileFundingEntity);
-
+        
     /**
-     * Get the funding associated with the client orcid and the organization id
-     * 
-     * @param clientOrcid
-     *            The client orcid
-     * 
-     * @param orgId
-     *            The id of the organization
-     * 
-     * @return the ProfileFundingEntity object
+     * Add a new funding subtype to the list of pending for indexing subtypes
      * */
-    ProfileFundingEntity getProfileFundingEntity(String orgId, String clientOrcid);
-
+    void addFundingSubType(String subtype, String orcid);        
+    
     /**
-     * Get the funding associated with the given profileFunding id
-     * 
-     * @param profileFundingId
-     *            The id of the ProfileFundingEntity object
-     * 
-     * @return the ProfileFundingEntity object
+     * A process that will process all funding subtypes, filter and index them. 
      * */
-    ProfileFundingEntity getProfileFundingEntity(String profileFundingId);
+    void indexFundingSubTypes();
+    
+    /**
+     * Looks for the org defined funding subtypes that matches a given pattern
+     * @param subtype pattern to look for
+     * @param limit the max number of results to look for
+     * @return a list of all org defined funding subtypes that matches the given pattern
+     * */
+    List<String> getIndexedFundingSubTypes(String subtype, int limit);
+    
 }

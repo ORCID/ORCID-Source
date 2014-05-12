@@ -35,5 +35,8 @@
     <core name="org" instanceDir="org">
       <property name="dataDir" value="${solr.data.dir:data}/org" />
     </core>
+    <core name="fundingSubType" instanceDir="fundingSubType">
+      <property name="dataDir" value="${solr.data.dir:data}/fundingSubType" />
+    </core>
   </cores>
 </solr>
