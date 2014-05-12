@@ -406,6 +406,10 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         }
 
     }
+    
+    public boolean exists(String orcid) {
+        return profileDao.exists(orcid);
+    }
 
     /**
      * Add source to the fundings

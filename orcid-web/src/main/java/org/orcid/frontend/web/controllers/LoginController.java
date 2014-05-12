@@ -40,6 +40,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller("loginController")
 public class LoginController extends BaseController {
     Pattern clientIdPattern = Pattern.compile("client_id=([^&]*)");
+    Pattern orcidPattern = Pattern.compile("(&|\\?)orcid=([^&]*)");
     
     @Resource
     ClientDetailsManager clientDetailsManager;
@@ -68,6 +69,7 @@ public class LoginController extends BaseController {
         String client_id = "";
         String client_group_name = "";
         String email = "";
+        String orcid = null;
         if (savedRequest != null) {
             String url = savedRequest.getRedirectUrl();
             Matcher matcher = clientIdPattern.matcher(url);
@@ -80,6 +82,13 @@ public class LoginController extends BaseController {
                         String tempEmail = emailMatcher.group(1);
                         if (orcidProfileManager.emailExists(tempEmail))
                             email = tempEmail;
+                    }
+                    
+                    Matcher orcidMatcher = orcidPattern.matcher(url);
+                    if (orcidMatcher.find()) {
+                        String tempOrcid = orcidMatcher.group(2);
+                        if (orcidProfileManager.exists(tempOrcid))
+                           orcid = tempOrcid;
                     }
                     
                     //Get client name
@@ -108,7 +117,7 @@ public class LoginController extends BaseController {
         mav.addObject("client_name", client_name);
         mav.addObject("client_id", client_id);
         mav.addObject("client_group_name", client_group_name);
-        mav.addObject("email", email);
+        mav.addObject("userId", orcid!=null ? orcid : email);
         mav.setViewName("oauth_login");
         mav.addObject("hideUserVoiceScript", true);
         return mav;

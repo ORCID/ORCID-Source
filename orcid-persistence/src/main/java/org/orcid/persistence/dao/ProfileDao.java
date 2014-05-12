@@ -38,7 +38,9 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     List<ProfileEntity> retrieveSelectableSponsors();
 
     List<String> findOrcidsByName(String name);
-
+    
+    public boolean exists(String orcid);
+    
     List<String> findByEventTypes(int maxResults, List<ProfileEventType> pet, Collection<String> orcidsToExclude, boolean not);
 
     List<String> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults);

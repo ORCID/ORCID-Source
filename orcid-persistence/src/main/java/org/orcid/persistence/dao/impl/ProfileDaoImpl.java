@@ -318,6 +318,15 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     }
 
     @Override
+    public boolean exists(String orcid) {
+        TypedQuery<Long> query = entityManager.createQuery(
+                "select count(p.id) from ProfileEntity p where p.id = :orcid", Long.class);
+        query.setParameter("orcid", orcid);
+        Long result = query.getSingleResult();
+        return (result != null && result > 0);
+    }
+
+    @Override
     @Transactional
     public void updateIndexingStatus(String orcid, IndexingStatus indexingStatus) {
         String queryString = null;
