@@ -84,6 +84,8 @@ import org.orcid.pojo.ajaxForm.BiographyForm;
 import org.orcid.pojo.ajaxForm.CountryForm;
 import org.orcid.pojo.ajaxForm.Emails;
 import org.orcid.pojo.ajaxForm.Errors;
+import org.orcid.pojo.ajaxForm.NamesForm;
+import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.OrcidWebUtils;
 import org.slf4j.Logger;
@@ -824,12 +826,30 @@ public class ManageProfileController extends BaseWorkspaceController {
         orcidProfileManager.updateCountry(currentProfile);
         return countryForm;
     }
-    
 
-    /**
-     * Retrieve all external identifiers as a json string
-     * */
-    @RequestMapping(value = "biographyForm.json", method = RequestMethod.GET)
+    @RequestMapping(value = "/nameForm.json", method = RequestMethod.GET)
+    public @ResponseBody
+    NamesForm getNameForm(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
+        OrcidProfile currentProfile = getEffectiveProfile();
+        NamesForm nf = NamesForm.valueOf(currentProfile.getOrcidBio().getPersonalDetails());
+        return nf;
+    }
+
+    @RequestMapping(value = "/nameForm.json", method = RequestMethod.POST)
+    public @ResponseBody
+    NamesForm setNameFormJson(HttpServletRequest request, @RequestBody NamesForm nf) throws NoSuchRequestHandlingMethodException {
+        nf.setErrors(new ArrayList<String>());
+        if (nf.getGivenNames() == null) nf.setGivenNames(new Text()); 
+        givenNameValidate(nf.getGivenNames());
+        copyErrors(nf.getGivenNames(), nf);
+        if (nf.getErrors().size()>0) return nf;        
+        OrcidProfile currentProfile = getEffectiveProfile();
+        nf.populatePersonalDetails(currentProfile.getOrcidBio().getPersonalDetails());
+        orcidProfileManager.updateNames(currentProfile);
+        return nf;
+    }
+
+    @RequestMapping(value = "/biographyForm.json", method = RequestMethod.GET)
     public @ResponseBody
     BiographyForm getBiographyForm(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
         OrcidProfile currentProfile = getEffectiveProfile();
@@ -837,10 +857,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         return bf;
     }
 
-    /**
-     * Retrieve all external identifiers as a json string
-     * */
-    @RequestMapping(value = "biographyForm.json", method = RequestMethod.POST)
+    @RequestMapping(value = "/biographyForm.json", method = RequestMethod.POST)
     public @ResponseBody
     BiographyForm setBiographyFormJson(HttpServletRequest request, @RequestBody BiographyForm bf) throws NoSuchRequestHandlingMethodException {
         bf.setErrors(new ArrayList<String>());
@@ -852,8 +869,6 @@ public class ManageProfileController extends BaseWorkspaceController {
         orcidProfileManager.updateBiography(currentProfile);
         return bf;
     }
-
-
 
     @RequestMapping(value = "/save-bio-settings", method = RequestMethod.POST)
     public ModelAndView saveEditedBio(HttpServletRequest request, @Valid @ModelAttribute("changePersonalInfoForm") ChangePersonalInfoForm changePersonalInfoForm,

@@ -325,13 +325,64 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 	return serv;
 }]);
 
-orcidNgModule.factory("worksSrvc", function () {
+orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 	var serv = {
 		    loading: false,
-			works: new Array()
+			works: new Array(),
+			worksToAddIds: null,
+			worksInfo: {},
+			bibtexJson: {},
+			addBibtexJson: function(dw) {
+				if (dw.citation && dw.citation.citationType && dw.citation.citationType.value == 'bibtex') {
+					try {
+						serv.bibtexJson[dw.putCode.value] = bibtexParse.toJSON(dw.citation.citation.value);
+					} catch (err) {
+						serv.bibtexJson[dw.putCode.value] = null;
+						console.log("couldn't parse bibtex: " + dw.citation.citation.value);
+					}
+				}
+			},
+		    addWorkToScope: function(worksUrl) {
+				if(serv.worksToAddIds.length != 0 ) {
+					serv.loading = true;
+					var workIds = serv.worksToAddIds.splice(0,20).join();
+					$.ajax({
+						url: worksUrl + workIds,
+						dataType: 'json',
+						success: function(data) {
+							$rootScope.$apply(function(){ 
+								for (i in data) {
+									var dw = data[i];                            
+									removeBadContributors(dw);							
+									serv.addBibtexJson(dw);							
+									serv.works.push(dw);
+								}
+							});
+							if(serv.worksToAddIds.length == 0 ) {
+								serv.loading = false;
+								$rootScope.$apply();					
+								fixZindexIE7('.workspace-public workspace-body-list li',99999);
+								fixZindexIE7('.workspace-toolbar',9999);						
+							} else {
+								$rootScope.$apply();					
+								setTimeout(function(){
+									serv.addWorkToScope();
+								},50);
+							}
+						}
+					}).fail(function() { 
+						$scope.$apply(function() {
+							serv.loading = false;
+						});
+				    	console.log("Error fetching works: " + workIds);
+				    });
+				} else {
+					serv.loading = false;
+				};
+			} 
 	}; 
 	return serv;
-});
+}]);
 
 orcidNgModule.factory("prefsSrvc", function ($rootScope) {
 	var serv = {
@@ -476,17 +527,6 @@ orcidNgModule.filter('externalIdentifierHtml', function(){
 	    return output;
 	};
 });
-
-function addBibtexCitation($scope, dw) {
-	if (dw.citation && dw.citation.citationType && dw.citation.citationType.value == 'bibtex') {
-		try {
-			$scope.bibtexCitations[dw.putCode.value] = bibtexParse.toJSON(dw.citation.citation.value);
-		} catch (err) {
-			$scope.bibtexCitations[dw.putCode.value] = null;
-			console.log("couldn't parse bibtex: " + dw.citation.citation.value);
-		}
-	}
-}
 
 function removeBadContributors(dw) {
 	for (idx in dw.contributors) {
@@ -954,8 +994,9 @@ function WebsitesCtrl($scope, $compile) {
     $scope.websitesForm = null;
     $scope.privacyHelp = false;
     
-	$scope.toggleEdit = function() {
-		$scope.showEdit = !$scope.showEdit;
+	$scope.openEdit = function() {
+		$scope.addNew();	
+		$scope.showEdit = true;
 	};
 
 	$scope.close = function() {
@@ -1035,9 +1076,11 @@ function KeywordsCtrl($scope, $compile) {
     $scope.keywordsForm = null;
     $scope.privacyHelp = false;
     
-	$scope.toggleEdit = function() {
-		$scope.showEdit = !$scope.showEdit;
+	$scope.openEdit = function() {
+		$scope.addNew();	
+		$scope.showEdit = true;
 	};
+
 
 	$scope.close = function() {
 		$scope.getKeywordsForm();
@@ -1100,13 +1143,71 @@ function KeywordsCtrl($scope, $compile) {
 	$scope.getKeywordsForm();
 };
 
+function NameCtrl($scope, $compile) {
+    $scope.showEdit = false;
+    $scope.nameForm = null;
+    $scope.privacyHelp = false;
+    
+	$scope.toggleEdit = function() {
+		$scope.showEdit = !$scope.showEdit;
+	};
+
+	$scope.close = function() {
+		$scope.getNameForm();
+		$scope.showEdit = false;
+	};
+	
+	
+    $scope.getNameForm = function(){
+		$.ajax({
+			url: getBaseUri() + '/account/nameForm.json',	        
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.nameForm = data;
+	        	$scope.$apply();
+	        }
+		}).fail(function(){
+			// something bad is happening!
+	    	console.log("error fetching otherNames");
+		});
+	};
+	
+	$scope.setNameForm = function(){
+		$.ajax({
+	        url: getBaseUri() + '/account/nameForm.json',
+	        type: 'POST',
+	        data:  angular.toJson($scope.nameForm),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.nameForm = data;
+	        	if(data.errors.length == 0)
+	        	   $scope.close();
+	        	$scope.$apply();
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("OtherNames.serverValidate() error");
+	    });
+	};
+	
+	$scope.setCreditNameVisibility = function(priv, $event) {
+		$event.preventDefault();
+		$scope.nameForm.creditNameVisibility.visibility = priv;
+	};
+
+	$scope.getNameForm();
+};
+
+
 function OtherNamesCtrl($scope, $compile) {
     $scope.showEdit = false;
     $scope.otherNamesForm = null;
     $scope.privacyHelp = false;
     
-	$scope.toggleEdit = function() {
-		$scope.showEdit = !$scope.showEdit;
+	$scope.openEdit = function() {
+		$scope.addNew();	
+		$scope.showEdit = true;
 	};
 
 	$scope.close = function() {
@@ -1133,11 +1234,11 @@ function OtherNamesCtrl($scope, $compile) {
 		});
 	};
 
-	$scope.deleteKeyword = function(keyword){
+	$scope.deleteKeyword = function(otherName){
 		var otherNames = $scope.otherNamesForm.otherNames;
     	var len = otherNames.length;
     	while (len--) {
-    		if (otherNames[len] == keyword)
+    		if (otherNames[len] == otherName)
     			otherNames.splice(len,1);
     	}
 	};
@@ -1173,6 +1274,7 @@ function OtherNamesCtrl($scope, $compile) {
 function BiographyCtrl($scope, $compile) {
     $scope.showEdit = false;
 	$scope.biographyForm = null;
+	$scope.lengthError = false;
 
 	$scope.toggleEdit = function() {
 		$scope.showEdit = !$scope.showEdit;
@@ -1185,6 +1287,18 @@ function BiographyCtrl($scope, $compile) {
 	$scope.cancel = function() {
 		$scope.getBiographyForm();
 		$scope.showEdit = false;
+	};
+	
+	$scope.checkLength = function () {
+		if ($scope.biographyForm != null)
+			if ($scope.biographyForm.biography != null)
+				if ($scope.biographyForm.biography.value != null)
+					if ($scope.biographyForm.biography.value.length > 5000) {
+						$scope.lengthError = true;
+					} else {
+						$scope.lengthError = false;
+					}	
+		return $scope.lengthError;
 	};
 
 	
@@ -1203,7 +1317,7 @@ function BiographyCtrl($scope, $compile) {
 	};
 	
 	$scope.setBiographyForm = function(){
-		
+		if ($scope.checkLength()) return; // do nothing if there is a length error
 		$.ajax({
 	        url: getBaseUri() + '/account/biographyForm.json',
 	        type: 'POST',
@@ -1222,7 +1336,12 @@ function BiographyCtrl($scope, $compile) {
 	    });
 	};
 
-		
+	$scope.setPrivacy = function(priv, $event) {
+		$event.preventDefault();
+		$scope.biographyForm.visiblity.visibility = priv;
+	};	
+	
+	
 	$scope.getBiographyForm();
 
 };
@@ -1232,8 +1351,8 @@ function CountryCtrl($scope, $compile) {
 	$scope.countryForm = null;
 	$scope.privacyHelp = false;
 	
-	$scope.toggleEdit = function() {
-		$scope.showEdit = !$scope.showEdit;
+	$scope.openEdit = function() {
+		$scope.showEdit = true;
 	};
 
 	$scope.close = function() {
@@ -1285,7 +1404,6 @@ function CountryCtrl($scope, $compile) {
 	$scope.setPrivacy = function(priv, $event) {
 		$event.preventDefault();
 		$scope.countryForm.profileAddressVisibility.visibility = priv;
-		$scope.setCountryForm();
 	};
 	
 	$scope.getCountryForm();
@@ -2204,6 +2322,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	$scope.moreInfo = {};
 	$scope.privacyHelp = {};
 	$scope.editTranslatedTitle = false; 	
+	$scope.lastIndexedTerm = null;
 	
 	$scope.toggleClickMoreInfo = function(key) {
 		if (!document.documentElement.className.contains('no-touch')) {
@@ -2239,7 +2358,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 			dataType: 'json',
 			success: function(data) {						
 				$scope.$apply(function() {
-					$scope.editFunding = data;
+					$scope.editFunding = data;					
 					$scope.showAddModal();
 				});
 			}
@@ -2256,7 +2375,8 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 			onComplete: function() {
 				//resize to insure content fits
 				formColorBoxResize();
-				$scope.bindTypeahead();
+				$scope.bindTypeaheadForOrgs();
+				$scope.bindTypeaheadForSubTypes();
 			}
 	    });
 	};
@@ -2311,7 +2431,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	};
 
 
-	$scope.bindTypeahead = function () {
+	$scope.bindTypeaheadForOrgs = function () {
 		var numOfResults = 100;
 		$("#fundingName").typeahead({
 			name: 'fundingName',
@@ -2347,8 +2467,51 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 		});		
 	};
 	
-	$scope.selectFunding = function(datum) {
-		console.log(angular.toJson(datum));
+	$scope.bindTypeaheadForSubTypes = function() {
+		var numOfResults = 20;
+		$("#organizationDefinedType").typeahead({
+			name: 'organizationDefinedType',
+			limit: numOfResults,
+			remote: {
+				replace: function () {
+                    var q = getBaseUri()+'/fundings/orgDefinedSubType/';
+                    if ($('#organizationDefinedType').val()) {
+                        q += encodeURIComponent($('#organizationDefinedType').val());
+                    }
+                    q += '?limit=' + numOfResults;
+                    return q;
+                }
+			},
+			template: function (datum) {					
+				   var forDisplay = 
+				       '<span style=\'white-space: nowrap; font-weight: bold;\'>' + datum.value + '</span><hr />';
+				   return forDisplay;
+			}
+		});
+		$("#organizationDefinedType").bind("typeahead:selected", function(obj, datum){
+			$scope.selectOrgDefinedFundingSubType(datum);
+			$scope.$apply();
+		});
+	};
+	
+	$scope.setSubTypeAsNotIndexed = function() {
+		if($scope.lastIndexedTerm != $.trim($('#organizationDefinedType').val())) {
+			console.log("value changed: " + $scope.lastIndexedTerm + " <-> " + $('#organizationDefinedType').val());
+			$scope.editFunding.organizationDefinedFundingSubType.alreadyIndexed = false;
+		}			
+	};
+	
+	
+	$scope.selectOrgDefinedFundingSubType = function(subtype) {
+		if (subtype != undefined && subtype != null) {
+			$scope.editFunding.organizationDefinedFundingSubType.subtype.value = subtype.value;
+			$scope.editFunding.organizationDefinedFundingSubType.alreadyIndexed = true;	
+			$scope.lastIndexedTerm = subtype.value;
+			$scope.unbindTypeaheadForSubTypes();
+		}
+	};
+	
+	$scope.selectFunding = function(datum) {		
 		if (datum != undefined && datum != null) {
 			$scope.editFunding.fundingName.value = datum.value;
 			if(datum.value)
@@ -2365,10 +2528,10 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 			
 			if (datum.disambiguatedFundingIdentifier != undefined && datum.disambiguatedFundingIdentifier != null) {
 				$scope.getDisambiguatedFunding(datum.disambiguatedFundingIdentifier);
-				$scope.unbindTypeahead();
+				$scope.unbindTypeaheadForOrgs();
 			}
 		}
-	};
+	};	
 	
 	$scope.getDisambiguatedFunding = function(id) {
 		$.ajax({
@@ -2424,7 +2587,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	};
 	
 	$scope.removeDisambiguatedFunding = function() {
-		$scope.bindTypeahead();
+		$scope.bindTypeaheadForOrgs();
 		if ($scope.disambiguatedFunding != undefined) delete $scope.disambiguatedFunding;
 		if ($scope.editFunding != undefined && $scope.editFunding.disambiguatedFundingSourceId != undefined) delete $scope.editFunding.disambiguatedFundingSourceId;
 	};
@@ -2445,7 +2608,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	        data:  angular.toJson($scope.editFunding),
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
-	        success: function(data) {
+	        success: function(data) {	        	
 	        	$scope.copyErrorsLeft($scope.editFunding, data);
 	        	$scope.$apply();
 	        }
@@ -2458,7 +2621,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	$scope.copyErrorsLeft = function (data1, data2) {
 		for (var key in data1) {
 			if (key == null) continue;
-			if (key == 'errors') {
+			if (key == 'errors') {				
 				data1.errors = data2.errors;
 			} else {
 				if (typeof(data1[key])=="object") {
@@ -2468,8 +2631,12 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 		};
 	};
 	
-	$scope.unbindTypeahead = function () {
+	$scope.unbindTypeaheadForOrgs = function () {
 		$('#fundingName').typeahead('destroy');
+	};
+	
+	$scope.unbindTypeaheadForSubTypes = function () {		
+		$('#organizationDefinedType').typeahead('destroy');
 	};
 	
 	$scope.addExternalIdentifier = function () {
@@ -2566,69 +2733,28 @@ function PublicFundingCtrl($scope, $compile, $filter, fundingSrvc){
 }
 
 function PublicWorkCtrl($scope, $compile, worksSrvc) {
-	$scope.works = worksSrvc.works;
 	$scope.worksSrvc = worksSrvc;
 	$scope.showBibtex = true;
 	$scope.loadingInfo = false;
-	$scope.bibtexCitations = {};
-	$scope.worksInfo = {};
 	$scope.moreInfoOpen = false;
 
     $scope.bibtexShowToggle = function () {
     	$scope.showBibtex = !($scope.showBibtex);
     };   
 
-    $scope.addWorkToScope = function() {
-		if($scope.worksToAddIds.length != 0 ) {
-			$scope.worksSrvc.loading = true;
-			var workIds = $scope.worksToAddIds.splice(0,20).join();
-			$.ajax({
-				url: getBaseUri() + '/' + orcidVar.orcidId +'/works.json?workIds=' + workIds,
-				dataType: 'json',
-				success: function(data) {
-					$scope.$apply(function(){ 
-						for (i in data) {
-							var dw = data[i];                            
-							removeBadContributors(dw);							
-							addBibtexCitation($scope,dw);							
-							$scope.works.push(dw);
-						}
-					});
-					if($scope.worksToAddIds.length == 0 ) {
-						$scope.worksSrvc.loading = false;
-						$scope.$apply();					
-						fixZindexIE7('.workspace-public workspace-body-list li',99999);
-						fixZindexIE7('.workspace-toolbar',9999);						
-					} else {
-						$scope.$apply();					
-						setTimeout(function(){
-							$scope.addWorkToScope();
-						},50);
-					}
-				}
-			}).fail(function() { 
-				$scope.$apply(function() {
-					$scope.worksSrvc.loading = false;
-				});
-		    	console.log("Error fetching works: " + workIds);
-		    });
-		} else {
-			$scope.worksSrvc.loading = false;
-		}
-	};     
 	  
 	$scope.renderTranslatedTitleInfo = function(putCode) {		
 		var info = null; 
 		
-		if(putCode != null && $scope.worksInfo[putCode] != null && $scope.worksInfo[putCode].workTitle != null && $scope.worksInfo[putCode].workTitle.translatedTitle != null) {
-			info = $scope.worksInfo[putCode].workTitle.translatedTitle.content + ' - ' + $scope.worksInfo[putCode].workTitle.translatedTitle.languageName;										
+		if(putCode != null && $scope.worksSrvc.worksInfo[putCode] != null && $scope.worksSrvc.worksInfo[putCode].workTitle != null && $scope.worksSrvc.worksInfo[putCode].workTitle.translatedTitle != null) {
+			info = $scope.worksSrvc.worksInfo[putCode].workTitle.translatedTitle.content + ' - ' + $scope.worksSrvc.worksInfo[putCode].workTitle.translatedTitle.languageName;										
 		}		
 		
 		return info;
 	};
 		
-	$scope.worksToAddIds = orcidVar.workIds;	
-	$scope.addWorkToScope();
+	$scope.worksSrvc.worksToAddIds = orcidVar.workIds;	
+	$scope.worksSrvc.addWorkToScope(getBaseUri() + '/' + orcidVar.orcidId +'/works.json?workIds=');
 	
 
 	$scope.moreInfoClick = function(work, $event) {
@@ -2651,15 +2777,15 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 		//Display the popover
 		$scope.loadingInfo = true;
 		$(event.target).next().css('display','inline');		
-		if($scope.worksInfo[putCode] == null) {		
+		if($scope.worksSrvc.worksInfo[putCode] == null) {		
 			$.ajax({
 				url: getBaseUri() + '/' + orcidVar.orcidId + '/getWorkInfo.json?workId=' + putCode,	        
 		        dataType: 'json',
 		        success: function(data) {		        	
 		        	$scope.$apply(function () {
 		        		removeBadContributors(data);
-						addBibtexCitation($scope,data);
-						$scope.worksInfo[putCode] = data;
+						$scope.worksSrvc.addBibtexJson(data);
+						$scope.worksSrvc.worksInfo[putCode] = data;
 						$scope.loadingInfo = false;
 		        	});		        	
 		        }
@@ -2684,13 +2810,10 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	$scope.workspaceSrvc = workspaceSrvc;
 	$scope.worksSrvc = worksSrvc;
-	$scope.works = worksSrvc.works;
 	$scope.showBibtex = true;
 	$scope.loadingInfo = false;
-	$scope.bibtexCitations = {};
 	$scope.editTranslatedTitle = false;
 	$scope.types = null;
-	$scope.worksInfo = {};
 	$scope.privacyHelp = {};
 	$scope.moreInfoOpen = false;
 	
@@ -2799,53 +2922,19 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		};
 	};
 		
-	$scope.addWorkToScope = function() {
-		if($scope.worksToAddIds.length != 0 ) {
-			$scope.worksSrvc.loading = true;
-			var workIds = $scope.worksToAddIds.splice(0,20).join();
-			$.ajax({
-				url: getBaseUri() + '/works/works.json?workIds=' + workIds,
-				dataType: 'json',
-				success: function(data) {
-					$scope.$apply(function(){ 
-						for (i in data) {
-							var dw = data[i];													
-							$scope.works.push(dw);
-						}
-					});
-					if($scope.worksToAddIds.length == 0 ) {
-						$scope.worksSrvc.loading = false;
-						$scope.$apply();
-						fixZindexIE7('.workspace-toolbar', 999999);
-						fixZindexIE7('.workspace-private-toolbar', 500);
-						fixZindexIE7('#privacy-bar', 400);						
-					} else {
-						$scope.$apply();
-						setTimeout(function () {
-							$scope.addWorkToScope(); 
-						},50);
-					}
-				}
-			}).fail(function() { 
-		    	console.log("Error fetching work: " + value);
-		    });
-		} else {
-			$scope.worksSrvc.loading = false;
-		}
-	}; 	
 
 	$scope.getWorks = function() {
 		//clear out current works
-		$scope.worksToAddIds = null;
+		$scope.worksSrvc.worksToAddIds = null;
 		$scope.worksSrvc.loading = true;
-		$scope.works.length = 0;
+		$scope.worksSrvc.works.length = 0;
 		//get work ids
 		$.ajax({
 			url: getBaseUri() + '/works/workIds.json',	        
 	        dataType: 'json',
 	        success: function(data) {
-	        	$scope.worksToAddIds = data;
-	        	$scope.addWorkToScope();
+	        	$scope.worksSrvc.worksToAddIds = data;
+	        	$scope.worksSrvc.addWorkToScope(getBaseUri() + '/works/works.json?workIds=');
 	        	$scope.$apply();
 	        }
 		}).fail(function(){
@@ -2858,8 +2947,8 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	$scope.renderTranslatedTitleInfo = function(putCode) {		
 		var info = null; 
 		
-		if(putCode != null && $scope.worksInfo[putCode] != null && $scope.worksInfo[putCode].workTitle != null && $scope.worksInfo[putCode].workTitle.translatedTitle != null) {
-			info = $scope.worksInfo[putCode].workTitle.translatedTitle.content + ' - ' + $scope.worksInfo[putCode].workTitle.translatedTitle.languageName;										
+		if(putCode != null && $scope.worksSrvc.worksInfo[putCode] != null && $scope.worksSrvc.worksInfo[putCode].workTitle != null && $scope.worksSrvc.worksInfo[putCode].workTitle.translatedTitle != null) {
+			info = $scope.worksSrvc.worksInfo[putCode].workTitle.translatedTitle.content + ' - ' + $scope.worksSrvc.worksInfo[putCode].workTitle.translatedTitle.languageName;										
 		}		
 		
 		return info;
@@ -2888,7 +2977,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		//Display the popover
 		$scope.loadingInfo = true;		
 		$(event.target).next().css('display','inline');	
-		if($scope.worksInfo[putCode] == null) {		
+		if($scope.worksSrvc.worksInfo[putCode] == null) {		
 			$.ajax({
 				url: getBaseUri() + '/works/getWorkInfo.json?workId=' + putCode,	        
 		        dataType: 'json',
@@ -2896,8 +2985,8 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		        	
 		        	$scope.$apply(function () {
 		        		removeBadContributors(data);
-						addBibtexCitation($scope,data);
-						$scope.worksInfo[putCode] = data;
+		        		$scope.worksSrvc.addBibtexJson(data);
+						$scope.worksSrvc.worksInfo[putCode] = data;
 						$scope.loadingInfo = false;
 		        	});		        	
 		        }
@@ -2920,9 +3009,9 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	$scope.deleteWork = function(putCode) {
 		$scope.deletePutCode = putCode;
 		var work;
-		for (idx in $scope.works) {
-			if ($scope.works[idx].putCode.value == putCode) {
-				work = $scope.works[idx];
+		for (idx in $scope.worksSrvc.works) {
+			if ($scope.worksSrvc.works[idx].putCode.value == putCode) {
+				work = $scope.worksSrvc.works[idx];
 				break;
 			}
 		}
@@ -2941,16 +3030,16 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	$scope.deleteByPutCode = function() {		
 		var work;
 		var idx;
-		for (idx in $scope.works) {
-			if ($scope.works[idx].putCode.value == $scope.deletePutCode) {
-				work = $scope.works[idx];
+		for (idx in $scope.worksSrvc.works) {
+			if ($scope.worksSrvc.works[idx].putCode.value == $scope.deletePutCode) {
+				work = $scope.worksSrvc.works[idx];
 				break;
 			}
 		}
 		// remove work on server
 		$scope.removeWork(work);
 		// remove the work from the UI
-    	$scope.works.splice(idx, 1);
+    	$scope.worksSrvc.works.splice(idx, 1);
     	// apply changes on scope
 		// close box
 		$.colorbox.close(); 
@@ -2991,11 +3080,11 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	$scope.setPrivacy = function(putCode, priv, $event) {
 		$event.preventDefault();
 		var idx;
-		for (idx in $scope.works) {
-			if ($scope.works[idx].putCode.value == putCode)
+		for (idx in $scope.worksSrvc.works) {
+			if ($scope.worksSrvc.works[idx].putCode.value == putCode)
 				break;
 		}
-		$scope.works[idx].visibility = priv;
+		$scope.worksSrvc.works[idx].visibility = priv;
 		$scope.curPrivToggle = null;
 		$scope.updateProfileWork(putCode);
 	};
@@ -3047,9 +3136,9 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	
 	$scope.updateProfileWork = function(putCode) {
 		var work;
-		for (idx in $scope.works) {
-			if ($scope.works[idx].putCode.value == putCode) {
-				work = $scope.works[idx];
+		for (idx in $scope.worksSrvc.works) {
+			if ($scope.worksSrvc.works[idx].putCode.value == putCode) {
+				work = $scope.worksSrvc.works[idx];
 				break;
 			}
 		}

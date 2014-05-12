@@ -54,8 +54,8 @@
 		       	<div ng-controller="OtherNamesCtrl" class="other-names-controller">
 		        	<div>
 		        	   <strong><@orcid.msg 'workspace.Alsoknownas'/></strong>
-		        	   <span ng-hide="showEdit == true">
-		        	      <span class="glyphicon glyphicon-pencil edit-other-names edit-option" ng-click="toggleEdit()" title=""></span><br />
+		        	   <span ng-hide="showEdit == true" ng-click="openEdit()">
+		        	      <span class="glyphicon glyphicon-pencil edit-other-names edit-option" title=""></span><br />
 		        	      <span ng-repeat="otherNames in otherNamesForm.otherNames" ng-cloak>
 		        	         {{ $last?otherNames.value:otherNames.value+ ", "}}
 		        	      </span>
@@ -92,8 +92,9 @@
             
             <div ng-controller="CountryCtrl" class="country-controller">
 	        	<strong><@orcid.msg 'public_profile.labelCountry'/></strong>
-	               
-                <span ng-hide="showEdit == true">
+	            <span class="glyphicon glyphicon-pencil edit-country edit-option" ng-click="openEdit()" title="" ng-hide="showEdit == true"></span>
+	            <br />   
+                <span ng-hide="showEdit == true" ng-click="toggleEdit()">
 	                <span ng-show="countryForm != null && countryForm.iso2Country != null" ng-bind="countryForm.iso2Country.value">
 	                </span>
                     
@@ -101,11 +102,9 @@
 	                   <@spring.message "workspace.select_country"/>
 	                </span>
 	                
-	                <span class="glyphicon glyphicon-pencil edit-country edit-option" ng-click="toggleEdit()" title=""></span>
                </span>
                
                <div ng-show="showEdit == true" ng-cloak class="country-edit">
-               	  <a ng-click="close()" class="pull-right"><@orcid.msg 'freemarker.btnclose'/></a>               	  
                	  <@orcid.privacyToggle  angularModel="countryForm.profileAddressVisibility.visibility"
 			         questionClick="toggleClickPrivacyHelp()"
 			         clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
@@ -113,13 +112,16 @@
                  	     limitedClick="setPrivacy('LIMITED', $event)" 
                  	     privateClick="setPrivacy('PRIVATE', $event)" />
                   
-                  <select id="country" name="country" ng-model="countryForm.iso2Country.value" ng-change="setCountryForm()">
+                  <select id="country" name="country" ng-model="countryForm.iso2Country.value">
 		    			<option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
 						<#list isoCountries?keys as key>
 							<option value="${key}">${isoCountries[key]}</option>
 						</#list>
 				  </select>				  
-				  				  
+				  
+	             <button class="btn btn-primary" ng-click="setCountryForm()"><@spring.message "freemarker.btnsavechanges"/></button>
+		         <button class="btn" ng-click="close()"><@spring.message "freemarker.btncancel"/></button>
+	              			  
 				</div>
 				
             </div>
@@ -128,8 +130,8 @@
 		       	<div ng-controller="KeywordsCtrl" class="keywords-controller">
 		        	<div>
 		        	   <strong><@orcid.msg 'public_profile.labelKeywords'/></strong>
-		        	   <span ng-hide="showEdit == true">
-		        	      <span class="glyphicon glyphicon-pencil edit-keywords edit-option" ng-click="toggleEdit()" title=""></span><br />
+		        	   <span ng-hide="showEdit == true" ng-click="openEdit()">
+		        	      <span class="glyphicon glyphicon-pencil edit-keywords edit-option" title=""></span><br />
 		        	      <span ng-repeat="keyword in keywordsForm.keywords" ng-cloak>
 		        	         {{ $last?keyword.value:keyword.value+ ", "}}
 		        	      </span>
@@ -166,7 +168,7 @@
 		        	<div>
 		        	   <strong><@orcid.msg 'public_profile.labelWebsites'/></strong>
 		        	   <span ng-hide="showEdit == true">
-		        	      <span class="glyphicon glyphicon-pencil edit-websites edit-option" ng-click="toggleEdit()" title=""></span><br />
+		        	      <span class="glyphicon glyphicon-pencil edit-websites edit-option" ng-click="openEdit()" title=""></span><br />
 		        	      <div ng-repeat="website in websitesForm.websites" ng-cloak>
 		        	         <a href="{{website.url.value}}" target="_blank" rel="nofollow">{{website.name.value != null? website.name.value : website.url.value}}</a>
 		        	      </div>
@@ -207,10 +209,11 @@
 			   				<a ng-click="deleteExternalIdentifier($index)" class="glyphicon glyphicon-trash grey"></a>       			
        			</div>
 			</div>													    
-	        	        
-			<p class="hoover-white-fonts">	       
-	       		<a href="<@spring.url '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a>
-	        </p>
+	        <#if RequestParameters['OldPersonal']??>	        
+				<p class="hoover-white-fonts">	       
+		       		<a href="<@spring.url '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a>
+		        </p>
+	        </#if>
 			
         </div>
     </div>
@@ -256,7 +259,9 @@
 	        			   			<i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':displayInfo==false}"></i></a>
 	        			   		</a>
         			   			<a href="" ng-click="toggleDisplayInfo()" class="toggle-text"><@orcid.msg 'workspace.personal_information'/></a></li>
-        			   		<li><a href="<@spring.url '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a></li>        			   		
+        			   		<#if RequestParameters['OldPersonal']??>	        
+        			   		   <li><a href="<@spring.url '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a></li>        			   		
+        			        </#if>
         			   </ul>
         			</div>
             		<div class="workspace-accordion-content" ng-show="displayInfo">

@@ -89,7 +89,7 @@
 								</@security.authorize>
 								<@security.authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">
 								<li><a ${(nav=="record")?string('class="active" ', '')}href="<@spring.url '/my-orcid'/>">
-									<#if inDelegationMode><@orcid.msg 'public-layout.orcid_record'/><#else><@orcid.msg 'public-layout.my_orcid_record'/></#if>
+									<#if inDelegationMode><@orcid.msg 'public-layout.my_orcid'/><#else><@orcid.msg 'public-layout.my_orcid_record'/></#if>
 								</a></li>
 								<li><a ${(nav=="settings")?string('class="active" ', '')}href="<@spring.url '/account'/>"><@orcid.msg 'public-layout.account_setting'/></a></li>
 								<#if !inDelegationMode || isDelegatedByAdmin>

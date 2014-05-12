@@ -73,6 +73,7 @@ import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.Organization;
 import org.orcid.jaxb.model.message.OrganizationAddress;
+import org.orcid.jaxb.model.message.OrganizationDefinedFundingSubType;
 import org.orcid.jaxb.model.message.Title;
 import org.orcid.jaxb.model.message.TranslatedTitle;
 import org.orcid.jaxb.model.message.Url;
@@ -104,30 +105,31 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     private static final int DEFAULT_TIMEOUT_SECONDS = 30;
 
     private static final String CLIENT_DETAILS_ID = "4444-4444-4444-4445";
-    
-    public static final String GRANT_TITLE = "Grant Title # 1";
+
+    public static final String FUNDING_TITLE = "Grant Title # 1";
+    public static final String FUNDING_TITLE_2 = "Grant Title # 2";
     public static final String GRANT_DESCRIPTION = "A short description";
-	public static final String GRANT_URL = "http://myurl.com";
-	public static final String ORG_NAME = "My Org";
-	public static final String ORG_CITY = "My City";
-	public static final String EXT_ID_TYPE = "grant_number";
-	public static final String EXT_ID_URL = "http://ext.id.url";
-	public static final String EXT_ID_VALUE = "ext id value";
-	public static final String CONTRIBUTOR_CREDIT_NAME = "My Credit Name";	
-	public static final String CONTRIBUTOR_EMAIL = "my.email@contributor.com";
+    public static final String GRANT_URL = "http://myurl.com";
+    public static final String ORG_NAME = "My Org";
+    public static final String ORG_CITY = "My City";
+    public static final String EXT_ID_TYPE = "grant_number";
+    public static final String EXT_ID_URL = "http://ext.id.url";
+    public static final String EXT_ID_VALUE = "ext id value";
+    public static final String CONTRIBUTOR_CREDIT_NAME = "My Credit Name";
+    public static final String CONTRIBUTOR_EMAIL = "my.email@contributor.com";
 
     private WebDriver webDriver;
 
     @Resource
     private ClientRedirectDao clientRedirectDao;
 
-    @Resource(name="t2OAuthClient")
+    @Resource(name = "t2OAuthClient")
     private T2OAuthAPIService<ClientResponse> oauthT2Client;
-    
-    @Resource(name="t2OAuthClient1_0_22")
+
+    @Resource(name = "t2OAuthClient1_0_22")
     private T2OAuthAPIService<ClientResponse> oauthT2Client1_0_22;
-    
-    @Resource(name="t2OAuthClient1_2_rc2")
+
+    @Resource(name = "t2OAuthClient1_2_rc2")
     private T2OAuthAPIService<ClientResponse> oauthT2Client1_2_rc2;
 
     @Resource
@@ -135,7 +137,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
 
     @Resource
     OrcidSSOManagerImpl ssoManager;
-    
+
     @Value("${org.orcid.web.base.url:http://localhost:8080/orcid-web}")
     private String webBaseUrl;
 
@@ -200,16 +202,16 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     public void testGetAuthenticate() throws JSONException, InterruptedException {
         String scopes = "/authenticate";
         String authorizationCode = obtainAuthorizationCode(scopes);
-        String accessToken = obtainAccessToken(authorizationCode, scopes);        
+        String accessToken = obtainAccessToken(authorizationCode, scopes);
         assertNotNull(accessToken);
         assertTrue(StringUtils.isNotBlank(accessToken));
     }
-    
+
     @Test
     public void testInvalidCodesFail() throws JSONException, InterruptedException {
         String scopes = "/orcid-bio/read-limited";
         String authorizationCode = obtainAuthorizationCode(scopes);
-        String wrongScope="/myscope";
+        String wrongScope = "/myscope";
         MultivaluedMap<String, String> params = new MultivaluedMapImpl();
         params.add("client_id", CLIENT_DETAILS_ID);
         params.add("client_secret", "client-secret");
@@ -221,15 +223,17 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         assertEquals(409, tokenResponse.getStatus());
         OrcidMessage errorMessage = tokenResponse.getEntity(OrcidMessage.class);
         assertNotNull(errorMessage);
-        assertNotNull(errorMessage.getErrorDesc());        
-        assertEquals("One of the provided scopes is not allowed. Please refere to the list of allowed scopes at: http://support.orcid.org/knowledgebase/articles/120162-orcid-scopes", errorMessage.getErrorDesc().getContent());
+        assertNotNull(errorMessage.getErrorDesc());
+        assertEquals(
+                "One of the provided scopes is not allowed. Please refere to the list of allowed scopes at: http://support.orcid.org/knowledgebase/articles/120162-orcid-scopes",
+                errorMessage.getErrorDesc().getContent());
     }
-    
+
     @Test
     public void dontFailWithGrantScopes() throws JSONException, InterruptedException {
         String scopes = "/orcid-bio/read-limited";
         String authorizationCode = obtainAuthorizationCode(scopes);
-        String wrongScope="/orcid-bio/read-limited /funding/create /orcid-grants/read-limited";
+        String wrongScope = "/orcid-bio/read-limited /funding/create /orcid-grants/read-limited";
         MultivaluedMap<String, String> params = new MultivaluedMapImpl();
         params.add("client_id", CLIENT_DETAILS_ID);
         params.add("client_secret", "client-secret");
@@ -238,9 +242,9 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         params.add("redirect_uri", redirectUri);
         params.add("code", authorizationCode);
         ClientResponse tokenResponse = oauthT2Client.obtainOauth2TokenPost("client_credentials", params);
-        assertEquals(200, tokenResponse.getStatus());        
+        assertEquals(200, tokenResponse.getStatus());
     }
-    
+
     @Test
     public void testAddWork() throws InterruptedException, JSONException {
         String scopes = "/orcid-works/create";
@@ -412,7 +416,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     }
 
     @Test
-    public void testAddGrant() throws InterruptedException, JSONException {
+    public void testAddFunding() throws InterruptedException, JSONException {
         String scopes = "/funding/create";
         String authorizationCode = obtainAuthorizationCode(scopes);
         String accessToken = obtainAccessToken(authorizationCode, scopes);
@@ -423,52 +427,111 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         orcidMessage.setOrcidProfile(orcidProfile);
         OrcidActivities orcidActivities = new OrcidActivities();
         orcidProfile.setOrcidActivities(orcidActivities);
-        
+
         FundingList fundings = new FundingList();
         Funding funding = new Funding();
         FundingTitle title = new FundingTitle();
-        title.setTitle(new Title(GRANT_TITLE));
+        title.setTitle(new Title(FUNDING_TITLE));
         funding.setTitle(title);
         funding.setType(FundingType.SALARY_AWARD);
         funding.setVisibility(Visibility.PUBLIC);
-    	Amount amount = new Amount();
-    	amount.setCurrencyCode("CRC");
-    	amount.setContent("1.250.000");
-    	funding.setAmount(amount);
-    	funding.setStartDate(new FuzzyDate(2010, 1, 1));
-    	funding.setEndDate(new FuzzyDate(2013, 1, 1));
-    	funding.setDescription(GRANT_DESCRIPTION);
-    	funding.setUrl(new Url(GRANT_URL));
-    	Organization org = new Organization();
-    	org.setName(ORG_NAME);
-    	OrganizationAddress add = new OrganizationAddress();
-    	add.setCity(ORG_CITY);
-    	add.setCountry(Iso3166Country.CR);
-    	org.setAddress(add);
-    	funding.setOrganization(org);
-    	FundingExternalIdentifier extIdentifier = new FundingExternalIdentifier();
-    	extIdentifier.setType(FundingExternalIdentifierType.fromValue(EXT_ID_TYPE));
-    	extIdentifier.setUrl(new Url(EXT_ID_URL));
-    	extIdentifier.setValue(EXT_ID_VALUE);
-    	FundingExternalIdentifiers extIdentifiers = new FundingExternalIdentifiers();
-    	extIdentifiers.getFundingExternalIdentifier().add(extIdentifier);
-    	funding.setFundingExternalIdentifiers(extIdentifiers);
-    	FundingContributors contributors = new FundingContributors();
-    	FundingContributor contributor = new FundingContributor();
-    	contributor.setCreditName(new CreditName(CONTRIBUTOR_CREDIT_NAME));
-    	contributor.setContributorEmail(new ContributorEmail(CONTRIBUTOR_EMAIL));
-    	FundingContributorAttributes attributes = new FundingContributorAttributes();
-    	attributes.setContributorRole(FundingContributorRole.LEAD);
-    	contributor.setContributorAttributes(attributes);
-    	contributors.getContributor().add(contributor);
-    	funding.setFundingContributors(contributors);        
-    	fundings.getFundings().add(funding);
-    	orcidMessage.getOrcidProfile().getOrcidActivities().setFundings(fundings);
+        Amount amount = new Amount();
+        amount.setCurrencyCode("CRC");
+        amount.setContent("1.250.000");
+        funding.setAmount(amount);
+        funding.setStartDate(new FuzzyDate(2010, 1, 1));
+        funding.setEndDate(new FuzzyDate(2013, 1, 1));
+        funding.setDescription(GRANT_DESCRIPTION);
+        funding.setUrl(new Url(GRANT_URL));
+        Organization org = new Organization();
+        org.setName(ORG_NAME);
+        OrganizationAddress add = new OrganizationAddress();
+        add.setCity(ORG_CITY);
+        add.setCountry(Iso3166Country.CR);
+        org.setAddress(add);
+        funding.setOrganization(org);
+        FundingExternalIdentifier extIdentifier = new FundingExternalIdentifier();
+        extIdentifier.setType(FundingExternalIdentifierType.fromValue(EXT_ID_TYPE));
+        extIdentifier.setUrl(new Url(EXT_ID_URL));
+        extIdentifier.setValue(EXT_ID_VALUE);
+        FundingExternalIdentifiers extIdentifiers = new FundingExternalIdentifiers();
+        extIdentifiers.getFundingExternalIdentifier().add(extIdentifier);
+        funding.setFundingExternalIdentifiers(extIdentifiers);
+        FundingContributors contributors = new FundingContributors();
+        FundingContributor contributor = new FundingContributor();
+        contributor.setCreditName(new CreditName(CONTRIBUTOR_CREDIT_NAME));
+        contributor.setContributorEmail(new ContributorEmail(CONTRIBUTOR_EMAIL));
+        FundingContributorAttributes attributes = new FundingContributorAttributes();
+        attributes.setContributorRole(FundingContributorRole.LEAD);
+        contributor.setContributorAttributes(attributes);
+        contributors.getContributor().add(contributor);
+        funding.setFundingContributors(contributors);
+        fundings.getFundings().add(funding);
+        orcidMessage.getOrcidProfile().getOrcidActivities().setFundings(fundings);
 
         ClientResponse clientResponse = oauthT2Client1_2_rc2.addFundingXml("4444-4444-4444-4442", orcidMessage, accessToken);
         assertEquals(201, clientResponse.getStatus());
     }
-    
+
+    @Test
+    public void testAddFundingWithOrganizationDefinedFundingType() throws InterruptedException, JSONException {
+        String scopes = "/funding/create";
+        String authorizationCode = obtainAuthorizationCode(scopes);
+        String accessToken = obtainAccessToken(authorizationCode, scopes);
+
+        OrcidMessage orcidMessage = new OrcidMessage();
+        orcidMessage.setMessageVersion("1.2_rc4");
+        OrcidProfile orcidProfile = new OrcidProfile();
+        orcidMessage.setOrcidProfile(orcidProfile);
+        OrcidActivities orcidActivities = new OrcidActivities();
+        orcidProfile.setOrcidActivities(orcidActivities);
+
+        FundingList fundings = new FundingList();
+        Funding funding = new Funding();
+        FundingTitle title = new FundingTitle();
+        title.setTitle(new Title(FUNDING_TITLE_2));
+        funding.setTitle(title);
+        funding.setType(FundingType.SALARY_AWARD);
+        funding.setOrganizationDefinedFundingType(new OrganizationDefinedFundingSubType("My Org Type"));
+        funding.setVisibility(Visibility.PUBLIC);
+        Amount amount = new Amount();
+        amount.setCurrencyCode("CRC");
+        amount.setContent("1.250.000");
+        funding.setAmount(amount);
+        funding.setStartDate(new FuzzyDate(2010, 1, 1));
+        funding.setEndDate(new FuzzyDate(2013, 1, 1));
+        funding.setDescription(GRANT_DESCRIPTION);
+        funding.setUrl(new Url(GRANT_URL));
+        Organization org = new Organization();
+        org.setName(ORG_NAME);
+        OrganizationAddress add = new OrganizationAddress();
+        add.setCity(ORG_CITY);
+        add.setCountry(Iso3166Country.CR);
+        org.setAddress(add);
+        funding.setOrganization(org);
+        FundingExternalIdentifier extIdentifier = new FundingExternalIdentifier();
+        extIdentifier.setType(FundingExternalIdentifierType.fromValue(EXT_ID_TYPE));
+        extIdentifier.setUrl(new Url(EXT_ID_URL));
+        extIdentifier.setValue(EXT_ID_VALUE);
+        FundingExternalIdentifiers extIdentifiers = new FundingExternalIdentifiers();
+        extIdentifiers.getFundingExternalIdentifier().add(extIdentifier);
+        funding.setFundingExternalIdentifiers(extIdentifiers);
+        FundingContributors contributors = new FundingContributors();
+        FundingContributor contributor = new FundingContributor();
+        contributor.setCreditName(new CreditName(CONTRIBUTOR_CREDIT_NAME));
+        contributor.setContributorEmail(new ContributorEmail(CONTRIBUTOR_EMAIL));
+        FundingContributorAttributes attributes = new FundingContributorAttributes();
+        attributes.setContributorRole(FundingContributorRole.LEAD);
+        contributor.setContributorAttributes(attributes);
+        contributors.getContributor().add(contributor);
+        funding.setFundingContributors(contributors);
+        fundings.getFundings().add(funding);
+        orcidMessage.getOrcidProfile().getOrcidActivities().setFundings(fundings);
+
+        ClientResponse clientResponse = oauthT2Client1_2_rc2.addFundingXml("4444-4444-4444-4442", orcidMessage, accessToken);
+        assertEquals(201, clientResponse.getStatus());
+    }
+
     @Test
     public void testAddWorkToWrongProfile() throws InterruptedException, JSONException {
         String scopes = "/orcid-works/create";
@@ -511,11 +574,10 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     }
 
     private String obtainAuthorizationCode(String scopes) throws InterruptedException {
-        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, CLIENT_DETAILS_ID, scopes, redirectUri));       
+        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, CLIENT_DETAILS_ID, scopes, redirectUri));
         return obtainAuthorizationCode(CLIENT_DETAILS_ID, scopes, redirectUri);
     }
-    
-    
+
     private String obtainAuthorizationCode(String orcid, String scopes, String redirectUri) throws InterruptedException {
         webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, orcid, scopes, redirectUri));
         WebElement userId = webDriver.findElement(By.id("userId"));

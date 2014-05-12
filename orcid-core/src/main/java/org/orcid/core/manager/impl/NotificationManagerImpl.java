@@ -56,7 +56,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.MessageSource;
 import org.springframework.mail.MailSender;
-import org.springframework.mail.SimpleMailMessage;
 
 /**
  * @author Will Simpson
@@ -352,9 +351,15 @@ public class NotificationManagerImpl implements NotificationManager {
         Map<String, Object> templateParams = new HashMap<String, Object>();
         String subject = getSubject("email.subject.added_as_delegate", orcidUserGrantingPermission);
         
-        for (DelegationDetails newDelegation : delegatesGrantedByUser) {
-            String grantingOrcidEmail = orcidUserGrantingPermission.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();            
+        for (DelegationDetails newDelegation : delegatesGrantedByUser) {                       
             ProfileEntity delegateProfileEntity = profileDao.find(newDelegation.getDelegateSummary().getOrcidIdentifier().getPath());
+            Boolean sendChangeNotifications = delegateProfileEntity.getSendChangeNotifications();
+            if (sendChangeNotifications == null || !sendChangeNotifications) {
+                LOGGER.debug("Not sending added delegate email, because option to send change notifications not set to true for delegate: {}", delegateProfileEntity.getId());
+                return;
+            }
+                        
+            String grantingOrcidEmail = orcidUserGrantingPermission.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
             String emailNameForDelegate = deriveEmailFriendlyName(delegateProfileEntity);
             String email = delegateProfileEntity.getPrimaryEmail().getId();
 

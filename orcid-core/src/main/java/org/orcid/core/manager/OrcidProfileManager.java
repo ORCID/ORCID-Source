@@ -377,6 +377,8 @@ public interface OrcidProfileManager {
     OrcidWorks dedupeWorks(OrcidWorks orcidWorks);
 
     OrcidProfile retrieveClaimedOrcidProfile(String orcid);
+    
+    public void updateNames(OrcidProfile orcidProfile);
 
     Date retrieveLastModifiedDate(String orcid);
 

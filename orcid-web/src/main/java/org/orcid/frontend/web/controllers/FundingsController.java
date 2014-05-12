@@ -29,10 +29,10 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.validator.routines.UrlValidator;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.message.Funding;
@@ -44,7 +44,6 @@ import org.orcid.persistence.dao.FundingExternalIdentifierDao;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.dao.OrgDisambiguatedSolrDao;
 import org.orcid.persistence.dao.ProfileDao;
-import org.orcid.persistence.dao.ProfileFundingDao;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.FundingExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
@@ -56,6 +55,7 @@ import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.FundingExternalIdentifierForm;
 import org.orcid.pojo.ajaxForm.FundingForm;
 import org.orcid.pojo.ajaxForm.FundingTitleForm;
+import org.orcid.pojo.ajaxForm.OrgDefinedFundingSubType;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.TranslatedTitle;
@@ -86,7 +86,7 @@ public class FundingsController extends BaseWorkspaceController {
     private ProfileDao profileDao;
 
     @Resource
-    ProfileFundingDao profileFundingDao;
+    ProfileFundingManager profileFundingManager;
 
     @Resource
     FundingExternalIdentifierDao fundingExternalIdentifierDao;
@@ -122,6 +122,12 @@ public class FundingsController extends BaseWorkspaceController {
         result.setFundingName(new Text());
         result.setFundingType(Text.valueOf(""));
         result.setSourceName(new String());
+        
+        OrgDefinedFundingSubType subtype = new OrgDefinedFundingSubType();
+        subtype.setAlreadyIndexed(false);
+        subtype.setSubtype(Text.valueOf(""));        
+        result.setOrganizationDefinedFundingSubType(subtype);
+        
         FundingTitleForm title = new FundingTitleForm();
         title.setTitle(new Text());
         TranslatedTitle tt = new TranslatedTitle();
@@ -195,7 +201,7 @@ public class FundingsController extends BaseWorkspaceController {
             }
             fundings.setFundings(fundingList);
             currentProfile.getOrcidActivities().setFundings(fundings);
-            profileFundingDao.removeProfileFunding(currentProfile.getOrcidIdentifier().getPath(), funding.getPutCode().getValue());
+            profileFundingManager.removeProfileFunding(currentProfile.getOrcidIdentifier().getPath(), funding.getPutCode().getValue());
         }
         return deletedFunding;
     }
@@ -279,7 +285,7 @@ public class FundingsController extends BaseWorkspaceController {
      * */
     @RequestMapping(value = "/funding.json", method = RequestMethod.POST)
     public @ResponseBody
-    FundingForm postGrant(HttpServletRequest request, @RequestBody FundingForm funding) {
+    FundingForm postFunding(HttpServletRequest request, @RequestBody FundingForm funding) {
         // Remove empty external identifiers
         removeEmptyExternalIds(funding);
 
@@ -293,6 +299,7 @@ public class FundingsController extends BaseWorkspaceController {
         validateDates(funding);
         validateExternalIdentifiers(funding);
         validateType(funding);
+        validateOrganizationDefinedType(funding);
         validateCity(funding);
         validateRegion(funding);
         validateCountry(funding);
@@ -309,6 +316,8 @@ public class FundingsController extends BaseWorkspaceController {
         copyErrors(funding.getUrl(), funding);
         copyErrors(funding.getEndDate(), funding);
         copyErrors(funding.getFundingType(), funding);
+        if(funding.getOrganizationDefinedFundingSubType() != null)
+            copyErrors(funding.getOrganizationDefinedFundingSubType().getSubtype(), funding);
 
         for (FundingExternalIdentifierForm extId : funding.getExternalIdentifiers()) {
             copyErrors(extId.getType(), funding);
@@ -327,21 +336,21 @@ public class FundingsController extends BaseWorkspaceController {
             ProfileFundingEntity profileGrantEntity = jaxb2JpaAdapter.getNewProfileFundingEntity(funding.toOrcidFunding(), userProfile);
             profileGrantEntity.setSource(userProfile);
             // Persists the profile funding object
-            ProfileFundingEntity newProfileGrant = profileFundingDao.addProfileFunding(profileGrantEntity);
+            ProfileFundingEntity newProfileFunding = profileFundingManager.addProfileFunding(profileGrantEntity);
 
             // Persist the external identifiers
             SortedSet<FundingExternalIdentifierEntity> externalIdentifiers = profileGrantEntity.getExternalIdentifiers();
 
             if (externalIdentifiers != null && !externalIdentifiers.isEmpty()) {
                 for (FundingExternalIdentifierEntity externalIdentifier : externalIdentifiers) {
-                    externalIdentifier.setProfileFunding(newProfileGrant);
+                    externalIdentifier.setProfileFunding(newProfileFunding);
                     fundingExternalIdentifierDao.createFundingExternalIdentifier(externalIdentifier);
                 }
             }
 
             // Transform it back into a OrcidGrant to add it into the cached
             // object
-            Funding newFunding = jpa2JaxbAdapter.getFunding(newProfileGrant);
+            Funding newFunding = jpa2JaxbAdapter.getFunding(newProfileFunding);
             // Update the fundings on the cached object
             OrcidProfile currentProfile = getEffectiveProfile();
             // Initialize activities if needed
@@ -355,6 +364,10 @@ public class FundingsController extends BaseWorkspaceController {
 
             // Set the new funding into the cached object
             currentProfile.getOrcidActivities().getFundings().getFundings().add(newFunding);
+            
+            //Send the new funding sub type for indexing
+            if(funding.getOrganizationDefinedFundingSubType() != null && !PojoUtil.isEmpty(funding.getOrganizationDefinedFundingSubType().getSubtype()) && !funding.getOrganizationDefinedFundingSubType().isAlreadyIndexed())
+                profileFundingManager.addFundingSubType(funding.getOrganizationDefinedFundingSubType().getSubtype().getValue(), getEffectiveUserOrcid());
         }
 
         return funding;
@@ -420,7 +433,7 @@ public class FundingsController extends BaseWorkspaceController {
                 for (Funding funding : fundings) {
                     if (funding.getPutCode().equals(fundingForm.getPutCode().getValue())) {
                         // Update the privacy of the funding
-                        profileFundingDao.updateProfileFunding(currentProfile.getOrcidIdentifier().getPath(), fundingForm.getPutCode().getValue(), fundingForm
+                        profileFundingManager.updateProfileFunding(currentProfile.getOrcidIdentifier().getPath(), fundingForm.getPutCode().getValue(), fundingForm
                                 .getVisibility().getVisibility());
                     }
                 }
@@ -580,7 +593,23 @@ public class FundingsController extends BaseWorkspaceController {
         }
         return funding;
     }
-
+    
+    @RequestMapping(value = "/funding/organizationDefinedTypeValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    FundingForm validateOrganizationDefinedType(@RequestBody FundingForm funding) {
+        if(funding.getOrganizationDefinedFundingSubType() == null)
+            funding.setOrganizationDefinedFundingSubType(new OrgDefinedFundingSubType());
+        if(funding.getOrganizationDefinedFundingSubType().getSubtype() == null)
+            funding.getOrganizationDefinedFundingSubType().setSubtype(Text.valueOf(""));
+        funding.getOrganizationDefinedFundingSubType().getSubtype().setErrors(new ArrayList<String>());
+        if (!PojoUtil.isEmpty(funding.getOrganizationDefinedFundingSubType().getSubtype())) {
+            String value = funding.getOrganizationDefinedFundingSubType().getSubtype().getValue();
+            if(value.length() > 255)
+                setError(funding.getOrganizationDefinedFundingSubType().getSubtype(), "fundings.lenght_less_255");            
+        }
+        return funding;
+    }
+    
     @RequestMapping(value = "/funding/cityValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     FundingForm validateCity(@RequestBody FundingForm funding) {
@@ -661,5 +690,14 @@ public class FundingsController extends BaseWorkspaceController {
         datum.put("sourceId", orgDisambiguatedEntity.getSourceId());
         datum.put("sourceType", orgDisambiguatedEntity.getSourceType());
         return datum;
+    }
+    
+    /**
+     * Search DB for org defined funding types
+     */
+    @RequestMapping(value = "/orgDefinedSubType/{query}", method = RequestMethod.GET)
+    public @ResponseBody
+    List<String> searchOrgDefinedFundingSubTypes(@PathVariable("query") String query, @RequestParam(value = "limit") int limit) {
+        return profileFundingManager.getIndexedFundingSubTypes(query, limit);
     }
 }

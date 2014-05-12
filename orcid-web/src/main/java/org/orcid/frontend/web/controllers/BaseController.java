@@ -58,6 +58,7 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.pojo.ajaxForm.ErrorsInterface;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.utils.OrcidStringUtils;
 import org.orcid.utils.OrcidWebUtils;
@@ -75,6 +76,7 @@ import org.springframework.security.web.authentication.switchuser.SwitchUserGran
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 public class BaseController {
@@ -567,7 +569,7 @@ public class BaseController {
            
            // check length
            if (text.getValue().length() > 5000)
-              setError(text, "Length.changePersonalInfoForm.biograph");
+              setError(text, "Length.changePersonalInfoForm.biography");
         }
     }
 
@@ -594,6 +596,15 @@ public class BaseController {
            }
         }
     }
+    
+    void givenNameValidate(Text givenName) {
+        // validate given name isn't blank
+        givenName.setErrors(new ArrayList<String>());
+        if (givenName.getValue() == null || givenName.getValue().trim().isEmpty()) {
+            setError(givenName, "NotBlank.registrationForm.givenNames");
+        }
+    }
+
 
 
     @ModelAttribute("searchBaseUrl")
