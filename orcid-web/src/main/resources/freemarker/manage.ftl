@@ -541,7 +541,7 @@
 </script>
 	
 <script type="text/ng-template" id="revoke-delegate-modal">
-	<div style="padding: 20px;">
+	<div class="lightbox-container">
 		<h3><@orcid.msg 'manage_delegation.confirmrevoketrustedindividual'/></h3>
 		<p> {{delegateNameToRevoke}} ({{delegateToRevoke}})</p>
 		<button class="btn btn-danger" ng-click="revoke()"><@orcid.msg 'manage_delegation.btnrevokeaccess'/></button> 
