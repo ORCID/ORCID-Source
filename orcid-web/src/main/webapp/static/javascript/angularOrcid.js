@@ -325,13 +325,64 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 	return serv;
 }]);
 
-orcidNgModule.factory("worksSrvc", function () {
+orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 	var serv = {
 		    loading: false,
-			works: new Array()
+			works: new Array(),
+			worksToAddIds: null,
+			worksInfo: {},
+			bibtexJson: {},
+			addBibtexJson: function(dw) {
+				if (dw.citation && dw.citation.citationType && dw.citation.citationType.value == 'bibtex') {
+					try {
+						serv.bibtexJson[dw.putCode.value] = bibtexParse.toJSON(dw.citation.citation.value);
+					} catch (err) {
+						serv.bibtexJson[dw.putCode.value] = null;
+						console.log("couldn't parse bibtex: " + dw.citation.citation.value);
+					}
+				}
+			},
+		    addWorkToScope: function(worksUrl) {
+				if(serv.worksToAddIds.length != 0 ) {
+					serv.loading = true;
+					var workIds = serv.worksToAddIds.splice(0,20).join();
+					$.ajax({
+						url: worksUrl + workIds,
+						dataType: 'json',
+						success: function(data) {
+							$rootScope.$apply(function(){ 
+								for (i in data) {
+									var dw = data[i];                            
+									removeBadContributors(dw);							
+									serv.addBibtexJson(dw);							
+									serv.works.push(dw);
+								}
+							});
+							if(serv.worksToAddIds.length == 0 ) {
+								serv.loading = false;
+								$rootScope.$apply();					
+								fixZindexIE7('.workspace-public workspace-body-list li',99999);
+								fixZindexIE7('.workspace-toolbar',9999);						
+							} else {
+								$rootScope.$apply();					
+								setTimeout(function(){
+									serv.addWorkToScope();
+								},50);
+							}
+						}
+					}).fail(function() { 
+						$scope.$apply(function() {
+							serv.loading = false;
+						});
+				    	console.log("Error fetching works: " + workIds);
+				    });
+				} else {
+					serv.loading = false;
+				};
+			} 
 	}; 
 	return serv;
-});
+}]);
 
 orcidNgModule.factory("prefsSrvc", function ($rootScope) {
 	var serv = {
@@ -476,17 +527,6 @@ orcidNgModule.filter('externalIdentifierHtml', function(){
 	    return output;
 	};
 });
-
-function addBibtexCitation($scope, dw) {
-	if (dw.citation && dw.citation.citationType && dw.citation.citationType.value == 'bibtex') {
-		try {
-			$scope.bibtexCitations[dw.putCode.value] = bibtexParse.toJSON(dw.citation.citation.value);
-		} catch (err) {
-			$scope.bibtexCitations[dw.putCode.value] = null;
-			console.log("couldn't parse bibtex: " + dw.citation.citation.value);
-		}
-	}
-}
 
 function removeBadContributors(dw) {
 	for (idx in dw.contributors) {
@@ -2693,69 +2733,28 @@ function PublicFundingCtrl($scope, $compile, $filter, fundingSrvc){
 }
 
 function PublicWorkCtrl($scope, $compile, worksSrvc) {
-	$scope.works = worksSrvc.works;
 	$scope.worksSrvc = worksSrvc;
 	$scope.showBibtex = true;
 	$scope.loadingInfo = false;
-	$scope.bibtexCitations = {};
-	$scope.worksInfo = {};
 	$scope.moreInfoOpen = false;
 
     $scope.bibtexShowToggle = function () {
     	$scope.showBibtex = !($scope.showBibtex);
     };   
 
-    $scope.addWorkToScope = function() {
-		if($scope.worksToAddIds.length != 0 ) {
-			$scope.worksSrvc.loading = true;
-			var workIds = $scope.worksToAddIds.splice(0,20).join();
-			$.ajax({
-				url: getBaseUri() + '/' + orcidVar.orcidId +'/works.json?workIds=' + workIds,
-				dataType: 'json',
-				success: function(data) {
-					$scope.$apply(function(){ 
-						for (i in data) {
-							var dw = data[i];                            
-							removeBadContributors(dw);							
-							addBibtexCitation($scope,dw);							
-							$scope.works.push(dw);
-						}
-					});
-					if($scope.worksToAddIds.length == 0 ) {
-						$scope.worksSrvc.loading = false;
-						$scope.$apply();					
-						fixZindexIE7('.workspace-public workspace-body-list li',99999);
-						fixZindexIE7('.workspace-toolbar',9999);						
-					} else {
-						$scope.$apply();					
-						setTimeout(function(){
-							$scope.addWorkToScope();
-						},50);
-					}
-				}
-			}).fail(function() { 
-				$scope.$apply(function() {
-					$scope.worksSrvc.loading = false;
-				});
-		    	console.log("Error fetching works: " + workIds);
-		    });
-		} else {
-			$scope.worksSrvc.loading = false;
-		}
-	};     
 	  
 	$scope.renderTranslatedTitleInfo = function(putCode) {		
 		var info = null; 
 		
-		if(putCode != null && $scope.worksInfo[putCode] != null && $scope.worksInfo[putCode].workTitle != null && $scope.worksInfo[putCode].workTitle.translatedTitle != null) {
-			info = $scope.worksInfo[putCode].workTitle.translatedTitle.content + ' - ' + $scope.worksInfo[putCode].workTitle.translatedTitle.languageName;										
+		if(putCode != null && $scope.worksSrvc.worksInfo[putCode] != null && $scope.worksSrvc.worksInfo[putCode].workTitle != null && $scope.worksSrvc.worksInfo[putCode].workTitle.translatedTitle != null) {
+			info = $scope.worksSrvc.worksInfo[putCode].workTitle.translatedTitle.content + ' - ' + $scope.worksSrvc.worksInfo[putCode].workTitle.translatedTitle.languageName;										
 		}		
 		
 		return info;
 	};
 		
-	$scope.worksToAddIds = orcidVar.workIds;	
-	$scope.addWorkToScope();
+	$scope.worksSrvc.worksToAddIds = orcidVar.workIds;	
+	$scope.worksSrvc.addWorkToScope(getBaseUri() + '/' + orcidVar.orcidId +'/works.json?workIds=');
 	
 
 	$scope.moreInfoClick = function(work, $event) {
@@ -2778,15 +2777,15 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 		//Display the popover
 		$scope.loadingInfo = true;
 		$(event.target).next().css('display','inline');		
-		if($scope.worksInfo[putCode] == null) {		
+		if($scope.worksSrvc.worksInfo[putCode] == null) {		
 			$.ajax({
 				url: getBaseUri() + '/' + orcidVar.orcidId + '/getWorkInfo.json?workId=' + putCode,	        
 		        dataType: 'json',
 		        success: function(data) {		        	
 		        	$scope.$apply(function () {
 		        		removeBadContributors(data);
-						addBibtexCitation($scope,data);
-						$scope.worksInfo[putCode] = data;
+						$scope.worksSrvc.addBibtexJson(data);
+						$scope.worksSrvc.worksInfo[putCode] = data;
 						$scope.loadingInfo = false;
 		        	});		        	
 		        }
@@ -2811,13 +2810,10 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	$scope.workspaceSrvc = workspaceSrvc;
 	$scope.worksSrvc = worksSrvc;
-	$scope.works = worksSrvc.works;
 	$scope.showBibtex = true;
 	$scope.loadingInfo = false;
-	$scope.bibtexCitations = {};
 	$scope.editTranslatedTitle = false;
 	$scope.types = null;
-	$scope.worksInfo = {};
 	$scope.privacyHelp = {};
 	$scope.moreInfoOpen = false;
 	
@@ -2926,53 +2922,19 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		};
 	};
 		
-	$scope.addWorkToScope = function() {
-		if($scope.worksToAddIds.length != 0 ) {
-			$scope.worksSrvc.loading = true;
-			var workIds = $scope.worksToAddIds.splice(0,20).join();
-			$.ajax({
-				url: getBaseUri() + '/works/works.json?workIds=' + workIds,
-				dataType: 'json',
-				success: function(data) {
-					$scope.$apply(function(){ 
-						for (i in data) {
-							var dw = data[i];													
-							$scope.works.push(dw);
-						}
-					});
-					if($scope.worksToAddIds.length == 0 ) {
-						$scope.worksSrvc.loading = false;
-						$scope.$apply();
-						fixZindexIE7('.workspace-toolbar', 999999);
-						fixZindexIE7('.workspace-private-toolbar', 500);
-						fixZindexIE7('#privacy-bar', 400);						
-					} else {
-						$scope.$apply();
-						setTimeout(function () {
-							$scope.addWorkToScope(); 
-						},50);
-					}
-				}
-			}).fail(function() { 
-		    	console.log("Error fetching work: " + value);
-		    });
-		} else {
-			$scope.worksSrvc.loading = false;
-		}
-	}; 	
 
 	$scope.getWorks = function() {
 		//clear out current works
-		$scope.worksToAddIds = null;
+		$scope.worksSrvc.worksToAddIds = null;
 		$scope.worksSrvc.loading = true;
-		$scope.works.length = 0;
+		$scope.worksSrvc.works.length = 0;
 		//get work ids
 		$.ajax({
 			url: getBaseUri() + '/works/workIds.json',	        
 	        dataType: 'json',
 	        success: function(data) {
-	        	$scope.worksToAddIds = data;
-	        	$scope.addWorkToScope();
+	        	$scope.worksSrvc.worksToAddIds = data;
+	        	$scope.worksSrvc.addWorkToScope(getBaseUri() + '/works/works.json?workIds=');
 	        	$scope.$apply();
 	        }
 		}).fail(function(){
@@ -2985,8 +2947,8 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	$scope.renderTranslatedTitleInfo = function(putCode) {		
 		var info = null; 
 		
-		if(putCode != null && $scope.worksInfo[putCode] != null && $scope.worksInfo[putCode].workTitle != null && $scope.worksInfo[putCode].workTitle.translatedTitle != null) {
-			info = $scope.worksInfo[putCode].workTitle.translatedTitle.content + ' - ' + $scope.worksInfo[putCode].workTitle.translatedTitle.languageName;										
+		if(putCode != null && $scope.worksSrvc.worksInfo[putCode] != null && $scope.worksSrvc.worksInfo[putCode].workTitle != null && $scope.worksSrvc.worksInfo[putCode].workTitle.translatedTitle != null) {
+			info = $scope.worksSrvc.worksInfo[putCode].workTitle.translatedTitle.content + ' - ' + $scope.worksSrvc.worksInfo[putCode].workTitle.translatedTitle.languageName;										
 		}		
 		
 		return info;
@@ -3015,7 +2977,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		//Display the popover
 		$scope.loadingInfo = true;		
 		$(event.target).next().css('display','inline');	
-		if($scope.worksInfo[putCode] == null) {		
+		if($scope.worksSrvc.worksInfo[putCode] == null) {		
 			$.ajax({
 				url: getBaseUri() + '/works/getWorkInfo.json?workId=' + putCode,	        
 		        dataType: 'json',
@@ -3023,8 +2985,8 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		        	
 		        	$scope.$apply(function () {
 		        		removeBadContributors(data);
-						addBibtexCitation($scope,data);
-						$scope.worksInfo[putCode] = data;
+		        		$scope.worksSrvc.addBibtexJson(data);
+						$scope.worksSrvc.worksInfo[putCode] = data;
 						$scope.loadingInfo = false;
 		        	});		        	
 		        }
@@ -3047,9 +3009,9 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	$scope.deleteWork = function(putCode) {
 		$scope.deletePutCode = putCode;
 		var work;
-		for (idx in $scope.works) {
-			if ($scope.works[idx].putCode.value == putCode) {
-				work = $scope.works[idx];
+		for (idx in $scope.worksSrvc.works) {
+			if ($scope.worksSrvc.works[idx].putCode.value == putCode) {
+				work = $scope.worksSrvc.works[idx];
 				break;
 			}
 		}
@@ -3068,16 +3030,16 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	$scope.deleteByPutCode = function() {		
 		var work;
 		var idx;
-		for (idx in $scope.works) {
-			if ($scope.works[idx].putCode.value == $scope.deletePutCode) {
-				work = $scope.works[idx];
+		for (idx in $scope.worksSrvc.works) {
+			if ($scope.worksSrvc.works[idx].putCode.value == $scope.deletePutCode) {
+				work = $scope.worksSrvc.works[idx];
 				break;
 			}
 		}
 		// remove work on server
 		$scope.removeWork(work);
 		// remove the work from the UI
-    	$scope.works.splice(idx, 1);
+    	$scope.worksSrvc.works.splice(idx, 1);
     	// apply changes on scope
 		// close box
 		$.colorbox.close(); 
@@ -3118,11 +3080,11 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	$scope.setPrivacy = function(putCode, priv, $event) {
 		$event.preventDefault();
 		var idx;
-		for (idx in $scope.works) {
-			if ($scope.works[idx].putCode.value == putCode)
+		for (idx in $scope.worksSrvc.works) {
+			if ($scope.worksSrvc.works[idx].putCode.value == putCode)
 				break;
 		}
-		$scope.works[idx].visibility = priv;
+		$scope.worksSrvc.works[idx].visibility = priv;
 		$scope.curPrivToggle = null;
 		$scope.updateProfileWork(putCode);
 	};
@@ -3174,9 +3136,9 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	
 	$scope.updateProfileWork = function(putCode) {
 		var work;
-		for (idx in $scope.works) {
-			if ($scope.works[idx].putCode.value == putCode) {
-				work = $scope.works[idx];
+		for (idx in $scope.worksSrvc.works) {
+			if ($scope.worksSrvc.works[idx].putCode.value == putCode) {
+				work = $scope.worksSrvc.works[idx];
 				break;
 			}
 		}
