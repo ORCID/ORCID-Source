@@ -16,6 +16,10 @@
  */
 package org.orcid.core.adapter.impl;
 
+import java.math.BigDecimal;
+import java.text.NumberFormat;
+import java.text.ParsePosition;
+import java.util.Currency;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -34,6 +38,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
+import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.OrgManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.utils.JsonUtils;
@@ -121,6 +126,7 @@ import org.orcid.persistence.jpa.entities.StartDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.keys.WorkExternalIdentifierEntityPk;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.OrcidStringUtils;
 import org.springframework.util.Assert;
@@ -136,6 +142,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     @Resource(name = "securityQuestionDao")
     private GenericDao<SecurityQuestionEntity, Integer> securityQuestionDao;
 
+    @Resource
+    private LocaleManager localeManager;
+    
     @Resource
     private OrgManager orgManager;
 
@@ -926,9 +935,19 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             FuzzyDate startDate = funding.getStartDate();
             FuzzyDate endDate = funding.getEndDate();
             if(funding.getAmount() != null) {
-            	profileFundingEntity.setAmount(StringUtils.isNotBlank(funding.getAmount().getContent()) ? funding.getAmount().getContent() : null);            
-            	profileFundingEntity.setCurrencyCode(funding.getAmount().getCurrencyCode() != null ? funding.getAmount().getCurrencyCode() : null);
-            }
+            	String amount = StringUtils.isNotBlank(funding.getAmount().getContent()) ? funding.getAmount().getContent() : null;
+            	String currencyCode = funding.getAmount().getCurrencyCode() != null ? funding.getAmount().getCurrencyCode() : null;
+                try {
+                    BigDecimal bigDecimalAmount = getAmountAsBigDecimal(amount, currencyCode);
+                    profileFundingEntity.setNumericAmount(bigDecimalAmount);
+                } catch(Exception e) {
+                    throw new IllegalArgumentException("Invalid amount cannot be cast to BidDecimal");
+                }
+                
+            	
+            	profileFundingEntity.setAmount(amount);    
+            	profileFundingEntity.setCurrencyCode(currencyCode);            	            	
+            }                        
             
             profileFundingEntity.setContributorsJson(getFundingContributorsJson(funding.getFundingContributors()));
             profileFundingEntity.setDescription(StringUtils.isNotBlank(funding.getDescription()) ? funding.getDescription() : null);
@@ -961,6 +980,31 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         }
         return null;
     }
+    
+    /**
+     * TODO
+     * */
+    private BigDecimal getAmountAsBigDecimal(String amount, String currencyCode) throws Exception {
+        try {      
+            java.util.Locale locale = localeManager.getLocale();
+            ParsePosition parsePosition = new ParsePosition(0);
+            NumberFormat numberFormat = NumberFormat.getInstance(locale);
+            Number number = null;
+            if(!PojoUtil.isEmpty(currencyCode))  {                    
+                Currency currency = Currency.getInstance(currencyCode);
+                String currencySymbol = currency.getSymbol();            
+                number = numberFormat.parse(amount.replace(currencySymbol, StringUtils.EMPTY), parsePosition);
+            } else {
+                number = numberFormat.parse(amount, parsePosition);
+            }
+            if(parsePosition.getIndex() != amount.length())
+                throw new Exception("Unable to parse amount into BigDecimal"); 
+            return new BigDecimal(number.toString());                          
+        } catch(Exception e) {                
+            throw e;
+        }
+    }
+    
     
     /**
      * Get a list of GrantExternalIdentifierEntity from the external identifiers

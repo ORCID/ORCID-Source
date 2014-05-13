@@ -16,11 +16,15 @@
  */
 package org.orcid.frontend.web.controllers;
 
+import java.math.BigDecimal;
+import java.text.NumberFormat;
+import java.text.ParsePosition;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.regex.Pattern;
@@ -233,6 +237,8 @@ public class FundingsController extends BaseWorkspaceController {
             for (Funding funding : fundings.getFundings()) {
                 try {
                     FundingForm form = FundingForm.valueOf(funding);
+                    // Formats the amount
+                    formatAmountAsABigDecimal(form);
                     if (funding.getType() != null) {
                         form.setFundingTypeForDisplay(getMessage(buildInternationalizationKey(FundingType.class, funding.getType().value())));
                     }
@@ -245,7 +251,7 @@ public class FundingsController extends BaseWorkspaceController {
                     fundingsMap.put(funding.getPutCode(), form);
                     fundingIds.add(funding.getPutCode());
                 } catch (Exception e) {
-                    LOGGER.error("Failed to parse as Grant. Put code" + funding.getPutCode());
+                    LOGGER.error("Failed to parse as Funding. Put code" + funding.getPutCode());
                 }
             }
             request.getSession().setAttribute(GRANT_MAP, fundingsMap);
@@ -285,7 +291,7 @@ public class FundingsController extends BaseWorkspaceController {
      * */
     @RequestMapping(value = "/funding.json", method = RequestMethod.POST)
     public @ResponseBody
-    FundingForm postFunding(HttpServletRequest request, @RequestBody FundingForm funding) {
+    FundingForm postFunding(HttpServletRequest request, @RequestBody FundingForm funding) throws Exception {
         // Remove empty external identifiers
         removeEmptyExternalIds(funding);
 
@@ -331,6 +337,8 @@ public class FundingsController extends BaseWorkspaceController {
             setContributorsCreditName(funding);
             // Set default type for external identifiers
             setTypeToExternalIdentifiers(funding);
+            // Format the amount
+            formatAmountAsABigDecimal(funding);
             // Update on database
             ProfileEntity userProfile = profileDao.find(getEffectiveUserOrcid());
             ProfileFundingEntity profileGrantEntity = jaxb2JpaAdapter.getNewProfileFundingEntity(funding.toOrcidFunding(), userProfile);
@@ -419,6 +427,17 @@ public class FundingsController extends BaseWorkspaceController {
     }
 
     /**
+     * Get the amount present in the funding form and format it as a BigDecimal
+     * @param funding
+     * */
+    private void formatAmountAsABigDecimal(FundingForm funding) throws Exception {
+        String amount = funding.getAmount().getValue();
+        String currencyCode = PojoUtil.isEmpty(funding.getCurrencyCode()) ? StringUtils.EMPTY : funding.getCurrencyCode().getValue(); 
+        BigDecimal bigDecimal = getAmountAsBigDecimal(amount, currencyCode);
+        funding.setAmount(Text.valueOf(bigDecimal.toString()));
+    }
+    
+    /**
      * Saves an affiliation
      * */
     @RequestMapping(value = "/funding.json", method = RequestMethod.PUT)
@@ -440,7 +459,35 @@ public class FundingsController extends BaseWorkspaceController {
             }
         }
         return fundingForm;
-    }       
+    }              
+    
+    /**
+     * Transforms a string into a BigDecimal
+     * @param amount
+     * @param currencyCode
+     * @return a BigDecimal containing the given amount
+     * @throws Exception if the amount cannot be correctly parse into a BigDecimal
+     * */
+    public BigDecimal getAmountAsBigDecimal(String amount, String currencyCode) throws Exception {
+        try {      
+            Locale locale = getLocale();
+            ParsePosition parsePosition = new ParsePosition(0);
+            NumberFormat numberFormat = NumberFormat.getInstance(locale);
+            Number number = null;
+            if(!PojoUtil.isEmpty(currencyCode))  {                    
+                Currency currency = Currency.getInstance(currencyCode);
+                String currencySymbol = currency.getSymbol();            
+                number = numberFormat.parse(amount.replace(currencySymbol, StringUtils.EMPTY), parsePosition);
+            } else {
+                number = numberFormat.parse(amount, parsePosition);
+            }
+            if(parsePosition.getIndex() != amount.length())
+                throw new Exception(getMessage("Invalid.fundings.amount")); 
+            return new BigDecimal(number.toString());                          
+        } catch(Exception e) {                
+            throw e;
+        }
+    }
     
     /**
      * Validators
@@ -450,16 +497,13 @@ public class FundingsController extends BaseWorkspaceController {
     FundingForm validateAmount(@RequestBody FundingForm funding) {
         funding.getAmount().setErrors(new ArrayList<String>());        
         if (!PojoUtil.isEmpty(funding.getAmount())) {            
-            String amount = funding.getAmount().getValue();
-            
-            String onlyNumbersPattern = "[0-9]+";
-            String withCentsPattern = "[0-9]+(\\.|\\,)[0-9]{1,2}";
-            String thousandsSeparatorPattern = "[0-9]{1,3}((\\,[0-9]{3})*|(\\.[0-9]{3})*)";
-            String thousandsSeparatorWithCentsPattern = "[0-9]{1,3}(\\,[0-9]{3})*(\\.|\\,)[0-9]{1,2}";
-                                                
-            if (!(amount.matches(onlyNumbersPattern) || amount.matches(withCentsPattern) || amount.matches(thousandsSeparatorPattern) || amount.matches(thousandsSeparatorWithCentsPattern))) {                
+            String amount = funding.getAmount().getValue();  
+            String currencyCode = PojoUtil.isEmpty(funding.getCurrencyCode()) ? StringUtils.EMPTY : funding.getCurrencyCode().getValue();
+            try {                
+                getAmountAsBigDecimal(amount, currencyCode);        
+            } catch(Exception pe) {                
                 setError(funding.getAmount(), "Invalid.fundings.amount");
-            }                                    
+            }
         } else if(!PojoUtil.isEmpty(funding.getCurrencyCode())) {
             setError(funding.getAmount(), "Invalid.fundings.currency_not_empty");
         }
@@ -701,6 +745,6 @@ public class FundingsController extends BaseWorkspaceController {
     public @ResponseBody
     List<String> searchOrgDefinedFundingSubTypes(@PathVariable("query") String query, @RequestParam(value = "limit") int limit) {
         return profileFundingManager.getIndexedFundingSubTypes(query, limit);
-    }
+    }        
 }
 
