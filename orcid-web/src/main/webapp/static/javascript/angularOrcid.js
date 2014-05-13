@@ -3290,8 +3290,8 @@ function DelegatesCtrl($scope, $compile){
 	$scope.start = 0;
 	$scope.rows = 10;
 	$scope.showLoader = false;
-	$scope.effectiveUserOrcid = $('body').data('effective-user-orcid');
-	
+	$scope.effectiveUserOrcid = orcidVar.orcidId;
+	$scope.realUserOrcid = orcidVar.realOrcidId;
 	$scope.sort = {
 		column: 'delegateSummary.creditName.content',
 		descending: false

@@ -285,8 +285,9 @@
 			       				</div>
 			       			</div>	
 			       			<div class="col-md-10 col-sm-10 col-xs-12 action-button-bar" ng-show="workspaceSrvc.displayWorks">
-			       				<!-- 
+			       				 <!--
 			       				<div class="sort-menu-container">
+			       					 
 				       				<a class="action-option manage-button sort-menu" ng-click="">
 										<span class="glyphicon glyphicon-sort"></span>							
 										<@orcid.msg ''/>Sort Items							
@@ -297,6 +298,7 @@
 										<li><a href="">Type <span class=""></span></a></li>
 										<li><a href="">Source <span class=""></span></a></li>
 									</ul>
+									
 								</div>
 								 -->
 		                		<ul class="works-menu">
@@ -320,17 +322,16 @@
 											<@orcid.msg 'workspace.link_works'/>
 										</a>	        				
 			        				</li>
-								</ul>
+								</ul>								
 							</div>
 						</div>					
-					</div>
-					
+					</div>					 
       	            <div ng-show="workspaceSrvc.displayWorks" class="workspace-accordion-content">
 	            		<#include "includes/work/add_work_modal_inc.ftl"/>
 						<#include "includes/work/del_work_modal_inc.ftl"/>
 						<#include "includes/work/body_work_inc.ftl"/>
 	            	</div>
-	            	
+	            	 
             	</div>
             	
             	<#--

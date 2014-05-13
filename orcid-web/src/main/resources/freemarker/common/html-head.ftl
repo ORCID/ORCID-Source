@@ -48,11 +48,8 @@
       <#if (fundingIdsJson)??>
         orcidVar.fundingIdsJson = JSON.parse("${fundingIdsJson}");
       </#if>
-      <#if (profile)??>
-        orcidVar.orcidId = '${(profile.orcidIdentifier.path)!}';
-      <#else>
-        orcidVar.orcidId = '${(profile.orcidIdentifier.path)!}';
-      </#if>
+      orcidVar.orcidId = '${(profile.orcidIdentifier.path)!}';
+      orcidVar.realOrcidId = '${realUserOrcid!}';
       orcidVar.jsMessages = JSON.parse("${jsMessagesJson}");
     </script>    
     

@@ -88,7 +88,7 @@
                     $('#callApi').click(
                         function(){
                             $.ajax(
-                                { url: '/orcid-api-web/' + $('#orcid').html() + $('#uri_suffix').val(),
+                                { url: '/orcid-api-web/v1.2_rc4/' + $('#orcid').html() + $('#uri_suffix').val(),
                                   type : $('#method').val(),
                                   contentType : 'application/xml',
                                   data : $('#body').val(),

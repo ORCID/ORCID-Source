@@ -99,6 +99,14 @@ public interface OrcidProfileManager {
     OrcidProfile retrieveClaimedFundings(String orcid);
     
     /**
+     * Returns true if ORCID exist. 
+     * 
+     * @param orcid
+     * @return
+     */
+    public boolean exists(String orcid);
+    
+    /**
      * Retrieves the orcid works given an identifier
      * 
      * @param orcid
