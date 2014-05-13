@@ -3825,7 +3825,7 @@ p.orcid-id-container{
 
  .keywords-box, .keywords-box input,
  .other-names-box, .other-names-box input {
- 	margin: 10px 0 0 0;
+ 	margin: 10px 0 0 0; 	
  }
 
  .websites-box a.glyphicon-trash,
@@ -4793,6 +4793,32 @@ p.orcid-id-container{
 	.id-banner .id-banner-container ul.id-banner-dropdown > li{
 		width: 100%;
 	}
+	
+	.other-names-edit input,
+	.keywords-edit input,
+	.websites-edit input{
+		width: 90%;
+	}
+	
+	.other-names-edit .glyphicon-plus,
+	.websites-edit .glyphicon-plus{
+		margin-top: 15px;
+	}
+	
+	.other-names-edit .glyphicon-plus,
+    .other-names-edit .glyphicon-trash,
+	.keywords-edit .glyphicon-plus,
+	.keywords-edit .glyphicon-trash,
+	.websites-edit .glyphicon-plus,
+	.websites-edit .glyphicon-trash{			
+		font-size: 20px;		
+	}
+	
+	.public-profile p{
+		margin-bottom: 15px;		
+	}
+	
+	
 	
 }
 
