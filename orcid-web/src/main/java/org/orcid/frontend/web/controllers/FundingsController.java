@@ -237,8 +237,6 @@ public class FundingsController extends BaseWorkspaceController {
             for (Funding funding : fundings.getFundings()) {
                 try {
                     FundingForm form = FundingForm.valueOf(funding);
-                    // Formats the amount
-                    formatAmountAsABigDecimal(form);
                     if (funding.getType() != null) {
                         form.setFundingTypeForDisplay(getMessage(buildInternationalizationKey(FundingType.class, funding.getType().value())));
                     }
@@ -337,8 +335,6 @@ public class FundingsController extends BaseWorkspaceController {
             setContributorsCreditName(funding);
             // Set default type for external identifiers
             setTypeToExternalIdentifiers(funding);
-            // Format the amount
-            formatAmountAsABigDecimal(funding);
             // Update on database
             ProfileEntity userProfile = profileDao.find(getEffectiveUserOrcid());
             ProfileFundingEntity profileGrantEntity = jaxb2JpaAdapter.getNewProfileFundingEntity(funding.toOrcidFunding(), userProfile);
@@ -426,17 +422,6 @@ public class FundingsController extends BaseWorkspaceController {
         }
     }
 
-    /**
-     * Get the amount present in the funding form and format it as a BigDecimal
-     * @param funding
-     * */
-    private void formatAmountAsABigDecimal(FundingForm funding) throws Exception {
-        String amount = funding.getAmount().getValue();
-        String currencyCode = PojoUtil.isEmpty(funding.getCurrencyCode()) ? StringUtils.EMPTY : funding.getCurrencyCode().getValue(); 
-        BigDecimal bigDecimal = getAmountAsBigDecimal(amount, currencyCode);
-        funding.setAmount(Text.valueOf(bigDecimal.toString()));
-    }
-    
     /**
      * Saves an affiliation
      * */

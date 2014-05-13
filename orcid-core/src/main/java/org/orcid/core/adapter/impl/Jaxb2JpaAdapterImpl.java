@@ -943,9 +943,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 } catch(Exception e) {
                     throw new IllegalArgumentException("Invalid amount cannot be cast to BidDecimal");
                 }
-                
-            	
-            	profileFundingEntity.setAmount(amount);    
+                            
             	profileFundingEntity.setCurrencyCode(currencyCode);            	            	
             }                        
             

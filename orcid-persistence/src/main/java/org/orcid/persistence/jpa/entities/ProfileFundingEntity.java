@@ -253,7 +253,7 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
 
     
     
-    @Column(name = "amount")
+    @Column(name = "numeric_amount")
     public BigDecimal getNumericAmount() {
         return numericAmount;
     }

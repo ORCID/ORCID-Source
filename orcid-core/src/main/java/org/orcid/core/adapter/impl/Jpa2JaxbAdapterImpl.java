@@ -16,9 +16,12 @@
  */
 package org.orcid.core.adapter.impl;
 
+import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -32,6 +35,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
+import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.security.DefaultPermissionChecker;
 import org.orcid.core.security.PermissionChecker;
@@ -97,6 +101,10 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
     @Resource(name = "defaultPermissionChecker")
     private PermissionChecker permissionChecker;
+    
+    
+    @Resource
+    private LocaleManager localeManager;
 
     public Jpa2JaxbAdapterImpl() {
         try {
@@ -372,12 +380,15 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
      * */
     public Funding getFunding(ProfileFundingEntity profileFundingEntity) {
         Funding funding = new Funding();
-        if (StringUtils.isNotEmpty(profileFundingEntity.getAmount())) {
+        
+        if(profileFundingEntity.getNumericAmount() != null) {            
+            String formattedAmount = formatAmountString(profileFundingEntity.getNumericAmount(), profileFundingEntity.getCurrencyCode());            
             Amount orcidAmount = new Amount();
-            orcidAmount.setContent(StringUtils.isNotEmpty(profileFundingEntity.getAmount()) ? profileFundingEntity.getAmount() : null);
+            orcidAmount.setContent(formattedAmount);
             orcidAmount.setCurrencyCode(profileFundingEntity.getCurrencyCode() != null ? profileFundingEntity.getCurrencyCode() : null);
             funding.setAmount(orcidAmount);
         }
+        
         funding.setDescription(StringUtils.isNotEmpty(profileFundingEntity.getDescription()) ? profileFundingEntity.getDescription() : null);
         FundingTitle title = new FundingTitle();
         title.setTitle(StringUtils.isNotEmpty(profileFundingEntity.getTitle()) ? new Title(profileFundingEntity.getTitle()) : null);
@@ -417,6 +428,14 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return funding;
     }
 
+    /**
+     * TODO
+     * */
+    private String formatAmountString(BigDecimal bigDecimal, String currencyCode) {
+        NumberFormat numberFormat = NumberFormat.getNumberInstance(localeManager.getLocale());        
+        return numberFormat.format(bigDecimal);
+    }
+    
     /**
      * Get external identifiers from a profileFundingEntity object
      * 
