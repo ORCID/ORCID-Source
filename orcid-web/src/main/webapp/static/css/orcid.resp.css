@@ -3776,10 +3776,6 @@ p.orcid-id-container{
 	margin-top: 5px;
 }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 32b318ae60af6bd5f301593b414926ef3713e525
 /* New workspace styles */
 
 .manage-button{
@@ -3909,15 +3905,12 @@ ul.sort-menu-options li a:hover{
 	padding: 0;
 }
 
-<<<<<<< HEAD
 .works-date{
 	float:left;
 	display: block;
 	clear: both;
 }
 
-=======
->>>>>>> 32b318ae60af6bd5f301593b414926ef3713e525
 .websites-edit, .keywords-edit, .other-names-edit {
 	background: #EFEFEF;
 	padding: 10px;
@@ -4064,10 +4057,6 @@ ul.sort-menu-options li a:hover{
 .confirm-oauth-access .id-banner .id-banner-container ul.id-banner-dropdown,
 .confirm-oauth-access .id-banner .id-banner-container ul.id-banner-dropdown > li{
 		width: 100%;
-<<<<<<< HEAD
-=======
-
->>>>>>> 32b318ae60af6bd5f301593b414926ef3713e525
 }
 
 
@@ -4956,13 +4945,9 @@ ul.sort-menu-options li a:hover{
 	
 	.padding-fix{
 		padding: 15px;
-<<<<<<< HEAD
+
 	}	
 
-=======
-	}
-	
->>>>>>> 32b318ae60af6bd5f301593b414926ef3713e525
 	.action-option{
 		width: 100%;
 	}
@@ -5027,10 +5012,6 @@ ul.sort-menu-options li a:hover{
 	.id-banner .id-banner-container ul.id-banner-dropdown,
 	.id-banner .id-banner-container ul.id-banner-dropdown > li{
 		width: 100%;
-<<<<<<< HEAD
-	}	
-
-=======
 	}
 	
 	.more-info{
@@ -5041,8 +5022,6 @@ ul.sort-menu-options li a:hover{
 	.work-title a.toggle-text{
 		width:100%;
 	}
-	
->>>>>>> 32b318ae60af6bd5f301593b414926ef3713e525
 }
 
 @media (min-width : 768px) and (max-width : 991px) { /* Tablet */

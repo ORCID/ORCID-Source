@@ -50,10 +50,6 @@
     <div class="col-md-3 lhs left-aside">
     	<div class="workspace-profile">
             <#include "includes/id_banner.ftl"/>
-<<<<<<< HEAD
-=======
-
->>>>>>> 32b318ae60af6bd5f301593b414926ef3713e525
 	       	<div class="other-names-box">
 		       	<div ng-controller="OtherNamesCtrl" class="other-names-controller">
 		        	<div>
@@ -204,10 +200,6 @@
 		           </div>
 		       	</div>
 	       	</div>
-<<<<<<< HEAD
-=======
-	       	
->>>>>>> 32b318ae60af6bd5f301593b414926ef3713e525
        		<div ng-controller="ExternalIdentifierCtrl" ng-hide="!externalIdentifiersPojo.externalIdentifiers.length" ng-cloak>	       			
        			<p><strong><@orcid.msg 'public_profile.labelOtherIDs'/></strong></p>
        			<div ng-repeat='externalIdentifier in externalIdentifiersPojo.externalIdentifiers'>
@@ -215,24 +207,13 @@
 		        	<span ng-show="externalIdentifier.externalIdUrl"><a href="{{externalIdentifier.externalIdUrl.value}}" target="_blank">{{externalIdentifier.externalIdCommonName.content}} {{externalIdentifier.externalIdReference.content}}</a></span>
 			   		<a ng-click="deleteExternalIdentifier($index)" class="glyphicon glyphicon-trash grey"></a>       			
        			</div>
-<<<<<<< HEAD
 			</div>													    
-=======
-
-			</div>     
-													    
->>>>>>> 32b318ae60af6bd5f301593b414926ef3713e525
 	        <#if RequestParameters['OldPersonal']??>	        
 				<p class="hoover-white-fonts">	       
 		       		<a href="<@spring.url '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a>
 		        </p>
 	        </#if>
-<<<<<<< HEAD
 		</div>
-=======
-			
-        </div>
->>>>>>> 32b318ae60af6bd5f301593b414926ef3713e525
     </div>
     <div class="col-md-9 right-aside">
         <div class="workspace-right">
@@ -269,11 +250,7 @@
         	</div>
         	<div class="workspace-accordion" id="workspace-accordion">        		
         		<!-- Personal Information -->
-<<<<<<< HEAD
-            	<div id="workspace-personal" class="workspace-accordion-item workspace-accordion-active" ng-controller="PersonalInfoCtrl">
-=======
 				<div id="workspace-personal" class="workspace-accordion-item workspace-accordion-active" ng-controller="PersonalInfoCtrl">
->>>>>>> 32b318ae60af6bd5f301593b414926ef3713e525
         			<div class="workspace-accordion-header">
         				<div class="row">
         					<div class="col-md-12 col-sm-12 col-xs-12">
