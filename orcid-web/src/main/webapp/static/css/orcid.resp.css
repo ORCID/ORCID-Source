@@ -1605,7 +1605,8 @@ a:hover {
 
 .workspace-toolbar{
     line-height: 30px;
-	margin-top: 15px;	
+	margin-top: 15px;
+	padding-left: 3px;	
 }
 
 .workspace-private-toolbar{
@@ -3125,7 +3126,6 @@ ul.personal-inf-display li:last-child{
 	left: 50%;
 }
 
-
 .more-info .popover.bottom .arrow{
 	left: 484px !important;
 }
@@ -3776,6 +3776,10 @@ p.orcid-id-container{
 	margin-top: 5px;
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 32b318ae60af6bd5f301593b414926ef3713e525
 /* New workspace styles */
 
 .manage-button{
@@ -3905,12 +3909,15 @@ ul.sort-menu-options li a:hover{
 	padding: 0;
 }
 
+<<<<<<< HEAD
 .works-date{
 	float:left;
 	display: block;
 	clear: both;
 }
 
+=======
+>>>>>>> 32b318ae60af6bd5f301593b414926ef3713e525
 .websites-edit, .keywords-edit, .other-names-edit {
 	background: #EFEFEF;
 	padding: 10px;
@@ -3971,7 +3978,9 @@ ul.sort-menu-options li a:hover{
 .country-controller span.edit-country,
 .keywords-controller span.edit-keywords,
 .other-names-controller span.edit-other-names,
-.websites-controller span.edit-websites {
+.websites-controller span.edit-websites,
+.name-controller span.edit-name,
+.biography-controller span.edit-biography{
 	font-size: 12px;
   	margin-bottom: 10px;
 }
@@ -4055,6 +4064,10 @@ ul.sort-menu-options li a:hover{
 .confirm-oauth-access .id-banner .id-banner-container ul.id-banner-dropdown,
 .confirm-oauth-access .id-banner .id-banner-container ul.id-banner-dropdown > li{
 		width: 100%;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 32b318ae60af6bd5f301593b414926ef3713e525
 }
 
 
@@ -4943,8 +4956,13 @@ ul.sort-menu-options li a:hover{
 	
 	.padding-fix{
 		padding: 15px;
+<<<<<<< HEAD
 	}	
 
+=======
+	}
+	
+>>>>>>> 32b318ae60af6bd5f301593b414926ef3713e525
 	.action-option{
 		width: 100%;
 	}
@@ -4958,7 +4976,8 @@ ul.sort-menu-options li a:hover{
 	}
 	
 	.workspace-accordion-header ul>li>a.action-option{
-		width: 33.33%;		
+		/* width: 33.33%; */
+		width: 50%;		
 		color: transparent;
 		overflow: hidden;		
 		padding: 15px 0;
@@ -5008,8 +5027,22 @@ ul.sort-menu-options li a:hover{
 	.id-banner .id-banner-container ul.id-banner-dropdown,
 	.id-banner .id-banner-container ul.id-banner-dropdown > li{
 		width: 100%;
+<<<<<<< HEAD
 	}	
 
+=======
+	}
+	
+	.more-info{
+		margin-left: 5px;
+	}
+	
+	.work-title,
+	.work-title a.toggle-text{
+		width:100%;
+	}
+	
+>>>>>>> 32b318ae60af6bd5f301593b414926ef3713e525
 }
 
 @media (min-width : 768px) and (max-width : 991px) { /* Tablet */

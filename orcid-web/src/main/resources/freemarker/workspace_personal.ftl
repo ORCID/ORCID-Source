@@ -19,7 +19,7 @@
 <#escape x as x?html>
    	<div class="biography-controller" ng-controller="BiographyCtrl">
    			<strong ng-click="toggleEdit()">${springMacroRequestContext.getMessage("manage_bio_settings.labelbiography")}</strong>
-   			<span class="glyphicon glyphicon-pencil edit-country edit-option" ng-click="toggleEdit()" ng-hide="showEdit == true" title=""></span><br />
+   			<span class="glyphicon glyphicon-pencil edit-biography edit-option" ng-click="toggleEdit()" ng-hide="showEdit == true" title=""></span><br />
    			<div style="white-space: pre-wrap" ng-hide="showEdit == true" ng-bind="biographyForm.biography.value" ng-click="toggleEdit()"></div>
    			<div ng-hide="showEdit == false"  class="biography-edit" ng-cloak>
    				<div class="row">

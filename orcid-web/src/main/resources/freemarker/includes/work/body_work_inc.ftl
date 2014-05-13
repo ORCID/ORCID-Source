@@ -20,16 +20,15 @@
     <li class="bottom-margin-small" ng-repeat="work in worksSrvc.works | orderBy:['-dateSortString', 'workTitle.title.value']">        
 		<div class="row"> 
 			<!-- Info -->
-			<div class="col-md-8 col-sm-8">
+			<div class="col-md-8 col-sm-8 col-xs-12">
 		        <h3 class="work-title">
-		        	<strong ng-bind="work.workTitle.title.value"></strong><span class="work-subtitle" ng-show="work.workTitle.subtitle.value" ng-bind="':&nbsp;'.concat(work.workTitle.subtitle.value)"></span>		        	
+		        	<strong ng-bind="work.workTitle.title.value"></strong><span class="work-subtitle" ng-show="work.workTitle.subtitle.value" ng-bind="':&nbsp;'.concat(work.workTitle.subtitle.value)"></span>
+		        	(<span ng-show="work.publicationDate.year">{{work.publicationDate.year}}</span><span ng-show="work.publicationDate.month">-{{work.publicationDate.month}}</span>)		        	
 		        </h3>
-		        <div class="works-date">
-		        	<span ng-show="work.publicationDate.year">{{work.publicationDate.year}}</span><span ng-show="work.publicationDate.month">-{{work.publicationDate.month}}</span>
-		        </div>		        
+		        		        
 	        </div>
 	        <!-- Settings -->
-	        <div class="col-md-4 col-sm-4 workspace-toolbar">
+	        <div class="col-md-4 col-sm-4 col-xs-12 workspace-toolbar">
 	        	<!-- More info -->	        					
 	        	<#include "work_more_info_inc.ftl"/>
 	        	<#if !(isPublicProfile??)>

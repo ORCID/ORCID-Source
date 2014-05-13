@@ -50,6 +50,10 @@
     <div class="col-md-3 lhs left-aside">
     	<div class="workspace-profile">
             <#include "includes/id_banner.ftl"/>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 32b318ae60af6bd5f301593b414926ef3713e525
 	       	<div class="other-names-box">
 		       	<div ng-controller="OtherNamesCtrl" class="other-names-controller">
 		        	<div>
@@ -200,6 +204,10 @@
 		           </div>
 		       	</div>
 	       	</div>
+<<<<<<< HEAD
+=======
+	       	
+>>>>>>> 32b318ae60af6bd5f301593b414926ef3713e525
        		<div ng-controller="ExternalIdentifierCtrl" ng-hide="!externalIdentifiersPojo.externalIdentifiers.length" ng-cloak>	       			
        			<p><strong><@orcid.msg 'public_profile.labelOtherIDs'/></strong></p>
        			<div ng-repeat='externalIdentifier in externalIdentifiersPojo.externalIdentifiers'>
@@ -207,13 +215,24 @@
 		        	<span ng-show="externalIdentifier.externalIdUrl"><a href="{{externalIdentifier.externalIdUrl.value}}" target="_blank">{{externalIdentifier.externalIdCommonName.content}} {{externalIdentifier.externalIdReference.content}}</a></span>
 			   		<a ng-click="deleteExternalIdentifier($index)" class="glyphicon glyphicon-trash grey"></a>       			
        			</div>
+<<<<<<< HEAD
 			</div>													    
+=======
+
+			</div>     
+													    
+>>>>>>> 32b318ae60af6bd5f301593b414926ef3713e525
 	        <#if RequestParameters['OldPersonal']??>	        
 				<p class="hoover-white-fonts">	       
 		       		<a href="<@spring.url '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a>
 		        </p>
 	        </#if>
+<<<<<<< HEAD
 		</div>
+=======
+			
+        </div>
+>>>>>>> 32b318ae60af6bd5f301593b414926ef3713e525
     </div>
     <div class="col-md-9 right-aside">
         <div class="workspace-right">
@@ -221,9 +240,7 @@
                 <div class="alert alert-info" ng-show="showAddAlert()" ng-cloak><strong><@orcid.msg 'workspace.addinformationaboutyou'/></strong></div>
                 <!-- Summary 
         		<div class="row">
-        			
-        			
-	        		<div class="workspace-overview col-md-3 col-sm-3 col-xs-6" id="works-overview">
+        			<div class="workspace-overview col-md-3 col-sm-3 col-xs-6" id="works-overview">
 	        			<a href="#workspace-publications" class="overview-count" ng-click="workspaceSrvc.openWorks()"><span ng-bind="worksSrvc.works.length"></span></a>
 	        			<a href="#workspace-publications" class="overview-title" ng-click="workspaceSrvc.openWorks()"><@orcid.msg 'workspace.Works'/></a>
 	                    <br />	                    	
@@ -249,16 +266,17 @@
         			</div>
 	        	</div>
 	        	 -->
-	        	 <!-- Personal information will be here now -->
-	        	 
-	        	 
         	</div>
         	<div class="workspace-accordion" id="workspace-accordion">        		
         		<!-- Personal Information -->
+<<<<<<< HEAD
             	<div id="workspace-personal" class="workspace-accordion-item workspace-accordion-active" ng-controller="PersonalInfoCtrl">
+=======
+				<div id="workspace-personal" class="workspace-accordion-item workspace-accordion-active" ng-controller="PersonalInfoCtrl">
+>>>>>>> 32b318ae60af6bd5f301593b414926ef3713e525
         			<div class="workspace-accordion-header">
         				<div class="row">
-        					<div class="col-md-6 col-sm-6 col-xs-12">
+        					<div class="col-md-12 col-sm-12 col-xs-12">
 		 			   			<a href="" ng-click="toggleDisplayInfo($event)" class="toggle-text">
 		  			   				<i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':displayInfo==false}"></i>  			   			
 		 			   				<@orcid.msg 'workspace.personal_information'/>
@@ -267,11 +285,6 @@
         			        		</#if>
 		 			   			</a>
 	 			   			</div>
-	 			   			<div class="col-md-6 col-sm-6 col-xs-12 action-button-bar" ng-show="displayInfo">
-		   			   			<a href="<@spring.url '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="action-option manage-button">
-		   			   				<span class="glyphicon glyphicon-pencil"></span><@orcid.msg 'workspace.Update'/>
-		   			   			</a>
-		   			   		</div>
    			   			</div>
         			</div>
             		<div class="workspace-accordion-content" ng-show="displayInfo">
@@ -295,6 +308,7 @@
 			       				</div>
 			       			</div>	
 			       			<div class="col-md-10 col-sm-10 col-xs-12 action-button-bar" ng-show="workspaceSrvc.displayWorks">
+			       				<!-- 
 			       				<div class="sort-menu-container">
 				       				<a class="action-option manage-button sort-menu" ng-click="">
 										<span class="glyphicon glyphicon-sort"></span>							
@@ -307,13 +321,16 @@
 										<li><a href="">Source <span class=""></span></a></li>
 									</ul>
 								</div>
+								 -->
 		                		<ul class="works-menu">
+		                			<!-- 
 			        				<li>
 			        					<a href="" class="action-option manage-button" ng-click="">
 											<span class="glyphicon glyphicon-cog"></span>
 											Manage View
 										</a>	        				
 			        				</li>
+			        				 -->
 			        				<li>
 				        				<a href="" class="action-option manage-button" ng-click="addWorkModal()">
 											<span class="glyphicon glyphicon-plus"></span>
