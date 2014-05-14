@@ -131,7 +131,7 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
      * @return a list of all profile fundings where the amount is not null
      * */
     public List<ProfileFundingEntity> getProfileFundingWithAmount() {
-        TypedQuery<ProfileFundingEntity> query = entityManager.createQuery("from ProfileFundingEntity where amount is not null", ProfileFundingEntity.class);
+        TypedQuery<ProfileFundingEntity> query = entityManager.createQuery("from ProfileFundingEntity where amount is not null and numeric_amount is null", ProfileFundingEntity.class);
         return query.getResultList();
     }
 }
