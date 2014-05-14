@@ -97,12 +97,7 @@
                 <span ng-hide="showEdit == true" ng-click="toggleEdit()">
 	                <span ng-show="countryForm != null && countryForm.iso2Country != null" ng-bind="countryForm.iso2Country.value">
 	                </span>
-                    
-	                <span ng-show="countryForm != null && countryForm.iso2Country == null" ng-cloak>
-	                   <@spring.message "workspace.select_country"/>
-	                </span>
-	                
-               </span>
+	            </span>
                
                <div ng-show="showEdit == true" ng-cloak class="country-edit">
                	  <@orcid.privacyToggle  angularModel="countryForm.profileAddressVisibility.visibility"
