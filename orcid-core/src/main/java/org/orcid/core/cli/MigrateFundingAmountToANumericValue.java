@@ -28,6 +28,8 @@ import org.orcid.persistence.dao.ProfileFundingDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.transaction.TransactionStatus;
@@ -41,6 +43,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  */
 public class MigrateFundingAmountToANumericValue {
     
+    private static final Logger LOGGER = LoggerFactory.getLogger(MigrateFundingAmountToANumericValue.class);
     private ProfileFundingDao profileFundingDao;
     private TransactionTemplate transactionTemplate;
     
@@ -51,7 +54,7 @@ public class MigrateFundingAmountToANumericValue {
         transactionTemplate = (TransactionTemplate) context.getBean("transactionTemplate");
     }
     
-    public void process() {
+    public void execute() {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus status) {
@@ -61,7 +64,15 @@ public class MigrateFundingAmountToANumericValue {
                     String currencyCode = entity.getCurrencyCode();
                     ProfileEntity profile = entity.getProfile();
                     Locale locale = getLocaleFromProfile(profile);
-                    
+                    String fixedAmount = fixAmount(amount);
+                    try {
+                        BigDecimal bigDecimal = getAmountAsBigDecimal(fixedAmount, currencyCode, locale);
+                        LOGGER.info("FROM: " + amount + " TO: " + fixedAmount + " BigDecimal: " + bigDecimal);
+                        entity.setNumericAmount(bigDecimal);
+                        profileFundingDao.merge(entity);
+                    } catch (Exception e) {
+                        LOGGER.error("Exception migrating: " + entity.getProfile().getId() + ", " + amount + " = " + fixedAmount);                        
+                    }
                 }
             }
         });
@@ -134,16 +145,16 @@ public class MigrateFundingAmountToANumericValue {
         return amount;
     }
     
+    public void finish() {
+        LOGGER.info("PROCESS FINISHED");
+        System.exit(0);
+    }
+    
     public static void main(String[] args) {
-        MigrateFundingAmountToANumericValue a = new MigrateFundingAmountToANumericValue();
-        System.out.println(a.fixAmount("1.000.000"));
-        System.out.println(a.fixAmount("18 000"));
-        System.out.println(a.fixAmount("1 000 000"));
-        System.out.println(a.fixAmount("$500"));
-        System.out.println(a.fixAmount(" $500 "));
-        System.out.println(a.fixAmount("10.000.000:00"));
-        System.out.println(a.fixAmount("10.000.000"));
-        System.out.println(a.fixAmount("10,000,000"));
+        MigrateFundingAmountToANumericValue process = new MigrateFundingAmountToANumericValue();
+        process.init();
+        process.execute();  
+        process.finish();
     }
 }
 
