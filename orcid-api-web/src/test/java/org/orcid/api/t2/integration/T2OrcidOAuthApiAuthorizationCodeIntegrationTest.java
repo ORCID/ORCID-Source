@@ -437,7 +437,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         funding.setVisibility(Visibility.PUBLIC);
         Amount amount = new Amount();
         amount.setCurrencyCode("CRC");
-        amount.setContent("1.250.000");
+        amount.setContent("1,250,000");
         funding.setAmount(amount);
         funding.setStartDate(new FuzzyDate(2010, 1, 1));
         funding.setEndDate(new FuzzyDate(2013, 1, 1));
@@ -496,7 +496,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         funding.setVisibility(Visibility.PUBLIC);
         Amount amount = new Amount();
         amount.setCurrencyCode("CRC");
-        amount.setContent("1.250.000");
+        amount.setContent("1,250,000");
         funding.setAmount(amount);
         funding.setStartDate(new FuzzyDate(2010, 1, 1));
         funding.setEndDate(new FuzzyDate(2013, 1, 1));
