@@ -16,12 +16,11 @@
  */
 package org.orcid.frontend.web.forms.validate;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-
 import org.apache.commons.validator.routines.DomainValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xbill.DNS.Lookup;
+import org.xbill.DNS.TextParseException;
 
 /**
  * 
@@ -32,30 +31,24 @@ public class OrcidDomainValidator {
 
     private DomainValidator standardDomainValidator = DomainValidator.getInstance();
 
-    private static final String DNS_TEST_DOMAIN = "google.com";
-
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidDomainValidator.class);
 
     public boolean isValid(String hostLocation) {
-        if (isDnsOk()) {
-            return isValidInDns(hostLocation);
-        } else {
+        try {
+            Lookup lookup = new Lookup(hostLocation);
+            lookup.run();
+            int result = lookup.getResult();
+            if (Lookup.SUCCESSFUL == result) {
+                return true;
+            }
+            if (Lookup.HOST_NOT_FOUND == result || Lookup.TYPE_NOT_FOUND == result) {
+                return false;
+            }
             LOGGER.warn("DNS is not OK, so validating in offline mode");
             return standardDomainValidator.isValid(hostLocation);
-        }
-    }
-
-    private boolean isValidInDns(String hostLocation) {
-        try {
-            InetAddress.getByName(hostLocation);
-            return true;
-        } catch (UnknownHostException e) {
+        } catch (TextParseException e) {
             return false;
         }
-    }
-
-    private boolean isDnsOk() {
-        return isValidInDns(DNS_TEST_DOMAIN);
     }
 
     public static void main(String[] args) {
