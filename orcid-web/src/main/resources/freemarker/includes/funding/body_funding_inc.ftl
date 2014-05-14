@@ -20,7 +20,7 @@
 	<li class="bottom-margin-small" ng-repeat="funding in fundingSrvc.fundings |  orderBy:['-dateSortString', 'affiliationName']"> 
 		<div class="row">        			
 			<!-- Information -->
-			<div class="col-md-8 col-sm-8">
+			<div class="col-md-9 col-sm-9">
 				<h3 class="funding-title">
 					<strong ng-show="funding.fundingTitle.title.value">{{funding.fundingTitle.title.value}}:</strong>
 					<span class="funding-name" ng-bind-html="funding.fundingName.value"></span>
@@ -40,8 +40,10 @@
 				</h3>
 			</div>			
 			<!-- Privacy Settings -->
-	        <div class="col-md-4 col-sm-4 workspace-toolbar">
-	        	<#include "funding_more_info_inc.ftl"/>
+	        <div class="col-md-3 col-sm-3 workspace-toolbar">
+	        	
+	        	
+	        	
 	        	<#if !(isPublicProfile??)>
 	        		<a href ng-click="deleteFunding(funding)" class="glyphicon glyphicon-trash grey"></a>
 	        		<ul class="workspace-private-toolbar">
@@ -54,7 +56,18 @@
 		        	</ul>
 		        </#if>
 			</div>
-		</div>		
+		</div>				
+		<div ng-show="moreInfo[funding.putCode.value]">			
+			<#include "funding_more_info_inc.ftl"/>
+		</div>
+		<div class="row">
+			<div class="col-md-12 col-sm-12 col-xs-12">
+				<div class="show-more-info-tab">			
+					<a href="" ng-show="!moreInfo[funding.putCode.value]" ng-click="moreInfoMouseClick(funding.putCode.value,$event);" class=""><span class="glyphicon glyphicon-chevron-down"></span><@orcid.msg 'manage.developer_tools.show_details'/></a>
+					<a href="" ng-show="moreInfo[funding.putCode.value]" ng-click="moreInfoMouseClick(funding.putCode.value,$event);" class="ng-hide"><span class="glyphicon glyphicon-chevron-up"></span><@orcid.msg 'manage.developer_tools.hide_details'/></a>
+				</div>
+			</div>		
+		</div>	
 	</li>
 </ul>
 <div ng-show="fundingSrvc.loading == true;" class="text-center">

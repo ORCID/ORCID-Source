@@ -71,7 +71,7 @@
 		</div>
 	</div>
 	<!-- Affiliations -->
-	<!-- It section still requires styling -->
+	<!-- This section still requires styling -->
 	<div ng-show='affiliationsSrvc.affiliations.length != 0' id="workspace-affiliations" class="workspace-accordion-item workspace-accordion-active" ng-cloak>	
 		<div class="workspace-accordion-header">
 			<div class="row">

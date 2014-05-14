@@ -1593,9 +1593,8 @@ a:hover {
 	font-size: 16px;
 } 
 
-.more-info{
-	float: left;
-    width: 33px;
+.more-info{	
+    width: 100%;
 }
 
 .more-info .ng-binding{
@@ -3128,7 +3127,7 @@ ul.personal-inf-display li:last-child{
 }
 
 .more-info .popover.bottom .arrow{
-	left: 484px !important;
+	left: 474px !important;
 }
 
 .more-info .lightbox-container{
@@ -4064,6 +4063,37 @@ ul.sort-menu-options li a:hover{
 	padding-right: 14px;
 }
 
+.show-more-info-tab{
+	display: block;
+	width: 100%;
+	text-align: center;
+	margin-top: 10px;
+	border-bottom: 1px solid #C3C3C3;
+	padding-bottom: 23px;
+	height: 20px;
+}
+
+.show-more-info-tab a{
+	color: #FFF;
+	background: #949599;
+	padding: 2px 15px;
+}
+
+.show-more-info-tab a span{
+	font-size: 12px;
+	margin-right: 5px;
+}
+
+.show-more-info-tab a:hover{
+	background-color: #A6CE39;
+	color: #FFF;
+}
+
+.more-info #ajax-loader{
+	text-align: center;
+	margin:0 auto;
+	display: block;
+}
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
@@ -4554,11 +4584,11 @@ ul.sort-menu-options li a:hover{
 	}
 	
 	#workspace-accordion .popover-help-container .popover{
-		left:-134px !important;
+		left:-105px !important;
 	}
 	
 	#workspace-accordion .popover-help-container .arrow{
-		left: 145px !important;
+		left: 117px !important;
 	}		
 
 	.public-profile .popover-help-container .popover{
@@ -4707,7 +4737,7 @@ ul.sort-menu-options li a:hover{
 	/* Work List*/
 	.more-info-container{		
 		max-width:100%;
-		left:0;		
+		left:4px;		
 	}
 
 	.more-info .popover.bottom .arrow{
@@ -4855,7 +4885,7 @@ ul.sort-menu-options li a:hover{
 	}
 	
 	.work-more-info-container{
-		left: 0;
+		left: 4px;
 		width: 100%;		
 	}
 	

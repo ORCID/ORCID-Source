@@ -268,7 +268,7 @@
             			<#include "workspace_personal.ftl"/>
         			</div>
             	</div>
-            	<!-- Affiliations -->
+            	<!-- Affiliations / Education  -->
                 <#include "workspace_affiliations_body_list.ftl"/>
                 <!-- Fundings -->
                	<#include "workspace_fundings_body_list.ftl"/>
