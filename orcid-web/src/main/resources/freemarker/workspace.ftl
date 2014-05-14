@@ -195,13 +195,12 @@
 		           </div>
 		       	</div>
 	       	</div>
-	       	
        		<div ng-controller="ExternalIdentifierCtrl" ng-hide="!externalIdentifiersPojo.externalIdentifiers.length" ng-cloak>	       			
        			<p><strong><@orcid.msg 'public_profile.labelOtherIDs'/></strong></p>
        			<div ng-repeat='externalIdentifier in externalIdentifiersPojo.externalIdentifiers'>
-		        			<span ng-hide="externalIdentifier.externalIdUrl">{{externalIdentifier.externalIdCommonName.content}} {{externalIdentifier.externalIdReference.content}}</span>
-		        			<span ng-show="externalIdentifier.externalIdUrl"><a href="{{externalIdentifier.externalIdUrl.value}}" target="_blank">{{externalIdentifier.externalIdCommonName.content}} {{externalIdentifier.externalIdReference.content}}</a></span>
-			   				<a ng-click="deleteExternalIdentifier($index)" class="glyphicon glyphicon-trash grey"></a>       			
+		        	<span ng-hide="externalIdentifier.externalIdUrl">{{externalIdentifier.externalIdCommonName.content}} {{externalIdentifier.externalIdReference.content}}</span>
+		        	<span ng-show="externalIdentifier.externalIdUrl"><a href="{{externalIdentifier.externalIdUrl.value}}" target="_blank">{{externalIdentifier.externalIdCommonName.content}} {{externalIdentifier.externalIdReference.content}}</a></span>
+			   		<a ng-click="deleteExternalIdentifier($index)" class="glyphicon glyphicon-trash grey"></a>       			
        			</div>
 			</div>													    
 	        <#if RequestParameters['OldPersonal']??>	        
@@ -209,16 +208,15 @@
 		       		<a href="<@spring.url '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a>
 		        </p>
 	        </#if>
-			
-        </div>
+		</div>
     </div>
     <div class="col-md-9 right-aside">
         <div class="workspace-right">
         	<div class="workspace-inner workspace-header" ng-controller="WorkspaceSummaryCtrl">
                 <div class="alert alert-info" ng-show="showAddAlert()" ng-cloak><strong><@orcid.msg 'workspace.addinformationaboutyou'/></strong></div>
+                <!-- Summary 
         		<div class="row">
-        			<!-- Works -->
-	        		<div class="workspace-overview col-md-3 col-sm-3 col-xs-6" id="works-overview">
+        			<div class="workspace-overview col-md-3 col-sm-3 col-xs-6" id="works-overview">
 	        			<a href="#workspace-publications" class="overview-count" ng-click="workspaceSrvc.openWorks()"><span ng-bind="worksSrvc.works.length"></span></a>
 	        			<a href="#workspace-publications" class="overview-title" ng-click="workspaceSrvc.openWorks()"><@orcid.msg 'workspace.Works'/></a>
 	                    <br />	                    	
@@ -243,55 +241,92 @@
         				<a href="#workspace-employments" class="btn-update no-icon" ng-click="workspaceSrvc.openFunding()"><@orcid.msg 'workspace.view'/></a>
         			</div>
 	        	</div>
+	        	 -->
         	</div>
-        	<div class="workspace-accordion" id="workspace-accordion">
+        	<div class="workspace-accordion" id="workspace-accordion">        		
         		<!-- Personal Information -->
-        	   <div id="workspace-personal" class="workspace-accordion-item workspace-accordion-active" ng-controller="PersonalInfoCtrl">
-        			<div class="workspace-accordion-header" style="position: relative;">
-        			   <ul class="personal-inf-display">        			   		
-        			   		<li>
-        			   			<a href="" ng-click="toggleDisplayInfo()" class="toggle-text">
-	        			   			<i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':displayInfo==false}"></i></a>
-	        			   		</a>
-        			   			<a href="" ng-click="toggleDisplayInfo()" class="toggle-text"><@orcid.msg 'workspace.personal_information'/></a></li>
-        			   		<#if RequestParameters['OldPersonal']??>	        
-        			   		   <li><a href="<@spring.url '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a></li>        			   		
-        			        </#if>
-        			   </ul>
+				<div id="workspace-personal" class="workspace-accordion-item workspace-accordion-active" ng-controller="PersonalInfoCtrl">
+        			<div class="workspace-accordion-header">
+        				<div class="row">
+        					<div class="col-md-12 col-sm-12 col-xs-12">
+		 			   			<a href="" ng-click="toggleDisplayInfo($event)" class="toggle-text">
+		  			   				<i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':displayInfo==false}"></i>  			   			
+		 			   				<@orcid.msg 'workspace.personal_information'/>
+		 			   				<#if RequestParameters['OldPersonal']??>	        
+        			   		   			<a href="<@spring.url '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a>        			   		
+        			        		</#if>
+		 			   			</a>
+	 			   			</div>
+   			   			</div>
         			</div>
             		<div class="workspace-accordion-content" ng-show="displayInfo">
             			<#include "workspace_personal.ftl"/>
         			</div>
             	</div>
-            	<!-- Affiliations -->
+            	<!-- Affiliations / Education  -->
                 <#include "workspace_affiliations_body_list.ftl"/>
                 <!-- Fundings -->
                	<#include "workspace_fundings_body_list.ftl"/>
 		        <!-- Works -->                
                 <div id="workspace-publications" class="workspace-accordion-item workspace-accordion-active" ng-controller="WorkCtrl">
                 	<div class="workspace-accordion-header">
-                		<ul class="personal-inf-display">
-                			<li>
-		        				<a href="" ng-click="workspaceSrvc.toggleWorks()" class="toggle-text">
-		        			       <i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayWorks==false}"></i>
-		        			    </a> 
-		        				<a href="" ng-click="workspaceSrvc.toggleWorks()" class="toggle-text"><@orcid.msg 'workspace.Works'/></a>
-		        			</li>		        			
-							<li>
-								<a class="label btn-primary" ng-click="showWorkImportWizard()"><@orcid.msg 'workspace.link_works'/></a>
-							</li>	
-							<li>
-								<a href="" class="label btn-primary" ng-click="addWorkModal()"><@orcid.msg 'manual_work_form_contents.add_work_manually'/></a>
-							</li>	
-						</ul>					
-					</div>
-					
+                		<div class="row">
+                			<div class="col-md-2 col-sm-2 col-xs-12">
+		                		<div class="work-title" ng-controller="WorkspaceSummaryCtrl">
+			                		<a href="" ng-click="workspaceSrvc.toggleWorks($event)" class="toggle-text">
+				       			       <i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayWorks==false}"></i>
+				       			       <@orcid.msg 'workspace.Works'/> (<span ng-bind="worksSrvc.works.length"></span>)
+				       			    </a>
+			       				</div>
+			       			</div>	
+			       			<div class="col-md-10 col-sm-10 col-xs-12 action-button-bar" ng-show="workspaceSrvc.displayWorks">
+			       				 <!--
+			       				<div class="sort-menu-container">
+			       					 
+				       				<a class="action-option manage-button sort-menu" ng-click="">
+										<span class="glyphicon glyphicon-sort"></span>							
+										<@orcid.msg ''/>Sort Items							
+									</a>
+									<ul class="sort-menu-options">
+										<li><a href="">Title <span class=""></span></a></li>
+										<li><a href="" class="checked">Data <span class="glyphicon glyphicon-ok pull-right"></span></a></li>
+										<li><a href="">Type <span class=""></span></a></li>
+										<li><a href="">Source <span class=""></span></a></li>
+									</ul>
+									
+								</div>
+								 -->
+		                		<ul class="works-menu">
+		                			<!-- 
+			        				<li>
+			        					<a href="" class="action-option manage-button" ng-click="">
+											<span class="glyphicon glyphicon-cog"></span>
+											Manage View
+										</a>	        				
+			        				</li>
+			        				 -->
+			        				<li>
+				        				<a href="" class="action-option manage-button" ng-click="addWorkModal()">
+											<span class="glyphicon glyphicon-plus"></span>
+											<@orcid.msg 'manual_work_form_contents.add_work_manually'/>
+										</a>
+			        				</li>
+			        				<li>
+				        				<a class="action-option manage-button" ng-click="showWorkImportWizard()">
+											<span class="glyphicon glyphicon-cloud-upload"></span>							
+											<@orcid.msg 'workspace.link_works'/>
+										</a>	        				
+			        				</li>
+								</ul>								
+							</div>
+						</div>					
+					</div>					 
       	            <div ng-show="workspaceSrvc.displayWorks" class="workspace-accordion-content">
 	            		<#include "includes/work/add_work_modal_inc.ftl"/>
 						<#include "includes/work/del_work_modal_inc.ftl"/>
 						<#include "includes/work/body_work_inc.ftl"/>
 	            	</div>
-	            	
+	            	 
             	</div>
             	
             	<#--
@@ -463,6 +498,5 @@
 		</div>
 		</div>
 	</#if>
-</script>
-	
+</script>	
 </@protected>

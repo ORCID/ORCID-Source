@@ -20,16 +20,18 @@
     <li class="bottom-margin-small" ng-repeat="work in worksSrvc.works | orderBy:['-dateSortString', 'workTitle.title.value']">        
 		<div class="row"> 
 			<!-- Info -->
-			<div class="col-md-8 col-sm-8">
+			<div class="col-md-9 col-sm-9 col-xs-12">
 		        <h3 class="work-title">
 		        	<strong ng-bind="work.workTitle.title.value"></strong><span class="work-subtitle" ng-show="work.workTitle.subtitle.value" ng-bind="':&nbsp;'.concat(work.workTitle.subtitle.value)"></span>
-		        	<span ng-show="work.publicationDate.year">{{work.publicationDate.year}}</span><span ng-show="work.publicationDate.month">-{{work.publicationDate.month}}</span>
-		        </h3> 
+		        	(<span ng-show="work.publicationDate.year">{{work.publicationDate.year}}</span><span ng-show="work.publicationDate.month">-{{work.publicationDate.month}}</span>)		        	
+		        </h3>
+		        		        
 	        </div>
 	        <!-- Settings -->
-	        <div class="col-md-4 col-sm-4 workspace-toolbar">
+	        <div class="col-md-3 col-sm-3 col-xs-12 workspace-toolbar">
 	        	<!-- More info -->	        					
-	        	<#include "work_more_info_inc.ftl"/>
+	        	
+	        	
 	        	<#if !(isPublicProfile??)>
 	        		<!-- Trash can -->
 					<a href ng-click="deleteWork(work.putCode.value)" class="glyphicon glyphicon-trash grey"></a>
@@ -48,7 +50,18 @@
 					</ul>				
 				</#if>				
 			</div>
-        </div>
+        </div>        
+       	
+       	<#include "work_more_info_inc.ftl"/>      
+        
+        <div class="row">
+			<div class="col-md-12 col-sm-12 col-xs-12">
+				<div class="show-more-info-tab">			
+					<a href="" ng-show="!moreInfo[work.putCode.value]" ng-click="moreInfoMouseClick(work.putCode.value,$event);"><span class="glyphicon glyphicon-chevron-down"></span><@orcid.msg 'manage.developer_tools.show_details'/></a>
+					<a href="" ng-show="moreInfo[work.putCode.value]" ng-click="moreInfoMouseClick(work.putCode.value,$event);"><span class="glyphicon glyphicon-chevron-up"></span><@orcid.msg 'manage.developer_tools.hide_details'/></a>
+				</div>
+			</div>
+		</div>
     </li><!-- bottom-margin-small -->
 </ul>
 <div ng-show="worksSrvc.loading == true" class="text-center" id="workSpinner">
@@ -57,7 +70,8 @@
     	<img src="${staticCdn}/img/spin-big.gif" width="85" height ="85"/>
     <![endif]-->
 </div>
-<div ng-show="worksSrvc.loading == false && works.length == 0" class="alert alert-info" ng-cloak>
+{{works.length}}
+<div ng-show="worksSrvc.loading == false && worksSrvc.works.length == 0" class="alert alert-info" ng-cloak>
     <strong><#if (publicProfile)?? && publicProfile == true>${springMacroRequestContext.getMessage("workspace_works_body_list.Nopublicationsaddedyet")}<#else>${springMacroRequestContext.getMessage("workspace_works_body_list.havenotaddedanyworks")} <a ng-click="addWorkModal()">${springMacroRequestContext.getMessage("workspace_works_body_list.addsomenow")}</a></#if></strong>
 </div>
     
