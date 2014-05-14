@@ -153,6 +153,10 @@
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>dnsjava</groupId>
+            <artifactId>dnsjava</artifactId>
+        </dependency>
 
         <!-- Test dependencies -->
         <dependency>
