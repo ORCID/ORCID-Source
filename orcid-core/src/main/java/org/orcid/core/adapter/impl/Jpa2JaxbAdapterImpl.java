@@ -21,7 +21,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Currency;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -101,8 +100,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
     @Resource(name = "defaultPermissionChecker")
     private PermissionChecker permissionChecker;
-    
-    
+        
     @Resource
     private LocaleManager localeManager;
 
@@ -429,7 +427,10 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }
 
     /**
-     * TODO
+     * Format a big decimal based on a locale
+     * @param bigDecimal
+     * @param currencyCode
+     * @return a string with the number formatted based on the locale
      * */
     private String formatAmountString(BigDecimal bigDecimal, String currencyCode) {
         NumberFormat numberFormat = NumberFormat.getNumberInstance(localeManager.getLocale());        

@@ -251,8 +251,6 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
         this.source = source;
     }
 
-    
-    
     @Column(name = "numeric_amount")
     public BigDecimal getNumericAmount() {
         return numericAmount;
@@ -261,9 +259,6 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
     public void setNumericAmount(BigDecimal numericAmount) {
         this.numericAmount = numericAmount;
     }
-    
-    
-    
     
     @Override
     public int compareTo(ProfileFundingEntity other) {

@@ -461,8 +461,9 @@ public class FundingsController extends BaseWorkspaceController {
             Number number = null;
             if(!PojoUtil.isEmpty(currencyCode))  {                    
                 Currency currency = Currency.getInstance(currencyCode);
-                String currencySymbol = currency.getSymbol();            
-                number = numberFormat.parse(amount.replace(currencySymbol, StringUtils.EMPTY), parsePosition);
+                String currencySymbol = currency.getSymbol();
+                amount = amount.replace(currencySymbol, StringUtils.EMPTY);
+                number = numberFormat.parse(amount, parsePosition);
             } else {
                 number = numberFormat.parse(amount, parsePosition);
             }
@@ -483,12 +484,18 @@ public class FundingsController extends BaseWorkspaceController {
         funding.getAmount().setErrors(new ArrayList<String>());        
         if (!PojoUtil.isEmpty(funding.getAmount())) {            
             String amount = funding.getAmount().getValue();  
-            String currencyCode = PojoUtil.isEmpty(funding.getCurrencyCode()) ? StringUtils.EMPTY : funding.getCurrencyCode().getValue();
-            try {                
-                getAmountAsBigDecimal(amount, currencyCode);        
-            } catch(Exception pe) {                
+            if(amount.startsWith(".") || amount.startsWith(",")) {
                 setError(funding.getAmount(), "Invalid.fundings.amount");
-            }
+            } else if(amount.endsWith(".") || amount.endsWith(",")) {
+                setError(funding.getAmount(), "Invalid.fundings.amount");
+            } else {
+                String currencyCode = PojoUtil.isEmpty(funding.getCurrencyCode()) ? StringUtils.EMPTY : funding.getCurrencyCode().getValue();
+                try {                
+                    getAmountAsBigDecimal(amount, currencyCode);        
+                } catch(Exception pe) {                
+                    setError(funding.getAmount(), "Invalid.fundings.amount");
+                }
+            }                        
         } else if(!PojoUtil.isEmpty(funding.getCurrencyCode())) {
             setError(funding.getAmount(), "Invalid.fundings.currency_not_empty");
         }

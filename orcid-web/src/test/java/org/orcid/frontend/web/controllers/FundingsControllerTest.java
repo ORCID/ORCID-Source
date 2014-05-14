@@ -19,9 +19,11 @@ package org.orcid.frontend.web.controllers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
@@ -99,26 +101,46 @@ public class FundingsControllerTest extends BaseControllerTest {
         String validAmounts[] = { "1", "10", "100", "1000", "10000", "100000", "1000000", "10000000", "100000000", "1000000000", "1.0", "1.00", "1,0", "1,00", "10.0",
                 "10,0", "10.00", "10,00", "100.0", "100.00", "100,0", "100,00", "1000.0", "1000.00", "1000,0", "1000,00", "10000.0", "10000.00", "10000,0", "10000,00",
                 "1.000", "1,000", "1,000.0", "1,000.00", "10,000", "10,000.0", "10,000.00", "100,000", "100,000.0", "100,000.00", "1,000,000", "1,000,000.0", "1,000,000.00", "10,000,000",
-                "10,000,000.0", "10,000,000.00", "100,000,000", "100,000,000.0", "100,000,000.00", "12345678901234567890", "1.000.000", "10.000.000", "100.000.000", "1.000.000.000", "1,650.00", "1,650,000" };
+                "10,000,000.0", "10,000,000.00", "100,000,000", "100,000,000.0", "100,000,000.00", "12345678901234567890", "1,650.00", "1,650,000" };
 
-        String invalidAmounts[] = {"a", "1a", "1000a", "1234567890a", "0.", ".0", "1 000", "18 000", "180 000 000", "100,000:00", "1,000.000", "10,000.000", "100,000.000", "1,000.000.000", "10,10,00", "1234,123,123"};
+        String invalidAmounts[] = {"a", "1a", "1000a", "1234567890a", "1,000,000.", "0.", ".0", "1 000", "18 000", "180 000 000", "100,000:00", "1,000.000.000"};
         
-        for (String amount : validAmounts) {
+        for (String amount : validAmounts) {            
             FundingForm form = new FundingForm();
             form.setAmount(Text.valueOf(amount));
             form = fundingController.validateAmount(form);
             assertNotNull(form.getAmount());
             assertNotNull(form.getAmount().getErrors());
-            assertEquals(form.getAmount().getErrors().size(), 0);
+            assertEquals("The following number has been marked as invalid: " + amount, form.getAmount().getErrors().size(), 0);
         }
-
+        
         for (String amount : invalidAmounts) {
             FundingForm form = new FundingForm();
             form.setAmount(Text.valueOf(amount));
             form = fundingController.validateAmount(form);
             assertNotNull(form.getAmount());
-            assertEquals(form.getAmount().getErrors().size(), 1);
+            assertEquals("The following incorrect number has been marked as valid: " + amount, form.getAmount().getErrors().size(), 1);
             assertEquals(form.getAmount().getErrors().get(0), "Amount should be a numeric value");
+        }
+        
+    }
+    
+    @Test
+    public void validateBigDecimalConversion() {
+        BigDecimal _1000 = new BigDecimal(1000);
+        String amounts[] = {"1000","$1000","1,000"};
+        for(String amount : amounts) {
+            System.out.println("Converting amount: " + amount);
+            try {
+            BigDecimal result = null;
+            if(amount.contains("€"))
+                result = fundingController.getAmountAsBigDecimal(amount, "EUR");
+            else 
+                result = fundingController.getAmountAsBigDecimal(amount, "USD");
+            assertEquals(result, _1000);
+            } catch(Exception e) {
+                fail();
+            }
         }
     }
     

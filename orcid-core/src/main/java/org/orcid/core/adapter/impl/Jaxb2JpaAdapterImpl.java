@@ -980,7 +980,11 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     }
     
     /**
-     * TODO
+     * Get an string amount and transform it into a BigDecimal object
+     * @param amount
+     * @param currencyCode
+     * @return BigDecimal 
+     * @throws any exception that happens trying to convert the string
      * */
     private BigDecimal getAmountAsBigDecimal(String amount, String currencyCode) throws Exception {
         try {      
@@ -1002,8 +1006,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             throw e;
         }
     }
-    
-    
+        
     /**
      * Get a list of GrantExternalIdentifierEntity from the external identifiers
      * @param profileGrantEntity
