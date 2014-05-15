@@ -2641,7 +2641,10 @@ header overrides
 
 .oauth-title span {
 	text-transform: capitalize;
+	font-weight: normal;
 	color: #a6ce39;
+	display: block;
+	font-size: 22px;		
 }
 
 .logo h1 {
@@ -3609,6 +3612,15 @@ p.orcid-id-container{
 	width:315px;
 }
 
+.oauth-title span.researcher-name{
+	color: #939598;
+	font-weight: bold;
+}
+
+.oauth-title span:last-of-type a{
+	font-size: 16px;	
+}
+
 .delegation-label{
 	float:right;
 	clear: both;
@@ -3739,14 +3751,29 @@ p.orcid-id-container{
 	margin-top: 5px;
 }
 
-.websites-edit {
+.websites-edit, .keywords-edit, .other-names-edit {
 	background: #EFEFEF;
 	padding: 10px;
 	margin-bottom: 10px;
 }
 
+.websites-edit, .keywords-edit, .other-names-edit, .names-edit {
+	background: #EFEFEF;
+	padding: 10px;
+	margin-bottom: 10px;
+}
+
+
 .websites-edit input {
 	width: 95px;
+}
+
+.keywords-edit input, .other-names-edit input {
+	width: 190px;
+}
+
+.keywords-edit #privacy-bar, .other-names-edit #privacy-bar, .names-edit #privacy-bar {
+	padding-bottom: 10px;
 }
 
 .country-edit {
@@ -3759,28 +3786,71 @@ p.orcid-id-container{
 	margin: 10px 0;
 }
 
+.biography-controller .edit-option:hover,
 .country-controller .edit-option:hover,
+.keywords-controller .edit-option:hover,
+.other-names-controller .edit-option:hover,
+.name-controller .edit-option:hover,
 .websites-controller .edit-option:hover {
 	cursor: pointer;
 	color: #a6ce39;
 }
 
-.country-controller span.edit-country,
-.websites-controller span.edit-country {
-	font-size: 12px;
+.biography-controller .biography-edit {
+    background: #EFEFEF;
+	padding: 10px;
+	margin-bottom: 10px;
+
 }
+
+.biography-controller textarea {
+	height: 120px;
+	width: 100%;
+}
+
+.country-controller span.edit-country,
+.keywords-controller span.edit-keywords,
+.other-names-controller span.edit-other-names,
+.websites-controller span.edit-websites {
+	font-size: 12px;
+  	margin-bottom: 10px;
+}
+
+/* Website edit */
+  
+ .websites-box,
+ .websites-box input{
+ 	margin: 10px 0 0 0;
+ }
+
+ .keywords-box, .keywords-box input,
+ .other-names-box, .other-names-box input {
+ 	margin: 10px 0 0 0; 	
+ }
+
+ .websites-box a.glyphicon-trash,
+ .keywords-box a.glyphicon-trash,
+ .other-names-box a.glyphicon-trash {
+ 	vertical-align: -7px;
+ }
 
 .country-controller #privacy-bar{
 	float: left;
 }
 
 .country-controller .popover-help-container .popover, 
-.websites-controller .popover-help-container .popover {
+.websites-controller .popover-help-container .popover,
+.name-controller .popover-help-container .popover,
+.keywords-controller .popover-help-container .popover,
+.other-names-controller .popover-help-container .popover {
 	left: -120px !important;
 }
 
 .country-controller .popover.bottom .arrow,
-.websites-controller .popover.bottom .arrow{
+.websites-controller .popover.bottom .arrow,
+.name-controller .popover.bottom .arrow,
+.keywords-controller .popover.bottom .arrow,
+.other-names-controller .popover.bottom .arrow{
 	left: 127px !important;
 }
 
@@ -3811,12 +3881,21 @@ p.orcid-id-container{
 	color: #9FC836;
 }
 
+.confirm-oauth-access .id-banner .id-banner-container div.id-banner-header{
+	background: #338caf;
+	padding: 5px;
+	color: #FFF;
+}
+
+.confirm-oauth-access .id-banner .id-banner-container div.id-banner-dropdown{
+	width: 100%;
+	padding: 0;
+}
+
 .confirm-oauth-access .id-banner .id-banner-container ul.id-banner-dropdown,
 .confirm-oauth-access .id-banner .id-banner-container ul.id-banner-dropdown > li{
 		width: 100%;
 }
-
-
 
 
 /* Media Queries */
@@ -4715,10 +4794,40 @@ p.orcid-id-container{
 		width: 100%;
 	}
 	
+	.other-names-edit input,
+	.keywords-edit input,
+	.websites-edit input{
+		width: 90%;
+	}
+	
+	.other-names-edit .glyphicon-plus,
+	.websites-edit .glyphicon-plus{
+		margin-top: 15px;
+	}
+	
+	.other-names-edit .glyphicon-plus,
+    .other-names-edit .glyphicon-trash,
+	.keywords-edit .glyphicon-plus,
+	.keywords-edit .glyphicon-trash,
+	.websites-edit .glyphicon-plus,
+	.websites-edit .glyphicon-trash{			
+		font-size: 20px;		
+	}
+	
+	.public-profile p{
+		margin-bottom: 15px;		
+	}
+	
+	
+	
 }
 
 @media (min-width : 768px) and (max-width : 991px) { /* Tablet */
 	/*Header*/
+	
+	.websites-box input{
+ 		width: 45% !important;
+	}
 	
 	.container .header .search form input[type='search'] {
 		width: 185px;

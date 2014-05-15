@@ -105,5 +105,8 @@ public class OtherNameManagerImpl implements OtherNameManager {
         for (String newOtherName : newOtherNames) {
             otherNameDao.addOtherName(orcid, newOtherName);
         }
+        if (otherNames.getVisibility() != null)
+            otherNameDao.updateOtherNamesVisibility(orcid, otherNames.getVisibility());
+
     }
 }

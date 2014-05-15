@@ -75,7 +75,6 @@ import org.orcid.jaxb.model.message.SendChangeNotifications;
 import org.orcid.jaxb.model.message.SendOrcidNews;
 import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.message.WorkVisibilityDefault;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.ProfileDao;
@@ -415,11 +414,7 @@ public class RegistrationController extends BaseController {
     @RequestMapping(value = "/registerGivenNamesValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     Registration registerGivenNameValidate(@RequestBody Registration reg) {
-        // validate given name isn't blank
-        reg.getGivenNames().setErrors(new ArrayList<String>());
-        if (reg.getGivenNames().getValue() == null || reg.getGivenNames().getValue().trim().isEmpty()) {
-            setError(reg.getGivenNames(), "NotBlank.registrationForm.givenNames");
-        }
+        super.givenNameValidate(reg.getGivenNames());
         return reg;
     }
 

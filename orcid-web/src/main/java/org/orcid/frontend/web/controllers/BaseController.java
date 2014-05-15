@@ -25,7 +25,6 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -53,6 +52,7 @@ import org.orcid.core.manager.StatisticsManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.frontend.web.forms.LoginForm;
+import org.orcid.frontend.web.forms.validate.OrcidUrlValidator;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Visibility;
@@ -69,9 +69,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.switchuser.SwitchUserGrantedAuthority;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -80,7 +78,7 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 public class BaseController {
     
     String[] urlValschemes = {"http","https", "ftp"}; // DEFAULT schemes = "http", "https", "ftp"
-    UrlValidator urlValidator = new UrlValidator(urlValschemes);
+    UrlValidator urlValidator = new OrcidUrlValidator(urlValschemes);
 
     private String devSandboxUrl;
 
@@ -557,7 +555,20 @@ public class BaseController {
     protected void setError(ErrorsInterface ei, String msg) {
         ei.getErrors().add(getMessage(msg));
     }
-    
+
+    protected void validateBiography(Text text) {
+        text.setErrors(new ArrayList<String>());
+        if (!PojoUtil.isEmpty(text.getValue())) {
+           // trim if required
+           if (!text.getValue().equals(text.getValue().trim())) 
+               text.setValue(text.getValue().trim());
+           
+           // check length
+           if (text.getValue().length() > 5000)
+              setError(text, "Length.changePersonalInfoForm.biography");
+        }
+    }
+
     protected void validateUrl(Text url) {
         url.setErrors(new ArrayList<String>());
         if (!PojoUtil.isEmpty(url.getValue())) {
@@ -581,6 +592,15 @@ public class BaseController {
            }
         }
     }
+    
+    void givenNameValidate(Text givenName) {
+        // validate given name isn't blank
+        givenName.setErrors(new ArrayList<String>());
+        if (givenName.getValue() == null || givenName.getValue().trim().isEmpty()) {
+            setError(givenName, "NotBlank.registrationForm.givenNames");
+        }
+    }
+
 
 
     @ModelAttribute("searchBaseUrl")

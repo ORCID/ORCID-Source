@@ -406,6 +406,10 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         }
 
     }
+    
+    public boolean exists(String orcid) {
+        return profileDao.exists(orcid);
+    }
 
     /**
      * Add source to the fundings
@@ -858,33 +862,6 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
     @Override
     @Transactional
-    public OrcidProfile updatePersonalInformation(OrcidProfile updatedOrcidProfile) {
-        OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcidIdentifier().getPath());
-
-        if (existingProfile == null) {
-            return null;
-        }
-
-        orcidJaxbCopyManager.copyUpdatedBioToExistingWithVisibility(existingProfile.getOrcidBio(), updatedOrcidProfile.getOrcidBio());
-        orcidJaxbCopyManager.copyUpdatedWorksPreservingVisbility(existingProfile.retrieveOrcidWorks(), updatedOrcidProfile.retrieveOrcidWorks());
-        return updateOrcidProfile(existingProfile);
-    }
-
-    @Override
-    @Transactional
-    public OrcidProfile updateOrcidHistory(OrcidProfile updatedOrcidProfile) {
-        OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcidIdentifier().getPath());
-
-        if (existingProfile == null) {
-            return null;
-        }
-        orcidJaxbCopyManager.copyRelevantUpdatedHistoryElements(existingProfile.getOrcidHistory(), updatedOrcidProfile.getOrcidHistory());
-        orcidJaxbCopyManager.copyUpdatedBioToExistingWithVisibility(existingProfile.getOrcidBio(), updatedOrcidProfile.getOrcidBio());
-        return updateOrcidProfile(existingProfile);
-    }
-
-    @Override
-    @Transactional
     public OrcidProfile updateAffiliations(OrcidProfile updatedOrcidProfile) {
         OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcidIdentifier().getPath());
         if (existingProfile == null) {
@@ -1002,6 +979,27 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         profileDao.updateCountry(orcidProfile.getOrcidIdentifier().getPath(), orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().getValue(),
                 orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().getVisibility());
     }
+    
+    @Override
+    @Transactional
+    public void updateBiography(OrcidProfile orcidProfile) {
+        profileDao.updateBiography(orcidProfile.getOrcidIdentifier().getPath(), orcidProfile.getOrcidBio().getBiography().getContent(), orcidProfile.getOrcidBio().getBiography().getVisibility());
+    }
+    
+    @Override
+    @Transactional
+    public void updateNames(OrcidProfile orcidProfile) {
+        String orcid = orcidProfile.getOrcidIdentifier().getPath();
+        PersonalDetails pd = orcidProfile.getOrcidBio().getPersonalDetails();
+        String givenNames = pd.getGivenNames() != null ? pd.getGivenNames().getContent() : null;
+        String familyName = pd.getFamilyName() != null ? pd.getFamilyName().getContent() : null;
+        String creditName = pd.getCreditName() != null ? pd.getCreditName().getContent() : null;
+        Visibility creditNameVisibility =  pd.getCreditName() != null ? pd.getCreditName().getVisibility() : null;
+        
+        profileDao.updateNames(orcid, givenNames, familyName, creditName, creditNameVisibility);
+    }
+    
+
 
     @Override
     @Transactional

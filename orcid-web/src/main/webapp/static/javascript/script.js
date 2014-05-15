@@ -200,6 +200,20 @@ function trimAjaxFormText(pojoMember) {
 	  pojoMember.value = pojoMember.value.trim();
 }
 
+function logOffReload() {
+	$.ajax({
+        url: baseUrl + 'userStatus.json?logUserOut=true',
+        type: 'GET',
+        dataType: 'json',
+        success: function(data) {
+        	window.location.reload();
+        }
+	}).fail(function() { 
+    	// something bad is happening!
+    	window.location.reload();
+    });
+};
+
 
 // jquery ready
 $(function () {
@@ -1012,8 +1026,7 @@ function getWindowWidth() {
 	else {
 		if (document.documentElement && document.documentElement.clientWidth) {
 			windowWidth = document.documentElement.clientWidth;
-		}
-		else {
+		} else {
 			if (document.body && document.body.clientWidth) {
 				windowWidth = document.body.clientWidth;
 			}
@@ -1021,3 +1034,13 @@ function getWindowWidth() {
 	}
 	return windowWidth;
 };
+
+
+function tabletDesktopActionButtons($event){
+	var thisWidth = getWindowWidth();	
+	if(thisWidth >= 767){
+		$('.action-button-bar').addClass('tablet-desktop-display');
+	}else{ //Mobile
+		$('.action-button-bar').removeClass('tablet-desktop-display');		
+	}
+}

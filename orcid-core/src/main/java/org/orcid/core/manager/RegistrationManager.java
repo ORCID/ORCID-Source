@@ -28,8 +28,6 @@ import org.orcid.jaxb.model.message.OrcidProfile;
  */
 public interface RegistrationManager {
 
-    void verifyRegistration(OrcidProfile orcidProfile, URI baseUri);
-
     VerifyRegistrationToken parseEncyrptedParamsForVerification(String encryptedParams);
 
     void resetUserPassword(String toEmail, OrcidProfile orcidProfile, URI baseUri);

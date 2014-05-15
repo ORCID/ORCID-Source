@@ -47,7 +47,7 @@ public class MailGunManager {
     @Value("${com.mailgun.apiKey:key-3ax6xnjp29jd6fds4gc373sgvjxteol0}")
     private String apiKey;
     
-    @Value("${com.mailgun.apiUrl::https://api.mailgun.net/v2}")
+    @Value("${com.mailgun.apiUrl:https://api.mailgun.net/v2}")
     private String apiUrl;
 
     @Value("${com.mailgun.verify.apiUrl:https://api.mailgun.net/v2/samples.mailgun.org/messages}")

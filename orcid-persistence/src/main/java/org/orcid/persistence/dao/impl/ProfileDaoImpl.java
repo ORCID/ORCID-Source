@@ -318,6 +318,15 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     }
 
     @Override
+    public boolean exists(String orcid) {
+        TypedQuery<Long> query = entityManager.createQuery(
+                "select count(p.id) from ProfileEntity p where p.id = :orcid", Long.class);
+        query.setParameter("orcid", orcid);
+        Long result = query.getSingleResult();
+        return (result != null && result > 0);
+    }
+
+    @Override
     @Transactional
     public void updateIndexingStatus(String orcid, IndexingStatus indexingStatus) {
         String queryString = null;
@@ -500,7 +509,32 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         updateQuery.setParameter("profileAddressVisibility", StringUtils.upperCase(profileAddressVisibility.value()));
         updateQuery.executeUpdate();
     }
+    
+    @Override
+    @Transactional
+    public void updateBiography(String orcid, String biography, Visibility visibility) {
+        Query updateQuery = entityManager
+                .createQuery("update ProfileEntity set lastModified = now(), biography = :biography, biography_visibility = :visibility where orcid = :orcid");
+        updateQuery.setParameter("orcid", orcid);
+        updateQuery.setParameter("biography", biography);
+        updateQuery.setParameter("visibility", visibility == null ? null : StringUtils.upperCase(visibility.value()));
+        updateQuery.executeUpdate();
+    }
 
+    @Override
+    @Transactional
+    public void updateNames(String orcid, String givenNames, String familyName, String creditName, Visibility creditNameVisibility) {
+        Query updateQuery = entityManager
+                .createQuery("update ProfileEntity set lastModified = now(), family_name = :familyName, given_names = :givenNames, credit_name = :creditName, credit_name_visibility=:creditNameVisibility where orcid = :orcid");
+        updateQuery.setParameter("orcid", orcid);
+        updateQuery.setParameter("givenNames", givenNames);
+        updateQuery.setParameter("familyName", familyName);
+        updateQuery.setParameter("creditName", creditName);
+        updateQuery.setParameter("creditNameVisibility", creditNameVisibility == null ? null : StringUtils.upperCase(creditNameVisibility.value()));
+        updateQuery.executeUpdate();
+    }
+
+    
 
     /**
      * Return the list of profiles that belongs to the provided OrcidType

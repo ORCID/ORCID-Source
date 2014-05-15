@@ -88,7 +88,7 @@ public interface OrcidProfileManager {
      * @return the orcid profile with only the affiliations populated
      */
     OrcidProfile retrieveClaimedAffiliations(String orcid);
-    
+
     /**
      * Retrieves the orcid fundings given an identifier
      * 
@@ -97,7 +97,15 @@ public interface OrcidProfileManager {
      * @return the orcid profile with only the funding list populated
      */
     OrcidProfile retrieveClaimedFundings(String orcid);
-    
+
+    /**
+     * Returns true if ORCID exist.
+     * 
+     * @param orcid
+     * @return
+     */
+    public boolean exists(String orcid);
+
     /**
      * Retrieves the orcid works given an identifier
      * 
@@ -119,7 +127,7 @@ public interface OrcidProfileManager {
     OrcidProfile retrieveOrcidProfile(String orcid, LoadOptions loadOptions);
 
     OrcidProfile retrievePublicOrcidProfile(String orcid);
-    
+
     OrcidProfile retrievePublicOrcidProfileFromCache(String orcid, Date lastModifiedDate);
 
     /**
@@ -135,39 +143,20 @@ public interface OrcidProfileManager {
     OrcidProfile retrieveOrcidProfileWithNoInternal(String orcid);
 
     /**
-     * Overwrites the personal details, contact details, and external
-     * identifiers, keywords, subjects and short description in the DB with the
-     * values in the OrcidProfile object passed into the method.
-     * <p/>
-     * If the OrcidProfile param contains primary institution, affiliate
-     * institutions, or past institutions, they are just ignored.
-     * <p/>
-     * If the bio in the DB contains primary institution, affiliate institutions
-     * or past institutions, then the values in the DB are retained.
+     * Persist the country and country visibility
      * 
-     * @param orcidProfile
-     *            Profile containing the personal details, contact details and
-     *            identifiers to replace those in the DB.
-     */
-    OrcidProfile updatePersonalInformation(OrcidProfile orcidProfile);
-
-    /**
-     *  Persist the country and country visibility 
-     * 
-     *  * @param orcidProfile
-     *            Profile containing the personal details, contact details and
-     *            identifiers to replace those in the DB.
-
+     * * @param orcidProfile Profile containing the personal details, contact
+     * details and identifiers to replace those in the DB.
      */
     void updateCountry(OrcidProfile orcidProfile);
-    
+
     /**
-     * Overwrites the history of the of the profile.
+     * Persist the biography
      * 
-     * @param orcidProfile
-     * @return
+     * * @param orcidProfile Profile containing the personal details, contact
+     * details and identifiers to replace those in the DB.
      */
-    OrcidProfile updateOrcidHistory(OrcidProfile orcidProfile);
+    public void updateBiography(OrcidProfile orcidProfile);
 
     /**
      * Like {@link #updatePersonalInformation(OrcidProfile)}, but for primary
@@ -176,7 +165,7 @@ public interface OrcidProfileManager {
      * @see #updatePersonalInformation(OrcidProfile)
      */
     OrcidProfile updateAffiliations(OrcidProfile orcidProfile);
-    
+
     /**
      * Like {@link #updatePersonalInformation(OrcidProfile)}, but for primary
      * fundings and joint affiliation (not past institutions).
@@ -281,7 +270,7 @@ public interface OrcidProfileManager {
      * @return
      */
     void addAffiliations(OrcidProfile orcidProfile);
-    
+
     /**
      * Adds a new {@link org.orcid.jaxb.model.message.FundingList} to the
      * {@link} OrcidProfile} and returns the updated values
@@ -352,21 +341,24 @@ public interface OrcidProfileManager {
      * @param orcidProfile
      * @return
      */
-    
+
     public void processUnverifiedEmails7Days();
 
     OrcidProfile deactivateOrcidProfile(OrcidProfile orcidProfile);
-    
+
     /**
      * Reactivate a deactivated profile
+     * 
      * @param orcidProfile
-     * @return 
+     * @return
      * */
     OrcidProfile reactivateOrcidProfile(OrcidProfile orcidProfile);
 
     OrcidWorks dedupeWorks(OrcidWorks orcidWorks);
 
     OrcidProfile retrieveClaimedOrcidProfile(String orcid);
+
+    public void updateNames(OrcidProfile orcidProfile);
 
     Date retrieveLastModifiedDate(String orcid);
 
@@ -375,7 +367,7 @@ public interface OrcidProfileManager {
     void clearOrcidProfileCache();
 
     public void addLocale(OrcidProfile orcidProfile, Locale locale);
-    
+
     public void processProfilePendingIndexingInTransaction(final String orcid);
 
 }

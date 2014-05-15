@@ -44,9 +44,6 @@ import org.orcid.jaxb.model.message.Biography;
 import org.orcid.jaxb.model.message.Citation;
 import org.orcid.jaxb.model.message.CompletionDate;
 import org.orcid.jaxb.model.message.ContactDetails;
-import org.orcid.jaxb.model.message.Contributor;
-import org.orcid.jaxb.model.message.ContributorAttributes;
-import org.orcid.jaxb.model.message.ContributorRole;
 import org.orcid.jaxb.model.message.Country;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.CreditName;
@@ -70,7 +67,6 @@ import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.FundingTitle;
 import org.orcid.jaxb.model.message.FuzzyDate;
 import org.orcid.jaxb.model.message.GivenNames;
-import org.orcid.jaxb.model.message.GivenPermissionBy;
 import org.orcid.jaxb.model.message.GivenPermissionTo;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Keyword;
@@ -94,7 +90,6 @@ import org.orcid.jaxb.model.message.PublicationDate;
 import org.orcid.jaxb.model.message.ResearcherUrl;
 import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.jaxb.model.message.SecurityDetails;
-import org.orcid.jaxb.model.message.SequenceType;
 import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.jaxb.model.message.TranslatedTitle;
@@ -110,7 +105,6 @@ import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.FundingExternalIdentifierEntity;
-import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
@@ -391,13 +385,13 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     		existingProfileFundingEntities = new TreeSet<>();
     	}
     	
-    	// Create a map containing the existing profileGrant entities
+    	// Create a map containing the existing profile funding entities
     	Map<String, ProfileFundingEntity> existingProfileFundingEntitiesMap = createProfileFundingEntitiesMap(existingProfileFundingEntities);    	
     	
-    	// A set that will contain the updated profileGrant entities that comes from the orcidGrant object
+    	// A set that will contain the updated profile funding entities that comes from the orcidGrant object
     	SortedSet<ProfileFundingEntity> updatedProfileFundingEntities = new TreeSet<>();
         
-    	// Populate a list of the updated profileGrant entities that comes from the orcidGrant object
+    	// Populate a list of the updated profile funding entities that comes from the fundingList object
     	if(orcidFundings != null && orcidFundings.getFundings() != null && !orcidFundings.getFundings().isEmpty()) {
         	for(Funding orcidFunding : orcidFundings.getFundings()) {
         		ProfileFundingEntity newProfileGrantEntity = getProfileFundingEntity(orcidFunding, existingProfileFundingEntitiesMap.get(orcidFunding.getPutCode()));
@@ -406,7 +400,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         	}
         }
     	    	
-    	// Create a map containing the ProfileFundingEntity that comes in the orcidGrant object and that will be persisted
+    	// Create a map containing the profile funding that comes in the orcidGrant object and that will be persisted
     	Map<String, ProfileFundingEntity> updatedProfileGrantEntitiesMap = createProfileFundingEntitiesMap(updatedProfileFundingEntities);
     	
     	// Remove orphans
@@ -958,6 +952,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             }
                         
             profileFundingEntity.setType(funding.getType() != null ? funding.getType() : null);
+            profileFundingEntity.setOrganizationDefinedType(funding.getOrganizationDefinedFundingType() != null ? funding.getOrganizationDefinedFundingType().getContent() : null);
             if(funding.getUrl() != null)
             	profileFundingEntity.setUrl(StringUtils.isNotBlank(funding.getUrl().getValue()) ? funding.getUrl().getValue() : null);            
             profileFundingEntity.setVisibility(funding.getVisibility() != null ? funding.getVisibility() : OrcidVisibilityDefaults.WORKS_DEFAULT.getVisibility());
