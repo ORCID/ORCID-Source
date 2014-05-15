@@ -33,13 +33,10 @@ if (typeof jQuery.ui == 'undefined') {
 <script type="text/javascript" src="${staticCdn}/javascript/typeahead/0.9.3/typeahead.min.js"></script>
 
 <script type="text/javascript" src="${staticCdn}/javascript/plugins.js?v=${ver}"></script>
-<#if request.requestURI?ends_with("my-orcid2")>
-    <script type="text/javascript" src="${staticCdn}/javascript/orcid_v2.js?v=${ver}"></script>
-<#else>
-    <script type="text/javascript" src="${staticCdn}/javascript/orcid.js?v=${ver}"></script>
-</#if>
-<script type="text/javascript" src="${staticCdn}/javascript/plugins.js?v=${ver}"></script>
 
+<script type="text/javascript" src="${staticCdn}/javascript/orcid.js?v=${ver}"></script>
+
+<script type="text/javascript" src="${staticCdn}/javascript/plugins.js?v=${ver}"></script>
 
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.11/angular.min.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.11/angular-cookies.min.js"></script>
@@ -53,9 +50,9 @@ if (typeof angular == 'undefined') {
 </script>
 
 <#if request.requestURI?ends_with("my-orcid2")>
-    <script type="text/javascript" src="${staticCdn}/javascript/script_v2.js?v=${ver}"></script>
     <script type="text/javascript" src="${staticCdn}/javascript/angularOrcid_v2.js?v=${ver}"></script>
 <#else>
-    <script type="text/javascript" src="${staticCdn}/javascript/script.js?v=${ver}"></script>
     <script type="text/javascript" src="${staticCdn}/javascript/angularOrcid.js?v=${ver}"></script>
 </#if>
+
+<script type="text/javascript" src="${staticCdn}/javascript/script.js?v=${ver}"></script>
