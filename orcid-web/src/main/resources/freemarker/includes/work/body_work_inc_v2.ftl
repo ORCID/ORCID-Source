@@ -57,8 +57,8 @@
         <div class="row">
 			<div class="col-md-12 col-sm-12 col-xs-12">
 				<div class="show-more-info-tab">			
-					<a href="" ng-show="!moreInfo[work.putCode.value]" ng-click="moreInfoMouseClick(work.putCode.value,$event);"><span class="glyphicon glyphicon-chevron-down"></span><@orcid.msg 'manage.developer_tools.show_details'/></a>
-					<a href="" ng-show="moreInfo[work.putCode.value]" ng-click="moreInfoMouseClick(work.putCode.value,$event);"><span class="glyphicon glyphicon-chevron-up"></span><@orcid.msg 'manage.developer_tools.hide_details'/></a>
+					<a href="" ng-show="!moreInfo[work.putCode.value]" ng-click="showDetailsMouseClick(work.putCode.value,$event);"><span class="glyphicon glyphicon-chevron-down"></span><@orcid.msg 'manage.developer_tools.show_details'/></a>
+					<a href="" ng-show="moreInfo[work.putCode.value]" ng-click="showDetailsMouseClick(work.putCode.value,$event);"><span class="glyphicon glyphicon-chevron-up"></span><@orcid.msg 'manage.developer_tools.hide_details'/></a>
 				</div>
 			</div>
 		</div>
