@@ -302,12 +302,14 @@ public class WorkspaceController extends BaseWorkspaceController {
     @RequestMapping(value = "/my-orcid2", method = RequestMethod.GET)
     public ModelAndView viewWorkspace2(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int pageNo,
             @RequestParam(value = "maxResults", defaultValue = "200") int maxResults) {
-
-        ModelAndView mav = new ModelAndView("workspace2");
+        ModelAndView mav = new ModelAndView("workspace_v2");
         mav.addObject("showPrivacy", true);
 
-        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid(), LoadOptions.BIO_ONLY);
+        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid(), LoadOptions.BIO_AND_INTERNAL_ONLY);
         mav.addObject("profile", profile);
+        String countryName = getCountryName(profile);
+        if(!StringUtil.isBlank(countryName))
+            mav.addObject("countryName", countryName);
         mav.addObject("currentLocaleKey", localeManager.getLocale().toString());
         mav.addObject("currentLocaleValue", lm.buildLanguageValue(localeManager.getLocale(), localeManager.getLocale()));
         return mav;

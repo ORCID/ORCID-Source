@@ -18,7 +18,7 @@
 -->
 <div class="row">        
   	<!-- Information -->
-	<div class="col-md-8 col-sm-8">
+	<div class="col-md-9 col-sm-9">
 	    <h3 class="affiliation-title">
         	<strong ng-bind-html="affiliation.affiliationName.value"></strong>
         	<span class="affiliation-date" ng-show="affiliation.startDate && !affiliation.endDate">
@@ -40,8 +40,7 @@
         </div>
        </div>
        <!-- Privacy Settings -->
-       <div class="col-md-4 col-sm-4 workspace-toolbar">
-       	<#include "affiliate_more_info_inc.ftl"/>
+       <div class="col-md-3 col-sm-3 workspace-toolbar">       	
        	<#if !(isPublicProfile??)>
        		<a href ng-click="deleteAffiliation(affiliation)" class="glyphicon glyphicon-trash grey"></a>
        		<ul class="workspace-private-toolbar">
@@ -53,5 +52,21 @@
                   	privateClick="setPrivacy(affiliation, 'PRIVATE', $event)" />			        
         	</ul>
         </#if>
+	</div>
+</div>
+<div class="row" ng-show="moreInfo[affiliation.putCode.value]">
+	<div class="col-md-8 col-sm-8 col-xs-12">
+		<#include "affiliate_more_info_inc_v2.ftl"/>
+	</div>
+	<div class="col-md-4 col-sm-4 col-sm-12">
+		<!-- Versions and validations are going to be here -->	
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-12 col-sm-12 col-xs-12">
+		<div class="show-more-info-tab">			
+			<a href="" ng-show="!moreInfo[affiliation.putCode.value]" ng-click="moreInfoMouseClick(affiliation.putCode.value,$event);"><span class="glyphicon glyphicon-chevron-down"></span><@orcid.msg 'manage.developer_tools.show_details'/></a>
+			<a href="" ng-show="moreInfo[affiliation.putCode.value]" ng-click="moreInfoMouseClick(affiliation.putCode.value,$event);"><span class="glyphicon glyphicon-chevron-up"></span><@orcid.msg 'manage.developer_tools.hide_details'/></a>
+		</div>
 	</div>
 </div>

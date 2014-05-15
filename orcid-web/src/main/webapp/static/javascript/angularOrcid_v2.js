@@ -181,23 +181,29 @@ orcidNgModule.factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
 			displayFunding: true, 
 			displayPersonalInfo: true,
 			displayWorks: true,
-			toggleAffiliations: function() {
-				displayAffiliations = !displayAffiliations;
+			toggleAffiliations: function($event) {
+				serv.displayAffiliations = !serv.displayAffiliations;
+				tabletDesktopActionButtons($event);
 			},
-			toggleEducation: function() {
+			toggleEducation: function($event) {
 				serv.displayEducation = !serv.displayEducation;
+				tabletDesktopActionButtons($event);
 			},
-			toggleEmployment: function() {
+			toggleEmployment: function($event) {
 				serv.displayEmployment = !serv.displayEmployment;
+				tabletDesktopActionButtons($event);
 			},
-			toggleFunding: function() {
+			toggleFunding: function($event) {
 				serv.displayFunding = !serv.displayFunding;
+				tabletDesktopActionButtons($event);
 			},
-			togglePersonalInfo: function() {
+			togglePersonalInfo: function($event) {
 				serv.displayPersonalInfo = !serv.displayPersonalInfo;
+				tabletDesktopActionButtons($event);
 			},
-			toggleWorks: function() {
+			toggleWorks: function($event) {
 				serv.displayWorks = !serv.displayWorks;
+				tabletDesktopActionButtons($event);
 			},
 			openAffiliations: function() {
 				serv.displayAffiliations = true;
@@ -213,6 +219,7 @@ orcidNgModule.factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
 			},
 			openPersonalInfo: function() {
 				serv.displayPersonalInfo = true;
+				console.log('sdafasdf');
 			},
 			openWorks: function() {
 				serv.displayWorks = true;
@@ -1968,10 +1975,14 @@ function ClaimThanks($scope, $compile) {
 
 function PersonalInfoCtrl($scope, $compile, workspaceSrvc){
 	$scope.displayInfo = workspaceSrvc.displayPersonalInfo;
-	$scope.toggleDisplayInfo = function () {
+	$scope.toggleDisplayInfo = function ($event) {
 		$scope.displayInfo = !$scope.displayInfo;
+		tabletDesktopActionButtons($event); //Workaround to show always the actions buttons on Tablet and Desktop, but Mobile
 	};
 };
+
+ 
+
 
 function WorkspaceSummaryCtrl($scope, $compile, affiliationsSrvc, fundingSrvc, worksSrvc, workspaceSrvc){
 	$scope.workspaceSrvc = workspaceSrvc;
@@ -1994,14 +2005,21 @@ function PublicEduAffiliation($scope, $compile, $filter, affiliationsSrvc){
 	$scope.moreInfo = {};
 	
 	$scope.toggleClickMoreInfo = function(key) {
-		if (!document.documentElement.className.contains('no-touch'))
-			$scope.moreInfo[key]=!$scope.moreInfo[key];
+		
 	};
 	
-	$scope.moreInfoMouseEnter = function(key, $event) {
+	$scope.moreInfoMouseClick = function(key, $event) {
 		$event.stopPropagation();
+		$scope.moreInfo[key] = !$scope.moreInfo[key];
+		//
+		/*
+		if (!document.documentElement.className.contains('no-touch'))
+			$scope.moreInfo[key]=!$scope.moreInfo[key];
+		*/
+		/*
 		if (document.documentElement.className.contains('no-touch'))
 			$scope.moreInfo[key]=true;
+		*/
 	};
 
 	$scope.closeMoreInfo = function(key) {
@@ -2014,21 +2032,22 @@ function PublicEmpAffiliation($scope, $compile, $filter, affiliationsSrvc){
 	$scope.affiliationsSrvc = affiliationsSrvc;
 	$scope.moreInfo = {};
 	
+	/*
 	$scope.toggleClickMoreInfo = function(key) {
 		if (!document.documentElement.className.contains('no-touch'))
 			$scope.moreInfo[key]=!$scope.moreInfo[key];
 	};
+	*/
 	
-	$scope.moreInfoMouseEnter = function(key, $event) {
-		$event.stopPropagation();
-		if (document.documentElement.className.contains('no-touch'))
-			$scope.moreInfo[key]=true;
+	$scope.moreInfoMouseClick = function(key, $event) {
+			$event.stopPropagation();
+			$scope.moreInfo[key]=!$scope.moreInfo[key];		
 	};
-
+	/*
 	$scope.closeMoreInfo = function(key) {
 		$scope.moreInfo[key]=false;
 	};
-
+	*/
 	affiliationsSrvc.setIdsToAdd(orcidVar.affiliationIdsJson);
 	affiliationsSrvc.addAffiliationToScope(orcidVar.orcidId +'/affiliations.json');
 }
@@ -2055,6 +2074,7 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 			
 	};
 
+	/*
 	$scope.toggleClickMoreInfo = function(key) {
 		if (!document.documentElement.className.contains('no-touch')) {
 			if ($scope.moreInfoCurKey != null 
@@ -2065,9 +2085,12 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 			$scope.moreInfo[key]=!$scope.moreInfo[key];
 		}
 	};
+	*/
 	
-	$scope.moreInfoMouseEnter = function(key, $event) {
+	$scope.moreInfoMouseClick = function(key, $event) {
 		$event.stopPropagation();
+		$scope.moreInfo[key]=!$scope.moreInfo[key];
+		/*
 		if (document.documentElement.className.contains('no-touch')) {
 			if ($scope.moreInfoCurKey != null 
 					&& $scope.moreInfoCurKey != key) {
@@ -2076,6 +2099,7 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 			$scope.moreInfoCurKey = key;
 			$scope.moreInfo[key]=true;
 		}
+		*/
 	};
 
 	$scope.closeMoreInfo = function(key) {
@@ -2324,6 +2348,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	$scope.editTranslatedTitle = false; 	
 	$scope.lastIndexedTerm = null;
 	
+	/*
 	$scope.toggleClickMoreInfo = function(key) {
 		if (!document.documentElement.className.contains('no-touch')) {
 			if ($scope.moreInfoCurKey != null 
@@ -2334,9 +2359,14 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 			$scope.moreInfo[key]=!$scope.moreInfo[key];
 		}
 	};
+	*/
 	
-	$scope.moreInfoMouseEnter = function(key, $event) {
+	$scope.moreInfoMouseClick = function(key, $event) {
 		$event.stopPropagation();
+		$scope.moreInfo[key]=!$scope.moreInfo[key];
+		console.log(key);
+		
+		/*
 		if (document.documentElement.className.contains('no-touch')) {
 			if ($scope.moreInfoCurKey != null 
 					&& $scope.moreInfoCurKey != key) {
@@ -2345,11 +2375,14 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 			$scope.moreInfoCurKey = key;
 			$scope.moreInfo[key]=true;
 		}
+		*/
 	};
 	
+	/*
 	$scope.closeMoreInfo = function(key) {
 		$scope.moreInfo[key]=false;
 	};
+	*/
 	
 	$scope.addFundingModal = function(type){
 		$scope.removeDisambiguatedFunding();
@@ -2365,7 +2398,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 		}).fail(function() { 
 	    	console.log("Error fetching funding: " + value);
 	    });
-	};
+	};	
 	
 	$scope.showAddModal = function(){
 		$scope.editTranslatedTitle = false;		
@@ -2705,20 +2738,21 @@ function PublicFundingCtrl($scope, $compile, $filter, fundingSrvc){
 	$scope.fundingSrvc = fundingSrvc;
 	$scope.moreInfo = {};
 	
+	/*
 	$scope.toggleClickMoreInfo = function(key) {
 		if (!document.documentElement.className.contains('no-touch'))
 			$scope.moreInfo[key]=!$scope.moreInfo[key];
 	};
-	
-	$scope.moreInfoMouseEnter = function(key, $event) {
+	*/
+	$scope.moreInfoMouseClick = function(key, $event) {
 		$event.stopPropagation();
-		if (document.documentElement.className.contains('no-touch'))
-			$scope.moreInfo[key]=true;
+		$scope.moreInfo[key]=!$scope.moreInfo[key];
 	};
-
+	/*
 	$scope.closeMoreInfo = function(key) {
 		$scope.moreInfo[key]=false;
 	};
+	*/
 
 	fundingSrvc.setIdsToAdd(orcidVar.fundingIdsJson);
 	fundingSrvc.addFundingToScope(orcidVar.orcidId +'/fundings.json');
@@ -2737,6 +2771,7 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 	$scope.showBibtex = true;
 	$scope.loadingInfo = false;
 	$scope.moreInfoOpen = false;
+	$scope.moreInfo = {};
 
     $scope.bibtexShowToggle = function () {
     	$scope.showBibtex = !($scope.showBibtex);
@@ -2756,18 +2791,20 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 	$scope.worksSrvc.worksToAddIds = orcidVar.workIds;	
 	$scope.worksSrvc.addWorkToScope(getBaseUri() + '/' + orcidVar.orcidId +'/works.json?workIds=');
 	
-
+	/*
 	$scope.moreInfoClick = function(work, $event) {
 		if (!document.documentElement.className.contains('no-touch'))
 			$scope.moreInfoOpen?$scope.closePopover():$scope.loadWorkInfo(work.putCode.value, $event);
 	};
+	*/
 	
-	$scope.moreInfoMouseEnter = function(work, $event) {
+	$scope.moreInfoMouseClick = function(work, $event) {
 		$event.stopPropagation();
-		if (document.documentElement.className.contains('no-touch'))
-			$scope.loadWorkInfo(work.putCode.value, $event);
-		else
-			$scope.moreInfoOpen?$scope.closePopover():$scope.loadWorkInfo(work.putCode.value, $event);
+		//if (document.documentElement.className.contains('no-touch'))
+			$scope.moreInfo[work] = !$scope.moreInfo[work];
+			$scope.loadWorkInfo(work, $event);
+		//else
+			//$scope.moreInfoOpen?$scope.closePopover():$scope.loadWorkInfo(work.putCode.value, $event);
 	};
 	
 	$scope.loadWorkInfo = function(putCode, event) {
@@ -2816,6 +2853,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	$scope.types = null;
 	$scope.privacyHelp = {};
 	$scope.moreInfoOpen = false;
+	$scope.moreInfo = {};
 	
 	$scope.toggleClickPrivacyHelp = function(key) {
 		if (!document.documentElement.className.contains('no-touch'))
@@ -2956,19 +2994,18 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		
 	//init
 	$scope.getWorks();	
-	
+	/*
 	$scope.moreInfoClick = function(work, $event) {
 		if (!document.documentElement.className.contains('no-touch'))
 			$scope.moreInfoOpen?$scope.closePopover():$scope.loadWorkInfo(work.putCode.value, $event);
 	};
-	
-	$scope.moreInfoMouseEnter = function(work, $event) {
-		$event.stopPropagation();
-		if (document.documentElement.className.contains('no-touch'))
-			$scope.loadWorkInfo(work.putCode.value, $event);
-		else
-			$scope.moreInfoOpen?$scope.closePopover():$scope.loadWorkInfo(work.putCode.value, $event);
+	*/
+	$scope.moreInfoMouseClick = function(work, $event) {
+		$event.stopPropagation();		
+		$scope.moreInfo[work] = !$scope.moreInfo[work];		
+		$scope.loadWorkInfo(work, $event);
 	};
+	
 	
 	$scope.loadWorkInfo = function(putCode, event) {
 		//Close any open popover
