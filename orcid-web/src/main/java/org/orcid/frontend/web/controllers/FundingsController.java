@@ -449,24 +449,16 @@ public class FundingsController extends BaseWorkspaceController {
     /**
      * Transforms a string into a BigDecimal
      * @param amount
-     * @param currencyCode
      * @return a BigDecimal containing the given amount
      * @throws Exception if the amount cannot be correctly parse into a BigDecimal
      * */
-    public BigDecimal getAmountAsBigDecimal(String amount, String currencyCode) throws Exception {
+    public BigDecimal getAmountAsBigDecimal(String amount) throws Exception {
         try {      
-            Locale locale = getLocale();
+            Locale locale = getUserLocaleForCurrencyValidation();
             ParsePosition parsePosition = new ParsePosition(0);
             NumberFormat numberFormat = NumberFormat.getInstance(locale);
-            Number number = null;
-            if(!PojoUtil.isEmpty(currencyCode))  {                    
-                Currency currency = Currency.getInstance(currencyCode);
-                String currencySymbol = currency.getSymbol();
-                amount = amount.replace(currencySymbol, StringUtils.EMPTY);
-                number = numberFormat.parse(amount, parsePosition);
-            } else {
-                number = numberFormat.parse(amount, parsePosition);
-            }
+            Number number = numberFormat.parse(amount, parsePosition);
+            
             if(parsePosition.getIndex() != amount.length())
                 throw new Exception(getMessage("Invalid.fundings.amount")); 
             return new BigDecimal(number.toString());                          
@@ -474,6 +466,49 @@ public class FundingsController extends BaseWorkspaceController {
             throw e;
         }
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    /**
+     * TODO
+     * */
+    private Locale getUserLocaleForCurrencyValidation() {
+        Locale locale = getLocale();
+        String language = locale.getLanguage();
+        String country = locale.getCountry();
+
+        if (PojoUtil.isEmpty(country)) {
+            OrcidProfile profile = getEffectiveProfile();
+            if (profile.getOrcidBio() != null && profile.getOrcidBio().getContactDetails() != null && profile.getOrcidBio().getContactDetails().getAddress() != null
+                    && profile.getOrcidBio().getContactDetails().getAddress().getCountry() != null && profile.getOrcidBio().getContactDetails().getAddress().getCountry().getValue() != null) {
+                country = profile.getOrcidBio().getContactDetails().getAddress().getCountry().getValue().name();
+            }
+        }
+
+        Locale result = null;
+        if(country == null)
+            result = new Locale(language);
+        else
+            result = new Locale(language, country);
+        return result;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     /**
      * Validators
@@ -483,19 +518,20 @@ public class FundingsController extends BaseWorkspaceController {
     FundingForm validateAmount(@RequestBody FundingForm funding) {
         funding.getAmount().setErrors(new ArrayList<String>());        
         if (!PojoUtil.isEmpty(funding.getAmount())) {            
-            String amount = funding.getAmount().getValue();  
-            if(amount.startsWith(".") || amount.startsWith(",")) {
+            String amount = funding.getAmount().getValue();
+            
+            if(!amount.matches("\\d+|(\\d{1,}[\\.\\,\\'\\s]?)*")){
                 setError(funding.getAmount(), "Invalid.fundings.amount");
-            } else if(amount.endsWith(".") || amount.endsWith(",")) {
-                setError(funding.getAmount(), "Invalid.fundings.amount");
-            } else {
-                String currencyCode = PojoUtil.isEmpty(funding.getCurrencyCode()) ? StringUtils.EMPTY : funding.getCurrencyCode().getValue();
+            } else {                
                 try {                
-                    getAmountAsBigDecimal(amount, currencyCode);        
+                    getAmountAsBigDecimal(amount);        
                 } catch(Exception pe) {                
                     setError(funding.getAmount(), "Invalid.fundings.amount");
                 }
-            }                        
+            }
+            
+            
+                                     
         } else if(!PojoUtil.isEmpty(funding.getCurrencyCode())) {
             setError(funding.getAmount(), "Invalid.fundings.currency_not_empty");
         }

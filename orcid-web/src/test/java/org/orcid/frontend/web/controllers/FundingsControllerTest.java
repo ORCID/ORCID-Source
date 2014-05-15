@@ -26,6 +26,7 @@ import static org.mockito.Mockito.when;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -36,6 +37,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
@@ -59,30 +63,35 @@ public class FundingsControllerTest extends BaseControllerTest {
             "/data/WorksEntityData.xml", "/data/ProfileWorksEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml",
             "/data/WebhookEntityData.xml");
 
+    @Mock
+    private LocaleManager localeManager;
+
     @Resource
     FundingsController fundingController;
 
     @Resource
     protected OrcidProfileManager orcidProfileManager;
-    
+
     @Override
     protected Authentication getAuthentication() {
         orcidProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4443");
 
         OrcidProfileUserDetails details = null;
-        if(orcidProfile.getType() != null){             
-                details = new OrcidProfileUserDetails(orcidProfile.getOrcidIdentifier().getPath(), orcidProfile.getOrcidBio().getContactDetails().getEmail()
-                    .get(0).getValue(), orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedPassword().getContent(), orcidProfile.getType(), orcidProfile.getClientType(), orcidProfile.getGroupType());
+        if (orcidProfile.getType() != null) {
+            details = new OrcidProfileUserDetails(orcidProfile.getOrcidIdentifier().getPath(), orcidProfile.getOrcidBio().getContactDetails().getEmail().get(0)
+                    .getValue(), orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedPassword().getContent(), orcidProfile.getType(),
+                    orcidProfile.getClientType(), orcidProfile.getGroupType());
         } else {
-                details = new OrcidProfileUserDetails(orcidProfile.getOrcidIdentifier().getPath(), orcidProfile.getOrcidBio().getContactDetails().getEmail()
-                    .get(0).getValue(), orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedPassword().getContent());
+            details = new OrcidProfileUserDetails(orcidProfile.getOrcidIdentifier().getPath(), orcidProfile.getOrcidBio().getContactDetails().getEmail().get(0)
+                    .getValue(), orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedPassword().getContent());
         }
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(details, "4444-4444-4444-4443", Arrays.asList(OrcidWebRole.ROLE_USER));
         return auth;
     }
-    
+
     @Before
     public void init() {
+        MockitoAnnotations.initMocks(this);
         assertNotNull(fundingController);
     }
 
@@ -90,20 +99,19 @@ public class FundingsControllerTest extends BaseControllerTest {
     public static void beforeClass() throws Exception {
         initDBUnitData(DATA_FILES, null);
     }
-    
+
     @AfterClass
     public static void afterClass() throws Exception {
         removeDBUnitData(Lists.reverse(DATA_FILES), null);
     }
-    
-    @Test
-    public void testValidateAmount() {
-        String validAmounts[] = { "1", "10", "100", "1000", "10000", "100000", "1000000", "10000000", "100000000", "1000000000", "1.0", "1.00", "1,0", "1,00", "10.0",
-                "10,0", "10.00", "10,00", "100.0", "100.00", "100,0", "100,00", "1000.0", "1000.00", "1000,0", "1000,00", "10000.0", "10000.00", "10000,0", "10000,00",
-                "1.000", "1,000", "1,000.0", "1,000.00", "10,000", "10,000.0", "10,000.00", "100,000", "100,000.0", "100,000.00", "1,000,000", "1,000,000.0", "1,000,000.00", "10,000,000",
-                "10,000,000.0", "10,000,000.00", "100,000,000", "100,000,000.0", "100,000,000.00", "12345678901234567890", "1,650.00", "1,650,000" };
 
-        String invalidAmounts[] = {"a", "1a", "1000a", "1234567890a", "1,000,000.", "0.", ".0", "1 000", "18 000", "180 000 000", "100,000:00", "1,000.000.000"};
+    @Test
+    public void testValidateAmountLocaleEN() {
+        when(localeManager.getLocale()).thenReturn(new Locale("en", "US"));
+        String validAmounts[] = { "1", "10", "100", "1000", "10000", "100000", "1000000", "10000000", "10000000", "1.0", "1.00", "10.0", "10.00", "100.0", "100.00",
+                "1000.0", "1000.00", "1,000", "1,000.0", "1,000.00", "10,000", "100,000", "1,000,000", "10,000,000", "100,000,000", "100,000,000.0", "100,000,000.00",
+                "1,000,000,000", "1,000,000,000.0", "1,000,000,000.00", "10,000,000,000"};
+        String invalidAmounts[] = {".","0.","1.",".0",".1","a","1.000","1.000.000","1 000","1 000 000","1,000,0","1,000,00","1,0000,00","1,0000,0000"};
         
         for (String amount : validAmounts) {            
             FundingForm form = new FundingForm();
@@ -122,38 +130,37 @@ public class FundingsControllerTest extends BaseControllerTest {
             assertEquals("The following incorrect number has been marked as valid: " + amount, form.getAmount().getErrors().size(), 1);
             assertEquals(form.getAmount().getErrors().get(0), "Amount should be a numeric value");
         }
-        
     }
-    
+
     @Test
-    public void validateBigDecimalConversion() {
+    public void validateBigDecimalConversionLocaleEN() {
         BigDecimal _1000 = new BigDecimal(1000);
-        String amounts[] = {"1000","$1000","1,000"};
-        for(String amount : amounts) {
+        String amounts[] = { "1000", "$1000", "1,000" };
+        for (String amount : amounts) {
             System.out.println("Converting amount: " + amount);
             try {
-            BigDecimal result = null;
-            if(amount.contains("€"))
-                result = fundingController.getAmountAsBigDecimal(amount, "EUR");
-            else 
-                result = fundingController.getAmountAsBigDecimal(amount, "USD");
-            assertEquals(result, _1000);
-            } catch(Exception e) {
+                BigDecimal result = null;
+                if (amount.contains("€"))
+                    result = fundingController.getAmountAsBigDecimal(amount);
+                else
+                    result = fundingController.getAmountAsBigDecimal(amount);
+                assertEquals(result, _1000);
+            } catch (Exception e) {
                 fail();
             }
         }
     }
-    
+
     @Test
     public void testGetFundings() {
-        HttpServletRequest servletRequest = mock(HttpServletRequest.class);     
+        HttpServletRequest servletRequest = mock(HttpServletRequest.class);
         HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);
-        
+
         List<String> fundingIds = fundingController.getFundingsJson(servletRequest);
         assertNotNull(fundingIds);
         assertEquals(fundingIds.size(), 3);
-                
+
         assertTrue(fundingIds.contains("1"));
         assertTrue(fundingIds.contains("2"));
         assertTrue(fundingIds.contains("3"));
