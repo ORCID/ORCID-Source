@@ -24,8 +24,17 @@
    			<div ng-hide="showEdit == false"  class="biography-edit" ng-cloak>
    				<div class="row">
 	   			    <div class="col-md-12 col-sm-12 col-xs-12">
+	   			    	<div class="box">
+			   			    <@orcid.privacyToggle  angularModel="biographyForm.visiblity.visibility"
+							             questionClick="toggleClickPrivacyHelp()"
+							             clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
+							             publicClick="setPrivacy('PUBLIC', $event)" 
+				                 	     limitedClick="setPrivacy('LIMITED', $event)" 
+				                 	     privateClick="setPrivacy('PRIVATE', $event)" />
+			             </div>
 	   			    	<textarea id="biography" name="biography" class="input-xlarge" rows="20" ng-model="biographyForm.biography.value" ng-change="checkLength()">
-	   			    	</textarea>
+		   			    </textarea>
+		   			    
 	   			    </div>
    			    </div>
    			    <div class="row">
@@ -38,17 +47,9 @@
 						</span>
 					</div>
 				</div>
-				<div class="row">
-		        	<div class="col-md-4 col-sm-4 col-xs-12">
-		        		<@orcid.privacyToggle  angularModel="biographyForm.visiblity.visibility"
-					             questionClick="toggleClickPrivacyHelp()"
-					             clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
-					             publicClick="setPrivacy('PUBLIC', $event)" 
-		                 	     limitedClick="setPrivacy('LIMITED', $event)" 
-		                 	     privateClick="setPrivacy('PRIVATE', $event)" />
-					</div>				
-					<div class="col-md-8 col-sm-8 col-xs-12">
-						<div class="pull-right">
+				<div class="row">		        					
+					<div class="col-md-12 col-sm-12 col-xs-12">
+						<div class="pull-right full-width">
 		   			    	<button class="btn btn-primary" ng-click="setBiographyForm()"><@spring.message "freemarker.btnsavechanges"/></button>
 			        		<button class="btn" ng-click="cancel()"><@spring.message "freemarker.btncancel"/></button>
 		        		</div>

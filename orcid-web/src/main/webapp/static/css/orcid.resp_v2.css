@@ -4095,6 +4095,19 @@ ul.sort-menu-options li a:hover{
 	display: block;
 }
 
+.box{
+	padding: 10px 0;
+	display: block;
+}
+
+.biography-controller .popover-help-container .popover{
+	left: -109px;
+}
+
+.biography-controller .popover.bottom .arrow{
+	left: 117px;
+}
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 		
@@ -5015,10 +5028,6 @@ ul.sort-menu-options li a:hover{
 		font-size: 25px;
 	}
 	
-	#workspace-publications .alert{
-		margin-top: 100px;
-	}
-	
 	ul.sort-menu-options{
 		right: 0;	
 		width: 100%;
@@ -5081,6 +5090,31 @@ ul.sort-menu-options li a:hover{
 	
 	.public-profile p{
 		margin-bottom: 15px;		
+	}
+	
+	.full-width{
+		width: 100%;
+	}
+	
+	.biography-controller .popover-help-container .popover{
+		left: -110px !important;
+	}
+	
+	.biography-controller .popover.bottom .arrow{
+		left: 122px !important;
+	}
+	
+	.mobile-box{
+		padding: 10px 0;
+		display: block;
+	}
+	
+	.workspace-top .alert-info{
+		margin-top: 40px;	
+	}
+	
+	#workspace-publications .alert{
+		margin-top: 60px;
 	}
 
 }
