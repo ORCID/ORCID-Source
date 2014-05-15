@@ -49,10 +49,6 @@ if (typeof angular == 'undefined') {
 }
 </script>
 
-<#if request.requestURI?ends_with("my-orcid2")>
-    <script type="text/javascript" src="${staticCdn}/javascript/angularOrcid_v2.js?v=${ver}"></script>
-<#else>
-    <script type="text/javascript" src="${staticCdn}/javascript/angularOrcid.js?v=${ver}"></script>
-</#if>
+<script type="text/javascript" src="${staticCdn}/javascript/angularOrcid.js?v=${ver}"></script>
 
 <script type="text/javascript" src="${staticCdn}/javascript/script.js?v=${ver}"></script>
