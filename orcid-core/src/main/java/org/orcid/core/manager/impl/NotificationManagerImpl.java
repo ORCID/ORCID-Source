@@ -69,6 +69,16 @@ public class NotificationManagerImpl implements NotificationManager {
     private static final String RESET_NOTIFY_ORCID_ORG = "reset@notify.orcid.org";
 
     private static final String CLAIM_NOTIFY_ORCID_ORG = "claim@notify.orcid.org";
+    
+    private static final String DEACTIVATE_NOTIFY_ORCID_ORG = "deactivate@notify.orcid.org";
+    
+    private static final String AMEND_NOTIFY_ORCID_ORG = "amend@notify.orcid.org";
+    
+    private static final String DELEGATE_NOTIFY_ORCID_ORG = "delegate@notify.orcid.org";
+    
+    private static final String EMAIL_CHANGED_NOTIFY_ORCID_ORG = "email-changed@notify.orcid.org";
+    
+    private static final String ACCOUNT_DEPRECATED_NOTIFY_ORCID_ORG = "account-deprecate@notify.orcid.org";
 
     @Resource
     private MessageSource messages;
@@ -173,7 +183,7 @@ public class NotificationManagerImpl implements NotificationManager {
         // Generate html from template
         String html = templateManager.processTemplate("deactivate_orcid_email_html.ftl", templateParams);
         
-        mailGunManager.sendEmail(fromAddress, email, subject, body, html);
+        mailGunManager.sendEmail(DEACTIVATE_NOTIFY_ORCID_ORG, email, subject, body, html);
     }
 
     // look like the following is our best best for i18n emails
@@ -341,7 +351,7 @@ public class NotificationManagerImpl implements NotificationManager {
         // Generate html from template
         String html = templateManager.processTemplate("amend_email_html.ftl", templateParams);
         
-        mailGunManager.sendEmail(fromAddress, email, subject, body, html);
+        mailGunManager.sendEmail(AMEND_NOTIFY_ORCID_ORG, email, subject, body, html);
         
     }
 
@@ -377,7 +387,7 @@ public class NotificationManagerImpl implements NotificationManager {
             // Generate html from template
             String html = templateManager.processTemplate("added_as_delegate_email_html.ftl", templateParams);
             
-            mailGunManager.sendEmail(fromAddress, email, subject, body, html);
+            mailGunManager.sendEmail(DELEGATE_NOTIFY_ORCID_ORG, email, subject, body, html);
         }
     }
     
@@ -388,9 +398,8 @@ public class NotificationManagerImpl implements NotificationManager {
         Map<String, Object> templateParams = new HashMap<String, Object>();
         
         String subject = getSubject("email.subject.email_removed", updatedProfile);
-        String email = oldEmail.getValue();
-        String from = supportAddress;
-                String emailFriendlyName = deriveEmailFriendlyName(updatedProfile);
+        String email = oldEmail.getValue();        
+        String emailFriendlyName = deriveEmailFriendlyName(updatedProfile);
         templateParams.put("emailName", emailFriendlyName);
         String verificationUrl = createVerificationUrl(updatedProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), baseUri);
         templateParams.put("verificationUrl", verificationUrl);
@@ -407,7 +416,7 @@ public class NotificationManagerImpl implements NotificationManager {
         // Generate html from template
         String html = templateManager.processTemplate("email_removed_html.ftl", templateParams);
         
-        mailGunManager.sendEmail(from, email, subject, body, html);
+        mailGunManager.sendEmail(EMAIL_CHANGED_NOTIFY_ORCID_ORG, email, subject, body, html);
     }
 
     @Override
@@ -540,7 +549,6 @@ public class NotificationManagerImpl implements NotificationManager {
      * */
     private void sendProfileDeprecationEmailToDeprecatedAccount(ProfileEntity deprecatedProfile, ProfileEntity primaryProfile) {
         String subject = getSubject("email.subject.deprecated_profile", deprecatedProfile);
-        String from = fromAddress;
         String email = deprecatedProfile.getPrimaryEmail().getId();
         // Create map of template params
         Map<String, Object> templateParams = new HashMap<String, Object>();
@@ -558,7 +566,7 @@ public class NotificationManagerImpl implements NotificationManager {
         
         // Send message
         if (apiRecordCreationEmailEnabled) {
-            mailGunManager.sendEmail(from, email, subject, body, html);
+            mailGunManager.sendEmail(ACCOUNT_DEPRECATED_NOTIFY_ORCID_ORG, email, subject, body, html);
             profileEventDao.persist(new ProfileEventEntity(deprecatedProfile.getId(), ProfileEventType.PROFILE_DEPRECATED));
         } else {
             LOGGER.debug("Not sending profile deprecated email, because API record creation email option is disabled. Message would have been: {}", body);
@@ -571,8 +579,7 @@ public class NotificationManagerImpl implements NotificationManager {
      * @param primaryProfile
      * */
     private void sendProfileDeprecationEmailToPrimaryAccount(ProfileEntity deprecatedProfile, ProfileEntity primaryProfile) {
-        String subject = getSubject("email.subject.deprecated_profile_primary", primaryProfile);
-        String from = fromAddress;
+        String subject = getSubject("email.subject.deprecated_profile_primary", primaryProfile);        
         String email = deprecatedProfile.getPrimaryEmail().getId();
         
         // Create map of template params
@@ -591,7 +598,7 @@ public class NotificationManagerImpl implements NotificationManager {
         
         // Send message
         if (apiRecordCreationEmailEnabled) {
-            mailGunManager.sendEmail(from, email, subject, body, html);
+            mailGunManager.sendEmail(ACCOUNT_DEPRECATED_NOTIFY_ORCID_ORG, email, subject, body, html);
             profileEventDao.persist(new ProfileEventEntity(deprecatedProfile.getId(), ProfileEventType.PROFILE_DEPRECATED));
         } else {
             LOGGER.debug("Not sending profile deprecated email, because API record creation email option is disabled. Message would have been: {}", body);
