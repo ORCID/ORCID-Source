@@ -3897,6 +3897,19 @@ p.orcid-id-container{
 		width: 100%;
 }
 
+.box{
+	padding: 10px 0;
+	display: block;
+}
+
+.biography-controller .popover-help-container .popover{
+	left: -109px;
+}
+
+.biography-controller .popover.bottom .arrow{
+	left: 117px;
+}
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
@@ -4383,14 +4396,14 @@ p.orcid-id-container{
 		
 	.workspace-accordion-item{
 		border-bottom: none;
-	}
+	}	
 	
 	#workspace-accordion .popover-help-container .popover{
-		left:-134px !important;
+		left:-134px;
 	}
 	
 	#workspace-accordion .popover-help-container .arrow{
-		left: 145px !important;
+		left: 145px;
 	}		
 
 	.public-profile .popover-help-container .popover{
@@ -4818,6 +4831,22 @@ p.orcid-id-container{
 		margin-bottom: 15px;		
 	}
 	
+	.full-width{
+		width: 100%;
+	}
+	
+	.biography-controller .popover-help-container .popover{
+		left: -110px !important;
+	}
+	
+	.biography-controller .popover.bottom .arrow{
+		left: 122px !important;
+	}
+	
+	.mobile-box{
+		padding: 10px 0;
+		display: block;
+	}
 	
 	
 }
