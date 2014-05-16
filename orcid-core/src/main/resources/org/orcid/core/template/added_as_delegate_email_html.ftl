@@ -30,7 +30,7 @@
 			    <@emailMacros.msg "email.common.dear" /> ${emailNameForDelegate}<@emailMacros.msg "email.common.dear.comma" />
 		    </span>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-                <@emailMacros.msg "email.added_as_delegate.you_have.1" />${grantingOrcidName}<@emailMacros.msg "email.added_as_delegate.you_have.2" />${baseUri}/${grantingOrcidValue}?lang=${locale}<@emailMacros.msg "email.added_as_delegate.you_have.3" />${grantingOrcidName}<@emailMacros.msg "email.added_as_delegate.you_have.4" />
+                <@emailMacros.msg "email.added_as_delegate.you_have.1" />${grantingOrcidName}<@emailMacros.msg "email.added_as_delegate.you_have.2" /><a href="${baseUri}/${grantingOrcidValue}?lang=${locale}">${baseUri}/${grantingOrcidValue}<a/><@emailMacros.msg "email.added_as_delegate.you_have.3" />${grantingOrcidName}<@emailMacros.msg "email.added_as_delegate.you_have.4" />
 		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
                 <@emailMacros.msg "email.added_as_delegate.for_a_tutorial" />
@@ -38,9 +38,9 @@
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
 		    	<@emailMacros.msg "email.added_as_delegate.if_you_have.1" />${grantingOrcidName}<@emailMacros.msg "email.added_as_delegate.if_you_have.2" />${grantingOrcidEmail}<@emailMacros.msg "email.added_as_delegate.if_you_have.3" />
 		    </p>
-		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-		    	<@emailMacros.msg "email.common.kind_regards" />
-				${baseUri}/?lang=${locale}
+		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666; white-space: pre;">
+<@emailMacros.msg "email.common.kind_regards" />
+<a href="${baseUri}/?lang=${locale}">${baseUri}/<a/>				
 		    </p>
 			<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">
 				<@emailMacros.msg "email.common.you_have_received_this_email" />

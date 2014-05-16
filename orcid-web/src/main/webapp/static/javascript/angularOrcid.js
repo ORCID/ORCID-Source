@@ -366,12 +366,12 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 							} else {
 								$rootScope.$apply();					
 								setTimeout(function(){
-									serv.addWorkToScope();
+									serv.addWorkToScope(worksUrl);
 								},50);
 							}
 						}
 					}).fail(function() { 
-						$scope.$apply(function() {
+						$rootScope.$apply(function() {
 							serv.loading = false;
 						});
 				    	console.log("Error fetching works: " + workIds);
@@ -2887,6 +2887,7 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 }
 
 function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
+	$scope.html5File = false;
 	$scope.workspaceSrvc = workspaceSrvc;
 	$scope.worksSrvc = worksSrvc;
 	$scope.showBibtex = true;
@@ -2896,6 +2897,11 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	$scope.privacyHelp = {};
 	$scope.moreInfoOpen = false;
 	$scope.moreInfo = {};
+	
+	// Check for the various File API support.
+	if (window.File && window.FileReader && window.FileList && window.Blob) {
+		$scope.html5File = true;
+	}
 	
 	$scope.toggleClickPrivacyHelp = function(key) {
 		if (!document.documentElement.className.contains('no-touch'))
