@@ -1333,86 +1333,41 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             throw new IllegalArgumentException("No record found for " + orcid);
         }
 
+        String amenderOrcid = sourceManager.retrieveSourceOrcid();
         FundingList existingFundingList = existingProfile.retrieveFundings();
+        setFundingAmountsWithTheCorrectFormat(updatedOrcidProfile);
         FundingList updatedFundingList = updatedOrcidProfile.retrieveFundings();
         Visibility workVisibilityDefault = existingProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault().getValue();
         Boolean claimed = existingProfile.getOrcidHistory().isClaimed();
         setFundingPrivacy(updatedFundingList, workVisibilityDefault, claimed == null ? false : claimed);
-        updatedFundingList = dedupeFundings(updatedFundingList);
-        String amenderOrcid = sourceManager.retrieveSourceOrcid();
+        updatedFundingList = dedupeFundings(updatedFundingList);        
         addSourceToFundings(updatedFundingList, amenderOrcid);
         List<Funding> updatedList = updatedFundingList.getFundings();
         checkForAlreadyExistingFundings(existingFundingList, updatedList);
         persistAddedFundings(orcid, updatedList);
     }
 
-    private void setFundingAmountWithTheCorrectFormat(OrcidProfile updatedOrcidProfile) {
-        FundingList fundings = updatedOrcidProfile.retrieveFundings();
-
+    /**
+     * TODO
+     * */
+    private void setFundingAmountsWithTheCorrectFormat(OrcidProfile updatedOrcidProfile) throws IllegalArgumentException {
+        FundingList fundings = updatedOrcidProfile.retrieveFundings();        
+        
         for (Funding funding : fundings.getFundings()) {
             // If the amount is not empty, update it
             if (funding.getAmount() != null && !PojoUtil.isEmpty(funding.getAmount().getContent())) {
                 String amount = funding.getAmount().getContent();
+                Locale locale = localeManager.getLocale();
+                ParsePosition parsePosition = new ParsePosition(0);
+                NumberFormat numberFormat = NumberFormat.getInstance(locale);
+                Number number = numberFormat.parse(amount, parsePosition);
+                String formattedAmount = number.toString();
+                if (parsePosition.getIndex() != amount.length())
+                    throw new IllegalArgumentException("Unable to parse amount: " + amount + " into a numeric amount");
+                funding.getAmount().setContent(formattedAmount);
             }
         }
     }
-
-    /**
-     * Transforms a string into a BigDecimal
-     * 
-     * @param amount
-     * @return a BigDecimal containing the given amount
-     * @throws Exception
-     *             if the amount cannot be correctly parse into a BigDecimal
-     * */
-    public BigDecimal getAmountAsBigDecimal(String amount, Locale locale) throws Exception {
-        try {
-            ParsePosition parsePosition = new ParsePosition(0);
-            NumberFormat numberFormat = NumberFormat.getInstance(locale);
-            Number number = numberFormat.parse(amount, parsePosition);
-
-            if (parsePosition.getIndex() != amount.length())
-                throw new Exception(getMessage("Invalid.fundings.amount"));
-            return new BigDecimal(number.toString());
-        } catch (Exception e) {
-            throw e;
-        }
-    }
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    private Locale getUserLocaleForCurrencyValidation(OrcidProfile updatedOrcidProfile) {
-        String country = null;
-        org.orcid.jaxb.model.message.Locale userLocale = null;
-        if (updatedOrcidProfile != null && updatedOrcidProfile.getOrcidBio() != null && updatedOrcidProfile.getOrcidBio().getContactDetails() != null
-                && updatedOrcidProfile.getOrcidBio().getContactDetails().getAddress() != null
-                && updatedOrcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry() != null && updatedOrcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().getValue() != null) {
-            country = updatedOrcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().getValue().name();
-        }
-        
-        if(updatedOrcidProfile != null && updatedOrcidProfile.getOrcidPreferences() != null && updatedOrcidProfile.getOrcidPreferences().getLocale() != null ) {
-            userLocale = updatedOrcidProfile.getOrcidPreferences().getLocale();
-        }
-        
-    }
-
     
     
     
