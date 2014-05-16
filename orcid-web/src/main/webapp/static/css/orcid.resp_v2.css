@@ -3946,6 +3946,15 @@ ul.sort-menu-options li a:hover{
 	margin: 10px 0;
 }
 
+.edit-option{
+	width:20px;
+	height:20px;
+	background: #C9CACB;
+	border-radius: 50%;
+	padding: 4px;
+	color: #939598;
+}
+
 .biography-controller .edit-option:hover,
 .country-controller .edit-option:hover,
 .keywords-controller .edit-option:hover,
@@ -3953,7 +3962,8 @@ ul.sort-menu-options li a:hover{
 .name-controller .edit-option:hover,
 .websites-controller .edit-option:hover {
 	cursor: pointer;
-	color: #a6ce39;
+	color: #FFF;
+	background: #a6ce39;
 }
 
 .biography-controller .biography-edit {
@@ -5009,8 +5019,8 @@ ul.sort-menu-options li a:hover{
 	}
 	
 	.workspace-accordion-header ul>li>a.action-option{
-		/* width: 33.33%; */
-		width: 50%;		
+		width: 33.33%;
+		/* width: 50%;		*/
 		color: transparent;
 		overflow: hidden;		
 		padding: 15px 0;

@@ -55,7 +55,11 @@
 		        	<div>
 		        	   <strong><@orcid.msg 'workspace.Alsoknownas'/></strong>
 		        	   <span ng-hide="showEdit == true" ng-click="openEdit()">
-		        	      <span class="glyphicon glyphicon-pencil edit-other-names edit-option" title=""></span><br />
+		        	   	  
+		        	      	<span class="glyphicon glyphicon-pencil edit-other-names edit-option" title=""></span>
+		        	
+		        	      
+		        	      <br />
 		        	      <span ng-repeat="otherNames in otherNamesForm.otherNames" ng-cloak>
 		        	         {{ $last?otherNames.value:otherNames.value+ ", "}}
 		        	      </span>
@@ -280,7 +284,7 @@
 			       				</div>
 			       			</div>	
 			       			<div class="col-md-10 col-sm-10 col-xs-12 action-button-bar" ng-show="workspaceSrvc.displayWorks">
-			       				 <!--
+			       				 
 			       				<div class="sort-menu-container">
 			       					 
 				       				<a class="action-option manage-button sort-menu" ng-click="">
@@ -295,16 +299,16 @@
 									</ul>
 									
 								</div>
-								 -->
+								
 		                		<ul class="works-menu">
-		                			<!-- 
+		                			
 			        				<li>
 			        					<a href="" class="action-option manage-button" ng-click="">
 											<span class="glyphicon glyphicon-cog"></span>
 											Manage View
 										</a>	        				
 			        				</li>
-			        				 -->
+			        				
 			        				<li>
 				        				<a href="" class="action-option manage-button" ng-click="addWorkModal()">
 											<span class="glyphicon glyphicon-plus"></span>
