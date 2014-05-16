@@ -152,7 +152,8 @@ public class NotificationManagerTest extends BaseTest {
             EmailEntity delegateEmail = new EmailEntity();
             delegateEmail.setId("jimmy@dove.com");
             delegateProfileEntity.setPrimaryEmail(delegateEmail);
-            when(profileDao.find(delegateOrcid)).thenReturn(delegateProfileEntity);
+            delegateProfileEntity.setSendChangeNotifications(true);
+            when(profileDao.find(delegateOrcid)).thenReturn(delegateProfileEntity);            
 
             DelegationDetails secondNewDelegate = new DelegationDetails();
             DelegateSummary secondNewDelegateSummary = new DelegateSummary();

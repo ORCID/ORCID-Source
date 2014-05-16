@@ -32,8 +32,8 @@
 		    </span>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
 		    	<@emailMacros.msg "email.deactivate.you_have_requested.1" />
-		    	${baseUri}/${orcid}?lang=${locale}<@emailMacros.msg "email.deactivate.you_have_requested.2" />
-		    	${baseUri}${deactivateUrlEndpoint}?lang=${locale} 
+		    	<a href="${baseUri}/${orcid}?lang=${locale}">${baseUri}/${orcid}</a><@emailMacros.msg "email.deactivate.you_have_requested.2" />
+		    	<a href="${baseUri}${deactivateUrlEndpoint}?lang=${locale}">${baseUri}${deactivateUrlEndpoint}</a>		    	 
 		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
 		    	<@emailMacros.msg "email.deactivate.once_an_account" />
@@ -42,8 +42,8 @@
 		  		<@emailMacros.msg "email.deactivate.if_you_did" />
 		    </p>	
 		  	<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666; white-space: pre;">
-				<@emailMacros.msg "email.common.kind_regards" />
-				<a href="${baseUri}/?lang=${locale}">${baseUri}/</a>
+<@emailMacros.msg "email.common.kind_regards" />
+<a href="${baseUri}/?lang=${locale}">${baseUri}/</a>
 			</p>
 			<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">
 				<@emailMacros.msg "email.common.you_have_received_this_email" />
