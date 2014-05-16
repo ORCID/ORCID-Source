@@ -71,6 +71,9 @@ public class CountryForm implements ErrorsInterface, Serializable {
         if (this.iso2Country != null) { 
             a.setCountry(new org.orcid.jaxb.model.message.Country(this.iso2Country.getValue()));
             a.getCountry().setVisibility(this.profileAddressVisibility.getVisibility());
+        } else {
+            a.setCountry(new org.orcid.jaxb.model.message.Country(null));
+            a.getCountry().setVisibility(this.profileAddressVisibility.getVisibility());
         }
 
     }
