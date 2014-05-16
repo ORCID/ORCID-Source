@@ -88,33 +88,45 @@
 								  <table class="table">								  										   
 									    <!-- Client details-->
 									    <tr>
-									    	<td><strong><@orcid.msg 'manage.developer_tools.view.orcid'/></strong></td>
-									    	<td>{{userCredentials.clientOrcid.value}}</td>									    	
+									    	<td class="small_column"><strong><@orcid.msg 'manage.developer_tools.view.orcid'/></strong></td>
+									    	<td class="large_column">{{userCredentials.clientOrcid.value}}</td>									    	
 									    </tr>
 									    <tr class="table-row-border-bottom">
-									    	<td><strong><@orcid.msg 'manage.developer_tools.view.secret'/></strong></td>
-									    	<td><select ng-model="selectedClientSecret" ng-options="secret.value for secret in userCredentials.clientSecrets | orderBy:'value'" ng-change="updateSelectedClientSecret()"></select></td>									    	
+									    	<td class="small_column"><strong><@orcid.msg 'manage.developer_tools.view.secret'/></strong></td>
+									    	<td class="large_column"><select ng-model="selectedClientSecret" ng-options="secret.value for secret in userCredentials.clientSecrets | orderBy:'value'" ng-change="updateSelectedClientSecret()"></select></td>									    	
 									    </tr>
 									    <!-- Authorize URl and Token URL -->
 									    <tr ng-hide="playgroundExample != ''">
-									    	<td><strong><@orcid.msg 'manage.developer_tools.view.example.authorize'/></strong></td>
-									    	<td>
-									    		<strong><@orcid.msg 'manage.developer_tools.view.available_scopes.authenticate'/></strong>&nbsp;&nbsp;&nbsp;&nbsp;<@orcid.msg 'manage.developer_tools.view.available_scopes.authenticate.description'/><br/>
-									    		<textarea class="input-xlarge selectable authorizeURL" ng-model="authorizeURL" readonly="readonly"></textarea>									    		
+									    	<td class="small_column"><strong><@orcid.msg 'manage.developer_tools.view.example.authorize'/></strong></td>
+									    	<td class="large_column">
+									    		<div class="row">
+										    		<div class="col-md-3 col-sm-3 col-xs-3">
+										  				<strong><@orcid.msg 'manage.developer_tools.view.available_scopes.authenticate'/></strong>
+										  			</div>
+										  			<div class="col-md-9 col-sm-9 col-xs-9">
+										  				<@orcid.msg 'manage.developer_tools.view.available_scopes.authenticate.description'/>
+										  			</div>
+									    		</div>
+									    		<div class="row">
+									    			<div class="col-md-12 col-sm-12 col-xs-12">
+									    				<textarea class="input-xlarge selectable authorizeURL" ng-model="authorizeURL" readonly="readonly"></textarea>
+									    			</div>
+									    		</div>									    		
 									    	</td>
 									    </tr>
 									    <tr  ng-hide="playgroundExample != ''" class="table-row-border-bottom">
-									    	<td><strong><@orcid.msg 'manage.developer_tools.view.example.token'/></strong></td>
-									    	<td>{{tokenURL}}<br />
-									    	<@orcid.msg 'manage.developer_tools.view.example.curl' /><a href="<@orcid.msg 'manage.developer_tools.view.example.curl.url' />" target="curlWiki"><@orcid.msg 'manage.developer_tools.view.example.curl.text' /></a> 
-									    	<textarea class="input-xlarge selectable authorizeURL" ng-model="sampleAuthCurl" readonly="readonly"></textarea>
+									    	<td class="small_column"><strong><@orcid.msg 'manage.developer_tools.view.example.token'/></strong></td>
+									    	<td class="large_column">
+									    		{{tokenURL}}<br />
+									    		<@orcid.msg 'manage.developer_tools.view.example.curl' /><a href="<@orcid.msg 'manage.developer_tools.view.example.curl.url' />" target="curlWiki"><@orcid.msg 'manage.developer_tools.view.example.curl.text' /></a> 
+									    		<textarea class="input-xlarge selectable authorizeURL" ng-model="sampleAuthCurl" readonly="readonly"></textarea>
 									    	</td>
 									    </tr>
 									    									    
 									    <!-- Testing tools -->
 									    <tr ng-hide="playgroundExample == ''">
-									    		<td><strong><@orcid.msg 'manage.developer_tools.view.example.title'/></strong></td>
-									    		<td><a href="{{playgroundExample}}" target="_blank"><@orcid.msg 'manage.developer_tools.view.example.google'/></a></td>
+									    	<td class="small_column"><strong><@orcid.msg 'manage.developer_tools.view.example.title'/></strong></td>
+									    	<td class="large_column"><a href="{{playgroundExample}}" target="_blank"><@orcid.msg 'manage.developer_tools.view.example.google'/></a></td>
 									    </tr>
 								   </table>
 								</div>									
