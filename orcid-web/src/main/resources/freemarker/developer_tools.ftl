@@ -100,10 +100,15 @@
 									    	<td class="small_column"><strong><@orcid.msg 'manage.developer_tools.view.example.authorize'/></strong></td>
 									    	<td class="large_column">
 									    		<div class="row">
-										    		<div class="col-md-3 col-sm-3 col-xs-3">
-										  				<strong><@orcid.msg 'manage.developer_tools.view.available_scopes.authenticate'/></strong>
+									    			<div class="col-md-12 col-sm-12 col-xs-12">
+									    				{{authorizeUrlBase}}
+									    			</div>
+									    		</div>
+									    		<div class="row">									    			
+										    		<div class="col-md-5 col-sm-5 col-xs-5">
+										  				<strong><@orcid.msg 'manage.developer_tools.view.available_scopes.authenticate.scope'/>&nbsp;<@orcid.msg 'manage.developer_tools.view.available_scopes.authenticate'/></strong>
 										  			</div>
-										  			<div class="col-md-9 col-sm-9 col-xs-9">
+										  			<div class="col-md-7 col-sm-7 col-xs-7">
 										  				<@orcid.msg 'manage.developer_tools.view.available_scopes.authenticate.description'/>
 										  			</div>
 									    		</div>

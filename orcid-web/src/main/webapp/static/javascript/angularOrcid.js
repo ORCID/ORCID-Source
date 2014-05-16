@@ -4558,7 +4558,8 @@ function SSOPreferencesCtrl($scope, $compile) {
 	$scope.sampleAuthCurlTemplate = "curl -i -L -k -H 'Accept: application/json' --data 'client_id=[CLIENT_ID]&client_secret=[CLIENT_SECRET]&grant_type=authorization_code&redirect_uri=[REDIRECT_URI]&code=REPLACE WITH OAUTH CODE' [PUB_BASE_URI]/oauth/token";
 	$scope.runscopeExample = '';
 	$scope.runscopeExampleLink = 'https://www.runscope.com/oauth2_tool';
-	$scope.authorizeURLTemplate = getBaseUri() + '/oauth/authorize?client_id=[CLIENT_ID]&response_type=code&scope=/authenticate&redirect_uri=[REDIRECT_URI]';
+	$scope.authorizeUrlBase = getBaseUri() + '/oauth/authorize';
+	$scope.authorizeURLTemplate = $scope.authorizeUrlBase + '?client_id=[CLIENT_ID]&response_type=code&scope=/authenticate&redirect_uri=[REDIRECT_URI]';	
 	$scope.tokenURL = orcidVar.pubBaseUri + '/oauth/token';
 	$scope.authorizeURL = '';
 	$scope.selectedRedirectUri = '';
