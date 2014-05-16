@@ -22,6 +22,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.persistence.dao.ProfileDao;
@@ -163,5 +164,10 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     public boolean disableDeveloperTools(OrcidProfile profile) {
         boolean result = profileDao.updateDeveloperTools(profile.getOrcidIdentifier().getPath(), false);
         return result;
+    }
+    
+    @Override
+    public Iso3166Country getCountry(String orcid) {
+        return profileDao.getCountry(orcid);
     }
 }

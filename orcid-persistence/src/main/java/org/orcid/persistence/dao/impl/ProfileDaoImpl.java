@@ -512,6 +512,13 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     }
     
     @Override
+    public Iso3166Country getCountry(String orcid) {
+        TypedQuery<Iso3166Country> query = entityManager.createQuery("select iso2_country from ProfileEntity where orcid = :orcid", Iso3166Country.class);
+        query.setParameter("orcid", orcid);
+        return query.getSingleResult();
+    }
+    
+    @Override
     @Transactional
     public void updateBiography(String orcid, String biography, Visibility visibility) {
         Query updateQuery = entityManager
