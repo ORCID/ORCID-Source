@@ -156,6 +156,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         StringBuilder builder = new StringBuilder(
                 "SELECT p.orcid FROM profile p LEFT JOIN profile_event e ON e.orcid = p.orcid AND e.profile_event_type = :profileEventType");
         builder.append(" WHERE p.claimed = false");
+        builder.append(" AND p.deprecated_date is null AND p.profile_deactivation_date is null AND p.account_expiry is null ");
         // Hasn't already been sent a reminder
         builder.append(" AND e.orcid IS NULL");
         // Has to be have been created at least remindAfterDays number of days
@@ -508,6 +509,13 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         updateQuery.setParameter("iso2Country", iso2Country != null ? iso2Country.value() : null);
         updateQuery.setParameter("profileAddressVisibility", StringUtils.upperCase(profileAddressVisibility.value()));
         updateQuery.executeUpdate();
+    }
+    
+    @Override
+    public Iso3166Country getCountry(String orcid) {
+        TypedQuery<Iso3166Country> query = entityManager.createQuery("select iso2_country from ProfileEntity where orcid = :orcid", Iso3166Country.class);
+        query.setParameter("orcid", orcid);
+        return query.getSingleResult();
     }
     
     @Override

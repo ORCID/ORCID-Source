@@ -15,4 +15,4 @@ deploy.log
 orcid-solr-web/src/main/webapp/solr/data/
 orcid-solr-web/src/main/webapp/solr/org/data/
 orcid-solr-web/src/main/webapp/solr/profile/data/
-orcid-solr-web/src/main/webapp/solr/fundingSubType
+orcid-solr-web/src/main/webapp/solr/fundingSubType/data

@@ -331,6 +331,8 @@ public class FundingsController extends BaseWorkspaceController {
 
         // If there are no errors, persist to DB
         if (funding.getErrors().isEmpty()) {
+            //Set the right value for the amount
+            setAmountWithTheCorrectFormat(funding);
             // Set the credit name
             setContributorsCreditName(funding);
             // Set default type for external identifiers
@@ -420,8 +422,16 @@ public class FundingsController extends BaseWorkspaceController {
         for (FundingExternalIdentifierForm extId : funding.getExternalIdentifiers()) {
             extId.setType(Text.valueOf(DEFAULT_FUNDING_EXTERNAL_IDENTIFIER_TYPE_CODE));
         }
+    }    
+    
+    private void setAmountWithTheCorrectFormat(FundingForm funding) throws Exception {
+        if(!PojoUtil.isEmpty(funding.getAmount())){
+            String amount = funding.getAmount().getValue();
+            BigDecimal bigDecimal = getAmountAsBigDecimal(amount);
+            funding.setAmount(Text.valueOf(bigDecimal.toString()));
+        }
     }
-
+    
     /**
      * Saves an affiliation
      * */
@@ -467,13 +477,6 @@ public class FundingsController extends BaseWorkspaceController {
         }
     }
     
-    
-    
-    
-    
-    
-    
-    
     /**
      * TODO
      * */
@@ -498,18 +501,6 @@ public class FundingsController extends BaseWorkspaceController {
         return result;
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     /**
      * Validators
      * */
@@ -520,7 +511,7 @@ public class FundingsController extends BaseWorkspaceController {
         if (!PojoUtil.isEmpty(funding.getAmount())) {            
             String amount = funding.getAmount().getValue();
             
-            if(!amount.matches("\\d+|(\\d{1,}[\\.\\,\\'\\s]?)*")){
+            if(!amount.matches("\\d+|\\d{1,3}([\\.\\,\\'\\s]?\\d{1,3})*")){
                 setError(funding.getAmount(), "Invalid.fundings.amount");
             } else {                
                 try {                

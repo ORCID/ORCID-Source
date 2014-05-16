@@ -40,6 +40,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.OrgManager;
+import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.message.Affiliation;
@@ -149,7 +150,12 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     private OrgManager orgManager;
 
     @Resource
+    private ProfileEntityManager profileEntityManager;
+    
+    @Resource
     private OrgDisambiguatedDao orgDisambiguatedDao;
+    
+    
 
     @Override
     public ProfileEntity toProfileEntity(OrcidProfile profile, ProfileEntity existingProfileEntity) {
@@ -938,7 +944,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             	String amount = StringUtils.isNotBlank(funding.getAmount().getContent()) ? funding.getAmount().getContent() : null;
             	String currencyCode = funding.getAmount().getCurrencyCode() != null ? funding.getAmount().getCurrencyCode() : null;
                 try {
-                    BigDecimal bigDecimalAmount = getAmountAsBigDecimal(amount, currencyCode);
+                    BigDecimal bigDecimalAmount = getAmountAsBigDecimal(amount);
                     profileFundingEntity.setNumericAmount(bigDecimalAmount);
                 } catch(Exception e) {
                     throw new IllegalArgumentException("Invalid amount cannot be cast to BidDecimal");
@@ -977,36 +983,18 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             return profileFundingEntity;
         }
         return null;
+    }        
+     
+    /**
+     * Transforms a string into a BigDecimal, it assumes the amount comes already formatted
+     * @param amount
+     * @return a BigDecimal containing the given amount
+     * @throws Exception if the amount cannot be correctly parse into a BigDecimal
+     * */
+    public BigDecimal getAmountAsBigDecimal(String amount) throws Exception {
+        return new BigDecimal(amount);
     }
     
-    /**
-     * Get an string amount and transform it into a BigDecimal object
-     * @param amount
-     * @param currencyCode
-     * @return BigDecimal 
-     * @throws any exception that happens trying to convert the string
-     * */
-    private BigDecimal getAmountAsBigDecimal(String amount, String currencyCode) throws Exception {
-        try {      
-            java.util.Locale locale = localeManager.getLocale();
-            ParsePosition parsePosition = new ParsePosition(0);
-            NumberFormat numberFormat = NumberFormat.getInstance(locale);
-            Number number = null;
-            if(!PojoUtil.isEmpty(currencyCode))  {                    
-                Currency currency = Currency.getInstance(currencyCode);
-                String currencySymbol = currency.getSymbol();            
-                number = numberFormat.parse(amount.replace(currencySymbol, StringUtils.EMPTY), parsePosition);
-            } else {
-                number = numberFormat.parse(amount, parsePosition);
-            }
-            if(parsePosition.getIndex() != amount.length())
-                throw new Exception("Unable to parse amount into BigDecimal"); 
-            return new BigDecimal(number.toString());                          
-        } catch(Exception e) {                
-            throw e;
-        }
-    }
-        
     /**
      * Get a list of GrantExternalIdentifierEntity from the external identifiers
      * @param profileGrantEntity

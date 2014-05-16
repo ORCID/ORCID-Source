@@ -16,7 +16,13 @@
  */
 package org.orcid.pojo.ajaxForm;
 
-public class OrgDefinedFundingSubType {
+import java.io.Serializable;
+
+public class OrgDefinedFundingSubType implements Serializable {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     private Text subtype;
     private boolean alreadyIndexed;
     

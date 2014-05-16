@@ -18,6 +18,7 @@ package org.orcid.core.manager;
 
 import java.util.List;
 
+import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -54,4 +55,6 @@ public interface ProfileEntityManager {
     public boolean enableDeveloperTools(OrcidProfile profile);
     
     public boolean disableDeveloperTools(OrcidProfile profile);
+    
+    public Iso3166Country getCountry(String orcid);
 }

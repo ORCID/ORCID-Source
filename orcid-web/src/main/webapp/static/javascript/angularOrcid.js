@@ -1993,16 +1993,33 @@ function PublicEduAffiliation($scope, $compile, $filter, affiliationsSrvc){
 	$scope.affiliationsSrvc = affiliationsSrvc;
 	$scope.moreInfo = {};
 	
+	// remove once grouping is live
 	$scope.toggleClickMoreInfo = function(key) {
 		if (!document.documentElement.className.contains('no-touch'))
 			$scope.moreInfo[key]=!$scope.moreInfo[key];
 	};
 	
+	// remove once grouping is live
 	$scope.moreInfoMouseEnter = function(key, $event) {
 		$event.stopPropagation();
 		if (document.documentElement.className.contains('no-touch'))
 			$scope.moreInfo[key]=true;
 	};
+	
+	$scope.showDetailsMouseClick = function(key, $event) {
+		$event.stopPropagation();
+		$scope.moreInfo[key] = !$scope.moreInfo[key];
+		//
+		/*
+		if (!document.documentElement.className.contains('no-touch'))
+			$scope.moreInfo[key]=!$scope.moreInfo[key];
+		*/
+		/*
+		if (document.documentElement.className.contains('no-touch'))
+			$scope.moreInfo[key]=true;
+		*/
+	};
+
 
 	$scope.closeMoreInfo = function(key) {
 		$scope.moreInfo[key]=false;
@@ -2019,11 +2036,18 @@ function PublicEmpAffiliation($scope, $compile, $filter, affiliationsSrvc){
 			$scope.moreInfo[key]=!$scope.moreInfo[key];
 	};
 	
+	// remove once grouping is live
 	$scope.moreInfoMouseEnter = function(key, $event) {
 		$event.stopPropagation();
 		if (document.documentElement.className.contains('no-touch'))
 			$scope.moreInfo[key]=true;
 	};
+	
+	// remove once grouping is live
+	$scope.showDetailsMouseClick = function(key, $event) {
+		$event.stopPropagation();
+		$scope.moreInfo[key]=!$scope.moreInfo[key];		
+    };
 
 	$scope.closeMoreInfo = function(key) {
 		$scope.moreInfo[key]=false;
@@ -2055,6 +2079,7 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 			
 	};
 
+	// remove once grouping is live
 	$scope.toggleClickMoreInfo = function(key) {
 		if (!document.documentElement.className.contains('no-touch')) {
 			if ($scope.moreInfoCurKey != null 
@@ -2066,6 +2091,7 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 		}
 	};
 	
+	// remove once grouping is live
 	$scope.moreInfoMouseEnter = function(key, $event) {
 		$event.stopPropagation();
 		if (document.documentElement.className.contains('no-touch')) {
@@ -2076,6 +2102,21 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 			$scope.moreInfoCurKey = key;
 			$scope.moreInfo[key]=true;
 		}
+	};
+	
+	$scope.showDetailsMouseClick = function(key, $event) {
+		$event.stopPropagation();
+		$scope.moreInfo[key]=!$scope.moreInfo[key];
+		/*
+		if (document.documentElement.className.contains('no-touch')) {
+			if ($scope.moreInfoCurKey != null 
+					&& $scope.moreInfoCurKey != key) {
+				$scope.privacyHelp[$scope.moreInfoCurKey]=false;
+			}
+			$scope.moreInfoCurKey = key;
+			$scope.moreInfo[key]=true;
+		}
+		*/
 	};
 
 	$scope.closeMoreInfo = function(key) {
@@ -2324,6 +2365,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	$scope.editTranslatedTitle = false; 	
 	$scope.lastIndexedTerm = null;
 	
+	// remove once grouping is live
 	$scope.toggleClickMoreInfo = function(key) {
 		if (!document.documentElement.className.contains('no-touch')) {
 			if ($scope.moreInfoCurKey != null 
@@ -2335,6 +2377,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 		}
 	};
 	
+	// remove once grouping is live
 	$scope.moreInfoMouseEnter = function(key, $event) {
 		$event.stopPropagation();
 		if (document.documentElement.className.contains('no-touch')) {
@@ -2346,6 +2389,23 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 			$scope.moreInfo[key]=true;
 		}
 	};
+	
+	$scope.showDetailsMouseClick = function(key, $event) {
+		$event.stopPropagation();
+		$scope.moreInfo[key]=!$scope.moreInfo[key];
+		console.log(key);
+		
+		/*
+		if (document.documentElement.className.contains('no-touch')) {
+			if ($scope.moreInfoCurKey != null 
+					&& $scope.moreInfoCurKey != key) {
+				$scope.privacyHelp[$scope.moreInfoCurKey]=false;
+			}
+			$scope.moreInfoCurKey = key;
+			$scope.moreInfo[key]=true;
+		}
+		*/
+	};	
 	
 	$scope.closeMoreInfo = function(key) {
 		$scope.moreInfo[key]=false;
@@ -2705,15 +2765,22 @@ function PublicFundingCtrl($scope, $compile, $filter, fundingSrvc){
 	$scope.fundingSrvc = fundingSrvc;
 	$scope.moreInfo = {};
 	
+	// remove once grouping is live
 	$scope.toggleClickMoreInfo = function(key) {
 		if (!document.documentElement.className.contains('no-touch'))
 			$scope.moreInfo[key]=!$scope.moreInfo[key];
 	};
 	
+	// remove once grouping is live
 	$scope.moreInfoMouseEnter = function(key, $event) {
 		$event.stopPropagation();
 		if (document.documentElement.className.contains('no-touch'))
 			$scope.moreInfo[key]=true;
+	};
+
+	$scope.showDetailsMouseClick = function(key, $event) {
+		$event.stopPropagation();
+		$scope.moreInfo[key]=!$scope.moreInfo[key];
 	};
 
 	$scope.closeMoreInfo = function(key) {
@@ -2737,6 +2804,7 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 	$scope.showBibtex = true;
 	$scope.loadingInfo = false;
 	$scope.moreInfoOpen = false;
+	$scope.moreInfo = {};
 
     $scope.bibtexShowToggle = function () {
     	$scope.showBibtex = !($scope.showBibtex);
@@ -2756,12 +2824,13 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 	$scope.worksSrvc.worksToAddIds = orcidVar.workIds;	
 	$scope.worksSrvc.addWorkToScope(getBaseUri() + '/' + orcidVar.orcidId +'/works.json?workIds=');
 	
-
+	// remove once grouping is live
 	$scope.moreInfoClick = function(work, $event) {
 		if (!document.documentElement.className.contains('no-touch'))
 			$scope.moreInfoOpen?$scope.closePopover():$scope.loadWorkInfo(work.putCode.value, $event);
 	};
 	
+	// remove once grouping is live
 	$scope.moreInfoMouseEnter = function(work, $event) {
 		$event.stopPropagation();
 		if (document.documentElement.className.contains('no-touch'))
@@ -2769,6 +2838,16 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 		else
 			$scope.moreInfoOpen?$scope.closePopover():$scope.loadWorkInfo(work.putCode.value, $event);
 	};
+	
+	$scope.showDetailsMouseClick = function(work, $event) {
+		$event.stopPropagation();
+		//if (document.documentElement.className.contains('no-touch'))
+			$scope.moreInfo[work] = !$scope.moreInfo[work];
+			$scope.loadWorkInfo(work, $event);
+		//else
+			//$scope.moreInfoOpen?$scope.closePopover():$scope.loadWorkInfo(work.putCode.value, $event);
+	};
+
 	
 	$scope.loadWorkInfo = function(putCode, event) {
 		//Close any open popover
@@ -2816,6 +2895,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	$scope.types = null;
 	$scope.privacyHelp = {};
 	$scope.moreInfoOpen = false;
+	$scope.moreInfo = {};
 	
 	$scope.toggleClickPrivacyHelp = function(key) {
 		if (!document.documentElement.className.contains('no-touch'))
@@ -2957,11 +3037,13 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	//init
 	$scope.getWorks();	
 	
+	// remove once grouping is live
 	$scope.moreInfoClick = function(work, $event) {
 		if (!document.documentElement.className.contains('no-touch'))
 			$scope.moreInfoOpen?$scope.closePopover():$scope.loadWorkInfo(work.putCode.value, $event);
 	};
 	
+	// remove once grouping is live
 	$scope.moreInfoMouseEnter = function(work, $event) {
 		$event.stopPropagation();
 		if (document.documentElement.className.contains('no-touch'))
@@ -2969,6 +3051,44 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		else
 			$scope.moreInfoOpen?$scope.closePopover():$scope.loadWorkInfo(work.putCode.value, $event);
 	};
+	
+	$scope.showDetailsMouseClick = function(work, $event) {
+		$event.stopPropagation();		
+		$scope.moreInfo[work] = !$scope.moreInfo[work];		
+		$scope.loadDetails(work, $event);
+	};
+	
+	$scope.loadDetails = function(putCode, event) {
+		//Close any open popover
+		$scope.closePopover(event);
+		$scope.moreInfoOpen = true;
+		//Display the popover
+		$scope.loadingInfo = true;		
+		$(event.target).next().css('display','inline');	
+		if($scope.worksSrvc.worksInfo[putCode] == null) {		
+			$.ajax({
+				url: getBaseUri() + '/works/getWorkInfo.json?workId=' + putCode,	        
+		        dataType: 'json',
+		        success: function(data) {
+		        	
+		        	$scope.$apply(function () {
+		        		removeBadContributors(data);
+		        		$scope.worksSrvc.addBibtexJson(data);
+						$scope.worksSrvc.worksInfo[putCode] = data;
+						$scope.loadingInfo = false;
+		        	});		        	
+		        }
+			}).fail(function(){
+				// something bad is happening!
+		    	console.log("error fetching works");
+		    	$scope.loadingInfo = false;
+			});
+		} else {
+			$(event.target).next().css('display','inline');
+			$scope.loadingInfo = false;
+		}
+	};			
+
 	
 	$scope.loadWorkInfo = function(putCode, event) {
 		//Close any open popover

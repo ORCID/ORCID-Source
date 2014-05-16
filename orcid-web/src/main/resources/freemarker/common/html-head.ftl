@@ -61,7 +61,11 @@
         <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.1.0/css/bootstrap-ie7.css?v=${ver}"/>	                
     <![endif]-->
 
-    <link rel="stylesheet" href="${staticCdn}/css/orcid.resp.css?v=${ver}"/>	    
+    <#if request.requestURI?ends_with("my-orcid2")>
+       <link rel="stylesheet" href="${staticCdn}/css/orcid.resp_v2.css?v=${ver}"/>
+    <#else>
+       <link rel="stylesheet" href="${staticCdn}/css/orcid.resp.css?v=${ver}"/>    
+    </#if>	    
     <!--[if lt IE 8]>
     	<link rel="stylesheet" href="${staticCdn}/css/orcid-ie7.css?v=${ver}"/>
     <![endif]-->

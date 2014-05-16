@@ -38,7 +38,6 @@ if (typeof jQuery.ui == 'undefined') {
 
 <script type="text/javascript" src="${staticCdn}/javascript/plugins.js?v=${ver}"></script>
 
-
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.11/angular.min.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.11/angular-cookies.min.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.11/angular-sanitize.min.js"></script>
@@ -50,6 +49,6 @@ if (typeof angular == 'undefined') {
 }
 </script>
 
-<script type="text/javascript" src="${staticCdn}/javascript/script.js?v=${ver}"></script>
+<script type="text/javascript" src="${staticCdn}/javascript/angularOrcid.js?v=${ver}"></script>
 
-<script type="text/javascript" src="${staticCdn}/javascript/angularOrcid.js?v=${ver}"></script> 
+<script type="text/javascript" src="${staticCdn}/javascript/script.js?v=${ver}"></script>

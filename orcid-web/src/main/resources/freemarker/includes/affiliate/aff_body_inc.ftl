@@ -19,7 +19,11 @@
 <div  class="alert">We are migrating to only Education and Employment affiliations. Please delete any affiliations shown here.</div>
 <ul ng-hide="!affiliationsSrvc.affiliations.length" class="workspace-affiliations workspace-body-list bottom-margin-medium" ng-cloak>        
     <li class="bottom-margin-small" ng-repeat="affiliation in affiliationsSrvc.affiliations | orderBy:['-dateSortString', 'affiliationName']">            	
-		<#include "aff_row_inc.ftl" />
+		<#if request.requestURI?ends_with("my-orcid2")>
+		    <#include "aff_row_inc_v2.ftl" />
+		<#else>
+		    <#include "aff_row_inc.ftl" />
+		</#if>
     </li>           
 </ul>
 <div ng-show="affiliationsSrvc.loading == true" class="text-center">
