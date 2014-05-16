@@ -932,6 +932,7 @@
 		<xs:complexType>
 			<xs:sequence>				
 				<xs:element ref="orcid:funding-type" minOccurs="1" maxOccurs="1" />
+				<xs:element ref="orcid:organization-defined-type" minOccurs="0" maxOccurs="1" />				
 				<xs:element ref="orcid:funding-title" minOccurs="1" />							
 				<xs:element ref="orcid:short-description" minOccurs="0"/>			
 				<xs:element ref="orcid:amount" minOccurs="0" maxOccurs="1"/>
@@ -1214,6 +1215,11 @@
 				<xs:enumeration value="salary-award" />
 			</xs:restriction>
 		</xs:simpleType>
+	</xs:element>
+	<xs:element name="organization-defined-type" type="orcid:string255">
+		<xs:annotation>
+			<xs:documentation>Container for a organization defined type.</xs:documentation>
+		</xs:annotation>		
 	</xs:element>
 	<xs:element name="funding-external-identifiers">
 		<xs:annotation>
@@ -2366,6 +2372,11 @@
 	<xs:simpleType name="short-text">
 		<xs:restriction base="xs:string">
 			<xs:maxLength value="500"></xs:maxLength>
+		</xs:restriction>
+	</xs:simpleType>	
+	<xs:simpleType name="string255">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="255"></xs:maxLength>
 		</xs:restriction>
 	</xs:simpleType>	
 	<xs:simpleType name="string1000">

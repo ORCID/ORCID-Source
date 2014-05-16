@@ -50,14 +50,12 @@ import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
-import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
 import org.orcid.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.MessageSource;
 import org.springframework.mail.MailSender;
-import org.springframework.mail.SimpleMailMessage;
 
 /**
  * @author Will Simpson
@@ -71,6 +69,16 @@ public class NotificationManagerImpl implements NotificationManager {
     private static final String RESET_NOTIFY_ORCID_ORG = "reset@notify.orcid.org";
 
     private static final String CLAIM_NOTIFY_ORCID_ORG = "claim@notify.orcid.org";
+    
+    private static final String DEACTIVATE_NOTIFY_ORCID_ORG = "deactivate@notify.orcid.org";
+    
+    private static final String AMEND_NOTIFY_ORCID_ORG = "amend@notify.orcid.org";
+    
+    private static final String DELEGATE_NOTIFY_ORCID_ORG = "delegate@notify.orcid.org";
+    
+    private static final String EMAIL_CHANGED_NOTIFY_ORCID_ORG = "email-changed@notify.orcid.org";
+    
+    private static final String ACCOUNT_DEPRECATED_NOTIFY_ORCID_ORG = "account-deprecate@notify.orcid.org";
 
     @Resource
     private MessageSource messages;
@@ -95,8 +103,7 @@ public class NotificationManagerImpl implements NotificationManager {
     private TemplateManager templateManager;
 
     private EncryptionManager encryptionManager;
-
-    private GenericDao<SecurityQuestionEntity, Integer> securityQuestionDao;
+    
 
     @Resource
     private GenericDao<ProfileEventEntity, Long> profileEventDao;
@@ -143,14 +150,7 @@ public class NotificationManagerImpl implements NotificationManager {
     @Required
     public void setEncryptionManager(EncryptionManager encryptionManager) {
         this.encryptionManager = encryptionManager;
-    }
-
-    @Required
-    @Resource(name = "securityQuestionDao")
-    @Override
-    public void setSecurityQuestionDao(GenericDao<SecurityQuestionEntity, Integer> securityQuestionDao) {
-        this.securityQuestionDao = securityQuestionDao;
-    }
+    }    
 
     public void setProfileEventDao(GenericDao<ProfileEventEntity, Long> profileEventDao) {
         this.profileEventDao = profileEventDao;
@@ -165,25 +165,25 @@ public class NotificationManagerImpl implements NotificationManager {
         // Create verification url
 
         Map<String, Object> templateParams = new HashMap<String, Object>();
-
+        
+        String subject = getSubject("email.subject.deactivate", orcidToDeactivate);
+        String email = orcidToDeactivate.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+        
         String emailFriendlyName = deriveEmailFriendlyName(orcidToDeactivate);
         templateParams.put("emailName", emailFriendlyName);
         templateParams.put("orcid", orcidToDeactivate.getOrcidIdentifier().getPath());
         templateParams.put("baseUri", baseUri);
         templateParams.put("deactivateUrlEndpoint", "/account/confirm-deactivate-orcid");
+        templateParams.put("subject", subject);
 
         addMessageParams(templateParams, orcidToDeactivate);
 
         // Generate body from template
         String body = templateManager.processTemplate("deactivate_orcid_email.ftl", templateParams);
-        // Create email message
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(fromAddress);
-        message.setTo(orcidToDeactivate.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
-        message.setSubject(getSubject("email.subject.deactivate", orcidToDeactivate));
-        message.setText(body);
-        // Send message
-        sendAndLogMessage(message);
+        // Generate html from template
+        String html = templateManager.processTemplate("deactivate_orcid_email_html.ftl", templateParams);
+        
+        mailGunManager.sendEmail(DEACTIVATE_NOTIFY_ORCID_ORG, email, subject, body, html);
     }
 
     // look like the following is our best best for i18n emails
@@ -311,7 +311,6 @@ public class NotificationManagerImpl implements NotificationManager {
         String body = templateManager.processTemplate("reset_password_email.ftl", templateParams);
         String htmlBody = templateManager.processTemplate("reset_password_email_html.ftl", templateParams);
         mailGunManager.sendEmail(RESET_NOTIFY_ORCID_ORG, primaryEmail, getSubject("email.subject.reset", orcidProfile), body, htmlBody);
-
     }
 
     @Override
@@ -333,73 +332,73 @@ public class NotificationManagerImpl implements NotificationManager {
             LOGGER.debug("Not sending amend email, because modified by admin ({}): {}", amenderOrcid, amendedProfile);
             return;
         }
+        
+        String subject = getSubject("email.subject.amend", amendedProfile);
+        String email = amendedProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+        
         // Create map of template params
         Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put("emailName", deriveEmailFriendlyName(amendedProfile));
         templateParams.put("orcid", amendedProfile.getOrcidIdentifier().getPath());
         templateParams.put("amenderName", extractAmenderName(amendedProfile, amenderOrcid));
         templateParams.put("baseUri", baseUri);
+        templateParams.put("subject", subject);
 
         addMessageParams(templateParams, amendedProfile);
 
         // Generate body from template
         String body = templateManager.processTemplate("amend_email.ftl", templateParams);
-        // Create email message
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(fromAddress);
-        message.setTo(amendedProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
-        message.setSubject(getSubject("email.subject.amend", amendedProfile));
-        message.setText(body);
-        // Send message
-        sendAndLogMessage(message);
+        // Generate html from template
+        String html = templateManager.processTemplate("amend_email_html.ftl", templateParams);
+        
+        mailGunManager.sendEmail(AMEND_NOTIFY_ORCID_ORG, email, subject, body, html);
+        
     }
 
     @Override
     public void sendNotificationToAddedDelegate(OrcidProfile orcidUserGrantingPermission, List<DelegationDetails> delegatesGrantedByUser) {
-
         // Create map of template params
         Map<String, Object> templateParams = new HashMap<String, Object>();
-        SimpleMailMessage message = new SimpleMailMessage();
-        // LADP, Please Check, can't test yet
-        // Would prefer if this email came from ORCID user granting permission -
-        // parameter also needed for the body of the email
-        // message.setFrom(grantingOrcidEmail);
-        message.setFrom(fromAddress);
-        message.setSubject(getSubject("email.subject.added_as_delegate", orcidUserGrantingPermission));
-
-        for (DelegationDetails newDelegation : delegatesGrantedByUser) {
-            String grantingOrcidEmail = orcidUserGrantingPermission.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+        String subject = getSubject("email.subject.added_as_delegate", orcidUserGrantingPermission);
+        
+        for (DelegationDetails newDelegation : delegatesGrantedByUser) {                       
             ProfileEntity delegateProfileEntity = profileDao.find(newDelegation.getDelegateSummary().getOrcidIdentifier().getPath());
+            Boolean sendChangeNotifications = delegateProfileEntity.getSendChangeNotifications();
+            if (sendChangeNotifications == null || !sendChangeNotifications) {
+                LOGGER.debug("Not sending added delegate email, because option to send change notifications not set to true for delegate: {}", delegateProfileEntity.getId());
+                return;
+            }
+                        
+            String grantingOrcidEmail = orcidUserGrantingPermission.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
             String emailNameForDelegate = deriveEmailFriendlyName(delegateProfileEntity);
+            String email = delegateProfileEntity.getPrimaryEmail().getId();
 
             templateParams.put("emailNameForDelegate", emailNameForDelegate);
             templateParams.put("grantingOrcidValue", orcidUserGrantingPermission.getOrcidIdentifier().getPath());
             templateParams.put("grantingOrcidName", deriveEmailFriendlyName(orcidUserGrantingPermission));
             templateParams.put("baseUri", baseUri);
             templateParams.put("grantingOrcidEmail", grantingOrcidEmail);
+            templateParams.put("subject", subject);
 
             addMessageParams(templateParams, orcidUserGrantingPermission);
 
+            // Generate body from template
             String body = templateManager.processTemplate("added_as_delegate_email.ftl", templateParams);
-
-            message.setTo(delegateProfileEntity.getPrimaryEmail().getId());
-            message.setText(body);
-            // Send message
-            sendAndLogMessage(message);
+            // Generate html from template
+            String html = templateManager.processTemplate("added_as_delegate_email_html.ftl", templateParams);
+            
+            mailGunManager.sendEmail(DELEGATE_NOTIFY_ORCID_ORG, email, subject, body, html);
         }
-
     }
-
+    
     @Override
     public void sendEmailAddressChangedNotification(OrcidProfile updatedProfile, Email oldEmail, URI baseUri) {
 
         // build up old template
         Map<String, Object> templateParams = new HashMap<String, Object>();
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(supportAddress);
-        message.setTo(oldEmail.getValue());
-        message.setSubject(getSubject("email.subject.email_removed", updatedProfile));
-
+        
+        String subject = getSubject("email.subject.email_removed", updatedProfile);
+        String email = oldEmail.getValue();        
         String emailFriendlyName = deriveEmailFriendlyName(updatedProfile);
         templateParams.put("emailName", emailFriendlyName);
         String verificationUrl = createVerificationUrl(updatedProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), baseUri);
@@ -408,15 +407,16 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("newEmail", updatedProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
         templateParams.put("orcid", updatedProfile.getOrcidIdentifier().getPath());
         templateParams.put("baseUri", baseUri);
+        templateParams.put("subject", subject);
 
         addMessageParams(templateParams, updatedProfile);
 
         // Generate body from template
         String body = templateManager.processTemplate("email_removed.ftl", templateParams);
-        // Create email message
-        message.setText(body);
-        // Send message
-        sendAndLogMessage(message);
+        // Generate html from template
+        String html = templateManager.processTemplate("email_removed_html.ftl", templateParams);
+        
+        mailGunManager.sendEmail(EMAIL_CHANGED_NOTIFY_ORCID_ORG, email, subject, body, html);
     }
 
     @Override
@@ -500,7 +500,9 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     /**
-     * TODO
+     * Substitute the message params with his real values
+     * @param templateParams
+     * @param profileEntity
      * */
     private void addMessageParams(Map<String, Object> templateParams, ProfileEntity profileEntity) {
         Locale locale = null;
@@ -515,7 +517,9 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     /**
-     * TODO
+     * Get the subject of a message given a code and a profile entity
+     * @param code
+     * @param profileEntity
      * */
     private String getSubject(String code, ProfileEntity profileEntity) {
         Locale locale = null;
@@ -539,62 +543,65 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     /**
-     * TODO
+     * Sends an email to the depreciated account owner
+     * @param deprecatedProfile
+     * @param primaryProfile 
      * */
     private void sendProfileDeprecationEmailToDeprecatedAccount(ProfileEntity deprecatedProfile, ProfileEntity primaryProfile) {
+        String subject = getSubject("email.subject.deprecated_profile", deprecatedProfile);
+        String email = deprecatedProfile.getPrimaryEmail().getId();
         // Create map of template params
         Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put("emailName", deriveEmailFriendlyName(deprecatedProfile));
         templateParams.put("deprecatedAccount", deprecatedProfile.getId());
         templateParams.put("primaryAccount", deprecatedProfile.getId());
-
+        templateParams.put("subject", subject);
+        
         addMessageParams(templateParams, deprecatedProfile);
 
         // Generate body from template
         String body = templateManager.processTemplate("profile_deprecation_deprecated_profile_email.ftl", templateParams);
-        // Create email message
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(fromAddress);
-        message.setTo(deprecatedProfile.getPrimaryEmail().getId());
-        message.setSubject(getSubject("email.subject.deprecated_profile", deprecatedProfile));
-        message.setText(body);
-
+        // Generate html from template
+        String html = templateManager.processTemplate("profile_deprecation_deprecated_profile_email_html.ftl", templateParams);
+        
         // Send message
         if (apiRecordCreationEmailEnabled) {
-            sendAndLogMessage(message);
+            mailGunManager.sendEmail(ACCOUNT_DEPRECATED_NOTIFY_ORCID_ORG, email, subject, body, html);
             profileEventDao.persist(new ProfileEventEntity(deprecatedProfile.getId(), ProfileEventType.PROFILE_DEPRECATED));
         } else {
-            LOGGER.debug("Not sending profile deprecated email, because API record creation email option is disabled. Message would have been: {}", message);
+            LOGGER.debug("Not sending profile deprecated email, because API record creation email option is disabled. Message would have been: {}", body);
         }
     }
 
     /**
-     * TODO
+     * Send an email to the primary account indicating that an account has been deprecated to his account
+     * @param deprecatedProfile
+     * @param primaryProfile
      * */
     private void sendProfileDeprecationEmailToPrimaryAccount(ProfileEntity deprecatedProfile, ProfileEntity primaryProfile) {
+        String subject = getSubject("email.subject.deprecated_profile_primary", primaryProfile);        
+        String email = deprecatedProfile.getPrimaryEmail().getId();
+        
         // Create map of template params
         Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put("emailName", deriveEmailFriendlyName(primaryProfile));
         templateParams.put("deprecatedAccount", deprecatedProfile.getId());
         templateParams.put("primaryAccount", deprecatedProfile.getId());
-
-        addMessageParams(templateParams, primaryProfile);
+        templateParams.put("subject", subject);
+        
+        addMessageParams(templateParams, deprecatedProfile);
 
         // Generate body from template
         String body = templateManager.processTemplate("profile_deprecation_primary_profile_email.ftl", templateParams);
-        // Create email message
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(fromAddress);
-        message.setTo(primaryProfile.getPrimaryEmail().getId());
-        message.setSubject(getSubject("email.subject.deprecated_profile_primary", primaryProfile));
-        message.setText(body);
-
+        // Generate html from template
+        String html = templateManager.processTemplate("profile_deprecation_primary_profile_email_html.ftl", templateParams);
+        
         // Send message
         if (apiRecordCreationEmailEnabled) {
-            sendAndLogMessage(message);
-            profileEventDao.persist(new ProfileEventEntity(deprecatedProfile.getId(), ProfileEventType.PROFILE_DEPRECATION));
+            mailGunManager.sendEmail(ACCOUNT_DEPRECATED_NOTIFY_ORCID_ORG, email, subject, body, html);
+            profileEventDao.persist(new ProfileEventEntity(deprecatedProfile.getId(), ProfileEventType.PROFILE_DEPRECATED));
         } else {
-            LOGGER.debug("Not sending profile deprecated email, because API record creation email option is disabled. Message would have been: {}", message);
+            LOGGER.debug("Not sending profile deprecated email, because API record creation email option is disabled. Message would have been: {}", body);
         }
     }
 
@@ -645,14 +652,4 @@ public class NotificationManagerImpl implements NotificationManager {
         }
         return String.format("%s/%s/%s", baseUri.toString(), path, base64EncodedParams);
     }
-
-    private void sendAndLogMessage(SimpleMailMessage message) {
-        LOGGER.info("Sending email message: {}", message);
-        try {
-            mailSender.send(message);
-        } catch (RuntimeException e) {
-            LOGGER.error("Error sending email: {}", message, e);
-        }
-    }
-
 }

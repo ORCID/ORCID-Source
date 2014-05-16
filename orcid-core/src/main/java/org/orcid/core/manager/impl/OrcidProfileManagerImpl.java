@@ -406,6 +406,10 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         }
 
     }
+    
+    public boolean exists(String orcid) {
+        return profileDao.exists(orcid);
+    }
 
     /**
      * Add source to the fundings
@@ -853,33 +857,6 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         // preserve the visibility settings
         orcidJaxbCopyManager.copyUpdatedBioToExistingWithVisibility(existingProfile.getOrcidBio(), updatedOrcidProfile.getOrcidBio());
         existingProfile.setOrcidBio(updatedOrcidProfile.getOrcidBio());
-        return updateOrcidProfile(existingProfile);
-    }
-
-    @Override
-    @Transactional
-    public OrcidProfile updatePersonalInformation(OrcidProfile updatedOrcidProfile) {
-        OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcidIdentifier().getPath());
-
-        if (existingProfile == null) {
-            return null;
-        }
-
-        orcidJaxbCopyManager.copyUpdatedBioToExistingWithVisibility(existingProfile.getOrcidBio(), updatedOrcidProfile.getOrcidBio());
-        orcidJaxbCopyManager.copyUpdatedWorksPreservingVisbility(existingProfile.retrieveOrcidWorks(), updatedOrcidProfile.retrieveOrcidWorks());
-        return updateOrcidProfile(existingProfile);
-    }
-
-    @Override
-    @Transactional
-    public OrcidProfile updateOrcidHistory(OrcidProfile updatedOrcidProfile) {
-        OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcidIdentifier().getPath());
-
-        if (existingProfile == null) {
-            return null;
-        }
-        orcidJaxbCopyManager.copyRelevantUpdatedHistoryElements(existingProfile.getOrcidHistory(), updatedOrcidProfile.getOrcidHistory());
-        orcidJaxbCopyManager.copyUpdatedBioToExistingWithVisibility(existingProfile.getOrcidBio(), updatedOrcidProfile.getOrcidBio());
         return updateOrcidProfile(existingProfile);
     }
 

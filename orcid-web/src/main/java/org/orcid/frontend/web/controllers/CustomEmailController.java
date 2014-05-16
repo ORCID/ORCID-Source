@@ -62,13 +62,14 @@ public class CustomEmailController extends BaseController {
     public @ResponseBody
     CustomEmailForm createCustomEmailForm(HttpServletRequest request, @RequestBody CustomEmailForm customEmailForm) {
         String currentOrcid = getEffectiveUserOrcid();
+        customEmailForm.setErrors(new ArrayList<String>());
         if(clientDetailsManager.exists(currentOrcid)) {
             //Validate
             validateEmailType(customEmailForm);
             validateSender(customEmailForm);
             validateSubject(customEmailForm);
-            validateContent(customEmailForm);
-                        
+            validateContent(customEmailForm);                       
+            
             copyErrors(customEmailForm.getEmailType(), customEmailForm);
             copyErrors(customEmailForm.getSender(), customEmailForm);
             copyErrors(customEmailForm.getSubject(), customEmailForm);

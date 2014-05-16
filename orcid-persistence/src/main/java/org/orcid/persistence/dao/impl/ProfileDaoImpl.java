@@ -156,6 +156,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         StringBuilder builder = new StringBuilder(
                 "SELECT p.orcid FROM profile p LEFT JOIN profile_event e ON e.orcid = p.orcid AND e.profile_event_type = :profileEventType");
         builder.append(" WHERE p.claimed = false");
+        builder.append(" AND p.deprecated_date is null AND p.profile_deactivation_date is null AND p.account_expiry is null ");
         // Hasn't already been sent a reminder
         builder.append(" AND e.orcid IS NULL");
         // Has to be have been created at least remindAfterDays number of days
@@ -313,6 +314,15 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
                 "select count(p.id) from ProfileEntity p where p.claimed = FALSE and p.source.id = :clientId and p.id = :messageOrcid", Long.class);
         query.setParameter("clientId", clientId);
         query.setParameter("messageOrcid", messageOrcid);
+        Long result = query.getSingleResult();
+        return (result != null && result > 0);
+    }
+
+    @Override
+    public boolean exists(String orcid) {
+        TypedQuery<Long> query = entityManager.createQuery(
+                "select count(p.id) from ProfileEntity p where p.id = :orcid", Long.class);
+        query.setParameter("orcid", orcid);
         Long result = query.getSingleResult();
         return (result != null && result > 0);
     }

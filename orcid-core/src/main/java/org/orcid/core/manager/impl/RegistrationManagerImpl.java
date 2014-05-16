@@ -17,7 +17,6 @@
 package org.orcid.core.manager.impl;
 
 import java.net.URI;
-import java.util.Date;
 
 import javax.annotation.Resource;
 
@@ -27,15 +26,10 @@ import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.PasswordGenerationManager;
 import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.utils.VerifyRegistrationToken;
-import org.orcid.jaxb.model.message.Claimed;
-import org.orcid.jaxb.model.message.CompletionDate;
-import org.orcid.jaxb.model.message.CreationMethod;
-import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.HearAboutEntity;
-import org.orcid.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
@@ -89,26 +83,11 @@ public class RegistrationManagerImpl implements RegistrationManager {
     }
 
     @Override
-    public void verifyRegistration(OrcidProfile orcidProfile, URI baseUri) {
-        LOGGER.debug("Verifying registration: {}", orcidProfile.getOrcidIdentifier().getPath());
-        OrcidHistory orcidHistory = orcidProfile.getOrcidHistory();
-        if (orcidHistory == null) {
-            orcidHistory = new OrcidHistory();
-        }
-        orcidHistory.setClaimed(new Claimed(true));
-        orcidHistory.setCompletionDate(new CompletionDate(DateUtils.convertToXMLGregorianCalendar(new Date())));
-        orcidHistory.setCreationMethod(CreationMethod.WEBSITE);
-        orcidProfile.setOrcidHistory(orcidHistory);
-        orcidProfileManager.updateOrcidHistory(orcidProfile);
-        REGISTRATIONS_VERIFIED_COUNTER.inc();
-    }
-
-    @Override
     public void resetUserPassword(String toEmail, OrcidProfile orcidProfile, URI baseUri) {
         LOGGER.debug("Resetting password for Orcid: {}", orcidProfile.getOrcidIdentifier().getPath());
         if (!orcidProfile.getOrcidHistory().isClaimed()) {
             LOGGER.debug("Profile is not claimed so re-sending claim email instead of password reset: {}", orcidProfile.getOrcidIdentifier().getPath());
-            notificationManager.sendApiRecordCreationEmail(toEmail,orcidProfile);
+            notificationManager.sendApiRecordCreationEmail(toEmail, orcidProfile);
         } else {
             notificationManager.sendPasswordResetEmail(toEmail, orcidProfile, baseUri);
         }

@@ -508,29 +508,6 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
     @Test
     @Transactional
     @Rollback(true)
-    public void testUpdatePersonalInformation() {
-
-        OrcidProfile profile1 = createBasicProfile();
-        orcidProfileManager.createOrcidProfile(profile1);
-
-        OrcidProfile profile2 = createFullOrcidProfile();
-
-        orcidProfileManager.updatePersonalInformation(profile2);
-
-        OrcidProfile resultProfile = orcidProfileManager.retrieveOrcidProfile(TEST_ORCID);
-        assertEquals("William", resultProfile.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
-        assertEquals("Simpson", resultProfile.getOrcidBio().getPersonalDetails().getFamilyName().getContent());
-        assertEquals("W. J. R. Simpson", resultProfile.getOrcidBio().getPersonalDetails().getCreditName().getContent());
-        assertEquals(1, resultProfile.retrieveOrcidWorks().getOrcidWork().size());
-        assertEquals(1, resultProfile.getOrcidBio().getResearcherUrls().getResearcherUrl().size());
-        assertEquals("http://www.wjrs.co.uk", resultProfile.getOrcidBio().getResearcherUrls().getResearcherUrl().get(0).getUrl().getValue());
-        assertEquals(1, resultProfile.getOrcidBio().getKeywords().getKeyword().size());
-        assertEquals("Will is a software developer at Semantico", resultProfile.getOrcidBio().getBiography().getContent());
-    }
-
-    @Test
-    @Transactional
-    @Rollback(true)
     public void testUpdatePersonalInformationRemovesOrcidIndexFields() throws Exception {
 
         // re-use the createFull method but add some extra criteria so we can

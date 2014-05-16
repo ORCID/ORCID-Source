@@ -97,12 +97,7 @@
                 <span ng-hide="showEdit == true" ng-click="toggleEdit()">
 	                <span ng-show="countryForm != null && countryForm.iso2Country != null" ng-bind="countryForm.iso2Country.value">
 	                </span>
-                    
-	                <span ng-show="countryForm != null && countryForm.iso2Country == null" ng-cloak>
-	                   <@spring.message "workspace.select_country"/>
-	                </span>
-	                
-               </span>
+	            </span>
                
                <div ng-show="showEdit == true" ng-cloak class="country-edit">
                	  <@orcid.privacyToggle  angularModel="countryForm.profileAddressVisibility.visibility"
@@ -181,9 +176,9 @@
 	                 	     limitedClick="setPrivacy('LIMITED', $event)" 
 	                 	     privateClick="setPrivacy('PRIVATE', $event)" />
 		        	   
-		        	      <div ng-repeat="website in websitesForm.websites">
-		        	          <input type="text" ng-model="website.url.value" placeholder="${springMacroRequestContext.getMessage("manual_work_form_contents.labelURL")}"></input>
+		        	      <div ng-repeat="website in websitesForm.websites" class="mobile-box">
 		        	          <input type="text" ng-model="website.name.value" placeholder="${springMacroRequestContext.getMessage("manual_work_form_contents.labeldescription")}"></input>
+		        	          <input type="text" ng-model="website.url.value" placeholder="${springMacroRequestContext.getMessage("manual_work_form_contents.labelURL")}"></input>
 		        	          <a ng-click="deleteWebsite(website)" class="glyphicon glyphicon-trash grey"></a>
 		        	          <br />
 		        	          <span class="orcid-error" ng-show="website.url.errors.length > 0">

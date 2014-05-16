@@ -386,10 +386,14 @@
 						<td width="40%"><a href="{{delegationDetails.delegateSummary.orcidIdentifier.uri}}" target="_blank">{{delegationDetails.delegateSummary.creditName.content}}</a></td>
 						<td width="30%"><a href="{{delegationDetails.delegateSummary.orcidIdentifier.uri}}" target="_blank">{{delegationDetails.delegateSummary.orcidIdentifier.path}}</a></td>
 						<td width="20%">{{delegationDetails.approvalDate.value|date:'yyyy-MM-dd'}}</td>
-						<td width="10%"><a
+						<td width="10%">
+							<a
+							ng-hide="realUserOrcid === delegationDetails.delegateSummary.orcidIdentifier.path"
 							ng-click="confirmRevoke(delegationDetails.delegateSummary.creditName.content, delegationDetails.delegateSummary.orcidIdentifier.path)"
 							class="glyphicon glyphicon-trash grey"
-							title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a></td>
+							title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a>
+							<span ng-show="realUserOrcid === delegationDetails.delegateSummary.orcidIdentifier.path">${springMacroRequestContext.getMessage("manage_delegation.you")}</span>
+						</td>
 					</tr>
 				</tbody>
 			</table>
@@ -425,7 +429,7 @@
 										class="glyphicon glyphicon-trash grey"
 										title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a>
 								</span>
-								<span ng-show="effectiveUserOrcid === result['orcid-profile']['orcid-identifier'].path">You</span>
+								<span ng-show="effectiveUserOrcid === result['orcid-profile']['orcid-identifier'].path">${springMacroRequestContext.getMessage("manage_delegation.you")}</span>
 							</td>
 						</tr>
 					</tbody>
@@ -541,7 +545,7 @@
 </script>
 	
 <script type="text/ng-template" id="revoke-delegate-modal">
-	<div style="padding: 20px;">
+	<div class="lightbox-container">
 		<h3><@orcid.msg 'manage_delegation.confirmrevoketrustedindividual'/></h3>
 		<p> {{delegateNameToRevoke}} ({{delegateToRevoke}})</p>
 		<button class="btn btn-danger" ng-click="revoke()"><@orcid.msg 'manage_delegation.btnrevokeaccess'/></button> 

@@ -30,7 +30,7 @@
             <div>
                 <label for="userId">${springMacroRequestContext.getMessage("oauth_sign_in.labelemailorID")}</label>
                 <div class="relative">
-                   <input type="text" id="userId" name="userId" value="${email}" placeholder="Email or iD" class="input-xlarge">
+                   <input type="text" id="userId" name="userId" value="${userId}" placeholder="Email or iD" class="input-xlarge">
                 </div>
             </div>
             <div id="passwordField">
