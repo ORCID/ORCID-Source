@@ -1335,6 +1335,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
         String amenderOrcid = sourceManager.retrieveSourceOrcid();
         FundingList existingFundingList = existingProfile.retrieveFundings();
+        //updates the amount format to the right format according to the current locale
         setFundingAmountsWithTheCorrectFormat(updatedOrcidProfile);
         FundingList updatedFundingList = updatedOrcidProfile.retrieveFundings();
         Visibility workVisibilityDefault = existingProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault().getValue();
@@ -1348,7 +1349,9 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     }
 
     /**
-     * TODO
+     * Replace the funding amount string into the desired format 
+     * @param updatedOrcidProfile
+     *          The profile containing the new funding
      * */
     private void setFundingAmountsWithTheCorrectFormat(OrcidProfile updatedOrcidProfile) throws IllegalArgumentException {
         FundingList fundings = updatedOrcidProfile.retrieveFundings();        
@@ -1362,30 +1365,15 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                 NumberFormat numberFormat = NumberFormat.getInstance(locale);
                 Number number = numberFormat.parse(amount, parsePosition);
                 String formattedAmount = number.toString();
-                if (parsePosition.getIndex() != amount.length())
-                    throw new IllegalArgumentException("Unable to parse amount: " + amount + " into a numeric amount");
+                if (parsePosition.getIndex() != amount.length()) {
+                    double example = 1234.56;
+                    NumberFormat numberFormatExample = NumberFormat.getNumberInstance(localeManager.getLocale());                     
+                    throw new IllegalArgumentException("The amount: " + amount + " doesn'n have the right format, it should use the format: " + numberFormatExample.format(example));
+                }
                 funding.getAmount().setContent(formattedAmount);
             }
         }
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     private void setAffiliationPrivacy(OrcidProfile updatedOrcidProfile, Visibility defaultAffiliationVisibility) {
         OrcidHistory orcidHistory = updatedOrcidProfile.getOrcidHistory();
