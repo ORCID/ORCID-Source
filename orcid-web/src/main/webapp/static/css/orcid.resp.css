@@ -3392,7 +3392,7 @@ p.orcid-id-container{
 } 
 
 .authorizeURL {
-	width: 465px;
+	width: 495px;
 	height: 95px;
 }
 
@@ -3588,6 +3588,14 @@ p.orcid-id-container{
 
 .developer-tools .client_secret_table .c3 {
 	width: 5%;
+}
+
+.developer-tools .small_column {
+	width: 21%;
+}
+
+.developer-tools .large_column {
+	width: 79%;
 }
 
 .padding-fix{
