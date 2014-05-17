@@ -24,6 +24,7 @@ public class CustomEmailEntity extends BaseEntity<CustomEmailPk>{
     private String sender;
     private String subject;
     private String content; 
+    private boolean isHtml;
     
     @Override
     @Transient
@@ -78,5 +79,14 @@ public class CustomEmailEntity extends BaseEntity<CustomEmailPk>{
 
     public void setSubject(String subject) {
         this.subject = subject;
-    }          
+    }
+
+    @Column(name = "is_html")    
+    public boolean isHtml() {
+        return isHtml;
+    }
+
+    public void setHtml(boolean isHtml) {
+        this.isHtml = isHtml;
+    }  
 }

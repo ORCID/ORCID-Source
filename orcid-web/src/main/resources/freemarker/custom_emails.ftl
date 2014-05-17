@@ -69,7 +69,7 @@
 			<div ng-show="showCreateForm" class="bottom-line">			
 				<div class="row">
 					<!-- Sender -->
-					<div class="col-md-10 col-sm-10 col-xs-12">
+					<div class="col-md-12 col-sm-12 col-xs-12">
 						<div class="inner-row">
 							<span><strong><@orcid.msg 'custom_email.template.create.sender.label'/></strong></span>
 							<input type="text" placeholder="<@orcid.msg 'custom_email.template.create.sender.placeholder'/>" class="input-xlarge" ng-model="customEmail.sender.value">
@@ -79,7 +79,7 @@
 						</div>						
 					</div>
 					<!-- Subject -->
-					<div class="col-md-10 col-sm-10 col-xs-12">
+					<div class="col-md-12 col-sm-12 col-xs-12">
 						<div class="inner-row">
 							<span><strong><@orcid.msg 'custom_email.template.create.subject.label'/></strong></span>
 							<input type="text" placeholder="<@orcid.msg 'custom_email.template.create.subject.placeholder'/>" class="input-xlarge" ng-model="customEmail.subject.value">
@@ -89,13 +89,22 @@
 						</div>
 					</div>
 					<!-- Content -->
-					<div class="col-md-10 col-sm-10 col-xs-12">
+					<div class="col-md-12 col-sm-12 col-xs-12">
 						<div class="inner-row content">
 							<span><strong><@orcid.msg 'custom_email.template.create.content.label'/></strong></span>
 							<textarea placeholder="<@orcid.msg 'custom_email.template.create.content.placeholder'/>" ng-model="customEmail.content.value"></textarea>
 							<span class="orcid-error" ng-show="customEmail.content.errors.length > 0">
 								<div ng-repeat='error in customEmail.content.errors' ng-bind-html="error"></div>
 							</span>
+						</div>
+					</div>
+					<!-- Is Html -->
+					<div class="col-md-12 col-sm-12 col-xs-12">
+						<div class="row">
+							<div class="inner-row">							
+								<div class="col-md-2 col-sm-2 col-xs-2"><strong><@orcid.msg 'custom_email.template.create.is_html'/></div>
+								<div class="col-md-10 col-sm-10 col-xs-10"><input type="checkbox" ng-model="customEmail.html"></div>
+							</div>							
 						</div>
 					</div>
 					<!-- Actions -->
@@ -143,6 +152,15 @@
 							</span>
 						</div>
 					</div>
+					<!-- Is Html -->
+					<div class="col-md-12 col-sm-12 col-xs-12">
+						<div class="row">
+							<div class="inner-row">							
+								<div class="col-md-2 col-sm-2 col-xs-2"><strong><@orcid.msg 'custom_email.template.create.is_html'/></div>
+								<div class="col-md-10 col-sm-10 col-xs-10"><input type="checkbox" ng-model="editedCustomEmail.html"></div>
+							</div>							
+						</div>
+					</div>
 					<!-- Actions -->
 					<div class="col-md-12 col-sm-12 col-xs-12">
 						<div class="inner-row content">				
@@ -174,7 +192,7 @@
 		<div class="row">
 			<div class="col-md-12 col-xs-12 col-sm-12">
 				<h3><@orcid.msg 'custom_email.template.delete.header' /></h3>
-				<p>{{customEmailToDelete.subject.value}}</p>		
+				<p>{{toDelete.subject.value}}</p>		
     			<div class="btn btn-danger" ng-click="deleteCustomEmail()">
     				<@orcid.msg 'freemarker.btnDelete' />
     			</div>

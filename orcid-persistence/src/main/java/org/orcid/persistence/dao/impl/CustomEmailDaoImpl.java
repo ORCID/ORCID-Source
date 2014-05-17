@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.hibernate.NonUniqueResultException;
 import org.orcid.persistence.dao.CustomEmailDao;
 import org.orcid.persistence.jpa.entities.CustomEmailEntity;
 import org.orcid.persistence.jpa.entities.EmailType;
@@ -39,8 +40,12 @@ public class CustomEmailDaoImpl extends GenericDaoImpl<CustomEmailEntity, Custom
     public CustomEmailEntity findByClientIdAndEmailType(String clientDetailsId, EmailType emailType) {
         TypedQuery<CustomEmailEntity> query = entityManager.createQuery("FROM CustomEmailEntity WHERE clientDetailsEntity.id=:clientDetailsId and emailType=:emailType", CustomEmailEntity.class);
         query.setParameter("clientDetailsId", clientDetailsId);
-        query.setParameter("emailType", emailType.name());
-        return query.getSingleResult();
+        query.setParameter("emailType", emailType);
+        try {
+            return query.getSingleResult();
+        } catch (NonUniqueResultException exception) {            
+            return null;
+        }        
     }
     
     /**
@@ -54,13 +59,14 @@ public class CustomEmailDaoImpl extends GenericDaoImpl<CustomEmailEntity, Custom
      * */
     @Override
     @Transactional
-    public boolean createCustomEmail(String clientDetailsId, EmailType emailType, String sender, String subject, String content) {
-        Query query = entityManager.createNativeQuery("INSERT INTO custom_email(client_details_id, email_type, sender, subject, content, date_created, last_modified) values(:clientDetailsId, :emailType, :sender, :subject, :content, now(), now())");
+    public boolean createCustomEmail(String clientDetailsId, EmailType emailType, String sender, String subject, String content, boolean isHtml) {
+        Query query = entityManager.createNativeQuery("INSERT INTO custom_email(client_details_id, email_type, sender, subject, content, is_html, date_created, last_modified) values(:clientDetailsId, :emailType, :sender, :subject, :content, :isHtml, now(), now())");
         query.setParameter("clientDetailsId", clientDetailsId);
         query.setParameter("emailType", emailType.name());
         query.setParameter("sender", sender);
         query.setParameter("subject", subject);
         query.setParameter("content", content);
+        query.setParameter("isHtml", isHtml);
         return query.executeUpdate() > 0;
     }
 
@@ -75,13 +81,14 @@ public class CustomEmailDaoImpl extends GenericDaoImpl<CustomEmailEntity, Custom
      * */
     @Override
     @Transactional
-    public boolean updateCustomEmail(String clientDetailsId, EmailType emailType, String sender, String subject, String content) {
-        Query query = entityManager.createNativeQuery("UPDATE custom_email SET email_type=:emailType, sender=:sender, subject=:subject, content=:content, last_modified=now() WHERE client_details_id=:clientDetailsId");
+    public boolean updateCustomEmail(String clientDetailsId, EmailType emailType, String sender, String subject, String content, boolean isHtml) {
+        Query query = entityManager.createNativeQuery("UPDATE custom_email SET email_type=:emailType, sender=:sender, subject=:subject, content=:content, is_html=:isHtml, last_modified=now() WHERE client_details_id=:clientDetailsId");
         query.setParameter("clientDetailsId", clientDetailsId);
         query.setParameter("emailType", emailType.name());
         query.setParameter("sender", sender);
         query.setParameter("subject", subject);
-        query.setParameter("content", content);       
+        query.setParameter("content", content);
+        query.setParameter("isHtml", isHtml);
         return query.executeUpdate() > 0;
     }
 

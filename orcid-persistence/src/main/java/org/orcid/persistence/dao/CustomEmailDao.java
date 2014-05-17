@@ -35,9 +35,10 @@ public interface CustomEmailDao extends GenericDao<CustomEmailEntity, CustomEmai
      * @param sender
      * @param subject
      * @param content
+     * @param isHtml
      * @return true if it was able to create the custom email      
      * */
-    boolean createCustomEmail(String clientDetailsId, EmailType emailType, String sender, String subject, String content);
+    boolean createCustomEmail(String clientDetailsId, EmailType emailType, String sender, String subject, String content, boolean isHtml);
     
     /**
      * Updated an existing custom email
@@ -46,9 +47,10 @@ public interface CustomEmailDao extends GenericDao<CustomEmailEntity, CustomEmai
      * @param sender
      * @param subject
      * @param content
+     * @param isHtml
      * @return true if it was able to update the custom email
      * */
-    boolean updateCustomEmail(String clientDetailsId, EmailType emailType, String sender, String subject, String content);
+    boolean updateCustomEmail(String clientDetailsId, EmailType emailType, String sender, String subject, String content, boolean isHtml);
     
     /**
      * Deletes a custom email

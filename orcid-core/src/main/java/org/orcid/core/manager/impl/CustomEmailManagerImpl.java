@@ -31,7 +31,7 @@ public class CustomEmailManagerImpl implements CustomEmailManager {
      * @return a CustomEmailEntity object if the email is found, null otherwise
      * */
     @Override
-    public CustomEmailEntity findByClientIdAndEmailType(String clientDetailsId, EmailType emailType) {
+    public CustomEmailEntity getCustomEmail(String clientDetailsId, EmailType emailType) {
         return customEmailDao.findByClientIdAndEmailType(clientDetailsId, emailType);
     }
 
@@ -45,8 +45,8 @@ public class CustomEmailManagerImpl implements CustomEmailManager {
      * @return true if it was able to create the custom email      
      * */
     @Override
-    public boolean createCustomEmail(String clientDetailsId, EmailType emailType, String sender, String subject, String content) {
-        return customEmailDao.createCustomEmail(clientDetailsId, emailType, sender, subject, content);
+    public boolean createCustomEmail(String clientDetailsId, EmailType emailType, String sender, String subject, String content, boolean isHtml) {
+        return customEmailDao.createCustomEmail(clientDetailsId, emailType, sender, subject, content, isHtml);
     }
 
     /**
@@ -59,9 +59,9 @@ public class CustomEmailManagerImpl implements CustomEmailManager {
      * @return true if it was able to update the custom email
      * */
     @Override
-    public boolean updateCustomEmail(String clientDetailsId, EmailType emailType, String sender, String subject, String content) {
+    public boolean updateCustomEmail(String clientDetailsId, EmailType emailType, String sender, String subject, String content, boolean isHtml) {
         if(customEmailDao.exists(clientDetailsId, emailType)) {
-            return customEmailDao.updateCustomEmail(clientDetailsId, emailType, sender, subject, content);
+            return customEmailDao.updateCustomEmail(clientDetailsId, emailType, sender, subject, content, isHtml);
         }
         return false;
     }

@@ -17,6 +17,7 @@ import org.orcid.persistence.jpa.entities.EmailType;
 import org.orcid.pojo.ajaxForm.CustomEmailForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
+import org.orcid.utils.OrcidStringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -55,6 +56,7 @@ public class CustomEmailController extends BaseController {
         result.setSubject(Text.valueOf(""));
         result.setContent(Text.valueOf(""));
         result.setSender(Text.valueOf(""));
+        result.setHtml(true);
         result.setEmailType(Text.valueOf(EmailType.CLAIM.name()));
         return result;
     }
@@ -125,14 +127,14 @@ public class CustomEmailController extends BaseController {
                 if(PojoUtil.isEmpty(customEmailForm.getSender())) {
                     sender = DEFAULT_CLAIM_SENDER;
                 } else {
-                    sender = customEmailForm.getSender().getValue();
+                    sender = OrcidStringUtils.stripHtml(customEmailForm.getSender().getValue());
                 }
                 
                 String subject = "";
                 if(PojoUtil.isEmpty(customEmailForm.getSubject())) {
                     subject = getMessage("email.subject.api_record_creation");
                 } else {
-                    subject = customEmailForm.getSubject().getValue();
+                    subject = OrcidStringUtils.stripHtml(customEmailForm.getSubject().getValue());
                 }
                 
                 String content = customEmailForm.getContent().getValue();
@@ -225,7 +227,7 @@ public class CustomEmailController extends BaseController {
         customEmailForm.getContent().setErrors(new ArrayList<String>());
         if(PojoUtil.isEmpty(customEmailForm.getContent())){
             customEmailForm.getContent().getErrors().add(getMessage("custom_email.content.not_blank"));
-        }
+        } 
         return customEmailForm;
     }
 }

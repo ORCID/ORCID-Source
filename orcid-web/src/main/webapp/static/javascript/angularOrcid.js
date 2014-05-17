@@ -5187,8 +5187,10 @@ function CustomEmailCtrl($scope, $compile) {
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        success: function(data) {
+	        	$scope.customEmailList = [];
+	        	$scope.showEmailList = false;
 	        	$scope.showCreateForm = false;
-	        	$scope.showEditForm = false;
+	        	$scope.showEditForm = false;	        	
 	        	$scope.customEmail = null;
 	        	$scope.editedCustomEmail = null;
 	        	if(data != null && data.length > 0){
@@ -5211,7 +5213,8 @@ function CustomEmailCtrl($scope, $compile) {
 	        type: 'GET',
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
-	        success: function(data) {	        	
+	        success: function(data) {	
+	        	console.log(angular.toJson(data));
 	        	if(data.errors == null || data.errors.length == 0){
 	        		$scope.customEmail = data;
 	        		$scope.showCreateForm = true;
@@ -5294,7 +5297,7 @@ function CustomEmailCtrl($scope, $compile) {
 			scrolling: true
         });
 		
-        $.colorbox.resize({width:"300px" , height:"275px"});
+        $.colorbox.resize({width:"415px" , height:"175px"});
 	};
 	
 	$scope.deleteCustomEmail = function(index) {		
@@ -5306,11 +5309,9 @@ function CustomEmailCtrl($scope, $compile) {
 	        dataType: 'json',
 	        success: function(data) {
 	        	if(data){
-	        		$scope.closeModal = function(){
-	        			$.colorbox.close();	
-	        		};
 	        		//If everything worked fine, reload the list of clients
-        			$scope.getCustomEmails();	        			        		
+	        		$scope.getCustomEmails();
+	        		$scope.closeModal();
 	        	} else {
 	        		console.log("Error deleting custom email");
 	        	} 
@@ -5319,6 +5320,10 @@ function CustomEmailCtrl($scope, $compile) {
 	    	alert("An error occured creating the custom email");
 	    	console.log("An error occured creating the custom email.");
 	    });	
+	};
+	
+	$scope.closeModal = function(){
+		$.colorbox.close();	
 	};
 	
 	$scope.getCustomEmails();

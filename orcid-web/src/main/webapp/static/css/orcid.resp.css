@@ -3624,6 +3624,10 @@ p.orcid-id-container{
 	width: 100%;	
 }
 
+.custom-email .inner-row input[type=checkbox] {
+	width: 5%;
+}
+
 .custom-email .content textarea {
 	height: 140px;
 }
