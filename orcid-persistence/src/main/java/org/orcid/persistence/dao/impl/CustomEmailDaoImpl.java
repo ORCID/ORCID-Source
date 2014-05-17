@@ -39,7 +39,7 @@ public class CustomEmailDaoImpl extends GenericDaoImpl<CustomEmailEntity, Custom
     public CustomEmailEntity findByClientIdAndEmailType(String clientDetailsId, EmailType emailType) {
         TypedQuery<CustomEmailEntity> query = entityManager.createQuery("FROM CustomEmailEntity WHERE clientDetailsEntity.id=:clientDetailsId and emailType=:emailType", CustomEmailEntity.class);
         query.setParameter("clientDetailsId", clientDetailsId);
-        query.setParameter("emailType", emailType);
+        query.setParameter("emailType", emailType.name());
         return query.getSingleResult();
     }
     
@@ -76,7 +76,7 @@ public class CustomEmailDaoImpl extends GenericDaoImpl<CustomEmailEntity, Custom
     @Override
     @Transactional
     public boolean updateCustomEmail(String clientDetailsId, EmailType emailType, String sender, String subject, String content) {
-        Query query = entityManager.createNativeQuery("UPDATE custom_email SET email_type=:emailType, sender=:sender, subject=:subject, content=:content, last_modified=now() WHERE client_details_id=:client_details_id");
+        Query query = entityManager.createNativeQuery("UPDATE custom_email SET email_type=:emailType, sender=:sender, subject=:subject, content=:content, last_modified=now() WHERE client_details_id=:clientDetailsId");
         query.setParameter("clientDetailsId", clientDetailsId);
         query.setParameter("emailType", emailType.name());
         query.setParameter("sender", sender);
@@ -110,7 +110,7 @@ public class CustomEmailDaoImpl extends GenericDaoImpl<CustomEmailEntity, Custom
     public boolean exists(String clientDetailsId, EmailType emailType) {
         TypedQuery<Long> query = entityManager.createQuery("SELECT count(*) FROM CustomEmailEntity WHERE clientDetailsEntity.id=:clientDetailsId and emailType=:emailType", Long.class);
         query.setParameter("clientDetailsId", clientDetailsId);
-        query.setParameter("emailType", emailType.name());
+        query.setParameter("emailType", emailType);
         Long result = query.getSingleResult();
         return (result != null && result > 0);
     }

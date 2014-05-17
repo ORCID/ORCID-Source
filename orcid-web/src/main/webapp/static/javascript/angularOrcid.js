@@ -5186,7 +5186,11 @@ function CustomEmailCtrl($scope, $compile) {
 			type: 'GET',
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
-	        success: function(data) {		        	
+	        success: function(data) {
+	        	$scope.showCreateForm = false;
+	        	$scope.showEditForm = false;
+	        	$scope.customEmail = null;
+	        	$scope.editedCustomEmail = null;
 	        	if(data != null && data.length > 0){
 	        		$scope.customEmailList = data;
 	        		$scope.showCreateForm = false;
@@ -5249,15 +5253,14 @@ function CustomEmailCtrl($scope, $compile) {
 		$scope.showEditForm = true;
 		$scope.showCreateButton = false;
 		$scope.showEmailList = false;
-		$scope.editedCustomEmail = $scope.customEmailList[index];
-		$scope.$apply();
+		$scope.editedCustomEmail = $scope.customEmailList[index];		
 	};
 	
 	$scope.editCustomEmail = function() {
 		$.ajax({
-	        url: getBaseUri() + '/custom-emails/edit.json',
+	        url: getBaseUri() + '/custom-emails/update.json',
 	        type: 'POST',
-	        data: angular.toJson($scope.customEmail),
+	        data: angular.toJson($scope.editedCustomEmail),
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        success: function(data) {
@@ -5275,29 +5278,41 @@ function CustomEmailCtrl($scope, $compile) {
 	    });		
 	};
 	
-	$scope.showViewLayout = function() {
-		$scope.showCreateForm = false;
-		$scope.showEditForm = false;
-		if($scope.customEmailList == null || $scope.customEmailList.length == 0) {
-			$scope.showCreateButton = true;			
-		}
+	$scope.showViewLayout = function() {		
+		$scope.getCustomEmails();
 	};
 	
-	$scope.deleteCustomEmail = function(index) {
-		var toDelete = $scope.customEmailList[index];
+	$scope.confirmDeleteCustomEmail = function(index) {
+		$scope.toDelete = $scope.customEmailList[index];
+		
+		$.colorbox({        	            
+            html : $compile($('#delete-custom-email').html())($scope),
+	        scrolling: true,
+	        onLoad: function() {
+			    $('#cboxClose').remove();
+			},
+			scrolling: true
+        });
+		
+        $.colorbox.resize({width:"300px" , height:"275px"});
+	};
+	
+	$scope.deleteCustomEmail = function(index) {		
 		$.ajax({
 	        url: getBaseUri() + '/custom-emails/delete.json',
 	        type: 'POST',
-	        data: angular.toJson(toDelete),
+	        data: angular.toJson($scope.toDelete),
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        success: function(data) {
-	        	if(data.errors != null && data.errors.length > 0){
-	        		$scope.customEmail = data;
-	        		$scope.$apply();
-	        	} else {
+	        	if(data){
+	        		$scope.closeModal = function(){
+	        			$.colorbox.close();	
+	        		};
 	        		//If everything worked fine, reload the list of clients
-        			$scope.getCustomEmails();        			
+        			$scope.getCustomEmails();	        			        		
+	        	} else {
+	        		console.log("Error deleting custom email");
 	        	} 
 	        }
 	    }).fail(function() { 

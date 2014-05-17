@@ -35,8 +35,7 @@
 				<div class="col-md-2 col-sm-2 col-xs-4" ng-show="showCreateButton" ng-cloak>
 					<a ng-click="displayCreateForm()" class="pull-right"><span class="label btn-primary"><@orcid.msg 'custom_email.template.create_button' /></span></a>
 				</div>	
-			</div>	
-			
+			</div>				
 			<div class="row bottom-line">
 				<div class="col-md-12 col-sm-12 col-xs-12 instructions">				
 					<p><@orcid.msg 'custom_email.template.description.1'/></p>
@@ -61,7 +60,7 @@
 						<div class="col-md-1 col-sm-1 col-xs-1">{{existingEmail.emailType.value}}</div>
 						<div class="col-md-9 col-sm-9 col-xs-9">{{existingEmail.subject.value}}</div>
 						<div class="col-md-1 col-sm-1 col-xs-1"><a href ng-click="showEditLayout($index)" class="edit" title="<@orcid.msg 'custom_email.common.edit' />"><span class="glyphicon glyphicon-pencil blue"></span></a></div>
-						<div class="col-md-1 col-sm-1 col-xs-1"><a href ng-click="deleteCustomEmail($index)" class="edit" title="<@orcid.msg 'custom_email.common.remove' />"><span class="glyphicon glyphicon-trash blue"></span></a></div>
+						<div class="col-md-1 col-sm-1 col-xs-1"><a href ng-click="confirmDeleteCustomEmail($index)" class="edit" title="<@orcid.msg 'custom_email.common.remove' />"><span class="glyphicon glyphicon-trash blue"></span></a></div>
 					</div>
 				</div>
 			</div>
@@ -111,12 +110,7 @@
 				</div>
 			</div>
 
-
-
-
-
 			<!-- Edit form -->				
-			
 			<div ng-show="showEditForm" class="bottom-line">			
 				<div class="row">
 					<!-- Sender -->
@@ -161,18 +155,6 @@
 				</div>
 			</div>			
 			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-
 			<!-- Learn more -->			
 			<div class="row">
 				<div class="col-md-12 col-sm-12 col-xs-12">					
@@ -184,10 +166,21 @@
 				</div>
 			</div>
 				
-									
-					
-					
 		</div>
 	</div>
 </div>
+<script type="text/ng-template" id="delete-custom-email">
+	<div class="lightbox-container">
+		<div class="row">
+			<div class="col-md-12 col-xs-12 col-sm-12">
+				<h3><@orcid.msg 'custom_email.template.delete.header' /></h3>
+				<p>{{customEmailToDelete.subject.value}}</p>		
+    			<div class="btn btn-danger" ng-click="deleteCustomEmail()">
+    				<@orcid.msg 'freemarker.btnDelete' />
+    			</div>
+    			<a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
+			</div>
+		</div>
+    </div>
+</script>
 </@public>

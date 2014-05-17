@@ -54,6 +54,7 @@ public class CustomEmailController extends BaseController {
         CustomEmailForm result = new CustomEmailForm();
         result.setSubject(Text.valueOf(""));
         result.setContent(Text.valueOf(""));
+        result.setSender(Text.valueOf(""));
         result.setEmailType(Text.valueOf(EmailType.CLAIM.name()));
         return result;
     }
@@ -151,7 +152,7 @@ public class CustomEmailController extends BaseController {
             type = EmailType.valueOf(customEmailForm.getEmailType().getValue());
         }
         if(currentOrcid != null && type != null)
-            customEmailManager.deleteCustomEmail(currentOrcid, type);
+            return customEmailManager.deleteCustomEmail(currentOrcid, type);
         return false;
     }
     
@@ -179,12 +180,12 @@ public class CustomEmailController extends BaseController {
     CustomEmailForm validateEmailType(@RequestBody CustomEmailForm customEmailForm){
         customEmailForm.getEmailType().setErrors(new ArrayList<String>());
         if(PojoUtil.isEmpty(customEmailForm.getEmailType()))
-                customEmailForm.getEmailType().getErrors().add("custom_email.email_type.not_blank");
+                customEmailForm.getEmailType().getErrors().add(getMessage("custom_email.email_type.not_blank"));
         else {
             try {
                 EmailType.valueOf(customEmailForm.getEmailType().getValue());
             } catch(IllegalArgumentException ie) {
-                customEmailForm.getEmailType().getErrors().add("custom_email.email_type.invalid");
+                customEmailForm.getEmailType().getErrors().add(getMessage("custom_email.email_type.invalid"));
             }
         } 
         return customEmailForm;
@@ -200,7 +201,7 @@ public class CustomEmailController extends BaseController {
                 InternetAddress addr = new InternetAddress(sender);
                 addr.validate();
             } catch (AddressException ex) {
-                customEmailForm.getSender().getErrors().add("custom_email.sender.invalid");
+                customEmailForm.getSender().getErrors().add(getMessage("custom_email.sender.invalid"));
             }
         }        
         return customEmailForm;
@@ -212,7 +213,7 @@ public class CustomEmailController extends BaseController {
         customEmailForm.getSubject().setErrors(new ArrayList<String>());
         if(!PojoUtil.isEmpty(customEmailForm.getSubject())){
             if(customEmailForm.getSubject().getValue().length() > SUBJECT_MAX_LENGTH)
-                customEmailForm.getSubject().getErrors().add("custom_email.subject.too_long");
+                customEmailForm.getSubject().getErrors().add(getMessage("custom_email.subject.too_long"));
         }
                 
         return customEmailForm;
@@ -223,7 +224,7 @@ public class CustomEmailController extends BaseController {
     CustomEmailForm validateContent(@RequestBody CustomEmailForm customEmailForm) {
         customEmailForm.getContent().setErrors(new ArrayList<String>());
         if(PojoUtil.isEmpty(customEmailForm.getContent())){
-            customEmailForm.getContent().getErrors().add("custom_email.content.not_blank");
+            customEmailForm.getContent().getErrors().add(getMessage("custom_email.content.not_blank"));
         }
         return customEmailForm;
     }
