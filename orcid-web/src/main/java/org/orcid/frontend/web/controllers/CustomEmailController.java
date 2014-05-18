@@ -81,6 +81,7 @@ public class CustomEmailController extends BaseController {
             //If valid
             if(customEmailForm.getErrors().isEmpty()) {
                 EmailType emailType = EmailType.valueOf(customEmailForm.getEmailType().getValue());
+                boolean isHtml = customEmailForm.isHtml();
                 String sender = "";
                 if(PojoUtil.isEmpty(customEmailForm.getSender())) {
                     sender = DEFAULT_CLAIM_SENDER;
@@ -97,7 +98,7 @@ public class CustomEmailController extends BaseController {
                 
                 String content = customEmailForm.getContent().getValue();
                 
-                customEmailManager.createCustomEmail(currentOrcid, emailType, sender, subject, content);
+                customEmailManager.createCustomEmail(currentOrcid, emailType, sender, subject, content, isHtml);
             }                        
             
         }                 
@@ -123,6 +124,7 @@ public class CustomEmailController extends BaseController {
             //If valid
             if(customEmailForm.getErrors().isEmpty()) {
                 EmailType emailType = EmailType.valueOf(customEmailForm.getEmailType().getValue());
+                boolean isHtml = customEmailForm.isHtml();
                 String sender = "";
                 if(PojoUtil.isEmpty(customEmailForm.getSender())) {
                     sender = DEFAULT_CLAIM_SENDER;
@@ -139,7 +141,7 @@ public class CustomEmailController extends BaseController {
                 
                 String content = customEmailForm.getContent().getValue();
                 
-                customEmailManager.updateCustomEmail(currentOrcid, emailType, sender, subject, content);
+                customEmailManager.updateCustomEmail(currentOrcid, emailType, sender, subject, content, isHtml);
             }
         }
         return customEmailForm;

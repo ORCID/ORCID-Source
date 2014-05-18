@@ -48,6 +48,7 @@ import org.orcid.jaxb.model.message.SendChangeNotifications;
 import org.orcid.jaxb.model.message.Source;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.CustomEmailEntity;
 import org.orcid.persistence.jpa.entities.EmailType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -84,6 +85,16 @@ public class NotificationManagerImpl implements NotificationManager {
 
     private static final String ACCOUNT_DEPRECATED_NOTIFY_ORCID_ORG = "account-deprecate@notify.orcid.org";
 
+    private static final String WILDCARD_MEMBER_NAME = "${name}";
+    
+    private static final String WILDCARD_USER_NAME = "${user_name}";
+    
+    private static final String WILDCARD_WEBSITE = "${website}";
+    
+    private static final String WILDCARD_DESCRIPTION = "${description}";
+    
+    private static final String WILDCARD_VERIFICATION_URL = "${verification_url}";
+    
     @Resource
     private MessageSource messages;
 
@@ -447,7 +458,32 @@ public class NotificationManagerImpl implements NotificationManager {
         String htmlBody = null;
         
         if(customEmail != null) {
-            
+            //Get the customized subject
+            subject = customEmail.getSubject();
+            //Replace the wildcards
+            subject = subject.replace(WILDCARD_USER_NAME, emailName);
+            subject = subject.replace(WILDCARD_MEMBER_NAME, creatorName);
+            if(customEmail.isHtml()){
+                htmlBody = customEmail.getContent();
+                htmlBody = htmlBody.replace(WILDCARD_USER_NAME, emailName);
+                htmlBody = htmlBody.replace(WILDCARD_MEMBER_NAME, creatorName);
+                htmlBody = htmlBody.replace(WILDCARD_VERIFICATION_URL, verificationUrl);
+                if(htmlBody.contains(WILDCARD_WEBSITE) || htmlBody.contains(WILDCARD_DESCRIPTION)) {
+                    ClientDetailsEntity clientDetails = customEmail.getClientDetailsEntity();
+                    htmlBody = htmlBody.replace(WILDCARD_WEBSITE, clientDetails.getClientWebsite());                    
+                    htmlBody = htmlBody.replace(WILDCARD_DESCRIPTION, clientDetails.getClientDescription());
+                }                
+            } else {
+                body = customEmail.getContent();
+                body = body.replace(WILDCARD_USER_NAME, emailName);
+                body = body.replace(WILDCARD_MEMBER_NAME, creatorName);
+                body = body.replace(WILDCARD_VERIFICATION_URL, verificationUrl);
+                if(body.contains(WILDCARD_WEBSITE) || body.contains(WILDCARD_DESCRIPTION)) {
+                    ClientDetailsEntity clientDetails = customEmail.getClientDetailsEntity();
+                    body = body.replace(WILDCARD_WEBSITE, clientDetails.getClientWebsite());                    
+                    body = body.replace(WILDCARD_DESCRIPTION, clientDetails.getClientDescription());
+                }
+            }
         } else {
             subject = getSubject("email.subject.api_record_creation", createdProfile);
             // Create map of template params
@@ -467,6 +503,7 @@ public class NotificationManagerImpl implements NotificationManager {
 
         // Send message
         if (apiRecordCreationEmailEnabled) {
+            //TODO: How to handle sender? we might have to register them on mailgun
             mailGunManager.sendEmail(CLAIM_NOTIFY_ORCID_ORG, email, subject, body, htmlBody);
         } else {
             LOGGER.debug("Not sending API record creation email, because option is disabled. Message would have been: {}", body);

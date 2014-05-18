@@ -44,7 +44,7 @@
 			</div>
 			
 			<!-- Show existing emails -->
-			<div class="row bottom-line" ng-show="showEmailList">				
+			<div class="row view bottom-line" ng-show="showEmailList">				
 				<div class="col-md-12 col-sm-12 col-xs-12 small-padding">	
 					<h3><@orcid.msg 'custom_email.template.existing_custom_emails.title' /></h3>					
 				</div>
@@ -66,7 +66,11 @@
 			</div>
 			
 			<!-- Create form -->
-			<div ng-show="showCreateForm" class="bottom-line">			
+			<div ng-show="showCreateForm" class="create bottom-line">	
+				<div class="col-md-12 col-sm-12 col-xs-12 small-padding">	
+					<h3><@orcid.msg 'custom_email.template.create_custom_emails.title' /></h3>					
+				</div>		
+				
 				<div class="row">
 					<!-- Sender -->
 					<div class="col-md-12 col-sm-12 col-xs-12">
@@ -120,7 +124,10 @@
 			</div>
 
 			<!-- Edit form -->				
-			<div ng-show="showEditForm" class="bottom-line">			
+			<div ng-show="showEditForm" class="edit bottom-line">		
+				<div class="col-md-12 col-sm-12 col-xs-12 small-padding">	
+					<h3><@orcid.msg 'custom_email.template.edit_custom_emails.title' /></h3>					
+				</div>	
 				<div class="row">
 					<!-- Sender -->
 					<div class="col-md-10 col-sm-10 col-xs-12">
@@ -174,7 +181,7 @@
 			</div>			
 			
 			<!-- Learn more -->			
-			<div class="row">
+			<div class="row learn-more">
 				<div class="col-md-12 col-sm-12 col-xs-12">					
 					<p>	
 						<@orcid.msg 'custom_email.template.description.learn_more.1'/>

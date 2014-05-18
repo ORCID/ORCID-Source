@@ -3662,6 +3662,17 @@ p.orcid-id-container{
 	padding-bottom: 10px;
 }
 
+.custom-email .create,
+.custom-email .edit,
+.custom-email .view  {	
+	padding-top: 15px;
+	padding-bottom: 15px;
+}
+
+.custom-email .learn-more {
+	padding-top: 15px;
+}
+
 .custom-email .bottom-line {
 	border-bottom: 1px solid #CCC;
 }
