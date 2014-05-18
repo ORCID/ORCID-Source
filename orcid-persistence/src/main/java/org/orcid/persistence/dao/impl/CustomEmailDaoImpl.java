@@ -2,6 +2,7 @@ package org.orcid.persistence.dao.impl;
 
 import java.util.List;
 
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
@@ -44,6 +45,8 @@ public class CustomEmailDaoImpl extends GenericDaoImpl<CustomEmailEntity, Custom
         try {
             return query.getSingleResult();
         } catch (NonUniqueResultException exception) {            
+            return null;
+        } catch (NoResultException exception) {
             return null;
         }        
     }
