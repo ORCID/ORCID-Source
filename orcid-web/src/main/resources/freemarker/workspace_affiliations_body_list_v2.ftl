@@ -28,7 +28,7 @@
 				<div class="col-md-6 col-sm-6 col-xs-12">
 					<a name='workspace-educations' />
 				    <a href="" ng-click="workspaceSrvc.toggleEducation($event)" ng-click="workspaceSrvc.toggleEducation($event)" class="toggle-text">
-				  		<i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayEducation==false}"></i>
+				  		<i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayEducation==false}"></i>
 				  		<@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education'/> (<span ng-bind="affiliationsSrvc.educations.length"></span>)
 				  	</a>
 				  	<!-- 
@@ -54,7 +54,7 @@
 				<div class="col-md-6 col-sm-6 col-xs-12">
 					<a name='workspace-employments' />
 				    <a href="" ng-click="workspaceSrvc.toggleEmployment($event)" ng-click="workspaceSrvc.toggleEmployment($event)" class="toggle-text">
-				  		<i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayEmployment==false}"></i>
+				  		<i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayEmployment==false}"></i>
 				  		<@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.employment'/> (<span ng-bind="affiliationsSrvc.employments.length"></span>)
 				   	</a>				   	
 				</div>
@@ -78,7 +78,7 @@
 				<div class="col-md-6 col-sm-6 col-xs-12 action-button-bar">
 					<a name='workspace-affiliations' />
 				    <a href="" ng-click="workspaceSrvc.toggleAffiliations($event)" class="toggle-text">
-				  		<i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayAffiliations==false}"></i>
+				  		<i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayAffiliations==false}"></i>
 				  		<@orcid.msg 'workspace_bio.Affiliations'/>
 				   	</a>				    
 				 </div>

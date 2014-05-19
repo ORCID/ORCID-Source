@@ -1590,7 +1590,7 @@ a:hover {
 }
 
 .workspace-right h3{
-	font-size: 16px;
+	font-size: 20px;
 } 
 
 .more-info{	
@@ -2743,6 +2743,7 @@ header overrides
 .work-title {
 	font-weight: normal;
 	font-family: 'Gill Sans W02', 'Helvetica', sans-serif;
+	height: 30px;
 }
 
 ul.workspace-private-toolbar > li{
@@ -3213,6 +3214,10 @@ ul.personal-inf-display li:last-child{
 .x0{
     font-size: 50%;
     vertical-align: 3px;
+}
+
+.x075{
+	font-size: 75%;
 }
 
 .x2 {
@@ -3859,7 +3864,7 @@ ul.sort-menu-options li{
 	border-bottom: 1px solid #FFF;	
 	display: block;
 	min-width: 100px;
-	height: 30px; 
+	height: 31px; 
 	width: auto;	
 	background: #C9CACB;
 }

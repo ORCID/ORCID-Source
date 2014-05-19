@@ -217,52 +217,18 @@
     <div class="col-md-9 right-aside">
         <div class="workspace-right">
         	<div class="workspace-inner workspace-header" ng-controller="WorkspaceSummaryCtrl">
-                <div class="alert alert-info" ng-show="showAddAlert()" ng-cloak><strong><@orcid.msg 'workspace.addinformationaboutyou'/></strong></div>
-                <!-- Summary 
-        		<div class="row">
-        			<div class="workspace-overview col-md-3 col-sm-3 col-xs-6" id="works-overview">
-	        			<a href="#workspace-publications" class="overview-count" ng-click="workspaceSrvc.openWorks()"><span ng-bind="worksSrvc.works.length"></span></a>
-	        			<a href="#workspace-publications" class="overview-title" ng-click="workspaceSrvc.openWorks()"><@orcid.msg 'workspace.Works'/></a>
-	                    <br />	                    	
-	                    <a href="#workspace-publications" class="btn-update no-icon" ng-click="workspaceSrvc.openWorks()"><@orcid.msg 'workspace.view'/></a>	                    
-	        		</div>
-		            <div class="workspace-overview col-md-3 col-sm-3 col-xs-6" id="educations-overview">
-		                <a href="#workspace-educations" class="overview-count" ng-click="workspaceSrvc.openEducation()"><span ng-bind="affiliationsSrvc.educations.length"></span></a>
-		                <a href="#workspace-educations" class="overview-title" ng-click="workspaceSrvc.openEducation()"><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education'/></a>
-		                <br />
-		                <a href="#workspace-educations" class="btn-update no-icon" ng-click="workspaceSrvc.openEducation()"><@orcid.msg 'workspace.view'/></a>
-		            </div>
-		            <div class="workspace-overview col-md-3 col-sm-3 col-xs-6" id="employments-overview">
-		                <a href="#workspace-employments" class="overview-count" ng-click="workspaceSrvc.openEmployment()"><span ng-bind="affiliationsSrvc.employments.length"></span></a>
-		                <a href="#workspace-employments" class="overview-title" ng-click="workspaceSrvc.openEmployment()"><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.employment'/></a>
-		                <br />
-		                <a href="#workspace-employments" class="btn-update no-icon" ng-click="workspaceSrvc.openEmployment()"><@orcid.msg 'workspace.view'/></a>
-		             </div>
-					<div class="workspace-overview col-md-3 col-sm-3 col-xs-6">
-        				<a href="#workspace-fundings" class="overview-count" ng-click="workspaceSrvc.openFunding()"><span ng-bind="fundingSrvc.fundings.length"></span></a>
-        				<a href="#workspace-fundings" class="overview-title" ng-click="workspaceSrvc.openFunding()"><@orcid.msg 'workspace.Funding'/></a>
-        				<br />
-        				<a href="#workspace-employments" class="btn-update no-icon" ng-click="workspaceSrvc.openFunding()"><@orcid.msg 'workspace.view'/></a>
-        			</div>
-	        	</div>
-	        	 -->
+                <div class="alert alert-info" ng-show="showAddAlert()" ng-cloak><strong><@orcid.msg 'workspace.addinformationaboutyou'/></strong></div>                
         	</div>
         	<div class="workspace-accordion" id="workspace-accordion">        		
         		<!-- Personal Information -->
-				<div id="workspace-personal" class="workspace-accordion-item workspace-accordion-active" ng-controller="PersonalInfoCtrl">
-        			<div class="workspace-accordion-header">
-        				<div class="row">
-        					<div class="col-md-12 col-sm-12 col-xs-12">
-		 			   			<a href="" ng-click="toggleDisplayInfo($event)" class="toggle-text">
-		  			   				<i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':displayInfo==false}"></i>  			   			
-		 			   				<@orcid.msg 'workspace.personal_information'/>
-		 			   				<#if RequestParameters['OldPersonal']??>	        
-        			   		   			<a href="<@spring.url '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a>        			   		
-        			        		</#if>
-		 			   			</a>
-	 			   			</div>
-   			   			</div>
-        			</div>
+				<div id="workspace-personal" class="workspace-accordion-item workspace-accordion-active" ng-controller="PersonalInfoCtrl">        			
+       				<div class="row">
+       					<div class="col-md-12 col-sm-12 col-xs-12">	 			   			
+ 			   				<#if RequestParameters['OldPersonal']??>	        
+      			   		   		<a href="<@spring.url '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a>        			   		
+      			        	</#if>	 			   			
+ 			   			</div>
+  			   		</div>        			
             		<div class="workspace-accordion-content" ng-show="displayInfo">
             			<#include "workspace_personal_v2.ftl"/>
         			</div>
@@ -278,7 +244,7 @@
                 			<div class="col-md-2 col-sm-2 col-xs-12">
 		                		<div class="work-title" ng-controller="WorkspaceSummaryCtrl">
 			                		<a href="" ng-click="workspaceSrvc.toggleWorks($event)" class="toggle-text">
-				       			       <i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayWorks==false}"></i>
+				       			       <i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayWorks==false}"></i>
 				       			       <@orcid.msg 'workspace.Works'/> (<span ng-bind="worksSrvc.works.length"></span>)
 				       			    </a>
 			       				</div>
