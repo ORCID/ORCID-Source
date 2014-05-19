@@ -74,7 +74,7 @@ public class NotificationManagerImpl implements NotificationManager {
     private static final String RESET_NOTIFY_ORCID_ORG = "reset@notify.orcid.org";
 
     private static final String CLAIM_NOTIFY_ORCID_ORG = "claim@notify.orcid.org";
-
+    
     private static final String DEACTIVATE_NOTIFY_ORCID_ORG = "deactivate@notify.orcid.org";
 
     private static final String AMEND_NOTIFY_ORCID_ORG = "amend@notify.orcid.org";
@@ -456,10 +456,13 @@ public class NotificationManagerImpl implements NotificationManager {
         String subject = null;
         String body = null;
         String htmlBody = null;
+        String sender = null;
         
         if(customEmail != null) {
-            //Get the customized subject
-            subject = customEmail.getSubject();
+            //Get the customized sender if available
+            sender = PojoUtil.isEmpty(customEmail.getSender()) ? CLAIM_NOTIFY_ORCID_ORG : customEmail.getSender();
+            //Get the customized subject is available
+            subject = PojoUtil.isEmpty(customEmail.getSubject()) ? getSubject("email.subject.api_record_creation", createdProfile) : customEmail.getSubject();
             //Replace the wildcards
             subject = subject.replace(WILDCARD_USER_NAME, emailName);
             subject = subject.replace(WILDCARD_MEMBER_NAME, creatorName);
@@ -503,8 +506,13 @@ public class NotificationManagerImpl implements NotificationManager {
 
         // Send message
         if (apiRecordCreationEmailEnabled) {
+            boolean isCustomEmail = customEmail != null ? true : false;
             //TODO: How to handle sender? we might have to register them on mailgun
-            mailGunManager.sendEmail(CLAIM_NOTIFY_ORCID_ORG, email, subject, body, htmlBody);
+            if(isCustomEmail) {                
+                mailGunManager.sendEmail(sender, email, subject, body, htmlBody, isCustomEmail);
+            } else {
+                mailGunManager.sendEmail(CLAIM_NOTIFY_ORCID_ORG, email, subject, body, htmlBody);
+            }
         } else {
             LOGGER.debug("Not sending API record creation email, because option is disabled. Message would have been: {}", body);
         }
