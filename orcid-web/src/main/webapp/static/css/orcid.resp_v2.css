@@ -2744,6 +2744,7 @@ header overrides
 	font-weight: normal;
 	font-family: 'Gill Sans W02', 'Helvetica', sans-serif;
 	height: 30px;
+	display: block;	
 }
 
 ul.workspace-private-toolbar > li{
@@ -4078,6 +4079,18 @@ ul.sort-menu-options li a:hover{
 	padding-right: 14px;
 }
 
+.versions ul,
+.validations ul,
+.versions ul li,
+.validations ul li,
+ul.validations-versions,
+ul.validations-versions li,
+ul.id-details,
+ul.id-details li{
+	margin-left: 0;	
+	padding-left: 0;
+}
+
 .show-more-info-tab{
 	display: block;
 	width: 100%;
@@ -4091,7 +4104,8 @@ ul.sort-menu-options li a:hover{
 .show-more-info-tab a{
 	color: #FFF;
 	background: #949599;
-	padding: 2px 15px;
+	padding: 3px 15px;
+	font-size: 13px;
 }
 
 .show-more-info-tab a span{
@@ -4121,6 +4135,54 @@ ul.sort-menu-options li a:hover{
 
 .biography-controller .popover.bottom .arrow{
 	left: 117px;
+}
+
+.dotted-bar{
+	display: block;
+	height: 1px;
+	width: 100%;
+	border: 1px dotted #C3C3C3;
+	margin: 15px 0;
+}
+
+.opaque{
+	opacity: 0.5;
+}
+
+.validations-versions li span{
+	margin-right: 10px;
+}
+
+.info-date-detail{	
+	clear: both;
+	display: block;
+	margin-bottom: 15px;
+	font-size: 13px;
+}
+
+.validations li,
+.versions li,
+.id-details a{
+	color: #338caf;
+}
+
+.id-details a:hover{
+	color: #a6ce39;
+}
+
+.versions li span{
+	font-size: 11px;
+	margin-right: 5px;
+}
+
+.versions li.current-version{
+	background: #E6E6E6;
+	padding: 5px;		
+}
+
+.versions li .privacy{
+	float: right;
+	font-size: 14px;
 }
 
 /* Media Queries */
