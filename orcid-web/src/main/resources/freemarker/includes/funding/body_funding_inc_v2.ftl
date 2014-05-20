@@ -56,9 +56,12 @@
 		        	</ul>
 		        </#if>
 			</div>
-		</div>				
-		<div ng-show="moreInfo[funding.putCode.value]">			
-			<#include "funding_more_info_inc_v2.ftl"/>
+		</div>			
+		
+		<div ng-show="moreInfo[funding.putCode.value]">
+			<div class="content">			
+				<#include "funding_more_info_inc_v2.ftl"/>
+			</div>
 		</div>
 		<div class="row">
 			<div class="col-md-12 col-sm-12 col-xs-12">

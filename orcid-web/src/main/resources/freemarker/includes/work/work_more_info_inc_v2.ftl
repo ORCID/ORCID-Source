@@ -21,7 +21,7 @@
 		<span id="ajax-loader"><i id="ajax-loader" class="glyphicon glyphicon-refresh spin x4 green"></i></span>
 	</div>
 	
-	<div id="content" ng-hide="loadingInfo">	
+	<div class="content" ng-hide="loadingInfo">	
 		
 		<!-- Title -->			
 		<div class="row bottomBuffer">		

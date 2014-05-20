@@ -44,11 +44,11 @@
 						<@orcid.msg 'manual_funding_form_contents.add_grant_manually'/>				
 					</a>
 				</div>
-			</div>
-			
-		</div>		
-		<div ng-show="workspaceSrvc.displayFunding" class="workspace-accordion-content">			
-			<#include "includes/funding/body_funding_inc_v2.ftl" />
-		</div>		
+			</div>			
+		</div>				
+			<div ng-show="workspaceSrvc.displayFunding" class="workspace-accordion-content">							
+				<#include "includes/funding/body_funding_inc_v2.ftl" />				
+			</div>		
+		</div>
 	</div>		
 </div>

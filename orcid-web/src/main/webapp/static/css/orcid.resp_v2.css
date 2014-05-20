@@ -4192,8 +4192,11 @@ ul.id-details li{
 	background: #338CAF;
 }
 
-
-/*color: #338CAF*/
+.content{
+	background: #FAFAFA;	
+	margin: 0px -10px;
+	padding: 15px;	
+}
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
