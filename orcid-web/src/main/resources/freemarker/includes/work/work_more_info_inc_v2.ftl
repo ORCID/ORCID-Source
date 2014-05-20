@@ -74,9 +74,10 @@
 				<div class="versions bottomBuffer">
 					<strong>Versions</strong>
 					<ul>
-						<li class="current-version"><span class="glyphicon glyphicon-chevron-right"></span><i>My Version</i><span class="glyphicon glyphicon-globe privacy"></span></li>
-						<li><span class="glyphicon glyphicon-chevron-right"></span><i>Source: ScopusToORCID</i></li>
-						<li><span class="glyphicon glyphicon-chevron-right"></span><i>Source: OtherSource</i></li>
+						<li class="current-version"><span class="glyphicon glyphicon-chevron-right"></span>My Version<span class="glyphicon glyphicon-globe privacy"></span></li>
+						<li><span class="glyphicon glyphicon-chevron-right"></span>ResearcherID</li>
+						<li><span class="glyphicon glyphicon-chevron-right"></span>DataCite</li>
+						<li><span class="glyphicon glyphicon-chevron-right"></span>Harvard University</li>
 					</ul>
 				</div>
 				<!-- Work Source -->
@@ -92,26 +93,31 @@
 		<!-- Citation -->
 		<div class="row bottomBuffer" ng-show="worksSrvc.worksInfo[work.putCode.value].citation.citation.value"
 			ng-cloak>
-			<div class="col-md-12">						
+			<div class="col-md-12 col-sm-12 col-xs-12">
+												
 				<strong><@orcid.msg 'manual_work_form_contents.labelcitation'/></strong>
+				<!-- Bibtex -->
 				<span ng-show="showBibtex && worksSrvc.worksInfo[work.putCode.value].citation.citationType.value == 'bibtex'">
 					<a ng-click="bibtexShowToggle()"><@orcid.msg 'work.show_in_bibtex'/></a>
 				</span>
+				<!-- Show in HTML/Bibtex -->
 				<span ng-show="showBibtex == false && worksSrvc.worksInfo[work.putCode.value].citation.citationType.value == 'bibtex'">
 					<a ng-click="bibtexShowToggle()"><@orcid.msg 'work.show_in_html'/></a>
-				</span>
-				<div ng-hide="showBibtex && worksSrvc.worksInfo[work.putCode.value].citation.citationType.value == 'bibtex'" ng-bind="worksSrvc.worksInfo[work.putCode.value].citation.citation.value" class="col-md-offset-1 col-md-11 col-sm-offset-1 col-sm-11 col-xs-12 citation-raw"></div>					
+				</span>				
+				<div ng-hide="showBibtex && worksSrvc.worksInfo[work.putCode.value].citation.citationType.value == 'bibtex'" ng-bind="worksSrvc.worksInfo[work.putCode.value].citation.citation.value" class="col-md-offset-1 col-md-11 col-sm-offset-1 col-sm-11 col-xs-12 citation-raw"></div>
+									
 				<div class="row" ng-show="showBibtex && (worksSrvc.bibtexJson[work.putCode.value]==null || worksSrvc.bibtexJson[work.putCode.value].length==0)">
-					<div class="col-md-offset-1 col-md-6"><@orcid.msg 'work.unavailable_in_html'/></div>
+					<div class="col-md-offset-1 col-md-6"><@orcid.msg 'work.unavailable_in_html'/></div>				
 				</div>
+				
 				<div class="row" ng-show="showBibtex" ng-repeat='bibJSON in worksSrvc.bibtexJson[work.putCode.value]'>						
 					
-					<div class="col-md-offset-1 col-md-2 col-sm-offset-1 col-sm-1 col-xs-offset-1 col-xs-11">{{bibJSON.entryType}}</div>
-					<div class="col-md-8 col-sm-9 col-xs-offset-1 col-xs-11">{{bibJSON.citationKey}}</div>								
+					<div class="col-md-offset-1 col-md-2 col-sm-offset-1 col-sm-2 col-xs-offset-1 col-xs-5">{{bibJSON.entryType}}</div>
+					<div class="col-md-8 col-sm-8 col-xs-6">{{bibJSON.citationKey}}</div>								
 					
 					<div ng-repeat="(entKey,entVal) in bibJSON.entryTags">
-						<div class="col-md-offset-1 col-md-2 col-sm-offset-1 col-sm-1 col-xs-offset-1 col-xs-11">{{entKey}}</div>
-						<div class="col-md-8 col-sm-9 col-xs-offset-1 col-xs-11">{{entVal}}</div>
+						<div class="col-md-offset-1 col-md-2 col-sm-offset-1 col-sm-2 col-xs-offset-1 col-xs-5">{{entKey}}</div>
+						<div class="col-md-8 col-sm-8 col-xs-6">{{entVal}}</div>
 					</div>
 					
 				</div>						

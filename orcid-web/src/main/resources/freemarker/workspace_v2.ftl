@@ -241,7 +241,7 @@
                 <div id="workspace-publications" class="workspace-accordion-item workspace-accordion-active" ng-controller="WorkCtrl">
                 	<div class="workspace-accordion-header">
                 		<div class="row">
-                			<div class="col-md-2 col-sm-2 col-xs-12">
+                			<div class="col-md-3 col-sm-2 col-xs-12">
 		                		<div class="work-title" ng-controller="WorkspaceSummaryCtrl">
 			                		<a href="" ng-click="workspaceSrvc.toggleWorks($event)" class="toggle-text">
 				       			       <i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayWorks==false}"></i>
@@ -249,7 +249,7 @@
 				       			    </a>
 			       				</div>
 			       			</div>	
-			       			<div class="col-md-10 col-sm-10 col-xs-12 action-button-bar" ng-show="workspaceSrvc.displayWorks">
+			       			<div class="col-md-9 col-sm-10 col-xs-12 action-button-bar" ng-show="workspaceSrvc.displayWorks">
 			       				 
 			       				<div class="sort-menu-container">
 			       					 

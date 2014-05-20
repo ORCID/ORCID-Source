@@ -4170,20 +4170,30 @@ ul.id-details li{
 	color: #a6ce39;
 }
 
+.versions li{
+	padding: 5px 0;	
+}
+
 .versions li span{
 	font-size: 11px;
 	margin-right: 5px;
 }
 
 .versions li.current-version{
-	background: #E6E6E6;
-	padding: 5px;		
+	background: #E6E6E6;			
 }
 
 .versions li .privacy{
 	float: right;
 	font-size: 14px;
 }
+
+.blue{
+	background: #338CAF;
+}
+
+
+/*color: #338CAF*/
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
@@ -4646,7 +4656,7 @@ ul.id-details li{
 	    height: 50px;
 	    margin-top: 15px;
 	    width: 100%;
-	    padding-left: 10px;
+	    padding-left: 10px;	    
 	}
 	
 	.workspace-header{
@@ -5193,7 +5203,20 @@ ul.id-details li{
 	#workspace-publications .alert{
 		margin-top: 60px;
 	}
-
+	
+	ul.validations-versions{
+		text-align: center;
+		margin-top: 15px;
+	}
+	
+	ul.validations-versions li{
+		display: inline-block;			
+	}
+	
+	.versions ul li{
+		border-bottom: 1px solid #E6E6E6;		
+	}	
+	
 }
 
 @media (min-width : 768px) and (max-width : 991px) { /* Tablet */
