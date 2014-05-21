@@ -4200,6 +4200,10 @@ ul.id-details li{
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
+
+	.container{
+		min-width:320px; /* Resolutions below 320px are not supported */
+	}
 		
 	.alert .small {
 		float: none !important;
