@@ -233,7 +233,7 @@
             			<#include "workspace_personal_v2.ftl"/>
         			</div>
             	</div>
-            	<!-- Affiliations / Education  -->
+            	<!-- Affiliations / Education / Employment -->
                 <#include "workspace_affiliations_body_list_v2.ftl"/>
                 <!-- Fundings -->
                	<#include "workspace_fundings_body_list_v2.ftl"/>
@@ -250,41 +250,40 @@
 			       				</div>
 			       			</div>	
 			       			<div class="col-md-9 col-sm-10 col-xs-12 action-button-bar" ng-show="workspaceSrvc.displayWorks">
-			       				 
-			       				<div class="sort-menu-container">
-			       					 
+			       				<!-- Sort -->
+			       				<div class="sort-menu-container">			       					 
 				       				<a class="action-option manage-button sort-menu" ng-click="">
 										<span class="glyphicon glyphicon-sort"></span>							
-										<@orcid.msg ''/>Sort Items							
+										<@orcid.msg 'manual_orcid_record_contents.sort'/>
 									</a>
 									<ul class="sort-menu-options">
-										<li><a href="">Title <span class=""></span></a></li>
-										<li><a href="" class="checked">Data <span class="glyphicon glyphicon-ok pull-right"></span></a></li>
-										<li><a href="">Type <span class=""></span></a></li>
-										<li><a href="">Source <span class=""></span></a></li>
+										<li><a href="" ng-click=""><@orcid.msg 'manual_orcid_record_contents.sort_title'/> <span class=""></span></a></li>
+										<li><a href="" ng-click="" class="checked"><@orcid.msg 'manual_orcid_record_contents.sort_data'/> <span class="glyphicon glyphicon-ok pull-right"></span></a></li>
+										<li><a href="" ng-click=""><@orcid.msg 'manual_orcid_record_contents.sort_type'/> <span class=""></span></a></li>
+										<li><a href="" ng-click=""><@orcid.msg 'manual_orcid_record_contents.sort_source'/> <span class=""></span></a></li>
 									</ul>
-									
 								</div>
 								
-		                		<ul class="works-menu">
-		                			
+		                		<ul class="workspace-bar-menu">
+		                			<!-- Manage view -->		                			
 			        				<li>
 			        					<a href="" class="action-option manage-button" ng-click="">
 											<span class="glyphicon glyphicon-cog"></span>
-											Manage View
+											<@orcid.msg 'manual_orcid_record_contents.manage_view'/>
 										</a>	        				
 			        				</li>
-			        				
+			        				<!-- Link Manually -->
 			        				<li>
 				        				<a href="" class="action-option manage-button" ng-click="addWorkModal()">
 											<span class="glyphicon glyphicon-plus"></span>
-											<@orcid.msg 'manual_work_form_contents.add_work_manually'/>
+											<@orcid.msg 'manual_orcid_record_contents.link_manually'/>
 										</a>
 			        				</li>
+			        				<!-- Search & Link -->
 			        				<li>
 				        				<a class="action-option manage-button" ng-click="showWorkImportWizard()">
-											<span class="glyphicon glyphicon-cloud-upload"></span>							
-											<@orcid.msg 'workspace.link_works'/>
+											<span class="glyphicon glyphicon-cloud-upload"></span>
+											<@orcid.msg 'manual_orcid_record_contents.search_link'/>
 										</a>	        				
 			        				</li>
 								</ul>								

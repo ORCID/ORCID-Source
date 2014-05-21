@@ -25,7 +25,7 @@
 	<div id="workspace-education" class="workspace-accordion-item workspace-accordion-active" >
 		<div class="workspace-accordion-header">
 			<div class="row">
-				<div class="col-md-6 col-sm-6 col-xs-12">
+				<div class="col-md-3 col-sm-3 col-xs-12">
 					<a name='workspace-educations' />
 				    <a href="" ng-click="workspaceSrvc.toggleEducation($event)" ng-click="workspaceSrvc.toggleEducation($event)" class="toggle-text">
 				  		<i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayEducation==false}"></i>
@@ -35,11 +35,36 @@
 				   	<a href="" ng-click="workspaceSrvc.toggleEducation($event)" class="toggle-text"><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education'/></a>
 				   	 --> 
 			    </div>
-			    <div class="col-md-6 col-sm-6 col-xs-12 action-button-bar" ng-show="workspaceSrvc.displayEducation">
-					<a href="" class="action-option manage-button" ng-click="addAffiliationModal('education')">
-						<span class="glyphicon glyphicon-plus"></span>
-						<@orcid.msg 'manual_affiliation_form_contents.add_education_manually'/>
-					</a>
+			    <div class="col-md-9 col-sm-9 col-xs-12 action-button-bar" ng-show="workspaceSrvc.displayEducation">
+			    	<!-- Sort -->
+       				<div class="sort-menu-container">			       					 
+	       				<a class="action-option manage-button sort-menu" ng-click="">
+							<span class="glyphicon glyphicon-sort"></span>							
+							<@orcid.msg 'manual_orcid_record_contents.sort'/>
+						</a>
+						<ul class="sort-menu-options">
+							<li><a href="" ng-click=""><@orcid.msg 'manual_orcid_record_contents.sort_title'/> <span class=""></span></a></li>
+							<li><a href="" ng-click="" class="checked"><@orcid.msg 'manual_orcid_record_contents.sort_data'/> <span class="glyphicon glyphicon-ok pull-right"></span></a></li>
+							<li><a href="" ng-click=""><@orcid.msg 'manual_orcid_record_contents.sort_type'/> <span class=""></span></a></li>
+							<li><a href="" ng-click=""><@orcid.msg 'manual_orcid_record_contents.sort_source'/> <span class=""></span></a></li>
+						</ul>
+					</div>					
+					<ul class="workspace-bar-menu">
+                			<!-- Manage view -->		                			
+	        				<li>
+	        					<a href="" class="action-option manage-button two-options" ng-click="">
+									<span class="glyphicon glyphicon-cog"></span>
+									<@orcid.msg 'manual_orcid_record_contents.manage_view'/>
+								</a>	        				
+	        				</li>
+	        				<!-- Link Manually -->
+	        				<li>		        			
+								<a href="" class="action-option manage-button two-options" ng-click="addAffiliationModal('education')">
+									<span class="glyphicon glyphicon-plus"></span>
+									<@orcid.msg 'manual_orcid_record_contents.link_manually'/>
+								</a>
+	        				</li>
+					</ul>
 				</div>
 			</div>
 		</div>
@@ -51,18 +76,43 @@
 	<div id="workspace-employment" class="workspace-accordion-item workspace-accordion-active" >
 		<div class="workspace-accordion-header">
 			<div class="row">
-				<div class="col-md-6 col-sm-6 col-xs-12">
+				<div class="col-md-3 col-sm-3 col-xs-12">
 					<a name='workspace-employments' />
 				    <a href="" ng-click="workspaceSrvc.toggleEmployment($event)" ng-click="workspaceSrvc.toggleEmployment($event)" class="toggle-text">
 				  		<i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayEmployment==false}"></i>
 				  		<@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.employment'/> (<span ng-bind="affiliationsSrvc.employments.length"></span>)
 				   	</a>				   	
 				</div>
-				<div class="col-md-6 col-sm-6 col-xs-12 action-button-bar" ng-show="workspaceSrvc.displayEmployment">
-					<a href="" class="action-option manage-button" ng-click="addAffiliationModal('employment')">
-						<span class="glyphicon glyphicon-plus"></span>
-						<@orcid.msg 'manual_affiliation_form_contents.add_employment_manually'/>
-					</a>				
+				<div class="col-md-9 col-sm-9 col-xs-12 action-button-bar" ng-show="workspaceSrvc.displayEmployment">
+					<!-- Sort -->
+       				<div class="sort-menu-container">			       					 
+	       				<a class="action-option manage-button sort-menu" ng-click="">
+							<span class="glyphicon glyphicon-sort"></span>							
+							<@orcid.msg 'manual_orcid_record_contents.sort'/>
+						</a>
+						<ul class="sort-menu-options">
+							<li><a href="" ng-click=""><@orcid.msg 'manual_orcid_record_contents.sort_title'/> <span class=""></span></a></li>
+							<li><a href="" ng-click="" class="checked"><@orcid.msg 'manual_orcid_record_contents.sort_data'/> <span class="glyphicon glyphicon-ok pull-right"></span></a></li>
+							<li><a href="" ng-click=""><@orcid.msg 'manual_orcid_record_contents.sort_type'/> <span class=""></span></a></li>
+							<li><a href="" ng-click=""><@orcid.msg 'manual_orcid_record_contents.sort_source'/> <span class=""></span></a></li>
+						</ul>
+					</div>
+					<ul class="workspace-bar-menu">
+                			<!-- Manage view -->		                			
+	        				<li>
+	        					<a href="" class="action-option manage-button two-options" ng-click="">
+									<span class="glyphicon glyphicon-cog"></span>
+									<@orcid.msg 'manual_orcid_record_contents.manage_view'/>
+								</a>	        				
+	        				</li>
+	        				<!-- Link Manually -->
+	        				<li>		        			
+								<a href="" class="action-option manage-button two-options" ng-click="addAffiliationModal('employment')">
+									<span class="glyphicon glyphicon-plus"></span>
+									<@orcid.msg 'manual_orcid_record_contents.link_manually'/>
+								</a>				
+	        				</li>
+					</ul>	
 				</div>
 			</div>
 		</div>

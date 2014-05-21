@@ -401,14 +401,12 @@
 	};
 	
 	var sortMenu =  function(){
-		$('#workspace-publications .sort-menu').click(function(event){
-			event.stopPropagation();
-			var status = $('#workspace-publications .sort-menu-options').css('display');
-			console.log(status);
+		$('.workspace-right .sort-menu').click(function(event){			
+			var status = $(this).siblings().css('display');			
 			if(status == 'none' ){
-				$('#workspace-publications .sort-menu-options').css('display','block');	
+				$(this).siblings().css('display','block');
 			}else{
-				$('#workspace-publications .sort-menu-options').css('display','none');
+				$(this).siblings().css('display','none');				
 			}
 		});
 	}

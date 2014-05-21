@@ -3825,13 +3825,13 @@ ul.personal-inf-display li:first-child a{
 	position: relative;
 }
 
-ul.works-menu{	
+ul.workspace-bar-menu{	
 	padding: 0;
 	margin: 0;
 	float: right; 
 }
 
-ul.works-menu li{
+ul.workspace-bar-menu li{
 	display: inline;
 	margin: 0;
 	padding: 0;
@@ -5094,7 +5094,7 @@ ul.id-details li{
 		padding-left: 5px;
 	}
 	
-	.workspace-accordion-header ul.works-menu{
+	.workspace-accordion-header ul.workspace-bar-menu{
 		width: 100%;
 	}
 	
@@ -5107,6 +5107,10 @@ ul.id-details li{
 		height: 60px;
 		text-align: center;
 		font-size: 0px;
+	}
+	
+	.workspace-accordion-header ul>li>a.action-option.two-options{
+		width: 50%;
 	}
 	
 	.workspace-accordion-header a.sort-menu{
