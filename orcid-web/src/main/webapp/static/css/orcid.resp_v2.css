@@ -4195,7 +4195,7 @@ ul.id-details li{
 .content{
 	background: #FAFAFA;	
 	margin: 0px -10px;
-	padding: 15px;	
+	padding: 10px;	
 }
 
 /* Media Queries */
@@ -4629,7 +4629,7 @@ ul.id-details li{
 	*/ 
 	
 	.public-profile .workspace-inner .alert{
-		margin: 10px 0;		
+		margin: 10px 	0;		
 	}
 	
 	.workspace-top{

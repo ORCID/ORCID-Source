@@ -54,13 +54,15 @@
         </#if>
 	</div>
 </div>
-<div class="row content" ng-show="moreInfo[affiliation.putCode.value]">		
+<div class="content" ng-show="moreInfo[affiliation.putCode.value]">
+	<div class="row">			
 		<div class="col-md-8 col-sm-8 col-xs-12">
 			<#include "affiliate_more_info_inc_v2.ftl"/>
 		</div>
 		<div class="col-md-4 col-sm-4 col-sm-12">
 			<!-- Versions and validations are going to be here -->	
 		</div>	
+	</div>
 </div>	
 <div class="row">
 	<div class="col-md-12 col-sm-12 col-xs-12">
