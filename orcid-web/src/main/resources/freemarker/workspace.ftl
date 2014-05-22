@@ -283,8 +283,33 @@
 							<li>
 								<a href="" class="label btn-primary" ng-click="addWorkModal()"><@orcid.msg 'manual_work_form_contents.add_work_manually'/></a>
 							</li>	
+							<#if RequestParameters['bibWizard']??>
+							    <li ng-show="canReadFiles" ng-cloak>
+							        <a href="" class="label btn-primary" ng-click="openBibTextWizard()">Import Bibtex File</a>
+							    </li>
+							</#if>
 						</ul>					
 					</div>
+
+					<div ng-show="showBibtexImportWizard" ng-cloak class="grey-box">
+						<div>
+					       <strong>You can import works from bibtex files, including Google Scholar's export.</strong><br />
+					       <br />
+					       <input type="file" ng-model="textFiles" accept="*" update-fn="loadBibtexJs()" class="btn btn-primary" app-file-text-reader multiple />
+					   	</div>
+					  	<div>
+					   	<div ng-repeat="work in worksFromBibtex" ng-cloak class="row" style="margin: 5px;">
+		        	       <div class="col-md-8 col-sm-8 col-xs-8" style="background-color: #FFFFFF;">
+		        	          {{work.workTitle.title.value}}
+		        	       </div>
+		        	       <div class="col-md-4 col-sm-4 col-xs-4">
+		        	          <strong><a class="glyphicon glyphicon-floppy-disk" ng-click="addWorkFromBibtex(work)">Save</a> <a ng-click="rmWorkFromBibtex(work)" class="glyphicon glyphicon-trash grey">Trash</a></strong>
+		        	       </div>
+		        	  	</div>
+					</div>
+					   
+					</div>
+					
 					
       	            <div ng-show="workspaceSrvc.displayWorks" class="workspace-accordion-content">
 	            		<#include "includes/work/add_work_modal_inc.ftl"/>
