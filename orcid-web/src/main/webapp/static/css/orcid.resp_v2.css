@@ -1,4 +1,4 @@
-/**
+f/**
  * =============================================================================
  *
  * ORCID (R) Open Source
@@ -1698,7 +1698,8 @@ a:hover {
 	font-size: 16px;
 	font-weight: bold;
 	width: 100%;
-	height: 30px;		
+	height: 30px;	
+	
 }
  
 .toggle-text:hover{
@@ -1776,10 +1777,6 @@ a:hover {
 .privacy-list,.workspace-body-list {
 	margin: 0;
 	padding: 0;
-}
-
-.workspace-body-list {
-	margin-top: -10px;
 }
 
 .workspace-body-list ul.workspace-controls{
@@ -3822,7 +3819,8 @@ ul.personal-inf-display li:first-child a{
 }
 
 .sort-menu-container{
-	position: relative;
+	display: block;
+	position: relative;			
 }
 
 ul.workspace-bar-menu{	
@@ -4197,6 +4195,12 @@ ul.id-details li{
 	margin: 0px -10px;
 	padding: 10px;	
 }
+
+.affiliation-title{
+	float: left;
+	display: block;
+}
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
@@ -4662,7 +4666,8 @@ ul.id-details li{
 	    height: 50px;
 	    margin-top: 15px;
 	    width: 100%;
-	    padding-left: 10px;	    
+	    padding-left: 10px;
+	    float: left;	    
 	}
 	
 	.workspace-header{
@@ -5107,13 +5112,16 @@ ul.id-details li{
 		color: transparent;
 		overflow: hidden;		
 		padding: 15px 0;
-		height: 60px;
+		height: 60px !important;
 		text-align: center;
 		font-size: 0px;
+		display: block;
 	}
 	
 	.workspace-accordion-header ul>li>a.action-option.two-options{
 		width: 50%;
+		display: block;
+		height: 60px;
 	}
 	
 	.workspace-accordion-header a.sort-menu{
@@ -5128,6 +5136,7 @@ ul.id-details li{
 	ul.sort-menu-options{
 		right: 0;	
 		width: 100%;
+		top: 40px;
 	}
 	
 	ul.sort-menu-options li,
@@ -5136,9 +5145,14 @@ ul.id-details li{
 	}
 	
 	.workspace-accordion-header a.action-option{
-		height: 40px;
+		height: 60px;
 		font-size: 16px;
 		padding-top: 5px;		
+		display: block;
+	}
+	
+	.workspace-accordion-header a.sort-menu{
+		height: 40px !important;
 	}
 	
 	.orcid-id{
@@ -5153,12 +5167,7 @@ ul.id-details li{
 	.id-banner .id-banner-container ul.id-banner-dropdown,
 	.id-banner .id-banner-container ul.id-banner-dropdown > li{
 		width: 100%;
-	}
-	
-
-	.more-info{
-		margin-left: 5px;
-	}
+	}	
 	
 	.work-title,
 	.work-title a.toggle-text{
@@ -5222,8 +5231,25 @@ ul.id-details li{
 	
 	.versions ul li{
 		border-bottom: 1px solid #E6E6E6;		
-	}	
+	}
 	
+	ul.workspace-bar-menu li{
+		height: 60px;
+		display: inline;
+		width: 50%;
+				
+	}
+	
+	.affiliation-details{
+		float: left;		 
+	}
+	
+	#workspace-education .content,
+	#workspace-fundings .content{
+		margin: 0px -10px;
+	}
+		
+
 }
 
 @media (min-width : 768px) and (max-width : 991px) { /* Tablet */
