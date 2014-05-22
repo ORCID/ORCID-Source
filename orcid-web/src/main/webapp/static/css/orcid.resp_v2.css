@@ -4629,7 +4629,7 @@ ul.id-details li{
 	*/ 
 	
 	.public-profile .workspace-inner .alert{
-		margin-left: 0;
+		margin: 10px 0;		
 	}
 	
 	.workspace-top{
@@ -4646,8 +4646,7 @@ ul.id-details li{
 	
 	.workspace-accordion-header, 
 	.workspace-accordion-content{
-		padding-left:0;
-		/*overflow: hidden;*/
+		padding:0;		
 	}
 	
 	.workspace-accordion-item{
@@ -5207,12 +5206,9 @@ ul.id-details li{
 		display: block;
 	}
 	
-	.workspace-top .alert-info{
-		margin-top: 40px;	
-	}
-	
+	.workspace-top .alert-info,
 	#workspace-publications .alert{
-		margin-top: 60px;
+		margin: 107px 0 10px 0;	
 	}
 	
 	ul.validations-versions{
