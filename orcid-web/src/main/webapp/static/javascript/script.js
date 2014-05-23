@@ -98,18 +98,28 @@ var OrcidCookie = new function () {
     };
 };
 
-var OrcidGA = function () {	
+var _gaq = _gaq || [];
+
+var OrcidGA = function () {
+	// test and make sure _gaq is working. disconnect.me chrome plugin has
+	// caused silent _gaq failures. This check allows us to detect that
+	// situation 
+	var gaEnabled = false;
+	_gaq.push(function() {
+		gaEnabled = true;
+	});
+	
 	this.buildClientString = function (clientGroupName, clientName) {
 		return  clientGroupName + ' - '+ clientName
 	};
 	this.gaPush = function (trackArray) {
-		if (typeof _gaq != 'undefined') {
+		if (gaEnabled) {
 			_gaq.push(trackArray);
 			console.log("_gap.push for " + trackArray);
 		} else {
 			// if it's a function and _gap isn't available run (typically only on dev)
-			if (typeof trackArray === 'function') trackArray();	
 			console.log("no _gap.push for " + trackArray);
+			if (typeof trackArray === 'function') trackArray();	
 		}
 	};
 	
