@@ -24,10 +24,7 @@ import static org.orcid.api.common.OrcidApiConstants.WORKS_PATH;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.persistence.PersistenceException;
@@ -36,7 +33,6 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.exception.ConstraintViolationException;
-import org.orcid.api.common.delegator.OrcidApiServiceDelegator;
 import org.orcid.api.common.delegator.impl.OrcidApiServiceDelegatorImpl;
 import org.orcid.api.common.exception.OrcidBadRequestException;
 import org.orcid.api.common.exception.OrcidForbiddenException;
@@ -44,10 +40,8 @@ import org.orcid.api.common.exception.OrcidNotFoundException;
 import org.orcid.api.t2.server.delegator.T2OrcidApiServiceDelegator;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.OrcidProfileManager;
-import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.security.visibility.aop.AccessControl;
-import org.orcid.core.security.visibility.aop.VisibilityControl;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.ExternalIdOrcid;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
@@ -55,8 +49,6 @@ import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.OrcidSearchResult;
-import org.orcid.jaxb.model.message.OrcidSearchResults;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.message.SourceName;
@@ -94,12 +86,9 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
     @Resource(name = "orcidProfileManager")
     private OrcidProfileManager orcidProfileManager;
 
-    @Resource(name = "orcidSearchManager")
-    private OrcidSearchManager orcidSearchManager;
-
     @Resource
-    private ClientDetailsManager clientDetailsManager; 
-    
+    private ClientDetailsManager clientDetailsManager;
+
     @Resource
     private ProfileEntityManager profileEntityManager;
 
@@ -228,8 +217,7 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
 
     /**
      * finds and returns the {@link org.orcid.jaxb.model.message.OrcidMessage}
-     * wrapped in a {@link javax.xml.ws.Response} with only the funding
-     * details
+     * wrapped in a {@link javax.xml.ws.Response} with only the funding details
      * 
      * @param orcid
      *            the ORCID to be used to identify the record
@@ -242,7 +230,7 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
         OrcidProfile profile = orcidProfileManager.retrieveClaimedFundings(orcid);
         return getOrcidMessageResponse(profile, orcid);
     }
-    
+
     /**
      * Creates a new profile and returns the saved representation of it. The
      * response should include the 'location' to retrieve the newly created
@@ -415,45 +403,6 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
         }
     }
 
-    /**
-     * See {@link OrcidApiServiceDelegator}{@link #searchByQuery(Map)}
-     */
-    @Override
-    @VisibilityControl
-    public Response searchByQuery(Map<String, List<String>> queryMap) {
-        OrcidMessage orcidMessage = orcidSearchManager.findOrcidsByQuery(queryMap);
-        List<OrcidSearchResult> searchResults = orcidMessage.getOrcidSearchResults() != null ? orcidMessage.getOrcidSearchResults().getOrcidSearchResult() : null;
-        List<OrcidSearchResult> filteredResults = new ArrayList<OrcidSearchResult>();
-        if (searchResults != null && searchResults.size() > 0) {
-            for (OrcidSearchResult searchResult : searchResults) {
-                OrcidSearchResult filteredSearchResult = new OrcidSearchResult();
-                filteredSearchResult.setRelevancyScore(searchResult.getRelevancyScore());
-                OrcidProfile filteredProfile = new OrcidProfile();
-                String retrievedOrcid = searchResult.getOrcidProfile().getOrcidIdentifier().getPath();
-                filteredProfile.setOrcidIdentifier(retrievedOrcid);
-                filteredProfile.setOrcidBio(searchResult.getOrcidProfile().getOrcidBio());
-                filteredSearchResult.setOrcidProfile(filteredProfile);
-                filteredResults.add(filteredSearchResult);
-            }
-
-        }
-
-        OrcidSearchResults orcidSearchResults = new OrcidSearchResults();
-        orcidSearchResults.getOrcidSearchResult().addAll(filteredResults);
-        return getOrcidSearchResultsResponse(orcidSearchResults, queryMap.toString());
-
-    }
-
-    private Response getOrcidSearchResultsResponse(OrcidSearchResults orcidSearchResults, String query) {
-        if (orcidSearchResults != null) {
-            OrcidMessage orcidMessage = new OrcidMessage();
-            orcidMessage.setOrcidSearchResults(orcidSearchResults);
-            return Response.ok(orcidMessage).build();
-        } else {
-            throw new OrcidNotFoundException("No search results found using query " + query);
-        }
-    }
-
     public void setSponsorFromAuthentication(OrcidProfile profile) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (profile.getOrcidHistory() == null) {
@@ -467,11 +416,11 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
             Source sponsor = new Source();
             String sponsorOrcid = authorizationRequest.getClientId();
             ClientDetailsEntity clientDetails = clientDetailsManager.find(sponsorOrcid);
-            if(clientDetails != null) {
+            if (clientDetails != null) {
                 sponsor.setSourceName(new SourceName(clientDetails.getClientName()));
             } else {
                 OrcidProfile sponsorProfile = orcidProfileManager.retrieveOrcidProfile(sponsorOrcid);
-                sponsor.setSourceName(new SourceName(sponsorProfile.getOrcidBio().getPersonalDetails().getCreditName().getContent()));                
+                sponsor.setSourceName(new SourceName(sponsorProfile.getOrcidBio().getPersonalDetails().getCreditName().getContent()));
             }
             sponsor.setSourceOrcid(new SourceOrcid(sponsorOrcid));
             profile.getOrcidHistory().setSource(sponsor);
