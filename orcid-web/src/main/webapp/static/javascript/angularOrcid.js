@@ -56,6 +56,43 @@ orcidNgModule.directive('ngModelOnblur', function() {
     };
 });
 
+orcidNgModule.directive('appFileTextReader', function($q){
+	    var slice = Array.prototype.slice;
+	    return {
+	        restrict: 'A',
+	        require: 'ngModel',
+	        scope: {
+	            updateFn: '&'
+	        },
+	        link: function(scope, element, attrs, ngModelCtrl){
+	            if(!ngModelCtrl) return;
+	            ngModelCtrl.$render = function(){};
+	            element.bind('change', function(event){
+	                var element = event.target;
+	                $q.all(slice.call(element.files, 0).map(readFile))
+	                .then(function(values){
+	                    if(element.multiple) ngModelCtrl.$setViewValue(values);
+	                    else ngModelCtrl.$setViewValue(values.length ? values[0] : null);
+	                    scope.updateFn(scope);
+	                });
+	                function readFile(file) {
+	                    var deferred = $q.defer();
+	                    var reader = new FileReader();
+	                    reader.onload = function(event){
+	                        deferred.resolve(event.target.result);
+	                    };
+	                    reader.onerror = function(event) {
+	                        deferred.reject(event);
+	                    };
+	                    reader.readAsText(file);
+	                    return deferred.promise;
+	                }
+	            });//change
+	        }//link
+	    };//return
+	});//appFilereader
+
+
 orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
 	var serv = {
 			affiliations: new Array(),
@@ -341,6 +378,18 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 						console.log("couldn't parse bibtex: " + dw.citation.citation.value);
 					}
 				}
+			},
+			getBlankWork: function(callback) {
+				$.ajax({
+					url: getBaseUri() + '/works/work.json',
+					dataType: 'json',
+					success: function(data) {
+						callback(data);
+						$rootScope.$apply();
+					}
+				}).fail(function() { 
+			    	console.log("Error fetching blank work");
+			    });
 			},
 		    addWorkToScope: function(worksUrl) {
 				if(serv.worksToAddIds.length != 0 ) {
@@ -2887,7 +2936,10 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 }
 
 function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
-	$scope.html5File = false;
+	$scope.canReadFiles = false;
+	$scope.showBibtexImportWizard = false;
+	$scope.textFiles = null;
+	$scope.worksFromBibtex = null;
 	$scope.workspaceSrvc = workspaceSrvc;
 	$scope.worksSrvc = worksSrvc;
 	$scope.showBibtex = true;
@@ -2897,10 +2949,50 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	$scope.privacyHelp = {};
 	$scope.moreInfoOpen = false;
 	$scope.moreInfo = {};
+	$scope.showBibtexImportWizard = false;
+	
+	$scope.loadBibtexJs = function() {
+        try {
+        	$scope.worksFromBibtex = new Array();
+        	$.each($scope.textFiles, function (index, bibtex) {
+        		console.log(bibtex);
+				var parsed = bibtexParse.toJSON(bibtex);
+				if (parsed.length == 0) throw "bibtex parse return nothing";
+				for (j in parsed) {
+					(function (cur) {
+						worksSrvc.getBlankWork(function(data) {
+							populateWorkAjaxForm(cur,data);
+							$scope.worksFromBibtex.push(data);
+						});
+					})(parsed[j]);
+			    };
+        	});
+        	$scope.textFiles = null;
+		} catch (err) {
+			alert("Error Parsing File");
+		};
+    };
+    
+    
+    $scope.addWorkFromBibtex = function(work) {
+    	var index = $scope.worksFromBibtex.indexOf(work);
+    	var work = $scope.worksFromBibtex.splice(index, 1);
+    	console.log(work[0]);
+    	$scope.addWorkModal(work[0]);
+    };
+
+    $scope.rmWorkFromBibtex = function(work) {
+    	var index = $scope.worksFromBibtex.indexOf(work);
+    	$scope.worksFromBibtex.splice(index, 1);
+    };
+   
+    $scope.openBibTextWizard = function () {
+    	$scope.showBibtexImportWizard = true;
+    };
 	
 	// Check for the various File API support.
 	if (window.File && window.FileReader && window.FileList && window.Blob) {
-		$scope.html5File = true;
+		$scope.canReadFiles = true;
 	}
 	
 	$scope.toggleClickPrivacyHelp = function(key) {
@@ -2909,7 +3001,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	};
 
 	$scope.addExternalIdentifier = function () {
-		$scope.editWork.workExternalIdentifiers.push({workExternalIdentifierId: { value: ""}, workExternalIdentifierType: {value: ""} });
+		$scope.editWork.workExternalIdentifiers.push({workExternalIdentifierId: {value: ""}, workExternalIdentifierType: {value: ""}});
 	};
 	
 	$scope.showAddModal = function(){;
@@ -2944,19 +3036,18 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
         });
 	};
 	
-	$scope.addWorkModal = function(){
-		$.ajax({
-			url: getBaseUri() + '/works/work.json',
-			dataType: 'json',
-			success: function(data) {
+	$scope.addWorkModal = function(data){
+		if (data == undefined) { 
+			worksSrvc.getBlankWork(function(data) {
 				$scope.editWork = data;
 				$scope.$apply(function() {
 					$scope.showAddModal();
-				});
-			}
-		}).fail(function() { 
-	    	console.log("Error fetching work: " + value);
-	    });
+				});			
+			});
+		} else {
+			$scope.editWork = data;
+			$scope.showAddModal();
+		}
 	};
 
 
@@ -4564,7 +4655,8 @@ function SSOPreferencesCtrl($scope, $compile) {
 	$scope.sampleAuthCurlTemplate = "curl -i -L -k -H 'Accept: application/json' --data 'client_id=[CLIENT_ID]&client_secret=[CLIENT_SECRET]&grant_type=authorization_code&redirect_uri=[REDIRECT_URI]&code=REPLACE WITH OAUTH CODE' [PUB_BASE_URI]/oauth/token";
 	$scope.runscopeExample = '';
 	$scope.runscopeExampleLink = 'https://www.runscope.com/oauth2_tool';
-	$scope.authorizeURLTemplate = getBaseUri() + '/oauth/authorize?client_id=[CLIENT_ID]&response_type=code&scope=/authenticate&redirect_uri=[REDIRECT_URI]';
+	$scope.authorizeUrlBase = getBaseUri() + '/oauth/authorize';
+	$scope.authorizeURLTemplate = $scope.authorizeUrlBase + '?client_id=[CLIENT_ID]&response_type=code&scope=/authenticate&redirect_uri=[REDIRECT_URI]';	
 	$scope.tokenURL = orcidVar.pubBaseUri + '/oauth/token';
 	$scope.authorizeURL = '';
 	$scope.selectedRedirectUri = '';

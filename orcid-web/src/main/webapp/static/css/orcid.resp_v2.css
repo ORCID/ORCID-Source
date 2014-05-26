@@ -4108,6 +4108,10 @@ ul.sort-menu-options li a:hover{
 	left: 117px;
 }
 
+.no-wrap{
+	word-break: normal;
+}
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 		
