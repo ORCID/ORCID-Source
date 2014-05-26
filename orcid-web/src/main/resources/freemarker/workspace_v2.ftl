@@ -396,7 +396,7 @@
 			<div class="row">
 				<div class="col-md-12 col-sm-12 col-xs-12">
 	    	    	<div class="justify">
-						<p><@orcid.msg 'workspace.LinkResearchActivitiess.description'/></p>
+						<p><@orcid.msg 'workspace.LinkResearchActivities.description'/></p>
 					</div>            	    	           	
     		    	<#list workImportWizards?sort_by("displayName") as thirdPartyDetails>
 	        	       	<#assign redirect = (thirdPartyDetails.redirectUris.redirectUri[0].value) >
@@ -416,8 +416,8 @@
             <div class="row footer">
 				<div class="col-md-12 col-sm-12 col-xs-12">
 					<p>
-				   		<strong><@orcid.msg 'workspace.LinkResearchActivitiess.footer.title'/></strong>	    
-	        			<@orcid.msg 'workspace.LinkResearchActivitiess.footer.description1'/> <a href="<@orcid.msg 'workspace.LinkResearchActivitiess.footer.description.url'/>"><@orcid.msg 'workspace.LinkResearchActivitiess.footer.description.link'/></a> <@orcid.msg 'workspace.LinkResearchActivitiess.footer.description2'/>
+				   		<strong><@orcid.msg 'workspace.LinkResearchActivities.footer.title'/></strong>	    
+	        			<@orcid.msg 'workspace.LinkResearchActivities.footer.description1'/> <a href="<@orcid.msg 'workspace.LinkResearchActivities.footer.description.url'/>"><@orcid.msg 'workspace.LinkResearchActivities.footer.description.link'/></a> <@orcid.msg 'workspace.LinkResearchActivities.footer.description2'/>
 			    	</p>
 				</div>
 	        </div>
@@ -439,7 +439,7 @@
 			<div class="row">
 				<div class="col-md-12 col-sm-12 col-xs-12">
 	    	    	<div class="justify">
-						<p><@orcid.msg 'workspace.LinkResearchActivitiess.description'/></p>
+						<p><@orcid.msg 'workspace.LinkResearchActivities.description'/></p>
 					</div>            	    	           	
     		    	<#list fundingImportWizards?sort_by("displayName") as thirdPartyDetails>
 	        	       	<#assign redirect = (thirdPartyDetails.redirectUris.redirectUri[0].value) >
@@ -459,8 +459,8 @@
             <div class="row footer">
 				<div class="col-md-12 col-sm-12 col-xs-12">
 					<p>
-				   		<strong><@orcid.msg 'workspace.LinkResearchActivitiess.footer.title'/></strong>	    
-	        			<@orcid.msg 'workspace.LinkResearchActivitiess.footer.description1'/> <a href="<@orcid.msg 'workspace.LinkResearchActivitiess.footer.description.url'/>"><@orcid.msg 'workspace.LinkResearchActivitiess.footer.description.link'/></a> <@orcid.msg 'workspace.LinkResearchActivitiess.footer.description2'/>
+				   		<strong><@orcid.msg 'workspace.LinkResearchActivities.footer.title'/></strong>	    
+	        			<@orcid.msg 'workspace.LinkResearchActivities.footer.description1'/> <a href="<@orcid.msg 'workspace.LinkResearchActivities.footer.description.url'/>"><@orcid.msg 'workspace.LinkResearchActivities.footer.description.link'/></a> <@orcid.msg 'workspace.LinkResearchActivities.footer.description2'/>
 			    	</p>
 				</div>
 	        </div>
