@@ -159,7 +159,7 @@ public class CustomEmailDaoImpl extends GenericDaoImpl<CustomEmailEntity, Custom
         try {
             result = query.getSingleResult();
         } catch(Exception e) {
-            
+            result = new Date();
         }
         return result;
     }

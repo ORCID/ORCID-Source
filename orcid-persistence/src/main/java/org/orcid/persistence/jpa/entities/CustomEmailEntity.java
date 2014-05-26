@@ -50,7 +50,7 @@ public class CustomEmailEntity extends BaseEntity<CustomEmailPk>{
     
     @Id
     @ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.ALL })
-    @JoinColumn(name = "client_details_id")
+    @JoinColumn(name = "client_details_id")        
     public ClientDetailsEntity getClientDetailsEntity() {
         return clientDetailsEntity;
     }
