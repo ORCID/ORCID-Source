@@ -23,5 +23,5 @@ package org.orcid.persistence.jpa.entities;
  */
 public enum EmailType {
     
-    CLAIM;
+    ACCOUNT_DEPRECATED, AMEND, CLAIM, DEACTIVATE, DELEGATE, EMAIL_CHANGED, RESET, SUPPORT, UPDATE;
 }

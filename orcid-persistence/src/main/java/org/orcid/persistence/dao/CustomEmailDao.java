@@ -16,6 +16,7 @@
  */
 package org.orcid.persistence.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import org.orcid.persistence.jpa.entities.CustomEmailEntity;
@@ -42,7 +43,7 @@ public interface CustomEmailDao extends GenericDao<CustomEmailEntity, CustomEmai
      * @param emailType
      * @return a CustomEmailEntity object if the email is found, null otherwise
      * */
-    CustomEmailEntity findByClientIdAndEmailType(String clientDetailsId, EmailType emailType);
+    CustomEmailEntity findByClientIdAndEmailType(String clientDetailsId, EmailType emailType, Date lastModified);
     
     /**
      * Creates a custom email on database
@@ -84,4 +85,12 @@ public interface CustomEmailDao extends GenericDao<CustomEmailEntity, CustomEmai
      * @return true if a custom email with id=clientDetailsId and email type=emailType exists
      * */
     boolean exists(String clientDetailsId, EmailType emailType);
+    
+    /**
+     * Get the last modified date of a custom email
+     * @param clientDetailsId
+     * @param emailType
+     * @return the last modified date of the custom email, null in case the email doesn't exists
+     * */
+    Date getLastModified(String clientDetailsId, EmailType emailType);
 }

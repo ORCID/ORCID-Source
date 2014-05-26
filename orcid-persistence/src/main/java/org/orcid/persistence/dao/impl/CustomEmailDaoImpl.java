@@ -16,6 +16,7 @@
  */
 package org.orcid.persistence.dao.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.NoResultException;
@@ -27,6 +28,7 @@ import org.orcid.persistence.dao.CustomEmailDao;
 import org.orcid.persistence.jpa.entities.CustomEmailEntity;
 import org.orcid.persistence.jpa.entities.EmailType;
 import org.orcid.persistence.jpa.entities.keys.CustomEmailPk;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
 public class CustomEmailDaoImpl extends GenericDaoImpl<CustomEmailEntity, CustomEmailPk> implements CustomEmailDao {
@@ -54,7 +56,8 @@ public class CustomEmailDaoImpl extends GenericDaoImpl<CustomEmailEntity, Custom
      * @return a CustomEmailEntity object if the email is found, null otherwise
      * */
     @Override
-    public CustomEmailEntity findByClientIdAndEmailType(String clientDetailsId, EmailType emailType) {
+    @Cacheable(value = "custom-email", key = "#clientDetailsId.concat('-').concat(#emailType).concat('-').concat(#lastModified)")
+    public CustomEmailEntity findByClientIdAndEmailType(String clientDetailsId, EmailType emailType, Date lastModified) {
         TypedQuery<CustomEmailEntity> query = entityManager.createQuery("FROM CustomEmailEntity WHERE clientDetailsEntity.id=:clientDetailsId and emailType=:emailType", CustomEmailEntity.class);
         query.setParameter("clientDetailsId", clientDetailsId);
         query.setParameter("emailType", emailType);
@@ -139,6 +142,26 @@ public class CustomEmailDaoImpl extends GenericDaoImpl<CustomEmailEntity, Custom
         query.setParameter("emailType", emailType);
         Long result = query.getSingleResult();
         return (result != null && result > 0);
+    }
+    
+    /**
+     * Get the last modified date of a custom email
+     * @param clientDetailsId
+     * @param emailType
+     * @return the last modified date of the custom email, null in case the email doesn't exists
+     * */
+    @Override
+    public Date getLastModified(String clientDetailsId, EmailType emailType) {
+        TypedQuery<Date> query = entityManager.createQuery("SELECT lastModified FROM CustomEmailEntity WHERE clientDetailsEntity.id=:clientDetailsId and emailType=:emailType", Date.class);
+        query.setParameter("clientDetailsId", clientDetailsId);
+        query.setParameter("emailType", emailType);
+        Date result = null;
+        try {
+            result = query.getSingleResult();
+        } catch(Exception e) {
+            
+        }
+        return result;
     }
 
 }

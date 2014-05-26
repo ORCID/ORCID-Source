@@ -533,7 +533,7 @@
 	   </div>
 	   <div ng-show="!emailSearchResult.found" >
 	       <p class="alert alert-error"><@orcid.msg 'manage_delegation.sorrynoaccount1'/>{{userQuery}}<@orcid.msg 'manage_delegation.sorrynoaccount2'/></p>
-	       <p><@orcid.msg 'manage.musthaveanaccount'/></p>
+	       <p><@orcid.msg 'manage_delegation.musthaveanaccount'/></p>
 	       <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
 	   </div>
 	   <div ng-show="!emailSearchResult.isSelf && emailSearchResult.found">

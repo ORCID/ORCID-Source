@@ -98,18 +98,28 @@ var OrcidCookie = new function () {
     };
 };
 
-var OrcidGA = function () {	
+var _gaq = _gaq || [];
+
+var OrcidGA = function () {
+	// test and make sure _gaq is working. disconnect.me chrome plugin has
+	// caused silent _gaq failures. This check allows us to detect that
+	// situation 
+	var gaEnabled = false;
+	_gaq.push(function() {
+		gaEnabled = true;
+	});
+	
 	this.buildClientString = function (clientGroupName, clientName) {
 		return  clientGroupName + ' - '+ clientName
 	};
 	this.gaPush = function (trackArray) {
-		if (typeof _gaq != 'undefined') {
+		if (gaEnabled) {
 			_gaq.push(trackArray);
 			console.log("_gap.push for " + trackArray);
 		} else {
 			// if it's a function and _gap isn't available run (typically only on dev)
-			if (typeof trackArray === 'function') trackArray();	
 			console.log("no _gap.push for " + trackArray);
+			if (typeof trackArray === 'function') trackArray();	
 		}
 	};
 	
@@ -538,6 +548,101 @@ $(function () {
 	
 });
 
+/* START: Bibjson to work AjaxForm */
+/*
+{
+	"errors":[],
+	"publicationDate":
+	   {
+		  "errors":[],"month":"","day":"","year":"","required":true,"getRequiredMessage":null},
+	      "visibility":"LIMITED","putCode":null,
+	      "shortDescription":{
+	    	  "errors":[],"value":null,"required":true,"getRequiredMessage":null},
+	"url":{"errors":[],"value":null,"required":true,"getRequiredMessage":null},
+	"journalTitle":{"errors":[],"value":null,"required":false,"getRequiredMessage":null},
+	"languageCode":{"errors":[],"value":null,"required":false,"getRequiredMessage":null},
+	"languageName":{"errors":[],"value":null,"required":false,"getRequiredMessage":null},
+	"citation":{"errors":[],"citation":{"errors":[],"value":null,"required":true,"getRequiredMessage":null},
+	"citationType":{"errors":[],"value":"formatted-unspecified","required":true,"getRequiredMessage":null},"required":true,"getRequiredMessage":null},
+	"countryCode":{"errors":[],"value":null,"required":true,"getRequiredMessage":null},
+	"countryName":{"errors":[],"value":null,"required":true,"getRequiredMessage":null},
+	"contributors":[{"errors":[],"contributorSequence":{"errors":[],"value":"","required":true,"getRequiredMessage":null},"email":null,"orcid":null,"uri":null,"creditName":null,"contributorRole":{"errors":[],"value":"","required":true,"getRequiredMessage":null},"creditNameVisibility":null}],
+	"workExternalIdentifiers":[
+	    {
+	      "errors":[],
+	      "workExternalIdentifierId":{"errors":[],"value":null,"required":true,"getRequiredMessage":null},
+	      "workExternalIdentifierType":{"errors":[],"value":"","required":true,"getRequiredMessage":null}
+	 }],
+	"workSource":null,
+	"workSourceName":null,
+	"workTitle":{"errors":[],"title":{"errors":[],"value":null,"required":true,"getRequiredMessage":null},"subtitle":{"errors":[],"value":null,"required":true,"getRequiredMessage":null},"translatedTitle":{"errors":[],"content":"","languageCode":"","languageName":"","required":false,"getRequiredMessage":null}},
+	"workCategory":{"errors":[],"value":"","required":true,"getRequiredMessage":null},
+	"workType":{"errors":[],"value":"","required":true,"getRequiredMessage":null},"dateSortString":null}
+*/
+
+var bibToWorkTypeMap = {};
+bibToWorkTypeMap['article'] = ['publication','journal-article'];
+bibToWorkTypeMap['book'] = ['publication','book'];
+
+function populateWorkAjaxForm(bibJson, work) {
+	 
+	 // get the bibtex back put it in the citation field
+	 var bibtex = bibtexParse.toBibtex([bibJson]);
+	 work.citation.citation.value = bibtex;
+     work.citation.citationType.value = 'bibtex';
+     
+     // set the work type based off the entry type
+     if (bibJson.entryType) {
+    	 var type = bibJson.entryType.toLowerCase(); 
+    	 if (bibToWorkTypeMap.hasOwnProperty(type)) {
+    		 work.workCategory.value = bibToWorkTypeMap[type][0];
+    		 work.workType.value = bibToWorkTypeMap[type][1];
+    	 }
+     } 
+     
+     // tags we mapped
+     if (bibJson.entryTags) {
+	     var tags = bibJson.entryTags;
+	     for (key in tags) {
+	    	 var lower = key.toLowerCase();
+	    	 if (lower == 'booktitle')
+	    		 work.workTitle.title.value = tags[key];
+	    	 
+	    	 if (lower == 'doi') {
+	    		var ident = {  
+	    				 workExternalIdentifierId: {value: tags[key]}, 
+	    				 workExternalIdentifierType: {value: 'doi'} 
+	    		};
+	    		if (work.workExternalIdentifiers[0].workExternalIdentifierId.value == null) 
+	    			work.workExternalIdentifiers[0] = ident;
+	    		else
+	    		    work.workExternalIdentifiers.push(ident);
+	    	 }
+	    		
+	    	 if (lower == 'journal')
+	    		 work.journalTitle.value = tags[key];
+	    	 
+	    	 if (lower == 'publisher')
+	    		 work.journalTitle.value = tags[key];
+	    	 
+	    	 if (lower == 'title')
+	    		 work.workTitle.title.value = tags[key];
+	    	
+	    	 if (lower == 'year')
+	    		 work.publicationDate.year = tags[key];
+	    	 
+	    	 if (lower == 'month')
+	    		 work.publicationDate.year = tags[key];
+	    	 
+	    	 if (lower == 'url')
+	    		 work.url.value = tags[key];
+	    	 
+	     };
+     };
+};
+
+/* END: Bibjson to work AjaxForm */
+
 /* START: workIdLinkJs v0.0.5 */
 /* https://github.com/ORCID/workIdLinkJs */
 
@@ -707,7 +812,7 @@ $(function (){
 	});
 });
 
-/* start bibtexParse 0.0.7 */
+/* start bibtexParse 0.0.8 */
 
 //Original work by Henrik Muehe (c) 2010
 //
@@ -992,16 +1097,44 @@ $(function (){
 		};
 	};
 
-	exports.toJSON = function(input) {
+	exports.toJSON = function(bibtex) {
 		var b = new BibtexParser();
-		b.setInput(input);
+		b.setInput(bibtex);
 		b.bibtex();
 		return b.entries;
+	};
+	
+	/* added during hackathon don't hate on me */
+	exports.toBibtex = function(json) {
+     out = '';
+     for (var i in json) {
+	      out += "@" + json[i].entryType;
+	      out += '{';
+	      if (json[i].citationKey)
+	         out += json[i].citationKey + ', ';
+	      if (json[i].entry) 
+	         if (json[i].entry.indexOf('{') > 0)
+	            out+= '"' + json[i].entry + '"'; 
+	         else
+	            out+= json[i].entry; 
+	      if (json[i].entryTags) {
+           var tags = '';
+           for (jdx in json[i].entryTags) {
+              if (tags.length != 0) tags += ', ';
+	            tags += jdx + '= {' + json[i].entryTags[jdx]+'}';
+	         }
+	         out += tags;
+	      }
+	      out += '}\n\n';
+	   }
+     return out;
+     
 	};
 
 })(typeof exports === 'undefined' ? this['bibtexParse'] = {} : exports);
 
 /* end bibtexParse */
+
 
 
 

@@ -16,6 +16,7 @@
  */
 package org.orcid.core.manager.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -46,9 +47,10 @@ public class CustomEmailManagerImpl implements CustomEmailManager {
      * @param emailType
      * @return a CustomEmailEntity object if the email is found, null otherwise
      * */
-    @Override
+    @Override    
     public CustomEmailEntity getCustomEmail(String clientDetailsId, EmailType emailType) {
-        return customEmailDao.findByClientIdAndEmailType(clientDetailsId, emailType);
+        Date lastModified = customEmailDao.getLastModified(clientDetailsId, emailType);
+        return customEmailDao.findByClientIdAndEmailType(clientDetailsId, emailType, lastModified);
     }
 
     /**

@@ -82,4 +82,6 @@
     <client_secret client_details_id="4444-4444-4444-4444" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25"/>
     <client_secret client_details_id="4444-4444-4444-4445" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25"/>
 
+	<custom_email client_details_id="4444-4444-4444-4441" email_type="CLAIM" content="This is the content" sender="angel.montenegro.jimenez@gmail.com" subject="This is the subject" is_html="true" />
+
 </dataset>
