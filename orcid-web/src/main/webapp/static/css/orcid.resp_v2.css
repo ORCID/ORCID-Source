@@ -1857,12 +1857,6 @@ a:hover {
 	margin-bottom: 0px;
 }
 
-/* Affiliations */
-.affiliation-date, .funding-date {
-    font-style: italic;
-    font-weight: normal !important;
-}
-
 .affiliation-type {
     font-size: 16px;
     font-style: italic;
@@ -2742,6 +2736,7 @@ header overrides
 	font-family: 'Gill Sans W02', 'Helvetica', sans-serif;
 	height: 30px;
 	display: block;	
+	float: left;		
 }
 
 ul.workspace-private-toolbar > li{
@@ -3813,11 +3808,6 @@ ul.personal-inf-display li:first-child a{
 	
 }
 
-.work-title{
-	display: block;
-	float: left;
-}
-
 .sort-menu-container{
 	display: block;
 	position: relative;			
@@ -4204,6 +4194,13 @@ ul.id-details li{
 .no-wrap{
 	word-break: normal;
 }
+
+.role{
+	float: left;
+	clear: both;
+}
+
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
@@ -5243,7 +5240,7 @@ ul.id-details li{
 				
 	}
 	
-	.affiliation-details{
+	.role{
 		float: left;		 
 	}
 	
