@@ -406,7 +406,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         }
 
     }
-    
+
     public boolean exists(String orcid) {
         return profileDao.exists(orcid);
     }
@@ -979,13 +979,14 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         profileDao.updateCountry(orcidProfile.getOrcidIdentifier().getPath(), orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().getValue(),
                 orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().getVisibility());
     }
-    
+
     @Override
     @Transactional
     public void updateBiography(OrcidProfile orcidProfile) {
-        profileDao.updateBiography(orcidProfile.getOrcidIdentifier().getPath(), orcidProfile.getOrcidBio().getBiography().getContent(), orcidProfile.getOrcidBio().getBiography().getVisibility());
+        profileDao.updateBiography(orcidProfile.getOrcidIdentifier().getPath(), orcidProfile.getOrcidBio().getBiography().getContent(), orcidProfile.getOrcidBio()
+                .getBiography().getVisibility());
     }
-    
+
     @Override
     @Transactional
     public void updateNames(OrcidProfile orcidProfile) {
@@ -994,12 +995,10 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         String givenNames = pd.getGivenNames() != null ? pd.getGivenNames().getContent() : null;
         String familyName = pd.getFamilyName() != null ? pd.getFamilyName().getContent() : null;
         String creditName = pd.getCreditName() != null ? pd.getCreditName().getContent() : null;
-        Visibility creditNameVisibility =  pd.getCreditName() != null ? pd.getCreditName().getVisibility() : null;
-        
+        Visibility creditNameVisibility = pd.getCreditName() != null ? pd.getCreditName().getVisibility() : null;
+
         profileDao.updateNames(orcid, givenNames, familyName, creditName, creditNameVisibility);
     }
-    
-
 
     @Override
     @Transactional
@@ -1701,6 +1700,21 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                 }
             }
         });
+    }
+
+    @Override
+    public void processProfilesThatMissedIndexing() {
+        LOG.info("About to process profiles that missed indexing");
+        List<ProfileEntity> profileEntities = Collections.emptyList();
+        do {
+            profileEntities = profileDao.findProfilesThatMissedIndexing(INDEXING_BATCH_SIZE);
+            for (ProfileEntity profileEntity : profileEntities) {
+                LOG.info("Profile missed indexing: orcid={}, lastModified={}, lastIndexed={}, indexingStatus={}",
+                        new Object[] { profileEntity.getId(), profileEntity.getLastModified(), profileEntity.getLastIndexedDate(), profileEntity.getIndexingStatus() });
+                profileDao.updateIndexingStatus(profileEntity.getId(), IndexingStatus.PENDING);
+            }
+        } while (!profileEntities.isEmpty());
+        LOG.info("Finished processing profiles that missed indexing");
     }
 
     @Override

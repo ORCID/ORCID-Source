@@ -329,9 +329,11 @@ public interface OrcidProfileManager {
     OrcidProfile revokeDelegate(String giverOrcid, String receiverOrcid);
 
     void processProfilesPendingIndexing();
+    
+    void processProfilesThatMissedIndexing();
 
     void processUnclaimedProfilesToFlagForIndexing();
-
+    
     void processUnclaimedProfilesForReminder();
 
     /**

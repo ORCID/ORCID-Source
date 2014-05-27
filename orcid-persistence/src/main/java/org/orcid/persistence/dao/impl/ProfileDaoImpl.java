@@ -261,6 +261,14 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     }
 
     @Override
+    public List<ProfileEntity> findProfilesThatMissedIndexing(int maxResults) {
+        TypedQuery<ProfileEntity> query = entityManager.createQuery(
+                "from ProfileEntity where lastModified > lastIndexedDate and indexingStatus not in ('PENDING', 'IGNORE') order by lastModified", ProfileEntity.class);
+        query.setMaxResults(maxResults);
+        return query.getResultList();
+    }
+
+    @Override
     public boolean orcidExists(String orcid) {
         TypedQuery<Long> query = entityManager.createQuery("select count(pe.id) from ProfileEntity pe where pe.id=:orcid", Long.class);
         query.setParameter("orcid", orcid);
