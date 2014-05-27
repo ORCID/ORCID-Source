@@ -17,7 +17,6 @@
 package org.orcid.pojo.ajaxForm;
 
 import java.io.Serializable;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -358,9 +357,8 @@ public class FundingForm implements ErrorsInterface, Serializable {
 
         if (funding.getAmount() != null) {
             if (StringUtils.isNotEmpty(funding.getAmount().getContent())) {
-                String cleanNumber = funding.getAmount().getContent().replace(",", "");
-                String formattedNumber = NumberFormat.getNumberInstance().format(Double.parseDouble(cleanNumber));
-                result.setAmount(Text.valueOf(formattedNumber));
+                String cleanNumber = funding.getAmount().getContent().trim();                                
+                result.setAmount(Text.valueOf(cleanNumber));
             }
             if (funding.getAmount().getCurrencyCode() != null)
                 result.setCurrencyCode(Text.valueOf(funding.getAmount().getCurrencyCode()));
