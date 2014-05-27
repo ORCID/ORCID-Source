@@ -127,4 +127,6 @@ public interface ClientDetailsManager extends ClientDetailsService {
     boolean removeClientSecret(String clientId, String clientSecret);
     
     boolean addClientSecret(String clientId, String clientSecret);
+    
+    boolean resetClientSecret(String clientId, String clientSecret);
 }

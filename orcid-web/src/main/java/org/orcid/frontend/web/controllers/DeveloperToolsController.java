@@ -26,6 +26,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.OrcidSSOManager;
@@ -45,7 +46,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -98,7 +98,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
     public @ResponseBody
     SSOCredentials getEmptySSOCredentials(HttpServletRequest request) {
         SSOCredentials emptyObject = new SSOCredentials();
-        emptyObject.setClientSecret(new HashSet<Text>());
+        emptyObject.setClientSecret(Text.valueOf(StringUtils.EMPTY));
 
         RedirectUri redirectUri = new RedirectUri();
         redirectUri.setValue(new Text());
@@ -198,15 +198,9 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         return ssoCredentials;
     }
 
-    @RequestMapping(value = "/add-client-secret", method = RequestMethod.POST)
+    @RequestMapping(value = "/reset-client-secret", method = RequestMethod.POST)
     public @ResponseBody boolean addClientSecret(){    
-        return orcidSSOManager.addClientSecret(getEffectiveUserOrcid());         
-    }
-    
-    @RequestMapping(value = "/delete-client-secret", method = RequestMethod.POST)
-    public @ResponseBody boolean deleteClientSecret(@RequestParam(value = "clientSecret") String clientSecret){
-        String userOrcid = getEffectiveUserOrcid();
-        return orcidSSOManager.removeClientSecret(userOrcid, clientSecret);        
+        return orcidSSOManager.resetClientSecret(getEffectiveUserOrcid());         
     }
     
     @RequestMapping(value = "/get-sso-credentials.json", method = RequestMethod.POST)

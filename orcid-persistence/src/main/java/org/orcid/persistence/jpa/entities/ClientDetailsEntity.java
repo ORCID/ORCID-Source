@@ -261,6 +261,13 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
         }
         clientSecrets.add(new ClientSecretEntity(clientSecret, this));
     }
+    
+    public void setClientSecretForJpa(String clientSecret, boolean primary) {
+        if (clientSecrets == null) {
+            clientSecrets = new TreeSet<>();
+        }
+        clientSecrets.add(new ClientSecretEntity(clientSecret, this, primary));
+    }
 
     @Transient
     public String getDecryptedClientSecret() {

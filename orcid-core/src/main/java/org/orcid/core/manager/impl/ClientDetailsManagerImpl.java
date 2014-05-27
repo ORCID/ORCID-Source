@@ -34,6 +34,7 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.ClientDetailsDao;
+import org.orcid.persistence.dao.ClientSecretDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientAuthorisedGrantTypeEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -51,6 +52,9 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
 
     @Resource
     ClientDetailsDao clientDetailsDao;
+
+    @Resource
+    ClientSecretDao clientSecretDao;
 
     @Resource
     private ProfileEntityManager profileEntityManager;
@@ -321,14 +325,14 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
     public boolean removeClientSecret(String clientId, String clientSecret) {
         boolean result = false;
         // Look for the list of client secrets
-        List<ClientSecretEntity> clientSecrets = clientDetailsDao.getClientSecretsByClientId(clientId);
+        List<ClientSecretEntity> clientSecrets = clientSecretDao.getClientSecretsByClientId(clientId);
         if (clientSecrets != null) {
 
             for (ClientSecretEntity clientSecretEntity : clientSecrets) {
                 String decryptedSecret = encryptionManager.decryptForInternalUse(clientSecretEntity.getClientSecret());
                 if (clientSecret.equals(decryptedSecret)) {
                     // Remove client secret
-                    result = clientDetailsDao.removeClientSecret(clientId, clientSecretEntity.getClientSecret());
+                    result = clientSecretDao.removeClientSecret(clientId, clientSecretEntity.getClientSecret());
                     break;
                 }
             }
@@ -344,12 +348,26 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
     @Override
     @Transactional
     public boolean addClientSecret(String clientId, String clientSecret) {
-     // Creates the new client secret
-        boolean result = clientDetailsDao.createClientSecret(clientId, clientSecret);
+        // Creates the new client secret
+        boolean result = clientSecretDao.createClientSecret(clientId, clientSecret);
         // Update last modified
         if (result)
             clientDetailsDao.updateLastModified(clientId);
 
+        return result;
+    }
+    
+    @Override
+    @Transactional
+    public boolean resetClientSecret(String clientId, String clientSecret) {
+        //#1 Set all existing client secrets as non primary
+        clientSecretDao.revokeAllKeys(clientId);
+        //#2 Create the new client secret as primary
+        boolean result = clientSecretDao.createClientSecret(clientId, clientSecret);
+        //#3 if it was created, update the last modified for the client details
+        if (result)
+            clientDetailsDao.updateLastModified(clientId);
+        
         return result;
     }
 }

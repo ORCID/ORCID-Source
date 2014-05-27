@@ -180,7 +180,7 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
     }
     
     @Override
-    public boolean addClientSecret(String clientDetailsId) {        
+    public boolean resetClientSecret(String clientDetailsId) {        
         ClientDetailsEntity clientDetailsEntity = clientDetailsManager.findByClientId(clientDetailsId);
         if (clientDetailsEntity == null) {
             throw new IllegalArgumentException("ORCID " + clientDetailsId + " doesnt have client details assigned yet");
@@ -188,18 +188,7 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
         // Generate new client secret
         String clientSecret = encryptionManager.encryptForInternalUse(UUID.randomUUID().toString());
         
-        return clientDetailsManager.addClientSecret(clientDetailsEntity.getClientId(), clientSecret);          
-    }
-
-    @Override
-    public boolean removeClientSecret(String clientDetailsId, String clientSecret) {
-        ClientDetailsEntity clientDetailsEntity = clientDetailsManager.findByClientId(clientDetailsId);
-        if (clientDetailsEntity == null) {
-            throw new IllegalArgumentException("ORCID " + clientDetailsId + " doesnt have client details assigned yet");
-        } 
-        
-        //Remove client secret
-        return clientDetailsManager.removeClientSecret(clientDetailsId, clientSecret);
+        return clientDetailsManager.resetClientSecret(clientDetailsEntity.getClientId(), clientSecret);          
     }
 
     private boolean hasSSOScope(Set<ClientScopeEntity> scopes) {
@@ -217,7 +206,7 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
             Set<String> clientRegisteredRedirectUris) {
         ClientDetailsEntity clientDetailsEntity = new ClientDetailsEntity();
         clientDetailsEntity.setId(clientId);
-        clientDetailsEntity.setClientSecretForJpa(clientSecret);
+        clientDetailsEntity.setClientSecretForJpa(clientSecret, true);
         clientDetailsEntity.setClientName(name);
         clientDetailsEntity.setClientDescription(description);
         clientDetailsEntity.setClientWebsite(website);
