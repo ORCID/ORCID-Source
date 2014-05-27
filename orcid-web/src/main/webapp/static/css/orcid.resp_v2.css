@@ -1,4 +1,4 @@
-/**
+f/**
  * =============================================================================
  *
  * ORCID (R) Open Source
@@ -1590,7 +1590,7 @@ a:hover {
 }
 
 .workspace-right h3{
-	font-size: 16px;
+	font-size: 20px;
 } 
 
 .more-info{	
@@ -1698,7 +1698,8 @@ a:hover {
 	font-size: 16px;
 	font-weight: bold;
 	width: 100%;
-	height: 30px;		
+	height: 30px;	
+	
 }
  
 .toggle-text:hover{
@@ -1778,10 +1779,6 @@ a:hover {
 	padding: 0;
 }
 
-.workspace-body-list {
-	margin-top: -10px;
-}
-
 .workspace-body-list ul.workspace-controls{
 	margin-top: 15px;
 }
@@ -1858,12 +1855,6 @@ a:hover {
 
 .no-margin-bottom {
 	margin-bottom: 0px;
-}
-
-/* Affiliations */
-.affiliation-date, .funding-date {
-    font-style: italic;
-    font-weight: normal !important;
 }
 
 .affiliation-type {
@@ -2743,6 +2734,9 @@ header overrides
 .work-title {
 	font-weight: normal;
 	font-family: 'Gill Sans W02', 'Helvetica', sans-serif;
+	height: 30px;
+	display: block;	
+	float: left;		
 }
 
 ul.workspace-private-toolbar > li{
@@ -3213,6 +3207,10 @@ ul.personal-inf-display li:last-child{
 .x0{
     font-size: 50%;
     vertical-align: 3px;
+}
+
+.x075{
+	font-size: 75%;
 }
 
 .x2 {
@@ -3810,22 +3808,18 @@ ul.personal-inf-display li:first-child a{
 	
 }
 
-.work-title{
-	display: block;
-	float: left;
-}
-
 .sort-menu-container{
-	position: relative;
+	display: block;
+	position: relative;			
 }
 
-ul.works-menu{	
+ul.workspace-bar-menu{	
 	padding: 0;
 	margin: 0;
 	float: right; 
 }
 
-ul.works-menu li{
+ul.workspace-bar-menu li{
 	display: inline;
 	margin: 0;
 	padding: 0;
@@ -3859,7 +3853,7 @@ ul.sort-menu-options li{
 	border-bottom: 1px solid #FFF;	
 	display: block;
 	min-width: 100px;
-	height: 30px; 
+	height: 31px; 
 	width: auto;	
 	background: #C9CACB;
 }
@@ -3946,6 +3940,15 @@ ul.sort-menu-options li a:hover{
 	margin: 10px 0;
 }
 
+.edit-option{
+	width:20px;
+	height:20px;
+	background: #C9CACB;
+	border-radius: 50%;
+	padding: 4px;
+	color: #939598;
+}
+
 .biography-controller .edit-option:hover,
 .country-controller .edit-option:hover,
 .keywords-controller .edit-option:hover,
@@ -3953,7 +3956,8 @@ ul.sort-menu-options li a:hover{
 .name-controller .edit-option:hover,
 .websites-controller .edit-option:hover {
 	cursor: pointer;
-	color: #a6ce39;
+	color: #FFF;
+	background: #a6ce39;
 }
 
 .biography-controller .biography-edit {
@@ -4063,6 +4067,18 @@ ul.sort-menu-options li a:hover{
 	padding-right: 14px;
 }
 
+.versions ul,
+.validations ul,
+.versions ul li,
+.validations ul li,
+ul.validations-versions,
+ul.validations-versions li,
+ul.id-details,
+ul.id-details li{
+	margin-left: 0;	
+	padding-left: 0;
+}
+
 .show-more-info-tab{
 	display: block;
 	width: 100%;
@@ -4076,7 +4092,8 @@ ul.sort-menu-options li a:hover{
 .show-more-info-tab a{
 	color: #FFF;
 	background: #949599;
-	padding: 2px 15px;
+	padding: 3px 15px;
+	font-size: 13px;
 }
 
 .show-more-info-tab a span{
@@ -4108,12 +4125,89 @@ ul.sort-menu-options li a:hover{
 	left: 117px;
 }
 
+.dotted-bar{
+	display: block;
+	height: 1px;
+	width: 100%;
+	border: 1px dotted #C3C3C3;
+	margin: 15px 0;
+}
+
+.opaque{
+	opacity: 0.5;
+}
+
+.validations-versions li span{
+	margin-right: 10px;
+}
+
+.info-date-detail{	
+	clear: both;
+	display: block;
+	margin-bottom: 15px;
+	font-size: 13px;
+}
+
+.validations li,
+.versions li,
+.id-details a{
+	color: #338caf;
+}
+
+.id-details a:hover{
+	color: #a6ce39;
+}
+
+.versions li{
+	padding: 5px 0;	
+}
+
+.versions li span{
+	font-size: 11px;
+	margin-right: 5px;
+}
+
+.versions li.current-version{
+	background: #E6E6E6;			
+}
+
+.versions li .privacy{
+	float: right;
+	font-size: 14px;
+}
+
+.blue{
+	background: #338CAF;
+}
+
+.content{
+	background: #FAFAFA;	
+	margin: 0px -10px;
+	padding: 10px;	
+}
+
+.affiliation-title{
+	float: left;
+	display: block;
+}
+
 .no-wrap{
 	word-break: normal;
 }
 
+.role{
+	float: left;
+	clear: both;
+}
+
+
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
+
+	.container{
+		min-width:320px; /* Resolutions below 320px are not supported */
+	}
 		
 	.alert .small {
 		float: none !important;
@@ -4539,7 +4633,7 @@ ul.sort-menu-options li a:hover{
 	*/ 
 	
 	.public-profile .workspace-inner .alert{
-		margin-left: 0;
+		margin: 10px 	0;		
 	}
 	
 	.workspace-top{
@@ -4556,8 +4650,7 @@ ul.sort-menu-options li a:hover{
 	
 	.workspace-accordion-header, 
 	.workspace-accordion-content{
-		padding-left:0;
-		/*overflow: hidden;*/
+		padding:0;		
 	}
 	
 	.workspace-accordion-item{
@@ -4574,6 +4667,7 @@ ul.sort-menu-options li a:hover{
 	    margin-top: 15px;
 	    width: 100%;
 	    padding-left: 10px;
+	    float: left;	    
 	}
 	
 	.workspace-header{
@@ -5008,19 +5102,26 @@ ul.sort-menu-options li a:hover{
 		padding-left: 5px;
 	}
 	
-	.workspace-accordion-header ul.works-menu{
+	.workspace-accordion-header ul.workspace-bar-menu{
 		width: 100%;
 	}
 	
 	.workspace-accordion-header ul>li>a.action-option{
-		/* width: 33.33%; */
-		width: 50%;		
+		width: 33.33%;
+		/* width: 50%;		*/
 		color: transparent;
 		overflow: hidden;		
 		padding: 15px 0;
-		height: 60px;
+		height: 60px !important;
 		text-align: center;
 		font-size: 0px;
+		display: block;
+	}
+	
+	.workspace-accordion-header ul>li>a.action-option.two-options{
+		width: 50%;
+		display: block;
+		height: 60px;
 	}
 	
 	.workspace-accordion-header a.sort-menu{
@@ -5035,6 +5136,7 @@ ul.sort-menu-options li a:hover{
 	ul.sort-menu-options{
 		right: 0;	
 		width: 100%;
+		top: 40px;
 	}
 	
 	ul.sort-menu-options li,
@@ -5043,9 +5145,14 @@ ul.sort-menu-options li a:hover{
 	}
 	
 	.workspace-accordion-header a.action-option{
-		height: 40px;
+		height: 60px;
 		font-size: 16px;
 		padding-top: 5px;		
+		display: block;
+	}
+	
+	.workspace-accordion-header a.sort-menu{
+		height: 40px !important;
 	}
 	
 	.orcid-id{
@@ -5060,12 +5167,7 @@ ul.sort-menu-options li a:hover{
 	.id-banner .id-banner-container ul.id-banner-dropdown,
 	.id-banner .id-banner-container ul.id-banner-dropdown > li{
 		width: 100%;
-	}
-	
-
-	.more-info{
-		margin-left: 5px;
-	}
+	}	
 	
 	.work-title,
 	.work-title a.toggle-text{
@@ -5113,13 +5215,40 @@ ul.sort-menu-options li a:hover{
 		display: block;
 	}
 	
-	.workspace-top .alert-info{
-		margin-top: 40px;	
+	.workspace-top .alert-info,
+	#workspace-publications .alert{
+		margin: 107px 0 10px 0;	
 	}
 	
-	#workspace-publications .alert{
-		margin-top: 60px;
+	ul.validations-versions{
+		text-align: center;
+		margin-top: 15px;
 	}
+	
+	ul.validations-versions li{
+		display: inline-block;			
+	}
+	
+	.versions ul li{
+		border-bottom: 1px solid #E6E6E6;		
+	}
+	
+	ul.workspace-bar-menu li{
+		height: 60px;
+		display: inline;
+		width: 50%;
+				
+	}
+	
+	.role{
+		float: left;		 
+	}
+	
+	#workspace-education .content,
+	#workspace-fundings .content{
+		margin: 0px -10px;
+	}
+		
 
 }
 
