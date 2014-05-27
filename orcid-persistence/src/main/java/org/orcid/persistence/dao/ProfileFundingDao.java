@@ -16,6 +16,8 @@
  */
 package org.orcid.persistence.dao;
 
+import java.util.List;
+
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 
@@ -82,4 +84,10 @@ public interface ProfileFundingDao extends GenericDao<ProfileFundingEntity, Long
      * @return the ProfileFundingEntity object
      * */
     ProfileFundingEntity getProfileFundingEntity(String profileFundingId);
+    
+    /**
+     * Get all the profile fundings where the amount is not null
+     * @return a list of all profile fundings where the amount is not null 
+     * */
+    List<ProfileFundingEntity> getProfileFundingWithAmount();
 }

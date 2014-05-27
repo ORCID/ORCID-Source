@@ -70,6 +70,8 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     Long getConfirmedProfileCount();
     
     public void updateCountry(String orcid, Iso3166Country country, Visibility activitiesVisibilityDefault);
+    
+    public Iso3166Country getCountry(String orcid);
 
     public void updateBiography(String orcid, String biography, Visibility visibility); 
     

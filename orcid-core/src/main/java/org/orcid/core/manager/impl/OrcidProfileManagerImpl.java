@@ -16,6 +16,9 @@
  */
 package org.orcid.core.manager.impl;
 
+import java.math.BigDecimal;
+import java.text.NumberFormat;
+import java.text.ParsePosition;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -127,6 +130,7 @@ import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.NullUtils;
 import org.orcid.utils.ReleaseNameUtils;
@@ -406,7 +410,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         }
 
     }
-    
+
     public boolean exists(String orcid) {
         return profileDao.exists(orcid);
     }
@@ -979,13 +983,14 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         profileDao.updateCountry(orcidProfile.getOrcidIdentifier().getPath(), orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().getValue(),
                 orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().getVisibility());
     }
-    
+
     @Override
     @Transactional
     public void updateBiography(OrcidProfile orcidProfile) {
-        profileDao.updateBiography(orcidProfile.getOrcidIdentifier().getPath(), orcidProfile.getOrcidBio().getBiography().getContent(), orcidProfile.getOrcidBio().getBiography().getVisibility());
+        profileDao.updateBiography(orcidProfile.getOrcidIdentifier().getPath(), orcidProfile.getOrcidBio().getBiography().getContent(), orcidProfile.getOrcidBio()
+                .getBiography().getVisibility());
     }
-    
+
     @Override
     @Transactional
     public void updateNames(OrcidProfile orcidProfile) {
@@ -994,12 +999,10 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         String givenNames = pd.getGivenNames() != null ? pd.getGivenNames().getContent() : null;
         String familyName = pd.getFamilyName() != null ? pd.getFamilyName().getContent() : null;
         String creditName = pd.getCreditName() != null ? pd.getCreditName().getContent() : null;
-        Visibility creditNameVisibility =  pd.getCreditName() != null ? pd.getCreditName().getVisibility() : null;
-        
+        Visibility creditNameVisibility = pd.getCreditName() != null ? pd.getCreditName().getVisibility() : null;
+
         profileDao.updateNames(orcid, givenNames, familyName, creditName, creditNameVisibility);
     }
-    
-
 
     @Override
     @Transactional
@@ -1329,19 +1332,49 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         if (existingProfile == null) {
             throw new IllegalArgumentException("No record found for " + orcid);
         }
+
+        String amenderOrcid = sourceManager.retrieveSourceOrcid();
         FundingList existingFundingList = existingProfile.retrieveFundings();
+        //updates the amount format to the right format according to the current locale
+        setFundingAmountsWithTheCorrectFormat(updatedOrcidProfile);
         FundingList updatedFundingList = updatedOrcidProfile.retrieveFundings();
         Visibility workVisibilityDefault = existingProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault().getValue();
         Boolean claimed = existingProfile.getOrcidHistory().isClaimed();
         setFundingPrivacy(updatedFundingList, workVisibilityDefault, claimed == null ? false : claimed);
-        updatedFundingList = dedupeFundings(updatedFundingList);
-        String amenderOrcid = sourceManager.retrieveSourceOrcid();
+        updatedFundingList = dedupeFundings(updatedFundingList);        
         addSourceToFundings(updatedFundingList, amenderOrcid);
         List<Funding> updatedList = updatedFundingList.getFundings();
         checkForAlreadyExistingFundings(existingFundingList, updatedList);
         persistAddedFundings(orcid, updatedList);
     }
 
+    /**
+     * Replace the funding amount string into the desired format 
+     * @param updatedOrcidProfile
+     *          The profile containing the new funding
+     * */
+    private void setFundingAmountsWithTheCorrectFormat(OrcidProfile updatedOrcidProfile) throws IllegalArgumentException {
+        FundingList fundings = updatedOrcidProfile.retrieveFundings();        
+        
+        for (Funding funding : fundings.getFundings()) {
+            // If the amount is not empty, update it
+            if (funding.getAmount() != null && !PojoUtil.isEmpty(funding.getAmount().getContent())) {
+                String amount = funding.getAmount().getContent();
+                Locale locale = localeManager.getLocale();
+                ParsePosition parsePosition = new ParsePosition(0);
+                NumberFormat numberFormat = NumberFormat.getInstance(locale);
+                Number number = numberFormat.parse(amount, parsePosition);
+                String formattedAmount = number.toString();
+                if (parsePosition.getIndex() != amount.length()) {
+                    double example = 1234.56;
+                    NumberFormat numberFormatExample = NumberFormat.getNumberInstance(localeManager.getLocale());                     
+                    throw new IllegalArgumentException("The amount: " + amount + " doesn'n have the right format, it should use the format: " + numberFormatExample.format(example));
+                }
+                funding.getAmount().setContent(formattedAmount);
+            }
+        }
+    }
+    
     private void setAffiliationPrivacy(OrcidProfile updatedOrcidProfile, Visibility defaultAffiliationVisibility) {
         OrcidHistory orcidHistory = updatedOrcidProfile.getOrcidHistory();
         boolean isClaimed = orcidHistory != null ? orcidHistory.getClaimed().isValue() : false;
