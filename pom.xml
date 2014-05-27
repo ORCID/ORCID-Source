@@ -233,6 +233,7 @@ the software.
                             <exclude>**/src/test/resources/solr/**</exclude>
                             <exclude>**/src/test/resources/org/orcid/core/manager/example**</exclude>
                             <exclude>**/src/test/resources/org/orcid/frontend/web/forms/**</exclude>
+                            <exclude>**/src/test/javascript/node_modules/**</exclude>
                             <exclude>**.md</exclude>
                         	<exclude>**/src/main/resources/**/*countries.txt</exclude>
                         	<exclude>**/src/main/resources/**/*words_to_filter.txt</exclude>
