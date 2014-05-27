@@ -54,6 +54,8 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     List<String> findUnclaimedNeedingReminder(int reminderAfterDays, int maxResults, Collection<String> orcidsToExclude);
 
     List<String> findOrcidsNeedingEmailMigration(int maxResults);
+    
+    List<ProfileEntity> findProfilesThatMissedIndexing(int maxResults);
 
     boolean orcidExists(String orcid);
 
