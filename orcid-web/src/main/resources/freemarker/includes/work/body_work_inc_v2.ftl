@@ -19,19 +19,17 @@
 <ul ng-hide="!worksSrvc.works.length" class="workspace-publications workspace-body-list bottom-margin-medium" id="body-work-list" ng-cloak>
     <li class="bottom-margin-small" ng-repeat="work in worksSrvc.works | orderBy:['-dateSortString', 'workTitle.title.value']">        
 		<div class="row"> 
-			<!-- Info -->
+			<!-- Main title -->
 			<div class="col-md-9 col-sm-9 col-xs-12">
 		        <h3 class="work-title">
-		        	<strong ng-bind="work.workTitle.title.value"></strong><span class="work-subtitle" ng-show="work.workTitle.subtitle.value" ng-bind="':&nbsp;'.concat(work.workTitle.subtitle.value)"></span>
-		        	(<span ng-show="work.publicationDate.year">{{work.publicationDate.year}}</span><span ng-show="work.publicationDate.month">-{{work.publicationDate.month}}</span>)		        	
+		        	<strong ng-bind="work.workTitle.title.value"></strong><span class="work-subtitle" ng-show="work.workTitle.subtitle.value" ng-bind="':&nbsp;'.concat(work.workTitle.subtitle.value)"></span>		        			        	
 		        </h3>
-		        		        
+		        <div class="info-date-detail">
+		        	<span ng-show="work.publicationDate.year">{{work.publicationDate.year}}</span><span ng-show="work.publicationDate.month">-{{work.publicationDate.month}}</span>
+		        </div>		        
 	        </div>
 	        <!-- Settings -->
-	        <div class="col-md-3 col-sm-3 col-xs-12 workspace-toolbar">
-	        	<!-- More info -->	        					
-	        	
-	        	
+	        <div class="col-md-3 col-sm-3 col-xs-12 workspace-toolbar">	        	
 	        	<#if !(isPublicProfile??)>
 	        		<!-- Trash can -->
 					<a href ng-click="deleteWork(work.putCode.value)" class="glyphicon glyphicon-trash grey"></a>
@@ -50,10 +48,28 @@
 					</ul>				
 				</#if>				
 			</div>
-        </div>        
+        </div>
+        
+        <!-- Identifiers / URL / Validations / Versions -->
+		<div class="row bottomBuffer">
+			<div class="col-md-9 col-sm-9">
+				<ul class="id-details">				
+					<li><strong>DOI:</strong> <a href="">10.6084/M9.FIGSHARE.841742</a></li>
+					<li><strong>URL:</strong> <a href="">http://www.ibridgenetwork.org</a></li>
+				</ul>
+			</div>
+			<div class="col-md-3 col-sm-3">
+				<ul class="validations-versions nav nav-pills nav-stacked">
+					<li><a href=""><span class="glyphicon glyphicon-ok green"></span><strong></strong><span class="badge pull-right blue">2</span>Validated</a></li>
+					<li><a href=""><span class="glyphicon glyphicon-file green"></span><span class="badge pull-right blue">3</span>Versions</a></li> <!-- for non versions use class 'opaque' instead green -->
+				</ul>
+			</div>
+		</div>        
        	
+       	<!-- More info -->
        	<#include "work_more_info_inc_v2.ftl"/>      
         
+        <!-- More info tabs -->
         <div class="row">
 			<div class="col-md-12 col-sm-12 col-xs-12">
 				<div class="show-more-info-tab">			

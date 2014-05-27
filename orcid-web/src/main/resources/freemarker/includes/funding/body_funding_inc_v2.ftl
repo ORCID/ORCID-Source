@@ -23,21 +23,23 @@
 			<div class="col-md-9 col-sm-9">
 				<h3 class="funding-title">
 					<strong ng-show="funding.fundingTitle.title.value">{{funding.fundingTitle.title.value}}:</strong>
-					<span class="funding-name" ng-bind-html="funding.fundingName.value"></span>
+					<span class="funding-name" ng-bind-html="funding.fundingName.value"></span>					
+				</h3>
+				<div class="info-date-detail">
 					<span class="funding-date" ng-show="funding.startDate && !funding.endDate">
-						(<span ng-show="funding.startDate.year">{{funding.startDate.year}}</span><span ng-show="funding.startDate.month">-{{funding.startDate.month}}</span>						
+						<span ng-show="funding.startDate.year">{{funding.startDate.year}}</span><span ng-show="funding.startDate.month">-{{funding.startDate.month}}</span>						
 				    	<@orcid.msg 'workspace_fundings.dateSeparator'/>
-				    	<@orcid.msg 'workspace_fundings.present'/>)
+				    	<@orcid.msg 'workspace_fundings.present'/>
 					</span>
 					<span class="funding-date" ng-show="funding.startDate && funding.endDate">
-						(<span ng-show="funding.startDate.year">{{funding.startDate.year}}</span><span ng-show="funding.startDate.month">-{{funding.startDate.month}}</span>						
+						<span ng-show="funding.startDate.year">{{funding.startDate.year}}</span><span ng-show="funding.startDate.month">-{{funding.startDate.month}}</span>						
 						<@orcid.msg 'workspace_fundings.dateSeparator'/>
-						<span ng-show="funding.endDate.year">{{funding.endDate.year}}</span><span ng-show="funding.endDate.month">-{{funding.endDate.month}}</span>)
+						<span ng-show="funding.endDate.year">{{funding.endDate.year}}</span><span ng-show="funding.endDate.month">-{{funding.endDate.month}}</span>
 					</span>
 					<span class="funding-date" ng-show="!funding.startDate && funding.endDate">
-					     (<span ng-show="funding.endDate.year">{{funding.endDate.year}}</span><span ng-show="funding.endDate.month">-{{funding.endDate.month}}</span>)
+					     <span ng-show="funding.endDate.year">{{funding.endDate.year}}</span><span ng-show="funding.endDate.month">-{{funding.endDate.month}}</span>
 					</span>
-				</h3>
+				</div>
 			</div>			
 			<!-- Privacy Settings -->
 	        <div class="col-md-3 col-sm-3 workspace-toolbar">
@@ -56,9 +58,12 @@
 		        	</ul>
 		        </#if>
 			</div>
-		</div>				
-		<div ng-show="moreInfo[funding.putCode.value]">			
-			<#include "funding_more_info_inc_v2.ftl"/>
+		</div>			
+		
+		<div ng-show="moreInfo[funding.putCode.value]">
+			<div class="content">			
+				<#include "funding_more_info_inc_v2.ftl"/>
+			</div>
 		</div>
 		<div class="row">
 			<div class="col-md-12 col-sm-12 col-xs-12">

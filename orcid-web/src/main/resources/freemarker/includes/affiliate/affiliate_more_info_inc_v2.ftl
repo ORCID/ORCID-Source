@@ -17,7 +17,7 @@
 
 -->
  
-<div class="more-info">
+<div class="more-info content">
 <!-- ng-mouseleave="closeMoreInfo(affiliation.putCode.value)"  --> 
 <!--
 
