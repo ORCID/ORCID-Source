@@ -93,7 +93,9 @@
 									    </tr>
 									    <tr class="table-row-border-bottom">
 									    	<td class="small_column"><strong><@orcid.msg 'manage.developer_tools.view.secret'/></strong></td>
-									    	<td class="large_column"><select ng-model="selectedClientSecret" ng-options="secret.value for secret in userCredentials.clientSecrets | orderBy:'value'" ng-change="updateSelectedClientSecret()"></select></td>									    	
+									    	<td class="large_column">
+									    		{{userCredentials.clientSecret.value}}
+									    	</td>									    	
 									    </tr>
 									    <!-- Authorize URl and Token URL -->
 									    <tr ng-hide="playgroundExample != ''">
@@ -324,11 +326,10 @@
 								    	<td><strong><@orcid.msg 'manage.developer_tools.view.orcid'/></strong></td>
 								    	<td colspan="3">{{userCredentials.clientOrcid.value}}</td>
 								    </tr>
-								    <tr ng-repeat="secret in userCredentials.clientSecrets">
-								    	<td class="c1"><strong ng-show="$first"><@orcid.msg 'manage.developer_tools.view.secret'/></strong></td>
-								    	<td class="c2">{{secret.value}}</td>	
-								    	<td class="c3"><a href ng-click="confirmDeleteClientSecret($index)" class="delete" title="<@orcid.msg 'manage.developer_tools.client_secret.tooltip.delete' />" ng-show="userCredentials.clientSecrets.length > 1"><span class="glyphicon glyphicon-trash"></span></a></td>
-								    	<td><a href ng-click="addClientSecret()" class="edit" title="<@orcid.msg 'manage.developer_tools.client_secret.tooltip.add' />" ng-show="$last"><span class="glyphicon glyphicon-plus-sign"></span></a></td>							    	   
+								    <tr>
+								    	<td class="c1"><strong><@orcid.msg 'manage.developer_tools.view.secret'/></strong></td>
+								    	<td class="c2">{{userCredentials.clientSecret}}</td>									    	
+								    	<td colspan="2"><a href ng-click="addClientSecret()" class="edit" title="<@orcid.msg 'manage.developer_tools.client_secret.tooltip.add' />" ng-show="$last"><span class="glyphicon glyphicon-plus-sign"></span></a></td>							    	   
 								    </tr>
 								  </table>
 								</div>									

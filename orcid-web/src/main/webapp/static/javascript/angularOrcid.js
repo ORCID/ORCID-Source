@@ -4660,7 +4660,6 @@ function SSOPreferencesCtrl($scope, $compile) {
 	$scope.tokenURL = orcidVar.pubBaseUri + '/oauth/token';
 	$scope.authorizeURL = '';
 	$scope.selectedRedirectUri = '';
-	$scope.selectedClientSecret = null;
 	$scope.creating = false;
 	
 	$scope.enableDeveloperTools = function() {
@@ -4716,7 +4715,6 @@ function SSOPreferencesCtrl($scope, $compile) {
 	        			$scope.userCredentials = data;	
 	        			$scope.hideGoogleUri = false;	
 	        			$scope.selectedRedirectUri = $scope.userCredentials.redirectUris[0];
-	        			$scope.selectedClientSecret = $scope.userCredentials.clientSecrets[0];
 	        			for(var i = 0; i < $scope.userCredentials.redirectUris.length; i++) {
 	        				if($scope.googleUri == $scope.userCredentials.redirectUris[i].value.value) {
 	        					$scope.hideGoogleUri = true;
@@ -4930,16 +4928,10 @@ function SSOPreferencesCtrl($scope, $compile) {
 	};
 	
 	
-	$scope.updateSelectedRedirectUri = function() {		
-		//Initialize client secret if needed
-		if($scope.selectedClientSecret == null) {
-			$scope.selectedClientSecret = $scope.userCredentials.clientSecrets[0];
-		}
+	$scope.updateSelectedRedirectUri = function() {				
 		var clientId = $scope.userCredentials.clientOrcid.value;
-		var selectedRedirectUriValue = $scope.selectedRedirectUri.value.value;
-		var selectedClientSecret = $scope.selectedClientSecret.value;
-		
-		console.log("Selected secret: " + angular.toJson($scope.selectedClientSecret));
+		var selectedRedirectUriValue = $scope.selectedRedirectUri.value.value;		
+		var selectedClientSecret = $scope.userCredentials.clientSecret.value;
 		
 		//Build the google playground url example
 		$scope.playgroundExample = '';
@@ -4966,11 +4958,7 @@ function SSOPreferencesCtrl($scope, $compile) {
 		    .replace('[PUB_BASE_URI]', orcidVar.pubBaseUri)
 		    .replace('[REDIRECT_URI]', selectedRedirectUriValue);
        
-	};
-	
-	$scope.updateSelectedClientSecret = function(){
-		$scope.updateSelectedRedirectUri();
-	};
+	};	
 	
 	$scope.confirmDeleteClientSecret = function(index) {
 		$scope.clientSecretToDelete = $scope.userCredentials.clientSecrets[index];
