@@ -105,6 +105,9 @@
 								<@security.authorize ifAnyGranted="ROLE_ADMIN">
 									<li><a ${(nav=="admin")?string('class="active" ', '')}href="<@spring.url "/admin-actions" />"><@orcid.msg 'admin.workspace_link' /></a></li>
 								</@security.authorize>
+								<@security.authorize ifAnyGranted="ROLE_PREMIUM_CREATOR, ROLE_CREATOR">
+									<li><a ${(nav=="custom-mail")?string('class="active" ', '')}href="<@spring.url "/custom-emails" />"><@orcid.msg 'custom_email.menu_link' /></a></li>
+								</@security.authorize>
 							</@security.authorize>
 						</ul>
 					</li>

@@ -352,4 +352,9 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
 
         return result;
     }
+    
+    @Override
+    public boolean exists(String clientId) {
+        return clientDetailsDao.exists(clientId);
+    }
 }
