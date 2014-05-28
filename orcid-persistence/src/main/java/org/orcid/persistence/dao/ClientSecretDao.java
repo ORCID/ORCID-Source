@@ -35,4 +35,11 @@ public interface ClientSecretDao extends GenericDao<ClientSecretEntity, ClientSe
      * @return true if all keys where successfully revoked
      * */
     boolean revokeAllKeys(String clientId);
+    
+    /**
+     * Sets the given client secret as the primary client secret
+     * @param clientSecret
+     * @return true if it was possible to set the client secret as primary
+     * */
+    boolean setAsPrimary(ClientSecretEntity clientSecret);
 }

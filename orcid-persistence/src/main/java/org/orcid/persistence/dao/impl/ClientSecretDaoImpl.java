@@ -73,4 +73,15 @@ public class ClientSecretDaoImpl extends GenericDaoImpl<ClientSecretEntity, Clie
         return revokeAllKeys.executeUpdate() > 0;
     }
 
+    /**
+     * Sets the given client secret as the primary client secret
+     * @param clientSecret
+     * @return true if it was possible to set the client secret as primary
+     * */
+    public boolean setAsPrimary(ClientSecretEntity clientSecret) {
+        Query query = entityManager.createNativeQuery("UPDATE client_secret SET is_primary=true WHERE client_details_id=:clientDetailsId AND client_secret=:clientSecret");
+        query.setParameter("clientDetailsId", clientSecret.getClientDetailsEntity().getId());
+        query.setParameter("clientSecret", clientSecret.getClientSecret());
+        return query.executeUpdate() > 0;
+    }
 }
