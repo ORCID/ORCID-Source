@@ -27,12 +27,29 @@
     
     <changeSet id="CONVERT-TEXT-TO-JSON" author="Will Simpson" dbms="postgresql">
         <sql>ALTER TABLE work ALTER COLUMN contributors_json TYPE json USING contributors_json::JSON</sql>
-        <sql>ALTER TABLE work ALTER COLUMN external_ids_json TYPE json USING contributors_json::JSON</sql>
+        <sql>ALTER TABLE work ALTER COLUMN external_ids_json TYPE json USING external_ids_json::JSON</sql>
         <createProcedure>
 CREATE OR REPLACE FUNCTION json_intext(text) RETURNS json AS $$
 SELECT json_in($1::cstring);
 $$ LANGUAGE SQL IMMUTABLE;
+ALTER FUNCTION json_intext(text) OWNER TO orcid;
         </createProcedure>
+        <createProcedure>
+CREATE OR REPLACE FUNCTION extract_doi(json) RETURNS varchar
+AS $$
+SELECT j->'workExternalIdentifierId'->>'content'
+FROM (SELECT json_array_elements(json_extract_path($1, 'workExternalIdentifier')) AS j) AS a
+WHERE j->>'workExternalIdentifierType' = 'DOI'
+ORDER BY length(j->'workExternalIdentifierId'->>'content') DESC
+LIMIT 1;
+$$ LANGUAGE SQL
+IMMUTABLE
+RETURNS NULL ON NULL INPUT;
+ALTER FUNCTION extract_doi(json) OWNER TO orcid;
+        </createProcedure>
+        <createIndex tableName="work" indexName="work_doi_idx">
+            <column name="extract_doi(external_ids_json)"></column>
+        </createIndex>
     </changeSet>
     
     <changeSet id="ADD-JSON-CAST" author="Will Simpson" dbms="postgresql">
