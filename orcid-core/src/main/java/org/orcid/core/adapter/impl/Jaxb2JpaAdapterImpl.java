@@ -145,17 +145,15 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
     @Resource
     private LocaleManager localeManager;
-    
+
     @Resource
     private OrgManager orgManager;
 
     @Resource
     private ProfileEntityManager profileEntityManager;
-    
+
     @Resource
     private OrgDisambiguatedDao orgDisambiguatedDao;
-    
-    
 
     @Override
     public ProfileEntity toProfileEntity(OrcidProfile profile, ProfileEntity existingProfileEntity) {
@@ -182,15 +180,15 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     }
 
     private void setActivityDetails(ProfileEntity profileEntity, OrcidActivities orcidActivities) {
-        Affiliations affiliations = null;        
+        Affiliations affiliations = null;
         FundingList orcidFundings = null;
         OrcidWorks orcidWorks = null;
         if (orcidActivities != null) {
-            affiliations = orcidActivities.getAffiliations();            
+            affiliations = orcidActivities.getAffiliations();
             orcidFundings = orcidActivities.getFundings();
             orcidWorks = orcidActivities.getOrcidWorks();
         }
-        setOrgAffiliationRelations(profileEntity, affiliations);        
+        setOrgAffiliationRelations(profileEntity, affiliations);
         setFundings(profileEntity, orcidFundings);
         setWorks(profileEntity, orcidWorks);
     }
@@ -285,7 +283,11 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             // workEntity.setContributors(getWorkContributors(workEntity,
             // orcidWork.getWorkContributors()));
             workEntity.setDescription(orcidWork.getShortDescription() != null ? orcidWork.getShortDescription() : null);
-            workEntity.setExternalIdentifiers(getWorkExternalIdentifiers(workEntity, orcidWork.getWorkExternalIdentifiers()));
+            // New way of doing work external ids
+            workEntity.setExternalIdentifiersJson(getWorkExternalIdsJson(orcidWork.getWorkExternalIdentifiers()));
+            // Old way of doing work external ids
+            // workEntity.setExternalIdentifiers(getWorkExternalIdentifiers(workEntity,
+            // orcidWork.getWorkExternalIdentifiers()));
             workEntity.setPublicationDate(getWorkPublicationDate(orcidWork));
             WorkTitle workTitle = orcidWork.getWorkTitle();
             if (workTitle != null) {
@@ -386,7 +388,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         }
         return JsonUtils.convertToJsonString(workContributors);
     }
-    
+
     private String getFundingContributorsJson(FundingContributors fundingContributors) {
         if (fundingContributors == null) {
             return null;
@@ -394,47 +396,57 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         return JsonUtils.convertToJsonString(fundingContributors);
     }
 
-    private void setFundings(ProfileEntity profileEntity, FundingList orcidFundings) {
-    	SortedSet<ProfileFundingEntity> existingProfileFundingEntities = profileEntity.getProfileFunding();
-    	if(existingProfileFundingEntities == null) {
-    		existingProfileFundingEntities = new TreeSet<>();
-    	}
-    	
-    	// Create a map containing the existing profile funding entities
-    	Map<String, ProfileFundingEntity> existingProfileFundingEntitiesMap = createProfileFundingEntitiesMap(existingProfileFundingEntities);    	
-    	
-    	// A set that will contain the updated profile funding entities that comes from the orcidGrant object
-    	SortedSet<ProfileFundingEntity> updatedProfileFundingEntities = new TreeSet<>();
-        
-    	// Populate a list of the updated profile funding entities that comes from the fundingList object
-    	if(orcidFundings != null && orcidFundings.getFundings() != null && !orcidFundings.getFundings().isEmpty()) {
-        	for(Funding orcidFunding : orcidFundings.getFundings()) {
-        		ProfileFundingEntity newProfileGrantEntity = getProfileFundingEntity(orcidFunding, existingProfileFundingEntitiesMap.get(orcidFunding.getPutCode()));
-        		newProfileGrantEntity.setProfile(profileEntity);
-        		updatedProfileFundingEntities.add(newProfileGrantEntity);
-        	}
+    private String getWorkExternalIdsJson(WorkExternalIdentifiers workExternalIdentifiers) {
+        if (workExternalIdentifiers == null) {
+            return null;
         }
-    	    	
-    	// Create a map containing the profile funding that comes in the orcidGrant object and that will be persisted
-    	Map<String, ProfileFundingEntity> updatedProfileGrantEntitiesMap = createProfileFundingEntitiesMap(updatedProfileFundingEntities);
-    	
-    	// Remove orphans
-    	for(Iterator<ProfileFundingEntity> iterator = existingProfileFundingEntities.iterator(); iterator.hasNext();){
-    		ProfileFundingEntity existingEntity = iterator.next();
-    		if(!updatedProfileGrantEntitiesMap.containsKey(String.valueOf(existingEntity.getId()))){
-    			iterator.remove();
-    		}
-    	}
-    	
-    	// Add new
+        return JsonUtils.convertToJsonString(workExternalIdentifiers);
+    }
+
+    private void setFundings(ProfileEntity profileEntity, FundingList orcidFundings) {
+        SortedSet<ProfileFundingEntity> existingProfileFundingEntities = profileEntity.getProfileFunding();
+        if (existingProfileFundingEntities == null) {
+            existingProfileFundingEntities = new TreeSet<>();
+        }
+
+        // Create a map containing the existing profile funding entities
+        Map<String, ProfileFundingEntity> existingProfileFundingEntitiesMap = createProfileFundingEntitiesMap(existingProfileFundingEntities);
+
+        // A set that will contain the updated profile funding entities that
+        // comes from the orcidGrant object
+        SortedSet<ProfileFundingEntity> updatedProfileFundingEntities = new TreeSet<>();
+
+        // Populate a list of the updated profile funding entities that comes
+        // from the fundingList object
+        if (orcidFundings != null && orcidFundings.getFundings() != null && !orcidFundings.getFundings().isEmpty()) {
+            for (Funding orcidFunding : orcidFundings.getFundings()) {
+                ProfileFundingEntity newProfileGrantEntity = getProfileFundingEntity(orcidFunding, existingProfileFundingEntitiesMap.get(orcidFunding.getPutCode()));
+                newProfileGrantEntity.setProfile(profileEntity);
+                updatedProfileFundingEntities.add(newProfileGrantEntity);
+            }
+        }
+
+        // Create a map containing the profile funding that comes in the
+        // orcidGrant object and that will be persisted
+        Map<String, ProfileFundingEntity> updatedProfileGrantEntitiesMap = createProfileFundingEntitiesMap(updatedProfileFundingEntities);
+
+        // Remove orphans
+        for (Iterator<ProfileFundingEntity> iterator = existingProfileFundingEntities.iterator(); iterator.hasNext();) {
+            ProfileFundingEntity existingEntity = iterator.next();
+            if (!updatedProfileGrantEntitiesMap.containsKey(String.valueOf(existingEntity.getId()))) {
+                iterator.remove();
+            }
+        }
+
+        // Add new
         for (ProfileFundingEntity updatedEntity : updatedProfileFundingEntities) {
             if (updatedEntity.getId() == null) {
-            	existingProfileFundingEntities.add(updatedEntity);
+                existingProfileFundingEntities.add(updatedEntity);
             }
         }
         profileEntity.setProfileFunding(existingProfileFundingEntities);
-    }           
-    
+    }
+
     private void setBioDetails(ProfileEntity profileEntity, OrcidBio orcidBio) {
         if (orcidBio != null) {
             setBiographyDetails(profileEntity, orcidBio.getBiography());
@@ -774,10 +786,11 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         }
         return map;
 
-    }        
-    
+    }
+
     /**
      * Create a map with the provided profileGrantEntities
+     * 
      * @param profileGrantEntities
      * @return Map<String, ProfileFundingEntity>
      * */
@@ -806,9 +819,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
                 String verificationCode = securityDetails.getEncryptedVerificationCode() != null ? securityDetails.getEncryptedVerificationCode().getContent() : null;
                 profileEntity.setEncryptedVerificationCode(verificationCode);
-                
+
             }
-            
+
             if (orcidInternal.getReferredBy() != null) {
                 profileEntity.setReferredBy(orcidInternal.getReferredBy().getPath());
             }
@@ -823,9 +836,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 // ActivitiesVisibilityDefault default is WorkVisibilityDefault
                 if (preferences.getActivitiesVisibilityDefault() != null) {
                     profileEntity.setActivitiesVisibilityDefault(preferences.getActivitiesVisibilityDefault().getValue());
-                } 
-                
-                if(preferences.getDeveloperToolsEnabled() != null) {
+                }
+
+                if (preferences.getDeveloperToolsEnabled() != null) {
                     profileEntity.setEnableDeveloperTools(preferences.getDeveloperToolsEnabled().isValue());
                 }
             }
@@ -874,9 +887,10 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         orgAffiliationRelationEntity.setProfile(profileEntity);
         return orgAffiliationRelationEntity;
     }
-    
+
     /**
      * Transforms a OrcidGrant object into a ProfileFundingEntity object
+     * 
      * @param updatedFunding
      * @param profileEntity
      * @return ProfileFundingEntity
@@ -916,16 +930,17 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         }
         return null;
     }
-    
+
     /**
      * Get a ProfileFundingEntity based on a Grant object
+     * 
      * @param funding
      * @param exisitingProfileFundingEntity
-     * @return a ProfileFundingEntity created from the provided funding 
+     * @return a ProfileFundingEntity created from the provided funding
      * */
     private ProfileFundingEntity getProfileFundingEntity(Funding funding, ProfileFundingEntity exisitingProfileFundingEntity) {
         if (funding != null) {
-        	ProfileFundingEntity profileFundingEntity = null;
+            ProfileFundingEntity profileFundingEntity = null;
             if (exisitingProfileFundingEntity == null) {
                 String putCode = funding.getPutCode();
                 if (StringUtils.isNotBlank(putCode) && !"-1".equals(putCode)) {
@@ -935,89 +950,96 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 profileFundingEntity.setSource(getSource(funding.getSource()));
                 profileFundingEntity.setOrg(getOrgEntity(funding));
             } else {
-            	profileFundingEntity = exisitingProfileFundingEntity;
-            	profileFundingEntity.clean();
+                profileFundingEntity = exisitingProfileFundingEntity;
+                profileFundingEntity.clean();
             }
             FuzzyDate startDate = funding.getStartDate();
             FuzzyDate endDate = funding.getEndDate();
-            if(funding.getAmount() != null) {
-            	String amount = StringUtils.isNotBlank(funding.getAmount().getContent()) ? funding.getAmount().getContent() : null;
-            	String currencyCode = funding.getAmount().getCurrencyCode() != null ? funding.getAmount().getCurrencyCode() : null;
+            if (funding.getAmount() != null) {
+                String amount = StringUtils.isNotBlank(funding.getAmount().getContent()) ? funding.getAmount().getContent() : null;
+                String currencyCode = funding.getAmount().getCurrencyCode() != null ? funding.getAmount().getCurrencyCode() : null;
                 try {
                     BigDecimal bigDecimalAmount = getAmountAsBigDecimal(amount);
                     profileFundingEntity.setNumericAmount(bigDecimalAmount);
-                } catch(Exception e) {
+                } catch (Exception e) {
                     throw new IllegalArgumentException("Invalid amount cannot be cast to BidDecimal");
                 }
-                            
-            	profileFundingEntity.setCurrencyCode(currencyCode);            	            	
-            }                        
-            
+
+                profileFundingEntity.setCurrencyCode(currencyCode);
+            }
+
             profileFundingEntity.setContributorsJson(getFundingContributorsJson(funding.getFundingContributors()));
             profileFundingEntity.setDescription(StringUtils.isNotBlank(funding.getDescription()) ? funding.getDescription() : null);
             profileFundingEntity.setEndDate(endDate != null ? new EndDateEntity(endDate) : null);
-            profileFundingEntity.setExternalIdentifiers(getGrantExternalIdentifiers(profileFundingEntity, funding.getFundingExternalIdentifiers()));            
+            profileFundingEntity.setExternalIdentifiers(getGrantExternalIdentifiers(profileFundingEntity, funding.getFundingExternalIdentifiers()));
             profileFundingEntity.setStartDate(startDate != null ? new StartDateEntity(startDate) : null);
-            
+
             FundingTitle fundingTitle = funding.getTitle();
-            if(fundingTitle != null) {
-            	String title = null, translatedTitle = null, languageCode = null;            	
-            	if(fundingTitle.getTitle() != null)
-            		title = fundingTitle.getTitle().getContent();
-            	if(fundingTitle.getTranslatedTitle() != null) {
-            		translatedTitle = fundingTitle.getTranslatedTitle().getContent();
-            		languageCode = fundingTitle.getTranslatedTitle().getLanguageCode();
-            	}
-            	
-            	profileFundingEntity.setTitle(StringUtils.isNotBlank(title) ? title : null);
-            	profileFundingEntity.setTranslatedTitle(StringUtils.isNotBlank(translatedTitle) ? translatedTitle : null);
-            	profileFundingEntity.setTranslatedTitleLanguageCode(StringUtils.isNotBlank(languageCode) ? languageCode : null);            	
+            if (fundingTitle != null) {
+                String title = null, translatedTitle = null, languageCode = null;
+                if (fundingTitle.getTitle() != null)
+                    title = fundingTitle.getTitle().getContent();
+                if (fundingTitle.getTranslatedTitle() != null) {
+                    translatedTitle = fundingTitle.getTranslatedTitle().getContent();
+                    languageCode = fundingTitle.getTranslatedTitle().getLanguageCode();
+                }
+
+                profileFundingEntity.setTitle(StringUtils.isNotBlank(title) ? title : null);
+                profileFundingEntity.setTranslatedTitle(StringUtils.isNotBlank(translatedTitle) ? translatedTitle : null);
+                profileFundingEntity.setTranslatedTitleLanguageCode(StringUtils.isNotBlank(languageCode) ? languageCode : null);
             }
-                        
+
             profileFundingEntity.setType(funding.getType() != null ? funding.getType() : null);
-            profileFundingEntity.setOrganizationDefinedType(funding.getOrganizationDefinedFundingType() != null ? funding.getOrganizationDefinedFundingType().getContent() : null);
-            if(funding.getUrl() != null)
-            	profileFundingEntity.setUrl(StringUtils.isNotBlank(funding.getUrl().getValue()) ? funding.getUrl().getValue() : null);            
+            profileFundingEntity.setOrganizationDefinedType(funding.getOrganizationDefinedFundingType() != null ? funding.getOrganizationDefinedFundingType()
+                    .getContent() : null);
+            if (funding.getUrl() != null)
+                profileFundingEntity.setUrl(StringUtils.isNotBlank(funding.getUrl().getValue()) ? funding.getUrl().getValue() : null);
             profileFundingEntity.setVisibility(funding.getVisibility() != null ? funding.getVisibility() : OrcidVisibilityDefaults.WORKS_DEFAULT.getVisibility());
 
             return profileFundingEntity;
         }
         return null;
-    }        
-     
+    }
+
     /**
-     * Transforms a string into a BigDecimal, it assumes the amount comes already formatted
+     * Transforms a string into a BigDecimal, it assumes the amount comes
+     * already formatted
+     * 
      * @param amount
      * @return a BigDecimal containing the given amount
-     * @throws Exception if the amount cannot be correctly parse into a BigDecimal
+     * @throws Exception
+     *             if the amount cannot be correctly parse into a BigDecimal
      * */
     public BigDecimal getAmountAsBigDecimal(String amount) throws Exception {
         return new BigDecimal(amount);
     }
-    
+
     /**
      * Get a list of GrantExternalIdentifierEntity from the external identifiers
+     * 
      * @param profileGrantEntity
      * @param externalIdentifiers
-     * @return a list of GrantExternalIdentifierEntity based on the provided OrcidGrantExternalIdentifiers
+     * @return a list of GrantExternalIdentifierEntity based on the provided
+     *         OrcidGrantExternalIdentifiers
      * */
-    private SortedSet<FundingExternalIdentifierEntity> getGrantExternalIdentifiers(ProfileFundingEntity profileFundingEntity, FundingExternalIdentifiers externalIdentifiers) {
-    	if(externalIdentifiers == null || externalIdentifiers.getFundingExternalIdentifier() == null || externalIdentifiers.getFundingExternalIdentifier().isEmpty())
-    		return null;
-    	TreeSet<FundingExternalIdentifierEntity> result = new TreeSet<>();
-    	List<FundingExternalIdentifier> externalIdentifierList = externalIdentifiers.getFundingExternalIdentifier();
-    	for(FundingExternalIdentifier externalIdentifier : externalIdentifierList){
-    		FundingExternalIdentifierEntity entity = new FundingExternalIdentifierEntity();    		
-    		entity.setProfileFunding(profileFundingEntity);
-    		entity.setType(externalIdentifier.getType() != null ? externalIdentifier.getType().value() : null);
-    		entity.setValue(StringUtils.isNotEmpty(externalIdentifier.getValue()) ? externalIdentifier.getValue() : null);
-    		if(externalIdentifier.getUrl() != null)
-    			entity.setUrl(StringUtils.isNotEmpty(externalIdentifier.getUrl().getValue()) ? externalIdentifier.getUrl().getValue() : null);    		    		
-    		result.add(entity);
-    		if(StringUtils.isNotEmpty(externalIdentifier.getPutCode()))
-    			entity.setId(Long.valueOf(externalIdentifier.getPutCode()));
-    	}
-    	return result;
+    private SortedSet<FundingExternalIdentifierEntity> getGrantExternalIdentifiers(ProfileFundingEntity profileFundingEntity,
+            FundingExternalIdentifiers externalIdentifiers) {
+        if (externalIdentifiers == null || externalIdentifiers.getFundingExternalIdentifier() == null || externalIdentifiers.getFundingExternalIdentifier().isEmpty())
+            return null;
+        TreeSet<FundingExternalIdentifierEntity> result = new TreeSet<>();
+        List<FundingExternalIdentifier> externalIdentifierList = externalIdentifiers.getFundingExternalIdentifier();
+        for (FundingExternalIdentifier externalIdentifier : externalIdentifierList) {
+            FundingExternalIdentifierEntity entity = new FundingExternalIdentifierEntity();
+            entity.setProfileFunding(profileFundingEntity);
+            entity.setType(externalIdentifier.getType() != null ? externalIdentifier.getType().value() : null);
+            entity.setValue(StringUtils.isNotEmpty(externalIdentifier.getValue()) ? externalIdentifier.getValue() : null);
+            if (externalIdentifier.getUrl() != null)
+                entity.setUrl(StringUtils.isNotEmpty(externalIdentifier.getUrl().getValue()) ? externalIdentifier.getUrl().getValue() : null);
+            result.add(entity);
+            if (StringUtils.isNotEmpty(externalIdentifier.getPutCode()))
+                entity.setId(Long.valueOf(externalIdentifier.getPutCode()));
+        }
+        return result;
     }
 
     private OrgEntity getOrgEntity(Affiliation affiliation) {
@@ -1037,9 +1059,10 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         }
         return null;
     }
-    
+
     /**
      * Get an OrgEntity object based on the provided orcidGrant
+     * 
      * @param orcidGrant
      * @return a OrgEntity based on the provided OrcidGrant
      * */
@@ -1060,7 +1083,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         }
         return null;
     }
-    
+
     private ProfileEntity getSource(Source source) {
         if (source != null && StringUtils.isNotEmpty(source.getSourceOrcid().getPath()) && !source.getSourceOrcid().getPath().equals(WorkSource.NULL_SOURCE_PROFILE)) {
             return new ProfileEntity(source.getSourceOrcid().getPath());
