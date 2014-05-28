@@ -4702,12 +4702,13 @@ ul.id-details li{
 		left: 117px !important;
 	}		
 
+	
 	.public-profile .popover-help-container .popover{
-		left:-193px;		
+		left:-105px;		
 	}
 	
 	.public-profile .popover-help-container .popover.bottom .arrow{
-		left:75%;
+		left:117px;
 	}
 	
 	

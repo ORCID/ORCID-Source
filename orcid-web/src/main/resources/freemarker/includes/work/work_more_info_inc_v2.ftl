@@ -66,18 +66,18 @@
 				<div class="validations bottomBuffer">
 					<strong>Validations</strong>
 					<ul>
-						<li>Validation #1</li>
-						<li>Validation #2</li>
+						<li><a href="">Validation #1</a></li>
+						<li><a href="">Validation #2</a></li>
 					</ul>
 				</div>
 				<!-- Versions -->
 				<div class="versions bottomBuffer">
 					<strong>Versions</strong>
 					<ul>
-						<li class="current-version"><span class="glyphicon glyphicon-chevron-right"></span>My Version<span class="glyphicon glyphicon-globe privacy"></span></li>
-						<li><span class="glyphicon glyphicon-chevron-right"></span>ResearcherID</li>
-						<li><span class="glyphicon glyphicon-chevron-right"></span>DataCite</li>
-						<li><span class="glyphicon glyphicon-chevron-right"></span>Harvard University</li>
+						<li class="current-version"><span class="glyphicon glyphicon-chevron-right"></span><a href="">My Version</a><span class="glyphicon glyphicon-globe privacy"></span></li>
+						<li><span class="glyphicon glyphicon-chevron-right"></span><a href="">ResearcherID</a></li>
+						<li><span class="glyphicon glyphicon-chevron-right"></span><a href="">DataCite</a></li>
+						<li><span class="glyphicon glyphicon-chevron-right"></span><a href="">Harvard University</a></li>
 					</ul>
 				</div>
 				<!-- Work Source -->
