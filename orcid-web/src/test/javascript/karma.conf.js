@@ -42,7 +42,7 @@ module.exports = function(config) {
         'src/main/webapp/static/javascript/orcid.js',
         'src/main/webapp/static/javascript/script.js',
         'src/main/webapp/static/javascript/angularOrcid.js',
-        'src/test/javascript/test*.js'
+        'src/test/javascript/*_tests.js'
     ],
 
 
