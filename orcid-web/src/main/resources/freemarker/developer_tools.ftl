@@ -43,7 +43,7 @@
 			</div>
 						
 			<!-- App details -->
-			<div class="details" ng-show="userCredentials.clientSecrets && userCredentials.clientSecrets[0].value && !editing" ng-cloak>
+			<div class="details" ng-show="userCredentials.clientSecret && userCredentials.clientSecret.value && !editing" ng-cloak>
 			
 				<!-- Name and Edit/Delete options -->
 				<div class="row">					
@@ -230,7 +230,7 @@
 			</div>
 			
 			<!-- Edit form -->
-			<div class="edit-details" ng-show="userCredentials.clientSecrets && userCredentials.clientSecrets[0].value && editing" ng-cloak>			
+			<div class="edit-details" ng-show="userCredentials.clientSecret && userCredentials.clientSecret.value && editing" ng-cloak>			
 				<!-- Name and Edit/Delete options -->
 				<div class="row">					
 					<div class="col-md-10 col-sm-10 col-xs-9">
@@ -324,12 +324,19 @@
 								  <table class="table client_secret_table">
 								    <tr>
 								    	<td><strong><@orcid.msg 'manage.developer_tools.view.orcid'/></strong></td>
-								    	<td colspan="3">{{userCredentials.clientOrcid.value}}</td>
+								    	<td colspan="2">{{userCredentials.clientOrcid.value}}</td>
 								    </tr>
 								    <tr>
 								    	<td class="c1"><strong><@orcid.msg 'manage.developer_tools.view.secret'/></strong></td>
-								    	<td class="c2">{{userCredentials.clientSecret}}</td>									    	
-								    	<td colspan="2"><a href ng-click="addClientSecret()" class="edit" title="<@orcid.msg 'manage.developer_tools.client_secret.tooltip.add' />" ng-show="$last"><span class="glyphicon glyphicon-plus-sign"></span></a></td>							    	   
+								    	<td class="c2" colspan="2">{{userCredentials.clientSecret.value}}</td>									    									    								    	  
+								    </tr>
+								    <tr>
+								    	<td class="c1"></td>
+								    	<td class="c2">
+								    		<a href="" class="btn btn-danger" ng-click="confirmResetClientSecret()">								    		
+								    			<@orcid.msg 'manage.developer_tools.edit.reset_client_secret' />
+								    		</a>
+								    	</td>
 								    </tr>
 								  </table>
 								</div>									
@@ -339,7 +346,7 @@
 				</div>				
 			</div>		
 						
-			<div class="row slide" ng-show="userCredentials.clientSecrets && userCredentials.clientSecrets[0].value" ng-cloak>
+			<div class="row slide" ng-show="userCredentials.clientSecret && userCredentials.clientSecret.value" ng-cloak>
 				<div class="col-md-12 col-sm-12 col-xs-12">
 					<div class="tab-container">
 						<a href="#" class="tab collapsed" data-tab="collapsed"><span class="glyphicon glyphicon-chevron-down"></span><@orcid.msg 'manage.developer_tools.show_details' /></a>
@@ -370,14 +377,15 @@
 	</div>				
 </div>
 
-<script type="text/ng-template" id="delete-secret-modal">
+<script type="text/ng-template" id="reset-client-secret-modal">
 	<div class="lightbox-container">
 		<div class="row">
 			<div class="col-md-12 col-xs-12 col-sm-12">
-				<h3><@orcid.msg 'manage.developer_tools.edit.delete_key.title' /></h3>
-				<p>{{clientSecretToDelete.value}}</p>		
-    			<div class="btn btn-danger" ng-click="deleteClientSecret(clientSecretToDelete.value)">
-    				<@orcid.msg 'freemarker.btnDelete' />
+				<h3><@orcid.msg 'manage.developer_tools.edit.reset_key.title' /></h3>				
+				<p><strong>{{clientSecretToReset.value}}</strong></p>		
+				<p><@orcid.msg 'manage.developer_tools.edit.reset_key.description' /></p>
+    			<div class="btn btn-danger" ng-click="resetClientSecret()">
+    				<@orcid.msg 'freemarker.btnReset' />
     			</div>
     			<a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
 			</div>
