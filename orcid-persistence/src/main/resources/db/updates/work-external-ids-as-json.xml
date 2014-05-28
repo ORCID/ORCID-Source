@@ -1,0 +1,50 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+        
+    <changeSet id="ADD-WORK-EXTERNAL-IDS-JSON-COLUMN" author="Will Simpson">
+        <addColumn tableName="work">
+            <column name="external_ids_json" type="text" />
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="CONVERT-TEXT-TO-JSON" author="Will Simpson" dbms="postgresql">
+        <sql>ALTER TABLE work ALTER COLUMN contributors_json TYPE json USING contributors_json::JSON</sql>
+        <sql>ALTER TABLE work ALTER COLUMN external_ids_json TYPE json USING contributors_json::JSON</sql>
+        <createProcedure>
+CREATE OR REPLACE FUNCTION json_intext(text) RETURNS json AS $$
+SELECT json_in($1::cstring);
+$$ LANGUAGE SQL IMMUTABLE;
+        </createProcedure>
+    </changeSet>
+    
+    <changeSet id="ADD-JSON-CAST" author="Will Simpson" dbms="postgresql">
+        <!-- 
+            This needs to be run as a super user, which can be done in your development environment by
+            changing into the orcid-persistence dir in your git repo and running the following
+            mvn liquibase:update -Dliquibase.changeLogFile=src/main/resources/db/updates/work-external-ids-as-json.xml -Dliquibase.username=postgres -Dliquibase.password=postgres
+        -->
+        <preConditions onFail="CONTINUE">
+            <runningAs username="postgres"/>
+        </preConditions>
+        <sql>CREATE CAST (character varying AS json) WITH FUNCTION json_intext(text) AS IMPLICIT;</sql>
+    </changeSet>
+    
+</databaseChangeLog>
