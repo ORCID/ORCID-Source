@@ -34,6 +34,7 @@
     <profile_keyword/>
     <profile_patent/>
     <webhook/>
+    <org_disambiguated_external_identifier/>    
 	<org/>
 	<org_affiliation_relation/>
 	<profile_funding/>
@@ -41,4 +42,5 @@
 	<address/>
 	<institution/>
 	<affiliation/>
+	<custom_email/>
 </dataset>

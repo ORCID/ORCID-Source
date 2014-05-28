@@ -16,6 +16,10 @@
  */
 package org.orcid.core.adapter.impl;
 
+import java.math.BigDecimal;
+import java.text.NumberFormat;
+import java.text.ParsePosition;
+import java.util.Currency;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -34,7 +38,9 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
+import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.OrgManager;
+import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.message.Affiliation;
@@ -121,6 +127,7 @@ import org.orcid.persistence.jpa.entities.StartDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.keys.WorkExternalIdentifierEntityPk;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.OrcidStringUtils;
 import org.springframework.util.Assert;
@@ -137,10 +144,18 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     private GenericDao<SecurityQuestionEntity, Integer> securityQuestionDao;
 
     @Resource
+    private LocaleManager localeManager;
+    
+    @Resource
     private OrgManager orgManager;
 
     @Resource
+    private ProfileEntityManager profileEntityManager;
+    
+    @Resource
     private OrgDisambiguatedDao orgDisambiguatedDao;
+    
+    
 
     @Override
     public ProfileEntity toProfileEntity(OrcidProfile profile, ProfileEntity existingProfileEntity) {
@@ -926,9 +941,17 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             FuzzyDate startDate = funding.getStartDate();
             FuzzyDate endDate = funding.getEndDate();
             if(funding.getAmount() != null) {
-            	profileFundingEntity.setAmount(StringUtils.isNotBlank(funding.getAmount().getContent()) ? funding.getAmount().getContent() : null);            
-            	profileFundingEntity.setCurrencyCode(funding.getAmount().getCurrencyCode() != null ? funding.getAmount().getCurrencyCode() : null);
-            }
+            	String amount = StringUtils.isNotBlank(funding.getAmount().getContent()) ? funding.getAmount().getContent() : null;
+            	String currencyCode = funding.getAmount().getCurrencyCode() != null ? funding.getAmount().getCurrencyCode() : null;
+                try {
+                    BigDecimal bigDecimalAmount = getAmountAsBigDecimal(amount);
+                    profileFundingEntity.setNumericAmount(bigDecimalAmount);
+                } catch(Exception e) {
+                    throw new IllegalArgumentException("Invalid amount cannot be cast to BidDecimal");
+                }
+                            
+            	profileFundingEntity.setCurrencyCode(currencyCode);            	            	
+            }                        
             
             profileFundingEntity.setContributorsJson(getFundingContributorsJson(funding.getFundingContributors()));
             profileFundingEntity.setDescription(StringUtils.isNotBlank(funding.getDescription()) ? funding.getDescription() : null);
@@ -960,6 +983,16 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             return profileFundingEntity;
         }
         return null;
+    }        
+     
+    /**
+     * Transforms a string into a BigDecimal, it assumes the amount comes already formatted
+     * @param amount
+     * @return a BigDecimal containing the given amount
+     * @throws Exception if the amount cannot be correctly parse into a BigDecimal
+     * */
+    public BigDecimal getAmountAsBigDecimal(String amount) throws Exception {
+        return new BigDecimal(amount);
     }
     
     /**

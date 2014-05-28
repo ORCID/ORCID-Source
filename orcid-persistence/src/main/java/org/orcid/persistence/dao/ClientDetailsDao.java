@@ -40,4 +40,6 @@ public interface ClientDetailsDao extends GenericDao<ClientDetailsEntity, String
     boolean createClientSecret(String clientId, String clientSecret);
     
     List<ClientSecretEntity> getClientSecretsByClientId(String clientId);
+    
+    boolean exists(String clientId);
 }

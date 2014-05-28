@@ -68,6 +68,7 @@
         <class>org.orcid.persistence.jpa.entities.OrcidGrantedAuthority</class>
         <class>org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail</class>
         <class>org.orcid.persistence.jpa.entities.OrcidOauth2AuthoriziationCodeDetail</class>
+        <class>org.orcid.persistence.jpa.entities.CustomEmailEntity</class>
 
 		<!-- Orcid props entity -->
 		<class>org.orcid.persistence.jpa.entities.OrcidPropsEntity</class>

@@ -137,6 +137,15 @@ public class BaseController {
 
     protected static final String EMPTY = "empty";
 
+    
+    public LocaleManager getLocaleManager() {
+        return localeManager;
+    }
+    
+    public void setLocaleManager(LocaleManager localeManager) {
+        this.localeManager = localeManager;
+    }
+    
     public OrcidProfileManager getOrcidProfileManager() {
         return orcidProfileManager;
     }

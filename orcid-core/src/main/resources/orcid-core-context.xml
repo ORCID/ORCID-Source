@@ -376,6 +376,8 @@
 	
 	<bean id="sourceManager" class="org.orcid.core.manager.impl.SourceManagerImpl" />
 	
+	<bean id="customEmailManager" class="org.orcid.core.manager.impl.CustomEmailManagerImpl" />
+	
 	<bean id="crossRefEmail" class="org.orcid.core.profileEvent.CrossRefEmail" scope="prototype"/>
 	
 	<bean id="privPolicyEmail2014_03" class="org.orcid.core.profileEvent.PrivPolicyEmail2014_03" scope="prototype"/>

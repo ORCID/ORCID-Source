@@ -51,7 +51,7 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
             + "|| execution(* org.orcid.persistence.dao.*.delete*(..))" + "|| execution(* org.orcid.persistence.dao.*.update*(..))"
             + "|| execution(* org.orcid.persistence.dao.*.merge*(..))" + "|| execution(* org.orcid.persistence.dao.*.add*(..))"
             + "|| execution(* org.orcid.persistence.dao.*.persist*(..)))"
-            + "&& !@annotation(org.orcid.persistence.aop.ExcludeFromProfileLastModifiedUpdate)" + "&& !within(org.orcid.persistence.dao.impl.ProfileDaoImpl)"
+            + "&& !@annotation(org.orcid.persistence.aop.ExcludeFromProfileLastModifiedUpdate)"
             + "&& !within(org.orcid.persistence.dao.impl.WebhookDaoImpl)";
 
     //@formatter:on

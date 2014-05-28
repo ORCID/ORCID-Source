@@ -3351,7 +3351,7 @@ p.orcid-id-container{
 }
 
 /* SSO */
-.sso-api ul.sso-links{
+.sso-api ul.sso-links {
 	padding-left: 0;
 }
 
@@ -3596,6 +3596,80 @@ p.orcid-id-container{
 
 .developer-tools .large_column {
 	width: 79%;
+}
+
+/* Custom Email */
+.custom-email .inner-row {
+	margin-left: 15px;
+}
+
+
+.custom-email .inner-row input,
+.custom-email .content textarea {
+	width: 100%;	
+}
+
+.custom-email .inner-row input[type=checkbox] {
+	width: 5%;
+}
+
+.custom-email .content textarea {
+	height: 140px;
+}
+
+.custom-email .content ul {
+	list-style: none; 
+	list-style-type: none;
+	padding-left: 0;		
+}
+
+.custom-email .content ul li {
+	display: inline-block;	
+}
+
+.custom-email .actions a{
+	display: block;
+	-webkit-border-radius: 50%;
+	border-radius: 50%;
+	background: #949599;
+	color: #FFF;
+	width: 35px;
+	height: 35px;
+	padding: 9px 10px;
+}
+
+.custom-email .actions a:HOVER{
+	background: #a6ce39;
+}
+
+.custom-email .instructions {	
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+.custom-email .create,
+.custom-email .edit,
+.custom-email .view  {	
+	padding-top: 15px;
+	padding-bottom: 15px;
+}
+
+.custom-email .learn-more {
+	padding-top: 15px;
+}
+
+.custom-email .bottom-line {
+	border-bottom: 1px solid #CCC;
+}
+
+.custom-email .list-header {
+	background: #a6ce39;
+	color: #FFFFFF;
+}
+
+.custom-email .email-list {
+	margin-bottom: 15px;
+	margin-top: 15px;
 }
 
 .padding-fix{

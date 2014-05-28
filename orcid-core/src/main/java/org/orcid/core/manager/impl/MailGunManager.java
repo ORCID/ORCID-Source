@@ -65,6 +65,10 @@ public class MailGunManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(MailGunManager.class);
 
     public boolean sendEmail(String from, String to, String subject, String text, String html) {
+        return sendEmail(from, to, subject, text, html, false);
+    }
+    
+    public boolean sendEmail(String from, String to, String subject, String text, String html, boolean custom) {
         
         Client client = Client.create();
         client.addFilter(new HTTPBasicAuthFilter("api",
@@ -72,7 +76,12 @@ public class MailGunManager {
         
         // determine correct api based off domain.
         WebResource webResource = null;
-        if (from.trim().endsWith("@verify.orcid.org")) 
+        
+        //If it is a custom email, send it as a notification
+        if(custom) 
+            webResource = client.resource(getNotifyApiUrl());
+        //Else, check the from address to identify the domain
+        else if (from.trim().endsWith("@verify.orcid.org")) 
             webResource = client.resource(getVerifyApiUrl());
         else if (from.trim().endsWith("@notify.orcid.org")) 
             webResource = client.resource(getNotifyApiUrl());

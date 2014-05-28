@@ -16,6 +16,7 @@
  */
 package org.orcid.persistence.jpa.entities;
 
+import java.math.BigDecimal;
 import java.util.SortedSet;
 
 import javax.persistence.Basic;
@@ -74,6 +75,7 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
     private Visibility visibility;
     private SortedSet<FundingExternalIdentifierEntity> externalIdentifiers;
     private ProfileEntity source;
+    private BigDecimal numericAmount;
 
     @Override
     @Id
@@ -249,6 +251,15 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
         this.source = source;
     }
 
+    @Column(name = "numeric_amount")
+    public BigDecimal getNumericAmount() {
+        return numericAmount;
+    }
+
+    public void setNumericAmount(BigDecimal numericAmount) {
+        this.numericAmount = numericAmount;
+    }
+    
     @Override
     public int compareTo(ProfileFundingEntity other) {
         if (other == null) {
@@ -284,6 +295,12 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
             return compareAmounts;
         }
 
+        if(numericAmount != null) {
+            int compareNumericAmounts = numericAmount.compareTo(other.getNumericAmount());
+            if(compareNumericAmounts != 0)
+                return compareNumericAmounts;
+        }
+        
         int compareCurrency = compareStrings(currencyCode, other.getCurrencyCode());
         if (compareCurrency != 0) {
             return compareCurrency;
@@ -350,6 +367,7 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
         description = null;
         currencyCode = null;
         amount = null;
+        numericAmount = null;
         contributorsJson = null;
         url = null;
     }
