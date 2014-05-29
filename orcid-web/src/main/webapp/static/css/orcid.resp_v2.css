@@ -1,4 +1,4 @@
-f/**
+/**
  * =============================================================================
  *
  * ORCID (R) Open Source
@@ -1018,7 +1018,7 @@ h1,h2,h3,h4,h5,h6,b,strong,.table th,.close,.nav-header,.label,.badge,.header .s
 	position: relative;
 	margin: 0px;
 	padding: 0px;
-	width: 100px;
+	width: 98px;
 	height: 29px;
 }
 
@@ -1609,7 +1609,7 @@ a:hover {
 }
 
 .workspace-private-toolbar{
-	margin:0 40px 0 0;
+	margin:0;
 	padding:0;
 	float:right;
 }
@@ -2741,8 +2741,8 @@ header overrides
 
 ul.workspace-private-toolbar > li{
 	display: inline-block;
-	padding: 0;
-	margin: 0;
+	padding: 0;	
+	margin-bottom: -6px;
 }
 
 .popover-form .input-xlarge {
@@ -3261,12 +3261,14 @@ p.orcid-id-container{
 	width: 100%;
 	padding: 4px 5px 0px 5px;
 	background-color: #939598;
-	margin-bottom: 1px;	
+	margin-bottom: 1px;
+	float: left;	
 }
 
 .public-profile .oid{	
 	border-bottom: 1px solid #c9c9c9;
 	margin-bottom: 10px;
+	float: left;
 }
 
 .public-profile p{
@@ -3947,6 +3949,7 @@ ul.sort-menu-options li a:hover{
 	border-radius: 50%;
 	padding: 4px;
 	color: #939598;
+	margin-right: 5px;
 }
 
 .biography-controller .edit-option:hover,
@@ -4084,14 +4087,14 @@ ul.id-details li{
 	width: 100%;
 	text-align: center;
 	margin-top: 10px;
-	border-bottom: 1px solid #C3C3C3;
+	border-bottom: 1px solid #C9CACB;
 	padding-bottom: 23px;
 	height: 20px;
 }
 
 .show-more-info-tab a{
 	color: #FFF;
-	background: #949599;
+	background: #C9CACB;
 	padding: 3px 15px;
 	font-size: 13px;
 }
@@ -4141,9 +4144,10 @@ ul.id-details li{
 	margin-right: 10px;
 }
 
-.info-date-detail{	
+.info-detail{	
 	clear: both;
 	display: block;
+	float:left;
 	margin-bottom: 15px;
 	font-size: 13px;
 }
@@ -4186,21 +4190,84 @@ ul.id-details li{
 	padding: 10px;	
 }
 
-.affiliation-title{
+.workspace-title{
 	float: left;
 	display: block;
+}
+
+.workspace-title span{
+	font-weight: normal;
+	
 }
 
 .no-wrap{
 	word-break: normal;
 }
 
-.role{
-	float: left;
-	clear: both;
+.info-date, .role, .divisor{
+	display: block;
+	float: left;	
 }
 
+.divisor{
+	margin: 0 5px; 
+	height: 16px;
+	border-left: 1px solid #939598;
+}
 
+.edit-option-toolbar{		
+	padding: 7px;
+}
+
+a.toolbar-button{
+	color: #939598;
+	display: block;
+	background: #C9CACB;
+	border-radius: 50%;
+	width: 29px;
+	height: 29px;	
+}
+
+a.toolbar-button:hover{	
+	background: #a6ce39;
+	color: #FFF;
+}
+
+.submenu-tree{
+	position: relative;
+}
+
+ul.workspace-submenu-options{
+	position: absolute;
+	min-width: 160px;
+	width: auto;
+	margin: 0;
+	padding: 0;
+	right: 0;
+	top: 35px;	
+	z-index:500;
+	display: none;
+}
+
+ul.workspace-submenu-options li{	
+	background: #a6ce39;
+	border-bottom: 1px solid #FFF;
+}
+
+ul.workspace-submenu-options li a{
+	display: block;
+	padding: 3px 5px;
+	color: #FFF;	
+}
+
+ul.workspace-submenu-options li a:hover{
+	background: #338caf;
+	color: #FFF;
+}
+
+ul.workspace-submenu-options li a>span{
+	margin-right: 5px;
+}
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
@@ -5249,6 +5316,10 @@ ul.id-details li{
 	#workspace-fundings .content{
 		margin: 0px -10px;
 	}
+	
+	.public-profile .oid{
+		width: 100%;
+	}
 		
 
 }
@@ -5414,6 +5485,10 @@ ul.id-details li{
 	
 	#workspace-publications .action-button-bar{
 		padding-right: 14px;
+	}
+	
+	.public-profile .oid{
+		width: 100%;
 	}
 }
 

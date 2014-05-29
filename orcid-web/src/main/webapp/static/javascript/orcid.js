@@ -401,7 +401,8 @@
 	};
 	
 	var sortMenu =  function(){
-		$('.workspace-right .sort-menu').click(function(event){			
+		$('.workspace-right .sort-menu').click(function(event){
+			event.preventDefault();
 			var status = $(this).siblings().css('display');			
 			if(status == 'none' ){
 				$(this).siblings().css('display','block');
@@ -409,7 +410,21 @@
 				$(this).siblings().css('display','none');				
 			}
 		});
-	}
+	};
+	
+	var optionsMenu =  function(){		
+		$('.more-options-button').click(function(event){
+			event.preventDefault();
+			var status = $(this).siblings().css('display');			
+			if(status == 'none' ){
+				$(this).siblings().css('display','block');
+			}else{
+				$(this).siblings().css('display','none');				
+			}
+		});
+	};
+	
+	
 	
 	var selectableInputs = function(){
     	$(".selectable").click(function () {
@@ -422,17 +437,15 @@
     ============================================================*/
 
     var init = function() {
-        //handleNews();
         searchFilters();
-        //secondaryNavCleanup();
         toolTips();
         popupHandler();
         menuHack();        
         menuHandler();
         developerToolsTabs();
-        //setLoginStatusIcon();
-        selectableInputs();
+        selectableInputs();        
         sortMenu();
+        optionsMenu();
     };
 
     

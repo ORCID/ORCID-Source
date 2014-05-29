@@ -21,11 +21,11 @@
 		<div class="row">        			
 			<!-- Information -->
 			<div class="col-md-9 col-sm-9">
-				<h3 class="funding-title">
+				<h3 class="workspace-title">
 					<strong ng-show="funding.fundingTitle.title.value">{{funding.fundingTitle.title.value}}:</strong>
 					<span class="funding-name" ng-bind-html="funding.fundingName.value"></span>					
 				</h3>
-				<div class="info-date-detail">
+				<div class="info-detail">
 					<span class="funding-date" ng-show="funding.startDate && !funding.endDate">
 						<span ng-show="funding.startDate.year">{{funding.startDate.year}}</span><span ng-show="funding.startDate.month">-{{funding.startDate.month}}</span>						
 				    	<@orcid.msg 'workspace_fundings.dateSeparator'/>
@@ -40,21 +40,51 @@
 					     <span ng-show="funding.endDate.year">{{funding.endDate.year}}</span><span ng-show="funding.endDate.month">-{{funding.endDate.month}}</span>
 					</span>
 				</div>
+				<div class="row bottomBuffer" ng-show="funding.externalIdentifiers.length > 0" ng-cloak>
+				<div class="col-md-12">					
+					<div>					
+						<span ng-repeat='ei in funding.externalIdentifiers'>							
+							<span ng-bind-html='ei | externalIdentifierHtml:$first:$last:funding.externalIdentifiers.length'>
+							</span>
+						</span>
+					</div>
+				</div>
+			</div>
 			</div>			
 			<!-- Privacy Settings -->
 	        <div class="col-md-3 col-sm-3 workspace-toolbar">
-	        	
-	        	
-	        	
 	        	<#if !(isPublicProfile??)>
-	        		<a href ng-click="deleteFunding(funding)" class="glyphicon glyphicon-trash grey"></a>
+	        		<!-- <a href ng-click="deleteFunding(funding)" class="glyphicon glyphicon-trash grey"></a> -->
 	        		<ul class="workspace-private-toolbar">
-						<@orcid.privacyToggle  angularModel="funding.visibility.visibility"
-						questionClick="toggleClickPrivacyHelp(funding.putCode.value)"
-						clickedClassCheck="{'popover-help-container-show':privacyHelp[funding.putCode.value]==true}" 
-						publicClick="setPrivacy(funding, 'PUBLIC', $event)" 
-	                	limitedClick="setPrivacy(funding, 'LIMITED', $event)" 
-	                	privateClick="setPrivacy(funding, 'PRIVATE', $event)" />			        
+	        			<li>
+					 		<a href="" class="toolbar-button edit-item-button">
+					 			<span class="glyphicon glyphicon-pencil edit-option-toolbar" title=""></span>
+					 		</a>	
+					 	</li>
+	        			<li>
+							<@orcid.privacyToggle2  angularModel="funding.visibility.visibility"
+							questionClick="toggleClickPrivacyHelp(funding.putCode.value)"
+							clickedClassCheck="{'popover-help-container-show':privacyHelp[funding.putCode.value]==true}" 
+							publicClick="setPrivacy(funding, 'PUBLIC', $event)" 
+		                	limitedClick="setPrivacy(funding, 'LIMITED', $event)" 
+		                	privateClick="setPrivacy(funding, 'PRIVATE', $event)" />
+	                	</li>
+	                	 <li class="submenu-tree">
+		            		<a href="" class="toolbar-button more-options-button" id="more-options-button">
+		            			<span class="glyphicon glyphicon-align-left edit-option-toolbar"></span>
+		            		</a>
+		            		<ul class="workspace-submenu-options">
+		            			<li>
+		            				<a href=""><span class="glyphicon glyphicon-file"></span>Review Versions</a>
+		            			</li>
+		            			<li>
+		            				<a href=""><span class="glyphicon glyphicon-trash"></span>Delete</a>
+		            			</li>
+		            			<li>
+		            				<a href=""><span class="glyphicon glyphicon-question-sign"></span>Help</a>
+		            			</li>
+		            		</ul>
+            			</li>			        
 		        	</ul>
 		        </#if>
 			</div>
