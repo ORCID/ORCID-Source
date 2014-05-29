@@ -137,4 +137,6 @@ public interface ClientDetailsManager extends ClientDetailsService {
      * @param clientId
      * */
     void cleanOldClientKeys();
+    
+    boolean exists(String cliendId);
 }

@@ -17,8 +17,10 @@
 package org.orcid.persistence.dao;
 
 import java.util.Date;
+import java.util.List;
 
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.ClientSecretEntity;
 
 /**
  * 
@@ -31,5 +33,13 @@ public interface ClientDetailsDao extends GenericDao<ClientDetailsEntity, String
 
     Date getLastModified(String orcid);
     
-    void updateLastModified(String orcid);    
+    void updateLastModified(String orcid);
+    
+    boolean removeClientSecret(String clientId, String clientSecret);
+    
+    boolean createClientSecret(String clientId, String clientSecret);
+    
+    List<ClientSecretEntity> getClientSecretsByClientId(String clientId);
+    
+    boolean exists(String clientId);
 }

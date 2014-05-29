@@ -49,17 +49,12 @@
 	</div>
 	<div class="row">
 		<div class="col-md-12 col-sm-12 col-xs-12">
-		    <#if RequestParameters['notYou']??>
-			    <h2 class="oauth-title">Connecting 
-		            <span>${displayName?html}</span>
-		             with ORCID record for 
-		            <span class="researcher-name">${(profile.orcidBio.personalDetails.givenNames.content?html)!} ${(profile.orcidBio.personalDetails.familyName.content?html)!}</span> 
-		            <span><a href="" onclick="logOffReload(); return false;">(Not you?)</a></span> 
-	            </h2>   
-		    <#else>
-		       <h2 class="oauth-title">
-			   ${springMacroRequestContext.getMessage("confirm-oauth-access.connecting")}<br /><span>${displayName?html}</span><br />${springMacroRequestContext.getMessage("confirm-oauth-access.withyourrecord")}</h2>
-		    </#if>
+		 	<h2 class="oauth-title">${springMacroRequestContext.getMessage("confirm-oauth-access.connecting")} 
+		       <span>${displayName?html}</span>
+	           ${springMacroRequestContext.getMessage("confirm-oauth-access.withOrcidRecord")} 
+	           <span class="researcher-name">${(profile.orcidBio.personalDetails.givenNames.content?html)!} ${(profile.orcidBio.personalDetails.familyName.content?html)!}</span> 
+	           <span><a href="" onclick="logOffReload(); return false;">(${springMacroRequestContext.getMessage("confirm-oauth-access.notYou")}?)</a></span> 
+			</h2>   
 		</div>
 	</div>
 	<div class="row">

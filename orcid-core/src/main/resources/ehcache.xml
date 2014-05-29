@@ -140,4 +140,10 @@
 		<persistence strategy="none" />
 	</cache>
 
+	<cache name="custom-email" maxElementsInMemory="2000" timeToLiveSeconds="86400"
+		copyOnRead="false" copyOnWrite="false"
+		eternal="false">
+		<persistence strategy="none" />
+	</cache>
+
 </ehcache>

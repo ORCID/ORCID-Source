@@ -68,6 +68,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
     private List<ClientGrantedAuthorityEntity> clientGrantedAuthorities = Collections.emptyList();
     private Set<OrcidOauth2TokenDetail> tokenDetails;
     private ProfileEntity profileEntity;
+    private Set<CustomEmailEntity> customEmails = Collections.emptySet();
     private int accessTokenValiditySeconds = DEFAULT_TOKEN_VALIDITY;
 
     /**
@@ -245,6 +246,15 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
 
     public void setClientSecrets(SortedSet<ClientSecretEntity> clientSecrets) {
         this.clientSecrets = clientSecrets;
+    }
+
+    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientDetailsEntity", orphanRemoval = true)    
+    public Set<CustomEmailEntity> getCustomEmails() {
+        return customEmails;
+    }
+
+    public void setCustomEmails(Set<CustomEmailEntity> customEmails) {
+        this.customEmails = customEmails;
     }
 
     @Transient

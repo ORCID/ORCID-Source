@@ -1737,6 +1737,21 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     }
 
     @Override
+    public void processProfilesThatMissedIndexing() {
+        LOG.info("About to process profiles that missed indexing");
+        List<ProfileEntity> profileEntities = Collections.emptyList();
+        do {
+            profileEntities = profileDao.findProfilesThatMissedIndexing(INDEXING_BATCH_SIZE);
+            for (ProfileEntity profileEntity : profileEntities) {
+                LOG.info("Profile missed indexing: orcid={}, lastModified={}, lastIndexed={}, indexingStatus={}",
+                        new Object[] { profileEntity.getId(), profileEntity.getLastModified(), profileEntity.getLastIndexedDate(), profileEntity.getIndexingStatus() });
+                profileDao.updateIndexingStatus(profileEntity.getId(), IndexingStatus.PENDING);
+            }
+        } while (!profileEntities.isEmpty());
+        LOG.info("Finished processing profiles that missed indexing");
+    }
+
+    @Override
     synchronized public void processUnclaimedProfilesToFlagForIndexing() {
         LOG.info("About to process unclaimed profiles to flag for indexing");
         List<String> orcidsToFlag = Collections.<String> emptyList();

@@ -45,12 +45,16 @@ import org.orcid.persistence.jpa.entities.ClientResourceIdEntity;
 import org.orcid.persistence.jpa.entities.ClientScopeEntity;
 import org.orcid.persistence.jpa.entities.ClientSecretEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.oauth2.common.exceptions.InvalidClientException;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.transaction.annotation.Transactional;
 
 public class ClientDetailsManagerImpl implements ClientDetailsManager {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClientDetailsManagerImpl.class);
+    
     @Resource
     ClientDetailsDao clientDetailsDao;
 
@@ -351,66 +355,32 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
     @Override
     @Transactional
     public void cleanOldClientKeys() {
-
-        System.out
-                .println("---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-        System.out
-                .println("---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-        System.out
-                .println("---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-        System.out
-                .println("---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-        System.out
-                .println("---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-        System.out
-                .println("---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-        System.out
-                .println("---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-        System.out
-                .println("---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-        System.out
-                .println("---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-        System.out
-                .println("---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-        System.out.println("Running cron to delete old keys");
-        System.out
-                .println("---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-        System.out
-                .println("---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-        System.out
-                .println("---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-        System.out
-                .println("---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-        System.out
-                .println("---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-        System.out
-                .println("---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-        System.out
-                .println("---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-        System.out
-                .println("---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-        System.out
-                .println("---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-        System.out
-                .println("---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-        System.out
-                .println("---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-
+        LOGGER.info("Starting cron to delete non primary client keys");
         Date currentDate = new Date();
         List<ClientDetailsEntity> allClientDetails = this.getAll();
         if (allClientDetails != null && allClientDetails != null) {
-            for (ClientDetailsEntity clientDetails : allClientDetails) {
+            for (ClientDetailsEntity clientDetails : allClientDetails) {                
                 String clientId = clientDetails.getClientId();
+                LOGGER.info("Deleting non primary keys for client: {}", clientId);
                 Set<ClientSecretEntity> clientSecrets = clientDetails.getClientSecrets();
                 for (ClientSecretEntity clientSecret : clientSecrets) {
-                    Date dateRevoked = clientSecret.getLastModified();
-                    Date timeToDeleteMe = DateUtils.addMinutes(dateRevoked, 2);
-                    // If the key have been revokend more than 24 hours ago
-                    if (timeToDeleteMe.before(currentDate)) {
-                        clientSecretDao.removeClientSecret(clientId, clientSecret.getClientSecret());
+                    if(!clientSecret.isPrimary()) {
+                        Date dateRevoked = clientSecret.getLastModified();
+                        Date timeToDeleteMe = DateUtils.addHours(dateRevoked, 24);
+                        // If the key have been revokend more than 24 hours ago
+                        if (timeToDeleteMe.before(currentDate)) {
+                            LOGGER.info("Deleting key for client {}", clientId);
+                            clientSecretDao.removeClientSecret(clientId, clientSecret.getClientSecret());
+                        }
                     }
                 }
             }
         }
+        LOGGER.info("Cron done");
+    }
+    
+    @Override
+    public boolean exists(String clientId) {
+        return clientDetailsDao.exists(clientId);
     }
 }

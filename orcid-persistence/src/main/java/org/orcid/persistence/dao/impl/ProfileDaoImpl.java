@@ -33,6 +33,7 @@ import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.persistence.aop.ExcludeFromProfileLastModifiedUpdate;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.BaseEntity;
 import org.orcid.persistence.jpa.entities.EmailEventType;
@@ -51,6 +52,12 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     public ProfileDaoImpl() {
         super(ProfileEntity.class);
+    }
+
+    @Override
+    @ExcludeFromProfileLastModifiedUpdate
+    public void remove(String id) {
+        super.remove(id);
     }
 
     @SuppressWarnings("unchecked")
@@ -254,6 +261,14 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     }
 
     @Override
+    public List<ProfileEntity> findProfilesThatMissedIndexing(int maxResults) {
+        TypedQuery<ProfileEntity> query = entityManager.createQuery(
+                "from ProfileEntity where lastModified > lastIndexedDate and indexingStatus not in ('PENDING', 'IGNORE') order by lastModified", ProfileEntity.class);
+        query.setMaxResults(maxResults);
+        return query.getResultList();
+    }
+
+    @Override
     public boolean orcidExists(String orcid) {
         TypedQuery<Long> query = entityManager.createQuery("select count(pe.id) from ProfileEntity pe where pe.id=:orcid", Long.class);
         query.setParameter("orcid", orcid);
@@ -320,8 +335,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     public boolean exists(String orcid) {
-        TypedQuery<Long> query = entityManager.createQuery(
-                "select count(p.id) from ProfileEntity p where p.id = :orcid", Long.class);
+        TypedQuery<Long> query = entityManager.createQuery("select count(p.id) from ProfileEntity p where p.id = :orcid", Long.class);
         query.setParameter("orcid", orcid);
         Long result = query.getSingleResult();
         return (result != null && result > 0);
@@ -329,6 +343,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     @Transactional
+    @ExcludeFromProfileLastModifiedUpdate
     public void updateIndexingStatus(String orcid, IndexingStatus indexingStatus) {
         String queryString = null;
         if (IndexingStatus.DONE.equals(indexingStatus)) {
@@ -381,6 +396,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     @Transactional
+    @ExcludeFromProfileLastModifiedUpdate
     public Date updateLastModifiedDate(String orcid) {
         updateLastModifiedDateWithoutResult(orcid);
         return retrieveLastModifiedDate(orcid);
@@ -403,6 +419,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     @Transactional
+    @ExcludeFromProfileLastModifiedUpdate
     public void updateLastModifiedDateAndIndexingStatus(String orcid) {
         Query updateQuery = entityManager.createQuery("update ProfileEntity set lastModified = now(), indexingStatus = 'PENDING' where orcid = :orcid");
         updateQuery.setParameter("orcid", orcid);
@@ -498,7 +515,6 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         updateQuery.setParameter("enableDeveloperTools", enableDeveloperTools);
         updateQuery.executeUpdate();
     }
-    
 
     @Override
     @Transactional
@@ -510,7 +526,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         updateQuery.setParameter("profileAddressVisibility", StringUtils.upperCase(profileAddressVisibility.value()));
         updateQuery.executeUpdate();
     }
-    
+
     @Override
     public Iso3166Country getCountry(String orcid) {
         TypedQuery<Iso3166Country> query = entityManager.createQuery("select iso2_country from ProfileEntity where orcid = :orcid", Iso3166Country.class);
@@ -541,8 +557,6 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         updateQuery.setParameter("creditNameVisibility", creditNameVisibility == null ? null : StringUtils.upperCase(creditNameVisibility.value()));
         updateQuery.executeUpdate();
     }
-
-    
 
     /**
      * Return the list of profiles that belongs to the provided OrcidType
@@ -577,8 +591,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setParameter("enabled", enabled);
         return query.executeUpdate() > 0;
     }
-    
-    
+
     @Override
     @Transactional
     public boolean updateResearcherUrlsVisibility(String orcid, Visibility visibility) {
@@ -592,5 +605,4 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         return result;
     }
 
-    
 }

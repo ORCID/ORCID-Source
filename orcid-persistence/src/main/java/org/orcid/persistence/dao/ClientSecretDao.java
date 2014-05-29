@@ -62,12 +62,5 @@ public interface ClientSecretDao extends GenericDao<ClientSecretEntity, ClientSe
      * @param clientSecret
      * @return true if it was possible to set the client secret as primary
      * */
-    boolean setAsPrimary(ClientSecretEntity clientSecret);
-
-    /**
-     * Removes all non primary client secret keys
-     * 
-     * @param clientId
-     * */
-    void removeAllNonPrimaryKeys(String clientId);
+    boolean setAsPrimary(ClientSecretEntity clientSecret);    
 }

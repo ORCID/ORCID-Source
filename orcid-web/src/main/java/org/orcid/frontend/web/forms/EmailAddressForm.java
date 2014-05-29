@@ -30,7 +30,9 @@ public class EmailAddressForm {
     @NotBlank(message = "Please enter your email address")
     @org.hibernate.validator.constraints.Email
     public String getUserEmailAddress() {
-        return userEmailAddress;
+        if (userEmailAddress!= null) 
+            return userEmailAddress.trim();
+        return null;
     }
 
     public void setUserEmailAddress(String userEmailAddress) {

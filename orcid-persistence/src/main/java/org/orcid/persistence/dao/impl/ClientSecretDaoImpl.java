@@ -40,6 +40,7 @@ public class ClientSecretDaoImpl extends GenericDaoImpl<ClientSecretEntity, Clie
      * @return true if a entity is removed
      * */
     @Override
+    @Transactional
     public boolean removeClientSecret(String clientId, String clientSecret) {
         Query deleteQuery = entityManager.createNativeQuery("delete from client_secret where client_details_id=:clientId and client_secret=:clientSecret");
         deleteQuery.setParameter("clientId", clientId);
@@ -55,6 +56,7 @@ public class ClientSecretDaoImpl extends GenericDaoImpl<ClientSecretEntity, Clie
      * @return true if the entity was created
      * */
     @Override
+    @Transactional
     public boolean createClientSecret(String clientId, String clientSecret) {
         Query deleteQuery = entityManager
                 .createNativeQuery("INSERT INTO client_secret (client_details_id, client_secret, is_primary, date_created, last_modified) VALUES (:clientId, :clientSecret, true, now(), now())");
@@ -85,7 +87,7 @@ public class ClientSecretDaoImpl extends GenericDaoImpl<ClientSecretEntity, Clie
     @Override
     @Transactional
     public boolean revokeAllKeys(String clientId) {
-        Query revokeAllKeys = entityManager.createNativeQuery("UPDATE client_secret SET is_primary=false WHERE client_details_id=:clientId");
+        Query revokeAllKeys = entityManager.createNativeQuery("UPDATE client_secret SET is_primary=false, last_modified=now() WHERE client_details_id=:clientId");
         revokeAllKeys.setParameter("clientId", clientId);
         return revokeAllKeys.executeUpdate() > 0;
     }
@@ -96,24 +98,13 @@ public class ClientSecretDaoImpl extends GenericDaoImpl<ClientSecretEntity, Clie
      * @param clientSecret
      * @return true if it was possible to set the client secret as primary
      * */
+    @Override
+    @Transactional
     public boolean setAsPrimary(ClientSecretEntity clientSecret) {
         Query query = entityManager
                 .createNativeQuery("UPDATE client_secret SET is_primary=true WHERE client_details_id=:clientDetailsId AND client_secret=:clientSecret");
         query.setParameter("clientDetailsId", clientSecret.getClientDetailsEntity().getId());
         query.setParameter("clientSecret", clientSecret.getClientSecret());
         return query.executeUpdate() > 0;
-    }
-
-    /**
-     * Removes all non primary client secret keys
-     * 
-     * @param clientId
-     * */
-    @Override
-    @Transactional
-    public void removeAllNonPrimaryKeys(String clientId) {
-        Query query = entityManager.createNativeQuery("DELETE FROM client_SECRET WHERE client_details_id=:clientDetailsId AND is_primary=false");
-        query.setParameter("clientDetailsId", clientId);
-        query.executeUpdate();
     }
 }

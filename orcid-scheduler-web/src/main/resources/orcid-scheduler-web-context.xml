@@ -30,6 +30,7 @@
 
     <task:scheduled-tasks scheduler="scheduler">   
         <task:scheduled ref="orcidProfileManager" method="processProfilesPendingIndexing" fixed-delay="${org.orcid.scheduler.web.processProfilesPendingIndexingDelaySeconds:60}000"/>
+        <task:scheduled ref="orcidProfileManager" method="processProfilesThatMissedIndexing" cron="${org.orcid.scheduler.web.processProfilesThatMissedIndexing:20 20 0-2 * * *}000"/>
         <task:scheduled ref="orcidProfileManager" method="processUnclaimedProfilesToFlagForIndexing" cron="${org.orcid.scheduler.web.processUnclaimedProfilesToFlagForIndexingCron:25 25 * * * *}"/>
         <task:scheduled ref="orcidProfileManager" method="processUnverifiedEmails7Days" cron="${org.orcid.scheduler.web.processUnverifiedEmails7Days:0 10 * * * *}"/>
         <task:scheduled ref="orcidProfileManager" method="processUnclaimedProfilesForReminder" cron="${org.orcid.scheduler.web.processUnclaimedProfilesForReminderCron:35 35 * * * *}"/>
@@ -39,7 +40,7 @@
         <task:scheduled ref="orgDisambiguatedManager" method="processOrgsWithIncorrectPopularity" cron="${org.orcid.scheduler.web.processOrgsWithIncorrectPopularity:45 45 0-2 * * *}"/>
         <task:scheduled ref="orgDisambiguatedManager" method="processOrgsForIndexing" cron="${org.orcid.scheduler.web.processOrgsForIndexing:55 55 0-2 * * *}"/>
         <task:scheduled ref="profileFundingManager" method="indexFundingSubTypes" cron="${org.orcid.scheduler.web.processFundingSubTypesForIndexing:15 15 * * * *}" />
-        <task:scheduled ref="clientDetailsManager" method="cleanOldClientKeys" cron="${org.orcid.scheduler.web.cleanOldClientKeys:0 0 0 * * ?}" />
+        <task:scheduled ref="clientDetailsManager" method="cleanOldClientKeys" cron="${org.orcid.scheduler.web.cleanOldClientKeys:0 0 0/1 * * ?}" />
     </task:scheduled-tasks>
 
     <task:scheduler id="scheduler" pool-size="10"/>
