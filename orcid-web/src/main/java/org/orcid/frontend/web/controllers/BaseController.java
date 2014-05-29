@@ -564,6 +564,10 @@ public class BaseController {
     protected void setError(ErrorsInterface ei, String msg) {
         ei.getErrors().add(getMessage(msg));
     }
+    
+    protected void setError(ErrorsInterface ei, String msg, Object... messageParams) {
+        ei.getErrors().add(getMessage(msg, messageParams));
+    }
 
     protected void validateBiography(Text text) {
         text.setErrors(new ArrayList<String>());

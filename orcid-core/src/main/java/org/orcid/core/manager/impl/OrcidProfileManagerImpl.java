@@ -17,6 +17,8 @@
 package org.orcid.core.manager.impl;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
 import java.util.ArrayList;
@@ -1362,7 +1364,17 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                 String amount = funding.getAmount().getContent();
                 Locale locale = localeManager.getLocale();
                 ParsePosition parsePosition = new ParsePosition(0);
-                NumberFormat numberFormat = NumberFormat.getInstance(locale);
+                DecimalFormat numberFormat = (DecimalFormat) NumberFormat.getNumberInstance(locale);
+                DecimalFormatSymbols symbols = numberFormat.getDecimalFormatSymbols();
+                /**
+                 * When spaces are allowed, the grouping separator is the character
+                 * 160, which is a non-breaking space So, lets change it so it uses
+                 * the default space as a separator
+                 * */
+                if (symbols.getGroupingSeparator() == 160) {
+                    symbols.setGroupingSeparator(' ');
+                }
+                numberFormat.setDecimalFormatSymbols(symbols);
                 Number number = numberFormat.parse(amount, parsePosition);
                 String formattedAmount = number.toString();
                 if (parsePosition.getIndex() != amount.length()) {
