@@ -4660,7 +4660,6 @@ function SSOPreferencesCtrl($scope, $compile) {
 	$scope.tokenURL = orcidVar.pubBaseUri + '/oauth/token';
 	$scope.authorizeURL = '';
 	$scope.selectedRedirectUri = '';
-	$scope.selectedClientSecret = null;
 	$scope.creating = false;
 	
 	$scope.enableDeveloperTools = function() {
@@ -4709,14 +4708,13 @@ function SSOPreferencesCtrl($scope, $compile) {
 	        url: getBaseUri()+'/developer-tools/get-sso-credentials.json',	        
 	        contentType: 'application/json;charset=UTF-8',
 	        type: 'POST',	                	      
-	        success: function(data){	        	
+	        success: function(data){	   
 	        	$scope.$apply(function(){ 
-	        		if(data != null && data.clientSecrets != null) {
+	        		if(data != null && data.clientSecret != null) {
 	        			$scope.playgroundExample = '';
 	        			$scope.userCredentials = data;	
 	        			$scope.hideGoogleUri = false;	
 	        			$scope.selectedRedirectUri = $scope.userCredentials.redirectUris[0];
-	        			$scope.selectedClientSecret = $scope.userCredentials.clientSecrets[0];
 	        			for(var i = 0; i < $scope.userCredentials.redirectUris.length; i++) {
 	        				if($scope.googleUri == $scope.userCredentials.redirectUris[i].value.value) {
 	        					$scope.hideGoogleUri = true;
@@ -4930,16 +4928,10 @@ function SSOPreferencesCtrl($scope, $compile) {
 	};
 	
 	
-	$scope.updateSelectedRedirectUri = function() {		
-		//Initialize client secret if needed
-		if($scope.selectedClientSecret == null) {
-			$scope.selectedClientSecret = $scope.userCredentials.clientSecrets[0];
-		}
+	$scope.updateSelectedRedirectUri = function() {				
 		var clientId = $scope.userCredentials.clientOrcid.value;
-		var selectedRedirectUriValue = $scope.selectedRedirectUri.value.value;
-		var selectedClientSecret = $scope.selectedClientSecret.value;
-		
-		console.log("Selected secret: " + angular.toJson($scope.selectedClientSecret));
+		var selectedRedirectUriValue = $scope.selectedRedirectUri.value.value;		
+		var selectedClientSecret = $scope.userCredentials.clientSecret.value;
 		
 		//Build the google playground url example
 		$scope.playgroundExample = '';
@@ -4965,58 +4957,35 @@ function SSOPreferencesCtrl($scope, $compile) {
 		    .replace('[CLIENT_SECRET]', selectedClientSecret)
 		    .replace('[PUB_BASE_URI]', orcidVar.pubBaseUri)
 		    .replace('[REDIRECT_URI]', selectedRedirectUriValue);
-       
-	};
+	};	
 	
-	$scope.updateSelectedClientSecret = function(){
-		$scope.updateSelectedRedirectUri();
-	};
-	
-	$scope.confirmDeleteClientSecret = function(index) {
-		$scope.clientSecretToDelete = $scope.userCredentials.clientSecrets[index];
+	$scope.confirmResetClientSecret = function() {
+		$scope.clientSecretToReset = $scope.userCredentials.clientSecret;
 		$.colorbox({        	            
-            html : $compile($('#delete-secret-modal').html())($scope), 
+            html : $compile($('#reset-client-secret-modal').html())($scope), 
             transition: 'fade',
             onLoad: function() {
 			    $('#cboxClose').remove();
 			},
 	        scrolling: true
         });
-        $.colorbox.resize({width:"400px" , height:"175px"});
+        $.colorbox.resize({width:"415px" , height:"250px"});
 	};
 	
-	$scope.deleteClientSecret = function(secretToDelete) {		
+	$scope.resetClientSecret = function() {
 		$.ajax({
-			url: getBaseUri() + '/developer-tools/delete-client-secret.json',
-			type: 'POST',
-			dataType: 'text',
-			data: 'clientSecret=' + secretToDelete, 
-			success: function(data) {
-				if(data) {
-					$scope.getSSOCredentials();
-					$scope.closeModal();
-				} else
-					console.log('Unable to delete client secret');
-			}
-		}).fail(function() { 
-	    	console.log("Error fetching empty redirect uri");
-	    });
-		
-		
-	};
-	
-	$scope.addClientSecret = function() {
-		$.ajax({
-			url: getBaseUri() + '/developer-tools/add-client-secret.json',
+			url: getBaseUri() + '/developer-tools/reset-client-secret.json',
 			type: 'POST',			
 			success: function(data) {
-				if(data)
-					$scope.getSSOCredentials();
-				else
-					console.log('Unable to delete client secret');
+				if(data) {
+					$scope.editing = false;
+					$scope.closeModal();
+					$scope.getSSOCredentials();					
+				} else
+					console.log('Unable to reset client secret');
 			}
 		}).fail(function() { 
-	    	console.log("Error fetching empty redirect uri");
+	    	console.log("Error resetting redirect uri");
 	    });
 	};
 	

@@ -124,9 +124,19 @@ public interface ClientDetailsManager extends ClientDetailsService {
     
     void updateLastModified(String clientId);
     
-    boolean removeClientSecret(String clientId, String clientSecret);
+    /**
+     * Set a new client secret for the specific client and set the other keys as non primaries 
+     * @param clientId
+     * @param clientSecret
+     * @return true if the new key has been added
+     * */
+    boolean resetClientSecret(String clientId, String clientSecret);
     
-    boolean addClientSecret(String clientId, String clientSecret);
+    /**
+     * Removes all non primary client secret keys
+     * @param clientId
+     * */
+    void cleanOldClientKeys();
     
     boolean exists(String cliendId);
 }
