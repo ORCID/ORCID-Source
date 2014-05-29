@@ -114,11 +114,11 @@ public class FundingsController extends BaseWorkspaceController {
 
     @Resource(name = "languagesMap")
     private LanguagesMap lm;
-    
+
     public void setLocaleManager(LocaleManager localeManager) {
         this.localeManager = localeManager;
     }
-    
+
     /**
      * Returns a blank funding form
      * */
@@ -132,12 +132,12 @@ public class FundingsController extends BaseWorkspaceController {
         result.setFundingName(new Text());
         result.setFundingType(Text.valueOf(""));
         result.setSourceName(new String());
-        
+
         OrgDefinedFundingSubType subtype = new OrgDefinedFundingSubType();
         subtype.setAlreadyIndexed(false);
-        subtype.setSubtype(Text.valueOf(""));        
+        subtype.setSubtype(Text.valueOf(""));
         result.setOrganizationDefinedFundingSubType(subtype);
-        
+
         FundingTitleForm title = new FundingTitleForm();
         title.setTitle(new Text());
         TranslatedTitle tt = new TranslatedTitle();
@@ -316,7 +316,7 @@ public class FundingsController extends BaseWorkspaceController {
 
         copyErrors(funding.getCity(), funding);
         copyErrors(funding.getRegion(), funding);
-        copyErrors(funding.getCountry(), funding);        
+        copyErrors(funding.getCountry(), funding);
         copyErrors(funding.getFundingName(), funding);
         copyErrors(funding.getAmount(), funding);
         copyErrors(funding.getCurrencyCode(), funding);
@@ -326,7 +326,7 @@ public class FundingsController extends BaseWorkspaceController {
         copyErrors(funding.getUrl(), funding);
         copyErrors(funding.getEndDate(), funding);
         copyErrors(funding.getFundingType(), funding);
-        if(funding.getOrganizationDefinedFundingSubType() != null)
+        if (funding.getOrganizationDefinedFundingSubType() != null)
             copyErrors(funding.getOrganizationDefinedFundingSubType().getSubtype(), funding);
 
         for (FundingExternalIdentifierForm extId : funding.getExternalIdentifiers()) {
@@ -337,7 +337,7 @@ public class FundingsController extends BaseWorkspaceController {
 
         // If there are no errors, persist to DB
         if (funding.getErrors().isEmpty()) {
-            //Set the right value for the amount
+            // Set the right value for the amount
             setAmountWithTheCorrectFormat(funding);
             // Set the credit name
             setContributorsCreditName(funding);
@@ -376,9 +376,10 @@ public class FundingsController extends BaseWorkspaceController {
 
             // Set the new funding into the cached object
             currentProfile.getOrcidActivities().getFundings().getFundings().add(newFunding);
-            
-            //Send the new funding sub type for indexing
-            if(funding.getOrganizationDefinedFundingSubType() != null && !PojoUtil.isEmpty(funding.getOrganizationDefinedFundingSubType().getSubtype()) && !funding.getOrganizationDefinedFundingSubType().isAlreadyIndexed())
+
+            // Send the new funding sub type for indexing
+            if (funding.getOrganizationDefinedFundingSubType() != null && !PojoUtil.isEmpty(funding.getOrganizationDefinedFundingSubType().getSubtype())
+                    && !funding.getOrganizationDefinedFundingSubType().isAlreadyIndexed())
                 profileFundingManager.addFundingSubType(funding.getOrganizationDefinedFundingSubType().getSubtype().getValue(), getEffectiveUserOrcid());
         }
 
@@ -428,16 +429,16 @@ public class FundingsController extends BaseWorkspaceController {
         for (FundingExternalIdentifierForm extId : funding.getExternalIdentifiers()) {
             extId.setType(Text.valueOf(DEFAULT_FUNDING_EXTERNAL_IDENTIFIER_TYPE_CODE));
         }
-    }    
-    
+    }
+
     private void setAmountWithTheCorrectFormat(FundingForm funding) throws Exception {
-        if(!PojoUtil.isEmpty(funding.getAmount())){
+        if (!PojoUtil.isEmpty(funding.getAmount())) {
             String amount = funding.getAmount().getValue();
             BigDecimal bigDecimal = getAmountAsBigDecimal(amount);
             funding.setAmount(Text.valueOf(bigDecimal.toString()));
         }
     }
-    
+
     /**
      * Saves an affiliation
      * */
@@ -460,73 +461,83 @@ public class FundingsController extends BaseWorkspaceController {
             }
         }
         return fundingForm;
-    }              
-    
+    }
+
     /**
      * Transforms a string into a BigDecimal
+     * 
      * @param amount
      * @param locale
      * @return a BigDecimal containing the given amount
-     * @throws Exception if the amount cannot be correctly parse into a BigDecimal
+     * @throws Exception
+     *             if the amount cannot be correctly parse into a BigDecimal
      * */
     public BigDecimal getAmountAsBigDecimal(String amount) throws Exception {
         Locale locale = getUserLocale();
         return getAmountAsBigDecimal(amount, locale);
     }
-    
+
     /**
      * Transforms a string into a BigDecimal
+     * 
      * @param amount
      * @param locale
      * @return a BigDecimal containing the given amount
-     * @throws Exception if the amount cannot be correctly parse into a BigDecimal
+     * @throws Exception
+     *             if the amount cannot be correctly parse into a BigDecimal
      * */
     public BigDecimal getAmountAsBigDecimal(String amount, Locale locale) throws Exception {
-        try {                  
+        try {
             ParsePosition parsePosition = new ParsePosition(0);
-            DecimalFormat numberFormat = (DecimalFormat)NumberFormat.getNumberInstance(locale);
+            DecimalFormat numberFormat = (DecimalFormat) NumberFormat.getNumberInstance(locale);
             DecimalFormatSymbols symbols = numberFormat.getDecimalFormatSymbols();
-            if(symbols.getGroupingSeparator() == 160) {
+            /**
+             * When spaces are allowed, the grouping separator is the character
+             * 160, which is a non-breaking space So, lets change it so it uses
+             * the default space as a separator
+             * */
+            if (symbols.getGroupingSeparator() == 160) {
                 symbols.setGroupingSeparator(' ');
             }
             numberFormat.setDecimalFormatSymbols(symbols);
             Number number = numberFormat.parse(amount, parsePosition);
-            if(number == null || parsePosition.getIndex() != amount.length()) {                
+            if (number == null || parsePosition.getIndex() != amount.length()) {
                 throw new Exception();
             }
-            return new BigDecimal(number.toString());                          
-        } catch(Exception e) {                
+            return new BigDecimal(number.toString());
+        } catch (Exception e) {
             throw e;
         }
     }
-    
+
     /**
      * Get a string with the proper amount format
+     * 
      * @param local
-     * @return an example string showing how the amount should be entered 
+     * @return an example string showing how the amount should be entered
      * */
     private String getSampleAmountInProperFormat(Locale locale) {
         double example = 1234567.89;
-        NumberFormat numberFormatExample = NumberFormat.getNumberInstance(locale);                     
+        NumberFormat numberFormatExample = NumberFormat.getNumberInstance(locale);
         return numberFormatExample.format(example);
-    }      
-    
+    }
+
     /**
      * Validators
      * */
     @RequestMapping(value = "/funding/amountValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     FundingForm validateAmount(@RequestBody FundingForm funding) {
-        funding.getAmount().setErrors(new ArrayList<String>());        
-        if (!PojoUtil.isEmpty(funding.getAmount())) {            
+        funding.getAmount().setErrors(new ArrayList<String>());
+        if (!PojoUtil.isEmpty(funding.getAmount())) {
             String amount = funding.getAmount().getValue();
-            Locale locale = getUserLocale();                     
-            try {                
-                getAmountAsBigDecimal(amount, locale);        
-            } catch(Exception pe) {                
+            Locale locale = getUserLocale();
+            try {
+                getAmountAsBigDecimal(amount, locale);
+            } catch (Exception pe) {
                 setError(funding.getAmount(), "Invalid.fundings.amount", getSampleAmountInProperFormat(locale));
-            }                                                 
-        } else if(!PojoUtil.isEmpty(funding.getCurrencyCode())) {
+            }
+        } else if (!PojoUtil.isEmpty(funding.getCurrencyCode())) {
             setError(funding.getAmount(), "Invalid.fundings.currency_not_empty");
         }
         return funding;
@@ -661,23 +672,23 @@ public class FundingsController extends BaseWorkspaceController {
         }
         return funding;
     }
-    
+
     @RequestMapping(value = "/funding/organizationDefinedTypeValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     FundingForm validateOrganizationDefinedType(@RequestBody FundingForm funding) {
-        if(funding.getOrganizationDefinedFundingSubType() == null)
+        if (funding.getOrganizationDefinedFundingSubType() == null)
             funding.setOrganizationDefinedFundingSubType(new OrgDefinedFundingSubType());
-        if(funding.getOrganizationDefinedFundingSubType().getSubtype() == null)
+        if (funding.getOrganizationDefinedFundingSubType().getSubtype() == null)
             funding.getOrganizationDefinedFundingSubType().setSubtype(Text.valueOf(""));
         funding.getOrganizationDefinedFundingSubType().getSubtype().setErrors(new ArrayList<String>());
         if (!PojoUtil.isEmpty(funding.getOrganizationDefinedFundingSubType().getSubtype())) {
             String value = funding.getOrganizationDefinedFundingSubType().getSubtype().getValue();
-            if(value.length() > 255)
-                setError(funding.getOrganizationDefinedFundingSubType().getSubtype(), "fundings.lenght_less_255");            
+            if (value.length() > 255)
+                setError(funding.getOrganizationDefinedFundingSubType().getSubtype(), "fundings.lenght_less_255");
         }
         return funding;
     }
-    
+
     @RequestMapping(value = "/funding/cityValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     FundingForm validateCity(@RequestBody FundingForm funding) {
@@ -751,15 +762,15 @@ public class FundingsController extends BaseWorkspaceController {
         OrgDisambiguatedEntity orgDisambiguatedEntity = orgDisambiguatedDao.find(id);
         Map<String, String> datum = new HashMap<>();
         datum.put("value", orgDisambiguatedEntity.getName());
-        datum.put("city", orgDisambiguatedEntity.getCity());                
+        datum.put("city", orgDisambiguatedEntity.getCity());
         datum.put("region", orgDisambiguatedEntity.getRegion());
-        if(orgDisambiguatedEntity.getCountry() != null)
+        if (orgDisambiguatedEntity.getCountry() != null)
             datum.put("country", orgDisambiguatedEntity.getCountry().value());
         datum.put("sourceId", orgDisambiguatedEntity.getSourceId());
         datum.put("sourceType", orgDisambiguatedEntity.getSourceType());
         return datum;
     }
-    
+
     /**
      * Search DB for org defined funding types
      */
@@ -767,10 +778,9 @@ public class FundingsController extends BaseWorkspaceController {
     public @ResponseBody
     List<String> searchOrgDefinedFundingSubTypes(@PathVariable("query") String query, @RequestParam(value = "limit") int limit) {
         return profileFundingManager.getIndexedFundingSubTypes(query, limit);
-    }        
-    
+    }
+
     public Locale getUserLocale() {
         return localeManager.getLocale();
     }
 }
-
