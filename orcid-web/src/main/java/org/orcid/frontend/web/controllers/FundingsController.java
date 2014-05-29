@@ -17,6 +17,8 @@
 package org.orcid.frontend.web.controllers;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
 import java.util.ArrayList;
@@ -112,7 +114,11 @@ public class FundingsController extends BaseWorkspaceController {
 
     @Resource(name = "languagesMap")
     private LanguagesMap lm;
-
+    
+    public void setLocaleManager(LocaleManager localeManager) {
+        this.localeManager = localeManager;
+    }
+    
     /**
      * Returns a blank funding form
      * */
@@ -228,7 +234,7 @@ public class FundingsController extends BaseWorkspaceController {
      */
     private List<String> createFundingIdList(HttpServletRequest request) {
         OrcidProfile currentProfile = getEffectiveProfile();
-        Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
+        Map<String, String> languages = lm.buildLanguageMap(getUserLocale(), false);
         FundingList fundings = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getFundings();
 
         HashMap<String, FundingForm> fundingsMap = new HashMap<>();
@@ -464,7 +470,7 @@ public class FundingsController extends BaseWorkspaceController {
      * @throws Exception if the amount cannot be correctly parse into a BigDecimal
      * */
     public BigDecimal getAmountAsBigDecimal(String amount) throws Exception {
-        Locale locale = getUserLocaleForCurrencyValidation();
+        Locale locale = getUserLocale();
         return getAmountAsBigDecimal(amount, locale);
     }
     
@@ -478,12 +484,15 @@ public class FundingsController extends BaseWorkspaceController {
     public BigDecimal getAmountAsBigDecimal(String amount, Locale locale) throws Exception {
         try {                  
             ParsePosition parsePosition = new ParsePosition(0);
-            NumberFormat numberFormat = NumberFormat.getInstance(locale);
+            DecimalFormat numberFormat = (DecimalFormat)NumberFormat.getNumberInstance(locale);
+            DecimalFormatSymbols symbols = numberFormat.getDecimalFormatSymbols();
+            if(symbols.getGroupingSeparator() == 160) {
+                symbols.setGroupingSeparator(' ');
+            }
+            numberFormat.setDecimalFormatSymbols(symbols);
             Number number = numberFormat.parse(amount, parsePosition);
-            
-            if(parsePosition.getIndex() != amount.length()) {
-                String errorMessage = getMessage("Invalid.fundings.amount").replace("%s", getSampleAmountInProperFormat(locale));
-                throw new Exception(errorMessage);
+            if(number == null || parsePosition.getIndex() != amount.length()) {                
+                throw new Exception();
             }
             return new BigDecimal(number.toString());                          
         } catch(Exception e) {                
@@ -498,35 +507,9 @@ public class FundingsController extends BaseWorkspaceController {
      * */
     private String getSampleAmountInProperFormat(Locale locale) {
         double example = 1234567.89;
-        NumberFormat numberFormatExample = NumberFormat.getNumberInstance(localeManager.getLocale());                     
+        NumberFormat numberFormatExample = NumberFormat.getNumberInstance(locale);                     
         return numberFormatExample.format(example);
-    }
-    
-    /**
-     * Gets the user locale and validates the currency according to the locale format
-     * @return user locale
-     * */
-    private Locale getUserLocaleForCurrencyValidation() {
-        Locale locale = getLocale();
-        String language = locale.getLanguage();
-        String country = locale.getCountry();
-
-        if (PojoUtil.isEmpty(country)) {
-            OrcidProfile profile = getEffectiveProfile();
-            if (profile.getOrcidBio() != null && profile.getOrcidBio().getContactDetails() != null && profile.getOrcidBio().getContactDetails().getAddress() != null
-                    && profile.getOrcidBio().getContactDetails().getAddress().getCountry() != null && profile.getOrcidBio().getContactDetails().getAddress().getCountry().getValue() != null) {
-                country = profile.getOrcidBio().getContactDetails().getAddress().getCountry().getValue().name();
-            }
-        }
-
-        Locale result = null;
-        if(country == null)
-            result = new Locale(language);
-        else
-            result = new Locale(language, country);
-        return result;
-    }
-    
+    }      
     
     /**
      * Validators
@@ -537,18 +520,12 @@ public class FundingsController extends BaseWorkspaceController {
         funding.getAmount().setErrors(new ArrayList<String>());        
         if (!PojoUtil.isEmpty(funding.getAmount())) {            
             String amount = funding.getAmount().getValue();
-            Locale locale = getUserLocaleForCurrencyValidation();
-            
-            if(!amount.matches("\\d+|\\d{1,3}([\\.\\,\\'\\s]?\\d{1,3})*")){
+            Locale locale = getUserLocale();                     
+            try {                
+                getAmountAsBigDecimal(amount, locale);        
+            } catch(Exception pe) {                
                 setError(funding.getAmount(), "Invalid.fundings.amount", getSampleAmountInProperFormat(locale));
-            } else {                
-                try {                
-                    getAmountAsBigDecimal(amount, locale);        
-                } catch(Exception pe) {                
-                    setError(funding.getAmount(), "Invalid.fundings.amount", getSampleAmountInProperFormat(locale));
-                }
-            }
-                                     
+            }                                                 
         } else if(!PojoUtil.isEmpty(funding.getCurrencyCode())) {
             setError(funding.getAmount(), "Invalid.fundings.currency_not_empty");
         }
@@ -791,5 +768,9 @@ public class FundingsController extends BaseWorkspaceController {
     List<String> searchOrgDefinedFundingSubTypes(@PathVariable("query") String query, @RequestParam(value = "limit") int limit) {
         return profileFundingManager.getIndexedFundingSubTypes(query, limit);
     }        
+    
+    public Locale getUserLocale() {
+        return localeManager.getLocale();
+    }
 }
 
