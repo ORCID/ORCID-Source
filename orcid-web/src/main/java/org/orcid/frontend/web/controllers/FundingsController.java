@@ -459,18 +459,32 @@ public class FundingsController extends BaseWorkspaceController {
     /**
      * Transforms a string into a BigDecimal
      * @param amount
+     * @param locale
      * @return a BigDecimal containing the given amount
      * @throws Exception if the amount cannot be correctly parse into a BigDecimal
      * */
     public BigDecimal getAmountAsBigDecimal(String amount) throws Exception {
-        try {      
-            Locale locale = getUserLocaleForCurrencyValidation();
+        Locale locale = getUserLocaleForCurrencyValidation();
+        return getAmountAsBigDecimal(amount, locale);
+    }
+    
+    /**
+     * Transforms a string into a BigDecimal
+     * @param amount
+     * @param locale
+     * @return a BigDecimal containing the given amount
+     * @throws Exception if the amount cannot be correctly parse into a BigDecimal
+     * */
+    public BigDecimal getAmountAsBigDecimal(String amount, Locale locale) throws Exception {
+        try {                  
             ParsePosition parsePosition = new ParsePosition(0);
             NumberFormat numberFormat = NumberFormat.getInstance(locale);
             Number number = numberFormat.parse(amount, parsePosition);
             
-            if(parsePosition.getIndex() != amount.length())
-                throw new Exception(getMessage("Invalid.fundings.amount")); 
+            if(parsePosition.getIndex() != amount.length()) {
+                String errorMessage = getMessage("Invalid.fundings.amount").replace("%s", getSampleAmountInProperFormat(locale));
+                throw new Exception(errorMessage);
+            }
             return new BigDecimal(number.toString());                          
         } catch(Exception e) {                
             throw e;
@@ -478,7 +492,19 @@ public class FundingsController extends BaseWorkspaceController {
     }
     
     /**
-     * TODO
+     * Get a string with the proper amount format
+     * @param local
+     * @return an example string showing how the amount should be entered 
+     * */
+    private String getSampleAmountInProperFormat(Locale locale) {
+        double example = 1234567.89;
+        NumberFormat numberFormatExample = NumberFormat.getNumberInstance(localeManager.getLocale());                     
+        return numberFormatExample.format(example);
+    }
+    
+    /**
+     * Gets the user locale and validates the currency according to the locale format
+     * @return user locale
      * */
     private Locale getUserLocaleForCurrencyValidation() {
         Locale locale = getLocale();
@@ -501,6 +527,7 @@ public class FundingsController extends BaseWorkspaceController {
         return result;
     }
     
+    
     /**
      * Validators
      * */
@@ -510,18 +537,17 @@ public class FundingsController extends BaseWorkspaceController {
         funding.getAmount().setErrors(new ArrayList<String>());        
         if (!PojoUtil.isEmpty(funding.getAmount())) {            
             String amount = funding.getAmount().getValue();
+            Locale locale = getUserLocaleForCurrencyValidation();
             
             if(!amount.matches("\\d+|\\d{1,3}([\\.\\,\\'\\s]?\\d{1,3})*")){
-                setError(funding.getAmount(), "Invalid.fundings.amount");
+                setError(funding.getAmount(), "Invalid.fundings.amount", getSampleAmountInProperFormat(locale));
             } else {                
                 try {                
-                    getAmountAsBigDecimal(amount);        
+                    getAmountAsBigDecimal(amount, locale);        
                 } catch(Exception pe) {                
-                    setError(funding.getAmount(), "Invalid.fundings.amount");
+                    setError(funding.getAmount(), "Invalid.fundings.amount", getSampleAmountInProperFormat(locale));
                 }
             }
-            
-            
                                      
         } else if(!PojoUtil.isEmpty(funding.getCurrencyCode())) {
             setError(funding.getAmount(), "Invalid.fundings.currency_not_empty");
