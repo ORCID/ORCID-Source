@@ -46,7 +46,8 @@ public class ClientSecretEntity extends BaseEntity<ClientSecretPk> implements Co
     private String clientSecret;
     private String decryptedClientSecret;
     private ClientDetailsEntity clientDetailsEntity;
-
+    private boolean primary;
+    
     public ClientSecretEntity() {
         super();
     }
@@ -54,6 +55,12 @@ public class ClientSecretEntity extends BaseEntity<ClientSecretPk> implements Co
     public ClientSecretEntity(String clientSecret, ClientDetailsEntity clientDetailsEntity) {
         this.clientSecret = clientSecret;
         this.clientDetailsEntity = clientDetailsEntity;
+    }
+    
+    public ClientSecretEntity(String clientSecret, ClientDetailsEntity clientDetailsEntity, boolean primary) {
+        this.clientSecret = clientSecret;
+        this.clientDetailsEntity = clientDetailsEntity;
+        this.primary = primary;
     }
 
     /**
@@ -88,6 +95,15 @@ public class ClientSecretEntity extends BaseEntity<ClientSecretPk> implements Co
         this.clientDetailsEntity = clientDetailsEntity;
     }
 
+    @Column(name = "is_primary")
+    public boolean isPrimary() {
+        return primary;
+    }
+
+    public void setPrimary(boolean primary) {
+        this.primary = primary;
+    }
+
     @Transient
     public String getDecryptedClientSecret() {
         return decryptedClientSecret;
@@ -105,6 +121,11 @@ public class ClientSecretEntity extends BaseEntity<ClientSecretPk> implements Co
         if (dateComparison != 0) {
             return -dateComparison;
         }
+        
+        if(isPrimary() != other.isPrimary()) {
+            return -1;
+        }
+        
         return clientSecret.compareTo(other.getClientSecret());
     }
 

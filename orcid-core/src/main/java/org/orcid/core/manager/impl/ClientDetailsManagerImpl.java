@@ -28,12 +28,14 @@ import java.util.UUID;
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.ClientDetailsDao;
+import org.orcid.persistence.dao.ClientSecretDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientAuthorisedGrantTypeEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -43,14 +45,21 @@ import org.orcid.persistence.jpa.entities.ClientResourceIdEntity;
 import org.orcid.persistence.jpa.entities.ClientScopeEntity;
 import org.orcid.persistence.jpa.entities.ClientSecretEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.oauth2.common.exceptions.InvalidClientException;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.transaction.annotation.Transactional;
 
 public class ClientDetailsManagerImpl implements ClientDetailsManager {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClientDetailsManagerImpl.class);
+    
     @Resource
     ClientDetailsDao clientDetailsDao;
+
+    @Resource
+    ClientSecretDao clientSecretDao;
 
     @Resource
     private ProfileEntityManager profileEntityManager;
@@ -316,41 +325,58 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
         clientDetailsDao.updateLastModified(clientId);
     }
 
+    /**
+     * Set a new client secret for the specific client and set the other keys as
+     * non primaries
+     * 
+     * @param clientId
+     * @param clientSecret
+     * @return true if the new key has been added
+     * */
     @Override
     @Transactional
-    public boolean removeClientSecret(String clientId, String clientSecret) {
-        boolean result = false;
-        // Look for the list of client secrets
-        List<ClientSecretEntity> clientSecrets = clientDetailsDao.getClientSecretsByClientId(clientId);
-        if (clientSecrets != null) {
-
-            for (ClientSecretEntity clientSecretEntity : clientSecrets) {
-                String decryptedSecret = encryptionManager.decryptForInternalUse(clientSecretEntity.getClientSecret());
-                if (clientSecret.equals(decryptedSecret)) {
-                    // Remove client secret
-                    result = clientDetailsDao.removeClientSecret(clientId, clientSecretEntity.getClientSecret());
-                    break;
-                }
-            }
-
-            // Update last modified if a secret code was deleted
-            if (result)
-                clientDetailsDao.updateLastModified(clientId);
-        }
-
-        return result;
-    }
-
-    @Override
-    @Transactional
-    public boolean addClientSecret(String clientId, String clientSecret) {
-     // Creates the new client secret
-        boolean result = clientDetailsDao.createClientSecret(clientId, clientSecret);
-        // Update last modified
+    public boolean resetClientSecret(String clientId, String clientSecret) {
+        // #1 Set all existing client secrets as non primary
+        clientSecretDao.revokeAllKeys(clientId);
+        // #2 Create the new client secret as primary
+        boolean result = clientSecretDao.createClientSecret(clientId, clientSecret);
+        // #3 if it was created, update the last modified for the client details
         if (result)
             clientDetailsDao.updateLastModified(clientId);
 
         return result;
+    }
+
+    /**
+     * Removes all non primary client secret keys
+     * 
+     * @param clientId
+     * */
+    @Override
+    @Transactional
+    public void cleanOldClientKeys() {
+        LOGGER.info("Starting cron to delete non primary client keys");
+        Date currentDate = new Date();
+        List<ClientDetailsEntity> allClientDetails = this.getAll();
+        if (allClientDetails != null && allClientDetails != null) {
+            for (ClientDetailsEntity clientDetails : allClientDetails) {                
+                String clientId = clientDetails.getClientId();
+                LOGGER.info("Deleting non primary keys for client: {}", clientId);
+                Set<ClientSecretEntity> clientSecrets = clientDetails.getClientSecrets();
+                for (ClientSecretEntity clientSecret : clientSecrets) {
+                    if(!clientSecret.isPrimary()) {
+                        Date dateRevoked = clientSecret.getLastModified();
+                        Date timeToDeleteMe = DateUtils.addHours(dateRevoked, 24);
+                        // If the key have been revokend more than 24 hours ago
+                        if (timeToDeleteMe.before(currentDate)) {
+                            LOGGER.info("Deleting key for client {}", clientId);
+                            clientSecretDao.removeClientSecret(clientId, clientSecret.getClientSecret());
+                        }
+                    }
+                }
+            }
+        }
+        LOGGER.info("Cron done");
     }
     
     @Override

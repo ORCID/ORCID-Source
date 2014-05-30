@@ -78,6 +78,7 @@ public class AdminController extends BaseController {
     
     @Resource
     ProfileEntityManager profileEntityManager;
+    
 
     @Resource
     ProfileWorkManager profileWorkManager;

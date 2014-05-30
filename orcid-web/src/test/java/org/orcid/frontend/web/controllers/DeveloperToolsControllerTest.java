@@ -208,8 +208,8 @@ public class DeveloperToolsControllerTest extends BaseControllerTest {
         assertNotNull(result);
         assertNotNull(result.getErrors());
         assertEquals(result.getErrors().size(), 0);
-        assertNotNull(result.getClientSecrets());
-        assertFalse(result.getClientSecrets().isEmpty());
+        assertNotNull(result.getClientSecret());
+        assertFalse(PojoUtil.isEmpty(result.getClientSecret()));
         assertFalse(PojoUtil.isEmpty(result.getClientOrcid()));
     }
     
@@ -230,12 +230,7 @@ public class DeveloperToolsControllerTest extends BaseControllerTest {
         assertNotNull(result);
         assertNotNull(result.getErrors());
         assertEquals(result.getErrors().size(), 0);
-        Set<Text> clientSecrets = result.getClientSecrets();
-        
-        String clientSecret = "";
-        for (Text clientSecretText : clientSecrets){
-            clientSecret = clientSecretText.getValue();
-        }        
+        Text clientSecret = result.getClientSecret();                        
                 
         //Update values
         ssoCredentials.setClientName(Text.valueOf("Updated client name"));
@@ -251,14 +246,9 @@ public class DeveloperToolsControllerTest extends BaseControllerTest {
         assertNotNull(updatedResult.getErrors());
         assertEquals(updatedResult.getErrors().size(), 0);
         
-        Set<Text> updatedClientSecrets =updatedResult.getClientSecrets();
+        Text updatedClientSecret = updatedResult.getClientSecret();
         
-        String updatedClientSecret = "";
-        for (Text clientSecretText : updatedClientSecrets){
-            updatedClientSecret = clientSecretText.getValue();
-        }  
-                
-        assertEquals(updatedClientSecret, clientSecret);
+        assertEquals(updatedClientSecret.toString(), clientSecret.toString());
         assertEquals(updatedResult.getClientName().getValue(), "Updated client name");
         assertEquals(updatedResult.getClientDescription().getValue(), "Updated client description");
         assertEquals(updatedResult.getClientWebsite().getValue(), "http://updated.com");
