@@ -42,7 +42,6 @@ import org.orcid.persistence.jpa.entities.ClientGrantedAuthorityEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
 import org.orcid.persistence.jpa.entities.ClientResourceIdEntity;
 import org.orcid.persistence.jpa.entities.ClientScopeEntity;
-import org.orcid.persistence.jpa.entities.ClientSecretEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.security.oauth2.common.exceptions.InvalidClientException;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
@@ -320,54 +319,41 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
         clientDetailsDao.updateLastModified(clientId);
     }
 
-    @Override
-    @Transactional
-    public boolean removeClientSecret(String clientId, String clientSecret) {
-        boolean result = false;
-        // Look for the list of client secrets
-        List<ClientSecretEntity> clientSecrets = clientSecretDao.getClientSecretsByClientId(clientId);
-        if (clientSecrets != null) {
-
-            for (ClientSecretEntity clientSecretEntity : clientSecrets) {
-                String decryptedSecret = encryptionManager.decryptForInternalUse(clientSecretEntity.getClientSecret());
-                if (clientSecret.equals(decryptedSecret)) {
-                    // Remove client secret
-                    result = clientSecretDao.removeClientSecret(clientId, clientSecretEntity.getClientSecret());
-                    break;
-                }
-            }
-
-            // Update last modified if a secret code was deleted
-            if (result)
-                clientDetailsDao.updateLastModified(clientId);
-        }
-
-        return result;
-    }
-
-    @Override
-    @Transactional
-    public boolean addClientSecret(String clientId, String clientSecret) {
-        // Creates the new client secret
-        boolean result = clientSecretDao.createClientSecret(clientId, clientSecret);
-        // Update last modified
-        if (result)
-            clientDetailsDao.updateLastModified(clientId);
-
-        return result;
-    }
-    
+    /**
+     * Set a new client secret for the specific client and set the other keys as
+     * non primaries
+     * 
+     * @param clientId
+     * @param clientSecret
+     * @return true if the new key has been added
+     * */
     @Override
     @Transactional
     public boolean resetClientSecret(String clientId, String clientSecret) {
-        //#1 Set all existing client secrets as non primary
+        // #1 Set all existing client secrets as non primary
         clientSecretDao.revokeAllKeys(clientId);
-        //#2 Create the new client secret as primary
+        // #2 Create the new client secret as primary
         boolean result = clientSecretDao.createClientSecret(clientId, clientSecret);
-        //#3 if it was created, update the last modified for the client details
+        // #3 if it was created, update the last modified for the client details
         if (result)
             clientDetailsDao.updateLastModified(clientId);
-        
+
         return result;
+    }
+
+    /**
+     * Removes all non primary client secret keys
+     * 
+     * @param clientId
+     * */
+    @Override
+    @Transactional
+    public void cleanOldClientKeys() {
+        List<ClientDetailsEntity> allClientDetails = this.getAll();
+        if (allClientDetails != null && allClientDetails != null) {
+            for (ClientDetailsEntity clientDetails : allClientDetails) {
+                clientSecretDao.removeAllNonPrimaryKeys(clientDetails.getClientId());
+            }
+        }
     }
 }

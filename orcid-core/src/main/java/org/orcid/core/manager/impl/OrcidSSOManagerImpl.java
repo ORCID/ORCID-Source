@@ -44,7 +44,6 @@ import org.orcid.persistence.jpa.entities.ClientScopeEntity;
 import org.orcid.persistence.jpa.entities.ClientSecretEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.keys.ClientScopePk;
-import org.springframework.transaction.annotation.Transactional;
 
 public class OrcidSSOManagerImpl implements OrcidSSOManager {
 
@@ -96,24 +95,24 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
                     existingScopes.add(ssoScope);
                     existingClientDetails.setClientScopes(existingScopes);
                     clientDetailsManager.merge(existingClientDetails);
-                }                                
+                }
             } else {
-                String clientSecret = encryptionManager.encryptForInternalUse(UUID.randomUUID().toString());                
+                String clientSecret = encryptionManager.encryptForInternalUse(UUID.randomUUID().toString());
                 Set<String> redirectUrisSet = new HashSet<String>();
                 for (String uri : redirectUris) {
                     redirectUrisSet.add(uri);
                 }
                 ClientDetailsEntity clientDetailsEntity = populateClientDetailsEntity(clientId, name, description, website, clientSecret, redirectUrisSet);
-                clientDetailsManager.persist(clientDetailsEntity);                
+                clientDetailsManager.persist(clientDetailsEntity);
             }
-            
-            ClientDetailsEntity clientDetailsEntity = clientDetailsManager.findByClientId(clientId); 
+
+            ClientDetailsEntity clientDetailsEntity = clientDetailsManager.findByClientId(clientId);
             if (clientDetailsEntity.getClientSecrets() != null) {
-                for(ClientSecretEntity updatedClientSecret : clientDetailsEntity.getClientSecrets()) {                                        
+                for (ClientSecretEntity updatedClientSecret : clientDetailsEntity.getClientSecrets()) {
                     updatedClientSecret.setDecryptedClientSecret(encryptionManager.decryptForInternalUse(updatedClientSecret.getClientSecret()));
                 }
-            } 
-            return clientDetailsEntity;                                    
+            }
+            return clientDetailsEntity;
         }
     }
 
@@ -133,10 +132,10 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
             }
             existingClientDetails.setClientRegisteredRedirectUris(onlySSORedirectUris);
             if (existingClientDetails.getClientSecrets() != null) {
-                for(ClientSecretEntity clientSecret : existingClientDetails.getClientSecrets()) {                                        
+                for (ClientSecretEntity clientSecret : existingClientDetails.getClientSecrets()) {
                     clientSecret.setDecryptedClientSecret(encryptionManager.decryptForInternalUse(clientSecret.getClientSecret()));
                 }
-            }                
+            }
         }
         return existingClientDetails;
     }
@@ -178,17 +177,17 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
             }
         }
     }
-    
+
     @Override
-    public boolean resetClientSecret(String clientDetailsId) {        
+    public boolean resetClientSecret(String clientDetailsId) {
         ClientDetailsEntity clientDetailsEntity = clientDetailsManager.findByClientId(clientDetailsId);
         if (clientDetailsEntity == null) {
             throw new IllegalArgumentException("ORCID " + clientDetailsId + " doesnt have client details assigned yet");
         }
         // Generate new client secret
         String clientSecret = encryptionManager.encryptForInternalUse(UUID.randomUUID().toString());
-        
-        return clientDetailsManager.resetClientSecret(clientDetailsEntity.getClientId(), clientSecret);          
+
+        return clientDetailsManager.resetClientSecret(clientDetailsEntity.getClientId(), clientSecret);
     }
 
     private boolean hasSSOScope(Set<ClientScopeEntity> scopes) {

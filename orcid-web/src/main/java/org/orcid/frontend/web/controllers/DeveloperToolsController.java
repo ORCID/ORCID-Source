@@ -116,7 +116,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         boolean hasErrors = validateSSOCredentials(ssoCredentials);
 
         if (!hasErrors) {
-            //Strips html content from ssoCredentials object
+            // Strips html content from ssoCredentials object
             this.stripHtml(ssoCredentials);
             OrcidProfile profile = getEffectiveProfile();
             String orcid = profile.getOrcidIdentifier().getPath();
@@ -143,7 +143,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
             if (ssoCredentials.getClientWebsite().getErrors() != null && !ssoCredentials.getClientWebsite().getErrors().isEmpty())
                 errors.addAll(ssoCredentials.getClientWebsite().getErrors());
 
-            if(ssoCredentials.getRedirectUris() != null) {
+            if (ssoCredentials.getRedirectUris() != null) {
                 for (RedirectUri redirectUri : ssoCredentials.getRedirectUris()) {
                     if (redirectUri.getErrors() != null && !redirectUri.getErrors().isEmpty())
                         errors.addAll(redirectUri.getErrors());
@@ -161,7 +161,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         boolean hasErrors = validateSSOCredentials(ssoCredentials);
 
         if (!hasErrors) {
-            //Strips html content from ssoCredentials object
+            // Strips html content from ssoCredentials object
             this.stripHtml(ssoCredentials);
             OrcidProfile profile = getEffectiveProfile();
             String orcid = profile.getOrcidIdentifier().getPath();
@@ -199,10 +199,11 @@ public class DeveloperToolsController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/reset-client-secret", method = RequestMethod.POST)
-    public @ResponseBody boolean addClientSecret(){    
-        return orcidSSOManager.resetClientSecret(getEffectiveUserOrcid());         
+    public @ResponseBody
+    boolean addClientSecret() {
+        return orcidSSOManager.resetClientSecret(getEffectiveUserOrcid());
     }
-    
+
     @RequestMapping(value = "/get-sso-credentials.json", method = RequestMethod.POST)
     public @ResponseBody
     SSOCredentials getSSOCredentialsJson(HttpServletRequest request) {
@@ -222,17 +223,21 @@ public class DeveloperToolsController extends BaseWorkspaceController {
     }
 
     /**
-     * Strip html from client name and client description to prevent cross site scripting attacks
+     * Strip html from client name and client description to prevent cross site
+     * scripting attacks
+     * 
      * @param ssoCredentials
-     * @return the ssoCredentials object with stripped client name and client description
+     * @return the ssoCredentials object with stripped client name and client
+     *         description
      * */
     private void stripHtml(SSOCredentials ssoCredentials) {
         String strippedClientName = PojoUtil.isEmpty(ssoCredentials.getClientName()) ? "" : OrcidStringUtils.stripHtml(ssoCredentials.getClientName().getValue());
-        String strippedDescription = PojoUtil.isEmpty(ssoCredentials.getClientDescription()) ? "" : OrcidStringUtils.stripHtml(ssoCredentials.getClientDescription().getValue());
+        String strippedDescription = PojoUtil.isEmpty(ssoCredentials.getClientDescription()) ? "" : OrcidStringUtils.stripHtml(ssoCredentials.getClientDescription()
+                .getValue());
         ssoCredentials.setClientName(Text.valueOf(strippedClientName));
-        ssoCredentials.setClientDescription(Text.valueOf(strippedDescription));                
+        ssoCredentials.setClientDescription(Text.valueOf(strippedDescription));
     }
-    
+
     /**
      * Validates the ssoCredentials object
      * 
@@ -273,14 +278,14 @@ public class DeveloperToolsController extends BaseWorkspaceController {
             hasErrors = true;
         } else {
             List<String> errors = new ArrayList<String>();
-            String[] schemes = { "http", "https", "ftp" }; 
+            String[] schemes = { "http", "https", "ftp" };
             UrlValidator urlValidator = new UrlValidator(schemes);
             String websiteString = ssoCredentials.getClientWebsite().getValue();
             if (!urlValidator.isValid(websiteString))
                 websiteString = "http://" + websiteString;
 
             // test validity again
-            if (!urlValidator.isValid(websiteString)) {                
+            if (!urlValidator.isValid(websiteString)) {
                 errors.add(getMessage("manage.developer_tools.invalid_website"));
             }
             ssoCredentials.getClientWebsite().setErrors(errors);
@@ -312,7 +317,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
      * */
     private List<String> validateRedirectUri(RedirectUri redirectUri) {
         List<String> errors = null;
-        String[] schemes = { "http", "https" }; 
+        String[] schemes = { "http", "https" };
         UrlValidator urlValidator = new UrlValidator(schemes);
         if (!PojoUtil.isEmpty(redirectUri.getValue())) {
             try {
