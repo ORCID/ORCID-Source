@@ -81,21 +81,21 @@ Do to licensing issues this is only available to ORCID.org employees.
     cd ~/git/ORCID-Source
     mvn clean install
     ```
+    
+Tip: use the same command for rebuilding.
 
 ## Create the Database Schema - First Time Only
 
 Intialize the database schema (runs as orcid the first time, but then you need to run it again as postgres because some tasks require superuser).
 
     ```
-    cd ~/git/ORCID-Source/orcid-persistence
+    cd ~/git/ORCID-Source/orcid-core
     
     mvn exec:java -Dexec.mainClass=org.orcid.core.cli.InitDb
     
     mvn exec:java -Dexec.mainClass=org.orcid.core.cli.InitDb -Dorg.orcid.persistence.db.username=postgres -Dorg.orcid.persistence.db.password=postgres
     
     ```
-    
-Tip: use the same command for rebuilding.
 
 ## Eclipse Setup (Spring Tool Suite Eclipse)
 These instructions are for Spring Tool Suite for Eclipse. 
