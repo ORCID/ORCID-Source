@@ -20,12 +20,22 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
         
     <changeSet id="ADD-WORK-EXTERNAL-IDS-JSON-COLUMN" author="Will Simpson">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="work" columnName="external_ids_json"/>
+            </not>
+        </preConditions>
         <addColumn tableName="work">
             <column name="external_ids_json" type="text" />
         </addColumn>
     </changeSet>
     
     <changeSet id="CONVERT-TEXT-TO-JSON" author="Will Simpson" dbms="postgresql">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="work_doi_idx"/>
+            </not>
+        </preConditions>
         <sql>ALTER TABLE work ALTER COLUMN contributors_json TYPE json USING contributors_json::JSON</sql>
         <sql>ALTER TABLE work ALTER COLUMN external_ids_json TYPE json USING external_ids_json::JSON</sql>
         <createProcedure>
@@ -60,6 +70,7 @@ ALTER FUNCTION extract_doi(json) OWNER TO orcid;
         -->
         <preConditions onFail="CONTINUE">
             <runningAs username="postgres"/>
+            <not><sqlCheck expectedResult="123">select ('{"a":123}'::varchar)->'a'</sqlCheck></not>
         </preConditions>
         <sql>CREATE CAST (character varying AS json) WITH FUNCTION json_intext(text) AS IMPLICIT;</sql>
     </changeSet>
