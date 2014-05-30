@@ -309,6 +309,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         return null;
     }
 
+    /**
+     * Old, non-json way of doing work external identifiers
+     */
     private SortedSet<WorkExternalIdentifierEntity> getWorkExternalIdentifiers(WorkEntity workEntity, WorkExternalIdentifiers workExternalIdentifiers) {
         SortedSet<WorkExternalIdentifierEntity> existingWorkExternalIdentifierEntities = workEntity.getExternalIdentifiers();
         Map<WorkExternalIdentifierEntityPk, WorkExternalIdentifierEntity> existingWorkExternalIdentifierEntitiesMap = createWorkExternalIdentifierEntitiesMap(existingWorkExternalIdentifierEntities);
