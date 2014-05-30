@@ -103,5 +103,6 @@
     <include file="/db/updates/add_organization_defined_type_to_funding.xml" />
     <include file="/db/updates/create_custom_emails_table.xml" />
     <include file="/db/updates/add_numeric_amount_to_funding.xml" />
+    <include file="/db/updates/work-external-ids-as-json.xml" />
     <include file="/db/updates/add_primary_indicator_to_client_secret.xml" />
 </databaseChangeLog>
