@@ -184,7 +184,7 @@ orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
 						&& affiliation.affiliationType.value == 'employment')
 					arr = serv.employments;
 				var idx;
-				for (idx in arr) {
+				for (var idx in arr) {
 					if (arr[idx].putCode.value == affiliation.putCode.value) {
 						break;
 					}
@@ -345,7 +345,7 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 	    	        	} else {
 	    	        		var arr = serv.fundings;				
 	    					var idx;
-	    					for (idx in arr) {
+	    					for (var idx in arr) {
 	    						if (arr[idx].putCode.value == funding.putCode.value) {
 	    							break;
 	    						}
@@ -390,14 +390,23 @@ GroupedWorks.prototype.add = function(work) {
 };
 
 GroupedWorks.prototype.hasPut = function(putCode) {
-	for (idx in this.works)
+	for (var idx in this.works)
 		if (this.works[idx].putCode.value == putCode) 
 			return true;
 	return false;
 };
 
+GroupedWorks.prototype.getByPut = function(putCode) {
+    // not sure if we should get fancy with a map yet
+	for (var idx in this.works)
+		if (this.works[idx].putCode.value == putCode) 
+			return this.works[idx];
+	return null;
+};
+
+
 GroupedWorks.prototype.rmByPut = function(putCode) {
-	for (idx in this.works)
+	for (var idx in this.works)
 		if (this.works[idx].putCode.value == putCode)
 			return this.works.splice(idx, 1);
 	return undefined;
@@ -418,8 +427,8 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 					} catch (err) {
 						serv.bibtexJson[dw.putCode.value] = null;
 						console.log("couldn't parse bibtex: " + dw.citation.citation.value);
-					}
-				}
+					};
+				};
 			},
 		    addWorkToScope: function(worksUrl) {
 				if(serv.worksToAddIds.length != 0 ) {
@@ -435,7 +444,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 									removeBadContributors(dw);							
 									serv.addBibtexJson(dw);
 									var added = false;
-									for (idx in serv.groups)
+									for (var idx in serv.groups)
 										if (serv.groups[idx].keyMatch(dw)) {
 											serv.groups[idx].addWork(dw);
 											added = true;
@@ -445,8 +454,8 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 										var newGroup = new GroupedWorks();
 										newGroup.add(dw);
 										serv.groups.push(newGroup);
-									}
-								}
+									};
+								};
 							});
 							if(serv.worksToAddIds.length == 0 ) {
 								serv.loading = false;
@@ -482,10 +491,17 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 			    	console.log("Error fetching blank work");
 			    });
 			},
+			getByPutCode: function(putCode) {
+				for (var idx in serv.groups) {
+						if (serv.groups[idx].hasPut(putCode))
+							return serv.groups[idx].getByPut(putCode);				
+				}
+				return null;
+			},
 			deleteByPutCode: function(putCode) {
 				var idx;
 				var rmWorks;
-				for (idx in serv.groups) {
+				for (var idx in serv.groups) {
 					if (serv.groups[idx].hasPut(putCode)) {
 						rmWorks = serv.groups[idx].rmByPut(putCode);
 						if (serv.groups[idx].works.length == 0)
@@ -506,12 +522,34 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 			        success: function(data) {	        	
 			        	if(data.errors.length != 0){
 			        		console.log("Unable to delete work.");
-			        	} 
+			        	}; 
 			        }
 			    }).fail(function() { 
 			    	console.log("Error deleting work.");
 			    });
-			}
+			},
+			setPrivacy: function(putCode, priv) {
+				var idx;
+				var work = serv.getByPutCode(putCode);
+				work.visibility = priv;
+				serv.updateProfileWork(work);
+			},
+			updateProfileWork: function(work) {
+				$.ajax({
+			        url: getBaseUri() + '/works/profileWork.json',
+			        type: 'PUT',
+			        data: angular.toJson(work),
+			        contentType: 'application/json;charset=UTF-8',
+			        dataType: 'json',
+			        success: function(data) {	        	
+			        	if(data.errors.length != 0){
+			        		console.log("Unable to update profile work.");
+			        	} 
+			        }
+			    }).fail(function() { 
+			    	console.log("Error updating profile work.");
+			    });
+			}		
 	}; 
 	return serv;
 }]);
@@ -661,7 +699,7 @@ orcidNgModule.filter('externalIdentifierHtml', function(){
 });
 
 function removeBadContributors(dw) {
-	for (idx in dw.contributors) {
+	for (var idx in dw.contributors) {
 		if (dw.contributors[idx].contributorSequence == null
 			&& dw.contributors[idx].email == null
 			&& dw.contributors[idx].orcid == null
@@ -3308,13 +3346,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	
 	$scope.deleteWork = function(putCode) {
 		$scope.deletePutCode = putCode;
-		var work;
-		for (idx in $scope.worksSrvc.works) {
-			if ($scope.worksSrvc.works[idx].putCode.value == putCode) {
-				work = $scope.worksSrvc.works[idx];
-				break;
-			}
-		}
+		var work = worksSrvc.getByPutCode(putCode);
 		if (work.workTitle && work.workTitle.title) 
 			$scope.fixedTitle = work.workTitle.title.value;
 		else $scope.fixedTitle = '';
@@ -3347,14 +3379,8 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 			
 	$scope.setPrivacy = function(putCode, priv, $event) {
 		$event.preventDefault();
-		var idx;
-		for (idx in $scope.worksSrvc.works) {
-			if ($scope.worksSrvc.works[idx].putCode.value == putCode)
-				break;
-		}
-		$scope.worksSrvc.works[idx].visibility = priv;
 		$scope.curPrivToggle = null;
-		$scope.updateProfileWork(putCode);
+		worksSrvc.setPrivacy(putCode, priv);
 	};
 	
 	$scope.serverValidate = function (relativePath) {
@@ -3400,31 +3426,6 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		if (cur.errors !== undefined && cur.errors.length > 0) valid = false;
 		return valid ? '' : 'text-error';
 	};
-
-	
-	$scope.updateProfileWork = function(putCode) {
-		var work;
-		for (idx in $scope.worksSrvc.works) {
-			if ($scope.worksSrvc.works[idx].putCode.value == putCode) {
-				work = $scope.worksSrvc.works[idx];
-				break;
-			}
-		}
-		$.ajax({
-	        url: getBaseUri() + '/works/profileWork.json',
-	        type: 'PUT',
-	        data: angular.toJson(work),
-	        contentType: 'application/json;charset=UTF-8',
-	        dataType: 'json',
-	        success: function(data) {	        	
-	        	if(data.errors.length != 0){
-	        		console.log("Unable to update profile work.");
-	        	} 
-	        }
-	    }).fail(function() { 
-	    	console.log("Error updating profile work.");
-	    });
-	};		
 	
 	
 	$scope.loadWorkTypes = function(){			
