@@ -1605,7 +1605,7 @@ a:hover {
 .workspace-toolbar{
     line-height: 30px;
 	margin-top: 15px;
-	padding-left: 3px;	
+	padding-left: 0;	
 }
 
 .workspace-private-toolbar{
@@ -3842,7 +3842,7 @@ ul.sort-menu-options{
 	display: none;
 }
 
-a.sort-menu{
+a.toggle-menu{
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;
 	-khtml-user-select: none;
@@ -4140,6 +4140,10 @@ ul.id-details li{
 	opacity: 0.5;
 }
 
+.validations-versions a{
+	padding: 2px 0 0 0 !important; /* Overwriting Boostrap*/
+}
+
 .validations-versions li span{
 	margin-right: 10px;
 }
@@ -4216,7 +4220,7 @@ ul.id-details li{
 }
 
 .edit-option-toolbar{		
-	padding: 7px;
+	padding: 7px;	
 }
 
 a.toolbar-button{
@@ -4252,6 +4256,7 @@ ul.workspace-submenu-options{
 ul.workspace-submenu-options li{	
 	background: #a6ce39;
 	border-bottom: 1px solid #FFF;
+	font-size: 12px;
 }
 
 ul.workspace-submenu-options li a{
@@ -4267,6 +4272,10 @@ ul.workspace-submenu-options li a:hover{
 
 ul.workspace-submenu-options li a>span{
 	margin-right: 5px;
+}
+
+.affiliate .validations{
+	margin-top: 30px;
 }
 
 /* Media Queries */
@@ -5192,7 +5201,7 @@ ul.workspace-submenu-options li a>span{
 		height: 60px;
 	}
 	
-	.workspace-accordion-header a.sort-menu{
+	.workspace-accordion-header a.toggle-menu{
 		border-bottom: 1px solid #FFF;		
 	}
 	
@@ -5217,9 +5226,10 @@ ul.workspace-submenu-options li a>span{
 		font-size: 16px;
 		padding-top: 5px;		
 		display: block;
+		border-bottom: 1px solid #FFF;
 	}
 	
-	.workspace-accordion-header a.sort-menu{
+	.workspace-accordion-header a.toggle-menu{
 		height: 40px !important;
 	}
 	
@@ -5319,6 +5329,11 @@ ul.workspace-submenu-options li a>span{
 	
 	.public-profile .oid{
 		width: 100%;
+	}
+	
+	
+	.workspace-private-toolbar .glyphicon{
+		line-height: 15px;
 	}
 		
 
@@ -5462,8 +5477,8 @@ ul.workspace-submenu-options li a>span{
 		margin-top: 25px;
 	}
 	
-	.workspace-profile{
-		margin-bottom: 30px;				
+	.workspace-profile{		
+		padding: 15px;				
 	}
 	
 	.developer-tools{
@@ -5489,7 +5504,8 @@ ul.workspace-submenu-options li a>span{
 	
 	.public-profile .oid{
 		width: 100%;
-	}
+	}	
+	
 }
 
 @media(min-width:1200px){

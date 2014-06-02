@@ -62,6 +62,7 @@
 			</div>
 			<!-- Right column -->
 			<div class="col-md-3">
+				
 				<!-- Validations -->
 				<div class="validations bottomBuffer">
 					<strong>Validations</strong>
@@ -86,6 +87,7 @@
 					'manual_work_form_contents.labelWorkSource'/></strong>
 					<div ng-bind="worksSrvc.worksInfo[work.putCode.value].workSourceName.value"></div>
 				</div>
+				
 			</div>			
 		</div>
 		

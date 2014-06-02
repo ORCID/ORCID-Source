@@ -25,6 +25,7 @@
 					<strong ng-show="funding.fundingTitle.title.value">{{funding.fundingTitle.title.value}}:</strong>
 					<span class="funding-name" ng-bind-html="funding.fundingName.value"></span>					
 				</h3>
+				
 				<div class="info-detail">
 					<span class="funding-date" ng-show="funding.startDate && !funding.endDate">
 						<span ng-show="funding.startDate.year">{{funding.startDate.year}}</span><span ng-show="funding.startDate.month">-{{funding.startDate.month}}</span>						
@@ -40,17 +41,8 @@
 					     <span ng-show="funding.endDate.year">{{funding.endDate.year}}</span><span ng-show="funding.endDate.month">-{{funding.endDate.month}}</span>
 					</span>
 				</div>
-				<div class="row bottomBuffer" ng-show="funding.externalIdentifiers.length > 0" ng-cloak>
-				<div class="col-md-12">					
-					<div>					
-						<span ng-repeat='ei in funding.externalIdentifiers'>							
-							<span ng-bind-html='ei | externalIdentifierHtml:$first:$last:funding.externalIdentifiers.length'>
-							</span>
-						</span>
-					</div>
-				</div>
-			</div>
-			</div>			
+			</div>	
+			
 			<!-- Privacy Settings -->
 	        <div class="col-md-3 col-sm-3 workspace-toolbar">
 	        	<#if !(isPublicProfile??)>
@@ -70,7 +62,7 @@
 		                	privateClick="setPrivacy(funding, 'PRIVATE', $event)" />
 	                	</li>
 	                	 <li class="submenu-tree">
-		            		<a href="" class="toolbar-button more-options-button" id="more-options-button">
+		            		<a href="" class="toolbar-button toggle-menu" id="more-options-button">
 		            			<span class="glyphicon glyphicon-align-left edit-option-toolbar"></span>
 		            		</a>
 		            		<ul class="workspace-submenu-options">
@@ -88,8 +80,23 @@
 		        	</ul>
 		        </#if>
 			</div>
-		</div>			
-		
+		</div>
+		<div class="row bottomBuffer" ng-show="funding.externalIdentifiers.length > 0" ng-cloak>
+				<div class="col-md-9 col-sm-9">					
+					<div>					
+						<span ng-repeat='ei in funding.externalIdentifiers'>							
+							<span ng-bind-html='ei | externalIdentifierHtml:$first:$last:funding.externalIdentifiers.length'>
+							</span>
+						</span>
+					</div>
+				</div>
+				<div class="col-md-3 col-sm-3">
+					<ul class="validations-versions nav nav-pills nav-stacked">
+						<li><a href=""><span class="glyphicon glyphicon-ok green"></span><strong></strong><span class="badge pull-right blue">2</span>Validated</a></li>
+						<li><a href=""><span class="glyphicon glyphicon-file green"></span><span class="badge pull-right blue">3</span>Versions</a></li> <!-- for non versions use class 'opaque' instead green -->
+					</ul>
+				</div>
+			</div>			
 		<div ng-show="moreInfo[funding.putCode.value]">
 			<div class="content">			
 				<#include "funding_more_info_inc_v2.ftl"/>
@@ -105,6 +112,7 @@
 		</div>	
 	</li>
 </ul>
+
 <div ng-show="fundingSrvc.loading == true;" class="text-center">
     <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>
     <!--[if lt IE 8]>    

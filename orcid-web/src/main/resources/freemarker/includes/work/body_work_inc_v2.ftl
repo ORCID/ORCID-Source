@@ -52,18 +52,24 @@
 		                	privateClick="setPrivacy(work.putCode.value, 'PRIVATE', $event)"/>
 		                </li>
 		            	<li class="submenu-tree">
-		            		<a href="" class="toolbar-button more-options-button" id="more-options-button">
+		            		<a href="" class="toolbar-button toggle-menu">
 		            			<span class="glyphicon glyphicon-align-left edit-option-toolbar"></span>
 		            		</a>
 		            		<ul class="workspace-submenu-options">
 		            			<li>
-		            				<a href=""><span class="glyphicon glyphicon-file"></span>Review Versions</a>
+		            				<a href="">
+		            					<span class="glyphicon glyphicon-file"></span>Review Versions
+		            				</a>
 		            			</li>
 		            			<li>
-		            				<a href=""><span class="glyphicon glyphicon-trash"></span>Delete</a>
+		            				<a href="">
+		            					<span class="glyphicon glyphicon-trash"></span>Delete
+		            				</a>
 		            			</li>
 		            			<li>
-		            				<a href=""><span class="glyphicon glyphicon-question-sign"></span>Help</a>
+		            				<a href="">
+		            					<span class="glyphicon glyphicon-question-sign"></span>Help
+		            					</a>
 		            			</li>
 		            		</ul>
 		            	</li>	

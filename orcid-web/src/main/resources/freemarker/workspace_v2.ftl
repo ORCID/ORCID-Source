@@ -251,7 +251,7 @@
 			       			<div class="col-md-9 col-sm-10 col-xs-12 action-button-bar" ng-show="workspaceSrvc.displayWorks">
 			       				<!-- Sort -->
 			       				<div class="sort-menu-container">			       					 
-				       				<a class="action-option manage-button sort-menu" ng-click="">
+				       				<a class="action-option manage-button toggle-menu" ng-click="">
 										<span class="glyphicon glyphicon-sort"></span>							
 										<@orcid.msg 'manual_orcid_record_contents.sort'/>
 									</a>
