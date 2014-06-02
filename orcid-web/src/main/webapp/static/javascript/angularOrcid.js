@@ -362,10 +362,52 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 	return serv;
 }]);
 
+var GroupedWorks = function() {
+	this._keys = {};
+	this.works = new Array();
+	this.dateSortString;
+	this.title;
+};
+
+GroupedWorks.prototype.hasKey = function (key) {
+	if (key in this._keys) return true;
+	return false;
+};
+
+GroupedWorks.prototype.keyMatch = function (work) {
+	// we don't have keys yet
+	return false;
+};
+
+GroupedWorks.prototype.add = function(work) {
+   // we don't have the work external identifiers yet.
+   // we'll have to make sure any new keys are added
+   // and populate the sort title and sort strings 
+   // from the best match
+   this.dateSortString = work.dateSortString;
+   this.title = work.workTitle.title.value;
+   this.works.push(work);
+};
+
+GroupedWorks.prototype.hasPut = function(putCode) {
+	for (idx in this.works)
+		if (this.works[idx].putCode.value == putCode) 
+			return true;
+	return false;
+};
+
+GroupedWorks.prototype.rmByPut = function(putCode) {
+	for (idx in this.works)
+		if (this.works[idx].putCode.value == putCode)
+			return this.works.splice(idx, 1);
+	return undefined;
+};
+
+
 orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 	var serv = {
 		    loading: false,
-			works: new Array(),
+			groups: new Array(),
 			worksToAddIds: null,
 			worksInfo: {},
 			bibtexJson: {},
@@ -379,18 +421,6 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 					}
 				}
 			},
-			getBlankWork: function(callback) {
-				$.ajax({
-					url: getBaseUri() + '/works/work.json',
-					dataType: 'json',
-					success: function(data) {
-						callback(data);
-						$rootScope.$apply();
-					}
-				}).fail(function() { 
-			    	console.log("Error fetching blank work");
-			    });
-			},
 		    addWorkToScope: function(worksUrl) {
 				if(serv.worksToAddIds.length != 0 ) {
 					serv.loading = true;
@@ -403,8 +433,19 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 								for (i in data) {
 									var dw = data[i];                            
 									removeBadContributors(dw);							
-									serv.addBibtexJson(dw);							
-									serv.works.push(dw);
+									serv.addBibtexJson(dw);
+									var added = false;
+									for (idx in serv.groups)
+										if (serv.groups[idx].keyMatch(dw)) {
+											serv.groups[idx].addWork(dw);
+											added = true;
+											break;
+										}
+									if (added == false) {
+										var newGroup = new GroupedWorks();
+										newGroup.add(dw);
+										serv.groups.push(newGroup);
+									}
 								}
 							});
 							if(serv.worksToAddIds.length == 0 ) {
@@ -428,7 +469,49 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 				} else {
 					serv.loading = false;
 				};
-			} 
+			},
+			getBlankWork: function(callback) {
+				$.ajax({
+					url: getBaseUri() + '/works/work.json',
+					dataType: 'json',
+					success: function(data) {
+						callback(data);
+						$rootScope.$apply();
+					}
+				}).fail(function() { 
+			    	console.log("Error fetching blank work");
+			    });
+			},
+			deleteByPutCode: function(putCode) {
+				var idx;
+				var rmWorks;
+				for (idx in serv.groups) {
+					if (serv.groups[idx].hasPut(putCode)) {
+						rmWorks = serv.groups[idx].rmByPut(putCode);
+						if (serv.groups[idx].works.length == 0)
+						   serv.groups.splice(idx, 1);
+						break;
+					}
+				}
+				// remove work on server
+				serv.removeWork(rmWorks[0]);
+			},
+			removeWork: function(work) {
+				$.ajax({
+			        url: getBaseUri() + '/works/works.json',
+			        type: 'DELETE',
+			        data: angular.toJson(work),
+			        contentType: 'application/json;charset=UTF-8',
+			        dataType: 'json',
+			        success: function(data) {	        	
+			        	if(data.errors.length != 0){
+			        		console.log("Unable to delete work.");
+			        	} 
+			        }
+			    }).fail(function() { 
+			    	console.log("Error deleting work.");
+			    });
+			}
 	}; 
 	return serv;
 }]);
@@ -2029,7 +2112,7 @@ function WorkspaceSummaryCtrl($scope, $compile, affiliationsSrvc, fundingSrvc, w
 	$scope.fundingSrvc = fundingSrvc;
 	$scope.showAddAlert = function () {
 		if (worksSrvc.loading == false && affiliationsSrvc.loading == false
-				&& worksSrvc.works.length == 0 
+				&& worksSrvc.groups.length == 0 
 				&& affiliationsSrvc.educations.length == 0
 				&& affiliationsSrvc.employments.length == 0
 				&& fundingSrvc.fundings.length == 0)
@@ -3104,7 +3187,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		//clear out current works
 		$scope.worksSrvc.worksToAddIds = null;
 		$scope.worksSrvc.loading = true;
-		$scope.worksSrvc.works.length = 0;
+		$scope.worksSrvc.groups.length = 0;
 		//get work ids
 		$.ajax({
 			url: getBaseUri() + '/works/workIds.json',	        
@@ -3244,21 +3327,8 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
         });
 	};
 	
-	$scope.deleteByPutCode = function() {		
-		var work;
-		var idx;
-		for (idx in $scope.worksSrvc.works) {
-			if ($scope.worksSrvc.works[idx].putCode.value == $scope.deletePutCode) {
-				work = $scope.worksSrvc.works[idx];
-				break;
-			}
-		}
-		// remove work on server
-		$scope.removeWork(work);
-		// remove the work from the UI
-    	$scope.worksSrvc.works.splice(idx, 1);
-    	// apply changes on scope
-		// close box
+	$scope.deleteByPutCode = function() {
+		worksSrvc.deleteByPutCode($scope.deletePutCode);
 		$.colorbox.close(); 
 	};
 	
@@ -3266,27 +3336,8 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		$.colorbox.close();
 	};
 	
-
 	$scope.openImportWizardUrl = function(url) {
 		openImportWizardUrl(url);
-	};
-
-	
-	$scope.removeWork = function(work) {
-		$.ajax({
-	        url: getBaseUri() + '/works/works.json',
-	        type: 'DELETE',
-	        data: angular.toJson(work),
-	        contentType: 'application/json;charset=UTF-8',
-	        dataType: 'json',
-	        success: function(data) {	        	
-	        	if(data.errors.length != 0){
-	        		console.log("Unable to delete work.");
-	        	} 
-	        }
-	    }).fail(function() { 
-	    	console.log("Error deleting work.");
-	    });
 	};
 
 	$scope.setAddWorkPrivacy = function(priv, $event) {

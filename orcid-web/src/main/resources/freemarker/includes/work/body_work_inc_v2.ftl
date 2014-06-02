@@ -16,8 +16,9 @@
     =============================================================================
 
 -->
-<ul ng-hide="!worksSrvc.works.length" class="workspace-publications workspace-body-list bottom-margin-medium" id="body-work-list" ng-cloak>
-    <li class="bottom-margin-small" ng-repeat="work in worksSrvc.works | orderBy:['-dateSortString', 'workTitle.title.value']">        
+<ul ng-hide="!worksSrvc.groups.length" class="workspace-publications workspace-body-list bottom-margin-medium" id="body-work-list" ng-cloak>
+    <li class="bottom-margin-small" ng-repeat="group in worksSrvc.groups | orderBy:['-dateSortString', 'title']">        
+	<span ng-repeat="work in group.works | orderBy:['-dateSortString', 'workTitle.title.value']">
 		<div class="row"> 
 			<!-- Main title -->
 			<div class="col-md-9 col-sm-9 col-xs-12">
@@ -78,6 +79,7 @@
 				</div>
 			</div>
 		</div>
+		</span>
     </li><!-- bottom-margin-small -->
 </ul>
 <div ng-show="worksSrvc.loading == true" class="text-center" id="workSpinner">
