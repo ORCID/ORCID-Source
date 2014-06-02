@@ -4507,7 +4507,7 @@ function findIdsCtrl($scope,$compile){
 			scrolling: true
 		});	
 
-		setTimeout(function(){$.colorbox.resize({width:"450px"});},100);		
+		setTimeout(function(){$.colorbox.resize({width:"575px"});},100);		
 	};	
 	
 	$scope.closeModal = function() {
@@ -5388,4 +5388,16 @@ function CustomEmailCtrl($scope, $compile) {
 	};
 	
 	$scope.getCustomEmails();
+};
+
+function switchUserCtrl($scope,$compile){
+	$scope.emails = "";
+	$scope.orcidOrEmail = "";
+	$scope.showSection = false;
+	
+	$scope.toggleSection = function(){
+		$scope.showSection = !$scope.showSection;
+    	$('#switch_user_section').toggle();
+	};
+			
 };

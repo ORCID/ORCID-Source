@@ -63,6 +63,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  * @author Angel Montenegro
@@ -521,6 +522,40 @@ public class AdminController extends BaseController {
         return getMessage("admin.remove_security_question.success");
     }
     
+    /**
+     * Admin switch user
+     * */
+    @RequestMapping(value = "/switch-user", method = RequestMethod.POST)
+    public ModelAndView adminSwitchUser(@ModelAttribute("orcidOrEmail") String orcidOrEmail, RedirectAttributes redirectAttributes) {
+        if(StringUtils.isNotBlank(orcidOrEmail))
+            orcidOrEmail = orcidOrEmail.trim();
+        boolean isOrcid = matchesOrcidPattern(orcidOrEmail);
+        String orcid = null;
+        //If it is not an orcid, check the value from the emails table
+        if(!isOrcid) {
+            Map<String, String> email = findIdByEmail(orcidOrEmail);
+            orcid = email.get(orcidOrEmail);
+        } else {
+            orcid = orcidOrEmail;
+        }
+        
+        ModelAndView mav = null;
+        
+        if(StringUtils.isNotEmpty(orcid)) {
+            if (profileEntityManager.orcidExists(orcid)) {
+                mav = new ModelAndView("redirect:/switch-user?j_username=" + orcid);
+            } else {
+                redirectAttributes.addFlashAttribute("invalidOrcid", true);
+                mav = new ModelAndView("redirect:/admin-actions");
+            }
+        } else {
+            redirectAttributes.addFlashAttribute("invalidOrcid", true);
+            mav = new ModelAndView("redirect:/admin-actions");
+        }
+        
+        return mav;
+        
+    }
     
     private boolean matchesOrcidPattern(String orcid){
         return OrcidStringUtils.isValidOrcid(orcid);

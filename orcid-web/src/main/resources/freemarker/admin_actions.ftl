@@ -40,7 +40,7 @@
 				</tr>
 				<tr ng-repeat="(email, orcid) in emailIdsMap">
 					<td>{{email}}</td>
-					<td>{{orcid}}</td>
+					<td>{{orcid}}&nbsp;(<@orcid.msg 'admin.switch.click.1'/>&nbsp;<a href="<@orcid.msg 'admin.switch.click.link'/>{{orcid}}"><@orcid.msg 'admin.switch.click.here'/></a>&nbsp;<@orcid.msg 'admin.switch.click.2'/>)</td>
 				</tr>
 			</table>
 			<div class="controls save-btns pull-right bottom-margin-small">
@@ -219,7 +219,7 @@
 				<div class="control-group">
 	    			<span><strong><@orcid.msg 'manage_groups.group_orcid'/></strong></span>
     				<div class="relative">
-      					<span>{{newGroup.groupOrcid.value}}</span>
+      					<span>{{newGroup.groupOrcid.value}}&nbsp;(<@orcid.msg 'admin.switch.click.1'/>&nbsp;<a href="<@orcid.msg 'admin.switch.click.link'/>{{newGroup.groupOrcid.value}}"><@orcid.msg 'admin.switch.click.here'/></a>&nbsp;<@orcid.msg 'admin.switch.click.2'/>)</span>
     				</div>
   				</div>
 				<div class="control-group">
@@ -309,6 +309,11 @@
 	</div>
 </script>
 
+<#if invalidOrcid?? && invalidOrcid>
+    <div class="alert alert-success">
+        <strong><@spring.message "orcid.frontend.web.invalid_switch_orcid"/></strong>
+    </div>
+</#if>
 <!-- Admin main Layout -->
 <div class="row">
 	<!-- Left menu bar -->	
@@ -317,6 +322,26 @@
 	</div>
 	<!-- Right menu bar -->
 	<div class="col-md-9 col-sm-12 col-xs-12 admin-options">	
+		<!-- Switch user -->
+		<a name="switch-user"></a>
+		<div ng-controller="switchUserCtrl" class="workspace-accordion-item" ng-cloak>
+			<p>
+				<a  ng-show="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-down blue"></span></span><@orcid.msg 'admin.switch_user' /></a>
+				<a  ng-hide="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-right blue"></span></span><@orcid.msg 'admin.switch_user' /></a>
+			</p>
+			<div class="collapsible bottom-margin-small admin-modal" id="switch_user_section" style="display:none;">
+				<form action="./admin-actions/switch-user" method="post">
+					<div class="form-group">
+						<label for="orcidOrEmail"><@orcid.msg 'admin.switch_user.orcid.label' /></label>
+						<input type="text" id="orcidOrEmail" name="orcidOrEmail" placeholder="<@orcid.msg 'admin.switch_user.orcid.placeholder' />" class="input-xlarge" />
+					</div>
+					<div class="controls save-btns pull-left">
+						<input type="submit" class="btn btn-primary" value="<@orcid.msg 'admin.switch_user.button'/>" />											
+					</div>
+				</form>
+			</div>	
+		</div>
+
 		<!-- Find Ids by email -->
 		<a name="find-ids"></a>
 		<div ng-controller="findIdsCtrl" class="workspace-accordion-item" ng-cloak>
