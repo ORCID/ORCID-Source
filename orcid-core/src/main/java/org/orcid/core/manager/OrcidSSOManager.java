@@ -26,6 +26,5 @@ public interface OrcidSSOManager {
     ClientDetailsEntity getUserCredentials(String orcid);
     ClientDetailsEntity updateUserCredentials(String orcid, String name, String description, String website, Set<String> redirectUris);
     void revokeSSOAccess(String orcid);   
-    boolean addClientSecret(String clientDetailsId);
-    boolean removeClientSecret(String clientDetailsId, String clientSecret);
+    boolean resetClientSecret(String clientDetailsId);    
 }

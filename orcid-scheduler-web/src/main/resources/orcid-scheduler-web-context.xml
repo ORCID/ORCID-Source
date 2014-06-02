@@ -40,6 +40,7 @@
         <task:scheduled ref="orgDisambiguatedManager" method="processOrgsWithIncorrectPopularity" cron="${org.orcid.scheduler.web.processOrgsWithIncorrectPopularity:45 45 0-2 * * *}"/>
         <task:scheduled ref="orgDisambiguatedManager" method="processOrgsForIndexing" cron="${org.orcid.scheduler.web.processOrgsForIndexing:55 55 0-2 * * *}"/>
         <task:scheduled ref="profileFundingManager" method="indexFundingSubTypes" cron="${org.orcid.scheduler.web.processFundingSubTypesForIndexing:15 15 * * * *}" />
+        <task:scheduled ref="clientDetailsManager" method="cleanOldClientKeys" cron="${org.orcid.scheduler.web.cleanOldClientKeys:0 0 0/1 * * ?}" />
     </task:scheduled-tasks>
 
     <task:scheduler id="scheduler" pool-size="10"/>

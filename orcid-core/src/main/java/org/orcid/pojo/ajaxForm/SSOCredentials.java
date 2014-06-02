@@ -18,7 +18,6 @@ package org.orcid.pojo.ajaxForm;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -38,7 +37,7 @@ public class SSOCredentials implements ErrorsInterface, Serializable {
     Text clientDescription;
     Text clientWebsite;
     Text clientOrcid;
-    Set<Text> clientSecrets;
+    Text clientSecret;
     Set<RedirectUri> redirectUris;
     
     public static SSOCredentials toSSOCredentials(ClientDetailsEntity clientDetails) {
@@ -49,7 +48,8 @@ public class SSOCredentials implements ErrorsInterface, Serializable {
             result.setClientWebsite(Text.valueOf(clientDetails.getClientWebsite()));
             if(clientDetails.getClientSecrets() != null) {
                 for(ClientSecretEntity clientSecret : clientDetails.getClientSecrets()){
-                    result.addClientSecret(Text.valueOf(clientSecret.getDecryptedClientSecret()));
+                    if(clientSecret.isPrimary())
+                        result.setClientSecret(Text.valueOf(clientSecret.getDecryptedClientSecret()));
                 }
             }
             result.setClientOrcid(Text.valueOf(clientDetails.getClientId()));            
@@ -88,18 +88,12 @@ public class SSOCredentials implements ErrorsInterface, Serializable {
         this.clientWebsite = clientWebsite;
     }
 
-    public Set<Text> getClientSecrets() {
-        return clientSecrets;
+    public Text getClientSecret() {
+        return clientSecret;
     }
-    public void setClientSecret(Set<Text> clientSecrets) {
-        this.clientSecrets = clientSecrets;
-    }
-    
-    public void addClientSecret(Text clientSecret) {
-        if(this.clientSecrets == null)
-            this.clientSecrets = new HashSet<Text>();
-        this.clientSecrets.add(clientSecret);
-    }
+    public void setClientSecret(Text clientSecret) {
+        this.clientSecret = clientSecret;
+    }    
     
     public Set<RedirectUri> getRedirectUris() {
         return redirectUris;
