@@ -264,7 +264,7 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
         clientDetailsEntity.setClientName(name);
         clientDetailsEntity.setClientDescription(description);
         clientDetailsEntity.setClientWebsite(website);
-        clientDetailsEntity.setClientSecretForJpa(clientSecret);
+        clientDetailsEntity.setClientSecretForJpa(clientSecret, true);
         clientDetailsEntity.setDecryptedClientSecret(encryptionManager.decryptForInternalUse(clientSecret));
         clientDetailsEntity.setClientScopes(getClientScopeEntities(clientScopes, clientDetailsEntity));
         clientDetailsEntity.setClientResourceIds(getClientResourceIds(clientResourceIds, clientDetailsEntity));
