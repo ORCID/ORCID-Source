@@ -5032,10 +5032,23 @@ function ClientEditCtrl($scope, $compile){
 	$scope.availableRedirectScopes = [];
 	$scope.editing = false;
 	$scope.creating = false;
+	$scope.viewing = false;
 	$scope.listing = true;
 	$scope.hideGoogleUri = true;
+	$scope.selectedRedirectUri = "";
+	// Google example
 	$scope.googleUri = 'https://developers.google.com/oauthplayground';
-	$scope.runscopeUri = 'https://www.runscope.com/oauth_tool/callback';
+	$scope.playgroundExample = '';
+	$scope.googleExampleLink = 'https://developers.google.com/oauthplayground/#step1&scopes=/authenticate&oauthEndpointSelect=Custom&oauthAuthEndpointValue=[BASE_URI_ENCODE]/oauth/authorize&oauthTokenEndpointValue=[PUB_BASE_URI_ENCODE]/oauth/token&oauthClientId=[CLIENT_ID]&oauthClientSecret=[CLIENT_SECRET]&accessTokenType=bearer';
+	// Curl example
+	$scope.sampleAuthCurl = '';
+	$scope.sampleAuthCurlTemplate = "curl -i -L -k -H 'Accept: application/json' --data 'client_id=[CLIENT_ID]&client_secret=[CLIENT_SECRET]&grant_type=authorization_code&redirect_uri=[REDIRECT_URI]&code=REPLACE WITH OAUTH CODE' [PUB_BASE_URI]/oauth/token";
+	// Auth example
+	$scope.authorizeUrlBase = getBaseUri() + '/oauth/authorize';
+	$scope.authorizeURLTemplate = $scope.authorizeUrlBase + '?client_id=[CLIENT_ID]&response_type=code&scope=/authenticate&redirect_uri=[REDIRECT_URI]';	
+	// Token url
+	$scope.tokenURL = orcidVar.pubBaseUri + '/oauth/token';
+	
 	
 	// Get the list of clients associated with this user
 	$scope.getClients = function(){
@@ -5047,6 +5060,7 @@ function ClientEditCtrl($scope, $compile){
 					$scope.clients = data;
 					$scope.creating = false;
 					$scope.editing = false;
+					$scope.viewing = false;
 					$scope.listing = true;
 					$scope.hideGoogleUri = true;
 				});
@@ -5070,6 +5084,7 @@ function ClientEditCtrl($scope, $compile){
 					$scope.creating = true;
 					$scope.listing = false;
 					$scope.editing = false;
+					$scope.viewing = false;
 					$scope.hideGoogleUri = false;
 				});
 			}
@@ -5088,13 +5103,8 @@ function ClientEditCtrl($scope, $compile){
 		$scope.clientToEdit.redirectUris.push({value: {value: ''},type: {value: 'default'}, scopes: []});
 	};
 	
-	
-	
-	
-	
-	
 	$scope.addTestRedirectUri = function(type, edit) {
-		var rUri = $scope.runscopeUri;		
+		var rUri = '';		
 		if(type == 'google'){
 			rUri = $scope.googleUri;
 		}
@@ -5128,14 +5138,6 @@ function ClientEditCtrl($scope, $compile){
 	    });
 	};
 	
-	
-	
-	
-	
-	
-	
-	
-	
 	// Display the modal to edit a client
 	$scope.editClient = function(idx) {		
 		// Copy the client to edit to a scope variable 
@@ -5150,22 +5152,6 @@ function ClientEditCtrl($scope, $compile){
         });		
         $.colorbox.resize({width:"400px" , height:"450px"});   
 	};		
-	
-	// Display client details: Client ID and Client secret
-	$scope.viewDetails = function(idx){
-		$scope.clientDetails = $scope.clients[idx];
-		$.colorbox({        	            
-            html : $compile($('#view-details-modal').html())($scope),
-	        scrolling: true,
-	        onLoad: function() {
-			    $('#cboxClose').remove();
-			},
-			scrolling: true
-        });
-		
-        $.colorbox.resize({width:"560px" , height:"275px"});
-        
-	};
 	
 	$scope.closeModal = function(){
 		$.colorbox.close();	
@@ -5245,12 +5231,19 @@ function ClientEditCtrl($scope, $compile){
 	    });		
 	};
 	
-	$scope.showViewLayout = function() {	
-		//Reset the credentials
-		$scope.getClients();	
+	// Display client details: Client ID and Client secret
+	$scope.viewDetails = function(client) {				
+		// Set the client details
+		$scope.clientDetails = client;
+		// Set the first redirect uri selected		
+		if(client.redirectUris != null && client.redirectUris.length > 0) {
+			$scope.selectedRedirectUri = client.redirectUris[0];			
+		}
+		 
 		$scope.editing = false;
 		$scope.creating = false;
 		$scope.listing = false;	
+		$scope.viewing = true;
 	};
 	
 	
@@ -5306,6 +5299,11 @@ function ClientEditCtrl($scope, $compile){
 	    }
 	    return false;
 	};
+	
+	$scope.updateSelectedRedirectUri = function() {
+		
+	};
+	
 	
 	//init
 	$scope.getClients();

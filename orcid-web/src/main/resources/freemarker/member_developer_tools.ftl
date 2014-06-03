@@ -73,8 +73,8 @@
 										</td>												
 										<td colspan="4" class="pull-right">										
 											<ul class="client-options">
-												<li><a href ng-click="viewDetails($index)"><span class="glyphicon glyphicon-eye-open"></span><@orcid.msg 'manage.developer_tools.group.view_credentials_link' /></a></li>	
-												<li><a href ng-click="editClient($index)"><span class="glyphicon glyphicon-pencil"></span><@orcid.msg 'manage.developer_tools.group.edit_credentials_link' /></a></li>												
+												<li><a href ng-click="viewDetails(client)"><span class="glyphicon glyphicon-eye-open"></span><@orcid.msg 'manage.developer_tools.group.view_credentials_link' /></a></li>	
+												<li><a href ng-click="editClient(client)"><span class="glyphicon glyphicon-pencil"></span><@orcid.msg 'manage.developer_tools.group.edit_credentials_link' /></a></li>												
 											</ul>										
 										</td>									
 									</tr>												
@@ -218,8 +218,51 @@
 			
 			
 			
-			<!-- Edit credentials -->
-			<div class="row">				
+			<!-- View credentials -->
+			<div class="viewing-client" ng-show="viewing" ng-cloak>		
+				<!-- ORCID -->
+				<div class="row">					
+					<div class="col-md-3 col-sm-3 col-xs-12">
+						<div class="inner-row margin-left-fix">
+							<span><@orcid.msg 'manage.developer_tools.group.client_id' /></span>
+						</div>
+					</div>
+					<div class="col-md-9 col-sm-9 col-xs-12">
+						<div class="inner-row margin-left-fix">
+							<span>{{clientDetails.clientId.value}}</span>
+						</div>
+					</div>
+				</div>		
+				<!-- Secret -->
+				<div class="row">					
+					<div class="col-md-3 col-sm-3 col-xs-12">
+						<div class="inner-row margin-left-fix"> 
+							<span><@orcid.msg 'manage.developer_tools.group.client_secret' /></span>
+						</div>
+					</div>
+					<div class="col-md-9 col-sm-9 col-xs-12">
+						<div class="inner-row margin-left-fix">
+							<span>{{clientDetails.clientSecret.value}}</span>
+						</div>
+					</div>
+				</div>				
+				<!-- Redirect Uri -->
+				<div class="row">
+					<div class="col-md-3 col-sm-3 col-xs-12">
+						<div class="inner-row margin-left-fix">
+							<span><@orcid.msg 'manage.developer_tools.group.view.redirect_uris' /></span>
+						</div>
+					</div>
+					<div class="col-md-9 col-sm-9 col-xs-12">
+						<div class="inner-row margin-left-fix">
+							<select ng-model="selectedRedirectUri" ng-options="rUri.value.value for rUri in clientDetails.redirectUris | orderBy:'value.value'" ng-change="updateSelectedRedirectUri()">
+						</div>
+					</div>
+				</div>
+				<!-- Example -->
+				<div class="row">
+					
+				</div>
 			</div>
 			
 			
