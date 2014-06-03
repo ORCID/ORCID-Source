@@ -110,10 +110,10 @@
 				</div>
 				<!-- Description -->
 				<div class="row">					
-					<div class="col-md-12 col-sm-12 col-xs-12">
+					<div class="col-md-12 col-sm-12 col-xs-12 dt-description">
 						<div class="inner-row">
 							<span><strong><@orcid.msg 'manage.developer_tools.group.description'/></strong></span>
-							<textarea placeholder="<@orcid.msg 'manage.developer_tools.group.description_placeholder'/>" ng-model="newClient.shortDescription.value"></textarea>						
+							<textarea class="input-xlarge selectable" placeholder="<@orcid.msg 'manage.developer_tools.group.description_placeholder'/>" ng-model="newClient.shortDescription.value"></textarea>						
 							<span class="orcid-error" ng-show="newClient.shortDescription.errors.length > 0">
 								<div ng-repeat='error in newClient.shortDescription.errors' ng-bind-html="error"></div>
 							</span>

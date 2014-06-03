@@ -115,6 +115,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
         RedirectUri emptyRedirectUri = new RedirectUri();
         emptyRedirectUri.setValue(Text.valueOf(""));
         emptyRedirectUri.setType(Text.valueOf("default"));
+        redirectUris.add(emptyRedirectUri);
         emptyClient.setRedirectUris(redirectUris);
         return emptyClient;
     }
