@@ -400,39 +400,38 @@
 		});		
 	};
 	
-	var sortMenu =  function(){
-		$('.workspace-right .sort-menu').click(function(event){			
-			var status = $(this).siblings().css('display');			
-			if(status == 'none' ){
-				$(this).siblings().css('display','block');
-			}else{
-				$(this).siblings().css('display','none');				
-			}
-		});
-	}
-	
 	var selectableInputs = function(){
     	$(".selectable").click(function () {
     		$(this).select();
     	});
     };
     
+    var toggleMenu = function(){			
+		$(".toggle-menu").live("click", function(event){			
+			event.preventDefault();			
+			var status = $(this).siblings().css('display');
+			if(status == 'none' ){
+				$(this).siblings().slideDown();
+			}else{
+				$(this).siblings().slideUp();							
+			}
+		});
+	};
+	
+    
     /*============================================================
         Page initialisation
     ============================================================*/
 
     var init = function() {
-        //handleNews();
         searchFilters();
-        //secondaryNavCleanup();
         toolTips();
         popupHandler();
         menuHack();        
         menuHandler();
         developerToolsTabs();
-        //setLoginStatusIcon();
         selectableInputs();
-        sortMenu();
+        toggleMenu();
     };
 
     

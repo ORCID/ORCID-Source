@@ -46,19 +46,18 @@
 	<#elseif !Session.CHECK_EMAIL_VALIDATED?exists && !inDelegationMode>
     	<div ng-controller="VerifyEmailCtrl" style="display: hidden;"></div>
 	</#if>
-
+	<!-- ID Banner and other account information -->
     <div class="col-md-3 lhs left-aside">
     	<div class="workspace-profile">
+            
             <#include "includes/id_banner.ftl"/>
+            
 	       	<div class="other-names-box">
 		       	<div ng-controller="OtherNamesCtrl" class="other-names-controller">
 		        	<div>
 		        	   <strong><@orcid.msg 'workspace.Alsoknownas'/></strong>
-		        	   <span ng-hide="showEdit == true" ng-click="openEdit()">
-		        	   	  
-		        	      	<span class="glyphicon glyphicon-pencil edit-other-names edit-option" title=""></span>
-		        	
-		        	      
+		        	   <span ng-hide="showEdit == true" ng-click="openEdit()">		        	   	  
+		        	      	<span class="glyphicon glyphicon-pencil edit-other-names edit-option pull-right" title=""></span>
 		        	      <br />
 		        	      <span ng-repeat="otherNames in otherNamesForm.otherNames" ng-cloak>
 		        	         {{ $last?otherNames.value:otherNames.value+ ", "}}
@@ -96,7 +95,7 @@
             
             <div ng-controller="CountryCtrl" class="country-controller">
 	        	<strong><@orcid.msg 'public_profile.labelCountry'/></strong>
-	            <span class="glyphicon glyphicon-pencil edit-country edit-option" ng-click="openEdit()" title="" ng-hide="showEdit == true"></span>
+	            <span class="glyphicon glyphicon-pencil edit-country edit-option pull-right" ng-click="openEdit()" title="" ng-hide="showEdit == true"></span>
 	            <br />   
                 <span ng-hide="showEdit == true" ng-click="toggleEdit()">
 	                <span ng-show="countryForm != null && countryForm.iso2Country != null" ng-bind="countryForm.iso2Country.value">
@@ -130,7 +129,7 @@
 		        	<div>
 		        	   <strong><@orcid.msg 'public_profile.labelKeywords'/></strong>
 		        	   <span ng-hide="showEdit == true" ng-click="openEdit()">
-		        	      <span class="glyphicon glyphicon-pencil edit-keywords edit-option" title=""></span><br />
+		        	      <span class="glyphicon glyphicon-pencil edit-keywords edit-option pull-right" title=""></span><br />
 		        	      <span ng-repeat="keyword in keywordsForm.keywords" ng-cloak>
 		        	         {{ $last?keyword.value:keyword.value+ ", "}}
 		        	      </span>
@@ -167,11 +166,11 @@
 		        	<div>
 		        	   <strong><@orcid.msg 'public_profile.labelWebsites'/></strong>
 		        	   <span ng-hide="showEdit == true">
-		        	      <span class="glyphicon glyphicon-pencil edit-websites edit-option" ng-click="openEdit()" title=""></span><br />
+		        	      <span class="glyphicon glyphicon-pencil edit-websites edit-option pull-right" ng-click="openEdit()" title=""></span><br />
 		        	      <div ng-repeat="website in websitesForm.websites" ng-cloak>
 		        	         <a href="{{website.url.value}}" target="_blank" rel="nofollow">{{website.name.value != null? website.name.value : website.url.value}}</a>
 		        	      </div>
-		        	   </span>
+		        	   </span>		        	   
 		        	   <div ng-show="showEdit == true" ng-cloak class="websites-edit">
 		        	      <@orcid.privacyToggle  angularModel="websitesForm.visibility.visibility"
 				             questionClick="toggleClickPrivacyHelp()"
@@ -242,7 +241,7 @@
                 	<div class="workspace-accordion-header">
                 		<div class="row">
                 			<div class="col-md-3 col-sm-2 col-xs-12">
-		                		<div class="work-title" ng-controller="WorkspaceSummaryCtrl">
+		                		<div class="workspace-title" ng-controller="WorkspaceSummaryCtrl">
 			                		<a href="" ng-click="workspaceSrvc.toggleWorks($event)" class="toggle-text">
 				       			       <i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayWorks==false}"></i>
 				       			       <@orcid.msg 'workspace.Works'/> (<span ng-bind="worksSrvc.works.length"></span>)
@@ -252,7 +251,7 @@
 			       			<div class="col-md-9 col-sm-10 col-xs-12 action-button-bar" ng-show="workspaceSrvc.displayWorks">
 			       				<!-- Sort -->
 			       				<div class="sort-menu-container">			       					 
-				       				<a class="action-option manage-button sort-menu" ng-click="">
+				       				<a class="action-option manage-button toggle-menu" ng-click="">
 										<span class="glyphicon glyphicon-sort"></span>							
 										<@orcid.msg 'manual_orcid_record_contents.sort'/>
 									</a>

@@ -29,7 +29,7 @@
 				    && (nameForm.creditName == null || nameForm.creditNameVisibility.visibility != 'PUBLIC')" ng-cloak>
 				    {{nameForm.givenNames.value}} {{nameForm.familyName.value}}
 				</span>
-				<span class="glyphicon glyphicon-pencil edit-name edit-option" title="" ng-hide="showEdit == true"></span> 
+				<span class="glyphicon glyphicon-pencil edit-name edit-option pull-right" title="" ng-hide="showEdit == true"></span> 
 			</h2>
 		</div>
 		<div class="names-edit" ng-show="showEdit == true" ng-cloak>
