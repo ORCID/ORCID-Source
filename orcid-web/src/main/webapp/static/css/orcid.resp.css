@@ -178,6 +178,7 @@ label,input,button,select,textarea {
 	padding-left: 0;
 	margin-bottom: 10px;
 }
+
 .margin-top-box{
 	margin-top: 15px;
 }
@@ -3534,7 +3535,7 @@ p.orcid-id-container{
 }
 
 .inner-row{
-	margin-left: 15px;
+	/*margin-left: 15px;*/
 }
 
 .developer-tools .tab-container{	
@@ -3992,6 +3993,15 @@ p.orcid-id-container{
 
 .no-wrap{
 	word-break: normal;
+}
+
+.small-box{
+	float:left;
+	width: 25%;	
+}
+
+.small-box input[type="checkbox"]{
+	width: 15px;
 }
 
 /* Media Queries */
@@ -4931,6 +4941,15 @@ p.orcid-id-container{
 		display: block;
 	}
 	
+	.small-box{
+		float:left;
+		width: 100%;	
+	}	
+	
+	.margin-top-box-mobile{
+		margin-top:15px; 
+	}
+	
 	
 }
 
@@ -5095,6 +5114,10 @@ p.orcid-id-container{
     .id-banner .id-banner-container ul.id-banner-dropdown,
 	.id-banner .id-banner-container ul.id-banner-dropdown > li{
 		width: 100%;
+	}
+	
+	.margin-top-box-mobile{
+		margin-top:15px; 
 	}
 }
 
