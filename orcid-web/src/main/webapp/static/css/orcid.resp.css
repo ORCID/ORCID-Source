@@ -4004,10 +4004,6 @@ p.orcid-id-container{
 	width: 15px;
 }
 
-.input-xlarge-full{
-	width: 100%;
-}
-
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 		
@@ -4952,6 +4948,10 @@ p.orcid-id-container{
 	
 	.margin-top-box-mobile{
 		margin-top:15px; 
+	}	
+	
+	.input-xlarge-full{
+		width: 100%;
 	}
 	
 }

@@ -157,7 +157,7 @@
 						<div class="row">						
 							<div class="col-md-12 col-sm-12 col-xs-12">
 								<div class="inner-row">
-									<select class="input-xlarge-full" ng-model="rUri.type.value" ng-change="loadDefaultScopes(rUri)">
+									<select class="input-large input-xlarge-full" ng-model="rUri.type.value" ng-change="loadDefaultScopes(rUri)">
 										<#list redirectUriTypes?keys as key>
 											<option value="${key}">${redirectUriTypes[key]}</option>
 										</#list>
