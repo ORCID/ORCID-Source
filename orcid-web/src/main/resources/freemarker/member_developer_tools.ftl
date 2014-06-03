@@ -98,7 +98,7 @@
 				<!-- Name -->
 				<div class="row">					
 					<div class="col-md-12 col-sm-12 col-xs-12">
-						<div class="inner-row">
+						<div class="inner-row margin-left-fix">
 							<span><strong><@orcid.msg 'manage.developer_tools.group.display_name'/></strong></span>
 							<input type="text" placeholder="<@orcid.msg 'manage.developer_tools.group.display_name_placeholder'/>" class="input-xlarge" ng-model="newClient.displayName.value" />
 							<span class="orcid-error" ng-show="newClient.displayName.errors.length > 0">
@@ -110,7 +110,7 @@
 				<!-- Website -->
 				<div class="row">	
 					<div class="col-md-12 col-sm-12 col-xs-12">
-						<div class="inner-row">
+						<div class="inner-row margin-left-fix">
 							<span><strong><@orcid.msg 'manage.developer_tools.group.website'/></strong></span>
 							<input type="text" placeholder="<@orcid.msg 'manage.developer_tools.group.website_placeholder'/>" class="input-xlarge" ng-model="newClient.website.value" />
 							<span class="orcid-error" ng-show="newClient.website.errors.length > 0">
@@ -122,7 +122,7 @@
 				<!-- Description -->
 				<div class="row">					
 					<div class="col-md-12 col-sm-12 col-xs-12 dt-description">
-						<div class="inner-row">
+						<div class="inner-row margin-left-fix">
 							<span><strong><@orcid.msg 'manage.developer_tools.group.description'/></strong></span>
 							<textarea class="input-xlarge selectable" placeholder="<@orcid.msg 'manage.developer_tools.group.description_placeholder'/>" ng-model="newClient.shortDescription.value"></textarea>						
 							<span class="orcid-error" ng-show="newClient.shortDescription.errors.length > 0">
@@ -136,7 +136,7 @@
 					<!-- Header -->
 					<div class="row" ng-show="$first">
 						<div class="col-md-12 col-sm-12 col-xs-12">
-							<div class="inner-row">					
+							<div class="inner-row margin-left-fix">					
 								<h4><@orcid.msg 'manage.developer_tools.redirect_uri'/></h4>
 							</div>
 						</div>
@@ -145,7 +145,7 @@
 					<div class="grey-box">
 						<div class="row">						
 							<div class="col-md-12 col-sm-12 col-xs-12">
-								<div class="inner-row">							
+								<div class="inner-row margin-left-fix">							
 									<input type="text" placeholder="<@orcid.msg 'manage.developer_tools.group.redirect_uri_placeholder'/>" class="input-xlarge" ng-model="rUri.value.value" />															
 									<span class="orcid-error" ng-show="rUri.value.errors.length > 0">
 										<div ng-repeat='error in rUri.value.errors' ng-bind-html="error"></div>
@@ -156,7 +156,7 @@
 						<!-- Type -->
 						<div class="row">						
 							<div class="col-md-12 col-sm-12 col-xs-12">
-								<div class="inner-row">
+								<div class="inner-row margin-left-fix">
 									<select class="input-large input-xlarge-full" ng-model="rUri.type.value" ng-change="loadDefaultScopes(rUri)">
 										<#list redirectUriTypes?keys as key>
 											<option value="${key}">${redirectUriTypes[key]}</option>
@@ -168,7 +168,7 @@
 						<!-- Scopes -->
 						<div class="row">						
 							<div class="col-md-12 col-sm-12 col-xs-12" ng-show="rUri.type.value != 'default'">
-								<div class="inner-row">
+								<div class="inner-row margin-left-fix">
 									<div class="scope_item" ng-repeat="scope in availableRedirectScopes">
 										<div class="small-box">
 											<div class="checkbox">										

@@ -3535,7 +3535,7 @@ p.orcid-id-container{
 }
 
 .inner-row{
-	/*margin-left: 15px;*/
+	margin-left: 15px;
 }
 
 .developer-tools .tab-container{	
@@ -4002,6 +4002,10 @@ p.orcid-id-container{
 
 .small-box input[type="checkbox"]{
 	width: 15px;
+}
+
+.margin-left-fix{
+	margin-left: 0;
 }
 
 /* Media Queries */
