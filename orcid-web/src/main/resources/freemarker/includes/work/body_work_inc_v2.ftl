@@ -16,15 +16,16 @@
     =============================================================================
 
 -->
-<ul ng-hide="!worksSrvc.works.length" class="workspace-publications workspace-body-list bottom-margin-medium" id="body-work-list" ng-cloak>
-    <li class="bottom-margin-small" ng-repeat="work in worksSrvc.works | orderBy:['-dateSortString', 'workTitle.title.value']">        
+<ul ng-hide="!worksSrvc.groups.length" class="workspace-publications workspace-body-list bottom-margin-medium" id="body-work-list" ng-cloak>
+    <li class="bottom-margin-small" ng-repeat="group in worksSrvc.groups | orderBy:['-dateSortString', 'title']">        
+	<div ng-repeat="work in group.works | orderBy:['-dateSortString', 'workTitle.title.value']">
 		<div class="row"> 
 			<!-- Main title -->
 			<div class="col-md-9 col-sm-9 col-xs-12">
-		        <h3 class="work-title">
+		        <h3 class="workspace-title">
 		        	<strong ng-bind="work.workTitle.title.value"></strong><span class="work-subtitle" ng-show="work.workTitle.subtitle.value" ng-bind="':&nbsp;'.concat(work.workTitle.subtitle.value)"></span>		        			        	
 		        </h3>
-		        <div class="info-date-detail">
+		        <div class="info-detail">
 		        	<span ng-show="work.publicationDate.year">{{work.publicationDate.year}}</span><span ng-show="work.publicationDate.month">-{{work.publicationDate.month}}</span>
 		        </div>		        
 	        </div>
@@ -32,19 +33,47 @@
 	        <div class="col-md-3 col-sm-3 col-xs-12 workspace-toolbar">	        	
 	        	<#if !(isPublicProfile??)>
 	        		<!-- Trash can -->
-					<a href ng-click="deleteWork(work.putCode.value)" class="glyphicon glyphicon-trash grey"></a>
+					<!-- <a href ng-click="deleteWork(work.putCode.value)" class="glyphicon glyphicon-trash grey"></a> -->
+					
 	        	</#if>
 	        	<#if !(isPublicProfile??)>
 	        		<!-- Privacy bar -->
 					<ul class="workspace-private-toolbar">
+					 	<li>
+					 		<a href="" class="toolbar-button edit-item-button">
+					 			<span class="glyphicon glyphicon-pencil edit-option-toolbar" title=""></span>
+					 		</a>	
+					 	</li>					 	
 						<li>
-						<@orcid.privacyToggle angularModel="work.visibility" 
+						<@orcid.privacyToggle2 angularModel="work.visibility" 
 						    questionClick="toggleClickPrivacyHelp(work.putCode.value)"
 						    clickedClassCheck="{'popover-help-container-show':privacyHelp[work.putCode.value]==true}"
 							publicClick="setPrivacy(work.putCode.value, 'PUBLIC', $event)" 
 		                	limitedClick="setPrivacy(work.putCode.value, 'LIMITED', $event)" 
 		                	privateClick="setPrivacy(work.putCode.value, 'PRIVATE', $event)"/>
-		                </li>			
+		                </li>
+		            	<li class="submenu-tree">
+		            		<a href="" class="toolbar-button toggle-menu">
+		            			<span class="glyphicon glyphicon-align-left edit-option-toolbar"></span>
+		            		</a>
+		            		<ul class="workspace-submenu-options">
+		            			<li>
+		            				<a href="">
+		            					<span class="glyphicon glyphicon-file"></span>Review Versions
+		            				</a>
+		            			</li>
+		            			<li>
+		            				<a href="">
+		            					<span class="glyphicon glyphicon-trash"></span>Delete
+		            				</a>
+		            			</li>
+		            			<li>
+		            				<a href="">
+		            					<span class="glyphicon glyphicon-question-sign"></span>Help
+		            					</a>
+		            			</li>
+		            		</ul>
+		            	</li>	
 					</ul>				
 				</#if>				
 			</div>
@@ -77,6 +106,7 @@
 					<a href="" ng-show="moreInfo[work.putCode.value]" ng-click="showDetailsMouseClick(work.putCode.value,$event);"><span class="glyphicon glyphicon-chevron-up"></span><@orcid.msg 'manage.developer_tools.hide_details'/></a>
 				</div>
 			</div>
+		</div>
 		</div>
     </li><!-- bottom-margin-small -->
 </ul>
