@@ -165,7 +165,7 @@
 						<div class="col-md-12 col-sm-12 col-xs-12" ng-show="rUri.type.value != 'default'">
 							<div class="inner-row">
 								<div class="scope_item" ng-repeat="scope in availableRedirectScopes">
-									<label><input type="checkbox" value="{{scope}}"/>{{scope}}</label>								
+									<label><input type="checkbox" value="{{scope}}" ng-checked="isChecked(rUri)"/>{{scope}}</label>								
 								</div>
 							</div>
 						</div>
@@ -183,7 +183,13 @@
 								</ul>								
 							</div>
 						</div>						
-					</div>	
+					</div>
+					<div class="col-md-3 col-sm-3 col-xs-3">				
+						<ul class="sso-options pull-right">							
+							<li><a href ng-click="showViewLayout()" class="back" title="<@orcid.msg 'manage.developer_tools.tooltip.back' />"><span class="glyphicon glyphicon-arrow-left"></span></a></li>
+							<li><a href ng-click="addClient()" class="save" title="<@orcid.msg 'manage.developer_tools.tooltip.save' />"><span class="glyphicon glyphicon-floppy-disk"></span></a></li>							
+						</ul>					
+					</div>		
 				</div>		
 			</div>
 			

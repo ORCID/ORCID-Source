@@ -107,7 +107,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
     RedirectUri getEmptyRedirectUri(HttpServletRequest request) {
         RedirectUri result = new RedirectUri();
         result.setValue(new Text());
-        result.setType(Text.valueOf(RedirectUriType.DEFAULT.name()));
+        result.setType(Text.valueOf(RedirectUriType.DEFAULT.value()));
         return result;
     }
     
@@ -124,7 +124,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
         ArrayList<RedirectUri> redirectUris = new ArrayList<RedirectUri>();
         RedirectUri emptyRedirectUri = new RedirectUri();
         emptyRedirectUri.setValue(new Text());
-        emptyRedirectUri.setType(Text.valueOf(RedirectUriType.DEFAULT.name()));
+        emptyRedirectUri.setType(Text.valueOf(RedirectUriType.DEFAULT.value()));
         redirectUris.add(emptyRedirectUri);
         emptyClient.setRedirectUris(redirectUris);
         return emptyClient;

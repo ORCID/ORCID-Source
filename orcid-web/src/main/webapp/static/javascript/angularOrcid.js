@@ -5030,6 +5030,7 @@ function ClientEditCtrl($scope, $compile){
 	$scope.scopeSelectorOpen = false;		
 	$scope.selectedScopes = [];
 	$scope.availableRedirectScopes = [];
+	$scope.editing = false;
 	$scope.creating = false;
 	$scope.listing = true;
 	$scope.hideGoogleUri = true;
@@ -5041,10 +5042,11 @@ function ClientEditCtrl($scope, $compile){
 		$.ajax({
 	        url: getBaseUri() + '/group/developer-tools/get-clients.json',
 	        dataType: 'json',
-	        success: function(data) {	        	        					
+	        success: function(data) {	  	        	
 				$scope.$apply(function(){
 					$scope.clients = data;
 					$scope.creating = false;
+					$scope.editing = false;
 					$scope.listing = true;
 					$scope.hideGoogleUri = true;
 				});
@@ -5067,6 +5069,7 @@ function ClientEditCtrl($scope, $compile){
 					$scope.newClient = data;
 					$scope.creating = true;
 					$scope.listing = false;
+					$scope.editing = false;
 					$scope.hideGoogleUri = false;
 				});
 			}
@@ -5212,7 +5215,7 @@ function ClientEditCtrl($scope, $compile){
 	};
 	
 	//Submits the new client request
-	$scope.submitAddClient = function(){		
+	$scope.addClient = function(){		
 		// Check which redirect uris are empty strings and remove them from the array
 		for(var j = $scope.newClient.redirectUris.length - 1; j >= 0 ; j--)	{
 			if(!$scope.newClient.redirectUris[j].value){
@@ -5242,6 +5245,15 @@ function ClientEditCtrl($scope, $compile){
 	    });		
 	};
 	
+	$scope.showViewLayout = function() {	
+		//Reset the credentials
+		$scope.getClients();	
+		$scope.editing = false;
+		$scope.creating = false;
+		$scope.listing = false;	
+	};
+	
+	
 	//Load the list of scopes for client redirect uris 
 	$scope.loadAvailableScopes = function(){
 		console.log("looking for available scopes");
@@ -5261,18 +5273,18 @@ function ClientEditCtrl($scope, $compile){
 			
 	//Load the default scopes based n the redirect uri type selected
 	$scope.loadDefaultScopes = function(rUri) {
-		//If the scopes are empty, fill it with the default scopes
-		if(rUri.scopes.length == 0) {
-			if(rUri.type.value == 'grant-read-wizard'){
-				rUri.scopes.push('/orcid-profile/read-limited');
-			} else if (rUri.type.value == 'import-works-wizard'){
-				rUri.scopes.push('/orcid-profile/read-limited');
-				rUri.scopes.push('/orcid-works/create');
-			} else if (rUri.type.value == 'import-funding-wizard'){
-				rUri.scopes.push('/orcid-profile/read-limited');
-				rUri.scopes.push('/funding/create');
-			}  
-		}
+		//Empty the scopes to update the default ones
+		rUri.scopes = [];
+		//Fill the scopes with the default scopes
+		if(rUri.type.value == 'grant-read-wizard'){
+			rUri.scopes.push('/orcid-profile/read-limited');
+		} else if (rUri.type.value == 'import-works-wizard'){
+			rUri.scopes.push('/orcid-profile/read-limited');
+			rUri.scopes.push('/orcid-works/create');
+		} else if (rUri.type.value == 'import-funding-wizard'){
+			rUri.scopes.push('/orcid-profile/read-limited');
+			rUri.scopes.push('/funding/create');
+		}  		
 	};		
 
 	//Mark an item as selected
@@ -5292,8 +5304,9 @@ function ClientEditCtrl($scope, $compile){
 	//be applied to the object
 	$scope.isChecked = function (rUri) { 
 		var scope = this.scope;
+		console.log("scope: " + scope);
 		if (jQuery.inArray( scope, rUri.scopes ) != -1) {
-	        return 'glyphicon glyphicon-ok pull-right';
+	        return true;
 	    }
 	    return false;
 	};
