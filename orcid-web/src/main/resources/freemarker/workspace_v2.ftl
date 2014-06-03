@@ -244,7 +244,7 @@
 		                		<div class="workspace-title" ng-controller="WorkspaceSummaryCtrl">
 			                		<a href="" ng-click="workspaceSrvc.toggleWorks($event)" class="toggle-text">
 				       			       <i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayWorks==false}"></i>
-				       			       <@orcid.msg 'workspace.Works'/> (<span ng-bind="worksSrvc.works.length"></span>)
+				       			       <@orcid.msg 'workspace.Works'/> (<span ng-bind="worksSrvc.groups.length"></span>)
 				       			    </a>
 			       				</div>
 			       			</div>	

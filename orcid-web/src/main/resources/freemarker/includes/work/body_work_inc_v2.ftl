@@ -16,8 +16,9 @@
     =============================================================================
 
 -->
-<ul ng-hide="!worksSrvc.works.length" class="workspace-publications workspace-body-list bottom-margin-medium" id="body-work-list" ng-cloak>
-    <li class="bottom-margin-small" ng-repeat="work in worksSrvc.works | orderBy:['-dateSortString', 'workTitle.title.value']">        
+<ul ng-hide="!worksSrvc.groups.length" class="workspace-publications workspace-body-list bottom-margin-medium" id="body-work-list" ng-cloak>
+    <li class="bottom-margin-small" ng-repeat="group in worksSrvc.groups | orderBy:['-dateSortString', 'title']">        
+	<div ng-repeat="work in group.works | orderBy:['-dateSortString', 'workTitle.title.value']">
 		<div class="row"> 
 			<!-- Main title -->
 			<div class="col-md-9 col-sm-9 col-xs-12">
@@ -105,6 +106,7 @@
 					<a href="" ng-show="moreInfo[work.putCode.value]" ng-click="showDetailsMouseClick(work.putCode.value,$event);"><span class="glyphicon glyphicon-chevron-up"></span><@orcid.msg 'manage.developer_tools.hide_details'/></a>
 				</div>
 			</div>
+		</div>
 		</div>
     </li><!-- bottom-margin-small -->
 </ul>
