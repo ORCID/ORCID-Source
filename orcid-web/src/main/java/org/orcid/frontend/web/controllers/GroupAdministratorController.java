@@ -73,7 +73,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
 
     @RequestMapping
     public ModelAndView manageClients() {
-        ModelAndView mav = new ModelAndView("group_developer_tools");
+        ModelAndView mav = new ModelAndView("member_developer_tools");
         OrcidProfile profile = getEffectiveProfile();
 
         if (profile.getType() == null || !profile.getType().equals(OrcidType.GROUP)) {
@@ -112,6 +112,9 @@ public class GroupAdministratorController extends BaseWorkspaceController {
         emptyClient.setClientSecret(Text.valueOf(""));
         emptyClient.setType(Text.valueOf(""));
         ArrayList<RedirectUri> redirectUris = new ArrayList<RedirectUri>();
+        RedirectUri emptyRedirectUri = new RedirectUri();
+        emptyRedirectUri.setValue(Text.valueOf(""));
+        emptyRedirectUri.setType(Text.valueOf("default"));
         emptyClient.setRedirectUris(redirectUris);
         return emptyClient;
     }

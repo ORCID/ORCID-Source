@@ -5003,6 +5003,7 @@ function ClientEditCtrl($scope, $compile){
 	$scope.scopeSelectorOpen = false;		
 	$scope.selectedScopes = [];
 	$scope.availableRedirectScopes = [];
+	$scope.creating = false;
 	
 	// Get the list of clients associated with this user
 	$scope.getClients = function(){
@@ -5011,7 +5012,8 @@ function ClientEditCtrl($scope, $compile){
 	        dataType: 'json',
 	        success: function(data) {	        	        					
 				$scope.$apply(function(){
-					$scope.clients = data;      		
+					$scope.clients = data;
+					$scope.creating = false;
 				});
 	        }
 	    }).fail(function() { 
@@ -5021,34 +5023,22 @@ function ClientEditCtrl($scope, $compile){
 	};		
 	
 	// Get an empty modal to add
-	$scope.addClient = function(){		
+	$scope.showAddClient = function(){	
+		console.log("Adding client");
 		$.ajax({
 			url: getBaseUri() + '/group/developer-tools/client.json',
 			dataType: 'json',
 			success: function(data) {
-				$scope.newClient = data;
 				console.log(data);
 				$scope.$apply(function() {
-					$scope.showNewClientModal();
+					$scope.newClient = data;
+					$scope.creating = true;
 				});
 			}
 		}).fail(function() { 
 	    	console.log("Error fetching client");
 	    });
-	};
-	
-	// Display the modal to add a new client
-	$scope.showNewClientModal = function(){
-		$.colorbox({        	            
-            html : $compile($('#new-client-modal').html())($scope), 
-            transition: 'fade',
-            onLoad: function() {
-			    $('#cboxClose').remove();
-			},
-	        scrolling: true
-        });
-        $.colorbox.resize({width:"400px" , height:"450px"});
-	};
+	};		
 	
 	// Add a new uri input field to a new client
 	$scope.addUriToNewClientTable = function(){		
@@ -5212,7 +5202,6 @@ function ClientEditCtrl($scope, $compile){
 	            return value != scope;
 	          });
 	    }
-	    console.log(rUri.scopes);
 	    return false;
 	};
 	
