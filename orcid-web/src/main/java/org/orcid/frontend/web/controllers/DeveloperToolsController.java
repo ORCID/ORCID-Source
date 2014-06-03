@@ -102,7 +102,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
 
         RedirectUri redirectUri = new RedirectUri();
         redirectUri.setValue(new Text());
-        redirectUri.setType(Text.valueOf("default"));
+        redirectUri.setType(Text.valueOf(RedirectUriType.DEFAULT.name()));
 
         Set<RedirectUri> set = new HashSet<RedirectUri>();
         set.add(redirectUri);

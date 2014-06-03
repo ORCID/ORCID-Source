@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
@@ -101,20 +102,29 @@ public class GroupAdministratorController extends BaseWorkspaceController {
         return mav;
     }
 
+    @RequestMapping(value = "/get-empty-redirect-uri.json", method = RequestMethod.GET)
+    public @ResponseBody
+    RedirectUri getEmptyRedirectUri(HttpServletRequest request) {
+        RedirectUri result = new RedirectUri();
+        result.setValue(new Text());
+        result.setType(Text.valueOf(RedirectUriType.DEFAULT.name()));
+        return result;
+    }
+    
     @RequestMapping(value = "/client.json", method = RequestMethod.GET)
     public @ResponseBody
     Client getClient() {
         Client emptyClient = new Client();
-        emptyClient.setDisplayName(Text.valueOf(""));
-        emptyClient.setWebsite(Text.valueOf(""));
-        emptyClient.setShortDescription(Text.valueOf(""));
-        emptyClient.setClientId(Text.valueOf(""));
-        emptyClient.setClientSecret(Text.valueOf(""));
-        emptyClient.setType(Text.valueOf(""));
+        emptyClient.setDisplayName(new Text());
+        emptyClient.setWebsite(new Text());
+        emptyClient.setShortDescription(new Text());
+        emptyClient.setClientId(new Text());
+        emptyClient.setClientSecret(new Text());
+        emptyClient.setType(new Text());
         ArrayList<RedirectUri> redirectUris = new ArrayList<RedirectUri>();
         RedirectUri emptyRedirectUri = new RedirectUri();
-        emptyRedirectUri.setValue(Text.valueOf(""));
-        emptyRedirectUri.setType(Text.valueOf("default"));
+        emptyRedirectUri.setValue(new Text());
+        emptyRedirectUri.setType(Text.valueOf(RedirectUriType.DEFAULT.name()));
         redirectUris.add(emptyRedirectUri);
         emptyClient.setRedirectUris(redirectUris);
         return emptyClient;
