@@ -45,7 +45,7 @@
 		        <@emailMacros.msg "email.api_record_creation.what_is_orcid" />
 		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-		        <@emailMacros.msg "email.api_record_creation.launched.1" /><a href="${baseUri}/?lang=${locale}">${baseUri}</a><@emailMacros.msg "email.api_record_creation.launched.2" />
+		        <@emailMacros.msg "email.api_record_creation.launched.1" /><a href="${baseUri}/home?lang=${locale}">${baseUri}</a><@emailMacros.msg "email.api_record_creation.launched.2" />
 		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
 		        <@emailMacros.msg "email.api_record_creation.read_privacy.1" /><a href="${baseUri}/privacy-policy/?lang=${locale}">${baseUri}/privacy-policy/</a><@emailMacros.msg "email.api_record_creation.read_privacy.2" />

@@ -51,7 +51,7 @@
 		       <@emailMacros.msg "email.api_record_creation.what_is_orcid" />
 		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-		       <@emailMacros.msg "email.api_record_creation.launched.1" /><a href="${baseUri}/?lang=${locale}">${baseUri}/</a><@emailMacros.msg "email.api_record_creation.launched.2" />
+		       <@emailMacros.msg "email.api_record_creation.launched.1" /><a href="${baseUri}/home?lang=${locale}">${baseUri}/</a><@emailMacros.msg "email.api_record_creation.launched.2" />
 		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
 		        <@emailMacros.msg "email.api_record_creation.read_privacy.1" /><a href="${baseUri}/privacy-policy/?lang=${locale}">${baseUri}/privacy-policy/</a><@emailMacros.msg "email.api_record_creation.read_privacy.2" />
@@ -60,7 +60,7 @@
 		    </p>
 		  	<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666; white-space: pre;">
 <@emailMacros.msg "email.common.kind_regards" />
-<a href="${baseUri}/?lang=${locale}">${baseUri}/<a/>
+<a href="${baseUri}/home?lang=${locale}">${baseUri}/<a/>
 			</p>
 			<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">
 				<@emailMacros.msg "email.common.you_have_received_this_email" />

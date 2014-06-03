@@ -26,7 +26,7 @@
     ${baseUri}/my-orcid?lang=${locale}
 
 <@emailMacros.msg "email.common.kind_regards" />
-${baseUri}/?lang=${locale}
+${baseUri}/home?lang=${locale}
 
-<@emailMacros.msg "email.common.you_have_received_this_email_opt_out.1" />${baseUri}/?lang=${locale}<@emailMacros.msg "email.common.you_have_received_this_email_opt_out.2" />
+<@emailMacros.msg "email.common.you_have_received_this_email_opt_out.1" />${baseUri}/home?lang=${locale}<@emailMacros.msg "email.common.you_have_received_this_email_opt_out.2" />
 <#include "email_footer.ftl"/>
