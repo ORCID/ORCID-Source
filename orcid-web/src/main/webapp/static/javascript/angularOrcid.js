@@ -5256,7 +5256,6 @@ function ClientEditCtrl($scope, $compile){
 	
 	//Load the list of scopes for client redirect uris 
 	$scope.loadAvailableScopes = function(){
-		console.log("looking for available scopes");
 		$.ajax({
 	        url: getBaseUri() + '/group/developer-tools/get-available-scopes.json',
 	        type: 'GET',
@@ -5264,7 +5263,6 @@ function ClientEditCtrl($scope, $compile){
 	        dataType: 'json',
 	        success: function(data) {	        	
 	        	$scope.availableRedirectScopes = data;
-	        	console.log($scope.availableRedirectScopes);
 	        }
 	    }).fail(function() { 
 	    	console.log("Unable to fetch redirect uri scopes.");
@@ -5300,11 +5298,9 @@ function ClientEditCtrl($scope, $compile){
 	    return false;
 	};
 	
-	//Checks if an item is selected, if so, returns the css classes that might 
-	//be applied to the object
+	//Checks if an item is selected
 	$scope.isChecked = function (rUri) { 
-		var scope = this.scope;
-		console.log("scope: " + scope);
+		var scope = this.scope;		
 		if (jQuery.inArray( scope, rUri.scopes ) != -1) {
 	        return true;
 	    }

@@ -173,7 +173,7 @@
 										<div class="small-box">
 											<div class="checkbox">										
 												<label>
-													<input type="checkbox" value="{{scope}}" ng-checked="isChecked(rUri)"/>{{scope}}
+													<input type="checkbox" ng-checked="isChecked(rUri)" ng-click="setSelectedItem(rUri)"/>{{scope}}
 												</label>
 											</div>										
 										</div>								
