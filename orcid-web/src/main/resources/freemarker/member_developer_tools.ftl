@@ -146,11 +146,11 @@
 						<div class="row">						
 							<div class="col-md-12 col-sm-12 col-xs-12">
 								<div class="inner-row">							
-									<input type="text" placeholder="<@orcid.msg 'manage.developer_tools.group.redirect_uri_placeholder'/>" class="input-xlarge" ng-model="rUri.value.value" />						
+									<input type="text" placeholder="<@orcid.msg 'manage.developer_tools.group.redirect_uri_placeholder'/>" class="input-xlarge" ng-model="rUri.value.value" />															
 									<span class="orcid-error" ng-show="rUri.value.errors.length > 0">
 										<div ng-repeat='error in rUri.value.errors' ng-bind-html="error"></div>
 									</span>
-								</div>															
+								</div>											
 							</div>	
 						</div>
 						<!-- Type -->
@@ -163,8 +163,8 @@
 										</#list>
 									</select>
 								</div>															
-							</div>
-						</div>
+							</div>							
+						</div>						
 						<!-- Scopes -->
 						<div class="row">						
 							<div class="col-md-12 col-sm-12 col-xs-12" ng-show="rUri.type.value != 'default'">
@@ -179,6 +179,11 @@
 										</div>								
 									</div>
 								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12 col-sm-12 col-xs-12">
+								<a href="" ng-click="" class="glyphicon glyphicon-trash grey pull-right"></a>
 							</div>
 						</div>
 					</div>
