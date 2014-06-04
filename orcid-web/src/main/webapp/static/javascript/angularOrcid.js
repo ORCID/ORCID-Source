@@ -5074,12 +5074,10 @@ function ClientEditCtrl($scope, $compile){
 	
 	// Get an empty modal to add
 	$scope.showAddClient = function(){	
-		console.log("Adding client");
 		$.ajax({
 			url: getBaseUri() + '/group/developer-tools/client.json',
 			dataType: 'json',
 			success: function(data) {
-				console.log(data);
 				$scope.$apply(function() {
 					$scope.newClient = data;
 					$scope.creating = true;
@@ -5301,7 +5299,6 @@ function ClientEditCtrl($scope, $compile){
 	};
 	
 	$scope.updateSelectedRedirectUri = function() {
-		console.log(angular.toJson($scope.clientDetails));		
 		var clientId = $scope.clientDetails.clientId.value;
 		var selectedClientSecret = $scope.clientDetails.clientSecret.value;
 		var scope = $scope.selectedScope;
@@ -5353,7 +5350,6 @@ function ClientEditCtrl($scope, $compile){
 	        dataType: 'json',
 	        success: function(data) {	        	
 	        	$scope.availableRedirectScopes = data;
-	        	console.log(angular.toJson(data));
 	        }
 	    }).fail(function() { 
 	    	console.log("Unable to fetch redirect uri scopes.");
@@ -5401,6 +5397,48 @@ function ClientEditCtrl($scope, $compile){
 	//init
 	$scope.getClients();
 	$scope.loadAvailableScopes();
+	
+	$scope.confirmResetClientSecret = function() {
+		$scope.resetThisClient = $scope.clientToEdit;
+		$.colorbox({        	            
+            html : $compile($('#reset-client-secret-modal').html())($scope), 
+            transition: 'fade',
+            onLoad: function() {
+			    $('#cboxClose').remove();
+			},
+	        scrolling: true
+        });
+        $.colorbox.resize({width:"415px" , height:"250px"});
+	};	
+	
+	$scope.resetClientSecret = function() {		
+		$.ajax({
+			url: getBaseUri() + '/group/developer-tools/reset-client-secret.json',
+			type: 'POST',
+			data: $scope.resetThisClient.clientId.value,
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'text',
+			success: function(data) {
+				if(data) {
+					$scope.editing = false;
+					$scope.creating = false;
+					$scope.listing = true;	
+					$scope.viewing = false;
+					
+					$scope.closeModal();
+					$scope.getClients();					
+				} else {
+					console.log('Unable to reset client secret');
+				}					
+			}
+		}).fail(function() { 
+	    	console.log("Error resetting redirect uri");
+	    });
+	};
+	
+	$scope.closeModal = function(){
+		$.colorbox.close();	
+	};
 };
 
 

@@ -31,6 +31,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.orcid.core.exception.OrcidClientGroupManagementException;
 import org.orcid.core.manager.OrcidClientGroupManager;
+import org.orcid.core.manager.OrcidSSOManager;
 import org.orcid.core.manager.ThirdPartyLinkManager;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
@@ -68,6 +69,9 @@ public class GroupAdministratorController extends BaseWorkspaceController {
 
     @Resource
     OrcidClientGroupManager orcidClientGroupManager;
+    
+    @Resource
+    private OrcidSSOManager orcidSSOManager;
 
     @Resource
     private ThirdPartyLinkManager thirdPartyLinkManager;
@@ -353,5 +357,13 @@ public class GroupAdministratorController extends BaseWorkspaceController {
         Collections.sort(scopes);
         return scopes;
     }
-
+    
+    /**
+     * Reset client secret
+     * */
+    @RequestMapping(value = "/reset-client-secret.json", method = RequestMethod.POST)
+    public @ResponseBody
+    boolean resetClientSecret(HttpServletRequest request, @RequestBody String clientId) {
+        return orcidSSOManager.resetClientSecret(clientId);
+    }
 }

@@ -204,11 +204,12 @@
 			<!-- ---------------- -->
 			<div class="view-client" ng-show="viewing" ng-cloak>		
 				<!-- Client name -->
-				<div class="row">					
-					<div class="col-md-10 col-sm-10 col-xs-9">
-						<div class="inner-row">
-							<h4>{{clientDetails.displayName.value}}</h4>
-						</div>							
+				<div class="row">
+					<div class="col-md-3 col-sm-3 col-xs-12">
+						<span><strong><@orcid.msg 'manage.developer_tools.group.display_name'/></strong></span>
+					</div>					
+					<div class="col-md-7 col-sm-7 col-xs-7">
+						<h4>{{clientDetails.displayName.value}}</h4>												
 					</div>
 					<div class="col-md-2 col-sm-2 col-xs-3">				
 						<ul class="sso-options pull-right">	
@@ -219,15 +220,33 @@
 				</div>			
 				<div class="row">
 					<!-- Website -->
-					<div class="col-md-12 col-sm-12 col-xs-12 dt-website">
+					<div class="col-md-3 col-sm-3 col-xs-12">
+						<span><strong><@orcid.msg 'manage.developer_tools.group.website'/></strong></span>
+					</div>
+					<div class="col-md-9 col-sm-9 col-xs-12 dt-website">
 						<p><a href="{{clientDetails.clientWebsite.value}}">{{clientDetails.website.value}}</a></p>														
 					</div>							
 				</div>
 				<div class="row">
 					<!-- Description -->
-					<div class="col-md-12 col-sm-12 col-xs-12 dt-description">
+					<div class="col-md-3 col-sm-3 col-xs-12">
+						<span><strong><@orcid.msg 'manage.developer_tools.group.description'/></strong></span>
+					</div>
+					<div class="col-md-9 col-sm-9 col-xs-12 dt-description">
 						<p>{{clientDetails.shortDescription.value}}</p>														
 					</div>							
+				</div>
+				<div class="row">
+					<span class="col-md-3 col-sm-3 col-xs-12">
+						<strong><@orcid.msg 'manage.developer_tools.view.orcid'/></strong>
+					</span>
+					<span class="col-md-9 col-sm-9 col-xs-12">{{clientDetails.clientId.value}}</span>
+				</div>
+				<div class="row">
+					<span class="col-md-3 col-sm-3 col-xs-12">
+						<strong><@orcid.msg 'manage.developer_tools.view.secret'/></strong>
+					</span>
+					<span class="col-md-9 col-sm-9 col-xs-12">{{clientDetails.clientSecret.value}}</span>
 				</div>
 				<!-- Slidebox -->
 				<div class="slidebox">
@@ -246,7 +265,7 @@
 						</div>
 					</div>
 					<!-- Examples -->
-					<div ng-hide="playgroundExample != ''">
+					<div ng-hide="playgroundExample != ''">																					
 						<div class="row">
 							<span class="col-md-3 col-sm-3 col-xs-12"><strong><@orcid.msg 'manage.developer_tools.view.example.authorize'/></strong></span>
 							<span class="col-md-9 col-sm-9 col-xs-12">{{authorizeUrlBase}}</span>
@@ -296,8 +315,9 @@
 			
 			
 			
-			
+			<!-- ---------------- -->
 			<!-- Edit credentials -->
+			<!-- ---------------- -->
 			<div class="edit-client" ng-show="editing" ng-cloak>	
 				<!-- Name -->
 				<div class="row">					
@@ -334,6 +354,26 @@
 							</span>
 						</div>															
 					</div>			
+				</div>
+				<!-- Client secret -->
+				<div class="row">
+					<div class="col-md-3 col-sm-3 col-xs-4">
+						<span><strong><@orcid.msg 'manage.developer_tools.view.secret'/></strong></span>
+					</div>
+					<div class="col-md-9 col-sm-9 col-xs-8">
+						<span>{{clientToEdit.clientSecret.value}}</span>
+					</div>					
+				</div>	
+				<!-- Reset client secret button -->
+				<div class="row">
+					<div class="col-md-3 col-sm-3 col-xs-4">
+						<span></span>
+					</div>
+					<div class="col-md-9 col-sm-9 col-xs-8">
+						<a href="" class="btn btn-danger" ng-click="confirmResetClientSecret()">								    		
+							<@orcid.msg 'manage.developer_tools.edit.reset_client_secret' />
+						</a>
+					</div>
 				</div>
 				<!-- Redirect Uris -->				
 				<div ng-repeat="rUri in clientToEdit.redirectUris" class="margin-bottom-box">
@@ -391,7 +431,7 @@
 							</div>
 						</div>
 					</div>
-				</div>		
+				</div>					
 				<div class="row">
 					<!-- Add redirect uris -->
 					<div class="col-md-9 col-sm-9 col-xs-9 add-options">
@@ -452,108 +492,20 @@
 
 
 
-<#-- View details modal -->
-<script type="text/ng-template" id="view-details-modal">
-	<div style="padding: 20px;">
-		<h1><@orcid.msg 'manage.developer_tools.group.client_information'/></h1>
-		<table class="table table-bordered">
-			<tr>
-				<td><@orcid.msg 'manage.developer_tools.group.client_id'/></td>
-				<td>{{clientDetails.clientId.value}}</td>
-			</tr>
-			<tr>
-				<td><@orcid.msg 'manage.developer_tools.group.client_secret'/></td>
-				<td>{{clientDetails.clientSecret.value}}</td>
-			</tr>
-		</table>
-		<p><@orcid.msg 'manage.developer_tools.group.view.redirect_uris' /></p>
-		<table class="table">
-			<tr ng-repeat="redirect in clientDetails.redirectUris">
-				<td><a href="{{redirect.value.value}}" target="_blank">{{redirect.value.value}}</a></td>
-				<td><@orcid.msg 'manage.developer_tools.group.type' />:{{redirect.type.value}}</td>
-			</tr>
-		</table>
-		<div class="controls pull-left bottom-margin-small">			
-			<a href="" class="cancel-action" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>				
-		</div>  		
-	</div>
-</script>
-
-<#-- Edit client modal -->
-<script type="text/ng-template" id="edit-client-modal">
-	<div style="padding: 20px;">		
-		<h1><@orcid.msg 'manage.developer_tools.group.edit_client'/></h1>			
-		<form class="form-horizontal">
-			<div class="control-group">
-				<label class="control-label" for="clientname" style="margin-right:10px; text-align:left; width:90px"><@orcid.msg 'manage.developer_tools.group.display_name'/>: </label>
-		    	<div class="relative">
-		    		<input id="clientname" class="input-xlarge" type="text" ng-model="clientToEdit.displayName.value" required />
-					<span class="orcid-error" ng-show="clientToEdit.displayName.errors.length > 0">
-						<div ng-repeat='error in clientToEdit.displayName.errors' ng-bind-html="error"></div>
-					</span>
-				</div>
-		    </div>
-		    <div class="control-group">
-				<label class="control-label" for="website" style="margin-right:10px; text-align:left; width:90px"><@orcid.msg 'manage.developer_tools.group.website'/>: </label>
-		    	<div class="relative">
-					<input id="website" class="input-xlarge" type="text" ng-model="clientToEdit.website.value" required />
-					<span class="orcid-error" ng-show="clientToEdit.website.errors.length > 0">
-						<div ng-repeat='error in clientToEdit.website.errors' ng-bind-html="error"></div>
-					</span>
-				</div>	
-		    </div>
-		    <div class="control-group">
-				<label class="control-label" for="description" style="margin-right:10px; text-align:left; width:90px"><@orcid.msg 'manage.developer_tools.group.description'/>: </label>
-		    	<div class="relative">
-					<input id="description" class="input-xlarge" type="text" ng-model="clientToEdit.shortDescription.value" required />
-					<span class="orcid-error" ng-show="clientToEdit.shortDescription.errors.length > 0">
-						<div ng-repeat='error in clientToEdit.shortDescription.errors' ng-bind-html="error"></div>
-					</span>
-				</div>	
-		    </div>		    	    	    	
-	    	<div ng-show="clientToEdit.redirectUris.length">
-	    		<div id="edit-client-table">
-		    		<div class="control-group" ng-repeat='rUri in clientToEdit.redirectUris'>						
-						<label class="control-label" style="margin-right:10px; text-align:left; width:90px"><@orcid.msg 'manage.developer_tools.group.redirect_uri'/>:</label>
-						<a href ng-click="deleteUri($index)" class="glyphicon glyphicon-trash blue"></a>
-						<div class="relative">
-							<@orcid.msg 'manage.developer_tools.group.redirect_uri.value'/>:<input type="text" class="input-xlarge" ng-model="rUri.value.value">
-							<@orcid.msg 'manage.developer_tools.group.redirect_uri.type'/>:
-							<select class="input-xlarge" ng-model="rUri.type.value" ng-change="loadDefaultScopes(rUri)">
-								<#list redirectUriTypes?keys as key>
-									<option value="${key}">${redirectUriTypes[key]}</option>
-								</#list>
-							</select>							
-							
-							<div ng-show="rUri.type.value != 'default'">
-								<@orcid.msg 'manage_clients.redirect_uri.scope' />:<br />
-								<div class='btn-group multiple-select'>
-									<button class='btn btn-small'><@orcid.msg 'manage_clients.redirect_uri.scopes.label'/></button>
-									<button class='btn btn-small dropdown-toggle' ng-click='scopeSelectorOpen=!scopeSelectorOpen;openDropdown(rUri, true)'><span class='caret'></span></button>
-									<div class="scrollable-list" ng-show="scopeSelectorOpen">
-										<ul class="dropdown-menu">		
-											<li ng-repeat='scope in availableRedirectScopes'><a ng-click='setSelectedItem(rUri)'>{{scope}}<span ng-class='isChecked(rUri)'></span></a></li>
-										</ul>
-									</div>
-								</div>
-							</div>															
-							
-							<span class="orcid-error" ng-show="rUri.errors.length > 0">
-								<div ng-repeat='error in rUri.errors' ng-bind-html="error"></div>
-							</span>
-						</div>	
-					</div>
-		    	</div>
-	    	</div>			
-	    	<div>
-				<a href ng-click="addUriToExistingClientTable()"><span class="glyphicon glyphicon-plus blue"></span><@orcid.msg 'manage.developer_tools.group.add_redirect_uri'/></a>							
+<script type="text/ng-template" id="reset-client-secret-modal">
+	<div class="lightbox-container">
+		<div class="row">
+			<div class="col-md-12 col-xs-12 col-sm-12">
+				<h3><@orcid.msg 'manage.developer_tools.edit.reset_key.title' /></h3>				
+				<p><strong>{{resetThisClient.clientSecret.value}}</strong></p>		
+				<p><@orcid.msg 'manage.developer_tools.edit.reset_key.description' /></p>
+    			<div class="btn btn-danger" ng-click="resetClientSecret()">
+    				<@orcid.msg 'freemarker.btnReset' />
+    			</div>
+    			<a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
 			</div>
-			<div class="controls save-btns pull-left bottom-margin-small">
-				<button class="btn btn-primary" ng-click="submitEditClient($index)"><@orcid.msg 'manage.developer_tools.group.update'/></button>
-				<a href="" class="cancel-action" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>				
-			</div>  			  
-		</form>		
-    <div> 
+		</div>
+    </div>
 </script>
 
 
