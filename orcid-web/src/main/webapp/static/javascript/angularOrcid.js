@@ -549,7 +549,14 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 			    }).fail(function() { 
 			    	console.log("Error updating profile work.");
 			    });
-			}		
+			},
+			workCount: function() {
+				var count = 0;
+				for (var idx in serv.groups) {
+					count += serv.groups[idx].works.length;
+				}
+				return count;
+			}
 	}; 
 	return serv;
 }]);
