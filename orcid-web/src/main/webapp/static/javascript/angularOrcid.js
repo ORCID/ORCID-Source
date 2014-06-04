@@ -5199,6 +5199,9 @@ function ClientEditCtrl($scope, $compile){
 	    });				
 	};
 	
+	
+	
+	
 	//Submits the new client request
 	$scope.addClient = function(){		
 		// Check which redirect uris are empty strings and remove them from the array
@@ -5229,6 +5232,53 @@ function ClientEditCtrl($scope, $compile){
 	    	console.log("Error creating client information.");
 	    });		
 	};
+	
+	
+	
+	//Submits the updated client
+	$scope.editClient = function() {
+		// Check which redirect uris are empty strings and remove them from the array
+		for(var j = $scope.clientToEdit.redirectUris.length - 1; j >= 0 ; j--)	{
+			if(!$scope.clientToEdit.redirectUris[j].value){
+				$scope.clientToEdit.redirectUris.splice(j, 1);
+			}
+		}
+		
+		//Submit the edited client
+		$.ajax({
+	        url: getBaseUri() + '/group/developer-tools/edit-client.json',
+	        type: 'POST',
+	        data: angular.toJson($scope.clientToEdit),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {	        	
+	        	if(data.errors != null && data.errors.length > 0){
+	        		$scope.clientToEdit = data;
+	        		$scope.$apply();
+	        	} else {
+	        		//If everything worked fine, reload the list of clients
+	        		$scope.getClients();	        		
+	        	}
+	        }
+	    }).fail(function() { 
+	    	console.log("Error editing client information.");
+	    });	
+	};
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	// Display client details: Client ID and Client secret
 	$scope.viewDetails = function(client) {				

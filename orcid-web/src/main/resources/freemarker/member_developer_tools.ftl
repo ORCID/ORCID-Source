@@ -391,12 +391,12 @@
 				<div class="row">
 					<!-- Add redirect uris -->
 					<div class="col-md-9 col-sm-9 col-xs-9 add-options">
-						<a href="" class="icon-href-bg" ng-click="addRedirectUriToNewClientTable()"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.add_redirect_uri' /></a>
+						<a href="" class="icon-href-bg" ng-click="addUriToExistingClientTable()"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.add_redirect_uri' /></a>
 						<div class="add-options margin-bottom-box">								
 							<div ng-show="!hideGoogleUri">
 								<h4><@orcid.msg 'manage.developer_tools.test_redirect_uris.title' /></h4>
 								<ul class="pullleft-list">
-									<li id="google-ruir"><a href="" class="icon-href" ng-click="addTestRedirectUri('google','false')"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.google'/></a></li>										
+									<li id="google-ruir"><a href="" class="icon-href" ng-click="addTestRedirectUri('google','true')"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.google'/></a></li>										
 								</ul>								
 							</div>
 						</div>						
@@ -404,7 +404,7 @@
 					<div class="col-md-3 col-sm-3 col-xs-3 sso-api">				
 						<ul class="sso-options pull-right">							
 							<li><a href ng-click="showViewLayout()" class="back" title="<@orcid.msg 'manage.developer_tools.tooltip.back' />"><span class="glyphicon glyphicon-arrow-left"></span></a></li>
-							<li><a href ng-click="addClient()" class="save" title="<@orcid.msg 'manage.developer_tools.tooltip.save' />"><span class="glyphicon glyphicon-floppy-disk"></span></a></li>							
+							<li><a href ng-click="editClient()" class="save" title="<@orcid.msg 'manage.developer_tools.tooltip.save' />"><span class="glyphicon glyphicon-floppy-disk"></span></a></li>							
 						</ul>					
 					</div>		
 				</div>		
