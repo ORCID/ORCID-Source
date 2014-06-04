@@ -5036,16 +5036,17 @@ function ClientEditCtrl($scope, $compile){
 	$scope.listing = true;
 	$scope.hideGoogleUri = true;
 	$scope.selectedRedirectUri = "";
+	$scope.selectedScope = "";
 	// Google example
 	$scope.googleUri = 'https://developers.google.com/oauthplayground';
 	$scope.playgroundExample = '';
-	$scope.googleExampleLink = 'https://developers.google.com/oauthplayground/#step1&scopes=/authenticate&oauthEndpointSelect=Custom&oauthAuthEndpointValue=[BASE_URI_ENCODE]/oauth/authorize&oauthTokenEndpointValue=[PUB_BASE_URI_ENCODE]/oauth/token&oauthClientId=[CLIENT_ID]&oauthClientSecret=[CLIENT_SECRET]&accessTokenType=bearer';
+	$scope.googleExampleLink = 'https://developers.google.com/oauthplayground/#step1&oauthEndpointSelect=Custom&oauthAuthEndpointValue=[BASE_URI_ENCODE]/oauth/authorize&oauthTokenEndpointValue=[PUB_BASE_URI_ENCODE]/oauth/token&oauthClientId=[CLIENT_ID]&oauthClientSecret=[CLIENT_SECRET]&accessTokenType=bearer&scopes=[SCOPES]';
 	// Curl example
 	$scope.sampleAuthCurl = '';
 	$scope.sampleAuthCurlTemplate = "curl -i -L -k -H 'Accept: application/json' --data 'client_id=[CLIENT_ID]&client_secret=[CLIENT_SECRET]&grant_type=authorization_code&redirect_uri=[REDIRECT_URI]&code=REPLACE WITH OAUTH CODE' [PUB_BASE_URI]/oauth/token";
 	// Auth example
 	$scope.authorizeUrlBase = getBaseUri() + '/oauth/authorize';
-	$scope.authorizeURLTemplate = $scope.authorizeUrlBase + '?client_id=[CLIENT_ID]&response_type=code&scope=/authenticate&redirect_uri=[REDIRECT_URI]';	
+	$scope.authorizeURLTemplate = $scope.authorizeUrlBase + '?client_id=[CLIENT_ID]&response_type=code&redirect_uri=[REDIRECT_URI]&scopes=[SCOPES]';	
 	// Token url
 	$scope.tokenURL = orcidVar.pubBaseUri + '/oauth/token';
 	
@@ -5238,14 +5239,62 @@ function ClientEditCtrl($scope, $compile){
 		// Set the first redirect uri selected		
 		if(client.redirectUris != null && client.redirectUris.length > 0) {
 			$scope.selectedRedirectUri = client.redirectUris[0];			
+		} else {
+			$scope.selectedRedirectUri = null;
 		}
 		 
 		$scope.editing = false;
 		$scope.creating = false;
 		$scope.listing = false;	
 		$scope.viewing = true;
+		
+		// Update the selected redirect uri
+		$scope.updateSelectedRedirectUri();
 	};
 	
+	$scope.updateSelectedRedirectUri = function() {
+		console.log(angular.toJson($scope.clientDetails));		
+		var clientId = $scope.clientDetails.clientId.value;
+		var selectedClientSecret = $scope.clientDetails.clientSecret.value;
+		var scope = $scope.selectedScope;
+		var selectedRedirectUriValue = '';
+		if($scope.selectedRedirectUri != null) {
+			selectedRedirectUriValue = $scope.selectedRedirectUri.value.value;
+		}
+					
+		//Build the google playground url example
+		$scope.playgroundExample = '';
+		
+		if($scope.googleUri == selectedRedirectUriValue) {
+			var example = $scope.googleExampleLink;
+			example = example.replace('[PUB_BASE_URI_ENCODE]', encodeURI(orcidVar.pubBaseUri));
+			example = example.replace('[BASE_URI_ENCODE]', encodeURI(getBaseUri()));
+			example = example.replace('[CLIENT_ID]', clientId);
+			example = example.replace('[CLIENT_SECRET]', selectedClientSecret);	
+			if(scope != '')
+				example = example.replace('[SCOPES]', scope);
+			$scope.playgroundExample = example;
+		}		
+		
+		var example = $scope.authorizeURLTemplate;
+		example = example.replace('[PUB_BASE_URI]', orcidVar.pubBaseUri);
+		example = example.replace('[CLIENT_ID]', clientId);
+		example = example.replace('[REDIRECT_URI]', selectedRedirectUriValue);
+		if(scope != '')
+			example = example.replace('[SCOPES]', scope);
+		$scope.authorizeURL = example;
+		
+		// rebuild sample Auhtroization Curl
+		var sampleCurl = $scope.sampleAuthCurlTemplate;
+		$scope.sampleAuthCurl = sampleCurl.replace('[CLIENT_ID]', clientId)
+		    .replace('[CLIENT_SECRET]', selectedClientSecret)
+		    .replace('[PUB_BASE_URI]', orcidVar.pubBaseUri)
+		    .replace('[REDIRECT_URI]', selectedRedirectUriValue);
+	};
+	
+	$scope.showViewLayout = function() {		
+		$scope.getClients();
+	};
 	
 	//Load the list of scopes for client redirect uris 
 	$scope.loadAvailableScopes = function(){
@@ -5256,6 +5305,7 @@ function ClientEditCtrl($scope, $compile){
 	        dataType: 'json',
 	        success: function(data) {	        	
 	        	$scope.availableRedirectScopes = data;
+	        	console.log(angular.toJson(data));
 	        }
 	    }).fail(function() { 
 	    	console.log("Unable to fetch redirect uri scopes.");
@@ -5300,15 +5350,9 @@ function ClientEditCtrl($scope, $compile){
 	    return false;
 	};
 	
-	$scope.updateSelectedRedirectUri = function() {
-		
-	};
-	
-	
 	//init
 	$scope.getClients();
 	$scope.loadAvailableScopes();
-	
 };
 
 

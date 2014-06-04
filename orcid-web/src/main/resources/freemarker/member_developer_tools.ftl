@@ -183,7 +183,7 @@
 						</div>
 						<div class="row">
 							<div class="col-md-12 col-sm-12 col-xs-12">
-								<a href="" ng-click="" class="glyphicon glyphicon-trash grey pull-right"></a>
+								<a href ng-click="deleteJustCreatedUri($index)" class="glyphicon glyphicon-trash grey pull-right"></a>
 							</div>
 						</div>
 					</div>
@@ -219,53 +219,86 @@
 			
 			
 			<!-- View credentials -->
-			<div class="viewing-client" ng-show="viewing" ng-cloak>		
-				<!-- ORCID -->
+			<div class="view-client" ng-show="viewing" ng-cloak>		
+				<!-- Client name -->
 				<div class="row">					
-					<div class="col-md-3 col-sm-3 col-xs-12">
-						<div class="inner-row margin-left-fix">
-							<span><@orcid.msg 'manage.developer_tools.group.client_id' /></span>
-						</div>
+					<div class="col-md-10 col-sm-10 col-xs-9">
+						<div class="inner-row">
+							<h4>{{clientDetails.displayName.value}}</h4>
+						</div>							
 					</div>
-					<div class="col-md-9 col-sm-9 col-xs-12">
-						<div class="inner-row margin-left-fix">
-							<span>{{clientDetails.clientId.value}}</span>
-						</div>
-					</div>
-				</div>		
-				<!-- Secret -->
-				<div class="row">					
-					<div class="col-md-3 col-sm-3 col-xs-12">
-						<div class="inner-row margin-left-fix"> 
-							<span><@orcid.msg 'manage.developer_tools.group.client_secret' /></span>
-						</div>
-					</div>
-					<div class="col-md-9 col-sm-9 col-xs-12">
-						<div class="inner-row margin-left-fix">
-							<span>{{clientDetails.clientSecret.value}}</span>
-						</div>
-					</div>
-				</div>				
-				<!-- Redirect Uri -->
+					<div class="col-md-2 col-sm-2 col-xs-3">				
+						<ul class="sso-options pull-right">							
+							<li><a href ng-click="showEditLayout()" class="edit" title="<@orcid.msg 'manage.developer_tools.tooltip.edit' />"><span class="glyphicon glyphicon-pencil"></span></a></li>							
+						</ul>					
+					</div>				
+				</div>			
 				<div class="row">
-					<div class="col-md-3 col-sm-3 col-xs-12">
-						<div class="inner-row margin-left-fix">
-							<span><@orcid.msg 'manage.developer_tools.group.view.redirect_uris' /></span>
-						</div>
-					</div>
-					<div class="col-md-9 col-sm-9 col-xs-12">
-						<div class="inner-row margin-left-fix">
-							<select ng-model="selectedRedirectUri" ng-options="rUri.value.value for rUri in clientDetails.redirectUris | orderBy:'value.value'" ng-change="updateSelectedRedirectUri()">
-						</div>
-					</div>
+					<!-- Website -->
+					<div class="col-md-12 col-sm-12 col-xs-12 dt-website">
+						<p><a href="{{clientDetails.clientWebsite.value}}">{{clientDetails.website.value}}</a></p>														
+					</div>							
 				</div>
-				<!-- Example -->
 				<div class="row">
+					<!-- Description -->
+					<div class="col-md-12 col-sm-12 col-xs-12 dt-description">
+						<p>{{clientDetails.shortDescription.value}}</p>														
+					</div>							
+				</div>
+				<!-- Slidebox -->
+				<div class="slidebox">
+					<div class="row">
+						<!-- Redirect URIS -->
+						<div>
+							<div  class="col-md-12 col-sm-12 col-xs-12">
+								<h4><@orcid.msg 'manage.developer_tools.redirect_uri'/>:</h4>
+							</div>
+							<div class="col-md-6 col-sm-6 col-xs-6">
+								<select ng-model="selectedRedirectUri" ng-options="rUri.value.value for rUri in clientDetails.redirectUris | orderBy:'value.value'" ng-change="updateSelectedRedirectUri()"></select>
+							</div>		
+							<div class="col-md-6 col-sm-6 col-xs-6">
+								<@orcid.msg 'manage.developer_tools.view.scope' />:&nbsp;<select ng-model="selectedScope" ng-options="scope as scope for scope in availableRedirectScopes" ng-change="updateSelectedRedirectUri()"></select>
+							</div>																																													
+						</div>
+					</div>
+					<!-- Examples -->
+					<div ng-hide="playgroundExample != ''">
+						<div class="row">
+							<span class="col-md-3 col-sm-3 col-xs-12"><strong><@orcid.msg 'manage.developer_tools.view.example.authorize'/></strong></span>
+							<span class="col-md-9 col-sm-9 col-xs-12">{{authorizeUrlBase}}</span>
+						</div>
+						<div class="row">
+							<span class="col-md-3 col-sm-3 col-xs-12"></span>
+							<span class="col-md-9 col-sm-9 col-xs-12">
+								<textarea class="input-xlarge selectable authorizeURL" ng-model="authorizeURL" readonly="readonly"></textarea>
+							</span>
+						</div>
+						<div class="row">
+							<span class="col-md-3 col-sm-3 col-xs-12"><strong><@orcid.msg 'manage.developer_tools.view.example.token'/></strong></span>
+							<span class="col-md-9 col-sm-9 col-xs-12">
+								{{tokenURL}}<br />
+								<@orcid.msg 'manage.developer_tools.view.example.curl' /><a href="<@orcid.msg 'manage.developer_tools.view.example.curl.url' />" target="curlWiki"><@orcid.msg 'manage.developer_tools.view.example.curl.text' /></a>
+							</span>
+						</div>
+						<div class="row">
+							<span class="col-md-3 col-sm-3 col-xs-12"></span>
+							<span class="col-md-9 col-sm-9 col-xs-12">
+								<textarea class="input-xlarge selectable authorizeURL" ng-model="sampleAuthCurl" readonly="readonly"></textarea>
+							</span>
+						</div>
+					</div>
 					
 				</div>
 			</div>
 			
-			
+			<div class="row slide" ng-show="viewing" ng-cloak>
+				<div class="col-md-12 col-sm-12 col-xs-12">
+					<div class="tab-container">
+						<a href="#" class="tab collapsed" data-tab="collapsed"><span class="glyphicon glyphicon-chevron-down"></span><@orcid.msg 'manage.developer_tools.show_details' /></a>
+						<a href="#" class="tab expanded"><span class="glyphicon glyphicon-chevron-up"></span><@orcid.msg 'manage.developer_tools.hide_details' /></a>
+					</div>
+				</div>			
+			</div>
 			
 			
 		</div>
