@@ -81,7 +81,9 @@
 					</div>			
 				</div>	
 			</div>
+			<!-- ---------------------- -->
 			<!-- Create new credentials -->
+			<!-- ---------------------- -->
 			<div class="create-client" ng-show="creating" ng-cloak>	
 				<!-- Name -->
 				<div class="row">					
@@ -197,7 +199,9 @@
 					</div>		
 				</div>		
 			</div>
+			<!-- ---------------- -->
 			<!-- View credentials -->
+			<!-- ---------------- -->
 			<div class="view-client" ng-show="viewing" ng-cloak>		
 				<!-- Client name -->
 				<div class="row">					
@@ -207,8 +211,9 @@
 						</div>							
 					</div>
 					<div class="col-md-2 col-sm-2 col-xs-3">				
-						<ul class="sso-options pull-right">							
-							<li><a href ng-click="showEditLayout()" class="edit" title="<@orcid.msg 'manage.developer_tools.tooltip.edit' />"><span class="glyphicon glyphicon-pencil"></span></a></li>							
+						<ul class="sso-options pull-right">	
+							<li><a href ng-click="showViewLayout()" class="back" title="<@orcid.msg 'manage.developer_tools.tooltip.back' />"><span class="glyphicon glyphicon-arrow-left"></span></a></li>						
+							<li><a href ng-click="showEditClient(clientDetails)" class="edit" title="<@orcid.msg 'manage.developer_tools.tooltip.edit' />"><span class="glyphicon glyphicon-pencil"></span></a></li>							
 						</ul>					
 					</div>				
 				</div>			
@@ -266,7 +271,6 @@
 							</span>
 						</div>
 					</div>
-					
 				</div>
 			</div>			
 			<!-- Slide button -->
