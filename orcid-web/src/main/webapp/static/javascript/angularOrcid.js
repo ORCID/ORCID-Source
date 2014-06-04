@@ -5139,35 +5139,33 @@ function ClientEditCtrl($scope, $compile){
 	    });
 	};
 	
-	// Display the modal to edit a client
-	$scope.editClient = function(idx) {		
-		// Copy the client to edit to a scope variable 
-		$scope.clientToEdit = angular.copy($scope.clients[idx]);		
-		$.colorbox({        	            
-            html : $compile($('#edit-client-modal').html())($scope), 
-            transition: 'fade',            
-	        onLoad: function() {
-			    $('#cboxClose').remove();
-			},
-	        scrolling: true
-        });		
-        $.colorbox.resize({width:"400px" , height:"450px"});   
-	};		
-	
-	$scope.closeModal = function(){
-		$.colorbox.close();	
-	};
-	
-	
 	// Delete an uri input field 
-	$scope.deleteUri = function(idx){
-		$scope.clientToEdit.redirectUris.splice(idx, 1);
-	};		
-	
-	// Delete an uri input field 
-	$scope.deleteJustCreatedUri = function(idx){
+	$scope.deleteUriOnNewClient = function(idx){
 		$scope.newClient.redirectUris.splice(idx, 1);
 	};	
+	
+	
+	
+	
+	
+	
+	
+	// Display the modal to edit a client
+	$scope.showEditClient = function(client) {		
+		// Copy the client to edit to a scope variable 
+		$scope.clientToEdit = client;	
+		
+		$scope.editing = true;
+		$scope.creating = false;
+		$scope.listing = false;	
+		$scope.viewing = false;
+		
+	};		
+	
+	// Delete an uri input field 
+	$scope.deleteUriOnExistingClient = function(idx){
+		$scope.clientToEdit.redirectUris.splice(idx, 1);
+	};
 	
 	//Submits the client update request
 	$scope.submitEditClient = function(){				

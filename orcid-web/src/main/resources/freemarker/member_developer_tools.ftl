@@ -47,9 +47,6 @@
 					<p class="developer-tools-instructions"><@orcid.msg 'manage.developer_tools.header' /></p>
 				</div>
 			</div>		
-			
-			
-			
 			<!-- View existing credentials -->
 			<div class="listing-clients" ng-show="listing" ng-cloack>
 				<div class="row">
@@ -74,7 +71,7 @@
 										<td colspan="4" class="pull-right">										
 											<ul class="client-options">
 												<li><a href ng-click="viewDetails(client)"><span class="glyphicon glyphicon-eye-open"></span><@orcid.msg 'manage.developer_tools.group.view_credentials_link' /></a></li>	
-												<li><a href ng-click="editClient(client)"><span class="glyphicon glyphicon-pencil"></span><@orcid.msg 'manage.developer_tools.group.edit_credentials_link' /></a></li>												
+												<li><a href ng-click="showEditClient(client)"><span class="glyphicon glyphicon-pencil"></span><@orcid.msg 'manage.developer_tools.group.edit_credentials_link' /></a></li>												
 											</ul>										
 										</td>									
 									</tr>												
@@ -84,15 +81,6 @@
 					</div>			
 				</div>	
 			</div>
-			
-			
-			
-			
-			
-			
-			
-			
-			
 			<!-- Create new credentials -->
 			<div class="create-client" ng-show="creating" ng-cloak>	
 				<!-- Name -->
@@ -183,7 +171,7 @@
 						</div>
 						<div class="row">
 							<div class="col-md-12 col-sm-12 col-xs-12">
-								<a href ng-click="deleteJustCreatedUri($index)" class="glyphicon glyphicon-trash grey pull-right"></a>
+								<a href ng-click="deleteUriOnNewClient($index)" class="glyphicon glyphicon-trash grey pull-right"></a>
 							</div>
 						</div>
 					</div>
@@ -209,15 +197,6 @@
 					</div>		
 				</div>		
 			</div>
-			
-			
-			
-			
-			
-			
-			
-			
-			
 			<!-- View credentials -->
 			<div class="view-client" ng-show="viewing" ng-cloak>		
 				<!-- Client name -->
@@ -289,8 +268,8 @@
 					</div>
 					
 				</div>
-			</div>
-			
+			</div>			
+			<!-- Slide button -->
 			<div class="row slide" ng-show="viewing" ng-cloak>
 				<div class="col-md-12 col-sm-12 col-xs-12">
 					<div class="tab-container">
@@ -301,6 +280,168 @@
 			</div>
 			
 			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			<!-- Edit credentials -->
+			<div class="edit-client" ng-show="editing" ng-cloak>	
+				<!-- Name -->
+				<div class="row">					
+					<div class="col-md-12 col-sm-12 col-xs-12">
+						<div class="inner-row margin-left-fix">
+							<span><strong><@orcid.msg 'manage.developer_tools.group.display_name'/></strong></span>
+							<input type="text" class="input-xlarge" ng-model="clientToEdit.displayName.value" placeholder="<@orcid.msg 'manage.developer_tools.group.display_name_placeholder'/>"/>
+							<span class="orcid-error" ng-show="clientToEdit.displayName.errors.length > 0">
+								<div ng-repeat='error in clientToEdit.displayName.errors' ng-bind-html="error"></div>
+							</span>					
+						</div>		
+					</div>																
+				</div>
+				<!-- Website -->
+				<div class="row">	
+					<div class="col-md-12 col-sm-12 col-xs-12">
+						<div class="inner-row margin-left-fix">
+							<span><strong><@orcid.msg 'manage.developer_tools.group.website'/></strong></span>
+							<input type="text" class="input-xlarge" ng-model="clientToEdit.website.value" placeholder="<@orcid.msg 'manage.developer_tools.group.website_placeholder'/>"/>
+							<span class="orcid-error" ng-show="clientToEdit.website.errors.length > 0">
+								<div ng-repeat='error in clientToEdit.website.errors' ng-bind-html="error"></div>
+							</span>					
+						</div>		
+					</div>	
+				</div>
+				<!-- Description -->
+				<div class="row">					
+					<div class="col-md-12 col-sm-12 col-xs-12 dt-description">
+						<div class="inner-row margin-left-fix">
+							<span><strong><@orcid.msg 'manage.developer_tools.group.description'/></strong></span>
+							<textarea class="input-xlarge selectable" ng-model="clientToEdit.shortDescription.value" placeholder="<@orcid.msg 'manage.developer_tools.group.description_placeholder'/>"></textarea>						
+							<span class="orcid-error" ng-show="clientToEdit.shortDescription.errors.length > 0">
+								<div ng-repeat='error in clientToEdit.shortDescription.errors' ng-bind-html="error"></div>
+							</span>
+						</div>															
+					</div>			
+				</div>
+				<!-- Redirect Uris -->				
+				<div ng-repeat="rUri in clientToEdit.redirectUris" class="margin-bottom-box">
+					<!-- Header -->
+					<div class="row" ng-show="$first">
+						<div class="col-md-12 col-sm-12 col-xs-12">
+							<div class="inner-row margin-left-fix">					
+								<h4><@orcid.msg 'manage.developer_tools.redirect_uri'/></h4>
+							</div>
+						</div>
+					</div>
+					<!-- Value -->
+					<div class="grey-box">
+						<div class="row">						
+							<div class="col-md-12 col-sm-12 col-xs-12">
+								<div class="inner-row margin-left-fix">							
+									<input type="text" class="input-xlarge" ng-model="rUri.value.value" placeholder="<@orcid.msg 'manage.developer_tools.group.redirect_uri_placeholder'/>"/>															
+									<span class="orcid-error" ng-show="rUri.value.errors.length > 0">
+										<div ng-repeat='error in rUri.value.errors' ng-bind-html="error"></div>
+									</span>
+								</div>											
+							</div>	
+						</div>
+						<!-- Type -->
+						<div class="row">						
+							<div class="col-md-12 col-sm-12 col-xs-12">
+								<div class="inner-row margin-left-fix">
+									<select class="input-large input-xlarge-full" ng-model="rUri.type.value" ng-change="loadDefaultScopes(rUri)">
+										<#list redirectUriTypes?keys as key>
+											<option value="${key}">${redirectUriTypes[key]}</option>
+										</#list>
+									</select>
+								</div>															
+							</div>							
+						</div>						
+						<!-- Scopes -->
+						<div class="row">						
+							<div class="col-md-12 col-sm-12 col-xs-12" ng-show="rUri.type.value != 'default'">
+								<div class="inner-row margin-left-fix">
+									<div class="scope_item" ng-repeat="scope in availableRedirectScopes">
+										<div class="small-box">
+											<div class="checkbox">										
+												<label>
+													<input type="checkbox" ng-checked="isChecked(rUri)" ng-click="setSelectedItem(rUri)"/>{{scope}}
+												</label>
+											</div>										
+										</div>								
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12 col-sm-12 col-xs-12">
+								<a href ng-click="deleteUriOnExistingClient($index)" class="glyphicon glyphicon-trash grey pull-right"></a>
+							</div>
+						</div>
+					</div>
+				</div>		
+				<div class="row">
+					<!-- Add redirect uris -->
+					<div class="col-md-9 col-sm-9 col-xs-9 add-options">
+						<a href="" class="icon-href-bg" ng-click="addRedirectUriToNewClientTable()"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.add_redirect_uri' /></a>
+						<div class="add-options margin-bottom-box">								
+							<div ng-show="!hideGoogleUri">
+								<h4><@orcid.msg 'manage.developer_tools.test_redirect_uris.title' /></h4>
+								<ul class="pullleft-list">
+									<li id="google-ruir"><a href="" class="icon-href" ng-click="addTestRedirectUri('google','false')"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.google'/></a></li>										
+								</ul>								
+							</div>
+						</div>						
+					</div>
+					<div class="col-md-3 col-sm-3 col-xs-3 sso-api">				
+						<ul class="sso-options pull-right">							
+							<li><a href ng-click="showViewLayout()" class="back" title="<@orcid.msg 'manage.developer_tools.tooltip.back' />"><span class="glyphicon glyphicon-arrow-left"></span></a></li>
+							<li><a href ng-click="addClient()" class="save" title="<@orcid.msg 'manage.developer_tools.tooltip.save' />"><span class="glyphicon glyphicon-floppy-disk"></span></a></li>							
+						</ul>					
+					</div>		
+				</div>		
+			</div>
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+									
 		</div>
 	</div>
 </div>
