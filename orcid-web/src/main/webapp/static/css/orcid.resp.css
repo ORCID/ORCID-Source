@@ -2635,17 +2635,18 @@ header overrides
 }
 
 .oauth-title {
-	color: #949599;
-	text-transform: uppercase;
+	color: #949599;	
 	line-height: 1.2;
+	font-weight: normal;
+	font-size: 18px;
 }
 
 .oauth-title span {
-	text-transform: capitalize;
-	font-weight: normal;
+	text-transform: capitalize;	
 	color: #a6ce39;
 	display: block;
-	font-size: 22px;		
+	font-size: 22px;
+	font-weight: bold;		
 }
 
 .logo h1 {
@@ -3696,12 +3697,13 @@ p.orcid-id-container{
 }
 
 .oauth-title span.researcher-name{
-	color: #939598;
+	color: #a6ce39;
 	font-weight: bold;
 }
 
 .oauth-title span:last-of-type a{
-	font-size: 16px;	
+	font-size: 15px;	
+	font-weight: normal;
 }
 
 .delegation-label{
