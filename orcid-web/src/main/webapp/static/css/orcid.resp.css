@@ -4006,6 +4006,10 @@ ul.sso-options li span{
 	width: 15px;
 }
 
+.margin-left-fix{
+	margin-left: 0;
+}
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 		
