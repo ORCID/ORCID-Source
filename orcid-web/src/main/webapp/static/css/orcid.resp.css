@@ -3357,9 +3357,7 @@ p.orcid-id-container{
 	padding-left: 0;
 }
 
-.sso-api ul.sso-links li a span,
-.developer-tools a span
-{
+.sso-api ul.sso-links li a span{
 	font-size: 12px;	
 }
 
@@ -3377,11 +3375,11 @@ p.orcid-id-container{
 	padding-left: 0;		
 }
 
-.sso-api ul.sso-options li{
+ul.sso-options li{
 	display: inline-block;	
 }
 
-.sso-api ul.sso-options span{	
+ul.sso-options li span{	
 	font-size: 16px;
 }
 
@@ -3542,7 +3540,7 @@ p.orcid-id-container{
 }
 
 .developer-tools .tab-container{	
-	height: 32px;	 
+	height: 23px;	 
 	background: #FFF;
 	display: block;
 	text-align: center;
@@ -3550,7 +3548,7 @@ p.orcid-id-container{
 }
 
 .developer-tools .tab-container .tab{	
-	padding: 10px;	
+	padding: 2px 10px;	
 	text-align: center;
 	background: #949599;	
 	color: #FFF;
@@ -4006,10 +4004,6 @@ p.orcid-id-container{
 
 .small-box input[type="checkbox"]{
 	width: 15px;
-}
-
-.margin-left-fix{
-	margin-left: 0;
 }
 
 /* Media Queries */

@@ -193,31 +193,58 @@
 					</div>
 					<div class="col-md-3 col-sm-3 col-xs-3 sso-api">				
 						<ul class="sso-options pull-right">							
-							<li><a href ng-click="showViewLayout()" class="back" title="<@orcid.msg 'manage.developer_tools.tooltip.back' />"><span class="glyphicon glyphicon-arrow-left"></span></a></li>
-							<li><a href ng-click="addClient()" class="save" title="<@orcid.msg 'manage.developer_tools.tooltip.save' />"><span class="glyphicon glyphicon-floppy-disk"></span></a></li>							
+							<li>
+								<a href ng-click="showViewLayout()" class="back" title="<@orcid.msg 'manage.developer_tools.tooltip.back' />">
+									<span class="glyphicon glyphicon-arrow-left"></span>
+								</a>
+							</li>
+							<li>
+								<a href ng-click="addClient()" class="save" title="<@orcid.msg 'manage.developer_tools.tooltip.save' />">
+									<span class="glyphicon glyphicon-floppy-disk"></span>
+								</a>
+							</li>							
 						</ul>					
 					</div>		
 				</div>		
 			</div>
-
+			
+			<!-- ---------------- -->
 			<!-- View credentials -->
+			<!-- ---------------- -->
 			<div class="view-client" ng-show="viewing" ng-cloak>		
 				<!-- Client name -->
 				<div class="row">
-					<div class="col-md-3 col-sm-3 col-xs-12">
-						<span><strong><@orcid.msg 'manage.developer_tools.group.display_name'/></strong></span>
-					</div>					
-					<div class="col-md-7 col-sm-7 col-xs-7">
-						<h4>{{clientDetails.displayName.value}}</h4>												
-					</div>
-					<div class="col-md-2 col-sm-2 col-xs-3">				
+					<div class="col-md-12 col-sm-12 col-xs-12">				
 						<ul class="sso-options pull-right">	
 							<li><a href ng-click="showViewLayout()" class="back" title="<@orcid.msg 'manage.developer_tools.tooltip.back' />"><span class="glyphicon glyphicon-arrow-left"></span></a></li>						
 							<li><a href ng-click="showEditClient(clientDetails)" class="edit" title="<@orcid.msg 'manage.developer_tools.tooltip.edit' />"><span class="glyphicon glyphicon-pencil"></span></a></li>							
 						</ul>					
-					</div>				
+					</div>
+				</div>
+				<div class="row bottomBuffer">
+					<div class="col-md-3 col-sm-3 col-xs-6">
+						<span><strong><@orcid.msg 'manage.developer_tools.group.display_name'/></strong></span>
+					</div>					
+					<div class="col-md-9 col-sm-9 col-xs-6">
+						<span><strong>{{clientDetails.displayName.value}}</strong></span>												
+					</div>
+				
+				</div>
+				<!-- Client ID -->
+				<div class="row bottomBuffer">
+					<div class="col-md-3 col-sm-3 col-xs-12">
+						<span><strong><@orcid.msg 'manage.developer_tools.view.orcid'/></strong></span>
+					</div>
+					<div class="col-md-9 col-sm-9 col-xs-12"><span>{{clientDetails.clientId.value}}</span></div>
+				</div>
+				<!-- Client secret -->
+				<div class="row bottomBuffer">
+					<div class="col-md-3 col-sm-3 col-xs-12">
+						<span><strong><@orcid.msg 'manage.developer_tools.view.secret'/></strong></span>
+					</div>
+					<div class="col-md-9 col-sm-9 col-xs-12"><span>{{clientDetails.clientSecret.value}}</span></div>
 				</div>			
-				<div class="row">
+				<div class="row bottomBuffer">
 					<!-- Website -->
 					<div class="col-md-3 col-sm-3 col-xs-12">
 						<span><strong><@orcid.msg 'manage.developer_tools.group.website'/></strong></span>
@@ -226,7 +253,7 @@
 						<p><a href="{{clientDetails.clientWebsite.value}}">{{clientDetails.website.value}}</a></p>														
 					</div>							
 				</div>
-				<div class="row">
+				<div class="row bottomBuffer">
 					<!-- Description -->
 					<div class="col-md-3 col-sm-3 col-xs-12">
 						<span><strong><@orcid.msg 'manage.developer_tools.group.description'/></strong></span>
@@ -234,36 +261,20 @@
 					<div class="col-md-9 col-sm-9 col-xs-12 dt-description">
 						<p>{{clientDetails.shortDescription.value}}</p>														
 					</div>							
-				</div>
-
-				<div class="row">
-					<span class="col-md-3 col-sm-3 col-xs-12">
-						<strong><@orcid.msg 'manage.developer_tools.view.orcid'/></strong>
-					</span>
-					<span class="col-md-9 col-sm-9 col-xs-12">{{clientDetails.clientId.value}}</span>
-				</div>
-				<div class="row">
-					<span class="col-md-3 col-sm-3 col-xs-12">
-						<strong><@orcid.msg 'manage.developer_tools.view.secret'/></strong>
-					</span>
-					<span class="col-md-9 col-sm-9 col-xs-12">{{clientDetails.clientSecret.value}}</span>
-				</div>
-
+				</div>		
 				<!-- Slidebox -->
-				<div class="slidebox">
+				<div class="slidebox grey-box">
 					<div class="row">
 						<!-- Redirect URIS -->						
-						<div  class="col-md-12 col-sm-12 col-xs-12">
+						<div  class="col-md-6 col-sm-6 col-xs-12">
 							<h4><@orcid.msg 'manage.developer_tools.redirect_uri'/>:</h4>
 							<select ng-model="selectedRedirectUri" ng-options="rUri.value.value for rUri in clientDetails.redirectUris | orderBy:'value.value'" ng-change="updateSelectedRedirectUri()"></select>
-						</div>						
-					</div>
-					<div class="row">
-						<div class="col-md-12 col-sm-12 col-xs-12">
+						</div>
+						<div class="col-md-6 col-sm-6 col-xs-12 bottomBuffer">
 							<h4><@orcid.msg 'manage.developer_tools.view.scope' />:</h4>
 							<select ng-model="selectedScope" ng-options="scope as scope for scope in availableRedirectScopes" ng-change="updateSelectedRedirectUri()"></select>
-						</div>
-					</div>
+						</div>						
+					</div>					
 					<!-- Examples -->
 					<div ng-hide="playgroundExample != ''">																					
 						<div class="row">
