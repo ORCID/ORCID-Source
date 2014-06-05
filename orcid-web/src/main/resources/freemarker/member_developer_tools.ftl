@@ -199,9 +199,8 @@
 					</div>		
 				</div>		
 			</div>
-			<!-- ---------------- -->
+
 			<!-- View credentials -->
-			<!-- ---------------- -->
 			<div class="view-client" ng-show="viewing" ng-cloak>		
 				<!-- Client name -->
 				<div class="row">
@@ -236,6 +235,7 @@
 						<p>{{clientDetails.shortDescription.value}}</p>														
 					</div>							
 				</div>
+
 				<div class="row">
 					<span class="col-md-3 col-sm-3 col-xs-12">
 						<strong><@orcid.msg 'manage.developer_tools.view.orcid'/></strong>
@@ -248,20 +248,20 @@
 					</span>
 					<span class="col-md-9 col-sm-9 col-xs-12">{{clientDetails.clientSecret.value}}</span>
 				</div>
+
 				<!-- Slidebox -->
 				<div class="slidebox">
 					<div class="row">
-						<!-- Redirect URIS -->
-						<div>
-							<div  class="col-md-12 col-sm-12 col-xs-12">
-								<h4><@orcid.msg 'manage.developer_tools.redirect_uri'/>:</h4>
-							</div>
-							<div class="col-md-6 col-sm-6 col-xs-6">
-								<select ng-model="selectedRedirectUri" ng-options="rUri.value.value for rUri in clientDetails.redirectUris | orderBy:'value.value'" ng-change="updateSelectedRedirectUri()"></select>
-							</div>		
-							<div class="col-md-6 col-sm-6 col-xs-6">
-								<@orcid.msg 'manage.developer_tools.view.scope' />:&nbsp;<select ng-model="selectedScope" ng-options="scope as scope for scope in availableRedirectScopes" ng-change="updateSelectedRedirectUri()"></select>
-							</div>																																													
+						<!-- Redirect URIS -->						
+						<div  class="col-md-12 col-sm-12 col-xs-12">
+							<h4><@orcid.msg 'manage.developer_tools.redirect_uri'/>:</h4>
+							<select ng-model="selectedRedirectUri" ng-options="rUri.value.value for rUri in clientDetails.redirectUris | orderBy:'value.value'" ng-change="updateSelectedRedirectUri()"></select>
+						</div>						
+					</div>
+					<div class="row">
+						<div class="col-md-12 col-sm-12 col-xs-12">
+							<h4><@orcid.msg 'manage.developer_tools.view.scope' />:</h4>
+							<select ng-model="selectedScope" ng-options="scope as scope for scope in availableRedirectScopes" ng-change="updateSelectedRedirectUri()"></select>
 						</div>
 					</div>
 					<!-- Examples -->
