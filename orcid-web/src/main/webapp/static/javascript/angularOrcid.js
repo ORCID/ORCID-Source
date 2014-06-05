@@ -5122,7 +5122,7 @@ function ClientEditCtrl($scope, $compile){
 					$scope.editing = false;
 					$scope.viewing = false;
 					$scope.listing = true;
-					$scope.hideGoogleUri = true;
+					$scope.hideGoogleUri = false;
 				});
 	        }
 	    }).fail(function() { 
@@ -5153,12 +5153,40 @@ function ClientEditCtrl($scope, $compile){
 	
 	// Add a new uri input field to a new client
 	$scope.addRedirectUriToNewClientTable = function(){		
-		$scope.newClient.redirectUris.push({value: {value: ''},type: {value: 'default'}, scopes: []});	
+		$scope.newClient.redirectUris.push({value: {value: ''},type: {value: 'default'}, scopes: [], errors: []});	
 	};
 	
 	// Add a new uri input field to a existing client
 	$scope.addUriToExistingClientTable = function(){
-		$scope.clientToEdit.redirectUris.push({value: {value: ''},type: {value: 'default'}, scopes: []});
+		$scope.clientToEdit.redirectUris.push({value: {value: ''},type: {value: 'default'}, scopes: [], errors: []});
+	};
+	
+	// Delete an uri input field 
+	$scope.deleteUriOnNewClient = function(idx){
+		$scope.newClient.redirectUris.splice(idx, 1);
+		$scope.hideGoogleUri = false;
+		if($scope.newClient.redirectUris != null && $scope.newClient.redirectUris.length > 0) {
+			for(var i = 0; i < $scope.newClient.redirectUris.length; i++) {
+				if($scope.newClient.redirectUris[i].value.value == $scope.googleUri) {
+					$scope.hideGoogleUri = true;
+					break;
+				}
+			}
+		}
+	};	
+	
+	// Delete an uri input field 
+	$scope.deleteUriOnExistingClient = function(idx){
+		$scope.clientToEdit.redirectUris.splice(idx, 1);
+		$scope.hideGoogleUri = false;
+		if($scope.clientToEdit.redirectUris != null && $scope.clientToEdit.redirectUris.length > 0) {
+			for(var i = 0; i < $scope.clientToEdit.redirectUris.length; i++) {
+				if($scope.clientToEdit.redirectUris[i].value.value == $scope.googleUri) {
+					$scope.hideGoogleUri = true;
+					break;
+				}
+			}
+		}	
 	};
 	
 	$scope.addTestRedirectUri = function(type, edit) {
@@ -5172,6 +5200,7 @@ function ClientEditCtrl($scope, $compile){
 			dataType: 'json',
 			success: function(data) {
 				data.value.value=rUri;
+				data.type.value='default';
 				$scope.$apply(function(){ 
 					if(edit == 'true'){
 						if($scope.clientToEdit.redirectUris.length == 1 && $scope.clientToEdit.redirectUris[0].value.value == null) {						
@@ -5194,18 +5223,7 @@ function ClientEditCtrl($scope, $compile){
 		}).fail(function() { 
 	    	console.log("Error fetching empty redirect uri");
 	    });
-	};
-	
-	// Delete an uri input field 
-	$scope.deleteUriOnNewClient = function(idx){
-		$scope.newClient.redirectUris.splice(idx, 1);
-	};	
-	
-	
-	
-	
-	
-	
+	};		
 	
 	// Display the modal to edit a client
 	$scope.showEditClient = function(client) {		
@@ -5216,13 +5234,26 @@ function ClientEditCtrl($scope, $compile){
 		$scope.creating = false;
 		$scope.listing = false;	
 		$scope.viewing = false;
+		$scope.hideGoogleUri = false;
 		
+		if($scope.clientToEdit.redirectUris != null && $scope.clientToEdit.redirectUris.length > 0) {
+			for(var i = 0; i < $scope.clientToEdit.redirectUris.length; i++) {
+				if($scope.clientToEdit.redirectUris[i].value.value == $scope.googleUri) {
+					$scope.hideGoogleUri = true;
+					break;
+				}
+			}
+		}				
 	};		
 	
-	// Delete an uri input field 
-	$scope.deleteUriOnExistingClient = function(idx){
-		$scope.clientToEdit.redirectUris.splice(idx, 1);
-	};
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	//Submits the client update request
 	$scope.submitEditClient = function(){				
@@ -5256,9 +5287,6 @@ function ClientEditCtrl($scope, $compile){
 	    });				
 	};
 	
-	
-	
-	
 	//Submits the new client request
 	$scope.addClient = function(){		
 		// Check which redirect uris are empty strings and remove them from the array
@@ -5290,8 +5318,6 @@ function ClientEditCtrl($scope, $compile){
 	    });		
 	};
 	
-	
-	
 	//Submits the updated client
 	$scope.editClient = function() {
 		// Check which redirect uris are empty strings and remove them from the array
@@ -5321,21 +5347,6 @@ function ClientEditCtrl($scope, $compile){
 	    	console.log("Error editing client information.");
 	    });	
 	};
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	// Display client details: Client ID and Client secret
 	$scope.viewDetails = function(client) {				
