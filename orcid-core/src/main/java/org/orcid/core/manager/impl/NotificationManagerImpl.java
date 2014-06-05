@@ -322,12 +322,10 @@ public class NotificationManagerImpl implements NotificationManager {
 
         addMessageParams(templateParams, orcidProfile);
 
-        String primaryEmail = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
-
         // Generate body from template
         String body = templateManager.processTemplate("reset_password_email.ftl", templateParams);
         String htmlBody = templateManager.processTemplate("reset_password_email_html.ftl", templateParams);
-        mailGunManager.sendEmail(RESET_NOTIFY_ORCID_ORG, primaryEmail, getSubject("email.subject.reset", orcidProfile), body, htmlBody);
+        mailGunManager.sendEmail(RESET_NOTIFY_ORCID_ORG, submittedEmail, getSubject("email.subject.reset", orcidProfile), body, htmlBody);
     }
 
     @Override
