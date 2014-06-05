@@ -5056,33 +5056,6 @@ function SSOPreferencesCtrl($scope, $compile) {
 	$scope.getSSOCredentials();	
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 function ClientEditCtrl($scope, $compile){	
 	$scope.clients = [];
 	$scope.newClient = null;	
@@ -5505,36 +5478,6 @@ function ClientEditCtrl($scope, $compile){
 		$.colorbox.close();	
 	};
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 function CustomEmailCtrl($scope, $compile) {	
 	$scope.customEmail = null;

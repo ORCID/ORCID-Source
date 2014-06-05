@@ -23,7 +23,7 @@
 		<#include "includes/id_banner.ftl"/>
 	</div>
 	<div class="col-md-9 col-sm-12 col-xs-12 margin-top-box-mobile">		
-		<div ng-controller="ClientEditCtrl">	
+		<div ng-controller="ClientEditCtrl" id="member_developer_tools_header">	
 			<!-- Header -->
 			
 			<div class="row">
@@ -194,7 +194,7 @@
 					<div class="col-md-3 col-sm-3 col-xs-3 sso-api">				
 						<ul class="sso-options pull-right">							
 							<li>
-								<a href ng-click="showViewLayout()" class="back" title="<@orcid.msg 'manage.developer_tools.tooltip.back' />">
+								<a href="#member_developer_tools_header" ng-click="showViewLayout()" class="back" title="<@orcid.msg 'manage.developer_tools.tooltip.back' />">
 									<span class="glyphicon glyphicon-arrow-left"></span>
 								</a>
 							</li>
@@ -216,7 +216,7 @@
 				<div class="row">
 					<div class="col-md-12 col-sm-12 col-xs-12">				
 						<ul class="sso-options pull-right">	
-							<li><a href ng-click="showViewLayout()" class="back" title="<@orcid.msg 'manage.developer_tools.tooltip.back' />"><span class="glyphicon glyphicon-arrow-left"></span></a></li>						
+							<li><a href="#member_developer_tools_header" ng-click="showViewLayout()" class="back" title="<@orcid.msg 'manage.developer_tools.tooltip.back' />"><span class="glyphicon glyphicon-arrow-left"></span></a></li>						
 							<li><a href ng-click="showEditClient(clientDetails)" class="edit" title="<@orcid.msg 'manage.developer_tools.tooltip.edit' />"><span class="glyphicon glyphicon-pencil"></span></a></li>							
 						</ul>					
 					</div>
@@ -319,20 +319,6 @@
 					</div>
 				</div>			
 			</div>
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
 			<!-- ---------------- -->
 			<!-- Edit credentials -->
 			<!-- ---------------- -->
@@ -465,7 +451,7 @@
 					</div>
 					<div class="col-md-3 col-sm-3 col-xs-3 sso-api">				
 						<ul class="sso-options pull-right">							
-							<li><a href ng-click="showViewLayout()" class="back" title="<@orcid.msg 'manage.developer_tools.tooltip.back' />"><span class="glyphicon glyphicon-arrow-left"></span></a></li>
+							<li><a href="#member_developer_tools_header" ng-click="showViewLayout()" class="back" title="<@orcid.msg 'manage.developer_tools.tooltip.back' />"><span class="glyphicon glyphicon-arrow-left"></span></a></li>
 							<li><a href ng-click="editClient()" class="save" title="<@orcid.msg 'manage.developer_tools.tooltip.save' />"><span class="glyphicon glyphicon-floppy-disk"></span></a></li>							
 						</ul>					
 					</div>		
