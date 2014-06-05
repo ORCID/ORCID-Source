@@ -5247,14 +5247,6 @@ function ClientEditCtrl($scope, $compile){
 	};		
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
 	//Submits the client update request
 	$scope.submitEditClient = function(){				
 		// Check which redirect uris are empty strings and remove them from the array
@@ -5408,7 +5400,10 @@ function ClientEditCtrl($scope, $compile){
 	};
 	
 	$scope.showViewLayout = function() {		
-		$scope.getClients();
+		$scope.editing = false;
+		$scope.creating = false;
+		$scope.listing = true;	
+		$scope.viewing = false;
 	};
 	
 	//Load the list of scopes for client redirect uris 
