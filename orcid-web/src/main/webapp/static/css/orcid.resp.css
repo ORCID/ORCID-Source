@@ -2634,17 +2634,18 @@ header overrides
 }
 
 .oauth-title {
-	color: #949599;
-	text-transform: uppercase;
+	color: #949599;	
 	line-height: 1.2;
+	font-weight: normal;
+	font-size: 18px;
 }
 
 .oauth-title span {
-	text-transform: capitalize;
-	font-weight: normal;
+	text-transform: capitalize;	
 	color: #a6ce39;
 	display: block;
-	font-size: 22px;		
+	font-size: 22px;
+	font-weight: bold;		
 }
 
 .logo h1 {
@@ -2864,9 +2865,9 @@ a.btn-primary:hover {
 
 #loginForm .submit-login,
 #loginForm .submit-login div{
-	z-index: 1001;
-	width: 150px;
+	z-index: 1001;	
 	height: 45px;
+	margin-top: 40px;
 }
 
 #loginForm #form-sign-in-button{
@@ -2901,13 +2902,13 @@ a.btn-primary:hover {
 }
 
 #loginForm #login-error-mess {
-	top: 153px;
+	top: 141px;
 	position: absolute;
 	z-index: 1000;
-	height:auto;		
+	height: auto;
 	overflow: hidden;
 	width: 100%;
-	padding-left: 330px;	
+	padding-left: 225px;	
 }
 
 /* Personal Profile */
@@ -3695,12 +3696,13 @@ p.orcid-id-container{
 }
 
 .oauth-title span.researcher-name{
-	color: #939598;
+	color: #a6ce39;
 	font-weight: bold;
 }
 
 .oauth-title span:last-of-type a{
-	font-size: 16px;	
+	font-size: 15px;	
+	font-weight: normal;
 }
 
 .delegation-label{
@@ -4345,14 +4347,13 @@ p.orcid-id-container{
 		margin: 32px 0 0 0;
 		width: 100%;
 	}
-	#loginForm #login-error-mess {
-		line-height: 25px;
+	#loginForm #login-error-mess {		
 		margin: 0;
 		padding: 0;
 		min-height: 30px;
-		height: 50px;
+		height: auto;
 		text-align: center;
-		top: 260px; /* Login layout top */
+		top: 183px;
 	}
 	#loginForm #ajax-loader {
 		width: 100%;
@@ -5062,7 +5063,7 @@ p.orcid-id-container{
 	}
 	
 	#loginForm #login-error-mess{
-		padding-left: 280px;
+		padding-left: 172px;
 		text-align:left;
 	}
 	

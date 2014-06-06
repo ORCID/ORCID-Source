@@ -22,16 +22,12 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.validator.routines.UrlValidator;
-import org.hibernate.validator.constraints.impl.URLValidator;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.locale.LocaleManager;
@@ -44,17 +40,15 @@ import org.orcid.core.manager.WorkManager;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.message.CitationType;
-import org.orcid.jaxb.model.message.ContributorAttributes;
-import org.orcid.jaxb.model.message.ContributorRole;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.PublicationDate;
-import org.orcid.jaxb.model.message.SequenceType;
 import org.orcid.jaxb.model.message.WorkCategory;
 import org.orcid.jaxb.model.message.WorkContributors;
+import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
@@ -110,7 +104,6 @@ public class WorksController extends BaseWorkspaceController {
 
     @Resource
     private WorkManager workManager;
-
 
     @Resource
     private WorkExternalIdentifierManager workExternalIdentifierManager;
@@ -408,22 +401,6 @@ public class WorksController extends BaseWorkspaceController {
             // Create work
             workEntity = workManager.addWork(workEntity);
 
-            if (work.getWorkExternalIdentifiers() != null) {
-                for (WorkExternalIdentifier wei : work.getWorkExternalIdentifiers()) {
-                    if (!PojoUtil.isEmpty(wei.getWorkExternalIdentifierId())) {
-                        org.orcid.persistence.jpa.entities.WorkExternalIdentifierEntity newWeiJpa = new org.orcid.persistence.jpa.entities.WorkExternalIdentifierEntity();
-                        newWeiJpa.setIdentifier(wei.getWorkExternalIdentifierId().getValue());
-                        newWeiJpa.setDateCreated(new java.util.Date());
-                        newWeiJpa.setIdentifierType(wei.toWorkExternalIdentifier().getWorkExternalIdentifierType());
-                        newWeiJpa.setLastModified(new java.util.Date());
-                        newWeiJpa.setWork(workEntity);
-
-                        workExternalIdentifierManager.addWorkExternalIdentifier(newWeiJpa);
-                    }
-                }
-
-            }
-
             // Create profile work relationship
             profileWorkManager.addProfileWork(currentProfile.getOrcidIdentifier().getPath(), workEntity.getId(), newOw.getVisibility(), getRealUserOrcid());
 
@@ -508,12 +485,17 @@ public class WorksController extends BaseWorkspaceController {
             workEntity.setContributorsJson(JsonUtils.convertToJsonString(workContributors));
         }
 
+        WorkExternalIdentifiers workExternalIdentifiers = orcidWork.getWorkExternalIdentifiers();
+        if (workExternalIdentifiers != null) {
+            workEntity.setExternalIdentifiersJson(JsonUtils.convertToJsonString(workExternalIdentifiers));
+        }
+
         if (orcidWork.getCountry() != null)
             workEntity.setIso2Country(orcidWork.getCountry().getValue());
 
         return workEntity;
     }
- 
+
     /**
      * Transform a PublicationDate into a PuzzyDate
      * 
@@ -595,7 +577,6 @@ public class WorksController extends BaseWorkspaceController {
         validateUrl(work.getUrl());
         return work;
     }
-
 
     @RequestMapping(value = "/work/journalTitleValidate.json", method = RequestMethod.POST)
     public @ResponseBody

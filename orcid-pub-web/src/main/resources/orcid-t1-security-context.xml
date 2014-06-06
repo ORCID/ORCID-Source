@@ -37,14 +37,18 @@
 
 	<!-- The authentication manager that wraps the client details user service, that performs a db lookup -->
     <sec:authentication-manager id="clientAuthenticationManager">
-        <sec:authentication-provider user-service-ref="clientDetailsUserService" />
+        <sec:authentication-provider ref="orcidAuthenticationProvider" />
     </sec:authentication-manager>	
 
 	<!-- Add in order for it to be referenced in the filter order -->
-    <bean id="clientCredentialsTokenEndpointFilter" class="org.orcid.api.common.security.oauth.OrcidT1Oauth2TokenEndPointFilter">
+	<bean id="clientCredentialsTokenEndpointFilter" class="org.orcid.api.common.security.oauth.OrcidT1Oauth2TokenEndPointFilter">
         <property name="authenticationEntryPoint" ref="oauthAuthenticationEntryPoint"/>
         <property name="authenticationManager" ref="clientAuthenticationManager"/>
     </bean>
+
+	<bean id="orcidAuthenticationProvider" class="org.orcid.core.oauth.OrcidMultiSecretAuthenticationProvider">
+		<property name="userDetailsService" ref="clientDetailsUserService" />
+	</bean>
 
 	<bean id="oauthAccessDeniedHandler" class="org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler">
         <property name ="exceptionRenderer" ref="oauthExceptionRenderer"/>

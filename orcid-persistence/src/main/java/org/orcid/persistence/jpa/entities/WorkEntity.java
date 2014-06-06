@@ -68,6 +68,7 @@ public class WorkEntity extends BaseEntity<Long> implements Comparable<WorkEntit
     private WorkType workType;
     private PublicationDateEntity publicationDate;
     private String contributorsJson;
+    private String externalIdentifiersJson;
     private SortedSet<WorkExternalIdentifierEntity> externalIdentifiers;
 
     @Id
@@ -216,6 +217,15 @@ public class WorkEntity extends BaseEntity<Long> implements Comparable<WorkEntit
 
     public void setContributorsJson(String contributorsJson) {
         this.contributorsJson = contributorsJson;
+    }
+
+    @Column(name = "external_ids_json")
+    public String getExternalIdentifiersJson() {
+        return externalIdentifiersJson;
+    }
+
+    public void setExternalIdentifiersJson(String externalIdentifiersJson) {
+        this.externalIdentifiersJson = externalIdentifiersJson;
     }
 
     /**
