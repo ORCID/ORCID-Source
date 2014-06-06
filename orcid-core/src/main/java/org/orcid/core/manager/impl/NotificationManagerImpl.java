@@ -447,7 +447,7 @@ public class NotificationManagerImpl implements NotificationManager {
         
         String emailName = deriveEmailFriendlyName(createdProfile);
         String orcid = createdProfile.getOrcidIdentifier().getPath();
-        String creatorName = source == null ? "" : source.getSourceName().getContent();
+        String creatorName = (source == null || source.getSourceName() == null || source.getSourceName().getContent() == null) ? "" : source.getSourceName().getContent();
         String verificationUrl = createClaimVerificationUrl(createdProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), baseUri);
         String email = createdProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
         String subject = null;
@@ -535,7 +535,7 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("orcid", orcid);
         templateParams.put("subject", getSubject("email.subject.claim_reminder", orcidProfile));
         Source source = orcidProfile.getOrcidHistory().getSource();
-        templateParams.put("creatorName", source == null ? "" : source.getSourceName().getContent());
+        templateParams.put("creatorName", (source == null || source.getSourceName() == null || source.getSourceName().getContent() == null) ? "" : source.getSourceName().getContent());
         templateParams.put("baseUri", baseUri);
         templateParams.put("daysUntilActivation", daysUntilActivation);
         Email primaryEmail = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail();
