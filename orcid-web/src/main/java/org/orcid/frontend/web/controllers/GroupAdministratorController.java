@@ -25,11 +25,13 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.orcid.core.exception.OrcidClientGroupManagementException;
 import org.orcid.core.manager.OrcidClientGroupManager;
+import org.orcid.core.manager.OrcidSSOManager;
 import org.orcid.core.manager.ThirdPartyLinkManager;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
@@ -67,13 +69,16 @@ public class GroupAdministratorController extends BaseWorkspaceController {
 
     @Resource
     OrcidClientGroupManager orcidClientGroupManager;
+    
+    @Resource
+    private OrcidSSOManager orcidSSOManager;
 
     @Resource
     private ThirdPartyLinkManager thirdPartyLinkManager;
 
     @RequestMapping
     public ModelAndView manageClients() {
-        ModelAndView mav = new ModelAndView("group_developer_tools");
+        ModelAndView mav = new ModelAndView("member_developer_tools");
         OrcidProfile profile = getEffectiveProfile();
 
         if (profile.getType() == null || !profile.getType().equals(OrcidType.GROUP)) {
@@ -101,17 +106,30 @@ public class GroupAdministratorController extends BaseWorkspaceController {
         return mav;
     }
 
+    @RequestMapping(value = "/get-empty-redirect-uri.json", method = RequestMethod.GET)
+    public @ResponseBody
+    RedirectUri getEmptyRedirectUri(HttpServletRequest request) {
+        RedirectUri result = new RedirectUri();
+        result.setValue(new Text());
+        result.setType(Text.valueOf(RedirectUriType.DEFAULT.value()));
+        return result;
+    }
+    
     @RequestMapping(value = "/client.json", method = RequestMethod.GET)
     public @ResponseBody
     Client getClient() {
         Client emptyClient = new Client();
-        emptyClient.setDisplayName(Text.valueOf(""));
-        emptyClient.setWebsite(Text.valueOf(""));
-        emptyClient.setShortDescription(Text.valueOf(""));
-        emptyClient.setClientId(Text.valueOf(""));
-        emptyClient.setClientSecret(Text.valueOf(""));
-        emptyClient.setType(Text.valueOf(""));
+        emptyClient.setDisplayName(new Text());
+        emptyClient.setWebsite(new Text());
+        emptyClient.setShortDescription(new Text());
+        emptyClient.setClientId(new Text());
+        emptyClient.setClientSecret(new Text());
+        emptyClient.setType(new Text());
         ArrayList<RedirectUri> redirectUris = new ArrayList<RedirectUri>();
+        RedirectUri emptyRedirectUri = new RedirectUri();
+        emptyRedirectUri.setValue(new Text());
+        emptyRedirectUri.setType(Text.valueOf(RedirectUriType.DEFAULT.value()));
+        redirectUris.add(emptyRedirectUri);
         emptyClient.setRedirectUris(redirectUris);
         return emptyClient;
     }
@@ -339,5 +357,13 @@ public class GroupAdministratorController extends BaseWorkspaceController {
         Collections.sort(scopes);
         return scopes;
     }
-
+    
+    /**
+     * Reset client secret
+     * */
+    @RequestMapping(value = "/reset-client-secret.json", method = RequestMethod.POST)
+    public @ResponseBody
+    boolean resetClientSecret(HttpServletRequest request, @RequestBody String clientId) {
+        return orcidSSOManager.resetClientSecret(clientId);
+    }
 }

@@ -5062,15 +5062,40 @@ function ClientEditCtrl($scope, $compile){
 	$scope.scopeSelectorOpen = false;		
 	$scope.selectedScopes = [];
 	$scope.availableRedirectScopes = [];
+	$scope.editing = false;
+	$scope.creating = false;
+	$scope.viewing = false;
+	$scope.listing = true;
+	$scope.hideGoogleUri = true;
+	$scope.selectedRedirectUri = "";
+	$scope.selectedScope = "";
+	// Google example
+	$scope.googleUri = 'https://developers.google.com/oauthplayground';
+	$scope.playgroundExample = '';
+	$scope.googleExampleLink = 'https://developers.google.com/oauthplayground/#step1&oauthEndpointSelect=Custom&oauthAuthEndpointValue=[BASE_URI_ENCODE]/oauth/authorize&oauthTokenEndpointValue=[PUB_BASE_URI_ENCODE]/oauth/token&oauthClientId=[CLIENT_ID]&oauthClientSecret=[CLIENT_SECRET]&accessTokenType=bearer&scopes=[SCOPES]';
+	// Curl example
+	$scope.sampleAuthCurl = '';
+	$scope.sampleAuthCurlTemplate = "curl -i -L -k -H 'Accept: application/json' --data 'client_id=[CLIENT_ID]&client_secret=[CLIENT_SECRET]&grant_type=authorization_code&redirect_uri=[REDIRECT_URI]&code=REPLACE WITH OAUTH CODE' [PUB_BASE_URI]/oauth/token";
+	// Auth example
+	$scope.authorizeUrlBase = getBaseUri() + '/oauth/authorize';
+	$scope.authorizeURLTemplate = $scope.authorizeUrlBase + '?client_id=[CLIENT_ID]&response_type=code&redirect_uri=[REDIRECT_URI]&scopes=[SCOPES]';	
+	// Token url
+	$scope.tokenURL = orcidVar.pubBaseUri + '/oauth/token';
+	
 	
 	// Get the list of clients associated with this user
 	$scope.getClients = function(){
 		$.ajax({
 	        url: getBaseUri() + '/group/developer-tools/get-clients.json',
 	        dataType: 'json',
-	        success: function(data) {	        	        					
+	        success: function(data) {	  	        	
 				$scope.$apply(function(){
-					$scope.clients = data;      		
+					$scope.clients = data;
+					$scope.creating = false;
+					$scope.editing = false;
+					$scope.viewing = false;
+					$scope.listing = true;
+					$scope.hideGoogleUri = false;
 				});
 	        }
 	    }).fail(function() { 
@@ -5080,90 +5105,120 @@ function ClientEditCtrl($scope, $compile){
 	};		
 	
 	// Get an empty modal to add
-	$scope.addClient = function(){		
+	$scope.showAddClient = function(){	
 		$.ajax({
 			url: getBaseUri() + '/group/developer-tools/client.json',
 			dataType: 'json',
 			success: function(data) {
-				$scope.newClient = data;
-				console.log(data);
 				$scope.$apply(function() {
-					$scope.showNewClientModal();
+					$scope.newClient = data;
+					$scope.creating = true;
+					$scope.listing = false;
+					$scope.editing = false;
+					$scope.viewing = false;
+					$scope.hideGoogleUri = false;
 				});
 			}
 		}).fail(function() { 
 	    	console.log("Error fetching client");
 	    });
-	};
-	
-	// Display the modal to add a new client
-	$scope.showNewClientModal = function(){
-		$.colorbox({        	            
-            html : $compile($('#new-client-modal').html())($scope), 
-            transition: 'fade',
-            onLoad: function() {
-			    $('#cboxClose').remove();
-			},
-	        scrolling: true
-        });
-        $.colorbox.resize({width:"400px" , height:"450px"});
-	};
+	};		
 	
 	// Add a new uri input field to a new client
-	$scope.addUriToNewClientTable = function(){		
-		$scope.newClient.redirectUris.push({value: {value: ''},type: {value: 'default'}, scopes: []});	
+	$scope.addRedirectUriToNewClientTable = function(){		
+		$scope.newClient.redirectUris.push({value: {value: ''},type: {value: 'default'}, scopes: [], errors: []});	
 	};
 	
 	// Add a new uri input field to a existing client
 	$scope.addUriToExistingClientTable = function(){
-		$scope.clientToEdit.redirectUris.push({value: {value: ''},type: {value: 'default'}, scopes: []});
+		$scope.clientToEdit.redirectUris.push({value: {value: ''},type: {value: 'default'}, scopes: [], errors: []});
 	};
+	
+	// Delete an uri input field 
+	$scope.deleteUriOnNewClient = function(idx){
+		$scope.newClient.redirectUris.splice(idx, 1);
+		$scope.hideGoogleUri = false;
+		if($scope.newClient.redirectUris != null && $scope.newClient.redirectUris.length > 0) {
+			for(var i = 0; i < $scope.newClient.redirectUris.length; i++) {
+				if($scope.newClient.redirectUris[i].value.value == $scope.googleUri) {
+					$scope.hideGoogleUri = true;
+					break;
+				}
+			}
+		}
+	};	
+	
+	// Delete an uri input field 
+	$scope.deleteUriOnExistingClient = function(idx){
+		$scope.clientToEdit.redirectUris.splice(idx, 1);
+		$scope.hideGoogleUri = false;
+		if($scope.clientToEdit.redirectUris != null && $scope.clientToEdit.redirectUris.length > 0) {
+			for(var i = 0; i < $scope.clientToEdit.redirectUris.length; i++) {
+				if($scope.clientToEdit.redirectUris[i].value.value == $scope.googleUri) {
+					$scope.hideGoogleUri = true;
+					break;
+				}
+			}
+		}	
+	};
+	
+	$scope.addTestRedirectUri = function(type, edit) {
+		var rUri = '';		
+		if(type == 'google'){
+			rUri = $scope.googleUri;
+		}
+								
+		$.ajax({
+			url: getBaseUri() + '/developer-tools/get-empty-redirect-uri.json',
+			dataType: 'json',
+			success: function(data) {
+				data.value.value=rUri;
+				data.type.value='default';
+				$scope.$apply(function(){ 
+					if(edit == 'true'){
+						if($scope.clientToEdit.redirectUris.length == 1 && $scope.clientToEdit.redirectUris[0].value.value == null) {						
+							$scope.clientToEdit.redirectUris[0].value.value = rUri;						
+						} else {
+							$scope.clientToEdit.redirectUris.push(data);
+						}
+					} else {
+						if($scope.newClient.redirectUris.length == 1 && $scope.newClient.redirectUris[0].value.value == null) {						
+							$scope.newClient.redirectUris[0].value.value = rUri;						
+						} else {
+							$scope.newClient.redirectUris.push(data);
+						}
+					}															
+					if(type == 'google') {
+						$scope.hideGoogleUri = true; 
+					} 
+				});
+			}
+		}).fail(function() { 
+	    	console.log("Error fetching empty redirect uri");
+	    });
+	};		
 	
 	// Display the modal to edit a client
-	$scope.editClient = function(idx) {		
+	$scope.showEditClient = function(client) {		
 		// Copy the client to edit to a scope variable 
-		$scope.clientToEdit = angular.copy($scope.clients[idx]);		
-		$.colorbox({        	            
-            html : $compile($('#edit-client-modal').html())($scope), 
-            transition: 'fade',            
-	        onLoad: function() {
-			    $('#cboxClose').remove();
-			},
-	        scrolling: true
-        });		
-        $.colorbox.resize({width:"400px" , height:"450px"});   
-	};		
-	
-	// Display client details: Client ID and Client secret
-	$scope.viewDetails = function(idx){
-		$scope.clientDetails = $scope.clients[idx];
-		$.colorbox({        	            
-            html : $compile($('#view-details-modal').html())($scope),
-	        scrolling: true,
-	        onLoad: function() {
-			    $('#cboxClose').remove();
-			},
-			scrolling: true
-        });
+		$scope.clientToEdit = client;	
 		
-        $.colorbox.resize({width:"560px" , height:"275px"});
-        
-	};
-	
-	$scope.closeModal = function(){
-		$.colorbox.close();	
-	};
-	
-	
-	// Delete an uri input field 
-	$scope.deleteUri = function(idx){
-		$scope.clientToEdit.redirectUris.splice(idx, 1);
+		$scope.editing = true;
+		$scope.creating = false;
+		$scope.listing = false;	
+		$scope.viewing = false;
+		$scope.hideGoogleUri = false;
+		
+		if($scope.clientToEdit.redirectUris != null && $scope.clientToEdit.redirectUris.length > 0) {
+			for(var i = 0; i < $scope.clientToEdit.redirectUris.length; i++) {
+				if($scope.clientToEdit.redirectUris[i].value.value == $scope.googleUri) {
+					$scope.hideGoogleUri = true;
+					break;
+				}
+			}
+		}				
 	};		
 	
-	// Delete an uri input field 
-	$scope.deleteJustCreatedUri = function(idx){
-		$scope.newClient.redirectUris.splice(idx, 1);
-	};	
 	
 	//Submits the client update request
 	$scope.submitEditClient = function(){				
@@ -5198,7 +5253,7 @@ function ClientEditCtrl($scope, $compile){
 	};
 	
 	//Submits the new client request
-	$scope.submitAddClient = function(){		
+	$scope.addClient = function(){		
 		// Check which redirect uris are empty strings and remove them from the array
 		for(var j = $scope.newClient.redirectUris.length - 1; j >= 0 ; j--)	{
 			if(!$scope.newClient.redirectUris[j].value){
@@ -5228,9 +5283,104 @@ function ClientEditCtrl($scope, $compile){
 	    });		
 	};
 	
+	//Submits the updated client
+	$scope.editClient = function() {
+		// Check which redirect uris are empty strings and remove them from the array
+		for(var j = $scope.clientToEdit.redirectUris.length - 1; j >= 0 ; j--)	{
+			if(!$scope.clientToEdit.redirectUris[j].value){
+				$scope.clientToEdit.redirectUris.splice(j, 1);
+			}
+		}
+		
+		//Submit the edited client
+		$.ajax({
+	        url: getBaseUri() + '/group/developer-tools/edit-client.json',
+	        type: 'POST',
+	        data: angular.toJson($scope.clientToEdit),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {	        	
+	        	if(data.errors != null && data.errors.length > 0){
+	        		$scope.clientToEdit = data;
+	        		$scope.$apply();
+	        	} else {
+	        		//If everything worked fine, reload the list of clients
+	        		$scope.getClients();	        		
+	        	}
+	        }
+	    }).fail(function() { 
+	    	console.log("Error editing client information.");
+	    });	
+	};
+	
+	// Display client details: Client ID and Client secret
+	$scope.viewDetails = function(client) {				
+		// Set the client details
+		$scope.clientDetails = client;
+		// Set the first redirect uri selected		
+		if(client.redirectUris != null && client.redirectUris.length > 0) {
+			$scope.selectedRedirectUri = client.redirectUris[0];			
+		} else {
+			$scope.selectedRedirectUri = null;
+		}
+		 
+		$scope.editing = false;
+		$scope.creating = false;
+		$scope.listing = false;	
+		$scope.viewing = true;
+		
+		// Update the selected redirect uri
+		$scope.updateSelectedRedirectUri();
+	};
+	
+	$scope.updateSelectedRedirectUri = function() {
+		var clientId = $scope.clientDetails.clientId.value;
+		var selectedClientSecret = $scope.clientDetails.clientSecret.value;
+		var scope = $scope.selectedScope;
+		var selectedRedirectUriValue = '';
+		if($scope.selectedRedirectUri != null) {
+			selectedRedirectUriValue = $scope.selectedRedirectUri.value.value;
+		}
+					
+		//Build the google playground url example
+		$scope.playgroundExample = '';
+		
+		if($scope.googleUri == selectedRedirectUriValue) {
+			var example = $scope.googleExampleLink;
+			example = example.replace('[PUB_BASE_URI_ENCODE]', encodeURI(orcidVar.pubBaseUri));
+			example = example.replace('[BASE_URI_ENCODE]', encodeURI(getBaseUri()));
+			example = example.replace('[CLIENT_ID]', clientId);
+			example = example.replace('[CLIENT_SECRET]', selectedClientSecret);	
+			if(scope != '')
+				example = example.replace('[SCOPES]', scope);
+			$scope.playgroundExample = example;
+		}		
+		
+		var example = $scope.authorizeURLTemplate;
+		example = example.replace('[PUB_BASE_URI]', orcidVar.pubBaseUri);
+		example = example.replace('[CLIENT_ID]', clientId);
+		example = example.replace('[REDIRECT_URI]', selectedRedirectUriValue);
+		if(scope != '')
+			example = example.replace('[SCOPES]', scope);
+		$scope.authorizeURL = example;
+		
+		// rebuild sample Auhtroization Curl
+		var sampleCurl = $scope.sampleAuthCurlTemplate;
+		$scope.sampleAuthCurl = sampleCurl.replace('[CLIENT_ID]', clientId)
+		    .replace('[CLIENT_SECRET]', selectedClientSecret)
+		    .replace('[PUB_BASE_URI]', orcidVar.pubBaseUri)
+		    .replace('[REDIRECT_URI]', selectedRedirectUriValue);
+	};
+	
+	$scope.showViewLayout = function() {		
+		$scope.editing = false;
+		$scope.creating = false;
+		$scope.listing = true;	
+		$scope.viewing = false;
+	};
+	
 	//Load the list of scopes for client redirect uris 
 	$scope.loadAvailableScopes = function(){
-		console.log("looking for available scopes");
 		$.ajax({
 	        url: getBaseUri() + '/group/developer-tools/get-available-scopes.json',
 	        type: 'GET',
@@ -5238,7 +5388,6 @@ function ClientEditCtrl($scope, $compile){
 	        dataType: 'json',
 	        success: function(data) {	        	
 	        	$scope.availableRedirectScopes = data;
-	        	console.log($scope.availableRedirectScopes);
 	        }
 	    }).fail(function() { 
 	    	console.log("Unable to fetch redirect uri scopes.");
@@ -5247,18 +5396,18 @@ function ClientEditCtrl($scope, $compile){
 			
 	//Load the default scopes based n the redirect uri type selected
 	$scope.loadDefaultScopes = function(rUri) {
-		//If the scopes are empty, fill it with the default scopes
-		if(rUri.scopes.length == 0) {
-			if(rUri.type.value == 'grant-read-wizard'){
-				rUri.scopes.push('/orcid-profile/read-limited');
-			} else if (rUri.type.value == 'import-works-wizard'){
-				rUri.scopes.push('/orcid-profile/read-limited');
-				rUri.scopes.push('/orcid-works/create');
-			} else if (rUri.type.value == 'import-funding-wizard'){
-				rUri.scopes.push('/orcid-profile/read-limited');
-				rUri.scopes.push('/funding/create');
-			}  
-		}
+		//Empty the scopes to update the default ones
+		rUri.scopes = [];
+		//Fill the scopes with the default scopes
+		if(rUri.type.value == 'grant-read-wizard'){
+			rUri.scopes.push('/orcid-profile/read-limited');
+		} else if (rUri.type.value == 'import-works-wizard'){
+			rUri.scopes.push('/orcid-profile/read-limited');
+			rUri.scopes.push('/orcid-works/create');
+		} else if (rUri.type.value == 'import-funding-wizard'){
+			rUri.scopes.push('/orcid-profile/read-limited');
+			rUri.scopes.push('/funding/create');
+		}  		
 	};		
 
 	//Mark an item as selected
@@ -5271,16 +5420,14 @@ function ClientEditCtrl($scope, $compile){
 	            return value != scope;
 	          });
 	    }
-	    console.log(rUri.scopes);
 	    return false;
 	};
 	
-	//Checks if an item is selected, if so, returns the css classes that might 
-	//be applied to the object
+	//Checks if an item is selected
 	$scope.isChecked = function (rUri) { 
-		var scope = this.scope;
+		var scope = this.scope;		
 		if (jQuery.inArray( scope, rUri.scopes ) != -1) {
-	        return 'glyphicon glyphicon-ok pull-right';
+	        return true;
 	    }
 	    return false;
 	};
@@ -5289,6 +5436,47 @@ function ClientEditCtrl($scope, $compile){
 	$scope.getClients();
 	$scope.loadAvailableScopes();
 	
+	$scope.confirmResetClientSecret = function() {
+		$scope.resetThisClient = $scope.clientToEdit;
+		$.colorbox({        	            
+            html : $compile($('#reset-client-secret-modal').html())($scope), 
+            transition: 'fade',
+            onLoad: function() {
+			    $('#cboxClose').remove();
+			},
+	        scrolling: true
+        });
+        $.colorbox.resize({width:"415px" , height:"250px"});
+	};	
+	
+	$scope.resetClientSecret = function() {		
+		$.ajax({
+			url: getBaseUri() + '/group/developer-tools/reset-client-secret.json',
+			type: 'POST',
+			data: $scope.resetThisClient.clientId.value,
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'text',
+			success: function(data) {
+				if(data) {
+					$scope.editing = false;
+					$scope.creating = false;
+					$scope.listing = true;	
+					$scope.viewing = false;
+					
+					$scope.closeModal();
+					$scope.getClients();					
+				} else {
+					console.log('Unable to reset client secret');
+				}					
+			}
+		}).fail(function() { 
+	    	console.log("Error resetting redirect uri");
+	    });
+	};
+	
+	$scope.closeModal = function(){
+		$.colorbox.close();	
+	};
 };
 
 function CustomEmailCtrl($scope, $compile) {	

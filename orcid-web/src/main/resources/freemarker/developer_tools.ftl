@@ -159,8 +159,8 @@
 					<div class="col-md-2 col-sm-3"></div>											
 				</div>
 							
-				<div class="row">
-					<!-- Website -->
+				<!-- Website -->
+				<div class="row">					
 					<div class="col-md-10 col-sm-10 col-xs-12 dt-website">
 						<div class="inner-row">
 							<span><strong><@orcid.msg 'manage.developer_tools.generate.website'/></strong></span>
@@ -172,9 +172,9 @@
 					</div>			
 					<div class="col-md-2 col-sm-2"></div>									
 				</div>
-														
-				<div class="row">
-					<!-- Description -->
+								
+				<!-- Description -->						
+				<div class="row">					
 					<div class="col-md-10 col-sm-10 col-xs-12 dt-description">
 						<div class="inner-row">
 							<span><strong><@orcid.msg 'manage.developer_tools.generate.description'/></strong></span>
@@ -187,9 +187,9 @@
 					<div class="col-md-2 col-sm-2"></div>									
 				</div>
 				
+				<!-- Redirect URIS -->
 				<div class="row">
-					<!-- SLIDE BOX  -->
-					<!-- Redirect URIS -->
+					<!-- SLIDE BOX  -->					
 					<div class="col-md-10 col-sm-10 col-xs-12">
 						<div class="inner-row redirectUris">
 							<h4><@orcid.msg 'manage.developer_tools.redirect_uri'/></h4>						
@@ -205,9 +205,10 @@
 							</span>
 						</div>
 					</div>	
-					<div class="col-md-2 col-sm-2"></div>
-					<!-- Client ID - Client Secret -->
+					<div class="col-md-2 col-sm-2"></div>					
 				</div>
+				
+				<!-- Options -->
 				<div class="row">
 					<div class="col-md-9 col-sm-9 col-xs-9 add-options">
 						<a href="" class="icon-href-bg" ng-click="addRedirectURI()"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.add_redirect_uri' /></a>

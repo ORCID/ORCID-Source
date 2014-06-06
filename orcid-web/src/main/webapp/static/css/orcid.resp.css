@@ -178,6 +178,7 @@ label,input,button,select,textarea {
 	padding-left: 0;
 	margin-bottom: 10px;
 }
+
 .margin-top-box{
 	margin-top: 15px;
 }
@@ -3356,9 +3357,7 @@ p.orcid-id-container{
 	padding-left: 0;
 }
 
-.sso-api ul.sso-links li a span,
-.developer-tools a span
-{
+.sso-api ul.sso-links li a span{
 	font-size: 12px;	
 }
 
@@ -3376,11 +3375,11 @@ p.orcid-id-container{
 	padding-left: 0;		
 }
 
-.sso-api ul.sso-options li{
+ul.sso-options li{
 	display: inline-block;	
 }
 
-.sso-api ul.sso-options span{	
+ul.sso-options li span{	
 	font-size: 16px;
 }
 
@@ -3427,8 +3426,6 @@ p.orcid-id-container{
 	margin-right: 5px;
 }
 
-
-
 /* Developer Tools Layout */
 
 .developer-tools .label-info-green{
@@ -3436,7 +3433,7 @@ p.orcid-id-container{
 }
 
 .developer-tools .table-header-dt{
-	background-color: #31789B;
+	background-color: #939598;
 	color: #FFF;	
 }
 
@@ -3523,11 +3520,13 @@ p.orcid-id-container{
 
 .developer-tools .inner-row input,
 .developer-tools .edit-details .dt-description textarea, 
+.developer-tools .edit-client .dt-description textarea,
 .developer-tools .create-client .dt-description textarea{
 	width: 100%;
 }
 
 .developer-tools .edit-details .dt-description textarea,
+.developer-tools .edit-client .dt-description textarea,
 .developer-tools .create-client .dt-description textarea{
 	height: 150px;
 }
@@ -3541,7 +3540,7 @@ p.orcid-id-container{
 }
 
 .developer-tools .tab-container{	
-	height: 32px;	 
+	height: 23px;	 
 	background: #FFF;
 	display: block;
 	text-align: center;
@@ -3549,7 +3548,7 @@ p.orcid-id-container{
 }
 
 .developer-tools .tab-container .tab{	
-	padding: 10px;	
+	padding: 2px 10px;	
 	text-align: center;
 	background: #949599;	
 	color: #FFF;
@@ -3996,6 +3995,19 @@ p.orcid-id-container{
 
 .no-wrap{
 	word-break: normal;
+}
+
+.small-box{
+	float:left;
+	width: 25%;	
+}
+
+.small-box input[type="checkbox"]{
+	width: 15px;
+}
+
+.margin-left-fix{
+	margin-left: 0;
 }
 
 /* Media Queries */
@@ -4934,6 +4946,18 @@ p.orcid-id-container{
 		display: block;
 	}
 	
+	.small-box{
+		float:left;
+		width: 100%;	
+	}	
+	
+	.margin-top-box-mobile{
+		margin-top:15px; 
+	}	
+	
+	.input-xlarge-full{
+		width: 100%;
+	}
 	
 }
 
@@ -5098,6 +5122,10 @@ p.orcid-id-container{
     .id-banner .id-banner-container ul.id-banner-dropdown,
 	.id-banner .id-banner-container ul.id-banner-dropdown > li{
 		width: 100%;
+	}
+	
+	.margin-top-box-mobile{
+		margin-top:15px; 
 	}
 }
 
