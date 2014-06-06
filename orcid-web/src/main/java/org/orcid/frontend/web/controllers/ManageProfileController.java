@@ -317,6 +317,8 @@ public class ManageProfileController extends BaseWorkspaceController {
         // Redirect to the new way of switching user, which includes admin
         // access
         ModelAndView mav = null;
+        if(StringUtils.isNotBlank(targetOrcid))
+            targetOrcid = targetOrcid.trim();
         if (profileEntityManager.orcidExists(targetOrcid)) {
             mav = new ModelAndView("redirect:/switch-user?j_username=" + targetOrcid);
         } else {

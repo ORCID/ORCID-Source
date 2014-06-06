@@ -4566,7 +4566,7 @@ function findIdsCtrl($scope,$compile){
 			scrolling: true
 		});	
 
-		setTimeout(function(){$.colorbox.resize({width:"450px"});},100);		
+		setTimeout(function(){$.colorbox.resize({width:"575px"});},100);		
 	};	
 	
 	$scope.closeModal = function() {
@@ -5576,7 +5576,7 @@ function CustomEmailCtrl($scope, $compile) {
 	        dataType: 'json',
 	        success: function(data) {
 	        	if(data.errors != null && data.errors.length > 0){
-	        		$scope.customEmail = data;
+	        		$scope.editedCustomEmail = data;
 	        		$scope.$apply();
 	        	} else {
 	        		//If everything worked fine, reload the list of clients
@@ -5635,4 +5635,16 @@ function CustomEmailCtrl($scope, $compile) {
 	};
 	
 	$scope.getCustomEmails();
+};
+
+function switchUserCtrl($scope,$compile){
+	$scope.emails = "";
+	$scope.orcidOrEmail = "";
+	$scope.showSection = false;
+	
+	$scope.toggleSection = function(){
+		$scope.showSection = !$scope.showSection;
+    	$('#switch_user_section').toggle();
+	};
+			
 };

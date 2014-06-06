@@ -100,7 +100,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
     @Resource(name = "defaultPermissionChecker")
     private PermissionChecker permissionChecker;
-        
+
     @Resource
     private LocaleManager localeManager;
 
@@ -152,9 +152,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
     @Override
     public OrcidClient toOrcidClient(ProfileEntity profileEntity) {
-        OrcidClient client = new OrcidClient();        
-        client.setClientId(profileEntity.getId());        
-        client.setType(profileEntity.getClientType());        
+        OrcidClient client = new OrcidClient();
+        client.setClientId(profileEntity.getId());
+        client.setType(profileEntity.getClientType());
         ClientDetailsEntity clientDetailsEntity = profileEntity.getClientDetails();
         if (clientDetailsEntity != null) {
             client.setClientSecret(clientDetailsEntity.getClientSecretForJpa());
@@ -378,15 +378,15 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
      * */
     public Funding getFunding(ProfileFundingEntity profileFundingEntity) {
         Funding funding = new Funding();
-        
-        if(profileFundingEntity.getNumericAmount() != null) {            
-            String formattedAmount = formatAmountString(profileFundingEntity.getNumericAmount(), profileFundingEntity.getCurrencyCode());            
+
+        if (profileFundingEntity.getNumericAmount() != null) {
+            String formattedAmount = formatAmountString(profileFundingEntity.getNumericAmount(), profileFundingEntity.getCurrencyCode());
             Amount orcidAmount = new Amount();
             orcidAmount.setContent(formattedAmount);
             orcidAmount.setCurrencyCode(profileFundingEntity.getCurrencyCode() != null ? profileFundingEntity.getCurrencyCode() : null);
             funding.setAmount(orcidAmount);
         }
-        
+
         funding.setDescription(StringUtils.isNotEmpty(profileFundingEntity.getDescription()) ? profileFundingEntity.getDescription() : null);
         FundingTitle title = new FundingTitle();
         title.setTitle(StringUtils.isNotEmpty(profileFundingEntity.getTitle()) ? new Title(profileFundingEntity.getTitle()) : null);
@@ -398,7 +398,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         }
         funding.setTitle(title);
         funding.setType(profileFundingEntity.getType() != null ? profileFundingEntity.getType() : null);
-        funding.setOrganizationDefinedFundingType(profileFundingEntity.getOrganizationDefinedType() != null ? new OrganizationDefinedFundingSubType(profileFundingEntity.getOrganizationDefinedType()) : null);
+        funding.setOrganizationDefinedFundingType(profileFundingEntity.getOrganizationDefinedType() != null ? new OrganizationDefinedFundingSubType(profileFundingEntity
+                .getOrganizationDefinedType()) : null);
         funding.setUrl(StringUtils.isNotEmpty(profileFundingEntity.getUrl()) ? new Url(profileFundingEntity.getUrl()) : new Url(new String()));
         funding.setVisibility(profileFundingEntity.getVisibility() != null ? profileFundingEntity.getVisibility() : Visibility.PRIVATE);
         funding.setPutCode(Long.toString(profileFundingEntity.getId()));
@@ -428,15 +429,16 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
     /**
      * Format a big decimal based on a locale
+     * 
      * @param bigDecimal
      * @param currencyCode
      * @return a string with the number formatted based on the locale
      * */
     private String formatAmountString(BigDecimal bigDecimal, String currencyCode) {
-        NumberFormat numberFormat = NumberFormat.getNumberInstance(localeManager.getLocale());        
+        NumberFormat numberFormat = NumberFormat.getNumberInstance(localeManager.getLocale());
         return numberFormat.format(bigDecimal);
     }
-    
+
     /**
      * Get external identifiers from a profileFundingEntity object
      * 
@@ -538,13 +540,14 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         // If it is a client, lets use the source_name if it is public
         if (OrcidType.CLIENT.equals(sourceEntity.getOrcidType())) {
             ClientDetailsEntity clientDetails = sourceEntity.getClientDetails();
-            if(clientDetails != null) {
+            if (clientDetails != null) {
                 source.setSourceName(new SourceName(clientDetails.getClientName()));
             } else {
-                //This should never happen since the client name in client_details must not be empty
+                // This should never happen since the client name in
+                // client_details must not be empty
                 source.setSourceName(new SourceName(sourceEntity.getCreditName()));
-            }  
-            
+            }
+
         } else {
             // If it is a user, check if it have a credit name and is visible
             if (!StringUtils.isEmpty(sourceEntity.getCreditName()) && Visibility.PUBLIC.equals(sourceEntity.getCreditNameVisibility())) {
@@ -607,11 +610,11 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         if (researcherUrlEntities != null) {
             ResearcherUrls researcherUrls = new ResearcherUrls();
             researcherUrls.setVisibility(profileEntity.getResearcherUrlsVisibility());
-            for (ResearcherUrlEntity researcherUrl : researcherUrlEntities) {                
+            for (ResearcherUrlEntity researcherUrl : researcherUrlEntities) {
                 ResearcherUrl url = new ResearcherUrl(new Url(researcherUrl.getUrl()));
                 if (!StringUtils.isBlank(researcherUrl.getUrlName()))
                     url.setUrlName(new UrlName(researcherUrl.getUrlName()));
-                researcherUrls.getResearcherUrl().add(url);                               
+                researcherUrls.getResearcherUrl().add(url);
             }
             return researcherUrls;
         }
@@ -782,10 +785,10 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                     ProfileEntity acceptedClientProfileEntity = acceptedClient != null ? acceptedClient.getProfileEntity() : null;
                     if (acceptedClientProfileEntity != null) {
                         applicationSummary.setApplicationOrcid(new ApplicationOrcid(getOrcidIdBase(acceptedClient.getClientId())));
-                        
-                        //Set the name application name
+
+                        // Set the name application name
                         applicationSummary.setApplicationName(new ApplicationName(acceptedClient.getClientName()));
-                        //Set application website
+                        // Set application website
                         applicationSummary.setApplicationWebsite(new ApplicationWebsite(acceptedClient.getClientWebsite()));
                         applicationSummary.setApprovalDate(new ApprovalDate(DateUtils.convertToXMLGregorianCalendar(tokenDetail.getDateCreated())));
 
@@ -893,14 +896,15 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
         // Set the source name
         // If it is a client, use the client_name from the client_details table
-        if (OrcidType.CLIENT.equals(sourceProfile.getOrcidType())) {            
+        if (OrcidType.CLIENT.equals(sourceProfile.getOrcidType())) {
             ClientDetailsEntity clientDetails = sourceProfile.getClientDetails();
-            if(clientDetails != null) {
+            if (clientDetails != null) {
                 workSource.setSourceName(clientDetails.getClientName());
             } else {
-                //This should never happen since the client name in client_details must not be empty
+                // This should never happen since the client name in
+                // client_details must not be empty
                 workSource.setSourceName(sourceProfile.getCreditName());
-            }            
+            }
         } else {
             // If it is a user, check if it have a credit name and is visible
             if (!StringUtils.isEmpty(sourceProfile.getCreditName()) && Visibility.PUBLIC.equals(sourceProfile.getCreditNameVisibility())) {
@@ -923,18 +927,26 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }
 
     private WorkExternalIdentifiers getWorkExternalIdentifiers(WorkEntity work) {
-        if (work == null || work.getExternalIdentifiers() == null || work.getExternalIdentifiers().isEmpty()) {
-            return null;
-        }
-        Set<WorkExternalIdentifierEntity> workExternalIdentifierEntities = work.getExternalIdentifiers();
-        WorkExternalIdentifiers workExternalIdentifiers = new WorkExternalIdentifiers();
-        for (WorkExternalIdentifierEntity workExternalIdentifierEntity : workExternalIdentifierEntities) {
-            WorkExternalIdentifier workExternalIdentifier = getWorkExternalIdentifier(workExternalIdentifierEntity);
-            if (workExternalIdentifier != null) {
-                workExternalIdentifiers.getWorkExternalIdentifier().add(workExternalIdentifier);
+        String externalIdentifiersJson = work.getExternalIdentifiersJson();
+        if (externalIdentifiersJson != null) {
+            // New way of doing work external identifiers
+            return JsonUtils.readObjectFromJsonString(externalIdentifiersJson, WorkExternalIdentifiers.class);
+        } else {
+            // Old way of doing work external identifiers
+            if (work == null || work.getExternalIdentifiers() == null || work.getExternalIdentifiers().isEmpty()) {
+                return null;
             }
+            Set<WorkExternalIdentifierEntity> workExternalIdentifierEntities = work.getExternalIdentifiers();
+            WorkExternalIdentifiers workExternalIdentifiers = new WorkExternalIdentifiers();
+            for (WorkExternalIdentifierEntity workExternalIdentifierEntity : workExternalIdentifierEntities) {
+                WorkExternalIdentifier workExternalIdentifier = getWorkExternalIdentifier(workExternalIdentifierEntity);
+                if (workExternalIdentifier != null) {
+                    workExternalIdentifiers.getWorkExternalIdentifier().add(workExternalIdentifier);
+                }
+            }
+            return workExternalIdentifiers;
         }
-        return workExternalIdentifiers;
+
     }
 
     private WorkExternalIdentifier getWorkExternalIdentifier(WorkExternalIdentifierEntity workExternalIdentifierEntity) {
@@ -1069,9 +1081,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         // worry about null!
         preferences.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(profileEntity.getActivitiesVisibilityDefault()));
 
-        //Set developer tools preference
+        // Set developer tools preference
         preferences.setDeveloperToolsEnabled(new DeveloperToolsEnabled(profileEntity.getEnableDeveloperTools()));
-        
+
         if (profileEntity.getReferredBy() != null) {
             orcidInternal.setReferredBy(new ReferredBy(getOrcidIdBase(profileEntity.getReferredBy())));
         }

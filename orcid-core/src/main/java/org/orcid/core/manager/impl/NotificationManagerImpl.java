@@ -31,6 +31,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.LocaleUtils;
+import org.orcid.core.constants.EmailConstants;
 import org.orcid.core.manager.CustomEmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.NotificationManager;
@@ -92,8 +93,6 @@ public class NotificationManagerImpl implements NotificationManager {
     private static final String WILDCARD_WEBSITE = "${website}";
     
     private static final String WILDCARD_DESCRIPTION = "${description}";
-    
-    private static final String WILDCARD_VERIFICATION_URL = "${verification_url}";
     
     @Resource
     private MessageSource messages;
@@ -322,12 +321,10 @@ public class NotificationManagerImpl implements NotificationManager {
 
         addMessageParams(templateParams, orcidProfile);
 
-        String primaryEmail = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
-
         // Generate body from template
         String body = templateManager.processTemplate("reset_password_email.ftl", templateParams);
         String htmlBody = templateManager.processTemplate("reset_password_email_html.ftl", templateParams);
-        mailGunManager.sendEmail(RESET_NOTIFY_ORCID_ORG, primaryEmail, getSubject("email.subject.reset", orcidProfile), body, htmlBody);
+        mailGunManager.sendEmail(RESET_NOTIFY_ORCID_ORG, submittedEmail, getSubject("email.subject.reset", orcidProfile), body, htmlBody);
     }
 
     @Override
@@ -470,7 +467,7 @@ public class NotificationManagerImpl implements NotificationManager {
                 htmlBody = customEmail.getContent();
                 htmlBody = htmlBody.replace(WILDCARD_USER_NAME, emailName);
                 htmlBody = htmlBody.replace(WILDCARD_MEMBER_NAME, creatorName);
-                htmlBody = htmlBody.replace(WILDCARD_VERIFICATION_URL, verificationUrl);
+                htmlBody = htmlBody.replace(EmailConstants.WILDCARD_VERIFICATION_URL, verificationUrl);
                 if(htmlBody.contains(WILDCARD_WEBSITE) || htmlBody.contains(WILDCARD_DESCRIPTION)) {
                     ClientDetailsEntity clientDetails = customEmail.getClientDetailsEntity();
                     htmlBody = htmlBody.replace(WILDCARD_WEBSITE, clientDetails.getClientWebsite());                    
@@ -480,7 +477,7 @@ public class NotificationManagerImpl implements NotificationManager {
                 body = customEmail.getContent();
                 body = body.replace(WILDCARD_USER_NAME, emailName);
                 body = body.replace(WILDCARD_MEMBER_NAME, creatorName);
-                body = body.replace(WILDCARD_VERIFICATION_URL, verificationUrl);
+                body = body.replace(EmailConstants.WILDCARD_VERIFICATION_URL, verificationUrl);
                 if(body.contains(WILDCARD_WEBSITE) || body.contains(WILDCARD_DESCRIPTION)) {
                     ClientDetailsEntity clientDetails = customEmail.getClientDetailsEntity();
                     body = body.replace(WILDCARD_WEBSITE, clientDetails.getClientWebsite());                    
