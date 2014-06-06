@@ -5388,7 +5388,7 @@ function CustomEmailCtrl($scope, $compile) {
 	        dataType: 'json',
 	        success: function(data) {
 	        	if(data.errors != null && data.errors.length > 0){
-	        		$scope.customEmail = data;
+	        		$scope.editedCustomEmail = data;
 	        		$scope.$apply();
 	        	} else {
 	        		//If everything worked fine, reload the list of clients
