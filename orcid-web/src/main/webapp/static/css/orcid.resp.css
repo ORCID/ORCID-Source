@@ -3998,6 +3998,31 @@ p.orcid-id-container{
 	word-break: normal;
 }
 
+.upload{
+	overflow: hidden !important;
+	position: relative;
+	margin: 0;
+	vertical-align: 6px;
+	z-index: 0;
+}
+
+.upload-button{
+	position: absolute;
+	top:0;
+	right: 0;
+	margin: 0;
+	padding:0;
+	height: 20px;
+	cursor: pointer;
+	opacity: 0;
+	filter: alpha(opacity=0);
+	width: 120px !important;
+}
+
+.import-label{
+	cursor: pointer;
+}
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 		
