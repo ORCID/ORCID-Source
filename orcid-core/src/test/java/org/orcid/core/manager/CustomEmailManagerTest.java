@@ -81,6 +81,7 @@ public class CustomEmailManagerTest extends BaseTest {
 
     @Test
     @Transactional
+    @Rollback
     public void testAddAmendCustomEmail() {
         assertTrue(customEmailManager.createCustomEmail("4444-4444-4444-4441", EmailType.AMEND, "angel.montenegro.jimenez@gmail.com", "Amend subject", "Amend content",
                 false));
@@ -109,6 +110,7 @@ public class CustomEmailManagerTest extends BaseTest {
     }
 
     @Test    
+    @Rollback
     public void testUpdateCustomEmail() {
         // Check old values
         List<CustomEmailEntity> customEmails = customEmailManager.getCustomEmails("4444-4444-4444-4441");
@@ -138,6 +140,7 @@ public class CustomEmailManagerTest extends BaseTest {
 
     @Test
     @Transactional
+    @Rollback
     public void testDeleteCustomEmail() {
         // Check old values
         List<CustomEmailEntity> customEmails = customEmailManager.getCustomEmails("4444-4444-4444-4441");
