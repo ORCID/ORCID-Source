@@ -64,10 +64,10 @@ New functionality is often only in API release
 candidates. To access release candidates specify a version number between the ORCID id path and 
 resource path.
 
-pub.orcid.org/0000-0002-0036-9460/**v1.2_rc4**/orcid-profile
+pub.orcid.org/**v1.2_rc4**/0000-0002-0036-9460/orcid-profile
 
      curl  -H "Accept: application/xml" \
-        https://pub.orcid.org/0000-0002-0036-9460/v1.2_rc4/orcid-profile 
+        https://pub.orcid.org/v1.2_rc4/0000-0002-0036-9460/orcid-profile 
 
 
 ### Part 1 - Summary   
@@ -87,7 +87,7 @@ pub.orcid.org/0000-0002-0036-9460/**v1.2_rc4**/orcid-profile
 * Doing all of the above you end up with
 
         curl  -H "Accept: application/xml" \
-           https://pub.orcid.org/0000-0002-0036-9460/v1.2_rc4/orcid-profile 
+           https://pub.orcid.org/v1.2_rc4/0000-0002-0036-9460/orcid-profile 
 
 
 ## Part 2 - Authenticate an ORCID iD 
