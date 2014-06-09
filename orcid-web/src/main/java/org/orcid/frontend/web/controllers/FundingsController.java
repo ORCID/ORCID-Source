@@ -320,12 +320,14 @@ public class FundingsController extends BaseWorkspaceController {
         copyErrors(funding.getFundingName(), funding);
         copyErrors(funding.getAmount(), funding);
         copyErrors(funding.getCurrencyCode(), funding);
-        copyErrors(funding.getFundingTitle().getTitle(), funding);
-        copyErrors(funding.getFundingTitle().getTranslatedTitle(), funding);
+        copyErrors(funding.getFundingTitle().getTitle(), funding);        
         copyErrors(funding.getDescription(), funding);
         copyErrors(funding.getUrl(), funding);
         copyErrors(funding.getEndDate(), funding);
         copyErrors(funding.getFundingType(), funding);
+        if(funding.getFundingTitle().getTranslatedTitle() != null)
+            copyErrors(funding.getFundingTitle().getTranslatedTitle(), funding);
+        
         if (funding.getOrganizationDefinedFundingSubType() != null)
             copyErrors(funding.getOrganizationDefinedFundingSubType().getSubtype(), funding);
 
@@ -586,10 +588,9 @@ public class FundingsController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/funding/translatedTitleValidate.json", method = RequestMethod.POST)
     public @ResponseBody
-    FundingForm validateTranslatedTitle(@RequestBody FundingForm funding) {
-        funding.getFundingTitle().getTranslatedTitle().setErrors(new ArrayList<String>());
+    FundingForm validateTranslatedTitle(@RequestBody FundingForm funding) {        
         if (funding.getFundingTitle().getTranslatedTitle() != null) {
-
+            funding.getFundingTitle().getTranslatedTitle().setErrors(new ArrayList<String>());
             String content = funding.getFundingTitle().getTranslatedTitle().getContent();
             String code = funding.getFundingTitle().getTranslatedTitle().getLanguageCode();
 
