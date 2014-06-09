@@ -61,8 +61,7 @@ record add **/orcid-profile** to the path
 ### But I don't see X (for instance, funding) section? Use a version number.
 
 New functionality is often only in API release 
-candidates. To access release candidates specify a version number between the ORCID id path and 
-resource path.
+candidates. To access release candidates specify a version number before the numeric ORCID id path.
 
 pub.orcid.org/**v1.2_rc4**/0000-0002-0036-9460/orcid-profile
 
