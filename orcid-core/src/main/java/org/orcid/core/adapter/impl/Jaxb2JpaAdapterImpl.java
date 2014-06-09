@@ -958,19 +958,22 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             }
             FuzzyDate startDate = funding.getStartDate();
             FuzzyDate endDate = funding.getEndDate();
-            if (funding.getAmount() != null) {
-                String amount = StringUtils.isNotBlank(funding.getAmount().getContent()) ? funding.getAmount().getContent() : null;
-                String currencyCode = funding.getAmount().getCurrencyCode() != null ? funding.getAmount().getCurrencyCode() : null;
-                try {
-                    BigDecimal bigDecimalAmount = getAmountAsBigDecimal(amount);
-                    profileFundingEntity.setNumericAmount(bigDecimalAmount);
-                } catch (Exception e) {
-                    throw new IllegalArgumentException("Invalid amount cannot be cast to BidDecimal");
-                }
 
-                profileFundingEntity.setCurrencyCode(currencyCode);
-            }
-
+            if(funding.getAmount() != null) {
+            	String amount = StringUtils.isNotBlank(funding.getAmount().getContent()) ? funding.getAmount().getContent() : null;
+            	String currencyCode = funding.getAmount().getCurrencyCode() != null ? funding.getAmount().getCurrencyCode() : null;
+                if(StringUtils.isNotBlank(amount)) {
+                    try {
+                        BigDecimal bigDecimalAmount = getAmountAsBigDecimal(amount);
+                        profileFundingEntity.setNumericAmount(bigDecimalAmount);
+                    } catch(Exception e) {
+                        throw new IllegalArgumentException("Invalid amount cannot be cast to BidDecimal");
+                    }
+                                
+                    profileFundingEntity.setCurrencyCode(currencyCode);
+                }            	            	            
+            }                        
+            
             profileFundingEntity.setContributorsJson(getFundingContributorsJson(funding.getFundingContributors()));
             profileFundingEntity.setDescription(StringUtils.isNotBlank(funding.getDescription()) ? funding.getDescription() : null);
             profileFundingEntity.setEndDate(endDate != null ? new EndDateEntity(endDate) : null);
