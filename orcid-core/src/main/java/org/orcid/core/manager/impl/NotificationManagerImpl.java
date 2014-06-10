@@ -452,7 +452,7 @@ public class NotificationManagerImpl implements NotificationManager {
         String orcid = createdProfile.getOrcidIdentifier().getPath();
         String verificationUrl = createClaimVerificationUrl(createdProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), baseUri);
         String email = createdProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
-
+        
         String creatorName = "";
         if (source != null) {
             if (noneNull(source.getSourceName(), source.getSourceName().getContent())) {
