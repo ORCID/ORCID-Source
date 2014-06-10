@@ -3456,10 +3456,12 @@ ul.sso-options li span{
 	padding-bottom: 10px;
 }
 
+/*
 .developer-tools .col-md-10{
 	padding-left: 0;
 	padding-right: 0;
 }
+*/
 
 .developer-tools .sso-options a{
 	display: block;
@@ -4008,6 +4010,10 @@ ul.sso-options li span{
 
 .margin-left-fix{
 	margin-left: 0;
+}
+
+.full-width-input{
+	width: 100% !important;
 }
 
 /* Media Queries */

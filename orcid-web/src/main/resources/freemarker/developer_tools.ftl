@@ -27,10 +27,8 @@
 		<div ng-controller="SSOPreferencesCtrl" class="sso-api">
 			<!-- Top content, instructions -->
 			<div class="row">				
-				<div class="col-md-10 col-sm-10 col-xs-8">
-					<div class="inner-row">
-						<h2><@orcid.msg 'manage.developer_tools.user.title' /></h2>
-					</div>					
+				<div class="col-md-10 col-sm-10 col-xs-8">					
+					<h2><@orcid.msg 'manage.developer_tools.user.title' /></h2>										
 				</div>
 				<div class="col-md-2 col-sm-2 col-xs-4" ng-show="showReg" ng-cloak>
 					<a ng-click="createCredentialsLayout()" class="pull-right"><span class="label btn-primary"><@orcid.msg 'manage.developer_tools.button.register_now' /></span></a>
@@ -47,10 +45,8 @@
 			
 				<!-- Name and Edit/Delete options -->
 				<div class="row">					
-					<div class="col-md-10 col-sm-10 col-xs-9">
-						<div class="inner-row">
-							<h4>{{userCredentials.clientName.value}}</h4>
-						</div>							
+					<div class="col-md-10 col-sm-10 col-xs-9">						
+						<h4>{{userCredentials.clientName.value}}</h4>													
 					</div>
 					<div class="col-md-2 col-sm-2 col-xs-3">				
 						<ul class="sso-options pull-right">							
@@ -76,7 +72,7 @@
 						<!-- Redirect URIS -->
 						<div class="col-md-12 col-sm-12 col-xs-12">
 							<h4><@orcid.msg 'manage.developer_tools.redirect_uri'/>:</h4>																		
-							<select ng-model="selectedRedirectUri" ng-options="rUri.value.value for rUri in userCredentials.redirectUris | orderBy:'value.value'" ng-change="updateSelectedRedirectUri()" class="input-xlarge-full">
+							<select ng-model="selectedRedirectUri" ng-options="rUri.value.value for rUri in userCredentials.redirectUris | orderBy:'value.value'" ng-change="updateSelectedRedirectUri()" class="input-xlarge-full input-xlarge">
 							</select>														
 						</div>
 					</div>
@@ -157,14 +153,12 @@
 			<div class="create-client" ng-show="creating" ng-cloak>	
 				<!-- Name -->
 				<div class="row">					
-					<div class="col-md-10 col-sm-10 col-xs-9">
-						<div class="inner-row">
+					<div class="col-md-10 col-sm-10 col-xs-12">
 							<span><strong><@orcid.msg 'manage.developer_tools.generate.name'/></strong></span>
-							<input type="text" placeholder="<@orcid.msg 'manage.developer_tools.generate.name.placeholder'/>" class="input-xlarge" ng-model="userCredentials.clientName.value">
+							<input type="text" placeholder="<@orcid.msg 'manage.developer_tools.generate.name.placeholder'/>" class="full-width-input" ng-model="userCredentials.clientName.value">
 							<span class="orcid-error" ng-show="userCredentials.clientName.errors.length > 0">
 								<div ng-repeat='error in userCredentials.clientName.errors' ng-bind-html="error"></div>
-							</span>					
-						</div>		
+							</span>
 					</div>	
 					<div class="col-md-2 col-sm-3"></div>											
 				</div>
@@ -172,27 +166,23 @@
 				<!-- Website -->
 				<div class="row">					
 					<div class="col-md-10 col-sm-10 col-xs-12 dt-website">
-						<div class="inner-row">
-							<span><strong><@orcid.msg 'manage.developer_tools.generate.website'/></strong></span>
-							<input type="text" placeholder="<@orcid.msg 'manage.developer_tools.generate.website.placeholder'/>" class="input-xlarge" ng-model="userCredentials.clientWebsite.value">
-							<span class="orcid-error" ng-show="userCredentials.clientWebsite.errors.length > 0">
-								<div ng-repeat='error in userCredentials.clientWebsite.errors' ng-bind-html="error"></div>
-							</span>
-						</div>															
+						<span><strong><@orcid.msg 'manage.developer_tools.generate.website'/></strong></span>
+						<input type="text" placeholder="<@orcid.msg 'manage.developer_tools.generate.website.placeholder'/>" class="full-width-input" ng-model="userCredentials.clientWebsite.value">
+						<span class="orcid-error" ng-show="userCredentials.clientWebsite.errors.length > 0">
+							<div ng-repeat='error in userCredentials.clientWebsite.errors' ng-bind-html="error"></div>
+						</span>												
 					</div>			
 					<div class="col-md-2 col-sm-2"></div>									
 				</div>
 								
 				<!-- Description -->						
 				<div class="row">					
-					<div class="col-md-10 col-sm-10 col-xs-12 dt-description">
-						<div class="inner-row">
-							<span><strong><@orcid.msg 'manage.developer_tools.generate.description'/></strong></span>
-							<textarea placeholder="<@orcid.msg 'manage.developer_tools.generate.description.placeholder'/>" ng-model="userCredentials.clientDescription.value"></textarea>						
-							<span class="orcid-error" ng-show="userCredentials.clientDescription.errors.length > 0">
-								<div ng-repeat='error in userCredentials.clientDescription.errors' ng-bind-html="error"></div>
-							</span>
-						</div>															
+					<div class="col-md-10 col-sm-10 col-xs-12 dt-description">						
+						<span><strong><@orcid.msg 'manage.developer_tools.generate.description'/></strong></span>
+						<textarea placeholder="<@orcid.msg 'manage.developer_tools.generate.description.placeholder'/>" ng-model="userCredentials.clientDescription.value"></textarea>						
+						<span class="orcid-error" ng-show="userCredentials.clientDescription.errors.length > 0">
+							<div ng-repeat='error in userCredentials.clientDescription.errors' ng-bind-html="error"></div>
+						</span>												
 					</div>			
 					<div class="col-md-2 col-sm-2"></div>									
 				</div>
@@ -201,7 +191,7 @@
 				<div class="row">
 					<!-- SLIDE BOX  -->					
 					<div class="col-md-10 col-sm-10 col-xs-12">
-						<div class="inner-row redirectUris">
+						<div class="redirectUris">
 							<h4><@orcid.msg 'manage.developer_tools.redirect_uri'/></h4>						
 							<div ng-repeat="rUri in userCredentials.redirectUris">										
 								<input type="text" placeholder="<@orcid.msg 'manage.developer_tools.redirect_uri.placeholder'/>" ng-model="rUri.value.value">					
@@ -240,46 +230,43 @@
 				</div>				
 			</div>
 			
+			
+			
+			
 			<!-- Edit form -->
 			<div class="edit-details" ng-show="userCredentials.clientSecret && userCredentials.clientSecret.value && editing" ng-cloak>			
 				<!-- Name and Edit/Delete options -->
 				<div class="row">					
-					<div class="col-md-10 col-sm-10 col-xs-9">
-						<div class="inner-row">
-							<span><strong><@orcid.msg 'manage.developer_tools.generate.name'/></strong></span>
-							<input type="text" placeholder="<@orcid.msg 'manage.developer_tools.generate.name.placeholder'/>" class="input-xlarge" ng-model="userCredentials.clientName.value">
-							<span class="orcid-error" ng-show="userCredentials.clientName.errors.length > 0">
-								<div ng-repeat='error in userCredentials.clientName.errors' ng-bind-html="error"></div>
-							</span>					
-						</div>		
+					<div class="col-md-10 col-sm-10 col-xs-12">						
+						<span><strong><@orcid.msg 'manage.developer_tools.generate.name'/></strong></span>
+						<input type="text" placeholder="<@orcid.msg 'manage.developer_tools.generate.name.placeholder'/>" class="full-width-input" ng-model="userCredentials.clientName.value">
+						<span class="orcid-error" ng-show="userCredentials.clientName.errors.length > 0">
+							<div ng-repeat='error in userCredentials.clientName.errors' ng-bind-html="error"></div>
+						</span>
 					</div>	
-					<div class="col-md-2 col-sm-3"></div>											
+					<div class="col-md-2 col-sm-2 col-xs-12"></div>											
 				</div>
 							
 				<div class="row">
 					<!-- Website -->
-					<div class="col-md-10 col-sm-10 col-xs-12 dt-website">
-						<div class="inner-row">
-							<span><strong><@orcid.msg 'manage.developer_tools.generate.website'/></strong></span>
-							<input type="text" placeholder="<@orcid.msg 'manage.developer_tools.generate.website.placeholder'/>" class="input-xlarge" ng-model="userCredentials.clientWebsite.value">
-							<span class="orcid-error" ng-show="userCredentials.clientWebsite.errors.length > 0">
-								<div ng-repeat='error in userCredentials.clientWebsite.errors' ng-bind-html="error"></div>
-							</span>
-						</div>															
+					<div class="col-md-10 col-sm-10 col-xs-12 dt-website">						
+						<span><strong><@orcid.msg 'manage.developer_tools.generate.website'/></strong></span>
+						<input type="text" placeholder="<@orcid.msg 'manage.developer_tools.generate.website.placeholder'/>" class="full-width-input" ng-model="userCredentials.clientWebsite.value">
+						<span class="orcid-error" ng-show="userCredentials.clientWebsite.errors.length > 0">
+							<div ng-repeat='error in userCredentials.clientWebsite.errors' ng-bind-html="error"></div>
+						</span>													
 					</div>			
 					<div class="col-md-2 col-sm-2"></div>									
 				</div>
 														
 				<div class="row">
 					<!-- Description -->
-					<div class="col-md-10 col-sm-10 col-xs-12 dt-description">
-						<div class="inner-row">
-							<span><strong><@orcid.msg 'manage.developer_tools.generate.description'/></strong></span>
-							<textarea placeholder="<@orcid.msg 'manage.developer_tools.generate.description.placeholder'/>" ng-model="userCredentials.clientDescription.value"></textarea>						
-							<span class="orcid-error" ng-show="userCredentials.clientDescription.errors.length > 0">
-								<div ng-repeat='error in userCredentials.clientDescription.errors' ng-bind-html="error"></div>
-							</span>
-						</div>															
+					<div class="col-md-10 col-sm-10 col-xs-12 dt-description">						
+						<span><strong><@orcid.msg 'manage.developer_tools.generate.description'/></strong></span>
+						<textarea placeholder="<@orcid.msg 'manage.developer_tools.generate.description.placeholder'/>" ng-model="userCredentials.clientDescription.value" class="full-width-input"></textarea>						
+						<span class="orcid-error" ng-show="userCredentials.clientDescription.errors.length > 0">
+							<div ng-repeat='error in userCredentials.clientDescription.errors' ng-bind-html="error"></div>
+						</span>													
 					</div>			
 					<div class="col-md-2 col-sm-2"></div>									
 				</div>				
@@ -287,7 +274,7 @@
 					<!-- SLIDE BOX  -->
 					<!-- Redirect URIS -->
 					<div class="col-md-10 col-sm-10 col-xs-12">
-						<div class="inner-row redirectUris">
+						<div class="redirectUris">
 							<h4><@orcid.msg 'manage.developer_tools.redirect_uri'/></h4>						
 							<div ng-repeat="rUri in userCredentials.redirectUris">										
 								<input type="text" placeholder="<@orcid.msg 'manage.developer_tools.redirect_uri.placeholder'/>" ng-model="rUri.value.value">					
@@ -359,26 +346,7 @@
 								    		</a>
 									</div>
 								</div>
-								
-							
-								<div class="table-responsive">
-								  <table class="table client_secret_table">
-								    <tr>
-								    	<td></td>
-								    	<td colspan="2"></td>
-								    </tr>
-								    <tr>
-								    	<td class="c1"></td>
-								    	<td class="c2" colspan="2"></td>									    									    								    	  
-								    </tr>
-								    <tr>
-								    	<td class="c1"></td>
-								    	<td class="c2">
-								    		
-								    	</td>
-								    </tr>
-								  </table>
-								</div>									
+																	
 							</div>
 						</div>	 
 					</div>					
