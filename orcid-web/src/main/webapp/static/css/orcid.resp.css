@@ -4957,6 +4957,10 @@ ul.sso-options li span{
 	
 	.input-xlarge-full{
 		width: 100%;
+	}	
+	
+	.authorizeURL {		
+		height: 150px;
 	}
 	
 }

@@ -76,67 +76,77 @@
 						<!-- Redirect URIS -->
 						<div class="col-md-12 col-sm-12 col-xs-12">
 							<h4><@orcid.msg 'manage.developer_tools.redirect_uri'/>:</h4>																		
-							<select ng-model="selectedRedirectUri" ng-options="rUri.value.value for rUri in userCredentials.redirectUris | orderBy:'value.value'" ng-change="updateSelectedRedirectUri()">
+							<select ng-model="selectedRedirectUri" ng-options="rUri.value.value for rUri in userCredentials.redirectUris | orderBy:'value.value'" ng-change="updateSelectedRedirectUri()" class="input-xlarge-full">
 							</select>														
 						</div>
 					</div>
 					<div class="row">						
 						<div class="col-md-12 col-sm-12 col-xs-12">
 							<div class="grey-box">
-								<div class="table-responsive">
-								  <!-- Client ID - Client Secret -->
-								  <table class="table">								  										   
-									    <!-- Client details-->
-									    <tr>
-									    	<td class="small_column"><strong><@orcid.msg 'manage.developer_tools.view.orcid'/></strong></td>
-									    	<td class="large_column">{{userCredentials.clientOrcid.value}}</td>									    	
-									    </tr>
-									    <tr class="table-row-border-bottom">
-									    	<td class="small_column"><strong><@orcid.msg 'manage.developer_tools.view.secret'/></strong></td>
-									    	<td class="large_column">
-									    		{{userCredentials.clientSecret.value}}
-									    	</td>									    	
-									    </tr>
-									    <!-- Authorize URl and Token URL -->
-									    <tr ng-hide="playgroundExample != ''">
-									    	<td class="small_column"><strong><@orcid.msg 'manage.developer_tools.view.example.authorize'/></strong></td>
-									    	<td class="large_column">
-									    		<div class="row">
-									    			<div class="col-md-12 col-sm-12 col-xs-12">
-									    				{{authorizeUrlBase}}
-									    			</div>
-									    		</div>
-									    		<div class="row">									    			
-										    		<div class="col-md-5 col-sm-5 col-xs-5">
-										  				<strong><@orcid.msg 'manage.developer_tools.view.available_scopes.authenticate.scope'/>&nbsp;<@orcid.msg 'manage.developer_tools.view.available_scopes.authenticate'/></strong>
-										  			</div>
-										  			<div class="col-md-7 col-sm-7 col-xs-7 no-wrap">
-										  				<@orcid.msg 'manage.developer_tools.view.available_scopes.authenticate.description'/>
-										  			</div>
-									    		</div>
-									    		<div class="row">
-									    			<div class="col-md-12 col-sm-12 col-xs-12">
-									    				<textarea class="input-xlarge selectable authorizeURL" ng-model="authorizeURL" readonly="readonly"></textarea>
-									    			</div>
-									    		</div>									    		
-									    	</td>
-									    </tr>
-									    <tr  ng-hide="playgroundExample != ''" class="table-row-border-bottom">
-									    	<td class="small_column"><strong><@orcid.msg 'manage.developer_tools.view.example.token'/></strong></td>
-									    	<td class="large_column">
-									    		{{tokenURL}}<br />
-									    		<@orcid.msg 'manage.developer_tools.view.example.curl' /><a href="<@orcid.msg 'manage.developer_tools.view.example.curl.url' />" target="curlWiki"><@orcid.msg 'manage.developer_tools.view.example.curl.text' /></a> 
-									    		<textarea class="input-xlarge selectable authorizeURL" ng-model="sampleAuthCurl" readonly="readonly"></textarea>
-									    	</td>
-									    </tr>
-									    									    
-									    <!-- Testing tools -->
-									    <tr ng-hide="playgroundExample == ''">
-									    	<td class="small_column"><strong><@orcid.msg 'manage.developer_tools.view.example.title'/></strong></td>
-									    	<td class="large_column"><a href="{{playgroundExample}}" target="_blank"><@orcid.msg 'manage.developer_tools.view.example.google'/></a></td>
-									    </tr>
-								   </table>
-								</div>									
+								<!-- Client details-->
+								<div class="row bottomBuffer">
+									<div class="col-md-3 col-sm-3 col-xs-12">
+										<strong><@orcid.msg 'manage.developer_tools.view.orcid'/></strong>									
+									</div>
+									<div class="col-md-9 col-sm-9 col-xs-12">
+										{{userCredentials.clientOrcid.value}}								
+									</div>
+								</div>
+								
+								<div class="row bottomBuffer">
+									<div class="col-md-3 col-sm-3 col-xs-12">
+										<strong><@orcid.msg 'manage.developer_tools.view.secret'/></strong>								
+									</div>
+									<div class="col-md-9 col-sm-9 col-xs-12">
+										{{userCredentials.clientSecret.value}}							
+									</div>
+								</div>
+								 <!-- Authorize URl and Token URL -->
+								<div class="row bottomBuffer" ng-hide="playgroundExample != ''">
+									<div class="col-md-3 col-sm-3 col-xs-12">
+										<strong><@orcid.msg 'manage.developer_tools.view.example.authorize'/></strong>							
+									</div>
+									<div class="col-md-9 col-sm-9 col-xs-12">
+										<div class="row">
+							    			<div class="col-md-12 col-sm-12 col-xs-12">
+							    				{{authorizeUrlBase}}
+							    			</div>
+							    		</div>
+							    		<div class="row">									    			
+								    		<div class="col-md-5 col-sm-5 col-xs-12">
+								  				<strong><@orcid.msg 'manage.developer_tools.view.available_scopes.authenticate.scope'/>&nbsp;<@orcid.msg 'manage.developer_tools.view.available_scopes.authenticate'/></strong>
+								  			</div>
+								  			<div class="col-md-7 col-sm-7 col-xs-12 no-wrap">
+								  				<@orcid.msg 'manage.developer_tools.view.available_scopes.authenticate.description'/>
+								  			</div>
+							    		</div>
+							    		<div class="row">
+							    			<div class="col-md-12 col-sm-12 col-xs-12">
+							    				<textarea class="input-xlarge-full selectable authorizeURL" ng-model="authorizeURL" readonly="readonly"></textarea>
+							    			</div>
+							    		</div>								
+									</div>
+								</div>
+								
+								<div class="row bottomBuffer" ng-hide="playgroundExample != ''">
+									<div class="col-md-3 col-sm-3 col-xs-12">
+										<strong><@orcid.msg 'manage.developer_tools.view.example.token'/></strong>								
+									</div>
+									<div class="col-md-9 col-sm-9 col-xs-12">
+											{{tokenURL}}<br />
+									    	<@orcid.msg 'manage.developer_tools.view.example.curl' /><a href="<@orcid.msg 'manage.developer_tools.view.example.curl.url' />" target="curlWiki"><@orcid.msg 'manage.developer_tools.view.example.curl.text' /></a> 
+									    	<textarea class="input-xlarge-full selectable authorizeURL" ng-model="sampleAuthCurl" readonly="readonly"></textarea>							
+									</div>
+								</div>
+								
+								<div class="row" ng-hide="playgroundExample == ''">
+									<div class="col-md-3 col-sm-3 col-xs-12">
+										<strong><@orcid.msg 'manage.developer_tools.view.example.title'/></strong>								
+									</div>
+									<div class="col-md-9 col-sm-9 col-xs-12">
+										<a href="{{playgroundExample}}" target="_blank"><@orcid.msg 'manage.developer_tools.view.example.google'/></a>							
+									</div>
+								</div>												
 							</div>
 						</div>
 					</div>
@@ -321,22 +331,50 @@
 					<div class="row">
 						<div class="col-md-12 col-sm-12 col-xs-12">						
 							<div class="grey-box">
+								<div class="row bottomBuffer">
+									<div class="col-md-3 col-sm-3 col-xs-12">
+										<strong><@orcid.msg 'manage.developer_tools.view.orcid'/></strong>
+									</div>
+									<div class="col-md-9 col-sm-9 col-xs-12">
+										{{userCredentials.clientOrcid.value}}
+									</div>
+								</div>
+								
+								<div class="row bottomBuffer">
+									<div class="col-md-3 col-sm-3 col-xs-12">
+										<strong><@orcid.msg 'manage.developer_tools.view.secret'/></strong>
+									</div>
+									<div class="col-md-9 col-sm-9 col-xs-12">
+										{{userCredentials.clientSecret.value}}
+									</div>
+								</div>
+								
+								<div class="row bottomBuffer">
+									<div class="col-md-3 col-sm-3 col-xs-12">
+										
+									</div>
+									<div class="col-md-9 col-sm-9 col-xs-12">
+										<a href="" class="btn btn-danger" ng-click="confirmResetClientSecret()">								    		
+								    			<@orcid.msg 'manage.developer_tools.edit.reset_client_secret' />
+								    		</a>
+									</div>
+								</div>
+								
+							
 								<div class="table-responsive">
 								  <table class="table client_secret_table">
 								    <tr>
-								    	<td><strong><@orcid.msg 'manage.developer_tools.view.orcid'/></strong></td>
-								    	<td colspan="2">{{userCredentials.clientOrcid.value}}</td>
+								    	<td></td>
+								    	<td colspan="2"></td>
 								    </tr>
 								    <tr>
-								    	<td class="c1"><strong><@orcid.msg 'manage.developer_tools.view.secret'/></strong></td>
-								    	<td class="c2" colspan="2">{{userCredentials.clientSecret.value}}</td>									    									    								    	  
+								    	<td class="c1"></td>
+								    	<td class="c2" colspan="2"></td>									    									    								    	  
 								    </tr>
 								    <tr>
 								    	<td class="c1"></td>
 								    	<td class="c2">
-								    		<a href="" class="btn btn-danger" ng-click="confirmResetClientSecret()">								    		
-								    			<@orcid.msg 'manage.developer_tools.edit.reset_client_secret' />
-								    		</a>
+								    		
 								    	</td>
 								    </tr>
 								  </table>
