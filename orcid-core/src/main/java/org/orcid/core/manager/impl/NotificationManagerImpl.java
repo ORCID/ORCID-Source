@@ -16,6 +16,8 @@
  */
 package org.orcid.core.manager.impl;
 
+import static org.orcid.utils.NullUtils.noneNull;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.text.MessageFormat;
@@ -448,8 +450,14 @@ public class NotificationManagerImpl implements NotificationManager {
 
         String emailName = deriveEmailFriendlyName(createdProfile);
         String orcid = createdProfile.getOrcidIdentifier().getPath();
-        String creatorName = (source == null || source.getSourceName() == null || source.getSourceName().getContent() == null) ? source.getSourceOrcid().getPath()
-                : source.getSourceName().getContent();
+        String creatorName = "";
+        if (source != null) {
+            if (noneNull(source.getSourceName(), source.getSourceName().getContent())) {
+                creatorName = source.getSourceName().getContent();
+            } else if (noneNull(source.getSourceOrcid(), source.getSourceOrcid().getPath())) {
+                creatorName = source.getSourceOrcid().getPath();
+            }
+        }
         String verificationUrl = createClaimVerificationUrl(createdProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), baseUri);
         String email = createdProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
         String subject = null;
