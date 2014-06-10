@@ -903,13 +903,14 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         if (existingProfile == null) {
             return null;
         }
-        OrcidActivities updatedActivities = updatedOrcidProfile.getOrcidActivities();
-        if (updatedActivities == null) {
-            return null;
-        }
-        FundingList updatedFundingList = updatedActivities.getFundings();
+        FundingList updatedFundingList = updatedOrcidProfile.retrieveFundings();
         if (updatedFundingList == null) {
             return null;
+        } else {
+            //Parse the amount in the new funding
+            setFundingAmountsWithTheCorrectFormat(updatedOrcidProfile);
+            //Update the funding list with the new values
+            updatedFundingList = updatedOrcidProfile.retrieveFundings();            
         }
         OrcidActivities existingActivities = existingProfile.getOrcidActivities();
         if (existingActivities == null) {
