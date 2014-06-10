@@ -251,6 +251,14 @@ public class FundingsController extends BaseWorkspaceController {
                         String languageName = languages.get(funding.getTitle().getTranslatedTitle().getLanguageCode());
                         form.getFundingTitle().getTranslatedTitle().setLanguageName(languageName);
                     }
+                    
+                    // Set the formatted amount
+                    if (funding.getAmount() != null && StringUtils.isNotBlank(funding.getAmount().getContent())) {
+                        BigDecimal bigDecimal = new BigDecimal(funding.getAmount().getContent());
+                        String formattedAmount = formatAmountString(bigDecimal);
+                        form.setAmount(Text.valueOf(formattedAmount));
+                    }
+                    
                     form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, funding.getOrganization().getAddress().getCountry().name())));
                     fundingsMap.put(funding.getPutCode(), form);
                     fundingIds.add(funding.getPutCode());
@@ -522,6 +530,18 @@ public class FundingsController extends BaseWorkspaceController {
         return numberFormatExample.format(example);
     }
 
+    /**
+     * Format a big decimal based on a locale
+     * 
+     * @param bigDecimal
+     * @param currencyCode
+     * @return a string with the number formatted based on the locale
+     * */
+    private String formatAmountString(BigDecimal bigDecimal) {
+        NumberFormat numberFormat = NumberFormat.getNumberInstance(localeManager.getLocale());
+        return numberFormat.format(bigDecimal);
+    }
+    
     /**
      * Validators
      * */

@@ -591,7 +591,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         OrcidMessage errorMessage = clientResponse.getEntity(OrcidMessage.class);
         assertNotNull(errorMessage);
         assertNotNull(errorMessage.getErrorDesc());
-        assertEquals("Bad Request : The amount: 1.250.000 doesn'n have the right format, it should use the format: 1,234.56", errorMessage
+        assertEquals("Bad Request : The amount: 1.250.000 doesn'n have the right format, it should use the format: 1,234,567.89", errorMessage
                 .getErrorDesc().getContent());
     }
     

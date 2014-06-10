@@ -903,13 +903,15 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         if (existingProfile == null) {
             return null;
         }
-        OrcidActivities updatedActivities = updatedOrcidProfile.getOrcidActivities();
-        if (updatedActivities == null) {
-            return null;
-        }
-        FundingList updatedFundingList = updatedActivities.getFundings();
+        
+        FundingList updatedFundingList = updatedOrcidProfile.retrieveFundings();
         if (updatedFundingList == null) {
             return null;
+        } else {
+            //Parse the amount in the new funding
+            setFundingAmountsWithTheCorrectFormat(updatedOrcidProfile);
+            //Update the funding list with the new values
+            updatedFundingList = updatedOrcidProfile.retrieveFundings();            
         }
         OrcidActivities existingActivities = existingProfile.getOrcidActivities();
         if (existingActivities == null) {
@@ -1360,7 +1362,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         
         for (Funding funding : fundings.getFundings()) {
             // If the amount is not empty, update it
-            if (funding.getAmount() != null && !PojoUtil.isEmpty(funding.getAmount().getContent())) {
+            if (funding.getAmount() != null && StringUtils.isNotBlank(funding.getAmount().getContent())) {
                 String amount = funding.getAmount().getContent();
                 Locale locale = localeManager.getLocale();
                 ParsePosition parsePosition = new ParsePosition(0);
@@ -1378,7 +1380,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                 Number number = numberFormat.parse(amount, parsePosition);
                 String formattedAmount = number.toString();
                 if (parsePosition.getIndex() != amount.length()) {
-                    double example = 1234.56;
+                    double example = 1234567.89;
                     NumberFormat numberFormatExample = NumberFormat.getNumberInstance(localeManager.getLocale());                     
                     throw new IllegalArgumentException("The amount: " + amount + " doesn'n have the right format, it should use the format: " + numberFormatExample.format(example));
                 }

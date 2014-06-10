@@ -18,8 +18,6 @@ package org.orcid.core.adapter.impl;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
-import java.text.ParsePosition;
-import java.util.Currency;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -127,7 +125,6 @@ import org.orcid.persistence.jpa.entities.StartDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.keys.WorkExternalIdentifierEntityPk;
-import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.OrcidStringUtils;
 import org.springframework.util.Assert;
@@ -948,7 +945,8 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                         BigDecimal bigDecimalAmount = getAmountAsBigDecimal(amount);
                         profileFundingEntity.setNumericAmount(bigDecimalAmount);
                     } catch(Exception e) {
-                        throw new IllegalArgumentException("Invalid amount cannot be cast to BidDecimal");
+                        String sample = getSampleAmountInProperFormat(localeManager.getLocale());                                                
+                        throw new IllegalArgumentException("Cannot cast amount: " + amount + " proper format is: " + sample);
                     }
                                 
                     profileFundingEntity.setCurrencyCode(currencyCode);
@@ -996,6 +994,18 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     public BigDecimal getAmountAsBigDecimal(String amount) throws Exception {
         return new BigDecimal(amount);
     }
+    
+    /**
+     * Get a string with the proper amount format
+     * 
+     * @param local
+     * @return an example string showing how the amount should be entered
+     * */
+    private String getSampleAmountInProperFormat(java.util.Locale locale) {
+        double example = 1234567.89;
+        NumberFormat numberFormatExample = NumberFormat.getNumberInstance(locale);
+        return numberFormatExample.format(example);
+    }    
     
     /**
      * Get a list of GrantExternalIdentifierEntity from the external identifiers
