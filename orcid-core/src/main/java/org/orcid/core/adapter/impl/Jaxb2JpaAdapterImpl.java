@@ -17,6 +17,8 @@
 package org.orcid.core.adapter.impl;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
 import java.util.Currency;
@@ -966,8 +968,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                     try {
                         BigDecimal bigDecimalAmount = getAmountAsBigDecimal(amount);
                         profileFundingEntity.setNumericAmount(bigDecimalAmount);
-                    } catch(Exception e) {
-                        throw new IllegalArgumentException("Invalid amount cannot be cast to BidDecimal");
+                    } catch(Exception e) {                                                
+                        String sample = getSampleAmountInProperFormat(localeManager.getLocale());                                                
+                        throw new IllegalArgumentException("Cannot cast amount: " + amount + " proper format is: " + sample);                        
                     }
                                 
                     profileFundingEntity.setCurrencyCode(currencyCode);
@@ -1020,6 +1023,18 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         return new BigDecimal(amount);
     }
 
+    /**
+     * Get a string with the proper amount format
+     * 
+     * @param local
+     * @return an example string showing how the amount should be entered
+     * */
+    private String getSampleAmountInProperFormat(java.util.Locale locale) {
+        double example = 1234567.89;
+        NumberFormat numberFormatExample = NumberFormat.getNumberInstance(locale);
+        return numberFormatExample.format(example);
+    }
+    
     /**
      * Get a list of GrantExternalIdentifierEntity from the external identifiers
      * 

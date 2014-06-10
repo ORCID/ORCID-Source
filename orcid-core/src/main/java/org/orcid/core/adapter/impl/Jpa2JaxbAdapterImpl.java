@@ -380,9 +380,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         Funding funding = new Funding();
 
         if (profileFundingEntity.getNumericAmount() != null) {
-            String formattedAmount = formatAmountString(profileFundingEntity.getNumericAmount(), profileFundingEntity.getCurrencyCode());
+            String stringAmount = profileFundingEntity.getNumericAmount().toString();
             Amount orcidAmount = new Amount();
-            orcidAmount.setContent(formattedAmount);
+            orcidAmount.setContent(stringAmount);
             orcidAmount.setCurrencyCode(profileFundingEntity.getCurrencyCode() != null ? profileFundingEntity.getCurrencyCode() : null);
             funding.setAmount(orcidAmount);
         }
@@ -425,18 +425,6 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         // Set source
         funding.setSource(getSource(profileFundingEntity));
         return funding;
-    }
-
-    /**
-     * Format a big decimal based on a locale
-     * 
-     * @param bigDecimal
-     * @param currencyCode
-     * @return a string with the number formatted based on the locale
-     * */
-    private String formatAmountString(BigDecimal bigDecimal, String currencyCode) {
-        NumberFormat numberFormat = NumberFormat.getNumberInstance(localeManager.getLocale());
-        return numberFormat.format(bigDecimal);
     }
 
     /**

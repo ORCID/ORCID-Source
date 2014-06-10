@@ -1360,7 +1360,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         
         for (Funding funding : fundings.getFundings()) {
             // If the amount is not empty, update it
-            if (funding.getAmount() != null && !PojoUtil.isEmpty(funding.getAmount().getContent())) {
+            if (funding.getAmount() != null && StringUtils.isNotBlank(funding.getAmount().getContent())) {
                 String amount = funding.getAmount().getContent();
                 Locale locale = localeManager.getLocale();
                 ParsePosition parsePosition = new ParsePosition(0);
@@ -1378,7 +1378,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                 Number number = numberFormat.parse(amount, parsePosition);
                 String formattedAmount = number.toString();
                 if (parsePosition.getIndex() != amount.length()) {
-                    double example = 1234.56;
+                    double example = 1234567.89;
                     NumberFormat numberFormatExample = NumberFormat.getNumberInstance(localeManager.getLocale());                     
                     throw new IllegalArgumentException("The amount: " + amount + " doesn'n have the right format, it should use the format: " + numberFormatExample.format(example));
                 }
