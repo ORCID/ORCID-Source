@@ -21,7 +21,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -416,7 +415,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     }
 
     @Test
-    public void testAddFunding() throws InterruptedException, JSONException {
+    public void testAddFunding() throws InterruptedException, JSONException {                                         
         String scopes = "/funding/create";
         String authorizationCode = obtainAuthorizationCode(scopes);
         String accessToken = obtainAccessToken(authorizationCode, scopes);
@@ -591,7 +590,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         OrcidMessage errorMessage = clientResponse.getEntity(OrcidMessage.class);
         assertNotNull(errorMessage);
         assertNotNull(errorMessage.getErrorDesc());
-        assertEquals("Bad Request : The amount: 1.250.000 doesn'n have the right format, it should use the format: 1,234.56", errorMessage
+        assertEquals("Bad Request : The amount: 1.250.000 doesn'n have the right format, it should use the format: 1,234,567.89", errorMessage
                 .getErrorDesc().getContent());
     }
     

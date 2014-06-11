@@ -450,6 +450,9 @@ public class NotificationManagerImpl implements NotificationManager {
 
         String emailName = deriveEmailFriendlyName(createdProfile);
         String orcid = createdProfile.getOrcidIdentifier().getPath();
+        String verificationUrl = createClaimVerificationUrl(createdProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), baseUri);
+        String email = createdProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+        
         String creatorName = "";
         if (source != null) {
             if (noneNull(source.getSourceName(), source.getSourceName().getContent())) {
@@ -458,8 +461,7 @@ public class NotificationManagerImpl implements NotificationManager {
                 creatorName = source.getSourceOrcid().getPath();
             }
         }
-        String verificationUrl = createClaimVerificationUrl(createdProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), baseUri);
-        String email = createdProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+
         String subject = null;
         String body = null;
         String htmlBody = null;
