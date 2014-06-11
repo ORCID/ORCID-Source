@@ -2680,10 +2680,6 @@ header overrides
 	padding-left: 0;
 }
 
-.public-profile .workspace-inner>* {
-	padding-left: 10px;
-}
-
 .public-profile .workspace-inner .alert {
 	margin-left: 10px;
 }
@@ -4009,6 +4005,15 @@ ul.sso-options li span{
 .margin-left-fix{
 	margin-left: 0;
 }
+
+.public-profile #workspace-education{
+	border-top: 1px solid #c9c9c9;
+}
+
+.public-profile .workspace-inner{
+	padding-left: 10px;
+}
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
