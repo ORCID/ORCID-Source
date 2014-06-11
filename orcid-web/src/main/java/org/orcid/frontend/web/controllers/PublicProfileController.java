@@ -17,6 +17,8 @@
 package org.orcid.frontend.web.controllers;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -211,7 +213,14 @@ public class PublicProfileController extends BaseWorkspaceController {
             if (!(funding.getTitle().getTranslatedTitle() == null) && !StringUtils.isEmpty(funding.getTitle().getTranslatedTitle().getLanguageCode())) {
                 String languageName = languages.get(funding.getTitle().getTranslatedTitle().getLanguageCode());
                 form.getFundingTitle().getTranslatedTitle().setLanguageName(languageName);
+            }            
+            // Set formatted amount
+            if(funding.getAmount() != null && StringUtils.isNotBlank(funding.getAmount().getContent())) {
+                BigDecimal bigDecimal = new BigDecimal(funding.getAmount().getContent());
+                String formattedAmount = formatAmountString(bigDecimal);
+                form.setAmount(Text.valueOf(formattedAmount));
             }
+            
             // Set country name
             form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, funding.getOrganization().getAddress().getCountry().name())));
             fundings.add(form);
@@ -336,5 +345,17 @@ public class PublicProfileController extends BaseWorkspaceController {
         if (profile == null)
             return null;
         return activityCacheManager.pubMinWorksMap(profile);
+    }
+    
+    /**
+     * Format a big decimal based on a locale
+     * 
+     * @param bigDecimal
+     * @param currencyCode
+     * @return a string with the number formatted based on the locale
+     * */
+    private String formatAmountString(BigDecimal bigDecimal) {
+        NumberFormat numberFormat = NumberFormat.getNumberInstance(localeManager.getLocale());
+        return numberFormat.format(bigDecimal);
     }
 }
