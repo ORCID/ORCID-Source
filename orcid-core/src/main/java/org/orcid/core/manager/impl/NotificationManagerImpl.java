@@ -16,6 +16,8 @@
  */
 package org.orcid.core.manager.impl;
 
+import static org.orcid.utils.NullUtils.noneNull;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.text.MessageFormat;
@@ -75,7 +77,7 @@ public class NotificationManagerImpl implements NotificationManager {
     private static final String RESET_NOTIFY_ORCID_ORG = "reset@notify.orcid.org";
 
     private static final String CLAIM_NOTIFY_ORCID_ORG = "claim@notify.orcid.org";
-    
+
     private static final String DEACTIVATE_NOTIFY_ORCID_ORG = "deactivate@notify.orcid.org";
 
     private static final String AMEND_NOTIFY_ORCID_ORG = "amend@notify.orcid.org";
@@ -87,13 +89,13 @@ public class NotificationManagerImpl implements NotificationManager {
     private static final String ACCOUNT_DEPRECATED_NOTIFY_ORCID_ORG = "account-deprecate@notify.orcid.org";
 
     private static final String WILDCARD_MEMBER_NAME = "${name}";
-    
+
     private static final String WILDCARD_USER_NAME = "${user_name}";
-    
+
     private static final String WILDCARD_WEBSITE = "${website}";
-    
+
     private static final String WILDCARD_DESCRIPTION = "${description}";
-    
+
     @Resource
     private MessageSource messages;
 
@@ -444,47 +446,57 @@ public class NotificationManagerImpl implements NotificationManager {
         Source source = null;
         CustomEmailEntity customEmail = null;
         if (createdProfile.getOrcidHistory() != null && createdProfile.getOrcidHistory().getSource() != null
-                && createdProfile.getOrcidHistory().getSource().getSourceOrcid() != null && !PojoUtil.isEmpty(createdProfile.getOrcidHistory().getSource().getSourceOrcid().getPath())) {
+                && createdProfile.getOrcidHistory().getSource().getSourceOrcid() != null
+                && !PojoUtil.isEmpty(createdProfile.getOrcidHistory().getSource().getSourceOrcid().getPath())) {
             source = createdProfile.getOrcidHistory().getSource();
             customEmail = getCustomizedEmail(source.getSourceOrcid().getPath(), EmailType.CLAIM);
         }
-        
+
         String emailName = deriveEmailFriendlyName(createdProfile);
         String orcid = createdProfile.getOrcidIdentifier().getPath();
-        String creatorName = source == null ? "" : source.getSourceName().getContent();
         String verificationUrl = createClaimVerificationUrl(createdProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), baseUri);
         String email = createdProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+        
+        String creatorName = "";
+        if (source != null) {
+            if (noneNull(source.getSourceName(), source.getSourceName().getContent())) {
+                creatorName = source.getSourceName().getContent();
+            } else if (noneNull(source.getSourceOrcid(), source.getSourceOrcid().getPath())) {
+                creatorName = source.getSourceOrcid().getPath();
+            }
+        }
+
         String subject = null;
         String body = null;
         String htmlBody = null;
         String sender = null;
-        
-        if(customEmail != null) {
-            //Get the customized sender if available
+
+        if (customEmail != null) {
+            // Get the customized sender if available
             sender = PojoUtil.isEmpty(customEmail.getSender()) ? CLAIM_NOTIFY_ORCID_ORG : customEmail.getSender();
-            //Get the customized subject is available
+            // Get the customized subject is available
             subject = PojoUtil.isEmpty(customEmail.getSubject()) ? getSubject("email.subject.api_record_creation", createdProfile) : customEmail.getSubject();
-            //Replace the wildcards
+            // Replace the wildcards
             subject = subject.replace(WILDCARD_USER_NAME, emailName);
             subject = subject.replace(WILDCARD_MEMBER_NAME, creatorName);
-            if(customEmail.isHtml()){
+            if (customEmail.isHtml()) {
                 htmlBody = customEmail.getContent();
                 htmlBody = htmlBody.replace(WILDCARD_USER_NAME, emailName);
                 htmlBody = htmlBody.replace(WILDCARD_MEMBER_NAME, creatorName);
                 htmlBody = htmlBody.replace(EmailConstants.WILDCARD_VERIFICATION_URL, verificationUrl);
-                if(htmlBody.contains(WILDCARD_WEBSITE) || htmlBody.contains(WILDCARD_DESCRIPTION)) {
+                if (htmlBody.contains(WILDCARD_WEBSITE) || htmlBody.contains(WILDCARD_DESCRIPTION)) {
                     ClientDetailsEntity clientDetails = customEmail.getClientDetailsEntity();
-                    htmlBody = htmlBody.replace(WILDCARD_WEBSITE, clientDetails.getClientWebsite());                    
+                    htmlBody = htmlBody.replace(WILDCARD_WEBSITE, clientDetails.getClientWebsite());
                     htmlBody = htmlBody.replace(WILDCARD_DESCRIPTION, clientDetails.getClientDescription());
-                }                
+                }
             } else {
                 body = customEmail.getContent();
                 body = body.replace(WILDCARD_USER_NAME, emailName);
                 body = body.replace(WILDCARD_MEMBER_NAME, creatorName);
                 body = body.replace(EmailConstants.WILDCARD_VERIFICATION_URL, verificationUrl);
-                if(body.contains(WILDCARD_WEBSITE) || body.contains(WILDCARD_DESCRIPTION)) {
+                if (body.contains(WILDCARD_WEBSITE) || body.contains(WILDCARD_DESCRIPTION)) {
                     ClientDetailsEntity clientDetails = customEmail.getClientDetailsEntity();
-                    body = body.replace(WILDCARD_WEBSITE, clientDetails.getClientWebsite());                    
+                    body = body.replace(WILDCARD_WEBSITE, clientDetails.getClientWebsite());
                     body = body.replace(WILDCARD_DESCRIPTION, clientDetails.getClientDescription());
                 }
             }
@@ -496,7 +508,7 @@ public class NotificationManagerImpl implements NotificationManager {
             templateParams.put("orcid", orcid);
             templateParams.put("subject", subject);
             templateParams.put("creatorName", creatorName);
-            templateParams.put("baseUri", baseUri);            
+            templateParams.put("baseUri", baseUri);
             templateParams.put("verificationUrl", verificationUrl);
 
             addMessageParams(templateParams, createdProfile);
@@ -508,8 +520,9 @@ public class NotificationManagerImpl implements NotificationManager {
         // Send message
         if (apiRecordCreationEmailEnabled) {
             boolean isCustomEmail = customEmail != null ? true : false;
-            //TODO: How to handle sender? we might have to register them on mailgun
-            if(isCustomEmail) {                
+            // TODO: How to handle sender? we might have to register them on
+            // mailgun
+            if (isCustomEmail) {
                 mailGunManager.sendEmail(sender, email, subject, body, htmlBody, isCustomEmail);
             } else {
                 mailGunManager.sendEmail(CLAIM_NOTIFY_ORCID_ORG, email, subject, body, htmlBody);
@@ -539,7 +552,8 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("orcid", orcid);
         templateParams.put("subject", getSubject("email.subject.claim_reminder", orcidProfile));
         Source source = orcidProfile.getOrcidHistory().getSource();
-        templateParams.put("creatorName", source == null ? "" : source.getSourceName().getContent());
+        templateParams.put("creatorName", (source == null || source.getSourceName() == null || source.getSourceName().getContent() == null) ? source.getSourceOrcid()
+                .getPath() : source.getSourceName().getContent());
         templateParams.put("baseUri", baseUri);
         templateParams.put("daysUntilActivation", daysUntilActivation);
         Email primaryEmail = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail();

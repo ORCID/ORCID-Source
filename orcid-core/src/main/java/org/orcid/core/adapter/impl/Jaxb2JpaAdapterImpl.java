@@ -17,6 +17,8 @@
 package org.orcid.core.adapter.impl;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
 import java.util.Currency;
@@ -958,19 +960,23 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             }
             FuzzyDate startDate = funding.getStartDate();
             FuzzyDate endDate = funding.getEndDate();
-            if (funding.getAmount() != null) {
-                String amount = StringUtils.isNotBlank(funding.getAmount().getContent()) ? funding.getAmount().getContent() : null;
-                String currencyCode = funding.getAmount().getCurrencyCode() != null ? funding.getAmount().getCurrencyCode() : null;
-                try {
-                    BigDecimal bigDecimalAmount = getAmountAsBigDecimal(amount);
-                    profileFundingEntity.setNumericAmount(bigDecimalAmount);
-                } catch (Exception e) {
-                    throw new IllegalArgumentException("Invalid amount cannot be cast to BidDecimal");
-                }
 
-                profileFundingEntity.setCurrencyCode(currencyCode);
-            }
-
+            if(funding.getAmount() != null) {
+            	String amount = StringUtils.isNotBlank(funding.getAmount().getContent()) ? funding.getAmount().getContent() : null;
+            	String currencyCode = funding.getAmount().getCurrencyCode() != null ? funding.getAmount().getCurrencyCode() : null;
+                if(StringUtils.isNotBlank(amount)) {
+                    try {
+                        BigDecimal bigDecimalAmount = getAmountAsBigDecimal(amount);
+                        profileFundingEntity.setNumericAmount(bigDecimalAmount);
+                    } catch(Exception e) {                                                
+                        String sample = getSampleAmountInProperFormat(localeManager.getLocale());                                                
+                        throw new IllegalArgumentException("Cannot cast amount: " + amount + " proper format is: " + sample);                        
+                    }
+                                
+                    profileFundingEntity.setCurrencyCode(currencyCode);
+                }            	            	            
+            }                        
+            
             profileFundingEntity.setContributorsJson(getFundingContributorsJson(funding.getFundingContributors()));
             profileFundingEntity.setDescription(StringUtils.isNotBlank(funding.getDescription()) ? funding.getDescription() : null);
             profileFundingEntity.setEndDate(endDate != null ? new EndDateEntity(endDate) : null);
@@ -1017,6 +1023,18 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         return new BigDecimal(amount);
     }
 
+    /**
+     * Get a string with the proper amount format
+     * 
+     * @param local
+     * @return an example string showing how the amount should be entered
+     * */
+    private String getSampleAmountInProperFormat(java.util.Locale locale) {
+        double example = 1234567.89;
+        NumberFormat numberFormatExample = NumberFormat.getNumberInstance(locale);
+        return numberFormatExample.format(example);
+    }
+    
     /**
      * Get a list of GrantExternalIdentifierEntity from the external identifiers
      * 

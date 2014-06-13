@@ -251,6 +251,14 @@ public class FundingsController extends BaseWorkspaceController {
                         String languageName = languages.get(funding.getTitle().getTranslatedTitle().getLanguageCode());
                         form.getFundingTitle().getTranslatedTitle().setLanguageName(languageName);
                     }
+                    
+                    // Set the formatted amount
+                    if(funding.getAmount() != null && StringUtils.isNotBlank(funding.getAmount().getContent())) {
+                        BigDecimal bigDecimal = new BigDecimal(funding.getAmount().getContent());
+                        String formattedAmount = formatAmountString(bigDecimal);
+                        form.setAmount(Text.valueOf(formattedAmount));
+                    }
+                    
                     form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, funding.getOrganization().getAddress().getCountry().name())));
                     fundingsMap.put(funding.getPutCode(), form);
                     fundingIds.add(funding.getPutCode());
@@ -320,12 +328,14 @@ public class FundingsController extends BaseWorkspaceController {
         copyErrors(funding.getFundingName(), funding);
         copyErrors(funding.getAmount(), funding);
         copyErrors(funding.getCurrencyCode(), funding);
-        copyErrors(funding.getFundingTitle().getTitle(), funding);
-        copyErrors(funding.getFundingTitle().getTranslatedTitle(), funding);
+        copyErrors(funding.getFundingTitle().getTitle(), funding);        
         copyErrors(funding.getDescription(), funding);
         copyErrors(funding.getUrl(), funding);
         copyErrors(funding.getEndDate(), funding);
         copyErrors(funding.getFundingType(), funding);
+        if(funding.getFundingTitle().getTranslatedTitle() != null)
+            copyErrors(funding.getFundingTitle().getTranslatedTitle(), funding);
+        
         if (funding.getOrganizationDefinedFundingSubType() != null)
             copyErrors(funding.getOrganizationDefinedFundingSubType().getSubtype(), funding);
 
@@ -467,7 +477,6 @@ public class FundingsController extends BaseWorkspaceController {
      * Transforms a string into a BigDecimal
      * 
      * @param amount
-     * @param locale
      * @return a BigDecimal containing the given amount
      * @throws Exception
      *             if the amount cannot be correctly parse into a BigDecimal
@@ -522,6 +531,18 @@ public class FundingsController extends BaseWorkspaceController {
         return numberFormatExample.format(example);
     }
 
+    /**
+     * Format a big decimal based on a locale
+     * 
+     * @param bigDecimal
+     * @param currencyCode
+     * @return a string with the number formatted based on the locale
+     * */
+    private String formatAmountString(BigDecimal bigDecimal) {
+        NumberFormat numberFormat = NumberFormat.getNumberInstance(localeManager.getLocale());
+        return numberFormat.format(bigDecimal);
+    }
+    
     /**
      * Validators
      * */
@@ -586,10 +607,9 @@ public class FundingsController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/funding/translatedTitleValidate.json", method = RequestMethod.POST)
     public @ResponseBody
-    FundingForm validateTranslatedTitle(@RequestBody FundingForm funding) {
-        funding.getFundingTitle().getTranslatedTitle().setErrors(new ArrayList<String>());
+    FundingForm validateTranslatedTitle(@RequestBody FundingForm funding) {        
         if (funding.getFundingTitle().getTranslatedTitle() != null) {
-
+            funding.getFundingTitle().getTranslatedTitle().setErrors(new ArrayList<String>());
             String content = funding.getFundingTitle().getTranslatedTitle().getContent();
             String code = funding.getFundingTitle().getTranslatedTitle().getLanguageCode();
 

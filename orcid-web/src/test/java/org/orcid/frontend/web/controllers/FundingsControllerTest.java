@@ -45,6 +45,7 @@ import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.frontend.web.util.BaseControllerTest;
 import org.orcid.pojo.ajaxForm.FundingForm;
+import org.orcid.pojo.ajaxForm.FundingTitleForm;
 import org.orcid.pojo.ajaxForm.Text;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -360,5 +361,62 @@ public class FundingsControllerTest extends BaseControllerTest {
         assertTrue(fundingIds.contains("2"));
         assertTrue(fundingIds.contains("3"));
     }
-
+    
+    @Test
+    public void testAddFundingWithoutAmount() {
+        HttpSession session = mock(HttpSession.class);
+        when(servletRequest.getSession()).thenReturn(session);
+        when(localeManager.getLocale()).thenReturn(new Locale("us","EN"));
+        FundingForm funding = fundingController.getFunding(null);
+        funding.setFundingType(Text.valueOf("award"));
+        FundingTitleForm title = new FundingTitleForm();
+        title.setTitle(Text.valueOf("Title"));
+        funding.setFundingTitle(title);
+        funding.setCountry(Text.valueOf("CR"));
+        funding.setCity(Text.valueOf("SJ"));
+        funding.setRegion(Text.valueOf("SJ"));
+        
+        try {
+            FundingForm result = fundingController.postFunding(null, funding);
+            assertEquals(funding.getFundingTitle().getTitle(), result.getFundingTitle().getTitle());
+            assertEquals(funding.getFundingType(), result.getFundingType());
+            assertEquals(funding.getCountry(), result.getCountry());
+            assertEquals(funding.getCity(), result.getCity());
+            assertEquals(funding.getRegion(), result.getRegion());
+            assertEquals(funding.getCountry(), result.getCountry());
+        } catch(Exception e) {
+            fail();
+        }
+    }
+    
+    @Test
+    public void testAddFunding() {
+        HttpSession session = mock(HttpSession.class);
+        when(servletRequest.getSession()).thenReturn(session);
+        when(localeManager.getLocale()).thenReturn(new Locale("us","EN"));
+        FundingForm funding = fundingController.getFunding(null);
+        funding.setFundingType(Text.valueOf("award"));
+        FundingTitleForm title = new FundingTitleForm();
+        title.setTitle(Text.valueOf("Title"));
+        funding.setFundingTitle(title);
+        funding.setCountry(Text.valueOf("CR"));
+        funding.setCity(Text.valueOf("SJ"));
+        funding.setRegion(Text.valueOf("SJ"));
+        funding.setAmount(Text.valueOf("1000"));
+        
+        try {
+            FundingForm result = fundingController.postFunding(null, funding);
+            assertEquals(funding.getFundingTitle().getTitle(), result.getFundingTitle().getTitle());
+            assertEquals(funding.getFundingType(), result.getFundingType());
+            assertEquals(funding.getCountry(), result.getCountry());
+            assertEquals(funding.getCity(), result.getCity());
+            assertEquals(funding.getRegion(), result.getRegion());
+            assertEquals(funding.getCountry(), result.getCountry());
+            BigDecimal expected = fundingController.getAmountAsBigDecimal(funding.getAmount().getValue());
+            BigDecimal resulting = fundingController.getAmountAsBigDecimal(result.getAmount().getValue());
+            assertEquals(expected, resulting);
+        } catch(Exception e) {
+            fail();
+        }
+    }
 }

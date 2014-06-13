@@ -109,7 +109,6 @@ public class CustomEmailManagerTest extends BaseTest {
         assertTrue(claim);
     }
 
-    @Test      
     @Rollback
     public void testUpdateCustomEmail() {
         // Check old values
