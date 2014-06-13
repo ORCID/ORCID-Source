@@ -26,19 +26,19 @@ import org.orcid.pojo.ajaxForm.ErrorsInterface;
  * @author Will Simpson
  * 
  */
-public class AddDelegate implements ErrorsInterface {
+public class ManageDelegate implements ErrorsInterface {
 
     private List<String> errors = new ArrayList<String>();
-    private String delegateToAdd;
+    private String delegateToManage;
     private String delegateEmail;
     private String password;
 
-    public String getDelegateToAdd() {
-        return delegateToAdd;
+    public String getDelegateToManage() {
+        return delegateToManage;
     }
 
-    public void setDelegateToAdd(String delegateToAdd) {
-        this.delegateToAdd = delegateToAdd;
+    public void setDelegateToManage(String delegateToManage) {
+        this.delegateToManage = delegateToManage;
     }
 
     public String getDelegateEmail() {

@@ -72,7 +72,7 @@ import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
-import org.orcid.pojo.AddDelegate;
+import org.orcid.pojo.ManageDelegate;
 import org.orcid.pojo.ChangePassword;
 import org.orcid.pojo.SecurityQuestion;
 import org.orcid.pojo.ajaxForm.BiographyForm;
@@ -241,7 +241,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/addDelegate.json")
     public @ResponseBody
-    AddDelegate addDelegate(@RequestBody AddDelegate addDelegate) {
+    ManageDelegate addDelegate(@RequestBody ManageDelegate addDelegate) {
         // Check password
         String password = addDelegate.getPassword();
         if (StringUtils.isBlank(password) || !encryptionManager.hashMatches(password, getEffectiveProfile().getPassword())) {
@@ -249,7 +249,7 @@ public class ManageProfileController extends BaseWorkspaceController {
             return addDelegate;
         }
         String currentUserOrcid = getCurrentUserOrcid();
-        String delegateOrcid = addDelegate.getDelegateToAdd();
+        String delegateOrcid = addDelegate.getDelegateToManage();
         GivenPermissionToEntity existing = givenPermissionToDao.findByGiverAndReceiverOrcid(currentUserOrcid, delegateOrcid);
         if (existing == null) {
             // Clear the delegate's profile from the cache so that the granting
@@ -282,18 +282,24 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/addDelegateByEmail.json")
     public @ResponseBody
-    AddDelegate addDelegateByEmail(@RequestBody AddDelegate addDelegate) {
+    ManageDelegate addDelegateByEmail(@RequestBody ManageDelegate addDelegate) {
         EmailEntity emailEntity = emailDao.findCaseInsensitive(addDelegate.getDelegateEmail());
-        addDelegate.setDelegateToAdd(emailEntity.getProfile().getId());
+        addDelegate.setDelegateToManage(emailEntity.getProfile().getId());
         return addDelegate(addDelegate);
     }
 
-    @RequestMapping(value = "/revokeDelegate.json", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/revokeDelegate.json", method = RequestMethod.POST)
     public @ResponseBody
-    String revokeDelegate(@RequestBody String delegate) {
+    ManageDelegate revokeDelegate(@RequestBody ManageDelegate manageDelegate) {
+        // Check password
+        String password = manageDelegate.getPassword();
+        if (StringUtils.isBlank(password) || !encryptionManager.hashMatches(password, getEffectiveProfile().getPassword())) {
+            manageDelegate.getErrors().add(getMessage("check_password_modal.incorrect_password"));
+            return manageDelegate;
+        }
         String giverOrcid = getCurrentUserOrcid();
-        orcidProfileManager.revokeDelegate(giverOrcid, delegate);
-        return delegate;
+        orcidProfileManager.revokeDelegate(giverOrcid, manageDelegate.getDelegateToManage());
+        return manageDelegate;
     }
 
     @RequestMapping(value = "/revoke-delegate-from-summary-view", method = RequestMethod.GET)

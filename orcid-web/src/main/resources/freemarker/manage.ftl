@@ -574,8 +574,21 @@
 	<div class="lightbox-container">
 		<h3><@orcid.msg 'manage_delegation.confirmrevoketrustedindividual'/></h3>
 		<p> {{delegateNameToRevoke}} ({{delegateToRevoke}})</p>
-		<button class="btn btn-danger" ng-click="revoke()"><@orcid.msg 'manage_delegation.btnrevokeaccess'/></button> 
-		<a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
+		<form ng-submit="revoke()">
+			<div>
+				<h3><@orcid.msg 'check_password_modal.confirm_password' /></h3>	
+				<label for="confirm_add_delegate_modal.password" class=""><@orcid.msg 'check_password_modal.password' /></label>
+				<input id="confirm_add_delegate_modal.password" type="password" name="confirm_add_delegate_modal.password" ng-model="password" class="input-large"/> <span class="required">*</span>
+				<span class="orcid-error" ng-show="errors.length > 0">
+					<span ng-repeat='error in errors' ng-bind-html="error"></span>
+				</span>
+			</div>
+			<button class="btn btn-danger"><@orcid.msg 'manage_delegation.btnrevokeaccess'/></button> 
+			<a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
+		</form>
+		<div ng-show="errors.length === 0">
+			<br></br>
+		</div>
 	<div>
 </script>
 

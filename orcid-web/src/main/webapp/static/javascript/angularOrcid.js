@@ -3740,7 +3740,7 @@ function DelegatesCtrl($scope, $compile){
 	
 	$scope.addDelegate = function() {
 		var addDelegate = {};
-		addDelegate.delegateToAdd = $scope.delegateToAdd;
+		addDelegate.delegateToManage = $scope.delegateToAdd;
 		addDelegate.password = $scope.password;
 		$.ajax({
 	        url: getBaseUri() + '/account/addDelegate.json',
@@ -3765,6 +3765,7 @@ function DelegatesCtrl($scope, $compile){
 	};
 	
 	$scope.confirmRevoke = function(delegateName, delegateId) {
+		$scope.errors = [];
 	    $scope.delegateNameToRevoke = delegateName;
 	    $scope.delegateToRevoke = delegateId;
         $.colorbox({
@@ -3775,15 +3776,24 @@ function DelegatesCtrl($scope, $compile){
 	};
 
 	$scope.revoke = function () {
+		var revokeDelegate = {};
+		revokeDelegate.delegateToManage = $scope.delegateToRevoke;
+		revokeDelegate.password = $scope.password;
 		$.ajax({
 	        url: getBaseUri() + '/account/revokeDelegate.json',
-	        type: 'DELETE',
-	        data:  $scope.delegateToRevoke,
+	        type: 'POST',
+	        data:  angular.toJson(revokeDelegate),
 	        contentType: 'application/json;charset=UTF-8',
 	        success: function(data) {
-				$scope.getDelegates();
-				$scope.$apply();
-	        	$scope.closeModal();
+	        	if(data.errors.length === 0){
+	        		$scope.getDelegates();
+	        		$scope.$apply();
+	        		$scope.closeModal();
+	        	}
+	        	else{
+	        		$scope.errors = data.errors;
+	        		$scope.$apply();
+	        	}
 	        }
 	    }).fail(function() { 
 	    	// something bad is happening!
