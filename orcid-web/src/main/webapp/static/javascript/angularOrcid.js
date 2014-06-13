@@ -3681,6 +3681,7 @@ function DelegatesCtrl($scope, $compile){
 	};
 	
 	$scope.confirmAddDelegateByEmail = function(emailSearchResult){
+		$scope.errors = [];
 		$scope.emailSearchResult = emailSearchResult;
 		$.colorbox({                      
 			html : $compile($('#confirm-add-delegate-by-email-modal').html())($scope),
@@ -3695,6 +3696,7 @@ function DelegatesCtrl($scope, $compile){
 	};
 	
 	$scope.confirmAddDelegate = function(delegateName, delegateId, delegateIdx){
+		$scope.errors = [];
 		$scope.delegateNameToAdd = delegateName;
 		$scope.delegateToAdd = delegateId;
 		$scope.delegateIdx = delegateIdx;
@@ -3711,15 +3713,25 @@ function DelegatesCtrl($scope, $compile){
 	};
 	
 	$scope.addDelegateByEmail = function(delegateEmail) {
+		$scope.errors = [];
+		var addDelegate = {};
+		addDelegate.delegateEmail = $scope.userQuery;
+		addDelegate.password = $scope.password;
 		$.ajax({
 	        url: $('body').data('baseurl') + 'account/addDelegateByEmail.json',
 	        type: 'POST',
-	        data: delegateEmail,
+	        data: angular.toJson(addDelegate),
 	        contentType: 'application/json;charset=UTF-8',
 	        success: function(data) {
-	        	$scope.getDelegates();
-	        	$scope.$apply();
-	        	$scope.closeModal();
+	        	if(data.errors.length === 0){
+	        		$scope.getDelegates();
+	        		$scope.$apply();
+	        		$scope.closeModal();
+	        	}
+	        	else{
+	        		$scope.errors = data.errors;
+	        		$scope.$apply();
+	        	}
 	        }
 	    }).fail(function() { 
 	    	console.log("Error adding delegate.");
@@ -3727,16 +3739,25 @@ function DelegatesCtrl($scope, $compile){
 	};
 	
 	$scope.addDelegate = function() {
-		$scope.results.splice($scope.delegateIdx, 1);
+		var addDelegate = {};
+		addDelegate.delegateToAdd = $scope.delegateToAdd;
+		addDelegate.password = $scope.password;
 		$.ajax({
 	        url: getBaseUri() + '/account/addDelegate.json',
 	        type: 'POST',
-	        data: $scope.delegateToAdd,
+	        data: angular.toJson(addDelegate),
 	        contentType: 'application/json;charset=UTF-8',
 	        success: function(data) {
-	        	$scope.getDelegates();
-	        	$scope.$apply();
-	        	$scope.closeModal();
+	        	if(data.errors.length === 0){
+	        		$scope.getDelegates();
+	        		$scope.results.splice($scope.delegateIdx, 1);
+	        		$scope.$apply();
+	        		$scope.closeModal();
+	        	}
+	        	else{
+	        		$scope.errors = data.errors;
+	        		$scope.$apply();
+	        	}
 	        }
 	    }).fail(function() { 
 	    	console.log("Error adding delegate.");
