@@ -38,6 +38,12 @@
     </div>
 </#if>
 
+<#if emailDoesntMatch?? && emailDoesntMatch>
+	<div class="alert  alert-success">
+		<@spring.message "orcid.frontend.security.invalid_deactivate_account"/>
+	</div>
+</#if>    
+
 <div class="row workspace-top public-profile">
 
 	<#-- hidden divs that trigger angular -->

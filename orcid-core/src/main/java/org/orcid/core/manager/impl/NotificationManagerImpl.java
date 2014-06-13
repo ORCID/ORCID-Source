@@ -186,12 +186,16 @@ public class NotificationManagerImpl implements NotificationManager {
 
         String subject = getSubject("email.subject.deactivate", orcidToDeactivate);
         String email = orcidToDeactivate.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
-
+        String encryptedEmail = encryptionManager.encryptForExternalUse(email);
+        String base64EncodedEmail = Base64.encodeBase64URLSafeString(encryptedEmail.getBytes());
+        String deactivateUrlEndpointPath = "/account/confirm-deactivate-orcid";
+        
         String emailFriendlyName = deriveEmailFriendlyName(orcidToDeactivate);
         templateParams.put("emailName", emailFriendlyName);
         templateParams.put("orcid", orcidToDeactivate.getOrcidIdentifier().getPath());
         templateParams.put("baseUri", baseUri);
-        templateParams.put("deactivateUrlEndpoint", "/account/confirm-deactivate-orcid");
+        templateParams.put("deactivateUrlEndpoint", deactivateUrlEndpointPath + "/" + base64EncodedEmail );
+        templateParams.put("deactivateUrlEndpointUrl", deactivateUrlEndpointPath);
         templateParams.put("subject", subject);
 
         addMessageParams(templateParams, orcidToDeactivate);
