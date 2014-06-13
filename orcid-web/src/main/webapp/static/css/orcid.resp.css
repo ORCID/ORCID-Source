@@ -1667,6 +1667,7 @@ a:hover {
 	font-family: 'Gill Sans W02', 'Helvetica', sans-serif;
 	font-weight: bold;
 	font-style: normal;
+	width: 85%;
 }
 
 .workspace-accordion-header,.workspace-accordion-content {
