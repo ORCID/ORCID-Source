@@ -1667,6 +1667,7 @@ a:hover {
 	font-family: 'Gill Sans W02', 'Helvetica', sans-serif;
 	font-weight: bold;
 	font-style: normal;
+	width: 85%;
 }
 
 .workspace-accordion-header,.workspace-accordion-content {
@@ -3452,10 +3453,12 @@ ul.sso-options li span{
 	padding-bottom: 10px;
 }
 
+/*
 .developer-tools .col-md-10{
 	padding-left: 0;
 	padding-right: 0;
 }
+*/
 
 .developer-tools .sso-options a{
 	display: block;
@@ -4014,6 +4017,9 @@ ul.sso-options li span{
 	padding-left: 10px;
 }
 
+.full-width-input{
+	width: 100% !important;
+}
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
@@ -4962,6 +4968,10 @@ ul.sso-options li span{
 	
 	.input-xlarge-full{
 		width: 100%;
+	}	
+	
+	.authorizeURL {		
+		height: 150px;
 	}
 	
 }

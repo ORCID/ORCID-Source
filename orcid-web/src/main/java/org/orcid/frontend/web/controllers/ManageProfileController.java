@@ -30,6 +30,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.NotificationManager;
@@ -557,11 +558,24 @@ public class ManageProfileController extends BaseWorkspaceController {
         return deactivateOrcidView;
     }
 
-    @RequestMapping(value = "/confirm-deactivate-orcid", method = RequestMethod.GET)
-    public ModelAndView confirmDeactivateOrcidAccount(HttpServletRequest request) {
-        orcidProfileManager.deactivateOrcidProfile(getEffectiveProfile());
-        ModelAndView deactivateOrcidView = new ModelAndView("redirect:/signout#deactivated");
-        return deactivateOrcidView;
+    @RequestMapping(value = "/confirm-deactivate-orcid/{encryptedEmail}", method = RequestMethod.GET) 
+    public ModelAndView confirmDeactivateOrcidAccount(HttpServletRequest request, @PathVariable("encryptedEmail") String encryptedEmail, RedirectAttributes redirectAttributes) throws Exception {
+        ModelAndView result = null;
+        String decryptedEmail=  encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
+        OrcidProfile profile = getEffectiveProfile();
+        //Since all profiles have at least one email address, this must never be null
+        
+        String primaryEmail = profile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+
+        if(decryptedEmail.equals(primaryEmail)) {
+            orcidProfileManager.deactivateOrcidProfile(profile);
+            result = new ModelAndView("redirect:/signout#deactivated");    
+        } else {
+            redirectAttributes.addFlashAttribute("emailDoesntMatch", true);
+            return new ModelAndView("redirect:/my-orcid");
+        }
+                
+        return result;
     }
 
     @RequestMapping(value = "/manage-bio-settings", method = RequestMethod.GET)
