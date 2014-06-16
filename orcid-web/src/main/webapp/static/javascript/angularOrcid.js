@@ -5393,7 +5393,19 @@ function ClientEditCtrl($scope, $compile){
 	    	console.log("Unable to fetch redirect uri scopes.");
 	    });		
 	};
-			
+		
+	
+	$scope.getAvailableRedirectScopes = function() {
+		var toRemove = '/authenticate';
+		var result = [];
+		
+		result = jQuery.grep($scope.availableRedirectScopes, function(value) {
+		  return value != toRemove;
+		});
+		
+		return result;		 
+	};
+	
 	//Load the default scopes based n the redirect uri type selected
 	$scope.loadDefaultScopes = function(rUri) {
 		//Empty the scopes to update the default ones
@@ -5430,6 +5442,13 @@ function ClientEditCtrl($scope, $compile){
 	        return true;
 	    }
 	    return false;
+	};
+	
+	// Checks if the scope checkbox should be disabled
+	$scope.isDisabled = function (rUri) {
+		if(rUri.type.value == 'grant-read-wizard')
+			return true;
+		return false;
 	};
 	
 	//init
