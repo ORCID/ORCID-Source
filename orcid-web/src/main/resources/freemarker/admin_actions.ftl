@@ -330,7 +330,7 @@
 				<a  ng-hide="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-right blue"></span></span><@orcid.msg 'admin.switch_user' /></a>
 			</p>
 			<div class="collapsible bottom-margin-small admin-modal" id="switch_user_section" style="display:none;">
-				<form action="./admin-actions/switch-user" method="post">
+				<form action="./admin-actions/admin-switch-user" method="post">
 					<div class="form-group">
 						<label for="orcidOrEmail"><@orcid.msg 'admin.switch_user.orcid.label' /></label>
 						<input type="text" id="orcidOrEmail" name="orcidOrEmail" placeholder="<@orcid.msg 'admin.switch_user.orcid.placeholder' />" class="input-xlarge" />

@@ -525,7 +525,7 @@ public class AdminController extends BaseController {
     /**
      * Admin switch user
      * */
-    @RequestMapping(value = "/switch-user", method = RequestMethod.POST)
+    @RequestMapping(value = "/admin-switch-user", method = RequestMethod.POST)
     public ModelAndView adminSwitchUser(@ModelAttribute("orcidOrEmail") String orcidOrEmail, RedirectAttributes redirectAttributes) {
         if(StringUtils.isNotBlank(orcidOrEmail))
             orcidOrEmail = orcidOrEmail.trim();
