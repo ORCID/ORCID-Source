@@ -21,25 +21,31 @@
     <#if inDelegationMode><span class="delegation-mode-warning">${springMacroRequestContext.getMessage("delegate.managing_record")}</span></#if>
 	<div ng-controller="NameCtrl" class="name-controller">
 		<div ng-show="showEdit == false" ng-click="toggleEdit()">
-			<h2 class="full-name">
-				<span ng-hide="nameForm != null 
-				    && (nameForm.creditName == null || nameForm.creditNameVisibility.visibility != 'PUBLIC')" ng-bind="nameForm.creditName.value" ng-cloak>
-				</span>
-				<span ng-show="nameForm != null 
-				    && (nameForm.creditName == null || nameForm.creditNameVisibility.visibility != 'PUBLIC')" ng-cloak>
-				    {{nameForm.givenNames.value}} {{nameForm.familyName.value}}
-				</span>
-				<span class="glyphicon glyphicon-pencil edit-name edit-option pull-right" title="" ng-hide="showEdit == true"></span> 
-			</h2>
+			<div class="row">
+				<div class="col-md-9 col-sm-9 col-xs-10">
+					<h2 class="full-name">
+						<span ng-hide="nameForm != null 
+						    && (nameForm.creditName == null || nameForm.creditNameVisibility.visibility != 'PUBLIC')" ng-bind="nameForm.creditName.value" ng-cloak>
+						</span>
+						<span ng-show="nameForm != null 
+						    && (nameForm.creditName == null || nameForm.creditNameVisibility.visibility != 'PUBLIC')" ng-cloak>
+						    {{nameForm.givenNames.value}} {{nameForm.familyName.value}}
+						</span>						 
+					</h2>
+				</div>
+				<div class="col-md-3 col-sm-3 col-xs-2">
+					<span class="glyphicon glyphicon-pencil edit-name edit-option right" title="" ng-hide="showEdit == true"></span>
+				</div>
+			</div>
 		</div>
 		<div class="names-edit" ng-show="showEdit == true" ng-cloak>
 		   <label for="firstName">${springMacroRequestContext.getMessage("manage_bio_settings.labelfirstname")}</label><br />
-		   <input type="text" ng-model="nameForm.givenNames.value"></input><br />
+		   <input type="text" ng-model="nameForm.givenNames.value" class="full-width-input"></input><br />
 		   <span class="orcid-error" ng-show="nameForm.givenNames.errors.length > 0">
 			   <div ng-repeat='error in nameForm.givenNames.errors' ng-bind-html="error"></div>
 		   </span>
 		   <label for="lastName">${springMacroRequestContext.getMessage("manage_bio_settings.labellastname")}</label><br />
-		   <input type="text" ng-model="nameForm.familyName.value"></input><br />
+		   <input type="text" ng-model="nameForm.familyName.value"  class="full-width-input"></input><br />
 		   <label for="creditName">${springMacroRequestContext.getMessage("manage_bio_settings.labelpublishedname")}</label><br/ >
 		   <@orcid.privacyToggle  angularModel="nameForm.creditNameVisibility.visibility"
 				             questionClick="toggleClickPrivacyHelp()"
@@ -48,7 +54,7 @@
 	                 	     limitedClick="setCreditNameVisibility('LIMITED', $event)" 
 	                 	     privateClick="setCreditNameVisibility('PRIVATE', $event)" />
 		        	   
-		   <input type="text" ng-model="nameForm.creditName.value"></input>
+		   <input type="text" ng-model="nameForm.creditName.value" class="full-width-input"></input>
 		   <button class="btn btn-primary" ng-click="setNameForm()"><@spring.message "freemarker.btnsavechanges"/></button>
 		   <button class="btn" ng-click="close()"><@spring.message "freemarker.btncancel"/></button>
 		   
