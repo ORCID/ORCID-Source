@@ -5103,13 +5103,13 @@ function ClientEditCtrl($scope, $compile){
 	// Google example
 	$scope.googleUri = 'https://developers.google.com/oauthplayground';
 	$scope.playgroundExample = '';
-	$scope.googleExampleLink = 'https://developers.google.com/oauthplayground/#step1&oauthEndpointSelect=Custom&oauthAuthEndpointValue=[BASE_URI_ENCODE]/oauth/authorize&oauthTokenEndpointValue=[PUB_BASE_URI_ENCODE]/oauth/token&oauthClientId=[CLIENT_ID]&oauthClientSecret=[CLIENT_SECRET]&accessTokenType=bearer&scopes=[SCOPES]';
+	$scope.googleExampleLink = 'https://developers.google.com/oauthplayground/#step1&oauthEndpointSelect=Custom&oauthAuthEndpointValue=[BASE_URI_ENCODE]/oauth/authorize&oauthTokenEndpointValue=[PUB_BASE_URI_ENCODE]/oauth/token&oauthClientId=[CLIENT_ID]&oauthClientSecret=[CLIENT_SECRET]&accessTokenType=bearer&scope=[SCOPES]';
 	// Curl example
 	$scope.sampleAuthCurl = '';
 	$scope.sampleAuthCurlTemplate = "curl -i -L -k -H 'Accept: application/json' --data 'client_id=[CLIENT_ID]&client_secret=[CLIENT_SECRET]&grant_type=authorization_code&redirect_uri=[REDIRECT_URI]&code=REPLACE WITH OAUTH CODE' [PUB_BASE_URI]/oauth/token";
 	// Auth example
 	$scope.authorizeUrlBase = getBaseUri() + '/oauth/authorize';
-	$scope.authorizeURLTemplate = $scope.authorizeUrlBase + '?client_id=[CLIENT_ID]&response_type=code&redirect_uri=[REDIRECT_URI]&scopes=[SCOPES]';	
+	$scope.authorizeURLTemplate = $scope.authorizeUrlBase + '?client_id=[CLIENT_ID]&response_type=code&redirect_uri=[REDIRECT_URI]&scope=[SCOPES]';	
 	// Token url
 	$scope.tokenURL = orcidVar.pubBaseUri + '/oauth/token';
 	
@@ -5299,14 +5299,13 @@ function ClientEditCtrl($scope, $compile){
 	        data: angular.toJson($scope.newClient),
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
-	        success: function(data) {	        	
+	        success: function(data) {
 	        	if(data.errors != null && data.errors.length > 0){
 	        		$scope.newClient = data;
 	        		$scope.$apply();
 	        	} else {
 	        		//If everything worked fine, reload the list of clients
-	        		$scope.getClients();
-	        		$.colorbox.close();
+	        		$scope.getClients();	        		
 	        	}
 	        }
 	    }).fail(function() { 
@@ -5409,6 +5408,31 @@ function ClientEditCtrl($scope, $compile){
 		$scope.listing = true;	
 		$scope.viewing = false;
 	};
+
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	//Load the list of scopes for client redirect uris 
 	$scope.loadAvailableScopes = function(){
@@ -5418,13 +5442,64 @@ function ClientEditCtrl($scope, $compile){
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        success: function(data) {	        	
-	        	$scope.availableRedirectScopes = data;
+	        	$scope.availableRedirectScopes = data;	    
+	        	
+	        	console.log(angular.toJson(data))
+	        	
+	        	
+	        	
+	        	
 	        }
 	    }).fail(function() { 
 	    	console.log("Unable to fetch redirect uri scopes.");
 	    });		
 	};
 		
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	$scope.getAvailableRedirectScopes = function() {
 		var toRemove = '/authenticate';

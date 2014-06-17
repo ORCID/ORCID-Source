@@ -3534,6 +3534,10 @@ ul.sso-options li span{
 	height: 150px;
 }
 
+.developer-tools .create-client .ruri {
+	width: 95%;
+}
+
 .developer-tools .redirectUris input{
 	width: 96%;
 }
