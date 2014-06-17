@@ -3767,9 +3767,10 @@ ul.sso-options li span{
 	color: #FFF;
 	margin: 0;
 	padding: 5px 10px;
+	background: #338caf;
 }
 .id-banner .id-banner-container ul.id-banner-dropdown > li > a:hover{	
-	background: #338caf;	
+	background: #a6ce39;	
 }
 
 .id-banner .id-banner-container ul.id-banner-dropdown > li ul,
