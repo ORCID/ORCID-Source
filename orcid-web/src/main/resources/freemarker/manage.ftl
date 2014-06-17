@@ -518,38 +518,77 @@
 	   </div>
 	   <div ng-hide="effectiveUserOrcid === delegateToAdd">
 	      <p>{{delegateNameToAdd}} ({{delegateToAdd}})</p>
-	      <button class="btn btn-primary" ng-click="addDelegate()"><@orcid.msg 'manage.spanadd'/></button>
-	      <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
+	      <form ng-submit="addDelegate()">
+		      <div>
+		          <h3><@orcid.msg 'check_password_modal.confirm_password' /></h3>	
+		          <label for="confirm_add_delegate_modal.password" class=""><@orcid.msg 'check_password_modal.password' /></label>
+	              <input id="confirm_add_delegate_modal.password" type="password" name="confirm_add_delegate_modal.password" ng-model="password" class="input-large"/> <span class="required">*</span>
+		          <span class="orcid-error" ng-show="errors.length > 0">
+		              <span ng-repeat='error in errors' ng-bind-html="error"></span>
+	              </span>
+		      </div>
+		      <button class="btn btn-primary" ><@orcid.msg 'manage.spanadd'/></button>
+		      <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
+	      </form>
+	   </div>
+	   <div ng-show="errors.length === 0">
+	       <br></br>
 	   </div>
 	</div>
 </script>
 	
 <script type="text/ng-template" id="confirm-add-delegate-by-email-modal">
-	<div style="padding: 20px;">
-	   <h3><@orcid.msg 'manage_delegation.addtrustedindividual'/></h3>
-	   <div ng-show="emailSearchResult.isSelf">
-	      <p class="alert alert-error"><@orcid.msg 'manage_delegation.youcantaddyourself'/></p>
-	      <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
-	   </div>
-	   <div ng-show="!emailSearchResult.found" >
-	       <p class="alert alert-error"><@orcid.msg 'manage_delegation.sorrynoaccount1'/>{{userQuery}}<@orcid.msg 'manage_delegation.sorrynoaccount2'/></p>
-	       <p><@orcid.msg 'manage_delegation.musthaveanaccount'/></p>
-	       <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
-	   </div>
-	   <div ng-show="!emailSearchResult.isSelf && emailSearchResult.found">
-	      <p>{{userQuery}}</p>
-	      <button class="btn btn-primary" ng-click="addDelegateByEmail(userQuery)"><@orcid.msg 'manage.spanadd'/></button>
-	      <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
-	   </div>
-	</div>
+    <div style="padding: 20px;">
+	    <h3><@orcid.msg 'manage_delegation.addtrustedindividual'/></h3>
+	    <div ng-show="emailSearchResult.isSelf">
+	        <p class="alert alert-error"><@orcid.msg 'manage_delegation.youcantaddyourself'/></p>
+	        <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
+	    </div>
+	    <div ng-show="!emailSearchResult.found" >
+	        <p class="alert alert-error"><@orcid.msg 'manage_delegation.sorrynoaccount1'/>{{userQuery}}<@orcid.msg 'manage_delegation.sorrynoaccount2'/></p>
+	        <p><@orcid.msg 'manage_delegation.musthaveanaccount'/></p>
+	        <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
+	    </div>
+	    <div ng-show="!emailSearchResult.isSelf && emailSearchResult.found">
+	        <p>{{userQuery}}</p>
+	        <form ng-submit="addDelegateByEmail(userQuery)">
+		        <div>
+			        <h3><@orcid.msg 'check_password_modal.confirm_password' /></h3>	
+		            <label for="confirm_add_delegate_modal.password" class=""><@orcid.msg 'check_password_modal.password' /></label>
+		            <input id="confirm_add_delegate_modal.password" type="password" name="confirm_add_delegate_modal.password" ng-model="password" class="input-large"/> <span class="required">*</span>
+		            <span class="orcid-error" ng-show="errors.length > 0">
+		                <span ng-repeat='error in errors' ng-bind-html="error"></span>
+		            </span>
+		        </div>
+		        <button class="btn btn-primary"><@orcid.msg 'manage.spanadd'/></button>
+		        <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
+		    </form>
+		    <div ng-show="errors.length === 0">
+	            <br></br>
+	        </div>
+	    </div>
+    </div>
 </script>
 	
 <script type="text/ng-template" id="revoke-delegate-modal">
 	<div class="lightbox-container">
 		<h3><@orcid.msg 'manage_delegation.confirmrevoketrustedindividual'/></h3>
 		<p> {{delegateNameToRevoke}} ({{delegateToRevoke}})</p>
-		<button class="btn btn-danger" ng-click="revoke()"><@orcid.msg 'manage_delegation.btnrevokeaccess'/></button> 
-		<a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
+		<form ng-submit="revoke()">
+			<div>
+				<h3><@orcid.msg 'check_password_modal.confirm_password' /></h3>	
+				<label for="confirm_add_delegate_modal.password" class=""><@orcid.msg 'check_password_modal.password' /></label>
+				<input id="confirm_add_delegate_modal.password" type="password" name="confirm_add_delegate_modal.password" ng-model="password" class="input-large"/> <span class="required">*</span>
+				<span class="orcid-error" ng-show="errors.length > 0">
+					<span ng-repeat='error in errors' ng-bind-html="error"></span>
+				</span>
+			</div>
+			<button class="btn btn-danger"><@orcid.msg 'manage_delegation.btnrevokeaccess'/></button> 
+			<a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
+		</form>
+		<div ng-show="errors.length === 0">
+			<br></br>
+		</div>
 	<div>
 </script>
 

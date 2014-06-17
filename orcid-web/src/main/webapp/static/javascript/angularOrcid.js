@@ -3683,6 +3683,7 @@ function DelegatesCtrl($scope, $compile){
 	};
 	
 	$scope.confirmAddDelegateByEmail = function(emailSearchResult){
+		$scope.errors = [];
 		$scope.emailSearchResult = emailSearchResult;
 		$.colorbox({                      
 			html : $compile($('#confirm-add-delegate-by-email-modal').html())($scope),
@@ -3697,6 +3698,7 @@ function DelegatesCtrl($scope, $compile){
 	};
 	
 	$scope.confirmAddDelegate = function(delegateName, delegateId, delegateIdx){
+		$scope.errors = [];
 		$scope.delegateNameToAdd = delegateName;
 		$scope.delegateToAdd = delegateId;
 		$scope.delegateIdx = delegateIdx;
@@ -3713,15 +3715,25 @@ function DelegatesCtrl($scope, $compile){
 	};
 	
 	$scope.addDelegateByEmail = function(delegateEmail) {
+		$scope.errors = [];
+		var addDelegate = {};
+		addDelegate.delegateEmail = $scope.userQuery;
+		addDelegate.password = $scope.password;
 		$.ajax({
 	        url: $('body').data('baseurl') + 'account/addDelegateByEmail.json',
 	        type: 'POST',
-	        data: delegateEmail,
+	        data: angular.toJson(addDelegate),
 	        contentType: 'application/json;charset=UTF-8',
 	        success: function(data) {
-	        	$scope.getDelegates();
-	        	$scope.$apply();
-	        	$scope.closeModal();
+	        	if(data.errors.length === 0){
+	        		$scope.getDelegates();
+	        		$scope.$apply();
+	        		$scope.closeModal();
+	        	}
+	        	else{
+	        		$scope.errors = data.errors;
+	        		$scope.$apply();
+	        	}
 	        }
 	    }).fail(function() { 
 	    	console.log("Error adding delegate.");
@@ -3729,16 +3741,25 @@ function DelegatesCtrl($scope, $compile){
 	};
 	
 	$scope.addDelegate = function() {
-		$scope.results.splice($scope.delegateIdx, 1);
+		var addDelegate = {};
+		addDelegate.delegateToManage = $scope.delegateToAdd;
+		addDelegate.password = $scope.password;
 		$.ajax({
 	        url: getBaseUri() + '/account/addDelegate.json',
 	        type: 'POST',
-	        data: $scope.delegateToAdd,
+	        data: angular.toJson(addDelegate),
 	        contentType: 'application/json;charset=UTF-8',
 	        success: function(data) {
-	        	$scope.getDelegates();
-	        	$scope.$apply();
-	        	$scope.closeModal();
+	        	if(data.errors.length === 0){
+	        		$scope.getDelegates();
+	        		$scope.results.splice($scope.delegateIdx, 1);
+	        		$scope.$apply();
+	        		$scope.closeModal();
+	        	}
+	        	else{
+	        		$scope.errors = data.errors;
+	        		$scope.$apply();
+	        	}
 	        }
 	    }).fail(function() { 
 	    	console.log("Error adding delegate.");
@@ -3746,6 +3767,7 @@ function DelegatesCtrl($scope, $compile){
 	};
 	
 	$scope.confirmRevoke = function(delegateName, delegateId) {
+		$scope.errors = [];
 	    $scope.delegateNameToRevoke = delegateName;
 	    $scope.delegateToRevoke = delegateId;
         $.colorbox({
@@ -3756,15 +3778,24 @@ function DelegatesCtrl($scope, $compile){
 	};
 
 	$scope.revoke = function () {
+		var revokeDelegate = {};
+		revokeDelegate.delegateToManage = $scope.delegateToRevoke;
+		revokeDelegate.password = $scope.password;
 		$.ajax({
 	        url: getBaseUri() + '/account/revokeDelegate.json',
-	        type: 'DELETE',
-	        data:  $scope.delegateToRevoke,
+	        type: 'POST',
+	        data:  angular.toJson(revokeDelegate),
 	        contentType: 'application/json;charset=UTF-8',
 	        success: function(data) {
-				$scope.getDelegates();
-				$scope.$apply();
-	        	$scope.closeModal();
+	        	if(data.errors.length === 0){
+	        		$scope.getDelegates();
+	        		$scope.$apply();
+	        		$scope.closeModal();
+	        	}
+	        	else{
+	        		$scope.errors = data.errors;
+	        		$scope.$apply();
+	        	}
 	        }
 	    }).fail(function() { 
 	    	// something bad is happening!
@@ -5395,7 +5426,19 @@ function ClientEditCtrl($scope, $compile){
 	    	console.log("Unable to fetch redirect uri scopes.");
 	    });		
 	};
-			
+		
+	
+	$scope.getAvailableRedirectScopes = function() {
+		var toRemove = '/authenticate';
+		var result = [];
+		
+		result = jQuery.grep($scope.availableRedirectScopes, function(value) {
+		  return value != toRemove;
+		});
+		
+		return result;		 
+	};
+	
 	//Load the default scopes based n the redirect uri type selected
 	$scope.loadDefaultScopes = function(rUri) {
 		//Empty the scopes to update the default ones
@@ -5432,6 +5475,13 @@ function ClientEditCtrl($scope, $compile){
 	        return true;
 	    }
 	    return false;
+	};
+	
+	// Checks if the scope checkbox should be disabled
+	$scope.isDisabled = function (rUri) {
+		if(rUri.type.value == 'grant-read-wizard')
+			return true;
+		return false;
 	};
 	
 	//init
