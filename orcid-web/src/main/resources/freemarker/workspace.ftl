@@ -170,7 +170,7 @@
 		        	   <strong><@orcid.msg 'public_profile.labelWebsites'/></strong>
 		        	   <span ng-hide="showEdit == true">
 		        	      <span class="glyphicon glyphicon-pencil edit-websites edit-option" ng-click="openEdit()" title=""></span><br />
-		        	      <div ng-repeat="website in websitesForm.websites" ng-cloak>
+		        	      <div ng-repeat="website in websitesForm.websites" ng-cloak class="website-url">
 		        	         <a href="{{website.url.value}}" target="_blank" rel="nofollow">{{website.name.value != null? website.name.value : website.url.value}}</a>
 		        	      </div>
 		        	   </span>

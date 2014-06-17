@@ -4061,6 +4061,11 @@ ul.sso-options li span{
 	width: 100% !important;
 }
 
+.website-url{
+	word-wrap: break-word;
+	padding-right: 5px;
+}
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 		
