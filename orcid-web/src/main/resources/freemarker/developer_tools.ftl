@@ -230,9 +230,6 @@
 				</div>				
 			</div>
 			
-			
-			
-			
 			<!-- Edit form -->
 			<div class="edit-details" ng-show="userCredentials.clientSecret && userCredentials.clientSecret.value && editing" ng-cloak>			
 				<!-- Name and Edit/Delete options -->

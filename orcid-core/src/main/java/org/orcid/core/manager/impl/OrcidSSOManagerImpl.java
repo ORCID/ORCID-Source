@@ -319,8 +319,13 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
                 // kept
                 clientRedirectUriEntities.addAll(redirectUrisToAdd);
 
-                clientDetailsManager.merge(clientDetailsEntity);
-
+                clientDetailsEntity = clientDetailsManager.merge(clientDetailsEntity);
+                if (clientDetailsEntity.getClientSecrets() != null) {
+                    for (ClientSecretEntity updatedClientSecret : clientDetailsEntity.getClientSecrets()) {
+                        updatedClientSecret.setDecryptedClientSecret(encryptionManager.decryptForInternalUse(updatedClientSecret.getClientSecret()));
+                    }
+                }
+                
                 return clientDetailsEntity;
             }
         }
