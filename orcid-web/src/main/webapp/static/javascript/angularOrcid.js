@@ -363,50 +363,52 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 }]);
 
 var GroupedWorks = function() {
-	this._keys = {};
+	this._keySet = {};
 	this.works = new Array();
 	this.dateSortString;
 	this.title;
 };
 
-GroupedWorks.prototype.hasKey = function (key) {
-	if (key in this._keys) return true;
+GroupedWorks.prototype.hasKey = function(key) {
+	if (key in this._keySet)
+		return true;
 	return false;
 };
 
-GroupedWorks.prototype.keyMatch = function (work) {
+GroupedWorks.prototype.keyMatch = function(work) {
 	// we don't have keys yet
 	return false;
 };
 
 GroupedWorks.prototype.add = function(work) {
-   // we don't have the work external identifiers yet.
-   // we'll have to make sure any new keys are added
-   // and populate the sort title and sort strings 
-   // from the best match
-   this.dateSortString = work.dateSortString;
-   this.title = work.workTitle.title.value;
-   this.works.push(work);
+	// we don't have the work external identifiers yet.
+	// we'll have to make sure any new keys are added
+	// and populate the sort title and sort strings
+	// from the best match
+	if (true) { // will refactor with default
+		this.dateSortString = work.dateSortString;
+		this.title = work.workTitle.title.value;
+	}
+	this.works.push(work);
 };
 
 GroupedWorks.prototype.hasPut = function(putCode) {
-	for (var idx in this.works)
-		if (this.works[idx].putCode.value == putCode) 
+	for ( var idx in this.works)
+		if (this.works[idx].putCode.value == putCode)
 			return true;
 	return false;
 };
 
 GroupedWorks.prototype.getByPut = function(putCode) {
-    // not sure if we should get fancy with a map yet
-	for (var idx in this.works)
-		if (this.works[idx].putCode.value == putCode) 
+	// not sure if we should get fancy with a map yet
+	for ( var idx in this.works)
+		if (this.works[idx].putCode.value == putCode)
 			return this.works[idx];
 	return null;
 };
 
-
 GroupedWorks.prototype.rmByPut = function(putCode) {
-	for (var idx in this.works)
+	for ( var idx in this.works)
 		if (this.works[idx].putCode.value == putCode)
 			return this.works.splice(idx, 1);
 	return undefined;
