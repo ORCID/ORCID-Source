@@ -44,7 +44,7 @@
 			</div>
 			<div class="row">
 				<div class="col-md-12 col-sm-12 col-xs-12">				
-					<p class="developer-tools-instructions"><@orcid.msg 'manage.developer_tools.header' /></p>
+					<p class="developer-tools-instructions"><@orcid.msg 'manage.developer_tools.header_1' /><a href="<@orcid.msg 'manage.developer_tools.header_url' />" target="_blank"><@orcid.msg 'manage.developer_tools.header_link' /></a><@orcid.msg 'manage.developer_tools.header_2' /></p>
 				</div>
 			</div>		
 			<!-- View existing credentials -->
@@ -152,6 +152,7 @@
 											<option value="${key}">${redirectUriTypes[key]}</option>
 										</#list>
 									</select>
+									<span ng-show="rUri.type.value != 'default'"><@orcid.msg 'manage.developer_tools.group.wizard.warning'/></span>
 								</div>															
 							</div>							
 						</div>						
@@ -159,12 +160,12 @@
 						<div class="row">						
 							<div class="col-md-12 col-sm-12 col-xs-12" ng-show="rUri.type.value != 'default'">
 								<div class="inner-row margin-left-fix">
-									<div class="scope_item" ng-repeat="scope in availableRedirectScopes">
+									<div class="scope_item" ng-repeat="scope in getAvailableRedirectScopes()">
 										<div class="small-box">
 											<div class="checkbox">										
-												<label>
-													<input type="checkbox" ng-checked="isChecked(rUri)" ng-click="setSelectedItem(rUri)"/>{{scope}}
-												</label>
+												<label>													
+													<input type="checkbox" ng-checked="isChecked(rUri)" ng-click="setSelectedItem(rUri)" ng-disabled="isDisabled(rUri)"/>{{scope}}
+												</label>												
 											</div>										
 										</div>								
 									</div>
@@ -410,6 +411,7 @@
 											<option value="${key}">${redirectUriTypes[key]}</option>
 										</#list>
 									</select>
+									<span ng-show="rUri.type.value != 'default'"><@orcid.msg 'manage.developer_tools.group.wizard.warning'/></span>
 								</div>															
 							</div>							
 						</div>						
@@ -417,11 +419,11 @@
 						<div class="row">						
 							<div class="col-md-12 col-sm-12 col-xs-12" ng-show="rUri.type.value != 'default'">
 								<div class="inner-row margin-left-fix">
-									<div class="scope_item" ng-repeat="scope in availableRedirectScopes">
+									<div class="scope_item" ng-repeat="scope in getAvailableRedirectScopes()">
 										<div class="small-box">
 											<div class="checkbox">										
 												<label>
-													<input type="checkbox" ng-checked="isChecked(rUri)" ng-click="setSelectedItem(rUri)"/>{{scope}}
+													<input type="checkbox" ng-checked="isChecked(rUri)" ng-click="setSelectedItem(rUri)" ng-disabled="isDisabled(rUri)"/>{{scope}}
 												</label>
 											</div>										
 										</div>								
