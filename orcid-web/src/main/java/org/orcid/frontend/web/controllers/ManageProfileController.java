@@ -73,6 +73,7 @@ import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
+import org.orcid.pojo.ManageDelegate;
 import org.orcid.pojo.ChangePassword;
 import org.orcid.pojo.SecurityQuestion;
 import org.orcid.pojo.ajaxForm.BiographyForm;
@@ -241,8 +242,15 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/addDelegate.json")
     public @ResponseBody
-    String addDelegate(@RequestBody String delegateOrcid) {
+    ManageDelegate addDelegate(@RequestBody ManageDelegate addDelegate) {
+        // Check password
+        String password = addDelegate.getPassword();
+        if (StringUtils.isBlank(password) || !encryptionManager.hashMatches(password, getEffectiveProfile().getPassword())) {
+            addDelegate.getErrors().add(getMessage("check_password_modal.incorrect_password"));
+            return addDelegate;
+        }
         String currentUserOrcid = getCurrentUserOrcid();
+        String delegateOrcid = addDelegate.getDelegateToManage();
         GivenPermissionToEntity existing = givenPermissionToDao.findByGiverAndReceiverOrcid(currentUserOrcid, delegateOrcid);
         if (existing == null) {
             // Clear the delegate's profile from the cache so that the granting
@@ -270,22 +278,29 @@ public class ManageProfileController extends BaseWorkspaceController {
             detailsList.add(details);
             notificationManager.sendNotificationToAddedDelegate(currentUser, detailsList);
         }
-        return delegateOrcid;
+        return addDelegate;
     }
 
     @RequestMapping(value = "/addDelegateByEmail.json")
     public @ResponseBody
-    String addDelegateByEmail(@RequestBody String delegateEmail) {
-        EmailEntity emailEntity = emailDao.findCaseInsensitive(delegateEmail);
-        return addDelegate(emailEntity.getProfile().getId());
+    ManageDelegate addDelegateByEmail(@RequestBody ManageDelegate addDelegate) {
+        EmailEntity emailEntity = emailDao.findCaseInsensitive(addDelegate.getDelegateEmail());
+        addDelegate.setDelegateToManage(emailEntity.getProfile().getId());
+        return addDelegate(addDelegate);
     }
 
-    @RequestMapping(value = "/revokeDelegate.json", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/revokeDelegate.json", method = RequestMethod.POST)
     public @ResponseBody
-    String revokeDelegate(@RequestBody String delegate) {
+    ManageDelegate revokeDelegate(@RequestBody ManageDelegate manageDelegate) {
+        // Check password
+        String password = manageDelegate.getPassword();
+        if (StringUtils.isBlank(password) || !encryptionManager.hashMatches(password, getEffectiveProfile().getPassword())) {
+            manageDelegate.getErrors().add(getMessage("check_password_modal.incorrect_password"));
+            return manageDelegate;
+        }
         String giverOrcid = getCurrentUserOrcid();
-        orcidProfileManager.revokeDelegate(giverOrcid, delegate);
-        return delegate;
+        orcidProfileManager.revokeDelegate(giverOrcid, manageDelegate.getDelegateToManage());
+        return manageDelegate;
     }
 
     @RequestMapping(value = "/revoke-delegate-from-summary-view", method = RequestMethod.GET)
@@ -318,7 +333,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         // Redirect to the new way of switching user, which includes admin
         // access
         ModelAndView mav = null;
-        if(StringUtils.isNotBlank(targetOrcid))
+        if (StringUtils.isNotBlank(targetOrcid))
             targetOrcid = targetOrcid.trim();
         if (profileEntityManager.orcidExists(targetOrcid)) {
             mav = new ModelAndView("redirect:/switch-user?j_username=" + targetOrcid);
@@ -773,7 +788,6 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
         return emails;
     }
-    
 
     @RequestMapping(value = "/countryForm.json", method = RequestMethod.GET)
     public @ResponseBody
@@ -782,10 +796,10 @@ public class ManageProfileController extends BaseWorkspaceController {
         CountryForm countryForm = CountryForm.valueOf(currentProfile);
         return countryForm;
     }
-    
-    
+
     @RequestMapping(value = "/countryForm.json", method = RequestMethod.POST)
-    public @ResponseBody CountryForm setProfileCountryJson(HttpServletRequest request, @RequestBody CountryForm countryForm) throws NoSuchRequestHandlingMethodException {
+    public @ResponseBody
+    CountryForm setProfileCountryJson(HttpServletRequest request, @RequestBody CountryForm countryForm) throws NoSuchRequestHandlingMethodException {
         OrcidProfile currentProfile = getEffectiveProfile();
         countryForm.populateProfile(currentProfile);
         // only update entity attributes
@@ -805,10 +819,12 @@ public class ManageProfileController extends BaseWorkspaceController {
     public @ResponseBody
     NamesForm setNameFormJson(HttpServletRequest request, @RequestBody NamesForm nf) throws NoSuchRequestHandlingMethodException {
         nf.setErrors(new ArrayList<String>());
-        if (nf.getGivenNames() == null) nf.setGivenNames(new Text()); 
+        if (nf.getGivenNames() == null)
+            nf.setGivenNames(new Text());
         givenNameValidate(nf.getGivenNames());
         copyErrors(nf.getGivenNames(), nf);
-        if (nf.getErrors().size()>0) return nf;        
+        if (nf.getErrors().size() > 0)
+            return nf;
         OrcidProfile currentProfile = getEffectiveProfile();
         nf.populatePersonalDetails(currentProfile.getOrcidBio().getPersonalDetails());
         orcidProfileManager.updateNames(currentProfile);
@@ -829,7 +845,8 @@ public class ManageProfileController extends BaseWorkspaceController {
         bf.setErrors(new ArrayList<String>());
         validateBiography(bf.getBiography());
         copyErrors(bf.getBiography(), bf);
-        if (bf.getErrors().size()>0) return bf;        
+        if (bf.getErrors().size() > 0)
+            return bf;
         OrcidProfile currentProfile = getEffectiveProfile();
         bf.populateProfile(currentProfile);
         orcidProfileManager.updateBiography(currentProfile);
