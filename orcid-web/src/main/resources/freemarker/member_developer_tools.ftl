@@ -239,11 +239,7 @@
 							<select ng-model="selectedRedirectUri" ng-options="rUri.value.value for rUri in clientDetails.redirectUris | orderBy:'value.value'" ng-change="updateSelectedRedirectUri()"></select>
 						</div>
 						<div class="col-md-6 col-sm-6 col-xs-12 bottomBuffer">
-							<h4><@orcid.msg 'manage.developer_tools.view.scope' />:</h4>
-							
-							
-							
-
+							<h4><@orcid.msg 'manage.developer_tools.view.scope' />:</h4>							
 							<select ng-model="selectedScope" ng-options="scope as scope for scope in availableRedirectScopes" ng-change="updateSelectedRedirectUri()"></select>
 						</div>						
 					</div>					

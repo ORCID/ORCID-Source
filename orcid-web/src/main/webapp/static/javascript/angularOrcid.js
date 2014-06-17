@@ -5409,31 +5409,6 @@ function ClientEditCtrl($scope, $compile){
 		$scope.viewing = false;
 	};
 
-	
-	
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	//Load the list of scopes for client redirect uris 
 	$scope.loadAvailableScopes = function(){
 		$.ajax({
@@ -5446,60 +5421,12 @@ function ClientEditCtrl($scope, $compile){
 	        	
 	        	console.log(angular.toJson(data))
 	        	
-	        	
-	        	
-	        	
 	        }
 	    }).fail(function() { 
 	    	console.log("Unable to fetch redirect uri scopes.");
 	    });		
 	};
 		
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	$scope.getAvailableRedirectScopes = function() {
 		var toRemove = '/authenticate';
