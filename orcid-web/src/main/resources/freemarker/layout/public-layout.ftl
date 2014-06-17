@@ -109,6 +109,7 @@
 									<li><a ${(nav=="custom-mail")?string('class="active" ', '')}href="<@spring.url "/custom-emails" />"><@orcid.msg 'custom_email.menu_link' /></a></li>
 								</@security.authorize>
 							</@security.authorize>
+							<li class="leaf last"><a href="<@spring.url "/content/initiative" />"><@orcid.msg 'manage_delegators.learn_more.link.text' /></a></li>
 						</ul>
 					</li>
 					<li class="expanded">

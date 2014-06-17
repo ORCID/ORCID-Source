@@ -1667,6 +1667,7 @@ a:hover {
 	font-family: 'Gill Sans W02', 'Helvetica', sans-serif;
 	font-weight: bold;
 	font-style: normal;
+	width: 85%;
 }
 
 .workspace-accordion-header,.workspace-accordion-content {
@@ -3452,10 +3453,12 @@ ul.sso-options li span{
 	padding-bottom: 10px;
 }
 
+/*
 .developer-tools .col-md-10{
 	padding-left: 0;
 	padding-right: 0;
 }
+*/
 
 .developer-tools .sso-options a{
 	display: block;
@@ -3847,10 +3850,6 @@ ul.sso-options li span{
 	width: 95px;
 }
 
-.keywords-edit input, .other-names-edit input {
-	width: 190px;
-}
-
 .keywords-edit #privacy-bar, .other-names-edit #privacy-bar, .names-edit #privacy-bar {
 	padding-bottom: 10px;
 }
@@ -3897,21 +3896,21 @@ ul.sso-options li span{
 
 /* Website edit */
   
- .websites-box,
- .websites-box input{
- 	margin: 10px 0 0 0;
- }
+.websites-box,
+.websites-box input{
+	margin: 10px 0 0 0;
+}
 
- .keywords-box, .keywords-box input,
- .other-names-box, .other-names-box input {
+.keywords-box, .keywords-box input,
+.other-names-box, .other-names-box input {
  	margin: 10px 0 0 0; 	
- }
+}
 
- .websites-box a.glyphicon-trash,
- .keywords-box a.glyphicon-trash,
- .other-names-box a.glyphicon-trash {
+.websites-box a.glyphicon-trash,
+.keywords-box a.glyphicon-trash,
+.other-names-box a.glyphicon-trash {
  	vertical-align: -7px;
- }
+}
 
 .country-controller #privacy-bar{
 	float: left;
@@ -4014,6 +4013,57 @@ ul.sso-options li span{
 	padding-left: 10px;
 }
 
+/* ID banner full-name fixes*/
+.id-banner .row{
+	margin: 0;
+}
+
+.id-banner .row .col-md-9{
+	padding-right: 0;
+	padding-left: 0;
+}
+
+.id-banner .row .col-md-3{
+	margin-top: 15px;
+	padding-right: 0;
+}
+
+.full-width-input{
+	width: 100%;
+}
+
+.other-names-box input,
+.keyword-box input{
+	width: 90%;
+}
+
+.left-aside .workspace-profile .glyphicon-plus{
+ 	margin: 10px 0;
+}
+
+.workspace-profile  span.glyphicon-pencil,
+#workspace-personal span.glyphicon-pencil,
+.id-banner span.glyphicon-pencil{
+	float: right;
+	margin-right: 5px;
+	background: #949599;
+	padding: 5px;
+	border-radius: 50%;
+	color: #fff;
+	font-size: 10px;
+	z-index: 100;
+}
+
+.workspace-profile  span.glyphicon-pencil:hover,
+#workspace-personal span.glyphicon-pencil:hover,
+.id-banner span.glyphicon-pencil:hover{
+	background: #a6ce39;	
+	color: #fff;
+}
+
+.full-width-input{
+	width: 100% !important;
+}
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
@@ -4962,6 +5012,10 @@ ul.sso-options li span{
 	
 	.input-xlarge-full{
 		width: 100%;
+	}	
+	
+	.authorizeURL {		
+		height: 150px;
 	}
 	
 }
@@ -5130,8 +5184,13 @@ ul.sso-options li span{
 	}
 	
 	.margin-top-box-mobile{
-		margin-top:15px; 
+		margin-top:15px;		 
 	}
+	
+	.other-names-box input,
+	.keyword-box input{
+		width: 96%;
+	}	
 }
 
 @media(min-width:1200px){

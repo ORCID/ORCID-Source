@@ -38,6 +38,12 @@
     </div>
 </#if>
 
+<#if emailDoesntMatch?? && emailDoesntMatch>
+	<div class="alert  alert-success">
+		<@spring.message "orcid.frontend.security.invalid_deactivate_account"/>
+	</div>
+</#if>    
+
 <div class="row workspace-top public-profile">
 
 	<#-- hidden divs that trigger angular -->
@@ -79,7 +85,7 @@
 							     <div ng-repeat='error in otherNames.name.errors' ng-bind-html="error"></div>
 						      </span>
 		        	      </div>
-		        	      <a class="glyphicon glyphicon-plus" ng-click="addNew()"></a><br />
+		        	      <a class="glyphicon glyphicon-plus" ng-click="addNew()"></a><br />				        	      
 		        	      <button class="btn btn-primary" ng-click="setOtherNamesForm()"><@spring.message "freemarker.btnsavechanges"/></button>
 		        	      <button class="btn" ng-click="close()"><@spring.message "freemarker.btncancel"/></button>
 		        	   </div> 
@@ -140,7 +146,7 @@
 	                 	     privateClick="setPrivacy('PRIVATE', $event)" />
 		        	   
 		        	      <div ng-repeat="keyword in keywordsForm.keywords">
-		        	          <input type="text" ng-model="keyword.value"></input>
+		        	          <input type="text" ng-model="keyword.value" x></input>
 		        	          <a ng-click="deleteKeyword(keyword)" class="glyphicon glyphicon-trash grey"></a>
 		        	          <br />
 		        	          <span class="orcid-error" ng-show="keyword.url.errors.length > 0">
