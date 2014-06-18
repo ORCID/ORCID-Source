@@ -46,7 +46,7 @@
 				<!-- Name and Edit/Delete options -->
 				<div class="row">					
 					<div class="col-md-10 col-sm-10 col-xs-9">						
-						<h4>{{userCredentials.clientName.value}}</h4>													
+						<h4 ng-bind-html="userCredentials.clientName.value"></h4>													
 					</div>
 					<div class="col-md-2 col-sm-2 col-xs-3">				
 						<ul class="sso-options pull-right">							
@@ -63,7 +63,7 @@
 				<div class="row">
 					<!-- Description -->
 					<div class="col-md-12 col-sm-12 col-xs-12 dt-description">
-						<p>{{userCredentials.clientDescription.value}}</p>														
+						<p ng-bind-html="userCredentials.clientDescription.value"></p>														
 					</div>							
 				</div>
 				<div class="slidebox">
@@ -229,9 +229,6 @@
 					</div>	
 				</div>				
 			</div>
-			
-			
-			
 			
 			<!-- Edit form -->
 			<div class="edit-details" ng-show="userCredentials.clientSecret && userCredentials.clientSecret.value && editing" ng-cloak>			
