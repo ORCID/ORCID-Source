@@ -4162,6 +4162,10 @@ ul.id-details li{
 	color: #338caf;
 }
 
+.id-details .type {
+	font-weight: bold;
+}
+
 .id-details a:hover{
 	color: #a6ce39;
 }

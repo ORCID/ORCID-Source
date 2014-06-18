@@ -364,10 +364,19 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 
 var GroupedWorks = function() {
 	this._keySet = {};
-	this.works = new Array();
+	this.works = {};
+	this.worksCount = 0;
+	this.activePutCode = null;
+	this.defaultPutCode = null;
 	this.dateSortString;
-	this.title;
 };
+
+GroupedWorks.prototype.key = function(workExternalIdentifiers) {
+	var key = workExternalIdentifiers.workExternalIdentifierId ? workExternalIdentifiers.workExternalIdentifierId.value : ''; 
+	key += workExternalIdentifiers.workExternalIdentifierType != null ? workExternalIdentifiers.workExternalIdentifierType.value : ''; 
+	return key;
+};
+
 
 GroupedWorks.prototype.hasKey = function(key) {
 	if (key in this._keySet)
@@ -375,53 +384,61 @@ GroupedWorks.prototype.hasKey = function(key) {
 	return false;
 };
 
+GroupedWorks.prototype.addKey = function(key) {
+	if (this.hasKey(key)) return;
+	this._keySet[key] = true;
+	return;
+};
+
 GroupedWorks.prototype.keyMatch = function(work) {
-	// we don't have keys yet
-	return false;
-};
-
-GroupedWorks.prototype.add = function(work) {
-	// we don't have the work external identifiers yet.
-	// we'll have to make sure any new keys are added
-	// and populate the sort title and sort strings
-	// from the best match
-	if (true) { // will refactor with default
-		this.dateSortString = work.dateSortString;
-		this.title = work.workTitle.title.value;
-	}
-	this.works.push(work);
-};
-
-GroupedWorks.prototype.hasPut = function(putCode) {
-	for ( var idx in this.works)
-		if (this.works[idx].putCode.value == putCode)
+	for (var idx in work.workExternalIdentifiers) 
+		if (this.key(work.workExternalIdentifiers[idx]) in this._keySet)
 			return true;
 	return false;
 };
 
+GroupedWorks.prototype.add = function(work) {
+	if (true) { 
+		this.activePutCode = work.putCode.value;
+		this.defaultPutCode = work.putCode.value;
+		this.dateSortString = work.dateSortString;
+	}
+	for (var idx in work.workExternalIdentifiers)
+		this.addKey(this.key(work.workExternalIdentifiers[idx]));
+	this.works[work.putCode.value] = work;
+	this.worksCount++;
+};
+
+GroupedWorks.prototype.hasPut = function(putCode) {
+   if (this.works[putCode] !== undefined)
+			return true;
+	return false;
+};
+
+GroupedWorks.prototype.getActive = function() {
+	return this.works[this.activePutCode];
+};
+
 GroupedWorks.prototype.getByPut = function(putCode) {
-	// not sure if we should get fancy with a map yet
-	for ( var idx in this.works)
-		if (this.works[idx].putCode.value == putCode)
-			return this.works[idx];
-	return null;
+	return this.works[putCode];
 };
 
 GroupedWorks.prototype.rmByPut = function(putCode) {
-	for ( var idx in this.works)
-		if (this.works[idx].putCode.value == putCode)
-			return this.works.splice(idx, 1);
-	return undefined;
+	var work =  this.works[putCode];
+	delete this.works[putCode];
+	this.worksCount--;
+	return work;
 };
 
 
 orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 	var serv = {
-		    loading: false,
-			groups: new Array(),
-			worksToAddIds: null,
-			worksInfo: {},
 			bibtexJson: {},
+			groups: new Array(),
+			loading: false,
+			loadingDetails: false,
+			details: {},
+			worksToAddIds: null,
 			addBibtexJson: function(dw) {
 				if (dw.citation && dw.citation.citationType && dw.citation.citationType.value == 'bibtex') {
 					try {
@@ -448,7 +465,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 									var added = false;
 									for (var idx in serv.groups)
 										if (serv.groups[idx].keyMatch(dw)) {
-											serv.groups[idx].addWork(dw);
+											serv.groups[idx].add(dw);
 											added = true;
 											break;
 										}
@@ -506,13 +523,11 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 				for (var idx in serv.groups) {
 					if (serv.groups[idx].hasPut(putCode)) {
 						rmWorks = serv.groups[idx].rmByPut(putCode);
-						if (serv.groups[idx].works.length == 0)
-						   serv.groups.splice(idx, 1);
 						break;
 					}
 				}
 				// remove work on server
-				serv.removeWork(rmWorks[0]);
+				serv.removeWork(rmWorks);
 			},
 			removeWork: function(work) {
 				$.ajax({
@@ -555,7 +570,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 			workCount: function() {
 				var count = 0;
 				for (var idx in serv.groups) {
-					count += serv.groups[idx].works.length;
+					count += serv.groups[idx].worksCount;
 				}
 				return count;
 			}
@@ -669,7 +684,7 @@ orcidNgModule.filter('workExternalIdentifierHtml', function(){
 		var type;
 		if (workExternalIdentifier.workExternalIdentifierType != null)
 			type = workExternalIdentifier.workExternalIdentifierType.value;
-		if (type != null) output = output + type.toUpperCase() + ": ";
+		if (type != null) output = output + "<span class='type'>" + type.toUpperCase() + "</span>: ";
 		var link = workIdLinkJs.getLink(id,type);
 		if (link != null) 
 		    output = output + "<a href='" + link + "' target='_blank'>" + id + "</a>";
@@ -2981,7 +2996,6 @@ function PublicFundingCtrl($scope, $compile, $filter, fundingSrvc){
 function PublicWorkCtrl($scope, $compile, worksSrvc) {
 	$scope.worksSrvc = worksSrvc;
 	$scope.showBibtex = true;
-	$scope.loadingInfo = false;
 	$scope.moreInfoOpen = false;
 	$scope.moreInfo = {};
 
@@ -2993,8 +3007,8 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 	$scope.renderTranslatedTitleInfo = function(putCode) {		
 		var info = null; 
 		
-		if(putCode != null && $scope.worksSrvc.worksInfo[putCode] != null && $scope.worksSrvc.worksInfo[putCode].workTitle != null && $scope.worksSrvc.worksInfo[putCode].workTitle.translatedTitle != null) {
-			info = $scope.worksSrvc.worksInfo[putCode].workTitle.translatedTitle.content + ' - ' + $scope.worksSrvc.worksInfo[putCode].workTitle.translatedTitle.languageName;										
+		if(putCode != null && $scope.worksSrvc.details[putCode] != null && $scope.worksSrvc.details[putCode].workTitle != null && $scope.worksSrvc.details[putCode].workTitle.translatedTitle != null) {
+			info = $scope.worksSrvc.details[putCode].workTitle.translatedTitle.content + ' - ' + $scope.worksSrvc.details[putCode].workTitle.translatedTitle.languageName;										
 		}		
 		
 		return info;
@@ -3033,9 +3047,8 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 		$scope.closePopover(event);
 		$scope.moreInfoOpen = true;
 		//Display the popover
-		$scope.loadingInfo = true;
 		$(event.target).next().css('display','inline');		
-		if($scope.worksSrvc.worksInfo[putCode] == null) {		
+		if($scope.worksSrvc.details[putCode] == null) {		
 			$.ajax({
 				url: getBaseUri() + '/' + orcidVar.orcidId + '/getWorkInfo.json?workId=' + putCode,	        
 		        dataType: 'json',
@@ -3043,19 +3056,16 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 		        	$scope.$apply(function () {
 		        		removeBadContributors(data);
 						$scope.worksSrvc.addBibtexJson(data);
-						$scope.worksSrvc.worksInfo[putCode] = data;
-						$scope.loadingInfo = false;
+						$scope.worksSrvc.details[putCode] = data;
 		        	});		        	
 		        }
 			}).fail(function(){
 				// something bad is happening!
 		    	console.log("error fetching works");
 		    	$(event.target).next().css('display','none');	
-		    	$scope.loadingInfo = false;
 			});
 		} else {
 			$(event.target).next().css('display','inline');
-			$scope.loadingInfo = false;
 		}
 	};			
 	
@@ -3073,7 +3083,6 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	$scope.workspaceSrvc = workspaceSrvc;
 	$scope.worksSrvc = worksSrvc;
 	$scope.showBibtex = true;
-	$scope.loadingInfo = false;
 	$scope.editTranslatedTitle = false;
 	$scope.types = null;
 	$scope.privacyHelp = {};
@@ -3254,8 +3263,8 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	$scope.renderTranslatedTitleInfo = function(putCode) {		
 		var info = null; 
 		
-		if(putCode != null && $scope.worksSrvc.worksInfo[putCode] != null && $scope.worksSrvc.worksInfo[putCode].workTitle != null && $scope.worksSrvc.worksInfo[putCode].workTitle.translatedTitle != null) {
-			info = $scope.worksSrvc.worksInfo[putCode].workTitle.translatedTitle.content + ' - ' + $scope.worksSrvc.worksInfo[putCode].workTitle.translatedTitle.languageName;										
+		if(putCode != null && $scope.worksSrvc.details[putCode] != null && $scope.worksSrvc.details[putCode].workTitle != null && $scope.worksSrvc.details[putCode].workTitle.translatedTitle != null) {
+			info = $scope.worksSrvc.details[putCode].workTitle.translatedTitle.content + ' - ' + $scope.worksSrvc.details[putCode].workTitle.translatedTitle.languageName;										
 		}		
 		
 		return info;
@@ -3281,7 +3290,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	
 	$scope.showDetailsMouseClick = function(work, $event) {
 		$event.stopPropagation();		
-		$scope.moreInfo[work] = !$scope.moreInfo[work];		
+		$scope.moreInfo[work] = !$scope.moreInfo[work];
 		$scope.loadDetails(work, $event);
 	};
 	
@@ -3290,9 +3299,8 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		$scope.closePopover(event);
 		$scope.moreInfoOpen = true;
 		//Display the popover
-		$scope.loadingInfo = true;		
 		$(event.target).next().css('display','inline');	
-		if($scope.worksSrvc.worksInfo[putCode] == null) {		
+		if($scope.worksSrvc.details[putCode] == null) {		
 			$.ajax({
 				url: getBaseUri() + '/works/getWorkInfo.json?workId=' + putCode,	        
 		        dataType: 'json',
@@ -3301,18 +3309,15 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		        	$scope.$apply(function () {
 		        		removeBadContributors(data);
 		        		$scope.worksSrvc.addBibtexJson(data);
-						$scope.worksSrvc.worksInfo[putCode] = data;
-						$scope.loadingInfo = false;
+						$scope.worksSrvc.details[putCode] = data;
 		        	});		        	
 		        }
 			}).fail(function(){
 				// something bad is happening!
 		    	console.log("error fetching works");
-		    	$scope.loadingInfo = false;
 			});
 		} else {
 			$(event.target).next().css('display','inline');
-			$scope.loadingInfo = false;
 		}
 	};			
 
@@ -3322,9 +3327,8 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		$scope.closePopover(event);
 		$scope.moreInfoOpen = true;
 		//Display the popover
-		$scope.loadingInfo = true;		
 		$(event.target).next().css('display','inline');	
-		if($scope.worksSrvc.worksInfo[putCode] == null) {		
+		if($scope.worksSrvc.details[putCode] == null) {		
 			$.ajax({
 				url: getBaseUri() + '/works/getWorkInfo.json?workId=' + putCode,	        
 		        dataType: 'json',
@@ -3333,18 +3337,15 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		        	$scope.$apply(function () {
 		        		removeBadContributors(data);
 		        		$scope.worksSrvc.addBibtexJson(data);
-						$scope.worksSrvc.worksInfo[putCode] = data;
-						$scope.loadingInfo = false;
+						$scope.worksSrvc.details[putCode] = data;
 		        	});		        	
 		        }
 			}).fail(function(){
 				// something bad is happening!
 		    	console.log("error fetching works");
-		    	$scope.loadingInfo = false;
 			});
 		} else {
 			$(event.target).next().css('display','inline');
-			$scope.loadingInfo = false;
 		}
 	};			
 	
