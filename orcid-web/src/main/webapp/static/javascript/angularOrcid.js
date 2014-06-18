@@ -517,6 +517,24 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 				}
 				return null;
 			},
+			getDetails: function(url, putCode) {
+				if(serv.details[putCode] == null) {		
+					$.ajax({
+						url: url + putCode,	        
+				        dataType: 'json',
+				        success: function(data) {		        	
+				        	$rootScope.$apply(function () {
+				        		removeBadContributors(data);
+				        		serv.addBibtexJson(data);
+				        		serv.details[putCode] = data;
+				        	});		        	
+				        }
+					}).fail(function(){
+						// something bad is happening!
+				    	console.log("error fetching works");	
+					});
+				};
+			},
 			deleteByPutCode: function(putCode) {
 				var idx;
 				var rmWorks;
@@ -3049,21 +3067,7 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 		//Display the popover
 		$(event.target).next().css('display','inline');		
 		if($scope.worksSrvc.details[putCode] == null) {		
-			$.ajax({
-				url: getBaseUri() + '/' + orcidVar.orcidId + '/getWorkInfo.json?workId=' + putCode,	        
-		        dataType: 'json',
-		        success: function(data) {		        	
-		        	$scope.$apply(function () {
-		        		removeBadContributors(data);
-						$scope.worksSrvc.addBibtexJson(data);
-						$scope.worksSrvc.details[putCode] = data;
-		        	});		        	
-		        }
-			}).fail(function(){
-				// something bad is happening!
-		    	console.log("error fetching works");
-		    	$(event.target).next().css('display','none');	
-			});
+			$scope.worksSrvc.getDetails(getBaseUri() + '/' + orcidVar.orcidId + '/getWorkInfo.json?workId=', putCode);
 		} else {
 			$(event.target).next().css('display','inline');
 		}
@@ -3301,21 +3305,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		//Display the popover
 		$(event.target).next().css('display','inline');	
 		if($scope.worksSrvc.details[putCode] == null) {		
-			$.ajax({
-				url: getBaseUri() + '/works/getWorkInfo.json?workId=' + putCode,	        
-		        dataType: 'json',
-		        success: function(data) {
-		        	
-		        	$scope.$apply(function () {
-		        		removeBadContributors(data);
-		        		$scope.worksSrvc.addBibtexJson(data);
-						$scope.worksSrvc.details[putCode] = data;
-		        	});		        	
-		        }
-			}).fail(function(){
-				// something bad is happening!
-		    	console.log("error fetching works");
-			});
+			$scope.worksSrvc.getDetails(getBaseUri() + '/works/getWorkInfo.json?workId=', putCode);
 		} else {
 			$(event.target).next().css('display','inline');
 		}
