@@ -18,24 +18,18 @@
 -->
 <ul ng-hide="!worksSrvc.groups.length" class="workspace-publications workspace-body-list bottom-margin-medium" id="body-work-list" ng-cloak>
     <li class="bottom-margin-small" ng-repeat="group in worksSrvc.groups | orderBy:['-dateSortString', 'title']">        
-	<div ng-repeat="work in group.works | orderBy:['-dateSortString', 'workTitle.title.value']">
 		<div class="row"> 
 			<!-- Main title -->
 			<div class="col-md-9 col-sm-9 col-xs-12">
 		        <h3 class="workspace-title">
-		        	<strong ng-bind="work.workTitle.title.value"></strong><span class="work-subtitle" ng-show="work.workTitle.subtitle.value" ng-bind="':&nbsp;'.concat(work.workTitle.subtitle.value)"></span>		        			        	
+		        	<strong ng-bind="group.getActive().workTitle.title.value"></strong><span class="work-subtitle" ng-show="group.getActive().workTitle.subtitle.value" ng-bind="':&nbsp;'.concat(group.getActive().workTitle.subtitle.value)"></span>		        			        	
 		        </h3>
 		        <div class="info-detail">
-		        	<span ng-show="work.publicationDate.year">{{work.publicationDate.year}}</span><span ng-show="work.publicationDate.month">-{{work.publicationDate.month}}</span>
+		        	<span ng-show="group.getActive().publicationDate.year">{{group.getActive().publicationDate.year}}</span><span ng-show="group.getActive().publicationDate.month">-{{group.getActive().publicationDate.month}}</span>
 		        </div>		        
 	        </div>
 	        <!-- Settings -->
 	        <div class="col-md-3 col-sm-3 col-xs-12 workspace-toolbar">	        	
-	        	<#if !(isPublicProfile??)>
-	        		<!-- Trash can -->
-					<!-- <a href ng-click="deleteWork(work.putCode.value)" class="glyphicon glyphicon-trash grey"></a> -->
-					
-	        	</#if>
 	        	<#if !(isPublicProfile??)>
 	        		<!-- Privacy bar -->
 					<ul class="workspace-private-toolbar">
@@ -45,12 +39,12 @@
 					 		</a>	
 					 	</li>					 	
 						<li>
-						<@orcid.privacyToggle2 angularModel="work.visibility" 
-						    questionClick="toggleClickPrivacyHelp(work.putCode.value)"
-						    clickedClassCheck="{'popover-help-container-show':privacyHelp[work.putCode.value]==true}"
-							publicClick="setPrivacy(work.putCode.value, 'PUBLIC', $event)" 
-		                	limitedClick="setPrivacy(work.putCode.value, 'LIMITED', $event)" 
-		                	privateClick="setPrivacy(work.putCode.value, 'PRIVATE', $event)"/>
+						<@orcid.privacyToggle2 angularModel="group.getActive().visibility" 
+						    questionClick="toggleClickPrivacyHelp(group.getActive().putCode.value)"
+						    clickedClassCheck="{'popover-help-container-show':privacyHelp[group.getActive().putCode.value]==true}"
+							publicClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PUBLIC', $event)" 
+		                	limitedClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'LIMITED', $event)" 
+		                	privateClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PRIVATE', $event)"/>
 		                </li>
 		            	<li class="submenu-tree">
 		            		<a href="" class="toolbar-button toggle-menu">
@@ -63,8 +57,13 @@
 		            				</a>
 		            			</li>
 		            			<li>
-		            				<a href="">
-		            					<span class="glyphicon glyphicon-trash"></span>Delete
+		            				<a ng-click="deleteWorkConfirm(group.getActive().putCode.value, true)">
+		            					<span class="glyphicon glyphicon-trash"></span>Delete All Versions
+		            				</a>
+		            			</li>
+		            			<li>
+		            				<a ng-click="deleteWorkConfirm(group.getActive().putCode.value, false)">
+		            					<span class="glyphicon glyphicon-trash"></span>Delete This Version
 		            				</a>
 		            			</li>
 		            			<li>
@@ -83,14 +82,18 @@
 		<div class="row bottomBuffer">
 			<div class="col-md-9 col-sm-9">
 				<ul class="id-details">				
-					<li><strong>DOI:</strong> <a href="">10.6084/M9.FIGSHARE.841742</a></li>
-					<li><strong>URL:</strong> <a href="">http://www.ibridgenetwork.org</a></li>
+					<li>
+						<span ng-repeat='ie in group.getActive().workExternalIdentifiers'><span
+						ng-bind-html='ie | workExternalIdentifierHtml:$first:$last:group.getActive().workExternalIdentifiers.length'></span>
+					   </span>
+					</li>
+					<li ng-show="group.getActive().url.value"><strong>URL:</strong> <a href="{{group.getActive().url.value | urlWithHttp}}" target="_blank">{{group.getActive().url.value}}</a></li>
 				</ul>
 			</div>
 			<div class="col-md-3 col-sm-3">
 				<ul class="validations-versions nav nav-pills nav-stacked">
-					<li><a href=""><span class="glyphicon glyphicon-ok green"></span><strong></strong><span class="badge pull-right blue">2</span>Validated</a></li>
-					<li><a href=""><span class="glyphicon glyphicon-file green"></span><span class="badge pull-right blue">3</span>Versions</a></li> <!-- for non versions use class 'opaque' instead green -->
+					<li><a href=""><span class="glyphicon glyphicon-ok green"></span><strong></strong><span class="badge pull-right blue">0</span>Validated</a></li>
+					<li><a href=""><span class="glyphicon glyphicon-file green"></span><span class="badge pull-right blue" ng-bind="group.worksCount"></span>Versions</a></li> <!-- for non versions use class 'opaque' instead green -->
 				</ul>
 			</div>
 		</div>        
@@ -102,11 +105,10 @@
         <div class="row">
 			<div class="col-md-12 col-sm-12 col-xs-12">
 				<div class="show-more-info-tab">			
-					<a href="" ng-show="!moreInfo[work.putCode.value]" ng-click="showDetailsMouseClick(work.putCode.value,$event);"><span class="glyphicon glyphicon-chevron-down"></span><@orcid.msg 'manage.developer_tools.show_details'/></a>
-					<a href="" ng-show="moreInfo[work.putCode.value]" ng-click="showDetailsMouseClick(work.putCode.value,$event);"><span class="glyphicon glyphicon-chevron-up"></span><@orcid.msg 'manage.developer_tools.hide_details'/></a>
+					<a href="" ng-show="!moreInfo[group.getActive().putCode.value]" ng-click="showDetailsMouseClick(group.getActive().putCode.value,$event);"><span class="glyphicon glyphicon-chevron-down"></span><@orcid.msg 'manage.developer_tools.show_details'/></a>
+					<a href="" ng-show="moreInfo[group.getActive().putCode.value]" ng-click="showDetailsMouseClick(group.getActive().putCode.value,$event);"><span class="glyphicon glyphicon-chevron-up"></span><@orcid.msg 'manage.developer_tools.hide_details'/></a>
 				</div>
 			</div>
-		</div>
 		</div>
     </li><!-- bottom-margin-small -->
 </ul>
