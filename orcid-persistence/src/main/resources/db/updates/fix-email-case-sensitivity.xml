@@ -21,7 +21,7 @@
         
     <changeSet id="ADD-CASE-INSENSITIVE-UNIQUE-CONSTRAINT-TO-EMAIL" author="Will Simpson" dbms="postgresql">
         <createIndex tableName="email" indexName="lower_case_email_unique">
-            <column name="LOWER(email)"/>
+            <column name="lower(email)"/>
         </createIndex>
     </changeSet>
     

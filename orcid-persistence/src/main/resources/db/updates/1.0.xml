@@ -493,6 +493,7 @@
         <preConditions onFail="MARK_RAN">
             <tableExists tableName="oauth2_refresh_token_detail"/>
         </preConditions>
+        <dropForeignKeyConstraint baseTableName="oauth2_token_detail" constraintName="oauth2_refresh_token_detail_fk"/>
         <dropTable tableName="oauth2_refresh_token_detail" cascadeConstraints="true"/>
     </changeSet>
 
