@@ -365,8 +365,8 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 
 var GroupedWorks = function() {
 	this._keySet = {};
-	this.works = {};
-	this.worksCount = 0;
+	this.abbrWorks = {};
+	this.abbrWorksCount = 0;
 	this.activePutCode = null;
 	this.defaultPutCode = null;
 	this.dateSortString;
@@ -400,37 +400,37 @@ GroupedWorks.prototype.keyMatch = function(work) {
 	return false;
 };
 
-GroupedWorks.prototype.add = function(work) {
+GroupedWorks.prototype.add = function(abbrWork) {
 	if (true) { 
-		this.activePutCode = work.putCode.value;
-		this.defaultPutCode = work.putCode.value;
-		this.dateSortString = work.dateSortString;
+		this.activePutCode = abbrWork.putCode.value;
+		this.defaultPutCode = abbrWork.putCode.value;
+		this.dateSortString = abbrWork.dateSortString;
 	}
-	for (var idx in work.workExternalIdentifiers)
-		this.addKey(this.key(work.workExternalIdentifiers[idx]));
-	this.works[work.putCode.value] = work;
-	this.worksCount++;
+	for (var idx in abbrWork.workExternalIdentifiers)
+		this.addKey(this.key(abbrWork.workExternalIdentifiers[idx]));
+	this.abbrWorks[abbrWork.putCode.value] = abbrWork;
+	this.abbrWorksCount++;
 };
 
 GroupedWorks.prototype.hasPut = function(putCode) {
-   if (this.works[putCode] !== undefined)
+   if (this.abbrWorks[putCode] !== undefined)
 			return true;
 	return false;
 };
 
 GroupedWorks.prototype.getActive = function() {
-	return this.works[this.activePutCode];
+	return this.abbrWorks[this.activePutCode];
 };
 
 GroupedWorks.prototype.getByPut = function(putCode) {
-	return this.works[putCode];
+	return this.abbrWorks[putCode];
 };
 
 GroupedWorks.prototype.rmByPut = function(putCode) {
-	var work =  this.works[putCode];
-	delete this.works[putCode];
-	this.worksCount--;
-	return work;
+	var abbrWork =  this.works[putCode];
+	delete this.abbrWorks[putCode];
+	this.abbrWorksCount--;
+	return abbrWork;
 };
 
 
@@ -452,7 +452,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 					};
 				};
 			},
-		    addWorkToScope: function(worksUrl) {
+		    addAbbrWorkToScope: function(worksUrl) {
 				if(serv.worksToAddIds.length != 0 ) {
 					serv.loading = true;
 					var workIds = serv.worksToAddIds.splice(0,20).join();
@@ -487,7 +487,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 							} else {
 								$rootScope.$apply();					
 								setTimeout(function(){
-									serv.addWorkToScope(worksUrl);
+									serv.addAbbrWorkToScope(worksUrl);
 								},50);
 							}
 						}
@@ -540,8 +540,8 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 			},
 			getGroupDetails: function(url, putCode) {
 				var group = serv.getGroup(putCode);
-				for (var idx in group.works) {
-					var curPutCode = group.works[idx].putCode.value;
+				for (var idx in group.abbrWorks) {
+					var curPutCode = group.abbrWorks[idx].putCode.value;
 					serv.getDetails(url,curPutCode);
 				}
 			},
@@ -554,8 +554,8 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 			},
 			getGroupWorks: function(putCode) {
 				var group = serv.getGroup(putCode);
-				for (var idx in group.works) {
-					var curPutCode = group.works[idx].putCode.value;
+				for (var idx in group.abbrWorks) {
+					var curPutCode = group.abbrWorks[idx].putCode.value;
 					serv.deleteWork(curPutCode);
 				}
 			},
@@ -565,7 +565,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 				for (var idx in serv.groups) {
 					if (serv.groups[idx].hasPut(putCode)) {
 						rmWorks = serv.groups[idx].rmByPut(putCode);
-						if (serv.groups[idx].worksCount == 0) 
+						if (serv.groups[idx].abbrWorksCount == 0) 
 							serv.groups.splice(idx,1);
 						else
 							serv.groups[idx].activePutCode = serv.groups[idx].defaultPutCode;
@@ -593,8 +593,8 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 			},
 			setGroupPrivacy: function(putCode, priv) {
 				var group = serv.getGroup(putCode);
-				for (var idx in group.works) {
-					var curPutCode = group.works[idx].putCode.value;
+				for (var idx in group.abbrWorks) {
+					var curPutCode = group.abbrWorks[idx].putCode.value;
 					serv.setPrivacy(curPutCode, priv);
 				}
 			},
@@ -623,7 +623,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 			workCount: function() {
 				var count = 0;
 				for (var idx in serv.groups) {
-					count += serv.groups[idx].worksCount;
+					count += serv.groups[idx].abbrWorksCount;
 				}
 				return count;
 			}
@@ -3081,7 +3081,7 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 	};
 		
 	$scope.worksSrvc.worksToAddIds = orcidVar.workIds;	
-	$scope.worksSrvc.addWorkToScope(getBaseUri() + '/' + orcidVar.orcidId +'/works.json?workIds=');
+	$scope.worksSrvc.addAbbrWorkToScope(getBaseUri() + '/' + orcidVar.orcidId +'/works.json?workIds=');
 	
 	// remove once grouping is live
 	$scope.moreInfoClick = function(work, $event) {
@@ -3244,6 +3244,11 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 			$scope.showAddModal();
 		}
 	};
+	
+    $scope.editWork = function(putCode){
+    	var data = worksSrvc.getWork(putCode);
+    	$scope.addWorkModal(data);
+    };
 
 
 	$scope.addWork = function(){
@@ -3306,7 +3311,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	        dataType: 'json',
 	        success: function(data) {
 	        	$scope.worksSrvc.worksToAddIds = data;
-	        	$scope.worksSrvc.addWorkToScope(getBaseUri() + '/works/works.json?workIds=');
+	        	$scope.worksSrvc.addAbbrWorkToScope(getBaseUri() + '/works/works.json?workIds=');
 	        	$scope.$apply();
 	        }
 		}).fail(function(){
