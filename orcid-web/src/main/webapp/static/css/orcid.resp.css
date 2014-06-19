@@ -946,7 +946,6 @@ select {
 	width: 100%;
 }
 
-/* Mobile menu icon */
 .header .navigation>.mobile-button {
 	display: none;
 }
@@ -3841,6 +3840,8 @@ ul.sso-options li span{
 	background: #EFEFEF;
 	padding: 10px;
 	margin-bottom: 10px;
+	width: 100%;
+	float: left;
 }
 
 .websites-edit, .keywords-edit, .other-names-edit, .names-edit {
@@ -3848,7 +3849,6 @@ ul.sso-options li span{
 	padding: 10px;
 	margin-bottom: 10px;
 }
-
 
 .websites-edit input {
 	width: 95px;
@@ -3862,6 +3862,8 @@ ul.sso-options li span{
 	background: #EFEFEF;
 	padding: 10px;
 	margin-bottom: 10px;
+	float: left;
+	width: 100%;	
 }
 
 .country-controller #country{
@@ -3996,6 +3998,10 @@ ul.sso-options li span{
 	word-break: normal;
 }
 
+.wrap{
+	word-break: break-word;
+}
+
 .small-box{
 	float:left;
 	width: 25%;	
@@ -4064,6 +4070,13 @@ ul.sso-options li span{
 .website-url{
 	word-wrap: break-word;
 	padding-right: 5px;
+}
+
+.profile-header{
+	display: block;
+	width:100%;
+	float: left;
+	clear: both;
 }
 
 /* Media Queries */
