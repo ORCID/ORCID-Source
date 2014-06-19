@@ -3362,7 +3362,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		//Display the popover
 		$(event.target).next().css('display','inline');	
 		$scope.worksSrvc.getGroupDetails(getBaseUri() + '/works/getWorkInfo.json?workId=', putCode);
-	};			
+	};			 
 
 	
 	$scope.loadWorkInfo = function(putCode, event) {
@@ -3372,21 +3372,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		//Display the popover
 		$(event.target).next().css('display','inline');	
 		if($scope.worksSrvc.details[putCode] == null) {		
-			$.ajax({
-				url: getBaseUri() + '/works/getWorkInfo.json?workId=' + putCode,	        
-		        dataType: 'json',
-		        success: function(data) {
-		        	
-		        	$scope.$apply(function () {
-		        		removeBadContributors(data);
-		        		$scope.worksSrvc.addBibtexJson(data);
-						$scope.worksSrvc.details[putCode] = data;
-		        	});		        	
-		        }
-			}).fail(function(){
-				// something bad is happening!
-		    	console.log("error fetching works");
-			});
+			$scope.worksSrvc.getGroupDetails(getBaseUri() + '/works/getWorkInfo.json?workId=', putCode);
 		} else {
 			$(event.target).next().css('display','inline');
 		}
