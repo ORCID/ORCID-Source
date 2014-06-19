@@ -223,6 +223,7 @@ orcidNgModule.factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
 			},
 			toggleEducation: function() {
 				serv.displayEducation = !serv.displayEducation;
+				console.log('Education');
 			},
 			toggleEmployment: function() {
 				serv.displayEmployment = !serv.displayEmployment;
@@ -2169,6 +2170,7 @@ function WorkspaceSummaryCtrl($scope, $compile, affiliationsSrvc, fundingSrvc, w
 function PublicEduAffiliation($scope, $compile, $filter, affiliationsSrvc){
 	$scope.affiliationsSrvc = affiliationsSrvc;
 	$scope.moreInfo = {};
+	$scope.displayEducation = true;
 	
 	// remove once grouping is live
 	$scope.toggleClickMoreInfo = function(key) {
@@ -2185,28 +2187,25 @@ function PublicEduAffiliation($scope, $compile, $filter, affiliationsSrvc){
 	
 	$scope.showDetailsMouseClick = function(key, $event) {
 		$event.stopPropagation();
-		$scope.moreInfo[key] = !$scope.moreInfo[key];
-		//
-		/*
-		if (!document.documentElement.className.contains('no-touch'))
-			$scope.moreInfo[key]=!$scope.moreInfo[key];
-		*/
-		/*
-		if (document.documentElement.className.contains('no-touch'))
-			$scope.moreInfo[key]=true;
-		*/
+		$scope.moreInfo[key] = !$scope.moreInfo[key];		
 	};
 
 
 	$scope.closeMoreInfo = function(key) {
 		$scope.moreInfo[key]=false;
 	};
+	
+	$scope.toggleEducation = function(){
+        $scope.displayEducation = !$scope.displayEducation;
+        console.log('Education');
+    };
 
 }
 
 function PublicEmpAffiliation($scope, $compile, $filter, affiliationsSrvc){
 	$scope.affiliationsSrvc = affiliationsSrvc;
 	$scope.moreInfo = {};
+	$scope.displayEmployment = true;
 	
 	$scope.toggleClickMoreInfo = function(key) {
 		if (!document.documentElement.className.contains('no-touch'))
@@ -2232,6 +2231,10 @@ function PublicEmpAffiliation($scope, $compile, $filter, affiliationsSrvc){
 
 	affiliationsSrvc.setIdsToAdd(orcidVar.affiliationIdsJson);
 	affiliationsSrvc.addAffiliationToScope(orcidVar.orcidId +'/affiliations.json');
+	
+	$scope.toggleEmployment = function(){
+	    $scope.displayEmployment = !$scope.displayEmployment;  
+	};
 }
 
 
@@ -2941,6 +2944,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 function PublicFundingCtrl($scope, $compile, $filter, fundingSrvc){
 	$scope.fundingSrvc = fundingSrvc;
 	$scope.moreInfo = {};
+	$scope.displayFunding = true;
 	
 	// remove once grouping is live
 	$scope.toggleClickMoreInfo = function(key) {
@@ -2974,6 +2978,10 @@ function PublicFundingCtrl($scope, $compile, $filter, fundingSrvc){
 		}				
 		return info;
 	};
+	
+	$scope.toggleFunding = function(){
+	    $scope.displayFunding = !$scope.displayFunding;  
+	};
 }
 
 function PublicWorkCtrl($scope, $compile, worksSrvc) {
@@ -2982,6 +2990,7 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 	$scope.loadingInfo = false;
 	$scope.moreInfoOpen = false;
 	$scope.moreInfo = {};
+	$scope.displayWorks = true;
 
     $scope.bibtexShowToggle = function () {
     	$scope.showBibtex = !($scope.showBibtex);
@@ -3060,6 +3069,10 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 	$scope.closePopover = function(event) {
 		$scope.moreInfoOpen = false;
 		$('.work-more-info-container').css('display', 'none');
+	};
+	
+	$scope.toggleWorks = function(){
+	    $scope.displayWorks = !$scope.displayWorks;  
 	};
 }
 
