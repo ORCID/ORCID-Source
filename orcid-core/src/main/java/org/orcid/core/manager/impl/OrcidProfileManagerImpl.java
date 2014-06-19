@@ -16,7 +16,6 @@
  */
 package org.orcid.core.manager.impl;
 
-import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
@@ -86,14 +85,14 @@ import org.orcid.jaxb.model.message.EncryptedSecurityAnswer;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.FamilyName;
+import org.orcid.jaxb.model.message.Funding;
+import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.GivenNames;
 import org.orcid.jaxb.model.message.GivenPermissionTo;
 import org.orcid.jaxb.model.message.LastModifiedDate;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidDeprecated;
-import org.orcid.jaxb.model.message.Funding;
-import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidInternal;
 import org.orcid.jaxb.model.message.OrcidPreferences;
@@ -112,11 +111,12 @@ import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.VisibilityType;
 import org.orcid.jaxb.model.message.WorkContributors;
+import org.orcid.jaxb.model.message.WorkExternalIdentifier;
 import org.orcid.jaxb.model.message.WorkSource;
 import org.orcid.persistence.dao.EmailDao;
+import org.orcid.persistence.dao.FundingExternalIdentifierDao;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.GivenPermissionToDao;
-import org.orcid.persistence.dao.FundingExternalIdentifierDao;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.ProfileFundingDao;
@@ -132,7 +132,6 @@ import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
-import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.NullUtils;
 import org.orcid.utils.ReleaseNameUtils;
@@ -1057,6 +1056,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         updatedOrcidWorks = dedupeWorks(updatedOrcidWorks);
         List<OrcidWork> updatedOrcidWorksList = updatedOrcidWorks.getOrcidWork();
         checkForAlreadyExistingWorks(existingOrcidWorks, updatedOrcidWorksList);
+        checkWorkExternalIdentifiersAreNotDuplicated(updatedOrcidWorksList);
         persistAddedWorks(orcid, updatedOrcidWorksList);
     }
 
@@ -1075,6 +1075,37 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                     }
                 }
             }
+        }
+    }
+    
+    /**
+     * TODO
+     * The updatedOrcidWorksList MUST be deduped after getting into this method
+     * */
+    private void checkWorkExternalIdentifiersAreNotDuplicated(List<OrcidWork> updatedOrcidWorksList) {
+        List<WorkExternalIdentifier> extIdList = new ArrayList<WorkExternalIdentifier>();
+        WorkExternalIdentifier duplicatedExtId = null;
+        //Look for duplicates
+        for(OrcidWork work : updatedOrcidWorksList) {
+            if(work.getWorkExternalIdentifiers() != null) {
+                if(work.getWorkExternalIdentifiers().getWorkExternalIdentifier() != null && work.getWorkExternalIdentifiers().getWorkExternalIdentifier().size() > 0) {
+                    for(WorkExternalIdentifier extId : work.getWorkExternalIdentifiers().getWorkExternalIdentifier()) {
+                        if(extIdList.contains(extId)) {
+                            // If duplicate is found, ad it to the list of duplicated ids
+                            duplicatedExtId = extId;
+                            break;
+                        } else {
+                            extIdList.add(extId);
+                        }
+                    }
+                }                 
+            }
+            if(duplicatedExtId != null)
+                break;
+        }
+        
+        if(duplicatedExtId != null) {            
+            throw new IllegalArgumentException("A work with identifier " + duplicatedExtId.getWorkExternalIdentifierId().getContent() + " already exists in your record.");
         }
     }
 

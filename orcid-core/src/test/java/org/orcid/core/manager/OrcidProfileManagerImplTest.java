@@ -21,6 +21,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -83,7 +84,9 @@ import org.orcid.jaxb.model.message.Subtitle;
 import org.orcid.jaxb.model.message.Title;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkExternalIdentifier;
+import org.orcid.jaxb.model.message.WorkExternalIdentifierId;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.message.WorkSource;
 import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
@@ -363,6 +366,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         OrcidWork work1 = createWork1();
         OrcidWork work2 = createWork2();
         OrcidWork work3 = createWork3();
+                
         OrcidProfile profile = createBasicProfile();
         profile = orcidProfileManager.createOrcidProfile(profile);
         assertNotNull(profile);
@@ -450,19 +454,58 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
                 || profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(1).getWorkTitle().getTitle().getContent()
                         .equals(work1.getWorkTitle().getTitle().getContent())
                 || profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(2).getWorkTitle().getTitle().getContent()
-                        .equals(work3.getWorkTitle().getTitle().getContent()));
+                        .equals(work1.getWorkTitle().getTitle().getContent()));
+        
+        
+        
+        
         assertTrue(profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getWorkTitle().getTitle().getContent()
                 .equals(work2.getWorkTitle().getTitle().getContent())
                 || profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(1).getWorkTitle().getTitle().getContent()
                         .equals(work2.getWorkTitle().getTitle().getContent())
                 || profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(2).getWorkTitle().getTitle().getContent()
-                        .equals(work3.getWorkTitle().getTitle().getContent()));
+                        .equals(work2.getWorkTitle().getTitle().getContent()));
+        
+        
+        
         assertTrue(profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getWorkTitle().getTitle().getContent()
                 .equals(work3.getWorkTitle().getTitle().getContent())
                 || profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(1).getWorkTitle().getTitle().getContent()
                         .equals(work3.getWorkTitle().getTitle().getContent())
                 || profile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(2).getWorkTitle().getTitle().getContent()
                         .equals(work3.getWorkTitle().getTitle().getContent()));
+        
+        
+        //Test using work source
+        WorkSource source = new WorkSource();
+        source.setPath(APPLICATION_ORCID);
+        work1.setWorkSource(source);
+        
+        // Add work1 again, since it have a different source, it should be added
+        profile.getOrcidActivities().getOrcidWorks().getOrcidWork().add(work1);
+        
+        orcidProfileManager.addOrcidWorks(profile);
+
+        profile = orcidProfileManager.retrieveOrcidProfile(TEST_ORCID);
+        
+        assertNotNull(profile);
+        assertNotNull(profile.getOrcidActivities());
+        assertNotNull(profile.getOrcidActivities().getOrcidWorks());
+        assertNotNull(profile.getOrcidActivities().getOrcidWorks().getOrcidWork());
+        assertEquals(4, profile.getOrcidActivities().getOrcidWorks().getOrcidWork().size());
+        
+        //Add work1 again, and it should not be added, since is duplicated
+        profile.getOrcidActivities().getOrcidWorks().getOrcidWork().add(work1);
+        
+        orcidProfileManager.addOrcidWorks(profile);
+
+        profile = orcidProfileManager.retrieveOrcidProfile(TEST_ORCID);
+        
+        assertNotNull(profile);
+        assertNotNull(profile.getOrcidActivities());
+        assertNotNull(profile.getOrcidActivities().getOrcidWorks());
+        assertNotNull(profile.getOrcidActivities().getOrcidWorks().getOrcidWork());
+        assertEquals(4, profile.getOrcidActivities().getOrcidWorks().getOrcidWork().size());
     }
 
     @Test
@@ -1099,6 +1142,40 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
     public void testRetrieveProfileWhenNonExistant() {
         OrcidProfile orcidProfile = orcidProfileManager.retrievePublicOrcidProfile("1234-5678-8765-4321");
         assertNull(orcidProfile);
+    }
+    
+    @Test
+    @Transactional
+    @Rollback(true)
+    public void testDuplicatedExternalIdentifiersThrowsException() {
+        OrcidWork work2 = createWork2();
+        OrcidWork work3 = createWork3();
+        
+        WorkExternalIdentifier sharedExternalIdentifier1 = new WorkExternalIdentifier();
+        sharedExternalIdentifier1.setWorkExternalIdentifierType(WorkExternalIdentifierType.DOI);
+        sharedExternalIdentifier1.setWorkExternalIdentifierId(new WorkExternalIdentifierId("shared-doi1"));
+        
+        work2.getWorkExternalIdentifiers().getWorkExternalIdentifier().add(sharedExternalIdentifier1);
+        work3.getWorkExternalIdentifiers().getWorkExternalIdentifier().add(sharedExternalIdentifier1);
+
+        OrcidProfile profile = createBasicProfile();
+        profile = orcidProfileManager.createOrcidProfile(profile);
+        assertNotNull(profile);
+        assertNotNull(profile.getOrcidActivities());
+        assertNotNull(profile.getOrcidActivities().getOrcidWorks());
+        assertNotNull(profile.getOrcidActivities().getOrcidWorks().getOrcidWork());
+        assertEquals(1, profile.getOrcidActivities().getOrcidWorks().getOrcidWork().size());        
+
+        profile.getOrcidActivities().getOrcidWorks().getOrcidWork().add(work2);
+        profile.getOrcidActivities().getOrcidWorks().getOrcidWork().add(work3);
+        
+        try {
+            orcidProfileManager.addOrcidWorks(profile);
+            fail("This should not pass since we add works with duplicated external identifiers");
+        } catch(IllegalArgumentException iae) {
+            assertEquals("A work with identifier shared-doi1 already exists in your record.", iae.getMessage());
+        }
+        
     }
 
 }
