@@ -42,9 +42,9 @@
 						<@orcid.privacyToggle2 angularModel="group.getActive().visibility" 
 						    questionClick="toggleClickPrivacyHelp(group.getActive().putCode.value)"
 						    clickedClassCheck="{'popover-help-container-show':privacyHelp[group.getActive().putCode.value]==true}"
-							publicClick="setPrivacy(group.getActive().putCode.value, 'PUBLIC', $event)" 
-		                	limitedClick="setPrivacy(group.getActive().putCode.value, 'LIMITED', $event)" 
-		                	privateClick="setPrivacy(group.getActive().putCode.value, 'PRIVATE', $event)"/>
+							publicClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PUBLIC', $event)" 
+		                	limitedClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'LIMITED', $event)" 
+		                	privateClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PRIVATE', $event)"/>
 		                </li>
 		            	<li class="submenu-tree">
 		            		<a href="" class="toolbar-button toggle-menu">
@@ -57,12 +57,12 @@
 		            				</a>
 		            			</li>
 		            			<li>
-		            				<a href="">
+		            				<a ng-click="deleteWorkConfirm(group.getActive().putCode.value, true)">
 		            					<span class="glyphicon glyphicon-trash"></span>Delete All Versions
 		            				</a>
 		            			</li>
 		            			<li>
-		            				<a href="">
+		            				<a ng-click="deleteWorkConfirm(group.getActive().putCode.value, false)">
 		            					<span class="glyphicon glyphicon-trash"></span>Delete This Version
 		            				</a>
 		            			</li>

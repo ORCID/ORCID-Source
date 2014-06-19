@@ -32,7 +32,7 @@
 	        	<#include "work_more_info_inc.ftl"/>
 	        	<#if !(isPublicProfile??)>
 	        		<!-- Trash can -->
-					<a href ng-click="deleteWork(work.putCode.value)" class="glyphicon glyphicon-trash grey"></a>
+					<a href ng-click="deleteWorkConfirm(work.putCode.value, false)" class="glyphicon glyphicon-trash grey"></a>
 	        	</#if>
 	        	<#if !(isPublicProfile??)>
 	        		<!-- Privacy bar -->
