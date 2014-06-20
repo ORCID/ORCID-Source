@@ -427,7 +427,7 @@ GroupedWorks.prototype.getByPut = function(putCode) {
 };
 
 GroupedWorks.prototype.rmByPut = function(putCode) {
-	var abbrWork =  this.works[putCode];
+	var abbrWork =  this.abbrWorks[putCode];
 	delete this.abbrWorks[putCode];
 	this.abbrWorksCount--;
 	return abbrWork;
@@ -513,8 +513,8 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 			    	console.log("Error fetching blank work");
 			    });
 			},
-			getDetails: function(url, putCode) {
-				if(serv.details[putCode] == null) {		
+			getDetails: function(url, putCode, callback) {
+				if(serv.details[putCode] == undefined) {		
 					$.ajax({
 						url: url + putCode,	        
 				        dataType: 'json',
@@ -523,12 +523,15 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 				        		removeBadContributors(data);
 				        		serv.addBibtexJson(data);
 				        		serv.details[putCode] = data;
+				        		if (callback != undefined) callback(serv.details[putCode]);
 				        	});		        	
 				        }
 					}).fail(function(){
 						// something bad is happening!
 				    	console.log("error fetching works");	
 					});
+				} else {
+					if (callback != undefined) callback(serv.details[putCode]);
 				};
 			},
 			getGroup: function(putCode) {
@@ -3245,9 +3248,8 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		}
 	};
 	
-    $scope.editWork = function(putCode){
-    	var data = worksSrvc.getWork(putCode);
-    	$scope.addWorkModal(data);
+    $scope.openEditWork = function(putCode){
+    	worksSrvc.getDetails(getBaseUri() + '/works/getWorkInfo.json?workId=',putCode, function(data) {$scope.addWorkModal(data);});
     };
 
 

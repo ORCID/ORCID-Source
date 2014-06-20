@@ -23,9 +23,11 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.utils.JsonUtils;
+import org.orcid.jaxb.model.message.CitationType;
 import org.orcid.jaxb.model.message.Country;
 import org.orcid.jaxb.model.message.FuzzyDate;
 import org.orcid.jaxb.model.message.Iso3166Country;
+import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.PublicationDate;
@@ -88,6 +90,92 @@ public class Work implements ErrorsInterface, Serializable {
 	protected String citationForDisplay;
 	
 	private String dateSortString;
+	
+	public Work() {
+	        // work title and subtitle
+	        Text wtt = new Text();
+	        wtt.setRequired(true);
+	        WorkTitle wt = new WorkTitle();
+	        wt.setTitle(wtt);
+	        Text wst = new Text();
+	        wt.setSubtitle(wst);
+	        TranslatedTitle tt = new TranslatedTitle();
+	        tt.setContent(new String());
+	        tt.setLanguageCode(new String());
+	        tt.setLanguageName(new String());
+	        wt.setTranslatedTitle(tt);
+	        this.setWorkTitle(wt);
+
+	        // work journal title
+	        Text jt = new Text();
+	        jt.setRequired(false);
+	        this.setJournalTitle(jt);
+
+	        // set citation text and type
+	        Citation c = new Citation();
+	        Text ctText = new Text();
+	        ctText.setValue(CitationType.FORMATTED_UNSPECIFIED.value());
+	        c.setCitationType(ctText);
+	        Text cText = new Text();
+	        c.setCitation(cText);
+	        this.setCitation(c);
+
+	        Text wCategoryText = new Text();
+	        wCategoryText.setValue("");
+	        wCategoryText.setRequired(true);
+	        this.setWorkCategory(wCategoryText);
+
+	        Text wTypeText = new Text();
+	        wTypeText.setValue("");
+	        wTypeText.setRequired(true);
+	        this.setWorkType(wTypeText);
+
+	        Date d = new Date();
+	        d.setDay("");
+	        d.setMonth("");
+	        d.setYear("");
+	        this.setPublicationDate(d);
+
+	        WorkExternalIdentifier wdi = new WorkExternalIdentifier();
+	        Text wdiT = new Text();
+	        Text wdiType = new Text();
+	        wdiType.setValue("");
+	        wdi.setWorkExternalIdentifierId(wdiT);
+	        wdi.setWorkExternalIdentifierType(wdiType);
+	        List<WorkExternalIdentifier> wdiL = new ArrayList<WorkExternalIdentifier>();
+	        wdiL.add(wdi);
+	        this.setWorkExternalIdentifiers(wdiL);
+
+	        Text uText = new Text();
+	        this.setUrl(uText);
+
+	        Contributor contr = new Contributor();
+	        List<Contributor> contrList = new ArrayList<Contributor>();
+	        Text rText = new Text();
+	        rText.setValue("");
+	        contr.setContributorRole(rText);
+
+	        Text sText = new Text();
+	        sText.setValue("");
+	        contr.setContributorSequence(sText);
+	        contrList.add(contr);
+	        this.setContributors(contrList);
+
+	        Text disText = new Text();
+	        this.setShortDescription(disText);
+
+	        // Language code
+	        Text lc = new Text();
+	        lc.setRequired(false);
+	        this.setLanguageCode(lc);
+	        Text ln = new Text();
+	        ln.setRequired(false);
+	        this.setLanguageName(ln);
+
+	        this.setCountryCode(new Text());
+	        this.setCountryName(new Text());
+
+	}
 
 	public static Work valueOf(MinimizedWorkEntity minimizedWorkEntity) {
 		Work w = new Work();

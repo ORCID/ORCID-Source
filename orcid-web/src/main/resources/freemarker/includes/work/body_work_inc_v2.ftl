@@ -34,7 +34,7 @@
 	        		<!-- Privacy bar -->
 					<ul class="workspace-private-toolbar">
 					 	<li>
-					 		<a class="toolbar-button edit-item-button" ng-click="editWork(group.getActive().putCode.value)">
+					 		<a class="toolbar-button edit-item-button" ng-click="openEditWork(group.getActive().putCode.value)">
 					 			<span class="glyphicon glyphicon-pencil edit-option-toolbar" title=""></span>
 					 		</a>	
 					 	</li>					 	
