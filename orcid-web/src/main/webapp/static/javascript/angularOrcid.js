@@ -453,7 +453,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 				};
 			},
 		    addAbbrWorkToScope: function(worksUrl) {
-				if(serv.worksToAddIds.length != 0 ) {
+		    	if(serv.worksToAddIds.length != 0 ) {
 					serv.loading = true;
 					var workIds = serv.worksToAddIds.splice(0,20).join();
 					$.ajax({
@@ -512,6 +512,15 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 				}).fail(function() { 
 			    	console.log("Error fetching blank work");
 			    });
+			},
+			getEditable: function(url, putCode, callback) {
+				// first check if they are the current source
+				var work = serv.getDetails(url, putCode, function(data) {
+					if (data.workSource.value == orcidVar.orcidId)
+						callback(data);
+					else
+						serv.getGroupDetails();
+				});
 			},
 			getDetails: function(url, putCode, callback) {
 				if(serv.details[putCode] == undefined) {		
@@ -3091,7 +3100,6 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 		
 		return info;
 	};
-		
 	$scope.worksSrvc.worksToAddIds = orcidVar.workIds;	
 	$scope.worksSrvc.addAbbrWorkToScope(getBaseUri() + '/' + orcidVar.orcidId +'/works.json?workIds=');
 	
