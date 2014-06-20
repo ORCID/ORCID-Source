@@ -541,12 +541,21 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 				}
 				return null;
 			},
-			getGroupDetails: function(url, putCode) {
+			getGroupDetails: function(url, putCode, callback) {
 				var group = serv.getGroup(putCode);
+				var needsLoading =  new Array();
 				for (var idx in group.abbrWorks) {
-					var curPutCode = group.abbrWorks[idx].putCode.value;
-					serv.getDetails(url,curPutCode);
+					needsLoading.push(group.abbrWorks[idx].putCode.value)
 				}
+				
+				var popFunct = function () {
+					if (needsLoading.length > 0)
+						serv.getDetails(url,needsLoading.pop(),popFunct);
+					else if (callback != undefined)
+						callback();
+				}
+				
+				popFunct();
 			},
 			getWork: function(putCode) {
 				for (var idx in serv.groups) {
