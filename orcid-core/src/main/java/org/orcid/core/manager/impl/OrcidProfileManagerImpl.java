@@ -1079,8 +1079,10 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     }
     
     /**
-     * TODO
+     * Checks if the list of updated works contains any duplicated external identifier, if so, it will throw an exception
      * The updatedOrcidWorksList MUST be deduped after getting into this method
+     * @param updatedOrcidWorksList the deduped list of works
+     * @throws IllegalArgumentException if there is a duplicated external identifier
      * */
     private void checkWorkExternalIdentifiersAreNotDuplicated(List<OrcidWork> updatedOrcidWorksList) {
         List<WorkExternalIdentifier> extIdList = new ArrayList<WorkExternalIdentifier>();
