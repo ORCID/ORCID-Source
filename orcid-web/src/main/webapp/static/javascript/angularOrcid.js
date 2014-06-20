@@ -522,7 +522,10 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 						serv.getGroupDetails();
 				});
 			},
-			getDetails: function(url, putCode, callback) {
+			getDetails: function(putCode, type, callback) {
+				var url = getBaseUri() + '/' + orcidVar.orcidId + '/getWorkInfo.json?workId='; // public
+				if (type == 'private') 
+					var url = getBaseUri() + '/works/getWorkInfo.json?workId=';
 				if(serv.details[putCode] == undefined) {		
 					$.ajax({
 						url: url + putCode,	        
@@ -550,7 +553,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 				}
 				return null;
 			},
-			getGroupDetails: function(url, putCode, callback) {
+			getGroupDetails: function(putCode, type, callback) {
 				var group = serv.getGroup(putCode);
 				var needsLoading =  new Array();
 				for (var idx in group.abbrWorks) {
@@ -559,7 +562,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 				
 				var popFunct = function () {
 					if (needsLoading.length > 0)
-						serv.getDetails(url,needsLoading.pop(),popFunct);
+						serv.getDetails(needsLoading.pop(), type, popFunct);
 					else if (callback != undefined)
 						callback();
 				}
@@ -3135,7 +3138,7 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 		//Display the popover
 		$(event.target).next().css('display','inline');		
 		if($scope.worksSrvc.details[putCode] == null) {		
-			$scope.worksSrvc.getGroupDetails(getBaseUri() + '/' + orcidVar.orcidId + '/getWorkInfo.json?workId=', putCode);
+			$scope.worksSrvc.getGroupDetails(putCode, 'public');
 		} else {
 			$(event.target).next().css('display','inline');
 		}
@@ -3266,7 +3269,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	};
 	
     $scope.openEditWork = function(putCode){
-    	worksSrvc.getDetails(getBaseUri() + '/works/getWorkInfo.json?workId=',putCode, function(data) {$scope.addWorkModal(data);});
+    	worksSrvc.getDetails(putCode, 'private', function(data) {$scope.addWorkModal(data);});
     };
 
 
@@ -3380,7 +3383,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		$scope.moreInfoOpen = true;
 		//Display the popover
 		$(event.target).next().css('display','inline');	
-		$scope.worksSrvc.getGroupDetails(getBaseUri() + '/works/getWorkInfo.json?workId=', putCode);
+		$scope.worksSrvc.getGroupDetails(putCode, 'private');
 	};			 
 
 	
@@ -3391,7 +3394,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		//Display the popover
 		$(event.target).next().css('display','inline');	
 		if($scope.worksSrvc.details[putCode] == null) {		
-			$scope.worksSrvc.getGroupDetails(getBaseUri() + '/works/getWorkInfo.json?workId=', putCode);
+			$scope.worksSrvc.getGroupDetails(putCode, 'private');
 		} else {
 			$(event.target).next().css('display','inline');
 		}
