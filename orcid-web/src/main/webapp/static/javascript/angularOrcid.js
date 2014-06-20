@@ -513,13 +513,30 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 			    	console.log("Error fetching blank work");
 			    });
 			},
-			getEditable: function(url, putCode, callback) {
+			getEditable: function(putCode, callback) {
 				// first check if they are the current source
-				var work = serv.getDetails(url, putCode, function(data) {
+				var work = serv.getDetails(putCode, 'private', function(data) {
 					if (data.workSource.value == orcidVar.orcidId)
 						callback(data);
 					else
-						serv.getGroupDetails();
+						serv.getGroupDetails(putCode, 'private', function () {
+							// in this case we want to open their version
+							// if they don't have a version yet then copy
+							// the current one
+							var bestMatch = null;
+							for (var idx in serv.details)
+								if (serv.details[idx].workSource.value == orcidVar.orcidId) {
+									bestMatch = serv.details[idx]; 
+									break;
+								}	
+							if (bestMatch == null) {
+								bestMatch = JSON.decode(JSON.encode(serv.details[putCode]));
+								bestMatch.workSource = null;
+								bestMatch.workName = null;
+								bestMatch.putCode = null;
+							}
+						    callback(bestMatch);
+						});
 				});
 			},
 			getDetails: function(putCode, type, callback) {
@@ -3269,7 +3286,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	};
 	
     $scope.openEditWork = function(putCode){
-    	worksSrvc.getDetails(putCode, 'private', function(data) {$scope.addWorkModal(data);});
+    	worksSrvc.getEditable(putCode, function(data) {$scope.addWorkModal(data);});
     };
 
 
