@@ -366,18 +366,22 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 var GroupedActivities = function(type) {
 	this.type = type;
 	this._keySet = {};
-	this.abbrWorks = {};
-	this.abbrWorksCount = 0;
+	this.activities = {};
+	this.activitiesCount = 0;
 	this.activePutCode = null;
 	this.defaultPutCode = null;
 	this.dateSortString;
 };
 
 GroupedActivities.prototype.key = function(activityIdentifiers) {
-	var path;
-	if (this.type == 'work') path = 'workExternalIdentifierId';
-	var key = activityIdentifiers[path] ? activityIdentifiers[path].value : ''; 
-	key += activityIdentifiers[path] != null ? activityIdentifiers[path].value : ''; 
+	var idPath;
+	var idTypePath;
+	if (this.type == 'abbrWork') {
+		idPath = 'workExternalIdentifierId';
+		idTypePath = 'workExternalIdentifierType';
+	}
+	var key = activityIdentifiers[idTypePath] ? activityIdentifiers[idTypePath].value : ''; 
+	key += activityIdentifiers[idPath] != null ? activityIdentifiers[idPath].value : ''; 
 	return key;
 };
 
@@ -395,47 +399,49 @@ GroupedActivities.prototype.addKey = function(key) {
 };
 
 GroupedActivities.prototype.keyMatch = function(activity) {
-    var path = null;
-    if (this.type == 'work') path = 'workExternalIdentifiers';
-	for (var idx in activity[path]) { 
-		if (this.key(activity[path][idx]) == '') continue;
-		if (this.key(activity[path][idx]) in this._keySet)
+    var identifiersPath = null;
+    if (this.type == 'abbrWork') identifiersPath = 'workExternalIdentifiers';
+	for (var idx in activity[identifiersPath]) { 
+		if (this.key(activity[identifiersPath][idx]) == '') continue;
+		if (this.key(activity[identifiersPath][idx]) in this._keySet)
 			return true;
 	}
 	return false;
 };
 
-GroupedActivities.prototype.add = function(abbrWork) {
+GroupedActivities.prototype.add = function(activities) {
+    var identifiersPath = null;
+    if (this.type == 'abbrWork') identifiersPath = 'workExternalIdentifiers';
 	if (true) { 
-		this.activePutCode = abbrWork.putCode.value;
-		this.defaultPutCode = abbrWork.putCode.value;
-		this.dateSortString = abbrWork.dateSortString;
+		this.activePutCode = activities.putCode.value;
+		this.defaultPutCode = activities.putCode.value;
+		this.dateSortString = activities.dateSortString;
 	}
-	for (var idx in abbrWork.workExternalIdentifiers)
-		this.addKey(this.key(abbrWork.workExternalIdentifiers[idx]));
-	this.abbrWorks[abbrWork.putCode.value] = abbrWork;
-	this.abbrWorksCount++;
+	for (var idx in activities[identifiersPath])
+		this.addKey(this.key(activities[identifiersPath][idx]));
+	this.activities[activities.putCode.value] = activities;
+	this.activitiesCount++;
 };
 
 GroupedActivities.prototype.hasPut = function(putCode) {
-   if (this.abbrWorks[putCode] !== undefined)
+   if (this.activities[putCode] !== undefined)
 			return true;
 	return false;
 };
 
 GroupedActivities.prototype.getActive = function() {
-	return this.abbrWorks[this.activePutCode];
+	return this.activities[this.activePutCode];
 };
 
 GroupedActivities.prototype.getByPut = function(putCode) {
-	return this.abbrWorks[putCode];
+	return this.activities[putCode];
 };
 
 GroupedActivities.prototype.rmByPut = function(putCode) {
-	var abbrWork =  this.abbrWorks[putCode];
-	delete this.abbrWorks[putCode];
-	this.abbrWorksCount--;
-	return abbrWork;
+	var activities =  this.activities[putCode];
+	delete this.activities[putCode];
+	this.activitiesCount--;
+	return activities;
 };
 
 
@@ -478,7 +484,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 											break;
 										}
 									if (added == false) {
-										var newGroup = new GroupedActivities('work');
+										var newGroup = new GroupedActivities('abbrWork');
 										newGroup.add(dw);
 										serv.groups.push(newGroup);
 									};
@@ -578,8 +584,8 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 			getGroupDetails: function(putCode, type, callback) {
 				var group = serv.getGroup(putCode);
 				var needsLoading =  new Array();
-				for (var idx in group.abbrWorks) {
-					needsLoading.push(group.abbrWorks[idx].putCode.value)
+				for (var idx in group.activities) {
+					needsLoading.push(group.activities[idx].putCode.value)
 				}
 				
 				var popFunct = function () {
@@ -600,8 +606,8 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 			},
 			getGroupWorks: function(putCode) {
 				var group = serv.getGroup(putCode);
-				for (var idx in group.abbrWorks) {
-					var curPutCode = group.abbrWorks[idx].putCode.value;
+				for (var idx in group.activities) {
+					var curPutCode = group.activities[idx].putCode.value;
 					serv.deleteWork(curPutCode);
 				}
 			},
@@ -611,7 +617,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 				for (var idx in serv.groups) {
 					if (serv.groups[idx].hasPut(putCode)) {
 						rmWorks = serv.groups[idx].rmByPut(putCode);
-						if (serv.groups[idx].abbrWorksCount == 0) 
+						if (serv.groups[idx].activitiesCount == 0) 
 							serv.groups.splice(idx,1);
 						else
 							serv.groups[idx].activePutCode = serv.groups[idx].defaultPutCode;
@@ -639,8 +645,8 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 			},
 			setGroupPrivacy: function(putCode, priv) {
 				var group = serv.getGroup(putCode);
-				for (var idx in group.abbrWorks) {
-					var curPutCode = group.abbrWorks[idx].putCode.value;
+				for (var idx in group.activities) {
+					var curPutCode = group.activities[idx].putCode.value;
 					serv.setPrivacy(curPutCode, priv);
 				}
 			},
@@ -669,7 +675,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 			workCount: function() {
 				var count = 0;
 				for (var idx in serv.groups) {
-					count += serv.groups[idx].abbrWorksCount;
+					count += serv.groups[idx].activitiesCount;
 				}
 				return count;
 			}
