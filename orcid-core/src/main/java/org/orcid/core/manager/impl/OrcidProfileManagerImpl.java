@@ -1058,7 +1058,10 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         updatedOrcidWorks = dedupeWorks(updatedOrcidWorks);
         List<OrcidWork> updatedOrcidWorksList = updatedOrcidWorks.getOrcidWork();
         checkForAlreadyExistingWorks(existingOrcidWorks, updatedOrcidWorksList);
-        checkWorkExternalIdentifiersAreNotDuplicated(updatedOrcidWorksList, existingOrcidWorks.getOrcidWork());
+        if(existingOrcidWorks != null)
+            checkWorkExternalIdentifiersAreNotDuplicated(updatedOrcidWorksList, existingOrcidWorks.getOrcidWork());
+        else
+            checkWorkExternalIdentifiersAreNotDuplicated(updatedOrcidWorksList, null);
         persistAddedWorks(orcid, updatedOrcidWorksList);
     }
 
@@ -1089,9 +1092,11 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     private void checkWorkExternalIdentifiersAreNotDuplicated(List<OrcidWork> newOrcidWorksList, List<OrcidWork> existingWorkList) {
         List<OrcidWork> allWorks = new ArrayList<OrcidWork>();
         // Add new works
-        allWorks.addAll(newOrcidWorksList);
+        if(newOrcidWorksList != null)
+            allWorks.addAll(newOrcidWorksList);
         // Add old works
-        allWorks.addAll(existingWorkList);
+        if(existingWorkList != null)
+            allWorks.addAll(existingWorkList);
         
         //Iterate over all works looking for duplicated external identifiers
         //Follow the rules: 
