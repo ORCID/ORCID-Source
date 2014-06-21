@@ -108,6 +108,7 @@ import org.orcid.jaxb.model.message.SecurityQuestionId;
 import org.orcid.jaxb.model.message.SendChangeNotifications;
 import org.orcid.jaxb.model.message.SendOrcidNews;
 import org.orcid.jaxb.model.message.Source;
+import org.orcid.jaxb.model.message.Title;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.VisibilityType;
 import org.orcid.jaxb.model.message.WorkContributors;
@@ -132,6 +133,7 @@ import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.NullUtils;
 import org.orcid.utils.ReleaseNameUtils;
@@ -1056,7 +1058,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         updatedOrcidWorks = dedupeWorks(updatedOrcidWorks);
         List<OrcidWork> updatedOrcidWorksList = updatedOrcidWorks.getOrcidWork();
         checkForAlreadyExistingWorks(existingOrcidWorks, updatedOrcidWorksList);
-        checkWorkExternalIdentifiersAreNotDuplicated(updatedOrcidWorksList);
+        checkWorkExternalIdentifiersAreNotDuplicated(updatedOrcidWorksList, existingOrcidWorks.getOrcidWork());
         persistAddedWorks(orcid, updatedOrcidWorksList);
     }
 
@@ -1084,33 +1086,99 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
      * @param updatedOrcidWorksList the deduped list of works
      * @throws IllegalArgumentException if there is a duplicated external identifier
      * */
-    private void checkWorkExternalIdentifiersAreNotDuplicated(List<OrcidWork> updatedOrcidWorksList) {
-        List<WorkExternalIdentifier> extIdList = new ArrayList<WorkExternalIdentifier>();
-        WorkExternalIdentifier duplicatedExtId = null;
-        //Look for duplicates
-        for(OrcidWork work : updatedOrcidWorksList) {
-            if(work.getWorkExternalIdentifiers() != null) {
-                if(work.getWorkExternalIdentifiers().getWorkExternalIdentifier() != null && work.getWorkExternalIdentifiers().getWorkExternalIdentifier().size() > 0) {
-                    for(WorkExternalIdentifier extId : work.getWorkExternalIdentifiers().getWorkExternalIdentifier()) {
-                        if(extIdList.contains(extId)) {
-                            // If duplicate is found, ad it to the list of duplicated ids
-                            duplicatedExtId = extId;
-                            break;
-                        } else {
-                            extIdList.add(extId);
+    private void checkWorkExternalIdentifiersAreNotDuplicated(List<OrcidWork> newOrcidWorksList, List<OrcidWork> existingWorkList) {
+        List<OrcidWork> allWorks = new ArrayList<OrcidWork>();
+        // Add new works
+        allWorks.addAll(newOrcidWorksList);
+        // Add old works
+        allWorks.addAll(existingWorkList);
+        
+        //Iterate over all works looking for duplicated external identifiers
+        //Follow the rules: 
+        //1) If the source is the same and
+        //2) any of the ext id matches 
+        //3) but the tile is different
+        //Then, throw an exception
+        for(int i = 0; i < allWorks.size(); i++){
+            OrcidWork work = allWorks.get(i);
+            WorkSource workSource = work.getWorkSource();
+            // Look for works with the same source
+            for(int j = 0; j < allWorks.size(); j++) {
+                //Ignore if it is the same work
+                if(j != i) {
+                    OrcidWork workToCompare = allWorks.get(j);
+                    WorkSource workSourceToCompare = workToCompare.getWorkSource();
+                    // If the two works have the same source, compare their external identifiers
+                    if(isTheSameSource(workSource, workSourceToCompare)) {
+                        // If the work have external identifiers
+                        if(work.getWorkExternalIdentifiers() != null && work.getWorkExternalIdentifiers().getWorkExternalIdentifier() != null && !work.getWorkExternalIdentifiers().getWorkExternalIdentifier().isEmpty()) {
+                            // Compare each external identifier
+                            for(WorkExternalIdentifier workExtId : work.getWorkExternalIdentifiers().getWorkExternalIdentifier()) {
+                                //If the workToCompare have ext ids
+                                if(workToCompare.getWorkExternalIdentifiers() != null && workToCompare.getWorkExternalIdentifiers().getWorkExternalIdentifier() != null && !workToCompare.getWorkExternalIdentifiers().getWorkExternalIdentifier().isEmpty()) {
+                                    // Compare each ext ids, following the rules: 
+                                    for(WorkExternalIdentifier workToCompareExtId : workToCompare.getWorkExternalIdentifiers().getWorkExternalIdentifier()) {
+                                        // If the ext ids are the same
+                                        if(workExtId.equals(workToCompareExtId)){
+                                            // Compare the titles, if they are different, set it as duplicated
+                                            Title title = (work.getWorkTitle() == null || work.getWorkTitle().getTitle() == null) ? null : work.getWorkTitle().getTitle();
+                                            Title titleToCompare = (workToCompare.getWorkTitle() == null || workToCompare.getWorkTitle().getTitle() == null) ? null : workToCompare.getWorkTitle().getTitle();
+                                            if(!isTheSameTitle(title, titleToCompare)) {
+                                                String extIdContent = (workExtId.getWorkExternalIdentifierId() == null || PojoUtil.isEmpty(workExtId.getWorkExternalIdentifierId().getContent())) ? "" : workExtId.getWorkExternalIdentifierId().getContent(); 
+                                                throw new IllegalArgumentException("A work with identifier " + extIdContent + " already exists in your record.");
+                                            }                                            
+                                        }
+                                    }
+                                }
+                            } 
+                                    
                         }
                     }
-                }                 
+                }
             }
-            if(duplicatedExtId != null)
-                break;
-        }
-        
-        if(duplicatedExtId != null) {            
-            throw new IllegalArgumentException("A work with identifier " + duplicatedExtId.getWorkExternalIdentifierId().getContent() + " already exists in your record.");
-        }
+        }                
     }
 
+    /**
+     * Check if source1 and source2 are equals
+     * @param source1
+     * @param source2
+     * @return true if source1 is equals to source2
+     * */
+    private boolean isTheSameSource(WorkSource source1, WorkSource source2) {
+        if(source1 == null){
+            if(source2 == null)
+                return true;
+            else 
+                return false;
+        } else {
+            if(source2 == null)
+                return false;
+            else
+                return source1.equals(source2);
+        }
+    }
+    
+    /**
+     * Check if title1 and title2 are equals
+     * @param title1
+     * @param title2
+     * @return true if title1 is equals to title2
+     * */
+    private boolean isTheSameTitle(Title title1, Title title2) {
+        if(title1 == null) {
+            if(title2 == null)
+                return true;
+            else 
+                return false;
+        } else {
+            if(title2 == null)
+                return false;
+            else
+                return title1.equals(title2);
+        }
+    }
+    
     private void persistAddedWorks(String orcid, List<OrcidWork> updatedOrcidWorksList) {
         ProfileEntity profileEntity = profileDao.find(orcid);
         for (OrcidWork updatedOrcidWork : updatedOrcidWorksList) {

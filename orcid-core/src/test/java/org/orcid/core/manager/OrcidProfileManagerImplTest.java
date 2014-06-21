@@ -613,6 +613,8 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         workTitle1.setTitle(new Title("Another Title"));
         workTitle1.setSubtitle(new Subtitle("Journal of Cloud Spotting"));
         OrcidWork work1 = createWork1(workTitle1);
+        WorkSource source = new WorkSource(TEST_ORCID);
+        work1.setWorkSource(source);
         orcidWorks.getOrcidWork().add(work1);
 
         WorkTitle workTitle2 = new WorkTitle();
@@ -666,6 +668,8 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         workTitle1.setTitle(new Title("Another Title"));
         workTitle1.setSubtitle(new Subtitle("Journal of Cloud Spotting"));
         OrcidWork work1 = createWork1(workTitle1);
+        WorkSource source = new WorkSource(TEST_ORCID);
+        work1.setWorkSource(source);
         orcidWorks.getOrcidWork().add(work1);
 
         WorkTitle workTitle2 = new WorkTitle();
@@ -718,6 +722,8 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         workTitle1.setTitle(new Title("Another Title"));
         workTitle1.setSubtitle(new Subtitle("Journal of Cloud Spotting"));
         OrcidWork work1 = createWork1(workTitle1);
+        WorkSource source = new WorkSource(TEST_ORCID);
+        work1.setWorkSource(source);
         orcidWorks.getOrcidWork().add(work1);
 
         WorkTitle workTitle2 = new WorkTitle();
