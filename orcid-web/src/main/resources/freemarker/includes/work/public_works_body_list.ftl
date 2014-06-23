@@ -46,7 +46,9 @@
 				        	</#if>
 				        </h3>
 				        <#if work.shortDescription??>
-				           <div>${work.shortDescription}</div>
+				           <#if work.shortDescription.value??>
+				           <div>${work.shortDescription.value}</div>
+				           </#if>
 				        </#if>
 				    </div>
 		        </#list>

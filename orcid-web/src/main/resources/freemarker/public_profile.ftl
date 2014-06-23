@@ -72,21 +72,30 @@
         </div>
     </div>
     <div class="col-md-9 right-aside">
-        <div class="workspace-right">
+        <div class="workspace-right" ng-controller="PersonalInfoCtrl">
         	<#if (deprecated)??>
 	        	<div class="alert alert-error readme">
 	        		<p><b><@orcid.msg 'public_profile.deprecated_account.1'/>&nbsp;<a href="${baseUriHttp}/${primaryRecord}">${baseUriHttp}/${primaryRecord}</a>&nbsp;<@orcid.msg 'public_profile.deprecated_account.2'/></b></p>
 	        	</div>
         	</#if>
-        	<div class="workspace-inner workspace-public">
+        	<div class="workspace-inner-public workspace-public">
         		<#if (isProfileEmpty)?? && isProfileEmpty>
         			<p class="margin-top-box"><b><@orcid.msg 'public_profile.empty_profile'/></b></p>
         		<#else>	            
 	                <#if (profile.orcidBio.biography.content)?? && (profile.orcidBio.biography.content)?has_content>
-	                	<div class="workspace-header-public no-border">
-	                		<h3>${springMacroRequestContext.getMessage("public_profile.h3PersonalInformation")}</h3>
-	                    	<p><b>${springMacroRequestContext.getMessage("public_profile.labelBiography")}</b><br /><div style="white-space: pre-wrap;">${(profile.orcidBio.biography.content)!}</div></p>
-	                    </div>
+		                <div class="workspace-accordion-header" style="position: relative;">
+	        			   <ul class="personal-inf-display">        			   		
+	        			   		<li>
+	        			   			<a href="" ng-click="toggleDisplayInfo()" class="toggle-text">
+		        						<i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':displayInfo==false}"></i>
+		        					</a>		        			   		
+	        			   			<a href="" ng-click="toggleDisplayInfo()" class="toggle-text">Personal Information</a></li>
+	        			   		</li>	        			   		
+	        			   </ul>
+	        			</div>	        			
+	        			<div class="workspace-accordion-content" ng-show="displayInfo">
+	        				<p><b>${springMacroRequestContext.getMessage("public_profile.labelBiography")}</b><br /><div style="white-space: pre-wrap;">${(profile.orcidBio.biography.content)!}</div></p>
+	        			</div>
 	                </#if>
 	                <#assign publicProfile = true />
 	                <#include "workspace_preview_activities.ftl"/>	                    	
