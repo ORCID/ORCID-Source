@@ -82,9 +82,9 @@ public class CustomEmailController extends BaseController {
     @RequestMapping(value = "/create.json", method = RequestMethod.POST)
     public @ResponseBody
     CustomEmailForm createCustomEmailForm(HttpServletRequest request, @RequestBody CustomEmailForm customEmailForm) {
-        String currentOrcid = getEffectiveUserOrcid();
-        customEmailForm.setErrors(new ArrayList<String>());
+        String currentOrcid = getEffectiveUserOrcid();        
         if(clientDetailsManager.exists(currentOrcid)) {
+            customEmailForm.setErrors(new ArrayList<String>());
             //Validate
             validateEmailType(customEmailForm);
             validateSender(customEmailForm);
@@ -128,6 +128,7 @@ public class CustomEmailController extends BaseController {
     CustomEmailForm updateCustomEmailForm(HttpServletRequest request, @RequestBody CustomEmailForm customEmailForm) {
         String currentOrcid = getEffectiveUserOrcid();
         if(clientDetailsManager.exists(currentOrcid)) {
+            customEmailForm.setErrors(new ArrayList<String>());
             //Validate
             validateEmailType(customEmailForm);
             validateSender(customEmailForm);
