@@ -5434,50 +5434,55 @@ function ClientEditCtrl($scope, $compile){
 		$scope.listing = false;	
 		$scope.viewing = true;
 		
-		// Update the selected redirect uri
-		$scope.updateSelectedRedirectUri();
+		// Update the selected redirect uri		
+		if($scope.clientDetails != null){
+			$scope.updateSelectedRedirectUri();
+		}
 	};
 	
 	$scope.updateSelectedRedirectUri = function() {
-		
-		var clientId = $scope.clientDetails.clientId.value;
-		var selectedClientSecret = $scope.clientDetails.clientSecret.value;
-		var scope = $scope.selectedScope;
-		var selectedRedirectUriValue = '';
-		if($scope.selectedRedirectUri != null) {
-			selectedRedirectUriValue = $scope.selectedRedirectUri.value.value;			
-		}
-					
-		//Build the google playground url example
+				
+		var clientId = '';
+		var selectedClientSecret = '';		
 		$scope.playgroundExample = '';
+		var scope = $scope.selectedScope;
 		
-		if($scope.googleUri == selectedRedirectUriValue) {
-			var example = $scope.googleExampleLink;
-			example = example.replace('[PUB_BASE_URI_ENCODE]', encodeURI(orcidVar.pubBaseUri));
-			example = example.replace('[BASE_URI_ENCODE]', encodeURI(getBaseUri()));
-			example = example.replace('[CLIENT_ID]', clientId);
-			example = example.replace('[CLIENT_SECRET]', selectedClientSecret);			
-			if(scope != '')
-				example = example.replace('[SCOPES]', scope);			
-			$scope.playgroundExample = example.replace(/,/g,'%20');
-		}		
-		
-		var example = $scope.authorizeURLTemplate;
-		example = example.replace('[PUB_BASE_URI]', orcidVar.pubBaseUri);
-		example = example.replace('[CLIENT_ID]', clientId);
-		example = example.replace('[REDIRECT_URI]', selectedRedirectUriValue);		
-		if(scope != ''){
-			example = example.replace('[SCOPES]', scope);			
+		if ($scope.clientDetails != null){
+			clientId = $scope.clientDetails.clientId.value;
+			selectedClientSecret = $scope.clientDetails.clientSecret.value;
 		}
 		
-		$scope.authorizeURL = example.replace(/,/g,'%20');	//replacing ,	
+		if($scope.selectedRedirectUri.length != 0) {
+			selectedRedirectUriValue = $scope.selectedRedirectUri.value.value;	
 		
-		// rebuild sample Auhtroization Curl
-		var sampleCurl = $scope.sampleAuthCurlTemplate;
-		$scope.sampleAuthCurl = sampleCurl.replace('[CLIENT_ID]', clientId)
-		    .replace('[CLIENT_SECRET]', selectedClientSecret)
-		    .replace('[PUB_BASE_URI]', orcidVar.pubBaseUri)
-		    .replace('[REDIRECT_URI]', selectedRedirectUriValue);
+			if($scope.googleUri == selectedRedirectUriValue) {
+				var example = $scope.googleExampleLink;
+				example = example.replace('[PUB_BASE_URI_ENCODE]', encodeURI(orcidVar.pubBaseUri));
+				example = example.replace('[BASE_URI_ENCODE]', encodeURI(getBaseUri()));
+				example = example.replace('[CLIENT_ID]', clientId);
+				example = example.replace('[CLIENT_SECRET]', selectedClientSecret);			
+				if(scope != '')
+					example = example.replace('[SCOPES]', scope);			
+				$scope.playgroundExample = example.replace(/,/g,'%20');
+			}		
+			
+			var example = $scope.authorizeURLTemplate;
+			example = example.replace('[PUB_BASE_URI]', orcidVar.pubBaseUri);
+			example = example.replace('[CLIENT_ID]', clientId);
+			example = example.replace('[REDIRECT_URI]', selectedRedirectUriValue);		
+			if(scope != ''){
+				example = example.replace('[SCOPES]', scope);			
+			}
+			
+			$scope.authorizeURL = example.replace(/,/g,'%20');	//replacing ,	
+			
+			// rebuild sample Auhtroization Curl
+			var sampleCurl = $scope.sampleAuthCurlTemplate;
+			$scope.sampleAuthCurl = sampleCurl.replace('[CLIENT_ID]', clientId)
+			    .replace('[CLIENT_SECRET]', selectedClientSecret)
+			    .replace('[PUB_BASE_URI]', orcidVar.pubBaseUri)
+			    .replace('[REDIRECT_URI]', selectedRedirectUriValue);
+		}
 	};
 	
 	$scope.showViewLayout = function() {		
