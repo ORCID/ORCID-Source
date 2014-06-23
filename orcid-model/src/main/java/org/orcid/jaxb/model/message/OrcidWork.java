@@ -449,15 +449,14 @@ public class OrcidWork implements VisibilityType, Activity, Serializable {
             List<WorkExternalIdentifier> thisExternalIdentifiers = this.getWorkExternalIdentifiers().getWorkExternalIdentifier();
             boolean sharedExtId = false;
             
+            start:
             for(WorkExternalIdentifier thisId : thisExternalIdentifiers) {
                 for(WorkExternalIdentifier otherId : otherExternalIdentifiers) {
                     if(thisId.equals(otherId)) {
                         sharedExtId = true;
-                        break;
+                        break start;
                     }
                 }
-                if(sharedExtId)
-                    break;
             }
             
             if(!sharedExtId)

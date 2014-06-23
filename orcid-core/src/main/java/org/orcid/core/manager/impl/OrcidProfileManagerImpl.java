@@ -1081,8 +1081,11 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                 for (OrcidWork orcidWork : existingOrcidWorksSet) {
                     if (orcidWork.isDuplicated(updatedWork)) {
                         // Update the existing work
-                        WorkEntity updatedWorkEntity = mergeIntoAWorkEntity(orcidWork, updatedWork);
-                        workDao.persist(updatedWorkEntity);
+                        long workId = Long.valueOf(orcidWork.getPutCode());
+                        WorkEntity workEntity = workDao.find(workId);
+                        workEntity.clean();
+                        workEntity = jaxb2JpaAdapter.getWorkEntity(updatedWork, workEntity);
+                        workDao.persist(workEntity);                        
                         // Since it was already updated, remove it from the list of updated works
                         updatedWorkIterator.remove();
                         break;
@@ -1090,30 +1093,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                 }
             }
         }
-    }
-    
-    /**
-     * Merges two orcid work objects into a single WorkEntity object
-     * The first orcid work should be an existing work with a put code assinged
-     * The second orcid work should be a work containing the updated information
-     * The result will be a WorkEntity with a put code and all updated information
-     * @param existing
-     *          Must contain a put code
-     * @param updated
-     * @return WorkEntity containing the put code of the existing work and the information of the updated work
-     * */
-    private WorkEntity mergeIntoAWorkEntity(OrcidWork existing, OrcidWork updated) {
-        WorkEntity workEntity = new WorkEntity();
-        //If there is no ID on the existing work, thow an exception
-        if(PojoUtil.isEmpty(existing.getPutCode()))
-            throw new IllegalArgumentException("Existing works must have a putcode assigned to it");
-        // Keep the work id from the existing work
-        workEntity.setId(Long.valueOf(existing.getPutCode()));
-        
-        //Update all other information
-        workEntity = jaxb2JpaAdapter.getWorkEntity(updated, workEntity);
-        return workEntity;
-    }
+    }        
     
     /**
      * Checks if the list of updated works contains any duplicated external identifier, if so, it will throw an exception
