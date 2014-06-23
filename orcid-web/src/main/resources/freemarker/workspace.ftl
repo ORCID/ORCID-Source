@@ -167,7 +167,7 @@
 		            </div>
 		       	</div>
 	       	</div>
-	       	
+	       	<!-- Websites -->
 	       	<div class="websites-box">
 		       	<div ng-controller="WebsitesCtrl" class="websites-controller">
 		        	<div class="profile-header">
@@ -207,15 +207,24 @@
 		        	</div>
 		       	</div>
 	       	</div>
-	       	
+	       	<!-- External Identifiers -->
+       		
        		<div ng-controller="ExternalIdentifierCtrl" ng-hide="!externalIdentifiersPojo.externalIdentifiers.length" ng-cloak>	       			
        			<p><strong><@orcid.msg 'public_profile.labelOtherIDs'/></strong></p>
-       			<div ng-repeat='externalIdentifier in externalIdentifiersPojo.externalIdentifiers'>
-		        			<span ng-hide="externalIdentifier.externalIdUrl">{{externalIdentifier.externalIdCommonName.content}} {{externalIdentifier.externalIdReference.content}}</span>
-		        			<span ng-show="externalIdentifier.externalIdUrl"><a href="{{externalIdentifier.externalIdUrl.value}}" target="_blank">{{externalIdentifier.externalIdCommonName.content}} {{externalIdentifier.externalIdReference.content}}</a></span>
-			   				<a ng-click="deleteExternalIdentifier($index)" class="glyphicon glyphicon-trash grey"></a>       			
+       			<div class="row" id="external-identifiers">
+	       			<div ng-repeat='externalIdentifier in externalIdentifiersPojo.externalIdentifiers'>
+	       				<div class="col-md-10 col-sm-10 col-xs-10">	       						
+			        			<span ng-hide="externalIdentifier.externalIdUrl">{{externalIdentifier.externalIdCommonName.content}} {{externalIdentifier.externalIdReference.content}}</span>
+			        			<span ng-show="externalIdentifier.externalIdUrl"><a href="{{externalIdentifier.externalIdUrl.value}}" target="_blank">{{externalIdentifier.externalIdCommonName.content}} {{externalIdentifier.externalIdReference.content}}</a></span>
+			        	</div>
+			        	<div class="col-md-2 col-sm-2 col-xs-2">
+				   			<a ng-click="deleteExternalIdentifier($index)" class="glyphicon glyphicon-trash grey right"></a>
+				   		</div>       			
+	       			</div>
        			</div>
-			</div>													    
+       			
+			</div>
+																    
 	        <#if RequestParameters['OldPersonal']??>	        
 				<p class="hoover-white-fonts">	       
 		       		<a href="<@spring.url '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a>

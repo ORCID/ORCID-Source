@@ -4088,6 +4088,21 @@ ul.sso-options li span{
 	clear: both;
 }
 
+.public-profile #external-identifiers{ /* Overwriting Bootstrap row margins*/
+	margin-left: 0;
+	margin-right: 0;	
+}
+
+.public-profile #external-identifiers .col-md-10{
+	margin: 0;
+	padding: 0;
+}
+
+.public-profile #external-identifiers .col-md-2{
+	padding-right: 5px;
+}
+
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 		
@@ -5213,6 +5228,10 @@ ul.sso-options li span{
 	.other-names-box input,
 	.keyword-box input{
 		width: 96%;
+	}
+	
+	.public-profile #external-identifiers .col-md-2{
+		padding-right: 8px;
 	}	
 }
 
