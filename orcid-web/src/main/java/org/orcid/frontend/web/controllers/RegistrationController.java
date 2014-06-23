@@ -695,7 +695,7 @@ public class RegistrationController extends BaseController {
         }
 
         String securityAnswer = retrievedProfile.getSecurityQuestionAnswer();
-        if (!changeSecurityQuestionForm.getSecurityQuestionAnswer().equalsIgnoreCase(securityAnswer)) {
+        if (!changeSecurityQuestionForm.getSecurityQuestionAnswer().trim().equalsIgnoreCase(securityAnswer.trim())) {
             ModelAndView errorView = buildAnswerSecurityQuestionView(encryptedEmail, redirectAttributes);
             errorView.addObject("securityQuestionIncorrect", true);
             return errorView;
