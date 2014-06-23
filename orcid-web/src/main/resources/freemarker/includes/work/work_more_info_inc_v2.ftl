@@ -75,7 +75,7 @@
 				<div class="versions bottomBuffer">
 					<strong>Versions</strong>
 					<ul>
-					    <li ng-repeat="work in group.works" ng-class="work.putCode.value == group.activePutCode ? 'current-version' : ''">
+					    <li ng-repeat="work in group.activities" ng-class="work.putCode.value == group.activePutCode ? 'current-version' : ''">
 					       <span class="glyphicon glyphicon-chevron-right"></span><a ng-click="moreInfo[work.putCode.value] = true; group.activePutCode = work.putCode.value" ng-bind="worksSrvc.details[work.putCode.value].workSourceName.value"></a><span class="glyphicon glyphicon-globe privacy" ng-show="work.putCode.value == group.defaultPutCode"></span>
 					    </li>
 					</ul>

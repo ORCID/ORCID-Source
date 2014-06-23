@@ -946,7 +946,6 @@ select {
 	width: 100%;
 }
 
-/* Mobile menu icon */
 .header .navigation>.mobile-button {
 	display: none;
 }
@@ -3842,6 +3841,8 @@ ul.sso-options li span{
 	background: #EFEFEF;
 	padding: 10px;
 	margin-bottom: 10px;
+	width: 100%;
+	float: left;
 }
 
 .websites-edit, .keywords-edit, .other-names-edit, .names-edit {
@@ -3849,7 +3850,6 @@ ul.sso-options li span{
 	padding: 10px;
 	margin-bottom: 10px;
 }
-
 
 .websites-edit input {
 	width: 95px;
@@ -3863,6 +3863,8 @@ ul.sso-options li span{
 	background: #EFEFEF;
 	padding: 10px;
 	margin-bottom: 10px;
+	float: left;
+	width: 100%;	
 }
 
 .country-controller #country{
@@ -3997,6 +3999,10 @@ ul.sso-options li span{
 	word-break: normal;
 }
 
+.wrap{
+	word-break: break-word;
+}
+
 .small-box{
 	float:left;
 	width: 25%;	
@@ -4069,6 +4075,33 @@ ul.sso-options li span{
 .full-width-input{
 	width: 100% !important;
 }
+
+.website-url{
+	word-wrap: break-word;
+	padding-right: 5px;
+}
+
+.profile-header{
+	display: block;
+	width:100%;
+	float: left;
+	clear: both;
+}
+
+.public-profile #external-identifiers{ /* Overwriting Bootstrap row margins*/
+	margin-left: 0;
+	margin-right: 0;	
+}
+
+.public-profile #external-identifiers .col-md-10{
+	margin: 0;
+	padding: 0;
+}
+
+.public-profile #external-identifiers .col-md-2{
+	padding-right: 5px;
+}
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
@@ -5195,6 +5228,10 @@ ul.sso-options li span{
 	.other-names-box input,
 	.keyword-box input{
 		width: 96%;
+	}
+	
+	.public-profile #external-identifiers .col-md-2{
+		padding-right: 8px;
 	}	
 }
 

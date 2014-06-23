@@ -34,7 +34,7 @@
 	        		<!-- Privacy bar -->
 					<ul class="workspace-private-toolbar">
 					 	<li>
-					 		<a href="" class="toolbar-button edit-item-button">
+					 		<a class="toolbar-button edit-item-button" ng-click="openEditWork(group.getActive().putCode.value)">
 					 			<span class="glyphicon glyphicon-pencil edit-option-toolbar" title=""></span>
 					 		</a>	
 					 	</li>					 	
@@ -93,7 +93,7 @@
 			<div class="col-md-3 col-sm-3">
 				<ul class="validations-versions nav nav-pills nav-stacked">
 					<li><a href=""><span class="glyphicon glyphicon-ok green"></span><strong></strong><span class="badge pull-right blue">0</span>Validated</a></li>
-					<li><a href=""><span class="glyphicon glyphicon-file green"></span><span class="badge pull-right blue" ng-bind="group.worksCount"></span>Versions</a></li> <!-- for non versions use class 'opaque' instead green -->
+					<li><a href=""><span class="glyphicon glyphicon-file green"></span><span class="badge pull-right blue" ng-bind="group.activitiesCount"></span>Versions</a></li> <!-- for non versions use class 'opaque' instead green -->
 				</ul>
 			</div>
 		</div>        
