@@ -373,6 +373,46 @@ var GroupedActivities = function(type) {
 	this.dateSortString;
 };
 
+GroupedActivities.prototype.add = function(activity) {
+    var identifiersPath = null;
+    if (this.type == 'abbrWork') identifiersPath = 'workExternalIdentifiers';
+	if (true) { 
+		this.activePutCode = activity.putCode.value;
+		this.defaultPutCode = activity.putCode.value;
+		this.dateSortString = activity.dateSortString;
+	}
+	for (var idx in activity[identifiersPath])
+		this.addKey(this.key(activity[identifiersPath][idx]));
+	this.activities[activity.putCode.value] = activity;
+	this.activitiesCount++;
+};
+
+GroupedActivities.prototype.addKey = function(key) {
+	if (this.hasKey(key)) return;
+	this._keySet[key] = true;
+	return;
+};
+
+GroupedActivities.prototype.getActive = function() {
+	return this.activities[this.activePutCode];
+};
+
+GroupedActivities.prototype.getByPut = function(putCode) {
+	return this.activities[putCode];
+};
+
+GroupedActivities.prototype.hasKey = function(key) {
+	if (key in this._keySet)
+		return true;
+	return false;
+};
+
+GroupedActivities.prototype.hasPut = function(putCode) {
+	   if (this.activities[putCode] !== undefined)
+				return true;
+		return false;
+};
+
 GroupedActivities.prototype.key = function(activityIdentifiers) {
 	var idPath;
 	var idTypePath;
@@ -383,19 +423,6 @@ GroupedActivities.prototype.key = function(activityIdentifiers) {
 	var key = activityIdentifiers[idTypePath] ? activityIdentifiers[idTypePath].value : ''; 
 	key += activityIdentifiers[idPath] != null ? activityIdentifiers[idPath].value : ''; 
 	return key;
-};
-
-
-GroupedActivities.prototype.hasKey = function(key) {
-	if (key in this._keySet)
-		return true;
-	return false;
-};
-
-GroupedActivities.prototype.addKey = function(key) {
-	if (this.hasKey(key)) return;
-	this._keySet[key] = true;
-	return;
 };
 
 GroupedActivities.prototype.keyMatch = function(activity) {
@@ -409,34 +436,6 @@ GroupedActivities.prototype.keyMatch = function(activity) {
 	return false;
 };
 
-GroupedActivities.prototype.add = function(activities) {
-    var identifiersPath = null;
-    if (this.type == 'abbrWork') identifiersPath = 'workExternalIdentifiers';
-	if (true) { 
-		this.activePutCode = activities.putCode.value;
-		this.defaultPutCode = activities.putCode.value;
-		this.dateSortString = activities.dateSortString;
-	}
-	for (var idx in activities[identifiersPath])
-		this.addKey(this.key(activities[identifiersPath][idx]));
-	this.activities[activities.putCode.value] = activities;
-	this.activitiesCount++;
-};
-
-GroupedActivities.prototype.hasPut = function(putCode) {
-   if (this.activities[putCode] !== undefined)
-			return true;
-	return false;
-};
-
-GroupedActivities.prototype.getActive = function() {
-	return this.activities[this.activePutCode];
-};
-
-GroupedActivities.prototype.getByPut = function(putCode) {
-	return this.activities[putCode];
-};
-
 GroupedActivities.prototype.rmByPut = function(putCode) {
 	var activities =  this.activities[putCode];
 	delete this.activities[putCode];
@@ -444,14 +443,52 @@ GroupedActivities.prototype.rmByPut = function(putCode) {
 	return activities;
 };
 
+GroupedActivities.prototype.updateDefault = function(putsArray) {
+	this.defaultPutCode == undefined;
+	for (var idx in putsArray) {
+		if (this.hasPut(putsArray[idx])) {
+			this.defaultPutCode = putsArray[idx];
+			break;
+		};
+	};
+	// if we don't have a default select the first putCode
+	if (this.defaultPutCode == undefined) 
+		if (this.activitiesCount > 0)
+			for (var idx in activities) {
+				this.defaultPutCode = idx;
+			};
+};
+
+var ActivitesOrder = function() {
+	// this is a set that 
+	// dictates the order of activities
+	// an element with the lowest index 
+	// for any group should be the that appears 
+	// first for the group
+	//
+	// the lose coupling allows us
+	// to update which work shows first
+	// without having to update every work
+	this.putsArray = new Array();
+};
+
+ActivitesOrder.prototype.putFirst = function(putCode) {
+	var index = putsOrder.indexOf(putCode);
+	if (index >= 0)
+		putsArray.splice(index, 1);
+	putsArray.unshift(putCode);
+};
+
 
 orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 	var serv = {
 			bibtexJson: {},
+			constants: { 'access_type': { 'USER': 'user', 'ANONYMOUS': 'anonymous'}},
 			groups: new Array(),
 			loading: false,
 			loadingDetails: false,
-			details: {},
+			details: {}, // we should think about putting details in the 
+			activitesOrder: new ActivitesOrder(),
 			worksToAddIds: null,
 			addBibtexJson: function(dw) {
 				if (dw.citation && dw.citation.citationType && dw.citation.citationType.value == 'bibtex') {
@@ -463,7 +500,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 					};
 				};
 			},
-		    addAbbrWorkToScope: function(worksUrl) {
+		    addAbbrWorksToScope: function(worksUrl) {
 		    	if(serv.worksToAddIds.length != 0 ) {
 					serv.loading = true;
 					var workIds = serv.worksToAddIds.splice(0,20).join();
@@ -498,7 +535,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 							} else {
 								$rootScope.$apply();					
 								setTimeout(function(){
-									serv.addAbbrWorkToScope(worksUrl);
+									serv.addAbbrWorksToScope(worksUrl);
 								},50);
 							}
 						}
@@ -524,35 +561,9 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 			    	console.log("Error fetching blank work");
 			    });
 			},
-			getEditable: function(putCode, callback) {
-				// first check if they are the current source
-				var work = serv.getDetails(putCode, 'private', function(data) {
-					if (data.workSource.value == orcidVar.orcidId)
-						callback(data);
-					else
-						serv.getGroupDetails(putCode, 'private', function () {
-							// in this case we want to open their version
-							// if they don't have a version yet then copy
-							// the current one
-							var bestMatch = null;
-							for (var idx in serv.details)
-								if (serv.details[idx].workSource.value == orcidVar.orcidId) {
-									bestMatch = serv.details[idx]; 
-									break;
-								}	
-							if (bestMatch == null) {
-								bestMatch = JSON.decode(JSON.encode(serv.details[putCode]));
-								bestMatch.workSource = null;
-								bestMatch.workName = null;
-								bestMatch.putCode = null;
-							}
-						    callback(bestMatch);
-						});
-				});
-			},
 			getDetails: function(putCode, type, callback) {
 				var url = getBaseUri() + '/' + orcidVar.orcidId + '/getWorkInfo.json?workId='; // public
-				if (type == 'private') 
+				if (type == serv.constants.access_type.USER) 
 					var url = getBaseUri() + '/works/getWorkInfo.json?workId=';
 				if(serv.details[putCode] == undefined) {		
 					$.ajax({
@@ -573,6 +584,32 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 				} else {
 					if (callback != undefined) callback(serv.details[putCode]);
 				};
+			},
+			getEditable: function(putCode, callback) {
+				// first check if they are the current source
+				var work = serv.getDetails(putCode, serv.constants.access_type.USER, function(data) {
+					if (data.workSource.value == orcidVar.orcidId)
+						callback(data);
+					else
+						serv.getGroupDetails(putCode, serv.constants.access_type.USER, function () {
+							// in this case we want to open their version
+							// if they don't have a version yet then copy
+							// the current one
+							var bestMatch = null;
+							for (var idx in serv.details)
+								if (serv.details[idx].workSource.value == orcidVar.orcidId) {
+									bestMatch = serv.details[idx]; 
+									break;
+								}	
+							if (bestMatch == null) {
+								bestMatch = JSON.decode(JSON.encode(serv.details[putCode]));
+								bestMatch.workSource = null;
+								bestMatch.workName = null;
+								bestMatch.putCode = null;
+							}
+						    callback(bestMatch);
+						});
+				});
 			},
 			getGroup: function(putCode) {
 				for (var idx in serv.groups) {
@@ -597,19 +634,19 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 				
 				popFunct();
 			},
-			getWork: function(putCode) {
-				for (var idx in serv.groups) {
-						if (serv.groups[idx].hasPut(putCode))
-							return serv.groups[idx].getByPut(putCode);				
-				}
-				return null;
-			},
 			getGroupWorks: function(putCode) {
 				var group = serv.getGroup(putCode);
 				for (var idx in group.activities) {
 					var curPutCode = group.activities[idx].putCode.value;
 					serv.deleteWork(curPutCode);
 				}
+			},
+			getWork: function(putCode) {
+				for (var idx in serv.groups) {
+						if (serv.groups[idx].hasPut(putCode))
+							return serv.groups[idx].getByPut(putCode);				
+				}
+				return null;
 			},
 			deleteWork: function(putCode) {
 				var idx;
@@ -3132,7 +3169,7 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 		return info;
 	};
 	$scope.worksSrvc.worksToAddIds = orcidVar.workIds;	
-	$scope.worksSrvc.addAbbrWorkToScope(getBaseUri() + '/' + orcidVar.orcidId +'/works.json?workIds=');
+	$scope.worksSrvc.addAbbrWorksToScope(getBaseUri() + '/' + orcidVar.orcidId +'/works.json?workIds=');
 	
 	// remove once grouping is live
 	$scope.moreInfoClick = function(work, $event) {
@@ -3166,7 +3203,7 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 		//Display the popover
 		$(event.target).next().css('display','inline');		
 		if($scope.worksSrvc.details[putCode] == null) {		
-			$scope.worksSrvc.getGroupDetails(putCode, 'public');
+			$scope.worksSrvc.getGroupDetails(putCode, worksSrvc.constants.access_type.ANONYMOUS);
 		} else {
 			$(event.target).next().css('display','inline');
 		}
@@ -3361,7 +3398,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	        dataType: 'json',
 	        success: function(data) {
 	        	$scope.worksSrvc.worksToAddIds = data;
-	        	$scope.worksSrvc.addAbbrWorkToScope(getBaseUri() + '/works/works.json?workIds=');
+	        	$scope.worksSrvc.addAbbrWorksToScope(getBaseUri() + '/works/works.json?workIds=');
 	        	$scope.$apply();
 	        }
 		}).fail(function(){
@@ -3411,7 +3448,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		$scope.moreInfoOpen = true;
 		//Display the popover
 		$(event.target).next().css('display','inline');	
-		$scope.worksSrvc.getGroupDetails(putCode, 'private');
+		$scope.worksSrvc.getGroupDetails(putCode, worksSrvc.constants.access_type.USER);
 	};			 
 
 	
@@ -3422,7 +3459,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		//Display the popover
 		$(event.target).next().css('display','inline');	
 		if($scope.worksSrvc.details[putCode] == null) {		
-			$scope.worksSrvc.getGroupDetails(putCode, 'private');
+			$scope.worksSrvc.getGroupDetails(putCode, worksSrvc.constants.access_type.USER);
 		} else {
 			$(event.target).next().css('display','inline');
 		}
