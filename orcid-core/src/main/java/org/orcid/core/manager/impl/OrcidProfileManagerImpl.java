@@ -122,6 +122,7 @@ import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.ProfileFundingDao;
 import org.orcid.persistence.dao.ProfileWorkDao;
+import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.EmailEventEntity;
 import org.orcid.persistence.jpa.entities.EmailEventType;
@@ -133,6 +134,7 @@ import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
+import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.NullUtils;
@@ -227,6 +229,9 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
     @Resource
     private OrcidJaxbCopyManager orcidJaxbCopyManager;
+    
+    @Resource 
+    private WorkDao workDao;
 
     private int claimWaitPeriodDays = 10;
 
@@ -1075,12 +1080,39 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                 OrcidWork updatedWork = updatedWorkIterator.next();
                 for (OrcidWork orcidWork : existingOrcidWorksSet) {
                     if (orcidWork.isDuplicated(updatedWork)) {
+                        // Update the existing work
+                        WorkEntity updatedWorkEntity = mergeIntoAWorkEntity(orcidWork, updatedWork);
+                        workDao.persist(updatedWorkEntity);
+                        // Since it was already updated, remove it from the list of updated works
                         updatedWorkIterator.remove();
                         break;
                     }
                 }
             }
         }
+    }
+    
+    /**
+     * Merges two orcid work objects into a single WorkEntity object
+     * The first orcid work should be an existing work with a put code assinged
+     * The second orcid work should be a work containing the updated information
+     * The result will be a WorkEntity with a put code and all updated information
+     * @param existing
+     *          Must contain a put code
+     * @param updated
+     * @return WorkEntity containing the put code of the existing work and the information of the updated work
+     * */
+    private WorkEntity mergeIntoAWorkEntity(OrcidWork existing, OrcidWork updated) {
+        WorkEntity workEntity = new WorkEntity();
+        //If there is no ID on the existing work, thow an exception
+        if(PojoUtil.isEmpty(existing.getPutCode()))
+            throw new IllegalArgumentException("Existing works must have a putcode assigned to it");
+        // Keep the work id from the existing work
+        workEntity.setId(Long.valueOf(existing.getPutCode()));
+        
+        //Update all other information
+        workEntity = jaxb2JpaAdapter.getWorkEntity(updated, workEntity);
+        return workEntity;
     }
     
     /**
