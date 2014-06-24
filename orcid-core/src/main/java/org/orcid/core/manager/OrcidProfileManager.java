@@ -18,9 +18,11 @@ package org.orcid.core.manager;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -371,5 +373,7 @@ public interface OrcidProfileManager {
     public void addLocale(OrcidProfile orcidProfile, Locale locale);
 
     public void processProfilePendingIndexingInTransaction(final String orcid);
+    
+    public void checkWorkExternalIdentifiersAreNotDuplicated(List<OrcidWork> newOrcidWorksList, List<OrcidWork> existingWorkList);
 
 }

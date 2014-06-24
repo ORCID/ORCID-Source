@@ -26,6 +26,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
@@ -86,6 +87,7 @@ import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkExternalIdentifier;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierId;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.message.WorkSource;
 import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.persistence.dao.GenericDao;
@@ -118,6 +120,8 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
 
     protected static final String TEST_ORCID_WITH_WORKS = "4444-4444-4444-4443";
 
+    private int currentWorkId = 0;
+    
     @Resource
     private OrcidProfileManager orcidProfileManager;
 
@@ -1179,9 +1183,127 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
             orcidProfileManager.addOrcidWorks(profile);
             fail("This should not pass since we add works with duplicated external identifiers");
         } catch(IllegalArgumentException iae) {
-            assertEquals("A work with identifier shared-doi1 already exists in your record.", iae.getMessage());
+            assertEquals("Works \"Test Title # 2\" and \"Test Title # 3\" have the same external id \"shared-doi1\"", iae.getMessage());
         }
         
+    }
+    
+    @Test
+    @Transactional
+    public void testCheckWorkExternalIdentifiersAreNotDuplicated1() {
+        List<OrcidWork> newOrcidWorksList = new ArrayList<OrcidWork>();
+        List<OrcidWork> existingWorkList = new ArrayList<OrcidWork>();
+        
+        OrcidWork newWork1 = getOrcidWork("work1", false);
+        OrcidWork newWork2 = getOrcidWork("work2", false);
+        OrcidWork existingWork4 = getOrcidWork("work4", true);
+        OrcidWork existingWork5 = getOrcidWork("work5", true);
+        
+        //Check no duplicates at all
+        newOrcidWorksList.add(newWork1);
+        newOrcidWorksList.add(newWork2);
+        existingWorkList.add(existingWork4);
+        existingWorkList.add(existingWork5);
+        try {
+            orcidProfileManager.checkWorkExternalIdentifiersAreNotDuplicated(newOrcidWorksList, existingWorkList);
+        } catch(Exception e){
+            fail();
+        }
+    }
+    
+    @Test
+    @Transactional
+    public void testCheckWorkExternalIdentifiersAreNotDuplicated2() {
+        List<OrcidWork> newOrcidWorksList = new ArrayList<OrcidWork>();
+        List<OrcidWork> existingWorkList = new ArrayList<OrcidWork>();
+        
+        OrcidWork newWork1 = getOrcidWork("work1", false);
+        OrcidWork newWork2 = getOrcidWork("work2", false);
+        OrcidWork newWork3 = getOrcidWork("work3", false);
+        
+        OrcidWork existingWork3 = getOrcidWork("work3", true);
+        OrcidWork existingWork4 = getOrcidWork("work4", true);
+        OrcidWork existingWork5 = getOrcidWork("work5", true);
+        
+        //Check duplicates in new works and existing works
+        newOrcidWorksList.add(newWork1);
+        newOrcidWorksList.add(newWork2);
+        existingWorkList.add(existingWork4);
+        existingWorkList.add(existingWork5);
+        newOrcidWorksList.add(newWork3);
+        existingWorkList.add(existingWork3);
+        try {
+            orcidProfileManager.checkWorkExternalIdentifiersAreNotDuplicated(newOrcidWorksList, existingWorkList);
+            fail();
+        } catch(IllegalArgumentException iae) {
+            assertEquals("Works \"Title for work3->updated\" and \"Title for work3\"(put-code '" + existingWork3.getPutCode() + "') have the same external id \"doi-work3\"", iae.getMessage());
+        }
+    }
+    
+    @Test
+    @Transactional
+    public void testCheckWorkExternalIdentifiersAreNotDuplicated3() {
+        List<OrcidWork> newOrcidWorksList = new ArrayList<OrcidWork>();
+        List<OrcidWork> existingWorkList = new ArrayList<OrcidWork>();
+        
+        OrcidWork newWork1 = getOrcidWork("work1", false);
+        OrcidWork newWork2 = getOrcidWork("work2", false);
+        OrcidWork newWork3 = getOrcidWork("work3", false);
+        OrcidWork newWork3_fixed = getOrcidWork("work3", false);
+        WorkTitle updatedTitle = new WorkTitle();
+        updatedTitle.setTitle(new Title("updated title"));
+        newWork3_fixed.setWorkTitle(updatedTitle);
+        
+        //Check #3: Check duplicates in new works
+        newOrcidWorksList.add(newWork1);
+        newOrcidWorksList.add(newWork2);
+        newOrcidWorksList.add(newWork3);
+        newOrcidWorksList.add(newWork3_fixed);
+        try {
+            orcidProfileManager.checkWorkExternalIdentifiersAreNotDuplicated(newOrcidWorksList, existingWorkList);
+            fail();
+        } catch(IllegalArgumentException iae) {
+            assertEquals("Works \"Title for work3->updated\" and \"updated title\" have the same external id \"doi-work3\"", iae.getMessage());
+        }
+    }
+    
+    private OrcidWork getOrcidWork(String workName, boolean isExistingWork) {
+        OrcidWork orcidWork = new OrcidWork();
+        if(isExistingWork) {
+            orcidWork.setPutCode(String.valueOf(currentWorkId));
+            currentWorkId += 1;
+        }
+        //Set title
+        WorkTitle title = new WorkTitle();
+        if(isExistingWork)
+            title.setTitle(new Title("Title for " + workName));            
+        else
+            title.setTitle(new Title("Title for " + workName + "->updated"));
+        orcidWork.setWorkTitle(title);
+        
+        //Set source
+        WorkSource workSource = new WorkSource(TEST_ORCID);
+        orcidWork.setWorkSource(workSource);
+        
+        //Set external identifiers
+        WorkExternalIdentifier extId1 = new WorkExternalIdentifier();
+        extId1.setWorkExternalIdentifierId(new WorkExternalIdentifierId("doi-" + workName));
+        extId1.setWorkExternalIdentifierType(WorkExternalIdentifierType.DOI);
+        
+        WorkExternalIdentifier extId2 = new WorkExternalIdentifier();
+        if(isExistingWork)
+            extId2.setWorkExternalIdentifierId(new WorkExternalIdentifierId("issn-" + workName));
+        else
+            extId2.setWorkExternalIdentifierId(new WorkExternalIdentifierId("issn-" + workName + "->updated"));
+        extId2.setWorkExternalIdentifierType(WorkExternalIdentifierType.ISSN);
+        
+        WorkExternalIdentifiers extIds = new WorkExternalIdentifiers();
+        extIds.getWorkExternalIdentifier().add(extId1);
+        extIds.getWorkExternalIdentifier().add(extId2);        
+        
+        orcidWork.setWorkExternalIdentifiers(extIds);
+        
+        return orcidWork;
     }
 
 }

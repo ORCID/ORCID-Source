@@ -1097,63 +1097,132 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     
     /**
      * Checks if the list of updated works contains any duplicated external identifier, if so, it will throw an exception
-     * The updatedOrcidWorksList MUST be deduped before getting into this method
+     * The newOrcidWorksList MUST be deduped before getting into this method
      * @param updatedOrcidWorksList the deduped list of works
      * @throws IllegalArgumentException if there is a duplicated external identifier
      * */
-    private void checkWorkExternalIdentifiersAreNotDuplicated(List<OrcidWork> newOrcidWorksList, List<OrcidWork> existingWorkList) {
-        List<OrcidWork> allWorks = new ArrayList<OrcidWork>();
-        // Add new works
-        if(newOrcidWorksList != null)
-            allWorks.addAll(newOrcidWorksList);
-        // Add old works
-        if(existingWorkList != null)
-            allWorks.addAll(existingWorkList);
-        
-        //Iterate over all works looking for duplicated external identifiers
-        //Follow the rules: 
+    public void checkWorkExternalIdentifiersAreNotDuplicated(List<OrcidWork> newOrcidWorksList, List<OrcidWork> existingWorkList) {
+        //Rules to define if two works have the same id:
         //1) If the source is the same and
         //2) any of the ext id matches 
         //3) but the tile is different
-        //Then, throw an exception
-        for(int i = 0; i < allWorks.size(); i++){
-            OrcidWork work = allWorks.get(i);
-            WorkSource workSource = work.getWorkSource();
-            // Look for works with the same source
-            for(int j = 0; j < allWorks.size(); j++) {
-                //Ignore if it is the same work
-                if(j != i) {
-                    OrcidWork workToCompare = allWorks.get(j);
-                    WorkSource workSourceToCompare = workToCompare.getWorkSource();
-                    // If the two works have the same source, compare their external identifiers
-                    if(isTheSameSource(workSource, workSourceToCompare)) {
-                        // If the work have external identifiers
-                        if(work.getWorkExternalIdentifiers() != null && work.getWorkExternalIdentifiers().getWorkExternalIdentifier() != null && !work.getWorkExternalIdentifiers().getWorkExternalIdentifier().isEmpty()) {
-                            // Compare each external identifier
-                            for(WorkExternalIdentifier workExtId : work.getWorkExternalIdentifiers().getWorkExternalIdentifier()) {
-                                //If the workToCompare have ext ids
-                                if(workToCompare.getWorkExternalIdentifiers() != null && workToCompare.getWorkExternalIdentifiers().getWorkExternalIdentifier() != null && !workToCompare.getWorkExternalIdentifiers().getWorkExternalIdentifier().isEmpty()) {
-                                    // Compare each ext ids, following the rules: 
-                                    for(WorkExternalIdentifier workToCompareExtId : workToCompare.getWorkExternalIdentifiers().getWorkExternalIdentifier()) {
-                                        // If the ext ids are the same
-                                        if(workExtId.equals(workToCompareExtId)){
-                                            // Compare the titles, if they are different, set it as duplicated
-                                            Title title = (work.getWorkTitle() == null || work.getWorkTitle().getTitle() == null) ? null : work.getWorkTitle().getTitle();
-                                            Title titleToCompare = (workToCompare.getWorkTitle() == null || workToCompare.getWorkTitle().getTitle() == null) ? null : workToCompare.getWorkTitle().getTitle();
+        //Then, if both works are already existing: Log an error message
+        //If any of the works is new, or both are new, throw an exception
+        
+        //First compare new works, to verify they don't share any ext id
+        //Since the new works comes from a single request, we know they are from the same source, so, we can skip the work source comparison
+        if(newOrcidWorksList != null){
+            for(int i = 0; i < newOrcidWorksList.size(); i++) {
+                OrcidWork newWork = newOrcidWorksList.get(i);
+                for(int j = 0; j < newOrcidWorksList.size(); j++) {
+                    //If they are not the same work
+                    if(i != j){
+                        OrcidWork newWorkToCompare = newOrcidWorksList.get(j);
+                        //If newWork have external identifiers
+                        if(newWork.getWorkExternalIdentifiers() != null && newWork.getWorkExternalIdentifiers().getWorkExternalIdentifier() != null && !newWork.getWorkExternalIdentifiers().getWorkExternalIdentifier().isEmpty()) {
+                            //For each external id on the outer work
+                            for(WorkExternalIdentifier workExtId : newWork.getWorkExternalIdentifiers().getWorkExternalIdentifier()) {
+                                if(newWorkToCompare.getWorkExternalIdentifiers() != null && newWorkToCompare.getWorkExternalIdentifiers().getWorkExternalIdentifier() != null && !newWorkToCompare.getWorkExternalIdentifiers().getWorkExternalIdentifier().isEmpty()) {
+                                    //Compare it against each external id in the inner work
+                                    for(WorkExternalIdentifier workExtIdToCompare : newWorkToCompare.getWorkExternalIdentifiers().getWorkExternalIdentifier()) {
+                                        //If the ext ids are the same
+                                        if(workExtId.equals(workExtIdToCompare)) {
+                                            Title title = (newWork.getWorkTitle() == null || newWork.getWorkTitle().getTitle() == null) ? null : newWork.getWorkTitle().getTitle();
+                                            Title titleToCompare = (newWorkToCompare.getWorkTitle() == null || newWorkToCompare.getWorkTitle().getTitle() == null) ? null : newWorkToCompare.getWorkTitle().getTitle();
                                             if(!isTheSameTitle(title, titleToCompare)) {
                                                 String extIdContent = (workExtId.getWorkExternalIdentifierId() == null || PojoUtil.isEmpty(workExtId.getWorkExternalIdentifierId().getContent())) ? "" : workExtId.getWorkExternalIdentifierId().getContent(); 
-                                                throw new IllegalArgumentException("A work with identifier " + extIdContent + " already exists in your record.");
-                                            }                                            
+                                                String title1 = (title == null) ? "" : title.getContent();
+                                                String title2 = (titleToCompare == null) ? "" : titleToCompare.getContent();
+                                                String errorMessage = String.format("Works \"%s\" and \"%s\" have the same external id \"%s\"", title1, title2, extIdContent);
+                                                throw new IllegalArgumentException(errorMessage);
+                                            }
                                         }
                                     }
                                 }
-                            } 
-                                    
+                            }
                         }
                     }
                 }
             }
-        }                
+        }
+        
+        //Then, if it already have works 
+        if(existingWorkList != null && existingWorkList.size() > 0) {
+            //Check for duplicates in existing works, if any is found, log it
+            for(int i = 0; i < existingWorkList.size(); i++) {
+                OrcidWork existingWork = existingWorkList.get(i);
+                WorkSource workSource = existingWork.getWorkSource();
+                for(int j = 0; j < existingWorkList.size(); j++) {
+                    //If it is not the same index
+                    if(i != j){
+                        OrcidWork existingWorkToCompare = existingWorkList.get(j);
+                        WorkSource workSourceToCompare = existingWorkToCompare.getWorkSource();
+                        //If both works have the same source
+                        if(isTheSameSource(workSource, workSourceToCompare)) {
+                            //If the work have external identifiers
+                            if(existingWork.getWorkExternalIdentifiers() != null && existingWork.getWorkExternalIdentifiers().getWorkExternalIdentifier() != null && !existingWork.getWorkExternalIdentifiers().getWorkExternalIdentifier().isEmpty()) {
+                                // Compare each external identifier
+                                for(WorkExternalIdentifier workExtId : existingWork.getWorkExternalIdentifiers().getWorkExternalIdentifier()) {
+                                    //If the workToCompare have ext ids
+                                    if(existingWorkToCompare.getWorkExternalIdentifiers() != null && existingWorkToCompare.getWorkExternalIdentifiers().getWorkExternalIdentifier() != null && !existingWorkToCompare.getWorkExternalIdentifiers().getWorkExternalIdentifier().isEmpty()) {
+                                        // Compare each ext ids, following the rules: 
+                                        for(WorkExternalIdentifier workToCompareExtId : existingWorkToCompare.getWorkExternalIdentifiers().getWorkExternalIdentifier()) {
+                                            // If the ext ids are the same
+                                            if(workExtId.equals(workToCompareExtId)){
+                                                // Compare the titles, if they are different, set it as duplicated
+                                                Title title = (existingWork.getWorkTitle() == null || existingWork.getWorkTitle().getTitle() == null) ? null : existingWork.getWorkTitle().getTitle();
+                                                Title titleToCompare = (existingWorkToCompare.getWorkTitle() == null || existingWorkToCompare.getWorkTitle().getTitle() == null) ? null : existingWorkToCompare.getWorkTitle().getTitle();
+                                                if(!isTheSameTitle(title, titleToCompare)) {
+                                                    String extIdContent = (workExtId.getWorkExternalIdentifierId() == null || PojoUtil.isEmpty(workExtId.getWorkExternalIdentifierId().getContent())) ? "" : workExtId.getWorkExternalIdentifierId().getContent(); 
+                                                    LOG.error("Works {} and {} have the same external identifier {}", new Object[] {existingWork.getPutCode(), existingWorkToCompare.getPutCode(), extIdContent});
+                                                }                                            
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            //Check for duplicates between the existing works and the new works
+            if(newOrcidWorksList != null){
+                for(OrcidWork orcidWork : newOrcidWorksList) {
+                    WorkSource workSource = orcidWork.getWorkSource();
+                    for(OrcidWork existingWork : existingWorkList) {
+                        WorkSource existingWorkSource = existingWork.getWorkSource();
+                        // If both works have the same source
+                        if(isTheSameSource(workSource, existingWorkSource)) {
+                            //If the new work have external identifiers
+                            if(orcidWork.getWorkExternalIdentifiers() != null && orcidWork.getWorkExternalIdentifiers().getWorkExternalIdentifier() != null && !orcidWork.getWorkExternalIdentifiers().getWorkExternalIdentifier().isEmpty()) {
+                                //For each external identifier in the new work
+                                for(WorkExternalIdentifier newExternalIdentifier : orcidWork.getWorkExternalIdentifiers().getWorkExternalIdentifier()) {
+                                    if(existingWork.getWorkExternalIdentifiers() != null && existingWork.getWorkExternalIdentifiers().getWorkExternalIdentifier() != null &&!existingWork.getWorkExternalIdentifiers().getWorkExternalIdentifier().isEmpty()) {
+                                        // Compare them against the existing identifiers
+                                        for(WorkExternalIdentifier existingExternalIdentifier : existingWork.getWorkExternalIdentifiers().getWorkExternalIdentifier()) {
+                                            //If the ext ids are the same
+                                            if(newExternalIdentifier.equals(existingExternalIdentifier)) {
+                                                // Compare the titles, if they are different, set it as duplicated
+                                                Title title = (orcidWork.getWorkTitle() == null || orcidWork.getWorkTitle().getTitle() == null) ? null : orcidWork.getWorkTitle().getTitle();
+                                                Title titleToCompare = (existingWork.getWorkTitle() == null || existingWork.getWorkTitle().getTitle() == null) ? null : existingWork.getWorkTitle().getTitle();
+                                                if(!isTheSameTitle(title, titleToCompare)) {
+                                                    String extIdContent = (existingExternalIdentifier.getWorkExternalIdentifierId() == null || PojoUtil.isEmpty(existingExternalIdentifier.getWorkExternalIdentifierId().getContent())) ? "" : existingExternalIdentifier.getWorkExternalIdentifierId().getContent(); 
+                                                    String title1 = (title == null) ? "" : title.getContent();
+                                                    String title2 = (titleToCompare == null) ? "" : titleToCompare.getContent();
+                                                    String errorMessage = String.format("Works \"%s\" and \"%s\"(put-code '%s') have the same external id \"%s\"", title1, title2, existingWork.getPutCode(), extIdContent);
+                                                    throw new IllegalArgumentException(errorMessage);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**
