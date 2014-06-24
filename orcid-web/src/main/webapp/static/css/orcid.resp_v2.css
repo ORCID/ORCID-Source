@@ -4283,6 +4283,31 @@ ul.workspace-submenu-options li a>span{
 	margin-top: 30px;
 }
 
+/* Versions */
+
+.more-info .versions .version-icon{
+	float: left;
+	width: 10%;
+}
+
+.more-info .versions .version-icon-privacy{
+	margin-top: 4px;
+}
+
+.more-info .versions .version-name{
+	float: left;
+	width: 80%;
+}
+
+.more-info .versions ul li{
+	display: block;
+	float: left;
+	border-bottom: 1px solid #FAFAFA;
+	padding: 5px;
+}
+
+
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 
