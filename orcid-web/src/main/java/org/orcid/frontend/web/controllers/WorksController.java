@@ -200,6 +200,8 @@ public class WorksController extends BaseWorkspaceController {
     public @ResponseBody
     Work getWork(HttpServletRequest request) {
         Work w = new Work();
+        OrcidProfile profile = getEffectiveProfile();
+        w.setVisibility(profile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault().getValue());
 
         // work title and subtitle
         Text wtt = new Text();
@@ -273,9 +275,6 @@ public class WorksController extends BaseWorkspaceController {
         Text disText = new Text();
         w.setShortDescription(disText);
 
-        OrcidProfile profile = getEffectiveProfile();
-        w.setVisibility(profile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault().getValue());
-
         // Language code
         Text lc = new Text();
         lc.setRequired(false);
@@ -287,6 +286,7 @@ public class WorksController extends BaseWorkspaceController {
         w.setCountryCode(new Text());
         w.setCountryName(new Text());
 
+        
         return w;
     }
 
