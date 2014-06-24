@@ -376,7 +376,7 @@ var GroupedActivities = function(type) {
 GroupedActivities.prototype.add = function(activity) {
     var identifiersPath = null;
     if (this.type == 'abbrWork') identifiersPath = 'workExternalIdentifiers';
-	if (true) { 
+	if (this.defaultPutCode == null) { 
 		this.activePutCode = activity.putCode.value;
 		this.defaultPutCode = activity.putCode.value;
 		this.dateSortString = activity.dateSortString;
@@ -459,26 +459,6 @@ GroupedActivities.prototype.updateDefault = function(putsArray) {
 			};
 };
 
-var ActivitesOrder = function() {
-	// this is a set that 
-	// dictates the order of activities
-	// an element with the lowest index 
-	// for any group should be the that appears 
-	// first for the group
-	//
-	// the lose coupling allows us
-	// to update which work shows first
-	// without having to update every work
-	this.putsArray = new Array();
-};
-
-ActivitesOrder.prototype.putFirst = function(putCode) {
-	var index = putsOrder.indexOf(putCode);
-	if (index >= 0)
-		putsArray.splice(index, 1);
-	putsArray.unshift(putCode);
-};
-
 
 orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 	var serv = {
@@ -488,7 +468,6 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 			loading: false,
 			loadingDetails: false,
 			details: {}, // we should think about putting details in the 
-			activitesOrder: new ActivitesOrder(),
 			worksToAddIds: null,
 			addBibtexJson: function(dw) {
 				if (dw.citation && dw.citation.citationType && dw.citation.citationType.value == 'bibtex') {
@@ -3290,11 +3269,6 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
     	var work = $scope.worksFromBibtex.splice(index, 1);
     	console.log(work[0]);
     	$scope.addWorkModal(work[0]);
-    };
-
-    $scope.rmWorkFromBibtex = function(work) {
-    	var index = $scope.worksFromBibtex.indexOf(work);
-    	$scope.worksFromBibtex.splice(index, 1);
     };
    
     $scope.openBibTextWizard = function () {

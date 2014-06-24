@@ -54,6 +54,7 @@ public class ProfileWorkEntity extends BaseEntity<ProfileWorkEntityPk> implement
     private WorkEntity work;
     private Date addedToProfileDate;
     private Visibility visibility;
+    private Long displayIndex; 
 
     @Override
     @Transient
@@ -149,6 +150,15 @@ public class ProfileWorkEntity extends BaseEntity<ProfileWorkEntityPk> implement
             return -1;
         }
         return work.compareTo(other.getWork());
+    }
+
+    @Column(name = "display_index")
+    public Long getDisplayIndex() {
+        return displayIndex;
+    }
+
+    public void setDisplayIndex(Long displayIndex) {
+        this.displayIndex = displayIndex;
     }
 
     public static class ChronologicallyOrderedProfileWorkEntityComparator implements Comparator<ProfileWorkEntity> {

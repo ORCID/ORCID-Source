@@ -192,6 +192,13 @@ public class WorksController extends BaseWorkspaceController {
 
         return workList;
     }
+    
+    @RequestMapping(value = "/makeMaxDisplayIndex.json", method = RequestMethod.GET)
+    public @ResponseBody
+    boolean makeMaxDisplayIndex(HttpServletRequest request, @RequestParam(value = "putCode") String putCode) {
+        OrcidProfile profile = getEffectiveProfile();
+        return profileWorkManager.makeMaxDisplayIndex(profile.getOrcidIdentifier().getPath(), putCode);
+    }
 
     /**
      * Returns a blank work

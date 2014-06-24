@@ -94,4 +94,8 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
     public boolean addProfileWork(String orcid, long workId, Visibility visibility, String sourceOrcid) {
         return profileWorkDao.addProfileWork(orcid, workId, visibility, sourceOrcid);
     }
+    
+    public boolean makeMaxDisplayIndex(String orcid, String workId) {
+        return profileWorkDao.makeMaxDisplayIndex(orcid, workId);
+    }
 }
