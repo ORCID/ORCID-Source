@@ -151,6 +151,11 @@ public class ProfileWorkEntity extends BaseEntity<ProfileWorkEntityPk> implement
         }
         return work.compareTo(other.getWork());
     }
+    
+    /*
+     * Dictates the display order for works (and versions of works)
+     * works with higher numbers should be displayed first. 
+     */
 
     @Column(name = "display_index")
     public Long getDisplayIndex() {
