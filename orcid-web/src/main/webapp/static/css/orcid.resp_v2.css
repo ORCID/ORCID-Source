@@ -4287,7 +4287,8 @@ ul.workspace-submenu-options li a>span{
 
 .more-info .versions .version-icon{
 	float: left;
-	width: 10%;
+	width: 15px;
+	display: block;	
 }
 
 .more-info .versions .version-icon-privacy{
@@ -4296,12 +4297,12 @@ ul.workspace-submenu-options li a>span{
 
 .more-info .versions .version-name{
 	float: left;
-	width: 80%;
+	width: 100%;
+	display: block;	
 }
 
 .more-info .versions ul li{
-	display: block;
-	float: left;
+	display: flex;	
 	border-bottom: 1px solid #FAFAFA;
 	padding: 5px;
 }

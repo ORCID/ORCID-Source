@@ -76,6 +76,7 @@
 					<strong>Versions</strong>
 					<ul>
 					    <li ng-repeat="work in group.activities" ng-class="work.putCode.value == group.activePutCode ? 'current-version' : ''">
+					       
 					       <div class="version-icon">
 					       		<span class="glyphicon glyphicon-chevron-right"></span>
 					       </div>
@@ -85,6 +86,7 @@
 					       <div class="version-icon version-icon-privacy">
 						       	<span class="glyphicon glyphicon-globe privacy" ng-show="work.putCode.value == group.defaultPutCode"></span>
 					       </div>
+					       
 					    </li>
 					</ul>
 				</div>
