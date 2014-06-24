@@ -500,14 +500,19 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 					};
 				};
 			},
-		    addAbbrWorksToScope: function(worksUrl) {
+		    addAbbrWorksToScope: function(type) {
+				if (type == serv.constants.access_type.USER) 
+					var url = getBaseUri() + '/works/works.json?workIds=';
+				else // use the anonymous url
+					var url = getBaseUri() + '/' + orcidVar.orcidId +'/works.json?workIds='; // public
+
 		    	if(serv.worksToAddIds.length != 0 ) {
 					serv.loading = true;
 					var workIds = serv.worksToAddIds.splice(0,20).join();
 					$.ajax({
-						url: worksUrl + workIds,
-						dataType: 'json',
-						success: function(data) {
+						'url': url + workIds,
+						'dataType': 'json',
+						'success': function(data) {
 							$rootScope.$apply(function(){ 
 								for (i in data) {
 									var dw = data[i];                            
@@ -535,7 +540,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 							} else {
 								$rootScope.$apply();					
 								setTimeout(function(){
-									serv.addAbbrWorksToScope(worksUrl);
+									serv.addAbbrWorksToScope(type);
 								},50);
 							}
 						}
@@ -562,9 +567,10 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 			    });
 			},
 			getDetails: function(putCode, type, callback) {
-				var url = getBaseUri() + '/' + orcidVar.orcidId + '/getWorkInfo.json?workId='; // public
 				if (type == serv.constants.access_type.USER) 
 					var url = getBaseUri() + '/works/getWorkInfo.json?workId=';
+				else // use the anonymous url
+					var url = getBaseUri() + '/' + orcidVar.orcidId + '/getWorkInfo.json?workId='; // public
 				if(serv.details[putCode] == undefined) {		
 					$.ajax({
 						url: url + putCode,	        
@@ -663,6 +669,28 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 				}
 				// remove work on server
 				serv.removeWork(rmWorks);
+			},
+			loadAbbrWorks: function(access_type) {
+				if (access_type == serv.constants.access_type.ANONYMOUS) {
+				    serv.worksToAddIds = orcidVar.workIds;
+				    serv.addAbbrWorksToScope(serv.constants.access_type.ANONYMOUS);
+				} else {
+					serv.worksToAddIds = null;
+					serv.loading = true;
+					serv.groups.length = 0;
+					$.ajax({
+						url: getBaseUri() + '/works/workIds.json',	        
+				        dataType: 'json',
+				        success: function(data) {
+				        	serv.worksToAddIds = data;
+				        	serv.addAbbrWorksToScope(serv.constants.access_type.USER);
+				        	$rootScope.$apply();
+				        }
+					}).fail(function(){
+						// something bad is happening!
+				    	console.log("error fetching works");
+					});
+				};
 			},
 			removeWork: function(work) {
 				$.ajax({
@@ -3168,8 +3196,8 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 		
 		return info;
 	};
-	$scope.worksSrvc.worksToAddIds = orcidVar.workIds;	
-	$scope.worksSrvc.addAbbrWorksToScope(getBaseUri() + '/' + orcidVar.orcidId +'/works.json?workIds=');
+
+	$scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.ANONYMOUS);
 	
 	// remove once grouping is live
 	$scope.moreInfoClick = function(work, $event) {
@@ -3352,7 +3380,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	        	if (data.errors.length == 0){
 	        		$.colorbox.close(); 
 	        		$scope.addingWork = false;
-	        		$scope.getWorks();
+	        		$scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
 	        	} else {
 		        	$scope.editWork = data;
 		        	$scope.copyErrorsLeft($scope.editWork, data);
@@ -3384,29 +3412,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 				$scope.editWork.citation.citation.errors.push(om.get('manualWork.bibtext.notValid'));
 			};
 		};
-	};
-		
-
-	$scope.getWorks = function() {
-		//clear out current works
-		$scope.worksSrvc.worksToAddIds = null;
-		$scope.worksSrvc.loading = true;
-		$scope.worksSrvc.groups.length = 0;
-		//get work ids
-		$.ajax({
-			url: getBaseUri() + '/works/workIds.json',	        
-	        dataType: 'json',
-	        success: function(data) {
-	        	$scope.worksSrvc.worksToAddIds = data;
-	        	$scope.worksSrvc.addAbbrWorksToScope(getBaseUri() + '/works/works.json?workIds=');
-	        	$scope.$apply();
-	        }
-		}).fail(function(){
-			// something bad is happening!
-	    	console.log("error fetching works");
-		});
-	};
-		
+	};	
 	
 	$scope.renderTranslatedTitleInfo = function(putCode) {		
 		var info = null; 
@@ -3419,7 +3425,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	};
 		
 	//init
-	$scope.getWorks();	
+	$scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);	
 	
 	// remove once grouping is live
 	$scope.moreInfoClick = function(work, $event) {
