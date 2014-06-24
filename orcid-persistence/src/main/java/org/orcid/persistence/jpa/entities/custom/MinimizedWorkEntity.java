@@ -38,13 +38,14 @@ public class MinimizedWorkEntity implements Serializable {
     private int publicationYear;
     private Visibility visibility;
     private String externalIdentifiersJson;
-
+    private Long displayIndex;
+    
     public MinimizedWorkEntity() {
         super();
     }
 
     public MinimizedWorkEntity(Long id, String title, String subtitle, String description, Integer publicationDay, Integer publicationMonth, Integer publicationYear,
-            Visibility visibility, String externalIdentifiersJson) {
+            Visibility visibility, String externalIdentifiersJson, Long displayIndex) {
         super();
         this.id = id;
         this.title = title;
@@ -58,6 +59,7 @@ public class MinimizedWorkEntity implements Serializable {
             this.publicationYear = publicationYear;
         this.visibility = visibility;
         this.externalIdentifiersJson = externalIdentifiersJson;
+        this.displayIndex = displayIndex;
     }
 
     public Long getId() {
@@ -130,5 +132,13 @@ public class MinimizedWorkEntity implements Serializable {
 
     public void setExternalIdentifiersJson(String externalIdentifiersJson) {
         this.externalIdentifiersJson = externalIdentifiersJson;
+    }
+
+    public Long getDisplayIndex() {
+        return displayIndex;
+    }
+
+    public void setDisplayIndex(Long displayIndex) {
+        this.displayIndex = displayIndex;
     }
 }

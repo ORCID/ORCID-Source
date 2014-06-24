@@ -73,4 +73,5 @@ public class WorkManagerImpl implements WorkManager {
     public List<MinimizedWorkEntity> findPublicWorks(String orcid) {
     	return workDao.findPublicWorks(orcid);
     }
+  
 }
