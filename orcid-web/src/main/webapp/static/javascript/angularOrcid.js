@@ -374,6 +374,8 @@ var GroupedActivities = function(type) {
 };
 
 GroupedActivities.prototype.add = function(activity) {
+	// assumes works are added in the order of the display index desc
+	// subsorted by the created date asc
     var identifiersPath = null;
     if (this.type == 'abbrWork') identifiersPath = 'workExternalIdentifiers';
 	for (var idx in activity[identifiersPath])
