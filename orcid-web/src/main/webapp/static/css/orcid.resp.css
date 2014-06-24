@@ -3499,7 +3499,7 @@ ul.sso-options li span{
 
 .developer-tools .slidebox .add-options{
 	margin-bottom: 15px;
-	display: block;
+	display: block;	
 }
 
 .developer-tools .icon-href span{
@@ -3513,7 +3513,8 @@ ul.sso-options li span{
 
 .grey-box{
 	background: #EBEBEB;
-	padding: 15px;		
+	padding: 15px;
+	overflow: visible;		
 }
 
 .developer-tools .inner-row input,
@@ -3561,7 +3562,8 @@ ul.sso-options li span{
 }
 
 .developer-tools .slidebox{
-	display: none;		
+	display: none;
+	overflow: visible !important; 
 }
 
 .developer-tools .tab-container a span{
@@ -4074,6 +4076,31 @@ ul.sso-options li span{
 
 .full-width-input{
 	width: 100% !important;
+}
+/*Angular Multiselect*/
+multiselect .dropdown-menu{
+    padding-left: 5px; 
+    padding-right: 5px;
+    display: none;
+}
+
+multiselect .dropdown-menu .dropdown-menu-list > li > a {
+    padding: 3px 10px;
+    cursor:pointer;
+}
+
+multiselect .dropdown-menu .dropdown-menu-list > li > a:hover{
+	color: #000;
+}
+
+multiselect .dropdown-menu .dropdown-menu-list > li > a i.empty{
+	min-width: 14px;
+}
+
+multiselect .dropdown-menu .dropdown-menu-list{
+	height: 135px;
+	min-width: 315px;
+	overflow-y: scroll;
 }
 
 .website-url{
@@ -5053,7 +5080,30 @@ ul.sso-options li span{
 	}	
 	
 	.authorizeURL {		
-		height: 150px;
+		height: 150px; 
+	}
+	
+	/*MultiSelect*/
+	
+	multiselect, multiselect button, multiselect .btn-group, multiselect ul.dropdown-menu, multiselect ul.dropdown-menu li input{
+		width: 100%;
+	}
+	
+	multiselect ul.dropdown-menu li button{
+		font-weight: normal !important;
+		font-size: 16px;
+	}
+	
+	multiselect .dropdown-menu .dropdown-menu-list li{
+		height: 50px;
+	}
+	
+	multiselect .dropdown-menu .dropdown-menu-list li a{
+		line-height: 40px;
+	}
+	
+	#member_developer_tools_header input, #member_developer_tools_header textarea, #member_developer_tools_header select{
+		width: 100%;
 	}
 	
 }
