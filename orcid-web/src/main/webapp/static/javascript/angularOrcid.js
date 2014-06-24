@@ -668,6 +668,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 					serv.worksToAddIds = null;
 					serv.loading = true;
 					serv.groups.length = 0;
+					serv.details.length = 0;
 					$.ajax({
 						url: getBaseUri() + '/works/workIds.json',	        
 				        dataType: 'json',
@@ -2484,6 +2485,7 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 		$scope.moreInfo[key]=false;
 	};
 
+	
 	$scope.showAddModal = function(){
 		var numOfResults = 25;
 		$.colorbox({        	
@@ -2771,7 +2773,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	$scope.closeMoreInfo = function(key) {
 		$scope.moreInfo[key]=false;
 	};
-	
+		
 	$scope.addFundingModal = function(type){
 		$scope.removeDisambiguatedFunding();
 		$.ajax({
@@ -3363,6 +3365,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	        data:  angular.toJson($scope.editWork),
 	        success: function(data) {
 	        	if (data.errors.length == 0){
+	        		$scope.closeAllMoreInfo();
 	        		$.colorbox.close(); 
 	        		$scope.addingWork = false;
 	        		$scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
@@ -3378,6 +3381,11 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 			$scope.addingWork = false;
 	    	console.log("error fetching works");
 		});
+	};
+	
+	$scope.closeAllMoreInfo = function() {
+		for (var idx in $scope.moreInfo)
+		    $scope.moreInfo[idx]=false;
 	};
 	
 	$scope.validateCitation = function() {
