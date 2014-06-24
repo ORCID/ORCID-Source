@@ -3222,8 +3222,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
     
     $scope.addWorkFromBibtex = function(work) {
     	var index = $scope.worksFromBibtex.indexOf(work);
-    	var work = $scope.worksFromBibtex.splice(index, 1);
-    	console.log(work[0]);
+    	var work = $scope.worksFromBibtex.splice(index, 1);    	
     	$scope.addWorkModal(work[0]);
     };
 
@@ -3283,10 +3282,11 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	};
 	
 	$scope.addWorkModal = function(data){
+		$scope.loadWorkTypes();
 		if (data == undefined) { 
 			worksSrvc.getBlankWork(function(data) {
 				$scope.editWork = data;
-				$scope.$apply(function() {
+				$scope.$apply(function() {					
 					$scope.showAddModal();
 				});			
 			});
@@ -3380,9 +3380,51 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		
 		return info;
 	};
+			
+	$scope.loadWorkTypes = function(){			
+		var workCategory = "";
+		if($scope.editWork != null && $scope.editWork.workCategory != null && $scope.editWork.workCategory.value != null && $scope.editWork.workCategory.value != "")
+			workCategory = $scope.editWork.workCategory.value;
+					
+		$.ajax({
+	        url: getBaseUri() + '/works/loadWorkTypes.json?workCategory=' + workCategory,
+	        type: 'POST',	        
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	
+	        	$scope.$apply(function() {
+		        	$scope.types = data;
+		        	if($scope.editWork != null && $scope.editWork.workCategory != null) {
+		        		switch ($scope.editWork.workCategory.value){
+		                case "conference":
+		                	$scope.editWork.workType.value="conference-paper";		                	
+		                    break;
+		                case "intellectual_property":
+		                	$scope.editWork.workType.value="patent";
+		                    break;
+		                case "other_output":
+		                	$scope.editWork.workType.value="data-set";
+		                    break;
+		                case "publication":
+		                	$scope.editWork.workType.value="journal-article";
+		                    break;
+		        		}
+		        	}
+		        	
+		        	console.log($scope.types);
+		        	console.log($scope.editWork.workType.value);
+	        	});
+	        	
+	        }
+	    }).fail(function() { 
+	    	console.log("Error loading work types.");
+	    });
 		
+	};
+	
 	//init
-	$scope.getWorks();	
+	$scope.getWorks();		
 	
 	// remove once grouping is live
 	$scope.moreInfoClick = function(work, $event) {
@@ -3518,44 +3560,6 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		if (cur.required && (cur.value == null || cur.value.trim() == '')) valid = false;
 		if (cur.errors !== undefined && cur.errors.length > 0) valid = false;
 		return valid ? '' : 'text-error';
-	};
-	
-	
-	$scope.loadWorkTypes = function(){			
-		if($scope.editWork.workCategory.value != null && $scope.editWork.workCategory.value != ""){
-			$.ajax({
-		        url: getBaseUri() + '/works/loadWorkTypes.json?workCategory=' + $scope.editWork.workCategory.value,
-		        type: 'POST',	        
-		        contentType: 'application/json;charset=UTF-8',
-		        dataType: 'json',
-		        success: function(data) {
-		        	
-		        	$scope.$apply(function() {
-			        	$scope.types = data;		        	
-			        	switch ($scope.editWork.workCategory.value){
-			                case "conference":
-			                	$scope.editWork.workType.value="conference-paper";		                	
-			                    break;
-			                case "intellectual_property":
-			                	$scope.editWork.workType.value="patent";
-			                    break;
-			                case "other_output":
-			                	$scope.editWork.workType.value="data-set";
-			                    break;
-			                case "publication":
-			                	$scope.editWork.workType.value="journal-article";
-			                    break;
-			        	}
-			        	console.log($scope.editWork.workType.value);
-		        	});
-		        	
-		        }
-		    }).fail(function() { 
-		    	console.log("Error loading work types.");
-		    });
-		} else {
-			$scope.types = null;
-		}
 	};
 	
 	$scope.clearErrors = function() {
