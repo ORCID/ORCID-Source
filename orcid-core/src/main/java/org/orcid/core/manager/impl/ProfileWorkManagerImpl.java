@@ -95,7 +95,7 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
         return profileWorkDao.addProfileWork(orcid, workId, visibility, sourceOrcid);
     }
     
-    public boolean makeMaxDisplayIndex(String orcid, String workId) {
-        return profileWorkDao.makeMaxDisplayIndex(orcid, workId);
+    public boolean updateToMaxDisplay(String orcid, String workId) {
+        return profileWorkDao.updateToMaxDisplay(orcid, workId);
     }
 }

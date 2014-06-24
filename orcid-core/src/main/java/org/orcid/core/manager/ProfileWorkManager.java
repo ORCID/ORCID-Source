@@ -89,6 +89,6 @@ public interface ProfileWorkManager {
      * @param workId
      * @return
      */
-    public boolean makeMaxDisplayIndex(String orcid, String workId);
+    public boolean updateToMaxDisplay(String orcid, String workId);
 
 }

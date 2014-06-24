@@ -102,6 +102,6 @@ public interface ProfileWorkDao extends GenericDao<ProfileWorkEntity, ProfileWor
      * @param workId
      * @return
      */
-    public boolean makeMaxDisplayIndex(String orcid, String workId);
+    public boolean updateToMaxDisplay(String orcid, String workId);
 
 }

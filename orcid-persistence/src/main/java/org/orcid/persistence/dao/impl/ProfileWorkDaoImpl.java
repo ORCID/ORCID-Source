@@ -147,7 +147,7 @@ public class ProfileWorkDaoImpl extends GenericDaoImpl<ProfileWorkEntity, Profil
     
     @Override
     @Transactional
-    public boolean makeMaxDisplayIndex(String orcid, String workId) {
+    public boolean updateToMaxDisplay(String orcid, String workId) {
         Query query = entityManager.createNativeQuery("UPDATE profile_work SET display_index = (select max(display_index) + 1 from profile_work where orcid=:orcid and work_id != :workId ) WHERE work_id = :workId");
         query.setParameter("orcid", orcid);
         query.setParameter("workId", Long.valueOf(workId));

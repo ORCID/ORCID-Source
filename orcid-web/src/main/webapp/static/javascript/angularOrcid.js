@@ -376,15 +376,19 @@ var GroupedActivities = function(type) {
 GroupedActivities.prototype.add = function(activity) {
     var identifiersPath = null;
     if (this.type == 'abbrWork') identifiersPath = 'workExternalIdentifiers';
-	if (this.defaultPutCode == null) { 
-		this.activePutCode = activity.putCode.value;
-		this.defaultPutCode = activity.putCode.value;
-		this.dateSortString = activity.dateSortString;
-	}
 	for (var idx in activity[identifiersPath])
 		this.addKey(this.key(activity[identifiersPath][idx]));
 	this.activities[activity.putCode.value] = activity;
+	if (this.defaultPutCode == null) { 
+		this.activePutCode = activity.putCode.value;
+		this.makeDefault(activity.putCode.value);
+	}
 	this.activitiesCount++;
+};
+
+GroupedActivities.prototype.makeDefault = function(putCode) {
+	this.defaultPutCode = putCode;
+	this.dateSortString = this.activities[putCode].dateSortString;	
 };
 
 GroupedActivities.prototype.addKey = function(key) {
@@ -619,13 +623,6 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 				
 				popFunct();
 			},
-			getGroupWorks: function(putCode) {
-				var group = serv.getGroup(putCode);
-				for (var idx in group.activities) {
-					var curPutCode = group.activities[idx].putCode.value;
-					serv.deleteWork(curPutCode);
-				}
-			},
 			getWork: function(putCode) {
 				for (var idx in serv.groups) {
 						if (serv.groups[idx].hasPut(putCode))
@@ -649,6 +646,18 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 				// remove work on server
 				serv.removeWork(rmWorks);
 			},
+            makeDefault: function(group, putCode) {
+            	group.makeDefault(putCode);
+	    		$.ajax({
+	    			url: getBaseUri() + '/works/updateToMaxDisplay.json?putCode=' + putCode,	        
+	    	        dataType: 'json',
+	    	        success: function(data) {
+	    	        }
+	    		}).fail(function(){
+	    			// something bad is happening!
+	    	    	console.log("some bad is hppending");
+	    		});
+	    	},
 			loadAbbrWorks: function(access_type) {
 				if (access_type == serv.constants.access_type.ANONYMOUS) {
 				    serv.worksToAddIds = orcidVar.workIds;

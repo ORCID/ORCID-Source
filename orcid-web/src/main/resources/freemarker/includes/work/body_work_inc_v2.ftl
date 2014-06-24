@@ -57,6 +57,11 @@
 		            				</a>
 		            			</li>
 		            			<li>
+		            				<a ng-click="worksSrvc.makeDefault(group, group.getActive().putCode.value)">
+		            					<span class="glyphicon glyphicon-file"></span>Make Default
+		            				</a>
+		            			</li>
+		            			<li>
 		            				<a ng-click="deleteWorkConfirm(group.getActive().putCode.value, true)">
 		            					<span class="glyphicon glyphicon-trash"></span>Delete All Versions
 		            				</a>
