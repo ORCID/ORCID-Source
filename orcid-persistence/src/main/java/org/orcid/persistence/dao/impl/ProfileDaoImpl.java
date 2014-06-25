@@ -147,9 +147,9 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
                 + "JOIN profile p on p.orcid = e.orcid and p.claimed = true " 
                 + "AND p.deprecated_date is null AND p.profile_deactivation_date is null AND p.account_expiry is null "
                 + "where ev.email IS NULL "
-                +    "and e.is_verified = false "
-                +    "and (e.source_id is null || e.source_id = e.orcid)"
+                +    "and e.is_verified = false "                
                 +    "and e.date_created < (now() - CAST('" + daysUnverified + "' AS INTERVAL DAY)) "
+                +    "and (e.source_id = e.orcid OR e.source_id is null)"
                 +    " ORDER BY e.last_modified";
         //@formatter:on
         Query query = entityManager.createNativeQuery(queryStr);
