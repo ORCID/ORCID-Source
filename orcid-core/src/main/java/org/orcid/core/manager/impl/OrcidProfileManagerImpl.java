@@ -286,6 +286,8 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
         // Add source to works and affiliations
         String amenderOrcid = sourceManager.retrieveSourceOrcid();
+        
+        addSourceToEmails(orcidProfile, amenderOrcid);
         addSourceToWorks(orcidProfile, amenderOrcid);
         addSourceToAffiliations(orcidProfile, amenderOrcid);
         addSourceToFundings(orcidProfile, amenderOrcid);
@@ -370,6 +372,24 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    /**
+     * Add source to the profile emails
+     * 
+     * @param orcidProfile
+     *            The profile
+     * @param amenderOrcid
+     *            The orcid of the user or client that add the email to the
+     *            profile user
+     * */
+    private void addSourceToEmails(OrcidProfile orcidProfile, String amenderOrcid) {
+        if (orcidProfile != null && orcidProfile.getOrcidBio() != null && orcidProfile.getOrcidBio().getContactDetails() != null
+                && orcidProfile.getOrcidBio().getContactDetails().getEmail() != null) {
+            for (Email email : orcidProfile.getOrcidBio().getContactDetails().getEmail()) {
+                email.setSource(amenderOrcid);
             }
         }
     }
@@ -913,10 +933,10 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         if (updatedFundingList == null) {
             return null;
         } else {
-            //Parse the amount in the new funding
+            // Parse the amount in the new funding
             setFundingAmountsWithTheCorrectFormat(updatedOrcidProfile);
-            //Update the funding list with the new values
-            updatedFundingList = updatedOrcidProfile.retrieveFundings();            
+            // Update the funding list with the new values
+            updatedFundingList = updatedOrcidProfile.retrieveFundings();
         }
         OrcidActivities existingActivities = existingProfile.getOrcidActivities();
         if (existingActivities == null) {
@@ -1525,13 +1545,14 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
         String amenderOrcid = sourceManager.retrieveSourceOrcid();
         FundingList existingFundingList = existingProfile.retrieveFundings();
-        //updates the amount format to the right format according to the current locale
+        // updates the amount format to the right format according to the
+        // current locale
         setFundingAmountsWithTheCorrectFormat(updatedOrcidProfile);
         FundingList updatedFundingList = updatedOrcidProfile.retrieveFundings();
         Visibility workVisibilityDefault = existingProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault().getValue();
         Boolean claimed = existingProfile.getOrcidHistory().isClaimed();
         setFundingPrivacy(updatedFundingList, workVisibilityDefault, claimed == null ? false : claimed);
-        updatedFundingList = dedupeFundings(updatedFundingList);        
+        updatedFundingList = dedupeFundings(updatedFundingList);
         addSourceToFundings(updatedFundingList, amenderOrcid);
         List<Funding> updatedList = updatedFundingList.getFundings();
         checkForAlreadyExistingFundings(existingFundingList, updatedList);
@@ -1539,13 +1560,14 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     }
 
     /**
-     * Replace the funding amount string into the desired format 
+     * Replace the funding amount string into the desired format
+     * 
      * @param updatedOrcidProfile
-     *          The profile containing the new funding
+     *            The profile containing the new funding
      * */
     private void setFundingAmountsWithTheCorrectFormat(OrcidProfile updatedOrcidProfile) throws IllegalArgumentException {
-        FundingList fundings = updatedOrcidProfile.retrieveFundings();        
-        
+        FundingList fundings = updatedOrcidProfile.retrieveFundings();
+
         for (Funding funding : fundings.getFundings()) {
             // If the amount is not empty, update it
             if (funding.getAmount() != null && StringUtils.isNotBlank(funding.getAmount().getContent())) {
@@ -1555,9 +1577,9 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                 DecimalFormat numberFormat = (DecimalFormat) NumberFormat.getNumberInstance(locale);
                 DecimalFormatSymbols symbols = numberFormat.getDecimalFormatSymbols();
                 /**
-                 * When spaces are allowed, the grouping separator is the character
-                 * 160, which is a non-breaking space So, lets change it so it uses
-                 * the default space as a separator
+                 * When spaces are allowed, the grouping separator is the
+                 * character 160, which is a non-breaking space So, lets change
+                 * it so it uses the default space as a separator
                  * */
                 if (symbols.getGroupingSeparator() == 160) {
                     symbols.setGroupingSeparator(' ');
@@ -1567,14 +1589,15 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                 String formattedAmount = number.toString();
                 if (parsePosition.getIndex() != amount.length()) {
                     double example = 1234567.89;
-                    NumberFormat numberFormatExample = NumberFormat.getNumberInstance(localeManager.getLocale());                     
-                    throw new IllegalArgumentException("The amount: " + amount + " doesn'n have the right format, it should use the format: " + numberFormatExample.format(example));
+                    NumberFormat numberFormatExample = NumberFormat.getNumberInstance(localeManager.getLocale());
+                    throw new IllegalArgumentException("The amount: " + amount + " doesn'n have the right format, it should use the format: "
+                            + numberFormatExample.format(example));
                 }
                 funding.getAmount().setContent(formattedAmount);
             }
         }
     }
-    
+
     private void setAffiliationPrivacy(OrcidProfile updatedOrcidProfile, Visibility defaultAffiliationVisibility) {
         OrcidHistory orcidHistory = updatedOrcidProfile.getOrcidHistory();
         boolean isClaimed = orcidHistory != null ? orcidHistory.getClaimed().isValue() : false;
