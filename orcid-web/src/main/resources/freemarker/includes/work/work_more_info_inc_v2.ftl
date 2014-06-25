@@ -76,7 +76,17 @@
 					<strong>Versions</strong>
 					<ul>
 					    <li ng-repeat="work in group.activities" ng-class="work.putCode.value == group.activePutCode ? 'current-version' : ''">
-					       <span class="glyphicon glyphicon-chevron-right"></span><a ng-click="moreInfo[work.putCode.value] = true; group.activePutCode = work.putCode.value" ng-bind="worksSrvc.details[work.putCode.value].workSourceName.value"></a><span class="glyphicon glyphicon-globe privacy" ng-show="work.putCode.value == group.defaultPutCode"></span>
+					       
+					       <div class="version-icon">
+					       		<span class="glyphicon glyphicon-chevron-right"></span>
+					       </div>
+						   <div class="version-name">
+						       <a ng-click="moreInfo[work.putCode.value] = true; group.activePutCode = work.putCode.value" ng-bind="worksSrvc.details[work.putCode.value].workSourceName.value"></a>
+					       </div>
+					       <div class="version-icon version-icon-privacy">
+						       	<span class="glyphicon glyphicon-globe privacy" ng-show="work.putCode.value == group.defaultPutCode"></span>
+					       </div>
+					       
 					    </li>
 					</ul>
 				</div>
