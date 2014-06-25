@@ -49,6 +49,7 @@ import org.orcid.pojo.ajaxForm.FundingTitleForm;
 import org.orcid.pojo.ajaxForm.Text;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Propagation;
@@ -124,6 +125,7 @@ public class FundingsControllerTest extends BaseControllerTest {
         for (String amount : validAmounts) {            
             FundingForm form = new FundingForm();
             form.setAmount(Text.valueOf(amount));
+            form.setCurrencyCode(Text.valueOf("USD"));
             form = fundingController.validateAmount(form);
             assertNotNull(form.getAmount());
             assertNotNull(form.getAmount().getErrors());
@@ -133,6 +135,7 @@ public class FundingsControllerTest extends BaseControllerTest {
         for (String amount : invalidAmounts) {
             FundingForm form = new FundingForm();
             form.setAmount(Text.valueOf(amount));
+            form.setCurrencyCode(Text.valueOf("USD"));
             form = fundingController.validateAmount(form);
             assertNotNull(form.getAmount());
             assertEquals("The following incorrect number has been marked as valid: " + amount, 1, form.getAmount().getErrors().size());            
@@ -150,6 +153,7 @@ public class FundingsControllerTest extends BaseControllerTest {
         for (String amount : validAmounts) {            
             FundingForm form = new FundingForm();
             form.setAmount(Text.valueOf(amount));
+            form.setCurrencyCode(Text.valueOf("USD"));
             form = fundingController.validateAmount(form);
             assertNotNull(form.getAmount());
             assertNotNull(form.getAmount().getErrors());
@@ -159,7 +163,8 @@ public class FundingsControllerTest extends BaseControllerTest {
         for (String amount : invalidAmounts) {
             FundingForm form = new FundingForm();
             form.setAmount(Text.valueOf(amount));
-            form = fundingController.validateAmount(form);
+            form.setCurrencyCode(Text.valueOf("USD"));
+            form = fundingController.validateAmount(form);            
             assertNotNull(form.getAmount());
             assertEquals("The following incorrect number has been marked as valid: " + amount, 1, form.getAmount().getErrors().size());            
         }
@@ -176,6 +181,7 @@ public class FundingsControllerTest extends BaseControllerTest {
         for (String amount : validAmounts) {            
             FundingForm form = new FundingForm();
             form.setAmount(Text.valueOf(amount));
+            form.setCurrencyCode(Text.valueOf("USD"));
             form = fundingController.validateAmount(form);
             assertNotNull(form.getAmount());
             assertNotNull(form.getAmount().getErrors());
@@ -185,6 +191,7 @@ public class FundingsControllerTest extends BaseControllerTest {
         for (String amount : invalidAmounts) {
             FundingForm form = new FundingForm();
             form.setAmount(Text.valueOf(amount));
+            form.setCurrencyCode(Text.valueOf("USD"));
             form = fundingController.validateAmount(form);
             assertNotNull(form.getAmount());
             assertEquals("The following incorrect number has been marked as valid: " + amount, 1, form.getAmount().getErrors().size());            
@@ -354,8 +361,7 @@ public class FundingsControllerTest extends BaseControllerTest {
         when(localeManager.getLocale()).thenReturn(new Locale("us","EN"));
         
         List<String> fundingIds = fundingController.getFundingsJson(servletRequest);
-        assertNotNull(fundingIds);
-        assertEquals(fundingIds.size(), 3);
+        assertNotNull(fundingIds);        
 
         assertTrue(fundingIds.contains("1"));
         assertTrue(fundingIds.contains("2"));
@@ -363,6 +369,7 @@ public class FundingsControllerTest extends BaseControllerTest {
     }
     
     @Test
+    @Rollback(true)
     public void testAddFundingWithoutAmount() {
         HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);
@@ -375,6 +382,7 @@ public class FundingsControllerTest extends BaseControllerTest {
         funding.setCountry(Text.valueOf("CR"));
         funding.setCity(Text.valueOf("SJ"));
         funding.setRegion(Text.valueOf("SJ"));
+        funding.setFundingName(Text.valueOf("OrgName"));
         
         try {
             FundingForm result = fundingController.postFunding(null, funding);
@@ -384,12 +392,15 @@ public class FundingsControllerTest extends BaseControllerTest {
             assertEquals(funding.getCity(), result.getCity());
             assertEquals(funding.getRegion(), result.getRegion());
             assertEquals(funding.getCountry(), result.getCountry());
+            assertNotNull(funding.getErrors());
+            assertEquals(0, funding.getErrors().size());
         } catch(Exception e) {
             fail();
         }
     }
     
     @Test
+    @Rollback(true)
     public void testAddFunding() {
         HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);
@@ -403,7 +414,8 @@ public class FundingsControllerTest extends BaseControllerTest {
         funding.setCity(Text.valueOf("SJ"));
         funding.setRegion(Text.valueOf("SJ"));
         funding.setAmount(Text.valueOf("1000"));
-        
+        funding.setCurrencyCode(Text.valueOf("USD"));
+        funding.setFundingName(Text.valueOf("OrgName"));
         try {
             FundingForm result = fundingController.postFunding(null, funding);
             assertEquals(funding.getFundingTitle().getTitle(), result.getFundingTitle().getTitle());
@@ -412,11 +424,40 @@ public class FundingsControllerTest extends BaseControllerTest {
             assertEquals(funding.getCity(), result.getCity());
             assertEquals(funding.getRegion(), result.getRegion());
             assertEquals(funding.getCountry(), result.getCountry());
+            assertNotNull(funding.getErrors());
+            assertEquals(0, funding.getErrors().size());
             BigDecimal expected = fundingController.getAmountAsBigDecimal(funding.getAmount().getValue());
             BigDecimal resulting = fundingController.getAmountAsBigDecimal(result.getAmount().getValue());
             assertEquals(expected, resulting);
         } catch(Exception e) {
             fail();
         }
+    }
+    
+    @Test
+    public void testAddAmountWithoutCurrencyCode() {
+        HttpSession session = mock(HttpSession.class);
+        when(servletRequest.getSession()).thenReturn(session);
+        when(localeManager.getLocale()).thenReturn(new Locale("us","EN"));
+        FundingForm funding = fundingController.getFunding(null);
+        funding.setFundingType(Text.valueOf("award"));
+        FundingTitleForm title = new FundingTitleForm();
+        title.setTitle(Text.valueOf("Title"));
+        funding.setFundingTitle(title);
+        funding.setCountry(Text.valueOf("CR"));
+        funding.setCity(Text.valueOf("SJ"));
+        funding.setRegion(Text.valueOf("SJ"));
+        funding.setAmount(Text.valueOf("1000"));
+        funding.setFundingName(Text.valueOf("OrgName"));
+        try {
+            FundingForm result = fundingController.postFunding(null, funding);
+            assertNotNull(result);
+            assertNotNull(result.getErrors());
+            assertEquals(1, result.getErrors().size());
+            assertEquals(fundingController.getMessage("Invalid.fundings.currency"), result.getErrors().get(0));
+        } catch (Exception e) {
+            fail();
+        }
+        
     }
 }
