@@ -49,6 +49,7 @@ import org.orcid.pojo.ajaxForm.FundingTitleForm;
 import org.orcid.pojo.ajaxForm.Text;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Propagation;
@@ -369,6 +370,7 @@ public class FundingsControllerTest extends BaseControllerTest {
     }
     
     @Test
+    @Rollback(true)
     public void testAddFundingWithoutAmount() {
         HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);
@@ -399,6 +401,7 @@ public class FundingsControllerTest extends BaseControllerTest {
     }
     
     @Test
+    @Rollback(true)
     public void testAddFunding() {
         HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);
