@@ -3447,9 +3447,6 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		                    break;
 		        		}
 		        	}
-		        	
-		        	console.log($scope.types);
-		        	console.log($scope.editWork.workType.value);
 	        	});
 	        	
 	        }
