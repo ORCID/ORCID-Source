@@ -17,15 +17,18 @@
 package org.orcid.core.manager.impl;
 
 import java.net.URI;
+import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.PasswordGenerationManager;
 import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.utils.VerifyRegistrationToken;
+import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.ProfileDao;
@@ -60,6 +63,9 @@ public class RegistrationManagerImpl implements RegistrationManager {
     private EncryptionManager encryptionManager;
 
     private NotificationManager notificationManager;
+    
+    @Resource
+    private EmailManager emailManager;
 
     @Resource
     private PasswordGenerationManager passwordResetManager;
@@ -108,6 +114,12 @@ public class RegistrationManagerImpl implements RegistrationManager {
     @Override
     public OrcidProfile createMinimalRegistration(OrcidProfile orcidProfile) {
         OrcidProfile minimalProfile = orcidProfileManager.createOrcidProfile(orcidProfile);
+        //Set source to the new email
+        String sourceId = minimalProfile.getOrcidIdentifier().getPath();
+        List<Email> emails = minimalProfile.getOrcidBio().getContactDetails().getEmail();
+        for(Email email : emails)
+            emailManager.addSourceToEmail(email.getValue(), sourceId);
+        //Index new profile
         orcidProfileManager.processProfilePendingIndexingInTransaction(orcidProfile.getOrcidIdentifier().getPath());
         LOGGER.debug("Created minimal orcid and assigned id of {}", orcidProfile.getOrcidIdentifier().getPath());
         return minimalProfile;

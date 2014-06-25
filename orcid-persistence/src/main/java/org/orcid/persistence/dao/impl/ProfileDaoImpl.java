@@ -148,6 +148,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
                 + "AND p.deprecated_date is null AND p.profile_deactivation_date is null AND p.account_expiry is null "
                 + "where ev.email IS NULL "
                 +    "and e.is_verified = false "
+                +    "and (e.source_id is null || e.source_id = e.orcid)"
                 +    "and e.date_created < (now() - CAST('" + daysUnverified + "' AS INTERVAL DAY)) "
                 +    " ORDER BY e.last_modified";
         //@formatter:on

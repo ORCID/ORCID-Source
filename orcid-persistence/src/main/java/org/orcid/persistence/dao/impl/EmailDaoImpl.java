@@ -133,4 +133,13 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
         query.setParameter("emails", emails);
         return query.getResultList();
     }
+    
+    @Override
+    @Transactional
+    public void addSourceToEmail(String email, String sourceId) {
+        Query query = entityManager.createNativeQuery("update email set source_id = :sourceId where email=:email");
+        query.setParameter("sourceId", sourceId);
+        query.setParameter("email", email);
+        query.executeUpdate();        
+    }
 }
