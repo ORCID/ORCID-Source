@@ -361,8 +361,7 @@ public class FundingsControllerTest extends BaseControllerTest {
         when(localeManager.getLocale()).thenReturn(new Locale("us","EN"));
         
         List<String> fundingIds = fundingController.getFundingsJson(servletRequest);
-        assertNotNull(fundingIds);
-        assertEquals(fundingIds.size(), 3);
+        assertNotNull(fundingIds);        
 
         assertTrue(fundingIds.contains("1"));
         assertTrue(fundingIds.contains("2"));
