@@ -437,12 +437,11 @@ public class OrcidWork implements VisibilityType, Activity, Serializable {
                
         // Compare external identifiers
         if (this.getWorkExternalIdentifiers() == null) {
-            if (other.getWorkExternalIdentifiers() != null)
-                return false;
-            else if (other.getWorkExternalIdentifiers().getWorkExternalIdentifier() != null && other.getWorkExternalIdentifiers().getWorkExternalIdentifier().size() > 0)
-                return false;
+            //If other contains ext ids
+            if (other.getWorkExternalIdentifiers() != null && other.getWorkExternalIdentifiers().getWorkExternalIdentifier() != null && !other.getWorkExternalIdentifiers().getWorkExternalIdentifier().isEmpty())
+                return false;            
         } else if(other.getWorkExternalIdentifiers() == null) {
-            if(this.getWorkExternalIdentifiers().getWorkExternalIdentifier() != null && this.getWorkExternalIdentifiers().getWorkExternalIdentifier().size() > 0)
+            if(this.getWorkExternalIdentifiers().getWorkExternalIdentifier() != null && !this.getWorkExternalIdentifiers().getWorkExternalIdentifier().isEmpty())
                 return false;
         } else {
             List<WorkExternalIdentifier> otherExternalIdentifiers = other.getWorkExternalIdentifiers().getWorkExternalIdentifier();
