@@ -1,0 +1,79 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+        
+    <changeSet id="CREATE-NOTIFICATIONS-TABLE" author="Will Simpson">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="notification"/>
+            </not>
+        </preConditions>
+        <createTable tableName="notification">
+            <column name="id" type="bigint">
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="notification_pkey" />
+			</column>
+			<column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="orcid" type="VARCHAR(19)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="notification_type" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="subject" type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="body_text" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="body_html" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sent_date" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="read_date" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="archived_date" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="sendable" type="BOOLEAN" defaultValue="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="source_id" type="VARCHAR(19)"/>
+        </createTable>
+        <addForeignKeyConstraint constraintName="notification_orcid_fk"
+                                 baseTableName="notification" baseColumnNames="orcid" baseTableSchemaName="public" 
+                                 referencedTableName="profile" referencedColumnNames="orcid" referencedTableSchemaName="public"/>
+        <addForeignKeyConstraint constraintName="notification_source_id_fk"
+                                 baseTableName="notification" baseColumnNames="source_id" baseTableSchemaName="public" 
+                                 referencedTableName="profile" referencedColumnNames="orcid" referencedTableSchemaName="public"/>
+    </changeSet>
+    
+    <changeSet id="ADD-NOTIFICATION-FREQUENCY-TO-PROFILE-TABLE" author="Will Simpson">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="profile" columnName="send_email_frequency_days"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="profile">
+            <column name="send_email_frequency_days" type="real" defaultValueNumeric="7">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    
+</databaseChangeLog>
