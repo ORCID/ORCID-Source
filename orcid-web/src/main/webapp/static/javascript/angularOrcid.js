@@ -6060,12 +6060,12 @@ angular.module('ui.multiselect', [])
       };
     }])
 
-  .directive('multiselectPopup', ['$document', function ($document) {
+  .directive('multiselectPopup', ['$compile','$document','$templateCache', function ($compile, $document, $templateCache) {
     return {
       restrict: 'E',
       scope: false,
       replace: true,
-      templateUrl: getBaseUri() + '/static/html/multiselect.tmpl.html',
+      template: $templateCache.get('multiselect'),
       link: function (scope, element, attrs) {
 
         scope.isVisible = false;
