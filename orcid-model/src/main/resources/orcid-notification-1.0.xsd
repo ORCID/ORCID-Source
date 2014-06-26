@@ -1,0 +1,22 @@
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.orcid.org/ns/orcid" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="notification">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="notificationType">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="RECORD_UPDATED_BY_MEMBER"></xs:enumeration>
+                    <xs:enumeration value="CUSTOM"></xs:enumeration>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:element>
+        <xs:element type="xs:string" name="subject"/>
+        <xs:element type="xs:string" name="bodyText"/>
+        <xs:element type="xs:string" name="bodyHtml"/>
+        <xs:element type="xs:dateTime" name="sentDate"/>
+        <xs:element type="xs:dateTime" name="readDate" minOccurs="0"/>
+        <xs:element type="xs:dateTime" name="archivedDate" minOccurs="0"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

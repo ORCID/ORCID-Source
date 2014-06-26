@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<notification xmlns="http://www.orcid.org/ns/orcid"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-notification-1.0.xsd">
+    <notificationType>RECORD_UPDATED_BY_MEMBER</notificationType>
+    <subject>Important Notification from ORCID</subject>
+    <bodyText>This is an email with important info.
+    </bodyText>
+    <bodyHtml><![CDATA[
+        <p>
+            This is an email with <em>important</em> info.
+        </p>]]>
+    </bodyHtml>
+    <sentDate>2014-01-01T14:45:32</sentDate>
+</notification>
