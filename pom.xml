@@ -908,6 +908,11 @@ the software.
                 <artifactId>dnsjava</artifactId>
                 <version>2.1.6</version>
             </dependency>
+            <dependency>
+                <groupId>ma.glasnost.orika</groupId>
+                <artifactId>orika-core</artifactId>
+                <version>1.4.5</version>
+            </dependency>
 
             <!-- Test -->
             <dependency>
