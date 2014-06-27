@@ -24,12 +24,16 @@ import org.orcid.core.security.visibility.filter.VisibilityFilter;
 import org.orcid.core.tree.TreeCleaner;
 import org.orcid.core.tree.TreeCleaningDecision;
 import org.orcid.core.tree.TreeCleaningStrategy;
+import org.orcid.jaxb.model.message.Affiliation;
+import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.Orcid;
 import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidSearchResults;
 import org.orcid.jaxb.model.message.OrcidWork;
+import org.orcid.jaxb.model.message.Source;
+import org.orcid.jaxb.model.message.SourceOrcid;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.VisibilityType;
 import org.orcid.jaxb.model.message.WorkContributors;
@@ -147,7 +151,29 @@ public class VisibilityFilterImpl implements VisibilityFilter {
                         Class<?> clazz = obj.getClass();
                         
                         if(!PojoUtil.isEmpty(sourceId)) {
-                            if(OrcidWork.class.isAssignableFrom(clazz)){
+                            if(Affiliation.class.isAssignableFrom(clazz)) {
+                                Affiliation affiliation = (Affiliation) obj;
+                                Source source = affiliation.getSource();
+                                if(source != null) {
+                                    SourceOrcid sOrcid = source.getSourceOrcid();
+                                    if(sOrcid != null) {
+                                        if(sourceId.equals(sOrcid.getPath())) {
+                                            decision = TreeCleaningDecision.IGNORE;
+                                        }
+                                    }                                        
+                                }
+                            } else if(Funding.class.isAssignableFrom(clazz)) {
+                                Funding funding = (Funding) obj;
+                                Source source = funding.getSource();
+                                if(source != null) {
+                                    SourceOrcid sOrcid = source.getSourceOrcid();
+                                    if(sOrcid != null) {
+                                        if(sourceId.equals(sOrcid.getPath())) {
+                                            decision = TreeCleaningDecision.IGNORE;
+                                        }
+                                    }
+                                }
+                            } else if(OrcidWork.class.isAssignableFrom(clazz)){
                                 OrcidWork work = (OrcidWork) obj;
                                 WorkSource source = work.getWorkSource();
                                 if(source != null) {
@@ -155,10 +181,9 @@ public class VisibilityFilterImpl implements VisibilityFilter {
                                         decision = TreeCleaningDecision.IGNORE;
                                     }
                                 }
-                            }
+                            } 
                         }
-                         
-                        
+                                                 
                         if(TreeCleaningDecision.DEFAULT.equals(decision)){
                             if (WorkContributors.class.isAssignableFrom(clazz)) {
                                 decision = TreeCleaningDecision.IGNORE;
