@@ -29,9 +29,12 @@ import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidSearchResults;
+import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.VisibilityType;
 import org.orcid.jaxb.model.message.WorkContributors;
+import org.orcid.jaxb.model.message.WorkSource;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -79,9 +82,31 @@ public class VisibilityFilterImpl implements VisibilityFilter {
      */
     @Override
     public OrcidMessage filter(OrcidMessage messageToBeFiltered, Visibility... visibilities) {
-        return filter(messageToBeFiltered, false, visibilities);
+        return filter(messageToBeFiltered, null, false, visibilities);
     }
 
+    /**
+     * Remove the elements that are not present in the list of set of
+     * {@link org.orcid.jaxb.model.message .Visibility}s present in the array
+     * passed in By default the remaining visibility elements will not be
+     * removed from the object.
+     * 
+     * However, it will allow private activities where the source is the one passed by parameter
+     * 
+     * @param messageToBeFiltered
+     *            the {@link org.orcid.jaxb.model.message.OrcidMessage} that
+     *            will be traversed looking for
+     *            {@link org .orcid.jaxb.model.message.VisibilityType}
+     * @param visibilities
+     *            What {@link org.orcid.jaxb.model.message.Visibility} elements
+     *            should be allowed.
+     * @return the cleansed {@link org.orcid.jaxb.model.message.OrcidMessage}
+     */
+    @Override
+    public OrcidMessage filter(OrcidMessage messageToBeFiltered, final boolean removeAttribute, Visibility... visibilities) {
+        return filter(messageToBeFiltered, null, removeAttribute, visibilities);
+    }
+    
     /**
      * Remove the elements that are not present in the list of set of
      * {@link org.orcid.jaxb.model.message .Visibility}s present in the array
@@ -91,6 +116,8 @@ public class VisibilityFilterImpl implements VisibilityFilter {
      *            the {@link org.orcid.jaxb.model.message.OrcidMessage} that
      *            will be traversed looking for
      *            {@link org .orcid.jaxb.model.message.VisibilityType} elements.
+     * @param source 
+     *          The orcid source that is executing the request    
      * @param removeAttribute
      *            should all {@link org.orcid.jaxb.model.message.Visibility}
      *            elements be removed from the object graph. This has the effect
@@ -102,7 +129,7 @@ public class VisibilityFilterImpl implements VisibilityFilter {
      * @return the cleansed {@link org.orcid.jaxb.model.message.OrcidMessage}
      */
     @Override
-    public OrcidMessage filter(OrcidMessage messageToBeFiltered, final boolean removeAttribute, Visibility... visibilities) {
+    public OrcidMessage filter(OrcidMessage messageToBeFiltered, final String sourceId, final boolean removeAttribute, Visibility... visibilities) {
         if (messageToBeFiltered == null || visibilities == null || visibilities.length == 0) {
             return null;
         }
@@ -118,17 +145,34 @@ public class VisibilityFilterImpl implements VisibilityFilter {
                     TreeCleaningDecision decision = TreeCleaningDecision.DEFAULT;
                     if (obj != null) {
                         Class<?> clazz = obj.getClass();
-                        if (WorkContributors.class.isAssignableFrom(clazz)) {
-                            decision = TreeCleaningDecision.IGNORE;
-                        } else if (VisibilityType.class.isAssignableFrom(clazz)) {
-                            VisibilityType visibilityType = (VisibilityType) obj;
-                            if ((visibilityType.getVisibility() == null || !visibilitySet.contains(visibilityType.getVisibility()))) {
-                                decision = TreeCleaningDecision.CLEANING_REQUIRED;
-                            }
-                            if (removeAttribute) {
-                                visibilityType.setVisibility(null);
+                        
+                        if(!PojoUtil.isEmpty(sourceId)) {
+                            if(OrcidWork.class.isAssignableFrom(clazz)){
+                                OrcidWork work = (OrcidWork) obj;
+                                WorkSource source = work.getWorkSource();
+                                if(source != null) {
+                                    if(sourceId.equals(source.getPath())){
+                                        decision = TreeCleaningDecision.IGNORE;
+                                    }
+                                }
                             }
                         }
+                         
+                        
+                        if(TreeCleaningDecision.DEFAULT.equals(decision)){
+                            if (WorkContributors.class.isAssignableFrom(clazz)) {
+                                decision = TreeCleaningDecision.IGNORE;
+                            } else if (VisibilityType.class.isAssignableFrom(clazz)) {
+                                VisibilityType visibilityType = (VisibilityType) obj;
+                                if ((visibilityType.getVisibility() == null || !visibilitySet.contains(visibilityType.getVisibility()))) {
+                                    decision = TreeCleaningDecision.CLEANING_REQUIRED;
+                                }
+                                if (removeAttribute) {
+                                    visibilityType.setVisibility(null);
+                                }
+                            }
+                        }
+                        
                     }
                     return decision;
                 }

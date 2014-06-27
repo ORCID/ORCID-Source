@@ -17,21 +17,27 @@
 package org.orcid.core.security.visibility.aop;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
+
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.core.security.PermissionChecker;
 import org.orcid.core.security.visibility.filter.VisibilityFilter;
 import org.orcid.jaxb.model.message.OrcidMessage;
+import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.Visibility;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.stereotype.Component;
 
 /**
@@ -42,6 +48,8 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Component
 public class OrcidApiAuthorizationSecurityAspect {
+
+    public static final String CLIENT_ID = "client_id";
 
     @Resource(name = "visibilityFilter")
     private VisibilityFilter visibilityFilter;
@@ -77,7 +85,20 @@ public class OrcidApiAuthorizationSecurityAspect {
         if (entity != null && OrcidMessage.class.isAssignableFrom(entity.getClass())) {
             OrcidMessage orcidMessage = (OrcidMessage) entity;
             Set<Visibility> visibilities = permissionChecker.obtainVisibilitiesForAuthentication(getAuthentication(), accessControl.requiredScope(), orcidMessage);
-            visibilityFilter.filter(orcidMessage, false, visibilities.toArray(new Visibility[visibilities.size()]));
+
+            ScopePathType requiredScope = accessControl.requiredScope();
+            //If the required scope is */read-limited
+            if (ScopePathType.ORCID_PROFILE_READ_LIMITED.equals(requiredScope) || ScopePathType.AFFILIATIONS_READ_LIMITED.equals(requiredScope)
+                    || ScopePathType.FUNDING_READ_LIMITED.equals(requiredScope) || ScopePathType.ORCID_WORKS_READ_LIMITED.equals(requiredScope)) {
+                //get the client id
+                OrcidOAuth2Authentication authentication = (OrcidOAuth2Authentication) getAuthentication();
+                AuthorizationRequest authorization = authentication.getAuthorizationRequest();
+                Map<String, String> params = authorization.getAuthorizationParameters();
+                String clientId = params.get(CLIENT_ID);
+                visibilityFilter.filter(orcidMessage, clientId, false, visibilities.toArray(new Visibility[visibilities.size()])); 
+            } else {
+                visibilityFilter.filter(orcidMessage, null, false, visibilities.toArray(new Visibility[visibilities.size()]));
+            }
         }
     }
 
