@@ -92,4 +92,16 @@ public interface ProfileWorkDao extends GenericDao<ProfileWorkEntity, ProfileWor
      *         contributors but the credit name is null
      * */
     List<String> findOrcidsWhereWorkContributorCreditNameIsNull(int chunkSize);
+    
+    /**
+     * Make the given work have the maxDisplay value, higher the value
+     * equals how likely this work should be displayed before another 
+     * work (or work version)
+     * 
+     * @param orcid
+     * @param workId
+     * @return
+     */
+    public boolean updateToMaxDisplay(String orcid, String workId);
+
 }

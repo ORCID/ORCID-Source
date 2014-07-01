@@ -24,6 +24,7 @@
 package org.orcid.jaxb.model.message;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -427,30 +428,48 @@ public class OrcidWork implements VisibilityType, Activity, Serializable {
             return false;
         OrcidWork other = (OrcidWork) obj;
 
+        // Compare titles
         if (this.getWorkTitle() == null) {
             if (other.getWorkTitle() != null)
                 return false;
         } else if (!this.getWorkTitle().equals(other.getWorkTitle()))
             return false;
-
-        if (this.getWorkType() == null) {
-            if (other.getWorkType() != null)
-                return false;
-        } else if (!this.getWorkType().equals(other.getWorkType()))
-            return false;
-
+               
+        // Compare external identifiers
         if (this.getWorkExternalIdentifiers() == null) {
-            if (other.getWorkExternalIdentifiers() != null)
+            //If other contains ext ids
+            if (other.getWorkExternalIdentifiers() != null && other.getWorkExternalIdentifiers().getWorkExternalIdentifier() != null && !other.getWorkExternalIdentifiers().getWorkExternalIdentifier().isEmpty())
+                return false;            
+        } else if(other.getWorkExternalIdentifiers() == null) {
+            if(this.getWorkExternalIdentifiers().getWorkExternalIdentifier() != null && !this.getWorkExternalIdentifiers().getWorkExternalIdentifier().isEmpty())
                 return false;
-        } else if (!this.getWorkExternalIdentifiers().equals(other.getWorkExternalIdentifiers()))
-            return false;
+        } else {
+            List<WorkExternalIdentifier> otherExternalIdentifiers = other.getWorkExternalIdentifiers().getWorkExternalIdentifier();
+            List<WorkExternalIdentifier> thisExternalIdentifiers = this.getWorkExternalIdentifiers().getWorkExternalIdentifier();
+            boolean sharedExtId = false;
+            
+            start:
+            for(WorkExternalIdentifier thisId : thisExternalIdentifiers) {
+                for(WorkExternalIdentifier otherId : otherExternalIdentifiers) {
+                    if(thisId.equals(otherId)) {
+                        sharedExtId = true;
+                        break start;
+                    }
+                }
+            }
+            
+            if(!sharedExtId)
+                return false;
+        }
 
+        
+        // Compare source
         if (this.getWorkSource() == null) {
             if (other.getWorkSource() != null)
                 return false;
         } else if (!this.getWorkSource().equals(other.getWorkSource()))
             return false;
-
+        
         return true;
     }
 

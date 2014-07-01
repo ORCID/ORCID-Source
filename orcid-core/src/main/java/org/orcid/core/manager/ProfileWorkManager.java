@@ -79,4 +79,16 @@ public interface ProfileWorkManager {
      * @return true if the profile work relationship was created
      * */
     boolean addProfileWork(String orcid, long workId, Visibility visibility, String sourceOrcid);
+    
+    /**
+     * Make the given work have the maxDisplay value, higher the value
+     * equals how likely this work should be displayed before another 
+     * work (or work version)
+     * 
+     * @param orcid
+     * @param workId
+     * @return
+     */
+    public boolean updateToMaxDisplay(String orcid, String workId);
+
 }

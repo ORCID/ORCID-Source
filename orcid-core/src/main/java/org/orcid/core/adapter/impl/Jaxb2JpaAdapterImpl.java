@@ -272,7 +272,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         return null;
     }
 
-    private WorkEntity getWorkEntity(OrcidWork orcidWork, WorkEntity workEntity) {
+    public WorkEntity getWorkEntity(OrcidWork orcidWork, WorkEntity workEntity) {
         if (orcidWork != null) {
             Citation workCitation = orcidWork.getWorkCitation();
             if (workCitation != null && StringUtils.isNotBlank(workCitation.getCitation()) && workCitation.getWorkCitationType() != null) {

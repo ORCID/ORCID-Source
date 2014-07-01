@@ -550,7 +550,8 @@ public class FundingsController extends BaseWorkspaceController {
     public @ResponseBody
     FundingForm validateAmount(@RequestBody FundingForm funding) {
         funding.getAmount().setErrors(new ArrayList<String>());
-        if (!PojoUtil.isEmpty(funding.getAmount())) {
+        if (!PojoUtil.isEmpty(funding.getAmount())) {            
+            //Validate amount
             String amount = funding.getAmount().getValue();
             Locale locale = getUserLocale();
             try {
@@ -558,8 +559,11 @@ public class FundingsController extends BaseWorkspaceController {
             } catch (Exception pe) {
                 setError(funding.getAmount(), "Invalid.fundings.amount", getSampleAmountInProperFormat(locale));
             }
+            //Validate if currency code is selected
+            if(PojoUtil.isEmpty(funding.getCurrencyCode()))
+                setError(funding.getAmount(), "Invalid.fundings.currency");                
         } else if (!PojoUtil.isEmpty(funding.getCurrencyCode())) {
-            setError(funding.getAmount(), "Invalid.fundings.currency_not_empty");
+            setError(funding.getAmount(), "Invalid.fundings.currency_not_empty");            
         }
         return funding;
     }

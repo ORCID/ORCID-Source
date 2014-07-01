@@ -57,6 +57,11 @@
 		            				</a>
 		            			</li>
 		            			<li>
+		            				<a ng-click="worksSrvc.makeDefault(group, group.getActive().putCode.value)">
+		            					<span class="glyphicon glyphicon-file"></span>Make Default
+		            				</a>
+		            			</li>
+		            			<li>
 		            				<a ng-click="deleteWorkConfirm(group.getActive().putCode.value, true)">
 		            					<span class="glyphicon glyphicon-trash"></span>Delete All Versions
 		            				</a>
@@ -118,7 +123,6 @@
     	<img src="${staticCdn}/img/spin-big.gif" width="85" height ="85"/>
     <![endif]-->
 </div>
-{{works.length}}
 <div ng-show="worksSrvc.loading == false && worksSrvc.works.length == 0" class="alert alert-info" ng-cloak>
     <strong><#if (publicProfile)?? && publicProfile == true>${springMacroRequestContext.getMessage("workspace_works_body_list.Nopublicationsaddedyet")}<#else>${springMacroRequestContext.getMessage("workspace_works_body_list.havenotaddedanyworks")} <a ng-click="addWorkModal()">${springMacroRequestContext.getMessage("workspace_works_body_list.addsomenow")}</a></#if></strong>
 </div>
