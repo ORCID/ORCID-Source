@@ -86,7 +86,7 @@ public class VisibilityFilterImpl implements VisibilityFilter {
      */
     @Override
     public OrcidMessage filter(OrcidMessage messageToBeFiltered, Visibility... visibilities) {
-        return filter(messageToBeFiltered, null, false, visibilities);
+        return filter(messageToBeFiltered, null, false, false, false, false, visibilities);
     }
 
     /**
@@ -108,7 +108,7 @@ public class VisibilityFilterImpl implements VisibilityFilter {
      */
     @Override
     public OrcidMessage filter(OrcidMessage messageToBeFiltered, final boolean removeAttribute, Visibility... visibilities) {
-        return filter(messageToBeFiltered, null, removeAttribute, visibilities);
+        return filter(messageToBeFiltered, null, false, false, false, removeAttribute, visibilities);
     }
     
     /**
@@ -133,7 +133,7 @@ public class VisibilityFilterImpl implements VisibilityFilter {
      * @return the cleansed {@link org.orcid.jaxb.model.message.OrcidMessage}
      */
     @Override
-    public OrcidMessage filter(OrcidMessage messageToBeFiltered, final String sourceId, final boolean removeAttribute, Visibility... visibilities) {
+    public OrcidMessage filter(OrcidMessage messageToBeFiltered, final String sourceId,  final boolean allowPrivateWorks, final boolean allowPrivateFunding, final boolean allowPrivateAffiliations, final boolean removeAttribute, Visibility... visibilities) {
         if (messageToBeFiltered == null || visibilities == null || visibilities.length == 0) {
             return null;
         }
@@ -151,7 +151,7 @@ public class VisibilityFilterImpl implements VisibilityFilter {
                         Class<?> clazz = obj.getClass();
                         
                         if(!PojoUtil.isEmpty(sourceId)) {
-                            if(Affiliation.class.isAssignableFrom(clazz)) {
+                            if(allowPrivateAffiliations && Affiliation.class.isAssignableFrom(clazz)) {
                                 Affiliation affiliation = (Affiliation) obj;
                                 Source source = affiliation.getSource();
                                 if(source != null) {
@@ -162,7 +162,7 @@ public class VisibilityFilterImpl implements VisibilityFilter {
                                         }
                                     }                                        
                                 }
-                            } else if(Funding.class.isAssignableFrom(clazz)) {
+                            } else if(allowPrivateFunding && Funding.class.isAssignableFrom(clazz)) {
                                 Funding funding = (Funding) obj;
                                 Source source = funding.getSource();
                                 if(source != null) {
@@ -173,7 +173,7 @@ public class VisibilityFilterImpl implements VisibilityFilter {
                                         }
                                     }
                                 }
-                            } else if(OrcidWork.class.isAssignableFrom(clazz)){
+                            } else if(allowPrivateWorks && OrcidWork.class.isAssignableFrom(clazz)){
                                 OrcidWork work = (OrcidWork) obj;
                                 WorkSource source = work.getWorkSource();
                                 if(source != null) {

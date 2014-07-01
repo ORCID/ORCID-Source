@@ -16,6 +16,11 @@
  */
 package org.orcid.core.oauth.service;
 
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.persistence.NoResultException;
+
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
@@ -23,10 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.annotation.Resource;
-import javax.persistence.NoResultException;
-import java.util.List;
 
 /**
  * 2011-2012 ORCID
@@ -171,5 +172,22 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
         orcidOauth2TokenDetailDao.removeByAuthenticationKeyOrTokenValueOrRefreshTokenValue(detail.getAuthenticationKey(), detail.getTokenValue(), detail
                 .getRefreshTokenValue());
         orcidOauth2TokenDetailDao.persist(detail);
+    }
+    
+    /**
+     * Check if a member have a specific scope over a client
+     * @param clientId
+     * @param userName
+     * @param scope
+     * @return true if the member have access to the specified scope on the specified user
+     * */
+    @Override
+    public boolean checkIfScopeIsAvailableForMember(String clientId, String userName, String scope) {
+        List<String> availableScopes = orcidOauth2TokenDetailDao.findAvailableScopesByUserAndClientId(clientId, userName);
+        for(String availableScope : availableScopes) {
+            if(availableScope.contains(scope))
+                return true;
+        }
+        return false;
     }
 }
