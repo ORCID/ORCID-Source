@@ -178,6 +178,7 @@ label,input,button,select,textarea {
 	padding-left: 0;
 	margin-bottom: 10px;
 }
+
 .margin-top-box{
 	margin-top: 15px;
 }
@@ -945,7 +946,6 @@ select {
 	width: 100%;
 }
 
-/* Mobile menu icon */
 .header .navigation>.mobile-button {
 	display: none;
 }
@@ -1666,6 +1666,7 @@ a:hover {
 	font-family: 'Gill Sans W02', 'Helvetica', sans-serif;
 	font-weight: bold;
 	font-style: normal;
+	width: 85%;
 }
 
 .workspace-accordion-header,.workspace-accordion-content {
@@ -2679,10 +2680,6 @@ header overrides
 	padding-left: 0;
 }
 
-.public-profile .workspace-inner>* {
-	padding-left: 10px;
-}
-
 .public-profile .workspace-inner .alert {
 	margin-left: 10px;
 }
@@ -3356,9 +3353,7 @@ p.orcid-id-container{
 	padding-left: 0;
 }
 
-.sso-api ul.sso-links li a span,
-.developer-tools a span
-{
+.sso-api ul.sso-links li a span{
 	font-size: 12px;	
 }
 
@@ -3376,11 +3371,11 @@ p.orcid-id-container{
 	padding-left: 0;		
 }
 
-.sso-api ul.sso-options li{
+ul.sso-options li{
 	display: inline-block;	
 }
 
-.sso-api ul.sso-options span{	
+ul.sso-options li span{	
 	font-size: 16px;
 }
 
@@ -3427,8 +3422,6 @@ p.orcid-id-container{
 	margin-right: 5px;
 }
 
-
-
 /* Developer Tools Layout */
 
 .developer-tools .label-info-green{
@@ -3436,7 +3429,7 @@ p.orcid-id-container{
 }
 
 .developer-tools .table-header-dt{
-	background-color: #31789B;
+	background-color: #939598;
 	color: #FFF;	
 }
 
@@ -3459,10 +3452,12 @@ p.orcid-id-container{
 	padding-bottom: 10px;
 }
 
+/*
 .developer-tools .col-md-10{
 	padding-left: 0;
 	padding-right: 0;
 }
+*/
 
 .developer-tools .sso-options a{
 	display: block;
@@ -3504,7 +3499,7 @@ p.orcid-id-container{
 
 .developer-tools .slidebox .add-options{
 	margin-bottom: 15px;
-	display: block;
+	display: block;	
 }
 
 .developer-tools .icon-href span{
@@ -3518,18 +3513,25 @@ p.orcid-id-container{
 
 .grey-box{
 	background: #EBEBEB;
-	padding: 15px;		
+	padding: 15px;
+	overflow: visible;		
 }
 
 .developer-tools .inner-row input,
 .developer-tools .edit-details .dt-description textarea, 
+.developer-tools .edit-client .dt-description textarea,
 .developer-tools .create-client .dt-description textarea{
 	width: 100%;
 }
 
 .developer-tools .edit-details .dt-description textarea,
+.developer-tools .edit-client .dt-description textarea,
 .developer-tools .create-client .dt-description textarea{
 	height: 150px;
+}
+
+.developer-tools .create-client .ruri {
+	width: 95%;
 }
 
 .developer-tools .redirectUris input{
@@ -3541,7 +3543,7 @@ p.orcid-id-container{
 }
 
 .developer-tools .tab-container{	
-	height: 32px;	 
+	height: 23px;	 
 	background: #FFF;
 	display: block;
 	text-align: center;
@@ -3549,7 +3551,7 @@ p.orcid-id-container{
 }
 
 .developer-tools .tab-container .tab{	
-	padding: 10px;	
+	padding: 2px 10px;	
 	text-align: center;
 	background: #949599;	
 	color: #FFF;
@@ -3560,7 +3562,8 @@ p.orcid-id-container{
 }
 
 .developer-tools .slidebox{
-	display: none;		
+	display: none;
+	overflow: visible !important; 
 }
 
 .developer-tools .tab-container a span{
@@ -3765,9 +3768,10 @@ p.orcid-id-container{
 	color: #FFF;
 	margin: 0;
 	padding: 5px 10px;
+	background: #338caf;
 }
 .id-banner .id-banner-container ul.id-banner-dropdown > li > a:hover{	
-	background: #338caf;	
+	background: #a6ce39;	
 }
 
 .id-banner .id-banner-container ul.id-banner-dropdown > li ul,
@@ -3839,6 +3843,8 @@ p.orcid-id-container{
 	background: #EFEFEF;
 	padding: 10px;
 	margin-bottom: 10px;
+	width: 100%;
+	float: left;
 }
 
 .websites-edit, .keywords-edit, .other-names-edit, .names-edit {
@@ -3847,13 +3853,8 @@ p.orcid-id-container{
 	margin-bottom: 10px;
 }
 
-
 .websites-edit input {
 	width: 95px;
-}
-
-.keywords-edit input, .other-names-edit input {
-	width: 190px;
 }
 
 .keywords-edit #privacy-bar, .other-names-edit #privacy-bar, .names-edit #privacy-bar {
@@ -3864,6 +3865,8 @@ p.orcid-id-container{
 	background: #EFEFEF;
 	padding: 10px;
 	margin-bottom: 10px;
+	float: left;
+	width: 100%;	
 }
 
 .country-controller #country{
@@ -3902,21 +3905,21 @@ p.orcid-id-container{
 
 /* Website edit */
   
- .websites-box,
- .websites-box input{
- 	margin: 10px 0 0 0;
- }
+.websites-box,
+.websites-box input{
+	margin: 10px 0 0 0;
+}
 
- .keywords-box, .keywords-box input,
- .other-names-box, .other-names-box input {
+.keywords-box, .keywords-box input,
+.other-names-box, .other-names-box input {
  	margin: 10px 0 0 0; 	
- }
+}
 
- .websites-box a.glyphicon-trash,
- .keywords-box a.glyphicon-trash,
- .other-names-box a.glyphicon-trash {
+.websites-box a.glyphicon-trash,
+.keywords-box a.glyphicon-trash,
+.other-names-box a.glyphicon-trash {
  	vertical-align: -7px;
- }
+}
 
 .country-controller #privacy-bar{
 	float: left;
@@ -4022,6 +4025,135 @@ p.orcid-id-container{
 .import-label{
 	cursor: pointer;
 }
+
+.wrap{
+	word-break: break-word;
+}
+
+.small-box{
+	float:left;
+	width: 25%;	
+}
+
+.small-box input[type="checkbox"]{
+	width: 15px;
+}
+
+.margin-left-fix{
+	margin-left: 0;
+}
+
+.public-profile #workspace-education{
+	border-top: 1px solid #c9c9c9;
+}
+
+.public-profile .workspace-inner{
+	padding-left: 10px;
+}
+
+/* ID banner full-name fixes*/
+.id-banner .row{
+	margin: 0;
+}
+
+.id-banner .row .col-md-9{
+	padding-right: 0;
+	padding-left: 0;
+}
+
+.id-banner .row .col-md-3{
+	margin-top: 15px;
+	padding-right: 0;
+}
+
+.full-width-input{
+	width: 100%;
+}
+
+.other-names-box input,
+.keyword-box input{
+	width: 90%;
+}
+
+.left-aside .workspace-profile .glyphicon-plus{
+ 	margin: 10px 0;
+}
+
+.workspace-profile  span.glyphicon-pencil,
+#workspace-personal span.glyphicon-pencil,
+.id-banner span.glyphicon-pencil{
+	float: right;
+	margin-right: 5px;
+	background: #949599;
+	padding: 5px;
+	border-radius: 50%;
+	color: #fff;
+	font-size: 10px;
+	z-index: 100;
+}
+
+.workspace-profile  span.glyphicon-pencil:hover,
+#workspace-personal span.glyphicon-pencil:hover,
+.id-banner span.glyphicon-pencil:hover{
+	background: #a6ce39;	
+	color: #fff;
+}
+
+.full-width-input{
+	width: 100% !important;
+}
+/*Angular Multiselect*/
+multiselect .dropdown-menu{
+    padding-left: 5px; 
+    padding-right: 5px;
+    display: none;
+}
+
+multiselect .dropdown-menu .dropdown-menu-list > li > a {
+    padding: 3px 10px;
+    cursor:pointer;
+}
+
+multiselect .dropdown-menu .dropdown-menu-list > li > a:hover{
+	color: #000;
+}
+
+multiselect .dropdown-menu .dropdown-menu-list > li > a i.empty{
+	min-width: 14px;
+}
+
+multiselect .dropdown-menu .dropdown-menu-list{
+	height: 135px;
+	min-width: 315px;
+	overflow-y: scroll;
+}
+
+.website-url{
+	word-wrap: break-word;
+	padding-right: 5px;
+}
+
+.profile-header{
+	display: block;
+	width:100%;
+	float: left;
+	clear: both;
+}
+
+.public-profile #external-identifiers{ /* Overwriting Bootstrap row margins*/
+	margin-left: 0;
+	margin-right: 0;	
+}
+
+.public-profile #external-identifiers .col-md-10{
+	margin: 0;
+	padding: 0;
+}
+
+.public-profile #external-identifiers .col-md-2{
+	padding-right: 5px;
+}
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
@@ -4959,6 +5091,45 @@ p.orcid-id-container{
 		display: block;
 	}
 	
+	.small-box{
+		float:left;
+		width: 100%;	
+	}	
+	
+	.margin-top-box-mobile{
+		margin-top:15px; 
+	}	
+	
+	.input-xlarge-full{
+		width: 100%;
+	}	
+	
+	.authorizeURL {		
+		height: 150px; 
+	}
+	
+	/*MultiSelect*/
+	
+	multiselect, multiselect button, multiselect .btn-group, multiselect ul.dropdown-menu, multiselect ul.dropdown-menu li input{
+		width: 100%;
+	}
+	
+	multiselect ul.dropdown-menu li button{
+		font-weight: normal !important;
+		font-size: 16px;
+	}
+	
+	multiselect .dropdown-menu .dropdown-menu-list li{
+		height: 50px;
+	}
+	
+	multiselect .dropdown-menu .dropdown-menu-list li a{
+		line-height: 40px;
+	}
+	
+	#member_developer_tools_header input, #member_developer_tools_header textarea, #member_developer_tools_header select{
+		width: 100%;
+	}
 	
 }
 
@@ -5124,6 +5295,19 @@ p.orcid-id-container{
 	.id-banner .id-banner-container ul.id-banner-dropdown > li{
 		width: 100%;
 	}
+	
+	.margin-top-box-mobile{
+		margin-top:15px;		 
+	}
+	
+	.other-names-box input,
+	.keyword-box input{
+		width: 96%;
+	}
+	
+	.public-profile #external-identifiers .col-md-2{
+		padding-right: 8px;
+	}	
 }
 
 @media(min-width:1200px){

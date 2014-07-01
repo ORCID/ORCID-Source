@@ -55,13 +55,13 @@ public class BiographyForm implements ErrorsInterface, Serializable {
             op.setOrcidBio(new OrcidBio());
         if (op.getOrcidBio().getBiography() == null)
             op.getOrcidBio().setBiography(new Biography());
-        if (!PojoUtil.isEmpty(biography)) {
-            op.getOrcidBio().getBiography().setContent(this.biography.toString());            
-            if(this.visiblity == null)
-                op.getOrcidBio().getBiography().setVisibility(OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility());
-            else
-                op.getOrcidBio().getBiography().setVisibility(this.visiblity.getVisibility());
-        }
+        
+        op.getOrcidBio().getBiography().setContent(this.biography.toString());            
+        if(this.visiblity == null)
+            op.getOrcidBio().getBiography().setVisibility(OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility());
+        else
+            op.getOrcidBio().getBiography().setVisibility(this.visiblity.getVisibility());
+        
     }
 
     public List<String> getErrors() {

@@ -23,9 +23,11 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.utils.JsonUtils;
+import org.orcid.jaxb.model.message.CitationType;
 import org.orcid.jaxb.model.message.Country;
 import org.orcid.jaxb.model.message.FuzzyDate;
 import org.orcid.jaxb.model.message.Iso3166Country;
+import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.PublicationDate;
@@ -88,6 +90,7 @@ public class Work implements ErrorsInterface, Serializable {
 	protected String citationForDisplay;
 	
 	private String dateSortString;
+	
 
 	public static Work valueOf(MinimizedWorkEntity minimizedWorkEntity) {
 		Work w = new Work();

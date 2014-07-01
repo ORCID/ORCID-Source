@@ -235,6 +235,7 @@ the software.
                             <exclude>**/src/test/resources/org/orcid/frontend/web/forms/**</exclude>
                             <exclude>**/src/test/javascript/node_modules/**</exclude>
                             <exclude>**.md</exclude>
+                            <exclude>docs/**</exclude>
                         	<exclude>**/src/main/resources/**/*countries.txt</exclude>
                         	<exclude>**/src/main/resources/**/*words_to_filter.txt</exclude>
                         	<exclude>**/.gitignore</exclude>
@@ -266,7 +267,7 @@ the software.
                 <plugin>
                     <groupId>org.liquibase</groupId>
                     <artifactId>liquibase-maven-plugin</artifactId>
-                    <version>2.0.3</version>
+                    <version>3.2.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.cargo</groupId>
@@ -780,7 +781,7 @@ the software.
             <dependency>
                 <groupId>org.liquibase</groupId>
                 <artifactId>liquibase-core</artifactId>
-                <version>2.0.3</version>
+                <version>3.2.0</version>
             </dependency>
             <dependency>
                 <groupId>net.sf.ehcache</groupId>

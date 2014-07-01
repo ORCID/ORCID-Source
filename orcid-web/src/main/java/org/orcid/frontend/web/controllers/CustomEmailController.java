@@ -24,6 +24,7 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.servlet.http.HttpServletRequest;
 
+import org.orcid.core.constants.EmailConstants;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.CustomEmailManager;
 import org.orcid.core.manager.LoadOptions;
@@ -51,6 +52,7 @@ public class CustomEmailController extends BaseController {
 
     private static final String DEFAULT_CLAIM_SENDER = "claim@notify.orcid.org";
     private static final int SUBJECT_MAX_LENGTH = 255;
+        
     
     @Resource
     CustomEmailManager customEmailManager;
@@ -80,9 +82,9 @@ public class CustomEmailController extends BaseController {
     @RequestMapping(value = "/create.json", method = RequestMethod.POST)
     public @ResponseBody
     CustomEmailForm createCustomEmailForm(HttpServletRequest request, @RequestBody CustomEmailForm customEmailForm) {
-        String currentOrcid = getEffectiveUserOrcid();
-        customEmailForm.setErrors(new ArrayList<String>());
+        String currentOrcid = getEffectiveUserOrcid();        
         if(clientDetailsManager.exists(currentOrcid)) {
+            customEmailForm.setErrors(new ArrayList<String>());
             //Validate
             validateEmailType(customEmailForm);
             validateSender(customEmailForm);
@@ -126,6 +128,7 @@ public class CustomEmailController extends BaseController {
     CustomEmailForm updateCustomEmailForm(HttpServletRequest request, @RequestBody CustomEmailForm customEmailForm) {
         String currentOrcid = getEffectiveUserOrcid();
         if(clientDetailsManager.exists(currentOrcid)) {
+            customEmailForm.setErrors(new ArrayList<String>());
             //Validate
             validateEmailType(customEmailForm);
             validateSender(customEmailForm);
@@ -245,7 +248,12 @@ public class CustomEmailController extends BaseController {
         customEmailForm.getContent().setErrors(new ArrayList<String>());
         if(PojoUtil.isEmpty(customEmailForm.getContent())){
             customEmailForm.getContent().getErrors().add(getMessage("custom_email.content.not_blank"));
-        } 
+        } else {
+            String content = customEmailForm.getContent().getValue();
+            if(!content.contains(EmailConstants.WILDCARD_VERIFICATION_URL)) {
+                customEmailForm.getContent().getErrors().add(getMessage("custom_email.content.verification_url_required"));
+            }            
+        }
         return customEmailForm;
     }
 }

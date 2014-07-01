@@ -18,7 +18,7 @@
 -->
 <ul ng-hide="!worksSrvc.groups.length" class="workspace-publications workspace-body-list bottom-margin-medium" id="body-work-list" ng-cloak>
     <li class="bottom-margin-small" ng-repeat="group in worksSrvc.groups | orderBy:['-dateSortString', 'title']">        
-		<div class="row" ng-repeat="work in group.works | orderBy:['-dateSortString', 'workTitle.title.value']"> 
+		<div class="row" ng-repeat="work in group.activities | orderBy:['-dateSortString', 'workTitle.title.value']"> 
 			<!-- Info -->
 			<div class="col-md-8 col-sm-8">
 		        <h3 class="work-title">
@@ -32,7 +32,7 @@
 	        	<#include "work_more_info_inc.ftl"/>
 	        	<#if !(isPublicProfile??)>
 	        		<!-- Trash can -->
-					<a href ng-click="deleteWork(work.putCode.value)" class="glyphicon glyphicon-trash grey"></a>
+					<a href ng-click="deleteWorkConfirm(work.putCode.value, false)" class="glyphicon glyphicon-trash grey"></a>
 	        	</#if>
 	        	<#if !(isPublicProfile??)>
 	        		<!-- Privacy bar -->

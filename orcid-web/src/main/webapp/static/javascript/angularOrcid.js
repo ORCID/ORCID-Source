@@ -28,7 +28,7 @@
 	};
 
 
-var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize']);
+var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.multiselect']);
 
 orcidNgModule.directive('ngModelOnblur', function() {
     return {
@@ -223,6 +223,7 @@ orcidNgModule.factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
 			},
 			toggleEducation: function() {
 				serv.displayEducation = !serv.displayEducation;
+				console.log('Education');
 			},
 			toggleEmployment: function() {
 				serv.displayEmployment = !serv.displayEmployment;
@@ -362,64 +363,118 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 	return serv;
 }]);
 
-var GroupedWorks = function() {
-	this._keys = {};
-	this.works = new Array();
+var GroupedActivities = function(type) {
+	this.type = type;
+	this._keySet = {};
+	this.activities = {};
+	this.activitiesCount = 0;
+	this.activePutCode = null;
+	this.defaultPutCode = null;
 	this.dateSortString;
-	this.title;
 };
 
-GroupedWorks.prototype.hasKey = function (key) {
-	if (key in this._keys) return true;
+GroupedActivities.prototype.add = function(activity) {
+	// assumes works are added in the order of the display index desc
+	// subsorted by the created date asc
+    var identifiersPath = null;
+    if (this.type == 'abbrWork') identifiersPath = 'workExternalIdentifiers';
+	for (var idx in activity[identifiersPath])
+		this.addKey(this.key(activity[identifiersPath][idx]));
+	this.activities[activity.putCode.value] = activity;
+	if (this.defaultPutCode == null) { 
+		this.activePutCode = activity.putCode.value;
+		this.makeDefault(activity.putCode.value);
+	}
+	this.activitiesCount++;
+};
+
+GroupedActivities.prototype.makeDefault = function(putCode) {
+	this.defaultPutCode = putCode;
+	this.dateSortString = this.activities[putCode].dateSortString;	
+};
+
+GroupedActivities.prototype.addKey = function(key) {
+	if (this.hasKey(key)) return;
+	this._keySet[key] = true;
+	return;
+};
+
+GroupedActivities.prototype.getActive = function() {
+	return this.activities[this.activePutCode];
+};
+
+GroupedActivities.prototype.getByPut = function(putCode) {
+	return this.activities[putCode];
+};
+
+GroupedActivities.prototype.hasKey = function(key) {
+	if (key in this._keySet)
+		return true;
 	return false;
 };
 
-GroupedWorks.prototype.keyMatch = function (work) {
-	// we don't have keys yet
-	return false;
+GroupedActivities.prototype.hasPut = function(putCode) {
+	   if (this.activities[putCode] !== undefined)
+				return true;
+		return false;
 };
 
-GroupedWorks.prototype.add = function(work) {
-   // we don't have the work external identifiers yet.
-   // we'll have to make sure any new keys are added
-   // and populate the sort title and sort strings 
-   // from the best match
-   this.dateSortString = work.dateSortString;
-   this.title = work.workTitle.title.value;
-   this.works.push(work);
+GroupedActivities.prototype.key = function(activityIdentifiers) {
+	var idPath;
+	var idTypePath;
+	if (this.type == 'abbrWork') {
+		idPath = 'workExternalIdentifierId';
+		idTypePath = 'workExternalIdentifierType';
+	}
+	var key = activityIdentifiers[idTypePath] ? activityIdentifiers[idTypePath].value : ''; 
+	key += activityIdentifiers[idPath] != null ? activityIdentifiers[idPath].value : ''; 
+	return key;
 };
 
-GroupedWorks.prototype.hasPut = function(putCode) {
-	for (var idx in this.works)
-		if (this.works[idx].putCode.value == putCode) 
+GroupedActivities.prototype.keyMatch = function(activity) {
+    var identifiersPath = null;
+    if (this.type == 'abbrWork') identifiersPath = 'workExternalIdentifiers';
+	for (var idx in activity[identifiersPath]) { 
+		if (this.key(activity[identifiersPath][idx]) == '') continue;
+		if (this.key(activity[identifiersPath][idx]) in this._keySet)
 			return true;
+	}
 	return false;
 };
 
-GroupedWorks.prototype.getByPut = function(putCode) {
-    // not sure if we should get fancy with a map yet
-	for (var idx in this.works)
-		if (this.works[idx].putCode.value == putCode) 
-			return this.works[idx];
-	return null;
+GroupedActivities.prototype.rmByPut = function(putCode) {
+	var activities =  this.activities[putCode];
+	delete this.activities[putCode];
+	this.activitiesCount--;
+	return activities;
 };
 
-
-GroupedWorks.prototype.rmByPut = function(putCode) {
-	for (var idx in this.works)
-		if (this.works[idx].putCode.value == putCode)
-			return this.works.splice(idx, 1);
-	return undefined;
+GroupedActivities.prototype.updateDefault = function(putsArray) {
+	this.defaultPutCode == undefined;
+	for (var idx in putsArray) {
+		if (this.hasPut(putsArray[idx])) {
+			this.defaultPutCode = putsArray[idx];
+			break;
+		};
+	};
+	// if we don't have a default select the first putCode
+	if (this.defaultPutCode == undefined) 
+		if (this.activitiesCount > 0)
+			for (var idx in activities) {
+				this.defaultPutCode = idx;
+			};
 };
 
 
 orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 	var serv = {
-		    loading: false,
-			groups: new Array(),
-			worksToAddIds: null,
-			worksInfo: {},
 			bibtexJson: {},
+			constants: { 'access_type': { 'USER': 'user', 'ANONYMOUS': 'anonymous'}},
+			groups: new Array(),
+			loading: false,
+			loadingDetails: false,
+			details: {}, // we should think about putting details in the 
+			worksToAddIds: null,
 			addBibtexJson: function(dw) {
 				if (dw.citation && dw.citation.citationType && dw.citation.citationType.value == 'bibtex') {
 					try {
@@ -430,14 +485,19 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 					};
 				};
 			},
-		    addWorkToScope: function(worksUrl) {
-				if(serv.worksToAddIds.length != 0 ) {
+		    addAbbrWorksToScope: function(type) {
+				if (type == serv.constants.access_type.USER) 
+					var url = getBaseUri() + '/works/works.json?workIds=';
+				else // use the anonymous url
+					var url = getBaseUri() + '/' + orcidVar.orcidId +'/works.json?workIds='; // public
+
+		    	if(serv.worksToAddIds.length != 0 ) {
 					serv.loading = true;
 					var workIds = serv.worksToAddIds.splice(0,20).join();
 					$.ajax({
-						url: worksUrl + workIds,
-						dataType: 'json',
-						success: function(data) {
+						'url': url + workIds,
+						'dataType': 'json',
+						'success': function(data) {
 							$rootScope.$apply(function(){ 
 								for (i in data) {
 									var dw = data[i];                            
@@ -446,12 +506,12 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 									var added = false;
 									for (var idx in serv.groups)
 										if (serv.groups[idx].keyMatch(dw)) {
-											serv.groups[idx].addWork(dw);
+											serv.groups[idx].add(dw);
 											added = true;
 											break;
 										}
 									if (added == false) {
-										var newGroup = new GroupedWorks();
+										var newGroup = new GroupedActivities('abbrWork');
 										newGroup.add(dw);
 										serv.groups.push(newGroup);
 									};
@@ -465,7 +525,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 							} else {
 								$rootScope.$apply();					
 								setTimeout(function(){
-									serv.addWorkToScope(worksUrl);
+									serv.addAbbrWorksToScope(type);
 								},50);
 							}
 						}
@@ -491,26 +551,137 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 			    	console.log("Error fetching blank work");
 			    });
 			},
-			getByPutCode: function(putCode) {
+			getDetails: function(putCode, type, callback) {
+				if (type == serv.constants.access_type.USER) 
+					var url = getBaseUri() + '/works/getWorkInfo.json?workId=';
+				else // use the anonymous url
+					var url = getBaseUri() + '/' + orcidVar.orcidId + '/getWorkInfo.json?workId='; // public
+				if(serv.details[putCode] == undefined) {		
+					$.ajax({
+						url: url + putCode,	        
+				        dataType: 'json',
+				        success: function(data) {		        	
+				        	$rootScope.$apply(function () {
+				        		removeBadContributors(data);
+				        		serv.addBibtexJson(data);
+				        		serv.details[putCode] = data;
+				        		if (callback != undefined) callback(serv.details[putCode]);
+				        	});		        	
+				        }
+					}).fail(function(){
+						// something bad is happening!
+				    	console.log("error fetching works");	
+					});
+				} else {
+					if (callback != undefined) callback(serv.details[putCode]);
+				};
+			},
+			getEditable: function(putCode, callback) {
+				// first check if they are the current source
+				var work = serv.getDetails(putCode, serv.constants.access_type.USER, function(data) {
+					if (data.workSource.value == orcidVar.orcidId)
+						callback(data);
+					else
+						serv.getGroupDetails(putCode, serv.constants.access_type.USER, function () {
+							// in this case we want to open their version
+							// if they don't have a version yet then copy
+							// the current one
+							var bestMatch = null;
+							for (var idx in serv.details)
+								if (serv.details[idx].workSource.value == orcidVar.orcidId) {
+									bestMatch = serv.details[idx]; 
+									break;
+								}	
+							if (bestMatch == null) {
+								bestMatch = JSON.decode(JSON.encode(serv.details[putCode]));
+								bestMatch.workSource = null;
+								bestMatch.workName = null;
+								bestMatch.putCode = null;
+							}
+						    callback(bestMatch);
+						});
+				});
+			},
+			getGroup: function(putCode) {
+				for (var idx in serv.groups) {
+						if (serv.groups[idx].hasPut(putCode))
+							return serv.groups[idx];				
+				}
+				return null;
+			},
+			getGroupDetails: function(putCode, type, callback) {
+				var group = serv.getGroup(putCode);
+				var needsLoading =  new Array();
+				for (var idx in group.activities) {
+					needsLoading.push(group.activities[idx].putCode.value)
+				}
+				
+				var popFunct = function () {
+					if (needsLoading.length > 0)
+						serv.getDetails(needsLoading.pop(), type, popFunct);
+					else if (callback != undefined)
+						callback();
+				}
+				
+				popFunct();
+			},
+			getWork: function(putCode) {
 				for (var idx in serv.groups) {
 						if (serv.groups[idx].hasPut(putCode))
 							return serv.groups[idx].getByPut(putCode);				
 				}
 				return null;
 			},
-			deleteByPutCode: function(putCode) {
+			deleteWork: function(putCode) {
 				var idx;
 				var rmWorks;
 				for (var idx in serv.groups) {
 					if (serv.groups[idx].hasPut(putCode)) {
 						rmWorks = serv.groups[idx].rmByPut(putCode);
-						if (serv.groups[idx].works.length == 0)
-						   serv.groups.splice(idx, 1);
+						if (serv.groups[idx].activitiesCount == 0) 
+							serv.groups.splice(idx,1);
+						else
+							serv.groups[idx].activePutCode = serv.groups[idx].defaultPutCode;
 						break;
 					}
 				}
 				// remove work on server
-				serv.removeWork(rmWorks[0]);
+				serv.removeWork(rmWorks);
+			},
+            makeDefault: function(group, putCode) {
+            	group.makeDefault(putCode);
+	    		$.ajax({
+	    			url: getBaseUri() + '/works/updateToMaxDisplay.json?putCode=' + putCode,	        
+	    	        dataType: 'json',
+	    	        success: function(data) {
+	    	        }
+	    		}).fail(function(){
+	    			// something bad is happening!
+	    	    	console.log("some bad is hppending");
+	    		});
+	    	},
+			loadAbbrWorks: function(access_type) {
+				if (access_type == serv.constants.access_type.ANONYMOUS) {
+				    serv.worksToAddIds = orcidVar.workIds;
+				    serv.addAbbrWorksToScope(serv.constants.access_type.ANONYMOUS);
+				} else {
+					serv.worksToAddIds = null;
+					serv.loading = true;
+					serv.groups.length = 0;
+					serv.details.length = 0;
+					$.ajax({
+						url: getBaseUri() + '/works/workIds.json',	        
+				        dataType: 'json',
+				        success: function(data) {
+				        	serv.worksToAddIds = data;
+				        	serv.addAbbrWorksToScope(serv.constants.access_type.USER);
+				        	$rootScope.$apply();
+				        }
+					}).fail(function(){
+						// something bad is happening!
+				    	console.log("error fetching works");
+					});
+				};
 			},
 			removeWork: function(work) {
 				$.ajax({
@@ -528,9 +699,16 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 			    	console.log("Error deleting work.");
 			    });
 			},
+			setGroupPrivacy: function(putCode, priv) {
+				var group = serv.getGroup(putCode);
+				for (var idx in group.activities) {
+					var curPutCode = group.activities[idx].putCode.value;
+					serv.setPrivacy(curPutCode, priv);
+				}
+			},
 			setPrivacy: function(putCode, priv) {
 				var idx;
-				var work = serv.getByPutCode(putCode);
+				var work = serv.getWork(putCode);
 				work.visibility = priv;
 				serv.updateProfileWork(work);
 			},
@@ -553,7 +731,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 			workCount: function() {
 				var count = 0;
 				for (var idx in serv.groups) {
-					count += serv.groups[idx].works.length;
+					count += serv.groups[idx].activitiesCount;
 				}
 				return count;
 			}
@@ -660,15 +838,20 @@ orcidNgModule.filter('contributorFilter', function(){
 
 orcidNgModule.filter('workExternalIdentifierHtml', function(){
 	return function(workExternalIdentifier, first, last, length){
+		
 		var output = '';
 		
 		if (workExternalIdentifier == null) return output;
+		if (workExternalIdentifier.workExternalIdentifierId == null) return output;
+		
 		var id = workExternalIdentifier.workExternalIdentifierId.value;
 		var type;
+		
 		if (workExternalIdentifier.workExternalIdentifierType != null)
 			type = workExternalIdentifier.workExternalIdentifierType.value;
-		if (type != null) output = output + type.toUpperCase() + ": ";
+		if (type != null) output = output + "<span class='type'>" + type.toUpperCase() + "</span>: ";
 		var link = workIdLinkJs.getLink(id,type);
+		
 		if (link != null) 
 		    output = output + "<a href='" + link + "' target='_blank'>" + id + "</a>";
 		else
@@ -2169,6 +2352,7 @@ function WorkspaceSummaryCtrl($scope, $compile, affiliationsSrvc, fundingSrvc, w
 function PublicEduAffiliation($scope, $compile, $filter, affiliationsSrvc){
 	$scope.affiliationsSrvc = affiliationsSrvc;
 	$scope.moreInfo = {};
+	$scope.displayEducation = true;
 	
 	// remove once grouping is live
 	$scope.toggleClickMoreInfo = function(key) {
@@ -2185,28 +2369,25 @@ function PublicEduAffiliation($scope, $compile, $filter, affiliationsSrvc){
 	
 	$scope.showDetailsMouseClick = function(key, $event) {
 		$event.stopPropagation();
-		$scope.moreInfo[key] = !$scope.moreInfo[key];
-		//
-		/*
-		if (!document.documentElement.className.contains('no-touch'))
-			$scope.moreInfo[key]=!$scope.moreInfo[key];
-		*/
-		/*
-		if (document.documentElement.className.contains('no-touch'))
-			$scope.moreInfo[key]=true;
-		*/
+		$scope.moreInfo[key] = !$scope.moreInfo[key];		
 	};
 
 
 	$scope.closeMoreInfo = function(key) {
 		$scope.moreInfo[key]=false;
 	};
+	
+	$scope.toggleEducation = function(){
+        $scope.displayEducation = !$scope.displayEducation;
+        console.log('Education');
+    };
 
 }
 
 function PublicEmpAffiliation($scope, $compile, $filter, affiliationsSrvc){
 	$scope.affiliationsSrvc = affiliationsSrvc;
 	$scope.moreInfo = {};
+	$scope.displayEmployment = true;
 	
 	$scope.toggleClickMoreInfo = function(key) {
 		if (!document.documentElement.className.contains('no-touch'))
@@ -2232,6 +2413,10 @@ function PublicEmpAffiliation($scope, $compile, $filter, affiliationsSrvc){
 
 	affiliationsSrvc.setIdsToAdd(orcidVar.affiliationIdsJson);
 	affiliationsSrvc.addAffiliationToScope(orcidVar.orcidId +'/affiliations.json');
+	
+	$scope.toggleEmployment = function(){
+	    $scope.displayEmployment = !$scope.displayEmployment;  
+	};
 }
 
 
@@ -2300,6 +2485,7 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 		$scope.moreInfo[key]=false;
 	};
 
+	
 	$scope.showAddModal = function(){
 		var numOfResults = 25;
 		$.colorbox({        	
@@ -2587,7 +2773,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	$scope.closeMoreInfo = function(key) {
 		$scope.moreInfo[key]=false;
 	};
-	
+		
 	$scope.addFundingModal = function(type){
 		$scope.removeDisambiguatedFunding();
 		$.ajax({
@@ -2941,6 +3127,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 function PublicFundingCtrl($scope, $compile, $filter, fundingSrvc){
 	$scope.fundingSrvc = fundingSrvc;
 	$scope.moreInfo = {};
+	$scope.displayFunding = true;
 	
 	// remove once grouping is live
 	$scope.toggleClickMoreInfo = function(key) {
@@ -2974,14 +3161,18 @@ function PublicFundingCtrl($scope, $compile, $filter, fundingSrvc){
 		}				
 		return info;
 	};
+	
+	$scope.toggleFunding = function(){
+	    $scope.displayFunding = !$scope.displayFunding;  
+	};
 }
 
 function PublicWorkCtrl($scope, $compile, worksSrvc) {
 	$scope.worksSrvc = worksSrvc;
 	$scope.showBibtex = true;
-	$scope.loadingInfo = false;
 	$scope.moreInfoOpen = false;
 	$scope.moreInfo = {};
+	$scope.displayWorks = true;
 
     $scope.bibtexShowToggle = function () {
     	$scope.showBibtex = !($scope.showBibtex);
@@ -2991,15 +3182,14 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 	$scope.renderTranslatedTitleInfo = function(putCode) {		
 		var info = null; 
 		
-		if(putCode != null && $scope.worksSrvc.worksInfo[putCode] != null && $scope.worksSrvc.worksInfo[putCode].workTitle != null && $scope.worksSrvc.worksInfo[putCode].workTitle.translatedTitle != null) {
-			info = $scope.worksSrvc.worksInfo[putCode].workTitle.translatedTitle.content + ' - ' + $scope.worksSrvc.worksInfo[putCode].workTitle.translatedTitle.languageName;										
+		if(putCode != null && $scope.worksSrvc.details[putCode] != null && $scope.worksSrvc.details[putCode].workTitle != null && $scope.worksSrvc.details[putCode].workTitle.translatedTitle != null) {
+			info = $scope.worksSrvc.details[putCode].workTitle.translatedTitle.content + ' - ' + $scope.worksSrvc.details[putCode].workTitle.translatedTitle.languageName;										
 		}		
 		
 		return info;
 	};
-		
-	$scope.worksSrvc.worksToAddIds = orcidVar.workIds;	
-	$scope.worksSrvc.addWorkToScope(getBaseUri() + '/' + orcidVar.orcidId +'/works.json?workIds=');
+
+	$scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.ANONYMOUS);
 	
 	// remove once grouping is live
 	$scope.moreInfoClick = function(work, $event) {
@@ -3031,35 +3221,21 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 		$scope.closePopover(event);
 		$scope.moreInfoOpen = true;
 		//Display the popover
-		$scope.loadingInfo = true;
 		$(event.target).next().css('display','inline');		
-		if($scope.worksSrvc.worksInfo[putCode] == null) {		
-			$.ajax({
-				url: getBaseUri() + '/' + orcidVar.orcidId + '/getWorkInfo.json?workId=' + putCode,	        
-		        dataType: 'json',
-		        success: function(data) {		        	
-		        	$scope.$apply(function () {
-		        		removeBadContributors(data);
-						$scope.worksSrvc.addBibtexJson(data);
-						$scope.worksSrvc.worksInfo[putCode] = data;
-						$scope.loadingInfo = false;
-		        	});		        	
-		        }
-			}).fail(function(){
-				// something bad is happening!
-		    	console.log("error fetching works");
-		    	$(event.target).next().css('display','none');	
-		    	$scope.loadingInfo = false;
-			});
+		if($scope.worksSrvc.details[putCode] == null) {		
+			$scope.worksSrvc.getGroupDetails(putCode, worksSrvc.constants.access_type.ANONYMOUS);
 		} else {
 			$(event.target).next().css('display','inline');
-			$scope.loadingInfo = false;
 		}
 	};			
 	
 	$scope.closePopover = function(event) {
 		$scope.moreInfoOpen = false;
 		$('.work-more-info-container').css('display', 'none');
+	};
+	
+	$scope.toggleWorks = function(){
+	    $scope.displayWorks = !$scope.displayWorks;  
 	};
 }
 
@@ -3071,7 +3247,6 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	$scope.workspaceSrvc = workspaceSrvc;
 	$scope.worksSrvc = worksSrvc;
 	$scope.showBibtex = true;
-	$scope.loadingInfo = false;
 	$scope.editTranslatedTitle = false;
 	$scope.types = null;
 	$scope.privacyHelp = {};
@@ -3104,14 +3279,8 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
     
     $scope.addWorkFromBibtex = function(work) {
     	var index = $scope.worksFromBibtex.indexOf(work);
-    	var work = $scope.worksFromBibtex.splice(index, 1);
-    	console.log(work[0]);
+    	var work = $scope.worksFromBibtex.splice(index, 1);    	
     	$scope.addWorkModal(work[0]);
-    };
-
-    $scope.rmWorkFromBibtex = function(work) {
-    	var index = $scope.worksFromBibtex.indexOf(work);
-    	$scope.worksFromBibtex.splice(index, 1);
     };
    
     $scope.openBibTextWizard = function () {
@@ -3165,10 +3334,11 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	};
 	
 	$scope.addWorkModal = function(data){
+		$scope.loadWorkTypes();
 		if (data == undefined) { 
 			worksSrvc.getBlankWork(function(data) {
 				$scope.editWork = data;
-				$scope.$apply(function() {
+				$scope.$apply(function() {					
 					$scope.showAddModal();
 				});			
 			});
@@ -3177,6 +3347,10 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 			$scope.showAddModal();
 		}
 	};
+	
+    $scope.openEditWork = function(putCode){
+    	worksSrvc.getEditable(putCode, function(data) {$scope.addWorkModal(data);});
+    };
 
 
 	$scope.addWork = function(){
@@ -3191,9 +3365,10 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	        data:  angular.toJson($scope.editWork),
 	        success: function(data) {
 	        	if (data.errors.length == 0){
+	        		$scope.closeAllMoreInfo();
 	        		$.colorbox.close(); 
 	        		$scope.addingWork = false;
-	        		$scope.getWorks();
+	        		$scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
 	        	} else {
 		        	$scope.editWork = data;
 		        	$scope.copyErrorsLeft($scope.editWork, data);
@@ -3206,6 +3381,11 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 			$scope.addingWork = false;
 	    	console.log("error fetching works");
 		});
+	};
+	
+	$scope.closeAllMoreInfo = function() {
+		for (var idx in $scope.moreInfo)
+		    $scope.moreInfo[idx]=false;
 	};
 	
 	$scope.validateCitation = function() {
@@ -3225,42 +3405,59 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 				$scope.editWork.citation.citation.errors.push(om.get('manualWork.bibtext.notValid'));
 			};
 		};
-	};
-		
-
-	$scope.getWorks = function() {
-		//clear out current works
-		$scope.worksSrvc.worksToAddIds = null;
-		$scope.worksSrvc.loading = true;
-		$scope.worksSrvc.groups.length = 0;
-		//get work ids
-		$.ajax({
-			url: getBaseUri() + '/works/workIds.json',	        
-	        dataType: 'json',
-	        success: function(data) {
-	        	$scope.worksSrvc.worksToAddIds = data;
-	        	$scope.worksSrvc.addWorkToScope(getBaseUri() + '/works/works.json?workIds=');
-	        	$scope.$apply();
-	        }
-		}).fail(function(){
-			// something bad is happening!
-	    	console.log("error fetching works");
-		});
-	};
-		
+	};	
 	
 	$scope.renderTranslatedTitleInfo = function(putCode) {		
 		var info = null; 
 		
-		if(putCode != null && $scope.worksSrvc.worksInfo[putCode] != null && $scope.worksSrvc.worksInfo[putCode].workTitle != null && $scope.worksSrvc.worksInfo[putCode].workTitle.translatedTitle != null) {
-			info = $scope.worksSrvc.worksInfo[putCode].workTitle.translatedTitle.content + ' - ' + $scope.worksSrvc.worksInfo[putCode].workTitle.translatedTitle.languageName;										
+		if(putCode != null && $scope.worksSrvc.details[putCode] != null && $scope.worksSrvc.details[putCode].workTitle != null && $scope.worksSrvc.details[putCode].workTitle.translatedTitle != null) {
+			info = $scope.worksSrvc.details[putCode].workTitle.translatedTitle.content + ' - ' + $scope.worksSrvc.details[putCode].workTitle.translatedTitle.languageName;										
 		}		
 		
 		return info;
 	};
+			
+	$scope.loadWorkTypes = function(){			
+		var workCategory = "";
+		if($scope.editWork != null && $scope.editWork.workCategory != null && $scope.editWork.workCategory.value != null && $scope.editWork.workCategory.value != "")
+			workCategory = $scope.editWork.workCategory.value;
+					
+		$.ajax({
+	        url: getBaseUri() + '/works/loadWorkTypes.json?workCategory=' + workCategory,
+	        type: 'POST',	        
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	
+	        	$scope.$apply(function() {
+		        	$scope.types = data;
+		        	if($scope.editWork != null && $scope.editWork.workCategory != null) {
+		        		switch ($scope.editWork.workCategory.value){
+		                case "conference":
+		                	$scope.editWork.workType.value="conference-paper";		                	
+		                    break;
+		                case "intellectual_property":
+		                	$scope.editWork.workType.value="patent";
+		                    break;
+		                case "other_output":
+		                	$scope.editWork.workType.value="data-set";
+		                    break;
+		                case "publication":
+		                	$scope.editWork.workType.value="journal-article";
+		                    break;
+		        		}
+		        	}
+	        	});
+	        	
+	        }
+	    }).fail(function() { 
+	    	console.log("Error loading work types.");
+	    });
 		
+	};
+	
 	//init
-	$scope.getWorks();	
+	$scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);	
 	
 	// remove once grouping is live
 	$scope.moreInfoClick = function(work, $event) {
@@ -3279,7 +3476,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	
 	$scope.showDetailsMouseClick = function(work, $event) {
 		$event.stopPropagation();		
-		$scope.moreInfo[work] = !$scope.moreInfo[work];		
+		$scope.moreInfo[work] = !$scope.moreInfo[work];
 		$scope.loadDetails(work, $event);
 	};
 	
@@ -3288,31 +3485,9 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		$scope.closePopover(event);
 		$scope.moreInfoOpen = true;
 		//Display the popover
-		$scope.loadingInfo = true;		
 		$(event.target).next().css('display','inline');	
-		if($scope.worksSrvc.worksInfo[putCode] == null) {		
-			$.ajax({
-				url: getBaseUri() + '/works/getWorkInfo.json?workId=' + putCode,	        
-		        dataType: 'json',
-		        success: function(data) {
-		        	
-		        	$scope.$apply(function () {
-		        		removeBadContributors(data);
-		        		$scope.worksSrvc.addBibtexJson(data);
-						$scope.worksSrvc.worksInfo[putCode] = data;
-						$scope.loadingInfo = false;
-		        	});		        	
-		        }
-			}).fail(function(){
-				// something bad is happening!
-		    	console.log("error fetching works");
-		    	$scope.loadingInfo = false;
-			});
-		} else {
-			$(event.target).next().css('display','inline');
-			$scope.loadingInfo = false;
-		}
-	};			
+		$scope.worksSrvc.getGroupDetails(putCode, worksSrvc.constants.access_type.USER);
+	};			 
 
 	
 	$scope.loadWorkInfo = function(putCode, event) {
@@ -3320,29 +3495,11 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		$scope.closePopover(event);
 		$scope.moreInfoOpen = true;
 		//Display the popover
-		$scope.loadingInfo = true;		
 		$(event.target).next().css('display','inline');	
-		if($scope.worksSrvc.worksInfo[putCode] == null) {		
-			$.ajax({
-				url: getBaseUri() + '/works/getWorkInfo.json?workId=' + putCode,	        
-		        dataType: 'json',
-		        success: function(data) {
-		        	
-		        	$scope.$apply(function () {
-		        		removeBadContributors(data);
-		        		$scope.worksSrvc.addBibtexJson(data);
-						$scope.worksSrvc.worksInfo[putCode] = data;
-						$scope.loadingInfo = false;
-		        	});		        	
-		        }
-			}).fail(function(){
-				// something bad is happening!
-		    	console.log("error fetching works");
-		    	$scope.loadingInfo = false;
-			});
+		if($scope.worksSrvc.details[putCode] == null) {		
+			$scope.worksSrvc.getGroupDetails(putCode, worksSrvc.constants.access_type.USER);
 		} else {
 			$(event.target).next().css('display','inline');
-			$scope.loadingInfo = false;
 		}
 	};			
 	
@@ -3351,9 +3508,10 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		$('.work-more-info-container').css('display', 'none');
 	};
 	
-	$scope.deleteWork = function(putCode) {
+	$scope.deleteWorkConfirm = function(putCode, deleteGroup) {
 		$scope.deletePutCode = putCode;
-		var work = worksSrvc.getByPutCode(putCode);
+		$scope.deleteGroup = putCode;
+		var work = worksSrvc.getWork(putCode);
 		if (work.workTitle && work.workTitle.title) 
 			$scope.fixedTitle = work.workTitle.title.value;
 		else $scope.fixedTitle = '';
@@ -3366,8 +3524,11 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
         });
 	};
 	
-	$scope.deleteByPutCode = function() {
-		worksSrvc.deleteByPutCode($scope.deletePutCode);
+	$scope.deleteByPutCode = function(putCode, deleteGroup) {
+		if (deleteGroup)
+		   worksSrvc.deleteWork(putCode);
+		else
+		   worksSrvc.deleteGroupWorks(putCode);
 		$.colorbox.close(); 
 	};
 	
@@ -3432,44 +3593,6 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		if (cur.required && (cur.value == null || cur.value.trim() == '')) valid = false;
 		if (cur.errors !== undefined && cur.errors.length > 0) valid = false;
 		return valid ? '' : 'text-error';
-	};
-	
-	
-	$scope.loadWorkTypes = function(){			
-		if($scope.editWork.workCategory.value != null && $scope.editWork.workCategory.value != ""){
-			$.ajax({
-		        url: getBaseUri() + '/works/loadWorkTypes.json?workCategory=' + $scope.editWork.workCategory.value,
-		        type: 'POST',	        
-		        contentType: 'application/json;charset=UTF-8',
-		        dataType: 'json',
-		        success: function(data) {
-		        	
-		        	$scope.$apply(function() {
-			        	$scope.types = data;		        	
-			        	switch ($scope.editWork.workCategory.value){
-			                case "conference":
-			                	$scope.editWork.workType.value="conference-paper";		                	
-			                    break;
-			                case "intellectual_property":
-			                	$scope.editWork.workType.value="patent";
-			                    break;
-			                case "other_output":
-			                	$scope.editWork.workType.value="data-set";
-			                    break;
-			                case "publication":
-			                	$scope.editWork.workType.value="journal-article";
-			                    break;
-			        	}
-			        	console.log($scope.editWork.workType.value);
-		        	});
-		        	
-		        }
-		    }).fail(function() { 
-		    	console.log("Error loading work types.");
-		    });
-		} else {
-			$scope.types = null;
-		}
 	};
 	
 	$scope.clearErrors = function() {
@@ -3681,6 +3804,7 @@ function DelegatesCtrl($scope, $compile){
 	};
 	
 	$scope.confirmAddDelegateByEmail = function(emailSearchResult){
+		$scope.errors = [];
 		$scope.emailSearchResult = emailSearchResult;
 		$.colorbox({                      
 			html : $compile($('#confirm-add-delegate-by-email-modal').html())($scope),
@@ -3695,6 +3819,7 @@ function DelegatesCtrl($scope, $compile){
 	};
 	
 	$scope.confirmAddDelegate = function(delegateName, delegateId, delegateIdx){
+		$scope.errors = [];
 		$scope.delegateNameToAdd = delegateName;
 		$scope.delegateToAdd = delegateId;
 		$scope.delegateIdx = delegateIdx;
@@ -3711,15 +3836,25 @@ function DelegatesCtrl($scope, $compile){
 	};
 	
 	$scope.addDelegateByEmail = function(delegateEmail) {
+		$scope.errors = [];
+		var addDelegate = {};
+		addDelegate.delegateEmail = $scope.userQuery;
+		addDelegate.password = $scope.password;
 		$.ajax({
 	        url: $('body').data('baseurl') + 'account/addDelegateByEmail.json',
 	        type: 'POST',
-	        data: delegateEmail,
+	        data: angular.toJson(addDelegate),
 	        contentType: 'application/json;charset=UTF-8',
 	        success: function(data) {
-	        	$scope.getDelegates();
-	        	$scope.$apply();
-	        	$scope.closeModal();
+	        	if(data.errors.length === 0){
+	        		$scope.getDelegates();
+	        		$scope.$apply();
+	        		$scope.closeModal();
+	        	}
+	        	else{
+	        		$scope.errors = data.errors;
+	        		$scope.$apply();
+	        	}
 	        }
 	    }).fail(function() { 
 	    	console.log("Error adding delegate.");
@@ -3727,16 +3862,25 @@ function DelegatesCtrl($scope, $compile){
 	};
 	
 	$scope.addDelegate = function() {
-		$scope.results.splice($scope.delegateIdx, 1);
+		var addDelegate = {};
+		addDelegate.delegateToManage = $scope.delegateToAdd;
+		addDelegate.password = $scope.password;
 		$.ajax({
 	        url: getBaseUri() + '/account/addDelegate.json',
 	        type: 'POST',
-	        data: $scope.delegateToAdd,
+	        data: angular.toJson(addDelegate),
 	        contentType: 'application/json;charset=UTF-8',
 	        success: function(data) {
-	        	$scope.getDelegates();
-	        	$scope.$apply();
-	        	$scope.closeModal();
+	        	if(data.errors.length === 0){
+	        		$scope.getDelegates();
+	        		$scope.results.splice($scope.delegateIdx, 1);
+	        		$scope.$apply();
+	        		$scope.closeModal();
+	        	}
+	        	else{
+	        		$scope.errors = data.errors;
+	        		$scope.$apply();
+	        	}
 	        }
 	    }).fail(function() { 
 	    	console.log("Error adding delegate.");
@@ -3744,6 +3888,7 @@ function DelegatesCtrl($scope, $compile){
 	};
 	
 	$scope.confirmRevoke = function(delegateName, delegateId) {
+		$scope.errors = [];
 	    $scope.delegateNameToRevoke = delegateName;
 	    $scope.delegateToRevoke = delegateId;
         $.colorbox({
@@ -3754,15 +3899,24 @@ function DelegatesCtrl($scope, $compile){
 	};
 
 	$scope.revoke = function () {
+		var revokeDelegate = {};
+		revokeDelegate.delegateToManage = $scope.delegateToRevoke;
+		revokeDelegate.password = $scope.password;
 		$.ajax({
 	        url: getBaseUri() + '/account/revokeDelegate.json',
-	        type: 'DELETE',
-	        data:  $scope.delegateToRevoke,
+	        type: 'POST',
+	        data:  angular.toJson(revokeDelegate),
 	        contentType: 'application/json;charset=UTF-8',
 	        success: function(data) {
-				$scope.getDelegates();
-				$scope.$apply();
-	        	$scope.closeModal();
+	        	if(data.errors.length === 0){
+	        		$scope.getDelegates();
+	        		$scope.$apply();
+	        		$scope.closeModal();
+	        	}
+	        	else{
+	        		$scope.errors = data.errors;
+	        		$scope.$apply();
+	        	}
 	        }
 	    }).fail(function() { 
 	    	// something bad is happening!
@@ -5062,15 +5216,40 @@ function ClientEditCtrl($scope, $compile){
 	$scope.scopeSelectorOpen = false;		
 	$scope.selectedScopes = [];
 	$scope.availableRedirectScopes = [];
+	$scope.editing = false;
+	$scope.creating = false;
+	$scope.viewing = false;
+	$scope.listing = true;
+	$scope.hideGoogleUri = true;
+	$scope.selectedRedirectUri = "";
+	$scope.selectedScope = "";
+	// Google example
+	$scope.googleUri = 'https://developers.google.com/oauthplayground';
+	$scope.playgroundExample = '';
+	$scope.googleExampleLink = 'https://developers.google.com/oauthplayground/#step1&oauthEndpointSelect=Custom&oauthAuthEndpointValue=[BASE_URI_ENCODE]/oauth/authorize&oauthTokenEndpointValue=[PUB_BASE_URI_ENCODE]/oauth/token&oauthClientId=[CLIENT_ID]&oauthClientSecret=[CLIENT_SECRET]&accessTokenType=bearer&scope=[SCOPES]';
+	// Curl example
+	$scope.sampleAuthCurl = '';
+	$scope.sampleAuthCurlTemplate = "curl -i -L -k -H 'Accept: application/json' --data 'client_id=[CLIENT_ID]&client_secret=[CLIENT_SECRET]&grant_type=authorization_code&redirect_uri=[REDIRECT_URI]&code=REPLACE WITH OAUTH CODE' [PUB_BASE_URI]/oauth/token";
+	// Auth example
+	$scope.authorizeUrlBase = getBaseUri() + '/oauth/authorize';
+	$scope.authorizeURLTemplate = $scope.authorizeUrlBase + '?client_id=[CLIENT_ID]&response_type=code&redirect_uri=[REDIRECT_URI]&scope=[SCOPES]';	
+	// Token url
+	$scope.tokenURL = orcidVar.pubBaseUri + '/oauth/token';
+	
 	
 	// Get the list of clients associated with this user
 	$scope.getClients = function(){
 		$.ajax({
 	        url: getBaseUri() + '/group/developer-tools/get-clients.json',
 	        dataType: 'json',
-	        success: function(data) {	        	        					
+	        success: function(data) {	  	        	
 				$scope.$apply(function(){
-					$scope.clients = data;      		
+					$scope.clients = data;
+					$scope.creating = false;
+					$scope.editing = false;
+					$scope.viewing = false;
+					$scope.listing = true;
+					$scope.hideGoogleUri = false;
 				});
 	        }
 	    }).fail(function() { 
@@ -5080,90 +5259,120 @@ function ClientEditCtrl($scope, $compile){
 	};		
 	
 	// Get an empty modal to add
-	$scope.addClient = function(){		
+	$scope.showAddClient = function(){	
 		$.ajax({
 			url: getBaseUri() + '/group/developer-tools/client.json',
 			dataType: 'json',
 			success: function(data) {
-				$scope.newClient = data;
-				console.log(data);
 				$scope.$apply(function() {
-					$scope.showNewClientModal();
+					$scope.newClient = data;
+					$scope.creating = true;
+					$scope.listing = false;
+					$scope.editing = false;
+					$scope.viewing = false;
+					$scope.hideGoogleUri = false;
 				});
 			}
 		}).fail(function() { 
 	    	console.log("Error fetching client");
 	    });
-	};
-	
-	// Display the modal to add a new client
-	$scope.showNewClientModal = function(){
-		$.colorbox({        	            
-            html : $compile($('#new-client-modal').html())($scope), 
-            transition: 'fade',
-            onLoad: function() {
-			    $('#cboxClose').remove();
-			},
-	        scrolling: true
-        });
-        $.colorbox.resize({width:"400px" , height:"450px"});
-	};
+	};		
 	
 	// Add a new uri input field to a new client
-	$scope.addUriToNewClientTable = function(){		
-		$scope.newClient.redirectUris.push({value: {value: ''},type: {value: 'default'}, scopes: []});	
+	$scope.addRedirectUriToNewClientTable = function(){		
+		$scope.newClient.redirectUris.push({value: {value: ''},type: {value: 'default'}, scopes: [], errors: []});	
 	};
 	
 	// Add a new uri input field to a existing client
 	$scope.addUriToExistingClientTable = function(){
-		$scope.clientToEdit.redirectUris.push({value: {value: ''},type: {value: 'default'}, scopes: []});
+		$scope.clientToEdit.redirectUris.push({value: {value: ''},type: {value: 'default'}, scopes: [], errors: []});
 	};
+	
+	// Delete an uri input field 
+	$scope.deleteUriOnNewClient = function(idx){
+		$scope.newClient.redirectUris.splice(idx, 1);
+		$scope.hideGoogleUri = false;
+		if($scope.newClient.redirectUris != null && $scope.newClient.redirectUris.length > 0) {
+			for(var i = 0; i < $scope.newClient.redirectUris.length; i++) {
+				if($scope.newClient.redirectUris[i].value.value == $scope.googleUri) {
+					$scope.hideGoogleUri = true;
+					break;
+				}
+			}
+		}
+	};	
+	
+	// Delete an uri input field 
+	$scope.deleteUriOnExistingClient = function(idx){
+		$scope.clientToEdit.redirectUris.splice(idx, 1);
+		$scope.hideGoogleUri = false;
+		if($scope.clientToEdit.redirectUris != null && $scope.clientToEdit.redirectUris.length > 0) {
+			for(var i = 0; i < $scope.clientToEdit.redirectUris.length; i++) {
+				if($scope.clientToEdit.redirectUris[i].value.value == $scope.googleUri) {
+					$scope.hideGoogleUri = true;
+					break;
+				}
+			}
+		}	
+	};
+	
+	$scope.addTestRedirectUri = function(type, edit) {
+		var rUri = '';		
+		if(type == 'google'){
+			rUri = $scope.googleUri;
+		}
+								
+		$.ajax({
+			url: getBaseUri() + '/developer-tools/get-empty-redirect-uri.json',
+			dataType: 'json',
+			success: function(data) {
+				data.value.value=rUri;
+				data.type.value='default';
+				$scope.$apply(function(){ 
+					if(edit == 'true'){
+						if($scope.clientToEdit.redirectUris.length == 1 && $scope.clientToEdit.redirectUris[0].value.value == null) {						
+							$scope.clientToEdit.redirectUris[0].value.value = rUri;						
+						} else {
+							$scope.clientToEdit.redirectUris.push(data);
+						}
+					} else {
+						if($scope.newClient.redirectUris.length == 1 && $scope.newClient.redirectUris[0].value.value == null) {						
+							$scope.newClient.redirectUris[0].value.value = rUri;						
+						} else {
+							$scope.newClient.redirectUris.push(data);
+						}
+					}															
+					if(type == 'google') {
+						$scope.hideGoogleUri = true; 
+					} 
+				});
+			}
+		}).fail(function() { 
+	    	console.log("Error fetching empty redirect uri");
+	    });
+	};		
 	
 	// Display the modal to edit a client
-	$scope.editClient = function(idx) {		
+	$scope.showEditClient = function(client) {		
 		// Copy the client to edit to a scope variable 
-		$scope.clientToEdit = angular.copy($scope.clients[idx]);		
-		$.colorbox({        	            
-            html : $compile($('#edit-client-modal').html())($scope), 
-            transition: 'fade',            
-	        onLoad: function() {
-			    $('#cboxClose').remove();
-			},
-	        scrolling: true
-        });		
-        $.colorbox.resize({width:"400px" , height:"450px"});   
-	};		
-	
-	// Display client details: Client ID and Client secret
-	$scope.viewDetails = function(idx){
-		$scope.clientDetails = $scope.clients[idx];
-		$.colorbox({        	            
-            html : $compile($('#view-details-modal').html())($scope),
-	        scrolling: true,
-	        onLoad: function() {
-			    $('#cboxClose').remove();
-			},
-			scrolling: true
-        });
+		$scope.clientToEdit = client;	
 		
-        $.colorbox.resize({width:"560px" , height:"275px"});
-        
-	};
-	
-	$scope.closeModal = function(){
-		$.colorbox.close();	
-	};
-	
-	
-	// Delete an uri input field 
-	$scope.deleteUri = function(idx){
-		$scope.clientToEdit.redirectUris.splice(idx, 1);
+		$scope.editing = true;
+		$scope.creating = false;
+		$scope.listing = false;	
+		$scope.viewing = false;
+		$scope.hideGoogleUri = false;
+		
+		if($scope.clientToEdit.redirectUris != null && $scope.clientToEdit.redirectUris.length > 0) {
+			for(var i = 0; i < $scope.clientToEdit.redirectUris.length; i++) {
+				if($scope.clientToEdit.redirectUris[i].value.value == $scope.googleUri) {
+					$scope.hideGoogleUri = true;
+					break;
+				}
+			}
+		}				
 	};		
 	
-	// Delete an uri input field 
-	$scope.deleteJustCreatedUri = function(idx){
-		$scope.newClient.redirectUris.splice(idx, 1);
-	};	
 	
 	//Submits the client update request
 	$scope.submitEditClient = function(){				
@@ -5198,7 +5407,7 @@ function ClientEditCtrl($scope, $compile){
 	};
 	
 	//Submits the new client request
-	$scope.submitAddClient = function(){		
+	$scope.addClient = function(){		
 		// Check which redirect uris are empty strings and remove them from the array
 		for(var j = $scope.newClient.redirectUris.length - 1; j >= 0 ; j--)	{
 			if(!$scope.newClient.redirectUris[j].value){
@@ -5213,14 +5422,13 @@ function ClientEditCtrl($scope, $compile){
 	        data: angular.toJson($scope.newClient),
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
-	        success: function(data) {	        	
+	        success: function(data) {
 	        	if(data.errors != null && data.errors.length > 0){
 	        		$scope.newClient = data;
 	        		$scope.$apply();
 	        	} else {
 	        		//If everything worked fine, reload the list of clients
-	        		$scope.getClients();
-	        		$.colorbox.close();
+	        		$scope.getClients();	        		
 	        	}
 	        }
 	    }).fail(function() { 
@@ -5228,37 +5436,151 @@ function ClientEditCtrl($scope, $compile){
 	    });		
 	};
 	
+	//Submits the updated client
+	$scope.editClient = function() {
+		// Check which redirect uris are empty strings and remove them from the array
+		for(var j = $scope.clientToEdit.redirectUris.length - 1; j >= 0 ; j--)	{
+			if(!$scope.clientToEdit.redirectUris[j].value){
+				$scope.clientToEdit.redirectUris.splice(j, 1);
+			}
+		}
+		
+		//Submit the edited client
+		$.ajax({
+	        url: getBaseUri() + '/group/developer-tools/edit-client.json',
+	        type: 'POST',
+	        data: angular.toJson($scope.clientToEdit),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {	        	
+	        	if(data.errors != null && data.errors.length > 0){
+	        		$scope.clientToEdit = data;
+	        		$scope.$apply();
+	        	} else {
+	        		//If everything worked fine, reload the list of clients
+	        		$scope.getClients();	        		
+	        	}
+	        }
+	    }).fail(function() { 
+	    	console.log("Error editing client information.");
+	    });	
+	};
+	
+	// Display client details: Client ID and Client secret
+	$scope.viewDetails = function(client) {				
+		// Set the client details
+		$scope.clientDetails = client;
+		// Set the first redirect uri selected		
+		if(client.redirectUris != null && client.redirectUris.length > 0) {
+			$scope.selectedRedirectUri = client.redirectUris[0];			
+		} else {
+			$scope.selectedRedirectUri = null;
+		}
+		 
+		$scope.editing = false;
+		$scope.creating = false;
+		$scope.listing = false;	
+		$scope.viewing = true;
+		
+		// Update the selected redirect uri		
+		if($scope.clientDetails != null){
+			$scope.updateSelectedRedirectUri();
+		}
+	};
+	
+	$scope.updateSelectedRedirectUri = function() {
+				
+		var clientId = '';
+		var selectedClientSecret = '';		
+		$scope.playgroundExample = '';
+		var scope = $scope.selectedScope;
+		
+		if ($scope.clientDetails != null){
+			clientId = $scope.clientDetails.clientId.value;
+			selectedClientSecret = $scope.clientDetails.clientSecret.value;
+		}
+		
+		if($scope.selectedRedirectUri.length != 0) {
+			selectedRedirectUriValue = $scope.selectedRedirectUri.value.value;	
+		
+			if($scope.googleUri == selectedRedirectUriValue) {
+				var example = $scope.googleExampleLink;
+				example = example.replace('[PUB_BASE_URI_ENCODE]', encodeURI(orcidVar.pubBaseUri));
+				example = example.replace('[BASE_URI_ENCODE]', encodeURI(getBaseUri()));
+				example = example.replace('[CLIENT_ID]', clientId);
+				example = example.replace('[CLIENT_SECRET]', selectedClientSecret);			
+				if(scope != '')
+					example = example.replace('[SCOPES]', scope);			
+				$scope.playgroundExample = example.replace(/,/g,'%20');
+			}		
+			
+			var example = $scope.authorizeURLTemplate;
+			example = example.replace('[PUB_BASE_URI]', orcidVar.pubBaseUri);
+			example = example.replace('[CLIENT_ID]', clientId);
+			example = example.replace('[REDIRECT_URI]', selectedRedirectUriValue);		
+			if(scope != ''){
+				example = example.replace('[SCOPES]', scope);			
+			}
+			
+			$scope.authorizeURL = example.replace(/,/g,'%20');	//replacing ,	
+			
+			// rebuild sample Auhtroization Curl
+			var sampleCurl = $scope.sampleAuthCurlTemplate;
+			$scope.sampleAuthCurl = sampleCurl.replace('[CLIENT_ID]', clientId)
+			    .replace('[CLIENT_SECRET]', selectedClientSecret)
+			    .replace('[PUB_BASE_URI]', orcidVar.pubBaseUri)
+			    .replace('[REDIRECT_URI]', selectedRedirectUriValue);
+		}
+	};
+	
+	$scope.showViewLayout = function() {		
+		$scope.editing = false;
+		$scope.creating = false;
+		$scope.listing = true;	
+		$scope.viewing = false;
+	};
+
 	//Load the list of scopes for client redirect uris 
 	$scope.loadAvailableScopes = function(){
-		console.log("looking for available scopes");
 		$.ajax({
 	        url: getBaseUri() + '/group/developer-tools/get-available-scopes.json',
 	        type: 'GET',
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        success: function(data) {	        	
-	        	$scope.availableRedirectScopes = data;
-	        	console.log($scope.availableRedirectScopes);
+	        	$scope.availableRedirectScopes = data;	        	
 	        }
 	    }).fail(function() { 
 	    	console.log("Unable to fetch redirect uri scopes.");
 	    });		
 	};
-			
+		
+	
+	$scope.getAvailableRedirectScopes = function() {
+		var toRemove = '/authenticate';
+		var result = [];
+		
+		result = jQuery.grep($scope.availableRedirectScopes, function(value) {
+		  return value != toRemove;
+		});
+		
+		return result;		 
+	};
+	
 	//Load the default scopes based n the redirect uri type selected
 	$scope.loadDefaultScopes = function(rUri) {
-		//If the scopes are empty, fill it with the default scopes
-		if(rUri.scopes.length == 0) {
-			if(rUri.type.value == 'grant-read-wizard'){
-				rUri.scopes.push('/orcid-profile/read-limited');
-			} else if (rUri.type.value == 'import-works-wizard'){
-				rUri.scopes.push('/orcid-profile/read-limited');
-				rUri.scopes.push('/orcid-works/create');
-			} else if (rUri.type.value == 'import-funding-wizard'){
-				rUri.scopes.push('/orcid-profile/read-limited');
-				rUri.scopes.push('/funding/create');
-			}  
-		}
+		//Empty the scopes to update the default ones
+		rUri.scopes = [];
+		//Fill the scopes with the default scopes
+		if(rUri.type.value == 'grant-read-wizard'){
+			rUri.scopes.push('/orcid-profile/read-limited');
+		} else if (rUri.type.value == 'import-works-wizard'){
+			rUri.scopes.push('/orcid-profile/read-limited');
+			rUri.scopes.push('/orcid-works/create');
+		} else if (rUri.type.value == 'import-funding-wizard'){
+			rUri.scopes.push('/orcid-profile/read-limited');
+			rUri.scopes.push('/funding/create');
+		}  		
 	};		
 
 	//Mark an item as selected
@@ -5271,24 +5593,70 @@ function ClientEditCtrl($scope, $compile){
 	            return value != scope;
 	          });
 	    }
-	    console.log(rUri.scopes);
 	    return false;
 	};
 	
-	//Checks if an item is selected, if so, returns the css classes that might 
-	//be applied to the object
+	//Checks if an item is selected
 	$scope.isChecked = function (rUri) { 
-		var scope = this.scope;
+		var scope = this.scope;		
 		if (jQuery.inArray( scope, rUri.scopes ) != -1) {
-	        return 'glyphicon glyphicon-ok pull-right';
+	        return true;
 	    }
 	    return false;
+	};
+	
+	// Checks if the scope checkbox should be disabled
+	$scope.isDisabled = function (rUri) {
+		if(rUri.type.value == 'grant-read-wizard')
+			return true;
+		return false;
 	};
 	
 	//init
 	$scope.getClients();
 	$scope.loadAvailableScopes();
 	
+	$scope.confirmResetClientSecret = function() {
+		$scope.resetThisClient = $scope.clientToEdit;
+		$.colorbox({        	            
+            html : $compile($('#reset-client-secret-modal').html())($scope), 
+            transition: 'fade',
+            onLoad: function() {
+			    $('#cboxClose').remove();
+			},
+	        scrolling: true
+        });
+        $.colorbox.resize({width:"415px" , height:"250px"});
+	};	
+	
+	$scope.resetClientSecret = function() {		
+		$.ajax({
+			url: getBaseUri() + '/group/developer-tools/reset-client-secret.json',
+			type: 'POST',
+			data: $scope.resetThisClient.clientId.value,
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'text',
+			success: function(data) {
+				if(data) {
+					$scope.editing = false;
+					$scope.creating = false;
+					$scope.listing = true;	
+					$scope.viewing = false;
+					
+					$scope.closeModal();
+					$scope.getClients();					
+				} else {
+					console.log('Unable to reset client secret');
+				}					
+			}
+		}).fail(function() { 
+	    	console.log("Error resetting redirect uri");
+	    });
+	};
+	
+	$scope.closeModal = function(){
+		$.colorbox.close();	
+	};
 };
 
 function CustomEmailCtrl($scope, $compile) {	
@@ -5388,7 +5756,7 @@ function CustomEmailCtrl($scope, $compile) {
 	        dataType: 'json',
 	        success: function(data) {
 	        	if(data.errors != null && data.errors.length > 0){
-	        		$scope.customEmail = data;
+	        		$scope.editedCustomEmail = data;
 	        		$scope.$apply();
 	        	} else {
 	        		//If everything worked fine, reload the list of clients
@@ -5460,3 +5828,278 @@ function switchUserCtrl($scope,$compile){
 	};
 			
 };
+
+/*Angular Multi-selectbox*/
+angular.module('ui.multiselect', [])
+
+.factory('optionParser', ['$parse', function ($parse) {
+
+    //                      00000111000000000000022200000000000000003333333333333330000000000044000
+    var TYPEAHEAD_REGEXP = /^\s*(.*?)(?:\s+as\s+(.*?))?\s+for\s+(?:([\$\w][\$\w\d]*))\s+in\s+(.*)$/;
+
+    return {
+      parse: function (input) {
+
+        var match = input.match(TYPEAHEAD_REGEXP), modelMapper, viewMapper, source;
+        if (!match) {
+          throw new Error(
+            "Expected typeahead specification in form of '_modelValue_ (as _label_)? for _item_ in _collection_'" +
+              " but got '" + input + "'.");
+        }
+
+        return {
+          itemName: match[3],
+          source: $parse(match[4]),
+          viewMapper: $parse(match[2] || match[1]),
+          modelMapper: $parse(match[1])
+        };
+      }
+    };
+  }])
+
+  .directive('multiselect', ['$parse', '$document', '$compile', '$interpolate', 'optionParser',
+
+    function ($parse, $document, $compile, $interpolate, optionParser) {
+      return {
+        restrict: 'E',
+        require: 'ngModel',
+        link: function (originalScope, element, attrs, modelCtrl) {
+
+          var exp = attrs.options,
+            parsedResult = optionParser.parse(exp),
+            isMultiple = attrs.multiple ? true : false,
+            required = false,
+            scope = originalScope.$new(),
+            changeHandler = attrs.change || angular.noop;
+
+          scope.items = [];
+          scope.header = 'Select';
+          scope.multiple = isMultiple;
+          scope.disabled = false;
+
+          originalScope.$on('$destroy', function () {
+            scope.$destroy();
+          });
+
+          var popUpEl = angular.element('<multiselect-popup></multiselect-popup>');
+
+          //required validator
+          if (attrs.required || attrs.ngRequired) {
+            required = true;
+          }
+          attrs.$observe('required', function(newVal) {
+            required = newVal;
+          });
+
+          //watch disabled state
+          scope.$watch(function () {
+            return $parse(attrs.disabled)(originalScope);
+          }, function (newVal) {
+            scope.disabled = newVal;
+          });
+
+          //watch single/multiple state for dynamically change single to multiple
+          scope.$watch(function () {
+            return $parse(attrs.multiple)(originalScope);
+          }, function (newVal) {
+            isMultiple = newVal || false;
+          });
+
+          //watch option changes for options that are populated dynamically
+          scope.$watch(function () {
+            return parsedResult.source(originalScope);
+          }, function (newVal) {
+            if (angular.isDefined(newVal))
+              parseModel();
+          }, true);
+
+          //watch model change
+          scope.$watch(function () {
+            return modelCtrl.$modelValue;
+          }, function (newVal, oldVal) {
+            //when directive initialize, newVal usually undefined. Also, if model value already set in the controller
+            //for preselected list then we need to mark checked in our scope item. But we don't want to do this every time
+            //model changes. We need to do this only if it is done outside directive scope, from controller, for example.
+            if (angular.isDefined(newVal)) {
+              markChecked(newVal);
+              scope.$eval(changeHandler);
+            }
+            getHeaderText();
+            modelCtrl.$setValidity('required', scope.valid());
+          }, true);
+
+          function parseModel() {
+            scope.items.length = 0;
+            var model = parsedResult.source(originalScope);
+            if(!angular.isDefined(model)) return;
+            for (var i = 0; i < model.length; i++) {
+              var local = {};
+              local[parsedResult.itemName] = model[i];
+              scope.items.push({
+                label: parsedResult.viewMapper(local),
+                model: parsedResult.modelMapper(local),
+                checked: false
+              });
+            }
+          }
+
+          parseModel();
+
+          element.append($compile(popUpEl)(scope));
+
+          function getHeaderText() {
+            if (is_empty(modelCtrl.$modelValue)) return scope.header = attrs.msHeader || 'Select';
+            
+              if (isMultiple) {
+                  if (attrs.msSelected) {
+                      scope.header = $interpolate(attrs.msSelected)(scope);
+                  } else {
+                      scope.header = modelCtrl.$modelValue.length + ' ' + 'selected';
+                  }
+              
+            } else {
+              var local = {};
+              local[parsedResult.itemName] = modelCtrl.$modelValue;
+              scope.header = parsedResult.viewMapper(local);
+            }
+          }
+          
+          function is_empty(obj) {
+            if (!obj) return true;
+            if (obj.length && obj.length > 0) return false;
+            for (var prop in obj) if (obj[prop]) return false;
+            return true;
+          };
+
+          scope.valid = function validModel() {
+            if(!required) return true;
+            var value = modelCtrl.$modelValue;
+            return (angular.isArray(value) && value.length > 0) || (!angular.isArray(value) && value != null);
+          };
+
+          function selectSingle(item) {
+            if (item.checked) {
+              scope.uncheckAll();
+            } else {
+              scope.uncheckAll();
+              item.checked = !item.checked;
+            }
+            setModelValue(false);
+          }
+
+          function selectMultiple(item) {
+            item.checked = !item.checked;
+            setModelValue(true);
+          }
+
+          function setModelValue(isMultiple) {
+            var value;
+
+            if (isMultiple) {
+              value = [];
+              angular.forEach(scope.items, function (item) {
+                if (item.checked) value.push(item.model);
+              })
+            } else {
+              angular.forEach(scope.items, function (item) {
+                if (item.checked) {
+                  value = item.model;
+                  return false;
+                }
+              })
+            }
+            modelCtrl.$setViewValue(value);
+          }
+
+          function markChecked(newVal) {
+            if (!angular.isArray(newVal)) {
+              angular.forEach(scope.items, function (item) {
+                if (angular.equals(item.model, newVal)) {
+                  scope.uncheckAll();
+                  item.checked = true;
+                  setModelValue(false);
+                  return false;
+                }
+              });
+            } else {
+              angular.forEach(scope.items, function (item) {
+                item.checked = false;
+                angular.forEach(newVal, function (i) {
+                  if (angular.equals(item.model, i)) {
+                    item.checked = true;
+                  }
+                });
+              });
+            }
+          }
+
+          scope.checkAll = function () {
+            if (!isMultiple) return;
+            angular.forEach(scope.items, function (item) {
+              item.checked = true;
+            });
+            setModelValue(true);
+          };
+
+          scope.uncheckAll = function () {
+            angular.forEach(scope.items, function (item) {
+              item.checked = false;
+            });
+            setModelValue(true);
+          };
+
+          scope.select = function (item) {
+            if (isMultiple === false) {
+              selectSingle(item);
+              scope.toggleSelect();
+            } else {
+              selectMultiple(item);
+            }
+          }
+        }
+      };
+    }])
+
+  .directive('multiselectPopup', ['$compile','$document','$templateCache', function ($compile, $document, $templateCache) {
+    return {
+      restrict: 'E',
+      scope: false,
+      replace: true,
+      template: $templateCache.get('multiselect'),
+      link: function (scope, element, attrs) {
+
+        scope.isVisible = false;
+
+        scope.toggleSelect = function () {
+          if (element.hasClass('open')) {
+            element.removeClass('open');
+            $document.unbind('click', clickHandler);
+          } else {
+            element.addClass('open');
+            $document.bind('click', clickHandler);
+            scope.focus();
+          }
+        };
+
+        function clickHandler(event) {
+          if (elementMatchesAnyInArray(event.target, element.find(event.target.tagName)))
+            return;
+          element.removeClass('open');
+          $document.unbind('click', clickHandler);
+          scope.$apply();
+        }
+
+        scope.focus = function focus(){
+          var searchBox = element.find('input')[0];
+          searchBox.focus(); 
+        }
+
+        var elementMatchesAnyInArray = function (element, elementArray) {
+          for (var i = 0; i < elementArray.length; i++)
+            if (element == elementArray[i])
+              return true;
+          return false;
+        }
+      }
+    }
+  }]);

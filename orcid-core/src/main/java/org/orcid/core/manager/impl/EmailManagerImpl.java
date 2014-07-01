@@ -105,4 +105,9 @@ public class EmailManagerImpl implements EmailManager {
         }
         return emailIds;
     }
+    
+    @Override
+    public void addSourceToEmail(String email, String sourceId) {
+        emailDao.addSourceToEmail(email, sourceId);
+    }
 }

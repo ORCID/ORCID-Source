@@ -135,7 +135,7 @@
 							<span><strong><@orcid.msg 'custom_email.template.create.sender.label'/></strong></span>
 							<input type="text" placeholder="<@orcid.msg 'custom_email.template.create.sender.placeholder'/>" class="input-xlarge" ng-model="editedCustomEmail.sender.value">
 							<span class="orcid-error" ng-show="editedCustomEmail.sender.errors.length > 0">
-								<div ng-repeat='error in customEmail.sender.errors' ng-bind-html="error"></div>
+								<div ng-repeat='error in editedCustomEmail.sender.errors' ng-bind-html="error"></div>
 							</span>
 						</div>						
 					</div>

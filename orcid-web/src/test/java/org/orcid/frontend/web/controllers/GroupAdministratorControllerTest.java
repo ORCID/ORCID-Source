@@ -77,10 +77,11 @@ public class GroupAdministratorControllerTest extends BaseControllerTest {
         client = controller.createClient(client);
         assertNotNull(client);
         List<String> errors = client.getErrors(); 
-        assertEquals(3, errors.size());
+        assertEquals(4, errors.size());
         assertTrue(errors.contains(controller.getMessage("manage.developer_tools.group.error.display_name.empty")));
         assertTrue(errors.contains(controller.getMessage("manage.developer_tools.group.error.website.empty")));
         assertTrue(errors.contains(controller.getMessage("manage.developer_tools.group.error.short_description.empty")));
+        assertTrue(errors.contains(controller.getMessage("common.invalid_url")));        
     }
     
     @Test
@@ -96,8 +97,9 @@ public class GroupAdministratorControllerTest extends BaseControllerTest {
         client.setWebsite(Text.valueOf("http://site.com"));        
         client = controller.createClient(client);
         List<String> errors = client.getErrors(); 
-        assertEquals(1, errors.size());
-        assertTrue(errors.contains(controller.getMessage("manage.developer_tools.group.error.display_name.150")));             
+        assertEquals(2, errors.size());
+        assertTrue(errors.contains(controller.getMessage("manage.developer_tools.group.error.display_name.150")));  
+        assertTrue(errors.contains(controller.getMessage("common.invalid_url")));  
         
         //Test invalid redirect uris
         client = controller.getClient();

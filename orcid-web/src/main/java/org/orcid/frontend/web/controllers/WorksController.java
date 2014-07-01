@@ -192,6 +192,13 @@ public class WorksController extends BaseWorkspaceController {
 
         return workList;
     }
+    
+    @RequestMapping(value = "/updateToMaxDisplay.json", method = RequestMethod.GET)
+    public @ResponseBody
+    boolean updateToMaxDisplay(HttpServletRequest request, @RequestParam(value = "putCode") String putCode) {
+        OrcidProfile profile = getEffectiveProfile();
+        return profileWorkManager.updateToMaxDisplay(profile.getOrcidIdentifier().getPath(), putCode);
+    }
 
     /**
      * Returns a blank work
@@ -200,6 +207,8 @@ public class WorksController extends BaseWorkspaceController {
     public @ResponseBody
     Work getWork(HttpServletRequest request) {
         Work w = new Work();
+        OrcidProfile profile = getEffectiveProfile();
+        w.setVisibility(profile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault().getValue());
 
         // work title and subtitle
         Text wtt = new Text();
@@ -272,9 +281,6 @@ public class WorksController extends BaseWorkspaceController {
 
         Text disText = new Text();
         w.setShortDescription(disText);
-
-        OrcidProfile profile = getEffectiveProfile();
-        w.setVisibility(profile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault().getValue());
 
         // Language code
         Text lc = new Text();
@@ -749,16 +755,32 @@ public class WorksController extends BaseWorkspaceController {
     public @ResponseBody
     Map<String, String> retriveWorkSubtypesAsMap(@RequestParam(value = "workCategory") String workCategoryName) {
         Map<String, String> workTypes = new LinkedHashMap<String, String>();
-        WorkCategory workCategory = WorkCategory.fromValue(workCategoryName);
 
-        for (WorkType workType : workCategory.getSubTypes()) {
-            // Dont put work type UNDEFINED
-            if (!workType.equals(WorkType.UNDEFINED) && !workType.equals(WorkType.OTHER))
-                workTypes.put(workType.value(), getMessage(buildInternationalizationKey(WorkType.class, workType.value())));
-            else if (workType.equals(WorkType.OTHER))
-                // OTHER will be at the bottom of the list, so, put a custom
-                // message that will move other at bottom
-                workTypes.put(Work.OTHER_AT_BOTTOM, getMessage(buildInternationalizationKey(WorkType.class, workType.value())));
+        WorkCategory workCategory = null;
+        if (!PojoUtil.isEmpty(workCategoryName))
+            workCategory = WorkCategory.fromValue(workCategoryName);
+        // Get work types based on category
+        if (workCategory != null) {
+            for (WorkType workType : workCategory.getSubTypes()) {
+                // Dont put work type UNDEFINED
+                if (!workType.equals(WorkType.UNDEFINED) && !workType.equals(WorkType.OTHER))
+                    workTypes.put(workType.value(), getMessage(buildInternationalizationKey(WorkType.class, workType.value())));
+                else if (workType.equals(WorkType.OTHER))
+                    // OTHER will be at the bottom of the list, so, put a custom
+                    // message that will move other at bottom
+                    workTypes.put(Work.OTHER_AT_BOTTOM, getMessage(buildInternationalizationKey(WorkType.class, workType.value())));
+            }
+        } else {
+            // Get all work types
+            for (WorkType workType : WorkType.values()) {
+                if (!workType.equals(WorkType.UNDEFINED) && !workType.equals(WorkType.OTHER)) {
+                    workTypes.put(workType.value(), getMessage(buildInternationalizationKey(WorkType.class, workType.value())));
+                } else if (workType.equals(WorkType.OTHER)) {
+                    // OTHER will be at the bottom of the list, so, put a custom
+                    // message that will move other at bottom
+                    workTypes.put(Work.OTHER_AT_BOTTOM, getMessage(buildInternationalizationKey(WorkType.class, workType.value())));
+                }
+            }
         }
 
         return FunctionsOverCollections.sortMapsByValues(workTypes);

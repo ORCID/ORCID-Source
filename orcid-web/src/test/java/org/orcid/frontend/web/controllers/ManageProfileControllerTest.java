@@ -66,6 +66,7 @@ import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
 import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
+import org.orcid.pojo.ManageDelegate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Propagation;
@@ -137,7 +138,6 @@ public class ManageProfileControllerTest extends BaseControllerTest {
         OrcidProfileManagerImpl orcidProfileManagerImpl = getTargetObject(orcidProfileManager, OrcidProfileManagerImpl.class);
         orcidProfileManagerImpl.setOrcidIndexManager(mockOrcidIndexManager);
         orcidProfileManagerImpl.setNotificationManager(mockNotificationManager);
-        controller.setEncryptionManager(encryptionManager);
         controller.setOrcidProfileManager(orcidProfileManager);
         controller.setGivenPermissionToDao(givenPermissionToDao);
         controller.setNotificationManager(mockNotificationManager);
@@ -259,7 +259,10 @@ public class ManageProfileControllerTest extends BaseControllerTest {
         ProfileEntity delegateProfile = new ProfileEntity("5555-5555-5555-555X");
         delegateProfile.setCreditName("Test Delegate Credit Name");
         when(profileEntityManager.findByOrcid("5555-5555-5555-555X")).thenReturn(delegateProfile);
-        controller.addDelegate("5555-5555-5555-555X");
+        ManageDelegate addDelegate = new ManageDelegate();
+        addDelegate.setDelegateToManage("5555-5555-5555-555X");
+        addDelegate.setPassword("password");
+        controller.addDelegate(addDelegate);
         verify(mockNotificationManager, times(1)).sendNotificationToAddedDelegate(any(OrcidProfile.class), (argThat(onlyNewDelegateAdded())));
     }
 

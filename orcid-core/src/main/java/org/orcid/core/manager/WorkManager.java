@@ -49,4 +49,5 @@ public interface WorkManager {
      * @return the list of works associated to the specific user 
      * */
     List<MinimizedWorkEntity> findPublicWorks(String orcid);
+    
 }

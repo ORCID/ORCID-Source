@@ -581,7 +581,7 @@
             <columnExists tableName="external_identifier" columnName="sponsor_orcid"/>
         </preConditions>
         <delete tableName="external_identifier"/>
-        <dropPrimaryKey tableName="external_identifier" constraintName="external_identifier_pk"/>
+        <dropPrimaryKey tableName="external_identifier" constraintName="external_identifier_pkey"/>
         <dropColumn tableName="external_identifier" columnName="sponsor_orcid"/>
         <dropColumn tableName="external_identifier" columnName="sponsor_reference"/>
 
