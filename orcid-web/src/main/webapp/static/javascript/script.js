@@ -589,18 +589,18 @@ $(function () {
 var bibToWorkTypeMap = {};
 bibToWorkTypeMap['article'] = ['publication','journal-article'];
 bibToWorkTypeMap['book'] = ['publication','book'];
-bibtoworktypemap['booklet'] = ['publication','other'];
-bibtoworktypemap['conference'] = ['conference','conference-paper'];
-bibtoworktypemap['inbook'] = ['publication','book-chapter'];
-bibtoworktypemap['incollection'] = ['publication','book-chapter'];
-bibtoworktypemap['inproceedings'] =['conference','conference_paper'];
-bibtoworktypemap['manual'] = ['publication','manual'];
-bibtoworktypemap['mastersthesis'] = ['publication','supervised-student-publication'];
-bibtoworktypemap['misc'] = ['publication','other'];
-bibtoworktypemap['phdthesis'] = ['publication','disseratation'];
-bibtoworktypemap['proceedings'] = ['conference','conference-paper'];
-bibtoworktypemap['techreport'] = ['publication','report'];
-bibtoworktypemap['unpublished'] = ['publication','other'];
+bibToWorkTypeMap['booklet'] = ['publication','other'];
+bibToWorkTypeMap['conference'] = ['conference','conference-paper'];
+bibToWorkTypeMap['inbook'] = ['publication','book-chapter'];
+bibToWorkTypeMap['incollection'] = ['publication','book-chapter'];
+bibToWorkTypeMap['inproceedings'] =['conference','conference_paper'];
+bibToWorkTypeMap['manual'] = ['publication','manual'];
+bibToWorkTypeMap['mastersthesis'] = ['publication','supervised-student-publication'];
+bibToWorkTypeMap['misc'] = ['publication','other'];
+bibToWorkTypeMap['phdthesis'] = ['publication','disseratation'];
+bibToWorkTypeMap['proceedings'] = ['conference','conference-paper'];
+bibToWorkTypeMap['techreport'] = ['publication','report'];
+bibToWorkTypeMap['unpublished'] = ['publication','other'];
 
 function populateWorkAjaxForm(bibJson, work) {
 	 
