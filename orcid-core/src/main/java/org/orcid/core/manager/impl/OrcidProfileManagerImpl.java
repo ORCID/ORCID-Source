@@ -141,6 +141,7 @@ import org.orcid.utils.NullUtils;
 import org.orcid.utils.ReleaseNameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -232,6 +233,9 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     
     @Resource 
     private WorkDao workDao;
+    
+    @Value("${org.orcid.core.works.compare.useScopusWay:false}")
+    private boolean compareWorksUsingScopusWay;
 
     private int claimWaitPeriodDays = 10;
 
@@ -1082,14 +1086,42 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         addSourceToWorks(updatedOrcidWorks, amenderOrcid);
         updatedOrcidWorks = dedupeWorks(updatedOrcidWorks);
         List<OrcidWork> updatedOrcidWorksList = updatedOrcidWorks.getOrcidWork();
-        checkForAlreadyExistingWorks(existingOrcidWorks, updatedOrcidWorksList);
-        if(existingOrcidWorks != null)
-            checkWorkExternalIdentifiersAreNotDuplicated(updatedOrcidWorksList, existingOrcidWorks.getOrcidWork());
-        else
-            checkWorkExternalIdentifiersAreNotDuplicated(updatedOrcidWorksList, null);
+        
+        if(compareWorksUsingScopusWay) {
+            checkForAlreadyExistingWorks(existingOrcidWorks, updatedOrcidWorksList);
+            if(existingOrcidWorks != null)
+                checkWorkExternalIdentifiersAreNotDuplicated(updatedOrcidWorksList, existingOrcidWorks.getOrcidWork());
+            else
+                checkWorkExternalIdentifiersAreNotDuplicated(updatedOrcidWorksList, null);
+        } else {
+            checkForAlreadyExistingWorksLegacyMode(existingOrcidWorks, updatedOrcidWorksList);
+        }                        
+        
         persistAddedWorks(orcid, updatedOrcidWorksList);
     }
-
+    
+    /**
+     * Legacy mode to check if works are duplicated
+     * TODO: This must be removed in a near future
+     * */
+    private void checkForAlreadyExistingWorksLegacyMode(OrcidWorks existingOrcidWorks, List<OrcidWork> updatedOrcidWorksList) {
+        if (existingOrcidWorks != null) {
+            Set<OrcidWork> existingOrcidWorksSet = new HashSet<>();
+            for (OrcidWork existingWork : existingOrcidWorks.getOrcidWork()) {
+                existingOrcidWorksSet.add(existingWork);
+            }
+            for (Iterator<OrcidWork> updatedWorkIterator = updatedOrcidWorksList.iterator(); updatedWorkIterator.hasNext();) {
+                OrcidWork updatedWork = updatedWorkIterator.next();
+                for (OrcidWork orcidWork : existingOrcidWorksSet) {
+                    if (orcidWork.isDuplicatedLegacyMode(updatedWork)) {
+                        updatedWorkIterator.remove();
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    
     private void checkForAlreadyExistingWorks(OrcidWorks existingOrcidWorks, List<OrcidWork> updatedOrcidWorksList) {
         if (existingOrcidWorks != null) {
             Set<OrcidWork> existingOrcidWorksSet = new HashSet<>();
