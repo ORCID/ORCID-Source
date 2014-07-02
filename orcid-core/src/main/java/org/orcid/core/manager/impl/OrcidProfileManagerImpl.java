@@ -282,6 +282,11 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     }
 
     @Override
+    public void setCompareWorksUsingScopusWay(boolean compareWorksUsingScopusWay) {
+        this.compareWorksUsingScopusWay = compareWorksUsingScopusWay;
+    }
+    
+    @Override
     @Transactional
     public OrcidProfile createOrcidProfile(OrcidProfile orcidProfile) {
         if (orcidProfile.getOrcidIdentifier() == null) {
