@@ -375,5 +375,7 @@ public interface OrcidProfileManager {
     public void processProfilePendingIndexingInTransaction(final String orcid);
     
     public void checkWorkExternalIdentifiersAreNotDuplicated(List<OrcidWork> newOrcidWorksList, List<OrcidWork> existingWorkList);
+    
+    public void setCompareWorksUsingScopusWay(boolean compareWorksUsingScopusWay);
 
 }
