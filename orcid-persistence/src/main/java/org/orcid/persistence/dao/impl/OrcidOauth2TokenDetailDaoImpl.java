@@ -189,7 +189,7 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
      * @return the list of available scopes over a profile
      * */
     public List<String> findAvailableScopesByUserAndClientId(String clientId, String userName) {
-        Query query = entityManager.createNativeQuery("select distinct(scope_type) from oauth2_token_detail where user_orcid=:userName and client_details_id=:clientId and (tokenDisabled = FALSE or tokenDisabled is null)",
+        Query query = entityManager.createNativeQuery("select distinct(scope_type) from oauth2_token_detail where user_orcid=:userName and client_details_id=:clientId and (token_disabled = FALSE or token_disabled is null)",
                 OrcidOauth2TokenDetail.class);
         query.setParameter("clientId", clientId);
         query.setParameter("userName", userName);
