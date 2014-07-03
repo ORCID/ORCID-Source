@@ -240,27 +240,31 @@
         		<div class="row">
         			<!-- Works -->
 	        		<div class="workspace-overview col-md-3 col-sm-3 col-xs-6" id="works-overview">
-	        			<a href="#workspace-publications" class="overview-count" ng-click="workspaceSrvc.openWorks()"><span ng-bind="worksSrvc.workCount()"></span></a>
-	        			<a href="#workspace-publications" class="overview-title" ng-click="workspaceSrvc.openWorks()"><@orcid.msg 'workspace.Works'/></a>
-	                    <br />	                    	
+	        			<ul>
+	        				<li><a href="#workspace-publications" class="overview-count" ng-click="workspaceSrvc.openWorks()"><span ng-bind="worksSrvc.workCount()"></span></a></li>
+	        				<li><a href="#workspace-publications" class="overview-title" ng-click="workspaceSrvc.openWorks()"><@orcid.msg 'workspace.Works'/></a></li>
+	        			</ul>
 	                    <a href="#workspace-publications" class="btn-update no-icon" ng-click="workspaceSrvc.openWorks()"><@orcid.msg 'workspace.view'/></a>	                    
 	        		</div>
 		            <div class="workspace-overview col-md-3 col-sm-3 col-xs-6" id="educations-overview">
-		                <a href="#workspace-educations" class="overview-count" ng-click="workspaceSrvc.openEducation()"><span ng-bind="affiliationsSrvc.educations.length"></span></a>
-		                <a href="#workspace-educations" class="overview-title" ng-click="workspaceSrvc.openEducation()"><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education'/></a>
-		                <br />
+		            	<ul>
+		            		<li><a href="#workspace-educations" class="overview-count" ng-click="workspaceSrvc.openEducation()"><span ng-bind="affiliationsSrvc.educations.length"></span></a></li>
+		            		<li><a href="#workspace-educations" class="overview-title" ng-click="workspaceSrvc.openEducation()"><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education'/></a></li>
+		            	</ul>
 		                <a href="#workspace-educations" class="btn-update no-icon" ng-click="workspaceSrvc.openEducation()"><@orcid.msg 'workspace.view'/></a>
 		            </div>
 		            <div class="workspace-overview col-md-3 col-sm-3 col-xs-6" id="employments-overview">
-		                <a href="#workspace-employments" class="overview-count" ng-click="workspaceSrvc.openEmployment()"><span ng-bind="affiliationsSrvc.employments.length"></span></a>
-		                <a href="#workspace-employments" class="overview-title" ng-click="workspaceSrvc.openEmployment()"><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.employment'/></a>
-		                <br />
+		            	<ul>
+		            		<li><a href="#workspace-employments" class="overview-count" ng-click="workspaceSrvc.openEmployment()"><span ng-bind="affiliationsSrvc.employments.length"></span></a></li>
+		            		<li><a href="#workspace-employments" class="overview-title" ng-click="workspaceSrvc.openEmployment()"><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.employment'/></a></li>
+		            	</ul>
 		                <a href="#workspace-employments" class="btn-update no-icon" ng-click="workspaceSrvc.openEmployment()"><@orcid.msg 'workspace.view'/></a>
 		             </div>
 					<div class="workspace-overview col-md-3 col-sm-3 col-xs-6">
-        				<a href="#workspace-fundings" class="overview-count" ng-click="workspaceSrvc.openFunding()"><span ng-bind="fundingSrvc.fundings.length"></span></a>
-        				<a href="#workspace-fundings" class="overview-title" ng-click="workspaceSrvc.openFunding()"><@orcid.msg 'workspace.Funding'/></a>
-        				<br />
+						<ul>
+							<li><a href="#workspace-fundings" class="overview-count" ng-click="workspaceSrvc.openFunding()"><span ng-bind="fundingSrvc.fundings.length"></span></a></li>
+							<li><a href="#workspace-fundings" class="overview-title" ng-click="workspaceSrvc.openFunding()"><@orcid.msg 'workspace.Funding'/></a></li>
+						</ul>
         				<a href="#workspace-employments" class="btn-update no-icon" ng-click="workspaceSrvc.openFunding()"><@orcid.msg 'workspace.view'/></a>
         			</div>
 	        	</div>
