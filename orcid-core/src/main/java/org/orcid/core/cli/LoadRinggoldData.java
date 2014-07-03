@@ -35,6 +35,7 @@ import org.kohsuke.args4j.Option;
 import org.orcid.core.manager.OrgManager;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
+import org.orcid.persistence.dao.OrgDisambiguatedSolrDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
@@ -63,6 +64,7 @@ public class LoadRinggoldData {
     @Option(name = "-z", usage = "Path to zip file containing Ringgold data to process")
     private File zipFile;
     private OrgDisambiguatedDao orgDisambiguatedDao;
+    private OrgDisambiguatedSolrDao orgDisambiguatedSolrDao;
     private OrgManager orgManager;
     private int numAdded;
     private int numUpdated;
@@ -81,7 +83,12 @@ public class LoadRinggoldData {
         } catch (CmdLineException e) {
             System.err.println(e.getMessage());
             parser.printUsage(System.err);
+            System.exit(1);
+        } catch (Throwable t) {
+            System.err.println(t);
+            System.exit(2);
         }
+        System.exit(0);
     }
 
     private void validateArgs(CmdLineParser parser) throws CmdLineException {
@@ -93,6 +100,7 @@ public class LoadRinggoldData {
     private void init() {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         orgDisambiguatedDao = (OrgDisambiguatedDao) context.getBean("orgDisambiguatedDao");
+        orgDisambiguatedSolrDao = (OrgDisambiguatedSolrDao) context.getBean("orgDisambiguatedSolrDao");
         orgManager = (OrgManager) context.getBean("orgManager");
     }
 
@@ -327,11 +335,13 @@ public class LoadRinggoldData {
     }
 
     private void processDeletedIdsLine(String[] line) {
-        String deletedId = line[0];
-        OrgDisambiguatedEntity entity = orgDisambiguatedDao.findBySourceIdAndSourceType(deletedId, RINGGOLD_SOURCE_TYPE);
+        String deletedSourceId = line[0];
+        OrgDisambiguatedEntity entity = orgDisambiguatedDao.findBySourceIdAndSourceType(deletedSourceId, RINGGOLD_SOURCE_TYPE);
         if (entity != null) {
-            LOGGER.info("Deleted ID exists in DB, id={}", deletedId);
-            // Should actually delete, or flag status?
+            LOGGER.info("Deleted ID exists in DB, id={}", deletedSourceId);
+            Long entityId = entity.getId();
+            orgDisambiguatedSolrDao.remove(entityId);
+            orgDisambiguatedDao.remove(entityId);
             numDeleted++;
         }
     }
