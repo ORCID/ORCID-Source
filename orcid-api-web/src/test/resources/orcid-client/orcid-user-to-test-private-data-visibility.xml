@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ============================================================================= 
+	ORCID (R) Open Source http://orcid.org Copyright (c) 2012-2013 ORCID, Inc. 
+	Licensed under an MIT-Style License (MIT) http://orcid.org/open-source-license 
+	This copyright and license information (including a link to the full license) 
+	shall be included in its entirety in all copies or substantial portion of 
+	the software. ============================================================================= -->
+<orcid-message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../../orcid-model/src/main/resources/orcid-message-1.2_rc4.xsd"
+	xmlns="http://www.orcid.org/ns/orcid">
+	<message-version>1.2_rc4</message-version>
+	<orcid-profile xmlns="http://www.orcid.org/ns/orcid">
+		<orcid-history>
+			<creation-method>API</creation-method>
+			<verified-email>false</verified-email>
+			<verified-primary-email>false</verified-primary-email>
+		</orcid-history>
+		<orcid-bio>
+			<personal-details>
+				<given-names>Read</given-names>
+				<family-name>My</family-name>
+				<credit-name>Private Data</credit-name>
+			</personal-details>
+			<biography>Small Bio</biography>
+			<contact-details>
+				<email primary="true">private_data_integration_test@orcid.com</email>
+			</contact-details>
+		</orcid-bio>
+		<orcid-activities>
+			<affiliations>
+				<affiliation visibility="public">
+					<type>education</type>
+					<department-name>Public Affiliation</department-name>
+					<organization>
+						<name>New College # 1</name>
+						<address>
+							<city>Some City</city>
+							<region>NY</region>
+							<country>CR</country>
+						</address>
+					</organization>
+				</affiliation>
+				<affiliation visibility="limited">
+					<type>education</type>
+					<department-name>Limited Affiliation</department-name>
+					<organization>
+						<name>New College # 1</name>
+						<address>
+							<city>Some City</city>
+							<region>NY</region>
+							<country>CR</country>
+						</address>
+					</organization>
+				</affiliation>
+				<affiliation visibility="private">
+					<type>education</type>
+					<department-name>Private Affiliation</department-name>
+					<organization>
+						<name>New College # 1</name>
+						<address>
+							<city>Some City</city>
+							<region>NY</region>
+							<country>CR</country>
+						</address>
+					</organization>
+				</affiliation>
+			</affiliations>
+			<orcid-works>
+				<orcid-work visibility="public">
+					<work-title>
+						<title>Public Work</title>
+					</work-title>
+					<work-type>journal-article</work-type>
+				</orcid-work>
+				<orcid-work visibility="limited">
+					<work-title>
+						<title>Limited Work</title>
+					</work-title>
+					<work-type>journal-article</work-type>
+				</orcid-work>
+				<orcid-work visibility="private">
+					<work-title>
+						<title>Private Work</title>
+					</work-title>
+					<work-type>journal-article</work-type>
+				</orcid-work>
+			</orcid-works>
+			<funding-list>
+				<funding visibility="public">
+					<funding-type>award</funding-type>
+					<funding-title>
+						<title>Public Funding</title>
+					</funding-title>
+					<organization>
+						<name>New College # 1</name>
+						<address>
+							<city>Some City</city>
+							<region>NY</region>
+							<country>CR</country>
+						</address>
+					</organization>
+				</funding>
+				<funding visibility="limited">
+					<funding-type>award</funding-type>
+					<funding-title>
+						<title>Limited Funding</title>
+					</funding-title>
+					<organization>
+						<name>New College # 1</name>
+						<address>
+							<city>Some City</city>
+							<region>NY</region>
+							<country>CR</country>
+						</address>
+					</organization>
+				</funding>
+				<funding visibility="private">
+					<funding-type>award</funding-type>
+					<funding-title>
+						<title>Private Funding</title>
+					</funding-title>
+					<organization>
+						<name>New College # 1</name>
+						<address>
+							<city>Some City</city>
+							<region>NY</region>
+							<country>CR</country>
+						</address>
+					</organization>
+				</funding>
+			</funding-list>			
+		</orcid-activities>
+		<orcid-internal>
+			<security-details>
+				<encrypted-password>abc123</encrypted-password>
+				<security-question-id>1</security-question-id>
+				<encrypted-security-answer>dMDyJ1Z7Qn6xWClFzA63fQ==
+				</encrypted-security-answer>
+				<encrypted-verification-code>ghi789
+				</encrypted-verification-code>
+			</security-details>
+			<preferences>
+				<send-change-notifications>false</send-change-notifications>
+				<send-orcid-news>false</send-orcid-news>
+				<activities-visibility-default>private</activities-visibility-default>
+			</preferences>
+		</orcid-internal>
+	</orcid-profile>
+</orcid-message>

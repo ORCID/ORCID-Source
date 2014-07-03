@@ -53,7 +53,9 @@ public class OrcidClientDataHelper implements InitializingBean {
     public static final String ORCID_INTERNAL_NO_SPONSOR_XML = "/orcid-client/orcid-internal-no-sponsor-client.xml";
     public static final String ORCID_INTERNAL_SPONSOR_XML = "/orcid-client/orcid-internal-sponsor-message-client.xml";
     public static final String CLIENT_GROUP_SINGLE_FOR_OAUTH = "/orcid-client/orcid-client-group-single.xml";
-
+    public static final String GROUP_WITH_MULTIPLE_CLIENTS_FOR_OAUTH = "/orcid-client/orcid-group-with-multiple-clients.xml";
+    public static final String USER_TO_TEST_PRIVATE_DATA_VISIBILITY = "/orcid-client/orcid-user-to-test-private-data-visibility.xml";
+    
     @Resource
     private OrcidClientGroupManager orcidClientGroupManager;
 
@@ -125,6 +127,24 @@ public class OrcidClientDataHelper implements InitializingBean {
         return createdGroup;
     }
 
+    
+    
+    
+    
+    protected OrcidClientGroup createAndPersistGroupWithMultipleClients() {
+        OrcidClientGroup groupWithMultipleClients = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(GROUP_WITH_MULTIPLE_CLIENTS_FOR_OAUTH));
+        groupWithMultipleClients.setEmail("orcid.integration.test.client+" + System.currentTimeMillis() + "@orcid.net");
+        OrcidClientGroup result = orcidClientGroupManager.createOrUpdateOrcidClientGroup(groupWithMultipleClients); 
+        return result;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
     protected void assertClientCredentialsForTesting(OrcidClientGroup orcidClientGroup) {
         assertNotNull(orcidClientGroup);
 
