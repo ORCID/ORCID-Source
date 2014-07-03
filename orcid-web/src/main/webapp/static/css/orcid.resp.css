@@ -4154,6 +4154,23 @@ multiselect .dropdown-menu .dropdown-menu-list{
 	padding-right: 5px;
 }
 
+.white-box{
+	background: #FFF;
+	padding: 5px;
+	margin: 15px;
+}
+
+.bibtex-options-menu ul{
+	padding: 0;
+	margin:0;
+	list-style-type: none;
+}
+
+
+.bibtex-options-menu ul li{
+	display: inline-block;
+}
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */

@@ -309,7 +309,7 @@
 							        <!-- <a href="" class="label btn-primary" ng-click="openBibTextWizard()">Import Bibtex File</a> -->
 							        <div class="label btn-primary upload">
 							           <span class="import-label">Import BibTex File</span>
-								       <input type="file" class="upload-button" ng-model="textFiles" accept="*" update-fn="loadBibtexJs()"  app-file-text-reader multiple />
+								       <input type="file" class="upload-button" ng-model="textFiles" ng-click="openBibTextWizard()" accept="*" update-fn="loadBibtexJs()"  app-file-text-reader multiple />
 							       </div>
 							    </li>
 							</#if>
@@ -317,17 +317,20 @@
 					</div>
 
 					<div ng-show="showBibtexImportWizard" ng-cloak class="grey-box">
-					  	<div>
-						   	<div ng-repeat="work in worksFromBibtex" ng-cloak class="row" style="margin: 5px;">
-			        	       <div class="col-md-8 col-sm-8 col-xs-8" style="background-color: #FFFFFF;">
-			        	          {{work.workTitle.title.value}}
-			        	       </div>
-			        	       <div class="col-md-4 col-sm-4 col-xs-4">
-			        	          <strong><a class="glyphicon glyphicon-floppy-disk" ng-click="addWorkFromBibtex(work)">Save</a> <a ng-click="rmWorkFromBibtex(work)" class="glyphicon glyphicon-trash grey">Trash</a></strong>
-			        	       </div>
-			        	  	</div>
-						</div>
-					   
+					   	<div ng-repeat="work in worksFromBibtex" ng-cloak">
+		        	       <div class="row white-box">
+		        	       	  <div class="col-md-9">
+		        	          	{{work.workTitle.title.value}}
+		        	          </div>
+		        	          <div class="col-md-3 bibtex-options-menu">
+		        	          	<ul>
+		        	          		<li><a ng-click="addWorkFromBibtex(work)"><span class="glyphicon glyphicon-floppy-disk"></span>Save</a></li>
+		        	          		<li><a ng-click="rmWorkFromBibtex(work)"><span class="glyphicon glyphicon-trash"></span>Ignore</a></li>
+		        	          	</ul>
+	        	          	 </div>
+							  
+		        	       </div>
+		        	  	</div>
 					</div>
 					
 					

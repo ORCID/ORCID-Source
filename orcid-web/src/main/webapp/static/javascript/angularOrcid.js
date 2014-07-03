@@ -223,7 +223,6 @@ orcidNgModule.factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
 			},
 			toggleEducation: function() {
 				serv.displayEducation = !serv.displayEducation;
-				console.log('Education');
 			},
 			toggleEmployment: function() {
 				serv.displayEmployment = !serv.displayEmployment;
@@ -3252,14 +3251,13 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	$scope.privacyHelp = {};
 	$scope.moreInfoOpen = false;
 	$scope.moreInfo = {};
-	$scope.showBibtexImportWizard = false;
 	
 	$scope.loadBibtexJs = function() {
         try {
         	$scope.worksFromBibtex = new Array();
         	$.each($scope.textFiles, function (index, bibtex) {
-        		console.log(bibtex);
 				var parsed = bibtexParse.toJSON(bibtex);
+			
 				if (parsed.length == 0) throw "bibtex parse return nothing";
 				for (j in parsed) {
 					(function (cur) {
