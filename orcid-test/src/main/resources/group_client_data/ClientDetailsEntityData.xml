@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of 
+    the software.
+
+    =============================================================================
+
+-->
+
+<dataset>
+
+	<client_details client_details_id="9999-9999-9999-9991" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2014-07-03" last_modified="2014-07-03" client_name="Client # 1" client_description="A client" client_website="www.9999-9999-9999-9991.com"/>
+	<client_details client_details_id="9999-9999-9999-9992" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2014-07-03" last_modified="2014-07-03" client_name="Client # 2" client_description="A client" client_website="www.9999-9999-9999-9992.com"/>
+	<client_details client_details_id="9999-9999-9999-9993" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2014-07-03" last_modified="2014-07-03" client_name="Client # 3" client_description="A client" client_website="www.9999-9999-9999-9993.com"/>
+	<client_details client_details_id="9999-9999-9999-9994" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2014-07-03" last_modified="2014-07-03" client_name="Client # 4" client_description="A client" client_website="www.9999-9999-9999-9994.com"/>
+
+	<client_authorised_grant_type client_details_id="9999-9999-9999-9991" grant_type="authorization_code" />
+    <client_authorised_grant_type client_details_id="9999-9999-9999-9991" grant_type="refresh_token" />
+    <client_authorised_grant_type client_details_id="9999-9999-9999-9991" grant_type="client_credentials" />
+    
+    <client_authorised_grant_type client_details_id="9999-9999-9999-9992" grant_type="authorization_code" />
+    <client_authorised_grant_type client_details_id="9999-9999-9999-9992" grant_type="refresh_token" />
+    <client_authorised_grant_type client_details_id="9999-9999-9999-9992" grant_type="client_credentials" />
+    
+    <client_authorised_grant_type client_details_id="9999-9999-9999-9993" grant_type="authorization_code" />
+    <client_authorised_grant_type client_details_id="9999-9999-9999-9993" grant_type="refresh_token" />
+    <client_authorised_grant_type client_details_id="9999-9999-9999-9993" grant_type="client_credentials" />
+    
+    <client_authorised_grant_type client_details_id="9999-9999-9999-9994" grant_type="authorization_code" />
+    <client_authorised_grant_type client_details_id="9999-9999-9999-9994" grant_type="refresh_token" />
+    <client_authorised_grant_type client_details_id="9999-9999-9999-9994" grant_type="client_credentials" />
+    
+    <client_granted_authority client_details_id="9999-9999-9999-9991" granted_authority="ROLE_CLIENT"/>
+    <client_granted_authority client_details_id="9999-9999-9999-9992" granted_authority="ROLE_CLIENT"/>
+    <client_granted_authority client_details_id="9999-9999-9999-9993" granted_authority="ROLE_CLIENT"/>
+    <client_granted_authority client_details_id="9999-9999-9999-9994" granted_authority="ROLE_CLIENT"/>
+    
+    <client_redirect_uri client_details_id="9999-9999-9999-9991" redirect_uri="https://developers.google.com/oauthplayground" redirect_uri_type="default"/>
+    <client_redirect_uri client_details_id="9999-9999-9999-9992" redirect_uri="https://developers.google.com/oauthplayground" redirect_uri_type="default"/>
+    <client_redirect_uri client_details_id="9999-9999-9999-9993" redirect_uri="https://developers.google.com/oauthplayground" redirect_uri_type="default"/>
+    <client_redirect_uri client_details_id="9999-9999-9999-9994" redirect_uri="https://developers.google.com/oauthplayground" redirect_uri_type="default"/>
+    
+    <client_resource_id client_details_id="9999-9999-9999-9991" resource_id="orcid"/>
+    <client_resource_id client_details_id="9999-9999-9999-9992" resource_id="orcid"/>
+    <client_resource_id client_details_id="9999-9999-9999-9993" resource_id="orcid"/>
+    <client_resource_id client_details_id="9999-9999-9999-9994" resource_id="orcid"/>
+    
+    <client_scope client_details_id="9999-9999-9999-9991" scope_type="/orcid-profile/read-limited"/>
+    <client_scope client_details_id="9999-9999-9999-9991" scope_type="/orcid-works/read-limited"/>
+    <client_scope client_details_id="9999-9999-9999-9991" scope_type="/orcid-works/update"/>
+    <client_scope client_details_id="9999-9999-9999-9991" scope_type="/orcid-works/create"/>
+    
+    <client_scope client_details_id="9999-9999-9999-9992" scope_type="/orcid-profile/read-limited"/>
+    <client_scope client_details_id="9999-9999-9999-9992" scope_type="/funding/read-limited"/>
+    <client_scope client_details_id="9999-9999-9999-9992" scope_type="/funding/update"/>
+    <client_scope client_details_id="9999-9999-9999-9992" scope_type="/funding/create"/>
+    
+    <client_scope client_details_id="9999-9999-9999-9993" scope_type="/orcid-profile/read-limited"/>
+    <client_scope client_details_id="9999-9999-9999-9993" scope_type="/affiliations/read-limited"/>
+    <client_scope client_details_id="9999-9999-9999-9993" scope_type="/affiliations/update"/>
+    <client_scope client_details_id="9999-9999-9999-9993" scope_type="/affiliations/create"/>
+    
+    <client_scope client_details_id="9999-9999-9999-9994" scope_type="/orcid-profile/read-limited"/>
+    
+    <client_secret client_details_id="9999-9999-9999-9991" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2014-07-03" last_modified="2014-07-03"/>
+    <client_secret client_details_id="9999-9999-9999-9992" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2014-07-03" last_modified="2014-07-03"/>
+    <client_secret client_details_id="9999-9999-9999-9993" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2014-07-03" last_modified="2014-07-03"/>
+    <client_secret client_details_id="9999-9999-9999-9994" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2014-07-03" last_modified="2014-07-03"/>
+
+</dataset>

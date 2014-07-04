@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of 
+    the software.
+
+    =============================================================================
+
+-->
+<dataset>
+	<profile_funding 
+			id="1" 
+			orcid="9999-9999-9999-9989" 
+			org_id="1" 
+			title="Private Funding" 
+			type="SALARY_AWARD" 
+			currency_code="USD" 
+			amount="2500" 
+			visibility="PRIVATE" 
+			source_id="9999-9999-9999-9989"/>
+			
+	<profile_funding 
+			id="2" 
+			orcid="9999-9999-9999-9989" 
+			org_id="1" 
+			title="Limited Funding" 
+			type="SALARY_AWARD" 
+			currency_code="USD" 
+			amount="2500" 
+			visibility="LIMITED" 
+			source_id="9999-9999-9999-9989"/>
+    		
+    <profile_funding 
+			id="3" 
+			orcid="9999-9999-9999-9989" 
+			org_id="1" 
+			title="Public Funding" 
+			type="SALARY_AWARD" 
+			currency_code="USD" 
+			amount="2500" 
+			visibility="PUBLIC" 
+			source_id="9999-9999-9999-9989"/>    
+			
+	<profile_funding 
+			id="4" 
+			orcid="9999-9999-9999-9989" 
+			org_id="1" 
+			title="Private Funding from client" 
+			type="SALARY_AWARD" 
+			currency_code="USD" 
+			amount="2500" 
+			visibility="PRIVATE" 
+			source_id="9999-9999-9999-9993"/>			
+</dataset>
