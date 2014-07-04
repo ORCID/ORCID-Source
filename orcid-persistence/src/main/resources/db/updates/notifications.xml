@@ -63,6 +63,21 @@
                                  referencedTableName="profile" referencedColumnNames="orcid" referencedTableSchemaName="public"/>
     </changeSet>
     
+    <changeSet id="ADD-SEQUENCE-FOR-NOTIFICATIONS" author="Will Simpson" dbms="postgresql">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<sequenceExists sequenceName="notification_seq" />
+			</not>
+		</preConditions>
+		<createSequence sequenceName="notification_seq" />
+	</changeSet>
+
+	<changeSet id="ADD-AUTO-COL-FOR-NOTIFICATIONS" author="Will Simpson" dbms="hsqldb">
+		<addAutoIncrement tableName="notification"
+			columnName="id" columnDataType="bigint" />
+	</changeSet>
+    
+    
     <changeSet id="ADD-NOTIFICATION-FREQUENCY-TO-PROFILE-TABLE" author="Will Simpson">
         <preConditions onFail="MARK_RAN">
             <not>

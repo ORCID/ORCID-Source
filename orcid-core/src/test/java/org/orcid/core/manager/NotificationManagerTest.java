@@ -16,6 +16,9 @@
  */
 package org.orcid.core.manager;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -43,18 +46,23 @@ import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.notification.NotificationType;
 import org.orcid.persistence.dao.GenericDao;
+import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
+import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailSender;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 
 @ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
+@Transactional
 public class NotificationManagerTest extends BaseTest {
 
     public static final String ORCID_INTERNAL_FULL_XML = "/orcid-internal-full-message-latest.xml";
@@ -70,14 +78,17 @@ public class NotificationManagerTest extends BaseTest {
     @Mock
     private GenericDao<ProfileEventEntity, Long> profileEventDao;
 
-    @Mock
+    @Resource
     private ProfileDao profileDao;
 
     @Resource
     private EncryptionManager encryptionManager;
 
-    @Autowired
+    @Resource
     private NotificationManager notificationManager;
+
+    @Resource
+    private NotificationDao notificationDao;
 
     @Before
     public void initJaxb() throws JAXBException {
@@ -87,11 +98,10 @@ public class NotificationManagerTest extends BaseTest {
 
     @Before
     public void initMocks() throws Exception {
-        notificationManager.setMailSender(mailSender);        
+        notificationManager.setMailSender(mailSender);
         NotificationManagerImpl notificationManagerImpl = getTargetObject(notificationManager, NotificationManagerImpl.class);
         notificationManagerImpl.setEncryptionManager(encryptionManager);
         notificationManagerImpl.setProfileEventDao(profileEventDao);
-        notificationManagerImpl.setProfileDao(profileDao);
     }
 
     @Test
@@ -130,30 +140,42 @@ public class NotificationManagerTest extends BaseTest {
     @Test
     @Rollback
     public void testAmendEmail() throws JAXBException, IOException, URISyntaxException {
+        String testOrcid = "4444-4444-4444-4446";
+        profileDao.merge(new ProfileEntity(testOrcid));
         for (Locale locale : Locale.values()) {
+            NotificationEntity previousNotification = notificationDao.findLatestByOrcid(testOrcid);
+            long minNotificationId = previousNotification != null ? previousNotification.getId() : -1;
             OrcidProfile orcidProfile = getProfile(locale);
             notificationManager.sendAmendEmail(orcidProfile, "8888-8888-8888-8880");
+            // New notification entity should have been created
+            NotificationEntity latestNotification = notificationDao.findLatestByOrcid(testOrcid);
+            assertNotNull(latestNotification);
+            assertTrue(latestNotification.getId() > minNotificationId);
+            assertEquals(NotificationType.RECORD_UPDATED_BY_MEMBER, latestNotification.getNotificationType());
         }
     }
 
     @Test
     @Rollback
     public void testAddedDelegatesSentCorrectEmail() throws JAXBException, IOException, URISyntaxException {
+        String delegateOrcid = "1234-5678-1234-5678";
+        ProfileEntity delegateProfileEntity = new ProfileEntity(delegateOrcid);
+        EmailEntity delegateEmail = new EmailEntity();
+        delegateEmail.setId("jimmy@dove.com");
+        delegateEmail.setVisibility(Visibility.PRIVATE);
+        delegateEmail.setCurrent(true);
+        delegateEmail.setVerified(true);
+        delegateProfileEntity.setPrimaryEmail(delegateEmail);
+        delegateProfileEntity.setSendChangeNotifications(true);
+        profileDao.merge(delegateProfileEntity);
+
         for (Locale locale : Locale.values()) {
             OrcidProfile orcidProfile = getProfile(locale);
             DelegationDetails firstNewDelegate = new DelegationDetails();
             DelegateSummary firstNewDelegateSummary = new DelegateSummary();
             firstNewDelegateSummary.setCreditName(new CreditName("Jimmy Dove"));
             firstNewDelegate.setDelegateSummary(firstNewDelegateSummary);
-            String delegateOrcid = "1234-5678-1234-5678";
             firstNewDelegateSummary.setOrcidIdentifier(new OrcidIdentifier(delegateOrcid));
-
-            ProfileEntity delegateProfileEntity = new ProfileEntity(delegateOrcid);
-            EmailEntity delegateEmail = new EmailEntity();
-            delegateEmail.setId("jimmy@dove.com");
-            delegateProfileEntity.setPrimaryEmail(delegateEmail);
-            delegateProfileEntity.setSendChangeNotifications(true);
-            when(profileDao.find(delegateOrcid)).thenReturn(delegateProfileEntity);            
 
             DelegationDetails secondNewDelegate = new DelegationDetails();
             DelegateSummary secondNewDelegateSummary = new DelegateSummary();

@@ -24,9 +24,12 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.orcid.jaxb.model.notification.NotificationType;
@@ -54,6 +57,8 @@ public class NotificationEntity extends BaseEntity<Long> implements ProfileAware
 
     @Override
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "notification_seq")
+    @SequenceGenerator(name = "notification_seq", sequenceName = "notification_seq")
     public Long getId() {
         return id;
     }
@@ -63,7 +68,7 @@ public class NotificationEntity extends BaseEntity<Long> implements ProfileAware
     }
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "orcid", nullable = false, updatable = false, insertable = false)
+    @JoinColumn(name = "orcid", nullable = false)
     @Override
     public ProfileEntity getProfile() {
         return profile;
