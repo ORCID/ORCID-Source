@@ -126,24 +126,6 @@ public class OrcidClientDataHelper implements InitializingBean {
         OrcidClientGroup createdGroup = orcidClientGroupManager.createOrUpdateOrcidClientGroup(unmarshalledGroup);
         return createdGroup;
     }
-
-    
-    
-    
-    
-    protected OrcidClientGroup createAndPersistGroupWithMultipleClients() {
-        OrcidClientGroup groupWithMultipleClients = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(GROUP_WITH_MULTIPLE_CLIENTS_FOR_OAUTH));
-        groupWithMultipleClients.setEmail("orcid.integration.test.client+" + System.currentTimeMillis() + "@orcid.net");
-        OrcidClientGroup result = orcidClientGroupManager.createOrUpdateOrcidClientGroup(groupWithMultipleClients); 
-        return result;
-    }
-    
-    
-    
-    
-    
-    
-    
     
     protected void assertClientCredentialsForTesting(OrcidClientGroup orcidClientGroup) {
         assertNotNull(orcidClientGroup);
