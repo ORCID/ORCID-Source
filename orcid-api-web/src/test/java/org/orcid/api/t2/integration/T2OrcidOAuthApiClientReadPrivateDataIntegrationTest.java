@@ -43,6 +43,8 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.api.t2.T2OAuthAPIService;
+import org.orcid.jaxb.model.message.Affiliation;
+import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.persistence.dao.ClientDetailsDao;
@@ -72,8 +74,8 @@ public class T2OrcidOAuthApiClientReadPrivateDataIntegrationTest extends DBUnitT
     private static final Pattern AUTHORIZATION_CODE_PATTERN = Pattern.compile("code=(.+)");
     
     private static final String READ_PRIVATE_WORKS_CLIENT_ID = "9999-9999-9999-9991";
-    private static final String READ_PRIVATE_AFFILIATIONS_CLIENT_ID = "9999-9999-9999-9992";
-    private static final String READ_PRIVATE_FUNDING_CLIENT_ID = "9999-9999-9999-9993";
+    private static final String READ_PRIVATE_FUNDING_CLIENT_ID = "9999-9999-9999-9992";
+    private static final String READ_PRIVATE_AFFILIATIONS_CLIENT_ID = "9999-9999-9999-9993";
     private static final String READ_ONLY_LIMITED_INFO_CLIENT_ID = "9999-9999-9999-9994";    
 
     private static final List<String> DATA_FILES = Arrays.asList("/group_client_data/EmptyEntityData.xml", "/group_client_data/ProfileEntityData.xml", "/group_client_data/WorksEntityData.xml",
@@ -148,18 +150,24 @@ public class T2OrcidOAuthApiClientReadPrivateDataIntegrationTest extends DBUnitT
         webDriver.quit();
     }
     
+    /**
+     * Check fetching information from a client that only have read-limited access
+     * */
     @Test
     public void testGetProfileWithOnlyReadLimitedScope() throws JSONException, InterruptedException {
         String scopes = "/orcid-profile/read-limited";
         String authorizationCode = obtainAuthorizationCode(scopes, READ_ONLY_LIMITED_INFO_CLIENT_ID);
         String accessToken = obtainAccessToken(READ_ONLY_LIMITED_INFO_CLIENT_ID, authorizationCode, redirectUri, scopes);
 
-        ClientResponse fullResponse1 = oauthT2Client.viewFullDetailsXml("9999-9999-9999-9989", accessToken);
+        ClientResponse fullResponse1 = oauthT2Client.viewFullDetailsXml("9999-9999-9999-9989", accessToken, "v1.2_rc4");
         assertEquals(200, fullResponse1.getStatus());
         OrcidMessage orcidMessage = fullResponse1.getEntity(OrcidMessage.class);
+        //Check returning message
         assertNotNull(orcidMessage);
         assertNotNull(orcidMessage.getOrcidProfile());
         assertNotNull(orcidMessage.getOrcidProfile().getOrcidActivities());
+        
+        //Check works
         assertNotNull(orcidMessage.getOrcidProfile().getOrcidActivities().getOrcidWorks());
         assertNotNull(orcidMessage.getOrcidProfile().getOrcidActivities().getOrcidWorks().getOrcidWork());
         assertEquals(2, orcidMessage.getOrcidProfile().getOrcidActivities().getOrcidWorks().getOrcidWork().size());
@@ -170,8 +178,236 @@ public class T2OrcidOAuthApiClientReadPrivateDataIntegrationTest extends DBUnitT
             if(putCode.equals("1") || putCode.equals("4")){
                 fail("This client should not have access to work: " + putCode);
             }
-        }                
+        }            
+        
+        //Check funding
+        assertNotNull(orcidMessage.getOrcidProfile().getOrcidActivities().getFundings());
+        assertNotNull(orcidMessage.getOrcidProfile().getOrcidActivities().getFundings().getFundings());
+        assertEquals(2, orcidMessage.getOrcidProfile().getOrcidActivities().getFundings().getFundings().size());
+        
+        List<Funding> fundings = orcidMessage.getOrcidProfile().getOrcidActivities().getFundings().getFundings();
+        for(Funding funding : fundings) {
+            String putCode = funding.getPutCode();
+            if(putCode.equals("1") || putCode.equals("4")) {
+                fail("This client should not have access to funding: " + putCode);
+            }
+        }
+        
+        //Check affiliations
+        assertNotNull(orcidMessage.getOrcidProfile().getOrcidActivities().getAffiliations());
+        assertNotNull(orcidMessage.getOrcidProfile().getOrcidActivities().getAffiliations().getAffiliation());
+        assertEquals(2, orcidMessage.getOrcidProfile().getOrcidActivities().getAffiliations().getAffiliation().size());
+        
+        List<Affiliation> affiliations = orcidMessage.getOrcidProfile().getOrcidActivities().getAffiliations().getAffiliation();
+        for(Affiliation affiliation : affiliations) {
+            String putCode = affiliation.getPutCode();
+            if(putCode.equals("1") || putCode.equals("4")) {
+                fail("This client should not have access to affiliation: " + putCode);
+            }
+        }
     }
+    
+    /**
+     * Check fetching information from a client that should have access to his private works
+     * */
+    @Test
+    public void testGetProfileWithOwnPrivateWorks() throws JSONException, InterruptedException {
+        String scopes = "/orcid-profile/read-limited /orcid-works/update";
+        String authorizationCode = obtainAuthorizationCode(scopes, READ_PRIVATE_WORKS_CLIENT_ID);
+        String accessToken = obtainAccessToken(READ_PRIVATE_WORKS_CLIENT_ID, authorizationCode, redirectUri, scopes);
+        
+        ClientResponse fullResponse1 = oauthT2Client.viewFullDetailsXml("9999-9999-9999-9989", accessToken, "v1.2_rc4");
+        assertEquals(200, fullResponse1.getStatus());
+        OrcidMessage orcidMessage = fullResponse1.getEntity(OrcidMessage.class);
+        //Check returning message
+        assertNotNull(orcidMessage);
+        assertNotNull(orcidMessage.getOrcidProfile());
+        assertNotNull(orcidMessage.getOrcidProfile().getOrcidActivities());
+        
+        //Check works
+        assertNotNull(orcidMessage.getOrcidProfile().getOrcidActivities().getOrcidWorks());
+        assertNotNull(orcidMessage.getOrcidProfile().getOrcidActivities().getOrcidWorks().getOrcidWork());
+        assertEquals(3, orcidMessage.getOrcidProfile().getOrcidActivities().getOrcidWorks().getOrcidWork().size());
+        
+        List<OrcidWork> works = orcidMessage.getOrcidProfile().getOrcidActivities().getOrcidWorks().getOrcidWork();
+        for(OrcidWork work : works) {
+            String putCode = work.getPutCode();
+            if(putCode.equals("1")){
+                fail("This client should not have access to work: " + putCode);
+            }
+        }            
+        
+        //Check funding
+        assertNotNull(orcidMessage.getOrcidProfile().getOrcidActivities().getFundings());
+        assertNotNull(orcidMessage.getOrcidProfile().getOrcidActivities().getFundings().getFundings());
+        assertEquals(2, orcidMessage.getOrcidProfile().getOrcidActivities().getFundings().getFundings().size());
+        
+        List<Funding> fundings = orcidMessage.getOrcidProfile().getOrcidActivities().getFundings().getFundings();
+        for(Funding funding : fundings) {
+            String putCode = funding.getPutCode();
+            if(putCode.equals("1") || putCode.equals("4")) {
+                fail("This client should not have access to funding: " + putCode);
+            }
+        }
+        
+        //Check affiliations
+        assertNotNull(orcidMessage.getOrcidProfile().getOrcidActivities().getAffiliations());
+        assertNotNull(orcidMessage.getOrcidProfile().getOrcidActivities().getAffiliations().getAffiliation());
+        assertEquals(2, orcidMessage.getOrcidProfile().getOrcidActivities().getAffiliations().getAffiliation().size());
+        
+        List<Affiliation> affiliations = orcidMessage.getOrcidProfile().getOrcidActivities().getAffiliations().getAffiliation();
+        for(Affiliation affiliation : affiliations) {
+            String putCode = affiliation.getPutCode();
+            if(putCode.equals("1") || putCode.equals("4")) {
+                fail("This client should not have access to affiliation: " + putCode);
+            }
+        }    
+    }
+    
+    /**
+     * Check fetching information from a client that should have access to his private funding
+     * */
+    @Test
+    public void testGetProfileWithOwnPrivateFunding() throws JSONException, InterruptedException {
+        String scopes = "/orcid-profile/read-limited /funding/update";
+        String authorizationCode = obtainAuthorizationCode(scopes, READ_PRIVATE_FUNDING_CLIENT_ID);
+        String accessToken = obtainAccessToken(READ_PRIVATE_FUNDING_CLIENT_ID, authorizationCode, redirectUri, scopes);
+
+        ClientResponse fullResponse1 = oauthT2Client.viewFullDetailsXml("9999-9999-9999-9989", accessToken, "v1.2_rc4");
+        assertEquals(200, fullResponse1.getStatus());
+        OrcidMessage orcidMessage = fullResponse1.getEntity(OrcidMessage.class);
+        //Check returning message
+        assertNotNull(orcidMessage);
+        assertNotNull(orcidMessage.getOrcidProfile());
+        assertNotNull(orcidMessage.getOrcidProfile().getOrcidActivities());
+        
+        //Check works
+        assertNotNull(orcidMessage.getOrcidProfile().getOrcidActivities().getOrcidWorks());
+        assertNotNull(orcidMessage.getOrcidProfile().getOrcidActivities().getOrcidWorks().getOrcidWork());
+        assertEquals(2, orcidMessage.getOrcidProfile().getOrcidActivities().getOrcidWorks().getOrcidWork().size());
+        
+        List<OrcidWork> works = orcidMessage.getOrcidProfile().getOrcidActivities().getOrcidWorks().getOrcidWork();
+        for(OrcidWork work : works) {
+            String putCode = work.getPutCode();
+            if(putCode.equals("1") || putCode.equals("4")){
+                fail("This client should not have access to work: " + putCode);
+            }
+        }            
+        
+        //Check funding
+        assertNotNull(orcidMessage.getOrcidProfile().getOrcidActivities().getFundings());
+        assertNotNull(orcidMessage.getOrcidProfile().getOrcidActivities().getFundings().getFundings());
+        assertEquals(3, orcidMessage.getOrcidProfile().getOrcidActivities().getFundings().getFundings().size());
+        
+        List<Funding> fundings = orcidMessage.getOrcidProfile().getOrcidActivities().getFundings().getFundings();
+        for(Funding funding : fundings) {
+            String putCode = funding.getPutCode();
+            if(putCode.equals("1")) {
+                fail("This client should not have access to funding: " + putCode);
+            }
+        }
+        
+        //Check affiliations
+        assertNotNull(orcidMessage.getOrcidProfile().getOrcidActivities().getAffiliations());
+        assertNotNull(orcidMessage.getOrcidProfile().getOrcidActivities().getAffiliations().getAffiliation());
+        assertEquals(2, orcidMessage.getOrcidProfile().getOrcidActivities().getAffiliations().getAffiliation().size());
+        
+        List<Affiliation> affiliations = orcidMessage.getOrcidProfile().getOrcidActivities().getAffiliations().getAffiliation();
+        for(Affiliation affiliation : affiliations) {
+            String putCode = affiliation.getPutCode();
+            if(putCode.equals("1") || putCode.equals("4")) {
+                fail("This client should not have access to affiliation: " + putCode);
+            }
+        }
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    /**
+     * Check fetching information from a client that should have access to his private funding
+     * */
+    @Test
+    public void testGetProfileWithOwnPrivateAffiliations() throws JSONException, InterruptedException {
+        String scopes = "/orcid-profile/read-limited /affiliations/update";
+        String authorizationCode = obtainAuthorizationCode(scopes, READ_PRIVATE_AFFILIATIONS_CLIENT_ID);
+        String accessToken = obtainAccessToken(READ_PRIVATE_AFFILIATIONS_CLIENT_ID, authorizationCode, redirectUri, scopes);
+
+        ClientResponse fullResponse1 = oauthT2Client.viewFullDetailsXml("9999-9999-9999-9989", accessToken, "v1.2_rc4");
+        assertEquals(200, fullResponse1.getStatus());
+        OrcidMessage orcidMessage = fullResponse1.getEntity(OrcidMessage.class);
+        //Check returning message
+        assertNotNull(orcidMessage);
+        assertNotNull(orcidMessage.getOrcidProfile());
+        assertNotNull(orcidMessage.getOrcidProfile().getOrcidActivities());
+        
+        //Check works
+        assertNotNull(orcidMessage.getOrcidProfile().getOrcidActivities().getOrcidWorks());
+        assertNotNull(orcidMessage.getOrcidProfile().getOrcidActivities().getOrcidWorks().getOrcidWork());
+        assertEquals(2, orcidMessage.getOrcidProfile().getOrcidActivities().getOrcidWorks().getOrcidWork().size());
+        
+        List<OrcidWork> works = orcidMessage.getOrcidProfile().getOrcidActivities().getOrcidWorks().getOrcidWork();
+        for(OrcidWork work : works) {
+            String putCode = work.getPutCode();
+            if(putCode.equals("1") || putCode.equals("4")){
+                fail("This client should not have access to work: " + putCode);
+            }
+        }            
+        
+        //Check funding
+        assertNotNull(orcidMessage.getOrcidProfile().getOrcidActivities().getFundings());
+        assertNotNull(orcidMessage.getOrcidProfile().getOrcidActivities().getFundings().getFundings());
+        assertEquals(2, orcidMessage.getOrcidProfile().getOrcidActivities().getFundings().getFundings().size());
+        
+        List<Funding> fundings = orcidMessage.getOrcidProfile().getOrcidActivities().getFundings().getFundings();
+        for(Funding funding : fundings) {
+            String putCode = funding.getPutCode();
+            if(putCode.equals("1") || putCode.equals("4")) {
+                fail("This client should not have access to funding: " + putCode);
+            }
+        }
+        
+        //Check affiliations
+        assertNotNull(orcidMessage.getOrcidProfile().getOrcidActivities().getAffiliations());
+        assertNotNull(orcidMessage.getOrcidProfile().getOrcidActivities().getAffiliations().getAffiliation());
+        assertEquals(3, orcidMessage.getOrcidProfile().getOrcidActivities().getAffiliations().getAffiliation().size());
+        
+        List<Affiliation> affiliations = orcidMessage.getOrcidProfile().getOrcidActivities().getAffiliations().getAffiliation();
+        for(Affiliation affiliation : affiliations) {
+            String putCode = affiliation.getPutCode();
+            if(putCode.equals("1")) {
+                fail("This client should not have access to affiliation: " + putCode);
+            }
+        }
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     private String obtainAuthorizationCode(String scopes, String orcid) throws InterruptedException {
         webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, orcid, scopes, redirectUri));

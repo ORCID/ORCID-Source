@@ -140,6 +140,8 @@ public interface OAuthOrcidApiService<T> {
     @Path(PROFILE_GET_PATH)
     T viewFullDetailsXml(@PathParam("orcid") String orcid, String accessToken);
 
+    T viewFullDetailsXml(String orcid, String accessToken, String messageVersion);
+
     /**
      * GETs the JSON representation of the ORCID record containing all details
      * 

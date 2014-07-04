@@ -27,6 +27,8 @@
 			currency_code="USD" 
 			amount="2500" 
 			visibility="PRIVATE" 
+			date_created="2014-07-03 15:31:00.00"
+            last_modified="2014-07-03 15:31:00.00"
 			source_id="9999-9999-9999-9989"/>
 			
 	<profile_funding 
@@ -38,6 +40,8 @@
 			currency_code="USD" 
 			amount="2500" 
 			visibility="LIMITED" 
+			date_created="2014-07-03 15:31:00.00"
+            last_modified="2014-07-03 15:31:00.00"
 			source_id="9999-9999-9999-9989"/>
     		
     <profile_funding 
@@ -48,7 +52,9 @@
 			type="SALARY_AWARD" 
 			currency_code="USD" 
 			amount="2500" 
-			visibility="PUBLIC" 
+			visibility="PUBLIC"
+			date_created="2014-07-03 15:31:00.00"
+            last_modified="2014-07-03 15:31:00.00" 
 			source_id="9999-9999-9999-9989"/>    
 			
 	<profile_funding 
@@ -60,5 +66,7 @@
 			currency_code="USD" 
 			amount="2500" 
 			visibility="PRIVATE" 
-			source_id="9999-9999-9999-9993"/>			
+			date_created="2014-07-03 15:31:00.00"
+            last_modified="2014-07-03 15:31:00.00"
+			source_id="9999-9999-9999-9992"/>			
 </dataset>
