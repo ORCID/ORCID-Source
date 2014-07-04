@@ -4166,9 +4166,23 @@ multiselect .dropdown-menu .dropdown-menu-list{
 	list-style-type: none;
 }
 
-
 .bibtex-options-menu ul li{
 	display: inline-block;
+}
+
+.workspace-overview ul{
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	list-style-type: none;
+}
+
+.workspace-overview ul li{
+	display: inline-block;
+}
+
+.workspace-overview ul li a{
+	text-overflow: ellipsis;
 }
 
 

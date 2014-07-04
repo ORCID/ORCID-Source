@@ -411,6 +411,51 @@ public class OrcidWork implements VisibilityType, Activity, Serializable {
         return OrcidMessage.convertToString(this);
     }
 
+    
+    /**
+     * Indicates if two works are ORCID duplicated. Two works will be duplicated
+     * if they have the same title, type, subtype, external identifiers and
+     * source.
+     * 
+     * @return true if the two works are duplicated according to ORCID
+     *         requirements
+     * */
+    public boolean isDuplicatedLegacyMode(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        OrcidWork other = (OrcidWork) obj;
+
+        if (this.getWorkTitle() == null) {
+            if (other.getWorkTitle() != null)
+                return false;
+        } else if (!this.getWorkTitle().equals(other.getWorkTitle()))
+            return false;
+
+        if (this.getWorkType() == null) {
+            if (other.getWorkType() != null)
+                return false;
+        } else if (!this.getWorkType().equals(other.getWorkType()))
+            return false;
+
+        if (this.getWorkExternalIdentifiers() == null) {
+            if (other.getWorkExternalIdentifiers() != null)
+                return false;
+        } else if (!this.getWorkExternalIdentifiers().equals(other.getWorkExternalIdentifiers()))
+            return false;
+
+        if (this.getWorkSource() == null) {
+            if (other.getWorkSource() != null)
+                return false;
+        } else if (!this.getWorkSource().equals(other.getWorkSource()))
+            return false;
+
+        return true;
+    }
+    
     /**
      * Indicates if two works are ORCID duplicated. Two works will be duplicated
      * if they have the same title, type, subtype, external identifiers and

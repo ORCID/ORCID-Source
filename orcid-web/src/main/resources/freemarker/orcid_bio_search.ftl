@@ -46,7 +46,7 @@
 	            <fieldset>
 	                <div class="control-group">
 	                	<!-- Given name -->
-	                    <label for="givenName" class="control-label">${springMacroRequestContext.getMessage("orcid_bio_search.labelgivenname")}</label>
+	                    <label for="givenName" class="control-label">${springMacroRequestContext.getMessage("orcid_bio_search.labelfirstname")}</label>
 	                    <div class="controls">
 		                    <@spring.formInput "searchOrcidForm.givenName" 'class="input-xlarge"'/>
 		                	<@spring.showErrors "<br/>" "error" />
@@ -63,7 +63,7 @@
 	                </div>
 	                <div class="control-group">
 	                	<!-- Family name -->
-	                    <label for="familyName" class="control-label">${springMacroRequestContext.getMessage("orcid_bio_search.labelfamilyname")}</label>
+	                    <label for="familyName" class="control-label">${springMacroRequestContext.getMessage("orcid_bio_search.labellastname")}</label>
 	                    <div class="controls">
 		                    <@spring.formInput "searchOrcidForm.familyName" 'class="input-xlarge"'/>
 		                	<@spring.showErrors "<br/>" "error" />

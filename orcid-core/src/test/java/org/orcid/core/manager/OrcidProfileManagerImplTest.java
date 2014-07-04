@@ -208,6 +208,8 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
             securityQuestionEntity.setQuestion("What?");
             securityQuestionDao.persist(securityQuestionEntity);
         }
+        
+        orcidProfileManager.setCompareWorksUsingScopusWay(true);
     }
 
     @After
@@ -1178,14 +1180,14 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
 
         profile.getOrcidActivities().getOrcidWorks().getOrcidWork().add(work2);
         profile.getOrcidActivities().getOrcidWorks().getOrcidWork().add(work3);
-        
+                
         try {
+            
             orcidProfileManager.addOrcidWorks(profile);
             fail("This should not pass since we add works with duplicated external identifiers");
         } catch(IllegalArgumentException iae) {
             assertEquals("Works \"Test Title # 2\" and \"Test Title # 3\" have the same external id \"shared-doi1\"", iae.getMessage());
-        }
-        
+        }                
     }
     
     @Test
