@@ -1,3 +1,19 @@
+/**
+ * =============================================================================
+ *
+ * ORCID (R) Open Source
+ * http://orcid.org
+ *
+ * Copyright (c) 2012-2013 ORCID, Inc.
+ * Licensed under an MIT-Style License (MIT)
+ * http://orcid.org/open-source-license
+ *
+ * This copyright and license information (including a link to the full license)
+ * shall be included in its entirety in all copies or substantial portion of
+ * the software.
+ *
+ * =============================================================================
+ */
 package org.orcid.api.t2.integration;
 
 import static org.junit.Assert.assertEquals;
@@ -29,8 +45,11 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.api.t2.T2OAuthAPIService;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidWork;
+import org.orcid.persistence.dao.ClientDetailsDao;
+import org.orcid.persistence.dao.ClientRedirectDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.keys.ClientRedirectUriPk;
 import org.orcid.test.DBUnitTest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
@@ -55,8 +74,7 @@ public class T2OrcidOAuthApiClientReadPrivateDataIntegrationTest extends DBUnitT
     private static final String READ_PRIVATE_WORKS_CLIENT_ID = "9999-9999-9999-9991";
     private static final String READ_PRIVATE_AFFILIATIONS_CLIENT_ID = "9999-9999-9999-9992";
     private static final String READ_PRIVATE_FUNDING_CLIENT_ID = "9999-9999-9999-9993";
-    private static final String READ_ONLY_LIMITED_INFO_CLIENT_ID = "9999-9999-9999-9994";
-    private static final String REDIRECT_URI = "https://developers.google.com/oauthplayground";
+    private static final String READ_ONLY_LIMITED_INFO_CLIENT_ID = "9999-9999-9999-9994";    
 
     private static final List<String> DATA_FILES = Arrays.asList("/group_client_data/EmptyEntityData.xml", "/group_client_data/ProfileEntityData.xml", "/group_client_data/WorksEntityData.xml",
             "/group_client_data/OrgsEntityData.xml", "/group_client_data/ClientDetailsEntityData.xml", "/group_client_data/ProfileWorksEntityData.xml", "/group_client_data/OrgAffiliationEntityData.xml", "/group_client_data/ProfileFundingEntityData.xml");
@@ -65,6 +83,13 @@ public class T2OrcidOAuthApiClientReadPrivateDataIntegrationTest extends DBUnitT
     
     @Value("${org.orcid.web.base.url:http://localhost:8080/orcid-web}")
     private String webBaseUrl;
+    
+    private String redirectUri;
+    
+    @Resource
+    private ClientRedirectDao clientRedirectDao;
+    @Resource
+    private ClientDetailsDao clientDetailsDao;
     
     @Resource
     private ProfileDao profileDao;
@@ -81,8 +106,35 @@ public class T2OrcidOAuthApiClientReadPrivateDataIntegrationTest extends DBUnitT
     @Transactional
     public void before() {
         webDriver = new FirefoxDriver();
+        redirectUri = webBaseUrl + "/oauth/playground";        
+        
+        //Set redirect uris if needed
+        ClientRedirectUriPk clientRedirectUriPk = new ClientRedirectUriPk(READ_PRIVATE_WORKS_CLIENT_ID, redirectUri);
+        if (clientRedirectDao.find(clientRedirectUriPk) == null) {
+            clientRedirectDao.addClientRedirectUri(READ_PRIVATE_WORKS_CLIENT_ID, redirectUri);
+            clientDetailsDao.updateLastModified(READ_PRIVATE_WORKS_CLIENT_ID);
+        }
+        
+        clientRedirectUriPk = new ClientRedirectUriPk(READ_PRIVATE_AFFILIATIONS_CLIENT_ID, redirectUri);
+        if (clientRedirectDao.find(clientRedirectUriPk) == null) {
+            clientRedirectDao.addClientRedirectUri(READ_PRIVATE_AFFILIATIONS_CLIENT_ID, redirectUri);
+            clientDetailsDao.updateLastModified(READ_PRIVATE_AFFILIATIONS_CLIENT_ID);
+        }
+        
+        clientRedirectUriPk = new ClientRedirectUriPk(READ_PRIVATE_FUNDING_CLIENT_ID, redirectUri);
+        if (clientRedirectDao.find(clientRedirectUriPk) == null) {
+            clientRedirectDao.addClientRedirectUri(READ_PRIVATE_FUNDING_CLIENT_ID, redirectUri);
+            clientDetailsDao.updateLastModified(READ_PRIVATE_FUNDING_CLIENT_ID);
+        }
+        
+        clientRedirectUriPk = new ClientRedirectUriPk(READ_ONLY_LIMITED_INFO_CLIENT_ID, redirectUri);
+        if (clientRedirectDao.find(clientRedirectUriPk) == null) {
+            clientRedirectDao.addClientRedirectUri(READ_ONLY_LIMITED_INFO_CLIENT_ID, redirectUri);
+            clientDetailsDao.updateLastModified(READ_ONLY_LIMITED_INFO_CLIENT_ID);
+        }
         
         webDriver.get(webBaseUrl + "/signout");
+        
         // Update last modified to force cache eviction (because DB unit deletes
         // a load of stuff from the DB, but reinserts profiles with older last
         // modified date)
@@ -99,8 +151,8 @@ public class T2OrcidOAuthApiClientReadPrivateDataIntegrationTest extends DBUnitT
     @Test
     public void testGetProfileWithOnlyReadLimitedScope() throws JSONException, InterruptedException {
         String scopes = "/orcid-profile/read-limited";
-        String authorizationCode = obtainAuthorizationCode(READ_ONLY_LIMITED_INFO_CLIENT_ID, scopes, REDIRECT_URI);
-        String accessToken = obtainAccessToken(READ_ONLY_LIMITED_INFO_CLIENT_ID, authorizationCode, REDIRECT_URI, scopes);
+        String authorizationCode = obtainAuthorizationCode(scopes, READ_ONLY_LIMITED_INFO_CLIENT_ID);
+        String accessToken = obtainAccessToken(READ_ONLY_LIMITED_INFO_CLIENT_ID, authorizationCode, redirectUri, scopes);
 
         ClientResponse fullResponse1 = oauthT2Client.viewFullDetailsXml("9999-9999-9999-9989", accessToken);
         assertEquals(200, fullResponse1.getStatus());
@@ -121,10 +173,15 @@ public class T2OrcidOAuthApiClientReadPrivateDataIntegrationTest extends DBUnitT
         }                
     }
     
+    private String obtainAuthorizationCode(String scopes, String orcid) throws InterruptedException {
+        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, orcid, scopes, redirectUri));
+        return obtainAuthorizationCode(orcid, scopes, redirectUri);
+    }
+    
     private String obtainAuthorizationCode(String orcid, String scopes, String redirectUri) throws InterruptedException {
         webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, orcid, scopes, redirectUri));
         WebElement userId = webDriver.findElement(By.id("userId"));
-        userId.sendKeys("michael@bentine.com");
+        userId.sendKeys("user_to_test@user.com");
         WebElement password = webDriver.findElement(By.id("password"));
         password.sendKeys("password");
         password.submit();
