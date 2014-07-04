@@ -23,4 +23,5 @@
     <profile_work orcid="9999-9999-9999-9989" work_id="3" visibility="PUBLIC" />
     
     <profile_work orcid="9999-9999-9999-9989" work_id="4" visibility="PRIVATE" source_id="9999-9999-9999-9991"/>    
+    <profile_work orcid="9999-9999-9999-9989" work_id="5" visibility="PRIVATE" source_id="9999-9999-9999-9995"/>
 </dataset>

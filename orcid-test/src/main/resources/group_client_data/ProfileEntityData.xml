@@ -118,6 +118,48 @@
 			indexing_status="DONE"
 			activities_visibility_default='PRIVATE'
 			/>
+
+	<profile 
+			orcid="9999-9999-9999-9995"
+			completed_date="2014-07-03 15:31:00.00"
+            date_created="2014-07-03 15:31:00.00"
+            submission_date="2014-07-03 15:31:00.00"
+            last_indexed_date="2014-07-03 15:31:00.00"
+            last_modified="2014-07-03 15:31:00.00"
+			credit_name="Client # 5"
+			orcid_type="CLIENT"
+			client_type="PREMIUM_CREATOR"
+			indexing_status="DONE"
+			activities_visibility_default='PRIVATE'
+			/>
+			
+	<profile 
+			orcid="9999-9999-9999-9996"
+			completed_date="2014-07-03 15:31:00.00"
+            date_created="2014-07-03 15:31:00.00"
+            submission_date="2014-07-03 15:31:00.00"
+            last_indexed_date="2014-07-03 15:31:00.00"
+            last_modified="2014-07-03 15:31:00.00"
+			credit_name="Client # 5"
+			orcid_type="CLIENT"
+			client_type="PREMIUM_CREATOR"
+			indexing_status="DONE"
+			activities_visibility_default='PRIVATE'
+			/>
+			
+	<profile 
+			orcid="9999-9999-9999-9997"
+			completed_date="2014-07-03 15:31:00.00"
+            date_created="2014-07-03 15:31:00.00"
+            submission_date="2014-07-03 15:31:00.00"
+            last_indexed_date="2014-07-03 15:31:00.00"
+            last_modified="2014-07-03 15:31:00.00"
+			credit_name="Client # 5"
+			orcid_type="CLIENT"
+			client_type="PREMIUM_CREATOR"
+			indexing_status="DONE"
+			activities_visibility_default='PRIVATE'
+			/>			
 			
 	<email
         orcid="9999-9999-9999-9989"

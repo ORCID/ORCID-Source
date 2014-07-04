@@ -92,5 +92,24 @@
             end_day="02"
             visibility="PRIVATE"
             source_id="9999-9999-9999-9993"
+            />
+            
+	<org_affiliation_relation
+            id="5"
+            org_id="4"
+            orcid="9999-9999-9999-9989"
+            org_affiliation_relation_role="EDUCATION"
+            org_affiliation_relation_title="Private affiliation from member # 2"
+            department="A Department"
+            date_created="2014-07-03 15:31:00.00"
+            last_modified="2014-07-03 15:31:00.00"
+            start_year="2010"
+            start_month="07"
+            start_day="02"
+            end_year="2011"
+            end_month="07"
+            end_day="02"
+            visibility="PRIVATE"
+            source_id="9999-9999-9999-9997"
             />                        
 </dataset>

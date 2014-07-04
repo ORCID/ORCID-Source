@@ -68,5 +68,18 @@
 			visibility="PRIVATE" 
 			date_created="2014-07-03 15:31:00.00"
             last_modified="2014-07-03 15:31:00.00"
-			source_id="9999-9999-9999-9992"/>			
+			source_id="9999-9999-9999-9992"/>
+
+	<profile_funding 
+			id="5" 
+			orcid="9999-9999-9999-9989" 
+			org_id="1" 
+			title="Private Funding from client # 2" 
+			type="SALARY_AWARD" 
+			currency_code="USD" 
+			amount="2500" 
+			visibility="PRIVATE" 
+			date_created="2014-07-03 15:31:00.00"
+            last_modified="2014-07-03 15:31:00.00"
+			source_id="9999-9999-9999-9996"/>								
 </dataset>

@@ -48,5 +48,13 @@
           publication_day="1"
           title="A private work from client"
           work_type="BOOK"
-            />                        
+            />  
+
+	<work work_id="5"
+          publication_year="2011"
+          publication_month="2"
+          publication_day="1"
+          title="A private work from client #2"
+          work_type="BOOK"
+            />                                    
 </dataset>
