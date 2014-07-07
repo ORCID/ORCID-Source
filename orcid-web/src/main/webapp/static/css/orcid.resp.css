@@ -3921,6 +3921,16 @@ ul.sso-options li span{
  	vertical-align: -7px;
 }
 
+#social-networks #social-network-options input[type=checkbox]{
+	margin-top:11px;
+}
+
+#social-networks #social-network-options .checkbox-inline,
+#social-networks #sections .checkbox-inline{
+	margin: 15px 30px 0 0;
+}
+
+
 .country-controller #privacy-bar{
 	float: left;
 }
