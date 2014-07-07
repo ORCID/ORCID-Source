@@ -16,8 +16,11 @@
  */
 package org.orcid.persistence.dao.impl;
 
+import java.util.List;
+
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import org.orcid.persistence.dao.OrcidSocialDao;
 import org.orcid.persistence.jpa.entities.OrcidSocialEntity;
@@ -61,5 +64,11 @@ public class OrcidSocialDaoImpl extends GenericDaoImpl<OrcidSocialEntity, OrcidS
         } catch(NoResultException nre) {
             return false;
         }
+    }
+    
+    @Override
+    public List<OrcidSocialEntity> getRecordsToTweet() {
+        TypedQuery<OrcidSocialEntity> query = entityManager.createQuery("from OrcidSocialEntity where lastRun < (NOW() - CAST('1' as INTERVAL HOUR)) and type='TWITTER'", OrcidSocialEntity.class);        
+        return query.getResultList();
     }
 }
