@@ -3275,6 +3275,10 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		};
     };
     
+    $scope.rmWorkFromBibtex = function(work) {
+    	var index = $scope.worksFromBibtex.indexOf(work);    	
+    	$scope.worksFromBibtex.splice(index, 1);
+    };    
     
     $scope.addWorkFromBibtex = function(work) {
     	var index = $scope.worksFromBibtex.indexOf(work);
