@@ -328,8 +328,8 @@
 			        	          </div>
 			        	          <div class="col-md-3 bibtex-options-menu">
 			        	          	<ul>
-			        	          		<li><a ng-click="rmWorkFromBibtex(work)" class="glyphicon glyphicon-trash"></a></li>
-			        	          		<li><a ng-click="addWorkFromBibtex(work)" class="glyphicon glyphicon-floppy-disk"></a></li>
+			        	          		<li><a ng-click="rmWorkFromBibtex(work)" class="ignore glyphicon glyphicon-trash" title="Ignore"></a></li>
+			        	          		<li><a ng-click="addWorkFromBibtex(work)" class="save glyphicon glyphicon-floppy-disk" title="Save"></a></li>
 			        	          	</ul>
 		        	          	 </div>
 	        	          	 </div>
