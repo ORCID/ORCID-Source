@@ -26,6 +26,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jetty.util.ajax.JSON;
+import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.OrcidSocialManager;
 import org.orcid.persistence.dao.OrcidSocialDao;
@@ -49,6 +50,9 @@ public class OrcidSocialManagerImpl implements OrcidSocialManager {
     private static String TWITTER_USER_KEY = "twitter-key";
     private static String TWITTER_USER_SECRET = "twitter-secret";
 
+    @Value("${org.orcid.core.baseUri:http://orcid.org}")
+    private String baseUri;
+    
     @Value("${org.orcid.core.twitter.key}")
     private String twitterKey;
 
@@ -60,6 +64,9 @@ public class OrcidSocialManagerImpl implements OrcidSocialManager {
 
     @Resource
     private OrcidSocialDao orcidSocialDao;
+    
+    @Resource
+    private LocaleManager localeManager;
 
     private Map<String, RequestToken> requestTokenMap = new HashMap<String, RequestToken>();
 
@@ -196,12 +203,17 @@ public class OrcidSocialManagerImpl implements OrcidSocialManager {
 
         twitter.setOAuthAccessToken(accessToken);
         try {
-            twitter.updateStatus("Post using Twitter4J Again " + System.currentTimeMillis());
+            twitter.updateStatus(buildUpdateMessage(entity.getId().getOrcid()));
         } catch (Exception e) {
             LOGGER.error("Unable to tweet on profile {}", entity.getId().getOrcid());
             return false;
         }
 
         return true;
+    }
+    
+    private String buildUpdateMessage(String orcid) {
+        String path = baseUri + '/' + orcid;
+        return localeManager.resolveMessage("orcid_social.twitter.updated_message", path);
     }
 }
