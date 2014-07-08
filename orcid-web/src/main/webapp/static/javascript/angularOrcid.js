@@ -3251,6 +3251,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	$scope.privacyHelp = {};
 	$scope.moreInfoOpen = false;
 	$scope.moreInfo = {};
+	$scope.bibtexParsingError = false;
 	
 	$scope.loadBibtexJs = function() {
         try {
@@ -3270,7 +3271,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
         	});
         	$scope.textFiles = null;
 		} catch (err) {
-			alert("Error Parsing File");
+			$scope.bibtexParsingError = true;
 		};
     };
     
@@ -3282,6 +3283,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
     };
    
     $scope.openBibTextWizard = function () {
+    	$scope.bibtexParsingError = false;
     	$scope.showBibtexImportWizard = true;
     };
 	
