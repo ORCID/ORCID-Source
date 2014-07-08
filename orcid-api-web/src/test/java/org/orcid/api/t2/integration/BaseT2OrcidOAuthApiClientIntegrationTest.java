@@ -81,8 +81,7 @@ public abstract class BaseT2OrcidOAuthApiClientIntegrationTest {
         orcidOauthTokenDetailService.saveOrUpdate(orcidOauth2TokenDetail);
         assertNotNull(this.blankScopeToken);
     }
-    
-
+        
     protected String createAccessTokenFromCredentials(String scopes) throws Exception {
         MultivaluedMap<String, String> params = new MultivaluedMapImpl();
         params.add("client_id", clientId);
@@ -94,8 +93,8 @@ public abstract class BaseT2OrcidOAuthApiClientIntegrationTest {
         String body = clientResponse.getEntity(String.class);
         JSONObject jsonObject = new JSONObject(body);
         return (String) jsonObject.get("access_token");
-    }
-
+    }        
+    
     @Before
     public void createClientCredentialsAndAccessToken() throws Exception {
         OrcidClientGroup orcidClientGroup = orcidClientDataHelper.createAndPersistClientGroupSingle();

@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of 
+    the software.
+
+    =============================================================================
+
+-->
+<dataset>
+    <work work_id="1"
+          publication_year="2011"
+          publication_month="2"
+          publication_day="1"
+          title="A private work"
+          work_type="BOOK"
+            />
+            
+    <work work_id="2"
+          publication_year="2011"
+          publication_month="2"
+          publication_day="1"
+          title="A limited work"
+          work_type="BOOK"
+            />
+            
+	<work work_id="3"
+          publication_year="2011"
+          publication_month="2"
+          publication_day="1"
+          title="A public work"
+          work_type="BOOK"
+            />
+                      
+	<work work_id="4"
+          publication_year="2011"
+          publication_month="2"
+          publication_day="1"
+          title="A private work from client"
+          work_type="BOOK"
+            />  
+
+	<work work_id="5"
+          publication_year="2011"
+          publication_month="2"
+          publication_day="1"
+          title="A private work from client #2"
+          work_type="BOOK"
+            />                                    
+</dataset>

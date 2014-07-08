@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of 
+    the software.
+
+    =============================================================================
+
+-->
+<dataset>
+	<!-- Empty tables here needed to ensure correct clean up in integration tests -->
+	<profile/>	
+	<profile_event/>
+    <work/>
+    <work_external_identifier/>
+    <profile_work/>
+    <researcher_url/>
+    <given_permission_to/>
+    <oauth2_token_detail/>
+    <external_identifier/>
+    <email/>
+    <email_event/>    
+    <other_name/>
+    <profile_keyword/>
+    <profile_patent/>
+    <webhook/>
+    <org_disambiguated_external_identifier/>    
+	<org/>
+	<org_affiliation_relation/>
+	<profile_funding/>
+	<funding_external_identifier/>      
+	<address/>
+	<institution/>
+	<affiliation/>
+	<custom_email/>
+</dataset>
