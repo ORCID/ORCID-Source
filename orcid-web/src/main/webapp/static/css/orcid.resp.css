@@ -4161,13 +4161,27 @@ multiselect .dropdown-menu .dropdown-menu-list{
 }
 
 .bibtex-options-menu ul{
-	padding: 0;
 	margin:0;
 	list-style-type: none;
 }
 
 .bibtex-options-menu ul li{
 	display: inline-block;
+	float: right;
+	margin-left: 5px;
+}
+
+.bibtex-options-menu ul li a{
+	background-color: #949599;
+	border-radius: 50px;
+	height: 30px;
+	width: 30px;
+	padding: 8px;
+	color: #FFF;
+}
+
+.bibtex-options-menu ul li a:hover{
+	background-color: rgb(166, 206, 57);
 }
 
 .workspace-overview ul{
@@ -4183,6 +4197,10 @@ multiselect .dropdown-menu .dropdown-menu-list{
 
 .workspace-overview ul li a{
 	text-overflow: ellipsis;
+}
+
+.bibtex-box{
+	padding: 10px;
 }
 
 

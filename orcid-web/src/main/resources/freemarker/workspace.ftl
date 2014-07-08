@@ -320,20 +320,19 @@
 						</ul>					
 					</div>
 
-					<div ng-show="showBibtexImportWizard" ng-cloak class="grey-box">
-					   	<div ng-repeat="work in worksFromBibtex" ng-cloak">
-		        	       <div class="row white-box">
-		        	       	  <div class="col-md-9">
-		        	          	{{work.workTitle.title.value}}
-		        	          </div>
-		        	          <div class="col-md-3 bibtex-options-menu">
-		        	          	<ul>
-		        	          		<li><a ng-click="addWorkFromBibtex(work)"><span class="glyphicon glyphicon-floppy-disk"></span>Save</a></li>
-		        	          		<li><a ng-click="rmWorkFromBibtex(work)"><span class="glyphicon glyphicon-trash"></span>Ignore</a></li>
-		        	          	</ul>
+					<div ng-show="showBibtexImportWizard" ng-cloak class="bibtex-box">
+					   	<div ng-repeat="work in worksFromBibtex" ng-cloak" class="grey-box bottomBuffer">
+					   		  <div class="row">	  
+			        	       	  <div class="col-md-9">
+			        	          	{{work.workTitle.title.value}}
+			        	          </div>
+			        	          <div class="col-md-3 bibtex-options-menu">
+			        	          	<ul>
+			        	          		<li><a ng-click="rmWorkFromBibtex(work)" class="glyphicon glyphicon-trash"></a></li>
+			        	          		<li><a ng-click="addWorkFromBibtex(work)" class="glyphicon glyphicon-floppy-disk"></a></li>
+			        	          	</ul>
+		        	          	 </div>
 	        	          	 </div>
-							  
-		        	       </div>
 		        	  	</div>
 					</div>
 					
