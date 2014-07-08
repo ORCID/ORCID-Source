@@ -30,7 +30,7 @@ public class TwitterConnector {
     static String accessTokenSecretStr = "CaWVUpeQI8f2NMH5AKluOsPMzewlz1WMfSWtghz6t6BHa";
 
     
-    public static void postToTwitter() {
+    public void postToTwitter() {
         try {
             Twitter twitter = new TwitterFactory().getInstance();
 
@@ -49,7 +49,8 @@ public class TwitterConnector {
     
     public static void main(String[] args) throws InterruptedException {
         for(int i = 0; i < 100; i++) {
-            TwitterConnector.postToTwitter();
+            TwitterConnector tc = new TwitterConnector();
+            tc.postToTwitter();
             Thread.sleep(5000);
         }        
     }

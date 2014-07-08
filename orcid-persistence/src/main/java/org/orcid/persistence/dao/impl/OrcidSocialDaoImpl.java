@@ -20,7 +20,6 @@ import java.util.List;
 
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
-import javax.persistence.TypedQuery;
 
 import org.orcid.persistence.dao.OrcidSocialDao;
 import org.orcid.persistence.jpa.entities.OrcidSocialEntity;
@@ -47,7 +46,7 @@ public class OrcidSocialDaoImpl extends GenericDaoImpl<OrcidSocialEntity, OrcidS
     @Override
     @Transactional
     public void delete(String orcid, OrcidSocialType type) {
-        Query query = entityManager.createNativeQuery("DELETE FROM orcid_social WHERE orcid=:orcid and type=:type");
+        Query query = entityManager.createNativeQuery("DELETE FROM orcid_social WHERE orcid=:orcid AND type=:type");
         query.setParameter("orcid", orcid);
         query.setParameter("type", type.name());
         query.executeUpdate();
@@ -55,7 +54,7 @@ public class OrcidSocialDaoImpl extends GenericDaoImpl<OrcidSocialEntity, OrcidS
 
     @Override
     public boolean isEnabled(String orcid, OrcidSocialType type) {
-        Query query = entityManager.createNativeQuery("SELECT * FROM orcid_social WHERE orcid=:orcid and type=:type");
+        Query query = entityManager.createNativeQuery("SELECT * FROM orcid_social WHERE orcid=:orcid AND type=:type");
         query.setParameter("orcid", orcid);
         query.setParameter("type", type.name());
         try {
@@ -67,8 +66,17 @@ public class OrcidSocialDaoImpl extends GenericDaoImpl<OrcidSocialEntity, OrcidS
     }
     
     @Override
+    @Transactional
+    public boolean updateLatestRunDate(String orcid, OrcidSocialType type) {
+        Query query = entityManager.createNativeQuery("UPDATE orcid_social SET last_run = now() WHERE orcid=:orcid AND type=:type");
+        query.setParameter("orcid", orcid);
+        query.setParameter("type", type.name());
+        return query.executeUpdate() > 0;
+    }
+    
+    @Override
     public List<OrcidSocialEntity> getRecordsToTweet() {
-        TypedQuery<OrcidSocialEntity> query = entityManager.createQuery("from OrcidSocialEntity where lastRun < (NOW() - CAST('1' as INTERVAL HOUR)) and type='TWITTER'", OrcidSocialEntity.class);        
+        Query query = entityManager.createNativeQuery("SELECT * FROM orcid_social where type='TWITTER' AND (last_run is NULL OR last_run < (NOW() - CAST('1' as INTERVAL HOUR)))", OrcidSocialEntity.class);        
         return query.getResultList();
     }
 }

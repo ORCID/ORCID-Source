@@ -49,7 +49,7 @@ public class OrcidSocialEntity extends BaseEntity<OrcidSocialPk>{
     }
 
     @Id
-    @ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.ALL })
+    @ManyToOne(fetch = FetchType.EAGER, cascade = { CascadeType.ALL })
     @JoinColumn(name = "orcid") 
     public ProfileEntity getProfile() {
         return profile;

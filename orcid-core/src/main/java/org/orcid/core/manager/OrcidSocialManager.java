@@ -23,4 +23,5 @@ public interface OrcidSocialManager {
     void enableTwitter(String userOrcid, String token, String verifier);
     void disableTwitter(String userOrcid);
     boolean isTwitterEnabled(String userOrcid);
+    void tweetLatestUpdates();
 }
