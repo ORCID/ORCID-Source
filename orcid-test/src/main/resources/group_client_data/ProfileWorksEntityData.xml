@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of 
+    the software.
+
+    =============================================================================
+
+-->
+<dataset>
+    <profile_work orcid="9999-9999-9999-9989" work_id="1" visibility="PRIVATE" />
+    <profile_work orcid="9999-9999-9999-9989" work_id="2" visibility="LIMITED" />
+    <profile_work orcid="9999-9999-9999-9989" work_id="3" visibility="PUBLIC" />
+    
+    <profile_work orcid="9999-9999-9999-9989" work_id="4" visibility="PRIVATE" source_id="9999-9999-9999-9991"/>    
+    <profile_work orcid="9999-9999-9999-9989" work_id="5" visibility="PRIVATE" source_id="9999-9999-9999-9995"/>
+</dataset>
