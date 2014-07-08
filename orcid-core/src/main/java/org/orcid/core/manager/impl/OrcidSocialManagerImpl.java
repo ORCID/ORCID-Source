@@ -34,63 +34,96 @@ import org.orcid.persistence.jpa.entities.OrcidSocialType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
 import twitter4j.auth.AccessToken;
 import twitter4j.auth.RequestToken;
 
+@Service("orcidSocialManager")
 public class OrcidSocialManagerImpl implements OrcidSocialManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidSocialManagerImpl.class);
-    
+
     private static String TWITTER_USER_KEY = "twitter-key";
     private static String TWITTER_USER_SECRET = "twitter-secret";
-    
+
     @Value("${org.orcid.core.twitter.key}")
     private String twitterKey;
-    
+
     @Value("${org.orcid.core.twitter.secret}")
     private String twitterSecret;
-    
+
     @Resource
     private EncryptionManager encryptionManager;
-    
+
     @Resource
     private OrcidSocialDao orcidSocialDao;
-    
+
+    private Map<String, RequestToken> requestTokenMap = new HashMap<String, RequestToken>();
+
     /**
-     * Get the authorization URL for twitter
-     * @return the url where the user should authorize twitter
+     * Get the twitter RequestToken
+     * 
+     * @return The twitter RequestToken
      * */
-    @Override
-    public String getTwitterAuthorizationUrl() throws Exception {
+    private RequestToken getTwitterRequestToken(String orcid) throws Exception {
+        // If it exists, use it once and discart it
+        if (requestTokenMap.containsKey(orcid)) {
+            RequestToken result = requestTokenMap.get(orcid);
+            requestTokenMap.remove(orcid);
+            return result;
+        } else {
+            Twitter twitter = new TwitterFactory().getInstance();
+            twitter.setOAuthConsumer(twitterKey, twitterSecret);
+            RequestToken requestToken = twitter.getOAuthRequestToken();
+            requestTokenMap.put(orcid, requestToken);
+            return requestToken;
+        }
+    }
+
+    /**
+     * Get the twitter AccessToken
+     * 
+     * @return The twitter AccessToken
+     * */
+    private AccessToken getOAuthAccessToken(String orcid, String pin) throws Exception {
+        RequestToken requestToken = getTwitterRequestToken(orcid);
         Twitter twitter = new TwitterFactory().getInstance();
         twitter.setOAuthConsumer(twitterKey, twitterSecret);
-        RequestToken requestToken = twitter.getOAuthRequestToken();
-        return requestToken.getAuthorizationURL();
-    }        
-    
+        return twitter.getOAuthAccessToken(requestToken, pin);
+    }
+
+    /**
+     * TODO
+     * */
+    public String getTwitterAuthorizationUrl(String orcid) throws Exception {
+        RequestToken token = getTwitterRequestToken(orcid);
+        return token.getAuthorizationURL();
+    }
+
     /**
      * TODO
      * */
     @Override
-    public void enableTwitter(String userOrcid, String token, String verifier) {
-        String credentials = generateEncryptedTwitterCredentials(token, verifier);
+    public void enableTwitter(String userOrcid, String pin) throws Exception {
+        AccessToken accessToken = getOAuthAccessToken(userOrcid, pin);
+        String credentials = generateEncryptedTwitterCredentials(accessToken.getToken(), accessToken.getTokenSecret());
         orcidSocialDao.save(userOrcid, OrcidSocialType.TWITTER, credentials);
     }
-    
+
     /**
      * TODO
      * */
-    private String generateEncryptedTwitterCredentials(String token, String verifier) {
+    private String generateEncryptedTwitterCredentials(String userKey, String userSecret) {
         Map<String, String> twitterCredentials = new HashMap<String, String>();
-        twitterCredentials.put(TWITTER_USER_KEY, token);
-        twitterCredentials.put(TWITTER_USER_SECRET, verifier);
+        twitterCredentials.put(TWITTER_USER_KEY, userKey);
+        twitterCredentials.put(TWITTER_USER_SECRET, userSecret);
         String twitterJsonCredentials = JSON.toString(twitterCredentials);
         return encrypt(twitterJsonCredentials);
     }
-        
+
     /**
      * TODO
      * */
@@ -101,7 +134,7 @@ public class OrcidSocialManagerImpl implements OrcidSocialManager {
             return null;
         }
     }
-    
+
     /**
      * TODO
      * */
@@ -112,7 +145,7 @@ public class OrcidSocialManagerImpl implements OrcidSocialManager {
             return null;
         }
     }
-    
+
     /**
      * TODO
      * */
@@ -120,7 +153,7 @@ public class OrcidSocialManagerImpl implements OrcidSocialManager {
     public void disableTwitter(String userOrcid) {
         orcidSocialDao.delete(userOrcid, OrcidSocialType.TWITTER);
     }
-    
+
     /**
      * TODO
      * */
@@ -128,7 +161,7 @@ public class OrcidSocialManagerImpl implements OrcidSocialManager {
     public boolean isTwitterEnabled(String userOrcid) {
         return orcidSocialDao.isEnabled(userOrcid, OrcidSocialType.TWITTER);
     }
-    
+
     /**
      * TODO
      * */
@@ -139,23 +172,23 @@ public class OrcidSocialManagerImpl implements OrcidSocialManager {
         Calendar cal = Calendar.getInstance();
         cal.roll(Calendar.HOUR, false);
         Date oneHourBack = cal.getTime();
-        for(OrcidSocialEntity entity : toTweet) {
+        for (OrcidSocialEntity entity : toTweet) {
             Date lastTimeTweeted = entity.getLastRun();
-            if(lastTimeTweeted == null || lastTimeTweeted.before(oneHourBack)) {
+            if (lastTimeTweeted == null || lastTimeTweeted.before(oneHourBack)) {
                 LOGGER.info("Tweeting profile {}", entity.getId().getOrcid());
                 if (tweet(entity))
                     orcidSocialDao.updateLatestRunDate(entity.getId().getOrcid(), entity.getType());
-            }             
+            }
         }
         LOGGER.info("Finished tweeting thread");
     }
-    
+
     /**
      * TODO
      * */
     private boolean tweet(OrcidSocialEntity entity) {
         String jsonCredentials = decrypt(entity.getEncryptedCredentials());
-        Map<String, String> credentials = (HashMap<String, String>)JSON.parse(jsonCredentials);
+        Map<String, String> credentials = (HashMap<String, String>) JSON.parse(jsonCredentials);
         Twitter twitter = new TwitterFactory().getInstance();
 
         twitter.setOAuthConsumer(twitterKey, twitterSecret);
@@ -164,11 +197,11 @@ public class OrcidSocialManagerImpl implements OrcidSocialManager {
         twitter.setOAuthAccessToken(accessToken);
         try {
             twitter.updateStatus("Post using Twitter4J Again " + System.currentTimeMillis());
-        } catch(Exception e) {
+        } catch (Exception e) {
             LOGGER.error("Unable to tweet on profile {}", entity.getId().getOrcid());
             return false;
         }
-        
+
         return true;
     }
 }

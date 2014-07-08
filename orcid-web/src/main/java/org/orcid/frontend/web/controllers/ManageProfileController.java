@@ -100,6 +100,9 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import twitter4j.auth.AccessToken;
+import twitter4j.auth.RequestToken;
+
 /**
  * Copyright 2011-2012 ORCID
  * 
@@ -151,7 +154,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @Resource
     private OrcidSocialManager orcidSocialManager;
-    
+
     public EncryptionManager getEncryptionManager() {
         return encryptionManager;
     }
@@ -573,23 +576,25 @@ public class ManageProfileController extends BaseWorkspaceController {
         return deactivateOrcidView;
     }
 
-    @RequestMapping(value = "/confirm-deactivate-orcid/{encryptedEmail}", method = RequestMethod.GET) 
-    public ModelAndView confirmDeactivateOrcidAccount(HttpServletRequest request, @PathVariable("encryptedEmail") String encryptedEmail, RedirectAttributes redirectAttributes) throws Exception {
+    @RequestMapping(value = "/confirm-deactivate-orcid/{encryptedEmail}", method = RequestMethod.GET)
+    public ModelAndView confirmDeactivateOrcidAccount(HttpServletRequest request, @PathVariable("encryptedEmail") String encryptedEmail,
+            RedirectAttributes redirectAttributes) throws Exception {
         ModelAndView result = null;
-        String decryptedEmail=  encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
+        String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
         OrcidProfile profile = getEffectiveProfile();
-        //Since all profiles have at least one email address, this must never be null
-        
+        // Since all profiles have at least one email address, this must never
+        // be null
+
         String primaryEmail = profile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
 
-        if(decryptedEmail.equals(primaryEmail)) {
+        if (decryptedEmail.equals(primaryEmail)) {
             orcidProfileManager.deactivateOrcidProfile(profile);
-            result = new ModelAndView("redirect:/signout#deactivated");    
+            result = new ModelAndView("redirect:/signout#deactivated");
         } else {
             redirectAttributes.addFlashAttribute("emailDoesntMatch", true);
             return new ModelAndView("redirect:/my-orcid");
         }
-                
+
         return result;
     }
 
@@ -950,19 +955,18 @@ public class ManageProfileController extends BaseWorkspaceController {
     boolean isTwitterEnabled() {
         String orcid = getEffectiveUserOrcid();
         return orcidSocialManager.isTwitterEnabled(orcid);
-    } 
-    
-    
+    }
+
     /**
      * TODO
      * */
     @RequestMapping(value = { "/twitter" }, method = RequestMethod.POST)
     public @ResponseBody
     String goToTwitterAuthPage() throws Exception {
-        return orcidSocialManager.getTwitterAuthorizationUrl();
+        String authUrl = orcidSocialManager.getTwitterAuthorizationUrl(getEffectiveUserOrcid());
+        return authUrl;
     }
-    
-    
+
     /**
      * TODO
      * */
@@ -973,16 +977,16 @@ public class ManageProfileController extends BaseWorkspaceController {
         mav.addObject("showPrivacy", true);
         mav.addObject("managePasswordOptionsForm", populateManagePasswordFormFromUserInfo());
         mav.addObject("preferencesForm", new PreferencesForm(profile));
-        mav.addObject("profile", profile);        
+        mav.addObject("profile", profile);
         mav.addObject("activeTab", "profile-tab");
         mav.addObject("securityQuestions", getSecurityQuestions());
-        if(profile != null) {
-            orcidSocialManager.enableTwitter(getEffectiveUserOrcid(), token, verifier);                   
-            mav.addObject("twitter", true);            
+        if (profile != null) {
+            orcidSocialManager.enableTwitter(getEffectiveUserOrcid(), verifier);
+            mav.addObject("twitter", true);
         }
         return mav;
     }
-    
+
     /**
      * TODO
      * */
@@ -993,5 +997,5 @@ public class ManageProfileController extends BaseWorkspaceController {
         orcidSocialManager.disableTwitter(orcid);
         return true;
     }
-    
+
 }

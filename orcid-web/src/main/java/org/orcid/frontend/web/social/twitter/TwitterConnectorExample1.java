@@ -29,54 +29,47 @@ import twitter4j.auth.RequestToken;
 
 public class TwitterConnectorExample1 {
 
-    
-    
     static String consumerKeyStr = "soCTKWWByfjq91SxuaQRh4Gnk";
     static String consumerSecretStr = "sjtMHV2myGQ6qZAoKROoKaNfvRFvyDtIuGn0cKdy5h0RQ55NPM";
-    //These two should be saved on database
+    // These two should be saved on database
     static String accessTokenStr = "211510093-Vw2ex1DUOyMKr3G6VZjmad8wbYCanxmSBpMkGb6r";
     static String accessTokenSecretStr = "1VqVc9dwk3AQUkDnidpRE6q9NIEC4wkRrD4fUZqmlXQes";
-    
-    
-    
-    
-    
-    
+
     /**
      * @param args
-     * @throws TwitterException 
+     * @throws TwitterException
      */
     public static void main(String[] args) throws TwitterException, IOException {
-     // The factory instance is re-useable and thread safe.
+        // The factory instance is re-useable and thread safe.
         Twitter twitter = TwitterFactory.getSingleton();
         twitter.setOAuthConsumer("soCTKWWByfjq91SxuaQRh4Gnk", "sjtMHV2myGQ6qZAoKROoKaNfvRFvyDtIuGn0cKdy5h0RQ55NPM");
         RequestToken requestToken = twitter.getOAuthRequestToken();
         AccessToken accessToken = null;
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         while (null == accessToken) {
-          System.out.println("Open the following URL and grant access to your account:");
-          System.out.println(requestToken.getAuthorizationURL());
-          System.out.print("Enter the PIN(if aviailable) or just hit enter.[PIN]:");
-          String pin = br.readLine();
-          try{
-             if(pin.length() > 0){
-               accessToken = twitter.getOAuthAccessToken(requestToken, pin);
-             }else{
-               accessToken = twitter.getOAuthAccessToken();
-             }
-          } catch (TwitterException te) {
-            if(401 == te.getStatusCode()){
-              System.out.println("Unable to get the access token.");
-            }else{
-              te.printStackTrace();
+            System.out.println("Open the following URL and grant access to your account:");
+            System.out.println(requestToken.getAuthorizationURL());
+            System.out.print("Enter the PIN(if aviailable) or just hit enter.[PIN]:");
+            String pin = br.readLine();
+            try {
+                if (pin.length() > 0) {
+                    accessToken = twitter.getOAuthAccessToken(requestToken, pin);
+                } else {
+                    accessToken = twitter.getOAuthAccessToken();
+                }
+            } catch (TwitterException te) {
+                if (401 == te.getStatusCode()) {
+                    System.out.println("Unable to get the access token.");
+                } else {
+                    te.printStackTrace();
+                }
             }
-          }
         }
-        //persist to the accessToken for future reference.
-        System.out.println(twitter.verifyCredentials().getId() + " -> " +  accessToken);
+        // persist to the accessToken for future reference.
+        System.out.println(twitter.verifyCredentials().getId() + " -> " + accessToken);
         Status status = twitter.updateStatus("Playing with twitter oauth " + System.currentTimeMillis());
         System.out.println("Successfully updated the status to [" + status.getText() + "].");
-        
+
         System.out.println("--------------------------------------------------------------------------------------------------------------");
         System.out.println("--------------------------------------------------------------------------------------------------------------");
         System.out.println("--------------------------------------------------------------------------------------------------------------");
@@ -85,7 +78,7 @@ public class TwitterConnectorExample1 {
         System.out.println("--------------------------------------------------------------------------------------------------------------");
         System.out.println("--------------------------------------------------------------------------------------------------------------");
         System.out.println("--------------------------------------------------------------------------------------------------------------");
-        
+
         System.exit(0);
     }
 

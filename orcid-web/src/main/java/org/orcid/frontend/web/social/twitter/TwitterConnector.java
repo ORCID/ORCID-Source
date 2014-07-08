@@ -26,10 +26,9 @@ public class TwitterConnector {
     static String consumerKeyStr = "soCTKWWByfjq91SxuaQRh4Gnk";
     static String consumerSecretStr = "sjtMHV2myGQ6qZAoKROoKaNfvRFvyDtIuGn0cKdy5h0RQ55NPM";
     // These two should be saved on database
-    static String accessTokenStr = "2604224184-JEW89PiNZrEjVCyHOvOuYjilPxU2criQbQtxMaA";
-    static String accessTokenSecretStr = "CaWVUpeQI8f2NMH5AKluOsPMzewlz1WMfSWtghz6t6BHa";
+    static String accessTokenStr = "CaWVUpeQI8f2NMH5AKluOsPMzewlz1WMfSWtghz6t6BHa";
+    static String accessTokenSecretStr = "2604224184-JEW89PiNZrEjVCyHOvOuYjilPxU2criQbQtxMaA";
 
-    
     public void postToTwitter() {
         try {
             Twitter twitter = new TwitterFactory().getInstance();
@@ -46,13 +45,13 @@ public class TwitterConnector {
             te.printStackTrace();
         }
     }
-    
+
     public static void main(String[] args) throws InterruptedException {
-        for(int i = 0; i < 100; i++) {
+        for (int i = 0; i < 3; i++) {
             TwitterConnector tc = new TwitterConnector();
             tc.postToTwitter();
             Thread.sleep(5000);
-        }        
+        }
     }
 
 }
