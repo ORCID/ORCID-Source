@@ -210,8 +210,10 @@ public class OrcidSocialManagerImpl implements OrcidSocialManager {
             Date lastTimeTweeted = entity.getLastRun();
             if (lastTimeTweeted == null || lastTimeTweeted.before(oneHourBack)) {
                 LOGGER.info("Tweeting profile {}", entity.getId().getOrcid());
-                if (tweet(entity))
-                    orcidSocialDao.updateLatestRunDate(entity.getId().getOrcid(), entity.getType());
+                if(lastTimeTweeted == null || entity.getProfile().getLastModified().after(lastTimeTweeted)) {
+                    if (tweet(entity))
+                        orcidSocialDao.updateLatestRunDate(entity.getId().getOrcid(), entity.getType());
+                }                
             }
         }
         LOGGER.info("Finished tweeting thread");
