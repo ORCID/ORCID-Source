@@ -21,8 +21,15 @@
 		<div class="lightbox-container-ie7">		
 		<!-- Title -->
 		<div class="row">			
-			<div class="col-md-9 col-sm-8 col-xs-9">
-				<h1 class="lightbox-title pull-left"><@orcid.msg 'manual_work_form_contents.add_work'/></h1>
+			<div class="col-md-9 col-sm-8 col-xs-9">	
+				<h1 class="lightbox-title pull-left">
+					<div ng-show="edittingWork">
+						<@orcid.msg 'manual_work_form_contents.edit_work'/>
+					</div>
+					<div ng-hide="edittingWork">
+						<@orcid.msg 'manual_work_form_contents.add_work'/>
+					</div>
+				</h1>
 			</div>			
 			<div class="col-md-3 col-sm-3 pull-left">
 				<div class="control-group privacy-control">

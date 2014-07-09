@@ -3252,6 +3252,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	$scope.moreInfoOpen = false;
 	$scope.moreInfo = {};
 	$scope.bibtexParsingError = false;
+	$scope.edittingWork = false;
 	
 	$scope.loadBibtexJs = function() {
         try {
@@ -3340,6 +3341,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	$scope.addWorkModal = function(data){
 		$scope.loadWorkTypes();
 		if (data == undefined) { 
+			$scope.edittingWork = false;
 			worksSrvc.getBlankWork(function(data) {
 				$scope.editWork = data;
 				$scope.$apply(function() {					
@@ -3347,6 +3349,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 				});			
 			});
 		} else {
+			$scope.edittingWork = true;
 			$scope.editWork = data;
 			$scope.showAddModal();
 		}
