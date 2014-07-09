@@ -3390,6 +3390,51 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		});
 	};
 	
+	
+	
+	
+	
+	
+	
+	
+	//TODO
+	$scope.editWork = function() {				
+		$scope.editWork.errors.length = 0;
+		$.ajax({
+			url: getBaseUri() + '/works/edit-work.json',	        
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        type: 'POST',
+	        data:  angular.toJson($scope.editWork),
+	        success: function(data) {
+	        	if (data.errors.length == 0){
+	        		$scope.closeAllMoreInfo();
+	        		$.colorbox.close(); 
+	        		$scope.addingWork = false;
+	        		$scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
+	        	} else {
+		        	$scope.editWork = data;
+		        	$scope.copyErrorsLeft($scope.editWork, data);
+		        	$scope.addingWork = false;
+		        	$scope.$apply();
+	        	}
+	        }
+		}).fail(function(){
+			// something bad is happening!
+			$scope.addingWork = false;
+	    	console.log("error fetching works");
+		});
+	};
+	//TODO
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	$scope.closeAllMoreInfo = function() {
 		for (var idx in $scope.moreInfo)
 		    $scope.moreInfo[idx]=false;
