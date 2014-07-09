@@ -3595,7 +3595,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	};
 
 	$scope.isValidClass = function (cur) {
-		if (cur === undefined) return '';
+		if (cur === undefined || cur == null) return '';		
 		var valid = true;
 		if (cur.required && (cur.value == null || cur.value.trim() == '')) valid = false;
 		if (cur.errors !== undefined && cur.errors.length > 0) valid = false;
