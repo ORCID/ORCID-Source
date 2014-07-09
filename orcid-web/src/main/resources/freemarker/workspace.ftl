@@ -308,31 +308,35 @@
 							<li>
 								<a href="" class="label btn-primary" ng-click="addWorkModal()"><@orcid.msg 'manual_work_form_contents.add_work_manually'/></a>
 							</li>	
+							<!-- Bibtex Importer Wizard -->
 							<#if RequestParameters['bibWizard']??>
-							    <li ng-show="canReadFiles" ng-cloak>
-							        <a href="" class="label btn-primary" ng-click="openBibTextWizard()">Import Bibtex File</a>
+							    <li ng-show="canReadFiles" ng-cloak>							        
+							        <div class="label btn-primary upload">
+							           <span class="import-label">Link BibTeX</span>
+								       <input type="file" class="upload-button" ng-model="textFiles" ng-click="openBibTextWizard()" accept="*" update-fn="loadBibtexJs()"  app-file-text-reader multiple />
+							       </div>
 							    </li>
 							</#if>
 						</ul>					
 					</div>
-
-					<div ng-show="showBibtexImportWizard" ng-cloak class="grey-box">
-						<div>
-					       <strong>You can import works from bibtex files, including Google Scholar's export.</strong><br />
-					       <br />
-					       <input type="file" ng-model="textFiles" accept="*" update-fn="loadBibtexJs()" class="btn btn-primary" app-file-text-reader multiple />
-					   	</div>
-					  	<div>
-					   	<div ng-repeat="work in worksFromBibtex" ng-cloak class="row" style="margin: 5px;">
-		        	       <div class="col-md-8 col-sm-8 col-xs-8" style="background-color: #FFFFFF;">
-		        	          {{work.workTitle.title.value}}
-		        	       </div>
-		        	       <div class="col-md-4 col-sm-4 col-xs-4">
-		        	          <strong><a class="glyphicon glyphicon-floppy-disk" ng-click="addWorkFromBibtex(work)">Save</a> <a ng-click="rmWorkFromBibtex(work)" class="glyphicon glyphicon-trash grey">Trash</a></strong>
-		        	       </div>
+					<!-- Bibtex Importer Results -->
+					<div ng-show="showBibtexImportWizard" ng-cloak class="bibtex-box">
+						<div class="alert alert-block" ng-show="bibtexParsingError">
+							<strong>This file can not be read. Please check the BibTeX format and try again.</strong>
+						</div>
+					   	<div ng-repeat="work in worksFromBibtex" ng-cloak" class="grey-box bottomBuffer box-border">
+					   		  <div class="row">	  
+			        	       	  <div class="col-md-9">
+			        	          	{{work.workTitle.title.value}}
+			        	          </div>
+			        	          <div class="col-md-3 bibtex-options-menu">
+			        	          	<ul>
+			        	          		<li><a ng-click="rmWorkFromBibtex(work)" class="ignore glyphicon glyphicon-trash" title="Ignore"></a></li>
+			        	          		<li><a ng-click="addWorkFromBibtex(work)" class="save glyphicon glyphicon-floppy-disk" title="Save"></a></li>
+			        	          	</ul>
+		        	          	 </div>
+	        	          	 </div>
 		        	  	</div>
-					</div>
-					   
 					</div>
 					
 					
