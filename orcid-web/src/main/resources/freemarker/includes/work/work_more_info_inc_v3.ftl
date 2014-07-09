@@ -23,10 +23,9 @@
 	
 	<div class="content" ng-hide="worksSrvc.details[group.getActive().putCode.value] == undefined">	
 		
-		<!-- Title -->			
+	
 		<div class="row bottomBuffer">		
-			<!-- Left column -->	
-			<div class="col-md-9">
+			<div class="col-md-12">
 				<!-- Work Title -->
 				<div class="bottomBuffer" ng-show="worksSrvc.details[group.getActive().putCode.value].workTitle.title.value" ng-cloak>
 					<strong><@orcid.msg
@@ -59,45 +58,7 @@
 						'manual_work_form_contents.labelworktype'/> </strong>
 					<div ng-bind="worksSrvc.details[group.getActive().putCode.value].workType.value"></div>			
 				</div>
-			</div>
-			<!-- Right column -->
-			<div class="col-md-3">
-				
-				<!-- Validations -->
-				<div class="validations bottomBuffer">
-					<strong>Validations</strong>
-					<ul>
-						<li>None</li>
-						<!-- li><a href="">Validation #2</a></li -->
-					</ul>
-				</div>
-				<!-- Versions -->
-				<div class="versions bottomBuffer">
-					<strong>Versions</strong>
-					<ul>
-					    <li ng-repeat="work in group.activities" ng-class="work.putCode.value == group.activePutCode ? 'current-version' : ''">
-					       
-					       <div class="version-icon">
-					       		<span class="glyphicon glyphicon-chevron-right"></span>
-					       </div>
-						   <div class="version-name">
-						       <a ng-click="moreInfo[work.putCode.value] = true; group.activePutCode = work.putCode.value" ng-bind="worksSrvc.details[work.putCode.value].workSourceName.value"></a>
-					       </div>
-					       <div class="version-icon version-icon-privacy">
-						       	<span class="glyphicon glyphicon-globe privacy" ng-show="work.putCode.value == group.defaultPutCode"></span>
-					       </div>
-					       
-					    </li>
-					</ul>
-				</div>
-				<!-- Work Source -->
-				<div class="work-source bottombuffer" ng-show="worksSrvc.details[group.getActive().putCode.value].workSourceName.value" ng-cloak>
-					<strong> <@orcid.msg
-					'manual_work_form_contents.labelWorkSource'/></strong>
-					<div ng-bind="worksSrvc.details[group.getActive().putCode.value].workSourceName.value"></div>
-				</div>
-				
-			</div>			
+			</div>	
 		</div>
 		
 		<span class="dotted-bar"></span>

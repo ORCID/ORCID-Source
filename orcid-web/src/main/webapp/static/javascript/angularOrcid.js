@@ -363,6 +363,20 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 }]);
 
 var GroupedActivities = function(type) {
+	
+	if (GroupedActivities.count == undefined)
+		GroupedActivities.count = 1;
+	else
+		GroupedActivities.count ++;
+	
+	function getInstantiateCount() {
+		   var id = 0; // This is the private persistent value
+		   // The outer function returns a nested function that has access
+		   // to the persistent value.  It is this nested function we're storing
+		   // in the variable uniqueID above.
+		   return function() { return id++; };  // Return and increment
+	}
+	
 	this.type = type;
 	this._keySet = {};
 	this.activities = {};
@@ -370,7 +384,17 @@ var GroupedActivities = function(type) {
 	this.activePutCode = null;
 	this.defaultPutCode = null;
 	this.dateSortString;
+	this.groupId = GroupedActivities.count;
 };
+
+GroupedActivities.prototype.test = function() {
+	var count = null;
+	if (count == null)
+		count = 0;
+	else
+		count++;
+	return count;
+}
 
 GroupedActivities.prototype.add = function(activity) {
 	// assumes works are added in the order of the display index desc
@@ -3251,6 +3275,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	$scope.privacyHelp = {};
 	$scope.moreInfoOpen = false;
 	$scope.moreInfo = {};
+	$scope.editSources = {};
 	$scope.bibtexParsingError = false;
 	
 	$scope.loadBibtexJs = function() {

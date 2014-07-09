@@ -4180,8 +4180,8 @@ ul.id-details li{
 	margin-right: 5px;
 }
 
-.versions li.current-version{
-	background: #E6E6E6;			
+.current-version{
+	background: #a6ce39;			
 }
 
 .versions li .privacy{

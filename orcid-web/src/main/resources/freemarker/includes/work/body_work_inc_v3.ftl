@@ -26,7 +26,7 @@
 		        </h3>
 		        <div class="info-detail">
 		        	<span ng-show="group.getActive().publicationDate.year">{{group.getActive().publicationDate.year}}</span><span ng-show="group.getActive().publicationDate.month">-{{group.getActive().publicationDate.month}}</span>
-		        </div>		        
+		        </div>			        	        
 	        </div>
 	        <!-- Settings -->
 	        <div class="col-md-3 col-sm-3 col-xs-12 workspace-toolbar">	        	
@@ -46,46 +46,13 @@
 		                	limitedClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'LIMITED', $event)" 
 		                	privateClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PRIVATE', $event)"/>
 		                </li>
-		            	<li class="submenu-tree">
-		            		<a href="" class="toolbar-button toggle-menu">
-		            			<span class="glyphicon glyphicon-align-left edit-option-toolbar"></span>
-		            		</a>
-		            		<ul class="workspace-submenu-options">
-		            			<li>
-		            				<a href="">
-		            					<span class="glyphicon glyphicon-file"></span>Review Versions
-		            				</a>
-		            			</li>
-		            			<li>
-		            				<a ng-click="worksSrvc.makeDefault(group, group.getActive().putCode.value)">
-		            					<span class="glyphicon glyphicon-file"></span>Make Default
-		            				</a>
-		            			</li>
-		            			<li>
-		            				<a ng-click="deleteWorkConfirm(group.getActive().putCode.value, true)">
-		            					<span class="glyphicon glyphicon-trash"></span>Delete All Versions
-		            				</a>
-		            			</li>
-		            			<li>
-		            				<a ng-click="deleteWorkConfirm(group.getActive().putCode.value, false)">
-		            					<span class="glyphicon glyphicon-trash"></span>Delete This Version
-		            				</a>
-		            			</li>
-		            			<li>
-		            				<a href="">
-		            					<span class="glyphicon glyphicon-question-sign"></span>Help
-		            					</a>
-		            			</li>
-		            		</ul>
-		            	</li>	
-					</ul>				
-				</#if>				
+		            					</#if>				
 			</div>
         </div>
         
         <!-- Identifiers / URL / Validations / Versions -->
 		<div class="row bottomBuffer">
-			<div class="col-md-9 col-sm-9">
+			<div class="col-md-12 col-sm-12">
 				<ul class="id-details">				
 					<li>
 						<span ng-repeat='ie in group.getActive().workExternalIdentifiers'><span
@@ -95,11 +62,50 @@
 					<li ng-show="group.getActive().url.value"><strong>URL:</strong> <a href="{{group.getActive().url.value | urlWithHttp}}" target="_blank">{{group.getActive().url.value}}</a></li>
 				</ul>
 			</div>
-			<div class="col-md-3 col-sm-3">
-				<ul class="validations-versions nav nav-pills nav-stacked">
-					<li><a href=""><span class="glyphicon glyphicon-ok green"></span><strong></strong><span class="badge pull-right blue">0</span>Validated</a></li>
-					<li><a href=""><span class="glyphicon glyphicon-file green"></span><span class="badge pull-right blue" ng-bind="group.activitiesCount"></span>Versions</a></li> <!-- for non versions use class 'opaque' instead green -->
-				</ul>
+		</div>        
+       	
+       	
+        <!-- Identifiers / URL / Validations / Versions -->
+		<div class="row bottomBuffer">
+			<div class="col-md-12 col-sm-12">
+				<strong>Sources:</strong>
+				<a class="glyphicon glyphicon-pencil" ng-click="editSources[group.groupId] = true" ng-hide="editSources[group.groupId] == true"></a> 
+				<span ng-repeat="work in group.activities" ng-hide="editSources[group.groupId] == true">					       
+					  <span class="version-name">
+						   <span class="glyphicon glyphicon-globe privacy" ng-show="work.putCode.value == group.defaultPutCode"></span>
+						   <a ng-click="moreInfo[work.putCode.value] = moreInfo[group.activePutCode]; group.activePutCode = work.putCode.value" ng-bind="work.workSourceName.value" ng-class="work.putCode.value == group.activePutCode ? 'current-version' : ''"></a><span ng-show="$last == false">, </span>     
+					  </span>
+			    </span>
+			    <table border="1" ng-show="editSources[group.groupId] == true" ng-cloak>
+			    <tr>
+			       <th>
+			          Ugly edit table (<a ng-click="editSources[group.groupId] = false">close</a>)			           
+			       </th>
+			       <th>
+			       </th>
+			       <th>
+			          <a ng-click="deleteWorkConfirm(group.getActive().putCode.value, true)">
+		                 <span class="glyphicon glyphicon-trash"></span>Delete All
+		              </a>
+			       </th>
+			    </tr>
+			    <tr ng-repeat="work in group.activities">
+			       <td style="padding: 15px;">
+			           <a ng-click="moreInfo[work.putCode.value] = moreInfo[group.activePutCode]; group.activePutCode = work.putCode.value" ng-bind="work.workSourceName.value" ng-class="work.putCode.value == group.activePutCode ? 'current-version' : ''"></a>
+			       </td>
+			       <td style="padding: 15px;">
+			           <span class="glyphicon glyphicon-globe privacy" ng-show="work.putCode.value == group.defaultPutCode"></span>
+			           <a ng-click="worksSrvc.makeDefault(group, work.putCode.value)" ng-show="work.putCode.value != group.defaultPutCode">
+		            	 <span class="glyphicon glyphicon-file"></span>Make Default
+		               </a>
+		           </td>
+			       <td style="padding: 15px;">
+			           <a ng-click="deleteWorkConfirm(group.getActive().putCode.value, false)">
+		            	   <span class="glyphicon glyphicon-trash"></span>Delete
+		               </a>
+			       </td>
+			    </tr>
+			    </table>
 			</div>
 		</div>        
        	
