@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.core.adapter.impl.Jpa2JaxbAdapterImpl;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.message.CitationType;
@@ -131,6 +132,10 @@ public class Work implements ErrorsInterface, Serializable {
 		    WorkExternalIdentifiers identifiers = JsonUtils.readObjectFromJsonString(minimizedWorkEntity.getExternalIdentifiersJson(), WorkExternalIdentifiers.class);
 		    populateExternaIdentifiers(identifiers, w);            
 		}
+		if (minimizedWorkEntity.getSourceProfile() != null) {
+                    w.setWorkSource(Text.valueOf(minimizedWorkEntity.getSourceProfile().getId()));
+                    w.setWorkSourceName(Text.valueOf(Jpa2JaxbAdapterImpl.createName(minimizedWorkEntity.getSourceProfile())));
+                }
 		return w;
 	}
 	

@@ -19,6 +19,7 @@ package org.orcid.persistence.jpa.entities.custom;
 import java.io.Serializable;
 
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 
 /**
  * An object that will contain the minimum work information needed to display
@@ -39,13 +40,14 @@ public class MinimizedWorkEntity implements Serializable {
     private Visibility visibility;
     private String externalIdentifiersJson;
     private Long displayIndex;
+    private ProfileEntity sourceProfile;
     
     public MinimizedWorkEntity() {
         super();
     }
 
     public MinimizedWorkEntity(Long id, String title, String subtitle, String description, Integer publicationDay, Integer publicationMonth, Integer publicationYear,
-            Visibility visibility, String externalIdentifiersJson, Long displayIndex) {
+            Visibility visibility, String externalIdentifiersJson, Long displayIndex, ProfileEntity sourceProfile) {
         super();
         this.id = id;
         this.title = title;
@@ -60,6 +62,7 @@ public class MinimizedWorkEntity implements Serializable {
         this.visibility = visibility;
         this.externalIdentifiersJson = externalIdentifiersJson;
         this.displayIndex = displayIndex;
+        this.sourceProfile = sourceProfile;
     }
 
     public Long getId() {
@@ -140,5 +143,13 @@ public class MinimizedWorkEntity implements Serializable {
 
     public void setDisplayIndex(Long displayIndex) {
         this.displayIndex = displayIndex;
+    }
+
+    public ProfileEntity getSourceProfile() {
+        return sourceProfile;
+    }
+
+    public void setSourceProfile(ProfileEntity sourceProfile) {
+        this.sourceProfile = sourceProfile;
     }
 }
