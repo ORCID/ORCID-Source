@@ -100,9 +100,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import twitter4j.auth.AccessToken;
-import twitter4j.auth.RequestToken;
-
 /**
  * Copyright 2011-2012 ORCID
  * 
@@ -748,6 +745,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         return email;
     }
 
+    @SuppressWarnings("unchecked")
     @RequestMapping(value = "/emails.json", method = RequestMethod.POST)
     public @ResponseBody
     org.orcid.pojo.ajaxForm.Emails postEmailsJson(HttpServletRequest request, @RequestBody org.orcid.pojo.ajaxForm.Emails emails) {
@@ -948,7 +946,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     /**
-     * TODO
+     * Check if the user have twitter enabled
      * */
     @RequestMapping(value = { "/twitter/check-twitter-status" }, method = RequestMethod.GET)
     public @ResponseBody
@@ -958,7 +956,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     /**
-     * TODO
+     * Get a user request to authorize twitter and return the authorization URL
      * */
     @RequestMapping(value = { "/twitter" }, method = RequestMethod.POST)
     public @ResponseBody
@@ -968,7 +966,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     /**
-     * TODO
+     * Get the twitter credentials and enable it on the user profile
      * */
     @RequestMapping(value = { "/twitter" }, method = RequestMethod.GET)
     public ModelAndView setTwitterKeyToProfileGET(@RequestParam("oauth_token") String token, @RequestParam("oauth_verifier") String verifier) throws Exception {
@@ -988,7 +986,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     /**
-     * TODO
+     * Disable twitter access
      * */
     @RequestMapping(value = { "/disable-twitter" }, method = RequestMethod.POST)
     public @ResponseBody

@@ -52,7 +52,7 @@ public class OrcidSocialManagerImpl implements OrcidSocialManager {
 
     @Value("${org.orcid.core.baseUri:http://orcid.org}")
     private String baseUri;
-    
+
     @Value("${org.orcid.core.twitter.key}")
     private String twitterKey;
 
@@ -64,7 +64,7 @@ public class OrcidSocialManagerImpl implements OrcidSocialManager {
 
     @Resource
     private OrcidSocialDao orcidSocialDao;
-    
+
     @Resource
     private LocaleManager localeManager;
 
@@ -76,7 +76,7 @@ public class OrcidSocialManagerImpl implements OrcidSocialManager {
      * @return The twitter RequestToken
      * */
     private RequestToken getTwitterRequestToken(String orcid) throws Exception {
-        // If it exists, use it once and discart it
+        // If it exists, use it once and discard it
         if (requestTokenMap.containsKey(orcid)) {
             RequestToken result = requestTokenMap.get(orcid);
             requestTokenMap.remove(orcid);
@@ -103,7 +103,11 @@ public class OrcidSocialManagerImpl implements OrcidSocialManager {
     }
 
     /**
-     * TODO
+     * Return the URL where the user should authorize access
+     * 
+     * @param orcid
+     *            the user orcid
+     * @return the twitter URL where the user should authorize access
      * */
     public String getTwitterAuthorizationUrl(String orcid) throws Exception {
         RequestToken token = getTwitterRequestToken(orcid);
@@ -111,7 +115,11 @@ public class OrcidSocialManagerImpl implements OrcidSocialManager {
     }
 
     /**
-     * TODO
+     * Enables twitter on the user profile
+     * 
+     * @param orcid
+     * @param pin
+     *            oauth_verifier parameter that comes from twitter request
      * */
     @Override
     public void enableTwitter(String userOrcid, String pin) throws Exception {
@@ -121,7 +129,13 @@ public class OrcidSocialManagerImpl implements OrcidSocialManager {
     }
 
     /**
-     * TODO
+     * Generate a JSON string with the credentials and return the string
+     * encrypted
+     * 
+     * @param userKey
+     * @param userSecret
+     * @return an encrypted string that contains the user key and secret in a
+     *         json string
      * */
     private String generateEncryptedTwitterCredentials(String userKey, String userSecret) {
         Map<String, String> twitterCredentials = new HashMap<String, String>();
@@ -132,7 +146,10 @@ public class OrcidSocialManagerImpl implements OrcidSocialManager {
     }
 
     /**
-     * TODO
+     * Encrypts a string
+     * 
+     * @param unencrypted
+     * @return the string encrypted
      * */
     private String encrypt(String unencrypted) {
         if (StringUtils.isNotBlank(unencrypted)) {
@@ -143,18 +160,25 @@ public class OrcidSocialManagerImpl implements OrcidSocialManager {
     }
 
     /**
-     * TODO
+     * Decrypts a string
+     * 
+     * @param encrypted
+     *            string
+     * @return the unencrypted string
      * */
-    private String decrypt(String unencrypted) {
-        if (StringUtils.isNotBlank(unencrypted)) {
-            return encryptionManager.decryptForInternalUse(unencrypted);
+    private String decrypt(String encrypted) {
+        if (StringUtils.isNotBlank(encrypted)) {
+            return encryptionManager.decryptForInternalUse(encrypted);
         } else {
             return null;
         }
     }
 
     /**
-     * TODO
+     * Removes the twitter access from the user profile
+     * 
+     * @param userOrcid
+     *            the profile to disable twitter
      * */
     @Override
     public void disableTwitter(String userOrcid) {
@@ -162,7 +186,10 @@ public class OrcidSocialManagerImpl implements OrcidSocialManager {
     }
 
     /**
-     * TODO
+     * Checks if twitter is enabled in the given profile
+     * 
+     * @param userOrcid
+     * @return true if the profile has twitter enabled
      * */
     @Override
     public boolean isTwitterEnabled(String userOrcid) {
@@ -170,7 +197,7 @@ public class OrcidSocialManagerImpl implements OrcidSocialManager {
     }
 
     /**
-     * TODO
+     * Will be invoked by a cron job to tweet in the modified profiles
      * */
     @Override
     public void tweetLatestUpdates() {
@@ -191,8 +218,14 @@ public class OrcidSocialManagerImpl implements OrcidSocialManager {
     }
 
     /**
-     * TODO
+     * Tweet a message to the specified profile
+     * 
+     * @param entity
+     *            An entity containing the user information and the twitter
+     *            credentials
+     * @return true if it was able to tweet the updates
      * */
+    @SuppressWarnings("unchecked")
     private boolean tweet(OrcidSocialEntity entity) {
         String jsonCredentials = decrypt(entity.getEncryptedCredentials());
         Map<String, String> credentials = (HashMap<String, String>) JSON.parse(jsonCredentials);
@@ -211,7 +244,13 @@ public class OrcidSocialManagerImpl implements OrcidSocialManager {
 
         return true;
     }
-    
+
+    /**
+     * Builds the message to be tweeted
+     * 
+     * @param orcid
+     * @return the message the will be tweeted
+     * */
     private String buildUpdateMessage(String orcid) {
         String path = baseUri + '/' + orcid;
         return localeManager.resolveMessage("orcid_social.twitter.updated_message", path);

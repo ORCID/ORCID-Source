@@ -36,13 +36,14 @@ public class OrcidSocialDaoImpl extends GenericDaoImpl<OrcidSocialEntity, OrcidS
     @Override
     @Transactional
     public void save(String orcid, OrcidSocialType type, String encryptedCredentials) {
-        Query query = entityManager.createNativeQuery("INSERT INTO orcid_social(orcid, type, encrypted_credentials, date_created, last_modified) values(:orcid,:type,:credentials,now(),now())");
+        Query query = entityManager
+                .createNativeQuery("INSERT INTO orcid_social(orcid, type, encrypted_credentials, date_created, last_modified) values(:orcid,:type,:credentials,now(),now())");
         query.setParameter("orcid", orcid);
         query.setParameter("type", type.name());
         query.setParameter("credentials", encryptedCredentials);
         query.executeUpdate();
     }
-    
+
     @Override
     @Transactional
     public void delete(String orcid, OrcidSocialType type) {
@@ -60,11 +61,11 @@ public class OrcidSocialDaoImpl extends GenericDaoImpl<OrcidSocialEntity, OrcidS
         try {
             query.getSingleResult();
             return true;
-        } catch(NoResultException nre) {
+        } catch (NoResultException nre) {
             return false;
         }
     }
-    
+
     @Override
     @Transactional
     public boolean updateLatestRunDate(String orcid, OrcidSocialType type) {
@@ -73,10 +74,12 @@ public class OrcidSocialDaoImpl extends GenericDaoImpl<OrcidSocialEntity, OrcidS
         query.setParameter("type", type.name());
         return query.executeUpdate() > 0;
     }
-    
+
+    @SuppressWarnings("unchecked")
     @Override
     public List<OrcidSocialEntity> getRecordsToTweet() {
-        Query query = entityManager.createNativeQuery("SELECT * FROM orcid_social where type='TWITTER' AND (last_run is NULL OR last_run < (NOW() - CAST('1' as INTERVAL HOUR)))", OrcidSocialEntity.class);        
+        Query query = entityManager.createNativeQuery(
+                "SELECT * FROM orcid_social where type='TWITTER' AND (last_run is NULL OR last_run < (NOW() - CAST('1' as INTERVAL HOUR)))", OrcidSocialEntity.class);
         return query.getResultList();
     }
 }
