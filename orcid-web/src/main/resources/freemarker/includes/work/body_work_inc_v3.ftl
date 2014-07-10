@@ -68,6 +68,68 @@
         <!-- Identifiers / URL / Validations / Versions -->
 		<div class="row bottomBuffer">
 			<div class="col-md-12 col-sm-12">
+				<!-- Sources -->			
+				<div class="sources-container">
+					<div class="grey-box">
+						<div class="row">
+							<div class="col-md-8">
+								<strong>Sources:</strong>
+							</div>
+							<div class="col-md-4">
+								<a class="glyphicon glyphicon-pencil pull-right" ng-click="editSources[group.groupId] = true" ng-hide="editSources[group.groupId] == true"></a>
+								<ul class="sources-options" ng-show="editSources[group.groupId] == true" ng-cloak>
+									<li>
+										<a ng-click="deleteWorkConfirm(group.getActive().putCode.value, true)">
+		                 					<span class="glyphicon glyphicon-trash"></span> Delete all
+		              					</a>
+									</li>
+									<li>
+										<a ng-click="editSources[group.groupId] = false">
+											<span class="glyphicon glyphicon-remove"></span> Close
+										</a>
+									</li>								
+								</ul>
+								
+							</div>
+						</div>
+						<div class="sources-list">
+							<span 
+								ng-repeat="work in group.activities"
+								ng-class="work.putCode.value == group.activePutCode ? 'label label-success source' : 'label label-default source'"														
+								ng-hide="editSources[group.groupId] == true"
+								ng-click="moreInfo[work.putCode.value] = moreInfo[group.activePutCode]; group.activePutCode = work.putCode.value">						
+									{{work.workSourceName.value}} <span class="glyphicon glyphicon-globe privacy" ng-show="work.putCode.value == group.defaultPutCode"
+								></span>
+							</span>						
+						</div>
+						<div class="sources-edit">	
+							<table class="sources-edit-table" ng-show="editSources[group.groupId] == true" ng-cloak>							    
+							    <tr ng-repeat="work in group.activities">
+							       <td>
+							       		<span
+							           		ng-click="moreInfo[work.putCode.value] = moreInfo[group.activePutCode]; group.activePutCode = work.putCode.value"							           		
+							           		ng-class="work.putCode.value == group.activePutCode ? 'label label-success source' : 'label label-default source'">
+							           			{{work.workSourceName.value}}
+							           		</span> 
+							       </td>
+							       <td>
+							           <span class="glyphicon glyphicon-globe privacy" ng-show="work.putCode.value == group.defaultPutCode"></span> 
+							           <a ng-click="worksSrvc.makeDefault(group, work.putCode.value)" ng-show="work.putCode.value != group.defaultPutCode">
+						            	 <span class="glyphicon glyphicon-file"></span> Make Default
+						               </a>
+						           </td>
+							       <td>
+							           <a ng-click="deleteWorkConfirm(group.getActive().putCode.value, false)">
+						            	   <span class="glyphicon glyphicon-trash"></span> Delete
+						               </a>
+							       </td>
+							    </tr>
+							</table>						
+						</div>						
+					</div>
+				</div>	
+				 
+				 <!-- 
 				<strong>Sources:</strong>
 				<a class="glyphicon glyphicon-pencil" ng-click="editSources[group.groupId] = true" ng-hide="editSources[group.groupId] == true"></a> 
 				<span ng-repeat="work in group.activities" ng-hide="editSources[group.groupId] == true">					       
@@ -76,6 +138,8 @@
 						   <a ng-click="moreInfo[work.putCode.value] = moreInfo[group.activePutCode]; group.activePutCode = work.putCode.value" ng-bind="work.workSourceName.value" ng-class="work.putCode.value == group.activePutCode ? 'current-version' : ''"></a><span ng-show="$last == false">, </span>     
 					  </span>
 			    </span>
+			    
+			    
 			    <table border="1" ng-show="editSources[group.groupId] == true" ng-cloak>
 			    <tr>
 			       <th>
@@ -106,6 +170,9 @@
 			       </td>
 			    </tr>
 			    </table>
+			    -->
+			     
+			    
 			</div>
 		</div>        
        	
