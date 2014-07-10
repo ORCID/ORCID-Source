@@ -20,11 +20,7 @@ import java.util.List;
 
 import javax.persistence.Query;
 
-import org.orcid.jaxb.model.message.CitationType;
-import org.orcid.jaxb.model.message.Iso3166Country;
-import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.dao.WorkDao;
-import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,7 +38,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
      *            The work that will be persisted
      * @return the work already persisted on database
      * */
-    @Override
+    @Override 
     @Transactional
     public WorkEntity addWork(WorkEntity work) {
         this.persist(work);
@@ -50,19 +46,9 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
         return work;
     }
 
-    /*
-     * 
-     * private String translatedTitleLanguageCode; 
-     * private Iso3166Country iso2Country; 
-     * private CitationType citationType; 
-     * private WorkType workType; 
-     * private PublicationDateEntity publicationDate; 
-     * private String contributorsJson; 
-     * private String externalIdentifiersJson;
-     */
-
+    @Override
     @Transactional
-    public WorkEntity updateWork(WorkEntity updatedWork) {
+    public WorkEntity editWork(WorkEntity updatedWork) {
         Query updateQuery = entityManager
                 .createQuery("UPDATE WorkEntity SET title=:title, translatedTitle=:translatedTitle, subtitle=:subtitle, " + 
                         "description=:description, workUrl=:workUrl, citation=:citation, journalTitle=:journalTitle, " +
