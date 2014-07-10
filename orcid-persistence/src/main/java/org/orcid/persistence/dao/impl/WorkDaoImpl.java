@@ -50,12 +50,32 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     @Transactional
     public WorkEntity editWork(WorkEntity updatedWork) {
         Query updateQuery = entityManager
-                .createQuery("UPDATE WorkEntity SET title=:title, translatedTitle=:translatedTitle, subtitle=:subtitle, " + 
+                .createQuery("UPDATE WorkEntity " + 
+                        "SET title=:title, translatedTitle=:translatedTitle, subtitle=:subtitle, " + 
                         "description=:description, workUrl=:workUrl, citation=:citation, journalTitle=:journalTitle, " +
                         "languageCode=:languageCode, translatedTitleLanguageCode=:translatedTitleLanguageCode, " +
                         "iso2Country=:iso2Country, citationType=:citationType, workType=:workType, publicationDate=:publicationDate, " + 
                         "contributorsJson=:contributorsJson, externalIdentifiersJson=:externalIdentifiersJson " + 
                         "WHERE id=:id");
+        updateQuery.setParameter("title", updatedWork.getTitle());
+        updateQuery.setParameter("translatedTitle", updatedWork.getTranslatedTitle());
+        updateQuery.setParameter("subtitle", updatedWork.getSubtitle());
+        updateQuery.setParameter("description", updatedWork.getDescription());
+        updateQuery.setParameter("workUrl", updatedWork.getWorkUrl());
+        updateQuery.setParameter("citation", updatedWork.getCitation());
+        updateQuery.setParameter("journalTitle", updatedWork.getJournalTitle());
+        updateQuery.setParameter("languageCode", updatedWork.getLanguageCode());
+        updateQuery.setParameter("translatedTitleLanguageCode", updatedWork.getTranslatedTitleLanguageCode());
+        updateQuery.setParameter("iso2Country", updatedWork.getIso2Country());
+        updateQuery.setParameter("citationType", updatedWork.getCitationType());
+        updateQuery.setParameter("workType", updatedWork.getWorkType());
+        updateQuery.setParameter("publicationDate", updatedWork.getPublicationDate());
+        updateQuery.setParameter("contributorsJson", updatedWork.getContributorsJson());
+        updateQuery.setParameter("externalIdentifiersJson", updatedWork.getExternalIdentifiersJson());
+        
+        //If no work was updated, return a null object
+        if(updateQuery.executeUpdate() == 0)
+            return null;
         return updatedWork;
     }
 
