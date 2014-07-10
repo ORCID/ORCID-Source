@@ -223,7 +223,6 @@ orcidNgModule.factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
 			},
 			toggleEducation: function() {
 				serv.displayEducation = !serv.displayEducation;
-				console.log('Education');
 			},
 			toggleEmployment: function() {
 				serv.displayEmployment = !serv.displayEmployment;
@@ -3267,14 +3266,14 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	$scope.privacyHelp = {};
 	$scope.moreInfoOpen = false;
 	$scope.moreInfo = {};
-	$scope.showBibtexImportWizard = false;
+	$scope.bibtexParsingError = false;
 	
 	$scope.loadBibtexJs = function() {
         try {
         	$scope.worksFromBibtex = new Array();
         	$.each($scope.textFiles, function (index, bibtex) {
-        		console.log(bibtex);
 				var parsed = bibtexParse.toJSON(bibtex);
+			
 				if (parsed.length == 0) throw "bibtex parse return nothing";
 				for (j in parsed) {
 					(function (cur) {
@@ -3287,10 +3286,14 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
         	});
         	$scope.textFiles = null;
 		} catch (err) {
-			alert("Error Parsing File");
+			$scope.bibtexParsingError = true;
 		};
     };
     
+    $scope.rmWorkFromBibtex = function(work) {
+    	var index = $scope.worksFromBibtex.indexOf(work);    	
+    	$scope.worksFromBibtex.splice(index, 1);
+    };    
     
     $scope.addWorkFromBibtex = function(work) {
     	var index = $scope.worksFromBibtex.indexOf(work);
@@ -3299,6 +3302,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
     };
    
     $scope.openBibTextWizard = function () {
+    	$scope.bibtexParsingError = false;
     	$scope.showBibtexImportWizard = true;
     };
 	

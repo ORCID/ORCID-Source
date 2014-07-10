@@ -1,0 +1,115 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of 
+    the software.
+
+    =============================================================================
+
+-->
+<dataset>
+	<org_affiliation_relation
+            id="1"
+            org_id="1"
+            orcid="9999-9999-9999-9989"
+            org_affiliation_relation_role="EDUCATION"
+            org_affiliation_relation_title="Private affiliation"
+            department="A Department"
+            date_created="2014-07-03 15:31:00.00"
+            last_modified="2014-07-03 15:31:00.00"
+            start_year="2010"
+            start_month="07"
+            start_day="02"
+            end_year="2011"
+            end_month="07"
+            end_day="02"
+            visibility="PRIVATE"
+            source_id="9999-9999-9999-9989"
+            />
+
+	<org_affiliation_relation
+            id="2"
+            org_id="2"
+            orcid="9999-9999-9999-9989"
+            org_affiliation_relation_role="EDUCATION"
+            org_affiliation_relation_title="Limited affiliation"
+            department="A Department"
+            date_created="2014-07-03 15:31:00.00"
+            last_modified="2014-07-03 15:31:00.00"
+            start_year="2010"
+            start_month="07"
+            start_day="02"
+            end_year="2011"
+            end_month="07"
+            end_day="02"
+            visibility="LIMITED"
+            source_id="9999-9999-9999-9989"
+            />
+            
+	<org_affiliation_relation
+            id="3"
+            org_id="3"
+            orcid="9999-9999-9999-9989"
+            org_affiliation_relation_role="EDUCATION"
+            org_affiliation_relation_title="Public affiliation"
+            department="A Department"
+            date_created="2014-07-03 15:31:00.00"
+            last_modified="2014-07-03 15:31:00.00"
+            start_year="2010"
+            start_month="07"
+            start_day="02"
+            end_year="2011"
+            end_month="07"
+            end_day="02"
+            visibility="PUBLIC"
+            source_id="9999-9999-9999-9989"
+            />
+            
+	<org_affiliation_relation
+            id="4"
+            org_id="4"
+            orcid="9999-9999-9999-9989"
+            org_affiliation_relation_role="EDUCATION"
+            org_affiliation_relation_title="Private affiliation from member"
+            department="A Department"
+            date_created="2014-07-03 15:31:00.00"
+            last_modified="2014-07-03 15:31:00.00"
+            start_year="2010"
+            start_month="07"
+            start_day="02"
+            end_year="2011"
+            end_month="07"
+            end_day="02"
+            visibility="PRIVATE"
+            source_id="9999-9999-9999-9993"
+            />
+            
+	<org_affiliation_relation
+            id="5"
+            org_id="4"
+            orcid="9999-9999-9999-9989"
+            org_affiliation_relation_role="EDUCATION"
+            org_affiliation_relation_title="Private affiliation from member # 2"
+            department="A Department"
+            date_created="2014-07-03 15:31:00.00"
+            last_modified="2014-07-03 15:31:00.00"
+            start_year="2010"
+            start_month="07"
+            start_day="02"
+            end_year="2011"
+            end_month="07"
+            end_day="02"
+            visibility="PRIVATE"
+            source_id="9999-9999-9999-9997"
+            />                        
+</dataset>

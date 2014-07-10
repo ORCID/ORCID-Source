@@ -72,4 +72,6 @@ public interface OrcidOauth2TokenDetailService {
     void disableAccessTokenByRefreshToken(String refreshTokenValue);
 
     void removeConflictsAndCreateNew(OrcidOauth2TokenDetail detail);
+    
+    boolean checkIfScopeIsAvailableForMember(String clientId, String userName, String scope);
 }

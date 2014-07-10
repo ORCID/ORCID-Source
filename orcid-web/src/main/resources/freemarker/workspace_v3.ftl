@@ -38,12 +38,6 @@
     </div>
 </#if>
 
-<#if emailDoesntMatch?? && emailDoesntMatch>
-	<div class="alert  alert-success">
-		<@spring.message "orcid.frontend.security.invalid_deactivate_account"/>
-	</div>
-</#if>    
-
 <div class="row workspace-top public-profile">
 
 	<#-- hidden divs that trigger angular -->
@@ -52,26 +46,23 @@
 	<#elseif !Session.CHECK_EMAIL_VALIDATED?exists && !inDelegationMode>
     	<div ng-controller="VerifyEmailCtrl" style="display: hidden;"></div>
 	</#if>
-
+	<!-- ID Banner and other account information -->
     <div class="col-md-3 lhs left-aside">
     	<div class="workspace-profile">
+            
             <#include "includes/id_banner.ftl"/>
-            <!-- Also Known as -->
+            
 	       	<div class="other-names-box">
 		       	<div ng-controller="OtherNamesCtrl" class="other-names-controller">
-		        	<div class="profile-info-container">
-		        	   <!-- Header -->	
-		        	   <div class="profile-header">	
-			        	   <strong><@orcid.msg 'workspace.Alsoknownas'/></strong>
-			        	   <span class="glyphicon glyphicon-pencil edit-other-names edit-option" title="" ng-hide="showEdit == true" ng-click="openEdit()"></span>			        	   
-		        	   </div>
-		        	   <!-- Current content -->		        	   
+		        	<div>
+		        	   <strong><@orcid.msg 'workspace.Alsoknownas'/></strong>
 		        	   <span ng-hide="showEdit == true" ng-click="openEdit()">		        	   	  
-		        	      <span ng-repeat="otherNames in otherNamesForm.otherNames" ng-cloak class="wrap">
+		        	      	<span class="glyphicon glyphicon-pencil edit-other-names edit-option pull-right" title=""></span>
+		        	      <br />
+		        	      <span ng-repeat="otherNames in otherNamesForm.otherNames" ng-cloak>
 		        	         {{ $last?otherNames.value:otherNames.value+ ", "}}
 		        	      </span>
 		        	   </span>
-		        	   <!-- Edit form -->
 		        	   <div ng-show="showEdit == true" ng-cloak class="other-names-edit">
 		        	      <@orcid.privacyToggle  angularModel="otherNamesForm.visibility.visibility"
 				             questionClick="toggleClickPrivacyHelp()"
@@ -91,27 +82,26 @@
 							     <div ng-repeat='error in otherNames.name.errors' ng-bind-html="error"></div>
 						      </span>
 		        	      </div>
-		        	      <a class="glyphicon glyphicon-plus" ng-click="addNew()"></a><br />				        	      
+		        	      <a class="glyphicon glyphicon-plus" ng-click="addNew()"></a><br />
 		        	      <button class="btn btn-primary" ng-click="setOtherNamesForm()"><@spring.message "freemarker.btnsavechanges"/></button>
 		        	      <button class="btn" ng-click="close()"><@spring.message "freemarker.btncancel"/></button>
-		        	   </div>
-		             </div>
+		        	   </div> 
+		           </div>
 		       	</div>
 	       	</div>
             
-            <!-- Country -->
+            
+            
+            
             <div ng-controller="CountryCtrl" class="country-controller">
-            	<!-- Header -->
-            	<div class="profile-header">		
-		        	<strong><@orcid.msg 'public_profile.labelCountry'/></strong>
-		            <span class="glyphicon glyphicon-pencil edit-country edit-option" ng-click="openEdit()" title="" ng-hide="showEdit == true"></span>
-	            </div>   
-	            <!-- Current content -->
+	        	<strong><@orcid.msg 'public_profile.labelCountry'/></strong>
+	            <span class="glyphicon glyphicon-pencil edit-country edit-option pull-right" ng-click="openEdit()" title="" ng-hide="showEdit == true"></span>
+	            <br />   
                 <span ng-hide="showEdit == true" ng-click="toggleEdit()">
 	                <span ng-show="countryForm != null && countryForm.iso2Country != null" ng-bind="countryForm.iso2Country.value">
 	                </span>
 	            </span>
-               <!-- Edit form -->
+               
                <div ng-show="showEdit == true" ng-cloak class="country-edit">
                	  <@orcid.privacyToggle  angularModel="countryForm.profileAddressVisibility.visibility"
 			         questionClick="toggleClickPrivacyHelp()"
@@ -125,61 +115,62 @@
 						<#list isoCountries?keys as key>
 							<option value="${key}">${isoCountries[key]}</option>
 						</#list>
-				  </select>
+				  </select>				  
+				  
 	             <button class="btn btn-primary" ng-click="setCountryForm()"><@spring.message "freemarker.btnsavechanges"/></button>
-		         <button class="btn" ng-click="close()"><@spring.message "freemarker.btncancel"/></button>	              			  
-				</div>				
+		         <button class="btn" ng-click="close()"><@spring.message "freemarker.btncancel"/></button>
+	              			  
+				</div>
+				
             </div>
-            <!-- Keywords -->
+            
 	       	<div class="keyword-box">
 		       	<div ng-controller="KeywordsCtrl" class="keywords-controller">
-		        	<div class="profile-header">
+		        	<div>
 		        	   <strong><@orcid.msg 'public_profile.labelKeywords'/></strong>
 		        	   <span ng-hide="showEdit == true" ng-click="openEdit()">
-		        	      <span class="glyphicon glyphicon-pencil edit-keywords edit-option wrap" title=""></span><br />
-		        	      <span ng-repeat="keyword in keywordsForm.keywords" ng-cloak class="wrap">
+		        	      <span class="glyphicon glyphicon-pencil edit-keywords edit-option pull-right" title=""></span><br />
+		        	      <span ng-repeat="keyword in keywordsForm.keywords" ng-cloak>
 		        	         {{ $last?keyword.value:keyword.value+ ", "}}
 		        	      </span>
 		        	   </span>
-		        	</div>
-	        	    <div ng-show="showEdit == true" ng-cloak class="keywords-edit">
-	        	      <@orcid.privacyToggle  angularModel="keywordsForm.visibility.visibility"
-			             questionClick="toggleClickPrivacyHelp()"
-			             clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
-			             publicClick="setPrivacy('PUBLIC', $event)" 
-                 	     limitedClick="setPrivacy('LIMITED', $event)" 
-                 	     privateClick="setPrivacy('PRIVATE', $event)" />
-	        	   
-	        	      <div ng-repeat="keyword in keywordsForm.keywords">
-	        	          <input type="text" ng-model="keyword.value"></input>
-	        	          <a ng-click="deleteKeyword(keyword)" class="glyphicon glyphicon-trash grey"></a>
-	        	          <br />
-	        	          <span class="orcid-error" ng-show="keyword.url.errors.length > 0">
-						     <div ng-repeat='error in keyword.url.errors' ng-bind-html="error"></div>
-					      </span>
-	        	          <span class="orcid-error" ng-show="keyword.name.errors.length > 0">
-						     <div ng-repeat='error in keyword.name.errors' ng-bind-html="error"></div>
-					      </span>
-	        	      </div>
-	        	      <a class="glyphicon glyphicon-plus" ng-click="addNew()"></a><br />
-	        	      <button class="btn btn-primary" ng-click="setKeywordsForm()"><@spring.message "freemarker.btnsavechanges"/></button>
-	        	      <button class="btn" ng-click="close()"><@spring.message "freemarker.btncancel"/></button>		        	    
-		            </div>
+		        	   <div ng-show="showEdit == true" ng-cloak class="keywords-edit">
+		        	      <@orcid.privacyToggle  angularModel="keywordsForm.visibility.visibility"
+				             questionClick="toggleClickPrivacyHelp()"
+				             clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
+				             publicClick="setPrivacy('PUBLIC', $event)" 
+	                 	     limitedClick="setPrivacy('LIMITED', $event)" 
+	                 	     privateClick="setPrivacy('PRIVATE', $event)" />
+		        	   
+		        	      <div ng-repeat="keyword in keywordsForm.keywords">
+		        	          <input type="text" ng-model="keyword.value"></input>
+		        	          <a ng-click="deleteKeyword(keyword)" class="glyphicon glyphicon-trash grey"></a>
+		        	          <br />
+		        	          <span class="orcid-error" ng-show="keyword.url.errors.length > 0">
+							     <div ng-repeat='error in keyword.url.errors' ng-bind-html="error"></div>
+						      </span>
+		        	          <span class="orcid-error" ng-show="keyword.name.errors.length > 0">
+							     <div ng-repeat='error in keyword.name.errors' ng-bind-html="error"></div>
+						      </span>
+		        	      </div>
+		        	      <a class="glyphicon glyphicon-plus" ng-click="addNew()"></a><br />
+		        	      <button class="btn btn-primary" ng-click="setKeywordsForm()"><@spring.message "freemarker.btnsavechanges"/></button>
+		        	      <button class="btn" ng-click="close()"><@spring.message "freemarker.btncancel"/></button>
+		        	   </div> 
+		           </div>
 		       	</div>
 	       	</div>
-	       	<!-- Websites -->
+	       	
 	       	<div class="websites-box">
 		       	<div ng-controller="WebsitesCtrl" class="websites-controller">
-		        	<div class="profile-header">
+		        	<div>
 		        	   <strong><@orcid.msg 'public_profile.labelWebsites'/></strong>
 		        	   <span ng-hide="showEdit == true">
-		        	      <span class="glyphicon glyphicon-pencil edit-websites edit-option" ng-click="openEdit()" title=""></span><br />
-		        	      <div ng-repeat="website in websitesForm.websites" ng-cloak class="website-url">
+		        	      <span class="glyphicon glyphicon-pencil edit-websites edit-option pull-right" ng-click="openEdit()" title=""></span><br />
+		        	      <div ng-repeat="website in websitesForm.websites" ng-cloak>
 		        	         <a href="{{website.url.value}}" target="_blank" rel="nofollow">{{website.name.value != null? website.name.value : website.url.value}}</a>
 		        	      </div>
-		        	   </span>
-		        	</div>
-		        	<div>
+		        	   </span>		        	   
 		        	   <div ng-show="showEdit == true" ng-cloak class="websites-edit">
 		        	      <@orcid.privacyToggle  angularModel="websitesForm.visibility.visibility"
 				             questionClick="toggleClickPrivacyHelp()"
@@ -203,149 +194,107 @@
 		        	      <a class="glyphicon glyphicon-plus" ng-click="addNew()"></a><br />
 		        	      <button class="btn btn-primary" ng-click="setWebsitesForm()"><@spring.message "freemarker.btnsavechanges"/></button>
 		        	      <button class="btn" ng-click="close()"><@spring.message "freemarker.btncancel"/></button>
-		        	   </div>
-		        	</div>
+		        	   </div> 
+		           </div>
 		       	</div>
 	       	</div>
-	       	<!-- External Identifiers -->
-       		
        		<div ng-controller="ExternalIdentifierCtrl" ng-hide="!externalIdentifiersPojo.externalIdentifiers.length" ng-cloak>	       			
        			<p><strong><@orcid.msg 'public_profile.labelOtherIDs'/></strong></p>
-       			<div class="row" id="external-identifiers">
-	       			<div ng-repeat='externalIdentifier in externalIdentifiersPojo.externalIdentifiers'>
-	       				<div class="col-md-10 col-sm-10 col-xs-10">	       						
-			        			<span ng-hide="externalIdentifier.externalIdUrl">{{externalIdentifier.externalIdCommonName.content}} {{externalIdentifier.externalIdReference.content}}</span>
-			        			<span ng-show="externalIdentifier.externalIdUrl"><a href="{{externalIdentifier.externalIdUrl.value}}" target="_blank">{{externalIdentifier.externalIdCommonName.content}} {{externalIdentifier.externalIdReference.content}}</a></span>
-			        	</div>
-			        	<div class="col-md-2 col-sm-2 col-xs-2">
-				   			<a ng-click="deleteExternalIdentifier($index)" class="glyphicon glyphicon-trash grey right"></a>
-				   		</div>       			
-	       			</div>
+       			<div ng-repeat='externalIdentifier in externalIdentifiersPojo.externalIdentifiers'>
+		        	<span ng-hide="externalIdentifier.externalIdUrl">{{externalIdentifier.externalIdCommonName.content}} {{externalIdentifier.externalIdReference.content}}</span>
+		        	<span ng-show="externalIdentifier.externalIdUrl"><a href="{{externalIdentifier.externalIdUrl.value}}" target="_blank">{{externalIdentifier.externalIdCommonName.content}} {{externalIdentifier.externalIdReference.content}}</a></span>
+			   		<a ng-click="deleteExternalIdentifier($index)" class="glyphicon glyphicon-trash grey"></a>       			
        			</div>
-       			
-			</div>
-																    
+			</div>													    
 	        <#if RequestParameters['OldPersonal']??>	        
 				<p class="hoover-white-fonts">	       
 		       		<a href="<@spring.url '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a>
 		        </p>
 	        </#if>
-			
-        </div>
+		</div>
     </div>
     <div class="col-md-9 right-aside">
         <div class="workspace-right">
         	<div class="workspace-inner workspace-header" ng-controller="WorkspaceSummaryCtrl">
-                <div class="alert alert-info" ng-show="showAddAlert()" ng-cloak><strong><@orcid.msg 'workspace.addinformationaboutyou'/></strong></div>
-        		<div class="row">
-        			<!-- Works -->
-	        		<div class="workspace-overview col-md-3 col-sm-3 col-xs-6" id="works-overview">
-	        			<ul>
-	        				<li><a href="#workspace-publications" class="overview-count" ng-click="workspaceSrvc.openWorks()"><span ng-bind="worksSrvc.workCount()"></span></a></li>
-	        				<li><a href="#workspace-publications" class="overview-title" ng-click="workspaceSrvc.openWorks()"><@orcid.msg 'workspace.Works'/></a></li>
-	        			</ul>
-	                    <a href="#workspace-publications" class="btn-update no-icon" ng-click="workspaceSrvc.openWorks()"><@orcid.msg 'workspace.view'/></a>	                    
-	        		</div>
-		            <div class="workspace-overview col-md-3 col-sm-3 col-xs-6" id="educations-overview">
-		            	<ul>
-		            		<li><a href="#workspace-educations" class="overview-count" ng-click="workspaceSrvc.openEducation()"><span ng-bind="affiliationsSrvc.educations.length"></span></a></li>
-		            		<li><a href="#workspace-educations" class="overview-title" ng-click="workspaceSrvc.openEducation()"><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education'/></a></li>
-		            	</ul>
-		                <a href="#workspace-educations" class="btn-update no-icon" ng-click="workspaceSrvc.openEducation()"><@orcid.msg 'workspace.view'/></a>
-		            </div>
-		            <div class="workspace-overview col-md-3 col-sm-3 col-xs-6" id="employments-overview">
-		            	<ul>
-		            		<li><a href="#workspace-employments" class="overview-count" ng-click="workspaceSrvc.openEmployment()"><span ng-bind="affiliationsSrvc.employments.length"></span></a></li>
-		            		<li><a href="#workspace-employments" class="overview-title" ng-click="workspaceSrvc.openEmployment()"><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.employment'/></a></li>
-		            	</ul>
-		                <a href="#workspace-employments" class="btn-update no-icon" ng-click="workspaceSrvc.openEmployment()"><@orcid.msg 'workspace.view'/></a>
-		             </div>
-					<div class="workspace-overview col-md-3 col-sm-3 col-xs-6">
-						<ul>
-							<li><a href="#workspace-fundings" class="overview-count" ng-click="workspaceSrvc.openFunding()"><span ng-bind="fundingSrvc.fundings.length"></span></a></li>
-							<li><a href="#workspace-fundings" class="overview-title" ng-click="workspaceSrvc.openFunding()"><@orcid.msg 'workspace.Funding'/></a></li>
-						</ul>
-        				<a href="#workspace-employments" class="btn-update no-icon" ng-click="workspaceSrvc.openFunding()"><@orcid.msg 'workspace.view'/></a>
-        			</div>
-	        	</div>
+                <div class="alert alert-info" ng-show="showAddAlert()" ng-cloak><strong><@orcid.msg 'workspace.addinformationaboutyou'/></strong></div>                
         	</div>
-        	<div class="workspace-accordion" id="workspace-accordion">
+        	<div class="workspace-accordion" id="workspace-accordion">        		
         		<!-- Personal Information -->
-        	   <div id="workspace-personal" class="workspace-accordion-item workspace-accordion-active" ng-controller="PersonalInfoCtrl">
-        			<div class="workspace-accordion-header" style="position: relative;">
-        			   <ul class="personal-inf-display">        			   		
-        			   		<li>
-        			   			<a href="" ng-click="toggleDisplayInfo()" class="toggle-text">
-	        			   			<i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':displayInfo==false}"></i></a>
-	        			   		</a>
-        			   			<a href="" ng-click="toggleDisplayInfo()" class="toggle-text"><@orcid.msg 'workspace.personal_information'/></a></li>
-        			   		<#if RequestParameters['OldPersonal']??>	        
-        			   		   <li><a href="<@spring.url '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a></li>        			   		
-        			        </#if>
-        			   </ul>
-        			</div>
+				<div id="workspace-personal" class="workspace-accordion-item workspace-accordion-active" ng-controller="PersonalInfoCtrl">        			
+       				<div class="row">
+       					<div class="col-md-12 col-sm-12 col-xs-12">	 			   			
+ 			   				<#if RequestParameters['OldPersonal']??>	        
+      			   		   		<a href="<@spring.url '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a>        			   		
+      			        	</#if>	 			   			
+ 			   			</div>
+  			   		</div>        			
             		<div class="workspace-accordion-content" ng-show="displayInfo">
-            			<#include "workspace_personal.ftl"/>
+            			<#include "workspace_personal_v3.ftl"/>
         			</div>
             	</div>
-            	<!-- Affiliations -->
-                <#include "workspace_affiliations_body_list.ftl"/>
+            	<!-- Affiliations / Education / Employment -->
+                <#include "workspace_affiliations_body_list_v3.ftl"/>
                 <!-- Fundings -->
-               	<#include "workspace_fundings_body_list.ftl"/>
+               	<#include "workspace_fundings_body_list_v3.ftl"/>
 		        <!-- Works -->                
                 <div id="workspace-publications" class="workspace-accordion-item workspace-accordion-active" ng-controller="WorkCtrl">
                 	<div class="workspace-accordion-header">
-                		<ul class="personal-inf-display">
-                			<li>
-		        				<a href="" ng-click="workspaceSrvc.toggleWorks()" class="toggle-text">
-		        			       <i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayWorks==false}"></i>
-		        			    </a> 
-		        				<a href="" ng-click="workspaceSrvc.toggleWorks()" class="toggle-text"><@orcid.msg 'workspace.Works'/></a>
-		        			</li>		        			
-							<li>
-								<a class="label btn-primary" ng-click="showWorkImportWizard()"><@orcid.msg 'workspace.link_works'/></a>
-							</li>	
-							<li>
-								<a href="" class="label btn-primary" ng-click="addWorkModal()"><@orcid.msg 'manual_work_form_contents.add_work_manually'/></a>
-							</li>	
-							<!-- Bibtex Importer Wizard -->
-							<#if RequestParameters['bibWizard']??>
-							    <li ng-show="canReadFiles" ng-cloak>							        
-							        <div class="label btn-primary upload">
-							           <span class="import-label">Link BibTeX</span>
-								       <input type="file" class="upload-button" ng-model="textFiles" ng-click="openBibTextWizard()" accept="*" update-fn="loadBibtexJs()"  app-file-text-reader multiple />
-							       </div>
-							    </li>
-							</#if>
-						</ul>					
-					</div>
-					<!-- Bibtex Importer Results -->
-					<div ng-show="showBibtexImportWizard" ng-cloak class="bibtex-box">
-						<div class="alert alert-block" ng-show="bibtexParsingError">
-							<strong>This file can not be read. Please check the BibTeX format and try again.</strong>
-						</div>
-					   	<div ng-repeat="work in worksFromBibtex" ng-cloak" class="grey-box bottomBuffer box-border">
-					   		  <div class="row">	  
-			        	       	  <div class="col-md-9">
-			        	          	{{work.workTitle.title.value}}
-			        	          </div>
-			        	          <div class="col-md-3 bibtex-options-menu">
-			        	          	<ul>
-			        	          		<li><a ng-click="rmWorkFromBibtex(work)" class="ignore glyphicon glyphicon-trash" title="Ignore"></a></li>
-			        	          		<li><a ng-click="addWorkFromBibtex(work)" class="save glyphicon glyphicon-floppy-disk" title="Save"></a></li>
-			        	          	</ul>
-		        	          	 </div>
-	        	          	 </div>
-		        	  	</div>
-					</div>
-					
-					
+                		<div class="row">
+                			<div class="col-md-3 col-sm-2 col-xs-12">
+		                		<div class="workspace-title" ng-controller="WorkspaceSummaryCtrl">
+			                		<a href="" ng-click="workspaceSrvc.toggleWorks($event)" class="toggle-text">
+				       			       <i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayWorks==false}"></i>
+				       			       <@orcid.msg 'workspace.Works'/> (<span ng-bind="worksSrvc.groups.length"></span>)
+				       			    </a>
+			       				</div>
+			       			</div>	
+			       			<div class="col-md-9 col-sm-10 col-xs-12 action-button-bar" ng-show="workspaceSrvc.displayWorks">
+			       				<!-- Sort -->
+			       				<div class="sort-menu-container">			       					 
+				       				<a class="action-option manage-button toggle-menu" ng-click="">
+										<span class="glyphicon glyphicon-sort"></span>							
+										<@orcid.msg 'manual_orcid_record_contents.sort'/>
+									</a>
+									<ul class="sort-menu-options">
+										<li><a href="" ng-click=""><@orcid.msg 'manual_orcid_record_contents.sort_title'/> <span class=""></span></a></li>
+										<li><a href="" ng-click="" class="checked"><@orcid.msg 'manual_orcid_record_contents.sort_data'/> <span class="glyphicon glyphicon-ok pull-right"></span></a></li>
+										<li><a href="" ng-click=""><@orcid.msg 'manual_orcid_record_contents.sort_type'/> <span class=""></span></a></li>
+										<li><a href="" ng-click=""><@orcid.msg 'manual_orcid_record_contents.sort_source'/> <span class=""></span></a></li>
+									</ul>
+								</div>
+								
+		                		<ul class="workspace-bar-menu">
+		                			<!-- Manage view -->		                			
+			        				<li>
+			        					<a href="" class="action-option manage-button" ng-click="">
+											<span class="glyphicon glyphicon-cog"></span>
+											<@orcid.msg 'manual_orcid_record_contents.manage_view'/>
+										</a>	        				
+			        				</li>
+			        				<!-- Link Manually -->
+			        				<li>
+				        				<a href="" class="action-option manage-button" ng-click="addWorkModal()">
+											<span class="glyphicon glyphicon-plus"></span>
+											<@orcid.msg 'manual_orcid_record_contents.link_manually'/>
+										</a>
+			        				</li>
+			        				<!-- Search & Link -->
+			        				<li>
+				        				<a class="action-option manage-button" ng-click="showWorkImportWizard()">
+											<span class="glyphicon glyphicon-cloud-upload"></span>
+											<@orcid.msg 'manual_orcid_record_contents.search_link'/>
+										</a>	        				
+			        				</li>
+								</ul>								
+							</div>
+						</div>					
+					</div>					 
       	            <div ng-show="workspaceSrvc.displayWorks" class="workspace-accordion-content">
 	            		<#include "includes/work/add_work_modal_inc.ftl"/>
 						<#include "includes/work/del_work_modal_inc.ftl"/>
-						<#include "includes/work/body_work_inc.ftl"/>
+						<#include "includes/work/body_work_inc_v3.ftl"/>
 	            	</div>
-	            	
+	            	 
             	</div>
             	
             	<#--
@@ -517,6 +466,5 @@
 		</div>
 		</div>
 	</#if>
-</script>
-	
+</script>	
 </@protected>

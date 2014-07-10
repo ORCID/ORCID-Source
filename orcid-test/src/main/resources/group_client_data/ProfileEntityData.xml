@@ -1,0 +1,181 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of 
+    the software.
+
+    =============================================================================
+
+-->
+<dataset>
+
+	<profile
+            orcid="9999-9999-9999-9989"
+            creation_method="API"
+            completed_date="2014-07-03 15:31:00.00"
+            date_created="2014-07-03 15:31:00.00"
+            submission_date="2014-07-03 15:31:00.00"
+            last_indexed_date="2014-07-03 15:31:00.00"
+            last_modified="2014-07-03 15:31:00.00"
+            claimed="true"
+            given_names="User"
+            family_name="To Test"
+            credit_name="User To Test"
+            external_identifiers_visibility="PRIVATE"
+            biography_visibility="PUBLIC"
+            keywords_visibility="REGISTERED_ONLY"
+            other_names_visibility="PRIVATE"
+            researcher_urls_visibility="PUBLIC"                       
+            is_selectable_sponsor="false"
+            encrypted_password="e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA="
+            security_question_id="1"
+            encrypted_security_answer="iTlIoR2JsFl5guE56cazmg=="
+            encrypted_verification_code="1vLkD2Lm8c24TyALcW0Brg=="
+            send_change_notifications="false"
+            send_orcid_news="false"
+            activities_visibility_default='PRIVATE'
+            biography="Bio for User To Test"
+            indexing_status="DONE"
+            orcid_type="USER"            
+            />
+
+	<profile 
+			orcid="9999-9999-9999-9990"
+			completed_date="2014-07-03 15:31:00.00"
+            date_created="2014-07-03 15:31:00.00"
+            submission_date="2014-07-03 15:31:00.00"
+            last_indexed_date="2014-07-03 15:31:00.00"
+            last_modified="2014-07-03 15:31:00.00"
+			credit_name="Group Member"
+			orcid_type="GROUP"
+			group_type="PREMIUM_INSTITUTION"
+			indexing_status="DONE"
+			activities_visibility_default='PRIVATE'
+			/>
+
+	<profile 
+			orcid="9999-9999-9999-9991"
+			completed_date="2014-07-03 15:31:00.00"
+            date_created="2014-07-03 15:31:00.00"
+            submission_date="2014-07-03 15:31:00.00"
+            last_indexed_date="2014-07-03 15:31:00.00"
+            last_modified="2014-07-03 15:31:00.00"
+			credit_name="Client # 1"
+			orcid_type="CLIENT"
+			client_type="PREMIUM_CREATOR"
+			indexing_status="DONE"
+			activities_visibility_default='PRIVATE'
+			/>
+
+	<profile 
+			orcid="9999-9999-9999-9992"
+			completed_date="2014-07-03 15:31:00.00"
+            date_created="2014-07-03 15:31:00.00"
+            submission_date="2014-07-03 15:31:00.00"
+            last_indexed_date="2014-07-03 15:31:00.00"
+            last_modified="2014-07-03 15:31:00.00"
+			credit_name="Client # 2"
+			orcid_type="CLIENT"
+			client_type="PREMIUM_CREATOR"
+			indexing_status="DONE"
+			activities_visibility_default='PRIVATE'
+			/>
+
+	<profile 
+			orcid="9999-9999-9999-9993"
+			completed_date="2014-07-03 15:31:00.00"
+            date_created="2014-07-03 15:31:00.00"
+            submission_date="2014-07-03 15:31:00.00"
+            last_indexed_date="2014-07-03 15:31:00.00"
+            last_modified="2014-07-03 15:31:00.00"
+			credit_name="Client # 3"
+			orcid_type="CLIENT"
+			client_type="PREMIUM_CREATOR"
+			indexing_status="DONE"
+			activities_visibility_default='PRIVATE'
+			/>
+
+	<profile 
+			orcid="9999-9999-9999-9994"
+			completed_date="2014-07-03 15:31:00.00"
+            date_created="2014-07-03 15:31:00.00"
+            submission_date="2014-07-03 15:31:00.00"
+            last_indexed_date="2014-07-03 15:31:00.00"
+            last_modified="2014-07-03 15:31:00.00"
+			credit_name="Client # 4"
+			orcid_type="CLIENT"
+			client_type="PREMIUM_CREATOR"
+			indexing_status="DONE"
+			activities_visibility_default='PRIVATE'
+			/>
+
+	<profile 
+			orcid="9999-9999-9999-9995"
+			completed_date="2014-07-03 15:31:00.00"
+            date_created="2014-07-03 15:31:00.00"
+            submission_date="2014-07-03 15:31:00.00"
+            last_indexed_date="2014-07-03 15:31:00.00"
+            last_modified="2014-07-03 15:31:00.00"
+			credit_name="Client # 5"
+			orcid_type="CLIENT"
+			client_type="PREMIUM_CREATOR"
+			indexing_status="DONE"
+			activities_visibility_default='PRIVATE'
+			/>
+			
+	<profile 
+			orcid="9999-9999-9999-9996"
+			completed_date="2014-07-03 15:31:00.00"
+            date_created="2014-07-03 15:31:00.00"
+            submission_date="2014-07-03 15:31:00.00"
+            last_indexed_date="2014-07-03 15:31:00.00"
+            last_modified="2014-07-03 15:31:00.00"
+			credit_name="Client # 5"
+			orcid_type="CLIENT"
+			client_type="PREMIUM_CREATOR"
+			indexing_status="DONE"
+			activities_visibility_default='PRIVATE'
+			/>
+			
+	<profile 
+			orcid="9999-9999-9999-9997"
+			completed_date="2014-07-03 15:31:00.00"
+            date_created="2014-07-03 15:31:00.00"
+            submission_date="2014-07-03 15:31:00.00"
+            last_indexed_date="2014-07-03 15:31:00.00"
+            last_modified="2014-07-03 15:31:00.00"
+			credit_name="Client # 5"
+			orcid_type="CLIENT"
+			client_type="PREMIUM_CREATOR"
+			indexing_status="DONE"
+			activities_visibility_default='PRIVATE'
+			/>			
+			
+	<email
+        orcid="9999-9999-9999-9989"
+        email="user_to_test@user.com"
+        is_primary="true"
+        is_current="true"
+        is_verified="true"
+        visibility="PRIVATE"
+    />	
+	
+	<email
+        orcid="9999-9999-9999-9990"
+        email="group@user.com"
+        is_primary="true"
+        is_current="true"
+        is_verified="true"
+        visibility="PRIVATE"
+    />			
+</dataset>

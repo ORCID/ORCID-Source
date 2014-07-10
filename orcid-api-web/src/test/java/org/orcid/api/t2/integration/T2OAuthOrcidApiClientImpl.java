@@ -290,6 +290,13 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
         return getClientResponseWithToken(profilePathWithOrcidUrl, VND_ORCID_XML, accessToken);
     }
 
+    
+    public ClientResponse viewFullDetailsXml(String orcid, String accessToken, String messageVersion) {
+        String path = '/' + messageVersion + PROFILE_GET_PATH;
+        URI profilePathWithOrcidUrl = UriBuilder.fromPath(path).build(orcid);
+        return getClientResponseWithToken(profilePathWithOrcidUrl, VND_ORCID_XML, accessToken);
+    }
+    
     /**
      * GETs the JSON representation of the ORCID record containing all details
      * 

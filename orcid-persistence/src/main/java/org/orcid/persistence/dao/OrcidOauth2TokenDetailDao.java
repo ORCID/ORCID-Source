@@ -50,4 +50,6 @@ public interface OrcidOauth2TokenDetailDao extends GenericDao<OrcidOauth2TokenDe
     void disableAccessTokenByRefreshToken(String refreshTokenValue);
 
     void removeByAuthenticationKeyOrTokenValueOrRefreshTokenValue(String authKey, String tokenValue, String refreshTokenValue);
+    
+    List<String> findAvailableScopesByUserAndClientId(String clientId, String userName);
 }
