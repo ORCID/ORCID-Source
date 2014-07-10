@@ -158,11 +158,27 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public void remove(Long id) {
-        Query query = entityManager.createQuery("update OrgEntity set orgDisambiguated.id = null where orgDisambiguated.id = :id");
-        query.setParameter("id", id);
+    public void replace(long deletedOrgDisambiguatedId, long replacementOrgDisambiguatedId) {
+        Query query = entityManager
+                .createQuery("update OrgEntity set orgDisambiguated.id = :replacementOrgDisambiguatedId where orgDisambiguated.id = :deletedOrgDisambiguatedId");
+        query.setParameter("deletedOrgDisambiguatedId", deletedOrgDisambiguatedId);
+        query.setParameter("replacementOrgDisambiguatedId", replacementOrgDisambiguatedId);
         query.executeUpdate();
-        super.remove(id);
+    }
+
+    @Override
+    @Transactional
+    public void dropUniqueConstraint() {
+        Query query = entityManager.createNativeQuery("ALTER TABLE org_disambiguated DROP CONSTRAINT IF EXISTS org_disambiguated_unique_constraints");
+        query.executeUpdate();
+    }
+
+    @Override
+    @Transactional
+    public void createUniqueConstraint() {
+        Query query = entityManager
+                .createNativeQuery("ALTER TABLE org_disambiguated ADD CONSTRAINT org_disambiguated_unique_constraints UNIQUE (name, city, region, country, source_type)");
+        query.executeUpdate();
     }
 
 }

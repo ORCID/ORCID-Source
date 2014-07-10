@@ -71,6 +71,7 @@ public class LoadRinggoldData {
     private int numUnchanged;
     private int numSkipped;
     private int numDeleted;
+    private int numDeletionsSkipped;
 
     public static void main(String[] args) {
         LoadRinggoldData loadRinggoldData = new LoadRinggoldData();
@@ -105,6 +106,7 @@ public class LoadRinggoldData {
     }
 
     public void execute() {
+        dropUniqueConstraint();
         if (fileToLoad != null) {
             processParentsCsv();
         }
@@ -114,6 +116,7 @@ public class LoadRinggoldData {
         if (zipFile != null) {
             processZip();
         }
+        createUniqueConstraint();
         LOGGER.info("Finished loading Ringgold data");
     }
 
@@ -122,26 +125,32 @@ public class LoadRinggoldData {
             processDeletedIdsReader(reader);
         } catch (IOException e) {
             throw new RuntimeException("Error reading csv file", e);
-        } finally {
-            LOGGER.info("Number deleted={}", new Object[] { numDeleted });
         }
 
     }
 
     private void processZip() {
         try (ZipFile zip = new ZipFile(zipFile)) {
+            ZipEntry parentsEntry = null;
+            ZipEntry deletedIdsEntry = null;
             for (ZipEntry entry : Collections.list(zip.entries())) {
                 String entryName = entry.getName();
                 if (entryName.endsWith("_parents.csv")) {
                     LOGGER.info("Found parents file: " + entryName);
-                    Reader reader = getReader(zip, entry);
-                    processReader(reader);
+                    parentsEntry = entry;
                 }
                 if (entryName.endsWith("deleted_ids.csv")) {
                     LOGGER.info("Found deleted ids file: " + entryName);
-                    Reader reader = getReader(zip, entry);
-                    processDeletedIdsReader(reader);
+                    deletedIdsEntry = entry;
                 }
+            }
+            if (parentsEntry != null) {
+                Reader reader = getReader(zip, parentsEntry);
+                processReader(reader);
+            }
+            if (deletedIdsEntry != null) {
+                Reader reader = getReader(zip, deletedIdsEntry);
+                processDeletedIdsReader(reader);
             }
         } catch (IOException e) {
             throw new RuntimeException("Error reading zip file", e);
@@ -330,20 +339,39 @@ public class LoadRinggoldData {
                 processDeletedIdsLine(line);
             }
         } finally {
-            LOGGER.info("Number deleted={}", numDeleted);
+            LOGGER.info("Number deleted={}, number deletions skipped={}", new Object[] { numDeleted, numDeletionsSkipped });
         }
     }
 
     private void processDeletedIdsLine(String[] line) {
         String deletedSourceId = line[0];
-        OrgDisambiguatedEntity entity = orgDisambiguatedDao.findBySourceIdAndSourceType(deletedSourceId, RINGGOLD_SOURCE_TYPE);
-        if (entity != null) {
+        String replacementSourceId = line[1];
+        OrgDisambiguatedEntity deletedEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(deletedSourceId, RINGGOLD_SOURCE_TYPE);
+        if (deletedEntity != null) {
             LOGGER.info("Deleted ID exists in DB, id={}", deletedSourceId);
-            Long entityId = entity.getId();
-            orgDisambiguatedSolrDao.remove(entityId);
-            orgDisambiguatedDao.remove(entityId);
-            numDeleted++;
+            Long deletedEntityId = deletedEntity.getId();
+            OrgDisambiguatedEntity replacementEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(replacementSourceId, RINGGOLD_SOURCE_TYPE);
+            if (replacementEntity == null) {
+                LOGGER.warn("Replacement does not exist, id={}", replacementEntity);
+                numDeletionsSkipped++;
+            } else {
+                Long replacementEntityId = replacementEntity.getId();
+                orgDisambiguatedSolrDao.remove(deletedEntityId);
+                orgDisambiguatedDao.replace(deletedEntityId, replacementEntityId);
+                orgDisambiguatedDao.remove(deletedEntityId);
+                numDeleted++;
+            }
         }
+    }
+    
+    private void createUniqueConstraint() {
+        LOGGER.info("About to create unique constraint");
+        orgDisambiguatedDao.createUniqueConstraint();
+    }
+
+    private void dropUniqueConstraint() {
+        LOGGER.info("About to drop unique constraint");
+        orgDisambiguatedDao.dropUniqueConstraint();
     }
 
 }
