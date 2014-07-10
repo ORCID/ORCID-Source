@@ -20,7 +20,11 @@ import java.util.List;
 
 import javax.persistence.Query;
 
+import org.orcid.jaxb.model.message.CitationType;
+import org.orcid.jaxb.model.message.Iso3166Country;
+import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.dao.WorkDao;
+import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,6 +48,29 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
         this.persist(work);
         this.flush();
         return work;
+    }
+
+    /*
+     * 
+     * private String translatedTitleLanguageCode; 
+     * private Iso3166Country iso2Country; 
+     * private CitationType citationType; 
+     * private WorkType workType; 
+     * private PublicationDateEntity publicationDate; 
+     * private String contributorsJson; 
+     * private String externalIdentifiersJson;
+     */
+
+    @Transactional
+    public WorkEntity updateWork(WorkEntity updatedWork) {
+        Query updateQuery = entityManager
+                .createQuery("UPDATE WorkEntity SET title=:title, translatedTitle=:translatedTitle, subtitle=:subtitle, " + 
+                        "description=:description, workUrl=:workUrl, citation=:citation, journalTitle=:journalTitle, " +
+                        "languageCode=:languageCode, translatedTitleLanguageCode=:translatedTitleLanguageCode, " +
+                        "iso2Country=:iso2Country, citationType=:citationType, workType=:workType, publicationDate=:publicationDate, " + 
+                        "contributorsJson=:contributorsJson, externalIdentifiersJson=:externalIdentifiersJson " + 
+                        "WHERE id=:id");
+        return updatedWork;
     }
 
     /**
