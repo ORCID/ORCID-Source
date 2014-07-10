@@ -324,7 +324,13 @@
 						<div class="alert alert-block" ng-show="bibtexParsingError">
 							<strong>This file can not be read. Please check the BibTeX format and try again.</strong>
 						</div>
-					   	<div ng-repeat="work in worksFromBibtex" ng-cloak" class="grey-box bottomBuffer box-border">
+						<div class="row bottomBuffer" ng-show="bibtexCancelLink">
+							<div class="col-md-10"></div>
+							<div class="col-md-2">
+								<button type="button" ng-click="bibtextCancel()" class="btn close-button pull-right">Cancel</button>		
+							</div>
+						</div>
+					   	<div ng-repeat="work in worksFromBibtex" ng-cloak class="grey-box bottomBuffer box-border">
 					   		  <div class="row">	  
 			        	       	  <div class="col-md-9">
 			        	          	{{work.workTitle.title.value}}

@@ -3267,6 +3267,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	$scope.moreInfoOpen = false;
 	$scope.moreInfo = {};
 	$scope.bibtexParsingError = false;
+	$scope.bibtexCancelLink = false;
 	
 	$scope.loadBibtexJs = function() {
         try {
@@ -3280,6 +3281,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 						worksSrvc.getBlankWork(function(data) {
 							populateWorkAjaxForm(cur,data);
 							$scope.worksFromBibtex.push(data);
+							$scope.bibtexCancelLink = true;
 						});
 					})(parsed[j]);
 			    };
@@ -3304,6 +3306,11 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
     $scope.openBibTextWizard = function () {
     	$scope.bibtexParsingError = false;
     	$scope.showBibtexImportWizard = true;
+    };
+    
+    $scope.bibtextCancel = function(){
+    	$scope.worksFromBibtex = null;
+    	$scope.bibtexCancelLink = false;
     };
 	
 	// Check for the various File API support.
