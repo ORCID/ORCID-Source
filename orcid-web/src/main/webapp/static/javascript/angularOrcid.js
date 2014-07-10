@@ -1003,6 +1003,21 @@ function EditTableCtrl($scope) {
 	$scope.showEditSecurityQuestion = (window.location.hash === "#editSecurityQuestion");
 	$scope.securityQuestionUpdateToggleText();	
 	
+	/* Social Networks */
+
+	$scope.socialNetworksUpdateToggleText = function () {
+		if ($scope.showEditSocialSettings) $scope.socialNetworksToggleText = om.get("manage.socialNetworks.hide");
+		else $scope.socialNetworksToggleText = om.get("manage.socialNetworks.edit");
+	};
+
+	$scope.toggleSocialNetworksEdit = function(){
+		$scope.showEditSocialSettings = !$scope.showEditSocialSettings;
+		$scope.socialNetworksUpdateToggleText();
+	};
+
+	//init social networks row
+	$scope.showEditSocialSettings = (window.location.hash === "#editSocialNetworks");
+	$scope.socialNetworksUpdateToggleText();	
 };
 
 
@@ -5831,6 +5846,68 @@ function switchUserCtrl($scope,$compile){
     	$('#switch_user_section').toggle();
 	};
 			
+};
+
+function SocialNetworksCtrl($scope){
+	$scope.twitter=false;
+
+	$scope.checkTwitterStatus = function(){
+		$.ajax({
+			url: getBaseUri() + '/manage/twitter/check-twitter-status',
+	        type: 'GET',
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'text',
+	        success: function(data) {	
+	        	console.log("-> " + data);
+	        	if(data == "true")
+	        		$scope.twitter = true;
+	        	else 
+	        		$scope.twitter = false;
+	        	console.log("value: " + $scope.twitter);
+	        	$scope.$apply();
+	        }
+		}).fail(function(){
+			console.log("Unable to fetch user twitter status");
+		});
+	};
+
+	$scope.updateTwitter = function() {
+		console.log("Update twitter");
+		if($scope.twitter == true) {
+			$.ajax({
+		        url: getBaseUri() + '/manage/twitter',
+		        type: 'POST',
+		        contentType: 'application/json;charset=UTF-8',
+		        dataType: 'text',
+		        success: function(data) {	        			        			        	
+		        	window.location = data;
+		        }
+		    }).fail(function() { 
+		    	console.log("Unable to enable twitter");
+		    });	
+		} else {
+			$.ajax({
+		        url: getBaseUri() + '/manage/disable-twitter',
+		        type: 'POST',
+		        contentType: 'application/json;charset=UTF-8',
+		        dataType: 'text',
+		        success: function(data) {
+		        	if(data == "true"){
+		        		$scope.twitter = false;
+		        	} else {
+		        		$scope.twitter = true;
+		        	}
+
+		        	$scope.$apply();
+		        }
+		    }).fail(function() { 
+		    	console.log("Unable to disable twitter");
+		    });				
+		}
+	};
+
+	//init
+	$scope.checkTwitterStatus();
 };
 
 /*Angular Multi-selectbox*/
