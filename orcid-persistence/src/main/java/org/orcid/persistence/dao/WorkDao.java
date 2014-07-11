@@ -44,7 +44,7 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
      *            The work to be edited
      * @return the updated work
      * */
-    boolean editWork(WorkEntity work);
+    WorkEntity editWork(WorkEntity work);
 
     /**
      * Find works for a specific user

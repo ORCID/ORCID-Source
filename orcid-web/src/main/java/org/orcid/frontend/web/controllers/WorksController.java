@@ -572,6 +572,8 @@ public class WorksController extends BaseWorkspaceController {
      * */
     private WorkEntity toWorkEntity(OrcidWork orcidWork) {
         WorkEntity workEntity = new WorkEntity();
+        if(!PojoUtil.isEmpty(orcidWork.getPutCode()) && !orcidWork.getPutCode().equals("-1"))
+            workEntity.setId(Long.valueOf(orcidWork.getPutCode()));
         workEntity.setCitation(orcidWork.getWorkCitation().getCitation());
         workEntity.setCitationType(orcidWork.getWorkCitation().getWorkCitationType());
         workEntity.setDateCreated(new java.util.Date());

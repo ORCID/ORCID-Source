@@ -16,6 +16,7 @@
  */
 package org.orcid.persistence.dao.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Query;
@@ -48,15 +49,42 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
 
     @Override
     @Transactional
-    public boolean editWork(WorkEntity updatedWork) {
+    public WorkEntity editWork(WorkEntity updatedWork) {
+        
+        String query = "UPDATE work " + 
+                "SET title=:title, translated_title=:translatedTitle, subtitle=:subtitle, " + 
+                "description=:description, work_url=:workUrl, citation=:citation, journal_title=:journalTitle, " +
+                "language_code=:languageCode, translated_title_language_code=:translatedTitleLanguageCode, " +
+                "iso2_country=:iso2Country, citation_type=:citationType, work_type=:workType, " +
+                "{0} {1} {2}" +
+                "contributors_json=:contributorsJson, external_ids_json=:externalIdentifiersJson, last_modified=:lastModified " + 
+                "WHERE work_id=:id";
+        if(updatedWork.getPublicationDate() != null) {
+            if(updatedWork.getPublicationDate().getDay() == null) {
+                query = query.replace("{0}", "publication_day=null");
+            } else {
+                query = query.replace("{0}", "publication_day=:publicationDay");                
+            }
+            
+            if(updatedWork.getPublicationDate().getMonth() == null) {
+                query = query.replace("{1}", "publication_month=null,");
+            } else {
+                query = query.replace("{1}", "publication_month=:publicationMonth,");
+            }
+            
+            if(updatedWork.getPublicationDate().getYear() == null) {
+                query = query.replace("{2}", "publication_year=null,");
+            } else {
+                query = query.replace("{2}", "publication_year=:publicationDay,");
+            }
+        } else {
+            query = query.replace("{0}", "publication_day=null,");
+            query = query.replace("{1}", "publication_month=null,");
+            query = query.replace("{2}", "publication_year=null,");
+        } 
+                
         Query updateQuery = entityManager
-                .createQuery("UPDATE WorkEntity " + 
-                        "SET title=:title, translatedTitle=:translatedTitle, subtitle=:subtitle, " + 
-                        "description=:description, workUrl=:workUrl, citation=:citation, journalTitle=:journalTitle, " +
-                        "languageCode=:languageCode, translatedTitleLanguageCode=:translatedTitleLanguageCode, " +
-                        "iso2Country=:iso2Country, citationType=:citationType, workType=:workType, publicationDate=:publicationDate, " + 
-                        "contributorsJson=:contributorsJson, externalIdentifiersJson=:externalIdentifiersJson " + 
-                        "WHERE id=:id");
+                .createNativeQuery(query);
         updateQuery.setParameter("title", updatedWork.getTitle());
         updateQuery.setParameter("translatedTitle", updatedWork.getTranslatedTitle());
         updateQuery.setParameter("subtitle", updatedWork.getSubtitle());
@@ -69,11 +97,28 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
         updateQuery.setParameter("iso2Country", updatedWork.getIso2Country());
         updateQuery.setParameter("citationType", updatedWork.getCitationType());
         updateQuery.setParameter("workType", updatedWork.getWorkType());
-        updateQuery.setParameter("publicationDate", updatedWork.getPublicationDate());
+        
+        if(updatedWork.getPublicationDate() != null) {
+            if(updatedWork.getPublicationDate().getDay() != null) {
+                updateQuery.setParameter("publicationDay", updatedWork.getPublicationDate().getDay());
+            } 
+            
+            if(updatedWork.getPublicationDate().getMonth() != null) {
+                updateQuery.setParameter("publicationMonth", updatedWork.getPublicationDate().getMonth());
+            } 
+            
+            if(updatedWork.getPublicationDate().getYear() != null) {
+                updateQuery.setParameter("publicationYear", updatedWork.getPublicationDate().getYear());
+            }
+        }
+        
         updateQuery.setParameter("contributorsJson", updatedWork.getContributorsJson());
         updateQuery.setParameter("externalIdentifiersJson", updatedWork.getExternalIdentifiersJson());
+        updateQuery.setParameter("lastModified", new Date());
+        updateQuery.setParameter("id",updatedWork.getId());
         
-        return updateQuery.executeUpdate() > 0;
+        updateQuery.executeUpdate();
+        return updatedWork;
     }
 
     /**

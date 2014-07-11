@@ -37,9 +37,9 @@ public interface WorkManager {
      * 
      * @param work
      *            The work to be edited
-     * @return true if the work was updated
+     * @return The updated entity
      * */
-    boolean editWork(WorkEntity work);
+    WorkEntity editWork(WorkEntity work);
     
     /**
      * Find the works for a specific user

@@ -56,10 +56,10 @@ public class WorkManagerImpl implements WorkManager {
      * 
      * @param work
      *            The work to be edited
-     * @return true if the work was updated
+     * @return The updated entity
      * */
-    public boolean editWork(WorkEntity work) {
-        return workDao.editWork(work);        
+    public WorkEntity editWork(WorkEntity work) {
+        return workDao.editWork(work);                
     }
 
     /**
