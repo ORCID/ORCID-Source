@@ -192,7 +192,7 @@ public class WorksController extends BaseWorkspaceController {
 
         return workList;
     }
-    
+
     @RequestMapping(value = "/updateToMaxDisplay.json", method = RequestMethod.GET)
     public @ResponseBody
     boolean updateToMaxDisplay(HttpServletRequest request, @RequestParam(value = "putCode") String putCode) {
@@ -207,95 +207,134 @@ public class WorksController extends BaseWorkspaceController {
     public @ResponseBody
     Work getWork(HttpServletRequest request) {
         Work w = new Work();
-        OrcidProfile profile = getEffectiveProfile();
-        w.setVisibility(profile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault().getValue());
-
-        // work title and subtitle
-        Text wtt = new Text();
-        wtt.setRequired(true);
-        WorkTitle wt = new WorkTitle();
-        wt.setTitle(wtt);
-        Text wst = new Text();
-        wt.setSubtitle(wst);
-        TranslatedTitle tt = new TranslatedTitle();
-        tt.setContent(new String());
-        tt.setLanguageCode(new String());
-        tt.setLanguageName(new String());
-        wt.setTranslatedTitle(tt);
-        w.setWorkTitle(wt);
-
-        // work journal title
-        Text jt = new Text();
-        jt.setRequired(false);
-        w.setJournalTitle(jt);
-
-        // set citation text and type
-        Citation c = new Citation();
-        Text ctText = new Text();
-        ctText.setValue(CitationType.FORMATTED_UNSPECIFIED.value());
-        c.setCitationType(ctText);
-        Text cText = new Text();
-        c.setCitation(cText);
-        w.setCitation(c);
-
-        Text wCategoryText = new Text();
-        wCategoryText.setValue("");
-        wCategoryText.setRequired(true);
-        w.setWorkCategory(wCategoryText);
-
-        Text wTypeText = new Text();
-        wTypeText.setValue("");
-        wTypeText.setRequired(true);
-        w.setWorkType(wTypeText);
-
-        Date d = new Date();
-        d.setDay("");
-        d.setMonth("");
-        d.setYear("");
-        w.setPublicationDate(d);
-
-        WorkExternalIdentifier wdi = new WorkExternalIdentifier();
-        Text wdiT = new Text();
-        Text wdiType = new Text();
-        wdiType.setValue("");
-        wdi.setWorkExternalIdentifierId(wdiT);
-        wdi.setWorkExternalIdentifierType(wdiType);
-        List<WorkExternalIdentifier> wdiL = new ArrayList<WorkExternalIdentifier>();
-        wdiL.add(wdi);
-        w.setWorkExternalIdentifiers(wdiL);
-
-        Text uText = new Text();
-        w.setUrl(uText);
-
-        Contributor contr = new Contributor();
-        List<Contributor> contrList = new ArrayList<Contributor>();
-        Text rText = new Text();
-        rText.setValue("");
-        contr.setContributorRole(rText);
-
-        Text sText = new Text();
-        sText.setValue("");
-        contr.setContributorSequence(sText);
-        contrList.add(contr);
-        w.setContributors(contrList);
-
-        Text disText = new Text();
-        w.setShortDescription(disText);
-
-        // Language code
-        Text lc = new Text();
-        lc.setRequired(false);
-        w.setLanguageCode(lc);
-        Text ln = new Text();
-        ln.setRequired(false);
-        w.setLanguageName(ln);
-
-        w.setCountryCode(new Text());
-        w.setCountryName(new Text());
-
+        initializeFields(w);
         return w;
     }
 
+    private void initializeFields(Work w) {
+        if(w.getVisibility() == null) {
+            OrcidProfile profile = getEffectiveProfile();
+            w.setVisibility(profile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault().getValue());
+        }
+        
+        if(w.getWorkTitle() == null) {
+            Text wtt = new Text();
+            wtt.setRequired(true);
+            WorkTitle wt = new WorkTitle();
+            wt.setTitle(wtt);            
+            w.setWorkTitle(wt);
+        }
+        
+        if(w.getWorkTitle().getSubtitle() == null) {
+            WorkTitle wt = w.getWorkTitle();
+            Text wst = new Text();
+            wt.setSubtitle(wst);            
+        }
+        
+        if(w.getWorkTitle().getTranslatedTitle() == null) {
+            WorkTitle wt = w.getWorkTitle();
+            TranslatedTitle tt = new TranslatedTitle();
+            tt.setContent(new String());
+            tt.setLanguageCode(new String());
+            tt.setLanguageName(new String());
+            wt.setTranslatedTitle(tt);
+        }
+        
+        if(PojoUtil.isEmpty(w.getJournalTitle())) {
+            Text jt = new Text();
+            jt.setRequired(false);
+            w.setJournalTitle(jt);
+        }
+        
+        if(w.getCitation() == null) {
+            Citation c = new Citation();
+            Text ctText = new Text();
+            ctText.setValue(CitationType.FORMATTED_UNSPECIFIED.value());
+            c.setCitationType(ctText);
+            Text cText = new Text();
+            c.setCitation(cText);
+            w.setCitation(c);
+        }
+        
+        if(PojoUtil.isEmpty(w.getWorkCategory())) {
+            Text wCategoryText = new Text();
+            wCategoryText.setValue(new String());
+            wCategoryText.setRequired(true);
+            w.setWorkCategory(wCategoryText);
+        }
+        
+        if(PojoUtil.isEmpty(w.getWorkType())){
+            Text wTypeText = new Text();
+            wTypeText.setValue(new String());
+            wTypeText.setRequired(true);
+            w.setWorkType(wTypeText);
+        }
+        
+        if(w.getPublicationDate() == null) {
+            Date d = new Date();
+            d.setDay(new String());
+            d.setMonth(new String());
+            d.setYear(new String());
+            w.setPublicationDate(d);
+        }
+        
+        if(w.getWorkExternalIdentifiers() == null || w.getWorkExternalIdentifiers().isEmpty()) {
+            WorkExternalIdentifier wdi = new WorkExternalIdentifier();
+            Text wdiT = new Text();
+            Text wdiType = new Text();
+            wdiType.setValue(new String());
+            wdi.setWorkExternalIdentifierId(wdiT);
+            wdi.setWorkExternalIdentifierType(wdiType);
+            List<WorkExternalIdentifier> wdiL = new ArrayList<WorkExternalIdentifier>();
+            wdiL.add(wdi);
+            w.setWorkExternalIdentifiers(wdiL);
+        }
+        
+        if(PojoUtil.isEmpty(w.getUrl())) {
+            Text uText = new Text();
+            w.setUrl(uText);
+        }
+        
+        if(w.getContributors() == null || w.getContributors().isEmpty()) {
+            Contributor contr = new Contributor();
+            List<Contributor> contrList = new ArrayList<Contributor>();
+            Text rText = new Text();
+            rText.setValue(new String());
+            contr.setContributorRole(rText);
+
+            Text sText = new Text();
+            sText.setValue(new String());
+            contr.setContributorSequence(sText);
+            contrList.add(contr);
+            w.setContributors(contrList);
+        }
+        
+        if(PojoUtil.isEmpty(w.getShortDescription())) {
+            Text disText = new Text();
+            w.setShortDescription(disText);
+        }
+        
+        if(PojoUtil.isEmpty(w.getLanguageCode())) {
+            Text lc = new Text();
+            lc.setRequired(false);
+            w.setLanguageCode(lc);
+        }
+        
+        if(PojoUtil.isEmpty(w.getLanguageName())) {
+            Text ln = new Text();
+            ln.setRequired(false);
+            w.setLanguageName(ln);
+        }
+        
+        if(PojoUtil.isEmpty(w.getCountryCode())) {
+            w.setCountryCode(new Text());
+        }
+
+        if(PojoUtil.isEmpty(w.getCountryName())) {
+            w.setCountryName(new Text());
+        }                
+    }
+    
     /**
      * Returns a blank work
      * */
@@ -354,7 +393,7 @@ public class WorksController extends BaseWorkspaceController {
     }
 
     /**
-     * Returns a blank work
+     * Creates a new work
      * */
     @RequestMapping(value = "/work.json", method = RequestMethod.POST)
     public @ResponseBody
@@ -423,6 +462,76 @@ public class WorksController extends BaseWorkspaceController {
             // Add the new work to the list of works
             currentProfile.getOrcidActivities().getOrcidWorks().getOrcidWork().add(newOw);
 
+        }
+
+        return work;
+    }
+
+    /**
+     * Creates a new work
+     * */
+    @RequestMapping(value = "/edit-work.json", method = RequestMethod.POST)
+    public @ResponseBody
+    Work editWork(HttpServletRequest request, @RequestBody Work work) {
+        initializeFields(work);
+        work.setErrors(new ArrayList<String>());
+
+        workCitationValidate(work);
+        workWorkTitleTitleValidate(work);
+        workWorkTitleSubtitleValidate(work);
+        workWorkTitleTranslatedTitleValidate(work);
+        workdescriptionValidate(work);
+        workWorkCategoryValidate(work);
+        workWorkTypeValidate(work);
+        workWorkExternalIdentifiersValidate(work);
+        workUrlValidate(work);
+        workJournalTitleValidate(work);
+        workLanguageCodeValidate(work);
+        validateWorkId(work);
+        
+        copyErrors(work.getCitation().getCitation(), work);
+        copyErrors(work.getCitation().getCitationType(), work);
+        copyErrors(work.getWorkTitle().getTitle(), work);
+        copyErrors(work.getWorkTitle().getTranslatedTitle(), work);
+        copyErrors(work.getShortDescription(), work);
+        copyErrors(work.getWorkTitle().getSubtitle(), work);
+        copyErrors(work.getWorkType(), work);
+        copyErrors(work.getUrl(), work);
+        copyErrors(work.getJournalTitle(), work);
+
+        for (Contributor c : work.getContributors()) {
+            if(!PojoUtil.isEmpty(c.getContributorRole()))
+                    copyErrors(c.getContributorRole(), work);
+            if(!PojoUtil.isEmpty(c.getContributorSequence()))
+                copyErrors(c.getContributorSequence(), work);
+        }
+
+        for (WorkExternalIdentifier wId : work.getWorkExternalIdentifiers()) {
+            if(!PojoUtil.isEmpty(wId.getWorkExternalIdentifierId()))
+                copyErrors(wId.getWorkExternalIdentifierId(), work);            
+            if(!PojoUtil.isEmpty(wId.getWorkExternalIdentifierType()))
+                copyErrors(wId.getWorkExternalIdentifierType(), work);
+        }
+
+        if (work.getErrors().size() == 0) {
+            // Get current profile
+            OrcidProfile currentProfile = getEffectiveProfile();
+
+            OrcidWork updatedOw = work.toOrcidWork();
+
+            WorkEntity workEntity = toWorkEntity(updatedOw);
+            // Edit work
+            workManager.editWork(workEntity);
+
+            // Edit the work visibility
+            profileWorkManager.updateWork(currentProfile.getOrcidIdentifier().getPath(), String.valueOf(workEntity.getId()), updatedOw.getVisibility());
+            // Update the work on the cached profile
+            List<OrcidWork> works = currentProfile.getOrcidActivities().getOrcidWorks().getOrcidWork();
+            for (OrcidWork existingWork : works) {
+                if (existingWork.getPutCode().equals(updatedOw.getPutCode())) {
+
+                }
+            }
         }
 
         return work;
@@ -551,29 +660,26 @@ public class WorksController extends BaseWorkspaceController {
     public @ResponseBody
     Work workWorkTitleTranslatedTitleValidate(@RequestBody Work work) {
         work.getWorkTitle().getTranslatedTitle().setErrors(new ArrayList<String>());
+        
+        String content = work.getWorkTitle().getTranslatedTitle() == null ? null : work.getWorkTitle().getTranslatedTitle().getContent();
+        String code = work.getWorkTitle().getTranslatedTitle() == null ? null : work.getWorkTitle().getTranslatedTitle().getLanguageCode();
 
-        if (work.getWorkTitle().getTranslatedTitle() != null) {
-
-            String content = work.getWorkTitle().getTranslatedTitle().getContent();
-            String code = work.getWorkTitle().getTranslatedTitle().getLanguageCode();
-
-            if (!StringUtils.isEmpty(content)) {
-                if (!StringUtils.isEmpty(code)) {
-                    if (!LANGUAGE_CODE.matcher(work.getWorkTitle().getTranslatedTitle().getLanguageCode()).matches()) {
-                        setError(work.getWorkTitle().getTranslatedTitle(), "manualWork.invalid_language_code");
-                    }
-                } else {
-                    setError(work.getWorkTitle().getTranslatedTitle(), "manualWork.empty_code");
-                }
-                if (content.length() > 1000) {
-                    setError(work.getWorkTitle().getTranslatedTitle(), "manualWork.length_less_1000");
+        if (!StringUtils.isEmpty(content)) {
+            if (!StringUtils.isEmpty(code)) {
+                if (!LANGUAGE_CODE.matcher(work.getWorkTitle().getTranslatedTitle().getLanguageCode()).matches()) {
+                    setError(work.getWorkTitle().getTranslatedTitle(), "manualWork.invalid_language_code");
                 }
             } else {
-                if (!StringUtils.isEmpty(code)) {
-                    setError(work.getWorkTitle().getTranslatedTitle(), "manualWork.empty_translation");
-                }
+                setError(work.getWorkTitle().getTranslatedTitle(), "manualWork.empty_code");
             }
-        }
+            if (content.length() > 1000) {
+                setError(work.getWorkTitle().getTranslatedTitle(), "manualWork.length_less_1000");
+            }
+        } else {
+            if (!StringUtils.isEmpty(code)) {
+                setError(work.getWorkTitle().getTranslatedTitle(), "manualWork.empty_translation");
+            }
+        }        
         return work;
     }
 
@@ -640,20 +746,26 @@ public class WorksController extends BaseWorkspaceController {
     @RequestMapping(value = "/work/workExternalIdentifiersValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     Work workWorkExternalIdentifiersValidate(@RequestBody Work work) {
-        for (WorkExternalIdentifier wId : work.getWorkExternalIdentifiers()) {
-            wId.getWorkExternalIdentifierId().setErrors(new ArrayList<String>());
-            wId.getWorkExternalIdentifierType().setErrors(new ArrayList<String>());
-            // if has id type must be specified
-            if (wId.getWorkExternalIdentifierId().getValue() != null && !wId.getWorkExternalIdentifierId().getValue().trim().equals("")
-                    && (wId.getWorkExternalIdentifierType().getValue() == null || wId.getWorkExternalIdentifierType().getValue().equals(""))) {
-                setError(wId.getWorkExternalIdentifierType(), "NotBlank.currentWorkExternalIds.idType");
-            } else if (wId.getWorkExternalIdentifierId().getValue() != null && wId.getWorkExternalIdentifierId().getValue().length() > 2084) {
-                setError(wId.getWorkExternalIdentifierId(), "manualWork.length_less_2084");
-            }
-            // if type is set a id must set
-            if (wId.getWorkExternalIdentifierType().getValue() != null && !wId.getWorkExternalIdentifierType().getValue().trim().equals("")
-                    && (wId.getWorkExternalIdentifierId().getValue() == null || wId.getWorkExternalIdentifierId().getValue().trim().equals(""))) {
-                setError(wId.getWorkExternalIdentifierId(), "NotBlank.currentWorkExternalIds.id");
+        if(work.getWorkExternalIdentifiers() != null) {
+            for (WorkExternalIdentifier wId : work.getWorkExternalIdentifiers()) {
+                if(wId.getWorkExternalIdentifierId() == null)
+                    wId.setWorkExternalIdentifierId(new Text());
+                if(wId.getWorkExternalIdentifierType() == null)
+                    wId.setWorkExternalIdentifierType(new Text());
+                wId.getWorkExternalIdentifierId().setErrors(new ArrayList<String>());
+                wId.getWorkExternalIdentifierType().setErrors(new ArrayList<String>());
+                // if has id type must be specified
+                if (wId.getWorkExternalIdentifierId().getValue() != null && !wId.getWorkExternalIdentifierId().getValue().trim().equals("")
+                        && (wId.getWorkExternalIdentifierType().getValue() == null || wId.getWorkExternalIdentifierType().getValue().equals(""))) {
+                    setError(wId.getWorkExternalIdentifierType(), "NotBlank.currentWorkExternalIds.idType");
+                } else if (wId.getWorkExternalIdentifierId().getValue() != null && wId.getWorkExternalIdentifierId().getValue().length() > 2084) {
+                    setError(wId.getWorkExternalIdentifierId(), "manualWork.length_less_2084");
+                }
+                // if type is set a id must set
+                if (wId.getWorkExternalIdentifierType().getValue() != null && !wId.getWorkExternalIdentifierType().getValue().trim().equals("")
+                        && (wId.getWorkExternalIdentifierId().getValue() == null || wId.getWorkExternalIdentifierId().getValue().trim().equals(""))) {
+                    setError(wId.getWorkExternalIdentifierId(), "NotBlank.currentWorkExternalIds.id");
+                }
             }
         }
 
@@ -669,7 +781,7 @@ public class WorksController extends BaseWorkspaceController {
         // Citations must have a type if citation text has a vale
         if (PojoUtil.isEmpty(work.getCitation().getCitationType()) && !PojoUtil.isEmpty(work.getCitation().getCitation())) {
             setError(work.getCitation().getCitationType(), "NotBlank.manualWork.citationType");
-        } else if (!work.getCitation().getCitationType().getValue().trim().equals(CitationType.FORMATTED_UNSPECIFIED.value())
+        } else if (work.getCitation().getCitationType().getValue() != null && !work.getCitation().getCitationType().getValue().trim().equals(CitationType.FORMATTED_UNSPECIFIED.value())
                 && !PojoUtil.isEmpty(work.getCitation().getCitationType())) {
             // citation should not be blank if citation type is set
             if (PojoUtil.isEmpty(work.getCitation().getCitation())) {
@@ -678,6 +790,31 @@ public class WorksController extends BaseWorkspaceController {
 
         }
 
+        return work;
+    }
+
+    public Work validateWorkId(Work work) {
+        // Get current profile
+        OrcidProfile currentProfile = getEffectiveProfile();
+        if (currentProfile == null || currentProfile.getOrcidActivities() == null || currentProfile.getOrcidActivities().getOrcidWorks() == null
+                || currentProfile.getOrcidActivities().getOrcidWorks().getOrcidWork().isEmpty()) {
+            setError(work, "manual_work_form_contents.edit_work.invalid_id");
+        } else if(PojoUtil.isEmpty(work.getPutCode())) {
+            setError(work, "manual_work_form_contents.edit_work.undefined_id");
+        } else {
+            List<OrcidWork> existingWorks = currentProfile.getOrcidActivities().getOrcidWorks().getOrcidWork();
+            boolean exists = false;
+            for(OrcidWork existingWork : existingWorks) {
+                if(existingWork.getPutCode().equals(work.getPutCode().getValue())) {
+                    exists = true;
+                    break;
+                }
+            }
+            
+            if(!exists)
+                setError(work, "manual_work_form_contents.edit_work.invalid_id");
+        }               
+        
         return work;
     }
 

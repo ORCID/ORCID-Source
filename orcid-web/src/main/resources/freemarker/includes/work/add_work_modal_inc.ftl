@@ -300,7 +300,7 @@
 				</div>
 				<div class="control-group">
 					<div ng-show="edittingWork">	
-						<button class="btn btn-primary" ng-click="editWork()" ng-disabled="addingWork" ng-class="{disabled:addingWork}">
+						<button class="btn btn-primary" ng-click="editExistingWork()" ng-disabled="addingWork" ng-class="{disabled:addingWork}">
 							<@orcid.msg 'manual_work_form_contents.btnaddtolist'/>
 						</button>
 					</div>

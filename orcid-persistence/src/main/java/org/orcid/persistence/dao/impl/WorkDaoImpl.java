@@ -48,7 +48,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
 
     @Override
     @Transactional
-    public WorkEntity editWork(WorkEntity updatedWork) {
+    public boolean editWork(WorkEntity updatedWork) {
         Query updateQuery = entityManager
                 .createQuery("UPDATE WorkEntity " + 
                         "SET title=:title, translatedTitle=:translatedTitle, subtitle=:subtitle, " + 
@@ -73,10 +73,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
         updateQuery.setParameter("contributorsJson", updatedWork.getContributorsJson());
         updateQuery.setParameter("externalIdentifiersJson", updatedWork.getExternalIdentifiersJson());
         
-        //If no work was updated, return a null object
-        if(updateQuery.executeUpdate() == 0)
-            return null;
-        return updatedWork;
+        return updateQuery.executeUpdate() > 0;
     }
 
     /**
@@ -106,6 +103,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
      *            the Id of the user
      * @return the list of works associated to the specific user
      * */
+    @SuppressWarnings("unchecked")
     public List<MinimizedWorkEntity> findPublicWorks(String orcid) {
         Query query = entityManager
                 .createQuery("select NEW org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity(w.id, w.title, w.subtitle, w.description, w.publicationDate.day, w.publicationDate.month, w.publicationDate.year, pw.visibility, w.externalIdentifiersJson, pw.displayIndex, pw.sourceProfile) "

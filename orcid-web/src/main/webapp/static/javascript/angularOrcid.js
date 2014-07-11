@@ -3398,7 +3398,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	
 	
 	//TODO
-	$scope.editWork = function() {				
+	$scope.editExistingWork = function() {				
 		$scope.editWork.errors.length = 0;
 		$.ajax({
 			url: getBaseUri() + '/works/edit-work.json',	        

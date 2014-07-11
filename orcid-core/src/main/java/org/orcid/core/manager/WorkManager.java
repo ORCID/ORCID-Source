@@ -33,6 +33,15 @@ public interface WorkManager {
     WorkEntity addWork(WorkEntity work);
     
     /**
+     * Edits an existing work
+     * 
+     * @param work
+     *            The work to be edited
+     * @return true if the work was updated
+     * */
+    boolean editWork(WorkEntity work);
+    
+    /**
      * Find the works for a specific user
      * 
      * @param orcid
