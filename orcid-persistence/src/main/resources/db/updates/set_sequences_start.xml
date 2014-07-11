@@ -1,0 +1,51 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+    
+    <changeSet id="SET-SEQUENCES-START" author="Will Simpson" dbms="postgresql">
+        <createProcedure>
+<![CDATA[
+CREATE OR REPLACE FUNCTION set_sequence_starts() RETURNS VOID AS $$
+DECLARE
+    seq VARCHAR;
+    next_val BIGINT;
+    min_val BIGINT := 1000;
+BEGIN
+    RAISE NOTICE 'Setting values of sequences to minimum value...';
+
+    FOR seq IN SELECT c.relname FROM pg_class c WHERE c.relkind = 'S' LOOP
+        next_val := nextval(seq);
+        RAISE NOTICE 'Found sequence % with next value = %', seq, next_val;
+        IF next_val < min_val THEN
+            RAISE NOTICE 'Increasing value of sequence % to %', seq, min_val;
+            EXECUTE 'SELECT setval($1, $2)' USING seq, min_val;
+        END IF;
+    END LOOP;
+
+    RAISE NOTICE 'Finished setting values of sequences to minimum value';
+    RETURN;
+END;
+$$ LANGUAGE plpgsql;
+]]>
+        </createProcedure>
+        <sql>SELECT set_sequence_starts();</sql>
+    </changeSet>
+    
+</databaseChangeLog>

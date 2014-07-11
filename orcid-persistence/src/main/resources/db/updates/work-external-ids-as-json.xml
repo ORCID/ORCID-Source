@@ -68,7 +68,7 @@ ALTER FUNCTION extract_doi(json) OWNER TO orcid;
             changing into the orcid-persistence dir in your git repo and running the following
             mvn liquibase:update -Dliquibase.changeLogFile=src/main/resources/db/updates/work-external-ids-as-json.xml -Dliquibase.username=postgres -Dliquibase.password=postgres
         -->
-        <preConditions onFail="CONTINUE">
+        <preConditions onFail="CONTINUE" onError="WARN">
             <runningAs username="postgres"/>
             <not><sqlCheck expectedResult="123">select ('{"a":123}'::varchar)->'a'</sqlCheck></not>
         </preConditions>
