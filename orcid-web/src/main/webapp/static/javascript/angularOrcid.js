@@ -3438,14 +3438,6 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		});
 	};
 	
-	
-	
-	
-	
-	
-	
-	
-	//TODO
 	$scope.editExistingWork = function() {				
 		$scope.editWork.errors.length = 0;
 		$.ajax({
@@ -3473,15 +3465,6 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	    	console.log("error fetching works");
 		});
 	};
-	//TODO
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	$scope.closeAllMoreInfo = function() {
 		for (var idx in $scope.moreInfo)
