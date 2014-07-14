@@ -240,6 +240,7 @@
 									<option value="${idTypes[key]}">${key}</option>
 								</#list>
 							</select> 
+							<a href ng-click="deleteExternalIdentifier($index)" class="glyphicon glyphicon-trash grey"></a>
 							<span class="orcid-error" ng-show="workExternalIdentifier.workExternalIdentifierType.errors.length > 0">
 								<div ng-repeat='error in workExternalIdentifier.workExternalIdentifierType.errors' ng-bind-html="error"></div>
 							</span>
@@ -257,6 +258,11 @@
 					<div ng-show="$last" class="add-item-link">			
 						<span><a href ng-click="addExternalIdentifier()"><i class="glyphicon glyphicon-plus-sign"></i> <@orcid.msg 'manual_work_form_contents.add_external_identifier' /></a></span>
 					</div>			
+				</div>
+				<div ng-show="editWork.workExternalIdentifiers == null || editWork.workExternalIdentifiers.length == 0">
+					<div>			
+						<span><a href ng-click="addExternalIdentifier()"><i class="glyphicon glyphicon-plus-sign"></i> <@orcid.msg 'manual_work_form_contents.add_external_identifier' /></a></span>
+					</div>
 				</div>
 			
 				<div class="control-group">
