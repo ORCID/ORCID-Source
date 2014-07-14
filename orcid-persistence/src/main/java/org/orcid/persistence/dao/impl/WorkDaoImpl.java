@@ -50,75 +50,29 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     @Override
     @Transactional
     public WorkEntity editWork(WorkEntity updatedWork) {
-        
-        String query = "UPDATE work " + 
-                "SET title=:title, translated_title=:translatedTitle, subtitle=:subtitle, " + 
-                "description=:description, work_url=:workUrl, citation=:citation, journal_title=:journalTitle, " +
-                "language_code=:languageCode, translated_title_language_code=:translatedTitleLanguageCode, " +
-                "iso2_country=:iso2Country, citation_type=:citationType, work_type=:workType, " +
-                "{0} {1} {2}" +
-                "contributors_json=:contributorsJson, external_ids_json=:externalIdentifiersJson, last_modified=:lastModified " + 
-                "WHERE work_id=:id";
-        if(updatedWork.getPublicationDate() != null) {
-            if(updatedWork.getPublicationDate().getDay() == null) {
-                query = query.replace("{0}", "publication_day=null");
-            } else {
-                query = query.replace("{0}", "publication_day=:publicationDay");                
-            }
-            
-            if(updatedWork.getPublicationDate().getMonth() == null) {
-                query = query.replace("{1}", "publication_month=null,");
-            } else {
-                query = query.replace("{1}", "publication_month=:publicationMonth,");
-            }
-            
-            if(updatedWork.getPublicationDate().getYear() == null) {
-                query = query.replace("{2}", "publication_year=null,");
-            } else {
-                query = query.replace("{2}", "publication_year=:publicationDay,");
-            }
-        } else {
-            query = query.replace("{0}", "publication_day=null,");
-            query = query.replace("{1}", "publication_month=null,");
-            query = query.replace("{2}", "publication_year=null,");
-        } 
-                
-        Query updateQuery = entityManager
-                .createNativeQuery(query);
-        updateQuery.setParameter("title", updatedWork.getTitle());
-        updateQuery.setParameter("translatedTitle", updatedWork.getTranslatedTitle());
-        updateQuery.setParameter("subtitle", updatedWork.getSubtitle());
-        updateQuery.setParameter("description", updatedWork.getDescription());
-        updateQuery.setParameter("workUrl", updatedWork.getWorkUrl());
-        updateQuery.setParameter("citation", updatedWork.getCitation());
-        updateQuery.setParameter("journalTitle", updatedWork.getJournalTitle());
-        updateQuery.setParameter("languageCode", updatedWork.getLanguageCode());
-        updateQuery.setParameter("translatedTitleLanguageCode", updatedWork.getTranslatedTitleLanguageCode());
-        updateQuery.setParameter("iso2Country", updatedWork.getIso2Country());
-        updateQuery.setParameter("citationType", updatedWork.getCitationType());
-        updateQuery.setParameter("workType", updatedWork.getWorkType());
-        
-        if(updatedWork.getPublicationDate() != null) {
-            if(updatedWork.getPublicationDate().getDay() != null) {
-                updateQuery.setParameter("publicationDay", updatedWork.getPublicationDate().getDay());
-            } 
-            
-            if(updatedWork.getPublicationDate().getMonth() != null) {
-                updateQuery.setParameter("publicationMonth", updatedWork.getPublicationDate().getMonth());
-            } 
-            
-            if(updatedWork.getPublicationDate().getYear() != null) {
-                updateQuery.setParameter("publicationYear", updatedWork.getPublicationDate().getYear());
-            }
-        }
-        
-        updateQuery.setParameter("contributorsJson", updatedWork.getContributorsJson());
-        updateQuery.setParameter("externalIdentifiersJson", updatedWork.getExternalIdentifiersJson());
-        updateQuery.setParameter("lastModified", new Date());
-        updateQuery.setParameter("id",updatedWork.getId());
-        
-        updateQuery.executeUpdate();
-        return updatedWork;
+        WorkEntity workToUpdate =  this.find(updatedWork.getId());
+        mergeWork(workToUpdate, updatedWork);
+        workToUpdate = this.merge(workToUpdate);
+        return workToUpdate;
+    }
+    
+    private void mergeWork(WorkEntity workToUpdate, WorkEntity workWithNewData) {
+        workToUpdate.setTitle(workWithNewData.getTitle());
+        workToUpdate.setTranslatedTitle(workWithNewData.getTranslatedTitle());
+        workToUpdate.setSubtitle(workWithNewData.getSubtitle());
+        workToUpdate.setDescription(workWithNewData.getDescription());
+        workToUpdate.setWorkUrl(workWithNewData.getWorkUrl());
+        workToUpdate.setCitation(workWithNewData.getCitation());
+        workToUpdate.setJournalTitle(workWithNewData.getJournalTitle());
+        workToUpdate.setLanguageCode(workWithNewData.getLanguageCode());
+        workToUpdate.setTranslatedTitleLanguageCode(workWithNewData.getTranslatedTitleLanguageCode());
+        workToUpdate.setIso2Country(workWithNewData.getIso2Country());
+        workToUpdate.setCitationType(workWithNewData.getCitationType());
+        workToUpdate.setWorkType(workWithNewData.getWorkType());
+        workToUpdate.setPublicationDate(workWithNewData.getPublicationDate());
+        workToUpdate.setContributorsJson(workWithNewData.getContributorsJson());
+        workToUpdate.setExternalIdentifiersJson(workWithNewData.getExternalIdentifiersJson());
+        workToUpdate.setLastModified(new Date());
     }
 
     /**
