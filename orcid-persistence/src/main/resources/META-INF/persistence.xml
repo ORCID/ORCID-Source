@@ -73,6 +73,9 @@
 		<!-- Orcid props entity -->
 		<class>org.orcid.persistence.jpa.entities.OrcidPropsEntity</class>
 		
+		<!-- Orcid social -->
+		<class>org.orcid.persistence.jpa.entities.OrcidSocialEntity</class>
+		
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
 
 <!--         <properties> -->

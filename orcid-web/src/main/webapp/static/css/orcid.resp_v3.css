@@ -4180,8 +4180,8 @@ ul.id-details li{
 	margin-right: 5px;
 }
 
-.versions li.current-version{
-	background: #E6E6E6;			
+.current-version{
+	background: #a6ce39;			
 }
 
 .versions li .privacy{
@@ -4306,6 +4306,47 @@ ul.workspace-submenu-options li a>span{
 	border-bottom: 1px solid #FAFAFA;
 	padding: 5px;
 }
+
+/* Sources */
+
+.sources-container .source{
+	margin-right: 5px;
+	cursor: pointer;
+}
+
+.sources-container ul.sources-options{
+	margin:0;
+	padding: 0;
+	list-style: none; 
+	list-style-type: none;
+	float: right;
+}
+
+.sources-container ul.sources-options li{
+	display: inline-block;
+	margin-left: 15px;
+}
+
+.sources-container table.sources-edit-table{
+	margin-top: 15px;
+	border: 1px solid #CBCBCB;
+	width: 100%;
+}
+
+.sources-container table.sources-edit-table tr{
+	border: 1px solid #CBCBCB;
+}
+
+.sources-container table.sources-edit-table tr td{
+	padding: 15px;
+}
+
+
+
+
+
+
+
 
 
 

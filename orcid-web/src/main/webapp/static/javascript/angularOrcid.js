@@ -363,6 +363,20 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 }]);
 
 var GroupedActivities = function(type) {
+	
+	if (GroupedActivities.count == undefined)
+		GroupedActivities.count = 1;
+	else
+		GroupedActivities.count ++;
+	
+	function getInstantiateCount() {
+		   var id = 0; // This is the private persistent value
+		   // The outer function returns a nested function that has access
+		   // to the persistent value.  It is this nested function we're storing
+		   // in the variable uniqueID above.
+		   return function() { return id++; };  // Return and increment
+	}
+	
 	this.type = type;
 	this._keySet = {};
 	this.activities = {};
@@ -370,7 +384,17 @@ var GroupedActivities = function(type) {
 	this.activePutCode = null;
 	this.defaultPutCode = null;
 	this.dateSortString;
+	this.groupId = GroupedActivities.count;
 };
+
+GroupedActivities.prototype.test = function() {
+	var count = null;
+	if (count == null)
+		count = 0;
+	else
+		count++;
+	return count;
+}
 
 GroupedActivities.prototype.add = function(activity) {
 	// assumes works are added in the order of the display index desc
@@ -1003,6 +1027,21 @@ function EditTableCtrl($scope) {
 	$scope.showEditSecurityQuestion = (window.location.hash === "#editSecurityQuestion");
 	$scope.securityQuestionUpdateToggleText();	
 	
+	/* Social Networks */
+
+	$scope.socialNetworksUpdateToggleText = function () {
+		if ($scope.showEditSocialSettings) $scope.socialNetworksToggleText = om.get("manage.socialNetworks.hide");
+		else $scope.socialNetworksToggleText = om.get("manage.socialNetworks.edit");
+	};
+
+	$scope.toggleSocialNetworksEdit = function(){
+		$scope.showEditSocialSettings = !$scope.showEditSocialSettings;
+		$scope.socialNetworksUpdateToggleText();
+	};
+
+	//init social networks row
+	$scope.showEditSocialSettings = (window.location.hash === "#editSocialNetworks");
+	$scope.socialNetworksUpdateToggleText();	
 };
 
 
@@ -3251,8 +3290,11 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	$scope.privacyHelp = {};
 	$scope.moreInfoOpen = false;
 	$scope.moreInfo = {};
+	$scope.editSources = {};
 	$scope.bibtexParsingError = false;
 	$scope.edittingWork = false;
+	$scope.bibtexCancelLink = false;
+
 	
 	$scope.loadBibtexJs = function() {
         try {
@@ -3266,6 +3308,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 						worksSrvc.getBlankWork(function(data) {
 							populateWorkAjaxForm(cur,data);
 							$scope.worksFromBibtex.push(data);
+							$scope.bibtexCancelLink = true;
 						});
 					})(parsed[j]);
 			    };
@@ -3290,6 +3333,11 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
     $scope.openBibTextWizard = function () {
     	$scope.bibtexParsingError = false;
     	$scope.showBibtexImportWizard = true;
+    };
+    
+    $scope.bibtextCancel = function(){
+    	$scope.worksFromBibtex = null;
+    	$scope.bibtexCancelLink = false;
     };
 	
 	// Check for the various File API support.
@@ -5879,6 +5927,68 @@ function switchUserCtrl($scope,$compile){
     	$('#switch_user_section').toggle();
 	};
 			
+};
+
+function SocialNetworksCtrl($scope){
+	$scope.twitter=false;
+
+	$scope.checkTwitterStatus = function(){
+		$.ajax({
+			url: getBaseUri() + '/manage/twitter/check-twitter-status',
+	        type: 'GET',
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'text',
+	        success: function(data) {	
+	        	console.log("-> " + data);
+	        	if(data == "true")
+	        		$scope.twitter = true;
+	        	else 
+	        		$scope.twitter = false;
+	        	console.log("value: " + $scope.twitter);
+	        	$scope.$apply();
+	        }
+		}).fail(function(){
+			console.log("Unable to fetch user twitter status");
+		});
+	};
+
+	$scope.updateTwitter = function() {
+		console.log("Update twitter");
+		if($scope.twitter == true) {
+			$.ajax({
+		        url: getBaseUri() + '/manage/twitter',
+		        type: 'POST',
+		        contentType: 'application/json;charset=UTF-8',
+		        dataType: 'text',
+		        success: function(data) {	        			        			        	
+		        	window.location = data;
+		        }
+		    }).fail(function() { 
+		    	console.log("Unable to enable twitter");
+		    });	
+		} else {
+			$.ajax({
+		        url: getBaseUri() + '/manage/disable-twitter',
+		        type: 'POST',
+		        contentType: 'application/json;charset=UTF-8',
+		        dataType: 'text',
+		        success: function(data) {
+		        	if(data == "true"){
+		        		$scope.twitter = false;
+		        	} else {
+		        		$scope.twitter = true;
+		        	}
+
+		        	$scope.$apply();
+		        }
+		    }).fail(function() { 
+		    	console.log("Unable to disable twitter");
+		    });				
+		}
+	};
+
+	//init
+	$scope.checkTwitterStatus();
 };
 
 /*Angular Multi-selectbox*/

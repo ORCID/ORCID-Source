@@ -18,6 +18,11 @@
 -->
 
 <@protected classes=['manage'] nav="settings">
+<#if twitter?? && twitter>
+     <div class="alert alert-success">
+         <strong><@spring.message "orcid_social.twitter.enabled"/></strong>
+     </div>
+ </#if>
 <div class="row">
 	<div class="col-md-3 col-sm-12 col-xs-12 padding-fix">
 		<#include "admin_menu.ftl"/>
@@ -297,6 +302,40 @@
 						</div>
 					</td>
 				</tr>
+				<#if RequestParameters['OrcidSocial']??>
+					<tr>
+						<th><a name="editSocialNetworks"></a>${springMacroRequestContext.getMessage("manage.social_networks")}</th>
+						<td><a href="" ng-click="toggleSocialNetworksEdit()"
+							ng-bind="socialNetworksToggleText"></a></td>
+					</tr>
+					<tr ng-controller="SocialNetworksCtrl" ng-show="showEditSocialSettings" ng-cloak id="social-networks">
+						<td colspan="2">
+							<div class="editTablePadCell35">
+								<p><@orcid.msg 'manage.social_networks_label_1'/>
+									<div class="grey-box">
+										<form role="form" id="social-network-options">							  
+										  <div class="checkbox-inline">
+										    <label>
+										      <input type="checkbox" name="twitter" ng-change="updateTwitter()" ng-model="twitter"><img alt="Twitter" src="${staticCdn}/img/social/twitter.png">
+										    </label>
+										  </div>
+										  <div class="checkbox-inline">
+										    <label>
+										      <input type="checkbox" name="facebook" disabled><img src="${staticCdn}/img/social/facebook.png" alt="Facebook" />
+										    </label>
+										  </div>
+										  <div class="checkbox-inline">
+										    <label>
+										      <input type="checkbox" name="google-plus"  disabled><img src="${staticCdn}/img/social/google-plus.png" alt="Google+" />
+										    </label>
+										  </div>							  
+										</form>
+									</div>
+								</p>							
+							</div>
+						</td>
+					</tr>
+				</#if>
 			</tbody>
 		</table>
 

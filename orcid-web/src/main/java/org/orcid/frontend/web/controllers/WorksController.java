@@ -450,8 +450,12 @@ public class WorksController extends BaseWorkspaceController {
             profileWorkManager.addProfileWork(currentProfile.getOrcidIdentifier().getPath(), workEntity.getId(), newOw.getVisibility(), getRealUserOrcid());
 
             // Set the id (put-code) to the new work
-            newOw.setPutCode(String.valueOf(workEntity.getId()));
+            String putCode = String.valueOf(workEntity.getId());
+            newOw.setPutCode(putCode);
 
+            //Set the id in the work to be returned
+            work.setPutCode(Text.valueOf(putCode));
+            
             // Check if the user have orcid activities, if not, initialize them
             if (currentProfile.getOrcidActivities() == null)
                 currentProfile.setOrcidActivities(new OrcidActivities());
