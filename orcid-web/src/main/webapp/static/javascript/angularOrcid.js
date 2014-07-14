@@ -584,7 +584,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 						url: url + putCode,	        
 				        dataType: 'json',
 				        success: function(data) {		        	
-				        	$rootScope.$apply(function () {
+				        	$rootScope.$apply(function () {				        		
 				        		removeBadContributors(data);
 				        		serv.addBibtexJson(data);
 				        		serv.details[putCode] = data;
@@ -3532,20 +3532,22 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	        	$scope.$apply(function() {
 		        	$scope.types = data;
 		        	if($scope.editWork != null && $scope.editWork.workCategory != null) {
-		        		switch ($scope.editWork.workCategory.value){
-		                case "conference":
-		                	$scope.editWork.workType.value="conference-paper";		                	
-		                    break;
-		                case "intellectual_property":
-		                	$scope.editWork.workType.value="patent";
-		                    break;
-		                case "other_output":
-		                	$scope.editWork.workType.value="data-set";
-		                    break;
-		                case "publication":
-		                	$scope.editWork.workType.value="journal-article";
-		                    break;
-		        		}
+		        		if(!$scope.edittingWork) {
+		        			switch ($scope.editWork.workCategory.value){
+			                case "conference":
+			                	$scope.editWork.workType.value="conference-paper";		                	
+			                    break;
+			                case "intellectual_property":
+			                	$scope.editWork.workType.value="patent";
+			                    break;
+			                case "other_output":
+			                	$scope.editWork.workType.value="data-set";
+			                    break;
+			                case "publication":
+			                	$scope.editWork.workType.value="journal-article";
+			                    break;
+			        		}
+		        		}		        		
 		        	}
 	        	});
 	        	
