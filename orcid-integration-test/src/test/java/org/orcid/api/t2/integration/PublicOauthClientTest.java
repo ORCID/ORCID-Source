@@ -107,12 +107,23 @@ public class PublicOauthClientTest extends DBUnitTest {
     public void testPublicClient() throws JSONException, InterruptedException {
         String scopes = "/authenticate";
         String authorizationCode = obtainAuthorizationCode(scopes);
-        String accessToken = obtainAccessToken(authorizationCode, scopes);
         
-        ClientResponse authenticateResponse = oauthT2Client.authenticate("4444-4444-4444-4442", accessToken);
-        assertEquals(200, authenticateResponse.getStatus());
-        OrcidMessage orcidMessage = authenticateResponse.getEntity(OrcidMessage.class);
-        assertNotNull(orcidMessage);
+        MultivaluedMap<String, String> params = new MultivaluedMapImpl();
+        params.add("client_id", CLIENT_DETAILS_ID);
+        params.add("client_secret", "client-secret");
+        params.add("grant_type", "authorization_code");
+        params.add("scope", scopes);
+        params.add("redirect_uri", redirectUri);
+        params.add("code", authorizationCode);
+        ClientResponse clientResponse = oauthT2Client.obtainOauth2TokenPost("client_credentials", params);
+        //Should get a 400 since public client should not use the members API
+        assertEquals(400, clientResponse.getStatus());
+        String body = clientResponse.getEntity(String.class);
+        JSONObject jsonObject = new JSONObject(body);
+        String error = (String) jsonObject.get("error");        
+        String errorDescription = (String) jsonObject.get("error_description");
+        assertEquals("invalid_request", error);
+        assertEquals("Public members are not allowed to use the Members API", errorDescription);
         
     }
     
@@ -154,22 +165,5 @@ public class PublicOauthClientTest extends DBUnitTest {
         String authorizationCode = matcher.group(1);
         assertNotNull(authorizationCode);
         return authorizationCode;
-    }
-    
-    private String obtainAccessToken(String authorizationCode, String scopes) throws JSONException {
-        MultivaluedMap<String, String> params = new MultivaluedMapImpl();
-        params.add("client_id", CLIENT_DETAILS_ID);
-        params.add("client_secret", "client-secret");
-        params.add("grant_type", "authorization_code");
-        params.add("scope", scopes);
-        params.add("redirect_uri", redirectUri);
-        params.add("code", authorizationCode);
-        ClientResponse tokenResponse = oauthT2Client.obtainOauth2TokenPost("client_credentials", params);
-        assertEquals(200, tokenResponse.getStatus());
-        String body = tokenResponse.getEntity(String.class);
-        JSONObject jsonObject = new JSONObject(body);
-        String accessToken = (String) jsonObject.get("access_token");
-        assertNotNull(accessToken);
-        return accessToken;
-    }
+    }        
 }
