@@ -30,6 +30,7 @@ import java.util.UUID;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
+import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -69,8 +70,8 @@ public class CreateNewClientSecrets {
 
     private EncryptionManager encryptionManager;
 
-    private ClientDetailsDao clientDetailsDao;
-
+    private ClientDetailsManager clientDetailsManager;
+    
     private TransactionTemplate transactionTemplate;
 
     public static void main(String[] args) {
@@ -127,7 +128,7 @@ public class CreateNewClientSecrets {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus status) {
-                ClientDetailsEntity clientDetails = clientDetailsDao.find(clientDetailsId);
+                ClientDetailsEntity clientDetails = clientDetailsManager.find(clientDetailsId);
                 createNewClientSecret(clientDetails);
             }
         });
@@ -138,7 +139,7 @@ public class CreateNewClientSecrets {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus status) {
-                for (ClientDetailsEntity clientDetails : clientDetailsDao.getAll()) {
+                for (ClientDetailsEntity clientDetails : clientDetailsManager.getAll()) {
                     createNewClientSecret(clientDetails);
                 }
             }
@@ -164,7 +165,7 @@ public class CreateNewClientSecrets {
         String clientSecret = UUID.randomUUID().toString();
         clientDetails.getClientSecrets().add(new ClientSecretEntity(encryptionManager.encryptForInternalUse(clientSecret), clientDetails));
         clientDetails.setLastModified(now);
-        clientDetailsDao.merge(clientDetails);
+        clientDetailsManager.merge(clientDetails);
         String output = String.format("%s\t%s\t%s\n", clientDetails.getId(), clientDetails.getClientName(), clientSecret);
         output(output);
     }
@@ -172,7 +173,7 @@ public class CreateNewClientSecrets {
     private void init() {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         encryptionManager = (EncryptionManager) context.getBean("encryptionManager");
-        clientDetailsDao = (ClientDetailsDao) context.getBean("clientDetailsDao");
+        clientDetailsManager = (ClientDetailsManager) context.getBean("clientDetailsManager");
         transactionTemplate = (TransactionTemplate) context.getBean("transactionTemplate");
     }
 
