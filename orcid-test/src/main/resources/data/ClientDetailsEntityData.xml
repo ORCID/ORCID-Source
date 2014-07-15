@@ -25,6 +25,7 @@
     <client_details client_details_id="4444-4444-4444-4443" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25" client_name="P. Sellers III" client_description="Richard Henry Sellers, CBE (8 September 1925 – 24 July 1980), known as Peter Sellers, was a British film actor, comedian and singer." client_website="www.4444-4444-4444-4443.com"/>
     <client_details client_details_id="4444-4444-4444-4444" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25" client_name="H. Secombe" client_description="Sir Harry Donald Secombe, CBE (8 September 1921 – 11 April 2001) was a Welsh entertainer with a talent for comedy and a noted fine tenor singing voice." client_website="www.4444-4444-4444-4443.com"/>
     <client_details client_details_id="4444-4444-4444-4445" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25" client_name="A. Timothy" client_description="Andrew Timothy (1912–9 December 1990) was an Anglican priest and BBC Radio announcer, who is best remembered for being the original announcer of the comedy series The Goon Show." client_website="www.4444-4444-4444-4445.com"/>
+    <client_details client_details_id="4444-4444-4444-4498" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2014-07-14" last_modified="2014-07-14" client_name="U. Test" client_description="Client used to test the public OAuth process." client_website="www.4444-4444-4444-4498.com"/>
 
     <client_authorised_grant_type client_details_id="4444-4444-4444-4441" grant_type="authorization_code" />
     <client_authorised_grant_type client_details_id="4444-4444-4444-4441" grant_type="refresh_token" />
@@ -46,11 +47,14 @@
     <client_authorised_grant_type client_details_id="4444-4444-4444-4445" grant_type="refresh_token" />
     <client_authorised_grant_type client_details_id="4444-4444-4444-4445" grant_type="client_credentials" />
 
+	<client_authorised_grant_type client_details_id="4444-4444-4444-4498" grant_type="authorization_code" />
+    
     <client_granted_authority client_details_id="4444-4444-4444-4441" granted_authority="ROLE_CLIENT"/>
     <client_granted_authority client_details_id="4444-4444-4444-4442" granted_authority="ROLE_CLIENT"/>
     <client_granted_authority client_details_id="4444-4444-4444-4443" granted_authority="ROLE_CLIENT"/>
     <client_granted_authority client_details_id="4444-4444-4444-4444" granted_authority="ROLE_CLIENT"/>
     <client_granted_authority client_details_id="4444-4444-4444-4445" granted_authority="ROLE_CLIENT"/>
+    <client_granted_authority client_details_id="4444-4444-4444-4498" granted_authority="ROLE_PUBLIC"/>
 
     <client_redirect_uri client_details_id="4444-4444-4444-4441" redirect_uri="http:://www.4444-4444-4444-4441.com/redirect/oauth" 
     predefined_client_redirect_scope ="/orcid-profile/create" redirect_uri_type="default"/>
@@ -58,6 +62,7 @@
     <client_redirect_uri client_details_id="4444-4444-4444-4443" redirect_uri="http:://www.4444-4444-4444-4443.com/redirect/oauth" redirect_uri_type="default"/>
     <client_redirect_uri client_details_id="4444-4444-4444-4444" redirect_uri="http:://www.4444-4444-4444-4444.com/redirect/oauth" redirect_uri_type="default"/>
     <client_redirect_uri client_details_id="4444-4444-4444-4445" redirect_uri="http:://www.4444-4444-4444-4445.com/redirect/oauth" redirect_uri_type="default"/>
+    <client_redirect_uri client_details_id="4444-4444-4444-4498" redirect_uri="http:://www.4444-4444-4444-4498.com/redirect/oauth" redirect_uri_type="default"/>
 
     <client_resource_id client_details_id="4444-4444-4444-4441" resource_id="orcid"/>
     <client_resource_id client_details_id="4444-4444-4444-4442" resource_id="orcid"/>
@@ -65,7 +70,6 @@
     <client_resource_id client_details_id="4444-4444-4444-4444" resource_id="orcid"/>
     <client_resource_id client_details_id="4444-4444-4444-4445" resource_id="orcid"/>
     
-
     <client_scope client_details_id="4444-4444-4444-4441" scope_type="/orcid-bio/read-limited"/>
     <client_scope client_details_id="4444-4444-4444-4442" scope_type="/orcid-bio/read-limited"/>
     <client_scope client_details_id="4444-4444-4444-4443" scope_type="/orcid-bio/read-limited"/>
@@ -75,12 +79,14 @@
     <client_scope client_details_id="4444-4444-4444-4445" scope_type="/funding/create"/>    
     <client_scope client_details_id="4444-4444-4444-4445" scope_type="/affiliations/create"/>
     <client_scope client_details_id="4444-4444-4444-4445" scope_type="/authenticate"/>
+    <client_scope client_details_id="4444-4444-4444-4498" scope_type="/authenticate"/>
     
     <client_secret client_details_id="4444-4444-4444-4441" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25"/>
     <client_secret client_details_id="4444-4444-4444-4442" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25"/>
     <client_secret client_details_id="4444-4444-4444-4443" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25"/>
     <client_secret client_details_id="4444-4444-4444-4444" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25"/>
     <client_secret client_details_id="4444-4444-4444-4445" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25"/>
+    <client_secret client_details_id="4444-4444-4444-4498" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25"/>
 
 	<custom_email client_details_id="4444-4444-4444-4441" email_type="CLAIM" content="This is the content" sender="angel.montenegro.jimenez@gmail.com" subject="This is the subject" is_html="true" />
 

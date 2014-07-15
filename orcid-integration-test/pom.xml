@@ -8,27 +8,26 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>orcid-api-web</artifactId>
-    <packaging>war</packaging>
+	<artifactId>orcid-integration-test</artifactId>
+	<packaging>war</packaging>
 
-    <name>ORCID - Tier 2 Services Web</name>
-    <description>REST Service endpoints for the ORCID tier 2 API.</description>
+	<name>ORCID - Integration Test</name>
+    <description>The project that contains the full set of integration tests.</description>
 
     <properties>
         <main.basedir>${project.parent.basedir}</main.basedir>
     </properties>
 
     <dependencies>
-
         <!-- Internal dependencies -->
         <dependency>
             <groupId>${project.parent.groupId}</groupId>
             <artifactId>orcid-core</artifactId>
             <version>${project.parent.version}</version>
-        </dependency>
+        </dependency>      
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>orcid-api-common</artifactId>
+            <artifactId>orcid-api-web</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
 
@@ -79,10 +78,10 @@
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
             <scope>test</scope>
-        </dependency>
-
+        </dependency>    
     </dependencies>
-    <build>
+
+	<build>
         <plugins>
              <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -91,7 +90,7 @@
                    <url>${tomcat.manager.url}</url>
                    <server>${tomcat.server.id}</server>
                    <path>${artifactID}</path>
-		   <update>true</update>
+		   		<update>true</update>
                 </configuration>
             </plugin>
             <plugin>
@@ -105,33 +104,7 @@
                 </configuration>
             </plugin>
         </plugins>
-    </build>
-    <profiles>
-        <!-- QA fullstack deployments -->
-        <profile>
-            <id>qa-fullstack</id>
-            <activation>
-                <property>
-                    <name>env</name>
-                    <value>qa-fullstack</value>
-                </property>
-            </activation>
-            <properties>
-                <tomcat.manager.url>http://api.qa-fullstack.orcid.org:8080/manager/text</tomcat.manager.url>
-            </properties>
-        </profile>
-        <!-- QA 1 deployments -->
-        <profile>
-            <id>env-qa-1</id>
-            <activation>
-                <property>
-                    <name>env</name>
-                    <value>qa-1</value>
-                </property>
-            </activation>
-            <properties>
-                <tomcat.manager.url>http://api.qa-1.orcid.org:8080/manager/text</tomcat.manager.url>
-            </properties>
-        </profile>
-    </profiles>
+    </build>	
+    
+	
 </project>
