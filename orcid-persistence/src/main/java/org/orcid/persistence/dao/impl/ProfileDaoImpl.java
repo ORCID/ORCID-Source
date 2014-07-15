@@ -17,18 +17,15 @@
 package org.orcid.persistence.dao.impl;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.persistence.TemporalType;
 import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang.StringUtils;
@@ -112,19 +109,18 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @SuppressWarnings("unchecked")
     @Override
     public List<String> findUnclaimedNotIndexedAfterWaitPeriod(int waitPeriodDays, int maxDaysBack, int maxResults, Collection<String> orcidsToExclude) {        
-        Calendar waitPeriodCal = GregorianCalendar.getInstance();
-        waitPeriodCal.add(Calendar.DAY_OF_YEAR, -waitPeriodDays);
-        
-        Calendar maxBackCal = GregorianCalendar.getInstance();
-        maxBackCal.add(Calendar.DAY_OF_YEAR, -maxDaysBack);
-        
+               
         StringBuilder builder = new StringBuilder("SELECT orcid FROM profile p");
         builder.append(" WHERE p.claimed = false");
         builder.append(" AND p.indexing_status != :indexingStatus");
         // Has to be have been created before our min wait date
-        builder.append(" AND p.date_created < :min_wait_date");
+        builder.append(" AND p.date_created < now() - (CAST('1' AS INTERVAL DAY) * ");
+        builder.append(waitPeriodDays);
+        builder.append(")");
         // Max number of days limits how many days we go back and check
-        builder.append(" AND p.date_created > :max_date_back");
+        builder.append(" AND p.date_created > now() - (CAST('1' AS INTERVAL DAY) * ");
+        builder.append(maxDaysBack);
+        builder.append(")");
         // Has not been indexed during the waitPeriodDays number of days after
         // creation. 
         builder.append(" AND (p.last_indexed_date < p.date_created + (CAST('1' AS INTERVAL DAY) * ");
@@ -136,8 +132,6 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         builder.append(" ORDER BY p.last_modified");
         Query query = entityManager.createNativeQuery(builder.toString());
         query.setParameter("indexingStatus", IndexingStatus.PENDING.name());
-        query.setParameter("max_date_back", maxBackCal, TemporalType.DATE);
-        query.setParameter("min_wait_date", waitPeriodCal, TemporalType.DATE);
         if (!orcidsToExclude.isEmpty()) {
             query.setParameter("orcidsToExclude", orcidsToExclude);
         }
