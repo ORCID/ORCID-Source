@@ -53,6 +53,15 @@ public class OrgDisambiguatedSolrDaoImpl implements OrgDisambiguatedSolrDao {
     }
 
     @Override
+    public void remove(Long id) {
+        try {
+            solrServer.deleteById(String.valueOf(id));
+        } catch (SolrServerException | IOException e) {
+            throw new NonTransientDataAccessResourceException("Error removing org from SOLR Server", e);
+        }
+    }
+
+    @Override
     public OrgDisambiguatedSolrDocument findById(Long id) {
         SolrQuery query = new SolrQuery();
         query.setQuery(ORG_DISAMBIGUATED_ID + ":" + id).setFields("*");

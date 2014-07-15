@@ -25,6 +25,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.util.Collections;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -35,6 +36,7 @@ import org.kohsuke.args4j.Option;
 import org.orcid.core.manager.OrgManager;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
+import org.orcid.persistence.dao.OrgDisambiguatedSolrDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
@@ -62,13 +64,17 @@ public class LoadRinggoldData {
     private File deletedIdsFile;
     @Option(name = "-z", usage = "Path to zip file containing Ringgold data to process")
     private File zipFile;
+    @Option(name = "-c", usage = "Check for duplicates only (no load)")
+    private Boolean checkForDuplicates;
     private OrgDisambiguatedDao orgDisambiguatedDao;
+    private OrgDisambiguatedSolrDao orgDisambiguatedSolrDao;
     private OrgManager orgManager;
     private int numAdded;
     private int numUpdated;
     private int numUnchanged;
     private int numSkipped;
     private int numDeleted;
+    private int numDeletionsSkipped;
 
     public static void main(String[] args) {
         LoadRinggoldData loadRinggoldData = new LoadRinggoldData();
@@ -81,22 +87,33 @@ public class LoadRinggoldData {
         } catch (CmdLineException e) {
             System.err.println(e.getMessage());
             parser.printUsage(System.err);
+            System.exit(1);
+        } catch (Throwable t) {
+            System.err.println(t);
+            System.exit(2);
         }
+        System.exit(0);
     }
 
     private void validateArgs(CmdLineParser parser) throws CmdLineException {
-        if (NullUtils.allNull(fileToLoad, deletedIdsFile, zipFile)) {
-            throw new CmdLineException(parser, "At least one of -f | -d | -z must be specificed");
+        if (NullUtils.allNull(fileToLoad, deletedIdsFile, zipFile, checkForDuplicates)) {
+            throw new CmdLineException(parser, "At least one of -f | -d | -z | -c must be specificed");
         }
     }
 
     private void init() {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         orgDisambiguatedDao = (OrgDisambiguatedDao) context.getBean("orgDisambiguatedDao");
+        orgDisambiguatedSolrDao = (OrgDisambiguatedSolrDao) context.getBean("orgDisambiguatedSolrDao");
         orgManager = (OrgManager) context.getBean("orgManager");
     }
 
     public void execute() {
+        if (checkForDuplicates != null && checkForDuplicates) {
+            checkForDuplicates();
+            return;
+        }
+        dropUniqueConstraint();
         if (fileToLoad != null) {
             processParentsCsv();
         }
@@ -106,7 +123,20 @@ public class LoadRinggoldData {
         if (zipFile != null) {
             processZip();
         }
+        createUniqueConstraint();
         LOGGER.info("Finished loading Ringgold data");
+    }
+
+    private void checkForDuplicates() {
+        LOGGER.info("Checking for duplicates");
+        List<OrgDisambiguatedEntity> duplicates = orgDisambiguatedDao.findDuplicates();
+        for (OrgDisambiguatedEntity duplicate : duplicates) {
+            LOGGER.info(
+                    "Found duplicate: {}\t{}\t{}\t{}\t{}\t{}\t{}",
+                    new Object[] { duplicate.getSourceType(), duplicate.getSourceId(), duplicate.getName(), duplicate.getCity(), duplicate.getRegion(),
+                            duplicate.getCountry(), duplicate.getOrgType() });
+        }
+        LOGGER.info("Finished checking for duplicates");
     }
 
     private void processDeletedIds() {
@@ -114,26 +144,32 @@ public class LoadRinggoldData {
             processDeletedIdsReader(reader);
         } catch (IOException e) {
             throw new RuntimeException("Error reading csv file", e);
-        } finally {
-            LOGGER.info("Number deleted={}", new Object[] { numDeleted });
         }
 
     }
 
     private void processZip() {
         try (ZipFile zip = new ZipFile(zipFile)) {
+            ZipEntry parentsEntry = null;
+            ZipEntry deletedIdsEntry = null;
             for (ZipEntry entry : Collections.list(zip.entries())) {
                 String entryName = entry.getName();
                 if (entryName.endsWith("_parents.csv")) {
                     LOGGER.info("Found parents file: " + entryName);
-                    Reader reader = getReader(zip, entry);
-                    processReader(reader);
+                    parentsEntry = entry;
                 }
                 if (entryName.endsWith("deleted_ids.csv")) {
                     LOGGER.info("Found deleted ids file: " + entryName);
-                    Reader reader = getReader(zip, entry);
-                    processDeletedIdsReader(reader);
+                    deletedIdsEntry = entry;
                 }
+            }
+            if (parentsEntry != null) {
+                Reader reader = getReader(zip, parentsEntry);
+                processReader(reader);
+            }
+            if (deletedIdsEntry != null) {
+                Reader reader = getReader(zip, deletedIdsEntry);
+                processDeletedIdsReader(reader);
             }
         } catch (IOException e) {
             throw new RuntimeException("Error reading zip file", e);
@@ -322,18 +358,45 @@ public class LoadRinggoldData {
                 processDeletedIdsLine(line);
             }
         } finally {
-            LOGGER.info("Number deleted={}", numDeleted);
+            LOGGER.info("Number deleted={}, number deletions skipped={}", new Object[] { numDeleted, numDeletionsSkipped });
         }
     }
 
     private void processDeletedIdsLine(String[] line) {
-        String deletedId = line[0];
-        OrgDisambiguatedEntity entity = orgDisambiguatedDao.findBySourceIdAndSourceType(deletedId, RINGGOLD_SOURCE_TYPE);
-        if (entity != null) {
-            LOGGER.info("Deleted ID exists in DB, id={}", deletedId);
-            // Should actually delete, or flag status?
-            numDeleted++;
+        String deletedSourceId = line[0];
+        String replacementSourceId = line[1];
+        OrgDisambiguatedEntity deletedEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(deletedSourceId, RINGGOLD_SOURCE_TYPE);
+        if (deletedEntity != null) {
+            LOGGER.info("Deleted ID exists in DB, id={}", deletedSourceId);
+            Long deletedEntityId = deletedEntity.getId();
+            OrgDisambiguatedEntity replacementEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(replacementSourceId, RINGGOLD_SOURCE_TYPE);
+            if (replacementEntity == null) {
+                LOGGER.warn("Replacement does not exist, id={}", replacementEntity);
+                numDeletionsSkipped++;
+            } else {
+                Long replacementEntityId = replacementEntity.getId();
+                orgDisambiguatedSolrDao.remove(deletedEntityId);
+                orgDisambiguatedDao.replace(deletedEntityId, replacementEntityId);
+                orgDisambiguatedDao.remove(deletedEntityId);
+                numDeleted++;
+            }
         }
+    }
+
+    private void createUniqueConstraint() {
+        LOGGER.info("About to create unique constraint");
+        try {
+            orgDisambiguatedDao.createUniqueConstraint();
+            LOGGER.info("Finished creating unique constraint");
+        } catch (RuntimeException e) {
+            LOGGER.warn("Problem creating unique constraint");
+            checkForDuplicates();
+        }
+    }
+
+    private void dropUniqueConstraint() {
+        LOGGER.info("About to drop unique constraint");
+        orgDisambiguatedDao.dropUniqueConstraint();
     }
 
 }

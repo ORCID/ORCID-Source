@@ -29,6 +29,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+    import javax.persistence.NamedNativeQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -45,7 +46,10 @@ import org.orcid.jaxb.model.message.Iso3166Country;
 
 @Entity
 @Table(name = "org_disambiguated")
+@NamedNativeQuery(name = OrgDisambiguatedEntity.FIND_DUPLICATES, query = "SELECT o.* FROM org_disambiguated o JOIN (SELECT name, city, region, country FROM org_disambiguated GROUP BY name, city, region, country HAVING COUNT(*) > 1) d ON (d.name = o.name OR (d.name IS NULL AND o.name IS NULL)) AND (d.city = o.city OR (d.city IS NULL AND o.city IS NULL)) AND (d.region = o.region OR (d.region IS NULL AND o.region IS NULL)) AND (d.country = o.country OR (d.country IS NULL AND o.country IS NULL)) ORDER BY o.source_type, o.name, o.city, o.region, o.country, o.org_type;", resultClass = OrgDisambiguatedEntity.class)
 public class OrgDisambiguatedEntity extends BaseEntity<Long> {
+
+    public static final String FIND_DUPLICATES = "findDuplicates";
 
     private static final long serialVersionUID = 1L;
 
@@ -183,7 +187,7 @@ public class OrgDisambiguatedEntity extends BaseEntity<Long> {
         this.popularity = popularity;
     }
 
-    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "orgDisambiguated")
+    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = "orgDisambiguated")
     @Fetch(FetchMode.SUBSELECT)
     public Set<OrgDisambiguatedExternalIdentifierEntity> getExternalIdentifiers() {
         return externalIdentifiers;
