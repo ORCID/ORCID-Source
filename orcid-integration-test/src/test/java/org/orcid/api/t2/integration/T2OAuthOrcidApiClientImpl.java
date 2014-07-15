@@ -40,6 +40,7 @@ import org.orcid.jaxb.model.message.OrcidMessage;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
+import org.orcid.api.common.OrcidClientHelper;
 
 public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientResponse> {
 

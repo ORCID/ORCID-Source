@@ -67,6 +67,8 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.WebResource.Builder;
 
+import org.orcid.api.common.OrcidClientHelper;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiClientIntegrationTest {
 

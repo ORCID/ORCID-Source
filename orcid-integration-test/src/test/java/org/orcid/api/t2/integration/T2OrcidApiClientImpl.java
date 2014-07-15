@@ -32,6 +32,8 @@ import org.orcid.jaxb.model.message.OrcidMessage;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 
+import org.orcid.api.common.OrcidClientHelper;
+
 public class T2OrcidApiClientImpl implements T2OrcidApiService<ClientResponse> {
 
     private OrcidClientHelper orcidClientHelper;
