@@ -183,7 +183,7 @@ public class OrgDisambiguatedEntity extends BaseEntity<Long> {
         this.popularity = popularity;
     }
 
-    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "orgDisambiguated")
+    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = "orgDisambiguated")
     @Fetch(FetchMode.SUBSELECT)
     public Set<OrgDisambiguatedExternalIdentifierEntity> getExternalIdentifiers() {
         return externalIdentifiers;
