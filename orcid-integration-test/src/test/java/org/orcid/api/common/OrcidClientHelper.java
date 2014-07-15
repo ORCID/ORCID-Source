@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.api.t1.integration;
+package org.orcid.api.common;
 
 import java.net.URI;
 import java.net.URISyntaxException;
