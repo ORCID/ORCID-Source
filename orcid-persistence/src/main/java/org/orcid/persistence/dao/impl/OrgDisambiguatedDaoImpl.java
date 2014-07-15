@@ -181,4 +181,10 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
         query.executeUpdate();
     }
 
+    @Override
+    public List<OrgDisambiguatedEntity> findDuplicates() {
+        TypedQuery<OrgDisambiguatedEntity> query = entityManager.createNamedQuery(OrgDisambiguatedEntity.FIND_DUPLICATES, OrgDisambiguatedEntity.class);
+        return query.getResultList();
+    }
+
 }

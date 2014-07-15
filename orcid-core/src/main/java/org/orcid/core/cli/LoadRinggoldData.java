@@ -25,6 +25,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.util.Collections;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -63,6 +64,8 @@ public class LoadRinggoldData {
     private File deletedIdsFile;
     @Option(name = "-z", usage = "Path to zip file containing Ringgold data to process")
     private File zipFile;
+    @Option(name = "-c", usage = "Check for duplicates only (no load)")
+    private Boolean checkForDuplicates;
     private OrgDisambiguatedDao orgDisambiguatedDao;
     private OrgDisambiguatedSolrDao orgDisambiguatedSolrDao;
     private OrgManager orgManager;
@@ -93,8 +96,8 @@ public class LoadRinggoldData {
     }
 
     private void validateArgs(CmdLineParser parser) throws CmdLineException {
-        if (NullUtils.allNull(fileToLoad, deletedIdsFile, zipFile)) {
-            throw new CmdLineException(parser, "At least one of -f | -d | -z must be specificed");
+        if (NullUtils.allNull(fileToLoad, deletedIdsFile, zipFile, checkForDuplicates)) {
+            throw new CmdLineException(parser, "At least one of -f | -d | -z | -c must be specificed");
         }
     }
 
@@ -106,6 +109,10 @@ public class LoadRinggoldData {
     }
 
     public void execute() {
+        if (checkForDuplicates != null && checkForDuplicates) {
+            checkForDuplicates();
+            return;
+        }
         dropUniqueConstraint();
         if (fileToLoad != null) {
             processParentsCsv();
@@ -118,6 +125,18 @@ public class LoadRinggoldData {
         }
         createUniqueConstraint();
         LOGGER.info("Finished loading Ringgold data");
+    }
+
+    private void checkForDuplicates() {
+        LOGGER.info("Checking for duplicates");
+        List<OrgDisambiguatedEntity> duplicates = orgDisambiguatedDao.findDuplicates();
+        for (OrgDisambiguatedEntity duplicate : duplicates) {
+            LOGGER.info(
+                    "Found duplicate: {}\t{}\t{}\t{}\t{}\t{}\t{}",
+                    new Object[] { duplicate.getSourceType(), duplicate.getSourceId(), duplicate.getName(), duplicate.getCity(), duplicate.getRegion(),
+                            duplicate.getCountry(), duplicate.getOrgType() });
+        }
+        LOGGER.info("Finished checking for duplicates");
     }
 
     private void processDeletedIds() {
@@ -363,10 +382,16 @@ public class LoadRinggoldData {
             }
         }
     }
-    
+
     private void createUniqueConstraint() {
         LOGGER.info("About to create unique constraint");
-        orgDisambiguatedDao.createUniqueConstraint();
+        try {
+            orgDisambiguatedDao.createUniqueConstraint();
+            LOGGER.info("Finished creating unique constraint");
+        } catch (RuntimeException e) {
+            LOGGER.warn("Problem creating unique constraint");
+            checkForDuplicates();
+        }
     }
 
     private void dropUniqueConstraint() {
