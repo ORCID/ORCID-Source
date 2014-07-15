@@ -36,23 +36,32 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
      * @return the work already persisted on database
      * */
     WorkEntity addWork(WorkEntity work);
-    
+
+    /**
+     * Edits an existing work
+     * 
+     * @param work
+     *            The work to be edited
+     * @return the updated work
+     * */
+    WorkEntity editWork(WorkEntity work);
+
     /**
      * Find works for a specific user
      * 
      * @param orcid
-     * 		the Id of the user
-     * @return the list of works associated to the specific user 
+     *            the Id of the user
+     * @return the list of works associated to the specific user
      * */
     List<MinimizedWorkEntity> findWorks(String orcid);
-    
+
     /**
      * Find the public works for a specific user
      * 
      * @param orcid
-     * 		the Id of the user
-     * @return the list of works associated to the specific user 
+     *            the Id of the user
+     * @return the list of works associated to the specific user
      * */
     List<MinimizedWorkEntity> findPublicWorks(String orcid);
-    
+
 }
