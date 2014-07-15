@@ -745,7 +745,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         ProfileEntity sponsorProfileEntity = profileEntity.getSource();
         if (sponsorProfileEntity != null) {
             Source sponsor = new Source();
-            SourceName sponsorName = StringUtils.isNotBlank(sponsorProfileEntity.getCreditName()) ? new SourceName(sponsorProfileEntity.getCreditName()) : null;
+            SourceName sponsorName = new SourceName(createName(sponsorProfileEntity));
             SourceOrcid sponsorOrcid = StringUtils.isNotBlank(sponsorProfileEntity.getId()) ? new SourceOrcid(getOrcidIdBase(sponsorProfileEntity.getId())) : null;
             sponsor.setSourceName(sponsorName);
             sponsor.setSourceOrcid(sponsorOrcid);
