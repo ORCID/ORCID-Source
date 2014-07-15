@@ -74,7 +74,7 @@ public class ClientDetailsManagerTest extends DBUnitTest {
     @Transactional
     public void testLoadClientByClientId() throws Exception {
         List<ClientDetailsEntity> all = clientDetailsManager.getAll();
-        assertEquals(5, all.size());
+        assertEquals(6, all.size());
         for (ClientDetailsEntity clientDetailsEntity : all) {
             ClientDetails clientDetails = clientDetailsManager.loadClientByClientId(clientDetailsEntity.getId());
             assertNotNull(clientDetails);
@@ -156,7 +156,7 @@ public class ClientDetailsManagerTest extends DBUnitTest {
     @Transactional
     public void testDeleteClientDetail() throws Exception {
         List<ClientDetailsEntity> all = clientDetailsManager.getAll();
-        assertEquals(5, all.size());
+        assertEquals(6, all.size());
         for (ClientDetailsEntity clientDetailsEntity : all) {
             clientDetailsManager.deleteClientDetail(clientDetailsEntity.getId());
         }
@@ -182,12 +182,16 @@ public class ClientDetailsManagerTest extends DBUnitTest {
         assertEquals(1, authorities.size());
         Set<String> authorizedGrantTypes = clientDetails.getAuthorizedGrantTypes();
         assertNotNull(authorizedGrantTypes);
-        assertEquals(3, authorizedGrantTypes.size());
+        if(clientDetails.getClientId().equals("4444-4444-4444-4498"))
+            assertEquals(1, authorizedGrantTypes.size());
+        else 
+            assertEquals(3, authorizedGrantTypes.size());
         String clientSecret = clientDetails.getClientSecret();
         assertNotNull(clientSecret);
         Set<String> resourceIds = clientDetails.getResourceIds();
         assertNotNull(resourceIds);
-        assertEquals(1, resourceIds.size());
+        if(!clientDetails.getClientId().equals("4444-4444-4444-4498"))
+            assertEquals(1, resourceIds.size());
         Set<String> scope = clientDetails.getScope();
         assertNotNull(scope);
         int expectedNumberOfScopes = "4444-4444-4444-4445".equals(clientDetails.getClientId()) ? 5 : 1;

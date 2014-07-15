@@ -30,6 +30,11 @@
             <artifactId>orcid-api-web</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
+		<dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>orcid-pub-web</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
 
         <!-- External dependencies -->
         <dependency>
