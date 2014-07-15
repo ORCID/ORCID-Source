@@ -353,11 +353,17 @@ public class ProfileDaoTest extends DBUnitTest {
 
     @Test
     public void testFindUnclaimedNotIndexedAfterWaitPeriod() {
-        List<String> resultsList = profileDao.findUnclaimedNotIndexedAfterWaitPeriod(1, 10, Collections.<String> emptyList());
+        List<String> resultsList = profileDao.findUnclaimedNotIndexedAfterWaitPeriod(1, 100000, 10, Collections.<String> emptyList());
         assertNotNull(resultsList);
         assertTrue(resultsList.isEmpty());
 
-        resultsList = profileDao.findUnclaimedNotIndexedAfterWaitPeriod(5, 10, Collections.<String> emptyList());
+        //test far back
+        resultsList = profileDao.findUnclaimedNotIndexedAfterWaitPeriod(100000, 200000, 10, Collections.<String> emptyList());
+        assertNotNull(resultsList);
+        assertEquals(0, resultsList.size());
+        
+        // test range that fits test data
+        resultsList = profileDao.findUnclaimedNotIndexedAfterWaitPeriod(5, 100000, 10, Collections.<String> emptyList());
         assertNotNull(resultsList);
         assertEquals(1, resultsList.size());
         assertTrue(resultsList.contains("4444-4444-4444-4447"));

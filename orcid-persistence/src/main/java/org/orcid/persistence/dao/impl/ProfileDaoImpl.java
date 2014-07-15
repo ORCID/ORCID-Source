@@ -108,21 +108,24 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<String> findUnclaimedNotIndexedAfterWaitPeriod(int waitPeriodDays, int maxResults, Collection<String> orcidsToExclude) {
+    public List<String> findUnclaimedNotIndexedAfterWaitPeriod(int waitPeriodDays, int maxDaysBack, int maxResults, Collection<String> orcidsToExclude) {        
+               
         StringBuilder builder = new StringBuilder("SELECT orcid FROM profile p");
         builder.append(" WHERE p.claimed = false");
         builder.append(" AND p.indexing_status != :indexingStatus");
-        // Has to be have been created at least waitPeriodDay number of days ago
-        builder.append(" AND p.date_created < (now() - CAST('");
-        // Doesn't seem to work correctly in postgresql when using placeholder
-        // param, so wait period is inlined.
+        // Has to be have been created before our min wait date
+        builder.append(" AND p.date_created < now() - (CAST('1' AS INTERVAL DAY) * ");
         builder.append(waitPeriodDays);
-        builder.append("' AS INTERVAL DAY))");
+        builder.append(")");
+        // Max number of days limits how many days we go back and check
+        builder.append(" AND p.date_created > now() - (CAST('1' AS INTERVAL DAY) * ");
+        builder.append(maxDaysBack);
+        builder.append(")");
         // Has not been indexed during the waitPeriodDays number of days after
-        // creation
-        builder.append(" AND (p.last_indexed_date < (p.date_created + CAST('");
+        // creation. 
+        builder.append(" AND (p.last_indexed_date < p.date_created + (CAST('1' AS INTERVAL DAY) * ");
         builder.append(waitPeriodDays);
-        builder.append("' AS INTERVAL DAY)) OR p.last_indexed_date IS NULL)");
+        builder.append(") OR p.last_indexed_date IS NULL)");
         if (!orcidsToExclude.isEmpty()) {
             builder.append(" AND p.orcid NOT IN :orcidsToExclude");
         }
