@@ -36,13 +36,15 @@ import org.springframework.stereotype.Component;
  * 
  */
 @Aspect
-@Component
+@Component(value = "profileLastModifiedAspect")
 public class ProfileLastModifiedAspect implements PriorityOrdered {
 
     private static final int PRECEDENCE = 50;
 
     @Resource
     private ProfileDao profileDao;
+
+    private boolean enabled = true;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProfileLastModifiedAspect.class);
 
@@ -56,8 +58,19 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
 
     //@formatter:on
 
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
     @AfterReturning(POINTCUT_DEFINITION_BASE + " && args(orcid, ..)")
     public void updateProfileLastModified(JoinPoint joinPoint, String orcid) {
+        if (!enabled) {
+            return;
+        }
         if (LOGGER.isDebugEnabled()) {
             if (!OrcidStringUtils.isValidOrcid(orcid)) {
                 LOGGER.debug("Invalid ORCID for last modified date update: orcid={}, join point={}", orcid, joinPoint);

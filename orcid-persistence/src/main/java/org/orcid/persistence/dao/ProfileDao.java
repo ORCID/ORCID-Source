@@ -20,9 +20,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Query;
-
-import org.apache.commons.lang.StringUtils;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidType;
@@ -31,16 +28,15 @@ import org.orcid.persistence.jpa.entities.EmailEventType;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
-import org.springframework.transaction.annotation.Transactional;
 
 public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     List<ProfileEntity> retrieveSelectableSponsors();
 
     List<String> findOrcidsByName(String name);
-    
+
     public boolean exists(String orcid);
-    
+
     List<String> findByEventTypes(int maxResults, List<ProfileEventType> pet, Collection<String> orcidsToExclude, boolean not);
 
     List<String> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults);
@@ -54,7 +50,7 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     List<String> findUnclaimedNeedingReminder(int reminderAfterDays, int maxResults, Collection<String> orcidsToExclude);
 
     List<String> findOrcidsNeedingEmailMigration(int maxResults);
-    
+
     List<ProfileEntity> findProfilesThatMissedIndexing(int maxResults);
 
     boolean orcidExists(String orcid);
@@ -70,13 +66,13 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     void updateIndexingStatus(String orcid, IndexingStatus indexingStatus);
 
     Long getConfirmedProfileCount();
-    
+
     public void updateCountry(String orcid, Iso3166Country country, Visibility activitiesVisibilityDefault);
-    
+
     public Iso3166Country getCountry(String orcid);
 
-    public void updateBiography(String orcid, String biography, Visibility visibility); 
-    
+    public void updateBiography(String orcid, String biography, Visibility visibility);
+
     boolean updateProfile(ProfileEntity profile);
 
     Date retrieveLastModifiedDate(String orcid);
@@ -84,6 +80,8 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     Date updateLastModifiedDate(String orcid);
 
     void updateLastModifiedDateWithoutResult(String orcid);
+
+    void updateLastModifiedDateWithoutResult(String orcid, Date lastModified);
 
     void updateLastModifiedDateAndIndexingStatus(String orcid);
 
@@ -106,15 +104,15 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     void updateEncryptedPassword(String orcid, String encryptedPassword);
 
     void updateSecurityQuestion(String orcid, Integer securityQuestionId, String encryptedSecurityAnswer);
-    
+
     void updatePreferences(String orcid, boolean sendChangeNotifications, boolean sendOrcidNews, Visibility activitiesVisibilityDefault, boolean enableDeveloperTools);
 
     List<ProfileEntity> findProfilesByOrcidType(OrcidType type);
 
     public void updateNames(String orcid, String givenName, String familyName, String creditName, Visibility creditNameVisibility);
-    
+
     boolean updateDeveloperTools(String orcid, boolean enabled);
-   
+
     public boolean updateResearcherUrlsVisibility(String orcid, Visibility visibility);
 
 }

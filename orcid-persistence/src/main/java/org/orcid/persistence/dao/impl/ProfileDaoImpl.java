@@ -414,6 +414,15 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.executeUpdate();
     }
 
+    @Override
+    @Transactional
+    public void updateLastModifiedDateWithoutResult(String orcid, Date lastModified) {
+        Query query = entityManager.createNativeQuery("update profile set last_modified = :lastModified where orcid = :orcid ");
+        query.setParameter("orcid", orcid);
+        query.setParameter("lastModified", lastModified);
+        query.executeUpdate();
+    }
+
     private void updateWebhookProfileLastUpdate(String orcid) {
         Query query = entityManager.createNativeQuery("update webhook set profile_last_modified = (select last_modified from profile where orcid = :orcid ) "
                 + "where orcid = :orcid ");
@@ -537,7 +546,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setParameter("orcid", orcid);
         return query.getSingleResult();
     }
-    
+
     @Override
     @Transactional
     public void updateBiography(String orcid, String biography, Visibility visibility) {
