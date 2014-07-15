@@ -2016,7 +2016,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         LOG.info("About to process unclaimed profiles to flag for indexing");
         List<String> orcidsToFlag = Collections.<String> emptyList();
         do {
-            orcidsToFlag = profileDao.findUnclaimedNotIndexedAfterWaitPeriod(claimWaitPeriodDays, INDEXING_BATCH_SIZE, orcidsToFlag);
+            orcidsToFlag = profileDao.findUnclaimedNotIndexedAfterWaitPeriod(claimWaitPeriodDays, claimWaitPeriodDays * 2, INDEXING_BATCH_SIZE, orcidsToFlag);
             LOG.info("Got batch of {} unclaimed profiles to flag for indexing", orcidsToFlag.size());
             for (String orcid : orcidsToFlag) {
                 LOG.info("About to flag unclaimed profile for indexing: {}", orcid);
