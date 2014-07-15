@@ -33,6 +33,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.oauth.OrcidOauth2ClientAuthentication;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.persistence.dao.ClientDetailsDao;
@@ -65,7 +66,7 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
     private OrcidOauth2TokenDetailService orcidOauthTokenDetailService;
 
     @Resource
-    private ClientDetailsDao clientDetailsDao;
+    private ClientDetailsManager clientDetailsManager;
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
@@ -91,7 +92,7 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
         authorizationParameters.put(AuthorizationRequest.CLIENT_ID, clientId);
         authorizationParameters.put(AuthorizationRequest.SCOPE, "/orcid-profile/read-limited");
         AuthorizationRequest request = new DefaultAuthorizationRequest(authorizationParameters);
-        ClientDetailsEntity clientDetails = clientDetailsDao.find(clientId);
+        ClientDetailsEntity clientDetails = clientDetailsManager.find(clientId);
         Authentication userAuthentication = new OrcidOauth2ClientAuthentication(clientDetails);
         OAuth2Authentication authentication = new OAuth2Authentication(request, userAuthentication);
         OAuth2AccessToken oauth2AccessToken = tokenServices.createAccessToken(authentication);
@@ -122,7 +123,7 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
         authorizationParameters.put(AuthorizationRequest.CLIENT_ID, clientId);
         authorizationParameters.put(AuthorizationRequest.SCOPE, "/orcid-works/create");
         AuthorizationRequest request = new DefaultAuthorizationRequest(authorizationParameters);
-        ClientDetailsEntity clientDetails = clientDetailsDao.find(clientId);
+        ClientDetailsEntity clientDetails = clientDetailsManager.find(clientId);
         Authentication userAuthentication = new OrcidOauth2ClientAuthentication(clientDetails);
         OAuth2Authentication authentication = new OAuth2Authentication(request, userAuthentication);
         OAuth2AccessToken oauth2AccessToken = tokenServices.createAccessToken(authentication);
@@ -153,7 +154,7 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
         authorizationParameters.put(AuthorizationRequest.CLIENT_ID, clientId);
         authorizationParameters.put(AuthorizationRequest.SCOPE, "/orcid-works/create");
         AuthorizationRequest request = new DefaultAuthorizationRequest(authorizationParameters);
-        ClientDetailsEntity clientDetails = clientDetailsDao.find(clientId);
+        ClientDetailsEntity clientDetails = clientDetailsManager.find(clientId);
         Authentication userAuthentication = new OrcidOauth2ClientAuthentication(clientDetails);
         OAuth2Authentication authentication = new OAuth2Authentication(request, userAuthentication);
         OAuth2AccessToken oauth2AccessToken = tokenServices.createAccessToken(authentication);

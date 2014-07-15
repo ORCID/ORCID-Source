@@ -18,6 +18,7 @@ package org.orcid.core.oauth;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -36,8 +37,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 public class OrcidMultiSecretAuthenticationProvider extends DaoAuthenticationProvider {
 
     @Resource
-    private ClientDetailsDao clientDetailsDao;
-
+    private ClientDetailsManager clientDetailsManager;
+    
     @Resource
     private EncryptionManager encryptionManager;
 
@@ -51,7 +52,7 @@ public class OrcidMultiSecretAuthenticationProvider extends DaoAuthenticationPro
         }
 
         String presentedPassword = authentication.getCredentials().toString();
-        ClientDetailsEntity clientDetailsEntity = clientDetailsDao.find(userDetails.getUsername());
+        ClientDetailsEntity clientDetailsEntity = clientDetailsManager.find(userDetails.getUsername());
         for (ClientSecretEntity clientSecretEntity : clientDetailsEntity.getClientSecrets()) {
             if (getPasswordEncoder().isPasswordValid(encryptionManager.decryptForInternalUse(clientSecretEntity.getClientSecret()), presentedPassword, null)) {
                 return;
