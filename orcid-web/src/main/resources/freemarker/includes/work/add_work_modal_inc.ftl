@@ -307,15 +307,16 @@
 				<div class="control-group">
 					<div ng-show="edittingWork">	
 						<button class="btn btn-primary" ng-click="editExistingWork()" ng-disabled="addingWork" ng-class="{disabled:addingWork}">
-							<@orcid.msg 'manual_work_form_contents.btnaddtolist'/>
+							<@orcid.msg 'freemarker.btnsave'/>
 						</button>
+						<button id="" class="btn close-button" type="reset"  ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></button>
 					</div>
 					<div ng-hide="edittingWork">
 						<button class="btn btn-primary" ng-click="addWork()" ng-disabled="addingWork" ng-class="{disabled:addingWork}">
 							<@orcid.msg 'manual_work_form_contents.btnaddtolist'/>
 						</button>
-					</div>
-					<button id="" class="btn close-button" type="reset"  ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></button>					
+						<button id="" class="btn close-button" type="reset"  ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></button>
+					</div>									
 				</div>
 			</div>			
 		</div>		
