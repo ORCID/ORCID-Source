@@ -14,12 +14,13 @@
  *
  * =============================================================================
  */
-package org.orcid.api.t2;
+package org.orcid.api.t1;
 
 import static org.orcid.api.common.OrcidApiConstants.AFFILIATIONS_PATH;
 import static org.orcid.api.common.OrcidApiConstants.AUTHENTICATE_PATH;
 import static org.orcid.api.common.OrcidApiConstants.BIO_PATH;
 import static org.orcid.api.common.OrcidApiConstants.EXTERNAL_IDENTIFIER_PATH;
+import static org.orcid.api.common.OrcidApiConstants.FUNDING_PATH;
 import static org.orcid.api.common.OrcidApiConstants.ORCID_JSON;
 import static org.orcid.api.common.OrcidApiConstants.ORCID_XML;
 import static org.orcid.api.common.OrcidApiConstants.PROFILE_POST_PATH;
@@ -27,7 +28,6 @@ import static org.orcid.api.common.OrcidApiConstants.VND_ORCID_JSON;
 import static org.orcid.api.common.OrcidApiConstants.VND_ORCID_XML;
 import static org.orcid.api.common.OrcidApiConstants.WEBHOOKS_PATH;
 import static org.orcid.api.common.OrcidApiConstants.WORKS_PATH;
-import static org.orcid.api.common.OrcidApiConstants.FUNDING_PATH;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -46,7 +46,7 @@ import org.orcid.jaxb.model.message.OrcidMessage;
 
 import com.sun.jersey.api.client.ClientResponse;
 
-public interface T2OAuthAPIService<T> extends OAuthOrcidApiService<T> {
+public interface T1OAuthAPIService<T> extends OAuthOrcidApiService<T> {
 
     @POST
     @Path(T2OrcidApiService.OAUTH_TOKEN)

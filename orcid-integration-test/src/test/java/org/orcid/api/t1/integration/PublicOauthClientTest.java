@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.api.t2.integration;
+package org.orcid.api.t1.integration;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -41,7 +41,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.orcid.api.t2.T2OAuthAPIService;
+import org.orcid.api.t1.T1OAuthAPIService;
 import org.orcid.persistence.dao.ClientRedirectDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -61,7 +61,7 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-oauth-orcid-api-client-context.xml" })
+@ContextConfiguration(locations = { "classpath:orcid-t1-client-context.xml" })
 public class PublicOauthClientTest extends DBUnitTest {
     
     private static final int DEFAULT_TIMEOUT_SECONDS = 30;
@@ -76,8 +76,8 @@ public class PublicOauthClientTest extends DBUnitTest {
     @Resource
     private ClientRedirectDao clientRedirectDao;
     
-    @Resource(name = "t2OAuthClient")
-    private T2OAuthAPIService<ClientResponse> oauthT2Client;
+    @Resource(name = "t1OAuthClient")
+    private T1OAuthAPIService<ClientResponse> oauthT1Client;
     
     @Value("${org.orcid.web.base.url:http://localhost:8080/orcid-web}")
     private String webBaseUrl;
@@ -130,7 +130,7 @@ public class PublicOauthClientTest extends DBUnitTest {
         params.add("scope", scopes);
         params.add("redirect_uri", redirectUri);
         params.add("code", authorizationCode);
-        ClientResponse clientResponse = oauthT2Client.obtainOauth2TokenPost("client_credentials", params);
+        ClientResponse clientResponse = oauthT1Client.obtainOauth2TokenPost("client_credentials", params);
         //Should get a 400 since public client should not use the members API
         assertEquals(400, clientResponse.getStatus());
         String body = clientResponse.getEntity(String.class);

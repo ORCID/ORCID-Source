@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.api.t2;
+package org.orcid.api.common;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
