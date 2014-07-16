@@ -131,14 +131,15 @@ public class PublicOauthClientTest extends DBUnitTest {
         params.add("redirect_uri", redirectUri);
         params.add("code", authorizationCode);
         ClientResponse clientResponse = oauthT1Client.obtainOauth2TokenPost("client_credentials", params);
-        //Should get a 400 since public client should not use the members API
-        assertEquals(400, clientResponse.getStatus());
+        assertEquals(200, clientResponse.getStatus());
         String body = clientResponse.getEntity(String.class);
         JSONObject jsonObject = new JSONObject(body);
-        String error = (String) jsonObject.get("error");        
-        String errorDescription = (String) jsonObject.get("error_description");
-        assertEquals("invalid_request", error);
-        assertEquals("Public members are not allowed to use the Members API", errorDescription);
+        String scope = (String) jsonObject.get("scope");        
+        String orcid = (String) jsonObject.get("orcid");
+        String token = (String) jsonObject.get("access_token");
+        assertEquals("/authenticate", scope);
+        assertEquals("4444-4444-4444-4442", orcid);
+        assertNotNull(token);
         
     }
     
