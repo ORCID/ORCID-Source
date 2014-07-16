@@ -298,14 +298,6 @@ public class WorksController extends BaseWorkspaceController {
         if(w.getContributors() == null || w.getContributors().isEmpty()) {
             Contributor contr = new Contributor();
             List<Contributor> contrList = new ArrayList<Contributor>();
-            Text rText = new Text();
-            rText.setValue(new String());
-            contr.setContributorRole(rText);
-
-            Text sText = new Text();
-            sText.setValue(new String());
-            contr.setContributorSequence(sText);
-            contrList.add(contr);
             w.setContributors(contrList);
         }
         
