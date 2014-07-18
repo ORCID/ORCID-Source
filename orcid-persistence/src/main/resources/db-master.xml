@@ -109,4 +109,5 @@
     <include file="/db/updates/set_sequences_start.xml" />
     <include file="/db/updates/create_orcid_social_table.xml" />
     <include file="/db/updates/work-contributors-tidy-up.xml" />
+    <include file="/db/updates/add-orcid-index-for-affiliations.xml" />
 </databaseChangeLog>
