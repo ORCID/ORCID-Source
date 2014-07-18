@@ -17,6 +17,7 @@
 package org.orcid.api.t2;
 
 import static org.orcid.api.common.OrcidApiConstants.AFFILIATIONS_PATH;
+import static org.orcid.api.common.OrcidApiConstants.AUTHENTICATE_PATH;
 import static org.orcid.api.common.OrcidApiConstants.BIO_PATH;
 import static org.orcid.api.common.OrcidApiConstants.EXTERNAL_IDENTIFIER_PATH;
 import static org.orcid.api.common.OrcidApiConstants.ORCID_JSON;
@@ -29,6 +30,7 @@ import static org.orcid.api.common.OrcidApiConstants.WORKS_PATH;
 import static org.orcid.api.common.OrcidApiConstants.FUNDING_PATH;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -342,4 +344,9 @@ public interface T2OAuthAPIService<T> extends OAuthOrcidApiService<T> {
     @Path(WEBHOOKS_PATH)
     T unregisterWebhook(String orcid, String webhookUri, String token);
 
+        
+    @GET
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_XML })
+    @Path(AUTHENTICATE_PATH)
+    T authenticate(String orcid, String accessToken);
 }

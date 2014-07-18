@@ -196,7 +196,8 @@
 
 			<!-- Right column -->
 			<div class="col-md-6 col-sm-6 col-xs-12">				
-				<div class="control-group" ng-repeat="contributor in editWork.contributors">
+			    <!-- only allow work contributor editing if there is one or more contributors in the record -->
+				<div class="control-group" ng-repeat="contributor in editWork.contributors" ng-show="editWork.contributors.length > 0">
 				    <label class="relative"><@orcid.msg 'manual_work_form_contents.labelRole'/></label>
 				    <div class="relative">    
 						<select id="role" name="role" ng-model="contributor.contributorRole.value">
@@ -205,6 +206,7 @@
 							    <option value="${key}">${roles[key]}</option>
 							</#list>
 			    		</select>
+			    		<a href ng-click="deleteContributor(contributor)" class="glyphicon glyphicon-trash grey"></a>
 						<span class="orcid-error" ng-show="contributor.contributorRole.errors.length > 0">
 								<div ng-repeat='error in contributor.contributorRole.errors' ng-bind-html="error"></div>
 						</span>
@@ -240,7 +242,7 @@
 									<option value="${idTypes[key]}">${key}</option>
 								</#list>
 							</select> 
-							<a href ng-click="deleteExternalIdentifier($index)" class="glyphicon glyphicon-trash grey"></a>
+							<a href ng-click="deleteExternalIdentifier(workExternalIdentifier)" class="glyphicon glyphicon-trash grey"></a>
 							<span class="orcid-error" ng-show="workExternalIdentifier.workExternalIdentifierType.errors.length > 0">
 								<div ng-repeat='error in workExternalIdentifier.workExternalIdentifierType.errors' ng-bind-html="error"></div>
 							</span>
@@ -307,15 +309,16 @@
 				<div class="control-group">
 					<div ng-show="edittingWork">	
 						<button class="btn btn-primary" ng-click="editExistingWork()" ng-disabled="addingWork" ng-class="{disabled:addingWork}">
-							<@orcid.msg 'manual_work_form_contents.btnaddtolist'/>
+							<@orcid.msg 'freemarker.btnsave'/>
 						</button>
+						<button id="" class="btn close-button" type="reset"  ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></button>
 					</div>
 					<div ng-hide="edittingWork">
 						<button class="btn btn-primary" ng-click="addWork()" ng-disabled="addingWork" ng-class="{disabled:addingWork}">
 							<@orcid.msg 'manual_work_form_contents.btnaddtolist'/>
 						</button>
-					</div>
-					<button id="" class="btn close-button" type="reset"  ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></button>					
+						<button id="" class="btn close-button" type="reset"  ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></button>
+					</div>									
 				</div>
 			</div>			
 		</div>		

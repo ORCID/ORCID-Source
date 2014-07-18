@@ -53,13 +53,14 @@ the software.
         <module>orcid-test</module>
         <module>orcid-solr-web</module>
         <module>orcid-audit</module>
+        <module>orcid-integration-test</module>
     </modules>
 
 
     <!-- Start -->
 
     <organization>
-        <name>ORCID.ogr</name>
+        <name>ORCID.org</name>
         <url>https://github.com/ORCID</url>
     </organization>
 

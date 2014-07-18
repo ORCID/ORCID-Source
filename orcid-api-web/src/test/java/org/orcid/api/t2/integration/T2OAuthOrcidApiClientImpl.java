@@ -367,6 +367,15 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
         URI bioPathWithOrcid = UriBuilder.fromPath(BIO_PATH_NO_REGEX).build(orcid);
         return getClientResponseWithToken(bioPathWithOrcid, VND_ORCID_JSON, accessToken);
     }
+    
+    @Override
+    @GET
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_XML })
+    @Path(AUTHENTICATE_PATH)
+    public ClientResponse authenticate(@PathParam("orcid") String orcid, String accessToken) {
+        URI bioPathWithOrcid = UriBuilder.fromPath(AUTHENTICATE_PATH).build(orcid);
+        return getClientResponseWithToken(bioPathWithOrcid, VND_ORCID_JSON, accessToken);
+    }
 
     @Override
     public ClientResponse viewExternalIdentifiersHtml(@PathParam("orcid") String orcid, String accessToken) {
