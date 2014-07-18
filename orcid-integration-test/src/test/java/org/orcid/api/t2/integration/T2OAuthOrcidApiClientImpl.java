@@ -34,7 +34,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriBuilder;
 
 import org.orcid.api.t2.T2OAuthAPIService;
-import org.orcid.api.t2.T2OrcidApiService;
+import org.orcid.api.common.T2OrcidApiService;
 import org.orcid.jaxb.model.message.OrcidMessage;
 
 import com.sun.jersey.api.client.Client;

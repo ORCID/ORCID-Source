@@ -40,7 +40,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.orcid.api.common.OrcidApiConstants;
-import org.orcid.api.t2.T2OrcidApiService;
+import org.orcid.api.common.T2OrcidApiService;
 import org.orcid.jaxb.model.message.OrcidMessage;
 
 import com.sun.jersey.api.client.ClientResponse;
