@@ -524,7 +524,8 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 							$rootScope.$apply(function(){ 
 								for (i in data) {
 									var dw = data[i];                            
-									removeBadContributors(dw);							
+									removeBadContributors(dw);	
+									removeBadExternalIdentifiers(dw);
 									serv.addBibtexJson(dw);
 									var added = false;
 									for (var idx in serv.groups)
@@ -586,6 +587,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 				        success: function(data) {		        	
 				        	$rootScope.$apply(function () {				        		
 				        		removeBadContributors(data);
+				        		removeBadExternalIdentifiers(data);
 				        		serv.addBibtexJson(data);
 				        		serv.details[putCode] = data;
 				        		if (callback != undefined) callback(serv.details[putCode]);
@@ -921,6 +923,15 @@ function removeBadContributors(dw) {
 			&& dw.contributors[idx].creditNameVisibility == null) {
 				dw.contributors.splice(idx,1);
 			}
+	}
+}
+
+function removeBadExternalIdentifiers(dw) {
+	for(var idx in dw.workExternalIdentifiers) {
+		if(dw.workExternalIdentifiers[idx].workExternalIdentifierType == null 
+			&& dw.workExternalIdentifiers[idx].workExternalIdentifierId == null) {
+			dw.workExternalIdentifiers.splice(idx,1);
+		}
 	}
 }
 
