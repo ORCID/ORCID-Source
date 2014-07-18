@@ -3354,10 +3354,16 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		$scope.editWork.workExternalIdentifiers.push({workExternalIdentifierId: {value: ""}, workExternalIdentifierType: {value: ""}});
 	};
 	
-	$scope.deleteExternalIdentifier = function(index) {		
+	$scope.deleteExternalIdentifier = function(obj) {		
+		var index = $scope.editWork.contributors.indexOf(obj);
 		$scope.editWork.workExternalIdentifiers.splice(index,1);
 	};
-	
+
+	$scope.deleteContributor = function(obj) {
+		var index = $scope.editWork.contributors.indexOf(obj);
+		$scope.editWork.contributors.splice(index,1);
+	};
+
 	$scope.showAddModal = function(){;
 		$scope.editTranslatedTitle = false;
 		$scope.types = null;
