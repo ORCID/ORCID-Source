@@ -27,14 +27,9 @@
         </dependency>      
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>orcid-api-web</artifactId>
+            <artifactId>orcid-api-common</artifactId>
             <version>${project.parent.version}</version>
-        </dependency>
-		<dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>orcid-pub-web</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
+        </dependency>		
 
         <!-- External dependencies -->
         <dependency>
