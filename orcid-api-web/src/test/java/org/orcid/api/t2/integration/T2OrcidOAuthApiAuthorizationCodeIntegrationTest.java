@@ -32,6 +32,7 @@ import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -174,6 +175,14 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     @After
     public void after() {
         webDriver.quit();
+    }
+
+    @AfterClass
+    @Transactional
+    public void afterClass() throws Exception {
+        removeDBUnitData(Arrays.asList("/data/WebhookEntityData.xml", "/data/Oauth2TokenDetailsData.xml", "/data/ClientDetailsEntityData.xml",
+                "/data/ProfileWorksEntityData.xml", "/data/WorksEntityData.xml", "/data/ProfileEntityData.xml", "/data/SecurityQuestionEntityData.xml",
+                "/data/EmptyEntityData.xml"), null);
     }
 
     @Test
@@ -415,7 +424,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     }
 
     @Test
-    public void testAddFunding() throws InterruptedException, JSONException {                                         
+    public void testAddFunding() throws InterruptedException, JSONException {
         String scopes = "/funding/create";
         String authorizationCode = obtainAuthorizationCode(scopes);
         String accessToken = obtainAccessToken(authorizationCode, scopes);
@@ -590,10 +599,10 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         OrcidMessage errorMessage = clientResponse.getEntity(OrcidMessage.class);
         assertNotNull(errorMessage);
         assertNotNull(errorMessage.getErrorDesc());
-        assertEquals("Bad Request : The amount: 1.250.000 doesn'n have the right format, it should use the format: 1,234,567.89", errorMessage
-                .getErrorDesc().getContent());
+        assertEquals("Bad Request : The amount: 1.250.000 doesn'n have the right format, it should use the format: 1,234,567.89", errorMessage.getErrorDesc()
+                .getContent());
     }
-    
+
     @Test
     public void testAddWorkToWrongProfile() throws InterruptedException, JSONException {
         String scopes = "/orcid-works/create";
