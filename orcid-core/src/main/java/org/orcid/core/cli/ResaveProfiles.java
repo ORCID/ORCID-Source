@@ -115,10 +115,10 @@ public class ResaveProfiles {
 
     private void processOrcid(final String orcid) {
         LOG.info("Resaving profile: {}", orcid);
-        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-            @Override
-            protected void doInTransactionWithoutResult(TransactionStatus status) {
-                try {
+        try {
+            transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+                @Override
+                protected void doInTransactionWithoutResult(TransactionStatus status) {
                     OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile(orcid);
                     Date originalLastModified = orcidProfile.getOrcidHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime();
                     // Save it straight back - it will be saved back in the
@@ -127,17 +127,18 @@ public class ResaveProfiles {
                     if (!updateLastModified) {
                         profileDao.updateLastModifiedDateWithoutResult(orcid, originalLastModified);
                     }
-                    doneCount++;
-                } catch (RuntimeException e) {
-                    errorCount++;
-                    if (continueOnError) {
-                        LOG.error("Error saving profile: orcid={}", orcid, e);
-                    } else {
-                        throw e;
-                    }
                 }
+            });
+        } catch (RuntimeException e) {
+            errorCount++;
+            if (continueOnError) {
+                LOG.error("Error saving profile: orcid={}", orcid, e);
+                return;
+            } else {
+                throw e;
             }
-        });
+        }
+        doneCount++;
     }
 
     private void init() {
