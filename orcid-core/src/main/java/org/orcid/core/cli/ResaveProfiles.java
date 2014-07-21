@@ -31,6 +31,7 @@ import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.aop.ProfileLastModifiedAspect;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.utils.NullUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -121,11 +122,12 @@ public class ResaveProfiles {
                 protected void doInTransactionWithoutResult(TransactionStatus status) {
                     OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile(orcid);
                     Date originalLastModified = orcidProfile.getOrcidHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime();
+                    IndexingStatus originalIndexingStatus = profileDao.find(orcid).getIndexingStatus();
                     // Save it straight back - it will be saved back in the
                     // new DB table automatically
                     orcidProfileManager.updateOrcidProfile(orcidProfile);
                     if (!updateLastModified) {
-                        profileDao.updateLastModifiedDateWithoutResult(orcid, originalLastModified);
+                        profileDao.updateLastModifiedDateAndIndexingStatusWithoutResult(orcid, originalLastModified, originalIndexingStatus);
                     }
                 }
             });
