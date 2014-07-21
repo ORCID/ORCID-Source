@@ -1080,14 +1080,15 @@ $(function (){
 			this.currentEntry = {};
 			this.currentEntry['entryType'] = 'PREAMBLE';
 			this.currentEntry['entry'] = this.value_comment();
-			this.entries.push(this.currentEntry);
+			//this.entries.push(this.currentEntry); Do not push it
+			
 		};
 
 		this.comment = function() {
 			this.currentEntry = {};
 			this.currentEntry['entryType'] = 'COMMENT';
 			this.currentEntry['entry'] = this.value_comment();
-			this.entries.push(this.currentEntry);
+			//this.entries.push(this.currentEntry); Do not push it
 		};
 
 		this.entry = function(d) {
