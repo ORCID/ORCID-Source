@@ -117,9 +117,7 @@ public interface ClientDetailsManager extends ClientDetailsService {
     ClientDetailsEntity merge(ClientDetailsEntity clientDetails);
     
     void remove(String clientId);
-    
-    ClientDetailsEntity find(String clientId);
-    
+        
     List<ClientDetailsEntity> getAll();
     
     void updateLastModified(String clientId);

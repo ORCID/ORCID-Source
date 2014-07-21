@@ -71,7 +71,7 @@ public class AddReadPublicScopeToNoneInstitutionMembers {
                 for (ProfileEntity client : clients) {
                     // Only updater clients should be updated
                     if (client.getClientType().equals(ClientType.PREMIUM_UPDATER) || client.getClientType().equals(ClientType.UPDATER)) {
-                        ClientDetailsEntity clientDetails = clientDetailsManager.find(client.getId());
+                        ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(client.getId());
                         updateScopes(clientDetails);
                     }
                 }

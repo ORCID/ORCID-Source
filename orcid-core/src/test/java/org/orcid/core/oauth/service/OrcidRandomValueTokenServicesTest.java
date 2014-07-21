@@ -92,7 +92,7 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
         authorizationParameters.put(AuthorizationRequest.CLIENT_ID, clientId);
         authorizationParameters.put(AuthorizationRequest.SCOPE, "/orcid-profile/read-limited");
         AuthorizationRequest request = new DefaultAuthorizationRequest(authorizationParameters);
-        ClientDetailsEntity clientDetails = clientDetailsManager.find(clientId);
+        ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
         Authentication userAuthentication = new OrcidOauth2ClientAuthentication(clientDetails);
         OAuth2Authentication authentication = new OAuth2Authentication(request, userAuthentication);
         OAuth2AccessToken oauth2AccessToken = tokenServices.createAccessToken(authentication);
@@ -123,7 +123,7 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
         authorizationParameters.put(AuthorizationRequest.CLIENT_ID, clientId);
         authorizationParameters.put(AuthorizationRequest.SCOPE, "/orcid-works/create");
         AuthorizationRequest request = new DefaultAuthorizationRequest(authorizationParameters);
-        ClientDetailsEntity clientDetails = clientDetailsManager.find(clientId);
+        ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
         Authentication userAuthentication = new OrcidOauth2ClientAuthentication(clientDetails);
         OAuth2Authentication authentication = new OAuth2Authentication(request, userAuthentication);
         OAuth2AccessToken oauth2AccessToken = tokenServices.createAccessToken(authentication);
@@ -154,7 +154,7 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
         authorizationParameters.put(AuthorizationRequest.CLIENT_ID, clientId);
         authorizationParameters.put(AuthorizationRequest.SCOPE, "/orcid-works/create");
         AuthorizationRequest request = new DefaultAuthorizationRequest(authorizationParameters);
-        ClientDetailsEntity clientDetails = clientDetailsManager.find(clientId);
+        ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
         Authentication userAuthentication = new OrcidOauth2ClientAuthentication(clientDetails);
         OAuth2Authentication authentication = new OAuth2Authentication(request, userAuthentication);
         OAuth2AccessToken oauth2AccessToken = tokenServices.createAccessToken(authentication);

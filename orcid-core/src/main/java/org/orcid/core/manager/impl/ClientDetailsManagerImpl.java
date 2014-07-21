@@ -311,11 +311,6 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
     }
 
     @Override
-    public ClientDetailsEntity find(String clientId) {
-        return clientDetailsDao.find(clientId);
-    }
-
-    @Override
     public List<ClientDetailsEntity> getAll() {
         return clientDetailsDao.getAll();
     }

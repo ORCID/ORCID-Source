@@ -122,7 +122,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         assertEquals("http://www.journals.elsevier.com/ecological-complexity/orcid-callback", createdRedirectUris.get(0).getValue());
         assertEquals("grant-read-wizard", createdRedirectUris.get(0).getType().value());
         // Look up client details directly to check scopes
-        ClientDetailsEntity complexityEntity = clientDetailsManager.find(complexityClient.getClientId());
+        ClientDetailsEntity complexityEntity = clientDetailsManager.findByClientId(complexityClient.getClientId());
         Set<String> clientScopeTypes = complexityEntity.getScope();
         assertNotNull(clientScopeTypes);
         assertTrue(clientScopeTypes.contains("/orcid-bio/update"));
@@ -162,7 +162,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         assertEquals(1, createdRedirectUris.size());
         assertEquals("http://www.journals.elsevier.com/ecological-complexity/orcid-callback", createdRedirectUris.get(0).getValue());        
         // Look up client details directly to check scopes
-        ClientDetailsEntity complexityEntity = clientDetailsManager.find(complexityClient.getClientId());
+        ClientDetailsEntity complexityEntity = clientDetailsManager.findByClientId(complexityClient.getClientId());
         Set<String> clientScopeTypes = complexityEntity.getScope();
         assertNotNull(clientScopeTypes);
         assertTrue(clientScopeTypes.contains("/orcid-profile/read-limited"));
