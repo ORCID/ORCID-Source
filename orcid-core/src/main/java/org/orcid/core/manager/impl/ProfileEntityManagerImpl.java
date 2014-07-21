@@ -38,10 +38,10 @@ import org.springframework.stereotype.Service;
  */
 @Service("profileEntityManager")
 public class ProfileEntityManagerImpl implements ProfileEntityManager {
-
+    
     @Resource
     private ProfileDao profileDao;
-
+    
     @Override
     public ProfileEntity findByOrcid(String orcid) {
         return profileDao.find(orcid);
@@ -68,33 +68,37 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
 
     /**
      * Updates a profile with the given OrcidProfile object
+     * 
      * @param orcidProfile
-     * 		The object that will be used to update the database profile
-     * @return true if the profile was successfully updated on database, false otherwise
+     *            The object that will be used to update the database profile
+     * @return true if the profile was successfully updated on database, false
+     *         otherwise
      * */
     @Override
     public boolean updateProfile(OrcidProfile orcidProfile) {
         ProfileEntity profile = generateProfileEntityWithBio(orcidProfile);
         return profileDao.updateProfile(profile);
     }
-    
+
     /**
      * Updates a profile entity object on database.
+     * 
      * @param profile
-     *          The profile object to update
-     * @return true if the profile was successfully updated.        
+     *            The profile object to update
+     * @return true if the profile was successfully updated.
      * */
     @Override
-    public boolean updateProfile(ProfileEntity profile) {        
+    public boolean updateProfile(ProfileEntity profile) {
         return profileDao.updateProfile(profile);
     }
 
     /**
-     * Generate a ProfileEntity object with the bio information populated from the info that comes from the
-     * OrcidProfile parameter
+     * Generate a ProfileEntity object with the bio information populated from
+     * the info that comes from the OrcidProfile parameter
+     * 
      * @param orcidProfile
-     * @return 
-     *          A Profile Entity containing the bio information that comes in the OrcidProfile parameter
+     * @return A Profile Entity containing the bio information that comes in the
+     *         OrcidProfile parameter
      * */
     private ProfileEntity generateProfileEntityWithBio(OrcidProfile orcidProfile) {
         ProfileEntity profile = new ProfileEntity();
@@ -112,62 +116,67 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         profile.setId(orcidProfile.getOrcidIdentifier().getPath());
         return profile;
     }
-    
+
     /**
      * Deprecates a profile
+     * 
      * @param deprecatedProfile
-     *          The profile that want to be deprecated
+     *            The profile that want to be deprecated
      * @param primaryProfile
-     *          The primary profile for the deprecated profile
+     *            The primary profile for the deprecated profile
      * @return true if the account was successfully deprecated, false otherwise
      * */
     @Override
     public boolean deprecateProfile(ProfileEntity deprecatedProfile, ProfileEntity primaryProfile) {
         boolean result = profileDao.deprecateProfile(deprecatedProfile.getId(), primaryProfile.getId());
-        if(result)
+        if (result)
             profileDao.refresh(deprecatedProfile);
         return result;
     }
-    
+
     /**
      * Return the list of profiles that belongs to the provided OrcidType
+     * 
      * @param type
-     * 		OrcidType that indicates the profile type we want to fetch
-     * @return the list of profiles that belongs to the specified type  
+     *            OrcidType that indicates the profile type we want to fetch
+     * @return the list of profiles that belongs to the specified type
      * */
     @Override
-    public List<ProfileEntity> findProfilesByOrcidType(OrcidType type){
-    	if(type == null)
-    		return new ArrayList<ProfileEntity>();
-    	return profileDao.findProfilesByOrcidType(type);
+    public List<ProfileEntity> findProfilesByOrcidType(OrcidType type) {
+        if (type == null)
+            return new ArrayList<ProfileEntity>();
+        return profileDao.findProfilesByOrcidType(type);
     }
-    
+
     /**
      * Enable developer tools
+     * 
      * @param profile
-     *          The profile to update
+     *            The profile to update
      * @return true if the developer tools where enabled on that profile
      * */
-    @Override    
+    @Override
     public boolean enableDeveloperTools(OrcidProfile profile) {
         boolean result = profileDao.updateDeveloperTools(profile.getOrcidIdentifier().getPath(), true);
         return result;
     }
-    
+
     /**
      * Disable developer tools
+     * 
      * @param profile
-     *          The profile to update
+     *            The profile to update
      * @return true if the developer tools where disabeled on that profile
      * */
-    @Override    
+    @Override
     public boolean disableDeveloperTools(OrcidProfile profile) {
         boolean result = profileDao.updateDeveloperTools(profile.getOrcidIdentifier().getPath(), false);
         return result;
     }
-    
+
     @Override
     public Iso3166Country getCountry(String orcid) {
         return profileDao.getCountry(orcid);
     }
+
 }

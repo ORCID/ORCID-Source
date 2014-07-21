@@ -19,6 +19,7 @@ package org.orcid.core.cli;
 import java.util.Date;
 import java.util.List;
 
+import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -40,7 +41,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  * */
 public class AddReadPublicScopeToNoneInstitutionMembers {
 
-    private ClientDetailsDao clientDetailsDao;
+    private ClientDetailsManager clientDetailsManager;
     private ProfileDao profileDao;
     private TransactionTemplate transactionTemplate;
 
@@ -57,7 +58,7 @@ public class AddReadPublicScopeToNoneInstitutionMembers {
 
     private void init() {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
-        clientDetailsDao = (ClientDetailsDao) context.getBean("clientDetailsDao");
+        clientDetailsManager = (ClientDetailsManager) context.getBean("clientDetailsManager");
         profileDao = (ProfileDao) context.getBean("profileDao");
         transactionTemplate = (TransactionTemplate) context.getBean("transactionTemplate");
     }
@@ -70,7 +71,7 @@ public class AddReadPublicScopeToNoneInstitutionMembers {
                 for (ProfileEntity client : clients) {
                     // Only updater clients should be updated
                     if (client.getClientType().equals(ClientType.PREMIUM_UPDATER) || client.getClientType().equals(ClientType.UPDATER)) {
-                        ClientDetailsEntity clientDetails = clientDetailsDao.find(client.getId());
+                        ClientDetailsEntity clientDetails = clientDetailsManager.find(client.getId());
                         updateScopes(clientDetails);
                     }
                 }
@@ -95,7 +96,7 @@ public class AddReadPublicScopeToNoneInstitutionMembers {
             clientScope.setDateCreated(new Date());
             clientScope.setLastModified(new Date());
             clientDetails.getClientScopes().add(clientScope);
-            clientDetailsDao.merge(clientDetails);
+            clientDetailsManager.merge(clientDetails);
             clientsUpdated += 1;
             System.out.println("Client " + clientDetails.getId() + " has been updated");
         } else {

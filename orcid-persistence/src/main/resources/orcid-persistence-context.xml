@@ -150,6 +150,8 @@
 
 	<bean id="orcidPropsDao" class="org.orcid.persistence.dao.impl.OrcidPropsDaoImpl" />      
 	
+	<bean id="orcidSocialDao" class="org.orcid.persistence.dao.impl.OrcidSocialDaoImpl" />
+	
 	<bean id="fundingSubTypeToIndexDao" class="org.orcid.persistence.dao.impl.FundingSubTypeToIndexDaoImpl" />          
 	
 	<bean id="FundingSubTypeSolrDao" class="org.orcid.persistence.dao.impl.FundingSubtypeSolrDaoImpl" />

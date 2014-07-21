@@ -31,47 +31,58 @@ import org.springframework.cache.annotation.Cacheable;
 
 public class WorkManagerImpl implements WorkManager {
 
-	@Resource
-	private WorkDao workDao;
+    @Resource
+    private WorkDao workDao;
 
-	@Resource
-	private ProfileWorkDao profileWorkDao;
+    @Resource
+    private ProfileWorkDao profileWorkDao;
 
-	@Resource
-	private Jpa2JaxbAdapter jpa2JaxbAdapter;
+    @Resource
+    private Jpa2JaxbAdapter jpa2JaxbAdapter;
 
-	/**
-	 * Add a new work to the work table
-	 * 
-	 * @param work
-	 *            The work that will be persited
-	 * @return the work already persisted on database
-	 * */
-	public WorkEntity addWork(WorkEntity work) {
-		return workDao.addWork(work);
-	}
+    /**
+     * Add a new work to the work table
+     * 
+     * @param work
+     *            The work that will be persited
+     * @return the work already persisted on database
+     * */
+    public WorkEntity addWork(WorkEntity work) {
+        return workDao.addWork(work);
+    }
 
-	/**
-	 * Find the works for a specific user
-	 * 
-	 * @param orcid
-	 *            the Id of the user
-	 * @return the list of works associated to the specific user
-	 * */
-	@Cacheable(value="works", key="#orcid.concat('-').concat(#lastModified)")
-	public List<MinimizedWorkEntity> findWorks(String orcid, Date lastModified) {		
-		return workDao.findWorks(orcid);
-	}
+    /**
+     * Edits an existing work
+     * 
+     * @param work
+     *            The work to be edited
+     * @return The updated entity
+     * */
+    public WorkEntity editWork(WorkEntity work) {
+        return workDao.editWork(work);                
+    }
 
-	/**
+    /**
+     * Find the works for a specific user
+     * 
+     * @param orcid
+     *            the Id of the user
+     * @return the list of works associated to the specific user
+     * */
+    @Cacheable(value = "works", key = "#orcid.concat('-').concat(#lastModified)")
+    public List<MinimizedWorkEntity> findWorks(String orcid, Date lastModified) {
+        return workDao.findWorks(orcid);
+    }
+
+    /**
      * Find the public works for a specific user
      * 
      * @param orcid
-     * 		the Id of the user
-     * @return the list of works associated to the specific user 
-     * */	
+     *            the Id of the user
+     * @return the list of works associated to the specific user
+     * */
     public List<MinimizedWorkEntity> findPublicWorks(String orcid) {
-    	return workDao.findPublicWorks(orcid);
+        return workDao.findPublicWorks(orcid);
     }
-  
+
 }

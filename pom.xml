@@ -53,13 +53,14 @@ the software.
         <module>orcid-test</module>
         <module>orcid-solr-web</module>
         <module>orcid-audit</module>
+        <module>orcid-integration-test</module>
     </modules>
 
 
     <!-- Start -->
 
     <organization>
-        <name>ORCID.ogr</name>
+        <name>ORCID.org</name>
         <url>https://github.com/ORCID</url>
     </organization>
 
@@ -942,7 +943,7 @@ the software.
             <dependency>
                 <groupId>org.hsqldb</groupId>
                 <artifactId>hsqldb</artifactId>
-                <version>2.2.8</version>
+                <version>2.3.1</version>
                 <scope>test</scope>
             </dependency>
             <dependency>

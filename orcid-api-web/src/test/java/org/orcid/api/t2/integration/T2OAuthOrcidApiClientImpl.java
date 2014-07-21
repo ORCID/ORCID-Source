@@ -34,7 +34,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriBuilder;
 
 import org.orcid.api.t2.T2OAuthAPIService;
-import org.orcid.api.t2.T2OrcidApiService;
+import org.orcid.api.common.T2OrcidApiService;
 import org.orcid.jaxb.model.message.OrcidMessage;
 
 import com.sun.jersey.api.client.Client;
@@ -290,6 +290,13 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
         return getClientResponseWithToken(profilePathWithOrcidUrl, VND_ORCID_XML, accessToken);
     }
 
+    
+    public ClientResponse viewFullDetailsXml(String orcid, String accessToken, String messageVersion) {
+        String path = '/' + messageVersion + PROFILE_GET_PATH;
+        URI profilePathWithOrcidUrl = UriBuilder.fromPath(path).build(orcid);
+        return getClientResponseWithToken(profilePathWithOrcidUrl, VND_ORCID_XML, accessToken);
+    }
+    
     /**
      * GETs the JSON representation of the ORCID record containing all details
      * 
@@ -358,6 +365,15 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
     @Path(BIO_PATH)
     public ClientResponse viewBioDetailsJson(@PathParam("orcid") String orcid, String accessToken) {
         URI bioPathWithOrcid = UriBuilder.fromPath(BIO_PATH_NO_REGEX).build(orcid);
+        return getClientResponseWithToken(bioPathWithOrcid, VND_ORCID_JSON, accessToken);
+    }
+    
+    @Override
+    @GET
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_XML })
+    @Path(AUTHENTICATE_PATH)
+    public ClientResponse authenticate(@PathParam("orcid") String orcid, String accessToken) {
+        URI bioPathWithOrcid = UriBuilder.fromPath(AUTHENTICATE_PATH).build(orcid);
         return getClientResponseWithToken(bioPathWithOrcid, VND_ORCID_JSON, accessToken);
     }
 

@@ -475,9 +475,9 @@ public class NotificationManagerImpl implements NotificationManager {
 
         String creatorName = "";
         if (source != null) {
-            if (noneNull(source.getSourceName(), source.getSourceName().getContent())) {
+            if (source.getSourceName() != null && source.getSourceName().getContent() != null) {
                 creatorName = source.getSourceName().getContent();
-            } else if (noneNull(source.getSourceOrcid(), source.getSourceOrcid().getPath())) {
+            } else if (source.getSourceOrcid() != null && source.getSourceOrcid().getPath() != null) {
                 creatorName = source.getSourceOrcid().getPath();
             }
         }

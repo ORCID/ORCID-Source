@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.ClientSecretDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -38,7 +39,6 @@ public class UpdateSecretKeyStatus {
     
     private void init() {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
-        clientDetailsDao = (ClientDetailsDao) context.getBean("clientDetailsDao");
         clientSecretDao = (ClientSecretDao) context.getBean("clientSecretDao");
         transactionTemplate = (TransactionTemplate) context.getBean("transactionTemplate");
     }

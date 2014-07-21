@@ -21,8 +21,15 @@
 		<div class="lightbox-container-ie7">		
 		<!-- Title -->
 		<div class="row">			
-			<div class="col-md-9 col-sm-8 col-xs-9">
-				<h1 class="lightbox-title pull-left"><@orcid.msg 'manual_work_form_contents.add_work'/></h1>
+			<div class="col-md-9 col-sm-8 col-xs-9">	
+				<h1 class="lightbox-title pull-left">
+					<div ng-show="edittingWork">
+						<@orcid.msg 'manual_work_form_contents.edit_work'/>
+					</div>
+					<div ng-hide="edittingWork">
+						<@orcid.msg 'manual_work_form_contents.add_work'/>
+					</div>
+				</h1>
 			</div>			
 			<div class="col-md-3 col-sm-3 pull-left">
 				<div class="control-group privacy-control">
@@ -189,7 +196,8 @@
 
 			<!-- Right column -->
 			<div class="col-md-6 col-sm-6 col-xs-12">				
-				<div class="control-group" ng-repeat="contributor in editWork.contributors">
+			    <!-- only allow work contributor editing if there is one or more contributors in the record -->
+				<div class="control-group" ng-repeat="contributor in editWork.contributors" ng-show="editWork.contributors.length > 0">
 				    <label class="relative"><@orcid.msg 'manual_work_form_contents.labelRole'/></label>
 				    <div class="relative">    
 						<select id="role" name="role" ng-model="contributor.contributorRole.value">
@@ -198,6 +206,7 @@
 							    <option value="${key}">${roles[key]}</option>
 							</#list>
 			    		</select>
+			    		<a href ng-click="deleteContributor(contributor)" class="glyphicon glyphicon-trash grey"></a>
 						<span class="orcid-error" ng-show="contributor.contributorRole.errors.length > 0">
 								<div ng-repeat='error in contributor.contributorRole.errors' ng-bind-html="error"></div>
 						</span>
@@ -233,6 +242,7 @@
 									<option value="${idTypes[key]}">${key}</option>
 								</#list>
 							</select> 
+							<a href ng-click="deleteExternalIdentifier(workExternalIdentifier)" class="glyphicon glyphicon-trash grey"></a>
 							<span class="orcid-error" ng-show="workExternalIdentifier.workExternalIdentifierType.errors.length > 0">
 								<div ng-repeat='error in workExternalIdentifier.workExternalIdentifierType.errors' ng-bind-html="error"></div>
 							</span>
@@ -250,6 +260,11 @@
 					<div ng-show="$last" class="add-item-link">			
 						<span><a href ng-click="addExternalIdentifier()"><i class="glyphicon glyphicon-plus-sign"></i> <@orcid.msg 'manual_work_form_contents.add_external_identifier' /></a></span>
 					</div>			
+				</div>
+				<div ng-show="editWork.workExternalIdentifiers == null || editWork.workExternalIdentifiers.length == 0">
+					<div>			
+						<span><a href ng-click="addExternalIdentifier()"><i class="glyphicon glyphicon-plus-sign"></i> <@orcid.msg 'manual_work_form_contents.add_external_identifier' /></a></span>
+					</div>
 				</div>
 			
 				<div class="control-group">
@@ -292,8 +307,18 @@
 					</span>
 				</div>
 				<div class="control-group">
-					<button class="btn btn-primary" ng-click="addWork()" ng-disabled="addingWork" ng-class="{disabled:addingWork}"><@orcid.msg 'manual_work_form_contents.btnaddtolist'/></button>
-					<button id="" class="btn close-button" type="reset"  ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></button>					
+					<div ng-show="edittingWork">	
+						<button class="btn btn-primary" ng-click="editExistingWork()" ng-disabled="addingWork" ng-class="{disabled:addingWork}">
+							<@orcid.msg 'freemarker.btnsave'/>
+						</button>
+						<button id="" class="btn close-button" type="reset"  ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></button>
+					</div>
+					<div ng-hide="edittingWork">
+						<button class="btn btn-primary" ng-click="addWork()" ng-disabled="addingWork" ng-class="{disabled:addingWork}">
+							<@orcid.msg 'manual_work_form_contents.btnaddtolist'/>
+						</button>
+						<button id="" class="btn close-button" type="reset"  ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></button>
+					</div>									
 				</div>
 			</div>			
 		</div>		

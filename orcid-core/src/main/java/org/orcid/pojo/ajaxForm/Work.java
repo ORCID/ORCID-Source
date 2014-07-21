@@ -21,26 +21,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
+import org.orcid.core.adapter.impl.Jpa2JaxbAdapterImpl;
 import org.orcid.core.utils.JsonUtils;
-import org.orcid.jaxb.model.message.CitationType;
 import org.orcid.jaxb.model.message.Country;
 import org.orcid.jaxb.model.message.FuzzyDate;
 import org.orcid.jaxb.model.message.Iso3166Country;
-import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.PublicationDate;
 import org.orcid.jaxb.model.message.Title;
 import org.orcid.jaxb.model.message.Url;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.message.WorkCategory;
 import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.message.WorkSource;
 import org.orcid.jaxb.model.message.WorkType;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
-import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
 
 public class Work implements ErrorsInterface, Serializable {
@@ -131,6 +126,10 @@ public class Work implements ErrorsInterface, Serializable {
 		    WorkExternalIdentifiers identifiers = JsonUtils.readObjectFromJsonString(minimizedWorkEntity.getExternalIdentifiersJson(), WorkExternalIdentifiers.class);
 		    populateExternaIdentifiers(identifiers, w);            
 		}
+		if (minimizedWorkEntity.getSourceProfile() != null) {
+                    w.setWorkSource(Text.valueOf(minimizedWorkEntity.getSourceProfile().getId()));
+                    w.setWorkSourceName(Text.valueOf(Jpa2JaxbAdapterImpl.createName(minimizedWorkEntity.getSourceProfile())));
+                }
 		return w;
 	}
 	
@@ -171,9 +170,14 @@ public class Work implements ErrorsInterface, Serializable {
 		}
 		if (orcidWork.getWorkTitle() != null)
 			w.setWorkTitle(WorkTitle.valueOf(orcidWork.getWorkTitle()));
-		if (orcidWork.getWorkType() != null)
+		if (orcidWork.getWorkType() != null) {
 			w.setWorkType(Text.valueOf(orcidWork.getWorkType().value()));
+			WorkCategory category = WorkCategory.fromWorkType(orcidWork.getWorkType());
+			w.setWorkCategory(Text.valueOf(category.value()));
+		}
 
+		
+		
 		if (orcidWork.getJournalTitle() != null)
 			w.setJournalTitle(Text.valueOf(orcidWork.getJournalTitle()
 					.getContent()));

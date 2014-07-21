@@ -15,7 +15,7 @@
     </orcid-client>
     <orcid-client type="premium-creator">
         <display-name>P. Sellers III</display-name>
-        <website>http://www.researcherurl2.com?id=1</website>
+        <website>www.4444-4444-4444-4443.com</website>
         <short-description>Richard Henry Sellers, CBE (8 September 1925 – 24 July 1980), known as Peter Sellers, was a British film actor, comedian and singer.</short-description>
         <redirect-uris>
             <redirect-uri type="default">http:://www.4444-4444-4444-4443.com/redirect/oauth</redirect-uri>
@@ -25,6 +25,7 @@
     </orcid-client>
     <orcid-client type="premium-creator">
         <display-name>H. Secombe</display-name>
+        <website>www.4444-4444-4444-4443.com</website>
         <short-description>Sir Harry Donald Secombe, CBE (8 September 1921 – 11 April 2001) was a Welsh entertainer with a talent for comedy and a noted fine tenor singing voice.</short-description>
         <redirect-uris>
             <redirect-uri type="default">http:://www.4444-4444-4444-4444.com/redirect/oauth</redirect-uri>

@@ -20,6 +20,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
@@ -28,6 +29,8 @@ import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.persistence.aop.ProfileLastModifiedAspect;
+import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.utils.NullUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,10 +51,18 @@ public class ResaveProfiles {
 
     private OrcidProfileManager orcidProfileManager;
     private TransactionTemplate transactionTemplate;
+    private ProfileDao profileDao;
+    private ProfileLastModifiedAspect profileLastModifiedAspect;
     @Option(name = "-f", usage = "Path to file containing ORCIDs to resave")
     private File fileToLoad;
     @Option(name = "-o", usage = "ORCID to resave")
     private String orcid;
+    @Option(name = "-m", usage = "Update the last modified date of the record (default = false)")
+    private boolean updateLastModified;
+    @Option(name = "-c", usage = "Continue to next record if there is an error (default = stop on error)")
+    private boolean continueOnError;
+    private int doneCount;
+    private int errorCount;
 
     public static void main(String[] args) throws IOException {
         ResaveProfiles resaveProfiles = new ResaveProfiles();
@@ -64,6 +75,10 @@ public class ResaveProfiles {
         } catch (CmdLineException e) {
             System.err.println(e.getMessage());
             parser.printUsage(System.err);
+            System.exit(1);
+        } catch (Throwable t) {
+            System.err.println(t);
+            System.exit(2);
         }
         System.exit(0);
     }
@@ -85,18 +100,16 @@ public class ResaveProfiles {
 
     private void processFile() throws IOException {
         long startTime = System.currentTimeMillis();
-        int doneCount = 0;
         try (BufferedReader br = new BufferedReader(new FileReader(fileToLoad))) {
             String line = null;
             while ((line = br.readLine()) != null) {
                 if (StringUtils.isNotBlank(line)) {
                     processOrcid(line.trim());
-                    doneCount++;
                 }
             }
             long endTime = System.currentTimeMillis();
             String timeTaken = DurationFormatUtils.formatDurationHMS(endTime - startTime);
-            LOG.info("Finished resaving profiles: doneCount={}, timeTaken={} (H:m:s.S)", doneCount, timeTaken);
+            LOG.info("Finished resaving profiles: doneCount={}, errorCount={}, timeTaken={} (H:m:s.S)", new Object[] { doneCount, errorCount, timeTaken });
         }
     }
 
@@ -105,10 +118,24 @@ public class ResaveProfiles {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus status) {
-                OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile(orcid);
-                // Save it straight back - it will be saved back in the
-                // new DB table automatically
-                orcidProfileManager.updateOrcidProfile(orcidProfile);
+                try {
+                    OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile(orcid);
+                    Date originalLastModified = orcidProfile.getOrcidHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime();
+                    // Save it straight back - it will be saved back in the
+                    // new DB table automatically
+                    orcidProfileManager.updateOrcidProfile(orcidProfile);
+                    if (!updateLastModified) {
+                        profileDao.updateLastModifiedDateWithoutResult(orcid, originalLastModified);
+                    }
+                    doneCount++;
+                } catch (RuntimeException e) {
+                    errorCount++;
+                    if (continueOnError) {
+                        LOG.error("Error saving profile: orcid={}", orcid, e);
+                    } else {
+                        throw e;
+                    }
+                }
             }
         });
     }
@@ -117,6 +144,9 @@ public class ResaveProfiles {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         orcidProfileManager = (OrcidProfileManager) context.getBean("orcidProfileManager");
         transactionTemplate = (TransactionTemplate) context.getBean("transactionTemplate");
+        profileDao = (ProfileDao) context.getBean("profileDao");
+        profileLastModifiedAspect = (ProfileLastModifiedAspect) context.getBean("profileLastModifiedAspect");
+        profileLastModifiedAspect.setEnabled(updateLastModified);
     }
 
 }

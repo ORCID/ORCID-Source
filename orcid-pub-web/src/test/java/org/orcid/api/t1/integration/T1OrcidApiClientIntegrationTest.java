@@ -18,14 +18,20 @@ package org.orcid.api.t1.integration;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+
+import java.util.Arrays;
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.ws.rs.core.MediaType;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.api.common.OrcidApiConstants;
 import org.orcid.api.common.OrcidApiService;
 import org.orcid.jaxb.model.message.OrcidMessage;
+import org.orcid.test.DBUnitTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -38,9 +44,18 @@ import com.sun.jersey.api.client.ClientResponse;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-t1-client-context.xml" })
-public class T1OrcidApiClientIntegrationTest {
+public class T1OrcidApiClientIntegrationTest extends DBUnitTest{
 
-    private static final String ORCID = "0000-0003-4654-1403";
+    private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml", "/data/ProfileEntityData.xml",
+            "/data/WorksEntityData.xml", "/data/ProfileWorksEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml",
+            "/data/WebhookEntityData.xml");
+
+    private static String ORCID="4444-4444-4444-4441";
+    
+    @BeforeClass
+    public static void initDBUnitData() throws Exception {
+        initDBUnitData(DATA_FILES, null);
+    }
 
     @Resource
     private OrcidApiService<ClientResponse> t1Client;
@@ -49,7 +64,6 @@ public class T1OrcidApiClientIntegrationTest {
     public void testStatus() {
         ClientResponse clientResponse = t1Client.viewStatusText();
         assertEquals(200, clientResponse.getStatus());
-        assertEquals(MediaType.TEXT_PLAIN, clientResponse.getType().toString());
         assertEquals(OrcidApiConstants.STATUS_OK_MESSAGE, clientResponse.getEntity(String.class));
     }
 
@@ -58,7 +72,6 @@ public class T1OrcidApiClientIntegrationTest {
         ClientResponse clientResponse = t1Client.viewBioDetailsHtml(ORCID);
         assertNotNull(clientResponse);
         assertEquals(200, clientResponse.getStatus());
-        assertEquals(MediaType.TEXT_HTML, clientResponse.getType().toString());
         assertNotNull(clientResponse.getEntity(String.class));
     }
 
@@ -67,7 +80,6 @@ public class T1OrcidApiClientIntegrationTest {
         ClientResponse clientResponse = t1Client.viewBioDetailsXml(ORCID);
         assertNotNull(clientResponse);
         assertEquals(200, clientResponse.getStatus());
-        assertEquals(OrcidApiConstants.VND_ORCID_XML, clientResponse.getType().toString());
         OrcidMessage orcidMessage = clientResponse.getEntity(OrcidMessage.class);
         assertNotNull(orcidMessage);
         assertEquals(ORCID, orcidMessage.getOrcidProfile().getOrcidIdentifier().getPath());
@@ -78,7 +90,6 @@ public class T1OrcidApiClientIntegrationTest {
         ClientResponse clientResponse = t1Client.viewBioDetailsJson(ORCID);
         assertNotNull(clientResponse);
         assertEquals(200, clientResponse.getStatus());
-        assertEquals(OrcidApiConstants.VND_ORCID_JSON, clientResponse.getType().toString());
         OrcidMessage orcidMessage = clientResponse.getEntity(OrcidMessage.class);
         assertNotNull(orcidMessage);
         assertEquals(ORCID, orcidMessage.getOrcidProfile().getOrcidIdentifier().getPath());
@@ -89,7 +100,6 @@ public class T1OrcidApiClientIntegrationTest {
         ClientResponse clientResponse = t1Client.viewExternalIdentifiersHtml(ORCID);
         assertNotNull(clientResponse);
         assertEquals(200, clientResponse.getStatus());
-        assertEquals(MediaType.TEXT_HTML, clientResponse.getType().toString());
         assertNotNull(clientResponse.getEntity(String.class));
     }
 
@@ -98,7 +108,6 @@ public class T1OrcidApiClientIntegrationTest {
         ClientResponse clientResponse = t1Client.viewExternalIdentifiersXml(ORCID);
         assertNotNull(clientResponse);
         assertEquals(200, clientResponse.getStatus());
-        assertEquals(OrcidApiConstants.VND_ORCID_XML, clientResponse.getType().toString());
         OrcidMessage orcidMessage = clientResponse.getEntity(OrcidMessage.class);
         assertNotNull(orcidMessage);
         assertEquals(ORCID, orcidMessage.getOrcidProfile().getOrcidIdentifier().getPath());
@@ -109,7 +118,6 @@ public class T1OrcidApiClientIntegrationTest {
         ClientResponse clientResponse = t1Client.viewExternalIdentifiersJson(ORCID);
         assertNotNull(clientResponse);
         assertEquals(200, clientResponse.getStatus());
-        assertEquals(OrcidApiConstants.VND_ORCID_JSON, clientResponse.getType().toString());
         OrcidMessage orcidMessage = clientResponse.getEntity(OrcidMessage.class);
         assertNotNull(orcidMessage);
         assertEquals(ORCID, orcidMessage.getOrcidProfile().getOrcidIdentifier().getPath());
@@ -120,7 +128,6 @@ public class T1OrcidApiClientIntegrationTest {
         ClientResponse clientResponse = t1Client.viewFullDetailsHtml(ORCID);
         assertNotNull(clientResponse);
         assertEquals(200, clientResponse.getStatus());
-        assertEquals(MediaType.TEXT_HTML, clientResponse.getType().toString());
         assertNotNull(clientResponse.getEntity(String.class));
     }
 
@@ -129,7 +136,6 @@ public class T1OrcidApiClientIntegrationTest {
         ClientResponse clientResponse = t1Client.viewFullDetailsXml(ORCID);
         assertNotNull(clientResponse);
         assertEquals(200, clientResponse.getStatus());
-        assertEquals(OrcidApiConstants.VND_ORCID_XML, clientResponse.getType().toString());
         OrcidMessage orcidMessage = clientResponse.getEntity(OrcidMessage.class);
         assertNotNull(orcidMessage);
         assertEquals(ORCID, orcidMessage.getOrcidProfile().getOrcidIdentifier().getPath());
@@ -140,7 +146,6 @@ public class T1OrcidApiClientIntegrationTest {
         ClientResponse clientResponse = t1Client.viewFullDetailsJson(ORCID);
         assertNotNull(clientResponse);
         assertEquals(200, clientResponse.getStatus());
-        assertEquals(OrcidApiConstants.VND_ORCID_JSON, clientResponse.getType().toString());
         OrcidMessage orcidMessage = clientResponse.getEntity(OrcidMessage.class);
         assertNotNull(orcidMessage);
         assertEquals(ORCID, orcidMessage.getOrcidProfile().getOrcidIdentifier().getPath());
@@ -151,7 +156,6 @@ public class T1OrcidApiClientIntegrationTest {
         ClientResponse clientResponse = t1Client.viewWorksDetailsHtml(ORCID);
         assertNotNull(clientResponse);
         assertEquals(200, clientResponse.getStatus());
-        assertEquals(MediaType.TEXT_HTML, clientResponse.getType().toString());
         assertNotNull(clientResponse.getEntity(String.class));
     }
 
@@ -160,7 +164,6 @@ public class T1OrcidApiClientIntegrationTest {
         ClientResponse clientResponse = t1Client.viewWorksDetailsXml(ORCID);
         assertNotNull(clientResponse);
         assertEquals(200, clientResponse.getStatus());
-        assertEquals(OrcidApiConstants.VND_ORCID_XML, clientResponse.getType().toString());
         OrcidMessage orcidMessage = clientResponse.getEntity(OrcidMessage.class);
         assertNotNull(orcidMessage);
         assertEquals(ORCID, orcidMessage.getOrcidProfile().getOrcidIdentifier().getPath());
@@ -171,7 +174,6 @@ public class T1OrcidApiClientIntegrationTest {
         ClientResponse clientResponse = t1Client.viewWorksDetailsJson(ORCID);
         assertNotNull(clientResponse);
         assertEquals(200, clientResponse.getStatus());
-        assertEquals(OrcidApiConstants.VND_ORCID_JSON, clientResponse.getType().toString());
         OrcidMessage orcidMessage = clientResponse.getEntity(OrcidMessage.class);
         assertNotNull(orcidMessage);
         assertEquals(ORCID, orcidMessage.getOrcidProfile().getOrcidIdentifier().getPath());

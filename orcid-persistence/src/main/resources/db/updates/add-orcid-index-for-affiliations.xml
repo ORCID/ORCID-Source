@@ -1,0 +1,33 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+        
+    <changeSet id="ADD-ORCID-INDEX-FOR-AFFILIATIONS" author="Will Simpson">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="org_affiliation_relation_orcid_idx" tableName="org_affiliation_relation" />
+            </not>
+        </preConditions>
+        <createIndex tableName="org_affiliation_relation" indexName="org_affiliation_relation_orcid_idx">
+            <column name="orcid"></column>
+        </createIndex>
+    </changeSet>
+    
+</databaseChangeLog>

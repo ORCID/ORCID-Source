@@ -16,6 +16,7 @@
  */
 package org.orcid.persistence.dao.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Query;
@@ -38,12 +39,40 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
      *            The work that will be persisted
      * @return the work already persisted on database
      * */
-    @Override
+    @Override 
     @Transactional
     public WorkEntity addWork(WorkEntity work) {
         this.persist(work);
         this.flush();
         return work;
+    }
+
+    @Override
+    @Transactional
+    public WorkEntity editWork(WorkEntity updatedWork) {
+        WorkEntity workToUpdate =  this.find(updatedWork.getId());
+        mergeWork(workToUpdate, updatedWork);
+        workToUpdate = this.merge(workToUpdate);
+        return workToUpdate;
+    }
+    
+    private void mergeWork(WorkEntity workToUpdate, WorkEntity workWithNewData) {
+        workToUpdate.setTitle(workWithNewData.getTitle());
+        workToUpdate.setTranslatedTitle(workWithNewData.getTranslatedTitle());
+        workToUpdate.setSubtitle(workWithNewData.getSubtitle());
+        workToUpdate.setDescription(workWithNewData.getDescription());
+        workToUpdate.setWorkUrl(workWithNewData.getWorkUrl());
+        workToUpdate.setCitation(workWithNewData.getCitation());
+        workToUpdate.setJournalTitle(workWithNewData.getJournalTitle());
+        workToUpdate.setLanguageCode(workWithNewData.getLanguageCode());
+        workToUpdate.setTranslatedTitleLanguageCode(workWithNewData.getTranslatedTitleLanguageCode());
+        workToUpdate.setIso2Country(workWithNewData.getIso2Country());
+        workToUpdate.setCitationType(workWithNewData.getCitationType());
+        workToUpdate.setWorkType(workWithNewData.getWorkType());
+        workToUpdate.setPublicationDate(workWithNewData.getPublicationDate());
+        workToUpdate.setContributorsJson(workWithNewData.getContributorsJson());
+        workToUpdate.setExternalIdentifiersJson(workWithNewData.getExternalIdentifiersJson());
+        workToUpdate.setLastModified(new Date());
     }
 
     /**
@@ -57,7 +86,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     public List<MinimizedWorkEntity> findWorks(String orcid) {
 
         Query query = entityManager
-                .createQuery("select NEW org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity(w.id, w.title, w.subtitle, w.description, w.publicationDate.day, w.publicationDate.month, w.publicationDate.year, pw.visibility, w.externalIdentifiersJson, pw.displayIndex) "
+                .createQuery("select NEW org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity(w.id, w.title, w.subtitle, w.description, w.publicationDate.day, w.publicationDate.month, w.publicationDate.year, pw.visibility, w.externalIdentifiersJson, pw.displayIndex, pw.sourceProfile) "
                         + "from WorkEntity w, ProfileWorkEntity pw "
                         + "where pw.profile.id=:orcid and w.id=pw.work.id "
                         + "order by pw.displayIndex desc, pw.dateCreated asc");
@@ -73,9 +102,10 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
      *            the Id of the user
      * @return the list of works associated to the specific user
      * */
+    @SuppressWarnings("unchecked")
     public List<MinimizedWorkEntity> findPublicWorks(String orcid) {
         Query query = entityManager
-                .createQuery("select NEW org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity(w.id, w.title, w.subtitle, w.description, w.publicationDate.day, w.publicationDate.month, w.publicationDate.year, pw.visibility, w.externalIdentifiersJson, pw.displayIndex) "
+                .createQuery("select NEW org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity(w.id, w.title, w.subtitle, w.description, w.publicationDate.day, w.publicationDate.month, w.publicationDate.year, pw.visibility, w.externalIdentifiersJson, pw.displayIndex, pw.sourceProfile) "
                         + "from WorkEntity w, ProfileWorkEntity pw "
                         + "where pw.visibility='PUBLIC' and pw.profile.id=:orcid and w.id=pw.work.id "
                         + "order by pw.displayIndex desc, pw.dateCreated asc");

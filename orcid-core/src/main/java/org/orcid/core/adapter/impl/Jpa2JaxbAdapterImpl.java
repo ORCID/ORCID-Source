@@ -745,7 +745,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         ProfileEntity sponsorProfileEntity = profileEntity.getSource();
         if (sponsorProfileEntity != null) {
             Source sponsor = new Source();
-            SourceName sponsorName = StringUtils.isNotBlank(sponsorProfileEntity.getCreditName()) ? new SourceName(sponsorProfileEntity.getCreditName()) : null;
+            SourceName sponsorName = new SourceName(createName(sponsorProfileEntity));
             SourceOrcid sponsorOrcid = StringUtils.isNotBlank(sponsorProfileEntity.getId()) ? new SourceOrcid(getOrcidIdBase(sponsorProfileEntity.getId())) : null;
             sponsor.setSourceName(sponsorName);
             sponsor.setSourceOrcid(sponsorOrcid);
@@ -882,29 +882,36 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
         WorkSource workSource = new WorkSource(getOrcidIdBase(sourceProfile.getId()));
 
+        String sourceName = createName(sourceProfile);
+ 
+        workSource.setSourceName(sourceName);
+        
+        return workSource;
+    }
+
+    static public String createName(ProfileEntity sourceProfile) {
+        String sourceName;
         // Set the source name
         // If it is a client, use the client_name from the client_details table
         if (OrcidType.CLIENT.equals(sourceProfile.getOrcidType())) {
             ClientDetailsEntity clientDetails = sourceProfile.getClientDetails();
             if (clientDetails != null) {
-                workSource.setSourceName(clientDetails.getClientName());
+                sourceName = clientDetails.getClientName();
             } else {
                 // This should never happen since the client name in
                 // client_details must not be empty
-                workSource.setSourceName(sourceProfile.getCreditName());
+                sourceName = sourceProfile.getCreditName();
             }
         } else {
             // If it is a user, check if it have a credit name and is visible
             if (!StringUtils.isEmpty(sourceProfile.getCreditName()) && Visibility.PUBLIC.equals(sourceProfile.getCreditNameVisibility())) {
-                workSource.setSourceName(sourceProfile.getCreditName());
+                sourceName = sourceProfile.getCreditName();
             } else {
                 // If it doesnt, lets use the give name + family name
-                String name = sourceProfile.getGivenNames() + (StringUtils.isEmpty(sourceProfile.getFamilyName()) ? "" : " " + sourceProfile.getFamilyName());
-                workSource.setSourceName(name);
+                sourceName = sourceProfile.getGivenNames() + (StringUtils.isEmpty(sourceProfile.getFamilyName()) ? "" : " " + sourceProfile.getFamilyName());
             }
         }
-
-        return workSource;
+        return sourceName;
     }
 
     private SourceDate getSourceDate(Date depositedDate) {

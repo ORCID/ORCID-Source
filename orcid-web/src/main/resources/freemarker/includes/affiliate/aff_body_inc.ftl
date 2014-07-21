@@ -21,6 +21,8 @@
     <li class="bottom-margin-small" ng-repeat="affiliation in affiliationsSrvc.affiliations | orderBy:['-dateSortString', 'affiliationName']">            	
 		<#if request.requestURI?ends_with("my-orcid2")>
 		    <#include "aff_row_inc_v2.ftl" />
+		<#elseif request.requestURI?ends_with("my-orcid3")>
+		    <#include "aff_row_inc_v3.ftl" />
 		<#else>
 		    <#include "aff_row_inc.ftl" />
 		</#if>

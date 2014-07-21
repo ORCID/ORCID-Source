@@ -59,7 +59,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang.StringUtils;
-import org.orcid.api.t2.T2OrcidApiService;
+import org.orcid.api.common.T2OrcidApiService;
 import org.orcid.api.t2.server.delegator.T2OrcidApiServiceDelegator;
 import org.orcid.api.t2.server.delegator.impl.T2OrcidApiServiceVersionedDelegatorImpl;
 import org.orcid.jaxb.model.message.OrcidMessage;

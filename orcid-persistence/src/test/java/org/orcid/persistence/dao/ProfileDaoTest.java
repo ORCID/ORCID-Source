@@ -118,9 +118,9 @@ public class ProfileDaoTest extends DBUnitTest {
     public void testFindAll() {
         List<ProfileEntity> all = profileDao.getAll();
         assertNotNull(all);
-        assertEquals(10, all.size());
+        assertEquals(11, all.size());
         Long count = profileDao.countAll();
-        assertEquals(Long.valueOf(10), count);
+        assertEquals(Long.valueOf(11), count);
     }
 
     @Test
@@ -142,7 +142,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertEquals(dateCreated.getTime(), profile.getDateCreated().getTime());
 
         Long count = profileDao.countAll();
-        assertEquals(Long.valueOf(11), count);
+        assertEquals(Long.valueOf(12), count);
         profile = profileDao.find(newOrcid);
 
         assertNotNull(profile);
@@ -168,7 +168,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertEquals(dateCreated.getTime(), profile.getDateCreated().getTime());
 
         Long count = profileDao.countAll();
-        assertEquals(Long.valueOf(11), count);
+        assertEquals(Long.valueOf(12), count);
         profile = profileDao.find(newOrcid);
 
         assertNotNull(profile);
@@ -196,7 +196,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertEquals(dateCreated.getTime(), retrievedProfile.getDateCreated().getTime());
 
         Long count = profileDao.countAll();
-        assertEquals(Long.valueOf(11), count);
+        assertEquals(Long.valueOf(12), count);
     }
 
     @Test
@@ -308,7 +308,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertNull(profile);       
 
         List<ProfileEntity> all = profileDao.getAll();
-        assertEquals(8, all.size());
+        assertEquals(9, all.size());
     }
 
     @Test
@@ -345,7 +345,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertEquals("4444-4444-4444-4446", results.get(1));
 
         results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.DONE, Integer.MAX_VALUE);
-        assertEquals(8, results.size());
+        assertEquals(9, results.size());
 
         results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.DONE, 3);
         assertEquals(3, results.size());
@@ -353,11 +353,17 @@ public class ProfileDaoTest extends DBUnitTest {
 
     @Test
     public void testFindUnclaimedNotIndexedAfterWaitPeriod() {
-        List<String> resultsList = profileDao.findUnclaimedNotIndexedAfterWaitPeriod(1, 10, Collections.<String> emptyList());
+        List<String> resultsList = profileDao.findUnclaimedNotIndexedAfterWaitPeriod(1, 100000, 10, Collections.<String> emptyList());
         assertNotNull(resultsList);
         assertTrue(resultsList.isEmpty());
 
-        resultsList = profileDao.findUnclaimedNotIndexedAfterWaitPeriod(5, 10, Collections.<String> emptyList());
+        //test far back
+        resultsList = profileDao.findUnclaimedNotIndexedAfterWaitPeriod(100000, 200000, 10, Collections.<String> emptyList());
+        assertNotNull(resultsList);
+        assertEquals(0, resultsList.size());
+        
+        // test range that fits test data
+        resultsList = profileDao.findUnclaimedNotIndexedAfterWaitPeriod(5, 100000, 10, Collections.<String> emptyList());
         assertNotNull(resultsList);
         assertEquals(1, resultsList.size());
         assertTrue(resultsList.contains("4444-4444-4444-4447"));
@@ -406,12 +412,12 @@ public class ProfileDaoTest extends DBUnitTest {
     public void testGetConfirmedProfileCount() {
         String orcid = "4444-4444-4444-4446";
         Long confirmedProfileCount = profileDao.getConfirmedProfileCount();
-        assertEquals(Long.valueOf(10), confirmedProfileCount);
+        assertEquals(Long.valueOf(11), confirmedProfileCount);
         ProfileEntity profileEntity = profileDao.find(orcid);
         profileEntity.setCompletedDate(null);
         profileDao.persist(profileEntity);
         confirmedProfileCount = profileDao.getConfirmedProfileCount();
-        assertEquals(Long.valueOf(9), confirmedProfileCount);
+        assertEquals(Long.valueOf(10), confirmedProfileCount);
     }
 
     @Test

@@ -30,6 +30,7 @@ import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -76,15 +77,13 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
         List<OrgDisambiguatedEntity> results = query.getResultList();
         return results.isEmpty() ? null : results.get(0);
     }
-    
+
     @Override
     public List<OrgDisambiguatedEntity> findByName(String name) {
-    	TypedQuery<OrgDisambiguatedEntity> query = entityManager
-                .createQuery(
-                        "from OrgDisambiguatedEntity where lower(name) = lower(:name)",
-                        OrgDisambiguatedEntity.class);
-    	query.setParameter("name", name);
-    	List<OrgDisambiguatedEntity> results = query.getResultList();
+        TypedQuery<OrgDisambiguatedEntity> query = entityManager
+                .createQuery("from OrgDisambiguatedEntity where lower(name) = lower(:name)", OrgDisambiguatedEntity.class);
+        query.setParameter("name", name);
+        List<OrgDisambiguatedEntity> results = query.getResultList();
         return results.isEmpty() ? null : results;
     }
 
@@ -155,6 +154,37 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
         query.setParameter("orgDisambiguatedId", orgDisambiguatedId);
         query.setParameter("popularity", popularity);
         query.executeUpdate();
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void replace(long deletedOrgDisambiguatedId, long replacementOrgDisambiguatedId) {
+        Query query = entityManager
+                .createQuery("update OrgEntity set orgDisambiguated.id = :replacementOrgDisambiguatedId where orgDisambiguated.id = :deletedOrgDisambiguatedId");
+        query.setParameter("deletedOrgDisambiguatedId", deletedOrgDisambiguatedId);
+        query.setParameter("replacementOrgDisambiguatedId", replacementOrgDisambiguatedId);
+        query.executeUpdate();
+    }
+
+    @Override
+    @Transactional
+    public void dropUniqueConstraint() {
+        Query query = entityManager.createNativeQuery("ALTER TABLE org_disambiguated DROP CONSTRAINT IF EXISTS org_disambiguated_unique_constraints");
+        query.executeUpdate();
+    }
+
+    @Override
+    @Transactional
+    public void createUniqueConstraint() {
+        Query query = entityManager
+                .createNativeQuery("ALTER TABLE org_disambiguated ADD CONSTRAINT org_disambiguated_unique_constraints UNIQUE (name, city, region, country, source_type)");
+        query.executeUpdate();
+    }
+
+    @Override
+    public List<OrgDisambiguatedEntity> findDuplicates() {
+        TypedQuery<OrgDisambiguatedEntity> query = entityManager.createNamedQuery(OrgDisambiguatedEntity.FIND_DUPLICATES, OrgDisambiguatedEntity.class);
+        return query.getResultList();
     }
 
 }

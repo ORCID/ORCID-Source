@@ -173,7 +173,7 @@ Finally help out by improving these instructions!
 
 ## Integration tests
 
-Integration tests are under ```[ORCID-Source]/orcid-core/src/test/java/org/orcid/core/integration```.
+Integration tests are under ```[ORCID-Source]/orcid-integraton-test/src/test/java/org/orcid/api```.
 
 In order to run them, you should have the ORCID project up and running.
 
@@ -200,7 +200,10 @@ Find the **service** element/tag and the following connector:
 * Run the tests: 
 
 	* In order to run the integration tests, you should have the ORCID server up and running, so, start the server if it is not started yet.
-	* Go to "```/orcid-api-web/src/test/java/org/orcid/api/t2/integration```"
+	* Go to "```/orcid-integration-test/src/test/java/org/orcid/api/t1/integration```"
+	* Right click over the package
+	* Select “*Run As*” → “*JUnit Test*”
+	* Go to "```/orcid-integration-test/src/test/java/org/orcid/api/t2/integration```"
 	* Right click over the package
 	* Select “*Run As*” → “*JUnit Test*”
 

@@ -223,7 +223,6 @@ orcidNgModule.factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
 			},
 			toggleEducation: function() {
 				serv.displayEducation = !serv.displayEducation;
-				console.log('Education');
 			},
 			toggleEmployment: function() {
 				serv.displayEmployment = !serv.displayEmployment;
@@ -364,6 +363,20 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 }]);
 
 var GroupedActivities = function(type) {
+	
+	if (GroupedActivities.count == undefined)
+		GroupedActivities.count = 1;
+	else
+		GroupedActivities.count ++;
+	
+	function getInstantiateCount() {
+		   var id = 0; // This is the private persistent value
+		   // The outer function returns a nested function that has access
+		   // to the persistent value.  It is this nested function we're storing
+		   // in the variable uniqueID above.
+		   return function() { return id++; };  // Return and increment
+	}
+	
 	this.type = type;
 	this._keySet = {};
 	this.activities = {};
@@ -371,7 +384,17 @@ var GroupedActivities = function(type) {
 	this.activePutCode = null;
 	this.defaultPutCode = null;
 	this.dateSortString;
+	this.groupId = GroupedActivities.count;
 };
+
+GroupedActivities.prototype.test = function() {
+	var count = null;
+	if (count == null)
+		count = 0;
+	else
+		count++;
+	return count;
+}
 
 GroupedActivities.prototype.add = function(activity) {
 	// assumes works are added in the order of the display index desc
@@ -501,7 +524,8 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 							$rootScope.$apply(function(){ 
 								for (i in data) {
 									var dw = data[i];                            
-									removeBadContributors(dw);							
+									removeBadContributors(dw);	
+									removeBadExternalIdentifiers(dw);
 									serv.addBibtexJson(dw);
 									var added = false;
 									for (var idx in serv.groups)
@@ -561,8 +585,9 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 						url: url + putCode,	        
 				        dataType: 'json',
 				        success: function(data) {		        	
-				        	$rootScope.$apply(function () {
+				        	$rootScope.$apply(function () {				        		
 				        		removeBadContributors(data);
+				        		removeBadExternalIdentifiers(data);
 				        		serv.addBibtexJson(data);
 				        		serv.details[putCode] = data;
 				        		if (callback != undefined) callback(serv.details[putCode]);
@@ -901,6 +926,15 @@ function removeBadContributors(dw) {
 	}
 }
 
+function removeBadExternalIdentifiers(dw) {
+	for(var idx in dw.workExternalIdentifiers) {
+		if(dw.workExternalIdentifiers[idx].workExternalIdentifierType == null 
+			&& dw.workExternalIdentifiers[idx].workExternalIdentifierId == null) {
+			dw.workExternalIdentifiers.splice(idx,1);
+		}
+	}
+}
+
 function isEmail(email) {
 	var re = /\S+@\S+\.\S+/;
 	return re.test(email);
@@ -1004,6 +1038,21 @@ function EditTableCtrl($scope) {
 	$scope.showEditSecurityQuestion = (window.location.hash === "#editSecurityQuestion");
 	$scope.securityQuestionUpdateToggleText();	
 	
+	/* Social Networks */
+
+	$scope.socialNetworksUpdateToggleText = function () {
+		if ($scope.showEditSocialSettings) $scope.socialNetworksToggleText = om.get("manage.socialNetworks.hide");
+		else $scope.socialNetworksToggleText = om.get("manage.socialNetworks.edit");
+	};
+
+	$scope.toggleSocialNetworksEdit = function(){
+		$scope.showEditSocialSettings = !$scope.showEditSocialSettings;
+		$scope.socialNetworksUpdateToggleText();
+	};
+
+	//init social networks row
+	$scope.showEditSocialSettings = (window.location.hash === "#editSocialNetworks");
+	$scope.socialNetworksUpdateToggleText();	
 };
 
 
@@ -3252,30 +3301,39 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	$scope.privacyHelp = {};
 	$scope.moreInfoOpen = false;
 	$scope.moreInfo = {};
-	$scope.showBibtexImportWizard = false;
+	$scope.editSources = {};
+	$scope.bibtexParsingError = false;
+	$scope.edittingWork = false;
+	$scope.bibtexCancelLink = false;
+
 	
 	$scope.loadBibtexJs = function() {
         try {
         	$scope.worksFromBibtex = new Array();
         	$.each($scope.textFiles, function (index, bibtex) {
-        		console.log(bibtex);
 				var parsed = bibtexParse.toJSON(bibtex);
+			
 				if (parsed.length == 0) throw "bibtex parse return nothing";
 				for (j in parsed) {
 					(function (cur) {
 						worksSrvc.getBlankWork(function(data) {
 							populateWorkAjaxForm(cur,data);
 							$scope.worksFromBibtex.push(data);
+							$scope.bibtexCancelLink = true;
 						});
 					})(parsed[j]);
 			    };
         	});
         	$scope.textFiles = null;
 		} catch (err) {
-			alert("Error Parsing File");
+			$scope.bibtexParsingError = true;
 		};
     };
     
+    $scope.rmWorkFromBibtex = function(work) {
+    	var index = $scope.worksFromBibtex.indexOf(work);    	
+    	$scope.worksFromBibtex.splice(index, 1);
+    };    
     
     $scope.addWorkFromBibtex = function(work) {
     	var index = $scope.worksFromBibtex.indexOf(work);
@@ -3284,7 +3342,13 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
     };
    
     $scope.openBibTextWizard = function () {
+    	$scope.bibtexParsingError = false;
     	$scope.showBibtexImportWizard = true;
+    };
+    
+    $scope.bibtextCancel = function(){
+    	$scope.worksFromBibtex = null;
+    	$scope.bibtexCancelLink = false;
     };
 	
 	// Check for the various File API support.
@@ -3301,6 +3365,16 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		$scope.editWork.workExternalIdentifiers.push({workExternalIdentifierId: {value: ""}, workExternalIdentifierType: {value: ""}});
 	};
 	
+	$scope.deleteExternalIdentifier = function(obj) {		
+		var index = $scope.editWork.contributors.indexOf(obj);
+		$scope.editWork.workExternalIdentifiers.splice(index,1);
+	};
+
+	$scope.deleteContributor = function(obj) {
+		var index = $scope.editWork.contributors.indexOf(obj);
+		$scope.editWork.contributors.splice(index,1);
+	};
+
 	$scope.showAddModal = function(){;
 		$scope.editTranslatedTitle = false;
 		$scope.types = null;
@@ -3336,6 +3410,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	$scope.addWorkModal = function(data){
 		$scope.loadWorkTypes();
 		if (data == undefined) { 
+			$scope.edittingWork = false;
 			worksSrvc.getBlankWork(function(data) {
 				$scope.editWork = data;
 				$scope.$apply(function() {					
@@ -3343,6 +3418,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 				});			
 			});
 		} else {
+			$scope.edittingWork = true;
 			$scope.editWork = data;
 			$scope.showAddModal();
 		}
@@ -3359,6 +3435,34 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		$scope.editWork.errors.length = 0;
 		$.ajax({
 			url: getBaseUri() + '/works/work.json',	        
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        type: 'POST',
+	        data:  angular.toJson($scope.editWork),
+	        success: function(data) {
+	        	if (data.errors.length == 0){
+	        		$scope.closeAllMoreInfo();
+	        		$.colorbox.close(); 
+	        		$scope.addingWork = false;
+	        		$scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
+	        	} else {
+		        	$scope.editWork = data;
+		        	$scope.copyErrorsLeft($scope.editWork, data);
+		        	$scope.addingWork = false;
+		        	$scope.$apply();
+	        	}
+	        }
+		}).fail(function(){
+			// something bad is happening!
+			$scope.addingWork = false;
+	    	console.log("error fetching works");
+		});
+	};
+	
+	$scope.editExistingWork = function() {				
+		$scope.editWork.errors.length = 0;
+		$.ajax({
+			url: getBaseUri() + '/works/edit-work.json',	        
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        type: 'POST',
@@ -3432,20 +3536,22 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	        	$scope.$apply(function() {
 		        	$scope.types = data;
 		        	if($scope.editWork != null && $scope.editWork.workCategory != null) {
-		        		switch ($scope.editWork.workCategory.value){
-		                case "conference":
-		                	$scope.editWork.workType.value="conference-paper";		                	
-		                    break;
-		                case "intellectual_property":
-		                	$scope.editWork.workType.value="patent";
-		                    break;
-		                case "other_output":
-		                	$scope.editWork.workType.value="data-set";
-		                    break;
-		                case "publication":
-		                	$scope.editWork.workType.value="journal-article";
-		                    break;
-		        		}
+		        		if(!$scope.edittingWork) {
+		        			switch ($scope.editWork.workCategory.value){
+			                case "conference":
+			                	$scope.editWork.workType.value="conference-paper";		                	
+			                    break;
+			                case "intellectual_property":
+			                	$scope.editWork.workType.value="patent";
+			                    break;
+			                case "other_output":
+			                	$scope.editWork.workType.value="data-set";
+			                    break;
+			                case "publication":
+			                	$scope.editWork.workType.value="journal-article";
+			                    break;
+			        		}
+		        		}		        		
 		        	}
 	        	});
 	        	
@@ -3588,7 +3694,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	};
 
 	$scope.isValidClass = function (cur) {
-		if (cur === undefined) return '';
+		if (cur === undefined || cur == null) return '';		
 		var valid = true;
 		if (cur.required && (cur.value == null || cur.value.trim() == '')) valid = false;
 		if (cur.errors !== undefined && cur.errors.length > 0) valid = false;
@@ -5827,6 +5933,68 @@ function switchUserCtrl($scope,$compile){
     	$('#switch_user_section').toggle();
 	};
 			
+};
+
+function SocialNetworksCtrl($scope){
+	$scope.twitter=false;
+
+	$scope.checkTwitterStatus = function(){
+		$.ajax({
+			url: getBaseUri() + '/manage/twitter/check-twitter-status',
+	        type: 'GET',
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'text',
+	        success: function(data) {	
+	        	console.log("-> " + data);
+	        	if(data == "true")
+	        		$scope.twitter = true;
+	        	else 
+	        		$scope.twitter = false;
+	        	console.log("value: " + $scope.twitter);
+	        	$scope.$apply();
+	        }
+		}).fail(function(){
+			console.log("Unable to fetch user twitter status");
+		});
+	};
+
+	$scope.updateTwitter = function() {
+		console.log("Update twitter");
+		if($scope.twitter == true) {
+			$.ajax({
+		        url: getBaseUri() + '/manage/twitter',
+		        type: 'POST',
+		        contentType: 'application/json;charset=UTF-8',
+		        dataType: 'text',
+		        success: function(data) {	        			        			        	
+		        	window.location = data;
+		        }
+		    }).fail(function() { 
+		    	console.log("Unable to enable twitter");
+		    });	
+		} else {
+			$.ajax({
+		        url: getBaseUri() + '/manage/disable-twitter',
+		        type: 'POST',
+		        contentType: 'application/json;charset=UTF-8',
+		        dataType: 'text',
+		        success: function(data) {
+		        	if(data == "true"){
+		        		$scope.twitter = false;
+		        	} else {
+		        		$scope.twitter = true;
+		        	}
+
+		        	$scope.$apply();
+		        }
+		    }).fail(function() { 
+		    	console.log("Unable to disable twitter");
+		    });				
+		}
+	};
+
+	//init
+	$scope.checkTwitterStatus();
 };
 
 /*Angular Multi-selectbox*/

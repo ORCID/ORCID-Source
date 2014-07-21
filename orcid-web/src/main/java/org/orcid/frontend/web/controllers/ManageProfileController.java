@@ -35,6 +35,7 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidSearchManager;
+import org.orcid.core.manager.OrcidSocialManager;
 import org.orcid.core.manager.OtherNameManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileKeywordManager;
@@ -73,8 +74,8 @@ import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
-import org.orcid.pojo.ManageDelegate;
 import org.orcid.pojo.ChangePassword;
+import org.orcid.pojo.ManageDelegate;
 import org.orcid.pojo.SecurityQuestion;
 import org.orcid.pojo.ajaxForm.BiographyForm;
 import org.orcid.pojo.ajaxForm.CountryForm;
@@ -84,8 +85,6 @@ import org.orcid.pojo.ajaxForm.NamesForm;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.OrcidWebUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.MapBindingResult;
@@ -113,8 +112,6 @@ public class ManageProfileController extends BaseWorkspaceController {
     private static final String IS_SELF = "isSelf";
 
     private static final String FOUND = "found";
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ManageProfileController.class);
 
     /*
      * session attribute that is used to see if we should check and notify the
@@ -151,6 +148,9 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @Resource
     private EmailDao emailDao;
+
+    @Resource
+    private OrcidSocialManager orcidSocialManager;
 
     public EncryptionManager getEncryptionManager() {
         return encryptionManager;
@@ -573,23 +573,25 @@ public class ManageProfileController extends BaseWorkspaceController {
         return deactivateOrcidView;
     }
 
-    @RequestMapping(value = "/confirm-deactivate-orcid/{encryptedEmail}", method = RequestMethod.GET) 
-    public ModelAndView confirmDeactivateOrcidAccount(HttpServletRequest request, @PathVariable("encryptedEmail") String encryptedEmail, RedirectAttributes redirectAttributes) throws Exception {
+    @RequestMapping(value = "/confirm-deactivate-orcid/{encryptedEmail}", method = RequestMethod.GET)
+    public ModelAndView confirmDeactivateOrcidAccount(HttpServletRequest request, @PathVariable("encryptedEmail") String encryptedEmail,
+            RedirectAttributes redirectAttributes) throws Exception {
         ModelAndView result = null;
-        String decryptedEmail=  encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
+        String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
         OrcidProfile profile = getEffectiveProfile();
-        //Since all profiles have at least one email address, this must never be null
-        
+        // Since all profiles have at least one email address, this must never
+        // be null
+
         String primaryEmail = profile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
 
-        if(decryptedEmail.equals(primaryEmail)) {
+        if (decryptedEmail.equals(primaryEmail)) {
             orcidProfileManager.deactivateOrcidProfile(profile);
-            result = new ModelAndView("redirect:/signout#deactivated");    
+            result = new ModelAndView("redirect:/signout#deactivated");
         } else {
             redirectAttributes.addFlashAttribute("emailDoesntMatch", true);
             return new ModelAndView("redirect:/my-orcid");
         }
-                
+
         return result;
     }
 
@@ -743,6 +745,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         return email;
     }
 
+    @SuppressWarnings("unchecked")
     @RequestMapping(value = "/emails.json", method = RequestMethod.POST)
     public @ResponseBody
     org.orcid.pojo.ajaxForm.Emails postEmailsJson(HttpServletRequest request, @RequestBody org.orcid.pojo.ajaxForm.Emails emails) {
@@ -940,6 +943,57 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
 
         return upTodateResearcherUrls;
+    }
+
+    /**
+     * Check if the user have twitter enabled
+     * */
+    @RequestMapping(value = { "/twitter/check-twitter-status" }, method = RequestMethod.GET)
+    public @ResponseBody
+    boolean isTwitterEnabled() {
+        String orcid = getEffectiveUserOrcid();
+        return orcidSocialManager.isTwitterEnabled(orcid);
+    }
+
+    /**
+     * Get a user request to authorize twitter and return the authorization URL
+     * */
+    @RequestMapping(value = { "/twitter" }, method = RequestMethod.POST)
+    public @ResponseBody
+    String goToTwitterAuthPage() throws Exception {
+        String authUrl = orcidSocialManager.getTwitterAuthorizationUrl(getEffectiveUserOrcid());
+        return authUrl;
+    }
+
+    /**
+     * Get the twitter credentials and enable it on the user profile
+     * */
+    @RequestMapping(value = { "/twitter" }, method = RequestMethod.GET)
+    public ModelAndView setTwitterKeyToProfileGET(@RequestParam("oauth_token") String token, @RequestParam("oauth_verifier") String verifier) throws Exception {
+        OrcidProfile profile = getEffectiveProfile();
+        ModelAndView mav = new ModelAndView("manage");
+        mav.addObject("showPrivacy", true);
+        mav.addObject("managePasswordOptionsForm", populateManagePasswordFormFromUserInfo());
+        mav.addObject("preferencesForm", new PreferencesForm(profile));
+        mav.addObject("profile", profile);
+        mav.addObject("activeTab", "profile-tab");
+        mav.addObject("securityQuestions", getSecurityQuestions());
+        if (profile != null) {
+            orcidSocialManager.enableTwitter(getEffectiveUserOrcid(), verifier);
+            mav.addObject("twitter", true);
+        }
+        return mav;
+    }
+
+    /**
+     * Disable twitter access
+     * */
+    @RequestMapping(value = { "/disable-twitter" }, method = RequestMethod.POST)
+    public @ResponseBody
+    boolean disableTwitter() throws Exception {
+        String orcid = getEffectiveUserOrcid();
+        orcidSocialManager.disableTwitter(orcid);
+        return true;
     }
 
 }
