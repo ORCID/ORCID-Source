@@ -114,6 +114,8 @@ public interface ClientDetailsManager extends ClientDetailsService {
 
     void persist(ClientDetailsEntity clientDetails);
 
+    public void addClientRedirectUri(String clientId, String uri);    
+    
     ClientDetailsEntity merge(ClientDetailsEntity clientDetails);
     
     void remove(String clientId);
