@@ -145,7 +145,7 @@ http://www.springsource.org/downloads/sts-ggts
 
 * Right click on "VMWare vFabric tc Server"
 
-* Select "Add and Remove" Add orcid-api-web, orcid-pub, orcid-scheduler-web, orcid-solr-web and orcid-web
+* Select "Add and Remove" Add orcid-api-web, orcid-pub, orcid-scheduler-web, orcid-solr-web, orcid-integration-test and orcid-web
 
 * Right click on "VMWare vFabric tc Server"
 
