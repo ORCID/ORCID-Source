@@ -568,8 +568,8 @@ public class NotificationManagerImpl implements NotificationManager {
 
         String email = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
         // Generate body from template
-        String body = templateManager.processTemplate("api_record_creation_email.ftl", templateParams);
-        String htmlBody = templateManager.processTemplate("api_record_creation_email_html.ftl", templateParams);
+        String body = templateManager.processTemplate("claim_reminder_email.ftl", templateParams);
+        String htmlBody = templateManager.processTemplate("claim_reminder_email_html.ftl", templateParams);
 
         // Send message
         if (apiRecordCreationEmailEnabled) {
