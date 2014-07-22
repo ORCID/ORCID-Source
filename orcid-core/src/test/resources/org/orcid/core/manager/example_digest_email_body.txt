@@ -1,0 +1,38 @@
+Welcome to your ORCID digest.
+
+Today's Topics:
+
+   1. Your ORCID record was updated (Super Institution 1)
+   2. Your ORCID record was updated (Lovely Publisher 1)
+
+
+----------------------------------------------------------------------
+
+Message: 1
+Date: 2014-07-10T13:39:31
+From: Super Institution 1
+Subject: Your ORCID record was updated
+
+Your ORCID record was update by Super Institution 1.
+
+Best regards,
+
+ORCID
+
+------------------------------
+
+Message: 2
+Date: 2014-07-10T08:53:56
+From: Lovely Publisher 1
+Subject: Your ORCID record was updated
+
+Your ORCID record was update by Lovely Publisher 1.
+
+Best regards,
+
+ORCID
+
+------------------------------
+
+End of your ORCID digest
+***********************************************
