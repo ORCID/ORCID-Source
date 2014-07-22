@@ -607,14 +607,17 @@ function populateWorkAjaxForm(bibJson, work) {
 	 // get the bibtex back put it in the citation field
 	 var bibtex = bibtexParse.toBibtex([bibJson]);
 	 work.citation.citation.value = bibtex;
-     work.citation.citationType.value = 'bibtex';
+     work.citation.citationType.value = 'bibtex';     
+     
      
      // set the work type based off the entry type
      if (bibJson.entryType) {
-    	 var type = bibJson.entryType.toLowerCase(); 
-    	 if (bibToWorkTypeMap.hasOwnProperty(type)) {
-    		 work.workCategory.value = bibToWorkTypeMap[type][0];
-    		 work.workType.value = bibToWorkTypeMap[type][1];
+    	 
+    	 var type = bibJson.entryType.toLowerCase();
+    	 
+	    if (bibToWorkTypeMap.hasOwnProperty(type)) {	    		 
+	    	 work.workCategory.value = bibToWorkTypeMap[type][0];
+	    	 work.workType.value = bibToWorkTypeMap[type][1];    
     	 }
      } 
      
@@ -1080,7 +1083,7 @@ $(function (){
 			this.currentEntry = {};
 			this.currentEntry['entryType'] = 'PREAMBLE';
 			this.currentEntry['entry'] = this.value_comment();
-			//this.entries.push(this.currentEntry); Do not push it
+			this.entries.push(this.currentEntry);
 			
 		};
 
@@ -1088,7 +1091,7 @@ $(function (){
 			this.currentEntry = {};
 			this.currentEntry['entryType'] = 'COMMENT';
 			this.currentEntry['entry'] = this.value_comment();
-			//this.entries.push(this.currentEntry); Do not push it
+			this.entries.push(this.currentEntry);
 		};
 
 		this.entry = function(d) {
@@ -1295,8 +1298,8 @@ $(function (){
 	exports.toJSON = function(bibtex) {
 		var b = new BibtexParser();
 		b.setInput(bibtex);
-		b.bibtex();
-		return b.entries;
+		b.bibtex();		
+		return b.entries;		
 	};
 
 	/* added during hackathon don't hate on me */
@@ -1320,7 +1323,7 @@ $(function (){
 			}
 			out += '}\n\n';
 		}
-		console.log(out);
+		//console.log(out);
 		return out;
 		
 	};

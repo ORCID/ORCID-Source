@@ -3292,7 +3292,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	$scope.canReadFiles = false;
 	$scope.showBibtexImportWizard = false;
 	$scope.textFiles = null;
-	$scope.worksFromBibtex = null;
+	$scope.worksFromBibtex = null;	
 	$scope.workspaceSrvc = workspaceSrvc;
 	$scope.worksSrvc = worksSrvc;
 	$scope.showBibtex = true;
@@ -3305,22 +3305,31 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	$scope.bibtexParsingError = false;
 	$scope.edittingWork = false;
 	$scope.bibtexCancelLink = false;
+	$scope.bibtextWork = false;
+	$scope.bibtextWorkIndex = null;
 
 	
 	$scope.loadBibtexJs = function() {
         try {
         	$scope.worksFromBibtex = new Array();
+        	
         	$.each($scope.textFiles, function (index, bibtex) {
 				var parsed = bibtexParse.toJSON(bibtex);
-			
+				var bibtexEntry = null;
+							
 				if (parsed.length == 0) throw "bibtex parse return nothing";
+				
+				
 				for (j in parsed) {
-					(function (cur) {
-						worksSrvc.getBlankWork(function(data) {
-							populateWorkAjaxForm(cur,data);
-							$scope.worksFromBibtex.push(data);
-							$scope.bibtexCancelLink = true;
-						});
+					(function (cur) {						
+						bibtexEntry = parsed[j].entryType.toLowerCase(); 
+						if(bibtexEntry != 'preamble' && bibtexEntry != 'comment'){ //Filtering @PREAMBLE and @COMMENT
+							worksSrvc.getBlankWork(function(data) {
+								populateWorkAjaxForm(cur,data);
+								$scope.worksFromBibtex.push(data);			
+								$scope.bibtexCancelLink = true;
+							});
+						}
 					})(parsed[j]);
 			    };
         	});
@@ -3335,15 +3344,15 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
     	$scope.worksFromBibtex.splice(index, 1);
     };    
     
-    $scope.addWorkFromBibtex = function(work) {
-    	var index = $scope.worksFromBibtex.indexOf(work);
-    	var work = $scope.worksFromBibtex.splice(index, 1);    	
-    	$scope.addWorkModal(work[0]);
+    $scope.addWorkFromBibtex = function(work) {    	
+    	$scope.bibtextWorkIndex = $scope.worksFromBibtex.indexOf(work);
+    	$scope.bibtextWork = true;    	
+    	$scope.addWorkModalFromBibTex($scope.worksFromBibtex[$scope.bibtextWorkIndex]);
     };
    
     $scope.openBibTextWizard = function () {
     	$scope.bibtexParsingError = false;
-    	$scope.showBibtexImportWizard = true;
+    	$scope.showBibtexImportWizard = true;    	
     };
     
     $scope.bibtextCancel = function(){
@@ -3407,7 +3416,15 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
         });
 	};
 	
-	$scope.addWorkModal = function(data){
+	$scope.addWorkModalFromBibTex = function(data){
+		$scope.loadWorkTypes();		 
+		$scope.edittingWork = false;
+		$scope.editWork = data;
+		$scope.showAddModal();		
+	};
+	
+	$scope.addWorkModal = function(data){		
+		
 		$scope.loadWorkTypes();
 		if (data == undefined) { 
 			$scope.edittingWork = false;
@@ -3444,7 +3461,11 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	        		$scope.closeAllMoreInfo();
 	        		$.colorbox.close(); 
 	        		$scope.addingWork = false;
-	        		$scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
+	        		$scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);	        		
+	        		if($scope.bibtextWork == true){
+	        			$scope.worksFromBibtex.splice($scope.bibtextWorkIndex, 1);
+	        			$scope.bibtextWork = false;	        			
+	        		}
 	        	} else {
 		        	$scope.editWork = data;
 		        	$scope.copyErrorsLeft($scope.editWork, data);
@@ -3472,12 +3493,12 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	        		$scope.closeAllMoreInfo();
 	        		$.colorbox.close(); 
 	        		$scope.addingWork = false;
-	        		$scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
+	        		$scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);	        		
 	        	} else {
 		        	$scope.editWork = data;
 		        	$scope.copyErrorsLeft($scope.editWork, data);
 		        	$scope.addingWork = false;
-		        	$scope.$apply();
+		        	$scope.$apply();		        	
 	        	}
 	        }
 		}).fail(function(){
