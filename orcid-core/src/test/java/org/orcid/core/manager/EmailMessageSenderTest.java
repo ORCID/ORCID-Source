@@ -16,7 +16,8 @@
  */
 package org.orcid.core.manager;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,7 +30,6 @@ import org.junit.Test;
 import org.orcid.core.BaseTest;
 import org.orcid.jaxb.model.notification.Notification;
 import org.orcid.jaxb.model.notification.Source;
-import org.orcid.jaxb.model.notification.SourceName;
 import org.orcid.utils.DateUtils;
 
 /**
@@ -52,9 +52,7 @@ public class EmailMessageSenderTest extends BaseTest {
         notification1.setBodyText("Your ORCID record was update by Super Institution 1.\n\nBest regards,\n\nORCID");
         notification1.setSentDate(DateUtils.convertToXMLGregorianCalendar("2014-07-10T13:39:31"));
         Source source1 = new Source();
-        SourceName sourceName1 = new SourceName();
-        sourceName1.setContent("Super Institution 1");
-        source1.setSourceName(sourceName1);
+        source1.setSourceName("Super Institution 1");
         notification1.setSource(source1);
         notifications.add(notification1);
 
@@ -63,14 +61,12 @@ public class EmailMessageSenderTest extends BaseTest {
         notification2.setBodyText("Your ORCID record was update by Lovely Publisher 1.\n\nBest regards,\n\nORCID");
         notification2.setSentDate(DateUtils.convertToXMLGregorianCalendar("2014-07-10T08:53:56"));
         Source source2 = new Source();
-        SourceName sourceName2 = new SourceName();
-        sourceName2.setContent("Lovely Publisher 1");
-        source2.setSourceName(sourceName2);
+        source2.setSourceName("Lovely Publisher 1");
         notification2.setSource(source2);
         notifications.add(notification2);
 
         EmailMessage emailMessage = emailMessageSender.createDigest(notifications);
-        
+
         assertNotNull(emailMessage);
         String expectedBodyText = IOUtils.toString(getClass().getResourceAsStream("example_digest_email_body.txt"));
         assertEquals(expectedBodyText, emailMessage.getBodyText());

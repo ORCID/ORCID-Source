@@ -48,7 +48,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
             summaryText.append(". ");
             summaryText.append(notification.getSubject());
             summaryText.append(" (");
-            summaryText.append(notification.getSource().getSourceName().getContent());
+            summaryText.append(notification.getSource().getSourceName());
             summaryText.append(")");
 
             bodyText.append("\nMessage: ");
@@ -56,7 +56,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
             bodyText.append("\nDate: ");
             bodyText.append(notification.getSentDate().toXMLFormat());
             bodyText.append("\nFrom: ");
-            bodyText.append(notification.getSource().getSourceName().getContent());
+            bodyText.append(notification.getSource().getSourceName());
             bodyText.append("\nSubject: ");
             bodyText.append(notification.getSubject());
             bodyText.append("\n\n");

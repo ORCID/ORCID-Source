@@ -8,14 +8,7 @@
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element ref="orcid:putCode" minOccurs="0"/>
-				<xs:element name="notificationType">
-					<xs:simpleType>
-						<xs:restriction base="xs:string">
-							<xs:enumeration value="RECORD_UPDATED_BY_MEMBER"/>
-							<xs:enumeration value="CUSTOM"/>
-						</xs:restriction>
-					</xs:simpleType>
-				</xs:element>
+				<xs:element ref="orcid:notificationType"/>
 				<xs:element type="xs:string" name="subject"/>
 				<xs:element type="xs:string" name="bodyText"/>
 				<xs:element type="xs:string" name="bodyHtml"/>
@@ -26,5 +19,12 @@
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
-	
+	<xs:element name="notificationType">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="RECORD_UPDATED_BY_MEMBER"/>
+				<xs:enumeration value="CUSTOM"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
 </xs:schema>

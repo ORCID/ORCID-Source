@@ -15,12 +15,11 @@
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="sourceName">
+	<xs:element name="sourceName" type="xs:string">
 		<xs:annotation>
 			<xs:documentation>The name of the client application (Member organization system) that
 				created the ORCID Record. </xs:documentation>
 		</xs:annotation>
-		<xs:complexType mixed="true"/>
 	</xs:element>
 	<xs:element name="orcidId">
 		<xs:complexType>
