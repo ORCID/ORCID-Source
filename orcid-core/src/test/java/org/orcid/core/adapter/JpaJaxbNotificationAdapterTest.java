@@ -60,6 +60,7 @@ public class JpaJaxbNotificationAdapterTest {
         notificationEntity.setId(123L);
         notificationEntity.setNotificationType(NotificationType.RECORD_UPDATED_BY_MEMBER);
         notificationEntity.setSubject("Test subject");
+        notificationEntity.setDateCreated(DateUtils.convertToDate("2014-01-01T09:17:56"));
         notificationEntity.setReadDate(DateUtils.convertToDate("2014-03-04T17:43:06"));
 
         Notification notification = jpaJaxbNotificationAdapter.toNotification(notificationEntity);
@@ -67,6 +68,7 @@ public class JpaJaxbNotificationAdapterTest {
         assertNotNull(notification);
         assertEquals(NotificationType.RECORD_UPDATED_BY_MEMBER, notification.getNotificationType());
         assertEquals("Test subject", notification.getSubject());
+        assertEquals("2014-01-01T09:17:56.000Z", notification.getCreatedDate().toXMLFormat());
         assertEquals("2014-03-04T17:43:06.000Z", notification.getReadDate().toXMLFormat());
     }
 

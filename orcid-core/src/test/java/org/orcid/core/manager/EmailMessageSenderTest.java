@@ -50,7 +50,7 @@ public class EmailMessageSenderTest extends BaseTest {
         Notification notification1 = new Notification();
         notification1.setSubject("Your ORCID record was updated");
         notification1.setBodyText("Your ORCID record was update by Super Institution 1.\n\nBest regards,\n\nORCID");
-        notification1.setSentDate(DateUtils.convertToXMLGregorianCalendar("2014-07-10T13:39:31"));
+        notification1.setCreatedDate(DateUtils.convertToXMLGregorianCalendar("2014-07-10T13:39:31"));
         Source source1 = new Source();
         source1.setSourceName("Super Institution 1");
         notification1.setSource(source1);
@@ -59,7 +59,7 @@ public class EmailMessageSenderTest extends BaseTest {
         Notification notification2 = new Notification();
         notification2.setSubject("Your ORCID record was updated");
         notification2.setBodyText("Your ORCID record was update by Lovely Publisher 1.\n\nBest regards,\n\nORCID");
-        notification2.setSentDate(DateUtils.convertToXMLGregorianCalendar("2014-07-10T08:53:56"));
+        notification2.setCreatedDate(DateUtils.convertToXMLGregorianCalendar("2014-07-10T08:53:56"));
         Source source2 = new Source();
         source2.setSourceName("Lovely Publisher 1");
         notification2.setSource(source2);

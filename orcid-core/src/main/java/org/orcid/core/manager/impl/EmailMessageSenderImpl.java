@@ -54,7 +54,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
             bodyText.append("\nMessage: ");
             bodyText.append(messageNumber);
             bodyText.append("\nDate: ");
-            bodyText.append(notification.getSentDate().toXMLFormat());
+            bodyText.append(notification.getCreatedDate().toXMLFormat());
             bodyText.append("\nFrom: ");
             bodyText.append(notification.getSource().getSourceName());
             bodyText.append("\nSubject: ");
