@@ -70,13 +70,15 @@
 			<div class="col-md-12 col-sm-12">
 				<!-- Sources -->			
 				<div class="sources-container">
-					<div class="grey-box">
+					<div>
 						<div class="row">
 							<div class="col-md-8">
-								<strong>Sources:</strong>
+								<strong>Source:</strong> {{group.getActive().workSourceName.value}}
+								<span ng-hide="group.activitiesCount == 1" class="pull-right">
+								 (<a ng-click="editSources[group.groupId] = !editSources[group.groupId]">{{group.activitiesCount - 1 }} additional source<span ng-show="group.activitiesCount < 1">s</span></a>)
+								</span>
 							</div>
 							<div class="col-md-4">
-								<a class="glyphicon glyphicon-pencil pull-right" ng-click="editSources[group.groupId] = true" ng-hide="editSources[group.groupId] == true"></a>
 								<ul class="sources-options" ng-show="editSources[group.groupId] == true" ng-cloak>
 									<li>
 										<a ng-click="deleteWorkConfirm(group.getActive().putCode.value, true)">
@@ -92,25 +94,19 @@
 								
 							</div>
 						</div>
-						<div class="sources-list">
-							<span 
-								ng-repeat="work in group.activities"
-								ng-class="work.putCode.value == group.activePutCode ? 'label label-success source' : 'label label-default source'"														
-								ng-hide="editSources[group.groupId] == true"
-								ng-click="moreInfo[work.putCode.value] = moreInfo[group.activePutCode]; group.activePutCode = work.putCode.value">						
-									{{work.workSourceName.value}} <span class="glyphicon glyphicon-globe privacy" ng-show="work.putCode.value == group.defaultPutCode"
-								></span>
-							</span>						
-						</div>
 						<div class="sources-edit">	
 							<table class="sources-edit-table" ng-show="editSources[group.groupId] == true" ng-cloak>							    
-							    <tr ng-repeat="work in group.activities">
+							    <tr ng-repeat="work in group.activities" ng-class="work.putCode.value == group.activePutCode ? 'grey-box' : ''">
 							       <td>
 							       		<span
-							           		ng-click="moreInfo[work.putCode.value] = moreInfo[group.activePutCode]; group.activePutCode = work.putCode.value"							           		
-							           		ng-class="work.putCode.value == group.activePutCode ? 'label label-success source' : 'label label-default source'">
+							       		    ng-show="work.putCode.value == group.activePutCode"
+							           		ng-click="moreInfo[work.putCode.value] = moreInfo[group.activePutCode]; group.activePutCode = work.putCode.value">
 							           			{{work.workSourceName.value}}
-							           		</span> 
+							           		</span>
+							           	<a ng-hide="work.putCode.value == group.activePutCode"
+							           		ng-click="moreInfo[work.putCode.value] = moreInfo[group.activePutCode]; group.activePutCode = work.putCode.value">
+							           			{{work.workSourceName.value}}
+							           		</a> 
 							       </td>
 							       <td>
 							           <span class="glyphicon glyphicon-globe privacy" ng-show="work.putCode.value == group.defaultPutCode"></span> 
