@@ -75,7 +75,7 @@
 							<div class="col-md-8">
 								<strong>Source:</strong> {{group.getActive().workSourceName.value}}
 								<span ng-hide="group.activitiesCount == 1" class="pull-right">
-								 (<a ng-click="editSources[group.groupId] = !editSources[group.groupId]">{{group.activitiesCount - 1 }} additional source<span ng-show="group.activitiesCount < 1">s</span></a>)
+								 (<a ng-click="editSources[group.groupId] = !editSources[group.groupId]">{{group.activitiesCount - 1 }} additional source<span ng-show="group.activitiesCount > 2">s</span></a>)
 								</span>
 							</div>
 							<div class="col-md-4">
