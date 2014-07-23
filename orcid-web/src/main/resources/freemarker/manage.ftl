@@ -57,13 +57,13 @@
 					<td colspan="2">
 						<div class="editTablePadCell35">
 							<!-- we should never see errors here, but just to be safe -->
-							<span class="orcid-error" ng-show="emailsPojo.errors.length > 0">
-								<span ng-repeat='error in emailsPojo.errors'
+							<span class="orcid-error" ng-show="emailSrvc.emails.errors.length > 0">
+								<span ng-repeat='error in emailSrvc.emails.errors'
 								ng-bind-html="error"></span>
 							</span>
 							<!-- Start -->
 							
-							<div ng-repeat='email in emailsPojo.emails' class="data-row-group">
+							<div ng-repeat="email in emailSrvc.emails.emails | orderBy:['value']" class="data-row-group">
 								<div class="row">
 									<!-- Primary Email -->
 									<div ng-class="{primaryEmail:email.primary}"
@@ -71,7 +71,7 @@
 									<!-- Set Primary options -->
 									<div class="col-md-2 col-xs-12">
 										<span ng-hide="email.primary"> <a href=""
-											ng-click="setPrimary($index)">${springMacroRequestContext.getMessage("manage.email.set_primary")}</a>
+											ng-click="emailSrvc.setPrimary(email)">${springMacroRequestContext.getMessage("manage.email.set_primary")}</a>
 										</span> <span ng-show="email.primary" class="muted"
 											style="color: #bd362f;">
 											${springMacroRequestContext.getMessage("manage.email.primary_email")}
@@ -82,7 +82,7 @@
 										<div class="col-md-3 col-xs-4">
 											<!-- Current -->
 											<div class="left">
-												<select style="width: 100px; margin: 0px;" ng-change="saveEmail()" ng-model="email.current">
+												<select style="width: 100px; margin: 0px;" ng-change="emailSrvc.saveEmail()" ng-model="email.current">
 													<option value="true" ng-selected="email.current == true"><@orcid.msg 'manage.email.current.true' /></option>
 													<option value="false" ng-selected="email.current == false"><@orcid.msg 'manage.email.current.false' /></option>              
 												</select>
@@ -92,14 +92,14 @@
 											<!-- Email verified -->
 											<div class="email-verified left">
 												<span ng-hide="email.verified" class="left"><a href=""
-													ng-click="verifyEmail($index)">${springMacroRequestContext.getMessage("manage.email.verify")}</a></span>
+													ng-click="verifyEmail(email)">${springMacroRequestContext.getMessage("manage.email.verify")}</a></span>
 												<span ng-show="email.verified" class="left">${springMacroRequestContext.getMessage("manage.email.verified")}</span>
 											</div>
 											<!-- Icon Trash / Privacy Settings -->
 											<div class="right">
 												<a href="" class="glyphicon glyphicon-trash grey"
 													ng-show="email.primary == false"
-													ng-click="confirmDeleteEmail($index)"></a>
+													ng-click="confirmDeleteEmail(email)"></a>
 											</div>
 										</div>
 										<div class="col-md-2 col-xs-4">
@@ -118,12 +118,12 @@
 							<div class="row bottom-row">
 									<div class="col-md-12 add-email">
 										<input type="email" placeholder="${springMacroRequestContext.getMessage("manage.add_another_email")}"
-											class="input-xlarge inline-input" ng-model="inputEmail.value"
+											class="input-xlarge inline-input" ng-model="emailSrvc.inputEmail.value"
 											required /> <span
 											ng-click="checkCredentials()" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span>
 										<span class="orcid-error"
-											ng-show="inputEmail.errors.length > 0"> <span
-											ng-repeat='error in inputEmail.errors'
+											ng-show="emailSrvc.inputEmail.errors.length > 0"> <span
+											ng-repeat='error in emailSrvc.inputEmail.errors'
 											ng-bind-html="error"></span>
 										</span>
 									</div>
@@ -515,13 +515,13 @@
 </script>
 		
 <script type="text/ng-template" id="verify-email-modal">
-	<div style="padding: 20px;"><h3>${springMacroRequestContext.getMessage("manage.email.verificationEmail")} {{emailsPojo.emails[verifyEmailIdx].value}}</h3>
+	<div style="padding: 20px;"><h3>${springMacroRequestContext.getMessage("manage.email.verificationEmail")} {{verifyEmailObject.value}}</h3>
 	<button class="btn" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.email.verificationEmail.close")}</button>
 </script>
 
 <script type="text/ng-template" id="delete-email-modal">
-	<div style="padding: 20px;"><h3><@orcid.msg 'manage.email.pleaseConfirmDeletion' /> {{emailsPojo.emails[deleteEmailIdx].value}}</h3>
-	<button class="btn btn-danger" ng-click="deleteEmail()"><@orcid.msg 'manage.email.deleteEmail' /></button> 
+	<div style="padding: 20px;"><h3><@orcid.msg 'manage.email.pleaseConfirmDeletion' /> {{emailSrvc.delEmail.value}}</h3>
+	<button class="btn btn-danger" ng-click="deleteEmail(emailSrvc.delEmail)"><@orcid.msg 'manage.email.deleteEmail' /></button> 
 	<a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a><div>
 </script>		
 
