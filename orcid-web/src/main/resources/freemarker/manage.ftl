@@ -495,7 +495,11 @@
 					<div class="sso" ng-controller="SSOPreferencesCtrl">
 						<#if profile.orcidInternal?? && profile.orcidInternal.preferences.developerToolsEnabled?? && profile.orcidInternal.preferences.developerToolsEnabled.value == false>
 							<p><@spring.message "manage.developer_tools.enable.description"/></p>
-							<p><@spring.message "manage.developer_tools.enable.text"/>&nbsp;<a href ng-click="enableDeveloperTools()"><@spring.message "manage.developer_tools.enable_disable.link.text"/></a></p>
+							<#if hasVerifiedEmail>
+							   <p><@spring.message "manage.developer_tools.enable.text"/>&nbsp;<a href ng-click="enableDeveloperTools()"><@spring.message "manage.developer_tools.enable_disable.link.text"/></a></p>
+						    <#else>
+						       <@spring.message "manage.developer_tools.please"/> <a ng-click="verifyEmail()"><@spring.message "manage.developer_tools.verify_your_email"/></a> <@spring.message "manage.developer_tools.before_enabling_developers_tools"/>
+						    </#if>
 						<#else>
 							<p><@spring.message "manage.developer_tools.enabled.description"/>&nbsp;<a href="<@spring.url "/developer-tools"/>"><@spring.message "manage.developer_tools.enabled.link"/></a></p>						
 						</#if>				
