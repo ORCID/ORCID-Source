@@ -81,7 +81,7 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     void updateLastModifiedDateWithoutResult(String orcid);
 
-    void updateLastModifiedDateWithoutResult(String orcid, Date lastModified);
+    void updateLastModifiedDateAndIndexingStatusWithoutResult(String orcid, Date lastModified, IndexingStatus indexingStatus);
 
     void updateLastModifiedDateAndIndexingStatus(String orcid);
 
