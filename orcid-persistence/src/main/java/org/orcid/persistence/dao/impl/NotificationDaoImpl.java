@@ -16,9 +16,11 @@
  */
 package org.orcid.persistence.dao.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
@@ -48,6 +50,18 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     public NotificationEntity findLatestByOrcid(String orcid) {
         List<NotificationEntity> results = findByOrcid(orcid, 0, 1);
         return results.isEmpty() ? null : results.get(0);
+    }
+
+    @Override
+    public List<String> findOrcidsWithNotificationsToSend() {
+        return findOrcidsWithNotificationsToSend(new Date());
+    }
+
+    @Override
+    public List<String> findOrcidsWithNotificationsToSend(Date effectiveNow) {
+        TypedQuery<String> query = entityManager.createNamedQuery(NotificationEntity.FIND_ORCIDS_WITH_NOTIFICATIONS_TO_SEND, String.class);
+        query.setParameter("effectiveNow", effectiveNow);
+        return query.getResultList();
     }
 
 }

@@ -16,6 +16,7 @@
  */
 package org.orcid.persistence.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import org.orcid.persistence.jpa.entities.NotificationEntity;
@@ -30,4 +31,14 @@ public interface NotificationDao extends GenericDao<NotificationEntity, Long> {
     List<NotificationEntity> findByOrcid(String orcid, int firstResult, int maxResults);
 
     NotificationEntity findLatestByOrcid(String orcid);
+
+    List<String> findOrcidsWithNotificationsToSend();
+
+    /**
+     * @param effectiveNow
+     *            Normally this would be the current date and time, but it is
+     *            useful to be able to pass in a different value for testing.
+     */
+    List<String> findOrcidsWithNotificationsToSend(Date effectiveNow);
+
 }
