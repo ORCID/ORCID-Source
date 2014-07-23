@@ -42,6 +42,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.api.t2.T2OAuthAPIService;
+import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.persistence.dao.ClientRedirectDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -76,6 +77,9 @@ public class PublicOauthClientTest extends DBUnitTest {
     @Resource
     private ClientRedirectDao clientRedirectDao;
     
+    @Resource
+    private ClientDetailsManager clientDetailsManager;
+    
     @Resource(name = "t2OAuthClient")
     private T2OAuthAPIService<ClientResponse> oauthT2Client;
     
@@ -102,7 +106,7 @@ public class PublicOauthClientTest extends DBUnitTest {
         redirectUri = webBaseUrl + "/oauth/playground";
         ClientRedirectUriPk clientRedirectUriPk = new ClientRedirectUriPk(CLIENT_DETAILS_ID, redirectUri);
         if (clientRedirectDao.find(clientRedirectUriPk) == null) {
-            clientRedirectDao.addClientRedirectUri(CLIENT_DETAILS_ID, redirectUri);
+            clientDetailsManager.addClientRedirectUri(CLIENT_DETAILS_ID, redirectUri);
         }
         webDriver.get(webBaseUrl + "/signout");
         // Update last modified to force cache eviction (because DB unit deletes

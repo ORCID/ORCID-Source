@@ -128,7 +128,7 @@ public class CreateNewClientSecrets {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus status) {
-                ClientDetailsEntity clientDetails = clientDetailsManager.find(clientDetailsId);
+                ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientDetailsId);
                 createNewClientSecret(clientDetails);
             }
         });

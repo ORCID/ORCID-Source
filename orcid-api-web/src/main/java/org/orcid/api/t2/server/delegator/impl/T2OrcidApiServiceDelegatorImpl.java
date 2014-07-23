@@ -415,7 +415,7 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
             AuthorizationRequest authorizationRequest = ((OAuth2Authentication) authentication).getAuthorizationRequest();
             Source sponsor = new Source();
             String sponsorOrcid = authorizationRequest.getClientId();
-            ClientDetailsEntity clientDetails = clientDetailsManager.find(sponsorOrcid);
+            ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(sponsorOrcid);
             if (clientDetails != null) {
                 sponsor.setSourceName(new SourceName(clientDetails.getClientName()));
             } else {
