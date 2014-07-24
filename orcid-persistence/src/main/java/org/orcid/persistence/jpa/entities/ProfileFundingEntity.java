@@ -230,7 +230,7 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
         this.visibility = visibility;
     }
 
-    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = PROFILE_FUNDING)
+    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = PROFILE_FUNDING, orphanRemoval = true)
     @Fetch(FetchMode.SUBSELECT)
     @Sort(type = SortType.NATURAL)
     public SortedSet<FundingExternalIdentifierEntity> getExternalIdentifiers() {

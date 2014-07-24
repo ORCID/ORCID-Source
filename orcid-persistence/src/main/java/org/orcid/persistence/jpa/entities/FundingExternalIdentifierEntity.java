@@ -57,7 +57,7 @@ public class FundingExternalIdentifierEntity extends BaseEntity<Long> implements
         this.id = id;
     }
 
-    @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.DETACH }, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "profile_funding_id")
     public ProfileFundingEntity getProfileFunding() {
         return profileFunding;
@@ -125,6 +125,15 @@ public class FundingExternalIdentifierEntity extends BaseEntity<Long> implements
         }
 
         return 0;
+    }
+
+    /**
+     * Clean simple fields so that entity can be reused.
+     */
+    public void clean() {
+        type = null;
+        value = null;
+        url = null;
     }
 
 }
