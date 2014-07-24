@@ -35,7 +35,7 @@
          		</#list>				
 			</div>	
 			<#assign denyOnClick = " orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Authorize_Deny', 'OAuth " + client_group_name?js_string + " - " + client_name?js_string + "']);"> 
-			<form id="authForm" class="form-inline" name="authForm" action="#" onsubmit="${denyOnClick} orcidGA.gaFormSumbitDelay(this); return false;" method="post">            		
+			<div id="authForm">            		
 	            <input ng-model="authorizationForm.scope.value" name="scopes" value="${scopesString}" type="hidden"/>
 	            <input ng-model="authorizationForm.clientId.value" name="client_id" value="${client_id}" type="hidden"/>
 	            <input ng-model="authorizationForm.responseType.value" name="response_type" value="${response_type}" type="hidden"/>
@@ -52,15 +52,15 @@
 	                   <input type="password" id="password" ng-model="authorizationForm.password.value" name="password" value="" placeholder="Password" class="input-xlarge">
 	                </div>
 	            </div>
-	            <div id="buttons">                     		            		               
-					<button class="btn btn-primary" name="deny" value="${springMacroRequestContext.getMessage('confirm-oauth-access.Deny')}" type="submit">
-						<@orcid.msg 'confirm-oauth-access.Deny' />
-					</button>	
-					<button name="authorize" value="${springMacroRequestContext.getMessage('confirm-oauth-access.Authorize')}" type="submit">
+	            <div id="buttons">                     		            		               					
+					<button class="btn btn-primary" name="authorize" value="${springMacroRequestContext.getMessage('confirm-oauth-access.Authorize')}" ng-click="authorize()">
 						<@orcid.msg 'confirm-oauth-access.Authorize' />
 					</button>		                 	            
+					<button class="btn btn-primary" name="deny" value="${springMacroRequestContext.getMessage('confirm-oauth-access.Deny')}" ng-click="deny()">
+						<@orcid.msg 'confirm-oauth-access.Deny' />
+					</button>
 	            </div>
-        	</form>
+        	</div>
 		<#else>			    
 		    <div class="page-header">
 			    <h3>${springMacroRequestContext.getMessage("oauth_sign_in.h3signin")}</h3>
