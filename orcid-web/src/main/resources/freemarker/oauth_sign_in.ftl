@@ -36,8 +36,10 @@
 			</div>	
 			<#assign denyOnClick = " orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Authorize_Deny', 'OAuth " + client_group_name?js_string + " - " + client_name?js_string + "']);"> 
 			<form id="authForm" class="form-inline" name="authForm" action="<@spring.url '/oauth/custom/authorize'/>" onsubmit="${denyOnClick} orcidGA.gaFormSumbitDelay(this); return false;" method="post">            		
-	            <input name="scopes" value="${scope}" type="hidden"/>
+	            <input name="scopes" value="${scopesString}" type="hidden"/>
 	            <input name="client_id" value="${client_id}" type="hidden"/>
+	            <input name="response_type" value="${response_type}" type="hidden"/>
+	            <input name="redirect_uri" value="${redirect_uri}" type="hidden"/>	            
 	            <div>
 	                <label for="userId">${springMacroRequestContext.getMessage("oauth_sign_in.labelemailorID")}</label>
 	                <div class="relative">

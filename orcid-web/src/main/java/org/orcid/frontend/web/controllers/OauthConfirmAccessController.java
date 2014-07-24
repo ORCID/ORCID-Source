@@ -16,6 +16,12 @@
  */
 package org.orcid.frontend.web.controllers;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,29 +36,49 @@ import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.pojo.ajaxForm.OauthAuthorizeForm;
+import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.provider.endpoint.AuthorizationEndpoint;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.support.SimpleSessionStatus;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller("oauthConfirmAccessController")
 @RequestMapping(value = "/oauth", method = RequestMethod.GET)
 public class OauthConfirmAccessController extends BaseController {
 
-    Pattern clientIdPattern = Pattern.compile("client_id=([^&]*)");
-    Pattern orcidPattern = Pattern.compile("(&|\\?)orcid=([^&]*)");
-    Pattern scopesPattern = Pattern.compile("scope=([^&]*)");
+    private Pattern clientIdPattern = Pattern.compile("client_id=([^&]*)");
+    private Pattern orcidPattern = Pattern.compile("(&|\\?)orcid=([^&]*)");
+    private Pattern scopesPattern = Pattern.compile("scope=([^&]*)");
+    private Pattern redirectUriPattern = Pattern.compile("redirect_uri=([^&]*)");
+    private Pattern responseTypePattern = Pattern.compile("response_type=([^&]*)");
+    
+    private static String RESPONSE_TYPE = "code";
+    private static String CLIENT_ID_PARAM = "client_id";
+    private static String SCOPE_PARAM = "scope";
+    private static String RESPONSE_TYPE_PARAM = "response_type";
+    private static String REDIRECT_URI_PARAM = "redirect_uri";
     
     private static final String JUST_REGISTERED = "justRegistered";
     @Resource
     private OrcidProfileManager orcidProfileManager;
     @Resource
     private ClientDetailsManager clientDetailsManager;
+    @Resource
+    private AuthenticationManager authenticationManager;
+    @Resource
+    private AuthorizationEndpoint authorizationEndpoint;
 
     @RequestMapping(value = { "/signin", "/login" }, method = RequestMethod.GET)
     public ModelAndView loginGetHandler2(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
@@ -64,6 +90,8 @@ public class OauthConfirmAccessController extends BaseController {
         String email = "";
         String clientDescription = "";
         String scope = "";
+        String redirectUri = "";
+        String responseType = "";
         String orcid = null;
         if (savedRequest != null) {
             String url = savedRequest.getRedirectUrl();
@@ -89,6 +117,19 @@ public class OauthConfirmAccessController extends BaseController {
                     Matcher scopeMatcher = scopesPattern.matcher(url);
                     if(scopeMatcher.find()) {
                         scope = scopeMatcher.group(1);
+                        try {
+                            scope = URLDecoder.decode(scope, "UTF-8");
+                        } catch (UnsupportedEncodingException e) {}
+                    }
+                    
+                    Matcher redirectUriMatcher = redirectUriPattern.matcher(url);
+                    if(redirectUriMatcher.find()) {
+                        redirectUri = redirectUriMatcher.group(1);
+                    }
+                    
+                    Matcher responseTypeMatcher = responseTypePattern.matcher(url);
+                    if(responseTypeMatcher.find()) {
+                        responseType = responseTypeMatcher.group(1);
                     }
                     
                     //Get client name
@@ -115,6 +156,9 @@ public class OauthConfirmAccessController extends BaseController {
             }
         }
         mav.addObject("scopes", ScopePathType.getScopesFromSpaceSeparatedString(scope));
+        mav.addObject("scopesString", scope);
+        mav.addObject("redirect_uri", redirectUri);
+        mav.addObject("response_type", responseType);
         mav.addObject("client_name", clientName);
         mav.addObject("client_id", clientId);
         mav.addObject("client_group_name", clientGroupName);
@@ -174,6 +218,60 @@ public class OauthConfirmAccessController extends BaseController {
         mav.addObject("hideUserVoiceScript", true);
         mav.addObject("profile", getEffectiveProfile());
         return mav;
+    }        
+    
+    @RequestMapping(value = { "/custom/signin", "/custom/login" }, method = RequestMethod.POST)
+    public OauthAuthorizeForm authenticateAndAuthorize(HttpServletRequest request, OauthAuthorizeForm form) {
+        //Clean form errors
+        form.setErrors(new ArrayList<String>());
+        //Validate name and password
+        validateUserName(form);
+        validatePassword(form);
+        if(form.getErrors().isEmpty()) {
+            try {
+                //Authenticate user
+                Authentication auth = authenticateUser(request, form);
+                //Create authorization params
+                Map<String, Object> model = new HashMap<String, Object>();
+                Map<String, String> params = new HashMap<String, String>();
+                params.put(CLIENT_ID_PARAM, form.getClientId().getValue());                
+                params.put(REDIRECT_URI_PARAM, form.getRedirectUri().getValue());
+                if(!PojoUtil.isEmpty(form.getScope()))
+                    params.put(SCOPE_PARAM, form.getScope().getValue());
+                if(!PojoUtil.isEmpty(form.getResponseType()))
+                    params.put(RESPONSE_TYPE_PARAM, form.getResponseType().getValue());
+                SimpleSessionStatus status = new SimpleSessionStatus();
+                Principal principal = (Principal)auth.getPrincipal();
+                //Authorize
+                ModelAndView mv = authorizationEndpoint.authorize(model, RESPONSE_TYPE, params, status, principal);
+                
+            } catch(AuthenticationException ae) {
+                form.getErrors().add(getMessage("orcid.frontend.security.bad_credentials"));
+            }
+        }
+        return form;
+    }        
+    
+    private void validateUserName(OauthAuthorizeForm form) {        
+        if(PojoUtil.isEmpty(form.getUserName())) {
+            form.getErrors().add(getMessage("orcid.frontend.security.bad_credentials"));
+        }
     }
-
+    
+    private void validatePassword(OauthAuthorizeForm form) {
+        if(PojoUtil.isEmpty(form.getPassword())) {
+            form.getErrors().add(getMessage("orcid.frontend.security.bad_credentials"));
+        }
+    }
+    
+    private Authentication authenticateUser(HttpServletRequest request, OauthAuthorizeForm form) throws AuthenticationException {
+            UsernamePasswordAuthenticationToken token = null;
+            token = new UsernamePasswordAuthenticationToken(form.getUserName().getValue(), form.getPassword().getValue());
+            token.setDetails(new WebAuthenticationDetails(request));
+            Authentication authentication = authenticationManager.authenticate(token);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            return authentication;
+    }
+    
+    
 }

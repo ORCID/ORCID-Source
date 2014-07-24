@@ -18,8 +18,6 @@ package org.orcid.core.oauth.service;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.security.Principal;
-import java.util.Map;
 
 import org.springframework.security.oauth2.common.exceptions.ClientAuthenticationException;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
@@ -27,13 +25,8 @@ import org.springframework.security.oauth2.common.exceptions.RedirectMismatchExc
 import org.springframework.security.oauth2.provider.endpoint.AuthorizationEndpoint;
 import org.springframework.web.HttpSessionRequiredException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.View;
 
 public class OrcidAuthorizationEndpoint extends AuthorizationEndpoint {
 
@@ -70,12 +63,5 @@ public class OrcidAuthorizationEndpoint extends AuthorizationEndpoint {
             uri = contextPath + uri;
         }
         return new URI(uri);
-    }
-        
-    @RequestMapping(value = "/oauth/custom/authorize", method = RequestMethod.POST)
-    public View authorizeAndApproveOrDeny(@RequestParam Map<String, String> approvalParameters, Map<String, ?> model,
-                    SessionStatus sessionStatus, Principal principal) {
-        return super.approveOrDeny(approvalParameters, model, sessionStatus, principal);
-    }
-
+    }        
 }
