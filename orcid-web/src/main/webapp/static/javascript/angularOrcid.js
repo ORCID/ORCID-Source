@@ -6002,14 +6002,86 @@ function SocialNetworksCtrl($scope){
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 function OauthAuthorizationController($scope){ 
 	$scope.showClientDescription = false;
+	$scope.authorizationForm = {};
 	
 	$scope.toggleClientDescription = function() {
 		$scope.showClientDescription = !$scope.showClientDescription;
 	};
 	
+	$scope.getEmptyAuthorizationForm = function() {
+		$.ajax({
+			url: getBaseUri() + '/oauth/custom/empty.json',
+			type: 'GET',
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.authorizationForm = data;
+	        	$scope.$apply();
+	        }
+		});
+	};		
+	
+	$scope.authorize = function() {
+		$scope.authorizationForm.approved = true;
+		$scope.submit();
+	};
+	
+	$scope.deny = function() {
+		$scope.authorizationForm.approved = false;
+		$scope.submit();
+	};
+	
+	$scope.submit = function() {
+		$.ajax({
+			url: getBaseUri() + '/oauth/custom/login',
+			type: 'POST',
+			data: angular.toJson($scope.authorizationForm),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	
+	        }
+		}).fail(function() { 	    	
+	    	console.log("An error occured authenticating the user.");
+	    });
+	};
+	
+	$scope.getEmptyAuthorizationForm();
+	
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -38,6 +38,7 @@ import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.pojo.ajaxForm.OauthAuthorizeForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.pojo.ajaxForm.Text;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -51,6 +52,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.support.SimpleSessionStatus;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -69,6 +71,8 @@ public class OauthConfirmAccessController extends BaseController {
     private static String SCOPE_PARAM = "scope";
     private static String RESPONSE_TYPE_PARAM = "response_type";
     private static String REDIRECT_URI_PARAM = "redirect_uri";
+    
+    private static final String EMPTY_STRING = "";
     
     private static final String JUST_REGISTERED = "justRegistered";
     @Resource
@@ -220,6 +224,24 @@ public class OauthConfirmAccessController extends BaseController {
         return mav;
     }        
     
+    
+    @RequestMapping(value = "/custom/empty.json", method = RequestMethod.GET)
+    public @ResponseBody OauthAuthorizeForm getEmptyAuthorizeForm() {
+        OauthAuthorizeForm empty = new OauthAuthorizeForm();
+        Text emptyText = Text.valueOf(EMPTY_STRING);
+        empty.setClientId(emptyText);
+        empty.setPassword(emptyText);
+        empty.setRedirectUri(emptyText);
+        empty.setResponseType(emptyText);
+        empty.setScope(emptyText);
+        empty.setUserName(emptyText);
+        return empty;
+    }
+    
+    
+    
+    
+    
     @RequestMapping(value = { "/custom/signin", "/custom/login" }, method = RequestMethod.POST)
     public OauthAuthorizeForm authenticateAndAuthorize(HttpServletRequest request, OauthAuthorizeForm form) {
         //Clean form errors
@@ -234,8 +256,11 @@ public class OauthConfirmAccessController extends BaseController {
                 //Create authorization params
                 Map<String, Object> model = new HashMap<String, Object>();
                 Map<String, String> params = new HashMap<String, String>();
-                params.put(CLIENT_ID_PARAM, form.getClientId().getValue());                
-                params.put(REDIRECT_URI_PARAM, form.getRedirectUri().getValue());
+                params.put(CLIENT_ID_PARAM, form.getClientId().getValue());   
+                if(!PojoUtil.isEmpty(form.getRedirectUri()))
+                    params.put(REDIRECT_URI_PARAM, form.getRedirectUri().getValue());
+                else
+                    params.put(REDIRECT_URI_PARAM, new String());
                 if(!PojoUtil.isEmpty(form.getScope()))
                     params.put(SCOPE_PARAM, form.getScope().getValue());
                 if(!PojoUtil.isEmpty(form.getResponseType()))
@@ -244,7 +269,7 @@ public class OauthConfirmAccessController extends BaseController {
                 Principal principal = (Principal)auth.getPrincipal();
                 //Authorize
                 ModelAndView mv = authorizationEndpoint.authorize(model, RESPONSE_TYPE, params, status, principal);
-                
+                System.out.println(mv);
             } catch(AuthenticationException ae) {
                 form.getErrors().add(getMessage("orcid.frontend.security.bad_credentials"));
             }

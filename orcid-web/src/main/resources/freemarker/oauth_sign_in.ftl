@@ -35,28 +35,28 @@
          		</#list>				
 			</div>	
 			<#assign denyOnClick = " orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Authorize_Deny', 'OAuth " + client_group_name?js_string + " - " + client_name?js_string + "']);"> 
-			<form id="authForm" class="form-inline" name="authForm" action="<@spring.url '/oauth/custom/authorize'/>" onsubmit="${denyOnClick} orcidGA.gaFormSumbitDelay(this); return false;" method="post">            		
-	            <input name="scopes" value="${scopesString}" type="hidden"/>
-	            <input name="client_id" value="${client_id}" type="hidden"/>
-	            <input name="response_type" value="${response_type}" type="hidden"/>
-	            <input name="redirect_uri" value="${redirect_uri}" type="hidden"/>	            
+			<form id="authForm" class="form-inline" name="authForm" action="#" onsubmit="${denyOnClick} orcidGA.gaFormSumbitDelay(this); return false;" method="post">            		
+	            <input ng-model="authorizationForm.scope.value" name="scopes" value="${scopesString}" type="hidden"/>
+	            <input ng-model="authorizationForm.clientId.value" name="client_id" value="${client_id}" type="hidden"/>
+	            <input ng-model="authorizationForm.responseType.value" name="response_type" value="${response_type}" type="hidden"/>
+	            <input ng-model="authorizationForm.redirectUri.value" name="redirect_uri" value="${redirect_uri}" type="hidden"/>	            
 	            <div>
 	                <label for="userId">${springMacroRequestContext.getMessage("oauth_sign_in.labelemailorID")}</label>
 	                <div class="relative">
-	                   <input type="text" id="userId" name="userId" value="${userId}" placeholder="Email or iD" class="input-xlarge">
+	                   <input type="text" id="userId" ng-model="authorizationForm.userName.value" name="userId" value="${userId}" placeholder="Email or iD" class="input-xlarge">
 	                </div>
 	            </div>
 	            <div id="passwordField">
 	                <label for="password">${springMacroRequestContext.getMessage("oauth_sign_in.labelpassword")}</label>
 	                <div class="relative">
-	                   <input type="password" id="password" name="password" value="" placeholder="Password" class="input-xlarge">
+	                   <input type="password" id="password" ng-model="authorizationForm.password.value" name="password" value="" placeholder="Password" class="input-xlarge">
 	                </div>
 	            </div>
 	            <div id="buttons">                     		            		               
-					<button name="user_oauth_approval" value="false" class="btn btn-primary" name="deny" value="${springMacroRequestContext.getMessage('confirm-oauth-access.Deny')}" type="submit">
+					<button class="btn btn-primary" name="deny" value="${springMacroRequestContext.getMessage('confirm-oauth-access.Deny')}" type="submit">
 						<@orcid.msg 'confirm-oauth-access.Deny' />
 					</button>	
-					<button name="user_oauth_approval" value="true" class="btn btn-primary" name="authorize" value="${springMacroRequestContext.getMessage('confirm-oauth-access.Authorize')}" type="submit">
+					<button name="authorize" value="${springMacroRequestContext.getMessage('confirm-oauth-access.Authorize')}" type="submit">
 						<@orcid.msg 'confirm-oauth-access.Authorize' />
 					</button>		                 	            
 	            </div>
