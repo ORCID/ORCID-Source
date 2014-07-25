@@ -17,11 +17,7 @@
 package org.orcid.core.adapter.impl;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
-import java.text.ParsePosition;
-import java.util.Currency;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -129,7 +125,6 @@ import org.orcid.persistence.jpa.entities.StartDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.keys.WorkExternalIdentifierEntityPk;
-import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.OrcidStringUtils;
 import org.springframework.util.Assert;
@@ -961,22 +956,22 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             FuzzyDate startDate = funding.getStartDate();
             FuzzyDate endDate = funding.getEndDate();
 
-            if(funding.getAmount() != null) {
-            	String amount = StringUtils.isNotBlank(funding.getAmount().getContent()) ? funding.getAmount().getContent() : null;
-            	String currencyCode = funding.getAmount().getCurrencyCode() != null ? funding.getAmount().getCurrencyCode() : null;
-                if(StringUtils.isNotBlank(amount)) {
+            if (funding.getAmount() != null) {
+                String amount = StringUtils.isNotBlank(funding.getAmount().getContent()) ? funding.getAmount().getContent() : null;
+                String currencyCode = funding.getAmount().getCurrencyCode() != null ? funding.getAmount().getCurrencyCode() : null;
+                if (StringUtils.isNotBlank(amount)) {
                     try {
                         BigDecimal bigDecimalAmount = getAmountAsBigDecimal(amount);
                         profileFundingEntity.setNumericAmount(bigDecimalAmount);
-                    } catch(Exception e) {                                                
-                        String sample = getSampleAmountInProperFormat(localeManager.getLocale());                                                
-                        throw new IllegalArgumentException("Cannot cast amount: " + amount + " proper format is: " + sample);                        
+                    } catch (Exception e) {
+                        String sample = getSampleAmountInProperFormat(localeManager.getLocale());
+                        throw new IllegalArgumentException("Cannot cast amount: " + amount + " proper format is: " + sample);
                     }
-                                
+
                     profileFundingEntity.setCurrencyCode(currencyCode);
-                }            	            	            
-            }                        
-            
+                }
+            }
+
             profileFundingEntity.setContributorsJson(getFundingContributorsJson(funding.getFundingContributors()));
             profileFundingEntity.setDescription(StringUtils.isNotBlank(funding.getDescription()) ? funding.getDescription() : null);
             profileFundingEntity.setEndDate(endDate != null ? new EndDateEntity(endDate) : null);
@@ -1034,7 +1029,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         NumberFormat numberFormatExample = NumberFormat.getNumberInstance(locale);
         return numberFormatExample.format(example);
     }
-    
+
     /**
      * Get a list of GrantExternalIdentifierEntity from the external identifiers
      * 
@@ -1045,22 +1040,70 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
      * */
     private SortedSet<FundingExternalIdentifierEntity> getGrantExternalIdentifiers(ProfileFundingEntity profileFundingEntity,
             FundingExternalIdentifiers externalIdentifiers) {
-        if (externalIdentifiers == null || externalIdentifiers.getFundingExternalIdentifier() == null || externalIdentifiers.getFundingExternalIdentifier().isEmpty())
-            return null;
-        TreeSet<FundingExternalIdentifierEntity> result = new TreeSet<>();
-        List<FundingExternalIdentifier> externalIdentifierList = externalIdentifiers.getFundingExternalIdentifier();
-        for (FundingExternalIdentifier externalIdentifier : externalIdentifierList) {
-            FundingExternalIdentifierEntity entity = new FundingExternalIdentifierEntity();
-            entity.setProfileFunding(profileFundingEntity);
-            entity.setType(externalIdentifier.getType() != null ? externalIdentifier.getType().value() : null);
-            entity.setValue(StringUtils.isNotEmpty(externalIdentifier.getValue()) ? externalIdentifier.getValue() : null);
-            if (externalIdentifier.getUrl() != null)
-                entity.setUrl(StringUtils.isNotEmpty(externalIdentifier.getUrl().getValue()) ? externalIdentifier.getUrl().getValue() : null);
-            result.add(entity);
-            if (StringUtils.isNotEmpty(externalIdentifier.getPutCode()))
-                entity.setId(Long.valueOf(externalIdentifier.getPutCode()));
+
+        SortedSet<FundingExternalIdentifierEntity> existingExtIdEntities = profileFundingEntity.getExternalIdentifiers();
+        if (existingExtIdEntities == null) {
+            existingExtIdEntities = new TreeSet<>();
         }
-        return result;
+        // Create a map containing the existing ext ids entities
+        Map<String, FundingExternalIdentifierEntity> existingExtIdsMap = createFundingExternalIdentiferEntitiesMap(existingExtIdEntities);
+        SortedSet<FundingExternalIdentifierEntity> updatedExtIdEntities = new TreeSet<>();
+        if (externalIdentifiers != null && !externalIdentifiers.getFundingExternalIdentifier().isEmpty()) {
+            for (FundingExternalIdentifier externalIdentifier : externalIdentifiers.getFundingExternalIdentifier()) {
+                FundingExternalIdentifierEntity extIdEntity = getFundingExternalIdentifierEntity(externalIdentifier,
+                        existingExtIdsMap.get(externalIdentifier.getPutCode()));
+                extIdEntity.setProfileFunding(profileFundingEntity);
+                updatedExtIdEntities.add(extIdEntity);
+            }
+        }
+        Map<String, FundingExternalIdentifierEntity> updatedExtIdEntitiesMap = createFundingExternalIdentiferEntitiesMap(updatedExtIdEntities);
+        // Remove orphans
+        for (Iterator<FundingExternalIdentifierEntity> iterator = existingExtIdEntities.iterator(); iterator.hasNext();) {
+            FundingExternalIdentifierEntity existingEntity = iterator.next();
+            if (!updatedExtIdEntitiesMap.containsKey(String.valueOf(existingEntity.getId()))) {
+                iterator.remove();
+            }
+        }
+        // Add new
+        for (FundingExternalIdentifierEntity updatedEntity : updatedExtIdEntities) {
+            if (updatedEntity.getId() == null) {
+                existingExtIdEntities.add(updatedEntity);
+            }
+        }
+        return existingExtIdEntities;
+    }
+
+    private FundingExternalIdentifierEntity getFundingExternalIdentifierEntity(FundingExternalIdentifier externalIdentifier,
+            FundingExternalIdentifierEntity existingFundingExternalIdentifierEntity) {
+        if (externalIdentifier != null) {
+            FundingExternalIdentifierEntity extIdEntity = null;
+            if (existingFundingExternalIdentifierEntity == null) {
+                String putCode = externalIdentifier.getPutCode();
+                if (StringUtils.isNotBlank(putCode) && !"-1".equals(putCode)) {
+                    throw new IllegalArgumentException("Invalid put-code was supplied for an funding external identifier: " + putCode);
+                }
+                extIdEntity = new FundingExternalIdentifierEntity();
+            } else {
+                extIdEntity = existingFundingExternalIdentifierEntity;
+                extIdEntity.clean();
+            }
+            extIdEntity.setType(externalIdentifier.getType() != null ? externalIdentifier.getType().value() : null);
+            extIdEntity.setValue(StringUtils.isNotEmpty(externalIdentifier.getValue()) ? externalIdentifier.getValue() : null);
+            if (externalIdentifier.getUrl() != null)
+                extIdEntity.setUrl(StringUtils.isNotEmpty(externalIdentifier.getUrl().getValue()) ? externalIdentifier.getUrl().getValue() : null);
+            return extIdEntity;
+        }
+        return null;
+    }
+
+    private Map<String, FundingExternalIdentifierEntity> createFundingExternalIdentiferEntitiesMap(SortedSet<FundingExternalIdentifierEntity> existingExtIdEntities) {
+        Map<String, FundingExternalIdentifierEntity> map = new HashMap<>();
+        if (existingExtIdEntities != null) {
+            for (FundingExternalIdentifierEntity extId : existingExtIdEntities) {
+                map.put(String.valueOf(extId.getId()), extId);
+            }
+        }
+        return map;
     }
 
     private OrgEntity getOrgEntity(Affiliation affiliation) {
