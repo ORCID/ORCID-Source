@@ -208,6 +208,14 @@ public class ManageProfileController extends BaseWorkspaceController {
         ModelAndView mav = rebuildManageView(tab);
         return mav;
     }
+        
+    @ModelAttribute("hasVerifiedEmail")
+    public boolean hasVerifiedEmail() {
+        OrcidProfile profile = getEffectiveProfile();
+        if (profile == null  || profile.getOrcidBio() == null || profile.getOrcidBio().getContactDetails() == null) return false;
+        return profile.getOrcidBio().getContactDetails().anyEmailVerified();
+    }    
+    
 
     @RequestMapping(value = "/search-for-delegate-by-email/{email}/")
     public @ResponseBody

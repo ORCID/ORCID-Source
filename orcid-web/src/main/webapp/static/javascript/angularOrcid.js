@@ -769,6 +769,7 @@ orcidNgModule.factory("emailSrvc", function ($rootScope) {
 			emails: null,
 			inputEmail: null,
 			delEmail: null,
+			primaryEmail: null,
 			addEmail: function() {
 				$.ajax({
 			        url: getBaseUri() + '/account/addEmail.json',
@@ -797,6 +798,9 @@ orcidNgModule.factory("emailSrvc", function ($rootScope) {
 			        dataType: 'json',
 			        success: function(data) {
 			        	serv.emails = data;
+			        	for (var i in data.emails)
+			        		if (data.emails[i].primary) 
+			        			serv.primaryEmail = data.emails[i];
 			        	$rootScope.$apply();
 			        	if (callback)
 			        	   callback(data);
@@ -1407,6 +1411,8 @@ function EmailEditCtrl($scope, $compile, emailSrvc) {
 	};
 	
 };
+
+
 
 function WebsitesCtrl($scope, $compile) {
     $scope.showEdit = false;
@@ -4991,7 +4997,7 @@ function removeSecQuestionCtrl($scope,$compile) {
 	};	
 };
 
-function SSOPreferencesCtrl($scope, $compile) {
+function SSOPreferencesCtrl($scope, $compile, emailSrvc) {
 	$scope.showReg = false;
 	$scope.userCredentials = null;	
 	$scope.editing = false;
@@ -5011,6 +5017,29 @@ function SSOPreferencesCtrl($scope, $compile) {
 	$scope.authorizeURL = '';
 	$scope.selectedRedirectUri = '';
 	$scope.creating = false;
+	$scope.emailSrvc = emailSrvc;
+	
+	$scope.verifyEmail = function() {
+		var funct = function() {
+			$scope.verifyEmailObject = emailSrvc.primaryEmail;
+			emailSrvc.verifyEmail(emailSrvc.primaryEmail,function(data) {
+		    	    $.colorbox({
+		    	        html : $compile($('#verify-email-modal').html())($scope)
+		    	    });
+		    	    $scope.$apply();
+		    	    $.colorbox.resize();
+		   });  
+	   };
+	   if (emailSrvc.primaryEmail == null)
+		      emailSrvc.getEmails(funct);
+	   else
+		   funct();
+	};
+	
+	$scope.closeModal = function() {
+		$.colorbox.close();
+	};
+
 	
 	$scope.enableDeveloperTools = function() {
 		$.ajax({
