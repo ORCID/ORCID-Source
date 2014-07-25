@@ -17,10 +17,21 @@
 package org.orcid.core.manager.impl;
 
 import java.util.Collection;
+import java.util.List;
+
+import javax.annotation.Resource;
 
 import org.orcid.core.manager.EmailMessage;
 import org.orcid.core.manager.EmailMessageSender;
+import org.orcid.core.manager.NotificationManager;
 import org.orcid.jaxb.model.notification.Notification;
+import org.orcid.persistence.dao.NotificationDao;
+import org.orcid.persistence.dao.ProfileDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * 
@@ -29,13 +40,31 @@ import org.orcid.jaxb.model.notification.Notification;
  */
 public class EmailMessageSenderImpl implements EmailMessageSender {
 
+    private static final String DIGEST_FROM_ADDRESS = "update@notify.orcid.org";
+    private static final Logger LOGGER = LoggerFactory.getLogger(EmailMessageSenderImpl.class);
     private static final String HEADER = "Welcome to your ORCID digest.\n\nToday's Topics:\n";
     private static final String BIG_SEPARATOR = "\n\n\n----------------------------------------------------------------------\n";
     private static final String FOOTER = "\nEnd of your ORCID digest\n***********************************************\n";
 
+    @Resource
+    private NotificationDao notificationDao;
+
+    @Resource
+    private NotificationManager notificationManager;
+
+    @Resource
+    private MailGunManager mailGunManager;
+
+    @Resource
+    private ProfileDao profileDao;
+
+    @Resource
+    private TransactionTemplate transactionTemplate;
+
     @Override
     public EmailMessage createDigest(Collection<Notification> notifications) {
         EmailMessage emailMessage = new EmailMessage();
+        emailMessage.setSubject("Your digest from ORCID");
         StringBuilder summaryText = new StringBuilder();
         StringBuilder bodyText = new StringBuilder();
 
@@ -68,6 +97,29 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
 
         emailMessage.setBodyText(summaryText.toString() + BIG_SEPARATOR + bodyText.toString());
         return emailMessage;
+    }
+
+    @Override
+    public void sendEmailMessages() {
+        LOGGER.info("About to send email messages");
+        List<String> orcidsWithMessagesToSend = notificationDao.findOrcidsWithNotificationsToSend();
+        for (final String orcid : orcidsWithMessagesToSend) {
+            transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+                @Override
+                protected void doInTransactionWithoutResult(TransactionStatus status) {
+                    LOGGER.info("Sending messages for orcid: {}", orcid);
+                    List<Notification> notifications = notificationManager.getUnsentByOrcid(orcid);
+                    LOGGER.info("Found {} messages to send for orcid: {}", notifications.size(), orcid);
+                    EmailMessage digestMessage = createDigest(notifications);
+                    digestMessage.setFrom(DIGEST_FROM_ADDRESS);
+                    digestMessage.setTo(profileDao.find(orcid).getPrimaryEmail().getId());
+                    // XXX Need to add html
+                    mailGunManager.sendEmail(digestMessage.getFrom(), digestMessage.getTo(), digestMessage.getSubject(), digestMessage.getBodyText(), "<html><body><pre>"
+                            + digestMessage.getBodyText() + "</pre></body></html>");
+                }
+            });
+        }
+        LOGGER.info("Finished sending email messages");
     }
 
 }

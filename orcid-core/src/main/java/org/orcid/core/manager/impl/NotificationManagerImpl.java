@@ -21,6 +21,7 @@ import static org.orcid.utils.NullUtils.noneNull;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -775,6 +776,16 @@ public class NotificationManagerImpl implements NotificationManager {
         NotificationEntity notificationEntity = notificationAdapter.toNotificationEntity(notification);
         notificationEntity.setProfile(profileDao.find(orcid));
         notificationDao.persist(notificationEntity);
+    }
+
+    @Override
+    public List<Notification> getUnsentByOrcid(String orcid) {
+        List<NotificationEntity> entities = notificationDao.findUnsentByOrcid(orcid);
+        List<Notification> notifications = new ArrayList<>();
+        for (NotificationEntity entity : entities) {
+            notifications.add(notificationAdapter.toNotification(entity));
+        }
+        return notifications;
     }
 
 }

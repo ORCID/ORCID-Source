@@ -29,4 +29,6 @@ public interface EmailMessageSender {
 
     EmailMessage createDigest(Collection<Notification> notifications);
 
+    void sendEmailMessages();
+
 }

@@ -22,6 +22,7 @@ import java.util.List;
 import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.notification.Notification;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.mail.MailSender;
 
@@ -32,12 +33,12 @@ public interface NotificationManager {
     // void sendRegistrationEmail(RegistrationEntity registration, URI baseUri);
 
     void sendVerificationEmail(OrcidProfile orcidProfile, URI baseUri, String email);
-    
+
     public void sendVerificationReminderEmail(OrcidProfile orcidProfile, String email);
 
     void sendPasswordResetEmail(String toEmail, OrcidProfile orcidProfile, URI baseUri);
-    
-    public String createVerificationUrl(String email, URI baseUri); 
+
+    public String createVerificationUrl(String email, URI baseUri);
 
     public String deriveEmailFriendlyName(OrcidProfile orcidProfile);
 
@@ -52,9 +53,11 @@ public interface NotificationManager {
     void sendEmailAddressChangedNotification(OrcidProfile updatedProfile, Email oldEmail, URI baseUri);
 
     void sendClaimReminderEmail(OrcidProfile orcidProfile, int daysUntilActivation);
-    
+
     void sendProfileDeprecationEmail(ProfileEntity deprecatedProfile, ProfileEntity primaryProfile);
-    
+
     public boolean sendPrivPolicyEmail2014_03(OrcidProfile orcidProfile, URI baseUri);
+
+    public List<Notification> getUnsentByOrcid(String orcid);
 
 }

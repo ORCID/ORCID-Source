@@ -19,7 +19,6 @@ package org.orcid.persistence.dao.impl;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.orcid.persistence.dao.NotificationDao;
@@ -36,10 +35,10 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
         super(NotificationEntity.class);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<NotificationEntity> findByOrcid(String orcid, int firstResult, int maxResults) {
-        Query query = entityManager.createQuery("from NotificationEntity where orcid = :orcid order by dateCreated desc");
+        TypedQuery<NotificationEntity> query = entityManager.createQuery("from NotificationEntity where orcid = :orcid order by dateCreated desc",
+                NotificationEntity.class);
         query.setParameter("orcid", orcid);
         query.setFirstResult(firstResult);
         query.setMaxResults(maxResults);
@@ -50,6 +49,13 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     public NotificationEntity findLatestByOrcid(String orcid) {
         List<NotificationEntity> results = findByOrcid(orcid, 0, 1);
         return results.isEmpty() ? null : results.get(0);
+    }
+
+    @Override
+    public List<NotificationEntity> findUnsentByOrcid(String orcid) {
+        TypedQuery<NotificationEntity> query = entityManager.createQuery("from NotificationEntity where sentDate is null and orcid = :orcid", NotificationEntity.class);
+        query.setParameter("orcid", orcid);
+        return query.getResultList();
     }
 
     @Override
