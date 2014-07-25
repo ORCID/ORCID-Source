@@ -141,7 +141,9 @@ public class NotificationManagerTest extends BaseTest {
     @Rollback
     public void testAmendEmail() throws JAXBException, IOException, URISyntaxException {
         String testOrcid = "4444-4444-4444-4446";
-        profileDao.merge(new ProfileEntity(testOrcid));
+        ProfileEntity testProfile = new ProfileEntity(testOrcid);
+        testProfile.setEnableNotifications(true);
+        profileDao.merge(testProfile);
         for (Locale locale : Locale.values()) {
             NotificationEntity previousNotification = notificationDao.findLatestByOrcid(testOrcid);
             long minNotificationId = previousNotification != null ? previousNotification.getId() : -1;

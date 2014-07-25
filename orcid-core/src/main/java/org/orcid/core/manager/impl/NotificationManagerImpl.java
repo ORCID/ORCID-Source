@@ -388,7 +388,14 @@ public class NotificationManagerImpl implements NotificationManager {
         notification.setSubject(subject);
         notification.setBodyText(body);
         notification.setBodyHtml(html);
-        createNotification(amendedProfile.getOrcidIdentifier().getPath(), notification);
+
+        boolean notificationsEnabled = profileDao.find(amendedProfile.getOrcidIdentifier().getPath()).getEnableNotifications();
+        if (notificationsEnabled) {
+            createNotification(amendedProfile.getOrcidIdentifier().getPath(), notification);
+        } else {
+            String email = amendedProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+            mailGunManager.sendEmail(AMEND_NOTIFY_ORCID_ORG, email, subject, body, html);
+        }
     }
 
     @Override

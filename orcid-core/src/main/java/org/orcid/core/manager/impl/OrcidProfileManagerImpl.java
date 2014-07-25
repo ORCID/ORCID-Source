@@ -1103,6 +1103,8 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         }                        
         
         persistAddedWorks(orcid, updatedOrcidWorksList);
+        profileDao.flush();
+        notificationManager.sendAmendEmail(existingProfile, amenderOrcid);
     }
     
     /**
@@ -1562,6 +1564,8 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         List<Affiliation> updatedAffiliationsList = updatedAffiliations.getAffiliation();
         checkForAlreadyExistingAffiliations(existingAffiliations, updatedAffiliationsList);
         persistAddedAffiliations(orcid, updatedAffiliationsList);
+        profileDao.flush();
+        notificationManager.sendAmendEmail(existingProfile, amenderOrcid);
     }
 
     /**
@@ -1594,6 +1598,8 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         List<Funding> updatedList = updatedFundingList.getFundings();
         checkForAlreadyExistingFundings(existingFundingList, updatedList);
         persistAddedFundings(orcid, updatedList);
+        profileDao.flush();
+        notificationManager.sendAmendEmail(existingProfile, amenderOrcid);
     }
 
     /**

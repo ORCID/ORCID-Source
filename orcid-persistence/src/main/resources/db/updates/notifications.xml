@@ -91,4 +91,12 @@
         </addColumn>
     </changeSet>
     
+    <changeSet id="ADD-OPTION-TO-ENABLE-NOTIFICATIONS-PER-USER" author="Will Simpson">
+        <addColumn tableName="profile">
+            <column name="enable_notifications" type="boolean" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    
 </databaseChangeLog>
