@@ -119,44 +119,37 @@ public class T2OrcidOAuthApiClientReadPrivateDataIntegrationTest extends DBUnitT
         //Set redirect uris if needed
         ClientRedirectUriPk clientRedirectUriPk = new ClientRedirectUriPk(READ_PRIVATE_WORKS_CLIENT_ID, redirectUri);
         if (clientRedirectDao.find(clientRedirectUriPk) == null) {
-            clientRedirectDao.addClientRedirectUri(READ_PRIVATE_WORKS_CLIENT_ID, redirectUri);
-            clientDetailsManager.updateLastModified(READ_PRIVATE_WORKS_CLIENT_ID);
+            clientDetailsManager.addClientRedirectUri(READ_PRIVATE_WORKS_CLIENT_ID, redirectUri);
         }
         
         clientRedirectUriPk = new ClientRedirectUriPk(READ_PRIVATE_WORKS_CLIENT_ID_2, redirectUri);
         if (clientRedirectDao.find(clientRedirectUriPk) == null) {
-            clientRedirectDao.addClientRedirectUri(READ_PRIVATE_WORKS_CLIENT_ID_2, redirectUri);
-            clientDetailsManager.updateLastModified(READ_PRIVATE_WORKS_CLIENT_ID_2);
+            clientDetailsManager.addClientRedirectUri(READ_PRIVATE_WORKS_CLIENT_ID_2, redirectUri);
         }
         
         clientRedirectUriPk = new ClientRedirectUriPk(READ_PRIVATE_AFFILIATIONS_CLIENT_ID, redirectUri);
         if (clientRedirectDao.find(clientRedirectUriPk) == null) {
-            clientRedirectDao.addClientRedirectUri(READ_PRIVATE_AFFILIATIONS_CLIENT_ID, redirectUri);
-            clientDetailsManager.updateLastModified(READ_PRIVATE_AFFILIATIONS_CLIENT_ID);
+            clientDetailsManager.addClientRedirectUri(READ_PRIVATE_AFFILIATIONS_CLIENT_ID, redirectUri);
         }
         
         clientRedirectUriPk = new ClientRedirectUriPk(READ_PRIVATE_AFFILIATIONS_CLIENT_ID_2, redirectUri);
         if (clientRedirectDao.find(clientRedirectUriPk) == null) {
-            clientRedirectDao.addClientRedirectUri(READ_PRIVATE_AFFILIATIONS_CLIENT_ID_2, redirectUri);
-            clientDetailsManager.updateLastModified(READ_PRIVATE_AFFILIATIONS_CLIENT_ID_2);
+            clientDetailsManager.addClientRedirectUri(READ_PRIVATE_AFFILIATIONS_CLIENT_ID_2, redirectUri);
         }
         
         clientRedirectUriPk = new ClientRedirectUriPk(READ_PRIVATE_FUNDING_CLIENT_ID, redirectUri);
         if (clientRedirectDao.find(clientRedirectUriPk) == null) {
-            clientRedirectDao.addClientRedirectUri(READ_PRIVATE_FUNDING_CLIENT_ID, redirectUri);
-            clientDetailsManager.updateLastModified(READ_PRIVATE_FUNDING_CLIENT_ID);
+            clientDetailsManager.addClientRedirectUri(READ_PRIVATE_FUNDING_CLIENT_ID, redirectUri);
         }
         
         clientRedirectUriPk = new ClientRedirectUriPk(READ_PRIVATE_FUNDING_CLIENT_ID_2, redirectUri);
         if (clientRedirectDao.find(clientRedirectUriPk) == null) {
-            clientRedirectDao.addClientRedirectUri(READ_PRIVATE_FUNDING_CLIENT_ID_2, redirectUri);
-            clientDetailsManager.updateLastModified(READ_PRIVATE_FUNDING_CLIENT_ID_2);
+            clientDetailsManager.addClientRedirectUri(READ_PRIVATE_FUNDING_CLIENT_ID_2, redirectUri);
         }
         
         clientRedirectUriPk = new ClientRedirectUriPk(READ_ONLY_LIMITED_INFO_CLIENT_ID, redirectUri);
         if (clientRedirectDao.find(clientRedirectUriPk) == null) {
-            clientRedirectDao.addClientRedirectUri(READ_ONLY_LIMITED_INFO_CLIENT_ID, redirectUri);
-            clientDetailsManager.updateLastModified(READ_ONLY_LIMITED_INFO_CLIENT_ID);
+            clientDetailsManager.addClientRedirectUri(READ_ONLY_LIMITED_INFO_CLIENT_ID, redirectUri);
         }
         
                 

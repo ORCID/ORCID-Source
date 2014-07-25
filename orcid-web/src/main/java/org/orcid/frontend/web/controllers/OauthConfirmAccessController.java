@@ -64,7 +64,7 @@ public class OauthConfirmAccessController extends BaseController {
         String clientGroupName = "";
         String clientWebsite = "";
 
-        ClientDetailsEntity clientDetails = clientDetailsManager.find(clientId);
+        ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
         clientName = clientDetails.getClientName() == null ? "" : clientDetails.getClientName();
         clientDescription = clientDetails.getClientDescription() == null ? "" : clientDetails.getClientDescription();
         clientWebsite = clientDetails.getClientWebsite() == null ? "" : clientDetails.getClientWebsite();

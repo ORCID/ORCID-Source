@@ -147,7 +147,7 @@ public class OrcidClientDataHelper implements InitializingBean {
         assertEquals("http://www.journals.elsevier.com/ecological-complexity/orcid-callback", createdRedirectUris.get(0));
 
         // Look up client details directly to check scopes
-        ClientDetailsEntity complexityEntity = clientDetailsManager.find(complexityClient.getClientId());
+        ClientDetailsEntity complexityEntity = clientDetailsManager.findByClientId(complexityClient.getClientId());
         Set<String> clientScopeTypes = complexityEntity.getScope();
         assertNotNull(clientScopeTypes);
         assertTrue(clientScopeTypes.contains("/orcid-bio/update"));

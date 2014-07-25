@@ -61,7 +61,7 @@
 			</div>	
 		</div>
 		
-		<span class="dotted-bar"></span>
+		
 		<!-- Citation -->
 		<div class="row bottomBuffer" ng-show="worksSrvc.details[group.getActive().putCode.value].citation.citation.value"
 			ng-cloak>
@@ -151,7 +151,7 @@
 		</div>
 		
 		<!-- Contributors -->
-		<span class="dotted-bar"></span>
+		
 		<div class="row bottomBuffer" ng-show="worksSrvc.details[group.getActive().putCode.value].contributors.length > 0"
 			ng-cloak>
 			<div class="col-md-12">
@@ -178,6 +178,64 @@
 				<strong><@orcid.msg
 					'manual_work_form_contents.labelcountry'/></strong>
 				<div ng-bind="worksSrvc.details[group.getActive().putCode.value].countryName.value"></div>
+			</div>
+		</div>
+		<div class="show-more-info-tab hide-tab">
+			<a href="" ng-show="moreInfo[group.getActive().putCode.value]" ng-click="showDetailsMouseClick(group.getActive().putCode.value,$event);"><span class="glyphicon glyphicon-chevron-up"></span><@orcid.msg 'manage.developer_tools.hide_details'/></a>
+		</div>
+	</div>	
+</div>
+<div class="row">
+	<div class="col-md-12 col-sm-12">
+		<!-- Sources -->			
+		<div class="sources-container-header">
+			<div>
+				<div class="row">
+					<div class="col-md-8">
+						<strong>Source:</strong> {{group.getActive().workSourceName.value}}
+						<span ng-hide="group.activitiesCount == 1" class="pull-right">
+						 (<a ng-click="editSources[group.groupId] = !editSources[group.groupId]">{{group.activitiesCount - 1 }} additional source<span ng-show="group.activitiesCount > 2">s</span></a>)
+						</span>
+					</div>
+					<div class="col-md-4">								
+						<div class="show-more-info-tab">			
+							<a href="" ng-show="!moreInfo[group.getActive().putCode.value]" ng-click="showDetailsMouseClick(group.getActive().putCode.value,$event);"><span class="glyphicon glyphicon-chevron-down"></span><@orcid.msg 'manage.developer_tools.show_details'/></a>									
+						</div>								
+					</div>
+				</div>										
+			</div>
+		</div>
+	</div>
+	<div class="col-md-12 col-sm-12">
+		<div class="sources-container">
+			<div class="sources-edit">	
+				<table class="sources-edit-table" ng-show="editSources[group.groupId] == true" ng-cloak>							    
+				    <tr ng-repeat="work in group.activities | orderBy:index" ng-class="work.putCode.value == group.activePutCode ? 'grey-box' : ''">
+				    	<td>{{index}}</td>
+				       <td>
+				       		<span
+				       		    ng-show="work.putCode.value == group.activePutCode"
+				           		ng-click="moreInfo[work.putCode.value] = moreInfo[group.activePutCode]; group.activePutCode = work.putCode.value ">
+				           			{{work.workSourceName.value}}
+				           		</span>
+				           	<a ng-hide="work.putCode.value == group.activePutCode"
+				           		ng-click="moreInfo[work.putCode.value] = moreInfo[group.activePutCode]; group.activePutCode = work.putCode.value">
+				           			{{work.workSourceName.value}}
+				           		</a> 
+				       </td>
+				       <td>
+				           <span class="glyphicon glyphicon-globe privacy" ng-show="work.putCode.value == group.defaultPutCode"></span> 
+				           <a ng-click="worksSrvc.makeDefault(group, work.putCode.value); group.activePutCode = work.putCode.value" ng-show="work.putCode.value != group.defaultPutCode">
+			            	 <span class="glyphicon glyphicon-file"></span> Make Default
+			               </a>
+			           </td>
+				       <td>
+				           <a ng-click="deleteWorkConfirm(group.getActive().putCode.value, false)">
+			            	   <span class="glyphicon glyphicon-trash"></span>
+			               </a>
+				       </td>
+				    </tr>
+				</table>						
 			</div>
 		</div>
 	</div>

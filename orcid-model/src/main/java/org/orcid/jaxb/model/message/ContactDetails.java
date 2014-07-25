@@ -142,6 +142,33 @@ public class ContactDetails implements Serializable {
     }
 
     /**
+     * covenience method
+     * @return boolean
+     */
+    public boolean primaryEmailVerified() {
+        for (Email email : getEmail()) {
+            if (email.isPrimary() && email.isVerified()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * covenience method
+     * @return boolean
+     */
+    public boolean anyEmailVerified() {
+        for (Email email : getEmail()) {
+            if (email.isVerified()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    
+    /**
      * Gets the value of the address property.
      * 
      * @return possible object is {@link Address }

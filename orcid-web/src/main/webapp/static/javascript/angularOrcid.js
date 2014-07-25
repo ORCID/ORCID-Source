@@ -764,6 +764,128 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 	return serv;
 }]);
 
+orcidNgModule.factory("emailSrvc", function ($rootScope) {
+	var serv = {
+			emails: null,
+			inputEmail: null,
+			delEmail: null,
+			primaryEmail: null,
+			addEmail: function() {
+				$.ajax({
+			        url: getBaseUri() + '/account/addEmail.json',
+			        data:  angular.toJson(serv.inputEmail),
+			        contentType: 'application/json;charset=UTF-8',
+			        type: 'POST',
+			        dataType: 'json',
+			        success: function(data) {
+			        	serv.inputEmail = data;
+			        	if (serv.inputEmail.errors.length == 0) {
+			        		serv.initInputEmail();
+			        		serv.getEmails();
+			        	}
+			        	$rootScope.$apply();
+			        }
+			    }).fail(function() { 
+			    	// something bad is happening!
+			    	console.log("error with multi email");
+			    });
+			},
+			getEmails: function(callback) {
+				$.ajax({
+			        url: getBaseUri() + '/account/emails.json',
+			        //type: 'POST',
+			        //data: $scope.emailsPojo, 
+			        dataType: 'json',
+			        success: function(data) {
+			        	serv.emails = data;
+			        	for (var i in data.emails)
+			        		if (data.emails[i].primary) 
+			        			serv.primaryEmail = data.emails[i];
+			        	$rootScope.$apply();
+			        	if (callback)
+			        	   callback(data);
+			        }
+			    }).fail(function() { 
+			    	// something bad is happening!
+			    	console.log("error with multi email");
+			    });
+			},
+			deleteEmail: function (callback) {
+				$.ajax({
+			        url: getBaseUri() + '/account/deleteEmail.json',
+			        type: 'DELETE',
+			        data:  angular.toJson(serv.delEmail),
+			        contentType: 'application/json;charset=UTF-8',
+			        dataType: 'json',
+			        success: function(data) {
+			        	serv.getEmails();
+			        	if (callback)
+				        	   callback();
+			        }
+			    }).fail(function() { 
+			    	// something bad is happening!
+			    	console.log("$EmailEditCtrl.deleteEmail() error");
+			    });
+			},
+			initInputEmail: function () {
+				serv.inputEmail = {"value":"","primary":false,"current":true,"verified":false,"visibility":"PRIVATE","errors":[]};		
+			},
+			setPrivacy: function(email, priv) {
+				email.visibility = priv;
+				serv.saveEmail();
+			},
+			setPrimary: function(email) {
+				for (i in serv.emails.emails) {
+					if (serv.emails.emails[i] == email) {
+						serv.emails.emails[i].primary = true;
+					} else {
+						serv.emails.emails[i].primary = false;
+					}
+				}
+				serv.saveEmail();
+			},
+			saveEmail: function(callback) {
+				$.ajax({
+			        url: getBaseUri() + '/account/emails.json',
+			        type: 'POST',
+			        data: angular.toJson(serv.emails),
+			        contentType: 'application/json;charset=UTF-8',
+			        dataType: 'json',
+			        success: function(data) {
+			        	serv.data;
+			        	$rootScope.$apply();
+			        	if (callback)
+			        	    callback(data);
+			        }
+			    }).fail(function() { 
+			    	// something bad is happening!
+			    	console.log("error with multi email");
+			    });
+			},
+			verifyEmail: function(email, callback) {
+				$.ajax({
+			        url: getBaseUri() + '/account/verifyEmail.json',
+			        type: 'get',
+			        data:  { "email": email.value },
+			        contentType: 'application/json;charset=UTF-8',
+			        dataType: 'json',
+			        success: function(data) {
+			        	if (callback)
+			        	    callback(data);
+			        }
+			    }).fail(function() { 
+			    	// something bad is happening!
+			    	console.log("error with multi email");
+			    });  
+			}
+
+		};
+	    
+	return serv; 
+});
+
+
+
 orcidNgModule.factory("prefsSrvc", function ($rootScope) {
 	var serv = {
 			prefs: null,
@@ -1205,8 +1327,10 @@ function PasswordEditCtrl($scope, $http) {
 	};
 };
 
-function EmailEditCtrl($scope, $compile) {
+function EmailEditCtrl($scope, $compile, emailSrvc) {
+	$scope.emailSrvc = emailSrvc;
 	$scope.privacyHelp = {};
+	$scope.verifyEmailObject;
 	
 	$scope.toggleClickPrivacyHelp = function(key) {
 		if (!document.documentElement.className.contains('no-touch'))
@@ -1214,43 +1338,16 @@ function EmailEditCtrl($scope, $compile) {
 	};
 	
 	$scope.getEmails = function() {
-		$.ajax({
-	        url: getBaseUri() + '/account/emails.json',
-	        //type: 'POST',
-	        //data: $scope.emailsPojo, 
-	        dataType: 'json',
-	        success: function(data) {
-	        	$scope.emailsPojo = data;
-	        	$scope.$apply();
-	        	if(isIE() == 7) $scope.fixZindexesIE7();
-	        }
-	    }).fail(function() { 
-	    	// something bad is happening!
-	    	console.log("error with multi email");
-	    });
-	};
-	
-	$scope.initInputEmail = function () {
-		$scope.inputEmail = {"value":"","primary":false,"current":true,"verified":false,"visibility":"PRIVATE","errors":[]};		
+		emailSrvc.getEmails(function() {
+		        	if(isIE() == 7) $scope.fixZindexesIE7();
+		});
 	};
 	
 	//init
 	$scope.password = null;
 	$scope.curPrivToggle = null;
-	$scope.getEmails();
-	$scope.initInputEmail();
-
-	$scope.setPrimary = function(idx) {
-		for (i in $scope.emailsPojo.emails) {
-			console.log($scope.emailsPojo.emails[idx]);
-			if (i == idx) {
-				$scope.emailsPojo.emails[i].primary = true;
-			} else {
-				$scope.emailsPojo.emails[i].primary = false;
-			}
-		}
-		$scope.saveEmail();
-	};
+	emailSrvc.getEmails();
+	emailSrvc.initInputEmail();
 	
 	$scope.fixZindexesIE7 =  function(){		
 	    fixZindexIE7('.popover',2000);
@@ -1261,49 +1358,22 @@ function EmailEditCtrl($scope, $compile) {
 	    fixZindexIE7('.row', 7000);	
 	};
 	
-	$scope.toggleVisibility = function(idx) {
-		if ($scope.emailsPojo.emails[idx].visibility ==  "PRIVATE") {
-			$scope.emailsPojo.emails[idx].visibility = "LIMITED";
-		} else if ($scope.emailsPojo.emails[idx].visibility ==  "LIMITED") {
-			$scope.emailsPojo.emails[idx].visibility = "PUBLIC";
-		} else {
-			$scope.emailsPojo.emails[idx].visibility = "PRIVATE";
-		}
-		$scope.saveEmail();
-	};
-	
-	$scope.togglePrivacySelect = function(idx) {
-		var curEmail = $scope.emailsPojo.emails[idx].value;
-		if ($scope.curPrivToggle == null) $scope.curPrivToggle = curEmail;
-		else $scope.curPrivToggle = null;
-	};
-	
 	$scope.setPrivacy = function(email, priv, $event) {
 		$event.preventDefault();
 		email.visibility = priv;
 		$scope.curPrivToggle = null;
-		$scope.saveEmail();
+		emailSrvc.saveEmail();
 	};
 	
-	$scope.verifyEmail = function(idx) {
-		$scope.verifyEmailIdx = idx;
-		$.ajax({
-	        url: getBaseUri() + '/account/verifyEmail.json',
-	        type: 'get',
-	        data:  { "email": $scope.emailsPojo.emails[idx].value },
-	        contentType: 'application/json;charset=UTF-8',
-	        dataType: 'json',
-	        success: function(data) {
+	$scope.verifyEmail = function(email) {
+		$scope.verifyEmailObject = email;
+		emailSrvc.verifyEmail(email,function(data) {
 	    	    $.colorbox({
 	    	        html : $compile($('#verify-email-modal').html())($scope)
 	    	    });
 	    	    $scope.$apply();
 	    	    $.colorbox.resize();
-	        }
-	    }).fail(function() { 
-	    	// something bad is happening!
-	    	console.log("error with multi email");
-	    });  
+	   });  
 	};
 	
 	$scope.closeModal = function() {
@@ -1311,51 +1381,14 @@ function EmailEditCtrl($scope, $compile) {
 	};
 
 
-	$scope.saveEmail = function() {
-		$.ajax({
-	        url: getBaseUri() + '/account/emails.json',
-	        type: 'POST',
-	        data: angular.toJson($scope.emailsPojo),
-	        contentType: 'application/json;charset=UTF-8',
-	        dataType: 'json',
-	        success: function(data) {
-	        	$scope.emailsPojo = data;
-	        	$scope.$apply();
-	        }
-	    }).fail(function() { 
-	    	// something bad is happening!
-	    	console.log("error with multi email");
-	    });
-	};
-
 	$scope.submitModal = function (obj, $event) {
-		$scope.inputEmail.password = $scope.password;
-		
-		$.ajax({
-	        url: getBaseUri() + '/account/addEmail.json',
-	        type: 'POST',
-	        data:  angular.toJson($scope.inputEmail),
-	        contentType: 'application/json;charset=UTF-8',
-	        dataType: 'json',
-	        success: function(data) {
-	        	$scope.inputEmail = data;
-	        	//alert($scope.inputEmail.errors.length);
-	        	if ($scope.inputEmail.errors.length == 0) {
-					$scope.initInputEmail();
-					$scope.getEmails();
-				}
-	        	$scope.$apply();
-	        }
-	    }).fail(function() { 
-	    	// something bad is happening!
-	    	console.log("$EmailEditCtrl.addEmail() error");
-	    });
-		
+		emailSrvc.inputEmail.password = $scope.password;
+		emailSrvc.addEmail();
 		$.colorbox.close();
 	};
 	
-	$scope.confirmDeleteEmail = function(idx) {
-		    $scope.deleteEmailIdx = idx;
+	$scope.confirmDeleteEmail = function(email) {
+		    emailSrvc.delEmail = email;
             $.colorbox({
                 html : $compile($('#delete-email-modal').html())($scope)
                 	
@@ -1364,28 +1397,9 @@ function EmailEditCtrl($scope, $compile) {
 	};
 	
 	$scope.deleteEmail = function () {
-		var email = $scope.emailsPojo.emails[$scope.deleteEmailIdx];
-		$scope.deleteEmailIdx = null;
-		$.ajax({
-	        url: getBaseUri() + '/account/deleteEmail.json',
-	        type: 'DELETE',
-	        data:  angular.toJson(email),
-	        contentType: 'application/json;charset=UTF-8',
-	        dataType: 'json',
-	        success: function(data) {
-	        	$scope.inputEmail = data;
-	        	//alert($scope.inputEmail.errors.length);
-	        	if ($scope.inputEmail.errors.length == 0) {
-					$scope.initInputEmail();
-					$scope.getEmails();
-				}
-	        	$scope.$apply();
-	        	$scope.closeModal();
-	        }
-	    }).fail(function() { 
-	    	// something bad is happening!
-	    	console.log("$EmailEditCtrl.deleteEmail() error");
-	    });
+		emailSrvc.deleteEmail(function() {
+			$scope.closeModal();
+		});
 	};
 	
 	$scope.checkCredentials = function() {
@@ -1397,6 +1411,8 @@ function EmailEditCtrl($scope, $compile) {
 	};
 	
 };
+
+
 
 function WebsitesCtrl($scope, $compile) {
     $scope.showEdit = false;
@@ -2236,7 +2252,7 @@ function ClaimCtrl($scope, $compile) {
 };
 
 
-function VerifyEmailCtrl($scope, $compile) {
+function VerifyEmailCtrl($scope, $compile, emailSrvc) {
 	$scope.getEmails = function() {		
 		$.ajax({
 	        url: getBaseUri() + '/account/emails.json',
@@ -3292,7 +3308,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	$scope.canReadFiles = false;
 	$scope.showBibtexImportWizard = false;
 	$scope.textFiles = null;
-	$scope.worksFromBibtex = null;
+	$scope.worksFromBibtex = null;	
 	$scope.workspaceSrvc = workspaceSrvc;
 	$scope.worksSrvc = worksSrvc;
 	$scope.showBibtex = true;
@@ -3305,22 +3321,31 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	$scope.bibtexParsingError = false;
 	$scope.edittingWork = false;
 	$scope.bibtexCancelLink = false;
+	$scope.bibtextWork = false;
+	$scope.bibtextWorkIndex = null;
 
 	
 	$scope.loadBibtexJs = function() {
         try {
         	$scope.worksFromBibtex = new Array();
+        	
         	$.each($scope.textFiles, function (index, bibtex) {
 				var parsed = bibtexParse.toJSON(bibtex);
-			
+				var bibtexEntry = null;
+							
 				if (parsed.length == 0) throw "bibtex parse return nothing";
+				
+				
 				for (j in parsed) {
-					(function (cur) {
-						worksSrvc.getBlankWork(function(data) {
-							populateWorkAjaxForm(cur,data);
-							$scope.worksFromBibtex.push(data);
-							$scope.bibtexCancelLink = true;
-						});
+					(function (cur) {						
+						bibtexEntry = parsed[j].entryType.toLowerCase(); 
+						if(bibtexEntry != 'preamble' && bibtexEntry != 'comment'){ //Filtering @PREAMBLE and @COMMENT
+							worksSrvc.getBlankWork(function(data) {
+								populateWorkAjaxForm(cur,data);
+								$scope.worksFromBibtex.push(data);			
+								$scope.bibtexCancelLink = true;
+							});
+						}
 					})(parsed[j]);
 			    };
         	});
@@ -3335,15 +3360,15 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
     	$scope.worksFromBibtex.splice(index, 1);
     };    
     
-    $scope.addWorkFromBibtex = function(work) {
-    	var index = $scope.worksFromBibtex.indexOf(work);
-    	var work = $scope.worksFromBibtex.splice(index, 1);    	
-    	$scope.addWorkModal(work[0]);
+    $scope.addWorkFromBibtex = function(work) {    	
+    	$scope.bibtextWorkIndex = $scope.worksFromBibtex.indexOf(work);
+    	$scope.bibtextWork = true;    	
+    	$scope.addWorkModalFromBibTex($scope.worksFromBibtex[$scope.bibtextWorkIndex]);
     };
    
     $scope.openBibTextWizard = function () {
     	$scope.bibtexParsingError = false;
-    	$scope.showBibtexImportWizard = true;
+    	$scope.showBibtexImportWizard = true;    	
     };
     
     $scope.bibtextCancel = function(){
@@ -3407,7 +3432,15 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
         });
 	};
 	
-	$scope.addWorkModal = function(data){
+	$scope.addWorkModalFromBibTex = function(data){
+		$scope.loadWorkTypes();		 
+		$scope.edittingWork = false;
+		$scope.editWork = data;
+		$scope.showAddModal();		
+	};
+	
+	$scope.addWorkModal = function(data){		
+		
 		$scope.loadWorkTypes();
 		if (data == undefined) { 
 			$scope.edittingWork = false;
@@ -3444,7 +3477,11 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	        		$scope.closeAllMoreInfo();
 	        		$.colorbox.close(); 
 	        		$scope.addingWork = false;
-	        		$scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
+	        		$scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);	        		
+	        		if($scope.bibtextWork == true){
+	        			$scope.worksFromBibtex.splice($scope.bibtextWorkIndex, 1);
+	        			$scope.bibtextWork = false;	        			
+	        		}
 	        	} else {
 		        	$scope.editWork = data;
 		        	$scope.copyErrorsLeft($scope.editWork, data);
@@ -3472,12 +3509,12 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	        		$scope.closeAllMoreInfo();
 	        		$.colorbox.close(); 
 	        		$scope.addingWork = false;
-	        		$scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
+	        		$scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);	        		
 	        	} else {
 		        	$scope.editWork = data;
 		        	$scope.copyErrorsLeft($scope.editWork, data);
 		        	$scope.addingWork = false;
-		        	$scope.$apply();
+		        	$scope.$apply();		        	
 	        	}
 	        }
 		}).fail(function(){
@@ -4960,7 +4997,7 @@ function removeSecQuestionCtrl($scope,$compile) {
 	};	
 };
 
-function SSOPreferencesCtrl($scope, $compile) {
+function SSOPreferencesCtrl($scope, $compile, emailSrvc) {
 	$scope.showReg = false;
 	$scope.userCredentials = null;	
 	$scope.editing = false;
@@ -4980,6 +5017,29 @@ function SSOPreferencesCtrl($scope, $compile) {
 	$scope.authorizeURL = '';
 	$scope.selectedRedirectUri = '';
 	$scope.creating = false;
+	$scope.emailSrvc = emailSrvc;
+	
+	$scope.verifyEmail = function() {
+		var funct = function() {
+			$scope.verifyEmailObject = emailSrvc.primaryEmail;
+			emailSrvc.verifyEmail(emailSrvc.primaryEmail,function(data) {
+		    	    $.colorbox({
+		    	        html : $compile($('#verify-email-modal').html())($scope)
+		    	    });
+		    	    $scope.$apply();
+		    	    $.colorbox.resize();
+		   });  
+	   };
+	   if (emailSrvc.primaryEmail == null)
+		      emailSrvc.getEmails(funct);
+	   else
+		   funct();
+	};
+	
+	$scope.closeModal = function() {
+		$.colorbox.close();
+	};
+
 	
 	$scope.enableDeveloperTools = function() {
 		$.ajax({

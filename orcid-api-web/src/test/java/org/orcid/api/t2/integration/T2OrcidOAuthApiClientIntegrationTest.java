@@ -540,7 +540,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         OrcidHistory orcidHistory = message.getOrcidProfile().getOrcidHistory();
         assertTrue(orcidHistory != null && orcidHistory.getSource() != null);
         String orcid = orcidHistory.getSource().getSourceOrcid().getPath();
-        ClientDetailsEntity clientDetails = clientDetailsManager.find(orcid);
+        ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(orcid);
         assertNotNull(clientDetails);
         assertEquals("Ecological Complexity", clientDetails.getClientName());
 
@@ -582,7 +582,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         OrcidHistory orcidHistory = message.getOrcidProfile().getOrcidHistory();
         assertTrue(orcidHistory != null && orcidHistory.getSource() != null);
         String clientOrcid = orcidHistory.getSource().getSourceOrcid().getPath();
-        ClientDetailsEntity clientDetails = clientDetailsManager.find(clientOrcid);
+        ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientOrcid);
         assertEquals("Ecological Complexity", clientDetails.getClientName());
 
         ExternalIdentifiers externalIdentifiers = orcidBio.getExternalIdentifiers();
