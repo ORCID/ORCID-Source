@@ -6024,6 +6024,19 @@ function OauthAuthorizationController($scope){
 		$scope.showClientDescription = !$scope.showClientDescription;
 	};
 	
+	$scope.getEmptyAuthorizationForm = function() {
+		$.ajax({
+			url: getBaseUri() + '/oauth/custom/empty.json',
+			type: 'GET',
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.authorizationForm = data;
+	        	$scope.$apply();
+	        }
+		});
+	};		
+	
 	$scope.authorize = function() {
 		$scope.authorizationForm.approved = true;
 		$scope.submit();
@@ -6049,6 +6062,8 @@ function OauthAuthorizationController($scope){
 	    	console.log("An error occured authenticating the user.");
 	    });
 	};
+	
+	//$scope.getEmptyAuthorizationForm();
 	
 };
 

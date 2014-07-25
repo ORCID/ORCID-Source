@@ -36,10 +36,10 @@
 			</div>	
 			<#assign denyOnClick = " orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Authorize_Deny', 'OAuth " + client_group_name?js_string + " - " + client_name?js_string + "']);"> 
 			<div id="authForm">            		
-	            <input ng-model="authorizationForm.scope.value" name="scopes" value="${scopesString}" type="hidden"/>
-	            <input ng-model="authorizationForm.clientId.value" name="client_id" value="${client_id}" type="hidden"/>
-	            <input ng-model="authorizationForm.responseType.value" name="response_type" value="${response_type}" type="hidden"/>
-	            <input ng-model="authorizationForm.redirectUri.value" name="redirect_uri" value="${redirect_uri}" type="hidden"/>	            
+	            <input ng-model="authorizationForm.scope.value" name="scopes" ng-init="${scopesString}" type="hidden"/>
+	            <input ng-model="authorizationForm.clientId.value" name="client_id" ng-init="${client_id}" type="hidden"/>
+	            <input ng-model="authorizationForm.responseType.value" name="response_type" ng-init="${response_type}" type="hidden"/>
+	            <input ng-model="authorizationForm.redirectUri.value" name="redirect_uri" ng-init="${redirect_uri}" type="hidden"/>	            
 	            <div>
 	                <label for="userId">${springMacroRequestContext.getMessage("oauth_sign_in.labelemailorID")}</label>
 	                <div class="relative">
