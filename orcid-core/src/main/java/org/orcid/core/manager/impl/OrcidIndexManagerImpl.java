@@ -31,7 +31,7 @@ import org.orcid.core.manager.OrcidIndexManager;
 import org.orcid.core.security.visibility.filter.VisibilityFilter;
 import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.Email;
-import org.orcid.jaxb.model.message.ExternalIdOrcid;
+import org.orcid.jaxb.model.message.ExternalIdSource;
 import org.orcid.jaxb.model.message.ExternalIdReference;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
@@ -128,8 +128,8 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
 				List<String> extIdOrcidsAndRefs = new ArrayList<String>();
 				for (ExternalIdentifier externalIdentifier : externalIdentifiers
 						.getExternalIdentifier()) {
-					ExternalIdOrcid externalIdOrcid = externalIdentifier
-							.getExternalIdOrcid();
+					ExternalIdSource externalIdOrcid = externalIdentifier
+							.getExternalIdSource();
 					if (externalIdOrcid != null) {
 						extIdOrcids.add(externalIdOrcid.getPath());
 					}

@@ -40,7 +40,7 @@ import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.security.DefaultPermissionChecker;
 import org.orcid.core.security.PermissionChecker;
-import org.orcid.jaxb.model.message.ExternalIdOrcid;
+import org.orcid.jaxb.model.message.ExternalIdSource;
 import org.orcid.jaxb.model.message.ExternalIdReference;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
@@ -502,9 +502,11 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
 
             ExternalIdentifiers newExternalIdentifiers = new ExternalIdentifiers();
             newExternalIdentifiers.setVisibility(Visibility.PUBLIC);
-            ExternalIdOrcid externalIdOrcid = new ExternalIdOrcid();
+            ExternalIdSource externalIdOrcid = new ExternalIdSource();
             externalIdOrcid.setPath(clientId);
-            ExternalIdentifier additionalIdentifer = new ExternalIdentifier(externalIdOrcid, new ExternalIdReference("abc123"));
+            ExternalIdentifier additionalIdentifer = new ExternalIdentifier();
+            additionalIdentifer.setExternalIdReference(new ExternalIdReference("abc123"));
+            additionalIdentifer.setExternalIdOrcid(externalIdOrcid);
             newExternalIdentifiers.getExternalIdentifier().add(additionalIdentifer);
             orcidBio.setExternalIdentifiers(newExternalIdentifiers);
 
@@ -549,9 +551,11 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
 
         ExternalIdentifiers newExternalIdentifiers = new ExternalIdentifiers();
         newExternalIdentifiers.setVisibility(Visibility.PUBLIC);
-        ExternalIdOrcid externalIdOrcid = new ExternalIdOrcid();
+        ExternalIdSource externalIdOrcid = new ExternalIdSource();
         externalIdOrcid.setPath(clientId);
-        ExternalIdentifier additionalIdentifer = new ExternalIdentifier(externalIdOrcid, new ExternalIdReference("abc123"));
+        ExternalIdentifier additionalIdentifer = new ExternalIdentifier();
+        additionalIdentifer.setExternalIdReference(new ExternalIdReference("abc123"));
+        additionalIdentifer.setExternalIdOrcid(externalIdOrcid);
         newExternalIdentifiers.getExternalIdentifier().add(additionalIdentifer);
         orcidBio.setExternalIdentifiers(newExternalIdentifiers);
 
@@ -590,9 +594,11 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
 
         ExternalIdentifiers newExternalIdentifiers = new ExternalIdentifiers();
         newExternalIdentifiers.setVisibility(Visibility.PUBLIC);
-        ExternalIdOrcid externalIdOrcid = new ExternalIdOrcid();
+        ExternalIdSource externalIdOrcid = new ExternalIdSource();
         externalIdOrcid.setPath(clientId);
-        ExternalIdentifier additionalIdentifer = new ExternalIdentifier(externalIdOrcid, new ExternalIdReference("abc123"));
+        ExternalIdentifier additionalIdentifer = new ExternalIdentifier();
+        additionalIdentifer.setExternalIdReference(new ExternalIdReference("abc123"));
+        additionalIdentifer.setExternalIdOrcid(externalIdOrcid);
         newExternalIdentifiers.getExternalIdentifier().add(additionalIdentifer);
         orcidBio.setExternalIdentifiers(newExternalIdentifiers);
 

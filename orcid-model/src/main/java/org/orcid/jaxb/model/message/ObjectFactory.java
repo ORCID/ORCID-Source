@@ -508,11 +508,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ExternalIdOrcid }
+     * Create an instance of {@link ExternalIdSource }
      * 
      */
-    public ExternalIdOrcid createExternalIdOrcid() {
-        return new ExternalIdOrcid();
+    public ExternalIdSource createExternalIdOrcid() {
+        return new ExternalIdSource();
     }
 
     /**

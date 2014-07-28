@@ -57,7 +57,7 @@ import org.orcid.jaxb.model.message.Delegation;
 import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.ExternalIdCommonName;
-import org.orcid.jaxb.model.message.ExternalIdOrcid;
+import org.orcid.jaxb.model.message.ExternalIdSource;
 import org.orcid.jaxb.model.message.ExternalIdReference;
 import org.orcid.jaxb.model.message.ExternalIdUrl;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
@@ -623,7 +623,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             Map<Pair<String, String>, ExternalIdentifierEntity> existingExternalIdentifiersMap) {
         if (externalIdentifier != null && externalIdentifier.getExternalIdReference() != null) {
             ExternalIdCommonName externalIdCommonName = externalIdentifier.getExternalIdCommonName();
-            ExternalIdOrcid externalIdOrcid = externalIdentifier.getExternalIdOrcid();
+            ExternalIdSource externalIdOrcid = externalIdentifier.getExternalIdSource();
             String externalIdOrcidValue = externalIdOrcid != null ? externalIdOrcid.getPath() : null;
             ExternalIdReference externalIdReference = externalIdentifier.getExternalIdReference();
             String referenceValue = externalIdReference != null ? externalIdReference.getContent() : null;
