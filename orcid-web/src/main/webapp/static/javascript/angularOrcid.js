@@ -5945,12 +5945,10 @@ function SocialNetworksCtrl($scope){
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'text',
 	        success: function(data) {	
-	        	console.log("-> " + data);
 	        	if(data == "true")
 	        		$scope.twitter = true;
 	        	else 
 	        		$scope.twitter = false;
-	        	console.log("value: " + $scope.twitter);
 	        	$scope.$apply();
 	        }
 		}).fail(function(){
@@ -6023,8 +6021,10 @@ function OauthAuthorizationController($scope){
 	$scope.toggleClientDescription = function() {
 		$scope.showClientDescription = !$scope.showClientDescription;
 	};
-	
-	$scope.getEmptyAuthorizationForm = function() {
+		
+	//initializeHiddenFields(${scopesString}, ${client_id}, ${response_type}, ${redirect_uri})
+	$scope.initializeHiddenFields = function(scopes, redirect_uri, client_id, response_type) {
+		console.log("Initializing fields");
 		$.ajax({
 			url: getBaseUri() + '/oauth/custom/empty.json',
 			type: 'GET',
@@ -6032,10 +6032,17 @@ function OauthAuthorizationController($scope){
 	        dataType: 'json',
 	        success: function(data) {
 	        	$scope.authorizationForm = data;
+	        	$scope.authorizationForm.scope.value=scopes;
+	        	$scope.authorizationForm.redirectUri.value=redirect_uri;
+	        	$scope.authorizationForm.clientId.value=client_id;
+	        	$scope.authorizationForm.responseType.value=response_type;
 	        	$scope.$apply();
+	        	console.log(angular.toJson($scope.authorizationForm));
 	        }
-		});
-	};		
+		}).fail(function() { 	    	
+	    	console.log("An error occured initializing the form.");
+	    });;
+	};
 	
 	$scope.authorize = function() {
 		$scope.authorizationForm.approved = true;
@@ -6050,20 +6057,20 @@ function OauthAuthorizationController($scope){
 	$scope.submit = function() {
 		
 		$.ajax({
-			url: getBaseUri() + '/oauth/custom/login',
+			url: getBaseUri() + '/oauth/custom/login.json',
 			type: 'POST',
 			data: angular.toJson($scope.authorizationForm),
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        success: function(data) {
-	        	
+	        	window.location = data.redirectUri.value;
 	        }
 		}).fail(function() { 	    	
 	    	console.log("An error occured authenticating the user.");
 	    });
 	};
 	
-	//$scope.getEmptyAuthorizationForm();
+	
 	
 };
 

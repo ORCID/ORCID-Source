@@ -103,8 +103,12 @@
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/oauth/confirm_access(\?.*)?"
 			access="DENY_OAUTH,ROLE_USER" />
-		<sec:intercept-url pattern="/oauth/custom/login(\?.*)?"
+		<sec:intercept-url pattern="/oauth/custom/login.*?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/oauth/custom/signin.*?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/oauth/custom/empty.*?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />			
 		<sec:intercept-url pattern="/oauth/.*" access="ROLE_USER" />		
 		<sec:form-login authentication-failure-url="/oauth/signin"
 			login-page="/oauth/signin" login-processing-url="/signin/auth"

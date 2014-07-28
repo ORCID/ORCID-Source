@@ -18,7 +18,6 @@ package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,6 +32,7 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -44,17 +44,21 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.provider.endpoint.AuthorizationEndpoint;
+import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
+import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.support.SimpleSessionStatus;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.View;
+import org.springframework.web.servlet.view.RedirectView;
 
 @Controller("oauthConfirmAccessController")
 @RequestMapping(value = "/oauth", method = RequestMethod.GET)
@@ -82,7 +86,7 @@ public class OauthConfirmAccessController extends BaseController {
     @Resource
     private AuthenticationManager authenticationManager;
     @Resource
-    private AuthorizationEndpoint authorizationEndpoint;
+    private OrcidAuthorizationEndpoint authorizationEndpoint;
 
     @RequestMapping(value = { "/signin", "/login" }, method = RequestMethod.GET)
     public ModelAndView loginGetHandler2(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
@@ -97,7 +101,7 @@ public class OauthConfirmAccessController extends BaseController {
         String redirectUri = "";
         String responseType = "";
         String orcid = null;
-        if (savedRequest != null) {
+        if (savedRequest != null) {            
             String url = savedRequest.getRedirectUrl();
             Matcher matcher = clientIdPattern.matcher(url);
             if (matcher.find()) {
@@ -138,6 +142,20 @@ public class OauthConfirmAccessController extends BaseController {
                     
                     //Get client name
                     ClientDetailsEntity clientDetails = clientDetailsManager.find(clientId);
+                    
+                    //validate client scopes
+                    try {
+                        authorizationEndpoint.validateScope(scope, clientDetails);
+                    } catch (InvalidScopeException ise) {
+                        String redirectUriWithParams = redirectUri;
+                        redirectUriWithParams += "?error=invalid_scope&error_description=" + ise.getMessage();
+                        RedirectView rView = new RedirectView(redirectUriWithParams);
+                        
+                        ModelAndView error = new ModelAndView();
+                        error.setView(rView);
+                        return error;
+                    }
+                    //If client details is ok, continue
                     clientName = clientDetails.getClientName() == null ? "" : clientDetails.getClientName();
                     clientDescription = clientDetails.getClientDescription() == null ? "" : clientDetails.getClientDescription();
                     //Get the group credit name
@@ -238,12 +256,8 @@ public class OauthConfirmAccessController extends BaseController {
         return empty;
     }
     
-    
-    
-    
-    
-    @RequestMapping(value = { "/custom/signin", "/custom/login" }, method = RequestMethod.POST)
-    public OauthAuthorizeForm authenticateAndAuthorize(HttpServletRequest request, OauthAuthorizeForm form) {
+    @RequestMapping(value = { "/custom/signin.json", "/custom/login.json" }, method = RequestMethod.POST)
+    public @ResponseBody OauthAuthorizeForm authenticateAndAuthorize(HttpServletRequest request, @RequestBody OauthAuthorizeForm form) {        
         //Clean form errors
         form.setErrors(new ArrayList<String>());
         //Validate name and password
@@ -254,8 +268,9 @@ public class OauthConfirmAccessController extends BaseController {
                 //Authenticate user
                 Authentication auth = authenticateUser(request, form);
                 //Create authorization params
+                SimpleSessionStatus status = new SimpleSessionStatus();            
                 Map<String, Object> model = new HashMap<String, Object>();
-                Map<String, String> params = new HashMap<String, String>();
+                Map<String, String> params = new HashMap<String, String>();                
                 params.put(CLIENT_ID_PARAM, form.getClientId().getValue());   
                 if(!PojoUtil.isEmpty(form.getRedirectUri()))
                     params.put(REDIRECT_URI_PARAM, form.getRedirectUri().getValue());
@@ -265,11 +280,20 @@ public class OauthConfirmAccessController extends BaseController {
                     params.put(SCOPE_PARAM, form.getScope().getValue());
                 if(!PojoUtil.isEmpty(form.getResponseType()))
                     params.put(RESPONSE_TYPE_PARAM, form.getResponseType().getValue());
-                SimpleSessionStatus status = new SimpleSessionStatus();
-                Principal principal = (Principal)auth.getPrincipal();
+                if(form.getApproved())
+                    params.put("user_oauth_approval", "true");
+                else 
+                    params.put("user_oauth_approval", "false");
+                Map<String, String> approvalParams = new HashMap<String, String>();
+                if(form.getApproved())
+                    approvalParams.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "true");
+                else 
+                    approvalParams.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "false");
                 //Authorize
-                ModelAndView mv = authorizationEndpoint.authorize(model, RESPONSE_TYPE, params, status, principal);
-                System.out.println(mv);
+                authorizationEndpoint.authorize(model, RESPONSE_TYPE, params, status, auth);
+                //Approve
+                RedirectView view = (RedirectView)authorizationEndpoint.approveOrDeny(approvalParams, model, status, auth);
+                form.setRedirectUri(Text.valueOf(view.getUrl()));
             } catch(AuthenticationException ae) {
                 form.getErrors().add(getMessage("orcid.frontend.security.bad_credentials"));
             }
@@ -287,7 +311,7 @@ public class OauthConfirmAccessController extends BaseController {
         if(PojoUtil.isEmpty(form.getPassword())) {
             form.getErrors().add(getMessage("orcid.frontend.security.bad_credentials"));
         }
-    }
+    }    
     
     private Authentication authenticateUser(HttpServletRequest request, OauthAuthorizeForm form) throws AuthenticationException {
             UsernamePasswordAuthenticationToken token = null;
