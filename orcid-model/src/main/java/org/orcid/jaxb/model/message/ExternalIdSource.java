@@ -27,7 +27,7 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement(name = "external-id-orcid")
+@XmlRootElement(name = "external-id-source")
 public class ExternalIdSource extends OrcidIdBase implements Serializable {
 
     private static final long serialVersionUID = 1L;
