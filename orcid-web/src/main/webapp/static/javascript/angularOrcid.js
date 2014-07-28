@@ -6016,15 +6016,18 @@ function SocialNetworksCtrl($scope){
 
 function OauthAuthorizationController($scope){ 
 	$scope.showClientDescription = false;
+	$scope.showRegisterForm = false;
 	$scope.authorizationForm = {};
+	$scope.registrationForm = {};
 	
 	$scope.toggleClientDescription = function() {
 		$scope.showClientDescription = !$scope.showClientDescription;
 	};
 		
-	//initializeHiddenFields(${scopesString}, ${client_id}, ${response_type}, ${redirect_uri})
-	$scope.initializeHiddenFields = function(scopes, redirect_uri, client_id, response_type) {
-		console.log("Initializing fields");
+	//---------------------
+	//-LOGIN AND AUTHORIZE-
+	//---------------------	
+	$scope.initializeHiddenFields = function(scopes, redirect_uri, client_id, response_type) {		
 		$.ajax({
 			url: getBaseUri() + '/oauth/custom/empty.json',
 			type: 'GET',
@@ -6035,13 +6038,11 @@ function OauthAuthorizationController($scope){
 	        	$scope.authorizationForm.scope.value=scopes;
 	        	$scope.authorizationForm.redirectUri.value=redirect_uri;
 	        	$scope.authorizationForm.clientId.value=client_id;
-	        	$scope.authorizationForm.responseType.value=response_type;
-	        	$scope.$apply();
-	        	console.log(angular.toJson($scope.authorizationForm));
+	        	$scope.authorizationForm.responseType.value=response_type;	        	
 	        }
 		}).fail(function() { 	    	
 	    	console.log("An error occured initializing the form.");
-	    });;
+	    });
 	};
 	
 	$scope.authorize = function() {
@@ -6070,8 +6071,130 @@ function OauthAuthorizationController($scope){
 	    });
 	};
 	
+	//------------------------
+	//-REGISTER AND AUTHORIZE-
+	//------------------------
+	$scope.getRegistrationForm = function() {
+		$.ajax({
+			url: getBaseUri() + '/register.json',
+			type: 'GET',
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.registrationForm = data;	        		        
+	        }
+		}).fail(function() { 	    	
+	    	console.log("An error occured initializing the form.");
+	    });
+	};
 	
+	$scope.registerAndAuthorize = function() {
+		$scope.registrationForm.oauthAccept = true;
+		$scope.register();
+	};
 	
+	$scope.registerAndDeny = function() {
+		$scope.registrationForm.oauthAccept = false;
+		$scope.register();
+	};
+	
+	$scope.register = function() {
+		$.ajax({
+	        url: getBaseUri() + '/register.json',
+	        type: 'POST',
+	        data:  angular.toJson($scope.registrationForm),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.registrationForm = data;
+	        	$scope.$apply();
+	        	if ($scope.registrationForm.errors.length == 0) {
+	        		$scope.showProcessingColorBox();
+	        		$scope.getDuplicates();
+	        	}
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("RegistrationCtrl.postRegister() error");
+	    });
+	};
+	
+	$scope.getDuplicates = function(){
+		$.ajax({
+			url: getBaseUri() + '/dupicateResearcher.json?familyNames=' + $scope.register.familyNames.value + '&givenNames=' + $scope.register.givenNames.value,	        
+	        dataType: 'json',
+	        success: function(data) {
+		       	$scope.duplicates = data;
+		        $scope.$apply();
+		        if ($scope.duplicates.length > 0 ) {
+		        	$scope.showDuplicatesColorBox();
+		        } else {
+		        	$scope.postRegisterConfirm();
+		        }
+	        }
+		}).fail(function(){
+		// something bad is happening!
+			console.log("error fetching register.json");
+		});
+	};
+	
+	$scope.showDuplicatesColorBox = function () {
+	    $.colorbox({
+	        html : $compile($('#duplicates').html())($scope),
+	        escKey:false, 
+	        overlayClose:false,
+	        transition: 'fade',
+	        close: '',
+	        scrolling: true
+	        	    });
+	    $scope.$apply();
+	    $.colorbox.resize({width:"780px" , height:"400px"});
+	};
+		
+	$scope.postRegisterConfirm = function () {
+		$scope.showProcessingColorBox();
+		$.ajax({
+	        url: getBaseUri() + '/registerConfirm.json',
+	        type: 'POST',
+	        data:  angular.toJson($scope.register),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	    		if (basePath.startsWith(baseUrl + 'oauth')) {
+	    			var clientName = $('div#RegistrationCtr input[name="client_name"]').val();
+	    			var clientGroupName = $('div#RegistrationCtr input[name="client_group_name"]').val();
+	    		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration', 'OAuth '+ orcidGA.buildClientString(clientGroupName, clientName)]);
+	    		}
+	    	    else
+	    	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration', 'Website']);
+	    		orcidGA.windowLocationHrefDelay(data.url);
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("RegistrationCtrl.postRegister() error");
+	    });
+	};
+	
+	//------------------
+	//------COMMON------
+	//------------------
+	$scope.switchForm = function() {		
+		$scope.showRegisterForm = !$scope.showRegisterForm;		
+	};
+	
+	$scope.showProcessingColorBox = function () {
+	    $.colorbox({
+	        html : $('<div style="font-size: 50px; line-height: 60px; padding: 20px; text-align:center">' + om.get('common.processing') + '&nbsp;<i id="ajax-loader" class="glyphicon glyphicon-refresh spin green"></i></div>'),
+	        width: '400px', 
+	        height:"100px",
+	        close: '',
+	        escKey:false, 
+	        overlayClose:false,
+			onComplete: function() {
+			    $.colorbox.resize({width:"400px" , height:"100px"});
+			}	        
+	    });
+	};
 };
 
 

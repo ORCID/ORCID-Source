@@ -51,6 +51,10 @@ public class Registration implements ErrorsInterface, Serializable {
     private Text creationType;
     
     private Text referredBy;
+    
+    private String oauthRedirectUri;
+    
+    private boolean oauthAccept;
 
     public Registration() {
         errors = new ArrayList<String>();
@@ -66,6 +70,7 @@ public class Registration implements ErrorsInterface, Serializable {
         termsOfUse = new Checkbox();
         activitiesVisibilityDefault = new Visibility();
         referredBy = new Text();
+        oauthAccept = false;
     }
 
     public List<String> getErrors() {
@@ -172,4 +177,19 @@ public class Registration implements ErrorsInterface, Serializable {
         this.referredBy = referredBy;
     }
 
+    public boolean getOauthAccept() {
+        return oauthAccept;
+    }
+
+    public void setOauthAccept(boolean oauthAccept) {
+        this.oauthAccept = oauthAccept;
+    }
+
+    public String getOauthRedirectUri() {
+        return oauthRedirectUri;
+    }
+
+    public void setOauthRedirectUri(String oauthRedirectUri) {
+        this.oauthRedirectUri = oauthRedirectUri;
+    }    
 }

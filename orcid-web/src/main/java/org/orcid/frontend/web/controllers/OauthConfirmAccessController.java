@@ -36,8 +36,10 @@ import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.pojo.Redirect;
 import org.orcid.pojo.ajaxForm.OauthAuthorizeForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.Text;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -57,7 +59,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.support.SimpleSessionStatus;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
 
 @Controller("oauthConfirmAccessController")
@@ -87,6 +88,8 @@ public class OauthConfirmAccessController extends BaseController {
     private AuthenticationManager authenticationManager;
     @Resource
     private OrcidAuthorizationEndpoint authorizationEndpoint;
+    @Resource
+    private RegistrationController registrationController;
 
     @RequestMapping(value = { "/signin", "/login" }, method = RequestMethod.GET)
     public ModelAndView loginGetHandler2(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
@@ -301,6 +304,32 @@ public class OauthConfirmAccessController extends BaseController {
         return form;
     }        
     
+    
+    @RequestMapping(value = { "/custom/register.json" }, method = RequestMethod.POST)
+    public @ResponseBody Registration authenticateAndAuthorize(HttpServletRequest request, @RequestBody Registration form) {         
+        form.setErrors(new ArrayList<String>());
+        form = registrationController.setRegister(request, form);
+        if(form.getErrors() != null && form.getErrors().isEmpty()) {
+            //Register user
+            OrcidProfile newProfile = registrationController.createMinimalRegistration(request, registrationController.toProfile(form));
+            //Authenticate user 
+            String email = newProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+            String password = newProfile.getPassword();
+            Authentication auth = authenticateUser(request, email, password);
+            //Send redirect param
+            
+            String redirectUri = form.getOauthRedirectUri();
+            if(form.getOauthAccept()) {
+                
+            } else {
+                
+            }            
+        }
+        
+        return form;
+    }
+    
+    
     private void validateUserName(OauthAuthorizeForm form) {        
         if(PojoUtil.isEmpty(form.getUserName())) {
             form.getErrors().add(getMessage("orcid.frontend.security.bad_credentials"));
@@ -314,12 +343,21 @@ public class OauthConfirmAccessController extends BaseController {
     }    
     
     private Authentication authenticateUser(HttpServletRequest request, OauthAuthorizeForm form) throws AuthenticationException {
-            UsernamePasswordAuthenticationToken token = null;
-            token = new UsernamePasswordAuthenticationToken(form.getUserName().getValue(), form.getPassword().getValue());
+            UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(form.getUserName().getValue(), form.getPassword().getValue());
             token.setDetails(new WebAuthenticationDetails(request));
-            Authentication authentication = authenticationManager.authenticate(token);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            return authentication;
+            return authenticateUser(token);
+    }
+    
+    private Authentication authenticateUser(HttpServletRequest request, String email, String password) {
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(email, password);
+        token.setDetails(new WebAuthenticationDetails(request));
+        return authenticateUser(token);
+    }
+    
+    private Authentication authenticateUser(UsernamePasswordAuthenticationToken token) {
+        Authentication authentication = authenticationManager.authenticate(token);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        return authentication;
     }
     
     
