@@ -16,12 +16,9 @@
  */
 package org.orcid.core.manager.impl;
 
-import static org.orcid.utils.NullUtils.noneNull;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -786,13 +783,13 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     @Override
-    public List<Notification> getUnsentByOrcid(String orcid) {
-        List<NotificationEntity> entities = notificationDao.findUnsentByOrcid(orcid);
-        List<Notification> notifications = new ArrayList<>();
-        for (NotificationEntity entity : entities) {
-            notifications.add(notificationAdapter.toNotification(entity));
-        }
-        return notifications;
+    public List<Notification> findUnsentByOrcid(String orcid) {
+        return notificationAdapter.toNotification(notificationDao.findUnsentByOrcid(orcid));
+    }
+
+    @Override
+    public List<Notification> findByOrcid(String orcid, int firstResult, int maxResults) {
+        return notificationAdapter.toNotification(notificationDao.findByOrcid(orcid, firstResult, maxResults));
     }
 
 }

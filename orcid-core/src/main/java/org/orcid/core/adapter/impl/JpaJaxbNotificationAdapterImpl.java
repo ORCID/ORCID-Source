@@ -16,6 +16,9 @@
  */
 package org.orcid.core.adapter.impl;
 
+import java.util.Collection;
+import java.util.List;
+
 import ma.glasnost.orika.MapperFacade;
 
 import org.orcid.core.adapter.JpaJaxbNotificationAdapter;
@@ -49,6 +52,14 @@ public class JpaJaxbNotificationAdapterImpl implements JpaJaxbNotificationAdapte
             return null;
         }
         return mapperFacade.map(notificationEntity, Notification.class);
+    }
+
+    @Override
+    public List<Notification> toNotification(Collection<NotificationEntity> notificationEntities) {
+        if (notificationEntities == null) {
+            return null;
+        }
+        return mapperFacade.mapAsList(notificationEntities, Notification.class);
     }
 
 }

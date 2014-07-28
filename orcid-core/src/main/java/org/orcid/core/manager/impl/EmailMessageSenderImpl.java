@@ -108,7 +108,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 @Override
                 protected void doInTransactionWithoutResult(TransactionStatus status) {
                     LOGGER.info("Sending messages for orcid: {}", orcid);
-                    List<Notification> notifications = notificationManager.getUnsentByOrcid(orcid);
+                    List<Notification> notifications = notificationManager.findUnsentByOrcid(orcid);
                     LOGGER.info("Found {} messages to send for orcid: {}", notifications.size(), orcid);
                     EmailMessage digestMessage = createDigest(notifications);
                     digestMessage.setFrom(DIGEST_FROM_ADDRESS);

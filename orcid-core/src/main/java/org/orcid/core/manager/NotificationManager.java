@@ -58,6 +58,8 @@ public interface NotificationManager {
 
     public boolean sendPrivPolicyEmail2014_03(OrcidProfile orcidProfile, URI baseUri);
 
-    public List<Notification> getUnsentByOrcid(String orcid);
+    public List<Notification> findUnsentByOrcid(String orcid);
+
+    public List<Notification> findByOrcid(String orcid, int firstResult, int maxResults);
 
 }

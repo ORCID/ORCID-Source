@@ -4163,6 +4163,27 @@ function DelegatorsCtrl($scope, $compile){
 	
 };
 
+// Controller for notifications
+function NotificationsCtrl($scope, $compile){
+	
+	$scope.getNotifications = function() {
+		$.ajax({
+	        url: getBaseUri() + '/notifications/notifications.json',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.notifications = data;
+	        	$scope.$apply();
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("error with notifications");
+	    });
+	};
+	
+	// init
+	$scope.getNotifications();
+};
+
 function SwitchUserCtrl($scope, $compile, $document){
 	$scope.isDroppedDown = false;
 	$scope.searchResultsCache = new Object();
