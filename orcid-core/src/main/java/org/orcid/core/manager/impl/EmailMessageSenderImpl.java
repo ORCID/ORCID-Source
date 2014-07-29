@@ -25,6 +25,7 @@ import org.orcid.core.manager.EmailMessage;
 import org.orcid.core.manager.EmailMessageSender;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.jaxb.model.notification.Notification;
+import org.orcid.jaxb.model.notification.Source;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.slf4j.Logger;
@@ -77,7 +78,9 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
             summaryText.append(". ");
             summaryText.append(notification.getSubject());
             summaryText.append(" (");
-            summaryText.append(notification.getSource().getSourceName());
+            Source source = notification.getSource();
+            String sourceName = source != null ? source.getSourceName() : "ORCID";
+            summaryText.append(sourceName);
             summaryText.append(")");
 
             bodyText.append("\nMessage: ");
@@ -85,7 +88,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
             bodyText.append("\nDate: ");
             bodyText.append(notification.getCreatedDate().toXMLFormat());
             bodyText.append("\nFrom: ");
-            bodyText.append(notification.getSource().getSourceName());
+            bodyText.append(sourceName);
             bodyText.append("\nSubject: ");
             bodyText.append(notification.getSubject());
             bodyText.append("\n\n");
