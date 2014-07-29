@@ -466,23 +466,21 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="external-id-source" minOccurs="0"
-					maxOccurs="1" type="orcid:orcid-id">
-						<xs:annotation>
-							<xs:documentation>The source id for who added the identitifer to the the record.
-							</xs:documentation>
-						</xs:annotation>
-					</xs:element>
 				<xs:element ref="orcid:external-id-common-name"
 					minOccurs="0" maxOccurs="1" />
 				<xs:element ref="orcid:external-id-reference" minOccurs="0"
 					maxOccurs="1" />
 				<xs:element ref="orcid:external-id-url" minOccurs="0"
 					maxOccurs="1" />
+				<xs:element name="external-id-source" minOccurs="0"
+					maxOccurs="1" type="orcid:orcid-id">
+						<xs:annotation>
+							<xs:documentation>The source id for client or user that added the identitifer to the the record.
+							</xs:documentation>
+						</xs:annotation>
+			    </xs:element>
 			</xs:sequence>
 		</xs:complexType>
-	</xs:element>
-	<xs:element name="external-id-source" >
 	</xs:element>
 	<xs:element name="external-id-common-name">
 		<xs:complexType mixed="true" />

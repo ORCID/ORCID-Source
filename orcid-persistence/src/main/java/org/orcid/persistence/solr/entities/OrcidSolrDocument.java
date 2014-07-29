@@ -63,14 +63,28 @@ public class OrcidSolrDocument {
     @Field(SolrConstants.OTHER_NAMES)
     private List<String> otherNames;
 
+    /*
+     * @deprecated replaced with external-id-source in 1.2_rc5 and greater 
+     */
+    @Deprecated
     @Field(SolrConstants.EXTERNAL_ID_ORCIDS)
     private List<String> externalIdOrcids;
+
+    @Field(SolrConstants.EXTERNAL_ID_SOURCE)
+    private List<String> externalIdSources;
 
     @Field(SolrConstants.EXTERNAL_ID_REFERENCES)
     private List<String> externalIdReferences;
 
+    /*
+     * @deprecated replaced with external-id-source in 1.2_rc5 and greater 
+     */
+    @Deprecated
     @Field(SolrConstants.EXTERNAL_ID_ORCIDS_AND_REFERENCES)
     private List<String> externalIdOrcidsAndReferences;
+
+    @Field(SolrConstants.EXTERNAL_ID_SOURCE_AND_REFERENCES)
+    private List<String> externalIdSourcesAndReferences;
 
     @Field(SolrConstants.DIGITAL_OBJECT_IDS)
     private List<String> digitalObjectIds;
@@ -225,10 +239,18 @@ public class OrcidSolrDocument {
         this.otherNames = otherNames;
     }
 
+    /*
+     * @deprecated replaced with external-id-source in 1.2_rc5 and greater 
+     */
+    @Deprecated
     public List<String> getExternalIdOrcids() {
         return externalIdOrcids;
     }
 
+    /*
+     * @deprecated replaced with external-id-source in 1.2_rc5 and greater 
+     */
+    @Deprecated
     public void setExternalIdOrcids(List<String> externalIdOrcids) {
         this.externalIdOrcids = externalIdOrcids;
     }
@@ -241,10 +263,18 @@ public class OrcidSolrDocument {
         this.externalIdReferences = externalIdReferences;
     }
 
+    /*
+     * @deprecated replaced with external-id-source in 1.2_rc5 and greater 
+     */
+    @Deprecated
     public List<String> getExternalIdOrcidsAndReferences() {
         return externalIdOrcidsAndReferences;
     }
 
+    /*
+     * @deprecated replaced with external-id-source in 1.2_rc5 and greater 
+     */
+    @Deprecated
     public void setExternalIdOrcidsAndReferences(List<String> externalIdOrcidsAndReferences) {
         this.externalIdOrcidsAndReferences = externalIdOrcidsAndReferences;
     }
@@ -782,5 +812,21 @@ public class OrcidSolrDocument {
 
     public void setOtherIdentifierType(List<String> otherIdentifierType) {
         this.otherIdentifierType = otherIdentifierType;
+    }
+
+    public List<String> getExternalIdSources() {
+        return externalIdSources;
+    }
+
+    public void setExternalIdSources(List<String> externalIdSources) {
+        this.externalIdSources = externalIdSources;
+    }
+
+    public List<String> getExternalIdSourcesAndReferences() {
+        return externalIdSourcesAndReferences;
+    }
+
+    public void setExternalIdSourcesAndReferences(List<String> externalIdSourcesAndReferences) {
+        this.externalIdSourcesAndReferences = externalIdSourcesAndReferences;
     }
 }

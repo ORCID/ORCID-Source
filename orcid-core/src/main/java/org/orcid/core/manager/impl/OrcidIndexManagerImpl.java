@@ -130,6 +130,8 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
 						.getExternalIdentifier()) {
 					ExternalIdSource externalIdOrcid = externalIdentifier
 							.getExternalIdSource();
+					if (externalIdOrcid != null)
+					   externalIdOrcid = externalIdentifier.getExternalIdSource();
 					if (externalIdOrcid != null) {
 						extIdOrcids.add(externalIdOrcid.getPath());
 					}
@@ -146,6 +148,7 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
 				}
 				if (!extIdOrcids.isEmpty()) {
 					profileIndexDocument.setExternalIdOrcids(extIdOrcids);
+					profileIndexDocument.setExternalIdSources(extIdOrcids);
 				}
 				if (!extIdRefs.isEmpty()) {
 					profileIndexDocument.setExternalIdReferences(extIdRefs);
@@ -153,6 +156,8 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
 				if (!extIdOrcidsAndRefs.isEmpty()) {
 					profileIndexDocument
 							.setExternalIdOrcidsAndReferences(extIdOrcidsAndRefs);
+					profileIndexDocument
+                                        .setExternalIdSourcesAndReferences(extIdOrcidsAndRefs);
 				}
 			}
 
