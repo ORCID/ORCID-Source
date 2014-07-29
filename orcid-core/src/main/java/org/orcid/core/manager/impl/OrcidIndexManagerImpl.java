@@ -147,7 +147,6 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
 					}
 				}
 				if (!extIdOrcids.isEmpty()) {
-					profileIndexDocument.setExternalIdOrcids(extIdOrcids);
 					profileIndexDocument.setExternalIdSources(extIdOrcids);
 				}
 				if (!extIdRefs.isEmpty()) {
@@ -155,9 +154,7 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
 				}
 				if (!extIdOrcidsAndRefs.isEmpty()) {
 					profileIndexDocument
-							.setExternalIdOrcidsAndReferences(extIdOrcidsAndRefs);
-					profileIndexDocument
-                                        .setExternalIdSourcesAndReferences(extIdOrcidsAndRefs);
+							.setExternalIdSourcesAndReferences(extIdOrcidsAndRefs);
 				}
 			}
 

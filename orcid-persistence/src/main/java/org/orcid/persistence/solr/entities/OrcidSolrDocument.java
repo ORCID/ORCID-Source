@@ -63,25 +63,11 @@ public class OrcidSolrDocument {
     @Field(SolrConstants.OTHER_NAMES)
     private List<String> otherNames;
 
-    /*
-     * @deprecated replaced with external-id-source in 1.2_rc5 and greater 
-     */
-    @Deprecated
-    @Field(SolrConstants.EXTERNAL_ID_ORCIDS)
-    private List<String> externalIdOrcids;
-
     @Field(SolrConstants.EXTERNAL_ID_SOURCE)
     private List<String> externalIdSources;
 
     @Field(SolrConstants.EXTERNAL_ID_REFERENCES)
     private List<String> externalIdReferences;
-
-    /*
-     * @deprecated replaced with external-id-source in 1.2_rc5 and greater 
-     */
-    @Deprecated
-    @Field(SolrConstants.EXTERNAL_ID_ORCIDS_AND_REFERENCES)
-    private List<String> externalIdOrcidsAndReferences;
 
     @Field(SolrConstants.EXTERNAL_ID_SOURCE_AND_REFERENCES)
     private List<String> externalIdSourcesAndReferences;
@@ -239,44 +225,12 @@ public class OrcidSolrDocument {
         this.otherNames = otherNames;
     }
 
-    /*
-     * @deprecated replaced with external-id-source in 1.2_rc5 and greater 
-     */
-    @Deprecated
-    public List<String> getExternalIdOrcids() {
-        return externalIdOrcids;
-    }
-
-    /*
-     * @deprecated replaced with external-id-source in 1.2_rc5 and greater 
-     */
-    @Deprecated
-    public void setExternalIdOrcids(List<String> externalIdOrcids) {
-        this.externalIdOrcids = externalIdOrcids;
-    }
-
     public List<String> getExternalIdReferences() {
         return externalIdReferences;
     }
 
     public void setExternalIdReferences(List<String> externalIdReferences) {
         this.externalIdReferences = externalIdReferences;
-    }
-
-    /*
-     * @deprecated replaced with external-id-source in 1.2_rc5 and greater 
-     */
-    @Deprecated
-    public List<String> getExternalIdOrcidsAndReferences() {
-        return externalIdOrcidsAndReferences;
-    }
-
-    /*
-     * @deprecated replaced with external-id-source in 1.2_rc5 and greater 
-     */
-    @Deprecated
-    public void setExternalIdOrcidsAndReferences(List<String> externalIdOrcidsAndReferences) {
-        this.externalIdOrcidsAndReferences = externalIdOrcidsAndReferences;
     }
 
     public List<String> getDigitalObjectIds() {
@@ -373,8 +327,8 @@ public class OrcidSolrDocument {
         result = prime * result + ((creditName == null) ? 0 : creditName.hashCode());
         result = prime * result + ((digitalObjectIds == null) ? 0 : digitalObjectIds.hashCode());
         result = prime * result + ((emailAddresses == null) ? 0 : emailAddresses.hashCode());
-        result = prime * result + ((externalIdOrcids == null) ? 0 : externalIdOrcids.hashCode());
-        result = prime * result + ((externalIdOrcidsAndReferences == null) ? 0 : externalIdOrcidsAndReferences.hashCode());
+        result = prime * result + ((getExternalIdSources() == null) ? 0 : getExternalIdSources().hashCode());
+        result = prime * result + ((getExternalIdSourcesAndReferences() == null) ? 0 : getExternalIdSourcesAndReferences().hashCode());
         result = prime * result + ((externalIdReferences == null) ? 0 : externalIdReferences.hashCode());
         result = prime * result + ((familyName == null) ? 0 : familyName.hashCode());
         result = prime * result + ((fundingTitles == null) ? 0 : fundingTitles.hashCode());
@@ -450,15 +404,15 @@ public class OrcidSolrDocument {
                 return false;
         } else if (!emailAddresses.equals(other.emailAddresses))
             return false;
-        if (externalIdOrcids == null) {
-            if (other.externalIdOrcids != null)
+        if (getExternalIdSources() == null) {
+            if (other.getExternalIdSources() != null)
                 return false;
-        } else if (!externalIdOrcids.equals(other.externalIdOrcids))
+        } else if (!getExternalIdSources().equals(other.getExternalIdSources()))
             return false;
-        if (externalIdOrcidsAndReferences == null) {
-            if (other.externalIdOrcidsAndReferences != null)
+        if (getExternalIdSourcesAndReferences() == null) {
+            if (other.getExternalIdSourcesAndReferences() != null)
                 return false;
-        } else if (!externalIdOrcidsAndReferences.equals(other.externalIdOrcidsAndReferences))
+        } else if (!getExternalIdSourcesAndReferences().equals(other.getExternalIdSourcesAndReferences()))
             return false;
         if (externalIdReferences == null) {
             if (other.externalIdReferences != null)
