@@ -70,4 +70,12 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
         return query.getResultList();
     }
 
+    @Override
+    public NotificationEntity findByOricdAndId(String orcid, Long id) {
+        TypedQuery<NotificationEntity> query = entityManager.createQuery("from NotificationEntity where orcid = :orcid and id = :id", NotificationEntity.class);
+        query.setParameter("orcid", orcid);
+        query.setParameter("id", id);
+        return query.getSingleResult();
+    }
+
 }

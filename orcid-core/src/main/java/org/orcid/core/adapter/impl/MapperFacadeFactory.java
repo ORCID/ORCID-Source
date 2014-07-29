@@ -34,7 +34,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     @Override
     public MapperFacade getObject() throws Exception {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
-        mapperFactory.classMap(NotificationEntity.class, Notification.class).field("dateCreated", "createdDate").byDefault().register();
+        mapperFactory.classMap(NotificationEntity.class, Notification.class).field("dateCreated", "createdDate").field("id", "putCode.path").byDefault().register();
         return mapperFactory.getMapperFacade();
     }
 

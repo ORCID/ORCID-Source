@@ -43,4 +43,6 @@ public interface NotificationDao extends GenericDao<NotificationEntity, Long> {
      */
     List<String> findOrcidsWithNotificationsToSend(Date effectiveNow);
 
+    NotificationEntity findByOricdAndId(String orcid, Long id);
+
 }

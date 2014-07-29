@@ -28,7 +28,9 @@
 	<h1>Notifications</h1>
 	<div ng-controller="NotificationsCtrl">
 		<div ng-repeat="notification in notifications">
-			{{notification.subject}}
+			<div ng-cloak>{{notification.subject}}</span>&nbsp;<span>{{notification.createdDate|date:'yyyy-MM-ddTHH:mm'}}</div>
+			<iframe ng-src="{{ notification.putCode.path + '/notification.html'}}" frameborder="0" width="100%" height="300"></iframe>
+			<hr></hr>
 		</div>
 	</div>
 </div>

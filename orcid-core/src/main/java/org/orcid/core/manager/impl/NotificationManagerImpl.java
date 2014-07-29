@@ -792,4 +792,14 @@ public class NotificationManagerImpl implements NotificationManager {
         return notificationAdapter.toNotification(notificationDao.findByOrcid(orcid, firstResult, maxResults));
     }
 
+    @Override
+    public Notification findById(Long id) {
+        return notificationAdapter.toNotification(notificationDao.find(id));
+    }
+
+    @Override
+    public Notification findByOrcidAndId(String orcid, Long id) {
+        return notificationAdapter.toNotification(notificationDao.findByOricdAndId(orcid, id));
+    }
+
 }
