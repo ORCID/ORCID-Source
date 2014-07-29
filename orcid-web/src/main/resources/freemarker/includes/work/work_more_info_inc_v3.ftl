@@ -191,12 +191,16 @@
 		<div class="sources-container-header">
 			<div>
 				<div class="row">
+					 
 					<div class="col-md-8">
-						<strong>Source:</strong> {{group.getActive().workSourceName.value}}
+						<span ng-hide="editSources[group.groupId] == true">
+							<strong >Source:</strong> {{group.getActive().workSourceName.value}}
+						</span>
 						<span ng-hide="group.activitiesCount == 1" class="pull-right">
-						 (<a ng-click="editSources[group.groupId] = !editSources[group.groupId]">{{group.activitiesCount - 1 }} additional source<span ng-show="group.activitiesCount > 2">s</span></a>)
+						 <a ng-click="editSources[group.groupId] = !editSources[group.groupId]">{{group.activitiesCount - 1 }} additional source<span ng-show="group.activitiesCount > 2">s</span></a>
 						</span>
 					</div>
+					
 					<div class="col-md-4">								
 						<div class="show-more-info-tab">			
 							<a href="" ng-show="!moreInfo[group.getActive().putCode.value]" ng-click="showDetailsMouseClick(group.getActive().putCode.value,$event);"><span class="glyphicon glyphicon-chevron-down"></span><@orcid.msg 'manage.developer_tools.show_details'/></a>									
@@ -210,21 +214,18 @@
 		<div class="sources-container">
 			<div class="sources-edit">	
 				<table class="sources-edit-table" ng-show="editSources[group.groupId] == true" ng-cloak>							    
-				    <tr ng-repeat="work in group.activities | orderBy:index" ng-class="work.putCode.value == group.activePutCode ? 'grey-box' : ''">
-				    	<td>{{index}}</td>
+				    
+				    <tr ng-repeat="work in group.activities" ng-show="moreInfo[work.putCode.value] == moreInfo[group.activePutCode] && group.activePutCode == work.putCode.value">				    	
 				       <td>
 				       		<span
 				       		    ng-show="work.putCode.value == group.activePutCode"
 				           		ng-click="moreInfo[work.putCode.value] = moreInfo[group.activePutCode]; group.activePutCode = work.putCode.value ">
-				           			{{work.workSourceName.value}}
+				           			<strong >Source:</strong> {{work.workSourceName.value}}
 				           		</span>
-				           	<a ng-hide="work.putCode.value == group.activePutCode"
-				           		ng-click="moreInfo[work.putCode.value] = moreInfo[group.activePutCode]; group.activePutCode = work.putCode.value">
-				           			{{work.workSourceName.value}}
-				           		</a> 
 				       </td>
+				       <td>dd/mm/yyyy</td>
 				       <td>
-				           <span class="glyphicon glyphicon-globe privacy" ng-show="work.putCode.value == group.defaultPutCode"></span> 
+				           <span class="glyphicon glyphicon-globe privacy" ng-show="work.putCode.value == group.defaultPutCode"></span> <span ng-show="work.putCode.value == group.defaultPutCode">Default</span> 
 				           <a ng-click="worksSrvc.makeDefault(group, work.putCode.value); group.activePutCode = work.putCode.value" ng-show="work.putCode.value != group.defaultPutCode">
 			            	 <span class="glyphicon glyphicon-file"></span> Make Default
 			               </a>
@@ -235,6 +236,30 @@
 			               </a>
 				       </td>
 				    </tr>
+				    <tr ng-repeat="work in group.activities" ng-hide="moreInfo[work.putCode.value] == moreInfo[group.activePutCode] && group.activePutCode == work.putCode.value">				    	
+				       <td><!-- Source name -->				       		
+				           	<a ng-hide="work.putCode.value == group.activePutCode"
+				           		ng-click="moreInfo[work.putCode.value] = moreInfo[group.activePutCode]; group.activePutCode = work.putCode.value">
+				           			{{work.workSourceName.value}}
+				           		</a> 
+				       </td>
+				       <td><!-- Date -->
+				       		dd/mm/yyyy
+				       	</td>
+				       <td> <!-- Make Default -->
+				           <span class="glyphicon glyphicon-globe privacy" ng-show="work.putCode.value == group.defaultPutCode"></span> 
+				           <a ng-click="worksSrvc.makeDefault(group, work.putCode.value); group.activePutCode = work.putCode.value" ng-show="work.putCode.value != group.defaultPutCode">
+			            	 <span class="glyphicon glyphicon-file"></span> Make Default
+			               </a>
+			           </td>
+				       <td><!-- Delete -->
+				           <a ng-click="deleteWorkConfirm(group.getActive().putCode.value, false)">
+			            	   <span class="glyphicon glyphicon-trash"></span>
+			               </a>
+				       </td>
+				    </tr>
+				    
+				    
 				</table>						
 			</div>
 		</div>
