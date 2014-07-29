@@ -610,7 +610,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     }
 
     private Pair<String, String> createPairForKey(ExternalIdentifierEntity entity) {
-        ProfileEntity profileEntity = entity.getExternalIdOrcid();
+        ProfileEntity profileEntity = entity.getExternalIdSource();
         String id = null;
         if (profileEntity != null) {
             id = profileEntity.getId();
@@ -636,7 +636,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             if (existingExternalIdentifierEntity == null) {
                 externalIdentifierEntity = new ExternalIdentifierEntity();
                 ProfileEntity profileEntity = externalIdOrcid != null ? new ProfileEntity(externalIdOrcidValue) : null;
-                externalIdentifierEntity.setExternalIdOrcid(profileEntity);
+                externalIdentifierEntity.setExternalIdSource(profileEntity);
                 externalIdentifierEntity.setExternalIdReference(referenceValue);
             } else {
                 existingExternalIdentifierEntity.clean();
