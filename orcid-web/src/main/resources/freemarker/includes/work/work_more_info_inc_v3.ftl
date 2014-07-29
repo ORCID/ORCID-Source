@@ -211,7 +211,7 @@
 				        </li>
 				        <li ng-show="editSources[group.groupId] == true">
 				            <a ng-click="editSources[group.groupId] = false">
-				                <span class="glyphicon glyphicon-remove"></span> Hide aditional sources
+				                <span class="glyphicon glyphicon-remove"></span> Hide additional sources
 				            </a>
 				        </li>
 				        <li>
