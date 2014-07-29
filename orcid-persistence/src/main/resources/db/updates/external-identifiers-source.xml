@@ -1,0 +1,29 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2013 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+        
+    <changeSet id="EXTERNAL-IDENTIFIERS_SOURCE" author="Will Simpson">
+        <dropForeignKeyConstraint baseTableName="external_identifier" constraintName="external_identifier_external_orcid_fk" />
+        <renameColumn tableName="external_identifier" oldColumnName="external_orcid" newColumnName="source_id"/>
+        <addForeignKeyConstraint constraintName="external_identifier_source_id_fk"
+                                 baseTableName="external_identifier" baseColumnNames="source_id" 
+                                 referencedTableName="profile" referencedColumnNames="orcid" />
+        </changeSet>
+</databaseChangeLog>
