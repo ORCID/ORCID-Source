@@ -91,6 +91,11 @@
 								<li><a ${(nav=="record")?string('class="active" ', '')}href="<@spring.url '/my-orcid'/>">
 									<#if inDelegationMode><@orcid.msg 'public-layout.my_orcid'/><#else><@orcid.msg 'public-layout.my_orcid_record'/></#if>
 								</a></li>
+								<@security.authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">
+									<#if profile?? && profile.orcidInternal?? && profile.orcidInternal.preferences.notificationsEnabled?? && profile.orcidInternal.preferences.notificationsEnabled == true>
+										<li><a ${(nav=="notifications")?string('class="active" ', '')}href="<@spring.url "/notifications" />">Notifications</a></li>
+									</#if>
+								</@security.authorize>
 								<li><a ${(nav=="settings")?string('class="active" ', '')}href="<@spring.url '/account'/>"><@orcid.msg 'public-layout.account_setting'/></a></li>
 								<#if !inDelegationMode || isDelegatedByAdmin>
 									<@security.authorize ifAnyGranted="ROLE_GROUP, ROLE_BASIC, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM, ROLE_PREMIUM_INSTITUTION">

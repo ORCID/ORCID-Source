@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 /**
@@ -55,7 +56,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType( propOrder = { "sendChangeNotifications", "sendOrcidNews", "activitiesVisibilityDefault", "workVisibilityDefault", "developerToolsEnabled" })
+@XmlType(propOrder = { "sendChangeNotifications", "sendOrcidNews", "activitiesVisibilityDefault", "workVisibilityDefault", "developerToolsEnabled" })
 @XmlRootElement(name = "preferences")
 public class Preferences implements Serializable {
 
@@ -64,15 +65,17 @@ public class Preferences implements Serializable {
     protected SendChangeNotifications sendChangeNotifications;
     @XmlElement(name = "send-orcid-news", required = true)
     protected SendOrcidNews sendOrcidNews;
-    // as of 1.2_rc4 WorkVisibilityDefault is replaced by ActivitiesVisibilityDefault
+    // as of 1.2_rc4 WorkVisibilityDefault is replaced by
+    // ActivitiesVisibilityDefault
     @XmlElement(name = "work-visibility-default")
     protected WorkVisibilityDefault workVisibilityDefault;
     @XmlElement(name = "activities-visibility-default")
     private ActivitiesVisibilityDefault activitiesVisibilityDefault;
     @XmlElement(name = "developer-tools-enabled")
     private DeveloperToolsEnabled developerToolsEnabled;
- 
-    
+    @XmlTransient
+    private boolean notificationsEnabled;
+
     /**
      * Gets the value of the sendChangeNotifications property.
      * 
@@ -118,7 +121,10 @@ public class Preferences implements Serializable {
     /**
      * Gets the value of the workVisibilityDefault property.
      * 
-     *  @deprecated use {@getActivitiesVisibilityDefault} instead.  
+     * @deprecated use             {@getActivitiesVisibilityDefault
+     * 
+     * 
+     * } instead.
      * 
      */
     public WorkVisibilityDefault getWorkVisibilityDefault() {
@@ -128,13 +134,13 @@ public class Preferences implements Serializable {
     /**
      * Sets the value of the workVisibilityDefault property.
      * 
-     *  @deprecated use {@setActivitiesVisibilityDefault} instead.  
+     * @deprecated use {@setActivitiesVisibilityDefault} instead.
      * 
      */
     public void setWorkVisibilityDefault(WorkVisibilityDefault value) {
         this.workVisibilityDefault = value;
     }
-    
+
     public ActivitiesVisibilityDefault getActivitiesVisibilityDefault() {
         return activitiesVisibilityDefault;
     }
@@ -149,6 +155,14 @@ public class Preferences implements Serializable {
 
     public void setDeveloperToolsEnabled(DeveloperToolsEnabled developerToolsEnabled) {
         this.developerToolsEnabled = developerToolsEnabled;
+    }
+
+    public boolean isNotificationsEnabled() {
+        return notificationsEnabled;
+    }
+
+    public void setNotificationsEnabled(boolean notificationsEnabled) {
+        this.notificationsEnabled = notificationsEnabled;
     }
 
     @Override

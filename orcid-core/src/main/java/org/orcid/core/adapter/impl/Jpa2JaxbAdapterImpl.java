@@ -16,10 +16,8 @@
  */
 package org.orcid.core.adapter.impl;
 
-import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -883,9 +881,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         WorkSource workSource = new WorkSource(getOrcidIdBase(sourceProfile.getId()));
 
         String sourceName = createName(sourceProfile);
- 
+
         workSource.setSourceName(sourceName);
-        
+
         return workSource;
     }
 
@@ -1078,6 +1076,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
         // Set developer tools preference
         preferences.setDeveloperToolsEnabled(new DeveloperToolsEnabled(profileEntity.getEnableDeveloperTools()));
+
+        preferences.setNotificationsEnabled(profileEntity.getEnableNotifications());
 
         if (profileEntity.getReferredBy() != null) {
             orcidInternal.setReferredBy(new ReferredBy(getOrcidIdBase(profileEntity.getReferredBy())));
