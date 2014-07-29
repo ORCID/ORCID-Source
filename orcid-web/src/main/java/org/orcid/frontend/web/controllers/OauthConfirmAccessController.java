@@ -326,9 +326,17 @@ public class OauthConfirmAccessController extends BaseController {
 
     @RequestMapping(value = "/custom/register.json", method = RequestMethod.POST)
     public @ResponseBody
+    OauthRegistration checkRegisterForm(HttpServletRequest request, @RequestBody OauthRegistration form) {        
+        registrationController.setRegister(request, form);
+        return form;
+    }
+    
+    @RequestMapping(value = "/custom/registerConfirm.json", method = RequestMethod.POST)
+    public @ResponseBody
     OauthRegistration registerAndAuthorize(HttpServletRequest request, @RequestBody OauthRegistration form) {
         form.setErrors(new ArrayList<String>());
-        registrationController.setRegister(request, form);
+        //Check there are no errors
+        checkRegisterForm(request, form);
         if (form.getErrors() != null && form.getErrors().isEmpty()) {
             // Register user
             OrcidProfile newProfile = registrationController.createMinimalRegistration(request, RegistrationController.toProfile(form));

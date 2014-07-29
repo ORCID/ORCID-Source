@@ -6105,7 +6105,7 @@ function OauthAuthorizationController($scope){
 	$scope.register = function() {
 		console.log(angular.toJson($scope.registrationForm));
 		$.ajax({
-	        url: getBaseUri() + '/register.json',
+	        url: getBaseUri() + '/oauth/custom/register.json',
 	        type: 'POST',
 	        data:  angular.toJson($scope.registrationForm),
 	        contentType: 'application/json;charset=UTF-8',
@@ -6159,7 +6159,7 @@ function OauthAuthorizationController($scope){
 	$scope.postRegisterConfirm = function () {
 		$scope.showProcessingColorBox();
 		$.ajax({
-	        url: getBaseUri() + '/oauth/custom/register.json',
+	        url: getBaseUri() + '/oauth/custom/registerConfirm.json',
 	        type: 'POST',
 	        data:  angular.toJson($scope.registrationForm),
 	        contentType: 'application/json;charset=UTF-8',

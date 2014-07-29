@@ -111,6 +111,10 @@
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/oauth/custom/register/empty.*?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />			
+		<sec:intercept-url pattern="/oauth/custom/register.*?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/oauth/custom/registerConfirm.*?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 
 		<sec:intercept-url pattern="/oauth/custom/register/validate.*?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
