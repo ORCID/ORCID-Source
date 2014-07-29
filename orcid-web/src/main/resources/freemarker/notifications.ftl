@@ -17,7 +17,7 @@
 
 -->
 <#-- @ftlvariable name="profile" type="org.orcid.jaxb.model.message.OrcidProfile" -->
-<@protected nav="record">
+<@protected nav="notifications">
 <#escape x as x?html>
 <div class="col-md-3 lhs left-aside">
 	<div class="workspace-profile">
