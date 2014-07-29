@@ -52,7 +52,7 @@ import java.io.Serializable;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType( propOrder = { "orcid", "externalIdSource", "externalIdOrcid", "externalIdCommonName", "externalIdReference", "externalIdUrl" })
+@XmlType( propOrder = { "orcid", "externalIdOrcid", "externalIdCommonName", "externalIdReference", "externalIdUrl", "externalIdSource" })
 @XmlRootElement(name = "external-identifier")
 public class ExternalIdentifier implements Serializable {
 
@@ -64,6 +64,10 @@ public class ExternalIdentifier implements Serializable {
     protected Orcid orcid;
     @XmlElement(name = "external-id-source", required = false)
     protected ExternalIdSource externalIdSource;
+    /*
+     * @deprecated replaced with external-id-source in 1.2_rc5 and greater 
+     */
+    @Deprecated
     @XmlElement(name = "external-id-orcid", required = false)
     private ExternalIdSource externalIdOrcid;
     @XmlElement(name = "external-id-common-name", required = false)
@@ -215,6 +219,7 @@ public class ExternalIdentifier implements Serializable {
     @Override
     public int hashCode() {
         int result = externalIdSource != null ? externalIdSource.hashCode() : 0;
+        result = 31 * result + (orcid != null ? externalIdOrcid.hashCode() : 0);
         result = 31 * result + (orcid != null ? orcid.hashCode() : 0);
         result = 31 * result + (externalIdCommonName != null ? externalIdCommonName.hashCode() : 0);
         result = 31 * result + (externalIdReference != null ? externalIdReference.hashCode() : 0);
@@ -222,10 +227,18 @@ public class ExternalIdentifier implements Serializable {
         return result;
     }
 
+    /*
+     * @deprecated replaced with external-id-source in 1.2_rc5 and greater 
+     */
+    @Deprecated
     public ExternalIdSource getExternalIdOrcid() {
         return externalIdOrcid;
     }
 
+    /*
+     * @deprecated replaced with external-id-source in 1.2_rc5 and greater 
+     */
+    @Deprecated
     public void setExternalIdOrcid(ExternalIdSource externalIdOrcid) {
         this.externalIdOrcid = externalIdOrcid;
     }
