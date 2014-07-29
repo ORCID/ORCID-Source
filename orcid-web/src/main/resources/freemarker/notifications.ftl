@@ -29,7 +29,7 @@
 	<div ng-controller="NotificationsCtrl">
 		<div ng-repeat="notification in notifications">
 			<div ng-cloak>{{notification.subject}}</span>&nbsp;<span>{{notification.createdDate|date:'yyyy-MM-ddTHH:mm'}}</div>
-			<iframe ng-src="{{ notification.putCode.path + '/notification.html'}}" frameborder="0" width="100%" height="300"></iframe>
+			<iframe ng-src="{{ '<@spring.url '/notifications'/>/' + notification.putCode.path + '/notification.html'}}" frameborder="0" width="100%" height="300"></iframe>
 			<hr></hr>
 		</div>
 	</div>
