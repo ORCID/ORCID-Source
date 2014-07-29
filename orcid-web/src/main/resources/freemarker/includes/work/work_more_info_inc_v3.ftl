@@ -188,34 +188,49 @@
 <div class="row">
 	<div class="col-md-12 col-sm-12">
 		<!-- Sources -->			
-		<div class="sources-container-header">
-			<div>
-				<div class="row">
-					 
-					<div class="col-md-8">
-						<span ng-hide="editSources[group.groupId] == true">
-							<strong >Source:</strong> {{group.getActive().workSourceName.value}}
-						</span>
-						<span ng-hide="group.activitiesCount == 1" class="pull-right">
-						 <a ng-click="editSources[group.groupId] = !editSources[group.groupId]">{{group.activitiesCount - 1 }} additional source<span ng-show="group.activitiesCount > 2">s</span></a>
-						</span>
-					</div>
-					
-					<div class="col-md-4">								
-						<div class="show-more-info-tab">			
-							<a href="" ng-show="!moreInfo[group.getActive().putCode.value]" ng-click="showDetailsMouseClick(group.getActive().putCode.value,$event);"><span class="glyphicon glyphicon-chevron-down"></span><@orcid.msg 'manage.developer_tools.show_details'/></a>									
-						</div>								
-					</div>
-				</div>										
+		<div class="sources-container-header">			
+			<div class="row">					 
+				
+				<div class="col-md-5" ng-hide="editSources[group.groupId] == true">
+					<span>
+						<strong >Source:</strong> {{group.getActive().workSourceName.value}}
+					</span>						
+				</div>					
+				
+				<div ng-class="editSources[group.groupId] == true ? 'col-md-12' : 'col-md-7">						
+					<ul class="sources-options" ng-cloak>
+						<li ng-hide="group.activitiesCount == 1 || editSources[group.groupId] == true">
+							<span>
+							 	<a ng-click="editSources[group.groupId] = !editSources[group.groupId]">View <span class="badge">{{group.activitiesCount - 1 }}</span> additional source<span ng-show="group.activitiesCount > 2">s</span></a>
+							</span>
+						</li>
+				        <li ng-show="editSources[group.groupId] == true">
+				            <a ng-click="deleteWorkConfirm(group.getActive().putCode.value, true)">
+				                <span class="glyphicon glyphicon-trash"></span> Delete all
+				            </a>
+				        </li>
+				        <li ng-show="editSources[group.groupId] == true">
+				            <a ng-click="editSources[group.groupId] = false">
+				                <span class="glyphicon glyphicon-remove"></span> Hide aditional sources
+				            </a>
+				        </li>
+				        <li>
+					        <div class="show-more-info-tab">			
+								<a href="" ng-show="!moreInfo[group.getActive().putCode.value]" ng-click="showDetailsMouseClick(group.getActive().putCode.value,$event);"><span class="glyphicon glyphicon-chevron-down"></span><@orcid.msg 'manage.developer_tools.show_details'/></a>									
+								<a href="" ng-show="moreInfo[group.getActive().putCode.value]" ng-click="showDetailsMouseClick(group.getActive().putCode.value,$event);"><span class="glyphicon glyphicon-chevron-up"></span><@orcid.msg 'manage.developer_tools.hide_details'/></a>
+							</div>							
+				        </li>                               
+				    </ul>
+				</div>
 			</div>
 		</div>
 	</div>
 	<div class="col-md-12 col-sm-12">
 		<div class="sources-container">
 			<div class="sources-edit">	
-				<table class="sources-edit-table" ng-show="editSources[group.groupId] == true" ng-cloak>							    
+				<table class="sources-edit-table" ng-show="editSources[group.groupId] == true" ng-cloak>
 				    
-				    <tr ng-repeat="work in group.activities" ng-show="moreInfo[work.putCode.value] == moreInfo[group.activePutCode] && group.activePutCode == work.putCode.value">				    	
+				    <tr ng-repeat="work in group.activities" ng-show="moreInfo[work.putCode.value] == moreInfo[group.activePutCode] && group.activePutCode == work.putCode.value" class="no-border-top">				    	
 				       <td>
 				       		<span
 				       		    ng-show="work.putCode.value == group.activePutCode"
@@ -223,11 +238,11 @@
 				           			<strong >Source:</strong> {{work.workSourceName.value}}
 				           		</span>
 				       </td>
-				       <td>dd/mm/yyyy</td>
+				       <td>Last modified: 12/31/2013</td>
 				       <td>
-				           <span class="glyphicon glyphicon-globe privacy" ng-show="work.putCode.value == group.defaultPutCode"></span> <span ng-show="work.putCode.value == group.defaultPutCode">Default</span> 
+				           <span class="glyphicon glyphicon-check" ng-show="work.putCode.value == group.defaultPutCode"></span> <!-- <span ng-show="work.putCode.value == group.defaultPutCode">Default</span> --> 
 				           <a ng-click="worksSrvc.makeDefault(group, work.putCode.value); group.activePutCode = work.putCode.value" ng-show="work.putCode.value != group.defaultPutCode">
-			            	 <span class="glyphicon glyphicon-file"></span> Make Default
+			            	 <span class="glyphicon glyphicon-unchecked"></span> Keep on top
 			               </a>
 			           </td>
 				       <td>
@@ -236,6 +251,7 @@
 			               </a>
 				       </td>
 				    </tr>
+				    <!-- No default values -->
 				    <tr ng-repeat="work in group.activities" ng-hide="moreInfo[work.putCode.value] == moreInfo[group.activePutCode] && group.activePutCode == work.putCode.value">				    	
 				       <td><!-- Source name -->				       		
 				           	<a ng-hide="work.putCode.value == group.activePutCode"
@@ -244,12 +260,12 @@
 				           		</a> 
 				       </td>
 				       <td><!-- Date -->
-				       		dd/mm/yyyy
+				       		05/02/2010
 				       	</td>
 				       <td> <!-- Make Default -->
-				           <span class="glyphicon glyphicon-globe privacy" ng-show="work.putCode.value == group.defaultPutCode"></span> 
+				           <span class="glyphicon glyphicon-check" ng-show="work.putCode.value == group.defaultPutCode"></span><!-- <span ng-show="work.putCode.value == group.defaultPutCode">Default</span> --> 
 				           <a ng-click="worksSrvc.makeDefault(group, work.putCode.value); group.activePutCode = work.putCode.value" ng-show="work.putCode.value != group.defaultPutCode">
-			            	 <span class="glyphicon glyphicon-file"></span> Make Default
+			            	 <span class="glyphicon glyphicon-unchecked"></span> Keep on top
 			               </a>
 			           </td>
 				       <td><!-- Delete -->
