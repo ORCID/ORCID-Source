@@ -522,9 +522,9 @@ public class OrcidIndexManagerImplTest extends BaseTest {
         // String[] { "Current Inst2" }));
         orcidSolrDocument.setOtherNames(Arrays.asList(new String[] { "Other 1", "Other 2" }));
         orcidSolrDocument.setPmid(Arrays.asList(new String[] { "work1-pmid" }));
-        orcidSolrDocument.setExternalIdOrcids(Arrays.asList(new String[] { "45678", "54321" }));
+        orcidSolrDocument.setExternalIdSources(Arrays.asList(new String[] { "45678", "54321" }));
         orcidSolrDocument.setExternalIdReferences(Arrays.asList(new String[] { "defghi", "abc123" }));
-        orcidSolrDocument.setExternalIdOrcidsAndReferences(Arrays.asList(new String[] { "45678=defghi", "54321=abc123" }));
+        orcidSolrDocument.setExternalIdSourcesAndReferences(Arrays.asList(new String[] { "45678=defghi", "54321=abc123" }));
         // orcidSolrDocument.setPastInstitutionNames(Arrays.asList(new String[]
         // { "Past Inst 1", "Past Inst 2" }));
         orcidSolrDocument.setWorkTitles(Arrays.asList(new String[] { "Work title 1", "Work title 2" }));      
