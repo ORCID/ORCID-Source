@@ -935,6 +935,24 @@ orcidNgModule.filter('urlWithHttp', function(){
 	};
 });
 
+orcidNgModule.filter('ajaxFormDateToISO8601', function(){
+	return function(input){
+		var str = '';
+		if (input.year) str += input.year;
+		if (input.month) {
+			if (str.length > 0) str += '-';
+			str += input.month;
+		}
+		if (input.day) {
+			if (str.length > 0)
+				str += '-';
+			str += input.day;
+		}
+	    return str;
+	};
+});
+
+
 function formColorBoxWidth() {
 	return isMobile()? '100%': '800px';
 }
@@ -3304,7 +3322,7 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 	};
 }
 
-function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
+function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
 	$scope.canReadFiles = false;
 	$scope.showBibtexImportWizard = false;
 	$scope.textFiles = null;

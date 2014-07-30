@@ -230,18 +230,16 @@
 			<div class="sources-edit">	
 				<table class="sources-edit-table" ng-show="editSources[group.groupId] == true" ng-cloak>
 				    
-				    <tr ng-repeat="work in group.activities" ng-show="moreInfo[work.putCode.value] == moreInfo[group.activePutCode] && group.activePutCode == work.putCode.value" class="no-border-top">				    	
+				    <tr class="no-border-top">				    	
 				       <td>
-				       		<span
-				       		    ng-show="work.putCode.value == group.activePutCode"
-				           		ng-click="moreInfo[work.putCode.value] = moreInfo[group.activePutCode]; group.activePutCode = work.putCode.value ">
-				           			<strong >Source:</strong> {{work.workSourceName.value}}
-				           		</span>
+				       		<span>
+				           			<strong >Source:</strong> {{group.getActive().workSourceName.value}}
+				           	</span>
 				       </td>
-				       <td>Last modified: 12/31/2013</td>
+				       <td>Last modified: {{group.getActive().lastModified | ajaxFormDateToISO8601}}</td>
 				       <td>
-				           <span class="glyphicon glyphicon-check" ng-show="work.putCode.value == group.defaultPutCode"></span> <!-- <span ng-show="work.putCode.value == group.defaultPutCode">Default</span> --> 
-				           <a ng-click="worksSrvc.makeDefault(group, work.putCode.value); group.activePutCode = work.putCode.value" ng-show="work.putCode.value != group.defaultPutCode">
+				           <span class="glyphicon glyphicon-check" ng-show="group.getActive().putCode.value == group.defaultPutCode"></span> 
+				           <a ng-click="worksSrvc.makeDefault(group, group.getActive().putCode.value); group.activePutCode = group.getActive().putCode.value" ng-show="group.getActive().putCode.value != group.defaultPutCode">
 			            	 <span class="glyphicon glyphicon-unchecked"></span> Keep on top
 			               </a>
 			           </td>
@@ -252,18 +250,17 @@
 				       </td>
 				    </tr>
 				    <!-- No default values -->
-				    <tr ng-repeat="work in group.activities" ng-hide="moreInfo[work.putCode.value] == moreInfo[group.activePutCode] && group.activePutCode == work.putCode.value">				    	
+				    <tr ng-repeat="work in group.activities" ng-hide="group.activePutCode == work.putCode.value">				    	
 				       <td><!-- Source name -->				       		
-				           	<a ng-hide="work.putCode.value == group.activePutCode"
-				           		ng-click="moreInfo[work.putCode.value] = moreInfo[group.activePutCode]; group.activePutCode = work.putCode.value">
+				           	<a ng-click="moreInfo[work.putCode.value] = moreInfo[group.activePutCode]; group.activePutCode = work.putCode.value">
 				           			{{work.workSourceName.value}}
-				           		</a> 
+				           	</a> 
 				       </td>
 				       <td><!-- Date -->
-				       		05/02/2010
+				       		{{work.lastModified | ajaxFormDateToISO8601}}
 				       	</td>
 				       <td> <!-- Make Default -->
-				           <span class="glyphicon glyphicon-check" ng-show="work.putCode.value == group.defaultPutCode"></span><!-- <span ng-show="work.putCode.value == group.defaultPutCode">Default</span> --> 
+				           <span class="glyphicon glyphicon-check" ng-show="work.putCode.value == group.defaultPutCode"></span> 
 				           <a ng-click="worksSrvc.makeDefault(group, work.putCode.value); group.activePutCode = work.putCode.value" ng-show="work.putCode.value != group.defaultPutCode">
 			            	 <span class="glyphicon glyphicon-unchecked"></span> Keep on top
 			               </a>
@@ -274,7 +271,6 @@
 			               </a>
 				       </td>
 				    </tr>
-				    
 				    
 				</table>						
 			</div>
