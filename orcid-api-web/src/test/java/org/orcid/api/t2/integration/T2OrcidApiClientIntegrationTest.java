@@ -35,7 +35,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.api.common.T2OrcidApiService;
 import org.orcid.jaxb.model.message.Email;
-import org.orcid.jaxb.model.message.ExternalIdOrcid;
+import org.orcid.jaxb.model.message.ExternalIdSource;
 import org.orcid.jaxb.model.message.ExternalIdReference;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
@@ -439,9 +439,11 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
             assertTrue(externalIdentifiers.getExternalIdentifier().size() == 0);
 
             ExternalIdentifiers newExternalIdentifiers = new ExternalIdentifiers();
-            ExternalIdOrcid externalIdOrcid = new ExternalIdOrcid();
+            ExternalIdSource externalIdOrcid = new ExternalIdSource();
             externalIdOrcid.setPath(sponsorOrcid);
-            ExternalIdentifier additionalIdentifer = new ExternalIdentifier(externalIdOrcid, new ExternalIdReference("abc"));
+            ExternalIdentifier additionalIdentifer = new ExternalIdentifier();
+            additionalIdentifer.setExternalIdReference(new ExternalIdReference("abc"));
+            additionalIdentifer.setExternalIdOrcid(externalIdOrcid);
             newExternalIdentifiers.getExternalIdentifier().add(additionalIdentifer);
             orcidBio.setExternalIdentifiers(newExternalIdentifiers);
 
@@ -481,9 +483,11 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
             assertTrue(externalIdentifiers.getExternalIdentifier().size() == 0);
 
             ExternalIdentifiers newExternalIdentifiers = new ExternalIdentifiers();
-            ExternalIdOrcid externalIdOrcid = new ExternalIdOrcid();
+            ExternalIdSource externalIdOrcid = new ExternalIdSource();
             externalIdOrcid.setPath(sponsorOrcid);
-            ExternalIdentifier additionalIdentifer = new ExternalIdentifier(externalIdOrcid, new ExternalIdReference("abc"));
+            ExternalIdentifier additionalIdentifer = new ExternalIdentifier();
+            additionalIdentifer.setExternalIdReference(new ExternalIdReference("abc"));
+            additionalIdentifer.setExternalIdOrcid(externalIdOrcid);
             newExternalIdentifiers.getExternalIdentifier().add(additionalIdentifer);
             orcidBio.setExternalIdentifiers(newExternalIdentifiers);
 

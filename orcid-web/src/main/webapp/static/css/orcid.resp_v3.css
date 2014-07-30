@@ -4083,21 +4083,19 @@ ul.id-details li{
 	padding-left: 0;
 }
 
+
 .show-more-info-tab{
 	display: block;
 	width: 100%;
 	text-align: right;		
-	height: 20px;
-	position:relative;
+	height: 20px;		
 }
 
 .show-more-info-tab a{
 	color: #FFF;
 	background: #C9CACB;
 	padding: 3px 15px;
-	font-size: 13px;
-	position:absolute;
-	right: 0;	
+	font-size: 13px;	
 }
 
 .hide-tab a{
@@ -4324,7 +4322,8 @@ ul.workspace-submenu-options li a>span{
 	padding: 0;
 	list-style: none; 
 	list-style-type: none;
-	float: right;
+	float: right;	
+	margin-right: 10px;
 }
 
 .sources-container-header ul.sources-options li{
@@ -4338,18 +4337,21 @@ ul.workspace-submenu-options li a>span{
 	width: 100%;
 }
 
-.sources-container table.sources-edit-table tr:first-child{
-	border-top: none;
+.sources-container table.sources-edit-table tr + tr{
+	border: 1px solid #CBCBCB;
 }
 
-.sources-container table.sources-edit-table tr{
-	border: 1px solid #CBCBCB;
+.sources-container table.sources-edit-table tr:first-child{
+	border-top: none;
 }
 
 .sources-container table.sources-edit-table tr td{
 	padding: 5px 15px;
 }
 
+.no-border-top{
+	border-top: none !important;
+}
 
 .workspace-border-box{
 	/*background: #F6F6F6;*/
@@ -5379,7 +5381,7 @@ ul.workspace-submenu-options li a>span{
 	
 	ul.validations-versions{
 		text-align: center;
-		margin-top: 15px;
+		margin: 15px 0;		
 	}
 	
 	ul.validations-versions li{

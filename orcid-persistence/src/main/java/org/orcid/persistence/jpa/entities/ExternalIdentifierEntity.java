@@ -43,7 +43,7 @@ public class ExternalIdentifierEntity extends BaseEntity<ExternalIdentifierEntit
     private String externalIdReference;
     private String externalIdCommonName;
     private String externalIdUrl;
-    private ProfileEntity externalIdOrcid;
+    private ProfileEntity externalIdSource;
     private ProfileEntity owner;
 
     @Override
@@ -72,13 +72,13 @@ public class ExternalIdentifierEntity extends BaseEntity<ExternalIdentifierEntit
     }
 
     @ManyToOne(fetch = FetchType.EAGER, optional = true)
-    @JoinColumn(name = "external_orcid", nullable = true, updatable = false)
-    public ProfileEntity getExternalIdOrcid() {
-        return externalIdOrcid;
+    @JoinColumn(name = "source_id", nullable = true, updatable = false)
+    public ProfileEntity getExternalIdSource() {
+        return externalIdSource;
     }
 
-    public void setExternalIdOrcid(ProfileEntity externalIdOrcid) {
-        this.externalIdOrcid = externalIdOrcid;
+    public void setExternalIdSource(ProfileEntity externalIdSource) {
+        this.externalIdSource = externalIdSource;
     }
 
     /**

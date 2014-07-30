@@ -52,7 +52,7 @@ import java.io.Serializable;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType( propOrder = { "orcid", "externalIdOrcid", "externalIdCommonName", "externalIdReference", "externalIdUrl" })
+@XmlType( propOrder = { "orcid", "externalIdOrcid", "externalIdCommonName", "externalIdReference", "externalIdUrl", "externalIdSource" })
 @XmlRootElement(name = "external-identifier")
 public class ExternalIdentifier implements Serializable {
 
@@ -62,8 +62,14 @@ public class ExternalIdentifier implements Serializable {
     private static final long serialVersionUID = 1L;
     @XmlElement(name = "orcid", required = true)
     protected Orcid orcid;
+    @XmlElement(name = "external-id-source", required = false)
+    protected ExternalIdSource externalIdSource;
+    /*
+     * @deprecated replaced with external-id-source in 1.2_rc5 and greater 
+     */
+    @Deprecated
     @XmlElement(name = "external-id-orcid", required = false)
-    protected ExternalIdOrcid externalIdOrcid;
+    private ExternalIdSource externalIdOrcid;
     @XmlElement(name = "external-id-common-name", required = false)
     protected ExternalIdCommonName externalIdCommonName;
     @XmlElement(name = "external-id-reference", required = true)
@@ -75,14 +81,8 @@ public class ExternalIdentifier implements Serializable {
         super();
     }
 
-    public ExternalIdentifier(ExternalIdOrcid externalIdOrcid, ExternalIdReference externalIdReference) {
-        super();
-        this.externalIdOrcid = externalIdOrcid;
-        this.externalIdReference = externalIdReference;
-    }
-
     /**
-     * Gets the value of the eorcid property.
+     * Gets the value of the orcid property.
      *
      * @return possible object is
      *         {@link Orcid }
@@ -106,10 +106,10 @@ public class ExternalIdentifier implements Serializable {
      * Gets the value of the externalIdOrcid property.
      *
      * @return possible object is
-     *         {@link ExternalIdOrcid }
+     *         {@link ExternalIdSource }
      */
-    public ExternalIdOrcid getExternalIdOrcid() {
-        return externalIdOrcid;
+    public ExternalIdSource getExternalIdSource() {
+        return externalIdSource;
     }
 
     /**
@@ -117,10 +117,10 @@ public class ExternalIdentifier implements Serializable {
      *
      * @param value
      *         allowed object is
-     *         {@link ExternalIdOrcid }
+     *         {@link ExternalIdSource }
      */
-    public void setExternalIdOrcid(ExternalIdOrcid value) {
-        this.externalIdOrcid = value;
+    public void setExternalIdSource(ExternalIdSource value) {
+        this.externalIdSource = value;
     }
 
     /**
@@ -203,7 +203,7 @@ public class ExternalIdentifier implements Serializable {
         if (externalIdCommonName != null ? !externalIdCommonName.equals(that.externalIdCommonName) : that.externalIdCommonName != null) {
             return false;
         }
-        if (externalIdOrcid != null ? !externalIdOrcid.equals(that.externalIdOrcid) : that.externalIdOrcid != null) {
+        if (externalIdSource != null ? !externalIdSource.equals(that.externalIdSource) : that.externalIdSource != null) {
             return false;
         }
         if (externalIdReference != null ? !externalIdReference.equals(that.externalIdReference) : that.externalIdReference != null) {
@@ -218,11 +218,28 @@ public class ExternalIdentifier implements Serializable {
 
     @Override
     public int hashCode() {
-        int result = externalIdOrcid != null ? externalIdOrcid.hashCode() : 0;
+        int result = externalIdSource != null ? externalIdSource.hashCode() : 0;
+        result = 31 * result + (orcid != null ? externalIdOrcid.hashCode() : 0);
         result = 31 * result + (orcid != null ? orcid.hashCode() : 0);
         result = 31 * result + (externalIdCommonName != null ? externalIdCommonName.hashCode() : 0);
         result = 31 * result + (externalIdReference != null ? externalIdReference.hashCode() : 0);
         result = 31 * result + (externalIdUrl != null ? externalIdUrl.hashCode() : 0);
         return result;
+    }
+
+    /*
+     * @deprecated replaced with external-id-source in 1.2_rc5 and greater 
+     */
+    @Deprecated
+    public ExternalIdSource getExternalIdOrcid() {
+        return externalIdOrcid;
+    }
+
+    /*
+     * @deprecated replaced with external-id-source in 1.2_rc5 and greater 
+     */
+    @Deprecated
+    public void setExternalIdOrcid(ExternalIdSource externalIdOrcid) {
+        this.externalIdOrcid = externalIdOrcid;
     }
 }

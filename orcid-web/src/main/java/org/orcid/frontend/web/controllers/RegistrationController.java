@@ -223,7 +223,11 @@ public class RegistrationController extends BaseController {
             if (emailMatcher.find()) {
                 String tempEmail = emailMatcher.group(1);
                 if (!orcidProfileManager.emailExists(tempEmail)) {
-                    reg.getEmail().setValue(tempEmail);
+                    try {
+                        reg.getEmail().setValue(URLDecoder.decode(tempEmail, "UTF-8"));
+                    } catch (UnsupportedEncodingException e1) {
+                        LOGGER.info("error parsing users email from oauth url",e1);
+                    }
                     Matcher givenNamesMatcher = givenNamesPattern.matcher(url);
                     if (givenNamesMatcher.find())
                         try {

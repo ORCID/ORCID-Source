@@ -18,9 +18,8 @@
 
 -->
 <orcid-message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-               xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-message-1.2_rc4.xsd"
                xmlns="http://www.orcid.org/ns/orcid">
-    <message-version>1.2_rc4</message-version>
+    <message-version>1.2_rc5</message-version>
     <!-- Error message, if applicable -->
     <!-- Unable to connect to ORCID, no matching researchers, etc. -->
     <!-- <error-desc>No researcher found.</error-desc> -->
@@ -93,11 +92,11 @@
             </keywords>
             <external-identifiers visibility="public">
                 <external-identifier>
-                    <external-id-orcid>
+                    <external-id-source>
                         <uri>http://orcid.org/8888-8888-8888-8880</uri>
                         <path>8888-8888-8888-8880</path>
                         <host>orcid.org</host>
-                    </external-id-orcid>
+                    </external-id-source>
                     <external-id-reference>YH0923</external-id-reference>
                 </external-identifier>
             </external-identifiers>

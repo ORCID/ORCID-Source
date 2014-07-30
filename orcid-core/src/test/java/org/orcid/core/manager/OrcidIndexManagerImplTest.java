@@ -37,7 +37,7 @@ import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.Email;
-import org.orcid.jaxb.model.message.ExternalIdOrcid;
+import org.orcid.jaxb.model.message.ExternalIdSource;
 import org.orcid.jaxb.model.message.ExternalIdReference;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
@@ -522,9 +522,9 @@ public class OrcidIndexManagerImplTest extends BaseTest {
         // String[] { "Current Inst2" }));
         orcidSolrDocument.setOtherNames(Arrays.asList(new String[] { "Other 1", "Other 2" }));
         orcidSolrDocument.setPmid(Arrays.asList(new String[] { "work1-pmid" }));
-        orcidSolrDocument.setExternalIdOrcids(Arrays.asList(new String[] { "45678", "54321" }));
+        orcidSolrDocument.setExternalIdSources(Arrays.asList(new String[] { "45678", "54321" }));
         orcidSolrDocument.setExternalIdReferences(Arrays.asList(new String[] { "defghi", "abc123" }));
-        orcidSolrDocument.setExternalIdOrcidsAndReferences(Arrays.asList(new String[] { "45678=defghi", "54321=abc123" }));
+        orcidSolrDocument.setExternalIdSourcesAndReferences(Arrays.asList(new String[] { "45678=defghi", "54321=abc123" }));
         // orcidSolrDocument.setPastInstitutionNames(Arrays.asList(new String[]
         // { "Past Inst 1", "Past Inst 2" }));
         orcidSolrDocument.setWorkTitles(Arrays.asList(new String[] { "Work title 1", "Work title 2" }));      
@@ -554,9 +554,9 @@ public class OrcidIndexManagerImplTest extends BaseTest {
 
     private ExternalIdentifier createExternalIdentifier(String orcid, String reference) {
         ExternalIdentifier externalIdentifier1 = new ExternalIdentifier();
-        ExternalIdOrcid externalIdOrcid = new ExternalIdOrcid();
+        ExternalIdSource externalIdOrcid = new ExternalIdSource();
         externalIdOrcid.setPath(orcid);
-        externalIdentifier1.setExternalIdOrcid(externalIdOrcid);
+        externalIdentifier1.setExternalIdSource(externalIdOrcid);
         externalIdentifier1.setExternalIdReference(new ExternalIdReference(reference));
         return externalIdentifier1;
     }
