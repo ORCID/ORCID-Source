@@ -6014,11 +6014,13 @@ function SocialNetworksCtrl($scope){
 
 
 
-function OauthAuthorizationController($scope){ 
+function OauthAuthorizationController($scope, $compile){ 
 	$scope.showClientDescription = false;
 	$scope.showRegisterForm = false;
 	$scope.authorizationForm = {};
 	$scope.registrationForm = {};	
+	$scope.clientName = "";
+	$scope.clientGroupName = "";
 	
 	$scope.toggleClientDescription = function() {
 		$scope.showClientDescription = !$scope.showClientDescription;
@@ -6085,7 +6087,7 @@ function OauthAuthorizationController($scope){
 	        	$scope.registrationForm.redirectUri.value=redirect_uri;
 	        	$scope.registrationForm.clientId.value=client_id;
 	        	$scope.registrationForm.responseType.value=response_type;
-	        	console.log(angular.toJson($scope.registrationForm));
+	        	$scope.registrationForm.referredBy.value=client_id;
 	        }
 		}).fail(function() { 	    	
 	    	console.log("An error occured initializing the registration form.");
@@ -6165,14 +6167,9 @@ function OauthAuthorizationController($scope){
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        success: function(data) {
-	    		if (basePath.startsWith(baseUrl + 'oauth')) {
-	    			var clientName = $('div#RegistrationCtr input[name="client_name"]').val();
-	    			var clientGroupName = $('div#RegistrationCtr input[name="client_group_name"]').val();
-	    		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration', 'OAuth '+ orcidGA.buildClientString(clientGroupName, clientName)]);
-	    		}
-	    	    else
-	    	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration', 'Website']);
-	    		orcidGA.windowLocationHrefDelay(data.url);
+	        	console.log("Registered");	    			    		
+	    		orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration', 'OAuth '+ orcidGA.buildClientString($scope.clientGroupName, $scope.clientName)]);	    	    
+	    		orcidGA.windowLocationHrefDelay(data.redirectUri.value);
 	        }
 	    }).fail(function() { 
 	    	// something bad is happening!
@@ -6202,6 +6199,11 @@ function OauthAuthorizationController($scope){
 	//------------------
 	//------COMMON------
 	//------------------
+	$scope.initializeCommonFields = function(client_name, client_group_name) {
+		$scope.clientName = client_name;
+		$scope.clientGroupName = client_group_name;
+	};
+	
 	// in the case of slow network connection
 	// we don't want to overwrite  values while
 	// user is typing

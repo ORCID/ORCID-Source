@@ -33,14 +33,13 @@ import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
+import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.pojo.ajaxForm.Claim;
 import org.orcid.pojo.ajaxForm.OauthAuthorizeForm;
 import org.orcid.pojo.ajaxForm.OauthRegistration;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.Text;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -53,8 +52,6 @@ import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.MapBindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -291,9 +288,9 @@ public class OauthConfirmAccessController extends BaseController {
                 if (!PojoUtil.isEmpty(form.getResponseType()))
                     params.put(RESPONSE_TYPE_PARAM, form.getResponseType().getValue());
                 if (form.getApproved())
-                    params.put("user_oauth_approval", "true");
+                    params.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "true");
                 else
-                    params.put("user_oauth_approval", "false");
+                    params.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "false");
                 Map<String, String> approvalParams = new HashMap<String, String>();
                 if (form.getApproved())
                     approvalParams.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "true");
@@ -315,12 +312,14 @@ public class OauthConfirmAccessController extends BaseController {
     public @ResponseBody
     OauthRegistration getRegister(HttpServletRequest request, HttpServletResponse response) {
         OauthRegistration empty = new OauthRegistration(registrationController.getRegister(request, response));
+        //Creation type in oauth will always be member referred
+        empty.setCreationType(Text.valueOf(CreationMethod.MEMBER_REFERRED.value()));
         Text emptyText = Text.valueOf(EMPTY_STRING);
         empty.setClientId(emptyText);
         empty.setPassword(emptyText);
         empty.setRedirectUri(emptyText);
         empty.setResponseType(emptyText);
-        empty.setScope(emptyText);
+        empty.setScope(emptyText);        
         return empty;
     }
 
@@ -339,10 +338,10 @@ public class OauthConfirmAccessController extends BaseController {
         checkRegisterForm(request, form);
         if (form.getErrors() != null && form.getErrors().isEmpty()) {
             // Register user
-            OrcidProfile newProfile = registrationController.createMinimalRegistration(request, RegistrationController.toProfile(form));
+            registrationController.createMinimalRegistration(request, RegistrationController.toProfile(form));
             // Authenticate user
-            String email = newProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
-            String password = newProfile.getPassword();
+            String email = form.getEmail().getValue();
+            String password = form.getPassword().getValue();
             Authentication auth = authenticateUser(request, email, password);
             // Create authorization params
             SimpleSessionStatus status = new SimpleSessionStatus();
@@ -358,9 +357,9 @@ public class OauthConfirmAccessController extends BaseController {
             if (!PojoUtil.isEmpty(form.getResponseType()))
                 params.put(RESPONSE_TYPE_PARAM, form.getResponseType().getValue());
             if (form.getApproved())
-                params.put("user_oauth_approval", "true");
+                params.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "true");
             else
-                params.put("user_oauth_approval", "false");
+                params.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "false");
             Map<String, String> approvalParams = new HashMap<String, String>();
             if (form.getApproved())
                 approvalParams.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "true");

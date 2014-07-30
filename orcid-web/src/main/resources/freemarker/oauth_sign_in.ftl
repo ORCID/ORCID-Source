@@ -50,7 +50,7 @@
 	            </div>
 	        </form>
 		<#else>		    	  	        
-	        <div class="page-header">
+	        <div class="page-header" ng-init="initializeCommonFields('${client_name}','${client_group_name}')">
 				${client_name} - ${client_group_name}&nbsp;
 				<a ng-show="!showClientDescription" ng-click="toggleClientDescription()" class="glyphicon glyphicon-chevron-down"></a>
 				<a ng-show="showClientDescription" ng-click="toggleClientDescription()" class="glyphicon glyphicon-chevron-up"></a>
