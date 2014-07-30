@@ -4180,6 +4180,11 @@ function NotificationsCtrl($scope, $compile){
 	    });
 	};
 	
+	$scope.displayBody = {};
+	$scope.toggleDisplayBody = function (notificationId) {
+		$scope.displayBody[notificationId] = !$scope.displayBody[notificationId];
+	};
+	
 	// init
 	$scope.getNotifications();
 };
