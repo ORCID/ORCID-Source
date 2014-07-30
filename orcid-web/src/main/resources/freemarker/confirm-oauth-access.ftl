@@ -50,6 +50,9 @@
 		</p>
 	</div>
 	<div>
+		<p><@orcid.msg 'orcid.frontend.oauth.have_asked'/></p>
+	</div>
+	<div>
 		<#list scopes as scope>
 			<div><span class="mini-orcid-icon"></span><@orcid.msg '${scope.declaringClass.name}.${scope.name()}'/></div>
     	</#list>				
@@ -66,11 +69,6 @@
 		</button>
 	</div>					
 
-
-				
-				
-		    
-	</div>
 	</@security.authorize>
 </div>
 </@base>
