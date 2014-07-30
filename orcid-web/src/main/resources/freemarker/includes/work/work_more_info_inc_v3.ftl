@@ -195,14 +195,19 @@
 					<span>
 						<strong >Source:</strong> {{group.getActive().workSourceName.value}}
 					</span>						
-				</div>					
+				</div>
 				
 				<div ng-class="editSources[group.groupId] == true ? 'col-md-12' : 'col-md-7'">						
 					<ul class="sources-options" ng-cloak>
 						<li ng-hide="group.activitiesCount == 1 || editSources[group.groupId] == true">
 							<span>
 							 	<a ng-click="editSources[group.groupId] = !editSources[group.groupId]">View <span class="badge">{{group.activitiesCount - 1 }}</span> additional source<span ng-show="group.activitiesCount > 2">s</span></a>
-							</span>
+							</span>							
+						</li>
+						<li ng-show="group.activitiesCount == 1">
+							<a ng-click="deleteWorkConfirm(group.getActive().putCode.value, false)">
+			            	   <span class="glyphicon glyphicon-trash"></span>
+			               </a>
 						</li>
 				        <li ng-show="editSources[group.groupId] == true">
 				            <a ng-click="deleteWorkConfirm(group.getActive().putCode.value, true)">
@@ -253,7 +258,7 @@
 				    <tr ng-repeat="work in group.activities" ng-hide="group.activePutCode == work.putCode.value">				    	
 				       <td><!-- Source name -->				       		
 				           	<a ng-click="moreInfo[work.putCode.value] = moreInfo[group.activePutCode]; group.activePutCode = work.putCode.value">
-				           			{{work.workSourceName.value}}
+				           		{{work.workSourceName.value}}
 				           	</a> 
 				       </td>
 				       <td><!-- Date -->

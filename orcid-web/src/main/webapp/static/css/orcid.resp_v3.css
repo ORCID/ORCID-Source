@@ -1581,7 +1581,7 @@ a:hover {
 }
 
 .workspace-right {
-	border-left: 1px solid #c9c9c9;
+	/*border-left: 1px solid #c9c9c9;*/
 	min-height: 500px;
 }
 
@@ -1740,7 +1740,7 @@ a:hover {
 }
 
 .workspace-accordion-item {
-	border-bottom: 1px solid #c9c9c9;
+	/*border-bottom: 1px solid #c9c9c9;*/
 }
 
 .workspace-top .alert {
