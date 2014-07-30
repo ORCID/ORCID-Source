@@ -19,6 +19,7 @@ package org.orcid.frontend.web.controllers;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -231,8 +232,7 @@ public class OauthConfirmAccessController extends BaseController {
         // should be a SSO user
         if (StringUtils.isBlank(clientGroupName)) {
             clientGroupName = clientName;
-        }
-
+        }        
         mav.addObject("profile", profile);
         mav.addObject("client_name", clientName);
         mav.addObject("client_description", clientDescription);
@@ -240,6 +240,7 @@ public class OauthConfirmAccessController extends BaseController {
         mav.addObject("client_website", clientWebsite);
         mav.addObject("clientProfile", clientProfile);
         mav.addObject("scopes", ScopePathType.getScopesFromSpaceSeparatedString(scope));
+        mav.addObject("scopesString", scope);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         mav.addObject("auth", authentication);
         mav.setViewName("confirm-oauth-access");
@@ -375,6 +376,47 @@ public class OauthConfirmAccessController extends BaseController {
         return form;
     }
 
+    
+    
+    
+    
+    
+    
+    
+    
+    @RequestMapping(value = { "/custom/authorize.json"}, method = RequestMethod.POST)
+    public @ResponseBody
+    OauthAuthorizeForm authorize(HttpServletRequest request, @RequestBody OauthAuthorizeForm form) {        
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Object authorizationRequest= request.getSession().getAttribute("authorizationRequest"); 
+        //Authorization request model
+        Map<String, Object> model = new HashMap<String, Object>();
+        model.put("authorizationRequest", authorizationRequest);
+        //Approval params
+        Map<String, String> approvalParams = new HashMap<String, String>();
+        if (form.getApproved())
+            approvalParams.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "true");
+        else
+            approvalParams.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "false");
+        //Session status
+        SimpleSessionStatus status = new SimpleSessionStatus();
+                        
+        // Approve
+        RedirectView view = (RedirectView) authorizationEndpoint.approveOrDeny(approvalParams, model, status, auth);
+        form.setRedirectUri(Text.valueOf(view.getUrl()));      
+        return form;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     /*****************************
      * Authenticate user methods
      ****************************/

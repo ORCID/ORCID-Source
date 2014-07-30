@@ -6018,7 +6018,7 @@ function OauthAuthorizationController($scope, $compile){
 	$scope.showClientDescription = false;
 	$scope.showRegisterForm = false;
 	$scope.authorizationForm = {};
-	$scope.registrationForm = {};	
+	$scope.registrationForm = {};		
 	$scope.clientName = "";
 	$scope.clientGroupName = "";
 	
@@ -6047,12 +6047,12 @@ function OauthAuthorizationController($scope, $compile){
 	    });
 	};
 	
-	$scope.authorize = function() {
+	$scope.loginAndAuthorize = function() {
 		$scope.authorizationForm.approved = true;
 		$scope.submit();
 	};
 	
-	$scope.deny = function() {
+	$scope.loginAndDeny = function() {
 		$scope.authorizationForm.approved = false;
 		$scope.submit();
 	};
@@ -6193,6 +6193,52 @@ function OauthAuthorizationController($scope, $compile){
 	    }).fail(function() { 
 	    	// something bad is happening!
 	    	console.log("OauthAuthorizationController.serverValidate() error");
+	    });
+	};
+	
+	//------------------------
+	//------ AUTHORIZE -------
+	//------------------------
+	$scope.loadAndInitAuthorizationForm = function(scopes, redirect_uri, client_id, response_type) {		
+		$.ajax({
+			url: getBaseUri() + '/oauth/custom/authorize/empty.json',
+			type: 'GET',
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.authorizationForm = data;
+	        	$scope.authorizationForm.scope.value=scopes;
+	        	$scope.authorizationForm.redirectUri.value=redirect_uri;
+	        	$scope.authorizationForm.clientId.value=client_id;
+	        	$scope.authorizationForm.responseType.value=response_type;	        	
+	        }
+		}).fail(function() { 	    	
+	    	console.log("An error occured initializing the form.");
+	    });
+	};
+	
+	$scope.authorize = function() {
+		$scope.authorizationForm.approved = true;
+		$scope.authorizeRequest();
+	};
+	
+	$scope.deny = function() {
+		$scope.authorizationForm.approved = false;
+		$scope.authorizeRequest();
+	};
+	
+	$scope.authorizeRequest = function() {		
+		$.ajax({
+			url: getBaseUri() + '/oauth/custom/authorize.json',
+			type: 'POST',
+			data: angular.toJson($scope.authorizationForm),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	window.location = data.redirectUri.value;
+	        }
+		}).fail(function() { 	    	
+	    	console.log("An error occured authorizing the user.");
 	    });
 	};
 	

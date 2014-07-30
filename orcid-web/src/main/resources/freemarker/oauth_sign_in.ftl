@@ -49,20 +49,12 @@
 	                </div>
 	            </div>
 	        </form>
-<<<<<<< HEAD
 		<#else>	
 			<div class="app-client-name">
 				<h3 ng-click="toggleClientDescription()">${client_name} - ${client_group_name}
 					<a ng-show="!showClientDescription" ng-click="toggleClientDescription()" class="glyphicon glyphicon-chevron-down"></a>
 					<a ng-show="showClientDescription" ng-click="toggleClientDescription()" class="glyphicon glyphicon-chevron-up"></a>
 				</h3>
-=======
-		<#else>		    	  	        
-	        <div class="page-header" ng-init="initializeCommonFields('${client_name}','${client_group_name}')">
-				${client_name} - ${client_group_name}&nbsp;
-				<a ng-show="!showClientDescription" ng-click="toggleClientDescription()" class="glyphicon glyphicon-chevron-down"></a>
-				<a ng-show="showClientDescription" ng-click="toggleClientDescription()" class="glyphicon glyphicon-chevron-up"></a>
->>>>>>> b5338e2fb1fdda8c5f5d7b80e52148b7dd031691
 			</div>
 			<div class="app-client-description">
 				<p ng-show="showClientDescription">
@@ -101,10 +93,10 @@
 			    	</div>
 		    	</div>		
 	            <div id="login-buttons">                     		            		               					
-					<button class="btn btn-primary" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="authorize()">
+					<button class="btn btn-primary" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="loginAndAuthorize()">
 						<@orcid.msg 'confirm-oauth-access.Authorize' />
 					</button>		                 	            
-					<button class="btn btn-primary" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="deny()">
+					<button class="btn btn-primary" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="loginAndDeny()">
 						<@orcid.msg 'confirm-oauth-access.Deny' />
 					</button>
 	            </div>	                        

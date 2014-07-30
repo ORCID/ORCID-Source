@@ -18,7 +18,6 @@ package org.orcid.core.oauth.service;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,8 +29,6 @@ import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.endpoint.AuthorizationEndpoint;
 import org.springframework.web.HttpSessionRequiredException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.servlet.ModelAndView;
 
