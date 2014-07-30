@@ -197,7 +197,7 @@
 					</span>						
 				</div>					
 				
-				<div ng-class="editSources[group.groupId] == true ? 'col-md-12' : 'col-md-7">						
+				<div ng-class="editSources[group.groupId] == true ? 'col-md-12' : 'col-md-7'">						
 					<ul class="sources-options" ng-cloak>
 						<li ng-hide="group.activitiesCount == 1 || editSources[group.groupId] == true">
 							<span>
@@ -240,7 +240,7 @@
 				       <td>
 				           <span class="glyphicon glyphicon-check" ng-show="group.getActive().putCode.value == group.defaultPutCode"></span> 
 				           <a ng-click="worksSrvc.makeDefault(group, group.getActive().putCode.value); group.activePutCode = group.getActive().putCode.value" ng-show="group.getActive().putCode.value != group.defaultPutCode">
-			            	 <span class="glyphicon glyphicon-unchecked"></span> Keep on top
+			            	 <span class="glyphicon glyphicon-unchecked"></span> Make Preferred
 			               </a>
 			           </td>
 				       <td>
@@ -261,8 +261,8 @@
 				       	</td>
 				       <td> <!-- Make Default -->
 				           <span class="glyphicon glyphicon-check" ng-show="work.putCode.value == group.defaultPutCode"></span> 
-				           <a ng-click="worksSrvc.makeDefault(group, work.putCode.value); group.activePutCode = work.putCode.value" ng-show="work.putCode.value != group.defaultPutCode">
-			            	 <span class="glyphicon glyphicon-unchecked"></span> Keep on top
+				           <a ng-click="worksSrvc.makeDefault(group, work.putCode.value);" ng-show="work.putCode.value != group.defaultPutCode">
+			            	 <span class="glyphicon glyphicon-unchecked"></span> Make Preferred
 			               </a>
 			           </td>
 				       <td><!-- Delete -->

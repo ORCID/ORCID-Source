@@ -443,6 +443,7 @@ GroupedActivities.prototype.hasPut = function(putCode) {
 };
 
 GroupedActivities.prototype.key = function(activityIdentifiers) {
+	console.log(activityIdentifiers);
 	var idPath;
 	var idTypePath;
 	if (this.type == 'abbrWork') {
@@ -527,18 +528,28 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 									removeBadContributors(dw);	
 									removeBadExternalIdentifiers(dw);
 									serv.addBibtexJson(dw);
-									var added = false;
+									var matches = new Array();
 									for (var idx in serv.groups)
 										if (serv.groups[idx].keyMatch(dw)) {
-											serv.groups[idx].add(dw);
-											added = true;
-											break;
+											//serv.groups[idx].add(dw);
+											matches.push(serv.groups[idx]);
 										}
-									if (added == false) {
+									if (matches.length == 0) {
 										var newGroup = new GroupedActivities('abbrWork');
 										newGroup.add(dw);
 										serv.groups.push(newGroup);
-									};
+									} else {
+										var firstMatch = matches.shift();
+										firstMatch.add(dw);
+										// combine any remaining groups into the first group we found.
+										for (var idx in matches) {
+											var matchIndex = serv.groups.indexOf(matches[idx]);
+											var curMatch = serv.groups[matchIndex];
+											for (var idj in curMatch.activities)
+												firstMatch.add(curMatch.activities[idj]);
+											serv.groups.splice(matchIndex, 1);
+										}
+									}
 								};
 							});
 							if(serv.worksToAddIds.length == 0 ) {
@@ -3250,7 +3261,7 @@ function PublicFundingCtrl($scope, $compile, $filter, fundingSrvc){
 	};
 }
 
-function PublicWorkCtrl($scope, $compile, worksSrvc) {
+function PublicWorkCtrl($scope, $compile, $filter, worksSrvc) {
 	$scope.worksSrvc = worksSrvc;
 	$scope.showBibtex = true;
 	$scope.moreInfoOpen = false;
