@@ -49,16 +49,17 @@
 	                </div>
 	            </div>
 	        </form>
-		<#else>		    	  	        
-	        <div class="page-header">
-				${client_name} - ${client_group_name}&nbsp;
-				<a ng-show="!showClientDescription" ng-click="toggleClientDescription()" class="glyphicon glyphicon-chevron-down"></a>
-				<a ng-show="showClientDescription" ng-click="toggleClientDescription()" class="glyphicon glyphicon-chevron-up"></a>
+		<#else>	
+			<div class="app-client-name">
+				<h3 ng-click="toggleClientDescription()">${client_name} - ${client_group_name}
+					<a ng-show="!showClientDescription" ng-click="toggleClientDescription()" class="glyphicon glyphicon-chevron-down"></a>
+					<a ng-show="showClientDescription" ng-click="toggleClientDescription()" class="glyphicon glyphicon-chevron-up"></a>
+				</h3>
 			</div>
-			<div>
-				<span ng-show="showClientDescription">
-					${client_description}
-				</span>
+			<div class="app-client-description">
+				<p ng-show="showClientDescription">
+					<span class="uppercase gray-bold-about"><@orcid.msg 'oauth_sign_in.about'/></span> ${client_description}
+				</p>
 			</div>
 			<div>
 				<#list scopes as scope>

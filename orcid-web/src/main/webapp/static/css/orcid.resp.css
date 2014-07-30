@@ -4147,6 +4147,27 @@ multiselect .dropdown-menu .dropdown-menu-list {
 	border: 1px solid #c9cacb;
 }
 
+.app-client-name h3{
+	color: #A3CD39;
+	cursor: pointer;
+}
+
+.app-client-name h3 a{
+	font-size: 12px;
+	color: #A3CD39;	
+}
+
+.gray-bold-about{
+	color: #939598;
+	font-weight: bold;
+	font-style: normal;
+	font-size: 14px;
+}
+
+.app-client-description p{
+	margin-bottom: 15px;
+}
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 	.alert .small {
