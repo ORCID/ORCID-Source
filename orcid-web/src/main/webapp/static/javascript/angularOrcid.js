@@ -926,6 +926,48 @@ orcidNgModule.factory("prefsSrvc", function ($rootScope) {
 	return serv; 
 });
 
+orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) {
+	var serv = {
+		notifications: [],
+		getNotifications: function() {
+			$.ajax({
+		        url: getBaseUri() + '/notifications/notifications.json',
+		        dataType: 'json',
+		        success: function(data) {
+		        	for(var i = 0; i < data.length; i++){
+		        		serv.notifications.push(data[i]);
+		        	}
+		        	$rootScope.$apply();
+		        }
+		    }).fail(function() { 
+		    	// something bad is happening!
+		    	console.log("error with getting notifications");
+		    });
+		},
+		flagAsRead: function(notificationId) {
+			$.ajax({
+		        url: getBaseUri() + '/notifications/' + notificationId + '/read.json',
+		        type: 'POST',
+		        dataType: 'json',
+		        success: function(data) {
+		        	var updated = data;
+		        	for(var i = 0;  i < serv.notifications.length; i++){
+		        		var existing = serv.notifications[i];
+		        		if(existing.putCode.path === updated.putCode.path){
+		        			existing.readDate = updated.readDate;
+		        		}
+		        	}
+		        	$rootScope.$apply();
+		        }
+		    }).fail(function() { 
+		    	// something bad is happening!
+		    	console.log("error flagging notification as read");
+		    });
+		}
+	};
+	serv.getNotifications();
+	return serv;
+}]);
 
 orcidNgModule.filter('urlWithHttp', function(){
 	return function(input){
@@ -4164,52 +4206,15 @@ function DelegatorsCtrl($scope, $compile){
 };
 
 // Controller for notifications
-function NotificationsCtrl($scope, $compile){
-	
-	$scope.getNotifications = function() {
-		$.ajax({
-	        url: getBaseUri() + '/notifications/notifications.json',
-	        dataType: 'json',
-	        success: function(data) {
-	        	$scope.notifications = data;
-	        	$scope.$apply();
-	        }
-	    }).fail(function() { 
-	    	// something bad is happening!
-	    	console.log("error with getting notifications");
-	    });
-	};
-	
-	$scope.flagAsRead = function(notificationId) {
-		$.ajax({
-	        url: getBaseUri() + '/notifications/' + notificationId + '/read.json',
-	        type: 'POST',
-	        dataType: 'json',
-	        success: function(data) {
-	        	var updated = data;
-	        	var updatedId = updated.putCode.path;
-	        	for(var i = 0;  i < $scope.notifications.length; i++){
-	        		var existing = $scope.notifications[i];
-	        		if(existing.putCode.path === updatedId){
-	        			existing.readDate = updated.readDate;
-	        		}
-	        	}
-	        	$scope.$apply();
-	        }
-	    }).fail(function() { 
-	    	// something bad is happening!
-	    	console.log("error flagging notification as read");
-	    });
-	};
-	
+function NotificationsCtrl($scope, $compile, notificationsSrvc){
 	$scope.displayBody = {};
+	
 	$scope.toggleDisplayBody = function (notificationId) {
 		$scope.displayBody[notificationId] = !$scope.displayBody[notificationId];
-		$scope.flagAsRead(notificationId);
+		notificationsSrvc.flagAsRead(notificationId);
 	};
 	
-	// init
-	$scope.getNotifications();
+	$scope.notifications = notificationsSrvc.notifications;
 };
 
 function SwitchUserCtrl($scope, $compile, $document){
