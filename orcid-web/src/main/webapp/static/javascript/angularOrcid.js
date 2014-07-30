@@ -6023,7 +6023,7 @@ function OauthAuthorizationController($scope, $compile){
 	$scope.clientGroupName = "";
 	
 	$scope.toggleClientDescription = function() {
-		$scope.showClientDescription = !$scope.showClientDescription;
+		$scope.showClientDescription = !$scope.showClientDescription;		
 	};
 		
 	//---------------------

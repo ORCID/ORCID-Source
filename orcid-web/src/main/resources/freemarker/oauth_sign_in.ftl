@@ -52,8 +52,8 @@
 		<#else>	
 			<div class="app-client-name">
 				<h3 ng-click="toggleClientDescription()">${client_name} - ${client_group_name}
-					<a ng-show="!showClientDescription" ng-click="toggleClientDescription()" class="glyphicon glyphicon-chevron-down"></a>
-					<a ng-show="showClientDescription" ng-click="toggleClientDescription()" class="glyphicon glyphicon-chevron-up"></a>
+					<a ng-show="!showClientDescription" class="glyphicon glyphicon-chevron-down"></a>
+					<a ng-show="showClientDescription" class="glyphicon glyphicon-chevron-up"></a>
 				</h3>
 			</div>
 			<div class="app-client-description">
