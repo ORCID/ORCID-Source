@@ -17,8 +17,10 @@
 package org.orcid.persistence.jpa.entities.custom;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.persistence.jpa.entities.BaseEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 
 /**
@@ -27,7 +29,7 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
  * 
  * @author Angel Montenegro (amontenegro)
  * */
-public class MinimizedWorkEntity implements Serializable {
+public class MinimizedWorkEntity extends BaseEntity implements Serializable {
     private static final long serialVersionUID = -6961089690820823167L;
 
     private Long id;
@@ -47,7 +49,7 @@ public class MinimizedWorkEntity implements Serializable {
     }
 
     public MinimizedWorkEntity(Long id, String title, String subtitle, String description, Integer publicationDay, Integer publicationMonth, Integer publicationYear,
-            Visibility visibility, String externalIdentifiersJson, Long displayIndex, ProfileEntity sourceProfile) {
+            Visibility visibility, String externalIdentifiersJson, Long displayIndex, ProfileEntity sourceProfile, Date dateCreated, Date lastModified) {
         super();
         this.id = id;
         this.title = title;
@@ -63,6 +65,9 @@ public class MinimizedWorkEntity implements Serializable {
         this.externalIdentifiersJson = externalIdentifiersJson;
         this.displayIndex = displayIndex;
         this.sourceProfile = sourceProfile;
+        this.setDateCreated(dateCreated);
+        this.setLastModified(lastModified);
+        
     }
 
     public Long getId() {
