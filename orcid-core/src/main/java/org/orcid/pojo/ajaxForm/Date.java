@@ -61,6 +61,16 @@ public class Date implements ErrorsInterface, Required, Serializable {
         return pd;
     }
     
+    public static Date valueOf(java.util.Date date) {
+        Date newDate = new Date();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        newDate.setDay(Integer.toString(cal.get(Calendar.DAY_OF_MONTH)));
+        newDate.setMonth(Integer.toString(cal.get(Calendar.MONTH) + 1));
+        newDate.setYear(Integer.toString(cal.get(Calendar.YEAR)));
+        return newDate;
+    }
+    
     public java.util.Date toJavaDate() {
         Calendar gc = GregorianCalendar.getInstance();
         if (!PojoUtil.isEmpty(this.getDay()))

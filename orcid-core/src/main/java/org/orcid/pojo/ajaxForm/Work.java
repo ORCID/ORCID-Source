@@ -86,6 +86,10 @@ public class Work implements ErrorsInterface, Serializable {
 	
 	private String dateSortString;
 	
+	private Date dateCreated;
+	
+	private Date lastModified;
+	
 
 	public static Work valueOf(MinimizedWorkEntity minimizedWorkEntity) {
 		Work w = new Work();
@@ -130,6 +134,8 @@ public class Work implements ErrorsInterface, Serializable {
                     w.setWorkSource(Text.valueOf(minimizedWorkEntity.getSourceProfile().getId()));
                     w.setWorkSourceName(Text.valueOf(Jpa2JaxbAdapterImpl.createName(minimizedWorkEntity.getSourceProfile())));
                 }
+		w.setDateCreated(Date.valueOf(minimizedWorkEntity.getDateCreated()));
+		w.setLastModified(Date.valueOf(minimizedWorkEntity.getLastModified()));
 		return w;
 	}
 	
@@ -175,8 +181,6 @@ public class Work implements ErrorsInterface, Serializable {
 			WorkCategory category = WorkCategory.fromWorkType(orcidWork.getWorkType());
 			w.setWorkCategory(Text.valueOf(category.value()));
 		}
-
-		
 		
 		if (orcidWork.getJournalTitle() != null)
 			w.setJournalTitle(Text.valueOf(orcidWork.getJournalTitle()
@@ -188,6 +192,7 @@ public class Work implements ErrorsInterface, Serializable {
 		if (orcidWork.getCountry() != null)
 			w.setCountryCode((orcidWork.getCountry().getValue() == null) ? null
 					: Text.valueOf(orcidWork.getCountry().getValue().value()));
+		
 		return w;
 	}
 
@@ -441,5 +446,21 @@ public class Work implements ErrorsInterface, Serializable {
 
     public void setDateSortString(String dateSortString) {
         this.dateSortString = dateSortString;
+    }
+
+    public Date getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(Date dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
+    public Date getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(Date lastModified) {
+        this.lastModified = lastModified;
     }
 }
