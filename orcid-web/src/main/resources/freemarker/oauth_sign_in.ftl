@@ -74,11 +74,16 @@
 			</div>
 			<#assign denyOnClick = " orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Authorize_Deny', 'OAuth " + client_group_name?js_string + " - " + client_name?js_string + "']);"> 
 			<!-- LOGIN FORM -->
-			<div id="login" ng-show="!showRegisterForm" ng-init="loadAndInitLoginForm('${scopesString}','${redirect_uri}','${client_id}','${response_type}')">            		
+			<#assign user_id = "">
+			
+			<#if user_id??>
+				<#assign user_id = userId>
+	        </#if>
+			<div id="login" ng-show="!showRegisterForm" ng-init="loadAndInitLoginForm('${scopesString}','${redirect_uri}','${client_id}','${response_type}', '${user_id}')">            		
 	            <div>
 	                <label for="userId"><@orcid.msg 'oauth_sign_in.labelemailorID'/></label>
-	                <div class="relative">
-	                   <input type="text" id="userId" ng-model="authorizationForm.userName.value" name="userId" value="${userId}" placeholder="Email or iD" class="input-xlarge">
+	                <div class="relative">	                	
+	                   <input type="text" id="userId" ng-model="authorizationForm.userName.value" name="userId" value="" placeholder="Email or iD" class="input-xlarge">
 	                </div>
 	            </div>
 	            <div id="passwordField">
@@ -92,11 +97,11 @@
 				        <a href="<@spring.url '/reset-password'/>"><@orcid.msg 'login.reset'/></a>&nbsp;&nbsp;
 				    </div>
 				    <div id="oauth-login-register" class="col-md-6 col-sm-6 col-xs-12">
-				       	<a class="reg" ng-click="switchForm()"><@orcid.msg 'orcid.frontend.oauth.register'/></a>
+				       	<a class="reg" id="in-login-switch-form"ng-click="switchForm()"><@orcid.msg 'orcid.frontend.oauth.register'/></a>
 			    	</div>
 		    	</div>		
 	            <div id="login-buttons">                     		            		               					
-					<button class="btn btn-primary" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="loginAndAuthorize()">
+					<button class="btn btn-primary" id="authorize-button" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="loginAndAuthorize()">
 						<@orcid.msg 'confirm-oauth-access.Authorize' />
 					</button>		                 	            
 					<button class="btn btn-primary" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="loginAndDeny()">

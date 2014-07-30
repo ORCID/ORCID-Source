@@ -155,21 +155,9 @@ public class PublicOauthClientTest extends DBUnitTest {
         userId.sendKeys("michael@bentine.com");
         WebElement password = webDriver.findElement(By.id("password"));
         password.sendKeys("password");
-        password.submit();
-        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
-            public Boolean apply(WebDriver d) {
-                if (d.getCurrentUrl().contains("authorize")) {
-                    WebElement authorizeButton = d.findElement(By.name("authorize"));
-                    if (authorizeButton != null) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-        });
-        WebElement authorizeButton = webDriver.findElement(By.name("authorize"));
-        Thread.sleep(3000);
-        authorizeButton.submit();
+        WebElement submitButton = webDriver.findElement(By.id("authorize-button")); 
+        submitButton.click();
+                
         (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
             public Boolean apply(WebDriver d) {
                 return d.getTitle().equals("ORCID Playground");

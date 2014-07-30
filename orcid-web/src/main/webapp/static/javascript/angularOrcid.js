@@ -6029,7 +6029,7 @@ function OauthAuthorizationController($scope, $compile){
 	//---------------------
 	//-LOGIN AND AUTHORIZE-
 	//---------------------	
-	$scope.loadAndInitLoginForm = function(scopes, redirect_uri, client_id, response_type) {		
+	$scope.loadAndInitLoginForm = function(scopes, redirect_uri, client_id, response_type, user_id) {		
 		$.ajax({
 			url: getBaseUri() + '/oauth/custom/authorize/empty.json',
 			type: 'GET',
@@ -6040,7 +6040,8 @@ function OauthAuthorizationController($scope, $compile){
 	        	$scope.authorizationForm.scope.value=scopes;
 	        	$scope.authorizationForm.redirectUri.value=redirect_uri;
 	        	$scope.authorizationForm.clientId.value=client_id;
-	        	$scope.authorizationForm.responseType.value=response_type;	        	
+	        	$scope.authorizationForm.responseType.value=response_type;	
+	        	$scope.authorizationForm.userName.value = user_id;
 	        }
 		}).fail(function() { 	    	
 	    	console.log("An error occured initializing the form.");
