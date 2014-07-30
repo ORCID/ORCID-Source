@@ -33,13 +33,13 @@ import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
+import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.pojo.Redirect;
 import org.orcid.pojo.ajaxForm.OauthAuthorizeForm;
+import org.orcid.pojo.ajaxForm.OauthRegistration;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.Text;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -70,15 +70,15 @@ public class OauthConfirmAccessController extends BaseController {
     private Pattern scopesPattern = Pattern.compile("scope=([^&]*)");
     private Pattern redirectUriPattern = Pattern.compile("redirect_uri=([^&]*)");
     private Pattern responseTypePattern = Pattern.compile("response_type=([^&]*)");
-    
+
     private static String RESPONSE_TYPE = "code";
     private static String CLIENT_ID_PARAM = "client_id";
     private static String SCOPE_PARAM = "scope";
     private static String RESPONSE_TYPE_PARAM = "response_type";
     private static String REDIRECT_URI_PARAM = "redirect_uri";
-    
+
     private static final String EMPTY_STRING = "";
-    
+
     private static final String JUST_REGISTERED = "justRegistered";
     @Resource
     private OrcidProfileManager orcidProfileManager;
@@ -93,7 +93,7 @@ public class OauthConfirmAccessController extends BaseController {
 
     @RequestMapping(value = { "/signin", "/login" }, method = RequestMethod.GET)
     public ModelAndView loginGetHandler2(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
-        // find client name if available 
+        // find client name if available
         SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
         String clientName = "";
         String clientId = "";
@@ -104,11 +104,11 @@ public class OauthConfirmAccessController extends BaseController {
         String redirectUri = "";
         String responseType = "";
         String orcid = null;
-        if (savedRequest != null) {            
+        if (savedRequest != null) {
             String url = savedRequest.getRedirectUrl();
             Matcher matcher = clientIdPattern.matcher(url);
             if (matcher.find()) {
-                clientId = matcher.group(1);                
+                clientId = matcher.group(1);
                 if (clientId != null) {
 
                     Matcher emailMatcher = RegistrationController.emailPattern.matcher(url);
@@ -117,64 +117,67 @@ public class OauthConfirmAccessController extends BaseController {
                         if (orcidProfileManager.emailExists(tempEmail))
                             email = tempEmail;
                     }
-                    
+
                     Matcher orcidMatcher = orcidPattern.matcher(url);
                     if (orcidMatcher.find()) {
                         String tempOrcid = orcidMatcher.group(2);
                         if (orcidProfileManager.exists(tempOrcid))
-                           orcid = tempOrcid;
+                            orcid = tempOrcid;
                     }
-                    
+
                     Matcher scopeMatcher = scopesPattern.matcher(url);
-                    if(scopeMatcher.find()) {
+                    if (scopeMatcher.find()) {
                         scope = scopeMatcher.group(1);
                         try {
                             scope = URLDecoder.decode(scope, "UTF-8");
-                        } catch (UnsupportedEncodingException e) {}
+                        } catch (UnsupportedEncodingException e) {
+                        }
                     }
-                    
+
                     Matcher redirectUriMatcher = redirectUriPattern.matcher(url);
-                    if(redirectUriMatcher.find()) {
+                    if (redirectUriMatcher.find()) {
                         redirectUri = redirectUriMatcher.group(1);
                     }
-                    
+
                     Matcher responseTypeMatcher = responseTypePattern.matcher(url);
-                    if(responseTypeMatcher.find()) {
+                    if (responseTypeMatcher.find()) {
                         responseType = responseTypeMatcher.group(1);
                     }
-                    
-                    //Get client name
+
+                    // Get client name
                     ClientDetailsEntity clientDetails = clientDetailsManager.find(clientId);
-                    
-                    //validate client scopes
+
+                    // validate client scopes
                     try {
                         authorizationEndpoint.validateScope(scope, clientDetails);
                     } catch (InvalidScopeException ise) {
                         String redirectUriWithParams = redirectUri;
                         redirectUriWithParams += "?error=invalid_scope&error_description=" + ise.getMessage();
                         RedirectView rView = new RedirectView(redirectUriWithParams);
-                        
+
                         ModelAndView error = new ModelAndView();
                         error.setView(rView);
                         return error;
                     }
-                    //If client details is ok, continue
+                    // If client details is ok, continue
                     clientName = clientDetails.getClientName() == null ? "" : clientDetails.getClientName();
                     clientDescription = clientDetails.getClientDescription() == null ? "" : clientDetails.getClientDescription();
-                    //Get the group credit name
-                    OrcidProfile clientProfile = orcidProfileManager.retrieveOrcidProfile(clientId);                    
-                    
-                    if (clientProfile.getOrcidInternal() != null && clientProfile.getOrcidInternal().getGroupOrcidIdentifier() != null && StringUtils.isNotBlank(clientProfile.getOrcidInternal().getGroupOrcidIdentifier().getPath())) {
+                    // Get the group credit name
+                    OrcidProfile clientProfile = orcidProfileManager.retrieveOrcidProfile(clientId);
+
+                    if (clientProfile.getOrcidInternal() != null && clientProfile.getOrcidInternal().getGroupOrcidIdentifier() != null
+                            && StringUtils.isNotBlank(clientProfile.getOrcidInternal().getGroupOrcidIdentifier().getPath())) {
                         String client_group_id = clientProfile.getOrcidInternal().getGroupOrcidIdentifier().getPath();
-                        if(StringUtils.isNotBlank(client_group_id)) {
-                        OrcidProfile clientGroupProfile = orcidProfileManager.retrieveOrcidProfile(client_group_id);
-                        if (clientGroupProfile.getOrcidBio() != null && clientGroupProfile.getOrcidBio().getPersonalDetails() != null
-                                && clientGroupProfile.getOrcidBio().getPersonalDetails().getCreditName() != null)
-                            clientGroupName = clientGroupProfile.getOrcidBio().getPersonalDetails().getCreditName().getContent();
+                        if (StringUtils.isNotBlank(client_group_id)) {
+                            OrcidProfile clientGroupProfile = orcidProfileManager.retrieveOrcidProfile(client_group_id);
+                            if (clientGroupProfile.getOrcidBio() != null && clientGroupProfile.getOrcidBio().getPersonalDetails() != null
+                                    && clientGroupProfile.getOrcidBio().getPersonalDetails().getCreditName() != null)
+                                clientGroupName = clientGroupProfile.getOrcidBio().getPersonalDetails().getCreditName().getContent();
                         }
-                    } 
-                    //If the group name is empty, use the same as the client name, since it should be a SSO user 
-                    if(StringUtils.isBlank(clientGroupName)) {
+                    }
+                    // If the group name is empty, use the same as the client
+                    // name, since it should be a SSO user
+                    if (StringUtils.isBlank(clientGroupName)) {
                         clientGroupName = clientName;
                     }
                 }
@@ -188,12 +191,12 @@ public class OauthConfirmAccessController extends BaseController {
         mav.addObject("client_id", clientId);
         mav.addObject("client_group_name", clientGroupName);
         mav.addObject("client_description", clientDescription);
-        mav.addObject("userId", orcid!=null ? orcid : email);
+        mav.addObject("userId", orcid != null ? orcid : email);
         mav.setViewName("oauth_login");
         mav.addObject("hideUserVoiceScript", true);
         return mav;
     }
-    
+
     @RequestMapping(value = "/confirm_access", method = RequestMethod.GET)
     public ModelAndView loginGetHandler(HttpServletRequest request, ModelAndView mav, @RequestParam("client_id") String clientId, @RequestParam("scope") String scope) {
         OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid(), LoadOptions.BIO_ONLY);
@@ -243,11 +246,11 @@ public class OauthConfirmAccessController extends BaseController {
         mav.addObject("hideUserVoiceScript", true);
         mav.addObject("profile", getEffectiveProfile());
         return mav;
-    }        
-    
-    
-    @RequestMapping(value = "/custom/empty.json", method = RequestMethod.GET)
-    public @ResponseBody OauthAuthorizeForm getEmptyAuthorizeForm() {
+    }
+
+    @RequestMapping(value = "/custom/authorize/empty.json", method = RequestMethod.GET)
+    public @ResponseBody
+    OauthAuthorizeForm getEmptyAuthorizeForm() {
         OauthAuthorizeForm empty = new OauthAuthorizeForm();
         Text emptyText = Text.valueOf(EMPTY_STRING);
         empty.setClientId(emptyText);
@@ -258,107 +261,197 @@ public class OauthConfirmAccessController extends BaseController {
         empty.setUserName(emptyText);
         return empty;
     }
-    
+
     @RequestMapping(value = { "/custom/signin.json", "/custom/login.json" }, method = RequestMethod.POST)
-    public @ResponseBody OauthAuthorizeForm authenticateAndAuthorize(HttpServletRequest request, @RequestBody OauthAuthorizeForm form) {        
-        //Clean form errors
+    public @ResponseBody
+    OauthAuthorizeForm authenticateAndAuthorize(HttpServletRequest request, @RequestBody OauthAuthorizeForm form) {
+        // Clean form errors
         form.setErrors(new ArrayList<String>());
-        //Validate name and password
+        // Validate name and password
         validateUserName(form);
         validatePassword(form);
-        if(form.getErrors().isEmpty()) {
+        if (form.getErrors().isEmpty()) {
             try {
-                //Authenticate user
+                // Authenticate user
                 Authentication auth = authenticateUser(request, form);
-                //Create authorization params
-                SimpleSessionStatus status = new SimpleSessionStatus();            
+                // Create authorization params
+                SimpleSessionStatus status = new SimpleSessionStatus();
                 Map<String, Object> model = new HashMap<String, Object>();
-                Map<String, String> params = new HashMap<String, String>();                
-                params.put(CLIENT_ID_PARAM, form.getClientId().getValue());   
-                if(!PojoUtil.isEmpty(form.getRedirectUri()))
+                Map<String, String> params = new HashMap<String, String>();
+                params.put(CLIENT_ID_PARAM, form.getClientId().getValue());
+                if (!PojoUtil.isEmpty(form.getRedirectUri()))
                     params.put(REDIRECT_URI_PARAM, form.getRedirectUri().getValue());
                 else
                     params.put(REDIRECT_URI_PARAM, new String());
-                if(!PojoUtil.isEmpty(form.getScope()))
+                if (!PojoUtil.isEmpty(form.getScope()))
                     params.put(SCOPE_PARAM, form.getScope().getValue());
-                if(!PojoUtil.isEmpty(form.getResponseType()))
+                if (!PojoUtil.isEmpty(form.getResponseType()))
                     params.put(RESPONSE_TYPE_PARAM, form.getResponseType().getValue());
-                if(form.getApproved())
-                    params.put("user_oauth_approval", "true");
-                else 
-                    params.put("user_oauth_approval", "false");
+                if (form.getApproved())
+                    params.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "true");
+                else
+                    params.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "false");
                 Map<String, String> approvalParams = new HashMap<String, String>();
-                if(form.getApproved())
+                if (form.getApproved())
                     approvalParams.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "true");
-                else 
+                else
                     approvalParams.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "false");
-                //Authorize
+                // Authorize
                 authorizationEndpoint.authorize(model, RESPONSE_TYPE, params, status, auth);
-                //Approve
-                RedirectView view = (RedirectView)authorizationEndpoint.approveOrDeny(approvalParams, model, status, auth);
+                // Approve
+                RedirectView view = (RedirectView) authorizationEndpoint.approveOrDeny(approvalParams, model, status, auth);
                 form.setRedirectUri(Text.valueOf(view.getUrl()));
-            } catch(AuthenticationException ae) {
+            } catch (AuthenticationException ae) {
                 form.getErrors().add(getMessage("orcid.frontend.security.bad_credentials"));
             }
         }
         return form;
-    }        
-    
-    
-    @RequestMapping(value = { "/custom/register.json" }, method = RequestMethod.POST)
-    public @ResponseBody Registration authenticateAndAuthorize(HttpServletRequest request, @RequestBody Registration form) {         
-        form.setErrors(new ArrayList<String>());
-        form = registrationController.setRegister(request, form);
-        if(form.getErrors() != null && form.getErrors().isEmpty()) {
-            //Register user
-            OrcidProfile newProfile = registrationController.createMinimalRegistration(request, registrationController.toProfile(form));
-            //Authenticate user 
-            String email = newProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
-            String password = newProfile.getPassword();
-            Authentication auth = authenticateUser(request, email, password);
-            //Send redirect param
-            
-            String redirectUri = form.getOauthRedirectUri();
-            if(form.getOauthAccept()) {
-                
-            } else {
-                
-            }            
-        }
-        
+    }
+
+    @RequestMapping(value = "/custom/register/empty.json", method = RequestMethod.GET)
+    public @ResponseBody
+    OauthRegistration getRegister(HttpServletRequest request, HttpServletResponse response) {
+        OauthRegistration empty = new OauthRegistration(registrationController.getRegister(request, response));
+        //Creation type in oauth will always be member referred
+        empty.setCreationType(Text.valueOf(CreationMethod.MEMBER_REFERRED.value()));
+        Text emptyText = Text.valueOf(EMPTY_STRING);
+        empty.setClientId(emptyText);
+        empty.setPassword(emptyText);
+        empty.setRedirectUri(emptyText);
+        empty.setResponseType(emptyText);
+        empty.setScope(emptyText);        
+        return empty;
+    }
+
+    @RequestMapping(value = "/custom/register.json", method = RequestMethod.POST)
+    public @ResponseBody
+    OauthRegistration checkRegisterForm(HttpServletRequest request, @RequestBody OauthRegistration form) {        
+        registrationController.setRegister(request, form);
         return form;
     }
     
-    
-    private void validateUserName(OauthAuthorizeForm form) {        
-        if(PojoUtil.isEmpty(form.getUserName())) {
-            form.getErrors().add(getMessage("orcid.frontend.security.bad_credentials"));
+    @RequestMapping(value = "/custom/registerConfirm.json", method = RequestMethod.POST)
+    public @ResponseBody
+    OauthRegistration registerAndAuthorize(HttpServletRequest request, @RequestBody OauthRegistration form) {
+        form.setErrors(new ArrayList<String>());
+        //Check there are no errors
+        checkRegisterForm(request, form);
+        if (form.getErrors() != null && form.getErrors().isEmpty()) {
+            // Register user
+            registrationController.createMinimalRegistration(request, RegistrationController.toProfile(form));
+            // Authenticate user
+            String email = form.getEmail().getValue();
+            String password = form.getPassword().getValue();
+            Authentication auth = authenticateUser(request, email, password);
+            // Create authorization params
+            SimpleSessionStatus status = new SimpleSessionStatus();
+            Map<String, Object> model = new HashMap<String, Object>();
+            Map<String, String> params = new HashMap<String, String>();
+            params.put(CLIENT_ID_PARAM, form.getClientId().getValue());
+            if (!PojoUtil.isEmpty(form.getRedirectUri()))
+                params.put(REDIRECT_URI_PARAM, form.getRedirectUri().getValue());
+            else
+                params.put(REDIRECT_URI_PARAM, new String());
+            if (!PojoUtil.isEmpty(form.getScope()))
+                params.put(SCOPE_PARAM, form.getScope().getValue());
+            if (!PojoUtil.isEmpty(form.getResponseType()))
+                params.put(RESPONSE_TYPE_PARAM, form.getResponseType().getValue());
+            if (form.getApproved())
+                params.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "true");
+            else
+                params.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "false");
+            Map<String, String> approvalParams = new HashMap<String, String>();
+            if (form.getApproved())
+                approvalParams.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "true");
+            else
+                approvalParams.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "false");
+            // Authorize
+            authorizationEndpoint.authorize(model, RESPONSE_TYPE, params, status, auth);
+            // Approve
+            RedirectView view = (RedirectView) authorizationEndpoint.approveOrDeny(approvalParams, model, status, auth);
+            form.setRedirectUri(Text.valueOf(view.getUrl()));
         }
+
+        return form;
     }
-    
-    private void validatePassword(OauthAuthorizeForm form) {
-        if(PojoUtil.isEmpty(form.getPassword())) {
-            form.getErrors().add(getMessage("orcid.frontend.security.bad_credentials"));
-        }
-    }    
-    
+
+    /*****************************
+     * Authenticate user methods
+     ****************************/
     private Authentication authenticateUser(HttpServletRequest request, OauthAuthorizeForm form) throws AuthenticationException {
-            UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(form.getUserName().getValue(), form.getPassword().getValue());
-            token.setDetails(new WebAuthenticationDetails(request));
-            return authenticateUser(token);
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(form.getUserName().getValue(), form.getPassword().getValue());
+        token.setDetails(new WebAuthenticationDetails(request));
+        return authenticateUser(token);
     }
-    
+
     private Authentication authenticateUser(HttpServletRequest request, String email, String password) {
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(email, password);
         token.setDetails(new WebAuthenticationDetails(request));
         return authenticateUser(token);
     }
-    
+
     private Authentication authenticateUser(UsernamePasswordAuthenticationToken token) {
         Authentication authentication = authenticationManager.authenticate(token);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         return authentication;
     }
-    
-    
+
+    /*****************************
+     * Validators
+     ****************************/
+    private void validateUserName(OauthAuthorizeForm form) {
+        if (PojoUtil.isEmpty(form.getUserName())) {
+            form.getErrors().add(getMessage("orcid.frontend.security.bad_credentials"));
+        }
+    }
+
+    private void validatePassword(OauthAuthorizeForm form) {
+        if (PojoUtil.isEmpty(form.getPassword())) {
+            form.getErrors().add(getMessage("orcid.frontend.security.bad_credentials"));
+        }
+    }
+
+    @RequestMapping(value = "/custom/register/validatePasswordConfirm.json", method = RequestMethod.POST)
+    public @ResponseBody
+    OauthRegistration validatePasswordConfirm(@RequestBody OauthRegistration reg) {
+        registrationController.registerPasswordConfirmValidate(reg);
+        return reg;
+    }
+
+    @RequestMapping(value = "/custom/register/validatePassword.json", method = RequestMethod.POST)
+    public @ResponseBody
+    OauthRegistration validatePassword(@RequestBody OauthRegistration reg) {
+        registrationController.registerPasswordValidate(reg);
+        return reg;
+    }
+
+    @RequestMapping(value = "/custom/register/validateTermsOfUse.json", method = RequestMethod.POST)
+    public @ResponseBody
+    OauthRegistration validateTermsOfUse(@RequestBody OauthRegistration reg) {
+        registrationController.registerTermsOfUseValidate(reg);
+        return reg;
+    }
+
+    @RequestMapping(value = "/custom/register/validateGivenNames.json", method = RequestMethod.POST)
+    public @ResponseBody
+    OauthRegistration validateGivenName(@RequestBody OauthRegistration reg) {
+        
+        registrationController.registerGivenNameValidate(reg);
+        return reg;
+    }
+
+    @RequestMapping(value = "/custom/register/validateEmail.json", method = RequestMethod.POST)
+    public @ResponseBody
+    OauthRegistration validateEmail(HttpServletRequest request, @RequestBody OauthRegistration reg) {
+        registrationController.regEmailValidate(request, reg);
+        return reg;
+    }
+
+    @RequestMapping(value = "/custom/register/validateEmailConfirm.json", method = RequestMethod.POST)
+    public @ResponseBody
+    OauthRegistration validateEmailConfirm(@RequestBody OauthRegistration reg) {
+        registrationController.regEmailConfirmValidate(reg);
+        return reg;
+    }
+
 }

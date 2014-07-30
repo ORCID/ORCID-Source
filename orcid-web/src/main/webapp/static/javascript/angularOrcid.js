@@ -6014,11 +6014,13 @@ function SocialNetworksCtrl($scope){
 
 
 
-function OauthAuthorizationController($scope){ 
+function OauthAuthorizationController($scope, $compile){ 
 	$scope.showClientDescription = false;
 	$scope.showRegisterForm = false;
 	$scope.authorizationForm = {};
-	$scope.registrationForm = {};
+	$scope.registrationForm = {};	
+	$scope.clientName = "";
+	$scope.clientGroupName = "";
 	
 	$scope.toggleClientDescription = function() {
 		$scope.showClientDescription = !$scope.showClientDescription;
@@ -6027,9 +6029,9 @@ function OauthAuthorizationController($scope){
 	//---------------------
 	//-LOGIN AND AUTHORIZE-
 	//---------------------	
-	$scope.initializeHiddenFields = function(scopes, redirect_uri, client_id, response_type) {		
+	$scope.loadAndInitLoginForm = function(scopes, redirect_uri, client_id, response_type) {		
 		$.ajax({
-			url: getBaseUri() + '/oauth/custom/empty.json',
+			url: getBaseUri() + '/oauth/custom/authorize/empty.json',
 			type: 'GET',
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
@@ -6055,8 +6057,7 @@ function OauthAuthorizationController($scope){
 		$scope.submit();
 	};
 	
-	$scope.submit = function() {
-		
+	$scope.submit = function() {		
 		$.ajax({
 			url: getBaseUri() + '/oauth/custom/login.json',
 			type: 'POST',
@@ -6074,33 +6075,39 @@ function OauthAuthorizationController($scope){
 	//------------------------
 	//-REGISTER AND AUTHORIZE-
 	//------------------------
-	$scope.getRegistrationForm = function() {
+	$scope.loadAndInitRegistrationForm = function(scopes, redirect_uri, client_id, response_type) {
 		$.ajax({
-			url: getBaseUri() + '/register.json',
+			url: getBaseUri() + '/oauth/custom/register/empty.json',
 			type: 'GET',
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        success: function(data) {
-	        	$scope.registrationForm = data;	        		        
+	        	$scope.registrationForm = data;	    
+	        	$scope.registrationForm.scope.value=scopes;
+	        	$scope.registrationForm.redirectUri.value=redirect_uri;
+	        	$scope.registrationForm.clientId.value=client_id;
+	        	$scope.registrationForm.responseType.value=response_type;
+	        	$scope.registrationForm.referredBy.value=client_id;
 	        }
 		}).fail(function() { 	    	
-	    	console.log("An error occured initializing the form.");
+	    	console.log("An error occured initializing the registration form.");
 	    });
 	};
 	
 	$scope.registerAndAuthorize = function() {
-		$scope.registrationForm.oauthAccept = true;
+		$scope.registrationForm.approved = true;
 		$scope.register();
 	};
 	
 	$scope.registerAndDeny = function() {
-		$scope.registrationForm.oauthAccept = false;
+		$scope.registrationForm.approved = false;
 		$scope.register();
 	};
 	
 	$scope.register = function() {
+		console.log(angular.toJson($scope.registrationForm));
 		$.ajax({
-	        url: getBaseUri() + '/register.json',
+	        url: getBaseUri() + '/oauth/custom/register.json',
 	        type: 'POST',
 	        data:  angular.toJson($scope.registrationForm),
 	        contentType: 'application/json;charset=UTF-8',
@@ -6121,7 +6128,7 @@ function OauthAuthorizationController($scope){
 	
 	$scope.getDuplicates = function(){
 		$.ajax({
-			url: getBaseUri() + '/dupicateResearcher.json?familyNames=' + $scope.register.familyNames.value + '&givenNames=' + $scope.register.givenNames.value,	        
+			url: getBaseUri() + '/dupicateResearcher.json?familyNames=' + $scope.registrationForm.familyNames.value + '&givenNames=' + $scope.registrationForm.givenNames.value,	        
 	        dataType: 'json',
 	        success: function(data) {
 		       	$scope.duplicates = data;
@@ -6154,30 +6161,63 @@ function OauthAuthorizationController($scope){
 	$scope.postRegisterConfirm = function () {
 		$scope.showProcessingColorBox();
 		$.ajax({
-	        url: getBaseUri() + '/registerConfirm.json',
+	        url: getBaseUri() + '/oauth/custom/registerConfirm.json',
 	        type: 'POST',
-	        data:  angular.toJson($scope.register),
+	        data:  angular.toJson($scope.registrationForm),
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        success: function(data) {
-	    		if (basePath.startsWith(baseUrl + 'oauth')) {
-	    			var clientName = $('div#RegistrationCtr input[name="client_name"]').val();
-	    			var clientGroupName = $('div#RegistrationCtr input[name="client_group_name"]').val();
-	    		    orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration', 'OAuth '+ orcidGA.buildClientString(clientGroupName, clientName)]);
-	    		}
-	    	    else
-	    	    	orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration', 'Website']);
-	    		orcidGA.windowLocationHrefDelay(data.url);
+	        	console.log("Registered");	    			    		
+	    		orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration', 'OAuth '+ orcidGA.buildClientString($scope.clientGroupName, $scope.clientName)]);	    	    
+	    		orcidGA.windowLocationHrefDelay(data.redirectUri.value);
 	        }
 	    }).fail(function() { 
 	    	// something bad is happening!
-	    	console.log("RegistrationCtrl.postRegister() error");
+	    	console.log("OauthAuthorizationController.postRegister() error");
+	    });
+	};
+	
+	$scope.serverValidate = function (field) {
+		console.log(angular.toJson($scope.registrationForm));
+		if (field === undefined) field = '';
+		$.ajax({
+	        url: getBaseUri() + '/oauth/custom/register/validate' + field + '.json',
+	        type: 'POST',
+	        data:  angular.toJson($scope.registrationForm),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.copyErrorsLeft($scope.registrationForm, data);
+	        	$scope.$apply();
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("OauthAuthorizationController.serverValidate() error");
 	    });
 	};
 	
 	//------------------
 	//------COMMON------
 	//------------------
+	$scope.initializeCommonFields = function(client_name, client_group_name) {
+		$scope.clientName = client_name;
+		$scope.clientGroupName = client_group_name;
+	};
+	
+	// in the case of slow network connection
+	// we don't want to overwrite  values while
+	// user is typing
+	$scope.copyErrorsLeft = function (data1, data2) {
+		for (var key in data1) {
+			if (key == 'errors') {
+				data1.errors = data2.errors;
+			} else {
+				if (data1[key].errors !== undefined)
+				data1[key].errors = data2[key].errors;
+			};
+		};
+	};
+	
 	$scope.switchForm = function() {		
 		$scope.showRegisterForm = !$scope.showRegisterForm;		
 	};
