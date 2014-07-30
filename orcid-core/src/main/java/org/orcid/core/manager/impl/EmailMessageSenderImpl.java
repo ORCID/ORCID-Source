@@ -16,6 +16,7 @@
  */
 package org.orcid.core.manager.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -117,12 +118,23 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                     digestMessage.setFrom(DIGEST_FROM_ADDRESS);
                     digestMessage.setTo(profileDao.find(orcid).getPrimaryEmail().getId());
                     // XXX Need to add html
-                    mailGunManager.sendEmail(digestMessage.getFrom(), digestMessage.getTo(), digestMessage.getSubject(), digestMessage.getBodyText(), "<html><body><pre>"
-                            + digestMessage.getBodyText() + "</pre></body></html>");
+                    boolean successfullySent = mailGunManager.sendEmail(digestMessage.getFrom(), digestMessage.getTo(), digestMessage.getSubject(),
+                            digestMessage.getBodyText(), "<html><body><pre>" + digestMessage.getBodyText() + "</pre></body></html>");
+                    if (successfullySent) {
+                        flagAsSent(notifications);
+                    }
                 }
             });
         }
         LOGGER.info("Finished sending email messages");
+    }
+
+    private void flagAsSent(List<Notification> notifications) {
+        List<Long> notificationIds = new ArrayList<>();
+        for (Notification notification : notifications) {
+            notificationIds.add(Long.valueOf(notification.getPutCode().getPath()));
+        }
+        notificationDao.flagAsSent(notificationIds);
     }
 
 }

@@ -16,6 +16,7 @@
  */
 package org.orcid.persistence.dao;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -31,7 +32,7 @@ public interface NotificationDao extends GenericDao<NotificationEntity, Long> {
     List<NotificationEntity> findByOrcid(String orcid, int firstResult, int maxResults);
 
     NotificationEntity findLatestByOrcid(String orcid);
-    
+
     List<NotificationEntity> findUnsentByOrcid(String orcid);
 
     List<String> findOrcidsWithNotificationsToSend();
@@ -44,5 +45,7 @@ public interface NotificationDao extends GenericDao<NotificationEntity, Long> {
     List<String> findOrcidsWithNotificationsToSend(Date effectiveNow);
 
     NotificationEntity findByOricdAndId(String orcid, Long id);
+
+    void flagAsSent(Collection<Long> ids);
 
 }

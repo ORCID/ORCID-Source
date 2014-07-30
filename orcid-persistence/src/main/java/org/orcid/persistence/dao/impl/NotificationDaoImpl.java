@@ -16,13 +16,16 @@
  */
 package org.orcid.persistence.dao.impl;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 
@@ -76,6 +79,14 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
         query.setParameter("orcid", orcid);
         query.setParameter("id", id);
         return query.getSingleResult();
+    }
+
+    @Override
+    @Transactional
+    public void flagAsSent(Collection<Long> ids) {
+        Query query = entityManager.createQuery("update NotificationEntity set sentDate = now() where id in :ids");
+        query.setParameter("ids", ids);
+        query.executeUpdate();
     }
 
 }
