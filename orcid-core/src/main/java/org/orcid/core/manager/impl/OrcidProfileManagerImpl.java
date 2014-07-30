@@ -1104,7 +1104,10 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
         persistAddedWorks(orcid, updatedOrcidWorksList);
         profileDao.flush();
-        notificationManager.sendAmendEmail(existingProfile, amenderOrcid);
+        boolean notificationsEnabled = existingProfile.getOrcidInternal().getPreferences().isNotificationsEnabled();
+        if (notificationsEnabled) {
+            notificationManager.sendAmendEmail(existingProfile, amenderOrcid);
+        }
     }
 
     /**
@@ -1602,7 +1605,10 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         checkForAlreadyExistingAffiliations(existingAffiliations, updatedAffiliationsList);
         persistAddedAffiliations(orcid, updatedAffiliationsList);
         profileDao.flush();
-        notificationManager.sendAmendEmail(existingProfile, amenderOrcid);
+        boolean notificationsEnabled = existingProfile.getOrcidInternal().getPreferences().isNotificationsEnabled();
+        if (notificationsEnabled) {
+            notificationManager.sendAmendEmail(existingProfile, amenderOrcid);
+        }
     }
 
     /**
@@ -1636,7 +1642,10 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         checkForAlreadyExistingFundings(existingFundingList, updatedList);
         persistAddedFundings(orcid, updatedList);
         profileDao.flush();
-        notificationManager.sendAmendEmail(existingProfile, amenderOrcid);
+        boolean notificationsEnabled = existingProfile.getOrcidInternal().getPreferences().isNotificationsEnabled();
+        if (notificationsEnabled) {
+            notificationManager.sendAmendEmail(existingProfile, amenderOrcid);
+        }
     }
 
     /**
