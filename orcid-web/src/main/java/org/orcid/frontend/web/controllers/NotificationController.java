@@ -24,6 +24,7 @@ import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.notification.Notification;
+import org.orcid.persistence.dao.NotificationDao;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,10 +39,13 @@ public class NotificationController extends BaseController {
     @Resource
     private NotificationManager notificationManager;
 
+    @Resource
+    NotificationDao notificationDao;
+
     @RequestMapping
     public ModelAndView getNotifications() {
         ModelAndView mav = new ModelAndView("notifications");
-        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid(), LoadOptions.BIO_ONLY);
+        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid(), LoadOptions.BIO_AND_INTERNAL_ONLY);
         mav.addObject("profile", profile);
         return mav;
     }
@@ -58,6 +62,14 @@ public class NotificationController extends BaseController {
     String getNotificationHtml(@PathVariable("id") String id) {
         Notification notification = notificationManager.findByOrcidAndId(getCurrentUserOrcid(), Long.valueOf(id));
         return notification.getBodyHtml();
+    }
+
+    @RequestMapping(value = "{id}/read.json")
+    public @ResponseBody
+    Notification flagAsRead(@PathVariable("id") String id) {
+        String currentUserOrcid = getCurrentUserOrcid();
+        notificationDao.flagAsRead(currentUserOrcid, Long.valueOf(id));
+        return notificationManager.findByOrcidAndId(currentUserOrcid, Long.valueOf(id));
     }
 
 }

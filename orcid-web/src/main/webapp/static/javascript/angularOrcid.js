@@ -4176,13 +4176,36 @@ function NotificationsCtrl($scope, $compile){
 	        }
 	    }).fail(function() { 
 	    	// something bad is happening!
-	    	console.log("error with notifications");
+	    	console.log("error with getting notifications");
+	    });
+	};
+	
+	$scope.flagAsRead = function(notificationId) {
+		$.ajax({
+	        url: getBaseUri() + '/notifications/' + notificationId + '/read.json',
+	        type: 'POST',
+	        dataType: 'json',
+	        success: function(data) {
+	        	var updated = data;
+	        	var updatedId = updated.putCode.path;
+	        	for(var i = 0;  i < $scope.notifications.length; i++){
+	        		var existing = $scope.notifications[i];
+	        		if(existing.putCode.path === updatedId){
+	        			existing.readDate = updated.readDate;
+	        		}
+	        	}
+	        	$scope.$apply();
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("error flagging notification as read");
 	    });
 	};
 	
 	$scope.displayBody = {};
 	$scope.toggleDisplayBody = function (notificationId) {
 		$scope.displayBody[notificationId] = !$scope.displayBody[notificationId];
+		$scope.flagAsRead(notificationId);
 	};
 	
 	// init

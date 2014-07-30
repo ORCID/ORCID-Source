@@ -89,4 +89,13 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
         query.executeUpdate();
     }
 
+    @Override
+    @Transactional
+    public void flagAsRead(String orcid, Long id) {
+        Query query = entityManager.createQuery("update NotificationEntity set readDate = now() where orcid = :orcid and id = :id and readDate is null");
+        query.setParameter("orcid", orcid);
+        query.setParameter("id", id);
+        query.executeUpdate();
+    }
+
 }
