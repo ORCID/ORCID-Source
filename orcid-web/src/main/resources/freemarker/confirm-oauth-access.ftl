@@ -23,6 +23,14 @@
 </#if>
 <!-- colorbox-content -->
 <div class="container top-green-border confirm-oauth-access" ng-controller="OauthAuthorizationController">		
+	<!-- Freemarker and GA variables -->
+	<#assign user_id = "">			
+		<#if userId??>
+			<#assign user_id = userId>
+		</#if>
+	<#assign authOnClick = "">		        
+	<#assign denyOnClick = " orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Authorize_Deny', 'OAuth " + client_group_name?js_string + " - " + client_name?js_string + "']);">	    	
+	<!-- /Freemarker and GA variables -->
 	<@security.authorize ifAnyGranted="ROLE_USER">
 	<div class="row top-header">
 		<div class="col-md-2 col-sm-6 col-xs-12">
@@ -55,16 +63,17 @@
 	<div>
 		<#list scopes as scope>
 			<div><span class="mini-orcid-icon"></span><@orcid.msg '${scope.declaringClass.name}.${scope.name()}'/></div>
+			<#assign authOnClick = authOnClick + " orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Authorize_" + scope.name()?replace("ORCID_", "") + "', 'OAuth " + client_group_name?js_string + " - " + client_name?js_string + "']);">
     	</#list>				
 	</div>	
 	<div>
 		<p><@orcid.msg 'orcid.frontend.web.oauth_is_secure'/>.<a href="${aboutUri}/footer/privacy-policy" target="_blank"><@orcid.msg 'public-layout.privacy_policy'/></a>.</p>
 	</div>			
 	<div id="login-buttons" ng-init="loadAndInitAuthorizationForm('${scopesString}','${redirect_uri}','${client_id}','${response_type}')">                     		            		               					
-		<button class="btn btn-primary" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="authorize()">
+		<button class="btn btn-primary" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="authorize()" onclick="${authOnClick} orcidGA.gaFormSumbitDelay(this); return false;">
 			<@orcid.msg 'confirm-oauth-access.Authorize' />
 		</button>		                 	            
-		<button class="btn btn-primary" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="deny()">
+		<button class="btn btn-primary" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="deny()" onclick="${denyOnClick} orcidGA.gaFormSumbitDelay(this); return false;">
 			<@orcid.msg 'confirm-oauth-access.Deny' />
 		</button>
 	</div>					
