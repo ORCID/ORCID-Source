@@ -83,13 +83,13 @@
 	            <div>
 	                <label for="userId"><@orcid.msg 'oauth_sign_in.labelemailorID'/></label>
 	                <div class="relative">	                	
-	                   <input type="text" id="userId" ng-model="authorizationForm.userName.value" name="userId" value="" placeholder="Email or iD" class="input-xlarge">
+	                   <input name="userId" type="text" ng-model="authorizationForm.userName.value" placeholder="Email or iD" class="input-xlarge">
 	                </div>
 	            </div>
 	            <div id="passwordField">
 	                <label for="password"><@orcid.msg 'oauth_sign_in.labelpassword'/></label>
 	                <div class="relative">
-	                   <input type="password" id="password" ng-model="authorizationForm.password.value" name="password" value="" placeholder="Password" class="input-xlarge">
+	                   <input type="password" id="password" ng-model="authorizationForm.password.value" name="password" placeholder="Password" class="input-xlarge">
 	                </div>
 	            </div>
 	            <div class="control-group col-md-12 col-sm-12 col-xs-12"> 

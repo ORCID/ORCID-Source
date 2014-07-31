@@ -153,7 +153,8 @@ public class PopulateOAuthSignInCodeIntegrationTest extends DBUnitTest {
     @Test
     public void orcidIdPreopulate() throws JSONException, InterruptedException {
         // populating check populating orcid
-        webDriver.get(getBaseUrl() + "&orcid=4444-4444-4444-4441");
+        String url = getBaseUrl() + "&orcid=4444-4444-4444-4441";        
+        webDriver.get(url);
         assertTrue(webDriver.findElement(By.xpath("//input[@name='userId']")).getAttribute("value").equals("4444-4444-4444-4441"));
 
         // populating check populating orcid overwrites populating email
