@@ -111,6 +111,14 @@ public class Work implements ErrorsInterface, Serializable {
 			WorkTitle workTitle = new WorkTitle();
 			Text title = Text.valueOf(minimizedWorkEntity.getTitle());
 			workTitle.setTitle(title);
+                        
+                        if (!StringUtils.isEmpty(minimizedWorkEntity.getTranslatedTitle())) {
+                            TranslatedTitle translatedTitle = new TranslatedTitle();
+                            translatedTitle.setContent(minimizedWorkEntity.getTranslatedTitle());
+                            translatedTitle.setLanguageCode(minimizedWorkEntity.getTranslatedTitleLanguageCode());
+                            workTitle.setTranslatedTitle(translatedTitle);
+                        }
+			
 			if (!StringUtils.isEmpty(minimizedWorkEntity.getSubtitle())) {
 				Text subtitle = Text.valueOf(minimizedWorkEntity.getSubtitle());
 				workTitle.setSubtitle(subtitle);
@@ -133,9 +141,13 @@ public class Work implements ErrorsInterface, Serializable {
 		    WorkExternalIdentifiers identifiers = JsonUtils.readObjectFromJsonString(minimizedWorkEntity.getExternalIdentifiersJson(), WorkExternalIdentifiers.class);
 		    populateExternaIdentifiers(identifiers, w);            
 		}
-		if (minimizedWorkEntity.getSourceProfile() != null) {
+                if (minimizedWorkEntity.getSourceProfile() != null) {
                     w.setWorkSource(Text.valueOf(minimizedWorkEntity.getSourceProfile().getId()));
                     w.setWorkSourceName(Text.valueOf(Jpa2JaxbAdapterImpl.createName(minimizedWorkEntity.getSourceProfile())));
+                }
+                if (minimizedWorkEntity.getLanguageCode() != null) {
+                    w.setLanguageCode(Text.valueOf(minimizedWorkEntity.getLanguageCode()));
+                    w.setLanguageCode(Text.valueOf(minimizedWorkEntity.getLanguageCode()));
                 }
 		w.setDateCreated(Date.valueOf(minimizedWorkEntity.getDateCreated()));
 		w.setLastModified(Date.valueOf(minimizedWorkEntity.getLastModified()));

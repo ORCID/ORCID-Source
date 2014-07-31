@@ -43,6 +43,9 @@ public class MinimizedWorkEntity extends BaseEntity implements Serializable {
     private WorkType workType;
     private Visibility visibility;
     private String externalIdentifiersJson;
+    private String languageCode;
+    private String translatedTitleLanguageCode;
+    private String translatedTitle;    
     private Long displayIndex;
     private ProfileEntity sourceProfile;
     
@@ -51,7 +54,9 @@ public class MinimizedWorkEntity extends BaseEntity implements Serializable {
     }
 
     public MinimizedWorkEntity(Long id, String title, String subtitle, String description, Integer publicationDay, Integer publicationMonth, Integer publicationYear,
-            Visibility visibility, String externalIdentifiersJson, Long displayIndex, ProfileEntity sourceProfile, Date dateCreated, Date lastModified, WorkType workType) {
+            Visibility visibility, String externalIdentifiersJson, Long displayIndex, ProfileEntity sourceProfile, Date dateCreated, Date lastModified,
+            WorkType workType, String languageCode, String translatedTitleLanguageCode, String translatedTitle    
+ ) {
         super();
         this.id = id;
         this.title = title;
@@ -70,6 +75,9 @@ public class MinimizedWorkEntity extends BaseEntity implements Serializable {
         this.workType = workType;
         this.setDateCreated(dateCreated);
         this.setLastModified(lastModified);
+        this.setLanguageCode(languageCode);
+        this.setTranslatedTitleLanguageCode(translatedTitleLanguageCode);
+        this.setTranslatedTitle(translatedTitle);    
         
     }
 
@@ -167,5 +175,29 @@ public class MinimizedWorkEntity extends BaseEntity implements Serializable {
 
     public void setWorkType(WorkType workType) {
         this.workType = workType;
+    }
+
+    public String getLanguageCode() {
+        return languageCode;
+    }
+
+    public void setLanguageCode(String languageCode) {
+        this.languageCode = languageCode;
+    }
+
+    public String getTranslatedTitleLanguageCode() {
+        return translatedTitleLanguageCode;
+    }
+
+    public void setTranslatedTitleLanguageCode(String translatedTitleLanguageCode) {
+        this.translatedTitleLanguageCode = translatedTitleLanguageCode;
+    }
+
+    public String getTranslatedTitle() {
+        return translatedTitle;
+    }
+
+    public void setTranslatedTitle(String translatedTitle) {
+        this.translatedTitle = translatedTitle;
     }
 }

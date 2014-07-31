@@ -3262,6 +3262,7 @@ function PublicFundingCtrl($scope, $compile, $filter, fundingSrvc){
 }
 
 function PublicWorkCtrl($scope, $compile, $filter, worksSrvc) {
+	$sortPredicate = ['-dateSortString', 'title'];
 	$scope.worksSrvc = worksSrvc;
 	$scope.showBibtex = true;
 	$scope.moreInfoOpen = false;
@@ -3334,6 +3335,7 @@ function PublicWorkCtrl($scope, $compile, $filter, worksSrvc) {
 }
 
 function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
+	$sortPredicate = ['-dateSortString', 'title'];
 	$scope.canReadFiles = false;
 	$scope.showBibtexImportWizard = false;
 	$scope.textFiles = null;

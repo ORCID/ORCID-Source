@@ -17,7 +17,7 @@
 
 -->
 <ul ng-hide="!worksSrvc.groups.length" class="workspace-publications workspace-body-list bottom-margin-medium" id="body-work-list" ng-cloak>
-    <li class="bottom-margin-small workspace-border-box" ng-repeat="group in worksSrvc.groups | orderBy:['-dateSortString', 'title']">        
+    <li class="bottom-margin-small workspace-border-box" ng-repeat="group in worksSrvc.groups | orderBy:sortPredicate">        
 		<div class="row"> 
 			<!-- Main title -->
 			<div class="col-md-9 col-sm-9 col-xs-12">
