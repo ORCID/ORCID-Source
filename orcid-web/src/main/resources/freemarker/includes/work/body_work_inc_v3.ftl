@@ -25,7 +25,7 @@
 		        	<strong ng-bind="group.getActive().workTitle.title.value"></strong><span class="work-subtitle" ng-show="group.getActive().workTitle.subtitle.value" ng-bind="':&nbsp;'.concat(group.getActive().workTitle.subtitle.value)"></span>		        			        	
 		        </h3>
 		        <div class="info-detail">
-		        	<span ng-show="group.getActive().publicationDate.year">{{group.getActive().publicationDate.year}}</span><span ng-show="group.getActive().publicationDate.month">-{{group.getActive().publicationDate.month}}</span><span> | </span> <span class="uppercase">{{group.getActive().workType.value}}</span>		        	
+		        	<span ng-show="group.getActive().publicationDate.year">{{group.getActive().publicationDate.year}}</span><span ng-show="group.getActive().publicationDate.month">-{{group.getActive().publicationDate.month}}</span><span ng-show="group.getActive().publicationDate.year"> | </span> <span class="uppercase">{{group.getActive().workType.value}}</span>		        	
 		        </div>		                	        
 	        </div>
 	        <!-- Settings -->
