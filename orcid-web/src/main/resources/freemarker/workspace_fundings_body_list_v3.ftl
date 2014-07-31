@@ -47,14 +47,7 @@
 							</ul>
 						</div>
 						
-                		<ul class="workspace-bar-menu">
-                			<!-- Manage view -->		                			
-	        				<li>
-	        					<a href="" class="action-option manage-button" ng-click="">
-									<span class="glyphicon glyphicon-cog"></span>
-									<@orcid.msg 'manual_orcid_record_contents.manage_view'/>
-								</a>	        				
-	        				</li>
+                		<ul class="workspace-bar-menu">                			
 	        				<!-- Link Manually -->
 	        				<li>
 		        				<#if fundingImportWizards?size != 0>
