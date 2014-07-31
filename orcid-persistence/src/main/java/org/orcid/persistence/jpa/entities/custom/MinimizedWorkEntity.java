@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.jpa.entities.BaseEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 
@@ -39,6 +40,7 @@ public class MinimizedWorkEntity extends BaseEntity implements Serializable {
     private int publicationDay;
     private int publicationMonth;
     private int publicationYear;
+    private WorkType workType;
     private Visibility visibility;
     private String externalIdentifiersJson;
     private Long displayIndex;
@@ -49,7 +51,7 @@ public class MinimizedWorkEntity extends BaseEntity implements Serializable {
     }
 
     public MinimizedWorkEntity(Long id, String title, String subtitle, String description, Integer publicationDay, Integer publicationMonth, Integer publicationYear,
-            Visibility visibility, String externalIdentifiersJson, Long displayIndex, ProfileEntity sourceProfile, Date dateCreated, Date lastModified) {
+            Visibility visibility, String externalIdentifiersJson, Long displayIndex, ProfileEntity sourceProfile, Date dateCreated, Date lastModified, WorkType workType) {
         super();
         this.id = id;
         this.title = title;
@@ -65,6 +67,7 @@ public class MinimizedWorkEntity extends BaseEntity implements Serializable {
         this.externalIdentifiersJson = externalIdentifiersJson;
         this.displayIndex = displayIndex;
         this.sourceProfile = sourceProfile;
+        this.workType = workType;
         this.setDateCreated(dateCreated);
         this.setLastModified(lastModified);
         
@@ -156,5 +159,13 @@ public class MinimizedWorkEntity extends BaseEntity implements Serializable {
 
     public void setSourceProfile(ProfileEntity sourceProfile) {
         this.sourceProfile = sourceProfile;
+    }
+
+    public WorkType getWorkType() {
+        return workType;
+    }
+
+    public void setWorkType(WorkType workType) {
+        this.workType = workType;
     }
 }
