@@ -125,6 +125,9 @@ public class Work implements ErrorsInterface, Serializable {
 		// Set visibility
 		if (minimizedWorkEntity.getVisibility() != null)
 			w.setVisibility(minimizedWorkEntity.getVisibility());
+		
+		if (minimizedWorkEntity.getWorkType() != null)
+                    w.setWorkType(Text.valueOf(minimizedWorkEntity.getWorkType().value()));
 
 		if (!StringUtils.isEmpty(minimizedWorkEntity.getExternalIdentifiersJson())) {
 		    WorkExternalIdentifiers identifiers = JsonUtils.readObjectFromJsonString(minimizedWorkEntity.getExternalIdentifiersJson(), WorkExternalIdentifiers.class);
