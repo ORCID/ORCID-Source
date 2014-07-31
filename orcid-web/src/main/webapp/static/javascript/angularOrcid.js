@@ -5995,25 +5995,6 @@ function SocialNetworksCtrl($scope){
 	$scope.checkTwitterStatus();
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 function OauthAuthorizationController($scope, $compile){ 
 	$scope.showClientDescription = false;
 	$scope.showRegisterForm = false;
@@ -6285,28 +6266,6 @@ function OauthAuthorizationController($scope, $compile){
 	    });
 	};
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /*Angular Multi-selectbox*/
 angular.module('ui.multiselect', [])

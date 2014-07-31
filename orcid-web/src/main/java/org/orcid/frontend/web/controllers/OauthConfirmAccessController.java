@@ -19,7 +19,6 @@ package org.orcid.frontend.web.controllers;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -232,7 +231,7 @@ public class OauthConfirmAccessController extends BaseController {
         // should be a SSO user
         if (StringUtils.isBlank(clientGroupName)) {
             clientGroupName = clientName;
-        }        
+        }
         mav.addObject("profile", profile);
         mav.addObject("client_name", clientName);
         mav.addObject("client_description", clientDescription);
@@ -313,29 +312,29 @@ public class OauthConfirmAccessController extends BaseController {
     public @ResponseBody
     OauthRegistration getRegister(HttpServletRequest request, HttpServletResponse response) {
         OauthRegistration empty = new OauthRegistration(registrationController.getRegister(request, response));
-        //Creation type in oauth will always be member referred
+        // Creation type in oauth will always be member referred
         empty.setCreationType(Text.valueOf(CreationMethod.MEMBER_REFERRED.value()));
         Text emptyText = Text.valueOf(EMPTY_STRING);
         empty.setClientId(emptyText);
         empty.setPassword(emptyText);
         empty.setRedirectUri(emptyText);
         empty.setResponseType(emptyText);
-        empty.setScope(emptyText);        
+        empty.setScope(emptyText);
         return empty;
     }
 
     @RequestMapping(value = "/custom/register.json", method = RequestMethod.POST)
     public @ResponseBody
-    OauthRegistration checkRegisterForm(HttpServletRequest request, @RequestBody OauthRegistration form) {        
+    OauthRegistration checkRegisterForm(HttpServletRequest request, @RequestBody OauthRegistration form) {
         registrationController.setRegister(request, form);
         return form;
     }
-    
+
     @RequestMapping(value = "/custom/registerConfirm.json", method = RequestMethod.POST)
     public @ResponseBody
     OauthRegistration registerAndAuthorize(HttpServletRequest request, @RequestBody OauthRegistration form) {
         form.setErrors(new ArrayList<String>());
-        //Check there are no errors
+        // Check there are no errors
         checkRegisterForm(request, form);
         if (form.getErrors() != null && form.getErrors().isEmpty()) {
             // Register user
@@ -376,47 +375,29 @@ public class OauthConfirmAccessController extends BaseController {
         return form;
     }
 
-    
-    
-    
-    
-    
-    
-    
-    
-    @RequestMapping(value = { "/custom/authorize.json"}, method = RequestMethod.POST)
+    @RequestMapping(value = { "/custom/authorize.json" }, method = RequestMethod.POST)
     public @ResponseBody
-    OauthAuthorizeForm authorize(HttpServletRequest request, @RequestBody OauthAuthorizeForm form) {        
+    OauthAuthorizeForm authorize(HttpServletRequest request, @RequestBody OauthAuthorizeForm form) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Object authorizationRequest= request.getSession().getAttribute("authorizationRequest"); 
-        //Authorization request model
+        Object authorizationRequest = request.getSession().getAttribute("authorizationRequest");
+        // Authorization request model
         Map<String, Object> model = new HashMap<String, Object>();
         model.put("authorizationRequest", authorizationRequest);
-        //Approval params
+        // Approval params
         Map<String, String> approvalParams = new HashMap<String, String>();
         if (form.getApproved())
             approvalParams.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "true");
         else
             approvalParams.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "false");
-        //Session status
+        // Session status
         SimpleSessionStatus status = new SimpleSessionStatus();
-                        
+
         // Approve
         RedirectView view = (RedirectView) authorizationEndpoint.approveOrDeny(approvalParams, model, status, auth);
-        form.setRedirectUri(Text.valueOf(view.getUrl()));      
+        form.setRedirectUri(Text.valueOf(view.getUrl()));
         return form;
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
     /*****************************
      * Authenticate user methods
      ****************************/
@@ -477,7 +458,7 @@ public class OauthConfirmAccessController extends BaseController {
     @RequestMapping(value = "/custom/register/validateGivenNames.json", method = RequestMethod.POST)
     public @ResponseBody
     OauthRegistration validateGivenName(@RequestBody OauthRegistration reg) {
-        
+
         registrationController.registerGivenNameValidate(reg);
         return reg;
     }
