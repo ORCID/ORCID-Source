@@ -145,7 +145,7 @@ public class OauthConfirmAccessController extends BaseController {
                     }
 
                     // Get client name
-                    ClientDetailsEntity clientDetails = clientDetailsManager.find(clientId);
+                    ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
 
                     // validate client scopes
                     try {
