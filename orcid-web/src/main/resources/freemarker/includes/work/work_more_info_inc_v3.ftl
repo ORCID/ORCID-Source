@@ -55,7 +55,7 @@
 			ng-cloak>
 			<div class="col-md-12 col-sm-12 col-xs-12">
 												
-				<strong><@orcid.msg 'manual_work_form_contents.labelcitation'/></strong>
+				<strong><@orcid.msg 'manual_work_form_contents.labelcitation'/></strong> (<span ng-show="worksSrvc.details[group.getActive().putCode.value].citation.citationType.value" ng-cloak><i>{{worksSrvc.details[group.getActive().putCode.value].citation.citationType.value}}</i></span>)
 				<!-- Bibtex -->
 				<span ng-show="showBibtex && worksSrvc.details[group.getActive().putCode.value].citation.citationType.value == 'bibtex'">
 					<a ng-click="bibtexShowToggle()"><@orcid.msg 'group.getActive().show_in_bibtex'/></a>
@@ -82,15 +82,7 @@
 					
 				</div>						
 			</div>
-		</div>
-		<!-- Citation type -->
-		<div class="row bottomBuffer"
-			ng-show="worksSrvc.details[group.getActive().putCode.value].citation.citationType.value" ng-cloak>
-			<div class="col-md-12">
-				<strong> <@orcid.msg 'manual_work_form_contents.labelcitationtype'/> </strong>
-				<div ng-bind="worksSrvc.details[group.getActive().putCode.value].citation.citationType.value"></div>
-			</div>
-		</div>		
+		</div>			
 		<!-- Description -->
 		<div class="row bottomBuffer" ng-show="worksSrvc.details[group.getActive().putCode.value].shortDescription.value"
 			ng-cloak>
