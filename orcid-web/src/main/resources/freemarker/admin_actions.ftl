@@ -309,6 +309,8 @@
 	</div>
 </script>
 
+
+
 <#if invalidOrcid?? && invalidOrcid>
     <div class="alert alert-success">
         <strong><@spring.message "orcid.frontend.web.invalid_switch_orcid"/></strong>
@@ -380,6 +382,27 @@
 				</div>
 				<div class="controls save-btns pull-left">
 					<span id="find-ids" ng-click="confirmResetPassword()" class="btn btn-primary"><@orcid.msg 'admin.reset_password.button'/></span>						
+				</div>
+			</div>
+		</div>
+		
+		<!-- Verify email -->
+		<a name="verify-email"></a>
+		<div ng-controller="adminVerifyEmailCtrl" class="workspace-accordion-item" ng-cloak>
+			<p>
+				<a  ng-show="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-down blue"></span></span><@orcid.msg 'admin.verify_email' /></a>
+				<a  ng-hide="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-right blue"></span></span><@orcid.msg 'admin.verify_email' /></a>
+			</p>
+			<div class="collapsible bottom-margin-small admin-modal" id="verify_email_section" style="display:none;">
+				<div class="form-group">				
+					<div ng-show="result">
+						<span class="orcid-error" ng-bind-html="result"></span><br />
+					</div>
+					<label for="email"><@orcid.msg 'admin.verify_email.title' /></label>
+					<input type="text" id="name" ng-model="email" placeholder="<@orcid.msg 'admin.verify_email.placeholder' />" class="input-xlarge" />																					
+				</div>
+				<div class="controls save-btns pull-left">
+					<span id="verify-email" ng-click="verifyEmail()" class="btn btn-primary"><@orcid.msg 'admin.verify_email.btn'/></span>						
 				</div>
 			</div>
 		</div>

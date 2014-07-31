@@ -556,6 +556,21 @@ public class AdminController extends BaseController {
         return mav;
         
     }
+        
+    /**
+     * Admin verify email
+     * */
+    @RequestMapping(value = "/admin-verify-email", method = RequestMethod.GET)    
+    public @ResponseBody String adminVerifyEmail(@RequestParam("email") String email) {
+        String result = getMessage("admin.verify_email.success", email);
+        if(emailManager.emailExists(email)) {
+            emailManager.verifyEmail(email);
+        } else {
+            result = getMessage("admin.verify_email.fail", email);
+        }
+        return result;
+    }
+    
     
     private boolean matchesOrcidPattern(String orcid){
         return OrcidStringUtils.isValidOrcid(orcid);

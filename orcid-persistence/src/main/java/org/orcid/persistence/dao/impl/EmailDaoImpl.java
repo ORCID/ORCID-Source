@@ -142,4 +142,12 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
         query.setParameter("email", email);
         query.executeUpdate();        
     }
+    
+    @Override
+    @Transactional
+    public boolean verifyEmail(String email) {
+        Query query = entityManager.createNativeQuery("update email set is_verified = true, last_modified=now() where email=:email");
+        query.setParameter("email", email);
+        return query.executeUpdate() > 0;
+    }
 }
