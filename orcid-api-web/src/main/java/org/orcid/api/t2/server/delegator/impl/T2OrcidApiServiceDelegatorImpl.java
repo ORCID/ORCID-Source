@@ -43,7 +43,7 @@ import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.jaxb.model.message.CreationMethod;
-import org.orcid.jaxb.model.message.ExternalIdOrcid;
+import org.orcid.jaxb.model.message.ExternalIdSource;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.OrcidHistory;
@@ -338,12 +338,12 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
 
             for (ExternalIdentifier ei : updatedExternalIdentifiers.getExternalIdentifier()) {
                 // Set the client profile to each external identifier
-                if (ei.getExternalIdOrcid() == null) {
-                    ExternalIdOrcid eio = new ExternalIdOrcid(clientId);
-                    ei.setExternalIdOrcid(eio);
+                if (ei.getExternalIdSource() == null) {
+                    ExternalIdSource eio = new ExternalIdSource(clientId);
+                    ei.setExternalIdSource(eio);
                 } else {
                     // Check if the provided external orcid exists
-                    ExternalIdOrcid eio = ei.getExternalIdOrcid();
+                    ExternalIdSource eio = ei.getExternalIdSource();
 
                     if (StringUtils.isBlank(eio.getPath()) || !profileEntityManager.orcidExists(eio.getPath())) {
                         throw new OrcidNotFoundException("Cannot find external ORCID");
@@ -415,7 +415,7 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
             AuthorizationRequest authorizationRequest = ((OAuth2Authentication) authentication).getAuthorizationRequest();
             Source sponsor = new Source();
             String sponsorOrcid = authorizationRequest.getClientId();
-            ClientDetailsEntity clientDetails = clientDetailsManager.find(sponsorOrcid);
+            ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(sponsorOrcid);
             if (clientDetails != null) {
                 sponsor.setSourceName(new SourceName(clientDetails.getClientName()));
             } else {

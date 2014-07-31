@@ -44,6 +44,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.api.t2.T2OAuthAPIService;
+import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.OrcidMessage;
@@ -97,6 +98,10 @@ public class T2OrcidOAuthApiClientReadPrivateDataIntegrationTest extends DBUnitT
 
     @Resource
     private ClientRedirectDao clientRedirectDao;
+    
+    @Resource
+    private ClientDetailsManager clientDetailsManager;
+    
     @Resource
     private ClientDetailsDao clientDetailsDao;
 
@@ -120,44 +125,37 @@ public class T2OrcidOAuthApiClientReadPrivateDataIntegrationTest extends DBUnitT
         // Set redirect uris if needed
         ClientRedirectUriPk clientRedirectUriPk = new ClientRedirectUriPk(READ_PRIVATE_WORKS_CLIENT_ID, redirectUri);
         if (clientRedirectDao.find(clientRedirectUriPk) == null) {
-            clientRedirectDao.addClientRedirectUri(READ_PRIVATE_WORKS_CLIENT_ID, redirectUri);
-            clientDetailsDao.updateLastModified(READ_PRIVATE_WORKS_CLIENT_ID);
+            clientDetailsManager.addClientRedirectUri(READ_PRIVATE_WORKS_CLIENT_ID, redirectUri);
         }
 
         clientRedirectUriPk = new ClientRedirectUriPk(READ_PRIVATE_WORKS_CLIENT_ID_2, redirectUri);
         if (clientRedirectDao.find(clientRedirectUriPk) == null) {
-            clientRedirectDao.addClientRedirectUri(READ_PRIVATE_WORKS_CLIENT_ID_2, redirectUri);
-            clientDetailsDao.updateLastModified(READ_PRIVATE_WORKS_CLIENT_ID_2);
+            clientDetailsManager.addClientRedirectUri(READ_PRIVATE_WORKS_CLIENT_ID_2, redirectUri);
         }
 
         clientRedirectUriPk = new ClientRedirectUriPk(READ_PRIVATE_AFFILIATIONS_CLIENT_ID, redirectUri);
         if (clientRedirectDao.find(clientRedirectUriPk) == null) {
-            clientRedirectDao.addClientRedirectUri(READ_PRIVATE_AFFILIATIONS_CLIENT_ID, redirectUri);
-            clientDetailsDao.updateLastModified(READ_PRIVATE_AFFILIATIONS_CLIENT_ID);
+            clientDetailsManager.addClientRedirectUri(READ_PRIVATE_AFFILIATIONS_CLIENT_ID, redirectUri);
         }
 
         clientRedirectUriPk = new ClientRedirectUriPk(READ_PRIVATE_AFFILIATIONS_CLIENT_ID_2, redirectUri);
         if (clientRedirectDao.find(clientRedirectUriPk) == null) {
-            clientRedirectDao.addClientRedirectUri(READ_PRIVATE_AFFILIATIONS_CLIENT_ID_2, redirectUri);
-            clientDetailsDao.updateLastModified(READ_PRIVATE_AFFILIATIONS_CLIENT_ID_2);
+            clientDetailsManager.addClientRedirectUri(READ_PRIVATE_AFFILIATIONS_CLIENT_ID_2, redirectUri);
         }
 
         clientRedirectUriPk = new ClientRedirectUriPk(READ_PRIVATE_FUNDING_CLIENT_ID, redirectUri);
         if (clientRedirectDao.find(clientRedirectUriPk) == null) {
-            clientRedirectDao.addClientRedirectUri(READ_PRIVATE_FUNDING_CLIENT_ID, redirectUri);
-            clientDetailsDao.updateLastModified(READ_PRIVATE_FUNDING_CLIENT_ID);
+            clientDetailsManager.addClientRedirectUri(READ_PRIVATE_FUNDING_CLIENT_ID, redirectUri);
         }
 
         clientRedirectUriPk = new ClientRedirectUriPk(READ_PRIVATE_FUNDING_CLIENT_ID_2, redirectUri);
         if (clientRedirectDao.find(clientRedirectUriPk) == null) {
-            clientRedirectDao.addClientRedirectUri(READ_PRIVATE_FUNDING_CLIENT_ID_2, redirectUri);
-            clientDetailsDao.updateLastModified(READ_PRIVATE_FUNDING_CLIENT_ID_2);
+            clientDetailsManager.addClientRedirectUri(READ_PRIVATE_FUNDING_CLIENT_ID_2, redirectUri);
         }
 
         clientRedirectUriPk = new ClientRedirectUriPk(READ_ONLY_LIMITED_INFO_CLIENT_ID, redirectUri);
         if (clientRedirectDao.find(clientRedirectUriPk) == null) {
-            clientRedirectDao.addClientRedirectUri(READ_ONLY_LIMITED_INFO_CLIENT_ID, redirectUri);
-            clientDetailsDao.updateLastModified(READ_ONLY_LIMITED_INFO_CLIENT_ID);
+            clientDetailsManager.addClientRedirectUri(READ_ONLY_LIMITED_INFO_CLIENT_ID, redirectUri);
         }
 
         webDriver.get(webBaseUrl + "/signout");
@@ -185,7 +183,7 @@ public class T2OrcidOAuthApiClientReadPrivateDataIntegrationTest extends DBUnitT
         String authorizationCode = obtainAuthorizationCode(scopes, READ_ONLY_LIMITED_INFO_CLIENT_ID);
         String accessToken = obtainAccessToken(READ_ONLY_LIMITED_INFO_CLIENT_ID, authorizationCode, redirectUri, scopes);
 
-        ClientResponse fullResponse1 = oauthT2Client.viewFullDetailsXml("9999-9999-9999-9989", accessToken, "v1.2_rc4");
+        ClientResponse fullResponse1 = oauthT2Client.viewFullDetailsXml("9999-9999-9999-9989", accessToken, "v1.2_rc5");
         assertEquals(200, fullResponse1.getStatus());
         OrcidMessage orcidMessage = fullResponse1.getEntity(OrcidMessage.class);
         // Check returning message
@@ -249,7 +247,7 @@ public class T2OrcidOAuthApiClientReadPrivateDataIntegrationTest extends DBUnitT
         String authorizationCode = obtainAuthorizationCode(scopes, READ_PRIVATE_WORKS_CLIENT_ID);
         String accessToken = obtainAccessToken(READ_PRIVATE_WORKS_CLIENT_ID, authorizationCode, redirectUri, scopes);
 
-        ClientResponse fullResponse1 = oauthT2Client.viewFullDetailsXml("9999-9999-9999-9989", accessToken, "v1.2_rc4");
+        ClientResponse fullResponse1 = oauthT2Client.viewFullDetailsXml("9999-9999-9999-9989", accessToken, "v1.2_rc5");
         assertEquals(200, fullResponse1.getStatus());
         OrcidMessage orcidMessage = fullResponse1.getEntity(OrcidMessage.class);
         // Check returning message
@@ -317,7 +315,7 @@ public class T2OrcidOAuthApiClientReadPrivateDataIntegrationTest extends DBUnitT
         String authorizationCode = obtainAuthorizationCode(scopes, READ_PRIVATE_WORKS_CLIENT_ID_2);
         String accessToken = obtainAccessToken(READ_PRIVATE_WORKS_CLIENT_ID_2, authorizationCode, redirectUri, scopes);
 
-        ClientResponse fullResponse1 = oauthT2Client.viewFullDetailsXml("9999-9999-9999-9989", accessToken, "v1.2_rc4");
+        ClientResponse fullResponse1 = oauthT2Client.viewFullDetailsXml("9999-9999-9999-9989", accessToken, "v1.2_rc5");
         assertEquals(200, fullResponse1.getStatus());
         OrcidMessage orcidMessage = fullResponse1.getEntity(OrcidMessage.class);
         // Check returning message
@@ -388,7 +386,7 @@ public class T2OrcidOAuthApiClientReadPrivateDataIntegrationTest extends DBUnitT
         String authorizationCode = obtainAuthorizationCode(scopes, READ_PRIVATE_FUNDING_CLIENT_ID);
         String accessToken = obtainAccessToken(READ_PRIVATE_FUNDING_CLIENT_ID, authorizationCode, redirectUri, scopes);
 
-        ClientResponse fullResponse1 = oauthT2Client.viewFullDetailsXml("9999-9999-9999-9989", accessToken, "v1.2_rc4");
+        ClientResponse fullResponse1 = oauthT2Client.viewFullDetailsXml("9999-9999-9999-9989", accessToken, "v1.2_rc5");
         assertEquals(200, fullResponse1.getStatus());
         OrcidMessage orcidMessage = fullResponse1.getEntity(OrcidMessage.class);
         // Check returning message
@@ -455,7 +453,7 @@ public class T2OrcidOAuthApiClientReadPrivateDataIntegrationTest extends DBUnitT
         String authorizationCode = obtainAuthorizationCode(scopes, READ_PRIVATE_FUNDING_CLIENT_ID_2);
         String accessToken = obtainAccessToken(READ_PRIVATE_FUNDING_CLIENT_ID_2, authorizationCode, redirectUri, scopes);
 
-        ClientResponse fullResponse1 = oauthT2Client.viewFullDetailsXml("9999-9999-9999-9989", accessToken, "v1.2_rc4");
+        ClientResponse fullResponse1 = oauthT2Client.viewFullDetailsXml("9999-9999-9999-9989", accessToken, "v1.2_rc5");
         assertEquals(200, fullResponse1.getStatus());
         OrcidMessage orcidMessage = fullResponse1.getEntity(OrcidMessage.class);
         // Check returning message
@@ -524,7 +522,7 @@ public class T2OrcidOAuthApiClientReadPrivateDataIntegrationTest extends DBUnitT
         String authorizationCode = obtainAuthorizationCode(scopes, READ_PRIVATE_AFFILIATIONS_CLIENT_ID);
         String accessToken = obtainAccessToken(READ_PRIVATE_AFFILIATIONS_CLIENT_ID, authorizationCode, redirectUri, scopes);
 
-        ClientResponse fullResponse1 = oauthT2Client.viewFullDetailsXml("9999-9999-9999-9989", accessToken, "v1.2_rc4");
+        ClientResponse fullResponse1 = oauthT2Client.viewFullDetailsXml("9999-9999-9999-9989", accessToken, "v1.2_rc5");
         assertEquals(200, fullResponse1.getStatus());
         OrcidMessage orcidMessage = fullResponse1.getEntity(OrcidMessage.class);
         // Check returning message
@@ -591,7 +589,7 @@ public class T2OrcidOAuthApiClientReadPrivateDataIntegrationTest extends DBUnitT
         String authorizationCode = obtainAuthorizationCode(scopes, READ_PRIVATE_AFFILIATIONS_CLIENT_ID_2);
         String accessToken = obtainAccessToken(READ_PRIVATE_AFFILIATIONS_CLIENT_ID_2, authorizationCode, redirectUri, scopes);
 
-        ClientResponse fullResponse1 = oauthT2Client.viewFullDetailsXml("9999-9999-9999-9989", accessToken, "v1.2_rc4");
+        ClientResponse fullResponse1 = oauthT2Client.viewFullDetailsXml("9999-9999-9999-9989", accessToken, "v1.2_rc5");
         assertEquals(200, fullResponse1.getStatus());
         OrcidMessage orcidMessage = fullResponse1.getEntity(OrcidMessage.class);
         // Check returning message

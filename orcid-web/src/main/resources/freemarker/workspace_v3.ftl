@@ -291,10 +291,11 @@
 					</div>					 
       	            <div ng-show="workspaceSrvc.displayWorks" class="workspace-accordion-content">
 	            		<#include "includes/work/add_work_modal_inc.ftl"/>
-						<#include "includes/work/del_work_modal_inc.ftl"/>
-						<#include "includes/work/body_work_inc_v3.ftl"/>
+						<#include "includes/work/del_work_modal_inc.ftl"/>						
 	            	</div>
-	            	 
+	            	<div ng-show="workspaceSrvc.displayWorks">
+	            		<#include "includes/work/body_work_inc_v3.ftl"/> <!-- No class required -->
+	            	</div>
             	</div>
             	
             	<#--

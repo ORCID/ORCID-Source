@@ -35,6 +35,7 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.ClientDetailsDao;
+import org.orcid.persistence.dao.ClientRedirectDao;
 import org.orcid.persistence.dao.ClientSecretDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientAuthorisedGrantTypeEntity;
@@ -61,6 +62,9 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
     @Resource
     ClientSecretDao clientSecretDao;
 
+    @Resource
+    ClientRedirectDao clientRedirectDao;
+   
     @Resource
     private ProfileEntityManager profileEntityManager;
 
@@ -196,6 +200,14 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
     public void deleteClientDetail(String clientId) {
         removeByClientId(clientId);
     }
+    
+    @Override
+    public void addClientRedirectUri(String clientId, String uri) {
+        clientRedirectDao.addClientRedirectUri(clientId, uri);
+        clientDetailsDao.updateLastModified(clientId);
+    }
+    
+    
 
     private Set<ClientScopeEntity> getClientScopeEntities(Set<String> clientScopeStrings, ClientDetailsEntity clientDetailsEntity) {
         Set<ClientScopeEntity> clientScopeEntities = new HashSet<ClientScopeEntity>(clientScopeStrings.size());
@@ -282,7 +294,7 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
             Date lastModified = clientDetailsDao.getLastModified(orcid);
             result = clientDetailsDao.findByClientId(orcid, lastModified);
         } catch (NoResultException nre) {
-
+            LOGGER.error("Error getting client by id:" + orcid, nre);
         }
         return result;
     }
@@ -308,11 +320,6 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
     @Override
     public void remove(String clientId) {
         clientDetailsDao.remove(clientId);
-    }
-
-    @Override
-    public ClientDetailsEntity find(String clientId) {
-        return clientDetailsDao.find(clientId);
     }
 
     @Override

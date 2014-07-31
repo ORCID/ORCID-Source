@@ -379,7 +379,7 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         assertEquals(Visibility.LIMITED, externalIdentifiers.getVisibility());
         assertEquals(1, externalIdentifiers.getExternalIdentifier().size());
         ExternalIdentifier externalIdentifier = externalIdentifiers.getExternalIdentifier().get(0);
-        assertEquals("4444-4444-4444-4441", externalIdentifier.getExternalIdOrcid().getPath());
+        assertEquals("4444-4444-4444-4441", externalIdentifier.getExternalIdSource().getPath());
         assertEquals("d3clan", externalIdentifier.getExternalIdReference().getContent());
         assertEquals("Facebook", externalIdentifier.getExternalIdCommonName().getContent());
     }

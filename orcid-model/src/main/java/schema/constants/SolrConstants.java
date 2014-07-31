@@ -28,9 +28,9 @@ public class SolrConstants {
     public static final String AFFILIATE_INSTITUTION_NAME = "current-institution-affiliation-name";
     public static final String CREDIT_NAME = "credit-name";
     public static final String OTHER_NAMES = "other-names";
-    public static final String EXTERNAL_ID_ORCIDS = "external-id-orcid";
+    public static final String EXTERNAL_ID_SOURCE = "external-id-source";
     public static final String EXTERNAL_ID_REFERENCES = "external-id-reference";
-    public static final String EXTERNAL_ID_ORCIDS_AND_REFERENCES = "external-id-orcid-and-reference";
+    public static final String EXTERNAL_ID_SOURCE_AND_REFERENCES = "external-id-source-and-reference";
     public static final String DIGITAL_OBJECT_IDS = "digital-object-ids";
     public static final String WORK_TITLES = "work-titles";
     public static final String GRANT_NUMBERS = "grant-numbers";

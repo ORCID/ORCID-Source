@@ -1581,7 +1581,7 @@ a:hover {
 }
 
 .workspace-right {
-	border-left: 1px solid #c9c9c9;
+	/*border-left: 1px solid #c9c9c9;*/
 	min-height: 500px;
 }
 
@@ -1740,7 +1740,7 @@ a:hover {
 }
 
 .workspace-accordion-item {
-	border-bottom: 1px solid #c9c9c9;
+	/*border-bottom: 1px solid #c9c9c9;*/
 }
 
 .workspace-top .alert {
@@ -4083,21 +4083,26 @@ ul.id-details li{
 	padding-left: 0;
 }
 
+
 .show-more-info-tab{
 	display: block;
 	width: 100%;
-	text-align: center;
-	margin-top: 10px;
-	border-bottom: 1px solid #C9CACB;
-	padding-bottom: 23px;
-	height: 20px;
+	text-align: right;		
+	height: 20px;		
 }
 
 .show-more-info-tab a{
 	color: #FFF;
 	background: #C9CACB;
 	padding: 3px 15px;
-	font-size: 13px;
+	font-size: 13px;	
+}
+
+.hide-tab a{
+	position: absolute;
+	right: 0;
+	top: 19px;
+	z-index: 100;
 }
 
 .show-more-info-tab a span{
@@ -4191,12 +4196,6 @@ ul.id-details li{
 
 .blue{
 	background: #338CAF;
-}
-
-.content{
-	background: #FAFAFA;	
-	margin: 0px -10px;
-	padding: 10px;	
 }
 
 .workspace-title{
@@ -4309,46 +4308,56 @@ ul.workspace-submenu-options li a>span{
 
 /* Sources */
 
-.sources-container .source{
+.sources-container{
+	margin: 0 -6px;
+}
+
+.sources-container-header .source{
 	margin-right: 5px;
 	cursor: pointer;
 }
 
-.sources-container ul.sources-options{
+.sources-container-header ul.sources-options{
 	margin:0;
 	padding: 0;
 	list-style: none; 
 	list-style-type: none;
-	float: right;
+	float: right;	
+	margin-right: 10px;
 }
 
-.sources-container ul.sources-options li{
+.sources-container-header ul.sources-options li{
 	display: inline-block;
 	margin-left: 15px;
 }
 
 .sources-container table.sources-edit-table{
 	margin-top: 15px;
-	border: 1px solid #CBCBCB;
+	border: none;
 	width: 100%;
 }
 
-.sources-container table.sources-edit-table tr{
+.sources-container table.sources-edit-table tr + tr{
 	border: 1px solid #CBCBCB;
 }
 
-.sources-container table.sources-edit-table tr td{
-	padding: 15px;
+.sources-container table.sources-edit-table tr:first-child{
+	border-top: none;
 }
 
+.sources-container table.sources-edit-table tr td{
+	padding: 5px 15px;
+}
 
+.no-border-top{
+	border-top: none !important;
+}
 
-
-
-
-
-
-
+.workspace-border-box{
+	/*background: #F6F6F6;*/
+	border: 1px solid #C9CACB;
+	padding: 5px 5px 0 5px;
+}
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
@@ -5372,7 +5381,7 @@ ul.workspace-submenu-options li a>span{
 	
 	ul.validations-versions{
 		text-align: center;
-		margin-top: 15px;
+		margin: 15px 0;		
 	}
 	
 	ul.validations-versions li{

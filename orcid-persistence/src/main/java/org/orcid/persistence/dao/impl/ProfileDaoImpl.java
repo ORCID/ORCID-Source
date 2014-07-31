@@ -108,8 +108,8 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<String> findUnclaimedNotIndexedAfterWaitPeriod(int waitPeriodDays, int maxDaysBack, int maxResults, Collection<String> orcidsToExclude) {        
-               
+    public List<String> findUnclaimedNotIndexedAfterWaitPeriod(int waitPeriodDays, int maxDaysBack, int maxResults, Collection<String> orcidsToExclude) {
+
         StringBuilder builder = new StringBuilder("SELECT orcid FROM profile p");
         builder.append(" WHERE p.claimed = false");
         builder.append(" AND p.indexing_status != :indexingStatus");
@@ -122,7 +122,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         builder.append(maxDaysBack);
         builder.append(")");
         // Has not been indexed during the waitPeriodDays number of days after
-        // creation. 
+        // creation.
         builder.append(" AND (p.last_indexed_date < p.date_created + (CAST('1' AS INTERVAL DAY) * ");
         builder.append(waitPeriodDays);
         builder.append(") OR p.last_indexed_date IS NULL)");
@@ -416,10 +416,11 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     @Transactional
-    public void updateLastModifiedDateWithoutResult(String orcid, Date lastModified) {
-        Query query = entityManager.createNativeQuery("update profile set last_modified = :lastModified where orcid = :orcid ");
+    public void updateLastModifiedDateAndIndexingStatusWithoutResult(String orcid, Date lastModified, IndexingStatus indexingStatus) {
+        Query query = entityManager.createNativeQuery("update profile set last_modified = :lastModified, indexing_status = :indexingStatus where orcid = :orcid ");
         query.setParameter("orcid", orcid);
         query.setParameter("lastModified", lastModified);
+        query.setParameter("indexingStatus", indexingStatus.name());
         query.executeUpdate();
     }
 
