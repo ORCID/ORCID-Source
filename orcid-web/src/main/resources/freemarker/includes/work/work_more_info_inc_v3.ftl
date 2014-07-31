@@ -30,8 +30,8 @@
 				<!-- Translated title -->
 				<div class="bottomBuffer" ng-show="worksSrvc.details[group.getActive().putCode.value].workTitle.translatedTitle.content" ng-cloak>
 					<strong><@orcid.msg
-						'manual_work_form_contents.labeltranslatedtitle'/></strong>
-					<div ng-bind="renderTranslatedTitleInfo(group.getActive().putCode.value)"></div>				
+						'manual_work_form_contents.labeltranslatedtitle'/></strong> <span><i>({{worksSrvc.details[group.getActive().putCode.value].workTitle.translatedTitle.languageName}})</i></span>
+					<div>{{worksSrvc.details[group.getActive().putCode.value].workTitle.translatedTitle.content}}</div>				
 				</div>
 				
 				<!-- Subtitle -->		
