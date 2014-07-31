@@ -4387,6 +4387,31 @@ function languageCtrl($scope, $cookies) {
 	};
 };
 
+function adminVerifyEmailCtrl($scope,$compile){
+	$scope.showSection = false;
+	
+	$scope.toggleSection = function(){
+		$scope.showSection = !$scope.showSection;
+    	$('#verify_email_section').toggle();
+	};
+	
+	$scope.verifyEmail = function(){
+		$.ajax({
+	        url: getBaseUri()+'/admin-actions/admin-verify-email?email=' + $scope.email,	        
+	        type: 'GET',
+	        dataType: 'text',
+	        success: function(data){
+	        	$scope.$apply(function(){ 
+	        		$scope.result = data;        		
+				});
+	        }
+	    }).fail(function(error) { 
+	    	// something bad is happening!	    	
+	    	console.log("Error verifying the email address");	    	
+	    });	
+	};
+};
+
 function profileDeactivationAndReactivationCtrl($scope,$compile){
 	$scope.orcidToDeactivate = null;
 	$scope.orcidToReactivate = null;
