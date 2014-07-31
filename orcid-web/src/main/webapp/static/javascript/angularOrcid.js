@@ -586,7 +586,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 			    	console.log("Error fetching blank work");
 			    });
 			},
-			getDetails: function(putCode, type, callback) {
+			getDetails: function(putCode, type, callback) {				
 				if (type == serv.constants.access_type.USER) 
 					var url = getBaseUri() + '/works/getWorkInfo.json?workId=';
 				else // use the anonymous url
