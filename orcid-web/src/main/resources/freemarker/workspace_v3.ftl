@@ -251,18 +251,15 @@
 			       			<div class="col-md-9 col-sm-10 col-xs-12 action-button-bar" ng-show="workspaceSrvc.displayWorks">
 			       				<!-- Sort -->
 			       				<div class="sort-menu-container">			       					 
-				       				<a class="action-option manage-button toggle-menu" ng-click="">
+				       				<a class="action-option manage-button toggle-menu">
 										<span class="glyphicon glyphicon-sort"></span>							
 										<@orcid.msg 'manual_orcid_record_contents.sort'/>
 									</a>
 									<ul class="sort-menu-options">
-										<li><a href="" ng-click=""><@orcid.msg 'manual_orcid_record_contents.sort_title'/> <span class=""></span></a></li>
-										<li><a href="" ng-click="" class="checked"><@orcid.msg 'manual_orcid_record_contents.sort_data'/> <span class="glyphicon glyphicon-ok pull-right"></span></a></li>
-										<li><a href="" ng-click=""><@orcid.msg 'manual_orcid_record_contents.sort_type'/> <span class=""></span></a></li>
-										<li><a href="" ng-click=""><@orcid.msg 'manual_orcid_record_contents.sort_source'/> <span class=""></span></a></li>
-									</ul>
+									    <li><a ng-click="sort('title');" ng-class="{'checked':sortPredicateKey=='title'}"><@orcid.msg 'manual_orcid_record_contents.sort_title'/><span ng-class="{'glyphicon glyphicon-ok pull-right':sortPredicateKey=='title'}" ></span></a></li>
+										<li><a ng-click="sort('date');" ng-class="{'checked':sortPredicateKey=='date'}">Date <span ng-class="{'glyphicon glyphicon-ok pull-right':sortPredicateKey=='date'}"></span></a></li>
+								    </ul>
 								</div>
-								
 		                		<ul class="workspace-bar-menu">		                			
 			        				<!-- Link Manually -->
 			        				<li>

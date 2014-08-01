@@ -15,18 +15,24 @@
  * =============================================================================
  */
 
-	function openImportWizardUrl(url) {
-		var win = window.open(url, "_target"); 
-		setTimeout( function() {
-		    if(!win || win.outerHeight === 0) {
-		        //First Checking Condition Works For IE & Firefox
-		        //Second Checking Condition Works For Chrome
-		        window.location.href = url;
-		    } 
-		}, 250);
-		$.colorbox.close();		
-	};
+function openImportWizardUrl(url) {
+	var win = window.open(url, "_target"); 
+	setTimeout( function() {
+	    if(!win || win.outerHeight === 0) {
+	        //First Checking Condition Works For IE & Firefox
+	        //Second Checking Condition Works For Chrome
+	        window.location.href = url;
+	    } 
+	}, 250);
+	$.colorbox.close();		
+};
 
+	
+	
+sortPredicateMap = {};
+sortPredicateMap['date'] = ['-dateSortString', 'title'];
+sortPredicateMap['title'] = ['title', '-dateSortString'];
+	
 
 var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.multiselect']);
 
@@ -385,6 +391,7 @@ var GroupedActivities = function(type) {
 	this.defaultPutCode = null;
 	this.dateSortString;
 	this.groupId = GroupedActivities.count;
+	this.title;
 };
 
 GroupedActivities.prototype.test = function() {
@@ -394,7 +401,7 @@ GroupedActivities.prototype.test = function() {
 	else
 		count++;
 	return count;
-}
+};
 
 GroupedActivities.prototype.add = function(activity) {
 	// assumes works are added in the order of the display index desc
@@ -414,6 +421,7 @@ GroupedActivities.prototype.add = function(activity) {
 GroupedActivities.prototype.makeDefault = function(putCode) {
 	this.defaultPutCode = putCode;
 	this.dateSortString = this.activities[putCode].dateSortString;	
+	this.title = this.activities[putCode].workTitle.title.value;
 };
 
 GroupedActivities.prototype.addKey = function(key) {
@@ -471,22 +479,6 @@ GroupedActivities.prototype.rmByPut = function(putCode) {
 	delete this.activities[putCode];
 	this.activitiesCount--;
 	return activities;
-};
-
-GroupedActivities.prototype.updateDefault = function(putsArray) {
-	this.defaultPutCode == undefined;
-	for (var idx in putsArray) {
-		if (this.hasPut(putsArray[idx])) {
-			this.defaultPutCode = putsArray[idx];
-			break;
-		};
-	};
-	// if we don't have a default select the first putCode
-	if (this.defaultPutCode == undefined) 
-		if (this.activitiesCount > 0)
-			for (var idx in activities) {
-				this.defaultPutCode = idx;
-			};
 };
 
 
@@ -3262,17 +3254,25 @@ function PublicFundingCtrl($scope, $compile, $filter, fundingSrvc){
 }
 
 function PublicWorkCtrl($scope, $compile, $filter, worksSrvc) {
-	$sortPredicate = ['-dateSortString', 'title'];
+	$scope.sortPredicateKey = 'date';
+	$scope.sortPredicate = sortPredicateMap[$scope.sortPredicateKey];
+	$scope.sortReverse = false;
 	$scope.worksSrvc = worksSrvc;
 	$scope.showBibtex = true;
 	$scope.moreInfoOpen = false;
 	$scope.moreInfo = {};
 	$scope.displayWorks = true;
 
+	$scope.sort = function(key) {
+		if ($scope.sortPredicateKey == key) 
+			$scope.sortReverse = ! $scope.sortReverse;
+		$scope.sortPredicateKey = key;
+		$scope.sortPredicate = sortPredicateMap[key];
+	};
+	
     $scope.bibtexShowToggle = function () {
     	$scope.showBibtex = !($scope.showBibtex);
     };   
-
 	  
 	$scope.renderTranslatedTitleInfo = function(putCode) {		
 		var info = null; 
@@ -3335,7 +3335,9 @@ function PublicWorkCtrl($scope, $compile, $filter, worksSrvc) {
 }
 
 function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
-	$sortPredicate = ['-dateSortString', 'title'];
+	$scope.sortPredicateKey = 'date';
+	$scope.sortPredicate = sortPredicateMap[$scope.sortPredicateKey];
+	$scope.sortReverse = false;
 	$scope.canReadFiles = false;
 	$scope.showBibtexImportWizard = false;
 	$scope.textFiles = null;
@@ -3355,6 +3357,12 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
 	$scope.bibtextWork = false;
 	$scope.bibtextWorkIndex = null;
 
+	$scope.sort = function(key) {
+		if ($scope.sortPredicateKey == key) 
+			$scope.sortReverse = ! $scope.sortReverse;
+		$scope.sortPredicateKey = key;
+		$scope.sortPredicate = sortPredicateMap[key];
+	};
 	
 	$scope.loadBibtexJs = function() {
         try {
