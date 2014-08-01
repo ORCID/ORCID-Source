@@ -74,6 +74,7 @@ orcidNgModule.directive('appFileTextReader', function($q){
 	                    if(element.multiple) ngModelCtrl.$setViewValue(values);
 	                    else ngModelCtrl.$setViewValue(values.length ? values[0] : null);
 	                    scope.updateFn(scope);
+	                    element.value = null;
 	                });
 	                function readFile(file) {
 	                    var deferred = $q.defer();
