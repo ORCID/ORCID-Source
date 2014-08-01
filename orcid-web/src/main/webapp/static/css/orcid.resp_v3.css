@@ -4362,6 +4362,14 @@ ul.workspace-submenu-options li a>span{
 	margin-right: 15px;
 }
 
+a.toggle-tag-option{
+	font-size: 12px;
+}
+
+.small-chevron{
+	font-size: 11px;
+}
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 

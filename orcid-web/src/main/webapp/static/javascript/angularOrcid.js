@@ -3264,7 +3264,7 @@ function PublicFundingCtrl($scope, $compile, $filter, fundingSrvc){
 function PublicWorkCtrl($scope, $compile, $filter, worksSrvc) {
 	$sortPredicate = ['-dateSortString', 'title'];
 	$scope.worksSrvc = worksSrvc;
-	$scope.showBibtex = true;
+	$scope.showBibtex = false;
 	$scope.moreInfoOpen = false;
 	$scope.moreInfo = {};
 	$scope.displayWorks = true;
@@ -3342,7 +3342,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
 	$scope.worksFromBibtex = null;	
 	$scope.workspaceSrvc = workspaceSrvc;
 	$scope.worksSrvc = worksSrvc;
-	$scope.showBibtex = true;
+	$scope.showBibtex = false;
 	$scope.editTranslatedTitle = false;
 	$scope.types = null;
 	$scope.privacyHelp = {};
@@ -3354,6 +3354,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
 	$scope.bibtexCancelLink = false;
 	$scope.bibtextWork = false;
 	$scope.bibtextWorkIndex = null;
+	$scope.citationCollapsed =  true;
 
 	
 	$scope.loadBibtexJs = function() {
@@ -3454,6 +3455,10 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
     
     $scope.bibtexShowToggle = function () {
     	$scope.showBibtex = !($scope.showBibtex);
+    };
+    
+    $scope.toggleCitation = function () {
+    	$scope.citationCollapsed = !($scope.citationCollapsed);
     };
     
 	$scope.showWorkImportWizard =  function() {
