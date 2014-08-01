@@ -17,11 +17,11 @@
 
 -->
 <ul ng-hide="!worksSrvc.groups.length" class="workspace-publications workspace-body-list bottom-margin-medium" id="body-work-list" ng-cloak>
-    <li class="bottom-margin-small workspace-border-box" ng-repeat="group in worksSrvc.groups | orderBy:sortPredicate">        
+    <li class="bottom-margin-small workspace-border-box" ng-repeat="group in worksSrvc.groups | orderBy:sortPredicate:sortReverse">        
 		<div class="row"> 
 			<!-- Main title -->
 			<div class="col-md-9 col-sm-9 col-xs-12">
-		        <h3 class="workspace-title">
+			    <h3 class="workspace-title">
 		        	<strong ng-bind="group.getActive().workTitle.title.value"></strong><span class="work-subtitle" ng-show="group.getActive().workTitle.subtitle.value" ng-bind="':&nbsp;'.concat(group.getActive().workTitle.subtitle.value)"></span>		        			        	
 		        </h3>
 		        <div class="info-detail">
