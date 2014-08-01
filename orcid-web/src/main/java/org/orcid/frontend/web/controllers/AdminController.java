@@ -587,14 +587,26 @@ public class AdminController extends BaseController {
             managed  = email.get(managed);            
         }
         
+        //Restriction #1: Both accounts must be claimed
         boolean isTrustedClaimed = profileEntityManager.isProfileClaimed(trusted);
         boolean isManagedClaimed = profileEntityManager.isProfileClaimed(managed);
         
         if(!isTrustedClaimed || !isManagedClaimed) {
-            
+            if(!isTrustedClaimed && !isManagedClaimed) {
+                result = getMessage("admin.delegate.error.not_claimed.both", trusted, managed);
+            } else if(!isTrustedClaimed) {
+                result = getMessage("admin.delegate.error.not_claimed", trusted);
+            } else {
+                result = getMessage("admin.delegate.error.not_claimed", managed);
+            }
+            return result;
         }
         
-        
+        //Restriction #2: Trusted individual must have a verified primary email address
+        if(!emailManager.isPrimaryEmailVerified(trusted)) {
+            result = getMessage("admin.delegate.error.primary_email_not_verified", trusted);
+            return result;
+        }
         
         return result;
     }

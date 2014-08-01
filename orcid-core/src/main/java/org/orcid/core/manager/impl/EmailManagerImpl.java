@@ -115,4 +115,9 @@ public class EmailManagerImpl implements EmailManager {
     public boolean verifyEmail(String email) {
         return emailDao.verifyEmail(email);
     }
+    
+    @Override
+    public boolean isPrimaryEmailVerified(String orcid) {
+        return emailDao.isPrimaryEmailVerified(orcid);
+    }
 }

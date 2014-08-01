@@ -49,4 +49,6 @@ public interface EmailDao extends GenericDao<EmailEntity, String> {
     void addSourceToEmail(String email, String sourceId);
     
     boolean verifyEmail(String email);
+    
+    boolean isPrimaryEmailVerified(String orcid);
 }
