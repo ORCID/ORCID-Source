@@ -618,5 +618,12 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
         return result;
     }
+    
+    @Override
+    public boolean getClaimedStatus(String orcid) {
+        Query query = entityManager.createNativeQuery("select claimed from profile where orcid=:orcid");
+        query.setParameter("orcid", orcid);
+        return (Boolean)query.getSingleResult();
+    }
 
 }

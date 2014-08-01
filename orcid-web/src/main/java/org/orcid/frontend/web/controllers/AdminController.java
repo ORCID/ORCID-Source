@@ -571,6 +571,33 @@ public class AdminController extends BaseController {
         return result;
     }
     
+    /**
+     * Admin starts delegation process
+     * */
+    public @ResponseBody String startDelegationProcess(@RequestParam("trusted") String trusted, @RequestParam("managed") String managed) {
+        String result = new String();
+        boolean trustedIsOrcid = matchesOrcidPattern(trusted);
+        if(!trustedIsOrcid) {
+            Map<String, String> email = findIdByEmail(trusted);
+            trusted  = email.get(trusted);            
+        }
+        boolean managedIsOrcid = matchesOrcidPattern(managed);
+        if(!managedIsOrcid) {
+            Map<String, String> email = findIdByEmail(managed);
+            managed  = email.get(managed);            
+        }
+        
+        boolean isTrustedClaimed = profileEntityManager.isProfileClaimed(trusted);
+        boolean isManagedClaimed = profileEntityManager.isProfileClaimed(managed);
+        
+        if(!isTrustedClaimed || !isManagedClaimed) {
+            
+        }
+        
+        
+        
+        return result;
+    }
     
     private boolean matchesOrcidPattern(String orcid){
         return OrcidStringUtils.isValidOrcid(orcid);

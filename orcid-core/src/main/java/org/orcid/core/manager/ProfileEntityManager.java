@@ -57,4 +57,6 @@ public interface ProfileEntityManager {
     public boolean disableDeveloperTools(OrcidProfile profile);
     
     public Iso3166Country getCountry(String orcid);
+    
+    public boolean isProfileClaimed(String orcid);
 }
