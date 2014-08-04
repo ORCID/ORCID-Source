@@ -754,4 +754,9 @@ public class NotificationManagerImpl implements NotificationManager {
         }
         return String.format("%s/%s/%s", baseUri.toString(), path, base64EncodedParams);
     }
+    
+    @Override
+    public void sendDelegationRequestEmail(OrcidProfile trustedOrcidProfile, OrcidProfile managedOrcidProfile) {
+        
+    }
 }

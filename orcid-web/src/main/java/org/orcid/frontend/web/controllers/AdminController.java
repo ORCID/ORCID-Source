@@ -574,6 +574,7 @@ public class AdminController extends BaseController {
     /**
      * Admin starts delegation process
      * */
+    @RequestMapping(value = "/admin-delegates", method = RequestMethod.GET) 
     public @ResponseBody String startDelegationProcess(@RequestParam("trusted") String trusted, @RequestParam("managed") String managed) {
         String result = new String();
         boolean trustedIsOrcid = matchesOrcidPattern(trusted);
@@ -607,6 +608,10 @@ public class AdminController extends BaseController {
             result = getMessage("admin.delegate.error.primary_email_not_verified", trusted);
             return result;
         }
+        
+        //Generate link
+        //Send email to managed account
+        //Send email to trusted account
         
         return result;
     }

@@ -56,5 +56,7 @@ public interface NotificationManager {
     void sendProfileDeprecationEmail(ProfileEntity deprecatedProfile, ProfileEntity primaryProfile);
     
     public boolean sendPrivPolicyEmail2014_03(OrcidProfile orcidProfile, URI baseUri);
+    
+    void sendDelegationRequestEmail(OrcidProfile trustedOrcidProfile, OrcidProfile managedOrcidProfile);
 
 }
