@@ -60,12 +60,14 @@
 	<div>
 		<p><@orcid.msg 'orcid.frontend.oauth.have_asked'/></p>
 	</div>
-	<div>
+	<ul class="oauth-scopes">
 		<#list scopes as scope>
-			<div><span class="mini-orcid-icon"></span><@orcid.msg '${scope.declaringClass.name}.${scope.name()}'/></div>
-			<#assign authOnClick = authOnClick + " orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Authorize_" + scope.name()?replace("ORCID_", "") + "', 'OAuth " + client_group_name?js_string + " - " + client_name?js_string + "']);">
+			<li>
+				<span class="mini-orcid-icon oauth-bullet"></span><@orcid.msg '${scope.declaringClass.name}.${scope.name()}'/>
+					<#assign authOnClick = authOnClick + " orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Authorize_" + scope.name()?replace("ORCID_", "") + "', 'OAuth " + client_group_name?js_string + " - " + client_name?js_string + "']);">
+			</li>
     	</#list>				
-	</div>	
+	</ul>	
 	<div>
 		<p><@orcid.msg 'orcid.frontend.web.oauth_is_secure'/>.<a href="${aboutUri}/footer/privacy-policy" target="_blank"><@orcid.msg 'public-layout.privacy_policy'/></a>.</p>
 	</div>			

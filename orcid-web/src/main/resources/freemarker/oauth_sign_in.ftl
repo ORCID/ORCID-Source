@@ -74,47 +74,67 @@
 			<div>
 				<p><@orcid.msg 'orcid.frontend.oauth.have_asked'/></p>
 			</div>
-			<div>
+			<ul class="oauth-scopes">
 				<#list scopes as scope>
-					<div><span class="mini-orcid-icon"></span><@orcid.msg '${scope.declaringClass.name}.${scope.name()}'/></div>
-					<#assign authOnClick = authOnClick + " orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Authorize_" + scope.name()?replace("ORCID_", "") + "', 'OAuth " + client_group_name?js_string + " - " + client_name?js_string + "']);">
+					<li>
+						<span class="mini-orcid-icon oauth-bullet"></span><@orcid.msg '${scope.declaringClass.name}.${scope.name()}'/>
+						<#assign authOnClick = authOnClick + " orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Authorize_" + scope.name()?replace("ORCID_", "") + "', 'OAuth " + client_group_name?js_string + " - " + client_name?js_string + "']);">
+					</li>
          		</#list>				
-			</div>	
+			</ul>	
 			<div>
 				<p><@orcid.msg 'orcid.frontend.web.oauth_is_secure'/>.<a href="${aboutUri}/footer/privacy-policy" target="_blank"><@orcid.msg 'public-layout.privacy_policy'/></a>.</p>
 			</div>
 			 
 			<!-- LOGIN FORM -->			
 			<div id="login" ng-show="!showRegisterForm" ng-init="loadAndInitLoginForm('${scopesString}','${redirect_uri}','${client_id}','${response_type}', '${user_id}')">            		
-	            <div>
-	                <label for="userId"><@orcid.msg 'oauth_sign_in.labelemailorID'/></label>
-	                <div class="relative">	                	
-	                   <input name="userId" type="text" ng-model="authorizationForm.userName.value" placeholder="Email or iD" class="input-xlarge">
-	                </div>
-	            </div>
-	            <div id="passwordField">
-	                <label for="password"><@orcid.msg 'oauth_sign_in.labelpassword'/></label>
-	                <div class="relative">
-	                   <input type="password" id="password" ng-model="authorizationForm.password.value" name="password" placeholder="Password" class="input-xlarge">
-	                </div>
-	            </div>
-	            <div class="control-group col-md-12 col-sm-12 col-xs-12"> 
-			    	<div id="oauth-login-reset" class="col-md-6 col-sm-6 col-xs-12">
-				        <a href="<@spring.url '/reset-password'/>"><@orcid.msg 'login.reset'/></a>&nbsp;&nbsp;
+	            
+            	
+				  <div class="row">
+				  <div class="form-group has-feedback">
+				    <label for="userId" class="col-sm-3 control-label"><@orcid.msg 'oauth_sign_in.labelemailorID'/></label>
+				    <div class="col-sm-9">
+				      <input type="text" name="userId" ng-model="authorizationForm.userName.value" placeholder="Email or iD" class="form-control" >
+				      <span class="glyphicon glyphicon-asterisk form-control-feedback-oauth"></span>
 				    </div>
-				    <div id="oauth-login-register" class="col-md-6 col-sm-6 col-xs-12">
-				       	<a class="reg" id="in-login-switch-form"ng-click="switchForm()"><@orcid.msg 'orcid.frontend.oauth.register'/></a>
+				  </div>
+				 </div>
+				 <div class="row">  
+				  <div class="form-group has-feedback">
+				    <label for="password" class="col-sm-3 control-label"><@orcid.msg 'oauth_sign_in.labelpassword'/></label>
+				    <div class="col-sm-9">
+				      <input type="password" id="password" ng-model="authorizationForm.password.value" name="password" placeholder="Password" class="form-control">
+				      <span class="glyphicon glyphicon-asterisk form-control-feedback-oauth"></span>
+				    </div>
+				  </div>
+	        	</div>
+	        	
+	            <div class="row">
+		            <div class="control-group"> 
+				    	<div id="oauth-login-reset" class="col-md-offset-3 col-md-9 col-sm-offset-3 col-sm-3 col-xs-12">
+					        <a href="<@spring.url '/reset-password'/>"><@orcid.msg 'login.reset'/></a>
+					    </div>
+					    <div id="oauth-login-register" class="col-md-offset-3 col-md-9 col-sm-6 col-xs-12">
+					       	<a class="reg" id="in-login-switch-form"ng-click="switchForm()"><@orcid.msg 'orcid.frontend.oauth.register'/></a>
+				    	</div>
 			    	</div>
-		    	</div>		
-	            <div id="login-buttons">                     		            		               					
-					<button class="btn btn-primary" id="authorize-button" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="loginAndAuthorize()" onclick="${authOnClick} orcidGA.gaFormSumbitDelay(this); return false;">
-						<@orcid.msg 'confirm-oauth-access.Authorize' />
-					</button>		                 	            
-					<button class="btn btn-primary" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="loginAndDeny()" onclick="${denyOnClick} orcidGA.gaFormSumbitDelay(this); return false;">
-						<@orcid.msg 'confirm-oauth-access.Deny' />
-					</button>
-	            </div>	                        
+		    	</div>
+		    	<div class="row">
+		                <div class="col-md-12">                		            		               					
+							<button class="btn btn-primary pull-right" id="authorize-button" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="loginAndAuthorize()" onclick="${authOnClick} orcidGA.gaFormSumbitDelay(this); return false;">
+								<@orcid.msg 'confirm-oauth-access.Authorize' />
+							</button>
+							<button class="btn btn-primary pull-right oauth-deny-button" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="loginAndDeny()" onclick="${denyOnClick} orcidGA.gaFormSumbitDelay(this); return false;">
+								<@orcid.msg 'confirm-oauth-access.Deny' />
+							</button>		                 	  
+						</div>          
+						
+		            	  
+	            </div>                      
         	</div> 
+        	
+        	
+        	
         	<!-- REGISTER FORM -->
         	<div id="register" ng-show="showRegisterForm" ng-init="loadAndInitRegistrationForm('${scopesString}','${redirect_uri}','${client_id}','${response_type}')">
         		<div class="control-group col-md-12 col-sm-12 col-xs-12"> 			    	

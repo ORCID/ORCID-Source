@@ -4165,7 +4165,44 @@ multiselect .dropdown-menu .dropdown-menu-list {
 }
 
 .app-client-description p{
-	margin-bottom: 15px;
+	margin-bottom: 30px;
+}
+
+.oauth-bullet {
+	background: url('../img/mini-icon.png') transparent no-repeat;
+	background-size: 30px 30px;
+	width: 30px;
+	height: 30px;
+	margin-right: 10px;
+}
+
+ul.oauth-scopes{
+	padding: 0;
+	margin: 15px 0 0 0;
+	
+}
+
+ul.oauth-scopes li{
+	height: 30px;
+	font-size: 17px;
+	color: #338caf;
+	line-height: 33px;
+	margin: 10px 0;
+}
+
+.form-control-feedback-oauth{
+	position: absolute;
+	top: 0;
+	right: 10px;
+	display: block;
+	width: 34px;
+	height: 34px;
+	line-height: 34px;
+	text-align: center;
+}
+
+#login .oauth-deny-button{
+	margin-right: 10px;
 }
 
 /* Media Queries */
@@ -4988,6 +5025,15 @@ multiselect .dropdown-menu .dropdown-menu-list {
 	#member_developer_tools_header input,#member_developer_tools_header textarea,#member_developer_tools_header select
 		{
 		width: 100%;
+	}
+	
+	.form-control-feedback-oauth{
+		top: 8px;
+		right: 35px;
+	}
+	
+	#login .oauth-deny-button{
+		margin-right: 0;
 	}
 }
 
