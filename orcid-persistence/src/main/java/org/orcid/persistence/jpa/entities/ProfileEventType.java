@@ -29,5 +29,7 @@ public enum ProfileEventType {
     //Indicates that the account is deprecated
     PROFILE_DEPRECATED, 
     //Indicates that an account has been deprecated and you are the primary account
-    PROFILE_DEPRECATION;    
+    PROFILE_DEPRECATION,
+    //Indicates that the delegation process of an account was started by an admin
+    ADMIN_PROFILE_DELEGATION_REQUEST;
 }

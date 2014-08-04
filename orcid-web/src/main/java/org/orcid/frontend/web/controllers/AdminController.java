@@ -29,7 +29,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.jetty.util.ajax.JSON;
 import org.orcid.core.manager.EmailManager;
+import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.NotificationManager;
@@ -76,6 +78,11 @@ public class AdminController extends BaseController {
     private static final Logger LOGGER = LoggerFactory.getLogger(AdminController.class);
 
     private static int RANDOM_STRING_LENGTH = 15;
+
+    private static String MANAGED_USER_PARAM = "managed";
+    private static String TRUSTED_USER_PARAM = "trusted";
+    
+    private static String AUTHORIZE_DELEGATION_ACTION = "/manage/authorize-delegates";
     
     @Resource
     ProfileEntityManager profileEntityManager;
@@ -92,6 +99,9 @@ public class AdminController extends BaseController {
 
     @Resource
     OrcidClientGroupManager orcidClientGroupManager;
+    
+    @Resource
+    private EncryptionManager encryptionManager;
 
     @Resource
     EmailManager emailManager;
@@ -610,10 +620,34 @@ public class AdminController extends BaseController {
         }
         
         //Generate link
+        String link = generateEncryptedLink(trusted, managed);
+        //Get primary emails
+        OrcidProfile managedOrcidProfile = orcidProfileManager.retrieveClaimedOrcidProfile(managed);
+        OrcidProfile trustedOrcidProfile = orcidProfileManager.retrieveClaimedOrcidProfile(trusted);
         //Send email to managed account
-        //Send email to trusted account
+        notificationManager.sendDelegationRequestEmail(managedOrcidProfile, trustedOrcidProfile, link);
         
         return result;
+    }
+    
+    /**
+     * Encrypts a string
+     * 
+     * @param unencrypted
+     * @return the string encrypted
+     * */
+    private String generateEncryptedLink(String trusted, String managed) {
+        Map<String, String> params = new HashMap<String, String>();
+        params.put(TRUSTED_USER_PARAM, trusted);
+        params.put(MANAGED_USER_PARAM, managed);
+        String paramsString = JSON.toString(params);
+        if (StringUtils.isNotBlank(paramsString)) {
+            String encryptedParams = encryptionManager.encryptForInternalUse(paramsString);
+            String url = getBaseUri() + AUTHORIZE_DELEGATION_ACTION + "?key=" + encryptedParams;            
+            return url;
+        } else {
+            return null;
+        }
     }
     
     private boolean matchesOrcidPattern(String orcid){
