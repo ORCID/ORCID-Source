@@ -33,6 +33,7 @@ import javax.validation.Valid;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jetty.util.ajax.JSON;
+import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidSearchManager;
@@ -152,6 +153,9 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @Resource
     private OrcidSocialManager orcidSocialManager;
+    
+    @Resource 
+    private EmailManager emailManager;
 
     public EncryptionManager getEncryptionManager() {
         return encryptionManager;
@@ -1016,19 +1020,37 @@ public class ManageProfileController extends BaseWorkspaceController {
             String managedOrcid = params.get(AdminController.MANAGED_USER_PARAM);
             String trustedOrcid = params.get(AdminController.TRUSTED_USER_PARAM);
             //Check if managed user is the same than the logged user
-            //Check if the managed user email is verified, if not, verify it
-            //Create the delegation
-            //Send notifications
+            if(managedOrcid.equals(getEffectiveUserOrcid())) {
+                //Check if the managed user email is verified, if not, verify it
+                //Create the delegation
+                //Send notifications
+            } else {
+                //Exception, the email was not for you
+            }
+            
         } else {
             //Error
         }
         return mav;
     }
     
+    /**
+     * TODO
+     * */
     private Map<String, String> decryptDelegationKey(String encryptedKey) {
         String jsonString = encryptionManager.decryptForExternalUse(encryptedKey);
         Map<String, String> params = (HashMap<String, String>)JSON.parse(jsonString);
         return params;
+    }
+    
+    /**
+     * TODO
+     * */
+    private void verifyEmailIfNeeded(String orcid) {
+        if(!emailManager.isPrimaryEmailVerified(orcid)) {
+            //TODO: Verify email
+        }
+            
     }
     
 }
