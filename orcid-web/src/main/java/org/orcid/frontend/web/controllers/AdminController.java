@@ -79,8 +79,8 @@ public class AdminController extends BaseController {
 
     private static int RANDOM_STRING_LENGTH = 15;
 
-    private static String MANAGED_USER_PARAM = "managed";
-    private static String TRUSTED_USER_PARAM = "trusted";
+    public static String MANAGED_USER_PARAM = "managed";
+    public static String TRUSTED_USER_PARAM = "trusted";
     
     private static String AUTHORIZE_DELEGATION_ACTION = "/manage/authorize-delegates";
     
@@ -642,7 +642,7 @@ public class AdminController extends BaseController {
         params.put(MANAGED_USER_PARAM, managed);
         String paramsString = JSON.toString(params);
         if (StringUtils.isNotBlank(paramsString)) {
-            String encryptedParams = encryptionManager.encryptForInternalUse(paramsString);
+            String encryptedParams = encryptionManager.encryptForExternalUse(paramsString);
             String url = getBaseUri() + AUTHORIZE_DELEGATION_ACTION + "?key=" + encryptedParams;            
             return url;
         } else {

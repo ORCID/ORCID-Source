@@ -32,6 +32,7 @@ import javax.validation.Valid;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.jetty.util.ajax.JSON;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidSearchManager;
@@ -1004,4 +1005,30 @@ public class ManageProfileController extends BaseWorkspaceController {
         return true;
     }
 
+    /**
+     * TODO
+     * */
+    @RequestMapping(value = {"/authorize-delegates"}, method = RequestMethod.GET)
+    public ModelAndView authorizeDelegatesRequest(@RequestParam("key") String key) {
+        ModelAndView mav = new ModelAndView("manage");
+        Map<String, String> params = decryptDelegationKey(key);
+        if(params.containsKey(AdminController.MANAGED_USER_PARAM) && params.containsKey(AdminController.TRUSTED_USER_PARAM)) {
+            String managedOrcid = params.get(AdminController.MANAGED_USER_PARAM);
+            String trustedOrcid = params.get(AdminController.TRUSTED_USER_PARAM);
+            //Check if managed user is the same than the logged user
+            //Check if the managed user email is verified, if not, verify it
+            //Create the delegation
+            //Send notifications
+        } else {
+            //Error
+        }
+        return mav;
+    }
+    
+    private Map<String, String> decryptDelegationKey(String encryptedKey) {
+        String jsonString = encryptionManager.decryptForExternalUse(encryptedKey);
+        Map<String, String> params = (HashMap<String, String>)JSON.parse(jsonString);
+        return params;
+    }
+    
 }
