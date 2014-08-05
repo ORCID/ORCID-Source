@@ -1022,7 +1022,9 @@ public class ManageProfileController extends BaseWorkspaceController {
             //Check if managed user is the same than the logged user
             if(managedOrcid.equals(getEffectiveUserOrcid())) {
                 //Check if the managed user email is verified, if not, verify it
+                verifyPrimaryEmailIfNeeded(managedOrcid);
                 //Create the delegation
+                
                 //Send notifications
             } else {
                 //Exception, the email was not for you
@@ -1046,9 +1048,9 @@ public class ManageProfileController extends BaseWorkspaceController {
     /**
      * TODO
      * */
-    private void verifyEmailIfNeeded(String orcid) {
+    private void verifyPrimaryEmailIfNeeded(String orcid) {
         if(!emailManager.isPrimaryEmailVerified(orcid)) {
-            //TODO: Verify email
+            emailManager.verifyPrimaryEmail(orcid);
         }
             
     }

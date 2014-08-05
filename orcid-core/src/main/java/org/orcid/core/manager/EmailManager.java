@@ -48,4 +48,6 @@ public interface EmailManager {
     boolean verifyEmail(String email);
     
     boolean isPrimaryEmailVerified(String orcid);
+    
+    boolean verifyPrimaryEmail(String orcid);
 }
