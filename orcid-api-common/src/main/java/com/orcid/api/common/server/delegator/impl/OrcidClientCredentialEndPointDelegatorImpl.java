@@ -85,7 +85,9 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
                     "One of the provided scopes is not allowed. Please refere to the list of allowed scopes at: http://support.orcid.org/knowledgebase/articles/120162-orcid-scopes");
         }
 
-        clientId = client.getName();
+        String clientName = client.getName();
+        LOGGER.info("Comparing passed clientId and client name from spring auth: clientId={}, client.name={}", clientId, clientName);
+        clientId = clientName;
         Map<String, String> parameters = new HashMap<String, String>();
         if (code != null) {
             parameters.put("code", code);
