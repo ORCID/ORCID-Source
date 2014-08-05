@@ -16,6 +16,7 @@
  */
 package org.orcid.frontend.web.controllers;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1015,32 +1016,66 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = {"/authorize-delegates"}, method = RequestMethod.GET)
     public ModelAndView authorizeDelegatesRequest(@RequestParam("key") String key) {
         ModelAndView mav = new ModelAndView("manage");
-        Map<String, String> params = decryptDelegationKey(key);
-        if(params.containsKey(AdminController.MANAGED_USER_PARAM) && params.containsKey(AdminController.TRUSTED_USER_PARAM)) {
-            String managedOrcid = params.get(AdminController.MANAGED_USER_PARAM);
-            String trustedOrcid = params.get(AdminController.TRUSTED_USER_PARAM);
-            //Check if managed user is the same than the logged user
-            if(managedOrcid.equals(getEffectiveUserOrcid())) {
-                //Check if the managed user email is verified, if not, verify it
-                verifyPrimaryEmailIfNeeded(managedOrcid);
-                //Create the delegation
-                
-                //Send notifications
+        try {
+            Map<String, String> params = decryptDelegationKey(key);
+            if(params.containsKey(AdminController.MANAGED_USER_PARAM) && params.containsKey(AdminController.TRUSTED_USER_PARAM)) {
+                String managedOrcid = params.get(AdminController.MANAGED_USER_PARAM);
+                String trustedOrcid = params.get(AdminController.TRUSTED_USER_PARAM);
+                //Check if managed user is the same than the logged user
+                if(managedOrcid.equals(getEffectiveUserOrcid())) {
+                    //Check if the managed user email is verified, if not, verify it
+                    verifyPrimaryEmailIfNeeded(managedOrcid);
+                    //Check if the delegation doesnt exists
+                    GivenPermissionToEntity existing = givenPermissionToDao.findByGiverAndReceiverOrcid(managedOrcid, trustedOrcid);
+                    if(existing == null) {
+                        // Clear the delegate's profile from the cache so that the granting
+                        // user is visible to them immediately
+                        Date delegateLastModified = profileDao.updateLastModifiedDate(trustedOrcid);
+                        GivenPermissionToEntity permission = new GivenPermissionToEntity();
+                        permission.setGiver(managedOrcid);
+                        ProfileSummaryEntity receiver = new ProfileSummaryEntity(trustedOrcid);
+                        receiver.setLastModified(delegateLastModified);
+                        permission.setReceiver(receiver);
+                        permission.setApprovalDate(new Date());
+                        givenPermissionToDao.merge(permission);
+                        OrcidProfile currentUser = getEffectiveProfile();
+                        ProfileEntity delegateProfile = profileEntityManager.findByOrcid(trustedOrcid);
+                        DelegationDetails details = new DelegationDetails();
+                        details.setApprovalDate(new ApprovalDate(DateUtils.convertToXMLGregorianCalendar(permission.getApprovalDate())));
+                        DelegateSummary summary = new DelegateSummary();
+                        details.setDelegateSummary(summary);
+                        summary.setOrcidIdentifier(new OrcidIdentifier(trustedOrcid));
+                        String creditName = delegateProfile.getCreditName();
+                        if (StringUtils.isNotBlank(creditName)) {
+                            summary.setCreditName(new CreditName(creditName));
+                        }
+                        List<DelegationDetails> detailsList = new ArrayList<>(1);
+                        detailsList.add(details);                                                            
+                        //Send notifications
+                        notificationManager.sendNotificationToAddedDelegate(currentUser, detailsList);                    
+                    }                                
+                    mav.addObject("admin-delegate-approved", getMessage("admin.delegate.success", trustedOrcid));
+                } else {
+                    //Exception, the email was not for you
+                    mav.addObject("admin-delegate-failed", getMessage("admin.delegate.error.invalid_user"));
+                }            
             } else {
-                //Exception, the email was not for you
+                //Error
+                mav.addObject("admin-delegate-failed", getMessage("admin.delegate.error.invalid_link"));
             }
-            
-        } else {
-            //Error
+        } catch(UnsupportedEncodingException uee) {
+            mav.addObject("admin-delegate-failed", getMessage("admin.delegate.error.invalid_link"));
         }
+        
         return mav;
     }
     
     /**
      * TODO
+     * @throws UnsupportedEncodingException 
      * */
-    private Map<String, String> decryptDelegationKey(String encryptedKey) {
-        String jsonString = encryptionManager.decryptForExternalUse(encryptedKey);
+    private Map<String, String> decryptDelegationKey(String encryptedKey) throws UnsupportedEncodingException  {
+        String jsonString = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedKey), "UTF-8"));        
         Map<String, String> params = (HashMap<String, String>)JSON.parse(jsonString);
         return params;
     }

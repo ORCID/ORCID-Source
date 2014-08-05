@@ -27,6 +27,7 @@ import java.util.TreeMap;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.util.ajax.JSON;
@@ -643,7 +644,8 @@ public class AdminController extends BaseController {
         String paramsString = JSON.toString(params);
         if (StringUtils.isNotBlank(paramsString)) {
             String encryptedParams = encryptionManager.encryptForExternalUse(paramsString);
-            String url = getBaseUri() + AUTHORIZE_DELEGATION_ACTION + "?key=" + encryptedParams;            
+            String base64EncodedParams = Base64.encodeBase64URLSafeString(encryptedParams.getBytes());
+            String url = getBaseUri() + AUTHORIZE_DELEGATION_ACTION + "?key=" + base64EncodedParams;            
             return url;
         } else {
             return null;

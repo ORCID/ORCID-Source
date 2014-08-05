@@ -23,6 +23,16 @@
          <strong><@spring.message "orcid_social.twitter.enabled"/></strong>
      </div>
  </#if>
+ <#if admin-delegate-approved??>
+ 	<div class="alert alert-success">
+         <strong>${admin-delegate-approved}</strong>
+     </div>
+ </#if> 
+  <#if admin-delegate-failed??>
+ 	<div class="alert alert-success">
+         <strong>${admin-delegate-failed}</strong>
+     </div>
+ </#if> 
 <div class="row">
 	<div class="col-md-3 col-sm-12 col-xs-12 padding-fix">
 		<#include "admin_menu.ftl"/>
