@@ -6137,7 +6137,17 @@ function OauthAuthorizationController($scope, $compile){
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        success: function(data) {
-	        	window.location = data.redirectUri.value;
+	        	if(data) {
+	        		if(data.errors.length != 0) {
+	        			$scope.authorizationForm = data;
+	        			$scope.$apply();
+	        		} else {
+	        			window.location = data.redirectUri.value;
+	        		}	        		
+	        	} else {
+	        		console.log("Error authenticating the user");
+	        	} 
+	        	
 	        }
 		}).fail(function() { 	    	
 	    	console.log("An error occured authenticating the user.");

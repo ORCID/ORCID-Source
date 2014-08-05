@@ -87,17 +87,15 @@
 			</div>
 			 
 			<!-- LOGIN FORM -->			
-			<div id="login" ng-show="!showRegisterForm" ng-init="loadAndInitLoginForm('${scopesString}','${redirect_uri}','${client_id}','${response_type}', '${user_id}')">            		
-	            
-            	
+			<div id="login" ng-show="!showRegisterForm" ng-init="loadAndInitLoginForm('${scopesString}','${redirect_uri}','${client_id}','${response_type}', '${user_id}')">            			                        	
 				  <div class="row">
-				  <div class="form-group has-feedback">
-				    <label for="userId" class="col-sm-3 control-label"><@orcid.msg 'oauth_sign_in.labelemailorID'/></label>
-				    <div class="col-sm-9">
-				      <input type="text" name="userId" ng-model="authorizationForm.userName.value" placeholder="Email or iD" class="form-control" >
-				      <span class="glyphicon glyphicon-asterisk form-control-feedback-oauth"></span>
-				    </div>
-				  </div>
+					  <div class="form-group has-feedback">
+					    <label for="userId" class="col-sm-3 control-label"><@orcid.msg 'oauth_sign_in.labelemailorID'/></label>
+					    <div class="col-sm-9">
+					      <input type="text" name="userId" ng-model="authorizationForm.userName.value" placeholder="Email or iD" class="form-control" >
+					      <span class="glyphicon glyphicon-asterisk form-control-feedback-oauth"></span>
+					    </div>
+					  </div>
 				 </div>
 				 <div class="row">  
 				  <div class="form-group has-feedback">
@@ -107,6 +105,13 @@
 				      <span class="glyphicon glyphicon-asterisk form-control-feedback-oauth"></span>
 				    </div>
 				  </div>
+	        	</div>
+	        	<div class="row">
+	        		<div class="form-group has-feedback">
+		        		<span class="orcid-error" ng-show="authorizationForm.errors.length > 0">
+							<div ng-repeat='error in authorizationForm.errors' ng-bind-html="error"></div>
+				   		</span>
+			   		</div>
 	        	</div>
 	        	
 	            <div class="row">
