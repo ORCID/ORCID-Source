@@ -247,17 +247,23 @@
 			         </div>
 				</div>
 			   
-			    <div>
-			        <div class="relative"  style="margin-bottom: 15px;">
-			            <label><@orcid.msg 'register.labelTermsofUse'/> <span class="required"  ng-class="{'text-error':register.termsOfUse.value == false}">*</span></label>
-			            <label class="checkbox" style="width: 100%"></label>
-			            <input type="checkbox" tabindex="9" name="acceptTermsAndConditions" ng-model="registrationForm.termsOfUse.value" ng-change="serverValidate('TermsOfUse')" />
-			            <@orcid.msg 'register.labelconsent'/> <a href="${aboutUri}/footer/privacy-policy" target="_blank"><@orcid.msg 'register.labelprivacypolicy'/></a>&nbsp;<@orcid.msg 'register.labeland'/>&nbsp;<@orcid.msg 'common.termsandconditions1'/><a href="${aboutUri}/content/orcid-terms-use" target="_blank"><@orcid.msg 'common.termsandconditions2'/></a>&nbsp;<@orcid.msg 'common.termsandconditions3'/></p>			            
-			            <span class="orcid-error" ng-show="registrationForm.termsOfUse.errors.length > 0">
-							<div ng-repeat='error in registrationForm.termsOfUse.errors' ng-bind-html="error"></div>
-			   			</span>
-			        </div>
-				</div>   
+			    
+		        <div style="margin-bottom: 15px;">
+			        <div class="row">
+			            <label for="termsConditions" class="col-sm-12">
+			            	<@orcid.msg 'register.labelTermsofUse'/>
+			            	<span class="required"  ng-class="{'text-error':register.termsOfUse.value == false}">*</span>
+			            </label>
+			            <div class="col-sm-12">			            
+				            <input type="checkbox" name="termsConditions" tabindex="9" name="acceptTermsAndConditions" ng-model="registrationForm.termsOfUse.value" ng-change="serverValidate('TermsOfUse')" />
+				            <@orcid.msg 'register.labelconsent'/> <a href="${aboutUri}/footer/privacy-policy" target="_blank"><@orcid.msg 'register.labelprivacypolicy'/></a>&nbsp;<@orcid.msg 'register.labeland'/>&nbsp;<@orcid.msg 'common.termsandconditions1'/><a href="${aboutUri}/content/orcid-terms-use" target="_blank"><@orcid.msg 'common.termsandconditions2'/></a>&nbsp;<@orcid.msg 'common.termsandconditions3'/></p>			            
+				            <span class="orcid-error" ng-show="registrationForm.termsOfUse.errors.length > 0">
+								<div ng-repeat='error in registrationForm.termsOfUse.errors' ng-bind-html="error"></div>
+				   			</span>
+			   			</div>
+			   		</div>
+		        </div>
+				   
 			   
 			    <div id="register-buttons">                     		            		               					
 					<button class="btn btn-primary" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="registerAndAuthorize()" onclick="${authOnClick} orcidGA.gaFormSumbitDelay(this); return false;">

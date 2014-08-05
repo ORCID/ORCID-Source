@@ -4216,7 +4216,9 @@ ul.oauth-scopes li{
 }
 
 
-.oauth-registration .form-group input{
+.oauth-registration .form-group input[type="text"],
+.oauth-registration .form-group input[type="email"],
+.oauth-registration .form-group input[type="password"]{
 	margin-bottom: 0;
 	width: 89%;
 }
