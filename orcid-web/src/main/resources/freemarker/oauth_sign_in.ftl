@@ -134,9 +134,7 @@
 							</button>		                 	  
 						</div>  
 	            </div>                      
-        	</div> 
-        	
-        	
+        	</div>         	        	
         	
         	<!-- REGISTER FORM -->
         	<div id="register" class="oauth-registration" ng-show="showRegisterForm" ng-init="loadAndInitRegistrationForm('${scopesString}','${redirect_uri}','${client_id}','${response_type}')">
@@ -178,8 +176,7 @@
 				        </div>				         
 				     </div>
 			    </div>
-			    
-			    
+			    			    
 			    <div class="form-group">
 			        <label class="col-sm-3 control-label"><@orcid.msg 'oauth_sign_up.labelemail'/></label>
 			        <div class="col-sm-9 bottomBuffer">
@@ -228,7 +225,7 @@
 				<div style="margin-bottom: 20px; margin-top: 10px;">
 			        <label class="privacy-toggle-lbl"><@orcid.msg 'privacy_preferences.activitiesVisibilityDefault'/></label>
 			    	<@orcid.privacyToggle 
-			    	    angularModel="register.activitiesVisibilityDefault.visibility" 
+			    	    angularModel="registrationForm.activitiesVisibilityDefault.visibility" 
 			    	    questionClick="toggleClickPrivacyHelp('workPrivHelp')"
 						clickedClassCheck="{'popover-help-container-show':privacyHelp['workPrivHelp']==true}" 
 						publicClick="updateActivitiesVisibilityDefault('PUBLIC', $event)"

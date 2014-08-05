@@ -6188,7 +6188,6 @@ function OauthAuthorizationController($scope, $compile){
 	};
 	
 	$scope.register = function() {
-		console.log(angular.toJson($scope.registrationForm));
 		$.ajax({
 	        url: getBaseUri() + '/oauth/custom/register.json',
 	        type: 'POST',
@@ -6261,7 +6260,6 @@ function OauthAuthorizationController($scope, $compile){
 	};
 	
 	$scope.serverValidate = function (field) {
-		console.log(angular.toJson($scope.registrationForm));
 		if (field === undefined) field = '';
 		$.ajax({
 	        url: getBaseUri() + '/oauth/custom/register/validate' + field + '.json',
@@ -6277,6 +6275,10 @@ function OauthAuthorizationController($scope, $compile){
 	    	// something bad is happening!
 	    	console.log("OauthAuthorizationController.serverValidate() error");
 	    });
+	};
+	
+	$scope.updateActivitiesVisibilityDefault = function(priv, $event) {
+		$scope.registrationForm.activitiesVisibilityDefault.visibility = priv;
 	};
 	
 	//------------------------
@@ -6323,11 +6325,11 @@ function OauthAuthorizationController($scope, $compile){
 		}).fail(function() { 	    	
 	    	console.log("An error occured authorizing the user.");
 	    });
-	};
+	};		
 	
 	//------------------
 	//------COMMON------
-	//------------------
+	//------------------		
 	$scope.initializeCommonFields = function(client_name, client_group_name) {
 		$scope.clientName = client_name;
 		$scope.clientGroupName = client_group_name;
@@ -6365,6 +6367,8 @@ function OauthAuthorizationController($scope, $compile){
 	    });
 	};
 };
+
+
 
 /*Angular Multi-selectbox*/
 angular.module('ui.multiselect', [])
