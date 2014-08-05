@@ -27,6 +27,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 import java.net.URI;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +36,9 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.StringUtils;
+import org.eclipse.jetty.util.ajax.JSON;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.After;
@@ -96,6 +100,9 @@ public class ManageProfileControllerTest extends BaseControllerTest {
 
     @Resource
     private GenericDao<SecurityQuestionEntity, Integer> securityQuestionDao;
+    
+    @Resource(name = "adminController")
+    AdminController adminController;
 
     @Mock
     private OrcidIndexManager mockOrcidIndexManager;
@@ -266,6 +273,31 @@ public class ManageProfileControllerTest extends BaseControllerTest {
         verify(mockNotificationManager, times(1)).sendNotificationToAddedDelegate(any(OrcidProfile.class), (argThat(onlyNewDelegateAdded())));
     }
 
+    @Test
+    public void testAuthorizeAdminDelegates() throws Exception {
+        String url = generateEncryptedKey("4444-4444-4444-4446", "5555-5555-5555-555X");
+        assertNotNull(url);
+        
+    }
+    
+    /**
+     * TODO
+     * */
+    @Test
+    private String generateEncryptedKey(String trusted, String managed) {
+        Map<String, String> params = new HashMap<String, String>();
+        params.put(AdminController.TRUSTED_USER_PARAM, trusted);
+        params.put(AdminController.MANAGED_USER_PARAM, managed);
+        String paramsString = JSON.toString(params);
+        if (StringUtils.isNotBlank(paramsString)) {
+            String encryptedParams = encryptionManager.encryptForExternalUse(paramsString);
+            String base64EncodedParams = Base64.encodeBase64URLSafeString(encryptedParams.getBytes());
+            return base64EncodedParams;            
+        } else {
+            return null;
+        }
+    }
+    
     private ProfileEntity orcidWithExistingSingleDelegate() {
         ProfileEntity mockEntity = new ProfileEntity();
         mockEntity.setId("4444-4444-4444-4446");

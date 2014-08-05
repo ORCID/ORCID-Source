@@ -83,7 +83,7 @@ public class AdminController extends BaseController {
     public static String MANAGED_USER_PARAM = "managed";
     public static String TRUSTED_USER_PARAM = "trusted";
     
-    private static String AUTHORIZE_DELEGATION_ACTION = "/manage/authorize-delegates";
+    public static String AUTHORIZE_DELEGATION_ACTION = "/manage/authorize-delegates";
     
     @Resource
     ProfileEntityManager profileEntityManager;
