@@ -3828,7 +3828,14 @@ ul.workspace-bar-menu li{
 	padding: 0;
 }
 
-
+a.toggle-menu{
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;	
+}
 
 ul.sort-menu-options{
 	position: absolute;
@@ -3843,38 +3850,30 @@ ul.sort-menu-options{
 	display: none;
 }
 
-a.toggle-menu{
-	-webkit-touch-callout: none;
-	-webkit-user-select: none;
-	-khtml-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;	
-}
-
 ul.sort-menu-options li{
-	border-bottom: 1px solid #FFF;	
-	display: block;
-	min-width: 100px;
-	height: 31px; 
-	width: auto;	
+	border-bottom: 1px solid #FFF;
+	height: 31px;
 	background: #C9CACB;
+	padding-right: 5%;
+	min-width: 100px;	 	
 }
 
-ul.sort-menu-options li a{
-	display: block;
-	padding: 7px 10px;
+ul.sort-menu-options li a{	
+	padding: 7px;
 	color: #FFF;
 	background: #C9CACB;
 	font-size: 12px;
 	font-weight: bold;
-	width: auto;
-	height: 30px;	 
+	width: 105%;
+	min-width: 60px;
+	height: 30px;
+	float: left;	 
 }
 
-ul.sort-menu-options li a span{
-	margin-left: 5px;
-	display: block;
+ul.sort-menu-options li a span{	
+	height: 12px;
+	width: 12px;
+	float: right;	
 }
 
 ul.sort-menu-options li a:hover{	 
@@ -3882,15 +3881,8 @@ ul.sort-menu-options li a:hover{
 }
 
 .checked{
-	background: #a6ce39 !important;
+	background: #a6ce39;
 	display: block;
-	float: left;
-	min-width: 100px;
-	width: auto;
-}
-
-.checked span{
-	margin-right: 5px;
 }
 
 .tablet-desktop-display{
@@ -5308,9 +5300,12 @@ a.toggle-tag-option{
 		top: 40px;
 	}
 	
-	ul.sort-menu-options li,
+	ul.sort-menu-options li{
+		padding-right: 5%;
+	}
+	
 	ul.sort-menu-options li a{
-		width: 100%;
+		width: 105%;
 	}
 	
 	.workspace-accordion-header a.action-option{

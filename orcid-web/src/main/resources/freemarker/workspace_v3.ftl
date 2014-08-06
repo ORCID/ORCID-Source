@@ -256,8 +256,18 @@
 										<@orcid.msg 'manual_orcid_record_contents.sort'/>
 									</a>
 									<ul class="sort-menu-options">
-									    <li><a ng-click="sort('title');" ng-class="{'checked':sortPredicateKey=='title'}"><@orcid.msg 'manual_orcid_record_contents.sort_title'/><span ng-class="{'glyphicon glyphicon-ok pull-right':sortPredicateKey=='title'}" ></span></a></li>
-										<li><a ng-click="sort('date');" ng-class="{'checked':sortPredicateKey=='date'}">Date <span ng-class="{'glyphicon glyphicon-ok pull-right':sortPredicateKey=='date'}"></span></a></li>
+									    <li ng-class="{'checked':sortPredicateKey=='title'}">									    	
+									    	<a ng-click="sort('title');">
+									    		<@orcid.msg 'manual_orcid_record_contents.sort_title'/>
+									    		<span ng-class="{'glyphicon glyphicon-ok':sortPredicateKey=='title'}" ></span>
+									    	</a>									    	
+									    </li>
+										<li ng-class="{'checked':sortPredicateKey=='date'}">											
+											<a ng-click="sort('date');">
+												<@orcid.msg 'manual_orcid_record_contents.sort_date'/>
+												<span ng-class="{'glyphicon glyphicon-ok':sortPredicateKey=='date'}"></span>
+											</a>																						
+										</li>
 								    </ul>
 								</div>
 		                		<ul class="workspace-bar-menu">		                			
