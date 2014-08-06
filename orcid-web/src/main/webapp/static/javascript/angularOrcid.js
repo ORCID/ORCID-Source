@@ -15,18 +15,24 @@
  * =============================================================================
  */
 
-	function openImportWizardUrl(url) {
-		var win = window.open(url, "_target"); 
-		setTimeout( function() {
-		    if(!win || win.outerHeight === 0) {
-		        //First Checking Condition Works For IE & Firefox
-		        //Second Checking Condition Works For Chrome
-		        window.location.href = url;
-		    } 
-		}, 250);
-		$.colorbox.close();		
-	};
+function openImportWizardUrl(url) {
+	var win = window.open(url, "_target"); 
+	setTimeout( function() {
+	    if(!win || win.outerHeight === 0) {
+	        //First Checking Condition Works For IE & Firefox
+	        //Second Checking Condition Works For Chrome
+	        window.location.href = url;
+	    } 
+	}, 250);
+	$.colorbox.close();		
+};
 
+	
+	
+sortPredicateMap = {};
+sortPredicateMap['date'] = ['-dateSortString', 'title'];
+sortPredicateMap['title'] = ['title', '-dateSortString'];
+	
 
 var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.multiselect']);
 
@@ -74,6 +80,7 @@ orcidNgModule.directive('appFileTextReader', function($q){
 	                    if(element.multiple) ngModelCtrl.$setViewValue(values);
 	                    else ngModelCtrl.$setViewValue(values.length ? values[0] : null);
 	                    scope.updateFn(scope);
+	                    element.value = null;
 	                });
 	                function readFile(file) {
 	                    var deferred = $q.defer();
@@ -385,6 +392,7 @@ var GroupedActivities = function(type) {
 	this.defaultPutCode = null;
 	this.dateSortString;
 	this.groupId = GroupedActivities.count;
+	this.title;
 };
 
 GroupedActivities.prototype.test = function() {
@@ -394,7 +402,7 @@ GroupedActivities.prototype.test = function() {
 	else
 		count++;
 	return count;
-}
+};
 
 GroupedActivities.prototype.add = function(activity) {
 	// assumes works are added in the order of the display index desc
@@ -414,6 +422,7 @@ GroupedActivities.prototype.add = function(activity) {
 GroupedActivities.prototype.makeDefault = function(putCode) {
 	this.defaultPutCode = putCode;
 	this.dateSortString = this.activities[putCode].dateSortString;	
+	this.title = this.activities[putCode].workTitle.title.value;
 };
 
 GroupedActivities.prototype.addKey = function(key) {
@@ -471,22 +480,6 @@ GroupedActivities.prototype.rmByPut = function(putCode) {
 	delete this.activities[putCode];
 	this.activitiesCount--;
 	return activities;
-};
-
-GroupedActivities.prototype.updateDefault = function(putsArray) {
-	this.defaultPutCode == undefined;
-	for (var idx in putsArray) {
-		if (this.hasPut(putsArray[idx])) {
-			this.defaultPutCode = putsArray[idx];
-			break;
-		};
-	};
-	// if we don't have a default select the first putCode
-	if (this.defaultPutCode == undefined) 
-		if (this.activitiesCount > 0)
-			for (var idx in activities) {
-				this.defaultPutCode = idx;
-			};
 };
 
 
@@ -586,7 +579,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 			    	console.log("Error fetching blank work");
 			    });
 			},
-			getDetails: function(putCode, type, callback) {
+			getDetails: function(putCode, type, callback) {				
 				if (type == serv.constants.access_type.USER) 
 					var url = getBaseUri() + '/works/getWorkInfo.json?workId=';
 				else // use the anonymous url
@@ -3262,16 +3255,25 @@ function PublicFundingCtrl($scope, $compile, $filter, fundingSrvc){
 }
 
 function PublicWorkCtrl($scope, $compile, $filter, worksSrvc) {
+	$scope.sortPredicateKey = 'date';
+	$scope.sortPredicate = sortPredicateMap[$scope.sortPredicateKey];
+	$scope.sortReverse = false;
 	$scope.worksSrvc = worksSrvc;
-	$scope.showBibtex = true;
+	$scope.showBibtex = false;
 	$scope.moreInfoOpen = false;
 	$scope.moreInfo = {};
 	$scope.displayWorks = true;
 
+	$scope.sort = function(key) {
+		if ($scope.sortPredicateKey == key) 
+			$scope.sortReverse = ! $scope.sortReverse;
+		$scope.sortPredicateKey = key;
+		$scope.sortPredicate = sortPredicateMap[key];
+	};
+	
     $scope.bibtexShowToggle = function () {
     	$scope.showBibtex = !($scope.showBibtex);
     };   
-
 	  
 	$scope.renderTranslatedTitleInfo = function(putCode) {		
 		var info = null; 
@@ -3334,13 +3336,16 @@ function PublicWorkCtrl($scope, $compile, $filter, worksSrvc) {
 }
 
 function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
+	$scope.sortPredicateKey = 'date';
+	$scope.sortPredicate = sortPredicateMap[$scope.sortPredicateKey];
+	$scope.sortReverse = false;
 	$scope.canReadFiles = false;
 	$scope.showBibtexImportWizard = false;
 	$scope.textFiles = null;
 	$scope.worksFromBibtex = null;	
 	$scope.workspaceSrvc = workspaceSrvc;
 	$scope.worksSrvc = worksSrvc;
-	$scope.showBibtex = true;
+	$scope.showBibtex = false;
 	$scope.editTranslatedTitle = false;
 	$scope.types = null;
 	$scope.privacyHelp = {};
@@ -3352,7 +3357,14 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
 	$scope.bibtexCancelLink = false;
 	$scope.bibtextWork = false;
 	$scope.bibtextWorkIndex = null;
+	$scope.citationCollapsed =  true;
 
+	$scope.sort = function(key) {
+		if ($scope.sortPredicateKey == key) 
+			$scope.sortReverse = ! $scope.sortReverse;
+		$scope.sortPredicateKey = key;
+		$scope.sortPredicate = sortPredicateMap[key];
+	};
 	
 	$scope.loadBibtexJs = function() {
         try {
@@ -3452,6 +3464,10 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
     
     $scope.bibtexShowToggle = function () {
     	$scope.showBibtex = !($scope.showBibtex);
+    };
+    
+    $scope.toggleCitation = function () {
+    	$scope.citationCollapsed = !($scope.citationCollapsed);
     };
     
 	$scope.showWorkImportWizard =  function() {
@@ -4384,6 +4400,31 @@ function languageCtrl($scope, $cookies) {
 	    	// something bad is happening!	    	
 	    	console.log("Error setting up language cookie");	    	
 	    });		
+	};
+};
+
+function adminVerifyEmailCtrl($scope,$compile){
+	$scope.showSection = false;
+	
+	$scope.toggleSection = function(){
+		$scope.showSection = !$scope.showSection;
+    	$('#verify_email_section').toggle();
+	};
+	
+	$scope.verifyEmail = function(){
+		$.ajax({
+	        url: getBaseUri()+'/admin-actions/admin-verify-email?email=' + $scope.email,	        
+	        type: 'GET',
+	        dataType: 'text',
+	        success: function(data){
+	        	$scope.$apply(function(){ 
+	        		$scope.result = data;        		
+				});
+	        }
+	    }).fail(function(error) { 
+	    	// something bad is happening!	    	
+	    	console.log("Error verifying the email address");	    	
+	    });	
 	};
 };
 

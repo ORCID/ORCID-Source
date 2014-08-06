@@ -17,16 +17,16 @@
 
 -->
 <ul ng-hide="!worksSrvc.groups.length" class="workspace-publications workspace-body-list bottom-margin-medium" id="body-work-list" ng-cloak>
-    <li class="bottom-margin-small workspace-border-box" ng-repeat="group in worksSrvc.groups | orderBy:['-dateSortString', 'title']">        
+    <li class="bottom-margin-small workspace-border-box" ng-repeat="group in worksSrvc.groups | orderBy:sortPredicate:sortReverse">        
 		<div class="row"> 
 			<!-- Main title -->
 			<div class="col-md-9 col-sm-9 col-xs-12">
-		        <h3 class="workspace-title">
+			    <h3 class="workspace-title">
 		        	<strong ng-bind="group.getActive().workTitle.title.value"></strong><span class="work-subtitle" ng-show="group.getActive().workTitle.subtitle.value" ng-bind="':&nbsp;'.concat(group.getActive().workTitle.subtitle.value)"></span>		        			        	
 		        </h3>
 		        <div class="info-detail">
-		        	<span ng-show="group.getActive().publicationDate.year">{{group.getActive().publicationDate.year}}</span><span ng-show="group.getActive().publicationDate.month">-{{group.getActive().publicationDate.month}}</span>
-		        </div>			        	        
+		        	<span ng-show="group.getActive().publicationDate.year">{{group.getActive().publicationDate.year}}</span><span ng-show="group.getActive().publicationDate.month">-{{group.getActive().publicationDate.month}}</span><span ng-show="group.getActive().publicationDate.year"> | </span> <span class="uppercase">{{group.getActive().workType.value}}</span>		        	
+		        </div>		                	        
 	        </div>
 	        <!-- Settings -->
 	        <div class="col-md-3 col-sm-3 col-xs-12 workspace-toolbar">	        	
@@ -51,9 +51,10 @@
         </div>
         
         <!-- Identifiers / URL / Validations / Versions -->
-		<div class="row bottomBuffer">
+		<div class="row bottomBuffer" ng-show="group.getActive().workExternalIdentifiers.length > 0">
 			<div class="col-md-12 col-sm-12">
-				<ul class="id-details">				
+				<ul class="id-details">
+							
 					<li>
 						<span ng-repeat='ie in group.getActive().workExternalIdentifiers'><span
 						ng-bind-html='ie | workExternalIdentifierHtml:$first:$last:group.getActive().workExternalIdentifiers.length'></span>
