@@ -283,6 +283,10 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
         try {
             Date lastModified = clientDetailsDao.getLastModified(orcid);
             result = clientDetailsDao.findByClientId(orcid, lastModified);
+            if (result!= null) {
+                if (!result.getClientId().equals(orcid)) LOGGER.error("Client getClientId doesn't match. Requested: "+ orcid + " Returned: " + result.getClientId());      
+                if (!result.getId().equals(orcid)) LOGGER.error("Client getId() doesn't match. Requested: "+ orcid + " Returned: " + result.getId());
+            }
         } catch (NoResultException nre) {
 
         }
