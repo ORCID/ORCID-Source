@@ -32,6 +32,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.orcid.core.manager.impl.OrcidSSOManagerImpl;
 import org.orcid.persistence.dao.ProfileDao;
@@ -102,8 +103,11 @@ public class PopulateOAuthSignInCodeIntegrationTest extends DBUnitTest {
     @Test
     public void checkNoPrePop() throws JSONException, InterruptedException {
         webDriver.get(getBaseUrl());
+        
+        WebElement link = webDriver.findElement(By.id("in-login-switch-form"));        
+        link.click();
+        
         // make sure we are on the page
-        assertTrue(webDriver.findElements(By.xpath("//h3[contains(.,\"Don't have an iD? Register\")]")).size() > 0);
         assertTrue(webDriver.findElement(By.xpath("//input[@name='email']")).getAttribute("value").equals(""));
         assertTrue(webDriver.findElement(By.xpath("//input[@name='familyNames']")).getAttribute("value").equals(""));
         assertTrue(webDriver.findElement(By.xpath("//input[@name='givenNames']")).getAttribute("value").equals(""));
@@ -114,7 +118,13 @@ public class PopulateOAuthSignInCodeIntegrationTest extends DBUnitTest {
     @Test
     public void emailPrePopulate() throws JSONException, InterruptedException {
         // test populating form with email that doesn't exist
-        webDriver.get(getBaseUrl() + "&email=non_existent@test.com&family_names=test_family_names&given_names=test_given_name");
+        String url = getBaseUrl() + "&email=non_existent@test.com&family_names=test_family_names&given_names=test_given_name";
+        webDriver.get(url);        
+
+        WebElement link = webDriver.findElement(By.id("in-login-switch-form"));        
+        link.click();        
+        Thread.sleep(150);
+        
         assertTrue(webDriver.findElement(By.xpath("//input[@name='email']")).getAttribute("value").equals("non_existent@test.com"));
         assertTrue(webDriver.findElement(By.xpath("//input[@name='familyNames']")).getAttribute("value").equals("test_family_names"));
         assertTrue(webDriver.findElement(By.xpath("//input[@name='givenNames']")).getAttribute("value").equals("test_given_name"));
@@ -122,20 +132,29 @@ public class PopulateOAuthSignInCodeIntegrationTest extends DBUnitTest {
         assertTrue(webDriver.findElement(By.xpath("//input[@name='userId']")).getAttribute("value").equals(""));
 
         // test exisitng email
-        webDriver.get(getBaseUrl() + "&email=spike@milligan.com&family_names=test_family_names&given_names=test_given_name");
+        url = getBaseUrl() + "&email=spike@milligan.com&family_names=test_family_names&given_names=test_given_name";
+        webDriver.get(url);
+        link = webDriver.findElement(By.id("in-login-switch-form"));        
+        link.click();        
+        Thread.sleep(150);
         assertTrue(webDriver.findElement(By.xpath("//input[@name='userId']")).getAttribute("value").equals("spike@milligan.com"));
         // make sure register
         assertTrue(webDriver.findElement(By.xpath("//input[@name='email']")).getAttribute("value").equals(""));
 
         // populating check populating orcid
-        webDriver.get(getBaseUrl() + "&email=spike@milligan.com&family_names=test_family_names&given_names=test_given_name&orcid=4444-4444-4444-4441");
+        url = getBaseUrl() + "&email=spike@milligan.com&family_names=test_family_names&given_names=test_given_name&orcid=4444-4444-4444-4441";
+        webDriver.get(url);
+        link = webDriver.findElement(By.id("in-login-switch-form"));        
+        link.click();        
+        Thread.sleep(150);
         assertTrue(webDriver.findElement(By.xpath("//input[@name='userId']")).getAttribute("value").equals("4444-4444-4444-4441"));
     }
 
     @Test
     public void orcidIdPreopulate() throws JSONException, InterruptedException {
         // populating check populating orcid
-        webDriver.get(getBaseUrl() + "&orcid=4444-4444-4444-4441");
+        String url = getBaseUrl() + "&orcid=4444-4444-4444-4441";        
+        webDriver.get(url);
         assertTrue(webDriver.findElement(By.xpath("//input[@name='userId']")).getAttribute("value").equals("4444-4444-4444-4441"));
 
         // populating check populating orcid overwrites populating email

@@ -50,7 +50,7 @@ public class Registration implements ErrorsInterface, Serializable {
     
     private Text creationType;
     
-    private Text referredBy;
+    private Text referredBy;        
 
     public Registration() {
         errors = new ArrayList<String>();
@@ -170,6 +170,5 @@ public class Registration implements ErrorsInterface, Serializable {
 
     public void setReferredBy(Text referredBy) {
         this.referredBy = referredBy;
-    }
-
+    }      
 }
