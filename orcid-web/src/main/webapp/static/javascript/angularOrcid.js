@@ -3356,8 +3356,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
 	$scope.edittingWork = false;
 	$scope.bibtexCancelLink = false;
 	$scope.bibtextWork = false;
-	$scope.bibtextWorkIndex = null;
-	$scope.citationCollapsed =  true;
+	$scope.bibtextWorkIndex = null;	
 
 	$scope.sort = function(key) {
 		if ($scope.sortPredicateKey == key) 
@@ -3464,10 +3463,6 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
     
     $scope.bibtexShowToggle = function () {
     	$scope.showBibtex = !($scope.showBibtex);
-    };
-    
-    $scope.toggleCitation = function () {
-    	$scope.citationCollapsed = !($scope.citationCollapsed);
     };
     
 	$scope.showWorkImportWizard =  function() {

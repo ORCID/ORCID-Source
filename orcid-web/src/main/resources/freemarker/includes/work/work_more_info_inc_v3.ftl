@@ -52,13 +52,11 @@
 		
 		<!-- Citation -->                  
 		<div class="row bottomBuffer" ng-show="worksSrvc.details[group.getActive().putCode.value].citation.citation.value" ng-cloak>
-			<div class="col-md-12">
-				<a ng-click="toggleCitation()">
-					<strong><@orcid.msg 'manual_work_form_contents.labelcitation'/></strong <span> (<span ng-show="worksSrvc.details[group.getActive().putCode.value].citation.citationType.value" ng-cloak><i>{{worksSrvc.details[group.getActive().putCode.value].citation.citationType.value}}</i></span>) 
-					</span><span ng-class="citationCollapsed ? 'glyphicon glyphicon-chevron-down small-chevron' : 'glyphicon glyphicon-chevron-up small-chevron'"></span>
-				</a>
+			<div class="col-md-12">				
+				<strong><@orcid.msg 'manual_work_form_contents.labelcitation'/></strong <span> (<span ng-show="worksSrvc.details[group.getActive().putCode.value].citation.citationType.value" ng-cloak><i>{{worksSrvc.details[group.getActive().putCode.value].citation.citationType.value}}</i></span>) 
+				</span>
 			</div>
-			<div class="col-md-12" ng-show="citationCollapsed == false">
+			<div class="col-md-12">				
 				
 				<span ng-show="showBibtex && worksSrvc.details[group.getActive().putCode.value].citation.citationType.value == 'bibtex'">
 					<a class="toggle-tag-option" ng-click="bibtexShowToggle()">
@@ -70,8 +68,7 @@
 					<a class="toggle-tag-option" ng-click="bibtexShowToggle()">
 						[<@orcid.msg 'work.show_in_html'/>]
 					</a>
-				</span>
-				
+				</span>				
 				
 				<div ng-hide="showBibtex && worksSrvc.details[group.getActive().putCode.value].citation.citationType.value == 'bibtex'" ng-bind="worksSrvc.details[group.getActive().putCode.value].citation.citation.value" class="col-md-offset-1 col-md-11 col-sm-offset-1 col-sm-11 col-xs-12 citation-raw"></div>					
 				<div class="row" ng-show="showBibtex && (worksSrvc.bibtexJson[group.getActive().putCode.value]==null || worksSrvc.bibtexJson[group.getActive().putCode.value].length==0)">
