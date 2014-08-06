@@ -432,10 +432,10 @@
 				<!-- Managed -->
 				<div class="form-group">
 					<label for="managed"><@orcid.msg 'admin.delegate.managed.label' /></label>
-					<input type="text" id="managed" placeholder="<@orcid.msg 'admin.delegate.managed.placeholder' />" class="input-xlarge" ng-model="managed" ng-change="checkClaimedStatus('managed')">				
+					<input type="text" id="managed" placeholder="<@orcid.msg 'admin.delegate.managed.placeholder' />" class="input-xlarge" ng-model="request.managed.value" ng-change="checkClaimedStatus('managed')">				
 					<a href class="glyphicon glyphicon-ok green" ng-show="managed_verified"></a>					
-					<div id="invalid-managed" ng-show="invalid_managed" ng-cloak>
-						<span class="orcid-error"><@orcid.msg 'admin.delegate.managed.invalid' /></span><br />
+					<div id="invalid-managed" ng-show="request.managed.errors.length" ng-cloak>
+						<span class="orcid-error" ng-repeat='error in request.managed.errors' ng-bind-html="error"></span><br />
 					</div>							
 				</div>				
 				<!-- Trusted -->
@@ -443,8 +443,8 @@
 					<label for="trusted"><@orcid.msg 'admin.delegate.trusted.label' /></label>
 					<input type="text" id="trusted" placeholder="<@orcid.msg 'admin.delegate.trusted.placeholder' />" class="input-xlarge" ng-model="trusted" ng-change="checkClaimedStatus('trusted')">				
 					<a href class="glyphicon glyphicon-ok green" ng-show="trusted_verified"></a>					
-					<div id="invalid-trusted" ng-show="invalid_trusted" ng-cloak>
-						<span class="orcid-error"><@orcid.msg 'admin.delegate.trusted.invalid' /></span><br />
+					<div id="invalid-trusted" ng-show="request.trusted.errors.length" ng-cloak>
+						<span class="orcid-error" ng-repeat='error in request.trusted.errors' ng-bind-html="error"></span><br />
 					</div>							
 				</div>
 				<!-- Buttons -->

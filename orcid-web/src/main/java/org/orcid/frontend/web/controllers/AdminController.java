@@ -587,18 +587,16 @@ public class AdminController extends BaseController {
      * Admin starts delegation process
      * */
     @RequestMapping(value = "/admin-delegates", method = RequestMethod.POST) 
-    public @ResponseBody String startDelegationProcess(@RequestBody AdminDelegatesRequest request) {               
-        String trusted = request.getTrusted();
-        String managed = request.getManaged();
-        String result = new String();
+    public @ResponseBody AdminDelegatesRequest startDelegationProcess(@RequestBody AdminDelegatesRequest request) {               
+        String trusted = request.getTrusted().getValue();
+        String managed = request.getManaged().getValue();
         boolean trustedIsOrcid = matchesOrcidPattern(trusted);
         if(!trustedIsOrcid) {
             if(emailManager.emailExists(trusted)) {
                 Map<String, String> email = findIdByEmail(trusted);
                 trusted  = email.get(trusted);         
             } else {
-                result = getMessage("admin.delegate.error.invalid_orcid_or_email", trusted);
-                return result;
+                request.getTrusted().getErrors().add(getMessage("admin.delegate.error.invalid_orcid_or_email", trusted));                
             }
         }
         boolean managedIsOrcid = matchesOrcidPattern(managed);
@@ -607,8 +605,7 @@ public class AdminController extends BaseController {
                 Map<String, String> email = findIdByEmail(managed);
                 managed  = email.get(managed);
             } else {
-                result = getMessage("admin.delegate.error.invalid_orcid_or_email", managed);
-                return result;
+                request.getTrusted().getErrors().add(getMessage("admin.delegate.error.invalid_orcid_or_email", managed));
             }                       
         }
         
@@ -618,25 +615,22 @@ public class AdminController extends BaseController {
         
         if(!isTrustedClaimed || !isManagedClaimed) {
             if(!isTrustedClaimed && !isManagedClaimed) {
-                result = getMessage("admin.delegate.error.not_claimed.both", trusted, managed);
+                request.getErrors().add(getMessage("admin.delegate.error.not_claimed.both", trusted, managed));
             } else if(!isTrustedClaimed) {
-                result = getMessage("admin.delegate.error.not_claimed", trusted);
+                request.getTrusted().getErrors().add(getMessage("admin.delegate.error.not_claimed", trusted));
             } else {
-                result = getMessage("admin.delegate.error.not_claimed", managed);
+                request.getManaged().getErrors().add(getMessage("admin.delegate.error.not_claimed", managed));
             }
-            return result;
         }
         
         //Restriction #2: Trusted individual must have a verified primary email address
         if(!emailManager.isPrimaryEmailVerified(trusted)) {
-            result = getMessage("admin.delegate.error.primary_email_not_verified", trusted);
-            return result;
+            request.getErrors().add(getMessage("admin.delegate.error.primary_email_not_verified", trusted));
         }
         
         //Restriction #3: They cant be the same account
         if(trusted.equalsIgnoreCase(managed)) {
-            result = getMessage("admin.delegate.error.cant_be_the_same", trusted, managed);
-            return result;
+            request.getErrors().add(getMessage("admin.delegate.error.cant_be_the_same", trusted, managed));
         }
         
         //Generate link
@@ -647,7 +641,7 @@ public class AdminController extends BaseController {
         //Send email to managed account
         notificationManager.sendDelegationRequestEmail(managedOrcidProfile, trustedOrcidProfile, link);
         
-        return result;
+        return request;
     }
     
     /**

@@ -6134,10 +6134,9 @@ function SocialNetworksCtrl($scope){
 
 function adminDelegatesCtrl($scope){
 	$scope.showSection = false;
-	$scope.managed = '';
-	$scope.trusted = '';
 	$scope.managed_verified = false;
 	$scope.trusted_verified = false;
+	$scope.request = {trusted : {errors: [], value: $scope.trusted}, managed : {errors: [], value: $scope.managed}};
 	
 	$scope.toggleSection = function(){
 		$scope.showSection = !$scope.showSection;
@@ -6174,13 +6173,13 @@ function adminDelegatesCtrl($scope){
 		    });
 	};
 	
-	$scope.confirmDelegatesProcess = function() {
-		console.log($scope.trusted);
-		console.log($scope.managed);
+	$scope.confirmDelegatesProcess = function() {		
 		$.ajax({
 	        url: getBaseUri()+'/admin-actions/admin-delegates',	        
 	        type: 'POST',	        
-	        data: {trusted : $scope.trusted, managed : $scope.managed}, 
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'text',
+	        data: angular.toJson($scope.request), 
 	        success: function(data){
 		        	if(data) {
 		        		if(whichField == 'trusted') {

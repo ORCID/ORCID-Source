@@ -16,25 +16,43 @@
  */
 package org.orcid.pojo;
 
-public class AdminDelegatesRequest {
-    private String trusted;
+import java.util.ArrayList;
+import java.util.List;
 
-    private String managed;
+import org.orcid.pojo.ajaxForm.ErrorsInterface;
+import org.orcid.pojo.ajaxForm.Text;
 
-    public String getTrusted() {
+public class AdminDelegatesRequest implements ErrorsInterface {
+    private List<String> errors = new ArrayList<String>();
+    
+    private Text trusted;
+
+    private Text managed;
+
+    public Text getTrusted() {
         return trusted;
     }
 
-    public void setTrusted(String trusted) {
+    public void setTrusted(Text trusted) {
         this.trusted = trusted;
     }
 
-    public String getManaged() {
+    public Text getManaged() {
         return managed;
     }
 
-    public void setManaged(String managed) {
+    public void setManaged(Text managed) {
         this.managed = managed;
+    }
+
+    @Override
+    public List<String> getErrors() {
+        return errors;
+    }
+
+    @Override
+    public void setErrors(List<String> errors) {
+        this.errors = errors;
     }
 
 }
