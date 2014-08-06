@@ -565,6 +565,8 @@ public class AdminController extends BaseController {
         String result = getMessage("admin.verify_email.success", email);
         if(emailManager.emailExists(email)) {
             emailManager.verifyEmail(email);
+            Map<String, String> ids = emailManager.findIdByEmail(email);
+            orcidProfileManager.updateLastModifiedDate(ids.get(email));
         } else {
             result = getMessage("admin.verify_email.fail", email);
         }
