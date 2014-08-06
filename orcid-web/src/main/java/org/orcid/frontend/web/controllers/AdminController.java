@@ -50,6 +50,7 @@ import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.pojo.AdminChangePassword;
+import org.orcid.pojo.AdminDelegatesRequest;
 import org.orcid.pojo.ProfileDeprecationRequest;
 import org.orcid.pojo.ProfileDetails;
 import org.orcid.pojo.ajaxForm.Group;
@@ -585,8 +586,10 @@ public class AdminController extends BaseController {
     /**
      * Admin starts delegation process
      * */
-    @RequestMapping(value = "/admin-delegates", method = RequestMethod.GET) 
-    public @ResponseBody String startDelegationProcess(@RequestParam("trusted") String trusted, @RequestParam("managed") String managed) {
+    @RequestMapping(value = "/admin-delegates", method = RequestMethod.POST) 
+    public @ResponseBody String startDelegationProcess(@RequestBody AdminDelegatesRequest request) {               
+        String trusted = request.getTrusted();
+        String managed = request.getManaged();
         String result = new String();
         boolean trustedIsOrcid = matchesOrcidPattern(trusted);
         if(!trustedIsOrcid) {
@@ -627,6 +630,12 @@ public class AdminController extends BaseController {
         //Restriction #2: Trusted individual must have a verified primary email address
         if(!emailManager.isPrimaryEmailVerified(trusted)) {
             result = getMessage("admin.delegate.error.primary_email_not_verified", trusted);
+            return result;
+        }
+        
+        //Restriction #3: They cant be the same account
+        if(trusted.equalsIgnoreCase(managed)) {
+            result = getMessage("admin.delegate.error.cant_be_the_same", trusted, managed);
             return result;
         }
         

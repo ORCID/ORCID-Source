@@ -6160,7 +6160,29 @@ function adminDelegatesCtrl($scope){
 	        dataType: 'json',
 	        success: function(data){
 		        	if(data) {
-		        		console.log(data);
+		        		if(whichField == 'trusted') {
+		        			$scope.trusted_verified = true;
+		        		} else {
+		        			$scope.managed_verified = true;
+		        		}
+		        		$scope.$apply();
+		        	}	        	
+	        	}
+	        }).fail(function(error) { 
+		    	// something bad is happening!	    	
+		    	console.log("Error getting account details for: " + orcid);	    	
+		    });
+	};
+	
+	$scope.confirmDelegatesProcess = function() {
+		console.log($scope.trusted);
+		console.log($scope.managed);
+		$.ajax({
+	        url: getBaseUri()+'/admin-actions/admin-delegates',	        
+	        type: 'POST',	        
+	        data: {trusted : $scope.trusted, managed : $scope.managed}, 
+	        success: function(data){
+		        	if(data) {
 		        		if(whichField == 'trusted') {
 		        			$scope.trusted_verified = true;
 		        		} else {
