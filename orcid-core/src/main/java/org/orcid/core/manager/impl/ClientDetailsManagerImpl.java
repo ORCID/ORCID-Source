@@ -88,8 +88,8 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
     public ClientDetailsEntity loadClientByClientId(String clientId) throws OAuth2Exception {
         ClientDetailsEntity clientDetails = findByClientId(clientId);
         if (clientDetails != null) {
+            if (!clientDetails.getClientId().equals(clientId)) LOGGER.error("Client getClientId doesn't match. Requested: "+ clientId + " Returned: " + clientDetails.getClientId());      
             if (!clientDetails.getId().equals(clientId)) LOGGER.error("Client getId() doesn't match. Requested: "+ clientId + " Returned: " + clientDetails.getId());
-            if (!clientDetails.getClientId().equals(clientId)) LOGGER.error("Client getClientId doesn't match. Requested: "+ clientId + " Returned: " + clientDetails.getClientId());
             clientDetails.setDecryptedClientSecret(encryptionManager.decryptForInternalUse(clientDetails.getClientSecretForJpa()));
             return clientDetails;
         } else {
