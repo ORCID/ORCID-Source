@@ -5267,9 +5267,8 @@ a.toggle-tag-option{
 		width: 100%;
 	}
 	
-	.workspace-accordion-header ul>li>a.action-option{
-		width: 33.33%;
-		/* width: 50%;		*/
+	.workspace-accordion-header ul>li>a.action-option{		
+		width: 50%;
 		color: transparent;
 		overflow: hidden;		
 		padding: 15px 0;
@@ -5280,7 +5279,7 @@ a.toggle-tag-option{
 	}
 	
 	.workspace-accordion-header ul>li>a.action-option.two-options{
-		width: 50%;
+		width: 100%;
 		display: block;
 		height: 60px;
 	}
