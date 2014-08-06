@@ -1054,17 +1054,17 @@ public class ManageProfileController extends BaseWorkspaceController {
                         //Send notifications
                         notificationManager.sendNotificationToAddedDelegate(currentUser, detailsList);                    
                     }                                
-                    mav.addObject("admin-delegate-approved", getMessage("admin.delegate.success", trustedOrcid));
+                    mav.addObject("admin_delegate_approved", getMessage("admin.delegate.success", trustedOrcid));
                 } else {
                     //Exception, the email was not for you
-                    mav.addObject("admin-delegate-failed", getMessage("admin.delegate.error.invalid_user"));
+                    mav.addObject("admin_delegate_failed", getMessage("admin.delegate.error.invalid_user"));
                 }            
             } else {
                 //Error
-                mav.addObject("admin-delegate-failed", getMessage("admin.delegate.error.invalid_link"));
+                mav.addObject("admin_delegate_failed", getMessage("admin.delegate.error.invalid_link"));
             }
         } catch(UnsupportedEncodingException uee) {
-            mav.addObject("admin-delegate-failed", getMessage("admin.delegate.error.invalid_link"));
+            mav.addObject("admin_delegate_failed", getMessage("admin.delegate.error.invalid_link"));
         }
         
         return mav;

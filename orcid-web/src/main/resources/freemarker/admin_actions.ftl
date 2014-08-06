@@ -407,6 +407,74 @@
 			</div>
 		</div>
 		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		<!-- Admin delegates -->
+		<a name="admin-delegates"></a>
+		<div ng-controller="adminDelegatesCtrl" class="workspace-accordion-item" ng-cloak>
+			<p>
+				<a  ng-show="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-down blue"></span></span><@orcid.msg 'admin.delegate' /></a>
+				<a  ng-hide="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-right blue"></span></span><@orcid.msg 'admin.delegate' /></a>
+			</p>
+			
+			<div class="collapsible bottom-margin-small admin-modal" id="delegates_section" style="display:none;">
+				<!-- Managed -->
+				<div class="form-group">
+					<label for="managed"><@orcid.msg 'admin.delegate.managed.label' /></label>
+					<input type="text" id="managed" placeholder="<@orcid.msg 'admin.delegate.managed.placeholder' />" class="form-control" ng-model="managed" ng-change="checkClaimedStatus('managed')">				
+					<a href class="glyphicon glyphicon-ok green" ng-show="managed_verified"></a>					
+					<div id="invalid-managed" ng-show="invalid_managed" ng-cloak>
+						<span class="orcid-error"><@orcid.msg 'admin.delegate.managed.invalid' /></span><br />
+					</div>							
+				</div>				
+				<!-- Trusted -->
+				<div class="form-group">
+					<label for="trusted"><@orcid.msg 'admin.delegate.trusted.label' /></label>
+					<input type="text" id="trusted" placeholder="<@orcid.msg 'admin.delegate.trusted.placeholder' />" class="form-control" ng-model="trusted" ng-change="checkClaimedStatus('trusted')">				
+					<a href class="glyphicon glyphicon-ok green" ng-show="trusted_verified"></a>					
+					<div id="invalid-trusted" ng-show="invalid_trusted" ng-cloak>
+						<span class="orcid-error"><@orcid.msg 'admin.delegate.trusted.invalid' /></span><br />
+					</div>							
+				</div>
+				<!-- Buttons -->
+				<div class="controls save-btns pull-left">
+		    		<span id="bottom-confirm-delegate-profile" ng-click="confirmDelegatesProcess()" class="btn btn-primary"><@orcid.msg 'admin.delegate.button'/></span>
+				</div>
+			</div>
+		</div>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		<!-- Remove security question -->
 		<a name="remove-security-question"></a>
 		<div ng-controller="removeSecQuestionCtrl" class="workspace-accordion-item" ng-cloak>

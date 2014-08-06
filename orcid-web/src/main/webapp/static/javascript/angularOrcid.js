@@ -6113,6 +6113,88 @@ function SocialNetworksCtrl($scope){
 	$scope.checkTwitterStatus();
 };
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function adminDelegatesCtrl($scope){
+	$scope.showSection = false;
+	$scope.managed = '';
+	$scope.trusted = '';
+	$scope.managed_verified = false;
+	$scope.trusted_verified = false;
+	
+	$scope.toggleSection = function(){
+		$scope.showSection = !$scope.showSection;
+    	$('#delegates_section').toggle();
+	};
+	
+	$scope.checkClaimedStatus = function (whichField){
+		var orcidOrEmail = '';
+		if(whichField == 'trusted') {
+			$scope.trusted_verified = false;
+			orcidOrEmail = $scope.trusted;
+		} else {
+			$scope.managed_verified = false;
+			orcidOrEmail = $scope.managed;
+		}
+		
+		$.ajax({
+	        url: getBaseUri()+'/admin-actions/admin-delegates/check-claimed-status.json?orcidOrEmail=' + orcidOrEmail,	        
+	        type: 'GET',
+	        dataType: 'json',
+	        success: function(data){
+		        	if(data) {
+		        		console.log(data);
+		        		if(whichField == 'trusted') {
+		        			$scope.trusted_verified = true;
+		        		} else {
+		        			$scope.managed_verified = true;
+		        		}
+		        		$scope.$apply();
+		        	}	        	
+	        	}
+	        }).fail(function(error) { 
+		    	// something bad is happening!	    	
+		    	console.log("Error getting account details for: " + orcid);	    	
+		    });
+	};
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /*Angular Multi-selectbox*/
 angular.module('ui.multiselect', [])
 

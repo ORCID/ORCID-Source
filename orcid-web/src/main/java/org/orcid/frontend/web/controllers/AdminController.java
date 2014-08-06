@@ -291,7 +291,7 @@ public class AdminController extends BaseController {
      * */
     @RequestMapping(value = { "/deprecate-profile/check-orcid.json", "/deactivate-profile/check-orcid.json" }, method = RequestMethod.GET)
     public @ResponseBody
-    ProfileDetails checkOrcid(@RequestParam("orcid") String orcid) {
+    ProfileDetails checkOrcidToDeprecate(@RequestParam("orcid") String orcid) {        
         ProfileEntity profile = profileEntityManager.findByOrcid(orcid);
         ProfileDetails profileDetails = new ProfileDetails();
         if (profile != null) {
@@ -590,13 +590,23 @@ public class AdminController extends BaseController {
         String result = new String();
         boolean trustedIsOrcid = matchesOrcidPattern(trusted);
         if(!trustedIsOrcid) {
-            Map<String, String> email = findIdByEmail(trusted);
-            trusted  = email.get(trusted);            
+            if(emailManager.emailExists(trusted)) {
+                Map<String, String> email = findIdByEmail(trusted);
+                trusted  = email.get(trusted);         
+            } else {
+                result = getMessage("admin.delegate.error.invalid_orcid_or_email", trusted);
+                return result;
+            }
         }
         boolean managedIsOrcid = matchesOrcidPattern(managed);
         if(!managedIsOrcid) {
-            Map<String, String> email = findIdByEmail(managed);
-            managed  = email.get(managed);            
+            if(emailManager.emailExists(managed)) {
+                Map<String, String> email = findIdByEmail(managed);
+                managed  = email.get(managed);
+            } else {
+                result = getMessage("admin.delegate.error.invalid_orcid_or_email", managed);
+                return result;
+            }                       
         }
         
         //Restriction #1: Both accounts must be claimed
@@ -630,6 +640,30 @@ public class AdminController extends BaseController {
         
         return result;
     }
+    
+    /**
+     * Admin starts delegation process
+     * */    
+    @RequestMapping(value = "/admin-delegates/check-claimed-status.json", method = RequestMethod.GET) 
+    public @ResponseBody boolean checkClaimedStatus(@RequestParam("orcidOrEmail")String orcidOrEmail) {
+        boolean isOrcid = matchesOrcidPattern(orcidOrEmail);
+        String orcid = null;
+        //If it is not an orcid, check the value from the emails table
+        if(!isOrcid) {
+            if(emailManager.emailExists(orcidOrEmail)) {
+                Map<String, String> email = findIdByEmail(orcidOrEmail);
+                orcid = email.get(orcidOrEmail);
+            }
+        } else {
+            orcid = orcidOrEmail;
+        }
+        
+        if(PojoUtil.isEmpty(orcid))
+            return false;
+        
+        return profileEntityManager.isProfileClaimed(orcid);
+    }
+    
     
     /**
      * Encrypts a string

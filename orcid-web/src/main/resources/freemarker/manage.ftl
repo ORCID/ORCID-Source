@@ -23,12 +23,12 @@
          <strong><@spring.message "orcid_social.twitter.enabled"/></strong>
      </div>
  </#if>
- <#if admin-delegate-approved??>
+ <#if admin_delegate_approved??>
  	<div class="alert alert-success">
          <strong>${admin-delegate-approved}</strong>
      </div>
  </#if> 
-  <#if admin-delegate-failed??>
+  <#if admin_delegate_failed??>
  	<div class="alert alert-success">
          <strong>${admin-delegate-failed}</strong>
      </div>
