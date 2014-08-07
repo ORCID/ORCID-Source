@@ -25,12 +25,12 @@
  </#if>
  <#if admin_delegate_approved??>
  	<div class="alert alert-success">
-         <strong>${admin-delegate-approved}</strong>
+         <strong>${admin_delegate_approved}</strong>
      </div>
  </#if> 
   <#if admin_delegate_failed??>
  	<div class="alert alert-success">
-         <strong>${admin-delegate-failed}</strong>
+         <strong>${admin_delegate_failed}</strong>
      </div>
  </#if> 
 <div class="row">

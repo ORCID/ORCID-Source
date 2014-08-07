@@ -118,7 +118,7 @@ public class AdminControllerTest extends BaseControllerTest {
     @Test
     @Transactional("transactionManager")
     public void testCheckOrcid() throws Exception {
-        ProfileDetails profileDetails = adminController.checkOrcid("4444-4444-4444-4441");
+        ProfileDetails profileDetails = adminController.checkOrcidToDeprecate("4444-4444-4444-4441");
         assertNotNull(profileDetails);
         assertEquals(0, profileDetails.getErrors().size());
         assertEquals("spike@milligan.com", profileDetails.getEmail());
@@ -126,7 +126,7 @@ public class AdminControllerTest extends BaseControllerTest {
         assertEquals("Spike", profileDetails.getGivenNames());
         assertEquals("4444-4444-4444-4441", profileDetails.getOrcid());
 
-        profileDetails = adminController.checkOrcid("4444-4444-4444-4411");
+        profileDetails = adminController.checkOrcidToDeprecate("4444-4444-4444-4411");
         assertNotNull(profileDetails);
         assertEquals(1, profileDetails.getErrors().size());
         assertEquals(adminController.getMessage("admin.profile_deprecation.errors.inexisting_orcid", "4444-4444-4444-4411"), profileDetails.getErrors().get(0));
