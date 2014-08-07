@@ -587,16 +587,24 @@ public class AdminController extends BaseController {
      * Admin starts delegation process
      * */
     @RequestMapping(value = "/admin-delegates", method = RequestMethod.POST) 
-    public @ResponseBody AdminDelegatesRequest startDelegationProcess(@RequestBody AdminDelegatesRequest request) {               
+    public @ResponseBody AdminDelegatesRequest startDelegationProcess(@RequestBody AdminDelegatesRequest request) {
+        //Clear errors
+        request.setErrors(new ArrayList<String>());
+        request.getManaged().setErrors(new ArrayList<String>());
+        request.getTrusted().setErrors(new ArrayList<String>());
+        
         String trusted = request.getTrusted().getValue();
         String managed = request.getManaged().getValue();
         boolean trustedIsOrcid = matchesOrcidPattern(trusted);
+        boolean haveErrors = false;
+        
         if(!trustedIsOrcid) {
             if(emailManager.emailExists(trusted)) {
                 Map<String, String> email = findIdByEmail(trusted);
                 trusted  = email.get(trusted);         
             } else {
-                request.getTrusted().getErrors().add(getMessage("admin.delegate.error.invalid_orcid_or_email", trusted));                
+                request.getTrusted().getErrors().add(getMessage("admin.delegate.error.invalid_orcid_or_email", request.getTrusted().getValue()));  
+                haveErrors = true;
             }
         }
         boolean managedIsOrcid = matchesOrcidPattern(managed);
@@ -605,9 +613,13 @@ public class AdminController extends BaseController {
                 Map<String, String> email = findIdByEmail(managed);
                 managed  = email.get(managed);
             } else {
-                request.getTrusted().getErrors().add(getMessage("admin.delegate.error.invalid_orcid_or_email", managed));
+                request.getManaged().getErrors().add(getMessage("admin.delegate.error.invalid_orcid_or_email", request.getManaged().getValue()));
+                haveErrors = true;
             }                       
         }
+        
+        if(haveErrors)
+            return request;
         
         //Restriction #1: Both accounts must be claimed
         boolean isTrustedClaimed = profileEntityManager.isProfileClaimed(trusted);
@@ -615,23 +627,29 @@ public class AdminController extends BaseController {
         
         if(!isTrustedClaimed || !isManagedClaimed) {
             if(!isTrustedClaimed && !isManagedClaimed) {
-                request.getErrors().add(getMessage("admin.delegate.error.not_claimed.both", trusted, managed));
+                request.getErrors().add(getMessage("admin.delegate.error.not_claimed.both", trusted, request.getManaged().getValue()));
             } else if(!isTrustedClaimed) {
-                request.getTrusted().getErrors().add(getMessage("admin.delegate.error.not_claimed", trusted));
+                request.getTrusted().getErrors().add(getMessage("admin.delegate.error.not_claimed", request.getTrusted().getValue()));
             } else {
-                request.getManaged().getErrors().add(getMessage("admin.delegate.error.not_claimed", managed));
+                request.getManaged().getErrors().add(getMessage("admin.delegate.error.not_claimed", request.getManaged().getValue()));
             }
+            haveErrors = true;
         }
         
         //Restriction #2: Trusted individual must have a verified primary email address
         if(!emailManager.isPrimaryEmailVerified(trusted)) {
-            request.getErrors().add(getMessage("admin.delegate.error.primary_email_not_verified", trusted));
+            request.getTrusted().getErrors().add(getMessage("admin.delegate.error.primary_email_not_verified", request.getTrusted().getValue()));
+            haveErrors = true;
         }
         
         //Restriction #3: They cant be the same account
         if(trusted.equalsIgnoreCase(managed)) {
-            request.getErrors().add(getMessage("admin.delegate.error.cant_be_the_same", trusted, managed));
+            request.getErrors().add(getMessage("admin.delegate.error.cant_be_the_same", request.getTrusted().getValue(), request.getManaged().getValue()));
+            haveErrors = true;
         }
+        
+        if(haveErrors)
+            return request;
         
         //Generate link
         String link = generateEncryptedLink(trusted, managed);
@@ -640,6 +658,8 @@ public class AdminController extends BaseController {
         OrcidProfile trustedOrcidProfile = orcidProfileManager.retrieveClaimedOrcidProfile(trusted);
         //Send email to managed account
         notificationManager.sendDelegationRequestEmail(managedOrcidProfile, trustedOrcidProfile, link);
+        
+        request.setSuccessMessage(getMessage("admin.delegate.admin.success", managedOrcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail()));
         
         return request;
     }

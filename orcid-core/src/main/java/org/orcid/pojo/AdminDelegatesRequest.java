@@ -29,6 +29,8 @@ public class AdminDelegatesRequest implements ErrorsInterface {
 
     private Text managed;
 
+    private String successMessage;
+    
     public Text getTrusted() {
         return trusted;
     }
@@ -55,4 +57,11 @@ public class AdminDelegatesRequest implements ErrorsInterface {
         this.errors = errors;
     }
 
+    public String getSuccessMessage() {
+        return successMessage;
+    }
+
+    public void setSuccessMessage(String successMessage) {
+        this.successMessage = successMessage;
+    }        
 }
