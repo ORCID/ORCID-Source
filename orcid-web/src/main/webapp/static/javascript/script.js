@@ -31,6 +31,7 @@ if (!(window.console && console.log)) {
 	};
 };
 
+
 // add number padding function 
 Number.prototype.pad = function(size) {
     var s = String(this);

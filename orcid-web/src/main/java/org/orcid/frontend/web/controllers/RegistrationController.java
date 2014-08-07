@@ -250,7 +250,7 @@ public class RegistrationController extends BaseController {
         return reg;
     }
 
-    private static OrcidProfile toProfile(Registration reg) {
+    public static OrcidProfile toProfile(Registration reg) {
         OrcidProfile profile = new OrcidProfile();
         OrcidBio bio = new OrcidBio();
 
@@ -944,20 +944,11 @@ public class RegistrationController extends BaseController {
 
     }
 
-    private void createMinimalRegistrationAndLogUserIn(HttpServletRequest request, OrcidProfile profileToSave) {
-        orcidProfileManager.addLocale(profileToSave, RequestContextUtils.getLocale(request));
-        URI uri = OrcidWebUtils.getServerUriWithContextPath(request);
+    public void createMinimalRegistrationAndLogUserIn(HttpServletRequest request, OrcidProfile profileToSave) {
         String password = profileToSave.getPassword();
-        String sessionId = request.getSession() == null ? null : request.getSession().getId();
         UsernamePasswordAuthenticationToken token = null;
-        String email = profileToSave.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
         try {
-            LOGGER.info("About to create profile from registration email={}, sessionid={}", email, sessionId);
-            profileToSave = registrationManager.createMinimalRegistration(profileToSave);
-            notificationManager.sendVerificationEmail(profileToSave, uri, profileToSave.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
-            request.getSession().setAttribute(ManageProfileController.CHECK_EMAIL_VALIDATED, false);
-            LOGGER.info("Created profile from registration orcid={}, email={}, sessionid={}", new Object[] { profileToSave.getOrcidIdentifier().getPath(), email,
-                    sessionId });
+            profileToSave = createMinimalRegistration(request, profileToSave);
             token = new UsernamePasswordAuthenticationToken(profileToSave.getOrcidIdentifier().getPath(), password);
             token.setDetails(new WebAuthenticationDetails(request));
             Authentication authentication = authenticationManager.authenticate(token);
@@ -968,6 +959,21 @@ public class RegistrationController extends BaseController {
             LOGGER.warn("User {0} should have been logged-in, but we unable to due to a problem", e, (token != null ? token.getPrincipal() : "empty principle"));
         }
 
+    }
+    
+    public OrcidProfile createMinimalRegistration(HttpServletRequest request, OrcidProfile profileToSave) {
+        orcidProfileManager.addLocale(profileToSave, RequestContextUtils.getLocale(request));
+        URI uri = OrcidWebUtils.getServerUriWithContextPath(request);        
+        String sessionId = request.getSession() == null ? null : request.getSession().getId();
+        String email = profileToSave.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+        
+        LOGGER.info("About to create profile from registration email={}, sessionid={}", email, sessionId);
+        profileToSave = registrationManager.createMinimalRegistration(profileToSave);
+        notificationManager.sendVerificationEmail(profileToSave, uri, profileToSave.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
+        request.getSession().setAttribute(ManageProfileController.CHECK_EMAIL_VALIDATED, false);
+        LOGGER.info("Created profile from registration orcid={}, email={}, sessionid={}", new Object[] { profileToSave.getOrcidIdentifier().getPath(), email,
+                sessionId });
+        return profileToSave;        
     }
 
 }

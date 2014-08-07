@@ -16,6 +16,7 @@
  */
 package org.orcid.persistence.jpa.entities;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 /**
@@ -25,7 +26,9 @@ import java.util.Comparator;
  * @author Will Simpson
  * 
  */
-public class OrcidEntityIdComparator<T> implements Comparator<OrcidEntity<T>> {
+public class OrcidEntityIdComparator<T> implements Comparator<OrcidEntity<T>>, Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unchecked")
     @Override

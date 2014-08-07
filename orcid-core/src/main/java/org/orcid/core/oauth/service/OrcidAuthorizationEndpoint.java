@@ -18,10 +18,14 @@ package org.orcid.core.oauth.service;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.security.oauth2.common.exceptions.ClientAuthenticationException;
+import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.security.oauth2.common.exceptions.RedirectMismatchException;
+import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.endpoint.AuthorizationEndpoint;
 import org.springframework.web.HttpSessionRequiredException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -30,8 +34,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 public class OrcidAuthorizationEndpoint extends AuthorizationEndpoint {
 
+    private static String SCOPE = "scope";
+    
     private String redirectUriError = "forward:/oauth/error/redirect-uri-mismatch";
     private String oauthError = "forward:/oauth/error";
+    
     
     @Override
     @ExceptionHandler(HttpSessionRequiredException.class)
@@ -47,10 +54,24 @@ public class OrcidAuthorizationEndpoint extends AuthorizationEndpoint {
             return new ModelAndView(redirectUriError);
         } else if (e instanceof ClientAuthenticationException) {
             return new ModelAndView(oauthError);
-        }
+        } 
         
         return super.handleOAuth2Exception(e, webRequest);
     }
+    
+    /**
+     * Validate if the given client have the defined scope
+     * @param scopes a space or comma separated list of scopes
+     * @param clientDetails
+     * @throws InvalidScopeException in case the given client doesnt have any of the given scopes
+     * */
+    public void validateScope(String scopes, ClientDetails clientDetails) throws InvalidScopeException {
+        Map<String, String> parameters = new HashMap<String, String>();
+        parameters.put(SCOPE, scopes);
+        getAuthorizationRequestManager().validateParameters(parameters, clientDetails);
+    }
+    
+   
     
     private URI buildRedirectUri(ServletWebRequest webRequest) throws URISyntaxException {
         String[] referers = webRequest.getHeaderValues("referer");
@@ -63,6 +84,5 @@ public class OrcidAuthorizationEndpoint extends AuthorizationEndpoint {
             uri = contextPath + uri;
         }
         return new URI(uri);
-    }
-
+    }        
 }
