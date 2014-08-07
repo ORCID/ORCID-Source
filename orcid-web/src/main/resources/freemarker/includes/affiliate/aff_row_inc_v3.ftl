@@ -43,7 +43,7 @@
 	        	</span>
 	        	        	
         	</div>
-        	<span class="divisor" ng-show="affiliation.roleTitle"></span>
+        	<span class="divisor" ng-show="affiliation.roleTitle && (affiliation.startDate || affiliation.endDate)"></span>
         	
         	<div class="role" ng-show="affiliation.roleTitle">
 	            <span ng-bind-html="affiliation.roleTitle.value"></span>
