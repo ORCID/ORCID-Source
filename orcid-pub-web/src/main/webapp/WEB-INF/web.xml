@@ -21,14 +21,14 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
 
-
     <display-name>ORCID - Tier 1 API</display-name>
 
     <!-- Initialise Spring when we start up -->
     <listener>
-        <listener-class>
-            org.springframework.web.context.ContextLoaderListener
-        </listener-class>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+    <listener>
+        <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
     </listener>
     
     <listener>
@@ -67,7 +67,7 @@
 	<filter-mapping>
 		<filter-name>corsFilter</filter-name>
 		<url-pattern>*</url-pattern>
-	</filter-mapping>   
+	</filter-mapping>
 
     <filter>
         <filter-name>encodingFilter</filter-name>
@@ -81,16 +81,6 @@
             <param-value>true</param-value>
         </init-param>
     </filter>
-
-	<filter>
-        <filter-name>clientCredentialsTokenEndpointFilter</filter-name>
-        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-    </filter>
-
-    <filter-mapping>
-        <filter-name>clientCredentialsTokenEndpointFilter</filter-name>
-        <url-pattern>/oauth/token</url-pattern>
-    </filter-mapping>
 
     <filter-mapping>
         <filter-name>encodingFilter</filter-name>
@@ -109,9 +99,33 @@
         <dispatcher>INCLUDE</dispatcher>
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>ERROR</dispatcher>
-    </filter-mapping>	
+    </filter-mapping>
 
- 	<filter>
+    <filter>
+        <filter-name>clientCredentialsTokenEndpointFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>clientCredentialsTokenEndpointFilter</filter-name>
+        <url-pattern>/oauth/token</url-pattern>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>FORWARD</dispatcher>
+        <dispatcher>INCLUDE</dispatcher>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>ERROR</dispatcher>
+    </filter-mapping>
+
+    <filter>
         <filter-name>jersey</filter-name>
         <filter-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</filter-class>
         <init-param>
