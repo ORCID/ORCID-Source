@@ -55,8 +55,6 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.impl.OrcidProfileManagerImpl;
-import org.orcid.frontend.web.forms.AddDelegateForm;
-import org.orcid.frontend.web.forms.ChangePasswordForm;
 import org.orcid.frontend.web.forms.ChangePersonalInfoForm;
 import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
 import org.orcid.frontend.web.util.BaseControllerTest;
@@ -271,31 +269,7 @@ public class ManageProfileControllerTest extends BaseControllerTest {
         addDelegate.setPassword("password");
         controller.addDelegate(addDelegate);
         verify(mockNotificationManager, times(1)).sendNotificationToAddedDelegate(any(OrcidProfile.class), (argThat(onlyNewDelegateAdded())));
-    }
-
-    @Test
-    public void testAuthorizeAdminDelegates() throws Exception {
-        String url = generateEncryptedKey("4444-4444-4444-4446", "5555-5555-5555-555X");
-        assertNotNull(url);
-        
-    }
-    
-    /**
-     * TODO
-     * */    
-    private String generateEncryptedKey(String trusted, String managed) {
-        Map<String, String> params = new HashMap<String, String>();
-        params.put(AdminController.TRUSTED_USER_PARAM, trusted);
-        params.put(AdminController.MANAGED_USER_PARAM, managed);
-        String paramsString = JSON.toString(params);
-        if (StringUtils.isNotBlank(paramsString)) {
-            String encryptedParams = encryptionManager.encryptForExternalUse(paramsString);
-            String base64EncodedParams = Base64.encodeBase64URLSafeString(encryptedParams.getBytes());
-            return base64EncodedParams;            
-        } else {
-            return null;
-        }
-    }
+    }   
     
     private ProfileEntity orcidWithExistingSingleDelegate() {
         ProfileEntity mockEntity = new ProfileEntity();
