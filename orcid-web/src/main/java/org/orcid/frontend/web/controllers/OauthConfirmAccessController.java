@@ -136,7 +136,10 @@ public class OauthConfirmAccessController extends BaseController {
 
                     Matcher redirectUriMatcher = redirectUriPattern.matcher(url);
                     if (redirectUriMatcher.find()) {
-                        redirectUri = redirectUriMatcher.group(1);
+                        try {
+                            redirectUri = URLDecoder.decode(redirectUriMatcher.group(1), "UTF-8");
+                        } catch (UnsupportedEncodingException e) {
+                        }
                     }
 
                     Matcher responseTypeMatcher = responseTypePattern.matcher(url);

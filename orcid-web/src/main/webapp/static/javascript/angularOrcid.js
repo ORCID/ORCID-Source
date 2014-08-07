@@ -6265,13 +6265,16 @@ function OauthAuthorizationController($scope, $compile){
 			type: 'GET',
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
-	        success: function(data) {
+	        success: function(data) {	        	
 	        	$scope.registrationForm = data;	    
 	        	$scope.registrationForm.scope.value=scopes;
 	        	$scope.registrationForm.redirectUri.value=redirect_uri;
 	        	$scope.registrationForm.clientId.value=client_id;
 	        	$scope.registrationForm.responseType.value=response_type;
 	        	$scope.registrationForm.referredBy.value=client_id;
+	        	console.log(angular.toJson($scope.registrationForm));
+	        	if($scope.registrationForm.email.value)
+	        		$scope.showRegisterForm = true;
 	        	$scope.$apply();
 	        }
 		}).fail(function() { 	    	
