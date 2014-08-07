@@ -50,7 +50,6 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.MailSender;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -60,9 +59,6 @@ public class NotificationManagerTest extends BaseTest {
     public static final String ORCID_INTERNAL_FULL_XML = "/orcid-internal-full-message-latest.xml";
 
     private Unmarshaller unmarshaller;
-
-    @Mock
-    private MailSender mailSender;
 
     @Mock
     private GenericDao<SecurityQuestionEntity, Integer> securityQuestionDao;
@@ -86,8 +82,7 @@ public class NotificationManagerTest extends BaseTest {
     }
 
     @Before
-    public void initMocks() throws Exception {
-        notificationManager.setMailSender(mailSender);        
+    public void initMocks() throws Exception {           
         NotificationManagerImpl notificationManagerImpl = getTargetObject(notificationManager, NotificationManagerImpl.class);
         notificationManagerImpl.setEncryptionManager(encryptionManager);
         notificationManagerImpl.setProfileEventDao(profileEventDao);
@@ -208,4 +203,12 @@ public class NotificationManagerTest extends BaseTest {
         }
     }
 
+    @Test
+    public void testAdminDelegateRequest() throws JAXBException, IOException, URISyntaxException {
+        for (Locale locale : Locale.values()) {
+            OrcidProfile orcidProfile = getProfile(locale);
+            notificationManager.sendDelegationRequestEmail(orcidProfile, orcidProfile, "http://test.orcid.org");
+        }
+    }
+    
 }

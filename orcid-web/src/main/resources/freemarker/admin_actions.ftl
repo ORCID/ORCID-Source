@@ -407,6 +407,46 @@
 			</div>
 		</div>
 		
+		<!-- Admin delegates -->
+		<a name="admin-delegates"></a>
+		<div ng-controller="adminDelegatesCtrl" class="workspace-accordion-item" ng-cloak>
+			<p>
+				<a  ng-show="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-down blue"></span></span><@orcid.msg 'admin.delegate' /></a>
+				<a  ng-hide="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-right blue"></span></span><@orcid.msg 'admin.delegate' /></a>
+			</p>
+			
+			<div class="collapsible bottom-margin-small admin-modal" id="delegates_section" style="display:none;">
+				<div ng-show="success">
+					<span class="orcid-error" ng-bind-html="request.successMessage"></span>
+				</div>
+				<div ng-show="request.errors.length > 0">
+					<span class="orcid-error" ng-repeat='error in request.errors' ng-bind-html="error"></span><br />
+				</div>
+				<!-- Managed -->
+				<div class="form-group">
+					<label for="managed"><@orcid.msg 'admin.delegate.managed.label' /></label>
+					<input type="text" id="managed" placeholder="<@orcid.msg 'admin.delegate.managed.placeholder' />" class="input-xlarge" ng-model="request.managed.value" ng-change="checkClaimedStatus('managed')">				
+					<a href class="glyphicon glyphicon-ok green" ng-show="managed_verified"></a>					
+					<div id="invalid-managed" ng-show="request.managed.errors.length > 0" ng-cloak>
+						<span class="orcid-error" ng-repeat='error in request.managed.errors' ng-bind-html="error"></span><br />
+					</div>							
+				</div>				
+				<!-- Trusted -->
+				<div class="form-group">
+					<label for="trusted"><@orcid.msg 'admin.delegate.trusted.label' /></label>
+					<input type="text" id="trusted" placeholder="<@orcid.msg 'admin.delegate.trusted.placeholder' />" class="input-xlarge" ng-model="request.trusted.value" ng-change="checkClaimedStatus('trusted')">				
+					<a href class="glyphicon glyphicon-ok green" ng-show="trusted_verified"></a>					
+					<div id="invalid-trusted" ng-show="request.trusted.errors.length > 0" ng-cloak>
+						<span class="orcid-error" ng-repeat='error in request.trusted.errors' ng-bind-html="error"></span><br />
+					</div>							
+				</div>
+				<!-- Buttons -->
+				<div class="controls save-btns pull-left">
+		    		<span id="bottom-confirm-delegate-profile" ng-click="confirmDelegatesProcess()" class="btn btn-primary"><@orcid.msg 'admin.delegate.button'/></span>
+				</div>
+			</div>
+		</div>
+		
 		<!-- Remove security question -->
 		<a name="remove-security-question"></a>
 		<div ng-controller="removeSecQuestionCtrl" class="workspace-accordion-item" ng-cloak>

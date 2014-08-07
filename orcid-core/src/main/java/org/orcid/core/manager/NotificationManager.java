@@ -23,11 +23,8 @@ import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.springframework.mail.MailSender;
 
 public interface NotificationManager {
-
-    void setMailSender(MailSender mailSender);
 
     // void sendRegistrationEmail(RegistrationEntity registration, URI baseUri);
 
@@ -56,5 +53,7 @@ public interface NotificationManager {
     void sendProfileDeprecationEmail(ProfileEntity deprecatedProfile, ProfileEntity primaryProfile);
     
     public boolean sendPrivPolicyEmail2014_03(OrcidProfile orcidProfile, URI baseUri);
+    
+    void sendDelegationRequestEmail(OrcidProfile managed, OrcidProfile trusted, String link);
 
 }

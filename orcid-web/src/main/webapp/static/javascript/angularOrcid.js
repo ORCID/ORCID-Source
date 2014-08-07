@@ -6120,6 +6120,72 @@ function SocialNetworksCtrl($scope){
 	$scope.checkTwitterStatus();
 };
 
+function adminDelegatesCtrl($scope){
+	$scope.showSection = false;
+	$scope.managed_verified = false;
+	$scope.trusted_verified = false;
+	$scope.success = false;
+	$scope.request = {trusted : {errors: [], value: ''}, managed : {errors: [], value: ''}};
+	
+	$scope.toggleSection = function(){
+		$scope.showSection = !$scope.showSection;
+    	$('#delegates_section').toggle();
+	};
+	
+	$scope.checkClaimedStatus = function (whichField){
+		var orcidOrEmail = '';
+		if(whichField == 'trusted') {
+			$scope.trusted_verified = false;
+			orcidOrEmail = $scope.request.trusted.value;
+		} else {
+			$scope.managed_verified = false;
+			orcidOrEmail = $scope.request.managed.value;
+		}
+		
+		$.ajax({
+	        url: getBaseUri()+'/admin-actions/admin-delegates/check-claimed-status.json?orcidOrEmail=' + orcidOrEmail,	        
+	        type: 'GET',
+	        dataType: 'json',
+	        success: function(data){
+		        	if(data) {
+		        		if(whichField == 'trusted') {
+		        			$scope.trusted_verified = true;
+		        		} else {
+		        			$scope.managed_verified = true;
+		        		}
+		        		$scope.$apply();
+		        	}	        	
+	        	}
+	        }).fail(function(error) { 
+		    	// something bad is happening!	    	
+		    	console.log("Error getting account details for: " + orcid);	    	
+		    });
+	};
+	
+	$scope.confirmDelegatesProcess = function() {
+		$scope.success = false;
+		$.ajax({
+	        url: getBaseUri()+'/admin-actions/admin-delegates',	        
+	        type: 'POST',	        
+	        contentType: 'application/json;charset=UTF-8',	        
+	        dataType: 'json',
+	        data: angular.toJson($scope.request), 
+	        success: function(data){	
+	        		console.log(data);	        		
+		        	$scope.request = data;		 
+		        	console.log(data.successMessage);
+		        	if(data.successMessage) {
+		        		$scope.success = true;
+		        	}
+		        	$scope.$apply();
+	        	}
+	        }).fail(function(error) { 
+		    	// something bad is happening!	    	
+		    	console.log("Error getting delegates request");	    	
+		    });
+	};
+};
+
 function OauthAuthorizationController($scope, $compile){ 
 	$scope.showClientDescription = false;
 	$scope.showRegisterForm = false;
@@ -6403,7 +6469,6 @@ function OauthAuthorizationController($scope, $compile){
 	    });
 	};
 };
-
 
 
 /*Angular Multi-selectbox*/

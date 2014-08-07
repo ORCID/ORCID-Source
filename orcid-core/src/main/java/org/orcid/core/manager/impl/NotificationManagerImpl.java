@@ -16,8 +16,6 @@
  */
 package org.orcid.core.manager.impl;
 
-import static org.orcid.utils.NullUtils.noneNull;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.text.MessageFormat;
@@ -63,7 +61,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.MessageSource;
-import org.springframework.mail.MailSender;
 
 /**
  * @author Will Simpson
@@ -102,12 +99,6 @@ public class NotificationManagerImpl implements NotificationManager {
     @Resource
     private MailGunManager mailGunManager;
 
-    private MailSender mailSender;
-
-    private String fromAddress;
-
-    private String supportAddress;
-
     private String LAST_RESORT_ORCID_USER_EMAIL_NAME = "ORCID Registry User";
 
     private String ORCID_PRIVACY_POLICY_UPDATES = "ORCID - Privacy Policy Updates";
@@ -132,16 +123,6 @@ public class NotificationManagerImpl implements NotificationManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationManagerImpl.class);
 
     @Required
-    public void setFromAddress(String fromAddress) {
-        this.fromAddress = fromAddress;
-    }
-
-    @Required
-    public void setSupportAddress(String supportAddress) {
-        this.supportAddress = supportAddress;
-    }
-
-    @Required
     public void setBaseUri(URI baseUri) {
         this.baseUri = baseUri;
     }
@@ -152,12 +133,6 @@ public class NotificationManagerImpl implements NotificationManager {
 
     public void setApiRecordCreationEmailEnabled(boolean apiRecordCreationEmailEnabled) {
         this.apiRecordCreationEmailEnabled = apiRecordCreationEmailEnabled;
-    }
-
-    @Override
-    @Required
-    public void setMailSender(MailSender mailSender) {
-        this.mailSender = mailSender;
     }
 
     @Required
@@ -753,5 +728,39 @@ public class NotificationManagerImpl implements NotificationManager {
             throw new IllegalArgumentException(e);
         }
         return String.format("%s/%s/%s", baseUri.toString(), path, base64EncodedParams);
+    }
+    
+    @Override
+    public void sendDelegationRequestEmail(OrcidProfile managed, OrcidProfile trusted, String link) {
+        // Create map of template params
+        String orcid = managed.getOrcidIdentifier().getPath();
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+        templateParams.put("baseUri", baseUri);
+        templateParams.put("link", link);
+        
+        String trustedOrcidValue = trusted.retrieveOrcidPath();
+        String emailNameForDelegate = deriveEmailFriendlyName(managed);
+        String trustedOrcidName = deriveEmailFriendlyName(trusted);
+        templateParams.put("emailNameForDelegate", emailNameForDelegate);        
+        templateParams.put("trustedOrcidName", trustedOrcidName);        
+        templateParams.put("trustedOrcidValue", trustedOrcidValue);        
+        
+        Email primaryEmail = managed.getOrcidBio().getContactDetails().retrievePrimaryEmail();
+        if (primaryEmail == null) {
+            LOGGER.info("Cant send admin delegate email if primary email is null: {}", orcid);
+            return;
+        }       
+
+        addMessageParams(templateParams, managed);
+        
+        String htmlBody = templateManager.processTemplate("admin_delegate_request_html.ftl", templateParams);
+
+        // Send message
+        if (apiRecordCreationEmailEnabled) {
+            mailGunManager.sendEmail(DELEGATE_NOTIFY_ORCID_ORG, primaryEmail.getValue(), getSubject("email.subject.claim_reminder", managed), null, htmlBody);
+            profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.ADMIN_PROFILE_DELEGATION_REQUEST));
+        } else {
+            LOGGER.debug("Not sending admin delegate email, because API record creation email option is disabled. Message would have been: {}", htmlBody);
+        }
     }
 }

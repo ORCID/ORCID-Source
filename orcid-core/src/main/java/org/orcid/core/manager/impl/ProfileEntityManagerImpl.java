@@ -178,5 +178,10 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     public Iso3166Country getCountry(String orcid) {
         return profileDao.getCountry(orcid);
     }
+    
+    @Override
+    public boolean isProfileClaimed(String orcid) {
+        return profileDao.getClaimedStatus(orcid);
+    }
 
 }

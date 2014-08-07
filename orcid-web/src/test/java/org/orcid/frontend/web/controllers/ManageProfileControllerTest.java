@@ -27,6 +27,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 import java.net.URI;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +36,9 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.StringUtils;
+import org.eclipse.jetty.util.ajax.JSON;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.After;
@@ -51,8 +55,6 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.impl.OrcidProfileManagerImpl;
-import org.orcid.frontend.web.forms.AddDelegateForm;
-import org.orcid.frontend.web.forms.ChangePasswordForm;
 import org.orcid.frontend.web.forms.ChangePersonalInfoForm;
 import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
 import org.orcid.frontend.web.util.BaseControllerTest;
@@ -96,11 +98,14 @@ public class ManageProfileControllerTest extends BaseControllerTest {
 
     @Resource
     private GenericDao<SecurityQuestionEntity, Integer> securityQuestionDao;
+    
+    @Resource(name = "adminController")
+    AdminController adminController;
 
     @Mock
     private OrcidIndexManager mockOrcidIndexManager;
 
-    @Mock
+    @Resource
     private EncryptionManager encryptionManager;
 
     @Mock
@@ -264,8 +269,8 @@ public class ManageProfileControllerTest extends BaseControllerTest {
         addDelegate.setPassword("password");
         controller.addDelegate(addDelegate);
         verify(mockNotificationManager, times(1)).sendNotificationToAddedDelegate(any(OrcidProfile.class), (argThat(onlyNewDelegateAdded())));
-    }
-
+    }   
+    
     private ProfileEntity orcidWithExistingSingleDelegate() {
         ProfileEntity mockEntity = new ProfileEntity();
         mockEntity.setId("4444-4444-4444-4446");
