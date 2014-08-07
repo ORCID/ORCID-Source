@@ -208,7 +208,6 @@ public class NotificationManagerTest extends BaseTest {
         for (Locale locale : Locale.values()) {
             OrcidProfile orcidProfile = getProfile(locale);
             notificationManager.sendDelegationRequestEmail(orcidProfile, orcidProfile, "http://test.orcid.org");
-
         }
     }
     

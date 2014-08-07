@@ -61,7 +61,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.MessageSource;
-import org.springframework.mail.MailSender;
 
 /**
  * @author Will Simpson
@@ -738,6 +737,13 @@ public class NotificationManagerImpl implements NotificationManager {
         Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put("baseUri", baseUri);
         templateParams.put("link", link);
+        
+        String trustedOrcidValue = trusted.retrieveOrcidPath();
+        String emailNameForDelegate = deriveEmailFriendlyName(managed);
+        String trustedOrcidName = deriveEmailFriendlyName(trusted);
+        templateParams.put("emailNameForDelegate", emailNameForDelegate);        
+        templateParams.put("trustedOrcidName", trustedOrcidName);        
+        templateParams.put("trustedOrcidValue", trustedOrcidValue);        
         
         Email primaryEmail = managed.getOrcidBio().getContactDetails().retrievePrimaryEmail();
         if (primaryEmail == null) {

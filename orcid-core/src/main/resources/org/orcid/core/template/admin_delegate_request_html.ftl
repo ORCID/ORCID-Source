@@ -27,10 +27,16 @@
 			<img src="http://orcid.org/sites/all/themes/orcid/img/orcid-logo.png" alt="ORCID.org"/>
 		    <hr />
 		  	<span style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666; font-weight: bold;">
-			   
+			   <@emailMacros.msg "email.common.dear" /> ${emailNameForDelegate}<@emailMacros.msg "email.common.dear.comma" />
 		    </span>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
+				<@emailMacros.msg "email.admin_delegate_request.you_have.1" />${trustedOrcidName}<@emailMacros.msg "email.admin_delegate_request.you_have.2" />${baseUri}/${trustedOrcidValue}<@emailMacros.msg "email.admin_delegate_request.you_have.3" />
+		    </p>
+		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
 				${link}               
+		    </p>
+		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
+                <@emailMacros.msg "email.admin_delegate_request.for_a_tutorial" />
 		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666; white-space: pre;">
 <@emailMacros.msg "email.common.kind_regards" />
