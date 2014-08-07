@@ -1015,7 +1015,15 @@ public class ManageProfileController extends BaseWorkspaceController {
      * */
     @RequestMapping(value = {"/authorize-delegates"}, method = RequestMethod.GET)
     public ModelAndView authorizeDelegatesRequest(@RequestParam("key") String key) {
-        ModelAndView mav = new ModelAndView("manage");
+        ModelAndView mav = new ModelAndView("manage");        
+        //Set default objects the manage page needs
+        mav.addObject("showPrivacy", true);
+        mav.addObject("managePasswordOptionsForm", populateManagePasswordFormFromUserInfo());
+        mav.addObject("preferencesForm", new PreferencesForm(getEffectiveProfile()));
+        mav.addObject("profile", getEffectiveProfile());
+        mav.addObject("activeTab", "profile-tab");
+        mav.addObject("securityQuestions", getSecurityQuestions());
+        
         try {
             Map<String, String> params = decryptDelegationKey(key);
             if(params.containsKey(AdminController.MANAGED_USER_PARAM) && params.containsKey(AdminController.TRUSTED_USER_PARAM)) {

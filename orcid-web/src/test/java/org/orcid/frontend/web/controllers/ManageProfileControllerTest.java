@@ -107,7 +107,7 @@ public class ManageProfileControllerTest extends BaseControllerTest {
     @Mock
     private OrcidIndexManager mockOrcidIndexManager;
 
-    @Mock
+    @Resource
     private EncryptionManager encryptionManager;
 
     @Mock
@@ -282,8 +282,7 @@ public class ManageProfileControllerTest extends BaseControllerTest {
     
     /**
      * TODO
-     * */
-    @Test
+     * */    
     private String generateEncryptedKey(String trusted, String managed) {
         Map<String, String> params = new HashMap<String, String>();
         params.put(AdminController.TRUSTED_USER_PARAM, trusted);
