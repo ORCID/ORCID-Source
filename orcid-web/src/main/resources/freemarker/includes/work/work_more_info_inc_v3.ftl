@@ -25,31 +25,42 @@
 		
 		<span class="dotted-bar"></span>
 		<div class="row">		
-			<div class="col-md-12">			
-				
+			<div class="col-md-6" ng-show="worksSrvc.details[group.getActive().putCode.value].workTitle.translatedTitle.content" ng-cloak>
 				<!-- Translated title -->
-				<div class="bottomBuffer" ng-show="worksSrvc.details[group.getActive().putCode.value].workTitle.translatedTitle.content" ng-cloak>
+				<div class="bottomBuffer">
 					<strong><@orcid.msg
 						'manual_work_form_contents.labeltranslatedtitle'/></strong> <span><i>({{worksSrvc.details[group.getActive().putCode.value].workTitle.translatedTitle.languageName}})</i></span>
 					<div>{{worksSrvc.details[group.getActive().putCode.value].workTitle.translatedTitle.content}}</div>				
 				</div>
-				
-				<!-- Subtitle -->		
-				<div class="bottomBuffer" ng-show="worksSrvc.details[group.getActive().putCode.value].workTitle.subtitle.value" ng-cloak>
-					<strong> <@orcid.msg 'manual_work_form_contents.labelsubtitle'/> </strong>
-					<div ng-bind="worksSrvc.details[group.getActive().putCode.value].workTitle.subtitle.value"></div>
+			</div>
+			<div class="col-md-6" ng-show="worksSrvc.details[group.getActive().putCode.value].languageCode.value" ng-cloak>
+				<!-- Language -->
+				<div class="bottomBuffer">					
+					<strong><@orcid.msg
+						'manual_work_form_contents.labellanguage'/></strong>
+					<div ng-bind="worksSrvc.details[group.getActive().putCode.value].languageName.value"></div>					
 				</div>
-				
+			</div>
+			<div class="col-md-6" ng-show="worksSrvc.details[group.getActive().putCode.value].journalTitle.value" ng-cloak>
 				<!-- Journal Title -->
-				<div class="bottomBuffer" ng-show="worksSrvc.details[group.getActive().putCode.value].journalTitle.value" ng-cloak>
+				<div class="bottomBuffer">
 					<strong> <@orcid.msg 'manual_work_form_contents.journalTitle'/> </strong>
 					<div ng-bind="worksSrvc.details[group.getActive().putCode.value].journalTitle.value"></div>
-				</div>				
-				
-			</div>	
+				</div>
+			</div>
+			<div class="col-md-6" ng-show="worksSrvc.details[group.getActive().putCode.value].url.value" ng-cloak>
+				<!-- URL -->				
+				<div class="bottomBuffer">
+					<strong>
+						<@orcid.msg
+						'manual_work_form_contents.labelURL'/>
+					</strong>
+					<div>
+						<a href="{{worksSrvc.details[group.getActive().putCode.value].url.value | urlWithHttp}}" target="_blank">{{worksSrvc.details[group.getActive().putCode.value].url.value}}</a>					
+					</div>				
+				</div>
+			</div>			
 		</div>
-		
-		
 		<!-- Citation -->                  
 		<div class="row bottomBuffer" ng-show="worksSrvc.details[group.getActive().putCode.value].citation.citation.value" ng-cloak>
 			<div class="col-md-12">				
@@ -86,8 +97,6 @@
 				</div>						
 			</div>
 		</div>
-		
-				
 		<!-- Description -->
 		<div class="row bottomBuffer" ng-show="worksSrvc.details[group.getActive().putCode.value].shortDescription.value"
 			ng-cloak>
@@ -97,48 +106,26 @@
 				<div ng-bind="worksSrvc.details[group.getActive().putCode.value].shortDescription.value"
 					style="white-space: pre-wrap;"></div>
 			</div>
-		</div>				
-		<!-- URL -->
-		<div class="row bottomBuffer" ng-show="worksSrvc.details[group.getActive().putCode.value].url.value" ng-cloak>
-			<div class="col-md-12">
-				<strong>
-					<@orcid.msg
-					'manual_work_form_contents.labelURL'/>
-				</strong>
-				<div>
-					<a href="{{worksSrvc.details[group.getActive().putCode.value].url.value | urlWithHttp}}" target="_blank">{{worksSrvc.details[group.getActive().putCode.value].url.value}}</a>					
+		</div>
+		
+		<div class="row bottomBuffer">
+			<div class="col-md-6" ng-show="worksSrvc.details[group.getActive().putCode.value].countryCode.value" ng-cloak>
+				<!-- Country -->				
+				<div class="bottomBuffer">
+					<strong><@orcid.msg
+						'manual_work_form_contents.labelcountry'/></strong>
+					<div ng-bind="worksSrvc.details[group.getActive().putCode.value].countryName.value"></div>
 				</div>
-			</div>
-		</div>
-		
-		<!-- Contributors -->
-		
-		<div class="row bottomBuffer" ng-show="worksSrvc.details[group.getActive().putCode.value].contributors.length > 0"
-			ng-cloak>
-			<div class="col-md-12">
-				<strong> Contributor </strong>
-				<div ng-repeat="contributor in worksSrvc.details[group.getActive().putCode.value].contributors">
-					{{contributor.creditName.value}} <span
-						ng-bind='contributor | contributorFilter'></span>
-				</div>
-			</div>
-		</div>
-		
-		<!-- Language -->
-		<div class="row bottomBuffer" ng-show="worksSrvc.details[group.getActive().putCode.value].languageCode.value"
-			ng-cloak>
-			<div class="col-md-12">
-				<strong><@orcid.msg
-					'manual_work_form_contents.labellanguage'/></strong>
-				<div ng-bind="worksSrvc.details[group.getActive().putCode.value].languageName.value"></div>
-			</div>
-		</div>
-		<!-- Country of publication -->
-		<div class="row bottomBuffer" ng-show="worksSrvc.details[group.getActive().putCode.value].countryCode.value" ng-cloak>
-			<div class="col-md-12">
-				<strong><@orcid.msg
-					'manual_work_form_contents.labelcountry'/></strong>
-				<div ng-bind="worksSrvc.details[group.getActive().putCode.value].countryName.value"></div>
+			</div>			
+			<div class="col-md-6" ng-show="worksSrvc.details[group.getActive().putCode.value].contributors.length > 0" ng-cloak>
+				<!-- Contributors -->
+				<div class="bottomBuffer">			
+					<strong> Contributor </strong>
+					<div ng-repeat="contributor in worksSrvc.details[group.getActive().putCode.value].contributors">
+						{{contributor.creditName.value}} <span
+							ng-bind='contributor | contributorFilter'></span>
+					</div>
+				</div>										
 			</div>
 		</div>		
 	</div>	
