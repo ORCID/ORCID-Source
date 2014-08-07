@@ -6113,25 +6113,6 @@ function SocialNetworksCtrl($scope){
 	$scope.checkTwitterStatus();
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 function adminDelegatesCtrl($scope){
 	$scope.showSection = false;
 	$scope.managed_verified = false;
@@ -6197,25 +6178,6 @@ function adminDelegatesCtrl($scope){
 		    });
 	};
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /*Angular Multi-selectbox*/
 angular.module('ui.multiselect', [])

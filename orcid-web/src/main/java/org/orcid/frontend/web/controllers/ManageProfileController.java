@@ -1011,7 +1011,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     /**
-     * TODO
+     * Authorize a delegate request done by an admin
      * */
     @RequestMapping(value = {"/authorize-delegates"}, method = RequestMethod.GET)
     public ModelAndView authorizeDelegatesRequest(@RequestParam("key") String key) {
@@ -1079,23 +1079,24 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
     
     /**
-     * TODO
      * @throws UnsupportedEncodingException 
      * */
+    @SuppressWarnings("unchecked")
     private Map<String, String> decryptDelegationKey(String encryptedKey) throws UnsupportedEncodingException  {
-        String jsonString = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedKey), "UTF-8"));        
+        String jsonString = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedKey), "UTF-8"));                
         Map<String, String> params = (HashMap<String, String>)JSON.parse(jsonString);
         return params;
     }
     
     /**
-     * TODO
+     * Verify a primary email if it is not verified yet.
+     * @param orcid
+     *          The profile id to check
      * */
     private void verifyPrimaryEmailIfNeeded(String orcid) {
         if(!emailManager.isPrimaryEmailVerified(orcid)) {
             emailManager.verifyPrimaryEmail(orcid);
         }
-            
     }
     
 }
