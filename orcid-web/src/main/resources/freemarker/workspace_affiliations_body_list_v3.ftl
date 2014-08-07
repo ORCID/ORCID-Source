@@ -44,7 +44,7 @@
 						</a>
 						<ul class="sort-menu-options">
 							<li><a href="" ng-click=""><@orcid.msg 'manual_orcid_record_contents.sort_title'/> <span class=""></span></a></li>
-							<li><a href="" ng-click="" class="checked"><@orcid.msg 'manual_orcid_record_contents.sort_data'/> <span class="glyphicon glyphicon-ok pull-right"></span></a></li>
+							<li><a href="" ng-click="" class="checked"><@orcid.msg 'manual_orcid_record_contents.sort_date'/> <span class="glyphicon glyphicon-ok pull-right"></span></a></li>
 							<li><a href="" ng-click=""><@orcid.msg 'manual_orcid_record_contents.sort_type'/> <span class=""></span></a></li>
 							<li><a href="" ng-click=""><@orcid.msg 'manual_orcid_record_contents.sort_source'/> <span class=""></span></a></li>
 						</ul>
@@ -85,7 +85,7 @@
 						</a>
 						<ul class="sort-menu-options">
 							<li><a href="" ng-click=""><@orcid.msg 'manual_orcid_record_contents.sort_title'/> <span class=""></span></a></li>
-							<li><a href="" ng-click="" class="checked"><@orcid.msg 'manual_orcid_record_contents.sort_data'/> <span class="glyphicon glyphicon-ok pull-right"></span></a></li>
+							<li><a href="" ng-click="" class="checked"><@orcid.msg 'manual_orcid_record_contents.sort_date'/> <span class="glyphicon glyphicon-ok pull-right"></span></a></li>
 							<li><a href="" ng-click=""><@orcid.msg 'manual_orcid_record_contents.sort_type'/> <span class=""></span></a></li>
 							<li><a href="" ng-click=""><@orcid.msg 'manual_orcid_record_contents.sort_source'/> <span class=""></span></a></li>
 						</ul>
