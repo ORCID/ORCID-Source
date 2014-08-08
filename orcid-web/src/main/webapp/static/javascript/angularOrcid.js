@@ -6188,7 +6188,8 @@ function adminDelegatesCtrl($scope){
 
 function OauthAuthorizationController($scope, $compile){ 
 	$scope.showClientDescription = false;
-	$scope.showRegisterForm = false;
+	$scope.showRegisterForm = true;
+	$scope.isOrcidPresent = false;
 	$scope.authorizationForm = {};
 	$scope.registrationForm = {};		
 	$scope.clientName = "";
@@ -6202,6 +6203,7 @@ function OauthAuthorizationController($scope, $compile){
 	//-LOGIN AND AUTHORIZE-
 	//---------------------	
 	$scope.loadAndInitLoginForm = function(scopes, redirect_uri, client_id, response_type, user_id) {			
+		$scope.isOrcidPresent = false;
 		$.ajax({
 			url: getBaseUri() + '/oauth/custom/authorize/empty.json',
 			type: 'GET',
@@ -6214,6 +6216,11 @@ function OauthAuthorizationController($scope, $compile){
 	        	$scope.authorizationForm.clientId.value=client_id;
 	        	$scope.authorizationForm.responseType.value=response_type;	
 	        	$scope.authorizationForm.userName.value = user_id;
+	        	if($scope.authorizationForm.userName.value) {
+	        		console.log('Is orcid present: ' + $scope.authorizationForm.userName.value)
+	        		$scope.isOrcidPresent = true;
+	        		$scope.showRegisterForm = false;
+	        	}	        		
 	        	$scope.$apply();
 	        }
 		}).fail(function() { 	    	
@@ -6272,8 +6279,7 @@ function OauthAuthorizationController($scope, $compile){
 	        	$scope.registrationForm.clientId.value=client_id;
 	        	$scope.registrationForm.responseType.value=response_type;
 	        	$scope.registrationForm.referredBy.value=client_id;
-	        	console.log(angular.toJson($scope.registrationForm));
-	        	if($scope.registrationForm.email.value)
+	        	if($scope.registrationForm.email.value && !$scope.isOrcidPresent)
 	        		$scope.showRegisterForm = true;
 	        	$scope.$apply();
 	        }
