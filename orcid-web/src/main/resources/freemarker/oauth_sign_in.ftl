@@ -119,7 +119,7 @@
 					        <a href="<@spring.url '/reset-password'/>"><@orcid.msg 'login.reset'/></a>
 					    </div>
 					    <div id="oauth-login-register" class="col-md-offset-3 col-md-9 col-sm-6 col-xs-12">
-					       	<a class="reg" id="in-login-switch-form"ng-click="switchForm()"><@orcid.msg 'orcid.frontend.oauth.register'/></a>
+					       	<a class="reg" id="in-login-switch-form" ng-click="switchForm()"><@orcid.msg 'orcid.frontend.oauth.register'/></a>
 				    	</div>
 			    	</div>
 		    	</div>
@@ -138,7 +138,7 @@
         	<!-- REGISTER FORM -->
         	<div id="register" class="oauth-registration" ng-show="showRegisterForm" ng-init="loadAndInitRegistrationForm('${scopesString}','${redirect_uri}','${client_id}','${response_type}')">
         		<div class="control-group col-md-12 col-sm-12 col-xs-12"> 			    	
-					<p class="pull-right"><@orcid.msg 'orcid.frontend.oauth.alread_have_account'/>&nbsp;<a class="reg" ng-click="switchForm()"><@orcid.msg 'orcid.frontend.oauth.alread_have_account.link.text'/></a>.</p>			    	
+					<p class="pull-right"><@orcid.msg 'orcid.frontend.oauth.alread_have_account'/>&nbsp;<a class="reg" ng-click="switchForm()" id="in-register-switch-form"><@orcid.msg 'orcid.frontend.oauth.alread_have_account.link.text'/></a>.</p>			    	
 		    	</div>
 		    	<!-- First name -->
         		<div class="form-group">
