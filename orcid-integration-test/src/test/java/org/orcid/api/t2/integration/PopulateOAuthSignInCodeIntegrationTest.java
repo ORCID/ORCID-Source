@@ -104,9 +104,6 @@ public class PopulateOAuthSignInCodeIntegrationTest extends DBUnitTest {
     public void checkNoPrePop() throws JSONException, InterruptedException {
         webDriver.get(getBaseUrl());
         
-        WebElement link = webDriver.findElement(By.id("in-login-switch-form"));        
-        link.click();
-        
         // make sure we are on the page
         assertTrue(webDriver.findElement(By.xpath("//input[@name='email']")).getAttribute("value").equals(""));
         assertTrue(webDriver.findElement(By.xpath("//input[@name='familyNames']")).getAttribute("value").equals(""));
@@ -121,10 +118,6 @@ public class PopulateOAuthSignInCodeIntegrationTest extends DBUnitTest {
         String url = getBaseUrl() + "&email=non_existent@test.com&family_names=test_family_names&given_names=test_given_name";
         webDriver.get(url);        
 
-        WebElement link = webDriver.findElement(By.id("in-login-switch-form"));        
-        link.click();        
-        Thread.sleep(150);
-        
         assertTrue(webDriver.findElement(By.xpath("//input[@name='email']")).getAttribute("value").equals("non_existent@test.com"));
         assertTrue(webDriver.findElement(By.xpath("//input[@name='familyNames']")).getAttribute("value").equals("test_family_names"));
         assertTrue(webDriver.findElement(By.xpath("//input[@name='givenNames']")).getAttribute("value").equals("test_given_name"));
@@ -134,9 +127,7 @@ public class PopulateOAuthSignInCodeIntegrationTest extends DBUnitTest {
         // test exisitng email
         url = getBaseUrl() + "&email=spike@milligan.com&family_names=test_family_names&given_names=test_given_name";
         webDriver.get(url);
-        link = webDriver.findElement(By.id("in-login-switch-form"));        
-        link.click();        
-        Thread.sleep(150);
+        
         assertTrue(webDriver.findElement(By.xpath("//input[@name='userId']")).getAttribute("value").equals("spike@milligan.com"));
         // make sure register
         assertTrue(webDriver.findElement(By.xpath("//input[@name='email']")).getAttribute("value").equals(""));
@@ -144,9 +135,6 @@ public class PopulateOAuthSignInCodeIntegrationTest extends DBUnitTest {
         // populating check populating orcid
         url = getBaseUrl() + "&email=spike@milligan.com&family_names=test_family_names&given_names=test_given_name&orcid=4444-4444-4444-4441";
         webDriver.get(url);
-        link = webDriver.findElement(By.id("in-login-switch-form"));        
-        link.click();        
-        Thread.sleep(150);
         assertTrue(webDriver.findElement(By.xpath("//input[@name='userId']")).getAttribute("value").equals("4444-4444-4444-4441"));
     }
 

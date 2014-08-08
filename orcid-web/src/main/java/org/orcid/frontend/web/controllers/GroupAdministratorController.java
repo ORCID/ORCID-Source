@@ -349,7 +349,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
         List<String> scopes = new ArrayList<String>();
         // Ignore these scopes
         List<ScopePathType> ignoreScopes = new ArrayList<ScopePathType>(Arrays.asList(ScopePathType.ORCID_PATENTS_CREATE, ScopePathType.ORCID_PATENTS_READ_LIMITED,
-                ScopePathType.ORCID_PATENTS_UPDATE, ScopePathType.WEBHOOK, ScopePathType.ORCID_PROFILE_CREATE, ScopePathType.FUNDING_READ_LIMITED, ScopePathType.AFFILIATIONS_READ_LIMITED));
+                ScopePathType.ORCID_PATENTS_UPDATE, ScopePathType.WEBHOOK, ScopePathType.ORCID_PROFILE_CREATE, ScopePathType.FUNDING_READ_LIMITED, ScopePathType.AFFILIATIONS_READ_LIMITED, ScopePathType.READ_PUBLIC));
         for (ScopePathType t : ScopePathType.values()) {
             if (!ignoreScopes.contains(t))
                 scopes.add(t.value());

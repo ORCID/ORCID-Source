@@ -154,6 +154,11 @@ public class PublicOauthClientTest extends DBUnitTest {
 
     private String obtainAuthorizationCode(String orcid, String scopes, String redirectUri) throws InterruptedException {
         webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, orcid, scopes, redirectUri));
+        //Switch to the login form
+        WebElement switchFromLink = webDriver.findElement(By.id("in-register-switch-form"));
+        switchFromLink.click();
+        Thread.sleep(500);
+        //Fill the form
         WebElement userId = webDriver.findElement(By.id("userId"));
         userId.sendKeys("michael@bentine.com");
         WebElement password = webDriver.findElement(By.id("password"));

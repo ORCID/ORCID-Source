@@ -21,10 +21,12 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.orcid.jaxb.model.message.ScopePathType;
 import org.springframework.security.oauth2.common.exceptions.ClientAuthenticationException;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.security.oauth2.common.exceptions.RedirectMismatchException;
+import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.endpoint.AuthorizationEndpoint;
 import org.springframework.web.HttpSessionRequiredException;
@@ -68,6 +70,8 @@ public class OrcidAuthorizationEndpoint extends AuthorizationEndpoint {
     public void validateScope(String scopes, ClientDetails clientDetails) throws InvalidScopeException {
         Map<String, String> parameters = new HashMap<String, String>();
         parameters.put(SCOPE, scopes);
+        
+        //Check the user have permissions to the other scopes
         getAuthorizationRequestManager().validateParameters(parameters, clientDetails);
     }
     
