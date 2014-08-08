@@ -17,7 +17,7 @@
 
 -->
 	<#include "/common/browser-checks.ftl" />
-	<div class="col-md-6 col-sm-12 margin-top-bottom-box" ng-controller="OauthAuthorizationController">
+	<div class="col-md-6 col-sm-12 oauth-margin-top-bottom-box" ng-controller="OauthAuthorizationController">
 		<#if RequestParameters['twoSteps']??>	
 			<div class="page-header">
 			    <h3><@orcid.msg 'oauth_sign_in.h3signin'/></h3>
@@ -61,8 +61,7 @@
 		
 			<div class="app-client-name">
 				<h3 ng-click="toggleClientDescription()">${client_name} - ${client_group_name}
-					<a ng-show="!showClientDescription" class="glyphicon glyphicon-chevron-down"></a>
-					<a ng-show="showClientDescription" class="glyphicon glyphicon-chevron-up"></a>
+					<a class="glyphicon glyphicon-question-sign"></a>
 				</h3>
 			</div>
 			<div class="app-client-description">
@@ -76,8 +75,16 @@
 			<ul class="oauth-scopes">
 				<#list scopes as scope>
 					<li>
-						<span class="mini-orcid-icon oauth-bullet"></span><@orcid.msg '${scope.declaringClass.name}.${scope.name()}'/>
-						<#assign authOnClick = authOnClick + " orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Authorize_" + scope.name()?replace("ORCID_", "") + "', 'OAuth " + client_group_name?js_string + " - " + client_name?js_string + "']);">
+						<#assign authOnClick = authOnClick + " orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Authorize_" + scope.name()?replace("ORCID_", "") + "', 'OAuth " + client_group_name?js_string + " - " + client_name?js_string + "']);">												
+						<#if scope.value()?ends_with("/create")>
+							<span class="mini-icon glyphicon glyphicon-cloud-download green"></span><@orcid.msg '${scope.declaringClass.name}.${scope.name()}'/>
+						<#elseif scope.value()?ends_with("/update")>
+							<span class="mini-icon glyphicon glyphicon-refresh green"></span><@orcid.msg '${scope.declaringClass.name}.${scope.name()}'/>
+						<#elseif scope.value()?ends_with("/read-limited")>
+							<span class="mini-icon glyphicon glyphicon-eye-open green"></span><@orcid.msg '${scope.declaringClass.name}.${scope.name()}'/>
+						<#else>
+							<span class="mini-orcid-icon oauth-bullet"></span><@orcid.msg '${scope.declaringClass.name}.${scope.name()}'/>
+						</#if>											
 					</li>
          		</#list>				
 			</ul>	
@@ -128,9 +135,9 @@
 						<button class="btn btn-primary pull-right" id="authorize-button" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="loginAndAuthorize()" onclick="${authOnClick} orcidGA.gaFormSumbitDelay(this); return false;">
 							<@orcid.msg 'confirm-oauth-access.Authorize' />
 						</button>
-						<button class="btn btn-primary pull-right oauth-deny-button" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="loginAndDeny()" onclick="${denyOnClick} orcidGA.gaFormSumbitDelay(this); return false;">
+						<a class="oauth_deny_link pull-right" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="loginAndDeny()" onclick="${denyOnClick} orcidGA.gaFormSumbitDelay(this); return false;">
 							<@orcid.msg 'confirm-oauth-access.Deny' />
-						</button>		                 	  
+						</a>		                 	  
 					</div>  
 	            </div>                      
         	</div>         	        	
@@ -244,8 +251,7 @@
 			                <@orcid.msg 'register.labelsendinformation'/>
 			            </label>
 			         </div>
-				</div>
-			   
+				</div>			   
 			    
 		        <div style="margin-bottom: 15px;">
 			        <div class="row">
@@ -261,16 +267,15 @@
 				   			</span>
 			   			</div>
 			   		</div>
-		        </div>
-				   
+		        </div>				   
 			   
 			    <div id="register-buttons">                     		            		               					
 					<button class="btn btn-primary" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="registerAndAuthorize()" onclick="${authOnClick} orcidGA.gaFormSumbitDelay(this); return false;">
 						<@orcid.msg 'confirm-oauth-access.Authorize' />
 					</button>		                 	            
-					<button class="btn btn-primary" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="registerAndDeny()" onclick="${denyOnClick} orcidGA.gaFormSumbitDelay(this); return false;">
+					<a class="oauth_deny_link" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="registerAndDeny()" onclick="${denyOnClick} orcidGA.gaFormSumbitDelay(this); return false;">
 						<@orcid.msg 'confirm-oauth-access.Deny' />
-					</button>
+					</a>
 	            </div> 
         	</div> 
 		</#if>

@@ -21,7 +21,7 @@
 	<div class="row">
 		<div class="col-push-3 col-md-9">
 		    <div class="logo">
-		        <h1><a href="${aboutUri}"><img src="${staticCdn}/img/orcid-logo.png" alt="ORCID logo" /></a></h1>
+		        <h1 class="oauth_h1_margin"><a href="${aboutUri}"><img src="${staticCdn}/img/orcid-logo.png" alt="ORCID logo" /></a></h1>
 		        <p>${springMacroRequestContext.getMessage("oauth_login.connectingresearch")}</p>
 		    </div>
 	    </div>

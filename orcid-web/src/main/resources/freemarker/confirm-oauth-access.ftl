@@ -35,8 +35,8 @@
 	<div class="row top-header">
 		<div class="col-md-2 col-sm-6 col-xs-12">
 			<div class="logo">
-	        	<h1><a href="${aboutUri}"><img src="${staticCdn}/img/orcid-logo.png" alt="ORCID logo" /></a></h1>
-	        	<!-- <p>${springMacroRequestContext.getMessage("confirm-oauth-access.connectingresearchandresearchers")}</p> -->
+	        	<h1 class="oauth_h1_margin"><a href="${aboutUri}"><img src="${staticCdn}/img/orcid-logo.png" alt="ORCID logo" /></a></h1>
+	        	<p>${springMacroRequestContext.getMessage("confirm-oauth-access.connectingresearchandresearchers")}</p>
 	        </div>		
 		</div>
 		
@@ -50,8 +50,7 @@
 		<div class="col-md-6">	
 		<div class="app-client-name">
 			<h3 ng-click="toggleClientDescription()">${client_name} - ${client_group_name}
-				<a ng-show="!showClientDescription" class="glyphicon glyphicon-chevron-down"></a>
-				<a ng-show="showClientDescription" class="glyphicon glyphicon-chevron-up"></a>
+				<a class="glyphicon glyphicon-question-sign"></a>				
 			</h3>
 		</div>
 		<div class="app-client-description">
@@ -64,9 +63,17 @@
 		</div>
 		<ul class="oauth-scopes">
 			<#list scopes as scope>
-				<li>
-					<span class="mini-orcid-icon oauth-bullet"></span><@orcid.msg '${scope.declaringClass.name}.${scope.name()}'/>
-						<#assign authOnClick = authOnClick + " orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Authorize_" + scope.name()?replace("ORCID_", "") + "', 'OAuth " + client_group_name?js_string + " - " + client_name?js_string + "']);">
+				<li>				
+					<#assign authOnClick = authOnClick + " orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Authorize_" + scope.name()?replace("ORCID_", "") + "', 'OAuth " + client_group_name?js_string + " - " + client_name?js_string + "']);">
+					<#if scope.value()?ends_with("/create")>
+						<span class="mini-icon glyphicon glyphicon-cloud-download green"></span><@orcid.msg '${scope.declaringClass.name}.${scope.name()}'/>
+					<#elseif scope.value()?ends_with("/update")>
+						<span class="mini-icon glyphicon glyphicon-refresh green"></span><@orcid.msg '${scope.declaringClass.name}.${scope.name()}'/>
+					<#elseif scope.value()?ends_with("/read-limited")>
+						<span class="mini-icon glyphicon glyphicon-eye-open green"></span><@orcid.msg '${scope.declaringClass.name}.${scope.name()}'/>
+					<#else>
+						<span class="mini-orcid-icon oauth-bullet"></span><@orcid.msg '${scope.declaringClass.name}.${scope.name()}'/>
+					</#if>	
 				</li>
 	    	</#list>				
 		</ul>	
@@ -79,9 +86,9 @@
 					<button class="btn btn-primary pull-right" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="authorize()" onclick="${authOnClick} orcidGA.gaFormSumbitDelay(this); return false;">
 						<@orcid.msg 'confirm-oauth-access.Authorize' />
 					</button>		                 	            
-					<button class="btn btn-primary pull-right oauth-deny-button" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="deny()" onclick="${denyOnClick} orcidGA.gaFormSumbitDelay(this); return false;">
+					<a class="oauth_deny_link pull-right" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="deny()" onclick="${denyOnClick} orcidGA.gaFormSumbitDelay(this); return false;">
 						<@orcid.msg 'confirm-oauth-access.Deny' />
-					</button>
+					</a>
 				</div>					
 			</div>
 		</div>
