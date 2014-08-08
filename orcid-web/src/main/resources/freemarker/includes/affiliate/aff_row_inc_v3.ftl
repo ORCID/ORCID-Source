@@ -21,7 +21,7 @@
 	<div class="col-md-9 col-sm-9">
 	    <h3 class="workspace-title">
         	<strong ng-bind-html="affiliation.affiliationName.value"></strong>:
-        	<span ng-bind="affiliation.city.value"></span>, <span ng-bind="affiliation.region.value"></span>, <span ng-bind="affiliation.country.value"></span>        	        	        	        	
+        	<span ng-bind="affiliation.city.value"></span><span ng-show="affiliation.region.value">, </span><span ng-bind="affiliation.region.value"></span>, <span ng-bind="affiliation.country.value"></span>        	        	        	        	
         </h3>        
         <div class="info-detail">
         	<div class="info-date">
@@ -43,7 +43,7 @@
 	        	</span>
 	        	        	
         	</div>
-        	<span class="divisor" ng-show="affiliation.roleTitle"></span>
+        	<span class="divisor" ng-show="affiliation.roleTitle && (affiliation.startDate || affiliation.endDate)"></span>
         	
         	<div class="role" ng-show="affiliation.roleTitle">
 	            <span ng-bind-html="affiliation.roleTitle.value"></span>
