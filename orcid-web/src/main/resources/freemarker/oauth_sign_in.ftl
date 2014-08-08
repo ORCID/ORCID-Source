@@ -49,8 +49,7 @@
 	                </div>
 	            </div>
 	        </form>
-		<#else>	
-		
+		<#else>			
 			<!-- Freemarker and GA variables -->
 			<#assign user_id = "">			
 			<#if userId??>
@@ -125,14 +124,14 @@
 			    	</div>
 		    	</div>
 		    	<div class="row">
-		                <div class="col-md-12">                		            		               					
-							<button class="btn btn-primary pull-right" id="authorize-button" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="loginAndAuthorize()" onclick="${authOnClick} orcidGA.gaFormSumbitDelay(this); return false;">
-								<@orcid.msg 'confirm-oauth-access.Authorize' />
-							</button>
-							<button class="btn btn-primary pull-right oauth-deny-button" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="loginAndDeny()" onclick="${denyOnClick} orcidGA.gaFormSumbitDelay(this); return false;">
-								<@orcid.msg 'confirm-oauth-access.Deny' />
-							</button>		                 	  
-						</div>  
+	                <div class="col-md-12">                		            		               					
+						<button class="btn btn-primary pull-right" id="authorize-button" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="loginAndAuthorize()" onclick="${authOnClick} orcidGA.gaFormSumbitDelay(this); return false;">
+							<@orcid.msg 'confirm-oauth-access.Authorize' />
+						</button>
+						<button class="btn btn-primary pull-right oauth-deny-button" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="loginAndDeny()" onclick="${denyOnClick} orcidGA.gaFormSumbitDelay(this); return false;">
+							<@orcid.msg 'confirm-oauth-access.Deny' />
+						</button>		                 	  
+					</div>  
 	            </div>                      
         	</div>         	        	
         	
