@@ -36,7 +36,7 @@
 		<div class="col-md-2 col-sm-6 col-xs-12">
 			<div class="logo">
 	        	<h1 class="oauth_h1_margin"><a href="${aboutUri}"><img src="${staticCdn}/img/orcid-logo.png" alt="ORCID logo" /></a></h1>
-	        	<p>${springMacroRequestContext.getMessage("confirm-oauth-access.connectingresearchandresearchers")}</p>
+	        	<!-- <p>${springMacroRequestContext.getMessage("confirm-oauth-access.connectingresearchandresearchers")}</p> -->
 	        </div>		
 		</div>
 		
