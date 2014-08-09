@@ -61,7 +61,7 @@
 		
 			<div class="app-client-name">
 				<h3 ng-click="toggleClientDescription()">${client_name} - ${client_group_name}
-					<a class="glyphicon glyphicon-question-sign"></a>
+					<a class="glyphicon glyphicon-question-sign oauth-question-sign"></a>
 				</h3>
 			</div>
 			<div class="app-client-description">
