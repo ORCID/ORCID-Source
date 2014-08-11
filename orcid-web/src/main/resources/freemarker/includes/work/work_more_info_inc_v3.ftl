@@ -181,6 +181,57 @@
 	<div class="col-md-12 col-sm-12">
 		<div class="sources-container">
 			<div class="sources-edit">	
+			
+			
+			
+			
+				<ul class="sources-edit-list" ng-show="editSources[group.groupId] == true" ng-cloak>
+					<li>
+						<div class="col-sm-4">
+							<span>
+					        	<strong >Source:</strong> {{group.getActive().workSourceName.value}}
+					        </span>
+				        </div>
+				        <div class="col-sm-4">
+				        	Last modified: {{group.getActive().lastModified | ajaxFormDateToISO8601}}
+				        </div>
+				        <div class="col-sm-3">
+				        	   <span class="glyphicon glyphicon-check" ng-show="group.getActive().putCode.value == group.defaultPutCode"></span> 
+					           <a ng-click="worksSrvc.makeDefault(group, group.getActive().putCode.value); group.activePutCode = group.getActive().putCode.value" ng-show="group.getActive().putCode.value != group.defaultPutCode">
+				            	 <span class="glyphicon glyphicon-unchecked"></span> Make Preferred
+				               </a>
+				        </div>
+				        <div class="col-sm-1">
+				        		<a ng-click="deleteWorkConfirm(group.getActive().putCode.value, false)">
+			            	   <span class="glyphicon glyphicon-trash"></span>
+			               </a>
+				        </div>
+					</li>
+					<li ng-repeat="work in group.activities" ng-hide="group.activePutCode == work.putCode.value">
+						<div class="col-sm-4">
+							<a ng-click="worksSrvc.rotateIt($event); moreInfo[work.putCode.value] = moreInfo[group.activePutCode]; group.activePutCode = work.putCode.value">
+				           		{{work.workSourceName.value}}				           		
+				           	</a> 
+						</div>
+						<div class="col-sm-4">
+							{{work.lastModified | ajaxFormDateToISO8601}}
+						</div>
+						<div class="col-sm-3">
+							<span class="glyphicon glyphicon-check" ng-show="work.putCode.value == group.defaultPutCode"></span> 
+				           <a ng-click="worksSrvc.makeDefault(group, work.putCode.value); " ng-show="work.putCode.value != group.defaultPutCode">
+			            	 <span class="glyphicon glyphicon-unchecked"></span> Make Preferred
+			               </a>
+						</div>
+						<div class="col-sm-1">
+							<a ng-click="deleteWorkConfirm(group.getActive().putCode.value, false)">
+			            	   <span class="glyphicon glyphicon-trash"></span>
+			               </a>
+						</div>
+					</li>
+				</ul>
+			
+			
+				<!-- 
 				<table class="sources-edit-table" ng-show="editSources[group.groupId] == true" ng-cloak>
 				    
 				    <tr class="no-border-top">				    	
@@ -202,30 +253,35 @@
 			               </a>
 				       </td>
 				    </tr>
-				    <!-- No default values -->
+				   
 				    <tr ng-repeat="work in group.activities" ng-hide="group.activePutCode == work.putCode.value">				    	
-				       <td><!-- Source name -->				       		
+				       <td>		       		
 				           	<a ng-click="moreInfo[work.putCode.value] = moreInfo[group.activePutCode]; group.activePutCode = work.putCode.value">
 				           		{{work.workSourceName.value}}				           		
 				           	</a> 
 				       </td>
-				       <td><!-- Date -->
+				       <td>
 				       		{{work.lastModified | ajaxFormDateToISO8601}}
 				       	</td>
-				       <td> <!-- Make Default -->
+				       <td> 
 				           <span class="glyphicon glyphicon-check" ng-show="work.putCode.value == group.defaultPutCode"></span> 
 				           <a ng-click="worksSrvc.makeDefault(group, work.putCode.value);" ng-show="work.putCode.value != group.defaultPutCode">
 			            	 <span class="glyphicon glyphicon-unchecked"></span> Make Preferred
 			               </a>
 			           </td>
-				       <td><!-- Delete -->
+				       <td>
 				           <a ng-click="deleteWorkConfirm(group.getActive().putCode.value, false)">
 			            	   <span class="glyphicon glyphicon-trash"></span>
 			               </a>
 				       </td>
 				    </tr>
 				    
-				</table>						
+				</table>
+				-->	
+				
+				
+				
+									
 			</div>
 		</div>
 	</div>
