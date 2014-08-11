@@ -661,7 +661,7 @@ public class AdminController extends BaseController {
         //Send email to managed account
         notificationManager.sendDelegationRequestEmail(managedOrcidProfile, trustedOrcidProfile, link);
         
-        request.setSuccessMessage(getMessage("admin.delegate.admin.success", managedOrcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail()));
+        request.setSuccessMessage(getMessage("admin.delegate.admin.success", managedOrcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue()));
         
         return request;
     }
