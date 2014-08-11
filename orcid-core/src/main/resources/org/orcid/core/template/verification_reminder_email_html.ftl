@@ -31,7 +31,7 @@
 		    </span>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
                 <@emailMacros.msg "email.verify.thank_you" /><br /> 
-                <a href="${baseUri}/${orcid}?lang=${locale}">${baseUri}/${orcid}</a>.
+                <a href="${baseUri}/${orcid}?lang=${locale}">${baseUri}/${orcid}</a> ${primaryEmail}<@emailMacros.msg "email.verify.primary_email_2" />.
 		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
 				<@emailMacros.msg "email.verify.to_verify" /><br />

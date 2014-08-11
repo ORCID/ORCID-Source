@@ -187,7 +187,8 @@ public class NotificationManagerImpl implements NotificationManager {
     // http://stackoverflow.com/questions/9605828/email-internationalization-using-velocity-freemarker-templates
     public void sendVerificationEmail(OrcidProfile orcidProfile, URI baseUri, String email) {
         Map<String, Object> templateParams = new HashMap<String, Object>();
-
+        String primaryEmail = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+        templateParams.put("primaryEmail", primaryEmail);
         String emailFriendlyName = deriveEmailFriendlyName(orcidProfile);
         templateParams.put("emailName", emailFriendlyName);
         templateParams.put("subject", getSubject("email.subject.verify_reminder", orcidProfile));
@@ -254,6 +255,8 @@ public class NotificationManagerImpl implements NotificationManager {
     public void sendVerificationReminderEmail(OrcidProfile orcidProfile, String email) {
         Map<String, Object> templateParams = new HashMap<String, Object>();
 
+        String primaryEmail = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+        templateParams.put("primaryEmail", primaryEmail);
         String emailFriendlyName = deriveEmailFriendlyName(orcidProfile);
         templateParams.put("emailName", emailFriendlyName);
         String verificationUrl = createVerificationUrl(email, baseUri);
