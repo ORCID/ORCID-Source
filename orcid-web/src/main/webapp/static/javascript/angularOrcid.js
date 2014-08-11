@@ -6199,6 +6199,14 @@ function OauthAuthorizationController($scope, $compile){
 		$scope.showClientDescription = !$scope.showClientDescription;		
 	};
 		
+	//----------------------------
+	//-INIT GROUP AND CLIENT NAME-
+	//----------------------------
+	$scope.initGroupAndClientName = function(group_name, client_name) {
+		$scope.clientName = client_name;
+		$scope.clientGroupName = group_name;
+	};
+	
 	//---------------------
 	//-LOGIN AND AUTHORIZE-
 	//---------------------	
@@ -6230,15 +6238,15 @@ function OauthAuthorizationController($scope, $compile){
 	
 	$scope.loginAndAuthorize = function() {
 		$scope.authorizationForm.approved = true;
-		$scope.submit();
+		$scope.submitLogin();
 	};
 	
 	$scope.loginAndDeny = function() {
 		$scope.authorizationForm.approved = false;
-		$scope.submit();
+		$scope.submitLogin();
 	};
 	
-	$scope.submit = function() {		
+	$scope.submitLogin = function() {		
 		$.ajax({
 			url: getBaseUri() + '/oauth/custom/login.json',
 			type: 'POST',
@@ -6248,9 +6256,13 @@ function OauthAuthorizationController($scope, $compile){
 	        success: function(data) {
 	        	if(data) {
 	        		if(data.errors.length != 0) {
-	        			$scope.authorizationForm = data;
+	        			//Fire google GA event
+	        			orcidGA.gaPush(['_trackEvent', 'Sign-In', 'Sign-In-Submit' , 'OAuth ' + orcidGA.buildClientString($scope.clientGroupName, $scope.clientName)]);
+	        			$scope.authorizationForm = data;	        			
 	        			$scope.$apply();
 	        		} else {
+	        			//Fire google GA event
+	        			orcidGA.gaPush(['_trackEvent', 'Sign-In', 'RegGrowth' , 'OAuth ' + orcidGA.buildClientString($scope.clientGroupName, $scope.clientName)]);	        			
 	        			window.location = data.redirectUri.value;
 	        		}	        		
 	        	} else {
@@ -6430,7 +6442,7 @@ function OauthAuthorizationController($scope, $compile){
 			data: angular.toJson($scope.authorizationForm),
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
-	        success: function(data) {
+	        success: function(data) {	        	
 	        	window.location = data.redirectUri.value;
 	        }
 		}).fail(function() { 	    	
