@@ -61,6 +61,7 @@
 		<div>
 			<p><@orcid.msg 'orcid.frontend.oauth.have_asked'/></p>
 		</div>
+		<span class="dotted-green-bar"></span>
 		<ul class="oauth-scopes">
 			<#list scopes as scope>
 				<li>				
@@ -76,7 +77,8 @@
 					</#if>	
 				</li>
 	    	</#list>				
-		</ul>	
+		</ul>
+		<span class="dotted-green-bar"></span>	
 		<div>
 			<p><@orcid.msg 'orcid.frontend.web.oauth_is_secure'/>.&nbsp;<a href="${aboutUri}/footer/privacy-policy" target="_blank"><@orcid.msg 'public-layout.privacy_policy'/></a>.</p>
 		</div>			
