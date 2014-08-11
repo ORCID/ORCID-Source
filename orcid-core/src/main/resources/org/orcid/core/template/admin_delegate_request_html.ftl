@@ -31,11 +31,15 @@
 		    </span>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
 				<@emailMacros.msg "email.admin_delegate_request.you_have.1" />${trustedOrcidName}<@emailMacros.msg "email.admin_delegate_request.you_have.2" />${baseUri}/${trustedOrcidValue}
-				<@emailMacros.msg "email.admin_delegate_request.you_have.3" />${baseUri}/${managedOrcidValue}<@emailMacros.msg "email.admin_delegate_request.you_have.4" />
-		    </p>
+				<@emailMacros.msg "email.admin_delegate_request.you_have.3" />${trustedOrcidValue}<@emailMacros.msg "email.admin_delegate_request.you_have.4" />${baseUri}/${managedOrcidValue}
+				<@emailMacros.msg "email.admin_delegate_request.you_have.5" />${managedOrcidValue}<@emailMacros.msg "email.admin_delegate_request.you_have.6" />
+		    </p>		   
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-				${link}               
-		    </p>
+		    	<@emailMacros.msg "email.admin_delegate_request.you_have.7" />
+			</p>
+		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
+		    	<@emailMacros.msg "email.admin_delegate_request.you_have.8" />${link}<@emailMacros.msg "email.admin_delegate_request.you_have.9" />      
+		    </p>		     
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
                 <@emailMacros.msg "email.admin_delegate_request.for_a_tutorial" />
 		    </p>
