@@ -255,6 +255,8 @@ public class NotificationManagerImpl implements NotificationManager {
     public void sendVerificationReminderEmail(OrcidProfile orcidProfile, String email) {
         Map<String, Object> templateParams = new HashMap<String, Object>();
 
+        String primaryEmail = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+        templateParams.put("primaryEmail", primaryEmail);
         String emailFriendlyName = deriveEmailFriendlyName(orcidProfile);
         templateParams.put("emailName", emailFriendlyName);
         String verificationUrl = createVerificationUrl(email, baseUri);
