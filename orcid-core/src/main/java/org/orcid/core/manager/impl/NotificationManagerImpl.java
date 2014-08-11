@@ -742,11 +742,13 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("link", link);
         
         String trustedOrcidValue = trusted.retrieveOrcidPath();
+        String managedOrcidValue = managed.retrieveOrcidPath();
         String emailNameForDelegate = deriveEmailFriendlyName(managed);
         String trustedOrcidName = deriveEmailFriendlyName(trusted);
         templateParams.put("emailNameForDelegate", emailNameForDelegate);        
         templateParams.put("trustedOrcidName", trustedOrcidName);        
-        templateParams.put("trustedOrcidValue", trustedOrcidValue);        
+        templateParams.put("trustedOrcidValue", trustedOrcidValue);
+        templateParams.put("managedOrcidValue", managedOrcidValue);  
         
         Email primaryEmail = managed.getOrcidBio().getContactDetails().retrievePrimaryEmail();
         if (primaryEmail == null) {
