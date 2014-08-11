@@ -137,6 +137,11 @@
 											ng-bind-html="error"></span>
 										</span>
 									</div>
+									<div class="col-md-12">
+									<label>
+									As per ORCID's <a href="${aboutUri}/content/orcid-terms-use" target="_blank">terms of use</a>, you may only add email addresses that you have control over. An email to the added address will be sent immediately to ask for verification of address.
+									</lable>
+									</div>
 								</div>
 							</div>
 						</div>
