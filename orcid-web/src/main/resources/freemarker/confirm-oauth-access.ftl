@@ -48,7 +48,7 @@
 	</div>
 	<div class="row">
 		<div class="col-md-6">	
-		<div class="app-client-name">
+		<div class="app-client-name" ng-init="initGroupAndClientName('${client_group_name}','${client_name}')">
 			<h3 ng-click="toggleClientDescription()">${client_name} - ${client_group_name}
 				<a class="glyphicon glyphicon-question-sign oauth-question-sign"></a>				
 			</h3>
@@ -83,10 +83,10 @@
 		<div id="login-buttons" ng-init="loadAndInitAuthorizationForm('${scopesString}','${redirect_uri}','${client_id}','${response_type}')">
 			<div class="row">
 	            <div class="col-md-12">                     		            		               					
-					<button class="btn btn-primary pull-right" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="authorize()" onclick="${authOnClick} orcidGA.gaFormSumbitDelay(this); return false;">
+					<button class="btn btn-primary pull-right" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="authorize()" onclick="${authOnClick} return false;">
 						<@orcid.msg 'confirm-oauth-access.Authorize' />
 					</button>		                 	            
-					<a class="oauth_deny_link pull-right" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="deny()" onclick="${denyOnClick} orcidGA.gaFormSumbitDelay(this); return false;">
+					<a class="oauth_deny_link pull-right" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="deny()" onclick="${denyOnClick} return false;">
 						<@orcid.msg 'confirm-oauth-access.Deny' />
 					</a>
 				</div>					
