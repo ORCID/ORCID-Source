@@ -742,11 +742,13 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("link", link);
         
         String trustedOrcidValue = trusted.retrieveOrcidPath();
+        String managedOrcidValue = managed.retrieveOrcidPath();
         String emailNameForDelegate = deriveEmailFriendlyName(managed);
         String trustedOrcidName = deriveEmailFriendlyName(trusted);
         templateParams.put("emailNameForDelegate", emailNameForDelegate);        
         templateParams.put("trustedOrcidName", trustedOrcidName);        
-        templateParams.put("trustedOrcidValue", trustedOrcidValue);        
+        templateParams.put("trustedOrcidValue", trustedOrcidValue);
+        templateParams.put("managedOrcidValue", managedOrcidValue);  
         
         Email primaryEmail = managed.getOrcidBio().getContactDetails().retrievePrimaryEmail();
         if (primaryEmail == null) {
@@ -760,7 +762,7 @@ public class NotificationManagerImpl implements NotificationManager {
 
         // Send message
         if (apiRecordCreationEmailEnabled) {
-            mailGunManager.sendEmail(DELEGATE_NOTIFY_ORCID_ORG, primaryEmail.getValue(), getSubject("email.subject.claim_reminder", managed), null, htmlBody);
+            mailGunManager.sendEmail(DELEGATE_NOTIFY_ORCID_ORG, primaryEmail.getValue(), getSubject("email.subject.admin_as_delegate", managed), null, htmlBody);
             profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.ADMIN_PROFILE_DELEGATION_REQUEST));
         } else {
             LOGGER.debug("Not sending admin delegate email, because API record creation email option is disabled. Message would have been: {}", htmlBody);
