@@ -6225,7 +6225,6 @@ function OauthAuthorizationController($scope, $compile){
 	        	$scope.authorizationForm.responseType.value=response_type;	
 	        	$scope.authorizationForm.userName.value = user_id;
 	        	if($scope.authorizationForm.userName.value) {
-	        		console.log('Is orcid present: ' + $scope.authorizationForm.userName.value)
 	        		$scope.isOrcidPresent = true;
 	        		$scope.showRegisterForm = false;
 	        	}	        		
@@ -6372,7 +6371,6 @@ function OauthAuthorizationController($scope, $compile){
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        success: function(data) {
-	        	console.log("Registered");	    			    		
 	    		orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration', 'OAuth '+ orcidGA.buildClientString($scope.clientGroupName, $scope.clientName)]);	    	    
 	    		orcidGA.windowLocationHrefDelay(data.redirectUri.value);
 	        }
