@@ -28,7 +28,7 @@
 		<!-- /Freemarker and GA variables -->
 
 		<div class="app-client-name" ng-init="initGroupAndClientName('${client_group_name}','${client_name}')">
-			<h3 ng-click="toggleClientDescription()">${client_name} - ${client_group_name}
+			<h3 ng-click="toggleClientDescription()">${client_name}
 				<a class="glyphicon glyphicon-question-sign oauth-question-sign"></a>
 			</h3>
 		</div>
@@ -157,7 +157,7 @@
 		            <input name="email" type="email" tabindex="3" class="" ng-model="registrationForm.email.value" ng-model-onblur ng-change="serverValidate('Email')" />
 		            <span class="required" ng-class="isValidClass(registrationForm.email)">*</span>			            
 		            <span class="orcid-error" ng-show="registrationForm.email.errors.length > 0">
-						<div ng-repeat='error in registrationForm.email.errors' ng-bind-html="error"></div>
+						<div ng-repeat='error in registrationForm.email.errors' ng-bind-html="error" compile="html"></div>
 		   			</span>
 		        </div>			       
 		    </div>				

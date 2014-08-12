@@ -425,6 +425,12 @@ public class RegistrationController extends BaseController {
     @RequestMapping(value = "/registerEmailValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     Registration regEmailValidate(HttpServletRequest request, @RequestBody Registration reg) {
+        return regEmailValidate(request, reg, false);
+    }
+    
+    
+    public 
+    Registration regEmailValidate(HttpServletRequest request, Registration reg, boolean isOauthRequest) {
         reg.getEmail().setErrors(new ArrayList<String>());
         if (reg.getEmail().getValue() == null || reg.getEmail().getValue().trim().isEmpty()) {
             setError(reg.getEmail(), "Email.registrationForm.email");
@@ -435,7 +441,12 @@ public class RegistrationController extends BaseController {
         validateEmailAddress(reg.getEmail().getValue(), false, request, mbr);
 
         for (ObjectError oe : mbr.getAllErrors()) {
-            reg.getEmail().getErrors().add(getMessage(oe.getCode(), oe.getArguments()));
+            if(isOauthRequest && oe.getCode().equals("orcid.frontend.verify.duplicate_email")) {
+                //XXX
+                reg.getEmail().getErrors().add(getMessage("oauth.registration.duplicate_email", oe.getArguments()));                
+            } else {
+                reg.getEmail().getErrors().add(getMessage(oe.getCode(), oe.getArguments()));
+            }            
         }
 
         // validate confirm if already field out
