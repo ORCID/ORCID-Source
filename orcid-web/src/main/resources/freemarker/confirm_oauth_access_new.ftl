@@ -59,7 +59,7 @@
 	<div class="row">
 		<div class="col-md-6">	
 		<div class="app-client-name" ng-init="initGroupAndClientName('${client_group_name}','${client_name}')">
-			<h3 ng-click="toggleClientDescription()">${client_name} - ${client_group_name}
+			<h3 ng-click="toggleClientDescription()">${client_name}
 				<a class="glyphicon glyphicon-question-sign oauth-question-sign"></a>				
 			</h3>
 		</div>
