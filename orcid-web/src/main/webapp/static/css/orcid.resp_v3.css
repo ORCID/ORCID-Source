@@ -1808,6 +1808,7 @@ a:hover {
 
 .workspace-body-list>li {	
 	min-height: 30px;
+	box-shadow: 3px 4px 5px #C9CACB;
 }
 
 .workspace-body-list h3 {
@@ -4382,6 +4383,24 @@ a.toggle-tag-option{
 
 .small-chevron{
 	font-size: 11px;
+}
+
+ul.sources-edit-list{
+	margin: 0;
+	padding: 0;
+	margin-top: 10px;
+	position: relative;
+	top: 6px;
+}
+
+ul.sources-edit-list li{
+	display: inline-block;
+	width: 100%;
+	box-shadow: 3px 4px 5px #C9CACB;
+}
+
+.rotate-card{
+	transform: rotateY(180deg);
 }
 
 /* Media Queries */
