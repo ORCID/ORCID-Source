@@ -209,7 +209,7 @@
 					</li>
 					<li ng-repeat="work in group.activities" ng-hide="group.activePutCode == work.putCode.value">
 						<div class="col-sm-4">
-							<a ng-click="worksSrvc.rotateIt($event); moreInfo[work.putCode.value] = moreInfo[group.activePutCode]; group.activePutCode = work.putCode.value">
+							<a ng-click="moreInfo[work.putCode.value] = moreInfo[group.activePutCode]; group.activePutCode = work.putCode.value">
 				           		{{work.workSourceName.value}}				           		
 				           	</a> 
 						</div>

@@ -1808,7 +1808,7 @@ a:hover {
 
 .workspace-body-list>li {	
 	min-height: 30px;
-	box-shadow: 3px 4px 5px #888;
+	box-shadow: 3px 4px 5px #C9CACB;
 }
 
 .workspace-body-list h3 {
@@ -4396,7 +4396,7 @@ ul.sources-edit-list{
 ul.sources-edit-list li{
 	display: inline-block;
 	width: 100%;
-	box-shadow: 3px 4px 5px #888888;
+	box-shadow: 3px 4px 5px #C9CACB;
 }
 
 .rotate-card{
