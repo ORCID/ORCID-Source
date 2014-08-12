@@ -34,9 +34,11 @@
 	    </#if>
     </div>
     <div class="row">
-		<#include "sandbox_warning.ftl"/>
-		<#include "oauth_sign_in.ftl"/>
-		<#if RequestParameters['twoSteps']??>
+		<#include "sandbox_warning.ftl"/>		
+		<#if RequestParameters['oneStep']??>			
+			<#include "oauth_one_step.ftl"/>
+		<#else>
+			<#include "oauth_sign_in.ftl"/>
 			<#include "oauth_sign_up.ftl"/>
 		</#if>
 	</div>
