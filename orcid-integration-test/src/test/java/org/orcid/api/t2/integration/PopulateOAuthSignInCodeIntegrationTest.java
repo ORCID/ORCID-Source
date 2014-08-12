@@ -103,7 +103,7 @@ public class PopulateOAuthSignInCodeIntegrationTest extends DBUnitTest {
     @Test
     public void checkNoPrePop() throws JSONException, InterruptedException {
         webDriver.get(getBaseUrl());
-        
+        webDriver.get(String.format("%s?oneStep",webDriver.getCurrentUrl()));
         // make sure we are on the page
         assertTrue(webDriver.findElement(By.xpath("//input[@name='email']")).getAttribute("value").equals(""));
         assertTrue(webDriver.findElement(By.xpath("//input[@name='familyNames']")).getAttribute("value").equals(""));
@@ -117,7 +117,7 @@ public class PopulateOAuthSignInCodeIntegrationTest extends DBUnitTest {
         // test populating form with email that doesn't exist
         String url = getBaseUrl() + "&email=non_existent@test.com&family_names=test_family_names&given_names=test_given_name";
         webDriver.get(url);        
-
+        webDriver.get(String.format("%s?oneStep",webDriver.getCurrentUrl()));
         assertTrue(webDriver.findElement(By.xpath("//input[@name='email']")).getAttribute("value").equals("non_existent@test.com"));
         assertTrue(webDriver.findElement(By.xpath("//input[@name='familyNames']")).getAttribute("value").equals("test_family_names"));
         assertTrue(webDriver.findElement(By.xpath("//input[@name='givenNames']")).getAttribute("value").equals("test_given_name"));
@@ -127,7 +127,7 @@ public class PopulateOAuthSignInCodeIntegrationTest extends DBUnitTest {
         // test exisitng email
         url = getBaseUrl() + "&email=spike@milligan.com&family_names=test_family_names&given_names=test_given_name";
         webDriver.get(url);
-        
+        webDriver.get(String.format("%s?oneStep",webDriver.getCurrentUrl()));
         assertTrue(webDriver.findElement(By.xpath("//input[@name='userId']")).getAttribute("value").equals("spike@milligan.com"));
         // make sure register
         assertTrue(webDriver.findElement(By.xpath("//input[@name='email']")).getAttribute("value").equals(""));
@@ -135,6 +135,7 @@ public class PopulateOAuthSignInCodeIntegrationTest extends DBUnitTest {
         // populating check populating orcid
         url = getBaseUrl() + "&email=spike@milligan.com&family_names=test_family_names&given_names=test_given_name&orcid=4444-4444-4444-4441";
         webDriver.get(url);
+        webDriver.get(String.format("%s?oneStep",webDriver.getCurrentUrl()));
         assertTrue(webDriver.findElement(By.xpath("//input[@name='userId']")).getAttribute("value").equals("4444-4444-4444-4441"));
     }
 
@@ -143,10 +144,12 @@ public class PopulateOAuthSignInCodeIntegrationTest extends DBUnitTest {
         // populating check populating orcid
         String url = getBaseUrl() + "&orcid=4444-4444-4444-4441";        
         webDriver.get(url);
+        webDriver.get(String.format("%s?oneStep",webDriver.getCurrentUrl()));
         assertTrue(webDriver.findElement(By.xpath("//input[@name='userId']")).getAttribute("value").equals("4444-4444-4444-4441"));
 
         // populating check populating orcid overwrites populating email
         webDriver.get(getBaseUrl() + "&email=spike@milligan.com&family_names=test_family_names&given_names=test_given_name&orcid=4444-4444-4444-4441");
+        webDriver.get(String.format("%s?oneStep",webDriver.getCurrentUrl()));
         assertTrue(webDriver.findElement(By.xpath("//input[@name='userId']")).getAttribute("value").equals("4444-4444-4444-4441"));
     }
 
