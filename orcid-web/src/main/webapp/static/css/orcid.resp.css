@@ -4325,7 +4325,7 @@ ul.oauth-scopes li{
 		display: none;
 		position: absolute;
 		top: 50px;
-		z-index: 10;
+		z-index: 200;
 		min-height: 30px;
 		height: auto;
 		width: 100%;
