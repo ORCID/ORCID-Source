@@ -59,6 +59,9 @@ public class OrcidSocialManagerImpl implements OrcidSocialManager {
     @Value("${org.orcid.core.twitter.secret}")
     private String twitterSecret;
 
+    @Value("${org.orcid.core.twitter.enabled:true}")
+    private boolean isTwitterEnabled;
+    
     @Resource
     private EncryptionManager encryptionManager;
 
@@ -202,20 +205,24 @@ public class OrcidSocialManagerImpl implements OrcidSocialManager {
     @Override
     public void tweetLatestUpdates() {
         LOGGER.info("Start tweeting thread");
-        List<OrcidSocialEntity> toTweet = orcidSocialDao.getRecordsToTweet();
-        Calendar cal = Calendar.getInstance();
-        cal.roll(Calendar.HOUR, false);
-        Date oneHourBack = cal.getTime();
-        for (OrcidSocialEntity entity : toTweet) {
-            Date lastTimeTweeted = entity.getLastRun();
-            if (lastTimeTweeted == null || lastTimeTweeted.before(oneHourBack)) {
-                LOGGER.info("Tweeting profile {}", entity.getId().getOrcid());
-                if(lastTimeTweeted == null || entity.getProfile().getLastModified().after(lastTimeTweeted)) {
-                    if (tweet(entity))
-                        orcidSocialDao.updateLatestRunDate(entity.getId().getOrcid(), entity.getType());
-                }                
+        if(isTwitterEnabled) {
+            List<OrcidSocialEntity> toTweet = orcidSocialDao.getRecordsToTweet();
+            Calendar cal = Calendar.getInstance();
+            cal.roll(Calendar.HOUR, false);
+            Date oneHourBack = cal.getTime();
+            for (OrcidSocialEntity entity : toTweet) {
+                Date lastTimeTweeted = entity.getLastRun();
+                if (lastTimeTweeted == null || lastTimeTweeted.before(oneHourBack)) {
+                    LOGGER.info("Tweeting profile {}", entity.getId().getOrcid());
+                    if(lastTimeTweeted == null || entity.getProfile().getLastModified().after(lastTimeTweeted)) {
+                        if (tweet(entity))
+                            orcidSocialDao.updateLatestRunDate(entity.getId().getOrcid(), entity.getType());
+                    }                
+                }
             }
-        }
+        } else {
+            LOGGER.info("Twitter is disabled in this environment");
+        }        
         LOGGER.info("Finished tweeting thread");
     }
 
