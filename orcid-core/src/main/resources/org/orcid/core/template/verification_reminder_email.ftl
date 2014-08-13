@@ -23,7 +23,9 @@
 ${baseUri}/${orcid}?lang=${locale}.
 
 <@emailMacros.msg "email.verify.to_verify" />
-${verificationUrl}?lang=${locale}
+${verificationUrl}?lang=${locale} <@emailMacros.msg "email.verify.primary_email_1" /> ${primaryEmail}<@emailMacros.msg "email.verify.primary_email_2" />.
+
+<@emailMacros.msg "email.verify.if_you_did_not" />
 
 <@emailMacros.msg "email.common.did_you_know" />${baseUri}/about/news?lang=${locale}
 

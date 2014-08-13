@@ -99,6 +99,31 @@ orcidNgModule.directive('appFileTextReader', function($q){
 	    };//return
 	});//appFilereader
 
+//Thanks to: https://docs.angularjs.org/api/ng/service/$compile#attributes
+orcidNgModule.directive('compile', function($compile) {
+    // directive factory creates a link function
+    return function(scope, element, attrs) {
+      scope.$watch(
+        function(scope) {
+           // watch the 'compile' expression for changes
+          return scope.$eval(attrs.compile);
+        },
+        function(value) {
+          // when the 'compile' expression changes
+          // assign it into the current DOM
+          element.html(value);
+
+          // compile the new DOM and link it to the current
+          // scope.
+          // NOTE: we only compile .childNodes so that
+          // we don't get into infinite loop compiling ourselves
+          $compile(element.contents())(scope);
+        }
+      );
+    };
+  });
+
+
 
 orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
 	var serv = {
@@ -6198,7 +6223,7 @@ function adminDelegatesCtrl($scope){
 	};
 };
 
-function OauthAuthorizationController($scope, $compile){ 
+function OauthAuthorizationController($scope, $compile, $sce){ 
 	$scope.showClientDescription = false;
 	$scope.showRegisterForm = true;
 	$scope.isOrcidPresent = false;
@@ -6237,7 +6262,6 @@ function OauthAuthorizationController($scope, $compile){
 	        	$scope.authorizationForm.responseType.value=response_type;	
 	        	$scope.authorizationForm.userName.value = user_id;
 	        	if($scope.authorizationForm.userName.value) {
-	        		console.log('Is orcid present: ' + $scope.authorizationForm.userName.value)
 	        		$scope.isOrcidPresent = true;
 	        		$scope.showRegisterForm = false;
 	        	}	        		
@@ -6384,7 +6408,6 @@ function OauthAuthorizationController($scope, $compile){
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        success: function(data) {
-	        	console.log("Registered");	    			    		
 	    		orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration', 'OAuth '+ orcidGA.buildClientString($scope.clientGroupName, $scope.clientName)]);	    	    
 	    		orcidGA.windowLocationHrefDelay(data.redirectUri.value);
 	        }
@@ -6404,6 +6427,11 @@ function OauthAuthorizationController($scope, $compile){
 	        dataType: 'json',
 	        success: function(data) {
 	        	$scope.copyErrorsLeft($scope.registrationForm, data);
+	        	if(field == 'Email') {
+	        		for(var i = 0; i < $scope.registrationForm.email.errors.length; i++) {	        				        			
+	        			$scope.registrationForm.email.errors[i] = $sce.trustAsHtml($scope.registrationForm.email.errors[i]);
+	        		}
+	        	}	        		
 	        	$scope.$apply();
 	        }
 	    }).fail(function() { 
@@ -6501,6 +6529,11 @@ function OauthAuthorizationController($scope, $compile){
 			}	        
 	    });
 	};
+			
+	$scope.showToLoginForm = function() {		
+		$scope.authorizationForm.userName.value=$scope.registrationForm.email.value;
+		$scope.showRegisterForm = false;		
+	};				
 };
 
 

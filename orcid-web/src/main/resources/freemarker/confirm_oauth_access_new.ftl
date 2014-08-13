@@ -35,7 +35,7 @@
 	<div class="row top-header">
 		<div class="col-md-2 col-sm-6 col-xs-12">
 			<div class="logo">
-	        	<h1 class="oauth_h1_margin"><a href="${aboutUri}"><img src="${staticCdn}/img/orcid-logo.png" alt="ORCID logo" /></a></h1>
+	        	<h1><a href="${aboutUri}"><img src="${staticCdn}/img/orcid-logo.png" alt="ORCID logo" /></a></h1>
 	        	<!-- <p>${springMacroRequestContext.getMessage("confirm-oauth-access.connectingresearchandresearchers")}</p> -->
 	        </div>		
 		</div>
@@ -47,9 +47,19 @@
 	    </div>	    
 	</div>
 	<div class="row">
+		<div class="col-md-12 col-sm-12 col-xs-12">
+		 	<h2 class="oauth-title">${springMacroRequestContext.getMessage("confirm-oauth-access.connecting")} 
+		       <span>${displayName?html}</span>
+	           ${springMacroRequestContext.getMessage("confirm-oauth-access.withOrcidRecord")} 
+	           <span class="researcher-name">${(profile.orcidBio.personalDetails.givenNames.content?html)!} ${(profile.orcidBio.personalDetails.familyName.content?html)!}</span> 
+	           <span><a href="" onclick="logOffReload(); return false;">(${springMacroRequestContext.getMessage("confirm-oauth-access.notYou")}?)</a></span> 
+			</h2>   
+		</div>
+	</div>
+	<div class="row">
 		<div class="col-md-6">	
 		<div class="app-client-name" ng-init="initGroupAndClientName('${client_group_name}','${client_name}')">
-			<h3 ng-click="toggleClientDescription()">${client_name} - ${client_group_name}
+			<h3 ng-click="toggleClientDescription()">${client_name}
 				<a class="glyphicon glyphicon-question-sign oauth-question-sign"></a>				
 			</h3>
 		</div>
