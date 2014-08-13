@@ -22,6 +22,8 @@
 <@emailMacros.msg "email.verify.thank_you" /> 
 ${baseUri}/${orcid}?lang=${locale} <@emailMacros.msg "email.verify.primary_email_1" /> ${primaryEmail}<@emailMacros.msg "email.verify.primary_email_2" />.
 
+<@emailMacros.msg "email.verify.if_you_did_not" />
+
 <@emailMacros.msg "email.verify.to_verify" />
 ${verificationUrl}?lang=${locale}
 
