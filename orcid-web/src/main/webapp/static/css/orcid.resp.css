@@ -4316,7 +4316,31 @@ ul.oauth-scopes li{
 	}
 	.container .language-selector {
 		display: none;
+		margin: 0 auto;
 	}
+	
+	.container .language-selector .account-settings-mobile-menu{
+		text-align: center;		
+	}
+	
+	.container .language-selector .account-settings-mobile-menu span.account-settings-mobile{
+		display: block;
+		background: #A6CE39;
+		height: 30px;
+		width: 60%;
+		float: left;
+		margin-left: 10px;
+		margin-top: 10px;
+	}
+	
+	.container .language-selector .account-settings-mobile-menu span.account-settings-mobile a{
+		width: 100%;
+		height: 100%;
+		display: block;
+		color: #FFF;
+		float: left;
+	}
+	
 	.container .header #form-search {
 		height: 180px;
 		display: none;
@@ -4539,11 +4563,12 @@ ul.oauth-scopes li{
 	}
 	.container .header .language-selector select#language-codes {
 		float: left;
-		width: 98%;
+		width: 30%;
 		height: 30px;
 		margin-top: 10px;
 		padding: 5px;
 		font-size: 14px;
+		margin-left: 10px;
 	}
 
 	/* Forms */
