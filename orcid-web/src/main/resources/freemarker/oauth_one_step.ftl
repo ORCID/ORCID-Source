@@ -150,7 +150,7 @@
 			        </div>				         
 			     </div>
 		    </div>
-		    			    
+			<!-- Email -->		    			    
 		    <div class="form-group">
 		        <label class="col-sm-3 control-label"><@orcid.msg 'oauth_sign_up.labelemail'/></label>
 		        <div class="col-sm-9 bottomBuffer">

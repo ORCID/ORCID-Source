@@ -6342,12 +6342,18 @@ function OauthAuthorizationController($scope, $compile, $sce){
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        success: function(data) {
-	        	$scope.registrationForm = data;
-	        	$scope.$apply();
+	        	$scope.registrationForm = data;	        	
 	        	if ($scope.registrationForm.errors.length == 0) {
 	        		$scope.showProcessingColorBox();
 	        		$scope.getDuplicates();
+	        	} else {
+	        		if($scope.registrationForm.email.errors.length > 0) {	        			
+		        		for(var i = 0; i < $scope.registrationForm.email.errors.length; i++) {	        				        			
+		        			$scope.registrationForm.email.errors[i] = $sce.trustAsHtml($scope.registrationForm.email.errors[i]);
+		        		}
+	        		}
 	        	}
+	        	$scope.$apply();
 	        }
 	    }).fail(function() { 
 	    	// something bad is happening!
@@ -6396,8 +6402,9 @@ function OauthAuthorizationController($scope, $compile, $sce){
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        success: function(data) {
-	    		orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration', 'OAuth '+ orcidGA.buildClientString($scope.clientGroupName, $scope.clientName)]);	    	    
-	    		orcidGA.windowLocationHrefDelay(data.redirectUri.value);
+	    		orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration', 'OAuth '+ orcidGA.buildClientString($scope.clientGroupName, $scope.clientName)]);
+	    		setTimeout(orcidGA.windowLocationHrefDelay(data.redirectUri.value), 15000);
+	    		
 	        }
 	    }).fail(function() { 
 	    	// something bad is happening!
