@@ -392,44 +392,64 @@ public class WorksController extends BaseWorkspaceController {
     Work postWork(HttpServletRequest request, @RequestBody Work work) {
         work.setErrors(new ArrayList<String>());
 
-        workCitationValidate(work);
+        if (work.getCitation() != null) {
+            workCitationValidate(work);
+            copyErrors(work.getCitation().getCitationType(), work);
+            copyErrors(work.getCitation().getCitation(), work);
+        }
         workWorkTitleTitleValidate(work);
-        workWorkTitleSubtitleValidate(work);
-        workWorkTitleTranslatedTitleValidate(work);
-        workdescriptionValidate(work);
+        if (work.getWorkTitle().getSubtitle() != null) {
+            workWorkTitleSubtitleValidate(work);
+            copyErrors(work.getWorkTitle().getSubtitle(), work);
+        }
+        if (work.getWorkTitle().getTranslatedTitle() != null) {
+            workWorkTitleTranslatedTitleValidate(work);
+            copyErrors(work.getWorkTitle().getTranslatedTitle(), work);
+        }
+        // allowed to be null
+        if (work.getShortDescription() != null) {
+            workdescriptionValidate(work);
+            copyErrors(work.getShortDescription(), work);
+        }
         workWorkCategoryValidate(work);
-        workWorkTypeValidate(work);
-        workWorkExternalIdentifiersValidate(work);
-        workUrlValidate(work);
-        workJournalTitleValidate(work);
-        workLanguageCodeValidate(work);
-        validateWorkId(work);
         
-        copyErrors(work.getWorkTitle().getTitle(), work);
-        copyErrors(work.getWorkTitle().getTranslatedTitle(), work);
-        copyErrors(work.getShortDescription(), work);
-        copyErrors(work.getWorkTitle().getSubtitle(), work);
+        workWorkTypeValidate(work);
         copyErrors(work.getWorkType(), work);
-        copyErrors(work.getUrl(), work);
-        copyErrors(work.getJournalTitle(), work);
-
-        for (Contributor c : work.getContributors()) {
-            copyErrors(c.getContributorRole(), work);
-            copyErrors(c.getContributorSequence(), work);
+        if(work.getWorkExternalIdentifiers() != null) {
+            workWorkExternalIdentifiersValidate(work);
+            for (WorkExternalIdentifier wId : work.getWorkExternalIdentifiers()) {
+                copyErrors(wId.getWorkExternalIdentifierId(), work);
+                copyErrors(wId.getWorkExternalIdentifierType(), work);
+            }
+        }
+        
+        if (work.getUrl() != null) {
+            workUrlValidate(work);
+            copyErrors(work.getUrl(), work);
         }
 
-        for (WorkExternalIdentifier wId : work.getWorkExternalIdentifiers()) {
-            copyErrors(wId.getWorkExternalIdentifierId(), work);
-            copyErrors(wId.getWorkExternalIdentifierType(), work);
+        if (work.getJournalTitle() == null) {
+            workJournalTitleValidate(work);
+            copyErrors(work.getJournalTitle(), work);
         }
-
+        
+        //allowed to be null
+        if (work.getLanguageCode() != null) {
+            workLanguageCodeValidate(work);
+            copyErrors(work.getLanguageCode(), work);
+        }
+        
+        // null         
+        if (work.getPutCode() != null) {
+           validateWorkId(work);
+        }
+        
         if (work.getErrors().size() == 0) {
             if (work.getPutCode() != null) 
                 updateWork(work);
             else
                 addWork(work);
         }
-<<<<<<< Updated upstream
 
         return work;
     }
@@ -455,33 +475,6 @@ public class WorksController extends BaseWorkspaceController {
         String putCode = String.valueOf(workEntity.getId());
         newOw.setPutCode(putCode);
 
-=======
-
-        return work;
-    }
-
-    public void addWork(Work work) {
-        // Get current profile
-        OrcidProfile currentProfile = getEffectiveProfile();
-
-        // Set the credit name to the work
-
-        OrcidWork newOw = work.toOrcidWork();
-        newOw.setPutCode("-1"); // put codes of -1 override new works
-                                // visibility filtering settings.
-
-        WorkEntity workEntity = toWorkEntity(newOw);
-        // Create work
-        workEntity = workManager.addWork(workEntity);
-
-        // Create profile work relationship
-        profileWorkManager.addProfileWork(currentProfile.getOrcidIdentifier().getPath(), workEntity.getId(), newOw.getVisibility(), getRealUserOrcid());
-
-        // Set the id (put-code) to the new work
-        String putCode = String.valueOf(workEntity.getId());
-        newOw.setPutCode(putCode);
-
->>>>>>> Stashed changes
         //Set the id in the work to be returned
         work.setPutCode(Text.valueOf(putCode));
         
@@ -631,8 +624,6 @@ public class WorksController extends BaseWorkspaceController {
     @RequestMapping(value = "/work/workTitle/subtitleValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     Work workWorkTitleSubtitleValidate(@RequestBody Work work) {
-        // allowed to be null
-        if (work.getWorkTitle().getSubtitle() == null) return work;
         
         work.getWorkTitle().getSubtitle().setErrors(new ArrayList<String>());
         if (work.getWorkTitle().getSubtitle().getValue() != null && work.getWorkTitle().getSubtitle().getValue().length() > 1000) {
@@ -644,8 +635,6 @@ public class WorksController extends BaseWorkspaceController {
     @RequestMapping(value = "/work/workTitle/translatedTitleValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     Work workWorkTitleTranslatedTitleValidate(@RequestBody Work work) {
-        // allowed to be null
-        if (work.getWorkTitle().getTranslatedTitle() == null) return work;
         work.getWorkTitle().getTranslatedTitle().setErrors(new ArrayList<String>());
         
         String content = work.getWorkTitle().getTranslatedTitle() == null ? null : work.getWorkTitle().getTranslatedTitle().getContent();
@@ -673,8 +662,6 @@ public class WorksController extends BaseWorkspaceController {
     @RequestMapping(value = "/work/urlValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     Work workUrlValidate(@RequestBody Work work) {
-        // allowed to be null
-        if (work.getUrl() == null) return work;
         validateUrl(work.getUrl());
         return work;
     }
@@ -682,8 +669,6 @@ public class WorksController extends BaseWorkspaceController {
     @RequestMapping(value = "/work/journalTitleValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     Work workJournalTitleValidate(@RequestBody Work work) {
-        // allowed to be null
-        if (work.getJournalTitle() == null) return work;
         work.getJournalTitle().setErrors(new ArrayList<String>());
         if (work.getJournalTitle().getValue() != null && work.getJournalTitle().getValue().length() > 1000) {
             setError(work.getJournalTitle(), "manualWork.length_less_1000");
@@ -694,8 +679,6 @@ public class WorksController extends BaseWorkspaceController {
     @RequestMapping(value = "/work/languageCodeValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     Work workLanguageCodeValidate(@RequestBody Work work) {
-        //allowed to be null
-        if (work.getLanguageCode() == null) return work;
         work.getLanguageCode().setErrors(new ArrayList<String>());
         if (work.getLanguageCode().getValue() != null) {
             if (!LANGUAGE_CODE.matcher(work.getLanguageCode().getValue()).matches())
@@ -707,8 +690,6 @@ public class WorksController extends BaseWorkspaceController {
     @RequestMapping(value = "/work/descriptionValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     Work workdescriptionValidate(@RequestBody Work work) {
-        // allowed to be null
-        if (work.getShortDescription() == null) return work;
         work.getShortDescription().setErrors(new ArrayList<String>());
         if (work.getShortDescription().getValue() != null && work.getShortDescription().getValue().length() > 5000) {
             setError(work.getShortDescription(), "manualWork.length_less_5000");
@@ -741,7 +722,6 @@ public class WorksController extends BaseWorkspaceController {
     @RequestMapping(value = "/work/workExternalIdentifiersValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     Work workWorkExternalIdentifiersValidate(@RequestBody Work work) {
-        if(work.getWorkExternalIdentifiers() != null) {
             for (WorkExternalIdentifier wId : work.getWorkExternalIdentifiers()) {
                 if(wId.getWorkExternalIdentifierId() == null)
                     wId.setWorkExternalIdentifierId(new Text());
@@ -762,7 +742,7 @@ public class WorksController extends BaseWorkspaceController {
                     setError(wId.getWorkExternalIdentifierId(), "NotBlank.currentWorkExternalIds.id");
                 }
             }
-        }
+        
 
         return work;
     }
@@ -770,9 +750,6 @@ public class WorksController extends BaseWorkspaceController {
     @RequestMapping(value = "/work/citationValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     Work workCitationValidate(@RequestBody Work work) {
-        //allowed to be null
-        if (work.getCitation() == null) return work;
-        
         work.getCitation().getCitation().setErrors(new ArrayList<String>());
         work.getCitation().getCitationType().setErrors(new ArrayList<String>());
          
@@ -787,16 +764,11 @@ public class WorksController extends BaseWorkspaceController {
             }
 
         }
-        copyErrors(work.getCitation().getCitationType(), work);
-        copyErrors(work.getCitation().getCitation(), work);
         return work;
     }
 
     public Work validateWorkId(Work work) {
-        // null         
-        if (work.getPutCode() == null) 
-            return work;
-
+ 
         OrcidProfile currentProfile = getEffectiveProfile();
         if (currentProfile == null || currentProfile.getOrcidActivities() == null || currentProfile.getOrcidActivities().getOrcidWorks() == null
                 || currentProfile.getOrcidActivities().getOrcidWorks().getOrcidWork().isEmpty()) {
