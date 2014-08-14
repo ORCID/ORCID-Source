@@ -23,11 +23,14 @@
 		<#if userId??>
 			<#assign user_id = userId>
         </#if>
-		<#assign authOnClick = "">			       
-	    <#assign denyOnClick = " orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Authorize_Deny', 'OAuth " + client_group_name?js_string + " - " + client_name?js_string + "']);">	    	
-		<!-- /Freemarker and GA variables -->
-
-		<div class="app-client-name" ng-init="initGroupAndClientName('${client_group_name}','${client_name}')">
+        <#assign js_group_name = client_group_name?js_string>
+        <#assign js_client_name = client_name?js_string>
+        <#assign js_scopes_string = "">                
+        <#list scopes as scope>
+        	<#assign js_scopes_string = js_scopes_string + scope.name()?replace("ORCID_", "")?js_string + " ">
+		</#list>				      
+	    <!-- /Freemarker and GA variables -->
+		<div class="app-client-name" ng-init="initGroupClientNameAndScopes('${js_group_name}','${js_client_name}', '${js_scopes_string}')">
 			<h3 ng-click="toggleClientDescription()">${client_name}
 				<a class="glyphicon glyphicon-question-sign oauth-question-sign"></a>
 			</h3>
@@ -43,7 +46,6 @@
 		<ul class="oauth-scopes">
 			<#list scopes as scope>
 				<li>
-					<#assign authOnClick = authOnClick + " orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Authorize_" + scope.name()?replace("ORCID_", "") + "', 'OAuth " + client_group_name?js_string + " - " + client_name?js_string + "']);">												
 					<#if scope.value()?ends_with("/create")>
 						<span class="mini-icon glyphicon glyphicon-cloud-download green"></span><@orcid.msg '${scope.declaringClass.name}.${scope.name()}'/>
 					<#elseif scope.value()?ends_with("/update")>
@@ -100,10 +102,10 @@
 	    	</div>
 	    	<div class="row">
                 <div class="col-md-12">                		            		               					
-					<button class="btn btn-primary pull-right" id="authorize-button" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="loginAndAuthorize()" onclick="${authOnClick} return false;">
+					<button class="btn btn-primary pull-right" id="authorize-button" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="loginAndAuthorize()">
 						<@orcid.msg 'confirm-oauth-access.Authorize' />
 					</button>
-					<a class="oauth_deny_link pull-right" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="loginAndDeny()" onclick="${denyOnClick} return false;">
+					<a class="oauth_deny_link pull-right" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="loginAndDeny()">
 						<@orcid.msg 'confirm-oauth-access.Deny' />
 					</a>		                 	  
 				</div>  
@@ -238,10 +240,10 @@
 	        </div>				   
 		   
 		    <div id="register-buttons">                     		            		               					
-				<button class="btn btn-primary" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="registerAndAuthorize()" onclick="${authOnClick} return false;">
+				<button class="btn btn-primary" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="registerAndAuthorize()">
 					<@orcid.msg 'confirm-oauth-access.Authorize' />
 				</button>		                 	            
-				<a class="oauth_deny_link" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="registerAndDeny()" onclick="${denyOnClick} return false;">
+				<a class="oauth_deny_link" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="registerAndDeny()">
 					<@orcid.msg 'confirm-oauth-access.Deny' />
 				</a>
             </div> 
