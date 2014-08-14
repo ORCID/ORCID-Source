@@ -6403,8 +6403,7 @@ function OauthAuthorizationController($scope, $compile, $sce){
 	        dataType: 'json',
 	        success: function(data) {
 	    		orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration', 'OAuth '+ orcidGA.buildClientString($scope.clientGroupName, $scope.clientName)]);
-	    		setTimeout(orcidGA.windowLocationHrefDelay(data.redirectUri.value), 15000);
-	    		
+	    		orcidGA.windowLocationHrefDelay(data.redirectUri.value);	    		
 	        }
 	    }).fail(function() { 
 	    	// something bad is happening!
