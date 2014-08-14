@@ -30,16 +30,13 @@
 		    <@emailMacros.msg "email.common.dear" /> ${emailName}<@emailMacros.msg "email.common.dear.comma" />
 		    </span>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-                <@emailMacros.msg "email.verify.thank_you" /><br /> 
-                <a href="${baseUri}/${orcid}?lang=${locale}">${baseUri}/${orcid}</a> <@emailMacros.msg "email.verify.primary_email_1" />${primaryEmail}<@emailMacros.msg "email.verify.primary_email_2" />.
+		        <@emailMacros.msg "email.verify.thank_you" /><br /><br />
+		        <a href="${verificationUrl}?lang=${locale}" target="_blank">${verificationUrl}</a> 
 		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-		        <@emailMacros.msg "email.verify.if_you_did_not" />
+		        <@emailMacros.msg "email.verify.1" />${orcid}<@emailMacros.msg "email.verify.2" />
+		        <a href="${baseUri}/${orcid}?lang=${locale}" target="_blank">${baseUri}/${orcid}</a>		        
 		    </p>
-		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-				<@emailMacros.msg "email.verify.to_verify" /><br />
-				<a href="${verificationUrl}?lang=${locale}">${verificationUrl}</a>
- 		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">		  
 				<@emailMacros.msg "email.common.did_you_know" /><a href="${baseUri}/about/news">${baseUri}/about/news</a>
 		    </p>
@@ -49,7 +46,7 @@
 		    </p>		    
 		  	<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666; white-space: pre;">
 <@emailMacros.msg "email.common.kind_regards" />
-<a href="${baseUri}/home?lang=${locale}">${baseUri}/<a/>
+<a href="${baseUri}/home?lang=${locale}">${baseUri}/</a>
 			</p>
 			<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">
 				<@emailMacros.msg "email.common.you_have_received_this_email" />
