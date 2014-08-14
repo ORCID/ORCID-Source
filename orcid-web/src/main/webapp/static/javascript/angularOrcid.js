@@ -515,7 +515,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 			groups: new Array(),
 			loading: false,
 			loadingDetails: false,
-			details: {}, // we should think about putting details in the 
+			details: new Object(), // we should think about putting details in the 
 			worksToAddIds: null,
 			addBibtexJson: function(dw) {
 				if (dw.citation && dw.citation.citationType && dw.citation.citationType.value == 'bibtex') {
@@ -647,9 +647,8 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 									break;
 								}	
 							if (bestMatch == null) {
-								bestMatch = JSON.decode(JSON.encode(serv.details[putCode]));
+								bestMatch = JSON.parse(JSON.stringify(serv.details[putCode]));
 								bestMatch.workSource = null;
-								bestMatch.workName = null;
 								bestMatch.putCode = null;
 							}
 						    callback(bestMatch);
@@ -722,7 +721,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 					serv.worksToAddIds = null;
 					serv.loading = true;
 					serv.groups.length = 0;
-					serv.details.length = 0;
+					serv.details = new Object();
 					$.ajax({
 						url: getBaseUri() + '/works/workIds.json',	        
 				        dataType: 'json',
@@ -3527,7 +3526,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
     };
 
 
-	$scope.addWork = function(){
+	$scope.putWork = function(){
 		if ($scope.addingWork) return; // don't process if adding work
 		$scope.addingWork = true;
 		$scope.editWork.errors.length = 0;
@@ -3561,33 +3560,6 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
 		});
 	};
 	
-	$scope.editExistingWork = function() {				
-		$scope.editWork.errors.length = 0;
-		$.ajax({
-			url: getBaseUri() + '/works/edit-work.json',	        
-	        contentType: 'application/json;charset=UTF-8',
-	        dataType: 'json',
-	        type: 'POST',
-	        data:  angular.toJson($scope.editWork),
-	        success: function(data) {
-	        	if (data.errors.length == 0){
-	        		$scope.closeAllMoreInfo();
-	        		$.colorbox.close(); 
-	        		$scope.addingWork = false;
-	        		$scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);	        		
-	        	} else {
-		        	$scope.editWork = data;
-		        	$scope.copyErrorsLeft($scope.editWork, data);
-		        	$scope.addingWork = false;
-		        	$scope.$apply();		        	
-	        	}
-	        }
-		}).fail(function(){
-			// something bad is happening!
-			$scope.addingWork = false;
-	    	console.log("error fetching works");
-		});
-	};
 	
 	$scope.closeAllMoreInfo = function() {
 		for (var idx in $scope.moreInfo)
