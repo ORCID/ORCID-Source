@@ -405,8 +405,6 @@ public class WorksController extends BaseWorkspaceController {
         workLanguageCodeValidate(work);
         validateWorkId(work);
         
-        copyErrors(work.getCitation().getCitation(), work);
-        copyErrors(work.getCitation().getCitationType(), work);
         copyErrors(work.getWorkTitle().getTitle(), work);
         copyErrors(work.getWorkTitle().getTranslatedTitle(), work);
         copyErrors(work.getShortDescription(), work);
@@ -431,6 +429,7 @@ public class WorksController extends BaseWorkspaceController {
             else
                 addWork(work);
         }
+<<<<<<< Updated upstream
 
         return work;
     }
@@ -456,6 +455,33 @@ public class WorksController extends BaseWorkspaceController {
         String putCode = String.valueOf(workEntity.getId());
         newOw.setPutCode(putCode);
 
+=======
+
+        return work;
+    }
+
+    public void addWork(Work work) {
+        // Get current profile
+        OrcidProfile currentProfile = getEffectiveProfile();
+
+        // Set the credit name to the work
+
+        OrcidWork newOw = work.toOrcidWork();
+        newOw.setPutCode("-1"); // put codes of -1 override new works
+                                // visibility filtering settings.
+
+        WorkEntity workEntity = toWorkEntity(newOw);
+        // Create work
+        workEntity = workManager.addWork(workEntity);
+
+        // Create profile work relationship
+        profileWorkManager.addProfileWork(currentProfile.getOrcidIdentifier().getPath(), workEntity.getId(), newOw.getVisibility(), getRealUserOrcid());
+
+        // Set the id (put-code) to the new work
+        String putCode = String.valueOf(workEntity.getId());
+        newOw.setPutCode(putCode);
+
+>>>>>>> Stashed changes
         //Set the id in the work to be returned
         work.setPutCode(Text.valueOf(putCode));
         
@@ -761,7 +787,8 @@ public class WorksController extends BaseWorkspaceController {
             }
 
         }
-
+        copyErrors(work.getCitation().getCitationType(), work);
+        copyErrors(work.getCitation().getCitation(), work);
         return work;
     }
 
