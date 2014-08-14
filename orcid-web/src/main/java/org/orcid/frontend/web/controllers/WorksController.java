@@ -428,7 +428,7 @@ public class WorksController extends BaseWorkspaceController {
             copyErrors(work.getUrl(), work);
         }
 
-        if (work.getJournalTitle() == null) {
+        if (work.getJournalTitle() != null) {
             workJournalTitleValidate(work);
             copyErrors(work.getJournalTitle(), work);
         }
@@ -547,16 +547,20 @@ public class WorksController extends BaseWorkspaceController {
         WorkEntity workEntity = new WorkEntity();
         if(!PojoUtil.isEmpty(orcidWork.getPutCode()) && !orcidWork.getPutCode().equals("-1"))
             workEntity.setId(Long.valueOf(orcidWork.getPutCode()));
-        workEntity.setCitation(orcidWork.getWorkCitation().getCitation());
-        workEntity.setCitationType(orcidWork.getWorkCitation().getWorkCitationType());
+        if (orcidWork.getWorkCitation() != null) {
+            workEntity.setCitation(orcidWork.getWorkCitation().getCitation());
+            workEntity.setCitationType(orcidWork.getWorkCitation().getWorkCitationType());
+        }
         workEntity.setDateCreated(new java.util.Date());
         workEntity.setDescription(orcidWork.getShortDescription());
         workEntity.setLastModified(new java.util.Date());
         workEntity.setPublicationDate(toFuzzyDate(orcidWork.getPublicationDate()));
-        workEntity.setSubtitle(orcidWork.getWorkTitle().getSubtitle().getContent());
+        if (orcidWork.getWorkTitle().getSubtitle() != null)
+            workEntity.setSubtitle(orcidWork.getWorkTitle().getSubtitle().getContent());
         workEntity.setTitle(orcidWork.getWorkTitle().getTitle().getContent().trim());
         workEntity.setJournalTitle(orcidWork.getJournalTitle() != null ? orcidWork.getJournalTitle().getContent() : null);
         workEntity.setWorkType(orcidWork.getWorkType());
+        if (orcidWork.getUrl() != null)
         workEntity.setWorkUrl(orcidWork.getUrl().getValue());
         workEntity.setLanguageCode(StringUtils.isEmpty(orcidWork.getLanguageCode()) ? null : orcidWork.getLanguageCode());
 
