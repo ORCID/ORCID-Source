@@ -130,7 +130,7 @@
 		</div>		
 	</div>	
 </div>
-<div class="row">
+<div class="row sources-details">
 	<div class="col-md-12 col-sm-12">
 		<!-- Sources -->			
 		<div class="sources-container-header">			
@@ -186,7 +186,7 @@
 			
 			
 				<ul class="sources-edit-list" ng-show="editSources[group.groupId] == true" ng-cloak>
-					<li>
+					<li class="first-source">
 						<div class="col-sm-4">
 							<span>
 					        	<strong >Source:</strong> {{group.getActive().workSourceName.value}}
@@ -209,8 +209,8 @@
 					</li>
 					<li ng-repeat="work in group.activities" ng-hide="group.activePutCode == work.putCode.value">
 						<div class="col-sm-4">
-							<a ng-click="moreInfo[work.putCode.value] = moreInfo[group.activePutCode]; group.activePutCode = work.putCode.value">
-				           		{{work.workSourceName.value}}				           		
+							<a ng-click="worksSrvc.showSpinner($event); moreInfo[work.putCode.value] = moreInfo[group.activePutCode]; group.activePutCode = work.putCode.value">
+				           		{{work.workSourceName.value}}
 				           	</a> 
 						</div>
 						<div class="col-sm-4">

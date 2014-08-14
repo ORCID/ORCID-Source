@@ -476,8 +476,7 @@ GroupedActivities.prototype.hasPut = function(putCode) {
 		return false;
 };
 
-GroupedActivities.prototype.key = function(activityIdentifiers) {
-	console.log(activityIdentifiers);
+GroupedActivities.prototype.key = function(activityIdentifiers) {	
 	var idPath;
 	var idTypePath;
 	if (this.type == 'abbrWork') {
@@ -788,6 +787,19 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 					count += serv.groups[idx].activitiesCount;
 				}
 				return count;
+			},
+			showSpinner: function($event) {			
+			
+				$($event.target).closest('div.sources-details').siblings('div.work-list-container').css('display', 'none');
+				$($event.target).closest('div.sources-details').siblings('div.spinner').show();
+				
+				setTimeout(
+					function(){
+						$($event.target).closest('div.sources-details').siblings('div.spinner').hide();
+						$($event.target).closest('div.sources-details').siblings('div.work-list-container').css('display', 'block');
+					}
+				,250);
+				
 			}
 	}; 
 	return serv;

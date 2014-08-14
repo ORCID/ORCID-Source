@@ -4403,6 +4403,16 @@ ul.sources-edit-list li{
 	transform: rotateY(180deg);
 }
 
+.workspace-body-list .spinner{
+	text-align: center;
+	margin: 15px 0;
+	display: none;
+}
+
+.spinner span{
+	display: block;
+}
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 
