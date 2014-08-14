@@ -4168,12 +4168,17 @@ multiselect .dropdown-menu .dropdown-menu-list {
 	list-style-type: none;
 }
 
-.workspace-overview ul li {
-	display: inline-block;
+.workspace-overview ul li{
+	display: inline-block;	
 }
 
 .workspace-overview ul li a {
-	text-overflow: ellipsis;
+	word-wrap: inherit;
+}
+
+.workspace-overview:last-child{
+	padding-right: 0;
+	padding-left: 0;
 }
 
 .bibtex-box {
@@ -5101,6 +5106,11 @@ ul.oauth-scopes li{
 	
 	.oauth-login-form input{
 		width: 100%;
+	}
+	
+	.workspace-overview:last-child{
+		padding-left: 15px;
+		padding-right: 15px; 
 	}
 	
 }
