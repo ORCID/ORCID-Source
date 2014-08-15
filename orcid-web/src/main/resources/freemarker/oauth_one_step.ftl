@@ -63,8 +63,13 @@
 		</div>
 		 
 		<!-- LOGIN FORM -->			
-		<div id="login" class="oauth-login-form" ng-show="!showRegisterForm" ng-init="loadAndInitLoginForm('${scopesString}','${redirect_uri}','${client_id}','${response_type}', '${user_id}')">            			                        	
-			  <div class="row">
+		<div id="login" class="oauth-login-form" ng-show="!showRegisterForm" ng-init="loadAndInitLoginForm('${scopesString}','${redirect_uri}','${client_id}','${response_type}', '${user_id}')">
+			 <div class="row">
+				 <div class="control-group col-md-12 col-sm-12 col-xs-12"> 			    	
+					<p class="pull-right">Don't have an ORCID iD?&nbsp;<a class="reg" ng-click="switchForm()" id="in-register-switch-form">Register</a>.</p>			    	
+		    	 </div>           
+	    	 </div> 			                        	
+			 <div class="row">
 				  <div class="form-group has-feedback">
 				    <label for="userId" class="col-sm-3 control-label"><@orcid.msg 'oauth_sign_in.labelemailorID'/></label>
 				    <div class="col-sm-9">
@@ -95,9 +100,11 @@
 			    	<div id="oauth-login-reset" class="col-md-offset-3 col-md-9 col-sm-offset-3 col-sm-3 col-xs-12">
 				        <a href="<@spring.url '/reset-password'/>"><@orcid.msg 'login.reset'/></a>
 				    </div>
+				    <!-- 
 				    <div id="oauth-login-register" class="col-md-offset-3 col-md-9 col-sm-6 col-xs-12">
 				       	<a class="reg" id="in-login-switch-form" ng-click="switchForm()"><@orcid.msg 'orcid.frontend.oauth.register'/></a>
 			    	</div>
+			    	 -->
 		    	</div>
 	    	</div>
 	    	<div class="row">
@@ -198,7 +205,7 @@
 		        </div>			        
 		    </div>
 			
-			<div style="margin-bottom: 20px; margin-top: 10px;">
+			<div class="oauth-privacy" style="margin-bottom: 20px; margin-top: 10px;">
 		        <label class="privacy-toggle-lbl"><@orcid.msg 'privacy_preferences.activitiesVisibilityDefault'/></label>
 		    	<@orcid.privacyToggle 
 		    	    angularModel="registrationForm.activitiesVisibilityDefault.visibility" 
@@ -240,10 +247,10 @@
 	        </div>				   
 		   
 		    <div id="register-buttons">                     		            		               					
-				<button class="btn btn-primary" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="registerAndAuthorize()">
+				<button class="btn btn-primary pull-right" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="registerAndAuthorize()">
 					<@orcid.msg 'confirm-oauth-access.Authorize' />
 				</button>		                 	            
-				<a class="oauth_deny_link" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="registerAndDeny()">
+				<a class="oauth_deny_link pull-right" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="registerAndDeny()">
 					<@orcid.msg 'confirm-oauth-access.Deny' />
 				</a>
             </div> 

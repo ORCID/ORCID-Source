@@ -4257,7 +4257,7 @@ ul.oauth-scopes li{
 .oauth-registration .form-group input[type="email"],
 .oauth-registration .form-group input[type="password"]{
 	margin-bottom: 0;
-	width: 89%;
+	width: 85%;
 }
 
 .dotted-green-bar{
@@ -4267,6 +4267,15 @@ ul.oauth-scopes li{
 	height: 2px;
 	margin: 0 0 15px 0;
 }
+
+/* New Style not related to myorcid3 */
+
+#register-buttons{
+	margin-bottom: 15px;
+}
+
+
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
@@ -4647,7 +4656,7 @@ ul.oauth-scopes li{
 	}
 
 	/* Forms */
-	input[type="text"],input[type="password"],select {
+	input[type="text"],input[type="password"],select,input[type="email"]{
 		height: 50px;
 		font-size: 16px;
 		width: 96%;
@@ -5136,6 +5145,22 @@ ul.oauth-scopes li{
 	.workspace-overview:last-child{
 		padding-left: 15px;
 		padding-right: 15px; 
+	}
+	
+	.oauth-login .popover-help-container .popover{
+		left: -239px;
+	}
+	
+	.oauth-login .oauth-privacy .popover-help-container .popover{
+		left: -109px;
+	}
+	
+	.oauth-login .oauth-privacy .popover.bottom .arrow{
+		left: 120px;
+	}
+	
+	.oauth-login .popover.bottom .arrow{
+		left: 250px;
 	}
 	
 }
