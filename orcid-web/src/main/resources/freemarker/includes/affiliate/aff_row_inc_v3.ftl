@@ -21,25 +21,30 @@
 	<div class="col-md-9 col-sm-9">
 	    <h3 class="workspace-title">
         	<strong ng-bind-html="affiliation.affiliationName.value"></strong>:
-        	<span ng-bind="affiliation.city.value"></span>, <span ng-bind="affiliation.region.value"></span>, <span ng-bind="affiliation.country.value"></span>        	        	        	        	
+        	<span ng-bind="affiliation.city.value"></span><span ng-show="affiliation.region.value">, </span><span ng-bind="affiliation.region.value"></span>, <span ng-bind="affiliation.country.value"></span>        	        	        	        	
         </h3>        
         <div class="info-detail">
-        	<div class="info-date">        	
+        	<div class="info-date">
+        	        	
 	        	<span class="affiliation-date" ng-show="affiliation.startDate && !affiliation.endDate">
 	        	    <span ng-show="affiliation.startDate.year">{{affiliation.startDate.year}}</span><span ng-show="affiliation.startDate.month">-{{affiliation.startDate.month}}</span>
-	        	    <@orcid.msg 'workspace_affiliations.dateSeparator'/>
-	        	    <@orcid.msg 'workspace_affiliations.present'/>
+	        	    <span><@orcid.msg 'workspace_affiliations.dateSeparator'/></span>
+	        	     <@orcid.msg 'workspace_affiliations.present'/>
 	        	</span>
+	        	
 	        	<span class="affiliation-date" ng-show="affiliation.startDate && affiliation.endDate">
 	        		<span ng-show="affiliation.startDate.year">{{affiliation.startDate.year}}</span><span ng-show="affiliation.startDate.month">-{{affiliation.startDate.month}}</span>
 	        		<@orcid.msg 'workspace_affiliations.dateSeparator'/>
 	        		<span ng-show="affiliation.endDate.year">{{affiliation.endDate.year}}</span><span ng-show="affiliation.endDate.month">-{{affiliation.endDate.month}}</span>
 	            </span>
+	            
 	            <span class="affiliation-date" ng-show="!affiliation.startDate && affiliation.endDate">
 	        	     <span ng-show="affiliation.endDate.year">{{affiliation.endDate.year}}</span><span ng-show="affiliation.endDate.month">-{{affiliation.endDate.month}}</span>
-	        	</span>        	
+	        	</span>
+	        	        	
         	</div>
-        	<span class="divisor"></span>
+        	<span class="divisor" ng-show="affiliation.roleTitle && (affiliation.startDate || affiliation.endDate)"></span>
+        	
         	<div class="role" ng-show="affiliation.roleTitle">
 	            <span ng-bind-html="affiliation.roleTitle.value"></span>
         	</div>

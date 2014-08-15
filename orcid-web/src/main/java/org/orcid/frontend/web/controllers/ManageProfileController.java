@@ -16,6 +16,7 @@
  */
 package org.orcid.frontend.web.controllers;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,6 +33,8 @@ import javax.validation.Valid;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.jetty.util.ajax.JSON;
+import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidSearchManager;
@@ -151,6 +154,9 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @Resource
     private OrcidSocialManager orcidSocialManager;
+    
+    @Resource 
+    private EmailManager emailManager;
 
     public EncryptionManager getEncryptionManager() {
         return encryptionManager;
@@ -1004,4 +1010,93 @@ public class ManageProfileController extends BaseWorkspaceController {
         return true;
     }
 
+    /**
+     * Authorize a delegate request done by an admin
+     * */
+    @RequestMapping(value = {"/authorize-delegates"}, method = RequestMethod.GET)
+    public ModelAndView authorizeDelegatesRequest(@RequestParam("key") String key) {
+        ModelAndView mav = new ModelAndView("manage");        
+        //Set default objects the manage page needs
+        mav.addObject("showPrivacy", true);
+        mav.addObject("managePasswordOptionsForm", populateManagePasswordFormFromUserInfo());
+        mav.addObject("preferencesForm", new PreferencesForm(getEffectiveProfile()));
+        mav.addObject("profile", getEffectiveProfile());
+        mav.addObject("activeTab", "profile-tab");
+        mav.addObject("securityQuestions", getSecurityQuestions());
+        
+        try {
+            Map<String, String> params = decryptDelegationKey(key);
+            if(params.containsKey(AdminController.MANAGED_USER_PARAM) && params.containsKey(AdminController.TRUSTED_USER_PARAM)) {
+                String managedOrcid = params.get(AdminController.MANAGED_USER_PARAM);
+                String trustedOrcid = params.get(AdminController.TRUSTED_USER_PARAM);
+                //Check if managed user is the same than the logged user
+                if(managedOrcid.equals(getEffectiveUserOrcid())) {
+                    //Check if the managed user email is verified, if not, verify it
+                    verifyPrimaryEmailIfNeeded(managedOrcid);
+                    //Check if the delegation doesnt exists
+                    GivenPermissionToEntity existing = givenPermissionToDao.findByGiverAndReceiverOrcid(managedOrcid, trustedOrcid);
+                    if(existing == null) {
+                        // Clear the delegate's profile from the cache so that the granting
+                        // user is visible to them immediately
+                        Date delegateLastModified = profileDao.updateLastModifiedDate(trustedOrcid);
+                        GivenPermissionToEntity permission = new GivenPermissionToEntity();
+                        permission.setGiver(managedOrcid);
+                        ProfileSummaryEntity receiver = new ProfileSummaryEntity(trustedOrcid);
+                        receiver.setLastModified(delegateLastModified);
+                        permission.setReceiver(receiver);
+                        permission.setApprovalDate(new Date());
+                        givenPermissionToDao.merge(permission);
+                        OrcidProfile currentUser = getEffectiveProfile();
+                        ProfileEntity delegateProfile = profileEntityManager.findByOrcid(trustedOrcid);
+                        DelegationDetails details = new DelegationDetails();
+                        details.setApprovalDate(new ApprovalDate(DateUtils.convertToXMLGregorianCalendar(permission.getApprovalDate())));
+                        DelegateSummary summary = new DelegateSummary();
+                        details.setDelegateSummary(summary);
+                        summary.setOrcidIdentifier(new OrcidIdentifier(trustedOrcid));
+                        String creditName = delegateProfile.getCreditName();
+                        if (StringUtils.isNotBlank(creditName)) {
+                            summary.setCreditName(new CreditName(creditName));
+                        }
+                        List<DelegationDetails> detailsList = new ArrayList<>(1);
+                        detailsList.add(details);                                                            
+                        //Send notifications
+                        notificationManager.sendNotificationToAddedDelegate(currentUser, detailsList);                    
+                    }                                
+                    mav.addObject("admin_delegate_approved", getMessage("admin.delegate.success", trustedOrcid));
+                } else {
+                    //Exception, the email was not for you
+                    mav.addObject("admin_delegate_failed", getMessage("admin.delegate.error.invalid_user"));
+                }            
+            } else {
+                //Error
+                mav.addObject("admin_delegate_failed", getMessage("admin.delegate.error.invalid_link"));
+            }
+        } catch(UnsupportedEncodingException uee) {
+            mav.addObject("admin_delegate_failed", getMessage("admin.delegate.error.invalid_link"));
+        }
+        
+        return mav;
+    }
+    
+    /**
+     * @throws UnsupportedEncodingException 
+     * */
+    @SuppressWarnings("unchecked")
+    private Map<String, String> decryptDelegationKey(String encryptedKey) throws UnsupportedEncodingException  {
+        String jsonString = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedKey), "UTF-8"));                
+        Map<String, String> params = (HashMap<String, String>)JSON.parse(jsonString);
+        return params;
+    }
+    
+    /**
+     * Verify a primary email if it is not verified yet.
+     * @param orcid
+     *          The profile id to check
+     * */
+    private void verifyPrimaryEmailIfNeeded(String orcid) {
+        if(!emailManager.isPrimaryEmailVerified(orcid)) {
+            emailManager.verifyPrimaryEmail(orcid);
+        }
+    }
+    
 }

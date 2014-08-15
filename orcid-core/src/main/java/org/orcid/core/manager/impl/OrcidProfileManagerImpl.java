@@ -54,6 +54,7 @@ import net.sf.ehcache.Element;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.adapter.JpaJaxbEntityAdapter;
+import org.orcid.core.constants.DefaultPreferences;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.LoadOptions;
@@ -1045,10 +1046,10 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     @Override
     @Transactional
     public void updatePreferences(String orcid, Preferences preferences) {
-        boolean sendChangeNotifications = preferences.getSendChangeNotifications().isValue();
-        boolean sendOrcidNews = preferences.getSendOrcidNews().isValue();
+        boolean sendChangeNotifications = preferences.getSendChangeNotifications() == null? DefaultPreferences.SEND_CHANGE_NOTIFICATIONS_DEFAULT : preferences.getSendChangeNotifications().isValue();
+        boolean sendOrcidNews = preferences.getSendOrcidNews() == null ? DefaultPreferences.SEND_ORCID_NEWS_DEFAULT : preferences.getSendOrcidNews().isValue();
         Visibility activitiesVisibilityDefault = preferences.getActivitiesVisibilityDefault().getValue();
-        boolean developerToolsEnabled = preferences.getDeveloperToolsEnabled().isValue();
+        boolean developerToolsEnabled = preferences.getDeveloperToolsEnabled() == null ? DefaultPreferences.DEVELOPER_TOOLS_ENABLED_DEFAULT : preferences.getDeveloperToolsEnabled().isValue();
         profileDao.updatePreferences(orcid, sendChangeNotifications, sendOrcidNews, activitiesVisibilityDefault, developerToolsEnabled);
         OrcidProfile cachedProfile = getOrcidProfileFromCache(orcid);
         if (cachedProfile != null) {

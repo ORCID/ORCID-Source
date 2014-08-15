@@ -86,6 +86,10 @@ public class Work implements ErrorsInterface, Serializable {
 	
 	private String dateSortString;
 	
+	private Date dateCreated;
+	
+	private Date lastModified;
+	
 
 	public static Work valueOf(MinimizedWorkEntity minimizedWorkEntity) {
 		Work w = new Work();
@@ -107,6 +111,14 @@ public class Work implements ErrorsInterface, Serializable {
 			WorkTitle workTitle = new WorkTitle();
 			Text title = Text.valueOf(minimizedWorkEntity.getTitle());
 			workTitle.setTitle(title);
+                        
+                        if (!StringUtils.isEmpty(minimizedWorkEntity.getTranslatedTitle())) {
+                            TranslatedTitle translatedTitle = new TranslatedTitle();
+                            translatedTitle.setContent(minimizedWorkEntity.getTranslatedTitle());
+                            translatedTitle.setLanguageCode(minimizedWorkEntity.getTranslatedTitleLanguageCode());
+                            workTitle.setTranslatedTitle(translatedTitle);
+                        }
+			
 			if (!StringUtils.isEmpty(minimizedWorkEntity.getSubtitle())) {
 				Text subtitle = Text.valueOf(minimizedWorkEntity.getSubtitle());
 				workTitle.setSubtitle(subtitle);
@@ -121,15 +133,24 @@ public class Work implements ErrorsInterface, Serializable {
 		// Set visibility
 		if (minimizedWorkEntity.getVisibility() != null)
 			w.setVisibility(minimizedWorkEntity.getVisibility());
+		
+		if (minimizedWorkEntity.getWorkType() != null)
+                    w.setWorkType(Text.valueOf(minimizedWorkEntity.getWorkType().value()));
 
 		if (!StringUtils.isEmpty(minimizedWorkEntity.getExternalIdentifiersJson())) {
 		    WorkExternalIdentifiers identifiers = JsonUtils.readObjectFromJsonString(minimizedWorkEntity.getExternalIdentifiersJson(), WorkExternalIdentifiers.class);
 		    populateExternaIdentifiers(identifiers, w);            
 		}
-		if (minimizedWorkEntity.getSourceProfile() != null) {
+                if (minimizedWorkEntity.getSourceProfile() != null) {
                     w.setWorkSource(Text.valueOf(minimizedWorkEntity.getSourceProfile().getId()));
                     w.setWorkSourceName(Text.valueOf(Jpa2JaxbAdapterImpl.createName(minimizedWorkEntity.getSourceProfile())));
                 }
+                if (minimizedWorkEntity.getLanguageCode() != null) {
+                    w.setLanguageCode(Text.valueOf(minimizedWorkEntity.getLanguageCode()));
+                    w.setLanguageCode(Text.valueOf(minimizedWorkEntity.getLanguageCode()));
+                }
+		w.setDateCreated(Date.valueOf(minimizedWorkEntity.getDateCreated()));
+		w.setLastModified(Date.valueOf(minimizedWorkEntity.getLastModified()));
 		return w;
 	}
 	
@@ -175,8 +196,6 @@ public class Work implements ErrorsInterface, Serializable {
 			WorkCategory category = WorkCategory.fromWorkType(orcidWork.getWorkType());
 			w.setWorkCategory(Text.valueOf(category.value()));
 		}
-
-		
 		
 		if (orcidWork.getJournalTitle() != null)
 			w.setJournalTitle(Text.valueOf(orcidWork.getJournalTitle()
@@ -188,6 +207,7 @@ public class Work implements ErrorsInterface, Serializable {
 		if (orcidWork.getCountry() != null)
 			w.setCountryCode((orcidWork.getCountry().getValue() == null) ? null
 					: Text.valueOf(orcidWork.getCountry().getValue().value()));
+		
 		return w;
 	}
 
@@ -441,5 +461,21 @@ public class Work implements ErrorsInterface, Serializable {
 
     public void setDateSortString(String dateSortString) {
         this.dateSortString = dateSortString;
+    }
+
+    public Date getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(Date dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
+    public Date getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(Date lastModified) {
+        this.lastModified = lastModified;
     }
 }

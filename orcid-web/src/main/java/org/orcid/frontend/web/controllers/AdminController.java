@@ -27,9 +27,12 @@ import java.util.TreeMap;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.jetty.util.ajax.JSON;
 import org.orcid.core.manager.EmailManager;
+import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.NotificationManager;
@@ -47,6 +50,7 @@ import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.pojo.AdminChangePassword;
+import org.orcid.pojo.AdminDelegatesRequest;
 import org.orcid.pojo.ProfileDeprecationRequest;
 import org.orcid.pojo.ProfileDetails;
 import org.orcid.pojo.ajaxForm.Group;
@@ -76,6 +80,11 @@ public class AdminController extends BaseController {
     private static final Logger LOGGER = LoggerFactory.getLogger(AdminController.class);
 
     private static int RANDOM_STRING_LENGTH = 15;
+
+    public static String MANAGED_USER_PARAM = "managed";
+    public static String TRUSTED_USER_PARAM = "trusted";
+    
+    public static String AUTHORIZE_DELEGATION_ACTION = "/manage/authorize-delegates";
     
     @Resource
     ProfileEntityManager profileEntityManager;
@@ -92,6 +101,9 @@ public class AdminController extends BaseController {
 
     @Resource
     OrcidClientGroupManager orcidClientGroupManager;
+    
+    @Resource
+    private EncryptionManager encryptionManager;
 
     @Resource
     EmailManager emailManager;
@@ -280,7 +292,7 @@ public class AdminController extends BaseController {
      * */
     @RequestMapping(value = { "/deprecate-profile/check-orcid.json", "/deactivate-profile/check-orcid.json" }, method = RequestMethod.GET)
     public @ResponseBody
-    ProfileDetails checkOrcid(@RequestParam("orcid") String orcid) {
+    ProfileDetails checkOrcidToDeprecate(@RequestParam("orcid") String orcid) {        
         ProfileEntity profile = profileEntityManager.findByOrcid(orcid);
         ProfileDetails profileDetails = new ProfileDetails();
         if (profile != null) {
@@ -555,6 +567,148 @@ public class AdminController extends BaseController {
         
         return mav;
         
+    }
+        
+    /**
+     * Admin verify email
+     * */
+    @RequestMapping(value = "/admin-verify-email", method = RequestMethod.GET)    
+    public @ResponseBody String adminVerifyEmail(@RequestParam("email") String email) {
+        String result = getMessage("admin.verify_email.success", email);
+        if(emailManager.emailExists(email)) {
+            emailManager.verifyEmail(email);
+            Map<String, String> ids = emailManager.findIdByEmail(email);
+            orcidProfileManager.updateLastModifiedDate(ids.get(email));
+        } else {
+            result = getMessage("admin.verify_email.fail", email);
+        }
+        return result;
+    }
+    
+    /**
+     * Admin starts delegation process
+     * */
+    @RequestMapping(value = "/admin-delegates", method = RequestMethod.POST) 
+    public @ResponseBody AdminDelegatesRequest startDelegationProcess(@RequestBody AdminDelegatesRequest request) {
+        //Clear errors
+        request.setErrors(new ArrayList<String>());
+        request.getManaged().setErrors(new ArrayList<String>());
+        request.getTrusted().setErrors(new ArrayList<String>());
+        
+        String trusted = request.getTrusted().getValue();
+        String managed = request.getManaged().getValue();
+        boolean trustedIsOrcid = matchesOrcidPattern(trusted);
+        boolean haveErrors = false;
+        
+        if(!trustedIsOrcid) {
+            if(emailManager.emailExists(trusted)) {
+                Map<String, String> email = findIdByEmail(trusted);
+                trusted  = email.get(trusted);         
+            } else {
+                request.getTrusted().getErrors().add(getMessage("admin.delegate.error.invalid_orcid_or_email", request.getTrusted().getValue()));  
+                haveErrors = true;
+            }
+        }
+        boolean managedIsOrcid = matchesOrcidPattern(managed);
+        if(!managedIsOrcid) {
+            if(emailManager.emailExists(managed)) {
+                Map<String, String> email = findIdByEmail(managed);
+                managed  = email.get(managed);
+            } else {
+                request.getManaged().getErrors().add(getMessage("admin.delegate.error.invalid_orcid_or_email", request.getManaged().getValue()));
+                haveErrors = true;
+            }                       
+        }
+        
+        if(haveErrors)
+            return request;
+        
+        //Restriction #1: Both accounts must be claimed
+        boolean isTrustedClaimed = profileEntityManager.isProfileClaimed(trusted);
+        boolean isManagedClaimed = profileEntityManager.isProfileClaimed(managed);
+        
+        if(!isTrustedClaimed || !isManagedClaimed) {
+            if(!isTrustedClaimed && !isManagedClaimed) {
+                request.getErrors().add(getMessage("admin.delegate.error.not_claimed.both", trusted, request.getManaged().getValue()));
+            } else if(!isTrustedClaimed) {
+                request.getTrusted().getErrors().add(getMessage("admin.delegate.error.not_claimed", request.getTrusted().getValue()));
+            } else {
+                request.getManaged().getErrors().add(getMessage("admin.delegate.error.not_claimed", request.getManaged().getValue()));
+            }
+            haveErrors = true;
+        }
+        
+        //Restriction #2: Trusted individual must have a verified primary email address
+        if(!emailManager.isPrimaryEmailVerified(trusted)) {
+            request.getTrusted().getErrors().add(getMessage("admin.delegate.error.primary_email_not_verified", request.getTrusted().getValue()));
+            haveErrors = true;
+        }
+        
+        //Restriction #3: They cant be the same account
+        if(trusted.equalsIgnoreCase(managed)) {
+            request.getErrors().add(getMessage("admin.delegate.error.cant_be_the_same", request.getTrusted().getValue(), request.getManaged().getValue()));
+            haveErrors = true;
+        }
+        
+        if(haveErrors)
+            return request;
+        
+        //Generate link
+        String link = generateEncryptedLink(trusted, managed);
+        //Get primary emails
+        OrcidProfile managedOrcidProfile = orcidProfileManager.retrieveClaimedOrcidProfile(managed);
+        OrcidProfile trustedOrcidProfile = orcidProfileManager.retrieveClaimedOrcidProfile(trusted);
+        //Send email to managed account
+        notificationManager.sendDelegationRequestEmail(managedOrcidProfile, trustedOrcidProfile, link);
+        
+        request.setSuccessMessage(getMessage("admin.delegate.admin.success", managedOrcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue()));
+        
+        return request;
+    }
+    
+    /**
+     * Admin starts delegation process
+     * */    
+    @RequestMapping(value = "/admin-delegates/check-claimed-status.json", method = RequestMethod.GET) 
+    public @ResponseBody boolean checkClaimedStatus(@RequestParam("orcidOrEmail")String orcidOrEmail) {
+        boolean isOrcid = matchesOrcidPattern(orcidOrEmail);
+        String orcid = null;
+        //If it is not an orcid, check the value from the emails table
+        if(!isOrcid) {
+            if(emailManager.emailExists(orcidOrEmail)) {
+                Map<String, String> email = findIdByEmail(orcidOrEmail);
+                orcid = email.get(orcidOrEmail);
+            }
+        } else {
+            orcid = orcidOrEmail;
+        }
+        
+        if(PojoUtil.isEmpty(orcid))
+            return false;
+        
+        return profileEntityManager.isProfileClaimed(orcid);
+    }
+    
+    
+    /**
+     * Encrypts a string
+     * 
+     * @param unencrypted
+     * @return the string encrypted
+     * */
+    private String generateEncryptedLink(String trusted, String managed) {
+        Map<String, String> params = new HashMap<String, String>();
+        params.put(TRUSTED_USER_PARAM, trusted);
+        params.put(MANAGED_USER_PARAM, managed);
+        String paramsString = JSON.toString(params);
+        if (StringUtils.isNotBlank(paramsString)) {
+            String encryptedParams = encryptionManager.encryptForExternalUse(paramsString);
+            String base64EncodedParams = Base64.encodeBase64URLSafeString(encryptedParams.getBytes());
+            String url = getBaseUri() + AUTHORIZE_DELEGATION_ACTION + "?key=" + base64EncodedParams;            
+            return url;
+        } else {
+            return null;
+        }
     }
     
     private boolean matchesOrcidPattern(String orcid){

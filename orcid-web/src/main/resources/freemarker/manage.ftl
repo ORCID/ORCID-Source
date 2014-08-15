@@ -23,6 +23,16 @@
          <strong><@spring.message "orcid_social.twitter.enabled"/></strong>
      </div>
  </#if>
+ <#if admin_delegate_approved??>
+ 	<div class="alert alert-success">
+         <strong>${admin_delegate_approved}</strong>
+     </div>
+ </#if> 
+  <#if admin_delegate_failed??>
+ 	<div class="alert alert-success">
+         <strong>${admin_delegate_failed}</strong>
+     </div>
+ </#if> 
 <div class="row">
 	<div class="col-md-3 col-sm-12 col-xs-12 padding-fix">
 		<#include "admin_menu.ftl"/>
@@ -126,6 +136,11 @@
 											ng-repeat='error in emailSrvc.inputEmail.errors'
 											ng-bind-html="error"></span>
 										</span>
+									</div>
+									<div class="col-md-12">
+									<label>
+									As per ORCID's <a href="${aboutUri}/content/orcid-terms-use" target="_blank">terms of use</a>, you may only add email addresses that you have control over. An email to the added address will be sent immediately to ask for verification of address.
+									</lable>
 									</div>
 								</div>
 							</div>

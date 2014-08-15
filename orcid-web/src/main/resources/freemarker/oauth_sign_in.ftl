@@ -16,37 +16,82 @@
     =============================================================================
 
 -->
-    <#include "/common/browser-checks.ftl" />
-    <div class="col-md-6 col-sm-12 margin-top-bottom-box">
-	    <div class="page-header">
-		    <h3>${springMacroRequestContext.getMessage("oauth_sign_in.h3signin")}</h3>
+	<#include "/common/browser-checks.ftl" />
+	<div class="col-md-6 col-sm-12 oauth-margin-top-bottom-box" ng-controller="OauthAuthorizationController">
+		<div class="page-header">
+		    <h3><@orcid.msg 'oauth_sign_in.h3signin'/></h3>
 		</div>
-        <form id="loginForm" action="<@spring.url '/signin/auth'/>" method="post">
-            
+        <form id="loginForm" action="<@spring.url '/signin/auth'/>" method="post">	            
             <@spring.bind "loginForm" />
             <@spring.showErrors "<br/>" "error" />
 			<input type="hidden" name="client_name" value="${client_name}" />
 			<input type="hidden" name="client_group_name" value="${client_group_name}" />
             <div>
-                <label for="userId">${springMacroRequestContext.getMessage("oauth_sign_in.labelemailorID")}</label>
+                <label for="userId"><@orcid.msg 'oauth_sign_in.labelemailorID'/></label>
                 <div class="relative">
                    <input type="text" id="userId" name="userId" value="${userId}" placeholder="Email or iD" class="input-xlarge">
                 </div>
             </div>
             <div id="passwordField">
-                <label for="password">${springMacroRequestContext.getMessage("oauth_sign_in.labelpassword")}</label>
+                <label for="password"><@orcid.msg 'oauth_sign_in.labelpassword'/></label>
                 <div class="relative">
                    <input type="password" id="password" name="password" value="" placeholder="Password" class="input-xlarge">
                 </div>
             </div>
             <div id="buttons">
                 <div class="relative">
-                    <button class="btn btn-primary" type="submit">${springMacroRequestContext.getMessage("oauth_sign_in.h3signin")}</button>
+                    <button class="btn btn-primary" type="submit"><@orcid.msg 'oauth_sign_in.h3signin'/></button>
                     <span id="ajax-loader" class="hide"><i id="ajax-loader" class="glyphicon glyphicon-refresh spin x2 green"></i></span>
                 </div>
                 <div class="relative margin-top-box">
-                	<a href="<@spring.url '/reset-password'/>">${springMacroRequestContext.getMessage("oauth_sign_in.forgottenpassword")}</a>
+                	<a href="<@spring.url '/reset-password'/>"><@orcid.msg 'oauth_sign_in.forgottenpassword'/></a>
                 </div>
             </div>
-        </form>
-    </div>
+        </form>	
+	</div>	   
+	
+<script type="text/ng-template" id="duplicates">
+	<div class="lightbox-container" id="duplicates-records">
+		<div class="row margin-top-box">			
+			<div class="col-md-6 col-sm-6 col-xs-12">
+	     		<h4><@orcid.msg 'duplicate_researcher.wefoundfollowingrecords'/>
+	     		<@orcid.msg 'duplicate_researcher.to_access.1'/><a href="<@spring.url "/signin" />" target="signin"><@orcid.msg 'duplicate_researcher.to_access.2'/></a><@orcid.msg 'duplicate_researcher.to_access.3'/>
+	     		</h4>
+     		</div>
+     		<div class="col-md-6 col-sm-6 col-xs-12 right margin-top-box">
+	     	    <button class="btn btn-primary" ng-click="postRegisterConfirm()"><@orcid.msg 'duplicate_researcher.btncontinuetoregistration'/></button>
+			</div>
+		</div>				
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="table-container">
+					<table class="table">
+						<thead>
+							<tr>               				
+			    				<th><@orcid.msg 'search_results.thORCIDID'/></th>
+    							<th><@orcid.msg 'duplicate_researcher.thEmail'/></th>
+    							<th><@orcid.msg 'duplicate_researcher.thgivennames'/></th>
+    							<th><@orcid.msg 'duplicate_researcher.thFamilyName'/></th>
+	    						<th><@orcid.msg 'duplicate_researcher.thInstitution'/></th>                				
+							</tr>
+						</thead>
+						<tbody>
+						 	<tr ng-repeat='dup in duplicates'>
+					 			<td><a href="<@spring.url '/'/>{{dup.orcid}}" target="_blank">{{dup.orcid}}</a></td>
+        						<td>{{dup.email}}</td>
+        						<td>{{dup.givenNames}}</td>
+        						<td>{{dup.familyNames}}</td>
+        						<td>{{dup.institution}}</td>
+    						</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>	
+		<div class="row margin-top-box">
+			<div class="col-md-12 col-sm-12 col-xs-12 right">
+		    	<button class="btn btn-primary" ng-click="postRegisterConfirm()"><@orcid.msg 'duplicate_researcher.btncontinuetoregistration'/></button>
+			</div>
+		</div>
+	</div>
+</script>      

@@ -16,6 +16,7 @@
  */
 package org.orcid.persistence.jpa.entities;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Date;
 
@@ -166,7 +167,10 @@ public class ProfileWorkEntity extends BaseEntity<ProfileWorkEntityPk> implement
         this.displayIndex = displayIndex;
     }
 
-    public static class ChronologicallyOrderedProfileWorkEntityComparator implements Comparator<ProfileWorkEntity> {
+    public static class ChronologicallyOrderedProfileWorkEntityComparator implements Comparator<ProfileWorkEntity>, Serializable {
+
+        private static final long serialVersionUID = 1L;
+
         public int compare(ProfileWorkEntity profileWork1, ProfileWorkEntity profileWork2) {
             if (profileWork2 == null) {
                 throw new NullPointerException("Can't compare with null");

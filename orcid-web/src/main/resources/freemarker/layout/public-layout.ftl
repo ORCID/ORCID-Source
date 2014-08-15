@@ -67,7 +67,13 @@
 					<form id="language-form" action="#">
 						<select name="language-codes" id="language-codes" ng-model="language" ng-options="language.label for language in languages" ng-change="selectedLanguage()"></select>
 					</form>
+					<div class="account-settings-mobile-menu">
+						<span class="account-settings-mobile">
+							<a ${(nav=="settings")?string('class="active" ', '')}href="<@spring.url '/account'/>"><@orcid.msg 'public-layout.account_setting'/></a>
+						</span>
+					</div>
 				</div>
+				
 			</div>
 		</div> <!-- .row -->
 			<div class="row">

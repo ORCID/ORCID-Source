@@ -15,18 +15,24 @@
  * =============================================================================
  */
 
-	function openImportWizardUrl(url) {
-		var win = window.open(url, "_target"); 
-		setTimeout( function() {
-		    if(!win || win.outerHeight === 0) {
-		        //First Checking Condition Works For IE & Firefox
-		        //Second Checking Condition Works For Chrome
-		        window.location.href = url;
-		    } 
-		}, 250);
-		$.colorbox.close();		
-	};
+function openImportWizardUrl(url) {
+	var win = window.open(url, "_target"); 
+	setTimeout( function() {
+	    if(!win || win.outerHeight === 0) {
+	        //First Checking Condition Works For IE & Firefox
+	        //Second Checking Condition Works For Chrome
+	        window.location.href = url;
+	    } 
+	}, 250);
+	$.colorbox.close();		
+};
 
+	
+	
+sortPredicateMap = {};
+sortPredicateMap['date'] = ['-dateSortString', 'title'];
+sortPredicateMap['title'] = ['title', '-dateSortString'];
+	
 
 var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.multiselect']);
 
@@ -74,6 +80,7 @@ orcidNgModule.directive('appFileTextReader', function($q){
 	                    if(element.multiple) ngModelCtrl.$setViewValue(values);
 	                    else ngModelCtrl.$setViewValue(values.length ? values[0] : null);
 	                    scope.updateFn(scope);
+	                    element.value = null;
 	                });
 	                function readFile(file) {
 	                    var deferred = $q.defer();
@@ -91,6 +98,31 @@ orcidNgModule.directive('appFileTextReader', function($q){
 	        }//link
 	    };//return
 	});//appFilereader
+
+//Thanks to: https://docs.angularjs.org/api/ng/service/$compile#attributes
+orcidNgModule.directive('compile', function($compile) {
+    // directive factory creates a link function
+    return function(scope, element, attrs) {
+      scope.$watch(
+        function(scope) {
+           // watch the 'compile' expression for changes
+          return scope.$eval(attrs.compile);
+        },
+        function(value) {
+          // when the 'compile' expression changes
+          // assign it into the current DOM
+          element.html(value);
+
+          // compile the new DOM and link it to the current
+          // scope.
+          // NOTE: we only compile .childNodes so that
+          // we don't get into infinite loop compiling ourselves
+          $compile(element.contents())(scope);
+        }
+      );
+    };
+  });
+
 
 
 orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
@@ -385,6 +417,7 @@ var GroupedActivities = function(type) {
 	this.defaultPutCode = null;
 	this.dateSortString;
 	this.groupId = GroupedActivities.count;
+	this.title;
 };
 
 GroupedActivities.prototype.test = function() {
@@ -394,7 +427,7 @@ GroupedActivities.prototype.test = function() {
 	else
 		count++;
 	return count;
-}
+};
 
 GroupedActivities.prototype.add = function(activity) {
 	// assumes works are added in the order of the display index desc
@@ -414,6 +447,7 @@ GroupedActivities.prototype.add = function(activity) {
 GroupedActivities.prototype.makeDefault = function(putCode) {
 	this.defaultPutCode = putCode;
 	this.dateSortString = this.activities[putCode].dateSortString;	
+	this.title = this.activities[putCode].workTitle.title.value;
 };
 
 GroupedActivities.prototype.addKey = function(key) {
@@ -442,7 +476,7 @@ GroupedActivities.prototype.hasPut = function(putCode) {
 		return false;
 };
 
-GroupedActivities.prototype.key = function(activityIdentifiers) {
+GroupedActivities.prototype.key = function(activityIdentifiers) {	
 	var idPath;
 	var idTypePath;
 	if (this.type == 'abbrWork') {
@@ -470,22 +504,6 @@ GroupedActivities.prototype.rmByPut = function(putCode) {
 	delete this.activities[putCode];
 	this.activitiesCount--;
 	return activities;
-};
-
-GroupedActivities.prototype.updateDefault = function(putsArray) {
-	this.defaultPutCode == undefined;
-	for (var idx in putsArray) {
-		if (this.hasPut(putsArray[idx])) {
-			this.defaultPutCode = putsArray[idx];
-			break;
-		};
-	};
-	// if we don't have a default select the first putCode
-	if (this.defaultPutCode == undefined) 
-		if (this.activitiesCount > 0)
-			for (var idx in activities) {
-				this.defaultPutCode = idx;
-			};
 };
 
 
@@ -527,18 +545,28 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 									removeBadContributors(dw);	
 									removeBadExternalIdentifiers(dw);
 									serv.addBibtexJson(dw);
-									var added = false;
+									var matches = new Array();
 									for (var idx in serv.groups)
 										if (serv.groups[idx].keyMatch(dw)) {
-											serv.groups[idx].add(dw);
-											added = true;
-											break;
+											//serv.groups[idx].add(dw);
+											matches.push(serv.groups[idx]);
 										}
-									if (added == false) {
+									if (matches.length == 0) {
 										var newGroup = new GroupedActivities('abbrWork');
 										newGroup.add(dw);
 										serv.groups.push(newGroup);
-									};
+									} else {
+										var firstMatch = matches.shift();
+										firstMatch.add(dw);
+										// combine any remaining groups into the first group we found.
+										for (var idx in matches) {
+											var matchIndex = serv.groups.indexOf(matches[idx]);
+											var curMatch = serv.groups[matchIndex];
+											for (var idj in curMatch.activities)
+												firstMatch.add(curMatch.activities[idj]);
+											serv.groups.splice(matchIndex, 1);
+										}
+									}
 								};
 							});
 							if(serv.worksToAddIds.length == 0 ) {
@@ -575,7 +603,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 			    	console.log("Error fetching blank work");
 			    });
 			},
-			getDetails: function(putCode, type, callback) {
+			getDetails: function(putCode, type, callback) {				
 				if (type == serv.constants.access_type.USER) 
 					var url = getBaseUri() + '/works/getWorkInfo.json?workId=';
 				else // use the anonymous url
@@ -759,6 +787,19 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 					count += serv.groups[idx].activitiesCount;
 				}
 				return count;
+			},
+			showSpinner: function($event) {			
+			
+				$($event.target).closest('div.sources-details').siblings('div.work-list-container').css('display', 'none');
+				$($event.target).closest('div.sources-details').siblings('div.spinner').show();
+				
+				setTimeout(
+					function(){
+						$($event.target).closest('div.sources-details').siblings('div.spinner').hide();
+						$($event.target).closest('div.sources-details').siblings('div.work-list-container').css('display', 'block');
+					}
+				,250);
+				
 			}
 	}; 
 	return serv;
@@ -976,6 +1017,24 @@ orcidNgModule.filter('urlWithHttp', function(){
 	    return input;
 	};
 });
+
+orcidNgModule.filter('ajaxFormDateToISO8601', function(){
+	return function(input){
+		var str = '';
+		if (input.year) str += input.year;
+		if (input.month) {
+			if (str.length > 0) str += '-';
+			str += input.month;
+		}
+		if (input.day) {
+			if (str.length > 0)
+				str += '-';
+			str += input.day;
+		}
+	    return str;
+	};
+});
+
 
 function formColorBoxWidth() {
 	return isMobile()? '100%': '800px';
@@ -3274,17 +3333,26 @@ function PublicFundingCtrl($scope, $compile, $filter, fundingSrvc){
 	};
 }
 
-function PublicWorkCtrl($scope, $compile, worksSrvc) {
+function PublicWorkCtrl($scope, $compile, $filter, worksSrvc) {
+	$scope.sortPredicateKey = 'date';
+	$scope.sortPredicate = sortPredicateMap[$scope.sortPredicateKey];
+	$scope.sortReverse = false;
 	$scope.worksSrvc = worksSrvc;
-	$scope.showBibtex = true;
+	$scope.showBibtex = false;
 	$scope.moreInfoOpen = false;
 	$scope.moreInfo = {};
 	$scope.displayWorks = true;
 
+	$scope.sort = function(key) {
+		if ($scope.sortPredicateKey == key) 
+			$scope.sortReverse = ! $scope.sortReverse;
+		$scope.sortPredicateKey = key;
+		$scope.sortPredicate = sortPredicateMap[key];
+	};
+	
     $scope.bibtexShowToggle = function () {
     	$scope.showBibtex = !($scope.showBibtex);
     };   
-
 	  
 	$scope.renderTranslatedTitleInfo = function(putCode) {		
 		var info = null; 
@@ -3346,14 +3414,17 @@ function PublicWorkCtrl($scope, $compile, worksSrvc) {
 	};
 }
 
-function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
+function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
+	$scope.sortPredicateKey = 'date';
+	$scope.sortPredicate = sortPredicateMap[$scope.sortPredicateKey];
+	$scope.sortReverse = false;
 	$scope.canReadFiles = false;
 	$scope.showBibtexImportWizard = false;
 	$scope.textFiles = null;
 	$scope.worksFromBibtex = null;	
 	$scope.workspaceSrvc = workspaceSrvc;
 	$scope.worksSrvc = worksSrvc;
-	$scope.showBibtex = true;
+	$scope.showBibtex = false;
 	$scope.editTranslatedTitle = false;
 	$scope.types = null;
 	$scope.privacyHelp = {};
@@ -3364,8 +3435,14 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 	$scope.edittingWork = false;
 	$scope.bibtexCancelLink = false;
 	$scope.bibtextWork = false;
-	$scope.bibtextWorkIndex = null;
+	$scope.bibtextWorkIndex = null;	
 
+	$scope.sort = function(key) {
+		if ($scope.sortPredicateKey == key) 
+			$scope.sortReverse = ! $scope.sortReverse;
+		$scope.sortPredicateKey = key;
+		$scope.sortPredicate = sortPredicateMap[key];
+	};
 	
 	$scope.loadBibtexJs = function() {
         try {
@@ -3442,7 +3519,7 @@ function WorkCtrl($scope, $compile, worksSrvc, workspaceSrvc) {
 		$scope.editWork.contributors.splice(index,1);
 	};
 
-	$scope.showAddModal = function(){;
+	$scope.showAddModal = function(){
 		$scope.editTranslatedTitle = false;
 		$scope.types = null;
 	    $.colorbox({	    	
@@ -4409,6 +4486,31 @@ function languageCtrl($scope, $cookies) {
 	    	// something bad is happening!	    	
 	    	console.log("Error setting up language cookie");	    	
 	    });		
+	};
+};
+
+function adminVerifyEmailCtrl($scope,$compile){
+	$scope.showSection = false;
+	
+	$scope.toggleSection = function(){
+		$scope.showSection = !$scope.showSection;
+    	$('#verify_email_section').toggle();
+	};
+	
+	$scope.verifyEmail = function(){
+		$.ajax({
+	        url: getBaseUri()+'/admin-actions/admin-verify-email?email=' + $scope.email,	        
+	        type: 'GET',
+	        dataType: 'text',
+	        success: function(data){
+	        	$scope.$apply(function(){ 
+	        		$scope.result = data;        		
+				});
+	        }
+	    }).fail(function(error) { 
+	    	// something bad is happening!	    	
+	    	console.log("Error verifying the email address");	    	
+	    });	
 	};
 };
 
@@ -6059,12 +6161,10 @@ function SocialNetworksCtrl($scope){
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'text',
 	        success: function(data) {	
-	        	console.log("-> " + data);
 	        	if(data == "true")
 	        		$scope.twitter = true;
 	        	else 
 	        		$scope.twitter = false;
-	        	console.log("value: " + $scope.twitter);
 	        	$scope.$apply();
 	        }
 		}).fail(function(){
@@ -6110,6 +6210,415 @@ function SocialNetworksCtrl($scope){
 	//init
 	$scope.checkTwitterStatus();
 };
+
+function adminDelegatesCtrl($scope){
+	$scope.showSection = false;
+	$scope.managed_verified = false;
+	$scope.trusted_verified = false;
+	$scope.success = false;
+	$scope.request = {trusted : {errors: [], value: ''}, managed : {errors: [], value: ''}};
+	
+	$scope.toggleSection = function(){
+		$scope.showSection = !$scope.showSection;
+    	$('#delegates_section').toggle();
+	};
+	
+	$scope.checkClaimedStatus = function (whichField){
+		var orcidOrEmail = '';
+		if(whichField == 'trusted') {
+			$scope.trusted_verified = false;
+			orcidOrEmail = $scope.request.trusted.value;
+		} else {
+			$scope.managed_verified = false;
+			orcidOrEmail = $scope.request.managed.value;
+		}
+		
+		$.ajax({
+	        url: getBaseUri()+'/admin-actions/admin-delegates/check-claimed-status.json?orcidOrEmail=' + orcidOrEmail,	        
+	        type: 'GET',
+	        dataType: 'json',
+	        success: function(data){
+		        	if(data) {
+		        		if(whichField == 'trusted') {
+		        			$scope.trusted_verified = true;
+		        		} else {
+		        			$scope.managed_verified = true;
+		        		}
+		        		$scope.$apply();
+		        	}	        	
+	        	}
+	        }).fail(function(error) { 
+		    	// something bad is happening!	    	
+		    	console.log("Error getting account details for: " + orcid);	    	
+		    });
+	};
+	
+	$scope.confirmDelegatesProcess = function() {
+		$scope.success = false;
+		$.ajax({
+	        url: getBaseUri()+'/admin-actions/admin-delegates',	        
+	        type: 'POST',	        
+	        contentType: 'application/json;charset=UTF-8',	        
+	        dataType: 'json',
+	        data: angular.toJson($scope.request), 
+	        success: function(data){	
+	        		console.log(data);	        		
+		        	$scope.request = data;		 
+		        	console.log(data.successMessage);
+		        	if(data.successMessage) {
+		        		$scope.success = true;
+		        	}
+		        	$scope.$apply();
+	        	}
+	        }).fail(function(error) { 
+		    	// something bad is happening!	    	
+		    	console.log("Error getting delegates request");	    	
+		    });
+	};
+};
+
+function OauthAuthorizationController($scope, $compile, $sce){ 
+	$scope.showClientDescription = false;
+	$scope.showRegisterForm = true;
+	$scope.isOrcidPresent = false;
+	$scope.authorizationForm = {};
+	$scope.registrationForm = {};		
+	$scope.clientName = "";
+	$scope.clientGroupName = "";
+	$scope.requestScopes = null;
+	
+	$scope.toggleClientDescription = function() {
+		$scope.showClientDescription = !$scope.showClientDescription;		
+	};
+		
+	//----------------------------
+	//-INIT GROUP AND CLIENT NAME-
+	//----------------------------
+	$scope.initGroupClientNameAndScopes = function(group_name, client_name, scopes) {
+		$scope.clientName = client_name;
+		$scope.clientGroupName = group_name;
+		$scope.requestScopes = scopes.trim().split(" ");		
+	};
+	
+	//---------------------
+	//-LOGIN AND AUTHORIZE-
+	//---------------------	
+	$scope.loadAndInitLoginForm = function(scopes, redirect_uri, client_id, response_type, user_id) {			
+		$scope.isOrcidPresent = false;
+		$.ajax({
+			url: getBaseUri() + '/oauth/custom/authorize/empty.json',
+			type: 'GET',
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.authorizationForm = data;
+	        	$scope.authorizationForm.scope.value=scopes;
+	        	$scope.authorizationForm.redirectUri.value=redirect_uri;
+	        	$scope.authorizationForm.clientId.value=client_id;
+	        	$scope.authorizationForm.responseType.value=response_type;	
+	        	$scope.authorizationForm.userName.value = user_id;
+	        	if($scope.authorizationForm.userName.value) {
+	        		$scope.isOrcidPresent = true;
+	        		$scope.showRegisterForm = false;
+	        	}	        		
+	        	$scope.$apply();
+	        }
+		}).fail(function() { 	    	
+	    	console.log("An error occured initializing the form.");
+	    });
+	};
+	
+	$scope.loginAndAuthorize = function() {
+		$scope.authorizationForm.approved = true;
+		$scope.submitLogin();
+	};
+	
+	$scope.loginAndDeny = function() {
+		$scope.authorizationForm.approved = false;
+		//Fire GA deny
+		orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Authorize_Deny', 'OAuth ' + $scope.clientGroupName + ' - ' + $scope.clientName ]);
+		$scope.submitLogin();
+	};
+	
+	$scope.submitLogin = function() {
+		var is_authorize = $scope.authorizationForm.approved;
+		$.ajax({
+			url: getBaseUri() + '/oauth/custom/login.json',
+			type: 'POST',
+			data: angular.toJson($scope.authorizationForm),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	if(data) {
+	        		if(data.errors.length != 0) {
+	        			//Fire google GA event
+	        			orcidGA.gaPush(['_trackEvent', 'Sign-In', 'Sign-In-Submit' , 'OAuth ' + orcidGA.buildClientString($scope.clientGroupName, $scope.clientName)]);
+	        			if(is_authorize) {
+	        				for(var i = 0; i < $scope.requestScopes.length; i++) {
+	        					orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Authorize_' + $scope.requestScopes[i] + ', OAuth ' + $scope.clientGroupName + ' - ' + $scope.clientName]);
+	        				}
+	        			}	        			
+	        			$scope.authorizationForm = data;	        			
+	        			$scope.$apply();
+	        		} else {
+	        			//Fire google GA event
+	        			orcidGA.gaPush(['_trackEvent', 'Sign-In', 'RegGrowth' , 'OAuth ' + orcidGA.buildClientString($scope.clientGroupName, $scope.clientName)]);	
+	        			orcidGA.windowLocationHrefDelay(data.redirectUri.value);
+	        		}	        		
+	        	} else {
+	        		console.log("Error authenticating the user");
+	        	} 
+	        	
+	        }
+		}).fail(function() { 	    	
+	    	console.log("An error occured authenticating the user.");
+	    });
+	};
+	
+	//------------------------
+	//-REGISTER AND AUTHORIZE-
+	//------------------------
+	$scope.loadAndInitRegistrationForm = function(scopes, redirect_uri, client_id, response_type) {
+		$.ajax({
+			url: getBaseUri() + '/oauth/custom/register/empty.json',
+			type: 'GET',
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {	        	
+	        	$scope.registrationForm = data;	    
+	        	$scope.registrationForm.scope.value=scopes;
+	        	$scope.registrationForm.redirectUri.value=redirect_uri;
+	        	$scope.registrationForm.clientId.value=client_id;
+	        	$scope.registrationForm.responseType.value=response_type;
+	        	$scope.registrationForm.referredBy.value=client_id;
+	        	if($scope.registrationForm.email.value && !$scope.isOrcidPresent)
+	        		$scope.showRegisterForm = true;
+	        	$scope.$apply();
+	        }
+		}).fail(function() { 	    	
+	    	console.log("An error occured initializing the registration form.");
+	    });
+	};
+	
+	$scope.registerAndAuthorize = function() {
+		$scope.registrationForm.approved = true;
+		$scope.register();
+	};
+	
+	$scope.registerAndDeny = function() {
+		$scope.registrationForm.approved = false;
+		//Fire GA deny
+		orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Authorize_Deny', 'OAuth ' + $scope.clientGroupName + ' - ' + $scope.clientName ]);
+		$scope.register();
+	};
+	
+	$scope.register = function() {		
+		$.ajax({
+	        url: getBaseUri() + '/oauth/custom/register.json',
+	        type: 'POST',
+	        data:  angular.toJson($scope.registrationForm),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.registrationForm = data;	        	
+	        	if ($scope.registrationForm.errors.length == 0) {
+	        		$scope.showProcessingColorBox();
+	        		$scope.getDuplicates();
+	        	} else {
+	        		if($scope.registrationForm.email.errors.length > 0) {	        			
+		        		for(var i = 0; i < $scope.registrationForm.email.errors.length; i++) {	        				        			
+		        			$scope.registrationForm.email.errors[i] = $sce.trustAsHtml($scope.registrationForm.email.errors[i]);
+		        		}
+	        		}
+	        	}
+	        	$scope.$apply();
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("RegistrationCtrl.postRegister() error");
+	    });
+	};
+	
+	$scope.getDuplicates = function(){
+		$.ajax({
+			url: getBaseUri() + '/dupicateResearcher.json?familyNames=' + $scope.registrationForm.familyNames.value + '&givenNames=' + $scope.registrationForm.givenNames.value,	        
+	        dataType: 'json',
+	        success: function(data) {
+		       	$scope.duplicates = data;
+		        $scope.$apply();
+		        if ($scope.duplicates.length > 0 ) {
+		        	$scope.showDuplicatesColorBox();
+		        } else {
+		        	$scope.postRegisterConfirm();
+		        }
+	        }
+		}).fail(function(){
+		// something bad is happening!
+			console.log("error fetching register.json");
+		});
+	};
+	
+	$scope.showDuplicatesColorBox = function () {
+	    $.colorbox({
+	        html : $compile($('#duplicates').html())($scope),
+	        escKey:false, 
+	        overlayClose:false,
+	        transition: 'fade',
+	        close: '',
+	        scrolling: true
+	        	    });
+	    $scope.$apply();
+	    $.colorbox.resize({width:"780px" , height:"400px"});
+	};
+		
+	$scope.postRegisterConfirm = function () {
+		$scope.showProcessingColorBox();		
+		$.ajax({
+	        url: getBaseUri() + '/oauth/custom/registerConfirm.json',
+	        type: 'POST',
+	        data:  angular.toJson($scope.registrationForm),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	    		orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration', 'OAuth '+ orcidGA.buildClientString($scope.clientGroupName, $scope.clientName)]);
+	    		for(var i = 0; i < $scope.requestScopes.length; i++) {
+    				orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Authorize_' + $scope.requestScopes[i] + ', OAuth ' + $scope.clientGroupName + ' - ' + $scope.clientName]);
+    			}
+    			orcidGA.windowLocationHrefDelay(data.redirectUri.value);	    		
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("OauthAuthorizationController.postRegister() error");
+	    });
+	};
+	
+	$scope.serverValidate = function (field) {
+		if (field === undefined) field = '';
+		$.ajax({
+	        url: getBaseUri() + '/oauth/custom/register/validate' + field + '.json',
+	        type: 'POST',
+	        data:  angular.toJson($scope.registrationForm),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.copyErrorsLeft($scope.registrationForm, data);
+	        	if(field == 'Email') {
+	        		for(var i = 0; i < $scope.registrationForm.email.errors.length; i++) {	        				        			
+	        			$scope.registrationForm.email.errors[i] = $sce.trustAsHtml($scope.registrationForm.email.errors[i]);
+	        		}
+	        	}	        		
+	        	$scope.$apply();
+	        }
+	    }).fail(function() { 
+	    	// something bad is happening!
+	    	console.log("OauthAuthorizationController.serverValidate() error");
+	    });
+	};
+	
+	$scope.updateActivitiesVisibilityDefault = function(priv, $event) {
+		$scope.registrationForm.activitiesVisibilityDefault.visibility = priv;
+	};
+	
+	//------------------------
+	//------ AUTHORIZE -------
+	//------------------------
+	$scope.loadAndInitAuthorizationForm = function(scopes, redirect_uri, client_id, response_type) {		
+		$.ajax({
+			url: getBaseUri() + '/oauth/custom/authorize/empty.json',
+			type: 'GET',
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.authorizationForm = data;
+	        	$scope.authorizationForm.scope.value=scopes;
+	        	$scope.authorizationForm.redirectUri.value=redirect_uri;
+	        	$scope.authorizationForm.clientId.value=client_id;
+	        	$scope.authorizationForm.responseType.value=response_type;	        	
+	        }
+		}).fail(function() { 	    	
+	    	console.log("An error occured initializing the form.");
+	    });
+	};
+	
+	$scope.authorize = function() {
+		$scope.authorizationForm.approved = true;
+		$scope.authorizeRequest();
+	};
+	
+	$scope.deny = function() {
+		$scope.authorizationForm.approved = false;
+		//Fire GA deny
+		orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Authorize_Deny', 'OAuth ' + $scope.clientGroupName + ' - ' + $scope.clientName ]);
+		$scope.authorizeRequest();
+	};
+	
+	$scope.authorizeRequest = function() {	
+		var is_authorize = $scope.authorizationForm.approved;
+		$.ajax({
+			url: getBaseUri() + '/oauth/custom/authorize.json',
+			type: 'POST',
+			data: angular.toJson($scope.authorizationForm),
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {	
+	        	if(is_authorize) {
+    				for(var i = 0; i < $scope.requestScopes.length; i++) {
+    					orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Authorize_' + $scope.requestScopes[i] + ', OAuth ' + $scope.clientGroupName + ' - ' + $scope.clientName]);
+    				}
+    			}	
+	        	orcidGA.windowLocationHrefDelay(data.redirectUri.value);
+	        }
+		}).fail(function() { 	    	
+	    	console.log("An error occured authorizing the user.");
+	    });
+	};		
+	
+	//------------------
+	//------COMMON------
+	//------------------		
+	$scope.initializeCommonFields = function(client_name, client_group_name) {
+		$scope.clientName = client_name;
+		$scope.clientGroupName = client_group_name;
+	};
+	
+	// in the case of slow network connection
+	// we don't want to overwrite  values while
+	// user is typing
+	$scope.copyErrorsLeft = function (data1, data2) {
+		for (var key in data1) {
+			if (key == 'errors') {
+				data1.errors = data2.errors;
+			} else {
+				if (data1[key].errors !== undefined)
+				data1[key].errors = data2[key].errors;
+			};
+		};
+	};
+	
+	$scope.switchForm = function() {		
+		$scope.showRegisterForm = !$scope.showRegisterForm;		
+	};
+	
+	$scope.showProcessingColorBox = function () {
+	    $.colorbox({
+	        html : $('<div style="font-size: 50px; line-height: 60px; padding: 20px; text-align:center">' + om.get('common.processing') + '&nbsp;<i id="ajax-loader" class="glyphicon glyphicon-refresh spin green"></i></div>'),
+	        width: '400px', 
+	        height:"100px",
+	        close: '',
+	        escKey:false, 
+	        overlayClose:false,
+			onComplete: function() {
+			    $.colorbox.resize({width:"400px" , height:"100px"});
+			}	        
+	    });
+	};
+			
+	$scope.showToLoginForm = function() {		
+		$scope.authorizationForm.userName.value=$scope.registrationForm.email.value;
+		$scope.showRegisterForm = false;		
+	};				
+};
+
 
 /*Angular Multi-selectbox*/
 angular.module('ui.multiselect', [])

@@ -309,6 +309,8 @@
 	</div>
 </script>
 
+
+
 <#if invalidOrcid?? && invalidOrcid>
     <div class="alert alert-success">
         <strong><@spring.message "orcid.frontend.web.invalid_switch_orcid"/></strong>
@@ -380,6 +382,67 @@
 				</div>
 				<div class="controls save-btns pull-left">
 					<span id="find-ids" ng-click="confirmResetPassword()" class="btn btn-primary"><@orcid.msg 'admin.reset_password.button'/></span>						
+				</div>
+			</div>
+		</div>
+		
+		<!-- Verify email -->
+		<a name="verify-email"></a>
+		<div ng-controller="adminVerifyEmailCtrl" class="workspace-accordion-item" ng-cloak>
+			<p>
+				<a  ng-show="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-down blue"></span></span><@orcid.msg 'admin.verify_email' /></a>
+				<a  ng-hide="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-right blue"></span></span><@orcid.msg 'admin.verify_email' /></a>
+			</p>
+			<div class="collapsible bottom-margin-small admin-modal" id="verify_email_section" style="display:none;">
+				<div class="form-group">				
+					<div ng-show="result">
+						<span class="orcid-error" ng-bind-html="result"></span><br />
+					</div>
+					<label for="email"><@orcid.msg 'admin.verify_email.title' /></label>
+					<input type="text" id="name" ng-model="email" placeholder="<@orcid.msg 'admin.verify_email.placeholder' />" class="input-xlarge" />																					
+				</div>
+				<div class="controls save-btns pull-left">
+					<span id="verify-email" ng-click="verifyEmail()" class="btn btn-primary"><@orcid.msg 'admin.verify_email.btn'/></span>						
+				</div>
+			</div>
+		</div>
+		
+		<!-- Admin delegates -->
+		<a name="admin-delegates"></a>
+		<div ng-controller="adminDelegatesCtrl" class="workspace-accordion-item" ng-cloak>
+			<p>
+				<a  ng-show="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-down blue"></span></span><@orcid.msg 'admin.delegate' /></a>
+				<a  ng-hide="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-right blue"></span></span><@orcid.msg 'admin.delegate' /></a>
+			</p>
+			
+			<div class="collapsible bottom-margin-small admin-modal" id="delegates_section" style="display:none;">
+				<div ng-show="success">
+					<span class="orcid-error" ng-bind-html="request.successMessage"></span>
+				</div>
+				<div ng-show="request.errors.length > 0">
+					<span class="orcid-error" ng-repeat='error in request.errors' ng-bind-html="error"></span><br />
+				</div>
+				<!-- Managed -->
+				<div class="form-group">
+					<label for="managed"><@orcid.msg 'admin.delegate.managed.label' /></label>
+					<input type="text" id="managed" placeholder="<@orcid.msg 'admin.delegate.managed.placeholder' />" class="input-xlarge" ng-model="request.managed.value" ng-change="checkClaimedStatus('managed')">				
+					<a href class="glyphicon glyphicon-ok green" ng-show="managed_verified"></a>					
+					<div id="invalid-managed" ng-show="request.managed.errors.length > 0" ng-cloak>
+						<span class="orcid-error" ng-repeat='error in request.managed.errors' ng-bind-html="error"></span><br />
+					</div>							
+				</div>				
+				<!-- Trusted -->
+				<div class="form-group">
+					<label for="trusted"><@orcid.msg 'admin.delegate.trusted.label' /></label>
+					<input type="text" id="trusted" placeholder="<@orcid.msg 'admin.delegate.trusted.placeholder' />" class="input-xlarge" ng-model="request.trusted.value" ng-change="checkClaimedStatus('trusted')">				
+					<a href class="glyphicon glyphicon-ok green" ng-show="trusted_verified"></a>					
+					<div id="invalid-trusted" ng-show="request.trusted.errors.length > 0" ng-cloak>
+						<span class="orcid-error" ng-repeat='error in request.trusted.errors' ng-bind-html="error"></span><br />
+					</div>							
+				</div>
+				<!-- Buttons -->
+				<div class="controls save-btns pull-left">
+		    		<span id="bottom-confirm-delegate-profile" ng-click="confirmDelegatesProcess()" class="btn btn-primary"><@orcid.msg 'admin.delegate.button'/></span>
 				</div>
 			</div>
 		</div>

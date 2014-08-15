@@ -190,6 +190,10 @@ label,input,button,select,textarea {
 	margin-top: 50px;
 }
 
+.oauth-margin-top-bottom-box {
+	margin-top: 8px;
+}
+
 ::selection {
 	background: #338caf;
 	color: #fff;
@@ -3290,6 +3294,24 @@ p.orcid-id-container{
 	height: 20px;
 	display: block;
 	float: left;
+}
+
+.mini-icon {	
+	width: 30px;
+	height: 30px;
+	font-size: 25px;
+	display: block;
+	float: left;
+	margin-right: 10px;
+}
+
+.oauth_h1_margin {
+	margin-top: 10px;
+	margin-bottom: 5px;
+}
+
+.oauth_deny_link {
+	margin: 5px 17px 5px 0;	
 }
 
 .type-preset {

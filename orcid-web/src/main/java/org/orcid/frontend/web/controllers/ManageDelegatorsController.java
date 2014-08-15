@@ -78,16 +78,18 @@ public class ManageDelegatorsController extends BaseWorkspaceController {
         Map<String, Object> map = new HashMap<>();
         OrcidProfile realProfile = getRealProfile();
         Delegation delegation = realProfile.getOrcidBio().getDelegation();
-        GivenPermissionBy givenPermissionBy = delegation.getGivenPermissionBy();
-        String currentOrcid = getEffectiveUserOrcid();
-        if (givenPermissionBy != null) {
-            for (Iterator<DelegationDetails> delegationDetailsIterator = givenPermissionBy.getDelegationDetails().iterator(); delegationDetailsIterator.hasNext();) {
-                if (currentOrcid.equals(delegationDetailsIterator.next().getDelegateSummary().getOrcidIdentifier().getPath())) {
-                    delegationDetailsIterator.remove();
+        if (delegation != null) {
+            GivenPermissionBy givenPermissionBy = delegation.getGivenPermissionBy();
+            String currentOrcid = getEffectiveUserOrcid();
+            if (givenPermissionBy != null) {
+                for (Iterator<DelegationDetails> delegationDetailsIterator = givenPermissionBy.getDelegationDetails().iterator(); delegationDetailsIterator.hasNext();) {
+                    if (currentOrcid.equals(delegationDetailsIterator.next().getDelegateSummary().getOrcidIdentifier().getPath())) {
+                        delegationDetailsIterator.remove();
+                    }
                 }
             }
+            map.put("delegators", givenPermissionBy);
         }
-        map.put("delegators", givenPermissionBy);
         if (sourceManager.isInDelegationMode()) {
             // Add me, so I can switch back to me
             DelegationDetails details = new DelegationDetails();

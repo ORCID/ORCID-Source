@@ -23,95 +23,78 @@
 	
 	<div class="content" ng-hide="worksSrvc.details[group.getActive().putCode.value] == undefined">	
 		
-	
-		<div class="row bottomBuffer">		
-			<div class="col-md-12">
-				<!-- Work Title -->
-				<div class="bottomBuffer" ng-show="worksSrvc.details[group.getActive().putCode.value].workTitle.title.value" ng-cloak>
-					<strong><@orcid.msg
-						'manual_work_form_contents.labeltitle'/></strong>
-					<div ng-bind="worksSrvc.details[group.getActive().putCode.value].workTitle.title.value"></div>
-				</div>
-				
+		<span class="dotted-bar"></span>
+		<div class="row">		
+			<div class="col-md-6" ng-show="worksSrvc.details[group.getActive().putCode.value].workTitle.translatedTitle.content" ng-cloak>
 				<!-- Translated title -->
-				<div class="bottomBuffer" ng-show="worksSrvc.details[group.getActive().putCode.value].workTitle.translatedTitle.content" ng-cloak>
+				<div class="bottomBuffer">
 					<strong><@orcid.msg
-						'manual_work_form_contents.labeltranslatedtitle'/></strong>
-					<div ng-bind="renderTranslatedTitleInfo(group.getActive().putCode.value)"></div>				
+						'manual_work_form_contents.labeltranslatedtitle'/></strong> <span><i>({{worksSrvc.details[group.getActive().putCode.value].workTitle.translatedTitle.languageName}})</i></span>
+					<div>{{worksSrvc.details[group.getActive().putCode.value].workTitle.translatedTitle.content}}</div>				
 				</div>
-				
-				<!-- Subtitle -->		
-				<div class="bottomBuffer" ng-show="worksSrvc.details[group.getActive().putCode.value].workTitle.subtitle.value" ng-cloak>
-					<strong> <@orcid.msg 'manual_work_form_contents.labelsubtitle'/> </strong>
-					<div ng-bind="worksSrvc.details[group.getActive().putCode.value].workTitle.subtitle.value"></div>
+			</div>
+			<div class="col-md-6" ng-show="worksSrvc.details[group.getActive().putCode.value].languageCode.value" ng-cloak>
+				<!-- Language -->
+				<div class="bottomBuffer">					
+					<strong><@orcid.msg
+						'manual_work_form_contents.labellanguage'/></strong>
+					<div ng-bind="worksSrvc.details[group.getActive().putCode.value].languageName.value"></div>					
 				</div>
-				
+			</div>
+			<div class="col-md-6" ng-show="worksSrvc.details[group.getActive().putCode.value].journalTitle.value" ng-cloak>
 				<!-- Journal Title -->
-				<div ng-show="worksSrvc.details[group.getActive().putCode.value].journalTitle.value" ng-cloak>
+				<div class="bottomBuffer">
 					<strong> <@orcid.msg 'manual_work_form_contents.journalTitle'/> </strong>
 					<div ng-bind="worksSrvc.details[group.getActive().putCode.value].journalTitle.value"></div>
 				</div>
-				
-				<!-- Work type -->		
-				<div class="bottomBuffer" ng-show="worksSrvc.details[group.getActive().putCode.value].workType.value" ng-cloak>			
-					<strong> <@orcid.msg
-						'manual_work_form_contents.labelworktype'/> </strong>
-					<div ng-bind="worksSrvc.details[group.getActive().putCode.value].workType.value"></div>			
+			</div>
+			<div class="col-md-6" ng-show="worksSrvc.details[group.getActive().putCode.value].url.value" ng-cloak>
+				<!-- URL -->				
+				<div class="bottomBuffer">
+					<strong>
+						<@orcid.msg
+						'manual_work_form_contents.labelURL'/>
+					</strong>
+					<div>
+						<a href="{{worksSrvc.details[group.getActive().putCode.value].url.value | urlWithHttp}}" target="_blank">{{worksSrvc.details[group.getActive().putCode.value].url.value}}</a>					
+					</div>				
 				</div>
-			</div>	
+			</div>			
 		</div>
-		
-		
-		<!-- Citation -->
-		<div class="row bottomBuffer" ng-show="worksSrvc.details[group.getActive().putCode.value].citation.citation.value"
-			ng-cloak>
-			<div class="col-md-12 col-sm-12 col-xs-12">
-												
-				<strong><@orcid.msg 'manual_work_form_contents.labelcitation'/></strong>
-				<!-- Bibtex -->
-				<span ng-show="showBibtex && worksSrvc.details[group.getActive().putCode.value].citation.citationType.value == 'bibtex'">
-					<a ng-click="bibtexShowToggle()"><@orcid.msg 'group.getActive().show_in_bibtex'/></a>
+		<!-- Citation -->                  
+		<div class="row bottomBuffer" ng-show="worksSrvc.details[group.getActive().putCode.value].citation.citation.value" ng-cloak>
+			<div class="col-md-12">				
+				<strong><@orcid.msg 'manual_work_form_contents.labelcitation'/></strong <span> (<span ng-show="worksSrvc.details[group.getActive().putCode.value].citation.citationType.value" ng-cloak><i>{{worksSrvc.details[group.getActive().putCode.value].citation.citationType.value}}</i></span>) 
 				</span>
-				<!-- Show in HTML/Bibtex -->
+			</div>
+			<div class="col-md-12">				
+				
+				<span ng-show="showBibtex && worksSrvc.details[group.getActive().putCode.value].citation.citationType.value == 'bibtex'">
+					<a class="toggle-tag-option" ng-click="bibtexShowToggle()">
+						[<@orcid.msg 'work.show_in_bibtex'/>]
+					</a>
+				</span>
+				
 				<span ng-show="showBibtex == false && worksSrvc.details[group.getActive().putCode.value].citation.citationType.value == 'bibtex'">
-					<a ng-click="bibtexShowToggle()"><@orcid.msg 'group.getActive().show_in_html'/></a>
+					<a class="toggle-tag-option" ng-click="bibtexShowToggle()">
+						[<@orcid.msg 'work.show_in_html'/>]
+					</a>
 				</span>				
-				<div ng-hide="showBibtex && worksSrvc.details[group.getActive().putCode.value].citation.citationType.value == 'bibtex'" ng-bind="worksSrvc.details[group.getActive().putCode.value].citation.citation.value" class="col-md-offset-1 col-md-11 col-sm-offset-1 col-sm-11 col-xs-12 citation-raw"></div>
-									
+				
+				<div ng-hide="showBibtex && worksSrvc.details[group.getActive().putCode.value].citation.citationType.value == 'bibtex'" ng-bind="worksSrvc.details[group.getActive().putCode.value].citation.citation.value" class="col-md-offset-1 col-md-11 col-sm-offset-1 col-sm-11 col-xs-12 citation-raw"></div>					
 				<div class="row" ng-show="showBibtex && (worksSrvc.bibtexJson[group.getActive().putCode.value]==null || worksSrvc.bibtexJson[group.getActive().putCode.value].length==0)">
-					<div class="col-md-offset-1 col-md-6"><@orcid.msg 'group.getActive().unavailable_in_html'/></div>				
+					<div class="col-md-offset-1 col-md-6"><@orcid.msg 'work.unavailable_in_html'/></div>
 				</div>
+				
 				
 				<div class="row" ng-show="showBibtex" ng-repeat='bibJSON in worksSrvc.bibtexJson[group.getActive().putCode.value]'>						
-					
-					<div class="col-md-offset-1 col-md-2 col-sm-offset-1 col-sm-2 col-xs-offset-1 col-xs-5">{{bibJSON.entryType}}</div>
-					<div class="col-md-8 col-sm-8 col-xs-6">{{bibJSON.citationKey}}</div>								
-					
+					<div class="col-md-offset-1 col-md-2 col-sm-offset-1 col-sm-1 col-xs-offset-1 col-xs-11">{{bibJSON.entryType}}</div>
+					<div class="col-md-8 col-sm-9 col-xs-offset-1 col-xs-11">{{bibJSON.citationKey}}</div>								
 					<div ng-repeat="(entKey,entVal) in bibJSON.entryTags">
-						<div class="col-md-offset-1 col-md-2 col-sm-offset-1 col-sm-2 col-xs-offset-1 col-xs-5">{{entKey}}</div>
-						<div class="col-md-8 col-sm-8 col-xs-6">{{entVal}}</div>
+						<div class="col-md-offset-1 col-md-2 col-sm-offset-1 col-sm-1 col-xs-offset-1 col-xs-11">{{entKey}}</div>
+						<div class="col-md-8 col-sm-9 col-xs-offset-1 col-xs-11">{{entVal}}</div>
 					</div>
-					
 				</div>						
-			</div>
-		</div>
-		<!-- Citation type -->
-		<div class="row bottomBuffer"
-			ng-show="worksSrvc.details[group.getActive().putCode.value].citation.citationType.value" ng-cloak>
-			<div class="col-md-12">
-				<strong> <@orcid.msg 'manual_work_form_contents.labelcitationtype'/> </strong>
-				<div ng-bind="worksSrvc.details[group.getActive().putCode.value].citation.citationType.value"></div>
-			</div>
-		</div>
-		<!-- Publication date -->
-		<div class="row bottomBuffer" ng-show="worksSrvc.details[group.getActive().putCode.value].publicationDate.year"
-			ng-cloak>
-			<div class="col-md-12">
-				<strong> <@orcid.msg
-					'manual_work_form_contents.labelPubDate'/> </strong>
-				<div>
-					<span ng-show="worksSrvc.details[group.getActive().putCode.value].publicationDate.year">{{worksSrvc.details[group.getActive().putCode.value].publicationDate.year}}</span><span ng-show="worksSrvc.details[group.getActive().putCode.value].publicationDate.month">-{{worksSrvc.details[group.getActive().putCode.value].publicationDate.month}}</span><span ng-show="worksSrvc.details[group.getActive().putCode.value].publicationDate.day && worksSrvc.details[group.getActive().putCode.value].publicationDate.month">-{{worksSrvc.details[group.getActive().putCode.value].publicationDate.day}}</span>							
-				</div>
 			</div>
 		</div>
 		<!-- Description -->
@@ -125,67 +108,29 @@
 			</div>
 		</div>
 		
-		<!-- Identifier Value -->
-		<div class="row bottomBuffer"
-			ng-show="worksSrvc.details[group.getActive().putCode.value].workExternalIdentifiers.length > 0" ng-cloak>
-			<div class="col-md-8">
-				<strong> <@orcid.msg 'manual_work_form_contents.labelID'/>
-				</strong>
-				<div>
-					<span ng-repeat='ie in worksSrvc.details[group.getActive().putCode.value].workExternalIdentifiers'> <span
-						ng-bind-html='ie | workExternalIdentifierHtml:$first:$last:group.getActive().workExternalIdentifiers.length'></span>
-					</span>
+		<div class="row bottomBuffer">
+			<div class="col-md-6" ng-show="worksSrvc.details[group.getActive().putCode.value].countryCode.value" ng-cloak>
+				<!-- Country -->				
+				<div class="bottomBuffer">
+					<strong><@orcid.msg
+						'manual_work_form_contents.labelcountry'/></strong>
+					<div ng-bind="worksSrvc.details[group.getActive().putCode.value].countryName.value"></div>
 				</div>
+			</div>			
+			<div class="col-md-6" ng-show="worksSrvc.details[group.getActive().putCode.value].contributors.length > 0" ng-cloak>
+				<!-- Contributors -->
+				<div class="bottomBuffer">			
+					<strong> Contributor </strong>
+					<div ng-repeat="contributor in worksSrvc.details[group.getActive().putCode.value].contributors">
+						{{contributor.creditName.value}} <span
+							ng-bind='contributor | contributorFilter'></span>
+					</div>
+				</div>										
 			</div>
-		</div>
-		
-		<!-- URL -->
-		<div class="row bottomBuffer" ng-show="worksSrvc.details[group.getActive().putCode.value].url.value" ng-cloak>
-			<div class="col-md-12">
-				<strong> <@orcid.msg
-					'manual_work_form_contents.labelURL'/> </strong>
-				<div>
-					<a href="{{worksSrvc.details[group.getActive().putCode.value].url.value | urlWithHttp}}" target="_blank">{{worksSrvc.details[group.getActive().putCode.value].url.value}}</a>
-				</div>
-			</div>
-		</div>
-		
-		<!-- Contributors -->
-		
-		<div class="row bottomBuffer" ng-show="worksSrvc.details[group.getActive().putCode.value].contributors.length > 0"
-			ng-cloak>
-			<div class="col-md-12">
-				<strong> Contributor </strong>
-				<div ng-repeat="contributor in worksSrvc.details[group.getActive().putCode.value].contributors">
-					{{contributor.creditName.value}} <span
-						ng-bind='contributor | contributorFilter'></span>
-				</div>
-			</div>
-		</div>
-		
-		<!-- Language -->
-		<div class="row bottomBuffer" ng-show="worksSrvc.details[group.getActive().putCode.value].languageCode.value"
-			ng-cloak>
-			<div class="col-md-12">
-				<strong><@orcid.msg
-					'manual_work_form_contents.labellanguage'/></strong>
-				<div ng-bind="worksSrvc.details[group.getActive().putCode.value].languageName.value"></div>
-			</div>
-		</div>
-		<!-- Country of publication -->
-		<div class="row bottomBuffer" ng-show="worksSrvc.details[group.getActive().putCode.value].countryCode.value" ng-cloak>
-			<div class="col-md-12">
-				<strong><@orcid.msg
-					'manual_work_form_contents.labelcountry'/></strong>
-				<div ng-bind="worksSrvc.details[group.getActive().putCode.value].countryName.value"></div>
-			</div>
-		</div>
-		<div class="show-more-info-tab hide-tab">
-			<a href="" ng-show="moreInfo[group.getActive().putCode.value]" ng-click="showDetailsMouseClick(group.getActive().putCode.value,$event);"><span class="glyphicon glyphicon-chevron-up"></span><@orcid.msg 'manage.developer_tools.hide_details'/></a>
-		</div>
+		</div>		
 	</div>	
 </div>
-<div class="row">
+<div class="row sources-details">
 	<div class="col-md-12 col-sm-12">
 		<!-- Sources -->			
 		<div class="sources-container-header">			
@@ -195,14 +140,22 @@
 					<span>
 						<strong >Source:</strong> {{group.getActive().workSourceName.value}}
 					</span>						
-				</div>					
+				</div>
 				
-				<div ng-class="editSources[group.groupId] == true ? 'col-md-12' : 'col-md-7">						
+				<div ng-class="editSources[group.groupId] == true ? 'col-md-12' : 'col-md-7'">						
 					<ul class="sources-options" ng-cloak>
-						<li ng-hide="group.activitiesCount == 1 || editSources[group.groupId] == true">
-							<span>
-							 	<a ng-click="editSources[group.groupId] = !editSources[group.groupId]">View <span class="badge">{{group.activitiesCount - 1 }}</span> additional source<span ng-show="group.activitiesCount > 2">s</span></a>
+						<li ng-hide="group.activitiesCount == 1 || editSources[group.groupId] == true">							
+							<span class="view-sources-details">
+							 	<a ng-click="editSources[group.groupId] = !editSources[group.groupId]">View <span class="badge">{{group.activitiesCount - 1 }}</span> additional source<span ng-show="group.activitiesCount > 2">s</span></a>							 	
 							</span>
+							<a ng-click="editSources[group.groupId] = !editSources[group.groupId]">
+			            	   <span class="glyphicon glyphicon-trash"></span>
+			        		</a>
+						</li>
+						<li ng-show="group.activitiesCount == 1">
+							<a ng-click="deleteWorkConfirm(group.getActive().putCode.value, false)">
+			            	   <span class="glyphicon glyphicon-trash"></span>
+			               </a>
 						</li>
 				        <li ng-show="editSources[group.groupId] == true">
 				            <a ng-click="deleteWorkConfirm(group.getActive().putCode.value, true)">
@@ -228,21 +181,70 @@
 	<div class="col-md-12 col-sm-12">
 		<div class="sources-container">
 			<div class="sources-edit">	
+			
+			
+			
+			
+				<ul class="sources-edit-list" ng-show="editSources[group.groupId] == true" ng-cloak>
+					<li class="first-source">
+						<div class="col-sm-4">
+							<span>
+					        	<strong >Source:</strong> {{group.getActive().workSourceName.value}}
+					        </span>
+				        </div>
+				        <div class="col-sm-4">
+				        	Last modified: {{group.getActive().lastModified | ajaxFormDateToISO8601}}
+				        </div>
+				        <div class="col-sm-3">
+				        	   <span class="glyphicon glyphicon-check" ng-show="group.getActive().putCode.value == group.defaultPutCode"></span> 
+					           <a ng-click="worksSrvc.makeDefault(group, group.getActive().putCode.value); group.activePutCode = group.getActive().putCode.value" ng-show="group.getActive().putCode.value != group.defaultPutCode">
+				            	 <span class="glyphicon glyphicon-unchecked"></span> Make Preferred
+				               </a>
+				        </div>
+				        <div class="col-sm-1">
+				        		<a ng-click="deleteWorkConfirm(group.getActive().putCode.value, false)">
+			            	   <span class="glyphicon glyphicon-trash"></span>
+			               </a>
+				        </div>
+					</li>
+					<li ng-repeat="work in group.activities" ng-hide="group.activePutCode == work.putCode.value">
+						<div class="col-sm-4">
+							<a ng-click="worksSrvc.showSpinner($event); moreInfo[work.putCode.value] = moreInfo[group.activePutCode]; group.activePutCode = work.putCode.value">
+				           		{{work.workSourceName.value}}
+				           	</a> 
+						</div>
+						<div class="col-sm-4">
+							{{work.lastModified | ajaxFormDateToISO8601}}
+						</div>
+						<div class="col-sm-3">
+							<span class="glyphicon glyphicon-check" ng-show="work.putCode.value == group.defaultPutCode"></span> 
+				           <a ng-click="worksSrvc.makeDefault(group, work.putCode.value); " ng-show="work.putCode.value != group.defaultPutCode">
+			            	 <span class="glyphicon glyphicon-unchecked"></span> Make Preferred
+			               </a>
+						</div>
+						<div class="col-sm-1">
+							<a ng-click="deleteWorkConfirm(group.getActive().putCode.value, false)">
+			            	   <span class="glyphicon glyphicon-trash"></span>
+			               </a>
+						</div>
+					</li>
+				</ul>
+			
+			
+				<!-- 
 				<table class="sources-edit-table" ng-show="editSources[group.groupId] == true" ng-cloak>
 				    
-				    <tr ng-repeat="work in group.activities" ng-show="moreInfo[work.putCode.value] == moreInfo[group.activePutCode] && group.activePutCode == work.putCode.value" class="no-border-top">				    	
+				    <tr class="no-border-top">				    	
 				       <td>
-				       		<span
-				       		    ng-show="work.putCode.value == group.activePutCode"
-				           		ng-click="moreInfo[work.putCode.value] = moreInfo[group.activePutCode]; group.activePutCode = work.putCode.value ">
-				           			<strong >Source:</strong> {{work.workSourceName.value}}
-				           		</span>
+				       		<span>
+				           			<strong >Source:</strong> {{group.getActive().workSourceName.value}}
+				           	</span>
 				       </td>
-				       <td>Last modified: 12/31/2013</td>
+				       <td>Last modified: {{group.getActive().lastModified | ajaxFormDateToISO8601}}</td>
 				       <td>
-				           <span class="glyphicon glyphicon-check" ng-show="work.putCode.value == group.defaultPutCode"></span> <!-- <span ng-show="work.putCode.value == group.defaultPutCode">Default</span> --> 
-				           <a ng-click="worksSrvc.makeDefault(group, work.putCode.value); group.activePutCode = work.putCode.value" ng-show="work.putCode.value != group.defaultPutCode">
-			            	 <span class="glyphicon glyphicon-unchecked"></span> Keep on top
+				           <span class="glyphicon glyphicon-check" ng-show="group.getActive().putCode.value == group.defaultPutCode"></span> 
+				           <a ng-click="worksSrvc.makeDefault(group, group.getActive().putCode.value); group.activePutCode = group.getActive().putCode.value" ng-show="group.getActive().putCode.value != group.defaultPutCode">
+			            	 <span class="glyphicon glyphicon-unchecked"></span> Make Preferred
 			               </a>
 			           </td>
 				       <td>
@@ -251,32 +253,35 @@
 			               </a>
 				       </td>
 				    </tr>
-				    <!-- No default values -->
-				    <tr ng-repeat="work in group.activities" ng-hide="moreInfo[work.putCode.value] == moreInfo[group.activePutCode] && group.activePutCode == work.putCode.value">				    	
-				       <td><!-- Source name -->				       		
-				           	<a ng-hide="work.putCode.value == group.activePutCode"
-				           		ng-click="moreInfo[work.putCode.value] = moreInfo[group.activePutCode]; group.activePutCode = work.putCode.value">
-				           			{{work.workSourceName.value}}
-				           		</a> 
+				   
+				    <tr ng-repeat="work in group.activities" ng-hide="group.activePutCode == work.putCode.value">				    	
+				       <td>		       		
+				           	<a ng-click="moreInfo[work.putCode.value] = moreInfo[group.activePutCode]; group.activePutCode = work.putCode.value">
+				           		{{work.workSourceName.value}}				           		
+				           	</a> 
 				       </td>
-				       <td><!-- Date -->
-				       		05/02/2010
+				       <td>
+				       		{{work.lastModified | ajaxFormDateToISO8601}}
 				       	</td>
-				       <td> <!-- Make Default -->
-				           <span class="glyphicon glyphicon-check" ng-show="work.putCode.value == group.defaultPutCode"></span><!-- <span ng-show="work.putCode.value == group.defaultPutCode">Default</span> --> 
-				           <a ng-click="worksSrvc.makeDefault(group, work.putCode.value); group.activePutCode = work.putCode.value" ng-show="work.putCode.value != group.defaultPutCode">
-			            	 <span class="glyphicon glyphicon-unchecked"></span> Keep on top
+				       <td> 
+				           <span class="glyphicon glyphicon-check" ng-show="work.putCode.value == group.defaultPutCode"></span> 
+				           <a ng-click="worksSrvc.makeDefault(group, work.putCode.value);" ng-show="work.putCode.value != group.defaultPutCode">
+			            	 <span class="glyphicon glyphicon-unchecked"></span> Make Preferred
 			               </a>
 			           </td>
-				       <td><!-- Delete -->
+				       <td>
 				           <a ng-click="deleteWorkConfirm(group.getActive().putCode.value, false)">
 			            	   <span class="glyphicon glyphicon-trash"></span>
 			               </a>
 				       </td>
 				    </tr>
 				    
-				    
-				</table>						
+				</table>
+				-->	
+				
+				
+				
+									
 			</div>
 		</div>
 	</div>

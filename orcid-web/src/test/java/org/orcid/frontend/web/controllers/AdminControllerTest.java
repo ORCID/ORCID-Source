@@ -39,12 +39,16 @@ import javax.annotation.Resource;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.frontend.web.util.BaseControllerTest;
+import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -79,6 +83,12 @@ public class AdminControllerTest extends BaseControllerTest {
     @Resource
     private EncryptionManager encryptionManager;
     
+    @Resource
+    private EmailManager emailManager;
+    
+    @Resource
+    private EmailDao emailDao;
+    
     @Before
     public void init() {
         assertNotNull(adminController);
@@ -108,7 +118,7 @@ public class AdminControllerTest extends BaseControllerTest {
     @Test
     @Transactional("transactionManager")
     public void testCheckOrcid() throws Exception {
-        ProfileDetails profileDetails = adminController.checkOrcid("4444-4444-4444-4441");
+        ProfileDetails profileDetails = adminController.checkOrcidToDeprecate("4444-4444-4444-4441");
         assertNotNull(profileDetails);
         assertEquals(0, profileDetails.getErrors().size());
         assertEquals("spike@milligan.com", profileDetails.getEmail());
@@ -116,7 +126,7 @@ public class AdminControllerTest extends BaseControllerTest {
         assertEquals("Spike", profileDetails.getGivenNames());
         assertEquals("4444-4444-4444-4441", profileDetails.getOrcid());
 
-        profileDetails = adminController.checkOrcid("4444-4444-4444-4411");
+        profileDetails = adminController.checkOrcidToDeprecate("4444-4444-4444-4411");
         assertNotNull(profileDetails);
         assertEquals(1, profileDetails.getErrors().size());
         assertEquals(adminController.getMessage("admin.profile_deprecation.errors.inexisting_orcid", "4444-4444-4444-4411"), profileDetails.getErrors().get(0));
@@ -452,5 +462,24 @@ public class AdminControllerTest extends BaseControllerTest {
         adminController.resetPassword(null, form);
         orcidProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4442");
         assertFalse("e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA=".equals(orcidProfile.getPassword()));
+    }
+    
+    @Test
+    @Transactional("transactionManager")
+    @Rollback(true)
+    public void verifyEmailTest() {
+        //Add not verified email
+        Email email = new Email("not-verified@email.com");
+        email.setCurrent(false);
+        email.setPrimary(false);
+        email.setVerified(false);
+        email.setVisibility(Visibility.PUBLIC);
+        emailManager.addEmail("4444-4444-4444-4499", email);
+                
+        //Verify the email
+        adminController.adminVerifyEmail("not-verified@email.com");
+        EmailEntity emailEntity = emailDao.find("not-verified@email.com");
+        assertNotNull(emailEntity);
+        assertTrue(emailEntity.getVerified());
     }
 }

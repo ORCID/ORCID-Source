@@ -17,53 +17,60 @@
 
 -->
 <ul ng-hide="!worksSrvc.groups.length" class="workspace-publications workspace-body-list bottom-margin-medium" id="body-work-list" ng-cloak>
-    <li class="bottom-margin-small workspace-border-box" ng-repeat="group in worksSrvc.groups | orderBy:['-dateSortString', 'title']">        
-		<div class="row"> 
-			<!-- Main title -->
-			<div class="col-md-9 col-sm-9 col-xs-12">
-		        <h3 class="workspace-title">
-		        	<strong ng-bind="group.getActive().workTitle.title.value"></strong><span class="work-subtitle" ng-show="group.getActive().workTitle.subtitle.value" ng-bind="':&nbsp;'.concat(group.getActive().workTitle.subtitle.value)"></span>		        			        	
-		        </h3>
-		        <div class="info-detail">
-		        	<span ng-show="group.getActive().publicationDate.year">{{group.getActive().publicationDate.year}}</span><span ng-show="group.getActive().publicationDate.month">-{{group.getActive().publicationDate.month}}</span>
-		        </div>			        	        
+    <li class="bottom-margin-small workspace-border-box card" ng-repeat="group in worksSrvc.groups | orderBy:sortPredicate:sortReverse">
+    	<div class="row spinner">
+    			<span class="glyphicon glyphicon-refresh spin x2 green">
+    				
+    			</span>
+    	</div>
+    	<div class="work-list-container">
+			<div class="row"> 
+				<!-- Main title -->
+				<div class="col-md-9 col-sm-9 col-xs-12">
+				    <h3 class="workspace-title">
+			        	<strong ng-bind="group.getActive().workTitle.title.value"></strong><span class="work-subtitle" ng-show="group.getActive().workTitle.subtitle.value" ng-bind="':&nbsp;'.concat(group.getActive().workTitle.subtitle.value)"></span>		        			        	
+			        </h3>
+			        <div class="info-detail">
+			        	<span ng-show="group.getActive().publicationDate.year">{{group.getActive().publicationDate.year}}</span><span ng-show="group.getActive().publicationDate.month">-{{group.getActive().publicationDate.month}}</span><span ng-show="group.getActive().publicationDate.year"> | </span> <span class="uppercase">{{group.getActive().workType.value}}</span>		        	
+			        </div>		                	        
+		        </div>
+		        <!-- Settings -->
+		        <div class="col-md-3 col-sm-3 col-xs-12 workspace-toolbar">	        	
+		        	<#if !(isPublicProfile??)>
+		        		<!-- Privacy bar -->
+						<ul class="workspace-private-toolbar">
+						 	<li>
+						 		<a class="toolbar-button edit-item-button" ng-click="openEditWork(group.getActive().putCode.value)">
+						 			<span class="glyphicon glyphicon-pencil edit-option-toolbar" title=""></span>
+						 		</a>	
+						 	</li>					 	
+							<li>
+							<@orcid.privacyToggle2 angularModel="group.getActive().visibility" 
+							    questionClick="toggleClickPrivacyHelp(group.getActive().putCode.value)"
+							    clickedClassCheck="{'popover-help-container-show':privacyHelp[group.getActive().putCode.value]==true}"
+								publicClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PUBLIC', $event)" 
+			                	limitedClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'LIMITED', $event)" 
+			                	privateClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PRIVATE', $event)"/>
+			                </li>
+			            					</#if>				
+				</div>
 	        </div>
-	        <!-- Settings -->
-	        <div class="col-md-3 col-sm-3 col-xs-12 workspace-toolbar">	        	
-	        	<#if !(isPublicProfile??)>
-	        		<!-- Privacy bar -->
-					<ul class="workspace-private-toolbar">
-					 	<li>
-					 		<a class="toolbar-button edit-item-button" ng-click="openEditWork(group.getActive().putCode.value)">
-					 			<span class="glyphicon glyphicon-pencil edit-option-toolbar" title=""></span>
-					 		</a>	
-					 	</li>					 	
+	        
+	        <!-- Identifiers / URL / Validations / Versions -->
+			<div class="row bottomBuffer" ng-show="group.getActive().workExternalIdentifiers.length > 0">
+				<div class="col-md-12 col-sm-12">
+					<ul class="id-details">
+								
 						<li>
-						<@orcid.privacyToggle2 angularModel="group.getActive().visibility" 
-						    questionClick="toggleClickPrivacyHelp(group.getActive().putCode.value)"
-						    clickedClassCheck="{'popover-help-container-show':privacyHelp[group.getActive().putCode.value]==true}"
-							publicClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PUBLIC', $event)" 
-		                	limitedClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'LIMITED', $event)" 
-		                	privateClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PRIVATE', $event)"/>
-		                </li>
-		            					</#if>				
-			</div>
-        </div>
-        
-        <!-- Identifiers / URL / Validations / Versions -->
-		<div class="row bottomBuffer">
-			<div class="col-md-12 col-sm-12">
-				<ul class="id-details">				
-					<li>
-						<span ng-repeat='ie in group.getActive().workExternalIdentifiers'><span
-						ng-bind-html='ie | workExternalIdentifierHtml:$first:$last:group.getActive().workExternalIdentifiers.length'></span>
-					   </span>
-					</li>
-					<li ng-show="group.getActive().url.value"><strong>URL:</strong> <a href="{{group.getActive().url.value | urlWithHttp}}" target="_blank">{{group.getActive().url.value}}</a></li>
-				</ul>
-			</div>
+							<span ng-repeat='ie in group.getActive().workExternalIdentifiers'><span
+							ng-bind-html='ie | workExternalIdentifierHtml:$first:$last:group.getActive().workExternalIdentifiers.length'></span>
+						   </span>
+						</li>
+						<li ng-show="group.getActive().url.value"><strong>URL:</strong> <a href="{{group.getActive().url.value | urlWithHttp}}" target="_blank">{{group.getActive().url.value}}</a></li>
+					</ul>
+				</div>
+			</div>        
 		</div>        
-		        
        	
        	<!-- More info -->
        	<#include "work_more_info_inc_v3.ftl"/>

@@ -251,26 +251,26 @@
 			       			<div class="col-md-9 col-sm-10 col-xs-12 action-button-bar" ng-show="workspaceSrvc.displayWorks">
 			       				<!-- Sort -->
 			       				<div class="sort-menu-container">			       					 
-				       				<a class="action-option manage-button toggle-menu" ng-click="">
+				       				<a class="action-option manage-button toggle-menu">
 										<span class="glyphicon glyphicon-sort"></span>							
 										<@orcid.msg 'manual_orcid_record_contents.sort'/>
 									</a>
 									<ul class="sort-menu-options">
-										<li><a href="" ng-click=""><@orcid.msg 'manual_orcid_record_contents.sort_title'/> <span class=""></span></a></li>
-										<li><a href="" ng-click="" class="checked"><@orcid.msg 'manual_orcid_record_contents.sort_data'/> <span class="glyphicon glyphicon-ok pull-right"></span></a></li>
-										<li><a href="" ng-click=""><@orcid.msg 'manual_orcid_record_contents.sort_type'/> <span class=""></span></a></li>
-										<li><a href="" ng-click=""><@orcid.msg 'manual_orcid_record_contents.sort_source'/> <span class=""></span></a></li>
-									</ul>
+									    <li ng-class="{'checked':sortPredicateKey=='title'}">									    	
+									    	<a ng-click="sort('title');">
+									    		<@orcid.msg 'manual_orcid_record_contents.sort_title'/>
+									    		<span ng-class="{'glyphicon glyphicon-ok':sortPredicateKey=='title'}" ></span>
+									    	</a>									    	
+									    </li>
+										<li ng-class="{'checked':sortPredicateKey=='date'}">											
+											<a ng-click="sort('date');">
+												<@orcid.msg 'manual_orcid_record_contents.sort_date'/>
+												<span ng-class="{'glyphicon glyphicon-ok':sortPredicateKey=='date'}"></span>
+											</a>																						
+										</li>
+								    </ul>
 								</div>
-								
-		                		<ul class="workspace-bar-menu">
-		                			<!-- Manage view -->		                			
-			        				<li>
-			        					<a href="" class="action-option manage-button" ng-click="">
-											<span class="glyphicon glyphicon-cog"></span>
-											<@orcid.msg 'manual_orcid_record_contents.manage_view'/>
-										</a>	        				
-			        				</li>
+		                		<ul class="workspace-bar-menu">		                			
 			        				<!-- Link Manually -->
 			        				<li>
 				        				<a href="" class="action-option manage-button" ng-click="addWorkModal()">
@@ -291,10 +291,11 @@
 					</div>					 
       	            <div ng-show="workspaceSrvc.displayWorks" class="workspace-accordion-content">
 	            		<#include "includes/work/add_work_modal_inc.ftl"/>
-						<#include "includes/work/del_work_modal_inc.ftl"/>
-						<#include "includes/work/body_work_inc_v3.ftl"/>
+						<#include "includes/work/del_work_modal_inc.ftl"/>						
 	            	</div>
-	            	 
+	            	<div ng-show="workspaceSrvc.displayWorks">
+	            		<#include "includes/work/body_work_inc_v3.ftl"/> <!-- No class required -->
+	            	</div>
             	</div>
             	
             	<#--

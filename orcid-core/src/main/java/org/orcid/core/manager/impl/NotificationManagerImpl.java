@@ -106,12 +106,6 @@ public class NotificationManagerImpl implements NotificationManager {
     @Resource
     private MailGunManager mailGunManager;
 
-    private MailSender mailSender;
-
-    private String fromAddress;
-
-    private String supportAddress;
-
     private String LAST_RESORT_ORCID_USER_EMAIL_NAME = "ORCID Registry User";
 
     private String ORCID_PRIVACY_POLICY_UPDATES = "ORCID - Privacy Policy Updates";
@@ -142,16 +136,6 @@ public class NotificationManagerImpl implements NotificationManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationManagerImpl.class);
 
     @Required
-    public void setFromAddress(String fromAddress) {
-        this.fromAddress = fromAddress;
-    }
-
-    @Required
-    public void setSupportAddress(String supportAddress) {
-        this.supportAddress = supportAddress;
-    }
-
-    @Required
     public void setBaseUri(URI baseUri) {
         this.baseUri = baseUri;
     }
@@ -162,12 +146,6 @@ public class NotificationManagerImpl implements NotificationManager {
 
     public void setApiRecordCreationEmailEnabled(boolean apiRecordCreationEmailEnabled) {
         this.apiRecordCreationEmailEnabled = apiRecordCreationEmailEnabled;
-    }
-
-    @Override
-    @Required
-    public void setMailSender(MailSender mailSender) {
-        this.mailSender = mailSender;
     }
 
     @Required
@@ -222,7 +200,8 @@ public class NotificationManagerImpl implements NotificationManager {
     // http://stackoverflow.com/questions/9605828/email-internationalization-using-velocity-freemarker-templates
     public void sendVerificationEmail(OrcidProfile orcidProfile, URI baseUri, String email) {
         Map<String, Object> templateParams = new HashMap<String, Object>();
-
+        String primaryEmail = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+        templateParams.put("primaryEmail", primaryEmail);
         String emailFriendlyName = deriveEmailFriendlyName(orcidProfile);
         templateParams.put("emailName", emailFriendlyName);
         templateParams.put("subject", getSubject("email.subject.verify_reminder", orcidProfile));
@@ -289,6 +268,8 @@ public class NotificationManagerImpl implements NotificationManager {
     public void sendVerificationReminderEmail(OrcidProfile orcidProfile, String email) {
         Map<String, Object> templateParams = new HashMap<String, Object>();
 
+        String primaryEmail = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+        templateParams.put("primaryEmail", primaryEmail);
         String emailFriendlyName = deriveEmailFriendlyName(orcidProfile);
         templateParams.put("emailName", emailFriendlyName);
         String verificationUrl = createVerificationUrl(email, baseUri);
@@ -776,6 +757,42 @@ public class NotificationManagerImpl implements NotificationManager {
         return String.format("%s/%s/%s", baseUri.toString(), path, base64EncodedParams);
     }
 
+    @Override
+    public void sendDelegationRequestEmail(OrcidProfile managed, OrcidProfile trusted, String link) {
+        // Create map of template params
+        String orcid = managed.getOrcidIdentifier().getPath();
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+        templateParams.put("baseUri", baseUri);
+        templateParams.put("link", link);
+
+        String trustedOrcidValue = trusted.retrieveOrcidPath();
+        String managedOrcidValue = managed.retrieveOrcidPath();
+        String emailNameForDelegate = deriveEmailFriendlyName(managed);
+        String trustedOrcidName = deriveEmailFriendlyName(trusted);
+        templateParams.put("emailNameForDelegate", emailNameForDelegate);
+        templateParams.put("trustedOrcidName", trustedOrcidName);
+        templateParams.put("trustedOrcidValue", trustedOrcidValue);
+        templateParams.put("managedOrcidValue", managedOrcidValue);
+
+        Email primaryEmail = managed.getOrcidBio().getContactDetails().retrievePrimaryEmail();
+        if (primaryEmail == null) {
+            LOGGER.info("Cant send admin delegate email if primary email is null: {}", orcid);
+            return;
+        }
+
+        addMessageParams(templateParams, managed);
+
+        String htmlBody = templateManager.processTemplate("admin_delegate_request_html.ftl", templateParams);
+
+        // Send message
+        if (apiRecordCreationEmailEnabled) {
+            mailGunManager.sendEmail(DELEGATE_NOTIFY_ORCID_ORG, primaryEmail.getValue(), getSubject("email.subject.admin_as_delegate", managed), null, htmlBody);
+            profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.ADMIN_PROFILE_DELEGATION_REQUEST));
+        } else {
+            LOGGER.debug("Not sending admin delegate email, because API record creation email option is disabled. Message would have been: {}", htmlBody);
+        }
+    }
+
     private void createNotification(String orcid, Notification notification) {
         NotificationEntity notificationEntity = notificationAdapter.toNotificationEntity(notification);
         notificationEntity.setProfile(profileDao.find(orcid));
@@ -801,5 +818,5 @@ public class NotificationManagerImpl implements NotificationManager {
     public Notification findByOrcidAndId(String orcid, Long id) {
         return notificationAdapter.toNotification(notificationDao.findByOricdAndId(orcid, id));
     }
-
+    
 }

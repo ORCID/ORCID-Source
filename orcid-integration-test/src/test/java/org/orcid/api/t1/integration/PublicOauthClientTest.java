@@ -155,25 +155,19 @@ public class PublicOauthClientTest extends DBUnitTest {
 
     private String obtainAuthorizationCode(String orcid, String scopes, String redirectUri) throws InterruptedException {
         webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, orcid, scopes, redirectUri));
+        webDriver.get(String.format("%s?oneStep",webDriver.getCurrentUrl()));
+        //Switch to the login form
+        WebElement switchFromLink = webDriver.findElement(By.id("in-register-switch-form"));
+        switchFromLink.click();
+        Thread.sleep(500);
+        //Fill the form
         WebElement userId = webDriver.findElement(By.id("userId"));
         userId.sendKeys("michael@bentine.com");
         WebElement password = webDriver.findElement(By.id("password"));
         password.sendKeys("password");
-        password.submit();
-        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
-            public Boolean apply(WebDriver d) {
-                if (d.getCurrentUrl().contains("authorize")) {
-                    WebElement authorizeButton = d.findElement(By.name("authorize"));
-                    if (authorizeButton != null) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-        });
-        WebElement authorizeButton = webDriver.findElement(By.name("authorize"));
-        Thread.sleep(3000);
-        authorizeButton.submit();
+        WebElement submitButton = webDriver.findElement(By.id("authorize-button")); 
+        submitButton.click();
+                
         (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
             public Boolean apply(WebDriver d) {
                 return d.getTitle().equals("ORCID Playground");

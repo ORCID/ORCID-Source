@@ -21,8 +21,8 @@
 	<div class="row">
 		<div class="col-push-3 col-md-9">
 		    <div class="logo">
-		        <h1><a href="${aboutUri}"><img src="${staticCdn}/img/orcid-logo.png" alt="ORCID logo" /></a></h1>
-		        <p>${springMacroRequestContext.getMessage("oauth_login.connectingresearch")}</p>
+		        <h1 class="oauth_h1_margin"><a href="${aboutUri}"><img src="${staticCdn}/img/orcid-logo.png" alt="ORCID logo" /></a></h1>
+		        <!-- <p>${springMacroRequestContext.getMessage("oauth_login.connectingresearch")}</p> -->
 		    </div>
 	    </div>
 	</div>
@@ -34,9 +34,13 @@
 	    </#if>
     </div>
     <div class="row">
-		<#include "sandbox_warning.ftl"/>
-		<#include "oauth_sign_in.ftl"/>
-		<#include "oauth_sign_up.ftl"/>
+		<#include "sandbox_warning.ftl"/>		
+		<#if RequestParameters['oneStep']??>			
+			<#include "oauth_one_step.ftl"/>
+		<#else>
+			<#include "oauth_sign_in.ftl"/>
+			<#include "oauth_sign_up.ftl"/>
+		</#if>
 	</div>
 </div>
 </@base>

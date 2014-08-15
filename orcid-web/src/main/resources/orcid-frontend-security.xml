@@ -30,10 +30,15 @@
 	
 	<sec:global-method-security pre-post-annotations="enabled" />
 
+	<bean id="authorizationRequestManager" class="org.orcid.core.oauth.service.OrcidAuthorizationRequestManager">
+		<constructor-arg ref="clientDetailsManager" />
+	</bean>
+
 	<bean id="authorizationEndpoint" class="org.orcid.core.oauth.service.OrcidAuthorizationEndpoint">
 		<property name="authorizationCodeServices" ref="orcidAuthorizationCodeService" />
 		<property name="clientDetailsService" ref="clientDetailsManager" />
 		<property name="tokenGranter" ref="authorizationCodeTokenGranter" />
+		<property name="authorizationRequestManager" ref="authorizationRequestManager" />
 	</bean>
 
 	<bean id="userDetailsService" class="org.orcid.core.security.OrcidUserDetailsService" />
@@ -103,6 +108,24 @@
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/oauth/confirm_access(\?.*)?"
 			access="DENY_OAUTH,ROLE_USER" />
+		<sec:intercept-url pattern="/oauth/custom/login.*?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/oauth/custom/signin.*?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/oauth/custom/authorize.*?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/oauth/custom/authorize/empty.*?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/oauth/custom/register/empty.*?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />			
+		<sec:intercept-url pattern="/oauth/custom/register.*?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/oauth/custom/registerConfirm.*?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+
+		<sec:intercept-url pattern="/oauth/custom/register/validate.*?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+			
 		<sec:intercept-url pattern="/oauth/.*" access="ROLE_USER" />		
 		<sec:form-login authentication-failure-url="/oauth/signin"
 			login-page="/oauth/signin" login-processing-url="/signin/auth"
