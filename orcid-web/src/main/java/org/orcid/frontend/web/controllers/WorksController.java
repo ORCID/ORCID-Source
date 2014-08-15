@@ -554,7 +554,8 @@ public class WorksController extends BaseWorkspaceController {
         workEntity.setDateCreated(new java.util.Date());
         workEntity.setDescription(orcidWork.getShortDescription());
         workEntity.setLastModified(new java.util.Date());
-        workEntity.setPublicationDate(toFuzzyDate(orcidWork.getPublicationDate()));
+        if (orcidWork.getPublicationDate() != null)
+            workEntity.setPublicationDate(toFuzzyDate(orcidWork.getPublicationDate()));
         if (orcidWork.getWorkTitle().getSubtitle() != null)
             workEntity.setSubtitle(orcidWork.getWorkTitle().getSubtitle().getContent());
         workEntity.setTitle(orcidWork.getWorkTitle().getTitle().getContent().trim());
