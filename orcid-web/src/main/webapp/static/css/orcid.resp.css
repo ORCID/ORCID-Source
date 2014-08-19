@@ -4276,9 +4276,7 @@ ul.oauth-scopes li{
 
 .container.confirm-oauth-access,
 .container.oauth-login{
-	width: 500px; /* Fixed width */
-	height: 600px;
-	overflow: scroll;
+	max-width: 500px;
 }
 
 
