@@ -4224,7 +4224,7 @@ ul.oauth-scopes{
 }
 
 ul.oauth-scopes li{
-	height: 30px;
+	min-height: 30px;
 	font-size: 17px;
 	color: #338caf;
 	line-height: 33px;
@@ -4252,7 +4252,6 @@ ul.oauth-scopes li{
 	padding: 0;
 }
 
-
 .oauth-registration .form-group input[type="text"],
 .oauth-registration .form-group input[type="email"],
 .oauth-registration .form-group input[type="password"]{
@@ -4274,12 +4273,14 @@ ul.oauth-scopes li{
 	margin-bottom: 15px;
 }
 
-.container.confirm-oauth-access,
-.container.oauth-login{
-	max-width: 500px;
+.oneStepWidth{
+	max-width: 500px !important; /* forcing temporally */
 }
 
-
+.oAuthFix{
+	float: left;
+	width: 100%;
+}
 
 
 /* Media Queries */
@@ -4664,7 +4665,7 @@ ul.oauth-scopes li{
 	input[type="text"],input[type="password"],select,input[type="email"]{
 		height: 50px;
 		font-size: 16px;
-		width: 96%;
+		width: 85%;
 	}
 	.input-xlarge {
 		width: 96%;

@@ -22,7 +22,7 @@
 	<#assign displayName = client_name>
 </#if>
 <!-- colorbox-content -->
-<div class="container confirm-oauth-access" ng-controller="OauthAuthorizationController">
+<div class="container confirm-oauth-access oneStepWidth" ng-controller="OauthAuthorizationController">
 	<div class="row">
 		<div class="col-md-12 col-sm-12 col-xs-12">
 			<div class="top-green-border"></div>
