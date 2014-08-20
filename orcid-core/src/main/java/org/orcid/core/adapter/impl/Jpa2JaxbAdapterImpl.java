@@ -366,7 +366,10 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         organization.setAddress(getAddress(orgAffiliationRelationEntity.getOrg()));
         organization.setName(orgAffiliationRelationEntity.getOrg().getName());
         affiliation.setOrganization(organization);
-
+        
+        affiliation.setCreatedDate(new CreatedDate(toXMLGregorianCalendar(orgAffiliationRelationEntity.getDateCreated())));
+        affiliation.setLastModifiedDate(new LastModifiedDate(toXMLGregorianCalendar(orgAffiliationRelationEntity.getDateCreated())));
+        
         return affiliation;
     }
 
@@ -424,6 +427,10 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
         // Set source
         funding.setSource(getSource(profileFundingEntity));
+        
+        funding.setCreatedDate(new CreatedDate(toXMLGregorianCalendar(profileFundingEntity.getDateCreated())));
+        funding.setLastModifiedDate(new LastModifiedDate(toXMLGregorianCalendar(profileFundingEntity.getDateCreated())));
+
         return funding;
     }
 
@@ -834,6 +841,10 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         }
         orcidWork.setWorkType(work.getWorkType());
         orcidWork.setVisibility(profileWorkEntity.getVisibility());
+        
+        orcidWork.setCreatedDate(new CreatedDate(toXMLGregorianCalendar(profileWorkEntity.getDateCreated())));
+        orcidWork.setLastModifiedDate(new LastModifiedDate(toXMLGregorianCalendar(profileWorkEntity.getDateCreated())));
+
         return orcidWork;
     }
 

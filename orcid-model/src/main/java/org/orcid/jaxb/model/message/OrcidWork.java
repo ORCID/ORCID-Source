@@ -103,6 +103,11 @@ public class OrcidWork implements VisibilityType, Activity, Serializable {
     protected String putCode;
     @XmlAttribute
     protected Visibility visibility;
+    @XmlAttribute(name = "last-modified-date")
+    protected LastModifiedDate lastModifiedDate;
+    @XmlAttribute(name = "created-date")
+    protected CreatedDate createdDate;
+
 
     /**
      * Gets the value of the putCode property.
@@ -542,6 +547,29 @@ public class OrcidWork implements VisibilityType, Activity, Serializable {
         return result;
     }
 
+
+    @Override
+    public CreatedDate getCreatedDate() {
+        return createdDate;
+    }
+
+    @Override
+    public void setCreatedDate(CreatedDate value) {
+        createdDate = value;
+    }
+
+    @Override
+    public LastModifiedDate getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    @Override
+    public void setLastModifiedDate(LastModifiedDate value) {
+        lastModifiedDate = value;
+    }
+
+
+    
     /**
      * Note that put-code is not part of equality. This is important for avoid
      * creation of duplication works.
@@ -617,6 +645,8 @@ public class OrcidWork implements VisibilityType, Activity, Serializable {
                 return false;
         } else if (!country.equals(other.country))
             return false;
+        if (lastModifiedDate != other.lastModifiedDate) return false;
+        if (createdDate != other.createdDate) return false;
         return true;
     }
 

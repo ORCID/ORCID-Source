@@ -101,6 +101,10 @@ public class Funding implements VisibilityType, Activity, Serializable {
     protected String putCode;
     @XmlAttribute(required = true)
     protected Visibility visibility;
+    @XmlAttribute(name = "last-modified-date")
+    protected LastModifiedDate lastModifiedDate;
+    @XmlAttribute(name = "created-date")
+    protected CreatedDate createdDate;
 
     public FundingTitle getTitle() {
         return title;
@@ -276,6 +280,26 @@ public class Funding implements VisibilityType, Activity, Serializable {
         return result;
     }
 
+    @Override
+    public CreatedDate getCreatedDate() {
+        return createdDate;
+    }
+
+    @Override
+    public void setCreatedDate(CreatedDate value) {
+        createdDate = value;
+    }
+
+    @Override
+    public LastModifiedDate getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    @Override
+    public void setLastModifiedDate(LastModifiedDate value) {
+        lastModifiedDate = value;
+    }
+    
     /**
      * 
      * Note that put-code is not part of hashCode or equals! This is to allow
@@ -364,7 +388,9 @@ public class Funding implements VisibilityType, Activity, Serializable {
             if (other.endDate != null)
                 return false;
         } else if (!endDate.equals(other.endDate))
-            return false;
+            return false;   
+        if (lastModifiedDate != other.lastModifiedDate) return false;
+        if (createdDate != other.createdDate) return false;
         return true;
     }
 

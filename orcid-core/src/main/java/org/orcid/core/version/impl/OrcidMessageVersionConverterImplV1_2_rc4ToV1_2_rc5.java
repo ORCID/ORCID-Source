@@ -69,6 +69,9 @@ public class OrcidMessageVersionConverterImplV1_2_rc4ToV1_2_rc5 implements Orcid
                         externalIdentifier.setExternalIdOrcid(externalIdentifier.getExternalIdSource());
                         externalIdentifier.setExternalIdSource(null);
                     }
+            if (orcidProfile.getOrcidActivities() != null)
+                if (orcidProfile.getOrcidActivities().getAffiliations() != null)
+                    
     }
     
     private void upgradeProfile(OrcidProfile orcidProfile) {

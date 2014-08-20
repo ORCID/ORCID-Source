@@ -551,7 +551,8 @@ public class WorksController extends BaseWorkspaceController {
             workEntity.setCitation(orcidWork.getWorkCitation().getCitation());
             workEntity.setCitationType(orcidWork.getWorkCitation().getWorkCitationType());
         }
-        workEntity.setDateCreated(new java.util.Date());
+        if (orcidWork.getCreatedDate() == null) 
+            workEntity.setDateCreated(new java.util.Date());
         workEntity.setDescription(orcidWork.getShortDescription());
         workEntity.setLastModified(new java.util.Date());
         if (orcidWork.getPublicationDate() != null)
