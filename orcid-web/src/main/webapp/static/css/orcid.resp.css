@@ -4224,7 +4224,7 @@ ul.oauth-scopes{
 }
 
 ul.oauth-scopes li{
-	height: 30px;
+	min-height: 30px;
 	font-size: 17px;
 	color: #338caf;
 	line-height: 33px;
