@@ -6421,8 +6421,10 @@ function OauthAuthorizationController($scope, $compile, $sce){
 	        success: function(data) {
 	        	$scope.copyErrorsLeft($scope.registrationForm, data);
 	        	if(field == 'Email') {
-	        		for(var i = 0; i < $scope.registrationForm.email.errors.length; i++) {	        				        			
-	        			$scope.registrationForm.email.errors[i] = $sce.trustAsHtml($scope.registrationForm.email.errors[i]);
+	        		for(var i = 0; i < $scope.registrationForm.email.errors.length; i++){
+	        		    if ($scope.registrationForm.email.errors[i].lenght > 0){
+	        		        $scope.registrationForm.email.errors[i] = $sce.trustAsHtml($scope.registrationForm.email.errors[i]);
+	        		    }
 	        		}
 	        	}	        		
 	        	$scope.$apply();
