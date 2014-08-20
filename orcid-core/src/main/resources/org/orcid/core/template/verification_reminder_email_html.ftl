@@ -35,7 +35,10 @@
 		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
 		        <@emailMacros.msg "email.verify.1" />${orcid}<@emailMacros.msg "email.verify.2" />
-		        <a href="${baseUri}/${orcid}?lang=${locale}" target="_blank">${baseUri}/${orcid}</a>		        
+		        <a href="${baseUri}/${orcid}?lang=${locale}" target="_blank">${baseUri}/${orcid}</a> <@emailMacros.msg "email.verify.primary_email_1" /> ${primaryEmail}<@emailMacros.msg "email.verify.primary_email_2" />.	        
+		    </p>
+		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
+		        <@emailMacros.msg "email.verify.if_you_did_not" />
 		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">		  
 				<@emailMacros.msg "email.common.did_you_know" /><a href="${baseUri}/about/news">${baseUri}/about/news</a>
