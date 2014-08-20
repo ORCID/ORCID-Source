@@ -392,145 +392,122 @@ public class WorksController extends BaseWorkspaceController {
     Work postWork(HttpServletRequest request, @RequestBody Work work) {
         work.setErrors(new ArrayList<String>());
 
-        workCitationValidate(work);
+        if (work.getCitation() != null) {
+            workCitationValidate(work);
+            copyErrors(work.getCitation().getCitationType(), work);
+            copyErrors(work.getCitation().getCitation(), work);
+        }
         workWorkTitleTitleValidate(work);
-        workWorkTitleSubtitleValidate(work);
-        workWorkTitleTranslatedTitleValidate(work);
-        workdescriptionValidate(work);
+        if (work.getWorkTitle().getSubtitle() != null) {
+            workWorkTitleSubtitleValidate(work);
+            copyErrors(work.getWorkTitle().getSubtitle(), work);
+        }
+        if (work.getWorkTitle().getTranslatedTitle() != null) {
+            workWorkTitleTranslatedTitleValidate(work);
+            copyErrors(work.getWorkTitle().getTranslatedTitle(), work);
+        }
+        // allowed to be null
+        if (work.getShortDescription() != null) {
+            workdescriptionValidate(work);
+            copyErrors(work.getShortDescription(), work);
+        }
         workWorkCategoryValidate(work);
+        
         workWorkTypeValidate(work);
-        workWorkExternalIdentifiersValidate(work);
-        workUrlValidate(work);
-        workJournalTitleValidate(work);
-        workLanguageCodeValidate(work);
-
-        copyErrors(work.getCitation().getCitation(), work);
-        copyErrors(work.getCitation().getCitationType(), work);
-        copyErrors(work.getWorkTitle().getTitle(), work);
-        copyErrors(work.getWorkTitle().getTranslatedTitle(), work);
-        copyErrors(work.getShortDescription(), work);
-        copyErrors(work.getWorkTitle().getSubtitle(), work);
         copyErrors(work.getWorkType(), work);
-        copyErrors(work.getUrl(), work);
-        copyErrors(work.getJournalTitle(), work);
-
-        for (Contributor c : work.getContributors()) {
-            copyErrors(c.getContributorRole(), work);
-            copyErrors(c.getContributorSequence(), work);
+        if(work.getWorkExternalIdentifiers() != null) {
+            workWorkExternalIdentifiersValidate(work);
+            for (WorkExternalIdentifier wId : work.getWorkExternalIdentifiers()) {
+                copyErrors(wId.getWorkExternalIdentifierId(), work);
+                copyErrors(wId.getWorkExternalIdentifierType(), work);
+            }
+        }
+        
+        if (work.getUrl() != null) {
+            workUrlValidate(work);
+            copyErrors(work.getUrl(), work);
         }
 
-        for (WorkExternalIdentifier wId : work.getWorkExternalIdentifiers()) {
-            copyErrors(wId.getWorkExternalIdentifierId(), work);
-            copyErrors(wId.getWorkExternalIdentifierType(), work);
+        if (work.getJournalTitle() != null) {
+            workJournalTitleValidate(work);
+            copyErrors(work.getJournalTitle(), work);
         }
-
+        
+        //allowed to be null
+        if (work.getLanguageCode() != null) {
+            workLanguageCodeValidate(work);
+            copyErrors(work.getLanguageCode(), work);
+        }
+        
+        // null         
+        if (work.getPutCode() != null) {
+           validateWorkId(work);
+        }
+        
         if (work.getErrors().size() == 0) {
-            // Get current profile
-            OrcidProfile currentProfile = getEffectiveProfile();
-
-            // Set the credit name to the work
-
-            OrcidWork newOw = work.toOrcidWork();
-            newOw.setPutCode("-1"); // put codes of -1 override new works
-                                    // visibility filtering settings.
-
-            WorkEntity workEntity = toWorkEntity(newOw);
-            // Create work
-            workEntity = workManager.addWork(workEntity);
-
-            // Create profile work relationship
-            profileWorkManager.addProfileWork(currentProfile.getOrcidIdentifier().getPath(), workEntity.getId(), newOw.getVisibility(), getRealUserOrcid());
-
-            // Set the id (put-code) to the new work
-            String putCode = String.valueOf(workEntity.getId());
-            newOw.setPutCode(putCode);
-
-            //Set the id in the work to be returned
-            work.setPutCode(Text.valueOf(putCode));
-            
-            // Check if the user have orcid activities, if not, initialize them
-            if (currentProfile.getOrcidActivities() == null)
-                currentProfile.setOrcidActivities(new OrcidActivities());
-            // Check if the user have works, if not, initialize them
-            if (currentProfile.getOrcidActivities().getOrcidWorks() == null)
-                currentProfile.getOrcidActivities().setOrcidWorks(new OrcidWorks());
-
-            // Add the new work to the list of works
-            currentProfile.getOrcidActivities().getOrcidWorks().getOrcidWork().add(newOw);
-
+            if (work.getPutCode() != null) 
+                updateWork(work);
+            else
+                addWork(work);
         }
 
         return work;
     }
 
-    /**
-     * Creates a new work
-     * */
-    @RequestMapping(value = "/edit-work.json", method = RequestMethod.POST)
-    public @ResponseBody
-    Work editWork(HttpServletRequest request, @RequestBody Work work) {
-        initializeFields(work);
-        work.setErrors(new ArrayList<String>());
+    public void addWork(Work work) {
+        // Get current profile
+        OrcidProfile currentProfile = getEffectiveProfile();
 
-        workCitationValidate(work);
-        workWorkTitleTitleValidate(work);
-        workWorkTitleSubtitleValidate(work);
-        workWorkTitleTranslatedTitleValidate(work);
-        workdescriptionValidate(work);
-        workWorkCategoryValidate(work);
-        workWorkTypeValidate(work);
-        workWorkExternalIdentifiersValidate(work);
-        workUrlValidate(work);
-        workJournalTitleValidate(work);
-        workLanguageCodeValidate(work);
-        validateWorkId(work);
+        // Set the credit name to the work
+
+        OrcidWork newOw = work.toOrcidWork();
+        newOw.setPutCode("-1"); // put codes of -1 override new works
+                                // visibility filtering settings.
+
+        WorkEntity workEntity = toWorkEntity(newOw);
+        // Create work
+        workEntity = workManager.addWork(workEntity);
+
+        // Create profile work relationship
+        profileWorkManager.addProfileWork(currentProfile.getOrcidIdentifier().getPath(), workEntity.getId(), newOw.getVisibility(), getRealUserOrcid());
+
+        // Set the id (put-code) to the new work
+        String putCode = String.valueOf(workEntity.getId());
+        newOw.setPutCode(putCode);
+
+        //Set the id in the work to be returned
+        work.setPutCode(Text.valueOf(putCode));
         
-        copyErrors(work.getCitation().getCitation(), work);
-        copyErrors(work.getCitation().getCitationType(), work);
-        copyErrors(work.getWorkTitle().getTitle(), work);
-        copyErrors(work.getWorkTitle().getTranslatedTitle(), work);
-        copyErrors(work.getShortDescription(), work);
-        copyErrors(work.getWorkTitle().getSubtitle(), work);
-        copyErrors(work.getWorkType(), work);
-        copyErrors(work.getUrl(), work);
-        copyErrors(work.getJournalTitle(), work);
+        // Check if the user have orcid activities, if not, initialize them
+        if (currentProfile.getOrcidActivities() == null)
+            currentProfile.setOrcidActivities(new OrcidActivities());
+        // Check if the user have works, if not, initialize them
+        if (currentProfile.getOrcidActivities().getOrcidWorks() == null)
+            currentProfile.getOrcidActivities().setOrcidWorks(new OrcidWorks());
 
-        for (Contributor c : work.getContributors()) {
-            if(!PojoUtil.isEmpty(c.getContributorRole()))
-                    copyErrors(c.getContributorRole(), work);
-            if(!PojoUtil.isEmpty(c.getContributorSequence()))
-                copyErrors(c.getContributorSequence(), work);
-        }
+        // Add the new work to the list of works
+        currentProfile.getOrcidActivities().getOrcidWorks().getOrcidWork().add(newOw);
+    }
 
-        for (WorkExternalIdentifier wId : work.getWorkExternalIdentifiers()) {
-            if(!PojoUtil.isEmpty(wId.getWorkExternalIdentifierId()))
-                copyErrors(wId.getWorkExternalIdentifierId(), work);            
-            if(!PojoUtil.isEmpty(wId.getWorkExternalIdentifierType()))
-                copyErrors(wId.getWorkExternalIdentifierType(), work);
-        }
+    public void updateWork(Work work) {
+        // Get current profile
+        OrcidProfile currentProfile = getEffectiveProfile();
 
-        if (work.getErrors().size() == 0) {
-            // Get current profile
-            OrcidProfile currentProfile = getEffectiveProfile();
+        OrcidWork updatedOw = work.toOrcidWork();
 
-            OrcidWork updatedOw = work.toOrcidWork();
+        WorkEntity workEntity = toWorkEntity(updatedOw);
+        // Edit work
+        workManager.editWork(workEntity);
 
-            WorkEntity workEntity = toWorkEntity(updatedOw);
-            // Edit work
-            workManager.editWork(workEntity);
+        // Edit the work visibility
+        profileWorkManager.updateWork(currentProfile.getOrcidIdentifier().getPath(), String.valueOf(workEntity.getId()), updatedOw.getVisibility());
+        // Update the work on the cached profile
+        List<OrcidWork> works = currentProfile.getOrcidActivities().getOrcidWorks().getOrcidWork();
+        for (OrcidWork existingWork : works) {
+            if (existingWork.getPutCode().equals(updatedOw.getPutCode())) {
 
-            // Edit the work visibility
-            profileWorkManager.updateWork(currentProfile.getOrcidIdentifier().getPath(), String.valueOf(workEntity.getId()), updatedOw.getVisibility());
-            // Update the work on the cached profile
-            List<OrcidWork> works = currentProfile.getOrcidActivities().getOrcidWorks().getOrcidWork();
-            for (OrcidWork existingWork : works) {
-                if (existingWork.getPutCode().equals(updatedOw.getPutCode())) {
-
-                }
             }
         }
-
-        return work;
     }
 
     /**
@@ -570,16 +547,21 @@ public class WorksController extends BaseWorkspaceController {
         WorkEntity workEntity = new WorkEntity();
         if(!PojoUtil.isEmpty(orcidWork.getPutCode()) && !orcidWork.getPutCode().equals("-1"))
             workEntity.setId(Long.valueOf(orcidWork.getPutCode()));
-        workEntity.setCitation(orcidWork.getWorkCitation().getCitation());
-        workEntity.setCitationType(orcidWork.getWorkCitation().getWorkCitationType());
+        if (orcidWork.getWorkCitation() != null) {
+            workEntity.setCitation(orcidWork.getWorkCitation().getCitation());
+            workEntity.setCitationType(orcidWork.getWorkCitation().getWorkCitationType());
+        }
         workEntity.setDateCreated(new java.util.Date());
         workEntity.setDescription(orcidWork.getShortDescription());
         workEntity.setLastModified(new java.util.Date());
-        workEntity.setPublicationDate(toFuzzyDate(orcidWork.getPublicationDate()));
-        workEntity.setSubtitle(orcidWork.getWorkTitle().getSubtitle().getContent());
+        if (orcidWork.getPublicationDate() != null)
+            workEntity.setPublicationDate(toFuzzyDate(orcidWork.getPublicationDate()));
+        if (orcidWork.getWorkTitle().getSubtitle() != null)
+            workEntity.setSubtitle(orcidWork.getWorkTitle().getSubtitle().getContent());
         workEntity.setTitle(orcidWork.getWorkTitle().getTitle().getContent().trim());
         workEntity.setJournalTitle(orcidWork.getJournalTitle() != null ? orcidWork.getJournalTitle().getContent() : null);
         workEntity.setWorkType(orcidWork.getWorkType());
+        if (orcidWork.getUrl() != null)
         workEntity.setWorkUrl(orcidWork.getUrl().getValue());
         workEntity.setLanguageCode(StringUtils.isEmpty(orcidWork.getLanguageCode()) ? null : orcidWork.getLanguageCode());
 
@@ -647,6 +629,7 @@ public class WorksController extends BaseWorkspaceController {
     @RequestMapping(value = "/work/workTitle/subtitleValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     Work workWorkTitleSubtitleValidate(@RequestBody Work work) {
+        
         work.getWorkTitle().getSubtitle().setErrors(new ArrayList<String>());
         if (work.getWorkTitle().getSubtitle().getValue() != null && work.getWorkTitle().getSubtitle().getValue().length() > 1000) {
             setError(work.getWorkTitle().getSubtitle(), "manualWork.length_less_1000");
@@ -744,7 +727,6 @@ public class WorksController extends BaseWorkspaceController {
     @RequestMapping(value = "/work/workExternalIdentifiersValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     Work workWorkExternalIdentifiersValidate(@RequestBody Work work) {
-        if(work.getWorkExternalIdentifiers() != null) {
             for (WorkExternalIdentifier wId : work.getWorkExternalIdentifiers()) {
                 if(wId.getWorkExternalIdentifierId() == null)
                     wId.setWorkExternalIdentifierId(new Text());
@@ -765,7 +747,7 @@ public class WorksController extends BaseWorkspaceController {
                     setError(wId.getWorkExternalIdentifierId(), "NotBlank.currentWorkExternalIds.id");
                 }
             }
-        }
+        
 
         return work;
     }
@@ -775,8 +757,8 @@ public class WorksController extends BaseWorkspaceController {
     Work workCitationValidate(@RequestBody Work work) {
         work.getCitation().getCitation().setErrors(new ArrayList<String>());
         work.getCitation().getCitationType().setErrors(new ArrayList<String>());
-
-        // Citations must have a type if citation text has a vale
+         
+        // Citations must have a type if citation text has a value
         if (PojoUtil.isEmpty(work.getCitation().getCitationType()) && !PojoUtil.isEmpty(work.getCitation().getCitation())) {
             setError(work.getCitation().getCitationType(), "NotBlank.manualWork.citationType");
         } else if (work.getCitation().getCitationType().getValue() != null && !work.getCitation().getCitationType().getValue().trim().equals(CitationType.FORMATTED_UNSPECIFIED.value())
@@ -787,12 +769,11 @@ public class WorksController extends BaseWorkspaceController {
             }
 
         }
-
         return work;
     }
 
     public Work validateWorkId(Work work) {
-        // Get current profile
+ 
         OrcidProfile currentProfile = getEffectiveProfile();
         if (currentProfile == null || currentProfile.getOrcidActivities() == null || currentProfile.getOrcidActivities().getOrcidWorks() == null
                 || currentProfile.getOrcidActivities().getOrcidWorks().getOrcidWork().isEmpty()) {
