@@ -17,7 +17,11 @@
 
 -->
 <@base>
-<div class="container oauth-login top-green-border">
+<#if RequestParameters['oneStep']??>
+	<div class="container oauth-login top-green-border oneStepWidth">
+<#else>
+	<div class="container oauth-login top-green-border">
+</#if>
 	<div class="row">
 		<div class="col-push-3 col-md-9">
 		    <div class="logo">
