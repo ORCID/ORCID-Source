@@ -171,7 +171,7 @@
 		        </div>			       
 		    </div>				
 		    
-		    <div class="form-group">
+		    <div class="form-group oAuthFix">
 		        <label class="col-sm-3 control-label"><@orcid.msg 'oauth_sign_up.labelreenteremail'/></label>
 		        <div class="col-sm-9 bottomBuffer">
 		            <input name="confirmedEmail" type="email" tabindex="4" class="" ng-model="registrationForm.emailConfirm.value" ng-model-onblur ng-change="serverValidate('EmailConfirm')" />

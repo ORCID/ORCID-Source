@@ -16,7 +16,7 @@
     =============================================================================
 
 -->
-    <div class="col-md-6 col-sm-12 margin-top-bottom-box">
+    <div class="col-md-6 col-sm-12 margin-top-bottom-box oauth-sign-up">
     <div class="page-header">
 	    <h3>${springMacroRequestContext.getMessage("oauth_sign_up.h3donothaveid")}</h3>
 	</div>
