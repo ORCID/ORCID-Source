@@ -22,7 +22,12 @@
 	<#assign displayName = client_name>
 </#if>
 <!-- colorbox-content -->
-<div class="container top-green-border confirm-oauth-access" ng-controller="OauthAuthorizationController">		
+<div class="container confirm-oauth-access" ng-controller="OauthAuthorizationController">
+	<div class="row">
+		<div class="col-md-12 col-sm-12 col-xs-12">
+			<div class="top-green-border"></div>
+		</div>
+	</div>	
 	<!-- Freemarker and GA variables -->
 	<#assign user_id = "">			
 	<#if userId??>
@@ -37,14 +42,14 @@
 	<!-- /Freemarker and GA variables -->
 	<@security.authorize ifAnyGranted="ROLE_USER">
 	<div class="row top-header">
-		<div class="col-md-2 col-sm-6 col-xs-12">
+		<div class="col-md-4 col-sm-12 col-xs-12">
 			<div class="logo">
 	        	<h1><a href="${aboutUri}"><img src="${staticCdn}/img/orcid-logo.png" alt="ORCID logo" /></a></h1>
 	        	<!-- <p>${springMacroRequestContext.getMessage("confirm-oauth-access.connectingresearchandresearchers")}</p> -->
 	        </div>		
 		</div>
 		
-	    <div class="col-md-4 col-sm-6 col-xs-12">	        
+	    <div class="col-md-8 col-sm-12 col-xs-12">	        
 	        <div class="row">
 	            <#include "includes/mini_id_banner.ftl"/>
 	        </div>      
@@ -61,7 +66,7 @@
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-md-6">	
+		<div class="col-md-12">	
 		<div class="app-client-name" ng-init="initGroupClientNameAndScopes('${client_group_name}','${client_name}','${js_scopes_string}')">
 			<h3 ng-click="toggleClientDescription()">${client_name}
 				<a class="glyphicon glyphicon-question-sign oauth-question-sign"></a>				

@@ -4274,6 +4274,11 @@ ul.oauth-scopes li{
 	margin-bottom: 15px;
 }
 
+.container.confirm-oauth-access,
+.container.oauth-login{
+	max-width: 500px;
+}
+
 
 
 

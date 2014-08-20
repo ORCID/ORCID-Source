@@ -17,7 +17,7 @@
 
 -->
 	<#include "/common/browser-checks.ftl" />
-	<div class="col-md-6 col-sm-12 oauth-margin-top-bottom-box" ng-controller="OauthAuthorizationController">
+	<div class="col-md-12 col-sm-12 oauth-margin-top-bottom-box" ng-controller="OauthAuthorizationController">
 		<!-- Freemarker and GA variables -->
 		<#assign user_id = "">			
 		<#if userId??>
