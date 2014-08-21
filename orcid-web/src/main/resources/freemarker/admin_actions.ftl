@@ -472,8 +472,8 @@
 		<a name="add-client"></a>
 		<div ng-controller="adminGroupsCtrl" class="workspace-accordion-item" ng-cloak>
 			<p>
-				<a ng-show="showAdminGroupsModal" ng-click="toggleReactivationModal()"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'manage_groups.admin_groups_title'/></a>
-				<a ng-hide="showAdminGroupsModal" ng-click="toggleReactivationModal()"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'manage_groups.admin_groups_title'/></a>				
+				<a ng-show="showAdminGroupsModal" ng-click="toggleGroupsModal()"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'manage_groups.admin_groups_title'/></a>
+				<a ng-hide="showAdminGroupsModal" ng-click="toggleGroupsModal()"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'manage_groups.admin_groups_title'/></a>				
 			</p>
 			<div class="collapsible bottom-margin-small admin-modal" id="admin_groups_modal" style="display:none;">				
 	    		<div class="view-items-link">							
@@ -484,6 +484,91 @@
 				</div>				
 			</div>			
 		</div>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		<!-- Edit client -->
+		<a name="edit-client"></a>
+		<div ng-controller="adminEditClientCtrl" class="workspace-accordion-item" ng-cloak>
+			<p>
+				<a ng-show="showAdminGroupsModal" ng-click="toggleEditClientModal()"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.edit_client.title'/></a>
+				<a ng-hide="showAdminGroupsModal" ng-click="toggleEditClientModal()"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.edit_client.title'/></a>				
+			</p>
+			<div class="collapsible bottom-margin-small admin-modal" id="edit_client_modal" style="display:none;">					    		
+	    		<div class="form-group">
+					<label for="client_id"><@orcid.msg 'admin.edit_client.client_id' /></label>
+					<input type="text" id="client_id" ng-model="client_id" placeholder="<@orcid.msg 'admin.edit_client.client_id.placeholder' />" class="input-xlarge" />					
+					<div ng-show="showError">
+						<span class="orcid-error" ng-bind-html="error"></span><br />
+					</div>		
+				</div>
+				<div class="controls save-btns pull-left">
+					<span id="bottom-search-client" ng-click="search()" class="btn btn-primary"><@orcid.msg 'admin.edit_client.find'/></span>
+				</div>
+			</div>
+			
+			<div ng-show="client != null" ng-cloak>
+				<input type="text" ng-model="client.displayName.value" class="input-xlarge" /><br />
+				<input type="text" ng-model="client.website.value" class="input-xlarge"/><br />
+				<input type="text" ng-model="client.shortDescription.value" class="dt-description"/><br />
+				<div>
+					<h4><@orcid.msg 'admin.edit_client.redirect_uris'/></h4>
+					<div ng-repeat="rUri in client.redirectUris">
+						<input type="text" ng-model="rUri.value.value" class="input-xlarge">
+						<!-- Type -->						
+						<select class="input-large input-xlarge-full" ng-model="rUri.type.value" ng-change="loadDefaultScopes(rUri)">
+							<#list redirectUriTypes?keys as key>
+								<option value="${key}">${redirectUriTypes[key]}</option>
+							</#list>
+						</select>																			
+					</div>
+				</div>									
+			</div>
+			
+		</div>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		
 		<!-- Deprecate Profile -->
 		<a name="deprecate-profile"></a>

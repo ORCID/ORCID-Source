@@ -4785,12 +4785,86 @@ function revokeApplicationFormCtrl($scope,$compile){
 	};
 };
 
+
+
+
+
+
+
+
+function adminEditClientCtrl($scope) {
+	$scope.showEditClientModal = false;
+	$scope.client_id = null;
+	$scope.client = null;
+	$scope.showError = false;
+	$scope.error = om.get('admin.edit_client.invalid_client_id');
+	
+	$scope.toggleEditClientModal = function() {
+		$scope.showEditClientModal = !$scope.showEditClientModal;
+    	$('#edit_client_modal').toggle();
+	};
+	
+	$scope.search = function() {
+		$scope.showError = false;
+		$scope.client = null;
+		$.ajax({
+	        url: getBaseUri()+'/admin-actions/find-client.json?orcid=' + $scope.client_id,	        
+	        type: 'GET',
+	        dataType: 'json',	        
+	        success: function(data) {
+	        	console.log(angular.toJson(data));
+	        	if(data.clientId != null) {	        		
+	        		$scope.client = data;				
+	        	} else {
+	        		$scope.showError = true;
+	        		console.log($scope.error);
+	        	}
+	        	$scope.$apply();
+	        }
+	    }).fail(function(error) { 
+	    	// something bad is happening!	    	
+	    	console.log("Error getting existing groups");	    	
+	    });		
+	};
+	
+	
+	//Load the default scopes based n the redirect uri type selected
+	$scope.loadDefaultScopes = function(rUri) {
+		//Empty the scopes to update the default ones
+		rUri.scopes = [];
+		//Fill the scopes with the default scopes
+		if(rUri.type.value == 'grant-read-wizard'){
+			rUri.scopes.push('/orcid-profile/read-limited');
+		} else if (rUri.type.value == 'import-works-wizard'){
+			rUri.scopes.push('/orcid-profile/read-limited');
+			rUri.scopes.push('/orcid-works/create');
+		} else if (rUri.type.value == 'import-funding-wizard'){
+			rUri.scopes.push('/orcid-profile/read-limited');
+			rUri.scopes.push('/funding/create');
+		}  		
+	};		
+	
+	
+	
+};
+
+
+
+
+
+
+
+
+
+
+
+
 function adminGroupsCtrl($scope,$compile){
 	$scope.showAdminGroupsModal = false;
 	$scope.newGroup = null;
 	$scope.groups = [];
 	
-	$scope.toggleReactivationModal = function() {
+	$scope.toggleGroupsModal = function() {
 		$scope.showAdminGroupsModal = !$scope.showAdminGroupsModal;
     	$('#admin_groups_modal').toggle();
 	};

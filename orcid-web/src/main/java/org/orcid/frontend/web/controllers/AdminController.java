@@ -19,6 +19,7 @@ package org.orcid.frontend.web.controllers;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,6 +32,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.util.ajax.JSON;
+import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
@@ -41,10 +43,12 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.jaxb.model.clientgroup.GroupType;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
+import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.password.constants.OrcidPasswordConstants;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -53,6 +57,7 @@ import org.orcid.pojo.AdminChangePassword;
 import org.orcid.pojo.AdminDelegatesRequest;
 import org.orcid.pojo.ProfileDeprecationRequest;
 import org.orcid.pojo.ProfileDetails;
+import org.orcid.pojo.ajaxForm.Client;
 import org.orcid.pojo.ajaxForm.Group;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
@@ -107,6 +112,9 @@ public class AdminController extends BaseController {
 
     @Resource
     EmailManager emailManager;
+    
+    @Resource
+    ClientDetailsManager clientDetailsManager;
     
     public ProfileEntityManager getProfileEntityManager() {
         return profileEntityManager;
@@ -446,6 +454,35 @@ public class AdminController extends BaseController {
     	}
     	return groups;
     }
+    
+    
+    
+    
+    
+    
+    @RequestMapping(value = "/find-client.json", method = RequestMethod.GET)
+    public @ResponseBody Client findClient(@RequestParam("orcid") String orcid) {
+        ClientDetailsEntity clientDetailsEntity = clientDetailsManager.findByClientId(orcid);
+        return Client.valueOf(clientDetailsEntity);
+    }
+    
+    
+    @ModelAttribute("redirectUriTypes")
+    public Map<String, String> getRedirectUriTypes() {
+        Map<String, String> redirectUriTypes = new LinkedHashMap<String, String>();
+        for (RedirectUriType rType : RedirectUriType.values()) {
+            if (!RedirectUriType.SSO_AUTHENTICATION.equals(rType))
+                redirectUriTypes.put(rType.value(), rType.value());
+        }
+        return redirectUriTypes;
+    }
+    
+    
+    
+    
+    
+    
+    
     
     /**
      * Generate random string
