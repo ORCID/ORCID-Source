@@ -165,8 +165,8 @@
 		        <div class="col-sm-9 bottomBuffer">
 		            <input name="email" type="email" tabindex="3" class="" ng-model="registrationForm.email.value" ng-model-onblur ng-change="serverValidate('Email')" />
 		            <span class="required" ng-class="isValidClass(registrationForm.email)">*</span>			            
-		            <span class="orcid-error" ng-show="registrationForm.email.errors.length > 0">
-						<div ng-repeat='error in registrationForm.email.errors' ng-bind-html="error" compile="html"></div>
+		            <span class="orcid-error" ng-show="emailTrustAsHtmlErrors.length > 0">
+						<div ng-repeat='error in emailTrustAsHtmlErrors' ng-bind-html="error" compile="html"></div>
 		   			</span>
 		        </div>			       
 		    </div>				
