@@ -6204,6 +6204,7 @@ function OauthAuthorizationController($scope, $compile, $sce){
 	$scope.clientName = "";
 	$scope.clientGroupName = "";
 	$scope.requestScopes = null;
+	$scope.emailTrustAsHtmlErrors = [];
 	
 	$scope.toggleClientDescription = function() {
 		$scope.showClientDescription = !$scope.showClientDescription;		
@@ -6338,15 +6339,17 @@ function OauthAuthorizationController($scope, $compile, $sce){
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        success: function(data) {
-	        	$scope.registrationForm = data;	        	
+	        	$scope.registrationForm = data;	 
 	        	if ($scope.registrationForm.errors.length == 0) {
 	        		$scope.showProcessingColorBox();
 	        		$scope.getDuplicates();
 	        	} else {
-	        		if($scope.registrationForm.email.errors.length > 0) {	        			
-		        		for(var i = 0; i < $scope.registrationForm.email.errors.length; i++) {	        				        			
-		        			$scope.registrationForm.email.errors[i] = $sce.trustAsHtml($scope.registrationForm.email.errors[i]);
-		        		}
+	        		if($scope.registrationForm.email.errors.length > 0) {	        				        			
+	        			for(var i = 0; i < $scope.registrationForm.email.errors.length; i++){
+		        			$scope.emailTrustAsHtmlErrors[0] = $sce.trustAsHtml($scope.registrationForm.email.errors[i]);	        		    	        		   
+		        		}		        		  
+	        		} else {
+	        			$scope.emailTrustAsHtmlErrors = [];
 	        		}
 	        	}
 	        	$scope.$apply();
@@ -6421,10 +6424,14 @@ function OauthAuthorizationController($scope, $compile, $sce){
 	        success: function(data) {
 	        	$scope.copyErrorsLeft($scope.registrationForm, data);
 	        	if(field == 'Email') {
-	        		for(var i = 0; i < $scope.registrationForm.email.errors.length; i++) {	        				        			
-	        			$scope.registrationForm.email.errors[i] = $sce.trustAsHtml($scope.registrationForm.email.errors[i]);
-	        		}
-	        	}	        		
+		        	if ($scope.registrationForm.email.errors.length > 0) {
+	        			for(var i = 0; i < $scope.registrationForm.email.errors.length; i++){
+		        			$scope.emailTrustAsHtmlErrors[0] = $sce.trustAsHtml($scope.registrationForm.email.errors[i]);	        		    	        		   
+		        		}
+	        		} else {
+	        			$scope.emailTrustAsHtmlErrors = [];
+	        		}     		
+	        	}
 	        	$scope.$apply();
 	        }
 	    }).fail(function() { 
