@@ -17,7 +17,7 @@
 
 -->
 <ul ng-hide="!fundingSrvc.fundings.length" class="workspace-fundings workspace-body-list bottom-margin-medium" ng-cloak>
-	<li class="bottom-margin-small" ng-repeat="funding in fundingSrvc.fundings |  orderBy:['-dateSortString', 'affiliationName']"> 
+	<li class="bottom-margin-small workspace-border-box card ng-scope" ng-repeat="funding in fundingSrvc.fundings |  orderBy:['-dateSortString', 'affiliationName']"> 
 		<div class="row">        			
 			<!-- Information -->
 			<div class="col-md-9 col-sm-9">

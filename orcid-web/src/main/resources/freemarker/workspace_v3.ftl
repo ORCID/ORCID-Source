@@ -94,9 +94,10 @@
             
             
             <div ng-controller="CountryCtrl" class="country-controller">
-	        	<strong><@orcid.msg 'public_profile.labelCountry'/></strong>
-	            <span class="glyphicon glyphicon-pencil edit-country edit-option pull-right" ng-click="openEdit()" title="" ng-hide="showEdit == true"></span>
-	            <br />   
+            	<div class="profile-header">
+		        	<strong><@orcid.msg 'public_profile.labelCountry'/></strong>
+		            <span class="glyphicon glyphicon-pencil edit-country edit-option pull-right" ng-click="openEdit()" title="" ng-hide="showEdit == true"></span>
+	            </div>
                 <span ng-hide="showEdit == true" ng-click="toggleEdit()">
 	                <span ng-show="countryForm != null && countryForm.iso2Country != null" ng-bind="countryForm.iso2Country.value">
 	                </span>
@@ -126,14 +127,20 @@
             
 	       	<div class="keyword-box">
 		       	<div ng-controller="KeywordsCtrl" class="keywords-controller">
-		        	<div>
+		        	<div class="profile-header">
+		        	   
 		        	   <strong><@orcid.msg 'public_profile.labelKeywords'/></strong>
-		        	   <span ng-hide="showEdit == true" ng-click="openEdit()">
-		        	      <span class="glyphicon glyphicon-pencil edit-keywords edit-option pull-right" title=""></span><br />
+		        	   
+		        	   
+		        	   <span ng-hide="showEdit">
+		        	   	  <span class="glyphicon glyphicon-pencil edit-keywords edit-option pull-right" ng-click="openEdit()" title=""></span>	
 		        	      <span ng-repeat="keyword in keywordsForm.keywords" ng-cloak>
 		        	         {{ $last?keyword.value:keyword.value+ ", "}}
 		        	      </span>
 		        	   </span>
+		        	 </div>   
+		        	   
+		        	   
 		        	   <div ng-show="showEdit == true" ng-cloak class="keywords-edit">
 		        	      <@orcid.privacyToggle  angularModel="keywordsForm.visibility.visibility"
 				             questionClick="toggleClickPrivacyHelp()"
@@ -157,7 +164,7 @@
 		        	      <button class="btn btn-primary" ng-click="setKeywordsForm()"><@spring.message "freemarker.btnsavechanges"/></button>
 		        	      <button class="btn" ng-click="close()"><@spring.message "freemarker.btncancel"/></button>
 		        	   </div> 
-		           </div>
+		         
 		       	</div>
 	       	</div>
 	       	
@@ -213,6 +220,7 @@
 	        </#if>
 		</div>
     </div>
+    
     <div class="col-md-9 right-aside">
         <div class="workspace-right">
         	<div class="workspace-inner workspace-header" ng-controller="WorkspaceSummaryCtrl">
