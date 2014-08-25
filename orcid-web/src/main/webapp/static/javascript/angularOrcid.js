@@ -4792,12 +4792,23 @@ function revokeApplicationFormCtrl($scope,$compile){
 
 
 
-function adminEditClientCtrl($scope) {
+
+
+
+
+
+
+
+
+
+function adminEditClientCtrl($scope, $compile) {
 	$scope.showEditClientModal = false;
 	$scope.client_id = null;
 	$scope.client = null;
 	$scope.showError = false;
 	$scope.error = om.get('admin.edit_client.invalid_client_id');
+	$scope.availableRedirectScopes = [];
+	$scope.selectedScope = "";
 	
 	$scope.toggleEditClientModal = function() {
 		$scope.showEditClientModal = !$scope.showEditClientModal;
@@ -4828,6 +4839,27 @@ function adminEditClientCtrl($scope) {
 	};
 	
 	
+	//Load empty redirect uri
+	$scope.loadEmptyRedirectUri = function() {
+		$.ajax({
+	        url: getBaseUri() + '/admin-actions/empty-redirect-uri.json',
+	        type: 'GET',
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	console.log(data);
+	        	$scope.client.redirectUris.push(data);
+	        	$scope.$apply();
+	        }
+	    }).fail(function() { 
+	    	console.log("Unable to fetch redirect uri scopes.");
+	    });	
+	};
+	
+	$scope.deleteRedirectUri = function($index){
+		$scope.client.redirectUris.splice($index,1);
+	};
+	
 	//Load the default scopes based n the redirect uri type selected
 	$scope.loadDefaultScopes = function(rUri) {
 		//Empty the scopes to update the default ones
@@ -4844,9 +4876,34 @@ function adminEditClientCtrl($scope) {
 		}  		
 	};		
 	
+	//Load the list of scopes for client redirect uris 
+	$scope.loadAvailableScopes = function(){
+		$.ajax({
+	        url: getBaseUri() + '/group/developer-tools/get-available-scopes.json',
+	        type: 'GET',
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	console.log(data);
+	        	$scope.availableRedirectScopes = data;	        	
+	        }
+	    }).fail(function() { 
+	    	console.log("Unable to fetch redirect uri scopes.");
+	    });		
+	};
 	
+	//init	
+	$scope.loadAvailableScopes();
+	
+	$scope.say = function() {
+		console.log("updated");
+	};
 	
 };
+
+
+
+
 
 
 

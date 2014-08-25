@@ -60,6 +60,7 @@ import org.orcid.pojo.ProfileDetails;
 import org.orcid.pojo.ajaxForm.Client;
 import org.orcid.pojo.ajaxForm.Group;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.pojo.ajaxForm.RedirectUri;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
@@ -477,7 +478,14 @@ public class AdminController extends BaseController {
         return redirectUriTypes;
     }
     
-    
+    @RequestMapping(value = "/empty-redirect-uri.json", method = RequestMethod.GET)
+    public @ResponseBody RedirectUri getEmptyRedirectUri() {
+        RedirectUri rUri = new RedirectUri();
+        Text emptyText = Text.valueOf("");
+        rUri.setType(emptyText);        
+        rUri.setValue(emptyText);
+        return rUri;
+    }
     
     
     

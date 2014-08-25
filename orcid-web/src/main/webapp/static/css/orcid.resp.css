@@ -5329,3 +5329,9 @@ ul.oauth-scopes li{
 @media only screen and (-webkit-min-device-pixel-ratio: 2) , only screen
 	and (min-device-pixel-ratio: 2) {
 }
+
+.admin-edit-redirect-uri {
+	background-color: #D3D3D3;
+	border: 1px solid #D3D3D3;
+	margin: 10px;
+}

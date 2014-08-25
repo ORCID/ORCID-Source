@@ -526,24 +526,50 @@
 			</div>
 			
 			<div ng-show="client != null" ng-cloak>
+				<div>
+					<h4><@orcid.msg 'admin.edit_client.redirect_uris'/></h4>
+				</div>
 				<input type="text" ng-model="client.displayName.value" class="input-xlarge" /><br />
 				<input type="text" ng-model="client.website.value" class="input-xlarge"/><br />
 				<input type="text" ng-model="client.shortDescription.value" class="dt-description"/><br />
 				<div>
 					<h4><@orcid.msg 'admin.edit_client.redirect_uris'/></h4>
-					<div ng-repeat="rUri in client.redirectUris">
-						<input type="text" ng-model="rUri.value.value" class="input-xlarge">
+				</div>
+				<div>
+					<div class="row admin-edit-redirect-uri" ng-repeat="rUri in client.redirectUris">
+						<!-- URI -->
+						<div class="col-md-12 col-sm-12 col-xs-12">
+							<input type="text" ng-model="rUri.value.value" class="input-xlarge">
+						</div>
 						<!-- Type -->						
-						<select class="input-large input-xlarge-full" ng-model="rUri.type.value" ng-change="loadDefaultScopes(rUri)">
-							<#list redirectUriTypes?keys as key>
-								<option value="${key}">${redirectUriTypes[key]}</option>
-							</#list>
-						</select>																			
+						<div class="col-md-6 col-sm-6 col-xs-12">
+							<select class="input-large input-xlarge-full" ng-model="rUri.type.value" ng-change="loadDefaultScopes(rUri)">
+								<#list redirectUriTypes?keys as key>
+									<option value="${key}">${redirectUriTypes[key]}</option>
+								</#list>
+							</select>
+						</div>
+						<!-- Scopes -->
+						<div class="col-md-4 col-sm-4 col-xs-12">
+							<multiselect multiple="true" ng-model="rUri.scopes" options="scope as scope for scope in availableRedirectScopes" change="say()"></multiselect>							
+						</div>
+						<!-- Delete button -->
+						<div class="col-md-1 col-sm-1 col-xs-12">
+		    				<a href="" id="delete-redirect-uri" ng-click="deleteRedirectUri($index)" class="glyphicon glyphicon-trash grey"></a>
+						</div>
+						<!-- Add button -->
+						<div class="col-md-1 col-sm-1 col-xs-12">
+		    				<a href="" id="load-empty-redirect-uri" ng-click="loadEmptyRedirectUri()" class="glyphicon glyphicon-plus grey" ng-show="$last"></a>
+						</div>
 					</div>
-				</div>									
-			</div>
-			
-		</div>
+					<div class="row">
+						<div class="controls save-btns col-md-12 col-sm-12 col-xs-12">
+		    				<span id="bottom-confirm-update-client" ng-click="confirmUpdateClient()" class="btn btn-primary">UPDATE</span>
+						</div>
+					</div>					
+				</div>												
+			</div>			
+		</div>		
 		
 		
 		
@@ -650,4 +676,39 @@
 						
 	</div>
 </div>
+
+
+
+
+<script type="text/ng-template" id="multiselect">
+	<div class="btn-group">
+  		<button type="button" class="btn btn-default dropdown-toggle" ng-click="toggleSelect()" ng-disabled="disabled" ng-class="{'error': !valid()}">
+    	{{header}} <span class="caret"></span>
+  		</button>  
+  		<ul class="dropdown-menu">  	
+		    <li>
+	      		<input class="form-control input-sm" type="text" ng-model="searchText.label" autofocus="autofocus" placeholder="Filter" />
+	    	</li>	    
+	    	<li ng-show="multiple" role="presentation" class="">
+	      		<button class="btn btn-link btn-xs" ng-click="checkAll()" type="button"><i class="glyphicon glyphicon-ok"></i> Check all</button>
+	      		<button class="btn btn-link btn-xs" ng-click="uncheckAll()" type="button"><i class="glyphicon glyphicon-remove"></i> Uncheck all</button>
+	    	</li>
+			<div class="dropdown-menu-list">
+		    	<li ng-repeat="i in items | filter:searchText">
+		      		<a ng-click="select(i); focus()">
+		        	<i class='glyphicon' ng-class="{'glyphicon-ok': i.checked, 'empty': !i.checked}"></i> {{i.label}}</a>
+		    	</li>
+	    	</div>    
+  		</ul>
+	</div>
+</script>
+
+
+
+
+
+
+
+
+
 </@public >

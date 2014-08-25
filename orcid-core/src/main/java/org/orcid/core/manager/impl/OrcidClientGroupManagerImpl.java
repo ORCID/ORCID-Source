@@ -468,7 +468,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
                 if (clientPredefinedScopes != null) {
                     existingEntity.setPredefinedClientScope(ScopePathType.getScopesAsSingleString(clientPredefinedScopes));
                 }
-                //Add the the list
+                //Add to the list
                 clientRedirectUriEntities.add(existingEntity);
             } else {
                 ClientRedirectUriEntity clientRedirectUriEntity = new ClientRedirectUriEntity(redirectUri.getValue(), clientDetailsEntity);
