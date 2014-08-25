@@ -18,6 +18,8 @@ package org.orcid.core.version.impl;
 
 import org.orcid.core.version.OrcidMessageVersionConverter;
 import org.orcid.jaxb.model.message.ActivitiesVisibilityDefault;
+import org.orcid.jaxb.model.message.Activity;
+import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.DeveloperToolsEnabled;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.Funding;
@@ -71,7 +73,19 @@ public class OrcidMessageVersionConverterImplV1_2_rc4ToV1_2_rc5 implements Orcid
                     }
             if (orcidProfile.getOrcidActivities() != null)
                 if (orcidProfile.getOrcidActivities().getAffiliations() != null)
-                    
+                    for (Activity act:orcidProfile.getOrcidActivities().getAffiliations().getAffiliation())
+                        downGradeActivity(act);
+            if (orcidProfile.getOrcidActivities().getFundings() != null)
+                for (Activity act:orcidProfile.getOrcidActivities().getFundings().getFundings())
+                    downGradeActivity(act);
+            if (orcidProfile.getOrcidActivities().getOrcidWorks() != null)
+                for (Activity act:orcidProfile.getOrcidActivities().getOrcidWorks().getOrcidWork())
+                    downGradeActivity(act);                    
+    }
+
+    public void downGradeActivity(Activity act) {
+        if (act.getLastModifiedDate() != null) act.setLastModifiedDate(null);
+        if (act.getCreatedDate() != null) act.setCreatedDate(null);
     }
     
     private void upgradeProfile(OrcidProfile orcidProfile) {
