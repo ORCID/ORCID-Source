@@ -36,15 +36,21 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.MockitoAnnotations;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
+import org.orcid.core.manager.OrcidClientGroupManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.frontend.web.util.BaseControllerTest;
+import org.orcid.jaxb.model.clientgroup.OrcidClient;
+import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Visibility;
@@ -55,11 +61,13 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.AdminChangePassword;
 import org.orcid.pojo.ProfileDeprecationRequest;
 import org.orcid.pojo.ProfileDetails;
+import org.orcid.pojo.ajaxForm.Client;
 import org.orcid.pojo.ajaxForm.Group;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -88,6 +96,27 @@ public class AdminControllerTest extends BaseControllerTest {
     
     @Resource
     private EmailDao emailDao;
+    
+    @Resource
+    OrcidClientGroupManager orcidClientGroupManager;
+    
+    @BeforeClass
+    public static void beforeClass() throws Exception {
+        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/ProfileEntityData.xml", "/data/CilentDetailsEntityData.xml"), null);
+    }
+
+    @Before
+    public void beforeInstance() {
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication());
+        MockitoAnnotations.initMocks(this);
+    }
+
+    @AfterClass
+    public static void afterClass() throws Exception {
+        removeDBUnitData(Arrays.asList("/data/CilentDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/SecurityQuestionEntityData.xml"), null);
+    }
+    
+    
     
     @Before
     public void init() {
@@ -482,4 +511,35 @@ public class AdminControllerTest extends BaseControllerTest {
         assertNotNull(emailEntity);
         assertTrue(emailEntity.getVerified());
     }
+    
+    
+    
+    
+    
+    @Test
+    @Transactional("transactionManager")
+    public void editClientTest() {
+        OrcidClientGroup group = orcidClientGroupManager.retrieveOrcidClientGroup("4444-4444-4444-4446");
+        OrcidClient client1 = group.getOrcidClient().get(0);
+        String displayName = client1.getDisplayName();
+        client1.setDisplayName(displayName + "-UPDATED");
+        Client updatedClient = Client.valueOf(client1);
+        updatedClient = adminController.updateClient(updatedClient);
+        assertNotNull(updatedClient);
+        assertTrue(updatedClient.getErrors().isEmpty());
+        group = orcidClientGroupManager.retrieveOrcidClientGroup("4444-4444-4444-4446");
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 }

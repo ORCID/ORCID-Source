@@ -466,8 +466,7 @@
 					<span id="find-ids" ng-click="confirmRemoveSecurityQuestion()" class="btn btn-primary"><@orcid.msg 'admin.remove_security_question.button'/></span>						
 				</div>
 			</div>
-		</div>
-		
+		</div>		
 		<!-- Add new client group -->
 		<a name="add-client"></a>
 		<div ng-controller="adminGroupsCtrl" class="workspace-accordion-item" ng-cloak>
@@ -484,27 +483,6 @@
 				</div>				
 			</div>			
 		</div>
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 		<!-- Edit client -->
 		<a name="edit-client"></a>
 		<div ng-controller="adminEditClientCtrl" class="workspace-accordion-item" ng-cloak>
@@ -615,32 +593,6 @@
 				</div>												
 			</div>			
 		</div>		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 		<!-- Deprecate Profile -->
 		<a name="deprecate-profile"></a>
 		<div ng-controller="profileDeprecationCtrl" class="workspace-accordion-item" ng-cloak>
@@ -722,9 +674,6 @@
 	</div>
 </div>
 
-
-
-
 <script type="text/ng-template" id="multiselect">
 	<div class="btn-group">
   		<button type="button" class="btn btn-default dropdown-toggle" ng-click="toggleSelect()" ng-disabled="disabled" ng-class="{'error': !valid()}">
@@ -763,10 +712,5 @@
 		</div>
     </div>
 </script>
-
-
-
-
-
 
 </@public >
