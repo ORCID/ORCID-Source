@@ -4847,7 +4847,6 @@ function adminEditClientCtrl($scope, $compile) {
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        success: function(data) {
-	        	console.log(data);
 	        	$scope.client.redirectUris.push(data);
 	        	$scope.$apply();
 	        }
@@ -4884,7 +4883,6 @@ function adminEditClientCtrl($scope, $compile) {
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        success: function(data) {
-	        	console.log(data);
 	        	$scope.availableRedirectScopes = data;	        	
 	        }
 	    }).fail(function() { 
@@ -4892,13 +4890,45 @@ function adminEditClientCtrl($scope, $compile) {
 	    });		
 	};
 	
+	//Confirm updating a client
+	$scope.confirmUpdateClient = function() {
+		$.colorbox({                      
+			html : $compile($('#confirm-modal').html())($scope),
+				scrolling: true,
+				onLoad: function() {
+				$('#cboxClose').remove();
+			},
+			scrolling: true
+		});
+		
+		$.colorbox.resize({width:"450px" , height:"175px"});
+	};
+	
+	//Update client
+	$scope.updateClient = function() {
+		$.ajax({
+	        url: getBaseUri() + '/admin-actions/update-client.json',
+	        type: 'POST',
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',	        
+	        data: angular.toJson($scope.client),	 
+	        success: function(data) {
+	        	console.log(angular.toJson(data));
+	        	$scope.client = data;
+	        	$scope.$apply();
+	        	$scope.closeModal();
+	        }
+	    }).fail(function() { 
+	    	console.log("Unable to update client.");
+	    });	
+	};
+	
 	//init	
 	$scope.loadAvailableScopes();
 	
-	$scope.say = function() {
-		console.log("updated");
+	$scope.closeModal = function() {
+		$.colorbox.close();
 	};
-	
 };
 
 

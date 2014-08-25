@@ -5330,8 +5330,13 @@ ul.oauth-scopes li{
 	and (min-device-pixel-ratio: 2) {
 }
 
-.admin-edit-redirect-uri {
+.admin-edit-client {
+	padding: 10px;
+	margin: 5px;
+}
+
+.admin-edit-client-redirect-uris {
 	background-color: #D3D3D3;
-	border: 1px solid #D3D3D3;
-	margin: 10px;
+	padding: 10px;
+	margin: 5px;	
 }

@@ -156,7 +156,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
         return true;
     }
 
-    private Client validateDisplayName(Client client) {
+    public Client validateDisplayName(Client client) {
         client.getDisplayName().setErrors(new ArrayList<String>());
         if (PojoUtil.isEmpty(client.getDisplayName())) {
             setError(client.getDisplayName(), "manage.developer_tools.group.error.display_name.empty");
@@ -167,7 +167,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
         return client;
     }
 
-    private Client validateWebsite(Client client) {
+    public Client validateWebsite(Client client) {
         client.getWebsite().setErrors(new ArrayList<String>());
         if (PojoUtil.isEmpty(client.getWebsite())) {
             setError(client.getWebsite(), "manage.developer_tools.group.error.website.empty");
@@ -177,14 +177,14 @@ public class GroupAdministratorController extends BaseWorkspaceController {
         return client;
     }
 
-    private Client validateShortDescription(Client client) {
+    public Client validateShortDescription(Client client) {
         client.getShortDescription().setErrors(new ArrayList<String>());
         if (PojoUtil.isEmpty(client.getShortDescription()))
             setError(client.getShortDescription(), "manage.developer_tools.group.error.short_description.empty");
         return client;
     }
 
-    private Client validateRedirectUris(Client client) {
+    public Client validateRedirectUris(Client client) {
         if (client.getRedirectUris() != null && client.getRedirectUris().size() > 0) {
             for (RedirectUri redirectUri : client.getRedirectUris()) {
                 redirectUri.setErrors(new ArrayList<String>());
@@ -335,7 +335,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
      * Since the groups have changed, the cache version must be updated on
      * database and all caches have to be evicted.
      * */
-    private void clearCache() {
+    public void clearCache() {
         // Updates cache database version
         thirdPartyLinkManager.updateDatabaseCacheVersion();
         // Evict current cache

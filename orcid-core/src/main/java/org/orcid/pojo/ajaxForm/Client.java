@@ -88,7 +88,8 @@ public class Client implements ErrorsInterface, Serializable {
         orcidClient.setWebsite(this.website.getValue());
         orcidClient.setShortDescription(this.shortDescription.getValue());
         orcidClient.setClientId(this.clientId.getValue());
-        orcidClient.setClientSecret(this.clientSecret.getValue());
+        if(!PojoUtil.isEmpty(this.clientSecret))
+            orcidClient.setClientSecret(this.clientSecret.getValue());
         if(!PojoUtil.isEmpty(this.type))
         	orcidClient.setType(ClientType.fromValue(this.type.getValue()));
         
