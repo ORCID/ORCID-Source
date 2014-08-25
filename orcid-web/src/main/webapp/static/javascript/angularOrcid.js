@@ -3381,7 +3381,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
 	$scope.worksFromBibtex = null;	
 	$scope.workspaceSrvc = workspaceSrvc;
 	$scope.worksSrvc = worksSrvc;
-	$scope.showBibtex = false;
+	$scope.showBibtex = {};
 	$scope.editTranslatedTitle = false;
 	$scope.types = null;
 	$scope.privacyHelp = {};
@@ -3497,8 +3497,8 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
     	$.colorbox.resize();
 	};		
     
-    $scope.bibtexShowToggle = function () {
-    	$scope.showBibtex = !($scope.showBibtex);
+    $scope.bibtexShowToggle = function (putCode) {
+    	$scope.showBibtex[putCode] = !($scope.showBibtex[putCode]);    	
     };
     
 	$scope.showWorkImportWizard =  function() {
