@@ -22,25 +22,34 @@
 	<#assign displayName = client_name>
 </#if>
 <!-- colorbox-content -->
-<div class="container top-green-border confirm-oauth-access" ng-controller="OauthAuthorizationController">		
+<div class="container confirm-oauth-access oneStepWidth" ng-controller="OauthAuthorizationController">
+	<div class="row">
+		<div class="col-md-12 col-sm-12 col-xs-12">
+			<div class="top-green-border"></div>
+		</div>
+	</div>	
 	<!-- Freemarker and GA variables -->
 	<#assign user_id = "">			
-		<#if userId??>
-			<#assign user_id = userId>
-		</#if>
-	<#assign authOnClick = "">		        
-	<#assign denyOnClick = " orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Authorize_Deny', 'OAuth " + client_group_name?js_string + " - " + client_name?js_string + "']);">	    	
+	<#if userId??>
+		<#assign user_id = userId>
+	</#if>
+	
+	<#assign js_scopes_string = "">                
+	<#list scopes as scope>
+       	<#assign js_scopes_string = js_scopes_string + scope.name()?replace("ORCID_", "")?js_string + " ">
+	</#list>
+	
 	<!-- /Freemarker and GA variables -->
 	<@security.authorize ifAnyGranted="ROLE_USER">
 	<div class="row top-header">
-		<div class="col-md-2 col-sm-6 col-xs-12">
+		<div class="col-md-4 col-sm-12 col-xs-12">
 			<div class="logo">
 	        	<h1><a href="${aboutUri}"><img src="${staticCdn}/img/orcid-logo.png" alt="ORCID logo" /></a></h1>
 	        	<!-- <p>${springMacroRequestContext.getMessage("confirm-oauth-access.connectingresearchandresearchers")}</p> -->
 	        </div>		
 		</div>
 		
-	    <div class="col-md-4 col-sm-6 col-xs-12">	        
+	    <div class="col-md-8 col-sm-12 col-xs-12">	        
 	        <div class="row">
 	            <#include "includes/mini_id_banner.ftl"/>
 	        </div>      
@@ -57,8 +66,8 @@
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-md-6">	
-		<div class="app-client-name" ng-init="initGroupAndClientName('${client_group_name}','${client_name}')">
+		<div class="col-md-12">	
+		<div class="app-client-name" ng-init="initGroupClientNameAndScopes('${client_group_name}','${client_name}','${js_scopes_string}')">
 			<h3 ng-click="toggleClientDescription()">${client_name}
 				<a class="glyphicon glyphicon-question-sign oauth-question-sign"></a>				
 			</h3>
@@ -75,7 +84,6 @@
 		<ul class="oauth-scopes">
 			<#list scopes as scope>
 				<li>				
-					<#assign authOnClick = authOnClick + " orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Authorize_" + scope.name()?replace("ORCID_", "") + "', 'OAuth " + client_group_name?js_string + " - " + client_name?js_string + "']);">
 					<#if scope.value()?ends_with("/create")>
 						<span class="mini-icon glyphicon glyphicon-cloud-download green"></span><@orcid.msg '${scope.declaringClass.name}.${scope.name()}'/>
 					<#elseif scope.value()?ends_with("/update")>
@@ -95,10 +103,10 @@
 		<div id="login-buttons" ng-init="loadAndInitAuthorizationForm('${scopesString}','${redirect_uri}','${client_id}','${response_type}')">
 			<div class="row">
 	            <div class="col-md-12">                     		            		               					
-					<button class="btn btn-primary pull-right" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="authorize()" onclick="${authOnClick} return false;">
+					<button class="btn btn-primary pull-right" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="authorize()">
 						<@orcid.msg 'confirm-oauth-access.Authorize' />
 					</button>		                 	            
-					<a class="oauth_deny_link pull-right" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="deny()" onclick="${denyOnClick} return false;">
+					<a class="oauth_deny_link pull-right" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="deny()">
 						<@orcid.msg 'confirm-oauth-access.Deny' />
 					</a>
 				</div>					

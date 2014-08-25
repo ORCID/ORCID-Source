@@ -476,8 +476,7 @@ GroupedActivities.prototype.hasPut = function(putCode) {
 		return false;
 };
 
-GroupedActivities.prototype.key = function(activityIdentifiers) {
-	console.log(activityIdentifiers);
+GroupedActivities.prototype.key = function(activityIdentifiers) {	
 	var idPath;
 	var idTypePath;
 	if (this.type == 'abbrWork') {
@@ -787,6 +786,19 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 					count += serv.groups[idx].activitiesCount;
 				}
 				return count;
+			},
+			showSpinner: function($event) {			
+			
+				$($event.target).closest('div.sources-details').siblings('div.work-list-container').css('display', 'none');
+				$($event.target).closest('div.sources-details').siblings('div.spinner').show();
+				
+				setTimeout(
+					function(){
+						$($event.target).closest('div.sources-details').siblings('div.spinner').hide();
+						$($event.target).closest('div.sources-details').siblings('div.work-list-container').css('display', 'block');
+					}
+				,250);
+				
 			}
 	}; 
 	return serv;
@@ -3369,7 +3381,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
 	$scope.worksFromBibtex = null;	
 	$scope.workspaceSrvc = workspaceSrvc;
 	$scope.worksSrvc = worksSrvc;
-	$scope.showBibtex = false;
+	$scope.showBibtex = {};
 	$scope.editTranslatedTitle = false;
 	$scope.types = null;
 	$scope.privacyHelp = {};
@@ -3464,7 +3476,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
 		$scope.editWork.contributors.splice(index,1);
 	};
 
-	$scope.showAddModal = function(){;
+	$scope.showAddModal = function(){
 		$scope.editTranslatedTitle = false;
 		$scope.types = null;
 	    $.colorbox({	    	
@@ -3485,8 +3497,8 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
     	$.colorbox.resize();
 	};		
     
-    $scope.bibtexShowToggle = function () {
-    	$scope.showBibtex = !($scope.showBibtex);
+    $scope.bibtexShowToggle = function (putCode) {
+    	$scope.showBibtex[putCode] = !($scope.showBibtex[putCode]);    	
     };
     
 	$scope.showWorkImportWizard =  function() {
@@ -6191,6 +6203,8 @@ function OauthAuthorizationController($scope, $compile, $sce){
 	$scope.registrationForm = {};		
 	$scope.clientName = "";
 	$scope.clientGroupName = "";
+	$scope.requestScopes = null;
+	$scope.emailTrustAsHtmlErrors = [];
 	
 	$scope.toggleClientDescription = function() {
 		$scope.showClientDescription = !$scope.showClientDescription;		
@@ -6199,9 +6213,10 @@ function OauthAuthorizationController($scope, $compile, $sce){
 	//----------------------------
 	//-INIT GROUP AND CLIENT NAME-
 	//----------------------------
-	$scope.initGroupAndClientName = function(group_name, client_name) {
+	$scope.initGroupClientNameAndScopes = function(group_name, client_name, scopes) {
 		$scope.clientName = client_name;
 		$scope.clientGroupName = group_name;
+		$scope.requestScopes = scopes.trim().split(" ");		
 	};
 	
 	//---------------------
@@ -6239,10 +6254,13 @@ function OauthAuthorizationController($scope, $compile, $sce){
 	
 	$scope.loginAndDeny = function() {
 		$scope.authorizationForm.approved = false;
+		//Fire GA deny
+		orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Authorize_Deny', 'OAuth ' + $scope.clientGroupName + ' - ' + $scope.clientName ]);
 		$scope.submitLogin();
 	};
 	
-	$scope.submitLogin = function() {		
+	$scope.submitLogin = function() {
+		var is_authorize = $scope.authorizationForm.approved;
 		$.ajax({
 			url: getBaseUri() + '/oauth/custom/login.json',
 			type: 'POST',
@@ -6254,12 +6272,17 @@ function OauthAuthorizationController($scope, $compile, $sce){
 	        		if(data.errors.length != 0) {
 	        			//Fire google GA event
 	        			orcidGA.gaPush(['_trackEvent', 'Sign-In', 'Sign-In-Submit' , 'OAuth ' + orcidGA.buildClientString($scope.clientGroupName, $scope.clientName)]);
+	        			if(is_authorize) {
+	        				for(var i = 0; i < $scope.requestScopes.length; i++) {
+	        					orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Authorize_' + $scope.requestScopes[i] + ', OAuth ' + $scope.clientGroupName + ' - ' + $scope.clientName]);
+	        				}
+	        			}	        			
 	        			$scope.authorizationForm = data;	        			
 	        			$scope.$apply();
 	        		} else {
 	        			//Fire google GA event
-	        			orcidGA.gaPush(['_trackEvent', 'Sign-In', 'RegGrowth' , 'OAuth ' + orcidGA.buildClientString($scope.clientGroupName, $scope.clientName)]);	        			
-	        			window.location = data.redirectUri.value;
+	        			orcidGA.gaPush(['_trackEvent', 'Sign-In', 'RegGrowth' , 'OAuth ' + orcidGA.buildClientString($scope.clientGroupName, $scope.clientName)]);	
+	        			orcidGA.windowLocationHrefDelay(data.redirectUri.value);
 	        		}	        		
 	        	} else {
 	        		console.log("Error authenticating the user");
@@ -6303,10 +6326,12 @@ function OauthAuthorizationController($scope, $compile, $sce){
 	
 	$scope.registerAndDeny = function() {
 		$scope.registrationForm.approved = false;
+		//Fire GA deny
+		orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Authorize_Deny', 'OAuth ' + $scope.clientGroupName + ' - ' + $scope.clientName ]);
 		$scope.register();
 	};
 	
-	$scope.register = function() {
+	$scope.register = function() {		
 		$.ajax({
 	        url: getBaseUri() + '/oauth/custom/register.json',
 	        type: 'POST',
@@ -6314,12 +6339,20 @@ function OauthAuthorizationController($scope, $compile, $sce){
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        success: function(data) {
-	        	$scope.registrationForm = data;
-	        	$scope.$apply();
+	        	$scope.registrationForm = data;	 
 	        	if ($scope.registrationForm.errors.length == 0) {
 	        		$scope.showProcessingColorBox();
 	        		$scope.getDuplicates();
+	        	} else {
+	        		if($scope.registrationForm.email.errors.length > 0) {	        				        			
+	        			for(var i = 0; i < $scope.registrationForm.email.errors.length; i++){
+		        			$scope.emailTrustAsHtmlErrors[0] = $sce.trustAsHtml($scope.registrationForm.email.errors[i]);	        		    	        		   
+		        		}		        		  
+	        		} else {
+	        			$scope.emailTrustAsHtmlErrors = [];
+	        		}
 	        	}
+	        	$scope.$apply();
 	        }
 	    }).fail(function() { 
 	    	// something bad is happening!
@@ -6360,7 +6393,7 @@ function OauthAuthorizationController($scope, $compile, $sce){
 	};
 		
 	$scope.postRegisterConfirm = function () {
-		$scope.showProcessingColorBox();
+		$scope.showProcessingColorBox();		
 		$.ajax({
 	        url: getBaseUri() + '/oauth/custom/registerConfirm.json',
 	        type: 'POST',
@@ -6368,8 +6401,11 @@ function OauthAuthorizationController($scope, $compile, $sce){
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        success: function(data) {
-	    		orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration', 'OAuth '+ orcidGA.buildClientString($scope.clientGroupName, $scope.clientName)]);	    	    
-	    		orcidGA.windowLocationHrefDelay(data.redirectUri.value);
+	    		orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration', 'OAuth '+ orcidGA.buildClientString($scope.clientGroupName, $scope.clientName)]);
+	    		for(var i = 0; i < $scope.requestScopes.length; i++) {
+    				orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Authorize_' + $scope.requestScopes[i] + ', OAuth ' + $scope.clientGroupName + ' - ' + $scope.clientName]);
+    			}
+    			orcidGA.windowLocationHrefDelay(data.redirectUri.value);	    		
 	        }
 	    }).fail(function() { 
 	    	// something bad is happening!
@@ -6388,10 +6424,14 @@ function OauthAuthorizationController($scope, $compile, $sce){
 	        success: function(data) {
 	        	$scope.copyErrorsLeft($scope.registrationForm, data);
 	        	if(field == 'Email') {
-	        		for(var i = 0; i < $scope.registrationForm.email.errors.length; i++) {	        				        			
-	        			$scope.registrationForm.email.errors[i] = $sce.trustAsHtml($scope.registrationForm.email.errors[i]);
-	        		}
-	        	}	        		
+		        	if ($scope.registrationForm.email.errors.length > 0) {
+	        			for(var i = 0; i < $scope.registrationForm.email.errors.length; i++){
+		        			$scope.emailTrustAsHtmlErrors[0] = $sce.trustAsHtml($scope.registrationForm.email.errors[i]);	        		    	        		   
+		        		}
+	        		} else {
+	        			$scope.emailTrustAsHtmlErrors = [];
+	        		}     		
+	        	}
 	        	$scope.$apply();
 	        }
 	    }).fail(function() { 
@@ -6432,18 +6472,26 @@ function OauthAuthorizationController($scope, $compile, $sce){
 	
 	$scope.deny = function() {
 		$scope.authorizationForm.approved = false;
+		//Fire GA deny
+		orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Authorize_Deny', 'OAuth ' + $scope.clientGroupName + ' - ' + $scope.clientName ]);
 		$scope.authorizeRequest();
 	};
 	
-	$scope.authorizeRequest = function() {		
+	$scope.authorizeRequest = function() {	
+		var is_authorize = $scope.authorizationForm.approved;
 		$.ajax({
 			url: getBaseUri() + '/oauth/custom/authorize.json',
 			type: 'POST',
 			data: angular.toJson($scope.authorizationForm),
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
-	        success: function(data) {	        	
-	        	window.location = data.redirectUri.value;
+	        success: function(data) {	
+	        	if(is_authorize) {
+    				for(var i = 0; i < $scope.requestScopes.length; i++) {
+    					orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Authorize_' + $scope.requestScopes[i] + ', OAuth ' + $scope.clientGroupName + ' - ' + $scope.clientName]);
+    				}
+    			}	
+	        	orcidGA.windowLocationHrefDelay(data.redirectUri.value);
 	        }
 		}).fail(function() { 	    	
 	    	console.log("An error occured authorizing the user.");

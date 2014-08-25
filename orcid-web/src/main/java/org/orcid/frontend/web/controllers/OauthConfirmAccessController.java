@@ -40,6 +40,7 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.pojo.ajaxForm.OauthAuthorizeForm;
 import org.orcid.pojo.ajaxForm.OauthRegistration;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.Text;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -329,7 +330,21 @@ public class OauthConfirmAccessController extends BaseController {
     @RequestMapping(value = "/custom/register.json", method = RequestMethod.POST)
     public @ResponseBody
     OauthRegistration checkRegisterForm(HttpServletRequest request, @RequestBody OauthRegistration form) {
-        registrationController.setRegister(request, form);
+        form.setErrors(new ArrayList<String>());
+
+        registrationController.registerGivenNameValidate(form);
+        registrationController.registerPasswordValidate(form);
+        registrationController.registerPasswordConfirmValidate(form);
+        registrationController.regEmailValidate(request, form, true);
+        registrationController.registerTermsOfUseValidate(form);
+
+        copyErrors(form.getEmailConfirm(), form);
+        copyErrors(form.getEmail(), form);
+        copyErrors(form.getGivenNames(), form);
+        copyErrors(form.getPassword(), form);
+        copyErrors(form.getPasswordConfirm(), form);
+        copyErrors(form.getTermsOfUse(), form);
+
         return form;
     }
 

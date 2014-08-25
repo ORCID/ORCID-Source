@@ -38,14 +38,15 @@
 		    	<@emailMacros.msg "email.admin_delegate_request.you_have.7" />
 			</p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-		    	<@emailMacros.msg "email.admin_delegate_request.you_have.8" />${link}<@emailMacros.msg "email.admin_delegate_request.you_have.9" />      
+		    	<@emailMacros.msg "email.admin_delegate_request.you_have.8" /><br />
+		    	<a href="${link}" target="_blank">${link}</a>
 		    </p>		     
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
                 <@emailMacros.msg "email.admin_delegate_request.for_a_tutorial" />
 		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666; white-space: pre;">
 <@emailMacros.msg "email.common.kind_regards" />
-<a href="${baseUri}/home?lang=${locale}">${baseUri}/<a/>				
+<a href="${baseUri}/home?lang=${locale}">${baseUri}/</a>				
 		    </p>
 			<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">
 				<@emailMacros.msg "email.common.you_have_received_this_email" />

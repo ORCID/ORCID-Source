@@ -4168,12 +4168,17 @@ multiselect .dropdown-menu .dropdown-menu-list {
 	list-style-type: none;
 }
 
-.workspace-overview ul li {
-	display: inline-block;
+.workspace-overview ul li{
+	display: inline-block;	
 }
 
 .workspace-overview ul li a {
-	text-overflow: ellipsis;
+	word-wrap: inherit;
+}
+
+.workspace-overview:last-child{
+	padding-right: 0;
+	padding-left: 0;
 }
 
 .bibtex-box {
@@ -4219,7 +4224,7 @@ ul.oauth-scopes{
 }
 
 ul.oauth-scopes li{
-	height: 30px;
+	min-height: 30px;
 	font-size: 17px;
 	color: #338caf;
 	line-height: 33px;
@@ -4247,12 +4252,11 @@ ul.oauth-scopes li{
 	padding: 0;
 }
 
-
 .oauth-registration .form-group input[type="text"],
 .oauth-registration .form-group input[type="email"],
 .oauth-registration .form-group input[type="password"]{
 	margin-bottom: 0;
-	width: 89%;
+	width: 85%;
 }
 
 .dotted-green-bar{
@@ -4262,6 +4266,22 @@ ul.oauth-scopes li{
 	height: 2px;
 	margin: 0 0 15px 0;
 }
+
+/* New Style not related to myorcid3 */
+
+#register-buttons{
+	margin-bottom: 15px;
+}
+
+.oneStepWidth{
+	max-width: 500px !important; /* forcing temporally */
+}
+
+.oAuthFix{
+	float: left;
+	width: 100%;
+}
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
@@ -4316,7 +4336,31 @@ ul.oauth-scopes li{
 	}
 	.container .language-selector {
 		display: none;
+		margin: 0 auto;
 	}
+	
+	.container .language-selector .account-settings-mobile-menu{
+		text-align: center;		
+	}
+	
+	.container .language-selector .account-settings-mobile-menu span.account-settings-mobile{
+		display: block;
+		background: #A6CE39;
+		height: 30px;
+		width: 60%;
+		float: left;
+		margin-left: 10px;
+		margin-top: 10px;
+	}
+	
+	.container .language-selector .account-settings-mobile-menu span.account-settings-mobile a{
+		width: 100%;
+		height: 100%;
+		display: block;
+		color: #FFF;
+		float: left;
+	}
+	
 	.container .header #form-search {
 		height: 180px;
 		display: none;
@@ -4325,7 +4369,7 @@ ul.oauth-scopes li{
 		display: none;
 		position: absolute;
 		top: 50px;
-		z-index: 10;
+		z-index: 200;
 		min-height: 30px;
 		height: auto;
 		width: 100%;
@@ -4539,11 +4583,12 @@ ul.oauth-scopes li{
 	}
 	.container .header .language-selector select#language-codes {
 		float: left;
-		width: 98%;
+		width: 30%;
 		height: 30px;
 		margin-top: 10px;
 		padding: 5px;
 		font-size: 14px;
+		margin-left: 10px;
 	}
 
 	/* Forms */
@@ -4617,10 +4662,10 @@ ul.oauth-scopes li{
 	}
 
 	/* Forms */
-	input[type="text"],input[type="password"],select {
+	input[type="text"],input[type="password"],select,input[type="email"]{
 		height: 50px;
 		font-size: 16px;
-		width: 96%;
+		width: 85%;
 	}
 	.input-xlarge {
 		width: 96%;
@@ -5101,6 +5146,27 @@ ul.oauth-scopes li{
 	
 	.oauth-login-form input{
 		width: 100%;
+	}
+	
+	.workspace-overview:last-child{
+		padding-left: 15px;
+		padding-right: 15px; 
+	}
+	
+	.oauth-login .popover-help-container .popover{
+		left: -239px;
+	}
+	
+	.oauth-login .oauth-privacy .popover-help-container .popover{
+		left: -109px;
+	}
+	
+	.oauth-login .oauth-privacy .popover.bottom .arrow{
+		left: 120px;
+	}
+	
+	.oauth-login .popover.bottom .arrow{
+		left: 250px;
 	}
 	
 }
