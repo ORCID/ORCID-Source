@@ -102,7 +102,7 @@ public class AdminControllerTest extends BaseControllerTest {
     
     @BeforeClass
     public static void beforeClass() throws Exception {
-        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/ProfileEntityData.xml", "/data/CilentDetailsEntityData.xml"), null);
+        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml"), null);
     }
 
     @Before
@@ -113,7 +113,7 @@ public class AdminControllerTest extends BaseControllerTest {
 
     @AfterClass
     public static void afterClass() throws Exception {
-        removeDBUnitData(Arrays.asList("/data/CilentDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/SecurityQuestionEntityData.xml"), null);
+        removeDBUnitData(Arrays.asList("/data/ClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/SecurityQuestionEntityData.xml"), null);
     }
     
     
@@ -523,6 +523,7 @@ public class AdminControllerTest extends BaseControllerTest {
         OrcidClient client1 = group.getOrcidClient().get(0);
         String displayName = client1.getDisplayName();
         client1.setDisplayName(displayName + "-UPDATED");
+        client1.setWebsite("http://updated.com");
         Client updatedClient = Client.valueOf(client1);
         updatedClient = adminController.updateClient(updatedClient);
         assertNotNull(updatedClient);
