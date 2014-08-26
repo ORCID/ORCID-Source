@@ -54,17 +54,7 @@
 	            <#include "includes/mini_id_banner.ftl"/>
 	        </div>      
 	    </div>	    
-	</div>
-	<div class="row">
-		<div class="col-md-12 col-sm-12 col-xs-12">
-		 	<h2 class="oauth-title"><@orcid.msg 'confirm-oauth-access.connecting'/> 
-		       <span>${displayName?html}</span>
-	           <@orcid.msg 'confirm-oauth-access.withOrcidRecord'/>
-	           <span class="researcher-name">${(profile.orcidBio.personalDetails.givenNames.content?html)!} ${(profile.orcidBio.personalDetails.familyName.content?html)!}</span> 
-	           <span><a href="" onclick="logOffReload(); return false;">(<@orcid.msg 'confirm-oauth-access.notYou'/>?)</a></span> 
-			</h2>   
-		</div>
-	</div>
+	</div>	
 	<div class="row">
 		<div class="col-md-12">	
 		<div class="app-client-name" ng-init="initGroupClientNameAndScopes('${client_group_name?js_string}','${client_name?js_string}','${js_scopes_string}')">

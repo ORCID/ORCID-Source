@@ -56,6 +56,11 @@
 		           </li>
 		       </ul>
 		   </div>		   
+	    </div>
+	    <div ng-controller="SwitchUserCtrl" ng-hide="unfilteredLength" ng-cloak>
+	    	<div class="id-banner-orcid-id pull-right">
+	    		${baseUriHttp}/${(profile.orcidIdentifier.path)!}
+			</div>
 	    </div>	    
 	</div>
 	<div class="pull-right">
