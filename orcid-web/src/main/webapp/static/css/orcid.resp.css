@@ -4729,6 +4729,7 @@ ul.oauth-scopes li{
 	}
 	.workspace-right {
 		border-left: none;
+		float:left;
 	}
 	.workspace-accordion-header,.workspace-accordion-content {
 		padding-left: 0;
@@ -5246,6 +5247,7 @@ ul.oauth-scopes li{
 	}
 	.workspace-right {
 		border-left: 0;
+		float: left;
 	}
 	.workspace-left {
 		margin-left: 15px;
