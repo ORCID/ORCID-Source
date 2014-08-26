@@ -4281,6 +4281,10 @@ ul.oauth-scopes li{
 	width: 100%;
 }
 
+.clearfix {
+	clear: both;
+}
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
