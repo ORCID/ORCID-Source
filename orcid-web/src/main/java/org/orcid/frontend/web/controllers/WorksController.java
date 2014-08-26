@@ -398,6 +398,7 @@ public class WorksController extends BaseWorkspaceController {
             copyErrors(work.getCitation().getCitation(), work);
         }
         workWorkTitleTitleValidate(work);
+        copyErrors(work.getWorkTitle().getTitle(), work);
         if (work.getWorkTitle().getSubtitle() != null) {
             workWorkTitleSubtitleValidate(work);
             copyErrors(work.getWorkTitle().getSubtitle(), work);
