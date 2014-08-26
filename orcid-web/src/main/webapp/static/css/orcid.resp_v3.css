@@ -4056,7 +4056,7 @@ ul.sort-menu-options li a:hover{
 	padding-right: 10px 
 }
 
-.confirm-oauth-access .id-banner .id-banner-container a.id-banner-switch{
+.confirm-oauth-access .id-banner .id-banner-container a.id-banner-switch, .id-banner-orcid-id{
 	color: #939598;
 	background: transparent;
 	font-size: 14px;
