@@ -4262,8 +4262,7 @@ ul.oauth-scopes li{
 .dotted-green-bar{
 	display: block;
 	width: 100%;
-	border: 2px dotted #a6ce39;
-	height: 2px;
+	border: 1px dotted #a6ce39;
 	margin: 0 0 15px 0;
 }
 

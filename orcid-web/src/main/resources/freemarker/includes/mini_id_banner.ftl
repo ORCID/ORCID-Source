@@ -16,7 +16,6 @@
     =============================================================================
 
 -->
-<#if RequestParameters['delegates']??>
 <div class="id-banner <#if inDelegationMode>delegation-mode</#if>">
 	<div class="full-name">
 	    <#if (profile.orcidBio.personalDetails.creditName.content)??>
@@ -56,8 +55,10 @@
 		               </a>
 		           </li>
 		       </ul>
-		   </div>
-	    </div>
+		   </div>		   
+	    </div>	    
+	</div>
+	<div class="pull-right">
+		<span><a href="" onclick="logOffReload(); return false;">(<@orcid.msg 'confirm-oauth-access.notYou'/>?)</a></span>
 	</div>
 </div>
-</#if>
