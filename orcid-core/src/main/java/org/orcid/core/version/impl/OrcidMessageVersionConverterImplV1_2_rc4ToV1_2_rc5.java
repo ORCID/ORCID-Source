@@ -64,23 +64,25 @@ public class OrcidMessageVersionConverterImplV1_2_rc4ToV1_2_rc5 implements Orcid
     }
 
     private void downgradeProfile(OrcidProfile orcidProfile) {
-        if (orcidProfile != null)
+        if (orcidProfile != null) {
             if (orcidProfile.getOrcidBio() != null)
                 if (orcidProfile.getOrcidBio().getExternalIdentifiers() != null)
-                    for (ExternalIdentifier externalIdentifier: orcidProfile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier()) { 
+                    for (ExternalIdentifier externalIdentifier : orcidProfile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier()) {
                         externalIdentifier.setExternalIdOrcid(externalIdentifier.getExternalIdSource());
                         externalIdentifier.setExternalIdSource(null);
                     }
-            if (orcidProfile.getOrcidActivities() != null)
+            if (orcidProfile.getOrcidActivities() != null) {
                 if (orcidProfile.getOrcidActivities().getAffiliations() != null)
-                    for (Activity act:orcidProfile.getOrcidActivities().getAffiliations().getAffiliation())
+                    for (Activity act : orcidProfile.getOrcidActivities().getAffiliations().getAffiliation())
                         downGradeActivity(act);
-            if (orcidProfile.getOrcidActivities().getFundings() != null)
-                for (Activity act:orcidProfile.getOrcidActivities().getFundings().getFundings())
-                    downGradeActivity(act);
-            if (orcidProfile.getOrcidActivities().getOrcidWorks() != null)
-                for (Activity act:orcidProfile.getOrcidActivities().getOrcidWorks().getOrcidWork())
-                    downGradeActivity(act);                    
+                if (orcidProfile.getOrcidActivities().getFundings() != null)
+                    for (Activity act : orcidProfile.getOrcidActivities().getFundings().getFundings())
+                        downGradeActivity(act);
+                if (orcidProfile.getOrcidActivities().getOrcidWorks() != null)
+                    for (Activity act : orcidProfile.getOrcidActivities().getOrcidWorks().getOrcidWork())
+                        downGradeActivity(act);
+            }
+        }
     }
 
     public void downGradeActivity(Activity act) {

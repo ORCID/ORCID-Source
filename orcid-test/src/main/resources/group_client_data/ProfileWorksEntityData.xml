@@ -18,10 +18,19 @@
 
 -->
 <dataset>
-    <profile_work orcid="9999-9999-9999-9989" work_id="1" visibility="PRIVATE" />
-    <profile_work orcid="9999-9999-9999-9989" work_id="2" visibility="LIMITED" />
-    <profile_work orcid="9999-9999-9999-9989" work_id="3" visibility="PUBLIC" />
-    
-    <profile_work orcid="9999-9999-9999-9989" work_id="4" visibility="PRIVATE" source_id="9999-9999-9999-9991"/>    
-    <profile_work orcid="9999-9999-9999-9989" work_id="5" visibility="PRIVATE" source_id="9999-9999-9999-9995"/>
+	<profile_work orcid="9999-9999-9999-9989" work_id="1"
+		visibility="PRIVATE" date_created="2014-07-03 15:31:00.00"
+		last_modified="2014-07-03 15:31:00.00" />
+	<profile_work orcid="9999-9999-9999-9989" work_id="2"
+		visibility="LIMITED" date_created="2014-07-03 15:31:00.00"
+		last_modified="2014-07-03 15:31:00.00" />
+	<profile_work orcid="9999-9999-9999-9989" work_id="3"
+		date_created="2014-07-03 15:31:00.00" last_modified="2014-07-03 15:31:00.00"
+		visibility="PUBLIC" />
+	<profile_work orcid="9999-9999-9999-9989" work_id="4"
+		date_created="2014-07-03 15:31:00.00" last_modified="2014-07-03 15:31:00.00"
+		visibility="PRIVATE" source_id="9999-9999-9999-9991" />
+	<profile_work orcid="9999-9999-9999-9989" work_id="5"
+		date_created="2014-07-03 15:31:00.00" last_modified="2014-07-03 15:31:00.00"
+		visibility="PRIVATE" source_id="9999-9999-9999-9995" />
 </dataset>
