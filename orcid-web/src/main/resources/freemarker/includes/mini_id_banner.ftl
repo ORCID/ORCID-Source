@@ -63,7 +63,7 @@
 			</div>
 	    </div>	    
 	</div>
-	<div class="pull-right">
+	<div class="clearfix pull-right">
 		<span><a href="" onclick="logOffReload(); return false;">(<@orcid.msg 'confirm-oauth-access.notYou'/>?)</a></span>
 	</div>
 </div>
