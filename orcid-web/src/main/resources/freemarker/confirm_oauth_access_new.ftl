@@ -67,7 +67,7 @@
 	</div>
 	<div class="row">
 		<div class="col-md-12">	
-		<div class="app-client-name" ng-init="initGroupClientNameAndScopes('${client_group_name}','${client_name}','${js_scopes_string}')">
+		<div class="app-client-name" ng-init="initGroupClientNameAndScopes('${client_group_name?js_string}','${client_name?js_string}','${js_scopes_string}')">
 			<h3 ng-click="toggleClientDescription()">${client_name}
 				<a class="glyphicon glyphicon-question-sign oauth-question-sign"></a>				
 			</h3>
