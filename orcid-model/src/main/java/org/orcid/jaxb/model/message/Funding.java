@@ -389,11 +389,13 @@ public class Funding implements VisibilityType, Activity, Serializable {
                 return false;
         } else if (!endDate.equals(other.endDate))
             return false;
-        /*
-         * seems strange but this needs to excluded to pass unit test if
-         * (lastModifiedDate != other.lastModifiedDate) return false; if
-         * (createdDate != other.createdDate) return false;
-         */
+        
+        /*    
+        Breaks our deduping
+        if (lastModifiedDate != other.lastModifiedDate) return false;
+        if (createdDate != other.createdDate) return false;
+        */
+        
         return true;
     }
 

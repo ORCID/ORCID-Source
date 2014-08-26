@@ -384,10 +384,13 @@ public class Affiliation implements Serializable, VisibilityType, Activity {
             return false;
         if (visibility != other.visibility)
             return false;
-/* seems strange but this needs to excluded to pass unit test
+
+        /*    
+        Breaks our deduping
         if (lastModifiedDate != other.lastModifiedDate) return false;
         if (createdDate != other.createdDate) return false;
-*/
+        */
+        
         return true;
     }
 
