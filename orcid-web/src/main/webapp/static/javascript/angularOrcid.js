@@ -3477,7 +3477,6 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
 
 	$scope.showAddWorkModal = function(){
 		$scope.editTranslatedTitle = false;
-		$scope.types = null;
 	    $.colorbox({	    	
 	    	scrolling: true,
 	        html: $compile($('#add-work-modal').html())($scope),	        
@@ -3601,8 +3600,11 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
 			
 	$scope.loadWorkTypes = function(){	
 		var workCategory = "";
+		$scope.types = null;
 		if($scope.editWork != null && $scope.editWork.workCategory != null && $scope.editWork.workCategory.value != null && $scope.editWork.workCategory.value != "")
 			workCategory = $scope.editWork.workCategory.value;
+		else 
+			return; //do nothing if we have not types
 		$.ajax({
 	        url: getBaseUri() + '/works/loadWorkTypes.json?workCategory=' + workCategory,
 	        type: 'POST',	        
@@ -3612,8 +3614,8 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
 	        	$scope.$apply(function() {
 		        	$scope.types = data;		
 		        	if($scope.editWork != null && $scope.editWork.workCategory != null) {
-		        		if($scope.editWork.workType.value == null || $scope.editWork.workType.value == '' ) {
-		        			$scope.editWork.workType.value;
+		        		// if the edit works doesn't have a value that matches types
+		        		if(!$scope.types.hasOwnProperty($scope.editWork.workType.value)) {
 		        			switch ($scope.editWork.workCategory.value){
 			                case "conference":
 			                	$scope.editWork.workType.value="conference-paper";		                	
