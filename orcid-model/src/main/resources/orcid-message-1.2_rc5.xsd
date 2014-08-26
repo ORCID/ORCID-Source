@@ -198,7 +198,18 @@
 	</xs:element>
 	<xs:element name="last-modified-date">
 		<xs:annotation>
-			<xs:documentation>The date time when the ORCID Record was last modified.
+			<xs:documentation>The date time when the element was last modified.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:extension base="xs:dateTime" />
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="created-date">
+		<xs:annotation>
+			<xs:documentation>The date time when element was created.
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
@@ -648,6 +659,10 @@
 				<xs:element name="end-date" type="orcid:fuzzy-date" minOccurs="0" maxOccurs="1" />
 				<xs:element ref="orcid:organization" minOccurs="1" maxOccurs="1"/>
 				<xs:element ref="orcid:source" minOccurs="0"  maxOccurs="1" />
+				<xs:element ref="orcid:created-date" minOccurs="0"
+					maxOccurs="1" />
+				<xs:element ref="orcid:last-modified-date" minOccurs="0"
+					maxOccurs="1" />
 			</xs:sequence>
 			<xs:attributeGroup ref="orcid:put-code" />
 			<xs:attributeGroup ref="orcid:visibility" />
@@ -740,6 +755,10 @@
 				<xs:element ref="orcid:url" minOccurs="0" />
 				<xs:element ref="orcid:work-contributors" minOccurs="0" />
 				<xs:element ref="orcid:work-source" minOccurs="0" />
+				<xs:element ref="orcid:created-date" minOccurs="0"
+					maxOccurs="1" />
+				<xs:element ref="orcid:last-modified-date" minOccurs="0"
+					maxOccurs="1" />
 				<xs:element name="language-code"  type="orcid:language-code" minOccurs="0"
 					maxOccurs="1" />
 				<xs:element ref="orcid:country" minOccurs="0" />
@@ -943,6 +962,10 @@
 				<xs:element ref="orcid:funding-contributors" minOccurs="0"/>
 				<xs:element ref="orcid:organization" minOccurs="1" maxOccurs="1"/>				
 				<xs:element ref="orcid:source" minOccurs="0"  maxOccurs="1" />
+				<xs:element ref="orcid:created-date" minOccurs="0"
+					maxOccurs="1" />
+				<xs:element ref="orcid:last-modified-date" minOccurs="0"
+					maxOccurs="1" />
 			</xs:sequence>
 			<xs:attributeGroup ref="orcid:put-code" />
 			<xs:attributeGroup ref="orcid:visibility" />

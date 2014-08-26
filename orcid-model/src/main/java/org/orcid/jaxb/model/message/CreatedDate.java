@@ -53,7 +53,7 @@ import java.io.Serializable;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "value" })
-@XmlRootElement(name = "date-")
+@XmlRootElement(name = "created-date")
 public class CreatedDate implements Serializable {
 
     /**

@@ -632,7 +632,10 @@
 			type="SALARY_AWARD" 
 			currency_code="USD" 
 			amount="2500" 
-			visibility="LIMITED" />
+			visibility="LIMITED"
+			date_created="2013-10-22 11:09:28.636" 
+			last_modified="2013-10-22 11:09:28.636" 
+			/>
 			
     <profile_funding 
     		id="2" 
@@ -642,7 +645,10 @@
     		type="GRANT" 
     		currency_code="CRC" 
     		amount="1,650.00" 
-    		visibility="PUBLIC" />
+    		visibility="PUBLIC" 
+			date_created="2013-10-22 11:09:28.636" 
+			last_modified="2013-10-22 11:09:28.636"
+			/>
     		
     <profile_funding 
     		id="3" 
@@ -652,7 +658,10 @@
     		type="GRANT" 
     		currency_code="CRC" 
     		amount="1,650,000" 
-    		visibility="PRIVATE" />            
+    		visibility="PRIVATE" 
+			date_created="2013-10-22 11:09:28.636" 
+			last_modified="2013-10-22 11:09:28.636"
+			/>            
             
     <given_permission_to
             given_permission_to_id="1"
