@@ -19,6 +19,7 @@
 -->
 <dataset>
 	<!-- Empty tables here needed to ensure correct clean up in integration tests -->	
+	<orcid_props />
 	<profile/>	
 	<orcid_social/>
 	<profile_event/>
