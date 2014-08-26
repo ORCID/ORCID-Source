@@ -3389,7 +3389,6 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
 	$scope.moreInfo = {};
 	$scope.editSources = {};
 	$scope.bibtexParsingError = false;
-	$scope.edittingWork = false;
 	$scope.bibtexCancelLink = false;
 	$scope.bibtextWork = false;
 	$scope.bibtextWorkIndex = null;	
@@ -3439,7 +3438,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
     $scope.addWorkFromBibtex = function(work) {    	
     	$scope.bibtextWorkIndex = $scope.worksFromBibtex.indexOf(work);
     	$scope.bibtextWork = true;    	
-    	$scope.addWorkModalFromBibTex($scope.worksFromBibtex[$scope.bibtextWorkIndex]);
+    	$scope.addWorkModal($scope.worksFromBibtex[$scope.bibtextWorkIndex]);
     };
    
     $scope.openBibTextWizard = function () {
@@ -3476,9 +3475,8 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
 		$scope.editWork.contributors.splice(index,1);
 	};
 
-	$scope.showAddModal = function(){
+	$scope.showAddWorkModal = function(){
 		$scope.editTranslatedTitle = false;
-		$scope.types = null;
 	    $.colorbox({	    	
 	    	scrolling: true,
 	        html: $compile($('#add-work-modal').html())($scope),	        
@@ -3507,30 +3505,22 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
             onComplete: function() {$.colorbox.resize();}
         });
 	};
-	
-	$scope.addWorkModalFromBibTex = function(data){
-		$scope.loadWorkTypes();		 
-		$scope.edittingWork = false;
-		$scope.editWork = data;
-		$scope.showAddModal();		
-	};
-	
-	$scope.addWorkModal = function(data){		
 		
-		$scope.loadWorkTypes();
+	$scope.addWorkModal = function(data){		
 		if (data == undefined) { 
-			$scope.edittingWork = false;
 			worksSrvc.getBlankWork(function(data) {
 				$scope.editWork = data;
-				$scope.$apply(function() {					
-					$scope.showAddModal();
+				$scope.$apply(function() {
+					$scope.loadWorkTypes();
+					$scope.showAddWorkModal();
 				});			
 			});
 		} else {
-			$scope.edittingWork = true;
 			$scope.editWork = data;
-			$scope.showAddModal();
+            $scope.loadWorkTypes();
+			$scope.showAddWorkModal();
 		}
+		
 	};
 	
     $scope.openEditWork = function(putCode){
@@ -3553,7 +3543,8 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
 	        		$scope.closeAllMoreInfo();
 	        		$.colorbox.close(); 
 	        		$scope.addingWork = false;
-	        		$scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);	        		
+	        		$scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
+	        		
 	        		if($scope.bibtextWork == true){
 	        			$scope.worksFromBibtex.splice($scope.bibtextWorkIndex, 1);
 	        			$scope.bibtextWork = false;	        			
@@ -3607,22 +3598,24 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
 		return info;
 	};
 			
-	$scope.loadWorkTypes = function(){			
+	$scope.loadWorkTypes = function(){	
 		var workCategory = "";
+		$scope.types = null;
 		if($scope.editWork != null && $scope.editWork.workCategory != null && $scope.editWork.workCategory.value != null && $scope.editWork.workCategory.value != "")
 			workCategory = $scope.editWork.workCategory.value;
-					
+		else 
+			return; //do nothing if we have not types
 		$.ajax({
 	        url: getBaseUri() + '/works/loadWorkTypes.json?workCategory=' + workCategory,
 	        type: 'POST',	        
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        success: function(data) {
-	        	
 	        	$scope.$apply(function() {
-		        	$scope.types = data;
+		        	$scope.types = data;		
 		        	if($scope.editWork != null && $scope.editWork.workCategory != null) {
-		        		if(!$scope.edittingWork) {
+		        		// if the edit works doesn't have a value that matches types
+		        		if(!$scope.types.hasOwnProperty($scope.editWork.workType.value)) {
 		        			switch ($scope.editWork.workCategory.value){
 			                case "conference":
 			                	$scope.editWork.workType.value="conference-paper";		                	

@@ -23,10 +23,10 @@
 		<div class="row">			
 			<div class="col-md-9 col-sm-8 col-xs-9">	
 				<h1 class="lightbox-title pull-left">
-					<div ng-show="edittingWork">
+					<div ng-show="editWork.putCode.value != null">
 						<@orcid.msg 'manual_work_form_contents.edit_work'/>
 					</div>
-					<div ng-hide="edittingWork">
+					<div ng-show="editWork.putCode.value == null">
 						<@orcid.msg 'manual_work_form_contents.add_work'/>
 					</div>
 				</h1>
@@ -307,13 +307,13 @@
 					</span>
 				</div>
 				<div class="control-group">
-					<div ng-show="edittingWork">	
+					<div ng-show="editWork.putCode.value != null">	
 						<button class="btn btn-primary" ng-click="putWork()" ng-disabled="addingWork" ng-class="{disabled:addingWork}">
 							<@orcid.msg 'freemarker.btnsave'/>
 						</button>
 						<button id="" class="btn close-button" type="reset"  ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></button>
 					</div>
-					<div ng-hide="edittingWork">
+					<div ng-show="editWork.putCode.value == null">
 						<button class="btn btn-primary" ng-click="putWork()" ng-disabled="addingWork" ng-class="{disabled:addingWork}">
 							<@orcid.msg 'manual_work_form_contents.btnaddtolist'/>
 						</button>
