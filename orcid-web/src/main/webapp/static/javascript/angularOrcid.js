@@ -1031,6 +1031,9 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) 
 		        		var existing = serv.notifications[i];
 		        		if(existing.putCode.path === updated.putCode.path){
 		        			serv.notifications.splice(i, 1);
+		        			if(serv.firstResult > 0){
+		        				serv.firstResult--;
+		        			}
 		        			break;
 		        		}
 		        	}
