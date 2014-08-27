@@ -19,13 +19,12 @@
 <#import "email_macros.ftl" as emailMacros />
 <@emailMacros.msg "email.common.dear" /> ${emailName}<@emailMacros.msg "email.common.dear.comma" />
 
-<@emailMacros.msg "email.verify.thank_you" /> 
+<@emailMacros.msg "email.verify.thank_you" /> ${verificationUrl}?lang=${locale}
+
+<@emailMacros.msg "email.verify.1" />${orcid}<@emailMacros.msg "email.verify.2" />
 ${baseUri}/${orcid}?lang=${locale} <@emailMacros.msg "email.verify.primary_email_1" /> ${primaryEmail}<@emailMacros.msg "email.verify.primary_email_2" />.
-
+ 
 <@emailMacros.msg "email.verify.if_you_did_not" />
-
-<@emailMacros.msg "email.verify.to_verify" />
-${verificationUrl}?lang=${locale}
 
 <@emailMacros.msg "email.common.did_you_know" />${baseUri}/about/news
 

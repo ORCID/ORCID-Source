@@ -268,7 +268,7 @@ public class WorksControllerTest extends BaseControllerTest {
         work.getPublicationDate().setMonth("3");
         work.getPublicationDate().setYear("2014");
         
-        worksController.editWork(null, work);
+        worksController.postWork(null, work);
         
         Work updatedWork = worksController.getWorkInfo("6");
         assertNotNull(updatedWork);

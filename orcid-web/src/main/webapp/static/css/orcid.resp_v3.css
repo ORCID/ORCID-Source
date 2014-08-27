@@ -1672,7 +1672,7 @@ a:hover {
 }
 
 .workspace-accordion-content {
-	padding: 10px;
+	padding: 10px 0;
 }
 
 .workspace-accordion-header{
@@ -1745,6 +1745,7 @@ a:hover {
 
 .workspace-accordion-item {
 	/*border-bottom: 1px solid #c9c9c9;*/
+	
 }
 
 .workspace-top .alert {
@@ -3927,6 +3928,7 @@ ul.sort-menu-options li a:hover{
 	background: #EFEFEF;
 	padding: 10px;
 	margin-bottom: 10px;
+	float: left;
 }
 
 .websites-edit, .keywords-edit, .other-names-edit, .names-edit {
@@ -3952,6 +3954,7 @@ ul.sort-menu-options li a:hover{
 	background: #EFEFEF;
 	padding: 10px;
 	margin-bottom: 10px;
+	float:left;
 }
 
 .country-controller #country{
@@ -3999,6 +4002,7 @@ ul.sort-menu-options li a:hover{
 .biography-controller span.edit-biography{
 	font-size: 12px;
   	margin-bottom: 10px;
+  	float: right;
 }
 
 /* Website edit */
@@ -4056,7 +4060,7 @@ ul.sort-menu-options li a:hover{
 	padding-right: 10px 
 }
 
-.confirm-oauth-access .id-banner .id-banner-container a.id-banner-switch{
+.confirm-oauth-access .id-banner .id-banner-container a.id-banner-switch, .id-banner-orcid-id{
 	color: #939598;
 	background: transparent;
 	font-size: 14px;
@@ -4084,6 +4088,10 @@ ul.sort-menu-options li a:hover{
 
 #workspace-publications .action-button-bar{
 	padding-right: 14px;
+}
+
+#workspace-publications{
+	padding: 0 0 0 10px;
 }
 
 .versions ul,
@@ -4411,6 +4419,34 @@ ul.sources-edit-list li{
 
 .spinner span{
 	display: block;
+}
+
+/* Id banner */
+
+.id-banner .row .col-md-3{
+	margin-top: 15px;
+}
+
+.workspace-profile span.glyphicon-pencil, #workspace-personal span.glyphicon-pencil, .id-banner span.glyphicon-pencil{
+	float: right;
+	margin-right: 5px;
+	background: #949599;
+	padding: 5px;
+	border-radius: 50%;
+	color: #fff;
+	font-size: 10px;
+	z-index: 100;
+}
+
+.profile-header {
+	display: block;
+	width: 100%;
+	float: left;
+	clear: both;
+}
+
+.workspace-accordion{
+	padding: 0 0 0 10px;	
 }
 
 /* Media Queries */

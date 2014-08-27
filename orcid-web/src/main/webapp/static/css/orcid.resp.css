@@ -3933,7 +3933,7 @@ ul.sso-options li span {
 	padding-right: 10px
 }
 
-.confirm-oauth-access .id-banner .id-banner-container a.id-banner-switch
+.confirm-oauth-access .id-banner .id-banner-container a.id-banner-switch, .id-banner-orcid-id
 	{
 	color: #939598;
 	background: transparent;
@@ -4224,7 +4224,7 @@ ul.oauth-scopes{
 }
 
 ul.oauth-scopes li{
-	height: 30px;
+	min-height: 30px;
 	font-size: 17px;
 	color: #338caf;
 	line-height: 33px;
@@ -4252,21 +4252,39 @@ ul.oauth-scopes li{
 	padding: 0;
 }
 
-
 .oauth-registration .form-group input[type="text"],
 .oauth-registration .form-group input[type="email"],
 .oauth-registration .form-group input[type="password"]{
 	margin-bottom: 0;
-	width: 89%;
+	width: 85%;
 }
 
 .dotted-green-bar{
 	display: block;
 	width: 100%;
-	border: 2px dotted #a6ce39;
-	height: 2px;
+	border: 1px dotted #a6ce39;
 	margin: 0 0 15px 0;
 }
+
+/* New Style not related to myorcid3 */
+
+#register-buttons{
+	margin-bottom: 15px;
+}
+
+.oneStepWidth{
+	max-width: 500px !important; /* forcing temporally */
+}
+
+.oAuthFix{
+	float: left;
+	width: 100%;
+}
+
+.clearfix {
+	clear: both;
+}
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
@@ -4647,10 +4665,10 @@ ul.oauth-scopes li{
 	}
 
 	/* Forms */
-	input[type="text"],input[type="password"],select {
+	input[type="text"],input[type="password"],select,input[type="email"]{
 		height: 50px;
 		font-size: 16px;
-		width: 96%;
+		width: 85%;
 	}
 	.input-xlarge {
 		width: 96%;
@@ -4714,6 +4732,7 @@ ul.oauth-scopes li{
 	}
 	.workspace-right {
 		border-left: none;
+		float:left;
 	}
 	.workspace-accordion-header,.workspace-accordion-content {
 		padding-left: 0;
@@ -5138,6 +5157,22 @@ ul.oauth-scopes li{
 		padding-right: 15px; 
 	}
 	
+	.oauth-login .popover-help-container .popover{
+		left: -239px;
+	}
+	
+	.oauth-login .oauth-privacy .popover-help-container .popover{
+		left: -109px;
+	}
+	
+	.oauth-login .oauth-privacy .popover.bottom .arrow{
+		left: 120px;
+	}
+	
+	.oauth-login .popover.bottom .arrow{
+		left: 250px;
+	}
+	
 }
 
 @media ( min-width : 768px) and (max-width : 991px) { /* Tablet */
@@ -5215,6 +5250,7 @@ ul.oauth-scopes li{
 	}
 	.workspace-right {
 		border-left: 0;
+		float: left;
 	}
 	.workspace-left {
 		margin-left: 15px;

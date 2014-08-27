@@ -514,7 +514,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 			groups: new Array(),
 			loading: false,
 			loadingDetails: false,
-			details: {}, // we should think about putting details in the 
+			details: new Object(), // we should think about putting details in the 
 			worksToAddIds: null,
 			addBibtexJson: function(dw) {
 				if (dw.citation && dw.citation.citationType && dw.citation.citationType.value == 'bibtex') {
@@ -646,9 +646,8 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 									break;
 								}	
 							if (bestMatch == null) {
-								bestMatch = JSON.decode(JSON.encode(serv.details[putCode]));
+								bestMatch = JSON.parse(JSON.stringify(serv.details[putCode]));
 								bestMatch.workSource = null;
-								bestMatch.workName = null;
 								bestMatch.putCode = null;
 							}
 						    callback(bestMatch);
@@ -721,7 +720,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 					serv.worksToAddIds = null;
 					serv.loading = true;
 					serv.groups.length = 0;
-					serv.details.length = 0;
+					serv.details = new Object();
 					$.ajax({
 						url: getBaseUri() + '/works/workIds.json',	        
 				        dataType: 'json',
@@ -3424,7 +3423,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
 	$scope.worksFromBibtex = null;	
 	$scope.workspaceSrvc = workspaceSrvc;
 	$scope.worksSrvc = worksSrvc;
-	$scope.showBibtex = false;
+	$scope.showBibtex = {};
 	$scope.editTranslatedTitle = false;
 	$scope.types = null;
 	$scope.privacyHelp = {};
@@ -3432,7 +3431,6 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
 	$scope.moreInfo = {};
 	$scope.editSources = {};
 	$scope.bibtexParsingError = false;
-	$scope.edittingWork = false;
 	$scope.bibtexCancelLink = false;
 	$scope.bibtextWork = false;
 	$scope.bibtextWorkIndex = null;	
@@ -3482,7 +3480,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
     $scope.addWorkFromBibtex = function(work) {    	
     	$scope.bibtextWorkIndex = $scope.worksFromBibtex.indexOf(work);
     	$scope.bibtextWork = true;    	
-    	$scope.addWorkModalFromBibTex($scope.worksFromBibtex[$scope.bibtextWorkIndex]);
+    	$scope.addWorkModal($scope.worksFromBibtex[$scope.bibtextWorkIndex]);
     };
    
     $scope.openBibTextWizard = function () {
@@ -3519,9 +3517,8 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
 		$scope.editWork.contributors.splice(index,1);
 	};
 
-	$scope.showAddModal = function(){
+	$scope.showAddWorkModal = function(){
 		$scope.editTranslatedTitle = false;
-		$scope.types = null;
 	    $.colorbox({	    	
 	    	scrolling: true,
 	        html: $compile($('#add-work-modal').html())($scope),	        
@@ -3540,8 +3537,8 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
     	$.colorbox.resize();
 	};		
     
-    $scope.bibtexShowToggle = function () {
-    	$scope.showBibtex = !($scope.showBibtex);
+    $scope.bibtexShowToggle = function (putCode) {
+    	$scope.showBibtex[putCode] = !($scope.showBibtex[putCode]);    	
     };
     
 	$scope.showWorkImportWizard =  function() {
@@ -3550,30 +3547,22 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
             onComplete: function() {$.colorbox.resize();}
         });
 	};
-	
-	$scope.addWorkModalFromBibTex = function(data){
-		$scope.loadWorkTypes();		 
-		$scope.edittingWork = false;
-		$scope.editWork = data;
-		$scope.showAddModal();		
-	};
-	
-	$scope.addWorkModal = function(data){		
 		
-		$scope.loadWorkTypes();
+	$scope.addWorkModal = function(data){		
 		if (data == undefined) { 
-			$scope.edittingWork = false;
 			worksSrvc.getBlankWork(function(data) {
 				$scope.editWork = data;
-				$scope.$apply(function() {					
-					$scope.showAddModal();
+				$scope.$apply(function() {
+					$scope.loadWorkTypes();
+					$scope.showAddWorkModal();
 				});			
 			});
 		} else {
-			$scope.edittingWork = true;
 			$scope.editWork = data;
-			$scope.showAddModal();
+            $scope.loadWorkTypes();
+			$scope.showAddWorkModal();
 		}
+		
 	};
 	
     $scope.openEditWork = function(putCode){
@@ -3581,7 +3570,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
     };
 
 
-	$scope.addWork = function(){
+	$scope.putWork = function(){
 		if ($scope.addingWork) return; // don't process if adding work
 		$scope.addingWork = true;
 		$scope.editWork.errors.length = 0;
@@ -3596,7 +3585,8 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
 	        		$scope.closeAllMoreInfo();
 	        		$.colorbox.close(); 
 	        		$scope.addingWork = false;
-	        		$scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);	        		
+	        		$scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
+	        		
 	        		if($scope.bibtextWork == true){
 	        			$scope.worksFromBibtex.splice($scope.bibtextWorkIndex, 1);
 	        			$scope.bibtextWork = false;	        			
@@ -3615,33 +3605,6 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
 		});
 	};
 	
-	$scope.editExistingWork = function() {				
-		$scope.editWork.errors.length = 0;
-		$.ajax({
-			url: getBaseUri() + '/works/edit-work.json',	        
-	        contentType: 'application/json;charset=UTF-8',
-	        dataType: 'json',
-	        type: 'POST',
-	        data:  angular.toJson($scope.editWork),
-	        success: function(data) {
-	        	if (data.errors.length == 0){
-	        		$scope.closeAllMoreInfo();
-	        		$.colorbox.close(); 
-	        		$scope.addingWork = false;
-	        		$scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);	        		
-	        	} else {
-		        	$scope.editWork = data;
-		        	$scope.copyErrorsLeft($scope.editWork, data);
-		        	$scope.addingWork = false;
-		        	$scope.$apply();		        	
-	        	}
-	        }
-		}).fail(function(){
-			// something bad is happening!
-			$scope.addingWork = false;
-	    	console.log("error fetching works");
-		});
-	};
 	
 	$scope.closeAllMoreInfo = function() {
 		for (var idx in $scope.moreInfo)
@@ -3677,22 +3640,24 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
 		return info;
 	};
 			
-	$scope.loadWorkTypes = function(){			
+	$scope.loadWorkTypes = function(){	
 		var workCategory = "";
+		$scope.types = null;
 		if($scope.editWork != null && $scope.editWork.workCategory != null && $scope.editWork.workCategory.value != null && $scope.editWork.workCategory.value != "")
 			workCategory = $scope.editWork.workCategory.value;
-					
+		else 
+			return; //do nothing if we have not types
 		$.ajax({
 	        url: getBaseUri() + '/works/loadWorkTypes.json?workCategory=' + workCategory,
 	        type: 'POST',	        
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        success: function(data) {
-	        	
 	        	$scope.$apply(function() {
-		        	$scope.types = data;
+		        	$scope.types = data;		
 		        	if($scope.editWork != null && $scope.editWork.workCategory != null) {
-		        		if(!$scope.edittingWork) {
+		        		// if the edit works doesn't have a value that matches types
+		        		if(!$scope.types.hasOwnProperty($scope.editWork.workType.value)) {
 		        			switch ($scope.editWork.workCategory.value){
 			                case "conference":
 			                	$scope.editWork.workType.value="conference-paper";		                	
@@ -6286,6 +6251,7 @@ function OauthAuthorizationController($scope, $compile, $sce){
 	$scope.clientName = "";
 	$scope.clientGroupName = "";
 	$scope.requestScopes = null;
+	$scope.emailTrustAsHtmlErrors = [];
 	
 	$scope.toggleClientDescription = function() {
 		$scope.showClientDescription = !$scope.showClientDescription;		
@@ -6420,15 +6386,17 @@ function OauthAuthorizationController($scope, $compile, $sce){
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        success: function(data) {
-	        	$scope.registrationForm = data;	        	
+	        	$scope.registrationForm = data;	 
 	        	if ($scope.registrationForm.errors.length == 0) {
 	        		$scope.showProcessingColorBox();
 	        		$scope.getDuplicates();
 	        	} else {
-	        		if($scope.registrationForm.email.errors.length > 0) {	        			
-		        		for(var i = 0; i < $scope.registrationForm.email.errors.length; i++) {	        				        			
-		        			$scope.registrationForm.email.errors[i] = $sce.trustAsHtml($scope.registrationForm.email.errors[i]);
-		        		}
+	        		if($scope.registrationForm.email.errors.length > 0) {	        				        			
+	        			for(var i = 0; i < $scope.registrationForm.email.errors.length; i++){
+		        			$scope.emailTrustAsHtmlErrors[0] = $sce.trustAsHtml($scope.registrationForm.email.errors[i]);	        		    	        		   
+		        		}		        		  
+	        		} else {
+	        			$scope.emailTrustAsHtmlErrors = [];
 	        		}
 	        	}
 	        	$scope.$apply();
@@ -6503,10 +6471,14 @@ function OauthAuthorizationController($scope, $compile, $sce){
 	        success: function(data) {
 	        	$scope.copyErrorsLeft($scope.registrationForm, data);
 	        	if(field == 'Email') {
-	        		for(var i = 0; i < $scope.registrationForm.email.errors.length; i++) {	        				        			
-	        			$scope.registrationForm.email.errors[i] = $sce.trustAsHtml($scope.registrationForm.email.errors[i]);
-	        		}
-	        	}	        		
+		        	if ($scope.registrationForm.email.errors.length > 0) {
+	        			for(var i = 0; i < $scope.registrationForm.email.errors.length; i++){
+		        			$scope.emailTrustAsHtmlErrors[0] = $sce.trustAsHtml($scope.registrationForm.email.errors[i]);	        		    	        		   
+		        		}
+	        		} else {
+	        			$scope.emailTrustAsHtmlErrors = [];
+	        		}     		
+	        	}
 	        	$scope.$apply();
 	        }
 	    }).fail(function() { 

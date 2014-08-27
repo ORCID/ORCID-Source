@@ -17,7 +17,7 @@
 
 -->
 	<#include "/common/browser-checks.ftl" />
-	<div class="col-md-6 col-sm-12 oauth-margin-top-bottom-box" ng-controller="OauthAuthorizationController">
+	<div class="col-md-12 col-sm-12 oauth-margin-top-bottom-box" ng-controller="OauthAuthorizationController">
 		<!-- Freemarker and GA variables -->
 		<#assign user_id = "">			
 		<#if userId??>
@@ -43,28 +43,21 @@
 		<div>
 			<p><@orcid.msg 'orcid.frontend.oauth.have_asked'/></p>
 		</div>
-		<ul class="oauth-scopes">
-			<#list scopes as scope>
-				<li>
-					<#if scope.value()?ends_with("/create")>
-						<span class="mini-icon glyphicon glyphicon-cloud-download green"></span><@orcid.msg '${scope.declaringClass.name}.${scope.name()}'/>
-					<#elseif scope.value()?ends_with("/update")>
-						<span class="mini-icon glyphicon glyphicon-refresh green"></span><@orcid.msg '${scope.declaringClass.name}.${scope.name()}'/>
-					<#elseif scope.value()?ends_with("/read-limited")>
-						<span class="mini-icon glyphicon glyphicon-eye-open green"></span><@orcid.msg '${scope.declaringClass.name}.${scope.name()}'/>
-					<#else>
-						<span class="mini-orcid-icon oauth-bullet"></span><@orcid.msg '${scope.declaringClass.name}.${scope.name()}'/>
-					</#if>											
-				</li>
-        		</#list>				
-		</ul>	
+		<div>
+			<#include "includes/oauth/scopes.ftl"/>
+		</div>
 		<div>
 			<p><@orcid.msg 'orcid.frontend.web.oauth_is_secure'/>.&nbsp;<a href="${aboutUri}/footer/privacy-policy" target="_blank"><@orcid.msg 'public-layout.privacy_policy'/></a>.</p>
 		</div>
 		 
 		<!-- LOGIN FORM -->			
-		<div id="login" class="oauth-login-form" ng-show="!showRegisterForm" ng-init="loadAndInitLoginForm('${scopesString}','${redirect_uri}','${client_id}','${response_type}', '${user_id}')">            			                        	
-			  <div class="row">
+		<div id="login" class="oauth-login-form" ng-show="!showRegisterForm" ng-init="loadAndInitLoginForm('${scopesString}','${redirect_uri}','${client_id}','${response_type}', '${user_id}')">
+			 <div class="row">
+				 <div class="control-group col-md-12 col-sm-12 col-xs-12"> 			    	
+					<p class="pull-right">Don't have an ORCID iD?&nbsp;<a class="reg" ng-click="switchForm()" id="in-signin-switch-form">Register</a>.</p>			    	
+		    	 </div>           
+	    	 </div> 			                        	
+			 <div class="row">
 				  <div class="form-group has-feedback">
 				    <label for="userId" class="col-sm-3 control-label"><@orcid.msg 'oauth_sign_in.labelemailorID'/></label>
 				    <div class="col-sm-9">
@@ -95,9 +88,11 @@
 			    	<div id="oauth-login-reset" class="col-md-offset-3 col-md-9 col-sm-offset-3 col-sm-3 col-xs-12">
 				        <a href="<@spring.url '/reset-password'/>"><@orcid.msg 'login.reset'/></a>
 				    </div>
+				    <!-- 
 				    <div id="oauth-login-register" class="col-md-offset-3 col-md-9 col-sm-6 col-xs-12">
 				       	<a class="reg" id="in-login-switch-form" ng-click="switchForm()"><@orcid.msg 'orcid.frontend.oauth.register'/></a>
 			    	</div>
+			    	 -->
 		    	</div>
 	    	</div>
 	    	<div class="row">
@@ -158,13 +153,13 @@
 		        <div class="col-sm-9 bottomBuffer">
 		            <input name="email" type="email" tabindex="3" class="" ng-model="registrationForm.email.value" ng-model-onblur ng-change="serverValidate('Email')" />
 		            <span class="required" ng-class="isValidClass(registrationForm.email)">*</span>			            
-		            <span class="orcid-error" ng-show="registrationForm.email.errors.length > 0">
-						<div ng-repeat='error in registrationForm.email.errors' ng-bind-html="error" compile="html"></div>
+		            <span class="orcid-error" ng-show="emailTrustAsHtmlErrors.length > 0">
+						<div ng-repeat='error in emailTrustAsHtmlErrors' ng-bind-html="error" compile="html"></div>
 		   			</span>
 		        </div>			       
 		    </div>				
 		    
-		    <div class="form-group">
+		    <div class="form-group oAuthFix">
 		        <label class="col-sm-3 control-label"><@orcid.msg 'oauth_sign_up.labelreenteremail'/></label>
 		        <div class="col-sm-9 bottomBuffer">
 		            <input name="confirmedEmail" type="email" tabindex="4" class="" ng-model="registrationForm.emailConfirm.value" ng-model-onblur ng-change="serverValidate('EmailConfirm')" />
@@ -198,7 +193,7 @@
 		        </div>			        
 		    </div>
 			
-			<div style="margin-bottom: 20px; margin-top: 10px;">
+			<div class="oauth-privacy" style="margin-bottom: 20px; margin-top: 10px;">
 		        <label class="privacy-toggle-lbl"><@orcid.msg 'privacy_preferences.activitiesVisibilityDefault'/></label>
 		    	<@orcid.privacyToggle 
 		    	    angularModel="registrationForm.activitiesVisibilityDefault.visibility" 
@@ -240,10 +235,10 @@
 	        </div>				   
 		   
 		    <div id="register-buttons">                     		            		               					
-				<button class="btn btn-primary" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="registerAndAuthorize()">
+				<button class="btn btn-primary pull-right" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="registerAndAuthorize()">
 					<@orcid.msg 'confirm-oauth-access.Authorize' />
 				</button>		                 	            
-				<a class="oauth_deny_link" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="registerAndDeny()">
+				<a class="oauth_deny_link pull-right" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="registerAndDeny()">
 					<@orcid.msg 'confirm-oauth-access.Deny' />
 				</a>
             </div> 

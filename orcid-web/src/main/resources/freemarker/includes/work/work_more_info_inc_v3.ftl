@@ -67,27 +67,29 @@
 				<strong><@orcid.msg 'manual_work_form_contents.labelcitation'/></strong <span> (<span ng-show="worksSrvc.details[group.getActive().putCode.value].citation.citationType.value" ng-cloak><i>{{worksSrvc.details[group.getActive().putCode.value].citation.citationType.value}}</i></span>) 
 				</span>
 			</div>
-			<div class="col-md-12">				
-				
-				<span ng-show="showBibtex && worksSrvc.details[group.getActive().putCode.value].citation.citationType.value == 'bibtex'">
-					<a class="toggle-tag-option" ng-click="bibtexShowToggle()">
+			<div class="col-md-12">
+				<span ng-show="showBibtex[group.getActive().putCode.value] && worksSrvc.details[group.getActive().putCode.value].citation.citationType.value == 'bibtex'">
+					<a class="toggle-tag-option" ng-click="bibtexShowToggle(group.getActive().putCode.value)">
 						[<@orcid.msg 'work.show_in_bibtex'/>]
 					</a>
 				</span>
 				
-				<span ng-show="showBibtex == false && worksSrvc.details[group.getActive().putCode.value].citation.citationType.value == 'bibtex'">
-					<a class="toggle-tag-option" ng-click="bibtexShowToggle()">
+				<span ng-show="(showBibtex[group.getActive().putCode.value] == null || showBibtex[group.getActive().putCode.value] == false) && worksSrvc.details[group.getActive().putCode.value].citation.citationType.value == 'bibtex'">
+					<a class="toggle-tag-option" ng-click="bibtexShowToggle(group.getActive().putCode.value)">
 						[<@orcid.msg 'work.show_in_html'/>]
 					</a>
-				</span>				
+				</span>
 				
-				<div ng-hide="showBibtex && worksSrvc.details[group.getActive().putCode.value].citation.citationType.value == 'bibtex'" ng-bind="worksSrvc.details[group.getActive().putCode.value].citation.citation.value" class="col-md-offset-1 col-md-11 col-sm-offset-1 col-sm-11 col-xs-12 citation-raw"></div>					
-				<div class="row" ng-show="showBibtex && (worksSrvc.bibtexJson[group.getActive().putCode.value]==null || worksSrvc.bibtexJson[group.getActive().putCode.value].length==0)">
+				<div ng-show="(showBibtex[group.getActive().putCode.value] == null || showBibtex[group.getActive().putCode.value] == false) && worksSrvc.details[group.getActive().putCode.value].citation.citationType.value == 'bibtex'" 
+					 ng-bind="worksSrvc.details[group.getActive().putCode.value].citation.citation.value"
+					 class="col-md-offset-1 col-md-11 col-sm-offset-1 col-sm-11 col-xs-12 citation-raw">
+				</div>
+									
+				<div class="row" ng-show="showBibtex[group.getActive().putCode.value] && (worksSrvc.bibtexJson[group.getActive().putCode.value]==null || worksSrvc.bibtexJson[group.getActive().putCode.value].length==0)">
 					<div class="col-md-offset-1 col-md-6"><@orcid.msg 'work.unavailable_in_html'/></div>
 				</div>
 				
-				
-				<div class="row" ng-show="showBibtex" ng-repeat='bibJSON in worksSrvc.bibtexJson[group.getActive().putCode.value]'>						
+				<div class="row" ng-show="showBibtex[group.getActive().putCode.value]" ng-repeat='bibJSON in worksSrvc.bibtexJson[group.getActive().putCode.value]'>						
 					<div class="col-md-offset-1 col-md-2 col-sm-offset-1 col-sm-1 col-xs-offset-1 col-xs-11">{{bibJSON.entryType}}</div>
 					<div class="col-md-8 col-sm-9 col-xs-offset-1 col-xs-11">{{bibJSON.citationKey}}</div>								
 					<div ng-repeat="(entKey,entVal) in bibJSON.entryTags">

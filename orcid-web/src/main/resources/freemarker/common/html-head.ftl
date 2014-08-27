@@ -53,7 +53,17 @@
       orcidVar.jsMessages = JSON.parse("${jsMessagesJson}");
     </script>    
     
-	<link rel="stylesheet" href="${staticLoc}/css/fonts.css?v=${ver}"/>	
+    <link rel="stylesheet" href="${staticLoc}/css/fonts.css?v=${ver}"/>
+    <script type="text/javascript">
+        var MTIProjectId='078e0d2f-8275-4c25-8aa9-5d902d8e4491';
+        (function() {
+            var mtiTracking = document.createElement('script');
+            mtiTracking.type='text/javascript';
+            mtiTracking.async='true';
+            mtiTracking.src=('https:'==document.location.protocol?'https:':'http:')+'//fast.fonts.net/t/trackingCode.js';
+            (document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild( mtiTracking );
+       })();
+    </script>
 	
 	<!-- Always remember to remove Glyphicons font reference when bootstrap is updated -->
     <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.1.0/css/bootstrap.min.css?v=${ver}"/>

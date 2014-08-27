@@ -16,6 +16,8 @@
  */
 package org.orcid.persistence.jpa.entities;
 
+import static org.orcid.utils.NullUtils.compareObjectsNullSafe;
+
 import java.math.BigDecimal;
 import java.util.SortedSet;
 
@@ -259,7 +261,7 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
     public void setNumericAmount(BigDecimal numericAmount) {
         this.numericAmount = numericAmount;
     }
-    
+
     @Override
     public int compareTo(ProfileFundingEntity other) {
         if (other == null) {
@@ -295,12 +297,11 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
             return compareAmounts;
         }
 
-        if(numericAmount != null) {
-            int compareNumericAmounts = numericAmount.compareTo(other.getNumericAmount());
-            if(compareNumericAmounts != 0)
-                return compareNumericAmounts;
+        int compareNumericAmounts = compareObjectsNullSafe(numericAmount, other.getNumericAmount());
+        if (compareNumericAmounts != 0) {
+            return compareNumericAmounts;
         }
-        
+
         int compareCurrency = compareStrings(currencyCode, other.getCurrencyCode());
         if (compareCurrency != 0) {
             return compareCurrency;
