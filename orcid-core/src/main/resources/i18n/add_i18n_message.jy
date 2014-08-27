@@ -1,0 +1,144 @@
+#!/usr/bin/env jython
+# Author: Will Simpson
+# A script to add a property to a bunch of i18n properties file, and flag in the comments that needs translation
+# Unfortunately doesn't work with the email properties, because of the extra comment in those files
+# Assumes you have ORCID-Source checked out in ~/git
+# Developed using Jython 2.5.3 and Java 1.7.0_45
+# For more info run
+# ./add_i18n_message.jy --help
+
+import codecs
+import glob
+import logging
+import optparse
+import os
+import re
+from java.io import FileInputStream
+from java.io import FileOutputStream
+from java.io import InputStreamReader
+from java.io import OutputStreamWriter
+from java.util import Collections
+from java.util import Properties
+
+# Init
+
+logging.basicConfig(format='%(asctime)s:%(levelname)s:%(message)s', level=logging.INFO)
+info = logging.info
+
+# Config
+
+resource_dir = os.path.expanduser('~/git/ORCID-Source/orcid-core/src/main/resources/i18n/')
+en_suffix = '_en.properties'
+
+# Function definitions
+
+class Option (optparse.Option):
+    ATTRS = optparse.Option.ATTRS + ['required']
+    
+    def _check_required (self):
+        if self.required and not self.takes_value():
+            raise OptionError(
+                              "required flag set for option that doesn't take a value",
+                              self)
+    
+    # Make sure _check_required() is called from the constructor!
+    CHECK_METHODS = optparse.Option.CHECK_METHODS + [_check_required]
+    
+    def process (self, opt, value, values, parser):
+        optparse.Option.process(self, opt, value, values, parser)
+        parser.option_seen[self] = 1
+
+class OptionParser (optparse.OptionParser):
+    def _init_parsing_state (self):
+        optparse.OptionParser._init_parsing_state(self)
+        self.option_seen = {}
+    
+    def check_values (self, values, args):
+        for option in self.option_list:
+            if (isinstance(option, Option) and
+                option.required and
+                not self.option_seen.has_key(option)):
+                self.error("%s not supplied" % option)
+        return (values, args)
+
+class SortedProperties(Properties):
+    def keys(self):
+        return Collections.enumeration(sorted(self.super__keys()))
+
+def load_props(path):
+    fis = FileInputStream(path)
+    isr = InputStreamReader(fis, 'UTF-8')
+    props = SortedProperties()
+    props.load(isr)
+    fis.close()
+    return props
+
+def store_props(props, comment_lines, path):
+    comment_string = str.join('', comment_lines)
+    fos = FileOutputStream(path)
+    osw = OutputStreamWriter(fos, 'UTF-8')
+    props.store(osw, comment_string)
+    fos.close();
+
+def read_comment_lines(path):
+    file = codecs.open(path, 'r', 'UTF-8')
+    lines = file.readlines()
+    file.close()
+    comment_lines = [l for l in lines if l.startswith('#')]
+    # Need to remove initial # character as will be readded automcatically when storing the props
+    comment_lines[0] = re.sub('^#', '', comment_lines[0])
+    # Need to snip off any comments automatically added by properties storing
+    indices_to_delete = []
+    for i in [-1, -2]:
+        # Make sure not a key
+        trailing_line = comment_lines[i]
+        if(not(re.match('#\s*\w+\s*$',trailing_line))):
+            indices_to_delete.append(i);
+    comment_lines_length = len(comment_lines);
+    for i in indices_to_delete:
+        comment_lines.pop(comment_lines_length + i)
+    return comment_lines
+
+def add_comment(comment_lines):
+    new_comment="# " + options.key + "\n"
+    if (not(any(new_comment == l for l in comment_lines))):
+        comment_lines.append(new_comment)
+
+def tidy_license_header(path):
+    file = codecs.open(path, 'r', 'UTF-8')
+    lines = file.readlines()
+    file.close
+    # Need to insert a blank line after the license, otherwise messes up the license check
+    rule_count = 0
+    for index, line in enumerate(lines):
+        if line.startswith('# ====='):
+            rule_count += 1
+            if (rule_count == 2):
+                lines.insert(index + 2, "\n")
+                break
+    file = codecs.open(path, 'w', 'UTF-8')
+    file.write(str.join('', lines))
+    file.close
+
+# Start of script
+
+parser = OptionParser(option_list=[
+    Option('-k', '--key', help='the key of the property', required=1),
+    Option('-v', '--value', help='the value of the property', required=1),
+    Option('-p', '--prefix', help='the prefix of the properties files (messages|javascript)', choices=('messages', 'javascript'), required=1)
+])
+(options, args) = parser.parse_args()
+
+dir_listing = os.listdir(resource_dir)
+properties_filenames = [f for f in dir_listing if f.startswith(options.prefix + '_')]
+
+for properties_filename in properties_filenames:
+    en_filename = options.prefix + en_suffix
+    path = os.path.join(resource_dir, properties_filename)
+    props = load_props(path)
+    comment_lines = read_comment_lines(path)
+    if(properties_filename != en_filename):
+        add_comment(comment_lines)
+    props.put(options.key, options.value)
+    store_props(props, comment_lines, path)
+    tidy_license_header(path)

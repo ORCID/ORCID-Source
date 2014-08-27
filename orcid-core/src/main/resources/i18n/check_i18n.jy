@@ -1,0 +1,47 @@
+#!/usr/bin/env jython
+# A script to check for missing properties in a bunch of i18n properties files
+# Assumes you have ORCID-Source checked out in ~/git
+# # Developed using Jython 2.5.3 and Java 1.7.0_45
+# ./check_i18n.jy
+
+import glob
+import logging
+import os
+from java.util import Properties
+
+# Init
+
+logging.basicConfig(format='%(asctime)s:%(levelname)s:%(message)s', level=logging.INFO)
+info = logging.info
+
+# Config
+
+resource_dir = os.path.expanduser('~/git/ORCID-Source/orcid-core/src/main/resources/i18n/')
+en_suffix = '_en.properties'
+
+# Function definitions
+
+def load_props(path):
+    file = open(path, 'r')
+    props = Properties()
+    props.load(file)
+    return props
+
+# Start of script
+
+for prefix in ('messages', 'javascript', 'email'):
+    info("Checking i18n resources with prefix " + prefix)
+    
+    en_filename = prefix + en_suffix
+    en_props = load_props(os.path.join(resource_dir, en_filename))
+
+    dir_listing = os.listdir(resource_dir)
+    other_filenames = [f for f in dir_listing if f.startswith(prefix + '_') and f != en_filename]
+
+    for other_filename in other_filenames:
+        info("Comparing messages in: " + other_filename)
+        other_props = load_props(os.path.join(resource_dir, other_filename))
+        for prop in sorted(en_props):
+            other_prop = other_props.getProperty(prop)
+            if(other_prop == None):
+                info("Missing property: " + prop)
