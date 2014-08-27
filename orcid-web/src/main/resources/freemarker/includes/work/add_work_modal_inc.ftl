@@ -64,7 +64,8 @@
 
 				<div class="control-group">
 		    		<label class="relative"><@orcid.msg 'manual_work_form_contents.labelworktype'/></label>
-					<select id="workType" name="workType" class="input-xlarge" ng-model="editWork.workType.value" ng-options="key as value for (key , value) in types" ng-change="clearErrors()">						
+					<select id="workType" name="workType" class="input-xlarge" ng-model="editWork.workType.value" ng-options="type.key as type.value for type in types | orderBy:sortOtherLast" ng-change="clearErrors()">
+					   					
 					</select>
 					<span class="required" ng-class="isValidClass(editWork.workType)">*</span>
 					<span class="orcid-error" ng-show="editWork.workType.errors.length > 0">

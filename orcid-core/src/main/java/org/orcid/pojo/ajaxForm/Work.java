@@ -39,8 +39,6 @@ import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
 
 public class Work implements ErrorsInterface, Serializable {
-
-	public static final String OTHER_AT_BOTTOM = "zzz-other";
 	
 	private static final long serialVersionUID = 1L;
 
@@ -273,10 +271,7 @@ public class Work implements ErrorsInterface, Serializable {
 			ow.setWorkTitle(this.workTitle.toWorkTitle());
 		}
 		if (this.getWorkType() != null) {
-			if(!OTHER_AT_BOTTOM.equals(this.getWorkType().getValue()))
-				ow.setWorkType(WorkType.fromValue(this.getWorkType().getValue()));				
-			else
-				ow.setWorkType(WorkType.OTHER);
+			ow.setWorkType(WorkType.fromValue(this.getWorkType().getValue()));				
 		}
 
 		if (this.getJournalTitle() != null) {
