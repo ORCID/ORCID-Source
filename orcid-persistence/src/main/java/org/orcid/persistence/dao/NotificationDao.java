@@ -50,4 +50,6 @@ public interface NotificationDao extends GenericDao<NotificationEntity, Long> {
 
     void flagAsRead(String orcid, Long id);
 
+    void flagAsArchived(String orcid, Long id);
+
 }

@@ -73,5 +73,13 @@ public class NotificationController extends BaseController {
         notificationDao.flagAsRead(currentUserOrcid, Long.valueOf(id));
         return notificationManager.findByOrcidAndId(currentUserOrcid, Long.valueOf(id));
     }
+    
+    @RequestMapping(value = "{id}/archive.json")
+    public @ResponseBody
+    Notification flagAsArchived(@PathVariable("id") String id) {
+        String currentUserOrcid = getCurrentUserOrcid();
+        notificationDao.flagAsArchived(currentUserOrcid, Long.valueOf(id));
+        return notificationManager.findByOrcidAndId(currentUserOrcid, Long.valueOf(id));
+    }
 
 }

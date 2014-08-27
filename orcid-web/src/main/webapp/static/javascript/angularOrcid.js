@@ -1019,6 +1019,27 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) 
 		    	// something bad is happening!
 		    	console.log("error flagging notification as read");
 		    });
+		},
+		archive: function(notificationId) {
+			$.ajax({
+		        url: getBaseUri() + '/notifications/' + notificationId + '/archive.json',
+		        type: 'POST',
+		        dataType: 'json',
+		        success: function(data) {
+		        	var updated = data;
+		        	for(var i = 0;  i < serv.notifications.length; i++){
+		        		var existing = serv.notifications[i];
+		        		if(existing.putCode.path === updated.putCode.path){
+		        			serv.notifications.splice(i, 1);
+		        			break;
+		        		}
+		        	}
+		        	$rootScope.$apply();
+		        }
+		    }).fail(function() { 
+		    	// something bad is happening!
+		    	console.log("error flagging notification as archived");
+		    });
 		}
 	};
 	serv.getNotifications();
@@ -4275,6 +4296,7 @@ function NotificationsCtrl($scope, $compile, notificationsSrvc){
 	$scope.notifications = notificationsSrvc.notifications;
 	$scope.showMore = notificationsSrvc.showMore;
 	$scope.areMore = notificationsSrvc.areMore;
+	$scope.archive = notificationsSrvc.archive;
 };
 
 function SwitchUserCtrl($scope, $compile, $document){

@@ -40,7 +40,7 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
 
     @Override
     public List<NotificationEntity> findByOrcid(String orcid, int firstResult, int maxResults) {
-        TypedQuery<NotificationEntity> query = entityManager.createQuery("from NotificationEntity where orcid = :orcid order by dateCreated desc",
+        TypedQuery<NotificationEntity> query = entityManager.createQuery("from NotificationEntity where orcid = :orcid and archivedDate is null order by dateCreated desc",
                 NotificationEntity.class);
         query.setParameter("orcid", orcid);
         query.setFirstResult(firstResult);
@@ -93,6 +93,15 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     @Transactional
     public void flagAsRead(String orcid, Long id) {
         Query query = entityManager.createQuery("update NotificationEntity set readDate = now() where orcid = :orcid and id = :id and readDate is null");
+        query.setParameter("orcid", orcid);
+        query.setParameter("id", id);
+        query.executeUpdate();
+    }
+
+    @Override
+    @Transactional
+    public void flagAsArchived(String orcid, Long id) {
+        Query query = entityManager.createQuery("update NotificationEntity set archivedDate = now() where orcid = :orcid and id = :id and archivedDate is null");
         query.setParameter("orcid", orcid);
         query.setParameter("id", id);
         query.executeUpdate();
