@@ -3393,6 +3393,13 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
 	$scope.bibtextWork = false;
 	$scope.bibtextWorkIndex = null;	
 
+
+	$scope.sortOtherLast = function(type) {
+		if (type.key == 'other') return 'ZZZZZ';
+		return type.value;
+	};
+
+	
 	$scope.sort = function(key) {
 		if ($scope.sortPredicateKey == key) 
 			$scope.sortReverse = ! $scope.sortReverse;
@@ -3606,16 +3613,18 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
 		else 
 			return; //do nothing if we have not types
 		$.ajax({
-	        url: getBaseUri() + '/works/loadWorkTypes.json?workCategory=' + workCategory,
-	        type: 'POST',	        
+	        url: getBaseUri() + '/works/loadWorkTypes.json?workCategory=' + workCategory,	        
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        success: function(data) {
 	        	$scope.$apply(function() {
-		        	$scope.types = data;		
+		        	$scope.types = data;
 		        	if($scope.editWork != null && $scope.editWork.workCategory != null) {
 		        		// if the edit works doesn't have a value that matches types
-		        		if(!$scope.types.hasOwnProperty($scope.editWork.workType.value)) {
+		        		var hasType = false;
+		        		for (var idx in $scope.types)
+		        			if ($scope.types[idx].key == $scope.editWork.workType.value) hasType = true;
+		        		if(!hasType) {
 		        			switch ($scope.editWork.workCategory.value){
 			                case "conference":
 			                	$scope.editWork.workType.value="conference-paper";		                	
@@ -6064,7 +6073,7 @@ function switchUserCtrl($scope,$compile){
 
 function SocialNetworksCtrl($scope){
 	$scope.twitter=false;
-
+	
 	$scope.checkTwitterStatus = function(){
 		$.ajax({
 			url: getBaseUri() + '/manage/twitter/check-twitter-status',
