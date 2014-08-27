@@ -29,6 +29,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -52,9 +53,10 @@ public class NotificationController extends BaseController {
 
     @RequestMapping("/notifications.json")
     public @ResponseBody
-    List<Notification> getNotificationsJson() {
+    List<Notification> getNotificationsJson(@RequestParam(value = "firstResult", defaultValue = "0") int firstResult,
+            @RequestParam(value = "maxResults", defaultValue = "10") int maxResults) {
         String currentOrcid = getCurrentUserOrcid();
-        return notificationManager.findByOrcid(currentOrcid, 0, 10);
+        return notificationManager.findByOrcid(currentOrcid, firstResult, maxResults);
     }
 
     @RequestMapping(value = "/{id}/notification.html", produces = MediaType.TEXT_HTML_VALUE)

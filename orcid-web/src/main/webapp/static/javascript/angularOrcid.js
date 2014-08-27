@@ -968,12 +968,21 @@ orcidNgModule.factory("prefsSrvc", function ($rootScope) {
 
 orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) {
 	var serv = {
+		firstResult: 0,
+		maxResults: 10,
+		areMoreFlag: false,
 		notifications: [],
 		getNotifications: function() {
 			$.ajax({
-		        url: getBaseUri() + '/notifications/notifications.json',
+		        url: getBaseUri() + '/notifications/notifications.json?firstResult=' + serv.firstResult + '&maxResults=' + serv.maxResults,
 		        dataType: 'json',
 		        success: function(data) {
+		        	if(data.length === 0 || data.length < serv.maxResults){
+		        		serv.areMoreFlag = false;
+		        	}
+		        	else{
+		        		serv.areMoreFlag = true;
+		        	}
 		        	for(var i = 0; i < data.length; i++){
 		        		serv.notifications.push(data[i]);
 		        	}
@@ -983,6 +992,13 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) 
 		    	// something bad is happening!
 		    	console.log("error with getting notifications");
 		    });
+		},
+		showMore: function(){
+			serv.firstResult += serv.maxResults;
+			serv.getNotifications();
+		},
+		areMore: function(){
+			return serv.areMoreFlag;
 		},
 		flagAsRead: function(notificationId) {
 			$.ajax({
@@ -4257,6 +4273,8 @@ function NotificationsCtrl($scope, $compile, notificationsSrvc){
 	};
 	
 	$scope.notifications = notificationsSrvc.notifications;
+	$scope.showMore = notificationsSrvc.showMore;
+	$scope.areMore = notificationsSrvc.areMore;
 };
 
 function SwitchUserCtrl($scope, $compile, $document){

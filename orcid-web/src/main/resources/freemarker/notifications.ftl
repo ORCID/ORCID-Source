@@ -38,6 +38,9 @@
 			<iframe ng-show="displayBody[notification.putCode.path]" ng-src="{{ '<@spring.url '/notifications'/>/' + notification.putCode.path + '/notification.html'}}" frameborder="0" width="100%" height="300"></iframe>
 			<hr></hr>
 		</div>
+		<div ngcloak>
+			<button ng-show="areMore()" ng-click="showMore()" class="btn" type="submit" id="show-more-button">Show more</button>
+		</div>
 	</div>
 </div>
 </#escape>
