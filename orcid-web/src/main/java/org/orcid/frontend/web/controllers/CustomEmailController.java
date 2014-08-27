@@ -148,14 +148,14 @@ public class CustomEmailController extends BaseController {
                 if(PojoUtil.isEmpty(customEmailForm.getSender())) {
                     sender = DEFAULT_CLAIM_SENDER;
                 } else {
-                    sender = OrcidStringUtils.stripHtml(customEmailForm.getSender().getValue());
+                    sender = customEmailForm.getSender().getValue();
                 }
                 
                 String subject = "";
                 if(PojoUtil.isEmpty(customEmailForm.getSubject())) {
                     subject = getMessage("email.subject.api_record_creation");
                 } else {
-                    subject = OrcidStringUtils.stripHtml(customEmailForm.getSubject().getValue());
+                    subject = customEmailForm.getSubject().getValue();
                 }
                 
                 String content = customEmailForm.getContent().getValue();
@@ -237,6 +237,9 @@ public class CustomEmailController extends BaseController {
         if(!PojoUtil.isEmpty(customEmailForm.getSubject())){
             if(customEmailForm.getSubject().getValue().length() > SUBJECT_MAX_LENGTH)
                 customEmailForm.getSubject().getErrors().add(getMessage("custom_email.subject.too_long"));
+            else if(OrcidStringUtils.hasHtml(customEmailForm.getSubject().getValue())){
+                customEmailForm.getSubject().getErrors().add(getMessage("custom_email.subject.html"));
+            }
         }
                 
         return customEmailForm;
@@ -252,7 +255,9 @@ public class CustomEmailController extends BaseController {
             String content = customEmailForm.getContent().getValue();
             if(!content.contains(EmailConstants.WILDCARD_VERIFICATION_URL)) {
                 customEmailForm.getContent().getErrors().add(getMessage("custom_email.content.verification_url_required"));
-            }            
+            } else if(OrcidStringUtils.hasHtml(content)) {
+                customEmailForm.getContent().getErrors().add(getMessage("custom_email.content.html"));
+            }           
         }
         return customEmailForm;
     }

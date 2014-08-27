@@ -39,9 +39,23 @@ import java.util.regex.Pattern;
  */
 public class OrcidStringUtils {
 
+    private static String LT = "&lt;";
+    private static String GT = "&gt;";
+    private static String AMP = "&amp;";    
+    private static String APOS = "&apos;";
+    private static String QUOT = "&quot;";
+    
+    private static String DECODED_LT = "<";
+    private static String DECODED_GT = ">";
+    private static String DECODED_AMP = "&";
+    private static String DECODED_APOS = "'";
+    private static String DECODED_QUOT = "\"";
+    
     private static final Pattern pattern = Pattern.compile("(\\d{4}-){3,}\\d{3}[\\dX]");
-
+    
     private static final Document.OutputSettings outputSettings = new Document.OutputSettings().prettyPrint(false).charset("UTF-8").escapeMode(EscapeMode.xhtml);
+     
+    
     
     public static boolean isValidOrcid(String orcid) {
         if (StringUtils.isNotBlank(orcid)) {
@@ -65,7 +79,6 @@ public class OrcidStringUtils {
         Enumeration<String> keys = resource.getKeys();
         while (keys.hasMoreElements()) {
             String key = keys.nextElement();
-            String value = resource.getString(key);
             map.put(key, resource.getString(key));
         }
 
@@ -76,7 +89,25 @@ public class OrcidStringUtils {
     /* http://stackoverflow.com/questions/14453047/jsoup-to-strip-only-html-tagsnot-new-line-character */
     public static String stripHtml(String s) {
           String output = Jsoup.clean(s, "", Whitelist.simpleText(), outputSettings);
+          //According to http://jsoup.org/apidocs/org/jsoup/nodes/Entities.EscapeMode.html#xhtml jsoup scape lt, gt, amp, apos, and quot for xhtml
+          //So we want to restore them
+          output = output.replace(LT, DECODED_LT);
+          output = output.replace(GT, DECODED_GT);
+          output = output.replace(AMP, DECODED_AMP);
+          output = output.replace(APOS, DECODED_APOS);
+          output = output.replace(QUOT, DECODED_QUOT);
           return output;
+    }    
+    
+    /**
+     * Strips html and restore the following characters: ' " & > <
+     * If the string resulting after that process doesnt match the given string, we can say it contains html
+     * @param s
+     *          String to be cleared
+     * @return true if the give string has html tags in it     
+     * */
+    public static boolean hasHtml(String s) {
+        String striped = stripHtml(s);
+        return !striped.equals(s);
     }
-
 }
