@@ -40,8 +40,8 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
 
     @Override
     public List<NotificationEntity> findByOrcid(String orcid, int firstResult, int maxResults) {
-        TypedQuery<NotificationEntity> query = entityManager.createQuery("from NotificationEntity where orcid = :orcid and archivedDate is null order by dateCreated desc",
-                NotificationEntity.class);
+        TypedQuery<NotificationEntity> query = entityManager.createQuery(
+                "from NotificationEntity where orcid = :orcid and archivedDate is null order by dateCreated desc", NotificationEntity.class);
         query.setParameter("orcid", orcid);
         query.setFirstResult(firstResult);
         query.setMaxResults(maxResults);
@@ -59,6 +59,13 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
         TypedQuery<NotificationEntity> query = entityManager.createQuery("from NotificationEntity where sentDate is null and orcid = :orcid", NotificationEntity.class);
         query.setParameter("orcid", orcid);
         return query.getResultList();
+    }
+
+    @Override
+    public int getUnreadCount(String orcid) {
+        TypedQuery<Long> query = entityManager.createQuery("select count(*) from NotificationEntity where readDate is null and archivedDate is null and orcid = :orcid", Long.class);
+        query.setParameter("orcid", orcid);
+        return query.getSingleResult().intValue();
     }
 
     @Override

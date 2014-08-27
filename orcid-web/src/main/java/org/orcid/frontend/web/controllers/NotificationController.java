@@ -58,6 +58,13 @@ public class NotificationController extends BaseController {
         String currentOrcid = getCurrentUserOrcid();
         return notificationManager.findByOrcid(currentOrcid, firstResult, maxResults);
     }
+    
+    @RequestMapping("/unreadCount.json")
+    public @ResponseBody
+    int getUnreadCountJson() {
+        String currentOrcid = getCurrentUserOrcid();
+        return notificationDao.getUnreadCount(currentOrcid);
+    }
 
     @RequestMapping(value = "/{id}/notification.html", produces = MediaType.TEXT_HTML_VALUE)
     public @ResponseBody
