@@ -834,7 +834,7 @@ $(function (){
 	});
 });
 
-/* start bibtexParse 0.0.12 */
+/* start bibtexParse 0.0.13 */
 
 //Original work by Henrik Muehe (c) 2010
 //
@@ -1085,7 +1085,6 @@ $(function (){
 			this.currentEntry['entryType'] = 'PREAMBLE';
 			this.currentEntry['entry'] = this.value_comment();
 			this.entries.push(this.currentEntry);
-			
 		};
 
 		this.comment = function() {
@@ -1146,11 +1145,13 @@ $(function (){
      "\'u": "ú",
      "\'y": "ý",
      "\"A": "Ä", // begin diaeresis
+     "r A": "Å", 
      "\"E": "Ë",
      "\"I": "Ï",
      "\"O": "Ö",
      "\"U": "Ü",
      "\"a": "ä",
+     "r a": "å",
      "\"e": "ë",
      "\"i": "ï",
      "\"o": "ö",
@@ -1194,8 +1195,10 @@ $(function (){
      "`": "‘", // opening single quote
      "AA": "Å", // begin non-ASCII letters
      "AE": "Æ",
+     "c{C}": "Ç",
      "O": "Ø",
      "aa": "å",
+     "c{c}": "ç",
      "ae": "æ",
      "o": "ø",
      "ss": "ß",
@@ -1299,8 +1302,8 @@ $(function (){
 	exports.toJSON = function(bibtex) {
 		var b = new BibtexParser();
 		b.setInput(bibtex);
-		b.bibtex();		
-		return b.entries;		
+		b.bibtex();
+		return b.entries;
 	};
 
 	/* added during hackathon don't hate on me */
@@ -1324,7 +1327,7 @@ $(function (){
 			}
 			out += '}\n\n';
 		}
-		//console.log(out);
+		console.log(out);
 		return out;
 		
 	};
@@ -1332,6 +1335,7 @@ $(function (){
 })(typeof exports === 'undefined' ? this['bibtexParse'] = {} : exports);
 
 /* end bibtexParse */
+
 
 
 
