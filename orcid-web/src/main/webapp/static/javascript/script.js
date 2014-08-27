@@ -625,6 +625,7 @@ function populateWorkAjaxForm(bibJson, work) {
      // tags we mapped
      if (bibJson.entryTags) {
 	     var tags = bibJson.entryTags;
+	     
 	     for (key in tags) {
 	    	 var lower = key.toLowerCase();
 	    	 if (lower == 'booktitle')
@@ -645,7 +646,7 @@ function populateWorkAjaxForm(bibJson, work) {
 	    		 work.journalTitle.value = tags[key];
 	    	 
 	    	 if (lower == 'publisher')
-	    		 work.journalTitle.value = tags[key];
+	    		 work.journalTitle.value == null ? work.journalTitle.value = tags[key] : work.journalTitle.value = tags['journal'];
 	    	 
 	    	 if (lower == 'title')
 	    		 work.workTitle.title.value = tags[key];
