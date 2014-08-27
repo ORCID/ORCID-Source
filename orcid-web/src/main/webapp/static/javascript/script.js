@@ -643,10 +643,7 @@ function populateWorkAjaxForm(bibJson, work) {
 	    		
 	    	 if (lower == 'journal')
 	    		 work.journalTitle.value = tags[key];
-	    	 
-	    	 if (lower == 'publisher' && (work.journalTitle.value == null || work.journalTitle.value ==''))
-	    		 work.journalTitle.value = tags[key];
-	    	 
+	    	  
 	    	 if (lower == 'title')
 	    		 work.workTitle.title.value = tags[key];
 	    	
