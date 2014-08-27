@@ -44,6 +44,7 @@ import org.orcid.pojo.ajaxForm.Client;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RedirectUri;
 import org.orcid.pojo.ajaxForm.Text;
+import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -162,6 +163,9 @@ public class GroupAdministratorController extends BaseWorkspaceController {
             setError(client.getDisplayName(), "manage.developer_tools.group.error.display_name.empty");
         } else if (client.getDisplayName().getValue().length() > 150) {
             setError(client.getDisplayName(), "manage.developer_tools.group.error.display_name.150");
+        } else {
+            if(OrcidStringUtils.hasHtml(client.getDisplayName().getValue())) 
+                setError(client.getDisplayName(), "manage.developer_tools.group.error.display_name.html");
         }
 
         return client;
@@ -181,6 +185,11 @@ public class GroupAdministratorController extends BaseWorkspaceController {
         client.getShortDescription().setErrors(new ArrayList<String>());
         if (PojoUtil.isEmpty(client.getShortDescription()))
             setError(client.getShortDescription(), "manage.developer_tools.group.error.short_description.empty");
+        else {
+            if(OrcidStringUtils.hasHtml(client.getShortDescription().getValue()))
+                setError(client.getShortDescription(), "manage.developer_tools.group.error.short_description.html");
+        }
+        
         return client;
     }
 
@@ -274,7 +283,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
             copyErrors(redirectUri, client);
         }
 
-        if (client.getErrors().size() == 0) {
+        if (client.getErrors().size() == 0) {            
             OrcidProfile profile = getEffectiveProfile();
             String groupOrcid = profile.getOrcidIdentifier().getPath();
 

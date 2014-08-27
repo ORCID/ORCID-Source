@@ -98,4 +98,16 @@ public class OrcidStringUtils {
           output = output.replace(QUOT, DECODED_QUOT);
           return output;
     }    
+    
+    /**
+     * Strips html and restore the following characters: ' " & > <
+     * If the string resulting after that process doesnt match the given string, we can say it contains html
+     * @param s
+     *          String to be cleared
+     * @return true if the give string has html tags in it     
+     * */
+    public static boolean hasHtml(String s) {
+        String striped = stripHtml(s);
+        return !striped.equals(s);
+    }
 }

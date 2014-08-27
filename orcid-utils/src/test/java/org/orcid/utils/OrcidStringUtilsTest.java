@@ -19,6 +19,7 @@ package org.orcid.utils;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -65,5 +66,23 @@ public class OrcidStringUtilsTest {
         assertEquals("This is a link&s", OrcidStringUtils.stripHtml(html_4));
         assertEquals("This is a link > s", OrcidStringUtils.stripHtml(html_5));
         assertEquals("This is a link < s", OrcidStringUtils.stripHtml(html_6));
+    }
+    
+    @Test
+    public void testHasHtml() {
+        assertTrue(OrcidStringUtils.hasHtml("<a>hello</a>"));
+        assertTrue(OrcidStringUtils.hasHtml("This is a test <span>"));
+        assertTrue(OrcidStringUtils.hasHtml("<this is a test>"));
+        assertTrue(OrcidStringUtils.hasHtml("This is <script>another</script> test"));
+        assertTrue(OrcidStringUtils.hasHtml("This is a <div>test</div>"));        
+        assertTrue(OrcidStringUtils.hasHtml("<div>This is a test</div>"));
+        
+        assertFalse(OrcidStringUtils.hasHtml("This is a test"));
+        assertFalse(OrcidStringUtils.hasHtml("This is a test's"));
+        assertFalse(OrcidStringUtils.hasHtml("This < is a test >"));
+        assertFalse(OrcidStringUtils.hasHtml("This \"is a test\""));
+        assertFalse(OrcidStringUtils.hasHtml("This \" is a test \""));
+        assertFalse(OrcidStringUtils.hasHtml("This&this are tests"));
+        assertFalse(OrcidStringUtils.hasHtml("Users's test"));
     }
 }

@@ -5064,7 +5064,7 @@ function removeSecQuestionCtrl($scope,$compile) {
 	};	
 };
 
-function SSOPreferencesCtrl($scope, $compile, emailSrvc) {
+function SSOPreferencesCtrl($scope, $compile, $sce, emailSrvc) {
 	$scope.showReg = false;
 	$scope.userCredentials = null;	
 	$scope.editing = false;
@@ -5085,6 +5085,8 @@ function SSOPreferencesCtrl($scope, $compile, emailSrvc) {
 	$scope.selectedRedirectUri = '';
 	$scope.creating = false;
 	$scope.emailSrvc = emailSrvc;
+	$scope.nameToDisplay = '';
+	$scope.descriptionToDisplay = '';
 	
 	$scope.verifyEmail = function() {
 		var funct = function() {
@@ -5154,11 +5156,11 @@ function SSOPreferencesCtrl($scope, $compile, emailSrvc) {
 	        url: getBaseUri()+'/developer-tools/get-sso-credentials.json',	        
 	        contentType: 'application/json;charset=UTF-8',
 	        type: 'POST',	                	      
-	        success: function(data){	   
+	        success: function(data){	        	
 	        	$scope.$apply(function(){ 
 	        		if(data != null && data.clientSecret != null) {
 	        			$scope.playgroundExample = '';
-	        			$scope.userCredentials = data;	
+	        			$scope.userCredentials = data;
 	        			$scope.hideGoogleUri = false;	
 	        			$scope.selectedRedirectUri = $scope.userCredentials.redirectUris[0];
 	        			for(var i = 0; i < $scope.userCredentials.redirectUris.length; i++) {
@@ -5171,6 +5173,7 @@ function SSOPreferencesCtrl($scope, $compile, emailSrvc) {
 	        				}
 	        			}
 	        			$scope.updateSelectedRedirectUri();
+	        			$scope.setHtmlTrustedNameAndDescription();
 	        		} else {
 	        			$scope.showReg = true;
 	        		}        					        	
@@ -5236,6 +5239,7 @@ function SSOPreferencesCtrl($scope, $compile, emailSrvc) {
 	        				}
 	        			}
 	        			$scope.updateSelectedRedirectUri();
+	        			$scope.setHtmlTrustedNameAndDescription(); 
 	        			$scope.creating = false;	        			
 	        			$scope.showReg = false;
 	        		}
@@ -5327,6 +5331,7 @@ function SSOPreferencesCtrl($scope, $compile, emailSrvc) {
 	        			}
 	        			
 	        			$scope.updateSelectedRedirectUri();
+	        			$scope.setHtmlTrustedNameAndDescription();
 	        		}
 				});
 	        }
@@ -5441,6 +5446,12 @@ function SSOPreferencesCtrl($scope, $compile, emailSrvc) {
 	
 	//init
 	$scope.getSSOCredentials();	
+	
+	$scope.setHtmlTrustedNameAndDescription = function() {
+		//Trust client name and description as html since it has been already filtered
+		$scope.nameToDisplay = $sce.trustAsHtml($scope.userCredentials.clientName.value);
+		$scope.descriptionToDisplay = $sce.trustAsHtml($scope.userCredentials.clientDescription.value);
+	};
 };
 
 function ClientEditCtrl($scope, $compile){	
