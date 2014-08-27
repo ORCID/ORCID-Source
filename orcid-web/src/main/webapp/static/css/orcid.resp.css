@@ -2657,10 +2657,6 @@ header overrides
 	padding-left: 0;
 }
 
-.public-profile .workspace-inner .alert {
-	margin-left: 10px;
-}
-
 .workspace-header-public.no-border {
 	margin-top: 0;
 }
@@ -4716,14 +4712,12 @@ ul.oauth-scopes li{
 	}
 
 	/* Public Profile */
-	/*
-	.public-profile .workspace-inner > *{
+	
+	
+	.public-profile .workspace-inner{
 	 	padding-left: 0;
 	}
-	*/
-	.public-profile .workspace-inner .alert {
-		margin-left: 0;
-	}
+	
 	.workspace-top {
 		border-top: none;
 	}
