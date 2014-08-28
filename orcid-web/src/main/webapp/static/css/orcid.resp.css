@@ -4281,6 +4281,16 @@ ul.oauth-scopes li{
 	clear: both;
 }
 
+.confirm-oauth-access .id-banner .full-name,
+.confirm-oauth-access .id-banner .dropdown,
+.confirm-oauth-access .id-banner-container a.id-banner-switch{
+	padding-right: 0;
+}
+
+.confirm-oauth-access .id-banner .id-banner-container a.id-banner-switch span{
+	margin: 0;
+}
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
