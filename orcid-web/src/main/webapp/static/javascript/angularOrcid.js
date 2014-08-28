@@ -3412,6 +3412,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
         	$scope.worksFromBibtex = new Array();
         	
         	$.each($scope.textFiles, function (index, bibtex) {
+        		
 				var parsed = bibtexParse.toJSON(bibtex);
 				var bibtexEntry = null;
 							
@@ -3431,15 +3432,17 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
 					})(parsed[j]);
 			    };
         	});
-        	$scope.textFiles = null;
+       	    $scope.textFiles = null;      
+       	    $scope.bibtexParsingError = false;
 		} catch (err) {
 			$scope.bibtexParsingError = true;
 		};
     };
     
-    $scope.rmWorkFromBibtex = function(work) {
+    $scope.rmWorkFromBibtex = function(work) {    	
     	var index = $scope.worksFromBibtex.indexOf(work);    	
-    	$scope.worksFromBibtex.splice(index, 1);
+    	$scope.worksFromBibtex.splice(index, 1);    	
+    	if($scope.worksFromBibtex.length == 0) $scope.bibtexCancelLink = false;
     };    
     
     $scope.addWorkFromBibtex = function(work) {    	
@@ -3450,7 +3453,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
    
     $scope.openBibTextWizard = function () {
     	$scope.bibtexParsingError = false;
-    	$scope.showBibtexImportWizard = true;    	
+    	$scope.showBibtexImportWizard = !($scope.showBibtexImportWizard);    	
     };
     
     $scope.bibtextCancel = function(){
