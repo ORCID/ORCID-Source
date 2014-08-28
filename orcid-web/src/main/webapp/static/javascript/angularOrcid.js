@@ -4230,7 +4230,7 @@ function SwitchUserCtrl($scope, $compile, $document){
 	        success: function(data) {
 	        	$scope.delegators = data.delegators;
 				$scope.searchResultsCache[''] = $scope.delegators;
-	        	$scope.me = data.me;
+	        	$scope.me = data.me;	        	
 	        	$scope.unfilteredLength = $scope.delegators != null ? $scope.delegators.delegationDetails.length : 0;
 	        	$scope.$apply();
 	        }
