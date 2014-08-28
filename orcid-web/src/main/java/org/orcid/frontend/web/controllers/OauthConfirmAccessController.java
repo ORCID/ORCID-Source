@@ -40,7 +40,6 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.pojo.ajaxForm.OauthAuthorizeForm;
 import org.orcid.pojo.ajaxForm.OauthRegistration;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.Text;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -272,8 +271,7 @@ public class OauthConfirmAccessController extends BaseController {
         // Clean form errors
         form.setErrors(new ArrayList<String>());
         // Validate name and password
-        validateUserName(form);
-        validatePassword(form);
+        validateUserNameAndPassword(form);
         if (form.getErrors().isEmpty()) {
             try {
                 // Authenticate user
@@ -440,14 +438,8 @@ public class OauthConfirmAccessController extends BaseController {
     /*****************************
      * Validators
      ****************************/
-    private void validateUserName(OauthAuthorizeForm form) {
-        if (PojoUtil.isEmpty(form.getUserName())) {
-            form.getErrors().add(getMessage("orcid.frontend.security.bad_credentials"));
-        }
-    }
-
-    private void validatePassword(OauthAuthorizeForm form) {
-        if (PojoUtil.isEmpty(form.getPassword())) {
+    private void validateUserNameAndPassword(OauthAuthorizeForm form) {
+        if (PojoUtil.isEmpty(form.getUserName()) || PojoUtil.isEmpty(form.getPassword())) {
             form.getErrors().add(getMessage("orcid.frontend.security.bad_credentials"));
         }
     }

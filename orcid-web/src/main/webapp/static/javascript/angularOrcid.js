@@ -6290,7 +6290,8 @@ function OauthAuthorizationController($scope, $compile, $sce){
 	        					orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Authorize_' + $scope.requestScopes[i] + ', OAuth ' + $scope.clientGroupName + ' - ' + $scope.clientName]);
 	        				}
 	        			}	        			
-	        			$scope.authorizationForm = data;	        			
+	        			$scope.authorizationForm = data;
+	        			console.log(data)
 	        			$scope.$apply();
 	        		} else {
 	        			//Fire google GA event
