@@ -651,7 +651,7 @@ function populateWorkAjaxForm(bibJson, work) {
 	    		 work.publicationDate.year = tags[key];
 	    	 
 	    	 if (lower == 'month')
-	    		 work.publicationDate.year = tags[key];
+	    		 work.publicationDate.month = Number(tags[key]).pad(2);
 	    	 
 	    	 if (lower == 'url')
 	    		 work.url.value = tags[key];
