@@ -1324,7 +1324,6 @@ $(function (){
 			}
 			out += '}\n\n';
 		}
-		console.log(out);
 		return out;
 		
 	};
