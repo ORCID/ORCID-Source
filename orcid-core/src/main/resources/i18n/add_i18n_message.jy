@@ -27,7 +27,7 @@ info = logging.info
 
 # Config
 
-resource_dir = os.path.expanduser('C:/development/orcid/source/ORCID-Source/orcid-core/src/main/resources/i18n')
+resource_dir = os.path.expanduser('~/git/ORCID-Source/orcid-core/src/main/resources/i18n/')
 en_suffix = '_en.properties'
 
 # Function definitions

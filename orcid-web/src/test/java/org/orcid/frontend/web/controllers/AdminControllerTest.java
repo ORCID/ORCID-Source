@@ -41,6 +41,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
@@ -100,23 +101,23 @@ public class AdminControllerTest extends BaseControllerTest {
     @Resource
     OrcidClientGroupManager orcidClientGroupManager;
     
+    @Resource
+    GroupAdministratorController groupAdministratorController;
+    
     @BeforeClass
     public static void beforeClass() throws Exception {
-        initDBUnitData(Arrays.asList("/data/OrcidProps.xml", "/data/SecurityQuestionEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml"), null);
+        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml"), null);
     }
 
     @Before
     public void beforeInstance() {
         SecurityContextHolder.getContext().setAuthentication(getAuthentication());
-        MockitoAnnotations.initMocks(this);
     }
 
     @AfterClass
     public static void afterClass() throws Exception {
-        removeDBUnitData(Arrays.asList("/data/OrcidProps.xml", "/data/ClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/SecurityQuestionEntityData.xml"), null);
+        removeDBUnitData(Arrays.asList("/data/ClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/SecurityQuestionEntityData.xml"), null);
     }
-    
-    
     
     @Before
     public void init() {
@@ -519,6 +520,11 @@ public class AdminControllerTest extends BaseControllerTest {
     @Test
     @Transactional("transactionManager")
     public void editClientTest() {
+        //Mocks
+        GroupAdministratorController spy = Mockito.spy(groupAdministratorController);
+        adminController.setGroupAdministratorController(spy);
+        Mockito.doNothing().when(spy).clearCache();
+        
         OrcidClientGroup group = orcidClientGroupManager.retrieveOrcidClientGroup("4444-4444-4444-4446");
         OrcidClient client1 = group.getOrcidClient().get(0);
         String displayName = client1.getDisplayName();
