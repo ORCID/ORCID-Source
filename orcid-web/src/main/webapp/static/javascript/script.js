@@ -603,6 +603,21 @@ bibToWorkTypeMap['proceedings'] = ['conference','conference-paper'];
 bibToWorkTypeMap['techreport'] = ['publication','report'];
 bibToWorkTypeMap['unpublished'] = ['other_output','other'];
 
+function workExternalIdentifierId(work, id, value) {
+	var ident = {
+		workExternalIdentifierId : {
+			'value' : value
+		},
+		workExternalIdentifierType : {
+			'value' : id
+		}
+	};
+	if (work.workExternalIdentifiers[0].workExternalIdentifierId.value == null)
+		work.workExternalIdentifiers[0] = ident;
+	else
+		work.workExternalIdentifiers.push(ident);
+};
+
 function populateWorkAjaxForm(bibJson, work) {
 	 
 	 // get the bibtex back put it in the citation field
@@ -631,16 +646,13 @@ function populateWorkAjaxForm(bibJson, work) {
 	    		 work.workTitle.title.value = tags[key];
 	    	 
 	    	 if (lower == 'doi') {
-	    		var ident = {  
-	    				 workExternalIdentifierId: {value: tags[key]}, 
-	    				 workExternalIdentifierType: {value: 'doi'} 
-	    		};
-	    		if (work.workExternalIdentifiers[0].workExternalIdentifierId.value == null) 
-	    			work.workExternalIdentifiers[0] = ident;
-	    		else
-	    		    work.workExternalIdentifiers.push(ident);
+	    		workExternalIdentifierId(work, 'doi', tags[key]);
 	    	 }
-	    		
+
+	    	 if (lower == 'isbn') {
+		    	workExternalIdentifierId(work, 'isbn', tags[key]);
+		     }
+
 	    	 if (lower == 'journal')
 	    		 work.journalTitle.value = tags[key];
 	    	  
