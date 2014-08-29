@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidType;
@@ -116,4 +117,6 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     public boolean updateResearcherUrlsVisibility(String orcid, Visibility visibility);
 
     public boolean getClaimedStatus(String orcid);
+    
+    ClientType getClientType(String orcid);
 }

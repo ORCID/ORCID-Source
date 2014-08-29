@@ -3503,12 +3503,12 @@ ul.sso-options li span {
 	overflow: visible;
 }
 
-.developer-tools .inner-row input,.developer-tools .edit-details .dt-description textarea,.developer-tools .edit-client .dt-description textarea,.developer-tools .create-client .dt-description textarea
-	{
+.developer-tools .inner-row input,.developer-tools .edit-details .dt-description textarea,.developer-tools .edit-client .dt-description textarea,.developer-tools .create-client .dt-description textarea, .admin-edit-client .dt-description textarea
+{
 	width: 100%;
 }
 
-.developer-tools .edit-details .dt-description textarea,.developer-tools .edit-client .dt-description textarea,.developer-tools .create-client .dt-description textarea
+.developer-tools .edit-details .dt-description textarea,.developer-tools .edit-client .dt-description textarea,.developer-tools .create-client .dt-description textarea, .admin-edit-client .dt-description textarea
 	{
 	height: 150px;
 }
@@ -5340,6 +5340,7 @@ ul.oauth-scopes li{
 }
 
 .admin-edit-client {
+	border: solid 1px #D3D3D3;
 	padding: 10px;
 	margin: 5px;
 }
@@ -5349,3 +5350,4 @@ ul.oauth-scopes li{
 	padding: 10px;
 	margin: 5px;	
 }
+

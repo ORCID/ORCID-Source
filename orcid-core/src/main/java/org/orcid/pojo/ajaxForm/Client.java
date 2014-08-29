@@ -45,8 +45,7 @@ public class Client implements ErrorsInterface, Serializable {
         if(clientDetails != null) {
             client.setClientId(Text.valueOf(clientDetails.getClientId()));
             client.setDisplayName(Text.valueOf(clientDetails.getClientName()));
-            client.setShortDescription(Text.valueOf(clientDetails.getClientDescription()));
-            client.setType(Text.valueOf(clientDetails.getProfileEntity().getClientType().value()));
+            client.setShortDescription(Text.valueOf(clientDetails.getClientDescription()));            
             client.setWebsite(Text.valueOf(clientDetails.getClientWebsite()));
             
             client.redirectUris = new ArrayList<RedirectUri>();
@@ -55,7 +54,10 @@ public class Client implements ErrorsInterface, Serializable {
                    client.redirectUris.add(RedirectUri.valueOf(rUri)); 
                 }
             }
-        }                    
+            
+            if(clientDetails.getProfileEntity() != null)
+                client.setType(Text.valueOf(clientDetails.getProfileEntity().getClientType().value()));
+        }
         return client;
     }
     

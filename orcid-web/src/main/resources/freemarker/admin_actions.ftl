@@ -483,6 +483,22 @@
 				</div>				
 			</div>			
 		</div>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		<!-- Edit client -->
 		<a name="edit-client"></a>
 		<div ng-controller="adminEditClientCtrl" class="workspace-accordion-item" ng-cloak>
@@ -510,36 +526,37 @@
 							<h4><@orcid.msg 'admin.edit_client.general'/></h4>
 						</div>
 					</div>
+					<!-- Name -->
 					<div class="row">
 						<div class="col-md-12 col-sm-12 col-xs-12">
 							<span><@orcid.msg 'manage.developer_tools.group.display_name'/></span><br />
-							<input type="text" ng-model="client.displayName.value" class="input-xlarge" />
+							<input type="text" ng-model="client.displayName.value" class="full-width-input" />
 							<span class="orcid-error" ng-show="client.displayName.errors.length > 0">
 								<div ng-repeat='error in client.displayName.errors' ng-bind-html="error"></div>
 							</span>	
 						</div>
 					</div>
+					<!-- Website -->
 					<div class="row">
 						<div class="col-md-12 col-sm-12 col-xs-12">
 							<span><@orcid.msg 'manage.developer_tools.group.website'/></span><br />
-							<input type="text" ng-model="client.website.value" class="input-xlarge" />
+							<input type="text" ng-model="client.website.value" class="full-width-input" />
 							<span class="orcid-error" ng-show="client.website.errors.length > 0">
 								<div ng-repeat='error in client.website.errors' ng-bind-html="error"></div>
 							</span>	
 						</div>
 					</div>
+					<!-- Description -->
 					<div class="row">
-						<div class="col-md-12 col-sm-12 col-xs-12">
+						<div class="col-md-12 col-sm-12 col-xs-12 dt-description">
 							<span><@orcid.msg 'manage.developer_tools.group.description'/></span><br />
-							<input type="text" ng-model="client.shortDescription.value" class="dt-description" />
+							<textarea ng-model="client.shortDescription.value"></textarea>
 							<span class="orcid-error" ng-show="client.shortDescription.errors.length > 0">
 								<div ng-repeat='error in client.shortDescription.errors' ng-bind-html="error"></div>
 							</span>	
 						</div>
 					</div>
-				</div>			
-				
-				<div class="admin-edit-client">
+					<!-- Redirect uris -->
 					<div class="row">			
 						<div class="col-md-12 col-sm-12 col-xs-12">
 							<h4><@orcid.msg 'admin.edit_client.redirect_uris'/></h4>
@@ -564,7 +581,9 @@
 								</div>
 								<!-- Scopes -->
 								<div class="col-md-4 col-sm-4 col-xs-12">
-									<multiselect multiple="true" ng-model="rUri.scopes" options="scope as scope for scope in availableRedirectScopes"></multiselect>							
+									<div ng-show="rUri.type.value != 'default'">
+										<multiselect multiple="true" ng-model="rUri.scopes" options="scope as scope for scope in availableRedirectScopes"></multiselect>
+									</div>															
 								</div>
 								<!-- Delete button -->
 								<div class="col-md-1 col-sm-1 col-xs-12">
@@ -590,9 +609,38 @@
 		    				<span id="bottom-confirm-update-client" ng-click="confirmUpdateClient()" class="btn btn-primary"><@orcid.msg 'admin.edit_client.btn.update'/></span>
 						</div>
 					</div>					
-				</div>												
+				</div>							
 			</div>			
 		</div>		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		<!-- Deprecate Profile -->
 		<a name="deprecate-profile"></a>
 		<div ng-controller="profileDeprecationCtrl" class="workspace-accordion-item" ng-cloak>

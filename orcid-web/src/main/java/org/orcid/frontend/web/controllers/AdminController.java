@@ -465,7 +465,11 @@ public class AdminController extends BaseController {
     @RequestMapping(value = "/find-client.json", method = RequestMethod.GET)
     public @ResponseBody Client findClient(@RequestParam("orcid") String orcid) {
         ClientDetailsEntity clientDetailsEntity = clientDetailsManager.findByClientId(orcid);
-        return Client.valueOf(clientDetailsEntity);
+        Client result = Client.valueOf(clientDetailsEntity);
+        //If the client types is undefined, get it from DB
+        if(PojoUtil.isEmpty(result.getType()))
+            result.setType(Text.valueOf(profileEntityManager.getClientType(orcid).value()));
+        return result;
     }
     
     
