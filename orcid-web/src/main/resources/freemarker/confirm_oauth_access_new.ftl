@@ -22,12 +22,7 @@
 	<#assign displayName = client_name>
 </#if>
 <!-- colorbox-content -->
-<div class="container confirm-oauth-access oneStepWidth" ng-controller="OauthAuthorizationController">
-	<div class="row">
-		<div class="col-md-12 col-sm-12 col-xs-12">
-			<div class="top-green-border"></div>
-		</div>
-	</div>	
+<div class="container top-green-border confirm-oauth-access oneStepWidth" ng-controller="OauthAuthorizationController">		
 	<!-- Freemarker and GA variables -->
 	<#assign user_id = "">			
 	<#if userId??>
@@ -49,10 +44,8 @@
 	        </div>		
 		</div>
 		
-	    <div class="col-md-8 col-sm-12 col-xs-12">	        
-	        <div class="row">
-	            <#include "includes/mini_id_banner.ftl"/>
-	        </div>      
+	    <div class="col-md-8 col-sm-12 col-xs-12">
+	         <#include "includes/mini_id_banner.ftl"/>	              
 	    </div>	    
 	</div>	
 	<div class="row">

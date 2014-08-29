@@ -4355,7 +4355,7 @@ function SwitchUserCtrl($scope, $compile, $document){
 	        success: function(data) {
 	        	$scope.delegators = data.delegators;
 				$scope.searchResultsCache[''] = $scope.delegators;
-	        	$scope.me = data.me;
+	        	$scope.me = data.me;	        	
 	        	$scope.unfilteredLength = $scope.delegators != null ? $scope.delegators.delegationDetails.length : 0;
 	        	$scope.$apply();
 	        }
@@ -6387,13 +6387,13 @@ function OauthAuthorizationController($scope, $compile, $sce){
 	
 	$scope.loginAndAuthorize = function() {
 		$scope.authorizationForm.approved = true;
+		//Fire GA sign-in-submit
+		orcidGA.gaPush(['_trackEvent', 'Sign-In', 'Sign-In-Submit' , 'OAuth ' + orcidGA.buildClientString($scope.clientGroupName, $scope.clientName)]);
 		$scope.submitLogin();
 	};
 	
 	$scope.loginAndDeny = function() {
-		$scope.authorizationForm.approved = false;
-		//Fire GA deny
-		orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Authorize_Deny', 'OAuth ' + $scope.clientGroupName + ' - ' + $scope.clientName ]);
+		$scope.authorizationForm.approved = false;		
 		$scope.submitLogin();
 	};
 	
@@ -6407,19 +6407,20 @@ function OauthAuthorizationController($scope, $compile, $sce){
 	        dataType: 'json',
 	        success: function(data) {
 	        	if(data) {
-	        		if(data.errors.length != 0) {
+	        		if(data.errors.length != 0) {	        				        			      	
+	        			$scope.authorizationForm = data;
+	        			$scope.$apply();
+	        		} else {
 	        			//Fire google GA event
-	        			orcidGA.gaPush(['_trackEvent', 'Sign-In', 'Sign-In-Submit' , 'OAuth ' + orcidGA.buildClientString($scope.clientGroupName, $scope.clientName)]);
+	        			orcidGA.gaPush(['_trackEvent', 'Sign-In', 'RegGrowth' , 'OAuth ' + orcidGA.buildClientString($scope.clientGroupName, $scope.clientName)]);
 	        			if(is_authorize) {
 	        				for(var i = 0; i < $scope.requestScopes.length; i++) {
 	        					orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Authorize_' + $scope.requestScopes[i] + ', OAuth ' + $scope.clientGroupName + ' - ' + $scope.clientName]);
 	        				}
-	        			}	        			
-	        			$scope.authorizationForm = data;	        			
-	        			$scope.$apply();
-	        		} else {
-	        			//Fire google GA event
-	        			orcidGA.gaPush(['_trackEvent', 'Sign-In', 'RegGrowth' , 'OAuth ' + orcidGA.buildClientString($scope.clientGroupName, $scope.clientName)]);	
+	        			} else {
+	        				//Fire GA authorize-deny
+	        				orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Authorize_Deny', 'OAuth ' + $scope.clientGroupName + ' - ' + $scope.clientName ]);
+	        			}  
 	        			orcidGA.windowLocationHrefDelay(data.redirectUri.value);
 	        		}	        		
 	        	} else {
@@ -6463,9 +6464,7 @@ function OauthAuthorizationController($scope, $compile, $sce){
 	};
 	
 	$scope.registerAndDeny = function() {
-		$scope.registrationForm.approved = false;
-		//Fire GA deny
-		orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Authorize_Deny', 'OAuth ' + $scope.clientGroupName + ' - ' + $scope.clientName ]);
+		$scope.registrationForm.approved = false;		
 		$scope.register();
 	};
 	
@@ -6540,10 +6539,16 @@ function OauthAuthorizationController($scope, $compile, $sce){
 	        dataType: 'json',
 	        success: function(data) {
 	    		orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration', 'OAuth '+ orcidGA.buildClientString($scope.clientGroupName, $scope.clientName)]);
-	    		for(var i = 0; i < $scope.requestScopes.length; i++) {
-    				orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Authorize_' + $scope.requestScopes[i] + ', OAuth ' + $scope.clientGroupName + ' - ' + $scope.clientName]);
-    			}
-    			orcidGA.windowLocationHrefDelay(data.redirectUri.value);	    		
+	    		if($scope.registrationForm.approved) {
+	    			for(var i = 0; i < $scope.requestScopes.length; i++) {
+	    				orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Authorize_' + $scope.requestScopes[i] + ', OAuth ' + $scope.clientGroupName + ' - ' + $scope.clientName]);
+	    			}
+	    		} else {
+	    			//Fire GA register deny
+		    		orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Authorize_Deny', 'OAuth ' + $scope.clientGroupName + ' - ' + $scope.clientName ]);
+	    		}
+	    		
+	    		orcidGA.windowLocationHrefDelay(data.redirectUri.value);	    		
 	        }
 	    }).fail(function() { 
 	    	// something bad is happening!
