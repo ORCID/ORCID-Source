@@ -85,6 +85,45 @@ public class GroupAdministratorControllerTest extends BaseControllerTest {
     }
     
     @Test
+    public void testInvalidName() {
+        Client client = controller.getClient();
+        client.setRedirectUris(new ArrayList<RedirectUri>());
+        client.setDisplayName(Text.valueOf("This is a <a>invalid</a> name"));
+        client.setShortDescription(Text.valueOf("This is a valid description"));
+        client.setWebsite(Text.valueOf("http://www.orcid.org"));
+        client = controller.createClient(client);
+        assertNotNull(client);
+        assertEquals(1, client.getErrors().size());
+        assertEquals(controller.getMessage("manage.developer_tools.group.error.display_name.html"), client.getErrors().get(0));
+    }
+    
+    @Test
+    public void testInvalidDescription() {
+        Client client = controller.getClient();
+        client.setRedirectUris(new ArrayList<RedirectUri>());
+        client.setDisplayName(Text.valueOf("This is a valid name"));
+        client.setShortDescription(Text.valueOf("This is a <a>invalid</a> description"));
+        client.setWebsite(Text.valueOf("http://www.orcid.org"));
+        client = controller.createClient(client);
+        assertNotNull(client);
+        assertEquals(1, client.getErrors().size());
+        assertEquals(controller.getMessage("manage.developer_tools.group.error.short_description.html"), client.getErrors().get(0));
+    }
+    
+    @Test
+    public void testInvalidWebsite() {
+        Client client = controller.getClient();
+        client.setRedirectUris(new ArrayList<RedirectUri>());
+        client.setDisplayName(Text.valueOf("This is a valid name"));
+        client.setShortDescription(Text.valueOf("This is a valid description"));
+        client.setWebsite(Text.valueOf("http:://orcid.org"));
+        client = controller.createClient(client);
+        assertNotNull(client);
+        assertEquals(1, client.getErrors().size());
+        assertEquals(controller.getMessage("common.invalid_url"), client.getErrors().get(0));
+    }
+    
+    @Test
     @Transactional("transactionManager")
     @Rollback(true)
     public void invalidClientTest() {

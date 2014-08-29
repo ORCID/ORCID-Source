@@ -17,8 +17,8 @@
 
 -->
 
-<#if RequestParameters['oneStep']??>			
-	<#include "confirm_oauth_access_new.ftl"/>
+<#if RequestParameters['twoSteps']??>			
+	<#include "confirm_oauth_access_old.ftl"/>
 <#else>
-	<#include "confirm_oauth_access_old.ftl"/>		
+	<#include "confirm_oauth_access_new.ftl"/>		
 </#if>

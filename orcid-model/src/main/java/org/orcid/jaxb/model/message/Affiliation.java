@@ -62,7 +62,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "type", "departmentName", "roleTitle", "startDate", "endDate", "organization", "source" })
+@XmlType(propOrder = { "type", "departmentName", "roleTitle", "startDate", "endDate", "organization", "source", "createdDate", "lastModifiedDate" })
 @XmlRootElement(name = "affiliation")
 public class Affiliation implements Serializable, VisibilityType, Activity {
 
@@ -84,6 +84,12 @@ public class Affiliation implements Serializable, VisibilityType, Activity {
     protected Visibility visibility;
     @XmlAttribute(name = "put-code")
     protected String putCode;
+    @XmlElement(name = "last-modified-date")
+    protected LastModifiedDate lastModifiedDate;
+    @XmlElement(name = "created-date")
+    protected CreatedDate createdDate;
+    
+    
 
     /**
      * Gets the value of the type property.
@@ -286,6 +292,28 @@ public class Affiliation implements Serializable, VisibilityType, Activity {
         return sourceOrcid.getPath();
     }
     
+
+    @Override
+    public CreatedDate getCreatedDate() {
+        return createdDate;
+    }
+
+    @Override
+    public void setCreatedDate(CreatedDate value) {
+        createdDate = value;
+    }
+
+    @Override
+    public LastModifiedDate getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    @Override
+    public void setLastModifiedDate(LastModifiedDate value) {
+        lastModifiedDate = value;
+    }
+
+    
     /**
      * 
      * Note that put-code is not part of hashCode or equals! This is to allow
@@ -356,6 +384,13 @@ public class Affiliation implements Serializable, VisibilityType, Activity {
             return false;
         if (visibility != other.visibility)
             return false;
+
+        /*    
+        Breaks our deduping
+        if (lastModifiedDate != other.lastModifiedDate) return false;
+        if (createdDate != other.createdDate) return false;
+        */
+        
         return true;
     }
 

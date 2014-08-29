@@ -43,21 +43,9 @@
 		<div>
 			<p><@orcid.msg 'orcid.frontend.oauth.have_asked'/></p>
 		</div>
-		<ul class="oauth-scopes">
-			<#list scopes as scope>
-				<li>
-					<#if scope.value()?ends_with("/create")>
-						<span class="mini-icon glyphicon glyphicon-cloud-download green"></span><@orcid.msg '${scope.declaringClass.name}.${scope.name()}'/>
-					<#elseif scope.value()?ends_with("/update")>
-						<span class="mini-icon glyphicon glyphicon-refresh green"></span><@orcid.msg '${scope.declaringClass.name}.${scope.name()}'/>
-					<#elseif scope.value()?ends_with("/read-limited")>
-						<span class="mini-icon glyphicon glyphicon-eye-open green"></span><@orcid.msg '${scope.declaringClass.name}.${scope.name()}'/>
-					<#else>
-						<span class="mini-orcid-icon oauth-bullet"></span><@orcid.msg '${scope.declaringClass.name}.${scope.name()}'/>
-					</#if>											
-				</li>
-        		</#list>				
-		</ul>	
+		<div>
+			<#include "includes/oauth/scopes.ftl"/>
+		</div>
 		<div>
 			<p><@orcid.msg 'orcid.frontend.web.oauth_is_secure'/>.&nbsp;<a href="${aboutUri}/footer/privacy-policy" target="_blank"><@orcid.msg 'public-layout.privacy_policy'/></a>.</p>
 		</div>

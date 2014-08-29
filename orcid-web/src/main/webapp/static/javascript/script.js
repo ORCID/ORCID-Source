@@ -590,18 +590,33 @@ $(function () {
 var bibToWorkTypeMap = {};
 bibToWorkTypeMap['article'] = ['publication','journal-article'];
 bibToWorkTypeMap['book'] = ['publication','book'];
-bibToWorkTypeMap['booklet'] = ['publication','other'];
+bibToWorkTypeMap['booklet'] = ['other_output','other'];
 bibToWorkTypeMap['conference'] = ['conference','conference-paper'];
 bibToWorkTypeMap['inbook'] = ['publication','book-chapter'];
 bibToWorkTypeMap['incollection'] = ['publication','book-chapter'];
 bibToWorkTypeMap['inproceedings'] =['conference','conference_paper'];
 bibToWorkTypeMap['manual'] = ['publication','manual'];
 bibToWorkTypeMap['mastersthesis'] = ['publication','supervised-student-publication'];
-bibToWorkTypeMap['misc'] = ['publication','other'];
-bibToWorkTypeMap['phdthesis'] = ['publication','disseratation'];
+bibToWorkTypeMap['misc'] = ['other_output','other'];
+bibToWorkTypeMap['phdthesis'] = ['publication','dissertation'];
 bibToWorkTypeMap['proceedings'] = ['conference','conference-paper'];
 bibToWorkTypeMap['techreport'] = ['publication','report'];
-bibToWorkTypeMap['unpublished'] = ['publication','other'];
+bibToWorkTypeMap['unpublished'] = ['other_output','other'];
+
+function workExternalIdentifierId(work, id, value) {
+	var ident = {
+		workExternalIdentifierId : {
+			'value' : value
+		},
+		workExternalIdentifierType : {
+			'value' : id
+		}
+	};
+	if (work.workExternalIdentifiers[0].workExternalIdentifierId.value == null)
+		work.workExternalIdentifiers[0] = ident;
+	else
+		work.workExternalIdentifiers.push(ident);
+};
 
 function populateWorkAjaxForm(bibJson, work) {
 	 
@@ -631,22 +646,16 @@ function populateWorkAjaxForm(bibJson, work) {
 	    		 work.workTitle.title.value = tags[key];
 	    	 
 	    	 if (lower == 'doi') {
-	    		var ident = {  
-	    				 workExternalIdentifierId: {value: tags[key]}, 
-	    				 workExternalIdentifierType: {value: 'doi'} 
-	    		};
-	    		if (work.workExternalIdentifiers[0].workExternalIdentifierId.value == null) 
-	    			work.workExternalIdentifiers[0] = ident;
-	    		else
-	    		    work.workExternalIdentifiers.push(ident);
+	    		workExternalIdentifierId(work, 'doi', tags[key]);
 	    	 }
-	    		
+
+	    	 if (lower == 'isbn') {
+		    	workExternalIdentifierId(work, 'isbn', tags[key]);
+		     }
+
 	    	 if (lower == 'journal')
 	    		 work.journalTitle.value = tags[key];
-	    	 
-	    	 if (lower == 'publisher')
-	    		 work.journalTitle.value = tags[key];
-	    	 
+	    	  
 	    	 if (lower == 'title')
 	    		 work.workTitle.title.value = tags[key];
 	    	
@@ -654,7 +663,7 @@ function populateWorkAjaxForm(bibJson, work) {
 	    		 work.publicationDate.year = tags[key];
 	    	 
 	    	 if (lower == 'month')
-	    		 work.publicationDate.year = tags[key];
+	    		 work.publicationDate.month = Number(tags[key]).pad(2);
 	    	 
 	    	 if (lower == 'url')
 	    		 work.url.value = tags[key];
@@ -665,7 +674,7 @@ function populateWorkAjaxForm(bibJson, work) {
 
 /* END: Bibjson to work AjaxForm */
 
-/* START: workIdLinkJs v0.0.5 */
+/* START: workIdLinkJs v0.0.6 */
 /* https://github.com/ORCID/workIdLinkJs */
 
 /* browser and NodeJs compatible */
@@ -726,7 +735,8 @@ function populateWorkAjaxForm(bibJson, work) {
 
    typeMap['jfm'] = function (id) {
       if (id.toLowerCase().startsWith('www.zentralblatt-math.org')) return 'http://' + id;
-      return 'http://www.zentralblatt-math.org/zmath/en/search/?q=an:' + id + '&format=complete';
+      if (id.toLowerCase().startsWith('zbmath.org/?q=an:')) return 'http://' + id;
+      return 'http://zbmath.org/?q=an:' + id + '&format=complete';
    };
 
    typeMap['jstor'] = function (id) {
@@ -792,7 +802,8 @@ function populateWorkAjaxForm(bibJson, work) {
 
    typeMap['zbl'] = function (id) {
       if (id.toLowerCase().startsWith('zentralblatt-math.org')) return 'http://' + id;
-      return 'http://zentralblatt-math.org/zmath/en/search/?q=an:' + id + '&format=complete';
+      if (id.toLowerCase().startsWith('zbmath.org/?q=an:')) return 'http://' + id;
+      return 'http://zbmath.org/?q=an:' + id + '&format=complete';
    };
 
    exports.getLink = function(id, type) {
@@ -821,6 +832,7 @@ function populateWorkAjaxForm(bibJson, work) {
 
 
 
+
 $(function (){
 	$('*[wiJs-data]').each(function(index) {
 		var $this = $(this);
@@ -834,7 +846,7 @@ $(function (){
 	});
 });
 
-/* start bibtexParse 0.0.12 */
+/* start bibtexParse 0.0.13 */
 
 //Original work by Henrik Muehe (c) 2010
 //
@@ -1085,7 +1097,6 @@ $(function (){
 			this.currentEntry['entryType'] = 'PREAMBLE';
 			this.currentEntry['entry'] = this.value_comment();
 			this.entries.push(this.currentEntry);
-			
 		};
 
 		this.comment = function() {
@@ -1146,11 +1157,13 @@ $(function (){
      "\'u": "ú",
      "\'y": "ý",
      "\"A": "Ä", // begin diaeresis
+     "r A": "Å", 
      "\"E": "Ë",
      "\"I": "Ï",
      "\"O": "Ö",
      "\"U": "Ü",
      "\"a": "ä",
+     "r a": "å",
      "\"e": "ë",
      "\"i": "ï",
      "\"o": "ö",
@@ -1194,8 +1207,10 @@ $(function (){
      "`": "‘", // opening single quote
      "AA": "Å", // begin non-ASCII letters
      "AE": "Æ",
+     "c{C}": "Ç",
      "O": "Ø",
      "aa": "å",
+     "c{c}": "ç",
      "ae": "æ",
      "o": "ø",
      "ss": "ß",
@@ -1299,8 +1314,8 @@ $(function (){
 	exports.toJSON = function(bibtex) {
 		var b = new BibtexParser();
 		b.setInput(bibtex);
-		b.bibtex();		
-		return b.entries;		
+		b.bibtex();
+		return b.entries;
 	};
 
 	/* added during hackathon don't hate on me */
@@ -1324,7 +1339,6 @@ $(function (){
 			}
 			out += '}\n\n';
 		}
-		//console.log(out);
 		return out;
 		
 	};
@@ -1332,6 +1346,7 @@ $(function (){
 })(typeof exports === 'undefined' ? this['bibtexParse'] = {} : exports);
 
 /* end bibtexParse */
+
 
 
 

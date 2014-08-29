@@ -17,10 +17,10 @@
 
 -->
 <@base>
-<#if RequestParameters['oneStep']??>
-	<div class="container oauth-login top-green-border oneStepWidth">
+<#if RequestParameters['twoSteps']??>
+	<div class="container oauth-login top-green-border">	
 <#else>
-	<div class="container oauth-login top-green-border">
+	<div class="container oauth-login top-green-border oneStepWidth">
 </#if>
 	<div class="row">
 		<div class="col-push-3 col-md-9">
@@ -39,11 +39,11 @@
     </div>
     <div class="row">
 		<#include "sandbox_warning.ftl"/>		
-		<#if RequestParameters['oneStep']??>			
-			<#include "oauth_one_step.ftl"/>
-		<#else>
+		<#if RequestParameters['twoSteps']??>			
 			<#include "oauth_sign_in.ftl"/>
 			<#include "oauth_sign_up.ftl"/>
+		<#else>
+			<#include "oauth_one_step.ftl"/>			
 		</#if>
 	</div>
 </div>

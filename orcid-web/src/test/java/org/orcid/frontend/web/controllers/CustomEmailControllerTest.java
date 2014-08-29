@@ -60,5 +60,24 @@ public class CustomEmailControllerTest {
         customEmail = customEmailController.validateContent(customEmail);
         assertNotNull(customEmail);
         assertEquals(0, customEmail.getContent().getErrors().size());
+        
+        customEmail.setContent(Text.valueOf("This is a test ${verification_url} <a>"));
+        customEmail = customEmailController.validateContent(customEmail);
+        assertNotNull(customEmail);
+        assertEquals(1, customEmail.getContent().getErrors().size());
+        assertEquals(customEmailController.getMessage("custom_email.content.html"), customEmail.getContent().getErrors().get(0));                
+    }
+    
+    @Test 
+    public void testValidateSubject() {
+        CustomEmailForm  customEmail = customEmailController.getEmptyCustomEmailForm(null);
+        customEmail.setSubject(Text.valueOf("This is a subject <a>"));
+        customEmail = customEmailController.validateSubject(customEmail);
+        assertEquals(1, customEmail.getSubject().getErrors().size());
+        assertEquals(customEmailController.getMessage("custom_email.subject.html"), customEmail.getSubject().getErrors().get(0));
+        
+        customEmail.setSubject(Text.valueOf("This is a subject"));
+        customEmail = customEmailController.validateSubject(customEmail);
+        assertEquals(0, customEmail.getSubject().getErrors().size());
     }
 }

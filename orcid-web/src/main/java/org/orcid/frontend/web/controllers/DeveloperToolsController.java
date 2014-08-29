@@ -115,9 +115,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
     SSOCredentials generateSSOCredentialsJson(HttpServletRequest request, @RequestBody SSOCredentials ssoCredentials) {
         boolean hasErrors = validateSSOCredentials(ssoCredentials);
 
-        if (!hasErrors) {
-            // Strips html content from ssoCredentials object
-            this.stripHtml(ssoCredentials);
+        if (!hasErrors) {            
             OrcidProfile profile = getEffectiveProfile();
             String orcid = profile.getOrcidIdentifier().getPath();
             Set<String> redirectUriStrings = new HashSet<String>();
@@ -160,9 +158,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
     SSOCredentials updateUserCredentials(HttpServletRequest request, @RequestBody SSOCredentials ssoCredentials) {
         boolean hasErrors = validateSSOCredentials(ssoCredentials);
 
-        if (!hasErrors) {
-            // Strips html content from ssoCredentials object
-            this.stripHtml(ssoCredentials);
+        if (!hasErrors) {            
             OrcidProfile profile = getEffectiveProfile();
             String orcid = profile.getOrcidIdentifier().getPath();
             Set<String> redirectUriStrings = new HashSet<String>();
@@ -221,23 +217,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
     SSOCredentials revokeSSOCredentials(HttpServletRequest request) {
         throw new NotImplementedException();
     }
-
-    /**
-     * Strip html from client name and client description to prevent cross site
-     * scripting attacks
-     * 
-     * @param ssoCredentials
-     * @return the ssoCredentials object with stripped client name and client
-     *         description
-     * */
-    private void stripHtml(SSOCredentials ssoCredentials) {
-        String strippedClientName = PojoUtil.isEmpty(ssoCredentials.getClientName()) ? "" : OrcidStringUtils.stripHtml(ssoCredentials.getClientName().getValue());
-        String strippedDescription = PojoUtil.isEmpty(ssoCredentials.getClientDescription()) ? "" : OrcidStringUtils.stripHtml(ssoCredentials.getClientDescription()
-                .getValue());
-        ssoCredentials.setClientName(Text.valueOf(strippedClientName));
-        ssoCredentials.setClientDescription(Text.valueOf(strippedDescription));
-    }
-
+    
     /**
      * Validates the ssoCredentials object
      * 
@@ -256,6 +236,9 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         } else if (ssoCredentials.getClientName().getValue().length() > CLIENT_NAME_LENGTH) {
             ssoCredentials.getClientName().setErrors(Arrays.asList(getMessage("manage.developer_tools.name_too_long")));
             hasErrors = true;
+        } else if(OrcidStringUtils.hasHtml(ssoCredentials.getClientName().getValue())){
+            ssoCredentials.getClientName().setErrors(Arrays.asList(getMessage("manage.developer_tools.name.html")));
+            hasErrors = true;
         } else {
             ssoCredentials.getClientName().setErrors(new ArrayList<String>());
         }
@@ -265,6 +248,9 @@ public class DeveloperToolsController extends BaseWorkspaceController {
                 ssoCredentials.setClientDescription(new Text());
             }
             ssoCredentials.getClientDescription().setErrors(Arrays.asList(getMessage("manage.developer_tools.description_not_empty")));
+            hasErrors = true;
+        } else if(OrcidStringUtils.hasHtml(ssoCredentials.getClientDescription().getValue())) {
+            ssoCredentials.getClientDescription().setErrors(Arrays.asList(getMessage("manage.developer_tools.description.html")));
             hasErrors = true;
         } else {
             ssoCredentials.getClientDescription().setErrors(new ArrayList<String>());
@@ -376,5 +362,4 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         }
         return updated;
     }
-
 }

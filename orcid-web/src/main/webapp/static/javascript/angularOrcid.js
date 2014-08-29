@@ -966,6 +966,107 @@ orcidNgModule.factory("prefsSrvc", function ($rootScope) {
 	return serv; 
 });
 
+orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) {
+	var serv = {
+		firstResult: 0,
+		maxResults: 10,
+		areMoreFlag: false,
+		notifications: [],
+		unreadCount: 0,
+		getNotifications: function() {
+			$.ajax({
+		        url: getBaseUri() + '/notifications/notifications.json?firstResult=' + serv.firstResult + '&maxResults=' + serv.maxResults,
+		        dataType: 'json',
+		        success: function(data) {
+		        	if(data.length === 0 || data.length < serv.maxResults){
+		        		serv.areMoreFlag = false;
+		        	}
+		        	else{
+		        		serv.areMoreFlag = true;
+		        	}
+		        	for(var i = 0; i < data.length; i++){
+		        		serv.notifications.push(data[i]);
+		        	}
+		        	$rootScope.$apply();
+		        }
+		    }).fail(function() { 
+		    	// something bad is happening!
+		    	console.log("error with getting notifications");
+		    });
+		},
+		retrieveUnreadCount: function() {
+			$.ajax({
+		        url: getBaseUri() + '/notifications/unreadCount.json',
+		        dataType: 'json',
+		        success: function(data) {
+		        	serv.unreadCount = data;
+		        	$rootScope.$apply();
+		        }
+		    }).fail(function() { 
+		    	// something bad is happening!
+		    	console.log("error with getting count of unread notifications");
+		    });
+		},
+		getUnreadCount: function() {
+			return serv.unreadCount;
+		},
+		showMore: function() {
+			serv.firstResult += serv.maxResults;
+			serv.getNotifications();
+		},
+		areMore: function() {
+			return serv.areMoreFlag;
+		},
+		flagAsRead: function(notificationId) {
+			$.ajax({
+		        url: getBaseUri() + '/notifications/' + notificationId + '/read.json',
+		        type: 'POST',
+		        dataType: 'json',
+		        success: function(data) {
+		        	var updated = data;
+		        	for(var i = 0;  i < serv.notifications.length; i++){
+		        		var existing = serv.notifications[i];
+		        		if(existing.putCode.path === updated.putCode.path){
+		        			existing.readDate = updated.readDate;
+		        		}
+		        	}
+		        	serv.retrieveUnreadCount();
+		        	$rootScope.$apply();
+		        }
+		    }).fail(function() { 
+		    	// something bad is happening!
+		    	console.log("error flagging notification as read");
+		    });
+		},
+		archive: function(notificationId) {
+			$.ajax({
+		        url: getBaseUri() + '/notifications/' + notificationId + '/archive.json',
+		        type: 'POST',
+		        dataType: 'json',
+		        success: function(data) {
+		        	var updated = data;
+		        	for(var i = 0;  i < serv.notifications.length; i++){
+		        		var existing = serv.notifications[i];
+		        		if(existing.putCode.path === updated.putCode.path){
+		        			serv.notifications.splice(i, 1);
+		        			if(serv.firstResult > 0){
+		        				serv.firstResult--;
+		        			}
+		        			break;
+		        		}
+		        	}
+		        	serv.retrieveUnreadCount();
+		        	$rootScope.$apply();
+		        }
+		    }).fail(function() { 
+		    	// something bad is happening!
+		    	console.log("error flagging notification as archived");
+		    });
+		}
+	};
+	serv.getNotifications();
+	return serv;
+}]);
 
 orcidNgModule.filter('urlWithHttp', function(){
 	return function(input){
@@ -3381,7 +3482,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
 	$scope.worksFromBibtex = null;	
 	$scope.workspaceSrvc = workspaceSrvc;
 	$scope.worksSrvc = worksSrvc;
-	$scope.showBibtex = false;
+	$scope.showBibtex = {};
 	$scope.editTranslatedTitle = false;
 	$scope.types = null;
 	$scope.privacyHelp = {};
@@ -3389,11 +3490,17 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
 	$scope.moreInfo = {};
 	$scope.editSources = {};
 	$scope.bibtexParsingError = false;
-	$scope.edittingWork = false;
 	$scope.bibtexCancelLink = false;
 	$scope.bibtextWork = false;
 	$scope.bibtextWorkIndex = null;	
 
+
+	$scope.sortOtherLast = function(type) {
+		if (type.key == 'other') return 'ZZZZZ';
+		return type.value;
+	};
+
+	
 	$scope.sort = function(key) {
 		if ($scope.sortPredicateKey == key) 
 			$scope.sortReverse = ! $scope.sortReverse;
@@ -3406,6 +3513,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
         	$scope.worksFromBibtex = new Array();
         	
         	$.each($scope.textFiles, function (index, bibtex) {
+        		
 				var parsed = bibtexParse.toJSON(bibtex);
 				var bibtexEntry = null;
 							
@@ -3425,26 +3533,28 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
 					})(parsed[j]);
 			    };
         	});
-        	$scope.textFiles = null;
+       	    $scope.textFiles = null;      
+       	    $scope.bibtexParsingError = false;
 		} catch (err) {
 			$scope.bibtexParsingError = true;
 		};
     };
     
-    $scope.rmWorkFromBibtex = function(work) {
+    $scope.rmWorkFromBibtex = function(work) {    	
     	var index = $scope.worksFromBibtex.indexOf(work);    	
-    	$scope.worksFromBibtex.splice(index, 1);
+    	$scope.worksFromBibtex.splice(index, 1);    	
+    	if($scope.worksFromBibtex.length == 0) $scope.bibtexCancelLink = false;
     };    
     
     $scope.addWorkFromBibtex = function(work) {    	
     	$scope.bibtextWorkIndex = $scope.worksFromBibtex.indexOf(work);
     	$scope.bibtextWork = true;    	
-    	$scope.addWorkModalFromBibTex($scope.worksFromBibtex[$scope.bibtextWorkIndex]);
+    	$scope.addWorkModal($scope.worksFromBibtex[$scope.bibtextWorkIndex]);
     };
    
     $scope.openBibTextWizard = function () {
     	$scope.bibtexParsingError = false;
-    	$scope.showBibtexImportWizard = true;    	
+    	$scope.showBibtexImportWizard = !($scope.showBibtexImportWizard);    	
     };
     
     $scope.bibtextCancel = function(){
@@ -3476,9 +3586,8 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
 		$scope.editWork.contributors.splice(index,1);
 	};
 
-	$scope.showAddModal = function(){
+	$scope.showAddWorkModal = function(){
 		$scope.editTranslatedTitle = false;
-		$scope.types = null;
 	    $.colorbox({	    	
 	    	scrolling: true,
 	        html: $compile($('#add-work-modal').html())($scope),	        
@@ -3497,8 +3606,8 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
     	$.colorbox.resize();
 	};		
     
-    $scope.bibtexShowToggle = function () {
-    	$scope.showBibtex = !($scope.showBibtex);
+    $scope.bibtexShowToggle = function (putCode) {
+    	$scope.showBibtex[putCode] = !($scope.showBibtex[putCode]);    	
     };
     
 	$scope.showWorkImportWizard =  function() {
@@ -3507,30 +3616,22 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
             onComplete: function() {$.colorbox.resize();}
         });
 	};
-	
-	$scope.addWorkModalFromBibTex = function(data){
-		$scope.loadWorkTypes();		 
-		$scope.edittingWork = false;
-		$scope.editWork = data;
-		$scope.showAddModal();		
-	};
-	
-	$scope.addWorkModal = function(data){		
 		
-		$scope.loadWorkTypes();
+	$scope.addWorkModal = function(data){		
 		if (data == undefined) { 
-			$scope.edittingWork = false;
 			worksSrvc.getBlankWork(function(data) {
 				$scope.editWork = data;
-				$scope.$apply(function() {					
-					$scope.showAddModal();
+				$scope.$apply(function() {
+					$scope.loadWorkTypes();
+					$scope.showAddWorkModal();
 				});			
 			});
 		} else {
-			$scope.edittingWork = true;
 			$scope.editWork = data;
-			$scope.showAddModal();
+            $scope.loadWorkTypes();
+			$scope.showAddWorkModal();
 		}
+		
 	};
 	
     $scope.openEditWork = function(putCode){
@@ -3553,7 +3654,8 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
 	        		$scope.closeAllMoreInfo();
 	        		$.colorbox.close(); 
 	        		$scope.addingWork = false;
-	        		$scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);	        		
+	        		$scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
+	        		
 	        		if($scope.bibtextWork == true){
 	        			$scope.worksFromBibtex.splice($scope.bibtextWorkIndex, 1);
 	        			$scope.bibtextWork = false;	        			
@@ -3607,22 +3709,26 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
 		return info;
 	};
 			
-	$scope.loadWorkTypes = function(){			
+	$scope.loadWorkTypes = function(){	
 		var workCategory = "";
+		$scope.types = null;
 		if($scope.editWork != null && $scope.editWork.workCategory != null && $scope.editWork.workCategory.value != null && $scope.editWork.workCategory.value != "")
 			workCategory = $scope.editWork.workCategory.value;
-					
+		else 
+			return; //do nothing if we have not types
 		$.ajax({
-	        url: getBaseUri() + '/works/loadWorkTypes.json?workCategory=' + workCategory,
-	        type: 'POST',	        
+	        url: getBaseUri() + '/works/loadWorkTypes.json?workCategory=' + workCategory,	        
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        success: function(data) {
-	        	
 	        	$scope.$apply(function() {
 		        	$scope.types = data;
 		        	if($scope.editWork != null && $scope.editWork.workCategory != null) {
-		        		if(!$scope.edittingWork) {
+		        		// if the edit works doesn't have a value that matches types
+		        		var hasType = false;
+		        		for (var idx in $scope.types)
+		        			if ($scope.types[idx].key == $scope.editWork.workType.value) hasType = true;
+		        		if(!hasType) {
 		        			switch ($scope.editWork.workCategory.value){
 			                case "conference":
 			                	$scope.editWork.workType.value="conference-paper";		                	
@@ -4212,6 +4318,27 @@ function DelegatorsCtrl($scope, $compile){
 	
 };
 
+// Controller for notifications
+function NotificationsCtrl($scope, $compile, notificationsSrvc){
+	$scope.displayBody = {};
+	
+	$scope.toggleDisplayBody = function (notificationId) {
+		$scope.displayBody[notificationId] = !$scope.displayBody[notificationId];
+		notificationsSrvc.flagAsRead(notificationId);
+	};
+	
+	$scope.notifications = notificationsSrvc.notifications;
+	$scope.showMore = notificationsSrvc.showMore;
+	$scope.areMore = notificationsSrvc.areMore;
+	$scope.archive = notificationsSrvc.archive;
+};
+
+// Controller to show alert for unread notifications
+function NotificationsAlertCtrl($scope, $compile, notificationsSrvc){
+	$scope.getUnreadCount = notificationsSrvc.getUnreadCount;
+	notificationsSrvc.retrieveUnreadCount();
+};
+
 function SwitchUserCtrl($scope, $compile, $document){
 	$scope.isDroppedDown = false;
 	$scope.searchResultsCache = new Object();
@@ -4228,7 +4355,7 @@ function SwitchUserCtrl($scope, $compile, $document){
 	        success: function(data) {
 	        	$scope.delegators = data.delegators;
 				$scope.searchResultsCache[''] = $scope.delegators;
-	        	$scope.me = data.me;
+	        	$scope.me = data.me;	        	
 	        	$scope.unfilteredLength = $scope.delegators != null ? $scope.delegators.delegationDetails.length : 0;
 	        	$scope.$apply();
 	        }
@@ -5232,7 +5359,7 @@ function removeSecQuestionCtrl($scope,$compile) {
 	};	
 };
 
-function SSOPreferencesCtrl($scope, $compile, emailSrvc) {
+function SSOPreferencesCtrl($scope, $compile, $sce, emailSrvc) {
 	$scope.showReg = false;
 	$scope.userCredentials = null;	
 	$scope.editing = false;
@@ -5253,6 +5380,8 @@ function SSOPreferencesCtrl($scope, $compile, emailSrvc) {
 	$scope.selectedRedirectUri = '';
 	$scope.creating = false;
 	$scope.emailSrvc = emailSrvc;
+	$scope.nameToDisplay = '';
+	$scope.descriptionToDisplay = '';
 	
 	$scope.verifyEmail = function() {
 		var funct = function() {
@@ -5322,11 +5451,11 @@ function SSOPreferencesCtrl($scope, $compile, emailSrvc) {
 	        url: getBaseUri()+'/developer-tools/get-sso-credentials.json',	        
 	        contentType: 'application/json;charset=UTF-8',
 	        type: 'POST',	                	      
-	        success: function(data){	   
+	        success: function(data){	        	
 	        	$scope.$apply(function(){ 
 	        		if(data != null && data.clientSecret != null) {
 	        			$scope.playgroundExample = '';
-	        			$scope.userCredentials = data;	
+	        			$scope.userCredentials = data;
 	        			$scope.hideGoogleUri = false;	
 	        			$scope.selectedRedirectUri = $scope.userCredentials.redirectUris[0];
 	        			for(var i = 0; i < $scope.userCredentials.redirectUris.length; i++) {
@@ -5339,6 +5468,7 @@ function SSOPreferencesCtrl($scope, $compile, emailSrvc) {
 	        				}
 	        			}
 	        			$scope.updateSelectedRedirectUri();
+	        			$scope.setHtmlTrustedNameAndDescription();
 	        		} else {
 	        			$scope.showReg = true;
 	        		}        					        	
@@ -5404,6 +5534,7 @@ function SSOPreferencesCtrl($scope, $compile, emailSrvc) {
 	        				}
 	        			}
 	        			$scope.updateSelectedRedirectUri();
+	        			$scope.setHtmlTrustedNameAndDescription(); 
 	        			$scope.creating = false;	        			
 	        			$scope.showReg = false;
 	        		}
@@ -5495,6 +5626,7 @@ function SSOPreferencesCtrl($scope, $compile, emailSrvc) {
 	        			}
 	        			
 	        			$scope.updateSelectedRedirectUri();
+	        			$scope.setHtmlTrustedNameAndDescription();
 	        		}
 				});
 	        }
@@ -5609,6 +5741,12 @@ function SSOPreferencesCtrl($scope, $compile, emailSrvc) {
 	
 	//init
 	$scope.getSSOCredentials();	
+	
+	$scope.setHtmlTrustedNameAndDescription = function() {
+		//Trust client name and description as html since it has been already filtered
+		$scope.nameToDisplay = $sce.trustAsHtml($scope.userCredentials.clientName.value);
+		$scope.descriptionToDisplay = $sce.trustAsHtml($scope.userCredentials.clientDescription.value);
+	};
 };
 
 function ClientEditCtrl($scope, $compile){	
@@ -6232,7 +6370,7 @@ function switchUserCtrl($scope,$compile){
 
 function SocialNetworksCtrl($scope){
 	$scope.twitter=false;
-
+	
 	$scope.checkTwitterStatus = function(){
 		$.ajax({
 			url: getBaseUri() + '/manage/twitter/check-twitter-status',
@@ -6410,13 +6548,13 @@ function OauthAuthorizationController($scope, $compile, $sce){
 	
 	$scope.loginAndAuthorize = function() {
 		$scope.authorizationForm.approved = true;
+		//Fire GA sign-in-submit
+		orcidGA.gaPush(['_trackEvent', 'Sign-In', 'Sign-In-Submit' , 'OAuth ' + orcidGA.buildClientString($scope.clientGroupName, $scope.clientName)]);
 		$scope.submitLogin();
 	};
 	
 	$scope.loginAndDeny = function() {
-		$scope.authorizationForm.approved = false;
-		//Fire GA deny
-		orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Authorize_Deny', 'OAuth ' + $scope.clientGroupName + ' - ' + $scope.clientName ]);
+		$scope.authorizationForm.approved = false;		
 		$scope.submitLogin();
 	};
 	
@@ -6430,19 +6568,20 @@ function OauthAuthorizationController($scope, $compile, $sce){
 	        dataType: 'json',
 	        success: function(data) {
 	        	if(data) {
-	        		if(data.errors.length != 0) {
+	        		if(data.errors.length != 0) {	        				        			      	
+	        			$scope.authorizationForm = data;
+	        			$scope.$apply();
+	        		} else {
 	        			//Fire google GA event
-	        			orcidGA.gaPush(['_trackEvent', 'Sign-In', 'Sign-In-Submit' , 'OAuth ' + orcidGA.buildClientString($scope.clientGroupName, $scope.clientName)]);
+	        			orcidGA.gaPush(['_trackEvent', 'Sign-In', 'RegGrowth' , 'OAuth ' + orcidGA.buildClientString($scope.clientGroupName, $scope.clientName)]);
 	        			if(is_authorize) {
 	        				for(var i = 0; i < $scope.requestScopes.length; i++) {
 	        					orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Authorize_' + $scope.requestScopes[i] + ', OAuth ' + $scope.clientGroupName + ' - ' + $scope.clientName]);
 	        				}
-	        			}	        			
-	        			$scope.authorizationForm = data;	        			
-	        			$scope.$apply();
-	        		} else {
-	        			//Fire google GA event
-	        			orcidGA.gaPush(['_trackEvent', 'Sign-In', 'RegGrowth' , 'OAuth ' + orcidGA.buildClientString($scope.clientGroupName, $scope.clientName)]);	
+	        			} else {
+	        				//Fire GA authorize-deny
+	        				orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Authorize_Deny', 'OAuth ' + $scope.clientGroupName + ' - ' + $scope.clientName ]);
+	        			}  
 	        			orcidGA.windowLocationHrefDelay(data.redirectUri.value);
 	        		}	        		
 	        	} else {
@@ -6486,9 +6625,7 @@ function OauthAuthorizationController($scope, $compile, $sce){
 	};
 	
 	$scope.registerAndDeny = function() {
-		$scope.registrationForm.approved = false;
-		//Fire GA deny
-		orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Authorize_Deny', 'OAuth ' + $scope.clientGroupName + ' - ' + $scope.clientName ]);
+		$scope.registrationForm.approved = false;		
 		$scope.register();
 	};
 	
@@ -6563,10 +6700,16 @@ function OauthAuthorizationController($scope, $compile, $sce){
 	        dataType: 'json',
 	        success: function(data) {
 	    		orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration', 'OAuth '+ orcidGA.buildClientString($scope.clientGroupName, $scope.clientName)]);
-	    		for(var i = 0; i < $scope.requestScopes.length; i++) {
-    				orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Authorize_' + $scope.requestScopes[i] + ', OAuth ' + $scope.clientGroupName + ' - ' + $scope.clientName]);
-    			}
-    			orcidGA.windowLocationHrefDelay(data.redirectUri.value);	    		
+	    		if($scope.registrationForm.approved) {
+	    			for(var i = 0; i < $scope.requestScopes.length; i++) {
+	    				orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Authorize_' + $scope.requestScopes[i] + ', OAuth ' + $scope.clientGroupName + ' - ' + $scope.clientName]);
+	    			}
+	    		} else {
+	    			//Fire GA register deny
+		    		orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Authorize_Deny', 'OAuth ' + $scope.clientGroupName + ' - ' + $scope.clientName ]);
+	    		}
+	    		
+	    		orcidGA.windowLocationHrefDelay(data.redirectUri.value);	    		
 	        }
 	    }).fail(function() { 
 	    	// something bad is happening!

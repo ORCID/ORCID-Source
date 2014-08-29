@@ -1,0 +1,180 @@
+/**
+ * =============================================================================
+ *
+ * ORCID (R) Open Source
+ * http://orcid.org
+ *
+ * Copyright (c) 2012-2013 ORCID, Inc.
+ * Licensed under an MIT-Style License (MIT)
+ * http://orcid.org/open-source-license
+ *
+ * This copyright and license information (including a link to the full license)
+ * shall be included in its entirety in all copies or substantial portion of
+ * the software.
+ *
+ * =============================================================================
+ */
+package org.orcid.persistence.jpa.entities;
+
+import java.util.Date;
+
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedNativeQueries;
+import javax.persistence.NamedNativeQuery;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.SqlResultSetMappings;
+import javax.persistence.SqlResultSetMapping;
+import javax.persistence.ColumnResult;
+import javax.persistence.Table;
+
+import org.orcid.jaxb.model.notification.NotificationType;
+
+/**
+ * @author Will Simpson
+ */
+@Entity
+@Table(name = "notification")
+@SqlResultSetMappings({ @SqlResultSetMapping(name = "distinctOrcidMapping", columns = { @ColumnResult(name = "orcid") }) })
+// @formatter:off
+@NamedNativeQueries({ @NamedNativeQuery(name = NotificationEntity.FIND_ORCIDS_WITH_NOTIFICATIONS_TO_SEND, query = "SELECT DISTINCT n.orcid orcid FROM notification n"
+        + " JOIN profile p ON p.orcid = n.orcid"
+        + " LEFT JOIN (SELECT orcid, MAX(sent_date) AS max_sent_date FROM notification GROUP BY orcid) l ON l.orcid = n.orcid"
+        + " WHERE n.sent_date IS NULL"
+        + " AND"
+        + " (unix_timestamp(:effectiveNow) > (unix_timestamp(l.max_sent_date) + (p.send_email_frequency_days * 24 * 60 * 60))"
+        + " OR (l.max_sent_date IS NULL AND unix_timestamp(:effectiveNow) > (unix_timestamp(p.completed_date) + (p.send_email_frequency_days * 24 * 60 * 60))))", resultSetMapping = "distinctOrcidMapping") })
+// @formatter:on
+public class NotificationEntity extends BaseEntity<Long> implements ProfileAware {
+
+    public static final String FIND_ORCIDS_WITH_NOTIFICATIONS_TO_SEND = "findOrcidsWithNotificationsToSend";
+
+    private static final long serialVersionUID = 1L;
+
+    private Long id;
+    private ProfileEntity profile;
+    private NotificationType notificationType;
+    private String subject;
+    private String bodyText;
+    private String bodyHtml;
+    private Date sentDate;
+    private Date readDate;
+    private Date archivedDate;
+    private boolean sendable;
+    private ProfileEntity source;
+
+    @Override
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "notification_seq")
+    @SequenceGenerator(name = "notification_seq", sequenceName = "notification_seq")
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "orcid", nullable = false)
+    @Override
+    public ProfileEntity getProfile() {
+        return profile;
+    }
+
+    public void setProfile(ProfileEntity profile) {
+        this.profile = profile;
+    }
+
+    @Basic
+    @Enumerated(EnumType.STRING)
+    @Column(name = "notification_type")
+    public NotificationType getNotificationType() {
+        return notificationType;
+    }
+
+    public void setNotificationType(NotificationType notificationType) {
+        this.notificationType = notificationType;
+    }
+
+    public String getSubject() {
+        return subject;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    @Column(name = "body_text")
+    public String getBodyText() {
+        return bodyText;
+    }
+
+    public void setBodyText(String bodyText) {
+        this.bodyText = bodyText;
+    }
+
+    @Column(name = "body_html")
+    public String getBodyHtml() {
+        return bodyHtml;
+    }
+
+    public void setBodyHtml(String bodyHtml) {
+        this.bodyHtml = bodyHtml;
+    }
+
+    @Column(name = "sent_date")
+    public Date getSentDate() {
+        return sentDate;
+    }
+
+    public void setSentDate(Date sentDate) {
+        this.sentDate = sentDate;
+    }
+
+    @Column(name = "read_date")
+    public Date getReadDate() {
+        return readDate;
+    }
+
+    public void setReadDate(Date readDate) {
+        this.readDate = readDate;
+    }
+
+    @Column(name = "archived_date")
+    public Date getArchivedDate() {
+        return archivedDate;
+    }
+
+    public void setArchivedDate(Date archivedDate) {
+        this.archivedDate = archivedDate;
+    }
+
+    public boolean isSendable() {
+        return sendable;
+    }
+
+    public void setSendable(boolean sendable) {
+        this.sendable = sendable;
+    }
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "source_id")
+    public ProfileEntity getSource() {
+        return source;
+    }
+
+    public void setSource(ProfileEntity source) {
+        this.source = source;
+    }
+
+}

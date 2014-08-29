@@ -16,10 +16,8 @@
  */
 package org.orcid.core.adapter.impl;
 
-import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -367,6 +365,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         organization.setName(orgAffiliationRelationEntity.getOrg().getName());
         affiliation.setOrganization(organization);
 
+        affiliation.setCreatedDate(new CreatedDate(toXMLGregorianCalendar(orgAffiliationRelationEntity.getDateCreated())));
+        affiliation.setLastModifiedDate(new LastModifiedDate(toXMLGregorianCalendar(orgAffiliationRelationEntity.getLastModified())));
+
         return affiliation;
     }
 
@@ -424,6 +425,10 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
         // Set source
         funding.setSource(getSource(profileFundingEntity));
+
+        funding.setCreatedDate(new CreatedDate(toXMLGregorianCalendar(profileFundingEntity.getDateCreated())));
+        funding.setLastModifiedDate(new LastModifiedDate(toXMLGregorianCalendar(profileFundingEntity.getLastModified())));
+
         return funding;
     }
 
@@ -834,6 +839,10 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         }
         orcidWork.setWorkType(work.getWorkType());
         orcidWork.setVisibility(profileWorkEntity.getVisibility());
+
+        orcidWork.setCreatedDate(new CreatedDate(toXMLGregorianCalendar(profileWorkEntity.getDateCreated())));
+        orcidWork.setLastModifiedDate(new LastModifiedDate(toXMLGregorianCalendar(profileWorkEntity.getLastModified())));
+
         return orcidWork;
     }
 
@@ -883,9 +892,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         WorkSource workSource = new WorkSource(getOrcidIdBase(sourceProfile.getId()));
 
         String sourceName = createName(sourceProfile);
- 
+
         workSource.setSourceName(sourceName);
-        
+
         return workSource;
     }
 
@@ -1078,6 +1087,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
         // Set developer tools preference
         preferences.setDeveloperToolsEnabled(new DeveloperToolsEnabled(profileEntity.getEnableDeveloperTools()));
+
+        preferences.setNotificationsEnabled(profileEntity.getEnableNotifications());
 
         if (profileEntity.getReferredBy() != null) {
             orcidInternal.setReferredBy(new ReferredBy(getOrcidIdBase(profileEntity.getReferredBy())));

@@ -24,7 +24,6 @@ package org.orcid.frontend.web.controllers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -101,7 +100,7 @@ public class DeveloperToolsControllerTest extends BaseControllerTest {
     @Transactional("transactionManager")
     public void testCrossSiteScriptingOnClientName() throws Exception {
         SSOCredentials ssoCredentials = new SSOCredentials();
-        ssoCredentials.setClientName(Text.valueOf("This is a test to show that html is stripped<script>alert('name')</script>"));
+        ssoCredentials.setClientName(Text.valueOf("This is a test to show that html <script>alert('name')</script> throws an error"));
         ssoCredentials.setClientDescription(Text.valueOf("This is a short description"));
         ssoCredentials.setClientWebsite(Text.valueOf("http://client.com"));
         Set<RedirectUri> redirectUris = new HashSet<RedirectUri>();
@@ -111,7 +110,9 @@ public class DeveloperToolsControllerTest extends BaseControllerTest {
         redirectUris.add(rUri);
         ssoCredentials.setRedirectUris(redirectUris);
         SSOCredentials result = developerToolsController.generateSSOCredentialsJson(null, ssoCredentials);
-        assertEquals(result.getClientName().getValue(), "This is a test to show that html is stripped");
+        assertNotNull(result);
+        assertEquals(1, result.getErrors().size());
+        assertEquals(developerToolsController.getMessage("manage.developer_tools.name.html"), result.getErrors().get(0));        
     }
 
     
@@ -120,7 +121,7 @@ public class DeveloperToolsControllerTest extends BaseControllerTest {
     public void testCrossSiteScriptingOnClientDescription() throws Exception {
         SSOCredentials ssoCredentials = new SSOCredentials();
         ssoCredentials.setClientName(Text.valueOf("Client Name"));
-        ssoCredentials.setClientDescription(Text.valueOf("This is a test to show that html is stripped<script>alert('name')</script>"));
+        ssoCredentials.setClientDescription(Text.valueOf("This is a test to show that html is <script>alert('name')</script> throws an error"));
         ssoCredentials.setClientWebsite(Text.valueOf("http://client.com"));
         Set<RedirectUri> redirectUris = new HashSet<RedirectUri>();
         RedirectUri rUri = new RedirectUri();
@@ -129,7 +130,9 @@ public class DeveloperToolsControllerTest extends BaseControllerTest {
         redirectUris.add(rUri);
         ssoCredentials.setRedirectUris(redirectUris);
         SSOCredentials result = developerToolsController.generateSSOCredentialsJson(null, ssoCredentials);
-        assertEquals(result.getClientDescription().getValue(), "This is a test to show that html is stripped");
+        assertNotNull(result);
+        assertEquals(1, result.getErrors().size());
+        assertEquals(developerToolsController.getMessage("manage.developer_tools.description.html"), result.getErrors().get(0));
     }
     
     @Test
@@ -196,7 +199,7 @@ public class DeveloperToolsControllerTest extends BaseControllerTest {
     public void testGenerateSSOCredentials() throws Exception {
         SSOCredentials ssoCredentials = new SSOCredentials();
         ssoCredentials.setClientName(Text.valueOf("Client Name"));
-        ssoCredentials.setClientDescription(Text.valueOf("This is a test to show that html is stripped<script>alert('name')</script>"));
+        ssoCredentials.setClientDescription(Text.valueOf("This is a test"));
         ssoCredentials.setClientWebsite(Text.valueOf("http://client.com"));
         Set<RedirectUri> redirectUris = new HashSet<RedirectUri>();
         RedirectUri rUri = new RedirectUri();
@@ -218,7 +221,7 @@ public class DeveloperToolsControllerTest extends BaseControllerTest {
     public void testUpdateSSOCredentials() throws Exception {
         SSOCredentials ssoCredentials = new SSOCredentials();
         ssoCredentials.setClientName(Text.valueOf("Client Name"));
-        ssoCredentials.setClientDescription(Text.valueOf("This is a test to show that html is stripped<script>alert('name')</script>"));
+        ssoCredentials.setClientDescription(Text.valueOf("This is a test"));
         ssoCredentials.setClientWebsite(Text.valueOf("http://client.com"));
         Set<RedirectUri> redirectUris = new HashSet<RedirectUri>();
         RedirectUri rUri = new RedirectUri();

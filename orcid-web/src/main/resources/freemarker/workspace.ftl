@@ -308,19 +308,38 @@
 							<li>
 								<a href="" class="label btn-primary" ng-click="addWorkModal()"><@orcid.msg 'manual_work_form_contents.add_work_manually'/></a>
 							</li>	
-							<!-- Bibtex Importer Wizard -->
 							<#if RequestParameters['bibWizard']??>
+								<li>
+									<a href="" class="label btn-primary" ng-click="openBibTextWizard()">Link BibTeX</a>
+								</li>
+							</#if>
+							
+							 
+							
+							<#if RequestParameters['bibWizard']??>
+							<!--
 							    <li ng-show="canReadFiles" ng-cloak>							        
 							        <div class="label btn-primary upload">
 							           <span class="import-label">Link BibTeX</span>
 								       <input type="file" class="upload-button" ng-model="textFiles" ng-click="openBibTextWizard()" accept="*" update-fn="loadBibtexJs()"  app-file-text-reader multiple />
 							       </div>
 							    </li>
+							    -->
 							</#if>
+							 
 						</ul>					
 					</div>
 					<!-- Bibtex Importer Results -->
 					<div ng-show="showBibtexImportWizard" ng-cloak class="bibtex-box">
+						<div class="grey-box bottomBuffer box-border" ng-show="canReadFiles" ng-cloak>
+						   <p>
+						   <strong>You can import works from bibtex files, including Google Scholar's export.</strong>
+						   </p>													        
+					       <div class="label btn-primary upload">
+					           <span class="import-label">File Upload</span>
+						       <input type="file" class="upload-button" ng-model="textFiles" accept="*" update-fn="loadBibtexJs()"  app-file-text-reader multiple />
+					       </div>
+						</div>						
 						<div class="alert alert-block" ng-show="bibtexParsingError">
 							<strong>This file can not be read. Please check the BibTeX format and try again.</strong>
 						</div>

@@ -55,6 +55,7 @@ import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
+import org.orcid.pojo.KeyValue;
 import org.orcid.pojo.ajaxForm.Citation;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.Date;
@@ -398,6 +399,7 @@ public class WorksController extends BaseWorkspaceController {
             copyErrors(work.getCitation().getCitation(), work);
         }
         workWorkTitleTitleValidate(work);
+        copyErrors(work.getWorkTitle().getTitle(), work);
         if (work.getWorkTitle().getSubtitle() != null) {
             workWorkTitleSubtitleValidate(work);
             copyErrors(work.getWorkTitle().getSubtitle(), work);
@@ -551,7 +553,8 @@ public class WorksController extends BaseWorkspaceController {
             workEntity.setCitation(orcidWork.getWorkCitation().getCitation());
             workEntity.setCitationType(orcidWork.getWorkCitation().getWorkCitationType());
         }
-        workEntity.setDateCreated(new java.util.Date());
+        if (orcidWork.getCreatedDate() == null) 
+            workEntity.setDateCreated(new java.util.Date());
         workEntity.setDescription(orcidWork.getShortDescription());
         workEntity.setLastModified(new java.util.Date());
         if (orcidWork.getPublicationDate() != null)
@@ -867,11 +870,11 @@ public class WorksController extends BaseWorkspaceController {
      * @return a map containing the list of types associated with that type and
      *         his localized name
      * */
-    @RequestMapping(value = "/loadWorkTypes.json", method = RequestMethod.POST)
+    @RequestMapping(value = "/loadWorkTypes.json", method = RequestMethod.GET)
     public @ResponseBody
-    Map<String, String> retriveWorkSubtypesAsMap(@RequestParam(value = "workCategory") String workCategoryName) {
-        Map<String, String> workTypes = new LinkedHashMap<String, String>();
-
+    List<KeyValue> retriveWork(@RequestParam(value = "workCategory") String workCategoryName) {
+        List<KeyValue> types = new ArrayList<KeyValue>();
+        
         WorkCategory workCategory = null;
         if (!PojoUtil.isEmpty(workCategoryName))
             workCategory = WorkCategory.fromValue(workCategoryName);
@@ -879,26 +882,17 @@ public class WorksController extends BaseWorkspaceController {
         if (workCategory != null) {
             for (WorkType workType : workCategory.getSubTypes()) {
                 // Dont put work type UNDEFINED
-                if (!workType.equals(WorkType.UNDEFINED) && !workType.equals(WorkType.OTHER))
-                    workTypes.put(workType.value(), getMessage(buildInternationalizationKey(WorkType.class, workType.value())));
-                else if (workType.equals(WorkType.OTHER))
-                    // OTHER will be at the bottom of the list, so, put a custom
-                    // message that will move other at bottom
-                    workTypes.put(Work.OTHER_AT_BOTTOM, getMessage(buildInternationalizationKey(WorkType.class, workType.value())));
+                if (!workType.equals(WorkType.UNDEFINED))
+                    types.add(new KeyValue(workType.value(),getMessage(buildInternationalizationKey(WorkType.class, workType.value()))));
             }
         } else {
             // Get all work types
             for (WorkType workType : WorkType.values()) {
-                if (!workType.equals(WorkType.UNDEFINED) && !workType.equals(WorkType.OTHER)) {
-                    workTypes.put(workType.value(), getMessage(buildInternationalizationKey(WorkType.class, workType.value())));
-                } else if (workType.equals(WorkType.OTHER)) {
-                    // OTHER will be at the bottom of the list, so, put a custom
-                    // message that will move other at bottom
-                    workTypes.put(Work.OTHER_AT_BOTTOM, getMessage(buildInternationalizationKey(WorkType.class, workType.value())));
-                }
+                // Dont put work type UNDEFINED
+                if (!workType.equals(WorkType.UNDEFINED))
+                    types.add(new KeyValue(workType.value(),getMessage(buildInternationalizationKey(WorkType.class, workType.value()))));
             }
         }
-
-        return FunctionsOverCollections.sortMapsByValues(workTypes);
+        return types;
     }
 }

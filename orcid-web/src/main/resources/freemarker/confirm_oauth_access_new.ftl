@@ -22,12 +22,7 @@
 	<#assign displayName = client_name>
 </#if>
 <!-- colorbox-content -->
-<div class="container confirm-oauth-access oneStepWidth" ng-controller="OauthAuthorizationController">
-	<div class="row">
-		<div class="col-md-12 col-sm-12 col-xs-12">
-			<div class="top-green-border"></div>
-		</div>
-	</div>	
+<div class="container top-green-border confirm-oauth-access oneStepWidth" ng-controller="OauthAuthorizationController">		
 	<!-- Freemarker and GA variables -->
 	<#assign user_id = "">			
 	<#if userId??>
@@ -49,25 +44,13 @@
 	        </div>		
 		</div>
 		
-	    <div class="col-md-8 col-sm-12 col-xs-12">	        
-	        <div class="row">
-	            <#include "includes/mini_id_banner.ftl"/>
-	        </div>      
+	    <div class="col-md-8 col-sm-12 col-xs-12">
+	         <#include "includes/mini_id_banner.ftl"/>	              
 	    </div>	    
-	</div>
-	<div class="row">
-		<div class="col-md-12 col-sm-12 col-xs-12">
-		 	<h2 class="oauth-title">${springMacroRequestContext.getMessage("confirm-oauth-access.connecting")} 
-		       <span>${displayName?html}</span>
-	           ${springMacroRequestContext.getMessage("confirm-oauth-access.withOrcidRecord")} 
-	           <span class="researcher-name">${(profile.orcidBio.personalDetails.givenNames.content?html)!} ${(profile.orcidBio.personalDetails.familyName.content?html)!}</span> 
-	           <span><a href="" onclick="logOffReload(); return false;">(${springMacroRequestContext.getMessage("confirm-oauth-access.notYou")}?)</a></span> 
-			</h2>   
-		</div>
-	</div>
+	</div>	
 	<div class="row">
 		<div class="col-md-12">	
-		<div class="app-client-name" ng-init="initGroupClientNameAndScopes('${client_group_name}','${client_name}','${js_scopes_string}')">
+		<div class="app-client-name" ng-init="initGroupClientNameAndScopes('${client_group_name?js_string}','${client_name?js_string}','${js_scopes_string}')">
 			<h3 ng-click="toggleClientDescription()">${client_name}
 				<a class="glyphicon glyphicon-question-sign oauth-question-sign"></a>				
 			</h3>
@@ -80,23 +63,9 @@
 		<div>
 			<p><@orcid.msg 'orcid.frontend.oauth.have_asked'/></p>
 		</div>
-		<span class="dotted-green-bar"></span>
-		<ul class="oauth-scopes">
-			<#list scopes as scope>
-				<li>				
-					<#if scope.value()?ends_with("/create")>
-						<span class="mini-icon glyphicon glyphicon-cloud-download green"></span><@orcid.msg '${scope.declaringClass.name}.${scope.name()}'/>
-					<#elseif scope.value()?ends_with("/update")>
-						<span class="mini-icon glyphicon glyphicon-refresh green"></span><@orcid.msg '${scope.declaringClass.name}.${scope.name()}'/>
-					<#elseif scope.value()?ends_with("/read-limited")>
-						<span class="mini-icon glyphicon glyphicon-eye-open green"></span><@orcid.msg '${scope.declaringClass.name}.${scope.name()}'/>
-					<#else>
-						<span class="mini-orcid-icon oauth-bullet"></span><@orcid.msg '${scope.declaringClass.name}.${scope.name()}'/>
-					</#if>	
-				</li>
-	    	</#list>				
-		</ul>
-		<span class="dotted-green-bar"></span>	
+		<div>
+			<#include "includes/oauth/scopes.ftl"/>
+		</div>
 		<div>
 			<p><@orcid.msg 'orcid.frontend.web.oauth_is_secure'/>.&nbsp;<a href="${aboutUri}/footer/privacy-policy" target="_blank"><@orcid.msg 'public-layout.privacy_policy'/></a>.</p>
 		</div>			

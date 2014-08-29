@@ -52,8 +52,7 @@
 		 	<h2 class="oauth-title">${springMacroRequestContext.getMessage("confirm-oauth-access.connecting")} 
 		       <span>${displayName?html}</span>
 	           ${springMacroRequestContext.getMessage("confirm-oauth-access.withOrcidRecord")} 
-	           <span class="researcher-name">${(profile.orcidBio.personalDetails.givenNames.content?html)!} ${(profile.orcidBio.personalDetails.familyName.content?html)!}</span> 
-	           <span><a href="" onclick="logOffReload(); return false;">(${springMacroRequestContext.getMessage("confirm-oauth-access.notYou")}?)</a></span> 
+	           <span class="researcher-name">${(profile.orcidBio.personalDetails.givenNames.content?html)!} ${(profile.orcidBio.personalDetails.familyName.content?html)!}</span>
 			</h2>   
 		</div>
 	</div>
