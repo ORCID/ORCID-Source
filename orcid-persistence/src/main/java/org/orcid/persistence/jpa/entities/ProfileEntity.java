@@ -138,7 +138,9 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     private IndexingStatus indexingStatus = IndexingStatus.PENDING;
     private Set<ProfileEventEntity> profileEvents;
     private boolean enableDeveloperTools;
-    
+    private int sendEmailFrequencyDays;
+    private boolean enableNotifications;
+
     // Visibility settings
     private Visibility creditNameVisibility;
     private Visibility otherNamesVisibility;
@@ -182,7 +184,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     public void setGroupType(GroupType groupType) {
         this.groupType = groupType;
     }
-    
+
     @Basic
     @Enumerated(EnumType.STRING)
     @Column(name = "client_type")
@@ -193,7 +195,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     public void setClientType(ClientType clientType) {
         this.clientType = clientType;
     }
-    
+
     @Column(name = "given_names", length = 150)
     public String getGivenNames() {
         return givenNames;
@@ -428,9 +430,9 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
      */
     public void setOrgAffiliationRelations(SortedSet<OrgAffiliationRelationEntity> affiliations) {
         this.orgAffiliationRelations = affiliations;
-    }    
+    }
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = PROFILE, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = PROFILE, orphanRemoval = true)
     public Set<EmailEntity> getEmails() {
         return emails;
     }
@@ -507,7 +509,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
      * @return the grants
      */
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = PROFILE, orphanRemoval = true)
-    @Sort(type = SortType.NATURAL)    
+    @Sort(type = SortType.NATURAL)
     public SortedSet<ProfileFundingEntity> getProfileFunding() {
         return profileFunding;
     }
@@ -734,9 +736,9 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     public void setGroupOrcid(String groupOrcid) {
         this.groupOrcid = groupOrcid;
     }
-    
+
     @ManyToOne(cascade = { CascadeType.DETACH, CascadeType.REFRESH }, fetch = FetchType.LAZY)
-    @JoinColumn(name="group_orcid", insertable = false, updatable = false)
+    @JoinColumn(name = "group_orcid", insertable = false, updatable = false)
     public ProfileEntity getGroupProfile() {
         return groupProfile;
     }
@@ -744,7 +746,6 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     public void setGroupProfile(ProfileEntity groupProfile) {
         this.groupProfile = groupProfile;
     }
-
 
     @OneToMany(cascade = { CascadeType.DETACH, CascadeType.REFRESH }, fetch = FetchType.LAZY)
     @JoinColumn(name = "group_orcid")
@@ -798,15 +799,33 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     }
 
     @Basic
-    @Column(name="enable_developer_tools")
+    @Column(name = "enable_developer_tools")
     public boolean getEnableDeveloperTools() {
         return this.enableDeveloperTools;
     }
-    
+
     public void setEnableDeveloperTools(boolean enableDeveloperTools) {
         this.enableDeveloperTools = enableDeveloperTools;
     }
-    
+
+    @Column(name = "send_email_frequency_days")
+    public int getSendEmailFrequencyDays() {
+        return sendEmailFrequencyDays;
+    }
+
+    public void setSendEmailFrequencyDays(int sendEmailFrequencyDays) {
+        this.sendEmailFrequencyDays = sendEmailFrequencyDays;
+    }
+
+    @Column(name = "enable_notifications")
+    public boolean getEnableNotifications() {
+        return enableNotifications;
+    }
+
+    public void setEnableNotifications(boolean enableNotifications) {
+        this.enableNotifications = enableNotifications;
+    }
+
     @Basic
     @Enumerated(EnumType.STRING)
     @Column(name = "credit_name_visibility")
@@ -981,11 +1000,13 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     public void setReferredBy(String referredBy) {
         this.referredBy = referredBy;
     }
-    
+
     /**
      * Generates a string that will be used for caching proposes
+     * 
      * @param profile
-     * @return a string containing the orcid id and the last modified day, concatenated by '_' 
+     * @return a string containing the orcid id and the last modified day,
+     *         concatenated by '_'
      * */
     @Transient
     public String getCacheKey() {

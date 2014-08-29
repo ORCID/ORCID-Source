@@ -31,6 +31,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.LocaleUtils;
+import org.orcid.core.adapter.JpaJaxbNotificationAdapter;
 import org.orcid.core.constants.EmailConstants;
 import org.orcid.core.manager.CustomEmailManager;
 import org.orcid.core.manager.EncryptionManager;
@@ -47,11 +48,15 @@ import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.SendChangeNotifications;
 import org.orcid.jaxb.model.message.Source;
+import org.orcid.jaxb.model.notification.Notification;
+import org.orcid.jaxb.model.notification.NotificationType;
 import org.orcid.persistence.dao.GenericDao;
+import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.CustomEmailEntity;
 import org.orcid.persistence.jpa.entities.EmailType;
+import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
@@ -61,6 +66,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.MessageSource;
+import org.springframework.mail.MailSender;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Will Simpson
@@ -120,6 +127,12 @@ public class NotificationManagerImpl implements NotificationManager {
     @Resource
     private CustomEmailManager customEmailManager;
 
+    @Resource
+    private JpaJaxbNotificationAdapter notificationAdapter;
+
+    @Resource
+    private NotificationDao notificationDao;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationManagerImpl.class);
 
     @Required
@@ -164,12 +177,12 @@ public class NotificationManagerImpl implements NotificationManager {
         String encryptedEmail = encryptionManager.encryptForExternalUse(email);
         String base64EncodedEmail = Base64.encodeBase64URLSafeString(encryptedEmail.getBytes());
         String deactivateUrlEndpointPath = "/account/confirm-deactivate-orcid";
-        
+
         String emailFriendlyName = deriveEmailFriendlyName(orcidToDeactivate);
         templateParams.put("emailName", emailFriendlyName);
         templateParams.put("orcid", orcidToDeactivate.getOrcidIdentifier().getPath());
         templateParams.put("baseUri", baseUri);
-        templateParams.put("deactivateUrlEndpoint", deactivateUrlEndpointPath + "/" + base64EncodedEmail );
+        templateParams.put("deactivateUrlEndpoint", deactivateUrlEndpointPath + "/" + base64EncodedEmail);
         templateParams.put("deactivateUrlEndpointUrl", deactivateUrlEndpointPath);
         templateParams.put("subject", subject);
 
@@ -332,7 +345,6 @@ public class NotificationManagerImpl implements NotificationManager {
         }
 
         String subject = getSubject("email.subject.amend", amendedProfile);
-        String email = amendedProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
 
         // Create map of template params
         Map<String, Object> templateParams = new HashMap<String, Object>();
@@ -349,11 +361,23 @@ public class NotificationManagerImpl implements NotificationManager {
         // Generate html from template
         String html = templateManager.processTemplate("amend_email_html.ftl", templateParams);
 
-        mailGunManager.sendEmail(AMEND_NOTIFY_ORCID_ORG, email, subject, body, html);
+        Notification notification = new Notification();
+        notification.setNotificationType(NotificationType.RECORD_UPDATED_BY_MEMBER);
+        notification.setSubject(subject);
+        notification.setBodyText(body);
+        notification.setBodyHtml(html);
 
+        boolean notificationsEnabled = profileDao.find(amendedProfile.getOrcidIdentifier().getPath()).getEnableNotifications();
+        if (notificationsEnabled) {
+            createNotification(amendedProfile.getOrcidIdentifier().getPath(), notification);
+        } else {
+            String email = amendedProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+            mailGunManager.sendEmail(AMEND_NOTIFY_ORCID_ORG, email, subject, body, html);
+        }
     }
 
     @Override
+    @Transactional
     public void sendNotificationToAddedDelegate(OrcidProfile orcidUserGrantingPermission, List<DelegationDetails> delegatesGrantedByUser) {
         // Create map of template params
         Map<String, Object> templateParams = new HashMap<String, Object>();
@@ -434,7 +458,7 @@ public class NotificationManagerImpl implements NotificationManager {
         String orcid = createdProfile.getOrcidIdentifier().getPath();
         String verificationUrl = createClaimVerificationUrl(createdProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), baseUri);
         String email = createdProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
-        
+
         String creatorName = "";
         if (source != null) {
             if (source.getSourceName() != null && source.getSourceName().getContent() != null) {
@@ -732,7 +756,7 @@ public class NotificationManagerImpl implements NotificationManager {
         }
         return String.format("%s/%s/%s", baseUri.toString(), path, base64EncodedParams);
     }
-    
+
     @Override
     public void sendDelegationRequestEmail(OrcidProfile managed, OrcidProfile trusted, String link) {
         // Create map of template params
@@ -740,24 +764,24 @@ public class NotificationManagerImpl implements NotificationManager {
         Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put("baseUri", baseUri);
         templateParams.put("link", link);
-        
+
         String trustedOrcidValue = trusted.retrieveOrcidPath();
         String managedOrcidValue = managed.retrieveOrcidPath();
         String emailNameForDelegate = deriveEmailFriendlyName(managed);
         String trustedOrcidName = deriveEmailFriendlyName(trusted);
-        templateParams.put("emailNameForDelegate", emailNameForDelegate);        
-        templateParams.put("trustedOrcidName", trustedOrcidName);        
+        templateParams.put("emailNameForDelegate", emailNameForDelegate);
+        templateParams.put("trustedOrcidName", trustedOrcidName);
         templateParams.put("trustedOrcidValue", trustedOrcidValue);
-        templateParams.put("managedOrcidValue", managedOrcidValue);  
-        
+        templateParams.put("managedOrcidValue", managedOrcidValue);
+
         Email primaryEmail = managed.getOrcidBio().getContactDetails().retrievePrimaryEmail();
         if (primaryEmail == null) {
             LOGGER.info("Cant send admin delegate email if primary email is null: {}", orcid);
             return;
-        }       
+        }
 
         addMessageParams(templateParams, managed);
-        
+
         String htmlBody = templateManager.processTemplate("admin_delegate_request_html.ftl", templateParams);
 
         // Send message
@@ -768,4 +792,31 @@ public class NotificationManagerImpl implements NotificationManager {
             LOGGER.debug("Not sending admin delegate email, because API record creation email option is disabled. Message would have been: {}", htmlBody);
         }
     }
+
+    private void createNotification(String orcid, Notification notification) {
+        NotificationEntity notificationEntity = notificationAdapter.toNotificationEntity(notification);
+        notificationEntity.setProfile(profileDao.find(orcid));
+        notificationDao.persist(notificationEntity);
+    }
+
+    @Override
+    public List<Notification> findUnsentByOrcid(String orcid) {
+        return notificationAdapter.toNotification(notificationDao.findUnsentByOrcid(orcid));
+    }
+
+    @Override
+    public List<Notification> findByOrcid(String orcid, int firstResult, int maxResults) {
+        return notificationAdapter.toNotification(notificationDao.findByOrcid(orcid, firstResult, maxResults));
+    }
+
+    @Override
+    public Notification findById(Long id) {
+        return notificationAdapter.toNotification(notificationDao.find(id));
+    }
+
+    @Override
+    public Notification findByOrcidAndId(String orcid, Long id) {
+        return notificationAdapter.toNotification(notificationDao.findByOricdAndId(orcid, id));
+    }
+    
 }

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified"
+	targetNamespace="http://www.orcid.org/ns/orcid" xmlns:orcid="http://www.orcid.org/ns/orcid"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" vc:minVersion="1.1">
+	<xs:element name="source">
+		<xs:annotation>
+			<xs:documentation>The client application (Member organization's system) that created the
+				notification via the API (if any). </xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="orcid:orcidId" minOccurs="0"/>
+				<xs:element ref="orcid:sourceName" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="sourceName" type="xs:string">
+		<xs:annotation>
+			<xs:documentation>The name of the client application (Member organization system) that
+				created the ORCID Record. </xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="orcidId">
+		<xs:complexType>
+			<xs:annotation>
+				<xs:documentation>The identifier of the researcher or contributor in ORCID (the
+					ORCID iD). At least one of uri or path must be given. </xs:documentation>
+			</xs:annotation>
+			<xs:sequence>
+				<xs:choice>
+					<xs:sequence>
+						<xs:element name="uri" type="orcid:orcidUri"/>
+						<xs:element name="path" type="orcid:orcidPath" minOccurs="0"/>
+					</xs:sequence>
+					<xs:element name="path" type="orcid:orcidPath"/>
+				</xs:choice>
+				<xs:element ref="orcid:host" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:simpleType name="orcidPath">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="(\d{4}-){3,}\d{3}[\dX]"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="orcidUri">
+		<xs:restriction base="xs:string">
+			<xs:pattern
+				value="http://([^/]*orcid\.org|localhost.*/orcid-web)/(\d{4}-){3,}\d{3}[\dX]"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:element name="host" type="xs:string"/>
+	<xs:element name="putCode">
+		<xs:annotation>
+			<xs:documentation>The identifier of the researcher or contributor in ORCID (the ORCID
+				iD). At least one of uri or path must be given. </xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:choice>
+					<xs:sequence>
+						<xs:element name="uri" type="orcid:putCodeUri"/>
+						<xs:element name="path" type="orcid:putCodePath" minOccurs="0"/>
+					</xs:sequence>
+					<xs:element name="path" type="orcid:putCodePath"/>
+				</xs:choice>
+				<xs:element ref="orcid:host" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:simpleType name="putCodePath">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="(\d{4}-){3,}\d{3}[\dX](/[^/]+)*"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="putCodeUri">
+		<xs:restriction base="xs:string">
+			<xs:pattern
+				value="http://([^/]*orcid\.org|localhost.*/orcid-web)/(\d{4}-){3,}\d{3}[\dX](/[^/]+)*"
+			/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

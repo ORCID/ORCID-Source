@@ -46,6 +46,8 @@
 			value="${org.orcid.core.mail.apiRecordCreationEmailEnabled:true}" />
 	</bean>
 	
+	<bean id="emailMessageSender" class="org.orcid.core.manager.impl.EmailMessageSenderImpl" />
+	
 	    <!-- Effectively a wrapper around the client details service, converting client to user details -->
     <bean id="clientDetailsUserService" class="org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService">
         <constructor-arg ref="clientDetailsManager"/>
@@ -552,6 +554,11 @@
     <bean id="jpa2JaxbAdapter" class="org.orcid.core.adapter.impl.Jpa2JaxbAdapterImpl" />
     <bean id="jaxb2JpaAdapter" class="org.orcid.core.adapter.impl.Jaxb2JpaAdapterImpl" />
 	
+	<bean id="mapperFacadeFactory" class="org.orcid.core.adapter.impl.MapperFacadeFactory" />
+	<bean id="mapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getObject"/>
+	<bean id="jpaJaxbNotificationAdapter" class="org.orcid.core.adapter.impl.JpaJaxbNotificationAdapterImpl">
+	    <property name="mapperFacade" ref="mapperFacade" />
+	</bean>
 	
 	<!-- Geonames username -->
 	<bean id="geonamesUser" class="java.lang.String">

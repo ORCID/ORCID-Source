@@ -966,6 +966,107 @@ orcidNgModule.factory("prefsSrvc", function ($rootScope) {
 	return serv; 
 });
 
+orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) {
+	var serv = {
+		firstResult: 0,
+		maxResults: 10,
+		areMoreFlag: false,
+		notifications: [],
+		unreadCount: 0,
+		getNotifications: function() {
+			$.ajax({
+		        url: getBaseUri() + '/notifications/notifications.json?firstResult=' + serv.firstResult + '&maxResults=' + serv.maxResults,
+		        dataType: 'json',
+		        success: function(data) {
+		        	if(data.length === 0 || data.length < serv.maxResults){
+		        		serv.areMoreFlag = false;
+		        	}
+		        	else{
+		        		serv.areMoreFlag = true;
+		        	}
+		        	for(var i = 0; i < data.length; i++){
+		        		serv.notifications.push(data[i]);
+		        	}
+		        	$rootScope.$apply();
+		        }
+		    }).fail(function() { 
+		    	// something bad is happening!
+		    	console.log("error with getting notifications");
+		    });
+		},
+		retrieveUnreadCount: function() {
+			$.ajax({
+		        url: getBaseUri() + '/notifications/unreadCount.json',
+		        dataType: 'json',
+		        success: function(data) {
+		        	serv.unreadCount = data;
+		        	$rootScope.$apply();
+		        }
+		    }).fail(function() { 
+		    	// something bad is happening!
+		    	console.log("error with getting count of unread notifications");
+		    });
+		},
+		getUnreadCount: function() {
+			return serv.unreadCount;
+		},
+		showMore: function() {
+			serv.firstResult += serv.maxResults;
+			serv.getNotifications();
+		},
+		areMore: function() {
+			return serv.areMoreFlag;
+		},
+		flagAsRead: function(notificationId) {
+			$.ajax({
+		        url: getBaseUri() + '/notifications/' + notificationId + '/read.json',
+		        type: 'POST',
+		        dataType: 'json',
+		        success: function(data) {
+		        	var updated = data;
+		        	for(var i = 0;  i < serv.notifications.length; i++){
+		        		var existing = serv.notifications[i];
+		        		if(existing.putCode.path === updated.putCode.path){
+		        			existing.readDate = updated.readDate;
+		        		}
+		        	}
+		        	serv.retrieveUnreadCount();
+		        	$rootScope.$apply();
+		        }
+		    }).fail(function() { 
+		    	// something bad is happening!
+		    	console.log("error flagging notification as read");
+		    });
+		},
+		archive: function(notificationId) {
+			$.ajax({
+		        url: getBaseUri() + '/notifications/' + notificationId + '/archive.json',
+		        type: 'POST',
+		        dataType: 'json',
+		        success: function(data) {
+		        	var updated = data;
+		        	for(var i = 0;  i < serv.notifications.length; i++){
+		        		var existing = serv.notifications[i];
+		        		if(existing.putCode.path === updated.putCode.path){
+		        			serv.notifications.splice(i, 1);
+		        			if(serv.firstResult > 0){
+		        				serv.firstResult--;
+		        			}
+		        			break;
+		        		}
+		        	}
+		        	serv.retrieveUnreadCount();
+		        	$rootScope.$apply();
+		        }
+		    }).fail(function() { 
+		    	// something bad is happening!
+		    	console.log("error flagging notification as archived");
+		    });
+		}
+	};
+	serv.getNotifications();
+	return serv;
+}]);
 
 orcidNgModule.filter('urlWithHttp', function(){
 	return function(input){
@@ -4215,6 +4316,27 @@ function DelegatorsCtrl($scope, $compile){
 	// init
 	$scope.getDelegators();
 	
+};
+
+// Controller for notifications
+function NotificationsCtrl($scope, $compile, notificationsSrvc){
+	$scope.displayBody = {};
+	
+	$scope.toggleDisplayBody = function (notificationId) {
+		$scope.displayBody[notificationId] = !$scope.displayBody[notificationId];
+		notificationsSrvc.flagAsRead(notificationId);
+	};
+	
+	$scope.notifications = notificationsSrvc.notifications;
+	$scope.showMore = notificationsSrvc.showMore;
+	$scope.areMore = notificationsSrvc.areMore;
+	$scope.archive = notificationsSrvc.archive;
+};
+
+// Controller to show alert for unread notifications
+function NotificationsAlertCtrl($scope, $compile, notificationsSrvc){
+	$scope.getUnreadCount = notificationsSrvc.getUnreadCount;
+	notificationsSrvc.retrieveUnreadCount();
 };
 
 function SwitchUserCtrl($scope, $compile, $document){
