@@ -367,6 +367,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         organization.setName(orgAffiliationRelationEntity.getOrg().getName());
         affiliation.setOrganization(organization);
 
+        affiliation.setCreatedDate(new CreatedDate(toXMLGregorianCalendar(orgAffiliationRelationEntity.getDateCreated())));
+        affiliation.setLastModifiedDate(new LastModifiedDate(toXMLGregorianCalendar(orgAffiliationRelationEntity.getLastModified())));
+
         return affiliation;
     }
 
@@ -424,6 +427,10 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
         // Set source
         funding.setSource(getSource(profileFundingEntity));
+
+        funding.setCreatedDate(new CreatedDate(toXMLGregorianCalendar(profileFundingEntity.getDateCreated())));
+        funding.setLastModifiedDate(new LastModifiedDate(toXMLGregorianCalendar(profileFundingEntity.getLastModified())));
+
         return funding;
     }
 
@@ -834,6 +841,10 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         }
         orcidWork.setWorkType(work.getWorkType());
         orcidWork.setVisibility(profileWorkEntity.getVisibility());
+
+        orcidWork.setCreatedDate(new CreatedDate(toXMLGregorianCalendar(profileWorkEntity.getDateCreated())));
+        orcidWork.setLastModifiedDate(new LastModifiedDate(toXMLGregorianCalendar(profileWorkEntity.getLastModified())));
+
         return orcidWork;
     }
 
@@ -883,9 +894,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         WorkSource workSource = new WorkSource(getOrcidIdBase(sourceProfile.getId()));
 
         String sourceName = createName(sourceProfile);
- 
+
         workSource.setSourceName(sourceName);
-        
+
         return workSource;
     }
 

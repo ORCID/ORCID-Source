@@ -84,7 +84,7 @@ public class Work implements ErrorsInterface, Serializable {
 	
 	private String dateSortString;
 	
-	private Date dateCreated;
+	private Date createdDate;
 	
 	private Date lastModified;
 	
@@ -147,7 +147,7 @@ public class Work implements ErrorsInterface, Serializable {
                     w.setLanguageCode(Text.valueOf(minimizedWorkEntity.getLanguageCode()));
                     w.setLanguageCode(Text.valueOf(minimizedWorkEntity.getLanguageCode()));
                 }
-		w.setDateCreated(Date.valueOf(minimizedWorkEntity.getDateCreated()));
+		w.setCreatedDate(Date.valueOf(minimizedWorkEntity.getDateCreated()));
 		w.setLastModified(Date.valueOf(minimizedWorkEntity.getLastModified()));
 		return w;
 	}
@@ -205,7 +205,8 @@ public class Work implements ErrorsInterface, Serializable {
 		if (orcidWork.getCountry() != null)
 			w.setCountryCode((orcidWork.getCountry().getValue() == null) ? null
 					: Text.valueOf(orcidWork.getCountry().getValue().value()));
-		
+	        w.setCreatedDate(Date.valueOf(orcidWork.getCreatedDate()));
+	        w.setLastModified(Date.valueOf(orcidWork.getLastModifiedDate()));
 		return w;
 	}
 
@@ -458,12 +459,12 @@ public class Work implements ErrorsInterface, Serializable {
         this.dateSortString = dateSortString;
     }
 
-    public Date getDateCreated() {
-        return dateCreated;
+    public Date getCreatedDate() {
+        return createdDate;
     }
 
-    public void setDateCreated(Date dateCreated) {
-        this.dateCreated = dateCreated;
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
     }
 
     public Date getLastModified() {

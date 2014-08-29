@@ -255,6 +255,12 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             profileWorkEntity.setWork(getWorkEntity(orcidWork, workEntity));
             profileWorkEntity.setVisibility(orcidWork.getVisibility() == null ? Visibility.PRIVATE : orcidWork.getVisibility());
             profileWorkEntity.setSourceProfile(getWorkSource(orcidWork.getWorkSource()));
+            
+            if (orcidWork.getCreatedDate() != null && orcidWork.getCreatedDate().getValue() != null)
+                profileWorkEntity.setDateCreated(orcidWork.getCreatedDate().getValue().toGregorianCalendar().getTime());
+            if (orcidWork.getLastModifiedDate() != null && orcidWork.getLastModifiedDate().getValue() != null)
+                profileWorkEntity.setLastModified(orcidWork.getLastModifiedDate().getValue().toGregorianCalendar().getTime());
+            
             return profileWorkEntity;
         }
         return null;
@@ -926,6 +932,11 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             orgRelationEntity.setTitle(affiliation.getRoleTitle());
             orgRelationEntity.setStartDate(startDate != null ? new StartDateEntity(startDate) : null);
 
+            if (affiliation.getCreatedDate() != null && affiliation.getCreatedDate().getValue() != null)
+                orgRelationEntity.setDateCreated(affiliation.getCreatedDate().getValue().toGregorianCalendar().getTime());
+            if (affiliation.getLastModifiedDate() != null && affiliation.getLastModifiedDate().getValue() != null)
+                orgRelationEntity.setLastModified(affiliation.getLastModifiedDate().getValue().toGregorianCalendar().getTime());
+
             return orgRelationEntity;
         }
         return null;
@@ -1000,6 +1011,13 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 profileFundingEntity.setUrl(StringUtils.isNotBlank(funding.getUrl().getValue()) ? funding.getUrl().getValue() : null);
             profileFundingEntity.setVisibility(funding.getVisibility() != null ? funding.getVisibility() : OrcidVisibilityDefaults.WORKS_DEFAULT.getVisibility());
 
+            if (funding.getCreatedDate() != null && funding.getCreatedDate().getValue() != null)
+                profileFundingEntity.setDateCreated(funding.getCreatedDate().getValue().toGregorianCalendar().getTime());
+            if (funding.getLastModifiedDate() != null && funding.getLastModifiedDate().getValue() != null)
+                profileFundingEntity.setLastModified(funding.getLastModifiedDate().getValue().toGregorianCalendar().getTime());
+      
+            
+            
             return profileFundingEntity;
         }
         return null;
