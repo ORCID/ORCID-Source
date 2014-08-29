@@ -42,6 +42,7 @@ import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidClientGroupManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileWorkManager;
+import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.GroupType;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
@@ -464,11 +465,22 @@ public class AdminController extends BaseController {
     
     @RequestMapping(value = "/find-client.json", method = RequestMethod.GET)
     public @ResponseBody Client findClient(@RequestParam("orcid") String orcid) {
-        ClientDetailsEntity clientDetailsEntity = clientDetailsManager.findByClientId(orcid);
-        Client result = Client.valueOf(clientDetailsEntity);
-        //If the client types is undefined, get it from DB
-        if(PojoUtil.isEmpty(result.getType()))
-            result.setType(Text.valueOf(profileEntityManager.getClientType(orcid).value()));
+        Client result = new Client();
+        if(profileEntityManager.orcidExists(orcid)) {
+            ClientType clientType = profileEntityManager.getClientType(orcid);
+            if(clientType != null) {
+                ClientDetailsEntity clientDetailsEntity = clientDetailsManager.findByClientId(orcid);
+                result = Client.valueOf(clientDetailsEntity);
+                //If the client types is undefined, get it from DB
+                if(PojoUtil.isEmpty(result.getType()))
+                    result.setType(Text.valueOf(clientType.value()));
+            } else {
+                result.getErrors().add(getMessage("admin.edit_client.orcid_is_not_a_client"));
+            }
+            
+        } else {
+            result.getErrors().add(getMessage("admin.edit_client.invalid_orcid"));
+        }        
         return result;
     }
     
@@ -527,10 +539,6 @@ public class AdminController extends BaseController {
         
         return client;
     }
-    
-    
-    
-    
     
     /**
      * Generate random string

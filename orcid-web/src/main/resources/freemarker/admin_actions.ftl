@@ -484,21 +484,6 @@
 			</div>			
 		</div>
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 		<!-- Edit client -->
 		<a name="edit-client"></a>
 		<div ng-controller="adminEditClientCtrl" class="workspace-accordion-item" ng-cloak>
@@ -507,19 +492,22 @@
 				<a ng-hide="showAdminGroupsModal" ng-click="toggleEditClientModal()"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.edit_client.title'/></a>				
 			</p>
 			<div class="collapsible bottom-margin-small admin-modal" id="edit_client_modal" style="display:none;">					    		
+	    		<div class="form-group" ng-show="success_message != null">
+	    			<div ng-bind-html="success_message" class="alert alert-success"></div>
+	    		</div>
 	    		<div class="form-group">
 					<label for="client_id"><@orcid.msg 'admin.edit_client.client_id' /></label>
 					<input type="text" id="client_id" ng-model="client_id" placeholder="<@orcid.msg 'admin.edit_client.client_id.placeholder' />" class="input-xlarge" />					
-					<div ng-show="showError">
-						<span class="orcid-error" ng-bind-html="error"></span><br />
-					</div>		
+					<span class="orcid-error" ng-show="client.errors.length > 0 && client.clientId == null">
+						<div ng-repeat='error in client.errors' ng-bind-html="error"></div>
+					</span>		
 				</div>
 				<div class="controls save-btns pull-left">
 					<span id="bottom-search-client" ng-click="search()" class="btn btn-primary"><@orcid.msg 'admin.edit_client.find'/></span>
 				</div>
 			</div>
 			
-			<div ng-show="client != null" ng-cloak>	
+			<div ng-show="client.clientId != null" ng-cloak>	
 				<div class="admin-edit-client">
 					<div class="row">
 						<div class="col-md-12 col-sm-12 col-xs-12">
@@ -612,34 +600,6 @@
 				</div>							
 			</div>			
 		</div>		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 		
 		<!-- Deprecate Profile -->
 		<a name="deprecate-profile"></a>

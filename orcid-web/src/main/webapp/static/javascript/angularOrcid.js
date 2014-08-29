@@ -4859,7 +4859,6 @@ function profileDeprecationCtrl($scope,$compile){
 	};
 	
 	$scope.showSuccessModal = function(deprecated, primary){
-		console.log(om.get('admin.profile_deprecation.deprecate_account.success_message'));
 		$scope.successMessage = om.get('admin.profile_deprecation.deprecate_account.success_message').replace("{{0}}", deprecated).replace("{{1}}", primary);
 		
 		//Clean fields
@@ -4912,28 +4911,12 @@ function revokeApplicationFormCtrl($scope,$compile){
 	};
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 function adminEditClientCtrl($scope, $compile) {
 	$scope.showEditClientModal = false;
+	$scope.success_message = null;
 	$scope.client_id = null;
 	$scope.client = null;
 	$scope.showError = false;
-	$scope.error = om.get('admin.edit_client.invalid_client_id');
 	$scope.availableRedirectScopes = [];
 	$scope.selectedScope = "";
 	
@@ -4945,18 +4928,14 @@ function adminEditClientCtrl($scope, $compile) {
 	$scope.search = function() {
 		$scope.showError = false;
 		$scope.client = null;
+		$scope.success_message = null;
 		$.ajax({
 	        url: getBaseUri()+'/admin-actions/find-client.json?orcid=' + $scope.client_id,	        
 	        type: 'GET',
 	        dataType: 'json',	        
 	        success: function(data) {
 	        	console.log(angular.toJson(data));
-	        	if(data.clientId != null) {	        		
-	        		$scope.client = data;				
-	        	} else {
-	        		$scope.showError = true;
-	        		console.log($scope.error);
-	        	}
+	        	$scope.client = data;	        	
 	        	$scope.$apply();
 	        }
 	    }).fail(function(error) { 
@@ -5040,8 +5019,14 @@ function adminEditClientCtrl($scope, $compile) {
 	        dataType: 'json',	        
 	        data: angular.toJson($scope.client),	 
 	        success: function(data) {
-	        	console.log(angular.toJson(data));
-	        	$scope.client = data;
+	        	console.log(angular.toJson(data));	        	
+	        	if(data.errors.length == 0){
+	        		$scope.client = null;
+	        		$scope.client_id = "";
+	        		$scope.success_message = om.get('admin.edit_client.success');
+	        	} else {
+	        		$scope.client = data;
+	        	}
 	        	$scope.$apply();
 	        	$scope.closeModal();
 	        }
@@ -5057,20 +5042,6 @@ function adminEditClientCtrl($scope, $compile) {
 		$.colorbox.close();
 	};
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 function adminGroupsCtrl($scope,$compile){
