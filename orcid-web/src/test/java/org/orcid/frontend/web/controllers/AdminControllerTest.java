@@ -41,8 +41,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.OrcidClientGroupManager;
@@ -50,8 +48,6 @@ import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.frontend.web.util.BaseControllerTest;
-import org.orcid.jaxb.model.clientgroup.OrcidClient;
-import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Visibility;
@@ -62,7 +58,6 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.AdminChangePassword;
 import org.orcid.pojo.ProfileDeprecationRequest;
 import org.orcid.pojo.ProfileDetails;
-import org.orcid.pojo.ajaxForm.Client;
 import org.orcid.pojo.ajaxForm.Group;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
@@ -511,42 +506,5 @@ public class AdminControllerTest extends BaseControllerTest {
         EmailEntity emailEntity = emailDao.find("not-verified@email.com");
         assertNotNull(emailEntity);
         assertTrue(emailEntity.getVerified());
-    }
-    
-    
-    
-    
-    
-    @Test
-    @Transactional("transactionManager")
-    public void editClientTest() {
-        //Mocks
-        GroupAdministratorController spy = Mockito.spy(groupAdministratorController);
-        adminController.setGroupAdministratorController(spy);
-        Mockito.doNothing().when(spy).clearCache();
-        
-        OrcidClientGroup group = orcidClientGroupManager.retrieveOrcidClientGroup("4444-4444-4444-4446");
-        OrcidClient client1 = group.getOrcidClient().get(0);
-        String displayName = client1.getDisplayName();
-        client1.setDisplayName(displayName + "-UPDATED");
-        client1.setWebsite("http://updated.com");
-        Client updatedClient = Client.valueOf(client1);
-        updatedClient = adminController.updateClient(updatedClient);
-        assertNotNull(updatedClient);
-        assertTrue(updatedClient.getErrors().isEmpty());
-        group = orcidClientGroupManager.retrieveOrcidClientGroup("4444-4444-4444-4446");
-    }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    }            
 }
