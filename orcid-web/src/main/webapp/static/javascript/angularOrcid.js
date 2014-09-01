@@ -6377,7 +6377,10 @@ function OauthAuthorizationController($scope, $compile, $sce){
 	        	if($scope.authorizationForm.userName.value) {
 	        		$scope.isOrcidPresent = true;
 	        		$scope.showRegisterForm = false;
-	        	}	        		
+	        	}
+	        	if(window.location.href.endsWith('#show_login')) {
+	        		$scope.showRegisterForm = false;
+	        	}	        	
 	        	$scope.$apply();
 	        }
 		}).fail(function() { 	    	
