@@ -270,12 +270,99 @@ public class OauthConfirmAccessController extends BaseController {
     OauthAuthorizeForm authenticateAndAuthorize(HttpServletRequest request, @RequestBody OauthAuthorizeForm form) {
         // Clean form errors
         form.setErrors(new ArrayList<String>());
-        // Validate name and password
-        validateUserNameAndPassword(form);
-        if (form.getErrors().isEmpty()) {
-            try {
+        if(form.getApproved()) {
+            // Validate name and password
+            validateUserNameAndPassword(form);
+            if (form.getErrors().isEmpty()) {
+                try {
+                    // Authenticate user
+                    Authentication auth = authenticateUser(request, form);
+                    // Create authorization params
+                    SimpleSessionStatus status = new SimpleSessionStatus();
+                    Map<String, Object> model = new HashMap<String, Object>();
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put(CLIENT_ID_PARAM, form.getClientId().getValue());
+                    if (!PojoUtil.isEmpty(form.getRedirectUri()))
+                        params.put(REDIRECT_URI_PARAM, form.getRedirectUri().getValue());
+                    else
+                        params.put(REDIRECT_URI_PARAM, new String());
+                    if (!PojoUtil.isEmpty(form.getScope()))
+                        params.put(SCOPE_PARAM, form.getScope().getValue());
+                    if (!PojoUtil.isEmpty(form.getResponseType()))
+                        params.put(RESPONSE_TYPE_PARAM, form.getResponseType().getValue());
+                    params.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "true");                    
+                    Map<String, String> approvalParams = new HashMap<String, String>();
+                    approvalParams.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "true");
+                    // Authorize
+                    authorizationEndpoint.authorize(model, RESPONSE_TYPE, params, status, auth);
+                    // Approve
+                    RedirectView view = (RedirectView) authorizationEndpoint.approveOrDeny(approvalParams, model, status, auth);
+                    form.setRedirectUri(Text.valueOf(view.getUrl()));
+                } catch (AuthenticationException ae) {
+                    form.getErrors().add(getMessage("orcid.frontend.security.bad_credentials"));
+                }
+            }
+        } else {
+            form.setRedirectUri(Text.valueOf(buildDenyRedirectUri(form.getRedirectUri().getValue())));
+        }
+        
+        return form;
+    }
+    
+        @RequestMapping(value = "/custom/register/empty.json", method = RequestMethod.GET)
+    public @ResponseBody
+    OauthRegistration getRegister(HttpServletRequest request, HttpServletResponse response) {
+        OauthRegistration empty = new OauthRegistration(registrationController.getRegister(request, response));
+        // Creation type in oauth will always be member referred
+        empty.setCreationType(Text.valueOf(CreationMethod.MEMBER_REFERRED.value()));
+        Text emptyText = Text.valueOf(EMPTY_STRING);
+        empty.setClientId(emptyText);
+        empty.setPassword(emptyText);
+        empty.setRedirectUri(emptyText);
+        empty.setResponseType(emptyText);
+        empty.setScope(emptyText);
+        return empty;
+    }
+
+    @RequestMapping(value = "/custom/register.json", method = RequestMethod.POST)
+    public @ResponseBody
+    OauthRegistration checkRegisterForm(HttpServletRequest request, @RequestBody OauthRegistration form) {
+        form.setErrors(new ArrayList<String>());
+
+        if(form.getApproved()) {
+            registrationController.registerGivenNameValidate(form);
+            registrationController.registerPasswordValidate(form);
+            registrationController.registerPasswordConfirmValidate(form);
+            registrationController.regEmailValidate(request, form, true);
+            registrationController.registerTermsOfUseValidate(form);
+    
+            copyErrors(form.getEmailConfirm(), form);
+            copyErrors(form.getEmail(), form);
+            copyErrors(form.getGivenNames(), form);
+            copyErrors(form.getPassword(), form);
+            copyErrors(form.getPasswordConfirm(), form);
+            copyErrors(form.getTermsOfUse(), form);
+        } else {
+            form.setRedirectUri(Text.valueOf(buildDenyRedirectUri(form.getRedirectUri().getValue())));
+        }
+        return form;
+    }
+
+    @RequestMapping(value = "/custom/registerConfirm.json", method = RequestMethod.POST)
+    public @ResponseBody
+    OauthRegistration registerAndAuthorize(HttpServletRequest request, @RequestBody OauthRegistration form) {
+        form.setErrors(new ArrayList<String>());
+        
+        if(form.getApproved()) {
+            // Check there are no errors
+            checkRegisterForm(request, form);
+            if (form.getErrors() != null && form.getErrors().isEmpty()) {
+                // Register user
+                registrationController.createMinimalRegistration(request, RegistrationController.toProfile(form));
                 // Authenticate user
-                Authentication auth = authenticateUser(request, form);
+                String email = form.getEmail().getValue();
+                String password = form.getPassword().getValue();
+                Authentication auth = authenticateUser(request, email, password);
                 // Create authorization params
                 SimpleSessionStatus status = new SimpleSessionStatus();
                 Map<String, Object> model = new HashMap<String, Object>();
@@ -303,90 +390,11 @@ public class OauthConfirmAccessController extends BaseController {
                 // Approve
                 RedirectView view = (RedirectView) authorizationEndpoint.approveOrDeny(approvalParams, model, status, auth);
                 form.setRedirectUri(Text.valueOf(view.getUrl()));
-            } catch (AuthenticationException ae) {
-                form.getErrors().add(getMessage("orcid.frontend.security.bad_credentials"));
             }
+        } else {
+            form.setRedirectUri(Text.valueOf(buildDenyRedirectUri(form.getRedirectUri().getValue())));
         }
-        return form;
-    }
-
-    @RequestMapping(value = "/custom/register/empty.json", method = RequestMethod.GET)
-    public @ResponseBody
-    OauthRegistration getRegister(HttpServletRequest request, HttpServletResponse response) {
-        OauthRegistration empty = new OauthRegistration(registrationController.getRegister(request, response));
-        // Creation type in oauth will always be member referred
-        empty.setCreationType(Text.valueOf(CreationMethod.MEMBER_REFERRED.value()));
-        Text emptyText = Text.valueOf(EMPTY_STRING);
-        empty.setClientId(emptyText);
-        empty.setPassword(emptyText);
-        empty.setRedirectUri(emptyText);
-        empty.setResponseType(emptyText);
-        empty.setScope(emptyText);
-        return empty;
-    }
-
-    @RequestMapping(value = "/custom/register.json", method = RequestMethod.POST)
-    public @ResponseBody
-    OauthRegistration checkRegisterForm(HttpServletRequest request, @RequestBody OauthRegistration form) {
-        form.setErrors(new ArrayList<String>());
-
-        registrationController.registerGivenNameValidate(form);
-        registrationController.registerPasswordValidate(form);
-        registrationController.registerPasswordConfirmValidate(form);
-        registrationController.regEmailValidate(request, form, true);
-        registrationController.registerTermsOfUseValidate(form);
-
-        copyErrors(form.getEmailConfirm(), form);
-        copyErrors(form.getEmail(), form);
-        copyErrors(form.getGivenNames(), form);
-        copyErrors(form.getPassword(), form);
-        copyErrors(form.getPasswordConfirm(), form);
-        copyErrors(form.getTermsOfUse(), form);
-
-        return form;
-    }
-
-    @RequestMapping(value = "/custom/registerConfirm.json", method = RequestMethod.POST)
-    public @ResponseBody
-    OauthRegistration registerAndAuthorize(HttpServletRequest request, @RequestBody OauthRegistration form) {
-        form.setErrors(new ArrayList<String>());
-        // Check there are no errors
-        checkRegisterForm(request, form);
-        if (form.getErrors() != null && form.getErrors().isEmpty()) {
-            // Register user
-            registrationController.createMinimalRegistration(request, RegistrationController.toProfile(form));
-            // Authenticate user
-            String email = form.getEmail().getValue();
-            String password = form.getPassword().getValue();
-            Authentication auth = authenticateUser(request, email, password);
-            // Create authorization params
-            SimpleSessionStatus status = new SimpleSessionStatus();
-            Map<String, Object> model = new HashMap<String, Object>();
-            Map<String, String> params = new HashMap<String, String>();
-            params.put(CLIENT_ID_PARAM, form.getClientId().getValue());
-            if (!PojoUtil.isEmpty(form.getRedirectUri()))
-                params.put(REDIRECT_URI_PARAM, form.getRedirectUri().getValue());
-            else
-                params.put(REDIRECT_URI_PARAM, new String());
-            if (!PojoUtil.isEmpty(form.getScope()))
-                params.put(SCOPE_PARAM, form.getScope().getValue());
-            if (!PojoUtil.isEmpty(form.getResponseType()))
-                params.put(RESPONSE_TYPE_PARAM, form.getResponseType().getValue());
-            if (form.getApproved())
-                params.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "true");
-            else
-                params.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "false");
-            Map<String, String> approvalParams = new HashMap<String, String>();
-            if (form.getApproved())
-                approvalParams.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "true");
-            else
-                approvalParams.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "false");
-            // Authorize
-            authorizationEndpoint.authorize(model, RESPONSE_TYPE, params, status, auth);
-            // Approve
-            RedirectView view = (RedirectView) authorizationEndpoint.approveOrDeny(approvalParams, model, status, auth);
-            form.setRedirectUri(Text.valueOf(view.getUrl()));
-        }
+        
 
         return form;
     }
@@ -414,6 +422,23 @@ public class OauthConfirmAccessController extends BaseController {
         return form;
     }
 
+    /**
+     * Builds the redirect uri string to use when the user deny the request
+     * @param redirectUri
+     *          Redirect uri
+     * @return the redirect uri string with the deny params         
+     * */
+    private String buildDenyRedirectUri(String redirectUri) {
+        if(!PojoUtil.isEmpty(redirectUri)) {
+            if(redirectUri.contains("?")) {
+                redirectUri = redirectUri.concat("&error=access_denied&error_description=User denied access");
+            } else {
+                redirectUri = redirectUri.concat("?error=access_denied&error_description=User denied access");
+            }
+        }        
+        return redirectUri;
+    }
+    
     /*****************************
      * Authenticate user methods
      ****************************/
