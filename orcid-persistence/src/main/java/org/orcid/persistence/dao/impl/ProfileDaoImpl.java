@@ -29,6 +29,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidType;
@@ -41,14 +42,10 @@ import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 @PersistenceContext(unitName = "orcid")
 public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implements ProfileDao {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ProfileDaoImpl.class);
 
     public ProfileDaoImpl() {
         super(ProfileEntity.class);
@@ -624,6 +621,20 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         Query query = entityManager.createNativeQuery("select claimed from profile where orcid=:orcid");
         query.setParameter("orcid", orcid);
         return (Boolean)query.getSingleResult();
+    }
+    
+    /**
+     * Get the client type of a profile
+     * @param orcid    
+     *          The profile to look for
+     * @return the client type, null if it is not a client
+     * */
+    @Override
+    public ClientType getClientType(String orcid) {
+        TypedQuery<ClientType> query = entityManager.createQuery("select clientType from ProfileEntity where orcid = :orcid", ClientType.class);
+        query.setParameter("orcid", orcid);
+        List<ClientType> results = query.getResultList();
+        return results.isEmpty() ? null : results.get(0);
     }
 
 }

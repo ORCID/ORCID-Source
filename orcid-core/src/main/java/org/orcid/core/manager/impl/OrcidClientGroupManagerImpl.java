@@ -374,7 +374,47 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
 
         return adapter.toOrcidClient(clientProfileEntity);
     }
+    
+    
+    /**
+     * Updates a client profile, updates can be adding or removing redirect uris
+     * or updating the client fields
+     * 
+     * @param client
+     *            The updated client
+     * @return the updated OrcidClient
+     * */
+    public OrcidClient updateClientProfile(OrcidClient client) {
+        ProfileEntity clientProfileEntity = null;
+        if (client.getClientId() != null) {
+            // Look up the existing client.
+            String clientId = client.getClientId();
+            clientProfileEntity = profileDao.find(clientId);
+            if (clientProfileEntity == null) {
+                // If the existing client can't be found then raise an
+                // error.
+                throw new OrcidClientGroupManagementException("Unable to find client profile: " + clientId);
+            } else {
+                if (clientProfileEntity.getClientType() == null) {
+                    // If profile exists with for the client ID, but is not
+                    // of client type, then raise an error.
+                    throw new OrcidClientGroupManagementException("ORCID exists but is not a client: " + clientId);
+                }                
 
+                // If the existing client is found, then update the client
+                // details from the incoming client, and save using the profile
+                // DAO.
+                profileDao.removeChildrenWithGeneratedIds(clientProfileEntity);
+                updateProfileEntityFromClient(client, clientProfileEntity, true);
+                profileDao.merge(clientProfileEntity);
+                clientDetailsManager.updateLastModified(clientProfileEntity.getId());
+            }
+
+        }
+
+        return adapter.toOrcidClient(clientProfileEntity);
+    }  
+        
     /**
      * Get a client and evaluates if it is new or it is an update and act
      * accordingly.
@@ -468,7 +508,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
                 if (clientPredefinedScopes != null) {
                     existingEntity.setPredefinedClientScope(ScopePathType.getScopesAsSingleString(clientPredefinedScopes));
                 }
-                //Add the the list
+                //Add to the list
                 clientRedirectUriEntities.add(existingEntity);
             } else {
                 ClientRedirectUriEntity clientRedirectUriEntity = new ClientRedirectUriEntity(redirectUri.getValue(), clientDetailsEntity);

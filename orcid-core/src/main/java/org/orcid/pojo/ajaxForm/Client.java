@@ -23,6 +23,8 @@ import java.util.List;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.RedirectUris;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
 
 public class Client implements ErrorsInterface, Serializable {
 
@@ -36,6 +38,28 @@ public class Client implements ErrorsInterface, Serializable {
     private Text clientSecret;
     private Text type; 
     private List<RedirectUri> redirectUris;
+    
+    
+    public static Client valueOf(ClientDetailsEntity clientDetails) {
+        Client client = new Client();
+        if(clientDetails != null) {
+            client.setClientId(Text.valueOf(clientDetails.getClientId()));
+            client.setDisplayName(Text.valueOf(clientDetails.getClientName()));
+            client.setShortDescription(Text.valueOf(clientDetails.getClientDescription()));            
+            client.setWebsite(Text.valueOf(clientDetails.getClientWebsite()));
+            
+            client.redirectUris = new ArrayList<RedirectUri>();
+            if(clientDetails.getClientRegisteredRedirectUris() != null) {
+                for(ClientRedirectUriEntity rUri : clientDetails.getClientRegisteredRedirectUris()) {
+                   client.redirectUris.add(RedirectUri.valueOf(rUri)); 
+                }
+            }
+            
+            if(clientDetails.getProfileEntity() != null)
+                client.setType(Text.valueOf(clientDetails.getProfileEntity().getClientType().value()));
+        }
+        return client;
+    }
     
     public static Client valueOf(OrcidClient orcidClient){
         Client client = new Client();   
@@ -66,7 +90,8 @@ public class Client implements ErrorsInterface, Serializable {
         orcidClient.setWebsite(this.website.getValue());
         orcidClient.setShortDescription(this.shortDescription.getValue());
         orcidClient.setClientId(this.clientId.getValue());
-        orcidClient.setClientSecret(this.clientSecret.getValue());
+        if(!PojoUtil.isEmpty(this.clientSecret))
+            orcidClient.setClientSecret(this.clientSecret.getValue());
         if(!PojoUtil.isEmpty(this.type))
         	orcidClient.setType(ClientType.fromValue(this.type.getValue()));
         

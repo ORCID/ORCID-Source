@@ -87,7 +87,17 @@ public interface OrcidClientGroupManager {
      * @return the updated OrcidClient
      * */
     OrcidClient updateClientProfile(String groupOrcid, OrcidClient client);
-
+    
+    /**
+     * Updates a client profile, updates can be adding or removing redirect uris
+     * or updating the client fields
+     * 
+     * @param client
+     *            The updated client
+     * @return the updated OrcidClient
+     * */
+    OrcidClient updateClientProfile(OrcidClient client);    
+    
     /**
      * Creates a new client and set the group orcid as the owner of that client
      * 

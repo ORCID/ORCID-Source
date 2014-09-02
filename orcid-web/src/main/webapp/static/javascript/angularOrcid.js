@@ -4859,7 +4859,6 @@ function profileDeprecationCtrl($scope,$compile){
 	};
 	
 	$scope.showSuccessModal = function(deprecated, primary){
-		console.log(om.get('admin.profile_deprecation.deprecate_account.success_message'));
 		$scope.successMessage = om.get('admin.profile_deprecation.deprecate_account.success_message').replace("{{0}}", deprecated).replace("{{1}}", primary);
 		
 		//Clean fields
@@ -4912,12 +4911,145 @@ function revokeApplicationFormCtrl($scope,$compile){
 	};
 };
 
+function adminEditClientCtrl($scope, $compile) {
+	$scope.showEditClientModal = false;
+	$scope.success_message = null;
+	$scope.client_id = null;
+	$scope.client = null;
+	$scope.showError = false;
+	$scope.availableRedirectScopes = [];
+	$scope.selectedScope = "";
+	
+	$scope.toggleEditClientModal = function() {
+		$scope.showEditClientModal = !$scope.showEditClientModal;
+    	$('#edit_client_modal').toggle();
+	};
+	
+	$scope.search = function() {
+		$scope.showError = false;
+		$scope.client = null;
+		$scope.success_message = null;
+		$.ajax({
+	        url: getBaseUri()+'/admin-actions/find-client.json?orcid=' + $scope.client_id,	        
+	        type: 'GET',
+	        dataType: 'json',	        
+	        success: function(data) {
+	        	console.log(angular.toJson(data));
+	        	$scope.client = data;	        	
+	        	$scope.$apply();
+	        }
+	    }).fail(function(error) { 
+	    	// something bad is happening!	    	
+	    	console.log("Error getting existing groups");	    	
+	    });		
+	};
+	
+	
+	//Load empty redirect uri
+	$scope.loadEmptyRedirectUri = function() {
+		$.ajax({
+	        url: getBaseUri() + '/admin-actions/empty-redirect-uri.json',
+	        type: 'GET',
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.client.redirectUris.push(data);
+	        	$scope.$apply();
+	        }
+	    }).fail(function() { 
+	    	console.log("Unable to fetch redirect uri scopes.");
+	    });	
+	};
+	
+	$scope.deleteRedirectUri = function($index){
+		$scope.client.redirectUris.splice($index,1);
+	};
+	
+	//Load the default scopes based n the redirect uri type selected
+	$scope.loadDefaultScopes = function(rUri) {
+		//Empty the scopes to update the default ones
+		rUri.scopes = [];
+		//Fill the scopes with the default scopes
+		if(rUri.type.value == 'grant-read-wizard'){
+			rUri.scopes.push('/orcid-profile/read-limited');
+		} else if (rUri.type.value == 'import-works-wizard'){
+			rUri.scopes.push('/orcid-profile/read-limited');
+			rUri.scopes.push('/orcid-works/create');
+		} else if (rUri.type.value == 'import-funding-wizard'){
+			rUri.scopes.push('/orcid-profile/read-limited');
+			rUri.scopes.push('/funding/create');
+		}  		
+	};		
+	
+	//Load the list of scopes for client redirect uris 
+	$scope.loadAvailableScopes = function(){
+		$.ajax({
+	        url: getBaseUri() + '/group/developer-tools/get-available-scopes.json',
+	        type: 'GET',
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	$scope.availableRedirectScopes = data;	        	
+	        }
+	    }).fail(function() { 
+	    	console.log("Unable to fetch redirect uri scopes.");
+	    });		
+	};
+	
+	//Confirm updating a client
+	$scope.confirmUpdateClient = function() {
+		$.colorbox({                      
+			html : $compile($('#confirm-modal').html())($scope),
+				scrolling: true,
+				onLoad: function() {
+				$('#cboxClose').remove();
+			},
+			scrolling: true
+		});
+		
+		$.colorbox.resize({width:"450px" , height:"175px"});
+	};
+	
+	//Update client
+	$scope.updateClient = function() {
+		$.ajax({
+	        url: getBaseUri() + '/admin-actions/update-client.json',
+	        type: 'POST',
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',	        
+	        data: angular.toJson($scope.client),	 
+	        success: function(data) {
+	        	console.log(angular.toJson(data));	        	
+	        	if(data.errors.length == 0){
+	        		$scope.client = null;
+	        		$scope.client_id = "";
+	        		$scope.success_message = om.get('admin.edit_client.success');
+	        	} else {
+	        		$scope.client = data;
+	        	}
+	        	$scope.$apply();
+	        	$scope.closeModal();
+	        }
+	    }).fail(function() { 
+	    	console.log("Unable to update client.");
+	    });	
+	};
+	
+	//init	
+	$scope.loadAvailableScopes();
+	
+	$scope.closeModal = function() {
+		$.colorbox.close();
+	};
+};
+
+
 function adminGroupsCtrl($scope,$compile){
 	$scope.showAdminGroupsModal = false;
 	$scope.newGroup = null;
 	$scope.groups = [];
 	
-	$scope.toggleReactivationModal = function() {
+	$scope.toggleGroupsModal = function() {
 		$scope.showAdminGroupsModal = !$scope.showAdminGroupsModal;
     	$('#admin_groups_modal').toggle();
 	};
