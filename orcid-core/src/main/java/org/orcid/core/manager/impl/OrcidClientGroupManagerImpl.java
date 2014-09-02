@@ -496,13 +496,17 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         clientDetailsEntity.setClientDescription(client.getShortDescription());
         clientDetailsEntity.setClientWebsite(client.getWebsite());
         Set<ClientRedirectUriEntity> clientRedirectUriEntities = clientDetailsEntity.getClientRegisteredRedirectUris();
-        Map<String, ClientRedirectUriEntity> clientRedirectUriEntitiesMap = ClientRedirectUriEntity.mapByUri(clientRedirectUriEntities);
+        Map<String, ClientRedirectUriEntity> clientRedirectUriEntitiesMap = ClientRedirectUriEntity.mapByUriAndType(clientRedirectUriEntities);
         clientRedirectUriEntities.clear();
         Set<RedirectUri> redirectUrisToAdd = new HashSet<RedirectUri>();
         redirectUrisToAdd.addAll(client.getRedirectUris().getRedirectUri());
         for (RedirectUri redirectUri : redirectUrisToAdd) {
-            if (clientRedirectUriEntitiesMap.containsKey(redirectUri.getValue())) {
-                ClientRedirectUriEntity existingEntity = clientRedirectUriEntitiesMap.get(redirectUri.getValue());
+            String rUriKey = ClientRedirectUriEntity.getUriAndTypeKey(redirectUri);
+            //If there is a redirect uri with the same uri
+            if (clientRedirectUriEntitiesMap.containsKey(rUriKey)) {
+                //Check if it have the same scope and update it
+                //If it doesnt have the same scope
+                ClientRedirectUriEntity existingEntity = clientRedirectUriEntitiesMap.get(rUriKey);
                 //Update the scopes
                 List<ScopePathType> clientPredefinedScopes = redirectUri.getScope();
                 if (clientPredefinedScopes != null) {
