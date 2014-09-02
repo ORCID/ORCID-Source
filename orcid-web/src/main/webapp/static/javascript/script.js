@@ -214,13 +214,16 @@ function trimAjaxFormText(pojoMember) {
 	  pojoMember.value = pojoMember.value.trim();
 }
 
-function logOffReload() {
+function logOffReload(reload_param) {
 	$.ajax({
         url: baseUrl + 'userStatus.json?logUserOut=true',
         type: 'GET',
         dataType: 'json',
         success: function(data) {
-        	window.location.reload();
+        	if(reload_param != null) {
+        		window.location = window.location.href + '#' + reload_param;
+        	}
+        	window.location.reload();        	
         }
 	}).fail(function() { 
     	// something bad is happening!
