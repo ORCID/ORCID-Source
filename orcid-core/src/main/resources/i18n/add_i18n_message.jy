@@ -13,6 +13,7 @@ import logging
 import optparse
 import os
 import re
+import sys
 from java.io import FileInputStream
 from java.io import FileOutputStream
 from java.io import InputStreamReader
@@ -27,7 +28,7 @@ info = logging.info
 
 # Config
 
-resource_dir = os.path.expanduser('~/git/ORCID-Source/orcid-core/src/main/resources/i18n/')
+resource_dir = os.path.dirname(os.path.realpath(sys.argv[0]))
 en_suffix = '_en.properties'
 
 # Function definitions
