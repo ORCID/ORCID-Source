@@ -6612,18 +6612,25 @@ function OauthAuthorizationController($scope, $compile, $sce){
 	        dataType: 'json',
 	        success: function(data) {
 	        	$scope.registrationForm = data;	 
-	        	if ($scope.registrationForm.errors.length == 0) {
-	        		$scope.showProcessingColorBox();
-	        		$scope.getDuplicates();
+	        	if($scope.registrationForm.approved) {
+	        		if ($scope.registrationForm.errors.length == 0) {
+		        		$scope.showProcessingColorBox();
+		        		$scope.getDuplicates();
+		        	} else {
+		        		if($scope.registrationForm.email.errors.length > 0) {	        				        			
+		        			for(var i = 0; i < $scope.registrationForm.email.errors.length; i++){
+			        			$scope.emailTrustAsHtmlErrors[0] = $sce.trustAsHtml($scope.registrationForm.email.errors[i]);	        		    	        		   
+			        		}		        		  
+		        		} else {
+		        			$scope.emailTrustAsHtmlErrors = [];
+		        		}
+		        	}
 	        	} else {
-	        		if($scope.registrationForm.email.errors.length > 0) {	        				        			
-	        			for(var i = 0; i < $scope.registrationForm.email.errors.length; i++){
-		        			$scope.emailTrustAsHtmlErrors[0] = $sce.trustAsHtml($scope.registrationForm.email.errors[i]);	        		    	        		   
-		        		}		        		  
-	        		} else {
-	        			$scope.emailTrustAsHtmlErrors = [];
-	        		}
+	        		//Fire GA register deny
+		    		orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Authorize_Deny', 'OAuth ' + $scope.clientGroupName + ' - ' + $scope.clientName ]);
+	        		orcidGA.windowLocationHrefDelay(data.redirectUri.value);
 	        	}
+	        	
 	        	$scope.$apply();
 	        }
 	    }).fail(function() { 
