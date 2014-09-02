@@ -36,11 +36,14 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
+import org.orcid.core.manager.OrcidClientGroupManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
@@ -60,6 +63,7 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -88,6 +92,27 @@ public class AdminControllerTest extends BaseControllerTest {
     
     @Resource
     private EmailDao emailDao;
+    
+    @Resource
+    OrcidClientGroupManager orcidClientGroupManager;
+    
+    @Resource
+    GroupAdministratorController groupAdministratorController;
+    
+    @BeforeClass
+    public static void beforeClass() throws Exception {
+        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml"), null);
+    }
+
+    @Before
+    public void beforeInstance() {
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication());
+    }
+
+    @AfterClass
+    public static void afterClass() throws Exception {
+        removeDBUnitData(Arrays.asList("/data/ClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/SecurityQuestionEntityData.xml"), null);
+    }
     
     @Before
     public void init() {
@@ -481,5 +506,5 @@ public class AdminControllerTest extends BaseControllerTest {
         EmailEntity emailEntity = emailDao.find("not-verified@email.com");
         assertNotNull(emailEntity);
         assertTrue(emailEntity.getVerified());
-    }
+    }            
 }

@@ -22,6 +22,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
@@ -184,4 +185,14 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         return profileDao.getClaimedStatus(orcid);
     }
 
+    /**
+     * Get the client type of a profile
+     * @param orcid    
+     *          The profile to look for
+     * @return the client type, null if it is not a client
+     * */
+    @Override
+    public ClientType getClientType(String orcid) {
+        return profileDao.getClientType(orcid);
+    }
 }

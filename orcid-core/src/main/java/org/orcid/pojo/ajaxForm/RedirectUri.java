@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
 
 public class RedirectUri implements ErrorsInterface, Serializable, Comparable<RedirectUri> {
 
@@ -31,6 +32,18 @@ public class RedirectUri implements ErrorsInterface, Serializable, Comparable<Re
     private List<String> scopes = new ArrayList<String>();
     protected Text value;
     private Text type;
+    
+    public static RedirectUri valueOf(ClientRedirectUriEntity rUri) {
+        RedirectUri redirectUri = new RedirectUri();
+        redirectUri.setValue(Text.valueOf(rUri.getRedirectUri()));
+        redirectUri.setType(Text.valueOf(rUri.getRedirectUriType()));
+                
+        for(String scope : rUri.getPredefinedClientScope().split(" ")) {
+            redirectUri.getScopes().add(scope);
+        }
+                        
+        return redirectUri;
+    }
     
     public static RedirectUri toRedirectUri(org.orcid.jaxb.model.clientgroup.RedirectUri orcidRedirectUri){
         RedirectUri redirectUri = new RedirectUri();

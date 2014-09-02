@@ -18,7 +18,7 @@
 
 -->
 <dataset>
-	<!-- Empty tables here needed to ensure correct clean up in integration tests -->	
+	<!-- Empty tables here needed to ensure correct clean up in integration tests -->		
 	<profile/>	
 	<orcid_social/>
 	<profile_event/>

@@ -7,6 +7,7 @@
 import glob
 import logging
 import os
+import sys
 from java.util import Properties
 
 # Init
@@ -16,7 +17,7 @@ info = logging.info
 
 # Config
 
-resource_dir = os.path.expanduser('~/git/ORCID-Source/orcid-core/src/main/resources/i18n/')
+resource_dir = os.path.dirname(os.path.realpath(sys.argv[0]))
 en_suffix = '_en.properties'
 
 # Function definitions

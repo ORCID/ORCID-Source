@@ -66,7 +66,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.MessageSource;
-import org.springframework.mail.MailSender;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -263,6 +262,17 @@ public class NotificationManagerImpl implements NotificationManager {
             locale = LocaleUtils.toLocale("en");
         }
         return messages.getMessage(code, null, locale);
+    }
+    
+    private String getSubject(String code, OrcidProfile orcidProfile, String ... args) {
+        Locale locale = null;
+        if (orcidProfile.getOrcidPreferences() != null && orcidProfile.getOrcidPreferences().getLocale() != null) {
+            orcidProfile.getOrcidPreferences().getLocale().value();
+            locale = LocaleUtils.toLocale(orcidProfile.getOrcidPreferences().getLocale().value());
+        } else {
+            locale = LocaleUtils.toLocale("en");
+        }
+        return messages.getMessage(code, args, locale);
     }
 
     public void sendVerificationReminderEmail(OrcidProfile orcidProfile, String email) {
@@ -786,7 +796,7 @@ public class NotificationManagerImpl implements NotificationManager {
 
         // Send message
         if (apiRecordCreationEmailEnabled) {
-            mailGunManager.sendEmail(DELEGATE_NOTIFY_ORCID_ORG, primaryEmail.getValue(), getSubject("email.subject.admin_as_delegate", managed), null, htmlBody);
+            mailGunManager.sendEmail(DELEGATE_NOTIFY_ORCID_ORG, primaryEmail.getValue(), getSubject("email.subject.admin_as_delegate", managed, trustedOrcidName), null, htmlBody);
             profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.ADMIN_PROFILE_DELEGATION_REQUEST));
         } else {
             LOGGER.debug("Not sending admin delegate email, because API record creation email option is disabled. Message would have been: {}", htmlBody);
