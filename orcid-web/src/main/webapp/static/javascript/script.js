@@ -214,13 +214,16 @@ function trimAjaxFormText(pojoMember) {
 	  pojoMember.value = pojoMember.value.trim();
 }
 
-function logOffReload() {
+function logOffReload(reload_param) {
 	$.ajax({
         url: baseUrl + 'userStatus.json?logUserOut=true',
         type: 'GET',
         dataType: 'json',
         success: function(data) {
-        	window.location.reload();
+        	if(reload_param != null) {
+        		window.location = window.location.href + '#' + reload_param;
+        	}
+        	window.location.reload();        	
         }
 	}).fail(function() { 
     	// something bad is happening!
@@ -846,7 +849,7 @@ $(function (){
 	});
 });
 
-/* start bibtexParse 0.0.13 */
+/* start bibtexParse 0.0.14 */
 
 //Original work by Henrik Muehe (c) 2010
 //
@@ -1244,6 +1247,106 @@ $(function (){
      "chi": "φ",
      "psi": "χ",
      "omega": "ψ",
+     "=A": "Ā",
+    "=A": "Ā",
+    "=a": "ā",
+    "u{A}": "Ă",
+    "u{a}": "ă",
+    "k A": "Ą",
+    "k a": "ą",
+    "'C": "Ć",
+    "'c": "ć",
+    ".C": "Ċ",
+    ".c": "ċ",
+    "v{C}": "Č",
+    "v{c}": "č",
+    "v{D}": "Ď",
+    "=E": "Ē",
+    "=e": "ē",
+    "u{E}": "Ĕ",
+    "u{e}": "ĕ",
+    ".E": "Ė",
+    ".e": "ė",
+    "v{E}": "Ě",
+    "v{e}": "ě",
+    "u{G}": "Ğ",
+    "u{g}": "ğ",
+    ".G": "Ġ",
+    ".g": "ġ",
+    "c{G}": "Ģ",
+    "c{g}": "ģ",
+    "dH": "Ħ",
+    "dh": "ħ",
+    "~I": "Ĩ",
+    "~i": "ĩ",
+    "=I": "Ī",
+    "=i": "ī",
+    "u{I}": "Ĭ",
+    "u{i}": "ĭ",
+    "k I": "Į",
+    "k i": "į",
+    ".I": "İ",
+    "^J": "Ĵ",
+    "^j": "ĵ",
+    "c{J}": "Ķ",
+    "c{j}": "ķ",
+    "'L": "Ĺ",
+    "'l": "ĺ",
+    "c{L}": "Ļ",
+    "c{l}": "ļ",
+    "v{L}": "Ľ",
+    "v{l": "ľ",
+    "dL": "Ł",
+    "dl": "ł",
+    "'N": "Ń",
+    "'n": "ń",
+    "c{N}": "Ņ",
+    "c{n}": "ņ",
+    "v{N}": "Ň",
+    "v{n}": "ň",
+    "=O": "Ō",
+    "=o": "ō",
+    "u{O}": "Ŏ",
+    "u{o}": "ŏ",
+    "H{O}": "Ő",
+    "H{o}": "ő",
+    "OE": "Œ",
+    "oe": "œ",
+    "'R": "Ŕ",
+    "'r": "ŕ",
+    "c{R}": "Ŗ",
+    "c{r}": "ŗ",
+    "v{R}": "Ř",
+    "v{r}": "ř",
+    "'R": "Ś",
+    "'r": "ś",
+    "c{S": "Ş",
+    "c{s}": "ş",
+    "v{S}": "Š",
+    "v{s}": "š",
+    "c{T}": "Ţ",
+    "c{t}": "ţ",
+    "v{T}": "Ť",
+    "v{t}": "ť",
+    "dT": "Ŧ",
+    "dt": "ŧ",
+    "~U": "Ũ",
+    "~u": "ũ",
+    "=U": "Ū",
+    "=u": "ū",
+    "u{U}": "Ŭ",
+    "u{u}": "ŭ",
+    "H{U}": "Ű",
+    "H{u}": "ű",
+    "k U": "Ų",
+    "k u": "ų",
+    "\"Y": "Ÿ",
+    "'Z": "Ź",
+    "'z": "ź",
+    ".Z": "Ż",
+    ".z": "ż",
+    "v{Z}": "Ž",
+    "v{z}": "ž"
       };
 
      String.prototype.addSlashes = function() { 
@@ -1346,6 +1449,7 @@ $(function (){
 })(typeof exports === 'undefined' ? this['bibtexParse'] = {} : exports);
 
 /* end bibtexParse */
+
 
 
 

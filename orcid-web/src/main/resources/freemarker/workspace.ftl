@@ -310,43 +310,29 @@
 							</li>	
 							<#if RequestParameters['bibWizard']??>
 								<li>
-									<a href="" class="label btn-primary" ng-click="openBibTextWizard()">Link BibTeX</a>
+									<a href="" class="label btn-primary" ng-click="openBibTextWizard()"><@orcid.msg 'workspace.bibtexImporter.link_bibtex'/></a>
 								</li>
 							</#if>
-							
-							 
-							
-							<#if RequestParameters['bibWizard']??>
-							<!--
-							    <li ng-show="canReadFiles" ng-cloak>							        
-							        <div class="label btn-primary upload">
-							           <span class="import-label">Link BibTeX</span>
-								       <input type="file" class="upload-button" ng-model="textFiles" ng-click="openBibTextWizard()" accept="*" update-fn="loadBibtexJs()"  app-file-text-reader multiple />
-							       </div>
-							    </li>
-							    -->
-							</#if>
-							 
 						</ul>					
 					</div>
 					<!-- Bibtex Importer Results -->
 					<div ng-show="showBibtexImportWizard" ng-cloak class="bibtex-box">
 						<div class="grey-box bottomBuffer box-border" ng-show="canReadFiles" ng-cloak>
-						   <p>
-						   <strong>You can import works from bibtex files, including Google Scholar's export.</strong>
-						   </p>													        
+						   <p class="bottomBuffer">
+						   		<strong><@orcid.msg 'workspace.bibtexImporter.instructions'/>  <a href="http://support.orcid.org/knowledgebase/articles/390530" target="_blank"><@orcid.msg 'workspace.bibtexImporter.learnMore'/></a></strong>
+						   </p> 
 					       <div class="label btn-primary upload">
-					           <span class="import-label">File Upload</span>
+					           <span class="import-label"><@orcid.msg 'workspace.bibtexImporter.fileUpload'/></span>
 						       <input type="file" class="upload-button" ng-model="textFiles" accept="*" update-fn="loadBibtexJs()"  app-file-text-reader multiple />
 					       </div>
 						</div>						
 						<div class="alert alert-block" ng-show="bibtexParsingError">
-							<strong>This file can not be read. Please check the BibTeX format and try again.</strong>
+							<strong><@orcid.msg 'workspace.bibtexImporter.parsingError'/></strong>
 						</div>
 						<div class="row bottomBuffer" ng-show="bibtexCancelLink">
 							<div class="col-md-10"></div>
 							<div class="col-md-2">
-								<button type="button" ng-click="bibtextCancel()" class="btn close-button pull-right">Cancel</button>		
+								<button type="button" ng-click="bibtextCancel()" class="btn close-button pull-right"><@orcid.msg 'workspace.bibtexImporter.cancel'/></button>		
 							</div>
 						</div>
 					   	<div ng-repeat="work in worksFromBibtex" ng-cloak class="grey-box bottomBuffer box-border">
