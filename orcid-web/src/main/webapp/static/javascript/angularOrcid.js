@@ -30,8 +30,9 @@ function openImportWizardUrl(url) {
 	
 	
 sortPredicateMap = {};
-sortPredicateMap['date'] = ['-dateSortString', 'title'];
-sortPredicateMap['title'] = ['title', '-dateSortString'];
+sortPredicateMap['date'] = ['-dateSortString', 'title','getActive().workType.value'];
+sortPredicateMap['title'] = ['title', '-dateSortString','getActive().workType.value'];
+sortPredicateMap['type'] = ['getActive().workType.value','title', '-dateSortString'];
 	
 
 var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.multiselect']);
