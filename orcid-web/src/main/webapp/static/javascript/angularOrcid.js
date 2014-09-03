@@ -3286,9 +3286,15 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 		$('#organizationDefinedType').typeahead('destroy');
 	};
 	
-	$scope.addExternalIdentifier = function () {
+	$scope.addFundingExternalIdentifier = function () {
 		$scope.editFunding.externalIdentifiers.push({type: {value: ""}, value: {value: ""}, url: {value: ""} });
 	};
+	
+	$scope.deleteFundingExternalIdentifier = function(obj) {		
+		var index = $scope.editFunding.externalIdentifiers.indexOf(obj);
+		$scope.editFunding.externalIdentifiers.splice(index,1);
+	};
+
 	
 	$scope.toggleTranslatedTitleModal = function(){
 		$scope.editTranslatedTitle = !$scope.editTranslatedTitle;
@@ -3577,7 +3583,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
 	};
 	
 	$scope.deleteExternalIdentifier = function(obj) {		
-		var index = $scope.editWork.contributors.indexOf(obj);
+		var index = $scope.editWork.workExternalIdentifiers.indexOf(obj);
 		$scope.editWork.workExternalIdentifiers.splice(index,1);
 	};
 

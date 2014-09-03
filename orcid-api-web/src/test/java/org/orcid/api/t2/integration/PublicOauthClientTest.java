@@ -70,6 +70,8 @@ public class PublicOauthClientTest extends DBUnitTest {
     
     private static final String CLIENT_DETAILS_ID = "4444-4444-4444-4498";
     
+    private static final String DEFAULT = "default";
+    
     private WebDriver webDriver;
     
     @Resource
@@ -105,7 +107,7 @@ public class PublicOauthClientTest extends DBUnitTest {
     public void before() {
         webDriver = new FirefoxDriver();
         redirectUri = webBaseUrl + "/oauth/playground";
-        ClientRedirectUriPk clientRedirectUriPk = new ClientRedirectUriPk(CLIENT_DETAILS_ID, redirectUri);
+        ClientRedirectUriPk clientRedirectUriPk = new ClientRedirectUriPk(CLIENT_DETAILS_ID, redirectUri, DEFAULT);
         if (clientRedirectDao.find(clientRedirectUriPk) == null) {
             clientDetailsManager.addClientRedirectUri(CLIENT_DETAILS_ID, redirectUri);
         }
