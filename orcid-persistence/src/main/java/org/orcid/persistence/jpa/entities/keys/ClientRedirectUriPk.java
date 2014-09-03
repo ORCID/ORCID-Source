@@ -31,13 +31,15 @@ public class ClientRedirectUriPk implements Serializable {
     private static final long serialVersionUID = -3948069038449324678L;
     private String clientDetailsEntity;
     private String redirectUri;
+    private String redirectUriType;
 
     public ClientRedirectUriPk() {
     }
 
-    public ClientRedirectUriPk(String clientDetailsEntity, String redirectUri) {
+    public ClientRedirectUriPk(String clientDetailsEntity, String redirectUri, String redirectUriType) {
         this.clientDetailsEntity = clientDetailsEntity;
         this.redirectUri = redirectUri;
+        this.redirectUriType = redirectUriType;
     }
 
     public String getClientDetailsEntity() {
@@ -56,6 +58,14 @@ public class ClientRedirectUriPk implements Serializable {
         this.redirectUri = redirectUri;
     }
 
+    public String getRedirectUriType() {
+        return redirectUriType;
+    }
+
+    public void setRedirectUriType(String redirectUriType) {
+        this.redirectUriType = redirectUriType;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -69,6 +79,8 @@ public class ClientRedirectUriPk implements Serializable {
             return false;
         if (!redirectUri.equals(that.redirectUri))
             return false;
+        if(!redirectUriType.equals(that.redirectUriType))
+            return false;
 
         return true;
     }
@@ -77,6 +89,7 @@ public class ClientRedirectUriPk implements Serializable {
     public int hashCode() {
         int result = clientDetailsEntity.hashCode();
         result = 31 * result + redirectUri.hashCode();
+        result = 31 * result + redirectUriType.hashCode();
         return result;
     }
 }

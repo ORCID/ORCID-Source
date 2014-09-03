@@ -31,6 +31,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.persistence.jpa.entities.keys.ClientRedirectUriPk;
 
 /**
@@ -105,7 +106,23 @@ public class ClientRedirectUriEntity extends BaseEntity<ClientRedirectUriPk> imp
         }
         return map;
     }
+    
+    public static Map<String, ClientRedirectUriEntity> mapByUriAndType(Set<ClientRedirectUriEntity> clientRedirectUriEntities) {
+        Map<String, ClientRedirectUriEntity> map = new HashMap<String, ClientRedirectUriEntity>();
+        for (ClientRedirectUriEntity clientRedirectUriEntity : clientRedirectUriEntities) {
+            map.put(getUriAndTypeKey(clientRedirectUriEntity), clientRedirectUriEntity);
+        }
+        return map;
+    }
 
+    public static String getUriAndTypeKey(ClientRedirectUriEntity rUri) {
+        return rUri.getRedirectUri() + '-' + rUri.getRedirectUriType();
+    }
+    
+    public static String getUriAndTypeKey(RedirectUri rUri) {
+        return rUri.getValue() + '-' + rUri.getType().value();
+    }
+        
     @Override
     public int compareTo(ClientRedirectUriEntity o) {
         if (o == null) {
@@ -114,8 +131,25 @@ public class ClientRedirectUriEntity extends BaseEntity<ClientRedirectUriPk> imp
         String otherUri = o.getRedirectUri();
         if (otherUri == null) {
             return redirectUri == null ? 0 : 1;
+        } else if(redirectUri == null){
+            return -1;
+        } else {
+            int compare = redirectUri.compareTo(otherUri);
+            if(compare != 0)
+                return compare;
+            else {
+                if(o.getRedirectUriType() == null){
+                    if(redirectUriType != null)
+                        return 1;
+                } else if(redirectUriType == null) {
+                    return -1;
+                } else {
+                    return redirectUriType.compareTo(o.getRedirectUriType());
+                }
+            }
         }
-        return redirectUri == null ? -1 : redirectUri.compareTo(otherUri);
+        
+        return 0;
     }
 
     @Column(name = "redirect_uri_type", length = 20)

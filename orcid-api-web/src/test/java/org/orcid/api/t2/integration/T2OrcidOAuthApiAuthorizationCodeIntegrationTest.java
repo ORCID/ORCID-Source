@@ -119,6 +119,8 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     public static final String CONTRIBUTOR_CREDIT_NAME = "My Credit Name";
     public static final String CONTRIBUTOR_EMAIL = "my.email@contributor.com";
 
+    private static final String DEFAULT = "default";
+    
     private WebDriver webDriver;
 
     @Resource
@@ -163,7 +165,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     public void before() {
         webDriver = new FirefoxDriver();
         redirectUri = webBaseUrl + "/oauth/playground";
-        ClientRedirectUriPk clientRedirectUriPk = new ClientRedirectUriPk(CLIENT_DETAILS_ID, redirectUri);
+        ClientRedirectUriPk clientRedirectUriPk = new ClientRedirectUriPk(CLIENT_DETAILS_ID, redirectUri, DEFAULT);
         if (clientRedirectDao.find(clientRedirectUriPk) == null) {
             clientDetailsManager.addClientRedirectUri(CLIENT_DETAILS_ID, redirectUri);
         }
