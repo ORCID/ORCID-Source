@@ -263,10 +263,14 @@
 						<label class="relative" id="funding-ext-ids-url-label"><@orcid.msg 'manual_funding_form_contents.external_identifier.label_url'/></label>
 						<div class="relative">
 		    				<input name="currentFundingExternalIdentifierUrl" id="funding-ext-ids-url-input" type="text" class="input-xlarge" ng-model="externalIdentifier.url.value" placeholder="<@orcid.msg 'manual_funding_form_contents.external_identifier.url'/>" ng-model-onblur/>
-							<span class="orcid-error" ng-show="externalIdentifier.url.errors.length > 0">
+							<a href ng-click="deleteFundingExternalIdentifier(externalIdentifier)" class="glyphicon glyphicon-trash grey"></a>
+		    				<span class="orcid-error" ng-show="externalIdentifier.url.errors.length > 0">
 								<div ng-repeat='error in externalIdentifier.url.errors' ng-bind-html="error"></div>
 							</span>
 						</div>	
+					</div>
+					<div ng-show="$last" class="add-item-link">			
+						<span><a href ng-click="addFundingExternalIdentifier()"><i class="glyphicon glyphicon-plus-sign"></i> <@orcid.msg 'manual_funding_form_contents.external_identifier.add_another' /></a></span>
 					</div>							
 				</div>
 				<div class="control-group">
