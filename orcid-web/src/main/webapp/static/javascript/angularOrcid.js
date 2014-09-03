@@ -3045,7 +3045,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	        	} else {
 		        	$scope.editFunding = data;
 		        	if($scope.editFunding.externalIdentifiers.length == 0) {
-		        		$scope.addExternalIdentifier();
+		        		$scope.addFundingExternalIdentifier();
 		        	}
 		        	$scope.copyErrorsLeft($scope.editFunding, data);		        	
 	        	}
