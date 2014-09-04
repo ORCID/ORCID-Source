@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2013 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.api.t2.integration;
 
 import static org.junit.Assert.assertEquals;
@@ -26,10 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
-import javax.ws.rs.core.MultivaluedMap;
 
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -41,7 +22,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.orcid.api.t2.T2OAuthAPIService;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.persistence.dao.ClientRedirectDao;
 import org.orcid.persistence.dao.ProfileDao;
@@ -53,9 +33,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.core.util.MultivaluedMapImpl;
-
 /**
  * 
  * @author Angel Montenegro
@@ -63,38 +40,33 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-oauth-orcid-api-client-context.xml" })
-public class PublicOauthClientTest extends DBUnitTest {
-    
+public class OauthSignInPersistentParametersTests extends DBUnitTest {
     private static final int DEFAULT_TIMEOUT_SECONDS = 30;
-    
-    private static final String CLIENT_DETAILS_ID = "4444-4444-4444-4498";
-    
+    private static final String CLIENT_ID = "9999-9999-9999-9994";
+    private static final Pattern AUTHORIZATION_CODE_PATTERN = Pattern.compile("code=(.+)");
+    private static final Pattern STATE_PATTERN = Pattern.compile("state=(.+)");
     private static final String DEFAULT = "default";
     
     private WebDriver webDriver;
-    
-    @Resource
-    private ProfileDao profileDao;
-    
+
     @Resource
     private ClientRedirectDao clientRedirectDao;
     
     @Resource
     private ClientDetailsManager clientDetailsManager;
     
-    @Resource(name = "t2OAuthClient")
-    private T2OAuthAPIService<ClientResponse> oauthT2Client;
-    
+    @Resource
+    private ProfileDao profileDao;
+
     @Value("${org.orcid.web.base.url:http://localhost:8080/orcid-web}")
     private String webBaseUrl;
 
     private String redirectUri;
 
-    private static final Pattern AUTHORIZATION_CODE_PATTERN = Pattern.compile("code=(.+)");
-
-    private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml", "/data/ProfileEntityData.xml",
-            "/data/WorksEntityData.xml", "/data/ProfileWorksEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml",
-            "/data/WebhookEntityData.xml");
+    private static final List<String> DATA_FILES = Arrays.asList("/group_client_data/EmptyEntityData.xml", "/group_client_data/SecurityQuestionEntityData.xml",
+            "/group_client_data/ProfileEntityData.xml", "/group_client_data/WorksEntityData.xml", "/group_client_data/OrgsEntityData.xml",
+            "/group_client_data/ClientDetailsEntityData.xml", "/group_client_data/ProfileWorksEntityData.xml", "/group_client_data/OrgAffiliationEntityData.xml",
+            "/group_client_data/ProfileFundingEntityData.xml");
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
@@ -108,9 +80,9 @@ public class PublicOauthClientTest extends DBUnitTest {
         redirectUri = webBaseUrl + "/oauth/playground";
 
         // Set redirect uris if needed
-        ClientRedirectUriPk clientRedirectUriPk = new ClientRedirectUriPk(CLIENT_DETAILS_ID, redirectUri, DEFAULT);
+        ClientRedirectUriPk clientRedirectUriPk = new ClientRedirectUriPk(CLIENT_ID, redirectUri, DEFAULT);
         if (clientRedirectDao.find(clientRedirectUriPk) == null) {
-            clientDetailsManager.addClientRedirectUri(CLIENT_DETAILS_ID, redirectUri);
+            clientDetailsManager.addClientRedirectUri(CLIENT_ID, redirectUri);
         }
         
         webDriver.get(webBaseUrl + "/signout");
@@ -127,39 +99,10 @@ public class PublicOauthClientTest extends DBUnitTest {
     public void after() {
         webDriver.quit();
     }
-    
-    @Test
-    public void testPublicClient() throws JSONException, InterruptedException {
-        String scopes = "/authenticate";
-        String authorizationCode = obtainAuthorizationCode(scopes);
-        
-        MultivaluedMap<String, String> params = new MultivaluedMapImpl();
-        params.add("client_id", CLIENT_DETAILS_ID);
-        params.add("client_secret", "client-secret");
-        params.add("grant_type", "authorization_code");
-        params.add("scope", scopes);
-        params.add("redirect_uri", redirectUri);
-        params.add("code", authorizationCode);
-        ClientResponse clientResponse = oauthT2Client.obtainOauth2TokenPost("client_credentials", params);
-        //Should get a 400 since public client should not use the members API
-        assertEquals(400, clientResponse.getStatus());
-        String body = clientResponse.getEntity(String.class);
-        JSONObject jsonObject = new JSONObject(body);
-        String error = (String) jsonObject.get("error");        
-        String errorDescription = (String) jsonObject.get("error_description");
-        assertEquals("invalid_request", error);
-        assertEquals("Public members are not allowed to use the Members API", errorDescription);
-        
-    }
-    
-    
-    private String obtainAuthorizationCode(String scopes) throws InterruptedException {
-        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, CLIENT_DETAILS_ID, scopes, redirectUri));
-        return obtainAuthorizationCode(CLIENT_DETAILS_ID, scopes, redirectUri);
-    }
 
-    private String obtainAuthorizationCode(String orcid, String scopes, String redirectUri) throws InterruptedException {
-        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, orcid, scopes, redirectUri));
+    @Test
+    public void stateParamIsPersistentAndReturnedTest() throws InterruptedException {        
+        webDriver.get(String.format("%s/oauth/authorize?client_id=9999-9999-9999-9994&response_type=code&scope=/orcid-profile/read-limited&redirect_uri=%s&state=MyState", webBaseUrl, redirectUri));
         webDriver.get(String.format("%s?oneStep",webDriver.getCurrentUrl()));
         //Switch to the login form
         WebElement switchFromLink = webDriver.findElement(By.id("in-register-switch-form"));
@@ -167,9 +110,9 @@ public class PublicOauthClientTest extends DBUnitTest {
         Thread.sleep(500);
         //Fill the form
         WebElement userId = webDriver.findElement(By.id("userId"));
-        userId.sendKeys("michael@bentine.com");
+        userId.sendKeys("user_to_test@user.com");
         WebElement password = webDriver.findElement(By.id("password"));
-        password.sendKeys("password");        
+        password.sendKeys("password");
         WebElement submitButton = webDriver.findElement(By.id("authorize-button")); 
         submitButton.click();
         
@@ -180,9 +123,15 @@ public class PublicOauthClientTest extends DBUnitTest {
         });
         String currentUrl = webDriver.getCurrentUrl();
         Matcher matcher = AUTHORIZATION_CODE_PATTERN.matcher(currentUrl);
+        //Check the auth code is present
         assertTrue(matcher.find());
         String authorizationCode = matcher.group(1);
         assertNotNull(authorizationCode);
-        return authorizationCode;
-    }        
+        //Check the state param is present
+        matcher = STATE_PATTERN.matcher(currentUrl);
+        assertTrue(matcher.find());
+        String stateParam = matcher.group(1);
+        assertNotNull(stateParam);
+        assertEquals("MyState", stateParam);
+    }
 }
