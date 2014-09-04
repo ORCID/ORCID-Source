@@ -37,7 +37,7 @@ You can get help from the script.
     
 So, if you want to add a property to the messages files, with the key my.new.property and the value "Foo bar" then you do the following.
 
-    ./add_i18n_message.jy -p messaage -k my.new.property -v "Foo bar"
+    ./add_i18n_message.jy -p messages -k my.new.property -v "Foo bar"
     
 Please note, that the script does not work on the email_*.properties file due to the extensive commenting throughout those files. Please continue to edit those files by hand.
 
