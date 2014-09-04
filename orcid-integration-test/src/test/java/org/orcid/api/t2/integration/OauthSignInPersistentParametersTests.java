@@ -1,6 +1,7 @@
 package org.orcid.api.t2.integration;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -45,6 +46,8 @@ public class OauthSignInPersistentParametersTests extends DBUnitTest {
     private static final String CLIENT_ID = "9999-9999-9999-9994";
     private static final Pattern AUTHORIZATION_CODE_PATTERN = Pattern.compile("code=(.+)");
     private static final Pattern STATE_PATTERN = Pattern.compile("state=(.+)");
+    private static final Pattern OTHER_PATTERN = Pattern.compile("other=(.+)");
+    private static final Pattern MADE_UP_PATTERN = Pattern.compile("made_up_param_not_passed=(.+)");
     private static final String DEFAULT = "default";
     
     private WebDriver webDriver;
@@ -102,7 +105,7 @@ public class OauthSignInPersistentParametersTests extends DBUnitTest {
 
     @Test
     public void stateParamIsPersistentAndReturnedTest() throws InterruptedException {        
-        webDriver.get(String.format("%s/oauth/authorize?client_id=9999-9999-9999-9994&response_type=code&scope=/orcid-profile/read-limited&redirect_uri=%s&state=MyState", webBaseUrl, redirectUri));
+        webDriver.get(String.format("%s/oauth/authorize?client_id=9999-9999-9999-9994&response_type=code&scope=/orcid-profile/read-limited&redirect_uri=%s&state=MyState&made_up_param_not_passed=true&other=present", webBaseUrl, redirectUri));
         webDriver.get(String.format("%s?oneStep",webDriver.getCurrentUrl()));
         //Switch to the login form
         WebElement switchFromLink = webDriver.findElement(By.id("in-register-switch-form"));
@@ -133,5 +136,10 @@ public class OauthSignInPersistentParametersTests extends DBUnitTest {
         String stateParam = matcher.group(1);
         assertNotNull(stateParam);
         assertEquals("MyState", stateParam);
+        
+        matcher = OTHER_PATTERN.matcher(currentUrl);
+        assertFalse(matcher.find());
+        matcher = MADE_UP_PATTERN.matcher(currentUrl);
+        assertFalse(matcher.find());
     }
 }
