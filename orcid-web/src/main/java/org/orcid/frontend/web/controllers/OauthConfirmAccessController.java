@@ -267,7 +267,7 @@ public class OauthConfirmAccessController extends BaseController {
 
     @RequestMapping(value = { "/custom/signin.json", "/custom/login.json" }, method = RequestMethod.POST)
     public @ResponseBody
-    OauthAuthorizeForm authenticateAndAuthorize(HttpServletRequest request, @RequestBody OauthAuthorizeForm form) {
+    OauthAuthorizeForm authenticateAndAuthorize(HttpServletRequest request, HttpServletResponse response, @RequestBody OauthAuthorizeForm form) {
         // Clean form errors
         form.setErrors(new ArrayList<String>());
         if(form.getApproved()) {
@@ -281,6 +281,10 @@ public class OauthConfirmAccessController extends BaseController {
                     SimpleSessionStatus status = new SimpleSessionStatus();
                     Map<String, Object> model = new HashMap<String, Object>();
                     Map<String, String> params = new HashMap<String, String>();
+                    //Put all request params into the params
+                    SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
+                    copyRequestParameters(savedRequest, params);
+                    //Then, put the custom authorization params
                     params.put(CLIENT_ID_PARAM, form.getClientId().getValue());
                     if (!PojoUtil.isEmpty(form.getRedirectUri()))
                         params.put(REDIRECT_URI_PARAM, form.getRedirectUri().getValue());
@@ -350,7 +354,7 @@ public class OauthConfirmAccessController extends BaseController {
 
     @RequestMapping(value = "/custom/registerConfirm.json", method = RequestMethod.POST)
     public @ResponseBody
-    OauthRegistration registerAndAuthorize(HttpServletRequest request, @RequestBody OauthRegistration form) {
+    OauthRegistration registerAndAuthorize(HttpServletRequest request, HttpServletResponse response, @RequestBody OauthRegistration form) {
         form.setErrors(new ArrayList<String>());
         
         if(form.getApproved()) {
@@ -367,6 +371,10 @@ public class OauthConfirmAccessController extends BaseController {
                 SimpleSessionStatus status = new SimpleSessionStatus();
                 Map<String, Object> model = new HashMap<String, Object>();
                 Map<String, String> params = new HashMap<String, String>();
+                //Put all request params into the params
+                SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
+                copyRequestParameters(savedRequest, params);
+                //Then, put the custom authorization params
                 params.put(CLIENT_ID_PARAM, form.getClientId().getValue());
                 if (!PojoUtil.isEmpty(form.getRedirectUri()))
                     params.put(REDIRECT_URI_PARAM, form.getRedirectUri().getValue());
@@ -437,6 +445,27 @@ public class OauthConfirmAccessController extends BaseController {
             }
         }        
         return redirectUri;
+    }
+    
+    /**
+     * Copies all request parameters into the provided params map
+     * @param request
+     *          The server request
+     * @param params
+     *          The map to copy the params
+     * */
+    private void copyRequestParameters(SavedRequest request, Map<String, String> params) {
+        if(request != null && request.getParameterMap() != null) {
+            Map<String, String[]> savedParams = request.getParameterMap();
+            
+            if(savedParams != null && !savedParams.isEmpty()) {
+                for(String key : savedParams.keySet()) {
+                    String[] values = savedParams.get(key);
+                    if(values != null && values.length > 0)
+                        params.put(key, values[0]);                    
+                }
+            }            
+        }        
     }
     
     /*****************************
