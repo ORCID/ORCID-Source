@@ -311,7 +311,7 @@
 								</a>
 							</p>
 							<p>
-								${springMacroRequestContext.getMessage("deactivate_orcid.duplicate_orcid")}								
+								${springMacroRequestContext.getMessage("deactivate_orcid.duplicate_orcid.a")} <a href='mailto:${springMacroRequestContext.getMessage("deactivate_orcid.duplicate_orcid.support_email")}'>${springMacroRequestContext.getMessage("deactivate_orcid.duplicate_orcid.support_email")}</a> ${springMacroRequestContext.getMessage("deactivate_orcid.duplicate_orcid.b")} 								
 							</p>								
 							<strong>${springMacroRequestContext.getMessage("deactivate_orcid.listTitle")}</strong>
 							<ol>
