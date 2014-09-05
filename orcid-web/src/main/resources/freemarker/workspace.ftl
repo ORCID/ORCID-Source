@@ -57,16 +57,14 @@
     	<div class="workspace-profile">
             <#include "includes/id_banner.ftl"/>
             
-            
-            
+            <#if RequestParameters['orcidSocial']??>
             <div class="share-this">
-            	<span class='st_facebook_large' displayText='Facebook' st_url="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" st_title="<@orcid.msg 'orcid_social.facebook.message.title'/>" st_image="${staticCdn}/img/orcid-logo.png" st_summary="<@orcid.msg 'orcid_social.facebook.message.summary'/>"></span>
-            	<span class='st_googleplus_large' displayText='Google +' st_url="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" st_title="<@orcid.msg 'orcid_social.google.message.title'/>" st_image="${staticCdn}/img/orcid-logo.png" st_summary="<@orcid.msg 'orcid_social.google.message.summary'/>"></span>
-				<span class='st_twitter_large' displayText='Tweet' st_url="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" st_title="<@orcid.msg 'orcid_social.twitter.message.title'/>" st_image="${staticCdn}/img/orcid-logo.png" st_summary="<@orcid.msg 'orcid_social.twitter.message.summary'/>"></span>
-				<span class='st_linkedin_large' displayText='LinkedIn' st_url="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" st_title="<@orcid.msg 'orcid_social.linkedin.message.title'/>" st_image="${staticCdn}/img/orcid-logo.png" st_summary="<@orcid.msg 'orcid_social.linkedin.message.summary'/>"></span>
+            	<span class='st_facebook' st_url="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" st_title="<@orcid.msg 'orcid_social.facebook.message.title'/>" st_image="${staticCdn}/img/orcid-logo.png" st_summary="<@orcid.msg 'orcid_social.facebook.message.summary'/>"></span>
+            	<span class='st_googleplus' st_url="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" st_title="<@orcid.msg 'orcid_social.google.message.title'/>" st_image="${staticCdn}/img/orcid-logo.png" st_summary="<@orcid.msg 'orcid_social.google.message.summary'/>"></span>
+				<span class='st_twitter' st_url="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" st_title="<@orcid.msg 'orcid_social.twitter.message.title'/>" st_image="${staticCdn}/img/orcid-logo.png" st_summary="<@orcid.msg 'orcid_social.twitter.message.summary'/>"></span>
+				<span class='st_linkedin' st_url="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" st_title="<@orcid.msg 'orcid_social.linkedin.message.title'/>" st_image="${staticCdn}/img/orcid-logo.png" st_summary="<@orcid.msg 'orcid_social.linkedin.message.summary'/>"></span>
             </div>
-            
-            
+            </#if>
             
             <!-- Also Known as -->
 	       	<div class="other-names-box">
