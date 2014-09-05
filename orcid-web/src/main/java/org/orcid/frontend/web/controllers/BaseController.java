@@ -114,6 +114,9 @@ public class BaseController {
     @Value("${org.orcid.core.pubBaseUri:https://pub.orcid.org}")
     private String pubBaseUri;
     
+    @Value("${org.orcid.core.shareThis.key}")
+    private String shareThisKey;
+    
     @Resource
     private String cdnConfigFile;
 
@@ -623,4 +626,12 @@ public class BaseController {
         return baseUrlWithCorrectedContext + "/v1.1/search/orcid-bio/?q=";
     }
 
+    @ModelAttribute("shareThisKey")
+    public String getShareThisKey() {
+        return shareThisKey;
+    }
+    
+    public void setShareThisKey(String key) {
+        this.shareThisKey = key;
+    }
 }
