@@ -38,7 +38,8 @@ class SortedProperties(Properties):
     def keys(self):
         return Collections.enumeration(sorted(self.super__keys()))
 
-def load_props(path):
+def load_props(properties_filename):
+    path = os.path.join(resource_dir, properties_filename)
     fis = FileInputStream(path)
     isr = InputStreamReader(fis, 'UTF-8')
     props = SortedProperties()
@@ -46,7 +47,8 @@ def load_props(path):
     fis.close()
     return props
 
-def store_props(props, comment_lines, path):
+def store_props(props, comment_lines, properties_filename):
+    path = os.path.join(resource_dir, properties_filename)
     comment_string = str.join('', comment_lines)
     fos = FileOutputStream(path)
     osw = OutputStreamWriter(fos, 'UTF-8')
@@ -54,7 +56,9 @@ def store_props(props, comment_lines, path):
     fos.close();
     tidy_license_header(path)
 
-def read_comment_lines(path):
+def read_comment_lines(properties_filename):
+    path = os.path.join(resource_dir, properties_filename)
+    fis = FileInputStream(path)
     file = codecs.open(path, 'r', 'UTF-8')
     lines = file.readlines()
     file.close()
@@ -151,23 +155,21 @@ en_filename = options.prefix + en_suffix
 
 if(options.sync):
     info('Synchronizing with English')
-    en_path = os.path.join(resource_dir, en_filename)
-    en_props = load_props(en_path)
+    en_props = load_props(en_filename)
     for properties_filename in properties_filenames:
         if(properties_filename == en_filename):
             continue
         info('Synchronizing properties file: ' + properties_filename)
-        path = os.path.join(resource_dir, properties_filename)
-        props = load_props(path)
-        comment_lines = read_comment_lines(path)
+        props = load_props(properties_filename)
+        comment_lines = read_comment_lines(properties_filename)
         # Check for missing properties
         check_for_missing(en_props, props, comment_lines)
         # Check for extra properties
         comment_lines = check_for_extra(en_props, props, comment_lines)
-        store_props(props, comment_lines, path)
+        store_props(props, comment_lines, properties_filename)
     # Resave the English properties to ensure alpha sorted
-    en_comment_lines = read_comment_lines(en_path)
-    store_props(en_props, en_comment_lines, en_path)
+    en_comment_lines = read_comment_lines(en_filename)
+    store_props(en_props, en_comment_lines, en_filename)
     
 if(options.retranslate):
     info("Flagging for re-translation")
@@ -182,24 +184,22 @@ if(options.retranslate):
         if(properties_filename == en_filename):
             continue
         info('Flagging re-translations in properties file: ' + properties_filename)
-        path = os.path.join(resource_dir, properties_filename)
-        props = load_props(path)
-        comment_lines = read_comment_lines(path)
+        props = load_props(properties_filename)
+        comment_lines = read_comment_lines(properties_filename)
         for key_for_retranslation in keys_for_retranslation:
             prop = props[key_for_retranslation]
             if(prop == None):
                 info("No such property for re-translation: " + key_for_retranslation)
             else:
                 add_comment(comment_lines, key_for_retranslation)
-        store_props(props, comment_lines, path)
+        store_props(props, comment_lines, properties_filename)
     
 if(options.key):
     # Just add a new key/value
     for properties_filename in properties_filenames:
-        path = os.path.join(resource_dir, properties_filename)
-        props = load_props(path)
-        comment_lines = read_comment_lines(path)
+        props = load_props(properties_filename)
+        comment_lines = read_comment_lines(properties_filename)
         if(properties_filename != en_filename):
             add_comment(comment_lines, options.key)
         props.put(options.key, options.value)
-        store_props(props, comment_lines, path)
+        store_props(props, comment_lines, properties_filename)
