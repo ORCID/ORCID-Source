@@ -325,6 +325,9 @@
 					           <span class="import-label"><@orcid.msg 'workspace.bibtexImporter.fileUpload'/></span>
 						       <input type="file" class="upload-button" ng-model="textFiles" accept="*" update-fn="loadBibtexJs()"  app-file-text-reader multiple />
 					       </div>
+					       <span class="cancel-bibtex">
+					        	<a href="" class="label btn-primary" ng-click="openBibTextWizard()"><@orcid.msg 'workspace.bibtexImporter.cancel'/></a>
+						   </span>
 						</div>						
 						<div class="alert alert-block" ng-show="bibtexParsingError">
 							<strong><@orcid.msg 'workspace.bibtexImporter.parsingError'/></strong>

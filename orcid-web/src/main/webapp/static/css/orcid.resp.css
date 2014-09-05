@@ -4043,6 +4043,7 @@ ul.sso-options li span {
 
 .full-width-input {
 	width: 100%;
+	display: block;
 }
 
 .other-names-box input,.keyword-box input {
@@ -4289,6 +4290,11 @@ ul.oauth-scopes li{
 
 .confirm-oauth-access .id-banner .id-banner-container a.id-banner-switch span{
 	margin: 0;
+}
+
+#workspace-publications .cancel-bibtex{
+	margin-left: 5px;
+	vertical-align: 6px;
 }
 
 
