@@ -4953,7 +4953,7 @@ function adminEditClientCtrl($scope, $compile) {
 	
 	
 	//Load empty redirect uri
-	$scope.loadEmptyRedirectUri = function() {
+	$scope.addRedirectUri = function() {
 		$.ajax({
 	        url: getBaseUri() + '/admin-actions/empty-redirect-uri.json',
 	        type: 'GET',
