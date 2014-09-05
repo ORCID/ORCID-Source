@@ -63,5 +63,5 @@ if (typeof angular == 'undefined') {
         (document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild( mtiTracking );
    })();
 </script>
-<script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
-<script type="text/javascript">stLight.options({publisher: "${shareThisKey}", headerTitle:"This is the ORCID header"});</script>
+<script type="text/javascript" src="https://ws.sharethis.com/button/buttons.js"></script>
+<script type="text/javascript">stLight.options({publisher: "${shareThisKey}", headerTitle:"<@orcid.msg 'orcid_social.message.header'/>"});</script>
