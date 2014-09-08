@@ -16,6 +16,7 @@
  */
 package org.orcid.persistence.dao.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Query;
@@ -67,7 +68,7 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
      * */
     @Override
     @Transactional
-    public boolean updateProfileFunding(String clientOrcid, String profileFundingId, Visibility visibility) {
+    public boolean updateProfileFundingVisibility(String clientOrcid, String profileFundingId, Visibility visibility) {
         Query query = entityManager.createQuery("update ProfileFundingEntity set visibility=:visibility where profile.id=:clientOrcid and id=:profileFundingId");
         query.setParameter("clientOrcid", clientOrcid);
         query.setParameter("profileFundingId", Long.valueOf(profileFundingId));
@@ -134,4 +135,41 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
         TypedQuery<ProfileFundingEntity> query = entityManager.createQuery("from ProfileFundingEntity where amount is not null and numeric_amount is null", ProfileFundingEntity.class);
         return query.getResultList();
     }
+    
+    /**
+     * Edits a profileFunding
+     * 
+     * @param profileFunding
+     *            The profileFunding to be edited
+     * @return the updated profileFunding
+     * */
+    @Override
+    @Transactional
+    public ProfileFundingEntity editProfileFunding(ProfileFundingEntity profileFunding) {
+        ProfileFundingEntity toUpdate = this.find(profileFunding.getId());
+        mergeProfileFunding(toUpdate, profileFunding);
+        toUpdate = this.merge(toUpdate);
+        return toUpdate;
+    }
+    
+    private void mergeProfileFunding(ProfileFundingEntity existing, ProfileFundingEntity updated) {
+        existing.setContributorsJson(updated.getContributorsJson());
+        existing.setCurrencyCode(updated.getCurrencyCode());
+        existing.setDescription(updated.getDescription());
+        existing.setEndDate(updated.getEndDate());
+        existing.setExternalIdentifiers(updated.getExternalIdentifiers());
+        existing.setNumericAmount(updated.getNumericAmount());
+        existing.setOrg(updated.getOrg());
+        existing.setOrganizationDefinedType(updated.getOrganizationDefinedType());
+        existing.setStartDate(updated.getStartDate());
+        existing.setTitle(updated.getTitle());
+        existing.setTranslatedTitle(updated.getTranslatedTitle());
+        existing.setTranslatedTitleLanguageCode(updated.getTranslatedTitleLanguageCode());
+        existing.setType(updated.getType());
+        existing.setUrl(updated.getUrl());
+        existing.setVisibility(updated.getVisibility());
+        
+        existing.setLastModified(new Date());
+    }
+    
 }

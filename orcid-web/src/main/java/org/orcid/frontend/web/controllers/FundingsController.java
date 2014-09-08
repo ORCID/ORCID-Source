@@ -69,6 +69,7 @@ import org.orcid.pojo.ajaxForm.Visibility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -277,7 +278,7 @@ public class FundingsController extends BaseWorkspaceController {
     @SuppressWarnings("unchecked")
     @RequestMapping(value = "/fundings.json", method = RequestMethod.GET)
     public @ResponseBody
-    List<FundingForm> getFundingJson(HttpServletRequest request, @RequestParam(value = "fundingIds") String fundingIdsStr) {
+    List<FundingForm> getFundingsJson(HttpServletRequest request, @RequestParam(value = "fundingIds") String fundingIdsStr) {
         List<FundingForm> fundingList = new ArrayList<>();
         FundingForm funding = null;
         String[] fundingIds = fundingIdsStr.split(",");
@@ -298,12 +299,80 @@ public class FundingsController extends BaseWorkspaceController {
         return fundingList;
     }
 
+    
+    
+    
+    
+    
+    /**
+     * List fundings associated with a profile
+     * */
+    @SuppressWarnings("unchecked")
+    @RequestMapping(value = "/getFunding.json", method = RequestMethod.GET)
+    public @ResponseBody
+    FundingForm getFundingJson(HttpServletRequest request, @RequestParam(value = "fundingId") String fundingId) {
+        if(PojoUtil.isEmpty(fundingId))
+            return null;
+        ProfileFundingEntity profileFunding = profileFundingManager.getProfileFundingEntity(fundingId);
+        if(profileFunding == null) {
+            return null;
+        }
+        Map<String, String> languages = lm.buildLanguageMap(getUserLocale(), false);
+        Funding funding = jpa2JaxbAdapter.getFunding(profileFunding);
+        FundingForm form = FundingForm.valueOf(funding);
+        if (funding.getType() != null) {
+            form.setFundingTypeForDisplay(getMessage(buildInternationalizationKey(FundingType.class, funding.getType().value())));
+        }
+        // Set translated title language name
+        if (!(funding.getTitle().getTranslatedTitle() == null) && !StringUtils.isEmpty(funding.getTitle().getTranslatedTitle().getLanguageCode())) {
+            String languageName = languages.get(funding.getTitle().getTranslatedTitle().getLanguageCode());
+            form.getFundingTitle().getTranslatedTitle().setLanguageName(languageName);
+        }
+        
+        // Set the formatted amount
+        if(funding.getAmount() != null && StringUtils.isNotBlank(funding.getAmount().getContent())) {
+            BigDecimal bigDecimal = new BigDecimal(funding.getAmount().getContent());
+            String formattedAmount = formatAmountString(bigDecimal);
+            form.setAmount(Text.valueOf(formattedAmount));
+        }
+        
+        form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, funding.getOrganization().getAddress().getCountry().name())));
+        return form;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     /**
      * Persist a funding object on database
      * */
     @RequestMapping(value = "/funding.json", method = RequestMethod.POST)
     public @ResponseBody
     FundingForm postFunding(HttpServletRequest request, @RequestBody FundingForm funding) throws Exception {
+        //Reset errors
+        funding.setErrors(new ArrayList<String>());
         // Remove empty external identifiers
         removeEmptyExternalIds(funding);
 
@@ -347,55 +416,141 @@ public class FundingsController extends BaseWorkspaceController {
 
         // If there are no errors, persist to DB
         if (funding.getErrors().isEmpty()) {
-            // Set the right value for the amount
-            setAmountWithTheCorrectFormat(funding);
-            // Set the credit name
-            setContributorsCreditName(funding);
-            // Set default type for external identifiers
-            setTypeToExternalIdentifiers(funding);
-            // Update on database
-            ProfileEntity userProfile = profileDao.find(getEffectiveUserOrcid());
-            ProfileFundingEntity profileGrantEntity = jaxb2JpaAdapter.getNewProfileFundingEntity(funding.toOrcidFunding(), userProfile);
-            profileGrantEntity.setSource(userProfile);
-            // Persists the profile funding object
-            ProfileFundingEntity newProfileFunding = profileFundingManager.addProfileFunding(profileGrantEntity);
-
-            // Persist the external identifiers
-            SortedSet<FundingExternalIdentifierEntity> externalIdentifiers = profileGrantEntity.getExternalIdentifiers();
-
-            if (externalIdentifiers != null && !externalIdentifiers.isEmpty()) {
-                for (FundingExternalIdentifierEntity externalIdentifier : externalIdentifiers) {
-                    externalIdentifier.setProfileFunding(newProfileFunding);
-                    fundingExternalIdentifierDao.createFundingExternalIdentifier(externalIdentifier);
-                }
+            if(PojoUtil.isEmpty(funding.getPutCode())) {
+                addFunding(funding);
+            } else {
+                editFunding(funding);
             }
-
-            // Transform it back into a OrcidGrant to add it into the cached
-            // object
-            Funding newFunding = jpa2JaxbAdapter.getFunding(newProfileFunding);
-            // Update the fundings on the cached object
-            OrcidProfile currentProfile = getEffectiveProfile();
-            // Initialize activities if needed
-            if (currentProfile.getOrcidActivities() == null) {
-                currentProfile.setOrcidActivities(new OrcidActivities());
-            }
-            // Initialize fundings if needed
-            if (currentProfile.getOrcidActivities().getFundings() == null) {
-                currentProfile.getOrcidActivities().setFundings(new FundingList());
-            }
-
-            // Set the new funding into the cached object
-            currentProfile.getOrcidActivities().getFundings().getFundings().add(newFunding);
-
-            // Send the new funding sub type for indexing
-            if (funding.getOrganizationDefinedFundingSubType() != null && !PojoUtil.isEmpty(funding.getOrganizationDefinedFundingSubType().getSubtype())
-                    && !funding.getOrganizationDefinedFundingSubType().isAlreadyIndexed())
-                profileFundingManager.addFundingSubType(funding.getOrganizationDefinedFundingSubType().getSubtype().getValue(), getEffectiveUserOrcid());
         }
 
         return funding;
     }
+    
+    private void addFunding(FundingForm funding) throws Exception {
+        // Set the right value for the amount
+        setAmountWithTheCorrectFormat(funding);
+        // Set the credit name
+        setContributorsCreditName(funding);
+        // Set default type for external identifiers
+        setTypeToExternalIdentifiers(funding);
+        // Update on database
+        ProfileEntity userProfile = profileDao.find(getEffectiveUserOrcid());
+        ProfileFundingEntity profileGrantEntity = jaxb2JpaAdapter.getNewProfileFundingEntity(funding.toOrcidFunding(), userProfile);
+        profileGrantEntity.setSource(userProfile);
+        // Persists the profile funding object
+        ProfileFundingEntity newProfileFunding = profileFundingManager.addProfileFunding(profileGrantEntity);
 
+        // Persist the external identifiers
+        SortedSet<FundingExternalIdentifierEntity> externalIdentifiers = profileGrantEntity.getExternalIdentifiers();
+
+        if (externalIdentifiers != null && !externalIdentifiers.isEmpty()) {
+            for (FundingExternalIdentifierEntity externalIdentifier : externalIdentifiers) {
+                externalIdentifier.setProfileFunding(newProfileFunding);
+                fundingExternalIdentifierDao.createFundingExternalIdentifier(externalIdentifier);
+            }
+        }
+
+        // Transform it back into a OrcidGrant to add it into the cached
+        // object
+        Funding newFunding = jpa2JaxbAdapter.getFunding(newProfileFunding);
+        // Update the fundings on the cached object
+        OrcidProfile currentProfile = getEffectiveProfile();
+        // Initialize activities if needed
+        if (currentProfile.getOrcidActivities() == null) {
+            currentProfile.setOrcidActivities(new OrcidActivities());
+        }
+        // Initialize fundings if needed
+        if (currentProfile.getOrcidActivities().getFundings() == null) {
+            currentProfile.getOrcidActivities().setFundings(new FundingList());
+        }
+
+        // Set the new funding into the cached object
+        currentProfile.getOrcidActivities().getFundings().getFundings().add(newFunding);
+
+        // Send the new funding sub type for indexing
+        if (funding.getOrganizationDefinedFundingSubType() != null && !PojoUtil.isEmpty(funding.getOrganizationDefinedFundingSubType().getSubtype())
+                && !funding.getOrganizationDefinedFundingSubType().isAlreadyIndexed())
+            profileFundingManager.addFundingSubType(funding.getOrganizationDefinedFundingSubType().getSubtype().getValue(), getEffectiveUserOrcid());
+    }
+        
+    private void editFunding(FundingForm funding) throws Exception {
+        // Set the right value for the amount
+        setAmountWithTheCorrectFormat(funding);
+        // Set the credit name
+        setContributorsCreditName(funding);
+        // Set default type for external identifiers
+        setTypeToExternalIdentifiers(funding);
+        // Update profile_funding data        
+        ProfileFundingEntity updatedProfileGrantEntity = jaxb2JpaAdapter.getUpdatedProfileFundingEntity(funding.toOrcidFunding());
+        profileFundingManager.editProfileFunding(updatedProfileGrantEntity);
+        // Transform it back into a OrcidGrant to add it into the cached
+        // object
+        Funding updatedFunding = jpa2JaxbAdapter.getFunding(updatedProfileGrantEntity);
+        // Update the fundings on the cached object
+        OrcidProfile currentProfile = getEffectiveProfile();
+        // Initialize activities if needed
+        if (currentProfile.getOrcidActivities() == null) {
+            currentProfile.setOrcidActivities(new OrcidActivities());
+        }
+        // Initialize fundings if needed
+        if (currentProfile.getOrcidActivities().getFundings() == null) {
+            currentProfile.getOrcidActivities().setFundings(new FundingList());
+        }
+
+        // Set the new funding into the cached object
+        currentProfile.getOrcidActivities().getFundings().getFundings().add(updatedFunding);
+
+        // Send the new funding sub type for indexing
+        if (funding.getOrganizationDefinedFundingSubType() != null && !PojoUtil.isEmpty(funding.getOrganizationDefinedFundingSubType().getSubtype())
+                && !funding.getOrganizationDefinedFundingSubType().isAlreadyIndexed())
+            profileFundingManager.addFundingSubType(funding.getOrganizationDefinedFundingSubType().getSubtype().getValue(), getEffectiveUserOrcid());
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     private void removeEmptyExternalIds(FundingForm funding) {
         List<FundingExternalIdentifierForm> extIds = funding.getExternalIdentifiers();
         List<FundingExternalIdentifierForm> updatedExtIds = new ArrayList<FundingExternalIdentifierForm>();
@@ -464,7 +619,7 @@ public class FundingsController extends BaseWorkspaceController {
                 for (Funding funding : fundings) {
                     if (funding.getPutCode().equals(fundingForm.getPutCode().getValue())) {
                         // Update the privacy of the funding
-                        profileFundingManager.updateProfileFunding(currentProfile.getOrcidIdentifier().getPath(), fundingForm.getPutCode().getValue(), fundingForm
+                        profileFundingManager.updateProfileFundingVisibility(currentProfile.getOrcidIdentifier().getPath(), fundingForm.getPutCode().getValue(), fundingForm
                                 .getVisibility().getVisibility());
                     }
                 }
@@ -806,5 +961,5 @@ public class FundingsController extends BaseWorkspaceController {
 
     public Locale getUserLocale() {
         return localeManager.getLocale();
-    }
+    }             
 }

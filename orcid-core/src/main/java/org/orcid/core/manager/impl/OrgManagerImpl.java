@@ -112,7 +112,7 @@ public class OrgManagerImpl implements OrgManager {
         if (existingOrg != null) {
             return existingOrg;
         }
-        org.setSource(sourceManager.retrieveSourceProfileEntity());
+        //org.setSource(sourceManager.retrieveSourceProfileEntity());
         orgDao.persist(org);
         return org;
     }

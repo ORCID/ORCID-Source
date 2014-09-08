@@ -39,6 +39,7 @@ import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.message.Affiliation;
@@ -57,8 +58,8 @@ import org.orcid.jaxb.model.message.Delegation;
 import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.ExternalIdCommonName;
-import org.orcid.jaxb.model.message.ExternalIdSource;
 import org.orcid.jaxb.model.message.ExternalIdReference;
+import org.orcid.jaxb.model.message.ExternalIdSource;
 import org.orcid.jaxb.model.message.ExternalIdUrl;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
@@ -151,6 +152,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
     @Resource
     private OrgDisambiguatedDao orgDisambiguatedDao;
+    
+    @Resource
+    private ProfileFundingManager profileFundingManager;
 
     @Override
     public ProfileEntity toProfileEntity(OrcidProfile profile, ProfileEntity existingProfileEntity) {
@@ -908,6 +912,32 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         return profileFundingEntity;
     }
 
+    
+    
+    
+    
+    
+    /**
+     * Transforms a OrcidGrant object into a ProfileFundingEntity object
+     * 
+     * @param updatedFunding
+     * @param profileEntity
+     * @return ProfileFundingEntity
+     * */
+    @Override
+    public ProfileFundingEntity getUpdatedProfileFundingEntity(Funding updatedFunding) {
+        ProfileFundingEntity existingProfileFundingEntity = profileFundingManager.getProfileFundingEntity(updatedFunding.getPutCode());
+        ProfileFundingEntity profileFundingEntity = getProfileFundingEntity(updatedFunding, existingProfileFundingEntity);
+        return profileFundingEntity;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
     private OrgAffiliationRelationEntity getOrgAffiliationRelationEntity(Affiliation affiliation, OrgAffiliationRelationEntity exisitingOrgAffiliationEntity) {
         if (affiliation != null) {
             OrgAffiliationRelationEntity orgRelationEntity = null;
@@ -963,6 +993,10 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             } else {
                 profileFundingEntity = exisitingProfileFundingEntity;
                 profileFundingEntity.clean();
+                //If the org from funding is not null, update the existing org
+                if(funding.getOrganization() != null) {
+                    profileFundingEntity.setOrg(getOrgEntity(funding));
+                }
             }
             FuzzyDate startDate = funding.getStartDate();
             FuzzyDate endDate = funding.getEndDate();

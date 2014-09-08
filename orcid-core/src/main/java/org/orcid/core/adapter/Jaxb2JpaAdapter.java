@@ -42,5 +42,7 @@ public interface Jaxb2JpaAdapter {
 
     ProfileFundingEntity getNewProfileFundingEntity(Funding updatedFunding, ProfileEntity profileEntity);
     
+    ProfileFundingEntity getUpdatedProfileFundingEntity(Funding updatedFunding);
+    
     WorkEntity getWorkEntity(OrcidWork orcidWork, WorkEntity workEntity);
 }

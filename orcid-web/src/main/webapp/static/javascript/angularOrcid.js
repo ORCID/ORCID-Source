@@ -298,7 +298,9 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 	var serv = {
 			fundings: new Array(),
 			loading: false,
+			constants: { 'access_type': { 'USER': 'user', 'ANONYMOUS': 'anonymous'}},
 			fundingToAddIds: null,
+			details: new Object(),
 			addFundingToScope: function(path) {
 	    		if( serv.fundingToAddIds.length != 0 ) {
 	    			var fundingIds = serv.fundingToAddIds.splice(0,20).join();
@@ -390,6 +392,35 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 	    	    }).fail(function() { 
 	    	    	console.log("Error deleting funding.");
 	    	    });
+	    	},
+	    	getDetails: function(putCode, type, callback) {
+	    		var url = getBaseUri() + '/fundings/getFunding.json?fundingId=';
+	    		//We still not need the type here, but, lets keep the param here since soon it will be used
+	    		if(serv.details[putCode] == undefined) {
+	    			$.ajax({
+	    				url: url + putCode,
+	    				dataType: 'json',
+	    				success: function(data) {
+	    					$rootScope.$apply(function(){
+	    						serv.details[putCode] = data;
+	    						if(callback != undefined) callback(serv.details[putCode]);
+	    					});
+	    				}	    					    				
+	    			}).fail(function(){
+	    				//something bad happed
+	    				console.log("Error fetching funding info for " + putCode);
+	    			});
+	    		} else {
+	    			if(callback != undefined) callback(serv.details[putCode]);
+	    		}
+	    	},
+	    	getEditable: function(putCode, callback) {
+	    		console.log("Getting editable funding")
+	    		var funding = serv.getDetails(putCode, serv.constants.access_type.USER, function(data) {
+	    			console.log(data)
+		    		callback(data);
+	    		});
+	    		
 	    	}
 	};
 	return serv;
@@ -2981,38 +3012,32 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	$scope.showDetailsMouseClick = function(key, $event) {
 		$event.stopPropagation();
 		$scope.moreInfo[key]=!$scope.moreInfo[key];
-		console.log(key);
-		
-		/*
-		if (document.documentElement.className.contains('no-touch')) {
-			if ($scope.moreInfoCurKey != null 
-					&& $scope.moreInfoCurKey != key) {
-				$scope.privacyHelp[$scope.moreInfoCurKey]=false;
-			}
-			$scope.moreInfoCurKey = key;
-			$scope.moreInfo[key]=true;
-		}
-		*/
+		console.log(key);				
 	};	
 	
 	$scope.closeMoreInfo = function(key) {
 		$scope.moreInfo[key]=false;
 	};
 		
-	$scope.addFundingModal = function(type){
-		$scope.removeDisambiguatedFunding();
-		$.ajax({
-			url: getBaseUri() + '/fundings/funding.json',
-			dataType: 'json',
-			success: function(data) {						
-				$scope.$apply(function() {
-					$scope.editFunding = data;					
-					$scope.showAddModal();
-				});
-			}
-		}).fail(function() { 
-	    	console.log("Error fetching funding: " + value);
-	    });
+	$scope.addFundingModal = function(data){
+		if(data == undefined) {
+			$scope.removeDisambiguatedFunding();
+			$.ajax({
+				url: getBaseUri() + '/fundings/funding.json',
+				dataType: 'json',
+				success: function(data) {						
+					$scope.$apply(function() {
+						$scope.editFunding = data;					
+						$scope.showAddModal();
+					});
+				}
+			}).fail(function() { 
+		    	console.log("Error fetching funding: " + value);
+		    });
+		} else {
+			$scope.editFunding = data;
+			$scope.showAddModal();
+		}		
 	};
 	
 	$scope.showAddModal = function(){
@@ -3029,7 +3054,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	    });
 	};
 	
-	$scope.addFunding = function(){
+	$scope.putFunding = function(){
 		if ($scope.addingFunding) return; // don't process if adding funding
 		$scope.addingFunding = true;		
 		$scope.editFunding.errors.length = 0;
@@ -3350,6 +3375,10 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 			break;
 		}
 	};
+	
+	$scope.openEditFunding = function(putCode) {
+		fundingSrvc.getEditable(putCode, function(data){$scope.addFundingModal(data);});
+	};		
 }
 
 /**
