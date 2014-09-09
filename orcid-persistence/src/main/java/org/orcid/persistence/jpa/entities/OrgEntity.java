@@ -136,7 +136,7 @@ public class OrgEntity extends BaseEntity<Long> implements Serializable {
     }
 
     @ManyToOne
-    @JoinColumn(name = "source_id")
+    @JoinColumn(name = "source_id", updatable = false)
     public ProfileEntity getSource() {
         return source;
     }
