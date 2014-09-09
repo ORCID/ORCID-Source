@@ -4449,6 +4449,10 @@ ul.sources-edit-list li{
 	padding: 0 0 0 10px;	
 }
 
+.more-info .col-md-6{ /* Row height fix */
+	min-height: 70px;
+}
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 
@@ -4911,7 +4915,7 @@ ul.sources-edit-list li{
 
     .workspace-toolbar{		
 	    height: 50px;
-	    margin-top: 15px;
+	    margin: 15px 0 0 5px;
 	    width: 100%;
 	    padding-left: 10px;
 	    float: left;	    
@@ -4919,6 +4923,11 @@ ul.sources-edit-list li{
 	
 	.workspace-header{
 		border-bottom: 0 none;
+	}
+	
+	.workspace-accordion,
+	#workspace-publications{
+		padding: 0;
 	}
 	
 	
@@ -5493,11 +5502,6 @@ ul.sources-edit-list li{
 	
 	.role{
 		float: left;		 
-	}
-	
-	#workspace-education .content,
-	#workspace-fundings .content{
-		margin: 0px -10px;
 	}
 	
 	.public-profile .oid{

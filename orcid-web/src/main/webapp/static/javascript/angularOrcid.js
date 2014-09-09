@@ -4987,7 +4987,7 @@ function adminEditClientCtrl($scope, $compile) {
 	
 	
 	//Load empty redirect uri
-	$scope.loadEmptyRedirectUri = function() {
+	$scope.addRedirectUri = function() {
 		$.ajax({
 	        url: getBaseUri() + '/admin-actions/empty-redirect-uri.json',
 	        type: 'GET',
@@ -6815,7 +6815,7 @@ function OauthAuthorizationController($scope, $compile, $sce){
 	        success: function(data) {	
 	        	if(is_authorize) {
 	        		for(var i = 0; i < $scope.requestScopes.length; i++) {
-    					orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Authorize_' + $scope.requestScopes[i] + ', OAuth ' + orcidGA.buildClientString($scope.clientGroupName, $scope.clientName)]);
+    					orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Authorize_' + $scope.requestScopes[i], 'OAuth ' + orcidGA.buildClientString($scope.clientGroupName, $scope.clientName)]);
     				}
     			}	
 	        	orcidGA.windowLocationHrefDelay(data.redirectUri.value);

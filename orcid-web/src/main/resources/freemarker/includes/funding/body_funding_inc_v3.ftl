@@ -81,21 +81,15 @@
 		        </#if>
 			</div>
 		</div>
-		<div class="row bottomBuffer" ng-show="group.getActive().externalIdentifiers.length > 0" ng-cloak>
-				<div class="col-md-9 col-sm-9">					
+		<div ng-show="group.getActive().externalIdentifiers.length > 0" class="row bottomBuffer" ng-show="funding.externalIdentifiers.length > 0" ng-cloak>
+				<div class="col-md-12 col-sm-12">					
 					<div>					
 						<span ng-repeat='ei in group.getActive().externalIdentifiers'>							
 							<span ng-bind-html='ei | externalIdentifierHtml:$first:$last:group.getActive().externalIdentifiers.length'>
 							</span>
 						</span>
 					</div>
-				</div>
-				<div class="col-md-3 col-sm-3">
-					<ul class="validations-versions nav nav-pills nav-stacked">
-						<li><a href=""><span class="glyphicon glyphicon-ok green"></span><strong></strong><span class="badge pull-right blue">2</span>Validated</a></li>
-						<li><a href=""><span class="glyphicon glyphicon-file green"></span><span class="badge pull-right blue">3</span>Versions</a></li> <!-- for non versions use class 'opaque' instead green -->
-					</ul>
-				</div>
+				</div>				
 			</div>			
 		<div ng-show="moreInfo[group.getActive().putCode.value]">
 			<div class="content">			
