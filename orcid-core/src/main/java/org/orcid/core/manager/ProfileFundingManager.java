@@ -59,7 +59,7 @@ public interface ProfileFundingManager {
      *            The object to be persisted
      * @return the updated profileFundingEntity
      * */
-    ProfileFundingEntity editProfileFunding(ProfileFundingEntity updatedProfileFundingEntity);
+    ProfileFundingEntity updateProfileFunding(ProfileFundingEntity updatedProfileFundingEntity);
     
     /**
      * Creates a new profile funding relationship between an organization and a

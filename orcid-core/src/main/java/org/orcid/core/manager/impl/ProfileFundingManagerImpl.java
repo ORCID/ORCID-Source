@@ -159,14 +159,14 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
     }
     
     /**
-     * Edits an existing profile funding relationship between an organization and a
+     * Update an existing profile funding relationship between an organization and a
      * profile.
      * 
      * @param updatedProfileFundingEntity
      *            The object to be persisted
      * @return the updated profileFundingEntity
      * */
-    public ProfileFundingEntity editProfileFunding(ProfileFundingEntity updatedProfileFundingEntity) {
-        return profileFundingDao.editProfileFunding(updatedProfileFundingEntity);
+    public ProfileFundingEntity updateProfileFunding(ProfileFundingEntity updatedProfileFundingEntity) {
+        return profileFundingDao.updateProfileFunding(updatedProfileFundingEntity);
     }
 }

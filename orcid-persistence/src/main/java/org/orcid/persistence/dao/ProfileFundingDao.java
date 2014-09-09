@@ -99,5 +99,5 @@ public interface ProfileFundingDao extends GenericDao<ProfileFundingEntity, Long
      *            The profileFunding to be edited
      * @return the updated profileFunding
      * */
-    ProfileFundingEntity editProfileFunding(ProfileFundingEntity profileFunding);
+    ProfileFundingEntity updateProfileFunding(ProfileFundingEntity profileFunding);
 }

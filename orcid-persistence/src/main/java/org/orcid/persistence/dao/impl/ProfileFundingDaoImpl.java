@@ -145,7 +145,7 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
      * */
     @Override
     @Transactional
-    public ProfileFundingEntity editProfileFunding(ProfileFundingEntity profileFunding) {
+    public ProfileFundingEntity updateProfileFunding(ProfileFundingEntity profileFunding) {
         ProfileFundingEntity toUpdate = this.find(profileFunding.getId());
         mergeProfileFunding(toUpdate, profileFunding);
         toUpdate = this.merge(toUpdate);

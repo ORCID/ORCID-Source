@@ -69,7 +69,6 @@ import org.orcid.pojo.ajaxForm.Visibility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -307,7 +306,6 @@ public class FundingsController extends BaseWorkspaceController {
     /**
      * List fundings associated with a profile
      * */
-    @SuppressWarnings("unchecked")
     @RequestMapping(value = "/getFunding.json", method = RequestMethod.GET)
     public @ResponseBody
     FundingForm getFundingJson(HttpServletRequest request, @RequestParam(value = "fundingId") String fundingId) {
@@ -399,9 +397,11 @@ public class FundingsController extends BaseWorkspaceController {
         copyErrors(funding.getCurrencyCode(), funding);
         copyErrors(funding.getFundingTitle().getTitle(), funding);        
         copyErrors(funding.getDescription(), funding);
-        copyErrors(funding.getUrl(), funding);
-        copyErrors(funding.getEndDate(), funding);
+        copyErrors(funding.getUrl(), funding);        
         copyErrors(funding.getFundingType(), funding);
+        if(funding.getEndDate() != null)
+            copyErrors(funding.getEndDate(), funding);
+        
         if(funding.getFundingTitle().getTranslatedTitle() != null)
             copyErrors(funding.getFundingTitle().getTranslatedTitle(), funding);
         
@@ -482,7 +482,7 @@ public class FundingsController extends BaseWorkspaceController {
         setTypeToExternalIdentifiers(funding);
         // Update profile_funding data        
         ProfileFundingEntity updatedProfileGrantEntity = jaxb2JpaAdapter.getUpdatedProfileFundingEntity(funding.toOrcidFunding());
-        profileFundingManager.editProfileFunding(updatedProfileGrantEntity);
+        profileFundingManager.updateProfileFunding(updatedProfileGrantEntity);
         // Transform it back into a OrcidGrant to add it into the cached
         // object
         Funding updatedFunding = jpa2JaxbAdapter.getFunding(updatedProfileGrantEntity);
@@ -498,7 +498,14 @@ public class FundingsController extends BaseWorkspaceController {
         }
 
         // Set the new funding into the cached object
-        currentProfile.getOrcidActivities().getFundings().getFundings().add(updatedFunding);
+        for(int i = 0; i <  currentProfile.getOrcidActivities().getFundings().getFundings().size(); i++) {
+            Funding existingFunding = currentProfile.getOrcidActivities().getFundings().getFundings().get(i); 
+            if(updatedFunding.getPutCode().equals(existingFunding.getPutCode())) {
+                currentProfile.getOrcidActivities().getFundings().getFundings().set(i, updatedFunding);
+                break;
+            }
+        }
+        
 
         // Send the new funding sub type for indexing
         if (funding.getOrganizationDefinedFundingSubType() != null && !PojoUtil.isEmpty(funding.getOrganizationDefinedFundingSubType().getSubtype())
@@ -554,14 +561,15 @@ public class FundingsController extends BaseWorkspaceController {
     private void removeEmptyExternalIds(FundingForm funding) {
         List<FundingExternalIdentifierForm> extIds = funding.getExternalIdentifiers();
         List<FundingExternalIdentifierForm> updatedExtIds = new ArrayList<FundingExternalIdentifierForm>();
-        // For all external identifiers
-        for (FundingExternalIdentifierForm extId : extIds) {
-            // Keep only the ones that contains a value or url
-            if (!PojoUtil.isEmpty(extId.getValue()) || !PojoUtil.isEmpty(extId.getUrl())) {
-                updatedExtIds.add(extId);
+        if(extIds != null) {
+            // For all external identifiers
+            for (FundingExternalIdentifierForm extId : extIds) {
+                // Keep only the ones that contains a value or url
+                if (!PojoUtil.isEmpty(extId.getValue()) || !PojoUtil.isEmpty(extId.getUrl())) {
+                    updatedExtIds.add(extId);
+                }
             }
         }
-
         funding.setExternalIdentifiers(updatedExtIds);
     }
 
@@ -811,8 +819,10 @@ public class FundingsController extends BaseWorkspaceController {
     @RequestMapping(value = "/funding/datesValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     FundingForm validateDates(@RequestBody FundingForm funding) {
-        funding.getStartDate().setErrors(new ArrayList<String>());
-        funding.getEndDate().setErrors(new ArrayList<String>());
+        if(!PojoUtil.isEmpty(funding.getStartDate()))
+            funding.getStartDate().setErrors(new ArrayList<String>());
+        if(!PojoUtil.isEmpty(funding.getEndDate()))
+            funding.getEndDate().setErrors(new ArrayList<String>());
         if (!PojoUtil.isEmpty(funding.getStartDate()) && !PojoUtil.isEmpty(funding.getEndDate())) {
             if (funding.getStartDate().toJavaDate().after(funding.getEndDate().toJavaDate()))
                 setError(funding.getEndDate(), "fundings.endDate.after");
