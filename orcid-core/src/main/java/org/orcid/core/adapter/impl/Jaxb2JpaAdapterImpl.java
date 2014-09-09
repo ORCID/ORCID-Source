@@ -912,11 +912,6 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         return profileFundingEntity;
     }
 
-    
-    
-    
-    
-    
     /**
      * Transforms a OrcidGrant object into a ProfileFundingEntity object
      * 
@@ -930,13 +925,6 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         ProfileFundingEntity profileFundingEntity = getProfileFundingEntity(updatedFunding, existingProfileFundingEntity);
         return profileFundingEntity;
     }
-    
-    
-    
-    
-    
-    
-    
     
     private OrgAffiliationRelationEntity getOrgAffiliationRelationEntity(Affiliation affiliation, OrgAffiliationRelationEntity exisitingOrgAffiliationEntity) {
         if (affiliation != null) {

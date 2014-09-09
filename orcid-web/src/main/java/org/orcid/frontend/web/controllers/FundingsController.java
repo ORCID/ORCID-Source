@@ -298,11 +298,6 @@ public class FundingsController extends BaseWorkspaceController {
         return fundingList;
     }
 
-    
-    
-    
-    
-    
     /**
      * List fundings associated with a profile
      * */
@@ -506,7 +501,6 @@ public class FundingsController extends BaseWorkspaceController {
             }
         }
         
-
         // Send the new funding sub type for indexing
         if (funding.getOrganizationDefinedFundingSubType() != null && !PojoUtil.isEmpty(funding.getOrganizationDefinedFundingSubType().getSubtype())
                 && !funding.getOrganizationDefinedFundingSubType().isAlreadyIndexed())
