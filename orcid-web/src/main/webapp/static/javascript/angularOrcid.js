@@ -338,54 +338,6 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 	    			fundingSrvc.loading = false;
 	    		};
 	    	},
-	    	setIdsToAdd: function(ids) {
-	    		fundingSrvc.fundingToAddIds = ids;
-	    	},
-	    	getFundings: function(path) {
-	    		//clear out current fundings
-	    		fundingSrvc.loading = true;
-	    		fundingSrvc.fundingToAddIds = null;
-	    		
-	    		//new way
-	    		fundingSrvc.groups.length = 0;
-	    		//get funding ids
-	    		$.ajax({
-	    			url: getBaseUri() + '/'  + path,	        
-	    	        dataType: 'json',
-	    	        success: function(data) {
-	    	        	fundingSrvc.fundingToAddIds = data;
-	    	        	fundingSrvc.addFundingToScope('fundings/fundings.json');
-	    	        	$rootScope.$apply();
-	    	        }
-	    		}).fail(function(){
-	    			// something bad is happening!
-	    	    	console.log("error fetching fundings");
-	    		});
-	    	},
-	    	updateProfileFunding: function(funding) {
-	    		$.ajax({
-	    	        url: getBaseUri() + '/fundings/funding.json',
-	    	        type: 'PUT',
-	    	        data: angular.toJson(funding),
-	    	        contentType: 'application/json;charset=UTF-8',
-	    	        dataType: 'json',
-	    	        success: function(data) {	        	
-	    	        	if(data.errors.length != 0){
-	    	        		console.log("Unable to update profile funding.");
-	    	        	}
-	    	        	$rootScope.$apply();
-	    	        }
-	    	    }).fail(function() { 
-	    	    	console.log("Error updating profile funding.");
-	    	    });
-	    	},
-	    	fundingCount: function() {
-				var count = 0;
-				for (var idx in fundingSrvc.groups) {
-					count += fundingSrvc.groups[idx].activitiesCount;
-				}
-				return count;
-			},
 	    	deleteFunding: function(funding) {	
 	    		$.ajax({
 	    	        url: getBaseUri() + '/fundings/funding.json',
@@ -416,7 +368,56 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 	    	    }).fail(function() { 
 	    	    	console.log("Error deleting funding.");
 	    	    });
+	    	},
+	    	fundingCount: function() {
+				var count = 0;
+				for (var idx in fundingSrvc.groups) {
+					count += fundingSrvc.groups[idx].activitiesCount;
+				}
+				return count;
+			},
+	        getFundings: function(path) {
+	    		//clear out current fundings
+	    		fundingSrvc.loading = true;
+	    		fundingSrvc.fundingToAddIds = null;
+	    		
+	    		//new way
+	    		fundingSrvc.groups.length = 0;
+	    		//get funding ids
+	    		$.ajax({
+	    			url: getBaseUri() + '/'  + path,	        
+	    	        dataType: 'json',
+	    	        success: function(data) {
+	    	        	fundingSrvc.fundingToAddIds = data;
+	    	        	fundingSrvc.addFundingToScope('fundings/fundings.json');
+	    	        	$rootScope.$apply();
+	    	        }
+	    		}).fail(function(){
+	    			// something bad is happening!
+	    	    	console.log("error fetching fundings");
+	    		});
+	    	},
+	    	setIdsToAdd: function(ids) {
+	    		fundingSrvc.fundingToAddIds = ids;
+	    	},
+	    	updateProfileFunding: function(funding) {
+	    		$.ajax({
+	    	        url: getBaseUri() + '/fundings/funding.json',
+	    	        type: 'PUT',
+	    	        data: angular.toJson(funding),
+	    	        contentType: 'application/json;charset=UTF-8',
+	    	        dataType: 'json',
+	    	        success: function(data) {	        	
+	    	        	if(data.errors.length != 0){
+	    	        		console.log("Unable to update profile funding.");
+	    	        	}
+	    	        	$rootScope.$apply();
+	    	        }
+	    	    }).fail(function() { 
+	    	    	console.log("Error updating profile funding.");
+	    	    });
 	    	}
+	    	
 	};
 	return fundingSrvc;
 }]);
