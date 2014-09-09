@@ -482,7 +482,7 @@ public class FundingsController extends BaseWorkspaceController {
         setTypeToExternalIdentifiers(funding);
         // Update profile_funding data        
         ProfileFundingEntity updatedProfileGrantEntity = jaxb2JpaAdapter.getUpdatedProfileFundingEntity(funding.toOrcidFunding());
-        profileFundingManager.updateProfileFunding(updatedProfileGrantEntity);
+        updatedProfileGrantEntity = profileFundingManager.updateProfileFunding(updatedProfileGrantEntity);
         // Transform it back into a OrcidGrant to add it into the cached
         // object
         Funding updatedFunding = jpa2JaxbAdapter.getFunding(updatedProfileGrantEntity);

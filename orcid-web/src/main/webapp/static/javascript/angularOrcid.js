@@ -307,9 +307,10 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 	    			$.ajax({
 	    				url: getBaseUri() + '/' + path + '?fundingIds=' + fundingIds,
 	    				dataType: 'json',
-	    				success: function(data) {
+	    				success: function(data) {	    						
 	    						for (i in data) {	    							
 	    							serv.fundings.push(data[i]);
+	    							serv.details[data[i].putCode.value] = data[i];
 	    						};
 	    						if (serv.fundingToAddIds.length == 0) {
 	    							serv.loading = false;
@@ -395,7 +396,7 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 	    	},
 	    	getDetails: function(putCode, type, callback) {
 	    		var url = getBaseUri() + '/fundings/getFunding.json?fundingId=';
-	    		//We still not need the type here, but, lets keep the param here since soon it will be used
+	    		//We still not need the type here, but, lets keep the param here since soon it will be used	  
 	    		if(serv.details[putCode] == undefined) {
 	    			$.ajax({
 	    				url: url + putCode,
@@ -414,10 +415,8 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 	    			if(callback != undefined) callback(serv.details[putCode]);
 	    		}
 	    	},
-	    	getEditable: function(putCode, callback) {
-	    		console.log("Getting editable funding")
+	    	getEditable: function(putCode, callback) {	    		
 	    		var funding = serv.getDetails(putCode, serv.constants.access_type.USER, function(data) {
-	    			console.log(data)
 		    		callback(data);
 	    		});
 	    		
@@ -3067,7 +3066,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	        success: function(data) {	        		        	
 	        	if (data.errors.length == 0){
 	        		$.colorbox.close(); 	        		
-	        		fundingSrvc.getFundings('fundings/fundingIds.json');
+	        		fundingSrvc.getFundings('fundings/fundingIds.json');	        		
 	        	} else {
 		        	$scope.editFunding = data;
 		        	if($scope.editFunding.externalIdentifiers.length == 0) {
