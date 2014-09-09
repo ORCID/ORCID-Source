@@ -226,13 +226,13 @@ public class OauthConfirmAccessController extends BaseController {
         clientDescription = clientDetails.getClientDescription() == null ? "" : clientDetails.getClientDescription();
         clientWebsite = clientDetails.getClientWebsite() == null ? "" : clientDetails.getClientWebsite();
 
-        if (clientProfile.getOrcidInternal() != null && clientProfile.getOrcidInternal().getGroupOrcidIdentifier() != null
+        if(clientProfile.getClientType() == null) {
+            clientGroupName = PUBLIC_CLIENT_GROUP_NAME;
+        } else if (clientProfile.getOrcidInternal() != null && clientProfile.getOrcidInternal().getGroupOrcidIdentifier() != null
                 && StringUtils.isNotBlank(clientProfile.getOrcidInternal().getGroupOrcidIdentifier().getPath())) {
             String client_group_id = clientProfile.getOrcidInternal().getGroupOrcidIdentifier().getPath();
             OrcidProfile clientGroupProfile = orcidProfileManager.retrieveOrcidProfile(client_group_id);
-            if(clientProfile.getClientType() == null) {
-                clientGroupName = PUBLIC_CLIENT_GROUP_NAME;
-            } else if (clientGroupProfile.getOrcidBio() != null && clientGroupProfile.getOrcidBio().getPersonalDetails() != null
+            if (clientGroupProfile.getOrcidBio() != null && clientGroupProfile.getOrcidBio().getPersonalDetails() != null
                     && clientGroupProfile.getOrcidBio().getPersonalDetails().getCreditName() != null)
                 clientGroupName = clientGroupProfile.getOrcidBio().getPersonalDetails().getCreditName().getContent();
         }
