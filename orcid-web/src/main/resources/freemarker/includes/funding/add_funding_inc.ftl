@@ -298,8 +298,6 @@
 					</span>
 				</div>
 		    	<div class="control-group">			
-
-
 					<div ng-show="editFunding.putCode.value != null">	
 						<button class="btn btn-primary" ng-click="putFunding()" ng-disabled="addingFunding" ng-class="{disabled:addingFunding}">
 							<@orcid.msg 'freemarker.btnsave'/>

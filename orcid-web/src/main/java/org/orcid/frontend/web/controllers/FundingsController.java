@@ -303,7 +303,7 @@ public class FundingsController extends BaseWorkspaceController {
      * */
     @RequestMapping(value = "/getFunding.json", method = RequestMethod.GET)
     public @ResponseBody
-    FundingForm getFundingJson(HttpServletRequest request, @RequestParam(value = "fundingId") String fundingId) {
+    FundingForm getFundingJson(@RequestParam(value = "fundingId") String fundingId) {
         if(PojoUtil.isEmpty(fundingId))
             return null;
         ProfileFundingEntity profileFunding = profileFundingManager.getProfileFundingEntity(fundingId);
@@ -363,7 +363,7 @@ public class FundingsController extends BaseWorkspaceController {
      * */
     @RequestMapping(value = "/funding.json", method = RequestMethod.POST)
     public @ResponseBody
-    FundingForm postFunding(HttpServletRequest request, @RequestBody FundingForm funding) throws Exception {
+    FundingForm postFunding(@RequestBody FundingForm funding) throws Exception {
         //Reset errors
         funding.setErrors(new ArrayList<String>());
         // Remove empty external identifiers
