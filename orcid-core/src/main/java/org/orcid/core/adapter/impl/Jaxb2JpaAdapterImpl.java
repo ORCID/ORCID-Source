@@ -969,6 +969,10 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
      * */
     private ProfileFundingEntity getProfileFundingEntity(Funding funding, ProfileFundingEntity exisitingProfileFundingEntity) {
         if (funding != null) {
+            
+            //Get the org
+            OrgEntity orgEntity = getOrgEntity(funding);
+            
             ProfileFundingEntity profileFundingEntity = null;
             if (exisitingProfileFundingEntity == null) {
                 String putCode = funding.getPutCode();
@@ -976,15 +980,10 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                     throw new IllegalArgumentException("Invalid put-code was supplied for a funding: " + putCode);
                 }
                 profileFundingEntity = new ProfileFundingEntity();
-                profileFundingEntity.setSource(getSource(funding.getSource()));
-                profileFundingEntity.setOrg(getOrgEntity(funding));
+                profileFundingEntity.setSource(getSource(funding.getSource()));                
             } else {
                 profileFundingEntity = exisitingProfileFundingEntity;
-                profileFundingEntity.clean();
-                //If the org from funding is not null, update the existing org
-                if(funding.getOrganization() != null) {
-                    profileFundingEntity.setOrg(getOrgEntity(funding));
-                }
+                profileFundingEntity.clean();                                
             }
             FuzzyDate startDate = funding.getStartDate();
             FuzzyDate endDate = funding.getEndDate();
@@ -1038,7 +1037,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             if (funding.getLastModifiedDate() != null && funding.getLastModifiedDate().getValue() != null)
                 profileFundingEntity.setLastModified(funding.getLastModifiedDate().getValue().toGregorianCalendar().getTime());
       
-            
+            profileFundingEntity.setOrg(orgEntity);
             
             return profileFundingEntity;
         }
