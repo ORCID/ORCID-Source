@@ -257,8 +257,7 @@ public class FundingsController extends BaseWorkspaceController {
                         BigDecimal bigDecimal = new BigDecimal(funding.getAmount().getContent());
                         String formattedAmount = formatAmountString(bigDecimal);
                         form.setAmount(Text.valueOf(formattedAmount));
-                    }
-                    
+                    }                                                       
                     form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, funding.getOrganization().getAddress().getCountry().name())));
                     fundingsMap.put(funding.getPutCode(), form);
                     fundingIds.add(funding.getPutCode());
@@ -333,31 +332,6 @@ public class FundingsController extends BaseWorkspaceController {
         return form;
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     /**
      * Persist a funding object on database
      * */
@@ -417,7 +391,7 @@ public class FundingsController extends BaseWorkspaceController {
                 editFunding(funding);
             }
         }
-
+        
         return funding;
     }
     
@@ -506,51 +480,6 @@ public class FundingsController extends BaseWorkspaceController {
                 && !funding.getOrganizationDefinedFundingSubType().isAlreadyIndexed())
             profileFundingManager.addFundingSubType(funding.getOrganizationDefinedFundingSubType().getSubtype().getValue(), getEffectiveUserOrcid());
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     private void removeEmptyExternalIds(FundingForm funding) {
         List<FundingExternalIdentifierForm> extIds = funding.getExternalIdentifiers();

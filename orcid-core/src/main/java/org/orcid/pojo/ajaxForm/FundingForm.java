@@ -463,15 +463,15 @@ public class FundingForm implements ErrorsInterface, Serializable {
             result.setContributors(contributors);
         }
 
+        List<FundingExternalIdentifierForm> externalIdentifiersList = new ArrayList<FundingExternalIdentifierForm>();
         // Set external identifiers
-        if (funding.getFundingExternalIdentifiers() != null) {
-            List<FundingExternalIdentifierForm> externalIdentifiersList = new ArrayList<FundingExternalIdentifierForm>();
+        if (funding.getFundingExternalIdentifiers() != null) {            
             for (FundingExternalIdentifier fExternalIdentifier : funding.getFundingExternalIdentifiers().getFundingExternalIdentifier()) {
                 FundingExternalIdentifierForm fundingExternalIdentifierForm = FundingExternalIdentifierForm.valueOf(fExternalIdentifier);
                 externalIdentifiersList.add(fundingExternalIdentifierForm);
-            }
-            result.setExternalIdentifiers(externalIdentifiersList);
-        }
+            }            
+        } 
+        result.setExternalIdentifiers(externalIdentifiersList);
 
         return result;
     }

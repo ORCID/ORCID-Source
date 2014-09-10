@@ -2982,6 +2982,28 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	$scope.privacyHelp = {};
 	$scope.editTranslatedTitle = false; 	
 	$scope.lastIndexedTerm = null;
+	$scope.emptyExtId = {
+            "errors": [],
+            "type": {
+                "errors": [],
+                "value": "award",
+                "required": true,
+                "getRequiredMessage": null
+            },
+            "value": {
+                "errors": [],
+                "value": "",
+                "required": true,
+                "getRequiredMessage": null
+            },
+            "url": {
+                "errors": [],
+                "value": "",
+                "required": true,
+                "getRequiredMessage": null
+            },
+            "putCode": null
+        };
 	
 	// remove once grouping is live
 	$scope.toggleClickMoreInfo = function(key) {
@@ -3018,7 +3040,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 		$scope.moreInfo[key]=false;
 	};
 		
-	$scope.addFundingModal = function(data){
+	$scope.addFundingModal = function(data){		
 		if(data == undefined) {
 			$scope.removeDisambiguatedFunding();
 			$.ajax({
@@ -3035,6 +3057,9 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 		    });
 		} else {
 			$scope.editFunding = data;
+			if($scope.editFunding.externalIdentifiers == null || $scope.editFunding.externalIdentifiers.length == 0) {
+				$scope.editFunding.externalIdentifiers.push($scope.emptyExtId);
+			}			
 			$scope.showAddModal();
 		}		
 	};
