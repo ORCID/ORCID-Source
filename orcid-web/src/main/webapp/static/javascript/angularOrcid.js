@@ -295,30 +295,41 @@ orcidNgModule.factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
  * Fundings Service 
  * */
 orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
-	var serv = {
+	var fundingSrvc = {
 			fundings: new Array(),
+			groups: new Array(),
 			loading: false,
 			constants: { 'access_type': { 'USER': 'user', 'ANONYMOUS': 'anonymous'}},
 			fundingToAddIds: null,
 			details: new Object(),
 			addFundingToScope: function(path) {
-	    		if( serv.fundingToAddIds.length != 0 ) {
-	    			var fundingIds = serv.fundingToAddIds.splice(0,20).join();
+	    		if( fundingSrvc.fundingToAddIds.length != 0 ) {
+	    			var fundingIds = fundingSrvc.fundingToAddIds.splice(0,20).join();
 	    			$.ajax({
 	    				url: getBaseUri() + '/' + path + '?fundingIds=' + fundingIds,
 	    				dataType: 'json',
-	    				success: function(data) {	    						
-	    						for (i in data) {	    							
-	    							serv.fundings.push(data[i]);
-	    							serv.details[data[i].putCode.value] = data[i];
+	    				success: function(data) {
+	    						for (i in data) {	    
+	    							var funding = data[i];
+	    							// new stuff
+	    							var matches = new Array();
+									for (var idx in fundingSrvc.groups)
+									    if (fundingSrvc.groups[idx].keyMatch(funding))
+											matches.push(fundingSrvc.groups[idx]);
+										
+									if (matches.length == 0) {
+										var newGroup = new GroupedActivities('funding');
+										newGroup.add(funding);
+										fundingSrvc.groups.push(newGroup);
+									};
 	    						};
-	    						if (serv.fundingToAddIds.length == 0) {
-	    							serv.loading = false;
+	    						if (fundingSrvc.fundingToAddIds.length == 0) {
+	    							fundingSrvc.loading = false;
 	    							$rootScope.$apply();
 	    						} else {
 	    							$rootScope.$apply();
 	    					    	setTimeout(function () {
-	    					    		serv.addFundingToScope(path);
+	    					    		fundingSrvc.addFundingToScope(path);
 	    					    	},50);	    							
 	    						}
 	    				}
@@ -326,30 +337,70 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 	    		    	console.log("Error fetching fundings: " + value);
 	    		    });
 	    		} else {
-	    			serv.loading = false;
+	    			fundingSrvc.loading = false;
 	    		};
 	    	},
-	    	setIdsToAdd: function(ids) {
-	    		serv.fundingToAddIds = ids;
+	    	deleteFunding: function(funding) {	
+	    		$.ajax({
+	    	        url: getBaseUri() + '/fundings/funding.json',
+	    	        type: 'DELETE',
+	    	        data: angular.toJson(funding),
+	    	        contentType: 'application/json;charset=UTF-8',
+	    	        dataType: 'json',
+	    	        success: function(data) {	        	
+	    	        	if(data.errors.length != 0){
+	    	        		console.log("Unable to delete funding.");
+	    	        	} else {
+	    					
+	    					// new groups
+		    				for (var idx in fundingSrvc.groups) {
+		    					if (fundingSrvc.groups[idx].hasPut(funding.putCode.value)) {
+		    						rmWorks = fundingSrvc.groups[idx].rmByPut(funding.putCode.value);
+		    						if (fundingSrvc.groups[idx].activitiesCount == 0) 
+		    							fundingSrvc.groups.splice(idx,1);
+		    						else
+		    							fundingSrvc.groups[idx].activePutCode = fundingSrvc.groups[idx].defaultPutCode;
+		    						break;
+		    					}
+		    				}
+
+	    	        	}	    	        	
+	       	        	$rootScope.$apply();
+	    	        }
+	    	    }).fail(function() { 
+	    	    	console.log("Error deleting funding.");
+	    	    });
 	    	},
-	    	getFundings: function(path) {
+	    	fundingCount: function() {
+				var count = 0;
+				for (var idx in fundingSrvc.groups) {
+					count += fundingSrvc.groups[idx].activitiesCount;
+				}
+				return count;
+			},
+	        getFundings: function(path) {
 	    		//clear out current fundings
-	    		serv.loading = true;
-	    		serv.fundingToAddIds = null;
-	    		serv.fundings.length = 0;
+	    		fundingSrvc.loading = true;
+	    		fundingSrvc.fundingToAddIds = null;
+	    		
+	    		//new way
+	    		fundingSrvc.groups.length = 0;
 	    		//get funding ids
 	    		$.ajax({
 	    			url: getBaseUri() + '/'  + path,	        
 	    	        dataType: 'json',
 	    	        success: function(data) {
-	    	        	serv.fundingToAddIds = data;
-	    	        	serv.addFundingToScope('fundings/fundings.json');
+	    	        	fundingSrvc.fundingToAddIds = data;
+	    	        	fundingSrvc.addFundingToScope('fundings/fundings.json');
 	    	        	$rootScope.$apply();
 	    	        }
 	    		}).fail(function(){
 	    			// something bad is happening!
 	    	    	console.log("error fetching fundings");
 	    		});
+	    	},
+	    	setIdsToAdd: function(ids) {
+	    		fundingSrvc.fundingToAddIds = ids;
 	    	},
 	    	updateProfileFunding: function(funding) {
 	    		$.ajax({
@@ -368,43 +419,17 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 	    	    	console.log("Error updating profile funding.");
 	    	    });
 	    	},
-	    	deleteFunding: function(funding) {	
-	    		$.ajax({
-	    	        url: getBaseUri() + '/fundings/funding.json',
-	    	        type: 'DELETE',
-	    	        data: angular.toJson(funding),
-	    	        contentType: 'application/json;charset=UTF-8',
-	    	        dataType: 'json',
-	    	        success: function(data) {	        	
-	    	        	if(data.errors.length != 0){
-	    	        		console.log("Unable to delete funding.");
-	    	        	} else {
-	    	        		var arr = serv.fundings;				
-	    					var idx;
-	    					for (var idx in arr) {
-	    						if (arr[idx].putCode.value == funding.putCode.value) {
-	    							break;
-	    						}
-	    					}
-	    					arr.splice(idx, 1);
-	    	        	}
-	    	        	$rootScope.$apply();
-	    	        }
-	    	    }).fail(function() { 
-	    	    	console.log("Error deleting funding.");
-	    	    });
-	    	},
 	    	getDetails: function(putCode, type, callback) {
 	    		var url = getBaseUri() + '/fundings/getFunding.json?fundingId=';
 	    		//We still not need the type here, but, lets keep the param here since soon it will be used	  
-	    		if(serv.details[putCode] == undefined) {
+	    		if(fundingSrvc.details[putCode] == undefined) {
 	    			$.ajax({
 	    				url: url + putCode,
 	    				dataType: 'json',
 	    				success: function(data) {
 	    					$rootScope.$apply(function(){
-	    						serv.details[putCode] = data;
-	    						if(callback != undefined) callback(serv.details[putCode]);
+	    						fundingSrvc.details[putCode] = data;
+	    						if(callback != undefined) callback(fundingSrvc.details[putCode]);
 	    					});
 	    				}	    					    				
 	    			}).fail(function(){
@@ -416,13 +441,13 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 	    		}
 	    	},
 	    	getEditable: function(putCode, callback) {	    		
-	    		var funding = serv.getDetails(putCode, serv.constants.access_type.USER, function(data) {
+	    		var funding = fundingSrvc.getDetails(putCode, fundingSrvc.constants.access_type.USER, function(data) {
 		    		callback(data);
-	    		});
-	    		
+	    		});	    		
 	    	}
+	    	
 	};
-	return serv;
+	return fundingSrvc;
 }]);
 
 var GroupedActivities = function(type) {
@@ -465,6 +490,7 @@ GroupedActivities.prototype.add = function(activity) {
 	// subsorted by the created date asc
     var identifiersPath = null;
     if (this.type == 'abbrWork') identifiersPath = 'workExternalIdentifiers';
+    else if (this.type == 'funding') identifiersPath = 'externalIdentifiers';
 	for (var idx in activity[identifiersPath])
 		this.addKey(this.key(activity[identifiersPath][idx]));
 	this.activities[activity.putCode.value] = activity;
@@ -478,7 +504,9 @@ GroupedActivities.prototype.add = function(activity) {
 GroupedActivities.prototype.makeDefault = function(putCode) {
 	this.defaultPutCode = putCode;
 	this.dateSortString = this.activities[putCode].dateSortString;	
-	this.title = this.activities[putCode].workTitle.title.value;
+    if (this.type == 'abbrWork') this.title = this.activities[putCode].workTitle.title.value;
+    else if (this.type == 'funding') this.title = this.activities[putCode].fundingTitle.title.value;
+	
 };
 
 GroupedActivities.prototype.addKey = function(key) {
@@ -513,6 +541,10 @@ GroupedActivities.prototype.key = function(activityIdentifiers) {
 	if (this.type == 'abbrWork') {
 		idPath = 'workExternalIdentifierId';
 		idTypePath = 'workExternalIdentifierType';
+	}
+	if (this.type == 'funding') {
+		idPath = 'value';
+		idTypePath = 'type';
 	}
 	var key = activityIdentifiers[idTypePath] ? activityIdentifiers[idTypePath].value : ''; 
 	key += activityIdentifiers[idPath] != null ? activityIdentifiers[idPath].value : ''; 
@@ -2598,7 +2630,7 @@ function WorkspaceSummaryCtrl($scope, $compile, affiliationsSrvc, fundingSrvc, w
 				&& worksSrvc.groups.length == 0 
 				&& affiliationsSrvc.educations.length == 0
 				&& affiliationsSrvc.employments.length == 0
-				&& fundingSrvc.fundings.length == 0)
+				&& fundingSrvc.groups.length == 0)
 			return true;
 		return false;
 	};	
