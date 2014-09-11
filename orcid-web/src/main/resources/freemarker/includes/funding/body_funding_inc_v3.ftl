@@ -92,7 +92,7 @@
 				</div>				
 			</div>			
 		<div ng-show="moreInfo[group.getActive().putCode.value]">
-			<div class="content">			
+			<div class="content">		
 				<#include "funding_more_info_inc_v3.ftl"/>
 			</div>
 		</div>
