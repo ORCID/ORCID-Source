@@ -406,19 +406,6 @@
     	});
     };
     
-    var toggleMenu = function(){			
-		$(".toggle-menu").live("click", function(event){			
-			event.preventDefault();			
-			var status = $(this).siblings().css('display');
-			if(status == 'none' ){
-				$(this).siblings().slideDown();
-			}else{
-				$(this).siblings().slideUp();							
-			}
-		});
-	};
-	
-    
     /*============================================================
         Page initialisation
     ============================================================*/
@@ -430,8 +417,7 @@
         menuHack();        
         menuHandler();
         developerToolsTabs();
-        selectableInputs();
-        toggleMenu();
+        selectableInputs();    
     };
 
     
