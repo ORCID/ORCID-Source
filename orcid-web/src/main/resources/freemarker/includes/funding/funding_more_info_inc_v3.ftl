@@ -16,7 +16,7 @@
     =============================================================================
 
 -->
-<div class="more-info">
+<div class="more-info" ng-show="moreInfo[group.getActive().putCode.value]">
 	<div class="row"> 
 		
 		<div class="col-md-6" ng-show="group.getActive().fundingType.value" ng-cloak>			
@@ -122,15 +122,6 @@
 			<div class="bottomBuffer" ng-show="group.getActive().sourceName" ng-cloak>				
 				<strong><@orcid.msg 'manual_funding_form_contents.label_source'/></strong>
 				<div ng-bind="group.getActive().sourceName"></div>						
-			</div>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-md-12">
-			<div class="work-source bottombuffer" ng-show="worksSrvc.details[work.putCode.value].workSourceName.value" ng-cloak>
-				<strong> <@orcid.msg
-				'manual_work_form_contents.labelWorkSource'/></strong>
-				<div ng-bind="worksSrvc.details[work.putCode.value].workSourceName.value"></div>
 			</div>
 		</div>
 	</div>

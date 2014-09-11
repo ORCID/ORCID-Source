@@ -90,20 +90,15 @@
 						</span>
 					</div>
 				</div>				
-			</div>			
-		<div ng-show="moreInfo[group.getActive().putCode.value]">
-			<div class="content">		
-				<#include "funding_more_info_inc_v3.ftl"/>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-12 col-sm-12 col-xs-12">
-				<div class="show-more-info-tab">			
-					<a href="" ng-show="!moreInfo[group.getActive().putCode.value]" ng-click="showDetailsMouseClick(group.getActive().putCode.value,$event);" class=""><span class="glyphicon glyphicon-chevron-down"></span><@orcid.msg 'manage.developer_tools.show_details'/></a>
-					<a href="" ng-show="moreInfo[group.getActive().putCode.value]" ng-click="showDetailsMouseClick(group.getActive().putCode.value,$event);" class="ng-hide"><span class="glyphicon glyphicon-chevron-up"></span><@orcid.msg 'manage.developer_tools.hide_details'/></a>
-				</div>
-			</div>		
-		</div>	
+	   </div>			
+			
+       	
+       	<!-- More info -->
+		<#include "funding_more_info_inc_v3.ftl"/>
+
+       	<!-- Sources -->
+       	<#include "funding_sources_inc_v3.ftl"/>       	        
+	
 	</li>
 </ul>
 

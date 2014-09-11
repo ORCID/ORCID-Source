@@ -73,7 +73,10 @@
        	
        	<!-- More info -->
        	<#include "work_more_info_inc_v3.ftl"/>
-        
+
+       	<!-- Sources -->
+       	<#include "work_sources_inc_v3.ftl"/>
+       	        
     </li><!-- bottom-margin-small -->
 </ul>
 <div ng-show="worksSrvc.loading == true" class="text-center" id="workSpinner">

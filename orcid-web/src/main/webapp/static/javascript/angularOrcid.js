@@ -2997,6 +2997,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	$scope.editFunding = null;
 	$scope.disambiguatedFunding = null;
 	$scope.moreInfo = {};
+	$scope.editSources = {};
 	$scope.privacyHelp = {};
 	$scope.editTranslatedTitle = false; 	
 	$scope.lastIndexedTerm = null;
