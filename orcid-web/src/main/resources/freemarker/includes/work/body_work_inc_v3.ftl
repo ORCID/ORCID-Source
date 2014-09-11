@@ -52,15 +52,14 @@
 			                	limitedClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'LIMITED', $event)" 
 			                	privateClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PRIVATE', $event)"/>
 			                </li>
-			            					</#if>				
+			        </#if>				
 				</div>
 	        </div>
 	        
 	        <!-- Identifiers / URL / Validations / Versions -->
 			<div class="row bottomBuffer" ng-show="group.getActive().workExternalIdentifiers.length > 0">
 				<div class="col-md-12 col-sm-12">
-					<ul class="id-details">
-								
+					<ul class="id-details">			
 						<li>
 							<span ng-repeat='ie in group.getActive().workExternalIdentifiers'><span
 							ng-bind-html='ie | workExternalIdentifierHtml:$first:$last:group.getActive().workExternalIdentifiers.length'></span>

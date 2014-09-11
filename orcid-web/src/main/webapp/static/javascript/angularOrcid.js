@@ -315,12 +315,22 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 									for (var idx in fundingSrvc.groups)
 									    if (fundingSrvc.groups[idx].keyMatch(funding))
 											matches.push(fundingSrvc.groups[idx]);
-										
 									if (matches.length == 0) {
 										var newGroup = new GroupedActivities('funding');
 										newGroup.add(funding);
 										fundingSrvc.groups.push(newGroup);
-									};
+									}  else {
+										var firstMatch = matches.shift();
+										firstMatch.add(funding);
+										// combine any remaining groups into the first group we found.
+										for (var idx in matches) {
+											var matchIndex = fundingSrvc.groups.indexOf(matches[idx]);
+											var curMatch = fundingSrvc.groups[matchIndex];
+											for (var idj in curMatch.activities)
+												firstMatch.add(curMatch.activities[idj]);
+											fundingSrvc.groups.splice(matchIndex, 1);
+										}
+									}
 	    						};
 	    						if (fundingSrvc.fundingToAddIds.length == 0) {
 	    							fundingSrvc.loading = false;
@@ -461,10 +471,9 @@ GroupedActivities.prototype.add = function(activity) {
 	// assumes works are added in the order of the display index desc
 	// subsorted by the created date asc
     var identifiersPath = null;
-    if (this.type == 'abbrWork') identifiersPath = 'workExternalIdentifiers';
-    else if (this.type == 'funding') identifiersPath = 'externalIdentifiers';
-	for (var idx in activity[identifiersPath])
-		this.addKey(this.key(activity[identifiersPath][idx]));
+    identifiersPath = this.getIdentifiersPath();
+    for (var idx in activity[identifiersPath])
+    	this.addKey(this.key(activity[identifiersPath][idx]));
 	this.activities[activity.putCode.value] = activity;
 	if (this.defaultPutCode == null) { 
 		this.activePutCode = activity.putCode.value;
@@ -525,7 +534,7 @@ GroupedActivities.prototype.key = function(activityIdentifiers) {
 
 GroupedActivities.prototype.keyMatch = function(activity) {
     var identifiersPath = null;
-    if (this.type == 'abbrWork') identifiersPath = 'workExternalIdentifiers';
+    identifiersPath = this.getIdentifiersPath();
 	for (var idx in activity[identifiersPath]) { 
 		if (this.key(activity[identifiersPath][idx]) == '') continue;
 		if (this.key(activity[identifiersPath][idx]) in this._keySet)
@@ -533,6 +542,11 @@ GroupedActivities.prototype.keyMatch = function(activity) {
 	}
 	return false;
 };
+
+GroupedActivities.prototype.getIdentifiersPath = function() {
+    if (this.type == 'abbrWork') return 'workExternalIdentifiers';
+    return 'externalIdentifiers';
+}
 
 GroupedActivities.prototype.rmByPut = function(putCode) {
 	var activities =  this.activities[putCode];
