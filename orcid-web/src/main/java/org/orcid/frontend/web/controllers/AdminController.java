@@ -96,6 +96,8 @@ public class AdminController extends BaseController {
     
     public static String AUTHORIZE_DELEGATION_ACTION = "/manage/authorize-delegates";
     
+    private static String SALESFORCE_ID_PATTERN = "[a-zA-Z0-9]{15}";
+    
     @Resource
     ProfileEntityManager profileEntityManager;
     
@@ -378,10 +380,12 @@ public class AdminController extends BaseController {
     @RequestMapping(value = "/group.json", method = RequestMethod.GET)
     public @ResponseBody
     Group getEmptyGroup() {
+        Text empty = Text.valueOf("");
         Group group = new Group();
-        group.setEmail(Text.valueOf(""));
-        group.setGroupName(Text.valueOf(""));
-        group.setGroupOrcid(Text.valueOf(""));
+        group.setEmail(empty);
+        group.setGroupName(empty);
+        group.setGroupOrcid(empty);
+        group.setSalesforceId(empty);
         //Set the default type as basic
         group.setType(Text.valueOf(GroupType.BASIC.value()));
         return group;
@@ -445,6 +449,10 @@ public class AdminController extends BaseController {
                 setError(group.getType(), "group.type.invalid");
             }
         }
+    }
+    
+    private void validateSalesforceId(Group group) {
+        
     }
     
     /**

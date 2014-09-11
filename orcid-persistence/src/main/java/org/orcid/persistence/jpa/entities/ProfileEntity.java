@@ -151,6 +151,9 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     private Visibility profileAddressVisibility;
     private Visibility activitiesVisibilityDefault = Visibility.PRIVATE;
 
+    // Salesfore ID
+    private String salesforeId;
+    
     private Date deactivationDate;
 
     @Id
@@ -954,6 +957,16 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
      * */
     public void setDeprecatedDate(Date deprecatedDate) {
         this.deprecatedDate = deprecatedDate;
+    }
+
+    
+    @Column(name = "salesforce_id")
+    public String getSalesforeId() {
+        return salesforeId;
+    }
+
+    public void setSalesforeId(String salesforeId) {
+        this.salesforeId = salesforeId;
     }
 
     @Override

@@ -848,6 +848,10 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                     profileEntity.setEnableDeveloperTools(preferences.getDeveloperToolsEnabled().isValue());
                 }
             }
+            
+            if(orcidInternal.getSalesforceId() != null) {
+                profileEntity.setSalesforeId(orcidInternal.getSalesforceId().getContent());
+            }
 
         }
     }
