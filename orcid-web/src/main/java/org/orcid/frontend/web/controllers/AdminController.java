@@ -452,7 +452,13 @@ public class AdminController extends BaseController {
     }
     
     private void validateSalesforceId(Group group) {
-        
+        if(group != null && !PojoUtil.isEmpty(group.getSalesforceId())) {
+            if(group.getSalesforceId().getValue().length() != 15) {
+                setError(group.getSalesforceId(), "group.salesforece_id.invalid_length");
+            } else if(!group.getSalesforceId().getValue().matches(SALESFORCE_ID_PATTERN)) {
+                setError(group.getSalesforceId(), "group.salesforece_id.invalid");
+            }
+        }        
     }
     
     /**
