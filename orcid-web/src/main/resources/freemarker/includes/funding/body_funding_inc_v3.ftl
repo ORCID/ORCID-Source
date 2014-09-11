@@ -16,29 +16,29 @@
     =============================================================================
 
 -->
-<ul ng-hide="!fundingSrvc.fundings.length" class="workspace-fundings workspace-body-list bottom-margin-medium" ng-cloak>
-	<li class="bottom-margin-small workspace-border-box card ng-scope" ng-repeat="funding in fundingSrvc.fundings |  orderBy:['-dateSortString', 'affiliationName']"> 
+<ul ng-hide="!fundingSrvc.groups.length" class="workspace-fundings workspace-body-list bottom-margin-medium" ng-cloak>
+	<li class="bottom-margin-small workspace-border-box card ng-scope" ng-repeat="group in fundingSrvc.groups | orderBy:['-dateSortString', 'title']""> 
 		<div class="row">        			
 			<!-- Information -->
 			<div class="col-md-9 col-sm-9">
 				<h3 class="workspace-title">
-					<strong ng-show="funding.fundingTitle.title.value">{{funding.fundingTitle.title.value}}:</strong>
-					<span class="funding-name" ng-bind-html="funding.fundingName.value"></span>					
+					<strong ng-show="group.getActive().fundingTitle.title.value">{{group.getActive().fundingTitle.title.value}}:</strong>
+					<span class="funding-name" ng-bind-html="group.getActive().fundingName.value"></span>					
 				</h3>
 				
 				<div class="info-detail">
-					<span class="funding-date" ng-show="funding.startDate && !funding.endDate">
-						<span ng-show="funding.startDate.year">{{funding.startDate.year}}</span><span ng-show="funding.startDate.month">-{{funding.startDate.month}}</span>						
+					<span class="funding-date" ng-show="group.getActive().startDate && !group.getActive().endDate">
+						<span ng-show="group.getActive().startDate.year">{{group.getActive().startDate.year}}</span><span ng-show="group.getActive().startDate.month">-{{group.getActive().startDate.month}}</span>						
 				    	<@orcid.msg 'workspace_fundings.dateSeparator'/>
 				    	<@orcid.msg 'workspace_fundings.present'/>
 					</span>
-					<span class="funding-date" ng-show="funding.startDate && funding.endDate">
-						<span ng-show="funding.startDate.year">{{funding.startDate.year}}</span><span ng-show="funding.startDate.month">-{{funding.startDate.month}}</span>						
+					<span class="funding-date" ng-show="group.getActive().startDate && group.getActive().endDate">
+						<span ng-show="group.getActive().startDate.year">{{group.getActive().startDate.year}}</span><span ng-show="group.getActive().startDate.month">-{{group.getActive().startDate.month}}</span>						
 						<@orcid.msg 'workspace_fundings.dateSeparator'/>
-						<span ng-show="funding.endDate.year">{{funding.endDate.year}}</span><span ng-show="funding.endDate.month">-{{funding.endDate.month}}</span>
+						<span ng-show="group.getActive().endDate.year">{{group.getActive().endDate.year}}</span><span ng-show="group.getActive().endDate.month">-{{group.getActive().endDate.month}}</span>
 					</span>
-					<span class="funding-date" ng-show="!funding.startDate && funding.endDate">
-					     <span ng-show="funding.endDate.year">{{funding.endDate.year}}</span><span ng-show="funding.endDate.month">-{{funding.endDate.month}}</span>
+					<span class="funding-date" ng-show="!group.getActive().startDate && group.getActive().endDate">
+					     <span ng-show="group.getActive().endDate.year">{{group.getActive().endDate.year}}</span><span ng-show="group.getActive().endDate.month">-{{group.getActive().endDate.month}}</span>
 					</span>
 				</div>
 			</div>	
@@ -54,9 +54,9 @@
 					 		</a>	
 					 	</li>
 	        			<li>
-							<@orcid.privacyToggle2  angularModel="funding.visibility.visibility"
-							questionClick="toggleClickPrivacyHelp(funding.putCode.value)"
-							clickedClassCheck="{'popover-help-container-show':privacyHelp[funding.putCode.value]==true}" 
+							<@orcid.privacyToggle2  angularModel="group.getActive().visibility.visibility"
+							questionClick="toggleClickPrivacyHelp(group.getActive().putCode.value)"
+							clickedClassCheck="{'popover-help-container-show':privacyHelp[group.getActive().putCode.value]==true}" 
 							publicClick="setPrivacy(funding, 'PUBLIC', $event)" 
 		                	limitedClick="setPrivacy(funding, 'LIMITED', $event)" 
 		                	privateClick="setPrivacy(funding, 'PRIVATE', $event)" />
@@ -81,17 +81,17 @@
 		        </#if>
 			</div>
 		</div>
-		<div class="row bottomBuffer" ng-show="funding.externalIdentifiers.length > 0" ng-cloak>
+		<div ng-show="group.getActive().externalIdentifiers.length > 0" class="row bottomBuffer" ng-show="funding.externalIdentifiers.length > 0" ng-cloak>
 				<div class="col-md-12 col-sm-12">					
 					<div>					
-						<span ng-repeat='ei in funding.externalIdentifiers'>							
-							<span ng-bind-html='ei | externalIdentifierHtml:$first:$last:funding.externalIdentifiers.length'>
+						<span ng-repeat='ei in group.getActive().externalIdentifiers'>							
+							<span ng-bind-html='ei | externalIdentifierHtml:$first:$last:group.getActive().externalIdentifiers.length'>
 							</span>
 						</span>
 					</div>
 				</div>				
 			</div>			
-		<div ng-show="moreInfo[funding.putCode.value]">
+		<div ng-show="moreInfo[group.getActive().putCode.value]">
 			<div class="content">			
 				<#include "funding_more_info_inc_v3.ftl"/>
 			</div>
@@ -99,8 +99,8 @@
 		<div class="row">
 			<div class="col-md-12 col-sm-12 col-xs-12">
 				<div class="show-more-info-tab">			
-					<a href="" ng-show="!moreInfo[funding.putCode.value]" ng-click="showDetailsMouseClick(funding.putCode.value,$event);" class=""><span class="glyphicon glyphicon-chevron-down"></span><@orcid.msg 'manage.developer_tools.show_details'/></a>
-					<a href="" ng-show="moreInfo[funding.putCode.value]" ng-click="showDetailsMouseClick(funding.putCode.value,$event);" class="ng-hide"><span class="glyphicon glyphicon-chevron-up"></span><@orcid.msg 'manage.developer_tools.hide_details'/></a>
+					<a href="" ng-show="!moreInfo[group.getActive().putCode.value]" ng-click="showDetailsMouseClick(group.getActive().putCode.value,$event);" class=""><span class="glyphicon glyphicon-chevron-down"></span><@orcid.msg 'manage.developer_tools.show_details'/></a>
+					<a href="" ng-show="moreInfo[group.getActive().putCode.value]" ng-click="showDetailsMouseClick(group.getActive().putCode.value,$event);" class="ng-hide"><span class="glyphicon glyphicon-chevron-up"></span><@orcid.msg 'manage.developer_tools.hide_details'/></a>
 				</div>
 			</div>		
 		</div>	
@@ -113,7 +113,7 @@
     	<img src="${staticCdn}/img/spin-big.gif" width="85" height ="85"/>
     <![endif]-->
 </div>
-<div ng-show="fundingSrvc.loading == false && fundingSrvc.fundings.length == 0" class="alert alert-info" ng-cloak>
+<div ng-show="fundingSrvc.loading == false && fundingSrvc.groups.length == 0" class="alert alert-info" ng-cloak>
     <strong><#if (publicProfile)?? && publicProfile == true><@orcid.msg 'workspace_fundings_body_list.nograntaddedyet' /><#else><@orcid.msg 'workspace_fundings.havenotaddaffiliation' /><a ng-click="addFundingModal()"> <@orcid.msg 'workspace_fundings_body_list.addsomenow'/></a></#if></strong>
 </div>
 
