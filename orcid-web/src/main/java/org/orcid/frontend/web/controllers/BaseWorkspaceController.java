@@ -76,7 +76,7 @@ public class BaseWorkspaceController extends BaseController {
         Map<String, String> countriesWithId = new LinkedHashMap<String, String>();
         List<String> countries = countryManager.retrieveCountries();
         countriesWithId.put("", "Select a country");
-        for (String countryName : countries) {
+        for (String countryName : countries) { 
             countriesWithId.put(countryName, countryName);
         }
         return countriesWithId;

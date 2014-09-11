@@ -22,10 +22,8 @@ import java.util.List;
 
 import org.orcid.jaxb.model.message.Address;
 import org.orcid.jaxb.model.message.ContactDetails;
-import org.orcid.jaxb.model.message.Country;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 
 public class CountryForm implements ErrorsInterface, Serializable {
 
@@ -33,12 +31,14 @@ public class CountryForm implements ErrorsInterface, Serializable {
 
     private Iso2Country iso2Country;
 
-    private Visibility profileAddressVisibility;
+    private Visibility profileAddressVisibility;        
 
     String orcid;
 
     private List<String> errors = new ArrayList<String>();
 
+    private String countryName;
+    
     public static CountryForm valueOf(OrcidProfile op) {
         CountryForm pf = new CountryForm();
         pf.setProfileAddressVisibility(new Visibility()); // always start off with public
@@ -100,6 +100,14 @@ public class CountryForm implements ErrorsInterface, Serializable {
 
     public void setIso2Country(Iso2Country iso2Country) {
         this.iso2Country = iso2Country;
+    }
+
+    public String getCountryName() {
+        return countryName;
+    }
+
+    public void setCountryName(String countryName) {
+        this.countryName = countryName;
     }
 
 }
