@@ -89,28 +89,27 @@
 	</div>
 </div>
 <div class="row">
-	<div class="col-md-9">
-		
-	</div>
-	<div class="col-md-3">
-		<ul class="validations-versions nav nav-pills nav-stacked">
-			<li><a href=""><span class="glyphicon glyphicon-ok green"></span><strong></strong><span class="badge pull-right blue">2</span>Validated</a></li>
-			<li><a href=""><span class="glyphicon glyphicon-file green"></span><span class="badge pull-right blue">3</span>Versions</a></li> <!-- for non versions use class 'opaque' instead green -->
-		</ul>
+	<div class="col-md-12">		
+	
 	</div>
 </div>
 <div class="content affiliate" ng-show="moreInfo[affiliation.putCode.value]">	
 	<div class="row">			
 		<div class="col-md-12">
 			<#include "affiliate_more_info_inc_v3.ftl"/>
-		</div>	
+		</div>
 	</div>
 </div>	
 <div class="row">
 	<div class="col-md-12 col-sm-12 col-xs-12">
-		<div class="show-more-info-tab">			
-			<a href="" ng-show="!moreInfo[affiliation.putCode.value]" ng-click="showDetailsMouseClick(affiliation.putCode.value,$event);"><span class="glyphicon glyphicon-chevron-down"></span><@orcid.msg 'manage.developer_tools.show_details'/></a>
-			<a href="" ng-show="moreInfo[affiliation.putCode.value]" ng-click="showDetailsMouseClick(affiliation.putCode.value,$event);"><span class="glyphicon glyphicon-chevron-up"></span><@orcid.msg 'manage.developer_tools.hide_details'/></a>
+		<div class="row">
+			<div class="col-md-5"></div>
+			<div class="col-md-7">
+				<div class="show-more-info-tab">			
+					<a href="" ng-show="!moreInfo[affiliation.putCode.value]" ng-click="showDetailsMouseClick(affiliation.putCode.value,$event);"><span class="glyphicon glyphicon-chevron-down"></span><@orcid.msg 'manage.developer_tools.show_details'/></a>
+					<a href="" ng-show="moreInfo[affiliation.putCode.value]" ng-click="showDetailsMouseClick(affiliation.putCode.value,$event);"><span class="glyphicon glyphicon-chevron-up"></span><@orcid.msg 'manage.developer_tools.hide_details'/></a>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>

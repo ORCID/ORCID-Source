@@ -4499,6 +4499,9 @@ ul.toggle-menu li:hover ul {
 .work-tab{
 	margin-left: 3px;
 }
+.more-info .col-md-6{ /* Row height fix */
+	min-height: 70px;
+}
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
@@ -4962,7 +4965,7 @@ ul.toggle-menu li:hover ul {
 
     .workspace-toolbar{		
 	    height: 50px;
-	    margin-top: 15px;
+	    margin: 15px 0 0 5px;
 	    width: 100%;
 	    padding-left: 10px;
 	    float: left;	    
@@ -4970,6 +4973,11 @@ ul.toggle-menu li:hover ul {
 	
 	.workspace-header{
 		border-bottom: 0 none;
+	}
+	
+	.workspace-accordion,
+	#workspace-publications{
+		padding: 0;
 	}
 	
 	
@@ -5540,11 +5548,6 @@ ul.toggle-menu li:hover ul {
 	
 	.role{
 		float: left;		 
-	}
-	
-	#workspace-education .content,
-	#workspace-fundings .content{
-		margin: 0px -10px;
 	}
 	
 	.public-profile .oid{
