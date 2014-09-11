@@ -631,7 +631,7 @@
 			title="Grant # 1" 
 			type="SALARY_AWARD" 
 			currency_code="USD" 
-			amount="2500" 
+			numeric_amount="2500" 
 			visibility="LIMITED"
 			date_created="2013-10-22 11:09:28.636" 
 			last_modified="2013-10-22 11:09:28.636" 

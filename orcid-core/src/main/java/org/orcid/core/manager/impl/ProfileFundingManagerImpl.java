@@ -74,8 +74,8 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
      * 
      * @return true if the relationship was updated
      * */
-    public boolean updateProfileFunding(String clientOrcid, String profileFundingId, Visibility visibility) {
-        return profileFundingDao.updateProfileFunding(clientOrcid, profileFundingId, visibility);
+    public boolean updateProfileFundingVisibility(String clientOrcid, String profileFundingId, Visibility visibility) {
+        return profileFundingDao.updateProfileFundingVisibility(clientOrcid, profileFundingId, visibility);
     }
 
     /**
@@ -144,5 +144,29 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
             fundingSubTypeToIndexDao.removeSubTypes(subtype);
         }
         LOGGER.info("Funding subtypes have been correcly indexed");
+    }
+    
+    /**
+     * Get the funding associated with the given profileFunding id
+     * 
+     * @param profileFundingId
+     *            The id of the ProfileFundingEntity object
+     * 
+     * @return the ProfileFundingEntity object
+     * */
+    public ProfileFundingEntity getProfileFundingEntity(String profileFundingId) {
+        return profileFundingDao.getProfileFundingEntity(profileFundingId);
+    }
+    
+    /**
+     * Update an existing profile funding relationship between an organization and a
+     * profile.
+     * 
+     * @param updatedProfileFundingEntity
+     *            The object to be persisted
+     * @return the updated profileFundingEntity
+     * */
+    public ProfileFundingEntity updateProfileFunding(ProfileFundingEntity updatedProfileFundingEntity) {
+        return profileFundingDao.updateProfileFunding(updatedProfileFundingEntity);
     }
 }

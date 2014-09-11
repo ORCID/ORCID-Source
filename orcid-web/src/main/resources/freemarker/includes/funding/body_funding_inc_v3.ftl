@@ -46,11 +46,11 @@
 			<!-- Privacy Settings -->
 	        <div class="col-md-3 col-sm-3 workspace-toolbar">
 	        	<#if !(isPublicProfile??)>
-	        		<!-- <a href ng-click="deleteFunding(funding)" class="glyphicon glyphicon-trash grey"></a> -->
+	        		<!-- <a href ng-click="deleteFunding(group.getActive())" class="glyphicon glyphicon-trash grey"></a> -->
 	        		<ul class="workspace-private-toolbar">
 	        			<li>
 					 		<a href="" class="toolbar-button edit-item-button">
-					 			<span class="glyphicon glyphicon-pencil edit-option-toolbar" title=""></span>
+					 			<span class="glyphicon glyphicon-pencil edit-option-toolbar" title="" ng-click="openEditFunding(group.getActive())"></span>
 					 		</a>	
 					 	</li>
 	        			<li>

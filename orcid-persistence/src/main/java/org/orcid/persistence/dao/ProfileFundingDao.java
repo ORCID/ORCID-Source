@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
+import org.orcid.persistence.jpa.entities.WorkEntity;
 
 public interface ProfileFundingDao extends GenericDao<ProfileFundingEntity, Long> {
 
@@ -49,7 +50,7 @@ public interface ProfileFundingDao extends GenericDao<ProfileFundingEntity, Long
      * 
      * @return true if the relationship was updated
      * */
-    boolean updateProfileFunding(String clientOrcid, String profileFundingId, Visibility visibility);
+    boolean updateProfileFundingVisibility(String clientOrcid, String profileFundingId, Visibility visibility);
 
     /**
      * Creates a new profile funding relationship between an organization and a
@@ -90,4 +91,13 @@ public interface ProfileFundingDao extends GenericDao<ProfileFundingEntity, Long
      * @return a list of all profile fundings where the amount is not null 
      * */
     List<ProfileFundingEntity> getProfileFundingWithAmount();
+    
+    /**
+     * Edits a profileFunding
+     * 
+     * @param profileFunding
+     *            The profileFunding to be edited
+     * @return the updated profileFunding
+     * */
+    ProfileFundingEntity updateProfileFunding(ProfileFundingEntity profileFunding);
 }

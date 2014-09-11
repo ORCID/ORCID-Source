@@ -299,6 +299,7 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 			fundings: new Array(),
 			groups: new Array(),
 			loading: false,
+			constants: { 'access_type': { 'USER': 'user', 'ANONYMOUS': 'anonymous'}},
 			fundingToAddIds: null,
 			addFundingToScope: function(path) {
 	    		if( fundingSrvc.fundingToAddIds.length != 0 ) {
@@ -416,8 +417,7 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 	    	    }).fail(function() { 
 	    	    	console.log("Error updating profile funding.");
 	    	    });
-	    	}
-	    	
+	    	}	    	
 	};
 	return fundingSrvc;
 }]);
@@ -2986,6 +2986,28 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	$scope.privacyHelp = {};
 	$scope.editTranslatedTitle = false; 	
 	$scope.lastIndexedTerm = null;
+	$scope.emptyExtId = {
+            "errors": [],
+            "type": {
+                "errors": [],
+                "value": "award",
+                "required": true,
+                "getRequiredMessage": null
+            },
+            "value": {
+                "errors": [],
+                "value": "",
+                "required": true,
+                "getRequiredMessage": null
+            },
+            "url": {
+                "errors": [],
+                "value": "",
+                "required": true,
+                "getRequiredMessage": null
+            },
+            "putCode": null
+        };
 	
 	// remove once grouping is live
 	$scope.toggleClickMoreInfo = function(key) {
@@ -3015,38 +3037,35 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	$scope.showDetailsMouseClick = function(key, $event) {
 		$event.stopPropagation();
 		$scope.moreInfo[key]=!$scope.moreInfo[key];
-		console.log(key);
-		
-		/*
-		if (document.documentElement.className.contains('no-touch')) {
-			if ($scope.moreInfoCurKey != null 
-					&& $scope.moreInfoCurKey != key) {
-				$scope.privacyHelp[$scope.moreInfoCurKey]=false;
-			}
-			$scope.moreInfoCurKey = key;
-			$scope.moreInfo[key]=true;
-		}
-		*/
+		console.log(key);				
 	};	
 	
 	$scope.closeMoreInfo = function(key) {
 		$scope.moreInfo[key]=false;
 	};
 		
-	$scope.addFundingModal = function(type){
-		$scope.removeDisambiguatedFunding();
-		$.ajax({
-			url: getBaseUri() + '/fundings/funding.json',
-			dataType: 'json',
-			success: function(data) {						
-				$scope.$apply(function() {
-					$scope.editFunding = data;					
-					$scope.showAddModal();
-				});
-			}
-		}).fail(function() { 
-	    	console.log("Error fetching funding: " + value);
-	    });
+	$scope.addFundingModal = function(data){		
+		if(data == undefined) {
+			$scope.removeDisambiguatedFunding();
+			$.ajax({
+				url: getBaseUri() + '/fundings/funding.json',
+				dataType: 'json',
+				success: function(data) {						
+					$scope.$apply(function() {
+						$scope.editFunding = data;					
+						$scope.showAddModal();
+					});
+				}
+			}).fail(function() { 
+		    	console.log("Error fetching funding: " + value);
+		    });
+		} else {
+			$scope.editFunding = data;
+			if($scope.editFunding.externalIdentifiers == null || $scope.editFunding.externalIdentifiers.length == 0) {
+				$scope.editFunding.externalIdentifiers.push($scope.emptyExtId);
+			}			
+			$scope.showAddModal();
+		}		
 	};
 	
 	$scope.showAddModal = function(){
@@ -3063,7 +3082,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	    });
 	};
 	
-	$scope.addFunding = function(){
+	$scope.putFunding = function(){
 		if ($scope.addingFunding) return; // don't process if adding funding
 		$scope.addingFunding = true;		
 		$scope.editFunding.errors.length = 0;
@@ -3076,7 +3095,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	        success: function(data) {	        		        	
 	        	if (data.errors.length == 0){
 	        		$.colorbox.close(); 	        		
-	        		fundingSrvc.getFundings('fundings/fundingIds.json');
+	        		fundingSrvc.getFundings('fundings/fundingIds.json');	        		
 	        	} else {
 		        	$scope.editFunding = data;
 		        	if($scope.editFunding.externalIdentifiers.length == 0) {
@@ -3384,6 +3403,10 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 			break;
 		}
 	};
+	
+	$scope.openEditFunding = function(funding) {
+		$scope.addFundingModal(funding);
+	};		
 }
 
 /**
