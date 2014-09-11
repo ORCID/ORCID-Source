@@ -101,34 +101,8 @@
 </div>
 <div class="content affiliate" ng-show="moreInfo[affiliation.putCode.value]">	
 	<div class="row">			
-		<div class="col-md-9">
+		<div class="col-md-12">
 			<#include "affiliate_more_info_inc_v3.ftl"/>
-		</div>
-		<div class="col-md-3">
-			<!-- Validations -->					
-			<div class="validations bottomBuffer">
-				<strong>Validations</strong>
-				<ul>
-					<li><a href="">Validation #1</a></li>
-					<li><a href="">Validation #2</a></li>
-				</ul>
-			</div>
-			<!-- Versions -->
-			<div class="versions bottomBuffer">
-				<strong>Versions</strong>
-				<ul>
-					<li class="current-version"><span class="glyphicon glyphicon-chevron-right"></span><a href="">My Version</a><span class="glyphicon glyphicon-globe privacy"></span></li>
-					<li><span class="glyphicon glyphicon-chevron-right"></span><a href="">ResearcherID</a></li>
-					<li><span class="glyphicon glyphicon-chevron-right"></span><a href="">DataCite</a></li>
-					<li><span class="glyphicon glyphicon-chevron-right"></span><a href="">Harvard University</a></li>
-				</ul>
-			</div>
-			<!-- Work Source -->
-			<div class="work-source bottombuffer" ng-show="worksSrvc.details[work.putCode.value].workSourceName.value" ng-cloak>
-				<strong> <@orcid.msg
-				'manual_work_form_contents.labelWorkSource'/></strong>
-				<div ng-bind="worksSrvc.details[work.putCode.value].workSourceName.value"></div>
-			</div>					
 		</div>	
 	</div>
 </div>	
