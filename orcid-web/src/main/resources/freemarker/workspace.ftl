@@ -117,8 +117,8 @@
 		            <span class="glyphicon glyphicon-pencil edit-country edit-option" ng-click="openEdit()" title="" ng-hide="showEdit == true"></span>
 	            </div>   
 	            <!-- Current content -->
-                <span ng-hide="showEdit == true" ng-click="toggleEdit()">
-	                <span ng-show="countryForm != null && countryForm.iso2Country != null" ng-bind="countryForm.iso2Country.value">
+                <span ng-hide="showEdit == true" ng-click="toggleEdit()">                	
+	                <span ng-show="countryForm != null && countryForm.countryName != null" ng-bind="countryForm.countryName">
 	                </span>
 	            </span>
                <!-- Edit form -->
