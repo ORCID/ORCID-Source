@@ -68,6 +68,13 @@
 				</span>
 			</div>
 			<div class="col-md-12">
+			
+				<div ng-show="worksSrvc.details[group.getActive().putCode.value].citation.citationType.value != 'bibtex'">
+					<span>
+						{{worksSrvc.details[group.getActive().putCode.value].citation.citation.value}}
+					</span>
+				</div>	
+						
 				<span ng-show="showBibtex[group.getActive().putCode.value] && worksSrvc.details[group.getActive().putCode.value].citation.citationType.value == 'bibtex'">
 					<a class="toggle-tag-option" ng-click="bibtexShowToggle(group.getActive().putCode.value)">
 						[<@orcid.msg 'work.show_in_bibtex'/>]
