@@ -86,7 +86,12 @@ public class FundingForm implements ErrorsInterface, Serializable {
 
     private String fundingTypeForDisplay;
     
-    private String dateSortString;        
+    private String dateSortString;  
+    
+    private Date createdDate;
+    
+    private Date lastModified;
+
 
     public List<String> getErrors() {
         return errors;
@@ -472,6 +477,10 @@ public class FundingForm implements ErrorsInterface, Serializable {
             }            
         } 
         result.setExternalIdentifiers(externalIdentifiersList);
+        
+        result.setCreatedDate(Date.valueOf(funding.getCreatedDate()));
+        result.setLastModified(Date.valueOf(funding.getLastModifiedDate()));
+
 
         return result;
     }
@@ -483,4 +492,21 @@ public class FundingForm implements ErrorsInterface, Serializable {
     public void setDateSortString(String dateSortString) {
         this.dateSortString = dateSortString;
     }
+
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public Date getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(Date lastModified) {
+        this.lastModified = lastModified;
+    }
+
 }
