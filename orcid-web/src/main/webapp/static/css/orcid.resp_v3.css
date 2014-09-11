@@ -5737,6 +5737,12 @@ ul.toggle-menu li:hover ul {
 	
 	.public-profile .oid{
 		width: 100%;
+	}
+	
+	.workspace-profile,
+	.workspace-accordion,
+	#workspace-publications{
+		padding: 0;
 	}	
 	
 }
