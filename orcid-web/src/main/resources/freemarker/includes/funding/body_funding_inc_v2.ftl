@@ -50,7 +50,7 @@
 	        		<ul class="workspace-private-toolbar">
 	        			<li>
 					 		<a href="" class="toolbar-button edit-item-button">
-					 			<span class="glyphicon glyphicon-pencil edit-option-toolbar" title="" ng-click="openEditFunding(funding.putCode.value)"></span>
+					 			<span class="glyphicon glyphicon-pencil edit-option-toolbar" title="" ng-click="openEditFunding(funding)"></span>
 					 		</a>	
 					 	</li>
 	        			<li>

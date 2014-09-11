@@ -301,7 +301,6 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 			loading: false,
 			constants: { 'access_type': { 'USER': 'user', 'ANONYMOUS': 'anonymous'}},
 			fundingToAddIds: null,
-			details: new Object(),
 			addFundingToScope: function(path) {
 	    		if( fundingSrvc.fundingToAddIds.length != 0 ) {
 	    			var fundingIds = fundingSrvc.fundingToAddIds.splice(0,20).join();
@@ -418,34 +417,7 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 	    	    }).fail(function() { 
 	    	    	console.log("Error updating profile funding.");
 	    	    });
-	    	},
-	    	getDetails: function(putCode, type, callback) {
-	    		var url = getBaseUri() + '/fundings/getFunding.json?fundingId=';
-	    		//We still not need the type here, but, lets keep the param here since soon it will be used	  
-	    		if(fundingSrvc.details[putCode] == undefined) {
-	    			$.ajax({
-	    				url: url + putCode,
-	    				dataType: 'json',
-	    				success: function(data) {
-	    					$rootScope.$apply(function(){
-	    						fundingSrvc.details[putCode] = data;
-	    						if(callback != undefined) callback(fundingSrvc.details[putCode]);
-	    					});
-	    				}	    					    				
-	    			}).fail(function(){
-	    				//something bad happed
-	    				console.log("Error fetching funding info for " + putCode);
-	    			});
-	    		} else {
-	    			if(callback != undefined) callback(serv.details[putCode]);
-	    		}
-	    	},
-	    	getEditable: function(putCode, callback) {	    		
-	    		var funding = fundingSrvc.getDetails(putCode, fundingSrvc.constants.access_type.USER, function(data) {
-		    		callback(data);
-	    		});	    		
-	    	}
-	    	
+	    	}	    	
 	};
 	return fundingSrvc;
 }]);
@@ -3432,8 +3404,8 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 		}
 	};
 	
-	$scope.openEditFunding = function(putCode) {
-		fundingSrvc.getEditable(putCode, function(data){$scope.addFundingModal(data);});
+	$scope.openEditFunding = function(funding) {
+		$scope.addFundingModal(funding);
 	};		
 }
 
