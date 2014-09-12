@@ -5,7 +5,7 @@
     ORCID (R) Open Source
     http://orcid.org
 
-    Copyright (c) 2012-2013 ORCID, Inc.
+    Copyright (c) 2012-2014 ORCID, Inc.
     Licensed under an MIT-Style License (MIT)
     http://orcid.org/open-source-license
 
@@ -36,8 +36,8 @@ UserVoice.push(['set', {
 // Identify the user and pass traits
 // To enable, replace sample data with actual user traits and uncomment the line
 UserVoice.push(['identify', {
-  //email:      'john.doe@example.com', // User’s email address
-  //name:       'John Doe', // User’s real name
+  //email:      'john.doe@example.com', // Userï¿½s email address
+  //name:       'John Doe', // Userï¿½s real name
   //created_at: 1364406966, // Unix timestamp for the date the user signed up
   //id:         123, // Optional: Unique id of the user (if set, this should not change)
   //type:       'Owner', // Optional: segment your users by type
