@@ -58,7 +58,7 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "securityDetails", "preferences", "groupOrcidIdentifier", "referredBy" })
+@XmlType(propOrder = { "securityDetails", "preferences", "groupOrcidIdentifier", "referredBy", "salesforceId" })
 @XmlRootElement(name = "orcid-internal")
 public class OrcidInternal implements VisibilityType, Serializable {
 

@@ -36,6 +36,10 @@ public class SalesforceId implements Serializable {
     @XmlValue
     protected String content;
 
+    public SalesforceId() {
+        
+    }
+    
     public SalesforceId(String content) {
         this.content = content;
     }

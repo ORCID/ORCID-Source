@@ -22,7 +22,7 @@
 
 	<changeSet author="Angel Montenegro" id="ADD-SALESFORCE-ID-TO-PROFILE-TABLE">
 	    <addColumn tableName="profile">
-				<column name="salesforece_id" type="VARCHAR(15)" />
+				<column name="salesforce_id" type="VARCHAR(15)" />
 		</addColumn>
     </changeSet>
 </databaseChangeLog>	

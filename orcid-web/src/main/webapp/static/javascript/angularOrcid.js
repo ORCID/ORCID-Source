@@ -5157,6 +5157,7 @@ function adminGroupsCtrl($scope,$compile){
 	};
 	
 	$scope.addGroup = function() {
+		console.log(angular.toJson($scope.newGroup));
 		$.ajax({
 	        url: getBaseUri()+'/admin-actions/create-group.json',	        
 	        contentType: 'application/json;charset=UTF-8',

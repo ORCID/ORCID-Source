@@ -174,6 +174,15 @@
 					</span>
 	  			</div>
 				<div class="control-group">
+    				<label class="relative"><@orcid.msg 'manage_groups.salesforce_id'/></label>
+    					<div class="relative">
+      						<input type="text" class="input-xlarge" id="groupSalesforceId" ng-model="newGroup.salesforceId.value" placeholder="<@orcid.msg 'manage_groups.salesforce_id'/>">
+    				</div>
+					<span class="orcid-error" ng-show="newGroup.salesforce_id.errors.length > 0">
+						<div ng-repeat='error in newGroup.salesforce_id.errors' ng-bind-html="error"></div>
+					</span>
+	  			</div>
+				<div class="control-group">
     				<label class="relative"><@orcid.msg 'manage_groups.group_type'/></label>
     				<div class="relative">					
       					<select id="groupType" name="groupType" class="input-xlarge" ng-model="newGroup.type.value">			    		
@@ -220,6 +229,12 @@
 	    			<span><strong><@orcid.msg 'manage_groups.group_orcid'/></strong></span>
     				<div class="relative">
       					<span>{{newGroup.groupOrcid.value}}&nbsp;(<@orcid.msg 'admin.switch.click.1'/>&nbsp;<a href="<@orcid.msg 'admin.switch.click.link'/>{{newGroup.groupOrcid.value}}"><@orcid.msg 'admin.switch.click.here'/></a>&nbsp;<@orcid.msg 'admin.switch.click.2'/>)</span>
+    				</div>
+  				</div>
+				<div class="control-group" ng-show="newGroup.salesforceId != null">
+	    			<span><strong><@orcid.msg 'manage_groups.salesforce_id'/></strong></span>
+    				<div class="relative">
+      					<span>{{newGroup.salesforceId.value}}</span>
     				</div>
   				</div>
 				<div class="control-group">

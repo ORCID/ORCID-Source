@@ -404,10 +404,12 @@ public class AdminController extends BaseController {
         validateGroupEmail(group);
         validateGroupName(group);
         validateGroupType(group);
-
+        validateSalesforceId(group);
+        
         copyErrors(group.getEmail(), group);
         copyErrors(group.getGroupName(), group);
         copyErrors(group.getType(), group);
+        copyErrors(group.getSalesforceId(), group);
 
         if (group.getErrors().size() == 0) {
             OrcidClientGroup orcidClientGroup = group.toOrcidClientGroup();
@@ -454,9 +456,9 @@ public class AdminController extends BaseController {
     private void validateSalesforceId(Group group) {
         if(group != null && !PojoUtil.isEmpty(group.getSalesforceId())) {
             if(group.getSalesforceId().getValue().length() != 15) {
-                setError(group.getSalesforceId(), "group.salesforece_id.invalid_length");
+                setError(group.getSalesforceId(), "group.salesforce_id.invalid_length");
             } else if(!group.getSalesforceId().getValue().matches(SALESFORCE_ID_PATTERN)) {
-                setError(group.getSalesforceId(), "group.salesforece_id.invalid");
+                setError(group.getSalesforceId(), "group.salesforce_id.invalid");
             }
         }        
     }
