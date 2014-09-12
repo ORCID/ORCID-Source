@@ -16,13 +16,20 @@
  */
 package org.orcid.persistence.jpa.entities;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 import org.orcid.jaxb.model.message.FuzzyDate;
 
 @Embeddable
-public class StartDateEntity extends FuzzyDateEntity {
+public class StartDateEntity extends FuzzyDateEntity implements Serializable {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
     public StartDateEntity(FuzzyDate fuzzyDate) {
         super(fuzzyDate);

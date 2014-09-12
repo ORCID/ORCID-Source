@@ -16,6 +16,8 @@
  */
 package org.orcid.persistence.jpa.entities;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
@@ -25,7 +27,12 @@ import org.orcid.jaxb.model.message.Month;
 import org.orcid.jaxb.model.message.Year;
 
 @Embeddable
-public class FuzzyDateEntity implements Comparable<FuzzyDateEntity> {
+public class FuzzyDateEntity implements Comparable<FuzzyDateEntity>, Serializable {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
     private Integer year;
 
