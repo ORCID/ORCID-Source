@@ -23,7 +23,7 @@
        <#if noResultsFound??>
           <!-- no results -->
        <#else>
-        <div ng-controller="QuickSearchCtrl" id="QuickSearchCtrl" data-search-query-url="${searchQueryUrl?html}">
+       <div ng-controller="SearchCtrl" id="SearchCtrl" data-search-query="${searchQuery?html}">
             <h3 class="ng-cloak search-result-head" ng-show="areResults()">${springMacroRequestContext.getMessage("search_results.h3Searchresults")}</h3>
 		       <table class="ng-cloak table table-striped" ng-show="areResults()">
 		          <thead>
@@ -53,7 +53,7 @@
 		       </div>
 		       <div id="no-results-alert" class="orcid-hide alert alert-error"><@spring.message "orcid.frontend.web.no_results"/></div>
 		    </div>
-		 </#if>   
+		</#if>   
     </div>
 </div>
 

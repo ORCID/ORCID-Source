@@ -4092,15 +4092,18 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
 	};
 }
 
-function QuickSearchCtrl($scope, $compile){
+function SearchCtrl($scope, $compile){
 	$scope.results = new Array();
 	$scope.numFound = 0;
-	$scope.start = 0;
-	$scope.rows = 10;
+	$scope.input = {};
+	$scope.input.start = 0;
+	$scope.input.rows = 10;
+	$scope.input.text = $('#SearchCtrl').data('search-query');
+	orcidSearchUrlJs.setBaseUrl(orcidVar.searchBaseUrl);
 	
 	$scope.getResults = function(rows){
 		$.ajax({
-			url: $('#QuickSearchCtrl').data('search-query-url') + '&start=' + $scope.start + '&rows=' + $scope.rows,      
+			url: orcidSearchUrlJs.buildUrl($scope.input),      
 			dataType: 'json',
 			headers: { Accept: 'application/json'},
 			success: function(data) {
@@ -4113,7 +4116,7 @@ function QuickSearchCtrl($scope, $compile){
 				if(!$scope.numFound){
 					$('#no-results-alert').fadeIn(1200);
 				}
-				$scope.areMoreResults = $scope.numFound > ($scope.start + $scope.rows);
+				$scope.areMoreResults = $scope.numFound > ($scope.input.start + $scope.input.rows);
 				$scope.$apply();
 				var newSearchResults = $('.new-search-result');
 				if(newSearchResults.length > 0){
@@ -4141,7 +4144,7 @@ function QuickSearchCtrl($scope, $compile){
 	
 	$scope.getMoreResults = function(){
 		$('#ajax-loader').show();
-		$scope.start += 10;
+		$scope.input.start += 10;
 		$scope.getResults();
 	};
 	
