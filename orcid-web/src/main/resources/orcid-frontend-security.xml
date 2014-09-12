@@ -223,7 +223,11 @@
 		<sec:intercept-url pattern="/admin-actions" 
 			access="ROLE_ADMIN"/>
 		<sec:intercept-url pattern="/admin-actions/.*" 
+			access="ROLE_ADMIN"/>						
+		<sec:intercept-url pattern="/admin-members" 
 			access="ROLE_ADMIN"/>
+		<sec:intercept-url pattern="/admin-members/.*" 
+			access="ROLE_ADMIN"/>						
 		<sec:intercept-url pattern="/works/languages.json(\?.*)?" 
 			access="ROLE_USER"/>
 		<sec:intercept-url pattern="/works/countries.json(\?.*)?" 

@@ -124,5 +124,14 @@ public interface OrcidClientGroupManager {
      * @return the group updated with his orcid id.
      * */
     OrcidClientGroup createGroup(OrcidClientGroup orcidClientGroup);
+    
+    /**
+     * Updates an existing group profile. 
+     * If the group doesnt exists it will throw a OrcidClientGroupManagementException
+     * 
+     * @param orcidClientGroup
+     *          The group to be updated
+     * */
+    void updateGroup(OrcidClientGroup orcidClientGroup);
 
 }
