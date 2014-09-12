@@ -348,6 +348,18 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 	    			fundingSrvc.loading = false;
 	    		};
 	    	},
+            makeDefault: function(group, putCode) {
+            	group.makeDefault(putCode);
+	    		$.ajax({
+	    			url: getBaseUri() + '/fundings/updateToMaxDisplay.json?putCode=' + putCode,	        
+	    	        dataType: 'json',
+	    	        success: function(data) {
+	    	        }
+	    		}).fail(function(){
+	    			// something bad is happening!
+	    	    	console.log("some bad is hppending");
+	    		});
+	    	},
 	    	deleteFunding: function(funding) {	
 	    		$.ajax({
 	    	        url: getBaseUri() + '/fundings/funding.json',

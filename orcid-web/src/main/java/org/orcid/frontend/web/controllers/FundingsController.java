@@ -895,4 +895,14 @@ public class FundingsController extends BaseWorkspaceController {
     public Locale getUserLocale() {
         return localeManager.getLocale();
     }             
+
+
+    @RequestMapping(value = "/updateToMaxDisplay.json", method = RequestMethod.GET)
+    public @ResponseBody
+    boolean updateToMaxDisplay(HttpServletRequest request, @RequestParam(value = "putCode") String putCode) {
+        OrcidProfile profile = getEffectiveProfile();
+        return profileFundingManager.updateToMaxDisplay(profile.getOrcidIdentifier().getPath(), putCode);
+    }
+
 }
+

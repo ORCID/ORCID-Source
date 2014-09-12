@@ -53,7 +53,7 @@ import org.orcid.utils.NullUtils;
 
 @Entity
 @Table(name = "profile_funding")
-public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable<ProfileFundingEntity>, ProfileAware, SourceAware {
+public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable<ProfileFundingEntity>, ProfileAware, SourceAware, DisplayIndexInterface {
 
     private static final long serialVersionUID = -3187757614938904392L;
 
@@ -78,6 +78,7 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
     private SortedSet<FundingExternalIdentifierEntity> externalIdentifiers;
     private ProfileEntity source;
     private BigDecimal numericAmount;
+    private Long displayIndex; 
 
     @Override
     @Id
@@ -261,6 +262,20 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
     public void setNumericAmount(BigDecimal numericAmount) {
         this.numericAmount = numericAmount;
     }
+    
+    /*
+     * Dictates the display order for works (and versions of works)
+     * works with higher numbers should be displayed first. 
+     */
+
+    @Column(name = "display_index")
+    public Long getDisplayIndex() {
+        return displayIndex;
+    }
+
+    public void setDisplayIndex(Long displayIndex) {
+        this.displayIndex = displayIndex;
+    }
 
     @Override
     public int compareTo(ProfileFundingEntity other) {
@@ -372,4 +387,6 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
         contributorsJson = null;
         url = null;
     }
+    
+
 }

@@ -100,4 +100,6 @@ public interface ProfileFundingManager {
      * */
     ProfileFundingEntity getProfileFundingEntity(String profileFundingId);
     
+    public boolean updateToMaxDisplay(String orcid, String workId);
+    
 }
