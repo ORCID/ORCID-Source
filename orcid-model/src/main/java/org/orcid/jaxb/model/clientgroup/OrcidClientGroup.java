@@ -69,7 +69,7 @@ import org.orcid.jaxb.model.message.SalesforceId;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "groupOrcid", "type", "groupName", "email", "orcidClient" })
+@XmlType(propOrder = { "groupOrcid", "type", "groupName", "email", "orcidClient", "salesforceId" })
 @XmlRootElement(name = "orcid-client-group")
 public class OrcidClientGroup implements Serializable {
 
