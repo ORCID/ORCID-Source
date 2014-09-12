@@ -262,7 +262,7 @@ public class FundingsController extends BaseWorkspaceController {
                     fundingsMap.put(funding.getPutCode(), form);
                     fundingIds.add(funding.getPutCode());
                 } catch (Exception e) {
-                    LOGGER.error("Failed to parse as Funding. Put code" + funding.getPutCode());
+                    LOGGER.error("Failed to parse as Funding. Put code" + funding.getPutCode() + " " + e ,e);
                 }
             }
             request.getSession().setAttribute(GRANT_MAP, fundingsMap);
