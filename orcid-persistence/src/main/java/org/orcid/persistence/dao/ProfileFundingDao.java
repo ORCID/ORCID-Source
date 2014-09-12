@@ -100,4 +100,6 @@ public interface ProfileFundingDao extends GenericDao<ProfileFundingEntity, Long
      * @return the updated profileFunding
      * */
     ProfileFundingEntity updateProfileFunding(ProfileFundingEntity profileFunding);
+
+    public boolean updateToMaxDisplay(String orcid, String id);
 }

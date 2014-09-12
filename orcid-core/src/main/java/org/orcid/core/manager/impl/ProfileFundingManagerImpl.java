@@ -169,4 +169,9 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
     public ProfileFundingEntity updateProfileFunding(ProfileFundingEntity updatedProfileFundingEntity) {
         return profileFundingDao.updateProfileFunding(updatedProfileFundingEntity);
     }
+    
+    public boolean updateToMaxDisplay(String orcid, String workId) {
+        return profileFundingDao.updateToMaxDisplay(orcid, workId);
+    }
+
 }
