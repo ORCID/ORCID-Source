@@ -4295,6 +4295,11 @@ ul.oauth-scopes li{
 	vertical-align: 6px;
 }
 
+.add-funding .bottomBuffer,
+.add-work .bottomBuffer{
+	margin-bottom: 20px;
+}
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */

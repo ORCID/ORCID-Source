@@ -811,6 +811,13 @@ public class ManageProfileController extends BaseWorkspaceController {
     CountryForm getProfileCountryJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
         OrcidProfile currentProfile = getEffectiveProfile();
         CountryForm countryForm = CountryForm.valueOf(currentProfile);
+        //Set country name
+        if(countryForm != null && countryForm.getIso2Country() != null) {
+            Map<String, String> countries = retrieveIsoCountries();
+            if(countries != null)
+                countryForm.setCountryName(countries.get(countryForm.getIso2Country().getValue().name()));
+        }
+        
         return countryForm;
     }
 

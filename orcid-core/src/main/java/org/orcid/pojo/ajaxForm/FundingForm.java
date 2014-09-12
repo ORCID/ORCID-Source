@@ -86,7 +86,12 @@ public class FundingForm implements ErrorsInterface, Serializable {
 
     private String fundingTypeForDisplay;
     
-    private String dateSortString;        
+    private String dateSortString;  
+    
+    private Date createdDate;
+    
+    private Date lastModified;
+
 
     public List<String> getErrors() {
         return errors;
@@ -362,16 +367,28 @@ public class FundingForm implements ErrorsInterface, Serializable {
             }
             if (funding.getAmount().getCurrencyCode() != null)
                 result.setCurrencyCode(Text.valueOf(funding.getAmount().getCurrencyCode()));
+            else 
+                result.setCurrencyCode(new Text());
+        } else {
+            result.setAmount(new Text());
+            result.setCurrencyCode(new Text());
         }
         if (StringUtils.isNotEmpty(funding.getDescription()))
             result.setDescription(Text.valueOf(funding.getDescription()));
+        else
+            result.setDescription(new Text());
+
+        if (funding.getStartDate() != null)
+            result.setStartDate(Date.valueOf(funding.getStartDate()));
 
         if (funding.getEndDate() != null)
-            result.setEndDate(Date.valueOf(funding.getEndDate()));
+            result.setEndDate(Date.valueOf(funding.getEndDate()));        
 
         if (funding.getType() != null)
             result.setFundingType(Text.valueOf(funding.getType().value()));
-
+        else 
+            result.setFundingType(new Text());
+        
         if(funding.getOrganizationDefinedFundingType() != null) {
             OrgDefinedFundingSubType OrgDefinedFundingSubType = new OrgDefinedFundingSubType();
             OrgDefinedFundingSubType.setSubtype(Text.valueOf(funding.getOrganizationDefinedFundingType().getContent()));
@@ -382,14 +399,13 @@ public class FundingForm implements ErrorsInterface, Serializable {
         Source source = funding.getSource();
         if (source != null && source.getSourceName() != null)
             result.setSourceName(source.getSourceName().getContent());
-
-        if (funding.getStartDate() != null)
-            result.setStartDate(Date.valueOf(funding.getStartDate()));
-
+        
         if (funding.getTitle() != null) {
             FundingTitleForm fundingTitle = new FundingTitleForm();
             if (funding.getTitle().getTitle() != null)
                 fundingTitle.setTitle(Text.valueOf(funding.getTitle().getTitle().getContent()));
+            else
+                fundingTitle.setTitle(new Text());
             if (funding.getTitle().getTranslatedTitle() != null) {
                 TranslatedTitle translatedTitle = new TranslatedTitle();
                 translatedTitle.setContent(funding.getTitle().getTranslatedTitle().getContent());
@@ -397,10 +413,16 @@ public class FundingForm implements ErrorsInterface, Serializable {
                 fundingTitle.setTranslatedTitle(translatedTitle);
             }
             result.setFundingTitle(fundingTitle);
+        } else {
+            FundingTitleForm fundingTitle = new FundingTitleForm();
+            fundingTitle.setTitle(new Text());
+            result.setFundingTitle(fundingTitle);
         }
 
         if (funding.getUrl() != null)
             result.setUrl(Text.valueOf(funding.getUrl().getValue()));
+        else
+            result.setUrl(new Text());
 
         if (funding.getVisibility() != null)
             result.setVisibility(Visibility.valueOf(funding.getVisibility()));
@@ -419,10 +441,21 @@ public class FundingForm implements ErrorsInterface, Serializable {
         if (organizationAddress != null) {
             if (!PojoUtil.isEmpty(organizationAddress.getCity()))
                 result.setCity(Text.valueOf(organizationAddress.getCity()));
+            else
+                result.setCity(new Text());
             if (!PojoUtil.isEmpty(organizationAddress.getRegion()))
                 result.setRegion(Text.valueOf(organizationAddress.getRegion()));
+            else 
+                result.setRegion(new Text());
             if (organizationAddress.getCountry() != null)
                 result.setCountry(Text.valueOf(organizationAddress.getCountry().value()));
+            else
+                result.setCountry(new Text());
+                
+        } else {
+            result.setCountry(new Text());
+            result.setCity(new Text());            
+            result.setRegion(new Text());
         }
 
         // Set contributors
@@ -435,15 +468,19 @@ public class FundingForm implements ErrorsInterface, Serializable {
             result.setContributors(contributors);
         }
 
+        List<FundingExternalIdentifierForm> externalIdentifiersList = new ArrayList<FundingExternalIdentifierForm>();
         // Set external identifiers
-        if (funding.getFundingExternalIdentifiers() != null) {
-            List<FundingExternalIdentifierForm> externalIdentifiersList = new ArrayList<FundingExternalIdentifierForm>();
+        if (funding.getFundingExternalIdentifiers() != null) {            
             for (FundingExternalIdentifier fExternalIdentifier : funding.getFundingExternalIdentifiers().getFundingExternalIdentifier()) {
                 FundingExternalIdentifierForm fundingExternalIdentifierForm = FundingExternalIdentifierForm.valueOf(fExternalIdentifier);
                 externalIdentifiersList.add(fundingExternalIdentifierForm);
-            }
-            result.setExternalIdentifiers(externalIdentifiersList);
-        }
+            }            
+        } 
+        result.setExternalIdentifiers(externalIdentifiersList);
+        
+        result.setCreatedDate(Date.valueOf(funding.getCreatedDate()));
+        result.setLastModified(Date.valueOf(funding.getLastModifiedDate()));
+
 
         return result;
     }
@@ -455,4 +492,21 @@ public class FundingForm implements ErrorsInterface, Serializable {
     public void setDateSortString(String dateSortString) {
         this.dateSortString = dateSortString;
     }
+
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public Date getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(Date lastModified) {
+        this.lastModified = lastModified;
+    }
+
 }

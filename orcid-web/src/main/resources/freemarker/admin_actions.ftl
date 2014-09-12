@@ -579,7 +579,7 @@
 								</div>
 								<!-- Add button -->
 								<div class="col-md-1 col-sm-1 col-xs-12">
-				    				<a href="" id="load-empty-redirect-uri" ng-click="loadEmptyRedirectUri()" class="glyphicon glyphicon-plus grey" ng-show="$last"></a>
+				    				<a href="" id="load-empty-redirect-uri" ng-click="addRedirectUri()" class="glyphicon glyphicon-plus grey" ng-show="$last"></a>
 								</div>
 							</div>
 							<div class="row">
@@ -591,6 +591,11 @@
 								</div>
 							</div>
 						</div>						
+					</div>
+					<div class="row" ng-show="client.redirectUris.length == 0 || client.redirectUris == null">
+						<div class="controls save-btns col-md-12 col-sm-12 col-xs-12 margin-top-box margin-bottom-box">
+							<a href="" ng-click="addRedirectUri()"><@orcid.msg 'manage.developer_tools.edit.add_redirect_uri' /></a>
+						</div>
 					</div>
 					<div class="row">
 						<div class="controls save-btns col-md-12 col-sm-12 col-xs-12">

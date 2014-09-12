@@ -65,6 +65,8 @@ import org.springframework.web.servlet.view.RedirectView;
 @RequestMapping(value = "/oauth", method = RequestMethod.GET)
 public class OauthConfirmAccessController extends BaseController {
 
+    private static String PUBLIC_CLIENT_GROUP_NAME = "PubApp";
+    
     private Pattern clientIdPattern = Pattern.compile("client_id=([^&]*)");
     private Pattern orcidPattern = Pattern.compile("(&|\\?)orcid=([^&]*)");
     private Pattern scopesPattern = Pattern.compile("scope=([^&]*)");
@@ -117,7 +119,7 @@ public class OauthConfirmAccessController extends BaseController {
                         if (orcidProfileManager.emailExists(tempEmail))
                             email = tempEmail;
                     }
-
+                    
                     Matcher orcidMatcher = orcidPattern.matcher(url);
                     if (orcidMatcher.find()) {
                         String tempOrcid = orcidMatcher.group(2);
@@ -168,7 +170,10 @@ public class OauthConfirmAccessController extends BaseController {
                     // Get the group credit name
                     OrcidProfile clientProfile = orcidProfileManager.retrieveOrcidProfile(clientId);
 
-                    if (clientProfile.getOrcidInternal() != null && clientProfile.getOrcidInternal().getGroupOrcidIdentifier() != null
+                    //If client type is null it means it is a public client
+                    if(clientProfile.getClientType() == null) {
+                        clientGroupName = PUBLIC_CLIENT_GROUP_NAME;
+                    } else if (clientProfile.getOrcidInternal() != null && clientProfile.getOrcidInternal().getGroupOrcidIdentifier() != null
                             && StringUtils.isNotBlank(clientProfile.getOrcidInternal().getGroupOrcidIdentifier().getPath())) {
                         String client_group_id = clientProfile.getOrcidInternal().getGroupOrcidIdentifier().getPath();
                         if (StringUtils.isNotBlank(client_group_id)) {
@@ -194,9 +199,9 @@ public class OauthConfirmAccessController extends BaseController {
         mav.addObject("client_id", clientId);
         mav.addObject("client_group_name", clientGroupName);
         mav.addObject("client_description", clientDescription);
-        mav.addObject("userId", orcid != null ? orcid : email);
-        mav.setViewName("oauth_login");
+        mav.addObject("userId", orcid != null ? orcid : email);        
         mav.addObject("hideUserVoiceScript", true);
+        mav.setViewName("oauth_login");
         return mav;
     }
 
@@ -221,7 +226,9 @@ public class OauthConfirmAccessController extends BaseController {
         clientDescription = clientDetails.getClientDescription() == null ? "" : clientDetails.getClientDescription();
         clientWebsite = clientDetails.getClientWebsite() == null ? "" : clientDetails.getClientWebsite();
 
-        if (clientProfile.getOrcidInternal() != null && clientProfile.getOrcidInternal().getGroupOrcidIdentifier() != null
+        if(clientProfile.getClientType() == null) {
+            clientGroupName = PUBLIC_CLIENT_GROUP_NAME;
+        } else if (clientProfile.getOrcidInternal() != null && clientProfile.getOrcidInternal().getGroupOrcidIdentifier() != null
                 && StringUtils.isNotBlank(clientProfile.getOrcidInternal().getGroupOrcidIdentifier().getPath())) {
             String client_group_id = clientProfile.getOrcidInternal().getGroupOrcidIdentifier().getPath();
             OrcidProfile clientGroupProfile = orcidProfileManager.retrieveOrcidProfile(client_group_id);

@@ -117,8 +117,8 @@
 		            <span class="glyphicon glyphicon-pencil edit-country edit-option" ng-click="openEdit()" title="" ng-hide="showEdit == true"></span>
 	            </div>   
 	            <!-- Current content -->
-                <span ng-hide="showEdit == true" ng-click="toggleEdit()">
-	                <span ng-show="countryForm != null && countryForm.iso2Country != null" ng-bind="countryForm.iso2Country.value">
+                <span ng-hide="showEdit == true" ng-click="toggleEdit()">                	
+	                <span ng-show="countryForm != null && countryForm.countryName != null" ng-bind="countryForm.countryName">
 	                </span>
 	            </span>
                <!-- Edit form -->
@@ -272,7 +272,7 @@
 		             </div>
 					<div class="workspace-overview col-md-3 col-sm-3 col-xs-6">
 						<ul>
-							<li><a href="#workspace-fundings" class="overview-count" ng-click="workspaceSrvc.openFunding()"><span ng-bind="fundingSrvc.fundings.length"></span></a></li>
+							<li><a href="#workspace-fundings" class="overview-count" ng-click="workspaceSrvc.openFunding()"><span ng-bind="fundingSrvc.fundingCount()"></span></a></li>
 							<li><a href="#workspace-fundings" class="overview-title" ng-click="workspaceSrvc.openFunding()"><@orcid.msg 'workspace.Funding'/></a></li>
 						</ul>
         				<a href="#workspace-employments" class="btn-update no-icon" ng-click="workspaceSrvc.openFunding()"><@orcid.msg 'workspace.view'/></a>

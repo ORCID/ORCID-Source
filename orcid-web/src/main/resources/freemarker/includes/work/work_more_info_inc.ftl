@@ -57,7 +57,7 @@
 					<div class="col-md-12">
 						<strong> <@orcid.msg
 							'manual_work_form_contents.journalTitle'/> </strong>
-						<div ng-bind="worksSrvc.details[work.putCode.value].journalTitle.value"></div>
+						<div ng-bind="worksSrvc.details[work.putCode.value].journalTitle.value"></div>		
 					</div>
 				</div>
 				<div class="row bottomBuffer" ng-show="worksSrvc.details[work.putCode.value].workType.value" ng-cloak>
@@ -66,11 +66,20 @@
 							'manual_work_form_contents.labelworktype'/> </strong>
 						<div ng-bind="worksSrvc.details[work.putCode.value].workType.value"></div>
 					</div>
-				</div>
-				<div class="row bottomBuffer" ng-show="worksSrvc.details[work.putCode.value].citation.citation.value"
-					ng-cloak>
+				</div>				
+				
+				<div class="row bottomBuffer" ng-show="worksSrvc.details[work.putCode.value].citation.citation.value" ng-cloak>					
+					
+					
 					<div class="col-md-12">					
 						<strong><@orcid.msg 'manual_work_form_contents.labelcitation'/></strong>
+						
+						<div ng-show="worksSrvc.details[work.putCode.value].citation.citationType.value != 'bibtex'">
+							<span>
+								{{worksSrvc.details[work.putCode.value].citation.citation.value}}
+							</span>
+						</div>	
+						
 						<span ng-show="showBibtex[work.putCode.value] && worksSrvc.details[work.putCode.value].citation.citationType.value == 'bibtex'">
 							<a class="toggle-tag-option" ng-click="bibtexShowToggle(work.putCode.value)">
 								[<@orcid.msg 'work.show_in_bibtex'/>]

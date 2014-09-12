@@ -122,7 +122,6 @@ public class OauthSignInPersistentParametersTests extends DBUnitTest {
     @Test
     public void stateParamIsPersistentAndReturnedTest() throws InterruptedException {        
         webDriver.get(String.format("%s/oauth/authorize?client_id=9999-9999-9999-9994&response_type=code&scope=/orcid-profile/read-limited&redirect_uri=%s&state=MyState&made_up_param_not_passed=true&other=present", webBaseUrl, redirectUri));
-        webDriver.get(String.format("%s?oneStep",webDriver.getCurrentUrl()));
         //Switch to the login form
         WebElement switchFromLink = webDriver.findElement(By.id("in-register-switch-form"));
         switchFromLink.click();

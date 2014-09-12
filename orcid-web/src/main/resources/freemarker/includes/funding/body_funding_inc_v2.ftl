@@ -16,8 +16,8 @@
     =============================================================================
 
 -->
-<ul ng-hide="!fundingSrvc.fundings.length" class="workspace-fundings workspace-body-list bottom-margin-medium" ng-cloak>
-	<li class="bottom-margin-small" ng-repeat="funding in fundingSrvc.fundings |  orderBy:['-dateSortString', 'affiliationName']"> 
+<ul ng-hide="!fundingSrvc.groups.length" class="workspace-fundings workspace-body-list bottom-margin-medium" ng-cloak>
+	<li class="bottom-margin-small" ng-repeat="funding in fundingSrvc.groups |  orderBy:['-dateSortString', 'affiliationName']"> 
 		<div class="row">        			
 			<!-- Information -->
 			<div class="col-md-9 col-sm-9">
@@ -50,7 +50,7 @@
 	        		<ul class="workspace-private-toolbar">
 	        			<li>
 					 		<a href="" class="toolbar-button edit-item-button">
-					 			<span class="glyphicon glyphicon-pencil edit-option-toolbar" title=""></span>
+					 			<span class="glyphicon glyphicon-pencil edit-option-toolbar" title="" ng-click="openEditFunding(funding)"></span>
 					 		</a>	
 					 	</li>
 	        			<li>
@@ -119,7 +119,7 @@
     	<img src="${staticCdn}/img/spin-big.gif" width="85" height ="85"/>
     <![endif]-->
 </div>
-<div ng-show="fundingSrvc.loading == false && fundingSrvc.fundings.length == 0" class="alert alert-info" ng-cloak>
+<div ng-show="fundingSrvc.loading == false && fundingSrvc.groups.length == 0" class="alert alert-info" ng-cloak>
     <strong><#if (publicProfile)?? && publicProfile == true><@orcid.msg 'workspace_fundings_body_list.nograntaddedyet' /><#else><@orcid.msg 'workspace_fundings.havenotaddaffiliation' /><a ng-click="addFundingModal()"> <@orcid.msg 'workspace_fundings_body_list.addsomenow'/></a></#if></strong>
 </div>
 

@@ -654,7 +654,6 @@ public class T2OrcidOAuthApiClientReadPrivateDataIntegrationTest extends DBUnitT
 
     private String obtainAuthorizationCode(String orcid, String scopes, String redirectUri) throws InterruptedException {
         webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, orcid, scopes, redirectUri));
-        webDriver.get(String.format("%s?oneStep",webDriver.getCurrentUrl()));
         //Switch to the login form
         WebElement switchFromLink = webDriver.findElement(By.id("in-register-switch-form"));
         switchFromLink.click();
