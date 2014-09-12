@@ -5104,7 +5104,7 @@ function adminGroupsCtrl($scope,$compile){
 			}
 		});
 		
-		$.colorbox.resize({width:"400px" , height:"390px"});
+		$.colorbox.resize({width:"400px" , height:"500px"});
 	};
 	
 	$scope.closeModal = function() {
@@ -5189,7 +5189,7 @@ function adminGroupsCtrl($scope,$compile){
 			}
 		});
 		
-		$.colorbox.resize({width:"500px" , height:"450px"});
+		$.colorbox.resize({width:"500px" , height:"500px"});
 	};
 	
 	//init 

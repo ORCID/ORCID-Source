@@ -178,8 +178,8 @@
     					<div class="relative">
       						<input type="text" class="input-xlarge" id="groupSalesforceId" ng-model="newGroup.salesforceId.value" placeholder="<@orcid.msg 'manage_groups.salesforce_id'/>">
     				</div>
-					<span class="orcid-error" ng-show="newGroup.salesforce_id.errors.length > 0">
-						<div ng-repeat='error in newGroup.salesforce_id.errors' ng-bind-html="error"></div>
+					<span class="orcid-error" ng-show="newGroup.salesforceId.errors.length > 0">
+						<div ng-repeat='error in newGroup.salesforceId.errors' ng-bind-html="error"></div>
 					</span>
 	  			</div>
 				<div class="control-group">

@@ -454,6 +454,7 @@ public class AdminController extends BaseController {
     }
     
     private void validateSalesforceId(Group group) {
+        group.getSalesforceId().setErrors(new ArrayList<String>());
         if(group != null && !PojoUtil.isEmpty(group.getSalesforceId())) {
             if(group.getSalesforceId().getValue().length() != 15) {
                 setError(group.getSalesforceId(), "group.salesforce_id.invalid_length");

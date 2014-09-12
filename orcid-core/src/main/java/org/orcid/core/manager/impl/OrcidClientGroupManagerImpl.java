@@ -44,9 +44,11 @@ import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidHistory;
+import org.orcid.jaxb.model.message.OrcidInternal;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.PersonalDetails;
+import org.orcid.jaxb.model.message.SalesforceId;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.jaxb.model.message.Visibility;
@@ -56,6 +58,7 @@ import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.OrcidEntityIdComparator;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -560,7 +563,15 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         Email primaryEmail = new Email(orcidClientGroup.getEmail());
         primaryEmail.setVisibility(Visibility.PRIVATE);
         primaryEmail.setVerified(true);
-        contactDetails.addOrReplacePrimaryEmail(primaryEmail);
+        contactDetails.addOrReplacePrimaryEmail(primaryEmail);  
+        
+        if(!PojoUtil.isEmpty(orcidClientGroup.getSalesforceId())) {
+            OrcidInternal orcidInternal = new OrcidInternal();
+            orcidInternal.setSalesforceId(new SalesforceId(orcidClientGroup.getSalesforceId()));
+            orcidProfile.setOrcidInternal(orcidInternal);    
+        }
+        
+        
         return orcidProfile;
     }
 
