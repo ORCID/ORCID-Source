@@ -4,7 +4,7 @@
  * ORCID (R) Open Source
  * http://orcid.org
  *
- * Copyright (c) 2012-2013 ORCID, Inc.
+ * Copyright (c) 2012-2014 ORCID, Inc.
  * Licensed under an MIT-Style License (MIT)
  * http://orcid.org/open-source-license
  *
@@ -167,9 +167,17 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
         existing.setTranslatedTitleLanguageCode(updated.getTranslatedTitleLanguageCode());
         existing.setType(updated.getType());
         existing.setUrl(updated.getUrl());
-        existing.setVisibility(updated.getVisibility());
-        
+        existing.setVisibility(updated.getVisibility());   
         existing.setLastModified(new Date());
     }
     
+    @Override
+    @Transactional
+    public boolean updateToMaxDisplay(String orcid, String id) {
+        Query query = entityManager.createNativeQuery("UPDATE profile_funding SET display_index = (select max(display_index) + 1 from profile_funding where orcid=:orcid and id != :id ) WHERE id = :id");
+        query.setParameter("orcid", orcid);
+        query.setParameter("id", Long.valueOf(id));
+        return query.executeUpdate() > 0 ? true : false;
+    }
+
 }

@@ -6,12 +6,12 @@
     ORCID (R) Open Source
     http://orcid.org
 
-    Copyright (c) 2012-2013 ORCID, Inc.
+    Copyright (c) 2012-2014 ORCID, Inc.
     Licensed under an MIT-Style License (MIT)
     http://orcid.org/open-source-license
 
     This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of 
+    shall be included in its entirety in all copies or substantial portion of
     the software.
 
     =============================================================================
@@ -634,7 +634,8 @@
 			numeric_amount="2500" 
 			visibility="LIMITED"
 			date_created="2013-10-22 11:09:28.636" 
-			last_modified="2013-10-22 11:09:28.636" 
+			last_modified="2013-10-22 11:09:28.636"
+		    display_index="1" 
 			/>
 			
     <profile_funding 
@@ -648,6 +649,7 @@
     		visibility="PUBLIC" 
 			date_created="2013-10-22 11:09:28.636" 
 			last_modified="2013-10-22 11:09:28.636"
+			display_index="2"
 			/>
     		
     <profile_funding 
@@ -661,6 +663,7 @@
     		visibility="PRIVATE" 
 			date_created="2013-10-22 11:09:28.636" 
 			last_modified="2013-10-22 11:09:28.636"
+			display_index="3"
 			/>            
             
     <given_permission_to

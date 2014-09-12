@@ -4,7 +4,7 @@
  * ORCID (R) Open Source
  * http://orcid.org
  *
- * Copyright (c) 2012-2013 ORCID, Inc.
+ * Copyright (c) 2012-2014 ORCID, Inc.
  * Licensed under an MIT-Style License (MIT)
  * http://orcid.org/open-source-license
  *
@@ -53,7 +53,7 @@ import org.orcid.utils.NullUtils;
 
 @Entity
 @Table(name = "profile_funding")
-public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable<ProfileFundingEntity>, ProfileAware, SourceAware {
+public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable<ProfileFundingEntity>, ProfileAware, SourceAware, DisplayIndexInterface {
 
     private static final long serialVersionUID = -3187757614938904392L;
 
@@ -78,6 +78,7 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
     private SortedSet<FundingExternalIdentifierEntity> externalIdentifiers;
     private ProfileEntity source;
     private BigDecimal numericAmount;
+    private Long displayIndex; 
 
     @Override
     @Id
@@ -261,6 +262,23 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
     public void setNumericAmount(BigDecimal numericAmount) {
         this.numericAmount = numericAmount;
     }
+    
+    /*
+     * Dictates the display order for works (and versions of funding)
+     * works with higher numbers should be displayed first. 
+     *
+     * Currently only only updatable via ProfileWorkDaoImpl.updateToMaxDisplay
+     *
+     */
+
+    @Column(name = "display_index", updatable=false, insertable=false)
+    public Long getDisplayIndex() {
+        return displayIndex;
+    }
+
+    public void setDisplayIndex(Long displayIndex) {
+        this.displayIndex = displayIndex;
+    }
 
     @Override
     public int compareTo(ProfileFundingEntity other) {
@@ -372,4 +390,6 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
         contributorsJson = null;
         url = null;
     }
+    
+
 }

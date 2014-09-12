@@ -6,7 +6,7 @@
     ORCID (R) Open Source
     http://orcid.org
 
-    Copyright (c) 2012-2013 ORCID, Inc.
+    Copyright (c) 2012-2014 ORCID, Inc.
     Licensed under an MIT-Style License (MIT)
     http://orcid.org/open-source-license
 
@@ -112,4 +112,6 @@
     <include file="/db/updates/work-contributors-tidy-up.xml" />
     <include file="/db/updates/add-orcid-index-for-affiliations.xml" />
     <include file="/db/updates/external-identifiers-source.xml" />
+    <include file="/db/updates/funding_display_index.xml" />
+    <include file="/db/updates/funding_display_index_patch.xml" />
 </databaseChangeLog>

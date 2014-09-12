@@ -4,7 +4,7 @@
  * ORCID (R) Open Source
  * http://orcid.org
  *
- * Copyright (c) 2012-2013 ORCID, Inc.
+ * Copyright (c) 2012-2014 ORCID, Inc.
  * Licensed under an MIT-Style License (MIT)
  * http://orcid.org/open-source-license
  *
@@ -14,7 +14,6 @@
  *
  * =============================================================================
  */
-
 function openImportWizardUrl(url) {
 	var win = window.open(url, "_target"); 
 	setTimeout( function() {
@@ -348,6 +347,18 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 	    		} else {
 	    			fundingSrvc.loading = false;
 	    		};
+	    	},
+            makeDefault: function(group, putCode) {
+            	group.makeDefault(putCode);
+	    		$.ajax({
+	    			url: getBaseUri() + '/fundings/updateToMaxDisplay.json?putCode=' + putCode,	        
+	    	        dataType: 'json',
+	    	        success: function(data) {
+	    	        }
+	    		}).fail(function(){
+	    			// something bad is happening!
+	    	    	console.log("some bad is hppending");
+	    		});
 	    	},
 	    	deleteFunding: function(funding) {	
 	    		$.ajax({

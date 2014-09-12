@@ -4,7 +4,7 @@
  * ORCID (R) Open Source
  * http://orcid.org
  *
- * Copyright (c) 2012-2013 ORCID, Inc.
+ * Copyright (c) 2012-2014 ORCID, Inc.
  * Licensed under an MIT-Style License (MIT)
  * http://orcid.org/open-source-license
  *
@@ -14,7 +14,6 @@
  *
  * =============================================================================
  */
-
 describe("Test that function exist", function() {
 	// simple test to get things started
 	it("test method exist", function() {

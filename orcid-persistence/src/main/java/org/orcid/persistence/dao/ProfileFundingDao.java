@@ -4,7 +4,7 @@
  * ORCID (R) Open Source
  * http://orcid.org
  *
- * Copyright (c) 2012-2013 ORCID, Inc.
+ * Copyright (c) 2012-2014 ORCID, Inc.
  * Licensed under an MIT-Style License (MIT)
  * http://orcid.org/open-source-license
  *
@@ -100,4 +100,6 @@ public interface ProfileFundingDao extends GenericDao<ProfileFundingEntity, Long
      * @return the updated profileFunding
      * */
     ProfileFundingEntity updateProfileFunding(ProfileFundingEntity profileFunding);
+
+    public boolean updateToMaxDisplay(String orcid, String id);
 }

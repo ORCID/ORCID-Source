@@ -4,7 +4,7 @@
  * ORCID (R) Open Source
  * http://orcid.org
  *
- * Copyright (c) 2012-2013 ORCID, Inc.
+ * Copyright (c) 2012-2014 ORCID, Inc.
  * Licensed under an MIT-Style License (MIT)
  * http://orcid.org/open-source-license
  *
@@ -262,7 +262,7 @@ public class FundingsController extends BaseWorkspaceController {
                     fundingsMap.put(funding.getPutCode(), form);
                     fundingIds.add(funding.getPutCode());
                 } catch (Exception e) {
-                    LOGGER.error("Failed to parse as Funding. Put code" + funding.getPutCode());
+                    LOGGER.error("Failed to parse as Funding. Put code" + funding.getPutCode(), e);
                 }
             }
             request.getSession().setAttribute(GRANT_MAP, fundingsMap);
@@ -895,4 +895,14 @@ public class FundingsController extends BaseWorkspaceController {
     public Locale getUserLocale() {
         return localeManager.getLocale();
     }             
+
+
+    @RequestMapping(value = "/updateToMaxDisplay.json", method = RequestMethod.GET)
+    public @ResponseBody
+    boolean updateToMaxDisplay(HttpServletRequest request, @RequestParam(value = "putCode") String putCode) {
+        OrcidProfile profile = getEffectiveProfile();
+        return profileFundingManager.updateToMaxDisplay(profile.getOrcidIdentifier().getPath(), putCode);
+    }
+
 }
+

@@ -5,7 +5,7 @@
     ORCID (R) Open Source
     http://orcid.org
 
-    Copyright (c) 2012-2013 ORCID, Inc.
+    Copyright (c) 2012-2014 ORCID, Inc.
     Licensed under an MIT-Style License (MIT)
     http://orcid.org/open-source-license
 
@@ -39,12 +39,12 @@
 			        		</a>
 						</li>
 						<li ng-show="group.activitiesCount == 1">
-							<a ng-click="deleteWorkConfirm(group.getActive().putCode.value, false)">
+							<a ng-click="deleteFundingConfirm(group.getActive().putCode.value, false)">
 			            	   <span class="glyphicon glyphicon-trash"></span>
 			               </a>
 						</li>
 				        <li ng-show="editSources[group.groupId] == true">
-				            <a ng-click="deleteWorkConfirm(group.getActive().putCode.value, true)">
+				            <a ng-click="deleteFundingConfirm(group.getActive().putCode.value, true)">
 				                <span class="glyphicon glyphicon-trash"></span> Delete all
 				            </a>
 				        </li>
@@ -79,7 +79,7 @@
 				        </div>
 				        <div class="col-sm-3">
 				        	   <span class="glyphicon glyphicon-check" ng-show="group.getActive().putCode.value == group.defaultPutCode"></span> 
-					           <a ng-click="worksSrvc.makeDefault(group, group.getActive().putCode.value); group.activePutCode = group.getActive().putCode.value" ng-show="group.getActive().putCode.value != group.defaultPutCode">
+					           <a ng-click="fundingSrvc.makeDefault(group, group.getActive().putCode.value); group.activePutCode = group.getActive().putCode.value" ng-show="group.getActive().putCode.value != group.defaultPutCode">
 				            	 <span class="glyphicon glyphicon-unchecked"></span> Make Preferred
 				               </a>
 				        </div>
@@ -89,18 +89,18 @@
 			               </a>
 				        </div>
 					</li>
-					<li ng-repeat="work in group.activities" ng-hide="group.activePutCode == work.putCode.value">
+					<li ng-repeat="funding in group.activities" ng-hide="group.activePutCode == funding.putCode.value">
 						<div class="col-sm-4">
-							<a ng-click="worksSrvc.showSpinner($event); moreInfo[work.putCode.value] = moreInfo[group.activePutCode]; group.activePutCode = work.putCode.value">
-				           		{{work.sourceName}}
+							<a ng-click="worksSrvc.showSpinner($event); moreInfo[funding.putCode.value] = moreInfo[group.activePutCode]; group.activePutCode = funding.putCode.value">
+				           		{{funding.sourceName}}
 				           	</a> 
 						</div>
 						<div class="col-sm-4">
-							{{work.lastModified | ajaxFormDateToISO8601}}
+							{{funding.lastModified | ajaxFormDateToISO8601}}
 						</div>
 						<div class="col-sm-3">
-							<span class="glyphicon glyphicon-check" ng-show="work.putCode.value == group.defaultPutCode"></span> 
-				           <a ng-click="worksSrvc.makeDefault(group, work.putCode.value); " ng-show="work.putCode.value != group.defaultPutCode">
+							<span class="glyphicon glyphicon-check" ng-show="funding.putCode.value == group.defaultPutCode"></span> 
+				           <a ng-click="fundingSrvc.makeDefault(group, funding.putCode.value); " ng-show="funding.putCode.value != group.defaultPutCode">
 			            	 <span class="glyphicon glyphicon-unchecked"></span> Make Preferred
 			               </a>
 						</div>
