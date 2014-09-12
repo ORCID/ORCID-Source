@@ -264,11 +264,14 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
     }
     
     /*
-     * Dictates the display order for works (and versions of works)
+     * Dictates the display order for works (and versions of funding)
      * works with higher numbers should be displayed first. 
+     *
+     * Currently only only updatable via ProfileWorkDaoImpl.updateToMaxDisplay
+     *
      */
 
-    @Column(name = "display_index")
+    @Column(name = "display_index", updatable=false, insertable=false)
     public Long getDisplayIndex() {
         return displayIndex;
     }
