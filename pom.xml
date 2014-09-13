@@ -220,6 +220,8 @@ the software.
                         	<exclude>**/src/main/webapp/static/javascript/json3/**</exclude>
                         	<exclude>**/src/main/webapp/static/javascript/typeahead/**</exclude>
                         	<exclude>**/src/main/webapp/static/javascript/respond.*.js</exclude>
+                        	<exclude>**/src/main/webapp/static/fonts/glyphicons*</exclude>
+                        	<exclude>**/.externalToolBuilders/**</exclude>
                         	<exclude>**/src/main/webapp/static/css/jquery-*.css</exclude>
                         	<exclude>**/src/main/webapp/static/css/bootstrap*</exclude>
                         	<exclude>**/src/main/webapp/static/twitter-bootstrap/**</exclude>
