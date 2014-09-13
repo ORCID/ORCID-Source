@@ -25,6 +25,7 @@ import javax.annotation.Resource;
 
 import org.orcid.core.exception.OrcidClientGroupManagementException;
 import org.orcid.core.manager.ClientDetailsManager;
+import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.OrcidClientGroupManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.jaxb.model.clientgroup.ClientType;
@@ -33,6 +34,7 @@ import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.ErrorDesc;
+import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.Client;
@@ -49,6 +51,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * @author Angel Montenegro
@@ -58,7 +61,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping(value = { "/manage-members" })
 public class ManageMembersController extends BaseController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ManageMembersControllerTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ManageMembersController.class);
 
     private static String SALESFORCE_ID_PATTERN = "[a-zA-Z0-9]{15}";
     
@@ -81,6 +84,12 @@ public class ManageMembersController extends BaseController {
     public void setOrcidClientGroupManager(OrcidClientGroupManager orcidClientGroupManager) {
         this.orcidClientGroupManager = orcidClientGroupManager;
     }    
+    
+    @RequestMapping
+    public ModelAndView getManageMembersPage() {
+        ModelAndView mav = new ModelAndView("/admin/manage-members");        
+        return mav;
+    }
     
     /**
      * Get an empty group
