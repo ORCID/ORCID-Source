@@ -341,6 +341,11 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
             return compareOrgCity;
         }
 
+        int compareDisplayIndex = compareLongs(displayIndex, other.displayIndex);
+        if (compareDisplayIndex != 0) {
+            return compareDisplayIndex;
+        }
+
         return compareStrings(url, other.getUrl());
     }
 
@@ -371,6 +376,14 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
         }
         return string.compareTo(otherString);
     }
+    
+    private int compareLongs(Long l1, Long l2 ) {
+        if (NullUtils.anyNull(l1, l2)) {
+            return NullUtils.compareNulls(l1, l2);
+        }
+        return l1.compareTo(l2);
+    }
+    
 
     /**
      * Clean simple fields so that entity can be reused.
@@ -389,6 +402,7 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
         numericAmount = null;
         contributorsJson = null;
         url = null;
+        displayIndex = null;
     }
     
 

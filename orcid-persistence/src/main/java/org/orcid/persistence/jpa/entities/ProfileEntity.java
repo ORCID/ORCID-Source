@@ -509,7 +509,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
      * @return the grants
      */
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = PROFILE, orphanRemoval = true)
-    @Sort(type = SortType.COMPARATOR, comparator = DisplayIndexComparatorReverse.class)
+    @Sort(type = SortType.COMPARATOR, comparator = ProfileFundingEntityDisplayIndexComparatorReverse.class)
     public SortedSet<ProfileFundingEntity> getProfileFunding() {
         return profileFunding;
     }
