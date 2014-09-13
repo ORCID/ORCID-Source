@@ -18,7 +18,7 @@
 -->
 <@public nav="members">
 
-<script type="text/ng-template" id="add-new-group">
+<script type="text/ng-template" id="add-new-member">
 	<div class="colorbox-content">
 		<div class="row">
 			<div class="col-md-12 col-sm-12 col-xs-12">	
@@ -68,7 +68,7 @@
 					</span>
   				</div>
 				<div class="control-group">
-					<button class="btn btn-primary" ng-click="addGroup()"><@orcid.msg 'manage_groups.btnadd'/></button>
+					<button class="btn btn-primary" ng-click="addMember()"><@orcid.msg 'manage_groups.btnadd'/></button>
 					<a href="" class="cancel-action" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
 				</div>
 			</div>				
@@ -125,33 +125,6 @@
 	</div>
 </script>
 
-<script type="text/ng-template" id="list-groups">
-	<div class="colorbox-content">
-    	<h1><@orcid.msg 'manage_groups.group_list_title'/></h1>
-		<div>
-			<div class="relative" ng-show="groups.length">				
-				<table class="table table-bordered">
-					<tr>
-      					<th><@orcid.msg 'manage_groups.orcid'/></th>
-						<th><@orcid.msg 'manage_groups.name'/></th>
-						<th><@orcid.msg 'manage_groups.email'/></th>
-						<th><@orcid.msg 'manage_groups.type'/></th>
-					</tr>
-					<tr ng-repeat="group in groups">
-						<td>{{group.groupOrcid.value}}</td>
-						<td>{{group.groupName.value}}</td>
-						<td>{{group.email.value}}</td>
-						<td>{{group.type.value}}</td>
-					</tr>
-				</table>
-    		</div>
-			<div ng-show="!groups.length">
-				<span><@orcid.msg 'manage_groups.no_groups'/></span>
-			</div>
-		</div>
-	</div>
-</script>
-
 <!-- Admin main Layout -->
 <div class="row">
 	<!-- Left menu bar -->	
@@ -163,7 +136,7 @@
 		
 		<!-- Add new client group -->
 		<a name="add-client"></a>
-		<div ng-controller="adminGroupsCtrl" class="workspace-accordion-item" ng-cloak>
+		<div ng-controller="manageMembersCtrl" class="workspace-accordion-item" ng-cloak>
 			<p>
 				<a ng-show="showAdminGroupsModal" ng-click="toggleGroupsModal()"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'manage_groups.admin_groups_title'/></a>
 				<a ng-hide="showAdminGroupsModal" ng-click="toggleGroupsModal()"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'manage_groups.admin_groups_title'/></a>				
@@ -180,7 +153,7 @@
 		
 		<!-- Edit client -->
 		<a name="edit-client"></a>
-		<div ng-controller="adminEditClientCtrl" class="workspace-accordion-item" ng-cloak>
+		<div ng-controller="manageMembersCtrl" class="workspace-accordion-item" ng-cloak>
 			<p>
 				<a ng-show="showAdminGroupsModal" ng-click="toggleEditClientModal()"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.edit_client.title'/></a>
 				<a ng-hide="showAdminGroupsModal" ng-click="toggleEditClientModal()"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.edit_client.title'/></a>				

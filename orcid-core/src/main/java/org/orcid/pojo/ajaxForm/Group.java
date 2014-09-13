@@ -59,6 +59,8 @@ public class Group implements ErrorsInterface, Serializable {
         orcidClientGroup.setType(GroupType.fromValue(getType().getValue()));
         orcidClientGroup.setGroupName(getGroupName().getValue());
         orcidClientGroup.setEmail(getEmail().getValue());
+        if(getSalesforceId() == null)
+            setSalesforceId(Text.valueOf(""));
         orcidClientGroup.setSalesforceId(getSalesforceId().getValue());
         return orcidClientGroup;
     }

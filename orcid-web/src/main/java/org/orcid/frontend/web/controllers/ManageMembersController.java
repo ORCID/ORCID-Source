@@ -18,7 +18,6 @@ package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -34,7 +33,6 @@ import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.ErrorDesc;
-import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.Client;
@@ -57,10 +55,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 
 @Controller
-@RequestMapping(value = { "/admin-members" })
+@RequestMapping(value = { "/manage-members" })
 public class ManageMembersController extends BaseController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ManageMembersController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ManageMembersControllerTest.class);
 
     private static String SALESFORCE_ID_PATTERN = "[a-zA-Z0-9]{15}";
     
@@ -82,29 +80,13 @@ public class ManageMembersController extends BaseController {
 
     public void setOrcidClientGroupManager(OrcidClientGroupManager orcidClientGroupManager) {
         this.orcidClientGroupManager = orcidClientGroupManager;
-    }
-
-    /**
-     * Fetch all groups that exists on database
-     * 
-     * @return the list of groups that exists on database
-     * */
-    @RequestMapping(value = "/list-groups.json", method = RequestMethod.GET)
-    public @ResponseBody
-    List<Group> listGroups() {
-    	List<ProfileEntity> profileEntities = profileEntityManager.findProfilesByOrcidType(OrcidType.GROUP);
-    	List<Group> groups = new ArrayList<Group>();
-    	for(ProfileEntity profile : profileEntities){
-    		groups.add(Group.fromProfileEntity(profile));
-    	}
-    	return groups;
-    }
+    }    
     
     /**
      * Get an empty group
      * @return an empty group
      * */
-    @RequestMapping(value = "/group.json", method = RequestMethod.GET)
+    @RequestMapping(value = "/member.json", method = RequestMethod.GET)
     public @ResponseBody
     Group getEmptyGroup() {
         Text empty = Text.valueOf("");
@@ -206,8 +188,7 @@ public class ManageMembersController extends BaseController {
     }
             
     @RequestMapping(value = "/update-client.json", method = RequestMethod.POST)
-    public @ResponseBody Client updateClient(@RequestBody Client client) {
-        
+    public @ResponseBody Client updateClient(@RequestBody Client client) {        
         // Clean the error list
         client.setErrors(new ArrayList<String>());
         // Validate fields
