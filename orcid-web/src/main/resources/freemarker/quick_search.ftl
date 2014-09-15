@@ -19,13 +19,13 @@
 <@public classes=['home']>
 
 <div class="row" ng-controller="SearchCtrl" id="SearchCtrl" data-search-query="${searchQuery?html}">
-    <div class="col-md-12">
-       <#if noResultsFound??>
-          <!-- no results -->
-       <#else>
-           <#include "includes/search/search_results.ftl"/>
-		</#if>   
-    </div>
+	<div class="col-md-12">
+		<#if noResultsFound??>
+			<!-- no results -->
+		<#else>
+			<#include "includes/search/search_results.ftl"/>
+		</#if>
+	</div>
 </div>
 
 </@public>
