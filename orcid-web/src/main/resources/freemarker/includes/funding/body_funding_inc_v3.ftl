@@ -61,22 +61,6 @@
 		                	limitedClick="setPrivacy(funding, 'LIMITED', $event)" 
 		                	privateClick="setPrivacy(funding, 'PRIVATE', $event)" />
 	                	</li>
-	                	 <li class="submenu-tree">
-		            		<a href="" class="toolbar-button toggle-menu" id="more-options-button">
-		            			<span class="glyphicon glyphicon-align-left edit-option-toolbar"></span>
-		            		</a>
-		            		<ul class="workspace-submenu-options">
-		            			<li>
-		            				<a href=""><span class="glyphicon glyphicon-file"></span>Review Versions</a>
-		            			</li>
-		            			<li>
-		            				<a href=""><span class="glyphicon glyphicon-trash"></span>Delete</a>
-		            			</li>
-		            			<li>
-		            				<a href=""><span class="glyphicon glyphicon-question-sign"></span>Help</a>
-		            			</li>
-		            		</ul>
-            			</li>			        
 		        	</ul>
 		        </#if>
 			</div>
