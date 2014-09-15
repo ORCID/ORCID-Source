@@ -26,7 +26,6 @@
           <th>${springMacroRequestContext.getMessage("search_results.thGivenname")}</th>
           <th>${springMacroRequestContext.getMessage("search_results.thFamilynames")}</th>
           <th>${springMacroRequestContext.getMessage("search_results.thOthernames")}</th>
-          <th>${springMacroRequestContext.getMessage("search_results.thInstitutions")}</th>
       </tr>
       </thead>
       <tbody>
@@ -36,7 +35,6 @@
               <td>{{result['orcid-profile']['orcid-bio']['personal-details']['given-names'].value}}</td>
               <td>{{result['orcid-profile']['orcid-bio']['personal-details']['family-name'].value}}</td>
               <td>{{concatPropertyValues(result['orcid-profile']['orcid-bio']['personal-details']['other-names']['other-name'], 'value')}}</td>
-              <td>{{concatPropertyValues(result['orcid-profile']['orcid-bio']['affiliations'], 'affiliation-name')}}</td>
           </tr>
       </tbody>
    </table>
