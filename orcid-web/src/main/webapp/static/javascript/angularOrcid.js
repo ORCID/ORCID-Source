@@ -4093,6 +4093,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
 }
 
 function SearchCtrl($scope, $compile){
+	$scope.hasErrors = false;
 	$scope.results = new Array();
 	$scope.numFound = 0;
 	$scope.input = {};
@@ -4101,7 +4102,7 @@ function SearchCtrl($scope, $compile){
 	$scope.input.text = $('#SearchCtrl').data('search-query');
 	orcidSearchUrlJs.setBaseUrl(orcidVar.searchBaseUrl);
 	
-	$scope.getResults = function(rows){
+	$scope.getResults = function(){
 		$.ajax({
 			url: orcidSearchUrlJs.buildUrl($scope.input),      
 			dataType: 'json',
@@ -4138,8 +4139,25 @@ function SearchCtrl($scope, $compile){
 			}
 		}).fail(function(){
 			// something bad is happening!
-			console.log("error doing quick search");
+			console.log("error doing search");
 		});
+	};
+	
+	$scope.getFirstResults = function(){
+		$('#no-results-alert').hide();
+		$scope.results = new Array();
+		$scope.numFound = 0;
+		$scope.input.start = 0;
+		$scope.input.rows = 10;
+		$scope.areMoreResults = false;
+		if($scope.isValid()){
+			$scope.hasErrors = false;
+			$('#ajax-loader').show();
+			$scope.getResults();
+		}
+		else{
+			$scope.hasErrors = true;
+		}
 	};
 	
 	$scope.getMoreResults = function(){
@@ -4161,8 +4179,14 @@ function SearchCtrl($scope, $compile){
 		return $scope.results.length > 0;
 	};
 	
+	$scope.isValid = function(){
+		return orcidSearchUrlJs.isValidInput($scope.input);
+	};
+	
 	// init
-	$scope.getResults(10);
+	if(typeof $scope.input.text !== 'undefined'){
+		$scope.getResults();
+	}
 };
 
 // Controller for delegate permissions that have been granted BY the current user
