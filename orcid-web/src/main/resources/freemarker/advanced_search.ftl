@@ -16,6 +16,7 @@
     =============================================================================
 
 -->
+<@public classes=['home'] >
 <div ng-controller="SearchCtrl" id="SearchCtrl">
 	<div class="row">
 	   <div class="col-md-offset-3 col-md-9 col-sm-offset-3 col-sm-offset-9 col-xs-12">
@@ -111,3 +112,4 @@
 	    </div>
 	</div>
 </div>
+</@public>
