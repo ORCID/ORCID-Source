@@ -30,41 +30,41 @@
 				<div class="control-group">
 	    			<label class="relative"><@orcid.msg 'manage_groups.group_name'/></label>
     				<div class="relative">
-      					<input type="text" class="input-xlarge" id="groupName" ng-model="newGroup.groupName.value" placeholder="<@orcid.msg 'manage_groups.name'/>">
+      					<input type="text" class="input-xlarge" id="groupName" ng-model="newMember.groupName.value" placeholder="<@orcid.msg 'manage_groups.name'/>">
     				</div>
-					<span class="orcid-error" ng-show="newGroup.groupName.errors.length > 0">
-						<div ng-repeat='error in newGroup.groupName.errors' ng-bind-html="error"></div>
+					<span class="orcid-error" ng-show="newMember.groupName.errors.length > 0">
+						<div ng-repeat='error in newMember.groupName.errors' ng-bind-html="error"></div>
 					</span>
 	  			</div>
 				<div class="control-group">
     				<label class="relative"><@orcid.msg 'manage_groups.group_email'/></label>
     					<div class="relative">
-      						<input type="text" class="input-xlarge" id="groupEmail" ng-model="newGroup.email.value" placeholder="<@orcid.msg 'manage_groups.email'/>">
+      						<input type="text" class="input-xlarge" id="groupEmail" ng-model="newMember.email.value" placeholder="<@orcid.msg 'manage_groups.email'/>">
     				</div>
-					<span class="orcid-error" ng-show="newGroup.email.errors.length > 0">
-						<div ng-repeat='error in newGroup.email.errors' ng-bind-html="error"></div>
+					<span class="orcid-error" ng-show="newMember.email.errors.length > 0">
+						<div ng-repeat='error in newMember.email.errors' ng-bind-html="error"></div>
 					</span>
 	  			</div>
 				<div class="control-group">
     				<label class="relative"><@orcid.msg 'manage_groups.salesforce_id'/></label>
     					<div class="relative">
-      						<input type="text" class="input-xlarge" id="groupSalesforceId" ng-model="newGroup.salesforceId.value" placeholder="<@orcid.msg 'manage_groups.salesforce_id'/>">
+      						<input type="text" class="input-xlarge" id="groupSalesforceId" ng-model="newMember.salesforceId.value" placeholder="<@orcid.msg 'manage_groups.salesforce_id'/>">
     				</div>
-					<span class="orcid-error" ng-show="newGroup.salesforceId.errors.length > 0">
-						<div ng-repeat='error in newGroup.salesforceId.errors' ng-bind-html="error"></div>
+					<span class="orcid-error" ng-show="newMember.salesforceId.errors.length > 0">
+						<div ng-repeat='error in newMember.salesforceId.errors' ng-bind-html="error"></div>
 					</span>
 	  			</div>
 				<div class="control-group">
     				<label class="relative"><@orcid.msg 'manage_groups.group_type'/></label>
     				<div class="relative">					
-      					<select id="groupType" name="groupType" class="input-xlarge" ng-model="newGroup.type.value">			    		
+      					<select id="groupType" name="groupType" class="input-xlarge" ng-model="newMember.type.value">			    		
 							<#list groupTypes?keys as key>
 								<option value="${key}">${groupTypes[key]}</option>
 							</#list>
 						</select> 
     				</div>
-					<span class="orcid-error" ng-show="newGroup.type.errors.length > 0">
-						<div ng-repeat='error in newGroup.type.errors' ng-bind-html="error"></div>
+					<span class="orcid-error" ng-show="newMember.type.errors.length > 0">
+						<div ng-repeat='error in newMember.type.errors' ng-bind-html="error"></div>
 					</span>
   				</div>
 				<div class="control-group">
@@ -88,25 +88,25 @@
 				<div class="control-group">
     				<span><strong><@orcid.msg 'manage_groups.group_name'/></strong></span>
     				<div class="relative">
-      					<span>{{newGroup.groupName.value}}</span>
+      					<span>{{newMember.groupName.value}}</span>
     				</div>
 	  			</div>
 				<div class="control-group">
     				<span><strong><@orcid.msg 'manage_groups.group_email'/></strong></span>
     				<div class="relative">
-      					<span>{{newGroup.email.value}}</span>
+      					<span>{{newMember.email.value}}</span>
     				</div>
   				</div>
 				<div class="control-group">
 	    			<span><strong><@orcid.msg 'manage_groups.group_orcid'/></strong></span>
     				<div class="relative">
-      					<span>{{newGroup.groupOrcid.value}}&nbsp;(<@orcid.msg 'admin.switch.click.1'/>&nbsp;<a href="<@orcid.msg 'admin.switch.click.link'/>{{newGroup.groupOrcid.value}}"><@orcid.msg 'admin.switch.click.here'/></a>&nbsp;<@orcid.msg 'admin.switch.click.2'/>)</span>
+      					<span>{{newMember.groupOrcid.value}}&nbsp;(<@orcid.msg 'admin.switch.click.1'/>&nbsp;<a href="<@orcid.msg 'admin.switch.click.link'/>{{newMember.groupOrcid.value}}"><@orcid.msg 'admin.switch.click.here'/></a>&nbsp;<@orcid.msg 'admin.switch.click.2'/>)</span>
     				</div>
   				</div>
-				<div class="control-group" ng-show="newGroup.salesforceId != null">
+				<div class="control-group" ng-show="newMember.salesforceId != null">
 	    			<span><strong><@orcid.msg 'manage_groups.salesforce_id'/></strong></span>
     				<div class="relative">
-      					<span>{{newGroup.salesforceId.value}}</span>
+      					<span>{{newMember.salesforceId.value}}</span>
     				</div>
   				</div>
 				<div class="control-group">
@@ -129,27 +129,112 @@
 <div class="row">
 	<!-- Left menu bar -->	
 	<div class="col-md-3 col-sm-12 col-xs-12 lhs padding-fix">
-		<#include "includes/id_banner.ftl"/>
+		<#include "../includes/id_banner.ftl"/>
 	</div>
 	<!-- Right menu bar -->
 	<div class="col-md-9 col-sm-12 col-xs-12 admin-options">	
 		
 		<!-- Add new client group -->
 		<a name="add-client"></a>
-		<div ng-controller="manageMembersCtrl" class="workspace-accordion-item" ng-cloak>
+		<div ng-controller="manageMembersCtrl" class="workspace-accordion-item" ng-cloak>			
 			<p>
 				<a ng-show="showAdminGroupsModal" ng-click="toggleGroupsModal()"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'manage_groups.admin_groups_title'/></a>
 				<a ng-hide="showAdminGroupsModal" ng-click="toggleGroupsModal()"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'manage_groups.admin_groups_title'/></a>				
 			</p>
 			<div class="collapsible bottom-margin-small admin-modal" id="admin_groups_modal" style="display:none;">				
 	    		<div class="view-items-link">							
-					<a ng-click="showAddGroupModal()">
+					<a ng-click="showAddMemberModal()">
 						<span  class="glyphicon glyphicon-plus-sign blue"></span>
 						<@orcid.msg 'manage_groups.add_group_link'/>
-					</a>
+					</a>					
 				</div>				
 			</div>			
 		</div>
+		
+		
+		
+		
+		
+		
+		<!-- Edit Member -->
+		<a name="edit-member"></a>
+		<div ng-controller="manageMembersCtrl" class="workspace-accordion-item" ng-cloak>			
+			<p>
+				<a ng-show="showEditMemberModal" ng-click="toggleEditMemberModal()"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'manage_members.edit_members_title'/></a>
+				<a ng-hide="showEditMemberModal" ng-click="toggleEditMemberModal()"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'manage_members.edit_members_title'/></a>				
+			</p>
+			<div class="collapsible bottom-margin-small admin-modal" id="edit_member_modal" style="display:none;">					    		
+	    		<div class="form-group" ng-show="success_edit_member_message != null">
+	    			<div ng-bind-html="success_edit_member_message" class="alert alert-success"></div>
+	    		</div>
+	    		<div class="form-group">
+					<label for="member_id"><@orcid.msg 'manage_member.member_id' /></label>
+					<input type="text" id="member_id" ng-model="member_id" placeholder="<@orcid.msg 'manage_member.orcid_or_email' />" class="input-xlarge" />					
+					<span class="orcid-error" ng-show="member.errors.length > 0 && member.groupOrcid == null">
+						<div ng-repeat='error in member.errors' ng-bind-html="error"></div>
+					</span>		
+				</div>
+				<div class="controls save-btns pull-left">
+					<span id="bottom-search-client" ng-click="findMember()" class="btn btn-primary"><@orcid.msg 'public-layout.search'/></span>
+				</div>
+			</div>
+			
+			<div ng-show="member.groupOrcid != null" ng-cloak>
+				<div>
+					<div class="row">
+						<div class="col-md-12 col-sm-12 col-xs-12">
+							<h4><@orcid.msg 'manage_member.edit_member.general'/></h4>
+						</div>
+					</div>
+					<!-- Name -->
+					<div class="row">
+						<div class="col-md-12 col-sm-12 col-xs-12">
+							<span><@orcid.msg ''/></span><br />
+							<input type="text" ng-model="member.groupName.value" class="full-width-input" />
+							<span class="orcid-error" ng-show="member.groupName.errors.length > 0">
+								<div ng-repeat='error in member.groupName.errors' ng-bind-html="error"></div>
+							</span>	
+						</div>
+					</div>
+					<!-- Salesforce ID -->
+					<div class="row">
+						<div class="col-md-12 col-sm-12 col-xs-12">
+							<span><@orcid.msg ''/></span><br />
+							<input type="text" ng-model="member.salesforceId.value" class="full-width-input" />
+							<span class="orcid-error" ng-show="member.salesforceId.errors.length > 0">
+								<div ng-repeat='error in member.salesforceId.errors' ng-bind-html="error"></div>
+							</span>	
+						</div>
+					</div>
+					<!-- email -->
+					<div class="row">
+						<div class="col-md-12 col-sm-12 col-xs-12">
+							<span><@orcid.msg ''/></span><br />
+							<input type="text" ng-model="member.email.value" class="full-width-input" />
+							<span class="orcid-error" ng-show="member.email.errors.length > 0">
+								<div ng-repeat='error in member.email.errors' ng-bind-html="error"></div>
+							</span>	
+						</div>
+					</div>
+					<!-- Buttons -->
+					<div class="row">
+						<div class="controls save-btns col-md-12 col-sm-12 col-xs-12">
+		    				<span id="bottom-confirm-update-client" ng-click="confirmUpdateMember()" class="btn btn-primary"><@orcid.msg 'admin.edit_client.btn.update'/></span>
+						</div>
+					</div>			
+				</div>
+			</div>	
+		</div>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		
 		<!-- Edit client -->
 		<a name="edit-client"></a>
@@ -170,7 +255,7 @@
 					</span>		
 				</div>
 				<div class="controls save-btns pull-left">
-					<span id="bottom-search-client" ng-click="search()" class="btn btn-primary"><@orcid.msg 'admin.edit_client.find'/></span>
+					<span id="bottom-search-client" ng-click="searchClient()" class="btn btn-primary"><@orcid.msg 'admin.edit_client.find'/></span>
 				</div>
 			</div>
 			

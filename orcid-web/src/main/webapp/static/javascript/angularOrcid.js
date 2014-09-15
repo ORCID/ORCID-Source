@@ -4957,6 +4957,7 @@ function revokeApplicationFormCtrl($scope,$compile){
  * */
 function manageMembersCtrl($scope, $compile) {
 	$scope.showEditClientModal = false;
+	$scope.showEditMemberModal = false;
 	$scope.success_message = null;
 	$scope.client_id = null;
 	$scope.client = null;
@@ -4975,6 +4976,11 @@ function manageMembersCtrl($scope, $compile) {
 		$scope.showAdminGroupsModal = !$scope.showAdminGroupsModal;
     	$('#admin_groups_modal').toggle();
 	};
+	
+	$scope.toggleEditMemberModal = function() {
+		$scope.showEditMemberModal = !$scope.showEditMemberModal;
+		$('#edit_member_modal').toggle();
+	}
 	
 	/**
 	 * MEMBERS
@@ -5019,10 +5025,34 @@ function manageMembersCtrl($scope, $compile) {
 	    });		
 	};
 	
+	$scope.findMember = function() {
+		$.ajax({
+	        url: getBaseUri()+'/manage-members/find-member.json?orcidOrEmail=' + $scope.member_id,	        
+	        type: 'GET',
+	        dataType: 'json',	        
+	        success: function(data) {
+	        	console.log(angular.toJson(data));
+	        	$scope.member = data;	        	
+	        	$scope.$apply();
+	        }
+	    }).fail(function(error) { 
+	    	// something bad is happening!	    	
+	    	console.log("Error getting existing groups");	    	
+	    });	
+	};
+	
+	$scope.confirmUpdateMember = function() {
+		
+	};
+	
+	$scope.updateMember = function() {
+		
+	};
+	
 	/**
 	 * CLIENTS
 	 * */
-	$scope.search = function() {
+	$scope.searchClient = function() {
 		$scope.showError = false;
 		$scope.client = null;
 		$scope.success_message = null;
@@ -5119,7 +5149,7 @@ function manageMembersCtrl($scope, $compile) {
 	
 	//init	
 	$scope.loadAvailableScopes();
-	$scope.getGroup();
+	$scope.getMember();
 	
 	/**
 	 * Colorbox

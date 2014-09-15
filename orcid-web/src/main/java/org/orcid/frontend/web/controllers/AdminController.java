@@ -19,8 +19,6 @@ package org.orcid.frontend.web.controllers;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -32,7 +30,6 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.util.ajax.JSON;
-import org.orcid.core.exception.OrcidClientGroupManagementException;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
@@ -42,17 +39,11 @@ import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidClientGroupManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileWorkManager;
-import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.GroupType;
-import org.orcid.jaxb.model.clientgroup.OrcidClient;
-import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
-import org.orcid.jaxb.model.clientgroup.RedirectUriType;
-import org.orcid.jaxb.model.message.ErrorDesc;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.password.constants.OrcidPasswordConstants;
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -61,11 +52,7 @@ import org.orcid.pojo.AdminChangePassword;
 import org.orcid.pojo.AdminDelegatesRequest;
 import org.orcid.pojo.ProfileDeprecationRequest;
 import org.orcid.pojo.ProfileDetails;
-import org.orcid.pojo.ajaxForm.Client;
-import org.orcid.pojo.ajaxForm.Group;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.pojo.ajaxForm.RedirectUri;
-import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,8 +82,6 @@ public class AdminController extends BaseController {
     public static String TRUSTED_USER_PARAM = "trusted";
     
     public static String AUTHORIZE_DELEGATION_ACTION = "/manage/authorize-delegates";
-    
-    private static String SALESFORCE_ID_PATTERN = "[a-zA-Z0-9]{15}";
     
     @Resource
     ProfileEntityManager profileEntityManager;
