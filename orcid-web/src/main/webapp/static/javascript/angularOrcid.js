@@ -4185,6 +4185,7 @@ function SearchCtrl($scope, $compile){
 	
 	// init
 	if(typeof $scope.input.text !== 'undefined'){
+		$('#ajax-loader').show();
 		$scope.getResults();
 	}
 };
