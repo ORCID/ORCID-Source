@@ -29,8 +29,10 @@
 						<!-- Search by ORCID iD -->
 						<label for="orcid" class="control-label">${springMacroRequestContext.getMessage("orcid_bio_search.labelsearchbyorcid")}</label>
 						<div class="controls">
-							<input type="text" class="input-xlarge" name="orcid" id="orcid" ng-model="input.text">
+							<input type="text" class="input-xlarge" name="orcid" id="orcid" ng-model="input.text" ng-change="validateOrcidId()">
+							<span id="invalid-orcid" class="orcid-error"ng-cloak ng-show="invalidOrcidId"><@orcid.msg 'admin.profile_deprecation.errors.invalid_regex' /></span>
 						</div>
+					</div>
 					</div>
 				</fieldset>
 				<fieldset>

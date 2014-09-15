@@ -4094,6 +4094,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
 
 function SearchCtrl($scope, $compile){
 	$scope.hasErrors = false;
+	$scope.invalidOrcidId = false;
 	$scope.results = new Array();
 	$scope.numFound = 0;
 	$scope.input = {};
@@ -4182,6 +4183,15 @@ function SearchCtrl($scope, $compile){
 	$scope.isValid = function(){
 		return orcidSearchUrlJs.isValidInput($scope.input);
 	};
+	
+	$scope.validateOrcidId = function(){
+		if(typeof $scope.input.text === 'undefined' || $scope.input.text === null || $scope.input.text === '' || orcidSearchUrlJs.extractOrcidId($scope.input.text)){
+			$scope.invalidOrcidId = false;
+		}
+		else{
+		    $scope.invalidOrcidId = true;	
+		}
+	}
 	
 	// init
 	if(typeof $scope.input.text !== 'undefined'){
