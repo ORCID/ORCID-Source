@@ -115,7 +115,7 @@ public class ManageMembersController extends BaseController {
 
     @RequestMapping(value = "/find-member.json", method = RequestMethod.GET)
     public @ResponseBody
-    Group getMember(@RequestParam("orcidOrEmail") String orcidOrEmail) {
+    Group findMember(@RequestParam("orcidOrEmail") String orcidOrEmail) {
         Group group = new Group();
 
         String orcid = orcidOrEmail;

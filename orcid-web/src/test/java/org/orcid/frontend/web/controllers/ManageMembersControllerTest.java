@@ -51,16 +51,16 @@ public class ManageMembersControllerTest extends BaseControllerTest {
 
     @Resource
     ManageMembersController manageMembers;
-    
+
     @Resource
     private ProfileDao profileDao;
-    
+
     @Resource
     OrcidClientGroupManager orcidClientGroupManager;
-    
+
     @Resource
     GroupAdministratorController groupAdministratorController;
-    
+
     @Test
     @Transactional("transactionManager")
     @Rollback(true)
@@ -74,7 +74,7 @@ public class ManageMembersControllerTest extends BaseControllerTest {
         group.setGroupName(Text.valueOf("Group Name"));
         group.setType(Text.valueOf("basic"));
         group.setSalesforceId(Text.valueOf(""));
-        
+
         // Validate already existing email address
         group.setEmail(Text.valueOf(existingEmail));
         group = manageMembers.createMember(group);
@@ -102,7 +102,7 @@ public class ManageMembersControllerTest extends BaseControllerTest {
         group.setEmail(Text.valueOf("group@email.com"));
         group.setType(Text.valueOf("basic"));
         group.setSalesforceId(Text.valueOf(""));
-        
+
         // Validate empty group name
         group.setGroupName(Text.valueOf(""));
         group = manageMembers.createMember(group);
@@ -125,7 +125,7 @@ public class ManageMembersControllerTest extends BaseControllerTest {
         group.setEmail(Text.valueOf("group@email.com"));
         group.setGroupName(Text.valueOf("Group Name"));
         group.setSalesforceId(Text.valueOf(""));
-        
+
         // Validate empty type
         group.setType(Text.valueOf(""));
         group = manageMembers.createMember(group);
@@ -137,6 +137,28 @@ public class ManageMembersControllerTest extends BaseControllerTest {
         group = manageMembers.createMember(group);
         assertEquals(1, group.getErrors().size());
         assertEquals(manageMembers.getMessage("group.type.invalid", new ArrayList<String>()), group.getErrors().get(0));
+    }
+    
+    @Test
+    @Transactional("transactionManager")
+    @Rollback(true)
+    public void createMemberProfileWithInvalidSalesforceIdTest() throws Exception {
+        Group group = new Group();
+        group.setEmail(Text.valueOf("group@email.com"));
+        group.setGroupName(Text.valueOf("Group Name"));
+        group.setType(Text.valueOf("basic"));        
+
+        // Validate empty type        
+        group.setSalesforceId(Text.valueOf("1"));
+        group = manageMembers.createMember(group);
+        assertEquals(1, group.getErrors().size());
+        assertEquals(manageMembers.getMessage("group.salesforce_id.invalid_length", new ArrayList<String>()), group.getErrors().get(0));
+
+        // Validate invalid type        
+        group.setSalesforceId(Text.valueOf("1234567890abcd!"));
+        group = manageMembers.createMember(group);
+        assertEquals(1, group.getErrors().size());
+        assertEquals(manageMembers.getMessage("group.salesforce_id.invalid", new ArrayList<String>()), group.getErrors().get(0));
     }
 
     @Test
@@ -153,4 +175,121 @@ public class ManageMembersControllerTest extends BaseControllerTest {
         assertFalse(PojoUtil.isEmpty(group.getGroupOrcid()));
     }
 
+    @Test
+    @Transactional("transactionManager")
+    @Rollback(true)
+    public void findMemberByOrcidTest() throws Exception {
+        Group group = new Group();
+        group.setEmail(Text.valueOf("group@email.com"));
+        group.setGroupName(Text.valueOf("Group Name"));
+        group.setType(Text.valueOf("premium-institution"));
+        group.setSalesforceId(Text.valueOf("1234567890abcde"));
+        group = manageMembers.createMember(group);
+        assertEquals(0, group.getErrors().size());
+        assertFalse(PojoUtil.isEmpty(group.getGroupOrcid()));
+
+        // Test find by orcid
+        String orcid = group.getGroupOrcid().getValue();
+        Group newGroup = manageMembers.findMember(orcid);
+        assertNotNull(newGroup);
+
+        assertFalse(PojoUtil.isEmpty(newGroup.getGroupOrcid()));
+        assertFalse(PojoUtil.isEmpty(newGroup.getEmail()));
+        assertFalse(PojoUtil.isEmpty(newGroup.getSalesforceId()));
+        assertFalse(PojoUtil.isEmpty(newGroup.getGroupName()));
+
+        assertEquals("group@email.com", newGroup.getEmail().getValue());
+        assertEquals("Group Name", newGroup.getGroupName().getValue());
+        assertEquals("1234567890abcde", newGroup.getSalesforceId().getValue());
+        assertEquals(orcid, newGroup.getGroupOrcid().getValue());
+
+        // Test find by email
+        Group newGroup2 = manageMembers.findMember("group@email.com");
+        assertNotNull(newGroup2);
+
+        assertFalse(PojoUtil.isEmpty(newGroup2.getGroupOrcid()));
+        assertFalse(PojoUtil.isEmpty(newGroup2.getEmail()));
+        assertFalse(PojoUtil.isEmpty(newGroup2.getSalesforceId()));
+        assertFalse(PojoUtil.isEmpty(newGroup2.getGroupName()));
+
+        assertEquals("group@email.com", newGroup2.getEmail().getValue());
+        assertEquals("Group Name", newGroup2.getGroupName().getValue());
+        assertEquals("1234567890abcde", newGroup2.getSalesforceId().getValue());
+        assertEquals(orcid, newGroup2.getGroupOrcid().getValue());
+    }
+    
+    
+    @Test
+    @Transactional("transactionManager")
+    @Rollback(true)
+    public void editMemberTest() throws Exception {
+        Group group = new Group();
+        group.setEmail(Text.valueOf("group@email.com"));
+        group.setGroupName(Text.valueOf("Group Name"));
+        group.setType(Text.valueOf("premium-institution"));
+        group.setSalesforceId(Text.valueOf("1234567890abcde"));
+        group = manageMembers.createMember(group);
+        assertEquals(0, group.getErrors().size());
+        assertFalse(PojoUtil.isEmpty(group.getGroupOrcid()));
+        
+        group.setEmail(Text.valueOf("new_email@user.com"));
+        group.setSalesforceId(Text.valueOf(""));
+        group.setGroupName(Text.valueOf("Updated Group Name"));
+        
+        manageMembers.updateMember(group);
+        Group updatedGroup = manageMembers.findMember(group.getGroupOrcid().getValue());
+        assertNotNull(updatedGroup);
+        assertEquals(group.getGroupOrcid().getValue(), updatedGroup.getGroupOrcid().getValue());
+        assertEquals("Updated Group Name", updatedGroup.getGroupName().getValue());
+    }
+    
+    @Test
+    @Transactional("transactionManager")
+    @Rollback(true)
+    public void editMemberWithInvalidEmailTest() throws Exception {
+        //Create one member
+        Group group = new Group();
+        group.setEmail(Text.valueOf("group@email.com"));
+        group.setGroupName(Text.valueOf("Group Name"));
+        group.setType(Text.valueOf("premium-institution"));
+        group.setSalesforceId(Text.valueOf("1234567890abcde"));
+        group = manageMembers.createMember(group);
+        assertNotNull(group);
+        assertEquals(0, group.getErrors().size());
+        //Try to create another member with the same email
+        group = new Group();
+        group.setEmail(Text.valueOf("group@email.com"));
+        group.setGroupName(Text.valueOf("Group Name"));
+        group.setType(Text.valueOf("premium-institution"));
+        group.setSalesforceId(Text.valueOf("1234567890abcde"));
+        group = manageMembers.createMember(group);
+        assertNotNull(group);
+        assertEquals(1, group.getErrors().size());
+        assertEquals(manageMembers.getMessage("group.email.already_used", new ArrayList<String>()), group.getErrors().get(0));
+    }
+    
+    @Test
+    @Transactional("transactionManager")
+    @Rollback(true)
+    public void editMemberWithInvalidSalesforceIdTest() throws Exception {
+        //Create one member
+        Group group = new Group();
+        group.setEmail(Text.valueOf("group@email.com"));
+        group.setGroupName(Text.valueOf("Group Name"));
+        group.setType(Text.valueOf("premium-institution"));
+        group.setSalesforceId(Text.valueOf("1234567890abcde"));
+        group = manageMembers.createMember(group);
+        assertNotNull(group);
+        assertEquals(0, group.getErrors().size());
+        //Try to create another member with the same email
+        group = new Group();
+        group.setEmail(Text.valueOf("group2@email.com"));
+        group.setGroupName(Text.valueOf("Group Name"));
+        group.setType(Text.valueOf("premium-institution"));
+        group.setSalesforceId(Text.valueOf("1234567890abcd!"));
+        group = manageMembers.createMember(group);
+        assertNotNull(group);
+        assertEquals(1, group.getErrors().size());
+        assertEquals(manageMembers.getMessage("group.salesforce_id.invalid", new ArrayList<String>()), group.getErrors().get(0));
+    }
 }
