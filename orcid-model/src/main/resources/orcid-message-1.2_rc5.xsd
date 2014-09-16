@@ -1773,11 +1773,22 @@
 						<xs:documentation>User registration is know to be driven by Member</xs:documentation>
 					</xs:annotation>
 				</xs:element>
+				<xs:element minOccurs="0" ref="orcid:salesforce-id" />
 			</xs:sequence>
 			<xs:attributeGroup ref="orcid:scope" />
-			<xs:attributeGroup ref="orcid:visibility" />
+			<xs:attributeGroup ref="orcid:visibility" />						 
 		</xs:complexType>
 	</xs:element>
+	<xs:element name="salesforce-id" type="orcid:salesforce-id">
+    	<xs:annotation>
+      		<xs:documentation>An ID that identifies a profile in Salesforce.</xs:documentation>
+    	</xs:annotation>
+  	</xs:element>
+	<xs:simpleType name="salesforce-id">
+    	<xs:restriction base="xs:string">
+      		<xs:pattern value="([a-zA-Z0-9]){15}"/>
+    	</xs:restriction>
+  	</xs:simpleType>
 	<xs:element name="security-details">
 		<xs:annotation><xs:documentation>(INTERNAL USE ONLY)</xs:documentation></xs:annotation>
 		<xs:complexType>

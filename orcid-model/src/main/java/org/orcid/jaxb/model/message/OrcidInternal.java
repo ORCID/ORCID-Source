@@ -32,9 +32,12 @@ import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>
+ * Java class for anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType>
@@ -46,6 +49,7 @@ import java.io.Serializable;
  *       &lt;/sequence>
  *       &lt;attGroup ref="{http://www.orcid.org/ns/orcid}scope"/>
  *       &lt;attGroup ref="{http://www.orcid.org/ns/orcid}visibility"/>
+ *       &lt;attGroup ref="{http://www.orcid.org/ns/orcid}salesforce-id"/>
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -54,7 +58,7 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType( propOrder = { "securityDetails", "preferences", "groupOrcidIdentifier", "referredBy" })
+@XmlType(propOrder = { "securityDetails", "preferences", "groupOrcidIdentifier", "referredBy", "salesforceId" })
 @XmlRootElement(name = "orcid-internal")
 public class OrcidInternal implements VisibilityType, Serializable {
 
@@ -69,21 +73,21 @@ public class OrcidInternal implements VisibilityType, Serializable {
     protected Scope scope;
     @XmlAttribute
     protected Visibility visibility;
-    
+
     @XmlElement(name = "group-orcid-identifier")
     private OrcidIdentifier groupOrcidIdentifier;
 
     @XmlElement(name = "referred-by")
     private ReferredBy referredBy;
 
+    @XmlElement(name = "salesforce-id")
+    private SalesforceId salesforceId;
 
     /**
      * Gets the value of the securityDetails property.
      * 
-     * @return
-     *     possible object is
-     *     {@link SecurityDetails }
-     *     
+     * @return possible object is {@link SecurityDetails }
+     * 
      */
     public SecurityDetails getSecurityDetails() {
         return securityDetails;
@@ -93,9 +97,8 @@ public class OrcidInternal implements VisibilityType, Serializable {
      * Sets the value of the securityDetails property.
      * 
      * @param value
-     *     allowed object is
-     *     {@link SecurityDetails }
-     *     
+     *            allowed object is {@link SecurityDetails }
+     * 
      */
     public void setSecurityDetails(SecurityDetails value) {
         this.securityDetails = value;
@@ -104,10 +107,8 @@ public class OrcidInternal implements VisibilityType, Serializable {
     /**
      * Gets the value of the preferences property.
      * 
-     * @return
-     *     possible object is
-     *     {@link Preferences }
-     *     
+     * @return possible object is {@link Preferences }
+     * 
      */
     public Preferences getPreferences() {
         return preferences;
@@ -117,9 +118,8 @@ public class OrcidInternal implements VisibilityType, Serializable {
      * Sets the value of the preferences property.
      * 
      * @param value
-     *     allowed object is
-     *     {@link Preferences }
-     *     
+     *            allowed object is {@link Preferences }
+     * 
      */
     public void setPreferences(Preferences value) {
         this.preferences = value;
@@ -128,10 +128,8 @@ public class OrcidInternal implements VisibilityType, Serializable {
     /**
      * Gets the value of the scope property.
      * 
-     * @return
-     *     possible object is
-     *     {@link Scope }
-     *     
+     * @return possible object is {@link Scope }
+     * 
      */
     public Scope getScope() {
         return scope;
@@ -141,9 +139,8 @@ public class OrcidInternal implements VisibilityType, Serializable {
      * Sets the value of the scope property.
      * 
      * @param value
-     *     allowed object is
-     *     {@link Scope }
-     *     
+     *            allowed object is {@link Scope }
+     * 
      */
     public void setScope(Scope value) {
         this.scope = value;
@@ -152,10 +149,8 @@ public class OrcidInternal implements VisibilityType, Serializable {
     /**
      * Gets the value of the visibility property.
      * 
-     * @return
-     *     possible object is
-     *     {@link Visibility }
-     *     
+     * @return possible object is {@link Visibility }
+     * 
      */
     public Visibility getVisibility() {
         return visibility;
@@ -165,12 +160,30 @@ public class OrcidInternal implements VisibilityType, Serializable {
      * Sets the value of the visibility property.
      * 
      * @param value
-     *     allowed object is
-     *     {@link Visibility }
-     *     
+     *            allowed object is {@link Visibility }
+     * 
      */
     public void setVisibility(Visibility value) {
         this.visibility = value;
+    }
+
+    /**
+     * Gets the salesforce id property
+     * 
+     * @return possible object is {@link SalesforceId}
+     * */
+    public SalesforceId getSalesforceId() {
+        return this.salesforceId;
+    }
+
+    /**
+     * Sets the salesforce id property
+     * 
+     * @param SalesforceId
+     *            allowed object is {@link SalesforceId}
+     * */
+    public void setSalesforceId(SalesforceId salesforceId) {
+        this.salesforceId = salesforceId;
     }
 
     @Override
@@ -196,13 +209,16 @@ public class OrcidInternal implements VisibilityType, Serializable {
         if (visibility != that.visibility) {
             return false;
         }
-        
+
         if (referredBy == null) {
             if (that.referredBy != null)
                 return false;
         } else if (!referredBy.equals(that.referredBy))
             return false;
 
+        if (salesforceId != null ? !salesforceId.equals(that.salesforceId) : that.salesforceId != null) {
+            return false;
+        }
 
         return true;
     }
@@ -214,6 +230,7 @@ public class OrcidInternal implements VisibilityType, Serializable {
         result = result + ((referredBy == null) ? 0 : referredBy.hashCode());
         result = 31 * result + (scope != null ? scope.hashCode() : 0);
         result = 31 * result + (visibility != null ? visibility.hashCode() : 0);
+        result = 31 * result + (salesforceId != null ? salesforceId.hashCode() : 0);
         return result;
     }
 

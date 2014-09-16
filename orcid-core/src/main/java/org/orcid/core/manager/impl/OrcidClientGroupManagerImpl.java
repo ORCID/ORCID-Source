@@ -44,9 +44,11 @@ import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidHistory;
+import org.orcid.jaxb.model.message.OrcidInternal;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.PersonalDetails;
+import org.orcid.jaxb.model.message.SalesforceId;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.jaxb.model.message.Visibility;
@@ -56,6 +58,7 @@ import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.OrcidEntityIdComparator;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -145,29 +148,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
             orcidClientGroup = createGroup(orcidClientGroup);
             groupOrcid = orcidClientGroup.getGroupOrcid();
         } else {
-            // If the incoming client group ORCID is not null, then lookup the
-            // existing client group.
-            ProfileEntity groupProfileEntity = profileDao.find(groupOrcid);
-            if (groupProfileEntity == null) {
-                // If and existing client group can't be found
-                // then raise an error.
-                throw new OrcidClientGroupManagementException("Group ORCID was specified but does not yet exist: " + groupOrcid);
-            } else {
-                // If the existing client group is found, then update the type, name
-                // and contact email from the incoming client group, using the
-                // profile DAO
-                if (!orcidClientGroup.getEmail().equals(groupProfileEntity.getPrimaryEmail().getId())) {
-                    EmailEntity primaryEmailEntity = new EmailEntity();
-                    primaryEmailEntity.setId(orcidClientGroup.getEmail().toLowerCase().trim());                    
-                    primaryEmailEntity.setCurrent(true);
-                    primaryEmailEntity.setVerified(true);
-                    groupProfileEntity.setGroupType(orcidClientGroup.getType());
-                    primaryEmailEntity.setVisibility(Visibility.PRIVATE);
-                    groupProfileEntity.setPrimaryEmail(primaryEmailEntity);                    
-                }
-                groupProfileEntity.setCreditName(orcidClientGroup.getGroupName());
-                profileDao.merge(groupProfileEntity);
-            }
+            updateGroup(orcidClientGroup);
         }
         // Use the profile DAO to link the clients to the group, so get the
         // group profile entity.
@@ -196,7 +177,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
      * */
     public OrcidClientGroup createGroup(OrcidClientGroup orcidClientGroup) {
         String groupOrcid = orcidClientGroup.getGroupOrcid();
-        if (groupOrcid == null) {
+        if (PojoUtil.isEmpty(groupOrcid)) {
             OrcidProfile groupProfile = createGroupProfile(orcidClientGroup);
             groupProfile = orcidProfileManager.createOrcidProfile(groupProfile);
             groupOrcid = groupProfile.getOrcidIdentifier().getPath();
@@ -205,7 +186,42 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
 
         return orcidClientGroup;
     }
-
+    
+    /**
+     * Updates an existing group profile. 
+     * If the group doesnt exists it will throw a OrcidClientGroupManagementException
+     * 
+     * @param orcidClientGroup
+     *          The group to be updated
+     * */
+    public void updateGroup(OrcidClientGroup orcidClientGroup) {
+        String groupOrcid = orcidClientGroup.getGroupOrcid();
+        //If the incoming client group ORCID is not null, then lookup the
+        // existing client group.
+        ProfileEntity groupProfileEntity = profileDao.find(groupOrcid);
+        if (groupProfileEntity == null) {
+            // If and existing client group can't be found
+            // then raise an error.
+            throw new OrcidClientGroupManagementException("Group ORCID was specified but does not yet exist: " + groupOrcid);
+        } else {
+            // If the existing client group is found, then update the type, name
+            // and contact email from the incoming client group, using the
+            // profile DAO
+            if (!orcidClientGroup.getEmail().equals(groupProfileEntity.getPrimaryEmail().getId())) {
+                EmailEntity primaryEmailEntity = new EmailEntity();
+                primaryEmailEntity.setId(orcidClientGroup.getEmail().toLowerCase().trim());                    
+                primaryEmailEntity.setCurrent(true);
+                primaryEmailEntity.setVerified(true);
+                groupProfileEntity.setGroupType(orcidClientGroup.getType());
+                primaryEmailEntity.setVisibility(Visibility.PRIVATE);
+                groupProfileEntity.setPrimaryEmail(primaryEmailEntity);                    
+            }
+            groupProfileEntity.setCreditName(orcidClientGroup.getGroupName());
+            groupProfileEntity.setSalesforeId(orcidClientGroup.getSalesforceId());
+            profileDao.merge(groupProfileEntity);
+        }
+    }
+    
     /**
      * If the client type is set, check if the client type matches the types
      * that the group is allowed to add. If the client type is null, assig it
@@ -560,7 +576,14 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         Email primaryEmail = new Email(orcidClientGroup.getEmail());
         primaryEmail.setVisibility(Visibility.PRIVATE);
         primaryEmail.setVerified(true);
-        contactDetails.addOrReplacePrimaryEmail(primaryEmail);
+        contactDetails.addOrReplacePrimaryEmail(primaryEmail);  
+        
+        if(!PojoUtil.isEmpty(orcidClientGroup.getSalesforceId())) {
+            OrcidInternal orcidInternal = new OrcidInternal();
+            orcidInternal.setSalesforceId(new SalesforceId(orcidClientGroup.getSalesforceId()));
+            orcidProfile.setOrcidInternal(orcidInternal);    
+        }        
+        
         return orcidProfile;
     }
 

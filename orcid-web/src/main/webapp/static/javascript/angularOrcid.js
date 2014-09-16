@@ -5091,26 +5091,129 @@ function revokeApplicationFormCtrl($scope,$compile){
 	};
 };
 
-function adminEditClientCtrl($scope, $compile) {
+/**
+ * Manage members controller
+ * */
+function manageMembersCtrl($scope, $compile) {
 	$scope.showEditClientModal = false;
+	$scope.showEditMemberModal = false;
 	$scope.success_message = null;
 	$scope.client_id = null;
 	$scope.client = null;
 	$scope.showError = false;
 	$scope.availableRedirectScopes = [];
 	$scope.selectedScope = "";
+	$scope.newMember = null;
+	$scope.groups = [];
 	
 	$scope.toggleEditClientModal = function() {
 		$scope.showEditClientModal = !$scope.showEditClientModal;
     	$('#edit_client_modal').toggle();
 	};
 	
-	$scope.search = function() {
+	$scope.toggleGroupsModal = function() {
+		$scope.showAdminGroupsModal = !$scope.showAdminGroupsModal;
+    	$('#admin_groups_modal').toggle();
+	};
+	
+	$scope.toggleEditMemberModal = function() {
+		$scope.showEditMemberModal = !$scope.showEditMemberModal;
+		$('#edit_member_modal').toggle();
+	}
+	
+	/**
+	 * MEMBERS
+	 * */		
+	$scope.getMember = function() { 
+		$.ajax({
+	        url: getBaseUri()+'/manage-members/member.json',	        
+	        type: 'GET',
+	        dataType: 'json',	        
+	        success: function(data){
+	        	$scope.$apply(function(){ 	
+	        		$scope.newMember = data;
+				});
+	        }
+	    }).fail(function(error) { 
+	    	// something bad is happening!	    	
+	    	console.log("Error getting emtpy group");	    	
+	    });		
+	};
+	
+	$scope.addMember = function() {
+		$.ajax({
+	        url: getBaseUri()+'/manage-members/create-member.json',	        
+	        contentType: 'application/json;charset=UTF-8',
+	        type: 'POST',
+	        dataType: 'json',
+	        data: angular.toJson($scope.newMember),	        	       
+	        success: function(data){
+	        	console.log(data);
+	        	$scope.$apply(function(){ 
+	        		$scope.newMember = data;
+	        		if(data.errors.length != 0){
+	        			
+	        		} else {	        			
+	        			$scope.showSuccessModal();
+	        		}
+				});
+	        }
+	    }).fail(function(error) { 
+	    	// something bad is happening!	    	
+	    	console.log("Error deprecating the account");	    	
+	    });		
+	};
+	
+	$scope.findMember = function() {
+		$scope.success_edit_member_message = null;
+		$.ajax({
+	        url: getBaseUri()+'/manage-members/find-member.json?orcidOrEmail=' + $scope.member_id,	        
+	        type: 'GET',
+	        dataType: 'json',	        
+	        success: function(data) {
+	        	$scope.member = data;	        	
+	        	$scope.$apply();
+	        }
+	    }).fail(function(error) { 
+	    	// something bad is happening!	    	
+	    	console.log("Error getting existing groups");	    	
+	    });	
+	};	
+	
+	$scope.updateMember = function() {
+		$.ajax({
+	        url: getBaseUri()+'/manage-members/update-member.json',	        
+	        contentType: 'application/json;charset=UTF-8',
+	        type: 'POST',
+	        dataType: 'json',
+	        data: angular.toJson($scope.member),	        	       
+	        success: function(data){
+	        	$scope.$apply(function(){ 	        
+		        	if(data.errors.length == 0){
+		        		$scope.member = null;
+		        		$scope.success_edit_member_message = om.get('manage_member.edit_member.success');
+		        		$scope.member_id = null;
+		        	} else {
+		        		$scope.member = data;
+		        	}		        			        	
+				});
+	        	$scope.closeModal();
+	        }
+	    }).fail(function(error) { 
+	    	// something bad is happening!	    	
+	    	console.log("Error deprecating the account");	    	
+	    });		
+	};
+	
+	/**
+	 * CLIENTS
+	 * */
+	$scope.searchClient = function() {
 		$scope.showError = false;
 		$scope.client = null;
 		$scope.success_message = null;
 		$.ajax({
-	        url: getBaseUri()+'/admin-actions/find-client.json?orcid=' + $scope.client_id,	        
+	        url: getBaseUri()+'/manage-members/find-client.json?orcid=' + $scope.client_id,	        
 	        type: 'GET',
 	        dataType: 'json',	        
 	        success: function(data) {
@@ -5122,13 +5225,12 @@ function adminEditClientCtrl($scope, $compile) {
 	    	// something bad is happening!	    	
 	    	console.log("Error getting existing groups");	    	
 	    });		
-	};
-	
+	};	
 	
 	//Load empty redirect uri
 	$scope.addRedirectUri = function() {
 		$.ajax({
-	        url: getBaseUri() + '/admin-actions/empty-redirect-uri.json',
+	        url: getBaseUri() + '/manage-members/empty-redirect-uri.json',
 	        type: 'GET',
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
@@ -5174,26 +5276,12 @@ function adminEditClientCtrl($scope, $compile) {
 	    }).fail(function() { 
 	    	console.log("Unable to fetch redirect uri scopes.");
 	    });		
-	};
-	
-	//Confirm updating a client
-	$scope.confirmUpdateClient = function() {
-		$.colorbox({                      
-			html : $compile($('#confirm-modal').html())($scope),
-				scrolling: true,
-				onLoad: function() {
-				$('#cboxClose').remove();
-			},
-			scrolling: true
-		});
-		
-		$.colorbox.resize({width:"450px" , height:"175px"});
-	};
+	};	
 	
 	//Update client
 	$scope.updateClient = function() {
 		$.ajax({
-	        url: getBaseUri() + '/admin-actions/update-client.json',
+	        url: getBaseUri() + '/manage-members/update-client.json',
 	        type: 'POST',
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',	        
@@ -5217,108 +5305,53 @@ function adminEditClientCtrl($scope, $compile) {
 	
 	//init	
 	$scope.loadAvailableScopes();
+	$scope.getMember();
 	
-	$scope.closeModal = function() {
-		$.colorbox.close();
-	};
-};
-
-
-function adminGroupsCtrl($scope,$compile){
-	$scope.showAdminGroupsModal = false;
-	$scope.newGroup = null;
-	$scope.groups = [];
-	
-	$scope.toggleGroupsModal = function() {
-		$scope.showAdminGroupsModal = !$scope.showAdminGroupsModal;
-    	$('#admin_groups_modal').toggle();
-	};
-	
-	$scope.showAddGroupModal = function() {		
-		$scope.getGroup();
+	/**
+	 * Colorbox
+	 * */
+	//Confirm updating a client
+	$scope.confirmUpdateClient = function() {
 		$.colorbox({                      
-			html : $compile($('#add-new-group').html())($scope),				
+			html : $compile($('#confirm-modal-client').html())($scope),
+				scrolling: true,
+				onLoad: function() {
+				$('#cboxClose').remove();
+			},
+			scrolling: true
+		});
+		
+		$.colorbox.resize({width:"450px" , height:"175px"});
+	};
+	
+	//Confirm updating a member
+	$scope.confirmUpdateMember = function() {
+		$.colorbox({                      
+			html : $compile($('#confirm-modal-member').html())($scope),
+				scrolling: true,
+				onLoad: function() {
+				$('#cboxClose').remove();
+			},
+			scrolling: true
+		});
+		
+		$.colorbox.resize({width:"450px" , height:"175px"});
+	};
+	
+	//Display add member modal
+	$scope.showAddMemberModal = function() {		
+		$scope.getMember();
+		$.colorbox({                      
+			html : $compile($('#add-new-member').html())($scope),				
 				onLoad: function() {
 				$('#cboxClose').remove();
 			}
 		});
 		
-		$.colorbox.resize({width:"400px" , height:"390px"});
+		$.colorbox.resize({width:"400px" , height:"500px"});
 	};
 	
-	$scope.closeModal = function() {
-		$.colorbox.close();
-	};
-	
-	$scope.listGroups = function() {
-		$.ajax({
-	        url: getBaseUri()+'/admin-actions/list-groups.json',	        
-	        type: 'GET',
-	        dataType: 'json',	        
-	        success: function(data){
-	        	$scope.$apply(function(){
-	        		console.log(data);
-	        		$scope.groups = data;
-	        		$scope.showGroupList();
-				});	        	
-	        }
-	    }).fail(function(error) { 
-	    	// something bad is happening!	    	
-	    	console.log("Error getting existing groups");	    	
-	    });					
-	};
-	
-	$scope.showGroupList = function() {
-		$.colorbox({                      
-			html : $compile($('#list-groups').html())($scope),				
-				onLoad: function() {
-				$('#cboxClose').remove();
-			}
-		});
-		
-		$.colorbox.resize({width:"750px" , height:"360px"});
-	};
-	
-	$scope.getGroup = function() { 
-		$.ajax({
-	        url: getBaseUri()+'/admin-actions/group.json',	        
-	        type: 'GET',
-	        dataType: 'json',	        
-	        success: function(data){
-	        	$scope.$apply(function(){ 	
-	        		$scope.newGroup = data;
-				});
-	        }
-	    }).fail(function(error) { 
-	    	// something bad is happening!	    	
-	    	console.log("Error getting emtpy group");	    	
-	    });		
-	};
-	
-	$scope.addGroup = function() {
-		$.ajax({
-	        url: getBaseUri()+'/admin-actions/create-group.json',	        
-	        contentType: 'application/json;charset=UTF-8',
-	        type: 'POST',
-	        dataType: 'json',
-	        data: angular.toJson($scope.newGroup),	        	       
-	        success: function(data){
-	        	console.log(data);
-	        	$scope.$apply(function(){ 
-	        		$scope.newGroup = data;
-	        		if(data.errors.length != 0){
-	        			
-	        		} else {	        			
-	        			$scope.showSuccessModal();
-	        		}
-				});
-	        }
-	    }).fail(function(error) { 
-	    	// something bad is happening!	    	
-	    	console.log("Error deprecating the account");	    	
-	    });		
-	};
-	
+	//Show success modal for groups
 	$scope.showSuccessModal = function() {
 		$.colorbox({                      
 			html : $compile($('#new-group-info').html())($scope),				
@@ -5327,11 +5360,15 @@ function adminGroupsCtrl($scope,$compile){
 			}
 		});
 		
-		$.colorbox.resize({width:"500px" , height:"450px"});
+		$.colorbox.resize({width:"500px" , height:"500px"});
 	};
 	
-	//init 
-	$scope.getGroup();
+	/**
+	 * General
+	 * */
+	$scope.closeModal = function() {
+		$.colorbox.close();
+	};
 };
 
 function findIdsCtrl($scope,$compile){
