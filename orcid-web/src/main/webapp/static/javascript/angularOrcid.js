@@ -25,13 +25,6 @@ function openImportWizardUrl(url) {
 	}, 250);
 	$.colorbox.close();		
 };
-
-	
-	
-sortPredicateMap = {};
-sortPredicateMap['date'] = ['-dateSortString', 'title','getActive().workType.value'];
-sortPredicateMap['title'] = ['title', '-dateSortString','getActive().workType.value'];
-sortPredicateMap['type'] = ['getActive().workType.value','title', '-dateSortString'];
 	
 
 var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.multiselect']);
@@ -123,7 +116,30 @@ orcidNgModule.directive('compile', function($compile) {
     };
   });
 
-
+/*
+ * a service to hold common sort functions
+ */
+orcidNgModule.factory("actSortSrvc", ['$rootScope', function ($rootScope) {
+	var sortPredicateMap = {};
+	sortPredicateMap['date'] = ['-dateSortString', 'title','getActive().workType.value'];
+	sortPredicateMap['title'] = ['title', '-dateSortString','getActive().workType.value'];
+	sortPredicateMap['type'] = ['getActive().workType.value','title', '-dateSortString'];
+	
+	var actSortSrvc = {
+			initScope: function($scope) {
+				$scope.sortPredicateKey = 'date';
+				$scope.sortPredicate = sortPredicateMap[$scope.sortPredicateKey];
+				$scope.sortReverse = false;
+			},
+			sort: function(key, $scope) {
+				if ($scope.sortPredicateKey == key) 
+					$scope.sortReverse = ! $scope.sortReverse;
+				$scope.sortPredicateKey = key;
+				$scope.sortPredicate = sortPredicateMap[key];
+			}
+	};
+	return actSortSrvc;
+}]);
 
 orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
 	var serv = {
@@ -3069,7 +3085,8 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 /**
  * Fundings Controller 
  * */
-function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {	
+function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc, actSortSrvc) {
+	actSortSrvc.initScope($scope);
 	$scope.workspaceSrvc = workspaceSrvc;
 	$scope.fundingSrvc = fundingSrvc;
 	$scope.addingFunding = false;
@@ -3102,6 +3119,10 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
             },
             "putCode": null
         };
+	
+	$scope.sort = function(key) {
+		actSortSrvc.sort(key,$scope);
+	};
 	
 	// remove once grouping is live
 	$scope.toggleClickMoreInfo = function(key) {
@@ -3571,10 +3592,8 @@ function PublicFundingCtrl($scope, $compile, $filter, fundingSrvc){
 	};
 }
 
-function PublicWorkCtrl($scope, $compile, $filter, worksSrvc) {
-	$scope.sortPredicateKey = 'date';
-	$scope.sortPredicate = sortPredicateMap[$scope.sortPredicateKey];
-	$scope.sortReverse = false;
+function PublicWorkCtrl($scope, $compile, $filter, worksSrvc, actSortSrvc) {
+	actSortSrvc.initScope($scope);
 	$scope.worksSrvc = worksSrvc;
 	$scope.showBibtex = false;
 	$scope.moreInfoOpen = false;
@@ -3582,10 +3601,7 @@ function PublicWorkCtrl($scope, $compile, $filter, worksSrvc) {
 	$scope.displayWorks = true;
 
 	$scope.sort = function(key) {
-		if ($scope.sortPredicateKey == key) 
-			$scope.sortReverse = ! $scope.sortReverse;
-		$scope.sortPredicateKey = key;
-		$scope.sortPredicate = sortPredicateMap[key];
+		actSortSrvc.sort(key,$scope);
 	};
 	
     $scope.bibtexShowToggle = function () {
@@ -3652,10 +3668,8 @@ function PublicWorkCtrl($scope, $compile, $filter, worksSrvc) {
 	};
 }
 
-function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
-	$scope.sortPredicateKey = 'date';
-	$scope.sortPredicate = sortPredicateMap[$scope.sortPredicateKey];
-	$scope.sortReverse = false;
+function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSrvc) {
+	actSortSrvc.initScope($scope);
 	$scope.canReadFiles = false;
 	$scope.showBibtexImportWizard = false;
 	$scope.textFiles = null;
@@ -3674,18 +3688,13 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
 	$scope.bibtextWork = false;
 	$scope.bibtextWorkIndex = null;	
 
-
 	$scope.sortOtherLast = function(type) {
 		if (type.key == 'other') return 'ZZZZZ';
 		return type.value;
 	};
 
-	
 	$scope.sort = function(key) {
-		if ($scope.sortPredicateKey == key) 
-			$scope.sortReverse = ! $scope.sortReverse;
-		$scope.sortPredicateKey = key;
-		$scope.sortPredicate = sortPredicateMap[key];
+		actSortSrvc.sort(key,$scope);
 	};
 	
 	$scope.loadBibtexJs = function() {
