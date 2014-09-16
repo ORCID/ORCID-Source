@@ -5,7 +5,7 @@
     ORCID (R) Open Source
     http://orcid.org
 
-    Copyright (c) 2012-2013 ORCID, Inc.
+    Copyright (c) 2012-2014 ORCID, Inc.
     Licensed under an MIT-Style License (MIT)
     http://orcid.org/open-source-license
 
@@ -16,7 +16,6 @@
     =============================================================================
 
 -->
-
 <@public nav="custom-mail">
 <div class="row">
 	<div class="col-md-3 lhs col-sm-12 col-xs-12 padding-fix">

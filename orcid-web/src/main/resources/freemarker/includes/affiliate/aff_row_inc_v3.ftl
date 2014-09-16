@@ -5,7 +5,7 @@
     ORCID (R) Open Source
     http://orcid.org
 
-    Copyright (c) 2012-2013 ORCID, Inc.
+    Copyright (c) 2012-2014 ORCID, Inc.
     Licensed under an MIT-Style License (MIT)
     http://orcid.org/open-source-license
 
@@ -68,22 +68,6 @@
 	                  	limitedClick="setPrivacy(affiliation, 'LIMITED', $event)" 
 	                  	privateClick="setPrivacy(affiliation, 'PRIVATE', $event)" />
                 </li>			        
-                <li class="submenu-tree">
-            		<a href="" class="toolbar-button toggle-menu" id="more-options-button">
-            			<span class="glyphicon glyphicon-align-left edit-option-toolbar"></span>
-            		</a>
-            		<ul class="workspace-submenu-options">
-            			<li>
-            				<a href=""><span class="glyphicon glyphicon-file"></span>Review Versions</a>
-            			</li>
-            			<li>
-            				<a href=""><span class="glyphicon glyphicon-trash"></span>Delete</a>
-            			</li>
-            			<li>
-            				<a href=""><span class="glyphicon glyphicon-question-sign"></span>Help</a>
-            			</li>
-            		</ul>
-            	</li>
         	</ul>
         </#if>
 	</div>

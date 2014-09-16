@@ -4,7 +4,7 @@
  * ORCID (R) Open Source
  * http://orcid.org
  *
- * Copyright (c) 2012-2013 ORCID, Inc.
+ * Copyright (c) 2012-2014 ORCID, Inc.
  * Licensed under an MIT-Style License (MIT)
  * http://orcid.org/open-source-license
  *
@@ -14,7 +14,6 @@
  *
  * =============================================================================
  */
-
 function openImportWizardUrl(url) {
 	var win = window.open(url, "_target"); 
 	setTimeout( function() {
@@ -299,6 +298,7 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 			fundings: new Array(),
 			groups: new Array(),
 			loading: false,
+			constants: { 'access_type': { 'USER': 'user', 'ANONYMOUS': 'anonymous'}},
 			fundingToAddIds: null,
 			addFundingToScope: function(path) {
 	    		if( fundingSrvc.fundingToAddIds.length != 0 ) {
@@ -314,12 +314,22 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 									for (var idx in fundingSrvc.groups)
 									    if (fundingSrvc.groups[idx].keyMatch(funding))
 											matches.push(fundingSrvc.groups[idx]);
-										
 									if (matches.length == 0) {
 										var newGroup = new GroupedActivities('funding');
 										newGroup.add(funding);
 										fundingSrvc.groups.push(newGroup);
-									};
+									}  else {
+										var firstMatch = matches.shift();
+										firstMatch.add(funding);
+										// combine any remaining groups into the first group we found.
+										for (var idx in matches) {
+											var matchIndex = fundingSrvc.groups.indexOf(matches[idx]);
+											var curMatch = fundingSrvc.groups[matchIndex];
+											for (var idj in curMatch.activities)
+												firstMatch.add(curMatch.activities[idj]);
+											fundingSrvc.groups.splice(matchIndex, 1);
+										}
+									}
 	    						};
 	    						if (fundingSrvc.fundingToAddIds.length == 0) {
 	    							fundingSrvc.loading = false;
@@ -338,7 +348,65 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 	    			fundingSrvc.loading = false;
 	    		};
 	    	},
-	    	deleteFunding: function(funding) {	
+            makeDefault: function(group, putCode) {
+            	group.makeDefault(putCode);
+	    		$.ajax({
+	    			url: getBaseUri() + '/fundings/updateToMaxDisplay.json?putCode=' + putCode,	        
+	    	        dataType: 'json',
+	    	        success: function(data) {
+	    	        }
+	    		}).fail(function(){
+	    			// something bad is happening!
+	    	    	console.log("some bad is hppending");
+	    		});
+	    	},
+			deleteFunding: function(putCode) {
+				var rmFunding;
+				for (var idx in fundingSrvc.groups) {
+					if (fundingSrvc.groups[idx].hasPut(putCode)) {
+						rmFunding = fundingSrvc.groups[idx].rmByPut(putCode);
+						if (fundingSrvc.groups[idx].activitiesCount == 0) 
+							fundingSrvc.groups.splice(idx,1);
+						break;
+					};
+				};
+				// remove work on server
+				fundingSrvc.removeFunding(rmFunding);
+			},
+			deleteGroupFunding: function(putCode) {
+				var idx;
+				var rmWorks;
+				for (var idx in fundingSrvc.groups) {
+					if (fundingSrvc.groups[idx].hasPut(putCode)) {
+					   for (var idj in fundingSrvc.groups[idx].activities) {
+						   fundingSrvc.removeFunding(fundingSrvc.groups[idx].activities[idj]);
+						}
+					    fundingSrvc.groups.splice(idx,1);
+					    break;
+					}
+				}
+			},
+			setGroupPrivacy: function(putCode, priv) {
+				var group = fundingSrvc.getGroup(putCode);
+				for (var idx in group.activities) {
+					var curPutCode = group.activities[idx].putCode.value;
+					fundingSrvc.setPrivacy(curPutCode, priv);
+				}
+			},
+			getGroup: function(putCode) {
+				for (var idx in fundingSrvc.groups) {
+						if (fundingSrvc.groups[idx].hasPut(putCode))
+							return fundingSrvc.groups[idx];				
+				}
+				return null;
+			},
+			setPrivacy: function(putCode, priv) {
+				var idx;
+				var funding = fundingSrvc.getFunding(putCode);
+				funding.visibility.visibility = priv;
+				fundingSrvc.updateProfileFunding(funding);
+			},
+	    	removeFunding: function(funding) {	
 	    		$.ajax({
 	    	        url: getBaseUri() + '/fundings/funding.json',
 	    	        type: 'DELETE',
@@ -349,15 +417,12 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 	    	        	if(data.errors.length != 0){
 	    	        		console.log("Unable to delete funding.");
 	    	        	} else {
-	    					
 	    					// new groups
 		    				for (var idx in fundingSrvc.groups) {
 		    					if (fundingSrvc.groups[idx].hasPut(funding.putCode.value)) {
 		    						rmWorks = fundingSrvc.groups[idx].rmByPut(funding.putCode.value);
 		    						if (fundingSrvc.groups[idx].activitiesCount == 0) 
 		    							fundingSrvc.groups.splice(idx,1);
-		    						else
-		    							fundingSrvc.groups[idx].activePutCode = fundingSrvc.groups[idx].defaultPutCode;
 		    						break;
 		    					}
 		    				}
@@ -375,6 +440,13 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 					count += fundingSrvc.groups[idx].activitiesCount;
 				}
 				return count;
+			},
+			getFunding: function(putCode) {
+				for (var idx in fundingSrvc.groups) {
+						if (fundingSrvc.groups[idx].hasPut(putCode))
+							return fundingSrvc.groups[idx].getByPut(putCode);				
+				}
+				return null;
 			},
 	        getFundings: function(path) {
 	    		//clear out current fundings
@@ -416,8 +488,7 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 	    	    }).fail(function() { 
 	    	    	console.log("Error updating profile funding.");
 	    	    });
-	    	}
-	    	
+	    	}	    	
 	};
 	return fundingSrvc;
 }]);
@@ -461,10 +532,9 @@ GroupedActivities.prototype.add = function(activity) {
 	// assumes works are added in the order of the display index desc
 	// subsorted by the created date asc
     var identifiersPath = null;
-    if (this.type == 'abbrWork') identifiersPath = 'workExternalIdentifiers';
-    else if (this.type == 'funding') identifiersPath = 'externalIdentifiers';
-	for (var idx in activity[identifiersPath])
-		this.addKey(this.key(activity[identifiersPath][idx]));
+    identifiersPath = this.getIdentifiersPath();
+    for (var idx in activity[identifiersPath])
+    	this.addKey(this.key(activity[identifiersPath][idx]));
 	this.activities[activity.putCode.value] = activity;
 	if (this.defaultPutCode == null) { 
 		this.activePutCode = activity.putCode.value;
@@ -525,7 +595,7 @@ GroupedActivities.prototype.key = function(activityIdentifiers) {
 
 GroupedActivities.prototype.keyMatch = function(activity) {
     var identifiersPath = null;
-    if (this.type == 'abbrWork') identifiersPath = 'workExternalIdentifiers';
+    identifiersPath = this.getIdentifiersPath();
 	for (var idx in activity[identifiersPath]) { 
 		if (this.key(activity[identifiersPath][idx]) == '') continue;
 		if (this.key(activity[identifiersPath][idx]) in this._keySet)
@@ -534,16 +604,30 @@ GroupedActivities.prototype.keyMatch = function(activity) {
 	return false;
 };
 
+GroupedActivities.prototype.getIdentifiersPath = function() {
+    if (this.type == 'abbrWork') return 'workExternalIdentifiers';
+    return 'externalIdentifiers';
+}
+
 GroupedActivities.prototype.rmByPut = function(putCode) {
-	var activities =  this.activities[putCode];
+	var activity =  this.activities[putCode];
 	delete this.activities[putCode];
 	this.activitiesCount--;
-	return activities;
+	if (putCode == this.defaultPutCode) {
+        // make the first one default
+		for (var idx in this.activities) {
+        	this.defaultPutCode = idx;
+        	break;
+        }
+	}
+	if (putCode == this.activePutCode)
+		this.activePutCode = this.defaultPutCode;
+	return activity;
 };
 
 
 orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
-	var serv = {
+	var worksSrvc = {
 			bibtexJson: {},
 			constants: { 'access_type': { 'USER': 'user', 'ANONYMOUS': 'anonymous'}},
 			groups: new Array(),
@@ -554,22 +638,22 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 			addBibtexJson: function(dw) {
 				if (dw.citation && dw.citation.citationType && dw.citation.citationType.value == 'bibtex') {
 					try {
-						serv.bibtexJson[dw.putCode.value] = bibtexParse.toJSON(dw.citation.citation.value);
+						worksSrvc.bibtexJson[dw.putCode.value] = bibtexParse.toJSON(dw.citation.citation.value);
 					} catch (err) {
-						serv.bibtexJson[dw.putCode.value] = null;
+						worksSrvc.bibtexJson[dw.putCode.value] = null;
 						console.log("couldn't parse bibtex: " + dw.citation.citation.value);
 					};
 				};
 			},
 		    addAbbrWorksToScope: function(type) {
-				if (type == serv.constants.access_type.USER) 
+				if (type == worksSrvc.constants.access_type.USER) 
 					var url = getBaseUri() + '/works/works.json?workIds=';
 				else // use the anonymous url
 					var url = getBaseUri() + '/' + orcidVar.orcidId +'/works.json?workIds='; // public
 
-		    	if(serv.worksToAddIds.length != 0 ) {
-					serv.loading = true;
-					var workIds = serv.worksToAddIds.splice(0,20).join();
+		    	if(worksSrvc.worksToAddIds.length != 0 ) {
+					worksSrvc.loading = true;
+					var workIds = worksSrvc.worksToAddIds.splice(0,20).join();
 					$.ajax({
 						'url': url + workIds,
 						'dataType': 'json',
@@ -579,51 +663,51 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 									var dw = data[i];                            
 									removeBadContributors(dw);	
 									removeBadExternalIdentifiers(dw);
-									serv.addBibtexJson(dw);
+									worksSrvc.addBibtexJson(dw);
 									var matches = new Array();
-									for (var idx in serv.groups)
-										if (serv.groups[idx].keyMatch(dw)) {
-											//serv.groups[idx].add(dw);
-											matches.push(serv.groups[idx]);
+									for (var idx in worksSrvc.groups)
+										if (worksSrvc.groups[idx].keyMatch(dw)) {
+											//worksSrvc.groups[idx].add(dw);
+											matches.push(worksSrvc.groups[idx]);
 										}
 									if (matches.length == 0) {
 										var newGroup = new GroupedActivities('abbrWork');
 										newGroup.add(dw);
-										serv.groups.push(newGroup);
+										worksSrvc.groups.push(newGroup);
 									} else {
 										var firstMatch = matches.shift();
 										firstMatch.add(dw);
 										// combine any remaining groups into the first group we found.
 										for (var idx in matches) {
-											var matchIndex = serv.groups.indexOf(matches[idx]);
-											var curMatch = serv.groups[matchIndex];
+											var matchIndex = worksSrvc.groups.indexOf(matches[idx]);
+											var curMatch = worksSrvc.groups[matchIndex];
 											for (var idj in curMatch.activities)
 												firstMatch.add(curMatch.activities[idj]);
-											serv.groups.splice(matchIndex, 1);
+											worksSrvc.groups.splice(matchIndex, 1);
 										}
 									}
 								};
 							});
-							if(serv.worksToAddIds.length == 0 ) {
-								serv.loading = false;
+							if(worksSrvc.worksToAddIds.length == 0 ) {
+								worksSrvc.loading = false;
 								$rootScope.$apply();					
 								fixZindexIE7('.workspace-public workspace-body-list li',99999);
 								fixZindexIE7('.workspace-toolbar',9999);						
 							} else {
 								$rootScope.$apply();					
 								setTimeout(function(){
-									serv.addAbbrWorksToScope(type);
+									worksSrvc.addAbbrWorksToScope(type);
 								},50);
 							}
 						}
 					}).fail(function() { 
 						$rootScope.$apply(function() {
-							serv.loading = false;
+							worksSrvc.loading = false;
 						});
 				    	console.log("Error fetching works: " + workIds);
 				    });
 				} else {
-					serv.loading = false;
+					worksSrvc.loading = false;
 				};
 			},
 			getBlankWork: function(callback) {
@@ -639,11 +723,11 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 			    });
 			},
 			getDetails: function(putCode, type, callback) {				
-				if (type == serv.constants.access_type.USER) 
+				if (type == worksSrvc.constants.access_type.USER) 
 					var url = getBaseUri() + '/works/getWorkInfo.json?workId=';
 				else // use the anonymous url
 					var url = getBaseUri() + '/' + orcidVar.orcidId + '/getWorkInfo.json?workId='; // public
-				if(serv.details[putCode] == undefined) {		
+				if(worksSrvc.details[putCode] == undefined) {		
 					$.ajax({
 						url: url + putCode,	        
 				        dataType: 'json',
@@ -651,9 +735,9 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 				        	$rootScope.$apply(function () {				        		
 				        		removeBadContributors(data);
 				        		removeBadExternalIdentifiers(data);
-				        		serv.addBibtexJson(data);
-				        		serv.details[putCode] = data;
-				        		if (callback != undefined) callback(serv.details[putCode]);
+				        		worksSrvc.addBibtexJson(data);
+				        		worksSrvc.details[putCode] = data;
+				        		if (callback != undefined) callback(worksSrvc.details[putCode]);
 				        	});		        	
 				        }
 					}).fail(function(){
@@ -661,27 +745,27 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 				    	console.log("error fetching works");	
 					});
 				} else {
-					if (callback != undefined) callback(serv.details[putCode]);
+					if (callback != undefined) callback(worksSrvc.details[putCode]);
 				};
 			},
 			getEditable: function(putCode, callback) {
 				// first check if they are the current source
-				var work = serv.getDetails(putCode, serv.constants.access_type.USER, function(data) {
+				var work = worksSrvc.getDetails(putCode, worksSrvc.constants.access_type.USER, function(data) {
 					if (data.workSource.value == orcidVar.orcidId)
 						callback(data);
 					else
-						serv.getGroupDetails(putCode, serv.constants.access_type.USER, function () {
+						worksSrvc.getGroupDetails(putCode, worksSrvc.constants.access_type.USER, function () {
 							// in this case we want to open their version
 							// if they don't have a version yet then copy
 							// the current one
 							var bestMatch = null;
-							for (var idx in serv.details)
-								if (serv.details[idx].workSource.value == orcidVar.orcidId) {
-									bestMatch = serv.details[idx]; 
+							for (var idx in worksSrvc.details)
+								if (worksSrvc.details[idx].workSource.value == orcidVar.orcidId) {
+									bestMatch = worksSrvc.details[idx]; 
 									break;
 								}	
 							if (bestMatch == null) {
-								bestMatch = JSON.parse(JSON.stringify(serv.details[putCode]));
+								bestMatch = JSON.parse(JSON.stringify(worksSrvc.details[putCode]));
 								bestMatch.workSource = null;
 								bestMatch.putCode = null;
 							}
@@ -690,14 +774,14 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 				});
 			},
 			getGroup: function(putCode) {
-				for (var idx in serv.groups) {
-						if (serv.groups[idx].hasPut(putCode))
-							return serv.groups[idx];				
+				for (var idx in worksSrvc.groups) {
+						if (worksSrvc.groups[idx].hasPut(putCode))
+							return worksSrvc.groups[idx];				
 				}
 				return null;
 			},
 			getGroupDetails: function(putCode, type, callback) {
-				var group = serv.getGroup(putCode);
+				var group = worksSrvc.getGroup(putCode);
 				var needsLoading =  new Array();
 				for (var idx in group.activities) {
 					needsLoading.push(group.activities[idx].putCode.value)
@@ -705,35 +789,44 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 				
 				var popFunct = function () {
 					if (needsLoading.length > 0)
-						serv.getDetails(needsLoading.pop(), type, popFunct);
+						worksSrvc.getDetails(needsLoading.pop(), type, popFunct);
 					else if (callback != undefined)
 						callback();
-				}
-				
+				};
 				popFunct();
 			},
 			getWork: function(putCode) {
-				for (var idx in serv.groups) {
-						if (serv.groups[idx].hasPut(putCode))
-							return serv.groups[idx].getByPut(putCode);				
+				for (var idx in worksSrvc.groups) {
+						if (worksSrvc.groups[idx].hasPut(putCode))
+							return worksSrvc.groups[idx].getByPut(putCode);				
 				}
 				return null;
 			},
-			deleteWork: function(putCode) {
+			deleteGroupWorks: function(putCode) {
 				var idx;
 				var rmWorks;
-				for (var idx in serv.groups) {
-					if (serv.groups[idx].hasPut(putCode)) {
-						rmWorks = serv.groups[idx].rmByPut(putCode);
-						if (serv.groups[idx].activitiesCount == 0) 
-							serv.groups.splice(idx,1);
-						else
-							serv.groups[idx].activePutCode = serv.groups[idx].defaultPutCode;
+				for (var idx in worksSrvc.groups) {
+					if (worksSrvc.groups[idx].hasPut(putCode)) {
+					   for (var idj in worksSrvc.groups[idx].activities) {
+							worksSrvc.removeFunding(worksSrvc.groups[idx].activities[idj]);
+						}
+					    worksSrvc.groups.splice(idx,1);
 						break;
 					}
 				}
+			},
+			deleteWork: function(putCode) {
+				var rmWork;
+				for (var idx in worksSrvc.groups) {
+					if (worksSrvc.groups[idx].hasPut(putCode)) {
+						rmWork = worksSrvc.groups[idx].rmByPut(putCode);
+						if (worksSrvc.groups[idx].activitiesCount == 0) 
+							worksSrvc.groups.splice(idx,1);
+						break;
+					};
+				};
 				// remove work on server
-				serv.removeWork(rmWorks);
+				worksSrvc.removeWork(rmWork);
 			},
             makeDefault: function(group, putCode) {
             	group.makeDefault(putCode);
@@ -748,20 +841,20 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 	    		});
 	    	},
 			loadAbbrWorks: function(access_type) {
-				if (access_type == serv.constants.access_type.ANONYMOUS) {
-				    serv.worksToAddIds = orcidVar.workIds;
-				    serv.addAbbrWorksToScope(serv.constants.access_type.ANONYMOUS);
+				if (access_type == worksSrvc.constants.access_type.ANONYMOUS) {
+				    worksSrvc.worksToAddIds = orcidVar.workIds;
+				    worksSrvc.addAbbrWorksToScope(worksSrvc.constants.access_type.ANONYMOUS);
 				} else {
-					serv.worksToAddIds = null;
-					serv.loading = true;
-					serv.groups.length = 0;
-					serv.details = new Object();
+					worksSrvc.worksToAddIds = null;
+					worksSrvc.loading = true;
+					worksSrvc.groups.length = 0;
+					worksSrvc.details = new Object();
 					$.ajax({
 						url: getBaseUri() + '/works/workIds.json',	        
 				        dataType: 'json',
 				        success: function(data) {
-				        	serv.worksToAddIds = data;
-				        	serv.addAbbrWorksToScope(serv.constants.access_type.USER);
+				        	worksSrvc.worksToAddIds = data;
+				        	worksSrvc.addAbbrWorksToScope(worksSrvc.constants.access_type.USER);
 				        	$rootScope.$apply();
 				        }
 					}).fail(function(){
@@ -787,17 +880,30 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 			    });
 			},
 			setGroupPrivacy: function(putCode, priv) {
-				var group = serv.getGroup(putCode);
+				var group = worksSrvc.getGroup(putCode);
 				for (var idx in group.activities) {
 					var curPutCode = group.activities[idx].putCode.value;
-					serv.setPrivacy(curPutCode, priv);
+					worksSrvc.setPrivacy(curPutCode, priv);
 				}
 			},
 			setPrivacy: function(putCode, priv) {
 				var idx;
-				var work = serv.getWork(putCode);
+				var work = worksSrvc.getWork(putCode);
 				work.visibility = priv;
-				serv.updateProfileWork(work);
+				worksSrvc.updateProfileWork(work);
+			},
+			showSpinner: function($event) {			
+				
+				$($event.target).closest('div.sources-details').siblings('div.work-list-container').css('display', 'none');
+				$($event.target).closest('div.sources-details').siblings('div.spinner').show();
+				
+				setTimeout(
+					function(){
+						$($event.target).closest('div.sources-details').siblings('div.spinner').hide();
+						$($event.target).closest('div.sources-details').siblings('div.work-list-container').css('display', 'block');
+					}
+				,250);
+				
 			},
 			updateProfileWork: function(work) {
 				$.ajax({
@@ -817,26 +923,13 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 			},
 			workCount: function() {
 				var count = 0;
-				for (var idx in serv.groups) {
-					count += serv.groups[idx].activitiesCount;
+				for (var idx in worksSrvc.groups) {
+					count += worksSrvc.groups[idx].activitiesCount;
 				}
 				return count;
-			},
-			showSpinner: function($event) {			
-			
-				$($event.target).closest('div.sources-details').siblings('div.work-list-container').css('display', 'none');
-				$($event.target).closest('div.sources-details').siblings('div.spinner').show();
-				
-				setTimeout(
-					function(){
-						$($event.target).closest('div.sources-details').siblings('div.spinner').hide();
-						$($event.target).closest('div.sources-details').siblings('div.work-list-container').css('display', 'block');
-					}
-				,250);
-				
 			}
 	}; 
-	return serv;
+	return worksSrvc;
 }]);
 
 orcidNgModule.factory("emailSrvc", function ($rootScope) {
@@ -2983,9 +3076,32 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	$scope.editFunding = null;
 	$scope.disambiguatedFunding = null;
 	$scope.moreInfo = {};
+	$scope.editSources = {};
 	$scope.privacyHelp = {};
 	$scope.editTranslatedTitle = false; 	
 	$scope.lastIndexedTerm = null;
+	$scope.emptyExtId = {
+            "errors": [],
+            "type": {
+                "errors": [],
+                "value": "award",
+                "required": true,
+                "getRequiredMessage": null
+            },
+            "value": {
+                "errors": [],
+                "value": "",
+                "required": true,
+                "getRequiredMessage": null
+            },
+            "url": {
+                "errors": [],
+                "value": "",
+                "required": true,
+                "getRequiredMessage": null
+            },
+            "putCode": null
+        };
 	
 	// remove once grouping is live
 	$scope.toggleClickMoreInfo = function(key) {
@@ -3015,38 +3131,35 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	$scope.showDetailsMouseClick = function(key, $event) {
 		$event.stopPropagation();
 		$scope.moreInfo[key]=!$scope.moreInfo[key];
-		console.log(key);
-		
-		/*
-		if (document.documentElement.className.contains('no-touch')) {
-			if ($scope.moreInfoCurKey != null 
-					&& $scope.moreInfoCurKey != key) {
-				$scope.privacyHelp[$scope.moreInfoCurKey]=false;
-			}
-			$scope.moreInfoCurKey = key;
-			$scope.moreInfo[key]=true;
-		}
-		*/
+		console.log(key);				
 	};	
 	
 	$scope.closeMoreInfo = function(key) {
 		$scope.moreInfo[key]=false;
 	};
 		
-	$scope.addFundingModal = function(type){
-		$scope.removeDisambiguatedFunding();
-		$.ajax({
-			url: getBaseUri() + '/fundings/funding.json',
-			dataType: 'json',
-			success: function(data) {						
-				$scope.$apply(function() {
-					$scope.editFunding = data;					
-					$scope.showAddModal();
-				});
-			}
-		}).fail(function() { 
-	    	console.log("Error fetching funding: " + value);
-	    });
+	$scope.addFundingModal = function(data){		
+		if(data == undefined) {
+			$scope.removeDisambiguatedFunding();
+			$.ajax({
+				url: getBaseUri() + '/fundings/funding.json',
+				dataType: 'json',
+				success: function(data) {						
+					$scope.$apply(function() {
+						$scope.editFunding = data;					
+						$scope.showAddModal();
+					});
+				}
+			}).fail(function() { 
+		    	console.log("Error fetching funding: " + value);
+		    });
+		} else {
+			$scope.editFunding = data;
+			if($scope.editFunding.externalIdentifiers == null || $scope.editFunding.externalIdentifiers.length == 0) {
+				$scope.editFunding.externalIdentifiers.push($scope.emptyExtId);
+			}			
+			$scope.showAddModal();
+		}		
 	};
 	
 	$scope.showAddModal = function(){
@@ -3063,7 +3176,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	    });
 	};
 	
-	$scope.addFunding = function(){
+	$scope.putFunding = function(){
 		if ($scope.addingFunding) return; // don't process if adding funding
 		$scope.addingFunding = true;		
 		$scope.editFunding.errors.length = 0;
@@ -3076,7 +3189,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 	        success: function(data) {	        		        	
 	        	if (data.errors.length == 0){
 	        		$.colorbox.close(); 	        		
-	        		fundingSrvc.getFundings('fundings/fundingIds.json');
+	        		fundingSrvc.getFundings('fundings/fundingIds.json');	        		
 	        	} else {
 		        	$scope.editFunding = data;
 		        	if($scope.editFunding.externalIdentifiers.length == 0) {
@@ -3234,7 +3347,8 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 		});
 	};
 	
-	$scope.deleteFunding = function(funding) {
+	/*
+	$scope.deleteFundingConfirm = function(funding) {
 		$scope.delFunding = funding;
 				
 		$.colorbox({        	            
@@ -3242,9 +3356,30 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
             onComplete: function() {$.colorbox.resize();}
         });
 	};
+	*/
 	
-	$scope.confirmDeleteFunding = function(delFunding) {	
-		fundingSrvc.deleteFunding(delFunding);
+	$scope.deleteFundingConfirm = function(putCode, deleteGroup) {
+		$scope.deletePutCode = putCode;
+		$scope.deleteGroup = deleteGroup;
+		var funding = fundingSrvc.getFunding(putCode);
+		if (funding.fundingTitle && funding.fundingTitle.title) 
+			$scope.fixedTitle = funding.fundingTitle.title.value;
+		else $scope.fixedTitle = '';
+        var maxSize = 100;
+        if($scope.fixedTitle.length > maxSize)
+        	$scope.fixedTitle = $scope.fixedTitle.substring(0, maxSize) + '...';
+		$.colorbox({        	            
+            html : $compile($('#delete-funding-modal').html())($scope),
+            onComplete: function() {$.colorbox.resize();}
+        });
+	};
+
+	
+	$scope.deleteFundingByPut = function(putCode, deleteGroup) {
+		if (deleteGroup) 
+			fundingSrvc.deleteGroupFunding(putCode);
+		else
+			fundingSrvc.deleteFunding(putCode);
 		$.colorbox.close(); 
 	};
 	
@@ -3384,6 +3519,10 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 			break;
 		}
 	};
+	
+	$scope.openEditFunding = function(funding) {
+		$scope.addFundingModal(funding);
+	};		
 }
 
 /**
@@ -3849,7 +3988,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
 	
 	$scope.deleteWorkConfirm = function(putCode, deleteGroup) {
 		$scope.deletePutCode = putCode;
-		$scope.deleteGroup = putCode;
+		$scope.deleteGroup = deleteGroup;
 		var work = worksSrvc.getWork(putCode);
 		if (work.workTitle && work.workTitle.title) 
 			$scope.fixedTitle = work.workTitle.title.value;
@@ -3865,9 +4004,9 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
 	
 	$scope.deleteByPutCode = function(putCode, deleteGroup) {
 		if (deleteGroup)
-		   worksSrvc.deleteWork(putCode);
-		else
 		   worksSrvc.deleteGroupWorks(putCode);
+		else
+		   worksSrvc.deleteWork(putCode);
 		$.colorbox.close(); 
 	};
 	

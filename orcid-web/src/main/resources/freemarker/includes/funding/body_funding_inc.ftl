@@ -5,7 +5,7 @@
     ORCID (R) Open Source
     http://orcid.org
 
-    Copyright (c) 2012-2013 ORCID, Inc.
+    Copyright (c) 2012-2014 ORCID, Inc.
     Licensed under an MIT-Style License (MIT)
     http://orcid.org/open-source-license
 
@@ -43,7 +43,7 @@
 	        <div class="col-md-4 col-sm-4 workspace-toolbar">
 	        	<#include "funding_more_info_inc.ftl"/>
 	        	<#if !(isPublicProfile??)>
-	        		<a href ng-click="deleteFunding(funding)" class="glyphicon glyphicon-trash grey"></a>
+	        		<a href ng-click="deleteFundingConfirm(funding.putCode.value,false)" class="glyphicon glyphicon-trash grey"></a>
 	        		<ul class="workspace-private-toolbar">
 						<@orcid.privacyToggle  angularModel="funding.visibility.visibility"
 						questionClick="toggleClickPrivacyHelp(funding.putCode.value)"

@@ -5,7 +5,7 @@
     ORCID (R) Open Source
     http://orcid.org
 
-    Copyright (c) 2012-2013 ORCID, Inc.
+    Copyright (c) 2012-2014 ORCID, Inc.
     Licensed under an MIT-Style License (MIT)
     http://orcid.org/open-source-license
 
@@ -21,7 +21,14 @@
 		<!-- Title -->		 
 		<div class="row">			
 			<div class="col-md-9 col-sm-8 col-xs-9">
-				<h1 class="lightbox-title pull-left"><@orcid.msg 'manual_funding_form_contents.add_grant'/></h1>
+				<h1 class="lightbox-title pull-left">
+					<div ng-show="editFunding.putCode.value == null">
+						<@orcid.msg 'manual_funding_form_contents.add_grant'/>					
+					</div>
+					<div ng-show="editFunding.putCode.value != null">
+						<@orcid.msg 'manual_funding_form_contents.edit_grant'/>
+					</div>
+				</h1>				
 			</div>					
 			<div class="col-md-3 col-sm-4 pull-left">
 				<div class="control-group privacy-control">
@@ -293,9 +300,19 @@
 						<i class="glyphicon glyphicon-refresh spin x2 green"></i>
 					</span>
 				</div>
-		    	<div class="control-group">				
-					<button class="btn btn-primary" ng-click="addFunding()" ng-disabled="addingFunding" ng-class="{disabled:addingFunding}"><@orcid.msg 'manual_funding_form_contents.btnaddtolist'/></button>
-					<button id="" class="btn close-button" ng-click="closeModal()" type="reset"><@orcid.msg 'freemarker.btncancel'/></button>
+		    	<div class="control-group">			
+					<div ng-show="editFunding.putCode.value != null">	
+						<button class="btn btn-primary" ng-click="putFunding()" ng-disabled="addingFunding" ng-class="{disabled:addingFunding}">
+							<@orcid.msg 'freemarker.btnsave'/>
+						</button>
+						<button id="" class="btn close-button" ng-click="closeModal()" type="reset"><@orcid.msg 'freemarker.btncancel' /></button>
+					</div>
+					<div ng-show="editFunding.putCode.value == null">
+						<button class="btn btn-primary" ng-click="putFunding()" ng-disabled="addingFunding" ng-class="{disabled:addingFunding}">
+							<@orcid.msg 'manual_funding_form_contents.btnaddtolist'/>
+						</button>
+						<button id="" class="btn close-button" ng-click="closeModal()" type="reset"><@orcid.msg 'freemarker.btncancel'/></button>	
+					</div>						
 				</div>
 			</div>
 		</div>

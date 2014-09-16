@@ -5,7 +5,7 @@
     ORCID (R) Open Source
     http://orcid.org
 
-    Copyright (c) 2012-2013 ORCID, Inc.
+    Copyright (c) 2012-2014 ORCID, Inc.
     Licensed under an MIT-Style License (MIT)
     http://orcid.org/open-source-license
 
@@ -52,15 +52,14 @@
 			                	limitedClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'LIMITED', $event)" 
 			                	privateClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PRIVATE', $event)"/>
 			                </li>
-			            					</#if>				
+			        </#if>				
 				</div>
 	        </div>
 	        
 	        <!-- Identifiers / URL / Validations / Versions -->
 			<div class="row bottomBuffer" ng-show="group.getActive().workExternalIdentifiers.length > 0">
 				<div class="col-md-12 col-sm-12">
-					<ul class="id-details">
-								
+					<ul class="id-details">			
 						<li>
 							<span ng-repeat='ie in group.getActive().workExternalIdentifiers'><span
 							ng-bind-html='ie | workExternalIdentifierHtml:$first:$last:group.getActive().workExternalIdentifiers.length'></span>
@@ -74,7 +73,10 @@
        	
        	<!-- More info -->
        	<#include "work_more_info_inc_v3.ftl"/>
-        
+
+       	<!-- Sources -->
+       	<#include "work_sources_inc_v3.ftl"/>
+       	        
     </li><!-- bottom-margin-small -->
 </ul>
 <div ng-show="worksSrvc.loading == true" class="text-center" id="workSpinner">

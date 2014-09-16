@@ -4,7 +4,7 @@
  * ORCID (R) Open Source
  * http://orcid.org
  *
- * Copyright (c) 2012-2013 ORCID, Inc.
+ * Copyright (c) 2012-2014 ORCID, Inc.
  * Licensed under an MIT-Style License (MIT)
  * http://orcid.org/open-source-license
  *
@@ -119,7 +119,7 @@ public class OauthConfirmAccessController extends BaseController {
                         if (orcidProfileManager.emailExists(tempEmail))
                             email = tempEmail;
                     }
-
+                    
                     Matcher orcidMatcher = orcidPattern.matcher(url);
                     if (orcidMatcher.find()) {
                         String tempOrcid = orcidMatcher.group(2);
@@ -199,9 +199,9 @@ public class OauthConfirmAccessController extends BaseController {
         mav.addObject("client_id", clientId);
         mav.addObject("client_group_name", clientGroupName);
         mav.addObject("client_description", clientDescription);
-        mav.addObject("userId", orcid != null ? orcid : email);
-        mav.setViewName("oauth_login");
+        mav.addObject("userId", orcid != null ? orcid : email);        
         mav.addObject("hideUserVoiceScript", true);
+        mav.setViewName("oauth_login");
         return mav;
     }
 

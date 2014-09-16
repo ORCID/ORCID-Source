@@ -5,7 +5,7 @@
     ORCID (R) Open Source
     http://orcid.org
 
-    Copyright (c) 2012-2013 ORCID, Inc.
+    Copyright (c) 2012-2014 ORCID, Inc.
     Licensed under an MIT-Style License (MIT)
     http://orcid.org/open-source-license
 
@@ -46,11 +46,10 @@
 			<!-- Privacy Settings -->
 	        <div class="col-md-3 col-sm-3 workspace-toolbar">
 	        	<#if !(isPublicProfile??)>
-	        		<!-- <a href ng-click="deleteFunding(funding)" class="glyphicon glyphicon-trash grey"></a> -->
 	        		<ul class="workspace-private-toolbar">
 	        			<li>
 					 		<a href="" class="toolbar-button edit-item-button">
-					 			<span class="glyphicon glyphicon-pencil edit-option-toolbar" title=""></span>
+					 			<span class="glyphicon glyphicon-pencil edit-option-toolbar" title="" ng-click="openEditFunding(funding)"></span>
 					 		</a>	
 					 	</li>
 	        			<li>

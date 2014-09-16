@@ -4,7 +4,7 @@
  * ORCID (R) Open Source
  * http://orcid.org
  *
- * Copyright (c) 2012-2013 ORCID, Inc.
+ * Copyright (c) 2012-2014 ORCID, Inc.
  * Licensed under an MIT-Style License (MIT)
  * http://orcid.org/open-source-license
  *
@@ -76,7 +76,7 @@ public class BaseWorkspaceController extends BaseController {
         Map<String, String> countriesWithId = new LinkedHashMap<String, String>();
         List<String> countries = countryManager.retrieveCountries();
         countriesWithId.put("", "Select a country");
-        for (String countryName : countries) {
+        for (String countryName : countries) { 
             countriesWithId.put(countryName, countryName);
         }
         return countriesWithId;

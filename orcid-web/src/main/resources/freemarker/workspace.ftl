@@ -5,7 +5,7 @@
     ORCID (R) Open Source
     http://orcid.org
 
-    Copyright (c) 2012-2013 ORCID, Inc.
+    Copyright (c) 2012-2014 ORCID, Inc.
     Licensed under an MIT-Style License (MIT)
     http://orcid.org/open-source-license
 
@@ -59,10 +59,10 @@
             
             <#if RequestParameters['orcidSocial']??>
             <div class="share-this">
-            	<span class='st_facebook' st_url="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" st_title="<@orcid.msg 'orcid_social.facebook.message.title'/>" st_image="${staticCdn}/img/orcid-logo.png" st_summary="<@orcid.msg 'orcid_social.facebook.message.summary'/>"></span>
-            	<span class='st_googleplus' st_url="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" st_title="<@orcid.msg 'orcid_social.google.message.title'/>" st_image="${staticCdn}/img/orcid-logo.png" st_summary="<@orcid.msg 'orcid_social.google.message.summary'/>"></span>
-				<span class='st_twitter' st_url="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" st_title="<@orcid.msg 'orcid_social.twitter.message.title'/>" st_image="${staticCdn}/img/orcid-logo.png" st_summary="<@orcid.msg 'orcid_social.twitter.message.summary'/>"></span>
-				<span class='st_linkedin' st_url="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" st_title="<@orcid.msg 'orcid_social.linkedin.message.title'/>" st_image="${staticCdn}/img/orcid-logo.png" st_summary="<@orcid.msg 'orcid_social.linkedin.message.summary'/>"></span>
+            	<span class='st_facebook_custom st_custom social' st_url="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" st_title="<@orcid.msg 'orcid_social.facebook.message.title'/>" st_image="${staticCdn}/img/orcid-logo.png" st_summary="<@orcid.msg 'orcid_social.facebook.message.summary'/>"></span>
+            	<span class='st_googleplus_custom st_custom social' st_url="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" st_title="<@orcid.msg 'orcid_social.google.message.title'/>" st_image="${staticCdn}/img/orcid-logo.png" st_summary="<@orcid.msg 'orcid_social.google.message.summary'/>"></span>
+				<span class='st_twitter_custom st_custom social' st_url="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" st_title="<@orcid.msg 'orcid_social.twitter.message.title'/>" st_image="${staticCdn}/img/orcid-logo.png" st_summary="<@orcid.msg 'orcid_social.twitter.message.summary'/>"></span>
+				<span class='st_linkedin_custom st_custom social' st_url="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" st_title="<@orcid.msg 'orcid_social.linkedin.message.title'/>" st_image="${staticCdn}/img/orcid-logo.png" st_summary="<@orcid.msg 'orcid_social.linkedin.message.summary'/>"></span>
             </div>
             </#if>
             
@@ -117,8 +117,8 @@
 		            <span class="glyphicon glyphicon-pencil edit-country edit-option" ng-click="openEdit()" title="" ng-hide="showEdit == true"></span>
 	            </div>   
 	            <!-- Current content -->
-                <span ng-hide="showEdit == true" ng-click="toggleEdit()">
-	                <span ng-show="countryForm != null && countryForm.iso2Country != null" ng-bind="countryForm.iso2Country.value">
+                <span ng-hide="showEdit == true" ng-click="toggleEdit()">                	
+	                <span ng-show="countryForm != null && countryForm.countryName != null" ng-bind="countryForm.countryName">
 	                </span>
 	            </span>
                <!-- Edit form -->

@@ -5,7 +5,7 @@
     ORCID (R) Open Source
     http://orcid.org
 
-    Copyright (c) 2012-2013 ORCID, Inc.
+    Copyright (c) 2012-2014 ORCID, Inc.
     Licensed under an MIT-Style License (MIT)
     http://orcid.org/open-source-license
 
@@ -46,37 +46,20 @@
 			<!-- Privacy Settings -->
 	        <div class="col-md-3 col-sm-3 workspace-toolbar">
 	        	<#if !(isPublicProfile??)>
-	        		<!-- <a href ng-click="deleteFunding(funding)" class="glyphicon glyphicon-trash grey"></a> -->
 	        		<ul class="workspace-private-toolbar">
 	        			<li>
 					 		<a href="" class="toolbar-button edit-item-button">
-					 			<span class="glyphicon glyphicon-pencil edit-option-toolbar" title=""></span>
+					 			<span class="glyphicon glyphicon-pencil edit-option-toolbar" title="" ng-click="openEditFunding(group.getActive())"></span>
 					 		</a>	
 					 	</li>
 	        			<li>
 							<@orcid.privacyToggle2  angularModel="group.getActive().visibility.visibility"
 							questionClick="toggleClickPrivacyHelp(group.getActive().putCode.value)"
 							clickedClassCheck="{'popover-help-container-show':privacyHelp[group.getActive().putCode.value]==true}" 
-							publicClick="setPrivacy(funding, 'PUBLIC', $event)" 
-		                	limitedClick="setPrivacy(funding, 'LIMITED', $event)" 
-		                	privateClick="setPrivacy(funding, 'PRIVATE', $event)" />
+							publicClick="fundingSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PUBLIC', $event)" 
+		                	limitedClick="fundingSrvc.setGroupPrivacy(group.getActive().putCode.value, 'LIMITED', $event)" 
+		                	privateClick="fundingSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PRIVATE', $event)" />
 	                	</li>
-	                	 <li class="submenu-tree">
-		            		<a href="" class="toolbar-button toggle-menu" id="more-options-button">
-		            			<span class="glyphicon glyphicon-align-left edit-option-toolbar"></span>
-		            		</a>
-		            		<ul class="workspace-submenu-options">
-		            			<li>
-		            				<a href=""><span class="glyphicon glyphicon-file"></span>Review Versions</a>
-		            			</li>
-		            			<li>
-		            				<a href=""><span class="glyphicon glyphicon-trash"></span>Delete</a>
-		            			</li>
-		            			<li>
-		            				<a href=""><span class="glyphicon glyphicon-question-sign"></span>Help</a>
-		            			</li>
-		            		</ul>
-            			</li>			        
 		        	</ul>
 		        </#if>
 			</div>
@@ -90,20 +73,15 @@
 						</span>
 					</div>
 				</div>				
-			</div>			
-		<div ng-show="moreInfo[group.getActive().putCode.value]">
-			<div class="content">			
-				<#include "funding_more_info_inc_v3.ftl"/>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-12 col-sm-12 col-xs-12">
-				<div class="show-more-info-tab">			
-					<a href="" ng-show="!moreInfo[group.getActive().putCode.value]" ng-click="showDetailsMouseClick(group.getActive().putCode.value,$event);" class=""><span class="glyphicon glyphicon-chevron-down"></span><@orcid.msg 'manage.developer_tools.show_details'/></a>
-					<a href="" ng-show="moreInfo[group.getActive().putCode.value]" ng-click="showDetailsMouseClick(group.getActive().putCode.value,$event);" class="ng-hide"><span class="glyphicon glyphicon-chevron-up"></span><@orcid.msg 'manage.developer_tools.hide_details'/></a>
-				</div>
-			</div>		
-		</div>	
+	   </div>			
+			
+       	
+       	<!-- More info -->
+		<#include "funding_more_info_inc_v3.ftl"/>
+
+       	<!-- Sources -->
+       	<#include "funding_sources_inc_v3.ftl"/>       	        
+	
 	</li>
 </ul>
 

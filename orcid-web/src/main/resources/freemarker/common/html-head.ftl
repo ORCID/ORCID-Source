@@ -5,7 +5,7 @@
     ORCID (R) Open Source
     http://orcid.org
 
-    Copyright (c) 2012-2013 ORCID, Inc.
+    Copyright (c) 2012-2014 ORCID, Inc.
     Licensed under an MIT-Style License (MIT)
     http://orcid.org/open-source-license
 
@@ -16,7 +16,6 @@
     =============================================================================
 
 -->
-
 <head>
     <meta charset="utf-8" />
     <title>${title!"ORCID"}</title>
@@ -54,6 +53,8 @@
     </script>    
     
     <link rel="stylesheet" href="${staticLoc}/css/fonts.css?v=${ver}"/>
+    <link rel="stylesheet" href="${staticLoc}/css/social.css?v=${ver}"/>
+    <link rel="stylesheet" href="${staticLoc}/css/filetypes.css?v=${ver}"/>
 	
 	<!-- Always remember to remove Glyphicons font reference when bootstrap is updated -->
     <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.1.0/css/bootstrap.min.css?v=${ver}"/>

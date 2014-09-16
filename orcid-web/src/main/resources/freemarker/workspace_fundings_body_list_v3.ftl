@@ -5,7 +5,7 @@
     ORCID (R) Open Source
     http://orcid.org
 
-    Copyright (c) 2012-2013 ORCID, Inc.
+    Copyright (c) 2012-2014 ORCID, Inc.
     Licensed under an MIT-Style License (MIT)
     http://orcid.org/open-source-license
 
@@ -16,7 +16,6 @@
     =============================================================================
 
 -->
-
 <#include "includes/funding/del_funding_inc.ftl"/>
 
 <#include "includes/funding/add_funding_inc.ftl"/>
@@ -34,41 +33,56 @@
 				</div>
 				<div class="col-md-9 col-sm-9 col-xs-12 action-button-bar" ng-show="workspaceSrvc.displayFunding">
 					<!-- Sort -->
-	       				<div class="sort-menu-container">			       					 
-		       				<a class="action-option manage-button toggle-menu" ng-click="">
-								<span class="glyphicon glyphicon-sort"></span>							
-								<@orcid.msg 'manual_orcid_record_contents.sort'/>
-							</a>
-							<ul class="sort-menu-options">
-								<li><a href="" ng-click=""><@orcid.msg 'manual_orcid_record_contents.sort_title'/> <span class=""></span></a></li>
-								<li><a href="" ng-click="" class="checked"><@orcid.msg 'manual_orcid_record_contents.sort_date'/> <span class="glyphicon glyphicon-ok pull-right"></span></a></li>
-								<li><a href="" ng-click=""><@orcid.msg 'manual_orcid_record_contents.sort_type'/> <span class=""></span></a></li>
-								<li><a href="" ng-click=""><@orcid.msg 'manual_orcid_record_contents.sort_source'/> <span class=""></span></a></li>
-							</ul>
-						</div>
-						
-                		<ul class="workspace-bar-menu">                			
-	        				<!-- Link Manually -->
-	        				<li>
-		        				<#if fundingImportWizards?size != 0>
-									<a class="action-option manage-button" ng-click="showTemplateInModal('import-funding-modal')">
-										<span class="glyphicon glyphicon-plus"></span>
-										<@orcid.msg 'workspace.link_funding'/>
-									</a>
-								</#if>			
-								<a href="" class="action-option manage-button" ng-click="addFundingModal()">
+					<div class="sort-menu-container">                                    
+					    <ul class="action-option manage-button toggle-menu">
+					        <li>
+					            <span class="glyphicon glyphicon-sort"></span>                          
+					            <@orcid.msg 'manual_orcid_record_contents.sort'/>
+					            <ul class="sort-menu-options">
+					                <li class="checked">                                            
+					                    <a ng-click="">
+					                        <@orcid.msg 'manual_orcid_record_contents.sort_date'/>
+					                        <span class="glyphicon glyphicon-ok"></span>
+					                    </a>                                                                                        
+					                </li>
+					                <li class="">                                           
+					                    <a ng-click="">
+					                        <@orcid.msg 'manual_orcid_record_contents.sort_title'/>
+					                        <span class="" ></span>
+					                    </a>                                            
+					                </li>
+					                <li class="">                                           
+					                    <a ng-click="">
+					                        <@orcid.msg 'manual_orcid_record_contents.sort_type'/>
+					                        <span class=""></span>
+					                    </a>                                                                                        
+					                </li>
+					            </ul>                                           
+					        </li>
+					    </ul>                                   
+					</div>
+               		<ul class="workspace-bar-menu">                			
+        				<!-- Link Manually -->
+        				<li>
+	        				<#if fundingImportWizards?size != 0>
+								<a class="action-option manage-button" ng-click="showTemplateInModal('import-funding-modal')">
 									<span class="glyphicon glyphicon-plus"></span>
-									<@orcid.msg 'manual_orcid_record_contents.link_manually'/>				
+									<@orcid.msg 'workspace.link_funding'/>
 								</a>
-	        				</li>
-	        				<!-- Search & Link -->
-	        				<li>
-		        				<a class="action-option manage-button" ng-click="showWorkImportWizard()">
-									<span class="glyphicon glyphicon-cloud-upload"></span>							
-									<@orcid.msg 'manual_orcid_record_contents.search_link'/>
-								</a>	        				
-	        				</li>
-						</ul>
+							</#if>			
+							<a href="" class="action-option manage-button" ng-click="addFundingModal()">
+								<span class="glyphicon glyphicon-plus"></span>
+								<@orcid.msg 'manual_orcid_record_contents.link_manually'/>				
+							</a>
+        				</li>
+        				<!-- Search & Link -->
+        				<li>
+	        				<a class="action-option manage-button" ng-click="showWorkImportWizard()">
+								<span class="glyphicon glyphicon-cloud-upload"></span>							
+								<@orcid.msg 'manual_orcid_record_contents.search_link'/>
+							</a>	        				
+        				</li>
+					</ul>
 				</div>
 			</div>			
 		</div>				
