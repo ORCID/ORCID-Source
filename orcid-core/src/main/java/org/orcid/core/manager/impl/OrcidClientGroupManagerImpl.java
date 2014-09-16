@@ -186,7 +186,6 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
 
         return orcidClientGroup;
     }
-
     
     /**
      * Updates an existing group profile. 
@@ -583,8 +582,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
             OrcidInternal orcidInternal = new OrcidInternal();
             orcidInternal.setSalesforceId(new SalesforceId(orcidClientGroup.getSalesforceId()));
             orcidProfile.setOrcidInternal(orcidInternal);    
-        }
-        
+        }        
         
         return orcidProfile;
     }

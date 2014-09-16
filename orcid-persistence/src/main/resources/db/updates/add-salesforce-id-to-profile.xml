@@ -21,6 +21,9 @@
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
 	<changeSet author="Angel Montenegro" id="ADD-SALESFORCE-ID-TO-PROFILE-TABLE">
+	    <preConditions>
+			<not><columnExists columnName="salesforce_id" tableName="profile"/></not>
+        </preConditions>
 	    <addColumn tableName="profile">
 				<column name="salesforce_id" type="VARCHAR(15)" />
 		</addColumn>

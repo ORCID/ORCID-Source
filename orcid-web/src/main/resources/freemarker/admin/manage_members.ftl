@@ -221,16 +221,6 @@
 			</div>						
 		</div>
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 		<!-- Edit client -->
 		<a name="edit-client"></a>
 		<div ng-controller="manageMembersCtrl" class="workspace-accordion-item" ng-cloak>
