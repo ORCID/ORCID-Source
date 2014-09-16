@@ -16,17 +16,13 @@
  */
 package org.orcid.frontend.web.controllers;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.OrcidSearchManager;
-import org.orcid.frontend.web.forms.SearchOrcidBioForm;
 import org.orcid.jaxb.model.message.OrcidSearchResult;
-import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -46,7 +42,7 @@ public class SearchOrcidController extends BaseController {
     final static Counter FRONTEND_WEB_SEARCH_REQUESTS = Metrics.newCounter(SearchOrcidController.class, "FRONTEND-WEB-SEARCH-REQUESTS");
     final static Counter FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND = Metrics.newCounter(SearchOrcidController.class, "FRONTEND-WEB-SEARCH-RESULTS-NONE-FOUND");
     final static Counter FRONTEND_WEB_SEARCH_RESULTS_FOUND = Metrics.newCounter(SearchOrcidController.class, "FRONTEND-WEB-SEARCH-RESULTS-FOUND");
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(SearchOrcidController.class);
 
     @Resource
@@ -61,7 +57,6 @@ public class SearchOrcidController extends BaseController {
         ModelAndView mav = new ModelAndView();
         String tab = activeTab == null ? "OrcidBioSearch" : activeTab;
         mav.addObject("activeTab", tab);
-        mav.addObject("searchOrcidForm", new SearchOrcidBioForm());
         mav.setViewName("advanced_search");
         return mav;
     }
@@ -74,28 +69,8 @@ public class SearchOrcidController extends BaseController {
             mav.addObject("noResultsFound", true);
             return mav;
         }
-        String searchQueryUrl = createSearchUrl(queryFromUser, solrQuery);
         FRONTEND_WEB_SEARCH_REQUESTS.inc();
-        mav.addObject("searchQueryUrl", searchQueryUrl);
         return mav;
-    }
-
-    private String createSearchUrl(String queryFromUser, String solrQuery) {
-        String searchQueryUrl = createSearchBaseUrl();
-        queryFromUser = queryFromUser.trim();
-        if (StringUtils.isNotBlank(solrQuery)) {
-            searchQueryUrl += solrQuery;
-        } else if (OrcidStringUtils.isValidOrcid(queryFromUser)) {
-            searchQueryUrl += "orcid:" + queryFromUser;
-        } else {
-            try {
-                searchQueryUrl += URLEncoder.encode("{!edismax qf='given-and-family-names^50.0 family-name^10.0 given-names^5.0 credit-name^10.0 other-names^5.0 text^1.0' pf='given-and-family-names^50.0' mm=1}"
-                        + queryFromUser,"UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                LOGGER.error("Issue encoding SearchUrl", e);
-            }
-        }
-        return searchQueryUrl;
     }
 
     private void incrementSearchMetrics(List<OrcidSearchResult> searchResults) {
