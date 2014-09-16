@@ -373,6 +373,19 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 				// remove work on server
 				fundingSrvc.removeFunding(rmFunding);
 			},
+			deleteGroupFunding: function(putCode) {
+				var idx;
+				var rmWorks;
+				for (var idx in fundingSrvc.groups) {
+					if (fundingSrvc.groups[idx].hasPut(putCode)) {
+					   for (var idj in fundingSrvc.groups[idx].activities) {
+						   fundingSrvc.removeFunding(fundingSrvc.groups[idx].activities[idj]);
+						}
+					    fundingSrvc.groups.splice(idx,1);
+					    break;
+					}
+				}
+			},
 	    	removeFunding: function(funding) {	
 	    		$.ajax({
 	    	        url: getBaseUri() + '/fundings/funding.json',
@@ -407,6 +420,13 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 					count += fundingSrvc.groups[idx].activitiesCount;
 				}
 				return count;
+			},
+			getFunding: function(putCode) {
+				for (var idx in fundingSrvc.groups) {
+						if (fundingSrvc.groups[idx].hasPut(putCode))
+							return fundingSrvc.groups[idx].getByPut(putCode);				
+				}
+				return null;
 			},
 	        getFundings: function(path) {
 	    		//clear out current fundings
@@ -768,7 +788,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 				for (var idx in serv.groups) {
 					if (serv.groups[idx].hasPut(putCode)) {
 					   for (var idj in serv.groups[idx].activities) {
-							serv.removeWork(serv.groups[idx].activities[idj]);
+							serv.removeFunding(serv.groups[idx].activities[idj]);
 						}
 					    serv.groups.splice(idx,1);
 						break;
@@ -3307,6 +3327,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 		});
 	};
 	
+	/*
 	$scope.deleteFundingConfirm = function(funding) {
 		$scope.delFunding = funding;
 				
@@ -3315,9 +3336,30 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
             onComplete: function() {$.colorbox.resize();}
         });
 	};
+	*/
 	
-	$scope.deleteFunding = function(delFunding) {	
-		fundingSrvc.deleteFunding(delFunding);
+	$scope.deleteFundingConfirm = function(putCode, deleteGroup) {
+		$scope.deletePutCode = putCode;
+		$scope.deleteGroup = deleteGroup;
+		var funding = fundingSrvc.getFunding(putCode);
+		if (funding.fundingTitle && funding.fundingTitle.title) 
+			$scope.fixedTitle = funding.fundingTitle.title.value;
+		else $scope.fixedTitle = '';
+        var maxSize = 100;
+        if($scope.fixedTitle.length > maxSize)
+        	$scope.fixedTitle = $scope.fixedTitle.substring(0, maxSize) + '...';
+		$.colorbox({        	            
+            html : $compile($('#delete-funding-modal').html())($scope),
+            onComplete: function() {$.colorbox.resize();}
+        });
+	};
+
+	
+	$scope.deleteFundingByPut = function(putCode, deleteGroup) {
+		if (deleteGroup) 
+			fundingSrvc.deleteGroupFunding(putCode);
+		else
+			fundingSrvc.deleteFunding(putCode);
 		$.colorbox.close(); 
 	};
 	
