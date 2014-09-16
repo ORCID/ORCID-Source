@@ -26,6 +26,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
@@ -55,12 +56,17 @@ public class WebDriverHelper {
     public String obtainAuthorizationCode(String scopes, String orcid, String userId, String password) throws InterruptedException {
         webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, orcid, scopes, redirectUri));
         webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, orcid, scopes, redirectUri));
+
         // Switch to the login form
-        WebElement switchFromLink = webDriver.findElement(By.id("in-register-switch-form"));
+        By switchFromLinkLocator = By.id("in-register-switch-form");
+        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(switchFromLinkLocator));
+        WebElement switchFromLink = webDriver.findElement(switchFromLinkLocator);
         switchFromLink.click();
-        Thread.sleep(500);
+
         // Fill the form
-        WebElement userIdElement = webDriver.findElement(By.id("userId"));
+        By userIdElementLocator = By.id("userId");
+        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(userIdElementLocator));
+        WebElement userIdElement = webDriver.findElement(userIdElementLocator);
         userIdElement.sendKeys(userId);
         WebElement passwordElement = webDriver.findElement(By.id("password"));
         passwordElement.sendKeys(password);
