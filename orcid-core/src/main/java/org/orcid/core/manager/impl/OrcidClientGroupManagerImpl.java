@@ -177,7 +177,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
      * */
     public OrcidClientGroup createGroup(OrcidClientGroup orcidClientGroup) {
         String groupOrcid = orcidClientGroup.getGroupOrcid();
-        if (groupOrcid == null) {
+        if (PojoUtil.isEmpty(groupOrcid)) {
             OrcidProfile groupProfile = createGroupProfile(orcidClientGroup);
             groupProfile = orcidProfileManager.createOrcidProfile(groupProfile);
             groupOrcid = groupProfile.getOrcidIdentifier().getPath();

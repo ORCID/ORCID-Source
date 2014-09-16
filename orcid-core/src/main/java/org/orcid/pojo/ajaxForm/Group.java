@@ -56,6 +56,7 @@ public class Group implements ErrorsInterface, Serializable {
     
     public OrcidClientGroup toOrcidClientGroup() {
         OrcidClientGroup orcidClientGroup = new OrcidClientGroup();
+        orcidClientGroup.setGroupOrcid(groupOrcid == null? "" : groupOrcid.getValue());
         orcidClientGroup.setType(GroupType.fromValue(getType().getValue()));
         orcidClientGroup.setGroupName(getGroupName().getValue());
         orcidClientGroup.setEmail(getEmail().getValue());

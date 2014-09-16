@@ -151,11 +151,6 @@
 			</div>			
 		</div>
 		
-		
-		
-		
-		
-		
 		<!-- Edit Member -->
 		<a name="edit-member"></a>
 		<div ng-controller="manageMembersCtrl" class="workspace-accordion-item" ng-cloak>			
@@ -177,53 +172,53 @@
 				<div class="controls save-btns pull-left">
 					<span id="bottom-search-client" ng-click="findMember()" class="btn btn-primary"><@orcid.msg 'public-layout.search'/></span>
 				</div>
-			</div>
-			
-			<div ng-show="member.groupOrcid != null" ng-cloak>
-				<div>
-					<div class="row">
-						<div class="col-md-12 col-sm-12 col-xs-12">
-							<h4><@orcid.msg 'manage_member.edit_member.general'/></h4>
+				
+				<div ng-show="member.groupOrcid.value.length > 0" ng-cloak>
+					<div class="admin-edit-client">
+						<div class="row">
+							<div class="col-md-12 col-sm-12 col-xs-12">
+								<h4><@orcid.msg 'manage_member.edit_member.general'/></h4>
+							</div>
 						</div>
+						<!-- Name -->
+						<div class="row">
+							<div class="col-md-12 col-sm-12 col-xs-12">
+								<span><@orcid.msg 'manage_groups.group_name'/></span><br />
+								<input type="text" ng-model="member.groupName.value" class="full-width-input" />
+								<span class="orcid-error" ng-show="member.groupName.errors.length > 0">
+									<div ng-repeat='error in member.groupName.errors' ng-bind-html="error"></div>
+								</span>	
+							</div>
+						</div>
+						<!-- Salesforce ID -->
+						<div class="row">
+							<div class="col-md-12 col-sm-12 col-xs-12">
+								<span><@orcid.msg 'manage_groups.salesforce_id'/></span><br />
+								<input type="text" ng-model="member.salesforceId.value" class="full-width-input" />
+								<span class="orcid-error" ng-show="member.salesforceId.errors.length > 0">
+									<div ng-repeat='error in member.salesforceId.errors' ng-bind-html="error"></div>
+								</span>	
+							</div>
+						</div>
+						<!-- email -->
+						<div class="row">
+							<div class="col-md-12 col-sm-12 col-xs-12">
+								<span><@orcid.msg 'manage_groups.group_email'/></span><br />
+								<input type="text" ng-model="member.email.value" class="full-width-input" />
+								<span class="orcid-error" ng-show="member.email.errors.length > 0">
+									<div ng-repeat='error in member.email.errors' ng-bind-html="error"></div>
+								</span>	
+							</div>
+						</div>
+						<!-- Buttons -->
+						<div class="row">
+							<div class="controls save-btns col-md-12 col-sm-12 col-xs-12">
+			    				<span id="bottom-confirm-update-client" ng-click="confirmUpdateMember()" class="btn btn-primary"><@orcid.msg 'admin.edit_client.btn.update'/></span>
+							</div>
+						</div>			
 					</div>
-					<!-- Name -->
-					<div class="row">
-						<div class="col-md-12 col-sm-12 col-xs-12">
-							<span><@orcid.msg ''/></span><br />
-							<input type="text" ng-model="member.groupName.value" class="full-width-input" />
-							<span class="orcid-error" ng-show="member.groupName.errors.length > 0">
-								<div ng-repeat='error in member.groupName.errors' ng-bind-html="error"></div>
-							</span>	
-						</div>
-					</div>
-					<!-- Salesforce ID -->
-					<div class="row">
-						<div class="col-md-12 col-sm-12 col-xs-12">
-							<span><@orcid.msg ''/></span><br />
-							<input type="text" ng-model="member.salesforceId.value" class="full-width-input" />
-							<span class="orcid-error" ng-show="member.salesforceId.errors.length > 0">
-								<div ng-repeat='error in member.salesforceId.errors' ng-bind-html="error"></div>
-							</span>	
-						</div>
-					</div>
-					<!-- email -->
-					<div class="row">
-						<div class="col-md-12 col-sm-12 col-xs-12">
-							<span><@orcid.msg ''/></span><br />
-							<input type="text" ng-model="member.email.value" class="full-width-input" />
-							<span class="orcid-error" ng-show="member.email.errors.length > 0">
-								<div ng-repeat='error in member.email.errors' ng-bind-html="error"></div>
-							</span>	
-						</div>
-					</div>
-					<!-- Buttons -->
-					<div class="row">
-						<div class="controls save-btns col-md-12 col-sm-12 col-xs-12">
-		    				<span id="bottom-confirm-update-client" ng-click="confirmUpdateMember()" class="btn btn-primary"><@orcid.msg 'admin.edit_client.btn.update'/></span>
-						</div>
-					</div>			
-				</div>
-			</div>	
+				</div>	
+			</div>						
 		</div>
 		
 		
@@ -257,105 +252,105 @@
 				<div class="controls save-btns pull-left">
 					<span id="bottom-search-client" ng-click="searchClient()" class="btn btn-primary"><@orcid.msg 'admin.edit_client.find'/></span>
 				</div>
-			</div>
-			
-			<div ng-show="client.clientId != null" ng-cloak>	
-				<div class="admin-edit-client">
-					<div class="row">
-						<div class="col-md-12 col-sm-12 col-xs-12">
-							<h4><@orcid.msg 'admin.edit_client.general'/></h4>
-						</div>
-					</div>
-					<!-- Name -->
-					<div class="row">
-						<div class="col-md-12 col-sm-12 col-xs-12">
-							<span><@orcid.msg 'manage.developer_tools.group.display_name'/></span><br />
-							<input type="text" ng-model="client.displayName.value" class="full-width-input" />
-							<span class="orcid-error" ng-show="client.displayName.errors.length > 0">
-								<div ng-repeat='error in client.displayName.errors' ng-bind-html="error"></div>
-							</span>	
-						</div>
-					</div>
-					<!-- Website -->
-					<div class="row">
-						<div class="col-md-12 col-sm-12 col-xs-12">
-							<span><@orcid.msg 'manage.developer_tools.group.website'/></span><br />
-							<input type="text" ng-model="client.website.value" class="full-width-input" />
-							<span class="orcid-error" ng-show="client.website.errors.length > 0">
-								<div ng-repeat='error in client.website.errors' ng-bind-html="error"></div>
-							</span>	
-						</div>
-					</div>
-					<!-- Description -->
-					<div class="row">
-						<div class="col-md-12 col-sm-12 col-xs-12 dt-description">
-							<span><@orcid.msg 'manage.developer_tools.group.description'/></span><br />
-							<textarea ng-model="client.shortDescription.value"></textarea>
-							<span class="orcid-error" ng-show="client.shortDescription.errors.length > 0">
-								<div ng-repeat='error in client.shortDescription.errors' ng-bind-html="error"></div>
-							</span>	
-						</div>
-					</div>
-					<!-- Redirect uris -->
-					<div class="row">			
-						<div class="col-md-12 col-sm-12 col-xs-12">
-							<h4><@orcid.msg 'admin.edit_client.redirect_uris'/></h4>
-						</div>			
-					</div>
-					<div ng-repeat="rUri in client.redirectUris">
-						<div class="admin-edit-client-redirect-uris">
-							<div class="row">						
-								<!-- URI -->
-								<div class="col-md-12 col-sm-12 col-xs-12">
-									<input type="text" ng-model="rUri.value.value" class="input-xlarge">
-								</div>
+				
+				<div ng-show="client.clientId != null" ng-cloak>	
+					<div class="admin-edit-client">
+						<div class="row">
+							<div class="col-md-12 col-sm-12 col-xs-12">
+								<h4><@orcid.msg 'admin.edit_client.general'/></h4>
 							</div>
-							<div class="row">
-								<!-- Type -->						
-								<div class="col-md-6 col-sm-6 col-xs-12">
-									<select class="input-large input-xlarge-full" ng-model="rUri.type.value" ng-change="loadDefaultScopes(rUri)">
-										<#list redirectUriTypes?keys as key>
-											<option value="${key}">${redirectUriTypes[key]}</option>
-										</#list>
-									</select>
-								</div>
-								<!-- Scopes -->
-								<div class="col-md-4 col-sm-4 col-xs-12">
-									<div ng-show="rUri.type.value != 'default'">
-										<multiselect multiple="true" ng-model="rUri.scopes" options="scope as scope for scope in availableRedirectScopes"></multiselect>
-									</div>															
-								</div>
-								<!-- Delete button -->
-								<div class="col-md-1 col-sm-1 col-xs-12">
-				    				<a href="" id="delete-redirect-uri" ng-click="deleteRedirectUri($index)" class="glyphicon glyphicon-trash grey"></a>
-								</div>
-								<!-- Add button -->
-								<div class="col-md-1 col-sm-1 col-xs-12">
-				    				<a href="" id="load-empty-redirect-uri" ng-click="addRedirectUri()" class="glyphicon glyphicon-plus grey" ng-show="$last"></a>
-								</div>
-							</div>
-							<div class="row">
-								<!-- Errors -->
-								<div class="col-md-12 col-sm-12 col-xs-12">
-									<span class="orcid-error" ng-show="rUri.errors.length > 0">
-										<div ng-repeat='error in rUri.errors' ng-bind-html="error"></div>
-									</span>									
-								</div>
-							</div>
-						</div>						
-					</div>
-					<div class="row" ng-show="client.redirectUris.length == 0 || client.redirectUris == null">
-						<div class="controls save-btns col-md-12 col-sm-12 col-xs-12 margin-top-box margin-bottom-box">
-							<a href="" ng-click="addRedirectUri()"><@orcid.msg 'manage.developer_tools.edit.add_redirect_uri' /></a>
 						</div>
-					</div>
-					<div class="row">
-						<div class="controls save-btns col-md-12 col-sm-12 col-xs-12">
-		    				<span id="bottom-confirm-update-client" ng-click="confirmUpdateClient()" class="btn btn-primary"><@orcid.msg 'admin.edit_client.btn.update'/></span>
+						<!-- Name -->
+						<div class="row">
+							<div class="col-md-12 col-sm-12 col-xs-12">
+								<span><@orcid.msg 'manage.developer_tools.group.display_name'/></span><br />
+								<input type="text" ng-model="client.displayName.value" class="full-width-input" />
+								<span class="orcid-error" ng-show="client.displayName.errors.length > 0">
+									<div ng-repeat='error in client.displayName.errors' ng-bind-html="error"></div>
+								</span>	
+							</div>
 						</div>
-					</div>					
-				</div>							
-			</div>			
+						<!-- Website -->
+						<div class="row">
+							<div class="col-md-12 col-sm-12 col-xs-12">
+								<span><@orcid.msg 'manage.developer_tools.group.website'/></span><br />
+								<input type="text" ng-model="client.website.value" class="full-width-input" />
+								<span class="orcid-error" ng-show="client.website.errors.length > 0">
+									<div ng-repeat='error in client.website.errors' ng-bind-html="error"></div>
+								</span>	
+							</div>
+						</div>
+						<!-- Description -->
+						<div class="row">
+							<div class="col-md-12 col-sm-12 col-xs-12 dt-description">
+								<span><@orcid.msg 'manage.developer_tools.group.description'/></span><br />
+								<textarea ng-model="client.shortDescription.value"></textarea>
+								<span class="orcid-error" ng-show="client.shortDescription.errors.length > 0">
+									<div ng-repeat='error in client.shortDescription.errors' ng-bind-html="error"></div>
+								</span>	
+							</div>
+						</div>
+						<!-- Redirect uris -->
+						<div class="row">			
+							<div class="col-md-12 col-sm-12 col-xs-12">
+								<h4><@orcid.msg 'admin.edit_client.redirect_uris'/></h4>
+							</div>			
+						</div>
+						<div ng-repeat="rUri in client.redirectUris">
+							<div class="admin-edit-client-redirect-uris">
+								<div class="row">						
+									<!-- URI -->
+									<div class="col-md-12 col-sm-12 col-xs-12">
+										<input type="text" ng-model="rUri.value.value" class="input-xlarge">
+									</div>
+								</div>
+								<div class="row">
+									<!-- Type -->						
+									<div class="col-md-6 col-sm-6 col-xs-12">
+										<select class="input-large input-xlarge-full" ng-model="rUri.type.value" ng-change="loadDefaultScopes(rUri)">
+											<#list redirectUriTypes?keys as key>
+												<option value="${key}">${redirectUriTypes[key]}</option>
+											</#list>
+										</select>
+									</div>
+									<!-- Scopes -->
+									<div class="col-md-4 col-sm-4 col-xs-12">
+										<div ng-show="rUri.type.value != 'default'">
+											<multiselect multiple="true" ng-model="rUri.scopes" options="scope as scope for scope in availableRedirectScopes"></multiselect>
+										</div>															
+									</div>
+									<!-- Delete button -->
+									<div class="col-md-1 col-sm-1 col-xs-12">
+					    				<a href="" id="delete-redirect-uri" ng-click="deleteRedirectUri($index)" class="glyphicon glyphicon-trash grey"></a>
+									</div>
+									<!-- Add button -->
+									<div class="col-md-1 col-sm-1 col-xs-12">
+					    				<a href="" id="load-empty-redirect-uri" ng-click="addRedirectUri()" class="glyphicon glyphicon-plus grey" ng-show="$last"></a>
+									</div>
+								</div>
+								<div class="row">
+									<!-- Errors -->
+									<div class="col-md-12 col-sm-12 col-xs-12">
+										<span class="orcid-error" ng-show="rUri.errors.length > 0">
+											<div ng-repeat='error in rUri.errors' ng-bind-html="error"></div>
+										</span>									
+									</div>
+								</div>
+							</div>						
+						</div>
+						<div class="row" ng-show="client.redirectUris.length == 0 || client.redirectUris == null">
+							<div class="controls save-btns col-md-12 col-sm-12 col-xs-12 margin-top-box margin-bottom-box">
+								<a href="" ng-click="addRedirectUri()"><@orcid.msg 'manage.developer_tools.edit.add_redirect_uri' /></a>
+							</div>
+						</div>
+						<div class="row">
+							<div class="controls save-btns col-md-12 col-sm-12 col-xs-12">
+			    				<span id="bottom-confirm-update-client" ng-click="confirmUpdateClient()" class="btn btn-primary"><@orcid.msg 'admin.edit_client.btn.update'/></span>
+							</div>
+						</div>					
+					</div>							
+				</div>					
+			</div>							
 		</div>						
 						
 	</div>
@@ -384,7 +379,7 @@
 	</div>
 </script>
 
-<script type="text/ng-template" id="confirm-modal">
+<script type="text/ng-template" id="confirm-modal-client">
 	<div class="lightbox-container">
 		<div class="row">
 			<div class="col-md-12 col-xs-12 col-sm-12">
@@ -393,6 +388,22 @@
 				<p><strong>{{client.displayName.value}}</strong></p>						
     			<div class="btn btn-danger" ng-click="updateClient()">
     				<@orcid.msg 'admin.edit_client.btn.update' />
+    			</div>
+    			<a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
+			</div>
+		</div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="confirm-modal-member">
+	<div class="lightbox-container">
+		<div class="row">
+			<div class="col-md-12 col-xs-12 col-sm-12">
+				<h3><@orcid.msg 'manage_member.edit_member.confirm_update.title' /></h3>	
+				<p><@orcid.msg 'manage_member.edit_memeber.confirm_update.text' /></p>			
+				<p><strong>{{member.groupName.value}}</strong></p>						
+    			<div class="btn btn-danger" ng-click="updateMember()">
+    				<@orcid.msg 'manage_member.edit_member.btn.update' />
     			</div>
     			<a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
 			</div>

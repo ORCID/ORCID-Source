@@ -26,7 +26,6 @@ import javax.annotation.Resource;
 import org.orcid.core.exception.OrcidClientGroupManagementException;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EmailManager;
-import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.OrcidClientGroupManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.jaxb.model.clientgroup.ClientType;
@@ -35,7 +34,6 @@ import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.ErrorDesc;
-import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.Client;
@@ -307,8 +305,20 @@ public class ManageMembersController extends BaseController {
             setError(group.getEmail(), "NotBlank.group.email");
         } else if (!validateEmailAddress(group.getEmail().getValue())) {
             setError(group.getEmail(), "group.email.invalid_email");
-        } else if (emailManager.emailExists(group.getEmail().getValue())) {
-            setError(group.getEmail(), "group.email.already_used");
+        } else if(PojoUtil.isEmpty(group.getGroupOrcid())) {            
+            if (emailManager.emailExists(group.getEmail().getValue())) 
+                setError(group.getEmail(), "group.email.already_used");
+        } else if(!PojoUtil.isEmpty(group.getGroupOrcid())) {
+            String newEmail = group.getEmail().getValue();
+            String userOrcid = group.getGroupOrcid().getValue();
+            if(emailManager.emailExists(newEmail)) {
+                Map<String,String> ids = emailManager.findIdByEmail(newEmail);
+                String orcidThatOwnsTheEmail = ids.get(newEmail);
+                //If the email is not the same, it means the member cannot use that email address
+                if(!userOrcid.equals(orcidThatOwnsTheEmail)) {
+                    setError(group.getEmail(), "group.email.already_used");
+                }
+            }                        
         }
     }
 

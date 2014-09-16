@@ -5026,12 +5026,12 @@ function manageMembersCtrl($scope, $compile) {
 	};
 	
 	$scope.findMember = function() {
+		$scope.success_edit_member_message = null;
 		$.ajax({
 	        url: getBaseUri()+'/manage-members/find-member.json?orcidOrEmail=' + $scope.member_id,	        
 	        type: 'GET',
 	        dataType: 'json',	        
 	        success: function(data) {
-	        	console.log(angular.toJson(data));
 	        	$scope.member = data;	        	
 	        	$scope.$apply();
 	        }
@@ -5039,14 +5039,31 @@ function manageMembersCtrl($scope, $compile) {
 	    	// something bad is happening!	    	
 	    	console.log("Error getting existing groups");	    	
 	    });	
-	};
-	
-	$scope.confirmUpdateMember = function() {
-		
-	};
+	};	
 	
 	$scope.updateMember = function() {
-		
+		$.ajax({
+	        url: getBaseUri()+'/manage-members/update-member.json',	        
+	        contentType: 'application/json;charset=UTF-8',
+	        type: 'POST',
+	        dataType: 'json',
+	        data: angular.toJson($scope.member),	        	       
+	        success: function(data){
+	        	$scope.$apply(function(){ 	        
+		        	if(data.errors.length == 0){
+		        		$scope.member = null;
+		        		$scope.success_edit_member_message = om.get('manage_member.edit_member.success');
+		        		$scope.member_id = null;
+		        	} else {
+		        		$scope.member = data;
+		        	}		        			        	
+				});
+	        	$scope.closeModal();
+	        }
+	    }).fail(function(error) { 
+	    	// something bad is happening!	    	
+	    	console.log("Error deprecating the account");	    	
+	    });		
 	};
 	
 	/**
@@ -5157,7 +5174,21 @@ function manageMembersCtrl($scope, $compile) {
 	//Confirm updating a client
 	$scope.confirmUpdateClient = function() {
 		$.colorbox({                      
-			html : $compile($('#confirm-modal').html())($scope),
+			html : $compile($('#confirm-modal-client').html())($scope),
+				scrolling: true,
+				onLoad: function() {
+				$('#cboxClose').remove();
+			},
+			scrolling: true
+		});
+		
+		$.colorbox.resize({width:"450px" , height:"175px"});
+	};
+	
+	//Confirm updating a member
+	$scope.confirmUpdateMember = function() {
+		$.colorbox({                      
+			html : $compile($('#confirm-modal-member').html())($scope),
 				scrolling: true,
 				onLoad: function() {
 				$('#cboxClose').remove();
