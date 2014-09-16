@@ -119,12 +119,12 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     public static final String CONTRIBUTOR_EMAIL = "my.email@contributor.com";
 
     private static final String DEFAULT = "default";
-    
+
     private WebDriver webDriver;
 
     @Resource
     private ClientRedirectDao clientRedirectDao;
-    
+
     @Resource
     private ClientDetailsManager clientDetailsManager;
 
@@ -175,7 +175,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         for (ProfileEntity profile : profileDao.getAll()) {
             profileDao.updateLastModifiedDateWithoutResult(profile.getId());
         }
-        
+
     }
 
     @After
@@ -422,7 +422,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     }
 
     @Test
-    public void testAddFunding() throws InterruptedException, JSONException {                                         
+    public void testAddFunding() throws InterruptedException, JSONException {
         String scopes = "/funding/create";
         String authorizationCode = obtainAuthorizationCode(scopes);
         String accessToken = obtainAccessToken(authorizationCode, scopes);
@@ -597,10 +597,10 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         OrcidMessage errorMessage = clientResponse.getEntity(OrcidMessage.class);
         assertNotNull(errorMessage);
         assertNotNull(errorMessage.getErrorDesc());
-        assertEquals("Bad Request : The amount: 1.250.000 doesn'n have the right format, it should use the format: 1,234,567.89", errorMessage
-                .getErrorDesc().getContent());
+        assertEquals("Bad Request : The amount: 1.250.000 doesn'n have the right format, it should use the format: 1,234,567.89", errorMessage.getErrorDesc()
+                .getContent());
     }
-    
+
     @Test
     public void testAddWorkToWrongProfile() throws InterruptedException, JSONException {
         String scopes = "/orcid-works/create";
@@ -649,18 +649,18 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
 
     private String obtainAuthorizationCode(String orcid, String scopes, String redirectUri) throws InterruptedException {
         webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, orcid, scopes, redirectUri));
-        //Switch to the login form
+        // Switch to the login form
         WebElement switchFromLink = webDriver.findElement(By.id("in-register-switch-form"));
         switchFromLink.click();
         Thread.sleep(500);
-        //Fill the form
+        // Fill the form
         WebElement userId = webDriver.findElement(By.id("userId"));
         userId.sendKeys("michael@bentine.com");
         WebElement password = webDriver.findElement(By.id("password"));
         password.sendKeys("password");
-        WebElement submitButton = webDriver.findElement(By.id("authorize-button")); 
+        WebElement submitButton = webDriver.findElement(By.id("authorize-button"));
         submitButton.click();
-        
+
         (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
             public Boolean apply(WebDriver d) {
                 return d.getTitle().equals("ORCID Playground");

@@ -74,7 +74,7 @@ public class T2OrcidOAuthApiClientReadPrivateDataIntegrationTest extends DBUnitT
     private static final int DEFAULT_TIMEOUT_SECONDS = 30;
 
     private static final String DEFAULT = "default";
-    
+
     private static final Pattern AUTHORIZATION_CODE_PATTERN = Pattern.compile("code=(.+)");
 
     private static final String READ_PRIVATE_WORKS_CLIENT_ID = "9999-9999-9999-9991";
@@ -99,10 +99,10 @@ public class T2OrcidOAuthApiClientReadPrivateDataIntegrationTest extends DBUnitT
 
     @Resource
     private ClientRedirectDao clientRedirectDao;
-    
+
     @Resource
     private ClientDetailsManager clientDetailsManager;
-    
+
     @Resource
     private ClientDetailsDao clientDetailsDao;
 
@@ -116,7 +116,7 @@ public class T2OrcidOAuthApiClientReadPrivateDataIntegrationTest extends DBUnitT
     public static void initDBUnitData() throws Exception {
         initDBUnitData(DATA_FILES, null);
     }
-    
+
     @Before
     @Transactional
     public void before() {
@@ -654,18 +654,18 @@ public class T2OrcidOAuthApiClientReadPrivateDataIntegrationTest extends DBUnitT
 
     private String obtainAuthorizationCode(String orcid, String scopes, String redirectUri) throws InterruptedException {
         webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, orcid, scopes, redirectUri));
-        //Switch to the login form
+        // Switch to the login form
         WebElement switchFromLink = webDriver.findElement(By.id("in-register-switch-form"));
         switchFromLink.click();
         Thread.sleep(500);
-        //Fill the form
+        // Fill the form
         WebElement userId = webDriver.findElement(By.id("userId"));
         userId.sendKeys("user_to_test@user.com");
         WebElement password = webDriver.findElement(By.id("password"));
         password.sendKeys("password");
-        WebElement submitButton = webDriver.findElement(By.id("authorize-button")); 
+        WebElement submitButton = webDriver.findElement(By.id("authorize-button"));
         submitButton.click();
-        
+
         (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
             public Boolean apply(WebDriver d) {
                 return d.getTitle().equals("ORCID Playground");
