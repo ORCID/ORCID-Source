@@ -267,8 +267,8 @@
 												<li ng-class="{'checked':sortPredicateKey=='date'}">											
 													<a ng-click="sort('date');">
 														<@orcid.msg 'manual_orcid_record_contents.sort_date'/>
-														<span ng-class="{'glyphicon glyphicon-ok':sortPredicateKey=='date'}"></span>
-													</a>																						
+														<span ng-class="{'glyphicon glyphicon-ok':sortPredicateKey=='date'}"></span>														
+													</a>																					
 												</li>
 											    <li ng-class="{'checked':sortPredicateKey=='title'}">									    	
 											    	<a ng-click="sort('title');">

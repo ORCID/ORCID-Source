@@ -3836,7 +3836,7 @@ ul.personal-inf-display li:first-child a{
 
 .sort-menu-container{
 	display: block;
-	position: relative;			
+	float: right;			
 }
 
 ul.workspace-bar-menu{	
@@ -4411,8 +4411,7 @@ a.toggle-menu{
 ul.sort-menu-options{
 	position: absolute;
 	right: 0;
-	top: 31px;
-	background: #a6ce39;
+	top: 31px;	
 	margin: 0; 
 	padding: 0;
 	width: auto;	 
@@ -4422,7 +4421,7 @@ ul.sort-menu-options{
 }
 
 ul.sort-menu-options li{
-	border-bottom: 1px solid #FFF;
+	border-top: 1px solid #FFF;
 	height: 31px;
 	background: #C9CACB;
 	padding-right: 5%;
@@ -4435,7 +4434,7 @@ ul.sort-menu-options li a{
 	background: #C9CACB;
 	font-size: 12px;
 	font-weight: bold;
-	width: 105%;
+	width: 100%;
 	min-width: 60px;
 	height: 30px;
 	float: left;	 
@@ -4444,7 +4443,8 @@ ul.sort-menu-options li a{
 ul.sort-menu-options li a span{	
 	height: 12px;
 	width: 12px;
-	float: right;	
+	float: right;
+	margin-left: 6px;
 }
 
 ul.sort-menu-options li a:hover{	 
@@ -4463,8 +4463,7 @@ ul.toggle-menu{
   padding: 0;  
 }
 ul.toggle-menu li {  
-  display: inline-block;  
-  position: relative;
+  display: inline-block;
   cursor: pointer;
   padding: 1px 10px 2px;
   border-left: 1px solid #FFF;
@@ -4477,16 +4476,23 @@ ul.toggle-menu li:hover {
 ul.toggle-menu li ul {
   padding: 0;
   position: absolute;
-  top: 30px;
-  left: -1px;
-  width: 150px;  
+  top: 30px;  
+  right: 15px;
+  min-width: 75px;
+  width: auto;  
   display: none;
   opacity: 0;
-  visibility: hidden;  
+  visibility: hidden;    
 }
+
+#workspace-publications ul.toggle-menu li ul{
+	right: 14px;
+}
+
 ul.toggle-menu li ul li {
   display: block;
-  padding: 0;  
+  padding: 0;
+  width: 100%;  
 }
 
 ul.toggle-menu li:hover ul {
@@ -5567,7 +5573,20 @@ ul.toggle-menu li:hover ul {
 	
 	ul.toggle-menu{
 		border-bottom: 1px solid #FFF;
-	}		
+	}
+	
+	.sort-menu-container{
+		width: 100%;
+		position: relative;		
+	}
+	
+	ul.toggle-menu li ul{
+		right: 0;
+	}
+	
+	#workspace-publications ul.toggle-menu li ul{
+		right: 1px;
+	}
 
 }
 
