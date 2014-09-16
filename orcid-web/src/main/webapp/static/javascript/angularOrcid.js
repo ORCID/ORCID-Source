@@ -360,7 +360,20 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 	    	    	console.log("some bad is hppending");
 	    		});
 	    	},
-	    	deleteFunding: function(funding) {	
+			deleteFunding: function(putCode) {
+				var rmFunding;
+				for (var idx in fundingSrvc.groups) {
+					if (fundingSrvc.groups[idx].hasPut(putCode)) {
+						rmFunding = fundingSrvc.groups[idx].rmByPut(putCode);
+						if (fundingSrvc.groups[idx].activitiesCount == 0) 
+							fundingSrvc.groups.splice(idx,1);
+						break;
+					};
+				};
+				// remove work on server
+				fundingSrvc.removeFunding(rmFunding);
+			},
+	    	removeFunding: function(funding) {	
 	    		$.ajax({
 	    	        url: getBaseUri() + '/fundings/funding.json',
 	    	        type: 'DELETE',
@@ -371,15 +384,12 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 	    	        	if(data.errors.length != 0){
 	    	        		console.log("Unable to delete funding.");
 	    	        	} else {
-	    					
 	    					// new groups
 		    				for (var idx in fundingSrvc.groups) {
 		    					if (fundingSrvc.groups[idx].hasPut(funding.putCode.value)) {
 		    						rmWorks = fundingSrvc.groups[idx].rmByPut(funding.putCode.value);
 		    						if (fundingSrvc.groups[idx].activitiesCount == 0) 
 		    							fundingSrvc.groups.splice(idx,1);
-		    						else
-		    							fundingSrvc.groups[idx].activePutCode = fundingSrvc.groups[idx].defaultPutCode;
 		    						break;
 		    					}
 		    				}
@@ -560,10 +570,19 @@ GroupedActivities.prototype.getIdentifiersPath = function() {
 }
 
 GroupedActivities.prototype.rmByPut = function(putCode) {
-	var activities =  this.activities[putCode];
+	var activity =  this.activities[putCode];
 	delete this.activities[putCode];
 	this.activitiesCount--;
-	return activities;
+	if (putCode == this.defaultPutCode) {
+        // make the first one default
+		for (var idx in this.activities) {
+        	this.defaultPutCode = idx;
+        	break;
+        }
+	}
+	if (putCode == this.activePutCode)
+		this.activePutCode = this.defaultPutCode;
+	return activity;
 };
 
 
@@ -733,8 +752,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 						serv.getDetails(needsLoading.pop(), type, popFunct);
 					else if (callback != undefined)
 						callback();
-				}
-				
+				};
 				popFunct();
 			},
 			getWork: function(putCode) {
@@ -744,21 +762,31 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 				}
 				return null;
 			},
-			deleteWork: function(putCode) {
+			deleteGroupWorks: function(putCode) {
 				var idx;
 				var rmWorks;
 				for (var idx in serv.groups) {
 					if (serv.groups[idx].hasPut(putCode)) {
-						rmWorks = serv.groups[idx].rmByPut(putCode);
-						if (serv.groups[idx].activitiesCount == 0) 
-							serv.groups.splice(idx,1);
-						else
-							serv.groups[idx].activePutCode = serv.groups[idx].defaultPutCode;
+					   for (var idj in serv.groups[idx].activities) {
+							serv.removeWork(serv.groups[idx].activities[idj]);
+						}
+					    serv.groups.splice(idx,1);
 						break;
 					}
 				}
+			},
+			deleteWork: function(putCode) {
+				var rmWork;
+				for (var idx in serv.groups) {
+					if (serv.groups[idx].hasPut(putCode)) {
+						rmWork = serv.groups[idx].rmByPut(putCode);
+						if (serv.groups[idx].activitiesCount == 0) 
+							serv.groups.splice(idx,1);
+						break;
+					};
+				};
 				// remove work on server
-				serv.removeWork(rmWorks);
+				serv.removeWork(rmWork);
 			},
             makeDefault: function(group, putCode) {
             	group.makeDefault(putCode);
@@ -3279,7 +3307,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
 		});
 	};
 	
-	$scope.deleteFunding = function(funding) {
+	$scope.deleteFundingConfirm = function(funding) {
 		$scope.delFunding = funding;
 				
 		$.colorbox({        	            
@@ -3288,7 +3316,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc) {
         });
 	};
 	
-	$scope.confirmDeleteFunding = function(delFunding) {	
+	$scope.deleteFunding = function(delFunding) {	
 		fundingSrvc.deleteFunding(delFunding);
 		$.colorbox.close(); 
 	};
@@ -3898,7 +3926,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
 	
 	$scope.deleteWorkConfirm = function(putCode, deleteGroup) {
 		$scope.deletePutCode = putCode;
-		$scope.deleteGroup = putCode;
+		$scope.deleteGroup = deleteGroup;
 		var work = worksSrvc.getWork(putCode);
 		if (work.workTitle && work.workTitle.title) 
 			$scope.fixedTitle = work.workTitle.title.value;
@@ -3914,9 +3942,9 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc) {
 	
 	$scope.deleteByPutCode = function(putCode, deleteGroup) {
 		if (deleteGroup)
-		   worksSrvc.deleteWork(putCode);
-		else
 		   worksSrvc.deleteGroupWorks(putCode);
+		else
+		   worksSrvc.deleteWork(putCode);
 		$.colorbox.close(); 
 	};
 	

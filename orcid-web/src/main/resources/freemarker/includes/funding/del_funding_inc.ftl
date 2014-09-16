@@ -22,7 +22,7 @@
 			<div class="col-md-12 col-xs-12 col-sm-12">
 				<h3><@orcid.msg 'manage.deleteFunding.pleaseConfirm' /></h3>
 				<p>{{delFunding.fundingTitle.title.value}}</p>		
-    			<div class="btn btn-danger" ng-click="confirmDeleteFunding(delFunding)">
+    			<div class="btn btn-danger" ng-click="deleteFunding(delFunding.putCode.value)">
     				<@orcid.msg 'freemarker.btnDelete' />
     			</div>
     			<a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>

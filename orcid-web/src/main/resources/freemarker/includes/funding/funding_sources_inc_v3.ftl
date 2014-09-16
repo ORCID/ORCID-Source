@@ -39,7 +39,7 @@
 			        		</a>
 						</li>
 						<li ng-show="group.activitiesCount == 1">
-							<a ng-click="deleteFundingConfirm(group.getActive().putCode.value, false)">
+							<a ng-click="deleteFundingConfirm(group.getActive())">
 			            	   <span class="glyphicon glyphicon-trash"></span>
 			               </a>
 						</li>

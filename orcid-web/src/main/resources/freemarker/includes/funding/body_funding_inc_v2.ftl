@@ -46,7 +46,6 @@
 			<!-- Privacy Settings -->
 	        <div class="col-md-3 col-sm-3 workspace-toolbar">
 	        	<#if !(isPublicProfile??)>
-	        		<!-- <a href ng-click="deleteFunding(funding)" class="glyphicon glyphicon-trash grey"></a> -->
 	        		<ul class="workspace-private-toolbar">
 	        			<li>
 					 		<a href="" class="toolbar-button edit-item-button">
