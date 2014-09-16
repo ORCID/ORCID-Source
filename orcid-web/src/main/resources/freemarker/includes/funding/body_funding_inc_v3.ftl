@@ -46,7 +46,6 @@
 			<!-- Privacy Settings -->
 	        <div class="col-md-3 col-sm-3 workspace-toolbar">
 	        	<#if !(isPublicProfile??)>
-	        		<!-- <a href ng-click="deleteFunding(group.getActive())" class="glyphicon glyphicon-trash grey"></a> -->
 	        		<ul class="workspace-private-toolbar">
 	        			<li>
 					 		<a href="" class="toolbar-button edit-item-button">
@@ -57,9 +56,9 @@
 							<@orcid.privacyToggle2  angularModel="group.getActive().visibility.visibility"
 							questionClick="toggleClickPrivacyHelp(group.getActive().putCode.value)"
 							clickedClassCheck="{'popover-help-container-show':privacyHelp[group.getActive().putCode.value]==true}" 
-							publicClick="setPrivacy(funding, 'PUBLIC', $event)" 
-		                	limitedClick="setPrivacy(funding, 'LIMITED', $event)" 
-		                	privateClick="setPrivacy(funding, 'PRIVATE', $event)" />
+							publicClick="setPrivacy(group.getActive(), 'PUBLIC', $event)" 
+		                	limitedClick="setPrivacy(group.getActive(), 'LIMITED', $event)" 
+		                	privateClick="setPrivacy(group.getActive(), 'PRIVATE', $event)" />
 	                	</li>
 		        	</ul>
 		        </#if>
