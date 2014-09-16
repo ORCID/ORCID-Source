@@ -386,6 +386,26 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 					}
 				}
 			},
+			setGroupPrivacy: function(putCode, priv) {
+				var group = fundingSrvc.getGroup(putCode);
+				for (var idx in group.activities) {
+					var curPutCode = group.activities[idx].putCode.value;
+					fundingSrvc.setPrivacy(curPutCode, priv);
+				}
+			},
+			getGroup: function(putCode) {
+				for (var idx in fundingSrvc.groups) {
+						if (fundingSrvc.groups[idx].hasPut(putCode))
+							return fundingSrvc.groups[idx];				
+				}
+				return null;
+			},
+			setPrivacy: function(putCode, priv) {
+				var idx;
+				var funding = fundingSrvc.getFunding(putCode);
+				funding.visibility.visibility = priv;
+				fundingSrvc.updateProfileFunding(funding);
+			},
 	    	removeFunding: function(funding) {	
 	    		$.ajax({
 	    	        url: getBaseUri() + '/fundings/funding.json',

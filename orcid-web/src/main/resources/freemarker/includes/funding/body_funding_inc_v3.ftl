@@ -56,9 +56,9 @@
 							<@orcid.privacyToggle2  angularModel="group.getActive().visibility.visibility"
 							questionClick="toggleClickPrivacyHelp(group.getActive().putCode.value)"
 							clickedClassCheck="{'popover-help-container-show':privacyHelp[group.getActive().putCode.value]==true}" 
-							publicClick="setPrivacy(group.getActive(), 'PUBLIC', $event)" 
-		                	limitedClick="setPrivacy(group.getActive(), 'LIMITED', $event)" 
-		                	privateClick="setPrivacy(group.getActive(), 'PRIVATE', $event)" />
+							publicClick="fundingSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PUBLIC', $event)" 
+		                	limitedClick="fundingSrvc.setGroupPrivacy(group.getActive().putCode.value, 'LIMITED', $event)" 
+		                	privateClick="fundingSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PRIVATE', $event)" />
 	                	</li>
 		        	</ul>
 		        </#if>
