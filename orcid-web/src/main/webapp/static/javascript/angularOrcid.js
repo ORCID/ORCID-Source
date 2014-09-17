@@ -604,8 +604,10 @@ GroupedActivities.prototype.key = function(activityIdentifiers) {
 		idPath = 'value';
 		idTypePath = 'type';
 	}
-	var key = activityIdentifiers[idTypePath] ? activityIdentifiers[idTypePath].value : ''; 
-	key += activityIdentifiers[idPath] != null ? activityIdentifiers[idPath].value : ''; 
+	var key = activityIdentifiers[idTypePath] ? activityIdentifiers[idTypePath].value : '';
+	// currently I've been told all know identifiers are case insensive so we are 
+	// lowercasing the value for consistency 
+	key += activityIdentifiers[idPath] != null ? activityIdentifiers[idPath].value.toLowerCase() : ''; 
 	return key;
 };
 
