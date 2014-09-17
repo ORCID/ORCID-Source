@@ -386,6 +386,26 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 					}
 				}
 			},
+			setGroupPrivacy: function(putCode, priv) {
+				var group = fundingSrvc.getGroup(putCode);
+				for (var idx in group.activities) {
+					var curPutCode = group.activities[idx].putCode.value;
+					fundingSrvc.setPrivacy(curPutCode, priv);
+				}
+			},
+			getGroup: function(putCode) {
+				for (var idx in fundingSrvc.groups) {
+						if (fundingSrvc.groups[idx].hasPut(putCode))
+							return fundingSrvc.groups[idx];				
+				}
+				return null;
+			},
+			setPrivacy: function(putCode, priv) {
+				var idx;
+				var funding = fundingSrvc.getFunding(putCode);
+				funding.visibility.visibility = priv;
+				fundingSrvc.updateProfileFunding(funding);
+			},
 	    	removeFunding: function(funding) {	
 	    		$.ajax({
 	    	        url: getBaseUri() + '/fundings/funding.json',
@@ -607,7 +627,7 @@ GroupedActivities.prototype.rmByPut = function(putCode) {
 
 
 orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
-	var serv = {
+	var worksSrvc = {
 			bibtexJson: {},
 			constants: { 'access_type': { 'USER': 'user', 'ANONYMOUS': 'anonymous'}},
 			groups: new Array(),
@@ -618,22 +638,22 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 			addBibtexJson: function(dw) {
 				if (dw.citation && dw.citation.citationType && dw.citation.citationType.value == 'bibtex') {
 					try {
-						serv.bibtexJson[dw.putCode.value] = bibtexParse.toJSON(dw.citation.citation.value);
+						worksSrvc.bibtexJson[dw.putCode.value] = bibtexParse.toJSON(dw.citation.citation.value);
 					} catch (err) {
-						serv.bibtexJson[dw.putCode.value] = null;
+						worksSrvc.bibtexJson[dw.putCode.value] = null;
 						console.log("couldn't parse bibtex: " + dw.citation.citation.value);
 					};
 				};
 			},
 		    addAbbrWorksToScope: function(type) {
-				if (type == serv.constants.access_type.USER) 
+				if (type == worksSrvc.constants.access_type.USER) 
 					var url = getBaseUri() + '/works/works.json?workIds=';
 				else // use the anonymous url
 					var url = getBaseUri() + '/' + orcidVar.orcidId +'/works.json?workIds='; // public
 
-		    	if(serv.worksToAddIds.length != 0 ) {
-					serv.loading = true;
-					var workIds = serv.worksToAddIds.splice(0,20).join();
+		    	if(worksSrvc.worksToAddIds.length != 0 ) {
+					worksSrvc.loading = true;
+					var workIds = worksSrvc.worksToAddIds.splice(0,20).join();
 					$.ajax({
 						'url': url + workIds,
 						'dataType': 'json',
@@ -643,51 +663,51 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 									var dw = data[i];                            
 									removeBadContributors(dw);	
 									removeBadExternalIdentifiers(dw);
-									serv.addBibtexJson(dw);
+									worksSrvc.addBibtexJson(dw);
 									var matches = new Array();
-									for (var idx in serv.groups)
-										if (serv.groups[idx].keyMatch(dw)) {
-											//serv.groups[idx].add(dw);
-											matches.push(serv.groups[idx]);
+									for (var idx in worksSrvc.groups)
+										if (worksSrvc.groups[idx].keyMatch(dw)) {
+											//worksSrvc.groups[idx].add(dw);
+											matches.push(worksSrvc.groups[idx]);
 										}
 									if (matches.length == 0) {
 										var newGroup = new GroupedActivities('abbrWork');
 										newGroup.add(dw);
-										serv.groups.push(newGroup);
+										worksSrvc.groups.push(newGroup);
 									} else {
 										var firstMatch = matches.shift();
 										firstMatch.add(dw);
 										// combine any remaining groups into the first group we found.
 										for (var idx in matches) {
-											var matchIndex = serv.groups.indexOf(matches[idx]);
-											var curMatch = serv.groups[matchIndex];
+											var matchIndex = worksSrvc.groups.indexOf(matches[idx]);
+											var curMatch = worksSrvc.groups[matchIndex];
 											for (var idj in curMatch.activities)
 												firstMatch.add(curMatch.activities[idj]);
-											serv.groups.splice(matchIndex, 1);
+											worksSrvc.groups.splice(matchIndex, 1);
 										}
 									}
 								};
 							});
-							if(serv.worksToAddIds.length == 0 ) {
-								serv.loading = false;
+							if(worksSrvc.worksToAddIds.length == 0 ) {
+								worksSrvc.loading = false;
 								$rootScope.$apply();					
 								fixZindexIE7('.workspace-public workspace-body-list li',99999);
 								fixZindexIE7('.workspace-toolbar',9999);						
 							} else {
 								$rootScope.$apply();					
 								setTimeout(function(){
-									serv.addAbbrWorksToScope(type);
+									worksSrvc.addAbbrWorksToScope(type);
 								},50);
 							}
 						}
 					}).fail(function() { 
 						$rootScope.$apply(function() {
-							serv.loading = false;
+							worksSrvc.loading = false;
 						});
 				    	console.log("Error fetching works: " + workIds);
 				    });
 				} else {
-					serv.loading = false;
+					worksSrvc.loading = false;
 				};
 			},
 			getBlankWork: function(callback) {
@@ -703,11 +723,11 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 			    });
 			},
 			getDetails: function(putCode, type, callback) {				
-				if (type == serv.constants.access_type.USER) 
+				if (type == worksSrvc.constants.access_type.USER) 
 					var url = getBaseUri() + '/works/getWorkInfo.json?workId=';
 				else // use the anonymous url
 					var url = getBaseUri() + '/' + orcidVar.orcidId + '/getWorkInfo.json?workId='; // public
-				if(serv.details[putCode] == undefined) {		
+				if(worksSrvc.details[putCode] == undefined) {		
 					$.ajax({
 						url: url + putCode,	        
 				        dataType: 'json',
@@ -715,9 +735,9 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 				        	$rootScope.$apply(function () {				        		
 				        		removeBadContributors(data);
 				        		removeBadExternalIdentifiers(data);
-				        		serv.addBibtexJson(data);
-				        		serv.details[putCode] = data;
-				        		if (callback != undefined) callback(serv.details[putCode]);
+				        		worksSrvc.addBibtexJson(data);
+				        		worksSrvc.details[putCode] = data;
+				        		if (callback != undefined) callback(worksSrvc.details[putCode]);
 				        	});		        	
 				        }
 					}).fail(function(){
@@ -725,27 +745,27 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 				    	console.log("error fetching works");	
 					});
 				} else {
-					if (callback != undefined) callback(serv.details[putCode]);
+					if (callback != undefined) callback(worksSrvc.details[putCode]);
 				};
 			},
 			getEditable: function(putCode, callback) {
 				// first check if they are the current source
-				var work = serv.getDetails(putCode, serv.constants.access_type.USER, function(data) {
+				var work = worksSrvc.getDetails(putCode, worksSrvc.constants.access_type.USER, function(data) {
 					if (data.workSource.value == orcidVar.orcidId)
 						callback(data);
 					else
-						serv.getGroupDetails(putCode, serv.constants.access_type.USER, function () {
+						worksSrvc.getGroupDetails(putCode, worksSrvc.constants.access_type.USER, function () {
 							// in this case we want to open their version
 							// if they don't have a version yet then copy
 							// the current one
 							var bestMatch = null;
-							for (var idx in serv.details)
-								if (serv.details[idx].workSource.value == orcidVar.orcidId) {
-									bestMatch = serv.details[idx]; 
+							for (var idx in worksSrvc.details)
+								if (worksSrvc.details[idx].workSource.value == orcidVar.orcidId) {
+									bestMatch = worksSrvc.details[idx]; 
 									break;
 								}	
 							if (bestMatch == null) {
-								bestMatch = JSON.parse(JSON.stringify(serv.details[putCode]));
+								bestMatch = JSON.parse(JSON.stringify(worksSrvc.details[putCode]));
 								bestMatch.workSource = null;
 								bestMatch.putCode = null;
 							}
@@ -754,14 +774,14 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 				});
 			},
 			getGroup: function(putCode) {
-				for (var idx in serv.groups) {
-						if (serv.groups[idx].hasPut(putCode))
-							return serv.groups[idx];				
+				for (var idx in worksSrvc.groups) {
+						if (worksSrvc.groups[idx].hasPut(putCode))
+							return worksSrvc.groups[idx];				
 				}
 				return null;
 			},
 			getGroupDetails: function(putCode, type, callback) {
-				var group = serv.getGroup(putCode);
+				var group = worksSrvc.getGroup(putCode);
 				var needsLoading =  new Array();
 				for (var idx in group.activities) {
 					needsLoading.push(group.activities[idx].putCode.value)
@@ -769,44 +789,44 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 				
 				var popFunct = function () {
 					if (needsLoading.length > 0)
-						serv.getDetails(needsLoading.pop(), type, popFunct);
+						worksSrvc.getDetails(needsLoading.pop(), type, popFunct);
 					else if (callback != undefined)
 						callback();
 				};
 				popFunct();
 			},
 			getWork: function(putCode) {
-				for (var idx in serv.groups) {
-						if (serv.groups[idx].hasPut(putCode))
-							return serv.groups[idx].getByPut(putCode);				
+				for (var idx in worksSrvc.groups) {
+						if (worksSrvc.groups[idx].hasPut(putCode))
+							return worksSrvc.groups[idx].getByPut(putCode);				
 				}
 				return null;
 			},
 			deleteGroupWorks: function(putCode) {
 				var idx;
 				var rmWorks;
-				for (var idx in serv.groups) {
-					if (serv.groups[idx].hasPut(putCode)) {
-					   for (var idj in serv.groups[idx].activities) {
-							serv.removeFunding(serv.groups[idx].activities[idj]);
+				for (var idx in worksSrvc.groups) {
+					if (worksSrvc.groups[idx].hasPut(putCode)) {
+					   for (var idj in worksSrvc.groups[idx].activities) {
+							worksSrvc.removeFunding(worksSrvc.groups[idx].activities[idj]);
 						}
-					    serv.groups.splice(idx,1);
+					    worksSrvc.groups.splice(idx,1);
 						break;
 					}
 				}
 			},
 			deleteWork: function(putCode) {
 				var rmWork;
-				for (var idx in serv.groups) {
-					if (serv.groups[idx].hasPut(putCode)) {
-						rmWork = serv.groups[idx].rmByPut(putCode);
-						if (serv.groups[idx].activitiesCount == 0) 
-							serv.groups.splice(idx,1);
+				for (var idx in worksSrvc.groups) {
+					if (worksSrvc.groups[idx].hasPut(putCode)) {
+						rmWork = worksSrvc.groups[idx].rmByPut(putCode);
+						if (worksSrvc.groups[idx].activitiesCount == 0) 
+							worksSrvc.groups.splice(idx,1);
 						break;
 					};
 				};
 				// remove work on server
-				serv.removeWork(rmWork);
+				worksSrvc.removeWork(rmWork);
 			},
             makeDefault: function(group, putCode) {
             	group.makeDefault(putCode);
@@ -821,20 +841,20 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 	    		});
 	    	},
 			loadAbbrWorks: function(access_type) {
-				if (access_type == serv.constants.access_type.ANONYMOUS) {
-				    serv.worksToAddIds = orcidVar.workIds;
-				    serv.addAbbrWorksToScope(serv.constants.access_type.ANONYMOUS);
+				if (access_type == worksSrvc.constants.access_type.ANONYMOUS) {
+				    worksSrvc.worksToAddIds = orcidVar.workIds;
+				    worksSrvc.addAbbrWorksToScope(worksSrvc.constants.access_type.ANONYMOUS);
 				} else {
-					serv.worksToAddIds = null;
-					serv.loading = true;
-					serv.groups.length = 0;
-					serv.details = new Object();
+					worksSrvc.worksToAddIds = null;
+					worksSrvc.loading = true;
+					worksSrvc.groups.length = 0;
+					worksSrvc.details = new Object();
 					$.ajax({
 						url: getBaseUri() + '/works/workIds.json',	        
 				        dataType: 'json',
 				        success: function(data) {
-				        	serv.worksToAddIds = data;
-				        	serv.addAbbrWorksToScope(serv.constants.access_type.USER);
+				        	worksSrvc.worksToAddIds = data;
+				        	worksSrvc.addAbbrWorksToScope(worksSrvc.constants.access_type.USER);
 				        	$rootScope.$apply();
 				        }
 					}).fail(function(){
@@ -860,17 +880,30 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 			    });
 			},
 			setGroupPrivacy: function(putCode, priv) {
-				var group = serv.getGroup(putCode);
+				var group = worksSrvc.getGroup(putCode);
 				for (var idx in group.activities) {
 					var curPutCode = group.activities[idx].putCode.value;
-					serv.setPrivacy(curPutCode, priv);
+					worksSrvc.setPrivacy(curPutCode, priv);
 				}
 			},
 			setPrivacy: function(putCode, priv) {
 				var idx;
-				var work = serv.getWork(putCode);
+				var work = worksSrvc.getWork(putCode);
 				work.visibility = priv;
-				serv.updateProfileWork(work);
+				worksSrvc.updateProfileWork(work);
+			},
+			showSpinner: function($event) {			
+				
+				$($event.target).closest('div.sources-details').siblings('div.work-list-container').css('display', 'none');
+				$($event.target).closest('div.sources-details').siblings('div.spinner').show();
+				
+				setTimeout(
+					function(){
+						$($event.target).closest('div.sources-details').siblings('div.spinner').hide();
+						$($event.target).closest('div.sources-details').siblings('div.work-list-container').css('display', 'block');
+					}
+				,250);
+				
 			},
 			updateProfileWork: function(work) {
 				$.ajax({
@@ -890,26 +923,13 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 			},
 			workCount: function() {
 				var count = 0;
-				for (var idx in serv.groups) {
-					count += serv.groups[idx].activitiesCount;
+				for (var idx in worksSrvc.groups) {
+					count += worksSrvc.groups[idx].activitiesCount;
 				}
 				return count;
-			},
-			showSpinner: function($event) {			
-			
-				$($event.target).closest('div.sources-details').siblings('div.work-list-container').css('display', 'none');
-				$($event.target).closest('div.sources-details').siblings('div.spinner').show();
-				
-				setTimeout(
-					function(){
-						$($event.target).closest('div.sources-details').siblings('div.spinner').hide();
-						$($event.target).closest('div.sources-details').siblings('div.work-list-container').css('display', 'block');
-					}
-				,250);
-				
 			}
 	}; 
-	return serv;
+	return worksSrvc;
 }]);
 
 orcidNgModule.factory("emailSrvc", function ($rootScope) {
