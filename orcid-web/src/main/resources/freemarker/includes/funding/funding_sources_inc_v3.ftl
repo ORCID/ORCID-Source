@@ -24,7 +24,7 @@
 				
 				<div class="col-md-5" ng-hide="editSources[group.groupId] == true">
 					<span>
-						<strong >Source:</strong> {{group.getActive().sourceName.value}}
+						<strong >Source:</strong> {{group.getActive().sourceName}}
 					</span>						
 				</div>
 				
