@@ -26,6 +26,160 @@ function openImportWizardUrl(url) {
 	$.colorbox.close();		
 };
 	
+var GroupedActivities = function(type) {
+	
+	if (GroupedActivities.count == undefined)
+		GroupedActivities.count = 1;
+	else
+		GroupedActivities.count ++;
+	
+	function getInstantiateCount() {
+		   var id = 0; // This is the private persistent value
+		   // The outer function returns a nested function that has access
+		   // to the persistent value.  It is this nested function we're storing
+		   // in the variable uniqueID above.
+		   return function() { return id++; };  // Return and increment
+	}
+	
+	this.type = type;
+	this._keySet = {};
+	this.activities = {};
+	this.activitiesCount = 0;
+	this.activePutCode = null;
+	this.defaultPutCode = null;
+	this.dateSortString;
+	this.groupId = GroupedActivities.count;
+	this.title;
+};
+
+GroupedActivities.count = 0;
+GroupedActivities.FUNDING = 'funding';
+GroupedActivities.ABBR_WORK = 'abbrWork';
+GroupedActivities.AFFILIATION = 'affiliation';
+
+/* 
+ * takes a activity and adds it to an existing group or creates
+ * a new group
+ */
+GroupedActivities.group = function(activity, type, groupsArray) {
+	var matches = new Array();
+	for (var idx in groupsArray)
+	    if (groupsArray[idx].keyMatch(activity))
+			matches.push(groupsArray[idx]);
+	if (matches.length == 0) {
+		var newGroup = new GroupedActivities(type);
+		newGroup.add(activity);
+		groupsArray.push(newGroup);
+	}  else {
+		var firstMatch = matches.shift();
+		firstMatch.add(activity);
+		// combine any remaining groups into the first group we found.
+		for (var idx in matches) {
+			var matchIndex = groupsArray.indexOf(matches[idx]);
+			var curMatch = groupsArray[matchIndex];
+			for (var idj in curMatch.activities)
+				firstMatch.add(curMatch.activities[idj]);
+			groupsArray.splice(matchIndex, 1);
+		}
+	}	
+};
+
+GroupedActivities.prototype.add = function(activity) {
+	// assumes works are added in the order of the display index desc
+	// subsorted by the created date asc
+    var identifiersPath = null;
+    identifiersPath = this.getIdentifiersPath();
+    for (var idx in activity[identifiersPath])
+    	this.addKey(this.key(activity[identifiersPath][idx]));
+	this.activities[activity.putCode.value] = activity;
+	if (this.defaultPutCode == null) { 
+		this.activePutCode = activity.putCode.value;
+		this.makeDefault(activity.putCode.value);
+	}
+	this.activitiesCount++;
+};
+
+GroupedActivities.prototype.makeDefault = function(putCode) {
+	this.defaultPutCode = putCode;
+	this.dateSortString = this.activities[putCode].dateSortString;	
+    if (this.type == GroupedActivities.ABBR_WORK) this.title = this.activities[putCode].workTitle.title.value;
+    else if (this.type == GroupedActivities.FUNDING) this.title = this.activities[putCode].fundingTitle.title.value;
+	
+};
+
+GroupedActivities.prototype.addKey = function(key) {
+	if (this.hasKey(key)) return;
+	this._keySet[key] = true;
+	return;
+};
+
+GroupedActivities.prototype.getActive = function() {
+	return this.activities[this.activePutCode];
+};
+
+GroupedActivities.prototype.getByPut = function(putCode) {
+	return this.activities[putCode];
+};
+
+GroupedActivities.prototype.hasKey = function(key) {
+	if (key in this._keySet)
+		return true;
+	return false;
+};
+
+GroupedActivities.prototype.hasPut = function(putCode) {
+	   if (this.activities[putCode] !== undefined)
+				return true;
+		return false;
+};
+
+GroupedActivities.prototype.key = function(activityIdentifiers) {	
+	var idPath;
+	var idTypePath;
+	if (this.type == GroupedActivities.ABBR_WORK) {
+		idPath = 'workExternalIdentifierId';
+		idTypePath = 'workExternalIdentifierType';
+	}
+	if (this.type == GroupedActivities.FUNDING) {
+		idPath = 'value';
+		idTypePath = 'type';
+	}
+	var key = activityIdentifiers[idTypePath] ? activityIdentifiers[idTypePath].value : ''; 
+	key += activityIdentifiers[idPath] != null ? activityIdentifiers[idPath].value : ''; 
+	return key;
+};
+
+GroupedActivities.prototype.keyMatch = function(activity) {
+    var identifiersPath = null;
+    identifiersPath = this.getIdentifiersPath();
+	for (var idx in activity[identifiersPath]) { 
+		if (this.key(activity[identifiersPath][idx]) == '') continue;
+		if (this.key(activity[identifiersPath][idx]) in this._keySet)
+			return true;
+	}
+	return false;
+};
+
+GroupedActivities.prototype.getIdentifiersPath = function() {
+    if (this.type == GroupedActivities.ABBR_WORK) return 'workExternalIdentifiers';
+    return 'externalIdentifiers';
+};
+
+GroupedActivities.prototype.rmByPut = function(putCode) {
+	var activity =  this.activities[putCode];
+	delete this.activities[putCode];
+	this.activitiesCount--;
+	if (putCode == this.defaultPutCode) {
+        // make the first one default
+		for (var idx in this.activities) {
+        	this.defaultPutCode = idx;
+        	break;
+        }
+	}
+	if (putCode == this.activePutCode)
+		this.activePutCode = this.defaultPutCode;
+	return activity;
+};
 
 var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.multiselect']);
 
@@ -325,27 +479,7 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 	    				success: function(data) {
 	    						for (i in data) {	    
 	    							var funding = data[i];
-	    							// new stuff
-	    							var matches = new Array();
-									for (var idx in fundingSrvc.groups)
-									    if (fundingSrvc.groups[idx].keyMatch(funding))
-											matches.push(fundingSrvc.groups[idx]);
-									if (matches.length == 0) {
-										var newGroup = new GroupedActivities('funding');
-										newGroup.add(funding);
-										fundingSrvc.groups.push(newGroup);
-									}  else {
-										var firstMatch = matches.shift();
-										firstMatch.add(funding);
-										// combine any remaining groups into the first group we found.
-										for (var idx in matches) {
-											var matchIndex = fundingSrvc.groups.indexOf(matches[idx]);
-											var curMatch = fundingSrvc.groups[matchIndex];
-											for (var idj in curMatch.activities)
-												firstMatch.add(curMatch.activities[idj]);
-											fundingSrvc.groups.splice(matchIndex, 1);
-										}
-									}
+	    							GroupedActivities.group(funding,GroupedActivities.FUNDING,fundingSrvc.groups);
 	    						};
 	    						if (fundingSrvc.fundingToAddIds.length == 0) {
 	    							fundingSrvc.loading = false;
@@ -509,138 +643,6 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 	return fundingSrvc;
 }]);
 
-var GroupedActivities = function(type) {
-	
-	if (GroupedActivities.count == undefined)
-		GroupedActivities.count = 1;
-	else
-		GroupedActivities.count ++;
-	
-	function getInstantiateCount() {
-		   var id = 0; // This is the private persistent value
-		   // The outer function returns a nested function that has access
-		   // to the persistent value.  It is this nested function we're storing
-		   // in the variable uniqueID above.
-		   return function() { return id++; };  // Return and increment
-	}
-	
-	this.type = type;
-	this._keySet = {};
-	this.activities = {};
-	this.activitiesCount = 0;
-	this.activePutCode = null;
-	this.defaultPutCode = null;
-	this.dateSortString;
-	this.groupId = GroupedActivities.count;
-	this.title;
-};
-
-GroupedActivities.prototype.test = function() {
-	var count = null;
-	if (count == null)
-		count = 0;
-	else
-		count++;
-	return count;
-};
-
-GroupedActivities.prototype.add = function(activity) {
-	// assumes works are added in the order of the display index desc
-	// subsorted by the created date asc
-    var identifiersPath = null;
-    identifiersPath = this.getIdentifiersPath();
-    for (var idx in activity[identifiersPath])
-    	this.addKey(this.key(activity[identifiersPath][idx]));
-	this.activities[activity.putCode.value] = activity;
-	if (this.defaultPutCode == null) { 
-		this.activePutCode = activity.putCode.value;
-		this.makeDefault(activity.putCode.value);
-	}
-	this.activitiesCount++;
-};
-
-GroupedActivities.prototype.makeDefault = function(putCode) {
-	this.defaultPutCode = putCode;
-	this.dateSortString = this.activities[putCode].dateSortString;	
-    if (this.type == 'abbrWork') this.title = this.activities[putCode].workTitle.title.value;
-    else if (this.type == 'funding') this.title = this.activities[putCode].fundingTitle.title.value;
-	
-};
-
-GroupedActivities.prototype.addKey = function(key) {
-	if (this.hasKey(key)) return;
-	this._keySet[key] = true;
-	return;
-};
-
-GroupedActivities.prototype.getActive = function() {
-	return this.activities[this.activePutCode];
-};
-
-GroupedActivities.prototype.getByPut = function(putCode) {
-	return this.activities[putCode];
-};
-
-GroupedActivities.prototype.hasKey = function(key) {
-	if (key in this._keySet)
-		return true;
-	return false;
-};
-
-GroupedActivities.prototype.hasPut = function(putCode) {
-	   if (this.activities[putCode] !== undefined)
-				return true;
-		return false;
-};
-
-GroupedActivities.prototype.key = function(activityIdentifiers) {	
-	var idPath;
-	var idTypePath;
-	if (this.type == 'abbrWork') {
-		idPath = 'workExternalIdentifierId';
-		idTypePath = 'workExternalIdentifierType';
-	}
-	if (this.type == 'funding') {
-		idPath = 'value';
-		idTypePath = 'type';
-	}
-	var key = activityIdentifiers[idTypePath] ? activityIdentifiers[idTypePath].value : ''; 
-	key += activityIdentifiers[idPath] != null ? activityIdentifiers[idPath].value : ''; 
-	return key;
-};
-
-GroupedActivities.prototype.keyMatch = function(activity) {
-    var identifiersPath = null;
-    identifiersPath = this.getIdentifiersPath();
-	for (var idx in activity[identifiersPath]) { 
-		if (this.key(activity[identifiersPath][idx]) == '') continue;
-		if (this.key(activity[identifiersPath][idx]) in this._keySet)
-			return true;
-	}
-	return false;
-};
-
-GroupedActivities.prototype.getIdentifiersPath = function() {
-    if (this.type == 'abbrWork') return 'workExternalIdentifiers';
-    return 'externalIdentifiers';
-}
-
-GroupedActivities.prototype.rmByPut = function(putCode) {
-	var activity =  this.activities[putCode];
-	delete this.activities[putCode];
-	this.activitiesCount--;
-	if (putCode == this.defaultPutCode) {
-        // make the first one default
-		for (var idx in this.activities) {
-        	this.defaultPutCode = idx;
-        	break;
-        }
-	}
-	if (putCode == this.activePutCode)
-		this.activePutCode = this.defaultPutCode;
-	return activity;
-};
-
 
 orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 	var worksSrvc = {
@@ -680,28 +682,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 									removeBadContributors(dw);	
 									removeBadExternalIdentifiers(dw);
 									worksSrvc.addBibtexJson(dw);
-									var matches = new Array();
-									for (var idx in worksSrvc.groups)
-										if (worksSrvc.groups[idx].keyMatch(dw)) {
-											//worksSrvc.groups[idx].add(dw);
-											matches.push(worksSrvc.groups[idx]);
-										}
-									if (matches.length == 0) {
-										var newGroup = new GroupedActivities('abbrWork');
-										newGroup.add(dw);
-										worksSrvc.groups.push(newGroup);
-									} else {
-										var firstMatch = matches.shift();
-										firstMatch.add(dw);
-										// combine any remaining groups into the first group we found.
-										for (var idx in matches) {
-											var matchIndex = worksSrvc.groups.indexOf(matches[idx]);
-											var curMatch = worksSrvc.groups[matchIndex];
-											for (var idj in curMatch.activities)
-												firstMatch.add(curMatch.activities[idj]);
-											worksSrvc.groups.splice(matchIndex, 1);
-										}
-									}
+									GroupedActivities.group(dw,GroupedActivities.ABBR_WORK,worksSrvc.groups);
 								};
 							});
 							if(worksSrvc.worksToAddIds.length == 0 ) {
