@@ -116,6 +116,7 @@
 									</@security.authorize>
 								</#if>
 								<@security.authorize ifAnyGranted="ROLE_ADMIN">
+									<li><a ${(nav=="members")?string('class="active" ', '')}href="<@spring.url "/manage-members" />"><@orcid.msg 'admin.members.workspace_link' /></a></li>
 									<li><a ${(nav=="admin")?string('class="active" ', '')}href="<@spring.url "/admin-actions" />"><@orcid.msg 'admin.workspace_link' /></a></li>
 								</@security.authorize>
 								<@security.authorize ifAnyGranted="ROLE_PREMIUM_CREATOR, ROLE_CREATOR">

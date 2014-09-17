@@ -17,7 +17,7 @@
 
 -->
 <ul ng-hide="!fundingSrvc.groups.length" class="workspace-fundings workspace-body-list bottom-margin-medium" ng-cloak>
-	<li class="bottom-margin-small workspace-border-box card ng-scope" ng-repeat="group in fundingSrvc.groups | orderBy:['-dateSortString', 'title']""> 
+	<li class="bottom-margin-small workspace-border-box card ng-scope" ng-repeat="group in fundingSrvc.groups | orderBy:sortPredicate:sortReverse"> 
 		<div class="row">        			
 			<!-- Information -->
 			<div class="col-md-9 col-sm-9">

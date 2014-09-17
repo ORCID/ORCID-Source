@@ -19,6 +19,7 @@ package org.orcid.core.manager;
 import java.util.List;
 
 import org.orcid.jaxb.model.clientgroup.ClientType;
+import org.orcid.jaxb.model.clientgroup.GroupType;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
@@ -62,4 +63,6 @@ public interface ProfileEntityManager {
     public boolean isProfileClaimed(String orcid);
     
     ClientType getClientType(String orcid);
+    
+    GroupType getGroupType(String orcid);
 }

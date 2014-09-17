@@ -32,6 +32,7 @@ public class Group implements ErrorsInterface, Serializable {
     private Text groupOrcid;
     private Text groupName;
     private Text email;
+    private Text salesforceId;
 
     @Override
     public List<String> getErrors() {
@@ -49,14 +50,19 @@ public class Group implements ErrorsInterface, Serializable {
     	group.setGroupName(Text.valueOf(profile.getCreditName()));
     	group.setGroupOrcid(Text.valueOf(profile.getId()));
     	group.setType(Text.valueOf(profile.getGroupType().value()));
+    	group.setSalesforceId(Text.valueOf(profile.getSalesforeId()));
     	return group;
     }
     
     public OrcidClientGroup toOrcidClientGroup() {
         OrcidClientGroup orcidClientGroup = new OrcidClientGroup();
+        orcidClientGroup.setGroupOrcid(groupOrcid == null? "" : groupOrcid.getValue());
         orcidClientGroup.setType(GroupType.fromValue(getType().getValue()));
         orcidClientGroup.setGroupName(getGroupName().getValue());
         orcidClientGroup.setEmail(getEmail().getValue());
+        if(getSalesforceId() == null)
+            setSalesforceId(Text.valueOf(""));
+        orcidClientGroup.setSalesforceId(getSalesforceId().getValue());
         return orcidClientGroup;
     }
 
@@ -91,4 +97,12 @@ public class Group implements ErrorsInterface, Serializable {
     public void setEmail(Text email) {
         this.email = email;
     }
+
+    public Text getSalesforceId() {
+        return salesforceId;
+    }
+
+    public void setSalesforceId(Text salesforceId) {
+        this.salesforceId = salesforceId;
+    }        
 }

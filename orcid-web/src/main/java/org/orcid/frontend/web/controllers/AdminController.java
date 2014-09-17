@@ -19,8 +19,6 @@ package org.orcid.frontend.web.controllers;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -32,7 +30,6 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.util.ajax.JSON;
-import org.orcid.core.exception.OrcidClientGroupManagementException;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
@@ -42,17 +39,11 @@ import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidClientGroupManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileWorkManager;
-import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.GroupType;
-import org.orcid.jaxb.model.clientgroup.OrcidClient;
-import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
-import org.orcid.jaxb.model.clientgroup.RedirectUriType;
-import org.orcid.jaxb.model.message.ErrorDesc;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.password.constants.OrcidPasswordConstants;
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -61,11 +52,7 @@ import org.orcid.pojo.AdminChangePassword;
 import org.orcid.pojo.AdminDelegatesRequest;
 import org.orcid.pojo.ProfileDeprecationRequest;
 import org.orcid.pojo.ProfileDetails;
-import org.orcid.pojo.ajaxForm.Client;
-import org.orcid.pojo.ajaxForm.Group;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.pojo.ajaxForm.RedirectUri;
-import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -369,175 +356,6 @@ public class AdminController extends BaseController {
         if(StringUtils.isBlank(csvEmails))
             return new HashMap<String, String>();
         return emailManager.findIdByEmail(csvEmails);
-    }
-
-    /**
-     * Get an empty group
-     * @return an empty group
-     * */
-    @RequestMapping(value = "/group.json", method = RequestMethod.GET)
-    public @ResponseBody
-    Group getEmptyGroup() {
-        Group group = new Group();
-        group.setEmail(Text.valueOf(""));
-        group.setGroupName(Text.valueOf(""));
-        group.setGroupOrcid(Text.valueOf(""));
-        //Set the default type as basic
-        group.setType(Text.valueOf(GroupType.BASIC.value()));
-        return group;
-    }
-    
-    /**
-     * Create a group
-     * @param the group to be created
-     * @return the group with the orcid information or with the error information
-     * */
-    @RequestMapping(value = "/create-group.json", method = RequestMethod.POST)
-    public @ResponseBody
-    Group createGroup(@RequestBody Group group) {        
-        group.setErrors(new ArrayList<String>());
-
-        validateGroupEmail(group);
-        validateGroupName(group);
-        validateGroupType(group);
-
-        copyErrors(group.getEmail(), group);
-        copyErrors(group.getGroupName(), group);
-        copyErrors(group.getType(), group);
-
-        if (group.getErrors().size() == 0) {
-            OrcidClientGroup orcidClientGroup = group.toOrcidClientGroup();
-            orcidClientGroup = orcidClientGroupManager.createGroup(orcidClientGroup);
-            group.setGroupOrcid(Text.valueOf(orcidClientGroup.getGroupOrcid()));
-        }
-
-        return group;
-    }
-   
-    private void validateGroupEmail(Group group) {
-        group.getEmail().setErrors(new ArrayList<String>());
-        if (PojoUtil.isEmpty(group.getEmail())) {
-            setError(group.getEmail(), "NotBlank.group.email");
-        } else if (!validateEmailAddress(group.getEmail().getValue())) {
-            setError(group.getEmail(), "group.email.invalid_email");
-        } else if (emailManager.emailExists(group.getEmail().getValue())) {
-            setError(group.getEmail(), "group.email.already_used");
-        }
-    }
-    
-    private void validateGroupName(Group group) {
-        group.getGroupName().setErrors(new ArrayList<String>());
-        if (PojoUtil.isEmpty(group.getGroupName())) {
-            setError(group.getGroupName(), "NotBlank.group.name");
-        } else if (group.getGroupName().getValue().length() > 150) {
-            setError(group.getGroupName(), "group.name.too_long");
-        }
-    }
-    
-    private void validateGroupType(Group group) {
-        group.getType().setErrors(new ArrayList<String>());
-        if (PojoUtil.isEmpty(group.getType())) {
-            setError(group.getType(), "NotBlank.group.type");
-        } else {
-            try {
-                GroupType.fromValue(group.getType().getValue());
-            } catch (IllegalArgumentException e) {
-                setError(group.getType(), "group.type.invalid");
-            }
-        }
-    }
-    
-    /**
-     * Fetch all groups that exists on database
-     * 
-     * @return the list of groups that exists on database
-     * */
-    @RequestMapping(value = "/list-groups.json", method = RequestMethod.GET)
-    public @ResponseBody
-    List<Group> listGroups() {
-    	List<ProfileEntity> profileEntities = profileEntityManager.findProfilesByOrcidType(OrcidType.GROUP);
-    	List<Group> groups = new ArrayList<Group>();
-    	for(ProfileEntity profile : profileEntities){
-    		groups.add(Group.fromProfileEntity(profile));
-    	}
-    	return groups;
-    }
-    
-    @RequestMapping(value = "/find-client.json", method = RequestMethod.GET)
-    public @ResponseBody Client findClient(@RequestParam("orcid") String orcid) {
-        Client result = new Client();
-        if(profileEntityManager.orcidExists(orcid)) {
-            ClientType clientType = profileEntityManager.getClientType(orcid);
-            if(clientType != null) {
-                ClientDetailsEntity clientDetailsEntity = clientDetailsManager.findByClientId(orcid);
-                result = Client.valueOf(clientDetailsEntity);
-                //If the client types is undefined, get it from DB
-                if(PojoUtil.isEmpty(result.getType()))
-                    result.setType(Text.valueOf(clientType.value()));
-            } else {
-                result.getErrors().add(getMessage("admin.edit_client.orcid_is_not_a_client"));
-            }
-            
-        } else {
-            result.getErrors().add(getMessage("admin.edit_client.invalid_orcid"));
-        }        
-        return result;
-    }
-    
-    
-    @ModelAttribute("redirectUriTypes")
-    public Map<String, String> getRedirectUriTypes() {
-        Map<String, String> redirectUriTypes = new LinkedHashMap<String, String>();
-        for (RedirectUriType rType : RedirectUriType.values()) {
-            if (!RedirectUriType.SSO_AUTHENTICATION.equals(rType))
-                redirectUriTypes.put(rType.value(), rType.value());
-        }
-        return redirectUriTypes;
-    }
-    
-    @RequestMapping(value = "/empty-redirect-uri.json", method = RequestMethod.GET)
-    public @ResponseBody RedirectUri getEmptyRedirectUri() {
-        RedirectUri rUri = new RedirectUri();        
-        rUri.setType(Text.valueOf(RedirectUriType.DEFAULT.value()));        
-        rUri.setValue(Text.valueOf(""));
-        return rUri;
-    }
-    
-    @RequestMapping(value = "/update-client.json", method = RequestMethod.POST)
-    public @ResponseBody Client updateClient(@RequestBody Client client) {
-        
-        // Clean the error list
-        client.setErrors(new ArrayList<String>());
-        // Validate fields
-        groupAdministratorController.validateDisplayName(client);
-        groupAdministratorController.validateWebsite(client);
-        groupAdministratorController.validateShortDescription(client);
-        groupAdministratorController.validateRedirectUris(client);
-
-        copyErrors(client.getDisplayName(), client);
-        copyErrors(client.getWebsite(), client);
-        copyErrors(client.getShortDescription(), client);
-
-        for (RedirectUri redirectUri : client.getRedirectUris()) {
-            copyErrors(redirectUri, client);
-        }
-        
-        if(client.getErrors().isEmpty()) {
-            
-            OrcidClient result = null;
-            try {
-                result = orcidClientGroupManager.updateClientProfile(client.toOrcidClient());
-                groupAdministratorController.clearCache();
-            } catch (OrcidClientGroupManagementException e) {
-                LOGGER.error(e.getMessage());
-                result = new OrcidClient();
-                result.setErrors(new ErrorDesc(getMessage("manage.developer_tools.group.unable_to_update")));
-            }
-
-            client = Client.valueOf(result);
-        }
-        
-        return client;
     }
     
     /**

@@ -32,35 +32,7 @@
 				   	</a>
 				</div>
 				<div class="col-md-9 col-sm-9 col-xs-12 action-button-bar" ng-show="workspaceSrvc.displayFunding">
-					<!-- Sort -->
-					<div class="sort-menu-container">                                    
-					    <ul class="action-option manage-button toggle-menu">
-					        <li>
-					            <span class="glyphicon glyphicon-sort"></span>                          
-					            <@orcid.msg 'manual_orcid_record_contents.sort'/>
-					            <ul class="sort-menu-options">
-					                <li class="checked">                                            
-					                    <a ng-click="">
-					                        <@orcid.msg 'manual_orcid_record_contents.sort_date'/>
-					                        <span class="glyphicon glyphicon-ok"></span>
-					                    </a>                                                                                        
-					                </li>
-					                <li class="">                                           
-					                    <a ng-click="">
-					                        <@orcid.msg 'manual_orcid_record_contents.sort_title'/>
-					                        <span class="" ></span>
-					                    </a>                                            
-					                </li>
-					                <li class="">                                           
-					                    <a ng-click="">
-					                        <@orcid.msg 'manual_orcid_record_contents.sort_type'/>
-					                        <span class=""></span>
-					                    </a>                                                                                        
-					                </li>
-					            </ul>                                           
-					        </li>
-					    </ul>                                   
-					</div>
+					<#include "includes/workspace/workspace_act_sort_menu.ftl"/>
                		<ul class="workspace-bar-menu">                			
         				<!-- Link Manually -->
         				<li>
