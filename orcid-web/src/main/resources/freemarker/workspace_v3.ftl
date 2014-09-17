@@ -257,35 +257,7 @@
 			       				</div>
 			       			</div>	
 			       			<div class="col-md-9 col-sm-10 col-xs-12 action-button-bar" ng-show="workspaceSrvc.displayWorks">
-			       				<!-- Sort -->
-			       				<div class="sort-menu-container">			       					 
-				       				<ul class="action-option manage-button toggle-menu">
-				       					<li>
-											<span class="glyphicon glyphicon-sort"></span>							
-											<@orcid.msg 'manual_orcid_record_contents.sort'/>
-											<ul class="sort-menu-options">
-												<li ng-class="{'checked':sortPredicateKey=='date'}">											
-													<a ng-click="sort('date');">
-														<@orcid.msg 'manual_orcid_record_contents.sort_date'/>
-														<span ng-class="{'glyphicon glyphicon-ok':sortPredicateKey=='date'}"></span>
-													</a>																						
-												</li>
-											    <li ng-class="{'checked':sortPredicateKey=='title'}">									    	
-											    	<a ng-click="sort('title');">
-											    		<@orcid.msg 'manual_orcid_record_contents.sort_title'/>
-											    		<span ng-class="{'glyphicon glyphicon-ok':sortPredicateKey=='title'}" ></span>
-											    	</a>									    	
-											    </li>
-												<li ng-class="{'checked':sortPredicateKey=='type'}">											
-													<a ng-click="sort('type');">
-														<@orcid.msg 'manual_orcid_record_contents.sort_type'/>
-														<span ng-class="{'glyphicon glyphicon-ok':sortPredicateKey=='type'}"></span>
-													</a>																						
-												</li>
-										    </ul>											
-										</li>
-									</ul>									
-								</div>
+								<#include "includes/workspace/workspace_act_sort_menu.ftl"/>
 		                		<ul class="workspace-bar-menu">		                			
 			        				<!-- Link Manually -->
 			        				<li>
