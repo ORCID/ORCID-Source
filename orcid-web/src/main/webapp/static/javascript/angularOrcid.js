@@ -63,9 +63,11 @@ GroupedActivities.AFFILIATION = 'affiliation';
  */
 GroupedActivities.group = function(activity, type, groupsArray) {
 	var matches = new Array();
-	for (var idx in groupsArray)
-	    if (groupsArray[idx].keyMatch(activity))
-			matches.push(groupsArray[idx]);
+	// there are no possible keys for affiliations 
+	if (type != GroupedActivities.AFFILIATION);
+	   for (var idx in groupsArray)
+	       if (groupsArray[idx].keyMatch(activity))
+			   matches.push(groupsArray[idx]);
 	if (matches.length == 0) {
 		var newGroup = new GroupedActivities(type);
 		newGroup.add(activity);
@@ -104,6 +106,7 @@ GroupedActivities.prototype.makeDefault = function(putCode) {
 	this.dateSortString = this.activities[putCode].dateSortString;	
     if (this.type == GroupedActivities.ABBR_WORK) this.title = this.activities[putCode].workTitle.title.value;
     else if (this.type == GroupedActivities.FUNDING) this.title = this.activities[putCode].fundingTitle.title.value;
+    else if (this.type == GroupedActivities.AFFILIATION) this.title = this.activities[putCode].affiliationName.value;
 	
 };
 
@@ -139,10 +142,13 @@ GroupedActivities.prototype.key = function(activityIdentifiers) {
 	if (this.type == GroupedActivities.ABBR_WORK) {
 		idPath = 'workExternalIdentifierId';
 		idTypePath = 'workExternalIdentifierType';
-	}
-	if (this.type == GroupedActivities.FUNDING) {
+	} else if (this.type == GroupedActivities.FUNDING) {
 		idPath = 'value';
 		idTypePath = 'type';
+	} else if (this.type == GroupedActivities.AFFILIATION) {
+		// we don't have external identifiers for affiliations yet
+		idPath = null;
+		idTypePath = null;
 	}
 	var key = activityIdentifiers[idTypePath] ? activityIdentifiers[idTypePath].value : ''; 
 	key += activityIdentifiers[idPath] != null ? activityIdentifiers[idPath].value : ''; 
@@ -310,6 +316,7 @@ orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
 	    				dataType: 'json',
 	    				success: function(data) {
 	    						for (i in data) {
+	    							GroupedActivities.group(data[i],GroupedActivities.affiliation,serv.affiliations);
 	    							if (data[i].affiliationType != null && data[i].affiliationType.value != null
 	    									&& data[i].affiliationType.value == 'education')
 	    								serv.educations.push(data[i]);
