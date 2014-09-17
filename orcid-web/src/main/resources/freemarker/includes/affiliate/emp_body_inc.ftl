@@ -17,7 +17,7 @@
 
 -->
 <ul ng-hide="!affiliationsSrvc.employments.length" class="workspace-affiliations workspace-body-list bottom-margin-medium" ng-cloak>
-	<li class="bottom-margin-small workspace-border-box card" ng-repeat="affiliation in affiliationsSrvc.employments | orderBy:['-dateSortString', 'affiliationName']"> 
+	<li class="bottom-margin-small workspace-border-box card" ng-repeat="group in affiliationsSrvc.employments | orderBy:sortPredicate:sortReverse"> 
 		<#if request.requestURI?ends_with("my-orcid2")>
 		    <#include "aff_row_inc_v2.ftl" />
 		<#elseif request.requestURI?ends_with("my-orcid3")>
