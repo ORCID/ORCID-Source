@@ -4,7 +4,7 @@
  * ORCID (R) Open Source
  * http://orcid.org
  *
- * Copyright (c) 2012-2013 ORCID, Inc.
+ * Copyright (c) 2012-2014 ORCID, Inc.
  * Licensed under an MIT-Style License (MIT)
  * http://orcid.org/open-source-license
  *
@@ -87,7 +87,17 @@ public interface OrcidClientGroupManager {
      * @return the updated OrcidClient
      * */
     OrcidClient updateClientProfile(String groupOrcid, OrcidClient client);
-
+    
+    /**
+     * Updates a client profile, updates can be adding or removing redirect uris
+     * or updating the client fields
+     * 
+     * @param client
+     *            The updated client
+     * @return the updated OrcidClient
+     * */
+    OrcidClient updateClientProfile(OrcidClient client);    
+    
     /**
      * Creates a new client and set the group orcid as the owner of that client
      * 
@@ -114,5 +124,14 @@ public interface OrcidClientGroupManager {
      * @return the group updated with his orcid id.
      * */
     OrcidClientGroup createGroup(OrcidClientGroup orcidClientGroup);
+    
+    /**
+     * Updates an existing group profile. 
+     * If the group doesnt exists it will throw a OrcidClientGroupManagementException
+     * 
+     * @param orcidClientGroup
+     *          The group to be updated
+     * */
+    void updateGroup(OrcidClientGroup orcidClientGroup);
 
 }

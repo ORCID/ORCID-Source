@@ -4,7 +4,7 @@
  * ORCID (R) Open Source
  * http://orcid.org
  *
- * Copyright (c) 2012-2013 ORCID, Inc.
+ * Copyright (c) 2012-2014 ORCID, Inc.
  * Licensed under an MIT-Style License (MIT)
  * http://orcid.org/open-source-license
  *
@@ -16,6 +16,8 @@
  */
 package org.orcid.persistence.jpa.entities;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
@@ -25,7 +27,12 @@ import org.orcid.jaxb.model.message.Month;
 import org.orcid.jaxb.model.message.Year;
 
 @Embeddable
-public class FuzzyDateEntity implements Comparable<FuzzyDateEntity> {
+public class FuzzyDateEntity implements Comparable<FuzzyDateEntity>, Serializable {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
     private Integer year;
 

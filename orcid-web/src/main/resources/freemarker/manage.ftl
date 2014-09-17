@@ -5,7 +5,7 @@
     ORCID (R) Open Source
     http://orcid.org
 
-    Copyright (c) 2012-2013 ORCID, Inc.
+    Copyright (c) 2012-2014 ORCID, Inc.
     Licensed under an MIT-Style License (MIT)
     http://orcid.org/open-source-license
 
@@ -16,7 +16,6 @@
     =============================================================================
 
 -->
-
 <@protected classes=['manage'] nav="settings">
 <#if twitter?? && twitter>
      <div class="alert alert-success">
@@ -304,10 +303,16 @@
 						<div class="editTablePadCell35">
 							<p>${springMacroRequestContext.getMessage("deactivate_orcid.you_may")}</p>
 							<p>${springMacroRequestContext.getMessage("deactivate_orcid.once")}</p>
-							<a
-								href="http://support.orcid.org/knowledgebase/articles/148970-closing-an-orcid-account"
-								target="_blank">${springMacroRequestContext.getMessage("deactivate_orcid.close_an")}</a><br />
-							<br /> <strong>${springMacroRequestContext.getMessage("deactivate_orcid.listTitle")}</strong>
+							<p>
+								<a
+									href="http://support.orcid.org/knowledgebase/articles/148970-closing-an-orcid-account"
+									target="_blank">${springMacroRequestContext.getMessage("deactivate_orcid.close_an")}
+								</a>
+							</p>
+							<p>
+								${springMacroRequestContext.getMessage("deactivate_orcid.duplicate_orcid.a")} <a href='mailto:${springMacroRequestContext.getMessage("deactivate_orcid.duplicate_orcid.support_email")}'>${springMacroRequestContext.getMessage("deactivate_orcid.duplicate_orcid.support_email")}</a> ${springMacroRequestContext.getMessage("deactivate_orcid.duplicate_orcid.b")} 								
+							</p>								
+							<strong>${springMacroRequestContext.getMessage("deactivate_orcid.listTitle")}</strong>
 							<ol>
 								<li>${springMacroRequestContext.getMessage("deactivate_orcid.b1")}</li>
 								<li>${springMacroRequestContext.getMessage("deactivate_orcid.b2")}</li>

@@ -4,7 +4,7 @@
  * ORCID (R) Open Source
  * http://orcid.org
  *
- * Copyright (c) 2012-2013 ORCID, Inc.
+ * Copyright (c) 2012-2014 ORCID, Inc.
  * Licensed under an MIT-Style License (MIT)
  * http://orcid.org/open-source-license
  *
@@ -49,8 +49,18 @@ public interface ProfileFundingManager {
      * 
      * @return true if the relationship was updated
      * */
-    boolean updateProfileFunding(String clientOrcid, String profileFundingId, Visibility visibility);
+    boolean updateProfileFundingVisibility(String clientOrcid, String profileFundingId, Visibility visibility);
 
+    /**
+     * Updates an existing profile funding relationship between an organization and a
+     * profile.
+     * 
+     * @param updatedProfileFundingEntity
+     *            The object to be persisted
+     * @return the updated profileFundingEntity
+     * */
+    ProfileFundingEntity updateProfileFunding(ProfileFundingEntity updatedProfileFundingEntity);
+    
     /**
      * Creates a new profile funding relationship between an organization and a
      * profile.
@@ -79,5 +89,17 @@ public interface ProfileFundingManager {
      * @return a list of all org defined funding subtypes that matches the given pattern
      * */
     List<String> getIndexedFundingSubTypes(String subtype, int limit);
+    
+    /**
+     * Get the funding associated with the given profileFunding id
+     * 
+     * @param profileFundingId
+     *            The id of the ProfileFundingEntity object
+     * 
+     * @return the ProfileFundingEntity object
+     * */
+    ProfileFundingEntity getProfileFundingEntity(String profileFundingId);
+    
+    public boolean updateToMaxDisplay(String orcid, String workId);
     
 }

@@ -4,7 +4,7 @@
  * ORCID (R) Open Source
  * http://orcid.org
  *
- * Copyright (c) 2012-2013 ORCID, Inc.
+ * Copyright (c) 2012-2014 ORCID, Inc.
  * Licensed under an MIT-Style License (MIT)
  * http://orcid.org/open-source-license
  *
@@ -17,6 +17,7 @@
 package org.orcid.frontend.web.controllers;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -44,8 +45,10 @@ import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.frontend.web.util.BaseControllerTest;
+import org.orcid.pojo.ajaxForm.TranslatedTitle;
 import org.orcid.pojo.ajaxForm.FundingForm;
 import org.orcid.pojo.ajaxForm.FundingTitleForm;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -385,7 +388,7 @@ public class FundingsControllerTest extends BaseControllerTest {
         funding.setFundingName(Text.valueOf("OrgName"));
         
         try {
-            FundingForm result = fundingController.postFunding(null, funding);
+            FundingForm result = fundingController.postFunding(funding);
             assertEquals(funding.getFundingTitle().getTitle(), result.getFundingTitle().getTitle());
             assertEquals(funding.getFundingType(), result.getFundingType());
             assertEquals(funding.getCountry(), result.getCountry());
@@ -417,7 +420,7 @@ public class FundingsControllerTest extends BaseControllerTest {
         funding.setCurrencyCode(Text.valueOf("USD"));
         funding.setFundingName(Text.valueOf("OrgName"));
         try {
-            FundingForm result = fundingController.postFunding(null, funding);
+            FundingForm result = fundingController.postFunding(funding);
             assertEquals(funding.getFundingTitle().getTitle(), result.getFundingTitle().getTitle());
             assertEquals(funding.getFundingType(), result.getFundingType());
             assertEquals(funding.getCountry(), result.getCountry());
@@ -450,7 +453,7 @@ public class FundingsControllerTest extends BaseControllerTest {
         funding.setAmount(Text.valueOf("1000"));
         funding.setFundingName(Text.valueOf("OrgName"));
         try {
-            FundingForm result = fundingController.postFunding(null, funding);
+            FundingForm result = fundingController.postFunding(funding);
             assertNotNull(result);
             assertNotNull(result.getErrors());
             assertEquals(1, result.getErrors().size());
@@ -459,5 +462,89 @@ public class FundingsControllerTest extends BaseControllerTest {
             fail();
         }
         
+    }
+        
+    @Test
+    public void getFunding() {
+        HttpSession session = mock(HttpSession.class);
+        when(servletRequest.getSession()).thenReturn(session);
+        when(localeManager.getLocale()).thenReturn(new Locale("us","EN"));
+        
+        FundingForm funding = fundingController.getFundingJson("1");
+        assertNotNull(funding);
+        assertNotNull(funding.getFundingTitle());
+        assertFalse(PojoUtil.isEmpty(funding.getFundingTitle().getTitle()));
+        assertEquals("Grant # 1", funding.getFundingTitle().getTitle().getValue());
+        assertFalse(PojoUtil.isEmpty(funding.getFundingType()));
+        assertEquals("salary-award", funding.getFundingType().getValue());
+        assertFalse(PojoUtil.isEmpty(funding.getAmount()));
+        assertEquals("2,500", funding.getAmount().getValue());
+        assertFalse(PojoUtil.isEmpty(funding.getCurrencyCode()));
+        assertEquals("USD", funding.getCurrencyCode().getValue());        
+    }
+    
+    @Test
+    @Rollback(true)
+    public void testEditFunding() {
+        HttpSession session = mock(HttpSession.class);
+        when(servletRequest.getSession()).thenReturn(session);
+        when(localeManager.getLocale()).thenReturn(new Locale("us","EN"));
+        
+        FundingForm funding = fundingController.getFundingJson("1");
+        funding.getFundingTitle().getTitle().setValue("Grant # 1 - updated");
+        TranslatedTitle translatedTitle = new TranslatedTitle();
+        translatedTitle.setContent("Grant # 1 - translated title");
+        translatedTitle.setLanguageCode("en");
+        funding.getFundingTitle().setTranslatedTitle(translatedTitle);        
+        funding.getAmount().setValue("3500");
+        funding.getCurrencyCode().setValue("CRC");
+        
+        try {
+            fundingController.postFunding(funding);
+            //Fetch the funding again
+            FundingForm updated = fundingController.getFundingJson("1");
+            assertNotNull(updated);
+            assertNotNull(updated.getFundingTitle());
+            assertFalse(PojoUtil.isEmpty(updated.getFundingTitle().getTitle()));
+            assertEquals("Grant # 1 - updated", updated.getFundingTitle().getTitle().getValue());
+            assertEquals("Grant # 1 - translated title", updated.getFundingTitle().getTranslatedTitle().getContent());
+            assertEquals("en", updated.getFundingTitle().getTranslatedTitle().getLanguageCode());
+            assertFalse(PojoUtil.isEmpty(updated.getFundingType()));
+            assertEquals("salary-award", updated.getFundingType().getValue());
+            assertFalse(PojoUtil.isEmpty(updated.getAmount()));
+            assertEquals("3,500", updated.getAmount().getValue());
+            assertFalse(PojoUtil.isEmpty(updated.getCurrencyCode()));
+            assertEquals("CRC", updated.getCurrencyCode().getValue()); 
+        } catch (Exception e) {
+            fail();
+        }
+    }
+    
+    @Test
+    @Rollback(true)
+    public void testEditOrgOnExistingFunding() {
+        HttpSession session = mock(HttpSession.class);
+        when(servletRequest.getSession()).thenReturn(session);
+        when(localeManager.getLocale()).thenReturn(new Locale("us","EN"));
+        
+        FundingForm funding = fundingController.getFundingJson("1");
+        //Check old org
+        assertEquals("London", funding.getCity().getValue());
+        assertEquals("GB", funding.getCountry().getValue());
+        //Update org
+        funding.getCity().setValue("San Jose");
+        funding.getCountry().setValue("CR");
+        
+        try {
+            fundingController.postFunding(funding);
+            //Fetch the funding again
+            FundingForm updated = fundingController.getFundingJson("1");
+            assertNotNull(updated);
+            //Check new org
+            assertEquals("San Jose", funding.getCity().getValue());
+            assertEquals("CR", funding.getCountry().getValue()); 
+        } catch (Exception e) {
+            fail();
+        }
     }
 }

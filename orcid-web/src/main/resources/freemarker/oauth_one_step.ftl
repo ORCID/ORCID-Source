@@ -5,7 +5,7 @@
     ORCID (R) Open Source
     http://orcid.org
 
-    Copyright (c) 2012-2013 ORCID, Inc.
+    Copyright (c) 2012-2014 ORCID, Inc.
     Licensed under an MIT-Style License (MIT)
     http://orcid.org/open-source-license
 
@@ -17,7 +17,7 @@
 
 -->
 	<#include "/common/browser-checks.ftl" />
-	<div class="col-md-12 col-sm-12 oauth-margin-top-bottom-box" ng-controller="OauthAuthorizationController">
+	<div class="col-md-12 col-sm-12 oauth-margin-top-bottom-box" ng-controller="OauthAuthorizationController" ng-cloak>
 		<!-- Freemarker and GA variables -->
 		<#assign user_id = "">			
 		<#if userId??>
@@ -51,7 +51,7 @@
 		</div>
 		 
 		<!-- LOGIN FORM -->			
-		<div id="login" class="oauth-login-form" ng-show="!showRegisterForm" ng-init="loadAndInitLoginForm('${scopesString}','${redirect_uri}','${client_id}','${response_type}', '${user_id}')">
+		<div id="login" class="oauth-login-form" ng-show="!showRegisterForm" ng-init="loadAndInitLoginForm('${scopesString}','${redirect_uri}','${client_id}','${response_type}', '${user_id}')" ng-cloak>
 			 <div class="row">
 				 <div class="control-group col-md-12 col-sm-12 col-xs-12"> 			    	
 					<p class="pull-right">Don't have an ORCID iD?&nbsp;<a class="reg" ng-click="switchForm()" id="in-signin-switch-form">Register</a>.</p>			    	
@@ -108,7 +108,7 @@
        	</div>         	        	
        	
        	<!-- REGISTER FORM -->
-       	<div id="register" class="oauth-registration" ng-show="showRegisterForm" ng-init="loadAndInitRegistrationForm('${scopesString}','${redirect_uri}','${client_id}','${response_type}')">
+       	<div id="register" class="oauth-registration" ng-show="showRegisterForm" ng-init="loadAndInitRegistrationForm('${scopesString}','${redirect_uri}','${client_id}','${response_type}')" ng-cloak>
        		<div class="control-group col-md-12 col-sm-12 col-xs-12"> 			    	
 				<p class="pull-right"><@orcid.msg 'orcid.frontend.oauth.alread_have_account'/>&nbsp;<a class="reg" ng-click="switchForm()" id="in-register-switch-form"><@orcid.msg 'orcid.frontend.oauth.alread_have_account.link.text'/></a>.</p>			    	
 	    	</div>

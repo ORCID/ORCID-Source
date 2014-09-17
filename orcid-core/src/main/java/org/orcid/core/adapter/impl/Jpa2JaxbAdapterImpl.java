@@ -4,7 +4,7 @@
  * ORCID (R) Open Source
  * http://orcid.org
  *
- * Copyright (c) 2012-2013 ORCID, Inc.
+ * Copyright (c) 2012-2014 ORCID, Inc.
  * Licensed under an MIT-Style License (MIT)
  * http://orcid.org/open-source-license
  *
@@ -1089,11 +1089,13 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         preferences.setDeveloperToolsEnabled(new DeveloperToolsEnabled(profileEntity.getEnableDeveloperTools()));
 
         preferences.setNotificationsEnabled(profileEntity.getEnableNotifications());
-
+        
         if (profileEntity.getReferredBy() != null) {
             orcidInternal.setReferredBy(new ReferredBy(getOrcidIdBase(profileEntity.getReferredBy())));
         }
 
+        orcidInternal.setSalesforceId(profileEntity.getSalesforeId() == null? null : new SalesforceId(profileEntity.getSalesforeId()));
+        
         return orcidInternal;
     }
 

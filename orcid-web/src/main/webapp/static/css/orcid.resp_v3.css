@@ -4,7 +4,7 @@
  * ORCID (R) Open Source
  * http://orcid.org
  *
- * Copyright (c) 2012-2013 ORCID, Inc.
+ * Copyright (c) 2012-2014 ORCID, Inc.
  * Licensed under an MIT-Style License (MIT)
  * http://orcid.org/open-source-license
  *
@@ -14,7 +14,6 @@
  *
  * =============================================================================
  */
- 
 /*Custom Style */
 article,aside,details,figcaption,figure,footer,header,hgroup,nav,section
 {
@@ -3820,7 +3819,7 @@ p.orcid-id-container{
 }
 
 .manage-button span{	
-	padding: 0 5px 0 0;
+	padding: 4px 5px 0 0;
 	font-size: 12px;
 }
 
@@ -3837,7 +3836,7 @@ ul.personal-inf-display li:first-child a{
 
 .sort-menu-container{
 	display: block;
-	position: relative;			
+	float: right;			
 }
 
 ul.workspace-bar-menu{	
@@ -3852,62 +3851,6 @@ ul.workspace-bar-menu li{
 	padding: 0;
 }
 
-a.toggle-menu{
-	-webkit-touch-callout: none;
-	-webkit-user-select: none;
-	-khtml-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;	
-}
-
-ul.sort-menu-options{
-	position: absolute;
-	right: 0;
-	top: 31px;
-	background: #a6ce39;
-	margin: 0; 
-	padding: 0;
-	width: auto;	 
-	color: #FFF;
-	z-index: 500;
-	display: none;
-}
-
-ul.sort-menu-options li{
-	border-bottom: 1px solid #FFF;
-	height: 31px;
-	background: #C9CACB;
-	padding-right: 5%;
-	min-width: 100px;	 	
-}
-
-ul.sort-menu-options li a{	
-	padding: 7px;
-	color: #FFF;
-	background: #C9CACB;
-	font-size: 12px;
-	font-weight: bold;
-	width: 105%;
-	min-width: 60px;
-	height: 30px;
-	float: left;	 
-}
-
-ul.sort-menu-options li a span{	
-	height: 12px;
-	width: 12px;
-	float: right;	
-}
-
-ul.sort-menu-options li a:hover{	 
-	background:#a6ce39; 
-}
-
-.checked{
-	background: #a6ce39;
-	display: block;
-}
 
 .tablet-desktop-display{
 	display: block !important; 
@@ -4111,7 +4054,8 @@ ul.id-details li{
 	display: block;
 	width: 100%;
 	text-align: right;		
-	height: 20px;		
+	height: 20px;
+	margin-left: 5px;
 }
 
 .show-more-info-tab a{
@@ -4438,6 +4382,10 @@ ul.sources-edit-list li{
 	z-index: 100;
 }
 
+.workspace-profile span > span{
+	display: block;
+}
+
 .profile-header {
 	display: block;
 	width: 100%;
@@ -4447,6 +4395,117 @@ ul.sources-edit-list li{
 
 .workspace-accordion{
 	padding: 0 0 0 10px;	
+}
+
+/* Sort Dropdown Menu */
+
+a.toggle-menu{
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;	
+}
+
+ul.sort-menu-options{
+	position: absolute;
+	right: 0;
+	top: 31px;	
+	margin: 0; 
+	padding: 0;
+	width: auto;	 
+	color: #FFF;
+	z-index: 500;
+	display: none;
+}
+
+ul.sort-menu-options li{
+	border-top: 1px solid #FFF;
+	height: 31px;
+	background: #C9CACB;
+	padding-right: 5%;
+	min-width: 100px;	 	
+}
+
+ul.sort-menu-options li a{	
+	padding: 4px 10px;
+	color: #FFF;
+	background: #C9CACB;
+	font-size: 12px;
+	font-weight: bold;
+	width: 100%;
+	min-width: 60px;
+	height: 30px;
+	float: left;	 
+}
+
+ul.sort-menu-options li a span{	
+	height: 12px;
+	width: 12px;
+	float: right;
+	margin-left: 6px;
+}
+
+ul.sort-menu-options li a:hover{	 
+	background:#a6ce39; 
+}
+
+.checked{
+	background: #a6ce39;
+	display: block;
+}
+
+ul.toggle-menu{  
+  display: inline;    
+  list-style: none;
+  margin: 0;
+  padding: 0;  
+}
+ul.toggle-menu li {  
+  display: inline-block;
+  cursor: pointer;
+  padding: 1px 10px 2px;
+  border-left: 1px solid #FFF;
+}
+ul.toggle-menu li:hover {
+  color: #FFF;
+  background: #A6CE39;
+}
+
+ul.toggle-menu li ul {
+  padding: 0;
+  position: absolute;
+  top: 30px;  
+  right: 15px;
+  min-width: 75px;
+  width: auto;  
+  display: none;
+  opacity: 0;
+  visibility: hidden;    
+}
+
+#workspace-publications ul.toggle-menu li ul{
+	right: 14px;
+}
+
+ul.toggle-menu li ul li {
+  display: block;
+  padding: 0;
+  width: 100%;  
+}
+
+ul.toggle-menu li:hover ul {
+  display: block;
+  opacity: 1;
+  visibility: visible;
+}
+
+.work-tab{
+	margin-left: 3px;
+}
+.more-info .col-md-6{ /* Row height fix */
+	min-height: 70px;
 }
 
 /* Media Queries */
@@ -4911,7 +4970,7 @@ ul.sources-edit-list li{
 
     .workspace-toolbar{		
 	    height: 50px;
-	    margin-top: 15px;
+	    margin: 15px 0 0 5px;
 	    width: 100%;
 	    padding-left: 10px;
 	    float: left;	    
@@ -4919,6 +4978,11 @@ ul.sources-edit-list li{
 	
 	.workspace-header{
 		border-bottom: 0 none;
+	}
+	
+	.workspace-accordion,
+	#workspace-publications{
+		padding: 0;
 	}
 	
 	
@@ -5388,11 +5452,7 @@ ul.sources-edit-list li{
 	
 	ul.sort-menu-options li{
 		padding-right: 5%;
-	}
-	
-	ul.sort-menu-options li a{
-		width: 105%;
-	}
+	}	
 	
 	.workspace-accordion-header a.action-option{
 		height: 60px;
@@ -5495,11 +5555,6 @@ ul.sources-edit-list li{
 		float: left;		 
 	}
 	
-	#workspace-education .content,
-	#workspace-fundings .content{
-		margin: 0px -10px;
-	}
-	
 	.public-profile .oid{
 		width: 100%;
 	}
@@ -5507,8 +5562,31 @@ ul.sources-edit-list li{
 	
 	.workspace-private-toolbar .glyphicon{
 		line-height: 15px;
+	}	
+	
+	ul.sort-menu-options li a,
+	ul.toggle-menu li ul,
+	ul.toggle-menu li,
+	ul.toggle-menu li ul li{
+		width: 100%;
 	}
-		
+	
+	ul.toggle-menu{
+		border-bottom: 1px solid #FFF;
+	}
+	
+	.sort-menu-container{
+		width: 100%;
+		position: relative;		
+	}
+	
+	ul.toggle-menu li ul{
+		right: 0;
+	}
+	
+	#workspace-publications ul.toggle-menu li ul{
+		right: 1px;
+	}
 
 }
 
@@ -5677,6 +5755,12 @@ ul.sources-edit-list li{
 	
 	.public-profile .oid{
 		width: 100%;
+	}
+	
+	.workspace-profile,
+	.workspace-accordion,
+	#workspace-publications{
+		padding: 0;
 	}	
 	
 }

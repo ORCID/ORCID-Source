@@ -4,7 +4,7 @@
  * ORCID (R) Open Source
  * http://orcid.org
  *
- * Copyright (c) 2012-2013 ORCID, Inc.
+ * Copyright (c) 2012-2014 ORCID, Inc.
  * Licensed under an MIT-Style License (MIT)
  * http://orcid.org/open-source-license
  *
@@ -406,19 +406,6 @@
     	});
     };
     
-    var toggleMenu = function(){			
-		$(".toggle-menu").live("click", function(event){			
-			event.preventDefault();			
-			var status = $(this).siblings().css('display');
-			if(status == 'none' ){
-				$(this).siblings().slideDown();
-			}else{
-				$(this).siblings().slideUp();							
-			}
-		});
-	};
-	
-    
     /*============================================================
         Page initialisation
     ============================================================*/
@@ -430,8 +417,7 @@
         menuHack();        
         menuHandler();
         developerToolsTabs();
-        selectableInputs();
-        toggleMenu();
+        selectableInputs();    
     };
 
     

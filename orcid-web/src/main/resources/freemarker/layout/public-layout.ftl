@@ -5,7 +5,7 @@
     ORCID (R) Open Source
     http://orcid.org
 
-    Copyright (c) 2012-2013 ORCID, Inc.
+    Copyright (c) 2012-2014 ORCID, Inc.
     Licensed under an MIT-Style License (MIT)
     http://orcid.org/open-source-license
 
@@ -116,6 +116,7 @@
 									</@security.authorize>
 								</#if>
 								<@security.authorize ifAnyGranted="ROLE_ADMIN">
+									<li><a ${(nav=="members")?string('class="active" ', '')}href="<@spring.url "/manage-members" />"><@orcid.msg 'admin.members.workspace_link' /></a></li>
 									<li><a ${(nav=="admin")?string('class="active" ', '')}href="<@spring.url "/admin-actions" />"><@orcid.msg 'admin.workspace_link' /></a></li>
 								</@security.authorize>
 								<@security.authorize ifAnyGranted="ROLE_PREMIUM_CREATOR, ROLE_CREATOR">

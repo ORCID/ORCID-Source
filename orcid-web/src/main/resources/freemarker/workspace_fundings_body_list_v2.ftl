@@ -5,7 +5,7 @@
     ORCID (R) Open Source
     http://orcid.org
 
-    Copyright (c) 2012-2013 ORCID, Inc.
+    Copyright (c) 2012-2014 ORCID, Inc.
     Licensed under an MIT-Style License (MIT)
     http://orcid.org/open-source-license
 
@@ -16,7 +16,6 @@
     =============================================================================
 
 -->
-
 <#include "includes/funding/del_funding_inc.ftl"/>
 
 <#include "includes/funding/add_funding_inc.ftl"/>
@@ -29,7 +28,7 @@
 					<a name='workspace-fundings' />
 				    <a href="" ng-click="workspaceSrvc.toggleFunding($event)" class="toggle-text">
 				  		<i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayFunding==false}"></i>
-				  		<@orcid.msg 'workspace.Funding'/> (<span ng-bind="fundingSrvc.fundings.length"></span>)
+				  		<@orcid.msg 'workspace.Funding'/> (<span ng-bind="fundingSrvc.groups.length"></span>)
 				   	</a>
 				</div>
 				<div class="col-md-9 col-sm-9 col-xs-12 action-button-bar" ng-show="workspaceSrvc.displayFunding">

@@ -4,7 +4,7 @@
  * ORCID (R) Open Source
  * http://orcid.org
  *
- * Copyright (c) 2012-2013 ORCID, Inc.
+ * Copyright (c) 2012-2014 ORCID, Inc.
  * Licensed under an MIT-Style License (MIT)
  * http://orcid.org/open-source-license
  *
@@ -46,7 +46,7 @@ import org.orcid.persistence.jpa.entities.keys.ProfileWorkEntityPk;
 @Entity
 @Table(name = "profile_work")
 @IdClass(ProfileWorkEntityPk.class)
-public class ProfileWorkEntity extends BaseEntity<ProfileWorkEntityPk> implements Comparable<ProfileWorkEntity>, ProfileAware {
+public class ProfileWorkEntity extends BaseEntity<ProfileWorkEntityPk> implements Comparable<ProfileWorkEntity>, ProfileAware, DisplayIndexInterface {
 
     private static final long serialVersionUID = -3187757614938904392L;
 
@@ -156,9 +156,12 @@ public class ProfileWorkEntity extends BaseEntity<ProfileWorkEntityPk> implement
     /*
      * Dictates the display order for works (and versions of works)
      * works with higher numbers should be displayed first. 
+     * 
+     * Currently only only updatable via ProfileWorkDaoImpl.updateToMaxDisplay
+     *
      */
 
-    @Column(name = "display_index")
+    @Column(name = "display_index", updatable=false, insertable=false)
     public Long getDisplayIndex() {
         return displayIndex;
     }

@@ -4,7 +4,7 @@
  * ORCID (R) Open Source
  * http://orcid.org
  *
- * Copyright (c) 2012-2013 ORCID, Inc.
+ * Copyright (c) 2012-2014 ORCID, Inc.
  * Licensed under an MIT-Style License (MIT)
  * http://orcid.org/open-source-license
  *
@@ -28,6 +28,7 @@ import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Preferences;
+import org.orcid.jaxb.model.message.SalesforceId;
 import org.orcid.jaxb.model.message.WorkVisibilityDefault;
 
 /**
@@ -82,6 +83,9 @@ public class OrcidMessageVersionConverterImplV1_2_rc4ToV1_2_rc5 implements Orcid
                     for (Activity act : orcidProfile.getOrcidActivities().getOrcidWorks().getOrcidWork())
                         downGradeActivity(act);
             }
+            if(orcidProfile.getOrcidInternal() != null) {
+                orcidProfile.getOrcidInternal().setSalesforceId(null);
+            }
         }
     }
 
@@ -91,13 +95,16 @@ public class OrcidMessageVersionConverterImplV1_2_rc4ToV1_2_rc5 implements Orcid
     }
     
     private void upgradeProfile(OrcidProfile orcidProfile) {
-        if (orcidProfile != null)
+        if (orcidProfile != null) {
             if (orcidProfile.getOrcidBio() != null)
                 if (orcidProfile.getOrcidBio().getExternalIdentifiers() != null)
                     for (ExternalIdentifier externalIdentifier: orcidProfile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier()) { 
                         externalIdentifier.setExternalIdSource(externalIdentifier.getExternalIdOrcid());
                         externalIdentifier.setExternalIdOrcid(null);
                     }
+            if(orcidProfile.getOrcidInternal() != null) 
+                orcidProfile.getOrcidInternal().setSalesforceId(new SalesforceId());
+        }
     }
 
 

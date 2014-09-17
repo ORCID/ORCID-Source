@@ -5,7 +5,7 @@
     ORCID (R) Open Source
     http://orcid.org
 
-    Copyright (c) 2012-2013 ORCID, Inc.
+    Copyright (c) 2012-2014 ORCID, Inc.
     Licensed under an MIT-Style License (MIT)
     http://orcid.org/open-source-license
 
@@ -16,7 +16,6 @@
     =============================================================================
 
 -->
-
 <#include "includes/affiliate/del_affiliate_inc.ftl"/>
 
 <#include "includes/affiliate/add_affiliate_inc.ftl"/>
@@ -31,23 +30,36 @@
 				  		<i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayEducation==false}"></i>
 				  		<@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education'/> (<span ng-bind="affiliationsSrvc.educations.length"></span>)
 				  	</a>
-				  	<!-- 
-				   	<a href="" ng-click="workspaceSrvc.toggleEducation($event)" class="toggle-text"><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education'/></a>
-				   	 --> 
 			    </div>
 			    <div class="col-md-9 col-sm-9 col-xs-12 action-button-bar" ng-show="workspaceSrvc.displayEducation">
 			    	<!-- Sort -->
        				<div class="sort-menu-container">			       					 
-	       				<a class="action-option manage-button toggle-menu" ng-click="">
-							<span class="glyphicon glyphicon-sort"></span>							
-							<@orcid.msg 'manual_orcid_record_contents.sort'/>
-						</a>
-						<ul class="sort-menu-options">
-							<li><a href="" ng-click=""><@orcid.msg 'manual_orcid_record_contents.sort_title'/> <span class=""></span></a></li>
-							<li><a href="" ng-click="" class="checked"><@orcid.msg 'manual_orcid_record_contents.sort_date'/> <span class="glyphicon glyphicon-ok pull-right"></span></a></li>
-							<li><a href="" ng-click=""><@orcid.msg 'manual_orcid_record_contents.sort_type'/> <span class=""></span></a></li>
-							<li><a href="" ng-click=""><@orcid.msg 'manual_orcid_record_contents.sort_source'/> <span class=""></span></a></li>
-						</ul>
+	       				<ul class="action-option manage-button toggle-menu">
+	       					<li>
+								<span class="glyphicon glyphicon-sort"></span>							
+								<@orcid.msg 'manual_orcid_record_contents.sort'/>
+								<ul class="sort-menu-options">
+									<li class="checked">											
+										<a ng-click="">
+											<@orcid.msg 'manual_orcid_record_contents.sort_date'/>
+											<span class="glyphicon glyphicon-ok"></span>
+										</a>																						
+									</li>
+								    <li class="">									    	
+								    	<a ng-click="">
+								    		<@orcid.msg 'manual_orcid_record_contents.sort_title'/>
+								    		<span class="" ></span>
+								    	</a>									    	
+								    </li>
+									<li class="">											
+										<a ng-click="">
+											<@orcid.msg 'manual_orcid_record_contents.sort_type'/>
+											<span class=""></span>
+										</a>																						
+									</li>
+							    </ul>											
+							</li>
+						</ul>									
 					</div>					
 					<ul class="workspace-bar-menu">                			
 	        				<!-- Link Manually -->
@@ -78,18 +90,34 @@
 				</div>
 				<div class="col-md-9 col-sm-9 col-xs-12 action-button-bar" ng-show="workspaceSrvc.displayEmployment">
 					<!-- Sort -->
-       				<div class="sort-menu-container">			       					 
-	       				<a class="action-option manage-button toggle-menu" ng-click="">
-							<span class="glyphicon glyphicon-sort"></span>							
-							<@orcid.msg 'manual_orcid_record_contents.sort'/>
-						</a>
-						<ul class="sort-menu-options">
-							<li><a href="" ng-click=""><@orcid.msg 'manual_orcid_record_contents.sort_title'/> <span class=""></span></a></li>
-							<li><a href="" ng-click="" class="checked"><@orcid.msg 'manual_orcid_record_contents.sort_date'/> <span class="glyphicon glyphicon-ok pull-right"></span></a></li>
-							<li><a href="" ng-click=""><@orcid.msg 'manual_orcid_record_contents.sort_type'/> <span class=""></span></a></li>
-							<li><a href="" ng-click=""><@orcid.msg 'manual_orcid_record_contents.sort_source'/> <span class=""></span></a></li>
-						</ul>
-					</div>
+					<div class="sort-menu-container">                                    
+					    <ul class="action-option manage-button toggle-menu">
+					        <li>
+					            <span class="glyphicon glyphicon-sort"></span>                          
+					            <@orcid.msg 'manual_orcid_record_contents.sort'/>
+					            <ul class="sort-menu-options">
+					                <li class="checked">                                            
+					                    <a ng-click="">
+					                        <@orcid.msg 'manual_orcid_record_contents.sort_date'/>
+					                        <span class="glyphicon glyphicon-ok"></span>
+					                    </a>                                                                                        
+					                </li>
+					                <li class="">                                           
+					                    <a ng-click="">
+					                        <@orcid.msg 'manual_orcid_record_contents.sort_title'/>
+					                        <span class="" ></span>
+					                    </a>                                            
+					                </li>
+					                <li class="">                                           
+					                    <a ng-click="">
+					                        <@orcid.msg 'manual_orcid_record_contents.sort_type'/>
+					                        <span class=""></span>
+					                    </a>                                                                                        
+					                </li>
+					            </ul>                                           
+					        </li>
+					    </ul>                                   
+					</div>  
 					<ul class="workspace-bar-menu">                			
 	        				<!-- Link Manually -->
 	        				<li>		        			

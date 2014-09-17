@@ -4,7 +4,7 @@
  * ORCID (R) Open Source
  * http://orcid.org
  *
- * Copyright (c) 2012-2013 ORCID, Inc.
+ * Copyright (c) 2012-2014 ORCID, Inc.
  * Licensed under an MIT-Style License (MIT)
  * http://orcid.org/open-source-license
  *
@@ -39,6 +39,7 @@ import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.message.Affiliation;
@@ -57,8 +58,8 @@ import org.orcid.jaxb.model.message.Delegation;
 import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.ExternalIdCommonName;
-import org.orcid.jaxb.model.message.ExternalIdSource;
 import org.orcid.jaxb.model.message.ExternalIdReference;
+import org.orcid.jaxb.model.message.ExternalIdSource;
 import org.orcid.jaxb.model.message.ExternalIdUrl;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
@@ -151,6 +152,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
     @Resource
     private OrgDisambiguatedDao orgDisambiguatedDao;
+    
+    @Resource
+    private ProfileFundingManager profileFundingManager;
 
     @Override
     public ProfileEntity toProfileEntity(OrcidProfile profile, ProfileEntity existingProfileEntity) {
@@ -847,8 +851,10 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 if (preferences.getDeveloperToolsEnabled() != null) {
                     profileEntity.setEnableDeveloperTools(preferences.getDeveloperToolsEnabled().isValue());
                 }
+            }            
+            if(orcidInternal.getSalesforceId() != null) {
+                profileEntity.setSalesforeId(orcidInternal.getSalesforceId().getContent());
             }
-
         }
     }
 
@@ -908,6 +914,20 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         return profileFundingEntity;
     }
 
+    /**
+     * Transforms a OrcidGrant object into a ProfileFundingEntity object
+     * 
+     * @param updatedFunding
+     * @param profileEntity
+     * @return ProfileFundingEntity
+     * */
+    @Override
+    public ProfileFundingEntity getUpdatedProfileFundingEntity(Funding updatedFunding) {
+        ProfileFundingEntity existingProfileFundingEntity = profileFundingManager.getProfileFundingEntity(updatedFunding.getPutCode());
+        ProfileFundingEntity profileFundingEntity = getProfileFundingEntity(updatedFunding, existingProfileFundingEntity);
+        return profileFundingEntity;
+    }
+    
     private OrgAffiliationRelationEntity getOrgAffiliationRelationEntity(Affiliation affiliation, OrgAffiliationRelationEntity exisitingOrgAffiliationEntity) {
         if (affiliation != null) {
             OrgAffiliationRelationEntity orgRelationEntity = null;
@@ -951,6 +971,10 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
      * */
     private ProfileFundingEntity getProfileFundingEntity(Funding funding, ProfileFundingEntity exisitingProfileFundingEntity) {
         if (funding != null) {
+            
+            //Get the org
+            OrgEntity orgEntity = getOrgEntity(funding);
+            
             ProfileFundingEntity profileFundingEntity = null;
             if (exisitingProfileFundingEntity == null) {
                 String putCode = funding.getPutCode();
@@ -958,11 +982,10 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                     throw new IllegalArgumentException("Invalid put-code was supplied for a funding: " + putCode);
                 }
                 profileFundingEntity = new ProfileFundingEntity();
-                profileFundingEntity.setSource(getSource(funding.getSource()));
-                profileFundingEntity.setOrg(getOrgEntity(funding));
+                profileFundingEntity.setSource(getSource(funding.getSource()));                
             } else {
                 profileFundingEntity = exisitingProfileFundingEntity;
-                profileFundingEntity.clean();
+                profileFundingEntity.clean();                                
             }
             FuzzyDate startDate = funding.getStartDate();
             FuzzyDate endDate = funding.getEndDate();
@@ -1016,7 +1039,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             if (funding.getLastModifiedDate() != null && funding.getLastModifiedDate().getValue() != null)
                 profileFundingEntity.setLastModified(funding.getLastModifiedDate().getValue().toGregorianCalendar().getTime());
       
-            
+            profileFundingEntity.setOrg(orgEntity);
             
             return profileFundingEntity;
         }

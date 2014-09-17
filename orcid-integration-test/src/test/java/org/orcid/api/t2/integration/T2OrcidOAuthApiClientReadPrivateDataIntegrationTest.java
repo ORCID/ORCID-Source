@@ -4,7 +4,7 @@
  * ORCID (R) Open Source
  * http://orcid.org
  *
- * Copyright (c) 2012-2013 ORCID, Inc.
+ * Copyright (c) 2012-2014 ORCID, Inc.
  * Licensed under an MIT-Style License (MIT)
  * http://orcid.org/open-source-license
  *
@@ -18,13 +18,10 @@ package org.orcid.api.t2.integration;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.MultivaluedMap;
@@ -32,17 +29,13 @@ import javax.ws.rs.core.MultivaluedMap;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import org.orcid.api.common.WebDriverHelper;
 import org.orcid.api.t2.T2OAuthAPIService;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.jaxb.model.message.Affiliation;
@@ -72,9 +65,8 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-oauth-orcid-api-client-context.xml" })
 public class T2OrcidOAuthApiClientReadPrivateDataIntegrationTest extends DBUnitTest {
-    private static final int DEFAULT_TIMEOUT_SECONDS = 30;
 
-    private static final Pattern AUTHORIZATION_CODE_PATTERN = Pattern.compile("code=(.+)");
+    private static final String DEFAULT = "default";
 
     private static final String READ_PRIVATE_WORKS_CLIENT_ID = "9999-9999-9999-9991";
     private static final String READ_PRIVATE_FUNDING_CLIENT_ID = "9999-9999-9999-9992";
@@ -91,6 +83,8 @@ public class T2OrcidOAuthApiClientReadPrivateDataIntegrationTest extends DBUnitT
 
     private WebDriver webDriver;
 
+    private WebDriverHelper webDriverHelper;
+
     @Value("${org.orcid.web.base.url:http://localhost:8080/orcid-web}")
     private String webBaseUrl;
 
@@ -98,10 +92,10 @@ public class T2OrcidOAuthApiClientReadPrivateDataIntegrationTest extends DBUnitT
 
     @Resource
     private ClientRedirectDao clientRedirectDao;
-    
+
     @Resource
     private ClientDetailsManager clientDetailsManager;
-    
+
     @Resource
     private ClientDetailsDao clientDetailsDao;
 
@@ -115,45 +109,46 @@ public class T2OrcidOAuthApiClientReadPrivateDataIntegrationTest extends DBUnitT
     public static void initDBUnitData() throws Exception {
         initDBUnitData(DATA_FILES, null);
     }
-    
+
     @Before
     @Transactional
     public void before() {
         webDriver = new FirefoxDriver();
         redirectUri = webBaseUrl + "/oauth/playground";
+        webDriverHelper = new WebDriverHelper(webDriver, webBaseUrl, redirectUri);
 
         // Set redirect uris if needed
-        ClientRedirectUriPk clientRedirectUriPk = new ClientRedirectUriPk(READ_PRIVATE_WORKS_CLIENT_ID, redirectUri);
+        ClientRedirectUriPk clientRedirectUriPk = new ClientRedirectUriPk(READ_PRIVATE_WORKS_CLIENT_ID, redirectUri, DEFAULT);
         if (clientRedirectDao.find(clientRedirectUriPk) == null) {
             clientDetailsManager.addClientRedirectUri(READ_PRIVATE_WORKS_CLIENT_ID, redirectUri);
         }
 
-        clientRedirectUriPk = new ClientRedirectUriPk(READ_PRIVATE_WORKS_CLIENT_ID_2, redirectUri);
+        clientRedirectUriPk = new ClientRedirectUriPk(READ_PRIVATE_WORKS_CLIENT_ID_2, redirectUri, DEFAULT);
         if (clientRedirectDao.find(clientRedirectUriPk) == null) {
             clientDetailsManager.addClientRedirectUri(READ_PRIVATE_WORKS_CLIENT_ID_2, redirectUri);
         }
 
-        clientRedirectUriPk = new ClientRedirectUriPk(READ_PRIVATE_AFFILIATIONS_CLIENT_ID, redirectUri);
+        clientRedirectUriPk = new ClientRedirectUriPk(READ_PRIVATE_AFFILIATIONS_CLIENT_ID, redirectUri, DEFAULT);
         if (clientRedirectDao.find(clientRedirectUriPk) == null) {
             clientDetailsManager.addClientRedirectUri(READ_PRIVATE_AFFILIATIONS_CLIENT_ID, redirectUri);
         }
 
-        clientRedirectUriPk = new ClientRedirectUriPk(READ_PRIVATE_AFFILIATIONS_CLIENT_ID_2, redirectUri);
+        clientRedirectUriPk = new ClientRedirectUriPk(READ_PRIVATE_AFFILIATIONS_CLIENT_ID_2, redirectUri, DEFAULT);
         if (clientRedirectDao.find(clientRedirectUriPk) == null) {
             clientDetailsManager.addClientRedirectUri(READ_PRIVATE_AFFILIATIONS_CLIENT_ID_2, redirectUri);
         }
 
-        clientRedirectUriPk = new ClientRedirectUriPk(READ_PRIVATE_FUNDING_CLIENT_ID, redirectUri);
+        clientRedirectUriPk = new ClientRedirectUriPk(READ_PRIVATE_FUNDING_CLIENT_ID, redirectUri, DEFAULT);
         if (clientRedirectDao.find(clientRedirectUriPk) == null) {
             clientDetailsManager.addClientRedirectUri(READ_PRIVATE_FUNDING_CLIENT_ID, redirectUri);
         }
 
-        clientRedirectUriPk = new ClientRedirectUriPk(READ_PRIVATE_FUNDING_CLIENT_ID_2, redirectUri);
+        clientRedirectUriPk = new ClientRedirectUriPk(READ_PRIVATE_FUNDING_CLIENT_ID_2, redirectUri, DEFAULT);
         if (clientRedirectDao.find(clientRedirectUriPk) == null) {
             clientDetailsManager.addClientRedirectUri(READ_PRIVATE_FUNDING_CLIENT_ID_2, redirectUri);
         }
 
-        clientRedirectUriPk = new ClientRedirectUriPk(READ_ONLY_LIMITED_INFO_CLIENT_ID, redirectUri);
+        clientRedirectUriPk = new ClientRedirectUriPk(READ_ONLY_LIMITED_INFO_CLIENT_ID, redirectUri, DEFAULT);
         if (clientRedirectDao.find(clientRedirectUriPk) == null) {
             clientDetailsManager.addClientRedirectUri(READ_ONLY_LIMITED_INFO_CLIENT_ID, redirectUri);
         }
@@ -180,7 +175,7 @@ public class T2OrcidOAuthApiClientReadPrivateDataIntegrationTest extends DBUnitT
     @Test
     public void testGetProfileWithOnlyReadLimitedScope() throws JSONException, InterruptedException {
         String scopes = "/orcid-profile/read-limited";
-        String authorizationCode = obtainAuthorizationCode(scopes, READ_ONLY_LIMITED_INFO_CLIENT_ID);
+        String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, READ_ONLY_LIMITED_INFO_CLIENT_ID);
         String accessToken = obtainAccessToken(READ_ONLY_LIMITED_INFO_CLIENT_ID, authorizationCode, redirectUri, scopes);
 
         ClientResponse fullResponse1 = oauthT2Client.viewFullDetailsXml("9999-9999-9999-9989", accessToken, "v1.2_rc5");
@@ -244,7 +239,7 @@ public class T2OrcidOAuthApiClientReadPrivateDataIntegrationTest extends DBUnitT
     @Test
     public void testGetProfileWithOwnPrivateWorks() throws JSONException, InterruptedException {
         String scopes = "/orcid-profile/read-limited /orcid-works/update";
-        String authorizationCode = obtainAuthorizationCode(scopes, READ_PRIVATE_WORKS_CLIENT_ID);
+        String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, READ_PRIVATE_WORKS_CLIENT_ID);
         String accessToken = obtainAccessToken(READ_PRIVATE_WORKS_CLIENT_ID, authorizationCode, redirectUri, scopes);
 
         ClientResponse fullResponse1 = oauthT2Client.viewFullDetailsXml("9999-9999-9999-9989", accessToken, "v1.2_rc5");
@@ -312,7 +307,7 @@ public class T2OrcidOAuthApiClientReadPrivateDataIntegrationTest extends DBUnitT
     @Test
     public void testGetProfileWithOwnPrivateWorks2() throws JSONException, InterruptedException {
         String scopes = "/orcid-profile/read-limited /orcid-works/update";
-        String authorizationCode = obtainAuthorizationCode(scopes, READ_PRIVATE_WORKS_CLIENT_ID_2);
+        String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, READ_PRIVATE_WORKS_CLIENT_ID_2);
         String accessToken = obtainAccessToken(READ_PRIVATE_WORKS_CLIENT_ID_2, authorizationCode, redirectUri, scopes);
 
         ClientResponse fullResponse1 = oauthT2Client.viewFullDetailsXml("9999-9999-9999-9989", accessToken, "v1.2_rc5");
@@ -383,7 +378,7 @@ public class T2OrcidOAuthApiClientReadPrivateDataIntegrationTest extends DBUnitT
     @Test
     public void testGetProfileWithOwnPrivateFunding() throws JSONException, InterruptedException {
         String scopes = "/orcid-profile/read-limited /funding/update";
-        String authorizationCode = obtainAuthorizationCode(scopes, READ_PRIVATE_FUNDING_CLIENT_ID);
+        String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, READ_PRIVATE_FUNDING_CLIENT_ID);
         String accessToken = obtainAccessToken(READ_PRIVATE_FUNDING_CLIENT_ID, authorizationCode, redirectUri, scopes);
 
         ClientResponse fullResponse1 = oauthT2Client.viewFullDetailsXml("9999-9999-9999-9989", accessToken, "v1.2_rc5");
@@ -450,7 +445,7 @@ public class T2OrcidOAuthApiClientReadPrivateDataIntegrationTest extends DBUnitT
     @Test
     public void testGetProfileWithOwnPrivateFunding2() throws JSONException, InterruptedException {
         String scopes = "/orcid-profile/read-limited /funding/update";
-        String authorizationCode = obtainAuthorizationCode(scopes, READ_PRIVATE_FUNDING_CLIENT_ID_2);
+        String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, READ_PRIVATE_FUNDING_CLIENT_ID_2);
         String accessToken = obtainAccessToken(READ_PRIVATE_FUNDING_CLIENT_ID_2, authorizationCode, redirectUri, scopes);
 
         ClientResponse fullResponse1 = oauthT2Client.viewFullDetailsXml("9999-9999-9999-9989", accessToken, "v1.2_rc5");
@@ -519,7 +514,7 @@ public class T2OrcidOAuthApiClientReadPrivateDataIntegrationTest extends DBUnitT
     @Test
     public void testGetProfileWithOwnPrivateAffiliations() throws JSONException, InterruptedException {
         String scopes = "/orcid-profile/read-limited /affiliations/update";
-        String authorizationCode = obtainAuthorizationCode(scopes, READ_PRIVATE_AFFILIATIONS_CLIENT_ID);
+        String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, READ_PRIVATE_AFFILIATIONS_CLIENT_ID);
         String accessToken = obtainAccessToken(READ_PRIVATE_AFFILIATIONS_CLIENT_ID, authorizationCode, redirectUri, scopes);
 
         ClientResponse fullResponse1 = oauthT2Client.viewFullDetailsXml("9999-9999-9999-9989", accessToken, "v1.2_rc5");
@@ -586,7 +581,7 @@ public class T2OrcidOAuthApiClientReadPrivateDataIntegrationTest extends DBUnitT
     @Test
     public void testGetProfileWithOwnPrivateAffiliations2() throws JSONException, InterruptedException {
         String scopes = "/orcid-profile/read-limited /affiliations/update";
-        String authorizationCode = obtainAuthorizationCode(scopes, READ_PRIVATE_AFFILIATIONS_CLIENT_ID_2);
+        String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, READ_PRIVATE_AFFILIATIONS_CLIENT_ID_2);
         String accessToken = obtainAccessToken(READ_PRIVATE_AFFILIATIONS_CLIENT_ID_2, authorizationCode, redirectUri, scopes);
 
         ClientResponse fullResponse1 = oauthT2Client.viewFullDetailsXml("9999-9999-9999-9989", accessToken, "v1.2_rc5");
@@ -644,39 +639,6 @@ public class T2OrcidOAuthApiClientReadPrivateDataIntegrationTest extends DBUnitT
         if (!haveMyOwnPrivateAffiliation) {
             fail("This client must have his own private funding with put code 5");
         }
-    }
-
-    private String obtainAuthorizationCode(String scopes, String orcid) throws InterruptedException {
-        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, orcid, scopes, redirectUri));
-        return obtainAuthorizationCode(orcid, scopes, redirectUri);
-    }
-
-    private String obtainAuthorizationCode(String orcid, String scopes, String redirectUri) throws InterruptedException {
-        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, orcid, scopes, redirectUri));
-        webDriver.get(String.format("%s?oneStep",webDriver.getCurrentUrl()));
-        //Switch to the login form
-        WebElement switchFromLink = webDriver.findElement(By.id("in-register-switch-form"));
-        switchFromLink.click();
-        Thread.sleep(500);
-        //Fill the form
-        WebElement userId = webDriver.findElement(By.id("userId"));
-        userId.sendKeys("user_to_test@user.com");
-        WebElement password = webDriver.findElement(By.id("password"));
-        password.sendKeys("password");
-        WebElement submitButton = webDriver.findElement(By.id("authorize-button")); 
-        submitButton.click();
-        
-        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
-            public Boolean apply(WebDriver d) {
-                return d.getTitle().equals("ORCID Playground");
-            }
-        });
-        String currentUrl = webDriver.getCurrentUrl();
-        Matcher matcher = AUTHORIZATION_CODE_PATTERN.matcher(currentUrl);
-        assertTrue(matcher.find());
-        String authorizationCode = matcher.group(1);
-        assertNotNull(authorizationCode);
-        return authorizationCode;
     }
 
     private String obtainAccessToken(String clientId, String authorizationCode, String redirectUri, String scopes) throws JSONException {

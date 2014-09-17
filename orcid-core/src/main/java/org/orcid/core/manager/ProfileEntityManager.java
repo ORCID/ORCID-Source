@@ -4,7 +4,7 @@
  * ORCID (R) Open Source
  * http://orcid.org
  *
- * Copyright (c) 2012-2013 ORCID, Inc.
+ * Copyright (c) 2012-2014 ORCID, Inc.
  * Licensed under an MIT-Style License (MIT)
  * http://orcid.org/open-source-license
  *
@@ -18,6 +18,8 @@ package org.orcid.core.manager;
 
 import java.util.List;
 
+import org.orcid.jaxb.model.clientgroup.ClientType;
+import org.orcid.jaxb.model.clientgroup.GroupType;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
@@ -59,4 +61,8 @@ public interface ProfileEntityManager {
     public Iso3166Country getCountry(String orcid);
     
     public boolean isProfileClaimed(String orcid);
+    
+    ClientType getClientType(String orcid);
+    
+    GroupType getGroupType(String orcid);
 }

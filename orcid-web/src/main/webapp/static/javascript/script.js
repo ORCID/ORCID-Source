@@ -4,7 +4,7 @@
  * ORCID (R) Open Source
  * http://orcid.org
  *
- * Copyright (c) 2012-2013 ORCID, Inc.
+ * Copyright (c) 2012-2014 ORCID, Inc.
  * Licensed under an MIT-Style License (MIT)
  * http://orcid.org/open-source-license
  *
@@ -14,7 +14,6 @@
  *
  * =============================================================================
  */
-
 //IE7 hack
 if (!(window.console && console.log)) {
 	console = {
@@ -214,13 +213,16 @@ function trimAjaxFormText(pojoMember) {
 	  pojoMember.value = pojoMember.value.trim();
 }
 
-function logOffReload() {
+function logOffReload(reload_param) {
 	$.ajax({
         url: baseUrl + 'userStatus.json?logUserOut=true',
         type: 'GET',
         dataType: 'json',
         success: function(data) {
-        	window.location.reload();
+        	if(reload_param != null) {
+        		window.location = window.location.href + '#' + reload_param;
+        	}
+        	window.location.reload();        	
         }
 	}).fail(function() { 
     	// something bad is happening!
@@ -846,7 +848,7 @@ $(function (){
 	});
 });
 
-/* start bibtexParse 0.0.13 */
+/* start bibtexParse 0.0.15 */
 
 //Original work by Henrik Muehe (c) 2010
 //
@@ -1244,7 +1246,122 @@ $(function (){
      "chi": "φ",
      "psi": "χ",
      "omega": "ψ",
-      };
+     "=A": "Ā",
+     "=a": "ā",
+     "u{A}": "Ă",
+     "u{a}": "ă",
+     "k A": "Ą",
+     "k a": "ą",
+     "'C": "Ć",
+     "'c": "ć",
+     "^C": "Ĉ",
+     "^c": "ĉ",
+     ".C": "Ċ",
+     ".c": "ċ",
+     "v{C}": "Č",
+     "v{c}": "č",
+     "v{D}": "Ď",
+     "=E": "Ē",
+     "=e": "ē",
+     "u{E}": "Ĕ",
+     "u{e}": "ĕ",
+     ".E": "Ė",
+     ".e": "ė",
+     "k E": "Ę",
+     "k e": "ę",
+     "v{E}": "Ě",
+     "v{e}": "ě",
+     "^G": "Ĝ",
+     "^g": "ĝ",
+     "u{G}": "Ğ",
+     "u{g}": "ğ",
+     ".G": "Ġ",
+     ".g": "ġ",
+     "c{G}": "Ģ",
+     "c{g}": "ģ",
+     "^H": "Ĥ",
+     "^h": "ĥ",
+     "dH": "Ħ",
+     "dh": "ħ",
+     "~I": "Ĩ",
+     "~i": "ĩ",
+     "=I": "Ī",
+     "=i": "ī",
+     "u{I}": "Ĭ",
+     "u{i}": "ĭ",
+     "k I": "Į",
+     "k i": "į",
+     ".I": "İ",
+     "^J": "Ĵ",
+     "^j": "ĵ",
+     "c{J}": "Ķ",
+     "c{j}": "ķ",
+     "'L": "Ĺ",
+     "'l": "ĺ",
+     "c{L}": "Ļ",
+     "c{l}": "ļ",
+     "v{L}": "Ľ",
+     "v{l}": "ľ",
+     "dL": "Ł",
+     "dl": "ł",
+     "'N": "Ń",
+     "'n": "ń",
+     "c{N}": "Ņ",
+     "c{n}": "ņ",
+     "v{N}": "Ň",
+     "v{n}": "ň",
+     "=O": "Ō",
+     "=o": "ō",
+     "u{O}": "Ŏ",
+     "u{o}": "ŏ",
+     "H{O}": "Ő",
+     "H{o}": "ő",
+     "OE": "Œ",
+     "oe": "œ",
+     "'R": "Ŕ",
+     "'r": "ŕ",
+     "c{R}": "Ŗ",
+     "c{r}": "ŗ",
+     "v{R}": "Ř",
+     "v{r}": "ř",
+     "'R": "Ś",
+     "'r": "ś",
+     "^S": "Ŝ",
+     "^s": "ŝ",
+     "c{S}": "Ş",
+     "c{s}": "ş",
+     "v{S}": "Š",
+     "v{s}": "š",
+     "c{T}": "Ţ",
+     "c{t}": "ţ",
+     "v{T}": "Ť",
+     "v{t}": "ť",
+     "dT": "Ŧ",
+     "dt": "ŧ",
+     "~U": "Ũ",
+     "~u": "ũ",
+     "=U": "Ū",
+     "=u": "ū",
+     "u{U}": "Ŭ",
+     "u{u}": "ŭ",
+     "r U": "Ů",
+     "r u": "ů",
+     "H{U}": "Ű",
+     "H{u}": "ű",
+     "k U": "Ų",
+     "k u": "ų",
+     "^W": "Ŵ",
+     "^w": "ŵ",
+     "^Y": "Ŷ",
+     "^y": "ŷ",
+     "\"Y": "Ÿ",
+     "'Z": "Ź",
+     "'z": "ź",
+     ".Z": "Ż",
+     ".z": "ż",
+     "v{Z}": "Ž",
+     "v{z}": "ž"
+  };
 
      String.prototype.addSlashes = function() { 
            //no need to do (str+'') anymore because 'this' can only be a string
@@ -1346,6 +1463,8 @@ $(function (){
 })(typeof exports === 'undefined' ? this['bibtexParse'] = {} : exports);
 
 /* end bibtexParse */
+
+
 
 
 

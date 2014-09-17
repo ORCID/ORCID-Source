@@ -4,7 +4,7 @@
  * ORCID (R) Open Source
  * http://orcid.org
  *
- * Copyright (c) 2012-2013 ORCID, Inc.
+ * Copyright (c) 2012-2014 ORCID, Inc.
  * Licensed under an MIT-Style License (MIT)
  * http://orcid.org/open-source-license
  *
@@ -36,11 +36,14 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
+import org.orcid.core.manager.OrcidClientGroupManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
@@ -55,11 +58,9 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.AdminChangePassword;
 import org.orcid.pojo.ProfileDeprecationRequest;
 import org.orcid.pojo.ProfileDetails;
-import org.orcid.pojo.ajaxForm.Group;
-import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.pojo.ajaxForm.Text;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -88,6 +89,27 @@ public class AdminControllerTest extends BaseControllerTest {
     
     @Resource
     private EmailDao emailDao;
+    
+    @Resource
+    OrcidClientGroupManager orcidClientGroupManager;
+    
+    @Resource
+    GroupAdministratorController groupAdministratorController;
+    
+    @BeforeClass
+    public static void beforeClass() throws Exception {
+        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml"), null);
+    }
+
+    @Before
+    public void beforeInstance() {
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication());
+    }
+
+    @AfterClass
+    public static void afterClass() throws Exception {
+        removeDBUnitData(Arrays.asList("/data/ClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/SecurityQuestionEntityData.xml"), null);
+    }
     
     @Before
     public void init() {
@@ -310,95 +332,7 @@ public class AdminControllerTest extends BaseControllerTest {
         result = adminController.confirmReactivateOrcidAccount("4444-4444-4444-4441");
         assertEquals(1, result.getErrors().size());
         assertEquals(adminController.getMessage("admin.profile_reactivation.errors.already_active", new ArrayList<String>()), result.getErrors().get(0));
-    }
-
-    @Test
-    @Transactional("transactionManager")
-    @Rollback(true)
-    public void createGroupProfileWithInvalidEmailsTest() throws Exception {
-        ProfileEntity profile = profileDao.find("4444-4444-4444-4441");
-        assertNotNull(profile);
-        assertNotNull(profile.getPrimaryEmail());
-        String existingEmail = profile.getPrimaryEmail().getId();
-        assertNotNull(existingEmail);
-        Group group = new Group();
-        group.setGroupName(Text.valueOf("Group Name"));
-        group.setType(Text.valueOf("basic"));
-
-        // Validate already existing email address
-        group.setEmail(Text.valueOf(existingEmail));
-        group = adminController.createGroup(group);
-        assertEquals(1, group.getErrors().size());
-        assertEquals(adminController.getMessage("group.email.already_used", new ArrayList<String>()), group.getErrors().get(0));
-
-        // Validate empty email address
-        group.setEmail(Text.valueOf(""));
-        group = adminController.createGroup(group);
-        assertEquals(1, group.getErrors().size());
-        assertEquals(adminController.getMessage("NotBlank.group.email", new ArrayList<String>()), group.getErrors().get(0));
-
-        // Validate invalid email address
-        group.setEmail(Text.valueOf("invalidemail"));
-        group = adminController.createGroup(group);
-        assertEquals(1, group.getErrors().size());
-        assertEquals(adminController.getMessage("group.email.invalid_email", new ArrayList<String>()), group.getErrors().get(0));
-    }
-
-    @Test
-    @Transactional("transactionManager")
-    @Rollback(true)
-    public void createGroupProfileWithInvalidGroupNameTest() throws Exception {
-        Group group = new Group();
-        group.setEmail(Text.valueOf("group@email.com"));
-        group.setType(Text.valueOf("basic"));
-
-        // Validate empty group name
-        group.setGroupName(Text.valueOf(""));
-        group = adminController.createGroup(group);
-        assertEquals(1, group.getErrors().size());
-        assertEquals(adminController.getMessage("NotBlank.group.name", new ArrayList<String>()), group.getErrors().get(0));
-
-        // validate too long group name - 151 chars
-        group.setGroupName(Text
-                .valueOf("1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901"));
-        group = adminController.createGroup(group);
-        assertEquals(1, group.getErrors().size());
-        assertEquals(adminController.getMessage("group.name.too_long", new ArrayList<String>()), group.getErrors().get(0));
-    }
-
-    @Test
-    @Transactional("transactionManager")
-    @Rollback(true)
-    public void createGroupProfileWithInvalidTypeTest() throws Exception {
-        Group group = new Group();
-        group.setEmail(Text.valueOf("group@email.com"));
-        group.setGroupName(Text.valueOf("Group Name"));
-
-        // Validate empty type
-        group.setType(Text.valueOf(""));
-        group = adminController.createGroup(group);
-        assertEquals(1, group.getErrors().size());
-        assertEquals(adminController.getMessage("NotBlank.group.type", new ArrayList<String>()), group.getErrors().get(0));
-
-        // Validate invalid type
-        group.setType(Text.valueOf("invalid"));
-        group = adminController.createGroup(group);
-        assertEquals(1, group.getErrors().size());
-        assertEquals(adminController.getMessage("group.type.invalid", new ArrayList<String>()), group.getErrors().get(0));
-    }
-
-    @Test
-    @Transactional("transactionManager")
-    @Rollback(true)
-    public void createGroupProfileTest() throws Exception {
-        Group group = new Group();
-        group.setEmail(Text.valueOf("group@email.com"));
-        group.setGroupName(Text.valueOf("Group Name"));
-        group.setType(Text.valueOf("premium-institution"));
-        group = adminController.createGroup(group);
-        assertEquals(0, group.getErrors().size());
-        assertFalse(PojoUtil.isEmpty(group.getGroupOrcid()));
-    }
+    }    
     
     @Test
     public void findIdsTest(){
@@ -481,5 +415,5 @@ public class AdminControllerTest extends BaseControllerTest {
         EmailEntity emailEntity = emailDao.find("not-verified@email.com");
         assertNotNull(emailEntity);
         assertTrue(emailEntity.getVerified());
-    }
+    }            
 }

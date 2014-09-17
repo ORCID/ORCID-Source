@@ -5,7 +5,7 @@
     ORCID (R) Open Source
     http://orcid.org
 
-    Copyright (c) 2012-2013 ORCID, Inc.
+    Copyright (c) 2012-2014 ORCID, Inc.
     Licensed under an MIT-Style License (MIT)
     http://orcid.org/open-source-license
 
@@ -56,6 +56,16 @@
     <div class="col-md-3 lhs left-aside">
     	<div class="workspace-profile">
             <#include "includes/id_banner.ftl"/>
+            
+            <#if RequestParameters['orcidSocial']??>
+            <div class="share-this">
+            	<span class='st_facebook_custom st_custom social' st_url="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" st_title="<@orcid.msg 'orcid_social.facebook.message.title'/>" st_image="${staticCdn}/img/orcid-logo.png" st_summary="<@orcid.msg 'orcid_social.facebook.message.summary'/>"></span>
+            	<span class='st_googleplus_custom st_custom social' st_url="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" st_title="<@orcid.msg 'orcid_social.google.message.title'/>" st_image="${staticCdn}/img/orcid-logo.png" st_summary="<@orcid.msg 'orcid_social.google.message.summary'/>"></span>
+				<span class='st_twitter_custom st_custom social' st_url="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" st_title="<@orcid.msg 'orcid_social.twitter.message.title'/>" st_image="${staticCdn}/img/orcid-logo.png" st_summary="<@orcid.msg 'orcid_social.twitter.message.summary'/>"></span>
+				<span class='st_linkedin_custom st_custom social' st_url="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" st_title="<@orcid.msg 'orcid_social.linkedin.message.title'/>" st_image="${staticCdn}/img/orcid-logo.png" st_summary="<@orcid.msg 'orcid_social.linkedin.message.summary'/>"></span>
+            </div>
+            </#if>
+            
             <!-- Also Known as -->
 	       	<div class="other-names-box">
 		       	<div ng-controller="OtherNamesCtrl" class="other-names-controller">
@@ -107,8 +117,8 @@
 		            <span class="glyphicon glyphicon-pencil edit-country edit-option" ng-click="openEdit()" title="" ng-hide="showEdit == true"></span>
 	            </div>   
 	            <!-- Current content -->
-                <span ng-hide="showEdit == true" ng-click="toggleEdit()">
-	                <span ng-show="countryForm != null && countryForm.iso2Country != null" ng-bind="countryForm.iso2Country.value">
+                <span ng-hide="showEdit == true" ng-click="toggleEdit()">                	
+	                <span ng-show="countryForm != null && countryForm.countryName != null" ng-bind="countryForm.countryName">
 	                </span>
 	            </span>
                <!-- Edit form -->
@@ -262,7 +272,7 @@
 		             </div>
 					<div class="workspace-overview col-md-3 col-sm-3 col-xs-6">
 						<ul>
-							<li><a href="#workspace-fundings" class="overview-count" ng-click="workspaceSrvc.openFunding()"><span ng-bind="fundingSrvc.fundings.length"></span></a></li>
+							<li><a href="#workspace-fundings" class="overview-count" ng-click="workspaceSrvc.openFunding()"><span ng-bind="fundingSrvc.fundingCount()"></span></a></li>
 							<li><a href="#workspace-fundings" class="overview-title" ng-click="workspaceSrvc.openFunding()"><@orcid.msg 'workspace.Funding'/></a></li>
 						</ul>
         				<a href="#workspace-employments" class="btn-update no-icon" ng-click="workspaceSrvc.openFunding()"><@orcid.msg 'workspace.view'/></a>
@@ -310,43 +320,32 @@
 							</li>	
 							<#if RequestParameters['bibWizard']??>
 								<li>
-									<a href="" class="label btn-primary" ng-click="openBibTextWizard()">Link BibTeX</a>
+									<a href="" class="label btn-primary" ng-click="openBibTextWizard()"><@orcid.msg 'workspace.bibtexImporter.link_bibtex'/></a>
 								</li>
 							</#if>
-							
-							 
-							
-							<#if RequestParameters['bibWizard']??>
-							<!--
-							    <li ng-show="canReadFiles" ng-cloak>							        
-							        <div class="label btn-primary upload">
-							           <span class="import-label">Link BibTeX</span>
-								       <input type="file" class="upload-button" ng-model="textFiles" ng-click="openBibTextWizard()" accept="*" update-fn="loadBibtexJs()"  app-file-text-reader multiple />
-							       </div>
-							    </li>
-							    -->
-							</#if>
-							 
 						</ul>					
 					</div>
 					<!-- Bibtex Importer Results -->
 					<div ng-show="showBibtexImportWizard" ng-cloak class="bibtex-box">
 						<div class="grey-box bottomBuffer box-border" ng-show="canReadFiles" ng-cloak>
-						   <p>
-						   <strong>You can import works from bibtex files, including Google Scholar's export.</strong>
-						   </p>													        
+						   <p class="bottomBuffer">
+						   		<strong><@orcid.msg 'workspace.bibtexImporter.instructions'/>  <a href="http://support.orcid.org/knowledgebase/articles/390530" target="_blank"><@orcid.msg 'workspace.bibtexImporter.learnMore'/></a></strong>
+						   </p> 
 					       <div class="label btn-primary upload">
-					           <span class="import-label">File Upload</span>
+					           <span class="import-label"><@orcid.msg 'workspace.bibtexImporter.fileUpload'/></span>
 						       <input type="file" class="upload-button" ng-model="textFiles" accept="*" update-fn="loadBibtexJs()"  app-file-text-reader multiple />
 					       </div>
+					       <span class="cancel-bibtex">
+					        	<a href="" class="label btn-primary" ng-click="openBibTextWizard()"><@orcid.msg 'workspace.bibtexImporter.cancel'/></a>
+						   </span>
 						</div>						
 						<div class="alert alert-block" ng-show="bibtexParsingError">
-							<strong>This file can not be read. Please check the BibTeX format and try again.</strong>
+							<strong><@orcid.msg 'workspace.bibtexImporter.parsingError'/></strong>
 						</div>
 						<div class="row bottomBuffer" ng-show="bibtexCancelLink">
 							<div class="col-md-10"></div>
 							<div class="col-md-2">
-								<button type="button" ng-click="bibtextCancel()" class="btn close-button pull-right">Cancel</button>		
+								<button type="button" ng-click="bibtextCancel()" class="btn close-button pull-right"><@orcid.msg 'workspace.bibtexImporter.cancel'/></button>		
 							</div>
 						</div>
 					   	<div ng-repeat="work in worksFromBibtex" ng-cloak class="grey-box bottomBuffer box-border">

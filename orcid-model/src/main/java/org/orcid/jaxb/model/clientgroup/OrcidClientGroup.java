@@ -4,7 +4,7 @@
  * ORCID (R) Open Source
  * http://orcid.org
  *
- * Copyright (c) 2012-2013 ORCID, Inc.
+ * Copyright (c) 2012-2014 ORCID, Inc.
  * Licensed under an MIT-Style License (MIT)
  * http://orcid.org/open-source-license
  *
@@ -40,6 +40,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.orcid.jaxb.model.message.SalesforceId;
+
 /**
  * <p>
  * Java class for anonymous complex type.
@@ -67,7 +69,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "groupOrcid", "type", "groupName", "email", "orcidClient" })
+@XmlType(propOrder = { "groupOrcid", "type", "groupName", "email", "orcidClient", "salesforceId" })
 @XmlRootElement(name = "orcid-client-group")
 public class OrcidClientGroup implements Serializable {
 
@@ -82,7 +84,8 @@ public class OrcidClientGroup implements Serializable {
     protected String email;
     @XmlElement(name = "orcid-client", required = true)
     protected List<OrcidClient> orcidClient;
-
+    @XmlElement(name = "salesforce-id")
+    protected String salesforceId;
     
     /**
      * Gets the value of the type property.
@@ -166,6 +169,27 @@ public class OrcidClientGroup implements Serializable {
      */
     public void setEmail(String value) {
         this.email = value;
+    }
+
+    /**
+     * Gets the value of the salesforceId property.
+     * 
+     * @return possible object is {@link String }
+     * 
+     */
+    public String getSalesforceId() {
+        return salesforceId;
+    }
+
+    /**
+     * Sets the value of the salesforceId property.
+     * 
+     * @param value
+     *            allowed object is {@link String }
+     * 
+     */
+    public void setSalesforceId(String salesforceId) {
+        this.salesforceId = salesforceId;
     }
 
     /**

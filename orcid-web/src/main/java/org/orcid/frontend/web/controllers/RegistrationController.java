@@ -4,7 +4,7 @@
  * ORCID (R) Open Source
  * http://orcid.org
  *
- * Copyright (c) 2012-2013 ORCID, Inc.
+ * Copyright (c) 2012-2014 ORCID, Inc.
  * Licensed under an MIT-Style License (MIT)
  * http://orcid.org/open-source-license
  *
@@ -227,24 +227,25 @@ public class RegistrationController extends BaseController {
                         reg.getEmail().setValue(URLDecoder.decode(tempEmail, "UTF-8"));
                     } catch (UnsupportedEncodingException e1) {
                         LOGGER.info("error parsing users email from oauth url",e1);
-                    }
-                    Matcher givenNamesMatcher = givenNamesPattern.matcher(url);
-                    if (givenNamesMatcher.find())
-                        try {
-                            reg.getGivenNames().setValue(URLDecoder.decode(givenNamesMatcher.group(1), "UTF-8"));
-                        } catch (UnsupportedEncodingException e) {
-                            LOGGER.info("error parsing users family name from oauth url",e);
-                        }
-    
-                    Matcher familyNamesMatcher = familyNamesPattern.matcher(url);
-                    if (familyNamesMatcher.find())
-                        try {
-                            reg.getFamilyNames().setValue(URLDecoder.decode(familyNamesMatcher.group(1), "UTF-8"));
-                        } catch (UnsupportedEncodingException e) {
-                            LOGGER.info("error parsing users family name from oauth url",e);
-                        }
+                    }                    
                 }
             }
+            
+            Matcher givenNamesMatcher = givenNamesPattern.matcher(url);
+            if (givenNamesMatcher.find())
+                try {
+                    reg.getGivenNames().setValue(URLDecoder.decode(givenNamesMatcher.group(1), "UTF-8"));
+                } catch (UnsupportedEncodingException e) {
+                    LOGGER.info("error parsing users family name from oauth url",e);
+                }
+
+            Matcher familyNamesMatcher = familyNamesPattern.matcher(url);
+            if (familyNamesMatcher.find())
+                try {
+                    reg.getFamilyNames().setValue(URLDecoder.decode(familyNamesMatcher.group(1), "UTF-8"));
+                } catch (UnsupportedEncodingException e) {
+                    LOGGER.info("error parsing users family name from oauth url",e);
+                }
         }
 
         return reg;

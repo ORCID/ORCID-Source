@@ -4,7 +4,7 @@
  * ORCID (R) Open Source
  * http://orcid.org
  *
- * Copyright (c) 2012-2013 ORCID, Inc.
+ * Copyright (c) 2012-2014 ORCID, Inc.
  * Licensed under an MIT-Style License (MIT)
  * http://orcid.org/open-source-license
  *
@@ -151,6 +151,9 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     private Visibility profileAddressVisibility;
     private Visibility activitiesVisibilityDefault = Visibility.PRIVATE;
 
+    // Salesfore ID
+    private String salesforeId;
+    
     private Date deactivationDate;
 
     @Id
@@ -509,7 +512,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
      * @return the grants
      */
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = PROFILE, orphanRemoval = true)
-    @Sort(type = SortType.NATURAL)
+    @Sort(type = SortType.COMPARATOR, comparator = ProfileFundingEntityDisplayIndexComparatorReverse.class)
     public SortedSet<ProfileFundingEntity> getProfileFunding() {
         return profileFunding;
     }
@@ -954,6 +957,16 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
      * */
     public void setDeprecatedDate(Date deprecatedDate) {
         this.deprecatedDate = deprecatedDate;
+    }
+
+    
+    @Column(name = "salesforce_id")
+    public String getSalesforeId() {
+        return salesforeId;
+    }
+
+    public void setSalesforeId(String salesforeId) {
+        this.salesforeId = salesforeId;
     }
 
     @Override

@@ -6,18 +6,17 @@
     ORCID (R) Open Source
     http://orcid.org
 
-    Copyright (c) 2012-2013 ORCID, Inc.
+    Copyright (c) 2012-2014 ORCID, Inc.
     Licensed under an MIT-Style License (MIT)
     http://orcid.org/open-source-license
 
     This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of 
+    shall be included in its entirety in all copies or substantial portion of
     the software.
 
     =============================================================================
 
 -->
-
 <dataset>
 
     <client_details client_details_id="4444-4444-4444-4441" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25" client_name="S. Milligan" client_description="Terence Alan Patrick Seán 'Spike' Milligan KBE (16 April 1918 – 27 February 2002) was a comedian, writer, musician, poet, playwright, soldier and actor." client_website="www.4444-4444-4444-4441.com"/>
@@ -56,13 +55,13 @@
     <client_granted_authority client_details_id="4444-4444-4444-4445" granted_authority="ROLE_CLIENT"/>
     <client_granted_authority client_details_id="4444-4444-4444-4498" granted_authority="ROLE_PUBLIC"/>
 
-    <client_redirect_uri client_details_id="4444-4444-4444-4441" redirect_uri="http:://www.4444-4444-4444-4441.com/redirect/oauth" 
+    <client_redirect_uri client_details_id="4444-4444-4444-4441" redirect_uri="http://www.4444-4444-4444-4441.com/redirect/oauth" 
     predefined_client_redirect_scope ="/orcid-profile/create" redirect_uri_type="default"/>
-    <client_redirect_uri client_details_id="4444-4444-4444-4442" redirect_uri="http:://www.4444-4444-4444-4442.com/redirect/oauth" redirect_uri_type="default"/>
-    <client_redirect_uri client_details_id="4444-4444-4444-4443" redirect_uri="http:://www.4444-4444-4444-4443.com/redirect/oauth" redirect_uri_type="default"/>
-    <client_redirect_uri client_details_id="4444-4444-4444-4444" redirect_uri="http:://www.4444-4444-4444-4444.com/redirect/oauth" redirect_uri_type="default"/>
-    <client_redirect_uri client_details_id="4444-4444-4444-4445" redirect_uri="http:://www.4444-4444-4444-4445.com/redirect/oauth" redirect_uri_type="default"/>
-    <client_redirect_uri client_details_id="4444-4444-4444-4498" redirect_uri="http:://www.4444-4444-4444-4498.com/redirect/oauth" redirect_uri_type="default"/>
+    <client_redirect_uri client_details_id="4444-4444-4444-4442" redirect_uri="http://www.4444-4444-4444-4442.com/redirect/oauth" redirect_uri_type="default"/>
+    <client_redirect_uri client_details_id="4444-4444-4444-4443" redirect_uri="http://www.4444-4444-4444-4443.com/redirect/oauth" redirect_uri_type="default"/>
+    <client_redirect_uri client_details_id="4444-4444-4444-4444" redirect_uri="http://www.4444-4444-4444-4444.com/redirect/oauth" redirect_uri_type="default"/>
+    <client_redirect_uri client_details_id="4444-4444-4444-4445" redirect_uri="http://www.4444-4444-4444-4445.com/redirect/oauth" redirect_uri_type="default"/>
+    <client_redirect_uri client_details_id="4444-4444-4444-4498" redirect_uri="http://www.4444-4444-4444-4498.com/redirect/oauth" redirect_uri_type="default"/>
 
     <client_resource_id client_details_id="4444-4444-4444-4441" resource_id="orcid"/>
     <client_resource_id client_details_id="4444-4444-4444-4442" resource_id="orcid"/>

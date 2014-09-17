@@ -5,7 +5,7 @@
     ORCID (R) Open Source
     http://orcid.org
 
-    Copyright (c) 2012-2013 ORCID, Inc.
+    Copyright (c) 2012-2014 ORCID, Inc.
     Licensed under an MIT-Style License (MIT)
     http://orcid.org/open-source-license
 
@@ -16,9 +16,9 @@
     =============================================================================
 
 -->
-<ul ng-hide="!fundingSrvc.fundings.length" class="workspace-fundings workspace-body-list bottom-margin-medium" ng-cloak>
-	<li class="bottom-margin-small" ng-repeat="funding in fundingSrvc.fundings |  orderBy:['-dateSortString', 'affiliationName']"> 
-		<div class="row">        			
+<ul ng-hide="!fundingSrvc.groups.length" class="workspace-fundings workspace-body-list bottom-margin-medium" ng-cloak>
+	<li class="bottom-margin-small" ng-repeat="group in fundingSrvc.groups | orderBy:['-dateSortString', 'title']"> 
+		<div class="row" ng-repeat="funding in group.activities | orderBy:['-dateSortString', 'fundingTitle.title.value']">        			
 			<!-- Information -->
 			<div class="col-md-8 col-sm-8">
 				<h3 class="funding-title">
@@ -43,7 +43,7 @@
 	        <div class="col-md-4 col-sm-4 workspace-toolbar">
 	        	<#include "funding_more_info_inc.ftl"/>
 	        	<#if !(isPublicProfile??)>
-	        		<a href ng-click="deleteFunding(funding)" class="glyphicon glyphicon-trash grey"></a>
+	        		<a href ng-click="deleteFundingConfirm(funding.putCode.value,false)" class="glyphicon glyphicon-trash grey"></a>
 	        		<ul class="workspace-private-toolbar">
 						<@orcid.privacyToggle  angularModel="funding.visibility.visibility"
 						questionClick="toggleClickPrivacyHelp(funding.putCode.value)"
@@ -63,7 +63,7 @@
     	<img src="${staticCdn}/img/spin-big.gif" width="85" height ="85"/>
     <![endif]-->
 </div>
-<div ng-show="fundingSrvc.loading == false && fundingSrvc.fundings.length == 0" class="alert alert-info" ng-cloak>
+<div ng-show="fundingSrvc.loading == false && fundingSrvc.groups.length == 0" class="alert alert-info" ng-cloak>
     <strong><#if (publicProfile)?? && publicProfile == true><@orcid.msg 'workspace_fundings_body_list.nograntaddedyet' /><#else><@orcid.msg 'workspace_fundings.havenotaddaffiliation' /><a ng-click="addFundingModal()"> <@orcid.msg 'workspace_fundings_body_list.addsomenow'/></a></#if></strong>
 </div>
 
