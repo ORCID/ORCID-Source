@@ -134,23 +134,5 @@
 			<#include "includes/affiliate/emp_body_inc.ftl" />
 		</div>
 	</div>
-	<!-- Affiliations -->
-	<!-- This section still requires styling -->
-	<div ng-show='affiliationsSrvc.affiliations.length != 0' id="workspace-affiliations" class="workspace-accordion-item workspace-accordion-active" ng-cloak>	
-		<div class="workspace-accordion-header">
-			<div class="row">
-				<div class="col-md-6 col-sm-6 col-xs-12 action-button-bar">
-					<a name='workspace-affiliations' />
-				    <a href="" ng-click="workspaceSrvc.toggleAffiliations($event)" class="toggle-text">
-				  		<i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayAffiliations==false}"></i>
-				  		<@orcid.msg 'workspace_bio.Affiliations'/>
-				   	</a>				    
-				 </div>
-		    </div>
-		</div>
-		<div ng-show="workspaceSrvc.displayAffiliations" class="workspace-accordion-content">
-			<#include "includes/affiliate/aff_body_inc.ftl" />		
-		</div>
-	</div>
 </div>
     

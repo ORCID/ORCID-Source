@@ -46,17 +46,5 @@
 			<#include "includes/affiliate/emp_body_inc.ftl" />
 		</div>
 	</div>	
-	<!-- Affiliations -->
-	<div ng-show='affiliationsSrvc.affiliations.length != 0' id="workspace-affiliations" class="workspace-accordion-item workspace-accordion-active" ng-cloak>
-		<div class="workspace-accordion-header"><a name='workspace-affiliations' />
-		    <a href="" ng-click="workspaceSrvc.toggleAffiliations()" class="toggle-text">
-		  		<i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayAffiliations==false}"></i></a>
-		   	</a> 
-		    <a href="" ng-click="workspaceSrvc.toggleAffiliations()" class="toggle-text"><@orcid.msg 'workspace_bio.Affiliations'/></a>
-		</div>
-		<div ng-show="workspaceSrvc.displayAffiliations" class="workspace-accordion-content">
-			<#include "includes/affiliate/aff_body_inc.ftl" />
-		</div>
-	</div>
 </div>
     

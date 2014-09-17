@@ -303,7 +303,6 @@ orcidNgModule.factory("actSortSrvc", ['$rootScope', function ($rootScope) {
 
 orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
 	var serv = {
-			affiliations: new Array(),
 			educations: new Array(),
 			employments: new Array(),
 			loading: false,
@@ -316,15 +315,13 @@ orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
 	    				dataType: 'json',
 	    				success: function(data) {
 	    						for (i in data) {
-	    							GroupedActivities.group(data[i],GroupedActivities.affiliation,serv.affiliations);
+	    							//GroupedActivities.group(data[i],GroupedActivities.affiliation,serv.affiliations);
 	    							if (data[i].affiliationType != null && data[i].affiliationType.value != null
 	    									&& data[i].affiliationType.value == 'education')
 	    								serv.educations.push(data[i]);
 	    							else if (data[i].affiliationType != null && data[i].affiliationType.value != null
 	    									&& data[i].affiliationType.value == 'employment')
 	    								serv.employments.push(data[i]);
-	    							else
-	    								serv.affiliations.push(data[i]);
 	    						};
 	    						if (serv.affiliationsToAddIds.length == 0) {
 	    							serv.loading = false;
@@ -350,7 +347,6 @@ orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
 	    		//clear out current affiliations
 	    		serv.loading = true;
 	    		serv.affiliationsToAddIds = null;
-	    		serv.affiliations.length = 0;
 	    		serv.educations.length = 0;
 	    		serv.employments.length = 0;
 	    		//get affiliation ids
@@ -385,7 +381,7 @@ orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
 	    	    });
 	    	},
 	    	deleteAffiliation: function(affiliation) {
-				var arr = serv.affiliations;
+				var arr = null;
 				if (affiliation.affiliationType != null && affiliation.affiliationType.value != null
 						&& affiliation.affiliationType.value == 'education')
 					arr = serv.educations;
@@ -421,15 +417,11 @@ orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
 
 orcidNgModule.factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
 	var serv = {
-			displayAffiliations: true,
 			displayEducation: true,
 			displayEmployment: true,
 			displayFunding: true, 
 			displayPersonalInfo: true,
 			displayWorks: true,
-			toggleAffiliations: function() {
-				displayAffiliations = !displayAffiliations;
-			},
 			toggleEducation: function() {
 				serv.displayEducation = !serv.displayEducation;
 			},
@@ -444,9 +436,6 @@ orcidNgModule.factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
 			},
 			toggleWorks: function() {
 				serv.displayWorks = !serv.displayWorks;
-			},
-			openAffiliations: function() {
-				serv.displayAffiliations = true;
 			},
 			openEducation: function() {
 				serv.displayEducation = true;
