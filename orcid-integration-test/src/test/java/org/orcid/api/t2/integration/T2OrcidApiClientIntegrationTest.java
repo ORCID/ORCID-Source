@@ -54,8 +54,6 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
 /**
- * 2011-2012 ORCID
- * 
  * @author Declan Newman (declan) Date: 12/04/2012
  */
 

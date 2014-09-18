@@ -66,8 +66,6 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.ResIterator;
 
 /**
- * 2013 ORCID
- * 
  * @author Stian Soiland-Reyes
  */
 @Provider

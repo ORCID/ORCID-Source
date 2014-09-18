@@ -37,8 +37,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 /**
- * 2011-2012 ORCID
- * 
  * @author Declan Newman (declan) Date: 24/04/2012
  */
 

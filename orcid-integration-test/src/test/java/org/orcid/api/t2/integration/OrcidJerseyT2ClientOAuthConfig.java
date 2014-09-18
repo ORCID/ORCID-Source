@@ -36,8 +36,6 @@ import org.orcid.api.t2.integration.OrcidJerseyT2ClientConfig;
 import com.sun.jersey.client.urlconnection.HTTPSProperties;
 
 /**
- * 2011-2012 ORCID
- * 
  * @author Declan Newman (declan) Date: 12/04/2012
  */
 public class OrcidJerseyT2ClientOAuthConfig extends OrcidJerseyT2ClientConfig {

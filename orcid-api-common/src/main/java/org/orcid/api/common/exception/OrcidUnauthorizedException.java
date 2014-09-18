@@ -19,8 +19,6 @@ package org.orcid.api.common.exception;
 import javax.ws.rs.core.Response;
 
 /**
- * Copyright 2011-2012 ORCID
- * 
  * @author Declan Newman (declan) Date: 01/03/2012
  */
 public class OrcidUnauthorizedException extends OrcidApiException {

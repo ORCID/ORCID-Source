@@ -32,8 +32,6 @@ import javax.annotation.Resource;
 import static junit.framework.Assert.assertEquals;
 
 /**
- * 2011-2012 - ORCID
- *
  * @author Declan Newman (declan)
  *         Date: 24/07/2012
  */

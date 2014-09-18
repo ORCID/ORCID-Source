@@ -43,8 +43,6 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
 /**
- * Copyright 2011-2012 ORCID
- * 
  * @author Declan Newman (declan) Date: 13/02/2012
  */
 @RunWith(SpringJUnit4ClassRunner.class)

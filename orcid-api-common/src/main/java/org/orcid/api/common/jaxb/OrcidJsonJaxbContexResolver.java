@@ -36,8 +36,6 @@ import com.sun.jersey.api.json.JSONJAXBContext;
 import static org.orcid.api.common.OrcidApiConstants.*;
 
 /**
- * 2011-2012 ORCID
- * 
  * @author Declan Newman (declan) Date: 12/04/2012
  */
 @Provider

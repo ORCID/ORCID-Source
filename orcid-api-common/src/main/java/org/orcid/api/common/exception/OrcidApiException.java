@@ -23,8 +23,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 /**
- * Copyright 2011-2012 ORCID
- * 
  * @author Declan Newman (declan) Date: 01/03/2012
  */
 public abstract class OrcidApiException extends WebApplicationException {

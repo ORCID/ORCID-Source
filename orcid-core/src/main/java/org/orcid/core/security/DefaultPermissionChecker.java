@@ -48,8 +48,6 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * 2011-2012 ORCID
- * 
  * @author Declan Newman (declan) Date: 27/04/2012
  */
 @Component("defaultPermissionChecker")

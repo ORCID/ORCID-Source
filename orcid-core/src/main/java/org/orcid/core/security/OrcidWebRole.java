@@ -19,8 +19,6 @@ package org.orcid.core.security;
 import org.springframework.security.core.GrantedAuthority;
 
 /**
- * 2011-2012 ORCID
- * 
  * @author Declan Newman (declan) Date: 15/02/2012
  */
 public enum OrcidWebRole implements GrantedAuthority {

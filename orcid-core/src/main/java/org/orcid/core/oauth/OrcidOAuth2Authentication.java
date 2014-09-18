@@ -22,8 +22,6 @@ import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.util.Assert;
 
 /**
- * 2011-2012 ORCID
- * 
  * @author Declan Newman (declan) Date: 10/05/2012
  */
 public class OrcidOAuth2Authentication extends OAuth2Authentication {

@@ -17,8 +17,6 @@
 package org.orcid.frontend.web.controllers;
 
 /**
- * Copyright 2012-2013 ORCID
- * 
  * @author Angel Montenegro (amontenegro) Date: 29/08/2013
  */
 import static org.junit.Assert.assertEquals;

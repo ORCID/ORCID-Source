@@ -31,8 +31,6 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 2011-2012 - ORCID
- *
  * @author Declan Newman (declan)
  *         Date: 17/07/2012
  */

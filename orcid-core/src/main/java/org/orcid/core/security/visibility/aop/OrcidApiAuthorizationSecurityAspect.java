@@ -43,8 +43,6 @@ import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.stereotype.Component;
 
 /**
- * 2011-2012 ORCID
- * 
  * @author Declan Newman (declan) Date: 16/03/2012
  */
 @Aspect

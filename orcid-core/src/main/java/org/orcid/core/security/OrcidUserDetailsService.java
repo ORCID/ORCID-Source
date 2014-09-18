@@ -32,8 +32,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * 2011-2012 ORCID
- * 
  * @author Declan Newman (declan) Date: 13/02/2012
  */
 public class OrcidUserDetailsService implements UserDetailsService {

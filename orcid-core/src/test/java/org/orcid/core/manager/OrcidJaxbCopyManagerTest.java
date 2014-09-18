@@ -58,8 +58,6 @@ import org.orcid.jaxb.model.message.Url;
 import org.orcid.jaxb.model.message.Visibility;
 
 /**
- * 2011-2012 ORCID
- * 
  * @author Declan Newman (declan) Date: 13/03/2012
  */
 public class OrcidJaxbCopyManagerTest extends BaseTest {

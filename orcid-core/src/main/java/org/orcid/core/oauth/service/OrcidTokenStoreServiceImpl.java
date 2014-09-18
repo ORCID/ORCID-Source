@@ -56,8 +56,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * 2011-2012 ORCID
- * 
  * @author Declan Newman (declan) Date: 15/04/2012
  */
 

@@ -31,8 +31,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Copyright 2011-2012 ORCID
- * 
  * @author Will Simpson (will) Date: 15/02/2012
  */
 public class OrcidGenerationManagerImpl implements OrcidGenerationManager {

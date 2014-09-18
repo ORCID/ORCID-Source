@@ -30,8 +30,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 /**
- * 2011-2012 ORCID
- * 
  * @author Declan Newman (declan) Date: 12/03/2012
  */
 @Entity

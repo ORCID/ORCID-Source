@@ -35,8 +35,6 @@ import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.persistence.jpa.entities.keys.ClientRedirectUriPk;
 
 /**
- * 2011-2012 ORCID
- * 
  * @author Declan Newman (declan) Date: 12/03/2012
  */
 @Entity

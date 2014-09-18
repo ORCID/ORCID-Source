@@ -36,7 +36,6 @@ import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
-import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.jaxb.model.message.OrcidBio;
@@ -59,8 +58,6 @@ import org.springframework.util.Assert;
  * otherwise be overwritten. Some of the values can only perform 'best shot' at
  * matching them, in which case it will use the defaults if not able to match
  * <p/>
- * 2011-2012 ORCID
- * 
  * @author Declan Newman (declan) Date: 13/03/2012
  */
 

@@ -23,8 +23,6 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * 2011-2012 - Semantico Ltd.
- *
  * @author Declan Newman (declan)
  *         Date: 12/10/2012
  */

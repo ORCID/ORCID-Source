@@ -29,8 +29,6 @@ import java.util.Collection;
 import java.util.Set;
 
 /**
- * 2011-2012 ORCID
- * 
  * @author Declan Newman (declan) Date: 10/05/2012
  */
 public class OrcidClientCredentialsChecker {

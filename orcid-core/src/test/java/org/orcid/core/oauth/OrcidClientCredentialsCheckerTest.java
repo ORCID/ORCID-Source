@@ -33,8 +33,6 @@ import java.util.Set;
 import static org.mockito.Mockito.when;
 
 /**
- * 2011-2012 ORCID
- * 
  * @author Declan Newman (declan) Date: 11/05/2012
  */
 public class OrcidClientCredentialsCheckerTest {

@@ -35,8 +35,6 @@ import org.springframework.security.oauth2.provider.client.ClientCredentialsToke
 import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
- * 2013-2014 ORCID
- * 
  * @author Angel Montenegro (amontenegro) Date: 27/03/2014
  */
 public class OrcidT1Oauth2TokenEndPointFilter extends ClientCredentialsTokenEndpointFilter {
