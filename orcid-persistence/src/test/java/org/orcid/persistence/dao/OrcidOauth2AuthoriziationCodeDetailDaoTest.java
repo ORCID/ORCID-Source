@@ -16,6 +16,17 @@
  */
 package org.orcid.persistence.dao;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Arrays;
+import java.util.HashSet;
+
+import javax.annotation.Resource;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -27,14 +38,6 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.annotation.Resource;
-import java.util.Arrays;
-import java.util.HashSet;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 /**
  * 2011-2012 ORCID
@@ -55,12 +58,12 @@ public class OrcidOauth2AuthoriziationCodeDetailDaoTest extends DBUnitTest {
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SubjectEntityData.xml", "/data/ProfileEntityData.xml",
-                "/data/ClientDetailsEntityData.xml"), null);
+                "/data/ClientDetailsEntityData.xml", "/data/OrcidOauth2AuthorisationDetailsData.xml"), null);
     }
 
     @AfterClass
     public static void removeDBUnitData() throws Exception {
-        removeDBUnitData(Arrays.asList("/data/ClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/SubjectEntityData.xml",
+        removeDBUnitData(Arrays.asList("/data/OrcidOauth2AuthorisationDetailsData.xml", "/data/ClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/SubjectEntityData.xml",
                 "/data/SecurityQuestionEntityData.xml"), null);
     }
 
@@ -103,5 +106,12 @@ public class OrcidOauth2AuthoriziationCodeDetailDaoTest extends DBUnitTest {
         detail.setScopes(new HashSet<String>(Arrays.asList("/orcid-profile/create", "/orcid-profile/update")));
         detail.setSessionId("a-session-id");
         return detail;
+    }
+    
+    @Test
+    public void isPersistentTokenTest() {
+        assertTrue(orcidOauth2AuthoriziationCodeDetailDao.isPersistentToken("code1"));
+        assertFalse(orcidOauth2AuthoriziationCodeDetailDao.isPersistentToken("code2"));
+        assertTrue(orcidOauth2AuthoriziationCodeDetailDao.isPersistentToken("code3"));
     }
 }

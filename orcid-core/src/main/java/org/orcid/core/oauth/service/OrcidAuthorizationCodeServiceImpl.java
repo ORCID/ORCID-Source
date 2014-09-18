@@ -78,10 +78,10 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
     private ProfileEntityManager profileEntityManager;
     
     @Resource
-    private ProfileDao profileDao;
+    private ProfileDao profileDao;        
     
     @Value("${org.orcid.core.oauth.usePersistentTokens:false}")
-    private boolean usePersistentTokens;
+    private boolean usePersistentTokens;        
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidAuthorizationCodeServiceImpl.class);
 

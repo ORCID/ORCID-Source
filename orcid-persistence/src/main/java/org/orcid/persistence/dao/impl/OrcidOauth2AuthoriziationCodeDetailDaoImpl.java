@@ -16,11 +16,12 @@
  */
 package org.orcid.persistence.dao.impl;
 
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+
 import org.orcid.persistence.aop.ExcludeFromProfileLastModifiedUpdate;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
 import org.orcid.persistence.jpa.entities.OrcidOauth2AuthoriziationCodeDetail;
-
-import javax.persistence.PersistenceContext;
 
 /**
  * 2011-2012 ORCID
@@ -45,5 +46,14 @@ public class OrcidOauth2AuthoriziationCodeDetailDaoImpl extends GenericDaoImpl<O
         } else {
             return null;
         }
+    }
+    
+    @Override
+    public boolean isPersistentToken(String code) {
+        TypedQuery<OrcidOauth2AuthoriziationCodeDetail> query = entityManager.createQuery(
+                "from OrcidOauth2AuthoriziationCodeDetail where id=:code", OrcidOauth2AuthoriziationCodeDetail.class);
+        query.setParameter("code", code);
+        OrcidOauth2AuthoriziationCodeDetail result = query.getSingleResult();
+        return result.isPersistent();
     }
 }

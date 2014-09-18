@@ -71,4 +71,49 @@
             authentication_key="an-authentication-key-3"
             />
 
+	<oauth2_authoriziation_code_detail
+		authoriziation_code_value="code1"
+		is_aproved="true"
+		orcid="4444-4444-4444-4442"
+		redirect_uri="http://www.4444-4444-4444-4442.com/redirect/oauth"
+		response_type="code"
+		state=""
+		client_details_id="4444-4444-4444-4442"
+		session_id=""
+		is_authenticated="true"
+		date_created="2010-01-01"
+		last_modified="2010-01-01"
+		persistent="true"
+		/>
+		
+	<oauth2_authoriziation_code_detail
+		authoriziation_code_value="code2"
+		is_aproved="true"
+		orcid="4444-4444-4444-4442"
+		redirect_uri="http://www.4444-4444-4444-4442.com/redirect/oauth"
+		response_type="code"
+		state=""
+		client_details_id="4444-4444-4444-4442"
+		session_id=""
+		is_authenticated="true"
+		date_created="2010-01-01"
+		last_modified="2010-01-01"
+		persistent="false"
+		/>
+
+	<oauth2_authoriziation_code_detail
+		authoriziation_code_value="code3"
+		is_aproved="true"
+		orcid="4444-4444-4444-4442"
+		redirect_uri="http://www.4444-4444-4444-4442.com/redirect/oauth"
+		response_type="code"
+		state=""
+		client_details_id="4444-4444-4444-4442"
+		session_id=""
+		is_authenticated="true"
+		date_created="2010-01-01"
+		last_modified="2010-01-01"
+		persistent="true"
+		/>
+
 </dataset>

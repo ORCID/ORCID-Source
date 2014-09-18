@@ -25,6 +25,7 @@ import javax.annotation.Resource;
 
 import org.orcid.core.oauth.OrcidOauth2AuthInfo;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.AuthenticationException;
@@ -48,6 +49,9 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
 
     @Resource(name = "orcidTokenStore")
     private TokenStore tokenStore;
+    
+    @Resource
+    private OrcidOauth2AuthoriziationCodeDetailDao orcidOauth2AuthoriziationCodeDetailDao;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidRandomValueTokenServices.class);
 
@@ -118,6 +122,15 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
                 return readValiditySeconds;
             }
         }
+        
+        Map<String, String> params = authorizationRequest.getAuthorizationParameters();
+        if(params != null && params.containsKey("code")) {
+            String code = params.get("code");
+            if(orcidOauth2AuthoriziationCodeDetailDao.isPersistentToken(code)) {
+                return readValiditySeconds;
+            }
+        }
+        
         return writeValiditySeconds;
     }
 

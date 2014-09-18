@@ -27,4 +27,5 @@ public interface OrcidOauth2AuthoriziationCodeDetailDao extends GenericDao<Orcid
 
     OrcidOauth2AuthoriziationCodeDetail removeAndReturn(String code);
 
+    boolean isPersistentToken(String code);
 }
