@@ -150,7 +150,9 @@ GroupedActivities.prototype.key = function(activityIdentifiers) {
 		idTypePath = null;
 	}
 	var key = activityIdentifiers[idTypePath] ? activityIdentifiers[idTypePath].value : ''; 
-	key += activityIdentifiers[idPath] != null ? activityIdentifiers[idPath].value : ''; 
+	// currently I've been told all know identifiers are case insensitive so we are 
+	// lowercase the value for consistency 
+	key += activityIdentifiers[idPath] != null ? activityIdentifiers[idPath].value.toLowerCase() : '';  
 	return key;
 };
 
@@ -648,7 +650,6 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 	};
 	return fundingSrvc;
 }]);
-
 
 orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 	var worksSrvc = {
