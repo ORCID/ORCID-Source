@@ -90,13 +90,6 @@
 				</div>				
 			</div>
 		</div>
-		
-		<div class="col-md-6" ng-show="group.getActive().sourceName" ng-cloak>
-			<div class="bottomBuffer">
-				<strong><@orcid.msg 'manual_affiliation_form_contents.labelsource'/></strong>
-				<div ng-bind="group.getActive().sourceName"></div>
-			</div>
-		</div>
 				
 	</div>		
 </div>

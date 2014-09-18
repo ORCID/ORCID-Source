@@ -3197,10 +3197,19 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc, actS
 				formColorBoxResize();
 				$scope.bindTypeaheadForOrgs();
 				$scope.bindTypeaheadForSubTypes();
-			}
+			},
+	        onClosed: function() {
+	        	$scope.closeAllMoreInfo();
+	        	fundingSrvc.getFundings('fundings/fundingIds.json');
+	        }
 	    });
 	};
 	
+	$scope.closeAllMoreInfo = function() {
+		for (var idx in $scope.moreInfo)
+		    $scope.moreInfo[idx]=false;
+	};
+
 	$scope.putFunding = function(){
 		if ($scope.addingFunding) return; // don't process if adding funding
 		$scope.addingFunding = true;		
@@ -3213,8 +3222,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc, actS
 	        data:  angular.toJson($scope.editFunding),
 	        success: function(data) {	        		        	
 	        	if (data.errors.length == 0){
-	        		$.colorbox.close(); 	        		
-	        		fundingSrvc.getFundings('fundings/fundingIds.json');	        		
+	        		$.colorbox.close();	        		
 	        	} else {
 		        	$scope.editFunding = data;
 		        	if($scope.editFunding.externalIdentifiers.length == 0) {
@@ -3789,6 +3797,10 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
 			width: formColorBoxResize(),
 			onComplete: function() {
 				//resize to insure content fits
+	        },
+	        onClosed: function() {
+	        	$scope.closeAllMoreInfo();
+	    		$scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
 	        }
 	    });
 	};
@@ -3844,10 +3856,8 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
 	        data:  angular.toJson($scope.editWork),
 	        success: function(data) {
 	        	if (data.errors.length == 0){
-	        		$scope.closeAllMoreInfo();
 	        		$.colorbox.close(); 
 	        		$scope.addingWork = false;
-	        		$scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
 	        		
 	        		if($scope.bibtextWork == true){
 	        			$scope.worksFromBibtex.splice($scope.bibtextWorkIndex, 1);
@@ -4022,7 +4032,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
 		   worksSrvc.deleteWork(putCode);
 		$.colorbox.close(); 
 	};
-	
+		
 	$scope.closeModal = function() {
 		$.colorbox.close();
 	};
