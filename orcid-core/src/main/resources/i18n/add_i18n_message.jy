@@ -20,6 +20,7 @@ from java.io import InputStreamReader
 from java.io import OutputStreamWriter
 from java.util import Collections
 from java.util import Properties
+from java.lang import System
 from __builtin__ import None
 
 # Init
@@ -55,6 +56,11 @@ def store_props(props, comment_lines, properties_filename):
     props.store(osw, comment_string)
     fos.close();
     tidy_license_header(path)
+    
+def detect_and_set_line_separator(line):
+    match = re.search('[\r\n]{1,2}$', line)
+    if(match):
+        System.setProperty('line.separator', match.group(0))
 
 def read_comment_lines(properties_filename):
     path = os.path.join(resource_dir, properties_filename)
@@ -62,6 +68,7 @@ def read_comment_lines(properties_filename):
     file = codecs.open(path, 'r', 'UTF-8')
     lines = file.readlines()
     file.close()
+    detect_and_set_line_separator(lines[0])
     comment_lines = [l for l in lines if l.startswith('#')]
     # Need to remove initial # character as will be re-added automatically when storing the props
     comment_lines[0] = re.sub('^#', '', comment_lines[0])

@@ -117,12 +117,4 @@
 			</div>
 		</div>
 	</div>
-	<div class="row">									
-		<div class="col-md-12">
-			<div class="bottomBuffer" ng-show="group.getActive().sourceName" ng-cloak>				
-				<strong><@orcid.msg 'manual_funding_form_contents.label_source'/></strong>
-				<div ng-bind="group.getActive().sourceName"></div>						
-			</div>
-		</div>
-	</div>
 </div>
