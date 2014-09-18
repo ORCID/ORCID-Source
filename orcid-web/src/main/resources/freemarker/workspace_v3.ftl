@@ -224,7 +224,9 @@
     <div class="col-md-9 right-aside">
         <div class="workspace-right">
         	<div class="workspace-inner workspace-header" ng-controller="WorkspaceSummaryCtrl">
-                <div class="alert alert-info" ng-show="showAddAlert()" ng-cloak><strong><@orcid.msg 'workspace.addinformationaboutyou'/></strong></div>                
+                <div class="grey-box" ng-show="showAddAlert()" ng-cloak>
+                	<strong><@orcid.msg 'workspace.addinformationaboutyou'/></strong>
+              	</div>                
         	</div>
         	<div class="workspace-accordion" id="workspace-accordion">        		
         		<!-- Personal Information -->
@@ -276,13 +278,11 @@
 								</ul>								
 							</div>
 						</div>					
-					</div>					 
+					</div>
       	            <div ng-show="workspaceSrvc.displayWorks" class="workspace-accordion-content">
 	            		<#include "includes/work/add_work_modal_inc.ftl"/>
-						<#include "includes/work/del_work_modal_inc.ftl"/>						
-	            	</div>
-	            	<div ng-show="workspaceSrvc.displayWorks">
-	            		<#include "includes/work/body_work_inc_v3.ftl"/> <!-- No class required -->
+						<#include "includes/work/del_work_modal_inc.ftl"/>
+						<#include "includes/work/body_work_inc_v3.ftl"/>						
 	            	</div>
             	</div>
             	
