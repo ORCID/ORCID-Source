@@ -142,12 +142,6 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
         return grantedAuthorities;
     }
 
-    /**
-     * TODO: REMOVE
-     * Here, inside authentication.authorizationParams, there should be a boolean value "grantPersistentToken" if it is checked and
-     * the new way of handle tokens is enabled, we should create this code with a flag "eternal" set to true, so, we know is a new kind of token and 
-     * it should live for ever
-     * */
     private OrcidOauth2AuthoriziationCodeDetail getDetailFromAuthorizationRequestHolder(String code, AuthorizationRequestHolder authentication) {
         AuthorizationRequest authenticationRequest = authentication.getAuthenticationRequest();
         OrcidOauth2AuthoriziationCodeDetail detail = new OrcidOauth2AuthoriziationCodeDetail();

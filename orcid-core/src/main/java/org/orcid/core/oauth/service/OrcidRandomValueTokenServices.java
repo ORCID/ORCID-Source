@@ -99,13 +99,6 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
      *            the current authorization request
      * @return the access token validity period in seconds
      */    
-    /***
-     * TODO: REMOVE!!!!
-     * Here we have the token
-     * If the new way of creating tokens is enabled, and, the user accepted to give eternal life to the token, we have to return
-     * eternal (readValiditySeconds)    
-     * 
-     * **/
     @Override
     protected int getAccessTokenValiditySeconds(AuthorizationRequest authorizationRequest) {
         Set<ScopePathType> requestedScopes = ScopePathType.getScopesFromStrings(authorizationRequest.getScope());

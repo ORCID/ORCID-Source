@@ -36,7 +36,6 @@ import org.junit.runner.RunWith;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.oauth.OrcidOauth2ClientAuthentication;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
-import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.test.DBUnitTest;
@@ -224,5 +223,67 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
         String tokenValue = oauth2AccessToken.getValue();
         assertFalse("Token value should be different", tokenValue.equals("some-long-oauth2-token-value-1"));
     }
+    
+    /**
+     * Check that the token created with a non persistent code will expire within an hour 
+     * */
+    @Test
+    @Transactional
+    @Rollback
+    public void tokenExpireInAnHourTest() throws InterruptedException {
+        Map<String, String> authorizationParameters = new HashMap<>();
+        String clientId = "4444-4444-4444-4441";
+        authorizationParameters.put(AuthorizationRequest.CLIENT_ID, clientId);
+        authorizationParameters.put(AuthorizationRequest.SCOPE, "/orcid-works/create");
+        authorizationParameters.put("code", "code2");
+        
+        AuthorizationRequest request = new DefaultAuthorizationRequest(authorizationParameters);
+        ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
+        Authentication userAuthentication = new OrcidOauth2ClientAuthentication(clientDetails);
+        OAuth2Authentication authentication = new OAuth2Authentication(request, userAuthentication);
+        OAuth2AccessToken oauth2AccessToken = tokenServices.createAccessToken(authentication);
+        
+        
+        Date tokenExpiration = oauth2AccessToken.getExpiration();
+        Thread.sleep(2000);
+        
+        //The token expires in less than one hour
+        assertFalse(tokenExpiration.after(oneHoursTime()));
+        
+    }
 
+    /**
+     * Check that the token created with a persistent code will expire within 20 years
+     * */
+    @Test
+    @Transactional
+    @Rollback
+    public void tokenExpireIn20YearsTest() throws InterruptedException {
+        Date in20years = twentyYearsTime();
+        
+        Thread.sleep(2000);
+        
+        Map<String, String> authorizationParameters = new HashMap<>();
+        String clientId = "4444-4444-4444-4441";
+        authorizationParameters.put(AuthorizationRequest.CLIENT_ID, clientId);
+        authorizationParameters.put(AuthorizationRequest.SCOPE, "/orcid-works/create");
+        authorizationParameters.put("code", "code1");
+        
+        AuthorizationRequest request = new DefaultAuthorizationRequest(authorizationParameters);
+        ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
+        Authentication userAuthentication = new OrcidOauth2ClientAuthentication(clientDetails);
+        OAuth2Authentication authentication = new OAuth2Authentication(request, userAuthentication);
+        OAuth2AccessToken oauth2AccessToken = tokenServices.createAccessToken(authentication);
+        
+        
+        Date tokenExpiration = oauth2AccessToken.getExpiration();
+        
+        //The token expires in 20 years
+        assertFalse(in20years.after(tokenExpiration));
+        
+        in20years = twentyYearsTime();
+        
+        //Confirm the token expires in 20 years
+        assertFalse(tokenExpiration.after(in20years));
+    }
 }
