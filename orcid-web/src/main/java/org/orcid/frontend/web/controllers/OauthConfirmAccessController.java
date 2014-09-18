@@ -78,6 +78,7 @@ public class OauthConfirmAccessController extends BaseController {
     private static String SCOPE_PARAM = "scope";
     private static String RESPONSE_TYPE_PARAM = "response_type";
     private static String REDIRECT_URI_PARAM = "redirect_uri";
+    private static String GRANT_PERSISTENT_TOKEN = "grantPersistentToken";
 
     private static final String EMPTY_STRING = "";
 
@@ -304,6 +305,10 @@ public class OauthConfirmAccessController extends BaseController {
                     params.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "true");                    
                     Map<String, String> approvalParams = new HashMap<String, String>();
                     approvalParams.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "true");
+                    if(form.getPersistentTokenEnabled())
+                        approvalParams.put(GRANT_PERSISTENT_TOKEN, "true");
+                    else 
+                        approvalParams.put(GRANT_PERSISTENT_TOKEN, "false");
                     // Authorize
                     authorizationEndpoint.authorize(model, RESPONSE_TYPE, params, status, auth);
                     // Approve
@@ -400,6 +405,10 @@ public class OauthConfirmAccessController extends BaseController {
                     approvalParams.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "true");
                 else
                     approvalParams.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "false");
+                if(form.getPersistentTokenEnabled())
+                    approvalParams.put(GRANT_PERSISTENT_TOKEN, "true");
+                else 
+                    approvalParams.put(GRANT_PERSISTENT_TOKEN, "false");
                 // Authorize
                 authorizationEndpoint.authorize(model, RESPONSE_TYPE, params, status, auth);
                 // Approve
@@ -428,6 +437,10 @@ public class OauthConfirmAccessController extends BaseController {
             approvalParams.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "true");
         else
             approvalParams.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "false");
+        if(form.getPersistentTokenEnabled())
+            approvalParams.put(GRANT_PERSISTENT_TOKEN, "true");
+        else 
+            approvalParams.put(GRANT_PERSISTENT_TOKEN, "false");
         // Session status
         SimpleSessionStatus status = new SimpleSessionStatus();
 

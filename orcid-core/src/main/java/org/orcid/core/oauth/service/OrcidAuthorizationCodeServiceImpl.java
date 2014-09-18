@@ -195,9 +195,10 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
             detail.setSessionId(((WebAuthenticationDetails) authenticationDetails).getSessionId());
         }
         
+        Map<String, String> approvalParameters = authenticationRequest.getApprovalParameters();
         boolean isPersistentTokenEnabledByUser = false;
-        if(parameters.containsKey(GRANT_PERSISTENT_TOKEN)) {
-            String grantPersitentToken = parameters.get(GRANT_PERSISTENT_TOKEN);
+        if(approvalParameters.containsKey(GRANT_PERSISTENT_TOKEN)) {
+            String grantPersitentToken = approvalParameters.get(GRANT_PERSISTENT_TOKEN);
             if(Boolean.parseBoolean(grantPersitentToken)) {
                 isPersistentTokenEnabledByUser = true;                
             }

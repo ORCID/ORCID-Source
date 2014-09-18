@@ -33,3 +33,12 @@
    	</#list>				
 </ul>
 <span class="dotted-green-bar"></span>
+<div class="row">
+	<div class="col-md-1 col-sm-1 col-xs-1">
+		<input type="checkbox" name="enablePersistentToken" ng-model="enablePersistentToken"/>
+	</div>
+	<div class="col-md-11 col-sm-11 col-xs-11">
+		<@orcid.msg 'oauth.persistent_token_description'/><br>
+		<@orcid.msg 'oauth.persistent_token_description.note'/>
+	</div> 	
+</div>

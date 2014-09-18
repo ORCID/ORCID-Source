@@ -6701,6 +6701,7 @@ function OauthAuthorizationController($scope, $compile, $sce){
 	$scope.clientGroupName = "";
 	$scope.requestScopes = null;
 	$scope.emailTrustAsHtmlErrors = [];
+	$scope.enablePersistentToken = false;
 	
 	$scope.toggleClientDescription = function() {
 		$scope.showClientDescription = !$scope.showClientDescription;		
@@ -6759,6 +6760,8 @@ function OauthAuthorizationController($scope, $compile, $sce){
 	};
 	
 	$scope.submitLogin = function() {
+		if($scope.enablePersistentToken)
+			$scope.authorizationForm.persistentTokenEnabled=true;
 		var is_authorize = $scope.authorizationForm.approved;
 		$.ajax({
 			url: getBaseUri() + '/oauth/custom/login.json',
@@ -6830,7 +6833,9 @@ function OauthAuthorizationController($scope, $compile, $sce){
 		$scope.register();
 	};
 	
-	$scope.register = function() {		
+	$scope.register = function() {
+		if($scope.enablePersistentToken)
+			$scope.registrationForm.persistentTokenEnabled=true;	
 		$.ajax({
 	        url: getBaseUri() + '/oauth/custom/register.json',
 	        type: 'POST',
@@ -6990,6 +6995,8 @@ function OauthAuthorizationController($scope, $compile, $sce){
 	};
 	
 	$scope.authorizeRequest = function() {	
+		if($scope.enablePersistentToken)
+			$scope.authorizationForm.persistentTokenEnabled=true;
 		var is_authorize = $scope.authorizationForm.approved;
 		$.ajax({
 			url: getBaseUri() + '/oauth/custom/authorize.json',
