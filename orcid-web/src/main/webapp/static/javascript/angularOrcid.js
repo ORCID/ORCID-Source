@@ -305,12 +305,12 @@ orcidNgModule.factory("actSortSrvc", ['$rootScope', function ($rootScope) {
 				$scope.sortPredicate = sortPredicateMap[$scope.sortPredicateKey];
 				$scope.sortReverse = false;
 				
-				/*
+				
 				$scope.sortReverseKey = {};
 				$scope.sortReverseKey['date']  = false;
 				$scope.sortReverseKey['title'] = false;
 				$scope.sortReverseKey['type']  = false;
-				*/
+				
 				
 			},
 			sort: function(key, $scope) {				
@@ -321,7 +321,7 @@ orcidNgModule.factory("actSortSrvc", ['$rootScope', function ($rootScope) {
 				$scope.sortPredicateKey = key;
 				$scope.sortPredicate = sortPredicateMap[$scope.sortGroupType][key];
 				
-				//$scope.sortReverseKey[key] = ! $scope.sortReverseKey[key];
+				$scope.sortReverseKey[key] = ! $scope.sortReverseKey[key];
 				
 			}
 	};
