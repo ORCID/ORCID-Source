@@ -4092,15 +4092,19 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
 	};
 }
 
-function QuickSearchCtrl($scope, $compile){
+function SearchCtrl($scope, $compile){
+	$scope.hasErrors = false;
 	$scope.results = new Array();
 	$scope.numFound = 0;
-	$scope.start = 0;
-	$scope.rows = 10;
+	$scope.input = {};
+	$scope.input.start = 0;
+	$scope.input.rows = 10;
+	$scope.input.text = $('#SearchCtrl').data('search-query');
+	orcidSearchUrlJs.setBaseUrl(orcidVar.searchBaseUrl);
 	
-	$scope.getResults = function(rows){
+	$scope.getResults = function(){
 		$.ajax({
-			url: $('#QuickSearchCtrl').data('search-query-url') + '&start=' + $scope.start + '&rows=' + $scope.rows,      
+			url: orcidSearchUrlJs.buildUrl($scope.input),      
 			dataType: 'json',
 			headers: { Accept: 'application/json'},
 			success: function(data) {
@@ -4113,7 +4117,7 @@ function QuickSearchCtrl($scope, $compile){
 				if(!$scope.numFound){
 					$('#no-results-alert').fadeIn(1200);
 				}
-				$scope.areMoreResults = $scope.numFound > ($scope.start + $scope.rows);
+				$scope.areMoreResults = $scope.numFound > ($scope.input.start + $scope.input.rows);
 				$scope.$apply();
 				var newSearchResults = $('.new-search-result');
 				if(newSearchResults.length > 0){
@@ -4135,13 +4139,30 @@ function QuickSearchCtrl($scope, $compile){
 			}
 		}).fail(function(){
 			// something bad is happening!
-			console.log("error doing quick search");
+			console.log("error doing search");
 		});
+	};
+	
+	$scope.getFirstResults = function(){
+		$('#no-results-alert').hide();
+		$scope.results = new Array();
+		$scope.numFound = 0;
+		$scope.input.start = 0;
+		$scope.input.rows = 10;
+		$scope.areMoreResults = false;
+		if($scope.isValid()){
+			$scope.hasErrors = false;
+			$('#ajax-loader').show();
+			$scope.getResults();
+		}
+		else{
+			$scope.hasErrors = true;
+		}
 	};
 	
 	$scope.getMoreResults = function(){
 		$('#ajax-loader').show();
-		$scope.start += 10;
+		$scope.input.start += 10;
 		$scope.getResults();
 	};
 	
@@ -4158,8 +4179,22 @@ function QuickSearchCtrl($scope, $compile){
 		return $scope.results.length > 0;
 	};
 	
+	$scope.isValid = function(){
+		return orcidSearchUrlJs.isValidInput($scope.input);
+	};
+	
+	$scope.isValidOrcidId = function(){
+		if(typeof $scope.input.text === 'undefined' || $scope.input.text === null || $scope.input.text === '' || orcidSearchUrlJs.isValidOrcidId($scope.input.text)){
+			return true;
+		}
+		return false;
+	}
+	
 	// init
-	$scope.getResults(10);
+	if(typeof $scope.input.text !== 'undefined'){
+		$('#ajax-loader').show();
+		$scope.getResults();
+	}
 };
 
 // Controller for delegate permissions that have been granted BY the current user
