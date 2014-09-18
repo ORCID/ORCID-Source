@@ -20,33 +20,33 @@
   	<!-- Information -->
 	<div class="col-md-9 col-sm-9">
 	    <h3 class="workspace-title">
-        	<strong ng-bind-html="affiliation.affiliationName.value"></strong>:
-        	<span ng-bind="affiliation.city.value"></span><span ng-show="affiliation.region.value">, </span><span ng-bind="affiliation.region.value"></span>, <span ng-bind="affiliation.country.value"></span>        	        	        	        	
+        	<strong ng-bind-html="group.getActive().affiliationName.value"></strong>:
+        	<span ng-bind="group.getActive().city.value"></span><span ng-show="group.getActive().region.value">, </span><span ng-bind="group.getActive().region.value"></span>, <span ng-bind="group.getActive().country.value"></span>        	        	        	        	
         </h3>        
         <div class="info-detail">
         	<div class="info-date">
         	        	
-	        	<span class="affiliation-date" ng-show="affiliation.startDate && !affiliation.endDate">
-	        	    <span ng-show="affiliation.startDate.year">{{affiliation.startDate.year}}</span><span ng-show="affiliation.startDate.month">-{{affiliation.startDate.month}}</span>
+	        	<span class="affiliation-date" ng-show="group.getActive().startDate && !group.getActive().endDate">
+	        	    <span ng-show="group.getActive().startDate.year">{{group.getActive().startDate.year}}</span><span ng-show="group.getActive().startDate.month">-{{group.getActive().startDate.month}}</span>
 	        	    <span><@orcid.msg 'workspace_affiliations.dateSeparator'/></span>
 	        	     <@orcid.msg 'workspace_affiliations.present'/>
 	        	</span>
 	        	
-	        	<span class="affiliation-date" ng-show="affiliation.startDate && affiliation.endDate">
-	        		<span ng-show="affiliation.startDate.year">{{affiliation.startDate.year}}</span><span ng-show="affiliation.startDate.month">-{{affiliation.startDate.month}}</span>
+	        	<span class="affiliation-date" ng-show="group.getActive().startDate && group.getActive().endDate">
+	        		<span ng-show="group.getActive().startDate.year">{{group.getActive().startDate.year}}</span><span ng-show="group.getActive().startDate.month">-{{group.getActive().startDate.month}}</span>
 	        		<@orcid.msg 'workspace_affiliations.dateSeparator'/>
-	        		<span ng-show="affiliation.endDate.year">{{affiliation.endDate.year}}</span><span ng-show="affiliation.endDate.month">-{{affiliation.endDate.month}}</span>
+	        		<span ng-show="group.getActive().endDate.year">{{group.getActive().endDate.year}}</span><span ng-show="group.getActive().endDate.month">-{{group.getActive().endDate.month}}</span>
 	            </span>
 	            
-	            <span class="affiliation-date" ng-show="!affiliation.startDate && affiliation.endDate">
-	        	     <span ng-show="affiliation.endDate.year">{{affiliation.endDate.year}}</span><span ng-show="affiliation.endDate.month">-{{affiliation.endDate.month}}</span>
+	            <span class="affiliation-date" ng-show="!group.getActive().startDate && group.getActive().endDate">
+	        	     <span ng-show="group.getActive().endDate.year">{{group.getActive().endDate.year}}</span><span ng-show="group.getActive().endDate.month">-{{group.getActive().endDate.month}}</span>
 	        	</span>
 	        	        	
         	</div>
-        	<span class="divisor" ng-show="affiliation.roleTitle && (affiliation.startDate || affiliation.endDate)"></span>
+        	<span class="divisor" ng-show="group.getActive().roleTitle && (group.getActive().startDate || group.getActive().endDate)"></span>
         	
-        	<div class="role" ng-show="affiliation.roleTitle">
-	            <span ng-bind-html="affiliation.roleTitle.value"></span>
+        	<div class="role" ng-show="group.getActive().roleTitle">
+	            <span ng-bind-html="group.getActive().roleTitle.value"></span>
         	</div>
         </div>        
        </div>
@@ -61,12 +61,12 @@
 			 		</a>	
 			 	</li>	
 			 	<li>
-					<@orcid.privacyToggle2  angularModel="affiliation.visibility.visibility"
-					questionClick="toggleClickPrivacyHelp(affiliation.putCode.value)"
-					clickedClassCheck="{'popover-help-container-show':privacyHelp[affiliation.putCode.value]==true}" 
-					publicClick="setPrivacy(affiliation, 'PUBLIC', $event)" 
-	                  	limitedClick="setPrivacy(affiliation, 'LIMITED', $event)" 
-	                  	privateClick="setPrivacy(affiliation, 'PRIVATE', $event)" />
+					<@orcid.privacyToggle2  angularModel="group.getActive().visibility.visibility"
+					questionClick="toggleClickPrivacyHelp(group.getActive().putCode.value)"
+					clickedClassCheck="{'popover-help-container-show':privacyHelp[group.getActive().putCode.value]==true}" 
+					publicClick="setPrivacy(group.getActive(), 'PUBLIC', $event)" 
+	                  	limitedClick="setPrivacy(group.getActive(), 'LIMITED', $event)" 
+	                  	privateClick="setPrivacy(group.getActive(), 'PRIVATE', $event)" />
                 </li>			        
         	</ul>
         </#if>
@@ -77,7 +77,7 @@
 	
 	</div>
 </div>
-<div class="content affiliate" ng-show="moreInfo[affiliation.putCode.value]">	
+<div class="content affiliate" ng-show="moreInfo[group.getActive().putCode.value]">	
 	<div class="row">			
 		<div class="col-md-12">
 			<#include "affiliate_more_info_inc_v3.ftl"/>
@@ -90,8 +90,8 @@
 			<div class="col-md-5"></div>
 			<div class="col-md-7">
 				<div class="show-more-info-tab">			
-					<a href="" ng-show="!moreInfo[affiliation.putCode.value]" ng-click="showDetailsMouseClick(affiliation.putCode.value,$event);"><span class="glyphicon glyphicon-chevron-down"></span><@orcid.msg 'manage.developer_tools.show_details'/></a>
-					<a href="" ng-show="moreInfo[affiliation.putCode.value]" ng-click="showDetailsMouseClick(affiliation.putCode.value,$event);"><span class="glyphicon glyphicon-chevron-up"></span><@orcid.msg 'manage.developer_tools.hide_details'/></a>
+					<a href="" ng-show="!moreInfo[group.getActive().putCode.value]" ng-click="showDetailsMouseClick(group.getActive().putCode.value,$event);"><span class="glyphicon glyphicon-chevron-down"></span><@orcid.msg 'manage.developer_tools.show_details'/></a>
+					<a href="" ng-show="moreInfo[group.getActive().putCode.value]" ng-click="showDetailsMouseClick(group.getActive().putCode.value,$event);"><span class="glyphicon glyphicon-chevron-up"></span><@orcid.msg 'manage.developer_tools.hide_details'/></a>
 				</div>
 			</div>
 		</div>

@@ -32,35 +32,7 @@
 				  	</a>
 			    </div>
 			    <div class="col-md-9 col-sm-9 col-xs-12 action-button-bar" ng-show="workspaceSrvc.displayEducation">
-			    	<!-- Sort -->
-       				<div class="sort-menu-container">			       					 
-	       				<ul class="action-option manage-button toggle-menu">
-	       					<li>
-								<span class="glyphicon glyphicon-sort"></span>							
-								<@orcid.msg 'manual_orcid_record_contents.sort'/>
-								<ul class="sort-menu-options">
-									<li class="checked">											
-										<a ng-click="">
-											<@orcid.msg 'manual_orcid_record_contents.sort_date'/>
-											<span class="glyphicon glyphicon-ok"></span>
-										</a>																						
-									</li>
-								    <li class="">									    	
-								    	<a ng-click="">
-								    		<@orcid.msg 'manual_orcid_record_contents.sort_title'/>
-								    		<span class="" ></span>
-								    	</a>									    	
-								    </li>
-									<li class="">											
-										<a ng-click="">
-											<@orcid.msg 'manual_orcid_record_contents.sort_type'/>
-											<span class=""></span>
-										</a>																						
-									</li>
-							    </ul>											
-							</li>
-						</ul>									
-					</div>					
+			    	<#include "includes/workspace/workspace_act_sort_menu.ftl"/>					
 					<ul class="workspace-bar-menu">                			
 	        				<!-- Link Manually -->
 	        				<li>		        			
@@ -89,35 +61,7 @@
 				   	</a>				   	
 				</div>
 				<div class="col-md-9 col-sm-9 col-xs-12 action-button-bar" ng-show="workspaceSrvc.displayEmployment">
-					<!-- Sort -->
-					<div class="sort-menu-container">                                    
-					    <ul class="action-option manage-button toggle-menu">
-					        <li>
-					            <span class="glyphicon glyphicon-sort"></span>                          
-					            <@orcid.msg 'manual_orcid_record_contents.sort'/>
-					            <ul class="sort-menu-options">
-					                <li class="checked">                                            
-					                    <a ng-click="">
-					                        <@orcid.msg 'manual_orcid_record_contents.sort_date'/>
-					                        <span class="glyphicon glyphicon-ok"></span>
-					                    </a>                                                                                        
-					                </li>
-					                <li class="">                                           
-					                    <a ng-click="">
-					                        <@orcid.msg 'manual_orcid_record_contents.sort_title'/>
-					                        <span class="" ></span>
-					                    </a>                                            
-					                </li>
-					                <li class="">                                           
-					                    <a ng-click="">
-					                        <@orcid.msg 'manual_orcid_record_contents.sort_type'/>
-					                        <span class=""></span>
-					                    </a>                                                                                        
-					                </li>
-					            </ul>                                           
-					        </li>
-					    </ul>                                   
-					</div>  
+					<#include "includes/workspace/workspace_act_sort_menu.ftl"/>  
 					<ul class="workspace-bar-menu">                			
 	        				<!-- Link Manually -->
 	        				<li>		        			
@@ -132,24 +76,6 @@
 		</div>
 		<div ng-show="workspaceSrvc.displayEmployment" class="workspace-accordion-content">
 			<#include "includes/affiliate/emp_body_inc.ftl" />
-		</div>
-	</div>
-	<!-- Affiliations -->
-	<!-- This section still requires styling -->
-	<div ng-show='affiliationsSrvc.affiliations.length != 0' id="workspace-affiliations" class="workspace-accordion-item workspace-accordion-active" ng-cloak>	
-		<div class="workspace-accordion-header">
-			<div class="row">
-				<div class="col-md-6 col-sm-6 col-xs-12 action-button-bar">
-					<a name='workspace-affiliations' />
-				    <a href="" ng-click="workspaceSrvc.toggleAffiliations($event)" class="toggle-text">
-				  		<i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayAffiliations==false}"></i>
-				  		<@orcid.msg 'workspace_bio.Affiliations'/>
-				   	</a>				    
-				 </div>
-		    </div>
-		</div>
-		<div ng-show="workspaceSrvc.displayAffiliations" class="workspace-accordion-content">
-			<#include "includes/affiliate/aff_body_inc.ftl" />		
 		</div>
 	</div>
 </div>

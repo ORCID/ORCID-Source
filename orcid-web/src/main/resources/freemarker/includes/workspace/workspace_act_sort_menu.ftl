@@ -36,7 +36,7 @@
 											    		<span ng-class="{'glyphicon glyphicon-ok':sortPredicateKey=='title'}" ></span>
 											    	</a>									    	
 											    </li>
-												<li ng-class="{'checked':sortPredicateKey=='type'}">											
+												<li ng-show="sortGroupType != 'affiliation'" ng-class="{'checked':sortPredicateKey=='type'}">											
 													<a ng-click="sort('type');">
 														<@orcid.msg 'manual_orcid_record_contents.sort_type'/>
 														<span ng-class="{'glyphicon glyphicon-ok':sortPredicateKey=='type'}"></span>
