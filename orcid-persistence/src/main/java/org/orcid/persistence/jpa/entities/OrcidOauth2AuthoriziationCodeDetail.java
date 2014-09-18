@@ -54,6 +54,7 @@ public class OrcidOauth2AuthoriziationCodeDetail extends BaseEntity<String> impl
     private String responseType;
     private String state;
     private ClientDetailsEntity clientDetailsEntity;
+    private boolean isPersistent;
 
     // Authentication attributes
     private ProfileEntity profileEntity;
@@ -180,4 +181,13 @@ public class OrcidOauth2AuthoriziationCodeDetail extends BaseEntity<String> impl
     public void setClientDetailsEntity(ClientDetailsEntity clientDetailsEntity) {
         this.clientDetailsEntity = clientDetailsEntity;
     }
+
+    @Column(name = "persistent")
+    public boolean isPersistent() {
+        return isPersistent;
+    }
+
+    public void setPersistent(boolean isPersistent) {
+        this.isPersistent = isPersistent;
+    }        
 }

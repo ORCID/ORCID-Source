@@ -17,7 +17,6 @@
 package org.orcid.core.oauth.service;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -37,6 +36,7 @@ import org.orcid.persistence.jpa.entities.OrcidOauth2AuthoriziationCodeDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -65,6 +65,8 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
     private static final String REDIRECT_URI = "redirect_uri";
 
     private static final String RESPONSE_TYPE = "response_type";
+    
+    private static final String GRANT_PERSISTENT_TOKEN = "grantPersistentToken";
 
     @Resource(name = "orcidOauth2AuthoriziationCodeDetailDao")
     private OrcidOauth2AuthoriziationCodeDetailDao orcidOauth2AuthoriziationCodeDetailDao;
@@ -77,6 +79,9 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
     
     @Resource
     private ProfileDao profileDao;
+    
+    @Value("${org.orcid.core.oauth.usePersistentTokens:false}")
+    private boolean usePersistentTokens;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidAuthorizationCodeServiceImpl.class);
 
@@ -139,7 +144,7 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
 
     /**
      * TODO: REMOVE
-     * Here, inside authentication.authorizationParams, there should be a boolean value "grantLongLivedToken" if it is checked and
+     * Here, inside authentication.authorizationParams, there should be a boolean value "grantPersistentToken" if it is checked and
      * the new way of handle tokens is enabled, we should create this code with a flag "eternal" set to true, so, we know is a new kind of token and 
      * it should live for ever
      * */
@@ -189,6 +194,17 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
         if (authenticationDetails instanceof WebAuthenticationDetails) {
             detail.setSessionId(((WebAuthenticationDetails) authenticationDetails).getSessionId());
         }
+        
+        boolean isPersistentTokenEnabledByUser = false;
+        if(parameters.containsKey(GRANT_PERSISTENT_TOKEN)) {
+            String grantPersitentToken = parameters.get(GRANT_PERSISTENT_TOKEN);
+            if(Boolean.parseBoolean(grantPersitentToken)) {
+                isPersistentTokenEnabledByUser = true;                
+            }
+        }
+        
+        detail.setPersistent(isPersistentTokenEnabledByUser);
+        
         return detail;
     }
 
