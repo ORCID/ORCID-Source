@@ -21,7 +21,6 @@
 	<table class="ng-cloak table table-striped" ng-show="areResults()">
 		<thead>
 		<tr>
-			<th>${springMacroRequestContext.getMessage("search_results.thRelevance")}</th>
 			<th>${springMacroRequestContext.getMessage("search_results.thORCIDID")}</th>
 			<th>${springMacroRequestContext.getMessage("search_results.thGivenname")}</th>
 			<th>${springMacroRequestContext.getMessage("search_results.thFamilynames")}</th>
@@ -30,7 +29,6 @@
 		</thead>
 		<tbody>
 			<tr ng-repeat='result in results' class="new-search-result">
-				<td>{{result['relevancy-score'].value | number:3}}</td>
 				<td class='search-result-orcid-id'><a href="{{result['orcid-profile']['orcid-identifier'].uri}}">{{result['orcid-profile']['orcid-identifier'].path}}</td>
 				<td>{{result['orcid-profile']['orcid-bio']['personal-details']['given-names'].value}}</td>
 				<td>{{result['orcid-profile']['orcid-bio']['personal-details']['family-name'].value}}</td>
