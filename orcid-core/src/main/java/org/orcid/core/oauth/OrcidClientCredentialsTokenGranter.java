@@ -24,8 +24,6 @@ import org.springframework.security.oauth2.provider.TokenGranter;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 
 /**
- * 2011-2012 ORCID
- * 
  * @author Declan Newman (declan) Date: 10/05/2012
  */
 public class OrcidClientCredentialsTokenGranter implements TokenGranter {

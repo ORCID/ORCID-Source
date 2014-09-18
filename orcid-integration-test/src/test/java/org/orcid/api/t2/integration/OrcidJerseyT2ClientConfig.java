@@ -40,8 +40,6 @@ import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.client.urlconnection.HTTPSProperties;
 
 /**
- * 2011-2012 ORCID
- * 
  * @author Declan Newman (declan) Date: 12/04/2012
  */
 public class OrcidJerseyT2ClientConfig extends DefaultClientConfig implements InitializingBean {

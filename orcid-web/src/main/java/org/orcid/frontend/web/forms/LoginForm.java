@@ -18,9 +18,6 @@ package org.orcid.frontend.web.forms;
 
 /**
  * <p>
- * Copyright 2011-2012 ORCID
- * <p/>
- * <p>
  * User: Declan Newman (declan) Date: 09/02/2012
  * </p>
  */

@@ -104,8 +104,6 @@ import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMeth
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
- * Copyright 2011-2012 ORCID
- * 
  * @author Declan Newman (declan) Date: 22/02/2012
  */
 @Controller("manageProfileController")

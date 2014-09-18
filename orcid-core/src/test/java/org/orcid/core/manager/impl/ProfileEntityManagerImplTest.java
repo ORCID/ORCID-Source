@@ -40,8 +40,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * 2011-2012 ORCID
- * 
  * @author: Declan Newman (declan) Date: 10/02/2012
  */
 @RunWith(SpringJUnit4ClassRunner.class)

@@ -17,8 +17,6 @@
 package org.orcid.core.manager;
 
 /**
- * Copyright 2011-2012 ORCID
- * 
  * @author Will Simpson (will)
  * @author Declan Newman (declan) Date: 15/02/2012
  */

@@ -20,8 +20,6 @@ import javax.persistence.Embeddable;
 import java.io.Serializable;
 
 /**
- * 2011-2012 ORCID
- * 
  * @author Declan Newman (declan) Date: 13/02/2012
  */
 @Embeddable

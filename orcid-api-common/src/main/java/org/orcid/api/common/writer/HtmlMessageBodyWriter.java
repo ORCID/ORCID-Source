@@ -32,8 +32,6 @@ import java.lang.reflect.Type;
 import static javax.ws.rs.core.MediaType.TEXT_HTML;
 
 /**
- * 2011-2012 ORCID
- * 
  * @author Declan Newman (declan) Date: 02/03/2012
  */
 @Provider

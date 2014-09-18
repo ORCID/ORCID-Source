@@ -22,8 +22,6 @@ import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 /**
- * 2011-2012 - ORCID.
- *
  * @author Angel Montenegro 
  *         Date: 20/02/2014
  */

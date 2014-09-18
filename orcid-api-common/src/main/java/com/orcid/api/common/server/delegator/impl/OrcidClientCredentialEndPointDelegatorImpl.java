@@ -40,8 +40,6 @@ import org.springframework.stereotype.Component;
 import com.orcid.api.common.server.delegator.OrcidClientCredentialEndPointDelegator;
 
 /**
- * 2011-2012 ORCID
- * 
  * @author Declan Newman (declan) Date: 18/04/2012
  */
 @Component("orcidClientCredentialEndPointDelegator")

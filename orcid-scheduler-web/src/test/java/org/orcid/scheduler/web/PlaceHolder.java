@@ -17,8 +17,6 @@
 package org.orcid.scheduler.web;
 
 /**
- * 2011-2012 - ORCID
- *
  * @author Declan Newman (declan)
  *         Date: 18/07/2012
  */

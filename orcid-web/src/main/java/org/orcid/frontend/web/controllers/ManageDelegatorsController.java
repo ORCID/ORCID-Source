@@ -42,8 +42,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
 
 /**
- * Copyright 2011-2012 ORCID
- * 
  * Controller for delegate permissions that have been granted TO the current
  * user
  * 

@@ -24,8 +24,6 @@ import java.net.URI;
 import static junit.framework.Assert.assertEquals;
 
 /**
- * 2011-2012 ORCID
- * 
  * @author Declan Newman (declan) Date: 29/03/2012
  */
 public class OrcidWebUtilsTest {

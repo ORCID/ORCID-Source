@@ -23,8 +23,6 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 2011-2012 ORCID
- * 
  * @author Declan Newman (declan) Date: 25/04/2012
  */
 public class OrcidJerseyT1ClientConfig extends DefaultClientConfig implements ClientConfig {

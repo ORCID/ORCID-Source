@@ -31,8 +31,6 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 2011-2012 - ORCID
- *
  * @author Declan Newman (declan)
  *         Date: 24/07/2012
  */

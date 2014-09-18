@@ -19,8 +19,6 @@ package org.orcid.persistence.jpa.entities.keys;
 import java.io.Serializable;
 
 /**
- * 2011-2012 ORCID
- * 
  * @author Declan Newman (declan) Date: 13/02/2012
  */
 public class ClientRedirectUriPk implements Serializable {

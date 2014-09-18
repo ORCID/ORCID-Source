@@ -33,8 +33,6 @@ import javax.annotation.Resource;
 import static junit.framework.Assert.assertEquals;
 
 /**
- * 2011-2012 ORCID
- * 
  * @author Declan Newman (declan) Date: 19/04/2012
  */
 @RunWith(SpringJUnit4ClassRunner.class)

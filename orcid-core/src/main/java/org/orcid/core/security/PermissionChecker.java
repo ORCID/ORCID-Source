@@ -24,7 +24,6 @@ import org.springframework.security.core.Authentication;
 import java.util.Set;
 
 /**
- * 2011-2012 ORCID
  * <p/>
  * Checks permissions for the user current registered as the
  * {@link java.security.Principal} in this session.

@@ -24,8 +24,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * 2011-2012 ORCID
- * 
  * @author Declan Newman (declan) Date: 16/03/2012
  */
 @Target( { java.lang.annotation.ElementType.METHOD })

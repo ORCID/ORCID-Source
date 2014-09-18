@@ -38,8 +38,6 @@ import org.orcid.utils.FunctionsOverCollections;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 /**
- * Copyright 2011-2012 ORCID
- * 
  * @author Declan Newman (declan) Date: 22/02/2012
  */
 public class BaseWorkspaceController extends BaseController {

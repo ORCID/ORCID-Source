@@ -32,10 +32,6 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.stereotype.Service;
 
 /**
- * 2011-2012 ORCID
- * 
- * <p>
- * 
  * @author Declan Newman (declan) Date: 10/02/2012
  */
 @Service("profileEntityManager")

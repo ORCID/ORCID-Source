@@ -23,8 +23,6 @@ import org.orcid.persistence.jpa.entities.OrcidOauth2AuthoriziationCodeDetail;
 import javax.persistence.PersistenceContext;
 
 /**
- * 2011-2012 ORCID
- * 
  * @author Declan Newman (declan) Date: 24/04/2012
  */
 @PersistenceContext(unitName = "orcid")

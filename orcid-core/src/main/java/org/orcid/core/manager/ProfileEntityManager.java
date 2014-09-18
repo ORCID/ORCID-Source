@@ -26,11 +26,6 @@ import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 
 /**
- * <p>
- * 2011-2012 ORCID
- * </p>
- * <p/>
- * <p>
  * User: Declan Newman (declan) Date: 10/02/2012
  * </p>
  */

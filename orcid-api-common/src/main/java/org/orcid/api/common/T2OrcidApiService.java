@@ -31,8 +31,6 @@ import org.orcid.jaxb.model.message.OrcidMessage;
 import static org.orcid.api.common.OrcidApiConstants.*;
 
 /**
- * 2011-2012 ORCID
- * 
  * @author Declan Newman (declan) Date: 07/03/2012
  */
 public interface T2OrcidApiService<T> extends OrcidApiService<T> {

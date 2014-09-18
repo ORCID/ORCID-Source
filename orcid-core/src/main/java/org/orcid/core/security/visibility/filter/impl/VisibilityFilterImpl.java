@@ -60,7 +60,6 @@ import org.springframework.stereotype.Component;
  * {@link org.orcid.jaxb.model.message.VisibilityType} interface and check on
  * the visibility level requested.
  * <p/>
- * 2011-2012 ORCID
  * 
  * @author Declan Newman (declan) Date: 16/03/2012
  */

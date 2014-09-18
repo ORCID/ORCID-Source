@@ -20,8 +20,6 @@ import javax.ws.rs.core.Response;
 import java.util.Set;
 
 /**
- * 2011-2012 ORCID
- * 
  * @author Declan Newman (declan) Date: 18/04/2012
  */
 public interface OrcidClientCredentialEndPointDelegator {

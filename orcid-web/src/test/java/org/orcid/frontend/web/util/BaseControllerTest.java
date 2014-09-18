@@ -40,8 +40,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
- * Copyright 2011-2012 ORCID
- * 
  * @author Declan Newman (declan) Date: 23/02/2012
  */
 @Ignore

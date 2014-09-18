@@ -37,8 +37,6 @@ import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 
 /**
- * 2011-2012 ORCID
- * 
  * @author Declan Newman (declan) Date: 11/05/2012
  */
 public class OrcidRandomValueTokenServices extends DefaultTokenServices {

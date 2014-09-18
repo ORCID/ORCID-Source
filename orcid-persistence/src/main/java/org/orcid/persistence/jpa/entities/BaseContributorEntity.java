@@ -32,8 +32,6 @@ import org.orcid.jaxb.model.message.ContributorRole;
 import org.orcid.jaxb.model.message.SequenceType;
 
 /**
- * 2011-2012 - ORCID
- * 
  * @author Declan Newman (declan) Date: 08/08/2012
  */
 @MappedSuperclass

@@ -25,8 +25,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 2011-2012 - Semantico Ltd.
- *
  * @author Declan Newman (declan)
  *         Date: 12/10/2012
  */
