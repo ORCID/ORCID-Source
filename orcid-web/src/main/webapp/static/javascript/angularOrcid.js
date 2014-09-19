@@ -313,6 +313,23 @@ orcidNgModule.factory("actSortSrvc", ['$rootScope', function ($rootScope) {
 	return actSortSrvc;
 }]);
 
+orcidNgModule.factory("commonSrvc", ['$rootScope', function ($rootScope) {
+	var commonSrvc = {
+			copyErrorsLeft: function (data1, data2) {
+				for (var key in data1) {
+					if (key == 'errors') {
+						data1.errors = data2.errors;
+					} else {
+						if (data1[key] != null && data1[key].errors !== undefined)
+						data1[key].errors = data2[key].errors;
+					};
+				};
+			}
+	};
+	return commonSrvc;
+}]);
+
+
 orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
 	var serv = {
 			educations: new Array(),
@@ -2186,7 +2203,7 @@ function ExternalIdentifierCtrl($scope, $compile){
 	
 };	
 
-function ResetPasswordCtrl($scope, $compile) {
+function ResetPasswordCtrl($scope, $compile, commonSrvc) {
 	$scope.getResetPasswordForm = function(){
 		$.ajax({
 			url: getBaseUri() + '/password-reset.json',	        
@@ -2210,7 +2227,7 @@ function ResetPasswordCtrl($scope, $compile) {
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        success: function(data) {
-	        	$scope.copyErrorsLeft($scope.resetPasswordForm, data);
+	        	commonSrvc.copyErrorsLeft($scope.resetPasswordForm, data);
 	        	$scope.$apply();
 	        }
 	    }).fail(function() { 
@@ -2219,25 +2236,11 @@ function ResetPasswordCtrl($scope, $compile) {
 	    });
 	};		
 	
-	// in the case of slow network connection
-	// we don't want to overwrite  values while
-	// user is typing
-	$scope.copyErrorsLeft = function (data1, data2) {
-		for (var key in data1) {
-			if (key == 'errors') {
-				data1.errors = data2.errors;
-			} else {
-				if (data1[key].errors !== undefined)
-				data1[key].errors = data2[key].errors;
-			};
-		};
-	};
-	
 	//init
 	$scope.getResetPasswordForm();	
 }
 
-function RegistrationCtrl($scope, $compile) {
+function RegistrationCtrl($scope, $compile, commonSrvc) {
 	$scope.privacyHelp = {};
 	
 	$scope.toggleClickPrivacyHelp = function(key) {
@@ -2372,27 +2375,13 @@ function RegistrationCtrl($scope, $compile) {
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        success: function(data) {
-	        	$scope.copyErrorsLeft($scope.register, data);
+	        	commonSrvc.copyErrorsLeft($scope.register, data);
 	        	$scope.$apply();
 	        }
 	    }).fail(function() { 
 	    	// something bad is happening!
 	    	console.log("RegistrationCtrl.serverValidate() error");
 	    });
-	};
-
-	// in the case of slow network connection
-	// we don't want to overwrite  values while
-	// user is typing
-	$scope.copyErrorsLeft = function (data1, data2) {
-		for (var key in data1) {
-			if (key == 'errors') {
-				data1.errors = data2.errors;
-			} else {
-				if (data1[key].errors !== undefined)
-				data1[key].errors = data2[key].errors;
-			};
-		};
 	};
 	
 	$scope.showProcessingColorBox = function () {
@@ -2442,7 +2431,7 @@ function RegistrationCtrl($scope, $compile) {
 };
 		
 
-function ClaimCtrl($scope, $compile) {
+function ClaimCtrl($scope, $compile, commonSrvc) {
 	$scope.postingClaim = false;
 	$scope.getClaim = function(){
 		$.ajax({
@@ -2505,27 +2494,13 @@ function ClaimCtrl($scope, $compile) {
 	        dataType: 'json',
 	        success: function(data) {
 	        	//alert(angular.toJson(data));
-	        	$scope.copyErrorsLeft($scope.register, data);
+	        	commonSrvc.copyErrorsLeft($scope.register, data);
 	        	$scope.$apply();
 	        }
 	    }).fail(function() { 
 	    	// something bad is happening!
 	    	console.log("RegistrationCtrl.postRegisterValidate() error");
 	    });
-	};
-
-	// in the case of slow network connection
-	// we don't want to overwrite  values while
-	// user is typing
-	$scope.copyErrorsLeft = function (data1, data2) {
-		for (var key in data1) {
-			if (key == 'errors') {
-				data1.errors = data2.errors;
-			} else {
-				if (data1[key] != null && data1[key].errors !== undefined)
-				data1[key].errors = data2[key].errors;
-			};
-		};
 	};
 	
 	$scope.isValidClass = function (cur) {
@@ -2787,7 +2762,7 @@ function PublicEmpAffiliation($scope, $compile, $filter, affiliationsSrvc, actSo
 }
 
 
-function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceSrvc, actSortSrvc){
+function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceSrvc, actSortSrvc, commonSrvc){
 	actSortSrvc.initScope($scope, GroupedActivities.AFFILIATION);
 	$scope.affiliationsSrvc = affiliationsSrvc;
 	$scope.workspaceSrvc = workspaceSrvc;
@@ -2987,7 +2962,7 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 	        		affiliationsSrvc.getAffiliations('affiliations/affiliationIds.json');
 	        	} else {
 		        	$scope.editAffiliation = data;
-		        	$scope.copyErrorsLeft($scope.editAffiliation, data);
+		        	commonSrvc.copyErrorsLeft($scope.editAffiliation, data);
 		        	$scope.addingAffiliation = false;
 		        	$scope.$apply();
 	        	}
@@ -3049,7 +3024,7 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        success: function(data) {
-	        	$scope.copyErrorsLeft($scope.editAffiliation, data);
+	        	commonSrvc.copyErrorsLeft($scope.editAffiliation, data);
 	        	$scope.$apply();
 	        }
 	    }).fail(function() { 
@@ -3058,22 +3033,6 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 	    });
 	};
 	
-	// in the case of slow network connection
-	// we don't want to overwrite  values while
-	// user is typing
-	$scope.copyErrorsLeft = function (data1, data2) {
-		for (var key in data1) {
-			if (key == null) continue;
-			if (key == 'errors') {
-				data1.errors = data2.errors;
-			} else {
-				if (typeof(data1[key])=="object") {
-					$scope.copyErrorsLeft(data1[key], data2[key]);
-				}
-			};
-		};
-	};
-
 	$scope.isValidClass = function (cur) {
 		if (cur === undefined) return '';
 		var valid = true;
@@ -3089,7 +3048,7 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 /**
  * Fundings Controller 
  * */
-function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc, actSortSrvc) {
+function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc, actSortSrvc, commonSrvc) {
 	actSortSrvc.initScope($scope, GroupedActivities.FUNDING);
 	$scope.workspaceSrvc = workspaceSrvc;
 	$scope.fundingSrvc = fundingSrvc;
@@ -3228,7 +3187,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc, actS
 		        	if($scope.editFunding.externalIdentifiers.length == 0) {
 		        		$scope.addFundingExternalIdentifier();
 		        	}
-		        	$scope.copyErrorsLeft($scope.editFunding, data);		        	
+		        	commonSrvc.copyErrorsLeft($scope.editFunding, data);		        	
 	        	}
 	        	$scope.addingFunding = false;
 	        	$scope.$apply();	        	
@@ -3459,7 +3418,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc, actS
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        success: function(data) {	        	
-	        	$scope.copyErrorsLeft($scope.editFunding, data);
+	        	commonSrvc.copyErrorsLeft($scope.editFunding, data);
 	        	$scope.$apply();
 	        }
 	    }).fail(function() { 
@@ -3467,20 +3426,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc, actS
 	    	console.log("FundingCtrl.serverValidate() error");
 	    });
 	};
-	
-	$scope.copyErrorsLeft = function (data1, data2) {
-		for (var key in data1) {
-			if (key == null) continue;
-			if (key == 'errors') {				
-				data1.errors = data2.errors;
-			} else {
-				if (typeof(data1[key])=="object") {
-					$scope.copyErrorsLeft(data1[key], data2[key]);
-				}
-			};
-		};
-	};
-	
+		
 	$scope.unbindTypeaheadForOrgs = function () {
 		$('#fundingName').typeahead('destroy');
 	};
@@ -3680,7 +3626,7 @@ function PublicWorkCtrl($scope, $compile, $filter, worksSrvc, actSortSrvc) {
 	};
 }
 
-function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSrvc) {
+function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSrvc, commonSrvc) {
 	actSortSrvc.initScope($scope, GroupedActivities.ABBR_WORK);
 	$scope.canReadFiles = false;
 	$scope.showBibtexImportWizard = false;
@@ -3865,7 +3811,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
 	        		}
 	        	} else {
 		        	$scope.editWork = data;
-		        	$scope.copyErrorsLeft($scope.editWork, data);
+		        	commonSrvc.copyErrorsLeft($scope.editWork, data);
 		        	$scope.addingWork = false;
 		        	$scope.$apply();
 	        	}
@@ -4060,7 +4006,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        success: function(data) {
-	        	$scope.copyErrorsLeft($scope.editWork, data);
+	        	commonSrvc.copyErrorsLeft($scope.editWork, data);
 	        	if ( relativePath == 'works/work/citationValidate.json') {
 	        		$scope.validateCitation();
 	        	}
@@ -4072,22 +4018,6 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
 	    });
 	};
 	
-	// in the case of slow network connection
-	// we don't want to overwrite  values while
-	// user is typing
-	$scope.copyErrorsLeft = function (data1, data2) {
-		for (var key in data1) {
-			if (key == null) continue;
-			if (key == 'errors') {
-				data1.errors = data2.errors;
-			} else {
-				if (typeof(data1[key])=="object") {
-					$scope.copyErrorsLeft(data1[key], data2[key]);
-				}
-			};
-		};
-	};
-
 	$scope.isValidClass = function (cur) {
 		if (cur === undefined || cur == null) return '';		
 		var valid = true;
@@ -6740,7 +6670,7 @@ function adminDelegatesCtrl($scope){
 	};
 };
 
-function OauthAuthorizationController($scope, $compile, $sce){ 
+function OauthAuthorizationController($scope, $compile, $sce, commonSrvc){ 
 	$scope.showClientDescription = false;
 	$scope.showRegisterForm = true;
 	$scope.isOrcidPresent = false;
@@ -6983,7 +6913,7 @@ function OauthAuthorizationController($scope, $compile, $sce){
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        success: function(data) {
-	        	$scope.copyErrorsLeft($scope.registrationForm, data);
+	        	commonSrvc.copyErrorsLeft($scope.registrationForm, data);
 	        	if(field == 'Email') {
 		        	if ($scope.registrationForm.email.errors.length > 0) {
 	        			for(var i = 0; i < $scope.registrationForm.email.errors.length; i++){
@@ -7065,20 +6995,6 @@ function OauthAuthorizationController($scope, $compile, $sce){
 	$scope.initializeCommonFields = function(client_name, client_group_name) {
 		$scope.clientName = client_name;
 		$scope.clientGroupName = client_group_name;
-	};
-	
-	// in the case of slow network connection
-	// we don't want to overwrite  values while
-	// user is typing
-	$scope.copyErrorsLeft = function (data1, data2) {
-		for (var key in data1) {
-			if (key == 'errors') {
-				data1.errors = data2.errors;
-			} else {
-				if (data1[key].errors !== undefined)
-				data1[key].errors = data2[key].errors;
-			};
-		};
 	};
 	
 	$scope.switchForm = function() {		
