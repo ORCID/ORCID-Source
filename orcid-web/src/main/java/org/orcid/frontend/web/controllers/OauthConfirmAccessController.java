@@ -305,10 +305,15 @@ public class OauthConfirmAccessController extends BaseController {
                     params.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "true");                    
                     Map<String, String> approvalParams = new HashMap<String, String>();
                     approvalParams.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "true");
-                    if(form.getPersistentTokenEnabled())
-                        approvalParams.put(GRANT_PERSISTENT_TOKEN, "true");
-                    else 
+                    if(isUsePersistentTokens()) {
+                        if(form.getPersistentTokenEnabled())
+                            approvalParams.put(GRANT_PERSISTENT_TOKEN, "true");
+                        else 
+                            approvalParams.put(GRANT_PERSISTENT_TOKEN, "false");
+                    } else {
                         approvalParams.put(GRANT_PERSISTENT_TOKEN, "false");
+                    }
+                    
                     // Authorize
                     authorizationEndpoint.authorize(model, RESPONSE_TYPE, params, status, auth);
                     // Approve
@@ -405,10 +410,14 @@ public class OauthConfirmAccessController extends BaseController {
                     approvalParams.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "true");
                 else
                     approvalParams.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "false");
-                if(form.getPersistentTokenEnabled())
-                    approvalParams.put(GRANT_PERSISTENT_TOKEN, "true");
-                else 
+                if(isUsePersistentTokens()) {
+                    if(form.getPersistentTokenEnabled())
+                        approvalParams.put(GRANT_PERSISTENT_TOKEN, "true");
+                    else 
+                        approvalParams.put(GRANT_PERSISTENT_TOKEN, "false");
+                } else {
                     approvalParams.put(GRANT_PERSISTENT_TOKEN, "false");
+                }
                 // Authorize
                 authorizationEndpoint.authorize(model, RESPONSE_TYPE, params, status, auth);
                 // Approve
@@ -437,10 +446,14 @@ public class OauthConfirmAccessController extends BaseController {
             approvalParams.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "true");
         else
             approvalParams.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "false");
-        if(form.getPersistentTokenEnabled())
-            approvalParams.put(GRANT_PERSISTENT_TOKEN, "true");
-        else 
+        if(isUsePersistentTokens()) {
+            if(form.getPersistentTokenEnabled())
+                approvalParams.put(GRANT_PERSISTENT_TOKEN, "true");
+            else 
+                approvalParams.put(GRANT_PERSISTENT_TOKEN, "false");
+        } else {
             approvalParams.put(GRANT_PERSISTENT_TOKEN, "false");
+        }
         // Session status
         SimpleSessionStatus status = new SimpleSessionStatus();
 

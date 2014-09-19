@@ -36,7 +36,6 @@ import org.orcid.persistence.jpa.entities.OrcidOauth2AuthoriziationCodeDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -80,9 +79,6 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
     @Resource
     private ProfileDao profileDao;        
     
-    @Value("${org.orcid.core.oauth.usePersistentTokens:false}")
-    private boolean usePersistentTokens;        
-
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidAuthorizationCodeServiceImpl.class);
 
     @Override

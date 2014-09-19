@@ -63,7 +63,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service("orcidTokenStore")
 public class OrcidTokenStoreServiceImpl implements TokenStore {
 
-    public static String PERSISTENT_KEY = "persistent"; 
+    public static String PERSISTENT = "persistent"; 
+    public static String DATE_CREATED = "date_created";
     
     @Resource
     private OrcidOauth2TokenDetailService orcidOauthTokenDetailService;
@@ -277,6 +278,8 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
             if (profile != null) {
                 Map<String, Object> additionalInfo = new HashMap<String, Object>();
                 additionalInfo.put("orcid", profile.getId());
+                additionalInfo.put(PERSISTENT, detail.isPersistent());
+                additionalInfo.put(DATE_CREATED, detail.getDateCreated());
                 token.setAdditionalInformation(additionalInfo);
             }
         }
@@ -349,8 +352,8 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
         detail.setState(authorizationRequest.getState());
         
         Map<String, Object> additionalInfo = token.getAdditionalInformation();
-        if(additionalInfo != null && additionalInfo.containsKey(PERSISTENT_KEY)) {
-            boolean isPersistentKey = (Boolean)additionalInfo.get(PERSISTENT_KEY);
+        if(additionalInfo != null && additionalInfo.containsKey(PERSISTENT)) {
+            boolean isPersistentKey = (Boolean)additionalInfo.get(PERSISTENT);
             detail.setPersistent(isPersistentKey);
         } else {
             detail.setPersistent(false);
