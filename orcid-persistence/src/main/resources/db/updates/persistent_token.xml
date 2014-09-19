@@ -21,7 +21,7 @@
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
 	<changeSet author="Angel Montenegro" id="ADD-PERSISTENT-FLAG-TO-OAUTH2-AUTHORIZATION-CODE-DETAIL-TABLE">
-	    <preConditions>
+	    <preConditions onFail="MARK_RAN">
 			<not>
 				<columnExists columnName="persistent" tableName="oauth2_authoriziation_code_detail"/>
 			</not>
@@ -30,4 +30,16 @@
             <column name="persistent" type="boolean" defaultValue="false"/>            
         </addColumn>
     </changeSet>
+    
+    <changeSet author="Angel Montenegro" id="ADD-PERSISTENT-FLAG-TO-OAUTH2-TOKEN-DETAIL-TABLE">
+    	<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists columnName="persistent" tableName="oauth2_token_detail"/>
+			</not>
+        </preConditions>
+    	<addColumn tableName="oauth2_token_detail">
+            <column name="persistent" type="boolean"/>            
+        </addColumn>
+    </changeSet>
+    
 </databaseChangeLog>	

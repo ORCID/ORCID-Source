@@ -64,6 +64,12 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
     public OAuth2AccessToken createAccessToken(OAuth2Authentication authentication) throws AuthenticationException {
         OrcidOauth2AuthInfo authInfo = new OrcidOauth2AuthInfo(authentication);
         OAuth2AccessToken existingAccessToken = tokenStore.getAccessToken(authentication);
+        
+        Map<String, Object> additionalInfo = new HashMap<>();
+        additionalInfo.put("orcid", authInfo.getUserOrcid());                
+        if(isPersistentTokenEnabled(authentication.getAuthorizationRequest()))
+            additionalInfo.put("persistent", true);
+        
         if (existingAccessToken != null) {
             if (existingAccessToken.isExpired()) {
                 tokenStore.removeAccessToken(existingAccessToken);
@@ -75,17 +81,16 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
                 if (validitySeconds > 0) {
                     updatedAccessToken.setExpiration(new Date(System.currentTimeMillis() + (validitySeconds * 1000L)));
                 }
+                updatedAccessToken.setAdditionalInformation(additionalInfo);
                 tokenStore.storeAccessToken(updatedAccessToken, authentication);
                 LOGGER.info("Existing reusable access token found: clientId={}, scopes={}, userOrcid={}", new Object[] { authInfo.getClientId(), authInfo.getScopes(),
                         authInfo.getUserOrcid() });
                 return updatedAccessToken;
             }
         }
-
-        DefaultOAuth2AccessToken accessToken = new DefaultOAuth2AccessToken(super.createAccessToken(authentication));
-        Map<String, Object> additionalInfo = new HashMap<>();
-        additionalInfo.put("orcid", authInfo.getUserOrcid());
-        accessToken.setAdditionalInformation(additionalInfo);
+        DefaultOAuth2AccessToken accessToken = new DefaultOAuth2AccessToken(super.createAccessToken(authentication));        
+        
+        accessToken.setAdditionalInformation(additionalInfo);        
         tokenStore.storeAccessToken(accessToken, authentication);
         LOGGER.info("Creating new access token: clientId={}, scopes={}, userOrcid={}",
                 new Object[] { authInfo.getClientId(), authInfo.getScopes(), authInfo.getUserOrcid() });
@@ -116,13 +121,8 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
             }
         }
         
-        Map<String, String> params = authorizationRequest.getAuthorizationParameters();
-        if(params != null && params.containsKey("code")) {
-            String code = params.get("code");
-            if(orcidOauth2AuthoriziationCodeDetailDao.isPersistentToken(code)) {
-                return readValiditySeconds;
-            }
-        }
+        if(isPersistentTokenEnabled(authorizationRequest))
+            return readValiditySeconds;            
         
         return writeValiditySeconds;
     }
@@ -133,5 +133,19 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
 
     public int getReadValiditySeconds() {
         return readValiditySeconds;
+    }
+    
+    private boolean isPersistentTokenEnabled(AuthorizationRequest authorizationRequest) {
+        if(authorizationRequest != null) {
+            Map<String, String> params = authorizationRequest.getAuthorizationParameters();
+            if(params != null && params.containsKey("code")) {
+                String code = params.get("code");
+                if(orcidOauth2AuthoriziationCodeDetailDao.isPersistentToken(code)) {
+                    return true;
+                }
+            }
+        }        
+        
+        return false;
     }
 }

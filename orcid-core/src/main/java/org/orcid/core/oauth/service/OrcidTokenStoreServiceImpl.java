@@ -18,7 +18,6 @@ package org.orcid.core.oauth.service;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -64,6 +63,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service("orcidTokenStore")
 public class OrcidTokenStoreServiceImpl implements TokenStore {
 
+    public static String PERSISTENT_KEY = "persistent"; 
+    
     @Resource
     private OrcidOauth2TokenDetailService orcidOauthTokenDetailService;
 
@@ -346,6 +347,15 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
         detail.setResponseType(OAuth2Utils.formatParameterList(authorizationRequest.getResponseTypes()));
         detail.setScope(OAuth2Utils.formatParameterList(authorizationRequest.getScope()));
         detail.setState(authorizationRequest.getState());
+        
+        Map<String, Object> additionalInfo = token.getAdditionalInformation();
+        if(additionalInfo != null && additionalInfo.containsKey(PERSISTENT_KEY)) {
+            boolean isPersistentKey = (Boolean)additionalInfo.get(PERSISTENT_KEY);
+            detail.setPersistent(isPersistentKey);
+        } else {
+            detail.setPersistent(false);
+        }
+        
         return detail;
     }
 
