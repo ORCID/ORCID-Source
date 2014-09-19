@@ -302,6 +302,7 @@
 					<td colspan="2">
 						<div class="editTablePadCell35">
 							<p>${springMacroRequestContext.getMessage("deactivate_orcid.you_may")}</p>
+							<h4>${springMacroRequestContext.getMessage("deactivate_orcid.whatHappens")}</h4>
 							<p>${springMacroRequestContext.getMessage("deactivate_orcid.once")}</p>
 							<p>
 								<a
@@ -309,10 +310,11 @@
 									target="_blank">${springMacroRequestContext.getMessage("deactivate_orcid.close_an")}
 								</a>
 							</p>
+							<h4>${springMacroRequestContext.getMessage("deactivate_orcid.anotherAccount")}</h4>
 							<p>
 								${springMacroRequestContext.getMessage("deactivate_orcid.duplicate_orcid.a")} <a href='mailto:${springMacroRequestContext.getMessage("deactivate_orcid.duplicate_orcid.support_email")}'>${springMacroRequestContext.getMessage("deactivate_orcid.duplicate_orcid.support_email")}</a> ${springMacroRequestContext.getMessage("deactivate_orcid.duplicate_orcid.b")} 								
 							</p>								
-							<strong>${springMacroRequestContext.getMessage("deactivate_orcid.listTitle")}</strong>
+							<h4>${springMacroRequestContext.getMessage("deactivate_orcid.listTitle")}</h4>
 							<ol>
 								<li>${springMacroRequestContext.getMessage("deactivate_orcid.b1")}</li>
 								<li>${springMacroRequestContext.getMessage("deactivate_orcid.b2")}</li>
