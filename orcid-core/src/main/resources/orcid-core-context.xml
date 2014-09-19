@@ -100,6 +100,8 @@
 	</bean>
 
 	<bean id="orcidGenerationManager" class="org.orcid.core.manager.impl.OrcidGenerationManagerImpl" />
+	
+	<bean id="appIdGenerationManager" class="org.orcid.core.manager.impl.AppIdGenerationManagerImpl" />
 
 	<bean id="countryManager" class="org.orcid.core.manager.impl.CountryManagerImpl" />
 
