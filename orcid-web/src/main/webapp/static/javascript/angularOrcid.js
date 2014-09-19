@@ -301,8 +301,9 @@ orcidNgModule.factory("actSortSrvc", ['$rootScope', function ($rootScope) {
 	var actSortSrvc = {
 			initScope: function($scope, groupType) {
 				$scope.sortGroupType = groupType;
-				$scope.sortPredicateKey = 'date';
-				$scope.sortPredicate = sortPredicateMap[$scope.sortPredicateKey];
+				$scope.sortGroupType = groupType;
+				var key = $scope.sortPredicateKey = 'date';
+				$scope.sortPredicate = sortPredicateMap[$scope.sortGroupType][key];
 				$scope.sortReverse = false;
 				
 				
