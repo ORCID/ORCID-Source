@@ -316,13 +316,15 @@ orcidNgModule.factory("actSortSrvc", ['$rootScope', function ($rootScope) {
 			},
 			sort: function(key, $scope) {				
 				
-				if ($scope.sortPredicateKey == key) 
+				if ($scope.sortPredicateKey == key){ 
 					$scope.sortReverse = ! $scope.sortReverse;
+					$scope.sortReverseKey[key] = ! $scope.sortReverseKey[key];
+				}
 				
 				$scope.sortPredicateKey = key;
 				$scope.sortPredicate = sortPredicateMap[$scope.sortGroupType][key];
 				
-				$scope.sortReverseKey[key] = ! $scope.sortReverseKey[key];
+				
 				
 			}
 	};
