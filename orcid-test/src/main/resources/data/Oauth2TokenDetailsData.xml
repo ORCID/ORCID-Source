@@ -31,6 +31,7 @@
             date_created="2012-07-23 08:16:00.00"
             last_modified="2012-07-24 09:20:00.00"
             authentication_key="85578468aafa19ed63a3de2f9eb11288"
+            persistent="false"
             />
     <oauth2_token_detail
             id="2"
@@ -46,5 +47,6 @@
             date_created="2012-07-23 08:16:00.00"
             last_modified="2012-07-24 09:20:00.00"
             authentication_key="85578468aafa19ed63a3de2f9eb11289"
+            persistent="false"
             />
 </dataset>
