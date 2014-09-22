@@ -403,7 +403,7 @@ orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
 					arr = serv.employments;
 				var idx;
 				for (var idx in arr) {
-					if (arr[idx].putCode.value == affiliation.putCode.value) {
+					if (arr[idx].activePutCode == affiliation.putCode.value) {
 						break;
 					}
 				}
