@@ -49,7 +49,7 @@ public class OrcidOauth2AuthoriziationCodeDetailDaoImpl extends GenericDaoImpl<O
     }
     
     @Override
-    public boolean isPersistentToken(String code) {
+    public boolean isPersistentToken(String code) {        
         TypedQuery<OrcidOauth2AuthoriziationCodeDetail> query = entityManager.createQuery(
                 "from OrcidOauth2AuthoriziationCodeDetail where id=:code", OrcidOauth2AuthoriziationCodeDetail.class);
         query.setParameter("code", code);
