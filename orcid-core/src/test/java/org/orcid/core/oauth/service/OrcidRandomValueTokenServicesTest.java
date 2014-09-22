@@ -19,13 +19,17 @@ package org.orcid.core.oauth.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -40,7 +44,9 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.test.DBUnitTest;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.security.oauth2.provider.DefaultAuthorizationRequest;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
@@ -102,7 +108,8 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
         assertNotNull(oauth2AccessToken);
         assertFalse(oauth2AccessToken.getExpiration().before(earliestExpiry));
         assertFalse(oauth2AccessToken.getExpiration().after(latestExpiry));
-
+        assertNotNull(oauth2AccessToken.getRefreshToken());
+        
         OrcidOauth2TokenDetail tokenDetail = orcidOauthTokenDetailService.findByRefreshTokenValue(oauth2AccessToken.getRefreshToken().getValue());
         assertNotNull(tokenDetail);
         Date refreshTokenExpiration = tokenDetail.getRefreshTokenExpiration();
@@ -133,6 +140,7 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
         assertNotNull(oauth2AccessToken);
         assertFalse(oauth2AccessToken.getExpiration().before(earliestExpiry));
         assertFalse(oauth2AccessToken.getExpiration().after(latestExpiry));
+        assertNotNull(oauth2AccessToken.getRefreshToken());
 
         OrcidOauth2TokenDetail tokenDetail = orcidOauthTokenDetailService.findByRefreshTokenValue(oauth2AccessToken.getRefreshToken().getValue());
         assertNotNull(tokenDetail);
@@ -164,6 +172,7 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
         assertNotNull(oauth2AccessToken);
         assertFalse(oauth2AccessToken.getExpiration().before(earliestExpiry));
         assertFalse(oauth2AccessToken.getExpiration().after(latestExpiry));
+        assertNotNull(oauth2AccessToken.getRefreshToken());
 
         OrcidOauth2TokenDetail tokenDetail = orcidOauthTokenDetailService.findByRefreshTokenValue(oauth2AccessToken.getRefreshToken().getValue());
         assertNotNull(tokenDetail);
@@ -285,5 +294,58 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
         
         //Confirm the token expires in 20 years
         assertFalse(tokenExpiration.after(in20years));
+    }
+    
+    /**
+     * Check the expiration date when persistent tokens are disabled 
+     * */
+    @Test
+    @Transactional
+    @Rollback
+    public void tokenExpirationWithPersistentTokenDisabledTest() throws InterruptedException {
+        OAuth2AccessToken token = getAccessTokenWith20YearsExpiration();
+        OrcidRandomValueTokenServices orcidTokenServices = (OrcidRandomValueTokenServices) tokenServices;
+        orcidTokenServices.setSupportRefreshToken(false);
+        Date expirationTime = orcidTokenServices.getExpirationDateWhenPersistentTokenIsDisabled(token);
+        Thread.sleep(2000);
+        assertTrue(expirationTime.before(oneHoursTime()));
+    }
+            
+    
+    @Test
+    @Transactional
+    @Rollback
+    public void loadAuthenticationWithPersistentTokenDisabledTest() {
+        OrcidRandomValueTokenServices orcidTokenServices = (OrcidRandomValueTokenServices) tokenServices;
+        orcidTokenServices.setSupportRefreshToken(false);
+        try {
+            orcidTokenServices.loadAuthentication("persistent-token-1");
+            fail();
+        } catch(Exception e) {
+            if(e instanceof InvalidTokenException) {
+                
+            } else {
+                fail();
+            }
+        } finally {
+            orcidTokenServices.setSupportRefreshToken(true);
+        }                
+    }
+    
+    
+    private OAuth2AccessToken getAccessTokenWith20YearsExpiration() {
+        Date now = new Date();
+        Date expireIn20Years = twentyYearsTime();
+        DefaultOAuth2AccessToken token = new DefaultOAuth2AccessToken("tokenValue");
+        token.setExpiration(expireIn20Years);
+        Set<String> set = new HashSet<String>();
+        set.add("/orcid-works/create");
+        token.setScope(set);
+        token.setTokenType("bearer");
+        Map<String, Object> additionalInfo = new HashMap<String, Object>();
+        additionalInfo.put(OrcidTokenStoreServiceImpl.PERSISTENT, true);
+        additionalInfo.put(OrcidTokenStoreServiceImpl.DATE_CREATED, now);
+        token.setAdditionalInformation(additionalInfo);
+        return token;
     }
 }

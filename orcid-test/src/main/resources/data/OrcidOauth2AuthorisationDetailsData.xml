@@ -74,6 +74,26 @@
             persistent="false"
             />
 
+	<oauth2_token_detail
+            id="4"
+            token_value="persistent-token-1"
+            token_type="bearer"
+            token_expiration="2030-01-01"
+            user_orcid="4444-4444-4444-4444"
+            client_details_id="4444-4444-4444-4444"
+            refresh_token_value="persistent-token-refresh-1"
+            refresh_token_expiration="2030-02-01"
+            is_approved="true"
+            redirect_uri="http://www.google.com/"
+            response_type="bearer"
+            state="a-state"
+            scope_type="/funding/create"
+            resource_id="orcid"
+            authentication_key="an-authentication-key-4"
+            persistent="true"
+            date_created="2014-01-01"
+            />
+
 	<oauth2_authoriziation_code_detail
 		authoriziation_code_value="code1"
 		is_aproved="true"

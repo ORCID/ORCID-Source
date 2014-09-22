@@ -67,6 +67,14 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
         this.readValiditySeconds = readValiditySeconds;
     }
 
+    public boolean isUsePersistentTokens() {
+        return usePersistentTokens;
+    }
+
+    public void setUsePersistentTokens(boolean usePersistentTokens) {
+        this.usePersistentTokens = usePersistentTokens;
+    }
+
     @Override
     public OAuth2AccessToken createAccessToken(OAuth2Authentication authentication) throws AuthenticationException {
         OrcidOauth2AuthInfo authInfo = new OrcidOauth2AuthInfo(authentication);
