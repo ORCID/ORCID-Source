@@ -28,9 +28,10 @@
 				
 				<div class="info-detail">
 					<span class="funding-date" ng-show="group.getActive().startDate && !group.getActive().endDate">
-						<span ng-show="group.getActive().startDate.year">{{group.getActive().startDate.year}}</span><span ng-show="group.getActive().startDate.month">-{{group.getActive().startDate.month}}</span>						
-				    	<@orcid.msg 'workspace_fundings.dateSeparator'/>
-				    	<@orcid.msg 'workspace_fundings.present'/>
+						<span ng-show="group.getActive().startDate.year">{{group.getActive().startDate.year}}</span><span ng-show="group.getActive().startDate.month">-{{group.getActive().startDate.month}}</span>
+						<#-- Do not move it to two lines -->						
+				    	<@orcid.msg 'workspace_fundings.dateSeparator'/> <@orcid.msg 'workspace_fundings.present'/>
+				    	<#-- ########################### -->
 					</span>
 					<span class="funding-date" ng-show="group.getActive().startDate && group.getActive().endDate">
 						<span ng-show="group.getActive().startDate.year">{{group.getActive().startDate.year}}</span><span ng-show="group.getActive().startDate.month">-{{group.getActive().startDate.month}}</span>						
