@@ -97,12 +97,11 @@
             	<div class="profile-header">
 		        	<strong><@orcid.msg 'public_profile.labelCountry'/></strong>
 		            <span class="glyphicon glyphicon-pencil edit-country edit-option pull-right" ng-click="openEdit()" title="" ng-hide="showEdit == true"></span>
+		            <span ng-hide="showEdit == true" ng-click="toggleEdit()">	                
+	                <span ng-show="countryForm != null && countryForm.countryName != null" ng-bind="countryForm.countryName" ng-hide="showEdit == true"></span>
+	            </span>		            
 	            </div>
-                <span ng-hide="showEdit == true" ng-click="toggleEdit()">
-	                <span ng-show="countryForm != null && countryForm.iso2Country != null" ng-bind="countryForm.iso2Country.value">
-	                </span>
-	            </span>
-               
+                
                <div ng-show="showEdit == true" ng-cloak class="country-edit">
                	  <@orcid.privacyToggle  angularModel="countryForm.profileAddressVisibility.visibility"
 			         questionClick="toggleClickPrivacyHelp()"
