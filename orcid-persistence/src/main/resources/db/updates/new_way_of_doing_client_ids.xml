@@ -1,0 +1,38 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+        
+    <changeSet id="ADD-GROUP-ORCID-COLUMN-TO-CLIENT-DETAILS" author="Will Simpson">
+        <addColumn tableName="client_details">
+            <column name="group_orcid" type="varchar(255)" />
+        </addColumn>
+        <sql>
+            UPDATE client_details set group_orcid=COALESCE((SELECT group_orcid FROM profile WHERE orcid = client_details_id), (SELECT orcid FROM profile WHERE orcid = client_details_id));
+        </sql>
+        <addForeignKeyConstraint constraintName="client_details_group_orcid_fk" baseTableName="client_details" baseColumnNames="group_orcid" referencedTableName="profile" referencedColumnNames="orcid"/>
+    </changeSet>
+    
+    <!-- Do this once orphan clients are cleaned up
+    <changeSet id="ADD-NOT-NULL-TO-GROUP-ORCID" author="Will Simpson">
+        <addNotNullConstraint tableName="client_details" columnName="group_orcid"/>
+    </changeSet>
+    -->
+    
+ </databaseChangeLog>
