@@ -296,6 +296,8 @@ orcidNgModule.factory("actSortSrvc", ['$rootScope', function ($rootScope) {
 	sortPredicateMap[GroupedActivities.AFFILIATION]['date'] = ['-dateSortString', 'title'];
 	sortPredicateMap[GroupedActivities.AFFILIATION]['title'] = ['title', '-dateSortString'];
 	
+	
+	
 	var actSortSrvc = {
 			initScope: function($scope, groupType) {
 				$scope.sortGroupType = groupType;
@@ -303,12 +305,27 @@ orcidNgModule.factory("actSortSrvc", ['$rootScope', function ($rootScope) {
 				var key = $scope.sortPredicateKey = 'date';
 				$scope.sortPredicate = sortPredicateMap[$scope.sortGroupType][key];
 				$scope.sortReverse = false;
+				
+				
+				$scope.sortReverseKey = {};
+				$scope.sortReverseKey['date']  = false;
+				$scope.sortReverseKey['title'] = false;
+				$scope.sortReverseKey['type']  = false;
+				
+				
 			},
-			sort: function(key, $scope) {
-				if ($scope.sortPredicateKey == key) 
+			sort: function(key, $scope) {				
+				
+				if ($scope.sortPredicateKey == key){ 
 					$scope.sortReverse = ! $scope.sortReverse;
+					$scope.sortReverseKey[key] = ! $scope.sortReverseKey[key];
+				}
+				
 				$scope.sortPredicateKey = key;
 				$scope.sortPredicate = sortPredicateMap[$scope.sortGroupType][key];
+				
+				
+				
 			}
 	};
 	return actSortSrvc;
@@ -3645,7 +3662,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
 	$scope.bibtexParsingError = false;
 	$scope.bibtexCancelLink = false;
 	$scope.bibtextWork = false;
-	$scope.bibtextWorkIndex = null;	
+	$scope.bibtextWorkIndex = null;
 
 	$scope.sortOtherLast = function(type) {
 		if (type.key == 'other') return 'ZZZZZ';
