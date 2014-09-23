@@ -70,6 +70,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
     private ProfileEntity profileEntity;
     private Set<CustomEmailEntity> customEmails = Collections.emptySet();
     private int accessTokenValiditySeconds = DEFAULT_TOKEN_VALIDITY;
+    private boolean persistentTokensEnabled = false; 
 
     /**
      * This should be implemented by all entity classes to return the id of the
@@ -255,6 +256,15 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
 
     public void setCustomEmails(Set<CustomEmailEntity> customEmails) {
         this.customEmails = customEmails;
+    }
+
+    @Column(name = "persistent_tokens_enabled")
+    public boolean isPersistentTokensEnabled() {
+        return persistentTokensEnabled;
+    }
+
+    public void setPersistentTokensEnabled(boolean persistentTokensEnabled) {
+        this.persistentTokensEnabled = persistentTokensEnabled;
     }
 
     @Transient

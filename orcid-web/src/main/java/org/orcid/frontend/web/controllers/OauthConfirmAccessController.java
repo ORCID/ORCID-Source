@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.core.constants.OauthTokensConstants;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.OrcidProfileManager;
@@ -73,12 +74,11 @@ public class OauthConfirmAccessController extends BaseController {
     private Pattern redirectUriPattern = Pattern.compile("redirect_uri=([^&]*)");
     private Pattern responseTypePattern = Pattern.compile("response_type=([^&]*)");
 
-    private static String RESPONSE_TYPE = "code";
-    private static String CLIENT_ID_PARAM = "client_id";
-    private static String SCOPE_PARAM = "scope";
-    private static String RESPONSE_TYPE_PARAM = "response_type";
-    private static String REDIRECT_URI_PARAM = "redirect_uri";
-    private static String GRANT_PERSISTENT_TOKEN = "grantPersistentToken";
+    private static final String RESPONSE_TYPE = "code";
+    private static final String CLIENT_ID_PARAM = "client_id";
+    private static final String SCOPE_PARAM = "scope";
+    private static final String RESPONSE_TYPE_PARAM = "response_type";
+    private static final String REDIRECT_URI_PARAM = "redirect_uri";       
 
     private static final String EMPTY_STRING = "";
 
@@ -107,6 +107,7 @@ public class OauthConfirmAccessController extends BaseController {
         String redirectUri = "";
         String responseType = "";
         String orcid = null;
+        boolean usePersistentTokens = false;
         if (savedRequest != null) {
             String url = savedRequest.getRedirectUrl();
             Matcher matcher = clientIdPattern.matcher(url);
@@ -152,7 +153,14 @@ public class OauthConfirmAccessController extends BaseController {
 
                     // Get client name
                     ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
-
+                    
+                    //If persistence tokens are enabled on server
+                    if(isUsePersistentTokens()) {
+                        //Check if the client has persistent tokens enabled
+                        if(clientDetails.isPersistentTokensEnabled()) 
+                            usePersistentTokens = true;
+                    }                    
+                    
                     // validate client scopes
                     try {
                         authorizationEndpoint.validateScope(scope, clientDetails);
@@ -202,6 +210,7 @@ public class OauthConfirmAccessController extends BaseController {
         mav.addObject("client_description", clientDescription);
         mav.addObject("userId", orcid != null ? orcid : email);        
         mav.addObject("hideUserVoiceScript", true);
+        mav.addObject("usePersistentTokens", usePersistentTokens);
         mav.setViewName("oauth_login");
         return mav;
     }
@@ -222,11 +231,20 @@ public class OauthConfirmAccessController extends BaseController {
         String clientGroupName = "";
         String clientWebsite = "";
 
+        boolean usePersistentTokens = false;
+        
         ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
         clientName = clientDetails.getClientName() == null ? "" : clientDetails.getClientName();
         clientDescription = clientDetails.getClientDescription() == null ? "" : clientDetails.getClientDescription();
         clientWebsite = clientDetails.getClientWebsite() == null ? "" : clientDetails.getClientWebsite();
 
+        //If persistence tokens are enabled on server
+        if(isUsePersistentTokens()) {
+            //Check if the client has persistent tokens enabled
+            if(clientDetails.isPersistentTokensEnabled())
+                usePersistentTokens = true;
+        }
+        
         if(clientProfile.getClientType() == null) {
             clientGroupName = PUBLIC_CLIENT_GROUP_NAME;
         } else if (clientProfile.getOrcidInternal() != null && clientProfile.getOrcidInternal().getGroupOrcidIdentifier() != null
@@ -256,6 +274,7 @@ public class OauthConfirmAccessController extends BaseController {
         mav.setViewName("confirm-oauth-access");
         mav.addObject("hideUserVoiceScript", true);
         mav.addObject("profile", getEffectiveProfile());
+        mav.addObject("usePersistentTokens", usePersistentTokens);
         return mav;
     }
 
@@ -305,13 +324,16 @@ public class OauthConfirmAccessController extends BaseController {
                     params.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "true");                    
                     Map<String, String> approvalParams = new HashMap<String, String>();
                     approvalParams.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "true");
-                    if(isUsePersistentTokens()) {
+                    //If persistent tokens are enabled on server
+                    if(isUsePersistentTokens()) {                        
+                        approvalParams.put(OauthTokensConstants.TOKEN_VERSION, OauthTokensConstants.PERSISTENT_TOKEN);
                         if(form.getPersistentTokenEnabled())
-                            approvalParams.put(GRANT_PERSISTENT_TOKEN, "true");
+                            approvalParams.put(OauthTokensConstants.GRANT_PERSISTENT_TOKEN, "true");
                         else 
-                            approvalParams.put(GRANT_PERSISTENT_TOKEN, "false");
+                            approvalParams.put(OauthTokensConstants.GRANT_PERSISTENT_TOKEN, "false");
                     } else {
-                        approvalParams.put(GRANT_PERSISTENT_TOKEN, "false");
+                        approvalParams.put(OauthTokensConstants.TOKEN_VERSION, OauthTokensConstants.NON_PERSISTENT_TOKEN);
+                        approvalParams.put(OauthTokensConstants.GRANT_PERSISTENT_TOKEN, "false");
                     }
                     
                     // Authorize
@@ -410,13 +432,16 @@ public class OauthConfirmAccessController extends BaseController {
                     approvalParams.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "true");
                 else
                     approvalParams.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "false");
+                //If persistent tokens are enabled on server
                 if(isUsePersistentTokens()) {
+                    approvalParams.put(OauthTokensConstants.TOKEN_VERSION, OauthTokensConstants.PERSISTENT_TOKEN);
                     if(form.getPersistentTokenEnabled())
-                        approvalParams.put(GRANT_PERSISTENT_TOKEN, "true");
+                        approvalParams.put(OauthTokensConstants.GRANT_PERSISTENT_TOKEN, "true");
                     else 
-                        approvalParams.put(GRANT_PERSISTENT_TOKEN, "false");
+                        approvalParams.put(OauthTokensConstants.GRANT_PERSISTENT_TOKEN, "false");
                 } else {
-                    approvalParams.put(GRANT_PERSISTENT_TOKEN, "false");
+                    approvalParams.put(OauthTokensConstants.TOKEN_VERSION, OauthTokensConstants.NON_PERSISTENT_TOKEN);
+                    approvalParams.put(OauthTokensConstants.GRANT_PERSISTENT_TOKEN, "false");
                 }
                 // Authorize
                 authorizationEndpoint.authorize(model, RESPONSE_TYPE, params, status, auth);
@@ -446,13 +471,16 @@ public class OauthConfirmAccessController extends BaseController {
             approvalParams.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "true");
         else
             approvalParams.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "false");
+        //If persistent tokens are enabled on server
         if(isUsePersistentTokens()) {
+            approvalParams.put(OauthTokensConstants.TOKEN_VERSION, OauthTokensConstants.PERSISTENT_TOKEN);
             if(form.getPersistentTokenEnabled())
-                approvalParams.put(GRANT_PERSISTENT_TOKEN, "true");
+                approvalParams.put(OauthTokensConstants.GRANT_PERSISTENT_TOKEN, "true");
             else 
-                approvalParams.put(GRANT_PERSISTENT_TOKEN, "false");
+                approvalParams.put(OauthTokensConstants.GRANT_PERSISTENT_TOKEN, "false");
         } else {
-            approvalParams.put(GRANT_PERSISTENT_TOKEN, "false");
+            approvalParams.put(OauthTokensConstants.TOKEN_VERSION, OauthTokensConstants.NON_PERSISTENT_TOKEN);
+            approvalParams.put(OauthTokensConstants.GRANT_PERSISTENT_TOKEN, "false");
         }
         // Session status
         SimpleSessionStatus status = new SimpleSessionStatus();

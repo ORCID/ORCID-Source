@@ -637,8 +637,7 @@ public class BaseController {
     public void setShareThisKey(String key) {
         this.shareThisKey = key;
     }
-
-    @ModelAttribute("usePersistentTokens")
+    
     public boolean isUsePersistentTokens() {
         return usePersistentTokens;
     }
