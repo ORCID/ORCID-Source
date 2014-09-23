@@ -54,7 +54,6 @@ import org.orcid.persistence.jpa.entities.keys.ClientRedirectUriPk;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.test.DBUnitTest;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -174,6 +173,27 @@ public class PersistentTokensIntegrationTest extends DBUnitTest {
         Thread.sleep(2000);
         Date afterCreatingToken = twentyYearsTime();
         
+        //confirm the token expires in 20 years
+        assertTrue(tokenExpiration.after(beforeCreatingToken));
+        assertTrue(tokenExpiration.before(afterCreatingToken));
+    }
+    
+    @Test
+    public void createNonPersistentToken() throws InterruptedException, JSONException {
+        Date beforeCreatingToken = oneHoursTime();
+        String authorizationCode = webDriverHelper.obtainAuthorizationCode("/orcid-works/create", CLIENT_DETAILS_ID, "michael@bentine.com", "password");
+        assertFalse(PojoUtil.isEmpty(authorizationCode));
+        String accessToken = obtainAccessToken(CLIENT_DETAILS_ID, authorizationCode, redirectUri, "/orcid-works/create");
+        assertFalse(PojoUtil.isEmpty(accessToken));
+        OrcidOauth2TokenDetail tokenEntity = oauth2TokenDetailDao.findByTokenValue(accessToken);
+        assertNotNull(tokenEntity);
+        assertFalse(tokenEntity.isPersistent());        
+        Date tokenExpiration = tokenEntity.getTokenExpiration();
+        assertNotNull(tokenExpiration);
+        Thread.sleep(2000);
+        Date afterCreatingToken = oneHoursTime();
+        
+        //confirm the token expires in 1 hour
         assertTrue(tokenExpiration.after(beforeCreatingToken));
         assertTrue(tokenExpiration.before(afterCreatingToken));
     }
@@ -200,6 +220,12 @@ public class PersistentTokensIntegrationTest extends DBUnitTest {
         // This is roughly 2 years in seconds - used in the implementation, but
         // not sure how was calculated now.
         earliestExpiry.add(Calendar.SECOND, 631138519);
+        return earliestExpiry.getTime();
+    }
+    
+    private Date oneHoursTime() {
+        Calendar earliestExpiry = new GregorianCalendar();
+        earliestExpiry.add(Calendar.HOUR, 1);
         return earliestExpiry.getTime();
     }
 }
