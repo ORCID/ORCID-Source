@@ -134,11 +134,11 @@ public class Work implements ErrorsInterface, Serializable {
 		
 		if (minimizedWorkEntity.getWorkType() != null)
                     w.setWorkType(Text.valueOf(minimizedWorkEntity.getWorkType().value()));
-
+		WorkExternalIdentifiers identifiers = null;
 		if (!StringUtils.isEmpty(minimizedWorkEntity.getExternalIdentifiersJson())) {
-		    WorkExternalIdentifiers identifiers = JsonUtils.readObjectFromJsonString(minimizedWorkEntity.getExternalIdentifiersJson(), WorkExternalIdentifiers.class);
-		    populateExternaIdentifiers(identifiers, w);            
+		    identifiers = JsonUtils.readObjectFromJsonString(minimizedWorkEntity.getExternalIdentifiersJson(), WorkExternalIdentifiers.class);
 		}
+		populateExternaIdentifiers(identifiers, w);
                 if (minimizedWorkEntity.getSourceProfile() != null) {
                     w.setWorkSource(Text.valueOf(minimizedWorkEntity.getSourceProfile().getId()));
                     w.setWorkSourceName(Text.valueOf(Jpa2JaxbAdapterImpl.createName(minimizedWorkEntity.getSourceProfile())));
@@ -177,10 +177,11 @@ public class Work implements ErrorsInterface, Serializable {
 			}
 			w.setContributors(contributors);
 		}
+		WorkExternalIdentifiers workExternalIdentifiers = null;
 		if (orcidWork.getWorkExternalIdentifiers() != null) {
-		    WorkExternalIdentifiers workExternalIdentifiers = orcidWork.getWorkExternalIdentifiers();
-		    populateExternaIdentifiers(workExternalIdentifiers, w);
+		    workExternalIdentifiers = orcidWork.getWorkExternalIdentifiers();
 		}
+		populateExternaIdentifiers(workExternalIdentifiers, w);
 		if (orcidWork.getWorkSource() != null) {
 			w.setWorkSource(Text.valueOf(orcidWork.getWorkSource().getPath()));
 			if (orcidWork.getWorkSource().getSourceName() != null)
@@ -211,14 +212,12 @@ public class Work implements ErrorsInterface, Serializable {
 	}
 
     private static void populateExternaIdentifiers(WorkExternalIdentifiers workExternalIdentifiers, Work work) {
-        if (workExternalIdentifiers.getWorkExternalIdentifier() != null) {
         List<WorkExternalIdentifier> workExternalIdentifiersList = new ArrayList<WorkExternalIdentifier>();
-        for (org.orcid.jaxb.model.message.WorkExternalIdentifier owWorkExternalIdentifier : workExternalIdentifiers.getWorkExternalIdentifier()) {
+        if (workExternalIdentifiers != null && workExternalIdentifiers.getWorkExternalIdentifier() != null)
+            for (org.orcid.jaxb.model.message.WorkExternalIdentifier owWorkExternalIdentifier : workExternalIdentifiers.getWorkExternalIdentifier())
         	workExternalIdentifiersList.add(WorkExternalIdentifier
         			.valueOf(owWorkExternalIdentifier));
-        }
         work.setWorkExternalIdentifiers(workExternalIdentifiersList);
-        }
     }
 	
 	public static Work minimizedValueOf(OrcidWork orcidWork) {
@@ -259,13 +258,13 @@ public class Work implements ErrorsInterface, Serializable {
 			}
 			ow.setWorkContributors(new WorkContributors(cList));
 		}
+		List<org.orcid.jaxb.model.message.WorkExternalIdentifier> wiList = new ArrayList<org.orcid.jaxb.model.message.WorkExternalIdentifier>();
 		if (this.getWorkExternalIdentifiers() != null) {
-			List<org.orcid.jaxb.model.message.WorkExternalIdentifier> wiList = new ArrayList<org.orcid.jaxb.model.message.WorkExternalIdentifier>();
-			for (WorkExternalIdentifier wi : this.getWorkExternalIdentifiers()) {
+		    for (WorkExternalIdentifier wi : this.getWorkExternalIdentifiers()) {
 				wiList.add(wi.toWorkExternalIdentifier());
-			}
-			ow.setWorkExternalIdentifiers(new WorkExternalIdentifiers(wiList));
+		    }
 		}
+		ow.setWorkExternalIdentifiers(new WorkExternalIdentifiers(wiList));
 		if (this.getWorkSource() != null)
 			ow.setWorkSource(new WorkSource(this.getWorkSource().getValue()));
 		if (this.getWorkTitle() != null) {
