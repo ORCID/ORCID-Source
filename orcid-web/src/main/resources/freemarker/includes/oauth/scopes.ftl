@@ -17,21 +17,58 @@
 
 -->
 <span class="dotted-green-bar"></span>
-<ul class="oauth-scopes" id="scopes-ul">
-	<#list scopes as scope>
-		<li>				
-			<#if scope.value()?ends_with("/create")>
-				<span class="mini-icon glyphicon glyphicon-cloud-download green"></span><@orcid.msg '${scope.declaringClass.name}.${scope.name()}'/>
-			<#elseif scope.value()?ends_with("/update")>
-				<span class="mini-icon glyphicon glyphicon-refresh green"></span><@orcid.msg '${scope.declaringClass.name}.${scope.name()}'/>
-			<#elseif scope.value()?ends_with("/read-limited")>
-				<span class="mini-icon glyphicon glyphicon-eye-open green"></span><@orcid.msg '${scope.declaringClass.name}.${scope.name()}'/>
-			<#else>
-				<span class="mini-orcid-icon oauth-bullet"></span><@orcid.msg '${scope.declaringClass.name}.${scope.name()}'/>
-			</#if>	
-		</li>
-   	</#list>				
-</ul>
+<#assign show_create_icon = false >
+<#assign show_update_icon = false >
+<#assign show_read_limited_icon = false >
+<#assign show_bullet_icon = false >
+	
+<#list scopes as scope>
+	<#if scope.value()?ends_with("/create")>
+		<#assign show_create_icon = true>
+	<#elseif scope.value()?ends_with("/update")>
+		<#assign show_update_icon = true>
+	<#elseif scope.value()?ends_with("/read-limited")>
+		<#assign show_read_limited_icon = true>		
+	<#else>
+		<#assign show_bullet_icon = true>
+	</#if>	
+</#list>
+	
+<div class="row">	
+	<div class="col-md-12 col-sm-12 col-xs-12">
+		<ul class="oauth-icons">
+			<#if show_bullet_icon>
+				<li><span class="mini-orcid-icon oauth-bullet"></span></li>
+			</#if>
+			<#if show_read_limited_icon>
+				<li><span class="mini-icon glyphicon glyphicon-eye-open green"></span></li>
+			</#if>
+			<#if show_create_icon>
+				<li><span class="mini-icon glyphicon glyphicon-cloud-download green"></span></li>
+			</#if>
+			<#if show_update_icon>
+				<li><span class="mini-icon glyphicon glyphicon-refresh green"></span></li>
+			</#if>					
+		</ul>
+	</div>
+	<div class="col-md-12 col-sm-12 col-xs-12">
+		<ul class="oauth-scopes" id="scopes-ul">		
+			<#list scopes as scope>
+				<li>				
+					<#if scope.value()?ends_with("/create")>
+						<@orcid.msg '${scope.declaringClass.name}.${scope.name()}'/>
+					<#elseif scope.value()?ends_with("/update")>
+						<@orcid.msg '${scope.declaringClass.name}.${scope.name()}'/>
+					<#elseif scope.value()?ends_with("/read-limited")>
+						<@orcid.msg '${scope.declaringClass.name}.${scope.name()}'/>
+					<#else>
+						<@orcid.msg '${scope.declaringClass.name}.${scope.name()}'/>
+					</#if>	
+				</li>
+		   	</#list>				
+		</ul>
+	</div>
+</div>
 <span class="dotted-green-bar"></span>
 <#if usePersistentTokens?? && usePersistentTokens>
 	<div class="row">
