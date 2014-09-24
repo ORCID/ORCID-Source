@@ -149,10 +149,16 @@ GroupedActivities.prototype.key = function(activityIdentifiers) {
 		idPath = null;
 		idTypePath = null;
 	}
-	var key = activityIdentifiers[idTypePath] ? activityIdentifiers[idTypePath].value : ''; 
-	// currently I've been told all know identifiers are case insensitive so we are 
-	// lowercase the value for consistency 
-	key += activityIdentifiers[idPath] != null ? activityIdentifiers[idPath].value.toLowerCase() : '';  
+	var key = '';
+	if (activityIdentifiers[idTypePath]) {
+		// ISSN is misused too often to identify a work
+		if (activityIdentifiers[idTypePath].value != 'issn') {
+		    key = activityIdentifiers[idTypePath].value; 
+	        // currently I've been told all know identifiers are case insensitive so we are 
+	        // lowercase the value for consistency 
+	        key += activityIdentifiers[idPath] != null ? activityIdentifiers[idPath].value.toLowerCase() : '';
+		}
+	}
 	return key;
 };
 
