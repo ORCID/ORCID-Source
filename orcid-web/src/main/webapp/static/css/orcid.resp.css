@@ -5401,12 +5401,12 @@ ul.oauth-scopes li{
 .admin-edit-client {
 	border: solid 1px #D3D3D3;
 	padding: 10px;
-	margin: 5px;
+	margin: 55px 5px 10px 0px;
 }
 
 .admin-edit-client-redirect-uris {
 	background-color: #D3D3D3;
 	padding: 10px;
-	margin: 60px 5px 5px 5px;	
+	margin: 5px;	
 }
 
