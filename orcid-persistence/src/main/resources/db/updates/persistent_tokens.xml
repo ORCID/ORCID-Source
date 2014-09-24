@@ -49,7 +49,7 @@
 			</not>
         </preConditions>
     	<addColumn tableName="oauth2_token_detail">
-            <column name="persistent" type="boolean"/>            
+            <column name="persistent" type="boolean" defaultValue="false"/>            
         </addColumn>
     </changeSet>
     
