@@ -17,7 +17,7 @@
 
 -->
 <span class="dotted-green-bar"></span>
-<ul class="oauth-scopes">
+<ul class="oauth-scopes" id="scopes-ul">
 	<#list scopes as scope>
 		<li>				
 			<#if scope.value()?ends_with("/create")>

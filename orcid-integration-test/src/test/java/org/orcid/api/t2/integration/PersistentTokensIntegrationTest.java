@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,8 +39,12 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.api.common.WebDriverHelper;
 import org.orcid.api.t2.T2OAuthAPIService;
 import org.orcid.core.manager.ClientDetailsManager;
@@ -70,8 +75,10 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
 @ContextConfiguration(locations = { "classpath:test-oauth-orcid-api-client-context.xml" })
 public class PersistentTokensIntegrationTest extends DBUnitTest {
     private static final String CLIENT_DETAILS_ID = "4444-4444-4444-4445";
+    private static final String NO_PERSISTENT_TOKEN_CLIENT_DETAILS_ID = "4444-4444-4444-4444";
 
     private static final String DEFAULT = "default";        
+    private static final int DEFAULT_TIMEOUT_SECONDS = 30;
     
     @Resource
     private ProfileDao profileDao;
@@ -197,6 +204,23 @@ public class PersistentTokensIntegrationTest extends DBUnitTest {
         assertTrue(tokenExpiration.after(beforeCreatingToken));
         assertTrue(tokenExpiration.before(afterCreatingToken));
     }
+    
+    @Test
+    public void persistentTokenCheckboxNotVisibleWhenPersistentTokensIsDisabledOnClient() {
+        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, NO_PERSISTENT_TOKEN_CLIENT_DETAILS_ID, "/orcid-bio/read-limited", redirectUri));        
+
+        // Switch to the login form
+        By scopesUl = By.id("scopes-ul");
+        By switchFromLinkLocator = By.id("enablePersistentToken");
+        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(scopesUl));
+        
+        try {
+            webDriver.findElement(switchFromLinkLocator);
+            fail("Element enablePersistentToken should not be displayed");
+        } catch(NoSuchElementException e) {
+            
+        }                                           
+    }    
     
     private String obtainAccessToken(String clientId, String authorizationCode, String redirectUri, String scopes) throws JSONException {
         MultivaluedMap<String, String> params = new MultivaluedMapImpl();
