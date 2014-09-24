@@ -21,8 +21,6 @@ import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import java.util.List;
 
 /**
- * 2011-2012 ORCID
- * 
  * @author Declan Newman (declan) Date: 19/04/2012
  */
 public interface OrcidOauth2TokenDetailService {

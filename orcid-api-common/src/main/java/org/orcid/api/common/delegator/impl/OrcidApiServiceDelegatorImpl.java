@@ -46,8 +46,7 @@ import org.springframework.stereotype.Component;
  * {@link OrcidProfile}s that have not been confirmed, but it does this by
  * checking the status on the object rather than at database level.
  * <p/>
- * 2011-2012 ORCID
- * 
+
  * @author Declan Newman (declan) Date: 02/03/2012
  */
 @Component("orcidApiServiceDelegator")

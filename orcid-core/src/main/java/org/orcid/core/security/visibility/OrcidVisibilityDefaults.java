@@ -19,8 +19,6 @@ package org.orcid.core.security.visibility;
 import org.orcid.jaxb.model.message.Visibility;
 
 /**
- * 2011-2012 ORCID
- * 
  * @author Declan Newman (declan) Date: 13/03/2012
  */
 public enum OrcidVisibilityDefaults {

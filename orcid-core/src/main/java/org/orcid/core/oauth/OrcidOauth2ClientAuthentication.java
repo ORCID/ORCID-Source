@@ -23,8 +23,6 @@ import org.springframework.security.core.GrantedAuthority;
 import java.util.Collection;
 
 /**
- * 2011-2012 ORCID
- * 
  * @author Declan Newman (declan) Date: 17/04/2012
  */
 public class OrcidOauth2ClientAuthentication implements Authentication {

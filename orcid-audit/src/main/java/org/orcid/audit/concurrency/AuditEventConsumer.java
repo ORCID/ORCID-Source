@@ -25,8 +25,6 @@ import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 
 /**
- * 2011-2012 - ORCID
- *
  * @author Declan Newman (declan)
  *         Date: 24/07/2012
  */

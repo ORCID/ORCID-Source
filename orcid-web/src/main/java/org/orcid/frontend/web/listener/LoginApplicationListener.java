@@ -29,8 +29,6 @@ import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Counter;
 
 /**
- * 2011-2012 - ORCID
- * 
  * @author Declan Newman (declan) Date: 18/07/2012
  */
 public class LoginApplicationListener implements ApplicationListener<ApplicationEvent> {

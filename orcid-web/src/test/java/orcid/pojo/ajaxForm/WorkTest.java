@@ -29,6 +29,7 @@ import org.custommonkey.xmlunit.XMLTestCase;
 import org.junit.Test;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidWork;
+import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.pojo.ajaxForm.Work;
 
 public class WorkTest extends XMLTestCase {
@@ -49,12 +50,25 @@ public class WorkTest extends XMLTestCase {
         OrcidWork ow = new OrcidWork();
         Work work = Work.valueOf(ow);
         OrcidWork ow2 = work.toOrcidWork();
-        assertEquals(ow.toString(), ow2.toString());
+        // Work will add WorkExternalIdentifiers
+        assertFalse(ow.toString().equals(ow2.toString()));
+        // Run the test again but with empty WorkExternalIdentifiers added
+        ow.setWorkExternalIdentifiers(new WorkExternalIdentifiers());
+        work = Work.valueOf(ow);
+        ow2 = work.toOrcidWork();
+        assertEquals(ow.toString(),ow2.toString());
+        
+        
         
         // loop through all the works in orcid-protected-full-message-latest.xml
         OrcidMessage om = getOrcidMessage("/orcid-protected-full-message-latest.xml");
         List<OrcidWork> owList = om.getOrcidProfile().getOrcidActivities().getOrcidWorks().getOrcidWork();
         for (OrcidWork curOw: owList) {
+            // add in blank WorkExternalIdentifiers if it doesn't exist
+            // since Work will add it in to allow the user to add
+            // an identifier
+            if (curOw.getWorkExternalIdentifiers() == null)
+                curOw.setWorkExternalIdentifiers(new WorkExternalIdentifiers());
             Work curWork = Work.valueOf(curOw);
             OrcidWork curOw2 = curWork.toOrcidWork();  
             assertEquals(curOw.toString(), curOw2.toString());           

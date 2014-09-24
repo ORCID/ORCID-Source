@@ -71,7 +71,6 @@ import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.stereotype.Component;
 
 /**
- * 2011-2012 ORCID
  * <p/>
  * The delegator for the tier 2 API.
  * <p/>

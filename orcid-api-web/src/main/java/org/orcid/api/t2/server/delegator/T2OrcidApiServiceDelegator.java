@@ -23,7 +23,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 /**
- * 2011-2012 ORCID
  * <p/>
  * This class (unlike the
  * {@link org.orcid.api.common.delegator.impl.OrcidApiServiceDelegatorImpl})

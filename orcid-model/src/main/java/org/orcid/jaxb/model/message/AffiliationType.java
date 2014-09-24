@@ -22,8 +22,6 @@ import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 /**
- * 2011-2012 - ORCID
- * 
  * @author Declan Newman (declan) Date: 31/07/2012
  */
 @XmlType(name = "type")

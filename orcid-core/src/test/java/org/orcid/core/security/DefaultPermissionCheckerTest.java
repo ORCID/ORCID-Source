@@ -49,8 +49,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * 2011-2012 ORCID
- * 
  * @author Declan Newman (declan) Date: 27/04/2012
  */
 @RunWith(SpringJUnit4ClassRunner.class)

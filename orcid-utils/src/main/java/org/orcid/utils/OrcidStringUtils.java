@@ -31,9 +31,6 @@ import java.util.regex.Pattern;
 
 /**
  * <p>
- * 2011-2012 ORCID
- * </p>
- * <p>
  * User: Declan Newman (declan) Date: 10/02/2012
  * </p>
  */

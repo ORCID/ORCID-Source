@@ -24,7 +24,6 @@ import javax.ws.rs.core.Response;
 import org.orcid.persistence.dao.SolrDao;
 
 /**
- * 2011-2012 ORCID
  * <p/>
  * Interface that outlines the interactions between the API and core. However,
  * this is not interested in the actual content-type of the returned objects

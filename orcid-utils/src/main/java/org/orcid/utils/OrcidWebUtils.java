@@ -21,8 +21,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 /**
- * 2011-2012 ORCID
- * 
  * @author Declan Newman (declan) Date: 29/03/2012
  */
 public class OrcidWebUtils {

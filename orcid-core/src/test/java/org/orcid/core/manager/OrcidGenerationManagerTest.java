@@ -29,8 +29,6 @@ import java.util.Set;
 import static org.junit.Assert.*;
 
 /**
- * Copyright 2011-2012 ORCID
- * 
  * @author Will Simpson (will) Date: 15/12/2011
  */
 

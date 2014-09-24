@@ -24,8 +24,6 @@ import org.springframework.util.Assert;
 import java.util.Collection;
 
 /**
- * 2011-2012 ORCID
- * 
  * @author Declan Newman (declan) Date: 17/04/2012
  */
 public class OrcidOauth2UserAuthentication implements Authentication {

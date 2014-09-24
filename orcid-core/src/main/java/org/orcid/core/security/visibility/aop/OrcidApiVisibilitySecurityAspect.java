@@ -27,8 +27,6 @@ import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
 /**
- * 2011-2012 ORCID
- *
  * @author Declan Newman (declan) Date: 16/03/2012
  */
 @Aspect

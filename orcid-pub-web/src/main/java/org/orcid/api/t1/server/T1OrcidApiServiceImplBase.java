@@ -69,8 +69,6 @@ import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Counter;
 
 /**
- * Copyright 2011-2012 ORCID
- * 
  * @author Declan Newman (declan) Date: 01/03/2012
  */
 abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Response>, InitializingBean {

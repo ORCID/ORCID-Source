@@ -25,7 +25,7 @@ import javax.ws.rs.core.MediaType;
 import static org.orcid.api.common.OrcidApiConstants.*;
 
 /**
- * 2011-2012 ORCID An interface representing read-only access to the Orcid
+ * An interface representing read-only access to the Orcid
  * Service. This requires the use of an access token even to read data.
  * 
  * @author James Bowen

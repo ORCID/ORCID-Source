@@ -25,8 +25,6 @@ import org.orcid.scheduler.web.event.EventStatsGatherer;
 import javax.annotation.Resource;
 
 /**
- * 2011-2012 - ORCID
- *
  * @author Declan Newman (declan)
  *         Date: 17/07/2012
  */

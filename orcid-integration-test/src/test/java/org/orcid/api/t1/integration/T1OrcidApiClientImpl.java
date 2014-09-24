@@ -32,8 +32,6 @@ import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 
 /**
- * 2011-2012 ORCID
- * 
  * @author Declan Newman (declan) Date: 12/04/2012
  */
 public class T1OrcidApiClientImpl implements OrcidApiService<ClientResponse> {

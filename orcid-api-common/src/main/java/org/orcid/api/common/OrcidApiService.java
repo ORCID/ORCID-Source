@@ -25,8 +25,6 @@ import javax.ws.rs.core.MediaType;
 import static org.orcid.api.common.OrcidApiConstants.*;
 
 /**
- * 2011-2012 ORCID
- * 
  * @author Declan Newman (declan) Date: 01/03/2012
  */
 public interface OrcidApiService<T> {

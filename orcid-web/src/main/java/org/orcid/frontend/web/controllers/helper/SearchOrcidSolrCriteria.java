@@ -19,7 +19,6 @@ package org.orcid.frontend.web.controllers.helper;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.utils.OrcidSolrQueryBuilder;
 import org.orcid.core.utils.SolrQueryBuilder;
-import org.orcid.frontend.web.forms.SearchOrcidBioForm;
 
 /**
  * Helper class to be used by {@link SearchOrcidBioForm} to build up an

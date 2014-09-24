@@ -26,6 +26,167 @@ function openImportWizardUrl(url) {
 	$.colorbox.close();		
 };
 	
+var GroupedActivities = function(type) {
+	
+	if (GroupedActivities.count == undefined)
+		GroupedActivities.count = 1;
+	else
+		GroupedActivities.count ++;
+	
+	function getInstantiateCount() {
+		   var id = 0; // This is the private persistent value
+		   // The outer function returns a nested function that has access
+		   // to the persistent value.  It is this nested function we're storing
+		   // in the variable uniqueID above.
+		   return function() { return id++; };  // Return and increment
+	}
+	
+	this.type = type;
+	this._keySet = {};
+	this.activities = {};
+	this.activitiesCount = 0;
+	this.activePutCode = null;
+	this.defaultPutCode = null;
+	this.dateSortString;
+	this.groupId = GroupedActivities.count;
+	this.title;
+};
+
+GroupedActivities.count = 0;
+GroupedActivities.FUNDING = 'funding';
+GroupedActivities.ABBR_WORK = 'abbrWork';
+GroupedActivities.AFFILIATION = 'affiliation';
+
+/* 
+ * takes a activity and adds it to an existing group or creates
+ * a new group
+ */
+GroupedActivities.group = function(activity, type, groupsArray) {
+	var matches = new Array();
+	// there are no possible keys for affiliations 
+	if (type != GroupedActivities.AFFILIATION);
+	   for (var idx in groupsArray)
+	       if (groupsArray[idx].keyMatch(activity))
+			   matches.push(groupsArray[idx]);
+	if (matches.length == 0) {
+		var newGroup = new GroupedActivities(type);
+		newGroup.add(activity);
+		groupsArray.push(newGroup);
+	}  else {
+		var firstMatch = matches.shift();
+		firstMatch.add(activity);
+		// combine any remaining groups into the first group we found.
+		for (var idx in matches) {
+			var matchIndex = groupsArray.indexOf(matches[idx]);
+			var curMatch = groupsArray[matchIndex];
+			for (var idj in curMatch.activities)
+				firstMatch.add(curMatch.activities[idj]);
+			groupsArray.splice(matchIndex, 1);
+		}
+	}	
+};
+
+GroupedActivities.prototype.add = function(activity) {
+	// assumes works are added in the order of the display index desc
+	// subsorted by the created date asc
+    var identifiersPath = null;
+    identifiersPath = this.getIdentifiersPath();
+    for (var idx in activity[identifiersPath])
+    	this.addKey(this.key(activity[identifiersPath][idx]));
+	this.activities[activity.putCode.value] = activity;
+	if (this.defaultPutCode == null) { 
+		this.activePutCode = activity.putCode.value;
+		this.makeDefault(activity.putCode.value);
+	}
+	this.activitiesCount++;
+};
+
+GroupedActivities.prototype.makeDefault = function(putCode) {
+	this.defaultPutCode = putCode;
+	this.dateSortString = this.activities[putCode].dateSortString;	
+    if (this.type == GroupedActivities.ABBR_WORK) this.title = this.activities[putCode].workTitle.title.value;
+    else if (this.type == GroupedActivities.FUNDING) this.title = this.activities[putCode].fundingTitle.title.value;
+    else if (this.type == GroupedActivities.AFFILIATION) this.title = this.activities[putCode].affiliationName.value;
+};
+
+GroupedActivities.prototype.addKey = function(key) {
+	if (this.hasKey(key)) return;
+	this._keySet[key] = true;
+	return;
+};
+
+GroupedActivities.prototype.getActive = function() {
+	return this.activities[this.activePutCode];
+};
+
+GroupedActivities.prototype.getByPut = function(putCode) {
+	return this.activities[putCode];
+};
+
+GroupedActivities.prototype.hasKey = function(key) {
+	if (key in this._keySet)
+		return true;
+	return false;
+};
+
+GroupedActivities.prototype.hasPut = function(putCode) {
+	   if (this.activities[putCode] !== undefined)
+				return true;
+		return false;
+};
+
+GroupedActivities.prototype.key = function(activityIdentifiers) {	
+	var idPath;
+	var idTypePath;
+	if (this.type == GroupedActivities.ABBR_WORK) {
+		idPath = 'workExternalIdentifierId';
+		idTypePath = 'workExternalIdentifierType';
+	} else if (this.type == GroupedActivities.FUNDING) {
+		idPath = 'value';
+		idTypePath = 'type';
+	} else if (this.type == GroupedActivities.AFFILIATION) {
+		// we don't have external identifiers for affiliations yet
+		idPath = null;
+		idTypePath = null;
+	}
+	var key = activityIdentifiers[idTypePath] ? activityIdentifiers[idTypePath].value : ''; 
+	// currently I've been told all know identifiers are case insensitive so we are 
+	// lowercase the value for consistency 
+	key += activityIdentifiers[idPath] != null ? activityIdentifiers[idPath].value.toLowerCase() : '';  
+	return key;
+};
+
+GroupedActivities.prototype.keyMatch = function(activity) {
+    var identifiersPath = null;
+    identifiersPath = this.getIdentifiersPath();
+	for (var idx in activity[identifiersPath]) { 
+		if (this.key(activity[identifiersPath][idx]) == '') continue;
+		if (this.key(activity[identifiersPath][idx]) in this._keySet)
+			return true;
+	}
+	return false;
+};
+
+GroupedActivities.prototype.getIdentifiersPath = function() {
+    if (this.type == GroupedActivities.ABBR_WORK) return 'workExternalIdentifiers';
+    return 'externalIdentifiers';
+};
+
+GroupedActivities.prototype.rmByPut = function(putCode) {
+	var activity =  this.activities[putCode];
+	delete this.activities[putCode];
+	this.activitiesCount--;
+	if (putCode == this.defaultPutCode) {
+        // make the first one default
+		for (var idx in this.activities) {
+        	this.defaultPutCode = idx;
+        	break;
+        }
+	}
+	if (putCode == this.activePutCode)
+		this.activePutCode = this.defaultPutCode;
+	return activity;
+};
 
 var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.multiselect']);
 
@@ -121,29 +282,74 @@ orcidNgModule.directive('compile', function($compile) {
  */
 orcidNgModule.factory("actSortSrvc", ['$rootScope', function ($rootScope) {
 	var sortPredicateMap = {};
-	sortPredicateMap['date'] = ['-dateSortString', 'title','getActive().workType.value'];
-	sortPredicateMap['title'] = ['title', '-dateSortString','getActive().workType.value'];
-	sortPredicateMap['type'] = ['getActive().workType.value','title', '-dateSortString'];
+	sortPredicateMap[GroupedActivities.ABBR_WORK] = {};
+	sortPredicateMap[GroupedActivities.ABBR_WORK]['date'] = ['-dateSortString', 'title','getActive().workType.value'];
+	sortPredicateMap[GroupedActivities.ABBR_WORK]['title'] = ['title', '-dateSortString','getActive().workType.value'];
+	sortPredicateMap[GroupedActivities.ABBR_WORK]['type'] = ['getActive().workType.value','title', '-dateSortString'];
+
+	sortPredicateMap[GroupedActivities.FUNDING] = {};
+	sortPredicateMap[GroupedActivities.FUNDING]['date'] = ['-dateSortString', 'title','getActive().fundingTypeForDisplay'];
+	sortPredicateMap[GroupedActivities.FUNDING]['title'] = ['title', '-dateSortString','getActive().fundingTypeForDisplay'];
+	sortPredicateMap[GroupedActivities.FUNDING]['type'] = ['getActive().fundingTypeForDisplay','title', '-dateSortString'];
+
+	sortPredicateMap[GroupedActivities.AFFILIATION] = {};
+	sortPredicateMap[GroupedActivities.AFFILIATION]['date'] = ['-dateSortString', 'title'];
+	sortPredicateMap[GroupedActivities.AFFILIATION]['title'] = ['title', '-dateSortString'];
+	
+	
 	
 	var actSortSrvc = {
-			initScope: function($scope) {
-				$scope.sortPredicateKey = 'date';
-				$scope.sortPredicate = sortPredicateMap[$scope.sortPredicateKey];
+			initScope: function($scope, groupType) {
+				$scope.sortGroupType = groupType;
+				$scope.sortGroupType = groupType;
+				var key = $scope.sortPredicateKey = 'date';
+				$scope.sortPredicate = sortPredicateMap[$scope.sortGroupType][key];
 				$scope.sortReverse = false;
+				
+				
+				$scope.sortReverseKey = {};
+				$scope.sortReverseKey['date']  = false;
+				$scope.sortReverseKey['title'] = false;
+				$scope.sortReverseKey['type']  = false;
+				
+				
 			},
-			sort: function(key, $scope) {
-				if ($scope.sortPredicateKey == key) 
+			sort: function(key, $scope) {				
+				
+				if ($scope.sortPredicateKey == key){ 
 					$scope.sortReverse = ! $scope.sortReverse;
+					$scope.sortReverseKey[key] = ! $scope.sortReverseKey[key];
+				}
+				
 				$scope.sortPredicateKey = key;
-				$scope.sortPredicate = sortPredicateMap[key];
+				$scope.sortPredicate = sortPredicateMap[$scope.sortGroupType][key];
+				
+				
+				
 			}
 	};
 	return actSortSrvc;
 }]);
 
+orcidNgModule.factory("commonSrvc", ['$rootScope', function ($rootScope) {
+	var commonSrvc = {
+			copyErrorsLeft: function (data1, data2) {
+				for (var key in data1) {
+					if (key == 'errors') {
+						data1.errors = data2.errors;
+					} else {
+						if (data1[key] != null && data1[key].errors !== undefined)
+						data1[key].errors = data2[key].errors;
+					};
+				};
+			}
+	};
+	return commonSrvc;
+}]);
+
+
 orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
 	var serv = {
-			affiliations: new Array(),
 			educations: new Array(),
 			employments: new Array(),
 			loading: false,
@@ -156,14 +362,13 @@ orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
 	    				dataType: 'json',
 	    				success: function(data) {
 	    						for (i in data) {
+	    							
 	    							if (data[i].affiliationType != null && data[i].affiliationType.value != null
 	    									&& data[i].affiliationType.value == 'education')
-	    								serv.educations.push(data[i]);
+	    								GroupedActivities.group(data[i],GroupedActivities.AFFILIATION,serv.educations);
 	    							else if (data[i].affiliationType != null && data[i].affiliationType.value != null
 	    									&& data[i].affiliationType.value == 'employment')
-	    								serv.employments.push(data[i]);
-	    							else
-	    								serv.affiliations.push(data[i]);
+	    								GroupedActivities.group(data[i],GroupedActivities.AFFILIATION,serv.employments);
 	    						};
 	    						if (serv.affiliationsToAddIds.length == 0) {
 	    							serv.loading = false;
@@ -189,7 +394,6 @@ orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
 	    		//clear out current affiliations
 	    		serv.loading = true;
 	    		serv.affiliationsToAddIds = null;
-	    		serv.affiliations.length = 0;
 	    		serv.educations.length = 0;
 	    		serv.employments.length = 0;
 	    		//get affiliation ids
@@ -224,7 +428,7 @@ orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
 	    	    });
 	    	},
 	    	deleteAffiliation: function(affiliation) {
-				var arr = serv.affiliations;
+				var arr = null;
 				if (affiliation.affiliationType != null && affiliation.affiliationType.value != null
 						&& affiliation.affiliationType.value == 'education')
 					arr = serv.educations;
@@ -233,7 +437,7 @@ orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
 					arr = serv.employments;
 				var idx;
 				for (var idx in arr) {
-					if (arr[idx].putCode.value == affiliation.putCode.value) {
+					if (arr[idx].activePutCode == affiliation.putCode.value) {
 						break;
 					}
 				}
@@ -260,15 +464,11 @@ orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
 
 orcidNgModule.factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
 	var serv = {
-			displayAffiliations: true,
 			displayEducation: true,
 			displayEmployment: true,
 			displayFunding: true, 
 			displayPersonalInfo: true,
 			displayWorks: true,
-			toggleAffiliations: function() {
-				displayAffiliations = !displayAffiliations;
-			},
 			toggleEducation: function() {
 				serv.displayEducation = !serv.displayEducation;
 			},
@@ -283,9 +483,6 @@ orcidNgModule.factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
 			},
 			toggleWorks: function() {
 				serv.displayWorks = !serv.displayWorks;
-			},
-			openAffiliations: function() {
-				serv.displayAffiliations = true;
 			},
 			openEducation: function() {
 				serv.displayEducation = true;
@@ -325,27 +522,7 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 	    				success: function(data) {
 	    						for (i in data) {	    
 	    							var funding = data[i];
-	    							// new stuff
-	    							var matches = new Array();
-									for (var idx in fundingSrvc.groups)
-									    if (fundingSrvc.groups[idx].keyMatch(funding))
-											matches.push(fundingSrvc.groups[idx]);
-									if (matches.length == 0) {
-										var newGroup = new GroupedActivities('funding');
-										newGroup.add(funding);
-										fundingSrvc.groups.push(newGroup);
-									}  else {
-										var firstMatch = matches.shift();
-										firstMatch.add(funding);
-										// combine any remaining groups into the first group we found.
-										for (var idx in matches) {
-											var matchIndex = fundingSrvc.groups.indexOf(matches[idx]);
-											var curMatch = fundingSrvc.groups[matchIndex];
-											for (var idj in curMatch.activities)
-												firstMatch.add(curMatch.activities[idj]);
-											fundingSrvc.groups.splice(matchIndex, 1);
-										}
-									}
+	    							GroupedActivities.group(funding,GroupedActivities.FUNDING,fundingSrvc.groups);
 	    						};
 	    						if (fundingSrvc.fundingToAddIds.length == 0) {
 	    							fundingSrvc.loading = false;
@@ -509,139 +686,6 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 	return fundingSrvc;
 }]);
 
-var GroupedActivities = function(type) {
-	
-	if (GroupedActivities.count == undefined)
-		GroupedActivities.count = 1;
-	else
-		GroupedActivities.count ++;
-	
-	function getInstantiateCount() {
-		   var id = 0; // This is the private persistent value
-		   // The outer function returns a nested function that has access
-		   // to the persistent value.  It is this nested function we're storing
-		   // in the variable uniqueID above.
-		   return function() { return id++; };  // Return and increment
-	}
-	
-	this.type = type;
-	this._keySet = {};
-	this.activities = {};
-	this.activitiesCount = 0;
-	this.activePutCode = null;
-	this.defaultPutCode = null;
-	this.dateSortString;
-	this.groupId = GroupedActivities.count;
-	this.title;
-};
-
-GroupedActivities.prototype.test = function() {
-	var count = null;
-	if (count == null)
-		count = 0;
-	else
-		count++;
-	return count;
-};
-
-GroupedActivities.prototype.add = function(activity) {
-	// assumes works are added in the order of the display index desc
-	// subsorted by the created date asc
-    var identifiersPath = null;
-    identifiersPath = this.getIdentifiersPath();
-    for (var idx in activity[identifiersPath])
-    	this.addKey(this.key(activity[identifiersPath][idx]));
-	this.activities[activity.putCode.value] = activity;
-	if (this.defaultPutCode == null) { 
-		this.activePutCode = activity.putCode.value;
-		this.makeDefault(activity.putCode.value);
-	}
-	this.activitiesCount++;
-};
-
-GroupedActivities.prototype.makeDefault = function(putCode) {
-	this.defaultPutCode = putCode;
-	this.dateSortString = this.activities[putCode].dateSortString;	
-    if (this.type == 'abbrWork') this.title = this.activities[putCode].workTitle.title.value;
-    else if (this.type == 'funding') this.title = this.activities[putCode].fundingTitle.title.value;
-	
-};
-
-GroupedActivities.prototype.addKey = function(key) {
-	if (this.hasKey(key)) return;
-	this._keySet[key] = true;
-	return;
-};
-
-GroupedActivities.prototype.getActive = function() {
-	return this.activities[this.activePutCode];
-};
-
-GroupedActivities.prototype.getByPut = function(putCode) {
-	return this.activities[putCode];
-};
-
-GroupedActivities.prototype.hasKey = function(key) {
-	if (key in this._keySet)
-		return true;
-	return false;
-};
-
-GroupedActivities.prototype.hasPut = function(putCode) {
-	   if (this.activities[putCode] !== undefined)
-				return true;
-		return false;
-};
-
-GroupedActivities.prototype.key = function(activityIdentifiers) {	
-	var idPath;
-	var idTypePath;
-	if (this.type == 'abbrWork') {
-		idPath = 'workExternalIdentifierId';
-		idTypePath = 'workExternalIdentifierType';
-	}
-	if (this.type == 'funding') {
-		idPath = 'value';
-		idTypePath = 'type';
-	}
-	var key = activityIdentifiers[idTypePath] ? activityIdentifiers[idTypePath].value : ''; 
-	key += activityIdentifiers[idPath] != null ? activityIdentifiers[idPath].value : ''; 
-	return key;
-};
-
-GroupedActivities.prototype.keyMatch = function(activity) {
-    var identifiersPath = null;
-    identifiersPath = this.getIdentifiersPath();
-	for (var idx in activity[identifiersPath]) { 
-		if (this.key(activity[identifiersPath][idx]) == '') continue;
-		if (this.key(activity[identifiersPath][idx]) in this._keySet)
-			return true;
-	}
-	return false;
-};
-
-GroupedActivities.prototype.getIdentifiersPath = function() {
-    if (this.type == 'abbrWork') return 'workExternalIdentifiers';
-    return 'externalIdentifiers';
-}
-
-GroupedActivities.prototype.rmByPut = function(putCode) {
-	var activity =  this.activities[putCode];
-	delete this.activities[putCode];
-	this.activitiesCount--;
-	if (putCode == this.defaultPutCode) {
-        // make the first one default
-		for (var idx in this.activities) {
-        	this.defaultPutCode = idx;
-        	break;
-        }
-	}
-	if (putCode == this.activePutCode)
-		this.activePutCode = this.defaultPutCode;
-	return activity;
-};
-
-
 orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 	var worksSrvc = {
 			bibtexJson: {},
@@ -680,28 +724,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 									removeBadContributors(dw);	
 									removeBadExternalIdentifiers(dw);
 									worksSrvc.addBibtexJson(dw);
-									var matches = new Array();
-									for (var idx in worksSrvc.groups)
-										if (worksSrvc.groups[idx].keyMatch(dw)) {
-											//worksSrvc.groups[idx].add(dw);
-											matches.push(worksSrvc.groups[idx]);
-										}
-									if (matches.length == 0) {
-										var newGroup = new GroupedActivities('abbrWork');
-										newGroup.add(dw);
-										worksSrvc.groups.push(newGroup);
-									} else {
-										var firstMatch = matches.shift();
-										firstMatch.add(dw);
-										// combine any remaining groups into the first group we found.
-										for (var idx in matches) {
-											var matchIndex = worksSrvc.groups.indexOf(matches[idx]);
-											var curMatch = worksSrvc.groups[matchIndex];
-											for (var idj in curMatch.activities)
-												firstMatch.add(curMatch.activities[idj]);
-											worksSrvc.groups.splice(matchIndex, 1);
-										}
-									}
+									GroupedActivities.group(dw,GroupedActivities.ABBR_WORK,worksSrvc.groups);
 								};
 							});
 							if(worksSrvc.worksToAddIds.length == 0 ) {
@@ -2198,7 +2221,7 @@ function ExternalIdentifierCtrl($scope, $compile){
 	
 };	
 
-function ResetPasswordCtrl($scope, $compile) {
+function ResetPasswordCtrl($scope, $compile, commonSrvc) {
 	$scope.getResetPasswordForm = function(){
 		$.ajax({
 			url: getBaseUri() + '/password-reset.json',	        
@@ -2222,7 +2245,7 @@ function ResetPasswordCtrl($scope, $compile) {
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        success: function(data) {
-	        	$scope.copyErrorsLeft($scope.resetPasswordForm, data);
+	        	commonSrvc.copyErrorsLeft($scope.resetPasswordForm, data);
 	        	$scope.$apply();
 	        }
 	    }).fail(function() { 
@@ -2231,25 +2254,11 @@ function ResetPasswordCtrl($scope, $compile) {
 	    });
 	};		
 	
-	// in the case of slow network connection
-	// we don't want to overwrite  values while
-	// user is typing
-	$scope.copyErrorsLeft = function (data1, data2) {
-		for (var key in data1) {
-			if (key == 'errors') {
-				data1.errors = data2.errors;
-			} else {
-				if (data1[key].errors !== undefined)
-				data1[key].errors = data2[key].errors;
-			};
-		};
-	};
-	
 	//init
 	$scope.getResetPasswordForm();	
 }
 
-function RegistrationCtrl($scope, $compile) {
+function RegistrationCtrl($scope, $compile, commonSrvc) {
 	$scope.privacyHelp = {};
 	
 	$scope.toggleClickPrivacyHelp = function(key) {
@@ -2384,27 +2393,13 @@ function RegistrationCtrl($scope, $compile) {
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        success: function(data) {
-	        	$scope.copyErrorsLeft($scope.register, data);
+	        	commonSrvc.copyErrorsLeft($scope.register, data);
 	        	$scope.$apply();
 	        }
 	    }).fail(function() { 
 	    	// something bad is happening!
 	    	console.log("RegistrationCtrl.serverValidate() error");
 	    });
-	};
-
-	// in the case of slow network connection
-	// we don't want to overwrite  values while
-	// user is typing
-	$scope.copyErrorsLeft = function (data1, data2) {
-		for (var key in data1) {
-			if (key == 'errors') {
-				data1.errors = data2.errors;
-			} else {
-				if (data1[key].errors !== undefined)
-				data1[key].errors = data2[key].errors;
-			};
-		};
 	};
 	
 	$scope.showProcessingColorBox = function () {
@@ -2454,7 +2449,7 @@ function RegistrationCtrl($scope, $compile) {
 };
 		
 
-function ClaimCtrl($scope, $compile) {
+function ClaimCtrl($scope, $compile, commonSrvc) {
 	$scope.postingClaim = false;
 	$scope.getClaim = function(){
 		$.ajax({
@@ -2517,27 +2512,13 @@ function ClaimCtrl($scope, $compile) {
 	        dataType: 'json',
 	        success: function(data) {
 	        	//alert(angular.toJson(data));
-	        	$scope.copyErrorsLeft($scope.register, data);
+	        	commonSrvc.copyErrorsLeft($scope.register, data);
 	        	$scope.$apply();
 	        }
 	    }).fail(function() { 
 	    	// something bad is happening!
 	    	console.log("RegistrationCtrl.postRegisterValidate() error");
 	    });
-	};
-
-	// in the case of slow network connection
-	// we don't want to overwrite  values while
-	// user is typing
-	$scope.copyErrorsLeft = function (data1, data2) {
-		for (var key in data1) {
-			if (key == 'errors') {
-				data1.errors = data2.errors;
-			} else {
-				if (data1[key] != null && data1[key].errors !== undefined)
-				data1[key].errors = data2[key].errors;
-			};
-		};
 	};
 	
 	$scope.isValidClass = function (cur) {
@@ -2717,11 +2698,16 @@ function WorkspaceSummaryCtrl($scope, $compile, affiliationsSrvc, fundingSrvc, w
 	};	
 }
 
-function PublicEduAffiliation($scope, $compile, $filter, affiliationsSrvc){
+function PublicEduAffiliation($scope, $compile, $filter, affiliationsSrvc, actSortSrvc){
+	actSortSrvc.initScope($scope, GroupedActivities.AFFILIATION);
 	$scope.affiliationsSrvc = affiliationsSrvc;
 	$scope.moreInfo = {};
 	$scope.displayEducation = true;
 	
+	$scope.sort = function(key) {
+		actSortSrvc.sort(key,$scope);
+	};
+
 	// remove once grouping is live
 	$scope.toggleClickMoreInfo = function(key) {
 		if (!document.documentElement.className.contains('no-touch'))
@@ -2752,10 +2738,16 @@ function PublicEduAffiliation($scope, $compile, $filter, affiliationsSrvc){
 
 }
 
-function PublicEmpAffiliation($scope, $compile, $filter, affiliationsSrvc){
+function PublicEmpAffiliation($scope, $compile, $filter, affiliationsSrvc, actSortSrvc){
+	actSortSrvc.initScope($scope, GroupedActivities.AFFILIATION);
 	$scope.affiliationsSrvc = affiliationsSrvc;
 	$scope.moreInfo = {};
 	$scope.displayEmployment = true;
+	
+	$scope.sort = function(key) {
+		actSortSrvc.sort(key,$scope);
+	};
+
 	
 	$scope.toggleClickMoreInfo = function(key) {
 		if (!document.documentElement.className.contains('no-touch'))
@@ -2788,7 +2780,8 @@ function PublicEmpAffiliation($scope, $compile, $filter, affiliationsSrvc){
 }
 
 
-function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceSrvc){
+function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceSrvc, actSortSrvc, commonSrvc){
+	actSortSrvc.initScope($scope, GroupedActivities.AFFILIATION);
 	$scope.affiliationsSrvc = affiliationsSrvc;
 	$scope.workspaceSrvc = workspaceSrvc;
 	$scope.editAffiliation;
@@ -2796,6 +2789,10 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 	$scope.privacyHelpCurKey = null;
 	$scope.moreInfo = {};
 	$scope.moreInfoCurKey = null;	
+	
+	$scope.sort = function(key) {
+		actSortSrvc.sort(key,$scope);
+	};
 	
 	$scope.toggleClickPrivacyHelp = function(key) {
 		if (!document.documentElement.className.contains('no-touch')) {
@@ -2983,7 +2980,7 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 	        		affiliationsSrvc.getAffiliations('affiliations/affiliationIds.json');
 	        	} else {
 		        	$scope.editAffiliation = data;
-		        	$scope.copyErrorsLeft($scope.editAffiliation, data);
+		        	commonSrvc.copyErrorsLeft($scope.editAffiliation, data);
 		        	$scope.addingAffiliation = false;
 		        	$scope.$apply();
 	        	}
@@ -3045,7 +3042,7 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        success: function(data) {
-	        	$scope.copyErrorsLeft($scope.editAffiliation, data);
+	        	commonSrvc.copyErrorsLeft($scope.editAffiliation, data);
 	        	$scope.$apply();
 	        }
 	    }).fail(function() { 
@@ -3054,22 +3051,6 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 	    });
 	};
 	
-	// in the case of slow network connection
-	// we don't want to overwrite  values while
-	// user is typing
-	$scope.copyErrorsLeft = function (data1, data2) {
-		for (var key in data1) {
-			if (key == null) continue;
-			if (key == 'errors') {
-				data1.errors = data2.errors;
-			} else {
-				if (typeof(data1[key])=="object") {
-					$scope.copyErrorsLeft(data1[key], data2[key]);
-				}
-			};
-		};
-	};
-
 	$scope.isValidClass = function (cur) {
 		if (cur === undefined) return '';
 		var valid = true;
@@ -3085,8 +3066,8 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 /**
  * Fundings Controller 
  * */
-function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc, actSortSrvc) {
-	actSortSrvc.initScope($scope);
+function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc, actSortSrvc, commonSrvc) {
+	actSortSrvc.initScope($scope, GroupedActivities.FUNDING);
 	$scope.workspaceSrvc = workspaceSrvc;
 	$scope.fundingSrvc = fundingSrvc;
 	$scope.addingFunding = false;
@@ -3193,10 +3174,19 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc, actS
 				formColorBoxResize();
 				$scope.bindTypeaheadForOrgs();
 				$scope.bindTypeaheadForSubTypes();
-			}
+			},
+	        onClosed: function() {
+	        	$scope.closeAllMoreInfo();
+	        	fundingSrvc.getFundings('fundings/fundingIds.json');
+	        }
 	    });
 	};
 	
+	$scope.closeAllMoreInfo = function() {
+		for (var idx in $scope.moreInfo)
+		    $scope.moreInfo[idx]=false;
+	};
+
 	$scope.putFunding = function(){
 		if ($scope.addingFunding) return; // don't process if adding funding
 		$scope.addingFunding = true;		
@@ -3209,14 +3199,13 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc, actS
 	        data:  angular.toJson($scope.editFunding),
 	        success: function(data) {	        		        	
 	        	if (data.errors.length == 0){
-	        		$.colorbox.close(); 	        		
-	        		fundingSrvc.getFundings('fundings/fundingIds.json');	        		
+	        		$.colorbox.close();	        		
 	        	} else {
 		        	$scope.editFunding = data;
 		        	if($scope.editFunding.externalIdentifiers.length == 0) {
 		        		$scope.addFundingExternalIdentifier();
 		        	}
-		        	$scope.copyErrorsLeft($scope.editFunding, data);		        	
+		        	commonSrvc.copyErrorsLeft($scope.editFunding, data);		        	
 	        	}
 	        	$scope.addingFunding = false;
 	        	$scope.$apply();	        	
@@ -3447,7 +3436,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc, actS
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        success: function(data) {	        	
-	        	$scope.copyErrorsLeft($scope.editFunding, data);
+	        	commonSrvc.copyErrorsLeft($scope.editFunding, data);
 	        	$scope.$apply();
 	        }
 	    }).fail(function() { 
@@ -3455,20 +3444,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc, actS
 	    	console.log("FundingCtrl.serverValidate() error");
 	    });
 	};
-	
-	$scope.copyErrorsLeft = function (data1, data2) {
-		for (var key in data1) {
-			if (key == null) continue;
-			if (key == 'errors') {				
-				data1.errors = data2.errors;
-			} else {
-				if (typeof(data1[key])=="object") {
-					$scope.copyErrorsLeft(data1[key], data2[key]);
-				}
-			};
-		};
-	};
-	
+		
 	$scope.unbindTypeaheadForOrgs = function () {
 		$('#fundingName').typeahead('destroy');
 	};
@@ -3593,7 +3569,7 @@ function PublicFundingCtrl($scope, $compile, $filter, fundingSrvc){
 }
 
 function PublicWorkCtrl($scope, $compile, $filter, worksSrvc, actSortSrvc) {
-	actSortSrvc.initScope($scope);
+	actSortSrvc.initScope($scope, GroupedActivities.ABBR_WORK);
 	$scope.worksSrvc = worksSrvc;
 	$scope.showBibtex = false;
 	$scope.moreInfoOpen = false;
@@ -3668,8 +3644,8 @@ function PublicWorkCtrl($scope, $compile, $filter, worksSrvc, actSortSrvc) {
 	};
 }
 
-function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSrvc) {
-	actSortSrvc.initScope($scope);
+function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSrvc, commonSrvc) {
+	actSortSrvc.initScope($scope, GroupedActivities.ABBR_WORK);
 	$scope.canReadFiles = false;
 	$scope.showBibtexImportWizard = false;
 	$scope.textFiles = null;
@@ -3686,7 +3662,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
 	$scope.bibtexParsingError = false;
 	$scope.bibtexCancelLink = false;
 	$scope.bibtextWork = false;
-	$scope.bibtextWorkIndex = null;	
+	$scope.bibtextWorkIndex = null;
 
 	$scope.sortOtherLast = function(type) {
 		if (type.key == 'other') return 'ZZZZZ';
@@ -3785,6 +3761,10 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
 			width: formColorBoxResize(),
 			onComplete: function() {
 				//resize to insure content fits
+	        },
+	        onClosed: function() {
+	        	$scope.closeAllMoreInfo();
+	    		$scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
 	        }
 	    });
 	};
@@ -3840,10 +3820,8 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
 	        data:  angular.toJson($scope.editWork),
 	        success: function(data) {
 	        	if (data.errors.length == 0){
-	        		$scope.closeAllMoreInfo();
 	        		$.colorbox.close(); 
 	        		$scope.addingWork = false;
-	        		$scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
 	        		
 	        		if($scope.bibtextWork == true){
 	        			$scope.worksFromBibtex.splice($scope.bibtextWorkIndex, 1);
@@ -3851,7 +3829,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
 	        		}
 	        	} else {
 		        	$scope.editWork = data;
-		        	$scope.copyErrorsLeft($scope.editWork, data);
+		        	commonSrvc.copyErrorsLeft($scope.editWork, data);
 		        	$scope.addingWork = false;
 		        	$scope.$apply();
 	        	}
@@ -4018,7 +3996,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
 		   worksSrvc.deleteWork(putCode);
 		$.colorbox.close(); 
 	};
-	
+		
 	$scope.closeModal = function() {
 		$.colorbox.close();
 	};
@@ -4046,7 +4024,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        success: function(data) {
-	        	$scope.copyErrorsLeft($scope.editWork, data);
+	        	commonSrvc.copyErrorsLeft($scope.editWork, data);
 	        	if ( relativePath == 'works/work/citationValidate.json') {
 	        		$scope.validateCitation();
 	        	}
@@ -4058,22 +4036,6 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
 	    });
 	};
 	
-	// in the case of slow network connection
-	// we don't want to overwrite  values while
-	// user is typing
-	$scope.copyErrorsLeft = function (data1, data2) {
-		for (var key in data1) {
-			if (key == null) continue;
-			if (key == 'errors') {
-				data1.errors = data2.errors;
-			} else {
-				if (typeof(data1[key])=="object") {
-					$scope.copyErrorsLeft(data1[key], data2[key]);
-				}
-			};
-		};
-	};
-
 	$scope.isValidClass = function (cur) {
 		if (cur === undefined || cur == null) return '';		
 		var valid = true;
@@ -4088,15 +4050,19 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
 	};
 }
 
-function QuickSearchCtrl($scope, $compile){
+function SearchCtrl($scope, $compile){
+	$scope.hasErrors = false;
 	$scope.results = new Array();
 	$scope.numFound = 0;
-	$scope.start = 0;
-	$scope.rows = 10;
+	$scope.input = {};
+	$scope.input.start = 0;
+	$scope.input.rows = 10;
+	$scope.input.text = $('#SearchCtrl').data('search-query');
+	orcidSearchUrlJs.setBaseUrl(orcidVar.searchBaseUrl);
 	
-	$scope.getResults = function(rows){
+	$scope.getResults = function(){
 		$.ajax({
-			url: $('#QuickSearchCtrl').data('search-query-url') + '&start=' + $scope.start + '&rows=' + $scope.rows,      
+			url: orcidSearchUrlJs.buildUrl($scope.input),      
 			dataType: 'json',
 			headers: { Accept: 'application/json'},
 			success: function(data) {
@@ -4109,7 +4075,7 @@ function QuickSearchCtrl($scope, $compile){
 				if(!$scope.numFound){
 					$('#no-results-alert').fadeIn(1200);
 				}
-				$scope.areMoreResults = $scope.numFound > ($scope.start + $scope.rows);
+				$scope.areMoreResults = $scope.numFound > ($scope.input.start + $scope.input.rows);
 				$scope.$apply();
 				var newSearchResults = $('.new-search-result');
 				if(newSearchResults.length > 0){
@@ -4131,13 +4097,30 @@ function QuickSearchCtrl($scope, $compile){
 			}
 		}).fail(function(){
 			// something bad is happening!
-			console.log("error doing quick search");
+			console.log("error doing search");
 		});
+	};
+	
+	$scope.getFirstResults = function(){
+		$('#no-results-alert').hide();
+		$scope.results = new Array();
+		$scope.numFound = 0;
+		$scope.input.start = 0;
+		$scope.input.rows = 10;
+		$scope.areMoreResults = false;
+		if($scope.isValid()){
+			$scope.hasErrors = false;
+			$('#ajax-loader').show();
+			$scope.getResults();
+		}
+		else{
+			$scope.hasErrors = true;
+		}
 	};
 	
 	$scope.getMoreResults = function(){
 		$('#ajax-loader').show();
-		$scope.start += 10;
+		$scope.input.start += 10;
 		$scope.getResults();
 	};
 	
@@ -4154,8 +4137,22 @@ function QuickSearchCtrl($scope, $compile){
 		return $scope.results.length > 0;
 	};
 	
+	$scope.isValid = function(){
+		return orcidSearchUrlJs.isValidInput($scope.input);
+	};
+	
+	$scope.isValidOrcidId = function(){
+		if(typeof $scope.input.text === 'undefined' || $scope.input.text === null || $scope.input.text === '' || orcidSearchUrlJs.isValidOrcidId($scope.input.text)){
+			return true;
+		}
+		return false;
+	}
+	
 	// init
-	$scope.getResults(10);
+	if(typeof $scope.input.text !== 'undefined'){
+		$('#ajax-loader').show();
+		$scope.getResults();
+	}
 };
 
 // Controller for delegate permissions that have been granted BY the current user
@@ -6691,7 +6688,7 @@ function adminDelegatesCtrl($scope){
 	};
 };
 
-function OauthAuthorizationController($scope, $compile, $sce){ 
+function OauthAuthorizationController($scope, $compile, $sce, commonSrvc){ 
 	$scope.showClientDescription = false;
 	$scope.showRegisterForm = true;
 	$scope.isOrcidPresent = false;
@@ -6939,7 +6936,7 @@ function OauthAuthorizationController($scope, $compile, $sce){
 	        contentType: 'application/json;charset=UTF-8',
 	        dataType: 'json',
 	        success: function(data) {
-	        	$scope.copyErrorsLeft($scope.registrationForm, data);
+	        	commonSrvc.copyErrorsLeft($scope.registrationForm, data);
 	        	if(field == 'Email') {
 		        	if ($scope.registrationForm.email.errors.length > 0) {
 	        			for(var i = 0; i < $scope.registrationForm.email.errors.length; i++){
@@ -7023,20 +7020,6 @@ function OauthAuthorizationController($scope, $compile, $sce){
 	$scope.initializeCommonFields = function(client_name, client_group_name) {
 		$scope.clientName = client_name;
 		$scope.clientGroupName = client_group_name;
-	};
-	
-	// in the case of slow network connection
-	// we don't want to overwrite  values while
-	// user is typing
-	$scope.copyErrorsLeft = function (data1, data2) {
-		for (var key in data1) {
-			if (key == 'errors') {
-				data1.errors = data2.errors;
-			} else {
-				if (data1[key].errors !== undefined)
-				data1[key].errors = data2[key].errors;
-			};
-		};
 	};
 	
 	$scope.switchForm = function() {		

@@ -29,8 +29,6 @@ import javax.xml.bind.Unmarshaller;
 import java.io.InputStream;
 
 /**
- * 2011-2012 ORCID
- * 
  * @author Declan Newman (declan) Date: 16/03/2012
  */
 public class VisibilityFilterImplTest extends XMLTestCase {

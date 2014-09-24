@@ -22,8 +22,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- * 2011-2012 - Semantico Ltd.
- *
  * @author Declan Newman (declan)
  *         Date: 18/10/2012
  */

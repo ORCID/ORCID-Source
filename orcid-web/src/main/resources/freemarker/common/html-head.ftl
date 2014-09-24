@@ -50,6 +50,7 @@
       orcidVar.orcidId = '${(profile.orcidIdentifier.path)!}';
       orcidVar.realOrcidId = '${realUserOrcid!}';
       orcidVar.jsMessages = JSON.parse("${jsMessagesJson}");
+      orcidVar.searchBaseUrl = "${searchBaseUrl}";
     </script>    
     
     <link rel="stylesheet" href="${staticLoc}/css/fonts.css?v=${ver}"/>

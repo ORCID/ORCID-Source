@@ -32,8 +32,6 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.Date;
 
 /**
- * 2011-2012 ORCID
- * 
  * @author Declan Newman (declan) Date: 16/04/2012
  */
 @Entity

@@ -57,8 +57,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- * Copyright 2012-2013 ORCID
- * 
  * @author Angel Montenegro Date: 20/06/2013
  */
 @Controller

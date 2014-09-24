@@ -19,8 +19,6 @@ package org.orcid.persistence.dao;
 import org.orcid.persistence.jpa.entities.OrcidOauth2AuthoriziationCodeDetail;
 
 /**
- * 2011-2012 ORCID
- * 
  * @author Declan Newman (declan) Date: 24/04/2012
  */
 public interface OrcidOauth2AuthoriziationCodeDetailDao extends GenericDao<OrcidOauth2AuthoriziationCodeDetail, String> {

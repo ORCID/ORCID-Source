@@ -50,8 +50,6 @@ import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Service;
 
 /**
- * 2011-2012 ORCID
- * 
  * @author Declan Newman (declan) Date: 23/04/2012
  */
 @Service("orcidAuthorizationCodeService")
