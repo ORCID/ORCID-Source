@@ -160,7 +160,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         List<RedirectUri> createdRedirectUris = complexityClient.getRedirectUris().getRedirectUri();
         assertNotNull(createdRedirectUris);
         assertEquals(1, createdRedirectUris.size());
-        assertEquals("http://www.journals.elsevier.com/ecological-complexity/orcid-callback", createdRedirectUris.get(0).getValue());        
+        assertEquals("http://www.journals.elsevier.com/ecological-complexity/orcid-callback", createdRedirectUris.get(0).getValue());
         // Look up client details directly to check scopes
         ClientDetailsEntity complexityEntity = clientDetailsManager.findByClientId(complexityClient.getClientId());
         Set<String> clientScopeTypes = complexityEntity.getScope();
@@ -218,7 +218,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         assertEquals("http://www.journals.elsevier.com/ecological-complexity/orcid-callback", updatedRedirectUris.get(0).getValue());
         List<ScopePathType> scopesForRedirect = updatedRedirectUris.get(0).getScope();
         assertTrue(scopesForRedirect.size() == 2);
-        assertTrue(scopesForRedirect.contains(ScopePathType.ORCID_PROFILE_CREATE) && scopesForRedirect.contains(ScopePathType.ORCID_BIO_READ_LIMITED));     
+        assertTrue(scopesForRedirect.contains(ScopePathType.ORCID_PROFILE_CREATE) && scopesForRedirect.contains(ScopePathType.ORCID_BIO_READ_LIMITED));
     }
 
     @Test
@@ -228,224 +228,224 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(CLIENT_GROUP));
 
         OrcidClientGroup createdGroup = orcidClientGroupManager.createOrUpdateOrcidClientGroup(group);
-        
+
         createdGroup = orcidClientGroupManager.retrieveOrcidClientGroup(createdGroup.getGroupOrcid());
-        
+
         assertNotNull(createdGroup);
         assertNotNull(createdGroup.getOrcidClient());
         assertEquals(createdGroup.getOrcidClient().size(), 2);
     }
-    
+
     @Test
     @Rollback(true)
     @Transactional
-    public void testAddMoreThanOneClientToBasicGroup(){
+    public void testAddMoreThanOneClientToBasicGroup() {
         final OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(BASIC_CLIENT_GROUP_NO_CLIENT));
         OrcidClientGroup createdGroup = transactionTemplate.execute(new TransactionCallback<OrcidClientGroup>() {
             public OrcidClientGroup doInTransaction(TransactionStatus status) {
                 return orcidClientGroupManager.createOrUpdateOrcidClientGroup(group);
             }
         });
-        
+
         RedirectUris redirectUris = new RedirectUris();
-        RedirectUri redirectUri = new RedirectUri("http://uri.com");        
+        RedirectUri redirectUri = new RedirectUri("http://uri.com");
         redirectUris.getRedirectUri().add(redirectUri);
-        
+
         OrcidClient client1 = new OrcidClient();
         client1.setDisplayName("Name");
         client1.setRedirectUris(redirectUris);
         client1.setShortDescription("Description");
         client1.setType(ClientType.UPDATER);
         client1.setWebsite("http://site.com");
-        
-        //Add one client
+
+        // Add one client
         try {
-            orcidClientGroupManager.createAndPersistClientProfile(createdGroup.getGroupOrcid(), client1);            
-        } catch(OrcidClientGroupManagementException e){
+            orcidClientGroupManager.createAndPersistClientProfile(createdGroup.getGroupOrcid(), client1);
+        } catch (OrcidClientGroupManagementException e) {
             fail();
         }
-        
+
         OrcidClient client2 = new OrcidClient();
         client2.setDisplayName("Name");
         client2.setRedirectUris(redirectUris);
         client2.setShortDescription("Description");
         client2.setType(ClientType.UPDATER);
         client2.setWebsite("http://site.com");
-        
-        //Add other client should fail
+
+        // Add other client should fail
         try {
             orcidClientGroupManager.createAndPersistClientProfile(createdGroup.getGroupOrcid(), client2);
             fail();
-        } catch(OrcidClientGroupManagementException e){            
+        } catch (OrcidClientGroupManagementException e) {
         }
     }
-    
+
     @Test
     @Rollback(true)
     @Transactional
-    public void testAddCreatorToBasicGroup(){
+    public void testAddCreatorToBasicGroup() {
         final OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(BASIC_CLIENT_GROUP_NO_CLIENT));
         OrcidClientGroup createdGroup = transactionTemplate.execute(new TransactionCallback<OrcidClientGroup>() {
             public OrcidClientGroup doInTransaction(TransactionStatus status) {
                 return orcidClientGroupManager.createOrUpdateOrcidClientGroup(group);
             }
         });
-        
+
         RedirectUris redirectUris = new RedirectUris();
-        RedirectUri redirectUri = new RedirectUri("http://uri.com");        
+        RedirectUri redirectUri = new RedirectUri("http://uri.com");
         redirectUris.getRedirectUri().add(redirectUri);
-        
+
         OrcidClient client1 = new OrcidClient();
         client1.setDisplayName("Name");
         client1.setRedirectUris(redirectUris);
         client1.setShortDescription("Description");
         client1.setType(ClientType.CREATOR);
         client1.setWebsite("http://site.com");
-        
-        //Add one creator client to a basic group should fail
+
+        // Add one creator client to a basic group should fail
         try {
             OrcidClient orcidClient = orcidClientGroupManager.createAndPersistClientProfile(createdGroup.getGroupOrcid(), client1);
             assertEquals(orcidClient.getType(), ClientType.UPDATER);
-        } catch(OrcidClientGroupManagementException e){
-            
-        }     
-    }        
-    
+        } catch (OrcidClientGroupManagementException e) {
+
+        }
+    }
+
     @Test
     @Rollback(true)
     @Transactional
-    public void testAddMoreThanOneClientToBasicInstitutionGroup(){
+    public void testAddMoreThanOneClientToBasicInstitutionGroup() {
         final OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(BASIC_INSTITUTION_CLIENT_GROUP_NO_CLIENT));
         OrcidClientGroup createdGroup = transactionTemplate.execute(new TransactionCallback<OrcidClientGroup>() {
             public OrcidClientGroup doInTransaction(TransactionStatus status) {
                 return orcidClientGroupManager.createOrUpdateOrcidClientGroup(group);
             }
         });
-        
+
         RedirectUris redirectUris = new RedirectUris();
-        RedirectUri redirectUri = new RedirectUri("http://uri.com");        
+        RedirectUri redirectUri = new RedirectUri("http://uri.com");
         redirectUris.getRedirectUri().add(redirectUri);
-        
+
         OrcidClient client1 = new OrcidClient();
         client1.setDisplayName("Name");
         client1.setRedirectUris(redirectUris);
         client1.setShortDescription("Description");
         client1.setType(ClientType.CREATOR);
         client1.setWebsite("http://site.com");
-        
-        //Add one client
+
+        // Add one client
         try {
-            orcidClientGroupManager.createAndPersistClientProfile(createdGroup.getGroupOrcid(), client1);            
-        } catch(OrcidClientGroupManagementException e){
+            orcidClientGroupManager.createAndPersistClientProfile(createdGroup.getGroupOrcid(), client1);
+        } catch (OrcidClientGroupManagementException e) {
             fail();
         }
-        
+
         OrcidClient client2 = new OrcidClient();
         client2.setDisplayName("Name");
         client2.setRedirectUris(redirectUris);
         client2.setShortDescription("Description");
         client2.setType(ClientType.CREATOR);
         client2.setWebsite("http://site.com");
-        
-        //Add other client should fail
+
+        // Add other client should fail
         try {
             orcidClientGroupManager.createAndPersistClientProfile(createdGroup.getGroupOrcid(), client2);
             fail();
-        } catch(OrcidClientGroupManagementException e){            
+        } catch (OrcidClientGroupManagementException e) {
         }
     }
-    
+
     @Test
     @Rollback(true)
     @Transactional
-    public void testAddUpdaterToBasicInstitutionGroup(){
+    public void testAddUpdaterToBasicInstitutionGroup() {
         final OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(BASIC_INSTITUTION_CLIENT_GROUP_NO_CLIENT));
         OrcidClientGroup createdGroup = transactionTemplate.execute(new TransactionCallback<OrcidClientGroup>() {
             public OrcidClientGroup doInTransaction(TransactionStatus status) {
                 return orcidClientGroupManager.createOrUpdateOrcidClientGroup(group);
             }
         });
-        
+
         RedirectUris redirectUris = new RedirectUris();
-        RedirectUri redirectUri = new RedirectUri("http://uri.com");        
+        RedirectUri redirectUri = new RedirectUri("http://uri.com");
         redirectUris.getRedirectUri().add(redirectUri);
-        
+
         OrcidClient client1 = new OrcidClient();
         client1.setDisplayName("Name");
         client1.setRedirectUris(redirectUris);
         client1.setShortDescription("Description");
         client1.setType(ClientType.UPDATER);
         client1.setWebsite("http://site.com");
-        
-        //Add one creator client to a basic group should fail
+
+        // Add one creator client to a basic group should fail
         try {
-        	OrcidClient orcidClient = orcidClientGroupManager.createAndPersistClientProfile(createdGroup.getGroupOrcid(), client1);
-        	assertEquals(orcidClient.getType(), ClientType.CREATOR);
-        } catch(OrcidClientGroupManagementException e){
-            
-        }     
+            OrcidClient orcidClient = orcidClientGroupManager.createAndPersistClientProfile(createdGroup.getGroupOrcid(), client1);
+            assertEquals(orcidClient.getType(), ClientType.CREATOR);
+        } catch (OrcidClientGroupManagementException e) {
+
+        }
     }
-        
+
     @Test
     @Rollback(true)
     @Transactional
-    public void testAddCreatorToPremiumGroup(){
+    public void testAddCreatorToPremiumGroup() {
         final OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(PREMIUM_CLIENT_GROUP_NO_CLIENT));
         OrcidClientGroup createdGroup = transactionTemplate.execute(new TransactionCallback<OrcidClientGroup>() {
             public OrcidClientGroup doInTransaction(TransactionStatus status) {
                 return orcidClientGroupManager.createOrUpdateOrcidClientGroup(group);
             }
         });
-        
+
         RedirectUris redirectUris = new RedirectUris();
-        RedirectUri redirectUri = new RedirectUri("http://uri.com");        
+        RedirectUri redirectUri = new RedirectUri("http://uri.com");
         redirectUris.getRedirectUri().add(redirectUri);
-        
+
         OrcidClient client1 = new OrcidClient();
         client1.setDisplayName("Name");
         client1.setRedirectUris(redirectUris);
         client1.setShortDescription("Description");
         client1.setType(ClientType.CREATOR);
         client1.setWebsite("http://site.com");
-        
-        //Add one creator client to a premium group should fail
+
+        // Add one creator client to a premium group should fail
         try {
             OrcidClient orcidClient = orcidClientGroupManager.createAndPersistClientProfile(createdGroup.getGroupOrcid(), client1);
             assertEquals(orcidClient.getType(), ClientType.PREMIUM_UPDATER);
-        } catch(OrcidClientGroupManagementException e){
-            
-        }     
+        } catch (OrcidClientGroupManagementException e) {
+
+        }
     }
-        
+
     @Test
     @Rollback(true)
     @Transactional
-    public void testAddUpdaterToPremiumInstitutionGroup(){
+    public void testAddUpdaterToPremiumInstitutionGroup() {
         final OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(PREMIUM_INSTITUTION_CLIENT_GROUP_NO_CLIENT));
         OrcidClientGroup createdGroup = transactionTemplate.execute(new TransactionCallback<OrcidClientGroup>() {
             public OrcidClientGroup doInTransaction(TransactionStatus status) {
                 return orcidClientGroupManager.createOrUpdateOrcidClientGroup(group);
             }
         });
-        
+
         RedirectUris redirectUris = new RedirectUris();
-        RedirectUri redirectUri = new RedirectUri("http://uri.com");        
+        RedirectUri redirectUri = new RedirectUri("http://uri.com");
         redirectUris.getRedirectUri().add(redirectUri);
-        
+
         OrcidClient client1 = new OrcidClient();
         client1.setDisplayName("Name");
         client1.setRedirectUris(redirectUris);
         client1.setShortDescription("Description");
         client1.setType(ClientType.UPDATER);
         client1.setWebsite("http://site.com");
-        
-        //Add one creator client to a premium group should fail
+
+        // Add one creator client to a premium group should fail
         try {
             OrcidClient orcidClient = orcidClientGroupManager.createAndPersistClientProfile(createdGroup.getGroupOrcid(), client1);
             assertEquals(orcidClient.getType(), ClientType.PREMIUM_CREATOR);
-        } catch(OrcidClientGroupManagementException e){
-            
-        }     
+        } catch (OrcidClientGroupManagementException e) {
+
+        }
     }
-    
+
 }

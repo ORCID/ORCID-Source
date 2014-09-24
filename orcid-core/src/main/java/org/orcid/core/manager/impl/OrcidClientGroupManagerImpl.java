@@ -187,17 +187,17 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
 
         return orcidClientGroup;
     }
-    
+
     /**
-     * Updates an existing group profile. 
-     * If the group doesnt exists it will throw a OrcidClientGroupManagementException
+     * Updates an existing group profile. If the group doesnt exists it will
+     * throw a OrcidClientGroupManagementException
      * 
      * @param orcidClientGroup
-     *          The group to be updated
+     *            The group to be updated
      * */
     public void updateGroup(OrcidClientGroup orcidClientGroup) {
         String groupOrcid = orcidClientGroup.getGroupOrcid();
-        //If the incoming client group ORCID is not null, then lookup the
+        // If the incoming client group ORCID is not null, then lookup the
         // existing client group.
         ProfileEntity groupProfileEntity = profileDao.find(groupOrcid);
         if (groupProfileEntity == null) {
@@ -210,19 +210,19 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
             // profile DAO
             if (!orcidClientGroup.getEmail().equals(groupProfileEntity.getPrimaryEmail().getId())) {
                 EmailEntity primaryEmailEntity = new EmailEntity();
-                primaryEmailEntity.setId(orcidClientGroup.getEmail().toLowerCase().trim());                    
+                primaryEmailEntity.setId(orcidClientGroup.getEmail().toLowerCase().trim());
                 primaryEmailEntity.setCurrent(true);
                 primaryEmailEntity.setVerified(true);
                 groupProfileEntity.setGroupType(orcidClientGroup.getType());
                 primaryEmailEntity.setVisibility(Visibility.PRIVATE);
-                groupProfileEntity.setPrimaryEmail(primaryEmailEntity);                    
+                groupProfileEntity.setPrimaryEmail(primaryEmailEntity);
             }
             groupProfileEntity.setCreditName(orcidClientGroup.getGroupName());
             groupProfileEntity.setSalesforeId(orcidClientGroup.getSalesforceId());
             profileDao.merge(groupProfileEntity);
         }
     }
-    
+
     /**
      * If the client type is set, check if the client type matches the types
      * that the group is allowed to add. If the client type is null, assig it
@@ -391,8 +391,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
 
         return adapter.toOrcidClient(clientProfileEntity);
     }
-    
-    
+
     /**
      * Updates a client profile, updates can be adding or removing redirect uris
      * or updating the client fields
@@ -416,7 +415,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
                     // If profile exists with for the client ID, but is not
                     // of client type, then raise an error.
                     throw new OrcidClientGroupManagementException("ORCID exists but is not a client: " + clientId);
-                }                
+                }
 
                 // If the existing client is found, then update the client
                 // details from the incoming client, and save using the profile
@@ -430,8 +429,8 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         }
 
         return adapter.toOrcidClient(clientProfileEntity);
-    }  
-        
+    }
+
     /**
      * Get a client and evaluates if it is new or it is an update and act
      * accordingly.
@@ -489,8 +488,8 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
                 // details from the incoming client, and save using the profile
                 // DAO.
                 profileDao.removeChildrenWithGeneratedIds(clientProfileEntity);
-                updateProfileEntityFromClient(client, clientProfileEntity, true);                 
-                profileDao.merge(clientProfileEntity);                
+                updateProfileEntityFromClient(client, clientProfileEntity, true);
+                profileDao.merge(clientProfileEntity);
             }
         }
     }
@@ -520,17 +519,17 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         redirectUrisToAdd.addAll(client.getRedirectUris().getRedirectUri());
         for (RedirectUri redirectUri : redirectUrisToAdd) {
             String rUriKey = ClientRedirectUriEntity.getUriAndTypeKey(redirectUri);
-            //If there is a redirect uri with the same uri
+            // If there is a redirect uri with the same uri
             if (clientRedirectUriEntitiesMap.containsKey(rUriKey)) {
-                //Check if it have the same scope and update it
-                //If it doesnt have the same scope
+                // Check if it have the same scope and update it
+                // If it doesnt have the same scope
                 ClientRedirectUriEntity existingEntity = clientRedirectUriEntitiesMap.get(rUriKey);
-                //Update the scopes
+                // Update the scopes
                 List<ScopePathType> clientPredefinedScopes = redirectUri.getScope();
                 if (clientPredefinedScopes != null) {
                     existingEntity.setPredefinedClientScope(ScopePathType.getScopesAsSingleString(clientPredefinedScopes));
                 }
-                //Add to the list
+                // Add to the list
                 clientRedirectUriEntities.add(existingEntity);
             } else {
                 ClientRedirectUriEntity clientRedirectUriEntity = new ClientRedirectUriEntity(redirectUri.getValue(), clientDetailsEntity);
@@ -578,14 +577,14 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         Email primaryEmail = new Email(orcidClientGroup.getEmail());
         primaryEmail.setVisibility(Visibility.PRIVATE);
         primaryEmail.setVerified(true);
-        contactDetails.addOrReplacePrimaryEmail(primaryEmail);  
-        
-        if(!PojoUtil.isEmpty(orcidClientGroup.getSalesforceId())) {
+        contactDetails.addOrReplacePrimaryEmail(primaryEmail);
+
+        if (!PojoUtil.isEmpty(orcidClientGroup.getSalesforceId())) {
             OrcidInternal orcidInternal = new OrcidInternal();
             orcidInternal.setSalesforceId(new SalesforceId(orcidClientGroup.getSalesforceId()));
-            orcidProfile.setOrcidInternal(orcidInternal);    
-        }        
-        
+            orcidProfile.setOrcidInternal(orcidInternal);
+        }
+
         return orcidProfile;
     }
 
@@ -600,7 +599,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         OrcidBio orcidBio = new OrcidBio();
         orcidProfile.setOrcidBio(orcidBio);
         PersonalDetails personalDetails = new PersonalDetails();
-        orcidBio.setPersonalDetails(personalDetails);               
+        orcidBio.setPersonalDetails(personalDetails);
         return orcidProfile;
     }
 
@@ -621,9 +620,9 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         String name = orcidClient.getDisplayName();
         String description = orcidClient.getShortDescription();
         String website = orcidClient.getWebsite();
-        
-        ClientDetailsEntity clientDetails = clientDetailsManager.createClientDetails(orcid, name, description, website, createScopes(clientType), clientResourceIds, clientAuthorizedGrantTypes,
-                redirectUrisToAdd, clientGrantedAuthorities);
+
+        ClientDetailsEntity clientDetails = clientDetailsManager.createClientDetails(orcid, name, description, website, createScopes(clientType), clientResourceIds,
+                clientAuthorizedGrantTypes, redirectUrisToAdd, clientGrantedAuthorities);
         return clientDetails;
     }
 

@@ -48,20 +48,20 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class OrcidSSOManagerImplTest extends BaseTest {
-    
+
     private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml",
             "/data/ProfileWorksEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml");
-    
-    private String orcid1 = "4444-4444-4444-444X"; 
+
+    private String orcid1 = "4444-4444-4444-444X";
     private String name = "SSO Name";
     private String description = "SSO Description";
-    
+
     @Resource
     OrcidSSOManagerImpl ssoManager;
-    
+
     @Resource
     private ProfileEntityManager profileEntityManager;
-    
+
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(DATA_FILES, null);
@@ -73,7 +73,7 @@ public class OrcidSSOManagerImplTest extends BaseTest {
         Collections.reverse(reversedDataFiles);
         removeDBUnitData(reversedDataFiles, null);
     }
-    
+
     @Test
     @Rollback(true)
     public void testGrantSSOAccessToUser() {
@@ -87,40 +87,40 @@ public class OrcidSSOManagerImplTest extends BaseTest {
         assertTrue(clientDetails.getAuthorizedGrantTypes().contains("authorization_code"));
         assertNotNull(clientDetails.getClientRegisteredRedirectUris());
         assertEquals(clientDetails.getClientRegisteredRedirectUris().size(), 2);
-        for(ClientRedirectUriEntity redirectUri : clientDetails.getClientRegisteredRedirectUris()) {
+        for (ClientRedirectUriEntity redirectUri : clientDetails.getClientRegisteredRedirectUris()) {
             assertTrue(redirectUri.getRedirectUri().equals("http://1.com") || redirectUri.getRedirectUri().equals("http://2.com"));
             assertTrue(redirectUri.getRedirectUriType().equals(RedirectUriType.SSO_AUTHENTICATION.value()));
         }
-        
+
         Set<ClientAuthorisedGrantTypeEntity> grantTypeList = clientDetails.getClientAuthorizedGrantTypes();
         assertEquals(grantTypeList.size(), 1);
-        for(ClientAuthorisedGrantTypeEntity grantType : grantTypeList) {
+        for (ClientAuthorisedGrantTypeEntity grantType : grantTypeList) {
             assertEquals(grantType.getGrantType(), "authorization_code");
         }
-        
+
         List<ClientGrantedAuthorityEntity> grantedAuthList = clientDetails.getClientGrantedAuthorities();
         assertEquals(grantedAuthList.size(), 1);
-        for(ClientGrantedAuthorityEntity grantedAuth : grantedAuthList) {
+        for (ClientGrantedAuthorityEntity grantedAuth : grantedAuthList) {
             assertEquals(grantedAuth.getAuthority(), "ROLE_PUBLIC");
         }
     }
-    
+
     @Test
     @Rollback(true)
     public void testRevokeSSOAccessToUser() {
         HashSet<String> uris = new HashSet<String>();
         uris.add("http://1.com");
         uris.add("http://2.com");
-        //Grant SSO
+        // Grant SSO
         ssoManager.grantSSOAccess(orcid1, "My App", "My Description", "MyWebsite", uris);
         ClientDetailsEntity clientDetails = ssoManager.getUserCredentials(orcid1);
-        //Check the client details have been granted
+        // Check the client details have been granted
         assertNotNull(clientDetails);
-        //Revoke SSO        
+        // Revoke SSO
         ssoManager.revokeSSOAccess(orcid1);
-        //Fetch the profile and check 
+        // Fetch the profile and check
         ClientDetailsEntity clientDetails2 = ssoManager.getUserCredentials(orcid1);
-        //Check the profile doesnt have client details entity
+        // Check the profile doesnt have client details entity
         assertNull(clientDetails2);
-    }   
+    }
 }

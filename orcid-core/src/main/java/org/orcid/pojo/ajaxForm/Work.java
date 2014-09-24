@@ -39,416 +39,400 @@ import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
 
 public class Work implements ErrorsInterface, Serializable {
-	
-	private static final long serialVersionUID = 1L;
 
-	private List<String> errors = new ArrayList<String>();
+    private static final long serialVersionUID = 1L;
 
-	private Date publicationDate;
+    private List<String> errors = new ArrayList<String>();
 
-	private Visibility visibility;
+    private Date publicationDate;
 
-	private Text putCode;
+    private Visibility visibility;
 
-	private Text shortDescription;
+    private Text putCode;
 
-	private Text url;
+    private Text shortDescription;
 
-	private Text journalTitle;
+    private Text url;
 
-	private Text languageCode;
+    private Text journalTitle;
 
-	private Text languageName;
+    private Text languageCode;
 
-	private Citation citation;
+    private Text languageName;
 
-	private Text countryCode;
+    private Citation citation;
 
-	private Text countryName;
+    private Text countryCode;
 
-	private List<Contributor> contributors;
+    private Text countryName;
 
-	private List<WorkExternalIdentifier> workExternalIdentifiers;
+    private List<Contributor> contributors;
 
-	private Text workSource;
+    private List<WorkExternalIdentifier> workExternalIdentifiers;
 
-	private Text workSourceName;
+    private Text workSource;
 
-	private WorkTitle workTitle;
+    private Text workSourceName;
 
-	private Text workCategory;
+    private WorkTitle workTitle;
 
-	private Text workType;
+    private Text workCategory;
 
-	protected String citationForDisplay;
-	
-	private String dateSortString;
-	
-	private Date createdDate;
-	
-	private Date lastModified;
-	
+    private Text workType;
 
-	public static Work valueOf(MinimizedWorkEntity minimizedWorkEntity) {
-		Work w = new Work();
-		// Set id
-		w.setPutCode(Text.valueOf(String.valueOf(minimizedWorkEntity.getId())));
-		// Set publication date
-		Integer year = (minimizedWorkEntity.getPublicationYear() <= 0) ? null
-				: minimizedWorkEntity.getPublicationYear();
-		Integer month = (minimizedWorkEntity.getPublicationMonth() <= 0) ? null
-				: minimizedWorkEntity.getPublicationMonth();
-		Integer day = (minimizedWorkEntity.getPublicationDay() <= 0) ? null
-				: minimizedWorkEntity.getPublicationDay();
-		FuzzyDate fuzz = new FuzzyDate(year, month, day);
-		w.setPublicationDate(Date.valueOf(fuzz));
-		w.setDateSortString(PojoUtil.createDateSortString(null, fuzz));
-                
-		// Set title and subtitle
-		if (!StringUtils.isEmpty(minimizedWorkEntity.getTitle())) {
-			WorkTitle workTitle = new WorkTitle();
-			Text title = Text.valueOf(minimizedWorkEntity.getTitle());
-			workTitle.setTitle(title);
-                        
-                        if (!StringUtils.isEmpty(minimizedWorkEntity.getTranslatedTitle())) {
-                            TranslatedTitle translatedTitle = new TranslatedTitle();
-                            translatedTitle.setContent(minimizedWorkEntity.getTranslatedTitle());
-                            translatedTitle.setLanguageCode(minimizedWorkEntity.getTranslatedTitleLanguageCode());
-                            workTitle.setTranslatedTitle(translatedTitle);
-                        }
-			
-			if (!StringUtils.isEmpty(minimizedWorkEntity.getSubtitle())) {
-				Text subtitle = Text.valueOf(minimizedWorkEntity.getSubtitle());
-				workTitle.setSubtitle(subtitle);
-			}
-			w.setWorkTitle(workTitle);
-		}
-		// Set description
-		if (!StringUtils.isEmpty(minimizedWorkEntity.getDescription())) {
-			w.setShortDescription(Text.valueOf(minimizedWorkEntity
-					.getDescription()));
-		}
-		// Set visibility
-		if (minimizedWorkEntity.getVisibility() != null)
-			w.setVisibility(minimizedWorkEntity.getVisibility());
-		
-		if (minimizedWorkEntity.getWorkType() != null)
-                    w.setWorkType(Text.valueOf(minimizedWorkEntity.getWorkType().value()));
-		WorkExternalIdentifiers identifiers = null;
-		if (!StringUtils.isEmpty(minimizedWorkEntity.getExternalIdentifiersJson())) {
-		    identifiers = JsonUtils.readObjectFromJsonString(minimizedWorkEntity.getExternalIdentifiersJson(), WorkExternalIdentifiers.class);
-		}
-		populateExternaIdentifiers(identifiers, w);
-                if (minimizedWorkEntity.getSourceProfile() != null) {
-                    w.setWorkSource(Text.valueOf(minimizedWorkEntity.getSourceProfile().getId()));
-                    w.setWorkSourceName(Text.valueOf(Jpa2JaxbAdapterImpl.createName(minimizedWorkEntity.getSourceProfile())));
-                }
-                if (minimizedWorkEntity.getLanguageCode() != null) {
-                    w.setLanguageCode(Text.valueOf(minimizedWorkEntity.getLanguageCode()));
-                    w.setLanguageCode(Text.valueOf(minimizedWorkEntity.getLanguageCode()));
-                }
-		w.setCreatedDate(Date.valueOf(minimizedWorkEntity.getDateCreated()));
-		w.setLastModified(Date.valueOf(minimizedWorkEntity.getLastModified()));
-		return w;
-	}
-	
-	public static Work valueOf(OrcidWork orcidWork) {
-		Work w = new Work();
-		if (orcidWork.getPublicationDate() != null) 
-		    w.setPublicationDate(Date.valueOf(orcidWork.getPublicationDate()));
-		w.setDateSortString(PojoUtil.createDateSortString(null, orcidWork.getPublicationDate()));
-		if (orcidWork.getPutCode() != null)
-			w.setPutCode(Text.valueOf(orcidWork.getPutCode()));
-		if (orcidWork.getShortDescription() != null)
-			w.setShortDescription(Text.valueOf(orcidWork.getShortDescription()));
-		if (orcidWork.getUrl() != null)
-			w.setUrl(Text.valueOf(orcidWork.getUrl().getValue()));
-		if (orcidWork.getVisibility() != null)
-			w.setVisibility(orcidWork.getVisibility());
-		if (orcidWork.getWorkCitation() != null)
-			w.setCitation(Citation.valueOf(orcidWork.getWorkCitation()));
+    protected String citationForDisplay;
 
-		if (orcidWork.getWorkContributors() != null
-				&& orcidWork.getWorkContributors().getContributor() != null) {
-			List<Contributor> contributors = new ArrayList<Contributor>();
-			for (org.orcid.jaxb.model.message.Contributor owContributor : orcidWork
-					.getWorkContributors().getContributor()) {
-				contributors.add(Contributor.valueOf(owContributor));
-			}
-			w.setContributors(contributors);
-		}
-		WorkExternalIdentifiers workExternalIdentifiers = null;
-		if (orcidWork.getWorkExternalIdentifiers() != null) {
-		    workExternalIdentifiers = orcidWork.getWorkExternalIdentifiers();
-		}
-		populateExternaIdentifiers(workExternalIdentifiers, w);
-		if (orcidWork.getWorkSource() != null) {
-			w.setWorkSource(Text.valueOf(orcidWork.getWorkSource().getPath()));
-			if (orcidWork.getWorkSource().getSourceName() != null)
-				w.setWorkSourceName(Text.valueOf(orcidWork.getWorkSource()
-						.getSourceName()));
-		}
-		if (orcidWork.getWorkTitle() != null)
-			w.setWorkTitle(WorkTitle.valueOf(orcidWork.getWorkTitle()));
-		if (orcidWork.getWorkType() != null) {
-			w.setWorkType(Text.valueOf(orcidWork.getWorkType().value()));
-			WorkCategory category = WorkCategory.fromWorkType(orcidWork.getWorkType());
-			w.setWorkCategory(Text.valueOf(category.value()));
-		}
-		
-		if (orcidWork.getJournalTitle() != null)
-			w.setJournalTitle(Text.valueOf(orcidWork.getJournalTitle()
-					.getContent()));
+    private String dateSortString;
 
-		if (orcidWork.getLanguageCode() != null)
-			w.setLanguageCode(Text.valueOf(orcidWork.getLanguageCode()));
+    private Date createdDate;
 
-		if (orcidWork.getCountry() != null)
-			w.setCountryCode((orcidWork.getCountry().getValue() == null) ? null
-					: Text.valueOf(orcidWork.getCountry().getValue().value()));
-	        w.setCreatedDate(Date.valueOf(orcidWork.getCreatedDate()));
-	        w.setLastModified(Date.valueOf(orcidWork.getLastModifiedDate()));
-		return w;
-	}
+    private Date lastModified;
+
+    public static Work valueOf(MinimizedWorkEntity minimizedWorkEntity) {
+        Work w = new Work();
+        // Set id
+        w.setPutCode(Text.valueOf(String.valueOf(minimizedWorkEntity.getId())));
+        // Set publication date
+        Integer year = (minimizedWorkEntity.getPublicationYear() <= 0) ? null : minimizedWorkEntity.getPublicationYear();
+        Integer month = (minimizedWorkEntity.getPublicationMonth() <= 0) ? null : minimizedWorkEntity.getPublicationMonth();
+        Integer day = (minimizedWorkEntity.getPublicationDay() <= 0) ? null : minimizedWorkEntity.getPublicationDay();
+        FuzzyDate fuzz = new FuzzyDate(year, month, day);
+        w.setPublicationDate(Date.valueOf(fuzz));
+        w.setDateSortString(PojoUtil.createDateSortString(null, fuzz));
+
+        // Set title and subtitle
+        if (!StringUtils.isEmpty(minimizedWorkEntity.getTitle())) {
+            WorkTitle workTitle = new WorkTitle();
+            Text title = Text.valueOf(minimizedWorkEntity.getTitle());
+            workTitle.setTitle(title);
+
+            if (!StringUtils.isEmpty(minimizedWorkEntity.getTranslatedTitle())) {
+                TranslatedTitle translatedTitle = new TranslatedTitle();
+                translatedTitle.setContent(minimizedWorkEntity.getTranslatedTitle());
+                translatedTitle.setLanguageCode(minimizedWorkEntity.getTranslatedTitleLanguageCode());
+                workTitle.setTranslatedTitle(translatedTitle);
+            }
+
+            if (!StringUtils.isEmpty(minimizedWorkEntity.getSubtitle())) {
+                Text subtitle = Text.valueOf(minimizedWorkEntity.getSubtitle());
+                workTitle.setSubtitle(subtitle);
+            }
+            w.setWorkTitle(workTitle);
+        }
+        // Set description
+        if (!StringUtils.isEmpty(minimizedWorkEntity.getDescription())) {
+            w.setShortDescription(Text.valueOf(minimizedWorkEntity.getDescription()));
+        }
+        // Set visibility
+        if (minimizedWorkEntity.getVisibility() != null)
+            w.setVisibility(minimizedWorkEntity.getVisibility());
+
+        if (minimizedWorkEntity.getWorkType() != null)
+            w.setWorkType(Text.valueOf(minimizedWorkEntity.getWorkType().value()));
+        WorkExternalIdentifiers identifiers = null;
+        if (!StringUtils.isEmpty(minimizedWorkEntity.getExternalIdentifiersJson())) {
+            identifiers = JsonUtils.readObjectFromJsonString(minimizedWorkEntity.getExternalIdentifiersJson(), WorkExternalIdentifiers.class);
+        }
+        populateExternaIdentifiers(identifiers, w);
+        if (minimizedWorkEntity.getSourceProfile() != null) {
+            w.setWorkSource(Text.valueOf(minimizedWorkEntity.getSourceProfile().getId()));
+            w.setWorkSourceName(Text.valueOf(Jpa2JaxbAdapterImpl.createName(minimizedWorkEntity.getSourceProfile())));
+        }
+        if (minimizedWorkEntity.getLanguageCode() != null) {
+            w.setLanguageCode(Text.valueOf(minimizedWorkEntity.getLanguageCode()));
+            w.setLanguageCode(Text.valueOf(minimizedWorkEntity.getLanguageCode()));
+        }
+        w.setCreatedDate(Date.valueOf(minimizedWorkEntity.getDateCreated()));
+        w.setLastModified(Date.valueOf(minimizedWorkEntity.getLastModified()));
+        return w;
+    }
+
+    public static Work valueOf(OrcidWork orcidWork) {
+        Work w = new Work();
+        if (orcidWork.getPublicationDate() != null)
+            w.setPublicationDate(Date.valueOf(orcidWork.getPublicationDate()));
+        w.setDateSortString(PojoUtil.createDateSortString(null, orcidWork.getPublicationDate()));
+        if (orcidWork.getPutCode() != null)
+            w.setPutCode(Text.valueOf(orcidWork.getPutCode()));
+        if (orcidWork.getShortDescription() != null)
+            w.setShortDescription(Text.valueOf(orcidWork.getShortDescription()));
+        if (orcidWork.getUrl() != null)
+            w.setUrl(Text.valueOf(orcidWork.getUrl().getValue()));
+        if (orcidWork.getVisibility() != null)
+            w.setVisibility(orcidWork.getVisibility());
+        if (orcidWork.getWorkCitation() != null)
+            w.setCitation(Citation.valueOf(orcidWork.getWorkCitation()));
+
+        if (orcidWork.getWorkContributors() != null && orcidWork.getWorkContributors().getContributor() != null) {
+            List<Contributor> contributors = new ArrayList<Contributor>();
+            for (org.orcid.jaxb.model.message.Contributor owContributor : orcidWork.getWorkContributors().getContributor()) {
+                contributors.add(Contributor.valueOf(owContributor));
+            }
+            w.setContributors(contributors);
+        }
+        WorkExternalIdentifiers workExternalIdentifiers = null;
+        if (orcidWork.getWorkExternalIdentifiers() != null) {
+            workExternalIdentifiers = orcidWork.getWorkExternalIdentifiers();
+        }
+        populateExternaIdentifiers(workExternalIdentifiers, w);
+        if (orcidWork.getWorkSource() != null) {
+            w.setWorkSource(Text.valueOf(orcidWork.getWorkSource().getPath()));
+            if (orcidWork.getWorkSource().getSourceName() != null)
+                w.setWorkSourceName(Text.valueOf(orcidWork.getWorkSource().getSourceName()));
+        }
+        if (orcidWork.getWorkTitle() != null)
+            w.setWorkTitle(WorkTitle.valueOf(orcidWork.getWorkTitle()));
+        if (orcidWork.getWorkType() != null) {
+            w.setWorkType(Text.valueOf(orcidWork.getWorkType().value()));
+            WorkCategory category = WorkCategory.fromWorkType(orcidWork.getWorkType());
+            w.setWorkCategory(Text.valueOf(category.value()));
+        }
+
+        if (orcidWork.getJournalTitle() != null)
+            w.setJournalTitle(Text.valueOf(orcidWork.getJournalTitle().getContent()));
+
+        if (orcidWork.getLanguageCode() != null)
+            w.setLanguageCode(Text.valueOf(orcidWork.getLanguageCode()));
+
+        if (orcidWork.getCountry() != null)
+            w.setCountryCode((orcidWork.getCountry().getValue() == null) ? null : Text.valueOf(orcidWork.getCountry().getValue().value()));
+        w.setCreatedDate(Date.valueOf(orcidWork.getCreatedDate()));
+        w.setLastModified(Date.valueOf(orcidWork.getLastModifiedDate()));
+        return w;
+    }
 
     private static void populateExternaIdentifiers(WorkExternalIdentifiers workExternalIdentifiers, Work work) {
         List<WorkExternalIdentifier> workExternalIdentifiersList = new ArrayList<WorkExternalIdentifier>();
         if (workExternalIdentifiers != null && workExternalIdentifiers.getWorkExternalIdentifier() != null)
             for (org.orcid.jaxb.model.message.WorkExternalIdentifier owWorkExternalIdentifier : workExternalIdentifiers.getWorkExternalIdentifier())
-        	workExternalIdentifiersList.add(WorkExternalIdentifier
-        			.valueOf(owWorkExternalIdentifier));
+                workExternalIdentifiersList.add(WorkExternalIdentifier.valueOf(owWorkExternalIdentifier));
         work.setWorkExternalIdentifiers(workExternalIdentifiersList);
     }
-	
-	public static Work minimizedValueOf(OrcidWork orcidWork) {
-		Work w = new Work();
-		if (orcidWork.getPublicationDate() != null)
-			w.setPublicationDate(Date.valueOf(orcidWork.getPublicationDate()));
-		w.setDateSortString(PojoUtil.createDateSortString(null, orcidWork.getPublicationDate()));
-		if (orcidWork.getPutCode() != null)
-			w.setPutCode(Text.valueOf(orcidWork.getPutCode()));
-		if (orcidWork.getShortDescription() != null)
-			w.setShortDescription(Text.valueOf(orcidWork.getShortDescription()));
-		if (orcidWork.getVisibility() != null)
-			w.setVisibility(orcidWork.getVisibility());
-		if (orcidWork.getWorkTitle() != null)
-			w.setWorkTitle(WorkTitle.valueOf(orcidWork.getWorkTitle()));
-		return w;
-	}
 
-	public OrcidWork toOrcidWork() {
-		OrcidWork ow = new OrcidWork();
-		if (this.getPublicationDate() != null)
-			ow.setPublicationDate(new PublicationDate(this.getPublicationDate()
-					.toFuzzyDate()));
-		if (this.getPutCode() != null)
-			ow.setPutCode(this.getPutCode().getValue());
-		if (this.getShortDescription() != null)
-			ow.setShortDescription(this.shortDescription.getValue());
-		if (this.getUrl() != null)
-			ow.setUrl(new Url(this.url.getValue()));
-		if (this.getVisibility() != null)
-			ow.setVisibility(this.getVisibility());
-		if (this.getCitation() != null)
-			ow.setWorkCitation(this.citation.toCitiation());
-		if (this.getContributors() != null) {
-			List<org.orcid.jaxb.model.message.Contributor> cList = new ArrayList<org.orcid.jaxb.model.message.Contributor>();
-			for (Contributor c : this.getContributors()) {
-				cList.add(c.toContributor());
-			}
-			ow.setWorkContributors(new WorkContributors(cList));
-		}
-		List<org.orcid.jaxb.model.message.WorkExternalIdentifier> wiList = new ArrayList<org.orcid.jaxb.model.message.WorkExternalIdentifier>();
-		if (this.getWorkExternalIdentifiers() != null) {
-		    for (WorkExternalIdentifier wi : this.getWorkExternalIdentifiers()) {
-				wiList.add(wi.toWorkExternalIdentifier());
-		    }
-		}
-		ow.setWorkExternalIdentifiers(new WorkExternalIdentifiers(wiList));
-		if (this.getWorkSource() != null)
-			ow.setWorkSource(new WorkSource(this.getWorkSource().getValue()));
-		if (this.getWorkTitle() != null) {
-			ow.setWorkTitle(this.workTitle.toWorkTitle());
-		}
-		if (this.getWorkType() != null) {
-			ow.setWorkType(WorkType.fromValue(this.getWorkType().getValue()));				
-		}
+    public static Work minimizedValueOf(OrcidWork orcidWork) {
+        Work w = new Work();
+        if (orcidWork.getPublicationDate() != null)
+            w.setPublicationDate(Date.valueOf(orcidWork.getPublicationDate()));
+        w.setDateSortString(PojoUtil.createDateSortString(null, orcidWork.getPublicationDate()));
+        if (orcidWork.getPutCode() != null)
+            w.setPutCode(Text.valueOf(orcidWork.getPutCode()));
+        if (orcidWork.getShortDescription() != null)
+            w.setShortDescription(Text.valueOf(orcidWork.getShortDescription()));
+        if (orcidWork.getVisibility() != null)
+            w.setVisibility(orcidWork.getVisibility());
+        if (orcidWork.getWorkTitle() != null)
+            w.setWorkTitle(WorkTitle.valueOf(orcidWork.getWorkTitle()));
+        return w;
+    }
 
-		if (this.getJournalTitle() != null) {
-			ow.setJournalTitle(new Title(this.getJournalTitle().getValue()));
-		}
+    public OrcidWork toOrcidWork() {
+        OrcidWork ow = new OrcidWork();
+        if (this.getPublicationDate() != null)
+            ow.setPublicationDate(new PublicationDate(this.getPublicationDate().toFuzzyDate()));
+        if (this.getPutCode() != null)
+            ow.setPutCode(this.getPutCode().getValue());
+        if (this.getShortDescription() != null)
+            ow.setShortDescription(this.shortDescription.getValue());
+        if (this.getUrl() != null)
+            ow.setUrl(new Url(this.url.getValue()));
+        if (this.getVisibility() != null)
+            ow.setVisibility(this.getVisibility());
+        if (this.getCitation() != null)
+            ow.setWorkCitation(this.citation.toCitiation());
+        if (this.getContributors() != null) {
+            List<org.orcid.jaxb.model.message.Contributor> cList = new ArrayList<org.orcid.jaxb.model.message.Contributor>();
+            for (Contributor c : this.getContributors()) {
+                cList.add(c.toContributor());
+            }
+            ow.setWorkContributors(new WorkContributors(cList));
+        }
+        List<org.orcid.jaxb.model.message.WorkExternalIdentifier> wiList = new ArrayList<org.orcid.jaxb.model.message.WorkExternalIdentifier>();
+        if (this.getWorkExternalIdentifiers() != null) {
+            for (WorkExternalIdentifier wi : this.getWorkExternalIdentifiers()) {
+                wiList.add(wi.toWorkExternalIdentifier());
+            }
+        }
+        ow.setWorkExternalIdentifiers(new WorkExternalIdentifiers(wiList));
+        if (this.getWorkSource() != null)
+            ow.setWorkSource(new WorkSource(this.getWorkSource().getValue()));
+        if (this.getWorkTitle() != null) {
+            ow.setWorkTitle(this.workTitle.toWorkTitle());
+        }
+        if (this.getWorkType() != null) {
+            ow.setWorkType(WorkType.fromValue(this.getWorkType().getValue()));
+        }
 
-		if (this.getLanguageCode() != null) {
-			ow.setLanguageCode(this.getLanguageCode().getValue());
-		}
+        if (this.getJournalTitle() != null) {
+            ow.setJournalTitle(new Title(this.getJournalTitle().getValue()));
+        }
 
-		if (this.getCountryCode() != null) {
-			Country country = new Country(
-					StringUtils.isEmpty(this.getCountryCode().getValue()) ? null
-							: Iso3166Country.fromValue(this.getCountryCode()
-									.getValue()));
-			ow.setCountry(country);
-		}
+        if (this.getLanguageCode() != null) {
+            ow.setLanguageCode(this.getLanguageCode().getValue());
+        }
 
-		return ow;
-	}
+        if (this.getCountryCode() != null) {
+            Country country = new Country(StringUtils.isEmpty(this.getCountryCode().getValue()) ? null : Iso3166Country.fromValue(this.getCountryCode().getValue()));
+            ow.setCountry(country);
+        }
 
-	public void setCitationForDisplay(String citation) {
-		this.citationForDisplay = citation;
-	}
+        return ow;
+    }
 
-	public List<String> getErrors() {
-		return errors;
-	}
+    public void setCitationForDisplay(String citation) {
+        this.citationForDisplay = citation;
+    }
 
-	public void setErrors(List<String> errors) {
-		this.errors = errors;
-	}
+    public List<String> getErrors() {
+        return errors;
+    }
 
-	public Visibility getVisibility() {
-		return visibility;
-	}
+    public void setErrors(List<String> errors) {
+        this.errors = errors;
+    }
 
-	public void setVisibility(Visibility visibility) {
-		this.visibility = visibility;
-	}
+    public Visibility getVisibility() {
+        return visibility;
+    }
 
-	public Date getPublicationDate() {
-		return publicationDate;
-	}
+    public void setVisibility(Visibility visibility) {
+        this.visibility = visibility;
+    }
 
-	public void setPublicationDate(Date publicationDate) {
-		this.publicationDate = publicationDate;
-	}
+    public Date getPublicationDate() {
+        return publicationDate;
+    }
 
-	public Text getPutCode() {
-		return putCode;
-	}
+    public void setPublicationDate(Date publicationDate) {
+        this.publicationDate = publicationDate;
+    }
 
-	public void setPutCode(Text putCode) {
-		this.putCode = putCode;
-	}
+    public Text getPutCode() {
+        return putCode;
+    }
 
-	public Text getShortDescription() {
-		return shortDescription;
-	}
+    public void setPutCode(Text putCode) {
+        this.putCode = putCode;
+    }
 
-	public void setShortDescription(Text shortDescription) {
-		this.shortDescription = shortDescription;
-	}
+    public Text getShortDescription() {
+        return shortDescription;
+    }
 
-	public Text getUrl() {
-		return url;
-	}
+    public void setShortDescription(Text shortDescription) {
+        this.shortDescription = shortDescription;
+    }
 
-	public void setUrl(Text url) {
-		this.url = url;
-	}
+    public Text getUrl() {
+        return url;
+    }
 
-	public Citation getCitation() {
-		return citation;
-	}
+    public void setUrl(Text url) {
+        this.url = url;
+    }
 
-	public void setCitation(Citation citation) {
-		this.citation = citation;
-	}
+    public Citation getCitation() {
+        return citation;
+    }
 
-	public List<Contributor> getContributors() {
-		return contributors;
-	}
+    public void setCitation(Citation citation) {
+        this.citation = citation;
+    }
 
-	public void setContributors(List<Contributor> contributors) {
-		this.contributors = contributors;
-	}
+    public List<Contributor> getContributors() {
+        return contributors;
+    }
 
-	public List<WorkExternalIdentifier> getWorkExternalIdentifiers() {
-		return workExternalIdentifiers;
-	}
+    public void setContributors(List<Contributor> contributors) {
+        this.contributors = contributors;
+    }
 
-	public void setWorkExternalIdentifiers(
-			List<WorkExternalIdentifier> workExternalIdentifiers) {
-		this.workExternalIdentifiers = workExternalIdentifiers;
-	}
+    public List<WorkExternalIdentifier> getWorkExternalIdentifiers() {
+        return workExternalIdentifiers;
+    }
 
-	public Text getWorkSource() {
-		return workSource;
-	}
+    public void setWorkExternalIdentifiers(List<WorkExternalIdentifier> workExternalIdentifiers) {
+        this.workExternalIdentifiers = workExternalIdentifiers;
+    }
 
-	public void setWorkSource(Text workSource) {
-		this.workSource = workSource;
-	}
+    public Text getWorkSource() {
+        return workSource;
+    }
 
-	public WorkTitle getWorkTitle() {
-		return workTitle;
-	}
+    public void setWorkSource(Text workSource) {
+        this.workSource = workSource;
+    }
 
-	public void setWorkTitle(WorkTitle worksTitle) {
-		this.workTitle = worksTitle;
-	}
+    public WorkTitle getWorkTitle() {
+        return workTitle;
+    }
 
-	public Text getWorkType() {
-		return workType;
-	}
+    public void setWorkTitle(WorkTitle worksTitle) {
+        this.workTitle = worksTitle;
+    }
 
-	public void setWorkType(Text workType) {
-		this.workType = workType;
-	}
+    public Text getWorkType() {
+        return workType;
+    }
 
-	public Text getWorkCategory() {
-		return workCategory;
-	}
+    public void setWorkType(Text workType) {
+        this.workType = workType;
+    }
 
-	public void setWorkCategory(Text workCategory) {
-		this.workCategory = workCategory;
-	}
+    public Text getWorkCategory() {
+        return workCategory;
+    }
 
-	public Text getJournalTitle() {
-		return journalTitle;
-	}
+    public void setWorkCategory(Text workCategory) {
+        this.workCategory = workCategory;
+    }
 
-	public void setJournalTitle(Text journalTitle) {
-		this.journalTitle = journalTitle;
-	}
+    public Text getJournalTitle() {
+        return journalTitle;
+    }
 
-	public Text getLanguageCode() {
-		return languageCode;
-	}
+    public void setJournalTitle(Text journalTitle) {
+        this.journalTitle = journalTitle;
+    }
 
-	public void setLanguageCode(Text languageCode) {
-		this.languageCode = languageCode;
-	}
+    public Text getLanguageCode() {
+        return languageCode;
+    }
 
-	public Text getCountryCode() {
-		return countryCode;
-	}
+    public void setLanguageCode(Text languageCode) {
+        this.languageCode = languageCode;
+    }
 
-	public void setCountryCode(Text countryCode) {
-		this.countryCode = countryCode;
-	}
+    public Text getCountryCode() {
+        return countryCode;
+    }
 
-	public Text getLanguageName() {
-		return languageName;
-	}
+    public void setCountryCode(Text countryCode) {
+        this.countryCode = countryCode;
+    }
 
-	public void setLanguageName(Text languageName) {
-		this.languageName = languageName;
-	}
+    public Text getLanguageName() {
+        return languageName;
+    }
 
-	public Text getCountryName() {
-		return countryName;
-	}
+    public void setLanguageName(Text languageName) {
+        this.languageName = languageName;
+    }
 
-	public void setCountryName(Text countryName) {
-		this.countryName = countryName;
-	}
+    public Text getCountryName() {
+        return countryName;
+    }
 
-	public Text getWorkSourceName() {
-		return workSourceName;
-	}
+    public void setCountryName(Text countryName) {
+        this.countryName = countryName;
+    }
 
-	public void setWorkSourceName(Text workSourceName) {
-		this.workSourceName = workSourceName;
-	}
+    public Text getWorkSourceName() {
+        return workSourceName;
+    }
+
+    public void setWorkSourceName(Text workSourceName) {
+        this.workSourceName = workSourceName;
+    }
 
     public String getDateSortString() {
         return dateSortString;
