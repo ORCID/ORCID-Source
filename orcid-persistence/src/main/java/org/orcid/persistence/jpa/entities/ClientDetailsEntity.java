@@ -31,6 +31,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -68,6 +70,8 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
     private List<ClientGrantedAuthorityEntity> clientGrantedAuthorities = Collections.emptyList();
     private Set<OrcidOauth2TokenDetail> tokenDetails;
     private ProfileEntity profileEntity;
+    private ProfileEntity groupProfile;
+
     private Set<CustomEmailEntity> customEmails = Collections.emptySet();
     private int accessTokenValiditySeconds = DEFAULT_TOKEN_VALIDITY;
     private boolean persistentTokensEnabled = false; 
@@ -168,6 +172,16 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
 
     public void setTokenDetails(Set<OrcidOauth2TokenDetail> tokenDetails) {
         this.tokenDetails = tokenDetails;
+    }
+    
+    @ManyToOne(cascade = { CascadeType.DETACH, CascadeType.REFRESH }, fetch = FetchType.LAZY)
+    @JoinColumn(name = "group_orcid", insertable = false, updatable = false)
+    public ProfileEntity getGroupProfile() {
+        return groupProfile;
+    }
+
+    public void setGroupProfile(ProfileEntity groupProfile) {
+        this.groupProfile = groupProfile;
     }
 
     @OneToOne(mappedBy = "clientDetails")

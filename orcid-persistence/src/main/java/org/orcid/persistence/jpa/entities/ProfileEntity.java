@@ -133,6 +133,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     private String groupOrcid;
     private ProfileEntity groupProfile;
     private SortedSet<ProfileEntity> clientProfiles;
+    private SortedSet<ClientDetailsEntity> clients;
     private ClientDetailsEntity clientDetails;
     private SortedSet<OrcidOauth2TokenDetail> tokenDetails;
     private IndexingStatus indexingStatus = IndexingStatus.PENDING;
@@ -153,7 +154,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
 
     // Salesfore ID
     private String salesforeId;
-    
+
     private Date deactivationDate;
 
     @Id
@@ -761,6 +762,17 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
         this.clientProfiles = clientProfiles;
     }
 
+    @OneToMany(cascade = { CascadeType.DETACH, CascadeType.REFRESH }, fetch = FetchType.LAZY)
+    @JoinColumn(name = "group_orcid")
+    @Sort(type = SortType.COMPARATOR, comparator = OrcidEntityIdComparator.class)
+    public SortedSet<ClientDetailsEntity> getClients() {
+        return clients;
+    }
+
+    public void setClients(SortedSet<ClientDetailsEntity> clients) {
+        this.clients = clients;
+    }
+
     @OneToOne(cascade = { CascadeType.DETACH, CascadeType.REFRESH }, fetch = FetchType.LAZY)
     @JoinColumn(name = "orcid")
     public ClientDetailsEntity getClientDetails() {
@@ -959,7 +971,6 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
         this.deprecatedDate = deprecatedDate;
     }
 
-    
     @Column(name = "salesforce_id")
     public String getSalesforeId() {
         return salesforeId;
