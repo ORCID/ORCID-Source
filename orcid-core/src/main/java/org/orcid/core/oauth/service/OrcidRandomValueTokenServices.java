@@ -133,7 +133,7 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
         
         if(usePersistentTokens) {
             if (isPersistentTokenEnabled(authorizationRequest))
-                return readValiditySeconds;
+                return readValiditySeconds;            
         } else {
             /*
              * Tokens should last for the longest life span,

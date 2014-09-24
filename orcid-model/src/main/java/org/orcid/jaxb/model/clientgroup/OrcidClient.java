@@ -31,6 +31,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.message.ErrorDesc;
@@ -84,10 +85,12 @@ public class OrcidClient implements Serializable {
     protected String clientId;
     @XmlElement(name = "client-secret")
     protected String clientSecret;
-    @XmlElement(name = "error-desc", required=false)
+    @XmlElement(name = "error-desc", required = false)
     protected ErrorDesc errors;
     @XmlAttribute
-    protected ClientType type;    
+    protected ClientType type;
+    @XmlTransient
+    protected boolean persistentTokenEnabled;
 
     /**
      * Gets the value of the displayName property.
@@ -243,20 +246,41 @@ public class OrcidClient implements Serializable {
      *            allowed object is {@link ErrorDesc }
      * 
      */
-	public ErrorDesc getErrors() {
-		return errors;
-	}
+    public ErrorDesc getErrors() {
+        return errors;
+    }
 
-	/**
+    /**
      * Sets the value of the errors property.
      * 
      * @param value
      *            allowed object is {@link ErrorDesc }
      * 
      */
-	public void setErrors(ErrorDesc errors) {
-		this.errors = errors;
-	}        
-    
-    
+    public void setErrors(ErrorDesc errors) {
+        this.errors = errors;
+    }
+
+    /**
+     * Gets the value of the persistentTokenEnabled property.
+     * 
+     * @param value
+     *            allowed object is {@link boolean }
+     * 
+     */
+    public boolean isPersistentTokenEnabled() {
+        return persistentTokenEnabled;
+    }
+
+    /**
+     * Sets the value of the persistentTokenEnabled property.
+     * 
+     * @param value
+     *            allowed object is {@link boolean }
+     * 
+     */
+    public void setPersistentTokenEnabled(boolean persistentTokenEnabled) {
+        this.persistentTokenEnabled = persistentTokenEnabled;
+    }
+
 }

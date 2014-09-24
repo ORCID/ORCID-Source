@@ -279,7 +279,17 @@
 									<div ng-repeat='error in client.shortDescription.errors' ng-bind-html="error"></div>
 								</span>	
 							</div>
-						</div>
+						</div>						
+						<!-- Persistent tokens -->
+						<div class="row">
+							<div class="col-md-12 col-sm-12 col-xs-12">
+								<span><@orcid.msg 'manage.developer_tools.edit_client.use_pesistent_tokens'/></span><br />
+								<textarea ng-model="client.persistentTokenEnabled.value"></textarea>
+								<span class="orcid-error" ng-show="client.persistentTokenEnabled.errors.length > 0">
+									<div ng-repeat='error in client.persistentTokenEnabled.errors' ng-bind-html="error"></div>
+								</span>	
+							</div>
+						</div>												
 						<!-- Redirect uris -->
 						<div class="row">			
 							<div class="col-md-12 col-sm-12 col-xs-12">
