@@ -53,9 +53,9 @@
        <!-- Privacy Settings -->
        <div class="col-md-3 col-sm-3 workspace-toolbar">       	
        	<#if !(isPublicProfile??)>
-       		<a href ng-click="deleteAffiliation(group.getActive())" class="glyphicon glyphicon-trash grey"></a>
+       		<a href ng-click="deleteAffiliation(group.getActive())" class="glyphicon glyphicon-trash grey"></a>       		
        		<ul class="workspace-private-toolbar">
-       			<li>
+       			<li ng-show="group.getActive().sourceOrcid == '${effectiveUserOrcid}'">
 			 		<a href="" class="toolbar-button edit-item-button">
 						<span class="glyphicon glyphicon-pencil edit-option-toolbar" title="" ng-click="openEditAffiliation(group.getActive())"></span>
 					</a>	
