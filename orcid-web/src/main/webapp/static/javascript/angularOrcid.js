@@ -3577,7 +3577,7 @@ function PublicFundingCtrl($scope, $compile, $filter, fundingSrvc){
 function PublicWorkCtrl($scope, $compile, $filter, worksSrvc, actSortSrvc) {
 	actSortSrvc.initScope($scope, GroupedActivities.ABBR_WORK);
 	$scope.worksSrvc = worksSrvc;
-	$scope.showBibtex = false;
+	$scope.showBibtex = {};
 	$scope.moreInfoOpen = false;
 	$scope.moreInfo = {};
 	$scope.displayWorks = true;
@@ -3586,8 +3586,8 @@ function PublicWorkCtrl($scope, $compile, $filter, worksSrvc, actSortSrvc) {
 		actSortSrvc.sort(key,$scope);
 	};
 	
-    $scope.bibtexShowToggle = function () {
-    	$scope.showBibtex = !($scope.showBibtex);
+	$scope.bibtexShowToggle = function (putCode) {
+        $scope.showBibtex[putCode] = !($scope.showBibtex[putCode]);     
     };   
 	  
 	$scope.renderTranslatedTitleInfo = function(putCode) {		
