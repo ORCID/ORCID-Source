@@ -56,9 +56,9 @@
        		<a href ng-click="deleteAffiliation(group.getActive())" class="glyphicon glyphicon-trash grey"></a>
        		<ul class="workspace-private-toolbar">
        			<li>
-			 		<!-- a href="" class="toolbar-button edit-item-button">
-			 			<span class="glyphicon glyphicon-pencil edit-option-toolbar" title=""></span>
-			 		</a -->	
+			 		<a href="" class="toolbar-button edit-item-button">
+						<span class="glyphicon glyphicon-pencil edit-option-toolbar" title="" ng-click="openEditAffiliation(group.getActive())"></span>
+					</a>	
 			 	</li>	
 			 	<li>
 					<@orcid.privacyToggle2  angularModel="group.getActive().visibility.visibility"

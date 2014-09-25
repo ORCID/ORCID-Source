@@ -2944,23 +2944,28 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 		if ($scope.editAffiliation != undefined && $scope.editAffiliation.disambiguatedAffiliationSourceId != undefined) delete $scope.editAffiliation.disambiguatedAffiliationSourceId;
 	};
 
-	$scope.addAffiliationModal = function(type){
+	$scope.addAffiliationModal = function(type, affiliation){
 		$scope.removeDisambiguatedAffiliation();
 		$scope.addAffType = type;
-		$.ajax({
-			url: getBaseUri() + '/affiliations/affiliation.json',
-			dataType: 'json',
-			success: function(data) {
-				$scope.editAffiliation = data;
-				if (type != null) 
-					$scope.editAffiliation.affiliationType.value = type;
-				$scope.$apply(function() {
-					$scope.showAddModal();
-				});
-			}
-		}).fail(function() { 
-	    	console.log("Error fetching affiliation: " + value);
-	    });
+		if(affiliation === undefined) {
+			$.ajax({
+				url: getBaseUri() + '/affiliations/affiliation.json',
+				dataType: 'json',
+				success: function(data) {
+					$scope.editAffiliation = data;
+					if (type != null) 
+						$scope.editAffiliation.affiliationType.value = type;
+					$scope.$apply(function() {
+						$scope.showAddModal();
+					});
+				}
+			}).fail(function() { 
+		    	console.log("Error fetching affiliation: " + value);
+		    });
+		} else {
+			$scope.editAffiliation = affiliation;
+			$scope.showAddModal();
+		}		
 	};
 
 	$scope.addAffiliation = function(){
@@ -3061,6 +3066,10 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 	
 	//init
 	affiliationsSrvc.getAffiliations('affiliations/affiliationIds.json');
+	
+	$scope.openEditAffiliation = function(affiliation) {
+		$scope.addAffiliationModal(affiliation.affiliationType.value, affiliation);
+	};
 }
 
 /**
