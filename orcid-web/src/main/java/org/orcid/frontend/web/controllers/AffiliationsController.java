@@ -210,7 +210,8 @@ public class AffiliationsController extends BaseWorkspaceController {
         copyErrors(affiliationForm.getCountry(), affiliationForm);
         copyErrors(affiliationForm.getDepartmentName(), affiliationForm);
         copyErrors(affiliationForm.getRoleTitle(), affiliationForm);
-        copyErrors(affiliationForm.getEndDate(), affiliationForm);
+        if(!PojoUtil.isEmpty(affiliationForm.getEndDate()))
+            copyErrors(affiliationForm.getEndDate(), affiliationForm);
 
         if (affiliationForm.getErrors().isEmpty()) {
             if(PojoUtil.isEmpty(affiliationForm.getPutCode())) {
@@ -244,10 +245,11 @@ public class AffiliationsController extends BaseWorkspaceController {
         if(PojoUtil.isEmpty(affiliationForm.getPutCode())) {
             throw new IllegalArgumentException("Affiliation must contain a put code");
         }
-        
-        OrgAffiliationRelationEntity orgAffiliationRelationEntity = jaxb2JpaAdapter.getUpdatedAffiliationRelationEntity(affiliationForm.toAffiliation());        
+        ProfileEntity userProfile = profileDao.find(getEffectiveUserOrcid());
+        OrgAffiliationRelationEntity orgAffiliationRelationEntity = jaxb2JpaAdapter.getUpdatedAffiliationRelationEntity(affiliationForm.toAffiliation());
+        orgAffiliationRelationEntity.setSource(userProfile);
         orgAffiliationRelationDao.updateOrgAffiliationRelationEntity(orgAffiliationRelationEntity);
-        affiliationForm.setPutCode(Text.valueOf(orgAffiliationRelationEntity.getId().toString()));
+        affiliationForm.setPutCode(Text.valueOf(orgAffiliationRelationEntity.getId().toString()));                
     }            
 
     /**
@@ -434,8 +436,10 @@ public class AffiliationsController extends BaseWorkspaceController {
     @RequestMapping(value = "/affiliation/datesValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     AffiliationForm datesValidate(@RequestBody AffiliationForm affiliationForm) {
-        affiliationForm.getStartDate().setErrors(new ArrayList<String>());
-        affiliationForm.getEndDate().setErrors(new ArrayList<String>());
+        if(!PojoUtil.isEmpty(affiliationForm.getStartDate()))
+            affiliationForm.getStartDate().setErrors(new ArrayList<String>());
+        if(!PojoUtil.isEmpty(affiliationForm.getEndDate()))
+            affiliationForm.getEndDate().setErrors(new ArrayList<String>());
         if (!PojoUtil.isEmpty(affiliationForm.getStartDate()) && !PojoUtil.isEmpty(affiliationForm.getEndDate())) {
             if (affiliationForm.getStartDate().toJavaDate().after(affiliationForm.getEndDate().toJavaDate()))
                 setError(affiliationForm.getEndDate(), "manualAffiliation.endDate.after");

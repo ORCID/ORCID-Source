@@ -200,18 +200,36 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
         }
         if (address.getRegion() != null) {
             form.setRegion(Text.valueOf(address.getRegion()));
+        } else {
+            form.setRegion(new Text());
         }
-        form.setCountry(Text.valueOf(address.getCountry().value()));
+        
+        if(address.getCountry() != null) {
+            form.setCountry(Text.valueOf(address.getCountry().value()));
+        } else {
+            form.setCountry(new Text());
+        }        
+        
         if (affiliation.getDepartmentName() != null) {
             form.setDepartmentName(Text.valueOf(affiliation.getDepartmentName()));
+        } else {
+            form.setDepartmentName(new Text());
         }
+        
+        
         if (affiliation.getRoleTitle() != null) {
             form.setRoleTitle(Text.valueOf(affiliation.getRoleTitle()));
+        } else {
+            form.setRoleTitle(new Text());
         }
 
         if (affiliation.getType() != null) {
             form.setAffiliationType(Text.valueOf(affiliation.getType().value()));
+        } else {
+            form.setAffiliationType(new Text());
         }
+        
+        
         if (affiliation.getStartDate() != null) {
             form.setStartDate(Date.valueOf(affiliation.getStartDate()));
         }
