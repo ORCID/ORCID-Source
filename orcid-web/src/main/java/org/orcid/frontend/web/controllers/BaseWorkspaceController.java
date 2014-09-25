@@ -33,8 +33,6 @@ import org.orcid.core.security.visibility.filter.VisibilityFilter;
 import org.orcid.frontend.web.util.YearsList;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.persistence.jpa.entities.CountryIsoEntity;
-import org.orcid.utils.FunctionsOverCollections;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 /**
