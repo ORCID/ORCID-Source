@@ -213,15 +213,42 @@ public class AffiliationsController extends BaseWorkspaceController {
         copyErrors(affiliationForm.getEndDate(), affiliationForm);
 
         if (affiliationForm.getErrors().isEmpty()) {
-            // Persist to DB
-            ProfileEntity userProfile = profileDao.find(getEffectiveUserOrcid());
-            OrgAffiliationRelationEntity orgAffiliationRelationEntity = jaxb2JpaAdapter.getNewOrgAffiliationRelationEntity(affiliationForm.toAffiliation(), userProfile);
-            orgAffiliationRelationEntity.setSource(userProfile);
-            orgAffiliationRelationDao.persist(orgAffiliationRelationEntity);
+            if(PojoUtil.isEmpty(affiliationForm.getPutCode())) {
+                addAffiliation(affiliationForm);
+            } else {
+                editAffiliation(affiliationForm);
+            }            
         }
 
         return affiliationForm;
     }
+
+    /**
+     * Adds a new affiliations
+     * @param affiliationForm
+     * */
+    private void addAffiliation(AffiliationForm affiliationForm) {
+        // Persist to DB
+        ProfileEntity userProfile = profileDao.find(getEffectiveUserOrcid());
+        OrgAffiliationRelationEntity orgAffiliationRelationEntity = jaxb2JpaAdapter.getNewOrgAffiliationRelationEntity(affiliationForm.toAffiliation(), userProfile);
+        orgAffiliationRelationEntity.setSource(userProfile);
+        orgAffiliationRelationDao.persist(orgAffiliationRelationEntity);
+        affiliationForm.setPutCode(Text.valueOf(orgAffiliationRelationEntity.getId().toString()));
+    }
+    
+    /**
+     * Updates an existing affiliation
+     * @param affiliationForm
+     * */
+    private void editAffiliation(AffiliationForm affiliationForm) {
+        if(PojoUtil.isEmpty(affiliationForm.getPutCode())) {
+            throw new IllegalArgumentException("Affiliation must contain a put code");
+        }
+        
+        OrgAffiliationRelationEntity orgAffiliationRelationEntity = jaxb2JpaAdapter.getUpdatedAffiliationRelationEntity(affiliationForm.toAffiliation());        
+        orgAffiliationRelationDao.updateOrgAffiliationRelationEntity(orgAffiliationRelationEntity);
+        affiliationForm.setPutCode(Text.valueOf(orgAffiliationRelationEntity.getId().toString()));
+    }            
 
     /**
      * List affiliations associated with a profile
@@ -266,7 +293,7 @@ public class AffiliationsController extends BaseWorkspaceController {
     }
 
     /**
-     * Saves an affiliation
+     * Updates an affiliation visibility
      * */
     @RequestMapping(value = "/affiliation.json", method = RequestMethod.PUT)
     public @ResponseBody
@@ -282,7 +309,7 @@ public class AffiliationsController extends BaseWorkspaceController {
                     // same affiliation
                     if (orcidAffiliation.getPutCode().equals(affiliation.getPutCode().getValue())) {
                         // Update the privacy of the affiliation
-                        orgRelationAffiliationDao.updateOrgAffiliationRelation(currentProfile.getOrcidIdentifier().getPath(), affiliation.getPutCode().getValue(), affiliation
+                        orgRelationAffiliationDao.updateVisibilityOnOrgAffiliationRelation(currentProfile.getOrcidIdentifier().getPath(), affiliation.getPutCode().getValue(), affiliation
                                 .getVisibility().getVisibility());
                     }
                 }

@@ -105,6 +105,7 @@ import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.message.WorkSource;
 import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.persistence.dao.GenericDao;
+import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
@@ -126,6 +127,7 @@ import org.orcid.persistence.jpa.entities.StartDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.keys.WorkExternalIdentifierEntityPk;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.OrcidStringUtils;
 import org.springframework.util.Assert;
@@ -155,6 +157,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     
     @Resource
     private ProfileFundingManager profileFundingManager;
+    
+    @Resource
+    private OrgAffiliationRelationDao orgAffiliationRelationDao; 
 
     @Override
     public ProfileEntity toProfileEntity(OrcidProfile profile, ProfileEntity existingProfileEntity) {
@@ -899,6 +904,16 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         orgAffiliationRelationEntity.setProfile(profileEntity);
         return orgAffiliationRelationEntity;
     }
+    
+    @Override
+    public OrgAffiliationRelationEntity getUpdatedAffiliationRelationEntity(Affiliation updatedAffiliation) {
+        if(PojoUtil.isEmpty(updatedAffiliation.getPutCode()))
+            throw new IllegalArgumentException("Affiliation must contain a put code to be edited");
+        long affiliationId = Long.valueOf(updatedAffiliation.getPutCode());
+        OrgAffiliationRelationEntity exisitingOrgAffiliationEntity = orgAffiliationRelationDao.find(affiliationId);
+        OrgAffiliationRelationEntity orgAffiliationRelationEntity = getOrgAffiliationRelationEntity(updatedAffiliation, exisitingOrgAffiliationEntity);
+        return orgAffiliationRelationEntity;
+    }
 
     /**
      * Transforms a OrcidGrant object into a ProfileFundingEntity object
@@ -929,7 +944,11 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     }
     
     private OrgAffiliationRelationEntity getOrgAffiliationRelationEntity(Affiliation affiliation, OrgAffiliationRelationEntity exisitingOrgAffiliationEntity) {
-        if (affiliation != null) {
+        if (affiliation != null) {         
+            
+            //Get the org
+            OrgEntity orgEntity = getOrgEntity(affiliation);
+            
             OrgAffiliationRelationEntity orgRelationEntity = null;
             if (exisitingOrgAffiliationEntity == null) {
                 String putCode = affiliation.getPutCode();
@@ -948,7 +967,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             orgRelationEntity.setSource(getSource(affiliation.getSource()));
             orgRelationEntity.setDepartment(affiliation.getDepartmentName());
             orgRelationEntity.setEndDate(endDate != null ? new EndDateEntity(endDate) : null);
-            orgRelationEntity.setOrg(getOrgEntity(affiliation));
+            orgRelationEntity.setOrg(orgEntity);
             orgRelationEntity.setTitle(affiliation.getRoleTitle());
             orgRelationEntity.setStartDate(startDate != null ? new StartDateEntity(startDate) : null);
 
@@ -970,8 +989,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
      * @return a ProfileFundingEntity created from the provided funding
      * */
     private ProfileFundingEntity getProfileFundingEntity(Funding funding, ProfileFundingEntity exisitingProfileFundingEntity) {
-        if (funding != null) {
-            
+        if (funding != null) {            
             //Get the org
             OrgEntity orgEntity = getOrgEntity(funding);
             
