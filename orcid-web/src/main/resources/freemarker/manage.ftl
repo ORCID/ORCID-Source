@@ -31,7 +31,12 @@
  	<div class="alert alert-success">
          <strong>${admin_delegate_failed}</strong>
      </div>
- </#if> 
+ </#if>
+ <#if admin_delegate_not_you??>
+ 	<div class="alert alert-success">
+         <strong><@orcid.msg 'wrong_user.Wronguser' /></strong> <a href="<@spring.url '/signout'/>"><@orcid.msg 'public-layout.sign_out' /></a> <@orcid.msg 'wrong_user.andtryagain' />         
+     </div>
+ </#if>   
 <div class="row">
 	<div class="col-md-3 col-sm-12 col-xs-12 padding-fix">
 		<#include "admin_menu.ftl"/>
