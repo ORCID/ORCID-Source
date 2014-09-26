@@ -6713,7 +6713,7 @@ function OauthAuthorizationController($scope, $compile, $sce, commonSrvc){
 	$scope.clientGroupName = "";
 	$scope.requestScopes = null;
 	$scope.emailTrustAsHtmlErrors = [];
-	$scope.enablePersistentToken = false;
+	$scope.enablePersistentToken = true;
 	
 	$scope.toggleClientDescription = function() {
 		$scope.showClientDescription = !$scope.showClientDescription;		
