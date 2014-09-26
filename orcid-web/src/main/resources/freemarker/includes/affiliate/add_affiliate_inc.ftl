@@ -20,9 +20,18 @@
 	<div id="edit-affiliation" class="edit-affiliation colorbox-content">		 
 		<div class="row">
 			<div class="col-md-9 col-sm-8 col-xs-12">
-				<h1 ng-show="addAffType == null || addAffType == undefined " class="lightbox-title pull-left"><@orcid.msg 'manual_affiliation_form_contents.add_affiliation'/></h1>
-				<h1 ng-show="addAffType == 'education'" class="lightbox-title pull-left"><@orcid.msg 'manual_affiliation_form_contents.add_education'/></h1>
-				<h1 ng-show="addAffType == 'employment'" class="lightbox-title pull-left"><@orcid.msg 'manual_affiliation_form_contents.add_employment'/></h1>
+				<h1 ng-show="addAffType == null || addAffType == undefined " class="lightbox-title pull-left">
+					<span ng-show="editAffiliation.putCode.value == null"><@orcid.msg 'manual_affiliation_form_contents.add_affiliation'/></span>
+					<span ng-show="editAffiliation.putCode.value != null"><@orcid.msg 'manual_affiliation_form_contents.edit_affiliation'/></span>
+				</h1>
+				<h1 ng-show="addAffType == 'education'" class="lightbox-title pull-left">
+					<span ng-show="editAffiliation.putCode.value == null"><@orcid.msg 'manual_affiliation_form_contents.add_education'/></span>
+					<span ng-show="editAffiliation.putCode.value != null"><@orcid.msg 'manual_affiliation_form_contents.edit_education'/></span>
+				</h1>
+				<h1 ng-show="addAffType == 'employment'" class="lightbox-title pull-left">
+					<span ng-show="editAffiliation.putCode.value == null"><@orcid.msg 'manual_affiliation_form_contents.add_employment'/></span>
+					<span ng-show="editAffiliation.putCode.value != null"><@orcid.msg 'manual_affiliation_form_contents.edit_employment'/></span>
+				</h1>
 			</div>
 			<div class="col-md-3 col-sm-3">
 				<div class="control-group privacy-control">
@@ -182,7 +191,10 @@
 					</span>										
 				</div>
 		    	<div class="control-group">					
-					<button class="btn btn-primary" ng-click="addAffiliation()" ng-disabled="addingAffiliation" ng-class="{disabled:addingAffiliation}"><@orcid.msg 'manual_affiliation_form_contents.btnaddtolist'/></button>
+					<button class="btn btn-primary" ng-click="addAffiliation()" ng-disabled="addingAffiliation" ng-class="{disabled:addingAffiliation}">
+						<span ng-show="editAffiliation.putCode.value == null"><@orcid.msg 'manual_affiliation_form_contents.btnaddtolist'/></span>
+						<span ng-show="editAffiliation.putCode.value != null"><@orcid.msg 'manual_affiliation_form_contents.btnedit'/></span>
+					</button>
 					<button id="" class="btn close-button" ng-click="closeModal()" type="reset"><@orcid.msg 'freemarker.btncancel' /></button>
 				</div>	    				
 		</div>

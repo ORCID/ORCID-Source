@@ -66,8 +66,6 @@ import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Website;
 import org.orcid.pojo.ajaxForm.WebsitesForm;
 import org.orcid.utils.FunctionsOverCollections;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -83,8 +81,6 @@ import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMeth
  */
 @Controller("workspaceController")
 public class WorkspaceController extends BaseWorkspaceController {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(WorkspaceController.class);
 
     @Resource
     private ThirdPartyLinkManager thirdPartyLinkManager;

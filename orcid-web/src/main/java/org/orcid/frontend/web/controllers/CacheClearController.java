@@ -18,10 +18,9 @@ package org.orcid.frontend.web.controllers;
 
 
 import javax.annotation.Resource;
+
 import org.orcid.core.manager.ThirdPartyLinkManager;
 import org.orcid.pojo.ajaxForm.Errors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -34,8 +33,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping(value = {"/cacheClear"})
 public class CacheClearController extends BaseWorkspaceController {
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(CacheClearController.class);
-
     @Resource
     private ThirdPartyLinkManager thirdPartyLinkManager;
 
