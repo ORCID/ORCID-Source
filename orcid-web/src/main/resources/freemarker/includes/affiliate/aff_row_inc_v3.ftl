@@ -86,14 +86,23 @@
 </div>	
 <div class="row">
 	<div class="col-md-12 col-sm-12 col-xs-12">
-		<div class="row">
-			<div class="col-md-5">
-				<strong>Source:</strong> {{group.getActive().sourceName}}	
-			</div>
-			<div class="col-md-7">
-				<div class="show-more-info-tab">			
-					<a href="" ng-show="!moreInfo[group.getActive().putCode.value]" ng-click="showDetailsMouseClick(group.getActive().putCode.value,$event);"><span class="glyphicon glyphicon-chevron-down"></span><@orcid.msg 'manage.developer_tools.show_details'/></a>
-					<a href="" ng-show="moreInfo[group.getActive().putCode.value]" ng-click="showDetailsMouseClick(group.getActive().putCode.value,$event);"><span class="glyphicon glyphicon-chevron-up"></span><@orcid.msg 'manage.developer_tools.hide_details'/></a>
+		<div class="sources-container-header">          
+			<div class="row">
+				<div class="col-md-5">
+					<strong>Source:</strong> {{group.getActive().sourceName}}	
+				</div>
+				<div class="col-md-7">
+					<ul class="sources-options">
+				        <li>
+				            <a href ng-click="deleteAffiliation(group.getActive())" class="glyphicon glyphicon-trash grey"></a>
+				        </li>
+					    <li>
+					        <div class="show-more-info-tab">
+					            <a href="" ng-show="!moreInfo[group.getActive().putCode.value]" ng-click="showDetailsMouseClick(group.getActive().putCode.value,$event);"><span class="glyphicon glyphicon-chevron-down"></span><@orcid.msg 'manage.developer_tools.show_details'/></a>
+					            <a href="" ng-show="moreInfo[group.getActive().putCode.value]" ng-click="showDetailsMouseClick(group.getActive().putCode.value,$event);"><span class="glyphicon glyphicon-chevron-up"></span><@orcid.msg 'manage.developer_tools.hide_details'/></a>
+					        </div>                  
+					    </li>                               
+					</ul>
 				</div>
 			</div>
 		</div>
