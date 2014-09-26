@@ -4215,15 +4215,12 @@ multiselect .dropdown-menu .dropdown-menu-list {
 
 ul.oauth-scopes{
 	padding: 0;
-	margin: 15px 0 15px 0;
+	margin: 10px 0 10px 20px;
 }
 
-ul.oauth-scopes li{
-	min-height: 30px;
-	font-size: 17px;
-	color: #338caf;
-	line-height: 33px;
-	margin: 10px 0;
+ul.oauth-scopes li{	
+	list-style-type: circle;
+	padding: 5px 0 0 10px;
 }
 
 .form-control-feedback-oauth{
@@ -5401,12 +5398,19 @@ ul.oauth-scopes li{
 .admin-edit-client {
 	border: solid 1px #D3D3D3;
 	padding: 10px;
-	margin: 5px;
+	margin: 55px 5px 10px 0px;
 }
 
 .admin-edit-client-redirect-uris {
 	background-color: #D3D3D3;
 	padding: 10px;
-	margin: 60px 5px 5px 5px;	
+	margin: 5px;	
 }
 
+ul.oauth-icons {
+	padding: 0;
+}
+
+ul.oauth-icons li {
+	display: inline;
+}

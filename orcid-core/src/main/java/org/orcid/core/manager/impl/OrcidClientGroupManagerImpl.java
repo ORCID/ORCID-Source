@@ -511,6 +511,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         clientDetailsEntity.setClientName(client.getDisplayName());
         clientDetailsEntity.setClientDescription(client.getShortDescription());
         clientDetailsEntity.setClientWebsite(client.getWebsite());
+        clientDetailsEntity.setPersistentTokensEnabled(client.isPersistentTokenEnabled());
         Set<ClientRedirectUriEntity> clientRedirectUriEntities = clientDetailsEntity.getClientRegisteredRedirectUris();
         Map<String, ClientRedirectUriEntity> clientRedirectUriEntitiesMap = ClientRedirectUriEntity.mapByUriAndType(clientRedirectUriEntities);
         clientRedirectUriEntities.clear();

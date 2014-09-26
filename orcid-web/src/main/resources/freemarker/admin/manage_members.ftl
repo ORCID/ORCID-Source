@@ -146,7 +146,7 @@
 					<a ng-click="showAddMemberModal()">
 						<span  class="glyphicon glyphicon-plus-sign blue"></span>
 						<@orcid.msg 'manage_groups.add_group_link'/>
-					</a>					
+					</a>
 				</div>				
 			</div>			
 		</div>
@@ -280,6 +280,18 @@
 								</span>	
 							</div>
 						</div>
+						
+						<!-- Persistent tokens -->
+						<div class="row">
+							<div class="col-md-12 col-sm-12 col-xs-12">
+								<input type="checkbox" name="persistentToken" ng-model="client.persistentTokenEnabled.value" />
+								<span><@orcid.msg 'manage_member.edit_client.use_pesistent_tokens'/></span>								
+								<span class="orcid-error" ng-show="client.persistentTokenEnabled.errors.length > 0">
+									<div ng-repeat='error in client.persistentTokenEnabled.errors' ng-bind-html="error"></div>
+								</span>	
+							</div>
+						</div>			
+															
 						<!-- Redirect uris -->
 						<div class="row">			
 							<div class="col-md-12 col-sm-12 col-xs-12">
