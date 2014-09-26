@@ -35,12 +35,12 @@
 							 	<a ng-click="editSources[group.groupId] = !editSources[group.groupId]">View <span class="badge">{{group.activitiesCount - 1 }}</span> additional source<span ng-show="group.activitiesCount > 2">s</span></a>							 	
 							</span>
 							<a ng-click="editSources[group.groupId] = !editSources[group.groupId]">
-			            	   <span class="glyphicon glyphicon-trash"></span>
+			            	   <span class="glyphicon glyphicon-trash grey"></span>
 			        		</a>
 						</li>
 						<li ng-show="group.activitiesCount == 1">
 							<a ng-click="deleteWorkConfirm(group.getActive().putCode.value, false)">
-			            	   <span class="glyphicon glyphicon-trash"></span>
+			            	   <span class="glyphicon glyphicon-trash grey"></span>
 			               </a>
 						</li>
 				        <li ng-show="editSources[group.groupId] == true">
