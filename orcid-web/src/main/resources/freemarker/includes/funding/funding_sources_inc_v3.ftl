@@ -40,12 +40,12 @@
 						</li>
 						<li ng-show="group.activitiesCount == 1">
 							<a ng-click="deleteFundingConfirm(group.getActive().putCode.value,false)">
-			            	   <span class="glyphicon glyphicon-trash"></span>
+			            	   <span class="glyphicon glyphicon-trash grey"></span>
 			               </a>
 						</li>
 				        <li ng-show="editSources[group.groupId] == true">
 				            <a ng-click="deleteFundingConfirm(group.getActive().putCode.value, true)">
-				                <span class="glyphicon glyphicon-trash"></span> Delete all
+				                <span class="glyphicon glyphicon-trash grey"></span> Delete all
 				            </a>
 				        </li>
 				        <li ng-show="editSources[group.groupId] == true">

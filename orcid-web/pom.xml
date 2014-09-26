@@ -173,7 +173,17 @@
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
             <scope>test</scope>
-        </dependency>                        
+        </dependency>
+        <dependency>
+        	<groupId>org.neo4j</groupId>
+        	<artifactId>neo4j-cypher-commons</artifactId>
+        	<version>2.1.2</version>
+        </dependency>
+        <dependency>
+        	<groupId>org.neo4j</groupId>
+        	<artifactId>neo4j-cypher-commons</artifactId>
+        	<version>2.1.2</version>
+        </dependency>
     </dependencies>
 
     <build>

@@ -149,10 +149,16 @@ GroupedActivities.prototype.key = function(activityIdentifiers) {
 		idPath = null;
 		idTypePath = null;
 	}
-	var key = activityIdentifiers[idTypePath] ? activityIdentifiers[idTypePath].value : ''; 
-	// currently I've been told all know identifiers are case insensitive so we are 
-	// lowercase the value for consistency 
-	key += activityIdentifiers[idPath] != null ? activityIdentifiers[idPath].value.toLowerCase() : '';  
+	var key = '';
+	if (activityIdentifiers[idTypePath]) {
+		// ISSN is misused too often to identify a work
+		if (activityIdentifiers[idTypePath].value != 'issn') {
+		    key = activityIdentifiers[idTypePath].value; 
+	        // currently I've been told all know identifiers are case insensitive so we are 
+	        // lowercase the value for consistency 
+	        key += activityIdentifiers[idPath] != null ? activityIdentifiers[idPath].value.toLowerCase() : '';
+		}
+	}
 	return key;
 };
 
@@ -2944,23 +2950,28 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 		if ($scope.editAffiliation != undefined && $scope.editAffiliation.disambiguatedAffiliationSourceId != undefined) delete $scope.editAffiliation.disambiguatedAffiliationSourceId;
 	};
 
-	$scope.addAffiliationModal = function(type){
+	$scope.addAffiliationModal = function(type, affiliation){
 		$scope.removeDisambiguatedAffiliation();
 		$scope.addAffType = type;
-		$.ajax({
-			url: getBaseUri() + '/affiliations/affiliation.json',
-			dataType: 'json',
-			success: function(data) {
-				$scope.editAffiliation = data;
-				if (type != null) 
-					$scope.editAffiliation.affiliationType.value = type;
-				$scope.$apply(function() {
-					$scope.showAddModal();
-				});
-			}
-		}).fail(function() { 
-	    	console.log("Error fetching affiliation: " + value);
-	    });
+		if(affiliation === undefined) {
+			$.ajax({
+				url: getBaseUri() + '/affiliations/affiliation.json',
+				dataType: 'json',
+				success: function(data) {
+					$scope.editAffiliation = data;
+					if (type != null) 
+						$scope.editAffiliation.affiliationType.value = type;
+					$scope.$apply(function() {
+						$scope.showAddModal();
+					});
+				}
+			}).fail(function() { 
+		    	console.log("Error fetching affiliation: " + value);
+		    });
+		} else {
+			$scope.editAffiliation = affiliation;
+			$scope.showAddModal();
+		}		
 	};
 
 	$scope.addAffiliation = function(){
@@ -3061,6 +3072,10 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 	
 	//init
 	affiliationsSrvc.getAffiliations('affiliations/affiliationIds.json');
+	
+	$scope.openEditAffiliation = function(affiliation) {
+		$scope.addAffiliationModal(affiliation.affiliationType.value, affiliation);
+	};
 }
 
 /**
@@ -3571,7 +3586,7 @@ function PublicFundingCtrl($scope, $compile, $filter, fundingSrvc){
 function PublicWorkCtrl($scope, $compile, $filter, worksSrvc, actSortSrvc) {
 	actSortSrvc.initScope($scope, GroupedActivities.ABBR_WORK);
 	$scope.worksSrvc = worksSrvc;
-	$scope.showBibtex = false;
+	$scope.showBibtex = {};
 	$scope.moreInfoOpen = false;
 	$scope.moreInfo = {};
 	$scope.displayWorks = true;
@@ -3580,8 +3595,8 @@ function PublicWorkCtrl($scope, $compile, $filter, worksSrvc, actSortSrvc) {
 		actSortSrvc.sort(key,$scope);
 	};
 	
-    $scope.bibtexShowToggle = function () {
-    	$scope.showBibtex = !($scope.showBibtex);
+	$scope.bibtexShowToggle = function (putCode) {
+        $scope.showBibtex[putCode] = !($scope.showBibtex[putCode]);     
     };   
 	  
 	$scope.renderTranslatedTitleInfo = function(putCode) {		

@@ -23,8 +23,6 @@ import javax.annotation.Resource;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.jaxb.model.message.OrcidSearchResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,8 +40,6 @@ public class SearchOrcidController extends BaseController {
     final static Counter FRONTEND_WEB_SEARCH_REQUESTS = Metrics.newCounter(SearchOrcidController.class, "FRONTEND-WEB-SEARCH-REQUESTS");
     final static Counter FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND = Metrics.newCounter(SearchOrcidController.class, "FRONTEND-WEB-SEARCH-RESULTS-NONE-FOUND");
     final static Counter FRONTEND_WEB_SEARCH_RESULTS_FOUND = Metrics.newCounter(SearchOrcidController.class, "FRONTEND-WEB-SEARCH-RESULTS-FOUND");
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(SearchOrcidController.class);
 
     @Resource
     private OrcidSearchManager orcidSearchManager;
