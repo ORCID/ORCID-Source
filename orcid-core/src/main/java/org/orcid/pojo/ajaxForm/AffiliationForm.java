@@ -18,8 +18,6 @@ package org.orcid.pojo.ajaxForm;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.orcid.jaxb.model.message.Affiliation;
@@ -67,6 +65,8 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
     private Date endDate;
 
     private String sourceName;
+    
+    private String sourceOrcid;
     
     private String dateSortString;
 
@@ -202,18 +202,36 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
         }
         if (address.getRegion() != null) {
             form.setRegion(Text.valueOf(address.getRegion()));
+        } else {
+            form.setRegion(new Text());
         }
-        form.setCountry(Text.valueOf(address.getCountry().value()));
+        
+        if(address.getCountry() != null) {
+            form.setCountry(Text.valueOf(address.getCountry().value()));
+        } else {
+            form.setCountry(new Text());
+        }        
+        
         if (affiliation.getDepartmentName() != null) {
             form.setDepartmentName(Text.valueOf(affiliation.getDepartmentName()));
+        } else {
+            form.setDepartmentName(new Text());
         }
+        
+        
         if (affiliation.getRoleTitle() != null) {
             form.setRoleTitle(Text.valueOf(affiliation.getRoleTitle()));
+        } else {
+            form.setRoleTitle(new Text());
         }
 
         if (affiliation.getType() != null) {
             form.setAffiliationType(Text.valueOf(affiliation.getType().value()));
+        } else {
+            form.setAffiliationType(new Text());
         }
+        
+        
         if (affiliation.getStartDate() != null) {
             form.setStartDate(Date.valueOf(affiliation.getStartDate()));
         }
@@ -223,6 +241,7 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
         Source source = affiliation.getSource();
         if (source != null) {
             form.setSourceName(source.getSourceName().getContent());
+            form.setSourceOrcid(source.getSourceOrcid().getPath());
         }
         return form;
     }
@@ -298,4 +317,11 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
         this.dateSortString = dateSortString;
     }
 
+    public String getSourceOrcid() {
+        return sourceOrcid;
+    }
+
+    public void setSourceOrcid(String sourceOrcid) {
+        this.sourceOrcid = sourceOrcid;
+    }
 }

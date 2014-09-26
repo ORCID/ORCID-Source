@@ -30,7 +30,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
-import org.orcid.jaxb.model.message.Orcid;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.test.DBUnitTest;

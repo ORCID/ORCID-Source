@@ -14,16 +14,12 @@
  *
  * =============================================================================
  */
-package org.orcid.persistence.dao;
+package org.orcid.core.constants;
 
-import org.orcid.persistence.jpa.entities.OrcidOauth2AuthoriziationCodeDetail;
-
-/**
- * @author Declan Newman (declan) Date: 24/04/2012
- */
-public interface OrcidOauth2AuthoriziationCodeDetailDao extends GenericDao<OrcidOauth2AuthoriziationCodeDetail, String> {
-
-    OrcidOauth2AuthoriziationCodeDetail removeAndReturn(String code);
-
-    boolean isPersistentToken(String code);
+public class OauthTokensConstants {
+    
+    public static final String TOKEN_VERSION = "tokenVersion";
+    public static final String NON_PERSISTENT_TOKEN = "0";
+    public static final String PERSISTENT_TOKEN = "1";    
+    public static final String GRANT_PERSISTENT_TOKEN = "grantPersistentToken";
 }

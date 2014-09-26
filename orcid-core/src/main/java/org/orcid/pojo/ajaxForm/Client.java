@@ -37,6 +37,7 @@ public class Client implements ErrorsInterface, Serializable {
     private Text clientId;
     private Text clientSecret;
     private Text type; 
+    private Checkbox persistentTokenEnabled;
     private List<RedirectUri> redirectUris;
     
     
@@ -57,6 +58,9 @@ public class Client implements ErrorsInterface, Serializable {
             
             if(clientDetails.getProfileEntity() != null)
                 client.setType(Text.valueOf(clientDetails.getProfileEntity().getClientType().value()));
+            
+            client.persistentTokenEnabled = new Checkbox();
+            client.persistentTokenEnabled.setValue(clientDetails.isPersistentTokensEnabled());                                    
         }
         return client;
     }
@@ -102,6 +106,9 @@ public class Client implements ErrorsInterface, Serializable {
         }
         
         orcidClient.setRedirectUris(redirectUris);
+        
+        if(persistentTokenEnabled != null)
+            orcidClient.setPersistentTokenEnabled(persistentTokenEnabled.getValue());
         
         return orcidClient;
     }
@@ -168,5 +175,13 @@ public class Client implements ErrorsInterface, Serializable {
 
     public void setRedirectUris(List<RedirectUri> redirectUris) {
         this.redirectUris = redirectUris;
-    }        
+    }
+
+    public Checkbox getPersistentTokenEnabled() {
+        return persistentTokenEnabled;
+    }
+
+    public void setPersistentTokenEnabled(Checkbox persistentTokenEnabled) {
+        this.persistentTokenEnabled = persistentTokenEnabled;
+    }          
 }

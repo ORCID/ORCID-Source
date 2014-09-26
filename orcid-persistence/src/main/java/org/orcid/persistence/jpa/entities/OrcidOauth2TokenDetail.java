@@ -60,6 +60,8 @@ public class OrcidOauth2TokenDetail extends BaseEntity<Long> implements ProfileA
     private Date refreshTokenExpiration;
     private String authenticationKey;
     private Boolean tokenDisabled;
+    private boolean isPersistent;
+    private long version;
 
     /**
      * This should be implemented by all entity classes to return the id of the
@@ -214,6 +216,24 @@ public class OrcidOauth2TokenDetail extends BaseEntity<Long> implements ProfileA
 
     public void setTokenDisabled(Boolean tokenDisabled) {
         this.tokenDisabled = tokenDisabled;
+    }
+
+    @Column(name = "persistent")
+    public boolean isPersistent() {
+        return isPersistent;
+    }
+
+    public void setPersistent(boolean isPersistent) {
+        this.isPersistent = isPersistent;
+    }    
+        
+    @Column(name = "version")
+    public long getVersion() {
+        return version;
+    }
+
+    public void setVersion(long version) {
+        this.version = version;
     }
 
     @Override

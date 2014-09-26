@@ -117,6 +117,9 @@ public class BaseController {
     @Value("${org.orcid.core.shareThis.key}")
     private String shareThisKey;
     
+    @Value("${org.orcid.core.oauth.usePersistentTokens:false}")
+    private boolean usePersistentTokens;  
+    
     @Resource
     private String cdnConfigFile;
 
@@ -554,6 +557,7 @@ public class BaseController {
      * @param key
      * @return a String of the form full.class.name.with.package.key
      * */
+    @SuppressWarnings("rawtypes")
     protected String buildInternationalizationKey(Class theClass, String key) {
         return theClass.getName() + '.' + key;
     }
@@ -633,5 +637,13 @@ public class BaseController {
     
     public void setShareThisKey(String key) {
         this.shareThisKey = key;
+    }
+    
+    public boolean isUsePersistentTokens() {
+        return usePersistentTokens;
+    }
+
+    public void setUsePersistentTokens(boolean usePersistentTokens) {
+        this.usePersistentTokens = usePersistentTokens;
     }
 }

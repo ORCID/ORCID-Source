@@ -1070,7 +1070,7 @@ public class ManageProfileController extends BaseWorkspaceController {
                     mav.addObject("admin_delegate_approved", getMessage("admin.delegate.success", trustedOrcid));
                 } else {
                     //Exception, the email was not for you
-                    mav.addObject("admin_delegate_failed", getMessage("admin.delegate.error.invalid_user"));
+                    mav.addObject("admin_delegate_not_you", getMessage("wrong_user.Wronguser"));
                 }            
             } else {
                 //Error

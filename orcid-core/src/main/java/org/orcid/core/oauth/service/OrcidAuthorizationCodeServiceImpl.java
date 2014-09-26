@@ -24,6 +24,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 
+import org.orcid.core.constants.OauthTokensConstants;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidOauth2AuthInfo;
@@ -36,6 +37,7 @@ import org.orcid.persistence.jpa.entities.OrcidOauth2AuthoriziationCodeDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -61,7 +63,7 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
 
     private static final String REDIRECT_URI = "redirect_uri";
 
-    private static final String RESPONSE_TYPE = "response_type";
+    private static final String RESPONSE_TYPE = "response_type";           
 
     @Resource(name = "orcidOauth2AuthoriziationCodeDetailDao")
     private OrcidOauth2AuthoriziationCodeDetailDao orcidOauth2AuthoriziationCodeDetailDao;
@@ -74,7 +76,10 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
     
     @Resource
     private ProfileDao profileDao;
-
+    
+    @Value("${org.orcid.core.oauth.usePersistentTokens:false}")
+    private boolean usePersistentTokens;
+    
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidAuthorizationCodeServiceImpl.class);
 
     @Override
@@ -135,7 +140,6 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
     }
 
     private OrcidOauth2AuthoriziationCodeDetail getDetailFromAuthorizationRequestHolder(String code, AuthorizationRequestHolder authentication) {
-
         AuthorizationRequest authenticationRequest = authentication.getAuthenticationRequest();
         OrcidOauth2AuthoriziationCodeDetail detail = new OrcidOauth2AuthoriziationCodeDetail();
         Map<String, String> parameters = authenticationRequest.getAuthorizationParameters();
@@ -181,6 +185,26 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
         if (authenticationDetails instanceof WebAuthenticationDetails) {
             detail.setSessionId(((WebAuthenticationDetails) authenticationDetails).getSessionId());
         }
+        
+        Map<String, String> approvalParameters = authenticationRequest.getApprovalParameters();
+        boolean isPersistentTokenEnabledByUser = false;
+        //Check if persistent token is enabled on server
+        if(usePersistentTokens) {
+            //Set token version to persistent token
+            detail.setVersion(Long.valueOf(approvalParameters.get(OauthTokensConstants.TOKEN_VERSION)));
+            if(approvalParameters.containsKey(OauthTokensConstants.GRANT_PERSISTENT_TOKEN)) {
+                String grantPersitentToken = approvalParameters.get(OauthTokensConstants.GRANT_PERSISTENT_TOKEN);
+                if(Boolean.parseBoolean(grantPersitentToken)) {
+                    isPersistentTokenEnabledByUser = true;                
+                }
+            }
+        } else {
+            //Set token version to non persistent token
+            detail.setVersion(Long.valueOf(OauthTokensConstants.NON_PERSISTENT_TOKEN));
+        }
+                
+        detail.setPersistent(isPersistentTokenEnabledByUser);        
+        
         return detail;
     }
 

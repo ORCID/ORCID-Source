@@ -17,7 +17,6 @@
 package org.orcid.frontend.web.controllers;
 
 import java.util.Locale;
-import java.util.ResourceBundle;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -27,8 +26,6 @@ import javax.ws.rs.core.MediaType;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.pojo.UserStatus;
-import org.orcid.utils.OrcidStringUtils;
-import org.orcid.utils.UTF8Control;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;

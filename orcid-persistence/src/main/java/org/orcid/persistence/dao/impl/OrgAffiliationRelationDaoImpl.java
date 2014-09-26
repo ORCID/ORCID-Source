@@ -16,6 +16,8 @@
  */
 package org.orcid.persistence.dao.impl;
 
+import java.util.Date;
+
 import javax.persistence.Query;
 
 import org.orcid.jaxb.model.message.Visibility;
@@ -64,7 +66,7 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
      * */
     @Override
     @Transactional
-    public boolean updateOrgAffiliationRelation(String clientOrcid, String orgAffiliationRelationId, Visibility visibility) {
+    public boolean updateVisibilityOnOrgAffiliationRelation(String clientOrcid, String orgAffiliationRelationId, Visibility visibility) {
         Query query = entityManager
                 .createQuery("update OrgAffiliationRelationEntity set visibility=:visibility, lastModified=now() where profile.id=:clientOrcid and id=:orgAffiliationRelationId");
         query.setParameter("clientOrcid", clientOrcid);
@@ -119,6 +121,30 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
         query.setParameter("sourceId", clientOrcid);
 
         return query.executeUpdate() > 0 ? true : false;
+    }
+    
+    /**
+     * Updates an existing OrgAffiliationRelationEntity
+     * 
+     * @param OrgAffiliationRelationEntity
+     *          The entity to update
+     * @return the updated OrgAffiliationRelationEntity
+     * */
+    public OrgAffiliationRelationEntity updateOrgAffiliationRelationEntity(OrgAffiliationRelationEntity orgAffiliationRelationEntity) {
+        OrgAffiliationRelationEntity toUpdate = this.find(orgAffiliationRelationEntity.getId());
+        mergeOrgAffiliationRelationEntity(toUpdate, orgAffiliationRelationEntity);
+        toUpdate = this.merge(toUpdate);
+        return toUpdate;
+    }
+    
+    private void mergeOrgAffiliationRelationEntity(OrgAffiliationRelationEntity existing, OrgAffiliationRelationEntity updated) {
+        existing.setDepartment(updated.getDepartment());
+        existing.setEndDate(updated.getEndDate());        
+        existing.setOrg(updated.getOrg());
+        existing.setStartDate(updated.getStartDate());
+        existing.setTitle(updated.getTitle());
+        existing.setVisibility(updated.getVisibility());
+        existing.setLastModified(new Date());
     }
 
 }

@@ -210,18 +210,47 @@ public class AffiliationsController extends BaseWorkspaceController {
         copyErrors(affiliationForm.getCountry(), affiliationForm);
         copyErrors(affiliationForm.getDepartmentName(), affiliationForm);
         copyErrors(affiliationForm.getRoleTitle(), affiliationForm);
-        copyErrors(affiliationForm.getEndDate(), affiliationForm);
+        if(!PojoUtil.isEmpty(affiliationForm.getEndDate()))
+            copyErrors(affiliationForm.getEndDate(), affiliationForm);
 
         if (affiliationForm.getErrors().isEmpty()) {
-            // Persist to DB
-            ProfileEntity userProfile = profileDao.find(getEffectiveUserOrcid());
-            OrgAffiliationRelationEntity orgAffiliationRelationEntity = jaxb2JpaAdapter.getNewOrgAffiliationRelationEntity(affiliationForm.toAffiliation(), userProfile);
-            orgAffiliationRelationEntity.setSource(userProfile);
-            orgAffiliationRelationDao.persist(orgAffiliationRelationEntity);
+            if(PojoUtil.isEmpty(affiliationForm.getPutCode())) {
+                addAffiliation(affiliationForm);
+            } else {
+                editAffiliation(affiliationForm);
+            }            
         }
 
         return affiliationForm;
     }
+
+    /**
+     * Adds a new affiliations
+     * @param affiliationForm
+     * */
+    private void addAffiliation(AffiliationForm affiliationForm) {
+        // Persist to DB
+        ProfileEntity userProfile = profileDao.find(getEffectiveUserOrcid());
+        OrgAffiliationRelationEntity orgAffiliationRelationEntity = jaxb2JpaAdapter.getNewOrgAffiliationRelationEntity(affiliationForm.toAffiliation(), userProfile);
+        orgAffiliationRelationEntity.setSource(userProfile);
+        orgAffiliationRelationDao.persist(orgAffiliationRelationEntity);
+        affiliationForm.setPutCode(Text.valueOf(orgAffiliationRelationEntity.getId().toString()));
+    }
+    
+    /**
+     * Updates an existing affiliation
+     * @param affiliationForm
+     * */
+    private void editAffiliation(AffiliationForm affiliationForm) {
+        if(PojoUtil.isEmpty(affiliationForm.getPutCode())) {
+            throw new IllegalArgumentException("Affiliation must contain a put code");
+        }
+        ProfileEntity userProfile = profileDao.find(getEffectiveUserOrcid());
+        OrgAffiliationRelationEntity orgAffiliationRelationEntity = jaxb2JpaAdapter.getUpdatedAffiliationRelationEntity(affiliationForm.toAffiliation());
+        orgAffiliationRelationEntity.setSource(userProfile);
+        orgAffiliationRelationDao.updateOrgAffiliationRelationEntity(orgAffiliationRelationEntity);
+        affiliationForm.setPutCode(Text.valueOf(orgAffiliationRelationEntity.getId().toString()));                
+    }            
 
     /**
      * List affiliations associated with a profile
@@ -266,7 +295,7 @@ public class AffiliationsController extends BaseWorkspaceController {
     }
 
     /**
-     * Saves an affiliation
+     * Updates an affiliation visibility
      * */
     @RequestMapping(value = "/affiliation.json", method = RequestMethod.PUT)
     public @ResponseBody
@@ -282,7 +311,7 @@ public class AffiliationsController extends BaseWorkspaceController {
                     // same affiliation
                     if (orcidAffiliation.getPutCode().equals(affiliation.getPutCode().getValue())) {
                         // Update the privacy of the affiliation
-                        orgRelationAffiliationDao.updateOrgAffiliationRelation(currentProfile.getOrcidIdentifier().getPath(), affiliation.getPutCode().getValue(), affiliation
+                        orgRelationAffiliationDao.updateVisibilityOnOrgAffiliationRelation(currentProfile.getOrcidIdentifier().getPath(), affiliation.getPutCode().getValue(), affiliation
                                 .getVisibility().getVisibility());
                     }
                 }
@@ -407,8 +436,10 @@ public class AffiliationsController extends BaseWorkspaceController {
     @RequestMapping(value = "/affiliation/datesValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     AffiliationForm datesValidate(@RequestBody AffiliationForm affiliationForm) {
-        affiliationForm.getStartDate().setErrors(new ArrayList<String>());
-        affiliationForm.getEndDate().setErrors(new ArrayList<String>());
+        if(!PojoUtil.isEmpty(affiliationForm.getStartDate()))
+            affiliationForm.getStartDate().setErrors(new ArrayList<String>());
+        if(!PojoUtil.isEmpty(affiliationForm.getEndDate()))
+            affiliationForm.getEndDate().setErrors(new ArrayList<String>());
         if (!PojoUtil.isEmpty(affiliationForm.getStartDate()) && !PojoUtil.isEmpty(affiliationForm.getEndDate())) {
             if (affiliationForm.getStartDate().toJavaDate().after(affiliationForm.getEndDate().toJavaDate()))
                 setError(affiliationForm.getEndDate(), "manualAffiliation.endDate.after");

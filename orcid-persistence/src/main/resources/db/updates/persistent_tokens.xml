@@ -1,0 +1,77 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet author="Angel Montenegro" id="ADD-PERSISTENT-FLAG-TO-OAUTH2-AUTHORIZATION-CODE-DETAIL-TABLE">
+	    <preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists columnName="persistent" tableName="oauth2_authoriziation_code_detail"/>
+			</not>
+        </preConditions>
+    	<addColumn tableName="oauth2_authoriziation_code_detail">
+            <column name="persistent" type="boolean" defaultValue="false"/>            
+        </addColumn>
+    </changeSet>
+    
+    <changeSet author="Angel Montenegro" id="ADD-VERSION-FLAG-TO-OAUTH2-AUTHORIZATION-CODE-DETAIL-TABLE">
+    	<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists columnName="version" tableName="oauth2_authoriziation_code_detail"/>
+			</not>
+        </preConditions>
+    	<addColumn tableName="oauth2_authoriziation_code_detail">
+            <column name="version" type="bigint" defaultValue="0"/>            
+        </addColumn>
+    </changeSet>
+    
+    <changeSet author="Angel Montenegro" id="ADD-PERSISTENT-FLAG-TO-OAUTH2-TOKEN-DETAIL-TABLE">
+    	<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists columnName="persistent" tableName="oauth2_token_detail"/>
+			</not>
+        </preConditions>
+    	<addColumn tableName="oauth2_token_detail">
+            <column name="persistent" type="boolean" defaultValue="false"/>            
+        </addColumn>
+    </changeSet>
+    
+    <changeSet author="Angel Montenegro" id="ADD-VERSION-FLAG-TO-OAUTH2-TOKEN-DETAIL-TABLE">
+    	<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists columnName="version" tableName="oauth2_token_detail"/>
+			</not>
+        </preConditions>
+    	<addColumn tableName="oauth2_token_detail">
+            <column name="version" type="bigint" defaultValue="0"/>            
+        </addColumn>
+    </changeSet>
+    
+    <changeSet author="Angel Montenegro" id="ADD-PERSISTENT-TOKEN-ENABLE-FLAG-TO-CLIENT-DETAILS-TABLE">
+    	<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists columnName="persistent_tokens_enabled" tableName="client_details"/>
+			</not>
+        </preConditions>
+    	<addColumn tableName="client_details">
+            <column name="persistent_tokens_enabled" type="boolean" defaultValue="false"/>            
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>	

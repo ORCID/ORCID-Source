@@ -20,7 +20,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class OauthAuthorizeForm implements ErrorsInterface, Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -32,57 +31,80 @@ public class OauthAuthorizeForm implements ErrorsInterface, Serializable {
     Text redirectUri;
     Text scope;
     Text responseType;
-    boolean approved=false;
-    
+    boolean approved = false;
+    boolean persistentTokenEnabled = false;
+
     @Override
     public List<String> getErrors() {
         return errors;
     }
+
     @Override
     public void setErrors(List<String> errors) {
         this.errors = errors;
     }
+
     public Text getUserName() {
         return userName;
     }
+
     public void setUserName(Text userName) {
         this.userName = userName;
     }
+
     public Text getPassword() {
         return password;
     }
+
     public void setPassword(Text password) {
         this.password = password;
     }
+
     public Text getClientId() {
         return clientId;
     }
+
     public void setClientId(Text clientId) {
         this.clientId = clientId;
     }
+
     public Text getRedirectUri() {
         return redirectUri;
     }
+
     public void setRedirectUri(Text redirectUri) {
         this.redirectUri = redirectUri;
     }
+
     public Text getScope() {
         return scope;
     }
+
     public void setScope(Text scope) {
         this.scope = scope;
     }
+
     public Text getResponseType() {
         return responseType;
     }
+
     public void setResponseType(Text responseType) {
         this.responseType = responseType;
     }
+
     public boolean getApproved() {
         return approved;
     }
+
     public void setApproved(boolean approved) {
         this.approved = approved;
-    }     
-    
+    }
+
+    public boolean getPersistentTokenEnabled() {
+        return persistentTokenEnabled;
+    }
+
+    public void setPersistentTokenEnabled(boolean persistentTokenEnabled) {
+        this.persistentTokenEnabled = persistentTokenEnabled;
+    }       
 }

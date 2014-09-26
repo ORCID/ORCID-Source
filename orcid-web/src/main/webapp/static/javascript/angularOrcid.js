@@ -2950,23 +2950,28 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 		if ($scope.editAffiliation != undefined && $scope.editAffiliation.disambiguatedAffiliationSourceId != undefined) delete $scope.editAffiliation.disambiguatedAffiliationSourceId;
 	};
 
-	$scope.addAffiliationModal = function(type){
+	$scope.addAffiliationModal = function(type, affiliation){
 		$scope.removeDisambiguatedAffiliation();
 		$scope.addAffType = type;
-		$.ajax({
-			url: getBaseUri() + '/affiliations/affiliation.json',
-			dataType: 'json',
-			success: function(data) {
-				$scope.editAffiliation = data;
-				if (type != null) 
-					$scope.editAffiliation.affiliationType.value = type;
-				$scope.$apply(function() {
-					$scope.showAddModal();
-				});
-			}
-		}).fail(function() { 
-	    	console.log("Error fetching affiliation: " + value);
-	    });
+		if(affiliation === undefined) {
+			$.ajax({
+				url: getBaseUri() + '/affiliations/affiliation.json',
+				dataType: 'json',
+				success: function(data) {
+					$scope.editAffiliation = data;
+					if (type != null) 
+						$scope.editAffiliation.affiliationType.value = type;
+					$scope.$apply(function() {
+						$scope.showAddModal();
+					});
+				}
+			}).fail(function() { 
+		    	console.log("Error fetching affiliation: " + value);
+		    });
+		} else {
+			$scope.editAffiliation = affiliation;
+			$scope.showAddModal();
+		}		
 	};
 
 	$scope.addAffiliation = function(){
@@ -3067,6 +3072,10 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 	
 	//init
 	affiliationsSrvc.getAffiliations('affiliations/affiliationIds.json');
+	
+	$scope.openEditAffiliation = function(affiliation) {
+		$scope.addAffiliationModal(affiliation.affiliationType.value, affiliation);
+	};
 }
 
 /**
@@ -6704,6 +6713,7 @@ function OauthAuthorizationController($scope, $compile, $sce, commonSrvc){
 	$scope.clientGroupName = "";
 	$scope.requestScopes = null;
 	$scope.emailTrustAsHtmlErrors = [];
+	$scope.enablePersistentToken = false;
 	
 	$scope.toggleClientDescription = function() {
 		$scope.showClientDescription = !$scope.showClientDescription;		
@@ -6762,6 +6772,8 @@ function OauthAuthorizationController($scope, $compile, $sce, commonSrvc){
 	};
 	
 	$scope.submitLogin = function() {
+		if($scope.enablePersistentToken)
+			$scope.authorizationForm.persistentTokenEnabled=true;
 		var is_authorize = $scope.authorizationForm.approved;
 		$.ajax({
 			url: getBaseUri() + '/oauth/custom/login.json',
@@ -6833,7 +6845,9 @@ function OauthAuthorizationController($scope, $compile, $sce, commonSrvc){
 		$scope.register();
 	};
 	
-	$scope.register = function() {		
+	$scope.register = function() {
+		if($scope.enablePersistentToken)
+			$scope.registrationForm.persistentTokenEnabled=true;	
 		$.ajax({
 	        url: getBaseUri() + '/oauth/custom/register.json',
 	        type: 'POST',
@@ -6993,6 +7007,8 @@ function OauthAuthorizationController($scope, $compile, $sce, commonSrvc){
 	};
 	
 	$scope.authorizeRequest = function() {	
+		if($scope.enablePersistentToken)
+			$scope.authorizationForm.persistentTokenEnabled=true;
 		var is_authorize = $scope.authorizationForm.approved;
 		$.ajax({
 			url: getBaseUri() + '/oauth/custom/authorize.json',
