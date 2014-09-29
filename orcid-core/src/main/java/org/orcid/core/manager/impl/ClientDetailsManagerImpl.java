@@ -75,6 +75,9 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
     @Resource
     private ProfileDao profileDao;
     
+    @Value("${org.orcid.core.oauth.usePersistentTokens:false}")
+    private boolean usePersistentTokens;  
+    
     @Value("${org.orcid.core.oauth.enablePersistentTokensByDefault:false}")
     private boolean enablePersistentTokensByDefault;  
 
@@ -290,9 +293,11 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
         clientDetailsEntity.setClientRegisteredRedirectUris(getClientRegisteredRedirectUris(clientRegisteredRedirectUris, clientDetailsEntity));
         clientDetailsEntity.setClientGrantedAuthorities(getClientGrantedAuthorities(clientGrantedAuthorities, clientDetailsEntity));  
                 
-        if(enablePersistentTokensByDefault) {
-            clientDetailsEntity.setPersistentTokensEnabled(true);
-        }
+        if(usePersistentTokens) {
+            if(enablePersistentTokensByDefault) {
+                clientDetailsEntity.setPersistentTokensEnabled(true);
+            }
+        }        
         
         return createClientDetails(clientDetailsEntity);
     }
