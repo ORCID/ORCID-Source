@@ -48,6 +48,7 @@ import org.orcid.persistence.jpa.entities.ClientSecretEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.common.exceptions.InvalidClientException;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.transaction.annotation.Transactional;
@@ -73,6 +74,12 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
 
     @Resource
     private ProfileDao profileDao;
+    
+    @Value("${org.orcid.core.oauth.usePersistentTokens:false}")
+    private boolean usePersistentTokens;  
+    
+    @Value("${org.orcid.core.oauth.enablePersistentTokensByDefault:false}")
+    private boolean enablePersistentTokensByDefault;  
 
     /**
      * Load a client by the client id. This method must NOT return null.
@@ -284,8 +291,14 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
         clientDetailsEntity.setClientResourceIds(getClientResourceIds(clientResourceIds, clientDetailsEntity));
         clientDetailsEntity.setClientAuthorizedGrantTypes(getClientAuthorizedGrantTypes(clientAuthorizedGrantTypes, clientDetailsEntity));
         clientDetailsEntity.setClientRegisteredRedirectUris(getClientRegisteredRedirectUris(clientRegisteredRedirectUris, clientDetailsEntity));
-        clientDetailsEntity.setClientGrantedAuthorities(getClientGrantedAuthorities(clientGrantedAuthorities, clientDetailsEntity));
-
+        clientDetailsEntity.setClientGrantedAuthorities(getClientGrantedAuthorities(clientGrantedAuthorities, clientDetailsEntity));  
+                
+        if(usePersistentTokens) {
+            if(enablePersistentTokensByDefault) {
+                clientDetailsEntity.setPersistentTokensEnabled(true);
+            }
+        }        
+        
         return createClientDetails(clientDetailsEntity);
     }
 
