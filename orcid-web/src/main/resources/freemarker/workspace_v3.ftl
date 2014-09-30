@@ -274,9 +274,52 @@
 											<@orcid.msg 'manual_orcid_record_contents.search_link'/>
 										</a>	        				
 			        				</li>
+			        				<!-- Bibtex -->
+			        				<li>
+				        				<a class="action-option manage-button" ng-click="openBibTextWizard()">
+											<span class="glyphicons magic bibtex-wizard"></span>
+											<@orcid.msg 'workspace.bibtexImporter.link_bibtex'/>
+										</a>	        				
+			        				</li>
 								</ul>								
 							</div>
 						</div>					
+					</div>
+					<div ng-show="showBibtexImportWizard" ng-cloak class="bibtex-box">
+						<div class="grey-box bottomBuffer box-border" ng-show="canReadFiles" ng-cloak>
+						   <p class="bottomBuffer">
+						   		<strong><@orcid.msg 'workspace.bibtexImporter.instructions'/>  <a href="http://support.orcid.org/knowledgebase/articles/390530" target="_blank"><@orcid.msg 'workspace.bibtexImporter.learnMore'/></a></strong>
+						   </p> 
+					       <div class="label btn-primary upload">
+					           <span class="import-label"><@orcid.msg 'workspace.bibtexImporter.fileUpload'/></span>
+						       <input type="file" class="upload-button" ng-model="textFiles" accept="*" update-fn="loadBibtexJs()"  app-file-text-reader multiple />
+					       </div>
+					       <span class="cancel-bibtex">
+					        	<a href="" class="label btn-primary" ng-click="openBibTextWizard()"><@orcid.msg 'workspace.bibtexImporter.cancel'/></a>
+						   </span>
+						</div>						
+						<div class="alert alert-block" ng-show="bibtexParsingError">
+							<strong><@orcid.msg 'workspace.bibtexImporter.parsingError'/></strong>
+						</div>
+						<div class="row bottomBuffer" ng-show="bibtexCancelLink">
+							<div class="col-md-10"></div>
+							<div class="col-md-2">
+								<button type="button" ng-click="bibtextCancel()" class="btn close-button pull-right"><@orcid.msg 'workspace.bibtexImporter.cancel'/></button>		
+							</div>
+						</div>
+					   	<div ng-repeat="work in worksFromBibtex" ng-cloak class="grey-box bottomBuffer box-border">
+					   		  <div class="row">	  
+			        	       	  <div class="col-md-9">
+			        	          	{{work.workTitle.title.value}}
+			        	          </div>
+			        	          <div class="col-md-3 bibtex-options-menu">
+			        	          	<ul>
+			        	          		<li><a ng-click="rmWorkFromBibtex(work)" class="ignore glyphicon glyphicon-trash" title="Ignore"></a></li>
+			        	          		<li><a ng-click="addWorkFromBibtex(work)" class="save glyphicon glyphicon-floppy-disk" title="Save"></a></li>
+			        	          	</ul>
+		        	          	 </div>
+	        	          	 </div>
+		        	  	</div>
 					</div>
       	            <div ng-show="workspaceSrvc.displayWorks" class="workspace-accordion-content">
 	            		<#include "includes/work/add_work_modal_inc.ftl"/>

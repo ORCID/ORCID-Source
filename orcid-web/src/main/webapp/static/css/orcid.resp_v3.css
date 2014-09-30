@@ -4508,6 +4508,46 @@ ul.toggle-menu li:hover ul {
 	min-height: 70px;
 }
 
+.public-profile .bibtex-wizard{
+	padding: 0px 26px 0 0;
+	margin-top: 5px;
+	float: left;
+}
+
+.public-profile .bibtex-wizard:before{
+	font-size: 14px;
+	color: #FFF;
+}
+
+.upload {
+	position: relative;
+	margin: 0;
+	vertical-align: 6px;
+	z-index: 0;
+}
+
+.upload-button {
+	position: absolute;
+	top: 0;
+	right: 0;
+	margin: 0;
+	padding: 0;
+	height: 20px;
+	cursor: pointer;
+	opacity: 0;
+	filter: alpha(opacity = 0);
+	width: 120px !important;
+}
+
+.import-label {
+	cursor: pointer;
+}
+
+#workspace-publications .cancel-bibtex {
+	margin-left: 5px;
+	vertical-align: 6px;
+}
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 
