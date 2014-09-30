@@ -886,10 +886,6 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 	    		});
 	    	},
 			loadAbbrWorks: function(access_type) {
-				console.log("---------------------------------------------------------------------------------------");
-				console.log(access_type);
-				console.log("---------------------------------------------------------------------------------------");
-				
 				if (access_type == worksSrvc.constants.access_type.ANONYMOUS) {
 				    worksSrvc.worksToAddIds = orcidVar.workIds;
 				    worksSrvc.addAbbrWorksToScope(worksSrvc.constants.access_type.ANONYMOUS);
@@ -2686,9 +2682,6 @@ function ClaimThanks($scope, $compile) {
 };
 
 function PersonalInfoCtrl($scope, $compile, workspaceSrvc){
-	console.log("-------------------------------------------------------");
-	console.log(angular.toJson(workspaceSrvc.displayPersonalInfo));
-	console.log("-------------------------------------------------------");
 	$scope.displayInfo = workspaceSrvc.displayPersonalInfo;
 	$scope.toggleDisplayInfo = function () {
 		$scope.displayInfo = !$scope.displayInfo;
@@ -3616,7 +3609,7 @@ function PublicWorkCtrl($scope, $compile, $filter, worksSrvc, actSortSrvc) {
 		return info;
 	};
 
-	//$scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.ANONYMOUS);
+	$scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.ANONYMOUS);
 	
 	// remove once grouping is live
 	$scope.moreInfoClick = function(work, $event) {
