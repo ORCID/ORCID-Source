@@ -702,7 +702,6 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 			details: new Object(), // we should think about putting details in the 
 			worksToAddIds: null,
 			addBibtexJson: function(dw) {
-				console.log("in addBibtexJson");
 				if (dw.citation && dw.citation.citationType && dw.citation.citationType.value == 'bibtex') {
 					try {
 						worksSrvc.bibtexJson[dw.putCode.value] = bibtexParse.toJSON(dw.citation.citation.value);
