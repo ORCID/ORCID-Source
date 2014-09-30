@@ -45,6 +45,7 @@ import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
+import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -165,6 +166,24 @@ public class PublicProfileController extends BaseWorkspaceController {
             mav.addObject("affiliationIdsJson", StringEscapeUtils.escapeEcmaScript(affiliationIdsJson));
             mav.addObject("fundingIdsJson", StringEscapeUtils.escapeEcmaScript(fundingIdsJson));
             mav.addObject("isProfileEmpty", isProfileEmtpy);
+            
+            String creditName = "";
+            if(profile.getOrcidBio() != null && profile.getOrcidBio().getPersonalDetails() != null) {
+                PersonalDetails personalDetails = profile.getOrcidBio().getPersonalDetails(); 
+                if(personalDetails.getCreditName() != null && !PojoUtil.isEmpty(personalDetails.getCreditName().getContent()))
+                    creditName = profile.getOrcidBio().getPersonalDetails().getCreditName().getContent();
+                else {
+                    if(personalDetails.getGivenNames() != null && !PojoUtil.isEmpty(personalDetails.getGivenNames().getContent()))
+                        creditName += personalDetails.getGivenNames().getContent();
+                    if(personalDetails.getFamilyName() != null && !PojoUtil.isEmpty(personalDetails.getFamilyName().getContent()))
+                        creditName += personalDetails.getFamilyName().getContent();
+                }                   
+            }
+            if(!PojoUtil.isEmpty(creditName)) {
+                //<Published Name> (<ORCID iD>) - ORCID | Connecting Research and Researchers
+                mav.addObject("title", getMessage("layout.public-layout.title", creditName, orcid));
+            }
+            
         } catch (JsonGenerationException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
