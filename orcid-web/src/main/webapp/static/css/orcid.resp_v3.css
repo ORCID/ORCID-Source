@@ -5589,7 +5589,11 @@ ul.toggle-menu li:hover ul {
 	#workspace-publications ul.toggle-menu li ul{
 		right: 1px;
 	}
-
+	
+	.show-more-info-tab-container{
+		float: right;	
+	}
+	
 }
 
 @media (min-width : 768px) and (max-width : 991px) { /* Tablet */
