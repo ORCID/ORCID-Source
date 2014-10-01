@@ -18,7 +18,7 @@
 -->
 <#escape x as x?html>
 	<#-- noscript is for search engines -->
-	<noscript>
+	<noscript ng-non-bindable>
 		<#if (works)??>
 			<ul class="workspace-publications workspace-body-list">
 		        <#list works as work>
