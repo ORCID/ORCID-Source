@@ -1157,7 +1157,9 @@ ul.privacyHelp li.private {
 	padding-left: 0;
 }
 
-.editTablePadCell35 .email{
+.wrap,
+.editTablePadCell35 .email
+{
 	word-break: break-all;
 }
 
@@ -3255,7 +3257,7 @@ ul.personal-inf-display li:last-child{
 }
 
 .citation-raw {
-	white-space: pre-wrap
+	white-space: pre-wrap;
 }
 
 #signout{
