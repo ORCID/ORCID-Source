@@ -262,21 +262,21 @@
 		                		<ul class="workspace-bar-menu">		                			
 			        				<!-- Link Manually -->
 			        				<li>
-				        				<a href="" class="action-option manage-button" ng-click="addWorkModal()">
+				        				<a href="" class="action-option works manage-button" ng-click="addWorkModal()">
 											<span class="glyphicon glyphicon-plus"></span>
 											<@orcid.msg 'manual_orcid_record_contents.link_manually'/>
 										</a>
 			        				</li>
 			        				<!-- Search & Link -->
 			        				<li>
-				        				<a class="action-option manage-button" ng-click="showWorkImportWizard()">
+				        				<a class="action-option works manage-button" ng-click="showWorkImportWizard()">
 											<span class="glyphicon glyphicon-cloud-upload"></span>
 											<@orcid.msg 'manual_orcid_record_contents.search_link'/>
 										</a>	        				
 			        				</li>
 			        				<!-- Bibtex -->
 			        				<li>
-				        				<a class="action-option manage-button" ng-click="openBibTextWizard()">
+				        				<a class="action-option works manage-button" ng-click="openBibTextWizard()">
 											<span class="glyphicons magic bibtex-wizard"></span>
 											<@orcid.msg 'workspace.bibtexImporter.link_bibtex'/>
 										</a>	        				

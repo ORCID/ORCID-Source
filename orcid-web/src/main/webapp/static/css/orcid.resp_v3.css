@@ -4509,9 +4509,8 @@ ul.toggle-menu li:hover ul {
 }
 
 .public-profile .bibtex-wizard{
-	padding: 0px 26px 0 0;
-	margin-top: 5px;
-	float: left;
+	padding: 0px 22px 0 0;
+	margin-top: -13px;	
 }
 
 .public-profile .bibtex-wizard:before{
@@ -4547,6 +4546,35 @@ ul.toggle-menu li:hover ul {
 	margin-left: 5px;
 	vertical-align: 6px;
 }
+
+.box-border {
+	border: 1px solid #c9cacb;
+}
+
+.bibtex-options-menu ul {
+	margin: 0;
+	list-style-type: none;
+}
+
+.bibtex-options-menu ul li {
+	display: inline-block;
+	float: right;
+	margin-left: 5px;
+}
+
+.bibtex-options-menu ul li a {
+	background-color: #949599;
+	border-radius: 50px;
+	height: 30px;
+	width: 30px;
+	padding: 8px;
+	color: #FFF;
+}
+
+.bibtex-options-menu ul li a:hover {
+	background-color: rgb(166, 206, 57);
+}
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
@@ -5467,6 +5495,15 @@ ul.toggle-menu li:hover ul {
 		text-align: center;
 		font-size: 0px;
 		display: block;
+	}
+	
+	.workspace-accordion-header ul>li>a.works{
+		width: 33.3333%;
+		font-size: 0;
+	}
+	
+	.public-profile .bibtex-wizard:before{
+		font-size: 25px;
 	}
 	
 	.workspace-accordion-header ul>li>a.action-option.two-options{
