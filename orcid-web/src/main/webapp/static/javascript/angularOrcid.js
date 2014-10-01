@@ -715,8 +715,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 				if (type == worksSrvc.constants.access_type.USER) 
 					var url = getBaseUri() + '/works/works.json?workIds=';
 				else // use the anonymous url
-					var url = getBaseUri() + '/' + orcidVar.orcidId +'/works.json?workIds='; // public
-
+					var url = getBaseUri() + '/' + orcidVar.orcidId +'/works.json?workIds='; // public								
 		    	if(worksSrvc.worksToAddIds.length != 0 ) {
 					worksSrvc.loading = true;
 					var workIds = worksSrvc.worksToAddIds.splice(0,20).join();
