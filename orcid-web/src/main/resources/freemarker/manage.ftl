@@ -466,7 +466,7 @@
 			<p>${springMacroRequestContext.getMessage("manage_delegation.searchfortrustedindividuals")}</p>
 			<div>
 				<form ng-submit="search()">
-					<input type="text" placeholder="${springMacroRequestContext.getMessage("manage_delegation.searchplaceholder")}" class="input-xlarge inline-input" ng-model="userQuery"></input>
+					<input type="text" placeholder="${springMacroRequestContext.getMessage("manage_delegation.searchplaceholder")}" class="input-xlarge inline-input" ng-model="input.text"></input>
 					<input type="submit" class="btn btn-primary" value="Search"></input>
 				</form>
 			</div>
@@ -615,13 +615,13 @@
 	        <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
 	    </div>
 	    <div ng-show="!emailSearchResult.found" >
-	        <p class="alert alert-error"><@orcid.msg 'manage_delegation.sorrynoaccount1'/>{{userQuery}}<@orcid.msg 'manage_delegation.sorrynoaccount2'/></p>
+	        <p class="alert alert-error"><@orcid.msg 'manage_delegation.sorrynoaccount1'/>{{input.text}}<@orcid.msg 'manage_delegation.sorrynoaccount2'/></p>
 	        <p><@orcid.msg 'manage_delegation.musthaveanaccount'/></p>
 	        <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
 	    </div>
 	    <div ng-show="!emailSearchResult.isSelf && emailSearchResult.found">
-	        <p>{{userQuery}}</p>
-	        <form ng-submit="addDelegateByEmail(userQuery)">
+	        <p>{{input.text}}</p>
+	        <form ng-submit="addDelegateByEmail(input.text)">
 		        <div>
 			        <h3><@orcid.msg 'check_password_modal.confirm_password' /></h3>	
 		            <label for="confirm_add_delegate_modal.password" class=""><@orcid.msg 'check_password_modal.password' /></label>

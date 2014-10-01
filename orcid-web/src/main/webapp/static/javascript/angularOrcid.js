@@ -4173,8 +4173,9 @@ function SearchCtrl($scope, $compile){
 function DelegatesCtrl($scope, $compile){
 	$scope.results = new Array();
 	$scope.numFound = 0;
-	$scope.start = 0;
-	$scope.rows = 10;
+	$scope.input = {};
+	$scope.input.start = 0;
+	$scope.input.rows = 10;
 	$scope.showLoader = false;
 	$scope.effectiveUserOrcid = orcidVar.orcidId;
 	$scope.realUserOrcid = orcidVar.realOrcidId;
@@ -4197,7 +4198,7 @@ function DelegatesCtrl($scope, $compile){
 		$scope.results = new Array();
 		$scope.showLoader = true;
 		$('#no-results-alert').hide();
-		if(isEmail($scope.userQuery)){
+		if(isEmail($scope.input.text)){
 			$scope.numFound = 0;
 			$scope.start = 0;
 			$scope.areMoreResults = 0;
@@ -4210,7 +4211,7 @@ function DelegatesCtrl($scope, $compile){
 	
 	$scope.searchByEmail = function(){
 		$.ajax({
-			url: $('body').data('baseurl') + "manage/search-for-delegate-by-email/" + encodeURIComponent($scope.userQuery) + '/',      
+			url: $('body').data('baseurl') + "manage/search-for-delegate-by-email/" + encodeURIComponent($scope.input.text) + '/',      
 			dataType: 'json',
 			headers: { Accept: 'application/json'},
 			success: function(data) {
@@ -4226,14 +4227,8 @@ function DelegatesCtrl($scope, $compile){
 	};
 	
 	$scope.getResults = function(rows){
-		var query = "{!edismax qf='given-and-family-names^50.0 family-name^10.0 given-names^5.0 credit-name^10.0 other-names^5.0 text^1.0' pf='given-and-family-names^50.0' mm=1}" + $scope.userQuery;
-		var orcidRegex = new RegExp("(\\d{4}-){3,}\\d{3}[\\dX]");
-		var regexResult = orcidRegex.exec($scope.userQuery);
-		if(regexResult){
-			query = "orcid:" + regexResult[0];
-		}
 		$.ajax({
-			url: $('#DelegatesCtrl').data('search-query-url') + query + '&start=' + $scope.start + '&rows=' + $scope.rows,      
+			url: orcidSearchUrlJs.buildUrl($scope.input),  
 			dataType: 'json',
 			headers: { Accept: 'application/json'},
 			success: function(data) {
@@ -4336,7 +4331,7 @@ function DelegatesCtrl($scope, $compile){
 	$scope.addDelegateByEmail = function(delegateEmail) {
 		$scope.errors = [];
 		var addDelegate = {};
-		addDelegate.delegateEmail = $scope.userQuery;
+		addDelegate.delegateEmail = $scope.input.text;
 		addDelegate.password = $scope.password;
 		$.ajax({
 	        url: $('body').data('baseurl') + 'account/addDelegateByEmail.json',
