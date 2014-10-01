@@ -25,6 +25,7 @@ import java.util.Set;
 import javax.ws.rs.core.Response;
 
 import org.orcid.api.common.exception.OrcidInvalidScopeException;
+import org.orcid.core.constants.OauthTokensConstants;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -113,6 +114,13 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
     }
 
     private Response getResponse(OAuth2AccessToken accessToken) {
+        if(accessToken != null && accessToken.getAdditionalInformation() != null) {
+            if(accessToken.getAdditionalInformation().containsKey(OauthTokensConstants.TOKEN_VERSION))
+                accessToken.getAdditionalInformation().remove(OauthTokensConstants.TOKEN_VERSION);
+            if(accessToken.getAdditionalInformation().containsKey(OauthTokensConstants.PERSISTENT))
+                accessToken.getAdditionalInformation().remove(OauthTokensConstants.PERSISTENT);
+        }
+        
         return Response.ok(accessToken).header("Cache-Control", "no-store").header("Pragma", "no-cache").build();
     }
 
