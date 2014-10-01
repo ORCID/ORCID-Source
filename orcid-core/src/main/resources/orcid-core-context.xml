@@ -340,7 +340,8 @@
         <property name="requireOrcidProfile" value="true"/>        
         <property name="validateTitle" value="true"/>
         <property name="validateWorkType" value="true"/>   
-        <property name="validateOnlyOnePrimaryEmail" value="true"/>        
+        <property name="validateOnlyOnePrimaryEmail" value="true"/>
+        <property name="validateWorksHaveExternalIds" value="true"/>         
     </bean>
     <bean id="outgoingValidationManagerV1_2_rc5" class="org.orcid.core.manager.impl.ValidationManagerImpl">
         <property name="validationBehaviour"

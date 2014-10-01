@@ -62,6 +62,8 @@ public class ValidationManagerImpl implements ValidationManager {
     
     private boolean validateOnlyOnePrimaryEmail = false;
     
+    private boolean validateWorksHaveExternalIds = false;
+    
     private Schema schema;
 
     private static final Logger LOG = LoggerFactory.getLogger(ValidationManagerImpl.class);
@@ -101,8 +103,16 @@ public class ValidationManagerImpl implements ValidationManager {
 
     public void setValidateOnlyOnePrimaryEmail(boolean validateOnlyOnePrimaryEmail) {
         this.validateOnlyOnePrimaryEmail = validateOnlyOnePrimaryEmail;
-    }
+    }        
     
+    public boolean isValidateWorksHaveExternalIds() {
+        return validateWorksHaveExternalIds;
+    }
+
+    public void setValidateWorksHaveExternalIds(boolean validateWorksHaveExternalIds) {
+        this.validateWorksHaveExternalIds = validateWorksHaveExternalIds;
+    }
+
     @Override
     public void validateMessage(OrcidMessage orcidMessage) {
         if (ValidationBehaviour.IGNORE.equals(validationBehaviour)) {
@@ -199,6 +209,12 @@ public class ValidationManagerImpl implements ValidationManager {
         if(validateWorkType){            
             if(orcidWork.getWorkType() != null && orcidWork.getWorkType().isDeprecated()){
                 throw new OrcidValidationException("Invalid work type: Type " + orcidWork.getWorkType().value() + " is deprecated");
+            }
+        }
+        
+        if(validateWorksHaveExternalIds) {
+            if(orcidWork.getWorkExternalIdentifiers() == null || orcidWork.getWorkExternalIdentifiers().getWorkExternalIdentifier() == null || orcidWork.getWorkExternalIdentifiers().getWorkExternalIdentifier().isEmpty()) {
+                throw new OrcidValidationException("Invalid work: Works added using message version 1.2_rc5 or greater must contain at least one external identifier");
             }
         }
     }
