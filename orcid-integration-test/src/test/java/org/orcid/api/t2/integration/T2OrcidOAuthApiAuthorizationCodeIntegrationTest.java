@@ -73,6 +73,10 @@ import org.orcid.jaxb.model.message.Title;
 import org.orcid.jaxb.model.message.TranslatedTitle;
 import org.orcid.jaxb.model.message.Url;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.message.WorkExternalIdentifier;
+import org.orcid.jaxb.model.message.WorkExternalIdentifierId;
+import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.dao.ClientRedirectDao;
@@ -133,6 +137,9 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     @Resource(name = "t2OAuthClient1_2_rc2")
     private T2OAuthAPIService<ClientResponse> oauthT2Client1_2_rc2;
 
+    @Resource(name = "t2OAuthClient1_2_rc5")
+    private T2OAuthAPIService<ClientResponse> oauthT2Client1_2_rc5;
+    
     @Resource
     private ProfileDao profileDao;
 
@@ -329,7 +336,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
 
         ClientResponse clientResponse = oauthT2Client.addWorksJson("4444-4444-4444-4442", orcidMessage, accessToken);
         assertEquals(201, clientResponse.getStatus());
-    }
+    }        
 
     @Test
     public void testAddOldWorkType() throws InterruptedException, JSONException {
@@ -388,6 +395,93 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
                 .getErrorDesc().getContent());
     }
 
+    @Test
+    public void testAddWorkWithoutExtIdsFor1_2rc5() throws InterruptedException, JSONException {
+        String scopes = "/orcid-works/create";
+        String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, "michael@bentine.com", "password");
+        String accessToken = obtainAccessToken(authorizationCode, scopes);
+
+        OrcidMessage orcidMessage = new OrcidMessage();
+        orcidMessage.setMessageVersion("1.2_rc5");
+        OrcidProfile orcidProfile = new OrcidProfile();
+        orcidMessage.setOrcidProfile(orcidProfile);
+        OrcidActivities orcidActivities = new OrcidActivities();
+        orcidProfile.setOrcidActivities(orcidActivities);
+        OrcidWorks orcidWorks = new OrcidWorks();
+        orcidActivities.setOrcidWorks(orcidWorks);
+        OrcidWork orcidWork = new OrcidWork();
+        orcidWorks.getOrcidWork().add(orcidWork);
+        WorkTitle workTitle = new WorkTitle();
+        workTitle.setTitle(new Title("Work added by integration test - Version 1.2_rc5"));
+        orcidWork.setWorkTitle(workTitle);
+        orcidWork.setWorkType(WorkType.ARTISTIC_PERFORMANCE);        
+
+        ClientResponse clientResponse = oauthT2Client1_2_rc5.addWorksJson("4444-4444-4444-4442", orcidMessage, accessToken);
+        assertEquals(400, clientResponse.getStatus());
+        OrcidMessage errorMessage = clientResponse.getEntity(OrcidMessage.class);
+        assertNotNull(errorMessage);
+        assertNotNull(errorMessage.getErrorDesc());
+        assertEquals("Invalid incoming message: org.orcid.core.exception.OrcidValidationException: Invalid work: Works added using message version 1.2_rc5 or greater must contain at least one external identifier", errorMessage.getErrorDesc()
+                .getContent());
+    }
+    
+    @Test
+    public void testAddWorkWithoutExtIdsForLowerThan1_2rc5() throws InterruptedException, JSONException {
+        String scopes = "/orcid-works/create";
+        String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, "michael@bentine.com", "password");
+        String accessToken = obtainAccessToken(authorizationCode, scopes);
+
+        OrcidMessage orcidMessage = new OrcidMessage();
+        orcidMessage.setMessageVersion("1.2_rc5");
+        OrcidProfile orcidProfile = new OrcidProfile();
+        orcidMessage.setOrcidProfile(orcidProfile);
+        OrcidActivities orcidActivities = new OrcidActivities();
+        orcidProfile.setOrcidActivities(orcidActivities);
+        OrcidWorks orcidWorks = new OrcidWorks();
+        orcidActivities.setOrcidWorks(orcidWorks);
+        OrcidWork orcidWork = new OrcidWork();
+        orcidWorks.getOrcidWork().add(orcidWork);
+        WorkTitle workTitle = new WorkTitle();
+        workTitle.setTitle(new Title("Work added by integration test - Version 1.2_rc5"));
+        orcidWork.setWorkTitle(workTitle);
+        orcidWork.setWorkType(WorkType.ARTISTIC_PERFORMANCE);        
+
+        ClientResponse clientResponse = oauthT2Client1_2_rc2.addWorksJson("4444-4444-4444-4442", orcidMessage, accessToken);
+        assertEquals(201, clientResponse.getStatus());        
+    }
+    
+    
+    @Test
+    public void testAddWorkWithExtIdsFor1_2rc5() throws InterruptedException, JSONException {
+        String scopes = "/orcid-works/create";
+        String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, "michael@bentine.com", "password");
+        String accessToken = obtainAccessToken(authorizationCode, scopes);
+
+        OrcidMessage orcidMessage = new OrcidMessage();
+        orcidMessage.setMessageVersion("1.2_rc5");
+        OrcidProfile orcidProfile = new OrcidProfile();
+        orcidMessage.setOrcidProfile(orcidProfile);
+        OrcidActivities orcidActivities = new OrcidActivities();
+        orcidProfile.setOrcidActivities(orcidActivities);
+        OrcidWorks orcidWorks = new OrcidWorks();
+        orcidActivities.setOrcidWorks(orcidWorks);
+        OrcidWork orcidWork = new OrcidWork();
+        orcidWorks.getOrcidWork().add(orcidWork);
+        WorkTitle workTitle = new WorkTitle();
+        workTitle.setTitle(new Title("Work added by integration test - Version 1.2_rc5"));
+        orcidWork.setWorkTitle(workTitle);
+        orcidWork.setWorkType(WorkType.ARTISTIC_PERFORMANCE);
+        WorkExternalIdentifier extId = new WorkExternalIdentifier();
+        extId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("extId"));
+        extId.setWorkExternalIdentifierType(WorkExternalIdentifierType.fromValue("isbn"));
+        WorkExternalIdentifiers extIds = new WorkExternalIdentifiers();
+        extIds.getWorkExternalIdentifier().add(extId);
+        orcidWork.setWorkExternalIdentifiers(extIds);
+
+        ClientResponse clientResponse = oauthT2Client1_2_rc5.addWorksJson("4444-4444-4444-4442", orcidMessage, accessToken);
+        assertEquals(201, clientResponse.getStatus());        
+    }
+    
     @Test
     public void testAddAffiliation() throws InterruptedException, JSONException {
         String scopes = "/affiliations/create";
