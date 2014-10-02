@@ -2947,7 +2947,8 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 	$scope.removeDisambiguatedAffiliation = function() {
 		$scope.bindTypeahead();
 		if ($scope.disambiguatedAffiliation != undefined) delete $scope.disambiguatedAffiliation;
-		if ($scope.editAffiliation != undefined && $scope.editAffiliation.disambiguatedAffiliationSourceId != undefined) delete $scope.editAffiliation.disambiguatedAffiliationSourceId;		
+		if ($scope.editAffiliation != undefined && $scope.editAffiliation.disambiguatedAffiliationSourceId != undefined) delete $scope.editAffiliation.disambiguatedAffiliationSourceId;	
+		if ($scope.editAffiliation != undefined && $scope.editAffiliation.orgDisambiguatedId != undefined) delete $scope.editAffiliation.orgDisambiguatedId; 
 	};
 
 	$scope.addAffiliationModal = function(type, affiliation){		
