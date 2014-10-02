@@ -57,6 +57,8 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
     private Text disambiguatedAffiliationSourceId;
 
     private Text disambiguationSource;
+    
+    private Text orgDisambiguatedId;
 
     private String affiliationTypeForDisplay;
 
@@ -198,6 +200,7 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
             if (organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier() != null) {
                 form.setDisambiguatedAffiliationSourceId(Text.valueOf(organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier()));
                 form.setDisambiguationSource(Text.valueOf(organization.getDisambiguatedOrganization().getDisambiguationSource()));
+                form.setOrgDisambiguatedId(Text.valueOf(String.valueOf(organization.getDisambiguatedOrganization().getId())));
             }
         }
         if (address.getRegion() != null) {
@@ -243,6 +246,7 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
             form.setSourceName(source.getSourceName().getContent());
             form.setSourceOrcid(source.getSourceOrcid().getPath());
         }
+                
         return form;
     }
 
@@ -324,4 +328,12 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
     public void setSourceOrcid(String sourceOrcid) {
         this.sourceOrcid = sourceOrcid;
     }
+
+    public Text getOrgDisambiguatedId() {
+        return orgDisambiguatedId;
+    }
+
+    public void setOrgDisambiguatedId(Text orgDisambiguatedId) {
+        this.orgDisambiguatedId = orgDisambiguatedId;
+    }        
 }

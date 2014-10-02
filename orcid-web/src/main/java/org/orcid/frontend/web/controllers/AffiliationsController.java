@@ -188,6 +188,8 @@ public class AffiliationsController extends BaseWorkspaceController {
         endDate.setDay("");
         endDate.setMonth("");
         endDate.setYear("");
+        
+        affiliationForm.setOrgDisambiguatedId(new Text());
 
         return affiliationForm;
     }
