@@ -54,8 +54,9 @@
     </script>    
     
     <link rel="stylesheet" href="${staticLoc}/css/fonts.css?v=${ver}"/>
+    <link rel="stylesheet" href="${staticLoc}/css/glyphicons.css?v=${ver}"/>
     <link rel="stylesheet" href="${staticLoc}/css/social.css?v=${ver}"/>
-    <link rel="stylesheet" href="${staticLoc}/css/filetypes.css?v=${ver}"/>
+    <link rel="stylesheet" href="${staticLoc}/css/filetypes.css?v=${ver}"/>    
 	
 	<!-- Always remember to remove Glyphicons font reference when bootstrap is updated -->
     <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.1.0/css/bootstrap.min.css?v=${ver}"/>
