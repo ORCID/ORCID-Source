@@ -30,6 +30,8 @@ import org.orcid.core.manager.ValidationBehaviour;
 import org.orcid.core.manager.ValidationManager;
 import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.Email;
+import org.orcid.jaxb.model.message.Funding;
+import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidMessage;
@@ -63,6 +65,8 @@ public class ValidationManagerImpl implements ValidationManager {
     private boolean validateOnlyOnePrimaryEmail = false;
     
     private boolean validateWorksHaveExternalIds = false;
+    
+    private boolean validateFundingHaveExternalIds = false;
     
     private Schema schema;
 
@@ -111,6 +115,14 @@ public class ValidationManagerImpl implements ValidationManager {
 
     public void setValidateWorksHaveExternalIds(boolean validateWorksHaveExternalIds) {
         this.validateWorksHaveExternalIds = validateWorksHaveExternalIds;
+    }
+
+    public boolean isValidateFundingHaveExternalIds() {
+        return validateFundingHaveExternalIds;
+    }
+
+    public void setValidateFundingHaveExternalIds(boolean validateFundingHaveExternalIds) {
+        this.validateFundingHaveExternalIds = validateFundingHaveExternalIds;
     }
 
     @Override
@@ -187,6 +199,11 @@ public class ValidationManagerImpl implements ValidationManager {
             if (works != null && works.getOrcidWork() != null && !works.getOrcidWork().isEmpty()) {
                 checkWorks(works.getOrcidWork());
             }
+            
+            FundingList funding = orcidActivities.getFundings();
+            if (funding != null && funding.getFundings() != null && !funding.getFundings().isEmpty()) {
+                checkFunding(funding.getFundings());
+            }
         }
     }
 
@@ -216,9 +233,23 @@ public class ValidationManagerImpl implements ValidationManager {
             if(orcidWork.getWorkExternalIdentifiers() == null || orcidWork.getWorkExternalIdentifiers().getWorkExternalIdentifier() == null || orcidWork.getWorkExternalIdentifiers().getWorkExternalIdentifier().isEmpty()) {
                 throw new OrcidValidationException("Invalid work: Works added using message version 1.2_rc5 or greater must contain at least one external identifier");
             }
-        }
+        }                
     }
 
+    private void checkFunding(List<Funding> fundings) {        
+        for(Funding funding : fundings) {
+            checkFunding(funding);
+        }
+    }
+    
+    private void checkFunding(Funding funding) {
+        if(validateFundingHaveExternalIds) {
+            if(funding.getFundingExternalIdentifiers() == null || funding.getFundingExternalIdentifiers().getFundingExternalIdentifier() == null || funding.getFundingExternalIdentifiers().getFundingExternalIdentifier().isEmpty()) {
+                throw new OrcidValidationException("Invalid funding: Funding added using message version 1.2_rc5 or greater must contain at least one external identifier");
+            }
+        }
+    }
+    
     private void initSchema() {
         if (schema == null) {
             SchemaFactory factory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
