@@ -236,6 +236,7 @@ the software.
                             <exclude>**/src/test/resources/solr/**</exclude>
                             <exclude>**/src/test/resources/org/orcid/core/manager/example**</exclude>
                             <exclude>**/src/test/resources/org/orcid/frontend/web/forms/**</exclude>
+                            <exclude>**/src/main/webapp/static/css/glyphicons.css</exclude>
                             <exclude>**/src/test/javascript/node_modules/**</exclude>
                             <exclude>**.md</exclude>
                             <exclude>docs/**</exclude>
