@@ -1560,7 +1560,7 @@ $(function (){
 })(typeof exports === 'undefined' ? this.orcidSearchUrlJs = {} : exports);
 
 /* END: orcidSearchUrlJs */
-
+orcidSearchUrlJs.setBaseUrl(orcidVar.searchBaseUrl);
 
 
 
