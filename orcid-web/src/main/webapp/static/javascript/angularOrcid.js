@@ -4078,7 +4078,6 @@ function SearchCtrl($scope, $compile){
 	$scope.input.start = 0;
 	$scope.input.rows = 10;
 	$scope.input.text = $('#SearchCtrl').data('search-query');
-	orcidSearchUrlJs.setBaseUrl(orcidVar.searchBaseUrl);
 	
 	$scope.getResults = function(){
 		$.ajax({
