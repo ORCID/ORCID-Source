@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -29,6 +30,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -49,24 +52,26 @@ import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
 import org.orcid.frontend.web.forms.EmailAddressForm;
 import org.orcid.frontend.web.forms.OneTimeResetPasswordForm;
 import org.orcid.frontend.web.forms.PasswordTypeAndConfirmForm;
+import org.orcid.jaxb.model.message.Claimed;
+import org.orcid.jaxb.model.message.ContactDetails;
+import org.orcid.jaxb.model.message.OrcidBio;
+import org.orcid.jaxb.model.message.OrcidHistory;
+import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidInternal;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.SecurityDetails;
 import org.orcid.jaxb.model.message.SecurityQuestionId;
 import org.orcid.pojo.ajaxForm.Text;
-import org.orcid.test.DBUnitTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.orcid.jaxb.model.message.Email;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-frontend-web-servlet.xml", "classpath:orcid-core-context.xml" })
-@Transactional(propagation = Propagation.REQUIRES_NEW)
-public class RegistrationControllerTest extends DBUnitTest {
+public class RegistrationControllerTest {
 
     @Resource(name = "registrationController")
     RegistrationController registrationController;
@@ -82,7 +87,7 @@ public class RegistrationControllerTest extends DBUnitTest {
 
     @Mock
     EncryptionManager encryptionManager;
-
+    
     @Before
     public void before() {
         MockitoAnnotations.initMocks(this);
@@ -285,6 +290,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         HttpServletRequest servletRequest = mock(HttpServletRequest.class);
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
+        when(orcidProfileManager.retrieveOrcidProfileByEmail("billie@holiday.com")).thenReturn(getOrcidToTestClaimResend(true));
         EmailAddressForm emailAddressForm = new EmailAddressForm();
         //Testing with profile 4444-4444-4444-4446
         emailAddressForm.setUserEmailAddress("billie@holiday.com");
@@ -295,6 +301,23 @@ public class RegistrationControllerTest extends DBUnitTest {
         assertTrue((Boolean) mav.getModel().get("alreadyClaimed"));
     }
 
+    @Test
+    public void testResendClaimEmail() {
+        HttpServletRequest servletRequest = mock(HttpServletRequest.class);
+        BindingResult bindingResult = mock(BindingResult.class);
+        when(bindingResult.hasErrors()).thenReturn(false);
+        when(orcidProfileManager.retrieveOrcidProfileByEmail("billie@holiday.com")).thenReturn(getOrcidToTestClaimResend(false));
+        EmailAddressForm emailAddressForm = new EmailAddressForm();
+        //Testing with profile 4444-4444-4444-4446
+        emailAddressForm.setUserEmailAddress("billie@holiday.com");
+        ModelAndView mav = registrationController.resendClaimEmail(servletRequest, emailAddressForm, bindingResult);
+        assertNotNull(mav);
+        assertNotNull(mav.getModel());
+        assertFalse(mav.getModel().containsKey("alreadyClaimed"));
+        assertTrue(mav.getModel().containsKey("claimResendSuccessful"));
+        assertTrue((Boolean) mav.getModel().get("claimResendSuccessful"));
+    }
+    
     private OrcidProfile orcidWithSecurityQuestion() {
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidProfile.setSecurityQuestionAnswer("Answer");
@@ -303,6 +326,24 @@ public class RegistrationControllerTest extends DBUnitTest {
         securityDetails.setSecurityQuestionId(new SecurityQuestionId(3));
         orcidInternal.setSecurityDetails(securityDetails);
         orcidProfile.setOrcidInternal(orcidInternal);
+        return orcidProfile;
+    }
+    
+    private OrcidProfile getOrcidToTestClaimResend(boolean claimed) {
+        OrcidProfile orcidProfile = new OrcidProfile();
+        OrcidIdentifier orcid = new OrcidIdentifier("0000-0000-0000-0001");        
+        orcidProfile.setOrcidIdentifier(orcid);
+        OrcidHistory orcidHistory = new OrcidHistory();
+        orcidHistory.setClaimed(new Claimed(claimed));
+        orcidProfile.setOrcidHistory(orcidHistory);
+        OrcidBio orcidBio = new OrcidBio();
+        ContactDetails contactDetails = new ContactDetails();
+        List<Email> emails = new ArrayList<Email>();
+        Email email = new Email("billie@holiday.com");
+        emails.add(email);
+        contactDetails.setEmail(emails);
+        orcidBio.setContactDetails(contactDetails);
+        orcidProfile.setOrcidBio(orcidBio);
         return orcidProfile;
     }
 
