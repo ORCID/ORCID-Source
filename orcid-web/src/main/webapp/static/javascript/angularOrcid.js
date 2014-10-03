@@ -2933,6 +2933,7 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 	        	if (data != null) {
 	        		console.log(data.sourceId);
 			        $scope.disambiguatedAffiliation = data;
+			        $scope.editAffiliation.orgDisambiguatedId.value = id;
 			        $scope.editAffiliation.disambiguatedAffiliationSourceId = data.sourceId;
 			        $scope.editAffiliation.disambiguationSource = data.sourceType;
 			        $scope.$apply();
@@ -2946,13 +2947,14 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 	$scope.removeDisambiguatedAffiliation = function() {
 		$scope.bindTypeahead();
 		if ($scope.disambiguatedAffiliation != undefined) delete $scope.disambiguatedAffiliation;
-		if ($scope.editAffiliation != undefined && $scope.editAffiliation.disambiguatedAffiliationSourceId != undefined) delete $scope.editAffiliation.disambiguatedAffiliationSourceId;
+		if ($scope.editAffiliation != undefined && $scope.editAffiliation.disambiguatedAffiliationSourceId != undefined) delete $scope.editAffiliation.disambiguatedAffiliationSourceId;	
+		if ($scope.editAffiliation != undefined && $scope.editAffiliation.orgDisambiguatedId != undefined) delete $scope.editAffiliation.orgDisambiguatedId; 
 	};
 
-	$scope.addAffiliationModal = function(type, affiliation){
-		$scope.removeDisambiguatedAffiliation();
+	$scope.addAffiliationModal = function(type, affiliation){		
 		$scope.addAffType = type;
 		if(affiliation === undefined) {
+			$scope.removeDisambiguatedAffiliation();			
 			$.ajax({
 				url: getBaseUri() + '/affiliations/affiliation.json',
 				dataType: 'json',
@@ -2969,6 +2971,10 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 		    });
 		} else {
 			$scope.editAffiliation = affiliation;
+			console.log("Find for edit")
+			if($scope.editAffiliation.orgDisambiguatedId != null)
+				$scope.getDisambiguatedAffiliation($scope.editAffiliation.orgDisambiguatedId.value);
+						
 			$scope.showAddModal();
 		}		
 	};
