@@ -691,6 +691,173 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
                 .getContent());
     }
 
+    
+    @Test
+    public void testAddFundingWithExtIdsFor1_2rc5() throws InterruptedException, JSONException {
+        String scopes = "/funding/create";
+        String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, "michael@bentine.com", "password");
+        String accessToken = obtainAccessToken(authorizationCode, scopes);
+
+        OrcidMessage orcidMessage = new OrcidMessage();
+        orcidMessage.setMessageVersion("1.2_rc3");
+        OrcidProfile orcidProfile = new OrcidProfile();
+        orcidMessage.setOrcidProfile(orcidProfile);
+        OrcidActivities orcidActivities = new OrcidActivities();
+        orcidProfile.setOrcidActivities(orcidActivities);
+
+        FundingList fundings = new FundingList();
+        Funding funding = new Funding();
+        FundingTitle title = new FundingTitle();
+        title.setTitle(new Title(FUNDING_TITLE));
+        funding.setTitle(title);
+        funding.setType(FundingType.SALARY_AWARD);
+        funding.setVisibility(Visibility.PUBLIC);
+        Amount amount = new Amount();
+        amount.setCurrencyCode("CRC");
+        amount.setContent("1");
+        funding.setAmount(amount);
+        funding.setStartDate(new FuzzyDate(2010, 1, 1));
+        funding.setEndDate(new FuzzyDate(2013, 1, 1));
+        funding.setDescription(GRANT_DESCRIPTION);
+        funding.setUrl(new Url(GRANT_URL));
+        Organization org = new Organization();
+        org.setName(ORG_NAME);
+        OrganizationAddress add = new OrganizationAddress();
+        add.setCity(ORG_CITY);
+        add.setCountry(Iso3166Country.CR);
+        org.setAddress(add);
+        funding.setOrganization(org);
+        FundingExternalIdentifier extIdentifier = new FundingExternalIdentifier();
+        extIdentifier.setType(FundingExternalIdentifierType.fromValue(EXT_ID_TYPE));
+        extIdentifier.setUrl(new Url(EXT_ID_URL));
+        extIdentifier.setValue(EXT_ID_VALUE);
+        FundingExternalIdentifiers extIdentifiers = new FundingExternalIdentifiers();
+        extIdentifiers.getFundingExternalIdentifier().add(extIdentifier);
+        funding.setFundingExternalIdentifiers(extIdentifiers);
+        FundingContributors contributors = new FundingContributors();
+        FundingContributor contributor = new FundingContributor();
+        contributor.setCreditName(new CreditName(CONTRIBUTOR_CREDIT_NAME));
+        contributor.setContributorEmail(new ContributorEmail(CONTRIBUTOR_EMAIL));
+        FundingContributorAttributes attributes = new FundingContributorAttributes();
+        attributes.setContributorRole(FundingContributorRole.LEAD);
+        contributor.setContributorAttributes(attributes);
+        contributors.getContributor().add(contributor);
+        funding.setFundingContributors(contributors);
+        fundings.getFundings().add(funding);
+        orcidMessage.getOrcidProfile().getOrcidActivities().setFundings(fundings);
+
+        ClientResponse clientResponse = oauthT2Client1_2_rc5.addFundingXml("4444-4444-4444-4442", orcidMessage, accessToken);
+        assertEquals(201, clientResponse.getStatus());
+    }
+    
+    @Test
+    public void testAddFundingWithoutExtIdsFor1_2rc5() throws InterruptedException, JSONException {
+        String scopes = "/funding/create";
+        String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, "michael@bentine.com", "password");
+        String accessToken = obtainAccessToken(authorizationCode, scopes);
+
+        OrcidMessage orcidMessage = new OrcidMessage();
+        orcidMessage.setMessageVersion("1.2_rc3");
+        OrcidProfile orcidProfile = new OrcidProfile();
+        orcidMessage.setOrcidProfile(orcidProfile);
+        OrcidActivities orcidActivities = new OrcidActivities();
+        orcidProfile.setOrcidActivities(orcidActivities);
+
+        FundingList fundings = new FundingList();
+        Funding funding = new Funding();
+        FundingTitle title = new FundingTitle();
+        title.setTitle(new Title(FUNDING_TITLE));
+        funding.setTitle(title);
+        funding.setType(FundingType.SALARY_AWARD);
+        funding.setVisibility(Visibility.PUBLIC);
+        Amount amount = new Amount();
+        amount.setCurrencyCode("CRC");
+        amount.setContent("1");
+        funding.setAmount(amount);
+        funding.setStartDate(new FuzzyDate(2010, 1, 1));
+        funding.setEndDate(new FuzzyDate(2013, 1, 1));
+        funding.setDescription(GRANT_DESCRIPTION);
+        funding.setUrl(new Url(GRANT_URL));
+        Organization org = new Organization();
+        org.setName(ORG_NAME);
+        OrganizationAddress add = new OrganizationAddress();
+        add.setCity(ORG_CITY);
+        add.setCountry(Iso3166Country.CR);
+        org.setAddress(add);
+        funding.setOrganization(org);
+        FundingContributors contributors = new FundingContributors();
+        FundingContributor contributor = new FundingContributor();
+        contributor.setCreditName(new CreditName(CONTRIBUTOR_CREDIT_NAME));
+        contributor.setContributorEmail(new ContributorEmail(CONTRIBUTOR_EMAIL));
+        FundingContributorAttributes attributes = new FundingContributorAttributes();
+        attributes.setContributorRole(FundingContributorRole.LEAD);
+        contributor.setContributorAttributes(attributes);
+        contributors.getContributor().add(contributor);
+        funding.setFundingContributors(contributors);
+        fundings.getFundings().add(funding);
+        orcidMessage.getOrcidProfile().getOrcidActivities().setFundings(fundings);
+
+        ClientResponse clientResponse = oauthT2Client1_2_rc5.addFundingXml("4444-4444-4444-4442", orcidMessage, accessToken);
+        assertEquals(400, clientResponse.getStatus());
+        OrcidMessage errorMessage = clientResponse.getEntity(OrcidMessage.class);
+        assertNotNull(errorMessage);
+        assertNotNull(errorMessage.getErrorDesc());
+        assertEquals("Invalid incoming message: org.orcid.core.exception.OrcidValidationException: Invalid funding: Funding added using message version 1.2_rc5 or greater must contain at least one external identifier", errorMessage.getErrorDesc()
+                .getContent());
+    }
+    
+    @Test
+    public void testAddFundingWithoutExtIdsForLowerThan1_2rc5() throws InterruptedException, JSONException {
+        String scopes = "/funding/create";
+        String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, "michael@bentine.com", "password");
+        String accessToken = obtainAccessToken(authorizationCode, scopes);
+
+        OrcidMessage orcidMessage = new OrcidMessage();
+        orcidMessage.setMessageVersion("1.2_rc3");
+        OrcidProfile orcidProfile = new OrcidProfile();
+        orcidMessage.setOrcidProfile(orcidProfile);
+        OrcidActivities orcidActivities = new OrcidActivities();
+        orcidProfile.setOrcidActivities(orcidActivities);
+
+        FundingList fundings = new FundingList();
+        Funding funding = new Funding();
+        FundingTitle title = new FundingTitle();
+        title.setTitle(new Title(FUNDING_TITLE));
+        funding.setTitle(title);
+        funding.setType(FundingType.SALARY_AWARD);
+        funding.setVisibility(Visibility.PUBLIC);
+        Amount amount = new Amount();
+        amount.setCurrencyCode("CRC");
+        amount.setContent("1");
+        funding.setAmount(amount);
+        funding.setStartDate(new FuzzyDate(2010, 1, 1));
+        funding.setEndDate(new FuzzyDate(2013, 1, 1));
+        funding.setDescription(GRANT_DESCRIPTION);
+        funding.setUrl(new Url(GRANT_URL));
+        Organization org = new Organization();
+        org.setName(ORG_NAME);
+        OrganizationAddress add = new OrganizationAddress();
+        add.setCity(ORG_CITY);
+        add.setCountry(Iso3166Country.CR);
+        org.setAddress(add);
+        funding.setOrganization(org);
+        FundingContributors contributors = new FundingContributors();
+        FundingContributor contributor = new FundingContributor();
+        contributor.setCreditName(new CreditName(CONTRIBUTOR_CREDIT_NAME));
+        contributor.setContributorEmail(new ContributorEmail(CONTRIBUTOR_EMAIL));
+        FundingContributorAttributes attributes = new FundingContributorAttributes();
+        attributes.setContributorRole(FundingContributorRole.LEAD);
+        contributor.setContributorAttributes(attributes);
+        contributors.getContributor().add(contributor);
+        funding.setFundingContributors(contributors);
+        fundings.getFundings().add(funding);
+        orcidMessage.getOrcidProfile().getOrcidActivities().setFundings(fundings);
+        
+        ClientResponse clientResponse = oauthT2Client1_2_rc2.addFundingXml("4444-4444-4444-4442", orcidMessage, accessToken);
+        assertEquals(201, clientResponse.getStatus());
+    }
+    
+    
     @Test
     public void testAddWorkToWrongProfile() throws InterruptedException, JSONException {
         String scopes = "/orcid-works/create";
