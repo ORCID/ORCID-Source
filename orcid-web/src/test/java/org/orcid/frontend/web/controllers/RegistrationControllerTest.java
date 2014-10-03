@@ -17,7 +17,9 @@
 package org.orcid.frontend.web.controllers;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -52,15 +54,19 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.SecurityDetails;
 import org.orcid.jaxb.model.message.SecurityQuestionId;
 import org.orcid.pojo.ajaxForm.Text;
+import org.orcid.test.DBUnitTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-frontend-web-servlet.xml", "classpath:orcid-core-context.xml" })
-public class RegistrationControllerTest {
+@Transactional(propagation = Propagation.REQUIRES_NEW)
+public class RegistrationControllerTest extends DBUnitTest {
 
     @Resource(name = "registrationController")
     RegistrationController registrationController;
@@ -272,6 +278,21 @@ public class RegistrationControllerTest {
         assertEquals("redirect:/reset-password", expiredView.getViewName());
         verify(redirectAttributes, times(1)).addFlashAttribute("passwordResetLinkExpired", true);
 
+    }
+    
+    @Test
+    public void testResendEmailFailIfTheProfileIsAlreadyClaimed() {
+        HttpServletRequest servletRequest = mock(HttpServletRequest.class);
+        BindingResult bindingResult = mock(BindingResult.class);
+        when(bindingResult.hasErrors()).thenReturn(false);
+        EmailAddressForm emailAddressForm = new EmailAddressForm();
+        //Testing with profile 4444-4444-4444-4446
+        emailAddressForm.setUserEmailAddress("billie@holiday.com");
+        ModelAndView mav = registrationController.resendClaimEmail(servletRequest, emailAddressForm, bindingResult);
+        assertNotNull(mav);
+        assertNotNull(mav.getModel());
+        assertTrue(mav.getModel().containsKey("alreadyClaimed"));
+        assertTrue((Boolean) mav.getModel().get("alreadyClaimed"));
     }
 
     private OrcidProfile orcidWithSecurityQuestion() {
