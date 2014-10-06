@@ -49,4 +49,38 @@
             authentication_key="85578468aafa19ed63a3de2f9eb11289"
             persistent="false"
             />
+            
+	<oauth2_token_detail
+            id="3"
+            token_value="00000001-d80f-4afc-8f95-9b48d28aaadb"
+            token_type="bearer"
+            token_expiration="2014-09-12"
+            user_orcid="4444-4444-4444-4444"
+            client_details_id="4444-4444-4444-4441"
+            is_approved="true"
+            redirect_uri="http://www.google.com"
+            scope_type="/orcid-works/create"
+            resource_id="orcid"
+            date_created="2012-07-23 08:16:00.00"
+            last_modified="2012-07-24 09:20:00.00"
+            authentication_key="85578468aafa19ed63a3de2f9eb11290"
+            persistent="false"
+            />     
+            
+	<oauth2_token_detail
+            id="4"
+            token_value="00000002-d80f-4afc-8f95-9b48d28aaadb"
+            token_type="bearer"
+            token_expiration="2014-09-12"
+            user_orcid="4444-4444-4444-4444"
+            client_details_id="4444-4444-4444-4441"
+            is_approved="true"
+            redirect_uri="http://www.google.com"
+            scope_type="/funding/create"
+            resource_id="orcid"
+            date_created="2012-07-23 08:16:00.00"
+            last_modified="2012-07-24 09:20:00.00"
+            authentication_key="85578468aafa19ed63a3de2f9eb11291"
+            persistent="true"
+            />                  
 </dataset>
