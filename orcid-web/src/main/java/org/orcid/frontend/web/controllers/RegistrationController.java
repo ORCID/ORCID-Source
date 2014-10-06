@@ -588,9 +588,14 @@ public class RegistrationController extends BaseController {
             mav.addAllObjects(bindingResult.getModel());
             return mav;
         } else {
-            notificationManager.sendApiRecordCreationEmail(userEmailAddress, profile);
-            mav.addObject("claimResendSuccessful", true);
-            return mav;
+            if(profile.getOrcidHistory() != null && profile.getOrcidHistory().isClaimed()){
+                mav.addObject("alreadyClaimed", true);
+                return mav;
+            } else {
+                notificationManager.sendApiRecordCreationEmail(userEmailAddress, profile);
+                mav.addObject("claimResendSuccessful", true);
+                return mav;
+            }                        
         }
     }
 

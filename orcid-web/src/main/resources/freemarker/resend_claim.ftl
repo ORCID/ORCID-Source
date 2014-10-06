@@ -29,7 +29,12 @@
 				<div class="alert alert-success">
 	    			<strong><@spring.message "resend_claim.successful_resend"/></strong>
 				</div>
-			</#if>       
+			</#if>    
+			<#if alreadyClaimed?? && alreadyClaimed>
+				<div class="alert alert-success">
+	    			<strong><@spring.message "orcid.frontend.security.already_claimed_with_link"/></strong>
+				</div>
+			</#if>   
             <h2><@spring.message "resend_claim.title"/></h2>
             <p><small><@spring.message "resend_claim.resend_help"/> <a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("resend_claim.labelorg")}</a>.</small></p>      		
         	<form id="resend-claim-form" name="emailAddressForm" action="resend-claim" method="post">
