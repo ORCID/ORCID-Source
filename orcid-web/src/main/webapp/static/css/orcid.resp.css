@@ -3913,8 +3913,9 @@ ul.sso-options li span {
 }
 
 /* OAuth Confirm Access Page */
-.confirm-oauth-access .id-banner {
-	margin-top: 25px;
+.confirm-oauth-access .top-header .logo h1{
+	margin-top: 5px;
+	padding-top: 0;
 }
 
 .confirm-oauth-access .top-header {
@@ -4187,6 +4188,7 @@ multiselect .dropdown-menu .dropdown-menu-list {
 .app-client-name h3{
 	color: #A3CD39;
 	cursor: pointer;
+	margin: 0;
 }
 
 .app-client-name h3 a{
@@ -4202,7 +4204,7 @@ multiselect .dropdown-menu .dropdown-menu-list {
 }
 
 .app-client-description p{
-	margin-bottom: 30px;
+	margin-bottom: 15px;
 }
 
 .oauth-bullet {
@@ -4215,12 +4217,11 @@ multiselect .dropdown-menu .dropdown-menu-list {
 
 ul.oauth-scopes{
 	padding: 0;
-	margin: 10px 0 10px 20px;
+	margin: 10px 0 10px 0;
 }
 
 ul.oauth-scopes li{	
-	list-style-type: circle;
-	padding: 5px 0 0 10px;
+	padding: 0;
 }
 
 .form-control-feedback-oauth{
@@ -4255,7 +4256,7 @@ ul.oauth-scopes li{
 	display: block;
 	width: 100%;
 	border: 1px dotted #a6ce39;
-	margin: 0 0 15px 0;
+	margin: 0 0 10px 0;
 }
 
 /* New Style not related to myorcid3 */
