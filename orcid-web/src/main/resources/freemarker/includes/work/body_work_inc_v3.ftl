@@ -37,6 +37,7 @@
 		        <!-- Settings -->
 		        <div class="col-md-3 col-sm-3 col-xs-12 workspace-toolbar">	        	
 		        	<#if !(isPublicProfile??)>
+		        	    
 		        		<!-- Privacy bar -->
 						<ul class="workspace-private-toolbar">
 						 	<li>
@@ -52,6 +53,10 @@
 			                	limitedClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'LIMITED', $event)" 
 			                	privateClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PRIVATE', $event)"/>
 			                </li>
+			             </ul>
+			             <div ng-show="showBulkEdit">
+			                <input type="checkbox" ng-model="bulkEditMap[group.getActive().putCode.value]"></input>
+			             </div>
 			        </#if>				
 				</div>
 	        </div>

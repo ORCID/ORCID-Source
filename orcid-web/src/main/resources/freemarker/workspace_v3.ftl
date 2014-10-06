@@ -281,9 +281,28 @@
 											<@orcid.msg 'workspace.bibtexImporter.link_bibtex'/>
 										</a>	        				
 			        				</li>
+			        				<li>
+			        				    <a class="action-option works manage-button" ng-click="toggleBulkEdit()">
+											<span class="glyphicons magic bibtex-wizard"></span>Bulk Edit
+										</a>
+			        				</li>
 								</ul>								
 							</div>
 						</div>					
+					</div>
+					<div ng-show="showBulkEdit" ng-cloak>
+					   <lable>Bulk Edit</lable>
+					   <button ng-click="bulkChangeAll(true)">select all</button> <button ng-click="bulkChangeAll(false)">deselect all</button>
+					   							<@orcid.privacyToggle2 angularModel="groupPrivacy()" 
+							    questionClick=""
+							    clickedClassCheck=""
+								publicClick="setBulkGroupPrivacy('PUBLIC', $event)" 
+			                	limitedClick="setBulkGroupPrivacy('LIMITED', $event)" 
+			                	privateClick="setBulkGroupPrivacy('PRIVATE', $event)"/>
+			                	
+			            
+			            <a ng-click="deleteBulkConfirm()" class="ignore glyphicon glyphicon-trash" title="Ignore"></a>
+					   
 					</div>
 					<div ng-show="showBibtexImportWizard" ng-cloak class="bibtex-box">
 						<div class="grey-box bottomBuffer box-border" ng-show="canReadFiles" ng-cloak>
@@ -412,6 +431,19 @@
 		<div>
 	<div>	
 </script>
+
+<script type="text/ng-template" id="bulk-delete-modal">
+	<div class="lightbox-container">
+		<div class="row">
+			<div class="col-md-12 col-sm-12 col-xs-12">
+				<h3>Please confirm deleting {{bulkDeleteCount}} items </h3>
+				<button class="btn btn-danger" ng-click="bulkDeleteFunction()"><@orcid.msg 'freemarker.btnDelete'/></button> 
+				<a ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel'/></a>
+			<div>
+		<div>
+	<div>	
+</script>
+
 
 <script type="text/ng-template" id="import-wizard-modal">
     <#if ((workImportWizards)??)>		
