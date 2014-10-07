@@ -4577,6 +4577,143 @@ ul.toggle-menu li:hover ul {
 	background-color: rgb(166, 206, 57);
 }
 
+/* Bulk Edit control */
+
+.bulk-edit{
+	height: 60px;
+}
+
+.custom-control-x {
+	position: absolute;
+	background: #FFF;
+	width: 60px;
+}
+
+.bulk-edit #custom-control-x {
+	-webkit-border-radius: 2px;
+	border-radius: 2px;
+	cursor: default;
+	font-size: 11px;
+	font-weight: bold;
+	text-align: center;
+	white-space: nowrap;
+	margin-right: 16px;
+	height: 30px;
+	line-height: 27px;
+	min-width: 60px;
+	width: 62px;
+	outline: 0;
+	padding: 0 8px;
+	border: 1px solid rgba(0,0,0,0.2);
+	color: #444;
+	padding: 0;
+	margin: 0;
+	-moz-user-select: -moz-none;   
+    -webkit-user-select: none;
+    user-select: none;
+    display: block;
+    float: left;
+}
+
+.bulk-edit .custom-control-active{	
+	background-image: -webkit-linear-gradient(top,#eee, #e0e0e0);	
+	box-shadow: inset 0 1px 2px rgba(0,0,0,.1);
+	background-color: transparent;
+	border-color: #CCC;
+	color: #333;	
+}
+
+.bulk-edit .custom-control-hover{
+	-webkit-box-shadow: 0 1px 1px rgba(0,0,0,0.2);
+	box-shadow: 0 1px 1px rgba(0,0,0,0.2);	
+	border-color: #CaCaCa;
+}
+
+
+.bulk-edit .custom-checkbox-parent{
+	-webkit-border-radius: 0;
+	border-radius: 0;
+	background-color: rgba(255,255,255,.05);
+	border: 1px solid #c6c6c6;
+	border: 1px solid rgba(155,155,155,.57);
+	font-size: 1px;
+	height: 11px;
+	margin: 0 4px 0 1px;
+	outline: 0;
+	vertical-align: text-bottom;
+	width: 11px;
+	position: relative;
+	display: inline-block;
+}
+
+
+.bulk-edit .custom-checkbox{
+	height: 15px;
+	outline: 0;
+	width: 15px;
+	left: -5px;
+	position: relative;
+	top: -5px;
+	font-weight: bold;
+	text-align: center;
+	white-space: nowrap;	
+	line-height: 27px;
+}
+
+.bulk-edit .custom-checkbox-active{
+	background-image: url('../img/checkmark.png');	
+	height: 15px;
+	outline: 0;
+	width: 21px;	
+	position: relative;			
+	font-weight: bold;
+	text-align: center;
+	white-space: nowrap;
+	line-height: 27px;
+	height: 21px;
+	outline: 0;	
+	top: -7px;
+	display: block;
+}
+
+.bulk-edit .custom-control-arrow{
+	opacity: .55;
+	margin-top: 3px;
+	vertical-align: middle;
+	background: url('../img/arrow_down.png') no-repeat 0 1px;
+	position: relative;
+	display: inline-block;
+	height: 6px;
+	width: 7px;
+	font-size: 0;
+	margin-left: 3px;	
+}
+
+.bulk-edit #special-menu{
+	text-align: left;
+	display: none;
+}
+
+.bulk-edit .dropdown-custom-menu{
+	background: #FFF;
+}
+
+.bulk-edit .bulk-edit-privacy-control{
+	margin-left: 15px;
+	displat: block;
+	float: left;
+}
+
+.bulk-edit .bulk-edit-delete{
+	margin: 6px 0 0 15px;
+	display: block;
+	float: left;
+}
+
+.block{ /* Forcing block */
+	display: block !important;
+}
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */

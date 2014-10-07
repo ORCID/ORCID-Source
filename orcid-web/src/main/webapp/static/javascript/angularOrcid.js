@@ -3685,6 +3685,13 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
 	$scope.bibtexCancelLink = false;
 	$scope.bibtextWork = false;
 	$scope.bibtextWorkIndex = null;
+	$scope.checked = false;
+	$scope.displayMenu = false;
+	
+	$scope.toggleSelectMenu = function(){
+		$scope.displayMenu = !$scope.displayMenu;
+		console.log($scope.displayMenu);
+	};
 
 	$scope.toggleBulkEdit = function() {
 		if (!$scope.showBulkEdit) {
@@ -3701,9 +3708,24 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
 				func(worksSrvc.groups[idx].getActive().putCode.value);
 	};
 	
+	$scope.swapbulkChangeAll = function() {	
+		for (var idx in worksSrvc.groups){				
+			if ($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value] == true){
+				$scope.checked = false;
+				$scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value] = false;					
+			}else{
+				$scope.checked = true;								
+				$scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value] = true;
+			}
+		}
+		$scope.displayMenu = false;
+	};
+	
 	$scope.bulkChangeAll = function(bool) {
-		for (var idx in worksSrvc.groups)
+		$scope.checked = bool;
+		for (var idx in worksSrvc.groups){
 			$scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value] = bool;
+		}
 	};
 	
 	$scope.bulkGroupPrivacy = function () {

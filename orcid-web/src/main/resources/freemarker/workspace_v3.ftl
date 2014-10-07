@@ -290,20 +290,54 @@
 							</div>
 						</div>					
 					</div>
+					
+					<!-- Bulk Edit -->
 					<div ng-show="showBulkEdit" ng-cloak>
-					   <lable>Bulk Edit</lable>
-					   <button ng-click="bulkChangeAll(true)">select all</button> <button ng-click="bulkChangeAll(false)">deselect all</button>
-					   							<@orcid.privacyToggle2 angularModel="groupPrivacy()" 
-							    questionClick=""
-							    clickedClassCheck=""
-								publicClick="setBulkGroupPrivacy('PUBLIC', $event)" 
-			                	limitedClick="setBulkGroupPrivacy('LIMITED', $event)" 
-			                	privateClick="setBulkGroupPrivacy('PRIVATE', $event)"/>
-			                	
-			            
-			            <a ng-click="deleteBulkConfirm()" class="ignore glyphicon glyphicon-trash" title="Ignore"></a>
-					   
+						<div class="grey-box box-border bulk-edit">
+							<div id="custom-control-x">
+								<div class="custom-control-x" >	
+									<div class="dropdown-custom-menu" id="dropdown-custom-menu" ng-click="toggleSelectMenu()">										
+										<span class="custom-checkbox-parent">
+											<div class="custom-checkbox" id="custom-checkbox" ng-click="swapbulkChangeAll();$event.stopPropagation();" ng-class="{'custom-checkbox-active':checked == true}"></div>
+										</span>										
+										<div class="custom-control-arrow" ng-click="toggleSelectMenu();$event.stopPropagation();"></div>
+									</div>
+									<div>
+										<ul class="dropdown-menu" role="menu" id="special-menu" ng-class="{'block': displayMenu == true}">
+								          <li><a href="" ng-click="bulkChangeAll(true);toggleSelectMenu()">Select all</a></li>
+								          <li><a href="" ng-click="bulkChangeAll(false);toggleSelectMenu()">Deselect all</a></li>							          							          
+								        </ul>			
+									</div>
+								</div>
+							</div>															
+							<div class="bulk-edit-privacy-control">
+								<@orcid.privacyToggle2 angularModel="groupPrivacy()" 
+									    questionClick=""
+									    clickedClassCheck=""
+										publicClick="setBulkGroupPrivacy('PUBLIC', $event)" 
+					                	limitedClick="setBulkGroupPrivacy('LIMITED', $event)" 
+					                	privateClick="setBulkGroupPrivacy('PRIVATE', $event)"/>
+					 		</div>
+					 		<div class="bulk-edit-delete">
+								<a ng-click="deleteBulkConfirm()" class="ignore glyphicon glyphicon-trash" title="Ignore"></a>
+							</div>								
+						
+						   <!-- 						   
+						   <button ng-click="bulkChangeAll(true)">select all</button> <button ng-click="bulkChangeAll(false)">deselect all</button>
+						   							<@orcid.privacyToggle2 angularModel="groupPrivacy()" 
+								    questionClick=""
+								    clickedClassCheck=""
+									publicClick="setBulkGroupPrivacy('PUBLIC', $event)" 
+				                	limitedClick="setBulkGroupPrivacy('LIMITED', $event)" 
+				                	privateClick="setBulkGroupPrivacy('PRIVATE', $event)"/>
+				                	
+				            
+				            <a ng-click="deleteBulkConfirm()" class="ignore glyphicon glyphicon-trash" title="Ignore"></a>
+				             -->
+					   </div>
 					</div>
+					
+					<!-- Bibtex Importer Wizard -->
 					<div ng-show="showBibtexImportWizard" ng-cloak class="bibtex-box">
 						<div class="grey-box bottomBuffer box-border" ng-show="canReadFiles" ng-cloak>
 						   <p class="bottomBuffer">
