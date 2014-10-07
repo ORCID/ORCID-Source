@@ -65,7 +65,11 @@
 	<div class="oid">
 		<p class="orcid-id-container">
 	    	<span class="mini-orcid-icon"></span>
-	    	<a href="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" id="orcid-id" class="orcid-id" title="Click for public view of ORCID iD">${baseUriHttp}/${(profile.orcidIdentifier.path)!}</a>
+	     		<#if request.requestURI?ends_with("my-orcid3")>
+       				<a href="${baseUriHttp}/${(profile.orcidIdentifier.path)!}?v=3" id="orcid-id" class="orcid-id" title="Click for public view of ORCID iD">${baseUriHttp}/${(profile.orcidIdentifier.path)!}</a>
+    			<#else>
+       				<a href="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" id="orcid-id" class="orcid-id" title="Click for public view of ORCID iD">${baseUriHttp}/${(profile.orcidIdentifier.path)!}</a>
+       			</#if>	   
 		</p>
 		<#if RequestParameters['delegates']??>
 	   <div ng-controller="SwitchUserCtrl" class="dropdown id-banner-container" ng-show="unfilteredLength" ng-cloak>

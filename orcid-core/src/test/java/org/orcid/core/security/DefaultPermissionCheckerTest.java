@@ -16,37 +16,39 @@
  */
 package org.orcid.core.security;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.orcid.core.manager.ProfileEntityManager;
-import org.orcid.core.oauth.OrcidOAuth2Authentication;
-import org.orcid.core.oauth.OrcidOauth2UserAuthentication;
-import org.orcid.jaxb.model.message.OrcidMessage;
-import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.test.DBUnitTest;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.oauth2.provider.AuthorizationRequest;
-import org.springframework.security.oauth2.provider.DefaultAuthorizationRequest;
-import org.springframework.security.oauth2.provider.OAuth2Authentication;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.annotation.Transactional;
+import static org.junit.Assert.fail;
+
+import java.security.AccessControlException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-import java.security.AccessControlException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.oauth.OrcidOAuth2Authentication;
+import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
+import org.orcid.core.oauth.OrcidOauth2UserAuthentication;
+import org.orcid.jaxb.model.message.OrcidMessage;
+import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.test.DBUnitTest;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.provider.DefaultAuthorizationRequest;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Declan Newman (declan) Date: 27/04/2012
@@ -60,15 +62,18 @@ public class DefaultPermissionCheckerTest extends DBUnitTest {
 
     @Resource(name = "profileEntityManager")
     private ProfileEntityManager profileEntityManager;
+    
+    @Resource
+    private OrcidOauth2TokenDetailService tokenDetailService; 
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
-        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml"), null);
+        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml"), null);
     }
 
     @AfterClass
     public static void removeDBUnitData() throws Exception {
-        removeDBUnitData(Arrays.asList("/data/ClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/SecurityQuestionEntityData.xml"), null);
+        removeDBUnitData(Arrays.asList("/data/Oauth2TokenDetailsData.xml", "/data/ClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/SecurityQuestionEntityData.xml"), null);
     }
 
     @Test
@@ -148,7 +153,27 @@ public class DefaultPermissionCheckerTest extends DBUnitTest {
         ScopePathType requiredScope = ScopePathType.ORCID_BIO_READ_LIMITED;
         defaultPermissionChecker.checkPermissions(oAuth2Authentication, requiredScope, "4444-4444-4444-4447");
     }
+    
+    @Test
+    @Transactional
+    @Rollback
+    public void checkRemoveUserGrantWriteScopePastValitityForNonPersistentTokens() {
+        OrcidOauth2TokenDetail token = tokenDetailService.findIgnoringDisabledByTokenValue("00000001-d80f-4afc-8f95-9b48d28aaadb");
+        DefaultPermissionChecker customPermissionChecker = (DefaultPermissionChecker) defaultPermissionChecker;
+        if(!customPermissionChecker.removeUserGrantWriteScopePastValitity(token))
+            fail();
+    }
 
+    @Test
+    @Transactional
+    @Rollback
+    public void checkRemoveUserGrantWriteScopePastValitityForPersistentTokens() {
+        OrcidOauth2TokenDetail token = tokenDetailService.findIgnoringDisabledByTokenValue("00000002-d80f-4afc-8f95-9b48d28aaadb");
+        DefaultPermissionChecker customPermissionChecker = (DefaultPermissionChecker) defaultPermissionChecker;
+        if(customPermissionChecker.removeUserGrantWriteScopePastValitity(token))
+            fail();
+    }
+    
     private OrcidMessage getOrcidMessage() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(OrcidMessage.class);
         Unmarshaller unmarshaller = context.createUnmarshaller();
