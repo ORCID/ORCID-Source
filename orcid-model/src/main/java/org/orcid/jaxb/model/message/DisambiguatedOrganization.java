@@ -27,6 +27,7 @@ import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 /**
@@ -61,6 +62,8 @@ public class DisambiguatedOrganization implements Serializable {
     protected String disambiguatedOrganizationIdentifier;
     @XmlElement(name = "disambiguation-source", required = true)
     protected String disambiguationSource;
+    @XmlTransient
+    protected Long id;
 
     /**
      * Gets the value of the disambiguatedOrganizationIdentifier property.
@@ -102,6 +105,14 @@ public class DisambiguatedOrganization implements Serializable {
      */
     public void setDisambiguationSource(String value) {
         this.disambiguationSource = value;
+    }    
+    
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     @Override

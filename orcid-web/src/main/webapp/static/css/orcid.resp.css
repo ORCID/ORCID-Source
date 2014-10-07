@@ -3913,8 +3913,9 @@ ul.sso-options li span {
 }
 
 /* OAuth Confirm Access Page */
-.confirm-oauth-access .id-banner {
-	margin-top: 25px;
+.confirm-oauth-access .top-header .logo h1{
+	margin-top: 5px;
+	padding-top: 0;
 }
 
 .confirm-oauth-access .top-header {
@@ -4187,6 +4188,7 @@ multiselect .dropdown-menu .dropdown-menu-list {
 .app-client-name h3{
 	color: #A3CD39;
 	cursor: pointer;
+	margin: 0;
 }
 
 .app-client-name h3 a{
@@ -4202,7 +4204,7 @@ multiselect .dropdown-menu .dropdown-menu-list {
 }
 
 .app-client-description p{
-	margin-bottom: 30px;
+	margin-bottom: 15px;
 }
 
 .oauth-bullet {
@@ -4218,9 +4220,10 @@ ul.oauth-scopes{
 	margin: 10px 0 10px 0;
 }
 
-ul.oauth-scopes li{	
-	list-style-type: none;
-	padding: 5px 0 0 0;
+ul.oauth-scopes li{
+	list-style-type: none;	
+	position: relative;
+	padding: 0;
 }
 
 .form-control-feedback-oauth{
@@ -4255,7 +4258,7 @@ ul.oauth-scopes li{
 	display: block;
 	width: 100%;
 	border: 1px dotted #a6ce39;
-	margin: 0 0 15px 0;
+	margin: 0 0 10px 0;
 }
 
 /* New Style not related to myorcid3 */
@@ -4345,6 +4348,27 @@ ul.oauth-scopes li{
 .st_linkedin_custom:hover:before{
 	content: "\E018";
 	color: #a6ce39;
+}
+
+.confirm-oauth-access .popover{
+	top: 22px;
+	left: 9px;
+}
+
+.confirm-oauth-access .popover.bottom .arrow{
+	left: 17px;
+}
+
+.confirm-oauth-access .inline{
+	display: block !important;
+}
+
+.confirm-oauth-access .scopeLongDesc{
+	display: none;
+}
+
+.confirm-oauth-access ul.oauth-scopes li{
+	cursor: pointer;
 }
 
 

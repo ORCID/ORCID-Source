@@ -52,18 +52,16 @@
 		</ul>
 	</div>
 	<div class="col-md-12 col-sm-12 col-xs-12">
-		<ul class="oauth-scopes" id="scopes-ul">		
+		<ul class="oauth-scopes" id="scopes-ul">
 			<#list scopes as scope>
-				<li>				
-					<#if scope.value()?ends_with("/create")>
-						<@orcid.msg '${scope.declaringClass.name}.${scope.name()}'/>
-					<#elseif scope.value()?ends_with("/update")>
-						<@orcid.msg '${scope.declaringClass.name}.${scope.name()}'/>
-					<#elseif scope.value()?ends_with("/read-limited")>
-						<@orcid.msg '${scope.declaringClass.name}.${scope.name()}'/>
-					<#else>
-						<@orcid.msg '${scope.declaringClass.name}.${scope.name()}'/>
-					</#if>	
+				<li>
+					<span ng-mouseenter="toggleLongDescription('${scope.name()}')" ng-mouseleave="toggleLongDescription('${scope.name()}')"><@orcid.msg '${scope.declaringClass.name}.${scope.name()}'/></span>
+					<div class="popover bottom scopeLongDesc" ng-class="{'popover bottom inline':showLongDescription['${scope.name()}'] == true}">
+						<div class="arrow"></div>	
+						<div class="lightbox-container">
+							<@orcid.msg '${scope.declaringClass.name}.${scope.name()+".longDesc"}'/>
+						</div>
+					</div>	
 				</li>
 		   	</#list>				
 		</ul>

@@ -16,12 +16,22 @@
  */
 package org.orcid.core.security;
 
+import java.security.AccessControlException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.annotation.Resource;
+
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.oauth.service.OrcidRandomValueTokenServices;
-import org.orcid.jaxb.model.message.Orcid;
 import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -36,25 +46,11 @@ import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
-import java.security.AccessControlException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
 /**
  * @author Declan Newman (declan) Date: 27/04/2012
  */
 @Component("defaultPermissionChecker")
 public class DefaultPermissionChecker implements PermissionChecker {
-
-    // Initialise to 01-01-1970 (I was only 9 months old ;-))
-    private static final Date EXPIRES_DATE = new Date(0L);
 
     @Resource(name = "tokenServices")
     private DefaultTokenServices defaultTokenServices;
@@ -246,28 +242,31 @@ public class DefaultPermissionChecker implements PermissionChecker {
     public boolean removeUserGrantWriteScopePastValitity(OrcidOauth2TokenDetail tokenDetail) {
         boolean scopeRemoved = false;
         if (tokenDetail != null && tokenDetail.getScope() != null) {
-            Set<String> scopes = OAuth2Utils.parseParameterList(tokenDetail.getScope());
-            List<String> removeScopes = new ArrayList<String>();
-            for (String scope : scopes) {
-                if (scope != null && !scope.isEmpty()) {
-                    ScopePathType scopePathType = ScopePathType.fromValue(scope);
-                    if (scopePathType.isUserGrantWriteScope()) {
-                        Date now = new Date();
-                        OrcidRandomValueTokenServices orcidRandomValueTokenServices = (OrcidRandomValueTokenServices) defaultTokenServices;
-                        if (now.getTime() > tokenDetail.getDateCreated().getTime() + (orcidRandomValueTokenServices.getWriteValiditySeconds() * 1000)) {
-                            removeScopes.add(scope);
-                            scopeRemoved = true;
+            //Clean the scope if it is not a persistent token
+            if(!tokenDetail.isPersistent()) {
+                Set<String> scopes = OAuth2Utils.parseParameterList(tokenDetail.getScope());
+                List<String> removeScopes = new ArrayList<String>();
+                for (String scope : scopes) {
+                    if (scope != null && !scope.isEmpty()) {
+                        ScopePathType scopePathType = ScopePathType.fromValue(scope);
+                        if (scopePathType.isUserGrantWriteScope()) {
+                            Date now = new Date();
+                            OrcidRandomValueTokenServices orcidRandomValueTokenServices = (OrcidRandomValueTokenServices) defaultTokenServices;
+                            if (now.getTime() > tokenDetail.getDateCreated().getTime() + (orcidRandomValueTokenServices.getWriteValiditySeconds() * 1000)) {
+                                removeScopes.add(scope);
+                                scopeRemoved = true;
+                            }
                         }
                     }
                 }
-            }
-            if (scopeRemoved) {
-                for (String scope : removeScopes)
-                    scopes.remove(scope);
-                tokenDetail.setScope(OAuth2Utils.formatParameterList(scopes));
-                orcidOauthTokenDetailService.saveOrUpdate(tokenDetail);
-                return true;
-            }
+                if (scopeRemoved) {
+                    for (String scope : removeScopes)
+                        scopes.remove(scope);
+                    tokenDetail.setScope(OAuth2Utils.formatParameterList(scopes));
+                    orcidOauthTokenDetailService.saveOrUpdate(tokenDetail);
+                    return true;
+                }
+            }            
         }
         return false;
     }

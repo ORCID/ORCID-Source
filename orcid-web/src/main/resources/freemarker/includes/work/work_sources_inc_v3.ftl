@@ -53,7 +53,7 @@
 				                <span class="glyphicon glyphicon-remove"></span> Hide additional sources
 				            </a>
 				        </li>
-				        <li>
+				        <li class="show-more-info-tab-container">
 					        <div class="show-more-info-tab work-tab">			
 								<a href="" ng-show="!moreInfo[group.getActive().putCode.value]" ng-click="showDetailsMouseClick(group.getActive().putCode.value,$event);"><span class="glyphicon glyphicon-chevron-down"></span><@orcid.msg 'manage.developer_tools.show_details'/></a>									
 								<a href="" ng-show="moreInfo[group.getActive().putCode.value]" ng-click="showDetailsMouseClick(group.getActive().putCode.value,$event);"><span class="glyphicon glyphicon-chevron-up"></span><@orcid.msg 'manage.developer_tools.hide_details'/></a>
