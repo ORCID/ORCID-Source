@@ -6713,6 +6713,7 @@ function OauthAuthorizationController($scope, $compile, $sce, commonSrvc){
 	$scope.requestScopes = null;
 	$scope.emailTrustAsHtmlErrors = [];
 	$scope.enablePersistentToken = true;
+	$scope.showLongDescription = {};	
 	
 	$scope.toggleClientDescription = function() {
 		$scope.showClientDescription = !$scope.showClientDescription;		
@@ -7057,7 +7058,11 @@ function OauthAuthorizationController($scope, $compile, $sce, commonSrvc){
 	$scope.showToLoginForm = function() {		
 		$scope.authorizationForm.userName.value=$scope.registrationForm.email.value;
 		$scope.showRegisterForm = false;		
-	};				
+	};
+	
+	$scope.toggleLongDescription = function(orcid_scope) {
+		$scope.showLongDescription[orcid_scope] = !$scope.showLongDescription[orcid_scope];
+	}
 };
 
 
