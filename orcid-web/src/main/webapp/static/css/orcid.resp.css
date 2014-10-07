@@ -4215,12 +4215,12 @@ multiselect .dropdown-menu .dropdown-menu-list {
 
 ul.oauth-scopes{
 	padding: 0;
-	margin: 10px 0 10px 20px;
+	margin: 10px 0 10px 0;
 }
 
 ul.oauth-scopes li{	
-	list-style-type: circle;
-	padding: 5px 0 0 10px;
+	list-style-type: none;
+	padding: 5px 0 0 0;
 }
 
 .form-control-feedback-oauth{
