@@ -38,6 +38,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.persistence.dao.ClientRedirectDao;
@@ -53,7 +54,7 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * 
  * @author Angel Montenegro
- *
+ * 
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-oauth-orcid-api-client-context.xml" })
@@ -65,15 +66,15 @@ public class OauthSignInPersistentParametersTests extends DBUnitTest {
     private static final Pattern OTHER_PATTERN = Pattern.compile("other=(.+)");
     private static final Pattern MADE_UP_PATTERN = Pattern.compile("made_up_param_not_passed=(.+)");
     private static final String DEFAULT = "default";
-    
+
     private WebDriver webDriver;
 
     @Resource
     private ClientRedirectDao clientRedirectDao;
-    
+
     @Resource
     private ClientDetailsManager clientDetailsManager;
-    
+
     @Resource
     private ProfileDao profileDao;
 
@@ -103,7 +104,7 @@ public class OauthSignInPersistentParametersTests extends DBUnitTest {
         if (clientRedirectDao.find(clientRedirectUriPk) == null) {
             clientDetailsManager.addClientRedirectUri(CLIENT_ID, redirectUri);
         }
-        
+
         webDriver.get(webBaseUrl + "/signout");
 
         // Update last modified to force cache eviction (because DB unit deletes
@@ -120,20 +121,27 @@ public class OauthSignInPersistentParametersTests extends DBUnitTest {
     }
 
     @Test
-    public void stateParamIsPersistentAndReturnedTest() throws InterruptedException {        
-        webDriver.get(String.format("%s/oauth/authorize?client_id=9999-9999-9999-9994&response_type=code&scope=/orcid-profile/read-limited&redirect_uri=%s&state=MyState&made_up_param_not_passed=true&other=present", webBaseUrl, redirectUri));
-        //Switch to the login form
-        WebElement switchFromLink = webDriver.findElement(By.id("in-register-switch-form"));
+    public void stateParamIsPersistentAndReturnedTest() throws InterruptedException {
+        webDriver
+                .get(String
+                        .format("%s/oauth/authorize?client_id=9999-9999-9999-9994&response_type=code&scope=/orcid-profile/read-limited&redirect_uri=%s&state=MyState&made_up_param_not_passed=true&other=present",
+                                webBaseUrl, redirectUri));
+        // Switch to the login form
+        By switchFromLinkLocator = By.id("in-register-switch-form");
+        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(switchFromLinkLocator));
+        WebElement switchFromLink = webDriver.findElement(switchFromLinkLocator);
         switchFromLink.click();
-        Thread.sleep(500);
-        //Fill the form
-        WebElement userId = webDriver.findElement(By.id("userId"));
-        userId.sendKeys("user_to_test@user.com");
-        WebElement password = webDriver.findElement(By.id("password"));
-        password.sendKeys("password");
-        WebElement submitButton = webDriver.findElement(By.id("authorize-button")); 
+
+        // Fill the form
+        By userIdElementLocator = By.id("userId");
+        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(userIdElementLocator));
+        WebElement userIdElement = webDriver.findElement(userIdElementLocator);
+        userIdElement.sendKeys("user_to_test@user.com");
+        WebElement passwordElement = webDriver.findElement(By.id("password"));
+        passwordElement.sendKeys("password");
+        WebElement submitButton = webDriver.findElement(By.id("authorize-button"));
         submitButton.click();
-        
+
         (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
             public Boolean apply(WebDriver d) {
                 return d.getTitle().equals("ORCID Playground");
@@ -141,17 +149,17 @@ public class OauthSignInPersistentParametersTests extends DBUnitTest {
         });
         String currentUrl = webDriver.getCurrentUrl();
         Matcher matcher = AUTHORIZATION_CODE_PATTERN.matcher(currentUrl);
-        //Check the auth code is present
+        // Check the auth code is present
         assertTrue(matcher.find());
         String authorizationCode = matcher.group(1);
         assertNotNull(authorizationCode);
-        //Check the state param is present
+        // Check the state param is present
         matcher = STATE_PATTERN.matcher(currentUrl);
         assertTrue(matcher.find());
         String stateParam = matcher.group(1);
         assertNotNull(stateParam);
         assertEquals("MyState", stateParam);
-        
+
         matcher = OTHER_PATTERN.matcher(currentUrl);
         assertFalse(matcher.find());
         matcher = MADE_UP_PATTERN.matcher(currentUrl);
