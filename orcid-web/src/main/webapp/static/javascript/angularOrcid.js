@@ -119,6 +119,10 @@ GroupedActivities.prototype.getActive = function() {
 	return this.activities[this.activePutCode];
 };
 
+GroupedActivities.prototype.getDefault = function() {
+	return this.activities[this.defaultPutCode];
+};
+
 GroupedActivities.prototype.getByPut = function(putCode) {
 	return this.activities[putCode];
 };
@@ -3769,6 +3773,53 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
 	$scope.deleteContributor = function(obj) {
 		var index = $scope.editWork.contributors.indexOf(obj);
 		$scope.editWork.contributors.splice(index,1);
+	};
+
+	$scope.userIsSource = function(work) {
+		if (work.workSource.value == orcidVar.orcidId)
+			return true;
+	};
+	
+	$scope.hasEIs = function(work) {
+		if (work.workExternalIdentifiers != null)
+			if (work.workExternalIdentifiers.length>0)
+				return true;
+		return false;
+	};
+
+	$scope.canBeCombined = function(work) {
+		if ($scope.userIsSource(work))
+			return true;
+		return $scope.hasEIs(work);
+	};
+
+	$scope.combined = function(work1, work2) {
+		if ($scope.userIsSource(work1)) {
+			// add all identiifers
+		} else if ($scope.userIsSource(work2)) {
+		    // 
+		} else {
+			var newWork = JSON.parse(JSON.stringify(worksSrvc.details[putCode])); 
+		}	
+		$scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
+		
+	};
+	
+	$scope.showCombineMatches = function(work1) {
+		$scope.combineWork = work1;
+		$.colorbox({	    	
+	    	scrolling: true,
+	        html: $compile($('#combine-work-template').html())($scope),	        
+	        onLoad: function() {$('#cboxClose').remove();},
+			// start the colorbox off with the correct width
+			width: formColorBoxResize(),
+			onComplete: function() {$.colorbox.resize();},
+	        onClosed: function() {
+	        	$scope.closeAllMoreInfo();
+	    		$scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
+	        }
+	    });		
+		return false;
 	};
 
 	$scope.showAddWorkModal = function(){

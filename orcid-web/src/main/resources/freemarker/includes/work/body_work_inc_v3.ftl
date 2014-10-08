@@ -52,7 +52,10 @@
 			                	limitedClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'LIMITED', $event)" 
 			                	privateClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PRIVATE', $event)"/>
 			                </li>
-			        </#if>				
+			        </#if>
+			        <div ng-show="canBeCombined(group.getActive())">
+			             <a ng-click="showCombineMatches(group.getDefault())">combined duplicates</a>
+			        </div>				
 				</div>
 	        </div>
 	        
