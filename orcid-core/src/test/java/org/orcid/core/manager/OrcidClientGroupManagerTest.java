@@ -305,7 +305,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         // Add one creator client to a basic group should fail
         try {
             OrcidClient orcidClient = orcidClientGroupManager.createAndPersistClientProfile(createdGroup.getGroupOrcid(), client1);
-            assertEquals(orcidClient.getType(), ClientType.UPDATER);
+            assertEquals(ClientType.UPDATER, orcidClient.getType());
         } catch (OrcidClientGroupManagementException e) {
 
         }

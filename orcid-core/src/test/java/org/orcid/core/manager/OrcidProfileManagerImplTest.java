@@ -187,7 +187,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         clientDetails.setId(applicationProfile.getOrcidIdentifier().getPath());
         ProfileEntity applicationProfileEntity = profileDao.find(applicationProfile.getOrcidIdentifier().getPath());
         profileDao.refresh(applicationProfileEntity);
-        clientDetails.setProfileEntity(applicationProfileEntity);
+        clientDetails.setGroupProfile(applicationProfileEntity);
         clientDetailsManager.merge(clientDetails);
 
         OrcidOauth2TokenDetail token = new OrcidOauth2TokenDetail();

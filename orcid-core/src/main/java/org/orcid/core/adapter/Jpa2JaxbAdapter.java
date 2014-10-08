@@ -22,6 +22,7 @@ import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
@@ -40,7 +41,7 @@ public interface Jpa2JaxbAdapter {
 
     OrcidClientGroup toOrcidClientGroup(ProfileEntity profileEntity);
 
-    OrcidClient toOrcidClient(ProfileEntity profileEntity);
+    OrcidClient toOrcidClient(ClientDetailsEntity clientDetailsEntity);
     
     OrcidWork getOrcidWork(ProfileWorkEntity profileWorkEntity);
     

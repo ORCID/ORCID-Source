@@ -65,8 +65,13 @@ public class RemoveOrphanClients {
         List<ClientDetailsEntity> clientDetailsList = clientDetailsDao.getAll();
         for (ClientDetailsEntity clientDetailsEntity : clientDetailsList) {
             LOG.info("Checking client: {}", clientDetailsEntity.getId());
-            if (!dryRun) {
-                // XXX Remove the client
+            if (clientDetailsEntity.getGroupProfile() == null) {
+                LOG.info("Found orphan client: {}", clientDetailsEntity.getId());
+                if (!dryRun) {
+                    // Remove the client
+                    LOG.info("Removing orphan client: {}", clientDetailsEntity.getId());
+                    clientDetailsDao.remove(clientDetailsEntity.getId());
+                }
             }
         }
     }

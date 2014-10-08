@@ -49,14 +49,14 @@ public class OrcidOauth2AuthorisationDetailsDaoTest extends DBUnitTest {
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
-        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SubjectEntityData.xml", "/data/ProfileEntityData.xml",
-                "/data/ClientDetailsEntityData.xml", "/data/OrcidOauth2AuthorisationDetailsData.xml"), null);
+        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SubjectEntityData.xml", "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml",
+                "/data/ClientDetailsEntityData.xml", "/data/OrcidOauth2AuthorisationDetailsData.xml"));
     }
 
     @AfterClass
     public static void removeDBUnitData() throws Exception {
         removeDBUnitData(Arrays.asList("/data/OrcidOauth2AuthorisationDetailsData.xml", "/data/ClientDetailsEntityData.xml", "/data/ProfileEntityData.xml",
-                "/data/SubjectEntityData.xml", "/data/SecurityQuestionEntityData.xml"), null);
+                "/data/SubjectEntityData.xml", "/data/SecurityQuestionEntityData.xml"));
     }
 
     @Test
@@ -147,7 +147,7 @@ public class OrcidOauth2AuthorisationDetailsDaoTest extends DBUnitTest {
 
         for (OrcidOauth2TokenDetail detail : all) {
             ClientDetailsEntity clientDetailsEntity = detail.getClientDetailsEntity();
-            List<OrcidOauth2TokenDetail> allForClient = orcidOauth2TokenDetailDao.findByClientId(clientDetailsEntity.getProfileEntity().getId());
+            List<OrcidOauth2TokenDetail> allForClient = orcidOauth2TokenDetailDao.findByClientId(clientDetailsEntity.getId());
             assertEquals(1, allForClient.size());
         }
     }

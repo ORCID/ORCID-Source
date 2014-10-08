@@ -19,6 +19,7 @@ package org.orcid.core.manager;
 import java.util.List;
 import java.util.Set;
 
+import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
@@ -29,9 +30,8 @@ public interface ClientDetailsManager extends ClientDetailsService {
      * This to assist in the creation of clients from the automated client
      * creation process.
      * 
-     * @param orcid
-     *            the ORCID that will be the owner of this client. Each client
-     *            can have one, and one only profile associated with it
+     * @param groupOrcid
+     *            the ORCID that will be the owner of this client.
      * @param name
      *            The client name
      * @param description
@@ -51,14 +51,14 @@ public interface ClientDetailsManager extends ClientDetailsService {
      *            only "ROLE_CLIENT"
      * @return
      */
-    ClientDetailsEntity createClientDetails(String orcid, String name, String description, String website, Set<String> clientScopes, Set<String> clientResourceIds,
-            Set<String> clientAuthorizedGrantTypes, Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities);
+    ClientDetailsEntity createClientDetails(String groupOrcid, String name, String description, String website, ClientType clientType, Set<String> clientScopes,
+            Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes, Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities);
 
     /**
      * Creates a new {@link ClientDetailsEntity} using the component parts, and
      * not the underyling entity directly.
      * 
-     * @param orcid
+     * @param groupOrcid
      *            the ORCID that will be the owner of this client. Each client
      *            can have one, and one only profile associated with it
      * @param name
@@ -85,9 +85,9 @@ public interface ClientDetailsManager extends ClientDetailsService {
      *            only "ROLE_CLIENT"
      * @return
      */
-    ClientDetailsEntity createClientDetails(String orcid, String name, String description, String website, String clientId, String clientSecret,
-            Set<String> clientScopes, Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes, Set<RedirectUri> clientRegisteredRedirectUris,
-            List<String> clientGrantedAuthorities);
+    ClientDetailsEntity createClientDetails(String groupOrcid, String name, String description, String website, String clientId, String clientSecret,
+            ClientType clientType, Set<String> clientScopes, Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes,
+            Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities);
 
     /**
      * Create new {@link ClientDetailsEntity} using the entity object

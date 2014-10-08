@@ -17,7 +17,6 @@
 package org.orcid.core.security;
 
 import static org.junit.Assert.fail;
-
 import java.security.AccessControlException;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -68,12 +67,12 @@ public class DefaultPermissionCheckerTest extends DBUnitTest {
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
-        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml"), null);
+        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml","/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml"));
     }
 
     @AfterClass
     public static void removeDBUnitData() throws Exception {
-        removeDBUnitData(Arrays.asList("/data/Oauth2TokenDetailsData.xml", "/data/ClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/SecurityQuestionEntityData.xml"), null);
+        removeDBUnitData(Arrays.asList("/data/Oauth2TokenDetailsData.xml", "/data/ClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/SecurityQuestionEntityData.xml"));
     }
 
     @Test
@@ -118,7 +117,7 @@ public class DefaultPermissionCheckerTest extends DBUnitTest {
     public void testCheckClientPermissionsAuthenticationScopesOrcidAndOrcidMessage() throws Exception {
         Set<String> resourceIds = new HashSet<String>(Arrays.asList("orcid"));
         HashSet<GrantedAuthority> grantedAuthorities = new HashSet<GrantedAuthority>(Arrays.asList(new SimpleGrantedAuthority("ROLE_CLIENT")));
-        DefaultAuthorizationRequest request = new DefaultAuthorizationRequest("4444-4444-4444-4441", Arrays.asList("/orcid-bio/external-identifiers/create"));
+        DefaultAuthorizationRequest request = new DefaultAuthorizationRequest("APP-5555555555555555", Arrays.asList("/orcid-bio/external-identifiers/create"));
         request.setAuthorities(grantedAuthorities);
         request.setResourceIds(resourceIds);
         OAuth2Authentication oAuth2Authentication = new OrcidOAuth2Authentication(request, null, "made-up-token");

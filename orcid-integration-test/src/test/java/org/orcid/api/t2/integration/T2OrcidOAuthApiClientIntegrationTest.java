@@ -36,6 +36,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.api.common.OrcidApiConstants;
+import org.orcid.api.common.OrcidClientHelper;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.security.DefaultPermissionChecker;
@@ -57,6 +58,8 @@ import org.orcid.jaxb.model.message.Title;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.jaxb.model.message.WorkType;
+import org.orcid.persistence.dao.ClientDetailsDao;
+import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.slf4j.Logger;
@@ -66,8 +69,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.WebResource.Builder;
-
-import org.orcid.api.common.OrcidClientHelper;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiClientIntegrationTest {
@@ -79,7 +80,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
 
     @Resource(name = "defaultPermissionChecker")
     private PermissionChecker permissionChecker;
-    
+
     @Resource
     private ClientDetailsManager clientDetailsManager;
 
@@ -406,14 +407,12 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         List<OrcidWork> retrievedOrcidWorks = orcidWorksFromResponse.getEntity(OrcidMessage.class).getOrcidProfile().retrieveOrcidWorks().getOrcidWork();
         assertTrue(retrievedOrcidWorks.size() == 4);
 
-        String clientOrcid = this.clientId;
-
         for (OrcidWork work : retrievedOrcidWorks) {
             WorkTitle workTitle = work.getWorkTitle();
 
             if (workTitle != null && workTitle.getTitle() != null) {
                 if ("Single works with title".equals(workTitle.getTitle().getContent())) {
-                    assertEquals(clientOrcid, work.getWorkSource().getPath());
+                    assertEquals(this.clientId, work.getWorkSource().getPath());
                     break;
                 }
             }
@@ -505,7 +504,8 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
             ExternalIdentifiers newExternalIdentifiers = new ExternalIdentifiers();
             newExternalIdentifiers.setVisibility(Visibility.PUBLIC);
             ExternalIdSource externalIdOrcid = new ExternalIdSource();
-            externalIdOrcid.setPath(clientId);
+            // XXX Should be client ID?
+            externalIdOrcid.setPath(groupOrcid);
             ExternalIdentifier additionalIdentifer = new ExternalIdentifier();
             additionalIdentifer.setExternalIdReference(new ExternalIdReference("abc"));
             additionalIdentifer.setExternalIdOrcid(externalIdOrcid);
@@ -539,8 +539,8 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         createAccessTokenFromCredentials();
         ClientResponse bioResponse = oauthT2Client.viewBioDetailsXml(this.orcid, accessToken);
         OrcidMessage message = bioResponse.getEntity(OrcidMessage.class);
-        OrcidBio orcidBio = message.getOrcidProfile().getOrcidBio();                
-        
+        OrcidBio orcidBio = message.getOrcidProfile().getOrcidBio();
+
         OrcidHistory orcidHistory = message.getOrcidProfile().getOrcidHistory();
         assertTrue(orcidHistory != null && orcidHistory.getSource() != null);
         String orcid = orcidHistory.getSource().getSourceOrcid().getPath();
@@ -554,7 +554,8 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         ExternalIdentifiers newExternalIdentifiers = new ExternalIdentifiers();
         newExternalIdentifiers.setVisibility(Visibility.PUBLIC);
         ExternalIdSource externalIdOrcid = new ExternalIdSource();
-        externalIdOrcid.setPath(clientId);
+        // XXX Should be client ID?
+        externalIdOrcid.setPath(groupOrcid);
         ExternalIdentifier additionalIdentifer = new ExternalIdentifier();
         additionalIdentifer.setExternalIdReference(new ExternalIdReference("abc123"));
         additionalIdentifer.setExternalIdOrcid(externalIdOrcid);
@@ -598,7 +599,8 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         ExternalIdentifiers newExternalIdentifiers = new ExternalIdentifiers();
         newExternalIdentifiers.setVisibility(Visibility.PUBLIC);
         ExternalIdSource externalIdOrcid = new ExternalIdSource();
-        externalIdOrcid.setPath(clientId);
+        // XXX Should be client ID?
+        externalIdOrcid.setPath(groupOrcid);
         ExternalIdentifier additionalIdentifer = new ExternalIdentifier();
         additionalIdentifer.setExternalIdReference(new ExternalIdReference("abc"));
         additionalIdentifer.setExternalIdOrcid(externalIdOrcid);

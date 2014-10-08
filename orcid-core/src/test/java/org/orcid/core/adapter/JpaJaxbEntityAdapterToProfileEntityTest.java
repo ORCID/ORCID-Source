@@ -83,7 +83,7 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
-        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml"), null);
+        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml"));
     }
 
     @Before
@@ -98,7 +98,7 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
 
     @AfterClass
     public static void removeDBUnitData() throws Exception {
-        removeDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml"), null);
+        removeDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml"));
     }
 
     @Before
@@ -142,7 +142,7 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
         assertTrue(primaryEmail.getPrimary());
         assertTrue(primaryEmail.getCurrent());
         assertTrue(primaryEmail.getVerified());
-        assertEquals("4444-4444-4444-4446", primaryEmail.getSource().getId());
+        assertEquals("4444-4444-4444-4446", primaryEmail.getSource().getSourceId());
 
         EmailEntity nonPrimaryEmail1 = emailMap.get("josiah_carberry_1@brown.edu");
         assertNotNull(nonPrimaryEmail1);
@@ -150,7 +150,7 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
         assertFalse(nonPrimaryEmail1.getPrimary());
         assertTrue(nonPrimaryEmail1.getCurrent());
         assertFalse(nonPrimaryEmail1.getVerified());
-        assertEquals("1111-1111-1111-1115", nonPrimaryEmail1.getSource().getId());
+        assertEquals("1111-1111-1111-1115", nonPrimaryEmail1.getSource().getSourceId());
 
         EmailEntity nonPrimaryEmail2 = emailMap.get("josiah_carberry_2@brown.edu");
         assertNotNull(nonPrimaryEmail2);
@@ -158,7 +158,7 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
         assertFalse(nonPrimaryEmail2.getPrimary());
         assertFalse(nonPrimaryEmail2.getCurrent());
         assertTrue(nonPrimaryEmail2.getVerified());
-        assertEquals("1111-1111-1111-1115", nonPrimaryEmail1.getSource().getId());
+        assertEquals("1111-1111-1111-1115", nonPrimaryEmail1.getSource().getSourceId());
 
         Set<ProfileWorkEntity> profileWorkEntities = profileEntity.getProfileWorks();
         assertEquals(3, profileWorkEntities.size());

@@ -57,6 +57,7 @@ public enum OrcidType implements Serializable {
     @XmlEnumValue("user")
     USER("user"),   
     @XmlEnumValue("client")
+    @Deprecated
     CLIENT("client"),
     @XmlEnumValue("group")
     GROUP("group");

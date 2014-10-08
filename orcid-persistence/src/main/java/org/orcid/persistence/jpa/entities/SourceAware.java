@@ -24,5 +24,5 @@ package org.orcid.persistence.jpa.entities;
  * 
  */
 public interface SourceAware {
-    ProfileEntity getSource();
+   SourceEntity getSource();
 }

@@ -33,7 +33,7 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.orcid.core.manager.impl.OrcidSSOManagerImpl;
+import org.orcid.core.manager.OrcidSSOManager;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
@@ -45,7 +45,7 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * 
  * @author rcpeters
- *
+ * 
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-oauth-orcid-api-client-context.xml" })
@@ -59,20 +59,20 @@ public class PopulateOAuthSignInCodeIntegrationTest extends DBUnitTest {
     private ProfileDao profileDao;
 
     @Resource
-    OrcidSSOManagerImpl ssoManager;
+    OrcidSSOManager ssoManager;
 
     @Value("${org.orcid.web.base.url:http://localhost:8080/orcid-web}")
     private String webBaseUrl;
 
     private String redirectUri;
 
-    private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml", "/data/ProfileEntityData.xml",
-            "/data/WorksEntityData.xml", "/data/ProfileWorksEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml",
-            "/data/WebhookEntityData.xml");
+    private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
+            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ProfileWorksEntityData.xml",
+            "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml", "/data/WebhookEntityData.xml");
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
-        initDBUnitData(DATA_FILES, null);
+        initDBUnitData(DATA_FILES);
     }
 
     @Before
@@ -114,7 +114,7 @@ public class PopulateOAuthSignInCodeIntegrationTest extends DBUnitTest {
     public void emailPrePopulate() throws JSONException, InterruptedException {
         // test populating form with email that doesn't exist
         String url = getBaseUrl() + "&email=non_existent@test.com&family_names=test_family_names&given_names=test_given_name";
-        webDriver.get(url);        
+        webDriver.get(url);
         assertTrue(webDriver.findElement(By.xpath("//input[@name='email']")).getAttribute("value").equals("non_existent@test.com"));
         assertTrue(webDriver.findElement(By.xpath("//input[@name='familyNames']")).getAttribute("value").equals("test_family_names"));
         assertTrue(webDriver.findElement(By.xpath("//input[@name='givenNames']")).getAttribute("value").equals("test_given_name"));
@@ -137,7 +137,7 @@ public class PopulateOAuthSignInCodeIntegrationTest extends DBUnitTest {
     @Test
     public void orcidIdPreopulate() throws JSONException, InterruptedException {
         // populating check populating orcid
-        String url = getBaseUrl() + "&orcid=4444-4444-4444-4441";        
+        String url = getBaseUrl() + "&orcid=4444-4444-4444-4441";
         webDriver.get(url);
         assertTrue(webDriver.findElement(By.xpath("//input[@name='userId']")).getAttribute("value").equals("4444-4444-4444-4441"));
 
@@ -145,12 +145,12 @@ public class PopulateOAuthSignInCodeIntegrationTest extends DBUnitTest {
         webDriver.get(getBaseUrl() + "&email=spike@milligan.com&family_names=test_family_names&given_names=test_given_name&orcid=4444-4444-4444-4441");
         assertTrue(webDriver.findElement(By.xpath("//input[@name='userId']")).getAttribute("value").equals("4444-4444-4444-4441"));
     }
-    
+
     @Test
     public void givenAndFamilyNamesPrepopulate() throws JSONException, InterruptedException {
         // test populating form family and given names
         String url = getBaseUrl() + "&family_names=test_family_names&given_names=test_given_name";
-        webDriver.get(url);        
+        webDriver.get(url);
         assertTrue(webDriver.findElement(By.xpath("//input[@name='familyNames']")).getAttribute("value").equals("test_family_names"));
         assertTrue(webDriver.findElement(By.xpath("//input[@name='givenNames']")).getAttribute("value").equals("test_given_name"));
         // verify we don't populate signin
@@ -158,12 +158,12 @@ public class PopulateOAuthSignInCodeIntegrationTest extends DBUnitTest {
 
         // test populating form with family name
         url = getBaseUrl() + "&family_names=test_family_names";
-        webDriver.get(url);        
-        assertTrue(webDriver.findElement(By.xpath("//input[@name='familyNames']")).getAttribute("value").equals("test_family_names"));        
+        webDriver.get(url);
+        assertTrue(webDriver.findElement(By.xpath("//input[@name='familyNames']")).getAttribute("value").equals("test_family_names"));
 
         // test populating form with given name
         url = getBaseUrl() + "&given_names=test_given_names";
-        webDriver.get(url);        
+        webDriver.get(url);
         assertTrue(webDriver.findElement(By.xpath("//input[@name='givenNames']")).getAttribute("value").equals("test_given_names"));
     }
 

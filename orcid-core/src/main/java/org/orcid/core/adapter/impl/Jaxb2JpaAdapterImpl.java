@@ -123,6 +123,7 @@ import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkExternalIdentifierEntity;
@@ -175,7 +176,6 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         profileEntity.setId(orcidString);
         profileEntity.setOrcidType(profile.getType());
         profileEntity.setGroupType(profile.getGroupType());
-        profileEntity.setClientType(profile.getClientType());
         setBioDetails(profileEntity, profile.getOrcidBio());
         setHistoryDetails(profileEntity, profile.getOrcidHistory());
         setActivityDetails(profileEntity, profile.getOrcidActivities());
@@ -263,7 +263,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             }
             profileWorkEntity.setWork(getWorkEntity(orcidWork, workEntity));
             profileWorkEntity.setVisibility(orcidWork.getVisibility() == null ? Visibility.PRIVATE : orcidWork.getVisibility());
-            profileWorkEntity.setSourceProfile(getWorkSource(orcidWork.getWorkSource()));
+            profileWorkEntity.setSource(getWorkSource(orcidWork.getWorkSource()));
             
             if (orcidWork.getCreatedDate() != null && orcidWork.getCreatedDate().getValue() != null)
                 profileWorkEntity.setDateCreated(orcidWork.getCreatedDate().getValue().toGregorianCalendar().getTime());
@@ -275,9 +275,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         return null;
     }
 
-    private ProfileEntity getWorkSource(WorkSource workSource) {
+    private SourceEntity getWorkSource(WorkSource workSource) {
         if (workSource != null && StringUtils.isNotEmpty(workSource.getPath()) && !workSource.getPath().equals(WorkSource.NULL_SOURCE_PROFILE)) {
-            return new ProfileEntity(workSource.getPath());
+            return new SourceEntity(workSource.getPath());
         }
         return null;
     }
@@ -625,10 +625,10 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     }
 
     private Pair<String, String> createPairForKey(ExternalIdentifierEntity entity) {
-        ProfileEntity profileEntity = entity.getExternalIdSource();
+        SourceEntity sourceEntity = entity.getSource();
         String id = null;
-        if (profileEntity != null) {
-            id = profileEntity.getId();
+        if (sourceEntity != null) {
+            id = sourceEntity.getSourceId();
         }
         Pair<String, String> pair = new ImmutablePair<>(entity.getExternalIdReference(), id);
         return pair;
@@ -650,8 +650,8 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             ExternalIdentifierEntity externalIdentifierEntity = null;
             if (existingExternalIdentifierEntity == null) {
                 externalIdentifierEntity = new ExternalIdentifierEntity();
-                ProfileEntity profileEntity = externalIdOrcid != null ? new ProfileEntity(externalIdOrcidValue) : null;
-                externalIdentifierEntity.setExternalIdSource(profileEntity);
+                SourceEntity sourceEntity = externalIdOrcid != null ? new SourceEntity(externalIdOrcidValue) : null;
+                externalIdentifierEntity.setSource(sourceEntity);
                 externalIdentifierEntity.setExternalIdReference(referenceValue);
             } else {
                 existingExternalIdentifierEntity.clean();
@@ -704,8 +704,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 emailEntity.setId(emailId);
                 emailEntity.setProfile(profileEntity);
                 if (email.getSource() != null) {
-                    ProfileEntity source = new ProfileEntity();
-                    source.setId(email.getSource());
+                    SourceEntity source = new SourceEntity(email.getSource());
                     emailEntity.setSource(source);
                 }
             } else {
@@ -744,8 +743,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             CreationMethod creationMethod = orcidHistory.getCreationMethod();
             profileEntity.setCreationMethod(creationMethod != null ? creationMethod.value() : null);
             if (orcidHistory.getSource() != null) {
-                ProfileEntity source = new ProfileEntity();
-                source.setId(orcidHistory.getSource().getSourceOrcid().getPath());
+                SourceEntity source = new SourceEntity(orcidHistory.getSource().getSourceOrcid().getPath());
                 profileEntity.setSource(source);
             }
         }
@@ -841,9 +839,6 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 profileEntity.setReferredBy(orcidInternal.getReferredBy().getPath());
             }
 
-            if (orcidInternal.getGroupOrcidIdentifier() != null) {
-                profileEntity.setGroupOrcid(orcidInternal.getGroupOrcidIdentifier().getPath());
-            }
             Preferences preferences = orcidInternal.getPreferences();
             if (preferences != null) {
                 profileEntity.setSendChangeNotifications(preferences.getSendChangeNotifications() == null ? null : preferences.getSendChangeNotifications().isValue());
@@ -1207,9 +1202,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         return null;
     }
 
-    private ProfileEntity getSource(Source source) {
+    private SourceEntity getSource(Source source) {
         if (source != null && StringUtils.isNotEmpty(source.getSourceOrcid().getPath()) && !source.getSourceOrcid().getPath().equals(WorkSource.NULL_SOURCE_PROFILE)) {
-            return new ProfileEntity(source.getSourceOrcid().getPath());
+            return new SourceEntity(source.getSourceOrcid().getPath());
         }
         return null;
     }

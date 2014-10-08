@@ -328,7 +328,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Override
     public boolean existsAndNotClaimedAndBelongsTo(String messageOrcid, String clientId) {
         TypedQuery<Long> query = entityManager.createQuery(
-                "select count(p.id) from ProfileEntity p where p.claimed = FALSE and p.source.id = :clientId and p.id = :messageOrcid", Long.class);
+                "select count(p.id) from ProfileEntity p where p.claimed = FALSE and p.source.sourceClient.id = :clientId and p.id = :messageOrcid", Long.class);
         query.setParameter("clientId", clientId);
         query.setParameter("messageOrcid", messageOrcid);
         Long result = query.getSingleResult();
@@ -616,18 +616,19 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
         return result;
     }
-    
+
     @Override
     public boolean getClaimedStatus(String orcid) {
         Query query = entityManager.createNativeQuery("select claimed from profile where orcid=:orcid");
         query.setParameter("orcid", orcid);
-        return (Boolean)query.getSingleResult();
+        return (Boolean) query.getSingleResult();
     }
-    
+
     /**
      * Get the client type of a profile
-     * @param orcid    
-     *          The profile to look for
+     * 
+     * @param orcid
+     *            The profile to look for
      * @return the client type, null if it is not a client
      * */
     @Override
@@ -640,8 +641,9 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     /**
      * Get the group type of a profile
-     * @param orcid    
-     *          The profile to look for
+     * 
+     * @param orcid
+     *            The profile to look for
      * @return the group type, null if it is not a group
      * */
     @Override

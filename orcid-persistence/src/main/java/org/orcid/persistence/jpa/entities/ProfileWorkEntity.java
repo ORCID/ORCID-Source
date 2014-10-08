@@ -51,7 +51,7 @@ public class ProfileWorkEntity extends BaseEntity<ProfileWorkEntityPk> implement
     private static final long serialVersionUID = -3187757614938904392L;
 
     private ProfileEntity profile;
-    private ProfileEntity sourceProfile;
+    private SourceEntity source;
     private WorkEntity work;
     private Date addedToProfileDate;
     private Visibility visibility;
@@ -81,21 +81,12 @@ public class ProfileWorkEntity extends BaseEntity<ProfileWorkEntityPk> implement
         this.profile = profile;
     }
 
-    /**
-     * return the source profile
-     * */
-    @ManyToOne(cascade = { CascadeType.REFRESH }, fetch = FetchType.EAGER)
-    @JoinColumn(name = "source_id", nullable = true, updatable = false)
-    public ProfileEntity getSourceProfile() {
-        return sourceProfile;
+    public SourceEntity getSource() {
+        return source;
     }
 
-    /**
-     * Set the source to the profile work
-     * @param sourceProfile
-     * */
-    public void setSourceProfile(ProfileEntity sourceProfile) {
-        this.sourceProfile = sourceProfile;
+    public void setSource(SourceEntity source) {
+        this.source = source;
     }
 
     /**

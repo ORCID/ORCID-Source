@@ -34,16 +34,14 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
-import org.orcid.jaxb.model.message.Iso3166Country;
-import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.GroupType;
+import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
@@ -81,7 +79,6 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     // Main fields for publishing
     private String orcid;
     private OrcidType orcidType;
-    private ClientType clientType;
     private GroupType groupType;
     private String givenNames;
     private String familyName;
@@ -119,8 +116,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     private Date submissionDate = new Date();
     private Date lastIndexedDate;
     private Boolean claimed;
-    private ProfileEntity source;
-    private Set<ProfileEntity> sponsored;
+    private SourceEntity source;
     private Boolean isSelectableSponsor;
     private Collection<OrcidGrantedAuthority> authorities;
     private Set<GivenPermissionToEntity> givenPermissionTo;
@@ -130,11 +126,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     private Locale locale = Locale.EN;
     private Boolean sendChangeNotifications;
     private Boolean sendOrcidNews;
-    private String groupOrcid;
-    private ProfileEntity groupProfile;
-    private SortedSet<ProfileEntity> clientProfiles;
     private SortedSet<ClientDetailsEntity> clients;
-    private ClientDetailsEntity clientDetails;
     private SortedSet<OrcidOauth2TokenDetail> tokenDetails;
     private IndexingStatus indexingStatus = IndexingStatus.PENDING;
     private Set<ProfileEventEntity> profileEvents;
@@ -187,17 +179,6 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
 
     public void setGroupType(GroupType groupType) {
         this.groupType = groupType;
-    }
-
-    @Basic
-    @Enumerated(EnumType.STRING)
-    @Column(name = "client_type")
-    public ClientType getClientType() {
-        return clientType;
-    }
-
-    public void setClientType(ClientType clientType) {
-        this.clientType = clientType;
     }
 
     @Column(name = "given_names", length = 150)
@@ -341,12 +322,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
         this.claimed = claimed;
     }
 
-    /**
-     * @return the sponsor
-     */
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "source_id")
-    public ProfileEntity getSource() {
+    public SourceEntity getSource() {
         return source;
     }
 
@@ -354,17 +330,8 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
      * @param source
      *            the sponsor to set
      */
-    public void setSource(ProfileEntity source) {
+    public void setSource(SourceEntity source) {
         this.source = source;
-    }
-
-    @OneToMany(cascade = { CascadeType.DETACH, CascadeType.REFRESH }, fetch = FetchType.LAZY, mappedBy = "source")
-    public Set<ProfileEntity> getSponsored() {
-        return sponsored;
-    }
-
-    public void setSponsored(Set<ProfileEntity> sponsored) {
-        this.sponsored = sponsored;
     }
 
     @Column(name = "is_selectable_sponsor")
@@ -732,37 +699,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
         this.sendOrcidNews = sendOrcidNews;
     }
 
-    @Column(name = "group_orcid")
-    public String getGroupOrcid() {
-        return groupOrcid;
-    }
-
-    public void setGroupOrcid(String groupOrcid) {
-        this.groupOrcid = groupOrcid;
-    }
-
-    @ManyToOne(cascade = { CascadeType.DETACH, CascadeType.REFRESH }, fetch = FetchType.LAZY)
-    @JoinColumn(name = "group_orcid", insertable = false, updatable = false)
-    public ProfileEntity getGroupProfile() {
-        return groupProfile;
-    }
-
-    public void setGroupProfile(ProfileEntity groupProfile) {
-        this.groupProfile = groupProfile;
-    }
-
-    @OneToMany(cascade = { CascadeType.DETACH, CascadeType.REFRESH }, fetch = FetchType.LAZY)
-    @JoinColumn(name = "group_orcid")
-    @Sort(type = SortType.COMPARATOR, comparator = OrcidEntityIdComparator.class)
-    public SortedSet<ProfileEntity> getClientProfiles() {
-        return clientProfiles;
-    }
-
-    public void setClientProfiles(SortedSet<ProfileEntity> clientProfiles) {
-        this.clientProfiles = clientProfiles;
-    }
-
-    @OneToMany(cascade = { CascadeType.DETACH, CascadeType.REFRESH }, fetch = FetchType.LAZY)
+    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
     @JoinColumn(name = "group_orcid")
     @Sort(type = SortType.COMPARATOR, comparator = OrcidEntityIdComparator.class)
     public SortedSet<ClientDetailsEntity> getClients() {
@@ -771,16 +708,6 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
 
     public void setClients(SortedSet<ClientDetailsEntity> clients) {
         this.clients = clients;
-    }
-
-    @OneToOne(cascade = { CascadeType.DETACH, CascadeType.REFRESH }, fetch = FetchType.LAZY)
-    @JoinColumn(name = "orcid")
-    public ClientDetailsEntity getClientDetails() {
-        return clientDetails;
-    }
-
-    public void setClientDetails(ClientDetailsEntity clientDetails) {
-        this.clientDetails = clientDetails;
     }
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = PROFILE)

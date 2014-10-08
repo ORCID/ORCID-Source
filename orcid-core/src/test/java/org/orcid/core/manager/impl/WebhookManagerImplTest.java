@@ -80,10 +80,10 @@ public class WebhookManagerImplTest extends BaseTest {
         ProfileEntity profile = new ProfileEntity();
         profile.setId("0000-0000-0000-0001");
         clientDetails = new ClientDetailsEntity();
-        clientDetails.setProfileEntity(profile);
+        clientDetails.setGroupProfile(profile);
         clientDetails.setId("123456789");
 
-        assertNotNull(clientDetails.getProfileEntity());
+        assertNotNull(clientDetails.getGroupProfile());
         assertNotNull(clientDetails.getId());
 
         testProfile = new ProfileEntity("4444-4444-4444-4444");

@@ -33,6 +33,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.manager.ClientDetailsManager;
+import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.test.DBUnitTest;
@@ -56,15 +57,16 @@ public class ClientDetailsManagerTest extends DBUnitTest {
     private static String CLIENT_NAME = "the name";
     private static String CLIENT_DESCRIPTION = "the description";
     private static String CLIENT_WEBSITE = "http://website.com";
-    
+
     @BeforeClass
     public static void initDBUnitData() throws Exception {
-        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml"), null);
+        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml",
+                "/data/ClientDetailsEntityData.xml"));
     }
 
     @AfterClass
     public static void removeDBUnitData() throws Exception {
-        removeDBUnitData(Arrays.asList("/data/ClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/SecurityQuestionEntityData.xml"), null);
+        removeDBUnitData(Arrays.asList("/data/ClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/SecurityQuestionEntityData.xml"));
     }
 
     @Test
@@ -72,11 +74,13 @@ public class ClientDetailsManagerTest extends DBUnitTest {
     @Transactional
     public void testLoadClientByClientId() throws Exception {
         List<ClientDetailsEntity> all = clientDetailsManager.getAll();
-        assertEquals(6, all.size());
+        assertEquals(7, all.size());
         for (ClientDetailsEntity clientDetailsEntity : all) {
             ClientDetails clientDetails = clientDetailsManager.loadClientByClientId(clientDetailsEntity.getId());
             assertNotNull(clientDetails);
-            checkClientDetails(clientDetails);
+            if (!"APP-5555555555555555".equals(clientDetailsEntity.getId())) {
+                checkClientDetails(clientDetails);
+            }
         }
     }
 
@@ -99,8 +103,8 @@ public class ClientDetailsManagerTest extends DBUnitTest {
         List<String> clientGrantedAuthorities = new ArrayList<String>();
         clientGrantedAuthorities.add("ROLE_ADMIN");
 
-        ClientDetailsEntity clientDetails = clientDetailsManager.createClientDetails("4444-4444-4444-4499", CLIENT_NAME, CLIENT_DESCRIPTION, CLIENT_WEBSITE, clientId, clientSecret, clientScopes, clientResourceIds,
-                clientAuthorizedGrantTypes, clientRegisteredRedirectUris, clientGrantedAuthorities);
+        ClientDetailsEntity clientDetails = clientDetailsManager.createClientDetails("4444-4444-4444-4499", CLIENT_NAME, CLIENT_DESCRIPTION, CLIENT_WEBSITE, clientId,
+                clientSecret, ClientType.CREATOR, clientScopes, clientResourceIds, clientAuthorizedGrantTypes, clientRegisteredRedirectUris, clientGrantedAuthorities);
         assertNotNull(clientDetails);
         checkClientDetails(clientDetails);
     }
@@ -122,8 +126,8 @@ public class ClientDetailsManagerTest extends DBUnitTest {
         List<String> clientGrantedAuthorities = new ArrayList<String>();
         clientGrantedAuthorities.add("ROLE_ADMIN");
 
-        ClientDetailsEntity clientDetails = clientDetailsManager.createClientDetails("4444-4444-4444-4446", CLIENT_NAME, CLIENT_DESCRIPTION, CLIENT_WEBSITE, clientScopes, clientResourceIds, clientAuthorizedGrantTypes,
-                clientRegisteredRedirectUris, clientGrantedAuthorities);
+        ClientDetailsEntity clientDetails = clientDetailsManager.createClientDetails("4444-4444-4444-4446", CLIENT_NAME, CLIENT_DESCRIPTION, CLIENT_WEBSITE,
+                ClientType.CREATOR, clientScopes, clientResourceIds, clientAuthorizedGrantTypes, clientRegisteredRedirectUris, clientGrantedAuthorities);
         assertNotNull(clientDetails);
         checkClientDetails(clientDetails);
     }
@@ -145,8 +149,8 @@ public class ClientDetailsManagerTest extends DBUnitTest {
         List<String> clientGrantedAuthorities = new ArrayList<String>();
         clientGrantedAuthorities.add("ROLE_ADMIN");
 
-        clientDetailsManager.createClientDetails("8888-9999-9999-9999", CLIENT_NAME, CLIENT_DESCRIPTION, CLIENT_WEBSITE, clientScopes, clientResourceIds, clientAuthorizedGrantTypes, clientRegisteredRedirectUris,
-                clientGrantedAuthorities);
+        clientDetailsManager.createClientDetails("8888-9999-9999-9999", CLIENT_NAME, CLIENT_DESCRIPTION, CLIENT_WEBSITE, ClientType.CREATOR, clientScopes,
+                clientResourceIds, clientAuthorizedGrantTypes, clientRegisteredRedirectUris, clientGrantedAuthorities);
     }
 
     @Test
@@ -154,19 +158,21 @@ public class ClientDetailsManagerTest extends DBUnitTest {
     @Transactional
     public void testDeleteClientDetail() throws Exception {
         List<ClientDetailsEntity> all = clientDetailsManager.getAll();
-        assertEquals(6, all.size());
+        assertEquals(7, all.size());
         for (ClientDetailsEntity clientDetailsEntity : all) {
-            clientDetailsManager.deleteClientDetail(clientDetailsEntity.getId());
+            if (!"APP-5555555555555555".equals(clientDetailsEntity.getId())) {
+                clientDetailsManager.deleteClientDetail(clientDetailsEntity.getId());
+            }
         }
         all = clientDetailsManager.getAll();
-        assertEquals(0, all.size());
+        assertEquals(1, all.size());
     }
 
     private void checkClientDetails(ClientDetailsEntity clientDetails) {
         assertNotNull(clientDetails);
         assertEquals(clientDetails.getClientDescription(), CLIENT_DESCRIPTION);
         assertEquals(clientDetails.getClientName(), CLIENT_NAME);
-        checkClientDetails((ClientDetails)clientDetails);
+        checkClientDetails((ClientDetails) clientDetails);
     }
 
     private void checkClientDetails(ClientDetails clientDetails) {
@@ -183,15 +189,15 @@ public class ClientDetailsManagerTest extends DBUnitTest {
         assertEquals(1, authorities.size());
         Set<String> authorizedGrantTypes = clientDetails.getAuthorizedGrantTypes();
         assertNotNull(authorizedGrantTypes);
-        if(clientDetails.getClientId().equals("4444-4444-4444-4498"))
+        if (clientDetails.getClientId().equals("4444-4444-4444-4498"))
             assertEquals(1, authorizedGrantTypes.size());
-        else 
+        else
             assertEquals(3, authorizedGrantTypes.size());
         String clientSecret = clientDetails.getClientSecret();
         assertNotNull(clientSecret);
         Set<String> resourceIds = clientDetails.getResourceIds();
         assertNotNull(resourceIds);
-        if(!clientDetails.getClientId().equals("4444-4444-4444-4498"))
+        if (!clientDetails.getClientId().equals("4444-4444-4444-4498"))
             assertEquals(1, resourceIds.size());
         Set<String> scope = clientDetails.getScope();
         assertNotNull(scope);

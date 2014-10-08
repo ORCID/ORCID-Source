@@ -134,9 +134,9 @@ public class Work implements ErrorsInterface, Serializable {
             identifiers = JsonUtils.readObjectFromJsonString(minimizedWorkEntity.getExternalIdentifiersJson(), WorkExternalIdentifiers.class);
         }
         populateExternaIdentifiers(identifiers, w);
-        if (minimizedWorkEntity.getSourceProfile() != null) {
-            w.setWorkSource(Text.valueOf(minimizedWorkEntity.getSourceProfile().getId()));
-            w.setWorkSourceName(Text.valueOf(Jpa2JaxbAdapterImpl.createName(minimizedWorkEntity.getSourceProfile())));
+        if (minimizedWorkEntity.getSource() != null) {
+            w.setWorkSource(Text.valueOf(minimizedWorkEntity.getSource().getSourceId()));
+            w.setWorkSourceName(Text.valueOf(minimizedWorkEntity.getSource().getSourceName()));
         }
         if (minimizedWorkEntity.getLanguageCode() != null) {
             w.setLanguageCode(Text.valueOf(minimizedWorkEntity.getLanguageCode()));

@@ -135,6 +135,7 @@ import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
@@ -376,9 +377,9 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                     if (existingEmail == null) {
                         email.setSource(amenderOrcid);
                     } else {
-                        ProfileEntity existingSource = existingEmail.getSource();
+                        SourceEntity existingSource = existingEmail.getSource();
                         if (existingSource != null) {
-                            email.setSource(existingSource.getId());
+                            email.setSource(existingSource.getSourceId());
                         }
                     }
                 }
@@ -1047,10 +1048,12 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     @Override
     @Transactional
     public void updatePreferences(String orcid, Preferences preferences) {
-        boolean sendChangeNotifications = preferences.getSendChangeNotifications() == null? DefaultPreferences.SEND_CHANGE_NOTIFICATIONS_DEFAULT : preferences.getSendChangeNotifications().isValue();
+        boolean sendChangeNotifications = preferences.getSendChangeNotifications() == null ? DefaultPreferences.SEND_CHANGE_NOTIFICATIONS_DEFAULT : preferences
+                .getSendChangeNotifications().isValue();
         boolean sendOrcidNews = preferences.getSendOrcidNews() == null ? DefaultPreferences.SEND_ORCID_NEWS_DEFAULT : preferences.getSendOrcidNews().isValue();
         Visibility activitiesVisibilityDefault = preferences.getActivitiesVisibilityDefault().getValue();
-        boolean developerToolsEnabled = preferences.getDeveloperToolsEnabled() == null ? DefaultPreferences.DEVELOPER_TOOLS_ENABLED_DEFAULT : preferences.getDeveloperToolsEnabled().isValue();
+        boolean developerToolsEnabled = preferences.getDeveloperToolsEnabled() == null ? DefaultPreferences.DEVELOPER_TOOLS_ENABLED_DEFAULT : preferences
+                .getDeveloperToolsEnabled().isValue();
         profileDao.updatePreferences(orcid, sendChangeNotifications, sendOrcidNews, activitiesVisibilityDefault, developerToolsEnabled);
         OrcidProfile cachedProfile = getOrcidProfileFromCache(orcid);
         if (cachedProfile != null) {
@@ -2172,21 +2175,6 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                 break;
             case PREMIUM_INSTITUTION:
                 authority.setAuthority(OrcidWebRole.ROLE_PREMIUM_INSTITUTION.getAuthority());
-                break;
-            }
-        } else if (profileEntity.getOrcidType().equals(OrcidType.CLIENT)) {
-            switch (profileEntity.getClientType()) {
-            case CREATOR:
-                authority.setAuthority(OrcidWebRole.ROLE_CREATOR.getAuthority());
-                break;
-            case UPDATER:
-                authority.setAuthority(OrcidWebRole.ROLE_UPDATER.getAuthority());
-                break;
-            case PREMIUM_CREATOR:
-                authority.setAuthority(OrcidWebRole.ROLE_PREMIUM_CREATOR.getAuthority());
-                break;
-            case PREMIUM_UPDATER:
-                authority.setAuthority(OrcidWebRole.ROLE_PREMIUM_UPDATER.getAuthority());
                 break;
             }
         }

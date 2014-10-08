@@ -55,6 +55,7 @@ import org.orcid.persistence.jpa.entities.FundingExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.solr.entities.OrgDisambiguatedSolrDocument;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.Date;
@@ -405,7 +406,7 @@ public class FundingsController extends BaseWorkspaceController {
         // Update on database
         ProfileEntity userProfile = profileDao.find(getEffectiveUserOrcid());
         ProfileFundingEntity profileGrantEntity = jaxb2JpaAdapter.getNewProfileFundingEntity(funding.toOrcidFunding(), userProfile);
-        profileGrantEntity.setSource(userProfile);
+        profileGrantEntity.setSource(new SourceEntity(userProfile));
         // Persists the profile funding object
         ProfileFundingEntity newProfileFunding = profileFundingManager.addProfileFunding(profileGrantEntity);
 

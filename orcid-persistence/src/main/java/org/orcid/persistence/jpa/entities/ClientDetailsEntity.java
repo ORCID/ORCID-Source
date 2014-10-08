@@ -26,20 +26,23 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
+import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.util.StringUtils;
@@ -57,6 +60,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
     public static final int DEFAULT_TOKEN_VALIDITY = 631138519;
 
     private String clientId;
+    private ClientType clientType;
     private String clientName;
     private String clientDescription;
     private String clientWebsite;
@@ -69,7 +73,6 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
     private SortedSet<ClientRedirectUriEntity> clientRegisteredRedirectUris;
     private List<ClientGrantedAuthorityEntity> clientGrantedAuthorities = Collections.emptyList();
     private Set<OrcidOauth2TokenDetail> tokenDetails;
-    private ProfileEntity profileEntity;
     private ProfileEntity groupProfile;
 
     private Set<CustomEmailEntity> customEmails = Collections.emptySet();
@@ -90,6 +93,17 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
 
     public void setId(String clientId) {
         this.clientId = clientId;
+    }
+
+    @Basic
+    @Enumerated(EnumType.STRING)
+    @Column(name = "client_type")
+    public ClientType getClientType() {
+        return clientType;
+    }
+
+    public void setClientType(ClientType clientType) {
+        this.clientType = clientType;
     }
 
     @Column(name = "client_name", length = 255)
@@ -173,9 +187,9 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
     public void setTokenDetails(Set<OrcidOauth2TokenDetail> tokenDetails) {
         this.tokenDetails = tokenDetails;
     }
-    
+
     @ManyToOne(cascade = { CascadeType.DETACH, CascadeType.REFRESH }, fetch = FetchType.LAZY)
-    @JoinColumn(name = "group_orcid", insertable = false, updatable = false)
+    @JoinColumn(name = "group_orcid")
     public ProfileEntity getGroupProfile() {
         return groupProfile;
     }
@@ -184,19 +198,10 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
         this.groupProfile = groupProfile;
     }
 
-    @OneToOne(mappedBy = "clientDetails")
-    public ProfileEntity getProfileEntity() {
-        return profileEntity;
-    }
-
-    @Transient
     @Override
+    @Transient
     public ProfileEntity getProfile() {
-        return profileEntity;
-    }
-
-    public void setProfileEntity(ProfileEntity profileEntity) {
-        this.profileEntity = profileEntity;
+        return getGroupProfile();
     }
 
     // Below are the overriden ClientDetails methods
@@ -263,7 +268,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
         this.clientSecrets = clientSecrets;
     }
 
-    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientDetailsEntity", orphanRemoval = true)    
+    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientDetailsEntity", orphanRemoval = true)
     public Set<CustomEmailEntity> getCustomEmails() {
         return customEmails;
     }
@@ -295,7 +300,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
         }
         clientSecrets.add(new ClientSecretEntity(clientSecret, this));
     }
-    
+
     public void setClientSecretForJpa(String clientSecret, boolean primary) {
         if (clientSecrets == null) {
             clientSecrets = new TreeSet<>();

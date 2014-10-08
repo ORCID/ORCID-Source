@@ -417,11 +417,8 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
             ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(sponsorOrcid);
             if (clientDetails != null) {
                 sponsor.setSourceName(new SourceName(clientDetails.getClientName()));
-            } else {
-                OrcidProfile sponsorProfile = orcidProfileManager.retrieveOrcidProfile(sponsorOrcid);
-                sponsor.setSourceName(new SourceName(sponsorProfile.getOrcidBio().getPersonalDetails().getCreditName().getContent()));
+                sponsor.setSourceOrcid(new SourceOrcid(sponsorOrcid));
             }
-            sponsor.setSourceOrcid(new SourceOrcid(sponsorOrcid));
             profile.getOrcidHistory().setSource(sponsor);
         }
     }
@@ -449,14 +446,14 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
 
         ProfileEntity profile = profileDao.find(orcid);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        ProfileEntity clientProfile = null;
+        ClientDetailsEntity clientDetails = null;
         String clientId = null;
         if (OAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
             AuthorizationRequest authorizationRequest = ((OAuth2Authentication) authentication).getAuthorizationRequest();
             clientId = authorizationRequest.getClientId();
-            clientProfile = profileDao.find(clientId);
+            clientDetails = clientDetailsManager.findByClientId(clientId);
         }
-        if (profile != null && clientProfile != null) {
+        if (profile != null && clientDetails != null) {
             WebhookEntityPk webhookPk = new WebhookEntityPk(profile, webhookUri);
             WebhookEntity webhook = webhookDao.find(webhookPk);
             boolean isNew = webhook == null;
@@ -466,7 +463,7 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
                 webhook.setDateCreated(new Date());
                 webhook.setEnabled(true);
                 webhook.setUri(webhookUri);
-                webhook.setClientDetails(clientProfile.getClientDetails());
+                webhook.setClientDetails(clientDetails);
             }
             webhookDao.merge(webhook);
             webhookDao.flush();

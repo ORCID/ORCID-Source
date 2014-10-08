@@ -55,11 +55,9 @@ public class Client implements ErrorsInterface, Serializable {
                 }
             }
 
-            if (clientDetails.getProfileEntity() != null)
-                client.setType(Text.valueOf(clientDetails.getProfileEntity().getClientType().value()));
-            
             client.persistentTokenEnabled = new Checkbox();
             client.persistentTokenEnabled.setValue(clientDetails.isPersistentTokensEnabled());                                    
+            client.setType(Text.valueOf(clientDetails.getClientType().value()));
         }
         return client;
     }

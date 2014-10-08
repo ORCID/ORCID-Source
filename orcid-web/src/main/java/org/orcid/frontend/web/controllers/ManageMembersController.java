@@ -246,7 +246,7 @@ public class ManageMembersController extends BaseController {
 
             OrcidClient result = null;
             try {
-                result = orcidClientGroupManager.updateClientProfile(client.toOrcidClient());
+                result = orcidClientGroupManager.updateClient(client.toOrcidClient());
                 groupAdministratorController.clearCache();
             } catch (OrcidClientGroupManagementException e) {
                 LOGGER.error(e.getMessage());
