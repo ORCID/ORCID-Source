@@ -852,7 +852,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 				for (var idx in worksSrvc.groups) {
 					if (worksSrvc.groups[idx].hasPut(putCode)) {
 					   for (var idj in worksSrvc.groups[idx].activities) {
-							worksSrvc.removeFunding(worksSrvc.groups[idx].activities[idj]);
+							worksSrvc.removeWork(worksSrvc.groups[idx].activities[idj]);
 						}
 					    worksSrvc.groups.splice(idx,1);
 						break;
@@ -3679,10 +3679,89 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
 	$scope.moreInfoOpen = false;
 	$scope.moreInfo = {};
 	$scope.editSources = {};
+	$scope.showBulkEdit = false;
+	$scope.bulkEditMap = {};
 	$scope.bibtexParsingError = false;
 	$scope.bibtexCancelLink = false;
 	$scope.bibtextWork = false;
 	$scope.bibtextWorkIndex = null;
+	$scope.checked = false;
+	$scope.displayMenu = false;
+	
+	$scope.toggleSelectMenu = function(){
+		$scope.displayMenu = !$scope.displayMenu;		
+	};
+
+	$scope.toggleBulkEdit = function() {
+		if (!$scope.showBulkEdit) {
+			$scope.bulkEditMap = {};
+			for (var idx in worksSrvc.groups)
+				$scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value] = false;
+		};
+		$scope.showBulkEdit = !$scope.showBulkEdit;
+	};
+	
+	$scope.buldApply = function(func) {
+		for (var idx in worksSrvc.groups)
+			if ($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value])
+				func(worksSrvc.groups[idx].getActive().putCode.value);
+	};
+	
+	$scope.swapbulkChangeAll = function() {		
+		if($scope.checked == true){
+			$scope.checked = false;
+			for (var idx in worksSrvc.groups)
+				$scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value] = false;
+		}else{
+			$scope.checked = true;
+			for (var idx in worksSrvc.groups)
+				$scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value] = true;				
+		}
+		$scope.displayMenu = false;
+	};
+	
+	$scope.bulkChangeAll = function(bool) {
+		$scope.checked = bool;
+		for (var idx in worksSrvc.groups){
+			$scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value] = bool;
+		}
+	};
+	
+	$scope.bulkGroupPrivacy = function () {
+	    return null;	
+	};
+	
+	$scope.setBulkGroupPrivacy = function (privacy) {
+		for (var idx in worksSrvc.groups)
+			if ($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value])
+			    worksSrvc.setGroupPrivacy(worksSrvc.groups[idx].getActive().putCode.value, privacy);
+	};
+
+	$scope.deleteBulk = function () {
+		for (var idx in worksSrvc.groups)
+			if ($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value])
+			    worksSrvc.deleteGroupWorks(worksSrvc.groups[idx].getActive().putCode.value);
+		$.colorbox.close();
+		$scope.showBulkEdit = false;
+	};
+	
+
+	$scope.deleteBulkConfirm = function(idx) {
+		$scope.bulkDeleteCount = 0;
+		for (var idx in worksSrvc.groups)
+			console.log($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value]);
+		for (var idx in worksSrvc.groups)
+			if ($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value])
+				$scope.bulkDeleteCount++;
+		
+		$scope.bulkDeleteFunction = $scope.deleteBulk;
+		
+        $.colorbox({        	
+            html: $compile($('#bulk-delete-modal').html())($scope)
+            	
+        });
+        $.colorbox.resize();
+	};
 
 	$scope.sortOtherLast = function(type) {
 		if (type.key == 'other') return 'ZZZZZ';
