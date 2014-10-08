@@ -6772,8 +6772,11 @@ function OauthAuthorizationController($scope, $compile, $sce, commonSrvc){
 	};
 	
 	$scope.submitLogin = function() {
-		if($scope.enablePersistentToken)
+		var auth_scope_prefix = 'Authorize_';
+		if($scope.enablePersistentToken) {
 			$scope.authorizationForm.persistentTokenEnabled=true;
+			auth_scope_prefix = 'AuthorizeP_';
+		}			
 		var is_authorize = $scope.authorizationForm.approved;
 		$.ajax({
 			url: getBaseUri() + '/oauth/custom/login.json',
@@ -6791,7 +6794,7 @@ function OauthAuthorizationController($scope, $compile, $sce, commonSrvc){
 	        			if(is_authorize) {
 	        				orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Sign-In' , 'OAuth ' + orcidGA.buildClientString($scope.clientGroupName, $scope.clientName)]);
 	        				for(var i = 0; i < $scope.requestScopes.length; i++) {
-	        					orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Authorize_' + $scope.requestScopes[i] + ', OAuth ' + orcidGA.buildClientString($scope.clientGroupName, $scope.clientName)]);
+	        					orcidGA.gaPush(['_trackEvent', 'RegGrowth', auth_scope_prefix + $scope.requestScopes[i] + ', OAuth ' + orcidGA.buildClientString($scope.clientGroupName, $scope.clientName)]);
 	        				}
 	        			} else {
 	        				//Fire GA authorize-deny
@@ -6916,6 +6919,9 @@ function OauthAuthorizationController($scope, $compile, $sce, commonSrvc){
 	};
 		
 	$scope.postRegisterConfirm = function () {
+		var auth_scope_prefix = 'Authorize_';
+		if($scope.enablePersistentToken)
+			auth_scope_prefix = 'AuthorizeP_';
 		$scope.showProcessingColorBox();		
 		$.ajax({
 	        url: getBaseUri() + '/oauth/custom/registerConfirm.json',
@@ -6927,7 +6933,7 @@ function OauthAuthorizationController($scope, $compile, $sce, commonSrvc){
 	    		orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration', 'OAuth '+ orcidGA.buildClientString($scope.clientGroupName, $scope.clientName)]);
 	    		if($scope.registrationForm.approved) {
 	    			for(var i = 0; i < $scope.requestScopes.length; i++) {
-	    				orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Authorize_' + $scope.requestScopes[i] + ', OAuth ' + orcidGA.buildClientString($scope.clientGroupName, $scope.clientName)]);
+	    				orcidGA.gaPush(['_trackEvent', 'RegGrowth', auth_scope_prefix + $scope.requestScopes[i] + ', OAuth ' + orcidGA.buildClientString($scope.clientGroupName, $scope.clientName)]);
 	    			}
 	    		} else {
 	    			//Fire GA register deny
@@ -7007,8 +7013,11 @@ function OauthAuthorizationController($scope, $compile, $sce, commonSrvc){
 	};
 	
 	$scope.authorizeRequest = function() {	
-		if($scope.enablePersistentToken)
+		var auth_scope_prefix = 'Authorize_';			
+		if($scope.enablePersistentToken) {
 			$scope.authorizationForm.persistentTokenEnabled=true;
+			auth_scope_prefix = 'AuthorizeP_';
+		}			
 		var is_authorize = $scope.authorizationForm.approved;
 		$.ajax({
 			url: getBaseUri() + '/oauth/custom/authorize.json',
@@ -7019,7 +7028,7 @@ function OauthAuthorizationController($scope, $compile, $sce, commonSrvc){
 	        success: function(data) {	
 	        	if(is_authorize) {
 	        		for(var i = 0; i < $scope.requestScopes.length; i++) {
-    					orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Authorize_' + $scope.requestScopes[i], 'OAuth ' + orcidGA.buildClientString($scope.clientGroupName, $scope.clientName)]);
+    					orcidGA.gaPush(['_trackEvent', 'RegGrowth', auth_scope_prefix + $scope.requestScopes[i], 'OAuth ' + orcidGA.buildClientString($scope.clientGroupName, $scope.clientName)]);
     				}
     			}	
 	        	orcidGA.windowLocationHrefDelay(data.redirectUri.value);
