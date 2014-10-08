@@ -16,10 +16,7 @@
  */
 package org.orcid.frontend.forms.registration.test;
 
-import javax.annotation.Resource;
-
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,18 +38,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(locations = { "classpath:test-orcid-frontend-web-servlet.xml" })
 public class VerifyRegistrationITest {
 
-    @Resource
-    private WebDriverHelper driverHelper;
-
     // convenience alias...
     private String baseUrl;
     private WebDriver webDriver;
-
-    @Before
-    public void setUp() throws Exception {
-        baseUrl = driverHelper.getBaseUrl();
-        webDriver = driverHelper.getWebDriver();
-    }
 
     @After
     public void tearDown() throws Exception {
