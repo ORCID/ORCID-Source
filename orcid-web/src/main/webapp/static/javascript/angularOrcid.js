@@ -3689,8 +3689,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
 	$scope.displayMenu = false;
 	
 	$scope.toggleSelectMenu = function(){
-		$scope.displayMenu = !$scope.displayMenu;
-		console.log($scope.displayMenu);
+		$scope.displayMenu = !$scope.displayMenu;		
 	};
 
 	$scope.toggleBulkEdit = function() {
@@ -3708,15 +3707,15 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
 				func(worksSrvc.groups[idx].getActive().putCode.value);
 	};
 	
-	$scope.swapbulkChangeAll = function() {	
-		for (var idx in worksSrvc.groups){				
-			if ($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value] == true){
-				$scope.checked = false;
-				$scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value] = false;					
-			}else{
-				$scope.checked = true;								
-				$scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value] = true;
-			}
+	$scope.swapbulkChangeAll = function() {		
+		if($scope.checked == true){
+			$scope.checked = false;
+			for (var idx in worksSrvc.groups)
+				$scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value] = false;
+		}else{
+			$scope.checked = true;
+			for (var idx in worksSrvc.groups)
+				$scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value] = true;				
 		}
 		$scope.displayMenu = false;
 	};

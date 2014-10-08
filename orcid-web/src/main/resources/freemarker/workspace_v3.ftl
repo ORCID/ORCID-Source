@@ -283,7 +283,7 @@
 			        				</li>
 			        				<li>
 			        				    <a class="action-option works manage-button" ng-click="toggleBulkEdit()">
-											<span class="glyphicons magic bibtex-wizard"></span>Bulk Edit
+											<span class="glyphicon glyphicon-pencil"></span>Bulk Edit
 										</a>
 			        				</li>
 								</ul>								
@@ -319,21 +319,11 @@
 					                	privateClick="setBulkGroupPrivacy('PRIVATE', $event)"/>
 					 		</div>
 					 		<div class="bulk-edit-delete">
-								<a ng-click="deleteBulkConfirm()" class="ignore glyphicon glyphicon-trash" title="Ignore"></a>
-							</div>								
-						
-						   <!-- 						   
-						   <button ng-click="bulkChangeAll(true)">select all</button> <button ng-click="bulkChangeAll(false)">deselect all</button>
-						   							<@orcid.privacyToggle2 angularModel="groupPrivacy()" 
-								    questionClick=""
-								    clickedClassCheck=""
-									publicClick="setBulkGroupPrivacy('PUBLIC', $event)" 
-				                	limitedClick="setBulkGroupPrivacy('LIMITED', $event)" 
-				                	privateClick="setBulkGroupPrivacy('PRIVATE', $event)"/>
-				                	
-				            
-				            <a ng-click="deleteBulkConfirm()" class="ignore glyphicon glyphicon-trash" title="Ignore"></a>
-				             -->
+								<a ng-click="deleteBulkConfirm()" class="ignore glyphicon glyphicon-trash grey" title="Ignore"></a>
+							</div>	
+							<div class="">
+								<a class="btn btn-default pull-right" ng-click="toggleBulkEdit()">Cancel</a>							
+							</div>						  
 					   </div>
 					</div>
 					

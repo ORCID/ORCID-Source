@@ -4581,6 +4581,9 @@ ul.toggle-menu li:hover ul {
 
 .bulk-edit{
 	height: 60px;
+	display: inline-block;	
+	width: 100%;
+	margin-bottom: 10px;
 }
 
 .custom-control-x {
@@ -4700,7 +4703,7 @@ ul.toggle-menu li:hover ul {
 
 .bulk-edit .bulk-edit-privacy-control{
 	margin-left: 15px;
-	displat: block;
+	display: block;
 	float: left;
 }
 
@@ -4714,6 +4717,9 @@ ul.toggle-menu li:hover ul {
 	display: block !important;
 }
 
+.bulk-edit-input{
+	vertical-align: 0;	
+}
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
@@ -5637,7 +5643,7 @@ ul.toggle-menu li:hover ul {
 	}
 	
 	.workspace-accordion-header ul>li>a.works{
-		width: 33.3333%;
+		width: 25%;
 		font-size: 0;
 	}
 	
@@ -5806,6 +5812,10 @@ ul.toggle-menu li:hover ul {
 	
 	.show-more-info-tab-container{
 		float: right;	
+	}
+	
+	.bulk-edit-input{	
+		margin-right: 5px;		
 	}
 	
 }
