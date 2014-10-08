@@ -281,10 +281,53 @@
 											<@orcid.msg 'workspace.bibtexImporter.link_bibtex'/>
 										</a>	        				
 			        				</li>
+			        				<li>
+			        				    <a class="action-option works manage-button" ng-click="toggleBulkEdit()">
+											<span class="glyphicon glyphicon-pencil"></span>Bulk Edit
+										</a>
+			        				</li>
 								</ul>								
 							</div>
 						</div>					
 					</div>
+					
+					<!-- Bulk Edit -->
+					<div ng-show="showBulkEdit" ng-cloak>
+						<div class="grey-box box-border bulk-edit">
+							<div id="custom-control-x">
+								<div class="custom-control-x" >	
+									<div class="dropdown-custom-menu" id="dropdown-custom-menu" ng-click="toggleSelectMenu()">										
+										<span class="custom-checkbox-parent">
+											<div class="custom-checkbox" id="custom-checkbox" ng-click="swapbulkChangeAll();$event.stopPropagation();" ng-class="{'custom-checkbox-active':checked == true}"></div>
+										</span>										
+										<div class="custom-control-arrow" ng-click="toggleSelectMenu();$event.stopPropagation();"></div>
+									</div>
+									<div>
+										<ul class="dropdown-menu" role="menu" id="special-menu" ng-class="{'block': displayMenu == true}">
+								          <li><a href="" ng-click="bulkChangeAll(true);toggleSelectMenu()">Select all</a></li>
+								          <li><a href="" ng-click="bulkChangeAll(false);toggleSelectMenu()">Deselect all</a></li>							          							          
+								        </ul>			
+									</div>
+								</div>
+							</div>															
+							<div class="bulk-edit-privacy-control">
+								<@orcid.privacyToggle2 angularModel="groupPrivacy()" 
+									    questionClick=""
+									    clickedClassCheck=""
+										publicClick="setBulkGroupPrivacy('PUBLIC', $event)" 
+					                	limitedClick="setBulkGroupPrivacy('LIMITED', $event)" 
+					                	privateClick="setBulkGroupPrivacy('PRIVATE', $event)"/>
+					 		</div>
+					 		<div class="bulk-edit-delete">
+								<a ng-click="deleteBulkConfirm()" class="ignore glyphicon glyphicon-trash grey" title="Ignore"></a>
+							</div>	
+							<div class="">
+								<a class="btn btn-default pull-right" ng-click="toggleBulkEdit()">Cancel</a>							
+							</div>						  
+					   </div>
+					</div>
+					
+					<!-- Bibtex Importer Wizard -->
 					<div ng-show="showBibtexImportWizard" ng-cloak class="bibtex-box">
 						<div class="grey-box bottomBuffer box-border" ng-show="canReadFiles" ng-cloak>
 						   <p class="bottomBuffer">
@@ -452,6 +495,19 @@
 		<div>
 	<div>	
 </script>
+
+<script type="text/ng-template" id="bulk-delete-modal">
+	<div class="lightbox-container">
+		<div class="row">
+			<div class="col-md-12 col-sm-12 col-xs-12">
+				<h3>Please confirm deleting {{bulkDeleteCount}} items </h3>
+				<button class="btn btn-danger" ng-click="bulkDeleteFunction()"><@orcid.msg 'freemarker.btnDelete'/></button> 
+				<a ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel'/></a>
+			<div>
+		<div>
+	<div>	
+</script>
+
 
 <script type="text/ng-template" id="import-wizard-modal">
     <#if ((workImportWizards)??)>		

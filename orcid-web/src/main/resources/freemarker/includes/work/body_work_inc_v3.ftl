@@ -30,6 +30,9 @@
 				    <h3 class="workspace-title">
 			        	<strong ng-bind="group.getActive().workTitle.title.value"></strong><span class="work-subtitle" ng-show="group.getActive().workTitle.subtitle.value" ng-bind="':&nbsp;'.concat(group.getActive().workTitle.subtitle.value)"></span>		        			        	
 			        </h3>
+			        <div ng-show="showBulkEdit == true" class="bulk-edit-input hidden-lg hidden-md hidden-sm pull-right">
+			        	<input type="checkbox" ng-model="bulkEditMap[group.getActive().putCode.value]"></input>
+			        </div>
 			        <div class="info-detail">
 			        	<span ng-show="group.getActive().publicationDate.year">{{group.getActive().publicationDate.year}}</span><span ng-show="group.getActive().publicationDate.month">-{{group.getActive().publicationDate.month}}</span><span ng-show="group.getActive().publicationDate.year"> | </span> <span class="uppercase">{{group.getActive().workType.value}}</span>		        	
 			        </div>		                	        
@@ -39,19 +42,23 @@
 		        	<#if !(isPublicProfile??)>
 		        		<!-- Privacy bar -->
 						<ul class="workspace-private-toolbar">
+							<li ng-show="showBulkEdit" class="hidden-xs">								
+			        			<input type="checkbox" ng-model="bulkEditMap[group.getActive().putCode.value]" class="bulk-edit-input"></input>			        										
+							</li>							
 						 	<li>
 						 		<a class="toolbar-button edit-item-button" ng-click="openEditWork(group.getActive().putCode.value)">
 						 			<span class="glyphicon glyphicon-pencil edit-option-toolbar" title=""></span>
-						 		</a>	
-						 	</li>					 	
+						 		</a>
+						 	</li>
 							<li>
-							<@orcid.privacyToggle2 angularModel="group.getActive().visibility" 
-							    questionClick="toggleClickPrivacyHelp(group.getActive().putCode.value)"
-							    clickedClassCheck="{'popover-help-container-show':privacyHelp[group.getActive().putCode.value]==true}"
-								publicClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PUBLIC', $event)" 
-			                	limitedClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'LIMITED', $event)" 
-			                	privateClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PRIVATE', $event)"/>
+								<@orcid.privacyToggle2 angularModel="group.getActive().visibility" 
+								    questionClick="toggleClickPrivacyHelp(group.getActive().putCode.value)"
+								    clickedClassCheck="{'popover-help-container-show':privacyHelp[group.getActive().putCode.value]==true}"
+									publicClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PUBLIC', $event)" 
+				                	limitedClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'LIMITED', $event)" 
+				                	privateClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PRIVATE', $event)"/>
 			                </li>
+			             </ul>
 			        </#if>
 			        <div ng-show="canBeCombined(group.getActive())">
 			             <a ng-click="showCombineMatches(group.getDefault())">combined duplicates</a>
