@@ -34,23 +34,23 @@
 							<span class="view-sources-details">
 							 	<a ng-click="editSources[group.groupId] = !editSources[group.groupId]">View <span class="badge">{{group.activitiesCount - 1 }}</span> additional source<span ng-show="group.activitiesCount > 2">s</span></a>							 	
 							</span>
-							<a ng-click="editSources[group.groupId] = !editSources[group.groupId]">
+							<a ng-click="editSources[group.groupId] = !editSources[group.groupId]" ng-show="!showBulkEdit">
 			            	   <span class="glyphicon glyphicon-trash grey"></span>
 			        		</a>
 						</li>
 						<li ng-show="group.activitiesCount == 1">
 							<a ng-click="deleteWorkConfirm(group.getActive().putCode.value, false)">
-			            	   <span class="glyphicon glyphicon-trash grey"></span>
+			            	   <span class="glyphicon glyphicon-trash grey" ng-show="!showBulkEdit"></span>
 			               </a>
 						</li>
 				        <li ng-show="editSources[group.groupId] == true">
 				            <a ng-click="deleteWorkConfirm(group.getActive().putCode.value, true)">
-				                <span class="glyphicon glyphicon-trash"></span> Delete all
+				                <span class="glyphicon glyphicon-trash" ng-show="!showBulkEdit"></span> Delete all
 				            </a>
 				        </li>
 				        <li ng-show="editSources[group.groupId] == true">
 				            <a ng-click="editSources[group.groupId] = false">
-				                <span class="glyphicon glyphicon-remove"></span> Hide additional sources
+				                <span class="glyphicon glyphicon-remove" ng-show="!showBulkEdit"></span> Hide additional sources
 				            </a>
 				        </li>
 				        <li class="show-more-info-tab-container">
