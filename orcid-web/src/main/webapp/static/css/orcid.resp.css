@@ -4221,6 +4221,8 @@ ul.oauth-scopes{
 }
 
 ul.oauth-scopes li{	
+	list-style-type: circle;
+	position: relative;
 	padding: 0;
 }
 
@@ -4346,6 +4348,27 @@ ul.oauth-scopes li{
 .st_linkedin_custom:hover:before{
 	content: "\E018";
 	color: #a6ce39;
+}
+
+.confirm-oauth-access .popover{
+	top: 22px;
+	left: 9px;
+}
+
+.confirm-oauth-access .popover.bottom .arrow{
+	left: 17px;
+}
+
+.confirm-oauth-access .inline{
+	display: block !important;
+}
+
+.confirm-oauth-access .scopeLongDesc{
+	display: none;
+}
+
+.confirm-oauth-access ul.oauth-scopes li{
+	cursor: pointer;
 }
 
 
