@@ -1077,7 +1077,25 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
     @Override
     @Transactional
-    public void addOrcidWorks(OrcidProfile updatedOrcidProfile) {
+    public void addOrcidWorks(OrcidProfile updatedOrcidProfile) {        
+        if (updatedOrcidProfile != null && updatedOrcidProfile.getOrcidActivities() != null && updatedOrcidProfile.getOrcidActivities().getOrcidWorks() != null
+                && updatedOrcidProfile.getOrcidActivities().getOrcidWorks().getOrcidWork() != null
+                && !updatedOrcidProfile.getOrcidActivities().getOrcidWorks().getOrcidWork().isEmpty()) {
+            List<OrcidWork> works  = updatedOrcidProfile.getOrcidActivities().getOrcidWorks().getOrcidWork();
+            Set<String> titles = new HashSet<String>();
+            
+            for(OrcidWork work : works) {
+                if(work.getWorkTitle() != null && work.getWorkTitle().getTitle() != null) {
+                    String title = work.getWorkTitle().getTitle().getContent();
+                    if(titles.contains(title)) {
+                        LOG.warn("Request from {} contains dupplicated works on title '{}' \n {}", new Object[] { sourceManager.retrieveSourceOrcid(), title, updatedOrcidProfile});
+                    } else {
+                        titles.add(title);
+                    }
+                }                
+            }
+        }
+        
         String orcid = updatedOrcidProfile.getOrcidIdentifier().getPath();
         OrcidProfile existingProfile = retrieveOrcidProfile(orcid);
         if (existingProfile == null) {
