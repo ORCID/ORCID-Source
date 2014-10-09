@@ -4350,27 +4350,26 @@ ul.oauth-scopes li{
 	color: #a6ce39;
 }
 
-.confirm-oauth-access .popover{
+.confirm-oauth-access .popover, .oauth-signin-register .popover {
 	top: 22px;
 	left: 9px;
 }
 
-.confirm-oauth-access .popover.bottom .arrow{
+.confirm-oauth-access .popover.bottom .arrow, .oauth-signin-register .popover.bottom .arrow {
 	left: 17px;
 }
 
-.confirm-oauth-access .inline{
+.confirm-oauth-access .inline, .oauth-signin-register .inline {
 	display: block !important;
 }
 
-.confirm-oauth-access .scopeLongDesc{
+.confirm-oauth-access .scopeLongDesc, .oauth-signin-register .scopeLongDesc {
 	display: none;
 }
 
-.confirm-oauth-access ul.oauth-scopes li{
+.confirm-oauth-access ul.oauth-scopes li, .oauth-signin-register ul.oauth-scopes li{
 	cursor: pointer;
 }
-
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
