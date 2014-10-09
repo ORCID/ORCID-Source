@@ -758,6 +758,20 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 					worksSrvc.loading = false;
 				};
 			},
+			createNew: function(work) {
+				var cloneW = JSON.parse(JSON.stringify(work));
+				cloneW.workSource = null;
+				cloneW.putCode = null;
+				return cloneW;
+			},
+			copyEIs: function(from, to) {
+				// add all identiifers
+				if (to.workExternalIdentifiers == undefined)
+					to.workExternalIdentifiers = new Array();
+				for (var idx in from.workExternalIdentifiers) 
+					to.workExternalIdentifiers.push(JSON.parse(JSON.stringify(from.workExternalIdentifiers[idx])));
+				return to;
+			},
 			getBlankWork: function(callback) {
 				$.ajax({
 					url: getBaseUri() + '/works/work.json',
@@ -813,9 +827,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 									break;
 								}	
 							if (bestMatch == null) {
-								bestMatch = JSON.parse(JSON.stringify(worksSrvc.details[putCode]));
-								bestMatch.workSource = null;
-								bestMatch.putCode = null;
+								bestMatch = worksSrvc.createNew(worksSrvc.details[putCode]);
 							}
 						    callback(bestMatch);
 						});
@@ -910,6 +922,20 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 				    	console.log("error fetching works");
 					});
 				};
+			},
+			putWork: function(work,sucessFunc, failFunc) {
+				$.ajax({
+					url: getBaseUri() + '/works/work.json',	        
+			        contentType: 'application/json;charset=UTF-8',
+			        dataType: 'json',
+			        type: 'POST',
+			        data: angular.toJson(work),
+			        success: function(data) {
+			        	sucessFunc(data);
+			        }
+				}).fail(function(){
+					failFunc();
+				});
 			},
 			removeWork: function(work) {
 				$.ajax({
@@ -3872,16 +3898,31 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
 		return $scope.hasEIs(work);
 	};
 
+	$scope.combiningWorks = false;
 	$scope.combined = function(work1, work2) {
+		// no duplicate request;
+		if ($scope.combiningWorks) 
+			return;
+		$scope.combiningWorks = true;
+		var putWork;
 		if ($scope.userIsSource(work1)) {
-			// add all identiifers
+			putWork = worksSrvc.copyEIs(work2, work1);
 		} else if ($scope.userIsSource(work2)) {
-		    // 
+			putWork = worksSrvc.copyEIs(work1, work2);
 		} else {
-			var newWork = JSON.parse(JSON.stringify(worksSrvc.details[putCode])); 
+			putWork = worksSrvc.createNew(worksSrvc.details[putCode]); 
 		}	
-		$scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
-		
+		worksSrvc.putWork(
+				putWork,
+				function(data){
+					$scope.combiningWorks = false;
+					$scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
+					$scope.closeModal();
+				},
+				function() {
+					$scope.combiningWorks = false;
+				}
+			);
 	};
 	
 	$scope.showCombineMatches = function(work1) {
@@ -3962,13 +4003,8 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
 		if ($scope.addingWork) return; // don't process if adding work
 		$scope.addingWork = true;
 		$scope.editWork.errors.length = 0;
-		$.ajax({
-			url: getBaseUri() + '/works/work.json',	        
-	        contentType: 'application/json;charset=UTF-8',
-	        dataType: 'json',
-	        type: 'POST',
-	        data:  angular.toJson($scope.editWork),
-	        success: function(data) {
+		worksSrvc.putWork($scope.editWork,
+			function(data){
 	        	if (data.errors.length == 0){
 	        		$.colorbox.close(); 
 	        		$scope.addingWork = false;
@@ -3982,13 +4018,14 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
 		        	commonSrvc.copyErrorsLeft($scope.editWork, data);
 		        	$scope.addingWork = false;
 		        	$scope.$apply();
-	        	}
-	        }
-		}).fail(function(){
-			// something bad is happening!
-			$scope.addingWork = false;
-	    	console.log("error fetching works");
-		});
+	        	}			
+			},
+			function() {
+				// something bad is happening!
+				$scope.addingWork = false;
+		    	console.log("error fetching works");
+			}
+		);
 	};
 	
 	
