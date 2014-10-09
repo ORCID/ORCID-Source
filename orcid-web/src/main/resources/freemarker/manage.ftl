@@ -364,12 +364,11 @@
 					</tr>
 				</#if>
 			</tbody>
-		</table>
-
-		<h1 id="manage-permissions">${springMacroRequestContext.getMessage("manage.manage_permissions")}</h1>
-		<h3>
-			<b>${springMacroRequestContext.getMessage("manage.trusted_organisations")}</b>
-		</h3>
+		</table>		
+		
+		<h1 id="manage-permissions">
+			${springMacroRequestContext.getMessage("manage.trusted_organisations")}
+		</h1>
 		<p>
 			${springMacroRequestContext.getMessage("manage.youcanallowpermission")}<br />
 			<a href="http://support.orcid.org/knowledgebase/articles/131598"
@@ -429,9 +428,9 @@
 		</#if>
 		
 		<#if RequestParameters['delegates']??>
-		<h3>
-			<b>${springMacroRequestContext.getMessage("settings.tdtrustindividual")}</b>
-		</h3>
+		<h1>
+			${springMacroRequestContext.getMessage("settings.tdtrustindividual")}
+		</h1>
 		<p>
 			${springMacroRequestContext.getMessage("settings.tdallowpermission")}<br />
 			<a href="http://support.orcid.org/knowledgebase/articles/delegation"
