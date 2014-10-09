@@ -145,7 +145,7 @@ public class PersistentTokensIntegrationTest extends DBUnitTest {
     public void createAuthenticatedTokenToGeneratePersistentTokenTest() throws InterruptedException {
         List<String> items = new ArrayList<String>();
         items.add("enablePersistentToken");
-        String authorizationCode = webDriverHelper.obtainAuthorizationCode("/orcid-works/create", CLIENT_DETAILS_ID, "michael@bentine.com", "password", items);
+        String authorizationCode = webDriverHelper.obtainAuthorizationCode("/orcid-works/create", CLIENT_DETAILS_ID, "michael@bentine.com", "password", items, true);
         assertFalse(PojoUtil.isEmpty(authorizationCode));
         
         OrcidOauth2AuthoriziationCodeDetail authorizationCodeEntity = authorizationCodeDetailDao.find(authorizationCode);
@@ -155,7 +155,9 @@ public class PersistentTokensIntegrationTest extends DBUnitTest {
     
     @Test
     public void createNonPersistentAuthenticatedTokenTest() throws InterruptedException {
-        String authorizationCode = webDriverHelper.obtainAuthorizationCode("/orcid-works/create", CLIENT_DETAILS_ID, "michael@bentine.com", "password");
+        List<String> items = new ArrayList<String>();
+        items.add("enablePersistentToken");
+        String authorizationCode = webDriverHelper.obtainAuthorizationCode("/orcid-works/create", CLIENT_DETAILS_ID, "michael@bentine.com", "password", items, false);
         assertFalse(PojoUtil.isEmpty(authorizationCode));
         
         OrcidOauth2AuthoriziationCodeDetail authorizationCodeEntity = authorizationCodeDetailDao.find(authorizationCode);
@@ -168,7 +170,7 @@ public class PersistentTokensIntegrationTest extends DBUnitTest {
         Date beforeCreatingToken = twentyYearsTime();
         List<String> items = new ArrayList<String>();
         items.add("enablePersistentToken");
-        String authorizationCode = webDriverHelper.obtainAuthorizationCode("/orcid-works/create", CLIENT_DETAILS_ID, "michael@bentine.com", "password", items);
+        String authorizationCode = webDriverHelper.obtainAuthorizationCode("/orcid-works/create", CLIENT_DETAILS_ID, "michael@bentine.com", "password", items, true);
         assertFalse(PojoUtil.isEmpty(authorizationCode));
         String accessToken = obtainAccessToken(CLIENT_DETAILS_ID, authorizationCode, redirectUri, "/orcid-works/create");
         assertFalse(PojoUtil.isEmpty(accessToken));
@@ -188,7 +190,9 @@ public class PersistentTokensIntegrationTest extends DBUnitTest {
     @Test
     public void createNonPersistentToken() throws InterruptedException, JSONException {
         Date beforeCreatingToken = oneHoursTime();
-        String authorizationCode = webDriverHelper.obtainAuthorizationCode("/orcid-works/create", CLIENT_DETAILS_ID, "michael@bentine.com", "password");
+        List<String> items = new ArrayList<String>();
+        items.add("enablePersistentToken");       
+        String authorizationCode = webDriverHelper.obtainAuthorizationCode("/orcid-works/create", CLIENT_DETAILS_ID, "michael@bentine.com", "password", items, false);
         assertFalse(PojoUtil.isEmpty(authorizationCode));
         String accessToken = obtainAccessToken(CLIENT_DETAILS_ID, authorizationCode, redirectUri, "/orcid-works/create");
         assertFalse(PojoUtil.isEmpty(accessToken));
