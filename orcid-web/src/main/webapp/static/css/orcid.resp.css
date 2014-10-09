@@ -4220,8 +4220,8 @@ ul.oauth-scopes{
 	margin: 10px 0 10px 0;
 }
 
-ul.oauth-scopes li{	
-	list-style-type: circle;
+ul.oauth-scopes li{
+	list-style-type: none;	
 	position: relative;
 	padding: 0;
 }
