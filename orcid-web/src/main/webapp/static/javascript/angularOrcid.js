@@ -964,7 +964,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 				var idx;
 				var work = worksSrvc.getWork(putCode);
 				work.visibility = priv;
-				worksSrvc.updateProfileWork(work);
+				worksSrvc.updateVisibility(work);
 			},
 			showSpinner: function($event) {			
 				
@@ -979,17 +979,14 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 				,250);
 				
 			},
-			updateProfileWork: function(work) {
+			updateVisibility: function(work) {
 				$.ajax({
-			        url: getBaseUri() + '/works/profileWork.json',
+			        url: getBaseUri() + '/works/' + work.putCode.value + '/visibility.json',
 			        type: 'PUT',
-			        data: angular.toJson(work),
+			        data: angular.toJson(work.visibility),
 			        contentType: 'application/json;charset=UTF-8',
 			        dataType: 'json',
 			        success: function(data) {	        	
-			        	if(data.errors.length != 0){
-			        		console.log("Unable to update profile work.");
-			        	} 
 			        }
 			    }).fail(function() { 
 			    	console.log("Error updating profile work.");
