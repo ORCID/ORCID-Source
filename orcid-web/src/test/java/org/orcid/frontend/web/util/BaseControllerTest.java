@@ -17,7 +17,6 @@
 package org.orcid.frontend.web.util;
 
 import java.util.Arrays;
-import java.util.List;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;

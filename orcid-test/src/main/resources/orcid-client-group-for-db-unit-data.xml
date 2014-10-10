@@ -43,4 +43,15 @@
         <client-id>4444-4444-4444-4445</client-id>
         <client-secret>DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx</client-secret>
     </orcid-client>
+    <orcid-client type="premium-creator">
+        <display-name>U. Test</display-name>
+        <website>www.4444-4444-4444-4498.com</website>
+        <short-description>Client used to test the public OAuth process.</short-description>
+        <redirect-uris>
+            <redirect-uri type="default">http://www.4444-4444-4444-4498.com/redirect/oauth</redirect-uri>
+            <redirect-uri scope="/funding/read-limited" type="grant-read-wizard">http://www.4444-4444-4444-4498.com/redirect/oauth/grant_read_wizard</redirect-uri>
+        </redirect-uris>
+        <client-id>4444-4444-4444-4498</client-id>
+        <client-secret>DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx</client-secret>
+    </orcid-client>
 </orcid-client-group>
