@@ -265,24 +265,6 @@ public class ManageProfileControllerTest extends BaseControllerTest {
         verify(mockNotificationManager, times(1)).sendNotificationToAddedDelegate(any(OrcidProfile.class), (argThat(onlyNewDelegateAdded())));
     }   
     
-    private ProfileEntity orcidWithExistingSingleDelegate() {
-        ProfileEntity mockEntity = new ProfileEntity();
-        mockEntity.setId("4444-4444-4444-4446");
-        Set<GivenPermissionToEntity> existingPermissions = new HashSet<GivenPermissionToEntity>();
-        GivenPermissionToEntity singlePermission = new GivenPermissionToEntity();
-
-        singlePermission.setGiver("1234");
-        ProfileSummaryEntity receiver = new ProfileSummaryEntity();
-        receiver.setId("5678");
-        receiver.setCreditName("existing receiver creditName");
-        singlePermission.setReceiver(receiver);
-
-        existingPermissions.add(singlePermission);
-        mockEntity.setGivenPermissionTo(existingPermissions);
-
-        return mockEntity;
-    }
-
     public static TypeSafeMatcher<List<DelegationDetails>> onlyNewDelegateAdded() {
         return new TypeSafeMatcher<List<DelegationDetails>>() {
 
