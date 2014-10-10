@@ -22,19 +22,25 @@ package org.orcid.frontend.web.controllers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.annotation.Resource;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.manager.OrcidClientGroupManager;
 import org.orcid.frontend.web.util.BaseControllerTest;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.pojo.ajaxForm.Client;
 import org.orcid.pojo.ajaxForm.Group;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.pojo.ajaxForm.RedirectUri;
 import org.orcid.pojo.ajaxForm.Text;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
@@ -59,6 +65,17 @@ public class ManageMembersControllerTest extends BaseControllerTest {
     @Resource
     GroupAdministratorController groupAdministratorController;
 
+    @BeforeClass
+    public static void beforeClass() throws Exception {
+        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml"), null);
+    }    
+
+    @AfterClass
+    public static void afterClass() throws Exception {
+        //removeDBUnitData(Arrays.asList("/data/ClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/SecurityQuestionEntityData.xml"), null);
+    }
+    
+    
     @Test
     @Transactional("transactionManager")
     @Rollback(true)
@@ -289,5 +306,58 @@ public class ManageMembersControllerTest extends BaseControllerTest {
         assertNotNull(group);
         assertEquals(1, group.getErrors().size());
         assertEquals(manageMembers.getMessage("group.salesforce_id.invalid", new ArrayList<String>()), group.getErrors().get(0));
+    }
+    
+    @Test       
+    public void findClientTest() throws Exception {
+        //Client with all redirect uris default
+        Client client_4443 = manageMembers.findClient("4444-4444-4444-4443");
+        assertNotNull(client_4443);
+        assertNotNull(client_4443.getDisplayName());
+        assertEquals("P. Sellers III", client_4443.getDisplayName().getValue());
+        assertNotNull(client_4443.getRedirectUris());
+        assertEquals(1, client_4443.getRedirectUris().size());
+        assertEquals("http://www.4444-4444-4444-4443.com/redirect/oauth", client_4443.getRedirectUris().get(0).getValue().getValue());
+        
+        //Client with redirect uri not default
+        Client client_4498 = manageMembers.findClient("4444-4444-4444-4498");
+        assertNotNull(client_4498);
+        assertNotNull(client_4498.getDisplayName());
+        assertEquals("U. Test", client_4498.getDisplayName().getValue());
+        assertNotNull(client_4498.getRedirectUris());
+        assertEquals(2, client_4498.getRedirectUris().size());
+        
+        RedirectUri rUri1 = client_4498.getRedirectUris().get(0);
+        if("http://www.4444-4444-4444-4498.com/redirect/oauth".equals(rUri1.getValue().getValue())) {
+            assertNotNull(rUri1.getType());
+            assertEquals("default", rUri1.getType().getValue());
+            assertNotNull(rUri1.getScopes());
+            assertEquals(0, rUri1.getScopes().size());
+        } else if ("http://www.4444-4444-4444-4498.com/redirect/oauth/grant_read_wizard".equals(rUri1.getValue().getValue())) {
+            assertNotNull(rUri1.getType());
+            assertEquals("grant-read-wizard", rUri1.getType().getValue());
+            assertNotNull(rUri1.getScopes());
+            assertEquals(1, rUri1.getScopes().size());
+            assertEquals("/funding/read-limited", rUri1.getScopes().get(0));
+        } else {
+            fail("Invalid redirect uri: " + rUri1.getValue().getValue());
+        }
+        
+        RedirectUri rUri2 = client_4498.getRedirectUris().get(1);
+        if("http://www.4444-4444-4444-4498.com/redirect/oauth".equals(rUri2.getValue().getValue())) {
+            assertNotNull(rUri2.getType());
+            assertEquals("default", rUri2.getType().getValue());
+            assertNotNull(rUri2.getScopes());
+            assertEquals(1, rUri2.getScopes().size());
+            assertEquals("", rUri2.getScopes().get(0));
+        } else if ("http://www.4444-4444-4444-4498.com/redirect/oauth/grant_read_wizard".equals(rUri2.getValue().getValue())) {
+            assertNotNull(rUri2.getType());
+            assertEquals("grant-read-wizard", rUri2.getType().getValue());
+            assertNotNull(rUri2.getScopes());
+            assertEquals(1, rUri2.getScopes().size());
+            assertEquals("/funding/read-limited", rUri2.getScopes().get(0));
+        } else {
+            fail("Invalid redirect uri: " + rUri2.getValue().getValue());
+        }
     }
 }
