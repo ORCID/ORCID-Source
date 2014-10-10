@@ -174,7 +174,10 @@ public class ClientDetailsManagerTest extends DBUnitTest {
         assertNotNull(clientId);
         Set<String> registeredRedirectUris = clientDetails.getRegisteredRedirectUri();
         assertNotNull(registeredRedirectUris);
-        assertEquals(1, registeredRedirectUris.size());
+        if(clientDetails.getClientId().equals("4444-4444-4444-4498"))
+            assertEquals(2, registeredRedirectUris.size());
+        else 
+            assertEquals(1, registeredRedirectUris.size());
         Collection<GrantedAuthority> authorities = clientDetails.getAuthorities();
         assertNotNull(authorities);
         assertEquals(1, authorities.size());
