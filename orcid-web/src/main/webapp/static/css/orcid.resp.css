@@ -4375,12 +4375,24 @@ ul.oauth-scopes li{
 	cursor: pointer;
 }
 
+.confirm-oauth-access ul.oauth-icons,
+.oauth-signin-register ul.oauth-icons{
+	padding: 0;
+}
+
 .close-account-container h4{
 	margin-top: 20px;
 	margin-bottom: 0;
 }
 
 /* Media Queries */
+
+@media (max-width : 499px){ /* OAuth Screen Fix  */{
+    .confirm-oauth-access .col-xs-12,
+    .oauth-signin-register .col-xs-12{
+        width: 500px !important; 
+}
+
 @media ( max-width : 767px) { /* Mobile */
 	.alert .small {
 		float: none !important;
