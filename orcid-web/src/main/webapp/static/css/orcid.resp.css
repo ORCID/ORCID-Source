@@ -4371,6 +4371,11 @@ ul.oauth-scopes li{
 	cursor: pointer;
 }
 
+.close-account-container h4{
+	margin-top: 20px;
+	margin-bottom: 0;
+}
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 	.alert .small {

@@ -296,7 +296,7 @@
 						</div>
 					</td>
 				</tr>				
-				
+				<!-- Deactivate Account -->
 				<tr>
 					<th><a name="editDeactivate"></a>${springMacroRequestContext.getMessage("manage.close_account")}</th>
 					<td><a href="" ng-click="toggleDeactivateEdit()"
@@ -305,20 +305,25 @@
 				<tr ng-controller="DeactivateAccountCtrl"
 					ng-show="showEditDeactivate" ng-cloak>
 					<td colspan="2">
-						<div class="editTablePadCell35">
+						<div class="editTablePadCell35 close-account-container">
 							<p>${springMacroRequestContext.getMessage("deactivate_orcid.you_may")}</p>
+							
 							<h4>${springMacroRequestContext.getMessage("deactivate_orcid.whatHappens")}</h4>
-							<p>${springMacroRequestContext.getMessage("deactivate_orcid.once")}</p>
 							<p>
+								${springMacroRequestContext.getMessage("deactivate_orcid.once")}
+								<br />
 								<a
 									href="http://support.orcid.org/knowledgebase/articles/148970-closing-an-orcid-account"
 									target="_blank">${springMacroRequestContext.getMessage("deactivate_orcid.close_an")}
 								</a>
 							</p>
+							
 							<h4>${springMacroRequestContext.getMessage("deactivate_orcid.anotherAccount")}</h4>
 							<p>
 								${springMacroRequestContext.getMessage("deactivate_orcid.duplicate_orcid.a")} <a href='mailto:${springMacroRequestContext.getMessage("deactivate_orcid.duplicate_orcid.support_email")}'>${springMacroRequestContext.getMessage("deactivate_orcid.duplicate_orcid.support_email")}</a> ${springMacroRequestContext.getMessage("deactivate_orcid.duplicate_orcid.b")} 								
-							</p>								
+							</p>
+							
+															
 							<h4>${springMacroRequestContext.getMessage("deactivate_orcid.listTitle")}</h4>
 							<ol>
 								<li>${springMacroRequestContext.getMessage("deactivate_orcid.b1")}</li>
@@ -329,6 +334,7 @@
 						</div>
 					</td>
 				</tr>
+				<!-- / Deactivate Account -->
 				<#if RequestParameters['OrcidSocial']??>
 					<tr>
 						<th><a name="editSocialNetworks"></a>${springMacroRequestContext.getMessage("manage.social_networks")}</th>
