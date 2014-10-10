@@ -37,10 +37,12 @@ public class RedirectUri implements ErrorsInterface, Serializable, Comparable<Re
         RedirectUri redirectUri = new RedirectUri();
         redirectUri.setValue(Text.valueOf(rUri.getRedirectUri()));
         redirectUri.setType(Text.valueOf(rUri.getRedirectUriType()));
-                
-        for(String scope : rUri.getPredefinedClientScope().split(" ")) {
-            redirectUri.getScopes().add(scope);
-        }
+         
+        if(!PojoUtil.isEmpty(rUri.getPredefinedClientScope())) {
+            for(String scope : rUri.getPredefinedClientScope().split(" ")) {
+                redirectUri.getScopes().add(scope);
+            }
+        }        
                         
         return redirectUri;
     }

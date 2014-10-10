@@ -61,7 +61,7 @@
         <constructor-arg value="3600"/>
         <constructor-arg value="631138519"/>
         <property name="tokenStore" ref="orcidTokenStore" />
-        <property name="supportRefreshToken" value="true" />
+        <property name="supportRefreshToken" value="false" />
     </bean>
 	
 

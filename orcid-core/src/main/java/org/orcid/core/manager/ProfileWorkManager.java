@@ -36,19 +36,17 @@ public interface ProfileWorkManager {
 
     /**
      * Updates the visibility of an existing profile work relationship
-     * 
-     * @param clientOrcid
-     *          The client orcid
-     *          
+     * @param user orcid
      * @param workId
      *          The id of the work that will be updated
-     *          
      * @param visibility
      *          The new visibility value for the profile work relationship         
-     *                     
+     * @param clientOrcid
+     *          The client orcid
+     * 
      * @return true if the relationship was updated
      * */
-    boolean updateWork(String clientOrcid, String workId, Visibility visibility);
+    boolean updateVisibility(String orcid, String workId, Visibility visibility);
 
     /**
      * Get the profile work associated with the client orcid and the workId 

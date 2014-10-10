@@ -4352,8 +4352,12 @@ ul.oauth-scopes li{
 
 .confirm-oauth-access .popover, .oauth-signin-register .popover {
 	top: 22px;
-	left: 9px;
+	left: 0;
 }
+
+.confirm-oauth-access .lightbox-container, .oauth-signin-register .popover {
+	padding-bottom: 5px;
+} 
 
 .confirm-oauth-access .popover.bottom .arrow, .oauth-signin-register .popover.bottom .arrow {
 	left: 17px;
@@ -4376,14 +4380,19 @@ ul.oauth-scopes li{
 	padding: 0;
 }
 
+.close-account-container h4{
+	margin-top: 20px;
+	margin-bottom: 0;
+}
+
+/* Media Queries */
+
 @media (max-width : 499px){ /* OAuth Screen Fix  */{
     .confirm-oauth-access .col-xs-12,
     .oauth-signin-register .col-xs-12{
         width: 500px !important; 
-    }
 }
 
-/* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 	.alert .small {
 		float: none !important;

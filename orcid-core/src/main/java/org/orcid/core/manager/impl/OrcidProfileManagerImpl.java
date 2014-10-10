@@ -604,7 +604,8 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         if (actualLastModified == null) {
             return clearCacheAndRetrieve(orcid, loadOptions);
         }
-        if (actualLastModified.after(cachedProfileLastModified)) {
+        Date actualLastModifiedDate = new Date(actualLastModified.getTime());
+        if (actualLastModifiedDate.after(cachedProfileLastModified)) {
             return clearCacheAndRetrieve(orcid, loadOptions);
         }
         return cachedProfile;

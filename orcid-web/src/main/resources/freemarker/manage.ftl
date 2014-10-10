@@ -143,7 +143,7 @@
 									</div>
 									<div class="col-md-12">
 									<label>
-									As per ORCID's <a href="${aboutUri}/content/orcid-terms-use" target="_blank">terms of use</a>, you may only add email addresses that you have control over. An email to the added address will be sent immediately to ask for verification of address.
+										${springMacroRequestContext.getMessage("manage.verificationEmail.1")} <a href="${aboutUri}/content/orcid-terms-use" target="_blank">${springMacroRequestContext.getMessage("manage.verificationEmail.2")}</a>${springMacroRequestContext.getMessage("manage.verificationEmail.3")}
 									</label>
 									</div>
 								</div>
@@ -296,7 +296,7 @@
 						</div>
 					</td>
 				</tr>				
-				
+				<!-- Deactivate Account -->
 				<tr>
 					<th><a name="editDeactivate"></a>${springMacroRequestContext.getMessage("manage.close_account")}</th>
 					<td><a href="" ng-click="toggleDeactivateEdit()"
@@ -305,20 +305,25 @@
 				<tr ng-controller="DeactivateAccountCtrl"
 					ng-show="showEditDeactivate" ng-cloak>
 					<td colspan="2">
-						<div class="editTablePadCell35">
+						<div class="editTablePadCell35 close-account-container">
 							<p>${springMacroRequestContext.getMessage("deactivate_orcid.you_may")}</p>
+							
 							<h4>${springMacroRequestContext.getMessage("deactivate_orcid.whatHappens")}</h4>
-							<p>${springMacroRequestContext.getMessage("deactivate_orcid.once")}</p>
 							<p>
+								${springMacroRequestContext.getMessage("deactivate_orcid.once")}
+								<br />
 								<a
 									href="http://support.orcid.org/knowledgebase/articles/148970-closing-an-orcid-account"
 									target="_blank">${springMacroRequestContext.getMessage("deactivate_orcid.close_an")}
 								</a>
 							</p>
+							
 							<h4>${springMacroRequestContext.getMessage("deactivate_orcid.anotherAccount")}</h4>
 							<p>
 								${springMacroRequestContext.getMessage("deactivate_orcid.duplicate_orcid.a")} <a href='mailto:${springMacroRequestContext.getMessage("deactivate_orcid.duplicate_orcid.support_email")}'>${springMacroRequestContext.getMessage("deactivate_orcid.duplicate_orcid.support_email")}</a> ${springMacroRequestContext.getMessage("deactivate_orcid.duplicate_orcid.b")} 								
-							</p>								
+							</p>
+							
+															
 							<h4>${springMacroRequestContext.getMessage("deactivate_orcid.listTitle")}</h4>
 							<ol>
 								<li>${springMacroRequestContext.getMessage("deactivate_orcid.b1")}</li>
@@ -329,6 +334,7 @@
 						</div>
 					</td>
 				</tr>
+				<!-- / Deactivate Account -->
 				<#if RequestParameters['OrcidSocial']??>
 					<tr>
 						<th><a name="editSocialNetworks"></a>${springMacroRequestContext.getMessage("manage.social_networks")}</th>
@@ -364,12 +370,11 @@
 					</tr>
 				</#if>
 			</tbody>
-		</table>
-
-		<h1 id="manage-permissions">${springMacroRequestContext.getMessage("manage.manage_permissions")}</h1>
-		<h3>
-			<b>${springMacroRequestContext.getMessage("manage.trusted_organisations")}</b>
-		</h3>
+		</table>		
+		
+		<h1 id="manage-permissions">
+			${springMacroRequestContext.getMessage("manage.trusted_organisations")}
+		</h1>
 		<p>
 			${springMacroRequestContext.getMessage("manage.youcanallowpermission")}<br />
 			<a href="http://support.orcid.org/knowledgebase/articles/131598"
@@ -429,9 +434,9 @@
 		</#if>
 		
 		<#if RequestParameters['delegates']??>
-		<h3>
-			<b>${springMacroRequestContext.getMessage("settings.tdtrustindividual")}</b>
-		</h3>
+		<h1>
+			${springMacroRequestContext.getMessage("settings.tdtrustindividual")}
+		</h1>
 		<p>
 			${springMacroRequestContext.getMessage("settings.tdallowpermission")}<br />
 			<a href="http://support.orcid.org/knowledgebase/articles/delegation"
