@@ -119,6 +119,10 @@ GroupedActivities.prototype.getActive = function() {
 	return this.activities[this.activePutCode];
 };
 
+GroupedActivities.prototype.getDefault = function() {
+	return this.activities[this.defaultPutCode];
+};
+
 GroupedActivities.prototype.getByPut = function(putCode) {
 	return this.activities[putCode];
 };
@@ -754,6 +758,20 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 					worksSrvc.loading = false;
 				};
 			},
+			createNew: function(work) {
+				var cloneW = JSON.parse(JSON.stringify(work));
+				cloneW.workSource = null;
+				cloneW.putCode = null;
+				return cloneW;
+			},
+			copyEIs: function(from, to) {
+				// add all identiifers
+				if (to.workExternalIdentifiers == undefined)
+					to.workExternalIdentifiers = new Array();
+				for (var idx in from.workExternalIdentifiers) 
+					to.workExternalIdentifiers.push(JSON.parse(JSON.stringify(from.workExternalIdentifiers[idx])));
+				return to;
+			},
 			getBlankWork: function(callback) {
 				$.ajax({
 					url: getBaseUri() + '/works/work.json',
@@ -809,9 +827,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 									break;
 								}	
 							if (bestMatch == null) {
-								bestMatch = JSON.parse(JSON.stringify(worksSrvc.details[putCode]));
-								bestMatch.workSource = null;
-								bestMatch.putCode = null;
+								bestMatch = worksSrvc.createNew(worksSrvc.details[putCode]);
 							}
 						    callback(bestMatch);
 						});
@@ -891,7 +907,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 				} else {
 					worksSrvc.worksToAddIds = null;
 					worksSrvc.loading = true;
-					worksSrvc.groups.length = 0;
+					worksSrvc.groups = new Array();
 					worksSrvc.details = new Object();
 					$.ajax({
 						url: getBaseUri() + '/works/workIds.json',	        
@@ -906,6 +922,21 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 				    	console.log("error fetching works");
 					});
 				};
+			},
+			putWork: function(work,sucessFunc, failFunc) {
+				console.log(work);
+				$.ajax({
+					url: getBaseUri() + '/works/work.json',	        
+			        contentType: 'application/json;charset=UTF-8',
+			        dataType: 'json',
+			        type: 'POST',
+			        data: angular.toJson(work),
+			        success: function(data) {
+			        	sucessFunc(data);
+			        }
+				}).fail(function(){
+					failFunc();
+				});
 			},
 			removeWork: function(work) {
 				$.ajax({
@@ -934,7 +965,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 				var idx;
 				var work = worksSrvc.getWork(putCode);
 				work.visibility = priv;
-				worksSrvc.updateProfileWork(work);
+				worksSrvc.updateVisibility(work);
 			},
 			showSpinner: function($event) {			
 				
@@ -949,17 +980,14 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 				,250);
 				
 			},
-			updateProfileWork: function(work) {
+			updateVisibility: function(work) {
 				$.ajax({
-			        url: getBaseUri() + '/works/profileWork.json',
+			        url: getBaseUri() + '/works/' + work.putCode.value + '/visibility.json',
 			        type: 'PUT',
-			        data: angular.toJson(work),
+			        data: angular.toJson(work.visibility),
 			        contentType: 'application/json;charset=UTF-8',
 			        dataType: 'json',
 			        success: function(data) {	        	
-			        	if(data.errors.length != 0){
-			        		console.log("Unable to update profile work.");
-			        	} 
 			        }
 			    }).fail(function() { 
 			    	console.log("Error updating profile work.");
@@ -3850,6 +3878,76 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
 		$scope.editWork.contributors.splice(index,1);
 	};
 
+	$scope.userIsSource = function(work) {
+		if (work.workSource.value == orcidVar.orcidId)
+			return true;
+	};
+	
+	$scope.hasCombineableEIs = function(work) {
+		if (work.workExternalIdentifiers != null)
+			for (var idx in work.workExternalIdentifiers)
+				if (work.workExternalIdentifiers[idx].workExternalIdentifierType.value != 'issn')
+					return true;
+		return false;
+	};
+
+	$scope.canBeCombined = function(work) {
+		if ($scope.userIsSource(work))
+			return true;
+		return $scope.hasCombineableEIs(work);
+	};
+	
+	$scope.validCombineSel = function(selectedWork,work) {
+		if ($scope.hasCombineableEIs(selectedWork))
+			return $scope.userIsSource(work) || $scope.hasCombineableEIs(work);
+		else
+			return $scope.hasCombineableEIs(work);
+	};
+
+	$scope.combiningWorks = false;
+	$scope.combined = function(work1, work2) {
+		// no duplicate request;
+		if ($scope.combiningWorks) 
+			return;
+		$scope.combiningWorks = true;
+		var putWork;
+		if ($scope.userIsSource(work1)) {
+			putWork = worksSrvc.copyEIs(work2, work1);
+		} else if ($scope.userIsSource(work2)) {
+			putWork = worksSrvc.copyEIs(work1, work2);
+		} else {
+			putWork = worksSrvc.createNew(work1); 
+			putWork = worksSrvc.copyEIs(work1, work2);
+		}	
+		worksSrvc.putWork(
+				putWork,
+				function(data){
+					$scope.combiningWorks = false;
+					$scope.closeModal();
+				},
+				function() {
+					$scope.combiningWorks = false;
+				}
+			);
+	};
+	
+	$scope.showCombineMatches = function(work1) {
+		$scope.combineWork = work1;
+		$.colorbox({	    	
+	    	scrolling: true,
+	        html: $compile($('#combine-work-template').html())($scope),	        
+	        onLoad: function() {$('#cboxClose').remove();},
+			// start the colorbox off with the correct width
+			width: formColorBoxResize(),
+			onComplete: function() {$.colorbox.resize();},
+	        onClosed: function() {
+	        	$scope.closeAllMoreInfo();
+	    		$scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
+	        }
+	    });		
+		return false;
+	};
+
 	$scope.showAddWorkModal = function(){
 		$scope.editTranslatedTitle = false;
 	    $.colorbox({	    	
@@ -3911,13 +4009,8 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
 		if ($scope.addingWork) return; // don't process if adding work
 		$scope.addingWork = true;
 		$scope.editWork.errors.length = 0;
-		$.ajax({
-			url: getBaseUri() + '/works/work.json',	        
-	        contentType: 'application/json;charset=UTF-8',
-	        dataType: 'json',
-	        type: 'POST',
-	        data:  angular.toJson($scope.editWork),
-	        success: function(data) {
+		worksSrvc.putWork($scope.editWork,
+			function(data){
 	        	if (data.errors.length == 0){
 	        		$.colorbox.close(); 
 	        		$scope.addingWork = false;
@@ -3931,13 +4024,14 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
 		        	commonSrvc.copyErrorsLeft($scope.editWork, data);
 		        	$scope.addingWork = false;
 		        	$scope.$apply();
-	        	}
-	        }
-		}).fail(function(){
-			// something bad is happening!
-			$scope.addingWork = false;
-	    	console.log("error fetching works");
-		});
+	        	}			
+			},
+			function() {
+				// something bad is happening!
+				$scope.addingWork = false;
+		    	console.log("error fetching works");
+			}
+		);
 	};
 	
 	

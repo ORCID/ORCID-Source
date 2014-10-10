@@ -38,19 +38,14 @@ public interface ProfileWorkDao extends GenericDao<ProfileWorkEntity, ProfileWor
 
     /**
      * Updates the visibility of an existing profile work relationship
-     * 
-     * @param clientOrcid
-     *            The client orcid
-     * 
+     * @param orcid users orcid
      * @param workId
      *            The id of the work that will be updated
-     * 
      * @param visibility
      *            The new visibility value for the profile work relationship
-     * 
      * @return true if the relationship was updated
      * */
-    boolean updateWork(String clientOrcid, String workId, Visibility visibility);
+    boolean updateVisibility(String orcid, String workId, Visibility visibility);
 
     /**
      * Get the profile work associated with the client orcid and the workId
