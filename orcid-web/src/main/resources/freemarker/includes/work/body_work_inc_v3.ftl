@@ -60,9 +60,11 @@
 			                </li>
 			             </ul>
 			        </#if>
-			        <div ng-show="canBeCombined(group.getActive())">
-			             <a ng-click="showCombineMatches(group.getDefault())">combined duplicates</a>
-			        </div>				
+			        <#if RequestParameters['combine']??>
+			        	<div ng-show="canBeCombined(group.getActive())">
+			            	<a ng-click="showCombineMatches(group.getDefault())">combined duplicates</a>
+			        	</div>
+			        </#if>
 				</div>
 	        </div>
 	        
