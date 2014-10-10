@@ -72,7 +72,7 @@ public class ManageMembersControllerTest extends BaseControllerTest {
 
     @AfterClass
     public static void afterClass() throws Exception {
-        //removeDBUnitData(Arrays.asList("/data/ClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/SecurityQuestionEntityData.xml"), null);
+        removeDBUnitData(Arrays.asList("/data/ClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/SecurityQuestionEntityData.xml"), null);
     }
     
     
