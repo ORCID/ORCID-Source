@@ -87,7 +87,7 @@ public class WebDriverHelper {
         return authorizationCode;
     }
 
-    public String obtainAuthorizationCode(String scopes, String orcid, String userId, String password, List<String> inputIdsToCheck) throws InterruptedException {
+    public String obtainAuthorizationCode(String scopes, String orcid, String userId, String password, List<String> inputIdsToCheck, boolean markAsSelected) throws InterruptedException {
         webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, orcid, scopes, redirectUri));
         webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, orcid, scopes, redirectUri));
 
@@ -103,7 +103,13 @@ public class WebDriverHelper {
                 By input = By.id(id);
                 (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(input));
                 WebElement inputElement = webDriver.findElement(input);
-                inputElement.click();
+                if(markAsSelected) {
+                    if(!inputElement.isSelected())
+                        inputElement.click();
+                } else {
+                    if(inputElement.isSelected())
+                        inputElement.click();
+                }                
             }
         }
 

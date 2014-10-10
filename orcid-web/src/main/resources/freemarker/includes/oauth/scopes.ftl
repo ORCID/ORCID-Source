@@ -44,10 +44,10 @@
 				<li><span class="mini-icon glyphicon glyphicon-eye-open green"></span></li>
 			</#if>
 			<#if show_create_icon>
-				<li><span class="mini-icon glyphicon glyphicon-cloud-download green"></span></li>
+				<li><span class="mini-icon glyphicon glyphicon-cloud-upload green"></span></li>
 			</#if>
 			<#if show_update_icon>
-				<li><span class="mini-icon glyphicon glyphicon-refresh green"></span></li>
+				<li><span class="mini-icon glyphicon glyphicon-repeat green"></span></li>
 			</#if>					
 		</ul>
 	</div>
