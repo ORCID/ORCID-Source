@@ -4352,8 +4352,12 @@ ul.oauth-scopes li{
 
 .confirm-oauth-access .popover, .oauth-signin-register .popover {
 	top: 22px;
-	left: 9px;
+	left: 0;
 }
+
+.confirm-oauth-access .lightbox-container, .oauth-signin-register .popover {
+	padding-bottom: 5px;
+} 
 
 .confirm-oauth-access .popover.bottom .arrow, .oauth-signin-register .popover.bottom .arrow {
 	left: 17px;
@@ -4374,6 +4378,11 @@ ul.oauth-scopes li{
 .persistent-token-note{
 	font-size: 14px;
 	font-style: italic;
+}
+
+.close-account-container h4{
+	margin-top: 20px;
+	margin-bottom: 0;
 }
 
 /* Media Queries */

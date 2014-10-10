@@ -45,20 +45,14 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
 
     /**
      * Updates the visibility of an existing profile work relationship
-     * 
-     * @param clientOrcid
-     *            The client orcid
-     * 
      * @param workId
      *            The id of the work that will be updated
-     * 
      * @param visibility
      *            The new visibility value for the profile work relationship
-     * 
      * @return true if the relationship was updated
      * */
-    public boolean updateWork(String clientOrcid, String workId, Visibility visibility) {
-        return profileWorkDao.updateWork(clientOrcid, workId, visibility);
+    public boolean updateVisibility(String orcid, String workId, Visibility visibility) {
+        return profileWorkDao.updateVisibility(orcid, workId, visibility);
     }
 
     /**

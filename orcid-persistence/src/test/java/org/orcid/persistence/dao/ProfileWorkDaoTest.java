@@ -74,7 +74,7 @@ public class ProfileWorkDaoTest extends DBUnitTest {
         assertFalse(profileWorkDao.removeWork("4444-4444-4444-4443", "3"));
         assertTrue(profileWorkDao.removeWork("4444-4444-4444-4443", "1"));
 
-        assertFalse(profileWorkDao.updateWork("4444-4444-4444-4443", "3", Visibility.PUBLIC));
-        assertTrue(profileWorkDao.updateWork("4444-4444-4444-4443", "2", Visibility.PUBLIC));
+        assertFalse(profileWorkDao.updateVisibility("4444-4444-4444-4443", "3", Visibility.PUBLIC));
+        assertTrue(profileWorkDao.updateVisibility("4444-4444-4444-4443", "2", Visibility.PUBLIC));
     }
 }

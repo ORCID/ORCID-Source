@@ -53,26 +53,20 @@ public class ProfileWorkDaoImpl extends GenericDaoImpl<ProfileWorkEntity, Profil
 
     /**
      * Updates the visibility of an existing profile work relationship
-     * 
-     * @param clientOrcid
-     *            The client orcid
-     * 
      * @param workId
      *            The id of the work that will be updated
-     * 
      * @param visibility
      *            The new visibility value for the profile work relationship
-     * 
      * @return true if the relationship was updated
      * */
     @Override
     @Transactional
-    public boolean updateWork(String clientOrcid, String workId, Visibility visibility) {
+    public boolean updateVisibility(String orcid, String workId, Visibility visibility) {
         Query query = entityManager
-                .createQuery("update ProfileWorkEntity set visibility=:visibility, lastModified=now() where profile.id=:clientOrcid and work.id=:workId");
-        query.setParameter("clientOrcid", clientOrcid);
+                .createQuery("update ProfileWorkEntity set visibility=:visibility, lastModified=now() where work.id=:workId and  profile.id=:orcid");
         query.setParameter("workId", Long.valueOf(workId));
         query.setParameter("visibility", visibility);
+        query.setParameter("orcid", orcid);
         return query.executeUpdate() > 0 ? true : false;
     }
 

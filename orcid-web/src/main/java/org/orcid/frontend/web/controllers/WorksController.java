@@ -45,6 +45,7 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.PublicationDate;
+import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkCategory;
 import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
@@ -67,6 +68,7 @@ import org.orcid.pojo.ajaxForm.WorkTitle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -410,7 +412,8 @@ public class WorksController extends BaseWorkspaceController {
             workdescriptionValidate(work);
             copyErrors(work.getShortDescription(), work);
         }
-        workWorkCategoryValidate(work);
+        if (work.getWorkCategory() != null)
+            workWorkCategoryValidate(work);
         
         workWorkTypeValidate(work);
         copyErrors(work.getWorkType(), work);
@@ -499,7 +502,7 @@ public class WorksController extends BaseWorkspaceController {
         workManager.editWork(workEntity);
 
         // Edit the work visibility
-        profileWorkManager.updateWork(currentProfile.getOrcidIdentifier().getPath(), String.valueOf(workEntity.getId()), updatedOw.getVisibility());
+        profileWorkManager.updateVisibility(currentProfile.getOrcidIdentifier().getPath(), String.valueOf(workEntity.getId()), updatedOw.getVisibility());
         // Update the work on the cached profile
         List<OrcidWork> works = currentProfile.getOrcidActivities().getOrcidWorks().getOrcidWork();
         for (OrcidWork existingWork : works) {
@@ -836,27 +839,13 @@ public class WorksController extends BaseWorkspaceController {
     /**
      * Saves A work
      * */
-    @RequestMapping(value = "/profileWork.json", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{workId}/visibility.json", method = RequestMethod.PUT)
     public @ResponseBody
-    Work updateProfileWorkJson(HttpServletRequest request, @RequestBody Work work) {
-        // Get cached profile
-        OrcidWork ow = work.toOrcidWork();
+    Visibility updateProfileWorkJson(@PathVariable(value = "workId") String workId, @RequestBody Visibility visibility) {
+        // make sure this is a users work
         OrcidProfile currentProfile = getEffectiveProfile();
-        OrcidWorks orcidWorks = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getOrcidWorks();
-        if (orcidWorks != null) {
-            List<OrcidWork> orcidWorksList = orcidWorks.getOrcidWork();
-            if (orcidWorksList != null) {
-                for (OrcidWork orcidWork : orcidWorksList) {
-                    // If the put codes are equal, we know that they are the
-                    // same work
-                    if (orcidWork.getPutCode().equals(ow.getPutCode())) {
-                        // Update the privacy of the work
-                        profileWorkManager.updateWork(currentProfile.getOrcidIdentifier().getPath(), ow.getPutCode(), ow.getVisibility());
-                    }
-                }
-            }
-        }
-        return work;
+        profileWorkManager.updateVisibility(currentProfile.getOrcidIdentifier().getPath(), workId, visibility);
+        return visibility;
     }
 
     /**
