@@ -4371,6 +4371,11 @@ ul.oauth-scopes li{
 	cursor: pointer;
 }
 
+.persistent-token-note{
+	font-size: 14px;
+	font-style: italic;
+}
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 	.alert .small {

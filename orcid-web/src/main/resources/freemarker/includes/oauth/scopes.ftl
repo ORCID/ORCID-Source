@@ -57,7 +57,7 @@
 				<li>
 					<span ng-mouseenter="toggleLongDescription('${scope.name()}')" ng-mouseleave="toggleLongDescription('${scope.name()}')"><@orcid.msg '${scope.declaringClass.name}.${scope.name()}'/></span>
 					<div class="popover bottom scopeLongDesc" ng-class="{'popover bottom inline':showLongDescription['${scope.name()}'] == true}">
-						<div class="arrow"></div>	
+						<div class="arrow"></div>
 						<div class="lightbox-container">
 							<@orcid.msg '${scope.declaringClass.name}.${scope.name()+".longDesc"}'/>
 						</div>
@@ -75,7 +75,7 @@
 		</div>
 		<div class="col-md-11 col-sm-11 col-xs-11">
 			<@orcid.msg 'oauth.persistent_token_description'/><br>
-			<@orcid.msg 'oauth.persistent_token_description.note'/>
+			<p class="persistent-token-note"><@orcid.msg 'oauth.persistent_token_description.note'/></p>
 		</div> 	
 	</div>
 </#if>
