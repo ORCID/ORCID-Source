@@ -4375,6 +4375,11 @@ ul.oauth-scopes li{
 	cursor: pointer;
 }
 
+.persistent-token-note{
+	font-size: 14px;
+	font-style: italic;
+}
+
 .confirm-oauth-access ul.oauth-icons,
 .oauth-signin-register ul.oauth-icons{
 	padding: 0;
