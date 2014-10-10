@@ -3923,7 +3923,6 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
 				putWork,
 				function(data){
 					$scope.combiningWorks = false;
-					$scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
 					$scope.closeModal();
 				},
 				function() {
