@@ -412,7 +412,8 @@ public class WorksController extends BaseWorkspaceController {
             workdescriptionValidate(work);
             copyErrors(work.getShortDescription(), work);
         }
-        workWorkCategoryValidate(work);
+        if (work.getWorkCategory() != null)
+            workWorkCategoryValidate(work);
         
         workWorkTypeValidate(work);
         copyErrors(work.getWorkType(), work);

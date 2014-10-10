@@ -907,7 +907,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 				} else {
 					worksSrvc.worksToAddIds = null;
 					worksSrvc.loading = true;
-					worksSrvc.groups.length = 0;
+					worksSrvc.groups = new Array();
 					worksSrvc.details = new Object();
 					$.ajax({
 						url: getBaseUri() + '/works/workIds.json',	        
@@ -924,6 +924,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 				};
 			},
 			putWork: function(work,sucessFunc, failFunc) {
+				console.log(work);
 				$.ajax({
 					url: getBaseUri() + '/works/work.json',	        
 			        contentType: 'application/json;charset=UTF-8',
@@ -3882,17 +3883,25 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
 			return true;
 	};
 	
-	$scope.hasEIs = function(work) {
+	$scope.hasCombineableEIs = function(work) {
 		if (work.workExternalIdentifiers != null)
-			if (work.workExternalIdentifiers.length>0)
-				return true;
+			for (var idx in work.workExternalIdentifiers)
+				if (work.workExternalIdentifiers[idx].workExternalIdentifierType.value != 'issn')
+					return true;
 		return false;
 	};
 
 	$scope.canBeCombined = function(work) {
 		if ($scope.userIsSource(work))
 			return true;
-		return $scope.hasEIs(work);
+		return $scope.hasCombineableEIs(work);
+	};
+	
+	$scope.validCombineSel = function(selectedWork,work) {
+		if ($scope.hasCombineableEIs(selectedWork))
+			return $scope.userIsSource(work) || $scope.hasCombineableEIs(work);
+		else
+			return $scope.hasCombineableEIs(work);
 	};
 
 	$scope.combiningWorks = false;
@@ -3907,7 +3916,8 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
 		} else if ($scope.userIsSource(work2)) {
 			putWork = worksSrvc.copyEIs(work1, work2);
 		} else {
-			putWork = worksSrvc.createNew(worksSrvc.details[putCode]); 
+			putWork = worksSrvc.createNew(work1); 
+			putWork = worksSrvc.copyEIs(work1, work2);
 		}	
 		worksSrvc.putWork(
 				putWork,

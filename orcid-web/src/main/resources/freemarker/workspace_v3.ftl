@@ -410,7 +410,7 @@
 				    <tr>
 				       <th>Selected work "{{combineWork.workTitle.title.value}}"&nbsp;</h4></th>
 				       <td>
-				       		<span ng-show="hasEIs(combineWork)">
+				       		<span ng-show="hasCombineableEIs(combineWork)">
 				       			(<span ng-repeat='ie in combineWork.workExternalIdentifiers'><span
 									ng-bind-html='ie | workExternalIdentifierHtml:$first:$last:combineWork.workExternalIdentifiers.length'></span>
 						   		</span>)
@@ -421,14 +421,15 @@
 				    <tr>
 				       <td colspan=3">combine with (select one):</td>
 				    </tr>
-				    <tr ng-repeat="group in worksSrvc.groups | orderBy:sortPredicate:sortReverse" ng-show="combineWork.putCode.value != group.getDefault().putCode.value">
+				    <tr ng-repeat="group in worksSrvc.groups | orderBy:sortPredicate:sortReverse" ng-show="combineWork.putCode.value != group.getDefault().putCode.value && validCombineSel(combineWork,group.getDefault())">
 				    	<td><strong>{{group.getDefault().workTitle.title.value}}</strong></td>
 				    	<td>
-				    		<span ng-show="hasEIs(group.getDefault())">
-				       		(<span ng-repeat='ie in group.getDefault().workExternalIdentifiers'><span
+				    		<span ng-show="hasCombineableEIs(group.getDefault())">
+				    		(<span ng-repeat='ie in group.getDefault().workExternalIdentifiers'><span
 								ng-bind-html='ie | workExternalIdentifierHtml:$first:$last:combineWork.workExternalIdentifiers.length'></span>
 						   	</span>)
-						   	</span>&nbsp;				    	
+						   	</span>
+						   	&nbsp;				    	
 				    	</td>
 				    	<td><button ng-click="combined(combineWork,group.getDefault())">Combine</button></td>
 				    </tr>
