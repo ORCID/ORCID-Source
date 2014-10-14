@@ -54,7 +54,7 @@
 		<div id="login" class="oauth-login-form" ng-show="!showRegisterForm" ng-init="loadAndInitLoginForm('${scopesString}','${redirect_uri}','${client_id}','${response_type}', '${user_id}')" ng-cloak>
 			 <div class="row">
 				 <div class="control-group col-md-12 col-sm-12 col-xs-12"> 			    	
-					<p class="pull-right">Don't have an ORCID iD?&nbsp;<a class="reg" ng-click="switchForm()" id="in-signin-switch-form">Register</a>.</p>			    	
+					<p class="pull-right"><@orcid.msg 'common.dont_have_an_id'/>&nbsp;<a class="reg" ng-click="switchForm()" id="in-signin-switch-form"><@orcid.msg 'oauth_sign_up.btnregister'/></a>.</p>			    	
 		    	 </div>           
 	    	 </div> 			                        	
 			 <div class="row">
