@@ -4390,12 +4390,36 @@ ul.oauth-scopes li{
 	margin-bottom: 0;
 }
 
-/* Media Queries */
 
-@media (max-width : 499px){ /* OAuth Screen Fix  */{
+
+.admin-edit-client {
+	border: solid 1px #D3D3D3;
+	padding: 10px;
+	margin: 55px 5px 10px 0px;
+}
+
+.admin-edit-client-redirect-uris {
+	background-color: #D3D3D3;
+	padding: 10px;
+	margin: 5px;	
+}
+
+ul.oauth-icons {
+	padding: 0;
+}
+
+ul.oauth-icons li {
+	display: inline;
+}
+
+
+
+/* Media Queries */
+@media (max-width : 499px){ /* OAuth Screen Fix  */
     .confirm-oauth-access .col-xs-12,
     .oauth-signin-register .col-xs-12{
-        width: 500px !important; 
+        width: 500px !important;
+    } 
 }
 
 @media ( max-width : 767px) { /* Mobile */
@@ -5444,22 +5468,3 @@ ul.oauth-scopes li{
 	and (min-device-pixel-ratio: 2) {
 }
 
-.admin-edit-client {
-	border: solid 1px #D3D3D3;
-	padding: 10px;
-	margin: 55px 5px 10px 0px;
-}
-
-.admin-edit-client-redirect-uris {
-	background-color: #D3D3D3;
-	padding: 10px;
-	margin: 5px;	
-}
-
-ul.oauth-icons {
-	padding: 0;
-}
-
-ul.oauth-icons li {
-	display: inline;
-}
