@@ -377,7 +377,7 @@
 		</h1>
 		<p>
 			${springMacroRequestContext.getMessage("manage.youcanallowpermission")}<br />
-			<a href="http://support.orcid.org/knowledgebase/articles/131598"
+			<a href="${springMacroRequestContext.getMessage("manage.findoutmore.trustedOrganizations.url")}"
 				target=_blank"">${springMacroRequestContext.getMessage("manage.findoutmore")}</a>
 		</p>
 		<#if (profile.orcidBio.applications.applicationSummary)??>
@@ -439,7 +439,7 @@
 		</h1>
 		<p>
 			${springMacroRequestContext.getMessage("settings.tdallowpermission")}<br />
-			<a href="http://support.orcid.org/knowledgebase/articles/delegation"
+			<a href="${springMacroRequestContext.getMessage("manage.findoutmore.trustedIndividual.url")}"
 				target=_blank"">${springMacroRequestContext.getMessage("manage.findoutmore")}</a>
 		</p>
 		<div ng-controller="DelegatesCtrl" id="DelegatesCtrl" data-search-query-url="${searchBaseUrl}">
