@@ -4511,8 +4511,8 @@ ul.toggle-menu li:hover ul {
 }
 
 .public-profile .bibtex-wizard{
-	padding: 0px 22px 0 0;
-	margin-top: -13px;	
+	padding: 0px 16px 0 0;
+	margin-top: -16px;	
 }
 
 .public-profile .bibtex-wizard:before{

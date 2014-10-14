@@ -277,7 +277,7 @@
 			        				<!-- Bibtex -->
 			        				<li>
 				        				<a class="action-option works manage-button" ng-click="openBibTextWizard()">
-											<span class="glyphicons magic bibtex-wizard"></span>
+											<span class="glyphicons file_import bibtex-wizard"></span>
 											<@orcid.msg 'workspace.bibtexImporter.link_bibtex'/>
 										</a>	        				
 			        				</li>
