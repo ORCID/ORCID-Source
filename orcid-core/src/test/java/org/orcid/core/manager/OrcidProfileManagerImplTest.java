@@ -80,6 +80,8 @@ import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.SendChangeNotifications;
 import org.orcid.jaxb.model.message.SendOrcidNews;
 import org.orcid.jaxb.model.message.SequenceType;
+import org.orcid.jaxb.model.message.Source;
+import org.orcid.jaxb.model.message.SourceOrcid;
 import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.jaxb.model.message.Subtitle;
 import org.orcid.jaxb.model.message.Title;
@@ -483,9 +485,9 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         
         
         //Test using work source
-        WorkSource source = new WorkSource();
-        source.setPath(APPLICATION_ORCID);
-        work1.setWorkSource(source);
+        Source source = new Source();
+        source.setSourceOrcid(new SourceOrcid(APPLICATION_ORCID));
+        work1.setSource(source);
         
         // Add work1 again, since it have a different source, it should be added
         profile.getOrcidActivities().getOrcidWorks().getOrcidWork().add(work1);

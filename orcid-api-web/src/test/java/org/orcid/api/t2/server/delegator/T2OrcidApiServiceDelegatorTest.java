@@ -365,7 +365,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(1, affiliationsList.size());
         Affiliation affiliation = affiliationsList.get(0);
         assertEquals("A new affiliation", affiliation.getOrganization().getName());
-        assertEquals("APP-5555555555555555", affiliation.getSource().getSourceOrcid().getPath());
+        assertEquals("APP-5555555555555555", affiliation.getSource().retrieveSourcePath());
     }
 
     @Test
@@ -399,7 +399,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(3, retreivedAffiliationsList.size());
         Affiliation newAffiliation = retreivedAffiliationsList.get(0);
         assertEquals("A new affiliation", newAffiliation.getOrganization().getName());
-        assertEquals("APP-5555555555555555", newAffiliation.getSource().getSourceOrcid().getPath());
+        assertEquals("APP-5555555555555555", newAffiliation.getSource().retrieveSourcePath());
         Affiliation existingAffiliation = retreivedAffiliationsList.get(1);
         assertEquals(Visibility.PRIVATE, existingAffiliation.getVisibility());
         assertEquals("Eine Institution", existingAffiliation.getOrganization().getName());
@@ -437,7 +437,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(3, retreivedAffiliationsList.size());
         Affiliation updatedAffiliation = retreivedAffiliationsList.get(0);
         assertEquals("Different org", updatedAffiliation.getOrganization().getName());
-        assertEquals("APP-5555555555555555", updatedAffiliation.getSource().getSourceOrcid().getPath());
+        assertEquals("APP-5555555555555555", updatedAffiliation.getSource().retrieveSourcePath());
         Affiliation existingAffiliation = retreivedAffiliationsList.get(1);
         assertEquals(Visibility.PRIVATE, existingAffiliation.getVisibility());
         assertEquals("Eine Institution", existingAffiliation.getOrganization().getName());

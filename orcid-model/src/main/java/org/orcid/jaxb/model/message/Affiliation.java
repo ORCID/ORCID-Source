@@ -285,11 +285,7 @@ public class Affiliation implements Serializable, VisibilityType, Activity {
         if (source == null) {
             return null;
         }
-        SourceOrcid sourceOrcid = source.getSourceOrcid();
-        if (sourceOrcid == null) {
-            return null;
-        }
-        return sourceOrcid.getPath();
+        return source.retrieveSourcePath();
     }
     
 

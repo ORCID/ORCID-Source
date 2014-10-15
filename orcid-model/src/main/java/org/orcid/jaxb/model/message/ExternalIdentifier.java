@@ -31,10 +31,14 @@ import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>
+ * Java class for anonymous complex type.
  * <p/>
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * <p/>
+ * 
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -52,7 +56,7 @@ import java.io.Serializable;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType( propOrder = { "orcid", "externalIdOrcid", "externalIdCommonName", "externalIdReference", "externalIdUrl", "externalIdSource" })
+@XmlType(propOrder = { "orcid", "externalIdOrcid", "externalIdCommonName", "externalIdReference", "externalIdUrl", "externalIdSource", "source" })
 @XmlRootElement(name = "external-identifier")
 public class ExternalIdentifier implements Serializable {
 
@@ -65,7 +69,7 @@ public class ExternalIdentifier implements Serializable {
     @XmlElement(name = "external-id-source", required = false)
     protected ExternalIdSource externalIdSource;
     /*
-     * @deprecated replaced with external-id-source in 1.2_rc5 and greater 
+     * @deprecated replaced with external-id-source in 1.2_rc5 and greater
      */
     @Deprecated
     @XmlElement(name = "external-id-orcid", required = false)
@@ -76,6 +80,8 @@ public class ExternalIdentifier implements Serializable {
     protected ExternalIdReference externalIdReference;
     @XmlElement(name = "external-id-url", required = false)
     protected ExternalIdUrl externalIdUrl;
+    @XmlElement
+    protected Source source;
 
     public ExternalIdentifier() {
         super();
@@ -83,9 +89,8 @@ public class ExternalIdentifier implements Serializable {
 
     /**
      * Gets the value of the orcid property.
-     *
-     * @return possible object is
-     *         {@link Orcid }
+     * 
+     * @return possible object is {@link Orcid }
      */
     public Orcid getOrcid() {
         return orcid;
@@ -93,10 +98,9 @@ public class ExternalIdentifier implements Serializable {
 
     /**
      * Sets the value of the orcid property.
-     *
+     * 
      * @param value
-     *         allowed object is
-     *         {@link Orcid }
+     *            allowed object is {@link Orcid }
      */
     public void setOrcid(Orcid orcid) {
         this.orcid = orcid;
@@ -104,9 +108,8 @@ public class ExternalIdentifier implements Serializable {
 
     /**
      * Gets the value of the externalIdOrcid property.
-     *
-     * @return possible object is
-     *         {@link ExternalIdSource }
+     * 
+     * @return possible object is {@link ExternalIdSource }
      */
     public ExternalIdSource getExternalIdSource() {
         return externalIdSource;
@@ -114,20 +117,26 @@ public class ExternalIdentifier implements Serializable {
 
     /**
      * Sets the value of the externalIdOrcid property.
-     *
+     * 
      * @param value
-     *         allowed object is
-     *         {@link ExternalIdSource }
+     *            allowed object is {@link ExternalIdSource }
      */
     public void setExternalIdSource(ExternalIdSource value) {
         this.externalIdSource = value;
     }
 
+    public Source getSource() {
+        return source;
+    }
+
+    public void setSource(Source source) {
+        this.source = source;
+    }
+
     /**
      * Gets the value of the externalIdCommonName property.
-     *
-     * @return possible object is
-     *         {@link ExternalIdCommonName }
+     * 
+     * @return possible object is {@link ExternalIdCommonName }
      */
     public ExternalIdCommonName getExternalIdCommonName() {
         return externalIdCommonName;
@@ -135,10 +144,9 @@ public class ExternalIdentifier implements Serializable {
 
     /**
      * Sets the value of the externalIdCommonName property.
-     *
+     * 
      * @param value
-     *         allowed object is
-     *         {@link ExternalIdCommonName }
+     *            allowed object is {@link ExternalIdCommonName }
      */
     public void setExternalIdCommonName(ExternalIdCommonName value) {
         this.externalIdCommonName = value;
@@ -146,9 +154,8 @@ public class ExternalIdentifier implements Serializable {
 
     /**
      * Gets the value of the externalIdReference property.
-     *
-     * @return possible object is
-     *         {@link ExternalIdReference }
+     * 
+     * @return possible object is {@link ExternalIdReference }
      */
     public ExternalIdReference getExternalIdReference() {
         return externalIdReference;
@@ -156,10 +163,9 @@ public class ExternalIdentifier implements Serializable {
 
     /**
      * Sets the value of the externalIdReference property.
-     *
+     * 
      * @param value
-     *         allowed object is
-     *         {@link ExternalIdReference }
+     *            allowed object is {@link ExternalIdReference }
      */
     public void setExternalIdReference(ExternalIdReference value) {
         this.externalIdReference = value;
@@ -167,9 +173,8 @@ public class ExternalIdentifier implements Serializable {
 
     /**
      * Gets the value of the externalIdUrl property.
-     *
-     * @return possible object is
-     *         {@link ExternalIdUrl }
+     * 
+     * @return possible object is {@link ExternalIdUrl }
      */
     public ExternalIdUrl getExternalIdUrl() {
         return externalIdUrl;
@@ -177,58 +182,77 @@ public class ExternalIdentifier implements Serializable {
 
     /**
      * Sets the value of the externalIdUrl property.
-     *
+     * 
      * @param value
-     *         allowed object is
-     *         {@link ExternalIdUrl }
+     *            allowed object is {@link ExternalIdUrl }
      */
     public void setExternalIdUrl(ExternalIdUrl value) {
         this.externalIdUrl = value;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof ExternalIdentifier)) {
-            return false;
-        }
-
-        ExternalIdentifier that = (ExternalIdentifier) o;
-
-        if (orcid != null ? !orcid.equals(that.getOrcid()) : that.getOrcid() != null) {
-            return false;
-        }
-        if (externalIdCommonName != null ? !externalIdCommonName.equals(that.externalIdCommonName) : that.externalIdCommonName != null) {
-            return false;
-        }
-        if (externalIdSource != null ? !externalIdSource.equals(that.externalIdSource) : that.externalIdSource != null) {
-            return false;
-        }
-        if (externalIdReference != null ? !externalIdReference.equals(that.externalIdReference) : that.externalIdReference != null) {
-            return false;
-        }
-        if (externalIdUrl != null ? !externalIdUrl.equals(that.externalIdUrl) : that.externalIdUrl != null) {
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
     public int hashCode() {
-        int result = externalIdSource != null ? externalIdSource.hashCode() : 0;
-        result = 31 * result + (orcid != null ? externalIdOrcid.hashCode() : 0);
-        result = 31 * result + (orcid != null ? orcid.hashCode() : 0);
-        result = 31 * result + (externalIdCommonName != null ? externalIdCommonName.hashCode() : 0);
-        result = 31 * result + (externalIdReference != null ? externalIdReference.hashCode() : 0);
-        result = 31 * result + (externalIdUrl != null ? externalIdUrl.hashCode() : 0);
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((externalIdCommonName == null) ? 0 : externalIdCommonName.hashCode());
+        result = prime * result + ((externalIdOrcid == null) ? 0 : externalIdOrcid.hashCode());
+        result = prime * result + ((externalIdReference == null) ? 0 : externalIdReference.hashCode());
+        result = prime * result + ((externalIdSource == null) ? 0 : externalIdSource.hashCode());
+        result = prime * result + ((externalIdUrl == null) ? 0 : externalIdUrl.hashCode());
+        result = prime * result + ((orcid == null) ? 0 : orcid.hashCode());
+        result = prime * result + ((source == null) ? 0 : source.hashCode());
         return result;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ExternalIdentifier other = (ExternalIdentifier) obj;
+        if (externalIdCommonName == null) {
+            if (other.externalIdCommonName != null)
+                return false;
+        } else if (!externalIdCommonName.equals(other.externalIdCommonName))
+            return false;
+        if (externalIdOrcid == null) {
+            if (other.externalIdOrcid != null)
+                return false;
+        } else if (!externalIdOrcid.equals(other.externalIdOrcid))
+            return false;
+        if (externalIdReference == null) {
+            if (other.externalIdReference != null)
+                return false;
+        } else if (!externalIdReference.equals(other.externalIdReference))
+            return false;
+        if (externalIdSource == null) {
+            if (other.externalIdSource != null)
+                return false;
+        } else if (!externalIdSource.equals(other.externalIdSource))
+            return false;
+        if (externalIdUrl == null) {
+            if (other.externalIdUrl != null)
+                return false;
+        } else if (!externalIdUrl.equals(other.externalIdUrl))
+            return false;
+        if (orcid == null) {
+            if (other.orcid != null)
+                return false;
+        } else if (!orcid.equals(other.orcid))
+            return false;
+        if (source == null) {
+            if (other.source != null)
+                return false;
+        } else if (!source.equals(other.source))
+            return false;
+        return true;
+    }
+
     /*
-     * @deprecated replaced with external-id-source in 1.2_rc5 and greater 
+     * @deprecated replaced with external-id-source in 1.2_rc5 and greater
      */
     @Deprecated
     public ExternalIdSource getExternalIdOrcid() {
@@ -236,7 +260,7 @@ public class ExternalIdentifier implements Serializable {
     }
 
     /*
-     * @deprecated replaced with external-id-source in 1.2_rc5 and greater 
+     * @deprecated replaced with external-id-source in 1.2_rc5 and greater
      */
     @Deprecated
     public void setExternalIdOrcid(ExternalIdSource externalIdOrcid) {

@@ -55,7 +55,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}work-external-identifiers" minOccurs="0"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}url" minOccurs="0"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}work-contributors" minOccurs="0"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}work-source" minOccurs="0"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}source" minOccurs="0"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}language-code" minOccurs="0" maxOccurs="1"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}country" minOccurs="0" maxOccurs="1"/>
  *       &lt;/sequence>
@@ -71,7 +71,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "putCode", "workTitle", "journalTitle", "shortDescription", "workCitation", "workType", "publicationDate", "workExternalIdentifiers", "url",
-        "workContributors", "workSource", "createdDate", "lastModifiedDate", "languageCode", "country" })
+        "workContributors", "workSource", "source", "createdDate", "lastModifiedDate", "languageCode", "country" })
 @XmlRootElement(name = "orcid-work")
 public class OrcidWork implements VisibilityType, Activity, Serializable {
 
@@ -99,6 +99,8 @@ public class OrcidWork implements VisibilityType, Activity, Serializable {
     protected Country country;
     @XmlElement(name = "work-source")
     protected WorkSource workSource;
+    @XmlElement(name = "source")
+    protected Source source;
     @XmlAttribute(name = "put-code")
     protected String putCode;
     @XmlAttribute
@@ -107,7 +109,6 @@ public class OrcidWork implements VisibilityType, Activity, Serializable {
     protected LastModifiedDate lastModifiedDate;
     @XmlElement(name = "created-date")
     protected CreatedDate createdDate;
-
 
     /**
      * Gets the value of the putCode property.
@@ -310,10 +311,13 @@ public class OrcidWork implements VisibilityType, Activity, Serializable {
 
     @Override
     public String retrieveSourcePath() {
-        if (workSource == null) {
-            return null;
+        if (source != null) {
+            return source.retrieveSourcePath();
         }
-        return workSource.getPath();
+        if (workSource != null) {
+            return workSource.getPath();
+        }
+        return null;
     }
 
     /**
@@ -325,6 +329,14 @@ public class OrcidWork implements VisibilityType, Activity, Serializable {
      */
     public void setWorkSource(WorkSource value) {
         this.workSource = value;
+    }
+
+    public Source getSource() {
+        return source;
+    }
+
+    public void setSource(Source source) {
+        this.source = source;
     }
 
     /**
@@ -416,7 +428,6 @@ public class OrcidWork implements VisibilityType, Activity, Serializable {
         return OrcidMessage.convertToString(this);
     }
 
-    
     /**
      * Indicates if two works are ORCID duplicated. Two works will be duplicated
      * if they have the same title, type, subtype, external identifiers and
@@ -452,15 +463,15 @@ public class OrcidWork implements VisibilityType, Activity, Serializable {
         } else if (!this.getWorkExternalIdentifiers().equals(other.getWorkExternalIdentifiers()))
             return false;
 
-        if (this.getWorkSource() == null) {
-            if (other.getWorkSource() != null)
+        if (this.getSource() == null) {
+            if (other.getSource() != null)
                 return false;
-        } else if (!this.getWorkSource().equals(other.getWorkSource()))
+        } else if (!this.getSource().equals(other.getSource()))
             return false;
 
         return true;
     }
-    
+
     /**
      * Indicates if two works are ORCID duplicated. Two works will be duplicated
      * if they have the same title, type, subtype, external identifiers and
@@ -484,42 +495,40 @@ public class OrcidWork implements VisibilityType, Activity, Serializable {
                 return false;
         } else if (!this.getWorkTitle().equals(other.getWorkTitle()))
             return false;
-               
+
         // Compare external identifiers
         if (this.getWorkExternalIdentifiers() == null) {
-            //If other contains ext ids
-            if (other.getWorkExternalIdentifiers() != null && other.getWorkExternalIdentifiers().getWorkExternalIdentifier() != null && !other.getWorkExternalIdentifiers().getWorkExternalIdentifier().isEmpty())
-                return false;            
-        } else if(other.getWorkExternalIdentifiers() == null) {
-            if(this.getWorkExternalIdentifiers().getWorkExternalIdentifier() != null && !this.getWorkExternalIdentifiers().getWorkExternalIdentifier().isEmpty())
+            // If other contains ext ids
+            if (other.getWorkExternalIdentifiers() != null && other.getWorkExternalIdentifiers().getWorkExternalIdentifier() != null
+                    && !other.getWorkExternalIdentifiers().getWorkExternalIdentifier().isEmpty())
+                return false;
+        } else if (other.getWorkExternalIdentifiers() == null) {
+            if (this.getWorkExternalIdentifiers().getWorkExternalIdentifier() != null && !this.getWorkExternalIdentifiers().getWorkExternalIdentifier().isEmpty())
                 return false;
         } else {
             List<WorkExternalIdentifier> otherExternalIdentifiers = other.getWorkExternalIdentifiers().getWorkExternalIdentifier();
             List<WorkExternalIdentifier> thisExternalIdentifiers = this.getWorkExternalIdentifiers().getWorkExternalIdentifier();
             boolean sharedExtId = false;
-            
-            start:
-            for(WorkExternalIdentifier thisId : thisExternalIdentifiers) {
-                for(WorkExternalIdentifier otherId : otherExternalIdentifiers) {
-                    if(thisId.equals(otherId)) {
+
+            start: for (WorkExternalIdentifier thisId : thisExternalIdentifiers) {
+                for (WorkExternalIdentifier otherId : otherExternalIdentifiers) {
+                    if (thisId.equals(otherId)) {
                         sharedExtId = true;
                         break start;
                     }
                 }
             }
-            
-            if(!sharedExtId)
+
+            if (!sharedExtId)
                 return false;
         }
 
-        
         // Compare source
-        if (this.getWorkSource() == null) {
-            if (other.getWorkSource() != null)
+        if (this.getSource() == null) {
+            if (other.getSource() != null)
                 return false;
-        } else if (!this.getWorkSource().equals(other.getWorkSource()))
+        } else if (!this.getSource().equals(other.getSource()))
             return false;
-        
         return true;
     }
 
@@ -539,6 +548,7 @@ public class OrcidWork implements VisibilityType, Activity, Serializable {
         result = prime * result + ((workContributors == null) ? 0 : workContributors.hashCode());
         result = prime * result + ((workExternalIdentifiers == null) ? 0 : workExternalIdentifiers.hashCode());
         result = prime * result + ((workSource == null) ? 0 : workSource.hashCode());
+        result = prime * result + ((source == null) ? 0 : source.hashCode());
         result = prime * result + ((workTitle == null) ? 0 : workTitle.hashCode());
         result = prime * result + ((workType == null) ? 0 : workType.hashCode());
         result = prime * result + ((journalTitle == null) ? 0 : journalTitle.hashCode());
@@ -546,7 +556,6 @@ public class OrcidWork implements VisibilityType, Activity, Serializable {
         result = prime * result + ((country == null) ? 0 : country.hashCode());
         return result;
     }
-
 
     @Override
     public CreatedDate getCreatedDate() {
@@ -568,8 +577,6 @@ public class OrcidWork implements VisibilityType, Activity, Serializable {
         lastModifiedDate = value;
     }
 
-
-    
     /**
      * Note that put-code is not part of equality. This is important for avoid
      * creation of duplication works.
@@ -620,6 +627,11 @@ public class OrcidWork implements VisibilityType, Activity, Serializable {
                 return false;
         } else if (!workSource.equals(other.workSource))
             return false;
+        if (source == null) {
+            if (other.source != null)
+                return false;
+        } else if (!source.equals(other.source))
+            return false;
         if (workTitle == null) {
             if (other.workTitle != null)
                 return false;
@@ -646,11 +658,10 @@ public class OrcidWork implements VisibilityType, Activity, Serializable {
         } else if (!country.equals(other.country))
             return false;
 
-        /*    
-        Breaks our deduping
-        if (lastModifiedDate != other.lastModifiedDate) return false;
-        if (createdDate != other.createdDate) return false;
-        */
+        /*
+         * Breaks our deduping if (lastModifiedDate != other.lastModifiedDate)
+         * return false; if (createdDate != other.createdDate) return false;
+         */
 
         return true;
     }

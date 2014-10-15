@@ -155,12 +155,12 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
     @Resource
     private OrgDisambiguatedDao orgDisambiguatedDao;
-    
+
     @Resource
     private ProfileFundingManager profileFundingManager;
-    
+
     @Resource
-    private OrgAffiliationRelationDao orgAffiliationRelationDao; 
+    private OrgAffiliationRelationDao orgAffiliationRelationDao;
 
     @Override
     public ProfileEntity toProfileEntity(OrcidProfile profile, ProfileEntity existingProfileEntity) {
@@ -263,13 +263,13 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             }
             profileWorkEntity.setWork(getWorkEntity(orcidWork, workEntity));
             profileWorkEntity.setVisibility(orcidWork.getVisibility() == null ? Visibility.PRIVATE : orcidWork.getVisibility());
-            profileWorkEntity.setSource(getWorkSource(orcidWork.getWorkSource()));
-            
+            profileWorkEntity.setSource(getSource(orcidWork.getSource()));
+
             if (orcidWork.getCreatedDate() != null && orcidWork.getCreatedDate().getValue() != null)
                 profileWorkEntity.setDateCreated(orcidWork.getCreatedDate().getValue().toGregorianCalendar().getTime());
             if (orcidWork.getLastModifiedDate() != null && orcidWork.getLastModifiedDate().getValue() != null)
                 profileWorkEntity.setLastModified(orcidWork.getLastModifiedDate().getValue().toGregorianCalendar().getTime());
-            
+
             return profileWorkEntity;
         }
         return null;
@@ -703,7 +703,10 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 emailEntity = new EmailEntity();
                 emailEntity.setId(emailId);
                 emailEntity.setProfile(profileEntity);
-                if (email.getSource() != null) {
+                if (email.getSourceClientId() != null) {
+                    SourceEntity source = new SourceEntity(email.getSourceClientId());
+                    emailEntity.setSource(source);
+                } else if (email.getSource() != null) {
                     SourceEntity source = new SourceEntity(email.getSource());
                     emailEntity.setSource(source);
                 }
@@ -742,9 +745,10 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             profileEntity.setClaimed(orcidHistory.isClaimed());
             CreationMethod creationMethod = orcidHistory.getCreationMethod();
             profileEntity.setCreationMethod(creationMethod != null ? creationMethod.value() : null);
-            if (orcidHistory.getSource() != null) {
-                SourceEntity source = new SourceEntity(orcidHistory.getSource().getSourceOrcid().getPath());
-                profileEntity.setSource(source);
+            Source source = orcidHistory.getSource();
+            if (source != null) {
+                SourceEntity sourceEntity = new SourceEntity(source.retrieveSourcePath());
+                profileEntity.setSource(sourceEntity);
             }
         }
     }
@@ -851,8 +855,8 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 if (preferences.getDeveloperToolsEnabled() != null) {
                     profileEntity.setEnableDeveloperTools(preferences.getDeveloperToolsEnabled().isValue());
                 }
-            }            
-            if(orcidInternal.getSalesforceId() != null) {
+            }
+            if (orcidInternal.getSalesforceId() != null) {
                 profileEntity.setSalesforeId(orcidInternal.getSalesforceId().getContent());
             }
         }
@@ -899,10 +903,10 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         orgAffiliationRelationEntity.setProfile(profileEntity);
         return orgAffiliationRelationEntity;
     }
-    
+
     @Override
     public OrgAffiliationRelationEntity getUpdatedAffiliationRelationEntity(Affiliation updatedAffiliation) {
-        if(PojoUtil.isEmpty(updatedAffiliation.getPutCode()))
+        if (PojoUtil.isEmpty(updatedAffiliation.getPutCode()))
             throw new IllegalArgumentException("Affiliation must contain a put code to be edited");
         long affiliationId = Long.valueOf(updatedAffiliation.getPutCode());
         OrgAffiliationRelationEntity exisitingOrgAffiliationEntity = orgAffiliationRelationDao.find(affiliationId);
@@ -937,13 +941,13 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         ProfileFundingEntity profileFundingEntity = getProfileFundingEntity(updatedFunding, existingProfileFundingEntity);
         return profileFundingEntity;
     }
-    
+
     private OrgAffiliationRelationEntity getOrgAffiliationRelationEntity(Affiliation affiliation, OrgAffiliationRelationEntity exisitingOrgAffiliationEntity) {
-        if (affiliation != null) {         
-            
-            //Get the org
+        if (affiliation != null) {
+
+            // Get the org
             OrgEntity orgEntity = getOrgEntity(affiliation);
-            
+
             OrgAffiliationRelationEntity orgRelationEntity = null;
             if (exisitingOrgAffiliationEntity == null) {
                 String putCode = affiliation.getPutCode();
@@ -984,10 +988,10 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
      * @return a ProfileFundingEntity created from the provided funding
      * */
     private ProfileFundingEntity getProfileFundingEntity(Funding funding, ProfileFundingEntity exisitingProfileFundingEntity) {
-        if (funding != null) {            
-            //Get the org
+        if (funding != null) {
+            // Get the org
             OrgEntity orgEntity = getOrgEntity(funding);
-            
+
             ProfileFundingEntity profileFundingEntity = null;
             if (exisitingProfileFundingEntity == null) {
                 String putCode = funding.getPutCode();
@@ -995,10 +999,10 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                     throw new IllegalArgumentException("Invalid put-code was supplied for a funding: " + putCode);
                 }
                 profileFundingEntity = new ProfileFundingEntity();
-                profileFundingEntity.setSource(getSource(funding.getSource()));                
+                profileFundingEntity.setSource(getSource(funding.getSource()));
             } else {
                 profileFundingEntity = exisitingProfileFundingEntity;
-                profileFundingEntity.clean();                                
+                profileFundingEntity.clean();
             }
             FuzzyDate startDate = funding.getStartDate();
             FuzzyDate endDate = funding.getEndDate();
@@ -1051,9 +1055,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 profileFundingEntity.setDateCreated(funding.getCreatedDate().getValue().toGregorianCalendar().getTime());
             if (funding.getLastModifiedDate() != null && funding.getLastModifiedDate().getValue() != null)
                 profileFundingEntity.setLastModified(funding.getLastModifiedDate().getValue().toGregorianCalendar().getTime());
-      
+
             profileFundingEntity.setOrg(orgEntity);
-            
+
             return profileFundingEntity;
         }
         return null;
@@ -1203,8 +1207,11 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     }
 
     private SourceEntity getSource(Source source) {
-        if (source != null && StringUtils.isNotEmpty(source.getSourceOrcid().getPath()) && !source.getSourceOrcid().getPath().equals(WorkSource.NULL_SOURCE_PROFILE)) {
-            return new SourceEntity(source.getSourceOrcid().getPath());
+        if (source != null) {
+            String sourcePath = source.retrieveSourcePath();
+            if (StringUtils.isNotEmpty(sourcePath) && !sourcePath.equals(WorkSource.NULL_SOURCE_PROFILE)) {
+                return new SourceEntity(sourcePath);
+            }
         }
         return null;
     }

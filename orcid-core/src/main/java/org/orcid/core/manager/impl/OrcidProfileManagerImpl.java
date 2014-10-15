@@ -109,6 +109,8 @@ import org.orcid.jaxb.model.message.SecurityQuestionId;
 import org.orcid.jaxb.model.message.SendChangeNotifications;
 import org.orcid.jaxb.model.message.SendOrcidNews;
 import org.orcid.jaxb.model.message.Source;
+import org.orcid.jaxb.model.message.SourceClientId;
+import org.orcid.jaxb.model.message.SourceOrcid;
 import org.orcid.jaxb.model.message.Title;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.VisibilityType;
@@ -140,6 +142,7 @@ import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.NullUtils;
+import org.orcid.utils.OrcidStringUtils;
 import org.orcid.utils.ReleaseNameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -400,7 +403,11 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         if (orcidProfile != null && orcidProfile.getOrcidBio() != null && orcidProfile.getOrcidBio().getContactDetails() != null
                 && orcidProfile.getOrcidBio().getContactDetails().getEmail() != null) {
             for (Email email : orcidProfile.getOrcidBio().getContactDetails().getEmail()) {
-                email.setSource(amenderOrcid);
+                if (OrcidStringUtils.isValidOrcid(amenderOrcid)) {
+                    email.setSource(amenderOrcid);
+                } else {
+                    email.setSourceClientId(amenderOrcid);
+                }
             }
         }
     }
@@ -422,10 +429,22 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     private void addSourceToWorks(OrcidWorks orcidWorks, String amenderOrcid) {
         if (orcidWorks != null && !orcidWorks.getOrcidWork().isEmpty() && amenderOrcid != null) {
             for (OrcidWork orcidWork : orcidWorks.getOrcidWork()) {
-                if (orcidWork.getWorkSource() == null || StringUtils.isEmpty(orcidWork.getWorkSource().getPath()))
-                    orcidWork.setWorkSource(new WorkSource(amenderOrcid));
+                if (orcidWork.getSource() == null || StringUtils.isBlank(orcidWork.getSource().retrieveSourcePath())) {
+                    Source source = createSource(amenderOrcid);
+                    orcidWork.setSource(source);
+                }
             }
         }
+    }
+
+    private Source createSource(String amenderOrcid) {
+        Source source = new Source();
+        if (OrcidStringUtils.isValidOrcid(amenderOrcid)) {
+            source.setSourceOrcid(new SourceOrcid(amenderOrcid));
+        } else {
+            source.setSourceClientId(new SourceClientId(amenderOrcid));
+        }
+        return source;
     }
 
     /**
@@ -706,7 +725,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         String amenderOrcid = sourceManager.retrieveSourceOrcid();
         Source source = orcidProfile.getOrcidHistory().getSource();
         if (NullUtils.noneNull(amenderOrcid, source)) {
-            return amenderOrcid.equals(source.getSourceOrcid().getPath());
+            return amenderOrcid.equals(source.retrieveSourcePath());
         }
         return false;
     }
@@ -1767,9 +1786,8 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     private void addSourceToAffiliations(Affiliations affiliations, String amenderOrcid) {
         if (affiliations != null && !affiliations.getAffiliation().isEmpty()) {
             for (Affiliation affiliation : affiliations.getAffiliation()) {
-                if (affiliation.getSource() == null || affiliation.getSource().getSourceOrcid() == null
-                        || StringUtils.isEmpty(affiliation.getSource().getSourceOrcid().getPath()))
-                    affiliation.setSource(new Source(amenderOrcid));
+                if (affiliation.getSource() == null || StringUtils.isBlank(affiliation.retrieveSourcePath()))
+                    affiliation.setSource(createSource(amenderOrcid));
             }
         }
     }
@@ -1777,8 +1795,9 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     private void addSourceToFundings(FundingList fundings, String amenderOrcid) {
         if (fundings != null && !fundings.getFundings().isEmpty()) {
             for (Funding funding : fundings.getFundings()) {
-                if (funding.getSource() == null || funding.getSource().getSourceOrcid() == null || StringUtils.isEmpty(funding.getSource().getSourceOrcid().getPath()))
-                    funding.setSource(new Source(amenderOrcid));
+                if (funding.getSource() == null || StringUtils.isBlank(funding.retrieveSourcePath())) {
+                    funding.setSource(createSource(amenderOrcid));
+                }
             }
         }
     }

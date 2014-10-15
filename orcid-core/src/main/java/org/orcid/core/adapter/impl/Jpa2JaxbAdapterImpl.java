@@ -71,6 +71,7 @@ import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkExternalIdentifierEntity;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.NullUtils;
+import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -526,8 +527,17 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         if (sourceEntity == null) {
             return null;
         }
-        Source source = new Source(sourceEntity.getSourceId());
-        source.setSourceName(new SourceName(sourceEntity.getSourceName()));
+        Source source = new Source();
+        ClientDetailsEntity sourceClient = sourceEntity.getSourceClient();
+        if (sourceClient != null && !OrcidStringUtils.isValidOrcid(sourceClient.getClientId())) {
+            source.setSourceClientId(new SourceClientId(getOrcidIdBase(sourceClient.getClientId())));
+        } else {
+            source.setSourceOrcid(new SourceOrcid(getOrcidIdBase(sourceEntity.getSourceId())));
+        }
+        String sourceName = sourceEntity.getSourceName();
+        if (StringUtils.isNotBlank(sourceName)) {
+            source.setSourceName(new SourceName(sourceName));
+        }
         if (sourceAwareEntity instanceof BaseEntity) {
             @SuppressWarnings("rawtypes")
             Date createdDate = ((BaseEntity) sourceAwareEntity).getDateCreated();
@@ -686,7 +696,12 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 email.setVisibility(emailEntity.getVisibility());
                 SourceEntity source = emailEntity.getSource();
                 if (source != null) {
-                    email.setSource(source.getSourceId());
+                    ClientDetailsEntity sourceClient = source.getSourceClient();
+                    if (sourceClient != null) {
+                        email.setSourceClientId(sourceClient.getClientId());
+                    } else {
+                        email.setSource(source.getSourceId());
+                    }
                 }
                 emailList.add(email);
             }
@@ -730,9 +745,15 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         if (sourceEntity != null) {
             Source sponsor = new Source();
             SourceName sponsorName = new SourceName(sourceEntity.getSourceName());
-            SourceOrcid sponsorOrcid = StringUtils.isNotBlank(sourceEntity.getSourceId()) ? new SourceOrcid(getOrcidIdBase(sourceEntity.getSourceId())) : null;
             sponsor.setSourceName(sponsorName);
-            sponsor.setSourceOrcid(sponsorOrcid);
+            ClientDetailsEntity sourceClient = sourceEntity.getSourceClient();
+            if (sourceClient != null && !OrcidStringUtils.isValidOrcid(sourceClient.getClientId())) {
+                SourceClientId sourceClientId = new SourceClientId(getOrcidIdBase(sourceClient.getId()));
+                sponsor.setSourceClientId(sourceClientId);
+            } else {
+                SourceOrcid sponsorOrcid = StringUtils.isNotBlank(sourceEntity.getSourceId()) ? new SourceOrcid(getOrcidIdBase(sourceEntity.getSourceId())) : null;
+                sponsor.setSourceOrcid(sponsorOrcid);
+            }
             return sponsor;
         }
         return null;
@@ -805,7 +826,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         orcidWork.setWorkCitation(getWorkCitation(work));
         orcidWork.setWorkContributors(getWorkContributors(profileWorkEntity));
         orcidWork.setWorkExternalIdentifiers(getWorkExternalIdentifiers(work));
-        orcidWork.setWorkSource(getWorkSource(profileWorkEntity));
+        orcidWork.setSource(getSource(profileWorkEntity));
         orcidWork.setWorkTitle(getWorkTitle(work));
         orcidWork.setJournalTitle(StringUtils.isNotBlank(work.getJournalTitle()) ? new Title(work.getJournalTitle()) : null);
         orcidWork.setLanguageCode(normalizeLanguageCode(work.getLanguageCode()));
@@ -866,13 +887,13 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             return null;
         }
         SourceEntity sourceEntity = profileWorkEntity.getSource();
-
-        WorkSource workSource = new WorkSource(getOrcidIdBase(sourceEntity.getSourceId()));
-
+        String sourceId = sourceEntity.getSourceId();
+        if (!OrcidStringUtils.isValidOrcid(sourceId)) {
+            return null;
+        }
+        WorkSource workSource = new WorkSource(getOrcidIdBase(sourceId));
         String sourceName = sourceEntity.getSourceName();
-
         workSource.setSourceName(sourceName);
-
         return workSource;
     }
 
