@@ -633,7 +633,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
      * */
     @Override
     public ClientType getClientType(String orcid) {
-        TypedQuery<ClientType> query = entityManager.createQuery("select clientType from ProfileEntity where orcid = :orcid", ClientType.class);
+        TypedQuery<ClientType> query = entityManager.createQuery("select clientType from ClientDetailsEntity where id = :orcid", ClientType.class);
         query.setParameter("orcid", orcid);
         List<ClientType> results = query.getResultList();
         return results.isEmpty() ? null : results.get(0);
