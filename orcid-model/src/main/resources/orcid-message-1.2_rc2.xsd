@@ -218,12 +218,15 @@
 	</xs:element>
 	<xs:element name="source">
 		<xs:annotation>
-			<xs:documentation>The client application (Member organization's system) that created the ORCID Record via the API (if any).
+			<xs:documentation>The client application (Member organization's system) or user that created the item.
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="orcid:source-orcid" minOccurs="0" />
+				<xs:choice minOccurs="0">
+					<xs:element ref="orcid:source-orcid" />
+					<xs:element ref="orcid:source-client-id" />
+				</xs:choice>
 				<xs:element ref="orcid:source-name" minOccurs="0" />
 				<xs:element ref="orcid:source-date" minOccurs="0" />
 			</xs:sequence>
@@ -238,7 +241,13 @@
 	</xs:element>
 	<xs:element name="source-orcid" type="orcid:orcid-id">
 		<xs:annotation>
-			<xs:documentation>The ORCID identifier for the client application (Member organization system) that created the ORCID Record. Note this is a normal ORCID identifier, so can be used to look up the full details of the client application.
+			<xs:documentation>The ORCID identifier for the user that created the item. Note this is a normal ORCID identifier, so can be used to look up the full details of the user.
+			</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="source-client-id" type="orcid:client-id">
+		<xs:annotation>
+			<xs:documentation>The client ID for the client application (Member organization system) that created the ORCID Record.
 			</xs:documentation>
 		</xs:annotation>
 	</xs:element>
@@ -400,6 +409,7 @@
 					<xs:attribute name="verified" type="xs:boolean"
 						default="false" />
 					<xs:attribute name="source" type="orcid:orcid-path" />
+					<xs:attribute name="source-client-id" type="orcid:client-path" />
 				</xs:extension>
 			</xs:simpleContent>
 		</xs:complexType>
@@ -457,6 +467,7 @@
 					maxOccurs="1" />
 				<xs:element ref="orcid:external-id-url" minOccurs="0"
 					maxOccurs="1" />
+				<xs:element ref="orcid:source"  minOccurs="0"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -724,7 +735,10 @@
 					minOccurs="0" />
 				<xs:element ref="orcid:url" minOccurs="0" />
 				<xs:element ref="orcid:work-contributors" minOccurs="0" />
-				<xs:element ref="orcid:work-source" minOccurs="0" />
+				<xs:choice minOccurs="0">
+					<xs:element ref="orcid:work-source" minOccurs="0" />
+					<xs:element ref="orcid:source" minOccurs="0" />
+				</xs:choice>
 				<xs:element ref="orcid:language-code" minOccurs="0"
 					maxOccurs="1" />
 				<xs:element ref="orcid:country" minOccurs="0" />
@@ -1756,6 +1770,33 @@
 				</xs:choice>
 				<xs:element ref="orcid:host" minOccurs="0"/>
 			</xs:sequence>
+	</xs:complexType>
+		<xs:simpleType name="client-path">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="APP-[\da-zA-Z]{16}" />
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="client-uri">
+		<xs:restriction base="xs:string">
+			<xs:pattern
+				value="http://([^/]*orcid\.org|localhost.*/orcid-web)/APP-[\da-zA-Z]{16}" />
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="client-id">
+		<xs:annotation>
+			<xs:documentation>The identifier of a client app. At least one of uri or path must be given.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:choice>
+				<xs:sequence>
+					<xs:element name="uri" type="orcid:client-uri"/>
+					<xs:element name="path" type="orcid:client-path" minOccurs="0"/>
+				</xs:sequence>
+				<xs:element name="path" type="orcid:client-path"/>
+			</xs:choice>
+			<xs:element ref="orcid:host" minOccurs="0"/>
+		</xs:sequence>
 	</xs:complexType>
 	<xs:simpleType name="orcid-type">
 		<xs:restriction base="xs:string">

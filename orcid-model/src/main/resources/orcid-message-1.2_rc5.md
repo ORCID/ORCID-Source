@@ -5,5 +5,3 @@
 * Add created-date
 
 * Add last-modified-date
-
-* Add source-client-id
