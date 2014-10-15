@@ -23,4 +23,5 @@ public class OauthTokensConstants {
     public static final String PERSISTENT_TOKEN = "1";    
     public static final String GRANT_PERSISTENT_TOKEN = "grantPersistentToken";
     public static final String PERSISTENT = "persistent";
+    public static final String IS_PERSISTENT = "isPersistent";
 }

@@ -80,10 +80,10 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
 
         Map<String, Object> additionalInfo = new HashMap<>();
         additionalInfo.put("orcid", authInfo.getUserOrcid());
-        if(usePersistentTokens) {
+        if(usePersistentTokens) {                                    
             additionalInfo.put(OauthTokensConstants.TOKEN_VERSION, OauthTokensConstants.PERSISTENT_TOKEN);
-            if (isPersistentTokenEnabled(authentication.getAuthorizationRequest()))
-                additionalInfo.put("persistent", true);
+            if (isPersistentTokenEnabled(authentication.getAuthorizationRequest())) 
+                additionalInfo.put("persistent", true);            
         } else {
             additionalInfo.put(OauthTokensConstants.TOKEN_VERSION, OauthTokensConstants.NON_PERSISTENT_TOKEN);
         }
@@ -168,12 +168,21 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
         if (usePersistentTokens) {
             if (authorizationRequest != null) {
                 Map<String, String> params = authorizationRequest.getAuthorizationParameters();
-                if (params != null && params.containsKey("code")) {
-                    String code = params.get("code");
-                    if (orcidOauth2AuthoriziationCodeDetailDao.isPersistentToken(code)) {
-                        return true;
+                if(params != null) {
+                    if(params.containsKey(OauthTokensConstants.IS_PERSISTENT)){
+                        String isPersistent = params.get(OauthTokensConstants.IS_PERSISTENT);
+                        if(Boolean.valueOf(isPersistent)) {
+                            return true;
+                        }
+                    } else if (params.containsKey("code")) {
+                        String code = params.get("code");
+                        if(orcidOauth2AuthoriziationCodeDetailDao.find(code) != null) {
+                            if (orcidOauth2AuthoriziationCodeDetailDao.isPersistentToken(code)) {
+                                return true;
+                            }
+                        }
                     }
-                }
+                }                
             }
         }
 
