@@ -88,7 +88,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
     @Resource
     private OrcidProfileManager orcidProfileManager;
 
-    @Resource(name = "t2OrcidApiServiceDelegatorPrototype")
+    @Resource(name = "t2OrcidApiServiceDelegatorLatest")
     private T2OrcidApiServiceDelegator t2OrcidApiServiceDelegatorLatest;
 
     @Mock
@@ -134,7 +134,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
     public void testAddWorks() {
         setUpSecurityContext();
         OrcidMessage orcidMessage = new OrcidMessage();
-        orcidMessage.setMessageVersion("1.1");
+        orcidMessage.setMessageVersion("1.2_rc6");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
         orcidProfile.setOrcidIdentifier(new OrcidIdentifier("4444-4444-4444-4441"));
@@ -289,7 +289,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
 
     private OrcidMessage createStubOrcidMessage() {
         OrcidMessage orcidMessage = new OrcidMessage();
-        orcidMessage.setMessageVersion("1.1");
+        orcidMessage.setMessageVersion("1.2_rc6");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
         OrcidBio orcidBio = new OrcidBio();

@@ -611,7 +611,15 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             for (ExternalIdentifierEntity externalIdentifierEntity : externalIdentifierEntities) {
                 ExternalIdentifier externalIdentifier = new ExternalIdentifier();
                 SourceEntity sourceEntity = externalIdentifierEntity.getSource();
-                externalIdentifier.setExternalIdSource(sourceEntity != null ? new ExternalIdSource(getOrcidIdBase(sourceEntity.getSourceId())) : null);
+                if (sourceEntity != null) {
+                    Source source = new Source();
+                    if (sourceEntity.getSourceClient() != null) {
+                        source.setSourceClientId(new SourceClientId(getOrcidIdBase(sourceEntity.getSourceId())));
+                    } else {
+                        source.setSourceOrcid(new SourceOrcid(getOrcidIdBase(sourceEntity.getSourceId())));
+                    }
+                    externalIdentifier.setSource(source);
+                }
                 externalIdentifier.setExternalIdReference(StringUtils.isNotBlank(externalIdentifierEntity.getExternalIdReference()) ? new ExternalIdReference(
                         externalIdentifierEntity.getExternalIdReference()) : null);
                 externalIdentifier.setExternalIdCommonName(StringUtils.isNotBlank(externalIdentifierEntity.getExternalIdCommonName()) ? new ExternalIdCommonName(

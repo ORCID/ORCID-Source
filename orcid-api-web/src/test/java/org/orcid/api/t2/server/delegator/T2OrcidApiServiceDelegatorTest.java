@@ -66,6 +66,10 @@ import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.Title;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.message.WorkExternalIdentifier;
+import org.orcid.jaxb.model.message.WorkExternalIdentifierId;
+import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -131,7 +135,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
     public void testAddWorks() {
         setUpSecurityContext();
         OrcidMessage orcidMessage = new OrcidMessage();
-        orcidMessage.setMessageVersion("1.1");
+        orcidMessage.setMessageVersion("1.2_rc6");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
         orcidProfile.setOrcidIdentifier(new OrcidIdentifier("4444-4444-4444-4441"));
@@ -148,7 +152,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
     public void testUpdateWithNewWork() {
         setUpSecurityContext("4444-4444-4444-4446", ScopePathType.ORCID_WORKS_UPDATE);
         OrcidMessage orcidMessage = new OrcidMessage();
-        orcidMessage.setMessageVersion("1.1");
+        orcidMessage.setMessageVersion("1.2_rc6");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
         orcidProfile.setOrcidIdentifier(new OrcidIdentifier("4444-4444-4444-4446"));
@@ -162,6 +166,12 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         workTitle.setTitle(new Title("Added by works update"));
         orcidWork.setWorkTitle(workTitle);
         orcidWork.setWorkType(WorkType.ARTISTIC_PERFORMANCE);
+        WorkExternalIdentifiers workExternalIdentifiers = new WorkExternalIdentifiers();
+        WorkExternalIdentifier wei = new WorkExternalIdentifier();
+        wei.setWorkExternalIdentifierType(WorkExternalIdentifierType.DOI);
+        wei.setWorkExternalIdentifierId(new WorkExternalIdentifierId("abc123"));
+        workExternalIdentifiers.getWorkExternalIdentifier().add(wei);
+        orcidWork.setWorkExternalIdentifiers(workExternalIdentifiers);
         Response response = t2OrcidApiServiceDelegator.updateWorks(mockedUriInfo, "4444-4444-4444-4446", orcidMessage);
         assertNotNull(response);
 
@@ -199,7 +209,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
     public void testUpdateExistingNonPrivateWork() {
         setUpSecurityContext("4444-4444-4444-4446", ScopePathType.ORCID_WORKS_UPDATE);
         OrcidMessage orcidMessage = new OrcidMessage();
-        orcidMessage.setMessageVersion("1.1");
+        orcidMessage.setMessageVersion("1.2_rc6");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
         orcidProfile.setOrcidIdentifier(new OrcidIdentifier("4444-4444-4444-4446"));
@@ -214,6 +224,12 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         workTitle.setTitle(new Title("Updated by works update"));
         orcidWork.setWorkTitle(workTitle);
         orcidWork.setWorkType(WorkType.ARTISTIC_PERFORMANCE);
+        WorkExternalIdentifiers workExternalIdentifiers = new WorkExternalIdentifiers();
+        WorkExternalIdentifier wei = new WorkExternalIdentifier();
+        wei.setWorkExternalIdentifierType(WorkExternalIdentifierType.DOI);
+        wei.setWorkExternalIdentifierId(new WorkExternalIdentifierId("abc123"));
+        workExternalIdentifiers.getWorkExternalIdentifier().add(wei);
+        orcidWork.setWorkExternalIdentifiers(workExternalIdentifiers);
         Response response = t2OrcidApiServiceDelegator.updateWorks(mockedUriInfo, "4444-4444-4444-4446", orcidMessage);
         assertNotNull(response);
 
@@ -250,7 +266,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
     public void testUpdateWorkWhenNotSource() {
         setUpSecurityContext("4444-4444-4444-4446", ScopePathType.ORCID_WORKS_UPDATE);
         OrcidMessage orcidMessage = new OrcidMessage();
-        orcidMessage.setMessageVersion("1.1");
+        orcidMessage.setMessageVersion("1.2_rc6");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
         orcidProfile.setOrcidIdentifier(new OrcidIdentifier("4444-4444-4444-4446"));
@@ -265,6 +281,12 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         workTitle.setTitle(new Title("Updated by works update"));
         orcidWork.setWorkTitle(workTitle);
         orcidWork.setWorkType(WorkType.ARTISTIC_PERFORMANCE);
+        WorkExternalIdentifiers workExternalIdentifiers = new WorkExternalIdentifiers();
+        WorkExternalIdentifier wei = new WorkExternalIdentifier();
+        wei.setWorkExternalIdentifierType(WorkExternalIdentifierType.DOI);
+        wei.setWorkExternalIdentifierId(new WorkExternalIdentifierId("abc123"));
+        workExternalIdentifiers.getWorkExternalIdentifier().add(wei);
+        orcidWork.setWorkExternalIdentifiers(workExternalIdentifiers);
         t2OrcidApiServiceDelegator.updateWorks(mockedUriInfo, "4444-4444-4444-4446", orcidMessage);
     }
 
@@ -336,7 +358,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
     public void testAddAffilliations() {
         setUpSecurityContext(ScopePathType.AFFILIATIONS_CREATE);
         OrcidMessage orcidMessage = new OrcidMessage();
-        orcidMessage.setMessageVersion("1.1");
+        orcidMessage.setMessageVersion("1.2_rc6");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
         orcidProfile.setOrcidIdentifier(new OrcidIdentifier("4444-4444-4444-4441"));
@@ -373,7 +395,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
     public void testUpdateWithNewAffiliation() {
         setUpSecurityContext("4444-4444-4444-4443", ScopePathType.AFFILIATIONS_UPDATE);
         OrcidMessage orcidMessage = new OrcidMessage();
-        orcidMessage.setMessageVersion("1.1");
+        orcidMessage.setMessageVersion("1.2_rc6");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
         orcidProfile.setOrcidIdentifier(new OrcidIdentifier("4444-4444-4444-4443"));
@@ -410,7 +432,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
     public void testUpdateExistingNonPrivateAffiliation() {
         setUpSecurityContext("4444-4444-4444-4443", ScopePathType.AFFILIATIONS_UPDATE);
         OrcidMessage orcidMessage = new OrcidMessage();
-        orcidMessage.setMessageVersion("1.1");
+        orcidMessage.setMessageVersion("1.2_rc6");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
         orcidProfile.setOrcidIdentifier(new OrcidIdentifier("4444-4444-4444-4443"));
@@ -448,7 +470,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
     public void testUpdateAffiliationWhenNotSource() {
         setUpSecurityContext("4444-4444-4444-4443", ScopePathType.AFFILIATIONS_UPDATE);
         OrcidMessage orcidMessage = new OrcidMessage();
-        orcidMessage.setMessageVersion("1.1");
+        orcidMessage.setMessageVersion("1.2_rc6");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
         orcidProfile.setOrcidIdentifier(new OrcidIdentifier("4444-4444-4444-4443"));
@@ -472,7 +494,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
 
     private OrcidMessage createStubOrcidMessage() {
         OrcidMessage orcidMessage = new OrcidMessage();
-        orcidMessage.setMessageVersion("1.1");
+        orcidMessage.setMessageVersion("1.2_rc6");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
         OrcidBio orcidBio = new OrcidBio();

@@ -96,6 +96,7 @@ import org.orcid.jaxb.model.message.ResearcherUrl;
 import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.jaxb.model.message.SecurityDetails;
 import org.orcid.jaxb.model.message.Source;
+import org.orcid.jaxb.model.message.SourceReference;
 import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.jaxb.model.message.TranslatedTitle;
 import org.orcid.jaxb.model.message.Visibility;
@@ -638,8 +639,8 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             Map<Pair<String, String>, ExternalIdentifierEntity> existingExternalIdentifiersMap) {
         if (externalIdentifier != null && externalIdentifier.getExternalIdReference() != null) {
             ExternalIdCommonName externalIdCommonName = externalIdentifier.getExternalIdCommonName();
-            ExternalIdSource externalIdOrcid = externalIdentifier.getExternalIdSource();
-            String externalIdOrcidValue = externalIdOrcid != null ? externalIdOrcid.getPath() : null;
+            Source source = externalIdentifier.getSource();
+            String externalIdOrcidValue = source != null ? source.retrieveSourcePath() : null;
             ExternalIdReference externalIdReference = externalIdentifier.getExternalIdReference();
             String referenceValue = externalIdReference != null ? externalIdReference.getContent() : null;
             ExternalIdUrl externalIdUrl = externalIdentifier.getExternalIdUrl();
@@ -650,7 +651,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             ExternalIdentifierEntity externalIdentifierEntity = null;
             if (existingExternalIdentifierEntity == null) {
                 externalIdentifierEntity = new ExternalIdentifierEntity();
-                SourceEntity sourceEntity = externalIdOrcid != null ? new SourceEntity(externalIdOrcidValue) : null;
+                SourceEntity sourceEntity = externalIdOrcidValue != null ? new SourceEntity(externalIdOrcidValue) : null;
                 externalIdentifierEntity.setSource(sourceEntity);
                 externalIdentifierEntity.setExternalIdReference(referenceValue);
             } else {

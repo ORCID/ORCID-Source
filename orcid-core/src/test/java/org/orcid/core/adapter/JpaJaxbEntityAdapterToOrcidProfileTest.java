@@ -132,8 +132,7 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         System.out.println("Took: " + Long.toString(System.currentTimeMillis() - start));
 
         checkOrcidProfile(orcidProfile);
-        // XXX Fix client ID validation validateAgainstSchema(new
-        // OrcidMessage(orcidProfile));
+        validateAgainstSchema(new OrcidMessage(orcidProfile));
     }
 
     @Test
@@ -381,7 +380,7 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         assertEquals(Visibility.LIMITED, externalIdentifiers.getVisibility());
         assertEquals(1, externalIdentifiers.getExternalIdentifier().size());
         ExternalIdentifier externalIdentifier = externalIdentifiers.getExternalIdentifier().get(0);
-        assertEquals("4444-4444-4444-4441", externalIdentifier.getExternalIdSource().getPath());
+        assertEquals("4444-4444-4444-4441", externalIdentifier.getSource().getSourceOrcid().getPath());
         assertEquals("d3clan", externalIdentifier.getExternalIdReference().getContent());
         assertEquals("Facebook", externalIdentifier.getExternalIdCommonName().getContent());
     }
