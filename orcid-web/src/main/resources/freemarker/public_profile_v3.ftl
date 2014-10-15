@@ -71,6 +71,7 @@
             </#if>
         </div>
     </div>
+    
     <div class="col-md-9 right-aside">
         <div class="workspace-right" ng-controller="PersonalInfoCtrl">
         	<#if (deprecated)??>
@@ -78,13 +79,14 @@
 	        		<p><b><@orcid.msg 'public_profile.deprecated_account.1'/>&nbsp;<a href="${baseUriHttp}/${primaryRecord}">${baseUriHttp}/${primaryRecord}</a>&nbsp;<@orcid.msg 'public_profile.deprecated_account.2'/></b></p>
 	        	</div>
         	</#if>
-        	<div class="workspace-inner-public workspace-public">
+        	<div class="workspace-inner-public workspace-public workspace-accordion">
         		<#if (isProfileEmpty)?? && isProfileEmpty>
         			<p class="margin-top-box"><b><@orcid.msg 'public_profile.empty_profile'/></b></p>
         		<#else>	            
 	                <#if (profile.orcidBio.biography.content)?? && (profile.orcidBio.biography.content)?has_content>		                	        			
 	        			<div class="workspace-accordion-content" ng-show="displayInfo">
-	        				<p><b>${springMacroRequestContext.getMessage("public_profile.labelBiography")}</b><br /><div style="white-space: pre-wrap;">${(profile.orcidBio.biography.content)!}</div></p>
+	        				<strong>${springMacroRequestContext.getMessage("public_profile.labelBiography")}</strong>	        					
+	        				<div>${(profile.orcidBio.biography.content)!}</div>	        				
 	        			</div>
 	                </#if>
 	                <#assign publicProfile = true />

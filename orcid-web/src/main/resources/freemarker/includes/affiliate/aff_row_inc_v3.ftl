@@ -92,9 +92,11 @@
 				</div>
 				<div class="col-md-7">
 					<ul class="sources-options">
-				        <li>
-				            <a href ng-click="deleteAffiliation(group.getActive())" class="glyphicon glyphicon-trash grey"></a>
-				        </li>
+						<#if !(isPublicProfile??)>   
+					        <li>
+					            <a href ng-click="deleteAffiliation(group.getActive())" class="glyphicon glyphicon-trash grey"></a>
+					        </li>
+				         </#if>
 					    <li>
 					        <div class="show-more-info-tab">
 					            <a href="" ng-show="!moreInfo[group.getActive().putCode.value]" ng-click="showDetailsMouseClick(group.getActive().putCode.value,$event);"><span class="glyphicon glyphicon-chevron-down"></span><@orcid.msg 'manage.developer_tools.show_details'/></a>

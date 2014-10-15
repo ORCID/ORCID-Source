@@ -20,7 +20,7 @@
 	<li class="bottom-margin-small workspace-border-box card" ng-repeat="group in affiliationsSrvc.employments | orderBy:sortPredicate:sortReverse"> 
 		<#if request.requestURI?ends_with("my-orcid2")>
 		    <#include "aff_row_inc_v2.ftl" />
-		<#elseif request.requestURI?ends_with("my-orcid3")>
+		<#elseif request.requestURI?ends_with("my-orcid3") || RequestParameters['v']??>
 		    <#include "aff_row_inc_v3.ftl" />
 		<#else>
 		    <#include "aff_row_inc.ftl" />

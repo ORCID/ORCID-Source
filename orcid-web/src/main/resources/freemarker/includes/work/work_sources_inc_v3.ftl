@@ -24,7 +24,7 @@
 				
 				<div class="col-md-5" ng-hide="editSources[group.groupId] == true">
 					<span>
-						<strong >Source:</strong> {{group.getActive().workSourceName.value}}
+						<strong >Source:</strong>{{group.getActive().workSourceName.value}}
 					</span>						
 				</div>
 				
@@ -38,16 +38,18 @@
 			            	   <span class="glyphicon glyphicon-trash grey"></span>
 			        		</a>
 						</li>
-						<li ng-show="group.activitiesCount == 1">
-							<a ng-click="deleteWorkConfirm(group.getActive().putCode.value, false)">
-			            	   <span class="glyphicon glyphicon-trash grey" ng-show="!showBulkEdit"></span>
-			               </a>
-						</li>
-				        <li ng-show="editSources[group.groupId] == true">
-				            <a ng-click="deleteWorkConfirm(group.getActive().putCode.value, true)">
-				                <span class="glyphicon glyphicon-trash" ng-show="!showBulkEdit"></span> Delete all
-				            </a>
-				        </li>
+						<#if !(isPublicProfile??)>
+							<li ng-show="group.activitiesCount == 1">
+								<a ng-click="deleteWorkConfirm(group.getActive().putCode.value, false)">
+				            	   <span class="glyphicon glyphicon-trash grey" ng-show="!showBulkEdit"></span>
+				               </a>
+							</li>
+					        <li ng-show="editSources[group.groupId] == true">
+					            <a ng-click="deleteWorkConfirm(group.getActive().putCode.value, true)">
+					                <span class="glyphicon glyphicon-trash" ng-show="!showBulkEdit"></span> Delete all
+					            </a>
+					        </li>
+					    </#if>
 				        <li ng-show="editSources[group.groupId] == true">
 				            <a ng-click="editSources[group.groupId] = false">
 				                <span class="glyphicon glyphicon-remove" ng-show="!showBulkEdit"></span> Hide additional sources
@@ -84,9 +86,11 @@
 				               </a>
 				        </div>
 				        <div class="col-sm-1">
-				        		<a ng-click="deleteWorkConfirm(group.getActive().putCode.value, false)">
-			            	   <span class="glyphicon glyphicon-trash"></span>
-			               </a>
+				        	<#if !(isPublicProfile??)>
+					           <a ng-click="deleteWorkConfirm(group.getActive().putCode.value, false)">
+				            	   <span class="glyphicon glyphicon-trash"></span>
+				               </a>
+			                </#if>
 				        </div>
 					</li>
 					<li ng-repeat="work in group.activities" ng-hide="group.activePutCode == work.putCode.value">
@@ -105,9 +109,11 @@
 			               </a>
 						</div>
 						<div class="col-sm-1">
-							<a ng-click="deleteWorkConfirm(group.getActive().putCode.value, false)">
-			            	   <span class="glyphicon glyphicon-trash"></span>
-			               </a>
+							<#if !(isPublicProfile??)>
+								<a ng-click="deleteWorkConfirm(group.getActive().putCode.value, false)">
+				            	   <span class="glyphicon glyphicon-trash"></span>
+				                </a>
+				            </#if>    
 						</div>
 					</li>
 				</ul>				
