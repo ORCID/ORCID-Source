@@ -613,10 +613,11 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 SourceEntity sourceEntity = externalIdentifierEntity.getSource();
                 if (sourceEntity != null) {
                     Source source = new Source();
-                    if (sourceEntity.getSourceClient() != null) {
-                        source.setSourceClientId(new SourceClientId(getOrcidIdBase(sourceEntity.getSourceId())));
-                    } else {
+                    String sourceId = sourceEntity.getSourceId();
+                    if (OrcidStringUtils.isValidOrcid(sourceId)) {
                         source.setSourceOrcid(new SourceOrcid(getOrcidIdBase(sourceEntity.getSourceId())));
+                    } else {
+                        source.setSourceClientId(new SourceClientId(getOrcidIdBase(sourceEntity.getSourceId())));
                     }
                     externalIdentifier.setSource(source);
                 }

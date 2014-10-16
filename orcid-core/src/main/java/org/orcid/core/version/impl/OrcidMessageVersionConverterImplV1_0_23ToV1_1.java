@@ -40,6 +40,7 @@ import org.orcid.jaxb.model.message.OrcidSearchResults;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.PrimaryRecord;
+import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.message.Url;
 import org.orcid.jaxb.model.message.WorkSource;
 
@@ -126,6 +127,7 @@ public class OrcidMessageVersionConverterImplV1_0_23ToV1_1 implements OrcidMessa
                     if (obj instanceof ExternalIdentifier) {
                         ExternalIdentifier externalIdentifier = (ExternalIdentifier) obj;
                         externalIdentifier.setOrcid(new Orcid(orcid));
+                        externalIdentifier.setSource(null);
                     }
                 } else if (obj instanceof PrimaryRecord) {
                     PrimaryRecord primaryRecord = (PrimaryRecord) obj;
@@ -139,8 +141,13 @@ public class OrcidMessageVersionConverterImplV1_0_23ToV1_1 implements OrcidMessa
                         }
                     }
                     primaryRecord.setOrcidIdentifier((OrcidIdentifier) null);
+                } else if (obj instanceof Source) {
+                    Source source = (Source) obj;
+                    if (source.getSourceClientId() != null) {
+                        return TreeCleaningDecision.CLEANING_REQUIRED;
+                    }
                 }
-                // Always return default because we do not want to remove the
+                // Return default because we do not want to remove the
                 // obj
                 // itself
                 return TreeCleaningDecision.DEFAULT;
