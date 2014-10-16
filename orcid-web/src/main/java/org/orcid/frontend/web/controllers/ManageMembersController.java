@@ -129,7 +129,7 @@ public class ManageMembersController extends BaseController {
             }
         }
 
-        if(orcid != null) {
+        if (orcid != null) {
             if (profileEntityManager.orcidExists(orcid)) {
                 GroupType groupType = profileEntityManager.getGroupType(orcid);
                 if (groupType != null) {
@@ -141,7 +141,7 @@ public class ManageMembersController extends BaseController {
             } else {
                 group.getErrors().add(getMessage("manage_members.orcid_doesnt_exists"));
             }
-        }        
+        }
 
         return group;
     }
@@ -205,10 +205,10 @@ public class ManageMembersController extends BaseController {
     public @ResponseBody
     Client findClient(@RequestParam("orcid") String orcid) {
         Client result = new Client();
-        if (profileEntityManager.orcidExists(orcid)) {
+        ClientDetailsEntity clientDetailsEntity = clientDetailsManager.findByClientId(orcid);
+        if (clientDetailsEntity != null) {
             ClientType clientType = profileEntityManager.getClientType(orcid);
             if (clientType != null) {
-                ClientDetailsEntity clientDetailsEntity = clientDetailsManager.findByClientId(orcid);
                 result = Client.valueOf(clientDetailsEntity);
                 // If the client types is undefined, get it from DB
                 if (PojoUtil.isEmpty(result.getType()))
@@ -305,20 +305,21 @@ public class ManageMembersController extends BaseController {
             setError(group.getEmail(), "NotBlank.group.email");
         } else if (!validateEmailAddress(group.getEmail().getValue())) {
             setError(group.getEmail(), "group.email.invalid_email");
-        } else if(PojoUtil.isEmpty(group.getGroupOrcid())) {            
-            if (emailManager.emailExists(group.getEmail().getValue())) 
+        } else if (PojoUtil.isEmpty(group.getGroupOrcid())) {
+            if (emailManager.emailExists(group.getEmail().getValue()))
                 setError(group.getEmail(), "group.email.already_used");
-        } else if(!PojoUtil.isEmpty(group.getGroupOrcid())) {
+        } else if (!PojoUtil.isEmpty(group.getGroupOrcid())) {
             String newEmail = group.getEmail().getValue();
             String userOrcid = group.getGroupOrcid().getValue();
-            if(emailManager.emailExists(newEmail)) {
-                Map<String,String> ids = emailManager.findIdByEmail(newEmail);
+            if (emailManager.emailExists(newEmail)) {
+                Map<String, String> ids = emailManager.findIdByEmail(newEmail);
                 String orcidThatOwnsTheEmail = ids.get(newEmail);
-                //If the email is not the same, it means the member cannot use that email address
-                if(!userOrcid.equals(orcidThatOwnsTheEmail)) {
+                // If the email is not the same, it means the member cannot use
+                // that email address
+                if (!userOrcid.equals(orcidThatOwnsTheEmail)) {
                     setError(group.getEmail(), "group.email.already_used");
                 }
-            }                        
+            }
         }
     }
 
