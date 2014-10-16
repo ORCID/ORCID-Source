@@ -297,18 +297,20 @@
 							<div class="row">
 								<div class="col-md-7">
 									<ol>
-										<li><b>Select Works:</b> Clikck the checkbox beside each work or click the "Select All" checkbox.</li>
-										<li><b>Select Editing Action:</b> Click the trash can to delete all selected works or click a privacy setting to apply that setting to all selected works.</li>
+										<li><b>Select works:</b> Clikck the checkbox beside each work or click the "Select All" checkbox.</li>
+										<li><b>Select editing action:</b> Click the trash can to delete all selected works or click a privacy setting to apply that setting to all selected works.</li>
 									</ol>
 								</div>
 								<div class="col-md-5">
-									<ul class="bulk-edit-toolbar">
-										<li><!-- Cancel -->
+									<ul class="bulk-edit-toolbar">										
+										<li class="bulk-edit-toolbar-item"><!-- Cancel -->
+											<label></label>																						
 											<div class="cancel-bulk-edit">
 												<a class="btn btn-default pull-right" ng-click="toggleBulkEdit()">Cancel</a>
 											</div>
 										</li>
-										<li><!-- Select all -->
+										<li class="bulk-edit-toolbar-item"><!-- Select all -->
+											<label>Select all</label>											
 											<div id="custom-control-x">
 												<div class="custom-control-x" >	
 													<div class="dropdown-custom-menu" id="dropdown-custom-menu" ng-click="toggleSelectMenu()">										
@@ -326,14 +328,33 @@
 												</div>
 											</div>
 										</li>
-										<li><!-- Delete button -->
+										<li class="bulk-edit-toolbar-item"><!-- Delete button -->
+											<label>Delete</label>
 											<div class="bulk-edit-delete">
 												<a ng-click="deleteBulkConfirm()" class="ignore toolbar-button edit-item-button" title="Ignore">
 													<span class="edit-option-toolbar glyphicon glyphicon-trash"></span>
 												</a>
 											</div>
 										</li>
-										<li><!-- Privacy control -->
+										<li class="bulk-edit-toolbar-item"><!-- Privacy control -->
+											<div class="privacy-options">
+												<label>Edit privacy</label> 
+												<div class="popover-help-container" ng-class="{'popover-help-container-show':privacyHelp[work.putCode.value]==true}" style="position: absolute; left: 110px; top: 0px;">
+										        	<a ng-click="toggleClickPrivacyHelp(work.putCode.value)"><i class="glyphicon glyphicon-question-sign" style="width: 14px;"></i></a>
+										            <div class="popover bottom" style="">
+												        <div class="arrow" style=""></div>
+												        <div class="popover-content">
+												        	<strong>Who can see this?</strong>
+													        <ul class="privacyHelp">
+													        	<li class="public" style="color: #009900;">everyone</li>
+													        	<li class="limited" style="color: #ffb027;">trusted parties</li>
+													        	<li class="private" style="color: #990000;">only me</li>
+													        </ul>
+													        <a href="http://support.orcid.org/knowledgebase/articles/124518-orcid-privacy-settings" target="_blank">More information on privacy settings</a>
+												        </div>
+												    </div>
+										    	</div>
+									    	</div>
 											<div class="bulk-edit-privacy-control">
 											<@orcid.privacyToggle2 angularModel="groupPrivacy()" 
 												    questionClick=""

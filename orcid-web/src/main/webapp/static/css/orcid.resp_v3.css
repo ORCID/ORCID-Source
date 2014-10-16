@@ -4622,6 +4622,42 @@ ul.toggle-menu li:hover ul {
 	font-size: 12px;
 }
 
+.bulk-edit ul.bulk-edit-toolbar > li.bulk-edit-toolbar-item{
+	height: 50px;
+	text-align: center;
+}
+
+.bulk-edit ul.bulk-edit-toolbar > li.bulk-edit-toolbar-item > label,
+.bulk-edit ul.bulk-edit-toolbar > li.bulk-edit-toolbar-item > div label{
+	display: block;
+	float: left;
+	height: 15px;
+	font-size: 11px;
+	font-weight: bold;		
+}
+
+.bulk-edit ul.bulk-edit-toolbar > li.bulk-edit-toolbar-item > div{
+	display: block;
+	clear: both;
+	float: left;
+}
+
+.bulk-edit ul.bulk-edit-toolbar > li.bulk-edit-toolbar-item > div.privacy-options > label{
+	margin-left: 8px;
+}
+
+
+.bulk-edit ul.bulk-edit-toolbar > li.bulk-edit-toolbar-item div.popover-help-container{
+	position: initial !important; /* Overwriting defaul component settings */
+	float: left;
+	margin-left: 5px;	
+}
+
+
+.bulk-edit ul.bulk-edit-toolbar > li.bulk-edit-toolbar-item div.popover-help-container .popover{
+	left: 20px;
+}
+
 .custom-control-x {
 	position: absolute;
 	background: #FFF;
@@ -4742,8 +4778,7 @@ ul.toggle-menu li:hover ul {
 	float: right;
 }
 
-.bulk-edit .bulk-edit-delete{
-	margin: 6px 0 0 0;
+.bulk-edit .bulk-edit-delete{	
 	display: block;
 	float: left;
 }
