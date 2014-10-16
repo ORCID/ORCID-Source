@@ -22,11 +22,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
 import org.orcid.api.common.exception.OrcidInvalidScopeException;
 import org.orcid.core.constants.OauthTokensConstants;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
@@ -48,6 +50,9 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidClientCredentialEndPointDelegatorImpl.class);
 
+    @Resource
+    private OrcidOauth2AuthoriziationCodeDetailDao orcidOauth2AuthoriziationCodeDetailDao;
+    
     public Response obtainOauth2Token(String clientId, String clientSecret, String grantType, String refreshToken, String code, Set<String> scopes, String state,
             String redirectUri, String resourceId) {
 
@@ -90,6 +95,15 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
         Map<String, String> parameters = new HashMap<String, String>();
         if (code != null) {
             parameters.put("code", code);
+            if(orcidOauth2AuthoriziationCodeDetailDao.find(code) != null) {
+                if(orcidOauth2AuthoriziationCodeDetailDao.isPersistentToken(code)) {
+                    parameters.put(OauthTokensConstants.IS_PERSISTENT, "true");
+                } else {
+                    parameters.put(OauthTokensConstants.IS_PERSISTENT, "false");
+                }
+            } else {
+                parameters.put(OauthTokensConstants.IS_PERSISTENT, "false");
+            }                        
         }
         if (redirectUri != null) {
             parameters.put("redirect_uri", redirectUri);

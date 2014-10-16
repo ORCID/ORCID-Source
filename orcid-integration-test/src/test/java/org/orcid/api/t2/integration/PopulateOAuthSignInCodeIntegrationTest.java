@@ -121,7 +121,7 @@ public class PopulateOAuthSignInCodeIntegrationTest extends DBUnitTest {
         // verify we don't populate signin
         assertTrue(webDriver.findElement(By.xpath("//input[@name='userId']")).getAttribute("value").equals(""));
 
-        // test exisitng email
+        // test existing email
         url = getBaseUrl() + "&email=spike@milligan.com&family_names=test_family_names&given_names=test_given_name";
         webDriver.get(url);
         assertTrue(webDriver.findElement(By.xpath("//input[@name='userId']")).getAttribute("value").equals("spike@milligan.com"));
@@ -133,9 +133,33 @@ public class PopulateOAuthSignInCodeIntegrationTest extends DBUnitTest {
         webDriver.get(url);
         assertTrue(webDriver.findElement(By.xpath("//input[@name='userId']")).getAttribute("value").equals("4444-4444-4444-4441"));
     }
+        
+    @Test
+    public void emailPrePopulateWithHtmlEncodedEmail() throws JSONException, InterruptedException {
+        // test populating form with email that doesn't exist
+        String url = getBaseUrl() + "&email=non_existent%40test.com&family_names=test_family_names&given_names=test_given_name";
+        webDriver.get(url);        
+        assertTrue(webDriver.findElement(By.xpath("//input[@name='email']")).getAttribute("value").equals("non_existent@test.com"));
+        assertTrue(webDriver.findElement(By.xpath("//input[@name='familyNames']")).getAttribute("value").equals("test_family_names"));
+        assertTrue(webDriver.findElement(By.xpath("//input[@name='givenNames']")).getAttribute("value").equals("test_given_name"));
+        // verify we don't populate signin
+        assertTrue(webDriver.findElement(By.xpath("//input[@name='userId']")).getAttribute("value").equals(""));
+
+        // test existing email
+        url = getBaseUrl() + "&email=spike%40milligan.com&family_names=test_family_names&given_names=test_given_name";
+        webDriver.get(url);
+        assertTrue(webDriver.findElement(By.xpath("//input[@name='userId']")).getAttribute("value").equals("spike@milligan.com"));
+        // make sure register
+        assertTrue(webDriver.findElement(By.xpath("//input[@name='email']")).getAttribute("value").equals(""));
+
+        // populating check populating orcid
+        url = getBaseUrl() + "&email=spike%40milligan.com&family_names=test_family_names&given_names=test_given_name&orcid=4444-4444-4444-4441";
+        webDriver.get(url);
+        assertTrue(webDriver.findElement(By.xpath("//input[@name='userId']")).getAttribute("value").equals("4444-4444-4444-4441"));
+    }       
 
     @Test
-    public void orcidIdPreopulate() throws JSONException, InterruptedException {
+    public void orcidIdPrePopulate() throws JSONException, InterruptedException {
         // populating check populating orcid
         String url = getBaseUrl() + "&orcid=4444-4444-4444-4441";
         webDriver.get(url);
@@ -146,6 +170,18 @@ public class PopulateOAuthSignInCodeIntegrationTest extends DBUnitTest {
         assertTrue(webDriver.findElement(By.xpath("//input[@name='userId']")).getAttribute("value").equals("4444-4444-4444-4441"));
     }
 
+    @Test
+    public void orcidIdPreopulateWithHtmlEncodedOrcid() throws JSONException, InterruptedException {
+        // populating check populating orcid
+        String url = getBaseUrl() + "&orcid=4444%2D4444%2D4444%2D4441";        
+        webDriver.get(url);
+        assertTrue(webDriver.findElement(By.xpath("//input[@name='userId']")).getAttribute("value").equals("4444-4444-4444-4441"));
+
+        // populating check populating orcid overwrites populating email
+        webDriver.get(getBaseUrl() + "&email=spike@milligan.com&family_names=test_family_names&given_names=test_given_name&orcid=4444%2D4444%2D4444%2D4441");
+        assertTrue(webDriver.findElement(By.xpath("//input[@name='userId']")).getAttribute("value").equals("4444-4444-4444-4441"));
+    }
+    
     @Test
     public void givenAndFamilyNamesPrepopulate() throws JSONException, InterruptedException {
         // test populating form family and given names

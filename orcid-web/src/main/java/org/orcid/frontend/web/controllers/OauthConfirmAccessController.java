@@ -119,6 +119,10 @@ public class OauthConfirmAccessController extends BaseController {
                     Matcher emailMatcher = RegistrationController.emailPattern.matcher(url);
                     if (emailMatcher.find()) {
                         String tempEmail = emailMatcher.group(1);
+                        try {
+                            tempEmail = URLDecoder.decode(tempEmail, "UTF-8");
+                        } catch (UnsupportedEncodingException e) {
+                        }
                         if (orcidProfileManager.emailExists(tempEmail))
                             email = tempEmail;
                     }
@@ -126,6 +130,10 @@ public class OauthConfirmAccessController extends BaseController {
                     Matcher orcidMatcher = orcidPattern.matcher(url);
                     if (orcidMatcher.find()) {
                         String tempOrcid = orcidMatcher.group(2);
+                        try {
+                            tempOrcid = URLDecoder.decode(tempOrcid, "UTF-8");
+                        } catch (UnsupportedEncodingException e) {
+                        }
                         if (orcidProfileManager.exists(tempOrcid))
                             orcid = tempOrcid;
                     }
