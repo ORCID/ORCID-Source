@@ -19,7 +19,6 @@
 <#-- @ftlvariable name="profile" type="org.orcid.jaxb.model.message.OrcidProfile" -->
 <@public >
 <#escape x as x?html>
-<h1>!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!new v3 public view</h1>
 <div class="row workspace-top public-profile">
     <div class="col-md-3 left-aside">
         <div class="workspace-left workspace-profile">
@@ -72,6 +71,7 @@
             </#if>
         </div>
     </div>
+    
     <div class="col-md-9 right-aside">
         <div class="workspace-right" ng-controller="PersonalInfoCtrl">
         	<#if (deprecated)??>
@@ -79,23 +79,14 @@
 	        		<p><b><@orcid.msg 'public_profile.deprecated_account.1'/>&nbsp;<a href="${baseUriHttp}/${primaryRecord}">${baseUriHttp}/${primaryRecord}</a>&nbsp;<@orcid.msg 'public_profile.deprecated_account.2'/></b></p>
 	        	</div>
         	</#if>
-        	<div class="workspace-inner-public workspace-public">
+        	<div class="workspace-inner-public workspace-public workspace-accordion">
         		<#if (isProfileEmpty)?? && isProfileEmpty>
         			<p class="margin-top-box"><b><@orcid.msg 'public_profile.empty_profile'/></b></p>
         		<#else>	            
-	                <#if (profile.orcidBio.biography.content)?? && (profile.orcidBio.biography.content)?has_content>
-		                <div class="workspace-accordion-header" style="position: relative;">
-	        			   <ul class="personal-inf-display">        			   		
-	        			   		<li>
-	        			   			<a href="" ng-click="toggleDisplayInfo()" class="toggle-text">
-		        						<i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':displayInfo==false}"></i>
-		        					</a>		        			   		
-	        			   			<a href="" ng-click="toggleDisplayInfo()" class="toggle-text">Personal Information</a></li>
-	        			   		</li>	        			   		
-	        			   </ul>
-	        			</div>	        			
+	                <#if (profile.orcidBio.biography.content)?? && (profile.orcidBio.biography.content)?has_content>		                	        			
 	        			<div class="workspace-accordion-content" ng-show="displayInfo">
-	        				<p><b>${springMacroRequestContext.getMessage("public_profile.labelBiography")}</b><br /><div style="white-space: pre-wrap;">${(profile.orcidBio.biography.content)!}</div></p>
+	        				<strong>${springMacroRequestContext.getMessage("public_profile.labelBiography")}</strong>	        					
+	        				<div>${(profile.orcidBio.biography.content)!}</div>	        				
 	        			</div>
 	                </#if>
 	                <#assign publicProfile = true />
