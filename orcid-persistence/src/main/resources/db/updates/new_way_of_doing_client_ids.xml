@@ -86,47 +86,4 @@
         <addForeignKeyConstraint constraintName="profile_work_client_source_id_fk" baseTableName="profile_work" baseColumnNames="client_source_id" referencedTableName="client_details" referencedColumnNames="client_details_id"/>
     </changeSet>
     
-    <changeSet id="POPULATE-CLIENT-SOURCE-ID" author="Will Simpson" dbms="postgresql">
-       <sql>
-            UPDATE email e SET client_source_id = c.client_details_id
-            FROM client_details c
-            WHERE e.source_id = c.client_details_id;
-        </sql>
-        <sql>
-            UPDATE external_identifier e SET client_source_id = c.client_details_id
-            FROM client_details c
-            WHERE e.source_id = c.client_details_id;
-        </sql>
-        <sql>
-            UPDATE notification n SET client_source_id = c.client_details_id
-            FROM client_details c
-            WHERE n.source_id = c.client_details_id;
-        </sql>
-        <sql>
-            UPDATE org o SET client_source_id = c.client_details_id
-            FROM client_details c
-            WHERE o.source_id = c.client_details_id;
-        </sql>
-        <sql>
-            UPDATE org_affiliation_relation o SET client_source_id = c.client_details_id
-            FROM client_details c
-            WHERE o.source_id = c.client_details_id;
-        </sql>
-        <sql>
-            UPDATE profile p SET client_source_id = c.client_details_id
-            FROM client_details c
-            WHERE p.source_id = c.client_details_id;
-        </sql>
-        <sql>
-            UPDATE profile_funding p SET client_source_id = c.client_details_id
-            FROM client_details c
-            WHERE p.source_id = c.client_details_id;
-        </sql>
-        <sql>
-            UPDATE profile_work p SET client_source_id = c.client_details_id
-            FROM client_details c
-            WHERE p.source_id = c.client_details_id;
-        </sql>
-    </changeSet>
-    
  </databaseChangeLog>
