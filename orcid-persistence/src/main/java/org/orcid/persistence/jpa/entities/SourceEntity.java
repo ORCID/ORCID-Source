@@ -17,7 +17,6 @@
 package org.orcid.persistence.jpa.entities;
 
 import javax.persistence.Embeddable;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
@@ -54,7 +53,7 @@ public class SourceEntity {
         }
     }
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "source_id")
     public ProfileEntity getSourceProfile() {
         return sourceProfile;
@@ -64,7 +63,7 @@ public class SourceEntity {
         this.sourceProfile = sourceProfile;
     }
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "client_source_id")
     public ClientDetailsEntity getSourceClient() {
         return sourceClient;
