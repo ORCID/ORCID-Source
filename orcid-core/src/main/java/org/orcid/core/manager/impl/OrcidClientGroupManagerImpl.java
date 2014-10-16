@@ -52,6 +52,7 @@ import org.orcid.jaxb.model.message.SalesforceId;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
@@ -81,6 +82,9 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
 
     @Resource
     private ClientDetailsManager clientDetailsManager;
+
+    @Resource
+    private ClientDetailsDao clientDetailsDao;
 
     @Resource
     private EncryptionManager encryptionManager;
@@ -345,7 +349,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         if (client.getClientId() != null) {
             // Look up the existing client.
             String clientId = client.getClientId();
-            clientDetailsEntity = clientDetailsManager.findByClientId(clientId);
+            clientDetailsEntity = clientDetailsDao.find(clientId);
             if (clientDetailsEntity == null) {
                 // If the existing client can't be found then raise an
                 // error.
@@ -380,7 +384,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         if (client.getClientId() != null) {
             // Look up the existing client.
             String clientId = client.getClientId();
-            clientDetailsEntity = clientDetailsManager.findByClientId(clientId);
+            clientDetailsEntity = clientDetailsDao.find(clientId);
             if (clientDetailsEntity == null) {
                 // If the existing client can't be found then raise an
                 // error.
