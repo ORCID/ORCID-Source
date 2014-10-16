@@ -21,6 +21,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import static org.orcid.api.common.OrcidApiConstants.*;
 
@@ -291,6 +292,17 @@ public interface OrcidApiService<T> {
     @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(WORKS_PATH)
     T viewWorksDetailsJson(@PathParam("orcid") String orcid);
+    
+    /**
+     * Sends a redirect from the client URI to the group URI
+     * 
+     * @param clientId
+     *            the client ID that corresponds to the client
+     * @return a redirect to the ORCID record for the client's group
+     */
+    @GET
+    @Path(CLIENT_PATH)
+    T viewClient(String clientId);
 
     /**
      * Gets the JSON representation any Orcid Profiles (BIO) only relevant to

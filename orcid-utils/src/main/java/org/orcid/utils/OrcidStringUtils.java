@@ -48,24 +48,33 @@ public class OrcidStringUtils {
     private static String DECODED_APOS = "'";
     private static String DECODED_QUOT = "\"";
 
-    private static final Pattern pattern = Pattern.compile("(\\d{4}-){3,}\\d{3}[\\dX]");
+    private static final Pattern orcidPattern = Pattern.compile("(\\d{4}-){3,}\\d{3}[\\dX]");
+    private static final Pattern clientIdPattern = Pattern.compile("APP-[\\dA-Z]{16}");
 
     private static final Document.OutputSettings outputSettings = new Document.OutputSettings().prettyPrint(false).charset("UTF-8").escapeMode(EscapeMode.xhtml);
 
     public static boolean isValidOrcid(String orcid) {
         if (StringUtils.isNotBlank(orcid)) {
-            return pattern.matcher(orcid).matches();
+            return orcidPattern.matcher(orcid).matches();
         } else {
             return false;
         }
     }
 
     public static String getOrcidNumber(String orcid) {
-        Matcher matcher = pattern.matcher(orcid);
+        Matcher matcher = orcidPattern.matcher(orcid);
         if (matcher.find()) {
             return matcher.group(0);
         }
         return null;
+    }
+
+    public static boolean isClientId(String clientId) {
+        if (StringUtils.isNotBlank(clientId)) {
+            return clientIdPattern.matcher(clientId).matches();
+        } else {
+            return false;
+        }
     }
 
     public static Map<String, String> resourceBundleToMap(ResourceBundle resource) {

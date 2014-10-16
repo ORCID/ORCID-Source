@@ -251,7 +251,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return orcidDeprecated;
     }
 
-    private OrcidIdBase getOrcidIdBase(String id) {
+    @Override
+    public OrcidIdBase getOrcidIdBase(String id) {
         OrcidIdBase orcidId = new OrcidIdBase();
         String correctedBaseUri = baseUri.replace("https", "http");
         try {
@@ -259,6 +260,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             orcidId.setHost(uri.getHost());
         } catch (URISyntaxException e) {
             throw new RuntimeException("Error parsing base uri", e);
+        }
+        if (OrcidStringUtils.isClientId(id)) {
+            correctedBaseUri += "/client";
         }
         orcidId.setUri(correctedBaseUri + "/" + id);
         orcidId.setPath(id);

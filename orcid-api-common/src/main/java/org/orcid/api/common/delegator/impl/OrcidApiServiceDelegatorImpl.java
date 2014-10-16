@@ -18,6 +18,8 @@ package org.orcid.api.common.delegator.impl;
 
 import static org.orcid.api.common.OrcidApiConstants.STATUS_OK_MESSAGE;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +29,9 @@ import javax.ws.rs.core.Response;
 
 import org.orcid.api.common.delegator.OrcidApiServiceDelegator;
 import org.orcid.api.common.exception.OrcidNotFoundException;
+import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.exception.OrcidSearchException;
+import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.core.security.DeprecatedException;
@@ -36,9 +40,12 @@ import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidSearchResult;
 import org.orcid.jaxb.model.message.OrcidSearchResults;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import com.sun.jersey.api.client.ClientResponse.Status;
 
 /**
  * This class will retrieve {@link OrcidProfile}s and return them for use in the
@@ -46,7 +53,7 @@ import org.springframework.stereotype.Component;
  * {@link OrcidProfile}s that have not been confirmed, but it does this by
  * checking the status on the object rather than at database level.
  * <p/>
-
+ * 
  * @author Declan Newman (declan) Date: 02/03/2012
  */
 @Component("orcidApiServiceDelegator")
@@ -57,6 +64,12 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
 
     @Resource(name = "orcidSearchManager")
     private OrcidSearchManager orcidSearchManager;
+
+    @Resource
+    private ClientDetailsManager clientDetailsManager;
+
+    @Resource
+    private Jpa2JaxbAdapter jpa2JaxbAdapter;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidApiServiceDelegatorImpl.class);
 
@@ -266,6 +279,23 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
         } catch (OrcidSearchException e) {
             LOGGER.warn("Error searching, so falling back to DB", e);
             return findWorksDetails(orcid);
+        }
+    }
+
+    @Override
+    public Response redirectClientToGroup(String clientId) {
+        ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
+        if (clientDetails == null) {
+            return Response.status(Status.NOT_FOUND).build();
+        }
+        String groupOrcid = clientDetails.getGroupProfile().getId();
+        URI groupUri;
+        try {
+            groupUri = new URI(jpa2JaxbAdapter.getOrcidIdBase(groupOrcid).getUri());
+            return Response.seeOther(groupUri).build();
+        } catch (URISyntaxException e) {
+            LOGGER.error("Problem redirecting to group: {}", groupOrcid, e);
+            return Response.serverError().build();
         }
     }
 

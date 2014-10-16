@@ -1922,7 +1922,7 @@
 	<xs:simpleType name="client-uri">
 		<xs:restriction base="xs:string">
 			<xs:pattern
-				value="http://([^/]*orcid\.org|localhost.*/orcid-web)/APP-[\da-zA-Z]{16}" />
+				value="http://([^/]*orcid\.org|localhost.*/orcid-web)/client/APP-[\da-zA-Z]{16}" />
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:complexType name="client-id">

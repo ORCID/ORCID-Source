@@ -173,6 +173,11 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
     }
 
     @Override
+    public Response redirectClientToGroup(String clientId) {
+        return t2OrcidApiServiceDelegator.redirectClientToGroup(clientId);
+    }
+
+    @Override
     public Response searchByQuery(Map<String, List<String>> queryMap) {
         Response response = t2OrcidApiServiceDelegator.searchByQuery(queryMap);
         return downgradeAndValidateResponse(response);
