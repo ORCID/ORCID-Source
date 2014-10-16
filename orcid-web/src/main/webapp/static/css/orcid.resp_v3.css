@@ -1619,6 +1619,10 @@ a:hover {
 	float:right;
 }
 
+ul.workspace-private-toolbar li.bulk-checkbox-item{
+	width: 45px;
+}
+
 .orcid-id{
 	font-size: 10px;
 	line-height: 1;
@@ -4580,10 +4584,42 @@ ul.toggle-menu li:hover ul {
 /* Bulk Edit control */
 
 .bulk-edit{
-	height: 60px;
+	height: auto;
 	display: inline-block;	
 	width: 100%;
 	margin-bottom: 10px;
+}
+
+.bulk-edit .col-md-5{
+	padding-left: 0;
+	padding-right: 5px;
+}
+
+.bulk-edit .col-md-7{
+	padding-right: 0;
+}
+
+.bulk-edit ol{
+	padding-left: 5px;
+}
+
+
+.bulk-edit ol li{
+	font-size: 12px;
+}
+
+.bulk-edit ul.bulk-edit-toolbar{
+	padding: 0;
+	float: right;
+}
+
+.bulk-edit ul.bulk-edit-toolbar > li{
+	display: inline-block;
+}
+
+.bulk-edit ul.bulk-edit-toolbar > li .cancel-bulk-edit a{
+	height: 30px;
+	font-size: 12px;
 }
 
 .custom-control-x {
@@ -4701,14 +4737,13 @@ ul.toggle-menu li:hover ul {
 	background: #FFF;
 }
 
-.bulk-edit .bulk-edit-privacy-control{
-	margin-left: 15px;
+.bulk-edit .bulk-edit-privacy-control{	
 	display: block;
-	float: left;
+	float: right;
 }
 
 .bulk-edit .bulk-edit-delete{
-	margin: 6px 0 0 15px;
+	margin: 6px 0 0 0;
 	display: block;
 	float: left;
 }
@@ -5816,6 +5851,10 @@ ul.toggle-menu li:hover ul {
 	
 	.bulk-edit-input{	
 		margin-right: 5px;		
+	}
+	
+	.bulk-edit ul.bulk-edit-toolbar{
+		padding-right: 5px;
 	}
 	
 }
