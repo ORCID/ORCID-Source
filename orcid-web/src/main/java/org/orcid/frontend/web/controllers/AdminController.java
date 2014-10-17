@@ -44,6 +44,7 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.password.constants.OrcidPasswordConstants;
+import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -109,6 +110,9 @@ public class AdminController extends BaseController {
 
     @Resource
     private GroupAdministratorController groupAdministratorController;
+
+    @Resource
+    private GivenPermissionToDao givenPermissionToDao;
 
     public ProfileEntityManager getProfileEntityManager() {
         return profileEntityManager;
@@ -506,6 +510,7 @@ public class AdminController extends BaseController {
         request.setErrors(new ArrayList<String>());
         request.getManaged().setErrors(new ArrayList<String>());
         request.getTrusted().setErrors(new ArrayList<String>());
+        request.setSuccessMessage(null);
 
         String trusted = request.getTrusted().getValue();
         String managed = request.getManaged().getValue();
@@ -530,6 +535,12 @@ public class AdminController extends BaseController {
                 request.getManaged().getErrors().add(getMessage("admin.delegate.error.invalid_orcid_or_email", request.getManaged().getValue()));
                 haveErrors = true;
             }
+        }
+
+        // The permission should not already exist
+        if (givenPermissionToDao.findByGiverAndReceiverOrcid(managed, trusted) != null) {
+            request.getErrors().add(getMessage("admin.delegate.error.permission_already_exists", trusted, managed));
+            haveErrors = true;
         }
 
         if (haveErrors)
