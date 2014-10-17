@@ -26,7 +26,7 @@
     	<div class="work-list-container">
 			<div class="row"> 
 				<!-- Main title -->
-				<div class="col-md-9 col-sm-9 col-xs-12">
+				<div class="col-md-8 col-sm-8 col-xs-12">
 				    <h3 class="workspace-title">
 			        	<strong ng-bind="group.getActive().workTitle.title.value"></strong><span class="work-subtitle" ng-show="group.getActive().workTitle.subtitle.value" ng-bind="':&nbsp;'.concat(group.getActive().workTitle.subtitle.value)"></span>		        			        	
 			        </h3>
@@ -38,11 +38,11 @@
 			        </div>		                	        
 		        </div>
 		        <!-- Settings -->
-		        <div class="col-md-3 col-sm-3 col-xs-12 workspace-toolbar">	        	
+		        <div class="col-md-4 col-sm-4 col-xs-12 workspace-toolbar">	        	
 		        	<#if !(isPublicProfile??)>
 		        		<!-- Privacy bar -->
 						<ul class="workspace-private-toolbar">
-							<li ng-show="showBulkEdit" class="hidden-xs">								
+							<li ng-show="showBulkEdit" class="hidden-xs bulk-checkbox-item">								
 			        			<input type="checkbox" ng-model="bulkEditMap[group.getActive().putCode.value]" class="bulk-edit-input"></input>			        										
 							</li>							
 						 	<li>
