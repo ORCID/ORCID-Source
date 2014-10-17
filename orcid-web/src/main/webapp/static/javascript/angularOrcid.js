@@ -4602,7 +4602,7 @@ function DelegatesCtrl($scope, $compile){
 	        success: function(data) {
 	        	$scope.delegatesByOrcid = {};
 	        	$scope.delegation = data;
-	        	if(data.givenPermissionTo != null){
+	        	if(data != null && data.givenPermissionTo != null){
 		        	for(var i=0; i < data.givenPermissionTo.delegationDetails.length; i++){
 		        		var delegate = data.givenPermissionTo.delegationDetails[i];
 		        		$scope.delegatesByOrcid[delegate.delegateSummary.orcidIdentifier.path] = delegate;
