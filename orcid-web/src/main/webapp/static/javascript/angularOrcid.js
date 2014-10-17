@@ -3727,6 +3727,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
 				$scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value] = false;
 		};
 		$scope.showBulkEdit = !$scope.showBulkEdit;
+		$scope.showBibtexImportWizard = false;
 	};
 	
 	$scope.buldApply = function(func) {
@@ -3846,7 +3847,8 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
    
     $scope.openBibTextWizard = function () {
     	$scope.bibtexParsingError = false;
-    	$scope.showBibtexImportWizard = !($scope.showBibtexImportWizard);    	
+    	$scope.showBibtexImportWizard = !($scope.showBibtexImportWizard);
+    	$scope.showBulkEdit = false;
     };
     
     $scope.bibtextCancel = function(){

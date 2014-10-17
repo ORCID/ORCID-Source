@@ -1620,7 +1620,7 @@ a:hover {
 }
 
 ul.workspace-private-toolbar li.bulk-checkbox-item{
-	width: 45px;
+	width: 49px;
 }
 
 .orcid-id{
@@ -4061,7 +4061,6 @@ ul.id-details li{
 	width: 100%;
 	text-align: right;		
 	height: 20px;
-	margin-left: 5px;
 }
 
 .show-more-info-tab a{
@@ -4639,6 +4638,10 @@ ul.toggle-menu li:hover ul {
 .bulk-edit ul.bulk-edit-toolbar > li.bulk-edit-toolbar-item > div{
 	display: block;
 	clear: both;
+}
+
+
+.bulk-edit ul.bulk-edit-toolbar > li.bulk-edit-toolbar-item > div.privacy-options > .privacy-options-popover{
 	float: left;
 }
 
@@ -4646,16 +4649,12 @@ ul.toggle-menu li:hover ul {
 	margin-left: 8px;
 }
 
-
 .bulk-edit ul.bulk-edit-toolbar > li.bulk-edit-toolbar-item div.popover-help-container{
-	position: initial !important; /* Overwriting defaul component settings */
+	position: relative !important;
+	left: 0 !important;
+	top: 0; 
 	float: left;
 	margin-left: 5px;	
-}
-
-
-.bulk-edit ul.bulk-edit-toolbar > li.bulk-edit-toolbar-item div.popover-help-container .popover{
-	left: 20px;
 }
 
 .custom-control-x {
@@ -4781,6 +4780,8 @@ ul.toggle-menu li:hover ul {
 .bulk-edit .bulk-edit-delete{	
 	display: block;
 	float: left;
+	margin-left: 3px;
+	text-align: center;
 }
 
 .block{ /* Forcing block */
@@ -5890,6 +5891,22 @@ ul.toggle-menu li:hover ul {
 	
 	.bulk-edit ul.bulk-edit-toolbar{
 		padding-right: 5px;
+	}
+	
+	.bulk-edit-toolbar-item .popover-help-container a {
+		
+	}
+	
+	.bulk-edit .popover-help-container a i{
+		font-size: 16px;
+	}
+	
+	.bulk-edit .popover-help-container .popover{
+		left: -240px;
+	}
+	
+	.bulk-edit .popover-help-container .popover.bottom .arrow{
+		left: 247px;
 	}
 	
 }

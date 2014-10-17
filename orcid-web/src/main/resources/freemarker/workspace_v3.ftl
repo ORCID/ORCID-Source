@@ -295,13 +295,13 @@
 					<div ng-show="showBulkEdit" ng-cloak>
 						<div class="grey-box box-border bulk-edit">
 							<div class="row">
-								<div class="col-md-7">
+								<div class="col-md-7 col-sm-7">
 									<ol>
 										<li><b>Select works:</b> Clikck the checkbox beside each work or click the "Select All" checkbox.</li>
 										<li><b>Select editing action:</b> Click the trash can to delete all selected works or click a privacy setting to apply that setting to all selected works.</li>
 									</ol>
 								</div>
-								<div class="col-md-5">
+								<div class="col-md-5 col-sm-5">
 									<ul class="bulk-edit-toolbar">										
 										<li class="bulk-edit-toolbar-item"><!-- Cancel -->
 											<label></label>																						
@@ -331,37 +331,41 @@
 										<li class="bulk-edit-toolbar-item"><!-- Delete button -->
 											<label>Delete</label>
 											<div class="bulk-edit-delete">
-												<a ng-click="deleteBulkConfirm()" class="ignore toolbar-button edit-item-button" title="Ignore">
-													<span class="edit-option-toolbar glyphicon glyphicon-trash"></span>
-												</a>
+											    <div class="centered">
+													<a ng-click="deleteBulkConfirm()" class="ignore toolbar-button edit-item-button" title="Ignore">
+														<span class="edit-option-toolbar glyphicon glyphicon-trash"></span>
+													</a>
+												</div>
 											</div>
 										</li>
 										<li class="bulk-edit-toolbar-item"><!-- Privacy control -->
 											<div class="privacy-options">
-												<label>Edit privacy</label> 
-												<div class="popover-help-container" ng-class="{'popover-help-container-show':privacyHelp[work.putCode.value]==true}" style="position: absolute; left: 110px; top: 0px;">
-										        	<a ng-click="toggleClickPrivacyHelp(work.putCode.value)"><i class="glyphicon glyphicon-question-sign" style="width: 14px;"></i></a>
-										            <div class="popover bottom" style="">
-												        <div class="arrow" style=""></div>
-												        <div class="popover-content">
-												        	<strong>Who can see this?</strong>
-													        <ul class="privacyHelp">
-													        	<li class="public" style="color: #009900;">everyone</li>
-													        	<li class="limited" style="color: #ffb027;">trusted parties</li>
-													        	<li class="private" style="color: #990000;">only me</li>
-													        </ul>
-													        <a href="http://support.orcid.org/knowledgebase/articles/124518-orcid-privacy-settings" target="_blank">More information on privacy settings</a>
-												        </div>
-												    </div>
+												<label>Edit privacy</label>
+												<div class="privacy-options-popover"> 
+													<div class="popover-help-container" ng-class="{'popover-help-container-show':privacyHelp[work.putCode.value]==true}" style="position: absolute; left: 110px; top: 0px;">
+											        	<a ng-click="toggleClickPrivacyHelp(work.putCode.value)"><i class="glyphicon glyphicon-question-sign" style="width: 14px;"></i></a>
+											            <div class="popover bottom" style="">
+													        <div class="arrow" style=""></div>
+													        <div class="popover-content">
+													        	<strong>Who can see this?</strong>
+														        <ul class="privacyHelp">
+														        	<li class="public" style="color: #009900;">everyone</li>
+														        	<li class="limited" style="color: #ffb027;">trusted parties</li>
+														        	<li class="private" style="color: #990000;">only me</li>
+														        </ul>
+														        <a href="http://support.orcid.org/knowledgebase/articles/124518-orcid-privacy-settings" target="_blank">More information on privacy settings</a>
+													        </div>
+													    </div>
+											    	</div>
 										    	</div>
 									    	</div>
 											<div class="bulk-edit-privacy-control">
-											<@orcid.privacyToggle2 angularModel="groupPrivacy()" 
-												    questionClick=""
-												    clickedClassCheck=""
-													publicClick="setBulkGroupPrivacy('PUBLIC', $event)" 
-								                	limitedClick="setBulkGroupPrivacy('LIMITED', $event)" 
-								                	privateClick="setBulkGroupPrivacy('PRIVATE', $event)"/>
+												<@orcid.privacyToggle2 angularModel="groupPrivacy()" 
+													    questionClick=""
+													    clickedClassCheck=""
+														publicClick="setBulkGroupPrivacy('PUBLIC', $event)" 
+									                	limitedClick="setBulkGroupPrivacy('LIMITED', $event)" 
+									                	privateClick="setBulkGroupPrivacy('PRIVATE', $event)"/>
 								 			</div>
 										</li>
 									</ul>
