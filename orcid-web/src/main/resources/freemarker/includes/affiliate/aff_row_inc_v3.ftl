@@ -48,7 +48,7 @@
         	<div class="role" ng-show="group.getActive().roleTitle">
 	            <span ng-bind-html="group.getActive().roleTitle.value"></span>
         	</div>
-			&nbsp;(<span ng-show="group.getActive().departmentName.value" ng-bind="group.getActive().departmentName.value" ng-cloak></span>)
+			<span ng-show="group.getActive().departmentName.value">&nbsp;(</span><span ng-show="group.getActive().departmentName.value" ng-bind="group.getActive().departmentName.value" ng-cloak></span><span ng-show="group.getActive().departmentName.value">)</span>
         </div>        
        </div>
        <!-- Privacy Settings -->
