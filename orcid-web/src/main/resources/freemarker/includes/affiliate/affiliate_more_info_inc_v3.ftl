@@ -22,13 +22,15 @@
 	</div>	
 	<div class="row">
 		<div class="col-md-6" ng-show="group.getActive().affiliationName.value" ng-cloak>
-			<div class="bottomBuffer">
-				<strong ng-show="group.getActive().affiliationType.value == 'education'"><@orcid.msg 'manual_affiliation_form_contents.labelinstitution'/></strong>
-				<strong ng-show="group.getActive().affiliationType.value == 'employment'"><@orcid.msg 'manual_affiliation_form_contents.labelinstitutionemployer'/></strong>
-				<strong ng-show="group.getActive().affiliationType.value != 'education' && group.getActive().affiliationType.value != 'employment'"><@orcid.msg 'manual_affiliation_form_contents.labelname'/></strong>
-				<div ng-bind="group.getActive().affiliationName.value"></div>
-			</div>
+			
+				<div class="bottomBuffer">
+					  <strong ng-show="group.getActive().affiliationType.value == 'education'"><@orcid.msg 'manual_affiliation_form_contents.labelinstitution'/></strong>  
+					<strong ng-show="group.getActive().affiliationType.value == 'employment'"><@orcid.msg 'manual_affiliation_form_contents.labelinstitutionemployer'/></strong>
+					<strong ng-show="group.getActive().affiliationType.value != 'education' && group.getActive().affiliationType.value != 'employment'"><@orcid.msg 'manual_affiliation_form_contents.labelname'/></strong>
+					<div ng-bind="group.getActive().affiliationName.value"></div>
+				</div>
 		</div>	
+		
 		<div class="col-md-6" ng-show="group.getActive().city.value" ng-cloak>
 			<div class="bottomBuffer">
 				<strong><@orcid.msg 'manual_affiliation_form_contents.labelcity'/></strong>
@@ -49,7 +51,6 @@
 				<div ng-bind="group.getActive().country.value"></div>
 			</div>
 		</div>
-		
 		<div class="col-md-6" ng-show="group.getActive().departmentName.value" ng-cloak>
 			<div class="bottomBuffer">
 				<strong><@orcid.msg 'manual_affiliation_form_contents.labeldepartment'/></strong>

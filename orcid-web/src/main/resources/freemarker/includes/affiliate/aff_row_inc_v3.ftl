@@ -48,6 +48,7 @@
         	<div class="role" ng-show="group.getActive().roleTitle">
 	            <span ng-bind-html="group.getActive().roleTitle.value"></span>
         	</div>
+			&nbsp;(<span ng-show="group.getActive().departmentName.value" ng-bind="group.getActive().departmentName.value" ng-cloak></span>)
         </div>        
        </div>
        <!-- Privacy Settings -->
@@ -72,18 +73,6 @@
 	</div>
 </div>
 <div class="row">
-	<div class="col-md-12">		
-	
-	</div>
-</div>
-<div class="content affiliate" ng-show="moreInfo[group.getActive().putCode.value]">	
-	<div class="row">			
-		<div class="col-md-12">
-			<#include "affiliate_more_info_inc_v3.ftl"/>
-		</div>
-	</div>
-</div>	
-<div class="row">
 	<div class="col-md-12 col-sm-12 col-xs-12">
 		<div class="sources-container-header">          
 			<div class="row">
@@ -96,13 +85,7 @@
 					        <li>
 					            <a href ng-click="deleteAffiliation(group.getActive())" class="glyphicon glyphicon-trash grey"></a>
 					        </li>
-				         </#if>
-					    <li>
-					        <div class="show-more-info-tab">
-					            <a href="" ng-show="!moreInfo[group.getActive().putCode.value]" ng-click="showDetailsMouseClick(group.getActive().putCode.value,$event);"><span class="glyphicon glyphicon-chevron-down"></span><@orcid.msg 'manage.developer_tools.show_details'/></a>
-					            <a href="" ng-show="moreInfo[group.getActive().putCode.value]" ng-click="showDetailsMouseClick(group.getActive().putCode.value,$event);"><span class="glyphicon glyphicon-chevron-up"></span><@orcid.msg 'manage.developer_tools.hide_details'/></a>
-					        </div>                  
-					    </li>                               
+				         </#if>  
 					</ul>
 				</div>
 			</div>
