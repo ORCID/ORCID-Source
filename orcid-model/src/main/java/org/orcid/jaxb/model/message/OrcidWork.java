@@ -97,6 +97,10 @@ public class OrcidWork implements VisibilityType, Activity, Serializable {
     protected String languageCode;
     @XmlElement(name = "country")
     protected Country country;
+    /*
+     * @deprecated replaced with source in 1.2_rc6 and greater
+     */
+    @Deprecated
     @XmlElement(name = "work-source")
     protected WorkSource workSource;
     @XmlElement(name = "source")
@@ -305,6 +309,7 @@ public class OrcidWork implements VisibilityType, Activity, Serializable {
      * @return possible object is {@link WorkSource }
      * 
      */
+    @Deprecated
     public WorkSource getWorkSource() {
         return workSource;
     }
@@ -327,6 +332,7 @@ public class OrcidWork implements VisibilityType, Activity, Serializable {
      *            allowed object is {@link WorkSource }
      * 
      */
+    @Deprecated
     public void setWorkSource(WorkSource value) {
         this.workSource = value;
     }

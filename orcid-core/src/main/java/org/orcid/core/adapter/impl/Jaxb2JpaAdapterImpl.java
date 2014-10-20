@@ -276,13 +276,6 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         return null;
     }
 
-    private SourceEntity getWorkSource(WorkSource workSource) {
-        if (workSource != null && StringUtils.isNotEmpty(workSource.getPath()) && !workSource.getPath().equals(WorkSource.NULL_SOURCE_PROFILE)) {
-            return new SourceEntity(workSource.getPath());
-        }
-        return null;
-    }
-
     public WorkEntity getWorkEntity(OrcidWork orcidWork, WorkEntity workEntity) {
         if (orcidWork != null) {
             Citation workCitation = orcidWork.getWorkCitation();

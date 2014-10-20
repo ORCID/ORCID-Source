@@ -66,6 +66,10 @@ public class ExternalIdentifier implements Serializable {
     private static final long serialVersionUID = 1L;
     @XmlElement(name = "orcid", required = true)
     protected Orcid orcid;
+    /*
+     * @deprecated replaced with external-id-source in 1.2_rc6 and greater
+     */
+    @Deprecated
     @XmlElement(name = "external-id-source", required = false)
     protected ExternalIdSource externalIdSource;
     /*
@@ -111,6 +115,7 @@ public class ExternalIdentifier implements Serializable {
      * 
      * @return possible object is {@link ExternalIdSource }
      */
+    @Deprecated
     public ExternalIdSource getExternalIdSource() {
         return externalIdSource;
     }
@@ -121,6 +126,7 @@ public class ExternalIdentifier implements Serializable {
      * @param value
      *            allowed object is {@link ExternalIdSource }
      */
+    @Deprecated
     public void setExternalIdSource(ExternalIdSource value) {
         this.externalIdSource = value;
     }
