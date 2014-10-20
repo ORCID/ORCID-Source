@@ -42,6 +42,10 @@ public class SourceEntity {
         this.sourceProfile = sourceProfile;
     }
 
+    public SourceEntity(ClientDetailsEntity cde) {
+        this.sourceClient = cde;
+    }
+
     public SourceEntity(String sourceId) {
         if (sourceId != null) {
             if (sourceId.startsWith("APP-")) {

@@ -37,6 +37,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
@@ -105,9 +106,11 @@ import org.orcid.jaxb.model.message.WorkExternalIdentifier;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.message.WorkSource;
 import org.orcid.jaxb.model.message.WorkTitle;
+import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
@@ -162,6 +165,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
     @Resource
     private OrgAffiliationRelationDao orgAffiliationRelationDao;
+    
+    @Resource
+    private ClientDetailsDao clientDetailsDao;
 
     @Override
     public ProfileEntity toProfileEntity(OrcidProfile profile, ProfileEntity existingProfileEntity) {
@@ -1204,6 +1210,10 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         if (source != null) {
             String sourcePath = source.retrieveSourcePath();
             if (StringUtils.isNotEmpty(sourcePath) && !sourcePath.equals(WorkSource.NULL_SOURCE_PROFILE)) {
+                ClientDetailsEntity cde = clientDetailsDao.find(sourcePath);
+                if(cde != null){
+                    return new SourceEntity(cde);
+                }
                 return new SourceEntity(sourcePath);
             }
         }
