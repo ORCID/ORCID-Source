@@ -43,7 +43,7 @@
 				with ORCID -->
 			<source>
 				<source-client-id>
-					<uri>http://orcid.org/APP-5555555555555555</uri>
+					<uri>http://orcid.org/client/APP-5555555555555555</uri>
 					<path>APP-5555555555555555</path>
 					<host>orcid.org</host>
 				</source-client-id>
@@ -175,7 +175,7 @@
 					</organization>
 					<source>
 						<source-client-id>
-							<uri>http://orcid.org/APP-5555555555555555</uri>
+							<uri>http://orcid.org/client/APP-5555555555555555</uri>
 						</source-client-id>
 					</source>
 				</affiliation>
@@ -311,7 +311,7 @@
 					</work-contributors>
 					<source>
 						<source-client-id>
-							<uri>http://orcid.org/APP-5555555555555555</uri>
+							<uri>http://orcid.org/client/APP-5555555555555555</uri>
 							<path>APP-5555555555555555</path>
 							<host>orcid.org</host>
 						</source-client-id>
