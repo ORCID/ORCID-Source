@@ -38,16 +38,18 @@
 			            	   <span class="glyphicon glyphicon-trash"></span>
 			        		</a>
 						</li>
-						<li ng-show="group.activitiesCount == 1">
-							<a ng-click="deleteFundingConfirm(group.getActive().putCode.value,false)">
-			            	   <span class="glyphicon glyphicon-trash grey"></span>
-			               </a>
-						</li>
-				        <li ng-show="editSources[group.groupId] == true">
-				            <a ng-click="deleteFundingConfirm(group.getActive().putCode.value, true)">
-				                <span class="glyphicon glyphicon-trash grey"></span> Delete all
-				            </a>
-				        </li>
+						<#if !(isPublicProfile??)>
+							<li ng-show="group.activitiesCount == 1">
+								<a ng-click="deleteFundingConfirm(group.getActive().putCode.value,false)">
+				            	   <span class="glyphicon glyphicon-trash grey"></span>
+				               </a>
+							</li>
+					        <li ng-show="editSources[group.groupId] == true">
+					            <a ng-click="deleteFundingConfirm(group.getActive().putCode.value, true)">
+					                <span class="glyphicon glyphicon-trash grey"></span> Delete all
+					            </a>
+					        </li>
+					    </#if>    
 				        <li ng-show="editSources[group.groupId] == true">
 				            <a ng-click="editSources[group.groupId] = false">
 				                <span class="glyphicon glyphicon-remove"></span> Hide additional sources
@@ -84,9 +86,11 @@
 				               </a>
 				        </div>
 				        <div class="col-sm-1">
+				        	<#if !(isPublicProfile??)>
 				        		<a ng-click="deleteWorkConfirm(group.getActive().putCode.value, false)">
-			            	   <span class="glyphicon glyphicon-trash"></span>
-			               </a>
+			            	    	<span class="glyphicon glyphicon-trash"></span>
+			               		</a>
+			               	</#if>
 				        </div>
 					</li>
 					<li ng-repeat="funding in group.activities" ng-hide="group.activePutCode == funding.putCode.value">
@@ -105,9 +109,11 @@
 			               </a>
 						</div>
 						<div class="col-sm-1">
-							<a ng-click="deleteWorkConfirm(group.getActive().putCode.value, false)">
-			            	   <span class="glyphicon glyphicon-trash"></span>
-			               </a>
+							<#if !(isPublicProfile??)>
+								<a ng-click="deleteWorkConfirm(group.getActive().putCode.value, false)">
+				            	   <span class="glyphicon glyphicon-trash"></span>
+				                </a>
+				            </#if>
 						</div>
 					</li>
 				</ul>				

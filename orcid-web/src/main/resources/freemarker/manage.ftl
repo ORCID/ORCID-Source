@@ -481,7 +481,6 @@
 						<tr>
 							<th width="20%">${springMacroRequestContext.getMessage("manage.thproxy")}</th>
 							<th width="25%">${springMacroRequestContext.getMessage("search_results.thORCIDID")}</th>
-							<th width="45%">${springMacroRequestContext.getMessage("search_results.thInstitutions")}</th>
 							<th width="10%"></th>
 						</tr>
 					</thead>
@@ -489,7 +488,6 @@
 						<tr ng-repeat='result in results' class="new-search-result">
 							<td width="20%"><a href="{{result['orcid-profile']['orcid-identifier'].uri}}" target="_blank" ng-bind="getDisplayName(result)"></a></td>
 							<td width="25%" class='search-result-orcid-id'><a href="{{result['orcid-profile']['orcid-identifier'].uri}}" target="_blank">{{result['orcid-profile']['orcid-identifier'].path}}</td>
-							<td width="45%">{{concatPropertyValues(result['orcid-profile']['orcid-bio']['affiliations'], 'affiliation-name')}}</td>
 							<td width="10%">
 								<span ng-show="effectiveUserOrcid !== result['orcid-profile']['orcid-identifier'].path">							
 									<span ng-show="!delegatesByOrcid[result['orcid-profile']['orcid-identifier'].path]"

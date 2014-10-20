@@ -56,6 +56,10 @@
 		</#if>
 	</noscript>
 	<div ng-controller="PublicWorkCtrl">
-	      <#include "body_work_inc.ftl"/>
+		  <#if RequestParameters['v']??>	
+	      	<#include "body_work_inc_v3.ftl"/>
+	      <#else>
+	      	 <#include "body_work_inc.ftl"/>
+	      </#if>
 	</div>
 </#escape>

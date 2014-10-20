@@ -294,35 +294,82 @@
 					<!-- Bulk Edit -->
 					<div ng-show="showBulkEdit" ng-cloak>
 						<div class="grey-box box-border bulk-edit">
-							<div id="custom-control-x">
-								<div class="custom-control-x" >	
-									<div class="dropdown-custom-menu" id="dropdown-custom-menu" ng-click="toggleSelectMenu()">										
-										<span class="custom-checkbox-parent">
-											<div class="custom-checkbox" id="custom-checkbox" ng-click="swapbulkChangeAll();$event.stopPropagation();" ng-class="{'custom-checkbox-active':checked == true}"></div>
-										</span>										
-										<div class="custom-control-arrow" ng-click="toggleSelectMenu();$event.stopPropagation();"></div>
-									</div>
-									<div>
-										<ul class="dropdown-menu" role="menu" id="special-menu" ng-class="{'block': displayMenu == true}">
-								          <li><a href="" ng-click="bulkChangeAll(true);toggleSelectMenu()">Select all</a></li>
-								          <li><a href="" ng-click="bulkChangeAll(false);toggleSelectMenu()">Deselect all</a></li>							          							          
-								        </ul>			
-									</div>
+							<div class="row">
+								<div class="col-md-7 col-sm-7">
+									<ol>
+										<li><b>Select works:</b> Clikck the checkbox beside each work or click the "Select All" checkbox.</li>
+										<li><b>Select editing action:</b> Click the trash can to delete all selected works or click a privacy setting to apply that setting to all selected works.</li>
+									</ol>
 								</div>
-							</div>															
-							<div class="bulk-edit-privacy-control">
-								<@orcid.privacyToggle2 angularModel="groupPrivacy()" 
-									    questionClick=""
-									    clickedClassCheck=""
-										publicClick="setBulkGroupPrivacy('PUBLIC', $event)" 
-					                	limitedClick="setBulkGroupPrivacy('LIMITED', $event)" 
-					                	privateClick="setBulkGroupPrivacy('PRIVATE', $event)"/>
-					 		</div>
-					 		<div class="bulk-edit-delete">
-								<a ng-click="deleteBulkConfirm()" class="ignore glyphicon glyphicon-trash grey" title="Ignore"></a>
-							</div>	
-							<div class="">
-								<a class="btn btn-default pull-right" ng-click="toggleBulkEdit()">Cancel</a>							
+								<div class="col-md-5 col-sm-5">
+									<ul class="bulk-edit-toolbar">										
+										<li class="bulk-edit-toolbar-item"><!-- Cancel -->
+											<label></label>																						
+											<div class="cancel-bulk-edit">
+												<a class="btn btn-default pull-right" ng-click="toggleBulkEdit()">Cancel</a>
+											</div>
+										</li>
+										<li class="bulk-edit-toolbar-item"><!-- Select all -->
+											<label>Select all</label>											
+											<div id="custom-control-x">
+												<div class="custom-control-x" >	
+													<div class="dropdown-custom-menu" id="dropdown-custom-menu" ng-click="toggleSelectMenu()">										
+														<span class="custom-checkbox-parent">
+															<div class="custom-checkbox" id="custom-checkbox" ng-click="swapbulkChangeAll();$event.stopPropagation();" ng-class="{'custom-checkbox-active':checked == true}"></div>
+														</span>										
+														<div class="custom-control-arrow" ng-click="toggleSelectMenu();$event.stopPropagation();"></div>
+													</div>
+													<div>
+														<ul class="dropdown-menu" role="menu" id="special-menu" ng-class="{'block': displayMenu == true}">
+												          <li><a href="" ng-click="bulkChangeAll(true);toggleSelectMenu()">Select all</a></li>
+												          <li><a href="" ng-click="bulkChangeAll(false);toggleSelectMenu()">Deselect all</a></li>							          							          
+												        </ul>			
+													</div>
+												</div>
+											</div>
+										</li>
+										<li class="bulk-edit-toolbar-item"><!-- Delete button -->
+											<label>Delete</label>
+											<div class="bulk-edit-delete">
+											    <div class="centered">
+													<a ng-click="deleteBulkConfirm()" class="ignore toolbar-button edit-item-button" title="Ignore">
+														<span class="edit-option-toolbar glyphicon glyphicon-trash"></span>
+													</a>
+												</div>
+											</div>
+										</li>
+										<li class="bulk-edit-toolbar-item"><!-- Privacy control -->
+											<div class="privacy-options">
+												<label>Edit privacy</label>
+												<div class="privacy-options-popover"> 
+													<div class="popover-help-container" ng-class="{'popover-help-container-show':privacyHelp[work.putCode.value]==true}" style="position: absolute; left: 110px; top: 0px;">
+											        	<a ng-click="toggleClickPrivacyHelp(work.putCode.value)"><i class="glyphicon glyphicon-question-sign" style="width: 14px;"></i></a>
+											            <div class="popover bottom" style="">
+													        <div class="arrow" style=""></div>
+													        <div class="popover-content">
+													        	<strong>Who can see this?</strong>
+														        <ul class="privacyHelp">
+														        	<li class="public" style="color: #009900;">everyone</li>
+														        	<li class="limited" style="color: #ffb027;">trusted parties</li>
+														        	<li class="private" style="color: #990000;">only me</li>
+														        </ul>
+														        <a href="http://support.orcid.org/knowledgebase/articles/124518-orcid-privacy-settings" target="_blank">More information on privacy settings</a>
+													        </div>
+													    </div>
+											    	</div>
+										    	</div>
+									    	</div>
+											<div class="bulk-edit-privacy-control">
+												<@orcid.privacyToggle2 angularModel="groupPrivacy()" 
+													    questionClick=""
+													    clickedClassCheck=""
+														publicClick="setBulkGroupPrivacy('PUBLIC', $event)" 
+									                	limitedClick="setBulkGroupPrivacy('LIMITED', $event)" 
+									                	privateClick="setBulkGroupPrivacy('PRIVATE', $event)"/>
+								 			</div>
+										</li>
+									</ul>
+								</div>							
 							</div>						  
 					   </div>
 					</div>
