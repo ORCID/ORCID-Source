@@ -512,34 +512,6 @@
 		</div>
 		</#if>
 		
-		<#if RequestParameters['PublicClient']??>
-			<@security.authorize ifNotGranted="ROLE_GROUP,ROLE_BASIC,ROLE_PREMIUM,ROLE_BASIC_INSTITUTION,ROLE_PREMIUM_INSTITUTION,ROLE_CREATOR,ROLE_PREMIUM_CREATOR,ROLE_UPDATER,ROLE_PREMIUM_UPDATER">
-				<h1 id="manage-developer-tools">
-					<#if profile.orcidInternal?? && profile.orcidInternal.preferences.developerToolsEnabled?? && profile.orcidInternal.preferences.developerToolsEnabled.value == false>
-						<span><@spring.message "manage.developer_tools.title"/></span>
-					<#else>
-						<span><@spring.message "manage.developer_tools.title.enabled"/></span>
-					</#if>
-				</h1>
-				<#if !inDelegationMode || isDelegatedByAdmin>
-					<div class="sso" ng-controller="SSOPreferencesCtrl">
-						<#if profile.orcidInternal?? && profile.orcidInternal.preferences.developerToolsEnabled?? && profile.orcidInternal.preferences.developerToolsEnabled.value == false>
-							<p><@spring.message "manage.developer_tools.enable.description"/></p>
-							<#if hasVerifiedEmail>
-							   <p><@spring.message "manage.developer_tools.enable.text"/>&nbsp;<a href ng-click="enableDeveloperTools()"><@spring.message "manage.developer_tools.enable_disable.link.text"/></a></p>
-						    <#else>
-						       <@spring.message "manage.developer_tools.please"/> <a ng-click="verifyEmail()"><@spring.message "manage.developer_tools.verify_your_email"/></a> <@spring.message "manage.developer_tools.before_enabling_developers_tools"/>
-						    </#if>
-						<#else>
-							<p><@spring.message "manage.developer_tools.enabled.description"/>&nbsp;<a href="<@spring.url "/developer-tools"/>"><@spring.message "manage.developer_tools.enabled.link"/></a></p>						
-						</#if>				
-					</div>
-				<#else>
-					(unavailable to account delegates)
-				</#if>
-			</@security.authorize>
-		</#if>
-		
 	</div>
 </div>
 
