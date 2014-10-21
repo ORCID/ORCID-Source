@@ -29,7 +29,7 @@
 					<span><@spring.message "manage.developer_tools.title"/></span>					
 				</h1>
 				<#if !inDelegationMode || isDelegatedByAdmin>
-					<div class="sso" ng-controller="SSOPreferencesCtrl">
+					<div class="sso-api" ng-controller="SSOPreferencesCtrl">
 						<#if profile.orcidInternal?? && profile.orcidInternal.preferences.developerToolsEnabled?? && profile.orcidInternal.preferences.developerToolsEnabled.value == false>
 							
 							
@@ -40,12 +40,11 @@
 							
 							
 							
-							
-							<!--  <p><@spring.message "manage.developer_tools.enable.description"/></p> -->
+														
 							<div class="row">
 								<div class="col-md-12 col-sm-12 col-xs-12">
 									<p>ORCID offers an API (Application Programming Interface) that allows your systems and applications to connect to the ORCID registry with machine-to-machine communication, including reading from and writing to ORCID records. Some API functions are freely available to anyone; others are provided as a thank you to organizations that financially support ORCID with an annual membership subscription.</p>
-									<ul>
+									<ul class="dotted">
 										<li><strong>Public API:</strong> Freely available to anyone</li>
 										<li><strong>Basic Member API:</strong> Available to ORCID members who subscribe at the Basic level</li>
 										<li><strong>Premium Member API:</strong> Available to ORCID members who subscribe at the Premium level</li>
@@ -63,13 +62,13 @@
 								<div class="col-md-12 col-sm-12 col-xs-12">								
 									<p><strong>Public API Credentials</strong></p>									
 									<p>Public credentials are available to anyone who has an ORCID account.</p>
-									<ul class="sso-links">
+									<ul class="dotted">
 										<#if hasVerifiedEmail>
-											<li><a href ng-click="enableDeveloperTools()"><a href=""><span class="glyphicon glyphicon-link"></span>Turn on developer tools</a></li>
+											<li><a href ng-click="enableDeveloperTools()">Turn on developer tools</a></li>
 										<#else>
-											<li><a href ng-click="verifyEmail()"><a href=""><span class="glyphicon glyphicon-link"></span>Verify</a> your email address before turning on your developer tools</li>
+											<li><a href ng-click="verifyEmail()">Verify</a> your email address before turning on your developer tools</li>
 										</#if>
-										<li><a href=""><a href=""><span class="glyphicon glyphicon-link"></span>Read public API documentation</a></li>
+										<li><a href=""><a href="">Read public API documentation</a></li>
 									</ul>
 								</div>
 							</div>
@@ -77,12 +76,12 @@
 								<div class="col-md-12 col-sm-12 col-xs-12">
 									<p><strong>Member API Credentials</strong></p>
 									<p>Member credentials are only available to members. While considering membership, you may register credentials to use on ORCID's testing site.</p>
-									<ul class="sso-links">
-										<li><a href=""><span class="glyphicon glyphicon-link"></span>Learn more about membership</a></li>
-										<li><a href=""><span class="glyphicon glyphicon-link"></span>Learn about the steps for an ORCID integration</a></li>
-										<li><a href=""><span class="glyphicon glyphicon-link"></span>Get credentials to try the Member API on ORCID’s test Sandbox site</a></li>
+									<ul class="dotted">
+										<li><a href="">Learn more about membership</a></li>
+										<li><a href="">Learn about the steps for an ORCID integration</a></li>
+										<li><a href="">Get credentials to try the Member API on ORCID’s test Sandbox site</a></li>
 									</ul>
-								</div>			
+								</div>
 							</div>
 							
 							
@@ -126,7 +125,18 @@
 					</div>
 					<div class="row">
 						<div class="col-md-12 col-sm-12 col-xs-12">				
-							<p class="developer-tools-instructions"><@orcid.msg 'manage.developer_tools.view.instructions'/></p>
+							<p>ORCID offers several APIs (Application Programming Interface) that allows your systems and applications to connect to the ORCID registry with machine-to-machine communication, including reading from and writing to ORCID records.</p>
+							<p><a href="">Learn more about the differences between ORCID's APIs</a></p>
+							<p><strong>Public API Credentials</strong></p>
+							<p>Public credentials are available to anyone who has an ORCID account.</p>
+							<p>
+								<ul class="dotted">
+									<li>
+										<a href="">Read public API documentation</a>
+									</li>
+								</ul>
+							</p>
+							<p class="developer-tools-instructions"></p>
 						</div>
 					</div>
 								
@@ -451,13 +461,14 @@
 					
 					<div class="row">
 						<div class="col-md-12 col-sm-12 col-xs-12">
-							<p><strong><@orcid.msg 'manage.developer_tools.related_documentation' />:</p>
-							<ul class="sso-links">
-								<li><a href="<@orcid.msg 'manage.developer_tools.user.register_to.link.1.url'/>"><span class="glyphicon glyphicon-link"></span><@orcid.msg 'manage.developer_tools.user.register_to.link.1.text'/></a></li>
-								<li><a href="<@orcid.msg 'manage.developer_tools.user.register_to.link.2.url'/>"><span class="glyphicon glyphicon-link"></span><@orcid.msg 'manage.developer_tools.user.register_to.link.2.text'/></a></li>
-								<li><a href="<@orcid.msg 'manage.developer_tools.user.register_to.link.3.url'/>"><span class="glyphicon glyphicon-link"></span><@orcid.msg 'manage.developer_tools.user.register_to.link.3.text'/></a></li>
+							<p><strong>Member API Credentials</strong></p>
+							<p>Member credentials are only available to members. While considering membership, you may register credentials to use on ORCID's testing site.</p>
+							<ul class="dotted">
+								<li><a href="">Learn more about membership</a></li>
+								<li><a href="">Learn about the steps for an ORCID integration</a></li>
+								<li><a href="">Get credentials to try the Member API on ORCID’s test Sandbox site</a></li>
 							</ul>
-						</div>			
+						</div>
 					</div>
 					
 					<div class="row">
