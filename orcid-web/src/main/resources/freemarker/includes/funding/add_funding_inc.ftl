@@ -150,6 +150,9 @@
 							</#list>
 			    		</select>
 		    		</div>
+					<span class="orcid-error" ng-show="editFunding.startDate.errors.length > 0">
+						<div ng-repeat='error in editFunding.startDate.errors' ng-bind-html="error"></div>
+					</span>
 		    	</div>
 		    	<div class="control-group">
 		    		<label class="relative"><@orcid.msg 'manual_funding_form_contents.labelEndDateLeave'/></label>

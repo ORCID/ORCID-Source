@@ -124,7 +124,7 @@ public class FundingsController extends BaseWorkspaceController {
      * */
     @RequestMapping(value = "/funding.json", method = RequestMethod.GET)
     public @ResponseBody
-    FundingForm getFunding(HttpServletRequest request) {
+    FundingForm getFunding() {
         FundingForm result = new FundingForm();
         result.setAmount(new Text());
         result.setCurrencyCode(Text.valueOf(""));
@@ -368,6 +368,10 @@ public class FundingsController extends BaseWorkspaceController {
         copyErrors(funding.getDescription(), funding);
         copyErrors(funding.getUrl(), funding);        
         copyErrors(funding.getFundingType(), funding);
+        
+        if(funding.getStartDate() != null) 
+            copyErrors(funding.getStartDate(), funding);
+        
         if(funding.getEndDate() != null)
             copyErrors(funding.getEndDate(), funding);
         
@@ -742,11 +746,27 @@ public class FundingsController extends BaseWorkspaceController {
     @RequestMapping(value = "/funding/datesValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     FundingForm validateDates(@RequestBody FundingForm funding) {
-        if(!PojoUtil.isEmpty(funding.getStartDate()))
+        boolean hasError = false;
+        
+        if(funding.getStartDate() != null){
             funding.getStartDate().setErrors(new ArrayList<String>());
-        if(!PojoUtil.isEmpty(funding.getEndDate()))
+            
+            if(!PojoUtil.isEmpty(funding.getStartDate().getMonth()) && PojoUtil.isEmpty(funding.getStartDate().getYear())){
+                setError(funding.getStartDate(), "fundings.dates.invalid");
+                hasError = true;
+            }                
+        }
+            
+        if(funding.getEndDate() != null) {
             funding.getEndDate().setErrors(new ArrayList<String>());
-        if (!PojoUtil.isEmpty(funding.getStartDate()) && !PojoUtil.isEmpty(funding.getEndDate())) {
+            
+            if(!PojoUtil.isEmpty(funding.getEndDate().getMonth()) && PojoUtil.isEmpty(funding.getEndDate().getYear())) {
+                setError(funding.getEndDate(), "fundings.dates.invalid");
+                hasError = true;
+            }                
+        }            
+        
+        if (!hasError && !PojoUtil.isEmpty(funding.getStartDate()) && !PojoUtil.isEmpty(funding.getEndDate())) {
             if (funding.getStartDate().toJavaDate().after(funding.getEndDate().toJavaDate()))
                 setError(funding.getEndDate(), "fundings.endDate.after");
         }
