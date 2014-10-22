@@ -70,7 +70,19 @@ public enum WorkExternalIdentifierType implements Serializable {
     @XmlEnumValue("pmid") PMID("pmid"),
     @XmlEnumValue("rfc") RFC("rfc"),
     @XmlEnumValue("ssrn") SSRN("ssrn"),
-    @XmlEnumValue("zbl") XBL("zbl");
+    @XmlEnumValue("zbl") XBL("zbl"),
+    // New types in 1.2_rc6
+    @XmlEnumValue("agr") AGR("agr"), // Agricola
+    @XmlEnumValue("cba") CBA("cba"), // Chinese Biological Abstracts
+    @XmlEnumValue("cit") CIT("cit"), // CiteSeer
+    @XmlEnumValue("ctx") CTX("ctx"), // CiteXplore submission
+    @XmlEnumValue("ethos") ETHOS("ethos"), // EThOS Peristent ID
+    @XmlEnumValue("handle") HANDLE("handle"),
+    @XmlEnumValue("hir") HIR("hir"), // NHS Evidence
+    @XmlEnumValue("pat") PAT("pat"), // Patent number prefixed with country code
+    @XmlEnumValue("source-work-id") SOURCE_WORK_ID("source-work-id"),
+    @XmlEnumValue("uri") URI("uri"),
+    @XmlEnumValue("urn") URN("urn");
     // @formatter:on
 
     private final String value;
