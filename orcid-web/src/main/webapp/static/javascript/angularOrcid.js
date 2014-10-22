@@ -3767,7 +3767,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
 	};
 
 	$scope.deleteBulk = function () {
-		for (var idx in worksSrvc.groups)
+		for (var idx in worksSrvc.groups.slice(0))
 			if ($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value])
 			    worksSrvc.deleteGroupWorks(worksSrvc.groups[idx].getActive().putCode.value);
 		$.colorbox.close();
