@@ -50,28 +50,28 @@ import java.io.Serializable;
 @XmlEnum
 public enum WorkExternalIdentifierType implements Serializable {
 
-    @XmlEnumValue("other-id")
-    OTHER_ID("other-id"), @XmlEnumValue("asin")
-    ASIN("asin"), @XmlEnumValue("asin-tld")
-    ASIN_TLD("asin-tld"), @XmlEnumValue("arxiv")
-    ARXIV("arxiv"), @XmlEnumValue("bibcode")
-    BIBCODE("bibcode"), @XmlEnumValue("doi")
-    DOI("doi"), @XmlEnumValue("eid")
-    EID("eid"), @XmlEnumValue("isbn")
-    ISBN("isbn"), @XmlEnumValue("issn")
-    ISSN("issn"), @XmlEnumValue("jfm")
-    JFM("jfm"), @XmlEnumValue("jstor")
-    JSTOR("jstor"), @XmlEnumValue("lccn")
-    LCCN("lccn"), @XmlEnumValue("mr")
-    MR("mr"), @XmlEnumValue("oclc")
-    OCLC("oclc"), @XmlEnumValue("ol")
-    OL("ol"), @XmlEnumValue("osti")
-    OSTI("osti"), @XmlEnumValue("pmc")
-    PMC("pmc"), @XmlEnumValue("pmid")
-    PMID("pmid"), @XmlEnumValue("rfc")
-    RFC("rfc"), @XmlEnumValue("ssrn")
-    SSRN("ssrn"), @XmlEnumValue("zbl")
-    XBL("zbl");
+    // @formatter:off
+    @XmlEnumValue("other-id") OTHER_ID("other-id"),
+    @XmlEnumValue("asin") ASIN("asin"),
+    @XmlEnumValue("asin-tld") ASIN_TLD("asin-tld"),
+    @XmlEnumValue("arxiv") ARXIV("arxiv"),
+    @XmlEnumValue("bibcode") BIBCODE("bibcode"),
+    @XmlEnumValue("doi") DOI("doi"),
+    @XmlEnumValue("eid") EID("eid"),
+    @XmlEnumValue("isbn") ISBN("isbn"),
+    @XmlEnumValue("issn") ISSN("issn"),
+    @XmlEnumValue("jfm") JFM("jfm"), JSTOR("jstor"),
+    @XmlEnumValue("lccn") LCCN("lccn"),
+    @XmlEnumValue("mr") MR("mr"),
+    @XmlEnumValue("oclc") OCLC("oclc"),
+    @XmlEnumValue("ol") OL("ol"),
+    @XmlEnumValue("osti") OSTI("osti"),
+    @XmlEnumValue("pmc") PMC("pmc"),
+    @XmlEnumValue("pmid") PMID("pmid"),
+    @XmlEnumValue("rfc") RFC("rfc"),
+    @XmlEnumValue("ssrn") SSRN("ssrn"),
+    @XmlEnumValue("zbl") XBL("zbl");
+    // @formatter:on
 
     private final String value;
 
