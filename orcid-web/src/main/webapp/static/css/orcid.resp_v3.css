@@ -4302,6 +4302,10 @@ ul.workspace-submenu-options li a>span{
 	margin-left: 15px;
 }
 
+.sources-container-header ul.sources-options li a.glyphicon-trash{
+	margin-right: 5px;
+}
+
 .sources-container table.sources-edit-table{
 	margin-top: 15px;
 	border: none;
@@ -4507,7 +4511,7 @@ ul.toggle-menu li:hover ul {
 }
 
 .work-tab{
-	margin-left: 3px;
+	margin-left: 0;
 }
 .more-info .col-md-6{ /* Row height fix */
 	min-height: 70px;

@@ -43,6 +43,7 @@ import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.utils.OrcidStringUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -71,8 +72,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid(), LoadOptions.BIO_AND_INTERNAL_ONLY);
         mav.addObject("profile", profile);
         try {
-            if (!profile.getOrcidInternal().getPreferences().getDeveloperToolsEnabled().isValue()) {
-                mav = new ModelAndView("manage");
+            if (!profile.getOrcidInternal().getPreferences().getDeveloperToolsEnabled().isValue()) {                
                 if (OrcidType.USER.equals(profile.getType())) {
                     mav.addObject("error", getMessage("manage.developer_tools.user.error.enable_developer_tools"));
                 } else {
@@ -362,4 +362,11 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         }
         return updated;
     }
+    
+    @ModelAttribute("hasVerifiedEmail")
+    public boolean hasVerifiedEmail() {
+        OrcidProfile profile = getEffectiveProfile();
+        if (profile == null  || profile.getOrcidBio() == null || profile.getOrcidBio().getContactDetails() == null) return false;
+        return profile.getOrcidBio().getContactDetails().anyEmailVerified();
+    } 
 }

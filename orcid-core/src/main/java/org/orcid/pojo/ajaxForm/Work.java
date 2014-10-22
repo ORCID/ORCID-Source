@@ -147,6 +147,33 @@ public class Work implements ErrorsInterface, Serializable {
     }
 
     public static Work valueOf(OrcidWork orcidWork) {
+        Work w = Work.minimizedValueOf(orcidWork);
+
+        // minimized works have everything except citation and contributers now
+
+        if (orcidWork.getWorkContributors() != null && orcidWork.getWorkContributors().getContributor() != null) {
+            List<Contributor> contributors = new ArrayList<Contributor>();
+            for (org.orcid.jaxb.model.message.Contributor owContributor : orcidWork.getWorkContributors().getContributor()) {
+                contributors.add(Contributor.valueOf(owContributor));
+            }
+            w.setContributors(contributors);
+        }
+
+        if (orcidWork.getWorkCitation() != null)
+            w.setCitation(Citation.valueOf(orcidWork.getWorkCitation()));
+
+        return w;
+    }
+
+    private static void populateExternaIdentifiers(WorkExternalIdentifiers workExternalIdentifiers, Work work) {
+        List<WorkExternalIdentifier> workExternalIdentifiersList = new ArrayList<WorkExternalIdentifier>();
+        if (workExternalIdentifiers != null && workExternalIdentifiers.getWorkExternalIdentifier() != null)
+            for (org.orcid.jaxb.model.message.WorkExternalIdentifier owWorkExternalIdentifier : workExternalIdentifiers.getWorkExternalIdentifier())
+                workExternalIdentifiersList.add(WorkExternalIdentifier.valueOf(owWorkExternalIdentifier));
+        work.setWorkExternalIdentifiers(workExternalIdentifiersList);
+    }
+
+    public static Work minimizedValueOf(OrcidWork orcidWork) {
         Work w = new Work();
         if (orcidWork.getPublicationDate() != null)
             w.setPublicationDate(Date.valueOf(orcidWork.getPublicationDate()));
@@ -159,16 +186,6 @@ public class Work implements ErrorsInterface, Serializable {
             w.setUrl(Text.valueOf(orcidWork.getUrl().getValue()));
         if (orcidWork.getVisibility() != null)
             w.setVisibility(orcidWork.getVisibility());
-        if (orcidWork.getWorkCitation() != null)
-            w.setCitation(Citation.valueOf(orcidWork.getWorkCitation()));
-
-        if (orcidWork.getWorkContributors() != null && orcidWork.getWorkContributors().getContributor() != null) {
-            List<Contributor> contributors = new ArrayList<Contributor>();
-            for (org.orcid.jaxb.model.message.Contributor owContributor : orcidWork.getWorkContributors().getContributor()) {
-                contributors.add(Contributor.valueOf(owContributor));
-            }
-            w.setContributors(contributors);
-        }
         WorkExternalIdentifiers workExternalIdentifiers = null;
         if (orcidWork.getWorkExternalIdentifiers() != null) {
             workExternalIdentifiers = orcidWork.getWorkExternalIdentifiers();
@@ -197,30 +214,6 @@ public class Work implements ErrorsInterface, Serializable {
             w.setCountryCode((orcidWork.getCountry().getValue() == null) ? null : Text.valueOf(orcidWork.getCountry().getValue().value()));
         w.setCreatedDate(Date.valueOf(orcidWork.getCreatedDate()));
         w.setLastModified(Date.valueOf(orcidWork.getLastModifiedDate()));
-        return w;
-    }
-
-    private static void populateExternaIdentifiers(WorkExternalIdentifiers workExternalIdentifiers, Work work) {
-        List<WorkExternalIdentifier> workExternalIdentifiersList = new ArrayList<WorkExternalIdentifier>();
-        if (workExternalIdentifiers != null && workExternalIdentifiers.getWorkExternalIdentifier() != null)
-            for (org.orcid.jaxb.model.message.WorkExternalIdentifier owWorkExternalIdentifier : workExternalIdentifiers.getWorkExternalIdentifier())
-                workExternalIdentifiersList.add(WorkExternalIdentifier.valueOf(owWorkExternalIdentifier));
-        work.setWorkExternalIdentifiers(workExternalIdentifiersList);
-    }
-
-    public static Work minimizedValueOf(OrcidWork orcidWork) {
-        Work w = new Work();
-        if (orcidWork.getPublicationDate() != null)
-            w.setPublicationDate(Date.valueOf(orcidWork.getPublicationDate()));
-        w.setDateSortString(PojoUtil.createDateSortString(null, orcidWork.getPublicationDate()));
-        if (orcidWork.getPutCode() != null)
-            w.setPutCode(Text.valueOf(orcidWork.getPutCode()));
-        if (orcidWork.getShortDescription() != null)
-            w.setShortDescription(Text.valueOf(orcidWork.getShortDescription()));
-        if (orcidWork.getVisibility() != null)
-            w.setVisibility(orcidWork.getVisibility());
-        if (orcidWork.getWorkTitle() != null)
-            w.setWorkTitle(WorkTitle.valueOf(orcidWork.getWorkTitle()));
         return w;
     }
 
