@@ -39,7 +39,7 @@
 										<li><strong><@orcid.msg 'developer_tools.client_types.description.basic.title' /></strong> <@orcid.msg 'developer_tools.client_types.description.basic.description' /></li>
 										<li><strong><@orcid.msg 'developer_tools.client_types.description.premium.title' /></strong> <@orcid.msg 'developer_tools.client_types.description.premium.description' /></li>
 									</ul>
-									<p><a href=""><@orcid.msg 'developer_tools.client_types.learn_more' /></a></p>
+									<p><a href="https://orcid.org/about/membership/comparison"><@orcid.msg 'developer_tools.client_types.learn_more' /></a></p>
 								</div>
 							</div>
 							<div class="row">
@@ -93,7 +93,7 @@
 					<div class="row">
 						<div class="col-md-12 col-sm-12 col-xs-12">				
 							<p><@orcid.msg 'developer_tools.api.description'/></p>
-							<p><a href=""><@orcid.msg 'developer_tools.api.learn_more'/></a></p>
+							<p><a href="https://orcid.org/about/membership/comparison"><@orcid.msg 'developer_tools.api.learn_more'/></a></p>
 							<p><strong><@orcid.msg 'developer_tools.public_member.heading'/></strong></p>
 							<p><@orcid.msg 'developer_tools.public_member.description'/></p>
 							<ul class="dotted">
