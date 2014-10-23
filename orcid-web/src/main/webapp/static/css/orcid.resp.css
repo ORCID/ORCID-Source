@@ -3338,6 +3338,10 @@ p.orcid-id-container {
 }
 
 /* SSO */
+.sso-api ul.dotted {
+	list-style: circle;	
+}
+
 .sso-api ul.sso-links {
 	padding-left: 0;
 }
