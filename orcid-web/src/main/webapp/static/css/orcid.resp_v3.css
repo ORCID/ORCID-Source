@@ -4794,6 +4794,10 @@ ul.toggle-menu li:hover ul {
 	vertical-align: 0;	
 }
 
+.trash-source{
+	text-align: right;
+}
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 
@@ -5910,7 +5914,6 @@ ul.toggle-menu li:hover ul {
 	.bulk-edit .popover-help-container .popover.bottom .arrow{
 		left: 247px;
 	}
-	
 }
 
 @media (min-width : 768px) and (max-width : 991px) { /* Tablet */
@@ -6084,8 +6087,7 @@ ul.toggle-menu li:hover ul {
 	.workspace-accordion,
 	#workspace-publications{
 		padding: 0;
-	}	
-	
+	}
 }
 
 @media(min-width:1200px){

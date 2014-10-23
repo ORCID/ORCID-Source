@@ -3702,6 +3702,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
 	$scope.bibtextWorkIndex = null;
 	$scope.checked = false;
 	$scope.displayMenu = false;
+	$scope.lastDetailsKey = null;
 	
 	$scope.toggleSelectMenu = function(){
 		$scope.displayMenu = !$scope.displayMenu;		
@@ -4126,7 +4127,12 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
 		$event.stopPropagation();		
 		$scope.moreInfo[work] = !$scope.moreInfo[work];
 		$scope.loadDetails(work, $event);
+		$scope.lastDetailsKey = work;		
 	};
+	
+	$scope.hideLastDetails = function(){
+		$scope.moreInfo[$scope.lastDetailsKey] = false;		
+	}
 	
 	$scope.loadDetails = function(putCode, event) {
 		//Close any open popover

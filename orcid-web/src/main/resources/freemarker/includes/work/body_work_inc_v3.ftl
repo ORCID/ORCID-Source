@@ -132,21 +132,21 @@
 					
 					<!-- not active row && edit sources -->
 					<div ng-show="group.activePutCode != work.putCode.value" class="row">						
-						<div class="col-sm-4">
-								<a ng-click="group.activePutCode = work.putCode.value">
+						<div class="col-md-4 col-sm-4 col-xs-4">
+								<a ng-click="group.activePutCode = work.putCode.value; hideLastDetails()">
 				           		{{work.workSourceName.value}}
 				           	</a> 
 						</div>
-						<div class="col-sm-4">
+						<div class="col-md-4 col-sm-3 col-xs-3">
 							{{work.lastModified | ajaxFormDateToISO8601}}
 						</div>
-						<div class="col-sm-3">
+						<div class="col-md-3 col-sm-3 col-xs-5">
 							<span class="glyphicon glyphicon-check" ng-show="work.putCode.value == group.defaultPutCode"></span> 
 				        	<a ng-click="worksSrvc.makeDefault(group, work.putCode.value); " ng-show="work.putCode.value != group.defaultPutCode">
 				           	 <span class="glyphicon glyphicon-unchecked"></span> Make Preferred
 			             	</a>
 						</div>
-						<div class="col-sm-1">
+						<div class="col-md-1 col-sm-2 col-xs-12 trash-source">
 							<#if !(isPublicProfile??)>
 								<a ng-click="deleteWorkConfirm(work.putCode.value, false)">
 						          	   <span class="glyphicon glyphicon-trash"></span>
