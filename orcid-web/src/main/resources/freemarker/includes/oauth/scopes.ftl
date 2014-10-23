@@ -78,4 +78,6 @@
 			<p class="persistent-token-note"><@orcid.msg 'oauth.persistent_token_description.note'/></p>
 		</div> 	
 	</div>
+<#else>
+	<div ng-init="enablePersistentToken = false"></div>
 </#if>
