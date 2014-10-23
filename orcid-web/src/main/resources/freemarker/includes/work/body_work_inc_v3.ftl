@@ -30,7 +30,7 @@
 				    <h3 class="workspace-title">
 			        	<strong ng-bind="group.getActive().workTitle.title.value"></strong><span class="work-subtitle" ng-show="group.getActive().workTitle.subtitle.value" ng-bind="':&nbsp;'.concat(group.getActive().workTitle.subtitle.value)"></span>		        			        	
 			        </h3>
-			        <div ng-show="showBulkEdit == true" class="bulk-edit-input hidden-lg hidden-md hidden-sm pull-right">
+			        <div ng-show="bulkEditShow == true" class="bulk-edit-input hidden-lg hidden-md hidden-sm pull-right">
 			        	<input type="checkbox" ng-model="bulkEditMap[group.getActive().putCode.value]"></input>
 			        </div>
 			        <div class="info-detail">
@@ -42,7 +42,7 @@
 		        	<#if !(isPublicProfile??)>
 		        		<!-- Privacy bar -->
 						<ul class="workspace-private-toolbar">
-							<li ng-show="showBulkEdit" class="hidden-xs bulk-checkbox-item">								
+							<li ng-show="bulkEditShow" class="hidden-xs bulk-checkbox-item">								
 			        			<input type="checkbox" ng-model="bulkEditMap[group.getActive().putCode.value]" class="bulk-edit-input"></input>			        										
 							</li>							
 						 	<li>
