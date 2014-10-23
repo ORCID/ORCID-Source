@@ -3723,6 +3723,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
 	$scope.toggleBulkEdit = function() {
 		if (!$scope.showBulkEdit) {
 			$scope.bulkEditMap = {};
+			$scope.checked = false;
 			for (var idx in worksSrvc.groups)
 				$scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value] = false;
 		};
