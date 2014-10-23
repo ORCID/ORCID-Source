@@ -17,6 +17,7 @@
 package org.orcid.core.manager.impl;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.validation.Schema;
@@ -39,6 +40,7 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.WorkTitle;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -248,6 +250,18 @@ public class ValidationManagerImpl implements ValidationManager {
                 throw new OrcidValidationException("Invalid funding: Funding added using message version 1.2_rc5 or greater must contain at least one external identifier");
             }
         }
+        
+        if(funding.getStartDate() != null){                       
+            if(!PojoUtil.isEmpty(funding.getStartDate().getMonth()) && PojoUtil.isEmpty(funding.getStartDate().getYear())){
+                throw new OrcidValidationException("Invalid funding: Invalid start date");
+            }                
+        }
+            
+        if(funding.getEndDate() != null) {
+            if(!PojoUtil.isEmpty(funding.getEndDate().getMonth()) && PojoUtil.isEmpty(funding.getEndDate().getYear())) {
+                throw new OrcidValidationException("Invalid funding: Invalid end date");
+            }                
+        }        
     }
     
     private void initSchema() {
