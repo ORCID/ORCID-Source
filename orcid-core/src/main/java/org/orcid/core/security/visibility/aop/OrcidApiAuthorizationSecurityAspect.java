@@ -156,6 +156,24 @@ public class OrcidApiAuthorizationSecurityAspect {
         return profile.getOrcidIdentifier().getPath();
     }
 
+    private boolean requirePrivacyFilterin(ScopePathType requiredScope) {
+        switch(requiredScope) {
+        case AFFILIATIONS_READ_LIMITED:
+        case AFFILIATIONS_UPDATE:
+        case FUNDING_READ_LIMITED: 
+        case FUNDING_UPDATE:
+        case ORCID_BIO_READ_LIMITED:
+        case ORCID_BIO_UPDATE:
+        case ORCID_PATENTS_READ_LIMITED:
+        case ORCID_PATENTS_UPDATE:
+        case ORCID_PROFILE_READ_LIMITED:
+        case ORCID_WORKS_READ_LIMITED:
+        case ORCID_WORKS_UPDATE:
+            return true;
+        }
+        return false;
+    }
+    
     private List<ScopePathType> getRequiredScopesToGetPrivateData(ScopePathType readLimitedRequest) {
         List<ScopePathType> requiredScopes = new ArrayList<ScopePathType>();
         switch (readLimitedRequest) {
