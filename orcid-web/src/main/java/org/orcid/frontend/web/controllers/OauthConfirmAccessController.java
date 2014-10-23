@@ -335,10 +335,16 @@ public class OauthConfirmAccessController extends BaseController {
                     //If persistent tokens are enabled on server
                     if(isUsePersistentTokens()) {                        
                         approvalParams.put(OauthTokensConstants.TOKEN_VERSION, OauthTokensConstants.PERSISTENT_TOKEN);
-                        if(form.getPersistentTokenEnabled())
-                            approvalParams.put(OauthTokensConstants.GRANT_PERSISTENT_TOKEN, "true");
-                        else 
+                        //Check if the client have persistent tokens enabled
+                        if(hasPersistenTokensEnabled(form.getClientId().getValue())) {
+                            //Then check if the client granted the persistent token
+                            if(form.getPersistentTokenEnabled())
+                                approvalParams.put(OauthTokensConstants.GRANT_PERSISTENT_TOKEN, "true");
+                            else 
+                                approvalParams.put(OauthTokensConstants.GRANT_PERSISTENT_TOKEN, "false");
+                        } else {
                             approvalParams.put(OauthTokensConstants.GRANT_PERSISTENT_TOKEN, "false");
+                        }                        
                     } else {
                         approvalParams.put(OauthTokensConstants.TOKEN_VERSION, OauthTokensConstants.NON_PERSISTENT_TOKEN);
                         approvalParams.put(OauthTokensConstants.GRANT_PERSISTENT_TOKEN, "false");
@@ -443,10 +449,16 @@ public class OauthConfirmAccessController extends BaseController {
                 //If persistent tokens are enabled on server
                 if(isUsePersistentTokens()) {
                     approvalParams.put(OauthTokensConstants.TOKEN_VERSION, OauthTokensConstants.PERSISTENT_TOKEN);
-                    if(form.getPersistentTokenEnabled())
-                        approvalParams.put(OauthTokensConstants.GRANT_PERSISTENT_TOKEN, "true");
-                    else 
+                    //Check if the client have persistent tokens enabled
+                    if(hasPersistenTokensEnabled(form.getClientId().getValue())) {
+                        //Then check if the client granted the persistent token
+                        if(form.getPersistentTokenEnabled())
+                            approvalParams.put(OauthTokensConstants.GRANT_PERSISTENT_TOKEN, "true");
+                        else 
+                            approvalParams.put(OauthTokensConstants.GRANT_PERSISTENT_TOKEN, "false");
+                    } else {
                         approvalParams.put(OauthTokensConstants.GRANT_PERSISTENT_TOKEN, "false");
+                    }
                 } else {
                     approvalParams.put(OauthTokensConstants.TOKEN_VERSION, OauthTokensConstants.NON_PERSISTENT_TOKEN);
                     approvalParams.put(OauthTokensConstants.GRANT_PERSISTENT_TOKEN, "false");
@@ -481,11 +493,17 @@ public class OauthConfirmAccessController extends BaseController {
             approvalParams.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "false");
         //If persistent tokens are enabled on server
         if(isUsePersistentTokens()) {
-            approvalParams.put(OauthTokensConstants.TOKEN_VERSION, OauthTokensConstants.PERSISTENT_TOKEN);
-            if(form.getPersistentTokenEnabled())
-                approvalParams.put(OauthTokensConstants.GRANT_PERSISTENT_TOKEN, "true");
-            else 
+            approvalParams.put(OauthTokensConstants.TOKEN_VERSION, OauthTokensConstants.PERSISTENT_TOKEN);            
+            //Check if the client have persistent tokens enabled
+            if(hasPersistenTokensEnabled(form.getClientId().getValue())) {      
+                //Then check if the client granted the persistent token
+                if(form.getPersistentTokenEnabled())
+                    approvalParams.put(OauthTokensConstants.GRANT_PERSISTENT_TOKEN, "true");
+                else 
+                    approvalParams.put(OauthTokensConstants.GRANT_PERSISTENT_TOKEN, "false");
+            } else {
                 approvalParams.put(OauthTokensConstants.GRANT_PERSISTENT_TOKEN, "false");
+            }
         } else {
             approvalParams.put(OauthTokensConstants.TOKEN_VERSION, OauthTokensConstants.NON_PERSISTENT_TOKEN);
             approvalParams.put(OauthTokensConstants.GRANT_PERSISTENT_TOKEN, "false");
@@ -610,4 +628,16 @@ public class OauthConfirmAccessController extends BaseController {
         return reg;
     }
 
+    /**
+     * Checks if the client has the persistent tokens enabled
+     * @return true if the persistent tokens are enabled for that client
+     * @throws IllegalArgumentException
+     * */
+    private boolean hasPersistenTokensEnabled(String clientId) throws IllegalArgumentException {
+        ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
+        if(clientDetails == null)
+            throw new IllegalArgumentException("Invalid client details id");
+        return clientDetails.isPersistentTokensEnabled();
+    }
+    
 }
