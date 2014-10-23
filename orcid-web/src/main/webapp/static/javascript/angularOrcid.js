@@ -967,19 +967,6 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 				work.visibility = priv;
 				worksSrvc.updateVisibility(work);
 			},
-			showSpinner: function($event) {			
-				
-				$($event.target).closest('div.sources-details').siblings('div.work-list-container').css('display', 'none');
-				$($event.target).closest('div.sources-details').siblings('div.spinner').show();
-				
-				setTimeout(
-					function(){
-						$($event.target).closest('div.sources-details').siblings('div.spinner').hide();
-						$($event.target).closest('div.sources-details').siblings('div.work-list-container').css('display', 'block');
-					}
-				,250);
-				
-			},
 			updateVisibility: function(work) {
 				$.ajax({
 			        url: getBaseUri() + '/works/' + work.putCode.value + '/visibility.json',

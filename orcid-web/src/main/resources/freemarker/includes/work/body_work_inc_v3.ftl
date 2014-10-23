@@ -16,17 +16,11 @@
     =============================================================================
 
 -->
-<ul ng-hide="!worksSrvc.groups.length" class="workspace-publications workspace-body-list bottom-margin-medium" id="body-work-list" ng-cloak>
-    <li class="bottom-margin-small workspace-border-box card" ng-repeat="group in worksSrvc.groups | orderBy:sortPredicate:sortReverse">
-    	<div class="row spinner">
-    			<span class="glyphicon glyphicon-refresh spin x2 green">
-    				
-    			</span>
-    	</div>
+<ul ng-hide="!worksSrvc.groups.length" class="workspace-publications bottom-margin-medium" id="body-work-list" ng-cloak>	
+    <li class="bottom-margin-small workspace-border-box card" ng-repeat="group in worksSrvc.groups | orderBy:sortPredicate:sortReverse">    	
     	<div class="work-list-container">
-			<ul class="sources-edit-list">
-				<li ng-repeat="work in group.activities" ng-show="group.activePutCode == work.putCode.value || editSources[group.groupId] == true">
-					
+			<ul class="sources-edit-list">				
+				<li ng-repeat="work in group.activities" ng-show="group.activePutCode == work.putCode.value || editSources[group.groupId] == true" ng-class="{'source-active' : group.activePutCode == work.putCode.value && editSources[group.groupId] == true}">
 					<!-- active row summary info -->
 					<div class="row" ng-show="group.activePutCode == work.putCode.value">
 						<div class="col-md-8 col-sm-8 col-xs-12">
@@ -91,14 +85,14 @@
 							
 						<!-- active row  source display -->
 						<div class="row" ng-show="group.activePutCode == work.putCode.value">					 
-					
-							<div class="col-md-5">
+							
+							<div class="col-md-4">
 								<span>
 									<strong >Source:</strong>{{work.workSourceName.value}}
 								</span>						
 							</div>
 						
-							<div ng-class="editSources[group.groupId] == true ? 'col-md-12' : 'col-md-7'">						
+							<div class="col-md-8">						
 								<ul class="sources-options" ng-cloak>
 									<li ng-hide="group.activitiesCount == 1 || editSources[group.groupId] == true">							
 										<span class="view-sources-details">
@@ -126,10 +120,10 @@
 							            </a>
 							        </li>
 							        <li class="show-more-info-tab-container">
-								        <div class="show-more-info-tab work-tab">			
+								        <span class="show-more-info-tab work-tab">			
 											<a href="" ng-show="!moreInfo[group.getActive().putCode.value]" ng-click="showDetailsMouseClick(group.getActive().putCode.value,$event);"><span class="glyphicon glyphicon-chevron-down"></span><@orcid.msg 'manage.developer_tools.show_details'/></a>									
 											<a href="" ng-show="moreInfo[group.getActive().putCode.value]" ng-click="showDetailsMouseClick(group.getActive().putCode.value,$event);"><span class="glyphicon glyphicon-chevron-up"></span><@orcid.msg 'manage.developer_tools.hide_details'/></a>
-										</div>							
+										</span>							
 							        </li>                               
 							    </ul>
 							</div>
@@ -137,7 +131,7 @@
 					
 					
 					<!-- not active row && edit sources -->
-					<div ng-show="group.activePutCode != work.putCode.value" class="row">
+					<div ng-show="group.activePutCode != work.putCode.value" class="row">						
 						<div class="col-sm-4">
 								<a ng-click="group.activePutCode = work.putCode.value">
 				           		{{work.workSourceName.value}}
@@ -158,12 +152,14 @@
 						          	   <span class="glyphicon glyphicon-trash"></span>
 					            </a>
 				            </#if>    
-						</div>
+						</div>						
 					</div>
+					
+					
 				</li>
 			</ul>				
 		</div>
-	</li><!-- bottom-margin-small -->
+	</li><!-- bottom-margin-small -->	
 </ul>
 <div ng-show="worksSrvc.loading == true" class="text-center" id="workSpinner">
 	<i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i><!-- Hidden with a CSS hack on IE 7 only -->
