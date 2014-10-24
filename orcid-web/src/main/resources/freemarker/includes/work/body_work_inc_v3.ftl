@@ -27,7 +27,7 @@
 					    	<h3 class="workspace-title">
 				        		<strong ng-bind="work.workTitle.title.value"></strong><span class="work-subtitle" ng-show="work.workTitle.subtitle.value" ng-bind="':&nbsp;'.concat(work.workTitle.subtitle.value)"></span>		        			        	
 				        	</h3>
-				        	<div ng-show="showBulkEdit == true" class="bulk-edit-input hidden-lg hidden-md hidden-sm pull-right">
+				        	<div ng-show="bulkEditShow == true" class="bulk-edit-input hidden-lg hidden-md hidden-sm pull-right">
 				        		<input type="checkbox" ng-model="bulkEditMap[work.putCode.value]"></input>
 				        	</div>
 				        	<div class="info-detail">
@@ -40,7 +40,7 @@
 				        	<#if !(isPublicProfile??)>
 				        		<!-- Privacy bar -->
 								<ul class="workspace-private-toolbar">
-									<li ng-show="showBulkEdit" class="hidden-xs bulk-checkbox-item">								
+									<li ng-show="bulkEditShow" class="hidden-xs bulk-checkbox-item">								
 					        			<input type="checkbox" ng-model="bulkEditMap[work.putCode.value]" class="bulk-edit-input"></input>			        										
 									</li>							
 								 	<li>
@@ -98,25 +98,25 @@
 										<span class="view-sources-details">
 										 	<a ng-click="editSources[group.groupId] = !editSources[group.groupId]">View <span class="badge">{{group.activitiesCount - 1 }}</span> additional source<span ng-show="group.activitiesCount > 2">s</span></a>							 	
 										</span>
-										<a ng-click="editSources[group.groupId] = !editSources[group.groupId]" ng-show="!showBulkEdit">
+										<a ng-click="editSources[group.groupId] = !editSources[group.groupId]" ng-show="!bulkEditShow">
 						            	   <span class="glyphicon glyphicon-trash grey"></span>
 						        		</a>
 									</li>
 									<#if !(isPublicProfile??)>
 										<li ng-show="group.activitiesCount == 1">
 											<a ng-click="deleteWorkConfirm(group.getActive().putCode.value, false)">
-							            	   <span class="glyphicon glyphicon-trash grey" ng-show="!showBulkEdit"></span>
+							            	   <span class="glyphicon glyphicon-trash grey" ng-show="!bulkEditShow"></span>
 							               </a>
 										</li>
 								        <li ng-show="editSources[group.groupId] == true">
 								            <a ng-click="deleteWorkConfirm(group.getActive().putCode.value, true)">
-								                <span class="glyphicon glyphicon-trash" ng-show="!showBulkEdit"></span> Delete all
+								                <span class="glyphicon glyphicon-trash" ng-show="!bulkEditShow"></span> Delete all
 								            </a>
 								        </li>
 								    </#if>
 							        <li ng-show="editSources[group.groupId] == true">
 							            <a ng-click="editSources[group.groupId] = false">
-							                <span class="glyphicon glyphicon-remove" ng-show="!showBulkEdit"></span> Hide additional sources
+							                <span class="glyphicon glyphicon-remove" ng-show="!bulkEditShow"></span> Hide additional sources
 							            </a>
 							        </li>
 							        <li class="show-more-info-tab-container">

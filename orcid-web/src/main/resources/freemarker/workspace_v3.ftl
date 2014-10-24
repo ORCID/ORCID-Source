@@ -292,7 +292,7 @@
 					</div>
 					
 					<!-- Bulk Edit -->
-					<div ng-show="showBulkEdit" ng-cloak>
+					<div ng-show="bulkEditShow" ng-cloak>
 						<div class="grey-box box-border bulk-edit">
 							<div class="row">
 								<div class="col-md-7 col-sm-7">
@@ -315,14 +315,14 @@
 												<div class="custom-control-x" >	
 													<div class="dropdown-custom-menu" id="dropdown-custom-menu" ng-click="toggleSelectMenu()">										
 														<span class="custom-checkbox-parent">
-															<div class="custom-checkbox" id="custom-checkbox" ng-click="swapbulkChangeAll();$event.stopPropagation();" ng-class="{'custom-checkbox-active':checked == true}"></div>
+															<div class="custom-checkbox" id="custom-checkbox" ng-click="swapbulkChangeAll();$event.stopPropagation();" ng-class="{'custom-checkbox-active':bulkChecked == true}"></div>
 														</span>										
-														<div class="custom-control-arrow" ng-click="toggleSelectMenu();$event.stopPropagation();"></div>
+														<div class="custom-control-arrow" ng-click="toggleSelectMenu(); $event.stopPropagation();"></div>
 													</div>
 													<div>
-														<ul class="dropdown-menu" role="menu" id="special-menu" ng-class="{'block': displayMenu == true}">
-												          <li><a href="" ng-click="bulkChangeAll(true);toggleSelectMenu()">Select all</a></li>
-												          <li><a href="" ng-click="bulkChangeAll(false);toggleSelectMenu()">Deselect all</a></li>							          							          
+														<ul class="dropdown-menu" role="menu" id="special-menu" ng-class="{'block': bulkDisplayToggle == true}">
+												          <li><a href="" ng-click="bulkChangeAll(true); bulkDisplayToggle = false;">Select all</a></li>
+												          <li><a href="" ng-click="bulkChangeAll(false); bulkDisplayToggle = false;">Deselect all</a></li>							          							          
 												        </ul>			
 													</div>
 												</div>
