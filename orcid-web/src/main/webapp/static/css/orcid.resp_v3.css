@@ -1594,8 +1594,10 @@ a:hover {
 	padding-left: 10px;
 }
 
-.workspace-right h3{
+.workspace-right h3,
+.workspace-body-list h3{
 	font-size: 20px;
+	margin: 0;
 } 
 
 .more-info{	
@@ -1617,6 +1619,10 @@ a:hover {
 	margin:0;
 	padding:0;
 	float:right;
+}
+
+.workspace-private-toolbar li{
+	display: inline;
 }
 
 ul.workspace-private-toolbar li.bulk-checkbox-item{
@@ -1815,13 +1821,13 @@ ul.workspace-private-toolbar li.bulk-checkbox-item{
 .workspace-body-list>li {	
 	min-height: 30px;
 	box-shadow: 3px 4px 5px #C9CACB;
+	padding: 5px 5px 0 5px;	
 }
 
-.workspace-body-list h3 {
+.work-list-container h3 {
 	line-height: 24px;
 	margin: 0 15px 0 0;	
 }
-
 
 .workspace-header-public h3{
 	line-height: 1.2;
@@ -4056,9 +4062,7 @@ ul.id-details li{
 }
 
 
-.show-more-info-tab{
-	display: block;
-	width: 100%;
+.show-more-info-tab{		
 	text-align: right;		
 	height: 20px;
 }
@@ -4288,16 +4292,16 @@ ul.workspace-submenu-options li a>span{
 	cursor: pointer;
 }
 
-.sources-container-header ul.sources-options{
+ul.sources-options{
 	margin:0;
 	padding: 0;
 	list-style: none; 
 	list-style-type: none;
 	float: right;	
-	margin-right: -5px;
+	margin-right: -6px;
 }
 
-.sources-container-header ul.sources-options li{
+ul.sources-options li{
 	display: inline-block;
 	margin-left: 15px;
 }
@@ -4330,12 +4334,7 @@ ul.workspace-submenu-options li a>span{
 
 .workspace-border-box{
 	/*background: #F6F6F6;*/
-	border: 1px solid #C9CACB;
-	padding: 5px 5px 0 5px;
-}
-
-.sources-container-header .view-sources-details{
-	margin-right: 15px;
+	border: 1px solid #C9CACB;	
 }
 
 a.toggle-tag-option{
@@ -4348,20 +4347,19 @@ a.toggle-tag-option{
 
 ul.sources-edit-list{
 	margin: 0;
-	padding: 0;
-	margin-top: 10px;
-	position: relative;
-	top: 6px;
+	padding: 0;	
+	position: relative;	
 }
 
-ul.sources-edit-list li{
-	display: inline-block;
-	width: 100%;
-	box-shadow: 3px 4px 5px #C9CACB;
+ul.sources-edit-list > li{
+	display: inline;	
+	border-bottom: 1px solid #C9CACB;
+	display: block;	
+	padding: 5px 5px 0 5px;	
 }
 
-.rotate-card{
-	transform: rotateY(180deg);
+.source-active{
+	background: #EEE;
 }
 
 .workspace-body-list .spinner{
@@ -4794,6 +4792,10 @@ ul.toggle-menu li:hover ul {
 
 .bulk-edit-input{
 	vertical-align: 0;	
+}
+
+.trash-source{
+	text-align: right;
 }
 
 /* Media Queries */
@@ -5912,7 +5914,6 @@ ul.toggle-menu li:hover ul {
 	.bulk-edit .popover-help-container .popover.bottom .arrow{
 		left: 247px;
 	}
-	
 }
 
 @media (min-width : 768px) and (max-width : 991px) { /* Tablet */
@@ -6086,8 +6087,7 @@ ul.toggle-menu li:hover ul {
 	.workspace-accordion,
 	#workspace-publications{
 		padding: 0;
-	}	
-	
+	}
 }
 
 @media(min-width:1200px){

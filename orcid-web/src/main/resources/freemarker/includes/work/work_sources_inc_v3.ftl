@@ -28,7 +28,7 @@
 					</span>						
 				</div>
 				
-				<div ng-class="editSources[group.groupId] == true ? 'col-md-12' : 'col-md-7'">						
+				<div class="col-md-7">						
 					<ul class="sources-options" ng-cloak>
 						<li ng-hide="group.activitiesCount == 1 || editSources[group.groupId] == true">							
 							<span class="view-sources-details">
@@ -56,10 +56,10 @@
 				            </a>
 				        </li>
 				        <li class="show-more-info-tab-container">
-					        <div class="show-more-info-tab work-tab">			
+					        <span class="show-more-info-tab work-tab">			
 								<a href="" ng-show="!moreInfo[group.getActive().putCode.value]" ng-click="showDetailsMouseClick(group.getActive().putCode.value,$event);"><span class="glyphicon glyphicon-chevron-down"></span><@orcid.msg 'manage.developer_tools.show_details'/></a>									
 								<a href="" ng-show="moreInfo[group.getActive().putCode.value]" ng-click="showDetailsMouseClick(group.getActive().putCode.value,$event);"><span class="glyphicon glyphicon-chevron-up"></span><@orcid.msg 'manage.developer_tools.hide_details'/></a>
-							</div>							
+							</span>							
 				        </li>                               
 				    </ul>
 				</div>
@@ -70,6 +70,8 @@
 		<div class="sources-container">
 			<div class="sources-edit">	
 				<ul class="sources-edit-list" ng-show="editSources[group.groupId] == true" ng-cloak>
+					
+					
 					<li class="first-source">
 						<div class="col-sm-4">
 							<span>
@@ -93,6 +95,7 @@
 			                </#if>
 				        </div>
 					</li>
+					
 					<li ng-repeat="work in group.activities" ng-hide="group.activePutCode == work.putCode.value">
 						<div class="col-sm-4">
 							<a ng-click="worksSrvc.showSpinner($event); moreInfo[work.putCode.value] = moreInfo[group.activePutCode]; group.activePutCode = work.putCode.value">
@@ -116,6 +119,9 @@
 				            </#if>    
 						</div>
 					</li>
+					
+					
+					
 				</ul>				
 			</div>
 		</div>
