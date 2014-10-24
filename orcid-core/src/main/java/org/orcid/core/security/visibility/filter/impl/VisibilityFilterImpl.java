@@ -25,6 +25,7 @@ import org.orcid.core.tree.TreeCleaner;
 import org.orcid.core.tree.TreeCleaningDecision;
 import org.orcid.core.tree.TreeCleaningStrategy;
 import org.orcid.jaxb.model.message.Affiliation;
+import org.orcid.jaxb.model.message.Biography;
 import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.Orcid;
 import org.orcid.jaxb.model.message.OrcidIdentifier;
@@ -85,7 +86,7 @@ public class VisibilityFilterImpl implements VisibilityFilter {
      */
     @Override
     public OrcidMessage filter(OrcidMessage messageToBeFiltered, Visibility... visibilities) {
-        return filter(messageToBeFiltered, null, false, false, false, false, visibilities);
+        return filter(messageToBeFiltered, null, false, false, false, false, false, visibilities);
     }
 
     /**
@@ -107,7 +108,7 @@ public class VisibilityFilterImpl implements VisibilityFilter {
      */
     @Override
     public OrcidMessage filter(OrcidMessage messageToBeFiltered, final boolean removeAttribute, Visibility... visibilities) {
-        return filter(messageToBeFiltered, null, false, false, false, removeAttribute, visibilities);
+        return filter(messageToBeFiltered, null, false, false, false, false, removeAttribute, visibilities);
     }
     
     /**
@@ -132,7 +133,7 @@ public class VisibilityFilterImpl implements VisibilityFilter {
      * @return the cleansed {@link org.orcid.jaxb.model.message.OrcidMessage}
      */
     @Override
-    public OrcidMessage filter(OrcidMessage messageToBeFiltered, final String sourceId,  final boolean allowPrivateWorks, final boolean allowPrivateFunding, final boolean allowPrivateAffiliations, final boolean removeAttribute, Visibility... visibilities) {
+    public OrcidMessage filter(OrcidMessage messageToBeFiltered, final String sourceId,  final boolean allowPrivateBio, final boolean allowPrivateWorks, final boolean allowPrivateFunding, final boolean allowPrivateAffiliations, final boolean removeAttribute, Visibility... visibilities) {
         if (messageToBeFiltered == null || visibilities == null || visibilities.length == 0) {
             return null;
         }
@@ -150,7 +151,10 @@ public class VisibilityFilterImpl implements VisibilityFilter {
                         Class<?> clazz = obj.getClass();
                         
                         if(!PojoUtil.isEmpty(sourceId)) {
-                            if(allowPrivateAffiliations && Affiliation.class.isAssignableFrom(clazz)) {
+                            if(allowPrivateBio && Biography.class.isAssignableFrom(clazz)) {
+                                Biography bio = (Biography) obj;
+                                //TODO: We need the source in the bio
+                            } else if(allowPrivateAffiliations && Affiliation.class.isAssignableFrom(clazz)) {
                                 Affiliation affiliation = (Affiliation) obj;
                                 Source source = affiliation.getSource();
                                 if(source != null) {
