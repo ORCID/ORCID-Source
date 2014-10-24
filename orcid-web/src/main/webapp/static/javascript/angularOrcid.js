@@ -867,15 +867,16 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 				return null;
 			},
 			deleteGroupWorks: function(putCode) {
-				var idx;
-				var rmWorks;
+				var rmWorks = new Array();
 				for (var idx in worksSrvc.groups) {
 					if (worksSrvc.groups[idx].hasPut(putCode)) {
 					   for (var idj in worksSrvc.groups[idx].activities) {
-							worksSrvc.removeWork(worksSrvc.groups[idx].activities[idj]);
-						}
-					    worksSrvc.groups.splice(idx,1);
-						break;
+						   rmWorks = rmWorks.push(worksSrvc.groups[idx].activities[idj]);
+					   }
+					   worksSrvc.groups.splice(idx,1);
+					   for (var idx in rmWorks)
+						   removeWork(rmWorks[idx]);
+					   break;
 					}
 				}
 			},
@@ -3741,9 +3742,12 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
 	};
 
 	$scope.deleteBulk = function () {
-		for (var idx in worksSrvc.groups.slice(0))
+		var delPuts = new Array();
+		for (var idx in worksSrvc.groups)
 			if ($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value])
-			    worksSrvc.deleteGroupWorks(worksSrvc.groups[idx].getActive().putCode.value);
+			    delPuts.push(worksSrvc.groups[idx].getActive().putCode.value);
+		for (var idx in delPuts)		
+				worksSrvc.deleteGroupWorks(delPuts[idx]);
 		$.colorbox.close();
 		$scope.bulkEditShow = false;
 	};
