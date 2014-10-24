@@ -867,7 +867,6 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 				return null;
 			},
 			deleteGroupWorks: function(putCode) {
-				var idx;
 				var rmWorks = new Array();
 				for (var idx in worksSrvc.groups) {
 					if (worksSrvc.groups[idx].hasPut(putCode)) {
