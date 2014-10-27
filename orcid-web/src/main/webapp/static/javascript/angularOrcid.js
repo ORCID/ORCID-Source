@@ -871,11 +871,11 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 				for (var idx in worksSrvc.groups) {
 					if (worksSrvc.groups[idx].hasPut(putCode)) {
 					   for (var idj in worksSrvc.groups[idx].activities) {
-						   rmWorks = rmWorks.push(worksSrvc.groups[idx].activities[idj]);
+						   rmWorks.push(worksSrvc.groups[idx].activities[idj]);
 					   }
 					   worksSrvc.groups.splice(idx,1);
 					   for (var idx in rmWorks)
-						   removeWork(rmWorks[idx]);
+						   worksSrvc.removeWork(rmWorks[idx]);
 					   break;
 					}
 				}
