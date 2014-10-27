@@ -318,9 +318,11 @@
 							<li>
 								<a href="" class="label btn-primary" ng-click="addWorkModal()"><@orcid.msg 'manual_work_form_contents.add_work_manually'/></a>
 							</li>
-							<li>
-								<a href="" class="label btn-primary" ng-click="openBibTextWizard()"><@orcid.msg 'workspace.bibtexImporter.link_bibtex'/></a>
-							</li>
+							<#if RequestParameters['bibWizard']??>
+								<li>
+									<a href="" class="label btn-primary" ng-click="openBibTextWizard()"><@orcid.msg 'workspace.bibtexImporter.link_bibtex'/></a>
+								</li>
+							</#if>
 						</ul>					
 					</div>
 					<!-- Bibtex Importer Results -->
