@@ -48,6 +48,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
+import org.springframework.security.oauth2.common.exceptions.RedirectMismatchException;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
@@ -93,7 +94,9 @@ public class OauthConfirmAccessController extends BaseController {
     private OrcidAuthorizationEndpoint authorizationEndpoint;
     @Resource
     private RegistrationController registrationController;
-
+    
+    private static String REDIRECT_URI_ERROR = "/oauth/error/redirect-uri-mismatch?client_id={0}";
+    
     @RequestMapping(value = { "/signin", "/login" }, method = RequestMethod.GET)
     public ModelAndView loginGetHandler2(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
         // find client name if available
@@ -307,7 +310,7 @@ public class OauthConfirmAccessController extends BaseController {
         form.setErrors(new ArrayList<String>());
         if(form.getApproved()) {
             // Validate name and password
-            validateUserNameAndPassword(form);
+            validateUserNameAndPassword(form);            
             if (form.getErrors().isEmpty()) {
                 try {
                     // Authenticate user
@@ -346,8 +349,28 @@ public class OauthConfirmAccessController extends BaseController {
                         approvalParams.put(OauthTokensConstants.GRANT_PERSISTENT_TOKEN, "false");
                     }
                     
-                    // Authorize
-                    authorizationEndpoint.authorize(model, RESPONSE_TYPE, params, status, auth);
+                    // Authorize            
+                    try {
+                        authorizationEndpoint.authorize(model, RESPONSE_TYPE, params, status, auth);
+                    } catch (RedirectMismatchException rUriError) {                                                
+                        String redirectUri = this.getBaseUri() + REDIRECT_URI_ERROR;
+                        //Set the client id
+                        redirectUri = redirectUri.replace("{0}", form.getClientId().getValue());
+                        //Set the response type if needed
+                        if(!PojoUtil.isEmpty(form.getResponseType()))
+                            redirectUri += "&response_type=" + form.getResponseType().getValue();
+                        //Set the redirect uri
+                        if(!PojoUtil.isEmpty(form.getRedirectUri()))
+                            redirectUri += "&redirect_uri=" + form.getRedirectUri().getValue();
+                        //Set the scope param
+                        if(!PojoUtil.isEmpty(form.getScope()))
+                            redirectUri += "&scope=" + form.getScope().getValue();
+                        //Copy the state param if present
+                        if(params != null && params.containsKey("state"))
+                            redirectUri += "&state=" + params.get("state");
+                        form.setRedirectUri(Text.valueOf(redirectUri));
+                        return form;
+                    }
                     // Approve
                     RedirectView view = (RedirectView) authorizationEndpoint.approveOrDeny(approvalParams, model, status, auth);
                     form.setRedirectUri(Text.valueOf(view.getUrl()));
@@ -455,8 +478,28 @@ public class OauthConfirmAccessController extends BaseController {
                     approvalParams.put(OauthTokensConstants.TOKEN_VERSION, OauthTokensConstants.NON_PERSISTENT_TOKEN);
                     approvalParams.put(OauthTokensConstants.GRANT_PERSISTENT_TOKEN, "false");
                 }
-                // Authorize
-                authorizationEndpoint.authorize(model, RESPONSE_TYPE, params, status, auth);
+                // Authorize               
+                try {
+                    authorizationEndpoint.authorize(model, RESPONSE_TYPE, params, status, auth);
+                } catch (RedirectMismatchException rUriError) {
+                    String redirectUri = this.getBaseUri() + REDIRECT_URI_ERROR;
+                    //Set the client id
+                    redirectUri = redirectUri.replace("{0}", form.getClientId().getValue());
+                    //Set the response type if needed
+                    if(!PojoUtil.isEmpty(form.getResponseType()))
+                        redirectUri += "&response_type=" + form.getResponseType().getValue();
+                    //Set the redirect uri
+                    if(!PojoUtil.isEmpty(form.getRedirectUri()))
+                        redirectUri += "&redirect_uri=" + form.getRedirectUri().getValue();
+                    //Set the scope param
+                    if(!PojoUtil.isEmpty(form.getScope()))
+                        redirectUri += "&scope=" + form.getScope().getValue();
+                    //Copy the state param if present
+                    if(params != null && params.containsKey("state"))
+                        redirectUri += "&state=" + params.get("state");
+                    form.setRedirectUri(Text.valueOf(redirectUri));
+                    return form;
+                }
                 // Approve
                 RedirectView view = (RedirectView) authorizationEndpoint.approveOrDeny(approvalParams, model, status, auth);
                 form.setRedirectUri(Text.valueOf(view.getUrl()));
