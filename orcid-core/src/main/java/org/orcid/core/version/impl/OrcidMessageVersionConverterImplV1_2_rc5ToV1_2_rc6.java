@@ -24,7 +24,7 @@ import static org.orcid.jaxb.model.message.WorkExternalIdentifierType.ETHOS;
 import static org.orcid.jaxb.model.message.WorkExternalIdentifierType.HANDLE;
 import static org.orcid.jaxb.model.message.WorkExternalIdentifierType.HIR;
 import static org.orcid.jaxb.model.message.WorkExternalIdentifierType.OTHER_ID;
-import static org.orcid.jaxb.model.message.WorkExternalIdentifierType.PATENT;
+import static org.orcid.jaxb.model.message.WorkExternalIdentifierType.PAT;
 import static org.orcid.jaxb.model.message.WorkExternalIdentifierType.SOURCE_WORK_ID;
 import static org.orcid.jaxb.model.message.WorkExternalIdentifierType.URI;
 import static org.orcid.jaxb.model.message.WorkExternalIdentifierType.URN;
@@ -55,7 +55,7 @@ public class OrcidMessageVersionConverterImplV1_2_rc5ToV1_2_rc6 implements Orcid
 
     private static final String FROM_VERSION = "1.2_rc5";
     private static final String TO_VERSION = "1.2_rc6";
-    private static final WorkExternalIdentifierType[] NEW_WORK_EXT_ID_TYPES = new WorkExternalIdentifierType[] { AGR, CBA, CIT, CTX, ETHOS, HANDLE, HIR, PATENT,
+    private static final WorkExternalIdentifierType[] NEW_WORK_EXT_ID_TYPES = new WorkExternalIdentifierType[] { AGR, CBA, CIT, CTX, ETHOS, HANDLE, HIR, PAT,
             SOURCE_WORK_ID, URI, URN };
     static {
         // Just to be sure, for binary search
