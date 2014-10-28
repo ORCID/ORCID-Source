@@ -27,6 +27,7 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+@Deprecated
 @XmlRootElement(name = "external-id-source")
 public class ExternalIdSource extends OrcidIdBase implements Serializable {
 

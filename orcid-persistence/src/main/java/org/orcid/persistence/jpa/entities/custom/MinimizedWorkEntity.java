@@ -23,6 +23,7 @@ import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.jpa.entities.BaseEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 
 /**
  * An object that will contain the minimum work information needed to display
@@ -47,14 +48,14 @@ public class MinimizedWorkEntity extends BaseEntity implements Serializable {
     private String translatedTitleLanguageCode;
     private String translatedTitle;    
     private Long displayIndex;
-    private ProfileEntity sourceProfile;
+    private SourceEntity source;
     
     public MinimizedWorkEntity() {
         super();
     }
 
     public MinimizedWorkEntity(Long id, String title, String subtitle, String description, Integer publicationDay, Integer publicationMonth, Integer publicationYear,
-            Visibility visibility, String externalIdentifiersJson, Long displayIndex, ProfileEntity sourceProfile, Date dateCreated, Date lastModified,
+            Visibility visibility, String externalIdentifiersJson, Long displayIndex, SourceEntity source, Date dateCreated, Date lastModified,
             WorkType workType, String languageCode, String translatedTitleLanguageCode, String translatedTitle    
  ) {
         super();
@@ -71,7 +72,7 @@ public class MinimizedWorkEntity extends BaseEntity implements Serializable {
         this.visibility = visibility;
         this.externalIdentifiersJson = externalIdentifiersJson;
         this.displayIndex = displayIndex;
-        this.sourceProfile = sourceProfile;
+        this.source = source;
         this.workType = workType;
         this.setDateCreated(dateCreated);
         this.setLastModified(lastModified);
@@ -161,12 +162,12 @@ public class MinimizedWorkEntity extends BaseEntity implements Serializable {
         this.displayIndex = displayIndex;
     }
 
-    public ProfileEntity getSourceProfile() {
-        return sourceProfile;
+    public SourceEntity getSource() {
+        return source;
     }
 
-    public void setSourceProfile(ProfileEntity sourceProfile) {
-        this.sourceProfile = sourceProfile;
+    public void setSource(SourceEntity source) {
+        this.source = source;
     }
 
     public WorkType getWorkType() {

@@ -90,7 +90,7 @@ public class PublicOauthClientTest extends DBUnitTest {
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
-        initDBUnitData(DATA_FILES, null);
+        initDBUnitData(DATA_FILES);
     }
 
     @Before

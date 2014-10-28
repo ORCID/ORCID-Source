@@ -60,10 +60,10 @@ import com.google.common.collect.Lists;
 @Transactional(propagation = Propagation.REQUIRES_NEW)
 public class WorksControllerTest extends BaseControllerTest {
 
-	private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml", "/data/ProfileEntityData.xml",
-            "/data/WorksEntityData.xml", "/data/ProfileWorksEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml",
-            "/data/WebhookEntityData.xml");    
-	
+    private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
+            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ProfileWorksEntityData.xml",
+            "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml", "/data/WebhookEntityData.xml");
+
     @Resource
     WorksController worksController;
 
@@ -76,47 +76,47 @@ public class WorksControllerTest extends BaseControllerTest {
 
     @BeforeClass
     public static void beforeClass() throws Exception {
-        initDBUnitData(DATA_FILES, null);
+        initDBUnitData(DATA_FILES);
     }
-    
+
     @AfterClass
     public static void afterClass() throws Exception {
-        removeDBUnitData(Lists.reverse(DATA_FILES), null);
+        removeDBUnitData(Lists.reverse(DATA_FILES));
     }
-    
+
     @Test
     public void testGetWorksJson() throws Exception {
-    	HttpServletRequest servletRequest = mock(HttpServletRequest.class);    	
-    	HttpSession session = mock(HttpSession.class);
+        HttpServletRequest servletRequest = mock(HttpServletRequest.class);
+        HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);
-        
+
         List<String> work_ids = worksController.getWorksJson(servletRequest);
-        
+
         assertNotNull(work_ids);
         assertEquals(3, work_ids.size());
         assertTrue(work_ids.contains("5"));
         assertTrue(work_ids.contains("6"));
         assertTrue(work_ids.contains("7"));
-        
+
     }
-    
+
     @Test
-    public void testGetWorkInfo(){
-    	Work work = worksController.getWorkInfo("5");
-    	assertNotNull(work);
-    	assertEquals("5", work.getPutCode().getValue());        
-        assertNotNull(work.getPublicationDate());        
+    public void testGetWorkInfo() {
+        Work work = worksController.getWorkInfo("5");
+        assertNotNull(work);
+        assertEquals("5", work.getPutCode().getValue());
+        assertNotNull(work.getPublicationDate());
         assertEquals("2011", work.getPublicationDate().getYear());
         assertEquals("02", work.getPublicationDate().getMonth());
-        assertEquals("01", work.getPublicationDate().getDay());              
+        assertEquals("01", work.getPublicationDate().getDay());
         assertNotNull(work.getWorkTitle());
         assertNotNull(work.getWorkTitle().getTitle());
         assertEquals("Journal article A", work.getWorkTitle().getTitle().getValue());
         assertNotNull(work.getVisibility());
         assertEquals(Visibility.PUBLIC, work.getVisibility());
-        assertEquals("journal-article", work.getWorkType().getValue());               
+        assertEquals("journal-article", work.getWorkType().getValue());
     }
-    
+
     @Test
     public void testFieldValidators() throws Exception {
         // Test work without language fields
@@ -199,7 +199,7 @@ public class WorksControllerTest extends BaseControllerTest {
         worksController.workWorkTypeValidate(work);
         assertEquals(1, work.getWorkType().getErrors().size());
 
-    }    
+    }
 
     private String buildLongWord() {
         if (_5000chars == null) {
@@ -209,67 +209,67 @@ public class WorksControllerTest extends BaseControllerTest {
         }
         return _5000chars;
     }
-    
+
     @Test
     public void testAddWork() throws Exception {
-        HttpServletRequest servletRequest = mock(HttpServletRequest.class);     
+        HttpServletRequest servletRequest = mock(HttpServletRequest.class);
         HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);
-        
+
         Work work = worksController.getWork(null);
-        //Set title
+        // Set title
         work.getWorkTitle().setTitle(Text.valueOf("Test add work"));
-        work.setWorkType(Text.valueOf("artistic-performance"));        
+        work.setWorkType(Text.valueOf("artistic-performance"));
         WorkExternalIdentifier wei = work.getWorkExternalIdentifiers().get(0);
         wei.setWorkExternalIdentifierId(Text.valueOf("1"));
         wei.setWorkExternalIdentifierType(Text.valueOf("doi"));
-        
+
         work = worksController.postWork(null, work);
         assertNotNull(work);
         assertFalse(PojoUtil.isEmpty(work.getPutCode()));
         assertEquals(1, work.getWorkExternalIdentifiers().size());
         assertEquals("doi", work.getWorkExternalIdentifiers().get(0).getWorkExternalIdentifierType().getValue());
         assertEquals("1", work.getWorkExternalIdentifiers().get(0).getWorkExternalIdentifierId().getValue());
-        
+
     }
-    
+
     @Test
     public void testUpdateWork() throws Exception {
-        HttpServletRequest servletRequest = mock(HttpServletRequest.class);     
+        HttpServletRequest servletRequest = mock(HttpServletRequest.class);
         HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);
-        
+
         Work work = worksController.getWorkInfo("6");
-        //Set title
-        work.getWorkTitle().setTitle(Text.valueOf("Test update work"));        
+        // Set title
+        work.getWorkTitle().setTitle(Text.valueOf("Test update work"));
         work.getWorkTitle().setSubtitle(Text.valueOf("Test update subtitle"));
-        
+
         TranslatedTitle tTitle = new TranslatedTitle();
         tTitle.setContent("Test translated title");
         tTitle.setLanguageCode("EN");
-        
+
         work.getWorkTitle().setTranslatedTitle(tTitle);
-        
-        work.setWorkType(Text.valueOf("artistic-performance"));  
-        
+
+        work.setWorkType(Text.valueOf("artistic-performance"));
+
         work.setWorkExternalIdentifiers(new ArrayList<WorkExternalIdentifier>());
-        
+
         WorkExternalIdentifier wei1 = new WorkExternalIdentifier();
         wei1.setWorkExternalIdentifierId(Text.valueOf("1"));
         wei1.setWorkExternalIdentifierType(Text.valueOf("doi"));
         work.getWorkExternalIdentifiers().add(wei1);
-        
+
         WorkExternalIdentifier wei2 = new WorkExternalIdentifier();
         wei2.setWorkExternalIdentifierId(Text.valueOf("2"));
-        wei2.setWorkExternalIdentifierType(Text.valueOf("arxiv"));        
+        wei2.setWorkExternalIdentifierType(Text.valueOf("arxiv"));
         work.getWorkExternalIdentifiers().add(wei2);
 
         work.getPublicationDate().setDay("2");
         work.getPublicationDate().setMonth("3");
         work.getPublicationDate().setYear("2014");
-        
+
         worksController.postWork(null, work);
-        
+
         Work updatedWork = worksController.getWorkInfo("6");
         assertNotNull(updatedWork);
         assertEquals("6", updatedWork.getPutCode().getValue());
@@ -279,20 +279,20 @@ public class WorksControllerTest extends BaseControllerTest {
         assertEquals("EN", updatedWork.getWorkTitle().getTranslatedTitle().getLanguageCode());
         assertNotNull(updatedWork.getWorkExternalIdentifiers());
         assertEquals(2, updatedWork.getWorkExternalIdentifiers().size());
-        
+
         List<WorkExternalIdentifier> extIds = updatedWork.getWorkExternalIdentifiers();
-        for(WorkExternalIdentifier extId : extIds) {
-            if(extId.getWorkExternalIdentifierType().getValue().equals("doi") || extId.getWorkExternalIdentifierType().getValue().equals("arxiv")) {
-                if(extId.getWorkExternalIdentifierType().getValue().equals("doi")) {
+        for (WorkExternalIdentifier extId : extIds) {
+            if (extId.getWorkExternalIdentifierType().getValue().equals("doi") || extId.getWorkExternalIdentifierType().getValue().equals("arxiv")) {
+                if (extId.getWorkExternalIdentifierType().getValue().equals("doi")) {
                     assertEquals("1", extId.getWorkExternalIdentifierId().getValue());
                 } else {
                     assertEquals("2", extId.getWorkExternalIdentifierId().getValue());
                 }
-                
+
             } else {
                 fail("Invalid external identifier found: " + extId.getWorkExternalIdentifierType().getValue() + " : " + extId.getWorkExternalIdentifierId().getValue());
             }
-            
+
         }
     }
 }

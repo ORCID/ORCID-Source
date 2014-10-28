@@ -44,16 +44,14 @@ public class StatisticsGeneratorDaoTest extends DBUnitTest {
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
-        initDBUnitData(
-                Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ProfileWorksEntityData.xml"),
-                null);
+        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml",
+                "/data/WorksEntityData.xml", "/data/ProfileWorksEntityData.xml"));
     }
 
     @AfterClass
     public static void removeDBUnitData() throws Exception {
-        removeDBUnitData(
-                Arrays.asList("/data/ProfileWorksEntityData.xml", "/data/WorksEntityData.xml", "/data/ProfileEntityData.xml", "/data/SecurityQuestionEntityData.xml"),
-                null);
+        removeDBUnitData(Arrays.asList("/data/ProfileWorksEntityData.xml", "/data/WorksEntityData.xml", "/data/ProfileEntityData.xml",
+                "/data/SecurityQuestionEntityData.xml"));
     }
 
     @Before
@@ -67,7 +65,7 @@ public class StatisticsGeneratorDaoTest extends DBUnitTest {
     public void testStatistics() {
         assertEquals(9, statisticsGeneratorDao.getAccountsWithVerifiedEmails());
         assertEquals(3, statisticsGeneratorDao.getAccountsWithWorks());
-        assertEquals(10, statisticsGeneratorDao.getLiveIds());
+        assertEquals(11, statisticsGeneratorDao.getLiveIds());
         assertEquals(7, statisticsGeneratorDao.getNumberOfWorks());
         assertEquals(0, statisticsGeneratorDao.getNumberOfWorksWithDOIs());
     }

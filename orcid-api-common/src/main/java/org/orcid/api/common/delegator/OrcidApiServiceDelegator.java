@@ -120,6 +120,15 @@ public interface OrcidApiServiceDelegator {
     Response findWorksDetails(String orcid);
 
     Response findWorksDetailsFromPublicCache(String orcid);
+    
+    /**
+     * Sends a redirect from the client URI to the group URI
+     * 
+     * @param clientId
+     *            the client ID that corresponds to the client
+     * @return a redirect to the ORCID record for the client's group
+     */
+    Response redirectClientToGroup(String clientId);
 
     /**
      * finds and returns the

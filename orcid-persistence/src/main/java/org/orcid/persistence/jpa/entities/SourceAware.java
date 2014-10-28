@@ -17,12 +17,12 @@
 package org.orcid.persistence.jpa.entities;
 
 /**
- * Interface to indicate that an entity contains the source profile entity,
- * so, it will be able to show who creates it.
+ * Interface to indicate that an entity contains the source profile entity, so,
+ * it will be able to show who creates it.
  * 
  * @author Will Simpson
  * 
  */
 public interface SourceAware {
-	ProfileEntity getSource();
+   SourceEntity getSource();
 }

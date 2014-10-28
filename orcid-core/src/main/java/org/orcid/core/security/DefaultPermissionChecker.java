@@ -195,9 +195,8 @@ public class DefaultPermissionChecker implements PermissionChecker {
 
     private String getSponsorOrcid(OrcidMessage orcidMessage) {
         if (orcidMessage != null && orcidMessage.getOrcidProfile() != null && orcidMessage.getOrcidProfile().getOrcidHistory() != null
-                && orcidMessage.getOrcidProfile().getOrcidHistory().getSource() != null
-                && orcidMessage.getOrcidProfile().getOrcidHistory().getSource().getSourceOrcid() != null) {
-            return orcidMessage.getOrcidProfile().getOrcidHistory().getSource().getSourceOrcid().getPath();
+                && orcidMessage.getOrcidProfile().getOrcidHistory().getSource() != null) {
+            return orcidMessage.getOrcidProfile().getOrcidHistory().getSource().retrieveSourcePath();
         } else {
             return null;
         }
@@ -242,8 +241,8 @@ public class DefaultPermissionChecker implements PermissionChecker {
     public boolean removeUserGrantWriteScopePastValitity(OrcidOauth2TokenDetail tokenDetail) {
         boolean scopeRemoved = false;
         if (tokenDetail != null && tokenDetail.getScope() != null) {
-            //Clean the scope if it is not a persistent token
-            if(!tokenDetail.isPersistent()) {
+            // Clean the scope if it is not a persistent token
+            if (!tokenDetail.isPersistent()) {
                 Set<String> scopes = OAuth2Utils.parseParameterList(tokenDetail.getScope());
                 List<String> removeScopes = new ArrayList<String>();
                 for (String scope : scopes) {
@@ -266,7 +265,7 @@ public class DefaultPermissionChecker implements PermissionChecker {
                     orcidOauthTokenDetailService.saveOrUpdate(tokenDetail);
                     return true;
                 }
-            }            
+            }
         }
         return false;
     }

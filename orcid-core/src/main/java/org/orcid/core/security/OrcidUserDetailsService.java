@@ -65,7 +65,7 @@ public class OrcidUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("Bad username or password");
         }
         if (profile.getPrimaryRecord() != null) {
-        	throw new DeprecatedException("orcid.frontend.security.deprecated_with_primary", profile.getPrimaryRecord().getId(), profile.getId());
+            throw new DeprecatedException("orcid.frontend.security.deprecated_with_primary", profile.getPrimaryRecord().getId(), profile.getId());
         }
         if (!profile.getClaimed()) {
             throw new UnclaimedProfileExistsException("orcid.frontend.security.unclaimed_exists");
@@ -73,21 +73,21 @@ public class OrcidUserDetailsService implements UserDetailsService {
         if (profile.getDeactivationDate() != null) {
             throw new DisabledException("Account not active, please call helpdesk");
         }
-        
+
         String primaryEmail = null;
-        
-        //Clients doesnt have primary email, so, we need to cover that case.
-        if(profile.getPrimaryEmail() != null)
+
+        // Clients doesnt have primary email, so, we need to cover that case.
+        if (profile.getPrimaryEmail() != null)
             primaryEmail = profile.getPrimaryEmail().getId();
 
         OrcidProfileUserDetails userDetails = null;
-        
-        if(profile.getOrcidType() != null){
-        	userDetails = new OrcidProfileUserDetails(profile.getId(), primaryEmail, profile.getEncryptedPassword(), profile.getOrcidType(), profile.getClientType(), profile.getGroupType());
+
+        if (profile.getOrcidType() != null) {
+            userDetails = new OrcidProfileUserDetails(profile.getId(), primaryEmail, profile.getEncryptedPassword(), profile.getOrcidType(), profile.getGroupType());
         } else {
-        	userDetails = new OrcidProfileUserDetails(profile.getId(), primaryEmail, profile.getEncryptedPassword());
+            userDetails = new OrcidProfileUserDetails(profile.getId(), primaryEmail, profile.getEncryptedPassword());
         }
-        
+
         return userDetails;
     }
 

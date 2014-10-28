@@ -107,7 +107,7 @@ public class T2OrcidOAuthApiClientReadPrivateDataIntegrationTest extends DBUnitT
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
-        initDBUnitData(DATA_FILES, null);
+        initDBUnitData(DATA_FILES);
     }
 
     @Before

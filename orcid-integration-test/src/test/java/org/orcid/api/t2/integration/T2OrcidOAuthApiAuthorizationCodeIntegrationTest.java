@@ -39,7 +39,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.orcid.api.common.WebDriverHelper;
 import org.orcid.api.t2.T2OAuthAPIService;
 import org.orcid.core.manager.ClientDetailsManager;
-import org.orcid.core.manager.impl.OrcidSSOManagerImpl;
+import org.orcid.core.manager.OrcidSSOManager;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.Affiliations;
@@ -144,20 +144,21 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     private ProfileDao profileDao;
 
     @Resource
-    OrcidSSOManagerImpl ssoManager;
+    OrcidSSOManager ssoManager;
 
     @Value("${org.orcid.web.base.url:http://localhost:8080/orcid-web}")
     private String webBaseUrl;
 
     private String redirectUri;
 
-    private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml", "/data/ProfileEntityData.xml",
+    private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
+            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml",
             "/data/WorksEntityData.xml", "/data/ProfileWorksEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml",
             "/data/WebhookEntityData.xml");
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
-        initDBUnitData(DATA_FILES, null);
+        initDBUnitData(DATA_FILES);
     }
 
     @Before
@@ -432,7 +433,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         String accessToken = obtainAccessToken(authorizationCode, scopes);
 
         OrcidMessage orcidMessage = new OrcidMessage();
-        orcidMessage.setMessageVersion("1.2_rc5");
+        orcidMessage.setMessageVersion("1.2_rc2");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
         OrcidActivities orcidActivities = new OrcidActivities();
@@ -442,7 +443,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         OrcidWork orcidWork = new OrcidWork();
         orcidWorks.getOrcidWork().add(orcidWork);
         WorkTitle workTitle = new WorkTitle();
-        workTitle.setTitle(new Title("Work added by integration test - Version 1.2_rc5"));
+        workTitle.setTitle(new Title("Work added by integration test - Version 1.2_rc2"));
         orcidWork.setWorkTitle(workTitle);
         orcidWork.setWorkType(WorkType.ARTISTIC_PERFORMANCE);        
 
@@ -518,7 +519,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         String accessToken = obtainAccessToken(authorizationCode, scopes);
 
         OrcidMessage orcidMessage = new OrcidMessage();
-        orcidMessage.setMessageVersion("1.2_rc3");
+        orcidMessage.setMessageVersion("1.2_rc2");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
         OrcidActivities orcidActivities = new OrcidActivities();
@@ -624,7 +625,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         fundings.getFundings().add(funding);
         orcidMessage.getOrcidProfile().getOrcidActivities().setFundings(fundings);
 
-        ClientResponse clientResponse = oauthT2Client1_2_rc2.addFundingXml("4444-4444-4444-4442", orcidMessage, accessToken);
+        ClientResponse clientResponse = oauthT2Client1_2_rc5.addFundingXml("4444-4444-4444-4442", orcidMessage, accessToken);
         assertEquals(201, clientResponse.getStatus());
     }
 
@@ -635,7 +636,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         String accessToken = obtainAccessToken(authorizationCode, scopes);
 
         OrcidMessage orcidMessage = new OrcidMessage();
-        orcidMessage.setMessageVersion("1.2_rc3");
+        orcidMessage.setMessageVersion("1.2_rc2");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
         OrcidActivities orcidActivities = new OrcidActivities();
@@ -813,7 +814,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         String accessToken = obtainAccessToken(authorizationCode, scopes);
 
         OrcidMessage orcidMessage = new OrcidMessage();
-        orcidMessage.setMessageVersion("1.2_rc3");
+        orcidMessage.setMessageVersion("1.2_rc2");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
         OrcidActivities orcidActivities = new OrcidActivities();

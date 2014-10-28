@@ -48,9 +48,8 @@ public class CustomEmailManagerTest extends BaseTest {
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
-        initDBUnitData(
-                Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SubjectEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml"),
-                null);
+        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SubjectEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
+                "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml"));
     }
 
     @Before
@@ -60,9 +59,8 @@ public class CustomEmailManagerTest extends BaseTest {
 
     @AfterClass
     public static void removeDBUnitData() throws Exception {
-        removeDBUnitData(
-                Arrays.asList("/data/ClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/SubjectEntityData.xml", "/data/SecurityQuestionEntityData.xml"),
-                null);
+        removeDBUnitData(Arrays.asList("/data/ClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/SubjectEntityData.xml",
+                "/data/SecurityQuestionEntityData.xml"));
     }
 
     @Test
@@ -144,7 +142,7 @@ public class CustomEmailManagerTest extends BaseTest {
         // Check old values
         List<CustomEmailEntity> customEmails = customEmailManager.getCustomEmails("4444-4444-4444-4441");
         assertNotNull(customEmails);
-        assertEquals(1, customEmails.size());        
+        assertEquals(1, customEmails.size());
         // Delete
         customEmailManager.deleteCustomEmail("4444-4444-4444-4441", EmailType.CLAIM);
         // Check it is now empty

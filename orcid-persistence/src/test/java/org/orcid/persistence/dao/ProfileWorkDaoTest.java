@@ -50,14 +50,14 @@ public class ProfileWorkDaoTest extends DBUnitTest {
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
-        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml",
-                "/data/ProfileWorksEntityData.xml"), null);
+        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml",
+                "/data/ProfileWorksEntityData.xml"));
     }
 
     @AfterClass
     public static void removeDBUnitData() throws Exception {
         removeDBUnitData(Arrays.asList("/data/ProfileWorksEntityData.xml", "/data/WorksEntityData.xml", "/data/ProfileEntityData.xml",
-                "/data/SecurityQuestionEntityData.xml"), null);
+                "/data/SecurityQuestionEntityData.xml"));
     }
 
     @Before

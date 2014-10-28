@@ -70,7 +70,7 @@ public class NotificationEntity extends BaseEntity<Long> implements ProfileAware
     private Date readDate;
     private Date archivedDate;
     private boolean sendable;
-    private ProfileEntity source;
+    private SourceEntity source;
 
     @Override
     @Id
@@ -167,13 +167,11 @@ public class NotificationEntity extends BaseEntity<Long> implements ProfileAware
         this.sendable = sendable;
     }
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "source_id")
-    public ProfileEntity getSource() {
+    public SourceEntity getSource() {
         return source;
     }
 
-    public void setSource(ProfileEntity source) {
+    public void setSource(SourceEntity source) {
         this.source = source;
     }
 

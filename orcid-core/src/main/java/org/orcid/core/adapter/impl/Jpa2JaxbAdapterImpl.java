@@ -66,10 +66,12 @@ import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.SourceAware;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkExternalIdentifierEntity;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.NullUtils;
+import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -142,18 +144,16 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         profile.setPassword(profileEntity.getEncryptedPassword());
         profile.setSecurityQuestionAnswer(profileEntity.getEncryptedSecurityAnswer());
         profile.setType(type == null ? OrcidType.USER : type);
-        profile.setClientType(profileEntity.getClientType());
         profile.setGroupType(profileEntity.getGroupType());
         profile.setVerificationCode(profileEntity.getEncryptedVerificationCode());
         return profile;
     }
 
     @Override
-    public OrcidClient toOrcidClient(ProfileEntity profileEntity) {
+    public OrcidClient toOrcidClient(ClientDetailsEntity clientDetailsEntity) {
         OrcidClient client = new OrcidClient();
-        client.setClientId(profileEntity.getId());
-        client.setType(profileEntity.getClientType());
-        ClientDetailsEntity clientDetailsEntity = profileEntity.getClientDetails();
+        client.setClientId(clientDetailsEntity.getId());
+        client.setType(clientDetailsEntity.getClientType());
         if (clientDetailsEntity != null) {
             client.setClientSecret(clientDetailsEntity.getClientSecretForJpa());
             client.setDisplayName(clientDetailsEntity.getClientName());
@@ -187,8 +187,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         for (EmailEntity emailEntity : emailEntities) {
             group.setEmail(emailEntity.getId());
         }
-        for (ProfileEntity clientProfileEntity : profileEntity.getClientProfiles()) {
-            OrcidClient client = toOrcidClient(clientProfileEntity);
+        for (ClientDetailsEntity clientDetailsEntity : profileEntity.getClients()) {
+            OrcidClient client = toOrcidClient(clientDetailsEntity);
             group.getOrcidClient().add(client);
         }
         return group;
@@ -251,7 +251,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return orcidDeprecated;
     }
 
-    private OrcidIdBase getOrcidIdBase(String id) {
+    @Override
+    public OrcidIdBase getOrcidIdBase(String id) {
         OrcidIdBase orcidId = new OrcidIdBase();
         String correctedBaseUri = baseUri.replace("https", "http");
         try {
@@ -259,6 +260,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             orcidId.setHost(uri.getHost());
         } catch (URISyntaxException e) {
             throw new RuntimeException("Error parsing base uri", e);
+        }
+        if (OrcidStringUtils.isClientId(id)) {
+            correctedBaseUri += "/client";
         }
         orcidId.setUri(correctedBaseUri + "/" + id);
         orcidId.setPath(id);
@@ -523,35 +527,23 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
      * @return the source of the object
      * */
     private Source getSource(SourceAware sourceAwareEntity) {
-        ProfileEntity sourceEntity = sourceAwareEntity.getSource();
+        SourceEntity sourceEntity = sourceAwareEntity.getSource();
         if (sourceEntity == null) {
             return null;
         }
-        Source source = new Source(sourceEntity.getId());
-
-        // Set the source name
-        // If it is a client, lets use the source_name if it is public
-        if (OrcidType.CLIENT.equals(sourceEntity.getOrcidType())) {
-            ClientDetailsEntity clientDetails = sourceEntity.getClientDetails();
-            if (clientDetails != null) {
-                source.setSourceName(new SourceName(clientDetails.getClientName()));
-            } else {
-                // This should never happen since the client name in
-                // client_details must not be empty
-                source.setSourceName(new SourceName(sourceEntity.getCreditName()));
-            }
-
+        Source source = new Source();
+        ClientDetailsEntity sourceClient = sourceEntity.getSourceClient();
+        if (sourceClient != null && !OrcidStringUtils.isValidOrcid(sourceClient.getClientId())) {
+            source.setSourceClientId(new SourceClientId(getOrcidIdBase(sourceClient.getClientId())));
         } else {
-            // If it is a user, check if it have a credit name and is visible
-            if (!StringUtils.isEmpty(sourceEntity.getCreditName()) && Visibility.PUBLIC.equals(sourceEntity.getCreditNameVisibility())) {
-                source.setSourceName(new SourceName(sourceEntity.getCreditName()));
-            } else {
-                // If it doesnt, lets use the give name + family name
-                String name = sourceEntity.getGivenNames() + (StringUtils.isEmpty(sourceEntity.getFamilyName()) ? "" : " " + sourceEntity.getFamilyName());
-                source.setSourceName(new SourceName(name));
-            }
+            source.setSourceOrcid(new SourceOrcid(getOrcidIdBase(sourceEntity.getSourceId())));
+        }
+        String sourceName = sourceEntity.getSourceName();
+        if (StringUtils.isNotBlank(sourceName)) {
+            source.setSourceName(new SourceName(sourceName));
         }
         if (sourceAwareEntity instanceof BaseEntity) {
+            @SuppressWarnings("rawtypes")
             Date createdDate = ((BaseEntity) sourceAwareEntity).getDateCreated();
             source.setSourceDate(new SourceDate(DateUtils.convertToXMLGregorianCalendar(createdDate)));
         }
@@ -622,8 +614,17 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         if (externalIdentifierEntities != null) {
             for (ExternalIdentifierEntity externalIdentifierEntity : externalIdentifierEntities) {
                 ExternalIdentifier externalIdentifier = new ExternalIdentifier();
-                ProfileEntity externalIdEntity = externalIdentifierEntity.getExternalIdSource();
-                externalIdentifier.setExternalIdSource(externalIdEntity != null ? new ExternalIdSource(getOrcidIdBase(externalIdEntity.getId())) : null);
+                SourceEntity sourceEntity = externalIdentifierEntity.getSource();
+                if (sourceEntity != null) {
+                    Source source = new Source();
+                    String sourceId = sourceEntity.getSourceId();
+                    if (OrcidStringUtils.isValidOrcid(sourceId)) {
+                        source.setSourceOrcid(new SourceOrcid(getOrcidIdBase(sourceEntity.getSourceId())));
+                    } else {
+                        source.setSourceClientId(new SourceClientId(getOrcidIdBase(sourceEntity.getSourceId())));
+                    }
+                    externalIdentifier.setSource(source);
+                }
                 externalIdentifier.setExternalIdReference(StringUtils.isNotBlank(externalIdentifierEntity.getExternalIdReference()) ? new ExternalIdReference(
                         externalIdentifierEntity.getExternalIdReference()) : null);
                 externalIdentifier.setExternalIdCommonName(StringUtils.isNotBlank(externalIdentifierEntity.getExternalIdCommonName()) ? new ExternalIdCommonName(
@@ -706,9 +707,14 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 email.setCurrent(emailEntity.getCurrent());
                 email.setVerified(emailEntity.getVerified());
                 email.setVisibility(emailEntity.getVisibility());
-                ProfileEntity source = emailEntity.getSource();
+                SourceEntity source = emailEntity.getSource();
                 if (source != null) {
-                    email.setSource(source.getId());
+                    ClientDetailsEntity sourceClient = source.getSourceClient();
+                    if (sourceClient != null) {
+                        email.setSourceClientId(sourceClient.getClientId());
+                    } else {
+                        email.setSource(source.getSourceId());
+                    }
                 }
                 emailList.add(email);
             }
@@ -748,13 +754,19 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }
 
     private Source getSponsor(ProfileEntity profileEntity) {
-        ProfileEntity sponsorProfileEntity = profileEntity.getSource();
-        if (sponsorProfileEntity != null) {
+        SourceEntity sourceEntity = profileEntity.getSource();
+        if (sourceEntity != null) {
             Source sponsor = new Source();
-            SourceName sponsorName = new SourceName(createName(sponsorProfileEntity));
-            SourceOrcid sponsorOrcid = StringUtils.isNotBlank(sponsorProfileEntity.getId()) ? new SourceOrcid(getOrcidIdBase(sponsorProfileEntity.getId())) : null;
+            SourceName sponsorName = new SourceName(sourceEntity.getSourceName());
             sponsor.setSourceName(sponsorName);
-            sponsor.setSourceOrcid(sponsorOrcid);
+            ClientDetailsEntity sourceClient = sourceEntity.getSourceClient();
+            if (sourceClient != null && !OrcidStringUtils.isValidOrcid(sourceClient.getClientId())) {
+                SourceClientId sourceClientId = new SourceClientId(getOrcidIdBase(sourceClient.getId()));
+                sponsor.setSourceClientId(sourceClientId);
+            } else {
+                SourceOrcid sponsorOrcid = StringUtils.isNotBlank(sourceEntity.getSourceId()) ? new SourceOrcid(getOrcidIdBase(sourceEntity.getSourceId())) : null;
+                sponsor.setSourceOrcid(sponsorOrcid);
+            }
             return sponsor;
         }
         return null;
@@ -776,8 +788,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                     ApplicationSummary applicationSummary = new ApplicationSummary();
                     ClientDetailsEntity acceptedClient = tokenDetail.getClientDetailsEntity();
 
-                    ProfileEntity acceptedClientProfileEntity = acceptedClient != null ? acceptedClient.getProfileEntity() : null;
-                    if (acceptedClientProfileEntity != null) {
+                    if (acceptedClient != null) {
                         applicationSummary.setApplicationOrcid(new ApplicationOrcid(getOrcidIdBase(acceptedClient.getClientId())));
 
                         // Set the name application name
@@ -787,9 +798,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                         applicationSummary.setApprovalDate(new ApprovalDate(DateUtils.convertToXMLGregorianCalendar(tokenDetail.getDateCreated())));
 
                         // add group information
-                        if (acceptedClientProfileEntity.getGroupProfile() != null) {
-                            applicationSummary.setApplicationGroupOrcid(new ApplicationOrcid(profileEntity.getGroupOrcid()));
-                            applicationSummary.setApplicationGroupName(new ApplicationName(acceptedClientProfileEntity.getGroupProfile().getCreditName()));
+                        if (acceptedClient.getGroupProfile() != null) {
+                            applicationSummary.setApplicationGroupOrcid(new ApplicationOrcid(acceptedClient.getGroupProfile().getId()));
+                            applicationSummary.setApplicationGroupName(new ApplicationName(acceptedClient.getGroupProfile().getCreditName()));
                         }
 
                         // Scopes
@@ -828,7 +839,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         orcidWork.setWorkCitation(getWorkCitation(work));
         orcidWork.setWorkContributors(getWorkContributors(profileWorkEntity));
         orcidWork.setWorkExternalIdentifiers(getWorkExternalIdentifiers(work));
-        orcidWork.setWorkSource(getWorkSource(profileWorkEntity));
+        orcidWork.setSource(getSource(profileWorkEntity));
         orcidWork.setWorkTitle(getWorkTitle(work));
         orcidWork.setJournalTitle(StringUtils.isNotBlank(work.getJournalTitle()) ? new Title(work.getJournalTitle()) : null);
         orcidWork.setLanguageCode(normalizeLanguageCode(work.getLanguageCode()));
@@ -885,50 +896,18 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }
 
     private WorkSource getWorkSource(ProfileWorkEntity profileWorkEntity) {
-        if (profileWorkEntity == null || profileWorkEntity.getSourceProfile() == null) {
+        if (profileWorkEntity == null || profileWorkEntity.getSource() == null) {
             return null;
         }
-        ProfileEntity sourceProfile = profileWorkEntity.getSourceProfile();
-
-        WorkSource workSource = new WorkSource(getOrcidIdBase(sourceProfile.getId()));
-
-        String sourceName = createName(sourceProfile);
-
+        SourceEntity sourceEntity = profileWorkEntity.getSource();
+        String sourceId = sourceEntity.getSourceId();
+        if (!OrcidStringUtils.isValidOrcid(sourceId)) {
+            return null;
+        }
+        WorkSource workSource = new WorkSource(getOrcidIdBase(sourceId));
+        String sourceName = sourceEntity.getSourceName();
         workSource.setSourceName(sourceName);
-
         return workSource;
-    }
-
-    static public String createName(ProfileEntity sourceProfile) {
-        String sourceName;
-        // Set the source name
-        // If it is a client, use the client_name from the client_details table
-        if (OrcidType.CLIENT.equals(sourceProfile.getOrcidType())) {
-            ClientDetailsEntity clientDetails = sourceProfile.getClientDetails();
-            if (clientDetails != null) {
-                sourceName = clientDetails.getClientName();
-            } else {
-                // This should never happen since the client name in
-                // client_details must not be empty
-                sourceName = sourceProfile.getCreditName();
-            }
-        } else {
-            // If it is a user, check if it have a credit name and is visible
-            if (!StringUtils.isEmpty(sourceProfile.getCreditName()) && Visibility.PUBLIC.equals(sourceProfile.getCreditNameVisibility())) {
-                sourceName = sourceProfile.getCreditName();
-            } else {
-                // If it doesnt, lets use the give name + family name
-                sourceName = sourceProfile.getGivenNames() + (StringUtils.isEmpty(sourceProfile.getFamilyName()) ? "" : " " + sourceProfile.getFamilyName());
-            }
-        }
-        return sourceName;
-    }
-
-    private SourceDate getSourceDate(Date depositedDate) {
-        if (depositedDate == null) {
-            return null;
-        }
-        return new SourceDate(toXMLGregorianCalendar(depositedDate));
     }
 
     private WorkExternalIdentifiers getWorkExternalIdentifiers(WorkEntity work) {
@@ -1066,8 +1045,6 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     private OrcidInternal getOrcidInternal(ProfileEntity profileEntity) {
         OrcidInternal orcidInternal = new OrcidInternal();
 
-        orcidInternal.setGroupOrcidIdentifier(new OrcidIdentifier(getOrcidIdBase(profileEntity.getGroupOrcid())));
-
         SecurityDetails securityDetails = new SecurityDetails();
         orcidInternal.setSecurityDetails(securityDetails);
         securityDetails.setEncryptedPassword(profileEntity.getEncryptedPassword() != null ? new EncryptedPassword(profileEntity.getEncryptedPassword()) : null);
@@ -1090,13 +1067,13 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         preferences.setDeveloperToolsEnabled(new DeveloperToolsEnabled(profileEntity.getEnableDeveloperTools()));
 
         preferences.setNotificationsEnabled(profileEntity.getEnableNotifications());
-        
+
         if (profileEntity.getReferredBy() != null) {
             orcidInternal.setReferredBy(new ReferredBy(getOrcidIdBase(profileEntity.getReferredBy())));
         }
 
-        orcidInternal.setSalesforceId(profileEntity.getSalesforeId() == null? null : new SalesforceId(profileEntity.getSalesforeId()));
-        
+        orcidInternal.setSalesforceId(profileEntity.getSalesforeId() == null ? null : new SalesforceId(profileEntity.getSalesforeId()));
+
         return orcidInternal;
     }
 

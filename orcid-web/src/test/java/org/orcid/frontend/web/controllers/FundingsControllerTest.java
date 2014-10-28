@@ -65,17 +65,17 @@ import com.google.common.collect.Lists;
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml", "classpath:orcid-frontend-web-servlet.xml" })
 @Transactional(propagation = Propagation.REQUIRES_NEW)
 public class FundingsControllerTest extends BaseControllerTest {
-    private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml", "/data/ProfileEntityData.xml",
-            "/data/WorksEntityData.xml", "/data/ProfileWorksEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml",
-            "/data/WebhookEntityData.xml");
+    private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
+            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ProfileWorksEntityData.xml",
+            "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml", "/data/WebhookEntityData.xml");
 
     @Mock
     private LocaleManager localeManager;
-         
+
     @Mock
     private HttpServletRequest servletRequest;
-    
-    @Resource    
+
+    @Resource
     FundingsController fundingController;
 
     @Resource
@@ -89,7 +89,7 @@ public class FundingsControllerTest extends BaseControllerTest {
         if (orcidProfile.getType() != null) {
             details = new OrcidProfileUserDetails(orcidProfile.getOrcidIdentifier().getPath(), orcidProfile.getOrcidBio().getContactDetails().getEmail().get(0)
                     .getValue(), orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedPassword().getContent(), orcidProfile.getType(),
-                    orcidProfile.getClientType(), orcidProfile.getGroupType());
+                    orcidProfile.getGroupType());
         } else {
             details = new OrcidProfileUserDetails(orcidProfile.getOrcidIdentifier().getPath(), orcidProfile.getOrcidBio().getContactDetails().getEmail().get(0)
                     .getValue(), orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedPassword().getContent());
@@ -99,10 +99,10 @@ public class FundingsControllerTest extends BaseControllerTest {
     }
 
     @Before
-    public void initMocks() {        
+    public void initMocks() {
         fundingController.setLocaleManager(localeManager);
     }
-    
+
     @Before
     public void init() {
         assertNotNull(fundingController);
@@ -110,23 +110,24 @@ public class FundingsControllerTest extends BaseControllerTest {
 
     @BeforeClass
     public static void beforeClass() throws Exception {
-        initDBUnitData(DATA_FILES, null);
+        initDBUnitData(DATA_FILES);
     }
 
     @AfterClass
     public static void afterClass() throws Exception {
-        removeDBUnitData(Lists.reverse(DATA_FILES), null);
+        removeDBUnitData(Lists.reverse(DATA_FILES));
     }
 
-    @Test   
+    @Test
     public void testValidateAmountLocaleEN_US() {
-        when(localeManager.getLocale()).thenReturn(new Locale("en","US"));
+        when(localeManager.getLocale()).thenReturn(new Locale("en", "US"));
         String validAmounts[] = { "1", "10", "100", "1000", "10000", "100000", "1000000", "10000000", "10000000", "1.0", "1.00", "10.0", "10.00", "100.0", "100.00",
                 "1000.0", "1000.00", "1,000", "1,000.0", "1,000.00", "10,000", "100,000", "1,000,000", "10,000,000", "100,000,000", "100,000,000.0", "100,000,000.00",
-                "1,000,000,000", "1,000,000,000.0", "1,000,000,000.00", "10,000,000,000", "10,000,000.99"};
-        String invalidAmounts[] = {"a",".","1 000","1 000 000","1,000 000","1 000,000","1'000","1'000'000","1'000.0","1'000.00","$1000","$100","1.000.000", "1.000,00"};
-                        
-        for (String amount : validAmounts) {            
+                "1,000,000,000", "1,000,000,000.0", "1,000,000,000.00", "10,000,000,000", "10,000,000.99" };
+        String invalidAmounts[] = { "a", ".", "1 000", "1 000 000", "1,000 000", "1 000,000", "1'000", "1'000'000", "1'000.0", "1'000.00", "$1000", "$100", "1.000.000",
+                "1.000,00" };
+
+        for (String amount : validAmounts) {
             FundingForm form = new FundingForm();
             form.setAmount(Text.valueOf(amount));
             form.setCurrencyCode(Text.valueOf("USD"));
@@ -135,26 +136,26 @@ public class FundingsControllerTest extends BaseControllerTest {
             assertNotNull(form.getAmount().getErrors());
             assertEquals("The following number has been marked as invalid: " + amount, 0, form.getAmount().getErrors().size());
         }
-        
+
         for (String amount : invalidAmounts) {
             FundingForm form = new FundingForm();
             form.setAmount(Text.valueOf(amount));
             form.setCurrencyCode(Text.valueOf("USD"));
             form = fundingController.validateAmount(form);
             assertNotNull(form.getAmount());
-            assertEquals("The following incorrect number has been marked as valid: " + amount, 1, form.getAmount().getErrors().size());            
+            assertEquals("The following incorrect number has been marked as valid: " + amount, 1, form.getAmount().getErrors().size());
         }
     }
-    
+
     @Test
     public void testVAlidateAmountLocaleDE_CH() {
-        when(localeManager.getLocale()).thenReturn(new Locale("de","CH"));
+        when(localeManager.getLocale()).thenReturn(new Locale("de", "CH"));
         String validAmounts[] = { "1", "10", "100", "1000", "10000", "100000", "1000000", "10000000", "10000000", "1.0", "1.00", "10.0", "10.00", "100.0", "100.00",
                 "1000.0", "1000.00", "1'000", "1'000.0", "1'000.00", "10'000", "100'000", "1'000'000", "10'000'000", "100'000'000", "100'000'000.0", "100'000'000.00",
-                "1'000'000'000", "1'000'000'000.0", "1'000'000'000.00", "10'000'000'000", "10'000'000.99"};
-        String invalidAmounts[] = {"a",".","1 000","1 000 000","1,000 000","1 000,000","1,000","1,000,000","1,000.0","1,000.00","$1000","$100"};
-                        
-        for (String amount : validAmounts) {            
+                "1'000'000'000", "1'000'000'000.0", "1'000'000'000.00", "10'000'000'000", "10'000'000.99" };
+        String invalidAmounts[] = { "a", ".", "1 000", "1 000 000", "1,000 000", "1 000,000", "1,000", "1,000,000", "1,000.0", "1,000.00", "$1000", "$100" };
+
+        for (String amount : validAmounts) {
             FundingForm form = new FundingForm();
             form.setAmount(Text.valueOf(amount));
             form.setCurrencyCode(Text.valueOf("USD"));
@@ -163,26 +164,27 @@ public class FundingsControllerTest extends BaseControllerTest {
             assertNotNull(form.getAmount().getErrors());
             assertEquals("The following number has been marked as invalid: " + amount, 0, form.getAmount().getErrors().size());
         }
-        
+
         for (String amount : invalidAmounts) {
             FundingForm form = new FundingForm();
             form.setAmount(Text.valueOf(amount));
             form.setCurrencyCode(Text.valueOf("USD"));
-            form = fundingController.validateAmount(form);            
+            form = fundingController.validateAmount(form);
             assertNotNull(form.getAmount());
-            assertEquals("The following incorrect number has been marked as valid: " + amount, 1, form.getAmount().getErrors().size());            
+            assertEquals("The following incorrect number has been marked as valid: " + amount, 1, form.getAmount().getErrors().size());
         }
     }
-    
-    @Test   
+
+    @Test
     public void testValidateAmountLocaleRU() {
         when(localeManager.getLocale()).thenReturn(new Locale("ru"));
         String validAmounts[] = { "1", "10", "100", "1000", "10000", "100000", "1000000", "10000000", "10000000", "1,0", "1,00", "10,0", "10,00", "100,0", "100,00",
                 "1000,0", "1000,00", "1 000", "1 000,0", "1 000,00", "10 000", "100 000", "1 000 000", "10 000 000", "100 000 000", "100 000 000,0", "100 000 000,00",
-                "1 000 000 000", "1 000 000 000,0", "1 000 000 000,00", "10 000 000 000", "10 000 000,99"};
-        String invalidAmounts[] = {"a",".","1,000,000","1,000.000","1 000.000","1'000","1'000'000","1'000.0","1'000.00","$1000","$100","1.000.000", "1.000,00","1 000 000.0","1 000 000.00"};
-                        
-        for (String amount : validAmounts) {            
+                "1 000 000 000", "1 000 000 000,0", "1 000 000 000,00", "10 000 000 000", "10 000 000,99" };
+        String invalidAmounts[] = { "a", ".", "1,000,000", "1,000.000", "1 000.000", "1'000", "1'000'000", "1'000.0", "1'000.00", "$1000", "$100", "1.000.000",
+                "1.000,00", "1 000 000.0", "1 000 000.00" };
+
+        for (String amount : validAmounts) {
             FundingForm form = new FundingForm();
             form.setAmount(Text.valueOf(amount));
             form.setCurrencyCode(Text.valueOf("USD"));
@@ -191,62 +193,62 @@ public class FundingsControllerTest extends BaseControllerTest {
             assertNotNull(form.getAmount().getErrors());
             assertEquals("The following number has been marked as invalid: " + amount, 0, form.getAmount().getErrors().size());
         }
-        
+
         for (String amount : invalidAmounts) {
             FundingForm form = new FundingForm();
             form.setAmount(Text.valueOf(amount));
             form.setCurrencyCode(Text.valueOf("USD"));
             form = fundingController.validateAmount(form);
             assertNotNull(form.getAmount());
-            assertEquals("The following incorrect number has been marked as valid: " + amount, 1, form.getAmount().getErrors().size());            
+            assertEquals("The following incorrect number has been marked as valid: " + amount, 1, form.getAmount().getErrors().size());
         }
     }
-    
+
     /**
      * Validate amounts of form ###,###,###.##
      * */
     @Test
     public void validateBigDecimalConversionLocaleUS_EN() {
-        when(localeManager.getLocale()).thenReturn(new Locale("en","US"));
+        when(localeManager.getLocale()).thenReturn(new Locale("en", "US"));
         BigDecimal _100000 = new BigDecimal(100000);
         BigDecimal _1000 = new BigDecimal(1000);
         BigDecimal _1000_99 = new BigDecimal(1000.99).setScale(2, RoundingMode.FLOOR);
-        BigDecimal _1 = new BigDecimal(1);                
-        String amounts100000[] = {"100000","100000.0","100000.00","100,000","100,000.0","100,000.00"};
-        String amounts1000[] = { "1000","1,000","1000.0","1000.00","1,000.0","1,000.00" };
-        String amounts1000_99[] = {"1000.99","1,000.99"};
+        BigDecimal _1 = new BigDecimal(1);
+        String amounts100000[] = { "100000", "100000.0", "100000.00", "100,000", "100,000.0", "100,000.00" };
+        String amounts1000[] = { "1000", "1,000", "1000.0", "1000.00", "1,000.0", "1,000.00" };
+        String amounts1000_99[] = { "1000.99", "1,000.99" };
         String amounts1[] = { "1", "1.0", "1.00", "1.000" };
-        
-        for (String amount : amounts100000) {            
+
+        for (String amount : amounts100000) {
             try {
-                BigDecimal result = fundingController.getAmountAsBigDecimal(amount);                
+                BigDecimal result = fundingController.getAmountAsBigDecimal(amount);
                 assertEquals("Amount is: " + result + " but it should be: " + _100000, _100000, result);
             } catch (Exception e) {
                 fail("Amount: " + amount + " couldn't parsed to: " + _100000);
             }
         }
-        
+
         for (String amount : amounts1000) {
             try {
-                BigDecimal result = fundingController.getAmountAsBigDecimal(amount);                
+                BigDecimal result = fundingController.getAmountAsBigDecimal(amount);
                 assertEquals("Amount is: " + result + " but it should be: " + _1000, _1000, result);
             } catch (Exception e) {
                 fail("Amount: " + amount + " couldn't parsed to: " + _1000);
             }
         }
-        
-        for(String amount : amounts1000_99) {
+
+        for (String amount : amounts1000_99) {
             try {
-                BigDecimal result = fundingController.getAmountAsBigDecimal(amount);   
+                BigDecimal result = fundingController.getAmountAsBigDecimal(amount);
                 assertEquals("Amount is: " + result + " but it should be: " + _1000_99, _1000_99, result);
             } catch (Exception e) {
                 fail("Amount: " + amount + " couldn't parsed to: " + _1000_99);
             }
         }
-        
+
         for (String amount : amounts1) {
             try {
-                BigDecimal result = fundingController.getAmountAsBigDecimal(amount);                
+                BigDecimal result = fundingController.getAmountAsBigDecimal(amount);
                 assertEquals("Amount is: " + result + " but it should be: " + _1, _1, result);
             } catch (Exception e) {
                 fail("Amount: " + amount + " couldn't parsed to: " + _1);
@@ -257,89 +259,37 @@ public class FundingsControllerTest extends BaseControllerTest {
     /**
      * Validate amounts of form ###'###'###.##
      * */
-    @Test    
+    @Test
     public void validateBigDecimalConversionLocaleDE_CH() {
-        when(localeManager.getLocale()).thenReturn(new Locale("de","CH"));
+        when(localeManager.getLocale()).thenReturn(new Locale("de", "CH"));
         BigDecimal _100000 = new BigDecimal(100000);
         BigDecimal _1000 = new BigDecimal(1000);
         BigDecimal _1000_99 = new BigDecimal(1000.99).setScale(2, RoundingMode.FLOOR);
         BigDecimal _1 = new BigDecimal(1);
-        String amounts100000[] = {"100000","100'000.0","100'000.00","100'000"};
-        String amounts1000[] = { "1000","1'000","1000.0","1000.00","1'000.0","1'000.00"};
-        String amounts1000_99[] = {"1000.99","1'000.99"};
+        String amounts100000[] = { "100000", "100'000.0", "100'000.00", "100'000" };
+        String amounts1000[] = { "1000", "1'000", "1000.0", "1000.00", "1'000.0", "1'000.00" };
+        String amounts1000_99[] = { "1000.99", "1'000.99" };
         String amounts1[] = { "1", "1.0", "1.00", "1.000" };
-        
-        for (String amount : amounts100000) {            
+
+        for (String amount : amounts100000) {
             try {
-                BigDecimal result = fundingController.getAmountAsBigDecimal(amount);                
+                BigDecimal result = fundingController.getAmountAsBigDecimal(amount);
                 assertEquals("Amount is: " + result + " but it should be: " + _100000, _100000, result);
             } catch (Exception e) {
                 fail("Amount: " + amount + " couldn't parsed to: " + _100000);
             }
         }
-        
+
         for (String amount : amounts1000) {
             try {
-                BigDecimal result = fundingController.getAmountAsBigDecimal(amount);    
+                BigDecimal result = fundingController.getAmountAsBigDecimal(amount);
                 assertEquals("Amount is: " + result + " but it should be: " + _1000, _1000, result);
             } catch (Exception e) {
                 fail("Amount: " + amount + " couldn't parsed to: " + _1000);
             }
         }
-        
-        for(String amount : amounts1000_99) {
-            try {
-                BigDecimal result = fundingController.getAmountAsBigDecimal(amount);                
-                assertEquals("Amount is: " + result + " but it should be: " + _1000_99, _1000_99, result);
-            } catch (Exception e) {
-                fail("Amount: " + amount + " couldn't parsed to: " + _1000_99);
-            }
-        }
-        
-        for (String amount : amounts1) {
-            try {
-                BigDecimal result = fundingController.getAmountAsBigDecimal(amount);                
-                assertEquals("Amount is: " + result + " but it should be: " + _1, _1, result);
-            } catch (Exception e) {
-                fail("Amount: " + amount + " couldn't parsed to: " + _1);
-            }
-        }
-    }
-    
-    /**
-     * Validate amounts of form ### ### ###,##
-     * */
-    @Test    
-    public void validateBigDecimalConversionLocaleRU() {
-        when(localeManager.getLocale()).thenReturn(new Locale("ru"));
-        BigDecimal _100000 = new BigDecimal(100000);
-        BigDecimal _1000 = new BigDecimal(1000);
-        BigDecimal _1000_99 = new BigDecimal(1000.99).setScale(2, RoundingMode.FLOOR);
-        BigDecimal _1 = new BigDecimal(1);
-        String amounts100000[] = {"100000","100 000,0","100 000,00","100 000"};
-        String amounts1000[] = { "1000","1 000","1000,0","1000,00","1 000,0","1 000,00"};
-        String amounts1000_99[] = {"1000,99","1 000,99"};
-        String amounts1[] = { "1", "1,0", "1,00", "1,000" };
-        
-        for (String amount : amounts100000) {            
-            try {
-                BigDecimal result = fundingController.getAmountAsBigDecimal(amount);                
-                assertEquals("Amount is: " + result + " but it should be: " + _100000, _100000, result);
-            } catch (Exception e) {
-                fail("Amount: " + amount + " couldn't parsed to: " + _100000);
-            }
-        }
-        
-        for (String amount : amounts1000) {
-            try {
-                BigDecimal result = fundingController.getAmountAsBigDecimal(amount);                
-                assertEquals("Amount is: " + result + " but it should be: " + _1000, _1000, result);
-            } catch (Exception e) {
-                fail("Amount: " + amount + " couldn't parsed to: " + _1000);
-            }
-        }
-        
-        for(String amount : amounts1000_99) {
+
+        for (String amount : amounts1000_99) {
             try {
                 BigDecimal result = fundingController.getAmountAsBigDecimal(amount);
                 assertEquals("Amount is: " + result + " but it should be: " + _1000_99, _1000_99, result);
@@ -347,31 +297,83 @@ public class FundingsControllerTest extends BaseControllerTest {
                 fail("Amount: " + amount + " couldn't parsed to: " + _1000_99);
             }
         }
-        
+
         for (String amount : amounts1) {
             try {
-                BigDecimal result = fundingController.getAmountAsBigDecimal(amount);                
+                BigDecimal result = fundingController.getAmountAsBigDecimal(amount);
                 assertEquals("Amount is: " + result + " but it should be: " + _1, _1, result);
             } catch (Exception e) {
                 fail("Amount: " + amount + " couldn't parsed to: " + _1);
             }
         }
     }
-    
+
+    /**
+     * Validate amounts of form ### ### ###,##
+     * */
+    @Test
+    public void validateBigDecimalConversionLocaleRU() {
+        when(localeManager.getLocale()).thenReturn(new Locale("ru"));
+        BigDecimal _100000 = new BigDecimal(100000);
+        BigDecimal _1000 = new BigDecimal(1000);
+        BigDecimal _1000_99 = new BigDecimal(1000.99).setScale(2, RoundingMode.FLOOR);
+        BigDecimal _1 = new BigDecimal(1);
+        String amounts100000[] = { "100000", "100 000,0", "100 000,00", "100 000" };
+        String amounts1000[] = { "1000", "1 000", "1000,0", "1000,00", "1 000,0", "1 000,00" };
+        String amounts1000_99[] = { "1000,99", "1 000,99" };
+        String amounts1[] = { "1", "1,0", "1,00", "1,000" };
+
+        for (String amount : amounts100000) {
+            try {
+                BigDecimal result = fundingController.getAmountAsBigDecimal(amount);
+                assertEquals("Amount is: " + result + " but it should be: " + _100000, _100000, result);
+            } catch (Exception e) {
+                fail("Amount: " + amount + " couldn't parsed to: " + _100000);
+            }
+        }
+
+        for (String amount : amounts1000) {
+            try {
+                BigDecimal result = fundingController.getAmountAsBigDecimal(amount);
+                assertEquals("Amount is: " + result + " but it should be: " + _1000, _1000, result);
+            } catch (Exception e) {
+                fail("Amount: " + amount + " couldn't parsed to: " + _1000);
+            }
+        }
+
+        for (String amount : amounts1000_99) {
+            try {
+                BigDecimal result = fundingController.getAmountAsBigDecimal(amount);
+                assertEquals("Amount is: " + result + " but it should be: " + _1000_99, _1000_99, result);
+            } catch (Exception e) {
+                fail("Amount: " + amount + " couldn't parsed to: " + _1000_99);
+            }
+        }
+
+        for (String amount : amounts1) {
+            try {
+                BigDecimal result = fundingController.getAmountAsBigDecimal(amount);
+                assertEquals("Amount is: " + result + " but it should be: " + _1, _1, result);
+            } catch (Exception e) {
+                fail("Amount: " + amount + " couldn't parsed to: " + _1);
+            }
+        }
+    }
+
     @Test
     public void testGetFundings() {
         HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);
-        when(localeManager.getLocale()).thenReturn(new Locale("us","EN"));
-        
+        when(localeManager.getLocale()).thenReturn(new Locale("us", "EN"));
+
         List<String> fundingIds = fundingController.getFundingsJson(servletRequest);
-        assertNotNull(fundingIds);        
+        assertNotNull(fundingIds);
 
         assertTrue(fundingIds.contains("1"));
         assertTrue(fundingIds.contains("2"));
         assertTrue(fundingIds.contains("3"));
     }
-    
+
     @Test
     @Rollback(true)
     public void testAddFundingWithoutAmount() {
@@ -387,7 +389,7 @@ public class FundingsControllerTest extends BaseControllerTest {
         funding.setCity(Text.valueOf("SJ"));
         funding.setRegion(Text.valueOf("SJ"));
         funding.setFundingName(Text.valueOf("OrgName"));
-        
+
         try {
             FundingForm result = fundingController.postFunding(funding);
             assertEquals(funding.getFundingTitle().getTitle(), result.getFundingTitle().getTitle());
@@ -398,11 +400,11 @@ public class FundingsControllerTest extends BaseControllerTest {
             assertEquals(funding.getCountry(), result.getCountry());
             assertNotNull(funding.getErrors());
             assertEquals(0, funding.getErrors().size());
-        } catch(Exception e) {
+        } catch (Exception e) {
             fail();
         }
     }
-    
+
     @Test
     @Rollback(true)
     public void testAddFunding() {
@@ -433,11 +435,11 @@ public class FundingsControllerTest extends BaseControllerTest {
             BigDecimal expected = fundingController.getAmountAsBigDecimal(funding.getAmount().getValue());
             BigDecimal resulting = fundingController.getAmountAsBigDecimal(result.getAmount().getValue());
             assertEquals(expected, resulting);
-        } catch(Exception e) {
+        } catch (Exception e) {
             fail();
         }
     }
-    
+
     @Test
     public void testAddAmountWithoutCurrencyCode() {
         HttpSession session = mock(HttpSession.class);
@@ -462,15 +464,15 @@ public class FundingsControllerTest extends BaseControllerTest {
         } catch (Exception e) {
             fail();
         }
-        
+
     }
-        
+
     @Test
     public void getFunding() {
         HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);
-        when(localeManager.getLocale()).thenReturn(new Locale("us","EN"));
-        
+        when(localeManager.getLocale()).thenReturn(new Locale("us", "EN"));
+
         FundingForm funding = fundingController.getFundingJson("1");
         assertNotNull(funding);
         assertNotNull(funding.getFundingTitle());
@@ -481,28 +483,28 @@ public class FundingsControllerTest extends BaseControllerTest {
         assertFalse(PojoUtil.isEmpty(funding.getAmount()));
         assertEquals("2,500", funding.getAmount().getValue());
         assertFalse(PojoUtil.isEmpty(funding.getCurrencyCode()));
-        assertEquals("USD", funding.getCurrencyCode().getValue());        
+        assertEquals("USD", funding.getCurrencyCode().getValue());
     }
-    
+
     @Test
     @Rollback(true)
     public void testEditFunding() {
         HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);
-        when(localeManager.getLocale()).thenReturn(new Locale("us","EN"));
-        
+        when(localeManager.getLocale()).thenReturn(new Locale("us", "EN"));
+
         FundingForm funding = fundingController.getFundingJson("1");
         funding.getFundingTitle().getTitle().setValue("Grant # 1 - updated");
         TranslatedTitle translatedTitle = new TranslatedTitle();
         translatedTitle.setContent("Grant # 1 - translated title");
         translatedTitle.setLanguageCode("en");
-        funding.getFundingTitle().setTranslatedTitle(translatedTitle);        
+        funding.getFundingTitle().setTranslatedTitle(translatedTitle);
         funding.getAmount().setValue("3500");
         funding.getCurrencyCode().setValue("CRC");
-        
+
         try {
             fundingController.postFunding(funding);
-            //Fetch the funding again
+            // Fetch the funding again
             FundingForm updated = fundingController.getFundingJson("1");
             assertNotNull(updated);
             assertNotNull(updated.getFundingTitle());
@@ -515,35 +517,35 @@ public class FundingsControllerTest extends BaseControllerTest {
             assertFalse(PojoUtil.isEmpty(updated.getAmount()));
             assertEquals("3,500", updated.getAmount().getValue());
             assertFalse(PojoUtil.isEmpty(updated.getCurrencyCode()));
-            assertEquals("CRC", updated.getCurrencyCode().getValue()); 
+            assertEquals("CRC", updated.getCurrencyCode().getValue());
         } catch (Exception e) {
             fail();
         }
     }
-    
+
     @Test
     @Rollback(true)
     public void testEditOrgOnExistingFunding() {
         HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);
-        when(localeManager.getLocale()).thenReturn(new Locale("us","EN"));
-        
+        when(localeManager.getLocale()).thenReturn(new Locale("us", "EN"));
+
         FundingForm funding = fundingController.getFundingJson("1");
-        //Check old org
+        // Check old org
         assertEquals("London", funding.getCity().getValue());
         assertEquals("GB", funding.getCountry().getValue());
-        //Update org
+        // Update org
         funding.getCity().setValue("San Jose");
         funding.getCountry().setValue("CR");
-        
+
         try {
             fundingController.postFunding(funding);
-            //Fetch the funding again
+            // Fetch the funding again
             FundingForm updated = fundingController.getFundingJson("1");
             assertNotNull(updated);
-            //Check new org
+            // Check new org
             assertEquals("San Jose", funding.getCity().getValue());
-            assertEquals("CR", funding.getCountry().getValue()); 
+            assertEquals("CR", funding.getCountry().getValue());
         } catch (Exception e) {
             fail();
         }

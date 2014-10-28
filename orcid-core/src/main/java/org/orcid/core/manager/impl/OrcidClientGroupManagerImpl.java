@@ -52,6 +52,7 @@ import org.orcid.jaxb.model.message.SalesforceId;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
@@ -83,6 +84,9 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
     private ClientDetailsManager clientDetailsManager;
 
     @Resource
+    private ClientDetailsDao clientDetailsDao;
+
+    @Resource
     private EncryptionManager encryptionManager;
        
     @Override
@@ -92,13 +96,13 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         // Use the profile DAO to link the clients to the group, so get the
         // group profile entity.
         ProfileEntity groupProfileEntity = profileDao.find(groupOrcid);
-        SortedSet<ProfileEntity> clientProfileEntities = groupProfileEntity.getClientProfiles();
-        if (clientProfileEntities == null) {
-            clientProfileEntities = new TreeSet<ProfileEntity>(new OrcidEntityIdComparator<String>());
-            groupProfileEntity.setClientProfiles(clientProfileEntities);
+        SortedSet<ClientDetailsEntity> clientDetailsEntities = groupProfileEntity.getClients();
+        if (clientDetailsEntities == null) {
+            clientDetailsEntities = new TreeSet<>(new OrcidEntityIdComparator<String>());
+            groupProfileEntity.setClients(clientDetailsEntities);
         }
 
-        processClient(groupOrcid, clientProfileEntities, orcidClient, getClientType(groupProfileEntity.getGroupType()));
+        processClient(groupOrcid, clientDetailsEntities, orcidClient, getClientType(groupProfileEntity.getGroupType()));
 
         OrcidClientGroup group = retrieveOrcidClientGroup(groupOrcid);
 
@@ -154,10 +158,10 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         // Use the profile DAO to link the clients to the group, so get the
         // group profile entity.
         ProfileEntity groupProfileEntity = profileDao.find(groupOrcid);
-        SortedSet<ProfileEntity> clientProfileEntities = groupProfileEntity.getClientProfiles();
+        SortedSet<ClientDetailsEntity> clientProfileEntities = groupProfileEntity.getClients();
         if (clientProfileEntities == null) {
-            clientProfileEntities = new TreeSet<ProfileEntity>(new OrcidEntityIdComparator<String>());
-            groupProfileEntity.setClientProfiles(clientProfileEntities);
+            clientProfileEntities = new TreeSet<>(new OrcidEntityIdComparator<String>());
+            groupProfileEntity.setClients(clientProfileEntities);
         }
         // For each client in the client group
         for (OrcidClient client : orcidClientGroup.getOrcidClient()) {
@@ -187,17 +191,17 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
 
         return orcidClientGroup;
     }
-    
+
     /**
-     * Updates an existing group profile. 
-     * If the group doesnt exists it will throw a OrcidClientGroupManagementException
+     * Updates an existing group profile. If the group doesnt exists it will
+     * throw a OrcidClientGroupManagementException
      * 
      * @param orcidClientGroup
-     *          The group to be updated
+     *            The group to be updated
      * */
     public void updateGroup(OrcidClientGroup orcidClientGroup) {
         String groupOrcid = orcidClientGroup.getGroupOrcid();
-        //If the incoming client group ORCID is not null, then lookup the
+        // If the incoming client group ORCID is not null, then lookup the
         // existing client group.
         ProfileEntity groupProfileEntity = profileDao.find(groupOrcid);
         if (groupProfileEntity == null) {
@@ -210,19 +214,19 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
             // profile DAO
             if (!orcidClientGroup.getEmail().equals(groupProfileEntity.getPrimaryEmail().getId())) {
                 EmailEntity primaryEmailEntity = new EmailEntity();
-                primaryEmailEntity.setId(orcidClientGroup.getEmail().toLowerCase().trim());                    
+                primaryEmailEntity.setId(orcidClientGroup.getEmail().toLowerCase().trim());
                 primaryEmailEntity.setCurrent(true);
                 primaryEmailEntity.setVerified(true);
                 groupProfileEntity.setGroupType(orcidClientGroup.getType());
                 primaryEmailEntity.setVisibility(Visibility.PRIVATE);
-                groupProfileEntity.setPrimaryEmail(primaryEmailEntity);                    
+                groupProfileEntity.setPrimaryEmail(primaryEmailEntity);
             }
             groupProfileEntity.setCreditName(orcidClientGroup.getGroupName());
             groupProfileEntity.setSalesforeId(orcidClientGroup.getSalesforceId());
             profileDao.merge(groupProfileEntity);
         }
     }
-    
+
     /**
      * If the client type is set, check if the client type matches the types
      * that the group is allowed to add. If the client type is null, assig it
@@ -265,36 +269,21 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
      * @return the new OrcidClient
      * */
     public OrcidClient createAndPersistClientProfile(String groupOrcid, OrcidClient client) throws OrcidClientGroupManagementException {
-        ProfileEntity groupProfileEntity = profileDao.find(groupOrcid);
-        // Sets the client type
-        setClientType(groupProfileEntity.getGroupType(), client);
         if (!isAllowedToAddNewClient(groupOrcid))
-            throw new OrcidClientGroupManagementException("Your contract allow you to have only 1 client.");
-        // Create a new client profile for the orcidClient.
-        OrcidProfile clientProfile = createClientProfile(client);
-        clientProfile = orcidProfileManager.createOrcidProfile(clientProfile);
-        // Now the client profile has been created, use the profile DAO
-        // to link it to the group.
-        ProfileEntity clientProfileEntity = profileDao.find(clientProfile.getOrcidIdentifier().getPath());
-        clientProfileEntity.setGroupOrcid(groupOrcid);
-        profileDao.merge(clientProfileEntity);
-        // And link the client to the copy of the profile cached in
-        // memory by Hibernate
-        // Use the profile DAO to link the clients to the group, so get the
-        // group profile entity.
-        SortedSet<ProfileEntity> clientProfileEntities = groupProfileEntity.getClientProfiles();
-        if (clientProfileEntities == null) {
-            clientProfileEntities = new TreeSet<ProfileEntity>(new OrcidEntityIdComparator<String>());
-            groupProfileEntity.setClientProfiles(clientProfileEntities);
-        }
-        clientProfileEntities.add(clientProfileEntity);
+            throw new OrcidClientGroupManagementException("Your contract allows you to have only 1 client.");
+        ProfileEntity groupProfileEntity = profileDao.find(groupOrcid);
+        checkAndSetClientType(client, groupProfileEntity.getGroupType());
         // Use the client details service to create the client details
-        ClientDetailsEntity clientDetailsEntity = createClientDetails(clientProfile.getOrcidIdentifier().getPath(), client, client.getType());
-        // And put the client details into the copy of the profile
-        // entity cached in memory by Hibernate.
-        clientProfileEntity.setClientDetails(clientDetailsEntity);
-
-        return adapter.toOrcidClient(clientProfileEntity);
+        ClientDetailsEntity clientDetailsEntity = createClientDetails(groupOrcid, client, client.getType());
+        // Link the client to the copy of the profile cached in
+        // memory by Hibernate
+        SortedSet<ClientDetailsEntity> clientProfileEntities = groupProfileEntity.getClients();
+        if (clientProfileEntities == null) {
+            clientProfileEntities = new TreeSet<>(new OrcidEntityIdComparator<String>());
+            groupProfileEntity.setClients(clientProfileEntities);
+        }
+        clientProfileEntities.add(clientDetailsEntity);
+        return adapter.toOrcidClient(clientDetailsEntity);
     }
 
     /**
@@ -355,44 +344,33 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
      *            The updated client
      * @return the updated OrcidClient
      * */
-    public OrcidClient updateClientProfile(String groupOrcid, OrcidClient client) {
-        ProfileEntity clientProfileEntity = null;
+    public OrcidClient updateClient(String groupOrcid, OrcidClient client) {
+        ClientDetailsEntity clientDetailsEntity = null;
         if (client.getClientId() != null) {
             // Look up the existing client.
             String clientId = client.getClientId();
-            clientProfileEntity = profileDao.find(clientId);
-            if (clientProfileEntity == null) {
+            clientDetailsEntity = clientDetailsDao.find(clientId);
+            if (clientDetailsEntity == null) {
                 // If the existing client can't be found then raise an
                 // error.
-                throw new OrcidClientGroupManagementException("Unable to find client profile: " + clientId);
+                throw new OrcidClientGroupManagementException("Unable to find client: " + clientId);
             } else {
-                if (clientProfileEntity.getClientType() == null) {
-                    // If profile exists with for the client ID, but is not
-                    // of client type, then raise an error.
-                    throw new OrcidClientGroupManagementException("ORCID exists but is not a client: " + clientId);
-                }
-                if (!clientProfileEntity.getGroupOrcid().equals(groupOrcid)) {
+                if (!clientDetailsEntity.getGroupProfile().getId().equals(groupOrcid)) {
                     // If client belongs to another group, then raise an
                     // error.
                     throw new OrcidClientGroupManagementException(String.format("Client %s does not belong to group %s (actually belongs to group %s)", clientId,
-                            groupOrcid, clientProfileEntity.getGroupOrcid()));
+                            groupOrcid, clientDetailsEntity.getGroupProfile().getId()));
                 }
-
                 // If the existing client is found, then update the client
-                // details from the incoming client, and save using the profile
-                // DAO.
-                profileDao.removeChildrenWithGeneratedIds(clientProfileEntity);
-                updateProfileEntityFromClient(client, clientProfileEntity, true);
-                profileDao.merge(clientProfileEntity);
-                clientDetailsManager.updateLastModified(clientProfileEntity.getId());
+                // details from the incoming client, and save using the client
+                // details manager
+                updateClientDetailsEntityFromClient(client, clientDetailsEntity, true);
+                clientDetailsManager.merge(clientDetailsEntity);
             }
-
         }
-
-        return adapter.toOrcidClient(clientProfileEntity);
+        return adapter.toOrcidClient(clientDetailsEntity);
     }
-    
-    
+
     /**
      * Updates a client profile, updates can be adding or removing redirect uris
      * or updating the client fields
@@ -401,96 +379,69 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
      *            The updated client
      * @return the updated OrcidClient
      * */
-    public OrcidClient updateClientProfile(OrcidClient client) {
-        ProfileEntity clientProfileEntity = null;
+    public OrcidClient updateClient(OrcidClient client) {
+        ClientDetailsEntity clientDetailsEntity = null;
         if (client.getClientId() != null) {
             // Look up the existing client.
             String clientId = client.getClientId();
-            clientProfileEntity = profileDao.find(clientId);
-            if (clientProfileEntity == null) {
+            clientDetailsEntity = clientDetailsDao.find(clientId);
+            if (clientDetailsEntity == null) {
                 // If the existing client can't be found then raise an
                 // error.
-                throw new OrcidClientGroupManagementException("Unable to find client profile: " + clientId);
+                throw new OrcidClientGroupManagementException("Unable to find client: " + clientId);
             } else {
-                if (clientProfileEntity.getClientType() == null) {
-                    // If profile exists with for the client ID, but is not
-                    // of client type, then raise an error.
-                    throw new OrcidClientGroupManagementException("ORCID exists but is not a client: " + clientId);
-                }                
-
                 // If the existing client is found, then update the client
-                // details from the incoming client, and save using the profile
-                // DAO.
-                profileDao.removeChildrenWithGeneratedIds(clientProfileEntity);
-                updateProfileEntityFromClient(client, clientProfileEntity, true);
-                profileDao.merge(clientProfileEntity);
-                clientDetailsManager.updateLastModified(clientProfileEntity.getId());
+                // details from the incoming client, and save using the
+                // client details manager.
+                updateClientDetailsEntityFromClient(client, clientDetailsEntity, true);
+                clientDetailsManager.merge(clientDetailsEntity);
             }
-
         }
+        return adapter.toOrcidClient(clientDetailsEntity);
+    }
 
-        return adapter.toOrcidClient(clientProfileEntity);
-    }  
-        
     /**
      * Get a client and evaluates if it is new or it is an update and act
      * accordingly.
      * 
      * @param groupOrcid
      *            The client owner
-     * @param clientProfileEntities
-     *            The cached list of profiles
+     * @param clientDetailsEntities
+     *            The cached list of clients
      * @param client
      *            The client that is being evaluated
      * @param clientType
      *            The type of client
      * */
-    private void processClient(String groupOrcid, SortedSet<ProfileEntity> clientProfileEntities, OrcidClient client, ClientType clientType) {
+    private void processClient(String groupOrcid, SortedSet<ClientDetailsEntity> clientDetailsEntities, OrcidClient client, ClientType clientType) {
         if (client.getClientId() == null) {
             // If the client ID in the incoming client is null, then create
-            // a new client profile.
-            OrcidProfile clientProfile = createClientProfile(client);
-            clientProfile = orcidProfileManager.createOrcidProfile(clientProfile);
-            // Now the client profile has been created, use the profile DAO
-            // to link it to the group.
-            ProfileEntity clientProfileEntity = profileDao.find(clientProfile.getOrcidIdentifier().getPath());
-            clientProfileEntity.setGroupOrcid(groupOrcid);
-            profileDao.merge(clientProfileEntity);
+            // a new client.
+            // Use the client details service to create the client details
+            ClientDetailsEntity clientDetailsEntity = createClientDetails(groupOrcid, client, clientType);
             // And link the client to the copy of the profile cached in
             // memory by Hibernate
-            clientProfileEntities.add(clientProfileEntity);
-            // Use the client details service to create the client details
-            ClientDetailsEntity clientDetailsEntity = createClientDetails(clientProfile.getOrcidIdentifier().getPath(), client, clientType);
-            // And put the client details into the copy of the profile
-            // entity cached in memory by Hibernate.
-            clientProfileEntity.setClientDetails(clientDetailsEntity);
+            clientDetailsEntities.add(clientDetailsEntity);
         } else {
             // If the client ID in the incoming client is not null, then
             // look up the existing client.
             String clientId = client.getClientId();
-            ProfileEntity clientProfileEntity = profileDao.find(clientId);
-            if (clientProfileEntity == null) {
+            ClientDetailsEntity clientDetailsEntity = clientDetailsManager.findByClientId(clientId);
+            if (clientDetailsEntity == null) {
                 // If the existing client can't be found then raise an
                 // error.
-                throw new OrcidClientGroupManagementException("Unable to find client profile: " + clientId);
+                throw new OrcidClientGroupManagementException("Unable to find client: " + clientId);
             } else {
-                if (clientProfileEntity.getClientType() == null) {
-                    // If profile exists with for the client ID, but is not
-                    // of client type, then raise an error.
-                    throw new OrcidClientGroupManagementException("ORCID exists but is not a client: " + clientId);
-                }
-                if (!clientProfileEntity.getGroupOrcid().equals(groupOrcid)) {
+                if (!clientDetailsEntity.getGroupProfile().getId().equals(groupOrcid)) {
                     // If client belongs to another group, then raise an
                     // error.
                     throw new OrcidClientGroupManagementException(String.format("Client %s does not belong to group %s (actually belongs to group %s)", clientId,
-                            groupOrcid, clientProfileEntity.getGroupOrcid()));
+                            groupOrcid, clientDetailsEntity.getGroupProfile().getId()));
                 }
                 // If the existing client is found, then update the client
-                // details from the incoming client, and save using the profile
-                // DAO.
-                profileDao.removeChildrenWithGeneratedIds(clientProfileEntity);
-                updateProfileEntityFromClient(client, clientProfileEntity, true);                 
-                profileDao.merge(clientProfileEntity);                
+                // details from the incoming client
+                updateClientDetailsEntityFromClient(client, clientDetailsEntity, true);
+                clientDetailsManager.merge(clientDetailsEntity);
             }
         }
     }
@@ -501,14 +452,13 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
      * 
      * @param client
      *            The OrcidClient that contains the new information
-     * @param clientProfileEntity
+     * @param clientDetailsEntity
      *            The client profile entity that will be updated
      * @param isUpdate
      *            Indicates if this will be an update or is a new client
      * */
-    private void updateProfileEntityFromClient(OrcidClient client, ProfileEntity clientProfileEntity, boolean isUpdate) {
-        clientProfileEntity.setClientType(client.getType());
-        ClientDetailsEntity clientDetailsEntity = clientProfileEntity.getClientDetails();
+    private void updateClientDetailsEntityFromClient(OrcidClient client, ClientDetailsEntity clientDetailsEntity, boolean isUpdate) {
+        clientDetailsEntity.setClientType(client.getType());
         clientDetailsEntity.setClientName(client.getDisplayName());
         clientDetailsEntity.setClientDescription(client.getShortDescription());
         clientDetailsEntity.setClientWebsite(client.getWebsite());
@@ -520,17 +470,17 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         redirectUrisToAdd.addAll(client.getRedirectUris().getRedirectUri());
         for (RedirectUri redirectUri : redirectUrisToAdd) {
             String rUriKey = ClientRedirectUriEntity.getUriAndTypeKey(redirectUri);
-            //If there is a redirect uri with the same uri
+            // If there is a redirect uri with the same uri
             if (clientRedirectUriEntitiesMap.containsKey(rUriKey)) {
-                //Check if it have the same scope and update it
-                //If it doesnt have the same scope
+                // Check if it have the same scope and update it
+                // If it doesnt have the same scope
                 ClientRedirectUriEntity existingEntity = clientRedirectUriEntitiesMap.get(rUriKey);
-                //Update the scopes
+                // Update the scopes
                 List<ScopePathType> clientPredefinedScopes = redirectUri.getScope();
                 if (clientPredefinedScopes != null) {
                     existingEntity.setPredefinedClientScope(ScopePathType.getScopesAsSingleString(clientPredefinedScopes));
                 }
-                //Add to the list
+                // Add to the list
                 clientRedirectUriEntities.add(existingEntity);
             } else {
                 ClientRedirectUriEntity clientRedirectUriEntity = new ClientRedirectUriEntity(redirectUri.getValue(), clientDetailsEntity);
@@ -578,33 +528,18 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         Email primaryEmail = new Email(orcidClientGroup.getEmail());
         primaryEmail.setVisibility(Visibility.PRIVATE);
         primaryEmail.setVerified(true);
-        contactDetails.addOrReplacePrimaryEmail(primaryEmail);  
-        
-        if(!PojoUtil.isEmpty(orcidClientGroup.getSalesforceId())) {
+        contactDetails.addOrReplacePrimaryEmail(primaryEmail);
+
+        if (!PojoUtil.isEmpty(orcidClientGroup.getSalesforceId())) {
             OrcidInternal orcidInternal = new OrcidInternal();
             orcidInternal.setSalesforceId(new SalesforceId(orcidClientGroup.getSalesforceId()));
-            orcidProfile.setOrcidInternal(orcidInternal);    
-        }        
-        
+            orcidProfile.setOrcidInternal(orcidInternal);
+        }
+
         return orcidProfile;
     }
 
-    private OrcidProfile createClientProfile(OrcidClient orcidClient) {
-        OrcidProfile orcidProfile = new OrcidProfile();
-        orcidProfile.setType(OrcidType.CLIENT);
-        orcidProfile.setClientType(orcidClient.getType());
-        OrcidHistory orcidHistory = new OrcidHistory();
-        orcidProfile.setOrcidHistory(orcidHistory);
-        orcidHistory.setClaimed(new Claimed(true));
-        orcidHistory.setSubmissionDate(new SubmissionDate(DateUtils.convertToXMLGregorianCalendar(new Date())));
-        OrcidBio orcidBio = new OrcidBio();
-        orcidProfile.setOrcidBio(orcidBio);
-        PersonalDetails personalDetails = new PersonalDetails();
-        orcidBio.setPersonalDetails(personalDetails);               
-        return orcidProfile;
-    }
-
-    private ClientDetailsEntity createClientDetails(String orcid, OrcidClient orcidClient, ClientType clientType) {
+    private ClientDetailsEntity createClientDetails(String groupOrcid, OrcidClient orcidClient, ClientType clientType) {
         Set<String> clientResourceIds = new HashSet<String>();
         clientResourceIds.add("orcid");
         Set<String> clientAuthorizedGrantTypes = new HashSet<String>();
@@ -621,9 +556,9 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         String name = orcidClient.getDisplayName();
         String description = orcidClient.getShortDescription();
         String website = orcidClient.getWebsite();
-        
-        ClientDetailsEntity clientDetails = clientDetailsManager.createClientDetails(orcid, name, description, website, createScopes(clientType), clientResourceIds, clientAuthorizedGrantTypes,
-                redirectUrisToAdd, clientGrantedAuthorities);
+
+        ClientDetailsEntity clientDetails = clientDetailsManager.createClientDetails(groupOrcid, name, description, website, clientType, createScopes(clientType),
+                clientResourceIds, clientAuthorizedGrantTypes, redirectUrisToAdd, clientGrantedAuthorities);
         return clientDetails;
     }
 
@@ -662,7 +597,8 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         return new HashSet<>(ScopePathType.getScopesAsStrings(ScopePathType.AFFILIATIONS_CREATE, ScopePathType.AFFILIATIONS_READ_LIMITED,
                 ScopePathType.AFFILIATIONS_UPDATE, ScopePathType.AUTHENTICATE, ScopePathType.FUNDING_CREATE, ScopePathType.FUNDING_READ_LIMITED,
                 ScopePathType.FUNDING_UPDATE, ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE, ScopePathType.ORCID_BIO_READ_LIMITED, ScopePathType.ORCID_BIO_UPDATE,
-                ScopePathType.ORCID_PROFILE_READ_LIMITED, ScopePathType.ORCID_WORKS_CREATE, ScopePathType.ORCID_WORKS_READ_LIMITED, ScopePathType.ORCID_WORKS_UPDATE, ScopePathType.READ_PUBLIC));
+                ScopePathType.ORCID_PROFILE_READ_LIMITED, ScopePathType.ORCID_WORKS_CREATE, ScopePathType.ORCID_WORKS_READ_LIMITED, ScopePathType.ORCID_WORKS_UPDATE,
+                ScopePathType.READ_PUBLIC));
     }
 
     /**

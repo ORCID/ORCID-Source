@@ -19,6 +19,7 @@ package org.orcid.core.manager;
 import java.util.List;
 import java.util.Set;
 
+import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
@@ -29,13 +30,12 @@ public interface ClientDetailsManager extends ClientDetailsService {
      * This to assist in the creation of clients from the automated client
      * creation process.
      * 
-     * @param orcid
-     *            the ORCID that will be the owner of this client. Each client
-     *            can have one, and one only profile associated with it
+     * @param groupOrcid
+     *            the ORCID that will be the owner of this client.
      * @param name
-     *          The client name
+     *            The client name
      * @param description
-     *          The client description          
+     *            The client description
      * @param clientScopes
      *            the scopes that this client can request
      * @param clientResourceIds
@@ -51,20 +51,20 @@ public interface ClientDetailsManager extends ClientDetailsService {
      *            only "ROLE_CLIENT"
      * @return
      */
-    ClientDetailsEntity createClientDetails(String orcid, String name, String description, String website, Set<String> clientScopes, Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes,
-            Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities);
+    ClientDetailsEntity createClientDetails(String groupOrcid, String name, String description, String website, ClientType clientType, Set<String> clientScopes,
+            Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes, Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities);
 
     /**
      * Creates a new {@link ClientDetailsEntity} using the component parts, and
      * not the underyling entity directly.
      * 
-     * @param orcid
+     * @param groupOrcid
      *            the ORCID that will be the owner of this client. Each client
      *            can have one, and one only profile associated with it
      * @param name
-     *          The client name
+     *            The client name
      * @param description
-     *          The client description 
+     *            The client description
      * @param clientId
      *            the client id that will be used to retrieve this entity from
      *            the database
@@ -85,8 +85,9 @@ public interface ClientDetailsManager extends ClientDetailsService {
      *            only "ROLE_CLIENT"
      * @return
      */
-    ClientDetailsEntity createClientDetails(String orcid, String name, String description, String website, String clientId, String clientSecret, Set<String> clientScopes, Set<String> clientResourceIds,
-            Set<String> clientAuthorizedGrantTypes, Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities);
+    ClientDetailsEntity createClientDetails(String groupOrcid, String name, String description, String website, String clientId, String clientSecret,
+            ClientType clientType, Set<String> clientScopes, Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes,
+            Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities);
 
     /**
      * Create new {@link ClientDetailsEntity} using the entity object
@@ -107,36 +108,38 @@ public interface ClientDetailsManager extends ClientDetailsService {
      */
     void deleteClientDetail(String clientId);
 
-    
     ClientDetailsEntity findByClientId(String orcid);
 
     void removeByClientId(String clientId);
 
     void persist(ClientDetailsEntity clientDetails);
 
-    public void addClientRedirectUri(String clientId, String uri);    
-    
+    public void addClientRedirectUri(String clientId, String uri);
+
     ClientDetailsEntity merge(ClientDetailsEntity clientDetails);
-    
+
     void remove(String clientId);
-        
+
     List<ClientDetailsEntity> getAll();
-    
+
     void updateLastModified(String clientId);
-    
+
     /**
-     * Set a new client secret for the specific client and set the other keys as non primaries 
+     * Set a new client secret for the specific client and set the other keys as
+     * non primaries
+     * 
      * @param clientId
      * @param clientSecret
      * @return true if the new key has been added
      * */
     boolean resetClientSecret(String clientId, String clientSecret);
-    
+
     /**
      * Removes all non primary client secret keys
+     * 
      * @param clientId
      * */
     void cleanOldClientKeys();
-    
+
     boolean exists(String cliendId);
 }

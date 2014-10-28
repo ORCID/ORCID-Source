@@ -33,12 +33,11 @@ public class OrcidSocialManagerTest extends BaseTest {
 
     @Resource
     OrcidSocialManager orcidSocialManager;
-    
+
     @BeforeClass
     public static void initDBUnitData() throws Exception {
-        initDBUnitData(
-                Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SubjectEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml"),
-                null);
+        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SubjectEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
+                "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml"));
     }
 
     @Before
@@ -48,20 +47,18 @@ public class OrcidSocialManagerTest extends BaseTest {
 
     @AfterClass
     public static void removeDBUnitData() throws Exception {
-        removeDBUnitData(
-                Arrays.asList("/data/ClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/SubjectEntityData.xml", "/data/SecurityQuestionEntityData.xml"),
-                null);
+        removeDBUnitData(Arrays.asList("/data/ClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/SubjectEntityData.xml",
+                "/data/SecurityQuestionEntityData.xml"));
     }
-    
 
     @Test
     public void testGetTwitterAuthUrl() {
         try {
             String url = orcidSocialManager.getTwitterAuthorizationUrl("4444-4444-4444-4442");
             assertNotNull(url);
-        } catch(Exception e) {
+        } catch (Exception e) {
             fail();
-        }        
+        }
     }
 
 }

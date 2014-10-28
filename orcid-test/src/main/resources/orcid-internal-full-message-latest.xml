@@ -42,11 +42,11 @@
 			<!-- The name of the institution that invited the researcher to register 
 				with ORCID -->
 			<source>
-				<source-orcid>
-					<uri>http://orcid.org/8888-8888-8888-8880</uri>
-					<path>8888-8888-8888-8880</path>
+				<source-client-id>
+					<uri>http://orcid.org/client/APP-5555555555555555</uri>
+					<path>APP-5555555555555555</path>
 					<host>orcid.org</host>
-				</source-orcid>
+				</source-client-id>
 				<source-name>Brown University Library</source-name>
 				<source-date>2012-10-09T15:50:07</source-date>
 			</source>
@@ -95,12 +95,12 @@
 			</keywords>
 			<external-identifiers visibility="public">
 				<external-identifier>
+					<external-id-reference>YH0923</external-id-reference>
 					<external-id-source>
 						<uri>http://orcid.org/8888-8888-8888-8880</uri>
 						<path>8888-8888-8888-8880</path>
 						<host>orcid.org</host>
 					</external-id-source>
-					<external-id-reference>YH0923</external-id-reference>
 				</external-identifier>
 			</external-identifiers>
 			<delegation visibility="private">
@@ -173,6 +173,11 @@
 							<country>US</country>
 						</address>
 					</organization>
+					<source>
+						<source-client-id>
+							<uri>http://orcid.org/client/APP-5555555555555555</uri>
+						</source-client-id>
+					</source>
 				</affiliation>
 				<affiliation visibility="public">
 					<type>employment</type>
@@ -304,6 +309,13 @@
 							</contributor-attributes>
 						</contributor>
 					</work-contributors>
+					<source>
+						<source-client-id>
+							<uri>http://orcid.org/client/APP-5555555555555555</uri>
+							<path>APP-5555555555555555</path>
+							<host>orcid.org</host>
+						</source-client-id>
+					</source>
 				</orcid-work>
 			</orcid-works>
 			<funding-list>

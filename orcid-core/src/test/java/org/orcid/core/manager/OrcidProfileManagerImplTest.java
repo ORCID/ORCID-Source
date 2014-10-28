@@ -80,6 +80,8 @@ import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.SendChangeNotifications;
 import org.orcid.jaxb.model.message.SendOrcidNews;
 import org.orcid.jaxb.model.message.SequenceType;
+import org.orcid.jaxb.model.message.Source;
+import org.orcid.jaxb.model.message.SourceOrcid;
 import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.jaxb.model.message.Subtitle;
 import org.orcid.jaxb.model.message.Title;
@@ -187,7 +189,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         clientDetails.setId(applicationProfile.getOrcidIdentifier().getPath());
         ProfileEntity applicationProfileEntity = profileDao.find(applicationProfile.getOrcidIdentifier().getPath());
         profileDao.refresh(applicationProfileEntity);
-        clientDetails.setProfileEntity(applicationProfileEntity);
+        clientDetails.setGroupProfile(applicationProfileEntity);
         clientDetailsManager.merge(clientDetails);
 
         OrcidOauth2TokenDetail token = new OrcidOauth2TokenDetail();
@@ -483,9 +485,9 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         
         
         //Test using work source
-        WorkSource source = new WorkSource();
-        source.setPath(APPLICATION_ORCID);
-        work1.setWorkSource(source);
+        Source source = new Source();
+        source.setSourceOrcid(new SourceOrcid(APPLICATION_ORCID));
+        work1.setSource(source);
         
         // Add work1 again, since it have a different source, it should be added
         profile.getOrcidActivities().getOrcidWorks().getOrcidWork().add(work1);
@@ -619,8 +621,8 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         workTitle1.setTitle(new Title("Another Title"));
         workTitle1.setSubtitle(new Subtitle("Journal of Cloud Spotting"));
         OrcidWork work1 = createWork1(workTitle1);
-        WorkSource source = new WorkSource(TEST_ORCID);
-        work1.setWorkSource(source);
+        Source source = new Source(TEST_ORCID);
+        work1.setSource(source);
         orcidWorks.getOrcidWork().add(work1);
 
         WorkTitle workTitle2 = new WorkTitle();
@@ -674,8 +676,8 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         workTitle1.setTitle(new Title("Another Title"));
         workTitle1.setSubtitle(new Subtitle("Journal of Cloud Spotting"));
         OrcidWork work1 = createWork1(workTitle1);
-        WorkSource source = new WorkSource(TEST_ORCID);
-        work1.setWorkSource(source);
+        Source source = new Source(TEST_ORCID);
+        work1.setSource(source);
         orcidWorks.getOrcidWork().add(work1);
 
         WorkTitle workTitle2 = new WorkTitle();
@@ -728,8 +730,8 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         workTitle1.setTitle(new Title("Another Title"));
         workTitle1.setSubtitle(new Subtitle("Journal of Cloud Spotting"));
         OrcidWork work1 = createWork1(workTitle1);
-        WorkSource source = new WorkSource(TEST_ORCID);
-        work1.setWorkSource(source);
+        Source source = new Source(TEST_ORCID);
+        work1.setSource(source);
         orcidWorks.getOrcidWork().add(work1);
 
         WorkTitle workTitle2 = new WorkTitle();
@@ -1284,8 +1286,8 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         orcidWork.setWorkTitle(title);
         
         //Set source
-        WorkSource workSource = new WorkSource(TEST_ORCID);
-        orcidWork.setWorkSource(workSource);
+        Source workSource = new Source(TEST_ORCID);
+        orcidWork.setSource(workSource);
         
         //Set external identifiers
         WorkExternalIdentifier extId1 = new WorkExternalIdentifier();

@@ -50,7 +50,7 @@ public class OrgEntity extends BaseEntity<Long> implements Serializable {
     private String region;
     private Iso3166Country country;
     private String url;
-    private ProfileEntity source;
+    private SourceEntity source;
     private OrgDisambiguatedEntity orgDisambiguated;
 
     @Override
@@ -135,13 +135,11 @@ public class OrgEntity extends BaseEntity<Long> implements Serializable {
         this.url = url;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "source_id")
-    public ProfileEntity getSource() {
+    public SourceEntity getSource() {
         return source;
     }
 
-    public void setSource(ProfileEntity source) {
+    public void setSource(SourceEntity source) {
         this.source = source;
     }
 

@@ -8,3 +8,4 @@
 * Restructured all elements containing ORCID number so that they have a child element for each of the full URI, ORCID number, and host (&lt;uri>, &lt;path>, and &lt;host>).
 * Replaced &lt;orcid-id> with &lt;orcid-identifier> (containing &lt;uri>, &lt;path>, and &lt;host>) 
 * Removed &lt;orcid> from &lt;orcid-profile>.
+* Added source-client-id
