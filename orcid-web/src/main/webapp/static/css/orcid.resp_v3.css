@@ -4358,6 +4358,14 @@ ul.sources-edit-list > li{
 	padding: 5px 5px 0 5px;	
 }
 
+ul.sources-edit-list > li:first-of-type{
+	padding-bottom: 5px;
+}
+
+.sources-header div{
+	
+}
+
 .source-active{
 	background: #EEE;
 }

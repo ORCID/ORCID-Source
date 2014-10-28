@@ -19,25 +19,20 @@
 <ul ng-hide="!worksSrvc.groups.length" class="workspace-publications bottom-margin-medium" id="body-work-list" ng-cloak>	
     <li class="bottom-margin-small workspace-border-box card" ng-repeat="group in worksSrvc.groups | orderBy:sortPredicate:sortReverse">    	
     	<div class="work-list-container">
-			<ul class="sources-edit-list">				
-				<li ng-repeat="work in group.activities" ng-show="group.activePutCode == work.putCode.value || editSources[group.groupId] == true" ng-class="{'source-active' : group.activePutCode == work.putCode.value && editSources[group.groupId] == true}">
-					<!-- active row summary info -->
-					<div class="row" ng-show="group.activePutCode == work.putCode.value">
-						<div class="col-md-8 col-sm-8 col-xs-12">
-					    	<h3 class="workspace-title">
-				        		<strong ng-bind="work.workTitle.title.value"></strong><span class="work-subtitle" ng-show="work.workTitle.subtitle.value" ng-bind="':&nbsp;'.concat(work.workTitle.subtitle.value)"></span>		        			        	
-				        	</h3>
-				        	<div ng-show="showBulkEdit == true" class="bulk-edit-input hidden-lg hidden-md hidden-sm pull-right">
-				        		<input type="checkbox" ng-model="bulkEditMap[work.putCode.value]"></input>
-				        	</div>
-				        	<div class="info-detail">
-				        		<span ng-show="work.publicationDate.year">{{work.publicationDate.year}}</span><span ng-show="work.publicationDate.month">-{{work.publicationDate.month}}</span><span ng-show="work.publicationDate.year"> | </span> <span class="uppercase">{{work.workType.value}}</span>		        	
-				        	</div>		                	        
-		        		</div>
-		        	
-			        	<!-- Settings -->
-				        <div class="col-md-4 col-sm-4 col-xs-12 workspace-toolbar">	        	
-				        	<#if !(isPublicProfile??)>
+    		
+			<ul class="sources-edit-list">
+				<li ng-show="editSources[group.groupId] == true" ng- ng-class="{'source-active' : editSources[group.groupId] == true}" ng-model="group.activities">
+					<div class="row sources-header">
+						<div class="col-md-8">
+							<div class="">
+								<strong >Source:</strong>{{}}
+							</div>
+							<div class="">
+								<strong>Last Modified:</strong>
+							</div>
+						</div>
+						<div class="col-md-4">
+							<#if !(isPublicProfile??)>
 				        		<!-- Privacy bar -->
 								<ul class="workspace-private-toolbar">
 									<li ng-show="showBulkEdit" class="hidden-xs bulk-checkbox-item">								
@@ -58,6 +53,27 @@
 					                </li>
 					             </ul>
 					        </#if>
+				        </div>
+					</div>
+				
+				</li>				
+				<li ng-repeat="work in group.activities" ng-show="group.activePutCode == work.putCode.value || editSources[group.groupId] == true">
+					<!-- active row summary info -->
+					<div class="row" ng-show="group.activePutCode == work.putCode.value">
+						<div class="col-md-8 col-sm-8 col-xs-12">
+					    	<h3 class="workspace-title">
+				        		<strong ng-bind="work.workTitle.title.value"></strong><span class="work-subtitle" ng-show="work.workTitle.subtitle.value" ng-bind="':&nbsp;'.concat(work.workTitle.subtitle.value)"></span>		        			        	
+				        	</h3>
+				        	<div ng-show="showBulkEdit == true" class="bulk-edit-input hidden-lg hidden-md hidden-sm pull-right">
+				        		<input type="checkbox" ng-model="bulkEditMap[work.putCode.value]"></input>
+				        	</div>
+				        	<div class="info-detail">
+				        		<span ng-show="work.publicationDate.year">{{work.publicationDate.year}}</span><span ng-show="work.publicationDate.month">-{{work.publicationDate.month}}</span><span ng-show="work.publicationDate.year"> | </span> <span class="uppercase">{{work.workType.value}}</span>		        	
+				        	</div>		                	        
+		        		</div>
+		        	
+			        	<!-- Settings -->
+				        <div class="col-md-4 col-sm-4 col-xs-12 workspace-toolbar">
 					        <#if RequestParameters['combine']??>
 					        	<div ng-show="canBeCombined(work)">
 					            	<a ng-click="showCombineMatches(group.getDefault())">combined duplicates</a>
