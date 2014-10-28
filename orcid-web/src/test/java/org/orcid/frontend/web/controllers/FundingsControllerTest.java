@@ -45,11 +45,12 @@ import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.frontend.web.util.BaseControllerTest;
-import org.orcid.pojo.ajaxForm.TranslatedTitle;
+import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.FundingForm;
 import org.orcid.pojo.ajaxForm.FundingTitleForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
+import org.orcid.pojo.ajaxForm.TranslatedTitle;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.annotation.Rollback;
@@ -377,7 +378,7 @@ public class FundingsControllerTest extends BaseControllerTest {
         HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);
         when(localeManager.getLocale()).thenReturn(new Locale("us","EN"));
-        FundingForm funding = fundingController.getFunding(null);
+        FundingForm funding = fundingController.getFunding();
         funding.setFundingType(Text.valueOf("award"));
         FundingTitleForm title = new FundingTitleForm();
         title.setTitle(Text.valueOf("Title"));
@@ -408,7 +409,7 @@ public class FundingsControllerTest extends BaseControllerTest {
         HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);
         when(localeManager.getLocale()).thenReturn(new Locale("us","EN"));
-        FundingForm funding = fundingController.getFunding(null);
+        FundingForm funding = fundingController.getFunding();
         funding.setFundingType(Text.valueOf("award"));
         FundingTitleForm title = new FundingTitleForm();
         title.setTitle(Text.valueOf("Title"));
@@ -442,7 +443,7 @@ public class FundingsControllerTest extends BaseControllerTest {
         HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);
         when(localeManager.getLocale()).thenReturn(new Locale("us","EN"));
-        FundingForm funding = fundingController.getFunding(null);
+        FundingForm funding = fundingController.getFunding();
         funding.setFundingType(Text.valueOf("award"));
         FundingTitleForm title = new FundingTitleForm();
         title.setTitle(Text.valueOf("Title"));
@@ -546,5 +547,64 @@ public class FundingsControllerTest extends BaseControllerTest {
         } catch (Exception e) {
             fail();
         }
+    }
+    
+    @Test
+    public void testAddFundingWithInvalidDates() throws Exception {
+        FundingForm funding = getFundingForm();
+                
+        //Check valid start date
+        Date startDate = new Date();
+        startDate.setMonth("01");
+        funding.setStartDate(startDate);
+        funding = fundingController.postFunding(funding);
+        assertNotNull(funding);
+        assertNotNull(funding.getErrors());
+        assertEquals(1, funding.getErrors().size());
+        assertEquals(fundingController.getMessage("fundings.dates.invalid"), funding.getErrors().get(0));
+        
+        //Check valid end date
+        funding = getFundingForm();
+        Date endDate = new Date();
+        endDate.setMonth("01");
+        funding.setEndDate(endDate);
+        funding = fundingController.postFunding(funding);
+        assertNotNull(funding);
+        assertNotNull(funding.getErrors());
+        assertEquals(1, funding.getErrors().size());
+        assertEquals(fundingController.getMessage("fundings.dates.invalid"), funding.getErrors().get(0));
+        
+        
+        //Check end date is after start date
+        funding = getFundingForm();
+        
+        startDate = new Date();
+        startDate.setMonth("01");
+        startDate.setYear("2015");
+        
+        endDate = new Date();
+        endDate.setMonth("01");
+        endDate.setYear("2014");
+        
+        funding.setStartDate(startDate);
+        funding.setEndDate(endDate);
+        
+        funding = fundingController.postFunding(funding);
+        assertNotNull(funding);
+        assertNotNull(funding.getErrors());
+        assertEquals(1, funding.getErrors().size());
+        assertEquals(fundingController.getMessage("fundings.endDate.after"), funding.getErrors().get(0));
+    }
+    
+    private FundingForm getFundingForm() {
+        FundingForm funding = fundingController.getFunding();
+        funding.setFundingType(Text.valueOf("award"));
+        funding.setCity(Text.valueOf("city"));
+        funding.setCountry(Text.valueOf("CR"));
+        funding.setFundingName(Text.valueOf("Name"));
+        FundingTitleForm title = new FundingTitleForm();
+        title.setTitle(Text.valueOf("title"));
+        funding.setFundingTitle(title);
+        return funding;
     }
 }

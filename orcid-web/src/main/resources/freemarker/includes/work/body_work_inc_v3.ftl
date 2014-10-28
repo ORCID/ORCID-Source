@@ -19,23 +19,23 @@
 <ul ng-hide="!worksSrvc.groups.length" class="workspace-publications bottom-margin-medium" id="body-work-list" ng-cloak>	
     <li class="bottom-margin-small workspace-border-box card" ng-repeat="group in worksSrvc.groups | orderBy:sortPredicate:sortReverse">    	
     	<div class="work-list-container">
-    		
-			<ul class="sources-edit-list">
+			<ul class="sources-edit-list">				
+				
 				<li ng-show="editSources[group.groupId] == true" ng- ng-class="{'source-active' : editSources[group.groupId] == true}" ng-model="group.activities">
 					<div class="row sources-header">
 						<div class="col-md-8">
 							<div class="">
-								<strong >Source:</strong>{{}}
+								<strong >Source: </strong>{{work.workSourceName.value}}
 							</div>
 							<div class="">
-								<strong>Last Modified:</strong>
+								<strong>Last Modified: </strong>{{work.lastModified | ajaxFormDateToISO8601}}
 							</div>
 						</div>
 						<div class="col-md-4">
 							<#if !(isPublicProfile??)>
 				        		<!-- Privacy bar -->
 								<ul class="workspace-private-toolbar">
-									<li ng-show="showBulkEdit" class="hidden-xs bulk-checkbox-item">								
+									<li ng-show="bulkEditShow" class="hidden-xs bulk-checkbox-item">								
 					        			<input type="checkbox" ng-model="bulkEditMap[work.putCode.value]" class="bulk-edit-input"></input>			        										
 									</li>							
 								 	<li>
@@ -56,7 +56,9 @@
 				        </div>
 					</div>
 				
-				</li>				
+				</li>
+				
+								
 				<li ng-repeat="work in group.activities" ng-show="group.activePutCode == work.putCode.value || editSources[group.groupId] == true">
 					<!-- active row summary info -->
 					<div class="row" ng-show="group.activePutCode == work.putCode.value">
@@ -74,12 +76,20 @@
 		        	
 			        	<!-- Settings -->
 				        <div class="col-md-4 col-sm-4 col-xs-12 workspace-toolbar">
+				        	<!-- Need to validate when it appears or not, fix pending -->
+				        	<@orcid.privacyToggle2 angularModel="work.visibility" 
+										    questionClick="toggleClickPrivacyHelp(work.putCode.value)"
+										    clickedClassCheck="{'popover-help-container-show':privacyHelp[work.putCode.value]==true}"
+											publicClick="worksSrvc.setGroupPrivacy(work.putCode.value, 'PUBLIC', $event)" 
+						                	limitedClick="worksSrvc.setGroupPrivacy(work.putCode.value, 'LIMITED', $event)" 
+						                	privateClick="worksSrvc.setGroupPrivacy(work.putCode.value, 'PRIVATE', $event)"/>
+				        
 					        <#if RequestParameters['combine']??>
 					        	<div ng-show="canBeCombined(work)">
 					            	<a ng-click="showCombineMatches(group.getDefault())">combined duplicates</a>
 					        	</div>
 					        </#if>
-							</div>
+						</div>
 				        </div>
 				        	
 				        <!-- Active Row Identifiers / URL / Validations / Versions -->
@@ -102,37 +112,38 @@
 						<!-- active row  source display -->
 						<div class="row" ng-show="group.activePutCode == work.putCode.value">					 
 							
+							<!-- 
 							<div class="col-md-4">
 								<span>
 									<strong >Source:</strong>{{work.workSourceName.value}}
 								</span>						
 							</div>
-						
-							<div class="col-md-8">						
+						 	-->
+							<div class="col-md-12">						
 								<ul class="sources-options" ng-cloak>
 									<li ng-hide="group.activitiesCount == 1 || editSources[group.groupId] == true">							
 										<span class="view-sources-details">
 										 	<a ng-click="editSources[group.groupId] = !editSources[group.groupId]">View <span class="badge">{{group.activitiesCount - 1 }}</span> additional source<span ng-show="group.activitiesCount > 2">s</span></a>							 	
 										</span>
-										<a ng-click="editSources[group.groupId] = !editSources[group.groupId]" ng-show="!showBulkEdit">
+										<a ng-click="editSources[group.groupId] = !editSources[group.groupId]" ng-show="!bulkEditShow">
 						            	   <span class="glyphicon glyphicon-trash grey"></span>
 						        		</a>
 									</li>
 									<#if !(isPublicProfile??)>
 										<li ng-show="group.activitiesCount == 1">
 											<a ng-click="deleteWorkConfirm(group.getActive().putCode.value, false)">
-							            	   <span class="glyphicon glyphicon-trash grey" ng-show="!showBulkEdit"></span>
+							            	   <span class="glyphicon glyphicon-trash grey" ng-show="!bulkEditShow"></span>
 							               </a>
 										</li>
 								        <li ng-show="editSources[group.groupId] == true">
 								            <a ng-click="deleteWorkConfirm(group.getActive().putCode.value, true)">
-								                <span class="glyphicon glyphicon-trash" ng-show="!showBulkEdit"></span> Delete all
+								                <span class="glyphicon glyphicon-trash" ng-show="!bulkEditShow"></span> Delete all
 								            </a>
 								        </li>
 								    </#if>
 							        <li ng-show="editSources[group.groupId] == true">
 							            <a ng-click="editSources[group.groupId] = false">
-							                <span class="glyphicon glyphicon-remove" ng-show="!showBulkEdit"></span> Hide additional sources
+							                <span class="glyphicon glyphicon-remove" ng-show="!bulkEditShow"></span> Hide additional sources
 							            </a>
 							        </li>
 							        <li class="show-more-info-tab-container">

@@ -29,18 +29,54 @@
 					<span><@spring.message "manage.developer_tools.title"/></span>					
 				</h1>
 				<#if !inDelegationMode || isDelegatedByAdmin>
-					<div class="sso" ng-controller="SSOPreferencesCtrl">
+					<div class="sso-api" ng-controller="SSOPreferencesCtrl">
 						<#if profile.orcidInternal?? && profile.orcidInternal.preferences.developerToolsEnabled?? && profile.orcidInternal.preferences.developerToolsEnabled.value == false>
-							<p><@spring.message "manage.developer_tools.enable.description"/></p>
-							<#if hasVerifiedEmail>
-							   <p><@spring.message "manage.developer_tools.enable.text"/>&nbsp;<a href ng-click="enableDeveloperTools()"><@spring.message "manage.developer_tools.enable_disable.link.text"/></a></p>
-						    <#else>
-						       <@spring.message "manage.developer_tools.please"/> <a ng-click="verifyEmail()"><@spring.message "manage.developer_tools.verify_your_email"/></a> <@spring.message "manage.developer_tools.before_enabling_developers_tools"/>
-						    </#if>												
+							<div class="row">
+								<div class="col-md-12 col-sm-12 col-xs-12">
+									<p><@orcid.msg 'developer_tools.client_types.description' /></p>
+									<ul class="dotted">
+										<li><strong><@orcid.msg 'developer_tools.client_types.description.public.title' /></strong> <@orcid.msg 'developer_tools.client_types.description.public.description' /></li>
+										<li><strong><@orcid.msg 'developer_tools.client_types.description.basic.title' /></strong> <@orcid.msg 'developer_tools.client_types.description.basic.description' /></li>
+										<li><strong><@orcid.msg 'developer_tools.client_types.description.premium.title' /></strong> <@orcid.msg 'developer_tools.client_types.description.premium.description' /></li>
+									</ul>
+									<p><a href="https://orcid.org/about/membership/comparison"><@orcid.msg 'developer_tools.client_types.learn_more' /></a></p>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-12 col-sm-12 col-xs-12">								
+									<h3><@orcid.msg 'developer_tools.api.heading' /></h3>
+									<p><@orcid.msg 'developer_tools.api.description' /></p>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-12 col-sm-12 col-xs-12">								
+									<p><strong><@orcid.msg 'developer_tools.public_member.heading' /></strong></p>									
+									<p><@orcid.msg 'developer_tools.public_member.description' /></p>
+									<ul class="dotted">
+										<#if hasVerifiedEmail>
+											<li><a href ng-click="enableDeveloperTools()"><@orcid.msg 'developer_tools.public_member.turn_on' /></a></li>
+										<#else>
+											<li><a href ng-click="verifyEmail()"><@orcid.msg 'developer_tools.public_member.verify.link' /></a> <@orcid.msg 'developer_tools.public_member.verify.description' /></li>
+										</#if>
+										<li><a href="http://support.orcid.org/knowledgebase/articles/335483"><@orcid.msg 'developer_tools.public_member.read_more' /></a></li>
+									</ul>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-12 col-sm-12 col-xs-12">
+									<p><strong><@orcid.msg 'developer_tools.member_api.heading' /></strong></p>
+									<p><@orcid.msg 'developer_tools.member_api.description' /></p>
+									<ul class="dotted">
+										<li><a href="http://orcid.org/about/membership"><@orcid.msg 'developer_tools.member_api.description.1' /></a></li>
+										<li><a href="http://support.orcid.org/knowledgebase/articles/180285"><@orcid.msg 'developer_tools.member_api.description.2' /></a></li>
+										<li><a href="http://orcid.org/content/register-client-application"><@orcid.msg 'developer_tools.member_api.description.3' /></a></li>
+									</ul>
+								</div>
+							</div>
 						</#if>				
 					</div>
 				<#else>
-					(unavailable to account delegates)
+					<@orcid.msg 'developer_tools.unavailable' />
 				</#if>						
 			<#else>		
 				<!-- Developer public API Applications -->
@@ -56,10 +92,18 @@
 					</div>
 					<div class="row">
 						<div class="col-md-12 col-sm-12 col-xs-12">				
-							<p class="developer-tools-instructions"><@orcid.msg 'manage.developer_tools.view.instructions'/></p>
+							<p><@orcid.msg 'developer_tools.api.description'/></p>
+							<p><a href="https://orcid.org/about/membership/comparison"><@orcid.msg 'developer_tools.api.learn_more'/></a></p>
+							<p><strong><@orcid.msg 'developer_tools.public_member.heading'/></strong></p>
+							<p><@orcid.msg 'developer_tools.public_member.description'/></p>
+							<ul class="dotted">
+								<li>
+									<a href="http://support.orcid.org/knowledgebase/articles/335483"><@orcid.msg 'developer_tools.public_member.read_more'/></a>
+								</li>
+							</ul>							
+							<p class="developer-tools-instructions"></p>
 						</div>
 					</div>
-								
 					<!-- App details -->
 					<div class="details" ng-show="userCredentials.clientSecret && userCredentials.clientSecret.value && !editing" ng-cloak>
 					
@@ -368,8 +412,7 @@
 								</div>	 
 							</div>					
 						</div>				
-					</div>		
-								
+					</div>										
 					<div class="row slide" ng-show="userCredentials.clientSecret && userCredentials.clientSecret.value" ng-cloak>
 						<div class="col-md-12 col-sm-12 col-xs-12">
 							<div class="tab-container">
@@ -378,18 +421,17 @@
 							</div>
 						</div>			
 					</div>
-					
 					<div class="row">
 						<div class="col-md-12 col-sm-12 col-xs-12">
-							<p><strong><@orcid.msg 'manage.developer_tools.related_documentation' />:</p>
-							<ul class="sso-links">
-								<li><a href="<@orcid.msg 'manage.developer_tools.user.register_to.link.1.url'/>"><span class="glyphicon glyphicon-link"></span><@orcid.msg 'manage.developer_tools.user.register_to.link.1.text'/></a></li>
-								<li><a href="<@orcid.msg 'manage.developer_tools.user.register_to.link.2.url'/>"><span class="glyphicon glyphicon-link"></span><@orcid.msg 'manage.developer_tools.user.register_to.link.2.text'/></a></li>
-								<li><a href="<@orcid.msg 'manage.developer_tools.user.register_to.link.3.url'/>"><span class="glyphicon glyphicon-link"></span><@orcid.msg 'manage.developer_tools.user.register_to.link.3.text'/></a></li>
+							<p><strong><@orcid.msg 'developer_tools.member_api.heading' /></strong></p>
+							<p><@orcid.msg 'developer_tools.member_api.description' /></p>
+							<ul class="dotted">
+								<li><a href="http://orcid.org/about/membership"><@orcid.msg 'developer_tools.member_api.description.1' /></a></li>
+								<li><a href="http://support.orcid.org/knowledgebase/articles/180285"><@orcid.msg 'developer_tools.member_api.description.2' /></a></li>
+								<li><a href="http://orcid.org/content/register-client-application"><@orcid.msg 'developer_tools.member_api.description.3' /></a></li>
 							</ul>
-						</div>			
+						</div>
 					</div>
-					
 					<div class="row">
 						<div class="col-md-12 col-xs-12">
 							<span>
@@ -403,7 +445,7 @@
 	</div>		
 </@security.authorize>
 <@security.authorize ifAnyGranted="ROLE_GROUP,ROLE_BASIC,ROLE_PREMIUM,ROLE_BASIC_INSTITUTION,ROLE_PREMIUM_INSTITUTION,ROLE_CREATOR,ROLE_PREMIUM_CREATOR,ROLE_UPDATER,ROLE_PREMIUM_UPDATER">
-	Your account cant see this page
+	<@orcid.msg 'developer_tools.invalid_page'/>
 </@security.authorize>
 
 <script type="text/ng-template" id="verify-email-modal">
