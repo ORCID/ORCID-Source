@@ -16,8 +16,6 @@
  */
 package org.orcid.core.security.visibility.aop;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -108,16 +106,7 @@ public class OrcidApiAuthorizationSecurityAspect {
                     // #2: Evaluate the scope to know which field to filter
                     boolean allowWorks = false;
                     boolean allowFunding = false;
-                    boolean allowAffiliations = false;
-                    boolean allowBiography = false;
-
-                    // Check bio scopes
-                    if(requiredScope.equals(ScopePathType.ORCID_BIO_UPDATE) || requiredScope.equals(ScopePathType.ORCID_BIO_READ_LIMITED)) {
-                        // Check if the member have the update or read scope in bio
-                        if(hasScopeEnabled(clientId, userOrcid, requiredScope.getContent()))
-                            // If so, allow him to see private bio
-                            allowBiography = true;
-                    }
+                    boolean allowAffiliations = false;                    
                     
                     // Check works scopes
                     if (requiredScope.equals(ScopePathType.ORCID_WORKS_UPDATE) || requiredScope.equals(ScopePathType.ORCID_WORKS_READ_LIMITED)) {
@@ -141,14 +130,14 @@ public class OrcidApiAuthorizationSecurityAspect {
                             allowAffiliations = true;
                     }
 
-                    visibilityFilter.filter(orcidMessage, clientId, allowBiography, allowWorks, allowFunding, allowAffiliations, false,
+                    visibilityFilter.filter(orcidMessage, clientId, allowWorks, allowFunding, allowAffiliations, false,
                             visibilities.toArray(new Visibility[visibilities.size()]));
                 } else {
-                    visibilityFilter.filter(orcidMessage, null, false, false, false, false, false, visibilities.toArray(new Visibility[visibilities.size()]));
+                    visibilityFilter.filter(orcidMessage, null, false, false, false, false, visibilities.toArray(new Visibility[visibilities.size()]));
                 }
 
             } else {
-                visibilityFilter.filter(orcidMessage, null, false, false, false, false, false, visibilities.toArray(new Visibility[visibilities.size()]));
+                visibilityFilter.filter(orcidMessage, null, false, false, false, false, visibilities.toArray(new Visibility[visibilities.size()]));
             }
         }
     }
