@@ -4834,6 +4834,10 @@ function languageCtrl($scope, $cookies) {
 	    		"label": 'Français'
 	        },	        
 	        {
+	        	"value": 'ja',
+	    		"label": '日本語'
+	        },
+	        {
 	        	"value": 'ko',
 	    		"label": '한국어'
 	        },
