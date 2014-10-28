@@ -21,20 +21,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.orcid.core.adapter.impl.Jpa2JaxbAdapterImpl;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.message.Country;
 import org.orcid.jaxb.model.message.FuzzyDate;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.PublicationDate;
+import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.message.Title;
 import org.orcid.jaxb.model.message.Url;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkCategory;
 import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
-import org.orcid.jaxb.model.message.WorkSource;
 import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
 
@@ -134,9 +133,9 @@ public class Work implements ErrorsInterface, Serializable {
             identifiers = JsonUtils.readObjectFromJsonString(minimizedWorkEntity.getExternalIdentifiersJson(), WorkExternalIdentifiers.class);
         }
         populateExternaIdentifiers(identifiers, w);
-        if (minimizedWorkEntity.getSourceProfile() != null) {
-            w.setWorkSource(Text.valueOf(minimizedWorkEntity.getSourceProfile().getId()));
-            w.setWorkSourceName(Text.valueOf(Jpa2JaxbAdapterImpl.createName(minimizedWorkEntity.getSourceProfile())));
+        if (minimizedWorkEntity.getSource() != null) {
+            w.setWorkSource(Text.valueOf(minimizedWorkEntity.getSource().getSourceId()));
+            w.setWorkSourceName(Text.valueOf(minimizedWorkEntity.getSource().getSourceName()));
         }
         if (minimizedWorkEntity.getLanguageCode() != null) {
             w.setLanguageCode(Text.valueOf(minimizedWorkEntity.getLanguageCode()));
@@ -192,10 +191,10 @@ public class Work implements ErrorsInterface, Serializable {
             workExternalIdentifiers = orcidWork.getWorkExternalIdentifiers();
         }
         populateExternaIdentifiers(workExternalIdentifiers, w);
-        if (orcidWork.getWorkSource() != null) {
-            w.setWorkSource(Text.valueOf(orcidWork.getWorkSource().getPath()));
-            if (orcidWork.getWorkSource().getSourceName() != null)
-                w.setWorkSourceName(Text.valueOf(orcidWork.getWorkSource().getSourceName()));
+        if (orcidWork.getSource() != null) {
+            w.setWorkSource(Text.valueOf(orcidWork.getSource().retrieveSourcePath()));
+            if (orcidWork.getSource().getSourceName() != null)
+                w.setWorkSourceName(Text.valueOf(orcidWork.getSource().getSourceName().getContent()));
         }
         if (orcidWork.getWorkTitle() != null)
             w.setWorkTitle(WorkTitle.valueOf(orcidWork.getWorkTitle()));
@@ -247,7 +246,7 @@ public class Work implements ErrorsInterface, Serializable {
         }
         ow.setWorkExternalIdentifiers(new WorkExternalIdentifiers(wiList));
         if (this.getWorkSource() != null)
-            ow.setWorkSource(new WorkSource(this.getWorkSource().getValue()));
+            ow.setSource(new Source(this.getWorkSource().getValue()));
         if (this.getWorkTitle() != null) {
             ow.setWorkTitle(this.workTitle.toWorkTitle());
         }

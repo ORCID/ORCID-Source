@@ -39,6 +39,7 @@ import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.solr.entities.OrgDisambiguatedSolrDocument;
 import org.orcid.pojo.ajaxForm.AffiliationForm;
 import org.orcid.pojo.ajaxForm.Date;
@@ -234,7 +235,7 @@ public class AffiliationsController extends BaseWorkspaceController {
         // Persist to DB
         ProfileEntity userProfile = profileDao.find(getEffectiveUserOrcid());
         OrgAffiliationRelationEntity orgAffiliationRelationEntity = jaxb2JpaAdapter.getNewOrgAffiliationRelationEntity(affiliationForm.toAffiliation(), userProfile);
-        orgAffiliationRelationEntity.setSource(userProfile);
+        orgAffiliationRelationEntity.setSource(new SourceEntity(userProfile));
         orgAffiliationRelationDao.persist(orgAffiliationRelationEntity);
         affiliationForm.setPutCode(Text.valueOf(orgAffiliationRelationEntity.getId().toString()));
     }
@@ -249,7 +250,7 @@ public class AffiliationsController extends BaseWorkspaceController {
         }
         ProfileEntity userProfile = profileDao.find(getEffectiveUserOrcid());
         OrgAffiliationRelationEntity orgAffiliationRelationEntity = jaxb2JpaAdapter.getUpdatedAffiliationRelationEntity(affiliationForm.toAffiliation());
-        orgAffiliationRelationEntity.setSource(userProfile);
+        orgAffiliationRelationEntity.setSource(new SourceEntity(userProfile));
         orgAffiliationRelationDao.updateOrgAffiliationRelationEntity(orgAffiliationRelationEntity);
         affiliationForm.setPutCode(Text.valueOf(orgAffiliationRelationEntity.getId().toString()));                
     }            

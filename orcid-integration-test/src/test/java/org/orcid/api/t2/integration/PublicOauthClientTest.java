@@ -83,13 +83,13 @@ public class PublicOauthClientTest extends DBUnitTest {
 
     private String redirectUri;
 
-    private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml", "/data/ProfileEntityData.xml",
-            "/data/WorksEntityData.xml", "/data/ProfileWorksEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml",
-            "/data/WebhookEntityData.xml");
+    private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
+            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ProfileWorksEntityData.xml",
+            "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml", "/data/WebhookEntityData.xml");
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
-        initDBUnitData(DATA_FILES, null);
+        initDBUnitData(DATA_FILES);
     }
 
     @Before

@@ -36,6 +36,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.api.common.OrcidApiConstants;
+import org.orcid.api.common.OrcidClientHelper;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.security.DefaultPermissionChecker;
@@ -52,11 +53,15 @@ import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.message.Source;
+import org.orcid.jaxb.model.message.SourceClientId;
 import org.orcid.jaxb.model.message.Subtitle;
 import org.orcid.jaxb.model.message.Title;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.jaxb.model.message.WorkType;
+import org.orcid.persistence.dao.ClientDetailsDao;
+import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.slf4j.Logger;
@@ -66,8 +71,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.WebResource.Builder;
-
-import org.orcid.api.common.OrcidClientHelper;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiClientIntegrationTest {
@@ -79,7 +82,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
 
     @Resource(name = "defaultPermissionChecker")
     private PermissionChecker permissionChecker;
-    
+
     @Resource
     private ClientDetailsManager clientDetailsManager;
 
@@ -406,14 +409,12 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         List<OrcidWork> retrievedOrcidWorks = orcidWorksFromResponse.getEntity(OrcidMessage.class).getOrcidProfile().retrieveOrcidWorks().getOrcidWork();
         assertTrue(retrievedOrcidWorks.size() == 4);
 
-        String clientOrcid = this.clientId;
-
         for (OrcidWork work : retrievedOrcidWorks) {
             WorkTitle workTitle = work.getWorkTitle();
 
             if (workTitle != null && workTitle.getTitle() != null) {
                 if ("Single works with title".equals(workTitle.getTitle().getContent())) {
-                    assertEquals(clientOrcid, work.getWorkSource().getPath());
+                    assertEquals(this.clientId, work.getSource().retrieveSourcePath());
                     break;
                 }
             }
@@ -476,7 +477,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
 
         assertEquals("Chromosome 5a55.5 microdeletions comprising AB555 and CD5555", workToUpdate.getWorkTitle().getTitle().getContent());
         assertEquals("Chromosome subtitle", workToUpdate.getWorkTitle().getSubtitle().getContent());
-        assertEquals(this.clientId, workToUpdate.getWorkSource().getPath());
+        assertEquals(this.clientId, workToUpdate.getSource().retrieveSourcePath());
 
         // check other works unchanged
         assertEquals("Work title 1", orcidWorks.getOrcidWork().get(1).getWorkTitle().getTitle().getContent());
@@ -505,7 +506,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
             ExternalIdentifiers newExternalIdentifiers = new ExternalIdentifiers();
             newExternalIdentifiers.setVisibility(Visibility.PUBLIC);
             ExternalIdSource externalIdOrcid = new ExternalIdSource();
-            externalIdOrcid.setPath(clientId);
+            externalIdOrcid.setPath(groupOrcid);
             ExternalIdentifier additionalIdentifer = new ExternalIdentifier();
             additionalIdentifer.setExternalIdReference(new ExternalIdReference("abc"));
             additionalIdentifer.setExternalIdOrcid(externalIdOrcid);
@@ -539,11 +540,11 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         createAccessTokenFromCredentials();
         ClientResponse bioResponse = oauthT2Client.viewBioDetailsXml(this.orcid, accessToken);
         OrcidMessage message = bioResponse.getEntity(OrcidMessage.class);
-        OrcidBio orcidBio = message.getOrcidProfile().getOrcidBio();                
-        
+        OrcidBio orcidBio = message.getOrcidProfile().getOrcidBio();
+
         OrcidHistory orcidHistory = message.getOrcidProfile().getOrcidHistory();
         assertTrue(orcidHistory != null && orcidHistory.getSource() != null);
-        String orcid = orcidHistory.getSource().getSourceOrcid().getPath();
+        String orcid = orcidHistory.getSource().getSourceClientId().getPath();
         ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(orcid);
         assertNotNull(clientDetails);
         assertEquals("Ecological Complexity", clientDetails.getClientName());
@@ -554,7 +555,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         ExternalIdentifiers newExternalIdentifiers = new ExternalIdentifiers();
         newExternalIdentifiers.setVisibility(Visibility.PUBLIC);
         ExternalIdSource externalIdOrcid = new ExternalIdSource();
-        externalIdOrcid.setPath(clientId);
+        externalIdOrcid.setPath(groupOrcid);
         ExternalIdentifier additionalIdentifer = new ExternalIdentifier();
         additionalIdentifer.setExternalIdReference(new ExternalIdReference("abc123"));
         additionalIdentifer.setExternalIdOrcid(externalIdOrcid);
@@ -588,7 +589,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         OrcidBio orcidBio = message.getOrcidProfile().getOrcidBio();
         OrcidHistory orcidHistory = message.getOrcidProfile().getOrcidHistory();
         assertTrue(orcidHistory != null && orcidHistory.getSource() != null);
-        String clientOrcid = orcidHistory.getSource().getSourceOrcid().getPath();
+        String clientOrcid = orcidHistory.getSource().retrieveSourcePath();
         ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientOrcid);
         assertEquals("Ecological Complexity", clientDetails.getClientName());
 
@@ -598,7 +599,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         ExternalIdentifiers newExternalIdentifiers = new ExternalIdentifiers();
         newExternalIdentifiers.setVisibility(Visibility.PUBLIC);
         ExternalIdSource externalIdOrcid = new ExternalIdSource();
-        externalIdOrcid.setPath(clientId);
+        externalIdOrcid.setPath(groupOrcid);
         ExternalIdentifier additionalIdentifer = new ExternalIdentifier();
         additionalIdentifer.setExternalIdReference(new ExternalIdReference("abc"));
         additionalIdentifer.setExternalIdOrcid(externalIdOrcid);
@@ -612,6 +613,52 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         WebResource rootResource = orcidClientHelper.createRootResource(externalIdentifiersUriWithOrcid);
         Builder builder = rootResource.header("Authorization", "Bearer " + accessToken).accept(MediaType.WILDCARD).type(OrcidApiConstants.ORCID_XML);
         ClientResponse updatedIdsResponse = builder.post(ClientResponse.class, message);
+        assertEquals(200, updatedIdsResponse.getStatus());
+
+        // retrieve the sponsor info
+        createAccessTokenFromCredentials();
+        bioResponse = oauthT2Client.viewBioDetailsXml(this.orcid, accessToken);
+        message = bioResponse.getEntity(OrcidMessage.class);
+        orcidBio = message.getOrcidProfile().getOrcidBio();
+        assertTrue(orcidBio.getExternalIdentifiers() != null);
+        externalIdentifiers = orcidBio.getExternalIdentifiers();
+        assertEquals(1, externalIdentifiers.getExternalIdentifier().size());
+
+    }
+
+    @Test
+    public void testAddExternalIdentifiersXmlWithClientId() throws Exception {
+
+        createNewOrcidUsingAccessToken();
+        // get the bio details of the actual
+        createAccessTokenFromCredentials();
+        ClientResponse bioResponse = oauthT2Client.viewBioDetailsXml(this.orcid, accessToken);
+        OrcidMessage message = bioResponse.getEntity(OrcidMessage.class);
+        OrcidBio orcidBio = message.getOrcidProfile().getOrcidBio();
+
+        OrcidHistory orcidHistory = message.getOrcidProfile().getOrcidHistory();
+        assertTrue(orcidHistory != null && orcidHistory.getSource() != null);
+        String orcid = orcidHistory.getSource().getSourceClientId().getPath();
+        ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(orcid);
+        assertNotNull(clientDetails);
+        assertEquals("Ecological Complexity", clientDetails.getClientName());
+
+        ExternalIdentifiers externalIdentifiers = orcidBio.getExternalIdentifiers();
+        assertNull(externalIdentifiers);
+
+        ExternalIdentifiers newExternalIdentifiers = new ExternalIdentifiers();
+        newExternalIdentifiers.setVisibility(Visibility.PUBLIC);
+        Source source = new Source();
+        source.setSourceClientId(new SourceClientId(clientId));
+        ExternalIdentifier additionalIdentifer = new ExternalIdentifier();
+        additionalIdentifer.setExternalIdReference(new ExternalIdReference("abc123"));
+        additionalIdentifer.setSource(source);
+
+        newExternalIdentifiers.getExternalIdentifier().add(additionalIdentifer);
+        orcidBio.setExternalIdentifiers(newExternalIdentifiers);
+
+        createAccessTokenFromCredentials();
+        ClientResponse updatedIdsResponse = oauthT2Client.addExternalIdentifiersXml(this.orcid, message, accessToken);
         assertEquals(200, updatedIdsResponse.getStatus());
 
         // retrieve the sponsor info

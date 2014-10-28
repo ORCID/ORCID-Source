@@ -38,6 +38,7 @@ import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.OauthAuthorizeForm;
 import org.orcid.pojo.ajaxForm.OauthRegistration;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -187,21 +188,13 @@ public class OauthConfirmAccessController extends BaseController {
                     // If client details is ok, continue
                     clientName = clientDetails.getClientName() == null ? "" : clientDetails.getClientName();
                     clientDescription = clientDetails.getClientDescription() == null ? "" : clientDetails.getClientDescription();
-                    // Get the group credit name
-                    OrcidProfile clientProfile = orcidProfileManager.retrieveOrcidProfile(clientId);
-
-                    //If client type is null it means it is a public client
-                    if(clientProfile.getClientType() == null) {
+                    
+                    ProfileEntity groupProfile = clientDetails.getGroupProfile();
+                    // If client type is null it means it is a public client
+                    if (clientDetails.getClientType() == null) {
                         clientGroupName = PUBLIC_CLIENT_GROUP_NAME;
-                    } else if (clientProfile.getOrcidInternal() != null && clientProfile.getOrcidInternal().getGroupOrcidIdentifier() != null
-                            && StringUtils.isNotBlank(clientProfile.getOrcidInternal().getGroupOrcidIdentifier().getPath())) {
-                        String client_group_id = clientProfile.getOrcidInternal().getGroupOrcidIdentifier().getPath();
-                        if (StringUtils.isNotBlank(client_group_id)) {
-                            OrcidProfile clientGroupProfile = orcidProfileManager.retrieveOrcidProfile(client_group_id);
-                            if (clientGroupProfile.getOrcidBio() != null && clientGroupProfile.getOrcidBio().getPersonalDetails() != null
-                                    && clientGroupProfile.getOrcidBio().getPersonalDetails().getCreditName() != null)
-                                clientGroupName = clientGroupProfile.getOrcidBio().getPersonalDetails().getCreditName().getContent();
-                        }
+                    } else if (groupProfile != null) {
+                        clientGroupName = groupProfile.getCreditName();
                     }
                     // If the group name is empty, use the same as the client
                     // name, since it should be a SSO user

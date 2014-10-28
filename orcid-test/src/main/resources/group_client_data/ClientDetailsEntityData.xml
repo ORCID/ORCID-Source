@@ -19,13 +19,13 @@
 -->
 <dataset>
 
-	<client_details client_details_id="9999-9999-9999-9991" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2014-07-03" last_modified="2014-07-03" client_name="Client # 1" client_description="A client" client_website="www.9999-9999-9999-9991.com"/>
-	<client_details client_details_id="9999-9999-9999-9992" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2014-07-03" last_modified="2014-07-03" client_name="Client # 2" client_description="A client" client_website="www.9999-9999-9999-9992.com"/>
-	<client_details client_details_id="9999-9999-9999-9993" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2014-07-03" last_modified="2014-07-03" client_name="Client # 3" client_description="A client" client_website="www.9999-9999-9999-9993.com"/>
-	<client_details client_details_id="9999-9999-9999-9994" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2014-07-03" last_modified="2014-07-03" client_name="Client # 4" client_description="A client" client_website="www.9999-9999-9999-9994.com"/>
-	<client_details client_details_id="9999-9999-9999-9995" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2014-07-03" last_modified="2014-07-03" client_name="Client # 5" client_description="A client" client_website="www.9999-9999-9999-9995.com"/>
-	<client_details client_details_id="9999-9999-9999-9996" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2014-07-03" last_modified="2014-07-03" client_name="Client # 6" client_description="A client" client_website="www.9999-9999-9999-9996.com"/>
-	<client_details client_details_id="9999-9999-9999-9997" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2014-07-03" last_modified="2014-07-03" client_name="Client # 7" client_description="A client" client_website="www.9999-9999-9999-9997.com"/>
+	<client_details client_details_id="9999-9999-9999-9991" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2014-07-03" last_modified="2014-07-03" client_name="Client # 1" client_description="A client" client_website="www.9999-9999-9999-9991.com" group_orcid="9999-9999-9999-9991"/>
+	<client_details client_details_id="9999-9999-9999-9992" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2014-07-03" last_modified="2014-07-03" client_name="Client # 2" client_description="A client" client_website="www.9999-9999-9999-9992.com" group_orcid="9999-9999-9999-9992"/>
+	<client_details client_details_id="9999-9999-9999-9993" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2014-07-03" last_modified="2014-07-03" client_name="Client # 3" client_description="A client" client_website="www.9999-9999-9999-9993.com" group_orcid="9999-9999-9999-9993"/>
+	<client_details client_details_id="9999-9999-9999-9994" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2014-07-03" last_modified="2014-07-03" client_name="Client # 4" client_description="A client" client_website="www.9999-9999-9999-9994.com" group_orcid="9999-9999-9999-9994"/>
+	<client_details client_details_id="9999-9999-9999-9995" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2014-07-03" last_modified="2014-07-03" client_name="Client # 5" client_description="A client" client_website="www.9999-9999-9999-9995.com" group_orcid="9999-9999-9999-9995"/>
+	<client_details client_details_id="9999-9999-9999-9996" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2014-07-03" last_modified="2014-07-03" client_name="Client # 6" client_description="A client" client_website="www.9999-9999-9999-9996.com" group_orcid="9999-9999-9999-9996"/>
+	<client_details client_details_id="9999-9999-9999-9997" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2014-07-03" last_modified="2014-07-03" client_name="Client # 7" client_description="A client" client_website="www.9999-9999-9999-9997.com" group_orcid="9999-9999-9999-9997"/>
 
 	<client_authorised_grant_type client_details_id="9999-9999-9999-9991" grant_type="authorization_code" />
     <client_authorised_grant_type client_details_id="9999-9999-9999-9991" grant_type="refresh_token" />

@@ -41,7 +41,7 @@ import org.springframework.beans.factory.InitializingBean;
  * @author Will Simpson
  * 
  */
-public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServiceDelegator, InitializingBean {
+public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServiceDelegator {
 
     @Resource(name = "orcidT2ServiceDelegator")
     private T2OrcidApiServiceDelegator t2OrcidApiServiceDelegator;
@@ -79,11 +79,6 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
     @Override
     public Response viewStatusText() {
         return t2OrcidApiServiceDelegator.viewStatusText();
-    }
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        autoConfigureValidators();
     }
 
     public void autoConfigureValidators() {
@@ -175,6 +170,11 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
     public Response findWorksDetailsFromPublicCache(String orcid) {
         Response response = t2OrcidApiServiceDelegator.findWorksDetailsFromPublicCache(orcid);
         return downgradeAndValidateResponse(response);
+    }
+
+    @Override
+    public Response redirectClientToGroup(String clientId) {
+        return t2OrcidApiServiceDelegator.redirectClientToGroup(clientId);
     }
 
     @Override

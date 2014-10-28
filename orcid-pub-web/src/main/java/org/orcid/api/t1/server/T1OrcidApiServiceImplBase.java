@@ -20,6 +20,7 @@ import static org.orcid.api.common.OrcidApiConstants.AFFILIATIONS_PATH;
 import static org.orcid.api.common.OrcidApiConstants.APPLICATION_RDFXML;
 import static org.orcid.api.common.OrcidApiConstants.BIO_PATH;
 import static org.orcid.api.common.OrcidApiConstants.BIO_SEARCH_PATH;
+import static org.orcid.api.common.OrcidApiConstants.CLIENT_PATH;
 import static org.orcid.api.common.OrcidApiConstants.EXPERIMENTAL_RDF_V1;
 import static org.orcid.api.common.OrcidApiConstants.EXTERNAL_IDENTIFIER_PATH;
 import static org.orcid.api.common.OrcidApiConstants.FUNDING_PATH;
@@ -74,7 +75,7 @@ import com.yammer.metrics.core.Counter;
 abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Response>, InitializingBean {
 
     public static final String OAUTH_TOKEN = "/oauth/token";
-    
+
     @Value("${org.orcid.core.pubBaseUri:http://orcid.org}")
     private String pubBaseUri;
 
@@ -109,7 +110,7 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
 
     @Resource
     private OrcidClientCredentialEndPointDelegator orcidClientCredentialEndPointDelegator;
-    
+
     public void setUriInfo(UriInfo uriInfo) {
         this.uriInfo = uriInfo;
     }
@@ -428,10 +429,10 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
         T1_GET_REQUESTS.inc();
         return orcidApiServiceDelegator.findAffiliationsDetailsFromPublicCache(orcid);
     }
-    
+
     /**
-     * GETs the HTML representation of the ORCID record containing only
-     * funding details
+     * GETs the HTML representation of the ORCID record containing only funding
+     * details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -448,8 +449,8 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
     }
 
     /**
-     * GETs the XML representation of the ORCID record containing only
-     * funding details
+     * GETs the XML representation of the ORCID record containing only funding
+     * details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -464,8 +465,8 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
     }
 
     /**
-     * GETs the JSON representation of the ORCID record containing only
-     * funding details
+     * GETs the JSON representation of the ORCID record containing only funding
+     * details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -479,7 +480,7 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
         T1_GET_REQUESTS.inc();
         return orcidApiServiceDelegator.findFundingDetailsFromPublicCache(orcid);
     }
-    
+
     /**
      * GETs the HTML representation of the ORCID record containing only work
      * details
@@ -532,6 +533,21 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
     }
 
     /**
+     * Sends a redirect from the client URI to the group URI
+     * 
+     * @param clientId
+     *            the client ID that corresponds to the client
+     * @return a redirect to the ORCID record for the client's group
+     */
+    @Override
+    @GET
+    @Path(CLIENT_PATH)
+    public Response viewClient(@PathParam("client_id") String clientId) {
+        T1_GET_REQUESTS.inc();
+        return orcidApiServiceDelegator.redirectClientToGroup(clientId);
+    }
+
+    /**
      * Gets the JSON representation any Orcid Profiles (BIO) only relevant to
      * the given query
      * 
@@ -578,7 +594,7 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
 
         T1_SEARCH_RESULTS_NONE_FOUND.inc();
     }
-    
+
     /**
      * 
      * @param formParams

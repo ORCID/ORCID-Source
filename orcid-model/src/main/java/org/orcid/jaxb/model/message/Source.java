@@ -23,12 +23,13 @@
 
 package org.orcid.jaxb.model.message;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import java.io.Serializable;
 
 /**
  * <p>
@@ -55,7 +56,7 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType( propOrder = { "sourceOrcid", "sourceName", "sourceDate" })
+@XmlType(propOrder = { "sourceOrcid", "sourceClientId", "sourceName", "sourceDate" })
 @XmlRootElement(name = "source")
 public class Source implements Serializable {
 
@@ -65,6 +66,8 @@ public class Source implements Serializable {
     private static final long serialVersionUID = 1L;
     @XmlElement(name = "source-orcid")
     protected SourceOrcid sourceOrcid;
+    @XmlElement(name = "source-client-id")
+    protected SourceClientId sourceClientId;
     @XmlElement(name = "source-name")
     protected SourceName sourceName;
     @XmlElement(name = "source-date")
@@ -98,6 +101,14 @@ public class Source implements Serializable {
      */
     public void setSourceOrcid(SourceOrcid value) {
         this.sourceOrcid = value;
+    }
+
+    public SourceClientId getSourceClientId() {
+        return sourceClientId;
+    }
+
+    public void setSourceClientId(SourceClientId sourceClientId) {
+        this.sourceClientId = sourceClientId;
     }
 
     /**
@@ -142,12 +153,21 @@ public class Source implements Serializable {
         this.sourceDate = value;
     }
 
+    public String retrieveSourcePath() {
+        if (sourceClientId != null) {
+            return sourceClientId.getPath();
+        }
+        if (sourceOrcid != null) {
+            return sourceOrcid.getPath();
+        }
+        return null;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((sourceDate == null) ? 0 : sourceDate.hashCode());
-        result = prime * result + ((sourceName == null) ? 0 : sourceName.hashCode());
+        result = prime * result + ((sourceClientId == null) ? 0 : sourceClientId.hashCode());
         result = prime * result + ((sourceOrcid == null) ? 0 : sourceOrcid.hashCode());
         return result;
     }
@@ -161,15 +181,10 @@ public class Source implements Serializable {
         if (getClass() != obj.getClass())
             return false;
         Source other = (Source) obj;
-        if (sourceDate == null) {
-            if (other.sourceDate != null)
+        if (sourceClientId == null) {
+            if (other.sourceClientId != null)
                 return false;
-        } else if (!sourceDate.equals(other.sourceDate))
-            return false;
-        if (sourceName == null) {
-            if (other.sourceName != null)
-                return false;
-        } else if (!sourceName.equals(other.sourceName))
+        } else if (!sourceClientId.equals(other.sourceClientId))
             return false;
         if (sourceOrcid == null) {
             if (other.sourceOrcid != null)

@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import org.orcid.core.security.OrcidWebRole;
-import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.GroupType;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.springframework.security.core.GrantedAuthority;
@@ -41,8 +40,6 @@ public class OrcidProfileUserDetails implements UserDetails {
 
     private OrcidType orcidType;
 
-    private ClientType clientType;
-
     private GroupType groupType;
 
     public OrcidProfileUserDetails() {
@@ -61,12 +58,11 @@ public class OrcidProfileUserDetails implements UserDetails {
         this.orcidType = orcidType;
     }
 
-    public OrcidProfileUserDetails(String orcid, String primaryEmail, String password, OrcidType orcidType, ClientType clientType, GroupType groupType) {
+    public OrcidProfileUserDetails(String orcid, String primaryEmail, String password, OrcidType orcidType, GroupType groupType) {
         this.orcid = orcid;
         this.primaryEmail = primaryEmail;
         this.password = password;
         this.orcidType = orcidType;
-        this.clientType = clientType;
         this.groupType = groupType;
     }
 
@@ -97,21 +93,6 @@ public class OrcidProfileUserDetails implements UserDetails {
                 break;
             case PREMIUM_INSTITUTION:
                 result = Arrays.asList(OrcidWebRole.ROLE_PREMIUM_INSTITUTION, OrcidWebRole.ROLE_USER);
-                break;
-            }
-        } else if (orcidType.equals(OrcidType.CLIENT)) {
-            switch (clientType) {
-            case CREATOR:
-                result = Arrays.asList(OrcidWebRole.ROLE_CREATOR, OrcidWebRole.ROLE_USER);
-                break;
-            case UPDATER:
-                result = Arrays.asList(OrcidWebRole.ROLE_UPDATER, OrcidWebRole.ROLE_USER);
-                break;
-            case PREMIUM_CREATOR:
-                result = Arrays.asList(OrcidWebRole.ROLE_PREMIUM_CREATOR, OrcidWebRole.ROLE_USER);
-                break;
-            case PREMIUM_UPDATER:
-                result = Arrays.asList(OrcidWebRole.ROLE_PREMIUM_UPDATER, OrcidWebRole.ROLE_USER);
                 break;
             }
         } else {
@@ -207,13 +188,7 @@ public class OrcidProfileUserDetails implements UserDetails {
         this.orcidType = orcidType;
     }
 
-    public ClientType getClientType() {
-        return clientType;
-    }
-
-    public void setClientType(ClientType clientType) {
-        this.clientType = clientType;
-    }
+   
 
     public GroupType getGroupType() {
         return groupType;
@@ -230,7 +205,6 @@ public class OrcidProfileUserDetails implements UserDetails {
         result = prime * result + ((password == null) ? 0 : password.hashCode());
         result = prime * result + ((orcid == null) ? 0 : orcid.hashCode());
         result = prime * result + ((orcidType == null) ? 0 : orcidType.hashCode());
-        result = prime * result + ((clientType == null) ? 0 : clientType.hashCode());
         result = prime * result + ((groupType == null) ? 0 : groupType.hashCode());
         return result;
     }
@@ -258,12 +232,6 @@ public class OrcidProfileUserDetails implements UserDetails {
             if (other.orcidType != null)
                 return false;
         } else if (!orcidType.equals(other.orcidType))
-            return false;
-
-        if (clientType == null) {
-            if (other.clientType != null)
-                return false;
-        } else if (!clientType.equals(other.clientType))
             return false;
 
         if (groupType == null) {

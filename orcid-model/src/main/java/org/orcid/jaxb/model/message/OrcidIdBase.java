@@ -45,10 +45,9 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.orcid.utils.OrcidStringUtils;
 
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType( propOrder = { "value", "uri", "path", "host" })
+@XmlType(propOrder = { "value", "uri", "path", "host" })
 public class OrcidIdBase implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -76,7 +75,7 @@ public class OrcidIdBase implements Serializable {
     }
 
     @XmlMixed
-    @JsonSerialize(using=OrcidIdSerializer.class)
+    @JsonSerialize(using = OrcidIdSerializer.class)
     @Deprecated
     public List<String> getValue() {
         if (values != null) {
@@ -126,7 +125,7 @@ public class OrcidIdBase implements Serializable {
             return path;
         }
         if (uri != null) {
-            return OrcidStringUtils.getOrcidNumber(uri);
+            return uri.substring(uri.lastIndexOf('/') + 1);
         }
         return null;
     }

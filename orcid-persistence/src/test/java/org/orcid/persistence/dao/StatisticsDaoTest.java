@@ -52,16 +52,14 @@ public class StatisticsDaoTest extends DBUnitTest {
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
-        initDBUnitData(
-                Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ProfileWorksEntityData.xml"),
-                null);
+        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml",
+                "/data/WorksEntityData.xml", "/data/ProfileWorksEntityData.xml"));
     }
 
     @AfterClass
     public static void removeDBUnitData() throws Exception {
-        removeDBUnitData(
-                Arrays.asList("/data/ProfileWorksEntityData.xml", "/data/WorksEntityData.xml", "/data/ProfileEntityData.xml", "/data/SecurityQuestionEntityData.xml"),
-                null);
+        removeDBUnitData(Arrays.asList("/data/ProfileWorksEntityData.xml", "/data/WorksEntityData.xml", "/data/ProfileEntityData.xml",
+                "/data/SecurityQuestionEntityData.xml"));
     }
 
     @Before
@@ -83,7 +81,7 @@ public class StatisticsDaoTest extends DBUnitTest {
 
         assertEquals(9, s1);
         assertEquals(3, s2);
-        assertEquals(10, s3);
+        assertEquals(11, s3);
         assertEquals(7, s4);
         assertEquals(0, s5);
 

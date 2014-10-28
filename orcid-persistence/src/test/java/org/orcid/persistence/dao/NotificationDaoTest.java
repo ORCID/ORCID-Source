@@ -54,20 +54,20 @@ public class NotificationDaoTest extends DBUnitTest {
     @Resource
     private NotificationDao notificationDao;
 
-    private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml", "/data/ProfileEntityData.xml",
-            "/data/WorksEntityData.xml", "/data/ProfileWorksEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml",
-            "/data/WebhookEntityData.xml", "/data/NotificationEntityData.xml");
+    private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
+            "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ProfileWorksEntityData.xml", "/data/ClientDetailsEntityData.xml",
+            "/data/Oauth2TokenDetailsData.xml", "/data/WebhookEntityData.xml", "/data/NotificationEntityData.xml");
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
-        initDBUnitData(DATA_FILES, null);
+        initDBUnitData(DATA_FILES);
     }
 
     @AfterClass
     public static void removeDBUnitData() throws Exception {
         List<String> reversedDataFiles = new ArrayList<String>(DATA_FILES);
         Collections.reverse(reversedDataFiles);
-        removeDBUnitData(reversedDataFiles, null);
+        removeDBUnitData(reversedDataFiles);
     }
 
     @Test
@@ -78,7 +78,7 @@ public class NotificationDaoTest extends DBUnitTest {
         assertEquals(1, orcids.size());
         assertEquals("4444-4444-4444-4441", orcids.get(0));
     }
-    
+
     @Test
     @Rollback(true)
     public void testFindOrcidsWithNotificationsToSendWhenTooSoon() {

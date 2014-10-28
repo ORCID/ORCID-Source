@@ -29,9 +29,11 @@ import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.orcid.core.manager.AppIdGenerationManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.ClientDetailsDao;
@@ -56,7 +58,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ClientDetailsManagerImpl implements ClientDetailsManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ClientDetailsManagerImpl.class);
-    
+
     @Resource
     ClientDetailsDao clientDetailsDao;
 
@@ -65,7 +67,7 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
 
     @Resource
     ClientRedirectDao clientRedirectDao;
-   
+
     @Resource
     private ProfileEntityManager profileEntityManager;
 
@@ -81,6 +83,9 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
     @Value("${org.orcid.core.oauth.enablePersistentTokensByDefault:false}")
     private boolean enablePersistentTokensByDefault;  
 
+    @Resource
+    private AppIdGenerationManager appIdGenerationManager;
+
     /**
      * Load a client by the client id. This method must NOT return null.
      * 
@@ -95,8 +100,10 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
     public ClientDetailsEntity loadClientByClientId(String clientId) throws OAuth2Exception {
         ClientDetailsEntity clientDetails = findByClientId(clientId);
         if (clientDetails != null) {
-            if (!clientDetails.getClientId().equals(clientId)) LOGGER.error("Client getClientId doesn't match. Requested: "+ clientId + " Returned: " + clientDetails.getClientId());      
-            if (!clientDetails.getId().equals(clientId)) LOGGER.error("Client getId() doesn't match. Requested: "+ clientId + " Returned: " + clientDetails.getId());
+            if (!clientDetails.getClientId().equals(clientId))
+                LOGGER.error("Client getClientId doesn't match. Requested: " + clientId + " Returned: " + clientDetails.getClientId());
+            if (!clientDetails.getId().equals(clientId))
+                LOGGER.error("Client getId() doesn't match. Requested: " + clientId + " Returned: " + clientDetails.getId());
             clientDetails.setDecryptedClientSecret(encryptionManager.decryptForInternalUse(clientDetails.getClientSecretForJpa()));
             return clientDetails;
         } else {
@@ -133,15 +140,15 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
      * @return
      */
     @Override
-    public ClientDetailsEntity createClientDetails(String orcid, String name, String description, String website, Set<String> clientScopes,
+    public ClientDetailsEntity createClientDetails(String groupOrcid, String name, String description, String website, ClientType clientType, Set<String> clientScopes,
             Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes, Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities) {
-        ProfileEntity profileEntity = profileEntityManager.findByOrcid(orcid);
-        if (profileEntity == null) {
-            throw new IllegalArgumentException("ORCID does not exist for " + orcid + " cannot continue");
+        ProfileEntity groupProfileEntity = profileEntityManager.findByOrcid(groupOrcid);
+        if (groupProfileEntity == null) {
+            throw new IllegalArgumentException("ORCID does not exist for " + groupOrcid + " cannot continue");
         } else {
             String clientSecret = encryptionManager.encryptForInternalUse(UUID.randomUUID().toString());
-            StringBuilder clientId = new StringBuilder(profileEntity.getId());
-            return populateClientDetailsEntity(clientId.toString(), profileEntity, name, description, website, clientSecret, clientScopes, clientResourceIds,
+            String clientId = appIdGenerationManager.createNewAppId();
+            return populateClientDetailsEntity(clientId, groupProfileEntity, name, description, website, clientSecret, clientType, clientScopes, clientResourceIds,
                     clientAuthorizedGrantTypes, clientRegisteredRedirectUris, clientGrantedAuthorities);
         }
     }
@@ -178,15 +185,15 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
      */
     @Override
     public ClientDetailsEntity createClientDetails(String orcid, String name, String description, String website, String clientId, String clientSecret,
-            Set<String> clientScopes, Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes, Set<RedirectUri> clientRegisteredRedirectUris,
-            List<String> clientGrantedAuthorities) {
+            ClientType clientType, Set<String> clientScopes, Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes,
+            Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities) {
 
         ProfileEntity profileEntity = profileEntityManager.findByOrcid(orcid);
         if (profileEntity == null) {
             throw new IllegalArgumentException("The ORCID does not exist for " + orcid);
         }
 
-        return populateClientDetailsEntity(clientId, profileEntity, name, description, website, clientSecret, clientScopes, clientResourceIds,
+        return populateClientDetailsEntity(clientId, profileEntity, name, description, website, clientSecret, clientType, clientScopes, clientResourceIds,
                 clientAuthorizedGrantTypes, clientRegisteredRedirectUris, clientGrantedAuthorities);
     }
 
@@ -209,14 +216,12 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
     public void deleteClientDetail(String clientId) {
         removeByClientId(clientId);
     }
-    
+
     @Override
     public void addClientRedirectUri(String clientId, String uri) {
         clientRedirectDao.addClientRedirectUri(clientId, uri);
         clientDetailsDao.updateLastModified(clientId);
     }
-    
-    
 
     private Set<ClientScopeEntity> getClientScopeEntities(Set<String> clientScopeStrings, ClientDetailsEntity clientDetailsEntity) {
         Set<ClientScopeEntity> clientScopeEntities = new HashSet<ClientScopeEntity>(clientScopeStrings.size());
@@ -278,10 +283,11 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
     }
 
     public ClientDetailsEntity populateClientDetailsEntity(String clientId, ProfileEntity profileEntity, String name, String description, String website,
-            String clientSecret, Set<String> clientScopes, Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes,
+            String clientSecret, ClientType clientType, Set<String> clientScopes, Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes,
             Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities) {
         ClientDetailsEntity clientDetailsEntity = new ClientDetailsEntity();
         clientDetailsEntity.setId(clientId);
+        clientDetailsEntity.setClientType(clientType);
         clientDetailsEntity.setClientName(name);
         clientDetailsEntity.setClientDescription(description);
         clientDetailsEntity.setClientWebsite(website);
@@ -291,29 +297,30 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
         clientDetailsEntity.setClientResourceIds(getClientResourceIds(clientResourceIds, clientDetailsEntity));
         clientDetailsEntity.setClientAuthorizedGrantTypes(getClientAuthorizedGrantTypes(clientAuthorizedGrantTypes, clientDetailsEntity));
         clientDetailsEntity.setClientRegisteredRedirectUris(getClientRegisteredRedirectUris(clientRegisteredRedirectUris, clientDetailsEntity));
-        clientDetailsEntity.setClientGrantedAuthorities(getClientGrantedAuthorities(clientGrantedAuthorities, clientDetailsEntity));  
-                
         if(usePersistentTokens) {
             if(enablePersistentTokensByDefault) {
                 clientDetailsEntity.setPersistentTokensEnabled(true);
             }
         }        
-        
+        clientDetailsEntity.setClientGrantedAuthorities(getClientGrantedAuthorities(clientGrantedAuthorities, clientDetailsEntity));
+        clientDetailsEntity.setGroupProfile(profileEntity);
         return createClientDetails(clientDetailsEntity);
     }
 
     @Override
-    public ClientDetailsEntity findByClientId(String orcid) {
+    public ClientDetailsEntity findByClientId(String clientId) {
         ClientDetailsEntity result = null;
         try {
-            Date lastModified = clientDetailsDao.getLastModified(orcid);
-            result = clientDetailsDao.findByClientId(orcid, lastModified);
-            if (result!= null) {
-                if (!result.getClientId().equals(orcid)) LOGGER.error("Client getClientId doesn't match. Requested: "+ orcid + " Returned: " + result.getClientId());      
-                if (!result.getId().equals(orcid)) LOGGER.error("Client getId() doesn't match. Requested: "+ orcid + " Returned: " + result.getId());
+            Date lastModified = clientDetailsDao.getLastModified(clientId);
+            result = clientDetailsDao.findByClientId(clientId, lastModified);
+            if (result != null) {
+                if (!result.getClientId().equals(clientId))
+                    LOGGER.error("Client getClientId doesn't match. Requested: " + clientId + " Returned: " + result.getClientId());
+                if (!result.getId().equals(clientId))
+                    LOGGER.error("Client getId() doesn't match. Requested: " + clientId + " Returned: " + result.getId());
             }
         } catch (NoResultException nre) {
-            LOGGER.error("Error getting client by id:" + orcid, nre);
+            LOGGER.error("Error getting client by id:" + clientId, nre);
         }
         return result;
     }
@@ -385,12 +392,12 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
         Date currentDate = new Date();
         List<ClientDetailsEntity> allClientDetails = this.getAll();
         if (allClientDetails != null && allClientDetails != null) {
-            for (ClientDetailsEntity clientDetails : allClientDetails) {                
+            for (ClientDetailsEntity clientDetails : allClientDetails) {
                 String clientId = clientDetails.getClientId();
                 LOGGER.info("Deleting non primary keys for client: {}", clientId);
                 Set<ClientSecretEntity> clientSecrets = clientDetails.getClientSecrets();
                 for (ClientSecretEntity clientSecret : clientSecrets) {
-                    if(!clientSecret.isPrimary()) {
+                    if (!clientSecret.isPrimary()) {
                         Date dateRevoked = clientSecret.getLastModified();
                         Date timeToDeleteMe = DateUtils.addHours(dateRevoked, 24);
                         // If the key have been revokend more than 24 hours ago
@@ -404,7 +411,7 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
         }
         LOGGER.info("Cron done");
     }
-    
+
     @Override
     public boolean exists(String clientId) {
         return clientDetailsDao.exists(clientId);
