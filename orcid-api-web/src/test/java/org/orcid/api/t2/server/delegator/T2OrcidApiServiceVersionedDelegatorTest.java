@@ -78,8 +78,9 @@ import com.sun.jersey.api.uri.UriBuilderImpl;
 @ContextConfiguration(locations = { "classpath:orcid-api-web-context.xml", "classpath:orcid-api-security-context.xml" })
 public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
 
-    private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml", "/data/ProfileEntityData.xml",
-            "/data/WorksEntityData.xml", "/data/ProfileWorksEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml");
+    private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
+            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ProfileWorksEntityData.xml",
+            "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml");
 
     @Resource(name = "t2OrcidApiServiceDelegatorV1_0_21")
     private T2OrcidApiServiceDelegator t2OrcidApiServiceDelegatorV21;
@@ -87,7 +88,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
     @Resource
     private OrcidProfileManager orcidProfileManager;
 
-    @Resource(name = "t2OrcidApiServiceDelegatorPrototype")
+    @Resource(name = "t2OrcidApiServiceDelegatorLatest")
     private T2OrcidApiServiceDelegator t2OrcidApiServiceDelegatorLatest;
 
     @Mock
@@ -97,7 +98,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
-        initDBUnitData(DATA_FILES, null);
+        initDBUnitData(DATA_FILES);
     }
 
     @Before
@@ -114,12 +115,12 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
         SecurityContextHolder.clearContext();
         orcidProfileManager.clearOrcidProfileCache();
     }
-    
+
     @AfterClass
     public static void removeDBUnitData() throws Exception {
-        List<String> reversedDataFiles = new ArrayList<String>(Arrays.asList("/data/Oauth2TokenDetailsData.xml", 
-        		"/data/ProfileWorksEntityData.xml", "/data/WorksEntityData.xml", "/data/ClientDetailsEntityData.xml"));        
-        removeDBUnitData(reversedDataFiles, null);
+        List<String> reversedDataFiles = new ArrayList<String>(Arrays.asList("/data/Oauth2TokenDetailsData.xml", "/data/ProfileWorksEntityData.xml",
+                "/data/WorksEntityData.xml", "/data/ClientDetailsEntityData.xml"));
+        removeDBUnitData(reversedDataFiles);
     }
 
     @Test
@@ -133,7 +134,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
     public void testAddWorks() {
         setUpSecurityContext();
         OrcidMessage orcidMessage = new OrcidMessage();
-        orcidMessage.setMessageVersion("1.1");
+        orcidMessage.setMessageVersion("1.2_rc6");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
         orcidProfile.setOrcidIdentifier(new OrcidIdentifier("4444-4444-4444-4441"));
@@ -288,7 +289,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
 
     private OrcidMessage createStubOrcidMessage() {
         OrcidMessage orcidMessage = new OrcidMessage();
-        orcidMessage.setMessageVersion("1.1");
+        orcidMessage.setMessageVersion("1.2_rc6");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
         OrcidBio orcidBio = new OrcidBio();

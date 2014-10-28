@@ -20,6 +20,7 @@ import static org.orcid.api.common.OrcidApiConstants.AFFILIATIONS_PATH;
 import static org.orcid.api.common.OrcidApiConstants.APPLICATION_RDFXML;
 import static org.orcid.api.common.OrcidApiConstants.BIO_PATH;
 import static org.orcid.api.common.OrcidApiConstants.BIO_SEARCH_PATH;
+import static org.orcid.api.common.OrcidApiConstants.CLIENT_PATH;
 import static org.orcid.api.common.OrcidApiConstants.EXTERNAL_IDENTIFIER_PATH;
 import static org.orcid.api.common.OrcidApiConstants.FUNDING_PATH;
 import static org.orcid.api.common.OrcidApiConstants.ORCID_JSON;
@@ -380,8 +381,8 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     }
 
     /**
-     * GETs the HTML representation of the ORCID record containing only
-     * funding details
+     * GETs the HTML representation of the ORCID record containing only funding
+     * details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -398,8 +399,8 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     }
 
     /**
-     * GETs the XML representation of the ORCID record containing only
-     * funding details
+     * GETs the XML representation of the ORCID record containing only funding
+     * details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -414,8 +415,8 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     }
 
     /**
-     * GETs the JSON representation of the ORCID record containing only
-     * funding details
+     * GETs the JSON representation of the ORCID record containing only funding
+     * details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -429,7 +430,7 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
         T2_GET_REQUESTS.inc();
         return serviceDelegator.findFundingDetails(orcid);
     }
-    
+
     /**
      * GETs the HTML representation of the ORCID record containing only work
      * details
@@ -479,6 +480,21 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     public Response viewWorksDetailsJson(@PathParam("orcid") String orcid) {
         T2_GET_REQUESTS.inc();
         return serviceDelegator.findWorksDetails(orcid);
+    }
+
+    /**
+     * Sends a redirect from the client URI to the group URI
+     * 
+     * @param clientId
+     *            the client ID that corresponds to the client
+     * @return a redirect to the ORCID record for the client's group
+     */
+    @Override
+    @GET
+    @Path(CLIENT_PATH)
+    public Response viewClient(@PathParam("client_id") String clientId) {
+        T2_GET_REQUESTS.inc();
+        return serviceDelegator.redirectClientToGroup(clientId);
     }
 
     /**
@@ -693,8 +709,8 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     }
 
     /**
-     * POST an XML representation of the ORCID record containing only
-     * funding details
+     * POST an XML representation of the ORCID record containing only funding
+     * details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -711,8 +727,8 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     }
 
     /**
-     * POST a JSON representation of the ORCID record containing only
-     * funding details
+     * POST a JSON representation of the ORCID record containing only funding
+     * details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -729,8 +745,8 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     }
 
     /**
-     * PUT an XML representation of the ORCID record containing only
-     * funding details
+     * PUT an XML representation of the ORCID record containing only funding
+     * details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -747,8 +763,8 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     }
 
     /**
-     * PUT a JSON representation of the ORCID record containing only
-     * funding details
+     * PUT a JSON representation of the ORCID record containing only funding
+     * details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -763,7 +779,7 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
         T2_PUT_REQUESTS.inc();
         return serviceDelegator.updateFunding(uriInfo, orcid, orcidMessage);
     }
-    
+
     /**
      * POST an XML representation of the ORCID external identifiers containing
      * only the URLs details

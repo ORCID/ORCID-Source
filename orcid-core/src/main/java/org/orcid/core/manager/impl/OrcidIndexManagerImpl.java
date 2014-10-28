@@ -46,6 +46,7 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OtherName;
 import org.orcid.jaxb.model.message.PersonalDetails;
+import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.message.Subtitle;
 import org.orcid.jaxb.model.message.Title;
 import org.orcid.jaxb.model.message.TranslatedTitle;
@@ -128,12 +129,14 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
 				List<String> extIdOrcidsAndRefs = new ArrayList<String>();
 				for (ExternalIdentifier externalIdentifier : externalIdentifiers
 						.getExternalIdentifier()) {
-					ExternalIdSource externalIdOrcid = externalIdentifier
-							.getExternalIdSource();
-					if (externalIdOrcid != null)
-					   externalIdOrcid = externalIdentifier.getExternalIdSource();
-					if (externalIdOrcid != null) {
-						extIdOrcids.add(externalIdOrcid.getPath());
+					Source source = externalIdentifier
+							.getSource();
+					String sourcePath = null;
+					if (source != null){
+					   sourcePath = source.retrieveSourcePath();
+					   if(sourcePath != null){
+					       extIdOrcids.add(sourcePath);
+					   }
 					}
 					ExternalIdReference externalIdReference = externalIdentifier
 							.getExternalIdReference();
@@ -141,8 +144,8 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
 						extIdRefs.add(externalIdReference.getContent());
 					}
 					if (NullUtils
-							.noneNull(externalIdOrcid, externalIdReference)) {
-						extIdOrcidsAndRefs.add(externalIdOrcid.getPath() + "="
+							.noneNull(sourcePath, externalIdReference)) {
+						extIdOrcidsAndRefs.add(sourcePath + "="
 								+ externalIdReference.getContent());
 					}
 				}

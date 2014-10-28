@@ -23,6 +23,7 @@ import org.orcid.core.manager.LoadOptions;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -66,8 +67,8 @@ public class JpaJaxbEntityAdapterImpl implements JpaJaxbEntityAdapter {
     }
     
     @Override
-    public OrcidClient toOrcidClient(ProfileEntity profileEntity){
-        return jpa2JaxbAdapter.toOrcidClient(profileEntity);
+    public OrcidClient toOrcidClient(ClientDetailsEntity clientDetailsEntity){
+        return jpa2JaxbAdapter.toOrcidClient(clientDetailsEntity);
     }
     
     @Override

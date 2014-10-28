@@ -48,12 +48,12 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
-        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/ProfileEntityData.xml"), null);
+        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml"));
     }
 
     @AfterClass
     public static void removeDBUnitData() throws Exception {
-        removeDBUnitData(Arrays.asList("/data/ProfileEntityData.xml", "/data/SecurityQuestionEntityData.xml"), null);
+        removeDBUnitData(Arrays.asList("/data/ProfileEntityData.xml", "/data/SecurityQuestionEntityData.xml"));
     }
 
     @Resource
@@ -75,17 +75,17 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         assertEquals("Secombe", profileEntity.getFamilyName());
         assertEquals(harrysOrcid, profileEntity.getId());
     }
-    
+
     @Test
     @Transactional("transactionManager")
     @Rollback(true)
     public void testDeprecateProfile() throws Exception {
         ProfileEntity profileEntityToDeprecate = profileEntityManager.findByOrcid("4444-4444-4444-4441");
         ProfileEntity primaryProfileEntity = profileEntityManager.findByOrcid("4444-4444-4444-4442");
-        assertNull(profileEntityToDeprecate.getPrimaryRecord());        
+        assertNull(profileEntityToDeprecate.getPrimaryRecord());
         boolean result = profileEntityManager.deprecateProfile(profileEntityToDeprecate, primaryProfileEntity);
         assertTrue(result);
-        profileEntityToDeprecate = profileEntityManager.findByOrcid("4444-4444-4444-4441");        
+        profileEntityToDeprecate = profileEntityManager.findByOrcid("4444-4444-4444-4441");
         assertNotNull(profileEntityToDeprecate.getPrimaryRecord());
         assertEquals("4444-4444-4444-4442", profileEntityToDeprecate.getPrimaryRecord().getId());
     }

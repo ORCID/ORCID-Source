@@ -56,7 +56,7 @@ public class EmailManagerImpl implements EmailManager {
     @Override
     @Transactional
     public void addEmail(String orcid, EmailEntity email){
-    	emailDao.addEmail(orcid, email.getId(), email.getVisibility(), email.getSource() == null ? null : email.getSource().getId(), email.getVerified(), email.getCurrent());
+    	emailDao.addEmail(orcid, email.getId(), email.getVisibility(), email.getSource() == null ? null : email.getSource().getSourceId(), email.getVerified(), email.getCurrent());
     }
     
     @Override

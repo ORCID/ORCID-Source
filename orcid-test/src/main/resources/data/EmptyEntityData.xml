@@ -18,8 +18,8 @@
 
 -->
 <dataset>
-	<!-- Empty tables here needed to ensure correct clean up in integration tests -->		
-	<profile/>	
+	<!-- Empty tables here needed to ensure correct clean up in integration tests -->
+	<profile/>
 	<orcid_social/>
 	<profile_event/>
     <work/>
@@ -27,14 +27,12 @@
     <profile_work/>
     <researcher_url/>
     <given_permission_to/>
-    <oauth2_token_detail/>
     <external_identifier/>
     <email/>
     <email_event/>    
     <other_name/>
     <profile_keyword/>
     <profile_patent/>
-    <webhook/>
     <org_disambiguated_external_identifier/>    
 	<org/>
 	<org_affiliation_relation/>
@@ -43,6 +41,10 @@
 	<address/>
 	<institution/>
 	<affiliation/>
-	<custom_email/>
 	<notification/>
+	<client_details/>
+	<client_secret/>
+	<oauth2_token_detail/>
+	<custom_email/>
+	<webhook/>
 </dataset>

@@ -86,7 +86,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     public List<MinimizedWorkEntity> findWorks(String orcid) {
 
         Query query = entityManager
-                .createQuery("select NEW org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity(w.id, w.title, w.subtitle, w.description, w.publicationDate.day, w.publicationDate.month, w.publicationDate.year, pw.visibility, w.externalIdentifiersJson, pw.displayIndex, pw.sourceProfile, pw.dateCreated, pw.lastModified, w.workType, w.languageCode, w.translatedTitleLanguageCode, w.translatedTitle) "
+                .createQuery("select NEW org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity(w.id, w.title, w.subtitle, w.description, w.publicationDate.day, w.publicationDate.month, w.publicationDate.year, pw.visibility, w.externalIdentifiersJson, pw.displayIndex, pw.source, pw.dateCreated, pw.lastModified, w.workType, w.languageCode, w.translatedTitleLanguageCode, w.translatedTitle) "
                         + "from WorkEntity w, ProfileWorkEntity pw "
                         + "where pw.profile.id=:orcid and w.id=pw.work.id "
                         + "order by pw.displayIndex desc, pw.dateCreated asc");

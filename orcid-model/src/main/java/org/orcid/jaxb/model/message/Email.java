@@ -55,7 +55,7 @@ import javax.xml.bind.annotation.XmlValue;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType( propOrder = { "value" })
+@XmlType(propOrder = { "value" })
 @XmlRootElement(name = "email")
 public class Email implements Serializable, VisibilityType {
 
@@ -72,6 +72,8 @@ public class Email implements Serializable, VisibilityType {
     protected Visibility visibility;
     @XmlAttribute
     protected String source;
+    @XmlAttribute(name = "source-client-id")
+    protected String sourceClientId;
 
     public Email() {
         super();
@@ -205,6 +207,14 @@ public class Email implements Serializable, VisibilityType {
 
     public void setSource(String source) {
         this.source = source;
+    }
+
+    public String getSourceClientId() {
+        return sourceClientId;
+    }
+
+    public void setSourceClientId(String sourceClientId) {
+        this.sourceClientId = sourceClientId;
     }
 
     /**

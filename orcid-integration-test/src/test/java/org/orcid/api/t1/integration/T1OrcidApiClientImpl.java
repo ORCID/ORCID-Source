@@ -21,6 +21,8 @@ import static org.orcid.api.common.OrcidApiConstants.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
@@ -186,8 +188,8 @@ public class T1OrcidApiClientImpl implements OrcidApiService<ClientResponse> {
     }
 
     /**
-     * GETs the HTML representation of the ORCID record containing only affiliation
-     * details
+     * GETs the HTML representation of the ORCID record containing only
+     * affiliation details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -199,8 +201,8 @@ public class T1OrcidApiClientImpl implements OrcidApiService<ClientResponse> {
     }
 
     /**
-     * GETs the XML representation of the ORCID record containing only affiliation
-     * details
+     * GETs the XML representation of the ORCID record containing only
+     * affiliation details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -212,8 +214,8 @@ public class T1OrcidApiClientImpl implements OrcidApiService<ClientResponse> {
     }
 
     /**
-     * GETs the JSON representation of the ORCID record containing only affiliation
-     * details
+     * GETs the JSON representation of the ORCID record containing only
+     * affiliation details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
@@ -262,7 +264,7 @@ public class T1OrcidApiClientImpl implements OrcidApiService<ClientResponse> {
     public ClientResponse viewFundingDetailsJson(@PathParam("orcid") String orcid) {
         return orcidClientHelper.getClientResponse(UriBuilder.fromPath(FUNDING_PATH).build(orcid), VND_ORCID_JSON);
     }
-    
+
     /**
      * GETs the HTML representation of the ORCID record containing only work
      * details
@@ -300,6 +302,11 @@ public class T1OrcidApiClientImpl implements OrcidApiService<ClientResponse> {
     @Override
     public ClientResponse viewWorksDetailsJson(@PathParam("orcid") String orcid) {
         return orcidClientHelper.getClientResponse(UriBuilder.fromPath(WORKS_PATH).build(orcid), VND_ORCID_JSON);
+    }
+
+    @Override
+    public ClientResponse viewClient(String clientId) {
+        return orcidClientHelper.getClientResponse(UriBuilder.fromPath(CLIENT_PATH).build(clientId), MediaType.WILDCARD);
     }
 
     /**

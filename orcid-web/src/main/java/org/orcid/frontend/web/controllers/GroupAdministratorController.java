@@ -293,7 +293,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
             OrcidClient result = null;
 
             try {
-                result = orcidClientGroupManager.updateClientProfile(groupOrcid, client.toOrcidClient());
+                result = orcidClientGroupManager.updateClient(groupOrcid, client.toOrcidClient());
                 clearCache();
             } catch (OrcidClientGroupManagementException e) {
                 LOGGER.error(e.getMessage());

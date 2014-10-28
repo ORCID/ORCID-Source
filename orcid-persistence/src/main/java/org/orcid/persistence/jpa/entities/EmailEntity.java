@@ -48,7 +48,7 @@ public class EmailEntity extends BaseEntity<String> implements ProfileAware {
     private Boolean current;
     private Boolean verified;
     private Visibility visibility;
-    private ProfileEntity source;
+    private SourceEntity source;
 
     @Override
     @Id
@@ -108,13 +108,11 @@ public class EmailEntity extends BaseEntity<String> implements ProfileAware {
         this.visibility = visibility;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "source_id")
-    public ProfileEntity getSource() {
+    public SourceEntity getSource() {
         return source;
     }
 
-    public void setSource(ProfileEntity source) {
+    public void setSource(SourceEntity source) {
         this.source = source;
     }
 

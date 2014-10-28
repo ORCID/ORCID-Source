@@ -76,7 +76,7 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
     private EndDateEntity endDate;
     private Visibility visibility;
     private SortedSet<FundingExternalIdentifierEntity> externalIdentifiers;
-    private ProfileEntity source;
+    private SourceEntity source;
     private BigDecimal numericAmount;
     private Long displayIndex; 
 
@@ -244,13 +244,11 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
         this.externalIdentifiers = externalIdentifiers;
     }
 
-    @ManyToOne(cascade = { CascadeType.REFRESH }, fetch = FetchType.EAGER)
-    @JoinColumn(name = "source_id", nullable = true, updatable = false)
-    public ProfileEntity getSource() {
+    public SourceEntity getSource() {
         return source;
     }
 
-    public void setSource(ProfileEntity source) {
+    public void setSource(SourceEntity source) {
         this.source = source;
     }
 

@@ -28,6 +28,7 @@ import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.jpa.entities.AmbiguousOrgEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 
 import au.com.bytecode.opencsv.CSVWriter;
 
@@ -112,7 +113,8 @@ public class OrgManagerImpl implements OrgManager {
         if (existingOrg != null) {
             return existingOrg;
         }
-        org.setSource(sourceManager.retrieveSourceProfileEntity());
+        String sourceId = sourceManager.retrieveSourceOrcid();
+        org.setSource(new SourceEntity(sourceId));
         orgDao.persist(org);
         return org;
     }
@@ -131,7 +133,7 @@ public class OrgManagerImpl implements OrgManager {
             org.setOrgDisambiguated(disambiguatedOrg);
         }
         if (org.getSource() == null) {
-            org.setSource(sourceManager.retrieveSourceProfileEntity());
+            org.setSource(new SourceEntity(sourceManager.retrieveSourceOrcid()));
         }
         return orgDao.merge(org);
     }

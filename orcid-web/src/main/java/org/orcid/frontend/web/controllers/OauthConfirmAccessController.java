@@ -38,6 +38,7 @@ import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.OauthAuthorizeForm;
 import org.orcid.pojo.ajaxForm.OauthRegistration;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -48,6 +49,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
+import org.springframework.security.oauth2.common.exceptions.RedirectMismatchException;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
@@ -93,7 +95,9 @@ public class OauthConfirmAccessController extends BaseController {
     private OrcidAuthorizationEndpoint authorizationEndpoint;
     @Resource
     private RegistrationController registrationController;
-
+    
+    private static String REDIRECT_URI_ERROR = "/oauth/error/redirect-uri-mismatch?client_id={0}";
+    
     @RequestMapping(value = { "/signin", "/login" }, method = RequestMethod.GET)
     public ModelAndView loginGetHandler2(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
         // find client name if available
@@ -184,21 +188,13 @@ public class OauthConfirmAccessController extends BaseController {
                     // If client details is ok, continue
                     clientName = clientDetails.getClientName() == null ? "" : clientDetails.getClientName();
                     clientDescription = clientDetails.getClientDescription() == null ? "" : clientDetails.getClientDescription();
-                    // Get the group credit name
-                    OrcidProfile clientProfile = orcidProfileManager.retrieveOrcidProfile(clientId);
-
-                    //If client type is null it means it is a public client
-                    if(clientProfile.getClientType() == null) {
+                    
+                    ProfileEntity groupProfile = clientDetails.getGroupProfile();
+                    // If client type is null it means it is a public client
+                    if (clientDetails.getClientType() == null) {
                         clientGroupName = PUBLIC_CLIENT_GROUP_NAME;
-                    } else if (clientProfile.getOrcidInternal() != null && clientProfile.getOrcidInternal().getGroupOrcidIdentifier() != null
-                            && StringUtils.isNotBlank(clientProfile.getOrcidInternal().getGroupOrcidIdentifier().getPath())) {
-                        String client_group_id = clientProfile.getOrcidInternal().getGroupOrcidIdentifier().getPath();
-                        if (StringUtils.isNotBlank(client_group_id)) {
-                            OrcidProfile clientGroupProfile = orcidProfileManager.retrieveOrcidProfile(client_group_id);
-                            if (clientGroupProfile.getOrcidBio() != null && clientGroupProfile.getOrcidBio().getPersonalDetails() != null
-                                    && clientGroupProfile.getOrcidBio().getPersonalDetails().getCreditName() != null)
-                                clientGroupName = clientGroupProfile.getOrcidBio().getPersonalDetails().getCreditName().getContent();
-                        }
+                    } else if (groupProfile != null) {
+                        clientGroupName = groupProfile.getCreditName();
                     }
                     // If the group name is empty, use the same as the client
                     // name, since it should be a SSO user
@@ -307,7 +303,7 @@ public class OauthConfirmAccessController extends BaseController {
         form.setErrors(new ArrayList<String>());
         if(form.getApproved()) {
             // Validate name and password
-            validateUserNameAndPassword(form);
+            validateUserNameAndPassword(form);            
             if (form.getErrors().isEmpty()) {
                 try {
                     // Authenticate user
@@ -346,8 +342,28 @@ public class OauthConfirmAccessController extends BaseController {
                         approvalParams.put(OauthTokensConstants.GRANT_PERSISTENT_TOKEN, "false");
                     }
                     
-                    // Authorize
-                    authorizationEndpoint.authorize(model, RESPONSE_TYPE, params, status, auth);
+                    // Authorize            
+                    try {
+                        authorizationEndpoint.authorize(model, RESPONSE_TYPE, params, status, auth);
+                    } catch (RedirectMismatchException rUriError) {                                                
+                        String redirectUri = this.getBaseUri() + REDIRECT_URI_ERROR;
+                        //Set the client id
+                        redirectUri = redirectUri.replace("{0}", form.getClientId().getValue());
+                        //Set the response type if needed
+                        if(!PojoUtil.isEmpty(form.getResponseType()))
+                            redirectUri += "&response_type=" + form.getResponseType().getValue();
+                        //Set the redirect uri
+                        if(!PojoUtil.isEmpty(form.getRedirectUri()))
+                            redirectUri += "&redirect_uri=" + form.getRedirectUri().getValue();
+                        //Set the scope param
+                        if(!PojoUtil.isEmpty(form.getScope()))
+                            redirectUri += "&scope=" + form.getScope().getValue();
+                        //Copy the state param if present
+                        if(params != null && params.containsKey("state"))
+                            redirectUri += "&state=" + params.get("state");
+                        form.setRedirectUri(Text.valueOf(redirectUri));
+                        return form;
+                    }
                     // Approve
                     RedirectView view = (RedirectView) authorizationEndpoint.approveOrDeny(approvalParams, model, status, auth);
                     form.setRedirectUri(Text.valueOf(view.getUrl()));
@@ -455,8 +471,28 @@ public class OauthConfirmAccessController extends BaseController {
                     approvalParams.put(OauthTokensConstants.TOKEN_VERSION, OauthTokensConstants.NON_PERSISTENT_TOKEN);
                     approvalParams.put(OauthTokensConstants.GRANT_PERSISTENT_TOKEN, "false");
                 }
-                // Authorize
-                authorizationEndpoint.authorize(model, RESPONSE_TYPE, params, status, auth);
+                // Authorize               
+                try {
+                    authorizationEndpoint.authorize(model, RESPONSE_TYPE, params, status, auth);
+                } catch (RedirectMismatchException rUriError) {
+                    String redirectUri = this.getBaseUri() + REDIRECT_URI_ERROR;
+                    //Set the client id
+                    redirectUri = redirectUri.replace("{0}", form.getClientId().getValue());
+                    //Set the response type if needed
+                    if(!PojoUtil.isEmpty(form.getResponseType()))
+                        redirectUri += "&response_type=" + form.getResponseType().getValue();
+                    //Set the redirect uri
+                    if(!PojoUtil.isEmpty(form.getRedirectUri()))
+                        redirectUri += "&redirect_uri=" + form.getRedirectUri().getValue();
+                    //Set the scope param
+                    if(!PojoUtil.isEmpty(form.getScope()))
+                        redirectUri += "&scope=" + form.getScope().getValue();
+                    //Copy the state param if present
+                    if(params != null && params.containsKey("state"))
+                        redirectUri += "&state=" + params.get("state");
+                    form.setRedirectUri(Text.valueOf(redirectUri));
+                    return form;
+                }
                 // Approve
                 RedirectView view = (RedirectView) authorizationEndpoint.approveOrDeny(approvalParams, model, status, auth);
                 form.setRedirectUri(Text.valueOf(view.getUrl()));

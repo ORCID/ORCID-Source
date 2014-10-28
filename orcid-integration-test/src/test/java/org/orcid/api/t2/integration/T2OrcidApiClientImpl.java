@@ -581,6 +581,11 @@ public class T2OrcidApiClientImpl implements T2OrcidApiService<ClientResponse> {
     public ClientResponse viewWorksDetailsJson(@PathParam("orcid") String orcid) {
         return orcidClientHelper.getClientResponse(UriBuilder.fromPath(WORKS_PATH).build(orcid), VND_ORCID_JSON);
     }
+    
+    @Override
+    public ClientResponse viewClient(String clientId) {
+        return orcidClientHelper.getClientResponse(UriBuilder.fromPath(CLIENT_PATH).build(clientId), MediaType.WILDCARD);
+    }
 
     /**
      * @see OrcidApiService#searchByQueryJSON(String)

@@ -171,8 +171,7 @@ public class Funding implements VisibilityType, Activity, Serializable {
         if (source == null) {
             return null;
         }
-        SourceOrcid sourceOrcid = source.getSourceOrcid();
-        return sourceOrcid.getPath();
+        return source.retrieveSourcePath();
     }
 
     public void setSource(Source source) {
@@ -389,13 +388,12 @@ public class Funding implements VisibilityType, Activity, Serializable {
                 return false;
         } else if (!endDate.equals(other.endDate))
             return false;
-        
-        /*    
-        Breaks our deduping
-        if (lastModifiedDate != other.lastModifiedDate) return false;
-        if (createdDate != other.createdDate) return false;
-        */
-        
+
+        /*
+         * Breaks our deduping if (lastModifiedDate != other.lastModifiedDate)
+         * return false; if (createdDate != other.createdDate) return false;
+         */
+
         return true;
     }
 

@@ -109,14 +109,10 @@ public abstract class BaseT2OrcidOAuthApiClientIntegrationTest {
 
     @After
     public void clearOrcid() throws Exception {
-        // remove any client data if it exists -- plus each dependant profile
-        orcidClientDataHelper.deleteClientId(clientId);
-        orcidClientDataHelper.deleteOrcidProfile(groupOrcid);
-        // XXX Not sure why I can't delete these guys, but not too worried at
-        // this point, because deleting profiles is not part of the app
-        // functionality.
-        // orcidClientDataHelper.deleteOrcidProfile(orcid);
-        // orcidClientDataHelper.deleteOrcidProfile(clientId);
+        // remove any client data if it exists -- plus each dependent profile
+        orcidClientDataHelper.deleteOrcidProfile(orcid);
+        //orcidClientDataHelper.deleteClientId(clientId);
+        //orcidClientDataHelper.deleteOrcidProfile(groupOrcid);
 
         clientSecret = null;
         clientId = null;

@@ -55,7 +55,7 @@ public class OrgAffiliationRelationEntity extends BaseEntity<Long> implements Co
     private StartDateEntity startDate;
     private EndDateEntity endDate;
     private Visibility visibility;
-    private ProfileEntity source;
+    private SourceEntity source;
 
     @Override
     @Id
@@ -144,13 +144,11 @@ public class OrgAffiliationRelationEntity extends BaseEntity<Long> implements Co
         this.visibility = visibility;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "source_id")
-    public ProfileEntity getSource() {
+    public SourceEntity getSource() {
         return source;
     }
 
-    public void setSource(ProfileEntity source) {
+    public void setSource(SourceEntity source) {
         this.source = source;
     }
 

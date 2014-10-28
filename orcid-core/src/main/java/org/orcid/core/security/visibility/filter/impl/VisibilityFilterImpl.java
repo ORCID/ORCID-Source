@@ -158,9 +158,9 @@ public class VisibilityFilterImpl implements VisibilityFilter {
                                 Affiliation affiliation = (Affiliation) obj;
                                 Source source = affiliation.getSource();
                                 if(source != null) {
-                                    SourceOrcid sOrcid = source.getSourceOrcid();
-                                    if(sOrcid != null) {
-                                        if(sourceId.equals(sOrcid.getPath())) {
+                                    String sourcePath = source.retrieveSourcePath();
+                                    if(sourcePath != null) {
+                                        if(sourceId.equals(sourcePath)) {
                                             decision = TreeCleaningDecision.IGNORE;
                                         }
                                     }                                        
@@ -169,18 +169,18 @@ public class VisibilityFilterImpl implements VisibilityFilter {
                                 Funding funding = (Funding) obj;
                                 Source source = funding.getSource();
                                 if(source != null) {
-                                    SourceOrcid sOrcid = source.getSourceOrcid();
-                                    if(sOrcid != null) {
-                                        if(sourceId.equals(sOrcid.getPath())) {
+                                    String sourcePath = source.retrieveSourcePath();
+                                    if(sourcePath != null) {
+                                        if(sourceId.equals(sourcePath)) {
                                             decision = TreeCleaningDecision.IGNORE;
                                         }
                                     }
                                 }
                             } else if(allowPrivateWorks && OrcidWork.class.isAssignableFrom(clazz)){
                                 OrcidWork work = (OrcidWork) obj;
-                                WorkSource source = work.getWorkSource();
+                                Source source = work.getSource();
                                 if(source != null) {
-                                    if(sourceId.equals(source.getPath())){
+                                    if(sourceId.equals(source.retrieveSourcePath())){
                                         decision = TreeCleaningDecision.IGNORE;
                                     }
                                 }

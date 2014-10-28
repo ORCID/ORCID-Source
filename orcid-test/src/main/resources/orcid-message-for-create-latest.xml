@@ -18,9 +18,9 @@
 
 -->
 <orcid-message  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-message-1.2_rc5.xsd"
+    xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-message-1.2_rc6.xsd"
     xmlns="http://www.orcid.org/ns/orcid">
-    <message-version>1.2_rc5</message-version>
+    <message-version>1.2_rc6</message-version>
     <orcid-profile>
         <orcid-preferences>
             <locale>en</locale>
@@ -50,7 +50,7 @@
                     <external-id-reference>A-0000-9999</external-id-reference>
                     <external-id-url>http://www.myid.com/12345</external-id-url>
                 </external-identifier>
-                </external-identifiers>
+            </external-identifiers>
         </orcid-bio>
         <orcid-activities>
             <affiliations>
@@ -86,6 +86,12 @@
                         <citation>Test me</citation>
                     </work-citation>
                     <work-type>book</work-type>
+                    <work-external-identifiers>
+                        <work-external-identifier>
+                            <work-external-identifier-type>doi</work-external-identifier-type>
+                            <work-external-identifier-id>abc123</work-external-identifier-id>
+                        </work-external-identifier>
+                    </work-external-identifiers>
                 </orcid-work>
             </orcid-works>
        </orcid-activities>
