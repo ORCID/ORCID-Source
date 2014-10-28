@@ -26,7 +26,10 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang3.time.DateUtils;
 import org.orcid.core.constants.OauthTokensConstants;
+import org.orcid.core.manager.LoadOptions;
+import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.oauth.OrcidOauth2AuthInfo;
+import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
 import org.slf4j.Logger;
@@ -58,6 +61,9 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
     @Resource
     private OrcidOauth2AuthoriziationCodeDetailDao orcidOauth2AuthoriziationCodeDetailDao;
 
+    @Resource
+    private OrcidProfileManager orcidProfileManager;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidRandomValueTokenServices.class);
 
     public OrcidRandomValueTokenServices(ClientDetailsService clientDetailsService, int writeValiditySeconds, int readValiditySeconds) {
@@ -79,7 +85,13 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
         OAuth2AccessToken existingAccessToken = tokenStore.getAccessToken(authentication);
 
         Map<String, Object> additionalInfo = new HashMap<>();
-        additionalInfo.put("orcid", authInfo.getUserOrcid());
+        String userOrcid = authInfo.getUserOrcid();
+        additionalInfo.put("orcid", userOrcid);
+        if (userOrcid != null) {
+            OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile(userOrcid, LoadOptions.BIO_ONLY);
+            String name = orcidProfile.getOrcidBio().getPersonalDetails().retrievePublicDisplayName();
+            additionalInfo.put("name", name);
+        }
         if (usePersistentTokens) {
             additionalInfo.put(OauthTokensConstants.TOKEN_VERSION, OauthTokensConstants.PERSISTENT_TOKEN);
             if (isPersistentTokenEnabled(authentication.getAuthorizationRequest()))
@@ -92,7 +104,7 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
             if (existingAccessToken.isExpired()) {
                 tokenStore.removeAccessToken(existingAccessToken);
                 LOGGER.info("Existing but expired access token found: clientId={}, scopes={}, userOrcid={}", new Object[] { authInfo.getClientId(), authInfo.getScopes(),
-                        authInfo.getUserOrcid() });
+                        userOrcid });
             } else {
                 DefaultOAuth2AccessToken updatedAccessToken = new DefaultOAuth2AccessToken(existingAccessToken);
                 int validitySeconds = getAccessTokenValiditySeconds(authentication.getAuthorizationRequest());
@@ -102,7 +114,7 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
                 updatedAccessToken.setAdditionalInformation(additionalInfo);
                 tokenStore.storeAccessToken(updatedAccessToken, authentication);
                 LOGGER.info("Existing reusable access token found: clientId={}, scopes={}, userOrcid={}", new Object[] { authInfo.getClientId(), authInfo.getScopes(),
-                        authInfo.getUserOrcid() });
+                        userOrcid });
                 return updatedAccessToken;
             }
         }
@@ -110,8 +122,7 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
 
         accessToken.setAdditionalInformation(additionalInfo);
         tokenStore.storeAccessToken(accessToken, authentication);
-        LOGGER.info("Creating new access token: clientId={}, scopes={}, userOrcid={}",
-                new Object[] { authInfo.getClientId(), authInfo.getScopes(), authInfo.getUserOrcid() });
+        LOGGER.info("Creating new access token: clientId={}, scopes={}, userOrcid={}", new Object[] { authInfo.getClientId(), authInfo.getScopes(), userOrcid });
         return accessToken;
     }
 
