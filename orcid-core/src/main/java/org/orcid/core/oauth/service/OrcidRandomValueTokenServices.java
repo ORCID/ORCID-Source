@@ -45,7 +45,7 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 /**
  * @author Declan Newman (declan) Date: 11/05/2012
  */
-public class OrcidRandomValueTokenServices extends DefaultTokenServices {        
+public class OrcidRandomValueTokenServices extends DefaultTokenServices {
     private final int writeValiditySeconds;
     private final int readValiditySeconds;
 
@@ -80,14 +80,14 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
 
         Map<String, Object> additionalInfo = new HashMap<>();
         additionalInfo.put("orcid", authInfo.getUserOrcid());
-        if(usePersistentTokens) {                                    
+        if (usePersistentTokens) {
             additionalInfo.put(OauthTokensConstants.TOKEN_VERSION, OauthTokensConstants.PERSISTENT_TOKEN);
-            if (isPersistentTokenEnabled(authentication.getAuthorizationRequest())) 
-                additionalInfo.put("persistent", true);            
+            if (isPersistentTokenEnabled(authentication.getAuthorizationRequest()))
+                additionalInfo.put("persistent", true);
         } else {
             additionalInfo.put(OauthTokensConstants.TOKEN_VERSION, OauthTokensConstants.NON_PERSISTENT_TOKEN);
         }
-        
+
         if (existingAccessToken != null) {
             if (existingAccessToken.isExpired()) {
                 tokenStore.removeAccessToken(existingAccessToken);
@@ -128,10 +128,10 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
         if (requestedScopes.size() == 1 && ScopePathType.ORCID_PROFILE_CREATE.equals(requestedScopes.iterator().next())) {
             return readValiditySeconds;
         }
-        
-        if(usePersistentTokens) {
+
+        if (usePersistentTokens) {
             if (isPersistentTokenEnabled(authorizationRequest))
-                return readValiditySeconds;            
+                return readValiditySeconds;
         } else {
             /*
              * Tokens should last for the longest life span,
@@ -143,7 +143,7 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
                     return readValiditySeconds;
                 }
             }
-        }                        
+        }
 
         return writeValiditySeconds;
     }
@@ -168,21 +168,21 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
         if (usePersistentTokens) {
             if (authorizationRequest != null) {
                 Map<String, String> params = authorizationRequest.getAuthorizationParameters();
-                if(params != null) {
-                    if(params.containsKey(OauthTokensConstants.IS_PERSISTENT)){
+                if (params != null) {
+                    if (params.containsKey(OauthTokensConstants.IS_PERSISTENT)) {
                         String isPersistent = params.get(OauthTokensConstants.IS_PERSISTENT);
-                        if(Boolean.valueOf(isPersistent)) {
+                        if (Boolean.valueOf(isPersistent)) {
                             return true;
                         }
                     } else if (params.containsKey("code")) {
                         String code = params.get("code");
-                        if(orcidOauth2AuthoriziationCodeDetailDao.find(code) != null) {
+                        if (orcidOauth2AuthoriziationCodeDetailDao.find(code) != null) {
                             if (orcidOauth2AuthoriziationCodeDetailDao.isPersistentToken(code)) {
                                 return true;
                             }
                         }
                     }
-                }                
+                }
             }
         }
 
