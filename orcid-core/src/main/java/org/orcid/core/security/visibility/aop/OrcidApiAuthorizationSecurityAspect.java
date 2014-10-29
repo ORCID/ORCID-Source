@@ -16,6 +16,8 @@
  */
 package org.orcid.core.security.visibility.aop;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -108,24 +110,27 @@ public class OrcidApiAuthorizationSecurityAspect {
                     boolean allowFunding = false;
                     boolean allowAffiliations = false;                    
                     
+                    // Get the update equivalent scope, if it is reading, but, doesnt have the read permissions, check if it have the update permissions
+                    ScopePathType equivalentUpdateScope = getEquivalentUpdateScope(requiredScope);
+                    
                     // Check works scopes
                     if (requiredScope.equals(ScopePathType.ORCID_WORKS_UPDATE) || requiredScope.equals(ScopePathType.ORCID_WORKS_READ_LIMITED)) {
                         // Check if the member have the update or read scope on works
-                        if (hasScopeEnabled(clientId, userOrcid, requiredScope.getContent()))
+                        if (hasScopeEnabled(clientId, userOrcid, requiredScope.getContent(), equivalentUpdateScope == null ? null : equivalentUpdateScope.getContent()))
                             // If so, allow him to see private works
                             allowWorks = true;
                     }
                     // Check funding scopes
                     if (requiredScope.equals(ScopePathType.FUNDING_UPDATE) || requiredScope.equals(ScopePathType.FUNDING_READ_LIMITED)) {
                         // Check if the member have the update or read scope on funding
-                        if (hasScopeEnabled(clientId, userOrcid, requiredScope.getContent()))
+                        if (hasScopeEnabled(clientId, userOrcid, requiredScope.getContent(), equivalentUpdateScope == null ? null : equivalentUpdateScope.getContent()))
                             // If so, allow him to see private funding
                             allowFunding = true;
                     }
                     // Check affiliations scopes
                     if (requiredScope.equals(ScopePathType.AFFILIATIONS_UPDATE) || requiredScope.equals(ScopePathType.AFFILIATIONS_READ_LIMITED)) {
                         // Check if the member have the update or read scope on affiliations
-                        if (hasScopeEnabled(clientId, userOrcid, requiredScope.getContent()))
+                        if (hasScopeEnabled(clientId, userOrcid, requiredScope.getContent(), equivalentUpdateScope == null ? null : equivalentUpdateScope.getContent()))
                             // If so, allow him to see private affiliations
                             allowAffiliations = true;
                     }
@@ -166,8 +171,12 @@ public class OrcidApiAuthorizationSecurityAspect {
         }
     }    
 
-    private boolean hasScopeEnabled(String clientId, String userName, String scope) {
-        return orcidOauthTokenDetailService.checkIfScopeIsAvailableForMember(clientId, userName, scope);
+    private boolean hasScopeEnabled(String clientId, String userName, String scope, String equivalentScope) {
+        List<String> scopes = new ArrayList<String> ();
+        scopes.add(scope);
+        if(equivalentScope != null)
+            scopes.add(equivalentScope);
+        return orcidOauthTokenDetailService.checkIfScopeIsAvailableForMember(clientId, userName, scopes);
     }
 
     private Authentication getAuthentication() {
@@ -179,4 +188,19 @@ public class OrcidApiAuthorizationSecurityAspect {
         }
     }
 
+    private ScopePathType getEquivalentUpdateScope(ScopePathType readScope) {
+        if(readScope != null)
+            switch (readScope) {
+            case AFFILIATIONS_READ_LIMITED:
+                return ScopePathType.AFFILIATIONS_UPDATE;
+            case FUNDING_READ_LIMITED:
+                return ScopePathType.FUNDING_UPDATE;
+            case ORCID_WORKS_READ_LIMITED:
+                return ScopePathType.ORCID_WORKS_UPDATE;
+            default:
+                return null;
+            }
+        return null;
+    }
+ 
 }
