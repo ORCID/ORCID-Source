@@ -39,8 +39,7 @@
 	<bean id="templateManager" class="org.orcid.core.manager.impl.TemplateManagerImpl" />
 
 	<bean id="notificationManager" class="org.orcid.core.manager.impl.NotificationManagerImpl">
-		<property name="encryptionManager" ref="encryptionManager" />				
-		<property name="baseUri" value="${org.orcid.core.baseUri}" />		
+		<property name="encryptionManager" ref="encryptionManager" />
 		<property name="templateManager" ref="templateManager" />
 		<property name="apiRecordCreationEmailEnabled"
 			value="${org.orcid.core.mail.apiRecordCreationEmailEnabled:true}" />

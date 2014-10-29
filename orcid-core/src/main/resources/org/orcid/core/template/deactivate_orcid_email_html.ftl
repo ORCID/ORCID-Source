@@ -25,14 +25,14 @@
 	</head>
 	<body>
 		<div style="padding: 20px; padding-top: 0px;">
-			<img src="http://orcid.org/sites/all/themes/orcid/img/orcid-logo.png" alt="ORCID.org"/>
+			<img src="https://orcid.org/sites/all/themes/orcid/img/orcid-logo.png" alt="ORCID.org"/>
 		    <hr />
 		  	<span style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666; font-weight: bold;">
 		    	<@emailMacros.msg "email.common.dear" /> ${emailName}<@emailMacros.msg "email.common.dear.comma" />
 		    </span>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
 		    	<@emailMacros.msg "email.deactivate.you_have_requested.1" />
-		    	<a href="${baseUri}/${orcid}?lang=${locale}">${baseUri}/${orcid}</a><@emailMacros.msg "email.deactivate.you_have_requested.2" />
+		    	<a href="${pubBaseUri}/${orcid}?lang=${locale}">${pubBaseUri}/${orcid}</a><@emailMacros.msg "email.deactivate.you_have_requested.2" />
 		    	<a href="${baseUri}${deactivateUrlEndpoint}?lang=${locale}">${baseUri}${deactivateUrlEndpointUrl}</a>		    	 
 		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">

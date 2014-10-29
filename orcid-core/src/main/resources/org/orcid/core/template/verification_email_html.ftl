@@ -24,7 +24,7 @@
 	</head>
 	<body>
 		<div style="padding: 20px; padding-top: 0px;">
-			<img src="http://orcid.org/sites/all/themes/orcid/img/orcid-logo.png" alt="ORCID.org"/>
+			<img src="https://orcid.org/sites/all/themes/orcid/img/orcid-logo.png" alt="ORCID.org"/>
 		    <hr />
 		  	<span style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666; font-weight: bold;">
 		    <@emailMacros.msg "email.common.dear" /> ${emailName}<@emailMacros.msg "email.common.dear.comma" />
@@ -35,7 +35,7 @@
 		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
 		        <@emailMacros.msg "email.verify.1" />${orcid}<@emailMacros.msg "email.verify.2" />
-		        <a href="${baseUri}/${orcid}?lang=${locale}" target="_blank">${baseUri}/${orcid}</a> <@emailMacros.msg "email.verify.primary_email_1" /> ${primaryEmail}<@emailMacros.msg "email.verify.primary_email_2" />. 	        
+		        <a href="${pubBaseUri}/${orcid}?lang=${locale}" target="_blank">${pubBaseUri}/${orcid}</a> <@emailMacros.msg "email.verify.primary_email_1" /> ${primaryEmail}<@emailMacros.msg "email.verify.primary_email_2" />. 	        
 		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
 		        <@emailMacros.msg "email.verify.if_you_did_not" />
