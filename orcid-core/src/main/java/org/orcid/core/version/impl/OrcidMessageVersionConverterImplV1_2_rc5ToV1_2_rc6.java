@@ -16,8 +16,22 @@
  */
 package org.orcid.core.version.impl;
 
+import static org.orcid.jaxb.model.message.WorkExternalIdentifierType.AGR;
+import static org.orcid.jaxb.model.message.WorkExternalIdentifierType.CBA;
+import static org.orcid.jaxb.model.message.WorkExternalIdentifierType.CIT;
+import static org.orcid.jaxb.model.message.WorkExternalIdentifierType.CTX;
+import static org.orcid.jaxb.model.message.WorkExternalIdentifierType.ETHOS;
+import static org.orcid.jaxb.model.message.WorkExternalIdentifierType.HANDLE;
+import static org.orcid.jaxb.model.message.WorkExternalIdentifierType.HIR;
+import static org.orcid.jaxb.model.message.WorkExternalIdentifierType.OTHER_ID;
+import static org.orcid.jaxb.model.message.WorkExternalIdentifierType.PAT;
+import static org.orcid.jaxb.model.message.WorkExternalIdentifierType.SOURCE_WORK_ID;
+import static org.orcid.jaxb.model.message.WorkExternalIdentifierType.URI;
+import static org.orcid.jaxb.model.message.WorkExternalIdentifierType.URN;
+
+import java.util.Arrays;
+
 import org.orcid.core.version.OrcidMessageVersionConverter;
-import org.orcid.jaxb.model.message.Activity;
 import org.orcid.jaxb.model.message.ExternalIdSource;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.OrcidMessage;
@@ -27,6 +41,9 @@ import org.orcid.jaxb.model.message.OrcidSearchResults;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.message.SourceOrcid;
+import org.orcid.jaxb.model.message.WorkExternalIdentifier;
+import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.message.WorkSource;
 
 /**
@@ -38,6 +55,12 @@ public class OrcidMessageVersionConverterImplV1_2_rc5ToV1_2_rc6 implements Orcid
 
     private static final String FROM_VERSION = "1.2_rc5";
     private static final String TO_VERSION = "1.2_rc6";
+    private static final WorkExternalIdentifierType[] NEW_WORK_EXT_ID_TYPES = new WorkExternalIdentifierType[] { AGR, CBA, CIT, CTX, ETHOS, HANDLE, HIR, PAT,
+            SOURCE_WORK_ID, URI, URN };
+    static {
+        // Just to be sure, for binary search
+        Arrays.sort(NEW_WORK_EXT_ID_TYPES);
+    }
 
     @Override
     public String getFromVersion() {
@@ -91,6 +114,17 @@ public class OrcidMessageVersionConverterImplV1_2_rc5ToV1_2_rc6 implements Orcid
             if (sourceOrcid != null) {
                 orcidWork.setSource(null);
                 orcidWork.setWorkSource(new WorkSource(sourceOrcid));
+            }
+        }
+        WorkExternalIdentifiers externalIdentifiers = orcidWork.getWorkExternalIdentifiers();
+        if (externalIdentifiers != null) {
+            for (WorkExternalIdentifier wei : externalIdentifiers.getWorkExternalIdentifier()) {
+                WorkExternalIdentifierType type = wei.getWorkExternalIdentifierType();
+                if (type != null) {
+                    if (Arrays.binarySearch(NEW_WORK_EXT_ID_TYPES, type) >= 0) {
+                        wei.setWorkExternalIdentifierType(OTHER_ID);
+                    }
+                }
             }
         }
     }

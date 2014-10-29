@@ -480,7 +480,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
      * @return the grants
      */
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = PROFILE, orphanRemoval = true)
-    @Sort(type = SortType.COMPARATOR, comparator = ProfileFundingEntityDisplayIndexComparatorReverse.class)
+    @Sort(type = SortType.COMPARATOR, comparator = ProfileFundingEntityDisplayIndexComparatorDesc.class)
     public SortedSet<ProfileFundingEntity> getProfileFunding() {
         return profileFunding;
     }
@@ -497,7 +497,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
      * @return the works
      */
     @OneToMany(mappedBy = PROFILE, cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @Sort(type = SortType.COMPARATOR, comparator = ProfileWorkEntity.ChronologicallyOrderedProfileWorkEntityComparator.class)
+    @Sort(type = SortType.COMPARATOR, comparator = ProfileWorkEntityDisplayIndexComparatorDesc.class)
     public SortedSet<ProfileWorkEntity> getProfileWorks() {
         return profileWorks;
     }
