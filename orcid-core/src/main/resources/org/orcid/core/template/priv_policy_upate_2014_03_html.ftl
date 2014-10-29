@@ -24,7 +24,7 @@
 	</head>
 	<body>
 		<div style="padding: 20px; padding-top: 0px;">
-			<img src="http://orcid.org/sites/all/themes/orcid/img/orcid-logo.png" alt="ORCID.org"/>
+			<img src="https://orcid.org/sites/all/themes/orcid/img/orcid-logo.png" alt="ORCID.org"/>
 		    <hr />
 		  	<span style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666; font-weight: bold;">
 		    Dear ${emailName},
