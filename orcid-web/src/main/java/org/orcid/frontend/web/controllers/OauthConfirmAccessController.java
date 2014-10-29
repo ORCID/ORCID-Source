@@ -224,7 +224,7 @@ public class OauthConfirmAccessController extends BaseController {
         OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid(), LoadOptions.BIO_ONLY);
 
         // XXX Use T2 API
-        OrcidProfile clientProfile = orcidProfileManager.retrieveOrcidProfile(clientId);
+        
         Boolean justRegistered = (Boolean) request.getSession().getAttribute(JUST_REGISTERED);
         if (justRegistered != null) {
             request.getSession().removeAttribute(JUST_REGISTERED);
@@ -249,15 +249,11 @@ public class OauthConfirmAccessController extends BaseController {
                 usePersistentTokens = true;
         }
         
-        if(clientProfile.getClientType() == null) {
+        if(clientDetails.getClientType() == null) {
             clientGroupName = PUBLIC_CLIENT_GROUP_NAME;
-        } else if (clientProfile.getOrcidInternal() != null && clientProfile.getOrcidInternal().getGroupOrcidIdentifier() != null
-                && StringUtils.isNotBlank(clientProfile.getOrcidInternal().getGroupOrcidIdentifier().getPath())) {
-            String client_group_id = clientProfile.getOrcidInternal().getGroupOrcidIdentifier().getPath();
-            OrcidProfile clientGroupProfile = orcidProfileManager.retrieveOrcidProfile(client_group_id);
-            if (clientGroupProfile.getOrcidBio() != null && clientGroupProfile.getOrcidBio().getPersonalDetails() != null
-                    && clientGroupProfile.getOrcidBio().getPersonalDetails().getCreditName() != null)
-                clientGroupName = clientGroupProfile.getOrcidBio().getPersonalDetails().getCreditName().getContent();
+        } else if (clientDetails.getGroupProfile() != null) {
+            if (!PojoUtil.isEmpty(clientDetails.getGroupProfile().getCreditName()))
+                clientGroupName = clientDetails.getGroupProfile().getCreditName();
         }
 
         // If the group name is empty, use the same as the client name, since it
@@ -269,8 +265,7 @@ public class OauthConfirmAccessController extends BaseController {
         mav.addObject("client_name", clientName);
         mav.addObject("client_description", clientDescription);
         mav.addObject("client_group_name", clientGroupName);
-        mav.addObject("client_website", clientWebsite);
-        mav.addObject("clientProfile", clientProfile);
+        mav.addObject("client_website", clientWebsite);        
         mav.addObject("scopes", ScopePathType.getScopesFromSpaceSeparatedString(scope));
         mav.addObject("scopesString", scope);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
