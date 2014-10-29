@@ -1,0 +1,313 @@
+/**
+ * =============================================================================
+ *
+ * ORCID (R) Open Source
+ * http://orcid.org
+ *
+ * Copyright (c) 2012-2014 ORCID, Inc.
+ * Licensed under an MIT-Style License (MIT)
+ * http://orcid.org/open-source-license
+ *
+ * This copyright and license information (including a link to the full license)
+ * shall be included in its entirety in all copies or substantial portion of
+ * the software.
+ *
+ * =============================================================================
+ */
+package org.orcid.api.t2.integration;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.util.Arrays;
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.ws.rs.core.MultivaluedMap;
+
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.orcid.api.common.WebDriverHelper;
+import org.orcid.api.t2.T2OAuthAPIService;
+import org.orcid.core.manager.ClientDetailsManager;
+import org.orcid.jaxb.model.message.Affiliation;
+import org.orcid.jaxb.model.message.Country;
+import org.orcid.jaxb.model.message.Funding;
+import org.orcid.jaxb.model.message.Iso3166Country;
+import org.orcid.jaxb.model.message.OrcidActivities;
+import org.orcid.jaxb.model.message.OrcidMessage;
+import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.OrcidWork;
+import org.orcid.jaxb.model.message.OrcidWorks;
+import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.message.WorkExternalIdentifier;
+import org.orcid.jaxb.model.message.WorkExternalIdentifierId;
+import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
+import org.orcid.persistence.dao.ClientDetailsDao;
+import org.orcid.persistence.dao.ClientRedirectDao;
+import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.keys.ClientRedirectUriPk;
+import org.orcid.test.DBUnitTest;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.core.util.MultivaluedMapImpl;
+
+/**
+ * 
+ * @author Angel Montenegro
+ * 
+ */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "classpath:test-oauth-orcid-api-client-context.xml" })
+public class T2OrcidOAuthApiClientUpdatePrivateDataIntegrationTest extends DBUnitTest {
+
+    private static final String DEFAULT = "default";
+
+    private static final String READ_PRIVATE_WORKS_CLIENT_ID = "9999-9999-9999-9991";
+    private static final String READ_PRIVATE_FUNDING_CLIENT_ID = "9999-9999-9999-9992";
+    private static final String READ_PRIVATE_AFFILIATIONS_CLIENT_ID = "9999-9999-9999-9993";
+    private static final String READ_ONLY_LIMITED_INFO_CLIENT_ID = "9999-9999-9999-9994";
+    private static final String READ_PRIVATE_WORKS_CLIENT_ID_2 = "9999-9999-9999-9995";
+    private static final String READ_PRIVATE_FUNDING_CLIENT_ID_2 = "9999-9999-9999-9996";
+    private static final String READ_PRIVATE_AFFILIATIONS_CLIENT_ID_2 = "9999-9999-9999-9997";
+
+    private static final List<String> DATA_FILES = Arrays.asList("/group_client_data/EmptyEntityData.xml", "/group_client_data/SecurityQuestionEntityData.xml",
+            "/group_client_data/ProfileEntityData.xml", "/group_client_data/WorksEntityData.xml", "/group_client_data/OrgsEntityData.xml",
+            "/group_client_data/ClientDetailsEntityData.xml", "/group_client_data/ProfileWorksEntityData.xml", "/group_client_data/OrgAffiliationEntityData.xml",
+            "/group_client_data/ProfileFundingEntityData.xml");
+
+    private WebDriver webDriver;
+
+    private WebDriverHelper webDriverHelper;
+
+    @Value("${org.orcid.web.base.url:http://localhost:8080/orcid-web}")
+    private String webBaseUrl;
+
+    private String redirectUri;
+
+    @Resource
+    private ClientRedirectDao clientRedirectDao;
+
+    @Resource
+    private ClientDetailsManager clientDetailsManager;
+
+    @Resource
+    private ClientDetailsDao clientDetailsDao;
+
+    @Resource
+    private ProfileDao profileDao;
+
+    @Resource(name = "t2OAuthClient")
+    private T2OAuthAPIService<ClientResponse> oauthT2Client;
+
+    @BeforeClass
+    public static void initDBUnitData() throws Exception {
+        initDBUnitData(DATA_FILES);
+    }
+
+    @Before
+    @Transactional
+    public void before() {
+        webDriver = new FirefoxDriver();
+        redirectUri = webBaseUrl + "/oauth/playground";
+        webDriverHelper = new WebDriverHelper(webDriver, webBaseUrl, redirectUri);
+
+        // Set redirect uris if needed
+        ClientRedirectUriPk clientRedirectUriPk = new ClientRedirectUriPk(READ_PRIVATE_WORKS_CLIENT_ID, redirectUri, DEFAULT);
+        if (clientRedirectDao.find(clientRedirectUriPk) == null) {
+            clientDetailsManager.addClientRedirectUri(READ_PRIVATE_WORKS_CLIENT_ID, redirectUri);
+        }
+
+        clientRedirectUriPk = new ClientRedirectUriPk(READ_PRIVATE_WORKS_CLIENT_ID_2, redirectUri, DEFAULT);
+        if (clientRedirectDao.find(clientRedirectUriPk) == null) {
+            clientDetailsManager.addClientRedirectUri(READ_PRIVATE_WORKS_CLIENT_ID_2, redirectUri);
+        }
+
+        clientRedirectUriPk = new ClientRedirectUriPk(READ_PRIVATE_AFFILIATIONS_CLIENT_ID, redirectUri, DEFAULT);
+        if (clientRedirectDao.find(clientRedirectUriPk) == null) {
+            clientDetailsManager.addClientRedirectUri(READ_PRIVATE_AFFILIATIONS_CLIENT_ID, redirectUri);
+        }
+
+        clientRedirectUriPk = new ClientRedirectUriPk(READ_PRIVATE_AFFILIATIONS_CLIENT_ID_2, redirectUri, DEFAULT);
+        if (clientRedirectDao.find(clientRedirectUriPk) == null) {
+            clientDetailsManager.addClientRedirectUri(READ_PRIVATE_AFFILIATIONS_CLIENT_ID_2, redirectUri);
+        }
+
+        clientRedirectUriPk = new ClientRedirectUriPk(READ_PRIVATE_FUNDING_CLIENT_ID, redirectUri, DEFAULT);
+        if (clientRedirectDao.find(clientRedirectUriPk) == null) {
+            clientDetailsManager.addClientRedirectUri(READ_PRIVATE_FUNDING_CLIENT_ID, redirectUri);
+        }
+
+        clientRedirectUriPk = new ClientRedirectUriPk(READ_PRIVATE_FUNDING_CLIENT_ID_2, redirectUri, DEFAULT);
+        if (clientRedirectDao.find(clientRedirectUriPk) == null) {
+            clientDetailsManager.addClientRedirectUri(READ_PRIVATE_FUNDING_CLIENT_ID_2, redirectUri);
+        }
+
+        clientRedirectUriPk = new ClientRedirectUriPk(READ_ONLY_LIMITED_INFO_CLIENT_ID, redirectUri, DEFAULT);
+        if (clientRedirectDao.find(clientRedirectUriPk) == null) {
+            clientDetailsManager.addClientRedirectUri(READ_ONLY_LIMITED_INFO_CLIENT_ID, redirectUri);
+        }
+
+        webDriver.get(webBaseUrl + "/signout");
+
+        // Update last modified to force cache eviction (because DB unit deletes
+        // a load of stuff from the DB, but reinserts profiles with older last
+        // modified date)
+        for (ProfileEntity profile : profileDao.getAll()) {
+            profileDao.updateLastModifiedDateWithoutResult(profile.getId());
+        }
+    }
+
+    @After
+    public void after() {
+        webDriver.quit();
+    }    
+
+    /**
+     * ------------------ UPDATE WORKS ------------------
+     * */
+    /**
+     * Check fetching information from a client that should have access to his
+     * private works
+     * */
+    @Test
+    public void testGetProfileWithOwnPrivateWorks() throws JSONException, InterruptedException {
+        String scopes = "/orcid-works/update";
+        String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, READ_PRIVATE_WORKS_CLIENT_ID);
+        String accessToken = obtainAccessToken(READ_PRIVATE_WORKS_CLIENT_ID, authorizationCode, redirectUri, scopes);
+
+        ClientResponse fullResponse1 = oauthT2Client.viewFullDetailsXml("9999-9999-9999-9989", accessToken, "v1.2_rc5");
+        assertEquals(200, fullResponse1.getStatus());
+        OrcidMessage orcidMessage = fullResponse1.getEntity(OrcidMessage.class);
+        // Check returning message
+        assertNotNull(orcidMessage);
+        assertNotNull(orcidMessage.getOrcidProfile());
+        assertNotNull(orcidMessage.getOrcidProfile().getOrcidActivities());
+
+        // Check works
+        assertNotNull(orcidMessage.getOrcidProfile().getOrcidActivities().getOrcidWorks());
+        assertNotNull(orcidMessage.getOrcidProfile().getOrcidActivities().getOrcidWorks().getOrcidWork());
+        assertEquals(2, orcidMessage.getOrcidProfile().getOrcidActivities().getOrcidWorks().getOrcidWork().size());
+
+        List<OrcidWork> works = orcidMessage.getOrcidProfile().getOrcidActivities().getOrcidWorks().getOrcidWork();
+        
+        OrcidWork myPrivateWork = null;
+        boolean containMyPrivateWork = false;
+        
+        
+        for (OrcidWork work : works) {
+            String putCode = work.getPutCode();
+            if (putCode.equals("4")) {
+                myPrivateWork = work;
+                containMyPrivateWork = true;
+                break;
+            } 
+        }
+
+        if (!containMyPrivateWork)
+            fail("Client doesnt have his private work with put code: 4");
+
+        myPrivateWork.setCountry(new Country(Iso3166Country.CR));
+        myPrivateWork.getWorkTitle().getTitle().setContent("Updated title");   
+        WorkExternalIdentifier extId = new WorkExternalIdentifier();
+        WorkExternalIdentifierId extIdId = new WorkExternalIdentifierId("updated-id"); 
+        extId.setWorkExternalIdentifierId(extIdId);
+        WorkExternalIdentifierType extIdType = WorkExternalIdentifierType.DOI; 
+        extId.setWorkExternalIdentifierType(extIdType);
+        WorkExternalIdentifiers extIds = new WorkExternalIdentifiers();
+        extIds.getWorkExternalIdentifier().add(extId);
+        myPrivateWork.setWorkExternalIdentifiers(extIds);        
+        Visibility oldVisibility = myPrivateWork.getVisibility();
+        myPrivateWork.setVisibility(Visibility.PUBLIC);
+        
+        oauthT2Client.updateWorksXml("9999-9999-9999-9989", getUpdateOrcidMessage(myPrivateWork), accessToken);
+        
+        fullResponse1 = oauthT2Client.viewFullDetailsXml("9999-9999-9999-9989", accessToken, "v1.2_rc5");
+        
+        assertEquals(200, fullResponse1.getStatus());
+        orcidMessage = fullResponse1.getEntity(OrcidMessage.class);
+        // Check returning message
+        assertNotNull(orcidMessage);
+        assertNotNull(orcidMessage.getOrcidProfile());
+        assertNotNull(orcidMessage.getOrcidProfile().getOrcidActivities());
+
+        // Check works
+        assertNotNull(orcidMessage.getOrcidProfile().getOrcidActivities().getOrcidWorks());
+        assertNotNull(orcidMessage.getOrcidProfile().getOrcidActivities().getOrcidWorks().getOrcidWork());
+        assertEquals(2, orcidMessage.getOrcidProfile().getOrcidActivities().getOrcidWorks().getOrcidWork().size());
+
+        works = orcidMessage.getOrcidProfile().getOrcidActivities().getOrcidWorks().getOrcidWork();
+        
+        containMyPrivateWork = false;
+        
+        for (OrcidWork work : works) {
+            String putCode = work.getPutCode();
+            if (putCode.equals("4")) {
+                assertEquals("Updated title", work.getWorkTitle().getTitle().getContent());
+                assertNotNull(work.getWorkExternalIdentifiers());
+                for(WorkExternalIdentifier updatedExtId : work.getWorkExternalIdentifiers().getWorkExternalIdentifier()) {
+                    assertEquals("updated-id", updatedExtId.getWorkExternalIdentifierId().getContent());
+                    assertEquals(WorkExternalIdentifierType.DOI, updatedExtId.getWorkExternalIdentifierType());
+                }
+                //Check the visibility doesnt changed
+                assertEquals(oldVisibility, work.getVisibility());
+                containMyPrivateWork = true;
+                break;
+            } 
+        }
+        
+        assertTrue(containMyPrivateWork);
+    }
+    
+    private OrcidMessage getUpdateOrcidMessage(OrcidWork work) {
+        OrcidMessage message = new OrcidMessage();
+        message.setMessageVersion("1.1");
+        OrcidProfile profile = new OrcidProfile();
+        OrcidActivities activities = new OrcidActivities();
+        OrcidWorks works = new OrcidWorks();
+        works.getOrcidWork().add(work);
+        activities.setOrcidWorks(works);
+        profile.setOrcidActivities(activities);
+        message.setOrcidProfile(profile);
+        return message;
+    }
+
+    
+    
+    
+    
+
+
+    private String obtainAccessToken(String clientId, String authorizationCode, String redirectUri, String scopes) throws JSONException {
+        MultivaluedMap<String, String> params = new MultivaluedMapImpl();
+        params.add("client_id", clientId);
+        params.add("client_secret", "client-secret");
+        params.add("grant_type", "authorization_code");
+        params.add("scope", scopes);
+        params.add("redirect_uri", redirectUri);
+        params.add("code", authorizationCode);
+        ClientResponse tokenResponse = oauthT2Client.obtainOauth2TokenPost("client_credentials", params);
+        assertEquals(200, tokenResponse.getStatus());
+        String body = tokenResponse.getEntity(String.class);
+        JSONObject jsonObject = new JSONObject(body);
+        String accessToken = (String) jsonObject.get("access_token");
+        assertNotNull(accessToken);
+        return accessToken;
+    }
+
+}
