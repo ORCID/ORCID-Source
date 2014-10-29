@@ -65,6 +65,7 @@ import org.orcid.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -109,7 +110,11 @@ public class NotificationManagerImpl implements NotificationManager {
 
     private String ORCID_PRIVACY_POLICY_UPDATES = "ORCID - Privacy Policy Updates";
 
+    @Value("${org.orcid.core.baseUri:http://orcid.org}")
     private URI baseUri;
+    
+    @Value("${org.orcid.core.pubBaseUri:https://pub.orcid.org}")
+    private String pubBaseUri;
 
     private boolean apiRecordCreationEmailEnabled;
 
@@ -134,7 +139,6 @@ public class NotificationManagerImpl implements NotificationManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationManagerImpl.class);
 
-    @Required
     public void setBaseUri(URI baseUri) {
         this.baseUri = baseUri;
     }
@@ -181,6 +185,7 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("emailName", emailFriendlyName);
         templateParams.put("orcid", orcidToDeactivate.getOrcidIdentifier().getPath());
         templateParams.put("baseUri", baseUri);
+        templateParams.put("pubBaseUri", pubBaseUri);
         templateParams.put("deactivateUrlEndpoint", deactivateUrlEndpointPath + "/" + base64EncodedEmail);
         templateParams.put("deactivateUrlEndpointUrl", deactivateUrlEndpointPath);
         templateParams.put("subject", subject);
@@ -208,6 +213,7 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("verificationUrl", verificationUrl);
         templateParams.put("orcid", orcidProfile.getOrcidIdentifier().getPath());
         templateParams.put("baseUri", baseUri);
+        templateParams.put("pubBaseUri", pubBaseUri);
 
         addMessageParams(templateParams, orcidProfile);
 
@@ -231,6 +237,7 @@ public class NotificationManagerImpl implements NotificationManager {
         }
         templateParams.put("orcid", orcidProfile.getOrcidIdentifier().getPath());
         templateParams.put("baseUri", baseUri);
+        templateParams.put("pubBaseUri", pubBaseUri);
 
         addMessageParams(templateParams, orcidProfile);
 
@@ -288,6 +295,7 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("email", email);
         templateParams.put("subject", getSubject("email.subject.verify_reminder", orcidProfile));
         templateParams.put("baseUri", baseUri);
+        templateParams.put("pubBaseUri", pubBaseUri);
 
         addMessageParams(templateParams, orcidProfile);
 
@@ -322,6 +330,7 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("orcid", orcidProfile.getOrcidIdentifier().getPath());
         templateParams.put("subject", getSubject("email.subject.reset", orcidProfile));
         templateParams.put("baseUri", baseUri);
+        templateParams.put("pubBaseUri", pubBaseUri);
         // Generate body from template
         String resetUrl = createResetEmail(orcidProfile, baseUri);
         templateParams.put("passwordResetUrl", resetUrl);
@@ -362,6 +371,7 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("orcid", amendedProfile.getOrcidIdentifier().getPath());
         templateParams.put("amenderName", extractAmenderName(amendedProfile, amenderOrcid));
         templateParams.put("baseUri", baseUri);
+        templateParams.put("pubBaseUri", pubBaseUri);
         templateParams.put("subject", subject);
 
         addMessageParams(templateParams, amendedProfile);
@@ -410,6 +420,7 @@ public class NotificationManagerImpl implements NotificationManager {
             templateParams.put("grantingOrcidValue", orcidUserGrantingPermission.getOrcidIdentifier().getPath());
             templateParams.put("grantingOrcidName", deriveEmailFriendlyName(orcidUserGrantingPermission));
             templateParams.put("baseUri", baseUri);
+            templateParams.put("pubBaseUri", pubBaseUri);
             templateParams.put("grantingOrcidEmail", grantingOrcidEmail);
             templateParams.put("subject", subject);
 
@@ -440,6 +451,7 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("newEmail", updatedProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
         templateParams.put("orcid", updatedProfile.getOrcidIdentifier().getPath());
         templateParams.put("baseUri", baseUri);
+        templateParams.put("pubBaseUri", pubBaseUri);
         templateParams.put("subject", subject);
 
         addMessageParams(templateParams, updatedProfile);
@@ -521,6 +533,7 @@ public class NotificationManagerImpl implements NotificationManager {
             templateParams.put("subject", subject);
             templateParams.put("creatorName", creatorName);
             templateParams.put("baseUri", baseUri);
+            templateParams.put("pubBaseUri", pubBaseUri);
             templateParams.put("verificationUrl", verificationUrl);
 
             addMessageParams(templateParams, createdProfile);
@@ -567,6 +580,7 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("creatorName", (source == null || source.getSourceName() == null || source.getSourceName().getContent() == null) ? source.getSourceOrcid()
                 .getPath() : source.getSourceName().getContent());
         templateParams.put("baseUri", baseUri);
+        templateParams.put("pubBaseUri", pubBaseUri);
         templateParams.put("daysUntilActivation", daysUntilActivation);
         Email primaryEmail = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail();
         if (primaryEmail == null) {
@@ -773,6 +787,7 @@ public class NotificationManagerImpl implements NotificationManager {
         String orcid = managed.getOrcidIdentifier().getPath();
         Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put("baseUri", baseUri);
+        templateParams.put("pubBaseUri", pubBaseUri);
         templateParams.put("link", link);
 
         String trustedOrcidValue = trusted.retrieveOrcidPath();
@@ -827,6 +842,14 @@ public class NotificationManagerImpl implements NotificationManager {
     @Override
     public Notification findByOrcidAndId(String orcid, Long id) {
         return notificationAdapter.toNotification(notificationDao.findByOricdAndId(orcid, id));
+    }
+
+    public String getPubBaseUri() {
+        return pubBaseUri;
+    }
+
+    public void setPubBaseUri(String pubBaseUri) {
+        this.pubBaseUri = pubBaseUri;
     }
     
 }
