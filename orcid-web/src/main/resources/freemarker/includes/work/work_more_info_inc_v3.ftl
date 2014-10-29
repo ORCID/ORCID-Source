@@ -135,7 +135,7 @@
 							ng-bind='contributor | contributorFilter'></span>
 					</div>
 				</div>										
-			</div>
+			</div>		
 		</div>		
 	</div>	
 </div>
