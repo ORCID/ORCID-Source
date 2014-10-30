@@ -57,6 +57,44 @@ GroupedActivities.FUNDING = 'funding';
 GroupedActivities.ABBR_WORK = 'abbrWork';
 GroupedActivities.AFFILIATION = 'affiliation';
 
+GroupedActivities.prototype.add = function(activity) {
+	// assumes works are added in the order of the display index desc
+	// subsorted by the created date asc
+    var identifiersPath = null;
+    identifiersPath = this.getIdentifiersPath();
+    for (var idx in activity[identifiersPath])
+    	this.addKey(this.key(activity[identifiersPath][idx]));
+	this.activities[activity.putCode.value] = activity;
+	if (this.defaultPutCode == null) { 
+		this.activePutCode = activity.putCode.value;
+		this.makeDefault(activity.putCode.value);
+	}
+	this.activitiesCount++;
+};
+
+GroupedActivities.prototype.addKey = function(key) {
+	if (this.hasKey(key)) return;
+	this._keySet[key] = true;
+	return;
+};
+
+GroupedActivities.prototype.getActive = function() {
+	return this.activities[this.activePutCode];
+};
+
+GroupedActivities.prototype.getDefault = function() {
+	return this.activities[this.defaultPutCode];
+};
+
+GroupedActivities.prototype.getByPut = function(putCode) {
+	return this.activities[putCode];
+};
+
+GroupedActivities.prototype.getIdentifiersPath = function() {
+    if (this.type == GroupedActivities.ABBR_WORK) return 'workExternalIdentifiers';
+    return 'externalIdentifiers';
+};
+
 /* 
  * takes a activity and adds it to an existing group or creates
  * a new group
@@ -84,47 +122,6 @@ GroupedActivities.group = function(activity, type, groupsArray) {
 			groupsArray.splice(matchIndex, 1);
 		}
 	}	
-};
-
-GroupedActivities.prototype.add = function(activity) {
-	// assumes works are added in the order of the display index desc
-	// subsorted by the created date asc
-    var identifiersPath = null;
-    identifiersPath = this.getIdentifiersPath();
-    for (var idx in activity[identifiersPath])
-    	this.addKey(this.key(activity[identifiersPath][idx]));
-	this.activities[activity.putCode.value] = activity;
-	if (this.defaultPutCode == null) { 
-		this.activePutCode = activity.putCode.value;
-		this.makeDefault(activity.putCode.value);
-	}
-	this.activitiesCount++;
-};
-
-GroupedActivities.prototype.makeDefault = function(putCode) {
-	this.defaultPutCode = putCode;
-	this.dateSortString = this.activities[putCode].dateSortString;	
-    if (this.type == GroupedActivities.ABBR_WORK) this.title = this.activities[putCode].workTitle.title.value;
-    else if (this.type == GroupedActivities.FUNDING) this.title = this.activities[putCode].fundingTitle.title.value;
-    else if (this.type == GroupedActivities.AFFILIATION) this.title = this.activities[putCode].affiliationName.value;
-};
-
-GroupedActivities.prototype.addKey = function(key) {
-	if (this.hasKey(key)) return;
-	this._keySet[key] = true;
-	return;
-};
-
-GroupedActivities.prototype.getActive = function() {
-	return this.activities[this.activePutCode];
-};
-
-GroupedActivities.prototype.getDefault = function() {
-	return this.activities[this.defaultPutCode];
-};
-
-GroupedActivities.prototype.getByPut = function(putCode) {
-	return this.activities[putCode];
 };
 
 GroupedActivities.prototype.hasKey = function(key) {
@@ -177,9 +174,12 @@ GroupedActivities.prototype.keyMatch = function(activity) {
 	return false;
 };
 
-GroupedActivities.prototype.getIdentifiersPath = function() {
-    if (this.type == GroupedActivities.ABBR_WORK) return 'workExternalIdentifiers';
-    return 'externalIdentifiers';
+GroupedActivities.prototype.makeDefault = function(putCode) {
+	this.defaultPutCode = putCode;
+	this.dateSortString = this.activities[putCode].dateSortString;	
+    if (this.type == GroupedActivities.ABBR_WORK) this.title = this.activities[putCode].workTitle.title.value;
+    else if (this.type == GroupedActivities.FUNDING) this.title = this.activities[putCode].fundingTitle.title.value;
+    else if (this.type == GroupedActivities.AFFILIATION) this.title = this.activities[putCode].affiliationName.value;
 };
 
 GroupedActivities.prototype.rmByPut = function(putCode) {
