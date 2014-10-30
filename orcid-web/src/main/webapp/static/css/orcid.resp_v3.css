@@ -1809,7 +1809,8 @@ ul.workspace-private-toolbar li.bulk-checkbox-item{
 }
 
 .workspace-body-list .pull-right-level-two {
-	position: absolute;	right: 0;
+	position: absolute;	
+	right: 0;
 	top: 50px;
 	float: none;
 }
@@ -3868,9 +3869,14 @@ ul.workspace-bar-menu li{
 	display: block !important; 
 }
 
-#body-work-list{
+ul#body-work-list{
 	margin: 0;
 	padding: 0;
+}
+
+ul#body-work-list > li{
+	display: inline-block;
+	width: 100%;
 }
 
 .works-date{
@@ -4349,13 +4355,23 @@ ul.sources-edit-list{
 	margin: 0;
 	padding: 0;	
 	position: relative;	
+	width: 100%;
 }
 
 ul.sources-edit-list > li{
-	display: inline;	
+	display: inline-block;	
 	border-bottom: 1px solid #C9CACB;
+	box-shadow: 3px 4px 5px #C9CACB;
 	display: block;	
 	padding: 5px 5px 0 5px;	
+}
+
+ul.sources-edit-list > li:first-of-type{
+	padding-bottom: 5px;
+}
+
+.sources-header div{
+	
 }
 
 .source-active{
@@ -5913,6 +5929,10 @@ ul.toggle-menu li:hover ul {
 	
 	.bulk-edit .popover-help-container .popover.bottom .arrow{
 		left: 247px;
+	}
+	
+	.workspace-body-list{
+		margin-top: 92px;
 	}
 }
 
