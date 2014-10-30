@@ -114,7 +114,7 @@
                                     </li>
                                     <li ng-show="work.url.value"><strong>URL:</strong> <a href="{{work.url.value | urlWithHttp}}" target="_blank">{{work.url.value}}</a></li>
                                     <li>
-                                    	<strong >Source: </strong>{{work.workSourceName.value}}
+                                    	<strong >Source: </strong>{{work.sourceName.value}}
                                     </li>
                                 </ul>
                             </div>
@@ -182,7 +182,7 @@
                     <div ng-show="group.activePutCode != work.putCode.value" class="row">                       
                         <div class="col-md-4 col-sm-4 col-xs-4">
                                 <a ng-click="group.activePutCode = work.putCode.value;">
-                                {{work.workSourceName.value}}
+                                {{work.sourceName.value}}
                             </a> 
                         </div>
                         <div class="col-md-4 col-sm-3 col-xs-3">

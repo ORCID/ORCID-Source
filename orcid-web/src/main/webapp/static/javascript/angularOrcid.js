@@ -772,7 +772,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 			},
 			createNew: function(work) {
 				var cloneW = JSON.parse(JSON.stringify(work));
-				cloneW.workSource = null;
+				cloneW.source = null;
 				cloneW.putCode = null;
 				return cloneW;
 			},
@@ -825,7 +825,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 			getEditable: function(putCode, callback) {
 				// first check if they are the current source
 				var work = worksSrvc.getDetails(putCode, worksSrvc.constants.access_type.USER, function(data) {
-					if (data.workSource.value == orcidVar.orcidId)
+					if (data.source.value == orcidVar.orcidId)
 						callback(data);
 					else
 						worksSrvc.getGroupDetails(putCode, worksSrvc.constants.access_type.USER, function () {
@@ -834,7 +834,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 							// the current one
 							var bestMatch = null;
 							for (var idx in worksSrvc.details)
-								if (worksSrvc.details[idx].workSource.value == orcidVar.orcidId) {
+								if (worksSrvc.details[idx].source.value == orcidVar.orcidId) {
 									bestMatch = worksSrvc.details[idx]; 
 									break;
 								}	
@@ -3867,7 +3867,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
 	};
 
 	$scope.userIsSource = function(work) {
-		if (work.workSource.value == orcidVar.orcidId)
+		if (work.source.value == orcidVar.orcidId)
 			return true;
 	};
 	
