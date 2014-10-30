@@ -44,9 +44,9 @@ import com.sun.jersey.api.client.ClientResponse;
 @ContextConfiguration(locations = { "classpath:orcid-t1-client-context.xml" })
 public class T1OrcidApiClientIntegrationTest extends DBUnitTest {
 
-    private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml", "/data/ProfileEntityData.xml",
-            "/data/WorksEntityData.xml", "/data/ProfileWorksEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml",
-            "/data/WebhookEntityData.xml");
+    private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
+            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ProfileWorksEntityData.xml",
+            "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml", "/data/WebhookEntityData.xml");
 
     private static String ORCID = "4444-4444-4444-4441";
 
@@ -66,7 +66,7 @@ public class T1OrcidApiClientIntegrationTest extends DBUnitTest {
     private OrcidApiService<ClientResponse> t1Client;
 
     @Test
-    public  void testStatus() {
+    public void testStatus() {
         ClientResponse clientResponse = t1Client.viewStatusText();
         assertEquals(200, clientResponse.getStatus());
         assertEquals(OrcidApiConstants.STATUS_OK_MESSAGE, clientResponse.getEntity(String.class));
