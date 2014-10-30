@@ -48,6 +48,7 @@ public class MinimizedWorkEntity extends BaseEntity implements Serializable {
     private String translatedTitleLanguageCode;
     private String translatedTitle;    
     private Long displayIndex;
+    private String workUrl;
     private SourceEntity source;
     
     public MinimizedWorkEntity() {
@@ -56,7 +57,7 @@ public class MinimizedWorkEntity extends BaseEntity implements Serializable {
 
     public MinimizedWorkEntity(Long id, String title, String subtitle, String description, Integer publicationDay, Integer publicationMonth, Integer publicationYear,
             Visibility visibility, String externalIdentifiersJson, Long displayIndex, SourceEntity source, Date dateCreated, Date lastModified,
-            WorkType workType, String languageCode, String translatedTitleLanguageCode, String translatedTitle    
+            WorkType workType, String languageCode, String translatedTitleLanguageCode, String translatedTitle, String workUrl    
  ) {
         super();
         this.id = id;
@@ -78,7 +79,8 @@ public class MinimizedWorkEntity extends BaseEntity implements Serializable {
         this.setLastModified(lastModified);
         this.setLanguageCode(languageCode);
         this.setTranslatedTitleLanguageCode(translatedTitleLanguageCode);
-        this.setTranslatedTitle(translatedTitle);    
+        this.setTranslatedTitle(translatedTitle);
+        this.setWorkUrl(workUrl);
         
     }
 
@@ -200,5 +202,13 @@ public class MinimizedWorkEntity extends BaseEntity implements Serializable {
 
     public void setTranslatedTitle(String translatedTitle) {
         this.translatedTitle = translatedTitle;
+    }
+
+    public String getWorkUrl() {
+        return workUrl;
+    }
+
+    public void setWorkUrl(String workUrl) {
+        this.workUrl = workUrl;
     }
 }

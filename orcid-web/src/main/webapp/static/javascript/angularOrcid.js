@@ -130,6 +130,14 @@ GroupedActivities.prototype.hasKey = function(key) {
 	return false;
 };
 
+//GroupedActivities.prototype.hasUserVersion = function(key) {
+//	for (var idx in this.activities)
+//		if (this.activities[idx].sourceId == orcidVar.orcidId)
+//		return true;
+//	return false;
+//};
+
+
 GroupedActivities.prototype.hasPut = function(putCode) {
 	   if (this.activities[putCode] !== undefined)
 				return true;
