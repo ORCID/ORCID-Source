@@ -29,7 +29,7 @@
                         <div class="row bottomBuffer">
                             <div class="col-md-12">
                                <span>
-                                    <a ng-click="editSources[group.groupId] = false">
+                                    <a ng-click="hideSources(group)">
                                         <span class="glyphicon glyphicon-remove" ng-show="!bulkEditShow"></span> Hide additional sources
                                     </a>
                                </span>
@@ -165,8 +165,8 @@
                                      </li>
                                     <li class="show-more-info-tab-container">
                                         <span class="show-more-info-tab work-tab">          
-                                            <a href="" ng-show="!moreInfo[group.getActive().putCode.value]" ng-click="showDetailsMouseClick(group.getActive().putCode.value,$event);"><span class="glyphicon glyphicon-chevron-down"></span><@orcid.msg 'manage.developer_tools.show_details'/></a>                                 
-                                            <a href="" ng-show="moreInfo[group.getActive().putCode.value]" ng-click="showDetailsMouseClick(group.getActive().putCode.value,$event);"><span class="glyphicon glyphicon-chevron-up"></span><@orcid.msg 'manage.developer_tools.hide_details'/></a>
+                                            <a href="" ng-show="!moreInfo[group.groupId]" ng-click="showDetailsMouseClick(group,$event);"><span class="glyphicon glyphicon-chevron-down"></span><@orcid.msg 'manage.developer_tools.show_details'/></a>                                 
+                                            <a href="" ng-show="moreInfo[group.groupId]" ng-click="showDetailsMouseClick(group,$event);"><span class="glyphicon glyphicon-chevron-up"></span><@orcid.msg 'manage.developer_tools.hide_details'/></a>
                                         </span>                         
                                     </li>                               
                                 </ul>
@@ -177,7 +177,7 @@
                     <!-- not active row && edit sources -->
                     <div ng-show="group.activePutCode != work.putCode.value" class="row">                       
                         <div class="col-md-4 col-sm-4 col-xs-4">
-                                <a ng-click="group.activePutCode = work.putCode.value; hideLastDetails()">
+                                <a ng-click="group.activePutCode = work.putCode.value;">
                                 {{work.workSourceName.value}}
                             </a> 
                         </div>
