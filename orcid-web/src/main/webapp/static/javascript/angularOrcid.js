@@ -852,8 +852,8 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 				}
 				return null;
 			},
-			getGroupDetails: function(putCode, type, callback) {
-				var group = worksSrvc.getGroup(putCode);
+			getGroupDetails: function(putCode, type, callback) {				
+				var group = worksSrvc.getGroup(putCode);				
 				var needsLoading =  new Array();
 				for (var idx in group.activities) {
 					needsLoading.push(group.activities[idx].putCode.value)
@@ -3623,6 +3623,7 @@ function PublicWorkCtrl($scope, $compile, $filter, worksSrvc, actSortSrvc) {
 	$scope.moreInfoOpen = false;
 	$scope.moreInfo = {};
 	$scope.displayWorks = true;
+	$scope.editSources = {};
 
 	$scope.sort = function(key) {
 		actSortSrvc.sort(key,$scope);
@@ -3659,13 +3660,29 @@ function PublicWorkCtrl($scope, $compile, $filter, worksSrvc, actSortSrvc) {
 			$scope.moreInfoOpen?$scope.closePopover():$scope.loadWorkInfo(work.putCode.value, $event);
 	};
 	
-	$scope.showDetailsMouseClick = function(work, $event) {
-		$event.stopPropagation();
+	$scope.showDetailsMouseClick = function(group, $event) {
+			$event.stopPropagation();
 		//if (document.documentElement.className.contains('no-touch'))
-			$scope.moreInfo[work] = !$scope.moreInfo[work];
-			$scope.loadWorkInfo(work, $event);
+			$scope.moreInfo[group.groupId] = !$scope.moreInfo[group.groupId];
+			//$scope.loadWorkInfo(work, $event);
+			for (var idx in group.activities)
+		        $scope.loadDetails(group.activities[idx].putCode.value, $event);        
 		//else
 			//$scope.moreInfoOpen?$scope.closePopover():$scope.loadWorkInfo(work.putCode.value, $event);
+	};
+	
+	$scope.loadDetails = function(putCode, event) {
+	    //Close any open popover
+	    $scope.closePopover(event);
+	    $scope.moreInfoOpen = true;
+	    //Display the popover
+	    $(event.target).next().css('display','inline'); 
+	    $scope.worksSrvc.getGroupDetails(putCode, worksSrvc.constants.access_type.USER);
+	};
+	
+	$scope.hideSources = function(group) {
+	    $scope.editSources[group.groupId] = false;
+	    group.activePutCode = group.defaultPutCode;
 	};
 
 	
