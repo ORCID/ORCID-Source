@@ -7,6 +7,7 @@ Many have contributed to ORCID's Open Source effort, from direct contributions o
 * [Fran Ramírez Monge](https://github.com/hexplus), Avantica _(http://orcid.org/0000-0002-3183-6594)_
 * [Laura Paglione](https://github.com/Laura-ORCID), ORCID _(http://orcid.org/0000-0003-3188-6273)_
 * [Catalina Oyler](https://github.com/caoyler), ORCID _(http://orcid.org/0000-0002-1982-1816)_
+* [Liz Krznarich](https://github.com/lizkrznarich), ORCID _(http://orcid.org/0000-0001-6622-4910)_
 
 ## Open Source Contributors
 ORCID appreciates the several significant contributions from the Open Source community:
