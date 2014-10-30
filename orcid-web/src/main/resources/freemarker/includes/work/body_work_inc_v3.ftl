@@ -18,11 +18,14 @@
 -->
 <ul ng-hide="!worksSrvc.groups.length" class="workspace-publications bottom-margin-medium" id="body-work-list" ng-cloak>    
     <li class="bottom-margin-small workspace-border-box card" ng-repeat="group in worksSrvc.groups | orderBy:sortPredicate:sortReverse">        
-        <div class="work-list-container">
-            <ul class="sources-edit-list">              
+        <div class="work-list-container">        
+            <ul class="sources-edit-list">
                 
+                
+                <!-- Header -->
                 <li ng-show="editSources[group.groupId] == true" ng- ng-class="{'source-active' : editSources[group.groupId] == true}" ng-model="group.activities">
                     <div class="sources-header">
+                        
                         <div class="row bottomBuffer">
                             <div class="col-md-12">
                                <span>
@@ -40,47 +43,49 @@
                             </div>                          
                         </div>
                     
-                        <div class="row ">                      
-                            <div class="col-md-4">
+                        <div class="row">                      
+                            <div class="col-md-4 col-sm-4 col-xs-4">
                                 <div class="">
                                     <strong >Source</strong>
-                                </div>                      
-                                    
+                                </div>
                             </div>                      
-                            <div class="col-md-4">
+                            <div class="col-md-4 col-sm-3 col-xs-3">
                                 <strong>Last Modified </strong>                         
                             </div>
                             
-                            <div class="col-md-2">
+                            <div class="col-md-2 col-sm-3 col-xs-3">
                                 <strong>Prefered</strong>
                             </div>
-                            <div class="col-md-2 right">
+                            <div class="col-md-2 col-sm-2 col-xs-2 right">
                                 <strong>Delete</strong>
                             </div>
-                            
-                            
-                            
                         </div>
                     </div>
-                </li>               
+                </li> 
+                
+                
+                              
                 <li ng-repeat="work in group.activities" ng-show="group.activePutCode == work.putCode.value || editSources[group.groupId] == true">
                     <!-- active row summary info -->
                     <div class="row" ng-show="group.activePutCode == work.putCode.value">
-                        <div class="col-md-9 col-sm-8 col-xs-12">
+                        <div class="col-md-8 col-sm-8 col-xs-12">
                             <h3 class="workspace-title">
                                 <strong ng-bind="work.workTitle.title.value"></strong><span class="work-subtitle" ng-show="work.workTitle.subtitle.value" ng-bind="':&nbsp;'.concat(work.workTitle.subtitle.value)"></span>                                     
                             </h3>
-                            <div ng-show="showBulkEdit == true" class="bulk-edit-input hidden-lg hidden-md hidden-sm pull-right">
-                                <input type="checkbox" ng-model="bulkEditMap[work.putCode.value]"></input>
-                            </div>
+                            <div ng-show="bulkEditShow == true" class="bulk-edit-input hidden-lg hidden-md hidden-sm pull-right">
+				        		<input type="checkbox" ng-model="bulkEditMap[work.putCode.value]" class="ng-pristine ng-valid">
+				        	</div>
                             <div class="info-detail">
                                 <span ng-show="work.publicationDate.year">{{work.publicationDate.year}}</span><span ng-show="work.publicationDate.month">-{{work.publicationDate.month}}</span><span ng-show="work.publicationDate.year"> | </span> <span class="uppercase">{{work.workType.value}}</span>                  
                             </div>                            
                         </div>
                     
                         <!-- Settings -->
-                        <div class="col-md-3 col-sm-3 workspace-toolbar">
+                        <div class="col-md-4 col-sm-4 workspace-toolbar">
                             <ul class="workspace-private-toolbar">
+                            	<li ng-show="bulkEditShow" class="hidden-xs bulk-checkbox-item">								
+					        			<input type="checkbox" ng-model="bulkEditMap[work.putCode.value]" class="bulk-edit-input ng-pristine ng-valid">			        										
+								</li>
                                 <li>
                                     <a href="" class="toolbar-button edit-item-button">
                                         <span class="glyphicon glyphicon-pencil edit-option-toolbar" title="" ng-click="openEditWork(group.getActive().putCode.value)"></span>
@@ -196,9 +201,10 @@
                     
                     
                 </li>
-            </ul>               
+            </ul><!-- End of .sources-edit-list -->
+                         
         </div>
-    </li><!-- bottom-margin-small -->   
+    </li>   
 </ul>
 <div ng-show="worksSrvc.loading == true" class="text-center" id="workSpinner">
     <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i><!-- Hidden with a CSS hack on IE 7 only -->
