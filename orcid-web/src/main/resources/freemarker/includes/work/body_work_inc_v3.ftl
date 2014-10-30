@@ -125,7 +125,11 @@
                                 </ul>
                             </div>
                         </div> 
-                            
+                         <#if RequestParameters['combine']??>
+					        	<div ng-show="canBeCombined(work)">
+					            	<a ng-click="showCombineMatches(group.getDefault())">combined duplicates</a>
+					        	</div>
+					        </#if>    
                         
                         <!-- more info -->
                         <#include "work_more_info_inc_v3.ftl"/>
