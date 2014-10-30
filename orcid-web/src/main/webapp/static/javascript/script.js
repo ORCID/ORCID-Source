@@ -582,8 +582,8 @@ $(function () {
 	      "workExternalIdentifierId":{"errors":[],"value":null,"required":true,"getRequiredMessage":null},
 	      "workExternalIdentifierType":{"errors":[],"value":"","required":true,"getRequiredMessage":null}
 	 }],
-	"workSource":null,
-	"workSourceName":null,
+	"source":null,
+	"sourceName":null,
 	"workTitle":{"errors":[],"title":{"errors":[],"value":null,"required":true,"getRequiredMessage":null},"subtitle":{"errors":[],"value":null,"required":true,"getRequiredMessage":null},"translatedTitle":{"errors":[],"content":"","languageCode":"","languageName":"","required":false,"getRequiredMessage":null}},
 	"workCategory":{"errors":[],"value":"","required":true,"getRequiredMessage":null},
 	"workType":{"errors":[],"value":"","required":true,"getRequiredMessage":null},"dateSortString":null}
