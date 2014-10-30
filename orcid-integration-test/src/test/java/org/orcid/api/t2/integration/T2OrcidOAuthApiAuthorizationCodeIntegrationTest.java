@@ -102,7 +102,7 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
 public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest {
 
 
-    private static final String CLIENT_DETAILS_ID = "4444-4444-4444-4445";
+    protected static String CLIENT_DETAILS_ID = "4444-4444-4444-4445";
 
     public static final String FUNDING_TITLE = "Grant Title # 1";
     public static final String FUNDING_TITLE_2 = "Grant Title # 2";
@@ -207,6 +207,29 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         OrcidMessage orcidMessage2 = bioResponse2.getEntity(OrcidMessage.class);
         assertNotNull(orcidMessage2);
     }
+    
+    @Test
+    public void testGetBioReadLimitedWhenAlreadySignedIn() throws JSONException, InterruptedException {
+        String scopes = "/orcid-bio/read-limited";
+        webDriverHelper.signIn("michael@bentine.com", "password");
+        String authorizationCode = webDriverHelper.obtainAuthorizationCodeWhenAlreadySignedIn(scopes, CLIENT_DETAILS_ID);
+        String accessToken = obtainAccessToken(authorizationCode, scopes);
+
+        ClientResponse bioResponse1 = oauthT2Client.viewBioDetailsJson("4444-4444-4444-4442", accessToken);
+        assertEquals(200, bioResponse1.getStatus());
+        OrcidMessage orcidMessage1 = bioResponse1.getEntity(OrcidMessage.class);
+        assertNotNull(orcidMessage1);
+        ExternalIdentifiers externalIdentifiers = orcidMessage1.getOrcidProfile().getOrcidBio().getExternalIdentifiers();
+        assertNotNull(externalIdentifiers);
+        assertEquals(Visibility.LIMITED, externalIdentifiers.getVisibility());
+        assertEquals(1, externalIdentifiers.getExternalIdentifier().size());
+
+        ClientResponse bioResponse2 = oauthT2Client.viewBioDetailsJson("4444-4444-4444-4443", accessToken);
+        assertEquals(403, bioResponse2.getStatus());
+        OrcidMessage orcidMessage2 = bioResponse2.getEntity(OrcidMessage.class);
+        assertNotNull(orcidMessage2);
+    }
+
 
     @Test
     public void testGetAuthenticate() throws JSONException, InterruptedException {
