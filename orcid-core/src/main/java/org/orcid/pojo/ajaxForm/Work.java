@@ -143,6 +143,8 @@ public class Work implements ErrorsInterface, Serializable {
         }
         w.setCreatedDate(Date.valueOf(minimizedWorkEntity.getDateCreated()));
         w.setLastModified(Date.valueOf(minimizedWorkEntity.getLastModified()));
+        if (minimizedWorkEntity.getWorkUrl() != null)
+            w.setUrl(Text.valueOf(minimizedWorkEntity.getWorkUrl()));
         return w;
     }
 
