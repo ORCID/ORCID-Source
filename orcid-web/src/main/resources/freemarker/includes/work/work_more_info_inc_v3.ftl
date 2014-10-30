@@ -16,7 +16,7 @@
     =============================================================================
 
 -->
-<div class="more-info" ng-show="moreInfo[work.putCode.value]">
+<div class="more-info" ng-show="moreInfo[group.groupId] && group.activePutCode == work.putCode.value">
 	<div id="ajax-loader" ng-show="worksSrvc.details[work.putCode.value] == undefined">
 		<span id="ajax-loader"><i id="ajax-loader" class="glyphicon glyphicon-refresh spin x4 green"></i></span>
 	</div>

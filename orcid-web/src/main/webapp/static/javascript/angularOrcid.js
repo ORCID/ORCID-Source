@@ -4112,16 +4112,17 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
 			$scope.moreInfoOpen?$scope.closePopover():$scope.loadWorkInfo(work.putCode.value, $event);
 	};
 	
-	$scope.showDetailsMouseClick = function(work, $event) {
+	$scope.showDetailsMouseClick = function(group, $event) {
 		$event.stopPropagation();		
-		$scope.moreInfo[work] = !$scope.moreInfo[work];
-		$scope.loadDetails(work, $event);
-		$scope.lastDetailsKey = work;		
+		$scope.moreInfo[group.groupId] = !$scope.moreInfo[group.groupId];
+		for (var idx in group.activities)
+		    $scope.loadDetails(group.activities[idx].putCode.value, $event);		
 	};
 	
-	$scope.hideLastDetails = function(){
-		$scope.moreInfo[$scope.lastDetailsKey] = false;		
-	}
+	$scope.hideSources = function(group) {
+		$scope.editSources[group.groupId] = false;
+		group.activePutCode = group.defaultPutCode;
+	};
 	
 	$scope.loadDetails = function(putCode, event) {
 		//Close any open popover
