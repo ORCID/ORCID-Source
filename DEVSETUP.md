@@ -81,11 +81,14 @@ Do to licensing issues this is only available to ORCID.org employees.
     cd ~/git/ORCID-Source
     mvn clean install
     ```
+    
 Tip: If you see an error like this one: 
+
     ```
     Caused by: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
     ```
-You can find the solution here: http://stackoverflow.com/questions/25911623/problems-using-maven-and-ssl-behind-proxy    
+    
+You can find the solution [here](http://stackoverflow.com/questions/25911623/problems-using-maven-and-ssl-behind-proxy)    
     
 Tip: use the same command for rebuilding.
 
