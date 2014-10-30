@@ -20,13 +20,13 @@
 <dataset>
 	<profile_work orcid="9999-9999-9999-9989" work_id="1"
 		visibility="PRIVATE" date_created="2014-07-03 15:31:00.00"
-		last_modified="2014-07-03 15:31:00.00" />
+		last_modified="2014-07-03 15:31:00.00" source_id="9999-9999-9999-9989"/>
 	<profile_work orcid="9999-9999-9999-9989" work_id="2"
 		visibility="LIMITED" date_created="2014-07-03 15:31:00.00"
-		last_modified="2014-07-03 15:31:00.00" />
+		last_modified="2014-07-03 15:31:00.00"  source_id="9999-9999-9999-9989"/>
 	<profile_work orcid="9999-9999-9999-9989" work_id="3"
 		date_created="2014-07-03 15:31:00.00" last_modified="2014-07-03 15:31:00.00"
-		visibility="PUBLIC" />
+		visibility="PUBLIC"  source_id="9999-9999-9999-9989"/>
 	<profile_work orcid="9999-9999-9999-9989" work_id="4"
 		date_created="2014-07-03 15:31:00.00" last_modified="2014-07-03 15:31:00.00"
 		visibility="PRIVATE" source_id="9999-9999-9999-9991" />
