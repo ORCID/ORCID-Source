@@ -433,7 +433,6 @@
 		</table>
 		</#if>
 		
-		<#if RequestParameters['delegates']??>
 		<h1>
 			${springMacroRequestContext.getMessage("settings.tdtrustindividual")}
 		</h1>
@@ -510,7 +509,6 @@
 			</div>
 			<div id="no-results-alert" class="orcid-hide alert alert-error no-delegate-matches"><@spring.message "orcid.frontend.web.no_results"/></div>
 		</div>
-		</#if>
 		
 	</div>
 </div>
