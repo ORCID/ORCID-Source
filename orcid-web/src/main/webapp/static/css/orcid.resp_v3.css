@@ -4309,7 +4309,6 @@ ul.sources-options{
 
 ul.sources-options li{
 	display: inline-block;
-	margin-left: 15px;
 }
 
 .sources-container-header ul.sources-options li a.glyphicon-trash{
@@ -4812,6 +4811,16 @@ ul.toggle-menu li:hover ul {
 
 .trash-source{
 	text-align: right;
+}
+
+ul.sources-actions{
+	margin: 0;
+	padding: 0;
+}
+
+ul.sources-actions li{
+	list-style-type: none;
+	display: inline;
 }
 
 /* Media Queries */
