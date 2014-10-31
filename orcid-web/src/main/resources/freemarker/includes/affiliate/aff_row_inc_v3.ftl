@@ -57,7 +57,7 @@
        <div class="col-md-3 col-sm-3 workspace-toolbar">       	
        	<#if !(isPublicProfile??)>       		
        		<ul class="workspace-private-toolbar">
-       			<li ng-show="group.getActive().sourceOrcid == '${effectiveUserOrcid}'">
+       			<li ng-show="group.getActive().source == '${effectiveUserOrcid}'">
 			 		<a href="" class="toolbar-button edit-item-button">
 						<span class="glyphicon glyphicon-pencil edit-option-toolbar" title="" ng-click="openEditAffiliation(group.getActive())"></span>
 					</a>	

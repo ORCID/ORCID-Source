@@ -329,7 +329,7 @@ public class PublicProfileController extends BaseWorkspaceController {
                 }
 
                 //If the work source is the user himself, fill the work source name
-                if(!PojoUtil.isEmpty(work.getSource()) && profileWork.getProfile().getId().equals(work.getSource().getValue())){
+                if(!PojoUtil.isEmpty(work.getSource()) && profileWork.getProfile().getId().equals(work.getSource())){
                     List<Contributor> contributors = work.getContributors();
                     if(work.getContributors() != null) {
                         for(Contributor contributor : contributors){  

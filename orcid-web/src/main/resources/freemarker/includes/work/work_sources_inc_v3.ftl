@@ -24,7 +24,7 @@
 				
 				<div class="col-md-5" ng-hide="editSources[group.groupId] == true">
 					<span>
-						<strong >Source:</strong>{{group.getActive().sourceName.value}}
+						<strong >Source:</strong>{{group.getActive().sourceName}}
 					</span>						
 				</div>
 				
@@ -75,7 +75,7 @@
 					<li class="first-source">
 						<div class="col-sm-4">
 							<span>
-					        	<strong >Source:</strong> {{group.getActive().sourceName.value}}
+					        	<strong >Source:</strong> {{group.getActive().sourceName}}
 					        </span>
 				        </div>
 				        <div class="col-sm-4">
@@ -99,7 +99,7 @@
 					<li ng-repeat="work in group.activities" ng-hide="group.activePutCode == work.putCode.value">
 						<div class="col-sm-4">
 							<a ng-click="worksSrvc.showSpinner($event); moreInfo[work.putCode.value] = moreInfo[group.activePutCode]; group.activePutCode = work.putCode.value">
-				           		{{work.sourceName.value}}
+				           		{{work.sourceName}}
 				           	</a> 
 						</div>
 						<div class="col-sm-4">

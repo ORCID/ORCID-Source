@@ -110,7 +110,7 @@
                    </div>
                             
                         <!-- Active Row Identifiers / URL / Validations / Versions -->
-                        <div class="row" ng-show="work.workExternalIdentifiers.length > 0 && group.activePutCode == work.putCode.value"">
+                        <div class="row" ng-show="group.activePutCode == work.putCode.value"">
                             <div class="col-md-12 col-sm-12">
                                 <ul class="id-details">         
                                     <li>
@@ -120,7 +120,7 @@
                                     </li>
                                     <li ng-show="work.url.value"><strong>URL:</strong> <a href="{{work.url.value | urlWithHttp}}" target="_blank">{{work.url.value}}</a></li>
                                     <li>
-                                    	<strong >Source: </strong>{{work.sourceName.value}}
+                                    	<strong >Source: </strong>{{work.sourceName}}
                                     </li>
                                 </ul>
                             </div>
@@ -175,7 +175,7 @@
                     <div ng-show="group.activePutCode != work.putCode.value" class="row">                       
                         <div class="col-md-4 col-sm-4 col-xs-4">
                                 <a ng-click="group.activePutCode = work.putCode.value;">
-                                {{work.sourceName.value}}
+                                {{work.sourceName}}
                             </a> 
                         </div>
                         <div class="col-md-4 col-sm-3 col-xs-3">

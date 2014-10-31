@@ -69,9 +69,9 @@ public class Work implements ErrorsInterface, Serializable {
 
     private List<WorkExternalIdentifier> workExternalIdentifiers;
 
-    private Text source;
+    private String source;
 
-    private Text sourceName;
+    private String sourceName;
 
     private WorkTitle workTitle;
 
@@ -134,8 +134,8 @@ public class Work implements ErrorsInterface, Serializable {
         }
         populateExternaIdentifiers(identifiers, w);
         if (minimizedWorkEntity.getSource() != null) {
-            w.setSource(Text.valueOf(minimizedWorkEntity.getSource().getSourceId()));
-            w.setSourceName(Text.valueOf(minimizedWorkEntity.getSource().getSourceName()));
+            w.setSource(minimizedWorkEntity.getSource().getSourceId());
+            w.setSourceName(minimizedWorkEntity.getSource().getSourceName());
         }
         if (minimizedWorkEntity.getLanguageCode() != null) {
             w.setLanguageCode(Text.valueOf(minimizedWorkEntity.getLanguageCode()));
@@ -194,9 +194,9 @@ public class Work implements ErrorsInterface, Serializable {
         }
         populateExternaIdentifiers(workExternalIdentifiers, w);
         if (orcidWork.getSource() != null) {
-            w.setSource(Text.valueOf(orcidWork.getSource().retrieveSourcePath()));
+            w.setSource(orcidWork.getSource().retrieveSourcePath());
             if (orcidWork.getSource().getSourceName() != null)
-                w.setSourceName(Text.valueOf(orcidWork.getSource().getSourceName().getContent()));
+                w.setSourceName(orcidWork.getSource().getSourceName().getContent());
         }
         if (orcidWork.getWorkTitle() != null)
             w.setWorkTitle(WorkTitle.valueOf(orcidWork.getWorkTitle()));
@@ -248,7 +248,7 @@ public class Work implements ErrorsInterface, Serializable {
         }
         ow.setWorkExternalIdentifiers(new WorkExternalIdentifiers(wiList));
         if (this.getSource() != null)
-            ow.setSource(new Source(this.getSource().getValue()));
+            ow.setSource(new Source(this.getSource()));
         if (this.getWorkTitle() != null) {
             ow.setWorkTitle(this.workTitle.toWorkTitle());
         }
@@ -348,11 +348,11 @@ public class Work implements ErrorsInterface, Serializable {
         this.workExternalIdentifiers = workExternalIdentifiers;
     }
 
-    public Text getSource() {
+    public String getSource() {
         return source;
     }
 
-    public void setSource(Text source) {
+    public void setSource(String source) {
         this.source = source;
     }
 
@@ -420,11 +420,11 @@ public class Work implements ErrorsInterface, Serializable {
         this.countryName = countryName;
     }
 
-    public Text getSourceName() {
+    public String getSourceName() {
         return sourceName;
     }
 
-    public void setSourceName(Text sourceName) {
+    public void setSourceName(String sourceName) {
         this.sourceName = sourceName;
     }
 
