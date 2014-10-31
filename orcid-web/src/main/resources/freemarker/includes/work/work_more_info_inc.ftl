@@ -182,11 +182,11 @@
 						<div ng-bind="worksSrvc.details[work.putCode.value].countryName.value"></div>
 					</div>
 				</div>						
-				<div class="row bottomBuffer" ng-show="worksSrvc.details[work.putCode.value].workSourceName.value" ng-cloak>
+				<div class="row bottomBuffer" ng-show="worksSrvc.details[work.putCode.value].sourceName" ng-cloak>
 					<div class="col-md-12">
 						<strong> <@orcid.msg
 							'manual_work_form_contents.labelWorkSource'/> </strong>
-						<div ng-bind="worksSrvc.details[work.putCode.value].workSourceName.value"></div>
+						<div ng-bind="worksSrvc.details[work.putCode.value].sourceName"></div>
 					</div>
 				</div>
 			</div>

@@ -364,7 +364,7 @@ public class WorksController extends BaseWorkspaceController {
 
                 // If the work source is the user himself, fill the work source
                 // name
-                if (!PojoUtil.isEmpty(work.getWorkSource()) && profileWork.getProfile().getId().equals(work.getWorkSource().getValue())) {
+                if (!PojoUtil.isEmpty(work.getSource()) && profileWork.getProfile().getId().equals(work.getSource())) {
                     List<Contributor> contributors = work.getContributors();
                     if (work.getContributors() != null) {
                         for (Contributor contributor : contributors) {

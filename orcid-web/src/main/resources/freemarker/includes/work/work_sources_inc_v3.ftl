@@ -24,7 +24,7 @@
 				
 				<div class="col-md-5" ng-hide="editSources[group.groupId] == true">
 					<span>
-						<strong >Source:</strong>{{group.getActive().workSourceName.value}}
+						<strong >Source:</strong>{{group.getActive().sourceName}}
 					</span>						
 				</div>
 				
@@ -57,8 +57,8 @@
 				        </li>
 				        <li class="show-more-info-tab-container">
 					        <span class="show-more-info-tab work-tab">			
-								<a href="" ng-show="!moreInfo[group.getActive().putCode.value]" ng-click="showDetailsMouseClick(group.getActive().putCode.value,$event);"><span class="glyphicon glyphicon-chevron-down"></span><@orcid.msg 'manage.developer_tools.show_details'/></a>									
-								<a href="" ng-show="moreInfo[group.getActive().putCode.value]" ng-click="showDetailsMouseClick(group.getActive().putCode.value,$event);"><span class="glyphicon glyphicon-chevron-up"></span><@orcid.msg 'manage.developer_tools.hide_details'/></a>
+								<a href="" ng-show="!moreInfo[group.groupId]" ng-click="showDetailsMouseClick(group,$event);"><span class="glyphicon glyphicon-chevron-down"></span><@orcid.msg 'manage.developer_tools.show_details'/></a>									
+								<a href="" ng-show="moreInfo[group.groupId]" ng-click="showDetailsMouseClick(group,$event);"><span class="glyphicon glyphicon-chevron-up"></span><@orcid.msg 'manage.developer_tools.hide_details'/></a>
 							</span>							
 				        </li>                               
 				    </ul>
@@ -75,7 +75,7 @@
 					<li class="first-source">
 						<div class="col-sm-4">
 							<span>
-					        	<strong >Source:</strong> {{group.getActive().workSourceName.value}}
+					        	<strong >Source:</strong> {{group.getActive().sourceName}}
 					        </span>
 				        </div>
 				        <div class="col-sm-4">
@@ -99,7 +99,7 @@
 					<li ng-repeat="work in group.activities" ng-hide="group.activePutCode == work.putCode.value">
 						<div class="col-sm-4">
 							<a ng-click="worksSrvc.showSpinner($event); moreInfo[work.putCode.value] = moreInfo[group.activePutCode]; group.activePutCode = work.putCode.value">
-				           		{{work.workSourceName.value}}
+				           		{{work.sourceName}}
 				           	</a> 
 						</div>
 						<div class="col-sm-4">

@@ -57,6 +57,44 @@ GroupedActivities.FUNDING = 'funding';
 GroupedActivities.ABBR_WORK = 'abbrWork';
 GroupedActivities.AFFILIATION = 'affiliation';
 
+GroupedActivities.prototype.add = function(activity) {
+	// assumes works are added in the order of the display index desc
+	// subsorted by the created date asc
+    var identifiersPath = null;
+    identifiersPath = this.getIdentifiersPath();
+    for (var idx in activity[identifiersPath])
+    	this.addKey(this.key(activity[identifiersPath][idx]));
+	this.activities[activity.putCode.value] = activity;
+	if (this.defaultPutCode == null) { 
+		this.activePutCode = activity.putCode.value;
+		this.makeDefault(activity.putCode.value);
+	}
+	this.activitiesCount++;
+};
+
+GroupedActivities.prototype.addKey = function(key) {
+	if (this.hasKey(key)) return;
+	this._keySet[key] = true;
+	return;
+};
+
+GroupedActivities.prototype.getActive = function() {
+	return this.activities[this.activePutCode];
+};
+
+GroupedActivities.prototype.getDefault = function() {
+	return this.activities[this.defaultPutCode];
+};
+
+GroupedActivities.prototype.getByPut = function(putCode) {
+	return this.activities[putCode];
+};
+
+GroupedActivities.prototype.getIdentifiersPath = function() {
+    if (this.type == GroupedActivities.ABBR_WORK) return 'workExternalIdentifiers';
+    return 'externalIdentifiers';
+};
+
 /* 
  * takes a activity and adds it to an existing group or creates
  * a new group
@@ -86,52 +124,19 @@ GroupedActivities.group = function(activity, type, groupsArray) {
 	}	
 };
 
-GroupedActivities.prototype.add = function(activity) {
-	// assumes works are added in the order of the display index desc
-	// subsorted by the created date asc
-    var identifiersPath = null;
-    identifiersPath = this.getIdentifiersPath();
-    for (var idx in activity[identifiersPath])
-    	this.addKey(this.key(activity[identifiersPath][idx]));
-	this.activities[activity.putCode.value] = activity;
-	if (this.defaultPutCode == null) { 
-		this.activePutCode = activity.putCode.value;
-		this.makeDefault(activity.putCode.value);
-	}
-	this.activitiesCount++;
-};
-
-GroupedActivities.prototype.makeDefault = function(putCode) {
-	this.defaultPutCode = putCode;
-	this.dateSortString = this.activities[putCode].dateSortString;	
-    if (this.type == GroupedActivities.ABBR_WORK) this.title = this.activities[putCode].workTitle.title.value;
-    else if (this.type == GroupedActivities.FUNDING) this.title = this.activities[putCode].fundingTitle.title.value;
-    else if (this.type == GroupedActivities.AFFILIATION) this.title = this.activities[putCode].affiliationName.value;
-};
-
-GroupedActivities.prototype.addKey = function(key) {
-	if (this.hasKey(key)) return;
-	this._keySet[key] = true;
-	return;
-};
-
-GroupedActivities.prototype.getActive = function() {
-	return this.activities[this.activePutCode];
-};
-
-GroupedActivities.prototype.getDefault = function() {
-	return this.activities[this.defaultPutCode];
-};
-
-GroupedActivities.prototype.getByPut = function(putCode) {
-	return this.activities[putCode];
-};
-
 GroupedActivities.prototype.hasKey = function(key) {
 	if (key in this._keySet)
 		return true;
 	return false;
 };
+
+//GroupedActivities.prototype.hasUserVersion = function(key) {
+//	for (var idx in this.activities)
+//		if (this.activities[idx].sourceId == orcidVar.orcidId)
+//		return true;
+//	return false;
+//};
+
 
 GroupedActivities.prototype.hasPut = function(putCode) {
 	   if (this.activities[putCode] !== undefined)
@@ -177,9 +182,12 @@ GroupedActivities.prototype.keyMatch = function(activity) {
 	return false;
 };
 
-GroupedActivities.prototype.getIdentifiersPath = function() {
-    if (this.type == GroupedActivities.ABBR_WORK) return 'workExternalIdentifiers';
-    return 'externalIdentifiers';
+GroupedActivities.prototype.makeDefault = function(putCode) {
+	this.defaultPutCode = putCode;
+	this.dateSortString = this.activities[putCode].dateSortString;	
+    if (this.type == GroupedActivities.ABBR_WORK) this.title = this.activities[putCode].workTitle.title.value;
+    else if (this.type == GroupedActivities.FUNDING) this.title = this.activities[putCode].fundingTitle.title.value;
+    else if (this.type == GroupedActivities.AFFILIATION) this.title = this.activities[putCode].affiliationName.value;
 };
 
 GroupedActivities.prototype.rmByPut = function(putCode) {
@@ -764,7 +772,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 			},
 			createNew: function(work) {
 				var cloneW = JSON.parse(JSON.stringify(work));
-				cloneW.workSource = null;
+				cloneW.source = null;
 				cloneW.putCode = null;
 				return cloneW;
 			},
@@ -817,7 +825,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 			getEditable: function(putCode, callback) {
 				// first check if they are the current source
 				var work = worksSrvc.getDetails(putCode, worksSrvc.constants.access_type.USER, function(data) {
-					if (data.workSource.value == orcidVar.orcidId)
+					if (data.source == orcidVar.orcidId)
 						callback(data);
 					else
 						worksSrvc.getGroupDetails(putCode, worksSrvc.constants.access_type.USER, function () {
@@ -826,7 +834,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 							// the current one
 							var bestMatch = null;
 							for (var idx in worksSrvc.details)
-								if (worksSrvc.details[idx].workSource.value == orcidVar.orcidId) {
+								if (worksSrvc.details[idx].source == orcidVar.orcidId) {
 									bestMatch = worksSrvc.details[idx]; 
 									break;
 								}	
@@ -844,8 +852,8 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 				}
 				return null;
 			},
-			getGroupDetails: function(putCode, type, callback) {
-				var group = worksSrvc.getGroup(putCode);
+			getGroupDetails: function(putCode, type, callback) {				
+				var group = worksSrvc.getGroup(putCode);				
 				var needsLoading =  new Array();
 				for (var idx in group.activities) {
 					needsLoading.push(group.activities[idx].putCode.value)
@@ -3615,6 +3623,7 @@ function PublicWorkCtrl($scope, $compile, $filter, worksSrvc, actSortSrvc) {
 	$scope.moreInfoOpen = false;
 	$scope.moreInfo = {};
 	$scope.displayWorks = true;
+	$scope.editSources = {};
 
 	$scope.sort = function(key) {
 		actSortSrvc.sort(key,$scope);
@@ -3651,13 +3660,29 @@ function PublicWorkCtrl($scope, $compile, $filter, worksSrvc, actSortSrvc) {
 			$scope.moreInfoOpen?$scope.closePopover():$scope.loadWorkInfo(work.putCode.value, $event);
 	};
 	
-	$scope.showDetailsMouseClick = function(work, $event) {
-		$event.stopPropagation();
+	$scope.showDetailsMouseClick = function(group, $event) {
+			$event.stopPropagation();
 		//if (document.documentElement.className.contains('no-touch'))
-			$scope.moreInfo[work] = !$scope.moreInfo[work];
-			$scope.loadWorkInfo(work, $event);
+			$scope.moreInfo[group.groupId] = !$scope.moreInfo[group.groupId];
+			//$scope.loadWorkInfo(work, $event);
+			for (var idx in group.activities)
+		        $scope.loadDetails(group.activities[idx].putCode.value, $event);        
 		//else
 			//$scope.moreInfoOpen?$scope.closePopover():$scope.loadWorkInfo(work.putCode.value, $event);
+	};
+	
+	$scope.loadDetails = function(putCode, event) {
+	    //Close any open popover
+	    $scope.closePopover(event);
+	    $scope.moreInfoOpen = true;
+	    //Display the popover
+	    $(event.target).next().css('display','inline'); 
+	    $scope.worksSrvc.getGroupDetails(putCode, worksSrvc.constants.access_type.USER);
+	};
+	
+	$scope.hideSources = function(group) {
+	    $scope.editSources[group.groupId] = false;
+	    group.activePutCode = group.defaultPutCode;
 	};
 
 	
@@ -3859,7 +3884,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
 	};
 
 	$scope.userIsSource = function(work) {
-		if (work.workSource.value == orcidVar.orcidId)
+		if (work.source == orcidVar.orcidId)
 			return true;
 	};
 	
@@ -4112,16 +4137,17 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
 			$scope.moreInfoOpen?$scope.closePopover():$scope.loadWorkInfo(work.putCode.value, $event);
 	};
 	
-	$scope.showDetailsMouseClick = function(work, $event) {
+	$scope.showDetailsMouseClick = function(group, $event) {
 		$event.stopPropagation();		
-		$scope.moreInfo[work] = !$scope.moreInfo[work];
-		$scope.loadDetails(work, $event);
-		$scope.lastDetailsKey = work;		
+		$scope.moreInfo[group.groupId] = !$scope.moreInfo[group.groupId];
+		for (var idx in group.activities)
+		    $scope.loadDetails(group.activities[idx].putCode.value, $event);		
 	};
 	
-	$scope.hideLastDetails = function(){
-		$scope.moreInfo[$scope.lastDetailsKey] = false;		
-	}
+	$scope.hideSources = function(group) {
+		$scope.editSources[group.groupId] = false;
+		group.activePutCode = group.defaultPutCode;
+	};
 	
 	$scope.loadDetails = function(putCode, event) {
 		//Close any open popover
@@ -4806,6 +4832,10 @@ function languageCtrl($scope, $cookies) {
 	        	"value": 'fr',
 	    		"label": 'Français'
 	        },	        
+	        {
+	        	"value": 'ja',
+	    		"label": '日本語'
+	        },
 	        {
 	        	"value": 'ko',
 	    		"label": '한국어'

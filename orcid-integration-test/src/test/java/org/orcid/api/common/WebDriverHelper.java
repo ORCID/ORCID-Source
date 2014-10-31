@@ -24,6 +24,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.By.ByName;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
@@ -56,7 +57,6 @@ public class WebDriverHelper {
 
     public String obtainAuthorizationCode(String scopes, String orcid, String userId, String password) throws InterruptedException {
         webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, orcid, scopes, redirectUri));
-        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, orcid, scopes, redirectUri));
 
         // Switch to the login form
         By switchFromLinkLocator = By.id("in-register-switch-form");
@@ -87,7 +87,45 @@ public class WebDriverHelper {
         return authorizationCode;
     }
 
-    public String obtainAuthorizationCode(String scopes, String orcid, String userId, String password, List<String> inputIdsToCheck, boolean markAsSelected) throws InterruptedException {
+    public void signIn(String userId, String password) throws InterruptedException {
+        webDriver.get(String.format("%s/signin", webBaseUrl));
+
+        // Fill the form
+        By userIdElementLocator = By.id("userId");
+        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(userIdElementLocator));
+        WebElement userIdElement = webDriver.findElement(userIdElementLocator);
+        userIdElement.sendKeys(userId);
+        WebElement passwordElement = webDriver.findElement(By.id("password"));
+        passwordElement.sendKeys(password);
+        WebElement submitButton = webDriver.findElement(By.id("form-sign-in-button"));
+        submitButton.click();
+
+        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(By.linkText("SIGN OUT")));
+    }
+
+    public String obtainAuthorizationCodeWhenAlreadySignedIn(String scopes, String orcid) throws InterruptedException {
+        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, orcid, scopes, redirectUri));
+
+        By authorizeButtonLocator = ByName.name("authorize");
+        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(authorizeButtonLocator));
+        WebElement submitButton = webDriver.findElement(authorizeButtonLocator);
+        submitButton.click();
+
+        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
+            public Boolean apply(WebDriver d) {
+                return d.getTitle().equals("ORCID Playground");
+            }
+        });
+        String currentUrl = webDriver.getCurrentUrl();
+        Matcher matcher = AUTHORIZATION_CODE_PATTERN.matcher(currentUrl);
+        assertTrue(matcher.find());
+        String authorizationCode = matcher.group(1);
+        assertNotNull(authorizationCode);
+        return authorizationCode;
+    }
+
+    public String obtainAuthorizationCode(String scopes, String orcid, String userId, String password, List<String> inputIdsToCheck, boolean markAsSelected)
+            throws InterruptedException {
         webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, orcid, scopes, redirectUri));
         webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, orcid, scopes, redirectUri));
 
@@ -97,19 +135,19 @@ public class WebDriverHelper {
         WebElement switchFromLink = webDriver.findElement(switchFromLinkLocator);
         switchFromLink.click();
 
-        //Check the given inputs
-        if(inputIdsToCheck != null && !inputIdsToCheck.isEmpty()) {
-            for(String id : inputIdsToCheck) {
+        // Check the given inputs
+        if (inputIdsToCheck != null && !inputIdsToCheck.isEmpty()) {
+            for (String id : inputIdsToCheck) {
                 By input = By.id(id);
                 (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(input));
                 WebElement inputElement = webDriver.findElement(input);
-                if(markAsSelected) {
-                    if(!inputElement.isSelected())
+                if (markAsSelected) {
+                    if (!inputElement.isSelected())
                         inputElement.click();
                 } else {
-                    if(inputElement.isSelected())
+                    if (inputElement.isSelected())
                         inputElement.click();
-                }                
+                }
             }
         }
 
@@ -135,7 +173,7 @@ public class WebDriverHelper {
         assertNotNull(authorizationCode);
         return authorizationCode;
     }
-    
+
     public String obtainAuthorizationCode(String scopes, String orcid) throws InterruptedException {
         return obtainAuthorizationCode(scopes, orcid, "user_to_test@user.com", "password");
     }

@@ -82,6 +82,14 @@ Do to licensing issues this is only available to ORCID.org employees.
     mvn clean install
     ```
     
+Tip: If you experience the following error: 
+
+    ```
+    Caused by: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+    ```
+   
+You can find the solution [here](http://stackoverflow.com/questions/25911623/problems-using-maven-and-ssl-behind-proxy)    
+    
 Tip: use the same command for rebuilding.
 
 ## Create the Database Schema - First Time Only
@@ -138,7 +146,7 @@ http://www.springsource.org/downloads/sts-ggts
 * In VM Arguments add the following (changing the /Users/rcpeters/git/ORCID-Source path to your repo checkout)
 
     ```
-    -Dsolr.solr.home=/Users/rcpeters/git/ORCID-Source/orcid-solr-web/src/main/webapp/solr -Dorg.orcid.config.file=classpath:staging-persistence.properties -Dorg.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true
+    -Dsolr.solr.home=/Users/rcpeters/git/ORCID-Source/orcid-solr-web/src/main/webapp/solr -Dorg.orcid.config.file=classpath:staging-persistence.properties -Dorg.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true -XX:MaxPermSize=1024m
     ```
 
 * Click Ok

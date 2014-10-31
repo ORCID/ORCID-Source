@@ -69,9 +69,9 @@ public class Work implements ErrorsInterface, Serializable {
 
     private List<WorkExternalIdentifier> workExternalIdentifiers;
 
-    private Text workSource;
+    private String source;
 
-    private Text workSourceName;
+    private String sourceName;
 
     private WorkTitle workTitle;
 
@@ -134,8 +134,8 @@ public class Work implements ErrorsInterface, Serializable {
         }
         populateExternaIdentifiers(identifiers, w);
         if (minimizedWorkEntity.getSource() != null) {
-            w.setWorkSource(Text.valueOf(minimizedWorkEntity.getSource().getSourceId()));
-            w.setWorkSourceName(Text.valueOf(minimizedWorkEntity.getSource().getSourceName()));
+            w.setSource(minimizedWorkEntity.getSource().getSourceId());
+            w.setSourceName(minimizedWorkEntity.getSource().getSourceName());
         }
         if (minimizedWorkEntity.getLanguageCode() != null) {
             w.setLanguageCode(Text.valueOf(minimizedWorkEntity.getLanguageCode()));
@@ -143,6 +143,8 @@ public class Work implements ErrorsInterface, Serializable {
         }
         w.setCreatedDate(Date.valueOf(minimizedWorkEntity.getDateCreated()));
         w.setLastModified(Date.valueOf(minimizedWorkEntity.getLastModified()));
+        if (minimizedWorkEntity.getWorkUrl() != null)
+            w.setUrl(Text.valueOf(minimizedWorkEntity.getWorkUrl()));
         return w;
     }
 
@@ -192,9 +194,9 @@ public class Work implements ErrorsInterface, Serializable {
         }
         populateExternaIdentifiers(workExternalIdentifiers, w);
         if (orcidWork.getSource() != null) {
-            w.setWorkSource(Text.valueOf(orcidWork.getSource().retrieveSourcePath()));
+            w.setSource(orcidWork.getSource().retrieveSourcePath());
             if (orcidWork.getSource().getSourceName() != null)
-                w.setWorkSourceName(Text.valueOf(orcidWork.getSource().getSourceName().getContent()));
+                w.setSourceName(orcidWork.getSource().getSourceName().getContent());
         }
         if (orcidWork.getWorkTitle() != null)
             w.setWorkTitle(WorkTitle.valueOf(orcidWork.getWorkTitle()));
@@ -245,8 +247,8 @@ public class Work implements ErrorsInterface, Serializable {
             }
         }
         ow.setWorkExternalIdentifiers(new WorkExternalIdentifiers(wiList));
-        if (this.getWorkSource() != null)
-            ow.setSource(new Source(this.getWorkSource().getValue()));
+        if (this.getSource() != null)
+            ow.setSource(new Source(this.getSource()));
         if (this.getWorkTitle() != null) {
             ow.setWorkTitle(this.workTitle.toWorkTitle());
         }
@@ -346,12 +348,12 @@ public class Work implements ErrorsInterface, Serializable {
         this.workExternalIdentifiers = workExternalIdentifiers;
     }
 
-    public Text getWorkSource() {
-        return workSource;
+    public String getSource() {
+        return source;
     }
 
-    public void setWorkSource(Text workSource) {
-        this.workSource = workSource;
+    public void setSource(String source) {
+        this.source = source;
     }
 
     public WorkTitle getWorkTitle() {
@@ -418,12 +420,12 @@ public class Work implements ErrorsInterface, Serializable {
         this.countryName = countryName;
     }
 
-    public Text getWorkSourceName() {
-        return workSourceName;
+    public String getSourceName() {
+        return sourceName;
     }
 
-    public void setWorkSourceName(Text workSourceName) {
-        this.workSourceName = workSourceName;
+    public void setSourceName(String sourceName) {
+        this.sourceName = sourceName;
     }
 
     public String getDateSortString() {

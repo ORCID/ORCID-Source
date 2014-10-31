@@ -800,7 +800,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                         // add group information
                         if (acceptedClient.getGroupProfile() != null) {
                             applicationSummary.setApplicationGroupOrcid(new ApplicationOrcid(acceptedClient.getGroupProfile().getId()));
-                            applicationSummary.setApplicationGroupName(new ApplicationName(acceptedClient.getGroupProfile().getCreditName()));
+                            applicationSummary.setApplicationGroupName(new ApplicationName(getGroupDisplayName(acceptedClient.getGroupProfile())));
                         }
 
                         // Scopes
@@ -823,6 +823,27 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             return applications;
         }
         return null;
+    }
+
+    private String getGroupDisplayName(ProfileEntity groupProfile) {
+        String creditName = groupProfile.getCreditName();
+        if (creditName != null) {
+            if (groupProfile.getGroupType() != null) {
+                // It's a member so, it will definitely have a credit name. Use
+                // it regardless of privacy.
+                return creditName;
+            }
+            Visibility creditNameVisibilty = groupProfile.getCreditNameVisibility();
+            if (Visibility.PUBLIC.equals(creditNameVisibilty)) {
+                return creditName;
+            }
+        }
+        String displayName = groupProfile.getGivenNames();
+        String familyName = groupProfile.getFamilyName();
+        if (StringUtils.isNotBlank(familyName)) {
+            displayName += " " + familyName;
+        }
+        return displayName;
     }
 
     public OrcidWork getOrcidWork(ProfileWorkEntity profileWorkEntity) {

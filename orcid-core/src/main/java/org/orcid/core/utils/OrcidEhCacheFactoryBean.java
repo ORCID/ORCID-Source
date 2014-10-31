@@ -109,6 +109,8 @@ public class OrcidEhCacheFactoryBean implements FactoryBean<Ehcache>, Initializi
             CacheConfiguration config = createConfig();
             this.cache = new Cache(config);
             cacheManager.addCache(this.cache);
+        } else {
+            this.cache = existingCache;
         }
     }
 

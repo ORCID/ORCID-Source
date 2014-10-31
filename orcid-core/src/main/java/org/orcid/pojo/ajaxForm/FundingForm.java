@@ -71,6 +71,8 @@ public class FundingForm implements ErrorsInterface, Serializable {
     private Visibility visibility;
 
     private String sourceName;
+    
+    private String source;
 
     private Text disambiguatedFundingSourceId;
 
@@ -397,8 +399,11 @@ public class FundingForm implements ErrorsInterface, Serializable {
         }            
         
         Source source = funding.getSource();
-        if (source != null && source.getSourceName() != null)
+        if (source != null) {
+            result.setSource(source.getSourceOrcid().getPath());
+            if(source.getSourceName() != null)
             result.setSourceName(source.getSourceName().getContent());
+        }
         
         if (funding.getTitle() != null) {
             FundingTitleForm fundingTitle = new FundingTitleForm();
@@ -507,6 +512,14 @@ public class FundingForm implements ErrorsInterface, Serializable {
 
     public void setLastModified(Date lastModified) {
         this.lastModified = lastModified;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
     }
 
 }

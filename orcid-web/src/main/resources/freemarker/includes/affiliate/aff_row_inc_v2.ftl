@@ -119,10 +119,10 @@
 				</ul>
 			</div>
 			<!-- Work Source -->
-			<div class="work-source bottombuffer" ng-show="worksSrvc.details[work.putCode.value].workSourceName.value" ng-cloak>
+			<div class="work-source bottombuffer" ng-show="worksSrvc.details[work.putCode.value].sourceName.value" ng-cloak>
 				<strong> <@orcid.msg
 				'manual_work_form_contents.labelWorkSource'/></strong>
-				<div ng-bind="worksSrvc.details[work.putCode.value].workSourceName.value"></div>
+				<div ng-bind="worksSrvc.details[work.putCode.value].sourceName.value"></div>
 			</div>					
 		</div>	
 	</div>
