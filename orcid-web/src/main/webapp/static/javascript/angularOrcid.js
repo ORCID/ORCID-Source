@@ -1771,7 +1771,91 @@ function EmailEditCtrl($scope, $compile, emailSrvc) {
 	
 };
 
+function NotificationPreferencesCtrl($scope, $compile, emailSrvc, prefsSrvc) {
+	$scope.prefsSrvc = prefsSrvc;
+	$scope.emailSrvc = emailSrvc;
+	$scope.privacyHelp = {};
+	$scope.verifyEmailObject;
+	
+	$scope.toggleClickPrivacyHelp = function(key) {
+		if (!document.documentElement.className.contains('no-touch'))
+			$scope.privacyHelp[key]=!$scope.privacyHelp[key];
+	};
+	
+	$scope.getEmails = function() {
+		emailSrvc.getEmails(function() {
+		        	if(isIE() == 7) $scope.fixZindexesIE7();
+		});
+	};
+	
+	//init
+	$scope.password = null;
+	$scope.curPrivToggle = null;
+	emailSrvc.getEmails();
+	emailSrvc.initInputEmail();
+	
+	$scope.fixZindexesIE7 =  function(){		
+	    fixZindexIE7('.popover',2000);
+	    fixZindexIE7('.popover-help-container',3000);
+	    fixZindexIE7('#privacy-bar',500);
+	    fixZindexIE7('.emailVisibility',5000);
+	    fixZindexIE7('.col-md-3', 6000);
+	    fixZindexIE7('.row', 7000);	
+	};
+	
+	$scope.setPrivacy = function(email, priv, $event) {
+		$event.preventDefault();
+		email.visibility = priv;
+		$scope.curPrivToggle = null;
+		emailSrvc.saveEmail();
+	};
+	
+	$scope.verifyEmail = function(email) {
+		$scope.verifyEmailObject = email;
+		emailSrvc.verifyEmail(email,function(data) {
+	    	    $.colorbox({
+	    	        html : $compile($('#verify-email-modal').html())($scope)
+	    	    });
+	    	    $scope.$apply();
+	    	    $.colorbox.resize();
+	   });  
+	};
+	
+	$scope.closeModal = function() {
+		$.colorbox.close();
+	};
 
+
+	$scope.submitModal = function (obj, $event) {
+		emailSrvc.inputEmail.password = $scope.password;
+		emailSrvc.addEmail();
+		$.colorbox.close();
+	};
+	
+	$scope.confirmDeleteEmail = function(email) {
+		    emailSrvc.delEmail = email;
+            $.colorbox({
+                html : $compile($('#delete-email-modal').html())($scope)
+                	
+            });
+            $.colorbox.resize();
+	};
+	
+	$scope.deleteEmail = function () {
+		emailSrvc.deleteEmail(function() {
+			$scope.closeModal();
+		});
+	};
+	
+	$scope.checkCredentials = function() {
+		$scope.password=null;
+		$.colorbox({        	
+			html: $compile($('#check-password-modal').html())($scope)
+		});
+		$.colorbox.resize();
+	};
+	
+};
 
 function WebsitesCtrl($scope, $compile) {
     $scope.showEdit = false;

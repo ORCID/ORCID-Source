@@ -151,6 +151,39 @@
                         </div>
                     </td>
                 </tr>
+                <#if profile.orcidInternal.preferences.notificationsEnabled>
+	                <tr>
+	                    <th><a name="editEmailPreferences"></a>${springMacroRequestContext.getMessage("manage.notification_preferences")}</th>
+	                    <td><a href="" ng-click="toggleEmailPreferencesEdit()"
+	                        ng-bind="emailPreferencesToggleText"></a></td>
+	                </tr>
+	                <tr ng-controller="NotificationPreferencesCtrl"
+	                    ng-show="showEditEmailPreferences" ng-cloak>
+	                    <td colspan="2">
+	                        <div class="editTablePadCell35">
+	                            <label class="checkbox"> <input type="checkbox"
+	                                id="sendOrcidChangeNotifcations"
+	                                name="sendOrcidChangeNotifcations"
+	                                ng-model="prefsSrvc.prefs.sendChangeNotifications.value"
+	                                ng-change="prefsSrvc.savePrivacyPreferences()" />
+	                                ${springMacroRequestContext.getMessage("change_email_preferences.sendnotification")}
+	                            </label> <label class="checkbox"> <input type="checkbox"
+	                                id="sendOrcidNews" name="sendOrcidNews"
+	                                ng-model="prefsSrvc.prefs.sendOrcidNews.value"
+	                                ng-change="prefsSrvc.savePrivacyPreferences()" />
+	                                ${springMacroRequestContext.getMessage("change_email_preferences.sendinformation")}
+	                            </label>
+	                            <p>
+	                                <strong>${springMacroRequestContext.getMessage("change_email_preferences.privacy")}</strong>
+	                                ${springMacroRequestContext.getMessage("change_email_preferences.yourregistrationinfo")}
+	                                <a href="${aboutUri}/footer/privacy-policy" target="_blank">${springMacroRequestContext.getMessage("change_email_preferences.privacyPolicy")}</a>
+	                                ${springMacroRequestContext.getMessage("change_email_preferences.and")}
+	                                <a href="${aboutUri}/content/orcid-terms-use" target="_blank">${springMacroRequestContext.getMessage("change_email_preferences.termsAnd")}</a>.
+	                            </p>
+	                        </div>
+	                    </td>
+	                </tr>
+	            </#if>
                 <tr>
                     <th><a name="editPassword"></a>${springMacroRequestContext.getMessage("manage.password")}</th>
                     <td><a href="" ng-click="togglePasswordEdit()"
@@ -265,37 +298,39 @@
                         </div>
                     </td>
                 </tr>
-                <tr>
-                    <th><a name="editEmailPreferences"></a>${springMacroRequestContext.getMessage("manage.email_preferences")}</th>
-                    <td><a href="" ng-click="toggleEmailPreferencesEdit()"
-                        ng-bind="emailPreferencesToggleText"></a></td>
-                </tr>
-                <tr ng-controller="EmailPreferencesCtrl"
-                    ng-show="showEditEmailPreferences" ng-cloak>
-                    <td colspan="2">
-                        <div class="editTablePadCell35">
-                            <label class="checkbox"> <input type="checkbox"
-                                id="sendOrcidChangeNotifcations"
-                                name="sendOrcidChangeNotifcations"
-                                ng-model="prefsSrvc.prefs.sendChangeNotifications.value"
-                                ng-change="prefsSrvc.savePrivacyPreferences()" />
-                                ${springMacroRequestContext.getMessage("change_email_preferences.sendnotification")}
-                            </label> <label class="checkbox"> <input type="checkbox"
-                                id="sendOrcidNews" name="sendOrcidNews"
-                                ng-model="prefsSrvc.prefs.sendOrcidNews.value"
-                                ng-change="prefsSrvc.savePrivacyPreferences()" />
-                                ${springMacroRequestContext.getMessage("change_email_preferences.sendinformation")}
-                            </label>
-                            <p>
-                                <strong>${springMacroRequestContext.getMessage("change_email_preferences.privacy")}</strong>
-                                ${springMacroRequestContext.getMessage("change_email_preferences.yourregistrationinfo")}
-                                <a href="${aboutUri}/footer/privacy-policy" target="_blank">${springMacroRequestContext.getMessage("change_email_preferences.privacyPolicy")}</a>
-                                ${springMacroRequestContext.getMessage("change_email_preferences.and")}
-                                <a href="${aboutUri}/content/orcid-terms-use" target="_blank">${springMacroRequestContext.getMessage("change_email_preferences.termsAnd")}</a>.
-                            </p>
-                        </div>
-                    </td>
-                </tr>
+                <#if !profile.orcidInternal.preferences.notificationsEnabled>
+	                <tr>
+	                    <th><a name="editEmailPreferences"></a>${springMacroRequestContext.getMessage("manage.email_preferences")}</th>
+	                    <td><a href="" ng-click="toggleEmailPreferencesEdit()"
+	                        ng-bind="emailPreferencesToggleText"></a></td>
+	                </tr>
+	                <tr ng-controller="EmailPreferencesCtrl"
+	                    ng-show="showEditEmailPreferences" ng-cloak>
+	                    <td colspan="2">
+	                        <div class="editTablePadCell35">
+	                            <label class="checkbox"> <input type="checkbox"
+	                                id="sendOrcidChangeNotifcations"
+	                                name="sendOrcidChangeNotifcations"
+	                                ng-model="prefsSrvc.prefs.sendChangeNotifications.value"
+	                                ng-change="prefsSrvc.savePrivacyPreferences()" />
+	                                ${springMacroRequestContext.getMessage("change_email_preferences.sendnotification")}
+	                            </label> <label class="checkbox"> <input type="checkbox"
+	                                id="sendOrcidNews" name="sendOrcidNews"
+	                                ng-model="prefsSrvc.prefs.sendOrcidNews.value"
+	                                ng-change="prefsSrvc.savePrivacyPreferences()" />
+	                                ${springMacroRequestContext.getMessage("change_email_preferences.sendinformation")}
+	                            </label>
+	                            <p>
+	                                <strong>${springMacroRequestContext.getMessage("change_email_preferences.privacy")}</strong>
+	                                ${springMacroRequestContext.getMessage("change_email_preferences.yourregistrationinfo")}
+	                                <a href="${aboutUri}/footer/privacy-policy" target="_blank">${springMacroRequestContext.getMessage("change_email_preferences.privacyPolicy")}</a>
+	                                ${springMacroRequestContext.getMessage("change_email_preferences.and")}
+	                                <a href="${aboutUri}/content/orcid-terms-use" target="_blank">${springMacroRequestContext.getMessage("change_email_preferences.termsAnd")}</a>.
+	                            </p>
+	                        </div>
+	                    </td>
+	                </tr>
+	            </#if>
                 <!-- Deactivate Account -->
                 <tr>
                     <th><a name="editDeactivate"></a>${springMacroRequestContext.getMessage("manage.close_account")}</th>
