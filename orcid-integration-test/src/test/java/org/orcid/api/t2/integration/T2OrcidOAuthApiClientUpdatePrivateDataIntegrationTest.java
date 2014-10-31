@@ -39,6 +39,9 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.orcid.api.common.WebDriverHelper;
 import org.orcid.api.t2.T2OAuthAPIService;
 import org.orcid.core.manager.ClientDetailsManager;
+import org.orcid.jaxb.model.message.Affiliation;
+import org.orcid.jaxb.model.message.AffiliationType;
+import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.Amount;
 import org.orcid.jaxb.model.message.Country;
 import org.orcid.jaxb.model.message.Funding;
@@ -88,10 +91,7 @@ public class T2OrcidOAuthApiClientUpdatePrivateDataIntegrationTest extends DBUni
     private static final String READ_PRIVATE_WORKS_CLIENT_ID = "9999-9999-9999-9991";
     private static final String READ_PRIVATE_FUNDING_CLIENT_ID = "9999-9999-9999-9992";
     private static final String READ_PRIVATE_AFFILIATIONS_CLIENT_ID = "9999-9999-9999-9993";
-    private static final String READ_ONLY_LIMITED_INFO_CLIENT_ID = "9999-9999-9999-9994";
-    private static final String READ_PRIVATE_WORKS_CLIENT_ID_2 = "9999-9999-9999-9995";
-    private static final String READ_PRIVATE_FUNDING_CLIENT_ID_2 = "9999-9999-9999-9996";
-    private static final String READ_PRIVATE_AFFILIATIONS_CLIENT_ID_2 = "9999-9999-9999-9997";
+    private static final String READ_ONLY_LIMITED_INFO_CLIENT_ID = "9999-9999-9999-9994";    
 
     private static final List<String> DATA_FILES = Arrays.asList("/group_client_data/EmptyEntityData.xml", "/group_client_data/SecurityQuestionEntityData.xml",
             "/group_client_data/ProfileEntityData.xml", "/group_client_data/WorksEntityData.xml", "/group_client_data/OrgsEntityData.xml",
@@ -142,31 +142,16 @@ public class T2OrcidOAuthApiClientUpdatePrivateDataIntegrationTest extends DBUni
         ClientRedirectUriPk clientRedirectUriPk = new ClientRedirectUriPk(READ_PRIVATE_WORKS_CLIENT_ID, redirectUri, DEFAULT);
         if (clientRedirectDao.find(clientRedirectUriPk) == null) {
             clientDetailsManager.addClientRedirectUri(READ_PRIVATE_WORKS_CLIENT_ID, redirectUri);
-        }
-
-        clientRedirectUriPk = new ClientRedirectUriPk(READ_PRIVATE_WORKS_CLIENT_ID_2, redirectUri, DEFAULT);
-        if (clientRedirectDao.find(clientRedirectUriPk) == null) {
-            clientDetailsManager.addClientRedirectUri(READ_PRIVATE_WORKS_CLIENT_ID_2, redirectUri);
-        }
+        }        
 
         clientRedirectUriPk = new ClientRedirectUriPk(READ_PRIVATE_AFFILIATIONS_CLIENT_ID, redirectUri, DEFAULT);
         if (clientRedirectDao.find(clientRedirectUriPk) == null) {
             clientDetailsManager.addClientRedirectUri(READ_PRIVATE_AFFILIATIONS_CLIENT_ID, redirectUri);
         }
 
-        clientRedirectUriPk = new ClientRedirectUriPk(READ_PRIVATE_AFFILIATIONS_CLIENT_ID_2, redirectUri, DEFAULT);
-        if (clientRedirectDao.find(clientRedirectUriPk) == null) {
-            clientDetailsManager.addClientRedirectUri(READ_PRIVATE_AFFILIATIONS_CLIENT_ID_2, redirectUri);
-        }
-
         clientRedirectUriPk = new ClientRedirectUriPk(READ_PRIVATE_FUNDING_CLIENT_ID, redirectUri, DEFAULT);
         if (clientRedirectDao.find(clientRedirectUriPk) == null) {
             clientDetailsManager.addClientRedirectUri(READ_PRIVATE_FUNDING_CLIENT_ID, redirectUri);
-        }
-
-        clientRedirectUriPk = new ClientRedirectUriPk(READ_PRIVATE_FUNDING_CLIENT_ID_2, redirectUri, DEFAULT);
-        if (clientRedirectDao.find(clientRedirectUriPk) == null) {
-            clientDetailsManager.addClientRedirectUri(READ_PRIVATE_FUNDING_CLIENT_ID_2, redirectUri);
         }
 
         clientRedirectUriPk = new ClientRedirectUriPk(READ_ONLY_LIMITED_INFO_CLIENT_ID, redirectUri, DEFAULT);
@@ -284,7 +269,7 @@ public class T2OrcidOAuthApiClientUpdatePrivateDataIntegrationTest extends DBUni
     
     /**
      * Check fetching information from a client that should have access to his
-     * private works
+     * private funding
      * */
     @Test
     public void testGetProfileWithOwnPrivateFunding() throws JSONException, InterruptedException {
@@ -300,7 +285,7 @@ public class T2OrcidOAuthApiClientUpdatePrivateDataIntegrationTest extends DBUni
         assertNotNull(orcidMessage.getOrcidProfile());
         assertNotNull(orcidMessage.getOrcidProfile().getOrcidActivities());
 
-        // Check works
+        // Check funding
         assertNotNull(orcidMessage.getOrcidProfile().getOrcidActivities().getFundings());
         assertNotNull(orcidMessage.getOrcidProfile().getOrcidActivities().getFundings().getFundings());
         assertEquals(3, orcidMessage.getOrcidProfile().getOrcidActivities().getFundings().getFundings().size());
@@ -322,6 +307,8 @@ public class T2OrcidOAuthApiClientUpdatePrivateDataIntegrationTest extends DBUni
         if (!containMyPrivateFunding)
             fail("Client doesnt have his private work with put code: 4");
         
+        Visibility oldVisibility = myPrivateFunding.getVisibility();
+        
         //Update funding info
         myPrivateFunding.setAmount(new Amount("123456789", "CRC"));
         myPrivateFunding.setDescription("Updated description");
@@ -335,6 +322,7 @@ public class T2OrcidOAuthApiClientUpdatePrivateDataIntegrationTest extends DBUni
         FundingExternalIdentifiers fundingExtIds = new FundingExternalIdentifiers();
         fundingExtIds.getFundingExternalIdentifier().add(fundingExtId);
         myPrivateFunding.setFundingExternalIdentifiers(fundingExtIds);
+        myPrivateFunding.setVisibility(Visibility.PUBLIC);
         
         oauthT2Clientv1_2_rc5.updateFundingXml("9999-9999-9999-9989", getUpdateOrcidMessage(myPrivateFunding), accessToken);
         
@@ -354,19 +342,106 @@ public class T2OrcidOAuthApiClientUpdatePrivateDataIntegrationTest extends DBUni
 
         fundings = orcidMessage.getOrcidProfile().getOrcidActivities().getFundings().getFundings();
         
-        myPrivateFunding = null;
         containMyPrivateFunding = false; 
         
         for (Funding funding : fundings) {
             String putCode = funding.getPutCode();
             if (putCode.equals("4")) {
+                containMyPrivateFunding = true;
                 assertEquals("123456789", funding.getAmount().getContent());
                 assertEquals("Updated description", funding.getDescription());
                 assertNotNull(funding.getFundingExternalIdentifiers());
                 assertNotNull(funding.getFundingExternalIdentifiers().getFundingExternalIdentifier());
                 assertEquals("funding_ext_id", funding.getFundingExternalIdentifiers().getFundingExternalIdentifier().get(0).getValue());
+                assertEquals(oldVisibility, funding.getVisibility());
             }
         }
+        
+        assertTrue(containMyPrivateFunding);
+    }
+    
+    /**
+     * Check fetching information from a client that should have access to his
+     * private funding
+     * */
+    @Test
+    public void testGetProfileWithOwnPrivateAffiliations() throws JSONException, InterruptedException {
+        String scopes = "/affiliations/update";
+        String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, READ_PRIVATE_AFFILIATIONS_CLIENT_ID);
+        String accessToken = obtainAccessToken(READ_PRIVATE_AFFILIATIONS_CLIENT_ID, authorizationCode, redirectUri, scopes);
+        
+        ClientResponse fullResponse1 = oauthT2Clientv1_2_rc5.viewAffiliationDetailsXml("9999-9999-9999-9989", accessToken);
+        assertEquals(200, fullResponse1.getStatus());
+        OrcidMessage orcidMessage = fullResponse1.getEntity(OrcidMessage.class);
+        
+        // Check returning message
+        assertNotNull(orcidMessage);
+        assertNotNull(orcidMessage.getOrcidProfile());
+        assertNotNull(orcidMessage.getOrcidProfile().getOrcidActivities());
+
+        // Check affiliations
+        assertNotNull(orcidMessage.getOrcidProfile().getOrcidActivities().getAffiliations());
+        assertNotNull(orcidMessage.getOrcidProfile().getOrcidActivities().getAffiliations().getAffiliation());
+        assertEquals(3, orcidMessage.getOrcidProfile().getOrcidActivities().getAffiliations().getAffiliation().size());
+        
+        List<Affiliation> affiliations = orcidMessage.getOrcidProfile().getOrcidActivities().getAffiliations().getAffiliation();
+        
+        Affiliation myPrivateAffiliation = null;
+        boolean containMyPrivateAffiliation = false;        
+        
+        for (Affiliation affiliation : affiliations) {
+            String putCode = affiliation.getPutCode();
+            if (putCode.equals("4")) {
+                myPrivateAffiliation = affiliation;
+                containMyPrivateAffiliation = true;
+                break;
+            } 
+        }
+
+        if (!containMyPrivateAffiliation)
+            fail("Client doesnt have his private work with put code: 4");
+        
+        Visibility oldVisibility = myPrivateAffiliation.getVisibility();
+        
+        // Update affiliation info
+        myPrivateAffiliation.setDepartmentName("Updated dept name");
+        myPrivateAffiliation.setRoleTitle("Updated role");
+        myPrivateAffiliation.setType(AffiliationType.EDUCATION);
+        myPrivateAffiliation.setVisibility(Visibility.PUBLIC);
+        
+        oauthT2Clientv1_2_rc5.updateAffiliationsXml("9999-9999-9999-9989", getUpdateOrcidMessage(myPrivateAffiliation), accessToken);
+        
+        fullResponse1 = oauthT2Clientv1_2_rc5.viewAffiliationDetailsXml("9999-9999-9999-9989", accessToken);
+        assertEquals(200, fullResponse1.getStatus());
+        orcidMessage = fullResponse1.getEntity(OrcidMessage.class);
+        
+        // Check returning message
+        assertNotNull(orcidMessage);
+        assertNotNull(orcidMessage.getOrcidProfile());
+        assertNotNull(orcidMessage.getOrcidProfile().getOrcidActivities());
+
+        // Check affiliations
+        assertNotNull(orcidMessage.getOrcidProfile().getOrcidActivities().getAffiliations());
+        assertNotNull(orcidMessage.getOrcidProfile().getOrcidActivities().getAffiliations().getAffiliation());
+        assertEquals(3, orcidMessage.getOrcidProfile().getOrcidActivities().getAffiliations().getAffiliation().size());
+        
+        affiliations = orcidMessage.getOrcidProfile().getOrcidActivities().getAffiliations().getAffiliation();
+                
+        containMyPrivateAffiliation = false;    
+        
+        for (Affiliation affiliation : affiliations) {
+            String putCode = affiliation.getPutCode();
+            if (putCode.equals("4")) {
+                containMyPrivateAffiliation = true;
+                assertEquals("Updated dept name", affiliation.getDepartmentName());
+                assertEquals("Updated role", affiliation.getRoleTitle());
+                assertEquals(AffiliationType.EDUCATION, affiliation.getType());
+                assertEquals(oldVisibility, affiliation.getVisibility());
+                break;
+            }
+        }
+        
+        assertTrue(containMyPrivateAffiliation);
     }
     
     private OrcidMessage getUpdateOrcidMessage(OrcidWork work) {        
@@ -395,6 +470,19 @@ public class T2OrcidOAuthApiClientUpdatePrivateDataIntegrationTest extends DBUni
         return message;
     }
 
+    private OrcidMessage getUpdateOrcidMessage(Affiliation affiliation) {
+        //Clear not needed info
+        affiliation.setCreatedDate(null);
+        affiliation.setLastModifiedDate(null);
+        
+        //Create orcid message
+        OrcidMessage message = getEmptyOrcidMessage();
+        Affiliations affiliations = new Affiliations();
+        affiliations.getAffiliation().add(affiliation);
+        message.getOrcidProfile().getOrcidActivities().setAffiliations(affiliations);
+        return message;
+    }
+    
     private OrcidMessage getEmptyOrcidMessage() {
         OrcidMessage message = new OrcidMessage();   
         message.setMessageVersion("1.2_rc5");

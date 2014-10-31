@@ -474,6 +474,15 @@ public class T1OAuthOrcidApiClientImpl implements T1OAuthAPIService<ClientRespon
     }
     
     @Override
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML })
+    @Path(AFFILIATIONS_PATH)
+    public ClientResponse viewAffiliationDetailsXml(@PathParam("orcid") String orcid, String accessToken) {
+        URI affiliationPathWithOrcid = UriBuilder.fromPath(AFFILIATIONS_PATH).build(orcid);
+        return getClientResponseWithToken(affiliationPathWithOrcid, VND_ORCID_XML, accessToken);
+    }
+    
+    @Override
     /**
      * Gets the XML representation any Orcid Profiles (BIO) only 
      * relevant to the given query

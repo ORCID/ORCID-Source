@@ -476,4 +476,12 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
         return getClientResponseWithToken(fundingPathWithOrcid, VND_ORCID_XML, accessToken);
     }
 
+    @Override
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML })
+    @Path(AFFILIATIONS_PATH)
+    public ClientResponse viewAffiliationDetailsXml(String orcid, String accessToken) {
+        URI affiliationPathWithOrcid = UriBuilder.fromPath(AFFILIATIONS_PATH).build(orcid);
+        return getClientResponseWithToken(affiliationPathWithOrcid, VND_ORCID_XML, accessToken);
+    }
 }

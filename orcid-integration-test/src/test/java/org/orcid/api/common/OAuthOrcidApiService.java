@@ -208,6 +208,19 @@ public interface OAuthOrcidApiService<T> {
     
     
     /**
+     * GETs the XML representation of the ORCID record containing only affiliation
+     * details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the XML representation of the ORCID record
+     */
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Path(AFFILIATIONS_PATH)
+    T viewAffiliationDetailsXml(@PathParam("orcid") String orcid, String accessToken);
+    
+    /**
      * Gets the JSON representation any Orcid Profiles (BIO) only relevant to
      * the given query
      * 
