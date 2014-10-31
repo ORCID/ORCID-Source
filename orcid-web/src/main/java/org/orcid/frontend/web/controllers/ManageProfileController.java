@@ -152,8 +152,8 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @Resource
     private OrcidSocialManager orcidSocialManager;
-    
-    @Resource 
+
+    @Resource
     private EmailManager emailManager;
 
     public EncryptionManager getEncryptionManager() {
@@ -212,14 +212,14 @@ public class ManageProfileController extends BaseWorkspaceController {
         ModelAndView mav = rebuildManageView(tab);
         return mav;
     }
-        
+
     @ModelAttribute("hasVerifiedEmail")
     public boolean hasVerifiedEmail() {
         OrcidProfile profile = getEffectiveProfile();
-        if (profile == null  || profile.getOrcidBio() == null || profile.getOrcidBio().getContactDetails() == null) return false;
+        if (profile == null || profile.getOrcidBio() == null || profile.getOrcidBio().getContactDetails() == null)
+            return false;
         return profile.getOrcidBio().getContactDetails().anyEmailVerified();
-    }    
-    
+    }
 
     @RequestMapping(value = "/search-for-delegate-by-email/{email}/")
     public @ResponseBody
@@ -809,13 +809,13 @@ public class ManageProfileController extends BaseWorkspaceController {
     CountryForm getProfileCountryJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
         OrcidProfile currentProfile = getEffectiveProfile();
         CountryForm countryForm = CountryForm.valueOf(currentProfile);
-        //Set country name
-        if(countryForm != null && countryForm.getIso2Country() != null) {
+        // Set country name
+        if (countryForm != null && countryForm.getIso2Country() != null) {
             Map<String, String> countries = retrieveIsoCountries();
-            if(countries != null)
+            if (countries != null)
                 countryForm.setCountryName(countries.get(countryForm.getIso2Country().getValue().name()));
         }
-        
+
         return countryForm;
     }
 
@@ -1018,30 +1018,32 @@ public class ManageProfileController extends BaseWorkspaceController {
     /**
      * Authorize a delegate request done by an admin
      * */
-    @RequestMapping(value = {"/authorize-delegates"}, method = RequestMethod.GET)
+    @RequestMapping(value = { "/authorize-delegates" }, method = RequestMethod.GET)
     public ModelAndView authorizeDelegatesRequest(@RequestParam("key") String key) {
-        ModelAndView mav = new ModelAndView("manage");        
-        //Set default objects the manage page needs
+        ModelAndView mav = new ModelAndView("manage");
+        // Set default objects the manage page needs
         mav.addObject("showPrivacy", true);
         mav.addObject("managePasswordOptionsForm", populateManagePasswordFormFromUserInfo());
         mav.addObject("preferencesForm", new PreferencesForm(getEffectiveProfile()));
         mav.addObject("profile", getEffectiveProfile());
         mav.addObject("activeTab", "profile-tab");
         mav.addObject("securityQuestions", getSecurityQuestions());
-        
+
         try {
             Map<String, String> params = decryptDelegationKey(key);
-            if(params.containsKey(AdminController.MANAGED_USER_PARAM) && params.containsKey(AdminController.TRUSTED_USER_PARAM)) {
+            if (params.containsKey(AdminController.MANAGED_USER_PARAM) && params.containsKey(AdminController.TRUSTED_USER_PARAM)) {
                 String managedOrcid = params.get(AdminController.MANAGED_USER_PARAM);
                 String trustedOrcid = params.get(AdminController.TRUSTED_USER_PARAM);
-                //Check if managed user is the same than the logged user
-                if(managedOrcid.equals(getEffectiveUserOrcid())) {
-                    //Check if the managed user email is verified, if not, verify it
+                // Check if managed user is the same than the logged user
+                if (managedOrcid.equals(getEffectiveUserOrcid())) {
+                    // Check if the managed user email is verified, if not,
+                    // verify it
                     verifyPrimaryEmailIfNeeded(managedOrcid);
-                    //Check if the delegation doesnt exists
+                    // Check if the delegation doesnt exists
                     GivenPermissionToEntity existing = givenPermissionToDao.findByGiverAndReceiverOrcid(managedOrcid, trustedOrcid);
-                    if(existing == null) {
-                        // Clear the delegate's profile from the cache so that the granting
+                    if (existing == null) {
+                        // Clear the delegate's profile from the cache so that
+                        // the granting
                         // user is visible to them immediately
                         Date delegateLastModified = profileDao.updateLastModifiedDate(trustedOrcid);
                         GivenPermissionToEntity permission = new GivenPermissionToEntity();
@@ -1063,45 +1065,46 @@ public class ManageProfileController extends BaseWorkspaceController {
                             summary.setCreditName(new CreditName(creditName));
                         }
                         List<DelegationDetails> detailsList = new ArrayList<>(1);
-                        detailsList.add(details);                                                            
-                        //Send notifications
-                        notificationManager.sendNotificationToAddedDelegate(currentUser, detailsList);                    
-                    }                                
+                        detailsList.add(details);
+                        // Send notifications
+                        notificationManager.sendNotificationToAddedDelegate(currentUser, detailsList);
+                    }
                     mav.addObject("admin_delegate_approved", getMessage("admin.delegate.success", trustedOrcid));
                 } else {
-                    //Exception, the email was not for you
+                    // Exception, the email was not for you
                     mav.addObject("admin_delegate_not_you", getMessage("wrong_user.Wronguser"));
-                }            
+                }
             } else {
-                //Error
+                // Error
                 mav.addObject("admin_delegate_failed", getMessage("admin.delegate.error.invalid_link"));
             }
-        } catch(UnsupportedEncodingException uee) {
+        } catch (UnsupportedEncodingException uee) {
             mav.addObject("admin_delegate_failed", getMessage("admin.delegate.error.invalid_link"));
         }
-        
+
         return mav;
     }
-    
+
     /**
-     * @throws UnsupportedEncodingException 
+     * @throws UnsupportedEncodingException
      * */
     @SuppressWarnings("unchecked")
-    private Map<String, String> decryptDelegationKey(String encryptedKey) throws UnsupportedEncodingException  {
-        String jsonString = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedKey), "UTF-8"));                
-        Map<String, String> params = (HashMap<String, String>)JSON.parse(jsonString);
+    private Map<String, String> decryptDelegationKey(String encryptedKey) throws UnsupportedEncodingException {
+        String jsonString = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedKey), "UTF-8"));
+        Map<String, String> params = (HashMap<String, String>) JSON.parse(jsonString);
         return params;
     }
-    
+
     /**
      * Verify a primary email if it is not verified yet.
+     * 
      * @param orcid
-     *          The profile id to check
+     *            The profile id to check
      * */
     private void verifyPrimaryEmailIfNeeded(String orcid) {
-        if(!emailManager.isPrimaryEmailVerified(orcid)) {
+        if (!emailManager.isPrimaryEmailVerified(orcid)) {
             emailManager.verifyPrimaryEmail(orcid);
         }
     }
-    
+
 }
