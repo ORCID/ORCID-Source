@@ -112,7 +112,14 @@ public class OrcidApiAuthorizationSecurityAspect {
                     
                     // Get the update equivalent scope, if it is reading, but, doesnt have the read permissions, check if it have the update permissions
                     ScopePathType equivalentUpdateScope = getEquivalentUpdateScope(requiredScope);
-                    if (requiredScope.equals(ScopePathType.ORCID_WORKS_UPDATE) || requiredScope.equals(ScopePathType.ORCID_WORKS_READ_LIMITED)) {
+                    if(requiredScope.equals(ScopePathType.ORCID_PROFILE_READ_LIMITED)) {
+                        if(hasScopeEnabled(clientId, userOrcid, ScopePathType.ORCID_WORKS_READ_LIMITED.getContent(), ScopePathType.ORCID_WORKS_UPDATE.getContent()))
+                            allowWorks = true;
+                        if(hasScopeEnabled(clientId, userOrcid, ScopePathType.FUNDING_READ_LIMITED.getContent(), ScopePathType.FUNDING_UPDATE.getContent()))
+                            allowFunding = true;
+                        if(hasScopeEnabled(clientId, userOrcid, ScopePathType.AFFILIATIONS_READ_LIMITED.getContent(), ScopePathType.AFFILIATIONS_UPDATE.getContent()))
+                            allowAffiliations = true;                            
+                    } else if (requiredScope.equals(ScopePathType.ORCID_WORKS_UPDATE) || requiredScope.equals(ScopePathType.ORCID_WORKS_READ_LIMITED)) {
                         // Check if the member have the update or read scope on works
                         if (hasScopeEnabled(clientId, userOrcid, requiredScope.getContent(), equivalentUpdateScope == null ? null : equivalentUpdateScope.getContent()))
                             // If so, allow him to see private works
