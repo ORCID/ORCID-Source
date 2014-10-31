@@ -825,7 +825,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 			getEditable: function(putCode, callback) {
 				// first check if they are the current source
 				var work = worksSrvc.getDetails(putCode, worksSrvc.constants.access_type.USER, function(data) {
-					if (data.source.value == orcidVar.orcidId)
+					if (data.source == orcidVar.orcidId)
 						callback(data);
 					else
 						worksSrvc.getGroupDetails(putCode, worksSrvc.constants.access_type.USER, function () {
@@ -834,7 +834,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 							// the current one
 							var bestMatch = null;
 							for (var idx in worksSrvc.details)
-								if (worksSrvc.details[idx].source.value == orcidVar.orcidId) {
+								if (worksSrvc.details[idx].source == orcidVar.orcidId) {
 									bestMatch = worksSrvc.details[idx]; 
 									break;
 								}	
@@ -3884,7 +3884,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
 	};
 
 	$scope.userIsSource = function(work) {
-		if (work.source.value == orcidVar.orcidId)
+		if (work.source == orcidVar.orcidId)
 			return true;
 	};
 	

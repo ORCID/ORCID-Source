@@ -68,7 +68,7 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
 
     private String sourceName;
     
-    private String sourceOrcid;
+    private String source;
     
     private String dateSortString;
 
@@ -244,7 +244,7 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
         Source source = affiliation.getSource();
         if (source != null) {
             form.setSourceName(source.getSourceName().getContent());
-            form.setSourceOrcid(source.getSourceOrcid().getPath());
+            form.setSource(source.getSourceOrcid().getPath());
         }
                 
         return form;
@@ -321,12 +321,12 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
         this.dateSortString = dateSortString;
     }
 
-    public String getSourceOrcid() {
-        return sourceOrcid;
+    public String getSource() {
+        return source;
     }
 
-    public void setSourceOrcid(String sourceOrcid) {
-        this.sourceOrcid = sourceOrcid;
+    public void setSource(String source) {
+        this.source = source;
     }
 
     public Text getOrgDisambiguatedId() {
