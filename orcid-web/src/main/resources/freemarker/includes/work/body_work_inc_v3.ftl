@@ -44,12 +44,12 @@
                             <div class="col-md-3 col-sm-3 workspace-toolbar">
                             	<ul class="workspace-private-toolbar">							
 								    <li>
-								        <@orcid.privacyToggle2 angularModel="work.visibility" 
-								            questionClick="toggleClickPrivacyHelp(work.putCode.value)"
-								            clickedClassCheck="{'popover-help-container-show':privacyHelp[work.putCode.value]==true}"
-								            publicClick="worksSrvc.setGroupPrivacy(work.putCode.value, 'PUBLIC', $event)" 
-								            limitedClick="worksSrvc.setGroupPrivacy(work.putCode.value, 'LIMITED', $event)" 
-								            privateClick="worksSrvc.setGroupPrivacy(work.putCode.value, 'PRIVATE', $event)"/>
+								        <@orcid.privacyToggle2 angularModel="group.getActive().visibility" 
+								            questionClick="toggleClickPrivacyHelp(group.getActive().putCode)"
+								            clickedClassCheck="{'popover-help-container-show':privacyHelp[group.getActive().putCode.value]==true}"
+								            publicClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PUBLIC', $event)" 
+								            limitedClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'LIMITED', $event)" 
+								            privateClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PRIVATE', $event)"/>
 								    </li>
 								</ul>
                             </div>                        
