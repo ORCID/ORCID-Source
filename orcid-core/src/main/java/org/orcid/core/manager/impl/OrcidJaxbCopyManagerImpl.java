@@ -131,7 +131,7 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
                 // Check the source of the existing activity is the same as
                 // the current source
                 checkSource(existingActivity);
-                if (updatedActivity.getVisibility() == null) {
+                if (updatedActivity.getVisibility() == null || !updatedActivity.getVisibility().equals(existingActivity.getVisibility())) {
                     // Keep the visibility from the existing activity unless
                     // was set by API user
                     updatedActivity.setVisibility(existingActivity.getVisibility());

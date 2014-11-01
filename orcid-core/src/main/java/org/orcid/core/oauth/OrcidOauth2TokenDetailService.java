@@ -71,5 +71,5 @@ public interface OrcidOauth2TokenDetailService {
 
     void removeConflictsAndCreateNew(OrcidOauth2TokenDetail detail);
     
-    boolean checkIfScopeIsAvailableForMember(String clientId, String userName, String scope);
+    boolean checkIfScopeIsAvailableForMember(String clientId, String userName, List<String> scope);
 }
