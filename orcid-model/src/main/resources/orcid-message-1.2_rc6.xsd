@@ -1897,6 +1897,7 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
+			    <xs:element ref="orcid:send-email-frequency-days" />
 				<xs:element ref="orcid:send-change-notifications" />
 				<xs:element ref="orcid:send-orcid-news" />
 				<xs:element ref="orcid:activities-visibility-default" />
@@ -1917,6 +1918,7 @@
 	<xs:element name="encrypted-security-answer">
 		<xs:complexType mixed="true" />
 	</xs:element>
+	<xs:element name="send-email-frequency-days" type="xs:string" />
 	<xs:element name="send-change-notifications">
 		<xs:complexType>
 			<xs:simpleContent>

@@ -64,6 +64,7 @@ import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.SecurityDetails;
 import org.orcid.jaxb.model.message.SecurityQuestionId;
+import org.orcid.jaxb.model.message.SendEmailFrequency;
 import org.orcid.jaxb.model.message.Url;
 import org.orcid.jaxb.model.message.UrlName;
 import org.orcid.jaxb.model.message.Visibility;
@@ -421,6 +422,15 @@ public class ManageProfileController extends BaseWorkspaceController {
             securityQuestionsWithMessages.put(key, getMessage(securityQuestions.get(key)));
         }
         return securityQuestionsWithMessages;
+    }
+
+    @ModelAttribute("sendEmailFrequencies")
+    public Map<String, String> retrieveRolesAsMap() {
+        Map<String, String> map = new LinkedHashMap<>();
+        for (SendEmailFrequency freq : SendEmailFrequency.values()) {
+            map.put(String.valueOf(freq.value()), getMessage(buildInternationalizationKey(SendEmailFrequency.class, freq.name())));
+        }
+        return map;
     }
 
     @RequestMapping(value = "/view-account-settings", method = RequestMethod.GET)

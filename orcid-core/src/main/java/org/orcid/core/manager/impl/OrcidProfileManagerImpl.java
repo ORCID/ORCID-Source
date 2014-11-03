@@ -1073,7 +1073,9 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         Visibility activitiesVisibilityDefault = preferences.getActivitiesVisibilityDefault().getValue();
         boolean developerToolsEnabled = preferences.getDeveloperToolsEnabled() == null ? DefaultPreferences.DEVELOPER_TOOLS_ENABLED_DEFAULT : preferences
                 .getDeveloperToolsEnabled().isValue();
-        profileDao.updatePreferences(orcid, sendChangeNotifications, sendOrcidNews, activitiesVisibilityDefault, developerToolsEnabled);
+        float sendEmailFrequencyDays = Float.valueOf(preferences.getSendEmailFrequencyDays() == null ? DefaultPreferences.SEND_EMAIL_FREQUENCY_DAYS : preferences
+                .getSendEmailFrequencyDays());
+        profileDao.updatePreferences(orcid, sendChangeNotifications, sendOrcidNews, activitiesVisibilityDefault, developerToolsEnabled, sendEmailFrequencyDays);
         OrcidProfile cachedProfile = getOrcidProfileFromCache(orcid);
         if (cachedProfile != null) {
             profileDao.flush();
@@ -1082,6 +1084,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             cachedPreferences.setSendOrcidNews(new SendOrcidNews(sendOrcidNews));
             cachedPreferences.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(activitiesVisibilityDefault));
             cachedPreferences.setDeveloperToolsEnabled(new DeveloperToolsEnabled(developerToolsEnabled));
+            cachedPreferences.setSendEmailFrequencyDays(preferences.getSendEmailFrequencyDays());
             putInCache(cachedProfile);
         }
     }

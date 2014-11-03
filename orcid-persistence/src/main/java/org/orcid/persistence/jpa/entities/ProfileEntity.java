@@ -131,7 +131,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     private IndexingStatus indexingStatus = IndexingStatus.PENDING;
     private Set<ProfileEventEntity> profileEvents;
     private boolean enableDeveloperTools;
-    private int sendEmailFrequencyDays;
+    private float sendEmailFrequencyDays;
     private boolean enableNotifications;
 
     // Visibility settings
@@ -751,11 +751,11 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     }
 
     @Column(name = "send_email_frequency_days")
-    public int getSendEmailFrequencyDays() {
+    public float getSendEmailFrequencyDays() {
         return sendEmailFrequencyDays;
     }
 
-    public void setSendEmailFrequencyDays(int sendEmailFrequencyDays) {
+    public void setSendEmailFrequencyDays(float sendEmailFrequencyDays) {
         this.sendEmailFrequencyDays = sendEmailFrequencyDays;
     }
 

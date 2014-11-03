@@ -36,6 +36,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
+import org.orcid.core.constants.DefaultPreferences;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.OrgManager;
@@ -165,7 +166,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
     @Resource
     private OrgAffiliationRelationDao orgAffiliationRelationDao;
-    
+
     @Resource
     private ClientDetailsDao clientDetailsDao;
 
@@ -845,6 +846,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
             Preferences preferences = orcidInternal.getPreferences();
             if (preferences != null) {
+                String sendEmailFrequencyDays = preferences.getSendEmailFrequencyDays();
+                profileEntity.setSendEmailFrequencyDays(Float.valueOf(sendEmailFrequencyDays == null ? DefaultPreferences.SEND_EMAIL_FREQUENCY_DAYS
+                        : sendEmailFrequencyDays));
                 profileEntity.setSendChangeNotifications(preferences.getSendChangeNotifications() == null ? null : preferences.getSendChangeNotifications().isValue());
                 profileEntity.setSendOrcidNews(preferences.getSendOrcidNews() == null ? null : preferences.getSendOrcidNews().isValue());
                 // ActivitiesVisibilityDefault default is WorkVisibilityDefault
@@ -1211,7 +1215,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             String sourcePath = source.retrieveSourcePath();
             if (StringUtils.isNotEmpty(sourcePath) && !sourcePath.equals(WorkSource.NULL_SOURCE_PROFILE)) {
                 ClientDetailsEntity cde = clientDetailsDao.find(sourcePath);
-                if(cde != null){
+                if (cde != null) {
                     return new SourceEntity(cde);
                 }
                 return new SourceEntity(sourcePath);

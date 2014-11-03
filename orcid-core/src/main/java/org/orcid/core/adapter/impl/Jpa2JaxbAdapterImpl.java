@@ -1077,6 +1077,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
         Preferences preferences = new Preferences();
         orcidInternal.setPreferences(preferences);
+        preferences.setSendEmailFrequencyDays(String.valueOf(profileEntity.getSendEmailFrequencyDays()));
         preferences.setSendChangeNotifications(profileEntity.getSendChangeNotifications() == null ? null : new SendChangeNotifications(profileEntity
                 .getSendChangeNotifications()));
         preferences.setSendOrcidNews(profileEntity.getSendOrcidNews() == null ? null : new SendOrcidNews(profileEntity.getSendOrcidNews()));

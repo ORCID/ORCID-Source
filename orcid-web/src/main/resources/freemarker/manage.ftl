@@ -160,6 +160,21 @@
 	                <tr ng-controller="NotificationPreferencesCtrl"
 	                    ng-show="showEditEmailPreferences" ng-cloak>
 	                    <td colspan="2">
+	                        <div class="control-group">
+                                <label for="sendEmailFrequencyDays"
+                                    class="">${springMacroRequestContext.getMessage("manage.send_email_frequency")}</label>
+                                <div class="relative">
+                                    <select id="sendEmailFrequencyDays" name="sendEmailFrequencyDays"
+                                        class="input-xlarge"
+                                        ng-model="prefsSrvc.prefs.sendEmailFrequencyDays"
+                                        ng-change="prefsSrvc.savePrivacyPreferences()">
+                                        <#list sendEmailFrequencies?keys as key>
+                                        <option value="${key}"
+                                            ng-selected="prefsSrvc.prefs.sendEmailFrequencyDays === ${key}">${sendEmailFrequencies[key]}</option>
+                                        </#list>
+                                    </select>
+                                </div>
+                            </div>
 	                        <div class="editTablePadCell35">
 	                            <label class="checkbox"> <input type="checkbox"
 	                                id="sendOrcidChangeNotifcations"
@@ -167,7 +182,8 @@
 	                                ng-model="prefsSrvc.prefs.sendChangeNotifications.value"
 	                                ng-change="prefsSrvc.savePrivacyPreferences()" />
 	                                ${springMacroRequestContext.getMessage("change_email_preferences.sendnotification")}
-	                            </label> <label class="checkbox"> <input type="checkbox"
+	                            </label>
+	                            <label class="checkbox"> <input type="checkbox"
 	                                id="sendOrcidNews" name="sendOrcidNews"
 	                                ng-model="prefsSrvc.prefs.sendOrcidNews.value"
 	                                ng-change="prefsSrvc.savePrivacyPreferences()" />
