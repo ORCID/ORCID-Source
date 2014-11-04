@@ -18,11 +18,9 @@ package org.orcid.persistence.jpa.entities.custom;
 
 import java.io.Serializable;
 import java.util.Date;
-
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.jpa.entities.BaseEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 
 /**
@@ -47,19 +45,18 @@ public class MinimizedWorkEntity extends BaseEntity implements Serializable {
     private String externalIdentifiersJson;
     private String languageCode;
     private String translatedTitleLanguageCode;
-    private String translatedTitle;    
+    private String translatedTitle;
     private Long displayIndex;
     private String workUrl;
     private SourceEntity source;
-    
+
     public MinimizedWorkEntity() {
         super();
     }
 
-    public MinimizedWorkEntity(Long id, String title, String subtitle, String journalTitle, String description, Integer publicationDay, Integer publicationMonth, Integer publicationYear,
-            Visibility visibility, String externalIdentifiersJson, Long displayIndex, SourceEntity source, Date dateCreated, Date lastModified,
-            WorkType workType, String languageCode, String translatedTitleLanguageCode, String translatedTitle, String workUrl    
- ) {
+    public MinimizedWorkEntity(Long id, String title, String subtitle, String journalTitle, String description, Integer publicationDay, Integer publicationMonth,
+            Integer publicationYear, Visibility visibility, String externalIdentifiersJson, Long displayIndex, SourceEntity source, Date dateCreated, Date lastModified,
+            WorkType workType, String languageCode, String translatedTitleLanguageCode, String translatedTitle, String workUrl) {
         super();
         this.id = id;
         this.title = title;
@@ -83,7 +80,7 @@ public class MinimizedWorkEntity extends BaseEntity implements Serializable {
         this.setTranslatedTitleLanguageCode(translatedTitleLanguageCode);
         this.setTranslatedTitle(translatedTitle);
         this.setWorkUrl(workUrl);
-        
+
     }
 
     public Long getId() {
