@@ -654,36 +654,39 @@ function populateWorkAjaxForm(bibJson, work) {
      
      // tags we mapped
      if (bibJson.entryTags) {
-	     var tags = bibJson.entryTags;
-	     for (key in tags) {
-	    	 var lower = key.toLowerCase();
-	    	 if (lower == 'booktitle')
-	    		 work.workTitle.title.value = tags[key];
-	    	 
-	    	 if (lower == 'doi') {
-	    		workExternalIdentifierId(work, 'doi', tags[key]);
-	    	 }
+         // create a lower case create a reference map
+         var tags = bibJson.entryTags;
+         var lowerKeyTags = {};
+         for (key in tags)
+             lowerKeyTags[key.toLowerCase()] = tags[key];
 
-	    	 if (lower == 'isbn') {
-		    	workExternalIdentifierId(work, 'isbn', tags[key]);
-		     }
+         if (lowerKeyTags.hasOwnProperty('booktitle'))
+             work.workTitle.title.value = lowerKeyTags['booktitle'];
 
-	    	 if (lower == 'journal')
-	    		 work.journalTitle.value = tags[key];
-	    	  
-	    	 if (lower == 'title')
-	    		 work.workTitle.title.value = tags[key];
-	    	
-	    	 if (lower == 'year')
-	    		 work.publicationDate.year = tags[key];
-	    	 
-	    	 if (lower == 'month')
-	    		 work.publicationDate.month = Number(tags[key]).pad(2);
-	    	 
-	    	 if (lower == 'url')
-	    		 work.url.value = tags[key];
-	    	 
-	     };
+         if (lowerKeyTags.hasOwnProperty('doi')) 
+             workExternalIdentifierId(work, 'doi', lowerKeyTags['doi']);
+
+         if (lowerKeyTags.hasOwnProperty('eprint') && lowerKeyTags.hasOwnProperty('eprint'))
+            workExternalIdentifierId(work, 'arxiv', tags['eprint']);
+
+        if (lowerKeyTags.hasOwnProperty('isbn'))
+            workExternalIdentifierId(work, 'isbn', lowerKeyTags['isbn']);
+
+        if (lowerKeyTags.hasOwnProperty('journal'))
+            work.journalTitle.value = lowerKeyTags['journal'];
+              
+        if (lowerKeyTags.hasOwnProperty('title'))
+            work.workTitle.title.value = lowerKeyTags['title'];
+
+        if (lowerKeyTags.hasOwnProperty('year'))
+            work.publicationDate.year = lowerKeyTags['year'];
+
+        if (lowerKeyTags.hasOwnProperty('month'))
+                 work.publicationDate.month = Number('month').pad(2);
+
+        if (lowerKeyTags.hasOwnProperty('url'))
+                 work.url.value = lowerKeyTags['url'];
+
      };
 };
 
