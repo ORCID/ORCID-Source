@@ -41,18 +41,20 @@
                                     </span>
                                 </#if>                  
                             </div>
-                            <div class="col-md-3 col-sm-3 workspace-toolbar">
-                            	<ul class="workspace-private-toolbar">							
-								    <li>
-								        <@orcid.privacyToggle2 angularModel="group.getActive().visibility" 
-								            questionClick="toggleClickPrivacyHelp(group.getActive().putCode)"
-								            clickedClassCheck="{'popover-help-container-show':privacyHelp[group.getActive().putCode.value]==true}"
-								            publicClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PUBLIC', $event)" 
-								            limitedClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'LIMITED', $event)" 
-								            privateClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PRIVATE', $event)"/>
-								    </li>
-								</ul>
-                            </div>                        
+                            <#if !(isPublicProfile??)>
+                                <div class="col-md-3 col-sm-3 workspace-toolbar">
+                                    <ul class="workspace-private-toolbar">
+                                        <li>
+                                            <@orcid.privacyToggle2 angularModel="group.getActive().visibility"
+                                                questionClick="toggleClickPrivacyHelp(group.getActive().putCode)"
+                                                clickedClassCheck="{'popover-help-container-show':privacyHelp[group.getActive().putCode.value]==true}"
+                                                publicClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PUBLIC', $event)"
+                                                limitedClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'LIMITED', $event)"
+                                                privateClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PRIVATE', $event)"/>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </#if>
                         </div>
                     
                         <div class="row">                      
@@ -95,24 +97,26 @@
                                 <span ng-show="work.publicationDate.year">{{work.publicationDate.year}}</span><span ng-show="work.publicationDate.month">-{{work.publicationDate.month}}</span><span ng-show="work.publicationDate.year"> | </span> <span class="uppercase">{{work.workType.value}}</span>                  
                             </div>                            
                         </div>
-                        <div class="col-md-3 workspace-toolbar">
-                            <ul class="workspace-private-toolbar" ng-hide="editSources[group.groupId] == true">
-                                <li ng-show="userIsSource(work) || (group.hasKeys() && !group.hasUserVersion())">
-                                    <a href="" class="toolbar-button edit-item-button">
-                                        <span class="glyphicon glyphicon-pencil edit-option-toolbar" title="" ng-click="openEditWork(group.getActive().putCode.value)"></span>
-                                    </a>
-                                </li>
-                        		<li>
-		                        	<@orcid.privacyToggle2 angularModel="work.visibility" 
-							            questionClick="toggleClickPrivacyHelp(work.putCode.value)"
-							            clickedClassCheck="{'popover-help-container-show':privacyHelp[work.putCode.value]==true}"
-							            publicClick="worksSrvc.setGroupPrivacy(work.putCode.value, 'PUBLIC', $event)" 
-							            limitedClick="worksSrvc.setGroupPrivacy(work.putCode.value, 'LIMITED', $event)" 
-							            privateClick="worksSrvc.setGroupPrivacy(work.putCode.value, 'PRIVATE', $event)"/>
-						        </li>
-				            </ul>
-                        </div>
-                    
+                        
+                        <#if !(isPublicProfile??)>
+                            <div class="col-md-3 workspace-toolbar">
+                                <ul class="workspace-private-toolbar" ng-hide="editSources[group.groupId] == true">
+                                    <li ng-show="userIsSource(work) || (group.hasKeys() && !group.hasUserVersion())">
+                                        <a ng-click="openEditWork(group.getActive().putCode.value)" class="toolbar-button edit-item-button">
+                                            <span class="glyphicon glyphicon-pencil edit-option-toolbar" title=""></span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <@orcid.privacyToggle2 angularModel="work.visibility"
+                                            questionClick="toggleClickPrivacyHelp(work.putCode.value)"
+                                            clickedClassCheck="{'popover-help-container-show':privacyHelp[work.putCode.value]==true}"
+                                            publicClick="worksSrvc.setGroupPrivacy(work.putCode.value, 'PUBLIC', $event)"
+                                            limitedClick="worksSrvc.setGroupPrivacy(work.putCode.value, 'LIMITED', $event)"
+                                            privateClick="worksSrvc.setGroupPrivacy(work.putCode.value, 'PRIVATE', $event)"/>
+                                    </li>
+                                </ul>
+                            </div>
+                        </#if>
                         
                    </div>
                             
@@ -175,10 +179,8 @@
 												</a>
 							        		</li>
 							        	</ul>
-							            
 									</#if>
 								</div>
-                        	
                         	</div>
                         </div>  
                     
@@ -197,24 +199,25 @@
                         	 <#if !(isPublicProfile??)>
 	                            <span class="glyphicon glyphicon-check" ng-show="work.putCode.value == group.defaultPutCode"></span> 
 	                            <a ng-click="worksSrvc.makeDefault(group, work.putCode.value); " ng-show="work.putCode.value != group.defaultPutCode">
-	                             	<span class="glyphicon glyphicon-unchecked"></span> Make Preferred
+	                               <span class="glyphicon glyphicon-unchecked"></span> Make Preferred
 	                            </a>
                             </#if> 
                         </div>
                         <div class="col-md-2 col-sm-2 col-xs-12 trash-source">
-                        	<ul class="sources-actions">
-				        		<li>
-				        			<a ng-show="!group.hasUserVersion() || userIsSource(work)" ng-click="openEditWork(group.getActive().putCode.value)">
-										<span class="glyphicon glyphicon-pencil"></span>
-									</a>
-				        			
-				        		</li>
-				        		<li>
-				        			<a ng-click="deleteWorkConfirm(work.putCode.value, false)">
-										<span class="glyphicon glyphicon-trash"></span>
-									</a>
-				        		</li>
-				        	</ul>
+                            <#if !(isPublicProfile??)>
+                                <ul class="sources-actions">
+                                    <li>
+                                        <a ng-show="!group.hasUserVersion() || userIsSource(work)" ng-click="openEditWork(group.getActive().putCode.value)">
+                                            <span class="glyphicon glyphicon-pencil"></span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a ng-click="deleteWorkConfirm(work.putCode.value, false)">
+                                            <span class="glyphicon glyphicon-trash"></span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </#if>
                         </div>                      
                     </div>
                     <div class="row">
