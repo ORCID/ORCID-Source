@@ -208,12 +208,26 @@ Find the **service** element/tag and the following connector:
 * Run the tests: 
 
 	* In order to run the integration tests, you should have the ORCID server up and running, so, start the server if it is not started yet.
-	* Go to "```/orcid-integration-test/src/test/java/org/orcid/api/t1/integration```"
-	* Right click over the package
-	* Select “*Run As*” → “*JUnit Test*”
-	* Go to "```/orcid-integration-test/src/test/java/org/orcid/api/t2/integration```"
-	* Right click over the package
-	* Select “*Run As*” → “*JUnit Test*”
+	* Go to the main menu and select *Run* → *Run Configurations* 
+	* Select JUnit
+	* Click on the New button
+	* Select 'Run all the tests in the selected project, package or source folder'
+	* Click on Search and select orcid-integration-test
+	* Select Junit 4 as the test runner
+	* Go to the Arguments tab and enter the following in VM arguments.
+	
+	```
+	-Dorg.orcid.persistence.db.dataSource=simpleDataSource
+	-Dorg.orcid.persistence.statistics.db.dataSource=statisticsSimpleDataSource
+	
+	```
+Please note that the integration tests set up test data, and **remove all other data from the DB**. So, you may want to set up another DB called orcid_test just for the integration tests, and then use the following property in both your Tomcat instance (maybe configure an additional Tomcat instance with this property, just for running the integration tests against - see above) and your integration tests run configuration.
+
+	```
+	-Dorg.orcid.persistence.db.url=jdbc:postgresql://localhost:5432/orcid_test
+	````
+	
+	* Click Run
 
 * Finally help out by improving these instructions!    
    
