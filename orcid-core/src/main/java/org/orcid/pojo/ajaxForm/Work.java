@@ -118,6 +118,11 @@ public class Work implements ErrorsInterface, Serializable {
             }
             w.setWorkTitle(workTitle);
         }
+
+        // Set Subtitle
+        if (!StringUtils.isEmpty(minimizedWorkEntity.getJournalTitle()))
+            w.setJournalTitle(Text.valueOf(minimizedWorkEntity.getJournalTitle()));
+
         // Set description
         if (!StringUtils.isEmpty(minimizedWorkEntity.getDescription())) {
             w.setShortDescription(Text.valueOf(minimizedWorkEntity.getDescription()));
