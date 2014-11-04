@@ -170,7 +170,13 @@ http://www.springsource.org/downloads/sts-ggts
 
 * Navigate to ~/git/ORCID-Source and select eclipse_formatter.xml
 
-Finally help out by improving these instructions! 
+* Click "Apply"
+
+2. Select Eclipse (or Spring Tool Suit) -> Preferences -> JavaScript -> Code style -> Formatter -> Import
+
+* Navigate to ~/git/ORCID-Source and select eclipse_javascript_formatter.xml
+
+* Click "Apply"
 
 # Testing
 ## Maven test
