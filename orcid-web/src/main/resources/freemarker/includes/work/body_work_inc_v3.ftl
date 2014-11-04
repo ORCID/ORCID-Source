@@ -23,7 +23,7 @@
                 
                 
                 <!-- Header -->
-                <li ng-show="editSources[group.groupId] == true" ng- ng-class="{'source-active' : editSources[group.groupId] == true}" ng-model="group.activities">
+                <li ng-show="editSources[group.groupId] == true" ng-class="{'source-active' : editSources[group.groupId] == true}" ng-model="group.activities">
                     <div class="sources-header">
                         
                         <div class="row bottomBuffer">
@@ -103,7 +103,7 @@
                                 <ul class="workspace-private-toolbar" ng-hide="editSources[group.groupId] == true">
                                     <li ng-show="userIsSource(work) || (group.hasKeys() && !group.hasUserVersion())">
                                         <a ng-click="openEditWork(group.getActive().putCode.value)" class="toolbar-button edit-item-button">
-                                            <span class="glyphicon glyphicon-pencil edit-option-toolbar" title=""></span>
+                                            <span class="glyphicon glyphicon-pencil edit-option-toolbar" ng-class="{'glyphicons git_create' : !userIsSource(work)}" title=""></span>
                                         </a>
                                     </li>
                                     <li>
@@ -169,7 +169,7 @@
 							        	<ul class="sources-actions">
 							        		<li>
 							        			<a ng-show="!group.hasUserVersion() || userIsSource(work)" ng-click="openEditWork(group.getActive().putCode.value)">
-													<span class="glyphicon glyphicon-pencil"></span>
+													<span class="glyphicon glyphicon-pencil" ng-class="{'glyphicons git_create' : !userIsSource(work)}"></span>
 												</a>
 							        			
 							        		</li>
@@ -208,7 +208,7 @@
                                 <ul class="sources-actions">
                                     <li>
                                         <a ng-show="!group.hasUserVersion() || userIsSource(work)" ng-click="openEditWork(group.getActive().putCode.value)">
-                                            <span class="glyphicon glyphicon-pencil"></span>
+                                            <span class="glyphicon glyphicon-pencil" ng-class="{'glyphicons git_create' : !userIsSource(work)}"></span>
                                         </a>
                                     </li>
                                     <li>
