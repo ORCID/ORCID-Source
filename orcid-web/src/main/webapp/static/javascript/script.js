@@ -62,6 +62,19 @@ if (typeof String.prototype.endsWith != 'function') {
 }
 
 
+if (!Object.keys) {
+	Object.keys = function (obj) {
+		var keys = [],
+		k;
+		for (k in obj) {
+			if (Object.prototype.hasOwnProperty.call(obj, k)) {
+				keys.push(k);
+			}
+		}
+		return keys;
+	};
+}
+
 if (typeof String.prototype.trim != 'function') {  
   String.prototype.trim = function () {  
 	return this.replace(/^\s+|\s+$/g,'');  

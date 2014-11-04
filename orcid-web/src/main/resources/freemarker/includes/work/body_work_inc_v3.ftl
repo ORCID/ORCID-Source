@@ -18,7 +18,7 @@
 -->
 <ul ng-hide="!worksSrvc.groups.length" class="workspace-publications bottom-margin-medium" id="body-work-list" ng-cloak>    
     <li class="bottom-margin-small workspace-border-box card" ng-repeat="group in worksSrvc.groups | orderBy:sortPredicate:sortReverse">        
-        <div class="work-list-container">        
+        <div class="work-list-container">
             <ul class="sources-edit-list">
                 
                 
@@ -96,12 +96,12 @@
                             </div>                            
                         </div>
                         <div class="col-md-3 workspace-toolbar">
-                        	<ul class="workspace-private-toolbar" ng-hide="editSources[group.groupId] == true">
-                        		<li>
-	                        		<a href="" class="toolbar-button edit-item-button">
-							            <span class="glyphicon glyphicon-pencil edit-option-toolbar" title="" ng-click="openEditWork(group.getActive().putCode.value)"></span>
-							        </a>
-                        		</li>
+                            <ul class="workspace-private-toolbar" ng-hide="editSources[group.groupId] == true">
+                                <li ng-show="userIsSource(work) || (group.hasKeys() && !group.hasUserVersion())">
+                                    <a href="" class="toolbar-button edit-item-button">
+                                        <span class="glyphicon glyphicon-pencil edit-option-toolbar" title="" ng-click="openEditWork(group.getActive().putCode.value)"></span>
+                                    </a>
+                                </li>
                         		<li>
 		                        	<@orcid.privacyToggle2 angularModel="work.visibility" 
 							            questionClick="toggleClickPrivacyHelp(work.putCode.value)"
@@ -164,7 +164,7 @@
 							        <#if !(isPublicProfile??)>
 							        	<ul class="sources-actions">
 							        		<li>
-							        			<a ng-click="openEditWork(group.getActive().putCode.value)">
+							        			<a ng-show="!group.hasUserVersion() || userIsSource(work)" ng-click="openEditWork(group.getActive().putCode.value)">
 													<span class="glyphicon glyphicon-pencil"></span>
 												</a>
 							        			
@@ -204,7 +204,7 @@
                         <div class="col-md-2 col-sm-2 col-xs-12 trash-source">
                         	<ul class="sources-actions">
 				        		<li>
-				        			<a ng-click="openEditWork(group.getActive().putCode.value)">
+				        			<a ng-show="!group.hasUserVersion() || userIsSource(work)" ng-click="openEditWork(group.getActive().putCode.value)">
 										<span class="glyphicon glyphicon-pencil"></span>
 									</a>
 				        			

@@ -130,16 +130,23 @@ GroupedActivities.prototype.hasKey = function(key) {
 	return false;
 };
 
-//GroupedActivities.prototype.hasUserVersion = function(key) {
-//	for (var idx in this.activities)
-//		if (this.activities[idx].sourceId == orcidVar.orcidId)
-//		return true;
-//	return false;
-//};
+GroupedActivities.prototype.hasKeys = function(key) {
+	if (Object.keys(this._keySet).length > 0)
+		return true;
+	return false;
+};
+
+GroupedActivities.prototype.hasUserVersion = function() {
+	for (var idx in this.activities)
+		console.log(this.activities[idx].source);
+		if (this.activities[idx].source == orcidVar.orcidId)
+			return true;
+	return false;
+};
 
 
 GroupedActivities.prototype.hasPut = function(putCode) {
-	   if (this.activities[putCode] !== undefined)
+	if (this.activities[putCode] !== undefined)
 				return true;
 		return false;
 };
