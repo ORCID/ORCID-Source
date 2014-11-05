@@ -690,6 +690,8 @@ $(function() {
  * "workType":{"errors":[],"value":"","required":true,"getRequiredMessage":null},"dateSortString":null}
  */
 
+var bibMonths = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+
 var bibToWorkTypeMap = {};
 bibToWorkTypeMap['article'] = [ 'publication', 'journal-article' ];
 bibToWorkTypeMap['book'] = [ 'publication', 'book' ];
@@ -770,8 +772,12 @@ function populateWorkAjaxForm(bibJson, work) {
         if (lowerKeyTags.hasOwnProperty('year'))
             work.publicationDate.year = lowerKeyTags['year'];
 
-        if (lowerKeyTags.hasOwnProperty('month'))
-            work.publicationDate.month = Number('month').pad(2);
+        if (lowerKeyTags.hasOwnProperty('month')) {
+            var month = lowerKeyTags['month'];
+            if (bibMonths.indexOf(month) >= 0) 
+                month = bibMonths.indexOf(month)+1;
+            work.publicationDate.month = Number(month).pad(2);
+        }
 
         if (lowerKeyTags.hasOwnProperty('url'))
             work.url.value = lowerKeyTags['url'];
