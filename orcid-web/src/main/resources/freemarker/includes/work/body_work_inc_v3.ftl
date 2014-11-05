@@ -23,7 +23,7 @@
                 
                 
                 <!-- Header -->
-                <li ng-show="editSources[group.groupId] == true" ng- ng-class="{'source-active' : editSources[group.groupId] == true}" ng-model="group.activities">
+                <li ng-show="editSources[group.groupId] == true" ng-class="{'source-active' : editSources[group.groupId] == true}" ng-model="group.activities">
                     <div class="sources-header">
                         
                         <div class="row bottomBuffer">
@@ -62,7 +62,7 @@
                                 <div class="">
                                     <strong >Source</strong>
                                 </div>
-                            </div>                      
+                            </div>
                             <div class="col-md-3 col-sm-3 col-xs-3">
                                 <strong>Last Modified </strong>                         
                             </div>
@@ -70,7 +70,7 @@
                             <div class="col-md-3 col-sm-3 col-xs-3">
                             	<#if !(isPublicProfile??)>
                                 	<strong>Preferred</strong>
-                                </#if>	
+                                </#if>
                             </div>
                             <div class="col-md-2 col-sm-2 col-xs-2 right">
                             	<#if !(isPublicProfile??)>
@@ -78,9 +78,11 @@
                                 </#if>	
                             </div>
                         </div>
+                        
+                        
                     </div>
                 </li> 
-                
+                <!-- End of Header -->
                 
                               
                 <li ng-repeat="work in group.activities" ng-show="group.activePutCode == work.putCode.value || editSources[group.groupId] == true">
@@ -117,72 +119,71 @@
                                 </ul>
                             </div>
                         </#if>
-                        
-                   </div>
+                  	 </div>
                             
-                        <!-- Active Row Identifiers / URL / Validations / Versions -->
-                        <div class="row" ng-show="group.activePutCode == work.putCode.value"">
-                            <div class="col-md-12 col-sm-12">
-                                <ul class="id-details">         
-                                    <li>
-                                        <span ng-repeat='ie in work.workExternalIdentifiers'><span
-                                        ng-bind-html='ie | workExternalIdentifierHtml:$first:$last:work.workExternalIdentifiers.length'></span>
-                                       </span>
-                                    </li>
-                                    <li ng-show="work.url.value"><strong>URL:</strong> <a href="{{work.url.value | urlWithHttp}}" target="_blank">{{work.url.value}}</a></li>
-                                    
-                                </ul>
-                            </div>
-                        </div> 
-                        <#if RequestParameters['combine']??>
-					        	<div ng-show="canBeCombined(work)">
-					            	<a ng-click="showCombineMatches(group.getDefault())">combined duplicates</a>
-					        	</div>
-					    </#if>    
-                        
-                        <!-- more info -->
-                        <#include "work_more_info_inc_v3.ftl"/>
-                            
-                        <!-- active row  source display -->
-                        <div class="row" ng-show="group.activePutCode == work.putCode.value">
-                        	<div class="col-md-4">
-                        		<strong >Source: </strong>{{work.sourceName}}
-                        	</div>
-                        	<div class="col-md-3" ng-show="editSources[group.groupId] == true">
-                        		<div ng-show="editSources[group.groupId] == true">
-                        			{{work.lastModified | ajaxFormDateToISO8601}}
-                        		</div>
-                        	</div>              
-                        	<div class="col-md-3" ng-show="editSources[group.groupId] == true">
-	                      		<#if !(isPublicProfile??)>
-									<div ng-show="editSources[group.groupId] == true">
-								        <span class="glyphicon glyphicon-check ng-hide" ng-show="work.putCode.value == group.defaultPutCode"></span> 
-								        <a ng-click="worksSrvc.makeDefault(group, work.putCode.value); " ng-show="work.putCode.value != group.defaultPutCode" class="">
-								         	<span class="glyphicon glyphicon-unchecked"></span> Make Preferred
-								        </a>
-									</div>    
-								</#if>
-                        	</div>
-                        	<div class="col-md-2 trash-source">
-                        		<div ng-show="editSources[group.groupId] == true">
-							        <#if !(isPublicProfile??)>
-							        	<ul class="sources-actions">
-							        		<li>
-							        			<a ng-show="!group.hasUserVersion() || userIsSource(work)" ng-click="openEditWork(group.getActive().putCode.value)">
-													<span class="glyphicon glyphicon-pencil"></span>
-												</a>
-							        			
-							        		</li>
-							        		<li>
-							        			<a ng-click="deleteWorkConfirm(work.putCode.value, false)">
-													<span class="glyphicon glyphicon-trash"></span>
-												</a>
-							        		</li>
-							        	</ul>
-									</#if>
-								</div>
-                        	</div>
-                        </div>  
+                     <!-- Active Row Identifiers / URL / Validations / Versions -->
+                     <div class="row" ng-show="group.activePutCode == work.putCode.value">
+                         <div class="col-md-12 col-sm-12">
+                             <ul class="id-details">         
+                                 <li>
+                                     <span ng-repeat='ie in work.workExternalIdentifiers'><span
+                                     ng-bind-html='ie | workExternalIdentifierHtml:$first:$last:work.workExternalIdentifiers.length'></span>
+                                    </span>
+                                 </li>
+                                 <li ng-show="work.url.value"><strong>URL:</strong> <a href="{{work.url.value | urlWithHttp}}" target="_blank">{{work.url.value}}</a></li>
+                                 
+                             </ul>
+                         </div>
+                     </div> 
+                     <#if RequestParameters['combine']??>
+				        	<div ng-show="canBeCombined(work)">
+				            	<a ng-click="showCombineMatches(group.getDefault())">combined duplicates</a>
+				        	</div>
+		   			 </#if>    
+                     
+                     <!-- more info -->
+                     <#include "work_more_info_inc_v3.ftl"/>
+                         
+                     <!-- active row  source display -->
+                      <div class="row" ng-show="group.activePutCode == work.putCode.value">
+                      	<div class="col-md-4">
+                      		<strong >Source: </strong>{{work.sourceName}}
+                      	</div>
+                      	<div class="col-md-3" ng-show="editSources[group.groupId] == true">
+                      		<div ng-show="editSources[group.groupId] == true">
+                      			{{work.lastModified | ajaxFormDateToISO8601}}
+                      		</div>
+                      	</div>              
+                      	<div class="col-md-3" ng-show="editSources[group.groupId] == true">
+                     		<#if !(isPublicProfile??)>
+							<div ng-show="editSources[group.groupId] == true">
+						        <span class="glyphicon glyphicon-check ng-hide" ng-show="work.putCode.value == group.defaultPutCode"></span> 
+						        <a ng-click="worksSrvc.makeDefault(group, work.putCode.value); " ng-show="work.putCode.value != group.defaultPutCode" class="">
+						         	<span class="glyphicon glyphicon-unchecked"></span> Make Preferred
+						        </a>
+							</div>    
+						</#if>
+                      	</div>
+                      	<div class="col-md-2 trash-source">
+                      		<div ng-show="editSources[group.groupId] == true">
+					        <#if !(isPublicProfile??)>
+					        	<ul class="sources-actions">
+					        		<li>
+					        			<a ng-show="!group.hasUserVersion() || userIsSource(work)" ng-click="openEditWork(group.getActive().putCode.value)">
+											<span class="glyphicon glyphicon-pencil"></span>
+										</a>
+					        			
+					        		</li>
+					        		<li>
+					        			<a ng-click="deleteWorkConfirm(work.putCode.value, false)">
+											<span class="glyphicon glyphicon-trash"></span>
+										</a>
+					        		</li>
+					        	</ul>
+							</#if>
+						</div>
+                      	</div>
+                    </div>  
                     
                     
                     <!-- not active row && edit sources -->

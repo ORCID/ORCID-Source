@@ -138,7 +138,6 @@ GroupedActivities.prototype.hasKeys = function(key) {
 
 GroupedActivities.prototype.hasUserVersion = function() {
 	for (var idx in this.activities)
-		console.log(this.activities[idx].source);
 		if (this.activities[idx].source == orcidVar.orcidId)
 			return true;
 	return false;

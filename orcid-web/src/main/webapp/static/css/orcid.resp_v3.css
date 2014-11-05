@@ -1819,10 +1819,9 @@ ul.workspace-private-toolbar li.bulk-checkbox-item{
 	position: relative;
 }
 
-.workspace-body-list>li {	
+.workspace-body-list > li {	
 	min-height: 30px;
-	box-shadow: 3px 4px 5px #C9CACB;
-	padding: 5px 5px 0 5px;	
+	box-shadow: 3px 4px 5px #C9CACB;	
 }
 
 .work-list-container h3 {
@@ -4363,14 +4362,6 @@ ul.sources-edit-list > li{
 	box-shadow: 3px 4px 5px #C9CACB;
 	display: block;	
 	padding: 5px 5px 0 5px;	
-}
-
-ul.sources-edit-list > li:first-of-type{
-	padding-bottom: 5px;
-}
-
-.sources-header div{
-	
 }
 
 .source-active{
