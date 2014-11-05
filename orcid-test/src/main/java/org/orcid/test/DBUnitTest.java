@@ -78,6 +78,7 @@ public class DBUnitTest {
         dataSet.addTable("other_name");
         dataSet.addTable("profile_keyword");
         dataSet.addTable("profile_work");
+        dataSet.addTable("profile_event");
         dataSet.addTable("researcher_url");
         dataSet.addTable("email");
         dataSet.addTable("external_identifier");
