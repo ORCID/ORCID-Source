@@ -6947,9 +6947,12 @@ function OauthAuthorizationController($scope, $compile, $sce, commonSrvc){
 	        		$scope.isOrcidPresent = true;
 	        		$scope.showRegisterForm = false;
 	        	}
-	        	if(window.location.href.endsWith('#show_login')) {
+	        	// #show_login - legacy fragment id, we should remove this sometime 
+	        	// after November 2014 and only support &show_login=true
+	        	if(window.location.href.endsWith('#show_login'))
 	        		$scope.showRegisterForm = false;
-	        	}	        	
+	        	else
+	        	    $scope.showRegisterForm = !orcidVar.showLogin;
 	        	$scope.$apply();
 	        }
 		}).fail(function() { 	    	
