@@ -654,36 +654,39 @@ function populateWorkAjaxForm(bibJson, work) {
      
      // tags we mapped
      if (bibJson.entryTags) {
-	     var tags = bibJson.entryTags;
-	     for (key in tags) {
-	    	 var lower = key.toLowerCase();
-	    	 if (lower == 'booktitle')
-	    		 work.workTitle.title.value = tags[key];
-	    	 
-	    	 if (lower == 'doi') {
-	    		workExternalIdentifierId(work, 'doi', tags[key]);
-	    	 }
+         // create a lower case create a reference map
+         var tags = bibJson.entryTags;
+         var lowerKeyTags = {};
+         for (key in tags)
+             lowerKeyTags[key.toLowerCase()] = tags[key];
 
-	    	 if (lower == 'isbn') {
-		    	workExternalIdentifierId(work, 'isbn', tags[key]);
-		     }
+         if (lowerKeyTags.hasOwnProperty('booktitle'))
+             work.workTitle.title.value = lowerKeyTags['booktitle'];
 
-	    	 if (lower == 'journal')
-	    		 work.journalTitle.value = tags[key];
-	    	  
-	    	 if (lower == 'title')
-	    		 work.workTitle.title.value = tags[key];
-	    	
-	    	 if (lower == 'year')
-	    		 work.publicationDate.year = tags[key];
-	    	 
-	    	 if (lower == 'month')
-	    		 work.publicationDate.month = Number(tags[key]).pad(2);
-	    	 
-	    	 if (lower == 'url')
-	    		 work.url.value = tags[key];
-	    	 
-	     };
+         if (lowerKeyTags.hasOwnProperty('doi')) 
+             workExternalIdentifierId(work, 'doi', lowerKeyTags['doi']);
+
+         if (lowerKeyTags.hasOwnProperty('eprint') && lowerKeyTags.hasOwnProperty('eprint'))
+            workExternalIdentifierId(work, 'arxiv', tags['eprint']);
+
+        if (lowerKeyTags.hasOwnProperty('isbn'))
+            workExternalIdentifierId(work, 'isbn', lowerKeyTags['isbn']);
+
+        if (lowerKeyTags.hasOwnProperty('journal'))
+            work.journalTitle.value = lowerKeyTags['journal'];
+              
+        if (lowerKeyTags.hasOwnProperty('title'))
+            work.workTitle.title.value = lowerKeyTags['title'];
+
+        if (lowerKeyTags.hasOwnProperty('year'))
+            work.publicationDate.year = lowerKeyTags['year'];
+
+        if (lowerKeyTags.hasOwnProperty('month'))
+                 work.publicationDate.month = Number('month').pad(2);
+
+        if (lowerKeyTags.hasOwnProperty('url'))
+                 work.url.value = lowerKeyTags['url'];
+
      };
 };
 
@@ -861,7 +864,7 @@ $(function (){
 	});
 });
 
-/* start bibtexParse 0.0.15 */
+/* start bibtexParse 0.0.16 */
 
 //Original work by Henrik Muehe (c) 2010
 //
@@ -888,6 +891,7 @@ $(function (){
 
 	function BibtexParser() {
 		
+		this.months = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
 		this.pos = 0;
 		this.input = "";
 		this.entries = new Array();
@@ -961,25 +965,25 @@ $(function (){
 			var start = this.pos;
 			var escaped = false;
 			while (true) {
-			    if (!escaped) {
-				    if (this.input[this.pos] == '}') {
-					    if (bracecount > 0) {
-						    bracecount--;
-					    } else {
-						    var end = this.pos;
-						    this.match("}", false);
-						    return this.input.substring(start, end);
-					    };
-				    } else if (this.input[this.pos] == '{') {
-					    bracecount++;
-				    } else if (this.pos >= this.input.length - 1) {
-					    throw "Unterminated value";
-				    };
+				if (!escaped) {
+					if (this.input[this.pos] == '}') {
+						if (bracecount > 0) {
+							bracecount--;
+						} else {
+							var end = this.pos;
+							this.match("}", false);
+							return this.input.substring(start, end);
+						};
+					} else if (this.input[this.pos] == '{') {
+						bracecount++;
+					} else if (this.pos >= this.input.length - 1) {
+						throw "Unterminated value";
+					};
 				};
-			    if (this.input[this.pos] == '\\' && escaped == false) 
-			       escaped == true;
-			    else 
-			       escaped == false;
+				if (this.input[this.pos] == '\\' && escaped == false)
+					escaped == true;
+				else
+					escaped == false;
 				this.pos++;
 			};
 		};
@@ -1006,19 +1010,19 @@ $(function (){
 			var start = this.pos;
 			var escaped = false;
 			while (true) {
-			    if (!escaped) {
-				    if (this.input[this.pos] == '"') {
-					    var end = this.pos;
-					    this.match('"', false);
-					    return this.input.substring(start, end);
-				    } else if (this.pos >= this.input.length - 1) {
-					    throw "Unterminated value:" + this.input.substring(start);
-				    };
+				if (!escaped) {
+					if (this.input[this.pos] == '"') {
+						var end = this.pos;
+						this.match('"', false);
+						return this.input.substring(start, end);
+					} else if (this.pos >= this.input.length - 1) {
+						throw "Unterminated value:" + this.input.substring(start);
+					};
 				}
-			    if (this.input[this.pos] == '\\' && escaped == false) 
-			       escaped == true;
-			    else 
-			       escaped == false;
+				if (this.input[this.pos] == '\\' && escaped == false)
+					escaped == true;
+				else
+					escaped == false;
 				this.pos++;
 			};
 		};
@@ -1031,11 +1035,13 @@ $(function (){
 				return this.value_quotes();
 			} else {
 				var k = this.key();
-				if (k.match("^[0-9]+$")) {
+				if (k.match("^[0-9]+$"))
 					return k;
-				} else {
-					throw "Value expected:" + this.input.substring(start);
-				};
+				else if (this.months.indexOf(k))
+					return k;
+				else
+					throw "Value expected:" + this.input.substring(start) + ' for key: ' + k;
+			
 			};
 		};
 
@@ -1054,8 +1060,7 @@ $(function (){
 			while (true) {
 				if (this.pos >= this.input.length) {
 					throw "Runaway key";
-				}
-				;
+				};
 
 				if (this.input[this.pos].match("[a-zA-Z0-9+_:\\./-]")) {
 					this.pos++;
@@ -1144,297 +1149,297 @@ $(function (){
 	};
 	
 	function LatexToUTF8 () {
-	   this.uniToLatex = {
+		this.uniToLatex = {
 		};
 		
 		
 		this.latexToUni = {
-     "`A": "À", // begin grave
-     "`E": "È",
-     "`I": "Ì",
-     "`O": "Ò",
-     "`U": "Ù",
-     "`a": "à",
-     "`e": "è",
-     "`i": "ì",
-     "`o": "ò",
-     "`u": "ù",
-     "\'A": "Á", // begin acute
-     "\'E": "É",
-     "\'I": "Í",
-     "\'O": "Ó",
-     "\'U": "Ú",
-     "\'Y": "Ý",
-     "\'a": "á",
-     "\'e": "é",
-     "\'i": "í",
-     "\'o": "ó",
-     "\'u": "ú",
-     "\'y": "ý",
-     "\"A": "Ä", // begin diaeresis
-     "r A": "Å", 
-     "\"E": "Ë",
-     "\"I": "Ï",
-     "\"O": "Ö",
-     "\"U": "Ü",
-     "\"a": "ä",
-     "r a": "å",
-     "\"e": "ë",
-     "\"i": "ï",
-     "\"o": "ö",
-     "\"u": "ü",
-     "~A": "Ã", // begin tilde
-     "~N": "Ñ",
-     "~O": "Õ",
-     "~a": "ã",
-     "~n": "ñ",
-     "~o": "õ",
-     "rU": "Ů", // begin ring above
-     "ru": "ů",
-     "vC": "Č",  // begin caron
-     "vD": "Ď",
-     "vE": "Ě",
-     "vN": "Ň",
-     "vR": "Ř",
-     "vS": "Š",
-     "vT": "Ť",
-     "vZ": "Ž",
-     "vc": "č",
-     "vd": "ď",
-     "ve": "ě",
-     "vn": "ň",
-     "vr": "ř",
-     "vs": "š",
-     "vt": "ť",
-     "vz": "ž",
-     "#": "#",  // begin special symbols
-     "$": "$",
-     "%": "%",
-     "&": "&",
-     "\\": "\\",
-     "^": "^",
-     "_": "_",
-     "{": "{",
-     "}": "}",
-     "~": "~",
-     "\"": "\"",
-     "\'": "’", // closing single quote
-     "`": "‘", // opening single quote
-     "AA": "Å", // begin non-ASCII letters
-     "AE": "Æ",
-     "c{C}": "Ç",
-     "O": "Ø",
-     "aa": "å",
-     "c{c}": "ç",
-     "ae": "æ",
-     "o": "ø",
-     "ss": "ß",
-     "textcopyright": "©",
-     "textellipsis": "…" ,
-     "textemdash": "—",
-     "textendash": "–",
-     "textregistered": "®",
-     "texttrademark": "™",
-     "alpha": "α", // begin greek alphabet
-     "beta": "β",
-     "gamma": "γ",
-     "delta": "δ",
-     "epsilon": "ε",
-     "zeta": "ζ",
-     "eta": "η",
-     "theta": "θ",
-     "iota": "ι",
-     "kappa": "κ",
-     "lambda": "λ",
-     "mu": "μ",
-     "nu": "ν",
-     "xi": "ξ",
-     "omicron": "ο",
-     "pi": "π",
-     "rho": "ρ",
-     "sigma": "ς",
-     "tau": "σ",
-     "upsilon": "τ",
-     "phi": "υ",
-     "chi": "φ",
-     "psi": "χ",
-     "omega": "ψ",
-     "=A": "Ā",
-     "=a": "ā",
-     "u{A}": "Ă",
-     "u{a}": "ă",
-     "k A": "Ą",
-     "k a": "ą",
-     "'C": "Ć",
-     "'c": "ć",
-     "^C": "Ĉ",
-     "^c": "ĉ",
-     ".C": "Ċ",
-     ".c": "ċ",
-     "v{C}": "Č",
-     "v{c}": "č",
-     "v{D}": "Ď",
-     "=E": "Ē",
-     "=e": "ē",
-     "u{E}": "Ĕ",
-     "u{e}": "ĕ",
-     ".E": "Ė",
-     ".e": "ė",
-     "k E": "Ę",
-     "k e": "ę",
-     "v{E}": "Ě",
-     "v{e}": "ě",
-     "^G": "Ĝ",
-     "^g": "ĝ",
-     "u{G}": "Ğ",
-     "u{g}": "ğ",
-     ".G": "Ġ",
-     ".g": "ġ",
-     "c{G}": "Ģ",
-     "c{g}": "ģ",
-     "^H": "Ĥ",
-     "^h": "ĥ",
-     "dH": "Ħ",
-     "dh": "ħ",
-     "~I": "Ĩ",
-     "~i": "ĩ",
-     "=I": "Ī",
-     "=i": "ī",
-     "u{I}": "Ĭ",
-     "u{i}": "ĭ",
-     "k I": "Į",
-     "k i": "į",
-     ".I": "İ",
-     "^J": "Ĵ",
-     "^j": "ĵ",
-     "c{J}": "Ķ",
-     "c{j}": "ķ",
-     "'L": "Ĺ",
-     "'l": "ĺ",
-     "c{L}": "Ļ",
-     "c{l}": "ļ",
-     "v{L}": "Ľ",
-     "v{l}": "ľ",
-     "dL": "Ł",
-     "dl": "ł",
-     "'N": "Ń",
-     "'n": "ń",
-     "c{N}": "Ņ",
-     "c{n}": "ņ",
-     "v{N}": "Ň",
-     "v{n}": "ň",
-     "=O": "Ō",
-     "=o": "ō",
-     "u{O}": "Ŏ",
-     "u{o}": "ŏ",
-     "H{O}": "Ő",
-     "H{o}": "ő",
-     "OE": "Œ",
-     "oe": "œ",
-     "'R": "Ŕ",
-     "'r": "ŕ",
-     "c{R}": "Ŗ",
-     "c{r}": "ŗ",
-     "v{R}": "Ř",
-     "v{r}": "ř",
-     "'R": "Ś",
-     "'r": "ś",
-     "^S": "Ŝ",
-     "^s": "ŝ",
-     "c{S}": "Ş",
-     "c{s}": "ş",
-     "v{S}": "Š",
-     "v{s}": "š",
-     "c{T}": "Ţ",
-     "c{t}": "ţ",
-     "v{T}": "Ť",
-     "v{t}": "ť",
-     "dT": "Ŧ",
-     "dt": "ŧ",
-     "~U": "Ũ",
-     "~u": "ũ",
-     "=U": "Ū",
-     "=u": "ū",
-     "u{U}": "Ŭ",
-     "u{u}": "ŭ",
-     "r U": "Ů",
-     "r u": "ů",
-     "H{U}": "Ű",
-     "H{u}": "ű",
-     "k U": "Ų",
-     "k u": "ų",
-     "^W": "Ŵ",
-     "^w": "ŵ",
-     "^Y": "Ŷ",
-     "^y": "ŷ",
-     "\"Y": "Ÿ",
-     "'Z": "Ź",
-     "'z": "ź",
-     ".Z": "Ż",
-     ".z": "ż",
-     "v{Z}": "Ž",
-     "v{z}": "ž"
-  };
+		"`A": "Ã", // begin grave
+		"`E": "Ã",
+		"`I": "Ã",
+		"`O": "Ã",
+		"`U": "Ã",
+		"`a": "Ã ",
+		"`e": "Ã¨",
+		"`i": "Ã¬",
+		"`o": "Ã²",
+		"`u": "Ã¹",
+		"\'A": "Ã", // begin acute
+		"\'E": "Ã",
+		"\'I": "Ã",
+		"\'O": "Ã",
+		"\'U": "Ã",
+		"\'Y": "Ã",
+		"\'a": "Ã¡",
+		"\'e": "Ã©",
+		"\'i": "Ã­",
+		"\'o": "Ã³",
+		"\'u": "Ãº",
+		"\'y": "Ã½",
+		"\"A": "Ã", // begin diaeresis
+		"r A": "Ã",
+		"\"E": "Ã",
+		"\"I": "Ã",
+		"\"O": "Ã",
+		"\"U": "Ã",
+		"\"a": "Ã¤",
+		"r a": "Ã¥",
+		"\"e": "Ã«",
+		"\"i": "Ã¯",
+		"\"o": "Ã¶",
+		"\"u": "Ã¼",
+		"~A": "Ã", // begin tilde
+		"~N": "Ã",
+		"~O": "Ã",
+		"~a": "Ã£",
+		"~n": "Ã±",
+		"~o": "Ãµ",
+		"rU": "Å®", // begin ring above
+		"ru": "Å¯",
+		"vC": "Ä",  // begin caron
+		"vD": "Ä",
+		"vE": "Ä",
+		"vN": "Å",
+		"vR": "Å",
+		"vS": "Å ",
+		"vT": "Å¤",
+		"vZ": "Å½",
+		"vc": "Ä",
+		"vd": "Ä",
+		"ve": "Ä",
+		"vn": "Å",
+		"vr": "Å",
+		"vs": "Å¡",
+		"vt": "Å¥",
+		"vz": "Å¾",
+		"#": "#",  // begin special symbols
+		"$": "$",
+		"%": "%",
+		"&": "&",
+		"\\": "\\",
+		"^": "^",
+		"_": "_",
+		"{": "{",
+		"}": "}",
+		"~": "~",
+		"\"": "\"",
+		"\'": "â", // closing single quote
+		"`": "â", // opening single quote
+		"AA": "Ã", // begin non-ASCII letters
+		"AE": "Ã",
+		"c{C}": "Ã",
+		"O": "Ã",
+		"aa": "Ã¥",
+		"c{c}": "Ã§",
+		"ae": "Ã¦",
+		"o": "Ã¸",
+		"ss": "Ã",
+		"textcopyright": "Â©",
+		"textellipsis": "â¦" ,
+		"textemdash": "â",
+		"textendash": "â",
+		"textregistered": "Â®",
+		"texttrademark": "â¢",
+		"alpha": "Î±", // begin greek alphabet
+		"beta": "Î²",
+		"gamma": "Î³",
+		"delta": "Î´",
+		"epsilon": "Îµ",
+		"zeta": "Î¶",
+		"eta": "Î·",
+		"theta": "Î¸",
+		"iota": "Î¹",
+		"kappa": "Îº",
+		"lambda": "Î»",
+		"mu": "Î¼",
+		"nu": "Î½",
+		"xi": "Î¾",
+		"omicron": "Î¿",
+		"pi": "Ï",
+		"rho": "Ï",
+		"sigma": "Ï",
+		"tau": "Ï",
+		"upsilon": "Ï",
+		"phi": "Ï",
+		"chi": "Ï",
+		"psi": "Ï",
+		"omega": "Ï",
+		"=A": "Ä",
+		"=a": "Ä",
+		"u{A}": "Ä",
+		"u{a}": "Ä",
+		"k A": "Ä",
+		"k a": "Ä",
+		"'C": "Ä",
+		"'c": "Ä",
+		"^C": "Ä",
+		"^c": "Ä",
+		".C": "Ä",
+		".c": "Ä",
+		"v{C}": "Ä",
+		"v{c}": "Ä",
+		"v{D}": "Ä",
+		"=E": "Ä",
+		"=e": "Ä",
+		"u{E}": "Ä",
+		"u{e}": "Ä",
+		".E": "Ä",
+		".e": "Ä",
+		"k E": "Ä",
+		"k e": "Ä",
+		"v{E}": "Ä",
+		"v{e}": "Ä",
+		"^G": "Ä",
+		"^g": "Ä",
+		"u{G}": "Ä",
+		"u{g}": "Ä",
+		".G": "Ä ",
+		".g": "Ä¡",
+		"c{G}": "Ä¢",
+		"c{g}": "Ä£",
+		"^H": "Ä¤",
+		"^h": "Ä¥",
+		"dH": "Ä¦",
+		"dh": "Ä§",
+		"~I": "Ä¨",
+		"~i": "Ä©",
+		"=I": "Äª",
+		"=i": "Ä«",
+		"u{I}": "Ä¬",
+		"u{i}": "Ä­",
+		"k I": "Ä®",
+		"k i": "Ä¯",
+		".I": "Ä°",
+		"^J": "Ä´",
+		"^j": "Äµ",
+		"c{J}": "Ä¶",
+		"c{j}": "Ä·",
+		"'L": "Ä¹",
+		"'l": "Äº",
+		"c{L}": "Ä»",
+		"c{l}": "Ä¼",
+		"v{L}": "Ä½",
+		"v{l}": "Ä¾",
+		"dL": "Å",
+		"dl": "Å",
+		"'N": "Å",
+		"'n": "Å",
+		"c{N}": "Å",
+		"c{n}": "Å",
+		"v{N}": "Å",
+		"v{n}": "Å",
+		"=O": "Å",
+		"=o": "Å",
+		"u{O}": "Å",
+		"u{o}": "Å",
+		"H{O}": "Å",
+		"H{o}": "Å",
+		"OE": "Å",
+		"oe": "Å",
+		"'R": "Å",
+		"'r": "Å",
+		"c{R}": "Å",
+		"c{r}": "Å",
+		"v{R}": "Å",
+		"v{r}": "Å",
+		"'R": "Å",
+		"'r": "Å",
+		"^S": "Å",
+		"^s": "Å",
+		"c{S}": "Å",
+		"c{s}": "Å",
+		"v{S}": "Å ",
+		"v{s}": "Å¡",
+		"c{T}": "Å¢",
+		"c{t}": "Å£",
+		"v{T}": "Å¤",
+		"v{t}": "Å¥",
+		"dT": "Å¦",
+		"dt": "Å§",
+		"~U": "Å¨",
+		"~u": "Å©",
+		"=U": "Åª",
+		"=u": "Å«",
+		"u{U}": "Å¬",
+		"u{u}": "Å­",
+		"r U": "Å®",
+		"r u": "Å¯",
+		"H{U}": "Å°",
+		"H{u}": "Å±",
+		"k U": "Å²",
+		"k u": "Å³",
+		"^W": "Å´",
+		"^w": "Åµ",
+		"^Y": "Å¶",
+		"^y": "Å·",
+		"\"Y": "Å¸",
+		"'Z": "Å¹",
+		"'z": "Åº",
+		".Z": "Å»",
+		".z": "Å¼",
+		"v{Z}": "Å½",
+		"v{z}": "Å¾"
+	};
 
-     String.prototype.addSlashes = function() { 
-           //no need to do (str+'') anymore because 'this' can only be a string
-           return this.replace(/[\\"']/g, '\\$&').replace(/\u0000/g, '\\0');
-     }
+		String.prototype.addSlashes = function() {
+			 //no need to do (str+'') anymore because 'this' can only be a string
+			 return this.replace(/[\\"']/g, '\\$&').replace(/\u0000/g, '\\0');
+		}
 
 		for (var idx in this.latexToUni) {
-		   if (this.latexToUni[idx].length > this.maxLatexLength) 
-		      this.maxLatexLength =  this.latexToUni[idx].length;
-		   this.uniToLatex[this.latexToUni[idx]] = idx;
-         //console.log('"'+ idx.addSlashes() + '": "' + this.latexToUni[idx].addSlashes() + '"');
-         //console.log(idx.addSlashes() + ' ' + this.latexToUni[idx].addSlashes());
+			if (this.latexToUni[idx].length > this.maxLatexLength)
+			  this.maxLatexLength =  this.latexToUni[idx].length;
+			this.uniToLatex[this.latexToUni[idx]] = idx;
+			//console.log('"'+ idx.addSlashes() + '": "' + this.latexToUni[idx].addSlashes() + '"');
+			//console.log(idx.addSlashes() + ' ' + this.latexToUni[idx].addSlashes());
 		}
 
 		this.longestEscapeMatch = function(value, pos) {
-         var subStringEnd =  pos + 1 + this.maxLatexLength <= value.length ? 
-		               pos + 1 + this.maxLatexLength : value.length;
-		   var subStr =  value.substring(pos + 1,subStringEnd);		            
-		   while (subStr.length > 0) {
-		     if (subStr in this.latexToUni) {
-              break;
-		     }
-		     subStr = subStr.substring(0,subStr.length -1);
-		   }
-		   return subStr;
+			var subStringEnd =  pos + 1 + this.maxLatexLength <= value.length ?
+						pos + 1 + this.maxLatexLength : value.length;
+			var subStr =  value.substring(pos + 1,subStringEnd);					
+			while (subStr.length > 0) {
+			 if (subStr in this.latexToUni) {
+				break;
+			 }
+			 subStr = subStr.substring(0,subStr.length -1);
+			}
+			return subStr;
 		}
 		
 		this.decodeLatex = function(value) {
-		   var newVal = '';
-		   var pos = 0;
-		   while (pos < value.length) {
-              if (value[pos] == '\\') {
-                  var match = this.longestEscapeMatch(value, pos);
-                  if (match.length > 0) {
-                     newVal += this.latexToUni[match];
-                     pos = pos + 1 + match.length;
-                  } else {
-                     newVal += value[pos];
-		               pos++;
-                  }
-             } else if (value[pos] == '{' || value[pos] == '}') {
-		          pos++;
-		        } else {
-		           newVal += value[pos];
-		           pos++;
-		        } 
-		   }
-		   return newVal;
+			var newVal = '';
+			var pos = 0;
+			while (pos < value.length) {
+				if (value[pos] == '\\') {
+					var match = this.longestEscapeMatch(value, pos);
+					if (match.length > 0) {
+						newVal += this.latexToUni[match];
+						pos = pos + 1 + match.length;
+					} else {
+						newVal += value[pos];
+						pos++;
+					}
+				} else if (value[pos] == '{' || value[pos] == '}') {
+				  pos++;
+				} else {
+					newVal += value[pos];
+					pos++;
+				}
+			}
+			return newVal;
 		}
 
 		this.encodeLatex = function(value) {
-		   var trans = '';
-		   for (var idx = 0; idx < value.length; ++idx) {
-		        var c = value.charAt(idx); 
-		        if (c in this.uniToLatex)
-		            trans += '\\' + this.uniToLatex[c];
-		        else 
-		           trans += c;
-		   }
-		   return trans;
+			var trans = '';
+			for (var idx = 0; idx < value.length; ++idx) {
+				var c = value.charAt(idx);
+				if (c in this.uniToLatex)
+					trans += '\\' + this.uniToLatex[c];
+				else
+					trans += c;
+			}
+			return trans;
 		}
 		
 	};
@@ -1476,6 +1481,7 @@ $(function (){
 })(typeof exports === 'undefined' ? this['bibtexParse'] = {} : exports);
 
 /* end bibtexParse */
+
 
 /* START: orcidSearchUrlJs v0.0.1 */
 /* https://github.com/ORCID/orcidSearchUrlJs */
