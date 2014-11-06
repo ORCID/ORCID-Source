@@ -119,7 +119,7 @@
                     <argLine>-Dorg.orcid.config.file=classpath:staging-persistence.properties</argLine>
                     <runOrder>alphabetical</runOrder>                   
                     <includes>                        
-                        <include>**/t1/**/*Test.java</include>
+                        <include>org/orcid/integration/**/test/*Test.java</include>
                     </includes>
                     <excludes combine.self="override">
                     </excludes>

@@ -140,6 +140,7 @@ the software.
                         <exclude>**/integration/**.java</exclude>
                         <exclude>**/*IntegrationTest.java</exclude>
                         <exclude>**/*ITest.java</exclude>
+                        <exclude>org/orcid/integration/**/*.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>
