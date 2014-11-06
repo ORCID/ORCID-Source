@@ -78,11 +78,11 @@
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
             <scope>test</scope>
-        </dependency>    
+        </dependency>          
     </dependencies>
-
-	<build>
-        <plugins>
+    
+    <build>
+    	<plugins>
              <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>tomcat-maven-plugin</artifactId>
@@ -106,5 +106,28 @@
         </plugins>
     </build>	
     
+    <profiles>
+      <profile>
+      	<id>integration</id>
+      	<build>
+	      <plugins>
+    		<plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <!-- argLine>-Duser.timezone=America/Los_Angeles</argLine -->
+                    <argLine>-Dorg.orcid.config.file=classpath:staging-persistence.properties</argLine>
+                    <runOrder>alphabetical</runOrder>                   
+                    <includes>                        
+                        <include>**/t1/**/*Test.java</include>
+                    </includes>
+                    <excludes combine.self="override">
+                    </excludes>
+                </configuration>
+            </plugin>
+    	</plugins>
+      </build>
+      </profile>
+   </profiles>	   
 	
 </project>
