@@ -16,7 +16,7 @@
     =============================================================================
 
 -->
-<div class="more-info" ng-show="moreInfo[group.getActive().putCode.value]">
+<div class="more-info" ng-show="moreInfo[group.groupId]">
 	<div class="row"> 
 		
 		<div class="col-md-6" ng-show="group.getActive().fundingType.value" ng-cloak>			
