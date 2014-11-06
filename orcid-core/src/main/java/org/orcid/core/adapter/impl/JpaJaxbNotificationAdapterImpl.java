@@ -22,7 +22,7 @@ import java.util.List;
 import ma.glasnost.orika.MapperFacade;
 
 import org.orcid.core.adapter.JpaJaxbNotificationAdapter;
-import org.orcid.jaxb.model.notification.Notification;
+import org.orcid.jaxb.model.notification.generic.Notification;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
 
 /**

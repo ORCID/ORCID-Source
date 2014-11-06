@@ -22,7 +22,7 @@ import java.util.List;
 import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.notification.Notification;
+import org.orcid.jaxb.model.notification.generic.Notification;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 
 public interface NotificationManager {

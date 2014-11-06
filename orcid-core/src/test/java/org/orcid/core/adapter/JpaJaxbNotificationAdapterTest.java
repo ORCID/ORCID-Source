@@ -22,8 +22,8 @@ import javax.annotation.Resource;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.jaxb.model.notification.Notification;
-import org.orcid.jaxb.model.notification.NotificationType;
+import org.orcid.jaxb.model.notification.generic.Notification;
+import org.orcid.jaxb.model.notification.generic.NotificationType;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;

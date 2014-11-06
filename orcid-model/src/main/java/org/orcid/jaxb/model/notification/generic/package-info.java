@@ -21,42 +21,6 @@
 // Generated on: 2014.07.22 at 06:46:00 PM BST 
 //
 
-package org.orcid.jaxb.model.notification;
+@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.orcid.org/ns/orcid", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+package org.orcid.jaxb.model.notification.generic;
 
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlType;
-
-/**
- * <p>
- * Java class for null.
- * 
- * <p>
- * The following schema fragment specifies the expected content contained within
- * this class.
- * <p>
- * 
- * <pre>
- * &lt;simpleType>
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *     &lt;enumeration value="RECORD_UPDATED_BY_MEMBER"/>
- *     &lt;enumeration value="CUSTOM"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
- * </pre>
- * 
- */
-@XmlType(name = "")
-@XmlEnum
-public enum NotificationType {
-
-    RECORD_UPDATED_BY_MEMBER, CUSTOM;
-
-    public String value() {
-        return name();
-    }
-
-    public static NotificationType fromValue(String v) {
-        return valueOf(v);
-    }
-
-}

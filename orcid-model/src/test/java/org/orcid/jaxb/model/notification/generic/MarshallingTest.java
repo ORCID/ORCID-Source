@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.jaxb.model.notification;
+package org.orcid.jaxb.model.notification.generic;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -26,6 +26,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.junit.Test;
+import org.orcid.jaxb.model.notification.generic.Notification;
+import org.orcid.jaxb.model.notification.generic.NotificationType;
 
 /**
  * 
@@ -47,9 +49,9 @@ public class MarshallingTest {
     }
 
     private Notification getNotification() throws JAXBException {
-        JAXBContext context = JAXBContext.newInstance("org.orcid.jaxb.model.notification");
+        JAXBContext context = JAXBContext.newInstance("org.orcid.jaxb.model.notification.generic");
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        InputStream inputStream = MarshallingTest.class.getResourceAsStream("/notification.xml");
+        InputStream inputStream = MarshallingTest.class.getResourceAsStream("/generic-notification.xml");
         return (Notification) unmarshaller.unmarshal(inputStream);
     }
 

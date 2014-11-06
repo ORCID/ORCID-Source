@@ -21,7 +21,7 @@
 // Generated on: 2014.07.22 at 06:46:00 PM BST 
 //
 
-package org.orcid.jaxb.model.notification;
+package org.orcid.jaxb.model.notification.generic;
 
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -30,6 +30,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 /**
+ * The identifier of the researcher or contributor in ORCID (the ORCID iD). At
+ * least one of uri or path must be given.
+ * 
  * <p>
  * Java class for anonymous complex type.
  * 
@@ -44,10 +47,10 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence>
  *         &lt;choice>
  *           &lt;sequence>
- *             &lt;element name="uri" type="{http://www.orcid.org/ns/orcid}putCodeUri"/>
- *             &lt;element name="path" type="{http://www.orcid.org/ns/orcid}putCodePath" minOccurs="0"/>
+ *             &lt;element name="uri" type="{http://www.orcid.org/ns/orcid}orcidUri"/>
+ *             &lt;element name="path" type="{http://www.orcid.org/ns/orcid}orcidPath" minOccurs="0"/>
  *           &lt;/sequence>
- *           &lt;element name="path" type="{http://www.orcid.org/ns/orcid}putCodePath"/>
+ *           &lt;element name="path" type="{http://www.orcid.org/ns/orcid}orcidPath"/>
  *         &lt;/choice>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}host" minOccurs="0"/>
  *       &lt;/sequence>
@@ -60,8 +63,8 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "uri", "path", "host" })
-@XmlRootElement(name = "putCode")
-public class PutCode implements Serializable {
+@XmlRootElement(name = "orcidId")
+public class OrcidId implements Serializable {
 
     private final static long serialVersionUID = 1L;
     protected String uri;
