@@ -49,7 +49,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum NotificationType {
 
-    RECORD_UPDATED_BY_MEMBER, CUSTOM, ADD_ACTIVITY;
+    RECORD_UPDATED_BY_MEMBER, CUSTOM, ADD_ACTIVITIES;
 
     public String value() {
         return name();
