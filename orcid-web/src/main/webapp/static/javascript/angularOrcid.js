@@ -3187,7 +3187,6 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc, actS
     $scope.showDetailsMouseClick = function(group, $event) {
         $event.stopPropagation();
         $scope.moreInfo[group.groupId]=!$scope.moreInfo[group.groupId];
-        console.log(key);
     };
 
     $scope.closeMoreInfo = function(key) {
