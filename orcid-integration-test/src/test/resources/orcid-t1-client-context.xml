@@ -26,12 +26,12 @@
 
 	<context:property-placeholder file-encoding="UTF-8" location="classpath:integration-test.properties"/>
 
-	 <bean id="t1OrcidApiClient" class="org.orcid.api.t1.integration.T1OrcidApiClientImpl">
+	 <bean id="t1OrcidApiClient" class="org.orcid.integration.api.t1.T1OrcidApiClientImpl">
         <constructor-arg value="${org.orcid.t1.client.base_url}"/>
         <constructor-arg ref="jerseyClient"/>
     </bean>
 
-	<bean id="t1OAuthClient" class="org.orcid.api.t1.integration.T1OAuthOrcidApiClientImpl">
+	<bean id="t1OAuthClient" class="org.orcid.integration.api.t1.T1OAuthOrcidApiClientImpl">
 		<constructor-arg value="${org.orcid.t1.client.base_url}"/>
 		<constructor-arg ref="jerseyClient"/>
 	</bean>
@@ -40,7 +40,7 @@
         <constructor-arg ref="clientConfig"/>
     </bean>
 
-    <bean id="clientConfig" class="org.orcid.api.t1.integration.OrcidJerseyT1ClientConfig">
+    <bean id="clientConfig" class="org.orcid.integration.api.t1.OrcidJerseyT1ClientConfig">
         <constructor-arg ref="providers"/>
         <property name="properties" ref="jerseyProperties"/>
     </bean>
