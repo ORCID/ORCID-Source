@@ -449,42 +449,34 @@
 	</div>		
 </script>
 
-<script type="text/ng-template" id="combine-work-template">	
+<script type="text/ng-template" id="combine-work-template">
 	<div class="lightbox-container">
+		<div class="row combine-work">
+			<div class="col-md-12 col-xs-12 col-sm-12">
+				<h3>Selected work "{{combineWork.workTitle.title.value}}"				
+					<span ng-show="hasCombineableEIs(combineWork)">
+						(<span ng-repeat='ie in combineWork.workExternalIdentifiers'>
+							<span ng-bind-html='ie | workExternalIdentifierHtml:$first:$last:combineWork.workExternalIdentifiers.length'></span>
+					 	</span>)
+					</span>				
+				</h3>
+				<p>Combine with (select one):</p>
+				<ul class="list-group">
+  					<li class="list-group-item" ng-repeat="group in worksSrvc.groups | orderBy:sortPredicate:sortReverse" ng-show="combineWork.putCode.value != group.getDefault().putCode.value && validCombineSel(combineWork,group.getDefault())">
+						<strong>{{group.getDefault().workTitle.title.value}}</strong>
+						<a ng-click="combined(combineWork,group.getDefault())" class="btn btn-primary pull-right bottomBuffer">Combine</a>
+
+					</li>  					
+				</ul>
+			</div>
+		</div>
 		<div class="row">
 			<div class="col-md-12 col-xs-12 col-sm-12">
-				<table>
-				    <tr>
-				       <th>Selected work "{{combineWork.workTitle.title.value}}"&nbsp;</h4></th>
-				       <td>
-				       		<span ng-show="hasCombineableEIs(combineWork)">
-				       			(<span ng-repeat='ie in combineWork.workExternalIdentifiers'><span
-									ng-bind-html='ie | workExternalIdentifierHtml:$first:$last:combineWork.workExternalIdentifiers.length'></span>
-						   		</span>)
-						   	</span>
-						</td>
-				       <td></td>
-				    </tr>
-				    <tr>
-				       <td colspan=3">combine with (select one):</td>
-				    </tr>
-				    <tr ng-repeat="group in worksSrvc.groups | orderBy:sortPredicate:sortReverse" ng-show="combineWork.putCode.value != group.getDefault().putCode.value && validCombineSel(combineWork,group.getDefault())">
-				    	<td><strong>{{group.getDefault().workTitle.title.value}}</strong></td>
-				    	<td>
-				    		<span ng-show="hasCombineableEIs(group.getDefault())">
-				    		(<span ng-repeat='ie in group.getDefault().workExternalIdentifiers'><span
-								ng-bind-html='ie | workExternalIdentifierHtml:$first:$last:combineWork.workExternalIdentifiers.length'></span>
-						   	</span>)
-						   	</span>
-						   	&nbsp;				    	
-				    	</td>
-				    	<td><button ng-click="combined(combineWork,group.getDefault())">Combine</button></td>
-				    </tr>
-				</table>
-				<span class="btn" id="modal-close" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel'/></span>								
+				<span class="btn close-button pull-right" id="modal-close" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel'/></span>
 			</div>
-		</div>		
-	</div>		
+		</div>
+	</div>
+	
 </script>
 
 
