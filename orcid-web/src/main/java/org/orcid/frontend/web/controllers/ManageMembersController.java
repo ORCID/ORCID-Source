@@ -232,7 +232,7 @@ public class ManageMembersController extends BaseController {
         groupAdministratorController.validateDisplayName(client);
         groupAdministratorController.validateWebsite(client);
         groupAdministratorController.validateShortDescription(client);
-        groupAdministratorController.validateRedirectUris(client);
+        groupAdministratorController.validateRedirectUris(client, true);
 
         copyErrors(client.getDisplayName(), client);
         copyErrors(client.getWebsite(), client);
