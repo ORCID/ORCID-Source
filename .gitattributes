@@ -1,7 +1,32 @@
 * text eol=lf
 
-# Declare files that will always have CRLF line endings on checkout.
-*.as text eol=crlf
+
+# files we don't want to force line endings on
+*.as text
+orcid-web/src/test/javascript/node_modules/* text
+orcid-web/src/test/javascript/node_modules/*/* text
+orcid-web/src/test/javascript/node_modules/*/*/* text
+orcid-web/src/test/javascript/node_modules/*/*/*/* text
+orcid-web/src/test/javascript/node_modules/*/*/*/*/* text
+orcid-web/src/test/javascript/node_modules/*/*/*/*/*/* text
+orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/* text
+orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/* text
+orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/*/* text
+orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/*/*/* text
+orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/*/*/*/* text
+orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/*/*/*/*/* text
+orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/*/*/*/*/*/* text
+orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/*/*/*/*/*/*/* text
+orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/*/*/*/*/*/*/*/* text
+orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/* text
+orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/* text
+orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/* text
+orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/* text
+orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/* text
+orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/* text
+orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/* text
+orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/* text
+orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/* text
 
 # Denote all files that are truly binary and should not be modified.
 *.png binary
@@ -11,29 +36,4 @@
 *.otf binary
 *.woff binary
 
-# fiiles we don't want to force line endings on
-*.as text=auto
-orcid-web/src/test/javascript/node_modules/* text=auto
-orcid-web/src/test/javascript/node_modules/*/* text=auto
-orcid-web/src/test/javascript/node_modules/*/*/* text=auto
-orcid-web/src/test/javascript/node_modules/*/*/*/* text=auto
-orcid-web/src/test/javascript/node_modules/*/*/*/*/* text=auto
-orcid-web/src/test/javascript/node_modules/*/*/*/*/*/* text=auto
-orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/* text=auto
-orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/* text=auto
-orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/*/* text=auto
-orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/*/*/* text=auto
-orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/*/*/*/* text=auto
-orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/*/*/*/*/* text=auto
-orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/*/*/*/*/*/* text=auto
-orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/*/*/*/*/*/*/* text=auto
-orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/*/*/*/*/*/*/*/* text=auto
-orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/* text=auto
-orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/* text=auto
-orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/* text=auto
-orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/* text=auto
-orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/* text=auto
-orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/* text=auto
-orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/* text=auto
-orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/* text=auto
-orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/* text=auto
+
