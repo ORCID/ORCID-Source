@@ -118,7 +118,7 @@
 	                                <!-- Privacy -->
                                     <li ng-show="userIsSource(work) || (group.hasKeys() && !group.hasUserVersion())">
                                         <a ng-click="openEditWork(group.getActive().putCode.value)" class="toolbar-button edit-item-button" title="Edit">
-                                            <span class="glyphicon glyphicon-pencil edit-option-toolbar" title=""></span>
+                                            <span class="glyphicon glyphicon-pencil edit-option-toolbar" ng-class="{'glyphicons git_create' : !userIsSource(work)}"title=""></span>
                                         </a>
                                     </li>
                                     <li>
@@ -185,7 +185,7 @@
 					        		</li>
 					        		<li>
 					        			<a ng-show="!group.hasUserVersion() || userIsSource(work)" ng-click="openEditWork(group.getActive().putCode.value)">
-											<span class="glyphicon glyphicon-pencil"></span>
+											<span class="glyphicon glyphicon-pencil" ng-class="{'glyphicons git_create' : !userIsSource(work)}"></span>
 										</a>
 					        			
 					        		</li>
@@ -230,7 +230,7 @@
 					        		</li>
                                     <li>
                                         <a ng-show="!group.hasUserVersion() || userIsSource(work)" ng-click="openEditWork(group.getActive().putCode.value)">
-                                            <span class="glyphicon glyphicon-pencil"></span>
+                                            <span class="glyphicon glyphicon-pencil" ng-class="{'glyphicons git_create' : !userIsSource(work)}"></span>
                                         </a>
                                     </li>
                                     <li>
