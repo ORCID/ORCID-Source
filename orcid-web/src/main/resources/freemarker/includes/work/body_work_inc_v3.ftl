@@ -42,14 +42,9 @@
                                 </#if>                  
                             </div>
                             <#if !(isPublicProfile??)>
-                            	
                                 <div class="col-md-4 col-sm-4 workspace-toolbar">
-                                
-                                    <ul class="workspace-private-toolbar">
-                                    
-                                    <!-- HERE -->
-                                    
-                                    	<li style="margin-right: 70px;" ng-show="bulkEditShow">
+                                    <ul class="workspace-private-toolbar">   
+                                    	<li ng-show="bulkEditShow">
                                     		<input type="checkbox" ng-model="bulkEditMap[group.getActive().putCode.value]" class="bulk-edit-input ng-valid ng-dirty">
                                     	</li>
                                         <li>
