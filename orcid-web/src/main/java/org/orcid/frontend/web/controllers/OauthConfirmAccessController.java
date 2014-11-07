@@ -111,14 +111,16 @@ public class OauthConfirmAccessController extends BaseController {
         String redirectUri = "";
         String responseType = "";
         String orcid = null;
+        boolean showLogin =  false; // default to Reg
         boolean usePersistentTokens = false;
         if (savedRequest != null) {
             String url = savedRequest.getRedirectUrl();
+            if (url.toLowerCase().contains("show_login=true"))
+                showLogin = true;
             Matcher matcher = clientIdPattern.matcher(url);
             if (matcher.find()) {
                 clientId = matcher.group(1);
                 if (clientId != null) {
-
                     Matcher emailMatcher = RegistrationController.emailPattern.matcher(url);
                     if (emailMatcher.find()) {
                         String tempEmail = emailMatcher.group(1);
@@ -215,6 +217,7 @@ public class OauthConfirmAccessController extends BaseController {
         mav.addObject("userId", orcid != null ? orcid : email);        
         mav.addObject("hideUserVoiceScript", true);
         mav.addObject("usePersistentTokens", usePersistentTokens);
+        mav.addObject("showLogin", String.valueOf(showLogin));
         mav.setViewName("oauth_login");
         return mav;
     }

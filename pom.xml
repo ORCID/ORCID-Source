@@ -140,6 +140,7 @@ the software.
                         <exclude>**/integration/**.java</exclude>
                         <exclude>**/*IntegrationTest.java</exclude>
                         <exclude>**/*ITest.java</exclude>
+                        <exclude>org/orcid/integration/**/*.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>
@@ -934,7 +935,7 @@ the software.
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>4.7</version>
+                <version>4.10</version>
                 <scope>test</scope>
             </dependency>
             <dependency>

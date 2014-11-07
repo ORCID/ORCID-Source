@@ -47,6 +47,9 @@
       <#if (fundingIdsJson)??>
         orcidVar.fundingIdsJson = JSON.parse("${fundingIdsJson}");
       </#if>
+      <#if (showLogin)??>
+        orcidVar.showLogin = ${showLogin};
+      </#if>
       orcidVar.orcidId = '${(profile.orcidIdentifier.path)!}';
       orcidVar.realOrcidId = '${realUserOrcid!}';
       orcidVar.jsMessages = JSON.parse("${jsMessagesJson}");

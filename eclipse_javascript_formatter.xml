@@ -17,7 +17,6 @@
     =============================================================================
 
 -->
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <profiles version="11">
 <profile kind="CodeFormatterProfile" name="ORCID JavaScript Conventions" version="11">
 <setting id="org.eclipse.wst.jsdt.core.formatter.indent_body_declarations_compare_to_annotation_declaration_header" value="true"/>

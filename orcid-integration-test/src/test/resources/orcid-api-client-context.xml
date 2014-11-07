@@ -25,7 +25,7 @@
 
     <context:property-placeholder file-encoding="UTF-8" location="classpath:integration-test.properties" ignore-unresolvable="true"/>
 
-    <bean id="t2OrcidApiClient" class="org.orcid.api.t2.integration.T2OrcidApiClientImpl">
+    <bean id="t2OrcidApiClient" class="org.orcid.integration.api.t2.T2OrcidApiClientImpl">
          <constructor-arg value="${org.orcid.t2.client.base_url}"/>
          <constructor-arg ref="jerseyClient"/>
     </bean>
@@ -34,7 +34,7 @@
         <constructor-arg ref="clientConfig"/>
     </bean>
 
-    <bean id="clientConfig" class="org.orcid.api.t2.integration.OrcidJerseyT2ClientConfig">
+    <bean id="clientConfig" class="org.orcid.integration.api.t2.OrcidJerseyT2ClientConfig">
         <constructor-arg ref="providers"/>
         <property name="properties" ref="jerseyProperties"/>
         <property name="keyStore" ref="keyStore"/>
@@ -65,12 +65,12 @@
         </property>
     </bean>
 
-    <bean id="keyStore" class="org.orcid.api.t2.integration.KeyStoreFactoryBean">
+    <bean id="keyStore" class="org.orcid.integration.api.t2.KeyStoreFactoryBean">
         <property name="location" value="${org.orcid.t2.client.keyStoreLocation}"/>
         <property name="password" value="${org.orcid.t2.client.keyStorePass}"/>
     </bean>
 
-    <bean id="trustStore" class="org.orcid.api.t2.integration.KeyStoreFactoryBean">
+    <bean id="trustStore" class="org.orcid.integration.api.t2.KeyStoreFactoryBean">
         <property name="location" value="${org.orcid.t2.client.trustStoreLocation}"/>
         <property name="password" value="${org.orcid.t2.client.trustStorePass}"/>
     </bean>
