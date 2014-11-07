@@ -177,6 +177,12 @@
                       		<div ng-show="editSources[group.groupId] == true">
 					        <#if !(isPublicProfile??)>
 					        	<ul class="sources-actions">
+					        		<li ng-show="bulkEditShow">
+                                		<input type="checkbox" ng-model="bulkEditMap[work.putCode.value]" class="bulk-edit-input ng-valid ng-dirty">
+                                	</li>
+					        		<li>
+					        			<a class="glyphicon glyphicon-transfer" ng-click="showCombineMatches(group.getDefault())"></a>
+					        		</li>
 					        		<li>
 					        			<a ng-show="!group.hasUserVersion() || userIsSource(work)" ng-click="openEditWork(group.getActive().putCode.value)">
 											<span class="glyphicon glyphicon-pencil"></span>
@@ -216,6 +222,12 @@
                         <div class="col-md-2 col-sm-2 col-xs-12 trash-source">
                             <#if !(isPublicProfile??)>
                                 <ul class="sources-actions">
+                                	<li ng-show="bulkEditShow">
+                                		<input type="checkbox" ng-model="bulkEditMap[work.putCode.value]" class="bulk-edit-input ng-valid ng-dirty">
+                                	</li>
+                                	<li>
+					        			<a class="glyphicon glyphicon-transfer" ng-click="showCombineMatches(group.getDefault())"></a>
+					        		</li>
                                     <li>
                                         <a ng-show="!group.hasUserVersion() || userIsSource(work)" ng-click="openEditWork(group.getActive().putCode.value)">
                                             <span class="glyphicon glyphicon-pencil"></span>
