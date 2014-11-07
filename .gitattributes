@@ -10,3 +10,30 @@
 *.ttf binary
 *.otf binary
 *.woff binary
+
+# fiiles we don't want to force line endings on
+*.as text=auto
+orcid-web/src/test/javascript/node_modules/* text=auto
+orcid-web/src/test/javascript/node_modules/*/* text=auto
+orcid-web/src/test/javascript/node_modules/*/*/* text=auto
+orcid-web/src/test/javascript/node_modules/*/*/*/* text=auto
+orcid-web/src/test/javascript/node_modules/*/*/*/*/* text=auto
+orcid-web/src/test/javascript/node_modules/*/*/*/*/*/* text=auto
+orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/* text=auto
+orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/* text=auto
+orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/*/* text=auto
+orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/*/*/* text=auto
+orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/*/*/*/* text=auto
+orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/*/*/*/*/* text=auto
+orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/*/*/*/*/*/* text=auto
+orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/*/*/*/*/*/*/* text=auto
+orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/*/*/*/*/*/*/*/* text=auto
+orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/* text=auto
+orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/* text=auto
+orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/* text=auto
+orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/* text=auto
+orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/* text=auto
+orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/* text=auto
+orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/* text=auto
+orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/* text=auto
+orcid-web/src/test/javascript/node_modules/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/* text=auto
