@@ -134,17 +134,25 @@ public class GroupAdministratorController extends BaseWorkspaceController {
     }
 
     private boolean validateUrl(String url) {
+        return validateUrl(url, false);
+    }
+    
+    private boolean validateUrl(String url, boolean checkProtocol) {
         String urlToCheck = null;
         if (PojoUtil.isEmpty(url))
             return false;
         // To validate the URL we need a string with a protocol, so, check if it
         // have it, if it doesn't, add it.
         // Check if the URL begins with the protocol
-        if (url.startsWith("http://") || url.startsWith("https://")) {
+        if(checkProtocol) {
             urlToCheck = url;
         } else {
-            // If it doesn't, add the http protocol by default
-            urlToCheck = "http://" + url;
+            if (url.startsWith("http://") || url.startsWith("https://")) {
+                urlToCheck = url;
+            } else {
+                // If it doesn't, add the http protocol by default
+                urlToCheck = "http://" + url;
+            }
         }
 
         try {
@@ -192,10 +200,14 @@ public class GroupAdministratorController extends BaseWorkspaceController {
     }
 
     public Client validateRedirectUris(Client client) {
+        return validateRedirectUris(client, false);
+    }
+    
+    public Client validateRedirectUris(Client client, boolean checkProtocol) {
         if (client.getRedirectUris() != null && client.getRedirectUris().size() > 0) {
             for (RedirectUri redirectUri : client.getRedirectUris()) {
                 redirectUri.setErrors(new ArrayList<String>());
-                if (!validateUrl(redirectUri.getValue().getValue())) {
+                if (!validateUrl(redirectUri.getValue().getValue(), checkProtocol)) {
                     setError(redirectUri, "common.invalid_url");
                 }
 
