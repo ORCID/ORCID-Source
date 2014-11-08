@@ -115,12 +115,13 @@
 											</a>	                                	
 	                                	</li>
 	                                </#if>
-	                                <!-- Privacy -->
-                                    <li ng-show="userIsSource(work) || (group.hasKeys() && !group.hasUserVersion())">
+	                                <!-- Create -->
+                                   <li ng-show="userIsSource(work) || (group.hasKeys() && !group.hasUserVersion())">
                                         <a ng-click="openEditWork(group.getActive().putCode.value)" class="toolbar-button edit-item-button" title="Edit">
                                             <span class="glyphicon glyphicon-pencil edit-option-toolbar" ng-class="{'glyphicons git_create' : !userIsSource(work)}"title=""></span>
                                         </a>
                                     </li>
+                                      <!-- Privacy -->
                                     <li>
                                         <@orcid.privacyToggle2 angularModel="work.visibility"
                                             questionClick="toggleClickPrivacyHelp(work.putCode.value)"
@@ -187,7 +188,6 @@
 					        			<a ng-show="!group.hasUserVersion() || userIsSource(work)" ng-click="openEditWork(group.getActive().putCode.value)">
 											<span class="glyphicon glyphicon-pencil" ng-class="{'glyphicons git_create' : !userIsSource(work)}"></span>
 										</a>
-					        			
 					        		</li>
 					        		<li>
 					        			<a ng-click="deleteWorkConfirm(work.putCode.value, false)">

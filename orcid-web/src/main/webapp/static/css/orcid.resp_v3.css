@@ -4823,6 +4823,35 @@ ul.sources-actions li{
 	line-height: 28px;
 }
 
+ul.sources-edit-list ul.workspace-private-toolbar > li{
+	vertical-align: top;
+}
+
+ul.sources-edit-list ul.workspace-private-toolbar .git_create:before{
+	font-size: 17px;
+	position: absolute;
+	left: 7px;
+	top: -2px;
+	color: #939598;
+}
+
+ul.sources-edit-list ul.sources-actions .git_create:before{
+	font-size: 16px;
+	position: absolute;
+	left: 7px;
+	top: -12px;
+	color: #338caf;
+}
+
+ul.sources-edit-list .workspace-private-toolbar .git_create:hover:before{
+	color: #FFF;
+}
+
+ul.sources-edit-list ul.sources-actions .git_create:hover:before{
+	color: rgb(166, 206, 57);	
+}
+
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 
