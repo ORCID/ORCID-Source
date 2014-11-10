@@ -1133,45 +1133,6 @@ orcidNgModule.factory("emailSrvc", function ($rootScope) {
 
 
 orcidNgModule.factory("prefsSrvc", function ($rootScope) {
-<<<<<<< HEAD
-	var serv = {
-			prefs: null,
-			getPrivacyPreferences: function() {
-				$.ajax({
-			        url: getBaseUri() + '/account/preferences.json',
-			        dataType: 'json',
-			        success: function(data) {
-			        	serv.prefs = data;
-			        	$rootScope.$apply();
-			        }
-			    }).fail(function() { 
-			    	// something bad is happening!
-			    	console.log("error with prefs");
-			    });
-			},
-			savePrivacyPreferences: function() {
-				$.ajax({
-			        url: getBaseUri() + '/account/preferences.json',
-			        type: 'POST',
-			        data: angular.toJson(serv.prefs),
-			        contentType: 'application/json;charset=UTF-8',
-			        dataType: 'json',
-			        success: function(data) {
-			        	serv.prefs = data;
-			        	$rootScope.$apply();
-			        }
-			    }).fail(function() { 
-			    	// something bad is happening!
-			    	console.log("error with prefs");
-			    });
-			}
-		};
-	    
-	    // populate the prefs
-		serv.getPrivacyPreferences();
-
-	return serv; 
-=======
     var serv = {
             prefs: null,
             getPrivacyPreferences: function() {
@@ -1184,7 +1145,7 @@ orcidNgModule.factory("prefsSrvc", function ($rootScope) {
                     }
                 }).fail(function() {
                     // something bad is happening!
-                    console.log("error with multi email");
+                    console.log("error with prefs");
                 });
             },
             savePrivacyPreferences: function() {
@@ -1200,7 +1161,7 @@ orcidNgModule.factory("prefsSrvc", function ($rootScope) {
                     }
                 }).fail(function() {
                     // something bad is happening!
-                    console.log("error with multi email");
+                    console.log("error with prefs");
                 });
             }
         };
@@ -1208,8 +1169,7 @@ orcidNgModule.factory("prefsSrvc", function ($rootScope) {
         // populate the prefs
         serv.getPrivacyPreferences();
 
-    return serv;
->>>>>>> master
+    return serv; 
 });
 
 orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) {
