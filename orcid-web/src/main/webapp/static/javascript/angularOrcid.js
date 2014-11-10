@@ -307,14 +307,14 @@ orcidNgModule.directive('compile', function($compile) {
 orcidNgModule.factory("actSortSrvc", ['$rootScope', function ($rootScope) {
     var sortPredicateMap = {};
     sortPredicateMap[GroupedActivities.ABBR_WORK] = {};
-    sortPredicateMap[GroupedActivities.ABBR_WORK]['date'] = ['-dateSortString', 'title','getActive().workType.value'];
-    sortPredicateMap[GroupedActivities.ABBR_WORK]['title'] = ['title', '-dateSortString','getActive().workType.value'];
-    sortPredicateMap[GroupedActivities.ABBR_WORK]['type'] = ['getActive().workType.value','title', '-dateSortString'];
+    sortPredicateMap[GroupedActivities.ABBR_WORK]['date'] = ['-dateSortString', 'title','getDefault().workType.value'];
+    sortPredicateMap[GroupedActivities.ABBR_WORK]['title'] = ['title', '-dateSortString','getDefault().workType.value'];
+    sortPredicateMap[GroupedActivities.ABBR_WORK]['type'] = ['getDefault().workType.value','title', '-dateSortString'];
 
     sortPredicateMap[GroupedActivities.FUNDING] = {};
-    sortPredicateMap[GroupedActivities.FUNDING]['date'] = ['-dateSortString', 'title','getActive().fundingTypeForDisplay'];
-    sortPredicateMap[GroupedActivities.FUNDING]['title'] = ['title', '-dateSortString','getActive().fundingTypeForDisplay'];
-    sortPredicateMap[GroupedActivities.FUNDING]['type'] = ['getActive().fundingTypeForDisplay','title', '-dateSortString'];
+    sortPredicateMap[GroupedActivities.FUNDING]['date'] = ['-dateSortString', 'title','getDefault().fundingTypeForDisplay'];
+    sortPredicateMap[GroupedActivities.FUNDING]['title'] = ['title', '-dateSortString','getDefault().fundingTypeForDisplay'];
+    sortPredicateMap[GroupedActivities.FUNDING]['type'] = ['getDefault().fundingTypeForDisplay','title', '-dateSortString'];
 
     sortPredicateMap[GroupedActivities.AFFILIATION] = {};
     sortPredicateMap[GroupedActivities.AFFILIATION]['date'] = ['-dateSortString', 'title'];
@@ -3184,10 +3184,9 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc, actS
         }
     };
 
-    $scope.showDetailsMouseClick = function(key, $event) {
+    $scope.showDetailsMouseClick = function(group, $event) {
         $event.stopPropagation();
-        $scope.moreInfo[key]=!$scope.moreInfo[key];
-        console.log(key);
+        $scope.moreInfo[group.groupId]=!$scope.moreInfo[group.groupId];
     };
 
     $scope.closeMoreInfo = function(key) {

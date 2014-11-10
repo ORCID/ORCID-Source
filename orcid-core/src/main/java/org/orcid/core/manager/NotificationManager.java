@@ -51,10 +51,8 @@ public interface NotificationManager {
 
     void sendClaimReminderEmail(OrcidProfile orcidProfile, int daysUntilActivation);
 
-    void sendProfileDeprecationEmail(ProfileEntity deprecatedProfile, ProfileEntity primaryProfile);
-
     public boolean sendPrivPolicyEmail2014_03(OrcidProfile orcidProfile, URI baseUri);
-    
+
     void sendDelegationRequestEmail(OrcidProfile managed, OrcidProfile trusted, String link);
 
     public List<Notification> findUnsentByOrcid(String orcid);
