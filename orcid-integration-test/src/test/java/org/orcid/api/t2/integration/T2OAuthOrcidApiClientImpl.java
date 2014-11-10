@@ -40,6 +40,7 @@ import org.orcid.jaxb.model.message.OrcidMessage;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
+
 import org.orcid.api.common.OrcidClientHelper;
 
 public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientResponse> {
@@ -466,4 +467,21 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
         return webResource.header("Authorization", "Bearer " + oAuthToken);
     }
 
+    @Override
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML })
+    @Path(FUNDING_PATH)
+    public ClientResponse viewFundingDetailsXml(String orcid, String accessToken) {
+        URI fundingPathWithOrcid = UriBuilder.fromPath(FUNDING_PATH).build(orcid);
+        return getClientResponseWithToken(fundingPathWithOrcid, VND_ORCID_XML, accessToken);
+    }
+
+    @Override
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML })
+    @Path(AFFILIATIONS_PATH)
+    public ClientResponse viewAffiliationDetailsXml(String orcid, String accessToken) {
+        URI affiliationPathWithOrcid = UriBuilder.fromPath(AFFILIATIONS_PATH).build(orcid);
+        return getClientResponseWithToken(affiliationPathWithOrcid, VND_ORCID_XML, accessToken);
+    }
 }

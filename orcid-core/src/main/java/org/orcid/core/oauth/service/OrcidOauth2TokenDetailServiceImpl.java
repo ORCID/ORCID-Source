@@ -176,15 +176,17 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
      * Check if a member have a specific scope over a client
      * @param clientId
      * @param userName
-     * @param scope
-     * @return true if the member have access to the specified scope on the specified user
+     * @param scopes
+     * @return true if the member have access to any of the specified scope on the specified user
      * */
     @Override
-    public boolean checkIfScopeIsAvailableForMember(String clientId, String userName, String scope) {
+    public boolean checkIfScopeIsAvailableForMember(String clientId, String userName, List<String> scopes) {
         List<String> availableScopes = orcidOauth2TokenDetailDao.findAvailableScopesByUserAndClientId(clientId, userName);
         for(String availableScope : availableScopes) {
-            if(availableScope.contains(scope))
-                return true;
+            for(String scope: scopes) {
+                if(availableScope.contains(scope))
+                    return true;
+            }
         }
         return false;
     }

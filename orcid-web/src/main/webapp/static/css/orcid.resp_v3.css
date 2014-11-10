@@ -1819,10 +1819,9 @@ ul.workspace-private-toolbar li.bulk-checkbox-item{
 	position: relative;
 }
 
-.workspace-body-list>li {	
+.workspace-body-list > li {	
 	min-height: 30px;
-	box-shadow: 3px 4px 5px #C9CACB;
-	padding: 5px 5px 0 5px;	
+	box-shadow: 3px 4px 5px #C9CACB;	
 }
 
 .work-list-container h3 {
@@ -4309,7 +4308,6 @@ ul.sources-options{
 
 ul.sources-options li{
 	display: inline-block;
-	margin-left: 15px;
 }
 
 .sources-container-header ul.sources-options li a.glyphicon-trash{
@@ -4364,14 +4362,6 @@ ul.sources-edit-list > li{
 	box-shadow: 3px 4px 5px #C9CACB;
 	display: block;	
 	padding: 5px 5px 0 5px;	
-}
-
-ul.sources-edit-list > li:first-of-type{
-	padding-bottom: 5px;
-}
-
-.sources-header div{
-	
 }
 
 .source-active{
@@ -4812,6 +4802,16 @@ ul.toggle-menu li:hover ul {
 
 .trash-source{
 	text-align: right;
+}
+
+ul.sources-actions{
+	margin: 0;
+	padding: 0;
+}
+
+ul.sources-actions li{
+	list-style-type: none;
+	display: inline;
 }
 
 /* Media Queries */

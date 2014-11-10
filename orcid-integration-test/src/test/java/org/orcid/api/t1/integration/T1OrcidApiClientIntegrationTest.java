@@ -25,12 +25,18 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.api.common.OrcidApiConstants;
 import org.orcid.api.common.OrcidApiService;
+import org.orcid.core.manager.OrcidIndexManager;
+import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.jaxb.model.message.OrcidMessage;
+import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -50,6 +56,18 @@ public class T1OrcidApiClientIntegrationTest extends DBUnitTest {
 
     private static String ORCID = "4444-4444-4444-4441";
 
+    @Resource
+    private OrcidApiService<ClientResponse> t1Client;
+
+    @Resource
+    private ProfileDao profileDao;
+
+    @Resource
+    private OrcidProfileManager orcidProfileManager;
+
+    @Resource
+    private OrcidIndexManager orcidIndexManager;
+
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(DATA_FILES);
@@ -62,8 +80,13 @@ public class T1OrcidApiClientIntegrationTest extends DBUnitTest {
                 "/data/EmptyEntityData.xml"));
     }
 
-    @Resource
-    private OrcidApiService<ClientResponse> t1Client;
+    @Before
+    public void indexAll() {
+        for (ProfileEntity profileEntity : profileDao.getAll()) {
+            OrcidProfile orcidProfile = orcidProfileManager.retrieveClaimedOrcidProfile(profileEntity.getId());
+            orcidIndexManager.persistProfileInformationForIndexing(orcidProfile);
+        }
+    }
 
     @Test
     public void testStatus() {

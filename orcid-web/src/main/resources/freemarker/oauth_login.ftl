@@ -17,11 +17,7 @@
 
 -->
 <@base>
-<#if RequestParameters['twoSteps']??>
-	<div class="container oauth-login top-green-border">	
-<#else>
 	<div class="container oauth-login top-green-border oneStepWidth">
-</#if>
 	<div class="row">
 		<div class="col-push-3 col-md-9">
 		    <div class="logo">
@@ -38,13 +34,8 @@
 	    </#if>
     </div>
     <div class="row">
-		<#include "sandbox_warning.ftl"/>		
-		<#if RequestParameters['twoSteps']??>			
-			<#include "oauth_sign_in.ftl"/>
-			<#include "oauth_sign_up.ftl"/>
-		<#else>
-			<#include "oauth_one_step.ftl"/>			
-		</#if>
+		<#include "sandbox_warning.ftl"/>
+		<#include "oauth_login_and_sign_up.ftl"/>
 	</div>
 </div>
 </@base>

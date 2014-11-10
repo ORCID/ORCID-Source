@@ -60,9 +60,7 @@ public class ValidationManagerImpl implements ValidationManager {
 
     private boolean validateBibtex = true;
     
-    private boolean validateTitle = false;
-    
-    private boolean validateWorkType = false;
+    private boolean validateTitle = false;        
     
     private boolean validateOnlyOnePrimaryEmail = false;
     
@@ -93,14 +91,6 @@ public class ValidationManagerImpl implements ValidationManager {
     
     public void setValidateTitle(boolean validateTitle) {
         this.validateTitle = validateTitle;
-    }
-
-    public boolean isValidateWorkType() {
-        return validateWorkType;
-    }
-
-    public void setValidateWorkType(boolean validateWorkType) {
-        this.validateWorkType = validateWorkType;
     }
 
     public boolean isValidateOnlyOnePrimaryEmail() {
@@ -223,13 +213,6 @@ public class ValidationManagerImpl implements ValidationManager {
                 throw new OrcidValidationException("Invalid Title: title cannot be null nor emtpy");
             }
         }  
-        
-        //TODO: This will be valid during the transition to new work types, after that, we can remove the work type validation
-        if(validateWorkType){            
-            if(orcidWork.getWorkType() != null && orcidWork.getWorkType().isDeprecated()){
-                throw new OrcidValidationException("Invalid work type: Type " + orcidWork.getWorkType().value() + " is deprecated");
-            }
-        }
         
         if(validateWorksHaveExternalIds) {
             if(orcidWork.getWorkExternalIdentifiers() == null || orcidWork.getWorkExternalIdentifiers().getWorkExternalIdentifier() == null || orcidWork.getWorkExternalIdentifiers().getWorkExternalIdentifier().isEmpty()) {

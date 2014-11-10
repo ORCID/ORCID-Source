@@ -34,7 +34,6 @@ import org.orcid.core.security.DeprecatedException;
 import org.orcid.core.version.OrcidMessageVersionConverterChain;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.persistence.dao.ProfileDao;
-import org.springframework.beans.factory.InitializingBean;
 
 /**
  * 
@@ -88,7 +87,6 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
             incomingValidationManagerImpl.setVersion(externalVersion);
             incomingValidationManagerImpl.setRequireOrcidProfile(true);
             incomingValidationManagerImpl.setValidateTitle(true);
-            incomingValidationManagerImpl.setValidateWorkType(true);
             setIncomingValidationManager(incomingValidationManagerImpl);
         }
 

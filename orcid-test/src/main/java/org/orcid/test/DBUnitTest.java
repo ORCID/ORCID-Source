@@ -20,7 +20,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.AmbiguousTableNameException;
 import org.dbunit.database.DatabaseConfig;
@@ -79,6 +78,7 @@ public class DBUnitTest {
         dataSet.addTable("other_name");
         dataSet.addTable("profile_keyword");
         dataSet.addTable("profile_work");
+        dataSet.addTable("profile_event");
         dataSet.addTable("researcher_url");
         dataSet.addTable("email");
         dataSet.addTable("external_identifier");
