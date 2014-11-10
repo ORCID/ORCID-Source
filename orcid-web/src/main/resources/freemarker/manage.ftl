@@ -161,6 +161,7 @@
 	                    ng-show="showEditEmailPreferences" ng-cloak>
 	                    <td colspan="2">
 	                        <div class="control-group">
+	                            <div>${springMacroRequestContext.getMessage("manage.send_email_to_primary_1")}{{emailSrvc.primaryEmail.value}}${springMacroRequestContext.getMessage("manage.send_email_to_primary_2")}<a href="" ng-click="openEmailEdit()">${springMacroRequestContext.getMessage("manage.send_email_to_primary_3")}</a></div>
                                 <label for="sendEmailFrequencyDays"
                                     class="">${springMacroRequestContext.getMessage("manage.send_email_frequency")}</label>
                                 <div class="relative">

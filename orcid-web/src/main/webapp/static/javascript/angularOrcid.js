@@ -1439,6 +1439,12 @@ function EditTableCtrl($scope) {
         $scope.showEditEmail = !$scope.showEditEmail;
         $scope.emailUpdateToggleText();
     };
+    
+    $scope.openEmailEdit = function() {
+        $scope.showEditEmail = true;
+        $scope.emailUpdateToggleText();
+        window.location.hash = "#editEmail"
+    };
 
     // init email edit row
     $scope.showEditEmail = (window.location.hash === "#editEmail");
@@ -1542,8 +1548,9 @@ function EditTableCtrl($scope) {
     $scope.socialNetworksUpdateToggleText();
 };
 
-function NotificationPreferencesCtrl($scope, $compile, emailSrvc, prefsSrvc) {
+function NotificationPreferencesCtrl($scope, $compile, emailSrvc, prefsSrvc, emailSrvc) {
     $scope.prefsSrvc = prefsSrvc;
+    $scope.emailSrvc = emailSrvc;
 };
 
 function WorksPrivacyPreferencesCtrl($scope, prefsSrvc) {
