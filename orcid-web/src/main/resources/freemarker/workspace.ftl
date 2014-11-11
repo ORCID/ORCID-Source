@@ -65,7 +65,19 @@
 				<span class='st_linkedin_custom st_custom social' st_url="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" st_title="<@orcid.msg 'orcid_social.linkedin.message.title'/>" st_image="${staticCdn}/img/orcid-logo.png" st_summary="<@orcid.msg 'orcid_social.linkedin.message.summary'/>"></span>
             </div>
             </#if>
-            
+            <!-- QR code -->
+            <div>
+                <a href="http://qrcode.orcid.org"><@orcid.msg 'workspace.qrcode.link.text'/></span>
+                <div class="popover-help-container">
+                    <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                    <div id="qrcode-help" class="popover bottom">
+                        <div class="arrow"></div>
+                        <div class="popover-content">
+                            <p><@orcid.msg 'workspace.qrcode.help'/></p>                        
+                        </div>                
+                    </div>
+                </div>
+            </div>
             <!-- Also Known as -->
 	       	<div class="other-names-box">
 		       	<div ng-controller="OtherNamesCtrl" class="other-names-controller">
@@ -540,5 +552,5 @@
 		</div>
 	</#if>
 </script>
-	
+
 </@protected>
