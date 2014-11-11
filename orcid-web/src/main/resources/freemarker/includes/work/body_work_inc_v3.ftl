@@ -25,45 +25,10 @@
                 <!-- Header -->
                 <li ng-show="editSources[group.groupId] == true" ng-class="{'source-active' : editSources[group.groupId] == true}" ng-model="group.activities">
                     <div class="sources-header">
-                        
-                        <div class="row bottomBuffer">
-                            <div class="col-md-8 col-sm-4">
-                               <span>
-                                    <a ng-click="hideSources(group)">
-                                        <span class="glyphicon glyphicon-remove"></span> Hide additional sources
-                                    </a>
-                               </span>
-                                <#if !(isPublicProfile??)>
-                                    <span ng-show="editSources[group.groupId] == true">
-                                        <a ng-click="deleteWorkConfirm(group.getActive().putCode.value, true)">
-                                            <span class="glyphicon glyphicon-trash"></span> Delete all
-                                        </a>
-                                    </span>
-                                </#if>                  
-                            </div>
-                            <#if !(isPublicProfile??)>
-                                <div class="col-md-4 col-sm-4 workspace-toolbar">
-                                    <ul class="workspace-private-toolbar">   
-                                    	<li ng-show="bulkEditShow">
-                                    		<input type="checkbox" ng-model="bulkEditMap[group.getActive().putCode.value]" class="bulk-edit-input ng-valid ng-dirty">
-                                    	</li>
-                                        <li>
-                                            <@orcid.privacyToggle2 angularModel="group.getActive().visibility"
-                                                questionClick="toggleClickPrivacyHelp(group.getActive().putCode)"
-                                                clickedClassCheck="{'popover-help-container-show':privacyHelp[group.getActive().putCode.value]==true}"
-                                                publicClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PUBLIC', $event)"
-                                                limitedClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'LIMITED', $event)"
-                                                privateClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PRIVATE', $event)"/>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </#if>
-                        </div>
-                    
                         <div class="row">                      
-                            <div class="col-md-4 col-sm-4 col-xs-4">
+                            <div class="col-md-3 col-sm-4 col-xs-4">
                                 <div class="">
-                                    <strong >Source</strong>
+                                    <strong >Sources</strong>
                                 </div>
                             </div>
                             <div class="col-md-3 col-sm-3 col-xs-3">
@@ -75,9 +40,26 @@
                                 	<strong>Preferred</strong>
                                 </#if>
                             </div>
-                            <div class="col-md-2 col-sm-2 col-xs-2 right">
+                            <div class="col-md-3 col-sm-2 col-xs-2 right">
                             	<#if !(isPublicProfile??)>
-                                	<strong>Actions</strong>
+                                	<div class="workspace-toolbar">
+	                                    <ul class="workspace-private-toolbar">   
+	                                    	<li ng-show="bulkEditShow">
+	                                    		<input type="checkbox" ng-model="bulkEditMap[group.getActive().putCode.value]" class="bulk-edit-input ng-valid ng-dirty">
+	                                    	</li>
+	                                    	<li class="sources-view">
+	                                    		<a ng-click="hideSources(group)"><span class="glyphicons book_open"></span></a>
+	                                    	</li>
+	                                        <li>
+	                                            <@orcid.privacyToggle2 angularModel="group.getActive().visibility"
+	                                                questionClick="toggleClickPrivacyHelp(group.getActive().putCode)"
+	                                                clickedClassCheck="{'popover-help-container-show':privacyHelp[group.getActive().putCode.value]==true}"
+	                                                publicClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PUBLIC', $event)"
+	                                                limitedClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'LIMITED', $event)"
+	                                                privateClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PRIVATE', $event)"/>
+	                                        </li>
+	                                    </ul>
+	                                </div>
                                 </#if>	
                             </div>
                         </div>

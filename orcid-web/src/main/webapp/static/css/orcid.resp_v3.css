@@ -1022,7 +1022,7 @@ h1,h2,h3,h4,h5,h6,b,strong,.table th,.close,.nav-header,.label,.badge,.header .s
 	margin: 0px;
 	padding: 0px;
 	width: 98px;
-	height: 29px;
+	height: 34px;
 }
 
 .privacyToggle li {
@@ -1610,7 +1610,6 @@ a:hover {
 }
 
 .workspace-toolbar{
-    line-height: 30px;
 	margin-top: 0;
 	padding-left: 0;	
 }
@@ -1621,8 +1620,8 @@ a:hover {
 	float:right;
 }
 
-.workspace-private-toolbar li{
-	display: inline;
+.workspace-private-toolbar li{	
+	display: inline-block;
 }
 
 ul.workspace-private-toolbar li.bulk-checkbox-item{
@@ -2758,12 +2757,6 @@ header overrides
 	height: 30px;
 	display: block;	
 	float: left;		
-}
-
-ul.workspace-private-toolbar > li{
-	display: inline-block;
-	padding: 0;	
-	margin-bottom: -6px;
 }
 
 .popover-form .input-xlarge {
@@ -4871,10 +4864,6 @@ ul.sources-actions li{
 	color: #FFF;
 }
 
-ul.sources-edit-list ul.workspace-private-toolbar > li{
-	vertical-align: top;
-}
-
 ul.sources-edit-list ul.workspace-private-toolbar .git_create:before{
 	font-size: 17px;
 	position: absolute;
@@ -4895,13 +4884,46 @@ ul.sources-edit-list .workspace-private-toolbar .git_create:hover:before{
 	color: #FFF;
 }
 
-ul.sources-edit-list ul.sources-actions .git_create:hover:before{
+ul.sources-edit-list ul.sources-actions .git_create:hover:before{necessary
 	color: rgb(166, 206, 57);	
 }
 
-.sources-header .workspace-toolbar ul.workspace-private-toolbar li:first-of-type{
-	margin-right: 70px;
+.workspace-toolbar ul.workspace-private-toolbar li{
+	margin-bottom: 4px;
+	float: left;
+	margin-right: 5px;
 }
+
+.workspace-toolbar ul.workspace-private-toolbar li.sources-view a{
+	height: 22px;
+	width: 22px;
+	display: block;	
+	color: #939598;
+	background: #C9CACB;
+	border-radius: 50%;
+	-webkit-border-radius: 50%;
+	-moz-border-radius: 50%;
+	padding: 15px;		
+}
+
+.workspace-toolbar ul.workspace-private-toolbar li.sources-view a:hover{
+	background: rgb(166, 206, 57);
+}
+
+.workspace-toolbar ul.workspace-private-toolbar li.sources-view > a >span:before{
+	top: -20px;
+	left: -8px;
+	color: #939598;
+	font-size: 17px;
+}
+
+.workspace-toolbar ul.workspace-private-toolbar li.sources-view a:hover > span:before{
+	color: #FFF;
+}
+
+
+
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
