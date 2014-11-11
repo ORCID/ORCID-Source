@@ -190,6 +190,12 @@
 	                                ng-change="prefsSrvc.savePrivacyPreferences()" />
 	                                ${springMacroRequestContext.getMessage("change_email_preferences.sendinformation")}
 	                            </label>
+	                            <label class="checkbox"> <input type="checkbox"
+                                    id="sendOrcidFeatureAnnouncements" name="sendOrcidFeatureAnnouncements"
+                                    ng-model="prefsSrvc.prefs.sendOrcidFeatureAnnouncements"
+                                    ng-change="prefsSrvc.savePrivacyPreferences()" />
+                                    ${springMacroRequestContext.getMessage("change_email_preferences.sendfeatureannouncements")}
+                                </label>
 	                            <p>
 	                                <strong>${springMacroRequestContext.getMessage("change_email_preferences.privacy")}</strong>
 	                                ${springMacroRequestContext.getMessage("change_email_preferences.yourregistrationinfo")}

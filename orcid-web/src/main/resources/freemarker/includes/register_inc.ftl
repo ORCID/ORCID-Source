@@ -122,6 +122,12 @@
                 <input type="checkbox" tabindex="8" name="sendOrcidNews" ng-model="register.sendOrcidNews.value"/>
                 ${springMacroRequestContext.getMessage("register.labelsendinformation")}
             </label>
+            <#-- Comment in when notifications stuff done
+            <label class="checkbox">
+                <input type="checkbox" tabindex="8" name="sendOrcidNews" ng-model="register.sendOrcidFeatureAnnouncements.value"/>
+                ${springMacroRequestContext.getMessage("register.labelsendfeatureannouncements")}
+            </label>
+            -->
          </div>
 	</div>
     <div>

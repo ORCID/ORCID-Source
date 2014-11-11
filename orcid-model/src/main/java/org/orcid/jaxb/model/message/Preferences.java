@@ -47,6 +47,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}send-email-frequency-days"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}send-change-notifications"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}send-orcid-news"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}send-orcid-feature-announcements"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}activities-visibility-default"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}developer-tools-enabled" minOccurs="0"/>
  *       &lt;/sequence>
@@ -58,8 +59,8 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "sendEmailFrequencyDays", "sendChangeNotifications", "sendOrcidNews", "activitiesVisibilityDefault", "workVisibilityDefault",
-        "developerToolsEnabled" })
+@XmlType(name = "", propOrder = { "sendEmailFrequencyDays", "sendChangeNotifications", "sendOrcidNews", "sendOrcidFeatureAnnouncements", "activitiesVisibilityDefault",
+        "workVisibilityDefault", "developerToolsEnabled" })
 @XmlRootElement(name = "preferences")
 public class Preferences implements Serializable {
 
@@ -70,6 +71,8 @@ public class Preferences implements Serializable {
     protected SendChangeNotifications sendChangeNotifications;
     @XmlElement(name = "send-orcid-news", required = true)
     protected SendOrcidNews sendOrcidNews;
+    @XmlElement(name = "send-orcid-feature-announcments", required = true)
+    protected Boolean sendOrcidFeatureAnnouncements;
     // as of 1.2_rc4 WorkVisibilityDefault is replaced by
     // ActivitiesVisibilityDefault
     @XmlElement(name = "work-visibility-default")
@@ -139,10 +142,20 @@ public class Preferences implements Serializable {
         this.sendOrcidNews = value;
     }
 
+    public Boolean getSendOrcidFeatureAnnouncements() {
+        return sendOrcidFeatureAnnouncements;
+    }
+
+    public void setSendOrcidFeatureAnnouncements(Boolean sendOrcidFeatureAnnouncements) {
+        this.sendOrcidFeatureAnnouncements = sendOrcidFeatureAnnouncements;
+    }
+
     /**
      * Gets the value of the workVisibilityDefault property.
      * 
      * @deprecated use             {@getActivitiesVisibilityDefault
+     * 
+     * 
      * 
      * 
      * } instead.

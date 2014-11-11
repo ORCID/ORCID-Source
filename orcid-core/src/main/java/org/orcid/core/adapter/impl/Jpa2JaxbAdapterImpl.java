@@ -1081,6 +1081,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         preferences.setSendChangeNotifications(profileEntity.getSendChangeNotifications() == null ? null : new SendChangeNotifications(profileEntity
                 .getSendChangeNotifications()));
         preferences.setSendOrcidNews(profileEntity.getSendOrcidNews() == null ? null : new SendOrcidNews(profileEntity.getSendOrcidNews()));
+        preferences.setSendOrcidFeatureAnnouncements(profileEntity.getSendOrcidFeatureAnnouncements());
         // This column is constrained as not null in the DB so don't have to
         // worry about null!
         preferences.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(profileEntity.getActivitiesVisibilityDefault()));

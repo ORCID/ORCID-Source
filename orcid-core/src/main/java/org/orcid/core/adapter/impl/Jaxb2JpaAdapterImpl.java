@@ -851,6 +851,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                         : sendEmailFrequencyDays));
                 profileEntity.setSendChangeNotifications(preferences.getSendChangeNotifications() == null ? null : preferences.getSendChangeNotifications().isValue());
                 profileEntity.setSendOrcidNews(preferences.getSendOrcidNews() == null ? null : preferences.getSendOrcidNews().isValue());
+                profileEntity.setSendOrcidFeatureAnnouncements(preferences.getSendOrcidFeatureAnnouncements() == null ? null : preferences.getSendOrcidFeatureAnnouncements());
                 // ActivitiesVisibilityDefault default is WorkVisibilityDefault
                 if (preferences.getActivitiesVisibilityDefault() != null) {
                     profileEntity.setActivitiesVisibilityDefault(preferences.getActivitiesVisibilityDefault().getValue());
