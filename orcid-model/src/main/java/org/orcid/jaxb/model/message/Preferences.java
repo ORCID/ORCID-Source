@@ -71,7 +71,7 @@ public class Preferences implements Serializable {
     protected SendChangeNotifications sendChangeNotifications;
     @XmlElement(name = "send-orcid-news", required = true)
     protected SendOrcidNews sendOrcidNews;
-    @XmlElement(name = "send-orcid-feature-announcments", required = true)
+    @XmlElement(name = "send-orcid-feature-announcements", required = true)
     protected Boolean sendOrcidFeatureAnnouncements;
     // as of 1.2_rc4 WorkVisibilityDefault is replaced by
     // ActivitiesVisibilityDefault
