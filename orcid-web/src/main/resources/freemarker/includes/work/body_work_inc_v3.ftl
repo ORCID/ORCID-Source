@@ -27,23 +27,26 @@
                     <div class="sources-header">
                         
                         <div class="row bottomBuffer">
-                            <div class="col-md-9">
+                            <div class="col-md-8 col-sm-4">
                                <span>
                                     <a ng-click="hideSources(group)">
-                                        <span class="glyphicon glyphicon-remove" ng-show="!bulkEditShow"></span> Hide additional sources
+                                        <span class="glyphicon glyphicon-remove"></span> Hide additional sources
                                     </a>
                                </span>
                                 <#if !(isPublicProfile??)>
                                     <span ng-show="editSources[group.groupId] == true">
                                         <a ng-click="deleteWorkConfirm(group.getActive().putCode.value, true)">
-                                            <span class="glyphicon glyphicon-trash" ng-show="!bulkEditShow"></span> Delete all
+                                            <span class="glyphicon glyphicon-trash"></span> Delete all
                                         </a>
                                     </span>
                                 </#if>                  
                             </div>
                             <#if !(isPublicProfile??)>
-                                <div class="col-md-3 col-sm-3 workspace-toolbar">
-                                    <ul class="workspace-private-toolbar">
+                                <div class="col-md-4 col-sm-4 workspace-toolbar">
+                                    <ul class="workspace-private-toolbar">   
+                                    	<li ng-show="bulkEditShow">
+                                    		<input type="checkbox" ng-model="bulkEditMap[group.getActive().putCode.value]" class="bulk-edit-input ng-valid ng-dirty">
+                                    	</li>
                                         <li>
                                             <@orcid.privacyToggle2 angularModel="group.getActive().visibility"
                                                 questionClick="toggleClickPrivacyHelp(group.getActive().putCode)"
@@ -90,7 +93,8 @@
                     <div class="row" ng-show="group.activePutCode == work.putCode.value">
                         <div class="col-md-8 col-sm-12 col-xs-12">
                             <h3 class="workspace-title">
-                                <strong ng-bind="work.workTitle.title.value"></strong><span class="work-subtitle" ng-show="work.workTitle.subtitle.value" ng-bind="':&nbsp;'.concat(work.workTitle.subtitle.value)"></span>                                     
+                                <strong ng-bind="work.workTitle.title.value"></strong>
+                                <span class="journaltitle" ng-show="work.journalTitle.value" ng-bind="':&nbsp;'.concat(work.journalTitle.value)"></span>                                     
                             </h3>
                             <div ng-show="bulkEditShow == true" class="bulk-edit-input hidden-lg hidden-md hidden-sm pull-right">
 				        		<input type="checkbox" ng-model="bulkEditMap[work.putCode.value]" class="ng-pristine ng-valid">
@@ -177,9 +181,6 @@
                       		<div ng-show="editSources[group.groupId] == true">
 					        <#if !(isPublicProfile??)>
 					        	<ul class="sources-actions">
-					        		<li ng-show="bulkEditShow">
-                                		<input type="checkbox" ng-model="bulkEditMap[work.putCode.value]" class="bulk-edit-input ng-valid ng-dirty">
-                                	</li>
 					        		<li>
 					        			<a class="glyphicon glyphicon-transfer" ng-click="showCombineMatches(group.getDefault())"></a>
 					        		</li>
@@ -222,9 +223,6 @@
                         <div class="col-md-2 col-sm-2 col-xs-12 trash-source">
                             <#if !(isPublicProfile??)>
                                 <ul class="sources-actions">
-                                	<li ng-show="bulkEditShow">
-                                		<input type="checkbox" ng-model="bulkEditMap[work.putCode.value]" class="bulk-edit-input ng-valid ng-dirty">
-                                	</li>
                                 	<li>
 					        			<a class="glyphicon glyphicon-transfer" ng-click="showCombineMatches(group.getDefault())"></a>
 					        		</li>
