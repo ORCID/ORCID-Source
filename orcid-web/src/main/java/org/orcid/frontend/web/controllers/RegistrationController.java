@@ -120,7 +120,7 @@ import org.springframework.web.servlet.support.RequestContextUtils;
  */
 @Controller
 public class RegistrationController extends BaseController {
-    
+
     public static Pattern givenNamesPattern = Pattern.compile("given_names=([^&]*)");
     public static Pattern familyNamesPattern = Pattern.compile("family_names=([^&]*)");
     public static Pattern emailPattern = Pattern.compile("email=([^&]*)");
@@ -194,8 +194,7 @@ public class RegistrationController extends BaseController {
     }
 
     @RequestMapping(value = "/register.json", method = RequestMethod.GET)
-    public @ResponseBody
-    Registration getRegister(HttpServletRequest request, HttpServletResponse response) {
+    public @ResponseBody Registration getRegister(HttpServletRequest request, HttpServletResponse response) {
         Registration reg = new Registration();
 
         reg.getEmail().setRequired(true);
@@ -214,7 +213,7 @@ public class RegistrationController extends BaseController {
         reg.getSendOrcidNews().setValue(true);
         reg.getTermsOfUse().setValue(false);
         setError(reg.getTermsOfUse(), "AssertTrue.registrationForm.acceptTermsAndConditions");
-        
+
         SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
         if (savedRequest != null) {
             String url = savedRequest.getRedirectUrl();
@@ -230,13 +229,13 @@ public class RegistrationController extends BaseController {
                     reg.getEmail().setValue(tempEmail);
                 }
             }
-            
+
             Matcher givenNamesMatcher = givenNamesPattern.matcher(url);
             if (givenNamesMatcher.find())
                 try {
                     reg.getGivenNames().setValue(URLDecoder.decode(givenNamesMatcher.group(1), "UTF-8"));
                 } catch (UnsupportedEncodingException e) {
-                    LOGGER.info("error parsing users family name from oauth url",e);
+                    LOGGER.info("error parsing users family name from oauth url", e);
                 }
 
             Matcher familyNamesMatcher = familyNamesPattern.matcher(url);
@@ -244,7 +243,7 @@ public class RegistrationController extends BaseController {
                 try {
                     reg.getFamilyNames().setValue(URLDecoder.decode(familyNamesMatcher.group(1), "UTF-8"));
                 } catch (UnsupportedEncodingException e) {
-                    LOGGER.info("error parsing users family name from oauth url",e);
+                    LOGGER.info("error parsing users family name from oauth url", e);
                 }
         }
 
@@ -279,7 +278,7 @@ public class RegistrationController extends BaseController {
         OrcidHistory orcidHistory = new OrcidHistory();
         orcidHistory.setClaimed(new Claimed(true));
         orcidHistory.setCreationMethod(CreationMethod.fromValue(reg.getCreationType().getValue()));
-        
+
         profile.setOrcidHistory(orcidHistory);
         orcidHistory.setSubmissionDate(new SubmissionDate(DateUtils.convertToXMLGregorianCalendar(new Date())));
 
@@ -290,8 +289,7 @@ public class RegistrationController extends BaseController {
     }
 
     @RequestMapping(value = "/register.json", method = RequestMethod.POST)
-    public @ResponseBody
-    Registration setRegister(HttpServletRequest request, @RequestBody Registration reg) {
+    public @ResponseBody Registration setRegister(HttpServletRequest request, @RequestBody Registration reg) {
         reg.setErrors(new ArrayList<String>());
 
         registerGivenNameValidate(reg);
@@ -311,8 +309,7 @@ public class RegistrationController extends BaseController {
     }
 
     @RequestMapping(value = "/registerConfirm.json", method = RequestMethod.POST)
-    public @ResponseBody
-    Redirect setRegisterConfirm(HttpServletRequest request, HttpServletResponse response, @RequestBody Registration reg) {
+    public @ResponseBody Redirect setRegisterConfirm(HttpServletRequest request, HttpServletResponse response, @RequestBody Registration reg) {
         Redirect r = new Redirect();
 
         // make sure validation still passes
@@ -348,29 +345,25 @@ public class RegistrationController extends BaseController {
     }
 
     @RequestMapping(value = "/registerPasswordConfirmValidate.json", method = RequestMethod.POST)
-    public @ResponseBody
-    Registration registerPasswordConfirmValidate(@RequestBody Registration reg) {
+    public @ResponseBody Registration registerPasswordConfirmValidate(@RequestBody Registration reg) {
         passwordConfirmValidate(reg.getPasswordConfirm(), reg.getPassword());
         return reg;
     }
 
     @RequestMapping(value = "/registerPasswordValidate.json", method = RequestMethod.POST)
-    public @ResponseBody
-    Registration registerPasswordValidate(@RequestBody Registration reg) {
+    public @ResponseBody Registration registerPasswordValidate(@RequestBody Registration reg) {
         passwordValidate(reg.getPasswordConfirm(), reg.getPassword());
         return reg;
     }
 
     @RequestMapping(value = "/claimPasswordConfirmValidate.json", method = RequestMethod.POST)
-    public @ResponseBody
-    Claim claimPasswordConfirmValidate(@RequestBody Claim claim) {
+    public @ResponseBody Claim claimPasswordConfirmValidate(@RequestBody Claim claim) {
         passwordConfirmValidate(claim.getPasswordConfirm(), claim.getPassword());
         return claim;
     }
 
     @RequestMapping(value = "/claimPasswordValidate.json", method = RequestMethod.POST)
-    public @ResponseBody
-    Claim claimPasswordValidate(@RequestBody Claim claim) {
+    public @ResponseBody Claim claimPasswordValidate(@RequestBody Claim claim) {
         passwordValidate(claim.getPasswordConfirm(), claim.getPassword());
         return claim;
     }
@@ -396,15 +389,13 @@ public class RegistrationController extends BaseController {
     }
 
     @RequestMapping(value = "/registerTermsOfUseValidate.json", method = RequestMethod.POST)
-    public @ResponseBody
-    Registration registerTermsOfUseValidate(@RequestBody Registration reg) {
+    public @ResponseBody Registration registerTermsOfUseValidate(@RequestBody Registration reg) {
         termsOfUserValidate(reg.getTermsOfUse());
         return reg;
     }
 
     @RequestMapping(value = "/claimTermsOfUseValidate.json", method = RequestMethod.POST)
-    public @ResponseBody
-    Claim claimTermsOfUseValidate(@RequestBody Claim claim) {
+    public @ResponseBody Claim claimTermsOfUseValidate(@RequestBody Claim claim) {
         termsOfUserValidate(claim.getTermsOfUse());
         return claim;
     }
@@ -417,21 +408,17 @@ public class RegistrationController extends BaseController {
     }
 
     @RequestMapping(value = "/registerGivenNamesValidate.json", method = RequestMethod.POST)
-    public @ResponseBody
-    Registration registerGivenNameValidate(@RequestBody Registration reg) {
+    public @ResponseBody Registration registerGivenNameValidate(@RequestBody Registration reg) {
         super.givenNameValidate(reg.getGivenNames());
         return reg;
     }
 
     @RequestMapping(value = "/registerEmailValidate.json", method = RequestMethod.POST)
-    public @ResponseBody
-    Registration regEmailValidate(HttpServletRequest request, @RequestBody Registration reg) {
+    public @ResponseBody Registration regEmailValidate(HttpServletRequest request, @RequestBody Registration reg) {
         return regEmailValidate(request, reg, false);
     }
-    
-    
-    public 
-    Registration regEmailValidate(HttpServletRequest request, Registration reg, boolean isOauthRequest) {
+
+    public Registration regEmailValidate(HttpServletRequest request, Registration reg, boolean isOauthRequest) {
         reg.getEmail().setErrors(new ArrayList<String>());
         if (reg.getEmail().getValue() == null || reg.getEmail().getValue().trim().isEmpty()) {
             setError(reg.getEmail(), "Email.registrationForm.email");
@@ -442,12 +429,12 @@ public class RegistrationController extends BaseController {
         validateEmailAddress(reg.getEmail().getValue(), false, request, mbr);
 
         for (ObjectError oe : mbr.getAllErrors()) {
-            if(isOauthRequest && oe.getCode().equals("orcid.frontend.verify.duplicate_email")) {
-                //XXX
-                reg.getEmail().getErrors().add(getMessage("oauth.registration.duplicate_email", oe.getArguments()));                
+            if (isOauthRequest && oe.getCode().equals("orcid.frontend.verify.duplicate_email")) {
+                // XXX
+                reg.getEmail().getErrors().add(getMessage("oauth.registration.duplicate_email", oe.getArguments()));
             } else {
                 reg.getEmail().getErrors().add(getMessage(oe.getCode(), oe.getArguments()));
-            }            
+            }
         }
 
         // validate confirm if already field out
@@ -459,12 +446,13 @@ public class RegistrationController extends BaseController {
     }
 
     @RequestMapping(value = "/registerEmailConfirmValidate.json", method = RequestMethod.POST)
-    public @ResponseBody
-    Registration regEmailConfirmValidate(@RequestBody Registration reg) {
+    public @ResponseBody Registration regEmailConfirmValidate(@RequestBody Registration reg) {
         reg.getEmailConfirm().setErrors(new ArrayList<String>());
         // normalize to "" sometimes angular sends null
-        if (reg.getEmail().getValue() == null) reg.getEmail().setValue("");
-        if (reg.getEmailConfirm().getValue() == null) reg.getEmailConfirm().setValue("");
+        if (reg.getEmail().getValue() == null)
+            reg.getEmail().setValue("");
+        if (reg.getEmailConfirm().getValue() == null)
+            reg.getEmailConfirm().setValue("");
         if (!reg.getEmailConfirm().getValue().equalsIgnoreCase(reg.getEmail().getValue())) {
             setError(reg.getEmailConfirm(), "StringMatchIgnoreCase.registrationForm");
         }
@@ -481,8 +469,7 @@ public class RegistrationController extends BaseController {
     }
 
     @RequestMapping(value = "/dupicateResearcher.json", method = RequestMethod.GET)
-    public @ResponseBody
-    List<DupicateResearcher> getDupicateResearcher(@RequestParam("givenNames") String givenNames, @RequestParam("familyNames") String familyNames) {
+    public @ResponseBody List<DupicateResearcher> getDupicateResearcher(@RequestParam("givenNames") String givenNames, @RequestParam("familyNames") String familyNames) {
         List<DupicateResearcher> drList = new ArrayList<DupicateResearcher>();
 
         List<OrcidProfile> potentialDuplicates = findPotentialDuplicatesByFirstNameLastName(givenNames, familyNames);
@@ -588,14 +575,14 @@ public class RegistrationController extends BaseController {
             mav.addAllObjects(bindingResult.getModel());
             return mav;
         } else {
-            if(profile.getOrcidHistory() != null && profile.getOrcidHistory().isClaimed()){
+            if (profile.getOrcidHistory() != null && profile.getOrcidHistory().isClaimed()) {
                 mav.addObject("alreadyClaimed", true);
                 return mav;
             } else {
                 notificationManager.sendApiRecordCreationEmail(userEmailAddress, profile);
                 mav.addObject("claimResendSuccessful", true);
                 return mav;
-            }                        
+            }
         }
     }
 
@@ -647,8 +634,7 @@ public class RegistrationController extends BaseController {
     }
 
     @RequestMapping(value = "/reset-password-form-validate.json", method = RequestMethod.POST)
-    public @ResponseBody
-    PasswordTypeAndConfirmForm resetPasswordConfirmValidate(@RequestBody PasswordTypeAndConfirmForm resetPasswordForm) {
+    public @ResponseBody PasswordTypeAndConfirmForm resetPasswordConfirmValidate(@RequestBody PasswordTypeAndConfirmForm resetPasswordForm) {
         resetPasswordValidateFields(resetPasswordForm.getPassword(), resetPasswordForm.getRetypedPassword());
         return resetPasswordForm;
     }
@@ -669,8 +655,7 @@ public class RegistrationController extends BaseController {
     }
 
     @RequestMapping(value = "/password-reset.json", method = RequestMethod.GET)
-    public @ResponseBody
-    PasswordTypeAndConfirmForm getResetPassword(HttpServletRequest request) {
+    public @ResponseBody PasswordTypeAndConfirmForm getResetPassword(HttpServletRequest request) {
         PasswordTypeAndConfirmForm form = new PasswordTypeAndConfirmForm();
         form.setPassword(new Text());
         form.setRetypedPassword(new Text());
@@ -841,8 +826,7 @@ public class RegistrationController extends BaseController {
     }
 
     @RequestMapping(value = "/claim/{encryptedEmail}.json", method = RequestMethod.GET)
-    public @ResponseBody
-    Claim verifyClaimJson(HttpServletRequest request, @PathVariable("encryptedEmail") String encryptedEmail, RedirectAttributes redirectAttributes)
+    public @ResponseBody Claim verifyClaimJson(HttpServletRequest request, @PathVariable("encryptedEmail") String encryptedEmail, RedirectAttributes redirectAttributes)
             throws NoSuchRequestHandlingMethodException, UnsupportedEncodingException {
         Claim c = new Claim();
         c.getSendChangeNotifications().setValue(true);
@@ -853,8 +837,7 @@ public class RegistrationController extends BaseController {
     }
 
     @RequestMapping(value = "/claim/{encryptedEmail}.json", method = RequestMethod.POST)
-    public @ResponseBody
-    Claim submitClaimJson(HttpServletRequest request, @PathVariable("encryptedEmail") String encryptedEmail, @RequestBody Claim claim)
+    public @ResponseBody Claim submitClaimJson(HttpServletRequest request, @PathVariable("encryptedEmail") String encryptedEmail, @RequestBody Claim claim)
             throws NoSuchRequestHandlingMethodException, UnsupportedEncodingException {
         claim.setErrors(new ArrayList<String>());
         String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
@@ -977,20 +960,19 @@ public class RegistrationController extends BaseController {
         }
 
     }
-    
+
     public OrcidProfile createMinimalRegistration(HttpServletRequest request, OrcidProfile profileToSave) {
         orcidProfileManager.addLocale(profileToSave, RequestContextUtils.getLocale(request));
-        URI uri = OrcidWebUtils.getServerUriWithContextPath(request);        
+        URI uri = OrcidWebUtils.getServerUriWithContextPath(request);
         String sessionId = request.getSession() == null ? null : request.getSession().getId();
         String email = profileToSave.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
-        
+
         LOGGER.info("About to create profile from registration email={}, sessionid={}", email, sessionId);
         profileToSave = registrationManager.createMinimalRegistration(profileToSave);
         notificationManager.sendVerificationEmail(profileToSave, uri, profileToSave.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
         request.getSession().setAttribute(ManageProfileController.CHECK_EMAIL_VALIDATED, false);
-        LOGGER.info("Created profile from registration orcid={}, email={}, sessionid={}", new Object[] { profileToSave.getOrcidIdentifier().getPath(), email,
-                sessionId });
-        return profileToSave;        
+        LOGGER.info("Created profile from registration orcid={}, email={}, sessionid={}", new Object[] { profileToSave.getOrcidIdentifier().getPath(), email, sessionId });
+        return profileToSave;
     }
 
 }
