@@ -41,13 +41,13 @@
 					<div ng-bind="worksSrvc.details[work.putCode.value].languageName.value"></div>					
 				</div>
 			</div>
-			<div class="col-md-6" ng-show="worksSrvc.details[work.putCode.value].journalTitle.value" ng-cloak>
-				<!-- Journal Title -->
+			<div class="col-md-6" ng-show="worksSrvc.details[work.putCode.value].workTitle.subtitle.value" ng-cloak>
 				<div class="bottomBuffer">
-					<strong> <@orcid.msg 'manual_work_form_contents.journalTitle'/> </strong>
-					<div ng-bind="worksSrvc.details[work.putCode.value].journalTitle.value"></div>
+					<strong> <@orcid.msg 'manual_work_form_contents.labelsubtitle'/> </strong>
+					<div ng-bind="worksSrvc.details[work.putCode.value].workTitle.subtitle.value"></div>
 				</div>
 			</div>
+			
 			<div class="col-md-6" ng-show="worksSrvc.details[work.putCode.value].url.value" ng-cloak>
 				<!-- URL -->				
 				<div class="bottomBuffer">
