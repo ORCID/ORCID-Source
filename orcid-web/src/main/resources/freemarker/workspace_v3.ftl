@@ -324,8 +324,8 @@
 													</div>
 													<div>
 														<ul class="dropdown-menu" role="menu" id="special-menu" ng-class="{'block': bulkDisplayToggle == true}">
-												          <li><a href="" ng-click="bulkChangeAll(true); bulkDisplayToggle = false;">Select all</a></li>
-												          <li><a href="" ng-click="bulkChangeAll(false); bulkDisplayToggle = false;">Deselect all</a></li>							          							          
+												          <li><a href="" ng-click="bulkChangeAll(true); bulkDisplayToggle = false;">All selected</a></li>
+												          <li><a href="" ng-click="bulkChangeAll(false); bulkDisplayToggle = false;">None selected</a></li>							          							          
 												        </ul>			
 													</div>
 												</div>
