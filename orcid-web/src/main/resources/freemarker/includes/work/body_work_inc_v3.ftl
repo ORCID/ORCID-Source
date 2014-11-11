@@ -93,7 +93,8 @@
                     <div class="row" ng-show="group.activePutCode == work.putCode.value">
                         <div class="col-md-8 col-sm-12 col-xs-12">
                             <h3 class="workspace-title">
-                                <strong ng-bind="work.workTitle.title.value"></strong><span class="work-subtitle" ng-show="work.workTitle.subtitle.value" ng-bind="':&nbsp;'.concat(work.workTitle.subtitle.value)"></span>                                     
+                                <strong ng-bind="work.workTitle.title.value"></strong>
+                                <span class="journaltitle" ng-show="work.journalTitle.value" ng-bind="':&nbsp;'.concat(work.journalTitle.value)"></span>                                     
                             </h3>
                             <div ng-show="bulkEditShow == true" class="bulk-edit-input hidden-lg hidden-md hidden-sm pull-right">
 				        		<input type="checkbox" ng-model="bulkEditMap[work.putCode.value]" class="ng-pristine ng-valid">
