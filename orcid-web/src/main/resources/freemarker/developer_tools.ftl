@@ -26,54 +26,47 @@
 		
 			<#if profile.orcidInternal?? && profile.orcidInternal.preferences.developerToolsEnabled?? && profile.orcidInternal.preferences.developerToolsEnabled.value == false>
 				<h1 id="manage-developer-tools">
-					<span><@spring.message "manage.developer_tools.title"/></span>					
+					<span><@spring.message "manage.developer_tools.user.title"/></span>					
 				</h1>
 				<#if !inDelegationMode || isDelegatedByAdmin>
-					<div class="sso-api" ng-controller="SSOPreferencesCtrl">
-						<#if profile.orcidInternal?? && profile.orcidInternal.preferences.developerToolsEnabled?? && profile.orcidInternal.preferences.developerToolsEnabled.value == false>
-							<div class="row">
-								<div class="col-md-12 col-sm-12 col-xs-12">
-									<p><@orcid.msg 'developer_tools.client_types.description' /></p>
-									<ul class="dotted">
-										<li><strong><@orcid.msg 'developer_tools.client_types.description.public.title' /></strong> <@orcid.msg 'developer_tools.client_types.description.public.description' /></li>
-										<li><strong><@orcid.msg 'developer_tools.client_types.description.basic.title' /></strong> <@orcid.msg 'developer_tools.client_types.description.basic.description' /></li>
-										<li><strong><@orcid.msg 'developer_tools.client_types.description.premium.title' /></strong> <@orcid.msg 'developer_tools.client_types.description.premium.description' /></li>
-									</ul>
-									<p><a href="https://orcid.org/about/membership/comparison"><@orcid.msg 'developer_tools.client_types.learn_more' /></a></p>
-								</div>
+					<div class="sso-api" ng-controller="SSOPreferencesCtrl">						
+						<div class="row">
+							<div class="col-md-12 col-sm-12 col-xs-12">
+								<p><i><@orcid.msg 'developer_tools.note' /> <a href="./my-orcid"><@orcid.msg 'developer_tools.note.link.text' /></a><@orcid.msg 'developer_tools.note.link.point' /></i></p>																
+								<div class="centered bottomBuffer">
+									<#if hasVerifiedEmail>
+										<button class="btn btn-primary" ng-click="enableDeveloperTools()" ><@orcid.msg 'developer_tools.public_member.turn_on' /></button>
+									<#else>
+										<button class="btn btn-primary" ng-click="verifyEmail()" ><@orcid.msg 'developer_tools.public_member.verify.button' /></button>
+									</#if>
+								</div>																								
+								<p><@orcid.msg 'developer_tools.client_types.description' /></p>
+								<ul class="dotted">
+									<li><@orcid.msg 'developer_tools.client_types.description.bullet.1' /></li>
+									<li><@orcid.msg 'developer_tools.client_types.description.bullet.2' /></li>
+									<li><@orcid.msg 'developer_tools.client_types.description.bullet.3' /></li>
+									<li><@orcid.msg 'developer_tools.client_types.description.bullet.4' /></li>
+								</ul>
+								<p><@orcid.msg 'developer_tools.client_types.description.oauth2' /></p>
 							</div>
-							<div class="row">
-								<div class="col-md-12 col-sm-12 col-xs-12">								
-									<h3><@orcid.msg 'developer_tools.api.heading' /></h3>
-									<p><@orcid.msg 'developer_tools.api.description' /></p>
-								</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12 col-sm-12 col-xs-12">
+								<h3><@orcid.msg 'developer_tools.client_types.description.differences' /></h3>
+								<p><a href="https://orcid.org/about/membership/comparison" target="_blank"><@orcid.msg 'developer_tools.client_types.description.differences.link' /></a></p>
 							</div>
-							<div class="row">
-								<div class="col-md-12 col-sm-12 col-xs-12">								
-									<p><strong><@orcid.msg 'developer_tools.public_member.heading' /></strong></p>									
-									<p><@orcid.msg 'developer_tools.public_member.description' /></p>
-									<ul class="dotted">
-										<#if hasVerifiedEmail>
-											<li><a href ng-click="enableDeveloperTools()"><@orcid.msg 'developer_tools.public_member.turn_on' /></a></li>
-										<#else>
-											<li><a href ng-click="verifyEmail()"><@orcid.msg 'developer_tools.public_member.verify.link' /></a> <@orcid.msg 'developer_tools.public_member.verify.description' /></li>
-										</#if>
-										<li><a href="http://support.orcid.org/knowledgebase/articles/335483"><@orcid.msg 'developer_tools.public_member.read_more' /></a></li>
-									</ul>
-								</div>
+						</div>																
+						<div class="row">
+							<div class="col-md-12 col-sm-12 col-xs-12">								
+								<h3><@orcid.msg 'developer_tools.public_member.additional_resources' /></h3>																	
+								<ul class="dotted">
+									<#if !hasVerifiedEmail>
+										<li><a href ng-click="verifyEmail()"><@orcid.msg 'developer_tools.public_member.verify.link' /></a> <@orcid.msg 'developer_tools.public_member.verify.description' /></li>
+									</#if>
+									<li><a href="http://support.orcid.org/knowledgebase/articles/335483" target="_blank"><@orcid.msg 'developer_tools.public_member.read_more' /></a></li>
+								</ul>
 							</div>
-							<div class="row">
-								<div class="col-md-12 col-sm-12 col-xs-12">
-									<p><strong><@orcid.msg 'developer_tools.member_api.heading' /></strong></p>
-									<p><@orcid.msg 'developer_tools.member_api.description' /></p>
-									<ul class="dotted">
-										<li><a href="http://orcid.org/about/membership"><@orcid.msg 'developer_tools.member_api.description.1' /></a></li>
-										<li><a href="http://support.orcid.org/knowledgebase/articles/180285"><@orcid.msg 'developer_tools.member_api.description.2' /></a></li>
-										<li><a href="http://orcid.org/content/register-client-application"><@orcid.msg 'developer_tools.member_api.description.3' /></a></li>
-									</ul>
-								</div>
-							</div>
-						</#if>				
+						</div>													
 					</div>
 				<#else>
 					<@orcid.msg 'developer_tools.unavailable' />
@@ -91,16 +84,8 @@
 						</div>	
 					</div>
 					<div class="row">
-						<div class="col-md-12 col-sm-12 col-xs-12">				
-							<p><@orcid.msg 'developer_tools.api.description'/></p>
-							<p><a href="https://orcid.org/about/membership/comparison"><@orcid.msg 'developer_tools.api.learn_more'/></a></p>
-							<p><strong><@orcid.msg 'developer_tools.public_member.heading'/></strong></p>
-							<p><@orcid.msg 'developer_tools.public_member.description'/></p>
-							<ul class="dotted">
-								<li>
-									<a href="http://support.orcid.org/knowledgebase/articles/335483"><@orcid.msg 'developer_tools.public_member.read_more'/></a>
-								</li>
-							</ul>							
+						<div class="col-md-12 col-sm-12 col-xs-12">	
+							<p><i><@orcid.msg 'developer_tools.note' /> <a href="./my-orcid"><@orcid.msg 'developer_tools.note.link.text' /></a><@orcid.msg 'developer_tools.note.link.point' /></i></p>
 							<p class="developer-tools-instructions"></p>
 						</div>
 					</div>
@@ -423,20 +408,29 @@
 					</div>
 					<div class="row">
 						<div class="col-md-12 col-sm-12 col-xs-12">
-							<p><strong><@orcid.msg 'developer_tools.member_api.heading' /></strong></p>
-							<p><@orcid.msg 'developer_tools.member_api.description' /></p>
-							<ul class="dotted">
-								<li><a href="http://orcid.org/about/membership"><@orcid.msg 'developer_tools.member_api.description.1' /></a></li>
-								<li><a href="http://support.orcid.org/knowledgebase/articles/180285"><@orcid.msg 'developer_tools.member_api.description.2' /></a></li>
-								<li><a href="http://orcid.org/content/register-client-application"><@orcid.msg 'developer_tools.member_api.description.3' /></a></li>
-							</ul>
+							<h3><@orcid.msg 'developer_tools.public_member.what_can_you_do' /></h3>
+							<p><@orcid.msg 'developer_tools.public_member.what_can_you_do.description' /></p>
+								<ul class="dotted">
+									<li><@orcid.msg 'developer_tools.public_member.what_can_you_do.bullet.1' /></li>
+									<li><@orcid.msg 'developer_tools.public_member.what_can_you_do.bullet.2' /></li>
+									<li><@orcid.msg 'developer_tools.public_member.what_can_you_do.bullet.3' /></li>
+									<li><@orcid.msg 'developer_tools.public_member.what_can_you_do.bullet.4' /></li>
+								</ul>
+								<p><@orcid.msg 'developer_tools.client_types.description.oauth2' /></p>
 						</div>
 					</div>
 					<div class="row">
-						<div class="col-md-12 col-xs-12">
-							<span>
-								<@orcid.msg 'manage.developer_tools.user.join.link.text.1'/>&nbsp;<a href="<@orcid.msg 'manage.developer_tools.user.join.link.url'/>" target="_blank"><@orcid.msg 'manage.developer_tools.user.join.link.text.2'/></a>						
-							</span>
+						<div class="col-md-12 col-sm-12 col-xs-12">
+							<h3><@orcid.msg 'developer_tools.client_types.description.differences' /></h3>
+							<p><a href="https://orcid.org/about/membership/comparison" target="_blank"><@orcid.msg 'developer_tools.client_types.description.differences.link' /></a></p>
+						</div>
+					</div>																
+					<div class="row">
+						<div class="col-md-12 col-sm-12 col-xs-12">								
+							<h3><@orcid.msg 'developer_tools.public_member.additional_resources' /></h3>																	
+							<ul class="dotted">
+								<li><a href="http://support.orcid.org/knowledgebase/articles/335483" target="_blank"><@orcid.msg 'developer_tools.public_member.read_more' /></a></li>
+							</ul>
 						</div>
 					</div>
 				</div>

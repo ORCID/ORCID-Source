@@ -4796,8 +4796,8 @@ ul.toggle-menu li:hover ul {
 	display: block !important;
 }
 
-.bulk-edit-input{
-	vertical-align: 0;	
+input.bulk-edit-input{	
+	margin: 0 4px 6px 0;	
 }
 
 .trash-source{
@@ -4812,6 +4812,15 @@ ul.sources-actions{
 ul.sources-actions li{
 	list-style-type: none;
 	display: inline;
+}
+
+.affiliation-box{
+	padding: 5px;
+}
+
+.combine-work ul.list-group li.list-group-item{
+	padding: 10px 15px 15px;
+	line-height: 28px;
 }
 
 /* Media Queries */

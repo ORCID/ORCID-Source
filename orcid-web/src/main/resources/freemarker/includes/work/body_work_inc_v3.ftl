@@ -88,7 +88,7 @@
                 <li ng-repeat="work in group.activities" ng-show="group.activePutCode == work.putCode.value || editSources[group.groupId] == true">
                     <!-- active row summary info -->
                     <div class="row" ng-show="group.activePutCode == work.putCode.value">
-                        <div class="col-md-9 col-sm-12 col-xs-12">
+                        <div class="col-md-8 col-sm-12 col-xs-12">
                             <h3 class="workspace-title">
                                 <strong ng-bind="work.workTitle.title.value"></strong><span class="work-subtitle" ng-show="work.workTitle.subtitle.value" ng-bind="':&nbsp;'.concat(work.workTitle.subtitle.value)"></span>                                     
                             </h3>
@@ -101,10 +101,23 @@
                         </div>
                         
                         <#if !(isPublicProfile??)>
-                            <div class="col-md-3 workspace-toolbar">
+                            <div class="col-md-4 workspace-toolbar">
                                 <ul class="workspace-private-toolbar" ng-hide="editSources[group.groupId] == true">
+                                	<!-- Bulk edit tool -->
+	                                <li ng-show="bulkEditShow" class="hidden-xs bulk-checkbox-item">								
+						        			<input type="checkbox" ng-model="bulkEditMap[work.putCode.value]" class="bulk-edit-input ng-pristine ng-valid pull-right">			        										
+									</li>
+									<!-- Combine -->
+                                	<#if RequestParameters['combine']??>
+	                                	<li ng-show="canBeCombined(work)">
+		                                	<a ng-click="showCombineMatches(group.getDefault())" class="toolbar-button edit-item-button" title="Combine duplicates">
+											    <span class="glyphicon glyphicon-transfer edit-option-toolbar"></span>
+											</a>	                                	
+	                                	</li>
+	                                </#if>
+	                                <!-- Privacy -->
                                     <li ng-show="userIsSource(work) || (group.hasKeys() && !group.hasUserVersion())">
-                                        <a ng-click="openEditWork(group.getActive().putCode.value)" class="toolbar-button edit-item-button">
+                                        <a ng-click="openEditWork(group.getActive().putCode.value)" class="toolbar-button edit-item-button" title="Edit">
                                             <span class="glyphicon glyphicon-pencil edit-option-toolbar" title=""></span>
                                         </a>
                                     </li>
@@ -135,11 +148,7 @@
                              </ul>
                          </div>
                      </div> 
-                     <#if RequestParameters['combine']??>
-				        	<div ng-show="canBeCombined(work)">
-				            	<a ng-click="showCombineMatches(group.getDefault())">combined duplicates</a>
-				        	</div>
-		   			 </#if>    
+                       
                      
                      <!-- more info -->
                      <#include "work_more_info_inc_v3.ftl"/>
@@ -168,6 +177,12 @@
                       		<div ng-show="editSources[group.groupId] == true">
 					        <#if !(isPublicProfile??)>
 					        	<ul class="sources-actions">
+					        		<li ng-show="bulkEditShow">
+                                		<input type="checkbox" ng-model="bulkEditMap[work.putCode.value]" class="bulk-edit-input ng-valid ng-dirty">
+                                	</li>
+					        		<li>
+					        			<a class="glyphicon glyphicon-transfer" ng-click="showCombineMatches(group.getDefault())"></a>
+					        		</li>
 					        		<li>
 					        			<a ng-show="!group.hasUserVersion() || userIsSource(work)" ng-click="openEditWork(group.getActive().putCode.value)">
 											<span class="glyphicon glyphicon-pencil"></span>
@@ -207,6 +222,12 @@
                         <div class="col-md-2 col-sm-2 col-xs-12 trash-source">
                             <#if !(isPublicProfile??)>
                                 <ul class="sources-actions">
+                                	<li ng-show="bulkEditShow">
+                                		<input type="checkbox" ng-model="bulkEditMap[work.putCode.value]" class="bulk-edit-input ng-valid ng-dirty">
+                                	</li>
+                                	<li>
+					        			<a class="glyphicon glyphicon-transfer" ng-click="showCombineMatches(group.getDefault())"></a>
+					        		</li>
                                     <li>
                                         <a ng-show="!group.hasUserVersion() || userIsSource(work)" ng-click="openEditWork(group.getActive().putCode.value)">
                                             <span class="glyphicon glyphicon-pencil"></span>
