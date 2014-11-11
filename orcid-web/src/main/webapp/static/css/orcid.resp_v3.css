@@ -4823,6 +4823,10 @@ ul.sources-actions li{
 	line-height: 28px;
 }
 
+.sources-header .workspace-toolbar ul.workspace-private-toolbar li:first-of-type{
+	margin-right: 70px;
+}
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 
