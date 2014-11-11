@@ -1688,7 +1688,7 @@ ul.workspace-private-toolbar li.bulk-checkbox-item{
 
 .workspace-accordion-header{
 	position: relative;	
-	background: #8A8A8A;
+	background: #494A4C;
 	height: 30px;
 	padding: 0 0 0 15px;	
 }
@@ -1702,6 +1702,10 @@ ul.workspace-private-toolbar li.bulk-checkbox-item{
 
 .workspace-accordion-header a.action-option:hover{
 	background: #a6ce39;
+	color: #FFF;
+}
+
+.workspace-accordion-header a.action-option:hover span:before{
 	color: #FFF;
 }
 
@@ -3817,11 +3821,11 @@ p.orcid-id-container{
 .manage-button{
 	display: block;
 	float: right;
-	background: #C9CACB;
+	background: #C9C9CA;
 	line-height: 27px;
 	padding: 0 10px;
 	font-size: 14px;
-	color: #FFF;	
+	color: #494A4C;	
 	text-decoration: none;
 }
 
@@ -4528,7 +4532,7 @@ ul.toggle-menu li:hover ul {
 
 .public-profile .bibtex-wizard:before{
 	font-size: 14px;
-	color: #FFF;
+	color: #494A4C;
 }
 
 .upload {
@@ -4595,6 +4599,35 @@ ul.toggle-menu li:hover ul {
 	display: inline-block;	
 	width: 100%;
 	margin-bottom: 10px;
+	padding-top: 5px;
+	background: #FFF;
+	border: 3px solid rgb(166, 206, 57);
+}
+
+.bulk-edit h4{
+	color: #494A4C;
+	margin-left: -8px;
+	margin-bottom: 3px;
+	font-family: 'Roman';
+	margin-top: 5px;
+	display: inline;
+}
+
+.bulk-edit span.hide-bulk{
+	padding: 0 10px;
+	background: #494A4C;
+	color: #C9C9CA;
+	font-size: 11px;
+	margin-left: 25px;
+	display: inline;
+	vertical-align: top;
+	line-height: 21px;
+}
+
+.bulk-edit span.hide-bulk:hover{
+	cursor: pointer;
+	background: rgb(166, 206, 57);
+	color: #FFF;
 }
 
 .bulk-edit .col-md-5{
@@ -4613,6 +4646,8 @@ ul.toggle-menu li:hover ul {
 
 .bulk-edit ol li{
 	font-size: 12px;
+	font-weight: 100;
+	font-family: 'Roman'; 
 }
 
 .bulk-edit ul.bulk-edit-toolbar{
@@ -4634,13 +4669,18 @@ ul.toggle-menu li:hover ul {
 	text-align: center;
 }
 
+.bulk-edit ul.bulk-edit-toolbar > li.bulk-edit-toolbar-item  label{
+	color: #494A4C;
+	width: 100%;
+}
+
 .bulk-edit ul.bulk-edit-toolbar > li.bulk-edit-toolbar-item > label,
 .bulk-edit ul.bulk-edit-toolbar > li.bulk-edit-toolbar-item > div label{
 	display: block;
 	float: left;
 	height: 15px;
 	font-size: 11px;
-	font-weight: bold;		
+	font-weight: bold;	
 }
 
 .bulk-edit ul.bulk-edit-toolbar > li.bulk-edit-toolbar-item > div{
@@ -4653,16 +4693,17 @@ ul.toggle-menu li:hover ul {
 	float: left;
 }
 
-.bulk-edit ul.bulk-edit-toolbar > li.bulk-edit-toolbar-item > div.privacy-options > label{
-	margin-left: 8px;
-}
-
 .bulk-edit ul.bulk-edit-toolbar > li.bulk-edit-toolbar-item div.popover-help-container{
 	position: relative !important;
 	left: 0 !important;
 	top: 0; 
 	float: left;
 	margin-left: 5px;	
+}
+
+.bibtex-box > div{
+	border: 3px solid rgb(166, 206, 57);
+	background: #FFF;
 }
 
 .custom-control-x {
@@ -4788,8 +4829,9 @@ ul.toggle-menu li:hover ul {
 .bulk-edit .bulk-edit-delete{	
 	display: block;
 	float: left;
-	margin-left: 3px;
+	margin: 5px 0 0 3px;
 	text-align: center;
+	
 }
 
 .block{ /* Forcing block */
@@ -4821,6 +4863,12 @@ ul.sources-actions li{
 .combine-work ul.list-group li.list-group-item{
 	padding: 10px 15px 15px;
 	line-height: 28px;
+}
+
+.green-bg,
+.green-bg span.file_import:before{
+	background: rgb(166, 206, 57);
+	color: #FFF;
 }
 
 ul.sources-edit-list ul.workspace-private-toolbar > li{

@@ -276,13 +276,13 @@
 			        				</li>
 			        				<!-- Bibtex -->
 			        				<li>
-				        				<a class="action-option works manage-button" ng-click="openBibTextWizard()">
+				        				<a class="action-option works manage-button" ng-class="{'green-bg' : showBibtexImportWizard == true}" ng-click="openBibTextWizard()">
 											<span class="glyphicons file_import bibtex-wizard"></span>
 											<@orcid.msg 'workspace.bibtexImporter.link_bibtex'/>
 										</a>	        				
 			        				</li>
 			        				<li>
-			        				    <a class="action-option works manage-button" ng-click="toggleBulkEdit()">
+			        				    <a class="action-option works manage-button" ng-class="{'green-bg' : bulkEditShow == true}" ng-click="toggleBulkEdit()">
 											<span class="glyphicon glyphicon-pencil"></span>Bulk Edit
 										</a>
 			        				</li>
@@ -293,24 +293,27 @@
 					
 					<!-- Bulk Edit -->
 					<div ng-show="bulkEditShow" ng-cloak>
-						<div class="grey-box box-border bulk-edit">
+						<div class="grey-box bulk-edit">
 							<div class="row">
 								<div class="col-md-7 col-sm-7">
+									<h4>Bulk edit</h4></a><span class="hide-bulk" ng-click="toggleBulkEdit()">Hide bulk edit</span>
 									<ol>
-										<li><b>Select works:</b> Clikck the checkbox beside each work or click the "Select All" checkbox.</li>
+										<li><b>Select works:</b> Click the checkbox beside each work or click the "Select All" checkbox.</li>
 										<li><b>Select editing action:</b> Click the trash can to delete all selected works or click a privacy setting to apply that setting to all selected works.</li>
 									</ol>
 								</div>
 								<div class="col-md-5 col-sm-5">
-									<ul class="bulk-edit-toolbar">										
-										<li class="bulk-edit-toolbar-item"><!-- Cancel -->
+									<ul class="bulk-edit-toolbar">
+										<!-- 										
+										<li class="bulk-edit-toolbar-item">
 											<label></label>																						
 											<div class="cancel-bulk-edit">
 												<a class="btn btn-default pull-right" ng-click="toggleBulkEdit()">Cancel</a>
 											</div>
 										</li>
+										 -->
 										<li class="bulk-edit-toolbar-item"><!-- Select all -->
-											<label>Select all</label>											
+											<label>SELECT</label>											
 											<div id="custom-control-x">
 												<div class="custom-control-x" >	
 													<div class="dropdown-custom-menu" id="dropdown-custom-menu" ng-click="toggleSelectMenu()">										
@@ -328,19 +331,10 @@
 												</div>
 											</div>
 										</li>
-										<li class="bulk-edit-toolbar-item"><!-- Delete button -->
-											<label>Delete</label>
-											<div class="bulk-edit-delete">
-											    <div class="centered">
-													<a ng-click="deleteBulkConfirm()" class="ignore toolbar-button edit-item-button" title="Ignore">
-														<span class="edit-option-toolbar glyphicon glyphicon-trash"></span>
-													</a>
-												</div>
-											</div>
-										</li>
 										<li class="bulk-edit-toolbar-item"><!-- Privacy control -->
-											<div class="privacy-options">
-												<label>Edit privacy</label>
+											<label>EDIT</label>
+											<!--
+											<div class="privacy-options"> 
 												<div class="privacy-options-popover"> 
 													<div class="popover-help-container" ng-class="{'popover-help-container-show':privacyHelp[work.putCode.value]==true}" style="position: absolute; left: 110px; top: 0px;">
 											        	<a ng-click="toggleClickPrivacyHelp(work.putCode.value)"><i class="glyphicon glyphicon-question-sign" style="width: 14px;"></i></a>
@@ -358,7 +352,9 @@
 													    </div>
 											    	</div>
 										    	</div>
+										    	 
 									    	</div>
+									    	-->
 											<div class="bulk-edit-privacy-control">
 												<@orcid.privacyToggle2 angularModel="groupPrivacy()" 
 													    questionClick=""
@@ -367,6 +363,13 @@
 									                	limitedClick="setBulkGroupPrivacy('LIMITED', $event)" 
 									                	privateClick="setBulkGroupPrivacy('PRIVATE', $event)"/>
 								 			</div>
+								 			<div class="bulk-edit-delete pull-right">
+											    <div class="centered">
+													<a ng-click="deleteBulkConfirm()" class="ignore toolbar-button edit-item-button" title="Ignore">
+														<span class="edit-option-toolbar glyphicon glyphicon-trash"></span>
+													</a>
+												</div>
+											</div>
 										</li>
 									</ul>
 								</div>							
