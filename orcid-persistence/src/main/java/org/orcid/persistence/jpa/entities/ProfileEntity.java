@@ -126,12 +126,13 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     private Locale locale = Locale.EN;
     private Boolean sendChangeNotifications;
     private Boolean sendOrcidNews;
+    private Boolean sendOrcidFeatureAnnouncements;
     private SortedSet<ClientDetailsEntity> clients;
     private SortedSet<OrcidOauth2TokenDetail> tokenDetails;
     private IndexingStatus indexingStatus = IndexingStatus.PENDING;
     private Set<ProfileEventEntity> profileEvents;
     private boolean enableDeveloperTools;
-    private int sendEmailFrequencyDays;
+    private float sendEmailFrequencyDays;
     private boolean enableNotifications;
 
     // Visibility settings
@@ -699,6 +700,15 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
         this.sendOrcidNews = sendOrcidNews;
     }
 
+    @Column(name = "send_orcid_feature_announcements")
+    public Boolean getSendOrcidFeatureAnnouncements() {
+        return sendOrcidFeatureAnnouncements;
+    }
+
+    public void setSendOrcidFeatureAnnouncements(Boolean sendOrcidFeatureAnnouncements) {
+        this.sendOrcidFeatureAnnouncements = sendOrcidFeatureAnnouncements;
+    }
+
     @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
     @JoinColumn(name = "group_orcid")
     @Sort(type = SortType.COMPARATOR, comparator = OrcidEntityIdComparator.class)
@@ -751,11 +761,11 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     }
 
     @Column(name = "send_email_frequency_days")
-    public int getSendEmailFrequencyDays() {
+    public float getSendEmailFrequencyDays() {
         return sendEmailFrequencyDays;
     }
 
-    public void setSendEmailFrequencyDays(int sendEmailFrequencyDays) {
+    public void setSendEmailFrequencyDays(float sendEmailFrequencyDays) {
         this.sendEmailFrequencyDays = sendEmailFrequencyDays;
     }
 

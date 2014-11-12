@@ -32,6 +32,8 @@ public class Registration implements ErrorsInterface, Serializable {
 
     private Checkbox sendOrcidNews;
 
+    private Checkbox sendOrcidFeatureAnnouncements;
+
     private Checkbox termsOfUse;
 
     private Visibility activitiesVisibilityDefault;
@@ -47,10 +49,10 @@ public class Registration implements ErrorsInterface, Serializable {
     private Text givenNames;
 
     private Text familyNames;
-    
+
     private Text creationType;
-    
-    private Text referredBy;        
+
+    private Text referredBy;
 
     public Registration() {
         errors = new ArrayList<String>();
@@ -63,6 +65,7 @@ public class Registration implements ErrorsInterface, Serializable {
         creationType = new Text();
         sendChangeNotifications = new Checkbox();
         sendOrcidNews = new Checkbox();
+        sendOrcidFeatureAnnouncements = new Checkbox();
         termsOfUse = new Checkbox();
         activitiesVisibilityDefault = new Visibility();
         referredBy = new Text();
@@ -132,6 +135,14 @@ public class Registration implements ErrorsInterface, Serializable {
         this.sendChangeNotifications = sendChangeNotifications;
     }
 
+    public Checkbox getSendOrcidFeatureAnnouncements() {
+        return sendOrcidFeatureAnnouncements;
+    }
+
+    public void setSendOrcidFeatureAnnouncements(Checkbox sendOrcidFeatureAnnouncements) {
+        this.sendOrcidFeatureAnnouncements = sendOrcidFeatureAnnouncements;
+    }
+
     public Visibility getActivitiesVisibilityDefault() {
         return activitiesVisibilityDefault;
     }
@@ -170,5 +181,5 @@ public class Registration implements ErrorsInterface, Serializable {
 
     public void setReferredBy(Text referredBy) {
         this.referredBy = referredBy;
-    }      
+    }
 }

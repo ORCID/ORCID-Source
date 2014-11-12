@@ -44,9 +44,12 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}send-email-frequency-days"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}send-change-notifications"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}send-orcid-news"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}work-visibility-default"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}send-orcid-feature-announcements"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}activities-visibility-default"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}developer-tools-enabled" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -56,15 +59,20 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "sendChangeNotifications", "sendOrcidNews", "activitiesVisibilityDefault", "workVisibilityDefault", "developerToolsEnabled" })
+@XmlType(name = "", propOrder = { "sendEmailFrequencyDays", "sendChangeNotifications", "sendOrcidNews", "sendOrcidFeatureAnnouncements", "activitiesVisibilityDefault",
+        "workVisibilityDefault", "developerToolsEnabled" })
 @XmlRootElement(name = "preferences")
 public class Preferences implements Serializable {
 
     private final static long serialVersionUID = 1L;
+    @XmlElement(name = "send-email-frequency-days")
+    protected String sendEmailFrequencyDays;
     @XmlElement(name = "send-change-notifications", required = true)
     protected SendChangeNotifications sendChangeNotifications;
     @XmlElement(name = "send-orcid-news", required = true)
     protected SendOrcidNews sendOrcidNews;
+    @XmlElement(name = "send-orcid-feature-announcements", required = true)
+    protected Boolean sendOrcidFeatureAnnouncements;
     // as of 1.2_rc4 WorkVisibilityDefault is replaced by
     // ActivitiesVisibilityDefault
     @XmlElement(name = "work-visibility-default")
@@ -75,6 +83,22 @@ public class Preferences implements Serializable {
     private DeveloperToolsEnabled developerToolsEnabled;
     @XmlTransient
     private boolean notificationsEnabled;
+
+    /**
+     * Gets the value of the sendEmailFrequencyDays property.
+     * 
+     */
+    public String getSendEmailFrequencyDays() {
+        return sendEmailFrequencyDays;
+    }
+
+    /**
+     * Sets the value of the sendEmailFrequencyDays property.
+     * 
+     */
+    public void setSendEmailFrequencyDays(String value) {
+        this.sendEmailFrequencyDays = value;
+    }
 
     /**
      * Gets the value of the sendChangeNotifications property.
@@ -118,10 +142,20 @@ public class Preferences implements Serializable {
         this.sendOrcidNews = value;
     }
 
+    public Boolean getSendOrcidFeatureAnnouncements() {
+        return sendOrcidFeatureAnnouncements;
+    }
+
+    public void setSendOrcidFeatureAnnouncements(Boolean sendOrcidFeatureAnnouncements) {
+        this.sendOrcidFeatureAnnouncements = sendOrcidFeatureAnnouncements;
+    }
+
     /**
      * Gets the value of the workVisibilityDefault property.
      * 
      * @deprecated use             {@getActivitiesVisibilityDefault
+     * 
+     * 
      * 
      * 
      * } instead.

@@ -516,15 +516,17 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     @Transactional
-    public void updatePreferences(String orcid, boolean sendChangeNotifications, boolean sendOrcidNews, Visibility activitiesVisibilityDefault,
-            boolean enableDeveloperTools) {
+    public void updatePreferences(String orcid, boolean sendChangeNotifications, boolean sendOrcidNews, boolean sendOrcidFeatureAnnouncements,
+            Visibility activitiesVisibilityDefault, boolean enableDeveloperTools, float sendEmailFrequencyDays) {
         Query updateQuery = entityManager
-                .createQuery("update ProfileEntity set lastModified = now(), sendChangeNotifications = :sendChangeNotifications, sendOrcidNews = :sendOrcidNews, activitiesVisibilityDefault = :activitiesVisibilityDefault, enableDeveloperTools = :enableDeveloperTools where orcid = :orcid");
+                .createQuery("update ProfileEntity set lastModified = now(), sendChangeNotifications = :sendChangeNotifications, sendOrcidNews = :sendOrcidNews, sendOrcidFeatureAnnouncements = :sendOrcidFeatureAnnouncements, activitiesVisibilityDefault = :activitiesVisibilityDefault, enableDeveloperTools = :enableDeveloperTools, sendEmailFrequencyDays = :sendEmailFrequencyDays where orcid = :orcid");
         updateQuery.setParameter("orcid", orcid);
         updateQuery.setParameter("sendChangeNotifications", sendChangeNotifications);
         updateQuery.setParameter("sendOrcidNews", sendOrcidNews);
+        updateQuery.setParameter("sendOrcidFeatureAnnouncements", sendOrcidFeatureAnnouncements);
         updateQuery.setParameter("activitiesVisibilityDefault", activitiesVisibilityDefault);
         updateQuery.setParameter("enableDeveloperTools", enableDeveloperTools);
+        updateQuery.setParameter("sendEmailFrequencyDays", sendEmailFrequencyDays);
         updateQuery.executeUpdate();
     }
 

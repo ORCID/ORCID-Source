@@ -1145,7 +1145,7 @@ orcidNgModule.factory("prefsSrvc", function ($rootScope) {
                     }
                 }).fail(function() {
                     // something bad is happening!
-                    console.log("error with multi email");
+                    console.log("error with prefs");
                 });
             },
             savePrivacyPreferences: function() {
@@ -1161,7 +1161,7 @@ orcidNgModule.factory("prefsSrvc", function ($rootScope) {
                     }
                 }).fail(function() {
                     // something bad is happening!
-                    console.log("error with multi email");
+                    console.log("error with prefs");
                 });
             }
         };
@@ -1169,7 +1169,7 @@ orcidNgModule.factory("prefsSrvc", function ($rootScope) {
         // populate the prefs
         serv.getPrivacyPreferences();
 
-    return serv;
+    return serv; 
 });
 
 orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) {
@@ -1439,6 +1439,12 @@ function EditTableCtrl($scope) {
         $scope.showEditEmail = !$scope.showEditEmail;
         $scope.emailUpdateToggleText();
     };
+    
+    $scope.openEmailEdit = function() {
+        $scope.showEditEmail = true;
+        $scope.emailUpdateToggleText();
+        window.location.hash = "#editEmail"
+    };
 
     // init email edit row
     $scope.showEditEmail = (window.location.hash === "#editEmail");
@@ -1542,6 +1548,10 @@ function EditTableCtrl($scope) {
     $scope.socialNetworksUpdateToggleText();
 };
 
+function NotificationPreferencesCtrl($scope, $compile, emailSrvc, prefsSrvc, emailSrvc) {
+    $scope.prefsSrvc = prefsSrvc;
+    $scope.emailSrvc = emailSrvc;
+};
 
 function WorksPrivacyPreferencesCtrl($scope, prefsSrvc) {
     $scope.prefsSrvc = prefsSrvc;
