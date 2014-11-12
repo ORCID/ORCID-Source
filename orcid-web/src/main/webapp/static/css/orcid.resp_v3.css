@@ -4600,8 +4600,7 @@ ul.toggle-menu li:hover ul {
 .bulk-edit h4{
 	color: #494A4C;
 	margin-left: -8px;
-	margin-bottom: 3px;
-	font-family: 'Roman';
+	margin-bottom: 3px;	
 	margin-top: 5px;
 	display: inline;
 }
@@ -4636,11 +4635,9 @@ ul.toggle-menu li:hover ul {
 	padding-left: 5px;
 }
 
-
 .bulk-edit ol li{
-	font-size: 12px;
-	font-weight: 100;
-	font-family: 'Roman'; 
+	font-size: 13px;
+	font-weight: 100;	 
 }
 
 .bulk-edit ul.bulk-edit-toolbar{
