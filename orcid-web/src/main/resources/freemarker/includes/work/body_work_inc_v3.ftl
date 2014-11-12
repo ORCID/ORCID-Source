@@ -28,7 +28,7 @@
                         <div class="row">                      
                             <div class="col-md-3 col-sm-4 col-xs-4">
                                 <div class="">
-                                    <strong >Sources</strong>
+                                    <strong >Sources</strong> <span>Close sources</span>
                                 </div>
                             </div>
                             <div class="col-md-3 col-sm-3 col-xs-3">
