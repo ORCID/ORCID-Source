@@ -317,7 +317,7 @@
 						<button id="" class="btn close-button" type="reset"  ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></button>
 					</div>
 					<div ng-show="editWork.putCode.value == null">
-						<button class="btn btn-primary" ng-click="putWork()" ng-disabled="addingWork" ng-class="{disabled:addingWork}">
+						<button class="btn btn-primary" id='save-new-work' ng-click="putWork()" ng-disabled="addingWork" ng-class="{disabled:addingWork}">
 							<@orcid.msg 'manual_work_form_contents.btnaddtolist'/>
 						</button>
 						<button id="" class="btn close-button" type="reset"  ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></button>
