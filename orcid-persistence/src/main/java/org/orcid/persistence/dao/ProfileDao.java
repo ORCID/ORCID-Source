@@ -107,7 +107,8 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     void updateSecurityQuestion(String orcid, Integer securityQuestionId, String encryptedSecurityAnswer);
 
-    void updatePreferences(String orcid, boolean sendChangeNotifications, boolean sendOrcidNews, Visibility activitiesVisibilityDefault, boolean enableDeveloperTools);
+    void updatePreferences(String orcid, boolean sendChangeNotifications, boolean sendOrcidNews, boolean sendOrcidFeatureAnnouncements,
+            Visibility activitiesVisibilityDefault, boolean enableDeveloperTools, float sendEmailFrequencyDays);
 
     List<ProfileEntity> findProfilesByOrcidType(OrcidType type);
 
@@ -118,8 +119,8 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     public boolean updateResearcherUrlsVisibility(String orcid, Visibility visibility);
 
     public boolean getClaimedStatus(String orcid);
-    
+
     ClientType getClientType(String orcid);
-    
+
     GroupType getGroupType(String orcid);
 }

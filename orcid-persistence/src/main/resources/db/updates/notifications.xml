@@ -99,4 +99,10 @@
         </addColumn>
     </changeSet>
     
+    <changeSet id="ADD-OPTION-FOR-ORCID-FEATURE-ANNOUNCEMENTS" author="Will Simpson">
+        <addColumn tableName="profile">
+            <column name="send_orcid_feature_announcements" type="boolean" />
+        </addColumn>
+    </changeSet>
+    
 </databaseChangeLog>
