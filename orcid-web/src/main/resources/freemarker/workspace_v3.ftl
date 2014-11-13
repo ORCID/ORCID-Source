@@ -312,7 +312,7 @@
 											</div>
 										</li>
 										 -->
-										<li class="bulk-edit-toolbar-item"><!-- Select all -->
+										<li class="bulk-edit-toolbar-item work-multiple-selector"><!-- Select all -->
 											<label>SELECT</label>											
 											<div id="custom-control-x">
 												<div class="custom-control-x" >	
