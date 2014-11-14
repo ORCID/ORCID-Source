@@ -88,7 +88,7 @@
                 <!-- End of Header -->
                 
                               
-                <li ng-repeat="work in group.activities" ng-show="group.activePutCode == work.putCode.value || editSources[group.groupId] == true">
+                <li ng-repeat="work in group.activities" ng-show="group.activePutCode == work.putCode.value || editSources[group.groupId] == true" orcid-putCode="{{work.putCode.value}}">
                     <!-- active row summary info -->
                     <div class="row" ng-show="group.activePutCode == work.putCode.value">
                         <div class="col-md-8 col-sm-12 col-xs-12">
@@ -191,7 +191,7 @@
 										</a>
 					        		</li>
 					        		<li>
-					        			<a ng-click="deleteWorkConfirm(work.putCode.value, false)">
+					        			<a ng-click="deleteWorkConfirm(work.putCode.value, false)"  title="Delete {{work.workTitle.title.value}}">
 											<span class="glyphicon glyphicon-trash"></span>
 										</a>
 					        		</li>
@@ -233,7 +233,7 @@
                                     </li>
                                     <li>
                                         <a ng-click="deleteWorkConfirm(work.putCode.value, false)">
-                                            <span class="glyphicon glyphicon-trash"></span>
+                                            <span class="glyphicon glyphicon-trash" title="Delete {{work.workTitle.title.value}}"></span>
                                         </a>
                                     </li>
                                 </ul>
@@ -255,7 +255,7 @@
 							    </li>
 							    <#if !(isPublicProfile??)>
 							         <li ng-show="group.activitiesCount == 1">
-							            <a ng-click="deleteWorkConfirm(group.getActive().putCode.value, false)">
+							            <a ng-click="deleteWorkConfirm(group.getActive().putCode.value, false)" title="Delete Group {{group.getActive().workTitle.title.value}}">
 							               <span class="glyphicon glyphicon-trash grey" ng-show="!bulkEditShow"></span>
 							           </a>
 							         </li>

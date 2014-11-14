@@ -50,7 +50,7 @@
 	<#if RequestParameters['recordClaimed']??>
 	    <div ng-controller="ClaimThanks" style="display: hidden;"></div>	    
 	<#elseif !Session.CHECK_EMAIL_VALIDATED?exists && !inDelegationMode>
-    	<div ng-controller="VerifyEmailCtrl" style="display: hidden;"></div>
+    	<div ng-controller="VerifyEmailCtrl" style="display: hidden;" orcid-loading="{{loading}}"></div>
 	</#if>
 
     <div class="col-md-3 lhs left-aside">

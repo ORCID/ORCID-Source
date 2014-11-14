@@ -2586,6 +2586,7 @@ function ClaimCtrl($scope, $compile, commonSrvc) {
 
 
 function VerifyEmailCtrl($scope, $compile, emailSrvc) {
+    $scope.loading = true;
     $scope.getEmails = function() {
         $.ajax({
             url: getBaseUri() + '/account/emails.json',
@@ -2605,7 +2606,6 @@ function VerifyEmailCtrl($scope, $compile, emailSrvc) {
                 if (!primeVerified) {
                     var colorboxHtml = $compile($('#verify-email-modal').html())($scope);
                     $scope.$apply();
-
                     $.colorbox({
                         html : colorboxHtml,
                         escKey:false,
@@ -2616,6 +2616,8 @@ function VerifyEmailCtrl($scope, $compile, emailSrvc) {
                                 });
                         $.colorbox.resize();
                 };
+                $scope.loading = false;
+                $scope.$apply();
             }
         }).fail(function() {
             // something bad is happening!
