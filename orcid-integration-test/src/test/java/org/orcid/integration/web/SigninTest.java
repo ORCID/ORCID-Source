@@ -58,12 +58,14 @@ public class SigninTest {
 
     @Test
     public void signinTest() {
-        webDriver.get(baseUri + "/signin");
-        signIn(webDriver, user1UserName, user1Password, true);
+        webDriver.get(baseUri + "/userStatus.json?logUserOut=true");
+        webDriver.get(baseUri + "/my-orcid");
+        signIn(webDriver, user1UserName, user1Password);
+        dismissVerifyEmailModal(webDriver);
     }
 
     // Make this available to other classes
-    static public void signIn(WebDriver webDriver, String username, String password, boolean dismissModal) {
+    static public void signIn(WebDriver webDriver, String username, String password) {
         WebElement emailEl = webDriver.findElement(By.xpath("//input[@name='userId']"));
         emailEl.sendKeys(username);
         WebElement passwordEl = webDriver.findElement(By.xpath("//input[@name='password']"));
@@ -72,11 +74,15 @@ public class SigninTest {
         buttonEl.click();
         WebDriverWait wait = new WebDriverWait(webDriver, 10);
         wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//a[text()='Sign out']")));
-        // auto close modals like verify email reminder
-        if (dismissModal) {
-            List<WebElement> wList = webDriver.findElements(By.xpath("//div[@id='colorbox']"));
-            if (wList.size() > 0)
-                ((JavascriptExecutor) webDriver).executeScript("$.colorbox.close();");
+    }
+
+    public static void dismissVerifyEmailModal(WebDriver webDriver) {
+        WebDriverWait wait = new WebDriverWait(webDriver, 10);
+        List<WebElement> weList = webDriver.findElements(By.xpath("//div[@ng-controller='VerifyEmailCtrl']"));
+        if (weList.size() > 0)  {// we need to wait for the color box to appear
+            wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//div[@ng-controller='VerifyEmailCtrl' and @orcid-loading='false']")));
+            ((JavascriptExecutor) webDriver).executeScript("$.colorbox.close();");
+            wait.until(ExpectedConditions.not(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath("//div[@id='colorbox']"))));
         }
     }
 

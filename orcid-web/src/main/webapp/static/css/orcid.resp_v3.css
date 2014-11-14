@@ -1611,13 +1611,16 @@ a:hover {
 
 .workspace-toolbar{
 	margin-top: 0;
-	padding-left: 0;	
+	padding-left: 0;
+	text-align: right;	
 }
 
 .workspace-private-toolbar{
 	margin:0;
 	padding:0;
-	float:right;
+	position:relative;
+	width: 100%;
+	
 }
 
 .workspace-private-toolbar li{	
@@ -1626,7 +1629,8 @@ a:hover {
 }
 
 ul.workspace-private-toolbar li.bulk-checkbox-item{
-	width: 49px;
+	position: absolute;
+	right: 173px;
 }
 
 .orcid-id{
@@ -4203,7 +4207,7 @@ ul.id-details li{
 }
 
 a.toolbar-button{
-	color: #939598;
+	color: #494A4C;
 	display: block;
 	background: #C9CACB;
 	border-radius: 50%;
@@ -4369,7 +4373,7 @@ ul.sources-edit-list > li{
 }
 
 .source-active > .sources-header .bulk-edit-input{
-	margin: 5px 39px 0 0;
+	margin: 17px 42px 0 0;
 }
 
 .workspace-body-list .spinner{
@@ -4606,7 +4610,7 @@ ul.toggle-menu li:hover ul {
 
 .bulk-edit h4{
 	color: #494A4C;
-	margin-left: -8px;
+	margin-left: -11px;
 	margin-bottom: 3px;	
 	margin-top: 5px;
 	display: inline;
@@ -4639,7 +4643,7 @@ ul.toggle-menu li:hover ul {
 }
 
 .bulk-edit ol{
-	padding-left: 5px;
+	padding-left: 7px;
 }
 
 .bulk-edit ol li{
@@ -4681,8 +4685,9 @@ ul.toggle-menu li:hover ul {
 	display: block;
 	float: left;
 	height: 15px;
-	font-size: 11px;
-	font-weight: bold;	
+	font-size: 13px;
+	font-weight: normal;
+	margin-bottom: 10px;	
 }
 
 .bulk-edit ul.bulk-edit-toolbar > li.bulk-edit-toolbar-item > div{
@@ -4907,7 +4912,7 @@ ul.sources-edit-list ul.sources-actions .git_create:hover:before{
 	height: 22px;
 	width: 22px;
 	display: block;	
-	color: #939598;
+	color: #494A4C;
 	background: #C9CACB;
 	border-radius: 50%;
 	-webkit-border-radius: 50%;
@@ -4922,7 +4927,7 @@ ul.sources-edit-list ul.sources-actions .git_create:hover:before{
 .workspace-toolbar ul.workspace-private-toolbar li.works-details > a >span:before{
 	top: -20px;
 	left: -8px;
-	color: #939598;
+	color: #494A4C;
 	font-size: 17px;
 }
 

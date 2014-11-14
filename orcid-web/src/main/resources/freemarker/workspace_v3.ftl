@@ -44,7 +44,7 @@
 	<#if RequestParameters['recordClaimed']??>
 	    <div ng-controller="ClaimThanks" style="display: hidden;"></div>	    
 	<#elseif !Session.CHECK_EMAIL_VALIDATED?exists && !inDelegationMode>
-    	<div ng-controller="VerifyEmailCtrl" style="display: hidden;"></div>
+    	<div ng-controller="VerifyEmailCtrl" style="display: hidden;" orcid-loading="{{loading}}"></div>
 	</#if>
 	<!-- ID Banner and other account information -->
     <div class="col-md-3 lhs left-aside">
@@ -246,7 +246,7 @@
                 <!-- Fundings -->
                	<#include "workspace_fundings_body_list_v3.ftl"/>
 		        <!-- Works -->                
-                <div id="workspace-publications" class="workspace-accordion-item workspace-accordion-active" ng-controller="WorkCtrl">
+                <div id="workspace-publications" class="workspace-accordion-item workspace-accordion-active" ng-controller="WorkCtrl" orcid-loaded="{{worksSrvc.worksToAddIds != null && worksSrvc.loading != true}}">
                 	<div class="workspace-accordion-header">
                 		<div class="row">
                 			<div class="col-md-3 col-sm-2 col-xs-12">
@@ -296,10 +296,10 @@
 						<div class="grey-box bulk-edit">
 							<div class="row">
 								<div class="col-md-7 col-sm-7">
-									<h4>Bulk edit</h4></a><span class="hide-bulk" ng-click="toggleBulkEdit()">Hide bulk edit</span>
+									<h4>Bulk edit</h4><span class="hide-bulk" ng-click="toggleBulkEdit()">Hide bulk edit</span>
 									<ol>
-										<li><b>Select works:</b> Click the checkbox beside each work or click the "Select All" checkbox.</li>
-										<li><b>Select editing action:</b> Click the trash can to delete all selected works or click a privacy setting to apply that setting to all selected works.</li>
+										<li>Select works: Click the checkbox beside each work. Use the checkbox to the right to select or deselect all.</li>
+										<li>Select editing action: Click the trash can to delete all selected works or click a privacy setting to apply that setting to all selected works.</li>
 									</ol>
 								</div>
 								<div class="col-md-5 col-sm-5">
