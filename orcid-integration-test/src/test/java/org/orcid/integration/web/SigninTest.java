@@ -79,11 +79,15 @@ public class SigninTest {
     public static void dismissVerifyEmailModal(WebDriver webDriver) {
         WebDriverWait wait = new WebDriverWait(webDriver, 10);
         List<WebElement> weList = webDriver.findElements(By.xpath("//div[@ng-controller='VerifyEmailCtrl']"));
-        if (weList.size() > 0)  {// we need to wait for the color box to appear
+        if (weList.size() > 0) {// we need to wait for the color box to appear
             wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//div[@ng-controller='VerifyEmailCtrl' and @orcid-loading='false']")));
             ((JavascriptExecutor) webDriver).executeScript("$.colorbox.close();");
-            wait.until(ExpectedConditions.not(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath("//div[@id='colorbox']"))));
+            colorBoxClosed(wait);
         }
+    }
+
+    public static void colorBoxClosed(WebDriverWait wait) {
+        wait.until(ExpectedConditions.not(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath("//div[@id='colorbox']"))));
     }
 
 }

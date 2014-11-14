@@ -905,7 +905,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                     };
                 };
                 // remove work on server
-                worksSrvc.removeWork(rmWork);
+                worksSrvc.removeWork(rmWork, function() {worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);});
             },
             makeDefault: function(group, putCode) {
                 group.makeDefault(putCode);
@@ -957,7 +957,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                     failFunc();
                 });
             },
-            removeWork: function(work) {
+            removeWork: function(work,callback) {
                 $.ajax({
                     url: getBaseUri() + '/works/works.json',
                     type: 'DELETE',
@@ -968,6 +968,8 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                         if(data.errors.length != 0){
                             console.log("Unable to delete work.");
                         };
+                        if (callback)
+                            callback(data);
                     }
                 }).fail(function() {
                     console.log("Error deleting work.");
