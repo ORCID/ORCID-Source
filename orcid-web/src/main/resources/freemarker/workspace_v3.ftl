@@ -44,7 +44,7 @@
 	<#if RequestParameters['recordClaimed']??>
 	    <div ng-controller="ClaimThanks" style="display: hidden;"></div>	    
 	<#elseif !Session.CHECK_EMAIL_VALIDATED?exists && !inDelegationMode>
-    	<div ng-controller="VerifyEmailCtrl" style="display: hidden;"></div>
+    	<div ng-controller="VerifyEmailCtrl" style="display: hidden;" orcid-loading="{{loading}}"></div>
 	</#if>
 	<!-- ID Banner and other account information -->
     <div class="col-md-3 lhs left-aside">
@@ -246,7 +246,7 @@
                 <!-- Fundings -->
                	<#include "workspace_fundings_body_list_v3.ftl"/>
 		        <!-- Works -->                
-                <div id="workspace-publications" class="workspace-accordion-item workspace-accordion-active" ng-controller="WorkCtrl">
+                <div id="workspace-publications" class="workspace-accordion-item workspace-accordion-active" ng-controller="WorkCtrl" orcid-loaded="{{worksSrvc.worksToAddIds != null && worksSrvc.loading != true}}">
                 	<div class="workspace-accordion-header">
                 		<div class="row">
                 			<div class="col-md-3 col-sm-2 col-xs-12">
