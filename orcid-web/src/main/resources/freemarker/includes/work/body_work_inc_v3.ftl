@@ -251,11 +251,20 @@
                     	<div class="col-md-1" ng-show="group.activePutCode == work.putCode.value">                    	
                     		<ul class="sources-options" ng-cloak>                    			
 							    <#if !(isPublicProfile??)>
-							         <li ng-hide="editSources[group.groupId] == true">
+							         
+							         <li ng-hide="editSources[group.groupId] == true || group.activitiesCount == 1">
 							            <a ng-click="editSources[group.groupId] = !editSources[group.groupId]" ng-show="!bulkEditShow" class="">
 											<span class="glyphicon glyphicon-trash grey"></span>
 										</a>
 							         </li>
+							         
+							         <li ng-show="group.activitiesCount == 1">
+										<a ng-click="deleteWorkConfirm(group.getActive().putCode.value, false)">
+										   <span class="glyphicon glyphicon-trash grey" ng-show="!bulkEditShow"></span>
+										</a>
+									</li>
+							         
+							         
 							      </#if>							                             
 							</ul>
                     	</div>
