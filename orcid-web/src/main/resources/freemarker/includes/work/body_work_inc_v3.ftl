@@ -175,7 +175,7 @@
 					        <#if !(isPublicProfile??)>
 					        	<ul class="sources-actions">					        		
 					        		<li>
-					        			<a class="glyphicons-icon git_pull_request" ng-click="showCombineMatches(group.getDefault())"></a>
+					        			<a class="glyphicons git_pull_request" ng-click="showCombineMatches(group.getDefault())"></a>
 					        		</li>
 					        		<li>
 					        			<a ng-show="!group.hasUserVersion() || userIsSource(work)" ng-click="openEditWork(group.getActive().putCode.value)">
