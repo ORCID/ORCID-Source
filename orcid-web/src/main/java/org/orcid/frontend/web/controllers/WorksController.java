@@ -819,7 +819,7 @@ public class WorksController extends BaseWorkspaceController {
     private List<String> createWorksIdList(HttpServletRequest request) {
         OrcidProfile currentProfile = getEffectiveProfile();
         java.util.Date lastModified = currentProfile.getOrcidHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime();
-        List<MinimizedWorkEntity> works = workManager.findWorks(currentProfile.getOrcidIdentifier().getPath(), lastModified);
+        List<MinimizedWorkEntity> works = workManager.findWorks(currentProfile.getOrcidIdentifier().getPath(), lastModified.getTime());
         HashMap<String, Work> worksMap = new HashMap<String, Work>();
         List<String> workIds = new ArrayList<String>();
         if (works != null) {

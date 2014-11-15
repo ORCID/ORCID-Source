@@ -70,7 +70,7 @@ public class WorkManagerImpl implements WorkManager {
      * @return the list of works associated to the specific user
      * */
     @Cacheable(value = "works", key = "#orcid.concat('-').concat(#lastModified)")
-    public List<MinimizedWorkEntity> findWorks(String orcid, Date lastModified) {
+    public List<MinimizedWorkEntity> findWorks(String orcid, long lastModified) {
         return workDao.findWorks(orcid);
     }
 
