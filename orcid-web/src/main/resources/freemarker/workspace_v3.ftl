@@ -296,10 +296,10 @@
 						<div class="grey-box bulk-edit">
 							<div class="row">
 								<div class="col-md-7 col-sm-7">
-									<h4>Bulk edit</h4></a><span class="hide-bulk" ng-click="toggleBulkEdit()">Hide bulk edit</span>
+									<h4>Bulk edit</h4><span class="hide-bulk" ng-click="toggleBulkEdit()">Hide bulk edit</span>
 									<ol>
-										<li><b>Select works:</b> Click the checkbox beside each work or click the "Select All" checkbox.</li>
-										<li><b>Select editing action:</b> Click the trash can to delete all selected works or click a privacy setting to apply that setting to all selected works.</li>
+										<li>Select works: Click the checkbox beside each work. Use the checkbox to the right to select or deselect all.</li>
+										<li>Select editing action: Click the trash can to delete all selected works or click a privacy setting to apply that setting to all selected works.</li>
 									</ol>
 								</div>
 								<div class="col-md-5 col-sm-5">
@@ -312,7 +312,7 @@
 											</div>
 										</li>
 										 -->
-										<li class="bulk-edit-toolbar-item"><!-- Select all -->
+										<li class="bulk-edit-toolbar-item work-multiple-selector"><!-- Select all -->
 											<label>SELECT</label>											
 											<div id="custom-control-x">
 												<div class="custom-control-x" >	

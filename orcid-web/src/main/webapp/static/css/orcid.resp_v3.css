@@ -1022,7 +1022,7 @@ h1,h2,h3,h4,h5,h6,b,strong,.table th,.close,.nav-header,.label,.badge,.header .s
 	margin: 0px;
 	padding: 0px;
 	width: 98px;
-	height: 29px;
+	height: 34px;
 }
 
 .privacyToggle li {
@@ -1610,23 +1610,27 @@ a:hover {
 }
 
 .workspace-toolbar{
-    line-height: 30px;
 	margin-top: 0;
-	padding-left: 0;	
+	padding-left: 0;
+	text-align: right;	
 }
 
 .workspace-private-toolbar{
 	margin:0;
 	padding:0;
-	float:right;
+	position:relative;
+	width: 100%;
+	
 }
 
-.workspace-private-toolbar li{
-	display: inline;
+.workspace-private-toolbar li{	
+	display: inline-block;
+	vertical-align: top;
 }
 
 ul.workspace-private-toolbar li.bulk-checkbox-item{
-	width: 49px;
+	position: absolute;
+	right: 173px;
 }
 
 .orcid-id{
@@ -2758,12 +2762,6 @@ header overrides
 	height: 30px;
 	display: block;	
 	float: left;		
-}
-
-ul.workspace-private-toolbar > li{
-	display: inline-block;
-	padding: 0;	
-	margin-bottom: -6px;
 }
 
 .popover-form .input-xlarge {
@@ -4152,10 +4150,6 @@ ul.id-details li{
 	color: #338caf;
 }
 
-.id-details .type {
-	font-weight: bold;
-}
-
 .id-details a:hover{
 	color: #a6ce39;
 }
@@ -4185,6 +4179,7 @@ ul.id-details li{
 .workspace-title{
 	float: left;
 	display: block;
+	color: #494A4C;
 }
 
 .workspace-title span{
@@ -4212,7 +4207,7 @@ ul.id-details li{
 }
 
 a.toolbar-button{
-	color: #939598;
+	color: #494A4C;
 	display: block;
 	background: #C9CACB;
 	border-radius: 50%;
@@ -4306,8 +4301,7 @@ ul.sources-options{
 	padding: 0;
 	list-style: none; 
 	list-style-type: none;
-	float: right;	
-	margin-right: -6px;
+	float: right;
 }
 
 ul.sources-options li{
@@ -4369,7 +4363,17 @@ ul.sources-edit-list > li{
 }
 
 .source-active{
-	background: #EEE;
+	background: #939598;
+	color: #FFF;
+	
+}
+
+.source-active > .sources-header div[class^="col-"]:not(:last-child){
+	padding-top: 12px;
+}
+
+.source-active > .sources-header .bulk-edit-input{
+	margin: 17px 42px 0 0;
 }
 
 .workspace-body-list .spinner{
@@ -4606,7 +4610,7 @@ ul.toggle-menu li:hover ul {
 
 .bulk-edit h4{
 	color: #494A4C;
-	margin-left: -8px;
+	margin-left: -11px;
 	margin-bottom: 3px;	
 	margin-top: 5px;
 	display: inline;
@@ -4639,7 +4643,7 @@ ul.toggle-menu li:hover ul {
 }
 
 .bulk-edit ol{
-	padding-left: 5px;
+	padding-left: 7px;
 }
 
 .bulk-edit ol li{
@@ -4666,6 +4670,11 @@ ul.toggle-menu li:hover ul {
 	text-align: center;
 }
 
+.bulk-edit ul.bulk-edit-toolbar > li.bulk-edit-toolbar-item.work-multiple-selector{
+	margin-right: 40px;
+}
+
+
 .bulk-edit ul.bulk-edit-toolbar > li.bulk-edit-toolbar-item  label{
 	color: #494A4C;
 	width: 100%;
@@ -4676,8 +4685,9 @@ ul.toggle-menu li:hover ul {
 	display: block;
 	float: left;
 	height: 15px;
-	font-size: 11px;
-	font-weight: bold;	
+	font-size: 13px;
+	font-weight: normal;
+	margin-bottom: 10px;	
 }
 
 .bulk-edit ul.bulk-edit-toolbar > li.bulk-edit-toolbar-item > div{
@@ -4836,11 +4846,12 @@ ul.toggle-menu li:hover ul {
 }
 
 input.bulk-edit-input{	
-	margin: 0 4px 6px 0;	
+	margin: 10px 5px 6px 0;	
 }
 
 .trash-source{
 	text-align: right;
+	height: 21px;
 }
 
 ul.sources-actions{
@@ -4868,10 +4879,6 @@ ul.sources-actions li{
 	color: #FFF;
 }
 
-ul.sources-edit-list ul.workspace-private-toolbar > li{
-	vertical-align: top;
-}
-
 ul.sources-edit-list ul.workspace-private-toolbar .git_create:before{
 	font-size: 17px;
 	position: absolute;
@@ -4896,8 +4903,65 @@ ul.sources-edit-list ul.sources-actions .git_create:hover:before{
 	color: rgb(166, 206, 57);	
 }
 
-.sources-header .workspace-toolbar ul.workspace-private-toolbar li:first-of-type{
-	margin-right: 70px;
+.workspace-toolbar ul.workspace-private-toolbar li.works-details{
+	margin-bottom: 4px;
+	display: inline-block;
+}
+
+.workspace-toolbar ul.workspace-private-toolbar li.works-details a{
+	height: 22px;
+	width: 22px;
+	display: block;	
+	color: #494A4C;
+	background: #C9CACB;
+	border-radius: 50%;
+	-webkit-border-radius: 50%;
+	-moz-border-radius: 50%;
+	padding: 15px;		
+}
+
+.workspace-toolbar ul.workspace-private-toolbar li.works-details a:hover{
+	background: rgb(166, 206, 57);
+}
+
+.workspace-toolbar ul.workspace-private-toolbar li.works-details > a >span:before{
+	top: -20px;
+	left: -8px;
+	color: #494A4C;
+	font-size: 17px;
+}
+
+.workspace-toolbar ul.workspace-private-toolbar li.works-details a:hover > span:before{
+	color: #FFF;
+}
+
+
+.hide-sources{	
+	padding: 0 7px;
+	background: #C9CACB;
+	font-size: 14px;
+	color: #494A4C;
+	cursor: pointer;
+	vertical-align: top; 
+}
+
+.hide-sources:hover{
+	background: rgb(166, 206, 57);
+	color: #FFF;	
+}
+
+.sources-actions .git_pull_request{
+	vertical-align: top;
+	padding-left: 18px;
+}
+
+.sources-actions .git_pull_request:before{
+	font-size: 17px;
+	color: #338caf;
+}
+
+.sources-actions .git_pull_request:hover:before{
+	color: #9FC836;
 }
 
 /* Media Queries */
