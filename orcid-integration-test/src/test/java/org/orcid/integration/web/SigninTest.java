@@ -82,11 +82,11 @@ public class SigninTest {
         if (weList.size() > 0) {// we need to wait for the color box to appear
             wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//div[@ng-controller='VerifyEmailCtrl' and @orcid-loading='false']")));
             ((JavascriptExecutor) webDriver).executeScript("$.colorbox.close();");
-            colorBoxClosed(wait);
+            colorBoxIsClosed(wait);
         }
     }
 
-    public static void colorBoxClosed(WebDriverWait wait) {
+    public static void colorBoxIsClosed(WebDriverWait wait) {
         wait.until(ExpectedConditions.not(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath("//div[@id='colorbox']"))));
     }
 
