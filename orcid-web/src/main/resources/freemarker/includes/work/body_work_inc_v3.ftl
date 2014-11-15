@@ -153,7 +153,7 @@
                      <!-- active row  source display -->
                       <div class="row" ng-show="group.activePutCode == work.putCode.value">                      
                       	<div class="col-md-4" ng-show="editSources[group.groupId] == true">
-                      		<strong >Source: </strong>{{work.sourceName}}
+                      		SOURCE: {{work.sourceName}}
                       	</div>
                       	<div class="col-md-2" ng-show="editSources[group.groupId] == true">
                       		<div ng-show="editSources[group.groupId] == true">
@@ -182,7 +182,7 @@
 											<span class="glyphicon glyphicon-pencil" ng-class="{'glyphicons git_create' : !userIsSource(work)}"></span>
 										</a>
 					        		</li>
-					        		<li>
+					        		<li ng-hide="bulkEditShow">
 					        			<a ng-click="deleteWorkConfirm(work.putCode.value, false)"  title="Delete {{work.workTitle.title.value}}">
 											<span class="glyphicon glyphicon-trash"></span>
 										</a>
@@ -223,7 +223,7 @@
                                             <span class="glyphicon glyphicon-pencil" ng-class="{'glyphicons git_create' : !userIsSource(work)}"></span>
                                         </a>
                                     </li>
-                                    <li>
+                                    <li ng-hide="bulkEditShow">
                                         <a ng-click="deleteWorkConfirm(work.putCode.value, false)">
                                             <span class="glyphicon glyphicon-trash" title="Delete {{work.workTitle.title.value}}"></span>
                                         </a>
@@ -251,10 +251,10 @@
                     	<div class="col-md-1" ng-show="group.activePutCode == work.putCode.value">                    	
                     		<ul class="sources-options" ng-cloak>                    			
 							    <#if !(isPublicProfile??)>
-							         <li ng-show="group.activitiesCount == 1">
-							            <a ng-click="deleteWorkConfirm(group.getActive().putCode.value, false)" title="Delete Group {{group.getActive().workTitle.title.value}}">
-							               <span class="glyphicon glyphicon-trash grey" ng-show="!bulkEditShow"></span>
-							           </a>
+							         <li ng-hide="editSources[group.groupId] == true">
+							            <a ng-click="editSources[group.groupId] = !editSources[group.groupId]" ng-show="!bulkEditShow" class="">
+											<span class="glyphicon glyphicon-trash grey"></span>
+										</a>
 							         </li>
 							      </#if>							                             
 							</ul>
