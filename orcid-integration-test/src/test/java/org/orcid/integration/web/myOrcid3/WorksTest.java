@@ -16,6 +16,7 @@
  */
 package org.orcid.integration.web.myOrcid3;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -49,8 +50,11 @@ public class WorksTest {
     public String user1UserName;
     @Value("${org.orcid.web.testUser1.password}")
     public String user1Password;
-    
+
     private String WORK_TEST_PREFIX = "WORK_TEST";
+    private String SIMPLE_A ="SIMPLE_A";
+    private String SIMPLE_B ="SIMPLE_B";
+    private String SIMPLE_C ="SIMPLE_C";
 
     @Before
     public void before() {
@@ -67,34 +71,39 @@ public class WorksTest {
     }
 
     @Test
-    public void addSimple() {
-        String workName = WORK_TEST_PREFIX + "_A";
+    public void addThreeSimple() {
+        String workNameA = WORK_TEST_PREFIX + "_" + SIMPLE_A;
+        String workNameB = WORK_TEST_PREFIX + "_" + SIMPLE_B;
+        String workNameC = WORK_TEST_PREFIX + "_" + SIMPLE_C;
+        WebDriverWait wait = new WebDriverWait(webDriver, 10);
+        waitWorksLoaded(wait);
+        // clean up any from previous test
+        deleteAllByWorkName(workNameA, webDriver);
+        deleteAllByWorkName(workNameB, webDriver);
+        deleteAllByWorkName(workNameC, webDriver);
         
-        // init by deleting all works with name prefix
+        // Test actually begins
+        addSimple(workNameA, webDriver);
+        addSimple(workNameB, webDriver);
+        addSimple(workNameC, webDriver);
+        assertEquals(1, webDriver.findElements(byWorkTitle(workNameA)).size());
+        assertEquals(1, webDriver.findElements(byWorkTitle(workNameB)).size());
+        assertEquals(1, webDriver.findElements(byWorkTitle(workNameC)).size());
         
-        String worTitleXPath = "//strong[@ng-bind='work.workTitle.title.value' and text()='" + workName + "']";
-        String loadedXPath = "//div[@id='workspace-publications' and @orcid-loaded='true']";
-        WebDriverWait wait = new WebDriverWait(webDriver, 10);  
         
-       
-        wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath(loadedXPath)));
+    }
+    
+    public void addComplete() {
         
-        List<WebElement> wList = webDriver.findElements(By.xpath("//*[@orcid-putCode and descendant::strong[text() = '" +workName + "']]"));
-        if (wList.size() > 0)
-            for (WebElement we: wList) {
-                String putCode = we.getAttribute("orcid-putCode");
-                putCode = "" + putCode;
-                String deleteJsStr = "angular.element('*[ng-app]').injector().get('worksSrvc').deleteWork('"+ putCode + "');";
-                ((JavascriptExecutor) webDriver).executeScript(deleteJsStr);
-            }
-        //Thee next 4 current don't work
-//        wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath(loadedXPath)));
-//        wait.until(ExpectedConditions.not(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath(worTitleXPath))));        
-//        assertTrue( 0 == webDriver.findElements(By.xpath(worTitleXPath)).size());
-        
+    }
+
+    public static void addSimple(String workName, WebDriver webDriver) {
+        WebDriverWait wait = new WebDriverWait(webDriver, 10);
+        ;
+        waitWorksLoaded(wait);
         WebElement linkEl = webDriver.findElement(By.xpath("//a[@ng-click='addWorkModal()']"));
         linkEl.click();
-        wait = new WebDriverWait(webDriver, 10);
+
         wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//select[@ng-model='editWork.workCategory.value']")));
         Select catSel = new Select(webDriver.findElement(By.xpath("//select[@ng-model='editWork.workCategory.value']")));
         catSel.selectByVisibleText("Conference");
@@ -105,14 +114,41 @@ public class WorksTest {
         title.sendKeys(workName);
         WebElement buttonEl = webDriver.findElement(By.xpath("//button[@id='save-new-work']"));
         buttonEl.click();
-        wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath(loadedXPath)));
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(worTitleXPath)));
-        
-        assertTrue( 1 == webDriver.findElements(By.xpath(worTitleXPath)).size());
+        SigninTest.colorBoxIsClosed(wait);
+        waitWorksLoaded(wait);
+        wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(byWorkTitle(workName)));
+    }
+
+    public static void deleteAllByWorkName(String workName, WebDriver webDriver) {
+        WebDriverWait wait = new WebDriverWait(webDriver, 10);
+        waitWorksLoaded(wait);
+        List<WebElement> wList = webDriver.findElements(By.xpath("//*[@orcid-putCode and descendant::strong[text() = '" + workName + "']]"));
+        if (wList.size() > 0)
+            for (WebElement we : wList) {
+                String putCode = we.getAttribute("orcid-putCode");
+                putCode = "" + putCode;
+                String deleteJsStr = "angular.element('*[ng-app]').injector().get('worksSrvc').deleteWork('" + putCode + "');";
+                ((JavascriptExecutor) webDriver).executeScript(deleteJsStr);
+                waitWorksLoaded(wait);
+            }
+        wait.until(ExpectedConditions.not(ExpectedConditions.presenceOfAllElementsLocatedBy(byWorkTitle(workName))));
+        assertTrue(0 == webDriver.findElements(byWorkTitle(workName)).size());
+    }
+
+    public static By byWorkTitle(String workName) {
+        return By.xpath("//strong[@ng-bind='work.workTitle.title.value' and text()='" + workName + "']");
     }
     
+    public static void waitWorksLoading(WebDriverWait wait) {
+        wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath("//div[@id='workSpinner']")));
+    }
+
+    
+    public static void waitWorksLoaded(WebDriverWait wait) {
+        wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//div[@id='workspace-publications' and @orcid-loaded='true']")));
+    }
+
     public void bulkVisToggle() {
-        
+
     }
 }
-
