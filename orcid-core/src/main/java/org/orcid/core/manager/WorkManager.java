@@ -48,7 +48,7 @@ public interface WorkManager {
      * 		the Id of the user
      * @return the list of works associated to the specific user 
      * */
-    List<MinimizedWorkEntity> findWorks(String orcid, Date lastModified); 
+    List<MinimizedWorkEntity> findWorks(String orcid, long lastModified); 
     
     /**
      * Find the public works for a specific user

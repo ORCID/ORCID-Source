@@ -29,7 +29,7 @@ import org.orcid.persistence.jpa.entities.ClientSecretEntity;
  */
 public interface ClientDetailsDao extends GenericDao<ClientDetailsEntity, String> {
 
-    ClientDetailsEntity findByClientId(String orcid, Date lastModified);
+    ClientDetailsEntity findByClientId(String orcid, long lastModified);
 
     Date getLastModified(String orcid);
     

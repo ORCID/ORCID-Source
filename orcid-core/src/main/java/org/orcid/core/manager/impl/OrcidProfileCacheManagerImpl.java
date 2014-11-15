@@ -33,7 +33,7 @@ public class OrcidProfileCacheManagerImpl implements OrcidProfileCacheManager {
 
     @Override
     public OrcidProfile retrievePublicOrcidProfile(String orcid) {
-        return orcidProfileManager.retrievePublicOrcidProfileFromCache(orcid, profileDao.retrieveLastModifiedDate(orcid));
+        return orcidProfileManager.retrievePublicOrcidProfileFromCache(orcid, profileDao.retrieveLastModifiedDate(orcid).getTime());
     }
 
 }
