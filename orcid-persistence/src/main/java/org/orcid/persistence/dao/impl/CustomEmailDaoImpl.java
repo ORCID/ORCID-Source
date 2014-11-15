@@ -57,7 +57,7 @@ public class CustomEmailDaoImpl extends GenericDaoImpl<CustomEmailEntity, Custom
      * */
     @Override
     @Cacheable(value = "custom-email", key = "#clientDetailsId.concat('-').concat(#emailType).concat('-').concat(#lastModified)")
-    public CustomEmailEntity findByClientIdAndEmailType(String clientDetailsId, EmailType emailType, Date lastModified) {
+    public CustomEmailEntity findByClientIdAndEmailType(String clientDetailsId, EmailType emailType, long lastModified) {
         TypedQuery<CustomEmailEntity> query = entityManager.createQuery("FROM CustomEmailEntity WHERE clientDetailsEntity.id=:clientDetailsId and emailType=:emailType", CustomEmailEntity.class);
         query.setParameter("clientDetailsId", clientDetailsId);
         query.setParameter("emailType", emailType);

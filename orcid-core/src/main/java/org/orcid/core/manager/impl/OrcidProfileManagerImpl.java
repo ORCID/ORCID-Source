@@ -779,8 +779,8 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
     @Override
     @VisibilityControl(removeAttributes = false, visibilities = Visibility.PUBLIC)
-    @Cacheable(value = "public-profile", key = "T(org.orcid.jaxb.model.message.OrcidProfile).createCacheKey(#orcid, #lastModifiedDate)")
-    public OrcidProfile retrievePublicOrcidProfileFromCache(String orcid, Date lastModifiedDate) {
+    @Cacheable(value = "public-profile", key = "T(org.orcid.jaxb.model.message.OrcidProfile).createCacheKey(#orcid, #lastModified)")
+    public OrcidProfile retrievePublicOrcidProfileFromCache(String orcid, long lastModified) {
         return retrieveClaimedOrcidProfile(orcid);
     }
 

@@ -50,7 +50,7 @@ public class CustomEmailManagerImpl implements CustomEmailManager {
     @Override    
     public CustomEmailEntity getCustomEmail(String clientDetailsId, EmailType emailType) {
         Date lastModified = customEmailDao.getLastModified(clientDetailsId, emailType);
-        return customEmailDao.findByClientIdAndEmailType(clientDetailsId, emailType, lastModified);
+        return customEmailDao.findByClientIdAndEmailType(clientDetailsId, emailType, lastModified.getTime());
     }
 
     /**

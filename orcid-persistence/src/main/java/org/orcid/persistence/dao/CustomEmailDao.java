@@ -43,7 +43,7 @@ public interface CustomEmailDao extends GenericDao<CustomEmailEntity, CustomEmai
      * @param emailType
      * @return a CustomEmailEntity object if the email is found, null otherwise
      * */
-    CustomEmailEntity findByClientIdAndEmailType(String clientDetailsId, EmailType emailType, Date lastModified);
+    CustomEmailEntity findByClientIdAndEmailType(String clientDetailsId, EmailType emailType, long lastModified);
     
     /**
      * Creates a custom email on database

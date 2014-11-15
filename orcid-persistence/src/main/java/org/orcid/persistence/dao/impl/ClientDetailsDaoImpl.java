@@ -46,7 +46,7 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
 
     @Override
     @Cacheable(value = "client-details", key = "#orcid.concat('-').concat(#lastModified)")
-    public ClientDetailsEntity findByClientId(String orcid, Date lastModified) {
+    public ClientDetailsEntity findByClientId(String orcid, long lastModified) {
         TypedQuery<ClientDetailsEntity> query = entityManager.createQuery("from ClientDetailsEntity where id = :orcid", ClientDetailsEntity.class);
         query.setParameter("orcid", orcid);
         try {
