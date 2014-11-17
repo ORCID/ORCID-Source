@@ -6958,13 +6958,13 @@ function OauthAuthorizationController($scope, $compile, $sce, commonSrvc){
                 $scope.authorizationForm.userName.value = user_id;
                 if($scope.authorizationForm.userName.value) {
                     $scope.isOrcidPresent = true;
-                    $scope.showRegisterForm = false;
+                    $scope.showRegisterForm = false;                    
                 }
                 // #show_login - legacy fragment id, we should remove this sometime
                 // after November 2014 and only support &show_login=true
                 if(window.location.href.endsWith('#show_login'))
                     $scope.showRegisterForm = false;
-                else
+                else if(!$scope.isOrcidPresent)
                     $scope.showRegisterForm = !orcidVar.showLogin;
                 $scope.$apply();
             }
