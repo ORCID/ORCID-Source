@@ -81,11 +81,7 @@ public class CrossRefEmail implements ProfileEvent {
                 Map<String, Object> templateParams = new HashMap<String, Object>();
                 templateParams.put("emailName", emailFriendlyName);
                 String verificationUrl = null;
-                try {
-                    verificationUrl = notificationManager.createVerificationUrl(email, new URI(orcidUrlManager.getBaseUrl()));
-                } catch (URISyntaxException e) {
-                    LOG.debug("SendEventEmail exception", e);
-                }
+                verificationUrl = notificationManager.createVerificationUrl(email, orcidUrlManager.getBaseUrl());
                 templateParams.put("verificationUrl", verificationUrl);
                 templateParams.put("orcid", orcidProfile.getOrcidIdentifier().getPath());
                 templateParams.put("baseUri", orcidUrlManager.getBaseUrl());

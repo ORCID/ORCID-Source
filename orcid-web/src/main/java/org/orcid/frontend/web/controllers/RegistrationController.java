@@ -971,7 +971,7 @@ public class RegistrationController extends BaseController {
 
         LOGGER.info("About to create profile from registration email={}, sessionid={}", email, sessionId);
         profileToSave = registrationManager.createMinimalRegistration(profileToSave);
-        notificationManager.sendVerificationEmail(profileToSave, uri, profileToSave.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
+        notificationManager.sendVerificationEmail(profileToSave, profileToSave.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
         request.getSession().setAttribute(ManageProfileController.CHECK_EMAIL_VALIDATED, false);
         LOGGER.info("Created profile from registration orcid={}, email={}, sessionid={}", new Object[] { profileToSave.getOrcidIdentifier().getPath(), email, sessionId });
         return profileToSave;
