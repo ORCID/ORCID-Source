@@ -122,10 +122,10 @@ public class WorksTest {
     public static void deleteAllByWorkName(String workName, WebDriver webDriver) {
         WebDriverWait wait = new WebDriverWait(webDriver, 10);
         waitWorksLoaded(wait);
-        List<WebElement> wList = webDriver.findElements(By.xpath("//*[@orcid-putCode and descendant::strong[text() = '" + workName + "']]"));
+        List<WebElement> wList = webDriver.findElements(By.xpath("//*[@orcid-put-code and descendant::span[text() = '" + workName + "']]"));
         if (wList.size() > 0)
             for (WebElement we : wList) {
-                String putCode = we.getAttribute("orcid-putCode");
+                String putCode = we.getAttribute("orcid-put-code");
                 putCode = "" + putCode;
                 String deleteJsStr = "angular.element('*[ng-app]').injector().get('worksSrvc').deleteWork('" + putCode + "');";
                 ((JavascriptExecutor) webDriver).executeScript(deleteJsStr);
@@ -136,7 +136,7 @@ public class WorksTest {
     }
 
     public static By byWorkTitle(String workName) {
-        return By.xpath("//strong[@ng-bind='work.workTitle.title.value' and text()='" + workName + "']");
+        return By.xpath("//span[@ng-bind='work.workTitle.title.value' and text()='" + workName + "']");
     }
     
     public static void waitWorksLoading(WebDriverWait wait) {

@@ -641,7 +641,10 @@
 					minOccurs="0" />
 				<xs:element ref="orcid:url" minOccurs="0" />
 				<xs:element ref="orcid:work-contributors" minOccurs="0" />
-				<xs:element ref="orcid:work-source" minOccurs="0" />
+				<xs:choice minOccurs="0">
+                    <xs:element ref="orcid:work-source" minOccurs="0" />
+                    <xs:element ref="orcid:source" minOccurs="0" />
+                </xs:choice>
 				<xs:element ref="orcid:language-code" minOccurs="0"
 					maxOccurs="1" />
 				<xs:element ref="orcid:country" minOccurs="0" />
