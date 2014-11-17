@@ -264,9 +264,9 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
 
     @Test
     public void dontFailWithGrantScopes() throws JSONException, InterruptedException {
-        String scopes = "/orcid-bio/read-limited";
+        String scopes = "/funding/read-limited";
         String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, "michael@bentine.com", "password");
-        String wrongScope = "/orcid-bio/read-limited /funding/create /orcid-grants/read-limited";
+        String wrongScope = "/orcid-grants/read-limited";
         MultivaluedMap<String, String> params = new MultivaluedMapImpl();
         params.add("client_id", CLIENT_DETAILS_ID);
         params.add("client_secret", "client-secret");

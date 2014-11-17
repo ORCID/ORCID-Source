@@ -18,7 +18,12 @@ package org.orcid.core.oauth;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
+import javax.annotation.Resource;
+
+import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
+import org.orcid.persistence.jpa.entities.OrcidOauth2AuthoriziationCodeDetail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -43,6 +48,9 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
 
     private final AuthorizationCodeServices authorizationCodeServices;
 
+    @Resource(name = "orcidOauth2AuthoriziationCodeDetailDao")
+    private OrcidOauth2AuthoriziationCodeDetailDao orcidOauth2AuthoriziationCodeDetailDao;
+    
     public OrcidAuthorizationCodeTokenGranter(AuthorizationServerTokenServices tokenServices, AuthorizationCodeServices authorizationCodeServices,
             ClientDetailsService clientDetailsService) {
         super(tokenServices, clientDetailsService, GRANT_TYPE);
@@ -63,6 +71,23 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
             throw new OAuth2Exception("An authorization code must be supplied.");
         }
 
+        //Validate scopes
+        OrcidOauth2AuthoriziationCodeDetail codeDetails = orcidOauth2AuthoriziationCodeDetailDao.find(authorizationCode);
+        if(codeDetails == null) {
+            throw new InvalidGrantException("Invalid authorization code: " + authorizationCode);
+        } else {
+            Set<String> grantedScopes = codeDetails.getScopes();
+            Set<String> requestScopes = authorizationRequest.getScope();
+            
+            for(String requestScope : requestScopes) {
+                if(!grantedScopes.contains(requestScope)) {
+                    throw new InvalidGrantException("Invalid scopes: " + requestScope + " available scopes for this code are: " + grantedScopes);
+                }
+            }
+            
+        }        
+        
+        //Consume code        
         AuthorizationRequestHolder storedAuth = authorizationCodeServices.consumeAuthorizationCode(authorizationCode);
         if (storedAuth == null) {
             throw new InvalidGrantException("Invalid authorization code: " + authorizationCode);
