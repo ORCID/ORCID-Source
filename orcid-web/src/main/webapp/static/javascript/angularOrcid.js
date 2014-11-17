@@ -5831,7 +5831,7 @@ function SSOPreferencesCtrl($scope, $compile, $sce, emailSrvc) {
             type: 'POST',
             success: function(data){
                 if(data == true){
-                    window.location.href = getBaseUri()+'/developer-tools';
+                    window.location.href = getBaseUri()+'/developer-tools?enabled';
                 };
             }
         }).fail(function(error) {

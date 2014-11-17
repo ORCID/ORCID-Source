@@ -83,12 +83,26 @@
 							<a ng-click="createCredentialsLayout()" class="pull-right"><span class="label btn-primary"><@orcid.msg 'manage.developer_tools.button.register_now' /></span></a>
 						</div>	
 					</div>
-					<div class="row">
-						<div class="col-md-12 col-sm-12 col-xs-12">	
-							<p><i><@orcid.msg 'developer_tools.note' /> <a href="./my-orcid"><@orcid.msg 'developer_tools.note.link.text' /></a><@orcid.msg 'developer_tools.note.link.point' /></i></p>
-							<p class="developer-tools-instructions"></p>
+					<#if RequestParameters['enabled']??>
+						<div class="row">
+							<div class="col-md-12 col-sm-12 col-xs-12">	
+								<p><i><@orcid.msg 'developer_tools.note' /> <a href="./my-orcid"><@orcid.msg 'developer_tools.note.link.text' /></a><@orcid.msg 'developer_tools.note.link.point' /></i></p>							
+							</div>
 						</div>
-					</div>
+						<div class="row">
+							<div class="col-md-12 col-sm-12 col-xs-12">
+								<p><strong><@orcid.msg 'developer_tools.public_member.enabled' /></strong></p>
+								<p class="developer-tools-instructions"></p>
+							</div>
+						</div>
+					<#else>
+						<div class="row">
+							<div class="col-md-12 col-sm-12 col-xs-12">	
+								<p><i><@orcid.msg 'developer_tools.note' /> <a href="./my-orcid"><@orcid.msg 'developer_tools.note.link.text' /></a><@orcid.msg 'developer_tools.note.link.point' /></i></p>
+								<p class="developer-tools-instructions"></p>							
+							</div>
+						</div>
+					</#if>
 					<!-- App details -->
 					<div class="details" ng-show="userCredentials.clientSecret && userCredentials.clientSecret.value && !editing" ng-cloak>
 					
