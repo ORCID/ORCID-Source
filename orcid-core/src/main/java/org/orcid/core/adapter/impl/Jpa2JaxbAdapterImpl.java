@@ -711,7 +711,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 SourceEntity source = emailEntity.getSource();
                 if (source != null) {
                     ClientDetailsEntity sourceClient = source.getSourceClient();
-                    if (sourceClient != null) {
+                    if (sourceClient != null && OrcidStringUtils.isClientId(sourceClient.getClientId())) {
                         email.setSourceClientId(sourceClient.getClientId());
                     } else {
                         email.setSource(source.getSourceId());
