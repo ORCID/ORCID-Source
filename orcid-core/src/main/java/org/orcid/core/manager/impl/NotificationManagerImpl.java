@@ -89,8 +89,6 @@ public class NotificationManagerImpl implements NotificationManager {
 
     private static final String EMAIL_CHANGED_NOTIFY_ORCID_ORG = "email-changed@notify.orcid.org";
 
-    private static final String ACCOUNT_DEPRECATED_NOTIFY_ORCID_ORG = "account-deprecate@notify.orcid.org";
-
     private static final String WILDCARD_MEMBER_NAME = "${name}";
 
     private static final String WILDCARD_USER_NAME = "${user_name}";
@@ -619,40 +617,6 @@ public class NotificationManagerImpl implements NotificationManager {
             }
         }
         return result;
-    }
-
-    /**
-     * Substitute the message params with his real values
-     * 
-     * @param templateParams
-     * @param profileEntity
-     * */
-    private void addMessageParams(Map<String, Object> templateParams, ProfileEntity profileEntity) {
-        Locale locale = null;
-        if (profileEntity.getLocale() != null) {
-            locale = LocaleUtils.toLocale(profileEntity.getLocale().value());
-        } else {
-            locale = LocaleUtils.toLocale("en");
-        }
-        templateParams.put("messages", this.messages);
-        templateParams.put("messageArgs", new Object[0]);
-        templateParams.put("locale", locale);
-    }
-
-    /**
-     * Get the subject of a message given a code and a profile entity
-     * 
-     * @param code
-     * @param profileEntity
-     * */
-    private String getSubject(String code, ProfileEntity profileEntity) {
-        Locale locale = null;
-        if (profileEntity.getLocale() != null) {
-            locale = LocaleUtils.toLocale(profileEntity.getLocale().value());
-        } else {
-            locale = LocaleUtils.toLocale("en");
-        }
-        return messages.getMessage(code, null, locale);
     }
 
     private String extractAmenderName(OrcidProfile orcidProfile, String amenderOrcid) {
