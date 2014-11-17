@@ -22,7 +22,7 @@
 <@emailMacros.msg "email.verify.thank_you" /> ${verificationUrl}?lang=${locale}
 
 <@emailMacros.msg "email.verify.1" />${orcid}<@emailMacros.msg "email.verify.2" />
-${pubBaseUri}/${orcid}?lang=${locale} <@emailMacros.msg "email.verify.primary_email_1" /> ${primaryEmail}<@emailMacros.msg "email.verify.primary_email_2" />.
+${baseUriHttp}/${orcid}?lang=${locale} <@emailMacros.msg "email.verify.primary_email_1" /> ${primaryEmail}<@emailMacros.msg "email.verify.primary_email_2" />.
  
 <@emailMacros.msg "email.verify.if_you_did_not" />
 

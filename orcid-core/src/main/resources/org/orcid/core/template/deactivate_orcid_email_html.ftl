@@ -32,7 +32,7 @@
 		    </span>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
 		    	<@emailMacros.msg "email.deactivate.you_have_requested.1" />
-		    	<a href="${pubBaseUri}/${orcid}?lang=${locale}">${pubBaseUri}/${orcid}</a><@emailMacros.msg "email.deactivate.you_have_requested.2" />
+		    	<a href="${baseUriHttp}/${orcid}?lang=${locale}">${baseUriHttp}/${orcid}</a><@emailMacros.msg "email.deactivate.you_have_requested.2" />
 		    	<a href="${baseUri}${deactivateUrlEndpoint}?lang=${locale}">${baseUri}${deactivateUrlEndpointUrl}</a>		    	 
 		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">

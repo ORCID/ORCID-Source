@@ -95,7 +95,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
             LOGGER.debug("Profile is not claimed so re-sending claim email instead of password reset: {}", orcidProfile.getOrcidIdentifier().getPath());
             notificationManager.sendApiRecordCreationEmail(toEmail, orcidProfile);
         } else {
-            notificationManager.sendPasswordResetEmail(toEmail, orcidProfile, baseUri);
+            notificationManager.sendPasswordResetEmail(toEmail, orcidProfile);
         }
     }
 

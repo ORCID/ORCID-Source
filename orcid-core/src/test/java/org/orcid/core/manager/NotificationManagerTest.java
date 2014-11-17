@@ -102,18 +102,14 @@ public class NotificationManagerTest extends BaseTest {
     @Test
     @Rollback
     public void testSendVerificationEmail() throws JAXBException, IOException, URISyntaxException {
-        URI baseUri = new URI("http://testserver.orcid.org");
-
         OrcidMessage orcidMessage = (OrcidMessage) unmarshaller.unmarshal(getClass().getResourceAsStream(ORCID_INTERNAL_FULL_XML));
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
-        notificationManager.sendVerificationEmail(orcidProfile, baseUri, orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
+        notificationManager.sendVerificationEmail(orcidProfile, orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
     }
 
     @Test
     @Rollback
     public void testResetEmail() throws Exception {
-        URI baseUri = new URI("http://testserver.orcid.org");
-
         for (Locale locale : Locale.values()) {
             OrcidProfile orcidProfile = getProfile(locale);
             orcidProfile.setPassword("r$nd0m");
@@ -121,7 +117,7 @@ public class NotificationManagerTest extends BaseTest {
             getTargetObject(notificationManager, NotificationManagerImpl.class).setEncryptionManager(mockEncypter);
             when(mockEncypter.encryptForExternalUse(any(String.class))).thenReturn(
                     "Ey+qsh7G2BFGEuqqkzlYRidL4NokGkIgDE+1KOv6aLTmIyrppdVA6WXFIaQ3KsQpKEb9FGUFRqiWorOfhbB2ww==");
-            notificationManager.sendPasswordResetEmail(orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), orcidProfile, baseUri);
+            notificationManager.sendPasswordResetEmail(orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), orcidProfile);
         }
     }
 
@@ -187,7 +183,7 @@ public class NotificationManagerTest extends BaseTest {
     public void testSendDeactivateEmail() throws JAXBException, IOException, URISyntaxException {
         for (Locale locale : Locale.values()) {
             OrcidProfile orcidProfile = getProfile(locale);
-            notificationManager.sendOrcidDeactivateEmail(orcidProfile, new URI("http://testserver.orcid.org"));
+            notificationManager.sendOrcidDeactivateEmail(orcidProfile);
 
         }
     }
@@ -223,7 +219,7 @@ public class NotificationManagerTest extends BaseTest {
         for (Locale locale : Locale.values()) {
             OrcidProfile orcidProfile = getProfile(locale);
             Email originalEmail = new Email("original@email.com");
-            notificationManager.sendEmailAddressChangedNotification(orcidProfile, originalEmail, new URI("http://testserver.orcid.org"));
+            notificationManager.sendEmailAddressChangedNotification(orcidProfile, originalEmail);
         }
     }
 

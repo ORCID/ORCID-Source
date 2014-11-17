@@ -635,7 +635,7 @@ public class ManageProfileController extends BaseWorkspaceController {
             request.getSession().setAttribute(ManageProfileController.CHECK_EMAIL_VALIDATED, false);
 
         URI baseUri = OrcidWebUtils.getServerUriWithContextPath(request);
-        notificationManager.sendVerificationEmail(currentProfile, baseUri, email);
+        notificationManager.sendVerificationEmail(currentProfile, email);
         return new Errors();
     }
 
@@ -652,7 +652,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         URI uri = OrcidWebUtils.getServerUriWithContextPath(request);
         OrcidProfile currentProfile = getEffectiveProfile();
         Email email = currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail();
-        notificationManager.sendOrcidDeactivateEmail(currentProfile, uri);
+        notificationManager.sendOrcidDeactivateEmail(currentProfile);
         return email;
     }
 
@@ -716,12 +716,12 @@ public class ManageProfileController extends BaseWorkspaceController {
 
                 // send verifcation email for new address
                 URI baseUri = OrcidWebUtils.getServerUriWithContextPath(request);
-                notificationManager.sendVerificationEmail(currentProfile, baseUri, email.getValue());
+                notificationManager.sendVerificationEmail(currentProfile, email.getValue());
 
                 // if primary also send change notification.
                 if (newPrime != null && !newPrime.equalsIgnoreCase(oldPrime)) {
                     request.getSession().setAttribute(ManageProfileController.CHECK_EMAIL_VALIDATED, false);
-                    notificationManager.sendEmailAddressChangedNotification(currentProfile, new Email(oldPrime), baseUri);
+                    notificationManager.sendEmailAddressChangedNotification(currentProfile, new Email(oldPrime));
                 }
 
             }
@@ -804,9 +804,9 @@ public class ManageProfileController extends BaseWorkspaceController {
             emailManager.updateEmails(currentProfile.getOrcidIdentifier().getPath(), currentProfile.getOrcidBio().getContactDetails().getEmail());
             if (newPrime != null && !newPrime.getValue().equalsIgnoreCase(oldPrime.getValue())) {
                 URI baseUri = OrcidWebUtils.getServerUriWithContextPath(request);
-                notificationManager.sendEmailAddressChangedNotification(currentProfile, new Email(oldPrime.getValue()), baseUri);
+                notificationManager.sendEmailAddressChangedNotification(currentProfile, new Email(oldPrime.getValue()));
                 if (!newPrime.isVerified()) {
-                    notificationManager.sendVerificationEmail(currentProfile, baseUri, newPrime.getValue());
+                    notificationManager.sendVerificationEmail(currentProfile, newPrime.getValue());
                     request.getSession().setAttribute(ManageProfileController.CHECK_EMAIL_VALIDATED, false);
                 }
             }

@@ -16,26 +16,24 @@
  */
 package org.orcid.core.manager;
 
-import java.net.URI;
 import java.util.List;
 
 import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.notification.Notification;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 
 public interface NotificationManager {
 
     // void sendRegistrationEmail(RegistrationEntity registration, URI baseUri);
 
-    void sendVerificationEmail(OrcidProfile orcidProfile, URI baseUri, String email);
+    void sendVerificationEmail(OrcidProfile orcidProfile, String email);
 
     public void sendVerificationReminderEmail(OrcidProfile orcidProfile, String email);
 
-    void sendPasswordResetEmail(String toEmail, OrcidProfile orcidProfile, URI baseUri);
+    void sendPasswordResetEmail(String toEmail, OrcidProfile orcidProfile);
 
-    public String createVerificationUrl(String email, URI baseUri);
+    public String createVerificationUrl(String email, String baseUri);
 
     public String deriveEmailFriendlyName(OrcidProfile orcidProfile);
 
@@ -43,15 +41,15 @@ public interface NotificationManager {
 
     void sendAmendEmail(OrcidProfile amendedProfile, String amenderOrcid);
 
-    void sendOrcidDeactivateEmail(OrcidProfile orcidToDeactivate, URI baseUri);
+    void sendOrcidDeactivateEmail(OrcidProfile orcidToDeactivate);
 
     void sendApiRecordCreationEmail(String toEmail, OrcidProfile createdProfile);
 
-    void sendEmailAddressChangedNotification(OrcidProfile updatedProfile, Email oldEmail, URI baseUri);
+    void sendEmailAddressChangedNotification(OrcidProfile updatedProfile, Email oldEmail);
 
     void sendClaimReminderEmail(OrcidProfile orcidProfile, int daysUntilActivation);
 
-    public boolean sendPrivPolicyEmail2014_03(OrcidProfile orcidProfile, URI baseUri);
+    public boolean sendPrivPolicyEmail2014_03(OrcidProfile orcidProfile);
 
     void sendDelegationRequestEmail(OrcidProfile managed, OrcidProfile trusted, String link);
 

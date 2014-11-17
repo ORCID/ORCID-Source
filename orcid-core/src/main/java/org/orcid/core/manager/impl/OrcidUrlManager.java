@@ -36,6 +36,10 @@ public class OrcidUrlManager {
     public void setBaseUrl(String baseUrl) {
         this.baseUrl = baseUrl;
     }
+    
+    public String getBaseUriHttp() {
+        return this.baseUrl.replace("https", "http");
+    }
 
     public String getPubBaseUrl() {
         return pubBaseUrl;

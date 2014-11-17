@@ -96,6 +96,8 @@ public class NotificationManagerImpl implements NotificationManager {
     private static final String WILDCARD_WEBSITE = "${website}";
 
     private static final String WILDCARD_DESCRIPTION = "${description}";
+    
+    
 
     @Resource
     private MessageSource messages;
@@ -107,12 +109,9 @@ public class NotificationManagerImpl implements NotificationManager {
 
     private String ORCID_PRIVACY_POLICY_UPDATES = "ORCID - Privacy Policy Updates";
 
-    @Value("${org.orcid.core.baseUri:http://orcid.org}")
-    private URI baseUri;
+    @Resource
+    private OrcidUrlManager orcidUrlManager;
     
-    @Value("${org.orcid.core.pubBaseUri:https://pub.orcid.org}")
-    private String pubBaseUri;
-
     private boolean apiRecordCreationEmailEnabled;
 
     private TemplateManager templateManager;
@@ -135,10 +134,6 @@ public class NotificationManagerImpl implements NotificationManager {
     private NotificationDao notificationDao;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationManagerImpl.class);
-
-    public void setBaseUri(URI baseUri) {
-        this.baseUri = baseUri;
-    }
 
     public boolean isApiRecordCreationEmailEnabled() {
         return apiRecordCreationEmailEnabled;
@@ -167,7 +162,7 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     @Override
-    public void sendOrcidDeactivateEmail(OrcidProfile orcidToDeactivate, URI baseUri) {
+    public void sendOrcidDeactivateEmail(OrcidProfile orcidToDeactivate) {
         // Create verification url
 
         Map<String, Object> templateParams = new HashMap<String, Object>();
@@ -181,8 +176,8 @@ public class NotificationManagerImpl implements NotificationManager {
         String emailFriendlyName = deriveEmailFriendlyName(orcidToDeactivate);
         templateParams.put("emailName", emailFriendlyName);
         templateParams.put("orcid", orcidToDeactivate.getOrcidIdentifier().getPath());
-        templateParams.put("baseUri", baseUri);
-        templateParams.put("pubBaseUri", pubBaseUri);
+        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
+        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
         templateParams.put("deactivateUrlEndpoint", deactivateUrlEndpointPath + "/" + base64EncodedEmail);
         templateParams.put("deactivateUrlEndpointUrl", deactivateUrlEndpointPath);
         templateParams.put("subject", subject);
@@ -199,18 +194,18 @@ public class NotificationManagerImpl implements NotificationManager {
 
     // look like the following is our best best for i18n emails
     // http://stackoverflow.com/questions/9605828/email-internationalization-using-velocity-freemarker-templates
-    public void sendVerificationEmail(OrcidProfile orcidProfile, URI baseUri, String email) {
+    public void sendVerificationEmail(OrcidProfile orcidProfile, String email) {
         Map<String, Object> templateParams = new HashMap<String, Object>();
         String primaryEmail = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
         templateParams.put("primaryEmail", primaryEmail);
         String emailFriendlyName = deriveEmailFriendlyName(orcidProfile);
         templateParams.put("emailName", emailFriendlyName);
         templateParams.put("subject", getSubject("email.subject.verify_reminder", orcidProfile));
-        String verificationUrl = createVerificationUrl(email, baseUri);
+        String verificationUrl = createVerificationUrl(email, orcidUrlManager.getBaseUrl());
         templateParams.put("verificationUrl", verificationUrl);
         templateParams.put("orcid", orcidProfile.getOrcidIdentifier().getPath());
-        templateParams.put("baseUri", baseUri);
-        templateParams.put("pubBaseUri", pubBaseUri);
+        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
+        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
 
         addMessageParams(templateParams, orcidProfile);
 
@@ -222,19 +217,19 @@ public class NotificationManagerImpl implements NotificationManager {
 
     // look like the following is our best best for i18n emails
     // http://stackoverflow.com/questions/9605828/email-internationalization-using-velocity-freemarker-templates
-    public boolean sendPrivPolicyEmail2014_03(OrcidProfile orcidProfile, URI baseUri) {
+    public boolean sendPrivPolicyEmail2014_03(OrcidProfile orcidProfile) {
         String email = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
         Map<String, Object> templateParams = new HashMap<String, Object>();
 
         String emailFriendlyName = deriveEmailFriendlyName(orcidProfile);
         templateParams.put("emailName", emailFriendlyName);
         if (!orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().isVerified()) {
-            String verificationUrl = createVerificationUrl(email, baseUri);
+            String verificationUrl = createVerificationUrl(email, orcidUrlManager.getBaseUrl());
             templateParams.put("verificationUrl", verificationUrl);
         }
         templateParams.put("orcid", orcidProfile.getOrcidIdentifier().getPath());
-        templateParams.put("baseUri", baseUri);
-        templateParams.put("pubBaseUri", pubBaseUri);
+        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
+        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
 
         addMessageParams(templateParams, orcidProfile);
 
@@ -286,13 +281,13 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("primaryEmail", primaryEmail);
         String emailFriendlyName = deriveEmailFriendlyName(orcidProfile);
         templateParams.put("emailName", emailFriendlyName);
-        String verificationUrl = createVerificationUrl(email, baseUri);
+        String verificationUrl = createVerificationUrl(email, orcidUrlManager.getBaseUrl());
         templateParams.put("verificationUrl", verificationUrl);
         templateParams.put("orcid", orcidProfile.getOrcidIdentifier().getPath());
         templateParams.put("email", email);
         templateParams.put("subject", getSubject("email.subject.verify_reminder", orcidProfile));
-        templateParams.put("baseUri", baseUri);
-        templateParams.put("pubBaseUri", pubBaseUri);
+        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
+        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
 
         addMessageParams(templateParams, orcidProfile);
 
@@ -319,17 +314,17 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     @Override
-    public void sendPasswordResetEmail(String submittedEmail, OrcidProfile orcidProfile, URI baseUri) {
+    public void sendPasswordResetEmail(String submittedEmail, OrcidProfile orcidProfile) {
 
         // Create map of template params
         Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put("emailName", deriveEmailFriendlyName(orcidProfile));
         templateParams.put("orcid", orcidProfile.getOrcidIdentifier().getPath());
         templateParams.put("subject", getSubject("email.subject.reset", orcidProfile));
-        templateParams.put("baseUri", baseUri);
-        templateParams.put("pubBaseUri", pubBaseUri);
+        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
+        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
         // Generate body from template
-        String resetUrl = createResetEmail(orcidProfile, baseUri);
+        String resetUrl = createResetEmail(orcidProfile, orcidUrlManager.getBaseUrl());
         templateParams.put("passwordResetUrl", resetUrl);
 
         addMessageParams(templateParams, orcidProfile);
@@ -367,8 +362,8 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("emailName", deriveEmailFriendlyName(amendedProfile));
         templateParams.put("orcid", amendedProfile.getOrcidIdentifier().getPath());
         templateParams.put("amenderName", extractAmenderName(amendedProfile, amenderOrcid));
-        templateParams.put("baseUri", baseUri);
-        templateParams.put("pubBaseUri", pubBaseUri);
+        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
+        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
         templateParams.put("subject", subject);
 
         addMessageParams(templateParams, amendedProfile);
@@ -416,8 +411,8 @@ public class NotificationManagerImpl implements NotificationManager {
             templateParams.put("emailNameForDelegate", emailNameForDelegate);
             templateParams.put("grantingOrcidValue", orcidUserGrantingPermission.getOrcidIdentifier().getPath());
             templateParams.put("grantingOrcidName", deriveEmailFriendlyName(orcidUserGrantingPermission));
-            templateParams.put("baseUri", baseUri);
-            templateParams.put("pubBaseUri", pubBaseUri);
+            templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
+            templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
             templateParams.put("grantingOrcidEmail", grantingOrcidEmail);
             templateParams.put("subject", subject);
 
@@ -433,7 +428,7 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     @Override
-    public void sendEmailAddressChangedNotification(OrcidProfile updatedProfile, Email oldEmail, URI baseUri) {
+    public void sendEmailAddressChangedNotification(OrcidProfile updatedProfile, Email oldEmail) {
 
         // build up old template
         Map<String, Object> templateParams = new HashMap<String, Object>();
@@ -442,13 +437,13 @@ public class NotificationManagerImpl implements NotificationManager {
         String email = oldEmail.getValue();
         String emailFriendlyName = deriveEmailFriendlyName(updatedProfile);
         templateParams.put("emailName", emailFriendlyName);
-        String verificationUrl = createVerificationUrl(updatedProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), baseUri);
+        String verificationUrl = createVerificationUrl(updatedProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), orcidUrlManager.getBaseUrl());
         templateParams.put("verificationUrl", verificationUrl);
         templateParams.put("oldEmail", oldEmail.getValue());
         templateParams.put("newEmail", updatedProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
         templateParams.put("orcid", updatedProfile.getOrcidIdentifier().getPath());
-        templateParams.put("baseUri", baseUri);
-        templateParams.put("pubBaseUri", pubBaseUri);
+        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
+        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
         templateParams.put("subject", subject);
 
         addMessageParams(templateParams, updatedProfile);
@@ -475,7 +470,7 @@ public class NotificationManagerImpl implements NotificationManager {
 
         String emailName = deriveEmailFriendlyName(createdProfile);
         String orcid = createdProfile.getOrcidIdentifier().getPath();
-        String verificationUrl = createClaimVerificationUrl(createdProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), baseUri);
+        String verificationUrl = createClaimVerificationUrl(createdProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), orcidUrlManager.getBaseUrl());
         String email = createdProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
 
         String creatorName = "";
@@ -529,8 +524,8 @@ public class NotificationManagerImpl implements NotificationManager {
             templateParams.put("orcid", orcid);
             templateParams.put("subject", subject);
             templateParams.put("creatorName", creatorName);
-            templateParams.put("baseUri", baseUri);
-            templateParams.put("pubBaseUri", pubBaseUri);
+            templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
+            templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
             templateParams.put("verificationUrl", verificationUrl);
 
             addMessageParams(templateParams, createdProfile);
@@ -576,15 +571,15 @@ public class NotificationManagerImpl implements NotificationManager {
         Source source = orcidProfile.getOrcidHistory().getSource();
         templateParams.put("creatorName", (source == null || source.getSourceName() == null || source.getSourceName().getContent() == null) ? source.getSourceOrcid()
                 .getPath() : source.getSourceName().getContent());
-        templateParams.put("baseUri", baseUri);
-        templateParams.put("pubBaseUri", pubBaseUri);
+        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
+        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
         templateParams.put("daysUntilActivation", daysUntilActivation);
         Email primaryEmail = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail();
         if (primaryEmail == null) {
             LOGGER.info("Cant send claim reminder email if primary email is null: {}", orcid);
             return;
         }
-        String verificationUrl = createClaimVerificationUrl(primaryEmail.getValue(), baseUri);
+        String verificationUrl = createClaimVerificationUrl(primaryEmail.getValue(), orcidUrlManager.getBaseUrl());
         templateParams.put("verificationUrl", verificationUrl);
 
         addMessageParams(templateParams, orcidProfile);
@@ -639,22 +634,22 @@ public class NotificationManagerImpl implements NotificationManager {
         return "";
     }
 
-    private String createClaimVerificationUrl(String email, URI baseUri) {
+    private String createClaimVerificationUrl(String email, String baseUri) {
         return createEmailBaseUrl(email, baseUri, "claim");
     }
 
-    public String createVerificationUrl(String email, URI baseUri) {
+    public String createVerificationUrl(String email, String baseUri) {
         return createEmailBaseUrl(email, baseUri, "verify-email");
     }
 
-    private String createResetEmail(OrcidProfile orcidProfile, URI baseUri) {
+    private String createResetEmail(OrcidProfile orcidProfile, String baseUri) {
         String userEmail = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
         XMLGregorianCalendar date = DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(new Date());
         String resetParams = MessageFormat.format("email={0}&issueDate={1}", new Object[] { userEmail, date.toXMLFormat() });
         return createEmailBaseUrl(resetParams, baseUri, "reset-password-email");
     }
 
-    public String createEmailBaseUrl(String unencryptedParams, URI baseUri, String path) {
+    public String createEmailBaseUrl(String unencryptedParams, String baseUri, String path) {
         // Encrypt and encode params
         String encryptedUrlParams = encryptionManager.encryptForExternalUse(unencryptedParams);
         String base64EncodedParams = null;
@@ -664,7 +659,7 @@ public class NotificationManagerImpl implements NotificationManager {
         } catch (UnsupportedEncodingException e) {
             throw new IllegalArgumentException(e);
         }
-        return String.format("%s/%s/%s", baseUri.toString(), path, base64EncodedParams);
+        return String.format("%s/%s/%s", baseUri, path, base64EncodedParams);
     }
 
     @Override
@@ -672,8 +667,8 @@ public class NotificationManagerImpl implements NotificationManager {
         // Create map of template params
         String orcid = managed.getOrcidIdentifier().getPath();
         Map<String, Object> templateParams = new HashMap<String, Object>();
-        templateParams.put("baseUri", baseUri);
-        templateParams.put("pubBaseUri", pubBaseUri);
+        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
+        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
         templateParams.put("link", link);
 
         String trustedOrcidValue = trusted.retrieveOrcidPath();
@@ -728,14 +723,6 @@ public class NotificationManagerImpl implements NotificationManager {
     @Override
     public Notification findByOrcidAndId(String orcid, Long id) {
         return notificationAdapter.toNotification(notificationDao.findByOricdAndId(orcid, id));
-    }
-
-    public String getPubBaseUri() {
-        return pubBaseUri;
-    }
-
-    public void setPubBaseUri(String pubBaseUri) {
-        this.pubBaseUri = pubBaseUri;
     }
     
 }
