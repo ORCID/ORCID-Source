@@ -31,7 +31,7 @@
                                     Sources <span class="hide-sources" ng-click="hideSources(group)">Close sources</span>
                                 </div>
                             </div>
-                            <div class="col-md-2 col-sm-3 col-xs-3">
+                            <div class="col-md-3 col-sm-3 col-xs-3">
                                 Created                         
                             </div>
                             
@@ -40,16 +40,16 @@
                                 	Preferred
                                 </#if>
                             </div>
-                            <div class="col-md-4 col-sm-2 col-xs-2 right">
+                            <div class="col-md-3 col-sm-2 col-xs-2 right">
                             	<#if !(isPublicProfile??)>
                                 	<div class="workspace-toolbar">
 	                                    <ul class="workspace-private-toolbar">   
 	                                    	<li ng-show="bulkEditShow">
-	                                    		<input type="checkbox" ng-model="bulkEditMap[group.getActive().putCode.value]" class="bulk-edit-input ng-valid ng-dirty">
+	                                    		<input type="checkbox" ng-model="bulkEditMap[group.getActive().putCode.value]" class="bulk-edit-input-header ng-valid ng-dirty">
 	                                    	</li>
 	                                    	<li class="works-details">                                		
 		                                		<a ng-click="showDetailsMouseClick(group,$event);">
-		                                			<span ng-class="(moreInfo[group.groupId] == true) ? 'glyphicons book_open' : 'glyphicons book'">
+		                                			<span ng-class="(moreInfo[group.groupId] == true) ? 'glyphicons book' : 'glyphicons book_open'">
 		                                			</span>
 		                                		</a>                                		
 											</li>	                                    	
@@ -99,7 +99,7 @@
                                 	<!-- Show/Hide Details -->
                                 	<li class="works-details" ng-hide="editSources[group.groupId] == true">                                		
                                 		<a ng-click="showDetailsMouseClick(group,$event);">
-                                			<span ng-class="(moreInfo[group.groupId] == true) ? 'glyphicons book_open' : 'glyphicons book'">
+                                			<span ng-class="(moreInfo[group.groupId] == true) ? 'glyphicons book' : 'glyphicons book_open'">
                                 			</span>
                                 		</a>                                		
 									</li>
@@ -111,12 +111,7 @@
 											</a>	                                	
 	                                	</li>
 	                                </#if>
-	                                <!-- Create -->
-                                   <li ng-show="userIsSource(work) || (group.hasKeys() && !group.hasUserVersion())">
-                                        <a ng-click="openEditWork(group.getActive().putCode.value)" class="toolbar-button edit-item-button" title="Edit">
-                                            <span class="glyphicon glyphicon-pencil edit-option-toolbar" ng-class="{'glyphicons git_create' : !userIsSource(work)}"title=""></span>
-                                        </a>
-                                    </li>
+	                                
                                       <!-- Privacy -->
                                     <li>
                                         <@orcid.privacyToggle2 angularModel="work.visibility"
@@ -133,7 +128,7 @@
                             
                      <!-- Active Row Identifiers / URL / Validations / Versions -->
                      <div class="row" ng-show="group.activePutCode == work.putCode.value">
-                         <div class="col-md-12 col-sm-12">
+                         <div class="col-md-12 col-sm-12 bottomBuffer">
                              <ul class="id-details">         
                                  <li>
                                      <span ng-repeat='ie in work.workExternalIdentifiers'><span
@@ -151,11 +146,11 @@
                      <#include "work_more_info_inc_v3.ftl"/>
                          
                      <!-- active row  source display -->
-                      <div class="row" ng-show="group.activePutCode == work.putCode.value">                      
+                      <div class="row source-line" ng-show="group.activePutCode == work.putCode.value">                      
                       	<div class="col-md-4" ng-show="editSources[group.groupId] == true">
                       		SOURCE: {{work.sourceName}}
                       	</div>
-                      	<div class="col-md-2" ng-show="editSources[group.groupId] == true">
+                      	<div class="col-md-3" ng-show="editSources[group.groupId] == true">
                       		<div ng-show="editSources[group.groupId] == true">
                       			{{work.lastModified | ajaxFormDateToISO8601}}
                       		</div>
@@ -170,7 +165,7 @@
 							</div>    
 						</#if>
                       	</div>
-                      	<div class="col-md-3 trash-source" ng-show="editSources[group.groupId] == true">
+                      	<div class="col-md-2 trash-source" ng-show="editSources[group.groupId] == true">
                       		<div ng-show="editSources[group.groupId] == true">
 					        <#if !(isPublicProfile??)>
 					        	<ul class="sources-actions">					        		
@@ -195,13 +190,13 @@
                     
                     
                     <!-- not active row && edit sources -->
-                    <div ng-show="group.activePutCode != work.putCode.value" class="row">                       
+                    <div ng-show="group.activePutCode != work.putCode.value" class="row source-line">                       
                         <div class="col-md-4 col-sm-4 col-xs-4">
                                 <a ng-click="group.activePutCode = work.putCode.value;">
                                 {{work.sourceName}}
                             </a> 
                         </div>
-                        <div class="col-md-2 col-sm-3 col-xs-3">
+                        <div class="col-md-3 col-sm-3 col-xs-3">
                             {{work.lastModified | ajaxFormDateToISO8601}}
                         </div>
                         <div class="col-md-3 col-sm-3 col-xs-5">
@@ -212,7 +207,7 @@
 	                            </a>
                             </#if> 
                         </div>
-                        <div class="col-md-3 col-sm-2 col-xs-12 trash-source">
+                        <div class="col-md-2 col-sm-2 col-xs-12 trash-source">
                             <#if !(isPublicProfile??)>
                                 <ul class="sources-actions">
                                 	<li>
@@ -235,22 +230,27 @@
                     
                     
                     <!--  Final Row -->                     
-                    <div class="row" ng-hide="editSources[group.groupId] == true">
+                    <div class="row source-line" ng-hide="editSources[group.groupId] == true">
                     	<div class="col-md-4">
                       		SOURCE: {{work.sourceName}}
                       	</div>
                       	<div class="col-md-3">                      		
                       		CREATED: {{work.lastModified | ajaxFormDateToISO8601}}                      		
                       	</div>              
-                      	<div class="col-md-4">
+                      	<div class="col-md-3">
                      		<#if !(isPublicProfile??)>							
-							    <span class="glyphicon glyphicon-check" ng-hide="group.activitiesCount == 1"></span><span ng-hide="group.activitiesCount == 1"> Preferred source</span> <span ng-hide="group.activitiesCount == 1">(</span><a ng-click="editSources[group.groupId] = !editSources[group.groupId]" ng-hide="group.activitiesCount == 1">of {{group.activitiesCount}}</a><span ng-hide="group.activitiesCount == 1">)</span>							    
+							    <span class="glyphicon glyphicon-check"></span><span> Preferred source</span> <span ng-hide="group.activitiesCount == 1">(</span><a ng-click="editSources[group.groupId] = !editSources[group.groupId]" ng-hide="group.activitiesCount == 1">of {{group.activitiesCount}}</a><span ng-hide="group.activitiesCount == 1">)</span>							    
 							</#if>
                       	</div>
                     
-                    	<div class="col-md-1" ng-show="group.activePutCode == work.putCode.value">                    	
+                    	<div class="col-md-2" ng-show="group.activePutCode == work.putCode.value">                    	
                     		<ul class="sources-options" ng-cloak>                    			
 							    <#if !(isPublicProfile??)>
+							    	<li ng-show="userIsSource(work) || (group.hasKeys() && !group.hasUserVersion())">
+									    <a ng-click="openEditWork(group.getActive().putCode.value)" class="" title="">
+									        <span class="glyphicon glyphicon-pencil grey" ng-class="{'glyphicons git_create grey' : !userIsSource(work)}"title=""></span>
+									    </a>
+									</li>
 							         
 							         <li ng-hide="editSources[group.groupId] == true || group.activitiesCount == 1">
 							            <a ng-click="editSources[group.groupId] = !editSources[group.groupId]" ng-show="!bulkEditShow" class="">

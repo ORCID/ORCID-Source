@@ -1630,7 +1630,11 @@ a:hover {
 
 ul.workspace-private-toolbar li.bulk-checkbox-item{
 	position: absolute;
-	right: 173px;
+	right: 137px;
+}
+
+ul.workspace-private-toolbar li.bulk-checkbox-item input{
+	margin-top: 9px;
 }
 
 .orcid-id{
@@ -4372,10 +4376,6 @@ ul.sources-edit-list > li{
 	padding-top: 12px;
 }
 
-.source-active > .sources-header .bulk-edit-input{
-	margin: 17px 42px 0 0;
-}
-
 .workspace-body-list .spinner{
 	text-align: center;
 	margin: 15px 0;
@@ -4670,11 +4670,6 @@ ul.toggle-menu li:hover ul {
 	text-align: center;
 }
 
-.bulk-edit ul.bulk-edit-toolbar > li.bulk-edit-toolbar-item.work-multiple-selector{
-	margin-right: 40px;
-}
-
-
 .bulk-edit ul.bulk-edit-toolbar > li.bulk-edit-toolbar-item  label{
 	color: #494A4C;
 	width: 100%;
@@ -4845,10 +4840,6 @@ ul.toggle-menu li:hover ul {
 	display: block !important;
 }
 
-input.bulk-edit-input{	
-	margin: 10px 5px 6px 0;	
-}
-
 .trash-source{
 	text-align: right;
 	height: 21px;
@@ -4879,19 +4870,21 @@ ul.sources-actions li{
 	color: #FFF;
 }
 
-ul.sources-edit-list ul.workspace-private-toolbar .git_create:before{
-	font-size: 17px;
+ul.sources-options .git_create:before{
+	font-size: 15px;
 	position: absolute;
 	left: 7px;
-	top: -2px;
+	top: -10px;
 	color: #939598;
+	padding-left: 27px;
 }
 
-ul.sources-edit-list ul.sources-actions .git_create:before{
-	font-size: 16px;
-	position: absolute;
-	left: 7px;
-	top: -12px;
+ul.sources-options .git_create:hover:before{
+	color: #338caf;
+}
+
+ul.sources-options a:hover span.glyphicon-trash,
+ul.sources-options a:hover span.glyphicon-pencil{
 	color: #338caf;
 }
 
@@ -4962,6 +4955,14 @@ ul.sources-edit-list ul.sources-actions .git_create:hover:before{
 
 .sources-actions .git_pull_request:hover:before{
 	color: #9FC836;
+}
+
+.source-line{
+	font-size: 13px;
+}
+
+.workspace-private-toolbar .bulk-edit-input-header{
+	margin-right: 2px;
 }
 
 /* Media Queries */
