@@ -73,7 +73,7 @@
                 <!-- End of Header -->
                 
                               
-                <li ng-repeat="work in group.activities" ng-show="group.activePutCode == work.putCode.value || editSources[group.groupId] == true" orcid-putCode="{{work.putCode.value}}">
+                <li ng-repeat="work in group.activities" ng-show="group.activePutCode == work.putCode.value || editSources[group.groupId] == true" orcid-put-code="{{work.putCode.value}}">
                     <!-- active row summary info -->
                     <div class="row" ng-show="group.activePutCode == work.putCode.value">
                         <div class="col-md-7 col-sm-12 col-xs-12">
