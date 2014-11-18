@@ -110,7 +110,7 @@ public class WorksTest {
         wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//option[text()='Conference paper']")));
         Select typeSel = new Select(webDriver.findElement(By.xpath("//select[@ng-model='editWork.workType.value']")));
         typeSel.selectByVisibleText("Conference paper");
-        WebElement title = webDriver.findElement(By.xpath("//input[@ng-model='editWork.workTitle.title.value']"));
+        WebElement title = webDriver.findElement(By.xpath("//input[@ng-model='editWork.title.value']"));
         title.sendKeys(workName);
         WebElement buttonEl = webDriver.findElement(By.xpath("//button[@id='save-new-work']"));
         buttonEl.click();
@@ -136,7 +136,7 @@ public class WorksTest {
     }
 
     public static By byWorkTitle(String workName) {
-        return By.xpath("//span[@ng-bind='work.workTitle.title.value' and text()='" + workName + "']");
+        return By.xpath("//span[@ng-bind='work.title.value' and text()='" + workName + "']");
     }
     
     public static void waitWorksLoading(WebDriverWait wait) {
