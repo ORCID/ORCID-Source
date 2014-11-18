@@ -22,6 +22,8 @@ import java.util.List;
 
 import org.orcid.jaxb.model.message.Keyword;
 import org.orcid.jaxb.model.message.OtherName;
+import org.orcid.jaxb.model.message.Subtitle;
+import org.orcid.jaxb.model.message.Title;
 
 public class Text implements ErrorsInterface, Required, Serializable {
     
@@ -42,6 +44,14 @@ public class Text implements ErrorsInterface, Required, Serializable {
         return new Keyword(this.value);
     }
 
+    public Title toTitle() {
+        return new Title(this.value);
+    }
+
+    public Subtitle toSubtitle() {
+        return new Subtitle(this.value);
+    }
+    
     public OtherName toOtherName() {
         return new OtherName(this.value);
     }

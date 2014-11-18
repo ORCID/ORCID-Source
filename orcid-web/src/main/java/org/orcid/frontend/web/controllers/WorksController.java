@@ -64,7 +64,6 @@ import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.TranslatedTitle;
 import org.orcid.pojo.ajaxForm.Work;
 import org.orcid.pojo.ajaxForm.WorkExternalIdentifier;
-import org.orcid.pojo.ajaxForm.WorkTitle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -181,10 +180,10 @@ public class WorksController extends BaseWorkspaceController {
                     work.setLanguageName(languageName);
                 }
                 // Set translated title language name
-                if (!(work.getWorkTitle() == null) && !(work.getWorkTitle().getTranslatedTitle() == null)
-                        && !StringUtils.isEmpty(work.getWorkTitle().getTranslatedTitle().getLanguageCode())) {
-                    String languageName = languages.get(work.getWorkTitle().getTranslatedTitle().getLanguageCode());
-                    work.getWorkTitle().getTranslatedTitle().setLanguageName(languageName);
+                if ( !(work.getTranslatedTitle() == null)
+                        && !StringUtils.isEmpty(work.getTranslatedTitle().getLanguageCode())) {
+                    String languageName = languages.get(work.getTranslatedTitle().getLanguageCode());
+                    work.getTranslatedTitle().setLanguageName(languageName);
                 }
 
                 workList.add(work);
@@ -218,27 +217,23 @@ public class WorksController extends BaseWorkspaceController {
             w.setVisibility(profile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault().getValue());
         }
         
-        if(w.getWorkTitle() == null) {
+        if(w.getTitle() == null) {
             Text wtt = new Text();
             wtt.setRequired(true);
-            WorkTitle wt = new WorkTitle();
-            wt.setTitle(wtt);            
-            w.setWorkTitle(wt);
+            w.setTitle(wtt);            
         }
         
-        if(w.getWorkTitle().getSubtitle() == null) {
-            WorkTitle wt = w.getWorkTitle();
+        if(w.getSubtitle() == null) {
             Text wst = new Text();
-            wt.setSubtitle(wst);            
+            w.setSubtitle(wst);            
         }
         
-        if(w.getWorkTitle().getTranslatedTitle() == null) {
-            WorkTitle wt = w.getWorkTitle();
+        if(w.getTranslatedTitle() == null) {
             TranslatedTitle tt = new TranslatedTitle();
             tt.setContent(new String());
             tt.setLanguageCode(new String());
             tt.setLanguageName(new String());
-            wt.setTranslatedTitle(tt);
+            w.setTranslatedTitle(tt);
         }
         
         if(PojoUtil.isEmpty(w.getJournalTitle())) {
@@ -357,10 +352,11 @@ public class WorksController extends BaseWorkspaceController {
                     work.setLanguageName(languageName);
                 }
                 // Set translated title language name
-                if (!(work.getWorkTitle().getTranslatedTitle() == null) && !StringUtils.isEmpty(work.getWorkTitle().getTranslatedTitle().getLanguageCode())) {
-                    String languageName = languages.get(work.getWorkTitle().getTranslatedTitle().getLanguageCode());
-                    work.getWorkTitle().getTranslatedTitle().setLanguageName(languageName);
+                if (!(work.getTranslatedTitle() == null) && !StringUtils.isEmpty(work.getTranslatedTitle().getLanguageCode())) {
+                    String languageName = languages.get(work.getTranslatedTitle().getLanguageCode());
+                    work.getTranslatedTitle().setLanguageName(languageName);
                 }
+                
 
                 // If the work source is the user himself, fill the work source
                 // name
@@ -397,15 +393,15 @@ public class WorksController extends BaseWorkspaceController {
             copyErrors(work.getCitation().getCitationType(), work);
             copyErrors(work.getCitation().getCitation(), work);
         }
-        workWorkTitleTitleValidate(work);
-        copyErrors(work.getWorkTitle().getTitle(), work);
-        if (work.getWorkTitle().getSubtitle() != null) {
-            workWorkTitleSubtitleValidate(work);
-            copyErrors(work.getWorkTitle().getSubtitle(), work);
+        workTitleValidate(work);
+        copyErrors(work.getTitle(), work);
+        if (work.getSubtitle() != null) {
+            workSubtitleValidate(work);
+            copyErrors(work.getSubtitle(), work);
         }
-        if (work.getWorkTitle().getTranslatedTitle() != null) {
-            workWorkTitleTranslatedTitleValidate(work);
-            copyErrors(work.getWorkTitle().getTranslatedTitle(), work);
+        if (work.getTranslatedTitle() != null) {
+            workTranslatedTitleValidate(work);
+            copyErrors(work.getTranslatedTitle(), work);
         }
         // allowed to be null
         if (work.getShortDescription() != null) {
@@ -615,53 +611,53 @@ public class WorksController extends BaseWorkspaceController {
         return fuzzyDate;
     }
 
-    @RequestMapping(value = "/work/workTitle/titleValidate.json", method = RequestMethod.POST)
+    @RequestMapping(value = "/work/titleValidate.json", method = RequestMethod.POST)
     public @ResponseBody
-    Work workWorkTitleTitleValidate(@RequestBody Work work) {
-        work.getWorkTitle().getTitle().setErrors(new ArrayList<String>());
-        if (work.getWorkTitle().getTitle().getValue() == null || work.getWorkTitle().getTitle().getValue().trim().length() == 0) {
-            setError(work.getWorkTitle().getTitle(), "NotBlank.manualWork.title");
+    Work workTitleValidate(@RequestBody Work work) {
+        work.getTitle().setErrors(new ArrayList<String>());
+        if (work.getTitle().getValue() == null || work.getTitle().getValue().trim().length() == 0) {
+            setError(work.getTitle(), "NotBlank.manualWork.title");
         } else {
-            if (work.getWorkTitle().getTitle().getValue().trim().length() > 1000) {
-                setError(work.getWorkTitle().getTitle(), "manualWork.length_less_1000");
+            if (work.getTitle().getValue().trim().length() > 1000) {
+                setError(work.getTitle(), "manualWork.length_less_1000");
             }
         }
         return work;
     }
 
-    @RequestMapping(value = "/work/workTitle/subtitleValidate.json", method = RequestMethod.POST)
+    @RequestMapping(value = "/work/subtitleValidate.json", method = RequestMethod.POST)
     public @ResponseBody
-    Work workWorkTitleSubtitleValidate(@RequestBody Work work) {
+    Work workSubtitleValidate(@RequestBody Work work) {
         
-        work.getWorkTitle().getSubtitle().setErrors(new ArrayList<String>());
-        if (work.getWorkTitle().getSubtitle().getValue() != null && work.getWorkTitle().getSubtitle().getValue().length() > 1000) {
-            setError(work.getWorkTitle().getSubtitle(), "manualWork.length_less_1000");
+        work.getSubtitle().setErrors(new ArrayList<String>());
+        if (work.getSubtitle().getValue() != null && work.getSubtitle().getValue().length() > 1000) {
+            setError(work.getSubtitle(), "manualWork.length_less_1000");
         }
         return work;
     }
 
-    @RequestMapping(value = "/work/workTitle/translatedTitleValidate.json", method = RequestMethod.POST)
+    @RequestMapping(value = "/work/translatedTitleValidate.json", method = RequestMethod.POST)
     public @ResponseBody
-    Work workWorkTitleTranslatedTitleValidate(@RequestBody Work work) {
-        work.getWorkTitle().getTranslatedTitle().setErrors(new ArrayList<String>());
+    Work workTranslatedTitleValidate(@RequestBody Work work) {
+        work.getTranslatedTitle().setErrors(new ArrayList<String>());
         
-        String content = work.getWorkTitle().getTranslatedTitle() == null ? null : work.getWorkTitle().getTranslatedTitle().getContent();
-        String code = work.getWorkTitle().getTranslatedTitle() == null ? null : work.getWorkTitle().getTranslatedTitle().getLanguageCode();
+        String content = work.getTranslatedTitle() == null ? null : work.getTranslatedTitle().getContent();
+        String code = work.getTranslatedTitle() == null ? null : work.getTranslatedTitle().getLanguageCode();
 
         if (!StringUtils.isEmpty(content)) {
             if (!StringUtils.isEmpty(code)) {
-                if (!LANGUAGE_CODE.matcher(work.getWorkTitle().getTranslatedTitle().getLanguageCode()).matches()) {
-                    setError(work.getWorkTitle().getTranslatedTitle(), "manualWork.invalid_language_code");
+                if (!LANGUAGE_CODE.matcher(work.getTranslatedTitle().getLanguageCode()).matches()) {
+                    setError(work.getTranslatedTitle(), "manualWork.invalid_language_code");
                 }
             } else {
-                setError(work.getWorkTitle().getTranslatedTitle(), "manualWork.empty_code");
+                setError(work.getTranslatedTitle(), "manualWork.empty_code");
             }
             if (content.length() > 1000) {
-                setError(work.getWorkTitle().getTranslatedTitle(), "manualWork.length_less_1000");
+                setError(work.getTranslatedTitle(), "manualWork.length_less_1000");
             }
         } else {
             if (!StringUtils.isEmpty(code)) {
-                setError(work.getWorkTitle().getTranslatedTitle(), "manualWork.empty_translation");
+                setError(work.getTranslatedTitle(), "manualWork.empty_translation");
             }
         }        
         return work;

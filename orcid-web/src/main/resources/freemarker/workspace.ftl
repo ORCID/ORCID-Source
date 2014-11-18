@@ -361,7 +361,7 @@
 					   	<div ng-repeat="work in worksFromBibtex" ng-cloak class="grey-box bottomBuffer box-border">
 					   		  <div class="row">	  
 			        	       	  <div class="col-md-9">
-			        	          	{{work.workTitle.title.value}}
+			        	          	{{work.title.value}}
 			        	          </div>
 			        	          <div class="col-md-3 bibtex-options-menu">
 			        	          	<ul>
