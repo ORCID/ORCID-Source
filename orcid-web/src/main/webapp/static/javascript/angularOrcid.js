@@ -3752,6 +3752,9 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
     $scope.bibtexCancelLink = false;
     $scope.bibtextWork = false;
     $scope.bibtextWorkIndex = null;
+    $scope.delCountVerify = 0;
+    $scope.bulkDeleteCount = 0;
+
 
     $scope.toggleBulkEdit = function() {
         if (!$scope.bulkEditShow) {
@@ -3790,6 +3793,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
     };
 
     $scope.deleteBulk = function () {
+        if ($scope.delCountVerify != parseInt($scope.bulkDeleteCount)) return;
         var delPuts = new Array();
         for (var idx in worksSrvc.groups)
             if ($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value])
@@ -3802,6 +3806,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
 
 
     $scope.deleteBulkConfirm = function(idx) {
+        $scope.delCountVerify = 0;
         $scope.bulkDeleteCount = 0;
         for (var idx in worksSrvc.groups)
             console.log($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value]);
