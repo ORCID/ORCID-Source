@@ -283,7 +283,7 @@
 			        				</li>
 			        				<li>
 			        				    <a class="action-option works manage-button" ng-class="{'green-bg' : bulkEditShow == true}" ng-click="toggleBulkEdit()">
-											<span class="glyphicon glyphicon-pencil"></span>Bulk Edit
+											<span class="glyphicon glyphicon-pencil"></span>Bulk edit
 										</a>
 			        				</li>
 								</ul>								
