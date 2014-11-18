@@ -41,7 +41,7 @@ Number.prototype.pad = function(size) {
         s = "0" + s;
     }
     return s;
-}
+};
 
 // add new method to string
 if (typeof String.prototype.startsWith != 'function') {

@@ -104,15 +104,14 @@
                                 		</a>                                		
 									</li>
 									<!-- Combine -->
-                                	<#if RequestParameters['combine']??>
-	                                	<li ng-show="canBeCombined(work)">
-		                                	<a ng-click="showCombineMatches(group.getDefault())" class="toolbar-button edit-item-button" title="Combine duplicates">
-											    <span class="glyphicons git_pull_request edit-option-toolbar"></span>
-											</a>	                                	
-	                                	</li>
-	                                </#if>
-	                                
-                                      <!-- Privacy -->
+                                    <#if RequestParameters['combine']??>
+                                        <li ng-show="canBeCombined(work)">
+                                            <a ng-click="showCombineMatches(group.getDefault())" class="toolbar-button edit-item-button" title="Combine duplicates">
+                                                <span class="glyphicons git_pull_request edit-option-toolbar"></span>
+                                            </a>
+                                         </li>
+                                    </#if>
+                                    <!-- Privacy -->
                                     <li>
                                         <@orcid.privacyToggle2 angularModel="work.visibility"
                                             questionClick="toggleClickPrivacyHelp(work.putCode.value)"
@@ -167,9 +166,11 @@
                       		<div ng-show="editSources[group.groupId] == true">
 					        <#if !(isPublicProfile??)>
 					        	<ul class="sources-actions">					        		
-					        		<li>
-					        			<a class="glyphicons git_pull_request" ng-click="showCombineMatches(group.getDefault())"></a>
-					        		</li>
+                                   <#if RequestParameters['combine']??>
+                                       <li>
+                                           <a class="glyphicons git_pull_request" ng-click="showCombineMatches(group.getDefault())"></a>
+                                       </li>
+                                    </#if>
 					        		<li>
 					        			<a ng-show="!group.hasUserVersion() || userIsSource(work)" ng-click="openEditWork(group.getActive().putCode.value)">
 											<span class="glyphicon glyphicon-pencil" ng-class="{'glyphicons git_create' : !userIsSource(work)}"></span>
@@ -206,9 +207,11 @@
                         <div class="col-md-2 col-sm-2 col-xs-12 trash-source">
                             <#if !(isPublicProfile??)>
                                 <ul class="sources-actions">
-                                	<li>
-					        			<a class="glyphicons git_pull_request" ng-click="showCombineMatches(group.getDefault())"></a>
-					        		</li>
+                                    <#if RequestParameters['combine']??>
+                                        <li>
+                                            <a class="glyphicons git_pull_request" ng-click="showCombineMatches(group.getDefault())"></a>
+                                        </li>
+                                    </#if>
                                     <li>
                                         <a ng-show="!group.hasUserVersion() || userIsSource(work)" ng-click="openEditWork(group.getActive().putCode.value)">
                                             <span class="glyphicon glyphicon-pencil" ng-class="{'glyphicons git_create' : !userIsSource(work)}"></span>
