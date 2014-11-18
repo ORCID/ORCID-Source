@@ -1108,6 +1108,7 @@ ul.privacyHelp li {
 	height: 22px;
 	background: url('../img/privacy_icons_100.png') no-repeat;
 	background-size: 25px 66px;
+	display: list-item;
 }
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2) , only screen
@@ -4894,6 +4895,7 @@ ul.sources-edit-list ul.sources-actions .git_create:hover:before{
 .workspace-toolbar ul.workspace-private-toolbar li.works-details{
 	margin-bottom: 4px;
 	display: inline-block;
+	position: relative;	
 }
 
 .workspace-toolbar ul.workspace-private-toolbar li.works-details a{
@@ -4963,6 +4965,46 @@ ul.sources-edit-list ul.sources-actions .git_create:hover:before{
 ul.sources-edit-list > li.source-header{
 	box-shadow: none;
 }
+
+/* Works popovers */
+
+.popover-tooltip{
+	display: inline;
+	font-size: 12px;
+	white-space: nowrap;
+	padding: 2px;
+}
+
+.workspace-toolbar .works-details .show-hide-details-popover{	
+	top: -38px;
+	left: -33px;
+}
+
+.workspace-top .popover-help-container .popover.privacy-myorcid3,
+.workspace-top .popover-help-container .popover.privacy-myorcid3:hover{
+	top: -178px;
+	left: -270px;	
+}
+
+.popover-help-container > .privacy-myorcid3 >.arrow{
+	left: 220px;
+}
+
+.source-line .sources-popover{	
+	top: -35px;
+	left: 74px;	
+}
+
+ul.sources-options .delete-group-popover,
+ul.sources-options .delete-source-popover,
+.trash-source .delete-activeSource-popover,
+ul.sources-actions .delete-inactiveSource-popover{
+	top: -41px;
+	left: 38px;
+}
+
+
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */

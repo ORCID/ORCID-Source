@@ -98,11 +98,19 @@
 									</li>
                                 	<!-- Show/Hide Details -->
                                 	<li class="works-details" ng-hide="editSources[group.groupId] == true">                                		
-                                		<a ng-click="showDetailsMouseClick(group,$event);">
+                                		<a ng-click="showDetailsMouseClick(group,$event);" ng-mouseenter="showTooltip(group.groupId+'-showHideDetails')" ng-mouseleave="hideTooltip(group.groupId+'-showHideDetails')">
                                 			<span ng-class="(moreInfo[group.groupId] == true) ? 'glyphicons book' : 'glyphicons book_open'">
                                 			</span>
                                 		</a>                                		
-									</li>
+                                		<div class="popover popover-tooltip top show-hide-details-popover" ng-show="showElement[group.groupId+'-showHideDetails'] == true"> 
+									     	<div class="arrow"></div>
+									        <div class="popover-content">
+									        	<span ng-show="moreInfo[group.groupId] == false || moreInfo[group.groupId] == null">Show Details</span>									                    
+									        	<span ng-show="moreInfo[group.groupId] == true">Hide Details</span>
+									        </div>                
+									    </div>                                		
+									</li>									
+									
 									<!-- Combine -->
                                 	<#if RequestParameters['combine']??>
 	                                	<li ng-show="canBeCombined(work)">
@@ -176,9 +184,19 @@
 										</a>
 					        		</li>
 					        		<li>
-					        			<a ng-click="deleteWorkConfirm(work.putCode.value, false)"  title="Delete {{work.title.value}}">
+					        			<a ng-click="deleteWorkConfirm(work.putCode.value, false)"  title="Delete {{work.title.value}}" ng-mouseenter="showTooltip(work.putCode.value+'-deleteActiveSource')" ng-mouseleave="hideTooltip(work.putCode.value+'-deleteActiveSource')">
 											<span class="glyphicon glyphicon-trash"></span>
 										</a>
+										
+										<div class="popover popover-tooltip top delete-activeSource-popover" ng-show="showElement[work.putCode.value+'-deleteActiveSource'] == true"> 
+										    <div class="arrow"></div>
+										    <div class="popover-content">
+										        Delete this source                                      
+										    </div>                
+										</div>
+										
+										
+										
 					        		</li>
 					        	</ul>
 							</#if>
@@ -215,9 +233,18 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a ng-click="deleteWorkConfirm(work.putCode.value, false)">
+                                        <a ng-click="deleteWorkConfirm(work.putCode.value, false)" ng-mouseenter="showTooltip(work.putCode.value+'-deleteInactiveSource')" ng-mouseleave="hideTooltip(work.putCode.value+'-deleteInactiveSource')">
                                             <span class="glyphicon glyphicon-trash" title="Delete {{work.title.value}}"></span>
                                         </a>
+                                        
+                                        <div class="popover popover-tooltip top delete-inactiveSource-popover" ng-show="showElement[work.putCode.value+'-deleteInactiveSource'] == true"> 
+										    <div class="arrow"></div>
+										    <div class="popover-content">
+										        Delete this source                                      
+										    </div>                
+										</div>
+                                        
+                                        
                                     </li>
                                 </ul>
                             </#if>
@@ -235,7 +262,15 @@
                       	</div>
                       	<div class="col-md-3">
                      		<#if !(isPublicProfile??)>							
-							    <span class="glyphicon glyphicon-check"></span><span> Preferred source</span> <span ng-hide="group.activitiesCount == 1">(</span><a ng-click="editSources[group.groupId] = !editSources[group.groupId]" ng-hide="group.activitiesCount == 1">of {{group.activitiesCount}}</a><span ng-hide="group.activitiesCount == 1">)</span>							    
+							    <span class="glyphicon glyphicon-check"></span><span> Preferred source</span> <span ng-hide="group.activitiesCount == 1">(</span><a ng-click="editSources[group.groupId] = !editSources[group.groupId]" ng-hide="group.activitiesCount == 1" ng-mouseenter="showTooltip(group.groupId+'-sources')" ng-mouseleave="hideTooltip(group.groupId+'-sources')">of {{group.activitiesCount}}</a><span ng-hide="group.activitiesCount == 1">)</span>
+							    
+							    <div class="popover popover-tooltip top sources-popover" ng-show="showElement[group.groupId+'-sources'] == true"> 
+								    <div class="arrow"></div>
+								    <div class="popover-content">
+								    	Show other sources								        
+								    </div>                
+								</div>
+							    							    
 							</#if>
                       	</div>
                     
@@ -244,21 +279,41 @@
 							    <#if !(isPublicProfile??)>
 							    	<li ng-show="userIsSource(work) || (group.hasKeys() && !group.hasUserVersion())">
 									    <a ng-click="openEditWork(group.getActive().putCode.value)" class="" title="">
-									        <span class="glyphicon glyphicon-pencil" ng-class="{'glyphicons git_create' : !userIsSource(work)}"title=""></span>
+									        <span class="glyphicon glyphicon-pencil" ng-class="{'glyphicons git_create' : !userIsSource(work)}" title=""></span>
 									    </a>
 									</li>
 							         
 							         <li ng-hide="editSources[group.groupId] == true || group.activitiesCount == 1">
-							            <a ng-click="editSources[group.groupId] = !editSources[group.groupId]">
+							            <a ng-click="editSources[group.groupId] = !editSources[group.groupId]" ng-mouseenter="showTooltip(group.groupId+'-deleteGroup')" ng-mouseleave="hideTooltip(group.groupId+'-deleteGroup')">
 											<span class="glyphicon glyphicon-trash"></span>
 										</a>
+										
+										<div class="popover popover-tooltip top delete-group-popover" ng-show="showElement[group.groupId+'-deleteGroup'] == true"> 
+										 	<div class="arrow"></div>
+										    <div class="popover-content">
+										    	Delete this source	        
+										    </div>                
+										</div>
+										
 							         </li>
 							         
 							         <li ng-show="group.activitiesCount == 1">
-										<a ng-click="deleteWorkConfirm(group.getActive().putCode.value, false)">
+										<a ng-click="deleteWorkConfirm(group.getActive().putCode.value, false)" ng-mouseenter="showTooltip(group.groupId+'-deleteSource')" ng-mouseleave="hideTooltip(group.groupId+'-deleteSource')">
 										   <span class="glyphicon glyphicon-trash"></span>
 										</a>
+										
+										
+										<div class="popover popover-tooltip top delete-source-popover" ng-show="showElement[group.groupId+'-deleteSource'] == true"> 
+										 	<div class="arrow"></div>
+										    <div class="popover-content">
+										    	Delete this source								        
+										    </div>                
+										</div>
+										
+										
 									</li>
+									
+									
 							         
 							         
 							      </#if>							                             
