@@ -160,7 +160,7 @@
     </bean>
 
     <!-- The 'granter responsible for returning and removing the auth codes -->
-    <bean id="authorizationCodeTokenGranter" class="org.springframework.security.oauth2.provider.code.AuthorizationCodeTokenGranter">
+    <bean id="authorizationCodeTokenGranter" class="org.orcid.core.oauth.OrcidAuthorizationCodeTokenGranter">
         <constructor-arg ref="orcidAuthorizationCodeService"/>
         <constructor-arg ref="tokenServices"/>
         <constructor-arg ref="clientDetailsManager"/>
