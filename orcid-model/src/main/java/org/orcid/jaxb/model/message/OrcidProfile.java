@@ -487,6 +487,10 @@ public class OrcidProfile implements Serializable {
         return createCacheKey(path, DateUtils.convertToXMLGregorianCalendar(lastModifiedDate).toXMLFormat(), ReleaseNameUtils.getReleaseName());
     }
 
+    public static String createCacheKey(String path, long time) {
+        return createCacheKey(path, DateUtils.convertToXMLGregorianCalendar(time).toXMLFormat(), ReleaseNameUtils.getReleaseName());
+    }
+    
     public static String createCacheKey(String path, String xmlFormatLastModifiedDate, String releaseName) {
         return StringUtils.join(new String[] { path, xmlFormatLastModifiedDate, releaseName }, "_");
     }
