@@ -191,9 +191,13 @@ GroupedActivities.prototype.keyMatch = function(activity) {
 GroupedActivities.prototype.makeDefault = function(putCode) {
     this.defaultPutCode = putCode;
     this.dateSortString = this.activities[putCode].dateSortString;
-    if (this.type == GroupedActivities.ABBR_WORK) this.title = this.activities[putCode].workTitle.title.value;
-    else if (this.type == GroupedActivities.FUNDING) this.title = this.activities[putCode].fundingTitle.title.value;
-    else if (this.type == GroupedActivities.AFFILIATION) this.title = this.activities[putCode].affiliationName.value;
+    var act = this.activities[putCode];
+    var title = null;
+    // at some point we should make this easier by making all paths match
+    if (this.type == GroupedActivities.ABBR_WORK) title = act.title;
+    else if (this.type == GroupedActivities.FUNDING) title = act.fundingTitle.title;
+    else if (this.type == GroupedActivities.AFFILIATION) title = act.affiliationName;
+    this.title =  title != null ? title.value : null;
 };
 
 GroupedActivities.prototype.rmByPut = function(putCode) {
@@ -3655,8 +3659,8 @@ function PublicWorkCtrl($scope, $compile, $filter, worksSrvc, actSortSrvc) {
     $scope.renderTranslatedTitleInfo = function(putCode) {
         var info = null;
 
-        if(putCode != null && $scope.worksSrvc.details[putCode] != null && $scope.worksSrvc.details[putCode].workTitle != null && $scope.worksSrvc.details[putCode].workTitle.translatedTitle != null) {
-            info = $scope.worksSrvc.details[putCode].workTitle.translatedTitle.content + ' - ' + $scope.worksSrvc.details[putCode].workTitle.translatedTitle.languageName;
+        if(putCode != null && $scope.worksSrvc.details[putCode] != null && $scope.worksSrvc.details[putCode].translatedTitle != null) {
+            info = $scope.worksSrvc.details[putCode].translatedTitle.content + ' - ' + $scope.worksSrvc.details[putCode].translatedTitle.languageName;
         }
 
         return info;
@@ -4086,8 +4090,8 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
     $scope.renderTranslatedTitleInfo = function(putCode) {
         var info = null;
 
-        if(putCode != null && $scope.worksSrvc.details[putCode] != null && $scope.worksSrvc.details[putCode].workTitle != null && $scope.worksSrvc.details[putCode].workTitle.translatedTitle != null) {
-            info = $scope.worksSrvc.details[putCode].workTitle.translatedTitle.content + ' - ' + $scope.worksSrvc.details[putCode].workTitle.translatedTitle.languageName;
+        if(putCode != null && $scope.worksSrvc.details[putCode] != null && $scope.worksSrvc.details[putCode].translatedTitle != null) {
+            info = $scope.worksSrvc.details[putCode].translatedTitle.content + ' - ' + $scope.worksSrvc.details[putCode].translatedTitle.languageName;
         }
 
         return info;
@@ -4200,8 +4204,8 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
         $scope.deletePutCode = putCode;
         $scope.deleteGroup = deleteGroup;
         var work = worksSrvc.getWork(putCode);
-        if (work.workTitle && work.workTitle.title)
-            $scope.fixedTitle = work.workTitle.title.value;
+        if (work.title)
+            $scope.fixedTitle = work.title.value;
         else $scope.fixedTitle = '';
         var maxSize = 100;
         if($scope.fixedTitle.length > maxSize)

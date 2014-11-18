@@ -25,12 +25,12 @@
 		
 		<span class="dotted-bar"></span>
 		<div class="row">		
-			<div class="col-md-6" ng-show="worksSrvc.details[work.putCode.value].workTitle.translatedTitle.content" ng-cloak>
+			<div class="col-md-6" ng-show="worksSrvc.details[work.putCode.value].translatedTitle.content" ng-cloak>
 				<!-- Translated title -->
 				<div class="bottomBuffer">
 					<strong><@orcid.msg
-						'manual_work_form_contents.labeltranslatedtitle'/></strong> <span><i>({{worksSrvc.details[work.putCode.value].workTitle.translatedTitle.languageName}})</i></span>
-					<div>{{worksSrvc.details[work.putCode.value].workTitle.translatedTitle.content}}</div>				
+						'manual_work_form_contents.labeltranslatedtitle'/></strong> <span><i>({{worksSrvc.details[work.putCode.value].translatedTitle.languageName}})</i></span>
+					<div>{{worksSrvc.details[work.putCode.value].translatedTitle.content}}</div>				
 				</div>
 			</div>
 			<div class="col-md-6" ng-show="worksSrvc.details[work.putCode.value].languageCode.value" ng-cloak>
@@ -41,10 +41,10 @@
 					<div ng-bind="worksSrvc.details[work.putCode.value].languageName.value"></div>					
 				</div>
 			</div>
-			<div class="col-md-6" ng-show="worksSrvc.details[work.putCode.value].workTitle.subtitle.value" ng-cloak>
+			<div class="col-md-6" ng-show="worksSrvc.details[work.putCode.value].subtitle.value" ng-cloak>
 				<div class="bottomBuffer">
 					<strong> <@orcid.msg 'manual_work_form_contents.labelsubtitle'/> </strong>
-					<div ng-bind="worksSrvc.details[work.putCode.value].workTitle.subtitle.value"></div>
+					<div ng-bind="worksSrvc.details[work.putCode.value].subtitle.value"></div>
 				</div>
 			</div>
 			

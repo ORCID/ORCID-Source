@@ -109,9 +109,8 @@ public class WorksControllerTest extends BaseControllerTest {
         assertEquals("2011", work.getPublicationDate().getYear());
         assertEquals("02", work.getPublicationDate().getMonth());
         assertEquals("01", work.getPublicationDate().getDay());
-        assertNotNull(work.getWorkTitle());
-        assertNotNull(work.getWorkTitle().getTitle());
-        assertEquals("Journal article A", work.getWorkTitle().getTitle().getValue());
+        assertNotNull(work.getTitle());
+        assertEquals("Journal article A", work.getTitle().getValue());
         assertNotNull(work.getVisibility());
         assertEquals(Visibility.PUBLIC, work.getVisibility());
         assertEquals("journal-article", work.getWorkType().getValue());
@@ -126,14 +125,14 @@ public class WorksControllerTest extends BaseControllerTest {
         assertNotNull(orcidWork);
         Work work = Work.valueOf(orcidWork);
 
-        worksController.workWorkTitleTitleValidate(work);
-        assertEquals(0, work.getWorkTitle().getTitle().getErrors().size());
+        worksController.workTitleValidate(work);
+        assertEquals(0, work.getTitle().getErrors().size());
 
-        worksController.workWorkTitleSubtitleValidate(work);
-        assertEquals(0, work.getWorkTitle().getSubtitle().getErrors().size());
+        worksController.workSubtitleValidate(work);
+        assertEquals(0, work.getSubtitle().getErrors().size());
 
-        worksController.workWorkTitleTranslatedTitleValidate(work);
-        assertEquals(0, work.getWorkTitle().getTranslatedTitle().getErrors().size());
+        worksController.workTranslatedTitleValidate(work);
+        assertEquals(0, work.getTranslatedTitle().getErrors().size());
 
         worksController.workUrlValidate(work);
         assertEquals(0, work.getUrl().getErrors().size());
@@ -165,24 +164,24 @@ public class WorksControllerTest extends BaseControllerTest {
         assertEquals(orcidWork.getCountry().getValue(), Iso3166Country.US);
 
         // Set wrong values to each field
-        work.getWorkTitle().setTitle(Text.valueOf(buildLongWord()));
-        work.getWorkTitle().setSubtitle(Text.valueOf(buildLongWord()));
-        work.getWorkTitle().getTranslatedTitle().setContent(buildLongWord());
-        work.getWorkTitle().getTranslatedTitle().setLanguageCode(buildLongWord());
+        work.setTitle(Text.valueOf(buildLongWord()));
+        work.setSubtitle(Text.valueOf(buildLongWord()));
+        work.getTranslatedTitle().setContent(buildLongWord());
+        work.getTranslatedTitle().setLanguageCode(buildLongWord());
         work.getUrl().setValue(buildLongWord());
         work.getJournalTitle().setValue(buildLongWord());
         work.getLanguageCode().setValue(buildLongWord());
         work.getShortDescription().setValue(buildLongWord());
         work.getWorkType().setValue(new String());
 
-        worksController.workWorkTitleTitleValidate(work);
-        assertEquals(1, work.getWorkTitle().getTitle().getErrors().size());
+        worksController.workTitleValidate(work);
+        assertEquals(1, work.getTitle().getErrors().size());
 
-        worksController.workWorkTitleSubtitleValidate(work);
-        assertEquals(1, work.getWorkTitle().getSubtitle().getErrors().size());
+        worksController.workSubtitleValidate(work);
+        assertEquals(1, work.getSubtitle().getErrors().size());
 
-        worksController.workWorkTitleTranslatedTitleValidate(work);
-        assertEquals(2, work.getWorkTitle().getTranslatedTitle().getErrors().size());
+        worksController.workTranslatedTitleValidate(work);
+        assertEquals(2, work.getTranslatedTitle().getErrors().size());
 
         worksController.workUrlValidate(work);
         assertEquals(2, work.getUrl().getErrors().size());
@@ -218,7 +217,7 @@ public class WorksControllerTest extends BaseControllerTest {
 
         Work work = worksController.getWork(null);
         // Set title
-        work.getWorkTitle().setTitle(Text.valueOf("Test add work"));
+        work.setTitle(Text.valueOf("Test add work"));
         work.setWorkType(Text.valueOf("artistic-performance"));
         WorkExternalIdentifier wei = work.getWorkExternalIdentifiers().get(0);
         wei.setWorkExternalIdentifierId(Text.valueOf("1"));
@@ -241,14 +240,14 @@ public class WorksControllerTest extends BaseControllerTest {
 
         Work work = worksController.getWorkInfo("6");
         // Set title
-        work.getWorkTitle().setTitle(Text.valueOf("Test update work"));
-        work.getWorkTitle().setSubtitle(Text.valueOf("Test update subtitle"));
+        work.setTitle(Text.valueOf("Test update work"));
+        work.setSubtitle(Text.valueOf("Test update subtitle"));
 
         TranslatedTitle tTitle = new TranslatedTitle();
         tTitle.setContent("Test translated title");
         tTitle.setLanguageCode("EN");
 
-        work.getWorkTitle().setTranslatedTitle(tTitle);
+        work.setTranslatedTitle(tTitle);
 
         work.setWorkType(Text.valueOf("artistic-performance"));
 
@@ -273,10 +272,10 @@ public class WorksControllerTest extends BaseControllerTest {
         Work updatedWork = worksController.getWorkInfo("6");
         assertNotNull(updatedWork);
         assertEquals("6", updatedWork.getPutCode().getValue());
-        assertEquals("Test update work", updatedWork.getWorkTitle().getTitle().getValue());
-        assertEquals("Test update subtitle", updatedWork.getWorkTitle().getSubtitle().getValue());
-        assertEquals("Test translated title", updatedWork.getWorkTitle().getTranslatedTitle().getContent());
-        assertEquals("EN", updatedWork.getWorkTitle().getTranslatedTitle().getLanguageCode());
+        assertEquals("Test update work", updatedWork.getTitle().getValue());
+        assertEquals("Test update subtitle", updatedWork.getSubtitle().getValue());
+        assertEquals("Test translated title", updatedWork.getTranslatedTitle().getContent());
+        assertEquals("EN", updatedWork.getTranslatedTitle().getLanguageCode());
         assertNotNull(updatedWork.getWorkExternalIdentifiers());
         assertEquals(2, updatedWork.getWorkExternalIdentifiers().size());
 

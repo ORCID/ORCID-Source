@@ -28,23 +28,23 @@
 			<!-- Left column -->	
 			<div class="col-md-9">
 				<!-- Work Title -->
-				<div class="bottomBuffer" ng-show="worksSrvc.details[group.getActive().putCode.value].workTitle.title.value" ng-cloak>
+				<div class="bottomBuffer" ng-show="worksSrvc.details[group.getActive().putCode.value].title.value" ng-cloak>
 					<strong><@orcid.msg
 						'manual_work_form_contents.labeltitle'/></strong>
-					<div ng-bind="worksSrvc.details[group.getActive().putCode.value].workTitle.title.value"></div>
+					<div ng-bind="worksSrvc.details[group.getActive().putCode.value].title.value"></div>
 				</div>
 				
 				<!-- Translated title -->
-				<div class="bottomBuffer" ng-show="worksSrvc.details[group.getActive().putCode.value].workTitle.translatedTitle.content" ng-cloak>
+				<div class="bottomBuffer" ng-show="worksSrvc.details[group.getActive().putCode.value].translatedTitle.content" ng-cloak>
 					<strong><@orcid.msg
 						'manual_work_form_contents.labeltranslatedtitle'/></strong>
 					<div ng-bind="renderTranslatedTitleInfo(group.getActive().putCode.value)"></div>				
 				</div>
 				
 				<!-- Subtitle -->		
-				<div class="bottomBuffer" ng-show="worksSrvc.details[group.getActive().putCode.value].workTitle.subtitle.value" ng-cloak>
+				<div class="bottomBuffer" ng-show="worksSrvc.details[group.getActive().putCode.value].subtitle.value" ng-cloak>
 					<strong> <@orcid.msg 'manual_work_form_contents.labelsubtitle'/> </strong>
-					<div ng-bind="worksSrvc.details[group.getActive().putCode.value].workTitle.subtitle.value"></div>
+					<div ng-bind="worksSrvc.details[group.getActive().putCode.value].subtitle.value"></div>
 				</div>
 				
 				<!-- Journal Title -->

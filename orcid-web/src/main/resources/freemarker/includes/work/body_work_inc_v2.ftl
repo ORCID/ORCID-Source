@@ -22,7 +22,7 @@
 			<!-- Main title -->
 			<div class="col-md-9 col-sm-9 col-xs-12">
 		        <h3 class="workspace-title">
-		        	<strong ng-bind="group.getActive().workTitle.title.value"></strong><span class="work-subtitle" ng-show="group.getActive().workTitle.subtitle.value" ng-bind="':&nbsp;'.concat(group.getActive().workTitle.subtitle.value)"></span>		        			        	
+		        	<strong ng-bind="group.getActive().title.value"></strong><span class="work-subtitle" ng-show="group.getActive().subtitle.value" ng-bind="':&nbsp;'.concat(group.getActive().subtitle.value)"></span>		        			        	
 		        </h3>
 		        <div class="info-detail">
 		        	<span ng-show="group.getActive().publicationDate.year">{{group.getActive().publicationDate.year}}</span><span ng-show="group.getActive().publicationDate.month">-{{group.getActive().publicationDate.month}}</span>

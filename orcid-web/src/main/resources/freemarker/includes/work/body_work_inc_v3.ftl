@@ -78,7 +78,7 @@
                     <div class="row" ng-show="group.activePutCode == work.putCode.value">
                         <div class="col-md-9 col-sm-12 col-xs-12">
                             <h3 class="workspace-title">
-                                <span ng-bind="work.workTitle.title.value"></span>
+                                <span ng-bind="work.title.value"></span>
                                 <span class="journaltitle" ng-show="work.journalTitle.value" ng-bind="':&nbsp;'.concat(work.journalTitle.value)"></span>                                     
                             </h3>
                             <div ng-show="bulkEditShow == true" class="bulk-edit-input hidden-lg hidden-md hidden-sm pull-right">
@@ -178,7 +178,7 @@
 										</a>
 					        		</li>
 					        		<li>
-					        			<a ng-click="deleteWorkConfirm(work.putCode.value, false)"  title="Delete {{work.workTitle.title.value}}">
+					        			<a ng-click="deleteWorkConfirm(work.putCode.value, false)"  title="Delete {{work.title.value}}">
 											<span class="glyphicon glyphicon-trash"></span>
 										</a>
 					        		</li>
@@ -220,7 +220,7 @@
                                     </li>
                                     <li>
                                         <a ng-click="deleteWorkConfirm(work.putCode.value, false)">
-                                            <span class="glyphicon glyphicon-trash" title="Delete {{work.workTitle.title.value}}"></span>
+                                            <span class="glyphicon glyphicon-trash" title="Delete {{work.title.value}}"></span>
                                         </a>
                                     </li>
                                 </ul>

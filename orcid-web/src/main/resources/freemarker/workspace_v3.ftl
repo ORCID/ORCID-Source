@@ -403,7 +403,7 @@
 					   	<div ng-repeat="work in worksFromBibtex" ng-cloak class="grey-box bottomBuffer box-border">
 					   		  <div class="row">	  
 			        	       	  <div class="col-md-9">
-			        	          	{{work.workTitle.title.value}}
+			        	          	{{work.title.value}}
 			        	          </div>
 			        	          <div class="col-md-3 bibtex-options-menu">
 			        	          	<ul>
@@ -456,7 +456,7 @@
 	<div class="lightbox-container">
 		<div class="row combine-work">
 			<div class="col-md-12 col-xs-12 col-sm-12">
-				<h3>Selected work "{{combineWork.workTitle.title.value}}"				
+				<h3>Selected work "{{combineWork.title.value}}"				
 					<span ng-show="hasCombineableEIs(combineWork)">
 						(<span ng-repeat='ie in combineWork.workExternalIdentifiers'>
 							<span ng-bind-html='ie | workExternalIdentifierHtml:$first:$last:combineWork.workExternalIdentifiers.length'></span>
@@ -466,7 +466,7 @@
 				<p>Combine with (select one):</p>
 				<ul class="list-group">
   					<li class="list-group-item" ng-repeat="group in worksSrvc.groups | orderBy:sortPredicate:sortReverse" ng-show="combineWork.putCode.value != group.getDefault().putCode.value && validCombineSel(combineWork,group.getDefault())">
-						<strong>{{group.getDefault().workTitle.title.value}}</strong>
+						<strong>{{group.getDefault().title.value}}</strong>
 						<a ng-click="combined(combineWork,group.getDefault())" class="btn btn-primary pull-right bottomBuffer">Combine</a>
 
 					</li>  					

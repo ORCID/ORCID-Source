@@ -24,11 +24,11 @@
 		        <#list works as work>
 		    		<div>
 				        <h3 class="work-title">
-				            <#if work.workTitle?? && work.workTitle.title?? && work.workTitle.title.value??>
-				        	    <#if work.workTitle.subtitle?? && work.workTitle.subtitle.value??>
-				        	        <strong>${work.workTitle.title.value}</strong>: <span class="work-subtitle">${work.workTitle.subtitle.value}</span>
+				            <#if work.title?? && work.title.value??>
+				        	    <#if work.subtitle?? && work.subtitle.value??>
+				        	        <strong>${work.title.value}</strong>: <span class="work-subtitle">${work.subtitle.value}</span>
 				        	    <#else>
-				        	        <strong>${work.workTitle.title.value}</strong>
+				        	        <strong>${work.title.value}</strong>
 				        	    </#if>
 				        	    <#if work.publicationDate??>
 				        	    	<#assign date = '' >

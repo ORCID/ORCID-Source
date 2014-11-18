@@ -28,28 +28,28 @@
 			</div>
 			
 			<div id="content" ng-hide="worksSrvc.details[group.getActive().putCode.value] == undefined">			
-				<div class="row bottomBuffer" ng-show="worksSrvc.details[work.putCode.value].workTitle.title.value"
+				<div class="row bottomBuffer" ng-show="worksSrvc.details[work.putCode.value].title.value"
 					ng-cloak>
 					<div class="col-md-12">
 						<strong><@orcid.msg
 							'manual_work_form_contents.labeltitle'/></strong>
-						<div ng-bind="worksSrvc.details[work.putCode.value].workTitle.title.value"></div>
+						<div ng-bind="worksSrvc.details[work.putCode.value].title.value"></div>
 					</div>
 				</div>
 				<div class="row bottomBuffer"
-					ng-show="worksSrvc.details[work.putCode.value].workTitle.translatedTitle.content" ng-cloak>
+					ng-show="worksSrvc.details[work.putCode.value].translatedTitle.content" ng-cloak>
 					<div class="col-md-12">
 						<strong><@orcid.msg
 							'manual_work_form_contents.labeltranslatedtitle'/></strong>
 						<div ng-bind="renderTranslatedTitleInfo(work.putCode.value)"></div>
 					</div>
 				</div>
-				<div class="row bottomBuffer" ng-show="worksSrvc.details[work.putCode.value].workTitle.subtitle.value"
+				<div class="row bottomBuffer" ng-show="worksSrvc.details[work.putCode.value].subtitle.value"
 					ng-cloak>
 					<div class="col-md-12">
 						<strong> <@orcid.msg
 							'manual_work_form_contents.labelsubtitle'/> </strong>
-						<div ng-bind="worksSrvc.details[work.putCode.value].workTitle.subtitle.value"></div>
+						<div ng-bind="worksSrvc.details[work.putCode.value].subtitle.value"></div>
 					</div>
 				</div>
 				<div class="row bottomBuffer" ng-show="worksSrvc.details[work.putCode.value].journalTitle.value"

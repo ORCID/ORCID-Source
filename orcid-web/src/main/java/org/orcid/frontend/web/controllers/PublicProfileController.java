@@ -277,10 +277,10 @@ public class PublicProfileController extends BaseWorkspaceController {
                         work.setLanguageName(languageName);
                     }
                     // Set translated title language name
-                    if (work.getWorkTitle() != null && work.getWorkTitle().getTranslatedTitle() != null
-                            && !StringUtils.isEmpty(work.getWorkTitle().getTranslatedTitle().getLanguageCode())) {
-                        String languageName = languages.get(work.getWorkTitle().getTranslatedTitle().getLanguageCode());
-                        work.getWorkTitle().getTranslatedTitle().setLanguageName(languageName);
+                    if (work.getTranslatedTitle() != null
+                            && !StringUtils.isEmpty(work.getTranslatedTitle().getLanguageCode())) {
+                        String languageName = languages.get(work.getTranslatedTitle().getLanguageCode());
+                        work.getTranslatedTitle().setLanguageName(languageName);
                     }
                     works.add(work);
                 }
@@ -322,10 +322,10 @@ public class PublicProfileController extends BaseWorkspaceController {
                     work.setLanguageName(languageName);
                 }
                 // Set translated title language name
-                if (work.getWorkTitle() != null && work.getWorkTitle().getTranslatedTitle() != null
-                        && !StringUtils.isEmpty(work.getWorkTitle().getTranslatedTitle().getLanguageCode())) {
-                    String languageName = languages.get(work.getWorkTitle().getTranslatedTitle().getLanguageCode());
-                    work.getWorkTitle().getTranslatedTitle().setLanguageName(languageName);
+                if (work.getTranslatedTitle() != null
+                        && !StringUtils.isEmpty(work.getTranslatedTitle().getLanguageCode())) {
+                    String languageName = languages.get(work.getTranslatedTitle().getLanguageCode());
+                    work.getTranslatedTitle().setLanguageName(languageName);
                 }
 
                 //If the work source is the user himself, fill the work source name
