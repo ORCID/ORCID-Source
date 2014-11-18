@@ -118,6 +118,41 @@
         </sql>
     </changeSet>
     
+    <changeSet id="CORRECT-SOURCE-ID-FOR-PUBLIC-CLIENT-OWNERS" author="Will Simpson" dbms="postgresql">
+        <sql>
+            UPDATE email e SET source_id = client_source_id, client_source_id = NULL
+            WHERE e.client_source_id IN (SELECT client_details_id FROM client_details WHERE client_type IS NULL);
+        </sql>
+        <sql>
+            UPDATE external_identifier e SET source_id = client_source_id, client_source_id = NULL
+            WHERE e.client_source_id IN (SELECT client_details_id FROM client_details WHERE client_type IS NULL);
+        </sql>
+        <sql>
+            UPDATE notification n SET source_id = client_source_id, client_source_id = NULL
+            WHERE n.client_source_id IN (SELECT client_details_id FROM client_details WHERE client_type IS NULL);
+        </sql>
+        <sql>
+            UPDATE org o SET source_id = client_source_id, client_source_id = NULL
+            WHERE o.client_source_id IN (SELECT client_details_id FROM client_details WHERE client_type IS NULL);
+        </sql>
+        <sql>
+            UPDATE org_affiliation_relation o SET source_id = client_source_id, client_source_id = NULL
+            WHERE o.client_source_id IN (SELECT client_details_id FROM client_details WHERE client_type IS NULL);
+        </sql>
+        <sql>
+            UPDATE profile p SET source_id = client_source_id, client_source_id = NULL
+            WHERE p.client_source_id IN (SELECT client_details_id FROM client_details WHERE client_type IS NULL);
+        </sql>
+        <sql>
+            UPDATE profile_funding p SET source_id = client_source_id, client_source_id = NULL
+            WHERE p.client_source_id IN (SELECT client_details_id FROM client_details WHERE client_type IS NULL);
+        </sql>
+        <sql>
+            UPDATE profile_work p SET source_id = client_source_id, client_source_id = NULL
+            WHERE p.client_source_id IN (SELECT client_details_id FROM client_details WHERE client_type IS NULL);
+        </sql>
+    </changeSet>
+    
     <changeSet id="ADD-FOREIGN-KEYS-FOR-CLIENT-SOURCE-ID" author="Will Simpson">
         <addForeignKeyConstraint constraintName="email_client_source_id_fk" baseTableName="email" baseColumnNames="client_source_id" referencedTableName="client_details" referencedColumnNames="client_details_id"/>
         <addForeignKeyConstraint constraintName="external_identifier_client_source_id_fk" baseTableName="external_identifier" baseColumnNames="client_source_id" referencedTableName="client_details" referencedColumnNames="client_details_id"/>
