@@ -4960,6 +4960,10 @@ ul.sources-edit-list ul.sources-actions .git_create:hover:before{
 	margin-right: 2px;
 }
 
+ul.sources-edit-list > li.source-header{
+	box-shadow: none;
+}
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 
