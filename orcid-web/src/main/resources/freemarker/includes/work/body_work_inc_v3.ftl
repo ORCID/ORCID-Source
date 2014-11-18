@@ -151,9 +151,7 @@
                       		SOURCE: {{work.sourceName}}
                       	</div>
                       	<div class="col-md-3" ng-show="editSources[group.groupId] == true">
-                      		<div ng-show="editSources[group.groupId] == true">
-                      			{{work.lastModified | ajaxFormDateToISO8601}}
-                      		</div>
+                      		<div ng-show="editSources[group.groupId] == true" ng-bind="work.createdDate | ajaxFormDateToISO8601"></div>
                       	</div>              
                       	<div class="col-md-3" ng-show="editSources[group.groupId] == true">
                      		<#if !(isPublicProfile??)>
@@ -196,9 +194,7 @@
                                 {{work.sourceName}}
                             </a> 
                         </div>
-                        <div class="col-md-3 col-sm-3 col-xs-3">
-                            {{work.lastModified | ajaxFormDateToISO8601}}
-                        </div>
+                        <div class="col-md-3 col-sm-3 col-xs-3" ng-bind="work.createdDate | ajaxFormDateToISO8601"></div>
                         <div class="col-md-3 col-sm-3 col-xs-5">
                         	 <#if !(isPublicProfile??)>                        	 	
 	                            <span class="glyphicon glyphicon-check" ng-show="work.putCode.value == group.defaultPutCode"></span><span ng-show="work.putCode.value == group.defaultPutCode"> Preferred source</span>	                             
@@ -235,8 +231,8 @@
                       		SOURCE: {{work.sourceName}}
                       	</div>
                       	<div class="col-md-3">                      		
-                      		CREATED: {{work.lastModified | ajaxFormDateToISO8601}}                      		
-                      	</div>              
+                      		CREATED: <span ng-bind="work.createdDate | ajaxFormDateToISO8601"></span>                      		
+                      	</div>
                       	<div class="col-md-3">
                      		<#if !(isPublicProfile??)>							
 							    <span class="glyphicon glyphicon-check"></span><span> Preferred source</span> <span ng-hide="group.activitiesCount == 1">(</span><a ng-click="editSources[group.groupId] = !editSources[group.groupId]" ng-hide="group.activitiesCount == 1">of {{group.activitiesCount}}</a><span ng-hide="group.activitiesCount == 1">)</span>							    
