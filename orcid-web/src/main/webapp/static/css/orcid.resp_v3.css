@@ -4883,11 +4883,6 @@ ul.sources-options .git_create:hover:before{
 	color: #338caf;
 }
 
-ul.sources-options a:hover span.glyphicon-trash,
-ul.sources-options a:hover span.glyphicon-pencil{
-	color: #338caf;
-}
-
 ul.sources-edit-list .workspace-private-toolbar .git_create:hover:before{
 	color: #FFF;
 }
