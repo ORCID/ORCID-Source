@@ -203,21 +203,22 @@ public class Work implements ErrorsInterface, Serializable {
                 w.setSourceName(orcidWork.getSource().getSourceName().getContent());
         }
         
-        if (orcidWork.getWorkTitle() != null) {
-            WorkTitle workTitle = orcidWork.getWorkTitle();  
-            if (workTitle.getTitle() != null) {
-                w.setTitle(Text.valueOf(workTitle.getTitle().getContent()));
-            }
-            if (workTitle.getSubtitle() != null) {
-                w.setSubtitle(Text.valueOf(workTitle.getSubtitle().getContent()));
-            }
-            if(workTitle.getTranslatedTitle() != null){
-                TranslatedTitle translatedTitle = new TranslatedTitle();
-                translatedTitle.setContent((workTitle.getTranslatedTitle() == null) ? null : workTitle.getTranslatedTitle().getContent());
-                translatedTitle.setLanguageCode((workTitle.getTranslatedTitle() == null || workTitle.getTranslatedTitle().getLanguageCode() == null) ? null : workTitle.getTranslatedTitle().getLanguageCode());
-                w.setTranslatedTitle(translatedTitle);
-            }
+        WorkTitle workTitle = orcidWork.getWorkTitle();
+        if (workTitle == null) 
+            workTitle =  new WorkTitle();
+        if (workTitle.getTitle() != null) {
+            w.setTitle(Text.valueOf(workTitle.getTitle().getContent()));
         }
+        if (workTitle.getSubtitle() != null) {
+            w.setSubtitle(Text.valueOf(workTitle.getSubtitle().getContent()));
+        }
+        if(workTitle.getTranslatedTitle() != null) {
+            TranslatedTitle translatedTitle = new TranslatedTitle();
+            translatedTitle.setContent((workTitle.getTranslatedTitle() == null) ? null : workTitle.getTranslatedTitle().getContent());
+            translatedTitle.setLanguageCode((workTitle.getTranslatedTitle() == null || workTitle.getTranslatedTitle().getLanguageCode() == null) ? null : workTitle.getTranslatedTitle().getLanguageCode());
+            w.setTranslatedTitle(translatedTitle);
+        }
+        
         if (orcidWork.getWorkType() != null) {
             w.setWorkType(Text.valueOf(orcidWork.getWorkType().value()));
             WorkCategory category = WorkCategory.fromWorkType(orcidWork.getWorkType());

@@ -192,9 +192,12 @@ GroupedActivities.prototype.makeDefault = function(putCode) {
     this.defaultPutCode = putCode;
     this.dateSortString = this.activities[putCode].dateSortString;
     var act = this.activities[putCode];
-    if (this.type == GroupedActivities.ABBR_WORK) this.title = act.title.value;
-    else if (this.type == GroupedActivities.FUNDING) this.title = act.fundingTitle.title.value;
-    else if (this.type == GroupedActivities.AFFILIATION) this.title = act.affiliationName.value;
+    var title = null;
+    // at some point we should make this easier by making all paths match
+    if (this.type == GroupedActivities.ABBR_WORK) title = act.title;
+    else if (this.type == GroupedActivities.FUNDING) title = act.fundingTitle.title;
+    else if (this.type == GroupedActivities.AFFILIATION) title = act.affiliationName;
+    this.title =  title != null ? title.value : null;
 };
 
 GroupedActivities.prototype.rmByPut = function(putCode) {
