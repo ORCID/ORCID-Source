@@ -160,7 +160,7 @@
 							<div ng-show="editSources[group.groupId] == true">
 						        <span class="glyphicon glyphicon-check ng-hide" ng-show="work.putCode.value == group.defaultPutCode"></span><span ng-show="work.putCode.value == group.defaultPutCode"> Preferred source</span>              
 						        <a ng-click="worksSrvc.makeDefault(group, work.putCode.value); " ng-show="work.putCode.value != group.defaultPutCode" class="">
-						         	<span class="glyphicon glyphicon-unchecked"></span> Make Preferred
+						         	<span class="glyphicon glyphicon-unchecked"></span> Make preferred
 						        </a>
 							</div>    
 						</#if>
@@ -203,7 +203,7 @@
                         	 <#if !(isPublicProfile??)>                        	 	
 	                            <span class="glyphicon glyphicon-check" ng-show="work.putCode.value == group.defaultPutCode"></span><span ng-show="work.putCode.value == group.defaultPutCode"> Preferred source</span>	                             
 	                            <a ng-click="worksSrvc.makeDefault(group, work.putCode.value); " ng-show="work.putCode.value != group.defaultPutCode">
-	                               <span class="glyphicon glyphicon-unchecked"></span> Make Preferred
+	                               <span class="glyphicon glyphicon-unchecked"></span> Make preferred
 	                            </a>
                             </#if> 
                         </div>
