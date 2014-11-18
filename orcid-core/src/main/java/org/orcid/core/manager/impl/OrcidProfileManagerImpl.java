@@ -116,7 +116,6 @@ import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.VisibilityType;
 import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkExternalIdentifier;
-import org.orcid.jaxb.model.message.WorkSource;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.FundingExternalIdentifierDao;
 import org.orcid.persistence.dao.GenericDao;

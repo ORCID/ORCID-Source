@@ -17,7 +17,6 @@
 package org.orcid.core.manager.impl;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.validation.Schema;
@@ -26,6 +25,7 @@ import javax.xml.validation.Validator;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.cli.ValidateOrcidMessage;
+import org.orcid.core.enums.MessageType;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.manager.ValidationBehaviour;
 import org.orcid.core.manager.ValidationManager;
@@ -55,23 +55,21 @@ public class ValidationManagerImpl implements ValidationManager {
     private ValidationBehaviour validationBehaviour = ValidationBehaviour.LOG_WARNING;
 
     private String version = OrcidMessage.DEFAULT_VERSION;
-    
+
     private boolean requireOrcidProfile;
 
-    private boolean validateBibtex = true;
-    
-    private boolean validateTitle = false;        
-    
+    private boolean validateTitle = false;
+
     private boolean validateOnlyOnePrimaryEmail = false;
-    
+
     private boolean validateWorksHaveExternalIds = false;
-    
+
     private boolean validateFundingHaveExternalIds = false;
-    
+
     private Schema schema;
 
     private static final Logger LOG = LoggerFactory.getLogger(ValidationManagerImpl.class);
-    
+
     @Override
     public void setValidationBehaviour(ValidationBehaviour validationBehaviour) {
         this.validationBehaviour = validationBehaviour;
@@ -85,10 +83,6 @@ public class ValidationManagerImpl implements ValidationManager {
         this.requireOrcidProfile = requireOrcidProfile;
     }
 
-    public void setValidateBibtex(boolean validateBibtex) {
-        this.validateBibtex = validateBibtex;
-    }
-    
     public void setValidateTitle(boolean validateTitle) {
         this.validateTitle = validateTitle;
     }
@@ -99,8 +93,8 @@ public class ValidationManagerImpl implements ValidationManager {
 
     public void setValidateOnlyOnePrimaryEmail(boolean validateOnlyOnePrimaryEmail) {
         this.validateOnlyOnePrimaryEmail = validateOnlyOnePrimaryEmail;
-    }        
-    
+    }
+
     public boolean isValidateWorksHaveExternalIds() {
         return validateWorksHaveExternalIds;
     }
@@ -119,13 +113,18 @@ public class ValidationManagerImpl implements ValidationManager {
 
     @Override
     public void validateMessage(OrcidMessage orcidMessage) {
+        validateMessage(orcidMessage, null);
+    }
+
+    @Override
+    public void validateMessage(OrcidMessage orcidMessage, MessageType type) {
         if (ValidationBehaviour.IGNORE.equals(validationBehaviour)) {
             return;
-        }               
+        }
         doSchemaValidation(orcidMessage);
-        doCustomValidation(orcidMessage);
+        doCustomValidation(orcidMessage, type);
     }
-    
+
     protected void doSchemaValidation(OrcidMessage orcidMessage) {
         Validator validator = createValidator();
         if (validator != null) {
@@ -140,32 +139,36 @@ public class ValidationManagerImpl implements ValidationManager {
     }
 
     public void doCustomValidation(OrcidMessage orcidMessage) {
+        doCustomValidation(orcidMessage, null);
+    }
+
+    public void doCustomValidation(OrcidMessage orcidMessage, MessageType type) {
         try {
-            checkMessage(orcidMessage);
+            checkMessage(orcidMessage, type);
         } catch (OrcidValidationException e) {
             handleError("Custom validation found a problem", e, orcidMessage);
         }
     }
 
-    private void checkMessage(OrcidMessage orcidMessage) {
+    private void checkMessage(OrcidMessage orcidMessage, MessageType type) {
         OrcidProfile orcidProfile = orcidMessage != null ? orcidMessage.getOrcidProfile() : null;
         if (orcidProfile == null) {
             if (requireOrcidProfile) {
                 throw new OrcidValidationException("There must be an orcid-profile element");
             }
-        } else {            
-            checkBio(orcidProfile.getOrcidBio());
+        } else {
+            checkBio(orcidProfile.getOrcidBio(), type);
             checkActivities(orcidProfile.getOrcidActivities());
         }
     }
 
-    private void checkBio(OrcidBio orcidBio) {
+    private void checkBio(OrcidBio orcidBio, MessageType type) {
         if (orcidBio != null) {
-            checkContactDetails(orcidBio.getContactDetails());
+            checkContactDetails(orcidBio.getContactDetails(), type);
         }
     }
 
-    private void checkContactDetails(ContactDetails contactDetails) {
+    private void checkContactDetails(ContactDetails contactDetails, MessageType type) {
         if (contactDetails != null) {
             List<Email> emailList = contactDetails.getEmail();
             int primaryCount = 0;
@@ -177,10 +180,14 @@ public class ValidationManagerImpl implements ValidationManager {
             if (primaryCount > 1) {
                 throw new OrcidValidationException("There must not be more than one primary email");
             }
-            
-            if(validateOnlyOnePrimaryEmail) {
-            	if(primaryCount == 0)
-            		throw new OrcidValidationException("There must be just one primary email");
+
+            if (validateOnlyOnePrimaryEmail) {
+                // If it is creating a record check that the message contains at
+                // least one primary email
+                if (MessageType.CREATE.equals(type)) {
+                    if (primaryCount == 0)
+                        throw new OrcidValidationException("There must be at least one primary email");
+                }
             }
         }
     }
@@ -191,7 +198,7 @@ public class ValidationManagerImpl implements ValidationManager {
             if (works != null && works.getOrcidWork() != null && !works.getOrcidWork().isEmpty()) {
                 checkWorks(works.getOrcidWork());
             }
-            
+
             FundingList funding = orcidActivities.getFundings();
             if (funding != null && funding.getFundings() != null && !funding.getFundings().isEmpty()) {
                 checkFunding(funding.getFundings());
@@ -206,52 +213,55 @@ public class ValidationManagerImpl implements ValidationManager {
     }
 
     public void checkWork(OrcidWork orcidWork) {
-        
-        if(validateTitle){
+
+        if (validateTitle) {
             WorkTitle title = orcidWork.getWorkTitle();
-            if(title == null || title.getTitle() == null || StringUtils.isEmpty(title.getTitle().getContent())){
+            if (title == null || title.getTitle() == null || StringUtils.isEmpty(title.getTitle().getContent())) {
                 throw new OrcidValidationException("Invalid Title: title cannot be null nor emtpy");
             }
-        }  
-        
-        if(validateWorksHaveExternalIds) {
-            if(orcidWork.getWorkExternalIdentifiers() == null || orcidWork.getWorkExternalIdentifiers().getWorkExternalIdentifier() == null || orcidWork.getWorkExternalIdentifiers().getWorkExternalIdentifier().isEmpty()) {
+        }
+
+        if (validateWorksHaveExternalIds) {
+            if (orcidWork.getWorkExternalIdentifiers() == null || orcidWork.getWorkExternalIdentifiers().getWorkExternalIdentifier() == null
+                    || orcidWork.getWorkExternalIdentifiers().getWorkExternalIdentifier().isEmpty()) {
                 throw new OrcidValidationException("Invalid work: Works added using message version 1.2_rc5 or greater must contain at least one external identifier");
             }
-        }                
+        }
     }
 
-    private void checkFunding(List<Funding> fundings) {        
-        for(Funding funding : fundings) {
+    private void checkFunding(List<Funding> fundings) {
+        for (Funding funding : fundings) {
             checkFunding(funding);
         }
     }
-    
+
     private void checkFunding(Funding funding) {
-        if(validateFundingHaveExternalIds) {
-            if(funding.getFundingExternalIdentifiers() == null || funding.getFundingExternalIdentifiers().getFundingExternalIdentifier() == null || funding.getFundingExternalIdentifiers().getFundingExternalIdentifier().isEmpty()) {
-                throw new OrcidValidationException("Invalid funding: Funding added using message version 1.2_rc5 or greater must contain at least one external identifier");
+        if (validateFundingHaveExternalIds) {
+            if (funding.getFundingExternalIdentifiers() == null || funding.getFundingExternalIdentifiers().getFundingExternalIdentifier() == null
+                    || funding.getFundingExternalIdentifiers().getFundingExternalIdentifier().isEmpty()) {
+                throw new OrcidValidationException(
+                        "Invalid funding: Funding added using message version 1.2_rc5 or greater must contain at least one external identifier");
             }
         }
-        
-        if(funding.getStartDate() != null){                       
-            if(!PojoUtil.isEmpty(funding.getStartDate().getMonth()) && PojoUtil.isEmpty(funding.getStartDate().getYear())){
+
+        if (funding.getStartDate() != null) {
+            if (!PojoUtil.isEmpty(funding.getStartDate().getMonth()) && PojoUtil.isEmpty(funding.getStartDate().getYear())) {
                 throw new OrcidValidationException("Invalid funding: Invalid start date");
-            }                
+            }
         }
-            
-        if(funding.getEndDate() != null) {
-            if(!PojoUtil.isEmpty(funding.getEndDate().getMonth()) && PojoUtil.isEmpty(funding.getEndDate().getYear())) {
+
+        if (funding.getEndDate() != null) {
+            if (!PojoUtil.isEmpty(funding.getEndDate().getMonth()) && PojoUtil.isEmpty(funding.getEndDate().getYear())) {
                 throw new OrcidValidationException("Invalid funding: Invalid end date");
-            }                
-        }        
+            }
+        }
     }
-    
+
     private void initSchema() {
         if (schema == null) {
             SchemaFactory factory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
-            try {                
-            	schema = factory.newSchema(ValidateOrcidMessage.class.getResource("/orcid-message-" + version + ".xsd"));
+            try {
+                schema = factory.newSchema(ValidateOrcidMessage.class.getResource("/orcid-message-" + version + ".xsd"));
             } catch (SAXException e) {
                 handleError("Error initializing schema", e);
             }

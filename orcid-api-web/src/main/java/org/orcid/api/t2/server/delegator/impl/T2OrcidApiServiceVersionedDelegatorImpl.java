@@ -26,6 +26,7 @@ import javax.ws.rs.core.UriInfo;
 import org.orcid.api.common.exception.OrcidBadRequestException;
 import org.orcid.api.common.exception.OrcidNotFoundException;
 import org.orcid.api.t2.server.delegator.T2OrcidApiServiceDelegator;
+import org.orcid.core.enums.MessageType;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.manager.ValidationBehaviour;
 import org.orcid.core.manager.ValidationManager;
@@ -93,7 +94,6 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
         if (outgoingValidationManager == null) {
             ValidationManagerImpl outgoingValidationManagerImpl = new ValidationManagerImpl();
             outgoingValidationManagerImpl.setVersion(externalVersion);
-            outgoingValidationManagerImpl.setValidateBibtex(false);
             setOutgoingValidationManager(outgoingValidationManagerImpl);
         }
     }
@@ -184,7 +184,7 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
     @Override
     public Response createProfile(UriInfo uriInfo, OrcidMessage orcidMessage) {
         Response response = null;
-        validateIncomingMessage(orcidMessage);
+        validateIncomingMessage(orcidMessage, MessageType.CREATE);
         OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
         response = t2OrcidApiServiceDelegator.createProfile(uriInfo, upgradedMessage);
         return response;
@@ -242,8 +242,15 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
     }
 
     private void validateIncomingMessage(OrcidMessage orcidMessage) {
+        validateIncomingMessage(orcidMessage, null);
+    }
+    
+    private void validateIncomingMessage(OrcidMessage orcidMessage, MessageType type) {
         try {
-            incomingValidationManager.validateMessage(orcidMessage);
+            if(type == null)
+                incomingValidationManager.validateMessage(orcidMessage);
+            else 
+                incomingValidationManager.validateMessage(orcidMessage, type);
             checkDeprecation(orcidMessage);
         } catch (OrcidValidationException e) {
             Throwable cause = e.getCause();

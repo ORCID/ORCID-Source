@@ -16,6 +16,7 @@
  */
 package org.orcid.core.manager;
 
+import org.orcid.core.enums.MessageType;
 import org.orcid.jaxb.model.message.OrcidMessage;
 
 /**
@@ -28,5 +29,7 @@ public interface ValidationManager {
     void setValidationBehaviour(ValidationBehaviour validationBehaviour);
 
     void validateMessage(OrcidMessage orcidMessage);
+    
+    void validateMessage(OrcidMessage orcidMessage, MessageType type);
 
 }
