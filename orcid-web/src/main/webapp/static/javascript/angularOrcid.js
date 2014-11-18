@@ -1294,12 +1294,12 @@ orcidNgModule.filter('ajaxFormDateToISO8601', function(){
         if (input.year) str += input.year;
         if (input.month) {
             if (str.length > 0) str += '-';
-            str += input.month;
+            str += Number(input.month).pad(2);
         }
         if (input.day) {
             if (str.length > 0)
                 str += '-';
-            str += input.day;
+            str += Number(input.day).pad(2);
         }
         return str;
     };
