@@ -23,7 +23,7 @@
                 
                 
                 <!-- Header -->
-                <li ng-show="editSources[group.groupId] == true" ng-class="{'source-active' : editSources[group.groupId] == true}" ng-model="group.activities">
+                <li ng-show="editSources[group.groupId] == true" class="source-header" ng-class="{'source-active' : editSources[group.groupId] == true}" ng-model="group.activities">
                     <div class="sources-header">
                         <div class="row">                      
                             <div class="col-md-4 col-sm-4 col-xs-4">
@@ -76,7 +76,7 @@
                 <li ng-repeat="work in group.activities" ng-show="group.activePutCode == work.putCode.value || editSources[group.groupId] == true" orcid-put-code="{{work.putCode.value}}">
                     <!-- active row summary info -->
                     <div class="row" ng-show="group.activePutCode == work.putCode.value">
-                        <div class="col-md-7 col-sm-12 col-xs-12">
+                        <div class="col-md-9 col-sm-12 col-xs-12">
                             <h3 class="workspace-title">
                                 <span ng-bind="work.title.value"></span>
                                 <span class="journaltitle" ng-show="work.journalTitle.value" ng-bind="':&nbsp;'.concat(work.journalTitle.value)"></span>                                     
@@ -90,7 +90,7 @@
                         </div>
                         
                         <#if !(isPublicProfile??)>
-                            <div class="col-md-5 workspace-toolbar">
+                            <div class="col-md-3 workspace-toolbar">
                                 <ul class="workspace-private-toolbar" ng-hide="editSources[group.groupId] == true">
                                 	<!-- Bulk edit tool -->
 	                                <li ng-show="bulkEditShow == true" class="hidden-xs bulk-checkbox-item">								
@@ -160,7 +160,7 @@
 							<div ng-show="editSources[group.groupId] == true">
 						        <span class="glyphicon glyphicon-check ng-hide" ng-show="work.putCode.value == group.defaultPutCode"></span><span ng-show="work.putCode.value == group.defaultPutCode"> Preferred source</span>              
 						        <a ng-click="worksSrvc.makeDefault(group, work.putCode.value); " ng-show="work.putCode.value != group.defaultPutCode" class="">
-						         	<span class="glyphicon glyphicon-unchecked"></span> Make Preferred
+						         	<span class="glyphicon glyphicon-unchecked"></span> Make preferred
 						        </a>
 							</div>    
 						</#if>
@@ -177,7 +177,7 @@
 											<span class="glyphicon glyphicon-pencil" ng-class="{'glyphicons git_create' : !userIsSource(work)}"></span>
 										</a>
 					        		</li>
-					        		<li ng-hide="bulkEditShow">
+					        		<li>
 					        			<a ng-click="deleteWorkConfirm(work.putCode.value, false)"  title="Delete {{work.title.value}}">
 											<span class="glyphicon glyphicon-trash"></span>
 										</a>
@@ -203,7 +203,7 @@
                         	 <#if !(isPublicProfile??)>                        	 	
 	                            <span class="glyphicon glyphicon-check" ng-show="work.putCode.value == group.defaultPutCode"></span><span ng-show="work.putCode.value == group.defaultPutCode"> Preferred source</span>	                             
 	                            <a ng-click="worksSrvc.makeDefault(group, work.putCode.value); " ng-show="work.putCode.value != group.defaultPutCode">
-	                               <span class="glyphicon glyphicon-unchecked"></span> Make Preferred
+	                               <span class="glyphicon glyphicon-unchecked"></span> Make preferred
 	                            </a>
                             </#if> 
                         </div>
@@ -218,7 +218,7 @@
                                             <span class="glyphicon glyphicon-pencil" ng-class="{'glyphicons git_create' : !userIsSource(work)}"></span>
                                         </a>
                                     </li>
-                                    <li ng-hide="bulkEditShow">
+                                    <li>
                                         <a ng-click="deleteWorkConfirm(work.putCode.value, false)">
                                             <span class="glyphicon glyphicon-trash" title="Delete {{work.title.value}}"></span>
                                         </a>
@@ -248,19 +248,19 @@
 							    <#if !(isPublicProfile??)>
 							    	<li ng-show="userIsSource(work) || (group.hasKeys() && !group.hasUserVersion())">
 									    <a ng-click="openEditWork(group.getActive().putCode.value)" class="" title="">
-									        <span class="glyphicon glyphicon-pencil grey" ng-class="{'glyphicons git_create grey' : !userIsSource(work)}"title=""></span>
+									        <span class="glyphicon glyphicon-pencil" ng-class="{'glyphicons git_create' : !userIsSource(work)}"title=""></span>
 									    </a>
 									</li>
 							         
 							         <li ng-hide="editSources[group.groupId] == true || group.activitiesCount == 1">
-							            <a ng-click="editSources[group.groupId] = !editSources[group.groupId]" ng-show="!bulkEditShow" class="">
-											<span class="glyphicon glyphicon-trash grey"></span>
+							            <a ng-click="editSources[group.groupId] = !editSources[group.groupId]">
+											<span class="glyphicon glyphicon-trash"></span>
 										</a>
 							         </li>
 							         
 							         <li ng-show="group.activitiesCount == 1">
 										<a ng-click="deleteWorkConfirm(group.getActive().putCode.value, false)">
-										   <span class="glyphicon glyphicon-trash grey" ng-show="!bulkEditShow"></span>
+										   <span class="glyphicon glyphicon-trash"></span>
 										</a>
 									</li>
 							         

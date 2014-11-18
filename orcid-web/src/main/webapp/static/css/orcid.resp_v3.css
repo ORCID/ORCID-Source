@@ -4883,11 +4883,6 @@ ul.sources-options .git_create:hover:before{
 	color: #338caf;
 }
 
-ul.sources-options a:hover span.glyphicon-trash,
-ul.sources-options a:hover span.glyphicon-pencil{
-	color: #338caf;
-}
-
 ul.sources-edit-list .workspace-private-toolbar .git_create:hover:before{
 	color: #FFF;
 }
@@ -4963,6 +4958,10 @@ ul.sources-edit-list ul.sources-actions .git_create:hover:before{
 
 .workspace-private-toolbar .bulk-edit-input-header{
 	margin-right: 2px;
+}
+
+ul.sources-edit-list > li.source-header{
+	box-shadow: none;
 }
 
 /* Media Queries */

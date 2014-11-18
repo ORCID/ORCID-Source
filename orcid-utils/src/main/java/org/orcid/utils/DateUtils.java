@@ -68,14 +68,17 @@ public class DateUtils {
         }
     }
 
+    public static XMLGregorianCalendar convertToXMLGregorianCalendar(long time) {
+        GregorianCalendar gregorianCalendar = new GregorianCalendar();
+        gregorianCalendar.setTimeInMillis(time);
+        return createDataTypeFactory().newXMLGregorianCalendar(gregorianCalendar);
+    }
+
     public static XMLGregorianCalendar convertToXMLGregorianCalendar(Date date) {
         if (date == null) {
             return null;
         }
-        GregorianCalendar gregorianCalendar = new GregorianCalendar();
-        gregorianCalendar.setTime(date);
-        return createDataTypeFactory().newXMLGregorianCalendar(gregorianCalendar);
-
+        return convertToXMLGregorianCalendar(date.getTime());
     }
 
     public static XMLGregorianCalendar convertToXMLGregorianCalendarNoTimeZoneNoMillis(Date date) {
@@ -83,7 +86,6 @@ public class DateUtils {
         basicCalender.setTimezone(DatatypeConstants.FIELD_UNDEFINED);
         basicCalender.setMillisecond(DatatypeConstants.FIELD_UNDEFINED);
         return basicCalender;
-
     }
 
     public static Date convertToDate(String dateString) {
