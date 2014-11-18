@@ -23,7 +23,7 @@
                 
                 
                 <!-- Header -->
-                <li ng-show="editSources[group.groupId] == true" ng-class="{'source-active' : editSources[group.groupId] == true}" ng-model="group.activities">
+                <li ng-show="editSources[group.groupId] == true" class="source-header" ng-class="{'source-active' : editSources[group.groupId] == true}" ng-model="group.activities">
                     <div class="sources-header">
                         <div class="row">                      
                             <div class="col-md-4 col-sm-4 col-xs-4">
