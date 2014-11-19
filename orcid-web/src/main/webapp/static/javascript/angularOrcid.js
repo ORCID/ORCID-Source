@@ -3647,6 +3647,7 @@ function PublicWorkCtrl($scope, $compile, $filter, worksSrvc, actSortSrvc) {
     $scope.moreInfo = {};
     $scope.displayWorks = true;
     $scope.editSources = {};
+    $scope.showElement = {};
 
     $scope.sort = function(key) {
         actSortSrvc.sort(key,$scope);
@@ -3729,6 +3730,14 @@ function PublicWorkCtrl($scope, $compile, $filter, worksSrvc, actSortSrvc) {
 
     $scope.toggleWorks = function(){
         $scope.displayWorks = !$scope.displayWorks;
+    };
+    
+    $scope.showTooltip = function (element){    	
+        $scope.showElement[element] = true;
+    };
+
+    $scope.hideTooltip = function (element){    	
+        $scope.showElement[element] = false;
     };
 }
 

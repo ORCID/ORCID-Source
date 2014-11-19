@@ -35,35 +35,35 @@
                                 Created                         
                             </div>
                             
-                            <div class="col-md-2 col-sm-3 col-xs-3">
-                            	<#if !(isPublicProfile??)>
-                                	Preferred
-                                </#if>
+                            <div class="col-md-2 col-sm-3 col-xs-3">                            	
+                                Preferred
                             </div>
-                            <div class="col-md-3 col-sm-2 col-xs-2 right">
-                            	<#if !(isPublicProfile??)>
-                                	<div class="workspace-toolbar">
-	                                    <ul class="workspace-private-toolbar">   
-	                                    	<li ng-show="bulkEditShow">
-	                                    		<input type="checkbox" ng-model="bulkEditMap[group.getActive().putCode.value]" class="bulk-edit-input-header ng-valid ng-dirty">
-	                                    	</li>
+                            <div class="col-md-3 col-sm-2 col-xs-2 right">                            	
+                                	<div class="workspace-toolbar">                                	
+	                                    <ul class="workspace-private-toolbar">
+	                                    	<#if !(isPublicProfile??)>   
+		                                    	<li ng-show="bulkEditShow">
+		                                    		<input type="checkbox" ng-model="bulkEditMap[group.getActive().putCode.value]" class="bulk-edit-input-header ng-valid ng-dirty">
+		                                    	</li>
+	                                    	</#if>
 	                                    	<li class="works-details">                                		
 		                                		<a ng-click="showDetailsMouseClick(group,$event);">
 		                                			<span ng-class="(moreInfo[group.groupId] == true) ? 'glyphicons book' : 'glyphicons book_open'">
 		                                			</span>
 		                                		</a>                                		
-											</li>	                                    	
-	                                        <li>
-	                                            <@orcid.privacyToggle2 angularModel="group.getActive().visibility"
-	                                                questionClick="toggleClickPrivacyHelp(group.getActive().putCode)"
-	                                                clickedClassCheck="{'popover-help-container-show':privacyHelp[group.getActive().putCode.value]==true}"
-	                                                publicClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PUBLIC', $event)"
-	                                                limitedClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'LIMITED', $event)"
-	                                                privateClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PRIVATE', $event)"/>
-	                                        </li>
+											</li>
+											<#if !(isPublicProfile??)>
+		                                        <li>
+		                                            <@orcid.privacyToggle2 angularModel="group.getActive().visibility"
+		                                                questionClick="toggleClickPrivacyHelp(group.getActive().putCode)"
+		                                                clickedClassCheck="{'popover-help-container-show':privacyHelp[group.getActive().putCode.value]==true}"
+		                                                publicClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PUBLIC', $event)"
+		                                                limitedClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'LIMITED', $event)"
+		                                                privateClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PRIVATE', $event)"/>
+		                                        </li>
+		                                    </#if>
 	                                    </ul>
-	                                </div>
-                                </#if>	
+	                                </div>                                	
                             </div>
                         </div>
                         
@@ -89,13 +89,15 @@
                             </div>                            
                         </div>
                         
-                        <#if !(isPublicProfile??)>
+                        
                             <div class="col-md-3 workspace-toolbar">
                                 <ul class="workspace-private-toolbar" ng-hide="editSources[group.groupId] == true">
-                                	<!-- Bulk edit tool -->
-	                                <li ng-show="bulkEditShow == true" class="hidden-xs bulk-checkbox-item">								
-						        			<input type="checkbox" ng-model="bulkEditMap[work.putCode.value]" class="bulk-edit-input ng-pristine ng-valid pull-right">			        										
-									</li>
+                                	<#if !(isPublicProfile??)>
+	                                	<!-- Bulk edit tool -->
+		                                <li ng-show="bulkEditShow == true" class="hidden-xs bulk-checkbox-item">								
+							        			<input type="checkbox" ng-model="bulkEditMap[work.putCode.value]" class="bulk-edit-input ng-pristine ng-valid pull-right">			        										
+										</li>
+									</#if>	
                                 	<!-- Show/Hide Details -->
                                 	<li class="works-details" ng-hide="editSources[group.groupId] == true">                                		
                                 		<a ng-click="showDetailsMouseClick(group,$event);">
@@ -103,26 +105,27 @@
                                 			</span>
                                 		</a>                                		
 									</li>
-									<!-- Combine -->
-                                    <#if RequestParameters['combine']??>
-                                        <li ng-show="canBeCombined(work)">
-                                            <a ng-click="showCombineMatches(group.getDefault())" class="toolbar-button edit-item-button" title="Combine duplicates">
-                                                <span class="glyphicons git_pull_request edit-option-toolbar"></span>
-                                            </a>
-                                         </li>
-                                    </#if>
-                                    <!-- Privacy -->
-                                    <li>
-                                        <@orcid.privacyToggle2 angularModel="work.visibility"
-                                            questionClick="toggleClickPrivacyHelp(work.putCode.value)"
-                                            clickedClassCheck="{'popover-help-container-show':privacyHelp[work.putCode.value]==true}"
-                                            publicClick="worksSrvc.setGroupPrivacy(work.putCode.value, 'PUBLIC', $event)"
-                                            limitedClick="worksSrvc.setGroupPrivacy(work.putCode.value, 'LIMITED', $event)"
-                                            privateClick="worksSrvc.setGroupPrivacy(work.putCode.value, 'PRIVATE', $event)"/>
-                                    </li>
+									<#if !(isPublicProfile??)>
+										<!-- Combine -->
+	                                    <#if RequestParameters['combine']??>
+	                                        <li ng-show="canBeCombined(work)">
+	                                            <a ng-click="showCombineMatches(group.getDefault())" class="toolbar-button edit-item-button" title="Combine duplicates">
+	                                                <span class="glyphicons git_pull_request edit-option-toolbar"></span>
+	                                            </a>
+	                                         </li>
+	                                    </#if>
+	                                    <!-- Privacy -->
+	                                    <li>
+	                                        <@orcid.privacyToggle2 angularModel="work.visibility"
+	                                            questionClick="toggleClickPrivacyHelp(work.putCode.value)"
+	                                            clickedClassCheck="{'popover-help-container-show':privacyHelp[work.putCode.value]==true}"
+	                                            publicClick="worksSrvc.setGroupPrivacy(work.putCode.value, 'PUBLIC', $event)"
+	                                            limitedClick="worksSrvc.setGroupPrivacy(work.putCode.value, 'LIMITED', $event)"
+	                                            privateClick="worksSrvc.setGroupPrivacy(work.putCode.value, 'PRIVATE', $event)"/>
+	                                    </li>
+	                                </#if>
                                 </ul>
-                            </div>
-                        </#if>
+                            </div>                        
                   	 </div>
                             
                      <!-- Active Row Identifiers / URL / Validations / Versions -->
@@ -153,14 +156,16 @@
                       		<div ng-show="editSources[group.groupId] == true" ng-bind="work.createdDate | ajaxFormDateToISO8601"></div>
                       	</div>              
                       	<div class="col-md-3" ng-show="editSources[group.groupId] == true">
-                     		<#if !(isPublicProfile??)>
+                     		
 							<div ng-show="editSources[group.groupId] == true">
-						        <span class="glyphicon glyphicon-check ng-hide" ng-show="work.putCode.value == group.defaultPutCode"></span><span ng-show="work.putCode.value == group.defaultPutCode"> Preferred source</span>              
-						        <a ng-click="worksSrvc.makeDefault(group, work.putCode.value); " ng-show="work.putCode.value != group.defaultPutCode" class="">
-						         	<span class="glyphicon glyphicon-unchecked"></span> Make preferred
-						        </a>
+						        <span class="glyphicon glyphicon-check ng-hide" ng-show="work.putCode.value == group.defaultPutCode"></span><span ng-show="work.putCode.value == group.defaultPutCode"> Preferred source</span>
+						        <#if !(isPublicProfile??)>              
+							        <a ng-click="worksSrvc.makeDefault(group, work.putCode.value); " ng-show="work.putCode.value != group.defaultPutCode" class="">
+							         	<span class="glyphicon glyphicon-unchecked"></span> Make preferred
+							        </a>
+						        </#if>
 							</div>    
-						</#if>
+						
                       	</div>
                       	<div class="col-md-2 trash-source" ng-show="editSources[group.groupId] == true">
                       		<div ng-show="editSources[group.groupId] == true">
@@ -236,12 +241,9 @@
                       	<div class="col-md-3">                      		
                       		CREATED: <span ng-bind="work.createdDate | ajaxFormDateToISO8601"></span>                      		
                       	</div>
-                      	<div class="col-md-3">
-                     		<#if !(isPublicProfile??)>							
-							    <span class="glyphicon glyphicon-check"></span><span> Preferred source</span> <span ng-hide="group.activitiesCount == 1">(</span><a ng-click="editSources[group.groupId] = !editSources[group.groupId]" ng-hide="group.activitiesCount == 1">of {{group.activitiesCount}}</a><span ng-hide="group.activitiesCount == 1">)</span>							    
-							</#if>
-                      	</div>
-                    
+                      	<div class="col-md-3">                     									
+							<span class="glyphicon glyphicon-check"></span><span> Preferred source</span> <span ng-hide="group.activitiesCount == 1">(</span><a ng-click="editSources[group.groupId] = !editSources[group.groupId]" ng-hide="group.activitiesCount == 1">of {{group.activitiesCount}}</a><span ng-hide="group.activitiesCount == 1">)</span>
+                      	</div>                    
                     	<div class="col-md-2" ng-show="group.activePutCode == work.putCode.value">                    	
                     		<ul class="sources-options" ng-cloak>                    			
 							    <#if !(isPublicProfile??)>
