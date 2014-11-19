@@ -3641,6 +3641,7 @@ function PublicWorkCtrl($scope, $compile, $filter, workspaceSrvc, worksSrvc) {
     $scope.moreInfoOpen = false;
     $scope.moreInfo = {};
     $scope.editSources = {};
+    $scope.showElement = {};
 
     $scope.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
     $scope.sort = function(key) {
@@ -3720,6 +3721,18 @@ function PublicWorkCtrl($scope, $compile, $filter, workspaceSrvc, worksSrvc) {
     $scope.closePopover = function(event) {
         $scope.moreInfoOpen = false;
         $('.work-more-info-container').css('display', 'none');
+    };
+
+    $scope.toggleWorks = function(){
+        $scope.displayWorks = !$scope.displayWorks;
+    };
+    
+    $scope.showTooltip = function (element){    	
+        $scope.showElement[element] = true;
+    };
+
+    $scope.hideTooltip = function (element){    	
+        $scope.showElement[element] = false;
     };
 
 }
