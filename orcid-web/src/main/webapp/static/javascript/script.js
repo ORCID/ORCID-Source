@@ -685,7 +685,9 @@ $(function() {
  * "workExternalIdentifierId":{"errors":[],"value":null,"required":true,"getRequiredMessage":null},
  * "workExternalIdentifierType":{"errors":[],"value":"","required":true,"getRequiredMessage":null}
  * }], "source":null, "sourceName":null,
- * "workTitle":{"errors":[],"title":{"errors":[],"value":null,"required":true,"getRequiredMessage":null},"subtitle":{"errors":[],"value":null,"required":true,"getRequiredMessage":null},"translatedTitle":{"errors":[],"content":"","languageCode":"","languageName":"","required":false,"getRequiredMessage":null}},
+ * "title":{"errors":[],"value":null,"required":true,"getRequiredMessage":null},
+ * "subtitle":{"errors":[],"value":null,"required":true,"getRequiredMessage":null},
+ * "translatedTitle":{"errors":[],"content":"","languageCode":"","languageName":"","required":false,"getRequiredMessage":null},
  * "workCategory":{"errors":[],"value":"","required":true,"getRequiredMessage":null},
  * "workType":{"errors":[],"value":"","required":true,"getRequiredMessage":null},"dateSortString":null}
  */
@@ -751,7 +753,7 @@ function populateWorkAjaxForm(bibJson, work) {
             lowerKeyTags[key.toLowerCase()] = tags[key];
 
         if (lowerKeyTags.hasOwnProperty('booktitle'))
-            work.workTitle.title.value = lowerKeyTags['booktitle'];
+            work.title.value = lowerKeyTags['booktitle'];
 
         if (lowerKeyTags.hasOwnProperty('doi'))
             workExternalIdentifierId(work, 'doi', lowerKeyTags['doi']);
@@ -767,7 +769,7 @@ function populateWorkAjaxForm(bibJson, work) {
             work.journalTitle.value = lowerKeyTags['journal'];
 
         if (lowerKeyTags.hasOwnProperty('title'))
-            work.workTitle.title.value = lowerKeyTags['title'];
+            work.title.value = lowerKeyTags['title'];
 
         if (lowerKeyTags.hasOwnProperty('year'))
             work.publicationDate.year = lowerKeyTags['year'];
