@@ -18,14 +18,16 @@
 
 -->
 <orcid-message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../../orcid-model/src/main/resources/orcid-message-1.1.xsd"
+    xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../../orcid-model/src/main/resources/orcid-message-1.2_rc6.xsd"
     xmlns="http://www.orcid.org/ns/orcid">
-    <message-version>1.1</message-version>
+    <message-version>1.2_rc6</message-version>
     <orcid-profile xmlns="http://www.orcid.org/ns/orcid">
         <orcid-history>
             <creation-method>API</creation-method>
             <completion-date>2012-10-09T15:50:07</completion-date>
             <submission-date>2012-10-09T15:50:07</submission-date>
+            <verified-email>true</verified-email>
+            <verified-primary-email>true</verified-primary-email>          
         </orcid-history>
         <orcid-bio>
             <personal-details>
@@ -71,6 +73,12 @@ v
                         <subtitle>Work subtitle 1</subtitle>
                     </work-title>
                     <work-type>journal-article</work-type>
+                    <work-external-identifiers>
+                        <work-external-identifier>
+                            <work-external-identifier-type>doi</work-external-identifier-type>
+                            <work-external-identifier-id>1234.56/1234</work-external-identifier-id>
+                        </work-external-identifier>
+                    </work-external-identifiers>
                 </orcid-work>
                 <orcid-work visibility="public">
                     <work-title>
@@ -78,6 +86,12 @@ v
                         <subtitle>Work subtitle 2</subtitle>
                     </work-title>
                     <work-type>journal-article</work-type>
+                    <work-external-identifiers>
+                        <work-external-identifier>
+                            <work-external-identifier-type>doi</work-external-identifier-type>
+                            <work-external-identifier-id>1234.56/4567</work-external-identifier-id>
+                        </work-external-identifier>
+                    </work-external-identifiers>
                 </orcid-work>
                 <orcid-work visibility="public">
                     <work-title>
@@ -85,6 +99,12 @@ v
                         <subtitle>Work subtitle 3</subtitle>
                     </work-title>
                     <work-type>journal-article</work-type>
+                    <work-external-identifiers>
+                        <work-external-identifier>
+                            <work-external-identifier-type>doi</work-external-identifier-type>
+                            <work-external-identifier-id>1234.56/8910</work-external-identifier-id>
+                        </work-external-identifier>
+                    </work-external-identifiers>
                 </orcid-work>
             </orcid-works>
         </orcid-activities>
@@ -98,9 +118,11 @@ v
                 </encrypted-verification-code>
             </security-details>
             <preferences>
-                <send-change-notifications>false</send-change-notifications> 
+                <send-email-frequency-days>7.0</send-email-frequency-days>
+                <send-change-notifications>false</send-change-notifications>
                 <send-orcid-news>false</send-orcid-news>
-                <work-visibility-default>public</work-visibility-default>              
+                <send-orcid-feature-announcements>false</send-orcid-feature-announcements>
+                <activities-visibility-default>public</activities-visibility-default>              
             </preferences>
         </orcid-internal>
     </orcid-profile>
