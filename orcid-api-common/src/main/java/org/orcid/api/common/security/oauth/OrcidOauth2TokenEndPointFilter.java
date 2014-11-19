@@ -39,7 +39,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class OrcidOauth2TokenEndPointFilter extends ClientCredentialsTokenEndpointFilter {
 
     private final static String PUBLIC_ROLE = "ROLE_PUBLIC";
-    
+
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException, ServletException {
         if (request.getMethod().equals(RequestMethod.GET.name())) {
@@ -48,40 +48,40 @@ public class OrcidOauth2TokenEndPointFilter extends ClientCredentialsTokenEndpoi
             InvalidRequestException ire = new InvalidRequestException(message);
             throw new MethodNotAllowedException(message, ire);
         }
-        
+
         String clientId = request.getParameter("client_id");
         String clientSecret = request.getParameter("client_secret");
 
-        // If the request is already authenticated we can assume that this filter is not needed
+        // If the request is already authenticated we can assume that this
+        // filter is not needed
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
-                return authentication;
+            return authentication;
         }
-        
+
         if (clientId == null) {
-                throw new BadCredentialsException("No client credentials presented");
+            throw new BadCredentialsException("No client credentials presented");
         }
 
         if (clientSecret == null) {
-                clientSecret = "";
+            clientSecret = "";
         }
 
         clientId = clientId.trim();
-        UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(clientId,
-                        clientSecret);
+        UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(clientId, clientSecret);
 
-        authentication = this.getAuthenticationManager().authenticate(authRequest); 
-                        
-        if(authentication != null){
-            for(GrantedAuthority auth : authentication.getAuthorities()) {
-                if(PUBLIC_ROLE.equals(auth.getAuthority())){
+        authentication = this.getAuthenticationManager().authenticate(authRequest);
+
+        if (authentication != null) {
+            for (GrantedAuthority auth : authentication.getAuthorities()) {
+                if (PUBLIC_ROLE.equals(auth.getAuthority())) {
                     String message = "Public members are not allowed to use the Members API";
                     InvalidRequestException ire = new InvalidRequestException(message);
                     throw new MethodNotAllowedException(message, ire);
                 }
             }
         }
-        
+
         return authentication;
     }
 
