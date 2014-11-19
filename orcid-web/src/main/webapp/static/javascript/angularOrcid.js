@@ -4281,14 +4281,12 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
         $scope.editWork.workType.errors = [];
     };
     
-    $scope.showTooltip = function (element){
-    	console.log('Showing: '+element);
+    $scope.showTooltip = function (element){    	
     	$scope.showElement[element] = true;
     	
     }
     
-    $scope.hideTooltip = function (element){
-    	console.log('Hiding: '+element);
+    $scope.hideTooltip = function (element){    	
     	$scope.showElement[element] = false;
     }
 }
