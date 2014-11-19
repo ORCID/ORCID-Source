@@ -16,7 +16,7 @@
  */
 package org.orcid.core.manager.impl;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import javax.annotation.Resource;
 
@@ -39,41 +39,39 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
     protected OrcidProfileManager orcidProfileManager;
 
     @Cacheable(value = "pub-min-works-maps", key = "#profile.getCacheKey()")
-    public HashMap<String, Work> pubMinWorksMap(OrcidProfile profile) {
-        HashMap<String, Work> workMap = new HashMap<String, Work>();
+    public LinkedHashMap<String, Work> pubMinWorksMap(OrcidProfile profile) {
+        LinkedHashMap<String, Work> workMap = new LinkedHashMap<String, Work>();
         if (profile.getOrcidActivities() != null) {
             if (profile.getOrcidActivities().getOrcidWorks() != null) {
-                for (OrcidWork orcidWork : profile.getOrcidActivities().getOrcidWorks().getOrcidWork()) {
-                    if (Visibility.PUBLIC.equals(orcidWork.getVisibility())) {
+                for (OrcidWork orcidWork : profile.getOrcidActivities().getOrcidWorks().getOrcidWork())
+                    if (Visibility.PUBLIC.equals(orcidWork.getVisibility()))
                         workMap.put(orcidWork.getPutCode(), Work.minimizedValueOf(orcidWork));
-                    }
-                }
             }
         }
         return workMap;
     }
 
     @Cacheable(value = "pub-funding-maps", key = "#profile.getCacheKey()")
-    public HashMap<String, Funding> fundingMap(OrcidProfile profile) {
-        HashMap<String, Funding> fundingMap = new HashMap<String, Funding>();
+    public LinkedHashMap<String, Funding> fundingMap(OrcidProfile profile) {
+        LinkedHashMap<String, Funding> fundingMap = new LinkedHashMap<String, Funding>();
         if (profile.getOrcidActivities() != null) {
             if (profile.getOrcidActivities().getFundings() != null) {
-                for (Funding funding : profile.getOrcidActivities().getFundings().getFundings()) {
-                    if (Visibility.PUBLIC.equals(funding.getVisibility())) {
+                for (Funding funding : profile.getOrcidActivities().getFundings().getFundings())
+                    if (Visibility.PUBLIC.equals(funding.getVisibility()))
                         fundingMap.put(funding.getPutCode(), funding);
-                    }
-                }
             }
         }
         return fundingMap;
     }
 
     @Cacheable(value = "pub-affiliation-maps", key = "#profile.getCacheKey()")
-    public HashMap<String, Affiliation> affiliationMap(OrcidProfile profile) {
-        HashMap<String, Affiliation> affiliationMap = new HashMap<String, Affiliation>();
+    public LinkedHashMap<String, Affiliation> affiliationMap(OrcidProfile profile) {
+        LinkedHashMap<String, Affiliation> affiliationMap = new LinkedHashMap<String, Affiliation>();
         if (profile.getOrcidActivities() != null) {
             if (profile.getOrcidActivities().getAffiliations() != null) {
-                affiliationMap = (HashMap<String, Affiliation>) profile.getOrcidActivities().getAffiliations().retrieveActivitiesAsMap();
+                for (Affiliation aff:profile.getOrcidActivities().getAffiliations().getAffiliation())
+                    if (Visibility.PUBLIC.equals(aff.getVisibility()))
+                        affiliationMap.put(aff.getPutCode(), aff);
             }
         }
         return affiliationMap;

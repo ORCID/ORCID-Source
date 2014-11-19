@@ -1294,12 +1294,12 @@ orcidNgModule.filter('ajaxFormDateToISO8601', function(){
         if (input.year) str += input.year;
         if (input.month) {
             if (str.length > 0) str += '-';
-            str += input.month;
+            str += Number(input.month).pad(2);
         }
         if (input.day) {
             if (str.length > 0)
                 str += '-';
-            str += input.day;
+            str += Number(input.day).pad(2);
         }
         return str;
     };
@@ -3753,7 +3753,9 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
     $scope.bibtextWork = false;
     $scope.bibtextWorkIndex = null;
     $scope.showElement = {};
-
+    $scope.delCountVerify = 0;
+    $scope.bulkDeleteCount = 0;
+    
     $scope.toggleBulkEdit = function() {
         if (!$scope.bulkEditShow) {
             $scope.bulkEditMap = {};
@@ -3791,6 +3793,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
     };
 
     $scope.deleteBulk = function () {
+        if ($scope.delCountVerify != parseInt($scope.bulkDeleteCount)) return;
         var delPuts = new Array();
         for (var idx in worksSrvc.groups)
             if ($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value])
@@ -3803,6 +3806,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
 
 
     $scope.deleteBulkConfirm = function(idx) {
+        $scope.delCountVerify = 0;
         $scope.bulkDeleteCount = 0;
         for (var idx in worksSrvc.groups)
             console.log($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value]);
@@ -5847,7 +5851,7 @@ function SSOPreferencesCtrl($scope, $compile, $sce, emailSrvc) {
             type: 'POST',
             success: function(data){
                 if(data == true){
-                    window.location.href = getBaseUri()+'/developer-tools?enabled';
+                    window.location.href = getBaseUri()+'/developer-tools';
                 };
             }
         }).fail(function(error) {

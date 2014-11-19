@@ -72,7 +72,7 @@
 	                 	     privateClick="setPrivacy('PRIVATE', $event)" />
 		        	   
 		        	      <div ng-repeat="otherNames in otherNamesForm.otherNames">
-		        	          <input type="text" ng-model="otherNames.value"></input>
+		        	          <input type="text" ng-model="otherNames.value"></input
 		        	          <a ng-click="deleteKeyword(otherNames)" class="glyphicon glyphicon-trash grey"></a>
 		        	          <br />
 		        	          <span class="orcid-error" ng-show="otherNames.url.errors.length > 0">
@@ -283,7 +283,7 @@
 			        				</li>
 			        				<li>
 			        				    <a class="action-option works manage-button" ng-class="{'green-bg' : bulkEditShow == true}" ng-click="toggleBulkEdit()">
-											<span class="glyphicon glyphicon-pencil"></span>Bulk Edit
+											<span class="glyphicon glyphicon-pencil"></span>Bulk edit
 										</a>
 			        				</li>
 								</ul>								
@@ -544,6 +544,7 @@
 		<div class="row">
 			<div class="col-md-12 col-sm-12 col-xs-12">
 				<h3>Please confirm deleting {{bulkDeleteCount}} items </h3>
+				<span class="orcid-error" ng-show="bulkDeleteCount != delCountVerify">To delete these {{bulkDeleteCount}} items, please enter the number of items you will be deleting <input type="text" size="3" ng-init="delCountVerify=0" ng-model="delCountVerify"/>.</span></br > 
 				<button class="btn btn-danger" ng-click="bulkDeleteFunction()"><@orcid.msg 'freemarker.btnDelete'/></button> 
 				<a ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel'/></a>
 			<div>

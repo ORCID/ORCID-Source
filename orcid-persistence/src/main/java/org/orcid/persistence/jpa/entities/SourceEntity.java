@@ -16,6 +16,8 @@
  */
 package org.orcid.persistence.jpa.entities;
 
+import java.io.Serializable;
+
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -30,7 +32,9 @@ import org.orcid.jaxb.model.message.Visibility;
  * 
  */
 @Embeddable
-public class SourceEntity {
+public class SourceEntity implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private ProfileEntity sourceProfile;
     private ClientDetailsEntity sourceClient;

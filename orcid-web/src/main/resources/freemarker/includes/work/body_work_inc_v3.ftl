@@ -117,7 +117,19 @@
 									        </div>                
 									    </div>                                		
 									</li>
-                                    
+
+									<!--
+										Combine 
+	                                    <#if RequestParameters['combine']??>
+	                                        <li ng-show="canBeCombined(work)">
+	                                            <a ng-click="showCombineMatches(group.getDefault())" class="toolbar-button edit-item-button" title="Combine duplicates">
+	                                                <span class="glyphicons git_pull_request edit-option-toolbar"></span>
+	                                            </a>
+	                                         </li>
+	                                    </#if>
+                                    	
+                                    -->
+
                                     <!-- Privacy -->
                                     <li>
                                         <@orcid.privacyToggle2 angularModel="work.visibility"
@@ -172,7 +184,7 @@
                       	<div class="col-md-2 trash-source" ng-show="editSources[group.groupId] == true">
                       		<div ng-show="editSources[group.groupId] == true">
 					        <#if !(isPublicProfile??)>
-					        	<ul class="sources-actions">					        		
+					        	<ul class="sources-actions">
 					        		<#if RequestParameters['combine']??>
 						        		<li ng-show="canBeCombined(work)">
 						        			<a class="glyphicons git_pull_request" ng-click="showCombineMatches(group.getDefault())" ng-mouseenter="showTooltip(work.putCode.value+'-combineActiveDuplicates')" ng-mouseleave="hideTooltip(work.putCode.value+'-combineActiveDuplicates')"></a>
@@ -189,7 +201,7 @@
 						        	</#if>					        		
 					        		<li>
 					        			<a ng-show="!group.hasUserVersion() || userIsSource(work)" ng-click="openEditWork(group.getActive().putCode.value)" ng-mouseenter="showTooltip(group.groupId+'-editActiveSource')" ng-mouseleave="hideTooltip(group.groupId+'-editActiveSource')">
-											<span class="glyphicon glyphicon-pencil" ng-class="{'glyphicons git_create' : !userIsSource(work)}"></span>											
+											<span class="glyphicon glyphicon-pencil" ng-class="{'glyphicons git_create' : !userIsSource(work)}"></span>
 										</a>
 										
 										<div class="popover popover-tooltip top edit-activeSource-popover" ng-show="showElement[group.groupId+'-editActiveSource'] == true"> 
@@ -242,17 +254,17 @@
                             <#if !(isPublicProfile??)>
                                 <ul class="sources-actions">
                                 	<#if RequestParameters['combine']??>
-                                	<li ng-show="canBeCombined(work)">					        			
-					        			<a class="glyphicons git_pull_request" ng-click="showCombineMatches(group.getDefault())" ng-mouseenter="showTooltip(work.putCode.value+'-combineInactiveDuplicates')" ng-mouseleave="hideTooltip(work.putCode.value+'-combineInactiveDuplicates')"></a>					        			
-					        			
-					        			<div class="popover popover-tooltip top combine-inactiveDuplicates-popover" ng-show="showElement[work.putCode.value+'-combineInactiveDuplicates'] == true"> 
-										    <div class="arrow"></div>
-										    <div class="popover-content">
-										        Combine duplicates                                      
-										    </div>                
-										</div>
-					        			
-					        		</li>
+	                                	<li ng-show="canBeCombined(work)">					        			
+						        			<a class="glyphicons git_pull_request" ng-click="showCombineMatches(group.getDefault())" ng-mouseenter="showTooltip(work.putCode.value+'-combineInactiveDuplicates')" ng-mouseleave="hideTooltip(work.putCode.value+'-combineInactiveDuplicates')"></a>					        			
+						        			
+						        			<div class="popover popover-tooltip top combine-inactiveDuplicates-popover" ng-show="showElement[work.putCode.value+'-combineInactiveDuplicates'] == true"> 
+											    <div class="arrow"></div>
+											    <div class="popover-content">
+											        Combine duplicates                                      
+											    </div>                
+											</div>
+						        			
+						        		</li>
 					        		</#if>
                                     <li>
                                         <a ng-show="!group.hasUserVersion() || userIsSource(work)" ng-click="openEditWork(work.putCode.value)" ng-mouseenter="showTooltip(work.putCode.value+'-editInactiveSource')" ng-mouseleave="hideTooltip(work.putCode.value+'-editInactiveSource')">

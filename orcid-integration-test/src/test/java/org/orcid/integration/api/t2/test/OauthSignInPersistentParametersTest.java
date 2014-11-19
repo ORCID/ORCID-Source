@@ -58,7 +58,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-oauth-orcid-api-client-context.xml" })
-public class OauthSignInPersistentParametersTests extends DBUnitTest {
+public class OauthSignInPersistentParametersTest extends DBUnitTest {
     private static final int DEFAULT_TIMEOUT_SECONDS = 30;
     private static final String CLIENT_ID = "9999-9999-9999-9994";
     private static final Pattern AUTHORIZATION_CODE_PATTERN = Pattern.compile("code=(.+)");
