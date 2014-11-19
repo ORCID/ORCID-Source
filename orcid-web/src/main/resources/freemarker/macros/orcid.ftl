@@ -226,22 +226,22 @@ kind of variable. This temp value is only used in this macro lib -->
 			<li class="publicActive" ng-class="{publicInActive: ${angularModel} != 'PUBLIC'}"><a href="" title="<@orcid.msg 'manage.lipublic' />" ng-click="${publicClick}"></a></li>
 			<li class="limitedActive" ng-class="{limitedInActive: ${angularModel} != 'LIMITED'}"><a href="" title="<@orcid.msg 'manage.lilimited' />" ng-click="${limitedClick}"></a></li>
 			<li class="privateActive" ng-class="{privateInActive: ${angularModel} != 'PRIVATE'}"><a href="" title="<@orcid.msg 'manage.liprivate' />" ng-click="${privateClick}"></a></li>
-		</ul>		        	
-		<div class="popover-help-container">
-	        <div class="popover top privacy-myorcid3" ng-class="showElement[group.groupId+'-privacy'] == true ? 'block' : ''">
-				<div class="arrow"></div>
-				<div class="popover-content">
-			    	<strong>${springMacroRequestContext.getMessage("privacyToggle.help.who_can_see")}</strong>
-				    <ul class="privacyHelp">
-					    <li class="public" style="color: #009900;">${springMacroRequestContext.getMessage("privacyToggle.help.everyone")}</li>
-					    <li class="limited"style="color: #ffb027;">${springMacroRequestContext.getMessage("privacyToggle.help.trusted_parties")}</li>
-					    <li class="private" style="color: #990000;">${springMacroRequestContext.getMessage("privacyToggle.help.only_me")}</li>
-				    </ul>
-			       <a href="http://support.orcid.org/knowledgebase/articles/124518-orcid-privacy-settings" target="_blank">${springMacroRequestContext.getMessage("privacyToggle.help.more_information")}</a>
-			    </div>                
-		  	</div>    			   				
-	  	</div>	
+		</ul>
 	</div>
+	<div class="popover-help-container">
+       <div class="popover top privacy-myorcid3" ng-class="showElement[group.groupId+'-privacy'] == true ? 'block' : ''">
+			<div class="arrow"></div>
+			<div class="popover-content">
+		    	<strong>${springMacroRequestContext.getMessage("privacyToggle.help.who_can_see")}</strong>
+			    <ul class="privacyHelp">
+				    <li class="public" style="color: #009900;">${springMacroRequestContext.getMessage("privacyToggle.help.everyone")}</li>
+				    <li class="limited"style="color: #ffb027;">${springMacroRequestContext.getMessage("privacyToggle.help.trusted_parties")}</li>
+				    <li class="private" style="color: #990000;">${springMacroRequestContext.getMessage("privacyToggle.help.only_me")}</li>
+			    </ul>
+		       <a href="http://support.orcid.org/knowledgebase/articles/124518-orcid-privacy-settings" target="_blank">${springMacroRequestContext.getMessage("privacyToggle.help.more_information")}</a>
+		    </div>                
+	  	</div>    			   				
+ 	</div>
 </#macro>
 
 
