@@ -72,18 +72,9 @@
 
 <!-- Works -->
 <#if !(worksEmpty)??>		
-	<div id="workspace-works" class="workspace-accordion-item workspace-accordion-active" ng-controller="PublicWorkCtrl" ng-cloack>
-	      <div class="workspace-accordion-header">
-		      <div class="row">
-		      		<div class="col-md-12 col-sm-12 col-xs-12">
-				    	<a href="" ng-click="toggleWorks()" class="toggle-text">
-					        <i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':displayWorks==false}"></i>
-					        <@orcid.msg 'workspace.Works'/> (<span ng-bind="worksSrvc.groups.length"></span>)
-				        </a> 
-		  	 		</div>
-		  	  </div>                                
-	      </div>	
-	      <div ng-show="displayWorks" class="workspace-accordion-content">
+	<div id="workspace-works" class="workspace-accordion-item workspace-accordion-active" ng-controller="PublicWorkCtrl" ng-cloak>
+          <#include "includes/work/work_section_header_inc_v3.ftl"/>
+	      <div ng-show="workspaceSrvc.displayWorks" class="workspace-accordion-content">
 				<#include "includes/work/public_works_body_list.ftl" />
 	      </div>
 	</div>
