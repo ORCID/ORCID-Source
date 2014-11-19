@@ -35,8 +35,8 @@ import org.orcid.jaxb.model.message.WorkTitle;
 import com.sun.jersey.api.client.ClientResponse;
 
 public abstract class AbstractT2ClientIntegrationTest {
-	
-	@Resource
+
+    @Resource(name = "t2OrcidApiClient1_2_rc6")
     private T2OrcidApiService<ClientResponse> t2Client;
     private Unmarshaller unmarshaller;
 
@@ -54,52 +54,52 @@ public abstract class AbstractT2ClientIntegrationTest {
 
     protected OrcidMessage getInternalFullOrcidMessage(String xmlLoc) throws JAXBException {
         OrcidMessage emptyOrcid = (OrcidMessage) unmarshaller.unmarshal(T2OrcidApiClientIntegrationTest.class.getResourceAsStream(xmlLoc));
-        emptyOrcid.getOrcidProfile().getOrcidBio().getContactDetails().addOrReplacePrimaryEmail(
-                new Email("orcid.integration.test+" + System.currentTimeMillis() + "@semantico.com"));
-        
+        emptyOrcid.getOrcidProfile().getOrcidBio().getContactDetails()
+                .addOrReplacePrimaryEmail(new Email("orcid.integration.test+" + System.currentTimeMillis() + "@semantico.com"));
+
         List<Email> emails = emptyOrcid.getOrcidProfile().getOrcidBio().getContactDetails().getEmail();
-        
+
         Email secondaryEmail1 = new Email("   test1+" + System.currentTimeMillis() + "@test.com   ");
         secondaryEmail1.setPrimary(false);
-        
+
         Email secondaryEmail2 = new Email("test2+" + System.currentTimeMillis() + "@test.com   ");
         secondaryEmail2.setPrimary(false);
-        
+
         Email secondaryEmail3 = new Email("   test3+" + System.currentTimeMillis() + "@test.com");
         secondaryEmail3.setPrimary(false);
-        
+
         emails.add(secondaryEmail1);
         emails.add(secondaryEmail2);
         emails.add(secondaryEmail3);
-        
+
         emptyOrcid.getOrcidProfile().getOrcidBio().getContactDetails().setEmail(emails);
-        
+
         return emptyOrcid;
     }
 
     protected OrcidMessage getInternalSponsor() throws JAXBException {
         OrcidMessage emptyOrcid = (OrcidMessage) unmarshaller.unmarshal(T2OrcidApiClientIntegrationTest.class
                 .getResourceAsStream(OrcidClientDataHelper.ORCID_INTERNAL_SPONSOR_XML));
-        emptyOrcid.getOrcidProfile().getOrcidBio().getContactDetails().addOrReplacePrimaryEmail(
-                new Email("orcid.integration.test.sponsor+" + System.currentTimeMillis() + "@semantico.com"));
-        
+        emptyOrcid.getOrcidProfile().getOrcidBio().getContactDetails()
+                .addOrReplacePrimaryEmail(new Email("orcid.integration.test.sponsor+" + System.currentTimeMillis() + "@semantico.com"));
+
         List<Email> emails = emptyOrcid.getOrcidProfile().getOrcidBio().getContactDetails().getEmail();
-        
+
         Email secondaryEmail1 = new Email("   test1+" + System.currentTimeMillis() + "@test.com   ");
         secondaryEmail1.setPrimary(false);
-        
+
         Email secondaryEmail2 = new Email("test2+" + System.currentTimeMillis() + "@test.com   ");
         secondaryEmail2.setPrimary(false);
-        
+
         Email secondaryEmail3 = new Email("   test3+" + System.currentTimeMillis() + "@test.com");
         secondaryEmail3.setPrimary(false);
-        
+
         emails.add(secondaryEmail1);
         emails.add(secondaryEmail2);
         emails.add(secondaryEmail3);
-        
+
         emptyOrcid.getOrcidProfile().getOrcidBio().getContactDetails().setEmail(emails);
-        
+
         return emptyOrcid;
     }
 
@@ -117,5 +117,5 @@ public abstract class AbstractT2ClientIntegrationTest {
         workTitle.setTitle(title);
         orcidWork.setWorkTitle(workTitle);
         return orcidWork;
-    }            
+    }
 }

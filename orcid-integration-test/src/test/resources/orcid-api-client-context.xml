@@ -29,6 +29,11 @@
          <constructor-arg value="${org.orcid.t2.client.base_url}"/>
          <constructor-arg ref="jerseyClient"/>
     </bean>
+    
+    <bean id="t2OrcidApiClient1_2_rc6" class="org.orcid.integration.api.t2.T2OrcidApiClientImpl">
+         <constructor-arg value="${org.orcid.t2.client.base_url}/v1.2_rc6"/>
+         <constructor-arg ref="jerseyClient"/>
+    </bean>
 
     <bean id="jerseyClient" class="com.sun.jersey.api.client.Client" factory-method="create">
         <constructor-arg ref="clientConfig"/>

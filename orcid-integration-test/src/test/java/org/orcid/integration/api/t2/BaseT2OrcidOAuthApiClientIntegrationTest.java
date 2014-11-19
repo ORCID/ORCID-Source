@@ -59,7 +59,7 @@ public abstract class BaseT2OrcidOAuthApiClientIntegrationTest {
     @Resource
     protected OrcidClientDataHelper orcidClientDataHelper;
 
-    @Resource(name="t2OAuthClient")
+    @Resource(name="t2OAuthClient1_2_rc6")
     protected T2OAuthAPIService<ClientResponse> oauthT2Client;
 
     @Resource
