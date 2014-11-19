@@ -24,7 +24,7 @@
 	      		<div class="col-md-12 col-sm-12 col-xs-12">
 		           <a href="" ng-click="toggleEducation()" class="toggle-text">
 		           		<i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':displayEducation==false}"></i>
-		           		${springMacroRequestContext.getMessage("org.orcid.jaxb.model.message.AffiliationType.education")}
+		           		<@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education'/> (<span ng-bind="affiliationsSrvc.educations.length"></span>)
 		           </a>
 	           </div>
 	       </div>                            
@@ -40,7 +40,7 @@
 		   	   <div class="col-md-12 col-sm-12 col-xs-12">
 		           <a href="" ng-click="toggleEmployment()" class="toggle-text">
 			           <i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':displayEmployment==false}"></i>
-			           ${springMacroRequestContext.getMessage("org.orcid.jaxb.model.message.AffiliationType.employment")}
+			           <@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education'/> (<span ng-bind="affiliationsSrvc.employments.length"></span>)
 		           </a>
 	           </div>
            </div>                        
@@ -59,7 +59,7 @@
 	      		<div class="col-md-12 col-sm-12 col-xs-12">
 			         <a href="" ng-click="toggleFunding()" class="toggle-text">
 				         <i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':displayFunding==false}"></i>
-				         ${springMacroRequestContext.getMessage("workspace.Funding")}
+				         <@orcid.msg 'workspace.Funding'/> (<span ng-bind="fundingSrvc.groups.length"></span>)
 			         </a>
 			    </div>
 			</div>                        
@@ -78,8 +78,8 @@
 		      		<div class="col-md-12 col-sm-12 col-xs-12">
 				    	<a href="" ng-click="toggleWorks()" class="toggle-text">
 					        <i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':displayWorks==false}"></i>
-					        ${springMacroRequestContext.getMessage("workspace.Works")}
-				        </a>
+					        <@orcid.msg 'workspace.Works'/> (<span ng-bind="worksSrvc.groups.length"></span>)
+				        </a> 
 		  	 		</div>
 		  	  </div>                                
 	      </div>	
