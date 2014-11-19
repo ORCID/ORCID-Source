@@ -41,6 +41,10 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.Title;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.message.WorkExternalIdentifier;
+import org.orcid.jaxb.model.message.WorkExternalIdentifierId;
+import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.test.TargetProxyHelper;
@@ -55,7 +59,7 @@ public class OrcidClientDataHelper implements InitializingBean {
     public static final String CLIENT_GROUP_SINGLE_FOR_OAUTH = "/orcid-client/orcid-client-group-single.xml";
     public static final String GROUP_WITH_MULTIPLE_CLIENTS_FOR_OAUTH = "/orcid-client/orcid-group-with-multiple-clients.xml";
     public static final String USER_TO_TEST_PRIVATE_DATA_VISIBILITY = "/orcid-client/orcid-user-to-test-private-data-visibility.xml";
-    
+
     @Resource
     private OrcidClientGroupManager orcidClientGroupManager;
 
@@ -72,7 +76,7 @@ public class OrcidClientDataHelper implements InitializingBean {
         init();
     }
 
-    @SuppressWarnings( { "unchecked" })
+    @SuppressWarnings({ "unchecked" })
     protected <T> T getTargetObject(Object proxy, Class<T> targetClass) throws Exception {
         return TargetProxyHelper.getTargetObject(proxy, targetClass);
     }
@@ -84,11 +88,11 @@ public class OrcidClientDataHelper implements InitializingBean {
     public void setClientDetailsManager(ClientDetailsManager clientDetailsManager) {
         this.clientDetailsManager = clientDetailsManager;
     }
-    
+
     public void setOrcidProfileManager(OrcidProfileManager orcidProfilerManager) {
         this.orcidProfileManager = orcidProfilerManager;
-    } 
-    
+    }
+
     private void init() throws Exception {
         JAXBContext context = JAXBContext.newInstance(OrcidMessage.class);
         unmarshaller = context.createUnmarshaller();
@@ -96,8 +100,8 @@ public class OrcidClientDataHelper implements InitializingBean {
 
     public OrcidMessage createFromXML(String xmlLoc) throws JAXBException {
         OrcidMessage emptyOrcid = (OrcidMessage) unmarshaller.unmarshal(OrcidClientDataHelper.class.getResourceAsStream(xmlLoc));
-        emptyOrcid.getOrcidProfile().getOrcidBio().getContactDetails().addOrReplacePrimaryEmail(
-                new Email("orcid.integration.test+" + System.currentTimeMillis() + "@semantico.com"));
+        emptyOrcid.getOrcidProfile().getOrcidBio().getContactDetails()
+                .addOrReplacePrimaryEmail(new Email("orcid.integration.test+" + System.currentTimeMillis() + "@semantico.com"));
         return emptyOrcid;
     }
 
@@ -126,7 +130,7 @@ public class OrcidClientDataHelper implements InitializingBean {
         OrcidClientGroup createdGroup = orcidClientGroupManager.createOrUpdateOrcidClientGroup(unmarshalledGroup);
         return createdGroup;
     }
-    
+
     public void assertClientCredentialsForTesting(OrcidClientGroup orcidClientGroup) {
         assertNotNull(orcidClientGroup);
 
@@ -163,6 +167,12 @@ public class OrcidClientDataHelper implements InitializingBean {
         workTitle.setTitle(title);
         orcidWork.setWorkTitle(workTitle);
         orcidWork.setVisibility(Visibility.PUBLIC);
+        WorkExternalIdentifiers workExternalIdentifiers = new WorkExternalIdentifiers();
+        orcidWork.setWorkExternalIdentifiers(workExternalIdentifiers);
+        WorkExternalIdentifier workExternalIdentifier = new WorkExternalIdentifier();
+        workExternalIdentifiers.getWorkExternalIdentifier().add(workExternalIdentifier);
+        workExternalIdentifier.setWorkExternalIdentifierType(WorkExternalIdentifierType.DOI);
+        workExternalIdentifier.setWorkExternalIdentifierId(new WorkExternalIdentifierId("1234/abc123"));
         return orcidWork;
     }
 

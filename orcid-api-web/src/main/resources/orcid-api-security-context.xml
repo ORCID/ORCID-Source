@@ -26,12 +26,12 @@
        http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2-1.0.xsd">
 
     <!-- Authenticate the client before reaching the token endpoint -->
-    <sec:http pattern="/oauth/token" create-session="stateless" authentication-manager-ref="clientAuthenticationManager">
-        <sec:intercept-url pattern="/oauth/token" access="IS_AUTHENTICATED_FULLY" />
+    <sec:http pattern="(/v[^/]+)?/oauth/token" create-session="stateless" authentication-manager-ref="clientAuthenticationManager" path-type="regex">
+        <sec:intercept-url pattern="(/v[^/]+)?/oauth/token" access="IS_AUTHENTICATED_FULLY" />
         <sec:anonymous enabled="false" />
         <sec:http-basic entry-point-ref="oauthAuthenticationEntryPoint" />
         <!-- include this only if you need to authenticate clients via request parameters -->
-        <sec:custom-filter ref="clientCredentialsTokenEndpointFilter" before="BASIC_AUTH_FILTER" />
+        <sec:custom-filter ref="customFilters" before="BASIC_AUTH_FILTER" />
         <sec:access-denied-handler ref="oauthAccessDeniedHandler" />
     </sec:http>
 
@@ -127,7 +127,20 @@
     
 
     <!-- Add in order for it to be referenced in the filter order -->
+    <bean id="customFilters" class="org.springframework.web.filter.CompositeFilter">
+        <property name="filters">
+            <list>
+                <ref bean="clientCredentialsTokenEndpointFilter"/>
+                <ref bean="clientCredentialsTokenEndpointFilter1_2_rc6"/>
+            </list>
+        </property>
+    </bean>
     <bean id="clientCredentialsTokenEndpointFilter" class="org.orcid.api.common.security.oauth.OrcidOauth2TokenEndPointFilter">
+        <property name="authenticationEntryPoint" ref="oauthAuthenticationEntryPoint"/>
+        <property name="authenticationManager" ref="clientAuthenticationManager"/>
+    </bean>
+    <bean id="clientCredentialsTokenEndpointFilter1_2_rc6" class="org.orcid.api.common.security.oauth.OrcidOauth2TokenEndPointFilter">
+        <constructor-arg value="/v1.2_rc6/oauth/token"/>
         <property name="authenticationEntryPoint" ref="oauthAuthenticationEntryPoint"/>
         <property name="authenticationManager" ref="clientAuthenticationManager"/>
     </bean>

@@ -57,6 +57,7 @@ import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.message.SourceClientId;
+import org.orcid.jaxb.model.message.SourceOrcid;
 import org.orcid.jaxb.model.message.Subtitle;
 import org.orcid.jaxb.model.message.Title;
 import org.orcid.jaxb.model.message.Visibility;
@@ -556,11 +557,13 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
 
         ExternalIdentifiers newExternalIdentifiers = new ExternalIdentifiers();
         newExternalIdentifiers.setVisibility(Visibility.PUBLIC);
-        ExternalIdSource externalIdOrcid = new ExternalIdSource();
-        externalIdOrcid.setPath(groupOrcid);
         ExternalIdentifier additionalIdentifer = new ExternalIdentifier();
         additionalIdentifer.setExternalIdReference(new ExternalIdReference("abc123"));
-        additionalIdentifer.setExternalIdOrcid(externalIdOrcid);
+        Source source = new Source();
+        additionalIdentifer.setSource(source);
+        SourceOrcid sourceOrcid = new SourceOrcid();
+        source.setSourceOrcid(sourceOrcid);
+        sourceOrcid.setPath(groupOrcid);
 
         newExternalIdentifiers.getExternalIdentifier().add(additionalIdentifer);
         orcidBio.setExternalIdentifiers(newExternalIdentifiers);
@@ -600,18 +603,20 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
 
         ExternalIdentifiers newExternalIdentifiers = new ExternalIdentifiers();
         newExternalIdentifiers.setVisibility(Visibility.PUBLIC);
-        ExternalIdSource externalIdOrcid = new ExternalIdSource();
-        externalIdOrcid.setPath(groupOrcid);
+        Source source = new Source();
+        SourceOrcid sourceOrcid = new SourceOrcid();
+        source.setSourceOrcid(sourceOrcid);
+        sourceOrcid.setPath(groupOrcid);
         ExternalIdentifier additionalIdentifer = new ExternalIdentifier();
         additionalIdentifer.setExternalIdReference(new ExternalIdReference("abc"));
-        additionalIdentifer.setExternalIdOrcid(externalIdOrcid);
+        additionalIdentifer.setSource(source);
         newExternalIdentifiers.getExternalIdentifier().add(additionalIdentifer);
         orcidBio.setExternalIdentifiers(newExternalIdentifiers);
 
         createAccessTokenFromCredentials();
 
         OrcidClientHelper orcidClientHelper = new OrcidClientHelper(t2BaseUrl, jerseyClient);
-        URI externalIdentifiersUriWithOrcid = orcidClientHelper.deriveUriFromRestPath(EXTERNAL_IDENTIFIER_PATH, orcid);
+        URI externalIdentifiersUriWithOrcid = orcidClientHelper.deriveUriFromRestPath("/v" + OrcidMessage.DEFAULT_VERSION + EXTERNAL_IDENTIFIER_PATH, orcid);
         WebResource rootResource = orcidClientHelper.createRootResource(externalIdentifiersUriWithOrcid);
         Builder builder = rootResource.header("Authorization", "Bearer " + accessToken).accept(MediaType.WILDCARD).type(OrcidApiConstants.ORCID_XML);
         ClientResponse updatedIdsResponse = builder.post(ClientResponse.class, message);
