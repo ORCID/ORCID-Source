@@ -247,49 +247,7 @@
                	<#include "workspace_fundings_body_list_v3.ftl"/>
 		        <!-- Works -->                
                 <div id="workspace-publications" class="workspace-accordion-item workspace-accordion-active" ng-controller="WorkCtrl" orcid-loaded="{{worksSrvc.worksToAddIds != null && worksSrvc.loading != true}}">
-                	<div class="workspace-accordion-header">
-                		<div class="row">
-                			<div class="col-md-3 col-sm-2 col-xs-12">
-		                		<div class="workspace-title" ng-controller="WorkspaceSummaryCtrl">
-			                		<a href="" ng-click="workspaceSrvc.toggleWorks($event)" class="toggle-text">
-				       			       <i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayWorks==false}"></i>
-				       			       <@orcid.msg 'workspace.Works'/> (<span ng-bind="worksSrvc.groups.length"></span>)
-				       			    </a>
-			       				</div>
-			       			</div>	
-			       			<div class="col-md-9 col-sm-10 col-xs-12 action-button-bar" ng-show="workspaceSrvc.displayWorks">
-								<#include "includes/workspace/workspace_act_sort_menu.ftl"/>
-		                		<ul class="workspace-bar-menu">		                			
-			        				<!-- Link Manually -->
-			        				<li>
-				        				<a href="" class="action-option works manage-button" ng-click="addWorkModal()">
-											<span class="glyphicon glyphicon-plus"></span>
-											<@orcid.msg 'manual_orcid_record_contents.link_manually'/>
-										</a>
-			        				</li>
-			        				<!-- Search & Link -->
-			        				<li>
-				        				<a class="action-option works manage-button" ng-click="showWorkImportWizard()">
-											<span class="glyphicon glyphicon-cloud-upload"></span>
-											<@orcid.msg 'manual_orcid_record_contents.search_link'/>
-										</a>	        				
-			        				</li>
-			        				<!-- Bibtex -->
-			        				<li>
-				        				<a class="action-option works manage-button" ng-class="{'green-bg' : showBibtexImportWizard == true}" ng-click="openBibTextWizard()">
-											<span class="glyphicons file_import bibtex-wizard"></span>
-											<@orcid.msg 'workspace.bibtexImporter.link_bibtex'/>
-										</a>	        				
-			        				</li>
-			        				<li>
-			        				    <a class="action-option works manage-button" ng-class="{'green-bg' : bulkEditShow == true}" ng-click="toggleBulkEdit()">
-											<span class="glyphicon glyphicon-pencil"></span>Bulk edit
-										</a>
-			        				</li>
-								</ul>								
-							</div>
-						</div>					
-					</div>
+                    <#include "includes/work/work_section_header_inc_v3.ftl"/>
 					
 					<!-- Bulk Edit -->
 					<div ng-show="bulkEditShow" ng-cloak>
@@ -465,7 +423,7 @@
 				</h3>
 				<p>Combine with (select one):</p>
 				<ul class="list-group">
-  					<li class="list-group-item" ng-repeat="group in worksSrvc.groups | orderBy:sortPredicate:sortReverse" ng-show="combineWork.putCode.value != group.getDefault().putCode.value && validCombineSel(combineWork,group.getDefault())">
+  					<li class="list-group-item" ng-repeat="group in worksSrvc.groups | orderBy:sortState.predicate:sortState.reverse" ng-show="combineWork.putCode.value != group.getDefault().putCode.value && validCombineSel(combineWork,group.getDefault())">
 						<strong>{{group.getDefault().title.value}}</strong>
 						<a ng-click="combined(combineWork,group.getDefault())" class="btn btn-primary pull-right bottomBuffer">Combine</a>
 
