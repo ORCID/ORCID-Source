@@ -16,7 +16,7 @@
  */
 package org.orcid.integration.api.t2.test;
 
-public class T2OrcidOAuthApiAuthorizationCodeIntegrationWithNewFormatClientIdTest extends T2OrcidOAuthApiAuthorizationCodeIntegrationTest {
+public class T2OrcidOAuthApiAuthorizationCodeIntegrationWithNewFormatClientId extends T2OrcidOAuthApiAuthorizationCodeIntegrationTest {
 
     static {
         CLIENT_DETAILS_ID = "APP-5555555555555555";
