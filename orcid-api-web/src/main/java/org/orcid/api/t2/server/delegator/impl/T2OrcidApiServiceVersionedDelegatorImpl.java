@@ -32,8 +32,12 @@ import org.orcid.core.manager.ValidationManager;
 import org.orcid.core.manager.impl.ValidationManagerImpl;
 import org.orcid.core.security.DeprecatedException;
 import org.orcid.core.version.OrcidMessageVersionConverterChain;
+import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidMessage;
+import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.EmailEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 
 /**
  * 
@@ -59,6 +63,9 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
     @Resource
     private ProfileDao profileDao;
 
+    @Resource
+    private EmailDao emailDao;
+    
     public void setExternalVersion(String externalVersion) {
         this.externalVersion = externalVersion;
     }
@@ -194,6 +201,7 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
     public Response updateBioDetails(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
         Response response = null;
         validateIncomingMessage(orcidMessage);
+        validateEmailAvailability(orcidMessage, orcid);
         OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
         response = t2OrcidApiServiceDelegator.updateBioDetails(uriInfo, orcid, upgradedMessage);
         return downgradeAndValidateResponse(response);
@@ -355,6 +363,22 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
         validateIncomingMessage(orcidMessage);
         OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
         return t2OrcidApiServiceDelegator.updateFunding(uriInfo, orcid, upgradedMessage);
+    }
+    
+    private void validateEmailAvailability(OrcidMessage orcidMessage, String targetOrcid) {
+        if(orcidMessage != null && orcidMessage.getOrcidProfile() != null && orcidMessage.getOrcidProfile().getOrcidBio() != null && orcidMessage.getOrcidProfile().getOrcidBio().getContactDetails() != null) {
+            List<Email> emailList = orcidMessage.getOrcidProfile().getOrcidBio().getContactDetails().getEmail();
+            for(Email email : emailList) {
+                if(!PojoUtil.isEmpty(email.getValue())) {
+                    EmailEntity emailEntity = emailDao.findCaseInsensitive(email.getValue());
+                    if(emailEntity != null) {
+                        String emailOrcid = emailEntity.getProfile().getId();
+                        if(!targetOrcid.equals(emailOrcid))
+                            throw new OrcidBadRequestException("Invalid incoming message: Email " + email.getValue() + " belongs to other user");
+                    }                                        
+                }                
+            }
+        }
     }
 
 }

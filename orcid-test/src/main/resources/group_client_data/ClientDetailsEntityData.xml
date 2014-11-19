@@ -110,6 +110,7 @@
     <client_scope client_details_id="9999-9999-9999-9997" scope_type="/affiliations/read-limited"/>
     <client_scope client_details_id="9999-9999-9999-9997" scope_type="/affiliations/update"/>
     <client_scope client_details_id="9999-9999-9999-9997" scope_type="/affiliations/create"/>
+    <client_scope client_details_id="9999-9999-9999-9997" scope_type="/orcid-bio/update"/>
     
     <client_secret client_details_id="9999-9999-9999-9991" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2014-07-03" last_modified="2014-07-03"/>
     <client_secret client_details_id="9999-9999-9999-9992" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2014-07-03" last_modified="2014-07-03"/>
