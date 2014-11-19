@@ -3752,10 +3752,10 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
     $scope.bibtexCancelLink = false;
     $scope.bibtextWork = false;
     $scope.bibtextWorkIndex = null;
+    $scope.showElement = {};
     $scope.delCountVerify = 0;
     $scope.bulkDeleteCount = 0;
-
-
+    
     $scope.toggleBulkEdit = function() {
         if (!$scope.bulkEditShow) {
             $scope.bulkEditMap = {};
@@ -4280,6 +4280,15 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
         $scope.editWork.workCategory.errors = [];
         $scope.editWork.workType.errors = [];
     };
+    
+    $scope.showTooltip = function (element){    	
+    	$scope.showElement[element] = true;
+    	
+    }
+    
+    $scope.hideTooltip = function (element){    	
+    	$scope.showElement[element] = false;
+    }
 }
 
 function SearchCtrl($scope, $compile){

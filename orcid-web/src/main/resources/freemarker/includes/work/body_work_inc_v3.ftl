@@ -48,10 +48,17 @@
 	                                    		<input type="checkbox" ng-model="bulkEditMap[group.getActive().putCode.value]" class="bulk-edit-input-header ng-valid ng-dirty">
 	                                    	</li>
 	                                    	<li class="works-details">                                		
-		                                		<a ng-click="showDetailsMouseClick(group,$event);">
+		                                		<a ng-click="showDetailsMouseClick(group,$event);" ng-mouseenter="showTooltip(group.groupId+'-showHideDetails')" ng-mouseleave="hideTooltip(group.groupId+'-showHideDetails')">
 		                                			<span ng-class="(moreInfo[group.groupId] == true) ? 'glyphicons book' : 'glyphicons book_open'">
 		                                			</span>
-		                                		</a>                                		
+		                                		</a>		                                		
+		                                		<div class="popover popover-tooltip top show-hide-details-popover" ng-show="showElement[group.groupId+'-showHideDetails'] == true"> 
+											     	<div class="arrow"></div>
+											        <div class="popover-content">											        	
+											        	<span ng-show="moreInfo[group.groupId] == false || moreInfo[group.groupId] == null">Show Details</span>									                    
+											        	<span ng-show="moreInfo[group.groupId] == true">Hide Details</span>
+											        </div>                
+											    </div>
 											</li>	                                    	
 	                                        <li>
 	                                            <@orcid.privacyToggle2 angularModel="group.getActive().visibility"
@@ -98,19 +105,31 @@
 									</li>
                                 	<!-- Show/Hide Details -->
                                 	<li class="works-details" ng-hide="editSources[group.groupId] == true">                                		
-                                		<a ng-click="showDetailsMouseClick(group,$event);">
+                                		<a ng-click="showDetailsMouseClick(group,$event);" ng-mouseenter="showTooltip(group.groupId+'-showHideDetails')" ng-mouseleave="hideTooltip(group.groupId+'-showHideDetails')">
                                 			<span ng-class="(moreInfo[group.groupId] == true) ? 'glyphicons book' : 'glyphicons book_open'">
                                 			</span>
                                 		</a>                                		
+                                		<div class="popover popover-tooltip top show-hide-details-popover" ng-show="showElement[group.groupId+'-showHideDetails'] == true"> 
+									     	<div class="arrow"></div>
+									        <div class="popover-content">
+									        	<span ng-show="moreInfo[group.groupId] == false || moreInfo[group.groupId] == null">Show Details</span>									                    
+									        	<span ng-show="moreInfo[group.groupId] == true">Hide Details</span>
+									        </div>                
+									    </div>                                		
 									</li>
-									<!-- Combine -->
-                                    <#if RequestParameters['combine']??>
-                                        <li ng-show="canBeCombined(work)">
-                                            <a ng-click="showCombineMatches(group.getDefault())" class="toolbar-button edit-item-button" title="Combine duplicates">
-                                                <span class="glyphicons git_pull_request edit-option-toolbar"></span>
-                                            </a>
-                                         </li>
-                                    </#if>
+
+									<!--
+										Combine 
+	                                    <#if RequestParameters['combine']??>
+	                                        <li ng-show="canBeCombined(work)">
+	                                            <a ng-click="showCombineMatches(group.getDefault())" class="toolbar-button edit-item-button" title="Combine duplicates">
+	                                                <span class="glyphicons git_pull_request edit-option-toolbar"></span>
+	                                            </a>
+	                                         </li>
+	                                    </#if>
+                                    	
+                                    -->
+
                                     <!-- Privacy -->
                                     <li>
                                         <@orcid.privacyToggle2 angularModel="work.visibility"
@@ -165,21 +184,48 @@
                       	<div class="col-md-2 trash-source" ng-show="editSources[group.groupId] == true">
                       		<div ng-show="editSources[group.groupId] == true">
 					        <#if !(isPublicProfile??)>
-					        	<ul class="sources-actions">					        		
-                                   <#if RequestParameters['combine']??>
-                                       <li>
-                                           <a class="glyphicons git_pull_request" ng-click="showCombineMatches(group.getDefault())"></a>
-                                       </li>
-                                    </#if>
+					        	<ul class="sources-actions">
+					        		<#if RequestParameters['combine']??>
+						        		<li ng-show="canBeCombined(work)">
+						        			<a class="glyphicons git_pull_request" ng-click="showCombineMatches(group.getDefault())" ng-mouseenter="showTooltip(work.putCode.value+'-combineActiveDuplicates')" ng-mouseleave="hideTooltip(work.putCode.value+'-combineActiveDuplicates')"></a>
+						        			
+						        			<div class="popover popover-tooltip top combine-activeDuplicates-popover" ng-show="showElement[work.putCode.value+'-combineActiveDuplicates'] == true"> 
+											    <div class="arrow"></div>
+											    <div class="popover-content">
+											        Combine duplicates                                      
+											    </div>                
+											</div>
+						        			
+						        			
+						        		</li>
+						        	</#if>					        		
 					        		<li>
-					        			<a ng-show="!group.hasUserVersion() || userIsSource(work)" ng-click="openEditWork(group.getActive().putCode.value)">
+					        			<a ng-show="!group.hasUserVersion() || userIsSource(work)" ng-click="openEditWork(group.getActive().putCode.value)" ng-mouseenter="showTooltip(group.groupId+'-editActiveSource')" ng-mouseleave="hideTooltip(group.groupId+'-editActiveSource')">
 											<span class="glyphicon glyphicon-pencil" ng-class="{'glyphicons git_create' : !userIsSource(work)}"></span>
 										</a>
+										
+										<div class="popover popover-tooltip top edit-activeSource-popover" ng-show="showElement[group.groupId+'-editActiveSource'] == true"> 
+										    <div class="arrow"></div>
+										    <div class="popover-content">
+										        <span ng-hide="!userIsSource(work)">Edit my version</span>
+												<span ng-show="!userIsSource(work)">Make a copy and edit</span>
+										    </div>                
+										</div>
 					        		</li>
 					        		<li>
-					        			<a ng-click="deleteWorkConfirm(work.putCode.value, false)"  title="Delete {{work.title.value}}">
+					        			<a ng-click="deleteWorkConfirm(work.putCode.value, false)"  title="Delete {{work.title.value}}" ng-mouseenter="showTooltip(work.putCode.value+'-deleteActiveSource')" ng-mouseleave="hideTooltip(work.putCode.value+'-deleteActiveSource')">
 											<span class="glyphicon glyphicon-trash"></span>
 										</a>
+										
+										<div class="popover popover-tooltip top delete-activeSource-popover" ng-show="showElement[work.putCode.value+'-deleteActiveSource'] == true"> 
+										    <div class="arrow"></div>
+										    <div class="popover-content">
+										        Delete this source                                      
+										    </div>                
+										</div>
+										
+										
+										
 					        		</li>
 					        	</ul>
 							</#if>
@@ -207,20 +253,44 @@
                         <div class="col-md-2 col-sm-2 col-xs-12 trash-source">
                             <#if !(isPublicProfile??)>
                                 <ul class="sources-actions">
-                                    <#if RequestParameters['combine']??>
-                                        <li>
-                                            <a class="glyphicons git_pull_request" ng-click="showCombineMatches(group.getDefault())"></a>
-                                        </li>
-                                    </#if>
+                                	<#if RequestParameters['combine']??>
+	                                	<li ng-show="canBeCombined(work)">					        			
+						        			<a class="glyphicons git_pull_request" ng-click="showCombineMatches(group.getDefault())" ng-mouseenter="showTooltip(work.putCode.value+'-combineInactiveDuplicates')" ng-mouseleave="hideTooltip(work.putCode.value+'-combineInactiveDuplicates')"></a>					        			
+						        			
+						        			<div class="popover popover-tooltip top combine-inactiveDuplicates-popover" ng-show="showElement[work.putCode.value+'-combineInactiveDuplicates'] == true"> 
+											    <div class="arrow"></div>
+											    <div class="popover-content">
+											        Combine duplicates                                      
+											    </div>                
+											</div>
+						        			
+						        		</li>
+					        		</#if>
                                     <li>
-                                        <a ng-show="!group.hasUserVersion() || userIsSource(work)" ng-click="openEditWork(group.getActive().putCode.value)">
+                                        <a ng-show="!group.hasUserVersion() || userIsSource(work)" ng-click="openEditWork(work.putCode.value)" ng-mouseenter="showTooltip(work.putCode.value+'-editInactiveSource')" ng-mouseleave="hideTooltip(work.putCode.value+'-editInactiveSource')">
                                             <span class="glyphicon glyphicon-pencil" ng-class="{'glyphicons git_create' : !userIsSource(work)}"></span>
                                         </a>
+                                        <div class="popover popover-tooltip top edit-inactiveSource-popover" ng-show="showElement[work.putCode.value+'-editInactiveSource'] == true"> 
+										    <div class="arrow"></div>
+										    <div class="popover-content">
+										        <span ng-hide="!userIsSource(work)">Edit my version</span>
+												<span ng-show="!userIsSource(work)">Make a copy and edit</span>
+										    </div>                
+										</div>
                                     </li>
                                     <li>
-                                        <a ng-click="deleteWorkConfirm(work.putCode.value, false)">
+                                        <a ng-click="deleteWorkConfirm(work.putCode.value, false)" ng-mouseenter="showTooltip(work.putCode.value+'-deleteInactiveSource')" ng-mouseleave="hideTooltip(work.putCode.value+'-deleteInactiveSource')">
                                             <span class="glyphicon glyphicon-trash" title="Delete {{work.title.value}}"></span>
                                         </a>
+                                        
+                                        <div class="popover popover-tooltip top delete-inactiveSource-popover" ng-show="showElement[work.putCode.value+'-deleteInactiveSource'] == true"> 
+										    <div class="arrow"></div>
+										    <div class="popover-content">
+										        Delete this source                                      
+										    </div>                
+										</div>
+                                        
+                                        
                                     </li>
                                 </ul>
                             </#if>
@@ -238,30 +308,83 @@
                       	</div>
                       	<div class="col-md-3">
                      		<#if !(isPublicProfile??)>							
-							    <span class="glyphicon glyphicon-check"></span><span> Preferred source</span> <span ng-hide="group.activitiesCount == 1">(</span><a ng-click="editSources[group.groupId] = !editSources[group.groupId]" ng-hide="group.activitiesCount == 1">of {{group.activitiesCount}}</a><span ng-hide="group.activitiesCount == 1">)</span>							    
+							    <span class="glyphicon glyphicon-check"></span><span> Preferred source</span> <span ng-hide="group.activitiesCount == 1">(</span><a ng-click="editSources[group.groupId] = !editSources[group.groupId]" ng-hide="group.activitiesCount == 1" ng-mouseenter="showTooltip(group.groupId+'-sources')" ng-mouseleave="hideTooltip(group.groupId+'-sources')">of {{group.activitiesCount}}</a><span ng-hide="group.activitiesCount == 1">)</span>
+							    
+							    <div class="popover popover-tooltip top sources-popover" ng-show="showElement[group.groupId+'-sources'] == true"> 
+								    <div class="arrow"></div>
+								    <div class="popover-content">
+								    	Show other sources								        
+								    </div>                
+								</div>
+							    							    
 							</#if>
                       	</div>
                     
                     	<div class="col-md-2" ng-show="group.activePutCode == work.putCode.value">                    	
                     		<ul class="sources-options" ng-cloak>                    			
 							    <#if !(isPublicProfile??)>
+							    	<#if RequestParameters['combine']??>
+                                        <li ng-show="canBeCombined(work)">
+                                            <a ng-click="showCombineMatches(group.getDefault())" title="Combine duplicates" ng-mouseenter="showTooltip(group.groupId+'-combineDuplicates')" ng-mouseleave="hideTooltip(group.groupId+'-combineDuplicates')">
+                                                <span class="glyphicons git_pull_request"></span>
+                                            </a>
+                                            
+                                            <div class="popover popover-tooltip top combine-duplicates-popover" ng-show="showElement[group.groupId+'-combineDuplicates'] == true"> 
+                                                <div class="arrow"></div>
+                                                <div class="popover-content">
+                                                    Combine duplicates
+                                                </div>                
+                                            </div>
+                                            
+                                            
+                                        </li>
+                                    </#if>							    
+							    
+							    
 							    	<li ng-show="userIsSource(work) || (group.hasKeys() && !group.hasUserVersion())">
-									    <a ng-click="openEditWork(group.getActive().putCode.value)" class="" title="">
-									        <span class="glyphicon glyphicon-pencil" ng-class="{'glyphicons git_create' : !userIsSource(work)}"title=""></span>
+									    <a ng-click="openEditWork(group.getActive().putCode.value)" ng-mouseenter="showTooltip(group.groupId+'-editSource')" ng-mouseleave="hideTooltip(group.groupId+'-editSource')">
+									        <span class="glyphicon glyphicon-pencil" ng-class="{'glyphicons git_create' : !userIsSource(work)}" title=""></span>
 									    </a>
+									    <div class="popover popover-tooltip top edit-source-popover" ng-show="showElement[group.groupId+'-editSource'] == true"> 
+										    <div class="arrow"></div>
+										    <div class="popover-content">
+										        <span ng-hide="!userIsSource(work)">Edit my version</span>
+										        <span ng-show="!userIsSource(work)">Make a copy and edit</span>
+										    </div>                
+										</div>
 									</li>
 							         
 							         <li ng-hide="editSources[group.groupId] == true || group.activitiesCount == 1">
-							            <a ng-click="editSources[group.groupId] = !editSources[group.groupId]">
+							            <a ng-click="editSources[group.groupId] = !editSources[group.groupId]" ng-mouseenter="showTooltip(group.groupId+'-deleteGroup')" ng-mouseleave="hideTooltip(group.groupId+'-deleteGroup')">
 											<span class="glyphicon glyphicon-trash"></span>
 										</a>
+										
+										<div class="popover popover-tooltip top delete-group-popover" ng-show="showElement[group.groupId+'-deleteGroup'] == true"> 
+										 	<div class="arrow"></div>
+										    <div class="popover-content">
+										    	Delete this source	        
+										    </div>                
+										</div>
+										
 							         </li>
 							         
 							         <li ng-show="group.activitiesCount == 1">
-										<a ng-click="deleteWorkConfirm(group.getActive().putCode.value, false)">
+										<a ng-click="deleteWorkConfirm(group.getActive().putCode.value, false)" ng-mouseenter="showTooltip(group.groupId+'-deleteSource')" ng-mouseleave="hideTooltip(group.groupId+'-deleteSource')">
 										   <span class="glyphicon glyphicon-trash"></span>
 										</a>
+										
+										
+										<div class="popover popover-tooltip top delete-source-popover" ng-show="showElement[group.groupId+'-deleteSource'] == true"> 
+										 	<div class="arrow"></div>
+										    <div class="popover-content">
+										    	Delete this source								        
+										    </div>                
+										</div>
+										
+										
 									</li>
+									
+									
 							         
 							         
 							      </#if>							                             
