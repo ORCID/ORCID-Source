@@ -297,8 +297,7 @@
                       	<div class="col-md-3">                      		
                       		CREATED: <span ng-bind="work.createdDate | ajaxFormDateToISO8601"></span>                      		
                       	</div>
-                      	<div class="col-md-3">
-                     		<#if !(isPublicProfile??)>							
+                      	<div class="col-md-3">                     								
 							    <span class="glyphicon glyphicon-check"></span><span> Preferred source</span> <span ng-hide="group.activitiesCount == 1">(</span><a ng-click="editSources[group.groupId] = !editSources[group.groupId]" ng-hide="group.activitiesCount == 1" ng-mouseenter="showTooltip(group.groupId+'-sources')" ng-mouseleave="hideTooltip(group.groupId+'-sources')">of {{group.activitiesCount}}</a><span ng-hide="group.activitiesCount == 1">)</span>
 							    
 							    <div class="popover popover-tooltip top sources-popover" ng-show="showElement[group.groupId+'-sources'] == true"> 
@@ -307,8 +306,6 @@
 								    	Show other sources								        
 								    </div>                
 								</div>
-							    							    
-							</#if>
                       	</div>                    
 
                     	<div class="col-md-2" ng-show="group.activePutCode == work.putCode.value">                    	
