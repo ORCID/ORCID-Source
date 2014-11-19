@@ -37,8 +37,8 @@ import org.orcid.api.common.T2OrcidApiService;
 import org.orcid.integration.api.t2.AbstractT2ClientIntegrationTest;
 import org.orcid.integration.api.t2.OrcidClientDataHelper;
 import org.orcid.jaxb.model.message.Email;
-import org.orcid.jaxb.model.message.ExternalIdSource;
 import org.orcid.jaxb.model.message.ExternalIdReference;
+import org.orcid.jaxb.model.message.ExternalIdSource;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.FamilyName;
@@ -48,6 +48,12 @@ import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidSearchResult;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
+import org.orcid.jaxb.model.message.Source;
+import org.orcid.jaxb.model.message.SourceOrcid;
+import org.orcid.jaxb.model.message.WorkExternalIdentifier;
+import org.orcid.jaxb.model.message.WorkExternalIdentifierId;
+import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.message.WorkType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -63,7 +69,7 @@ import com.sun.jersey.api.client.ClientResponse.Status;
 @ContextConfiguration(locations = { "classpath:orcid-api-client-context.xml" })
 public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegrationTest {
 
-    @Resource
+    @Resource(name = "t2OrcidApiClient1_2_rc6")
     private T2OrcidApiService<ClientResponse> t2Client;
 
     private String orcid;
@@ -277,12 +283,14 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
 
         OrcidWork orcidWork = createWork("Single works");
         orcidWork.setWorkType(WorkType.ARTISTIC_PERFORMANCE);
+        WorkExternalIdentifiers extIds = new WorkExternalIdentifiers();
+        orcidWork.setWorkExternalIdentifiers(extIds);
+        WorkExternalIdentifier extId = new WorkExternalIdentifier();
+        extIds.getWorkExternalIdentifier().add(extId);
+        extId.setWorkExternalIdentifierType(WorkExternalIdentifierType.DOI);
+        extId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("1234/abc456"));
 
         orcidWorks = new OrcidWorks();
-        // TODO JB electronic resource num
-        // orcidWork.getElectronicResourceNum().add(new
-        // ElectronicResourceNum("10.1016/S0021-8502(00)90373-2",
-        // ElectronicResourceNumType.DOI));
         orcidWorks.getOrcidWork().add(orcidWork);
         message.getOrcidProfile().setOrcidWorks(orcidWorks);
 
@@ -308,10 +316,13 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
         OrcidWork orcidWork = createWork("Single works");
 
         orcidWorks = new OrcidWorks();
-        // TODO JB electronic resource num
-        // orcidWork.getElectronicResourceNum().add(new
-        // ElectronicResourceNum("10.1016/S0021-8502(00)90373-2",
-        // ElectronicResourceNumType.DOI));
+        WorkExternalIdentifiers extIds = new WorkExternalIdentifiers();
+        orcidWork.setWorkExternalIdentifiers(extIds);
+        WorkExternalIdentifier extId = new WorkExternalIdentifier();
+        extIds.getWorkExternalIdentifier().add(extId);
+        extId.setWorkExternalIdentifierType(WorkExternalIdentifierType.DOI);
+        extId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("1234/abc456"));
+
         orcidWorks.getOrcidWork().add(orcidWork);
         message.getOrcidProfile().setOrcidWorks(orcidWorks);
 
@@ -439,11 +450,13 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
             assertTrue(externalIdentifiers.getExternalIdentifier().size() == 0);
 
             ExternalIdentifiers newExternalIdentifiers = new ExternalIdentifiers();
-            ExternalIdSource externalIdSource = new ExternalIdSource();
-            externalIdSource.setPath(sponsorOrcid);
+            Source source = new Source();
+            SourceOrcid sourceOrcid = new SourceOrcid();
+            source.setSourceOrcid(sourceOrcid);
+            sourceOrcid.setPath(sponsorOrcid);
             ExternalIdentifier additionalIdentifer = new ExternalIdentifier();
             additionalIdentifer.setExternalIdReference(new ExternalIdReference("abc"));
-            additionalIdentifer.setExternalIdOrcid(externalIdSource);
+            additionalIdentifer.setSource(source);
             newExternalIdentifiers.getExternalIdentifier().add(additionalIdentifer);
             orcidBio.setExternalIdentifiers(newExternalIdentifiers);
 

@@ -40,6 +40,14 @@ public class OrcidOauth2TokenEndPointFilter extends ClientCredentialsTokenEndpoi
 
     private final static String PUBLIC_ROLE = "ROLE_PUBLIC";
 
+    private OrcidOauth2TokenEndPointFilter() {
+        super();
+    }
+
+    private OrcidOauth2TokenEndPointFilter(String path) {
+        super(path);
+    }
+
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException, ServletException {
         if (request.getMethod().equals(RequestMethod.GET.name())) {
