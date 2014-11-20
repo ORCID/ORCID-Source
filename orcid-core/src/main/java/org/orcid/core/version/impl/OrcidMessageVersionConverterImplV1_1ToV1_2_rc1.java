@@ -64,26 +64,26 @@ public class OrcidMessageVersionConverterImplV1_1ToV1_2_rc1 implements OrcidMess
     private void downgradeProfile(OrcidProfile orcidProfile) {
         if (orcidProfile != null) {
             orcidProfile.setAffiliations(null);
-        }
-        OrcidBio orcidBio = orcidProfile.getOrcidBio();
-        if (orcidBio != null) {
-            ContactDetails contactDetails = orcidBio.getContactDetails();
-            if (contactDetails != null) {
-                for (Email email : contactDetails.getEmail()) {
-                    email.setSourceClientId(null);
+            OrcidBio orcidBio = orcidProfile.getOrcidBio();
+            if (orcidBio != null) {
+                ContactDetails contactDetails = orcidBio.getContactDetails();
+                if (contactDetails != null) {
+                    for (Email email : contactDetails.getEmail()) {
+                        email.setSourceClientId(null);
+                    }
+                }
+                ExternalIdentifiers extIds = orcidBio.getExternalIdentifiers();
+                if (extIds != null) {
+                    for (ExternalIdentifier extId : extIds.getExternalIdentifier()) {
+                        extId.setSource(null);
+                    }
                 }
             }
-            ExternalIdentifiers extIds = orcidBio.getExternalIdentifiers();
-            if (extIds != null) {
-                for (ExternalIdentifier extId : extIds.getExternalIdentifier()) {
-                    extId.setSource(null);
+            if (orcidProfile.getOrcidActivities() != null) {
+                if (orcidProfile.getOrcidActivities().getOrcidWorks() != null) {
+                    for (OrcidWork act : orcidProfile.getOrcidActivities().getOrcidWorks().getOrcidWork())
+                        downGradeActivity(act);
                 }
-            }
-        }
-        if (orcidProfile.getOrcidActivities() != null) {
-            if (orcidProfile.getOrcidActivities().getOrcidWorks() != null) {
-                for (OrcidWork act : orcidProfile.getOrcidActivities().getOrcidWorks().getOrcidWork())
-                    downGradeActivity(act);
             }
         }
     }
