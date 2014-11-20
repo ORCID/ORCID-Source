@@ -45,11 +45,11 @@
 <#if !(fundingEmpty)??>		
 	<div id="workspace-funding" class="workspace-accordion-item workspace-accordion-active" ng-controller="PublicFundingCtrl" ng-cloack>
 		<div class="workspace-accordion-header">
-	         <a href="" ng-click="toggleFunding()" class="toggle-text">
-	         <i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':displayFunding==false}"></i></a>             
-	         <a href="" ng-click="toggleFunding()" class="toggle-text">${springMacroRequestContext.getMessage("workspace.Funding")}</a>                        
+	         <a href="" ng-click="workspaceSrvc.toggleFunding($event)" class="toggle-text">
+	         <i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayFunding==false}"></i></a>             
+	         <a href="" ng-click="workspaceSrvc.toggleFunding($event)" class="toggle-text">${springMacroRequestContext.getMessage("workspace.Funding")}</a>                        
 	    </div>	
-	    <div ng-show="displayFunding" class="workspace-accordion-content">
+	    <div ng-show="workspaceSrvc.displayFunding" class="workspace-accordion-content">
 			<#include "includes/funding/body_funding_inc.ftl" />	
 	    </div>
 	</div>
@@ -59,11 +59,11 @@
 <#if !(worksEmpty)??>		
 	<div id="workspace-works" class="workspace-accordion-item workspace-accordion-active" ng-controller="PublicWorkCtrl" ng-cloack>
 	      <div class="workspace-accordion-header">
-	          <a href="" ng-click="toggleWorks()" class="toggle-text">
-	          <i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':displayWorks==false}"></i></a>             
-	          <a href="" ng-click="toggleWorks()" class="toggle-text">${springMacroRequestContext.getMessage("workspace.Works")}</a>                        
+	          <a href="" ng-click="workspaceSrvc.toggleWorks()" class="toggle-text">
+	          <i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayWorks==false}"></i></a>             
+	          <a href="" ng-click="workspaceSrvc.toggleWorks()" class="toggle-text">${springMacroRequestContext.getMessage("workspace.Works")}</a>                        
 	      </div>	
-	      <div ng-show="displayWorks" class="workspace-accordion-content">
+	      <div ng-show="workspaceSrvc.displayWorks" class="workspace-accordion-content">
 				<#include "includes/work/public_works_body_list.ftl" />
 	      </div>
 	</div>

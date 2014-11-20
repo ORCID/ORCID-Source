@@ -53,7 +53,7 @@ var GroupedActivities = function(type) {
 };
 
 GroupedActivities.count = 0;
-GroupedActivities.FUNDING = 'funding';
+GroupedActivities.prototype.FUNDING = 'funding';
 GroupedActivities.ABBR_WORK = 'abbrWork';
 GroupedActivities.AFFILIATION = 'affiliation';
 
@@ -3591,11 +3591,16 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc, comm
 /**
  * Public Funding Controller
  * */
-function PublicFundingCtrl($scope, $compile, $filter, fundingSrvc){
+function PublicFundingCtrl($scope, $compile, $filter, workspaceSrvc, fundingSrvc){
     $scope.fundingSrvc = fundingSrvc;
+    $scope.workspaceSrvc = workspaceSrvc;
     $scope.moreInfo = {};
-    $scope.displayFunding = true;
 
+    $scope.sortState = new ActSortState(GroupedActivities.FUNDING);
+    $scope.sort = function(key) {
+        $scope.sortState.sortBy(key);
+    };
+    
     // remove once grouping is live
     $scope.toggleClickMoreInfo = function(key) {
         if (!document.documentElement.className.contains('no-touch'))
@@ -3629,9 +3634,6 @@ function PublicFundingCtrl($scope, $compile, $filter, fundingSrvc){
         return info;
     };
 
-    $scope.toggleFunding = function(){
-        $scope.displayFunding = !$scope.displayFunding;
-    };
 }
 
 function PublicWorkCtrl($scope, $compile, $filter, workspaceSrvc, worksSrvc) {
@@ -3723,10 +3725,6 @@ function PublicWorkCtrl($scope, $compile, $filter, workspaceSrvc, worksSrvc) {
         $('.work-more-info-container').css('display', 'none');
     };
 
-    $scope.toggleWorks = function(){
-        $scope.displayWorks = !$scope.displayWorks;
-    };
-    
     $scope.showTooltip = function (element){    	
         $scope.showElement[element] = true;
     };
