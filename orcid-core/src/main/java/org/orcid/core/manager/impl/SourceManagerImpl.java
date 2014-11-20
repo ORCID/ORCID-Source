@@ -54,11 +54,6 @@ public class SourceManagerImpl implements SourceManager {
             AuthorizationRequest authorizationRequest = ((OAuth2Authentication) authentication).getAuthorizationRequest();
             return authorizationRequest.getClientId();
         }
-        // Delegation mode
-        String realUserIfInDelegationMode = getRealUserIfInDelegationMode(authentication);
-        if (realUserIfInDelegationMode != null) {
-            return realUserIfInDelegationMode;
-        }
         // Normal web user
         return retrieveEffectiveOrcid(authentication);
     }
@@ -82,6 +77,26 @@ public class SourceManagerImpl implements SourceManager {
             return false;
         }
         return !retrieveEffectiveOrcid().equals(realUserOrcid);
+    }
+
+    @Override
+    public String retrieveRealUserOrcid() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            return null;
+        }
+        // API
+        if (OAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
+            AuthorizationRequest authorizationRequest = ((OAuth2Authentication) authentication).getAuthorizationRequest();
+            return authorizationRequest.getClientId();
+        }
+        // Delegation mode
+        String realUserIfInDelegationMode = getRealUserIfInDelegationMode(authentication);
+        if (realUserIfInDelegationMode != null) {
+            return realUserIfInDelegationMode;
+        }
+        // Normal web user
+        return retrieveEffectiveOrcid(authentication);
     }
 
     private String getRealUserIfInDelegationMode(Authentication authentication) {
@@ -111,7 +126,6 @@ public class SourceManagerImpl implements SourceManager {
         return profileDao.find(sourceOrcid);
     }
 
-    
     @Override
     public boolean isDelegatedByAnAdmin() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -123,7 +137,7 @@ public class SourceManagerImpl implements SourceManager {
                         SwitchUserGrantedAuthority suga = (SwitchUserGrantedAuthority) authority;
                         Authentication sourceAuthentication = suga.getSource();
                         if (sourceAuthentication instanceof UsernamePasswordAuthenticationToken && sourceAuthentication.getPrincipal() instanceof OrcidProfileUserDetails) {
-                            OrcidType sourceUserType = ((OrcidProfileUserDetails) sourceAuthentication.getPrincipal()).getOrcidType();                            
+                            OrcidType sourceUserType = ((OrcidProfileUserDetails) sourceAuthentication.getPrincipal()).getOrcidType();
                             return OrcidType.ADMIN.equals(sourceUserType);
                         }
                     }
