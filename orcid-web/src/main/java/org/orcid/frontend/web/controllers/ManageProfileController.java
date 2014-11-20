@@ -223,8 +223,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/search-for-delegate-by-email/{email}/")
-    public @ResponseBody
-    Map<String, Boolean> searchForDelegateByEmail(@PathVariable String email) {
+    public @ResponseBody Map<String, Boolean> searchForDelegateByEmail(@PathVariable String email) {
         Map<String, Boolean> map = new HashMap<>();
         EmailEntity emailEntity = emailDao.findCaseInsensitive(email);
         if (emailEntity == null) {
@@ -246,16 +245,14 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/delegates.json", method = RequestMethod.GET)
-    public @ResponseBody
-    Delegation getDelegatesJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
+    public @ResponseBody Delegation getDelegatesJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
         OrcidProfile currentProfile = getEffectiveProfile();
         Delegation delegation = currentProfile.getOrcidBio().getDelegation();
         return delegation;
     }
 
     @RequestMapping(value = "/addDelegate.json")
-    public @ResponseBody
-    ManageDelegate addDelegate(@RequestBody ManageDelegate addDelegate) {
+    public @ResponseBody ManageDelegate addDelegate(@RequestBody ManageDelegate addDelegate) {
         // Check password
         String password = addDelegate.getPassword();
         if (StringUtils.isBlank(password) || !encryptionManager.hashMatches(password, getEffectiveProfile().getPassword())) {
@@ -295,16 +292,14 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/addDelegateByEmail.json")
-    public @ResponseBody
-    ManageDelegate addDelegateByEmail(@RequestBody ManageDelegate addDelegate) {
+    public @ResponseBody ManageDelegate addDelegateByEmail(@RequestBody ManageDelegate addDelegate) {
         EmailEntity emailEntity = emailDao.findCaseInsensitive(addDelegate.getDelegateEmail());
         addDelegate.setDelegateToManage(emailEntity.getProfile().getId());
         return addDelegate(addDelegate);
     }
 
     @RequestMapping(value = "/revokeDelegate.json", method = RequestMethod.POST)
-    public @ResponseBody
-    ManageDelegate revokeDelegate(@RequestBody ManageDelegate manageDelegate) {
+    public @ResponseBody ManageDelegate revokeDelegate(@RequestBody ManageDelegate manageDelegate) {
         // Check password
         String password = manageDelegate.getPassword();
         if (StringUtils.isBlank(password) || !encryptionManager.hashMatches(password, getEffectiveProfile().getPassword())) {
@@ -465,8 +460,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/security-question.json", method = RequestMethod.GET)
-    public @ResponseBody
-    SecurityQuestion getSecurityQuestionJson(HttpServletRequest request) {
+    public @ResponseBody SecurityQuestion getSecurityQuestionJson(HttpServletRequest request) {
         OrcidProfile profile = getEffectiveProfile();
         SecurityDetails sd = profile.getOrcidInternal().getSecurityDetails();
         SecurityQuestionId securityQuestionId = sd.getSecurityQuestionId();
@@ -488,8 +482,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/security-question.json", method = RequestMethod.POST)
-    public @ResponseBody
-    SecurityQuestion setSecurityQuestionJson(HttpServletRequest request, @RequestBody SecurityQuestion securityQuestion) {
+    public @ResponseBody SecurityQuestion setSecurityQuestionJson(HttpServletRequest request, @RequestBody SecurityQuestion securityQuestion) {
         List<String> errors = new ArrayList<String>();
         if (securityQuestion.getSecurityQuestionId() != 0 && (securityQuestion.getSecurityAnswer() == null || securityQuestion.getSecurityAnswer().trim() == ""))
             errors.add(getMessage("manage.pleaseProvideAnAnswer"));
@@ -520,16 +513,14 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/preferences.json", method = RequestMethod.GET)
-    public @ResponseBody
-    Preferences getDefaultPreference(HttpServletRequest request) {
+    public @ResponseBody Preferences getDefaultPreference(HttpServletRequest request) {
         OrcidProfile profile = getEffectiveProfile();
         profile.getOrcidInternal().getPreferences();
         return profile.getOrcidInternal().getPreferences() != null ? profile.getOrcidInternal().getPreferences() : new Preferences();
     }
 
     @RequestMapping(value = "/preferences.json", method = RequestMethod.POST)
-    public @ResponseBody
-    Preferences setDefaultPreference(HttpServletRequest request, @RequestBody Preferences preferences) {
+    public @ResponseBody Preferences setDefaultPreference(HttpServletRequest request, @RequestBody Preferences preferences) {
         orcidProfileManager.updatePreferences(getCurrentUserOrcid(), preferences);
         return preferences;
     }
@@ -557,15 +548,13 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = { "/change-password.json" }, method = RequestMethod.GET)
-    public @ResponseBody
-    ChangePassword getChangedPasswordJson(HttpServletRequest request) {
+    public @ResponseBody ChangePassword getChangedPasswordJson(HttpServletRequest request) {
         ChangePassword p = new ChangePassword();
         return p;
     }
 
     @RequestMapping(value = { "/change-password.json" }, method = RequestMethod.POST)
-    public @ResponseBody
-    ChangePassword changedPasswordJson(HttpServletRequest request, @RequestBody ChangePassword cp) {
+    public @ResponseBody ChangePassword changedPasswordJson(HttpServletRequest request, @RequestBody ChangePassword cp) {
         List<String> errors = new ArrayList<String>();
 
         if (cp.getPassword() == null || !cp.getPassword().matches(OrcidPasswordConstants.ORCID_PASSWORD_REGEX)) {
@@ -627,8 +616,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/verifyEmail.json", method = RequestMethod.GET)
-    public @ResponseBody
-    Errors verifyEmailJson(HttpServletRequest request, @RequestParam("email") String email) {
+    public @ResponseBody Errors verifyEmailJson(HttpServletRequest request, @RequestParam("email") String email) {
         OrcidProfile currentProfile = getEffectiveProfile();
         String primaryEmail = currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
         if (primaryEmail.equals(email))
@@ -640,15 +628,13 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/delayVerifyEmail.json", method = RequestMethod.GET)
-    public @ResponseBody
-    Errors delayVerifyEmailJson(HttpServletRequest request) {
+    public @ResponseBody Errors delayVerifyEmailJson(HttpServletRequest request) {
         request.getSession().setAttribute(ManageProfileController.CHECK_EMAIL_VALIDATED, false);
         return new Errors();
     }
 
     @RequestMapping(value = "/send-deactivate-account.json", method = RequestMethod.GET)
-    public @ResponseBody
-    Email startDeactivateOrcidAccountJson(HttpServletRequest request) {
+    public @ResponseBody Email startDeactivateOrcidAccountJson(HttpServletRequest request) {
         URI uri = OrcidWebUtils.getServerUriWithContextPath(request);
         OrcidProfile currentProfile = getEffectiveProfile();
         Email email = currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail();
@@ -658,8 +644,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @SuppressWarnings("unchecked")
     @RequestMapping(value = "/emails.json", method = RequestMethod.GET)
-    public @ResponseBody
-    org.orcid.pojo.ajaxForm.Emails getEmailsJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
+    public @ResponseBody org.orcid.pojo.ajaxForm.Emails getEmailsJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
         OrcidProfile currentProfile = getEffectiveProfile();
         Emails emails = new org.orcid.pojo.ajaxForm.Emails();
         emails.setEmails((List<org.orcid.pojo.Email>) (Object) currentProfile.getOrcidBio().getContactDetails().getEmail());
@@ -667,8 +652,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/addEmail.json", method = RequestMethod.POST)
-    public @ResponseBody
-    org.orcid.pojo.Email addEmailsJson(HttpServletRequest request, @RequestBody org.orcid.pojo.AddEmail email) {
+    public @ResponseBody org.orcid.pojo.Email addEmailsJson(HttpServletRequest request, @RequestBody org.orcid.pojo.AddEmail email) {
         List<String> errors = new ArrayList<String>();
         // Check password
         if (email.getPassword() == null || !encryptionManager.hashMatches(email.getPassword(), getEffectiveProfile().getPassword())) {
@@ -733,8 +717,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/deleteEmail.json", method = RequestMethod.DELETE)
-    public @ResponseBody
-    org.orcid.pojo.Email deleteEmailJson(HttpServletRequest request, @RequestBody org.orcid.pojo.Email email) {
+    public @ResponseBody org.orcid.pojo.Email deleteEmailJson(HttpServletRequest request, @RequestBody org.orcid.pojo.Email email) {
         List<String> emailErrors = new ArrayList<String>();
 
         // clear errros
@@ -769,8 +752,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @SuppressWarnings("unchecked")
     @RequestMapping(value = "/emails.json", method = RequestMethod.POST)
-    public @ResponseBody
-    org.orcid.pojo.ajaxForm.Emails postEmailsJson(HttpServletRequest request, @RequestBody org.orcid.pojo.ajaxForm.Emails emails) {
+    public @ResponseBody org.orcid.pojo.ajaxForm.Emails postEmailsJson(HttpServletRequest request, @RequestBody org.orcid.pojo.ajaxForm.Emails emails) {
         org.orcid.pojo.Email newPrime = null;
         org.orcid.pojo.Email oldPrime = null;
         List<String> allErrors = new ArrayList<String>();
@@ -815,8 +797,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/countryForm.json", method = RequestMethod.GET)
-    public @ResponseBody
-    CountryForm getProfileCountryJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
+    public @ResponseBody CountryForm getProfileCountryJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
         OrcidProfile currentProfile = getEffectiveProfile();
         CountryForm countryForm = CountryForm.valueOf(currentProfile);
         // Set country name
@@ -830,8 +811,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/countryForm.json", method = RequestMethod.POST)
-    public @ResponseBody
-    CountryForm setProfileCountryJson(HttpServletRequest request, @RequestBody CountryForm countryForm) throws NoSuchRequestHandlingMethodException {
+    public @ResponseBody CountryForm setProfileCountryJson(HttpServletRequest request, @RequestBody CountryForm countryForm) throws NoSuchRequestHandlingMethodException {
         OrcidProfile currentProfile = getEffectiveProfile();
         countryForm.populateProfile(currentProfile);
         // only update entity attributes
@@ -840,16 +820,14 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/nameForm.json", method = RequestMethod.GET)
-    public @ResponseBody
-    NamesForm getNameForm(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
+    public @ResponseBody NamesForm getNameForm(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
         OrcidProfile currentProfile = getEffectiveProfile();
         NamesForm nf = NamesForm.valueOf(currentProfile.getOrcidBio().getPersonalDetails());
         return nf;
     }
 
     @RequestMapping(value = "/nameForm.json", method = RequestMethod.POST)
-    public @ResponseBody
-    NamesForm setNameFormJson(HttpServletRequest request, @RequestBody NamesForm nf) throws NoSuchRequestHandlingMethodException {
+    public @ResponseBody NamesForm setNameFormJson(HttpServletRequest request, @RequestBody NamesForm nf) throws NoSuchRequestHandlingMethodException {
         nf.setErrors(new ArrayList<String>());
         if (nf.getGivenNames() == null)
             nf.setGivenNames(new Text());
@@ -864,16 +842,14 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/biographyForm.json", method = RequestMethod.GET)
-    public @ResponseBody
-    BiographyForm getBiographyForm(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
+    public @ResponseBody BiographyForm getBiographyForm(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
         OrcidProfile currentProfile = getEffectiveProfile();
         BiographyForm bf = BiographyForm.valueOf(currentProfile);
         return bf;
     }
 
     @RequestMapping(value = "/biographyForm.json", method = RequestMethod.POST)
-    public @ResponseBody
-    BiographyForm setBiographyFormJson(HttpServletRequest request, @RequestBody BiographyForm bf) throws NoSuchRequestHandlingMethodException {
+    public @ResponseBody BiographyForm setBiographyFormJson(HttpServletRequest request, @RequestBody BiographyForm bf) throws NoSuchRequestHandlingMethodException {
         bf.setErrors(new ArrayList<String>());
         validateBiography(bf.getBiography());
         copyErrors(bf.getBiography(), bf);
@@ -978,8 +954,7 @@ public class ManageProfileController extends BaseWorkspaceController {
      * Check if the user have twitter enabled
      * */
     @RequestMapping(value = { "/twitter/check-twitter-status" }, method = RequestMethod.GET)
-    public @ResponseBody
-    boolean isTwitterEnabled() {
+    public @ResponseBody boolean isTwitterEnabled() {
         String orcid = getEffectiveUserOrcid();
         return orcidSocialManager.isTwitterEnabled(orcid);
     }
@@ -988,8 +963,7 @@ public class ManageProfileController extends BaseWorkspaceController {
      * Get a user request to authorize twitter and return the authorization URL
      * */
     @RequestMapping(value = { "/twitter" }, method = RequestMethod.POST)
-    public @ResponseBody
-    String goToTwitterAuthPage() throws Exception {
+    public @ResponseBody String goToTwitterAuthPage() throws Exception {
         String authUrl = orcidSocialManager.getTwitterAuthorizationUrl(getEffectiveUserOrcid());
         return authUrl;
     }
@@ -1018,8 +992,7 @@ public class ManageProfileController extends BaseWorkspaceController {
      * Disable twitter access
      * */
     @RequestMapping(value = { "/disable-twitter" }, method = RequestMethod.POST)
-    public @ResponseBody
-    boolean disableTwitter() throws Exception {
+    public @ResponseBody boolean disableTwitter() throws Exception {
         String orcid = getEffectiveUserOrcid();
         orcidSocialManager.disableTwitter(orcid);
         return true;
