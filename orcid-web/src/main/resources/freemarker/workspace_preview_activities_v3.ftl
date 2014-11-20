@@ -19,33 +19,16 @@
 <#if !(affiliationsEmpty)??>
 <!-- Education -->
 <div id="workspace-education" class="workspace-accordion-item workspace-accordion-active" ng-controller="PublicEduAffiliation" ng-hide="!affiliationsSrvc.educations.length" ng-cloack>	       
-      <div class="workspace-accordion-header">
-	      <div class="row">
-	      		<div class="col-md-12 col-sm-12 col-xs-12">
-		           <a href="" ng-click="toggleEducation()" class="toggle-text">
-		           		<i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':displayEducation==false}"></i>
-		           		<@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education'/> (<span ng-bind="affiliationsSrvc.educations.length"></span>)
-		           </a>
-	           </div>
-	       </div>                            
-      </div>	
-      <div ng-show="displayEducation" class="workspace-accordion-content">
+
+      <#include "includes/affiliate/edu_section_header_inc.ftl" />
+      <div ng-show="workspaceSrvc.displayEducation" class="workspace-accordion-content">
 		<#include "includes/affiliate/edu_body_inc.ftl" />
       </div>	       
 </div>
 <!-- Employment -->
 <div id="workspace-employment" class="workspace-accordion-item workspace-accordion-active" ng-controller="PublicEmpAffiliation" ng-hide="!affiliationsSrvc.employments.length" ng-cloack>
-      <div class="workspace-accordion-header">
-		   <div class="row">	
-		   	   <div class="col-md-12 col-sm-12 col-xs-12">
-		           <a href="" ng-click="toggleEmployment()" class="toggle-text">
-			           <i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':displayEmployment==false}"></i>
-			           <@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education'/> (<span ng-bind="affiliationsSrvc.employments.length"></span>)
-		           </a>
-	           </div>
-           </div>                        
-      </div>		
-      <div ng-show="displayEmployment" class="workspace-accordion-content">
+       <#include "includes/affiliate/emp_section_header_inc.ftl" />
+       <div ng-show="workspaceSrvc.displayEmployment" class="workspace-accordion-content">
 	  		<#include "includes/affiliate/emp_body_inc.ftl" />	
       </div>
 </div>

@@ -378,17 +378,6 @@
 						<#include "includes/work/body_work_inc_v3.ftl"/>						
 	            	</div>
             	</div>
-            	
-            	<#--
-        		<div id="workspace-fundings" class="workspace-accordion-item">
-        			<div class="workspace-accordion-header"><a href="#"><@orcid.msg 'workspace.Grants'/></a></div>
-            	</div>
-            	
-        		<div id="workspace-patents" class="workspace-accordion-item">
-        			<div class="workspace-accordion-header"><a href="#"><@orcid.msg 'workspace.Patents'/></a></div>
-            	</div>
-            	-->
-            	
             </div>
         </div>
     </div>    
