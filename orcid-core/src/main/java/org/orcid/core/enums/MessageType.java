@@ -14,22 +14,8 @@
  *
  * =============================================================================
  */
-package org.orcid.core.manager;
+package org.orcid.core.enums;
 
-import org.orcid.core.enums.MessageType;
-import org.orcid.jaxb.model.message.OrcidMessage;
-
-/**
- * 
- * @author Will Simpson
- * 
- */
-public interface ValidationManager {
-
-    void setValidationBehaviour(ValidationBehaviour validationBehaviour);
-
-    void validateMessage(OrcidMessage orcidMessage);
-    
-    void validateMessage(OrcidMessage orcidMessage, MessageType type);
-
+public enum MessageType {
+    DELETE, GET, CREATE, UPDATE;
 }
