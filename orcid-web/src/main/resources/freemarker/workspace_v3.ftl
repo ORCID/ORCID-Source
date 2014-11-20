@@ -461,8 +461,14 @@
 	<div class="lightbox-container">
 		<div class="row">
 			<div class="col-md-12 col-sm-12 col-xs-12">
-				<h3>Please confirm deleting {{bulkDeleteCount}} items </h3>
-				<span class="orcid-error" ng-show="bulkDeleteCount != delCountVerify">To delete these {{bulkDeleteCount}} items, please enter the number of items you will be deleting <input type="text" size="3" ng-init="delCountVerify=0" ng-model="delCountVerify"/>.</span></br > 
+				<h3><@orcid.msg 'groups.bulk_delete.confirm.header'/></h3>
+				<div class="orcid-error" ng-show="bulkDeleteCount != delCountVerify">
+				<@orcid.msg 'groups.bulk_delete.confirm.line_1'/><br />
+				<br />
+				<@orcid.msg 'groups.bulk_delete.confirm.line_2'/><br />
+                <br />
+                <@orcid.msg 'groups.bulk_delete.confirm.line_3'/><input type="text" size="3" ng-init="delCountVerify=0" ng-model="delCountVerify"/>.
+				</div> 
 				<button class="btn btn-danger" ng-click="bulkDeleteFunction()"><@orcid.msg 'freemarker.btnDelete'/></button> 
 				<a ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel'/></a>
 			<div>
