@@ -22,6 +22,7 @@ package org.orcid.frontend.web.controllers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
@@ -67,7 +68,7 @@ public class ManageMembersControllerTest extends BaseControllerTest {
 
     @BeforeClass
     public static void beforeClass() throws Exception {
-        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml"));
+        initDBUnitData(Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml"));
     }    
 
     @AfterClass
@@ -378,5 +379,27 @@ public class ManageMembersControllerTest extends BaseControllerTest {
         assertNotNull(client_4443);
         assertEquals(1, client_4443.getErrors().size());
         assertEquals(manageMembers.getMessage("common.invalid_url"), client_4443.getErrors().get(0));                
+    }
+    
+    @Test
+    @Transactional("transactionManager")
+    @Rollback(true)
+    public void editMemberDoesntChangePersistentTokenEnabledValueTest() throws Exception {
+        Client clientWithPersistentTokensEnabled = manageMembers.findClient("4444-4444-4444-4445");
+        assertNotNull(clientWithPersistentTokensEnabled);
+        assertNotNull(clientWithPersistentTokensEnabled.getDisplayName());
+        assertEquals("A. Timothy", clientWithPersistentTokensEnabled.getDisplayName().getValue());
+        assertNotNull(clientWithPersistentTokensEnabled.getPersistentTokenEnabled());
+        assertTrue(clientWithPersistentTokensEnabled.getPersistentTokenEnabled().getValue());
+        
+        clientWithPersistentTokensEnabled.getDisplayName().setValue("Updated Name");
+        manageMembers.updateClient(clientWithPersistentTokensEnabled);
+        
+        Client updatedClient =  manageMembers.findClient("4444-4444-4444-4445");
+        assertNotNull(clientWithPersistentTokensEnabled);
+        assertNotNull(clientWithPersistentTokensEnabled.getDisplayName());
+        assertEquals("Updated Name", clientWithPersistentTokensEnabled.getDisplayName().getValue());
+        assertNotNull(clientWithPersistentTokensEnabled.getPersistentTokenEnabled());
+        assertTrue(clientWithPersistentTokensEnabled.getPersistentTokenEnabled().getValue());
     }
 }

@@ -71,7 +71,11 @@ public class Client implements ErrorsInterface, Serializable {
         if (orcidClient.getType() != null)
             client.setType(Text.valueOf(orcidClient.getType().value()));
         client.setWebsite(Text.valueOf(orcidClient.getWebsite()));
-
+        
+        Checkbox persistentTokenEnabled = new Checkbox();
+        persistentTokenEnabled.setValue(orcidClient.isPersistentTokenEnabled());        
+        client.setPersistentTokenEnabled(persistentTokenEnabled);
+        
         List<RedirectUri> redirectUris = new ArrayList<RedirectUri>();
         RedirectUris orcidRedirectUris = orcidClient.getRedirectUris();
         if (orcidRedirectUris != null && orcidRedirectUris.getRedirectUri() != null) {
