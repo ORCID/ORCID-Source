@@ -3725,10 +3725,6 @@ function PublicWorkCtrl($scope, $compile, $filter, workspaceSrvc, worksSrvc) {
         $('.work-more-info-container').css('display', 'none');
     };
 
-    $scope.toggleWorks = function(){
-        $scope.displayWorks = !$scope.displayWorks;
-    };
-    
     $scope.showTooltip = function (element){    	
         $scope.showElement[element] = true;
     };
