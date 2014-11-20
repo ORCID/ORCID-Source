@@ -251,7 +251,7 @@
 					
 					<!-- Bulk Edit -->					
 					<div ng-show="bulkEditShow && workspaceSrvc.displayWorks" ng-cloak>						
-						<div class="grey-box bulk-edit">
+						<div class="bulk-edit">
 							<div class="row">
 								<div class="col-md-7 col-sm-7">
 									<h4>Bulk edit</h4><span class="hide-bulk" ng-click="toggleBulkEdit()">Hide bulk edit</span>
@@ -308,17 +308,22 @@
 					
 					<!-- Bibtex Importer Wizard -->
 					<div ng-show="showBibtexImportWizard && workspaceSrvc.displayWorks" ng-cloak class="bibtex-box">
-						<div class="grey-box bottomBuffer box-border" ng-show="canReadFiles" ng-cloak>
-						   <p class="bottomBuffer">
-						   		<strong><@orcid.msg 'workspace.bibtexImporter.instructions'/>  <a href="http://support.orcid.org/knowledgebase/articles/390530" target="_blank"><@orcid.msg 'workspace.bibtexImporter.learnMore'/></a></strong>
-						   </p> 
-					       <div class="label btn-primary upload">
-					           <span class="import-label"><@orcid.msg 'workspace.bibtexImporter.fileUpload'/></span>
-						       <input type="file" class="upload-button" ng-model="textFiles" accept="*" update-fn="loadBibtexJs()"  app-file-text-reader multiple />
-					       </div>
-					       <span class="cancel-bibtex">
-					        	<a href="" class="label btn-primary" ng-click="openBibTextWizard()"><@orcid.msg 'workspace.bibtexImporter.cancel'/></a>
-						   </span>
+						<div class=box-border" ng-show="canReadFiles" ng-cloak>
+						   <h4>Link BibTeX</h4><span ng-click="openBibTextWizard()" class="hide-importer">Hide link BibTeX</span>
+						   <div class="row full-height-row">
+						   	   <div class="col-md-9">
+								   <p>
+								   		<@orcid.msg 'workspace.bibtexImporter.instructions'/>  <a href="http://support.orcid.org/knowledgebase/articles/390530" target="_blank"><@orcid.msg 'workspace.bibtexImporter.learnMore'/></a>
+								   </p> 
+							   </div>
+							   <div class="col-md-3">
+							   		<span class="bibtext-options">							   									   		
+									    <a class="bibtex-cancel" ng-click="openBibTextWizard()"><@orcid.msg 'workspace.bibtexImporter.cancel'/></a>			       
+									    <span class="import-label" ng-click="openFileDialog()"><@orcid.msg 'workspace.bibtexImporter.fileUpload'/></span>							           
+										<input id="inputBibtex" type="file" class="upload-button" ng-model="textFiles" accept="*" update-fn="loadBibtexJs()"  app-file-text-reader multiple />
+									</span>								    
+							   </div>
+						   </div>
 						</div>						
 						<div class="alert alert-block" ng-show="bibtexParsingError">
 							<strong><@orcid.msg 'workspace.bibtexImporter.parsingError'/></strong>
