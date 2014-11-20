@@ -467,7 +467,7 @@ public class WorksController extends BaseWorkspaceController {
         workEntity = workManager.addWork(workEntity);
 
         // Create profile work relationship
-        profileWorkManager.addProfileWork(currentProfile.getOrcidIdentifier().getPath(), workEntity.getId(), newOw.getVisibility(), getRealUserOrcid());
+        profileWorkManager.addProfileWork(currentProfile.getOrcidIdentifier().getPath(), workEntity.getId(), newOw.getVisibility(), sourceManager.retrieveSourceOrcid());
 
         // Set the id (put-code) to the new work
         String putCode = String.valueOf(workEntity.getId());

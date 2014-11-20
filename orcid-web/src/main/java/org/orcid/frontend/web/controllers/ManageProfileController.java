@@ -695,7 +695,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
                 emails.add(email);
                 currentProfile.getOrcidBio().getContactDetails().setEmail(emails);
-                email.setSource(getRealUserOrcid());
+                email.setSource(sourceManager.retrieveSourceOrcid());
                 emailManager.addEmail(currentProfile.getOrcidIdentifier().getPath(), email);
 
                 // send verifcation email for new address

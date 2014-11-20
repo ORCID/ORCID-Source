@@ -133,7 +133,7 @@ public class BaseController {
     private OrcidUrlManager orcidUrlManager;
 
     @Resource
-    private SourceManager sourceManager;
+    protected SourceManager sourceManager;
 
     protected static final String EMPTY = "empty";
 
@@ -298,7 +298,7 @@ public class BaseController {
 
     @ModelAttribute("realUserOrcid")
     public String getRealUserOrcid() {
-        return sourceManager.retrieveSourceOrcid();
+        return sourceManager.retrieveRealUserOrcid();
     }
 
     @ModelAttribute("effectiveUserOrcid")
