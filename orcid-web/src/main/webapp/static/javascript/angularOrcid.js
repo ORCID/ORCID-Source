@@ -2751,10 +2751,10 @@ function WorkspaceSummaryCtrl($scope, $compile, affiliationsSrvc, fundingSrvc, w
     };
 }
 
-function PublicEduAffiliation($scope, $compile, $filter, affiliationsSrvc){
+function PublicEduAffiliation($scope, $compile, $filter, workspaceSrvc , affiliationsSrvc){
+    $scope.workspaceSrvc = workspaceSrvc;
     $scope.affiliationsSrvc = affiliationsSrvc;
     $scope.moreInfo = {};
-    $scope.displayEducation = true;
 
     $scope.sortState = new ActSortState(GroupedActivities.AFFILIATION);
     $scope.sort = function(key) {
@@ -2784,17 +2784,12 @@ function PublicEduAffiliation($scope, $compile, $filter, affiliationsSrvc){
         $scope.moreInfo[key]=false;
     };
 
-    $scope.toggleEducation = function(){
-        $scope.displayEducation = !$scope.displayEducation;
-        console.log('Education');
-    };
-
 }
 
-function PublicEmpAffiliation($scope, $compile, $filter, affiliationsSrvc){
+function PublicEmpAffiliation($scope, $compile, $filter, workspaceSrvc, affiliationsSrvc){
+    $scope.workspaceSrvc = workspaceSrvc;
     $scope.affiliationsSrvc = affiliationsSrvc;
     $scope.moreInfo = {};
-    $scope.displayEmployment = true;
 
     $scope.sortState = new ActSortState(GroupedActivities.AFFILIATION);
     $scope.sort = function(key) {
@@ -2825,10 +2820,6 @@ function PublicEmpAffiliation($scope, $compile, $filter, affiliationsSrvc){
 
     affiliationsSrvc.setIdsToAdd(orcidVar.affiliationIdsJson);
     affiliationsSrvc.addAffiliationToScope(orcidVar.orcidId +'/affiliations.json');
-
-    $scope.toggleEmployment = function(){
-        $scope.displayEmployment = !$scope.displayEmployment;
-    };
 }
 
 

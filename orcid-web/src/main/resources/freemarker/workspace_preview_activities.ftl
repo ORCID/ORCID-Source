@@ -20,22 +20,22 @@
 <!-- Education -->
 <div id="workspace-education" class="workspace-accordion-item workspace-accordion-active" ng-controller="PublicEduAffiliation" ng-hide="!affiliationsSrvc.educations.length" ng-cloack>	       
       <div class="workspace-accordion-header">
-           <a href="" ng-click="toggleEducation()" class="toggle-text">
-           <i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':displayEducation==false}"></i></a>             
-           <a href="" ng-click="toggleEducation()" class="toggle-text">${springMacroRequestContext.getMessage("org.orcid.jaxb.model.message.AffiliationType.education")}</a>                        
+           <a href="" ng-click="workspaceSrvc.toggleEducation()" class="toggle-text">
+           <i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayEducation==false}"></i></a>             
+           <a href="" ng-click="workspaceSrvc.toggleEducation()" class="toggle-text">${springMacroRequestContext.getMessage("org.orcid.jaxb.model.message.AffiliationType.education")}</a>                        
       </div>	
-      <div ng-show="displayEducation" class="workspace-accordion-content">
+      <div ng-show="workspaceSrvc.displayEducation" class="workspace-accordion-content">
 		<#include "includes/affiliate/edu_body_inc.ftl" />
       </div>	       
 </div>
 <!-- Employment -->
 <div id="workspace-employment" class="workspace-accordion-item workspace-accordion-active" ng-controller="PublicEmpAffiliation" ng-hide="!affiliationsSrvc.employments.length" ng-cloack>
       <div class="workspace-accordion-header">
-           <a href="" ng-click="toggleEmployment()" class="toggle-text">
-           <i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':displayEmployment==false}"></i></a>             
-           <a href="" ng-click="toggleEmployment()" class="toggle-text">${springMacroRequestContext.getMessage("org.orcid.jaxb.model.message.AffiliationType.employment")}</a>                        
+           <a href="" ng-click="workspaceSrvc.toggleEmployment()" class="toggle-text">
+           <i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayEmployment==false}"></i></a>             
+           <a href="" ng-click="workspaceSrvc.toggleEmployment()" class="toggle-text">${springMacroRequestContext.getMessage("org.orcid.jaxb.model.message.AffiliationType.employment")}</a>                        
       </div>		
-      <div ng-show="displayEmployment" class="workspace-accordion-content">
+      <div ng-show="workspaceSrvc.displayEmployment" class="workspace-accordion-content">
 	  		<#include "includes/affiliate/emp_body_inc.ftl" />	
       </div>
 </div>
