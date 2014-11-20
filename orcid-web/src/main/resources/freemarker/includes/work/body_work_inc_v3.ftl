@@ -157,7 +157,7 @@
                      <!-- active row  source display -->
                       <div class="row source-line" ng-show="group.activePutCode == work.putCode.value">                      
                       	<div class="col-md-4" ng-show="editSources[group.groupId] == true">
-                      		SOURCE: {{work.sourceName}}
+                      		{{work.sourceName}}
                       	</div>
                       	<div class="col-md-3" ng-show="editSources[group.groupId] == true">
                       		<div ng-show="editSources[group.groupId] == true" ng-bind="work.createdDate | ajaxFormDateToISO8601"></div>
