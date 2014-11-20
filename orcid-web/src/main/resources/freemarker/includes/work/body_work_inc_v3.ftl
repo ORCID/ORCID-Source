@@ -144,7 +144,7 @@
                                      ng-bind-html='ie | workExternalIdentifierHtml:$first:$last:work.workExternalIdentifiers.length'></span>
                                     </span>
                                  </li>
-                                 <li ng-show="work.url.value"><strong>URL:</strong> <a href="{{work.url.value | urlWithHttp}}" target="_blank">{{work.url.value}}</a></li>
+                                 <li ng-show="work.url.value">URL: <a href="{{work.url.value | urlWithHttp}}" target="_blank">{{work.url.value}}</a></li>
                                  
                              </ul>
                          </div>
@@ -157,7 +157,7 @@
                      <!-- active row  source display -->
                       <div class="row source-line" ng-show="group.activePutCode == work.putCode.value">                      
                       	<div class="col-md-4" ng-show="editSources[group.groupId] == true">
-                      		SOURCE: {{work.sourceName}}
+                      		{{work.sourceName}}
                       	</div>
                       	<div class="col-md-3" ng-show="editSources[group.groupId] == true">
                       		<div ng-show="editSources[group.groupId] == true" ng-bind="work.createdDate | ajaxFormDateToISO8601"></div>

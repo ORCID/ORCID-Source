@@ -67,11 +67,9 @@
         <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.1.0/css/bootstrap-ie7.css?v=${ver}"/>	                
     <![endif]-->
     
-    <#if request.requestURI?ends_with("my-orcid2")>
-       <link rel="stylesheet" href="${staticCdn}/css/orcid.resp_v2.css?v=${ver}"/>
-    <#elseif request.requestURI?ends_with("my-orcid3") || RequestParameters['v']??>    
+    <#if request.requestURI?ends_with("my-orcid3") || RequestParameters['v']??>    
         <link rel="stylesheet" href="${staticCdn}/css/orcid.resp_v3.css?v=${ver}"/>     
-     <#else>
+    <#else>
        <link rel="stylesheet" href="${staticCdn}/css/orcid.resp.css?v=${ver}"/>    
     </#if>	    
     <!--[if lt IE 8]>

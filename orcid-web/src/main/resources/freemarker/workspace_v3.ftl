@@ -262,14 +262,7 @@
 								</div>
 								<div class="col-md-5 col-sm-5">
 									<ul class="bulk-edit-toolbar">
-										<!-- 										
-										<li class="bulk-edit-toolbar-item">
-											<label></label>																						
-											<div class="cancel-bulk-edit">
-												<a class="btn btn-default pull-right" ng-click="toggleBulkEdit()">Cancel</a>
-											</div>
-										</li>
-										 -->
+																			
 										<li class="bulk-edit-toolbar-item work-multiple-selector"><!-- Select all -->
 											<label>SELECT</label>											
 											<div id="custom-control-x">
@@ -290,29 +283,7 @@
 											</div>
 										</li>
 										<li class="bulk-edit-toolbar-item"><!-- Privacy control -->
-											<label>EDIT</label>
-											<!--
-											<div class="privacy-options"> 
-												<div class="privacy-options-popover"> 
-													<div class="popover-help-container" ng-class="{'popover-help-container-show':privacyHelp[work.putCode.value]==true}" style="position: absolute; left: 110px; top: 0px;">
-											        	<a ng-click="toggleClickPrivacyHelp(work.putCode.value)"><i class="glyphicon glyphicon-question-sign" style="width: 14px;"></i></a>
-											            <div class="popover bottom" style="">
-													        <div class="arrow" style=""></div>
-													        <div class="popover-content">
-													        	<strong>Who can see this?</strong>
-														        <ul class="privacyHelp">
-														        	<li class="public" style="color: #009900;">everyone</li>
-														        	<li class="limited" style="color: #ffb027;">trusted parties</li>
-														        	<li class="private" style="color: #990000;">only me</li>
-														        </ul>
-														        <a href="http://support.orcid.org/knowledgebase/articles/124518-orcid-privacy-settings" target="_blank">More information on privacy settings</a>
-													        </div>
-													    </div>
-											    	</div>
-										    	</div>
-										    	 
-									    	</div>
-									    	-->
+											<label>EDIT</label>											
 											<div class="bulk-edit-privacy-control">
 												<@orcid.privacyToggle2 angularModel="groupPrivacy()" 
 													    questionClick=""
