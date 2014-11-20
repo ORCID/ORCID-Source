@@ -45,11 +45,11 @@
 <#if !(fundingEmpty)??>		
 	<div id="workspace-funding" class="workspace-accordion-item workspace-accordion-active" ng-controller="PublicFundingCtrl" ng-cloack>
 		<div class="workspace-accordion-header">
-	         <a href="" ng-click="toggleFunding()" class="toggle-text">
-	         <i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':displayFunding==false}"></i></a>             
-	         <a href="" ng-click="toggleFunding()" class="toggle-text">${springMacroRequestContext.getMessage("workspace.Funding")}</a>                        
+	         <a href="" ng-click="workspaceSrvc.toggleFunding($event)" class="toggle-text">
+	         <i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayFunding==false}"></i></a>             
+	         <a href="" ng-click="workspaceSrvc.toggleFunding($event)" class="toggle-text">${springMacroRequestContext.getMessage("workspace.Funding")}</a>                        
 	    </div>	
-	    <div ng-show="displayFunding" class="workspace-accordion-content">
+	    <div ng-show="workspaceSrvc.displayFunding" class="workspace-accordion-content">
 			<#include "includes/funding/body_funding_inc.ftl" />	
 	    </div>
 	</div>

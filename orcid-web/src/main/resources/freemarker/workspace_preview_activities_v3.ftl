@@ -54,17 +54,8 @@
   <!-- Funding -->
 <#if !(fundingEmpty)??>		
 	<div id="workspace-funding" class="workspace-accordion-item workspace-accordion-active" ng-controller="PublicFundingCtrl" ng-cloack>
-		<div class="workspace-accordion-header">
-			<div class="row">
-	      		<div class="col-md-12 col-sm-12 col-xs-12">
-			         <a href="" ng-click="toggleFunding()" class="toggle-text">
-				         <i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':displayFunding==false}"></i>
-				         <@orcid.msg 'workspace.Funding'/> (<span ng-bind="fundingSrvc.groups.length"></span>)
-			         </a>
-			    </div>
-			</div>                        
-	    </div>	
-	    <div ng-show="displayFunding" class="workspace-accordion-content">
+        <#include "includes/funding/funding_section_header_inc_v3.ftl" />
+	    <div ng-show="workspaceSrvc.displayFunding" class="workspace-accordion-content">
 			<#include "includes/funding/body_funding_inc_v3.ftl" />	
 	    </div>
 	</div>
