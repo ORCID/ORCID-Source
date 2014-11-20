@@ -121,9 +121,26 @@ public class ValidationManagerImpl implements ValidationManager {
     public void validateMessage(OrcidMessage orcidMessage) {
         if (ValidationBehaviour.IGNORE.equals(validationBehaviour)) {
             return;
-        }               
+        }              
+        doWorkTypeValidation(orcidMessage);
         doSchemaValidation(orcidMessage);
         doCustomValidation(orcidMessage);
+    }
+    
+    private void doWorkTypeValidation(OrcidMessage orcidMessage) {
+        if (orcidMessage == null || orcidMessage.getOrcidProfile() == null || orcidMessage.getOrcidProfile().getOrcidActivities() == null
+                || orcidMessage.getOrcidProfile().getOrcidActivities().getOrcidWorks() == null
+                || orcidMessage.getOrcidProfile().getOrcidActivities().getOrcidWorks().getOrcidWork() == null
+                || orcidMessage.getOrcidProfile().getOrcidActivities().getOrcidWorks().getOrcidWork().isEmpty())
+            return;
+        List<OrcidWork> works = orcidMessage.getOrcidProfile().getOrcidActivities().getOrcidWorks().getOrcidWork();
+        for(OrcidWork work : works) {
+            if(work.getWorkType() == null)
+                if(work.getWorkTitle() != null && work.getWorkTitle().getTitle() != null && !PojoUtil.isEmpty(work.getWorkTitle().getTitle().getContent()))
+                    handleError("work-type is missing or invalid for work: '" + work.getWorkTitle().getTitle().getContent() + "'");
+                else 
+                    handleError("work-type is missing or invalid");
+        }
     }
     
     protected void doSchemaValidation(OrcidMessage orcidMessage) {
