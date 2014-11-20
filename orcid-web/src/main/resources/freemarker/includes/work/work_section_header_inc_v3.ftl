@@ -29,19 +29,18 @@
         <div class="col-md-9 col-sm-10 col-xs-12 action-button-bar" ng-show="workspaceSrvc.displayWorks">
             <#include "../workspace/workspace_act_sort_menu.ftl"/>
             <#if !(isPublicProfile??)>
-                <ul class="workspace-bar-menu">
-                    <!-- Link Manually -->
+                <ul class="workspace-bar-menu">                    
+                    <!-- Bulk Edit -->
+                    <li>
+                        <a class="action-option works manage-button" ng-class="{'green-bg' : bulkEditShow == true}" ng-click="toggleBulkEdit()">
+                            <span class="glyphicon glyphicon-pencil"></span>Bulk edit
+                        </a>
+                    </li>
+                    <!-- Add Manually -->
                     <li>
                         <a href="" class="action-option works manage-button" ng-click="addWorkModal()">
                             <span class="glyphicon glyphicon-plus"></span>
                             <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
-                        </a>
-                    </li>
-                    <!-- Search & Link -->
-                    <li>
-                        <a class="action-option works manage-button" ng-click="showWorkImportWizard()">
-                            <span class="glyphicon glyphicon-cloud-upload"></span>
-                            <@orcid.msg 'manual_orcid_record_contents.search_link'/>
                         </a>
                     </li>
                     <!-- Bibtex -->
@@ -50,10 +49,12 @@
                             <span class="glyphicons file_import bibtex-wizard"></span>
                             <@orcid.msg 'workspace.bibtexImporter.link_bibtex'/>
                         </a>
-                    </li>
+                    </li>                    
+                    <!-- Search & Link -->
                     <li>
-                        <a class="action-option works manage-button" ng-class="{'green-bg' : bulkEditShow == true}" ng-click="toggleBulkEdit()">
-                            <span class="glyphicon glyphicon-pencil"></span>Bulk edit
+                        <a class="action-option works manage-button" ng-click="showWorkImportWizard()">
+                            <span class="glyphicon glyphicon-cloud-upload"></span>
+                            <@orcid.msg 'manual_orcid_record_contents.search_link'/>
                         </a>
                     </li>
                 </ul>
