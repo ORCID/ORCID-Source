@@ -76,10 +76,10 @@
 				<div class="control-group">
 					<label><@orcid.msg 'manual_work_form_contents.labeltitle'/></label>
 				    <div class="relative">
-						<input name="familyNames" type="text" class="input-xlarge"  ng-model="editWork.workTitle.title.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_title'/>" ng-change="serverValidate('works/work/workTitle/titleValidate.json')" ng-model-onblur/>						
-						<span class="required" ng-class="isValidClass(editWork.workTitle.title)">*</span>						
-						<span class="orcid-error" ng-show="editWork.workTitle.title.errors.length > 0">
-							<div ng-repeat='error in editWork.workTitle.title.errors' ng-bind-html="error"></div>
+						<input name="familyNames" type="text" class="input-xlarge"  ng-model="editWork.title.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_title'/>" ng-change="serverValidate('works/work/titleValidate.json')" ng-model-onblur/>						
+						<span class="required" ng-class="isValidClass(editWork.title)">*</span>						
+						<span class="orcid-error" ng-show="editWork.title.errors.length > 0">
+							<div ng-repeat='error in editWork.title.errors' ng-bind-html="error"></div>
 						</span>
 						<div class="add-item-link">
 							<span ng-hide="editTranslatedTitle"><a ng-click="toggleTranslatedTitleModal()"><i class="glyphicon glyphicon-plus-sign"></i> <@orcid.msg 'manual_work_form_contents.labelshowtranslatedtitle'/></a></span>
@@ -89,20 +89,20 @@
 				</div>
 
 				<div id="translatedTitle">
-					<span class="orcid-error" ng-show="editWork.workTitle.translatedTitle.errors.length > 0">
-						<div ng-repeat='error in editWork.workTitle.translatedTitle.errors' ng-bind-html="error"></div>
+					<span class="orcid-error" ng-show="editWork.translatedTitle.errors.length > 0">
+						<div ng-repeat='error in editWork.translatedTitle.errors' ng-bind-html="error"></div>
 					</span>
 					<div class="control-group">
 						<label><@orcid.msg 'manual_work_form_contents.labeltranslatedtitle'/></label>
 						<div class="relative">
-							<input name="translatedTitle" type="text" class="input-xlarge" ng-model="editWork.workTitle.translatedTitle.content" placeholder="<@orcid.msg 'manual_work_form_contents.add_translated_title'/>" ng-change="serverValidate('works/work/workTitle/translatedTitleValidate.json')" ng-model-onblur/>														
+							<input name="translatedTitle" type="text" class="input-xlarge" ng-model="editWork.translatedTitle.content" placeholder="<@orcid.msg 'manual_work_form_contents.add_translated_title'/>" ng-change="serverValidate('works/work/translatedTitleValidate.json')" ng-model-onblur/>														
 						</div>						
 					</div>
 
 					<div class="control-group">
 						<label class="relative"><@orcid.msg 'manual_work_form_contents.labeltranslatedtitlelanguage'/></label>
 						<div class="relative">						
-							<select id="language" name="language" ng-model="editWork.workTitle.translatedTitle.languageCode" ng-change="serverValidate('works/work/workTitle/translatedTitleValidate.json')">			
+							<select id="language" name="language" ng-model="editWork.translatedTitle.languageCode" ng-change="serverValidate('works/work/translatedTitleValidate.json')">			
 								<#list languages?keys as key>
 									<option value="${languages[key]}">${key}</option>
 								</#list>
@@ -114,9 +114,9 @@
 				<div class="control-group">
 					<label><@orcid.msg 'manual_work_form_contents.labelsubtitle'/></label>
 				    <div class="relative">
-						<input name="familyNames" type="text" class="input-xlarge"  ng-model="editWork.workTitle.subtitle.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_subtitle'/>" ng-change="serverValidate('works/work/workTitle/subtitleValidate.json')" ng-model-onblur/>
-						<span class="orcid-error" ng-show="editWork.workTitle.subtitle.errors.length > 0">
-							<div ng-repeat='error in editWork.workTitle.subtitle.errors' ng-bind-html="error"></div>
+						<input name="familyNames" type="text" class="input-xlarge"  ng-model="editWork.subtitle.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_subtitle'/>" ng-change="serverValidate('works/work/subtitleValidate.json')" ng-model-onblur/>
+						<span class="orcid-error" ng-show="editWork.subtitle.errors.length > 0">
+							<div ng-repeat='error in editWork.subtitle.errors' ng-bind-html="error"></div>
 						</span>
 					</div>
 				</div>
@@ -317,7 +317,7 @@
 						<button id="" class="btn close-button" type="reset"  ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></button>
 					</div>
 					<div ng-show="editWork.putCode.value == null">
-						<button class="btn btn-primary" ng-click="putWork()" ng-disabled="addingWork" ng-class="{disabled:addingWork}">
+						<button class="btn btn-primary" id='save-new-work' ng-click="putWork()" ng-disabled="addingWork" ng-class="{disabled:addingWork}">
 							<@orcid.msg 'manual_work_form_contents.btnaddtolist'/>
 						</button>
 						<button id="" class="btn close-button" type="reset"  ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></button>

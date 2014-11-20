@@ -22,58 +22,14 @@
 <div ng-controller="AffiliationCtrl">
 	<!-- Education -->
 	<div id="workspace-education" class="workspace-accordion-item workspace-accordion-active" >
-		<div class="workspace-accordion-header">
-			<div class="row">
-				<div class="col-md-3 col-sm-3 col-xs-12">
-					<a name='workspace-educations' />
-				    <a href="" ng-click="workspaceSrvc.toggleEducation($event)" ng-click="workspaceSrvc.toggleEducation($event)" class="toggle-text">
-				  		<i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayEducation==false}"></i>
-				  		<@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education'/> (<span ng-bind="affiliationsSrvc.educations.length"></span>)
-				  	</a>
-			    </div>
-			    <div class="col-md-9 col-sm-9 col-xs-12 action-button-bar" ng-show="workspaceSrvc.displayEducation">
-			    	<#include "includes/workspace/workspace_act_sort_menu.ftl"/>					
-					<ul class="workspace-bar-menu">                			
-	        				<!-- Link Manually -->
-	        				<li>		        			
-								<a href="" class="action-option manage-button two-options" ng-click="addAffiliationModal('education')">
-									<span class="glyphicon glyphicon-plus"></span>
-									<@orcid.msg 'manual_orcid_record_contents.link_manually'/>
-								</a>
-	        				</li>
-					</ul>
-				</div>
-			</div>
-		</div>
+        <#include "includes/affiliate/edu_section_header_inc.ftl" />
 		<div ng-show="workspaceSrvc.displayEducation" class="workspace-accordion-content">
 			<#include "includes/affiliate/edu_body_inc.ftl" />
 		</div>
 	</div>
 	<!-- Employment -->
 	<div id="workspace-employment" class="workspace-accordion-item workspace-accordion-active" >
-		<div class="workspace-accordion-header">
-			<div class="row">
-				<div class="col-md-3 col-sm-3 col-xs-12">
-					<a name='workspace-employments' />
-				    <a href="" ng-click="workspaceSrvc.toggleEmployment($event)" ng-click="workspaceSrvc.toggleEmployment($event)" class="toggle-text">
-				  		<i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayEmployment==false}"></i>
-				  		<@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.employment'/> (<span ng-bind="affiliationsSrvc.employments.length"></span>)
-				   	</a>				   	
-				</div>
-				<div class="col-md-9 col-sm-9 col-xs-12 action-button-bar" ng-show="workspaceSrvc.displayEmployment">
-					<#include "includes/workspace/workspace_act_sort_menu.ftl"/>  
-					<ul class="workspace-bar-menu">                			
-	        				<!-- Link Manually -->
-	        				<li>		        			
-								<a href="" class="action-option manage-button two-options" ng-click="addAffiliationModal('employment')">
-									<span class="glyphicon glyphicon-plus"></span>
-									<@orcid.msg 'manual_orcid_record_contents.link_manually'/>
-								</a>				
-	        				</li>
-					</ul>	
-				</div>
-			</div>
-		</div>
+        <#include "includes/affiliate/emp_section_header_inc.ftl" />
 		<div ng-show="workspaceSrvc.displayEmployment" class="workspace-accordion-content">
 			<#include "includes/affiliate/emp_body_inc.ftl" />
 		</div>

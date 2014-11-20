@@ -262,7 +262,6 @@ public class OrcidProfile implements Serializable {
         this.orcidActivities = orcidActivities;
     }
 
-
     /**
      * 
      * @param orcidFundings
@@ -281,7 +280,6 @@ public class OrcidProfile implements Serializable {
     public FundingList retrieveFundings() {
         return orcidActivities != null ? orcidActivities.getFundings() : null;
     }
-
 
     /**
      * 
@@ -485,6 +483,10 @@ public class OrcidProfile implements Serializable {
 
     public static String createCacheKey(String path, Date lastModifiedDate) {
         return createCacheKey(path, DateUtils.convertToXMLGregorianCalendar(lastModifiedDate).toXMLFormat(), ReleaseNameUtils.getReleaseName());
+    }
+
+    public static String createCacheKey(String path, long time) {
+        return createCacheKey(path, DateUtils.convertToXMLGregorianCalendar(time).toXMLFormat(), ReleaseNameUtils.getReleaseName());
     }
 
     public static String createCacheKey(String path, String xmlFormatLastModifiedDate, String releaseName) {

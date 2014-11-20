@@ -107,12 +107,6 @@ public class BaseController {
     private String staticCdnPath;
 
     static Pattern fileNamePattern = Pattern.compile("https{0,1}:\\/\\/[^\\/]*(.*){0,1}");
-
-    @Value("${org.orcid.core.baseUri:http://orcid.org}")
-    private String baseUri;
-
-    @Value("${org.orcid.core.pubBaseUri:https://pub.orcid.org}")
-    private String pubBaseUri;
     
     @Value("${org.orcid.core.shareThis.key}")
     private String shareThisKey;
@@ -139,7 +133,7 @@ public class BaseController {
     private OrcidUrlManager orcidUrlManager;
 
     @Resource
-    private SourceManager sourceManager;
+    protected SourceManager sourceManager;
 
     protected static final String EMPTY = "empty";
 
@@ -304,7 +298,7 @@ public class BaseController {
 
     @ModelAttribute("realUserOrcid")
     public String getRealUserOrcid() {
-        return sourceManager.retrieveSourceOrcid();
+        return sourceManager.retrieveRealUserOrcid();
     }
 
     @ModelAttribute("effectiveUserOrcid")
@@ -462,20 +456,12 @@ public class BaseController {
 
     @ModelAttribute("baseUri")
     public String getBaseUri() {
-        return baseUri;
-    }
-
-    public void setBaseUri(String baseUri) {
-        this.baseUri = baseUri;
+        return orcidUrlManager.getBaseUrl();
     }
     
     @ModelAttribute("pubBaseUri")
     public String getPubBaseUri() {
-        return pubBaseUri;
-    }
-
-    public void setPubBaseUri(String pubBaseUri) {
-        this.pubBaseUri = pubBaseUri;
+        return orcidUrlManager.getPubBaseUrl();
     }
 
     /**
@@ -497,7 +483,7 @@ public class BaseController {
     @ModelAttribute("staticLoc")
     public String getStaticContentPath() {
         if (StringUtils.isBlank(this.staticContentPath)) {
-            this.staticContentPath = this.baseUri + STATIC_FOLDER_PATH;
+            this.staticContentPath = orcidUrlManager.getBaseUrl() + STATIC_FOLDER_PATH;
             this.staticContentPath = this.staticContentPath.replace("https:", "");
             this.staticContentPath = this.staticContentPath.replace("http:", "");
         }
@@ -536,12 +522,12 @@ public class BaseController {
 
     @ModelAttribute("baseUriHttp")
     public String getBaseUriHttp() {
-        return baseUri.replace("https", "http");
+        return orcidUrlManager.getBaseUriHttp();
     }
 
     @ModelAttribute("basePath")
     public String getBasePath() {
-        Matcher fileNameMatcher = fileNamePattern.matcher(baseUri);
+        Matcher fileNameMatcher = fileNamePattern.matcher(orcidUrlManager.getBaseUrl());
         if (!fileNameMatcher.find())
             return "/";
         return fileNameMatcher.group(1) + "/";

@@ -34,11 +34,13 @@ import java.util.Arrays;
 import org.orcid.core.version.OrcidMessageVersionConverter;
 import org.orcid.jaxb.model.message.ExternalIdSource;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
+import org.orcid.jaxb.model.message.OrcidInternal;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidSearchResult;
 import org.orcid.jaxb.model.message.OrcidSearchResults;
 import org.orcid.jaxb.model.message.OrcidWork;
+import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.message.SourceOrcid;
 import org.orcid.jaxb.model.message.WorkExternalIdentifier;
@@ -102,6 +104,14 @@ public class OrcidMessageVersionConverterImplV1_2_rc5ToV1_2_rc6 implements Orcid
                 if (orcidProfile.getOrcidActivities().getOrcidWorks() != null) {
                     for (OrcidWork act : orcidProfile.getOrcidActivities().getOrcidWorks().getOrcidWork())
                         downGradeActivity(act);
+                }
+            }
+            OrcidInternal orcidInternal = orcidProfile.getOrcidInternal();
+            if (orcidInternal != null) {
+                Preferences prefs = orcidInternal.getPreferences();
+                if (prefs != null) {
+                    prefs.setSendEmailFrequencyDays(null);
+                    prefs.setSendOrcidFeatureAnnouncements(null);
                 }
             }
         }

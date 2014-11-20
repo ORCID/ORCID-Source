@@ -1022,7 +1022,7 @@ h1,h2,h3,h4,h5,h6,b,strong,.table th,.close,.nav-header,.label,.badge,.header .s
 	margin: 0px;
 	padding: 0px;
 	width: 98px;
-	height: 29px;
+	height: 34px;
 }
 
 .privacyToggle li {
@@ -1108,6 +1108,7 @@ ul.privacyHelp li {
 	height: 22px;
 	background: url('../img/privacy_icons_100.png') no-repeat;
 	background-size: 25px 66px;
+	display: list-item;
 }
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2) , only screen
@@ -1610,23 +1611,31 @@ a:hover {
 }
 
 .workspace-toolbar{
-    line-height: 30px;
 	margin-top: 0;
-	padding-left: 0;	
+	padding-left: 0;
+	text-align: right;	
 }
 
 .workspace-private-toolbar{
 	margin:0;
 	padding:0;
-	float:right;
+	position:relative;
+	width: 100%;
+	
 }
 
-.workspace-private-toolbar li{
-	display: inline;
+.workspace-private-toolbar li{	
+	display: inline-block;
+	vertical-align: top;
 }
 
 ul.workspace-private-toolbar li.bulk-checkbox-item{
-	width: 49px;
+	position: absolute;
+	right: 137px;
+}
+
+ul.workspace-private-toolbar li.bulk-checkbox-item input{
+	margin-top: 9px;
 }
 
 .orcid-id{
@@ -1688,7 +1697,7 @@ ul.workspace-private-toolbar li.bulk-checkbox-item{
 
 .workspace-accordion-header{
 	position: relative;	
-	background: #8A8A8A;
+	background: #494A4C;
 	height: 30px;
 	padding: 0 0 0 15px;	
 }
@@ -1702,6 +1711,10 @@ ul.workspace-private-toolbar li.bulk-checkbox-item{
 
 .workspace-accordion-header a.action-option:hover{
 	background: #a6ce39;
+	color: #FFF;
+}
+
+.workspace-accordion-header a.action-option:hover span:before{
 	color: #FFF;
 }
 
@@ -2754,12 +2767,6 @@ header overrides
 	height: 30px;
 	display: block;	
 	float: left;		
-}
-
-ul.workspace-private-toolbar > li{
-	display: inline-block;
-	padding: 0;	
-	margin-bottom: -6px;
 }
 
 .popover-form .input-xlarge {
@@ -3817,11 +3824,11 @@ p.orcid-id-container{
 .manage-button{
 	display: block;
 	float: right;
-	background: #C9CACB;
+	background: #C9C9CA;
 	line-height: 27px;
 	padding: 0 10px;
 	font-size: 14px;
-	color: #FFF;	
+	color: #494A4C;	
 	text-decoration: none;
 }
 
@@ -4047,7 +4054,7 @@ ul#body-work-list > li{
 }
 
 #workspace-publications .action-button-bar{
-	padding-right: 14px;
+	padding: 0 14px 0 0;	
 }
 
 #workspace-publications{
@@ -4148,10 +4155,6 @@ ul.id-details li{
 	color: #338caf;
 }
 
-.id-details .type {
-	font-weight: bold;
-}
-
 .id-details a:hover{
 	color: #a6ce39;
 }
@@ -4181,6 +4184,7 @@ ul.id-details li{
 .workspace-title{
 	float: left;
 	display: block;
+	color: #494A4C;
 }
 
 .workspace-title span{
@@ -4208,7 +4212,7 @@ ul.id-details li{
 }
 
 a.toolbar-button{
-	color: #939598;
+	color: #494A4C;
 	display: block;
 	background: #C9CACB;
 	border-radius: 50%;
@@ -4302,8 +4306,7 @@ ul.sources-options{
 	padding: 0;
 	list-style: none; 
 	list-style-type: none;
-	float: right;	
-	margin-right: -6px;
+	float: right;
 }
 
 ul.sources-options li{
@@ -4365,7 +4368,13 @@ ul.sources-edit-list > li{
 }
 
 .source-active{
-	background: #EEE;
+	background: #939598;
+	color: #FFF;
+	
+}
+
+.source-active > .sources-header div[class^="col-"]:not(:last-child){
+	padding-top: 12px;
 }
 
 .workspace-body-list .spinner{
@@ -4528,7 +4537,7 @@ ul.toggle-menu li:hover ul {
 
 .public-profile .bibtex-wizard:before{
 	font-size: 14px;
-	color: #FFF;
+	color: #494A4C;
 }
 
 .upload {
@@ -4595,6 +4604,34 @@ ul.toggle-menu li:hover ul {
 	display: inline-block;	
 	width: 100%;
 	margin-bottom: 10px;
+	padding-top: 5px;
+	background: #FFF;
+	border: 3px solid rgb(166, 206, 57);
+}
+
+.bulk-edit h4{
+	color: #494A4C;
+	margin-left: -11px;
+	margin-bottom: 3px;	
+	margin-top: 5px;
+	display: inline;
+}
+
+.bulk-edit span.hide-bulk{
+	padding: 2px 10px;
+	background: #C9C9CA;
+	color: #494A4C;
+	font-size: 11px;
+	margin-left: 25px;
+	display: inline;
+	vertical-align: top;
+	line-height: 21px;
+}
+
+.bulk-edit span.hide-bulk:hover{
+	cursor: pointer;
+	background: rgb(166, 206, 57);
+	color: #FFF;
 }
 
 .bulk-edit .col-md-5{
@@ -4607,12 +4644,12 @@ ul.toggle-menu li:hover ul {
 }
 
 .bulk-edit ol{
-	padding-left: 5px;
+	padding-left: 7px;
 }
 
-
 .bulk-edit ol li{
-	font-size: 12px;
+	font-size: 13px;
+	font-weight: 100;	 
 }
 
 .bulk-edit ul.bulk-edit-toolbar{
@@ -4634,13 +4671,19 @@ ul.toggle-menu li:hover ul {
 	text-align: center;
 }
 
+.bulk-edit ul.bulk-edit-toolbar > li.bulk-edit-toolbar-item  label{
+	color: #494A4C;
+	width: 100%;
+}
+
 .bulk-edit ul.bulk-edit-toolbar > li.bulk-edit-toolbar-item > label,
 .bulk-edit ul.bulk-edit-toolbar > li.bulk-edit-toolbar-item > div label{
 	display: block;
 	float: left;
 	height: 15px;
-	font-size: 11px;
-	font-weight: bold;		
+	font-size: 13px;
+	font-weight: normal;
+	margin-bottom: 10px;	
 }
 
 .bulk-edit ul.bulk-edit-toolbar > li.bulk-edit-toolbar-item > div{
@@ -4653,16 +4696,17 @@ ul.toggle-menu li:hover ul {
 	float: left;
 }
 
-.bulk-edit ul.bulk-edit-toolbar > li.bulk-edit-toolbar-item > div.privacy-options > label{
-	margin-left: 8px;
-}
-
 .bulk-edit ul.bulk-edit-toolbar > li.bulk-edit-toolbar-item div.popover-help-container{
 	position: relative !important;
 	left: 0 !important;
 	top: 0; 
 	float: left;
 	margin-left: 5px;	
+}
+
+.bibtex-box > div{
+	border: 3px solid rgb(166, 206, 57);
+	background: #FFF;
 }
 
 .custom-control-x {
@@ -4788,20 +4832,18 @@ ul.toggle-menu li:hover ul {
 .bulk-edit .bulk-edit-delete{	
 	display: block;
 	float: left;
-	margin-left: 3px;
+	margin: 5px 0 0 3px;
 	text-align: center;
+	
 }
 
 .block{ /* Forcing block */
 	display: block !important;
 }
 
-.bulk-edit-input{
-	vertical-align: 0;	
-}
-
 .trash-source{
 	text-align: right;
+	height: 21px;
 }
 
 ul.sources-actions{
@@ -4813,6 +4855,189 @@ ul.sources-actions li{
 	list-style-type: none;
 	display: inline;
 }
+
+.affiliation-box{
+	padding: 5px;
+}
+
+.combine-work ul.list-group li.list-group-item{
+	padding: 10px 15px 15px;
+	line-height: 28px;
+}
+
+.green-bg,
+.green-bg span.file_import:before{
+	background: rgb(166, 206, 57);
+	color: #FFF;
+}
+
+ul.sources-edit-list ul.sources-actions .git_create:hover:before{
+	color: rgb(166, 206, 57);	
+}
+
+.workspace-toolbar ul.workspace-private-toolbar li.works-details{
+	margin-bottom: 4px;
+	display: inline-block;
+	position: relative;	
+}
+
+.workspace-toolbar ul.workspace-private-toolbar li.works-details a{
+	height: 22px;
+	width: 22px;
+	display: block;	
+	color: #494A4C;
+	background: #C9CACB;
+	border-radius: 50%;
+	-webkit-border-radius: 50%;
+	-moz-border-radius: 50%;
+	padding: 15px;		
+}
+
+.workspace-toolbar ul.workspace-private-toolbar li.works-details a:hover{
+	background: rgb(166, 206, 57);
+}
+
+.workspace-toolbar ul.workspace-private-toolbar li.works-details > a >span:before{
+	top: -20px;
+	left: -8px;
+	color: #494A4C;
+	font-size: 17px;
+}
+
+.workspace-toolbar ul.workspace-private-toolbar li.works-details a:hover > span:before{
+	color: #FFF;
+}
+
+
+.hide-sources{	
+	padding: 0 7px;
+	background: #C9CACB;
+	font-size: 14px;
+	color: #494A4C;
+	cursor: pointer;
+	vertical-align: top; 
+}
+
+.hide-sources:hover{
+	background: rgb(166, 206, 57);
+	color: #FFF;	
+}
+
+.sources-actions .git_pull_request,
+.sources-options .git_pull_request,
+.sources-actions .git_create,
+.sources-options .git_create{
+	vertical-align: top;
+	padding-left: 18px;
+}
+
+.sources-actions .git_pull_request:before,
+.sources-options .git_pull_request:before,
+.sources-actions .git_create:before,
+.sources-options .git_create:before{
+	font-size: 17px;
+	color: #338caf;
+}
+
+.sources-actions .git_pull_request:hover:before{
+	color: #9FC836;
+}
+
+.source-line{
+	font-size: 13px;
+}
+
+.workspace-private-toolbar .bulk-edit-input-header{
+	margin-right: 2px;
+}
+
+ul.sources-edit-list > li.source-header{
+	box-shadow: none;
+}
+
+/* Works popovers */
+ul.sources-actions > li,
+ul.sources-options > li,
+ul.workspace-private-toolbar > li{
+	position: relative;
+}
+
+.popover-tooltip{
+	display: inline;
+	font-size: 12px;
+	white-space: nowrap;
+	padding: 2px;
+}
+
+ul.workspace-private-toolbar > li .popover-tooltip > .arrow{
+	left: 47px;
+}
+
+ul.sources-options > li .popover-tooltip > .arrow,
+ul.sources-actions > li .popover-tooltip > .arrow{
+	left: 64px;
+}
+
+.workspace-toolbar .works-details .show-hide-details-popover{	
+	top: -38px;
+	left: -33px;
+	color: #939598;
+}
+
+.popover-content strong{
+	color: #939598;
+}
+
+.workspace-top .popover-help-container .popover.privacy-myorcid3,
+.workspace-top .popover-help-container .popover.privacy-myorcid3:hover{
+	top: -143px;
+	left: -138px;	
+}
+
+.popover-help-container > .privacy-myorcid3 >.arrow{
+	left: 186px;
+}
+
+.source-line .sources-popover{	
+	top: -35px;
+	left: 74px;	
+}
+
+ul.sources-options .delete-group-popover,
+ul.sources-options .delete-source-popover,
+.trash-source .delete-activeSource-popover,
+ul.sources-actions .delete-inactiveSource-popover{
+	top: -41px;
+	left: -58px;
+}
+
+ul.sources-options .edit-source-popover,
+.trash-source .edit-activeSource-popover,
+ul.sources-actions .edit-inactiveSource-popover{
+	top: -41px;
+	left: -60px;
+}
+
+ul.sources-options .combine-duplicates-popover,
+ul.sources-actions .combine-inactiveDuplicates-popover,
+ul.sources-actions .combine-activeDuplicates-popover{
+	top: -41px;
+	left: -57px;
+}
+
+ul.workspace-private-toolbar .popover-help-container{
+	position: static;
+}
+
+ul.workspace-private-toolbar .popover-help-container .popover .popover-content a{
+	white-space: nowrap;
+}
+
+ul.workspace-private-toolbar .popover-help-container .popover{
+	max-width: none;
+	width: auto;
+}
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */

@@ -32,6 +32,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
+import org.orcid.core.constants.DefaultPreferences;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.security.DefaultPermissionChecker;
@@ -710,7 +711,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 SourceEntity source = emailEntity.getSource();
                 if (source != null) {
                     ClientDetailsEntity sourceClient = source.getSourceClient();
-                    if (sourceClient != null) {
+                    if (sourceClient != null && OrcidStringUtils.isClientId(sourceClient.getClientId())) {
                         email.setSourceClientId(sourceClient.getClientId());
                     } else {
                         email.setSource(source.getSourceId());
@@ -1077,9 +1078,13 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
         Preferences preferences = new Preferences();
         orcidInternal.setPreferences(preferences);
-        preferences.setSendChangeNotifications(profileEntity.getSendChangeNotifications() == null ? null : new SendChangeNotifications(profileEntity
-                .getSendChangeNotifications()));
-        preferences.setSendOrcidNews(profileEntity.getSendOrcidNews() == null ? null : new SendOrcidNews(profileEntity.getSendOrcidNews()));
+        preferences.setSendEmailFrequencyDays(String.valueOf(profileEntity.getSendEmailFrequencyDays()));
+        preferences.setSendChangeNotifications(new SendChangeNotifications(
+                profileEntity.getSendChangeNotifications() == null ? DefaultPreferences.SEND_CHANGE_NOTIFICATIONS_DEFAULT : profileEntity.getSendChangeNotifications()));
+        preferences.setSendOrcidNews(new SendOrcidNews(profileEntity.getSendOrcidNews() == null ? DefaultPreferences.SEND_ORCID_NEWS_DEFAULT : profileEntity
+                .getSendOrcidNews()));
+        preferences.setSendOrcidFeatureAnnouncements(profileEntity.getSendOrcidFeatureAnnouncements() == null ? DefaultPreferences.SEND_ORCID_FEATURE_ANNOUNCEMENTS
+                : profileEntity.getSendOrcidFeatureAnnouncements());
         // This column is constrained as not null in the DB so don't have to
         // worry about null!
         preferences.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(profileEntity.getActivitiesVisibilityDefault()));

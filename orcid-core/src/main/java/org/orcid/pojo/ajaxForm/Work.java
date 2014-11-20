@@ -32,6 +32,7 @@ import org.orcid.jaxb.model.message.Title;
 import org.orcid.jaxb.model.message.Url;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkCategory;
+import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.message.WorkType;
@@ -73,8 +74,12 @@ public class Work implements ErrorsInterface, Serializable {
 
     private String sourceName;
 
-    private WorkTitle workTitle;
+    private Text title;
 
+    private Text subtitle;
+    
+    private TranslatedTitle translatedTitle;
+    
     private Text workCategory;
 
     private Text workType;
@@ -100,24 +105,18 @@ public class Work implements ErrorsInterface, Serializable {
         w.setDateSortString(PojoUtil.createDateSortString(null, fuzz));
 
         // Set title and subtitle
-        if (!StringUtils.isEmpty(minimizedWorkEntity.getTitle())) {
-            WorkTitle workTitle = new WorkTitle();
-            Text title = Text.valueOf(minimizedWorkEntity.getTitle());
-            workTitle.setTitle(title);
+        if (!StringUtils.isEmpty(minimizedWorkEntity.getTitle())) 
+            w.setTitle(Text.valueOf(minimizedWorkEntity.getTitle()));
 
-            if (!StringUtils.isEmpty(minimizedWorkEntity.getTranslatedTitle())) {
-                TranslatedTitle translatedTitle = new TranslatedTitle();
-                translatedTitle.setContent(minimizedWorkEntity.getTranslatedTitle());
-                translatedTitle.setLanguageCode(minimizedWorkEntity.getTranslatedTitleLanguageCode());
-                workTitle.setTranslatedTitle(translatedTitle);
-            }
-
-            if (!StringUtils.isEmpty(minimizedWorkEntity.getSubtitle())) {
-                Text subtitle = Text.valueOf(minimizedWorkEntity.getSubtitle());
-                workTitle.setSubtitle(subtitle);
-            }
-            w.setWorkTitle(workTitle);
+        if (!StringUtils.isEmpty(minimizedWorkEntity.getTranslatedTitle())) {
+            TranslatedTitle translatedTitle = new TranslatedTitle();
+            translatedTitle.setContent(minimizedWorkEntity.getTranslatedTitle());
+            translatedTitle.setLanguageCode(minimizedWorkEntity.getTranslatedTitleLanguageCode());
+            w.setTranslatedTitle(translatedTitle);
         }
+
+        if (!StringUtils.isEmpty(minimizedWorkEntity.getSubtitle()))
+            w.setSubtitle(Text.valueOf(minimizedWorkEntity.getSubtitle()));        
 
         // Set Subtitle
         if (!StringUtils.isEmpty(minimizedWorkEntity.getJournalTitle()))
@@ -203,8 +202,23 @@ public class Work implements ErrorsInterface, Serializable {
             if (orcidWork.getSource().getSourceName() != null)
                 w.setSourceName(orcidWork.getSource().getSourceName().getContent());
         }
-        if (orcidWork.getWorkTitle() != null)
-            w.setWorkTitle(WorkTitle.valueOf(orcidWork.getWorkTitle()));
+        
+        WorkTitle workTitle = orcidWork.getWorkTitle();
+        if (workTitle == null) 
+            workTitle =  new WorkTitle();
+        if (workTitle.getTitle() != null) {
+            w.setTitle(Text.valueOf(workTitle.getTitle().getContent()));
+        }
+        if (workTitle.getSubtitle() != null) {
+            w.setSubtitle(Text.valueOf(workTitle.getSubtitle().getContent()));
+        }
+        if(workTitle.getTranslatedTitle() != null) {
+            TranslatedTitle translatedTitle = new TranslatedTitle();
+            translatedTitle.setContent((workTitle.getTranslatedTitle() == null) ? null : workTitle.getTranslatedTitle().getContent());
+            translatedTitle.setLanguageCode((workTitle.getTranslatedTitle() == null || workTitle.getTranslatedTitle().getLanguageCode() == null) ? null : workTitle.getTranslatedTitle().getLanguageCode());
+            w.setTranslatedTitle(translatedTitle);
+        }
+        
         if (orcidWork.getWorkType() != null) {
             w.setWorkType(Text.valueOf(orcidWork.getWorkType().value()));
             WorkCategory category = WorkCategory.fromWorkType(orcidWork.getWorkType());
@@ -254,9 +268,16 @@ public class Work implements ErrorsInterface, Serializable {
         ow.setWorkExternalIdentifiers(new WorkExternalIdentifiers(wiList));
         if (this.getSource() != null)
             ow.setSource(new Source(this.getSource()));
-        if (this.getWorkTitle() != null) {
-            ow.setWorkTitle(this.workTitle.toWorkTitle());
-        }
+        
+        if (this.getTitle() != null || this.getSubtitle() != null || this.getTranslatedTitle() != null)
+            ow.setWorkTitle(new WorkTitle());
+        if (this.getTitle() != null)
+            ow.getWorkTitle().setTitle(this.getTitle().toTitle());
+        if (this.getSubtitle() != null)
+            ow.getWorkTitle().setSubtitle(this.getSubtitle().toSubtitle());
+        if(this.getTranslatedTitle() != null)
+            ow.getWorkTitle().setTranslatedTitle(this.getTranslatedTitle().toTranslatedTitle());
+
         if (this.getWorkType() != null) {
             ow.setWorkType(WorkType.fromValue(this.getWorkType().getValue()));
         }
@@ -361,14 +382,6 @@ public class Work implements ErrorsInterface, Serializable {
         this.source = source;
     }
 
-    public WorkTitle getWorkTitle() {
-        return workTitle;
-    }
-
-    public void setWorkTitle(WorkTitle worksTitle) {
-        this.workTitle = worksTitle;
-    }
-
     public Text getWorkType() {
         return workType;
     }
@@ -455,5 +468,29 @@ public class Work implements ErrorsInterface, Serializable {
 
     public void setLastModified(Date lastModified) {
         this.lastModified = lastModified;
+    }
+
+    public Text getTitle() {
+        return title;
+    }
+
+    public void setTitle(Text title) {
+        this.title = title;
+    }
+
+    public Text getSubtitle() {
+        return subtitle;
+    }
+
+    public void setSubtitle(Text subtitle) {
+        this.subtitle = subtitle;
+    }
+
+    public TranslatedTitle getTranslatedTitle() {
+        return translatedTitle;
+    }
+
+    public void setTranslatedTitle(TranslatedTitle translatedTitle) {
+        this.translatedTitle = translatedTitle;
     }
 }

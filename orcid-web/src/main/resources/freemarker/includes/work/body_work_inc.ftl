@@ -18,11 +18,11 @@
 -->
 <ul ng-hide="!worksSrvc.groups.length" class="workspace-publications workspace-body-list bottom-margin-medium" id="body-work-list" ng-cloak>
     <li class="bottom-margin-small" ng-repeat="group in worksSrvc.groups | orderBy:['-dateSortString', 'title']">        
-		<div class="row" ng-repeat="work in group.activities | orderBy:['-dateSortString', 'workTitle.title.value']"> 
+		<div class="row" ng-repeat="work in group.activities | orderBy:['-dateSortString', 'title.value']"> 
 			<!-- Info -->
 			<div class="col-md-8 col-sm-8">
 		        <h3 class="work-title">
-		        	<strong ng-bind="work.workTitle.title.value"></strong><span class="work-subtitle" ng-show="work.workTitle.subtitle.value" ng-bind="':&nbsp;'.concat(work.workTitle.subtitle.value)"></span>
+		        	<strong ng-bind="work.title.value"></strong><span class="work-subtitle" ng-show="work.subtitle.value" ng-bind="':&nbsp;'.concat(work.subtitle.value)"></span>
 		        	<span ng-show="work.publicationDate.year">{{work.publicationDate.year}}</span><span ng-show="work.publicationDate.month">-{{work.publicationDate.month}}</span>
 		        </h3> 
 	        </div>

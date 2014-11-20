@@ -21,6 +21,7 @@ import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -124,9 +125,9 @@ public class PublicProfileController extends BaseWorkspaceController {
         if(!StringUtil.isBlank(countryName))
             mav.addObject("countryName", countryName);
         
-        HashMap<String, Work> minimizedWorksMap = new HashMap<String, Work>();
-        HashMap<String, Affiliation> affiliationMap = new HashMap<String, Affiliation>();
-        HashMap<String, Funding> fundingMap = new HashMap<String, Funding>();
+        LinkedHashMap<String, Work> minimizedWorksMap = new LinkedHashMap<String, Work>();
+        LinkedHashMap<String, Affiliation> affiliationMap = new LinkedHashMap<String, Affiliation>();
+        LinkedHashMap<String, Funding> fundingMap = new LinkedHashMap<String, Funding>();
 
         if(profile != null && profile.getOrcidBio() != null && profile.getOrcidBio().getBiography() != null && StringUtils.isNotBlank(profile.getOrcidBio().getBiography().getContent())){
             isProfileEmtpy = false;
@@ -277,10 +278,10 @@ public class PublicProfileController extends BaseWorkspaceController {
                         work.setLanguageName(languageName);
                     }
                     // Set translated title language name
-                    if (work.getWorkTitle() != null && work.getWorkTitle().getTranslatedTitle() != null
-                            && !StringUtils.isEmpty(work.getWorkTitle().getTranslatedTitle().getLanguageCode())) {
-                        String languageName = languages.get(work.getWorkTitle().getTranslatedTitle().getLanguageCode());
-                        work.getWorkTitle().getTranslatedTitle().setLanguageName(languageName);
+                    if (work.getTranslatedTitle() != null
+                            && !StringUtils.isEmpty(work.getTranslatedTitle().getLanguageCode())) {
+                        String languageName = languages.get(work.getTranslatedTitle().getLanguageCode());
+                        work.getTranslatedTitle().setLanguageName(languageName);
                     }
                     works.add(work);
                 }
@@ -322,10 +323,10 @@ public class PublicProfileController extends BaseWorkspaceController {
                     work.setLanguageName(languageName);
                 }
                 // Set translated title language name
-                if (work.getWorkTitle() != null && work.getWorkTitle().getTranslatedTitle() != null
-                        && !StringUtils.isEmpty(work.getWorkTitle().getTranslatedTitle().getLanguageCode())) {
-                    String languageName = languages.get(work.getWorkTitle().getTranslatedTitle().getLanguageCode());
-                    work.getWorkTitle().getTranslatedTitle().setLanguageName(languageName);
+                if (work.getTranslatedTitle() != null
+                        && !StringUtils.isEmpty(work.getTranslatedTitle().getLanguageCode())) {
+                    String languageName = languages.get(work.getTranslatedTitle().getLanguageCode());
+                    work.getTranslatedTitle().setLanguageName(languageName);
                 }
 
                 //If the work source is the user himself, fill the work source name
@@ -350,21 +351,21 @@ public class PublicProfileController extends BaseWorkspaceController {
         return null;
     }
 
-    public HashMap<String, Funding> fundingMap(String orcid) {
+    public LinkedHashMap<String, Funding> fundingMap(String orcid) {
         OrcidProfile profile = orcidProfileCacheManager.retrievePublicOrcidProfile(orcid);
         if (profile == null)
             return null;
         return activityCacheManager.fundingMap(profile);
     }
 
-    public HashMap<String, Affiliation> affiliationMap(String orcid) {
+    public LinkedHashMap<String, Affiliation> affiliationMap(String orcid) {
         OrcidProfile profile = orcidProfileCacheManager.retrievePublicOrcidProfile(orcid);
         if (profile == null)
             return null;
         return activityCacheManager.affiliationMap(profile);
     }
 
-    public HashMap<String, Work> minimizedWorksMap(String orcid) {
+    public LinkedHashMap<String, Work> minimizedWorksMap(String orcid) {
         OrcidProfile profile = orcidProfileCacheManager.retrievePublicOrcidProfile(orcid);
         if (profile == null)
             return null;

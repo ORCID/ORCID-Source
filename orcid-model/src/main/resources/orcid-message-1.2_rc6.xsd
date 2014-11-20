@@ -1897,8 +1897,10 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
+			    <xs:element ref="orcid:send-email-frequency-days" />
 				<xs:element ref="orcid:send-change-notifications" />
 				<xs:element ref="orcid:send-orcid-news" />
+				<xs:element ref="orcid:send-orcid-feature-announcements" />
 				<xs:element ref="orcid:activities-visibility-default" />
 				<xs:element ref="orcid:developer-tools-enabled" minOccurs="0"/>
 			</xs:sequence>
@@ -1917,6 +1919,7 @@
 	<xs:element name="encrypted-security-answer">
 		<xs:complexType mixed="true" />
 	</xs:element>
+	<xs:element name="send-email-frequency-days" type="xs:string" />
 	<xs:element name="send-change-notifications">
 		<xs:complexType>
 			<xs:simpleContent>
@@ -1931,6 +1934,7 @@
 			</xs:simpleContent>
 		</xs:complexType>
 	</xs:element>
+	<xs:element name="send-orcid-feature-announcements" type="xs:boolean" />
 	<xs:element name="activities-visibility-default">
 		<xs:complexType mixed="true">
 			<xs:simpleContent>

@@ -44,7 +44,7 @@
 	<#if RequestParameters['recordClaimed']??>
 	    <div ng-controller="ClaimThanks" style="display: hidden;"></div>	    
 	<#elseif !Session.CHECK_EMAIL_VALIDATED?exists && !inDelegationMode>
-    	<div ng-controller="VerifyEmailCtrl" style="display: hidden;"></div>
+    	<div ng-controller="VerifyEmailCtrl" style="display: hidden;" orcid-loading="{{loading}}"></div>
 	</#if>
 	<!-- ID Banner and other account information -->
     <div class="col-md-3 lhs left-aside">
@@ -72,7 +72,7 @@
 	                 	     privateClick="setPrivacy('PRIVATE', $event)" />
 		        	   
 		        	      <div ng-repeat="otherNames in otherNamesForm.otherNames">
-		        	          <input type="text" ng-model="otherNames.value"></input>
+		        	          <input type="text" ng-model="otherNames.value"></input
 		        	          <a ng-click="deleteKeyword(otherNames)" class="glyphicon glyphicon-trash grey"></a>
 		        	          <br />
 		        	          <span class="orcid-error" ng-show="otherNames.url.errors.length > 0">
@@ -246,71 +246,25 @@
                 <!-- Fundings -->
                	<#include "workspace_fundings_body_list_v3.ftl"/>
 		        <!-- Works -->                
-                <div id="workspace-publications" class="workspace-accordion-item workspace-accordion-active" ng-controller="WorkCtrl">
-                	<div class="workspace-accordion-header">
-                		<div class="row">
-                			<div class="col-md-3 col-sm-2 col-xs-12">
-		                		<div class="workspace-title" ng-controller="WorkspaceSummaryCtrl">
-			                		<a href="" ng-click="workspaceSrvc.toggleWorks($event)" class="toggle-text">
-				       			       <i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayWorks==false}"></i>
-				       			       <@orcid.msg 'workspace.Works'/> (<span ng-bind="worksSrvc.groups.length"></span>)
-				       			    </a>
-			       				</div>
-			       			</div>	
-			       			<div class="col-md-9 col-sm-10 col-xs-12 action-button-bar" ng-show="workspaceSrvc.displayWorks">
-								<#include "includes/workspace/workspace_act_sort_menu.ftl"/>
-		                		<ul class="workspace-bar-menu">		                			
-			        				<!-- Link Manually -->
-			        				<li>
-				        				<a href="" class="action-option works manage-button" ng-click="addWorkModal()">
-											<span class="glyphicon glyphicon-plus"></span>
-											<@orcid.msg 'manual_orcid_record_contents.link_manually'/>
-										</a>
-			        				</li>
-			        				<!-- Search & Link -->
-			        				<li>
-				        				<a class="action-option works manage-button" ng-click="showWorkImportWizard()">
-											<span class="glyphicon glyphicon-cloud-upload"></span>
-											<@orcid.msg 'manual_orcid_record_contents.search_link'/>
-										</a>	        				
-			        				</li>
-			        				<!-- Bibtex -->
-			        				<li>
-				        				<a class="action-option works manage-button" ng-click="openBibTextWizard()">
-											<span class="glyphicons file_import bibtex-wizard"></span>
-											<@orcid.msg 'workspace.bibtexImporter.link_bibtex'/>
-										</a>	        				
-			        				</li>
-			        				<li>
-			        				    <a class="action-option works manage-button" ng-click="toggleBulkEdit()">
-											<span class="glyphicon glyphicon-pencil"></span>Bulk Edit
-										</a>
-			        				</li>
-								</ul>								
-							</div>
-						</div>					
-					</div>
+                <div id="workspace-publications" class="workspace-accordion-item workspace-accordion-active" ng-controller="WorkCtrl" orcid-loaded="{{worksSrvc.worksToAddIds != null && worksSrvc.loading != true}}">
+                    <#include "includes/work/work_section_header_inc_v3.ftl"/>
 					
 					<!-- Bulk Edit -->
 					<div ng-show="bulkEditShow" ng-cloak>
-						<div class="grey-box box-border bulk-edit">
+						<div class="grey-box bulk-edit">
 							<div class="row">
 								<div class="col-md-7 col-sm-7">
+									<h4>Bulk edit</h4><span class="hide-bulk" ng-click="toggleBulkEdit()">Hide bulk edit</span>
 									<ol>
-										<li><b>Select works:</b> Clikck the checkbox beside each work or click the "Select All" checkbox.</li>
-										<li><b>Select editing action:</b> Click the trash can to delete all selected works or click a privacy setting to apply that setting to all selected works.</li>
+										<li>Select works: Click the checkbox beside each work. Use the checkbox to the right to select or deselect all.</li>
+										<li>Select editing action: Click the trash can to delete all selected works or click a privacy setting to apply that setting to all selected works.</li>
 									</ol>
 								</div>
 								<div class="col-md-5 col-sm-5">
-									<ul class="bulk-edit-toolbar">										
-										<li class="bulk-edit-toolbar-item"><!-- Cancel -->
-											<label></label>																						
-											<div class="cancel-bulk-edit">
-												<a class="btn btn-default pull-right" ng-click="toggleBulkEdit()">Cancel</a>
-											</div>
-										</li>
-										<li class="bulk-edit-toolbar-item"><!-- Select all -->
-											<label>Select all</label>											
+									<ul class="bulk-edit-toolbar">
+																			
+										<li class="bulk-edit-toolbar-item work-multiple-selector"><!-- Select all -->
+											<label>SELECT</label>											
 											<div id="custom-control-x">
 												<div class="custom-control-x" >	
 													<div class="dropdown-custom-menu" id="dropdown-custom-menu" ng-click="toggleSelectMenu()">										
@@ -321,44 +275,15 @@
 													</div>
 													<div>
 														<ul class="dropdown-menu" role="menu" id="special-menu" ng-class="{'block': bulkDisplayToggle == true}">
-												          <li><a href="" ng-click="bulkChangeAll(true); bulkDisplayToggle = false;">Select all</a></li>
-												          <li><a href="" ng-click="bulkChangeAll(false); bulkDisplayToggle = false;">Deselect all</a></li>							          							          
+												          <li><a href="" ng-click="bulkChangeAll(true); bulkDisplayToggle = false;">All selected</a></li>
+												          <li><a href="" ng-click="bulkChangeAll(false); bulkDisplayToggle = false;">None selected</a></li>							          							          
 												        </ul>			
 													</div>
 												</div>
 											</div>
 										</li>
-										<li class="bulk-edit-toolbar-item"><!-- Delete button -->
-											<label>Delete</label>
-											<div class="bulk-edit-delete">
-											    <div class="centered">
-													<a ng-click="deleteBulkConfirm()" class="ignore toolbar-button edit-item-button" title="Ignore">
-														<span class="edit-option-toolbar glyphicon glyphicon-trash"></span>
-													</a>
-												</div>
-											</div>
-										</li>
 										<li class="bulk-edit-toolbar-item"><!-- Privacy control -->
-											<div class="privacy-options">
-												<label>Edit privacy</label>
-												<div class="privacy-options-popover"> 
-													<div class="popover-help-container" ng-class="{'popover-help-container-show':privacyHelp[work.putCode.value]==true}" style="position: absolute; left: 110px; top: 0px;">
-											        	<a ng-click="toggleClickPrivacyHelp(work.putCode.value)"><i class="glyphicon glyphicon-question-sign" style="width: 14px;"></i></a>
-											            <div class="popover bottom" style="">
-													        <div class="arrow" style=""></div>
-													        <div class="popover-content">
-													        	<strong>Who can see this?</strong>
-														        <ul class="privacyHelp">
-														        	<li class="public" style="color: #009900;">everyone</li>
-														        	<li class="limited" style="color: #ffb027;">trusted parties</li>
-														        	<li class="private" style="color: #990000;">only me</li>
-														        </ul>
-														        <a href="http://support.orcid.org/knowledgebase/articles/124518-orcid-privacy-settings" target="_blank">More information on privacy settings</a>
-													        </div>
-													    </div>
-											    	</div>
-										    	</div>
-									    	</div>
+											<label>EDIT</label>											
 											<div class="bulk-edit-privacy-control">
 												<@orcid.privacyToggle2 angularModel="groupPrivacy()" 
 													    questionClick=""
@@ -367,6 +292,13 @@
 									                	limitedClick="setBulkGroupPrivacy('LIMITED', $event)" 
 									                	privateClick="setBulkGroupPrivacy('PRIVATE', $event)"/>
 								 			</div>
+								 			<div class="bulk-edit-delete pull-right">
+											    <div class="centered">
+													<a ng-click="deleteBulkConfirm()" class="ignore toolbar-button edit-item-button" title="Ignore">
+														<span class="edit-option-toolbar glyphicon glyphicon-trash"></span>
+													</a>
+												</div>
+											</div>
 										</li>
 									</ul>
 								</div>							
@@ -400,7 +332,7 @@
 					   	<div ng-repeat="work in worksFromBibtex" ng-cloak class="grey-box bottomBuffer box-border">
 					   		  <div class="row">	  
 			        	       	  <div class="col-md-9">
-			        	          	{{work.workTitle.title.value}}
+			        	          	{{work.title.value}}
 			        	          </div>
 			        	          <div class="col-md-3 bibtex-options-menu">
 			        	          	<ul>
@@ -417,17 +349,6 @@
 						<#include "includes/work/body_work_inc_v3.ftl"/>						
 	            	</div>
             	</div>
-            	
-            	<#--
-        		<div id="workspace-fundings" class="workspace-accordion-item">
-        			<div class="workspace-accordion-header"><a href="#"><@orcid.msg 'workspace.Grants'/></a></div>
-            	</div>
-            	
-        		<div id="workspace-patents" class="workspace-accordion-item">
-        			<div class="workspace-accordion-header"><a href="#"><@orcid.msg 'workspace.Patents'/></a></div>
-            	</div>
-            	-->
-            	
             </div>
         </div>
     </div>    
@@ -449,42 +370,34 @@
 	</div>		
 </script>
 
-<script type="text/ng-template" id="combine-work-template">	
+<script type="text/ng-template" id="combine-work-template">
 	<div class="lightbox-container">
+		<div class="row combine-work">
+			<div class="col-md-12 col-xs-12 col-sm-12">
+				<h3>Selected work "{{combineWork.title.value}}"				
+					<span ng-show="hasCombineableEIs(combineWork)">
+						(<span ng-repeat='ie in combineWork.workExternalIdentifiers'>
+							<span ng-bind-html='ie | workExternalIdentifierHtml:$first:$last:combineWork.workExternalIdentifiers.length'></span>
+					 	</span>)
+					</span>				
+				</h3>
+				<p>Combine with (select one):</p>
+				<ul class="list-group">
+  					<li class="list-group-item" ng-repeat="group in worksSrvc.groups | orderBy:sortState.predicate:sortState.reverse" ng-show="combineWork.putCode.value != group.getDefault().putCode.value && validCombineSel(combineWork,group.getDefault())">
+						<strong>{{group.getDefault().title.value}}</strong>
+						<a ng-click="combined(combineWork,group.getDefault())" class="btn btn-primary pull-right bottomBuffer">Combine</a>
+
+					</li>  					
+				</ul>
+			</div>
+		</div>
 		<div class="row">
 			<div class="col-md-12 col-xs-12 col-sm-12">
-				<table>
-				    <tr>
-				       <th>Selected work "{{combineWork.workTitle.title.value}}"&nbsp;</h4></th>
-				       <td>
-				       		<span ng-show="hasCombineableEIs(combineWork)">
-				       			(<span ng-repeat='ie in combineWork.workExternalIdentifiers'><span
-									ng-bind-html='ie | workExternalIdentifierHtml:$first:$last:combineWork.workExternalIdentifiers.length'></span>
-						   		</span>)
-						   	</span>
-						</td>
-				       <td></td>
-				    </tr>
-				    <tr>
-				       <td colspan=3">combine with (select one):</td>
-				    </tr>
-				    <tr ng-repeat="group in worksSrvc.groups | orderBy:sortPredicate:sortReverse" ng-show="combineWork.putCode.value != group.getDefault().putCode.value && validCombineSel(combineWork,group.getDefault())">
-				    	<td><strong>{{group.getDefault().workTitle.title.value}}</strong></td>
-				    	<td>
-				    		<span ng-show="hasCombineableEIs(group.getDefault())">
-				    		(<span ng-repeat='ie in group.getDefault().workExternalIdentifiers'><span
-								ng-bind-html='ie | workExternalIdentifierHtml:$first:$last:combineWork.workExternalIdentifiers.length'></span>
-						   	</span>)
-						   	</span>
-						   	&nbsp;				    	
-				    	</td>
-				    	<td><button ng-click="combined(combineWork,group.getDefault())">Combine</button></td>
-				    </tr>
-				</table>
-				<span class="btn" id="modal-close" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel'/></span>								
+				<span class="btn close-button pull-right" id="modal-close" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel'/></span>
 			</div>
-		</div>		
-	</div>		
+		</div>
+	</div>
+	
 </script>
 
 
@@ -549,6 +462,7 @@
 		<div class="row">
 			<div class="col-md-12 col-sm-12 col-xs-12">
 				<h3>Please confirm deleting {{bulkDeleteCount}} items </h3>
+				<span class="orcid-error" ng-show="bulkDeleteCount != delCountVerify">To delete these {{bulkDeleteCount}} items, please enter the number of items you will be deleting <input type="text" size="3" ng-init="delCountVerify=0" ng-model="delCountVerify"/>.</span></br > 
 				<button class="btn btn-danger" ng-click="bulkDeleteFunction()"><@orcid.msg 'freemarker.btnDelete'/></button> 
 				<a ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel'/></a>
 			<div>

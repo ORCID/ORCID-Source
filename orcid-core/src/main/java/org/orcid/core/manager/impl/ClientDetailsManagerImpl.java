@@ -312,7 +312,7 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
         ClientDetailsEntity result = null;
         try {
             Date lastModified = clientDetailsDao.getLastModified(clientId);
-            result = clientDetailsDao.findByClientId(clientId, lastModified);
+            result = clientDetailsDao.findByClientId(clientId, lastModified.getTime());
             if (result != null) {
                 if (!result.getClientId().equals(clientId))
                     LOGGER.error("Client getClientId doesn't match. Requested: " + clientId + " Returned: " + result.getClientId());

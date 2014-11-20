@@ -53,7 +53,7 @@ var GroupedActivities = function(type) {
 };
 
 GroupedActivities.count = 0;
-GroupedActivities.FUNDING = 'funding';
+GroupedActivities.prototype.FUNDING = 'funding';
 GroupedActivities.ABBR_WORK = 'abbrWork';
 GroupedActivities.AFFILIATION = 'affiliation';
 
@@ -191,9 +191,13 @@ GroupedActivities.prototype.keyMatch = function(activity) {
 GroupedActivities.prototype.makeDefault = function(putCode) {
     this.defaultPutCode = putCode;
     this.dateSortString = this.activities[putCode].dateSortString;
-    if (this.type == GroupedActivities.ABBR_WORK) this.title = this.activities[putCode].workTitle.title.value;
-    else if (this.type == GroupedActivities.FUNDING) this.title = this.activities[putCode].fundingTitle.title.value;
-    else if (this.type == GroupedActivities.AFFILIATION) this.title = this.activities[putCode].affiliationName.value;
+    var act = this.activities[putCode];
+    var title = null;
+    // at some point we should make this easier by making all paths match
+    if (this.type == GroupedActivities.ABBR_WORK) title = act.title;
+    else if (this.type == GroupedActivities.FUNDING) title = act.fundingTitle.title;
+    else if (this.type == GroupedActivities.AFFILIATION) title = act.affiliationName;
+    this.title =  title != null ? title.value : null;
 };
 
 GroupedActivities.prototype.rmByPut = function(putCode) {
@@ -301,48 +305,44 @@ orcidNgModule.directive('compile', function($compile) {
     };
   });
 
-/*
- * a service to hold common sort functions
- */
-orcidNgModule.factory("actSortSrvc", ['$rootScope', function ($rootScope) {
-    var sortPredicateMap = {};
-    sortPredicateMap[GroupedActivities.ABBR_WORK] = {};
-    sortPredicateMap[GroupedActivities.ABBR_WORK]['date'] = ['-dateSortString', 'title','getDefault().workType.value'];
-    sortPredicateMap[GroupedActivities.ABBR_WORK]['title'] = ['title', '-dateSortString','getDefault().workType.value'];
-    sortPredicateMap[GroupedActivities.ABBR_WORK]['type'] = ['getDefault().workType.value','title', '-dateSortString'];
 
-    sortPredicateMap[GroupedActivities.FUNDING] = {};
-    sortPredicateMap[GroupedActivities.FUNDING]['date'] = ['-dateSortString', 'title','getDefault().fundingTypeForDisplay'];
-    sortPredicateMap[GroupedActivities.FUNDING]['title'] = ['title', '-dateSortString','getDefault().fundingTypeForDisplay'];
-    sortPredicateMap[GroupedActivities.FUNDING]['type'] = ['getDefault().fundingTypeForDisplay','title', '-dateSortString'];
+var ActSortState = function(groupType) {
+    this.type = groupType;
+    this.predicateKey = 'date';
+    this.reverseKey = {};
+    this.reverseKey['date']  = false;
+    this.reverseKey['title'] = false;
+    this.reverseKey['type']  = false;
+    this.predicate = this.predicateMap[this.type][this.predicateKey];
+};
 
-    sortPredicateMap[GroupedActivities.AFFILIATION] = {};
-    sortPredicateMap[GroupedActivities.AFFILIATION]['date'] = ['-dateSortString', 'title'];
-    sortPredicateMap[GroupedActivities.AFFILIATION]['title'] = ['title', '-dateSortString'];
 
-    var actSortSrvc = {
-            initScope: function($scope, groupType) {
-                $scope.sortGroupType = groupType;
-                $scope.sortGroupType = groupType;
-                var key = $scope.sortPredicateKey = 'date';
-                $scope.sortPredicate = sortPredicateMap[$scope.sortGroupType][key];
-                $scope.sortReverse = false;
-                $scope.sortReverseKey = {};
-                $scope.sortReverseKey['date']  = false;
-                $scope.sortReverseKey['title'] = false;
-                $scope.sortReverseKey['type']  = false;
-            },
-            sort: function(key, $scope) {
-                if ($scope.sortPredicateKey == key){
-                    $scope.sortReverse = ! $scope.sortReverse;
-                    $scope.sortReverseKey[key] = ! $scope.sortReverseKey[key];
-                }
-                $scope.sortPredicateKey = key;
-                $scope.sortPredicate = sortPredicateMap[$scope.sortGroupType][key];
-            }
-    };
-    return actSortSrvc;
-}]);
+var sortPredicateMap = {};
+sortPredicateMap[GroupedActivities.ABBR_WORK] = {};
+sortPredicateMap[GroupedActivities.ABBR_WORK]['date'] = ['-dateSortString', 'title','getDefault().workType.value'];
+sortPredicateMap[GroupedActivities.ABBR_WORK]['title'] = ['title', '-dateSortString','getDefault().workType.value'];
+sortPredicateMap[GroupedActivities.ABBR_WORK]['type'] = ['getDefault().workType.value','title', '-dateSortString'];
+
+sortPredicateMap[GroupedActivities.FUNDING] = {};
+sortPredicateMap[GroupedActivities.FUNDING]['date'] = ['-dateSortString', 'title','getDefault().fundingTypeForDisplay'];
+sortPredicateMap[GroupedActivities.FUNDING]['title'] = ['title', '-dateSortString','getDefault().fundingTypeForDisplay'];
+sortPredicateMap[GroupedActivities.FUNDING]['type'] = ['getDefault().fundingTypeForDisplay','title', '-dateSortString'];
+
+sortPredicateMap[GroupedActivities.AFFILIATION] = {};
+sortPredicateMap[GroupedActivities.AFFILIATION]['date'] = ['-dateSortString', 'title'];
+sortPredicateMap[GroupedActivities.AFFILIATION]['title'] = ['title', '-dateSortString'];
+ActSortState.prototype.predicateMap = sortPredicateMap;
+
+
+ActSortState.prototype.sortBy = function(key) {
+        if (this.predicateKey == key){
+           this.reverse = ! this.reverse;
+           this.reverseKey[key] = ! this.reverseKey[key];
+        }
+        this.predicateKey = key;
+        this.predicate = this.predicateMap[this.type][key];
+};
+
 
 orcidNgModule.factory("actBulkSrvc", ['$rootScope', function ($rootScope) {
     var actBulkSrvc = {
@@ -905,7 +905,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                     };
                 };
                 // remove work on server
-                worksSrvc.removeWork(rmWork);
+                worksSrvc.removeWork(rmWork, function() {worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);});
             },
             makeDefault: function(group, putCode) {
                 group.makeDefault(putCode);
@@ -957,7 +957,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                     failFunc();
                 });
             },
-            removeWork: function(work) {
+            removeWork: function(work,callback) {
                 $.ajax({
                     url: getBaseUri() + '/works/works.json',
                     type: 'DELETE',
@@ -968,6 +968,8 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                         if(data.errors.length != 0){
                             console.log("Unable to delete work.");
                         };
+                        if (callback)
+                            callback(data);
                     }
                 }).fail(function() {
                     console.log("Error deleting work.");
@@ -1145,7 +1147,7 @@ orcidNgModule.factory("prefsSrvc", function ($rootScope) {
                     }
                 }).fail(function() {
                     // something bad is happening!
-                    console.log("error with multi email");
+                    console.log("error with prefs");
                 });
             },
             savePrivacyPreferences: function() {
@@ -1161,7 +1163,7 @@ orcidNgModule.factory("prefsSrvc", function ($rootScope) {
                     }
                 }).fail(function() {
                     // something bad is happening!
-                    console.log("error with multi email");
+                    console.log("error with prefs");
                 });
             }
         };
@@ -1169,7 +1171,7 @@ orcidNgModule.factory("prefsSrvc", function ($rootScope) {
         // populate the prefs
         serv.getPrivacyPreferences();
 
-    return serv;
+    return serv; 
 });
 
 orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) {
@@ -1288,12 +1290,12 @@ orcidNgModule.filter('ajaxFormDateToISO8601', function(){
         if (input.year) str += input.year;
         if (input.month) {
             if (str.length > 0) str += '-';
-            str += input.month;
+            str += Number(input.month).pad(2);
         }
         if (input.day) {
             if (str.length > 0)
                 str += '-';
-            str += input.day;
+            str += Number(input.day).pad(2);
         }
         return str;
     };
@@ -1439,6 +1441,12 @@ function EditTableCtrl($scope) {
         $scope.showEditEmail = !$scope.showEditEmail;
         $scope.emailUpdateToggleText();
     };
+    
+    $scope.openEmailEdit = function() {
+        $scope.showEditEmail = true;
+        $scope.emailUpdateToggleText();
+        window.location.hash = "#editEmail"
+    };
 
     // init email edit row
     $scope.showEditEmail = (window.location.hash === "#editEmail");
@@ -1542,6 +1550,10 @@ function EditTableCtrl($scope) {
     $scope.socialNetworksUpdateToggleText();
 };
 
+function NotificationPreferencesCtrl($scope, $compile, emailSrvc, prefsSrvc, emailSrvc) {
+    $scope.prefsSrvc = prefsSrvc;
+    $scope.emailSrvc = emailSrvc;
+};
 
 function WorksPrivacyPreferencesCtrl($scope, prefsSrvc) {
     $scope.prefsSrvc = prefsSrvc;
@@ -2576,6 +2588,7 @@ function ClaimCtrl($scope, $compile, commonSrvc) {
 
 
 function VerifyEmailCtrl($scope, $compile, emailSrvc) {
+    $scope.loading = true;
     $scope.getEmails = function() {
         $.ajax({
             url: getBaseUri() + '/account/emails.json',
@@ -2595,7 +2608,6 @@ function VerifyEmailCtrl($scope, $compile, emailSrvc) {
                 if (!primeVerified) {
                     var colorboxHtml = $compile($('#verify-email-modal').html())($scope);
                     $scope.$apply();
-
                     $.colorbox({
                         html : colorboxHtml,
                         escKey:false,
@@ -2606,6 +2618,8 @@ function VerifyEmailCtrl($scope, $compile, emailSrvc) {
                                 });
                         $.colorbox.resize();
                 };
+                $scope.loading = false;
+                $scope.$apply();
             }
         }).fail(function() {
             // something bad is happening!
@@ -2737,14 +2751,14 @@ function WorkspaceSummaryCtrl($scope, $compile, affiliationsSrvc, fundingSrvc, w
     };
 }
 
-function PublicEduAffiliation($scope, $compile, $filter, affiliationsSrvc, actSortSrvc){
-    actSortSrvc.initScope($scope, GroupedActivities.AFFILIATION);
+function PublicEduAffiliation($scope, $compile, $filter, workspaceSrvc , affiliationsSrvc){
+    $scope.workspaceSrvc = workspaceSrvc;
     $scope.affiliationsSrvc = affiliationsSrvc;
     $scope.moreInfo = {};
-    $scope.displayEducation = true;
 
+    $scope.sortState = new ActSortState(GroupedActivities.AFFILIATION);
     $scope.sort = function(key) {
-        actSortSrvc.sort(key,$scope);
+        $scope.sortState.sortBy(key);
     };
 
     // remove once grouping is live
@@ -2770,23 +2784,17 @@ function PublicEduAffiliation($scope, $compile, $filter, affiliationsSrvc, actSo
         $scope.moreInfo[key]=false;
     };
 
-    $scope.toggleEducation = function(){
-        $scope.displayEducation = !$scope.displayEducation;
-        console.log('Education');
-    };
-
 }
 
-function PublicEmpAffiliation($scope, $compile, $filter, affiliationsSrvc, actSortSrvc){
-    actSortSrvc.initScope($scope, GroupedActivities.AFFILIATION);
+function PublicEmpAffiliation($scope, $compile, $filter, workspaceSrvc, affiliationsSrvc){
+    $scope.workspaceSrvc = workspaceSrvc;
     $scope.affiliationsSrvc = affiliationsSrvc;
     $scope.moreInfo = {};
-    $scope.displayEmployment = true;
 
+    $scope.sortState = new ActSortState(GroupedActivities.AFFILIATION);
     $scope.sort = function(key) {
-        actSortSrvc.sort(key,$scope);
+        $scope.sortState.sortBy(key);
     };
-
 
     $scope.toggleClickMoreInfo = function(key) {
         if (!document.documentElement.className.contains('no-touch'))
@@ -2812,15 +2820,10 @@ function PublicEmpAffiliation($scope, $compile, $filter, affiliationsSrvc, actSo
 
     affiliationsSrvc.setIdsToAdd(orcidVar.affiliationIdsJson);
     affiliationsSrvc.addAffiliationToScope(orcidVar.orcidId +'/affiliations.json');
-
-    $scope.toggleEmployment = function(){
-        $scope.displayEmployment = !$scope.displayEmployment;
-    };
 }
 
 
-function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceSrvc, actSortSrvc, commonSrvc){
-    actSortSrvc.initScope($scope, GroupedActivities.AFFILIATION);
+function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceSrvc, commonSrvc){
     $scope.affiliationsSrvc = affiliationsSrvc;
     $scope.workspaceSrvc = workspaceSrvc;
     $scope.editAffiliation;
@@ -2829,8 +2832,9 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
     $scope.moreInfo = {};
     $scope.moreInfoCurKey = null;
 
+    $scope.sortState = new ActSortState(GroupedActivities.AFFILIATION);
     $scope.sort = function(key) {
-        actSortSrvc.sort(key,$scope);
+        $scope.sortState.sortBy(key);
     };
 
     $scope.toggleClickPrivacyHelp = function(key) {
@@ -3120,8 +3124,7 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 /**
  * Fundings Controller
  * */
-function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc, actSortSrvc, commonSrvc) {
-    actSortSrvc.initScope($scope, GroupedActivities.FUNDING);
+function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc, commonSrvc) {
     $scope.workspaceSrvc = workspaceSrvc;
     $scope.fundingSrvc = fundingSrvc;
     $scope.addingFunding = false;
@@ -3155,8 +3158,9 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc, actS
             "putCode": null
         };
 
+    $scope.sortState = new ActSortState(GroupedActivities.FUNDING);
     $scope.sort = function(key) {
-        actSortSrvc.sort(key,$scope);
+        $scope.sortState.sortBy(key);
     };
 
     // remove once grouping is live
@@ -3578,11 +3582,16 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc, actS
 /**
  * Public Funding Controller
  * */
-function PublicFundingCtrl($scope, $compile, $filter, fundingSrvc){
+function PublicFundingCtrl($scope, $compile, $filter, workspaceSrvc, fundingSrvc){
     $scope.fundingSrvc = fundingSrvc;
+    $scope.workspaceSrvc = workspaceSrvc;
     $scope.moreInfo = {};
-    $scope.displayFunding = true;
 
+    $scope.sortState = new ActSortState(GroupedActivities.FUNDING);
+    $scope.sort = function(key) {
+        $scope.sortState.sortBy(key);
+    };
+    
     // remove once grouping is live
     $scope.toggleClickMoreInfo = function(key) {
         if (!document.documentElement.className.contains('no-touch'))
@@ -3616,24 +3625,22 @@ function PublicFundingCtrl($scope, $compile, $filter, fundingSrvc){
         return info;
     };
 
-    $scope.toggleFunding = function(){
-        $scope.displayFunding = !$scope.displayFunding;
-    };
 }
 
-function PublicWorkCtrl($scope, $compile, $filter, worksSrvc, actSortSrvc) {
-    actSortSrvc.initScope($scope, GroupedActivities.ABBR_WORK);
+function PublicWorkCtrl($scope, $compile, $filter, workspaceSrvc, worksSrvc) {
     $scope.worksSrvc = worksSrvc;
+    $scope.workspaceSrvc = workspaceSrvc;
     $scope.showBibtex = {};
     $scope.moreInfoOpen = false;
     $scope.moreInfo = {};
-    $scope.displayWorks = true;
     $scope.editSources = {};
+    $scope.showElement = {};
 
+    $scope.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
     $scope.sort = function(key) {
-        actSortSrvc.sort(key,$scope);
+        $scope.sortState.sortBy(key);
     };
-
+    
     $scope.bibtexShowToggle = function (putCode) {
         $scope.showBibtex[putCode] = !($scope.showBibtex[putCode]);
     };
@@ -3641,8 +3648,8 @@ function PublicWorkCtrl($scope, $compile, $filter, worksSrvc, actSortSrvc) {
     $scope.renderTranslatedTitleInfo = function(putCode) {
         var info = null;
 
-        if(putCode != null && $scope.worksSrvc.details[putCode] != null && $scope.worksSrvc.details[putCode].workTitle != null && $scope.worksSrvc.details[putCode].workTitle.translatedTitle != null) {
-            info = $scope.worksSrvc.details[putCode].workTitle.translatedTitle.content + ' - ' + $scope.worksSrvc.details[putCode].workTitle.translatedTitle.languageName;
+        if(putCode != null && $scope.worksSrvc.details[putCode] != null && $scope.worksSrvc.details[putCode].translatedTitle != null) {
+            info = $scope.worksSrvc.details[putCode].translatedTitle.content + ' - ' + $scope.worksSrvc.details[putCode].translatedTitle.languageName;
         }
 
         return info;
@@ -3709,13 +3716,17 @@ function PublicWorkCtrl($scope, $compile, $filter, worksSrvc, actSortSrvc) {
         $('.work-more-info-container').css('display', 'none');
     };
 
-    $scope.toggleWorks = function(){
-        $scope.displayWorks = !$scope.displayWorks;
+    $scope.showTooltip = function (element){    	
+        $scope.showElement[element] = true;
     };
+
+    $scope.hideTooltip = function (element){    	
+        $scope.showElement[element] = false;
+    };
+
 }
 
-function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSrvc, actBulkSrvc, commonSrvc) {
-    actSortSrvc.initScope($scope, GroupedActivities.ABBR_WORK);
+function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actBulkSrvc, commonSrvc) {
     actBulkSrvc.initScope($scope);
     $scope.canReadFiles = false;
     $scope.showBibtexImportWizard = false;
@@ -3734,6 +3745,14 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
     $scope.bibtexCancelLink = false;
     $scope.bibtextWork = false;
     $scope.bibtextWorkIndex = null;
+    $scope.showElement = {};
+    $scope.delCountVerify = 0;
+    $scope.bulkDeleteCount = 0;
+
+    $scope.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
+    $scope.sort = function(key) {
+        $scope.sortState.sortBy(key);
+    };
 
     $scope.toggleBulkEdit = function() {
         if (!$scope.bulkEditShow) {
@@ -3772,6 +3791,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
     };
 
     $scope.deleteBulk = function () {
+        if ($scope.delCountVerify != parseInt($scope.bulkDeleteCount)) return;
         var delPuts = new Array();
         for (var idx in worksSrvc.groups)
             if ($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value])
@@ -3784,6 +3804,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
 
 
     $scope.deleteBulkConfirm = function(idx) {
+        $scope.delCountVerify = 0;
         $scope.bulkDeleteCount = 0;
         for (var idx in worksSrvc.groups)
             console.log($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value]);
@@ -3803,10 +3824,6 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
     $scope.sortOtherLast = function(type) {
         if (type.key == 'other') return 'ZZZZZ';
         return type.value;
-    };
-
-    $scope.sort = function(key) {
-        actSortSrvc.sort(key,$scope);
     };
 
     $scope.loadBibtexJs = function() {
@@ -4072,8 +4089,8 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
     $scope.renderTranslatedTitleInfo = function(putCode) {
         var info = null;
 
-        if(putCode != null && $scope.worksSrvc.details[putCode] != null && $scope.worksSrvc.details[putCode].workTitle != null && $scope.worksSrvc.details[putCode].workTitle.translatedTitle != null) {
-            info = $scope.worksSrvc.details[putCode].workTitle.translatedTitle.content + ' - ' + $scope.worksSrvc.details[putCode].workTitle.translatedTitle.languageName;
+        if(putCode != null && $scope.worksSrvc.details[putCode] != null && $scope.worksSrvc.details[putCode].translatedTitle != null) {
+            info = $scope.worksSrvc.details[putCode].translatedTitle.content + ' - ' + $scope.worksSrvc.details[putCode].translatedTitle.languageName;
         }
 
         return info;
@@ -4186,8 +4203,8 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
         $scope.deletePutCode = putCode;
         $scope.deleteGroup = deleteGroup;
         var work = worksSrvc.getWork(putCode);
-        if (work.workTitle && work.workTitle.title)
-            $scope.fixedTitle = work.workTitle.title.value;
+        if (work.title)
+            $scope.fixedTitle = work.title.value;
         else $scope.fixedTitle = '';
         var maxSize = 100;
         if($scope.fixedTitle.length > maxSize)
@@ -4257,6 +4274,15 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actSortSr
         $scope.editWork.workCategory.errors = [];
         $scope.editWork.workType.errors = [];
     };
+    
+    $scope.showTooltip = function (element){    	
+    	$scope.showElement[element] = true;
+    	
+    }
+    
+    $scope.hideTooltip = function (element){    	
+    	$scope.showElement[element] = false;
+    }
 }
 
 function SearchCtrl($scope, $compile){
@@ -6944,13 +6970,13 @@ function OauthAuthorizationController($scope, $compile, $sce, commonSrvc){
                 $scope.authorizationForm.userName.value = user_id;
                 if($scope.authorizationForm.userName.value) {
                     $scope.isOrcidPresent = true;
-                    $scope.showRegisterForm = false;
+                    $scope.showRegisterForm = false;                    
                 }
                 // #show_login - legacy fragment id, we should remove this sometime
                 // after November 2014 and only support &show_login=true
                 if(window.location.href.endsWith('#show_login'))
                     $scope.showRegisterForm = false;
-                else
+                else if(!$scope.isOrcidPresent)
                     $scope.showRegisterForm = !orcidVar.showLogin;
                 $scope.$apply();
             }

@@ -16,7 +16,6 @@
  */
 package org.orcid.core.profileEvent;
 
-import java.net.URI;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -78,7 +77,7 @@ public class PrivPolicyEmail2014_03 implements ProfileEvent {
         if (isUser) {
             ProfileEventType pet = ProfileEventType.POLICY_UPDATE_2014_03_SENT;
             try {
-                if (!notificationManager.sendPrivPolicyEmail2014_03(orcidProfile, new URI(orcidUrlManager.getBaseUrl())))
+                if (!notificationManager.sendPrivPolicyEmail2014_03(orcidProfile))
                     pet = ProfileEventType.POLICY_UPDATE_2014_03_FAIL;
 
             } catch (Exception e) {

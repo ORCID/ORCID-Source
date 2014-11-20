@@ -306,7 +306,7 @@ public class ManageMembersControllerTest extends BaseControllerTest {
         assertNotNull(group);
         assertEquals(1, group.getErrors().size());
         assertEquals(manageMembers.getMessage("group.salesforce_id.invalid", new ArrayList<String>()), group.getErrors().get(0));
-    }
+    }        
     
     @Test       
     public void findClientTest() throws Exception {
@@ -359,5 +359,24 @@ public class ManageMembersControllerTest extends BaseControllerTest {
         } else {
             fail("Invalid redirect uri: " + rUri2.getValue().getValue());
         }
+    }
+    
+    @Test
+    @Rollback(true)
+    public void editClientWithInvalidRedirectUriTest() throws Exception {
+        //Client with all redirect uris default
+        Client client_4443 = manageMembers.findClient("4444-4444-4444-4443");
+        assertNotNull(client_4443);
+        RedirectUri rUri = new RedirectUri();
+        rUri.setType(Text.valueOf("default"));
+        rUri.setValue(Text.valueOf("1.com"));
+        
+        client_4443.getRedirectUris().add(rUri);
+        
+        client_4443 = manageMembers.updateClient(client_4443);
+        
+        assertNotNull(client_4443);
+        assertEquals(1, client_4443.getErrors().size());
+        assertEquals(manageMembers.getMessage("common.invalid_url"), client_4443.getErrors().get(0));                
     }
 }

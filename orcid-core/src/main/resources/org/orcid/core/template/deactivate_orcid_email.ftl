@@ -20,7 +20,7 @@
 <@emailMacros.msg "email.common.dear" /> ${emailName}<@emailMacros.msg "email.common.dear.comma" />
 
 <@emailMacros.msg "email.deactivate.you_have_requested.1" /> 
-${pubBaseUri}/${orcid}?lang=${locale} <@emailMacros.msg "email.deactivate.you_have_requested.2" />
+${baseUriHttp}/${orcid}?lang=${locale} <@emailMacros.msg "email.deactivate.you_have_requested.2" />
 ${baseUri}${deactivateUrlEndpoint}?lang=${locale}
 
 

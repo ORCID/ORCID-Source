@@ -33,4 +33,6 @@ public interface SourceManager {
 
     ProfileEntity retrieveSourceProfileEntity();
 
+    String retrieveRealUserOrcid();
+
 }
