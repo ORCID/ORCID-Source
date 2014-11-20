@@ -249,8 +249,8 @@
                 <div id="workspace-publications" class="workspace-accordion-item workspace-accordion-active" ng-controller="WorkCtrl" orcid-loaded="{{worksSrvc.worksToAddIds != null && worksSrvc.loading != true}}">
                     <#include "includes/work/work_section_header_inc_v3.ftl"/>
 					
-					<!-- Bulk Edit -->
-					<div ng-show="bulkEditShow" ng-cloak>
+					<!-- Bulk Edit -->					
+					<div ng-show="bulkEditShow && workspaceSrvc.displayWorks" ng-cloak>						
 						<div class="grey-box bulk-edit">
 							<div class="row">
 								<div class="col-md-7 col-sm-7">
@@ -307,7 +307,7 @@
 					</div>
 					
 					<!-- Bibtex Importer Wizard -->
-					<div ng-show="showBibtexImportWizard" ng-cloak class="bibtex-box">
+					<div ng-show="showBibtexImportWizard && workspaceSrvc.displayWorks" ng-cloak class="bibtex-box">
 						<div class="grey-box bottomBuffer box-border" ng-show="canReadFiles" ng-cloak>
 						   <p class="bottomBuffer">
 						   		<strong><@orcid.msg 'workspace.bibtexImporter.instructions'/>  <a href="http://support.orcid.org/knowledgebase/articles/390530" target="_blank"><@orcid.msg 'workspace.bibtexImporter.learnMore'/></a></strong>
