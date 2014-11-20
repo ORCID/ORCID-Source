@@ -4208,7 +4208,7 @@ ul.id-details li{
 }
 
 .edit-option-toolbar{		
-	padding: 7px;	
+	padding: 6px 4px 6px 2px;	
 }
 
 a.toolbar-button{
@@ -5038,6 +5038,32 @@ ul.workspace-private-toolbar .popover-help-container .popover{
 	width: auto;
 }
 
+/* Bulk Edit Pop up */
+
+.lightbox-container.bulk-delete-modal{
+	padding-right: 0;
+	padding-bottom: 0;	
+}
+
+.bulk-delete-modal{
+	max-width: 550px;
+}
+
+.bulk-delete-modal h3,
+.bulk-delete-modal p{	
+	color: #494A4C;
+}
+
+.bulk-delete-modal button{
+	color: #FFF;
+	margin-left: 15px;
+}
+
+.bulk-delete-modal button:hover, 
+.bulk-delete-modal button:focus{
+	color: #FFF;
+	background: #A3CD39;
+}
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
