@@ -3689,7 +3689,7 @@ function PublicWorkCtrl($scope, $compile, $filter, workspaceSrvc, worksSrvc) {
         $scope.moreInfoOpen = true;
         //Display the popover
         $(event.target).next().css('display','inline');
-        $scope.worksSrvc.getGroupDetails(putCode, worksSrvc.constants.access_type.USER);
+        $scope.worksSrvc.getGroupDetails(putCode, worksSrvc.constants.access_type.ANONYMOUS);
     };
 
     $scope.hideSources = function(group) {
