@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.integration.web;
+package org.orcid.integration.blackbox.web;
 
 import java.util.List;
 import org.junit.After;
