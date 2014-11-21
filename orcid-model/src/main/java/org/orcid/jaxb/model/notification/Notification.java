@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
 
@@ -66,9 +67,8 @@ import org.orcid.jaxb.model.notification.custom.NotificationType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "putCode", "notificationType", "createdDate", "sentDate", "readDate", "archivedDate", "source" })
-@XmlRootElement(name = "notification")
-public class Notification implements Serializable {
+@XmlTransient
+abstract public class Notification implements Serializable {
 
     private final static long serialVersionUID = 1L;
     protected PutCode putCode;
