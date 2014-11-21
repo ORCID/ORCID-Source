@@ -17,7 +17,6 @@
 package org.orcid.core.manager.impl;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URI;
 import java.text.MessageFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -47,7 +46,8 @@ import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.SendChangeNotifications;
 import org.orcid.jaxb.model.message.Source;
-import org.orcid.jaxb.model.notification.custom.Notification;
+import org.orcid.jaxb.model.notification.Notification;
+import org.orcid.jaxb.model.notification.custom.NotificationCustom;
 import org.orcid.jaxb.model.notification.custom.NotificationType;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
@@ -64,7 +64,6 @@ import org.orcid.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -373,7 +372,7 @@ public class NotificationManagerImpl implements NotificationManager {
         // Generate html from template
         String html = templateManager.processTemplate("amend_email_html.ftl", templateParams);
 
-        Notification notification = new Notification();
+        NotificationCustom notification = new NotificationCustom();
         notification.setNotificationType(NotificationType.CUSTOM);
         notification.setSubject(subject);
         notification.setBodyText(body);

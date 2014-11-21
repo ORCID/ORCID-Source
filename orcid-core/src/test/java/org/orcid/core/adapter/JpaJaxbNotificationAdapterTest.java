@@ -16,13 +16,16 @@
  */
 package org.orcid.core.adapter;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import javax.annotation.Resource;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.jaxb.model.notification.custom.Notification;
+import org.orcid.jaxb.model.notification.Notification;
+import org.orcid.jaxb.model.notification.custom.NotificationCustom;
 import org.orcid.jaxb.model.notification.custom.NotificationType;
 import org.orcid.persistence.jpa.entities.NotificationCustomEntity;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
@@ -44,7 +47,7 @@ public class JpaJaxbNotificationAdapterTest {
 
     @Test
     public void testToNotificationCustomEntity() {
-        Notification notification = new Notification();
+        NotificationCustom notification = new NotificationCustom();
         notification.setNotificationType(NotificationType.CUSTOM);
         notification.setSubject("Test subject");
 
@@ -67,8 +70,10 @@ public class JpaJaxbNotificationAdapterTest {
         Notification notification = jpaJaxbNotificationAdapter.toNotification(notificationEntity);
 
         assertNotNull(notification);
+        assertTrue(notification instanceof NotificationCustom);
+        NotificationCustom notificationCustom = (NotificationCustom) notification;
         assertEquals(NotificationType.CUSTOM, notification.getNotificationType());
-        assertEquals("Test subject", notification.getSubject());
+        assertEquals("Test subject", notificationCustom.getSubject());
         assertEquals("2014-01-01T09:17:56.000Z", notification.getCreatedDate().toXMLFormat());
         assertEquals("2014-03-04T17:43:06.000Z", notification.getReadDate().toXMLFormat());
     }

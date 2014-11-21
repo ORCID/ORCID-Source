@@ -26,8 +26,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.junit.Test;
-import org.orcid.jaxb.model.notification.custom.Notification;
-import org.orcid.jaxb.model.notification.custom.NotificationType;
 
 /**
  * 
@@ -39,7 +37,7 @@ public class MarshallingTest {
 
     @Test
     public void testUnMarshalling() throws JAXBException {
-        Notification notification = getNotification();
+        NotificationCustom notification = getNotification();
         assertNotNull(notification);
         assertEquals(NotificationType.CUSTOM, notification.getNotificationType());
         assertEquals("Important Notification from ORCID", notification.getSubject());
@@ -48,11 +46,11 @@ public class MarshallingTest {
         assertEquals("2014-01-01T14:45:32", notification.getSentDate().toXMLFormat());
     }
 
-    private Notification getNotification() throws JAXBException {
+    private NotificationCustom getNotification() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance("org.orcid.jaxb.model.notification.custom");
         Unmarshaller unmarshaller = context.createUnmarshaller();
         InputStream inputStream = MarshallingTest.class.getResourceAsStream("/notification-custom.xml");
-        return (Notification) unmarshaller.unmarshal(inputStream);
+        return (NotificationCustom) unmarshaller.unmarshal(inputStream);
     }
 
 }

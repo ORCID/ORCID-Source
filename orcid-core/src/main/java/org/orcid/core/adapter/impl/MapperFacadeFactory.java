@@ -20,7 +20,7 @@ import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
 
-import org.orcid.jaxb.model.notification.custom.Notification;
+import org.orcid.jaxb.model.notification.custom.NotificationCustom;
 import org.orcid.persistence.jpa.entities.NotificationCustomEntity;
 import org.springframework.beans.factory.FactoryBean;
 
@@ -34,7 +34,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     @Override
     public MapperFacade getObject() throws Exception {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
-        mapperFactory.classMap(NotificationCustomEntity.class, Notification.class).field("dateCreated", "createdDate").field("id", "putCode.path").byDefault().register();
+        mapperFactory.classMap(NotificationCustomEntity.class, NotificationCustom.class).field("dateCreated", "createdDate").field("id", "putCode.path").byDefault().register();
         return mapperFactory.getMapperFacade();
     }
 

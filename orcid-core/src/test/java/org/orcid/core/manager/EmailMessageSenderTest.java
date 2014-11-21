@@ -29,7 +29,8 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.orcid.core.BaseTest;
 import org.orcid.jaxb.model.common.Source;
-import org.orcid.jaxb.model.notification.custom.Notification;
+import org.orcid.jaxb.model.notification.Notification;
+import org.orcid.jaxb.model.notification.custom.NotificationCustom;
 import org.orcid.utils.DateUtils;
 
 /**
@@ -47,7 +48,7 @@ public class EmailMessageSenderTest extends BaseTest {
 
         List<Notification> notifications = new ArrayList<>();
 
-        Notification notification1 = new Notification();
+        NotificationCustom notification1 = new NotificationCustom();
         notification1.setSubject("Your ORCID record was updated");
         notification1.setBodyText("Your ORCID record was update by Super Institution 1.\n\nBest regards,\n\nORCID");
         notification1.setCreatedDate(DateUtils.convertToXMLGregorianCalendar("2014-07-10T13:39:31"));
@@ -56,7 +57,7 @@ public class EmailMessageSenderTest extends BaseTest {
         notification1.setSource(source1);
         notifications.add(notification1);
 
-        Notification notification2 = new Notification();
+        NotificationCustom notification2 = new NotificationCustom();
         notification2.setSubject("Your ORCID record was updated");
         notification2.setBodyText("Your ORCID record was update by Lovely Publisher 1.\n\nBest regards,\n\nORCID");
         notification2.setCreatedDate(DateUtils.convertToXMLGregorianCalendar("2014-07-10T08:53:56"));

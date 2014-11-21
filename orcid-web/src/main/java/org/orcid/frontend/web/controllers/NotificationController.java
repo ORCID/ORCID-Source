@@ -23,7 +23,8 @@ import javax.annotation.Resource;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.notification.custom.Notification;
+import org.orcid.jaxb.model.notification.Notification;
+import org.orcid.jaxb.model.notification.custom.NotificationCustom;
 import org.orcid.persistence.dao.NotificationDao;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -67,7 +68,11 @@ public class NotificationController extends BaseController {
     @RequestMapping(value = "/{id}/notification.html", produces = MediaType.TEXT_HTML_VALUE)
     public @ResponseBody String getNotificationHtml(@PathVariable("id") String id) {
         Notification notification = notificationManager.findByOrcidAndId(getCurrentUserOrcid(), Long.valueOf(id));
-        return notification.getBodyHtml();
+        if (notification instanceof NotificationCustom) {
+            return ((NotificationCustom) notification).getBodyHtml();
+        } else {
+            return "XXX message type not implemented yet!";
+        }
     }
 
     @RequestMapping(value = "{id}/read.json")

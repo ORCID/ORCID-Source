@@ -26,7 +26,8 @@ import org.orcid.core.manager.EmailMessage;
 import org.orcid.core.manager.EmailMessageSender;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.jaxb.model.common.Source;
-import org.orcid.jaxb.model.notification.custom.Notification;
+import org.orcid.jaxb.model.notification.Notification;
+import org.orcid.jaxb.model.notification.custom.NotificationCustom;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.slf4j.Logger;
@@ -73,28 +74,32 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         summaryText.append(HEADER);
         int messageNumber = 0;
         for (Notification notification : notifications) {
-            messageNumber++;
-            summaryText.append("\n   ");
-            summaryText.append(messageNumber);
-            summaryText.append(". ");
-            summaryText.append(notification.getSubject());
-            summaryText.append(" (");
-            Source source = notification.getSource();
-            String sourceName = source != null ? source.getSourceName() : "ORCID";
-            summaryText.append(sourceName);
-            summaryText.append(")");
+            if (notification instanceof NotificationCustom) {
+                // XXX Implement other notification types!
+                NotificationCustom notificationCustom = (NotificationCustom) notification;
+                messageNumber++;
+                summaryText.append("\n   ");
+                summaryText.append(messageNumber);
+                summaryText.append(". ");
+                summaryText.append(notificationCustom.getSubject());
+                summaryText.append(" (");
+                Source source = notification.getSource();
+                String sourceName = source != null ? source.getSourceName() : "ORCID";
+                summaryText.append(sourceName);
+                summaryText.append(")");
 
-            bodyText.append("\nMessage: ");
-            bodyText.append(messageNumber);
-            bodyText.append("\nDate: ");
-            bodyText.append(notification.getCreatedDate().toXMLFormat());
-            bodyText.append("\nFrom: ");
-            bodyText.append(sourceName);
-            bodyText.append("\nSubject: ");
-            bodyText.append(notification.getSubject());
-            bodyText.append("\n\n");
-            bodyText.append(notification.getBodyText());
-            bodyText.append("\n\n------------------------------\n");
+                bodyText.append("\nMessage: ");
+                bodyText.append(messageNumber);
+                bodyText.append("\nDate: ");
+                bodyText.append(notification.getCreatedDate().toXMLFormat());
+                bodyText.append("\nFrom: ");
+                bodyText.append(sourceName);
+                bodyText.append("\nSubject: ");
+                bodyText.append(notificationCustom.getSubject());
+                bodyText.append("\n\n");
+                bodyText.append(notificationCustom.getBodyText());
+                bodyText.append("\n\n------------------------------\n");
+            }
         }
 
         bodyText.append(FOOTER);

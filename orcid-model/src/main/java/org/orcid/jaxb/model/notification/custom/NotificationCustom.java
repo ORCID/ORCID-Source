@@ -29,12 +29,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.datatype.XMLGregorianCalendar;
 
-import org.orcid.jaxb.model.common.PutCode;
-import org.orcid.jaxb.model.common.Source;
+import org.orcid.jaxb.model.notification.Notification;
 
 /**
  * <p>
@@ -70,70 +67,15 @@ import org.orcid.jaxb.model.common.Source;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "putCode", "notificationType", "subject", "bodyText", "bodyHtml", "createdDate", "sentDate", "readDate", "archivedDate", "source" })
 @XmlRootElement(name = "notification")
-public class Notification implements Serializable {
+public class NotificationCustom extends Notification implements Serializable {
 
     private final static long serialVersionUID = 1L;
-    protected PutCode putCode;
-    @XmlElement(required = true)
-    protected NotificationType notificationType;
     @XmlElement(required = true)
     protected String subject;
     @XmlElement(required = true)
     protected String bodyText;
     @XmlElement(required = true)
     protected String bodyHtml;
-    @XmlSchemaType(name = "dateTime")
-    protected XMLGregorianCalendar createdDate;
-    @XmlElement(required = true)
-    @XmlSchemaType(name = "dateTime")
-    protected XMLGregorianCalendar sentDate;
-    @XmlSchemaType(name = "dateTime")
-    protected XMLGregorianCalendar readDate;
-    @XmlSchemaType(name = "dateTime")
-    protected XMLGregorianCalendar archivedDate;
-    protected Source source;
-
-    /**
-     * Gets the value of the putCode property.
-     * 
-     * @return possible object is {@link PutCode }
-     * 
-     */
-    public PutCode getPutCode() {
-        return putCode;
-    }
-
-    /**
-     * Sets the value of the putCode property.
-     * 
-     * @param value
-     *            allowed object is {@link PutCode }
-     * 
-     */
-    public void setPutCode(PutCode value) {
-        this.putCode = value;
-    }
-
-    /**
-     * Gets the value of the notificationType property.
-     * 
-     * @return possible object is {@link NotificationType }
-     * 
-     */
-    public NotificationType getNotificationType() {
-        return notificationType;
-    }
-
-    /**
-     * Sets the value of the notificationType property.
-     * 
-     * @param value
-     *            allowed object is {@link NotificationType }
-     * 
-     */
-    public void setNotificationType(NotificationType value) {
-        this.notificationType = value;
-    }
 
     /**
      * Gets the value of the subject property.
@@ -196,111 +138,6 @@ public class Notification implements Serializable {
      */
     public void setBodyHtml(String value) {
         this.bodyHtml = value;
-    }
-
-    /**
-     * Gets the value of the createdDate property.
-     * 
-     * @return possible object is {@link XMLGregorianCalendar }
-     * 
-     */
-    public XMLGregorianCalendar getCreatedDate() {
-        return createdDate;
-    }
-
-    /**
-     * Sets the value of the createdDate property.
-     * 
-     * @param value
-     *            allowed object is {@link XMLGregorianCalendar }
-     * 
-     */
-    public void setCreatedDate(XMLGregorianCalendar value) {
-        this.createdDate = value;
-    }
-
-    /**
-     * Gets the value of the sentDate property.
-     * 
-     * @return possible object is {@link XMLGregorianCalendar }
-     * 
-     */
-    public XMLGregorianCalendar getSentDate() {
-        return sentDate;
-    }
-
-    /**
-     * Sets the value of the sentDate property.
-     * 
-     * @param value
-     *            allowed object is {@link XMLGregorianCalendar }
-     * 
-     */
-    public void setSentDate(XMLGregorianCalendar value) {
-        this.sentDate = value;
-    }
-
-    /**
-     * Gets the value of the readDate property.
-     * 
-     * @return possible object is {@link XMLGregorianCalendar }
-     * 
-     */
-    public XMLGregorianCalendar getReadDate() {
-        return readDate;
-    }
-
-    /**
-     * Sets the value of the readDate property.
-     * 
-     * @param value
-     *            allowed object is {@link XMLGregorianCalendar }
-     * 
-     */
-    public void setReadDate(XMLGregorianCalendar value) {
-        this.readDate = value;
-    }
-
-    /**
-     * Gets the value of the archivedDate property.
-     * 
-     * @return possible object is {@link XMLGregorianCalendar }
-     * 
-     */
-    public XMLGregorianCalendar getArchivedDate() {
-        return archivedDate;
-    }
-
-    /**
-     * Sets the value of the archivedDate property.
-     * 
-     * @param value
-     *            allowed object is {@link XMLGregorianCalendar }
-     * 
-     */
-    public void setArchivedDate(XMLGregorianCalendar value) {
-        this.archivedDate = value;
-    }
-
-    /**
-     * Gets the value of the source property.
-     * 
-     * @return possible object is {@link Source }
-     * 
-     */
-    public Source getSource() {
-        return source;
-    }
-
-    /**
-     * Sets the value of the source property.
-     * 
-     * @param value
-     *            allowed object is {@link Source }
-     * 
-     */
-    public void setSource(Source value) {
-        this.source = value;
     }
 
 }
