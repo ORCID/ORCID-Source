@@ -3577,6 +3577,13 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc, comm
     $scope.openEditFunding = function(funding) {
         $scope.addFundingModal(funding);
     };
+    
+    $scope.showFundingImportWizard =  function() {
+        $.colorbox({
+            html : $compile($('#import-wizard-modal').html())($scope),
+            onComplete: function() {$.colorbox.resize();}
+        });
+    };
 }
 
 /**
@@ -3726,7 +3733,7 @@ function PublicWorkCtrl($scope, $compile, $filter, workspaceSrvc, worksSrvc) {
 
 }
 
-function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actBulkSrvc, commonSrvc) {
+function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actBulkSrvc, commonSrvc, $timeout) {
     actBulkSrvc.initScope($scope);
     $scope.canReadFiles = false;
     $scope.showBibtexImportWizard = false;
@@ -4282,6 +4289,12 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actBulkSr
     
     $scope.hideTooltip = function (element){    	
     	$scope.showElement[element] = false;
+    }
+    
+    $scope.openFileDialog = function(){    	
+    	$timeout(function() { //To avoid '$apply already in progress' error
+    	    angular.element('#inputBibtex').trigger('click');
+    	}, 0);
     }
 }
 
