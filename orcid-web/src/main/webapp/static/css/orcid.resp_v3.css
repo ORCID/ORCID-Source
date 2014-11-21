@@ -4579,16 +4579,17 @@ ul.toggle-menu li:hover ul {
 }
 
 .bibtex-options-menu ul li a {
-	background-color: #949599;
+	background: #C9C9CA;
 	border-radius: 50px;
 	height: 30px;
 	width: 30px;
 	padding: 8px;
-	color: #FFF;
+	color: #494A4C;
 }
 
 .bibtex-options-menu ul li a:hover {
 	background-color: rgb(166, 206, 57);
+	color: #FFF;
 }
 
 /* Bulk Edit control / bibtex */
@@ -4614,6 +4615,8 @@ ul.toggle-menu li:hover ul {
 
 .bibtex-box p{
 	margin-bottom: 0;
+	font-size: 13px;
+	font-weight: 100;
 }
 
 .bibtex-box .bibtext-options{
@@ -4649,10 +4652,6 @@ ul.toggle-menu li:hover ul {
 	cursor: pointer;
 	background: rgb(166, 206, 57);
 	color: #FFF;
-}
-
-.bibtex-box p{
-	font-size: 13px;
 }
 
 .bulk-edit .col-md-5{
@@ -5093,6 +5092,15 @@ ul.workspace-private-toolbar .popover-help-container .popover{
 	color: #FFF;
 	background: #A3CD39;
 }
+
+.dark-grey{
+	color: #494A4C;	
+}
+
+.bibtex-work-title{
+	line-height: 30px;
+}
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
