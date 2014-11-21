@@ -463,13 +463,24 @@
 </script>
 
 <script type="text/ng-template" id="bulk-delete-modal">
-	<div class="lightbox-container">
+	<div class="lightbox-container bulk-delete-modal">
 		<div class="row">
 			<div class="col-md-12 col-sm-12 col-xs-12">
-				<h3>Please confirm deleting {{bulkDeleteCount}} items </h3>
-				<span class="orcid-error" ng-show="bulkDeleteCount != delCountVerify">To delete these {{bulkDeleteCount}} items, please enter the number of items you will be deleting <input type="text" size="3" ng-init="delCountVerify=0" ng-model="delCountVerify"/>.</span></br > 
-				<button class="btn btn-danger" ng-click="bulkDeleteFunction()"><@orcid.msg 'freemarker.btnDelete'/></button> 
-				<a ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel'/></a>
+				<h3><@orcid.msg 'groups.bulk_delete.confirm.header'/></h3>
+				<div class="orcid-error" ng-show="bulkDeleteCount != delCountVerify">
+					<p>
+						<@orcid.msg 'groups.bulk_delete.confirm.line_1'/>
+					</p>
+					<p>
+						<@orcid.msg 'groups.bulk_delete.confirm.line_2'/>
+					</p>
+					<p>
+    	            	<@orcid.msg 'groups.bulk_delete.confirm.line_3'/> <input type="text" size="3" ng-init="delCountVerify=0" ng-model="delCountVerify"/>
+					</p>
+				</div>
+				<div class="pull-right">
+					<a ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel'/></a>  <button class="btn blue" ng-click="bulkDeleteFunction()"><@orcid.msg 'freemarker.btnDelete'/></button>
+				</div>
 			<div>
 		<div>
 	<div>	
