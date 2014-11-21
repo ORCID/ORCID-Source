@@ -14,10 +14,9 @@
  *
  * =============================================================================
  */
-package org.orcid.integration.web.myOrcid3;
+package org.orcid.integration.blackbox.web.works;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
@@ -33,14 +32,14 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.orcid.integration.web.SigninTest;
+import org.orcid.integration.blackbox.web.SigninTest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-web-context.xml" })
-public class WorksTest {
+public class AddWorksTest {
 
     private WebDriver webDriver;
 
@@ -51,10 +50,10 @@ public class WorksTest {
     @Value("${org.orcid.web.testUser1.password}")
     public String user1Password;
 
-    private String WORK_TEST_PREFIX = "WORK_TEST";
-    private String SIMPLE_A ="SIMPLE_A";
-    private String SIMPLE_B ="SIMPLE_B";
-    private String SIMPLE_C ="SIMPLE_C";
+    private String ADD_WORK_TEST = "ADD_WORK_TEST";
+    private String _A ="_A";
+    private String _B ="_B";
+    private String _C ="_C";
 
     @Before
     public void before() {
@@ -72,9 +71,9 @@ public class WorksTest {
 
     @Test
     public void addThreeSimple() {
-        String workNameA = WORK_TEST_PREFIX + "_" + SIMPLE_A;
-        String workNameB = WORK_TEST_PREFIX + "_" + SIMPLE_B;
-        String workNameC = WORK_TEST_PREFIX + "_" + SIMPLE_C;
+        String workNameA = ADD_WORK_TEST + "_" + _A;
+        String workNameB = ADD_WORK_TEST + "_" + _B;
+        String workNameC = ADD_WORK_TEST + "_" + _C;
         WebDriverWait wait = new WebDriverWait(webDriver, 10);
         waitWorksLoaded(wait);
         // clean up any from previous test
@@ -137,6 +136,17 @@ public class WorksTest {
 
     public static By byWorkTitle(String workName) {
         return By.xpath("//span[@ng-bind='work.title.value' and text()='" + workName + "']");
+    }
+    
+    
+    public static String firstPutCodeByTitle(String title, WebDriver webDriver) {
+        List<WebElement> wList = webDriver.findElements(By.xpath("//*[@orcid-put-code and descendant::span[text() = '" + title + "']]"));
+        return wList.get(0).getAttribute("orcid-put-code");
+    }
+    
+    public static void reloadWorks(WebDriver webDriver, WebDriverWait wait) {
+        ((JavascriptExecutor) webDriver).executeScript("angular.element('*[ng-app]').injector().get('worksSrvc').loadAbbrWorks()");
+        waitWorksLoaded(wait);
     }
     
     public static void waitWorksLoading(WebDriverWait wait) {
