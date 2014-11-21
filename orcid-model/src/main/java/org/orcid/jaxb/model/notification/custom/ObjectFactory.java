@@ -28,6 +28,10 @@ import javax.xml.bind.annotation.XmlElementDecl;
 import javax.xml.bind.annotation.XmlRegistry;
 import javax.xml.namespace.QName;
 
+import org.orcid.jaxb.model.common.OrcidId;
+import org.orcid.jaxb.model.common.PutCode;
+import org.orcid.jaxb.model.common.Source;
+
 /**
  * This object contains factory methods for each Java content interface and Java
  * element interface generated in the org.orcid.jaxb.model.notification package.

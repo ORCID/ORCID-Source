@@ -21,7 +21,7 @@
 // Generated on: 2014.07.22 at 06:46:00 PM BST 
 //
 
-package org.orcid.jaxb.model.notification.custom;
+package org.orcid.jaxb.model.common;
 
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -42,8 +42,14 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}orcidId" minOccurs="0"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}sourceName" minOccurs="0"/>
+ *         &lt;choice>
+ *           &lt;sequence>
+ *             &lt;element name="uri" type="{http://www.orcid.org/ns/orcid}putCodeUri"/>
+ *             &lt;element name="path" type="{http://www.orcid.org/ns/orcid}putCodePath" minOccurs="0"/>
+ *           &lt;/sequence>
+ *           &lt;element name="path" type="{http://www.orcid.org/ns/orcid}putCodePath"/>
+ *         &lt;/choice>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}host" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -53,54 +59,76 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "orcidId", "sourceName" })
-@XmlRootElement(name = "source")
-public class Source implements Serializable {
+@XmlType(name = "", propOrder = { "uri", "path", "host" })
+@XmlRootElement(name = "putCode")
+public class PutCode implements Serializable {
 
     private final static long serialVersionUID = 1L;
-    protected OrcidId orcidId;
-    protected String sourceName;
+    protected String uri;
+    protected String path;
+    protected String host;
 
     /**
-     * Gets the value of the orcidId property.
-     * 
-     * @return possible object is {@link OrcidId }
-     * 
-     */
-    public OrcidId getOrcidId() {
-        return orcidId;
-    }
-
-    /**
-     * Sets the value of the orcidId property.
-     * 
-     * @param value
-     *            allowed object is {@link OrcidId }
-     * 
-     */
-    public void setOrcidId(OrcidId value) {
-        this.orcidId = value;
-    }
-
-    /**
-     * Gets the value of the sourceName property.
+     * Gets the value of the uri property.
      * 
      * @return possible object is {@link String }
      * 
      */
-    public String getSourceName() {
-        return sourceName;
+    public String getUri() {
+        return uri;
     }
 
     /**
-     * Sets the value of the sourceName property.
+     * Sets the value of the uri property.
      * 
      * @param value
      *            allowed object is {@link String }
      * 
      */
-    public void setSourceName(String value) {
-        this.sourceName = value;
+    public void setUri(String value) {
+        this.uri = value;
+    }
+
+    /**
+     * Gets the value of the path property.
+     * 
+     * @return possible object is {@link String }
+     * 
+     */
+    public String getPath() {
+        return path;
+    }
+
+    /**
+     * Sets the value of the path property.
+     * 
+     * @param value
+     *            allowed object is {@link String }
+     * 
+     */
+    public void setPath(String value) {
+        this.path = value;
+    }
+
+    /**
+     * Gets the value of the host property.
+     * 
+     * @return possible object is {@link String }
+     * 
+     */
+    public String getHost() {
+        return host;
+    }
+
+    /**
+     * Sets the value of the host property.
+     * 
+     * @param value
+     *            allowed object is {@link String }
+     * 
+     */
+    public void setHost(String value) {
+        this.host = value;
     }
 
 }

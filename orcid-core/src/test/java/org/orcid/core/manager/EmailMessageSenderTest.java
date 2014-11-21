@@ -28,8 +28,8 @@ import javax.annotation.Resource;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.orcid.core.BaseTest;
+import org.orcid.jaxb.model.common.Source;
 import org.orcid.jaxb.model.notification.custom.Notification;
-import org.orcid.jaxb.model.notification.custom.Source;
 import org.orcid.utils.DateUtils;
 
 /**
