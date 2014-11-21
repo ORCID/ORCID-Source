@@ -21,7 +21,7 @@
 // Generated on: 2014.07.22 at 06:46:00 PM BST 
 //
 
-package org.orcid.jaxb.model.notification.generic;
+package org.orcid.jaxb.model.notification.custom;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
@@ -49,7 +49,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum NotificationType {
 
-    RECORD_UPDATED_BY_MEMBER, CUSTOM, ADD_ACTIVITIES;
+    CUSTOM, ADD_ACTIVITIES;
 
     public String value() {
         return name();

@@ -24,7 +24,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 
@@ -47,7 +46,7 @@ import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.notification.generic.NotificationType;
+import org.orcid.jaxb.model.notification.custom.NotificationType;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.ProfileDao;
@@ -144,7 +143,7 @@ public class NotificationManagerTest extends BaseTest {
             NotificationEntity latestNotification = notificationDao.findLatestByOrcid(testOrcid);
             assertNotNull(latestNotification);
             assertTrue(latestNotification.getId() > minNotificationId);
-            assertEquals(NotificationType.RECORD_UPDATED_BY_MEMBER, latestNotification.getNotificationType());
+            assertEquals(NotificationType.CUSTOM, latestNotification.getNotificationType());
         }
     }
 

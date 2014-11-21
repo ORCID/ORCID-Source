@@ -20,7 +20,7 @@ import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
 
-import org.orcid.jaxb.model.notification.generic.Notification;
+import org.orcid.jaxb.model.notification.custom.Notification;
 import org.orcid.persistence.jpa.entities.NotificationCustomEntity;
 import org.springframework.beans.factory.FactoryBean;
 

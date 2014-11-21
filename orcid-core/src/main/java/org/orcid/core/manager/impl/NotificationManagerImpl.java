@@ -47,8 +47,8 @@ import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.SendChangeNotifications;
 import org.orcid.jaxb.model.message.Source;
-import org.orcid.jaxb.model.notification.generic.Notification;
-import org.orcid.jaxb.model.notification.generic.NotificationType;
+import org.orcid.jaxb.model.notification.custom.Notification;
+import org.orcid.jaxb.model.notification.custom.NotificationType;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.ProfileDao;
@@ -374,7 +374,7 @@ public class NotificationManagerImpl implements NotificationManager {
         String html = templateManager.processTemplate("amend_email_html.ftl", templateParams);
 
         Notification notification = new Notification();
-        notification.setNotificationType(NotificationType.RECORD_UPDATED_BY_MEMBER);
+        notification.setNotificationType(NotificationType.CUSTOM);
         notification.setSubject(subject);
         notification.setBodyText(body);
         notification.setBodyHtml(html);

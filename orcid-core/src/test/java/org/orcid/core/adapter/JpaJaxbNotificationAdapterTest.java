@@ -22,8 +22,8 @@ import javax.annotation.Resource;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.jaxb.model.notification.generic.Notification;
-import org.orcid.jaxb.model.notification.generic.NotificationType;
+import org.orcid.jaxb.model.notification.custom.Notification;
+import org.orcid.jaxb.model.notification.custom.NotificationType;
 import org.orcid.persistence.jpa.entities.NotificationCustomEntity;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.utils.DateUtils;
@@ -43,23 +43,23 @@ public class JpaJaxbNotificationAdapterTest {
     private JpaJaxbNotificationAdapter jpaJaxbNotificationAdapter;
 
     @Test
-    public void testToNotificationEntity() {
+    public void testToNotificationCustomEntity() {
         Notification notification = new Notification();
-        notification.setNotificationType(NotificationType.RECORD_UPDATED_BY_MEMBER);
+        notification.setNotificationType(NotificationType.CUSTOM);
         notification.setSubject("Test subject");
 
         NotificationEntity notificationEntity = jpaJaxbNotificationAdapter.toNotificationEntity(notification);
 
         assertNotNull(notificationEntity);
-        assertEquals(NotificationType.RECORD_UPDATED_BY_MEMBER, notificationEntity.getNotificationType());
+        assertEquals(NotificationType.CUSTOM, notificationEntity.getNotificationType());
         assertEquals("Test subject", notification.getSubject());
     }
 
     @Test
-    public void testToNotification() {
+    public void testCustomEntityToNotification() {
         NotificationCustomEntity notificationEntity = new NotificationCustomEntity();
         notificationEntity.setId(123L);
-        notificationEntity.setNotificationType(NotificationType.RECORD_UPDATED_BY_MEMBER);
+        notificationEntity.setNotificationType(NotificationType.CUSTOM);
         notificationEntity.setSubject("Test subject");
         notificationEntity.setDateCreated(DateUtils.convertToDate("2014-01-01T09:17:56"));
         notificationEntity.setReadDate(DateUtils.convertToDate("2014-03-04T17:43:06"));
@@ -67,7 +67,7 @@ public class JpaJaxbNotificationAdapterTest {
         Notification notification = jpaJaxbNotificationAdapter.toNotification(notificationEntity);
 
         assertNotNull(notification);
-        assertEquals(NotificationType.RECORD_UPDATED_BY_MEMBER, notification.getNotificationType());
+        assertEquals(NotificationType.CUSTOM, notification.getNotificationType());
         assertEquals("Test subject", notification.getSubject());
         assertEquals("2014-01-01T09:17:56.000Z", notification.getCreatedDate().toXMLFormat());
         assertEquals("2014-03-04T17:43:06.000Z", notification.getReadDate().toXMLFormat());

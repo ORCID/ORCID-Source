@@ -21,7 +21,7 @@
 // Generated on: 2014.07.22 at 06:46:00 PM BST 
 //
 
-package org.orcid.jaxb.model.notification.generic;
+package org.orcid.jaxb.model.notification.custom;
 
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;

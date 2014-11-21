@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.jaxb.model.notification.generic;
+package org.orcid.jaxb.model.notification.custom;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -26,8 +26,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.junit.Test;
-import org.orcid.jaxb.model.notification.generic.Notification;
-import org.orcid.jaxb.model.notification.generic.NotificationType;
+import org.orcid.jaxb.model.notification.custom.Notification;
+import org.orcid.jaxb.model.notification.custom.NotificationType;
 
 /**
  * 
@@ -41,7 +41,7 @@ public class MarshallingTest {
     public void testUnMarshalling() throws JAXBException {
         Notification notification = getNotification();
         assertNotNull(notification);
-        assertEquals(NotificationType.RECORD_UPDATED_BY_MEMBER, notification.getNotificationType());
+        assertEquals(NotificationType.CUSTOM, notification.getNotificationType());
         assertEquals("Important Notification from ORCID", notification.getSubject());
         assertEquals("This is an email with important info.\n    ", notification.getBodyText());
         assertEquals("\n        <p>\n            This is an email with <em>important</em> info.\n        </p>\n    ", notification.getBodyHtml());
@@ -49,9 +49,9 @@ public class MarshallingTest {
     }
 
     private Notification getNotification() throws JAXBException {
-        JAXBContext context = JAXBContext.newInstance("org.orcid.jaxb.model.notification.generic");
+        JAXBContext context = JAXBContext.newInstance("org.orcid.jaxb.model.notification.custom");
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        InputStream inputStream = MarshallingTest.class.getResourceAsStream("/generic-notification.xml");
+        InputStream inputStream = MarshallingTest.class.getResourceAsStream("/notification-custom.xml");
         return (Notification) unmarshaller.unmarshal(inputStream);
     }
 

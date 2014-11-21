@@ -23,7 +23,7 @@ import javax.annotation.Resource;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.notification.generic.Notification;
+import org.orcid.jaxb.model.notification.custom.Notification;
 import org.orcid.persistence.dao.NotificationDao;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
