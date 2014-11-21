@@ -5829,7 +5829,7 @@ function removeSecQuestionCtrl($scope,$compile) {
 };
 
 function SSOPreferencesCtrl($scope, $compile, $sce, emailSrvc) {
-    $scope.showReg = false;
+    $scope.noCredentialsYet = true;
     $scope.userCredentials = null;
     $scope.editing = false;
     $scope.hideGoogleUri = false;
@@ -5939,7 +5939,8 @@ function SSOPreferencesCtrl($scope, $compile, $sce, emailSrvc) {
                         $scope.updateSelectedRedirectUri();
                         $scope.setHtmlTrustedNameAndDescription();
                     } else {
-                        $scope.showReg = true;
+                    	$scope.createCredentialsLayout();
+                        $scope.noCredentialsYet = true;
                     }
                 });
             }
@@ -6005,7 +6006,7 @@ function SSOPreferencesCtrl($scope, $compile, $sce, emailSrvc) {
                         $scope.updateSelectedRedirectUri();
                         $scope.setHtmlTrustedNameAndDescription();
                         $scope.creating = false;
-                        $scope.showReg = false;
+                        $scope.noCredentialsYet = false;
                     }
                 });
             }
