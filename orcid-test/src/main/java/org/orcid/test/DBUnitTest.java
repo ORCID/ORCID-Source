@@ -97,8 +97,7 @@ public class DBUnitTest {
         theRest.addTable("profile", "SELECT * FROM profile WHERE source_id IS NOT NULL AND source_id != orcid ORDER BY orcid DESC");
         theRest.addTable("client_details");
         theRest.addTable("client_secret");
-        theRest.addTable("custom_email");
-        theRest.addTable("orcid_props");
+        theRest.addTable("custom_email");        
         DatabaseOperation.DELETE.execute(connection, theRest);
     }
 

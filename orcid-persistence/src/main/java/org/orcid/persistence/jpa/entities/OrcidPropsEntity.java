@@ -44,6 +44,7 @@ public class OrcidPropsEntity extends BaseEntity<String> {
         this.key = key;
     }
 
+    @Column(name = "prop_value")
     public String getValue() {
         return value;
     }

@@ -396,10 +396,10 @@ public class ManageMembersControllerTest extends BaseControllerTest {
         manageMembers.updateClient(clientWithPersistentTokensEnabled);
         
         Client updatedClient =  manageMembers.findClient("4444-4444-4444-4445");
-        assertNotNull(clientWithPersistentTokensEnabled);
-        assertNotNull(clientWithPersistentTokensEnabled.getDisplayName());
-        assertEquals("Updated Name", clientWithPersistentTokensEnabled.getDisplayName().getValue());
-        assertNotNull(clientWithPersistentTokensEnabled.getPersistentTokenEnabled());
-        assertTrue(clientWithPersistentTokensEnabled.getPersistentTokenEnabled().getValue());
+        assertNotNull(updatedClient);
+        assertNotNull(updatedClient.getDisplayName());
+        assertEquals("Updated Name", updatedClient.getDisplayName().getValue());
+        assertNotNull(updatedClient.getPersistentTokenEnabled());
+        assertTrue(updatedClient.getPersistentTokenEnabled().getValue());
     }
 }

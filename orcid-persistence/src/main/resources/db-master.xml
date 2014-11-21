@@ -117,4 +117,6 @@
     <include file="/db/updates/funding_display_index_patch.xml" />
     <include file="/db/updates/persistent_tokens.xml" />
     <include file="/db/updates/new_way_of_doing_client_ids.xml" />
+    
+    <include file="/db/updates/change_column_name_on_orcid_props_table.xml" />
 </databaseChangeLog>
