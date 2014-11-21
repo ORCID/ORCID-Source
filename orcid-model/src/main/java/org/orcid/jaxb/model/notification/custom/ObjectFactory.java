@@ -31,7 +31,7 @@ import javax.xml.namespace.QName;
 import org.orcid.jaxb.model.common.OrcidId;
 import org.orcid.jaxb.model.common.PutCode;
 import org.orcid.jaxb.model.common.Source;
-import org.orcid.jaxb.model.notification.Notification;
+import org.orcid.jaxb.model.notification.custom.NotificationCustom;
 
 /**
  * This object contains factory methods for each Java content interface and Java
@@ -53,7 +53,7 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of
-     * schema derived classes for package: org.orcid.jaxb.model.notification
+     * schema derived classes for package: org.orcid.jaxb.model.notification.custom
      * 
      */
     public ObjectFactory() {
@@ -87,8 +87,8 @@ public class ObjectFactory {
      * Create an instance of {@link Notification }
      * 
      */
-    public Notification createNotification() {
-        return new Notification();
+    public NotificationCustom createNotificationCustom() {
+        return new NotificationCustom();
     }
 
     /**
