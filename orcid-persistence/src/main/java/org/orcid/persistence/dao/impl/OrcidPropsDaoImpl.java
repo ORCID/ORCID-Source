@@ -48,7 +48,7 @@ public class OrcidPropsDaoImpl extends GenericDaoImpl<OrcidPropsEntity, String> 
     public boolean create(String key, String value) {
         Assert.hasText(key, "Cannot create an empty key");
         Assert.hasText(value, "Cannot assign an empty value");
-        Query query = entityManager.createNativeQuery("INSERT INTO orcid_props(key, value, date_created, last_modified) values(:key,:value,now(),now())");
+        Query query = entityManager.createNativeQuery("INSERT INTO orcid_props(key, prop_value, date_created, last_modified) values(:key,:value,now(),now())");
         query.setParameter("key", key);
         query.setParameter("value", value);
 
@@ -67,7 +67,7 @@ public class OrcidPropsDaoImpl extends GenericDaoImpl<OrcidPropsEntity, String> 
     public boolean update(String key, String value) {
         Assert.hasText(key, "Cannot create an empty key");
         Assert.hasText(value, "Cannot assign an empty value");
-        Query query = entityManager.createNativeQuery("UPDATE orcid_props SET value=:value, last_modified=now() WHERE key=:key");
+        Query query = entityManager.createNativeQuery("UPDATE orcid_props SET prop_value=:value, last_modified=now() WHERE key=:key");
         query.setParameter("key", key);
         query.setParameter("value", value);
 
