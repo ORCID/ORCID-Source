@@ -20,6 +20,7 @@ import java.util.Date;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -27,6 +28,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedNativeQueries;
@@ -44,6 +47,8 @@ import org.orcid.jaxb.model.notification.generic.NotificationType;
  */
 @Entity
 @Table(name = "notification")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "notification_type")
 @SqlResultSetMappings({ @SqlResultSetMapping(name = "distinctOrcidMapping", columns = { @ColumnResult(name = "orcid") }) })
 // @formatter:off
 @NamedNativeQueries({ @NamedNativeQuery(name = NotificationEntity.FIND_ORCIDS_WITH_NOTIFICATIONS_TO_SEND, query = "SELECT DISTINCT n.orcid orcid FROM notification n"
@@ -54,7 +59,7 @@ import org.orcid.jaxb.model.notification.generic.NotificationType;
         + " (unix_timestamp(:effectiveNow) > (unix_timestamp(l.max_sent_date) + (p.send_email_frequency_days * 24 * 60 * 60))"
         + " OR (l.max_sent_date IS NULL AND unix_timestamp(:effectiveNow) > (unix_timestamp(p.completed_date) + (p.send_email_frequency_days * 24 * 60 * 60))))", resultSetMapping = "distinctOrcidMapping") })
 // @formatter:on
-public class NotificationEntity extends BaseEntity<Long> implements ProfileAware {
+abstract public class NotificationEntity extends BaseEntity<Long> implements ProfileAware {
 
     public static final String FIND_ORCIDS_WITH_NOTIFICATIONS_TO_SEND = "findOrcidsWithNotificationsToSend";
 
@@ -63,9 +68,6 @@ public class NotificationEntity extends BaseEntity<Long> implements ProfileAware
     private Long id;
     private ProfileEntity profile;
     private NotificationType notificationType;
-    private String subject;
-    private String bodyText;
-    private String bodyHtml;
     private Date sentDate;
     private Date readDate;
     private Date archivedDate;
@@ -97,39 +99,13 @@ public class NotificationEntity extends BaseEntity<Long> implements ProfileAware
 
     @Basic
     @Enumerated(EnumType.STRING)
-    @Column(name = "notification_type")
+    @Column(name = "notification_type", insertable = false, updatable = false)
     public NotificationType getNotificationType() {
         return notificationType;
     }
 
     public void setNotificationType(NotificationType notificationType) {
         this.notificationType = notificationType;
-    }
-
-    public String getSubject() {
-        return subject;
-    }
-
-    public void setSubject(String subject) {
-        this.subject = subject;
-    }
-
-    @Column(name = "body_text")
-    public String getBodyText() {
-        return bodyText;
-    }
-
-    public void setBodyText(String bodyText) {
-        this.bodyText = bodyText;
-    }
-
-    @Column(name = "body_html")
-    public String getBodyHtml() {
-        return bodyHtml;
-    }
-
-    public void setBodyHtml(String bodyHtml) {
-        this.bodyHtml = bodyHtml;
     }
 
     @Column(name = "sent_date")

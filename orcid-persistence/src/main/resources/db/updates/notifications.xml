@@ -105,4 +105,46 @@
         </addColumn>
     </changeSet>
     
+    <changeSet id="ADD-ACTIVITIES-NOTIFICATION" author="Will Simpson">
+        <createTable tableName="notification_activity">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true"
+                    primaryKeyName="notification_activity_pkey" />
+            </column>
+            <column name="notification_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE" />
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE" />
+            <column name="activity_type" type="varchar(200)"></column>
+            <column name="activity_name" type="varchar(1000)"></column>
+            <column name="external_id_type" type="varchar(100)"></column>
+            <column name="external_id_value" type="varchar(2048)"></column>
+        </createTable>
+        <addForeignKeyConstraint constraintName="notification_activity_notification_fk"
+                                 baseTableName="notification_activity" baseColumnNames="notification_id" baseTableSchemaName="public" 
+                                 referencedTableName="notification" referencedColumnNames="id" referencedTableSchemaName="public"/>
+        <addColumn tableName="notification">
+            <column name="authorization_url" type="varchar(2000)"></column>
+        </addColumn>
+        <dropNotNullConstraint tableName="notification" columnName="subject"/>
+        <dropNotNullConstraint tableName="notification" columnName="body_text"/>
+        <dropNotNullConstraint tableName="notification" columnName="body_html"/>
+    </changeSet>
+    
+    <changeSet id="ADD-SEQUENCE-FOR-NOTIFICATION-ACTIVITIES"
+        author="Will Simpson" dbms="postgresql">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sequenceExists sequenceName="notification_activity_seq" />
+            </not>
+        </preConditions>
+        <createSequence sequenceName="notification_activity_seq" />
+    </changeSet>
+    
+    <changeSet id="ADD-AUTO-COL-FOR-NOTIFICATION-ACTIVITIES"
+        author="will" dbms="hsqldb">
+        <addAutoIncrement tableName="notification_activity" columnName="id" columnDataType="bigint" />
+    </changeSet>
+    
 </databaseChangeLog>

@@ -18,14 +18,11 @@ package org.orcid.persistence.dao;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -35,10 +32,11 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.WebhookEntity;
-import org.orcid.persistence.jpa.entities.keys.WebhookEntityPk;
+import org.orcid.jaxb.model.notification.generic.NotificationType;
+import org.orcid.persistence.jpa.entities.NotificationActivityEntity;
+import org.orcid.persistence.jpa.entities.NotificationAddActivitiesEntity;
+import org.orcid.persistence.jpa.entities.NotificationCustomEntity;
+import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.utils.DateUtils;
 import org.springframework.test.annotation.Rollback;
@@ -68,6 +66,26 @@ public class NotificationDaoTest extends DBUnitTest {
         List<String> reversedDataFiles = new ArrayList<String>(DATA_FILES);
         Collections.reverse(reversedDataFiles);
         removeDBUnitData(reversedDataFiles);
+    }
+
+    @Test
+    public void testFindCustomNotification() {
+        NotificationEntity notification = notificationDao.find(1L);
+        assertNotNull(notification);
+        assertTrue(notification instanceof NotificationCustomEntity);
+        assertEquals(NotificationType.CUSTOM, notification.getNotificationType());
+    }
+    
+    @Test
+    public void testFindAddActivitiesNotification() {
+        NotificationEntity notification = notificationDao.find(5L);
+        assertNotNull(notification);
+        assertTrue(notification instanceof NotificationAddActivitiesEntity);
+        assertEquals(NotificationType.ADD_ACTIVITIES, notification.getNotificationType());
+        NotificationAddActivitiesEntity addActsNotification = (NotificationAddActivitiesEntity) notification;
+        Set<NotificationActivityEntity> acts = addActsNotification.getNotificationActivities();
+        assertNotNull(acts);
+        assertEquals(2, acts.size());
     }
 
     @Test

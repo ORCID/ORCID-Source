@@ -24,6 +24,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.jaxb.model.notification.generic.Notification;
 import org.orcid.jaxb.model.notification.generic.NotificationType;
+import org.orcid.persistence.jpa.entities.NotificationCustomEntity;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
@@ -56,7 +57,7 @@ public class JpaJaxbNotificationAdapterTest {
 
     @Test
     public void testToNotification() {
-        NotificationEntity notificationEntity = new NotificationEntity();
+        NotificationCustomEntity notificationEntity = new NotificationCustomEntity();
         notificationEntity.setId(123L);
         notificationEntity.setNotificationType(NotificationType.RECORD_UPDATED_BY_MEMBER);
         notificationEntity.setSubject("Test subject");
