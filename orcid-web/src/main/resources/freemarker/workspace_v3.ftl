@@ -313,7 +313,7 @@
 						   <div class="row full-height-row">
 						   	   <div class="col-md-9">
 								   <p>
-								   		<@orcid.msg 'workspace.bibtexImporter.instructions'/>  <a href="http://support.orcid.org/knowledgebase/articles/390530" target="_blank"><@orcid.msg 'workspace.bibtexImporter.learnMore'/></a>
+								   		<@orcid.msg 'workspace.bibtexImporter.instructions'/>  <a href="http://support.orcid.org/knowledgebase/articles/390530" target="_blank"><@orcid.msg 'workspace.bibtexImporter.learnMore'/></a>.
 								   </p> 
 							   </div>
 							   <div class="col-md-3">
@@ -328,16 +328,11 @@
 						<div class="alert alert-block" ng-show="bibtexParsingError">
 							<strong><@orcid.msg 'workspace.bibtexImporter.parsingError'/></strong>
 						</div>
-						<div class="row bottomBuffer" ng-show="bibtexCancelLink">
-							<div class="col-md-10"></div>
-							<div class="col-md-2">
-								<button type="button" ng-click="bibtextCancel()" class="btn close-button pull-right"><@orcid.msg 'workspace.bibtexImporter.cancel'/></button>		
-							</div>
-						</div>
-					   	<div ng-repeat="work in worksFromBibtex" ng-cloak class="grey-box bottomBuffer box-border">
-					   		  <div class="row">	  
+						<span class="dotted-bar" ng-show="worksFromBibtex.length > 0"></span>
+					   	<div ng-repeat="work in worksFromBibtex" ng-cloak class="bottomBuffer">
+					   		  <div class="row full-height-row">	  
 			        	       	  <div class="col-md-9">
-			        	          	{{work.title.value}}
+			        	          	<h3 class="workspace-title bibtex-work-title"><span>{{work.title.value}}</span></h3>
 			        	          </div>
 			        	          <div class="col-md-3 bibtex-options-menu">
 			        	          	<ul>

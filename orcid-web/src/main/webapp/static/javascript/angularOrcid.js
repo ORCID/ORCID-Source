@@ -3881,6 +3881,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actBulkSr
         $scope.bibtexParsingError = false;
         $scope.showBibtexImportWizard = !($scope.showBibtexImportWizard);
         $scope.bulkEditShow = false;
+        $scope.worksFromBibtex = null;
     };
 
     $scope.bibtextCancel = function(){
