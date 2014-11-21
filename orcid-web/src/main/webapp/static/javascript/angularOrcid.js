@@ -26,6 +26,11 @@ function openImportWizardUrl(url) {
     $.colorbox.close();
 };
 
+var PRIVACY = {};
+PRIVACY.PUBLIC = 'PUBLIC';
+PRIVACY.LIMITED = 'LIMITED';
+PRIVACY.PRIVATE = 'PRIVATE';
+
 var GroupedActivities = function(type) {
 
     if (GroupedActivities.count == undefined)
@@ -90,6 +95,14 @@ GroupedActivities.prototype.getByPut = function(putCode) {
     return this.activities[putCode];
 };
 
+GroupedActivities.prototype.consistentVis = function() {
+    var vis = this.getDefault().visibility;
+    for (var idx in this.activities)
+        if (this.activities[idx].visibility != vis)
+            return false;
+    return true;
+};
+
 GroupedActivities.prototype.getIdentifiersPath = function() {
     if (this.type == GroupedActivities.ABBR_WORK) return 'workExternalIdentifiers';
     return 'externalIdentifiers';
@@ -143,7 +156,6 @@ GroupedActivities.prototype.hasUserVersion = function() {
     return false;
 };
 
-
 GroupedActivities.prototype.hasPut = function(putCode) {
     if (this.activities[putCode] !== undefined)
                 return true;
@@ -186,6 +198,18 @@ GroupedActivities.prototype.keyMatch = function(activity) {
             return true;
     }
     return false;
+};
+
+GroupedActivities.prototype.highestVis = function() {
+    var vis = this.getDefault().visibility;
+    for (var idx in this.activities)
+        if (vis == PRIVACY.PUBLIC)
+            return vis;
+        else if (this.activities[putCode].visibility == PRIVACY.PUBLIC)
+            return PRIVACY.PUBLIC;
+        else if (this.activities[putCode].visibility == PRIVACY.LIMITED)
+            vis = PRIVACY.LIMITED;
+    return vis;
 };
 
 GroupedActivities.prototype.makeDefault = function(putCode) {

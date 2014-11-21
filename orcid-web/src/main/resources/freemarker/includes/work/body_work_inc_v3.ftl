@@ -124,7 +124,7 @@
 	                                    <!-- Privacy -->
 	                                    <li>
 	                                        <@orcid.privacyToggle2 angularModel="work.visibility"
-	                                            questionClick="toggleClickPrivacyHelp(work.putCode.value)"
+	                                            questionClick="toggleClickPrivacyHelp(group.highestVis())"
 	                                            clickedClassCheck="{'popover-help-container-show':privacyHelp[work.putCode.value]==true}"
 	                                            publicClick="worksSrvc.setGroupPrivacy(work.putCode.value, 'PUBLIC', $event)"
 	                                            limitedClick="worksSrvc.setGroupPrivacy(work.putCode.value, 'LIMITED', $event)"
@@ -132,6 +132,11 @@
 	                                    </li>
 	                                </#if>
                                 </ul>
+                                <#if !(isPublicProfile??)>
+                                    <div ng-show="!group.consistentVis()">
+                                        <i class="vis-issue glyphicons circle_exclamation_mark"></i>
+                                    </div>
+                                </#if>
                             </div>                        
                   	 </div>
                             
