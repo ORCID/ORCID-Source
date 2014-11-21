@@ -23,7 +23,7 @@
 	<xs:element name="notificationType">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:enumeration value="RECORD_UPDATED_BY_MEMBER"/>
+				<xs:enumeration value="ADD_ACTIVITIES"/>
 				<xs:enumeration value="CUSTOM"/>
 			</xs:restriction>
 		</xs:simpleType>
