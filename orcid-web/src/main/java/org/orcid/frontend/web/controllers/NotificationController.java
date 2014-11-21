@@ -52,38 +52,33 @@ public class NotificationController extends BaseController {
     }
 
     @RequestMapping("/notifications.json")
-    public @ResponseBody
-    List<Notification> getNotificationsJson(@RequestParam(value = "firstResult", defaultValue = "0") int firstResult,
+    public @ResponseBody List<Notification> getNotificationsJson(@RequestParam(value = "firstResult", defaultValue = "0") int firstResult,
             @RequestParam(value = "maxResults", defaultValue = "10") int maxResults) {
         String currentOrcid = getCurrentUserOrcid();
         return notificationManager.findByOrcid(currentOrcid, firstResult, maxResults);
     }
-    
+
     @RequestMapping("/unreadCount.json")
-    public @ResponseBody
-    int getUnreadCountJson() {
+    public @ResponseBody int getUnreadCountJson() {
         String currentOrcid = getCurrentUserOrcid();
         return notificationDao.getUnreadCount(currentOrcid);
     }
 
     @RequestMapping(value = "/{id}/notification.html", produces = MediaType.TEXT_HTML_VALUE)
-    public @ResponseBody
-    String getNotificationHtml(@PathVariable("id") String id) {
+    public @ResponseBody String getNotificationHtml(@PathVariable("id") String id) {
         Notification notification = notificationManager.findByOrcidAndId(getCurrentUserOrcid(), Long.valueOf(id));
         return notification.getBodyHtml();
     }
 
     @RequestMapping(value = "{id}/read.json")
-    public @ResponseBody
-    Notification flagAsRead(@PathVariable("id") String id) {
+    public @ResponseBody Notification flagAsRead(@PathVariable("id") String id) {
         String currentUserOrcid = getCurrentUserOrcid();
         notificationDao.flagAsRead(currentUserOrcid, Long.valueOf(id));
         return notificationManager.findByOrcidAndId(currentUserOrcid, Long.valueOf(id));
     }
-    
+
     @RequestMapping(value = "{id}/archive.json")
-    public @ResponseBody
-    Notification flagAsArchived(@PathVariable("id") String id) {
+    public @ResponseBody Notification flagAsArchived(@PathVariable("id") String id) {
         String currentUserOrcid = getCurrentUserOrcid();
         notificationDao.flagAsArchived(currentUserOrcid, Long.valueOf(id));
         return notificationManager.findByOrcidAndId(currentUserOrcid, Long.valueOf(id));
