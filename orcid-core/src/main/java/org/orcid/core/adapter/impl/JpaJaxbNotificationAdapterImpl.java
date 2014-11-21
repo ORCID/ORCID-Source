@@ -23,6 +23,7 @@ import ma.glasnost.orika.MapperFacade;
 
 import org.orcid.core.adapter.JpaJaxbNotificationAdapter;
 import org.orcid.jaxb.model.notification.generic.Notification;
+import org.orcid.persistence.jpa.entities.NotificationCustomEntity;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
 
 /**
@@ -43,7 +44,7 @@ public class JpaJaxbNotificationAdapterImpl implements JpaJaxbNotificationAdapte
         if (notification == null) {
             return null;
         }
-        return mapperFacade.map(notification, NotificationEntity.class);
+        return mapperFacade.map(notification, NotificationCustomEntity.class);
     }
 
     @Override
