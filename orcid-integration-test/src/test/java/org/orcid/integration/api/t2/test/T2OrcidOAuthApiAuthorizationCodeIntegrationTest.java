@@ -294,6 +294,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         orcidActivities.setOrcidWorks(orcidWorks);
         OrcidWork orcidWork = new OrcidWork();
         orcidWorks.getOrcidWork().add(orcidWork);
+        orcidWork.setWorkType(WorkType.JOURNAL_ARTICLE);
         WorkTitle workTitle = new WorkTitle();
         orcidWork.setWorkTitle(workTitle);
         workTitle.setTitle(new Title("Work added by integration test"));
@@ -318,6 +319,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         orcidActivities.setOrcidWorks(orcidWorks);
         OrcidWork orcidWork = new OrcidWork();
         orcidWorks.getOrcidWork().add(orcidWork);
+        orcidWork.setWorkType(WorkType.JOURNAL_ARTICLE);
         WorkTitle workTitle = new WorkTitle();
         workTitle.setTitle(new Title("Work added by integration test - Version 22"));
         TranslatedTitle translatedTitle = new TranslatedTitle();
@@ -377,7 +379,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         OrcidWorks orcidWorks = new OrcidWorks();
         orcidActivities.setOrcidWorks(orcidWorks);
         OrcidWork orcidWork = new OrcidWork();
-
+        orcidWork.setWorkType(WorkType.JOURNAL_ARTICLE);
         orcidWorks.getOrcidWork().add(orcidWork);
         WorkTitle workTitle = new WorkTitle();
         workTitle.setTitle(new Title(""));
@@ -872,6 +874,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         orcidActivities.setOrcidWorks(orcidWorks);
         OrcidWork orcidWork = new OrcidWork();
         orcidWorks.getOrcidWork().add(orcidWork);
+        orcidWork.setWorkType(WorkType.JOURNAL_ARTICLE);
         WorkTitle workTitle = new WorkTitle();
         orcidWork.setWorkTitle(workTitle);
         workTitle.setTitle(new Title("Work added by integration test"));
