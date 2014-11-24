@@ -191,8 +191,7 @@ public class OauthConfirmAccessController extends BaseController {
                     clientName = clientDetails.getClientName() == null ? "" : clientDetails.getClientName();
                     clientDescription = clientDetails.getClientDescription() == null ? "" : clientDetails.getClientDescription();
                     
-                    ProfileEntity groupProfile = clientDetails.getGroupProfile();
-                    
+                    ProfileEntity groupProfile = clientDetails.getGroupProfile();                    
                     // If client type is null it means it is a public client
                     if (clientDetails.getClientType() == null) {
                         clientGroupName = PUBLIC_CLIENT_GROUP_NAME;
