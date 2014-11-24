@@ -28,15 +28,15 @@
                         <div class="row">                      
                             <div class="col-md-4 col-sm-4 col-xs-4">
                                 <div class="">
-                                    Sources <span class="hide-sources" ng-click="hideSources(group)">Close sources</span>
+                                    <@orcid.msg 'common.details.groups.common.close_sources' /> <span class="hide-sources" ng-click="hideSources(group)"><@orcid.msg 'common.details.groups.common.close_sources' /></span>
                                 </div>
                             </div>
                             <div class="col-md-3 col-sm-3 col-xs-3">
-                                Created                         
+                                <@orcid.msg 'groups.common.created' />
                             </div>
                             
-                            <div class="col-md-2 col-sm-3 col-xs-3">                            	
-                                Preferred
+                            <div class="col-md-2 col-sm-3 col-xs-3">
+                                <@orcid.msg 'groups.common.preferred' />
                             </div>
                             <div class="col-md-3 col-sm-2 col-xs-2 right">                            	
                                 	<div class="workspace-toolbar">                                	
@@ -54,8 +54,8 @@
 		                                		<div class="popover popover-tooltip top show-hide-details-popover" ng-show="showElement[group.groupId+'-showHideDetails'] == true"> 
 											     	<div class="arrow"></div>
 											        <div class="popover-content">											        	
-											        	<span ng-show="moreInfo[group.groupId] == false || moreInfo[group.groupId] == null">Show Details</span>									                    
-											        	<span ng-show="moreInfo[group.groupId] == true">Hide Details</span>
+											        	<span ng-show="moreInfo[group.groupId] == false || moreInfo[group.groupId] == null"><@orcid.msg 'common.details.show_details'/></span>									                    
+											        	<span ng-show="moreInfo[group.groupId] == true"><@orcid.msg 'common.details.hide_details'/></span>
 											        </div>                
 											    </div>
 											</li>	
@@ -114,8 +114,8 @@
                                 		<div class="popover popover-tooltip top show-hide-details-popover" ng-show="showElement[group.groupId+'-showHideDetails'] == true"> 
 									     	<div class="arrow"></div>
 									        <div class="popover-content">
-									        	<span ng-show="moreInfo[group.groupId] == false || moreInfo[group.groupId] == null">Show Details</span>									                    
-									        	<span ng-show="moreInfo[group.groupId] == true">Hide Details</span>
+									        	<span ng-show="moreInfo[group.groupId] == false || moreInfo[group.groupId] == null"><@orcid.msg 'common.details.show_details' /></span>									                    
+									        	<span ng-show="moreInfo[group.groupId] == true"><@orcid.msg 'common.details.hide_details' /></span>
 									        </div>                
 									    </div>                                		
 									</li>
@@ -190,14 +190,13 @@
 						        			<div class="popover popover-tooltip top combine-activeDuplicates-popover" ng-show="showElement[work.putCode.value+'-combineActiveDuplicates'] == true"> 
 											    <div class="arrow"></div>
 											    <div class="popover-content">
-											        Combine duplicates                                      
-											    </div>                
+											        <@orcid.msg 'groups.common.combine_duplicates' />
+											    </div>
 											</div>
 						        			
 						        			
 						        		</li>
-						        	</#if>					        		
-					        		<li>
+						        	</#if>					        		<li>
 					        			<a ng-show="!group.hasUserVersion() || userIsSource(work)" ng-click="openEditWork(group.getActive().putCode.value)" ng-mouseenter="showTooltip(group.groupId+'-editActiveSource')" ng-mouseleave="hideTooltip(group.groupId+'-editActiveSource')">
 											<span class="glyphicon glyphicon-pencil" ng-class="{'glyphicons git_create' : !userIsSource(work)}"></span>
 										</a>
