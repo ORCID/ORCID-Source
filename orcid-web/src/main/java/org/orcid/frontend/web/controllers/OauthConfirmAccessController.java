@@ -37,6 +37,7 @@ import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.OauthAuthorizeForm;
@@ -95,6 +96,8 @@ public class OauthConfirmAccessController extends BaseController {
     private OrcidAuthorizationEndpoint authorizationEndpoint;
     @Resource
     private RegistrationController registrationController;
+    @Resource
+    private ProfileDao profileDao;
     
     private static String REDIRECT_URI_ERROR = "/oauth/error/redirect-uri-mismatch?client_id={0}";
     
@@ -192,6 +195,8 @@ public class OauthConfirmAccessController extends BaseController {
                     clientDescription = clientDetails.getClientDescription() == null ? "" : clientDetails.getClientDescription();
                     
                     ProfileEntity groupProfile = clientDetails.getGroupProfile();
+                    profileDao.refresh(groupProfile);
+                    
                     // If client type is null it means it is a public client
                     if (clientDetails.getClientType() == null) {
                         clientGroupName = PUBLIC_CLIENT_GROUP_NAME;
