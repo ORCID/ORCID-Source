@@ -49,6 +49,7 @@
 	<client_authorised_grant_type client_details_id="4444-4444-4444-4498" grant_type="authorization_code" />
 	
 	<client_authorised_grant_type client_details_id="APP-5555555555555555" grant_type="authorization_code" />
+	<client_authorised_grant_type client_details_id="APP-5555555555555555" grant_type="client_credentials" />
     
     <client_granted_authority client_details_id="4444-4444-4444-4441" granted_authority="ROLE_CLIENT"/>
     <client_granted_authority client_details_id="4444-4444-4444-4442" granted_authority="ROLE_CLIENT"/>
@@ -90,6 +91,9 @@
     <client_scope client_details_id="APP-5555555555555555" scope_type="/funding/create"/>    
     <client_scope client_details_id="APP-5555555555555555" scope_type="/affiliations/create"/>
     <client_scope client_details_id="APP-5555555555555555" scope_type="/authenticate"/>
+    <client_scope client_details_id="APP-5555555555555555" scope_type="/webhook"/>
+    <client_scope client_details_id="APP-5555555555555555" scope_type="/read-public"/>
+    <client_scope client_details_id="APP-5555555555555555" scope_type="/orcid-profile/create"/>
     
     <client_secret client_details_id="4444-4444-4444-4441" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25"/>
     <client_secret client_details_id="4444-4444-4444-4442" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25"/>

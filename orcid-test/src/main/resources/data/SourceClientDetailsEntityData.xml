@@ -50,5 +50,5 @@
             orcid_type="CLIENT"
             client_type="PREMIUM_CREATOR"
             />
-    <client_details client_details_id="APP-5555555555555555" date_created="2012-04-25" last_modified="2012-04-25" client_name="Source Client 1" client_description="A test source client" client_website="www.5555555555555555.com" group_orcid="4444-4444-4444-4448"/>
+    <client_details client_details_id="APP-5555555555555555" date_created="2012-04-25" last_modified="2012-04-25" client_name="Source Client 1" client_description="A test source client" client_website="www.5555555555555555.com" group_orcid="4444-4444-4444-4448" persistent_tokens_enabled="true"/>
 </dataset>
