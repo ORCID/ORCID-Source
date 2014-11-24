@@ -19,7 +19,7 @@
 -->
 <notification xmlns="http://www.orcid.org/ns/orcid"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-add-activity-notification-1.0.xsd">
+    xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-notification-add-activities-1.0.xsd">
 	<putCode>
 	    <!--  Read only section for API user, but they can PUT to this URL to update the notification, as long as they are the source and the notification has not been read yet by the user -->
 		<uri>http://orcid.org/1234-5678-1234-5678/notifications/add-activities/1</uri>
