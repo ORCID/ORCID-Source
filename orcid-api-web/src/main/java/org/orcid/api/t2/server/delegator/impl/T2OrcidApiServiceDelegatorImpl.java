@@ -63,6 +63,7 @@ import org.orcid.persistence.jpa.entities.WebhookEntity;
 import org.orcid.persistence.jpa.entities.keys.WebhookEntityPk;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.NullUtils;
+import org.orcid.utils.OrcidStringUtils;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -423,11 +424,15 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
         if (OAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
             AuthorizationRequest authorizationRequest = ((OAuth2Authentication) authentication).getAuthorizationRequest();
             Source sponsor = new Source();
-            String sponsorOrcid = authorizationRequest.getClientId();
-            ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(sponsorOrcid);
+            String sponsorId = authorizationRequest.getClientId();
+            ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(sponsorId);
             if (clientDetails != null) {
                 sponsor.setSourceName(new SourceName(clientDetails.getClientName()));
-                sponsor.setSourceOrcid(new SourceOrcid(sponsorOrcid));
+                if (OrcidStringUtils.isClientId(sponsorId)) {
+                    sponsor.setSourceClientId(new SourceClientId(sponsorId));
+                } else {
+                    sponsor.setSourceOrcid(new SourceOrcid(sponsorId));
+                }
             }
             profile.getOrcidHistory().setSource(sponsor);
         }

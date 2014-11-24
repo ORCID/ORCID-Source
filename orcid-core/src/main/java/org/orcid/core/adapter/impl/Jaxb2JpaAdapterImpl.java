@@ -748,7 +748,10 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             profileEntity.setCreationMethod(creationMethod != null ? creationMethod.value() : null);
             Source source = orcidHistory.getSource();
             if (source != null) {
-                SourceEntity sourceEntity = new SourceEntity(source.retrieveSourcePath());
+                SourceEntity sourceEntity = new SourceEntity();
+                ClientDetailsEntity clientDetailsEntity = new ClientDetailsEntity();
+                clientDetailsEntity.setId(source.retrieveSourcePath());
+                sourceEntity.setSourceClient(clientDetailsEntity);
                 profileEntity.setSource(sourceEntity);
             }
         }
@@ -851,7 +854,8 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                         : sendEmailFrequencyDays));
                 profileEntity.setSendChangeNotifications(preferences.getSendChangeNotifications() == null ? null : preferences.getSendChangeNotifications().isValue());
                 profileEntity.setSendOrcidNews(preferences.getSendOrcidNews() == null ? null : preferences.getSendOrcidNews().isValue());
-                profileEntity.setSendOrcidFeatureAnnouncements(preferences.getSendOrcidFeatureAnnouncements() == null ? null : preferences.getSendOrcidFeatureAnnouncements());
+                profileEntity.setSendOrcidFeatureAnnouncements(preferences.getSendOrcidFeatureAnnouncements() == null ? null : preferences
+                        .getSendOrcidFeatureAnnouncements());
                 // ActivitiesVisibilityDefault default is WorkVisibilityDefault
                 if (preferences.getActivitiesVisibilityDefault() != null) {
                     profileEntity.setActivitiesVisibilityDefault(preferences.getActivitiesVisibilityDefault().getValue());

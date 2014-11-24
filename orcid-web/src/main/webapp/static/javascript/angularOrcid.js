@@ -26,6 +26,11 @@ function openImportWizardUrl(url) {
     $.colorbox.close();
 };
 
+var PRIVACY = {};
+PRIVACY.PUBLIC = 'PUBLIC';
+PRIVACY.LIMITED = 'LIMITED';
+PRIVACY.PRIVATE = 'PRIVATE';
+
 var GroupedActivities = function(type) {
 
     if (GroupedActivities.count == undefined)
@@ -90,6 +95,14 @@ GroupedActivities.prototype.getByPut = function(putCode) {
     return this.activities[putCode];
 };
 
+GroupedActivities.prototype.consistentVis = function() {
+    var vis = this.getDefault().visibility;
+    for (var idx in this.activities)
+        if (this.activities[idx].visibility != vis)
+            return false;
+    return true;
+};
+
 GroupedActivities.prototype.getIdentifiersPath = function() {
     if (this.type == GroupedActivities.ABBR_WORK) return 'workExternalIdentifiers';
     return 'externalIdentifiers';
@@ -143,7 +156,6 @@ GroupedActivities.prototype.hasUserVersion = function() {
     return false;
 };
 
-
 GroupedActivities.prototype.hasPut = function(putCode) {
     if (this.activities[putCode] !== undefined)
                 return true;
@@ -186,6 +198,18 @@ GroupedActivities.prototype.keyMatch = function(activity) {
             return true;
     }
     return false;
+};
+
+GroupedActivities.prototype.highestVis = function() {
+    var vis = this.getDefault().visibility;
+    for (var idx in this.activities)
+        if (vis == PRIVACY.PUBLIC)
+            return vis;
+        else if (this.activities[putCode].visibility == PRIVACY.PUBLIC)
+            return PRIVACY.PUBLIC;
+        else if (this.activities[putCode].visibility == PRIVACY.LIMITED)
+            vis = PRIVACY.LIMITED;
+    return vis;
 };
 
 GroupedActivities.prototype.makeDefault = function(putCode) {
@@ -3577,6 +3601,13 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc, comm
     $scope.openEditFunding = function(funding) {
         $scope.addFundingModal(funding);
     };
+    
+    $scope.showFundingImportWizard =  function() {
+        $.colorbox({
+            html : $compile($('#import-wizard-modal').html())($scope),
+            onComplete: function() {$.colorbox.resize();}
+        });
+    };
 }
 
 /**
@@ -3689,7 +3720,7 @@ function PublicWorkCtrl($scope, $compile, $filter, workspaceSrvc, worksSrvc) {
         $scope.moreInfoOpen = true;
         //Display the popover
         $(event.target).next().css('display','inline');
-        $scope.worksSrvc.getGroupDetails(putCode, worksSrvc.constants.access_type.USER);
+        $scope.worksSrvc.getGroupDetails(putCode, worksSrvc.constants.access_type.ANONYMOUS);
     };
 
     $scope.hideSources = function(group) {
@@ -3726,7 +3757,7 @@ function PublicWorkCtrl($scope, $compile, $filter, workspaceSrvc, worksSrvc) {
 
 }
 
-function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actBulkSrvc, commonSrvc) {
+function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actBulkSrvc, commonSrvc, $timeout) {
     actBulkSrvc.initScope($scope);
     $scope.canReadFiles = false;
     $scope.showBibtexImportWizard = false;
@@ -3874,6 +3905,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actBulkSr
         $scope.bibtexParsingError = false;
         $scope.showBibtexImportWizard = !($scope.showBibtexImportWizard);
         $scope.bulkEditShow = false;
+        $scope.worksFromBibtex = null;
     };
 
     $scope.bibtextCancel = function(){
@@ -4282,6 +4314,12 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actBulkSr
     
     $scope.hideTooltip = function (element){    	
     	$scope.showElement[element] = false;
+    }
+    
+    $scope.openFileDialog = function(){    	
+    	$timeout(function() { //To avoid '$apply already in progress' error
+    	    angular.element('#inputBibtex').trigger('click');
+    	}, 0);
     }
 }
 

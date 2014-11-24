@@ -46,6 +46,7 @@ import org.orcid.jaxb.model.message.WorkExternalIdentifierId;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.message.WorkTitle;
+import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.beans.factory.InitializingBean;
@@ -162,6 +163,7 @@ public class OrcidClientDataHelper implements InitializingBean {
 
     public OrcidWork createWork(String theTitle) {
         OrcidWork orcidWork = new OrcidWork();
+        orcidWork.setWorkType(WorkType.JOURNAL_ARTICLE);
         Title title = new Title(theTitle);
         WorkTitle workTitle = new WorkTitle();
         workTitle.setTitle(title);

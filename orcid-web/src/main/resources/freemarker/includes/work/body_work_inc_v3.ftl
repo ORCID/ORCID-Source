@@ -124,7 +124,7 @@
 	                                    <!-- Privacy -->
 	                                    <li>
 	                                        <@orcid.privacyToggle2 angularModel="work.visibility"
-	                                            questionClick="toggleClickPrivacyHelp(work.putCode.value)"
+	                                            questionClick="toggleClickPrivacyHelp(group.highestVis())"
 	                                            clickedClassCheck="{'popover-help-container-show':privacyHelp[work.putCode.value]==true}"
 	                                            publicClick="worksSrvc.setGroupPrivacy(work.putCode.value, 'PUBLIC', $event)"
 	                                            limitedClick="worksSrvc.setGroupPrivacy(work.putCode.value, 'LIMITED', $event)"
@@ -132,6 +132,11 @@
 	                                    </li>
 	                                </#if>
                                 </ul>
+                                <#if !(isPublicProfile??)>
+                                    <div ng-show="!group.consistentVis()">
+                                        <i class="vis-issue glyphicons circle_exclamation_mark"></i>
+                                    </div>
+                                </#if>
                             </div>                        
                   	 </div>
                             
@@ -396,5 +401,5 @@
     <![endif]-->
 </div>
 <div ng-show="worksSrvc.loading == false && worksSrvc.groups.length == 0" class="" ng-cloak>
-    <strong><#if (publicProfile)?? && publicProfile == true>${springMacroRequestContext.getMessage("workspace_works_body_list.Nopublicationsaddedyet")}<#else>${springMacroRequestContext.getMessage("workspace_works_body_list.havenotaddedanyworks")} <a ng-click="addWorkModal()">${springMacroRequestContext.getMessage("workspace_works_body_list.addsomenow")}</a></#if></strong>
+    <strong><#if (publicProfile)?? && publicProfile == true>${springMacroRequestContext.getMessage("workspace_works_body_list.Nopublicationsaddedyet")}<#else>${springMacroRequestContext.getMessage("workspace_works_body_list.havenotaddedanyworks")} <a ng-click="showWorkImportWizard()">${springMacroRequestContext.getMessage("workspace_works_body_list.addsomenow")}</a></#if></strong>
 </div>

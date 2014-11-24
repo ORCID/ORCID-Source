@@ -249,9 +249,9 @@
                 <div id="workspace-publications" class="workspace-accordion-item workspace-accordion-active" ng-controller="WorkCtrl" orcid-loaded="{{worksSrvc.worksToAddIds != null && worksSrvc.loading != true}}">
                     <#include "includes/work/work_section_header_inc_v3.ftl"/>
 					
-					<!-- Bulk Edit -->
-					<div ng-show="bulkEditShow" ng-cloak>
-						<div class="grey-box bulk-edit">
+					<!-- Bulk Edit -->					
+					<div ng-show="bulkEditShow && workspaceSrvc.displayWorks" ng-cloak>						
+						<div class="bulk-edit">
 							<div class="row">
 								<div class="col-md-7 col-sm-7">
 									<h4>Bulk edit</h4><span class="hide-bulk" ng-click="toggleBulkEdit()">Hide bulk edit</span>
@@ -307,32 +307,32 @@
 					</div>
 					
 					<!-- Bibtex Importer Wizard -->
-					<div ng-show="showBibtexImportWizard" ng-cloak class="bibtex-box">
-						<div class="grey-box bottomBuffer box-border" ng-show="canReadFiles" ng-cloak>
-						   <p class="bottomBuffer">
-						   		<strong><@orcid.msg 'workspace.bibtexImporter.instructions'/>  <a href="http://support.orcid.org/knowledgebase/articles/390530" target="_blank"><@orcid.msg 'workspace.bibtexImporter.learnMore'/></a></strong>
-						   </p> 
-					       <div class="label btn-primary upload">
-					           <span class="import-label"><@orcid.msg 'workspace.bibtexImporter.fileUpload'/></span>
-						       <input type="file" class="upload-button" ng-model="textFiles" accept="*" update-fn="loadBibtexJs()"  app-file-text-reader multiple />
-					       </div>
-					       <span class="cancel-bibtex">
-					        	<a href="" class="label btn-primary" ng-click="openBibTextWizard()"><@orcid.msg 'workspace.bibtexImporter.cancel'/></a>
-						   </span>
+					<div ng-show="showBibtexImportWizard && workspaceSrvc.displayWorks" ng-cloak class="bibtex-box">
+						<div class=box-border" ng-show="canReadFiles" ng-cloak>
+						   <h4>Link BibTeX</h4><span ng-click="openBibTextWizard()" class="hide-importer">Hide link BibTeX</span>
+						   <div class="row full-height-row">
+						   	   <div class="col-md-9">
+								   <p>
+								   		<@orcid.msg 'workspace.bibtexImporter.instructions'/>  <a href="http://support.orcid.org/knowledgebase/articles/390530" target="_blank"><@orcid.msg 'workspace.bibtexImporter.learnMore'/></a>.
+								   </p> 
+							   </div>
+							   <div class="col-md-3">
+							   		<span class="bibtext-options">							   									   		
+									    <a class="bibtex-cancel" ng-click="openBibTextWizard()"><@orcid.msg 'workspace.bibtexImporter.cancel'/></a>			       
+									    <span class="import-label" ng-click="openFileDialog()"><@orcid.msg 'workspace.bibtexImporter.fileUpload'/></span>							           
+										<input id="inputBibtex" type="file" class="upload-button" ng-model="textFiles" accept="*" update-fn="loadBibtexJs()"  app-file-text-reader multiple />
+									</span>								    
+							   </div>
+						   </div>
 						</div>						
 						<div class="alert alert-block" ng-show="bibtexParsingError">
 							<strong><@orcid.msg 'workspace.bibtexImporter.parsingError'/></strong>
 						</div>
-						<div class="row bottomBuffer" ng-show="bibtexCancelLink">
-							<div class="col-md-10"></div>
-							<div class="col-md-2">
-								<button type="button" ng-click="bibtextCancel()" class="btn close-button pull-right"><@orcid.msg 'workspace.bibtexImporter.cancel'/></button>		
-							</div>
-						</div>
-					   	<div ng-repeat="work in worksFromBibtex" ng-cloak class="grey-box bottomBuffer box-border">
-					   		  <div class="row">	  
+						<span class="dotted-bar" ng-show="worksFromBibtex.length > 0"></span>
+					   	<div ng-repeat="work in worksFromBibtex" ng-cloak class="bottomBuffer">
+					   		  <div class="row full-height-row">	  
 			        	       	  <div class="col-md-9">
-			        	          	{{work.title.value}}
+			        	          	<h3 class="workspace-title bibtex-work-title"><span>{{work.title.value}}</span></h3>
 			        	          </div>
 			        	          <div class="col-md-3 bibtex-options-menu">
 			        	          	<ul>
@@ -458,13 +458,24 @@
 </script>
 
 <script type="text/ng-template" id="bulk-delete-modal">
-	<div class="lightbox-container">
+	<div class="lightbox-container bulk-delete-modal">
 		<div class="row">
 			<div class="col-md-12 col-sm-12 col-xs-12">
-				<h3>Please confirm deleting {{bulkDeleteCount}} items </h3>
-				<span class="orcid-error" ng-show="bulkDeleteCount != delCountVerify">To delete these {{bulkDeleteCount}} items, please enter the number of items you will be deleting <input type="text" size="3" ng-init="delCountVerify=0" ng-model="delCountVerify"/>.</span></br > 
-				<button class="btn btn-danger" ng-click="bulkDeleteFunction()"><@orcid.msg 'freemarker.btnDelete'/></button> 
-				<a ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel'/></a>
+				<h3><@orcid.msg 'groups.bulk_delete.confirm.header'/></h3>
+				<div class="orcid-error" ng-show="bulkDeleteCount != delCountVerify">
+					<p>
+						<@orcid.msg 'groups.bulk_delete.confirm.line_1'/>
+					</p>
+					<p>
+						<@orcid.msg 'groups.bulk_delete.confirm.line_2'/>
+					</p>
+					<p>
+    	            	<@orcid.msg 'groups.bulk_delete.confirm.line_3'/> <input type="text" size="3" ng-init="delCountVerify=0" ng-model="delCountVerify"/>
+					</p>
+				</div>
+				<div class="pull-right">
+					<a ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel'/></a>  <button class="btn blue" ng-click="bulkDeleteFunction()"><@orcid.msg 'freemarker.btnDelete'/></button>
+				</div>
 			<div>
 		<div>
 	<div>	
