@@ -111,7 +111,7 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
         if (refreshToken != null) {
             parameters.put("refresh_token", refreshToken);
         }
-
+                        
         DefaultAuthorizationRequest authorizationRequest = new DefaultAuthorizationRequest(parameters, Collections.<String, String> emptyMap(), clientId, scopes);
         Set<String> resourceIds = new HashSet<>();
         resourceIds.add("orcid");

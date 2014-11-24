@@ -168,6 +168,8 @@ public enum ScopePathType implements Serializable {
                 return true;
             case READ_PUBLIC:
                 return true;
+            case WEBHOOK:
+                return true;
             default:
                 return false;
         }
