@@ -3159,6 +3159,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc, comm
     $scope.privacyHelp = {};
     $scope.editTranslatedTitle = false;
     $scope.lastIndexedTerm = null;
+    $scope.showElement = {};
     $scope.emptyExtId = {
             "errors": [],
             "type": {
@@ -3607,6 +3608,14 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc, comm
             html : $compile($('#import-wizard-modal').html())($scope),
             onComplete: function() {$.colorbox.resize();}
         });
+    };
+    
+    $scope.showTooltip = function (element){    	
+        $scope.showElement[element] = true;
+    };
+
+    $scope.hideTooltip = function (element){    	
+        $scope.showElement[element] = false;
     };
 }
 

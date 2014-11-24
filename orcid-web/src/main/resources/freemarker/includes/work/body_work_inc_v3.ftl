@@ -27,9 +27,7 @@
                     <div class="sources-header">
                         <div class="row">                      
                             <div class="col-md-4 col-sm-4 col-xs-4">
-                                <div class="">
-                                    Sources <span class="hide-sources" ng-click="hideSources(group)">Close sources</span>
-                                </div>
+                                Sources <span class="hide-sources" ng-click="hideSources(group)">Close sources</span>
                             </div>
                             <div class="col-md-3 col-sm-3 col-xs-3">
                                 Created                         
@@ -296,7 +294,7 @@
                     </div>
                     
                     
-                    <!--  Final Row -->                     
+                    <!--  Bottom row -->                     
                     <div class="row source-line" ng-hide="editSources[group.groupId] == true">
                     	<div class="col-md-4">
                       		SOURCE: {{work.sourceName}}
