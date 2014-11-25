@@ -140,6 +140,8 @@ kind of variable. This temp value is only used in this macro lib -->
 -->
 <#macro msg key, htmlEscape=false>${springMacroRequestContext.getMessage(key, [], "", htmlEscape)}</#macro>
 
+<#macro msgToUpperCase key, htmlEscape=false>${springMacroRequestContext.getMessage(key, [], "", htmlEscape)?upper_case}</#macro>
+
 <#--
  * unescapedMessage
  *
