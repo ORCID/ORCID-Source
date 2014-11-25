@@ -74,7 +74,7 @@ public abstract class BaseT2OrcidOAuthApiClientIntegrationTest {
     }
     
     protected void createBlankTokenFromCredentials() throws Exception {
-        this.blankScopeToken = createAccessTokenFromCredentials(ScopePathType.ORCID_PROFILE_CREATE.value());
+        this.blankScopeToken = createAccessTokenFromCredentials(ScopePathType.WEBHOOK.value());
         OrcidOauth2TokenDetail orcidOauth2TokenDetail = orcidOauthTokenDetailService.findNonDisabledByTokenValue(blankScopeToken);
         orcidOauth2TokenDetail.setScope("");
         orcidOauthTokenDetailService.saveOrUpdate(orcidOauth2TokenDetail);
