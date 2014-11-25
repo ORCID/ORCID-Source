@@ -53,7 +53,7 @@
 				<div class="bottomBuffer">
 					<strong>
 						<@orcid.msg
-						'manual_work_form_contents.labelURL'/>
+						'common.url'/>
 					</strong>
 					<div>
 						<a href="{{worksSrvc.details[work.putCode.value].url.value | urlWithHttp}}" target="_blank">{{worksSrvc.details[work.putCode.value].url.value}}</a>					
