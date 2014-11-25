@@ -18,6 +18,7 @@ package org.orcid.core.oauth.service;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,10 +28,14 @@ import org.springframework.security.oauth2.common.exceptions.InvalidScopeExcepti
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.security.oauth2.common.exceptions.RedirectMismatchException;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
+import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.endpoint.AuthorizationEndpoint;
 import org.springframework.web.HttpSessionRequiredException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -61,6 +66,17 @@ public class OrcidAuthorizationEndpoint extends AuthorizationEndpoint {
         return super.handleOAuth2Exception(e, webRequest);
     }
     
+    @Override
+    @RequestMapping
+    public ModelAndView authorize(Map<String, Object> model,
+                    @RequestParam(value = "response_type", required = false, defaultValue = "none") String responseType,
+                    @RequestParam Map<String, String> requestParameters, SessionStatus sessionStatus, Principal principal) {
+        String scopes = requestParameters.get(AuthorizationRequest.SCOPE);
+        scopes = trimClientCredentialScopes(scopes);
+        requestParameters.put(AuthorizationRequest.SCOPE, scopes);
+        return super.authorize(model, responseType, requestParameters, sessionStatus, principal);
+    }
+    
     /**
      * Validate if the given client have the defined scope
      * @param scopes a space or comma separated list of scopes
@@ -88,5 +104,22 @@ public class OrcidAuthorizationEndpoint extends AuthorizationEndpoint {
             uri = contextPath + uri;
         }
         return new URI(uri);
-    }        
+    } 
+    
+    private String trimClientCredentialScopes(String scopes) {
+        String result = scopes;
+        for (String scope : OAuth2Utils.parseParameterList(scopes)) {
+            ScopePathType scopeType = ScopePathType.fromValue(scope);
+            if (scopeType.isClientCreditalScope()) {
+                if(scopes.contains(ScopePathType.ORCID_PROFILE_CREATE.getContent()))
+                    result = scopes.replaceAll(ScopePathType.ORCID_PROFILE_CREATE.getContent(), "");
+                else if(scopes.contains(ScopePathType.READ_PUBLIC.getContent()))
+                    result = scopes.replaceAll(ScopePathType.READ_PUBLIC.getContent(), "");
+                else if(scopes.contains(ScopePathType.WEBHOOK.getContent()))
+                    result = scopes.replaceAll(ScopePathType.WEBHOOK.getContent(), "");
+            }                           
+        }
+        
+        return result;
+    }
 }
