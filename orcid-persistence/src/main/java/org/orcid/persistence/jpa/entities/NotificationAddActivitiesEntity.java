@@ -38,7 +38,7 @@ public class NotificationAddActivitiesEntity extends NotificationEntity {
     private String authorizationUrl;
     private Set<NotificationActivityEntity> notificationActivities;
 
-    @Column(name = "authorizationUrl")
+    @Column(name = "authorization_url")
     public String getAuthorizationUrl() {
         return authorizationUrl;
     }
