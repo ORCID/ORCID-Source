@@ -13,6 +13,8 @@
 				<xs:element ref="orcid:activities"/>
 				<xs:element ref="orcid:createdDate" minOccurs="0"/>
 				<xs:element ref="orcid:sentDate" minOccurs="0"/>
+				<xs:element ref="orcid:readDate" minOccurs="0"/>
+				<xs:element ref="orcid:archivedDate" minOccurs="0"/>
 				<xs:element ref="orcid:source" minOccurs="0"/>
 			</xs:sequence>
 		</xs:complexType>
@@ -20,7 +22,7 @@
 	<xs:element name="notificationType">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:enumeration value="ADD_ACTIVITY"/>
+				<xs:enumeration value="ADD_ACTIVITIES"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
