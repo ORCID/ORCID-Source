@@ -47,7 +47,7 @@
                                              -->
                                              <li class="works-details" ng-show="editSources[group.groupId] == true">                                        
                                                 <a ng-click="showDetailsMouseClick(group,$event);" ng-mouseenter="showTooltip(group.groupId+'-showHideDetails')" ng-mouseleave="hideTooltip(group.groupId+'-showHideDetails')">
-                                                    <span ng-class="(moreInfo[group.groupId] == true) ? 'glyphicons book' : 'glyphicons book_open'" class="glyphicons book_open">
+                                                    <span ng-class="(moreInfo[group.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
                                                     </span>
                                                 </a>                                        
                                                 <div class="popover popover-tooltip top show-hide-details-popover ng-hide" ng-show="showElement[group.groupId+'-showHideDetails'] == true">
@@ -163,7 +163,7 @@
                                       <!-- Show/Hide Details -->
                                     <li class="works-details" ng-hide="editSources[group.groupId] == true">                                        
                                         <a ng-click="showDetailsMouseClick(group,$event);" ng-mouseenter="showTooltip(group.groupId+'-showHideDetails')" ng-mouseleave="hideTooltip(group.groupId+'-showHideDetails')">
-                                            <span ng-class="(moreInfo[group.groupId] == true) ? 'glyphicons book' : 'glyphicons book_open'">
+                                            <span ng-class="(moreInfo[group.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
                                             </span>
                                         </a>                                        
                                         <div class="popover popover-tooltip top show-hide-details-popover" ng-show="showElement[group.groupId+'-showHideDetails'] == true">
