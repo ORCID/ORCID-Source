@@ -4313,10 +4313,6 @@ ul.sources-options li{
 	display: inline-block;
 }
 
-.sources-container-header ul.sources-options li a.glyphicon-trash{
-	margin-right: 5px;
-}
-
 .sources-container table.sources-edit-table{
 	margin-top: 15px;
 	border: none;
@@ -4878,7 +4874,7 @@ ul.sources-actions li{
 }
 
 .affiliation-box{
-	padding: 5px;
+	padding: 5px 5px 0 5px;
 }
 
 .combine-work ul.list-group li.list-group-item{
@@ -5099,6 +5095,18 @@ ul.workspace-private-toolbar .popover-help-container .popover{
 
 .bibtex-work-title{
 	line-height: 30px;
+}
+
+#workspace-education .edit-source-popover,
+#workspace-education .delete-source-popover,
+#workspace-employment .edit-source-popover,
+#workspace-employment .delete-source-popover{
+	left: -25px;
+}
+
+#workspace-education  .popover-tooltip > .arrow,
+#workspace-employment  .popover-tooltip > .arrow{
+	left: 30px;
 }
 
 

@@ -18,11 +18,12 @@
 -->
 <div class="row">        
   	<!-- Information -->
-	<div class="col-md-9 col-sm-9">
+	<div class="col-md-9 col-sm-9 bottomBuffer">
 	    <h3 class="workspace-title">
-        	<strong ng-bind-html="group.getActive().affiliationName.value"></strong>:
+        	<span ng-bind-html="group.getActive().affiliationName.value"></span>:
         	<span ng-bind="group.getActive().city.value"></span><span ng-show="group.getActive().region.value">, </span><span ng-bind="group.getActive().region.value"></span>, <span ng-bind="group.getActive().country.value"></span>        	        	        	        	
-        </h3>        
+        </h3>
+     
         <div class="info-detail">
         	<div class="info-date">
         	        	
@@ -56,12 +57,7 @@
        <!-- Privacy Settings -->
        <div class="col-md-3 col-sm-3 workspace-toolbar">       	
        	<#if !(isPublicProfile??)>       		
-       		<ul class="workspace-private-toolbar">
-       			<li ng-show="group.getActive().source == '${effectiveUserOrcid}'">
-			 		<a href="" class="toolbar-button edit-item-button">
-						<span class="glyphicon glyphicon-pencil edit-option-toolbar" title="" ng-click="openEditAffiliation(group.getActive())"></span>
-					</a>	
-			 	</li>	
+       		<ul class="workspace-private-toolbar">	
 			 	<li>
 					<@orcid.privacyToggle2  angularModel="group.getActive().visibility.visibility"
 					questionClick="toggleClickPrivacyHelp(group.getActive().putCode.value)"
@@ -74,18 +70,41 @@
         </#if>
 	</div>
 </div>
-<div class="row">
+<div class="row source-line">
 	<div class="col-md-12 col-sm-12 col-xs-12">
 		<div class="sources-container-header">          
 			<div class="row">
-				<div class="col-md-5">
-					<strong>Source:</strong> {{group.getActive().sourceName}}	
+				<div class="col-md-4">
+					SOURCE: {{group.getActive().sourceName}}	
 				</div>
-				<div class="col-md-7">
+				<div class="col-md-3">
+					CREATED: <span ng-bind=""></span>
+				</div>
+				<div class="col-md-3">
+					<!--<span class="glyphicon glyphicon-check"></span><span> Preferred source</span> <span ng-hide="group.activitiesCount == 1">(</span><a ng-click="editSources[group.groupId] = !editSources[group.groupId]" ng-hide="group.activitiesCount == 1" ng-mouseenter="showTooltip(group.groupId+'-sources')" ng-mouseleave="hideTooltip(group.groupId+'-sources')">of {{group.activitiesCount}}</a><span ng-hide="group.activitiesCount == 1">)</span>-->
+				</div>
+				<div class="col-md-2">
 					<ul class="sources-options">
-						<#if !(isPublicProfile??)>   
+						<#if !(isPublicProfile??)>
+							<li ng-show="group.getActive().source == '${effectiveUserOrcid}'">
+								<a ng-click="openEditAffiliation(group.getActive())" ng-mouseenter="showTooltip(group.getActive().putCode.value+'-edit')" ng-mouseleave="hideTooltip(group.getActive().putCode.value+'-edit')">
+								    <span class="glyphicon glyphicon-pencil"></span>
+								</a>
+								<div class="popover popover-tooltip top edit-source-popover ng-hide" ng-show="showElement[group.getActive().putCode.value+'-edit'] == true"> 
+								    <div class="arrow"></div>
+								    <div class="popover-content">
+								        <span >Edit</span>
+								    </div>                
+								</div>	
+							</li>   
 					        <li>
-					            <a href ng-click="deleteAffiliation(group.getActive())" class="glyphicon glyphicon-trash grey"></a>
+					            <a href ng-click="deleteAffiliation(group.getActive())" ng-mouseenter="showTooltip(group.getActive().putCode.value+'-delete')" ng-mouseleave="hideTooltip(group.getActive().putCode.value+'-delete')" class="glyphicon glyphicon-trash"></a>
+					            <div class="popover popover-tooltip top delete-source-popover ng-hide" ng-show="showElement[group.getActive().putCode.value+'-delete'] == true"> 
+								 	<div class="arrow"></div>
+								    <div class="popover-content">
+								    	Delete								        
+								    </div>                
+								</div>
 					        </li>
 				         </#if>  
 					</ul>

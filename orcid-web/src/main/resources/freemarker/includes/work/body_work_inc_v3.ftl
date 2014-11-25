@@ -27,9 +27,7 @@
                     <div class="sources-header">
                         <div class="row">
                             <div class="col-md-4 col-sm-4 col-xs-4">
-                                <div class="">
-                                    <@orcid.msg 'common.details.groups.common.close_sources' /> <span class="hide-sources" ng-click="hideSources(group)"><@orcid.msg 'groups.common.close_sources' /></span>
-                                </div>
+                                Sources <span class="hide-sources" ng-click="hideSources(group)"><@orcid.msg 'groups.common.close_sources' /></span>
                             </div>
                             <div class="col-md-3 col-sm-3 col-xs-3">
                                 <@orcid.msg 'groups.common.created' />
@@ -290,8 +288,7 @@
                         </div>
                     </div>
 
-
-                    <!--  Final Row -->
+                    <!--  Bottom row -->                     
                     <div class="row source-line" ng-hide="editSources[group.groupId] == true">
                         <div class="col-md-4">
                               <@orcid.msgUpCase 'groups.common.source'/>: {{work.sourceName}}

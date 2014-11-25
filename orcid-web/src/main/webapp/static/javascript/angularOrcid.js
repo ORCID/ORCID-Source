@@ -2855,6 +2855,7 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
     $scope.privacyHelpCurKey = null;
     $scope.moreInfo = {};
     $scope.moreInfoCurKey = null;
+    $scope.showElement = {};
 
     $scope.sortState = new ActSortState(GroupedActivities.AFFILIATION);
     $scope.sort = function(key) {
@@ -3143,6 +3144,14 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
     $scope.openEditAffiliation = function(affiliation) {
         $scope.addAffiliationModal(affiliation.affiliationType.value, affiliation);
     };
+    
+    $scope.showTooltip = function (element){    	
+        $scope.showElement[element] = true;
+    };
+
+    $scope.hideTooltip = function (element){    	
+        $scope.showElement[element] = false;
+    };
 }
 
 /**
@@ -3159,6 +3168,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc, comm
     $scope.privacyHelp = {};
     $scope.editTranslatedTitle = false;
     $scope.lastIndexedTerm = null;
+    $scope.showElement = {};
     $scope.emptyExtId = {
             "errors": [],
             "type": {
@@ -3607,6 +3617,14 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc, comm
             html : $compile($('#import-wizard-modal').html())($scope),
             onComplete: function() {$.colorbox.resize();}
         });
+    };
+    
+    $scope.showTooltip = function (element){    	
+        $scope.showElement[element] = true;
+    };
+
+    $scope.hideTooltip = function (element){    	
+        $scope.showElement[element] = false;
     };
 }
 

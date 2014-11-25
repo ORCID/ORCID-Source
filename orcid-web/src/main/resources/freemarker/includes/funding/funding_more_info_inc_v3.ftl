@@ -16,9 +16,9 @@
     =============================================================================
 
 -->
-<div class="more-info" ng-show="moreInfo[group.groupId]">
-    <div class="row"> 
-        
+<div class="more-info" ng-show="moreInfo[group.groupId]  && group.activePutCode == funding.putCode.value">
+	<span class="dotted-bar" ng-show="group.getActive().fundingType.value"></span><!--  funding type is a required field -->
+    <div class="row">
         <div class="col-md-6" ng-show="group.getActive().fundingType.value" ng-cloak>            
             <div class="bottomBuffer">                    
                 <strong><@orcid.msg 'manual_funding_form_contents.grant_type'/></strong>
