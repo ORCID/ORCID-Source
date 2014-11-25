@@ -31,6 +31,7 @@ import javax.xml.namespace.QName;
 import org.orcid.jaxb.model.common.OrcidId;
 import org.orcid.jaxb.model.common.PutCode;
 import org.orcid.jaxb.model.common.Source;
+import org.orcid.jaxb.model.notification.NotificationType;
 import org.orcid.jaxb.model.notification.custom.NotificationCustom;
 
 /**
@@ -84,7 +85,7 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Notification }
+     * Create an instance of {@link NotificationAddActivities }
      * 
      */
     public NotificationCustom createNotificationCustom() {

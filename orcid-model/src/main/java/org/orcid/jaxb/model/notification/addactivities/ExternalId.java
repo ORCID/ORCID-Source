@@ -21,14 +21,17 @@
 // Generated on: 2014.11.24 at 04:27:39 PM GMT 
 //
 
-package org.orcid.jaxb.model.common;
+package org.orcid.jaxb.model.notification.addactivities;
 
 import java.io.Serializable;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>
@@ -43,11 +46,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;choice>
- *           &lt;element ref="{http://www.orcid.org/ns/orcid}orcidId" minOccurs="0"/>
- *           &lt;element ref="{http://www.orcid.org/ns/orcid}clientId" minOccurs="0"/>
- *         &lt;/choice>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}sourceName" minOccurs="0"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}externalIdType"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}externalIdValue"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -57,76 +57,59 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "clientId", "orcidId", "sourceName" })
-@XmlRootElement(name = "source")
-public class Source implements Serializable {
+@XmlType(name = "", propOrder = { "externalIdType", "externalIdValue" })
+@XmlRootElement(name = "externalId")
+public class ExternalId implements Serializable {
 
     private final static long serialVersionUID = 1L;
-    protected ClientId clientId;
-    protected OrcidId orcidId;
-    protected String sourceName;
+    @XmlElement(required = true)
+    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
+    @XmlSchemaType(name = "NCName")
+    protected String externalIdType;
+    @XmlElement(required = true)
+    @XmlSchemaType(name = "anyURI")
+    protected String externalIdValue;
 
     /**
-     * Gets the value of the clientId property.
-     * 
-     * @return possible object is {@link ClientId }
-     * 
-     */
-    public ClientId getClientId() {
-        return clientId;
-    }
-
-    /**
-     * Sets the value of the clientId property.
-     * 
-     * @param value
-     *            allowed object is {@link ClientId }
-     * 
-     */
-    public void setClientId(ClientId value) {
-        this.clientId = value;
-    }
-
-    /**
-     * Gets the value of the orcidId property.
-     * 
-     * @return possible object is {@link OrcidId }
-     * 
-     */
-    public OrcidId getOrcidId() {
-        return orcidId;
-    }
-
-    /**
-     * Sets the value of the orcidId property.
-     * 
-     * @param value
-     *            allowed object is {@link OrcidId }
-     * 
-     */
-    public void setOrcidId(OrcidId value) {
-        this.orcidId = value;
-    }
-
-    /**
-     * Gets the value of the sourceName property.
+     * Gets the value of the externalIdType property.
      * 
      * @return possible object is {@link String }
      * 
      */
-    public String getSourceName() {
-        return sourceName;
+    public String getExternalIdType() {
+        return externalIdType;
     }
 
     /**
-     * Sets the value of the sourceName property.
+     * Sets the value of the externalIdType property.
      * 
      * @param value
      *            allowed object is {@link String }
      * 
      */
-    public void setSourceName(String value) {
-        this.sourceName = value;
+    public void setExternalIdType(String value) {
+        this.externalIdType = value;
+    }
+
+    /**
+     * Gets the value of the externalIdValue property.
+     * 
+     * @return possible object is {@link String }
+     * 
+     */
+    public String getExternalIdValue() {
+        return externalIdValue;
+    }
+
+    /**
+     * Sets the value of the externalIdValue property.
+     * 
+     * @param value
+     *            allowed object is {@link String }
+     * 
+     */
+    public void setExternalIdValue(String value) {
+        this.externalIdValue = value;
     }
 
 }

@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.jaxb.model.notification.custom;
+package org.orcid.jaxb.model.notification.addactivities;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -38,20 +38,18 @@ public class MarshallingTest {
 
     @Test
     public void testUnMarshalling() throws JAXBException {
-        NotificationCustom notification = getNotification();
+        NotificationAddActivities notification = getNotification();
         assertNotNull(notification);
-        assertEquals(NotificationType.CUSTOM, notification.getNotificationType());
-        assertEquals("Important Notification from ORCID", notification.getSubject());
-        assertEquals("This is an email with important info.\n    ", notification.getBodyText());
-        assertEquals("\n        <p>\n            This is an email with <em>important</em> info.\n        </p>\n    ", notification.getBodyHtml());
+        assertEquals(NotificationType.ADD_ACTIVITIES, notification.getNotificationType());
+        assertEquals(2, notification.getActivities().getActivities().size());
         assertEquals("2014-01-01T14:45:32", notification.getSentDate().toXMLFormat());
     }
 
-    private NotificationCustom getNotification() throws JAXBException {
-        JAXBContext context = JAXBContext.newInstance("org.orcid.jaxb.model.notification.custom");
+    private NotificationAddActivities getNotification() throws JAXBException {
+        JAXBContext context = JAXBContext.newInstance("org.orcid.jaxb.model.notification.addactivities");
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        InputStream inputStream = MarshallingTest.class.getResourceAsStream("/notification-custom.xml");
-        return (NotificationCustom) unmarshaller.unmarshal(inputStream);
+        InputStream inputStream = MarshallingTest.class.getResourceAsStream("/notification-add-activities.xml");
+        return (NotificationAddActivities) unmarshaller.unmarshal(inputStream);
     }
 
 }

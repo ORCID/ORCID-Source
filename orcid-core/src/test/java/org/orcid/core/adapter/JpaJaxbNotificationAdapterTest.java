@@ -26,7 +26,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.jaxb.model.notification.Notification;
 import org.orcid.jaxb.model.notification.custom.NotificationCustom;
-import org.orcid.jaxb.model.notification.custom.NotificationType;
+import org.orcid.jaxb.model.notification.NotificationType;
 import org.orcid.persistence.jpa.entities.NotificationCustomEntity;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.utils.DateUtils;

@@ -21,13 +21,14 @@
 // Generated on: 2014.11.24 at 04:27:39 PM GMT 
 //
 
-package org.orcid.jaxb.model.common;
+package org.orcid.jaxb.model.notification.addactivities;
 
 import java.io.Serializable;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 
 /**
@@ -43,11 +44,9 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;choice>
- *           &lt;element ref="{http://www.orcid.org/ns/orcid}orcidId" minOccurs="0"/>
- *           &lt;element ref="{http://www.orcid.org/ns/orcid}clientId" minOccurs="0"/>
- *         &lt;/choice>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}sourceName" minOccurs="0"/>
+ *         &lt;element name="uri" type="{http://www.w3.org/2001/XMLSchema}anyURI"/>
+ *         &lt;element name="path" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="host" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -57,76 +56,80 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "clientId", "orcidId", "sourceName" })
-@XmlRootElement(name = "source")
-public class Source implements Serializable {
+@XmlType(name = "", propOrder = { "uri", "path", "host" })
+@XmlRootElement(name = "authorizationUrl")
+public class AuthorizationUrl implements Serializable {
 
     private final static long serialVersionUID = 1L;
-    protected ClientId clientId;
-    protected OrcidId orcidId;
-    protected String sourceName;
+    @XmlElement(required = true)
+    @XmlSchemaType(name = "anyURI")
+    protected String uri;
+    @XmlElement(required = true)
+    protected String path;
+    @XmlElement(required = true)
+    protected String host;
 
     /**
-     * Gets the value of the clientId property.
-     * 
-     * @return possible object is {@link ClientId }
-     * 
-     */
-    public ClientId getClientId() {
-        return clientId;
-    }
-
-    /**
-     * Sets the value of the clientId property.
-     * 
-     * @param value
-     *            allowed object is {@link ClientId }
-     * 
-     */
-    public void setClientId(ClientId value) {
-        this.clientId = value;
-    }
-
-    /**
-     * Gets the value of the orcidId property.
-     * 
-     * @return possible object is {@link OrcidId }
-     * 
-     */
-    public OrcidId getOrcidId() {
-        return orcidId;
-    }
-
-    /**
-     * Sets the value of the orcidId property.
-     * 
-     * @param value
-     *            allowed object is {@link OrcidId }
-     * 
-     */
-    public void setOrcidId(OrcidId value) {
-        this.orcidId = value;
-    }
-
-    /**
-     * Gets the value of the sourceName property.
+     * Gets the value of the uri property.
      * 
      * @return possible object is {@link String }
      * 
      */
-    public String getSourceName() {
-        return sourceName;
+    public String getUri() {
+        return uri;
     }
 
     /**
-     * Sets the value of the sourceName property.
+     * Sets the value of the uri property.
      * 
      * @param value
      *            allowed object is {@link String }
      * 
      */
-    public void setSourceName(String value) {
-        this.sourceName = value;
+    public void setUri(String value) {
+        this.uri = value;
+    }
+
+    /**
+     * Gets the value of the path property.
+     * 
+     * @return possible object is {@link String }
+     * 
+     */
+    public String getPath() {
+        return path;
+    }
+
+    /**
+     * Sets the value of the path property.
+     * 
+     * @param value
+     *            allowed object is {@link String }
+     * 
+     */
+    public void setPath(String value) {
+        this.path = value;
+    }
+
+    /**
+     * Gets the value of the host property.
+     * 
+     * @return possible object is {@link String }
+     * 
+     */
+    public String getHost() {
+        return host;
+    }
+
+    /**
+     * Sets the value of the host property.
+     * 
+     * @param value
+     *            allowed object is {@link String }
+     * 
+     */
+    public void setHost(String value) {
+        this.host = value;
     }
 
 }

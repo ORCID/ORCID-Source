@@ -40,7 +40,7 @@ import javax.persistence.SqlResultSetMapping;
 import javax.persistence.ColumnResult;
 import javax.persistence.Table;
 
-import org.orcid.jaxb.model.notification.custom.NotificationType;
+import org.orcid.jaxb.model.notification.NotificationType;
 
 /**
  * @author Will Simpson

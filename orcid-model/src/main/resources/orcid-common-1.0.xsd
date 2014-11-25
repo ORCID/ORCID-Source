@@ -73,6 +73,10 @@
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="clientId">
+		<xs:annotation>
+			<xs:documentation>The identifier of a client app. At least one of uri or path must be given.
+			</xs:documentation>
+		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element name="uri" type="orcid:clientUri"/>
@@ -92,22 +96,6 @@
 				value="http://([^/]*orcid\.org|localhost.*/orcid-web)/client/APP-[\da-zA-Z]{16}" />
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:complexType name="clientId">
-		<xs:annotation>
-			<xs:documentation>The identifier of a client app. At least one of uri or path must be given.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:sequence>
-			<xs:choice>
-				<xs:sequence>
-					<xs:element name="uri" type="orcid:clientUri"/>
-					<xs:element name="path" type="orcid:clientPath" minOccurs="0"/>
-				</xs:sequence>
-				<xs:element name="path" type="orcid:clientPath"/>
-			</xs:choice>
-			<xs:element ref="orcid:host" minOccurs="0"/>
-		</xs:sequence>
-	</xs:complexType>
 	<xs:simpleType name="putCodePath">
 		<xs:restriction base="xs:string">
 			<xs:pattern value="(\d{4}-){3,}\d{3}[\dX](/[^/]+)*"/>
