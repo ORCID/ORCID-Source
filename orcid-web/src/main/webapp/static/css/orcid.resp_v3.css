@@ -5097,6 +5097,18 @@ ul.workspace-private-toolbar .popover-help-container .popover{
 	line-height: 30px;
 }
 
+#workspace-education .edit-source-popover,
+#workspace-education .delete-source-popover,
+#workspace-employment .edit-source-popover,
+#workspace-employment .delete-source-popover{
+	left: -25px;
+}
+
+#workspace-education  .popover-tooltip > .arrow,
+#workspace-employment  .popover-tooltip > .arrow{
+	left: 30px;
+}
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
