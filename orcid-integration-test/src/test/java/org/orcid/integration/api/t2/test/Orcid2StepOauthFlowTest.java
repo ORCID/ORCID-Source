@@ -70,13 +70,8 @@ public class Orcid2StepOauthFlowTest extends DBUnitTest {
     } 
     
     @Test
-    public void testWebhook() throws InterruptedException, JSONException {
-        MultivaluedMap<String, String> params = new MultivaluedMapImpl();
-        params.add("client_id", CLIENT_DETAILS_ID);
-        params.add("client_secret", "client-secret");
-        params.add("grant_type", "client_credentials");
-        params.add("scope", "/webhook");
-        ClientResponse tokenResponse = oauthT2Client.obtainOauth2TokenPost("client_credentials", params);
+    public void testWebhook() throws InterruptedException, JSONException {        
+        ClientResponse tokenResponse = getClientResponse("/webhook");
         assertEquals(200, tokenResponse.getStatus());
         String body = tokenResponse.getEntity(String.class);
         JSONObject jsonObject = new JSONObject(body);
@@ -97,12 +92,7 @@ public class Orcid2StepOauthFlowTest extends DBUnitTest {
         
     @Test
     public void testReadPublic() throws InterruptedException, JSONException {
-        MultivaluedMap<String, String> params = new MultivaluedMapImpl();
-        params.add("client_id", CLIENT_DETAILS_ID);
-        params.add("client_secret", "client-secret");
-        params.add("grant_type", "client_credentials");
-        params.add("scope", "/read-public");
-        ClientResponse tokenResponse = oauthT2Client.obtainOauth2TokenPost("client_credentials", params);
+        ClientResponse tokenResponse = getClientResponse("/read-public");
         assertEquals(200, tokenResponse.getStatus());
         String body = tokenResponse.getEntity(String.class);
         JSONObject jsonObject = new JSONObject(body);
@@ -122,13 +112,8 @@ public class Orcid2StepOauthFlowTest extends DBUnitTest {
     }
     
     @Test
-    public void testOrcidProfileCreate() throws InterruptedException, JSONException {
-        MultivaluedMap<String, String> params = new MultivaluedMapImpl();
-        params.add("client_id", CLIENT_DETAILS_ID);
-        params.add("client_secret", "client-secret");
-        params.add("grant_type", "client_credentials");
-        params.add("scope", "/orcid-profile/create");
-        ClientResponse tokenResponse = oauthT2Client.obtainOauth2TokenPost("client_credentials", params);
+    public void testOrcidProfileCreate() throws InterruptedException, JSONException {        
+        ClientResponse tokenResponse = getClientResponse("/orcid-profile/create");
         assertEquals(200, tokenResponse.getStatus());
         String body = tokenResponse.getEntity(String.class);
         JSONObject jsonObject = new JSONObject(body);
@@ -147,6 +132,36 @@ public class Orcid2StepOauthFlowTest extends DBUnitTest {
         
     }
     
+    @Test
+    public void testInvalidScopeThrowAnError() throws InterruptedException, JSONException {
+        ClientResponse tokenResponse = getClientResponse("/orcid-profile/read-limited");
+        assertEquals(409, tokenResponse.getStatus());
+        String textEntity = tokenResponse.getEntity(String.class);
+        assertTrue(textEntity.contains("The provided scope /orcid-profile/read-limited is not valid for the grant type client_credentials"));
+        
+        tokenResponse = getClientResponse("/orcid-works/read-limited");
+        assertEquals(409, tokenResponse.getStatus());
+        textEntity = tokenResponse.getEntity(String.class);
+        assertTrue(textEntity.contains("The provided scope /orcid-works/read-limited is not valid for the grant type client_credentials"));
+        
+        tokenResponse = getClientResponse("/funding/create");
+        assertEquals(409, tokenResponse.getStatus());
+        textEntity = tokenResponse.getEntity(String.class);
+        assertTrue(textEntity.contains("The provided scope /funding/create is not valid for the grant type client_credentials"));
+        
+        tokenResponse = getClientResponse("/affiliations/update");
+        assertEquals(409, tokenResponse.getStatus());
+        textEntity = tokenResponse.getEntity(String.class);
+        assertTrue(textEntity.contains("The provided scope /affiliations/update is not valid for the grant type client_credentials"));
+    }
     
+    private ClientResponse getClientResponse(String scope) {
+        MultivaluedMap<String, String> params = new MultivaluedMapImpl();
+        params.add("client_id", CLIENT_DETAILS_ID);
+        params.add("client_secret", "client-secret");
+        params.add("grant_type", "client_credentials");
+        params.add("scope", scope);
+        return oauthT2Client.obtainOauth2TokenPost("client_credentials", params);
+    }
     
 }
