@@ -20,13 +20,22 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Set;
+
 import javax.annotation.Resource;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.jaxb.model.notification.Notification;
+import org.orcid.jaxb.model.notification.addactivities.Activities;
+import org.orcid.jaxb.model.notification.addactivities.Activity;
+import org.orcid.jaxb.model.notification.addactivities.AuthorizationUrl;
+import org.orcid.jaxb.model.notification.addactivities.ExternalId;
+import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
 import org.orcid.jaxb.model.notification.custom.NotificationCustom;
 import org.orcid.jaxb.model.notification.NotificationType;
+import org.orcid.persistence.jpa.entities.NotificationActivityEntity;
+import org.orcid.persistence.jpa.entities.NotificationAddActivitiesEntity;
 import org.orcid.persistence.jpa.entities.NotificationCustomEntity;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.utils.DateUtils;
@@ -76,6 +85,43 @@ public class JpaJaxbNotificationAdapterTest {
         assertEquals("Test subject", notificationCustom.getSubject());
         assertEquals("2014-01-01T09:17:56.000Z", notification.getCreatedDate().toXMLFormat());
         assertEquals("2014-03-04T17:43:06.000Z", notification.getReadDate().toXMLFormat());
+    }
+
+    @Test
+    public void testToNotificationAddActivitiesEntity() {
+        NotificationAddActivities notification = new NotificationAddActivities();
+        notification.setNotificationType(NotificationType.ADD_ACTIVITIES);
+        String authorizationUrlString = "https://orcid.org/oauth/authorize?client_id=APP-U4UKCNSSIM1OCVQY&amp;response_type=code&amp;scope=/orcid-works/create&amp;redirect_uri=http://somethirdparty.com";
+        AuthorizationUrl url = new AuthorizationUrl();
+        notification.setAuthorizationUrl(url);
+        url.setUri(authorizationUrlString);
+        Activities activities = new Activities();
+        notification.setActivities(activities);
+        Activity activity = new Activity();
+        activities.getActivities().add(activity);
+        activity.setActivityType("WORK");
+        activity.setActivityName("Latest Research Article");
+        ExternalId extId = new ExternalId();
+        activity.setExternalId(extId);
+        extId.setExternalIdType("DOI");
+        extId.setExternalIdValue("1234/abc123");
+
+        NotificationEntity notificationEntity = jpaJaxbNotificationAdapter.toNotificationEntity(notification);
+
+        assertTrue(notificationEntity instanceof NotificationAddActivitiesEntity);
+        NotificationAddActivitiesEntity addActivitiesEntity = (NotificationAddActivitiesEntity) notificationEntity;
+
+        assertNotNull(notificationEntity);
+        assertEquals(NotificationType.ADD_ACTIVITIES, notificationEntity.getNotificationType());
+        assertEquals(authorizationUrlString, addActivitiesEntity.getAuthorizationUrl());
+        Set<NotificationActivityEntity> activityEntities = addActivitiesEntity.getNotificationActivities();
+        assertNotNull(activityEntities);
+        assertEquals(1, activityEntities.size());
+        NotificationActivityEntity activityEntity = activityEntities.iterator().next();
+        assertEquals("WORK", activityEntity.getActivityType());
+        assertEquals("Latest Research Article", activityEntity.getActivityName());
+        assertEquals("DOI", activityEntity.getExternalIdType());
+        assertEquals("1234/abc123", activityEntity.getExternalIdValue());
     }
 
 }
