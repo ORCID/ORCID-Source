@@ -23,18 +23,13 @@
 
 package org.orcid.jaxb.model.notification.addactivities;
 
-import java.io.Serializable;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.datatype.XMLGregorianCalendar;
 
-import org.orcid.jaxb.model.common.PutCode;
-import org.orcid.jaxb.model.common.Source;
+import org.orcid.jaxb.model.notification.Notification;
 import org.orcid.jaxb.model.notification.NotificationType;
 
 /**
@@ -66,44 +61,15 @@ import org.orcid.jaxb.model.notification.NotificationType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "putCode", "notificationType", "authorizationUrl", "activities", "createdDate", "sentDate", "source" })
+@XmlType(name = "", propOrder = { "putCode", "notificationType", "authorizationUrl", "activities", "createdDate", "sentDate", "readDate", "archivedDate", "source" })
 @XmlRootElement(name = "notification")
-public class NotificationAddActivities implements Serializable {
+public class NotificationAddActivities extends Notification {
 
     private final static long serialVersionUID = 1L;
-    protected PutCode putCode;
-    @XmlElement(required = true)
-    protected NotificationType notificationType;
     @XmlElement(required = true)
     protected AuthorizationUrl authorizationUrl;
     @XmlElement(required = true)
     protected Activities activities;
-    @XmlSchemaType(name = "dateTime")
-    protected XMLGregorianCalendar createdDate;
-    @XmlSchemaType(name = "dateTime")
-    protected XMLGregorianCalendar sentDate;
-    protected Source source;
-
-    /**
-     * Gets the value of the putCode property.
-     * 
-     * @return possible object is {@link PutCode }
-     * 
-     */
-    public PutCode getPutCode() {
-        return putCode;
-    }
-
-    /**
-     * Sets the value of the putCode property.
-     * 
-     * @param value
-     *            allowed object is {@link PutCode }
-     * 
-     */
-    public void setPutCode(PutCode value) {
-        this.putCode = value;
-    }
 
     /**
      * Gets the value of the notificationType property.
@@ -166,69 +132,6 @@ public class NotificationAddActivities implements Serializable {
      */
     public void setActivities(Activities value) {
         this.activities = value;
-    }
-
-    /**
-     * Gets the value of the createdDate property.
-     * 
-     * @return possible object is {@link XMLGregorianCalendar }
-     * 
-     */
-    public XMLGregorianCalendar getCreatedDate() {
-        return createdDate;
-    }
-
-    /**
-     * Sets the value of the createdDate property.
-     * 
-     * @param value
-     *            allowed object is {@link XMLGregorianCalendar }
-     * 
-     */
-    public void setCreatedDate(XMLGregorianCalendar value) {
-        this.createdDate = value;
-    }
-
-    /**
-     * Gets the value of the sentDate property.
-     * 
-     * @return possible object is {@link XMLGregorianCalendar }
-     * 
-     */
-    public XMLGregorianCalendar getSentDate() {
-        return sentDate;
-    }
-
-    /**
-     * Sets the value of the sentDate property.
-     * 
-     * @param value
-     *            allowed object is {@link XMLGregorianCalendar }
-     * 
-     */
-    public void setSentDate(XMLGregorianCalendar value) {
-        this.sentDate = value;
-    }
-
-    /**
-     * Gets the value of the source property.
-     * 
-     * @return possible object is {@link Source }
-     * 
-     */
-    public Source getSource() {
-        return source;
-    }
-
-    /**
-     * Sets the value of the source property.
-     * 
-     * @param value
-     *            allowed object is {@link Source }
-     * 
-     */
-    public void setSource(Source value) {
-        this.source = value;
     }
 
 }
