@@ -26,12 +26,14 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang3.time.DateUtils;
 import org.orcid.core.constants.OauthTokensConstants;
+import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.oauth.OrcidOauth2AuthInfo;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -64,6 +66,9 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
     @Resource
     private OrcidProfileManager orcidProfileManager;
 
+    @Resource
+    private ClientDetailsManager clientDetailsManager;
+    
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidRandomValueTokenServices.class);
 
     public OrcidRandomValueTokenServices(ClientDetailsService clientDetailsService, int writeValiditySeconds, int readValiditySeconds) {
@@ -83,7 +88,7 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
     public OAuth2AccessToken createAccessToken(OAuth2Authentication authentication) throws AuthenticationException {
         OrcidOauth2AuthInfo authInfo = new OrcidOauth2AuthInfo(authentication);
         OAuth2AccessToken existingAccessToken = tokenStore.getAccessToken(authentication);
-
+        
         Map<String, Object> additionalInfo = new HashMap<>();
         String userOrcid = authInfo.getUserOrcid();
         additionalInfo.put("orcid", userOrcid);
@@ -140,8 +145,24 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
             return readValiditySeconds;
         }
 
-        if (usePersistentTokens) {
-            if (isPersistentTokenEnabled(authorizationRequest))
+        if (usePersistentTokens) {            
+            if(isClientCredentialsGrantType(authorizationRequest)) {
+                boolean isClientCredentialsScope = false;
+                
+                for(ScopePathType scope : requestedScopes) {
+                    if(scope.isClientCreditalScope()) {
+                        isClientCredentialsScope = true;
+                        break;
+                    }
+                }
+                            
+                if(isClientCredentialsScope) {
+                    String clientId = authorizationRequest.getClientId();
+                    ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
+                    if(clientDetails != null && clientDetails.isPersistentTokensEnabled())
+                        return readValiditySeconds;
+                }
+            } else if (isPersistentTokenEnabled(authorizationRequest))
                 return readValiditySeconds;
         } else {
             /*
@@ -197,6 +218,21 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
             }
         }
 
+        return false;
+    }
+    
+    /**
+     * Checks if the authorization request grant type is client_credentials
+     * */
+    private boolean isClientCredentialsGrantType(AuthorizationRequest authorizationRequest) {
+        Map<String, String> params = authorizationRequest.getAuthorizationParameters();
+        if (params != null) {
+            if (params.containsKey(OauthTokensConstants.GRANT_TYPE)) {
+                String grantType = params.get(OauthTokensConstants.GRANT_TYPE);
+                if(OauthTokensConstants.GRANT_TYPE_CLIENT_CREDENTIALS.equals(grantType))
+                    return true;
+            }
+        }
         return false;
     }
 

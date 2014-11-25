@@ -31,6 +31,7 @@ import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.Title;
 import org.orcid.jaxb.model.message.WorkTitle;
+import org.orcid.jaxb.model.message.WorkType;
 
 import com.sun.jersey.api.client.ClientResponse;
 
@@ -112,6 +113,7 @@ public abstract class AbstractT2ClientIntegrationTest {
 
     protected OrcidWork createWork(String titleParam) {
         OrcidWork orcidWork = new OrcidWork();
+        orcidWork.setWorkType(WorkType.JOURNAL_ARTICLE);
         WorkTitle workTitle = new WorkTitle();
         Title title = new Title(titleParam);
         workTitle.setTitle(title);
