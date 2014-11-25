@@ -19,6 +19,7 @@ package org.orcid.integration.api.t2.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -173,15 +174,25 @@ public class OauthAuthorizationCodeTest extends DBUnitTest {
         assertFalse(PojoUtil.isEmpty(accessToken));
     }
     
+    @Test
+    public void useClientCredentialsGrantTypeScope() throws InterruptedException, JSONException {
+        String authorizationCode = webDriverHelper.obtainAuthorizationCode("/orcid-works/create", CLIENT_DETAILS_ID, "michael@bentine.com", "password", new ArrayList<String>(), true);
+        assertFalse(PojoUtil.isEmpty(authorizationCode));
+        ClientResponse tokenResponse = obtainAccessTokenResponse(CLIENT_DETAILS_ID, authorizationCode, redirectUri, "/webhook");
+        assertEquals(409, tokenResponse.getStatus());
+        String textEntity = tokenResponse.getEntity(String.class);
+        assertTrue(textEntity.contains("The provided scope /webhook is not valid for the grant type authorization_code"));
+    }
+    
     private ClientResponse obtainAccessTokenResponse(String clientId, String authorizationCode, String redirectUri, String scopes) throws JSONException {
         MultivaluedMap<String, String> params = new MultivaluedMapImpl();
         params.add("client_id", clientId);
-        params.add("client_secret", "client-secret");
-        params.add("grant_type", "authorization_code");
+        params.add("client_secret", "client-secret");        
+        params.add("grant_type", "authorization_code");        
         if(scopes != null)
             params.add("scope", scopes);
         params.add("redirect_uri", redirectUri);
         params.add("code", authorizationCode);
-        return oauthT2Client.obtainOauth2TokenPost("client_credentials", params);        
+        return oauthT2Client.obtainOauth2TokenPost("authorization_code", params);        
     }
 }

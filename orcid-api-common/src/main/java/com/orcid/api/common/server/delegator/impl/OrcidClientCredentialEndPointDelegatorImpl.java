@@ -64,8 +64,8 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
             LOGGER.info("Not authenticated for OAuth2: clientId={}, grantType={}, refreshToken={}, code={}, scopes={}, state={}, redirectUri={}", new Object[] {
                     clientId, grantType, refreshToken, code, scopes, state, redirectUri });
             throw new InsufficientAuthenticationException("The client is not authenticated.");
-        }
-
+        }        
+        
         /**
          * Patch, update any orcid-grants scope to funding scope
          * */
@@ -79,16 +79,25 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
         }
 
         try {
+            boolean isClientCredentialsGrantType = OauthTokensConstants.GRANT_TYPE_CLIENT_CREDENTIALS.equals(grantType);
+            
             if (scopes != null) {
                 for (String scope : scopes) {
-                    ScopePathType.fromValue(scope);
+                    ScopePathType scopeType = ScopePathType.fromValue(scope);
+                    if(isClientCredentialsGrantType) {
+                        if(!scopeType.isClientCreditalScope())
+                            throw new OrcidInvalidScopeException("The provided scope " + scope + " is not valid for the grant type " + grantType);
+                    } else {
+                        if(scopeType.isClientCreditalScope())
+                            throw new OrcidInvalidScopeException("The provided scope " + scope + " is not valid for the grant type " + grantType);
+                    }
                 }
             }
         } catch (IllegalArgumentException iae) {
             throw new OrcidInvalidScopeException(
                     "One of the provided scopes is not allowed. Please refere to the list of allowed scopes at: http://support.orcid.org/knowledgebase/articles/120162-orcid-scopes");
         }
-
+                
         String clientName = client.getName();
         LOGGER.info("Comparing passed clientId and client name from spring auth: clientId={}, client.name={}", clientId, clientName);
         clientId = clientName;
