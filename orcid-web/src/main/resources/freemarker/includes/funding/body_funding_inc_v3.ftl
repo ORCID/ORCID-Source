@@ -21,7 +21,7 @@
         <div class="work-list-container">
             <ul class="sources-edit-list">
                 <!-- HEADER -->
-                <li ng-show="editSources[group.groupId] == true" ng-class="{'source-active' : editSources[group.groupId] == true}" ng-model="group.activities">                        
+                <li ng-show="editSources[group.groupId] == true" ng-class="{'source-active' : editSources[group.groupId] == true}" ng-model="group.activities">
                     <div class="sources-header">
                         <div class="row bottomBuffer">
                             <div class="col-md-9">
@@ -32,11 +32,11 @@
                                </span>
                                 <#if !(isPublicProfile??)>
                                     <span ng-show="editSources[group.groupId] == true">
-                                        <a ng-click="deleteFundingConfirm(group.getActive().putCode.value, true)">                                        
+                                        <a ng-click="deleteFundingConfirm(group.getActive().putCode.value, true)">
                                             <span class="glyphicon glyphicon-trash" ng-show="!bulkEditShow"></span> Delete all
                                         </a>
                                     </span>
-                                </#if>                  
+                                </#if>
                             </div>
                             <#if !(isPublicProfile??)>
                                 <div class="col-md-3 col-sm-3 workspace-toolbar">
@@ -45,45 +45,45 @@
                                             <a ng-click="openEditFunding(group.getActive())" class="toolbar-button edit-item-button">
                                                 <span class="glyphicon glyphicon-pencil edit-option-toolbar" title=""></span>
                                             </a>
-                                        </li>                                    
+                                        </li>
                                         <li>
                                             <@orcid.privacyToggle2  angularModel="group.getActive().visibility.visibility"
                                                 questionClick="toggleClickPrivacyHelp(group.getActive().putCode.value)"
-                                                clickedClassCheck="{'popover-help-container-show':privacyHelp[group.getActive().putCode.value]==true}" 
-                                                publicClick="fundingSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PUBLIC', $event)" 
-                                                limitedClick="fundingSrvc.setGroupPrivacy(group.getActive().putCode.value, 'LIMITED', $event)" 
+                                                clickedClassCheck="{'popover-help-container-show':privacyHelp[group.getActive().putCode.value]==true}"
+                                                publicClick="fundingSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PUBLIC', $event)"
+                                                limitedClick="fundingSrvc.setGroupPrivacy(group.getActive().putCode.value, 'LIMITED', $event)"
                                                 privateClick="fundingSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PRIVATE', $event)" />
                                         </li>
                                     </ul>
                                 </div>
                             </#if>
                         </div>
-                    
-                        <div class="row">                      
+
+                        <div class="row">
                             <div class="col-md-4 col-sm-4 col-xs-4">
                                 <div class="">
                                     <strong >Source</strong>
                                 </div>
-                            </div>                      
-                            <div class="col-md-3 col-sm-3 col-xs-3">
-                                <strong>Last Modified </strong>                         
                             </div>
-                            
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <strong>Last Modified </strong>
+                            </div>
+
                             <div class="col-md-3 col-sm-3 col-xs-3">
                                 <#if !(isPublicProfile??)>
                                     <strong>Preferred</strong>
-                                </#if>    
+                                </#if>
                             </div>
                             <div class="col-md-2 col-sm-2 col-xs-2 right">
                                 <#if !(isPublicProfile??)>
                                     <strong>Actions</strong>
-                                </#if>    
+                                </#if>
                             </div>
                         </div>
                     </div>
                 </li>
-                
-                
+
+
                 <li ng-repeat="funding in group.activities" ng-show="group.activePutCode == funding.putCode.value || editSources[group.groupId] == true">
                     <!-- active row summary info -->
                     <div class="row" ng-show="group.activePutCode == funding.putCode.value">
@@ -91,65 +91,65 @@
                             <h3 class="workspace-title">
                                 <h3 class="workspace-title">
                                 <strong ng-show="group.getActive().fundingTitle.title.value">{{group.getActive().fundingTitle.title.value}}:</strong>
-                                <span class="funding-name" ng-bind-html="group.getActive().fundingName.value"></span>                    
+                                <span class="funding-name" ng-bind-html="group.getActive().fundingName.value"></span>
                             </h3>
-                            
+
                             <div class="info-detail">
                                 <span class="funding-date" ng-show="group.getActive().startDate && !group.getActive().endDate">
                                     <span ng-show="group.getActive().startDate.year">{{group.getActive().startDate.year}}</span><span ng-show="group.getActive().startDate.month">-{{group.getActive().startDate.month}}</span>
-                                    <#-- Do not move it to two lines -->                        
+                                    <#-- Do not move it to two lines -->
                                     <@orcid.msg 'workspace_fundings.dateSeparator'/> <@orcid.msg 'workspace_fundings.present'/>
                                     <#-- ########################### -->
                                 </span>
                                 <span class="funding-date" ng-show="group.getActive().startDate && group.getActive().endDate">
-                                    <span ng-show="group.getActive().startDate.year">{{group.getActive().startDate.year}}</span><span ng-show="group.getActive().startDate.month">-{{group.getActive().startDate.month}}</span>                        
+                                    <span ng-show="group.getActive().startDate.year">{{group.getActive().startDate.year}}</span><span ng-show="group.getActive().startDate.month">-{{group.getActive().startDate.month}}</span>
                                     <@orcid.msg 'workspace_fundings.dateSeparator'/>
                                     <span ng-show="group.getActive().endDate.year">{{group.getActive().endDate.year}}</span><span ng-show="group.getActive().endDate.month">-{{group.getActive().endDate.month}}</span>
                                 </span>
                                 <span class="funding-date" ng-show="!group.getActive().startDate && group.getActive().endDate">
                                      <span ng-show="group.getActive().endDate.year">{{group.getActive().endDate.year}}</span><span ng-show="group.getActive().endDate.month">-{{group.getActive().endDate.month}}</span>
-                                </span>                  
-                            </div>                            
+                                </span>
+                            </div>
                         </div>
-                        
+
                         <#if !(isPublicProfile??)>
                             <div class="col-md-3 workspace-toolbar">
                                 <ul class="workspace-private-toolbar" ng-hide="editSources[group.groupId] == true">
                                     <li><!-- Validate with ng-show for works is: !group.hasUserVersion() || userIsSource(work) -->
                                          <a href="" class="toolbar-button edit-item-button">
                                              <span class="glyphicon glyphicon-pencil edit-option-toolbar" title="" ng-click="openEditFunding(group.getActive())"></span>
-                                         </a>    
+                                         </a>
                                      </li>
                                     <li>
                                         <@orcid.privacyToggle2  angularModel="group.getActive().visibility.visibility"
                                             questionClick="toggleClickPrivacyHelp(group.getActive().putCode.value)"
-                                            clickedClassCheck="{'popover-help-container-show':privacyHelp[group.getActive().putCode.value]==true}" 
-                                            publicClick="fundingSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PUBLIC', $event)" 
-                                            limitedClick="fundingSrvc.setGroupPrivacy(group.getActive().putCode.value, 'LIMITED', $event)" 
+                                            clickedClassCheck="{'popover-help-container-show':privacyHelp[group.getActive().putCode.value]==true}"
+                                            publicClick="fundingSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PUBLIC', $event)"
+                                            limitedClick="fundingSrvc.setGroupPrivacy(group.getActive().putCode.value, 'LIMITED', $event)"
                                             privateClick="fundingSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PRIVATE', $event)" />
                                     </li>
                                 </ul>
                             </div>
                         </#if>
                     </div>
-                    
+
                     <!-- Active Row Identifiers / URL / Validations / Versions -->
                     <div class="row" ng-show="group.activePutCode == funding.putCode.value">
                          <div class="col-md-12 col-sm-12">
-                             <ul class="id-details">         
+                             <ul class="id-details">
                                  <li>
-                                     <span ng-repeat='ei in group.getActive().externalIdentifiers'>                            
+                                     <span ng-repeat='ei in group.getActive().externalIdentifiers'>
                                         <span ng-bind-html='ei | externalIdentifierHtml:$first:$last:group.getActive().externalIdentifiers.length'>
                                         </span>
                                     </span>
                                  </li>
                              </ul>
                          </div>
-                     </div> 
-                     
+                     </div>
+
                      <!-- more info -->
                      <#include "funding_more_info_inc_v3.ftl"/>
-                     
+
                      <!-- active row  source display -->
                       <div class="row" ng-show="group.activePutCode == funding.putCode.value">
                           <div class="col-md-4">
@@ -159,21 +159,21 @@
                               <div ng-show="editSources[group.groupId] == true">
                                   {{group.getActive().lastModified | ajaxFormDateToISO8601}}
                               </div>
-                          </div>              
+                          </div>
                           <div class="col-md-3" ng-show="editSources[group.groupId] == true">
                              <#if !(isPublicProfile??)>
                                 <div ng-show="editSources[group.groupId] == true">
-                                    <span class="glyphicon glyphicon-check ng-hide" ng-show="funding.putCode.value == group.defaultPutCode"></span> 
+                                    <span class="glyphicon glyphicon-check ng-hide" ng-show="funding.putCode.value == group.defaultPutCode"></span>
                                     <a ng-click="fundingSrvc.makeDefault(group, funding.putCode.value);" ng-show="funding.putCode.value != group.defaultPutCode" class="">
                                          <span class="glyphicon glyphicon-unchecked"></span> Make Preferred
                                     </a>
-                                </div>    
+                                </div>
                             </#if>
                           </div>
                           <div class="col-md-2 trash-source">
                               <div ng-show="editSources[group.groupId] == true">
                             <#if !(isPublicProfile??)>
-                                <ul class="sources-actions">                                    
+                                <ul class="sources-actions">
                                     <li>
                                         <a ng-click="openEditFunding(group.getActive())" class="">
                                             <span class="glyphicon glyphicon-pencil"></span>
@@ -189,27 +189,27 @@
                         </div>
                           </div>
                     </div>
-                    
+
                     <!-- not active row && edit sources -->
-                    <div ng-show="group.activePutCode != funding.putCode.value" class="row">                       
+                    <div ng-show="group.activePutCode != funding.putCode.value" class="row">
                         <div class="col-md-4 col-sm-4 col-xs-4">
                                 <a ng-click="group.activePutCode = funding.putCode.value;">
                                 {{group.getActive().sourceName}}
-                            </a> 
+                            </a>
                         </div>
                         <div class="col-md-3 col-sm-3 col-xs-3">
                             {{group.getActive().lastModified | ajaxFormDateToISO8601}}
                         </div>
                         <div class="col-md-3 col-sm-3 col-xs-5">
                              <#if !(isPublicProfile??)>
-                                <span class="glyphicon glyphicon-check" ng-show="funding.putCode.value == group.defaultPutCode"></span> 
+                                <span class="glyphicon glyphicon-check" ng-show="funding.putCode.value == group.defaultPutCode"></span>
                                 <a ng-click="fundingSrvc.makeDefault(group, funding.putCode.value); " ng-show="funding.putCode.value != group.defaultPutCode">
                                    <span class="glyphicon glyphicon-unchecked"></span> Make Preferred
                                 </a>
-                            </#if> 
+                            </#if>
                         </div>
-                        
-                        
+
+
                         <div class="col-md-2 col-sm-2 col-xs-12 trash-source">
                             <#if !(isPublicProfile??)>
                                 <ul class="sources-actions">
@@ -226,15 +226,15 @@
                                 </ul>
                             </#if>
                         </div>
-                        
-                                              
+
+
                     </div>
                     <div class="row">
                         <div class="col-md-12" ng-show="group.activePutCode == funding.putCode.value">
-                            <ul class="sources-options" ng-cloak>                                    
-                                <li ng-hide="group.activitiesCount == 1 || editSources[group.groupId] == true">                         
+                            <ul class="sources-options" ng-cloak>
+                                <li ng-hide="group.activitiesCount == 1 || editSources[group.groupId] == true">
                                     <span class="view-sources-details">
-                                        <a ng-click="editSources[group.groupId] = !editSources[group.groupId]">View <span class="badge">{{group.activitiesCount - 1 }}</span> additional source<span ng-show="group.activitiesCount > 2">s</span></a>                               
+                                        <a ng-click="editSources[group.groupId] = !editSources[group.groupId]">View <span class="badge">{{group.activitiesCount - 1 }}</span> additional source<span ng-show="group.activitiesCount > 2">s</span></a>
                                     </span>
                                     <#if !(isPublicProfile??)>
                                       <a ng-click="editSources[group.groupId] = !editSources[group.groupId]" ng-show="!bulkEditShow">
@@ -252,23 +252,23 @@
                                 <li class="show-more-info-tab-container">
                                     <span class="show-more-info-tab work-tab">
                                         <!-- The code for getting this working needs to be added in orcidAngular.js -->
-                                        <a ng-show="!moreInfo[group.groupId]" ng-click="showDetailsMouseClick(group,$event);"><span class="glyphicon glyphicon-chevron-down"></span><@orcid.msg 'common.details.show_details'/></a>                                 
+                                        <a ng-show="!moreInfo[group.groupId]" ng-click="showDetailsMouseClick(group,$event);"><span class="glyphicon glyphicon-chevron-down"></span><@orcid.msg 'common.details.show_details'/></a>
                                         <a ng-show="moreInfo[group.groupId]" ng-click="showDetailsMouseClick(group,$event);"><span class="glyphicon glyphicon-chevron-up"></span><@orcid.msg 'common.details.hide_details'/></a>
-                                    </span>                         
-                                </li>                               
+                                    </span>
+                                </li>
                             </ul>
-                        
+
                         </div>
-                    </div>                
+                    </div>
                 </li><!-- End line -->
-               </ul>                 
+               </ul>
          </div>
     </li>
 </ul>
 
 <div ng-show="fundingSrvc.loading == true;" class="text-center">
     <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>
-    <!--[if lt IE 8]>    
+    <!--[if lt IE 8]>
         <img src="${staticCdn}/img/spin-big.gif" width="85" height ="85"/>
     <![endif]-->
 </div>
