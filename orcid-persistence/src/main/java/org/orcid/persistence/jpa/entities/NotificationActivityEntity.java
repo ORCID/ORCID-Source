@@ -16,6 +16,7 @@
  */
 package org.orcid.persistence.jpa.entities;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -29,12 +30,16 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name="notification_activity")
+@Table(name = "notification_activity")
 public class NotificationActivityEntity extends BaseEntity<Long> {
 
     private static final long serialVersionUID = 1L;
-    
+
     private Long id;
+    private String activityType;
+    private String activityName;
+    private String externalIdType;
+    private String externalIdValue;
 
     @Override
     @Id
@@ -46,6 +51,42 @@ public class NotificationActivityEntity extends BaseEntity<Long> {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    @Column(name = "activity_type")
+    public String getActivityType() {
+        return activityType;
+    }
+
+    public void setActivityType(String activityType) {
+        this.activityType = activityType;
+    }
+
+    @Column(name = "activity_name")
+    public String getActivityName() {
+        return activityName;
+    }
+
+    public void setActivityName(String activityName) {
+        this.activityName = activityName;
+    }
+
+    @Column(name = "external_id_type")
+    public String getExternalIdType() {
+        return externalIdType;
+    }
+
+    public void setExternalIdType(String externalIdType) {
+        this.externalIdType = externalIdType;
+    }
+
+    @Column(name = "external_id_value")
+    public String getExternalIdValue() {
+        return externalIdValue;
+    }
+
+    public void setExternalIdValue(String externalIdValue) {
+        this.externalIdValue = externalIdValue;
     }
 
 }

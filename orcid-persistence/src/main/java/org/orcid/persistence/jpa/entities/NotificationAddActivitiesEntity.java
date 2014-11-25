@@ -18,6 +18,7 @@ package org.orcid.persistence.jpa.entities;
 
 import java.util.Set;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -34,10 +35,20 @@ public class NotificationAddActivitiesEntity extends NotificationEntity {
 
     private static final long serialVersionUID = 1L;
 
+    private String authorizationUrl;
     private Set<NotificationActivityEntity> notificationActivities;
 
+    @Column(name = "authorizationUrl")
+    public String getAuthorizationUrl() {
+        return authorizationUrl;
+    }
+
+    public void setAuthorizationUrl(String authorizationUrl) {
+        this.authorizationUrl = authorizationUrl;
+    }
+
     @OneToMany
-    @JoinColumn(name="notification_id")
+    @JoinColumn(name = "notification_id")
     public Set<NotificationActivityEntity> getNotificationActivities() {
         return notificationActivities;
     }
@@ -45,5 +56,5 @@ public class NotificationAddActivitiesEntity extends NotificationEntity {
     public void setNotificationActivities(Set<NotificationActivityEntity> notificationActivities) {
         this.notificationActivities = notificationActivities;
     }
-    
+
 }
