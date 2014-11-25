@@ -50,6 +50,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
 import org.springframework.security.oauth2.common.exceptions.RedirectMismatchException;
+import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
@@ -175,6 +176,11 @@ public class OauthConfirmAccessController extends BaseController {
                             usePersistentTokens = true;
                     }                    
                     
+                    //Remove client_credentials scopes
+                    if(!PojoUtil.isEmpty(scope))
+                        scope = trimClientCredentialScopes(scope);
+                    
+                    
                     // validate client scopes
                     try {
                         authorizationEndpoint.validateScope(scope, clientDetails);
@@ -238,6 +244,10 @@ public class OauthConfirmAccessController extends BaseController {
         String clientGroupName = "";
         String clientWebsite = "";
 
+        //Remove client_credentials scopes
+        if(!PojoUtil.isEmpty(scope))
+            scope = trimClientCredentialScopes(scope);
+        
         boolean usePersistentTokens = false;
         
         ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
@@ -660,6 +670,23 @@ public class OauthConfirmAccessController extends BaseController {
         if(clientDetails == null)
             throw new IllegalArgumentException("Invalid client details id");
         return clientDetails.isPersistentTokensEnabled();
+    }
+    
+    private String trimClientCredentialScopes(String scopes) {
+        String result = scopes;
+        for (String scope : OAuth2Utils.parseParameterList(scopes)) {
+            ScopePathType scopeType = ScopePathType.fromValue(scope);
+            if (scopeType.isClientCreditalScope()) {
+                if(scopes.contains(ScopePathType.ORCID_PROFILE_CREATE.getContent()))
+                    result = scopes.replaceAll(ScopePathType.ORCID_PROFILE_CREATE.getContent(), "");
+                else if(scopes.contains(ScopePathType.READ_PUBLIC.getContent()))
+                    result = scopes.replaceAll(ScopePathType.READ_PUBLIC.getContent(), "");
+                else if(scopes.contains(ScopePathType.WEBHOOK.getContent()))
+                    result = scopes.replaceAll(ScopePathType.WEBHOOK.getContent(), "");
+            }                           
+        }
+        
+        return result;
     }
     
 }
