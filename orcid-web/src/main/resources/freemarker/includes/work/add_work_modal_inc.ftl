@@ -271,7 +271,7 @@
 				</div>
 			
 				<div class="control-group">
-		    		<label class="relative"><@orcid.msg 'manual_work_form_contents.labelURL'/></label>
+		    		<label class="relative"><@orcid.msg 'common.url'/></label>
 		    		<div class="relative">
 						<input name="url" type="text" class="input-xlarge"  ng-model="editWork.url.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_URL'/>" ng-change="serverValidate('works/work/urlValidate.json')" ng-model-onblur/>
 						<span class="orcid-error" ng-show="editWork.url.errors.length > 0">
