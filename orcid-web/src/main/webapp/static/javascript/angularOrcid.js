@@ -2855,6 +2855,7 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
     $scope.privacyHelpCurKey = null;
     $scope.moreInfo = {};
     $scope.moreInfoCurKey = null;
+    $scope.showElement = {};
 
     $scope.sortState = new ActSortState(GroupedActivities.AFFILIATION);
     $scope.sort = function(key) {
@@ -3142,6 +3143,14 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
 
     $scope.openEditAffiliation = function(affiliation) {
         $scope.addAffiliationModal(affiliation.affiliationType.value, affiliation);
+    };
+    
+    $scope.showTooltip = function (element){    	
+        $scope.showElement[element] = true;
+    };
+
+    $scope.hideTooltip = function (element){    	
+        $scope.showElement[element] = false;
     };
 }
 

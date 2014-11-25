@@ -4313,10 +4313,6 @@ ul.sources-options li{
 	display: inline-block;
 }
 
-.sources-container-header ul.sources-options li a.glyphicon-trash{
-	margin-right: 5px;
-}
-
 .sources-container table.sources-edit-table{
 	margin-top: 15px;
 	border: none;
@@ -4878,7 +4874,7 @@ ul.sources-actions li{
 }
 
 .affiliation-box{
-	padding: 5px;
+	padding: 5px 5px 0 5px;
 }
 
 .combine-work ul.list-group li.list-group-item{
