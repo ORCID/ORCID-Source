@@ -28,7 +28,7 @@
                         <div class="row">
                             <div class="col-md-4 col-sm-4 col-xs-4">
                                 <div class="">
-                                    <@orcid.msg 'common.details.groups.common.close_sources' /> <span class="hide-sources" ng-click="hideSources(group)"><@orcid.msg 'common.details.groups.common.close_sources' /></span>
+                                    <@orcid.msg 'common.details.groups.common.close_sources' /> <span class="hide-sources" ng-click="hideSources(group)"><@orcid.msg 'groups.common.close_sources' /></span>
                                 </div>
                             </div>
                             <div class="col-md-3 col-sm-3 col-xs-3">
@@ -36,7 +36,7 @@
                             </div>
 
                             <div class="col-md-2 col-sm-3 col-xs-3">
-                                <@orcid.msg 'groups.common.preferred' />
+                                <@orcid.msgCapFirst 'groups.common.preferred' />
                             </div>
                             <div class="col-md-3 col-sm-2 col-xs-2 right">
                                     <div class="workspace-toolbar">
@@ -295,10 +295,10 @@
                     <!--  Final Row -->
                     <div class="row source-line" ng-hide="editSources[group.groupId] == true">
                         <div class="col-md-4">
-                              <@orcid.msgToUpperCase 'groups.common.source'/>: {{work.sourceName}}
+                              <@orcid.msgUpCase 'groups.common.source'/>: {{work.sourceName}}
                           </div>
                           <div class="col-md-3">
-                              <@orcid.msgToUpperCase 'groups.common.created'/>: <span ng-bind="work.createdDate | ajaxFormDateToISO8601"></span>
+                              <@orcid.msgUpCase 'groups.common.created'/>: <span ng-bind="work.createdDate | ajaxFormDateToISO8601"></span>
                           </div>
                           <div class="col-md-3">
                                 <span class="glyphicon glyphicon-check"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span> <span ng-hide="group.activitiesCount == 1">(</span><a ng-click="editSources[group.groupId] = !editSources[group.groupId]" ng-hide="group.activitiesCount == 1" ng-mouseenter="showTooltip(group.groupId+'-sources')" ng-mouseleave="hideTooltip(group.groupId+'-sources')">of {{group.activitiesCount}}</a><span ng-hide="group.activitiesCount == 1">)</span>
