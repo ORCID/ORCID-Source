@@ -5869,17 +5869,15 @@ function SSOPreferencesCtrl($scope, $compile, $sce, emailSrvc) {
     $scope.emailSrvc = emailSrvc;
     $scope.nameToDisplay = '';
     $scope.descriptionToDisplay = '';
+    $scope.verifyEmailSent=false;
 
     $scope.verifyEmail = function() {
         var funct = function() {
             $scope.verifyEmailObject = emailSrvc.primaryEmail;
             emailSrvc.verifyEmail(emailSrvc.primaryEmail,function(data) {
-                    $.colorbox({
-                        html : $compile($('#verify-email-modal').html())($scope)
-                    });
-                    $scope.$apply();
-                    $.colorbox.resize();
-           });
+            	$scope.verifyEmailSent = true;    
+            	$scope.$apply();                    
+           });            
        };
        if (emailSrvc.primaryEmail == null)
               emailSrvc.getEmails(funct);
