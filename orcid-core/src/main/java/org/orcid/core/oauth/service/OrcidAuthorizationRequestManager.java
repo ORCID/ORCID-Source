@@ -38,7 +38,8 @@ public class OrcidAuthorizationRequestManager extends DefaultAuthorizationReques
             if (clientDetails.isScoped()) {
                 Set<String> validScope = clientDetails.getScope();
                 for (String scope : OAuth2Utils.parseParameterList(parameters.get("scope"))) {
-                    if (ScopePathType.READ_PUBLIC.equals(ScopePathType.fromValue(scope)) || ScopePathType.ORCID_PROFILE_CREATE.equals(ScopePathType.fromValue(scope)))
+                    ScopePathType scopeType = ScopePathType.fromValue(scope);
+                    if (scopeType.isClientCreditalScope())
                         throw new InvalidScopeException("Invalid scope: " + scope);
                     if (!validScope.contains(scope))
                         throw new InvalidScopeException("Invalid scope: " + scope);
