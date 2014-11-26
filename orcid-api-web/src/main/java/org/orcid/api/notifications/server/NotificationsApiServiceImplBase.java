@@ -17,6 +17,7 @@
 package org.orcid.api.notifications.server;
 
 import static org.orcid.api.common.OrcidApiConstants.ADD_ACTIVITIES_PATH;
+import static org.orcid.api.common.OrcidApiConstants.ADD_ACTIVITIES_VIEW_PATH;
 import static org.orcid.api.common.OrcidApiConstants.ORCID_JSON;
 import static org.orcid.api.common.OrcidApiConstants.ORCID_XML;
 import static org.orcid.api.common.OrcidApiConstants.STATUS_PATH;
@@ -83,6 +84,20 @@ abstract public class NotificationsApiServiceImplBase {
         return serviceDelegator.findAddActivitiesNotifications(orcid);
     }
 
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Path(ADD_ACTIVITIES_VIEW_PATH)
+    public Response viewAddActivitiesNotificationXml(@PathParam("orcid") String orcid, @PathParam("id") Long id) {
+        return serviceDelegator.findAddActivitiesNotification(orcid, id);
+    }
+
+    @GET
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(ADD_ACTIVITIES_VIEW_PATH)
+    public Response viewAddActivitiesNotificationJson(@PathParam("orcid") String orcid, @PathParam("id") Long id) {
+        return serviceDelegator.findAddActivitiesNotification(orcid, id);
+    }
+    
     @POST
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })

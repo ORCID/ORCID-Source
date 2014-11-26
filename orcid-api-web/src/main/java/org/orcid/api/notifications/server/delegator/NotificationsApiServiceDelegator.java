@@ -31,6 +31,8 @@ public interface NotificationsApiServiceDelegator {
     Response viewStatusText();
 
     Response findAddActivitiesNotifications(String orcid);
+    
+    Response findAddActivitiesNotification(String orcid, Long id);
 
     Response addAddActivitiesNotification(UriInfo uriInfo, String orcid, NotificationAddActivities notification);
 

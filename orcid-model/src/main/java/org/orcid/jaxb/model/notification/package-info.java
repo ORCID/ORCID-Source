@@ -21,6 +21,6 @@
 // Generated on: 2014.07.22 at 06:46:00 PM BST 
 //
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.orcid.org/ns/orcid", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.orcid.org/ns/orcid", xmlns = { @javax.xml.bind.annotation.XmlNs(namespaceURI = "http://www.orcid.org/ns/orcid", prefix = "orcid") }, elementFormDefault = javax.xml.bind.annotation.XmlNsForm.UNQUALIFIED)
 package org.orcid.jaxb.model.notification;
 

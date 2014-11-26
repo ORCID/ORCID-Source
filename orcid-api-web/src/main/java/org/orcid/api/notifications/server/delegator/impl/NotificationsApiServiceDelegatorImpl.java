@@ -30,6 +30,8 @@ import org.orcid.core.manager.NotificationManager;
 import org.orcid.jaxb.model.notification.Notification;
 import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
 
+import com.sun.jersey.api.Responses;
+
 /**
  * 
  * @author Will Simpson
@@ -49,6 +51,16 @@ public class NotificationsApiServiceDelegatorImpl implements NotificationsApiSer
     public Response findAddActivitiesNotifications(String orcid) {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public Response findAddActivitiesNotification(String orcid, Long id) {
+        Notification notification = notificationManager.findByOrcidAndId(orcid, id);
+        if (notification != null) {
+            return Response.ok(notification).build();
+        } else {
+            return Responses.notFound().build();
+        }
     }
 
     @Override
