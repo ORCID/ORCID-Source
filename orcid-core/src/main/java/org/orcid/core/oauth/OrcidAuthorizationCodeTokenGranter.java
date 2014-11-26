@@ -28,6 +28,7 @@ import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
 import org.orcid.persistence.jpa.entities.OrcidOauth2AuthoriziationCodeDetail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.common.exceptions.InvalidClientException;
 import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
@@ -50,7 +51,8 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
 
     private final AuthorizationCodeServices authorizationCodeServices;
 
-    private static final int AUTH_TOKEN_EXPIRATION_TIME_MINUTES = 10;
+    @Value("${org.orcid.core.oauth.auth_code.expiration_minutes:10}")    
+    private int authorizationCodeExpiration;
     
     @Resource(name = "orcidOauth2AuthoriziationCodeDetailDao")
     private OrcidOauth2AuthoriziationCodeDetailDao orcidOauth2AuthoriziationCodeDetailDao;
@@ -85,7 +87,7 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
             Date tokenCreationDate = codeDetails.getDateCreated();
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(tokenCreationDate);
-            calendar.add(Calendar.MINUTE, AUTH_TOKEN_EXPIRATION_TIME_MINUTES);            
+            calendar.add(Calendar.MINUTE, authorizationCodeExpiration);            
             Date tokenExpirationDate = calendar.getTime();
             
             if(tokenExpirationDate.before(new Date())) {
