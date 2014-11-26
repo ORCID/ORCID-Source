@@ -95,8 +95,6 @@ public class NotificationManagerImpl implements NotificationManager {
     private static final String WILDCARD_WEBSITE = "${website}";
 
     private static final String WILDCARD_DESCRIPTION = "${description}";
-    
-    
 
     @Resource
     private MessageSource messages;
@@ -110,7 +108,7 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Resource
     private OrcidUrlManager orcidUrlManager;
-    
+
     private boolean apiRecordCreationEmailEnabled;
 
     private TemplateManager templateManager;
@@ -261,8 +259,8 @@ public class NotificationManagerImpl implements NotificationManager {
         }
         return messages.getMessage(code, null, locale);
     }
-    
-    private String getSubject(String code, OrcidProfile orcidProfile, String ... args) {
+
+    private String getSubject(String code, OrcidProfile orcidProfile, String... args) {
         Locale locale = null;
         if (orcidProfile.getOrcidPreferences() != null && orcidProfile.getOrcidPreferences().getLocale() != null) {
             orcidProfile.getOrcidPreferences().getLocale().value();
@@ -469,7 +467,8 @@ public class NotificationManagerImpl implements NotificationManager {
 
         String emailName = deriveEmailFriendlyName(createdProfile);
         String orcid = createdProfile.getOrcidIdentifier().getPath();
-        String verificationUrl = createClaimVerificationUrl(createdProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), orcidUrlManager.getBaseUrl());
+        String verificationUrl = createClaimVerificationUrl(createdProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(),
+                orcidUrlManager.getBaseUrl());
         String email = createdProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
 
         String creatorName = "";
@@ -691,17 +690,20 @@ public class NotificationManagerImpl implements NotificationManager {
 
         // Send message
         if (apiRecordCreationEmailEnabled) {
-            mailGunManager.sendEmail(DELEGATE_NOTIFY_ORCID_ORG, primaryEmail.getValue(), getSubject("email.subject.admin_as_delegate", managed, trustedOrcidName), null, htmlBody);
+            mailGunManager.sendEmail(DELEGATE_NOTIFY_ORCID_ORG, primaryEmail.getValue(), getSubject("email.subject.admin_as_delegate", managed, trustedOrcidName), null,
+                    htmlBody);
             profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.ADMIN_PROFILE_DELEGATION_REQUEST));
         } else {
             LOGGER.debug("Not sending admin delegate email, because API record creation email option is disabled. Message would have been: {}", htmlBody);
         }
     }
 
-    private void createNotification(String orcid, Notification notification) {
+    @Override
+    public Notification createNotification(String orcid, Notification notification) {
         NotificationEntity notificationEntity = notificationAdapter.toNotificationEntity(notification);
         notificationEntity.setProfile(profileDao.find(orcid));
         notificationDao.persist(notificationEntity);
+        return notificationAdapter.toNotification(notificationEntity);
     }
 
     @Override
@@ -723,5 +725,5 @@ public class NotificationManagerImpl implements NotificationManager {
     public Notification findByOrcidAndId(String orcid, Long id) {
         return notificationAdapter.toNotification(notificationDao.findByOricdAndId(orcid, id));
     }
-    
+
 }

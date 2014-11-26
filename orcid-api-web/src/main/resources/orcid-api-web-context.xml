@@ -195,4 +195,10 @@
         <property name="serviceDelegator" ref="t2OrcidApiServiceDelegatorV1_2_rc6"/>
     </bean>
     
+    <!--  Notifications API -->
+    <bean id="notificationsApiServiceDelegator" class="org.orcid.api.notifications.server.delegator.impl.NotificationsApiServiceDelegatorImpl" />
+    <bean id="notificationsApiServiceImplRoot" class="org.orcid.api.notifications.server.NotificationsApiServiceImplRoot">
+        <property name="serviceDelegator" ref="notificationsApiServiceDelegator"/>
+    </bean>
+    
 </beans>

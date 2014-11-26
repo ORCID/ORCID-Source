@@ -18,6 +18,7 @@ package org.orcid.persistence.jpa.entities;
 
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -47,7 +48,7 @@ public class NotificationAddActivitiesEntity extends NotificationEntity {
         this.authorizationUrl = authorizationUrl;
     }
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "notification_id")
     public Set<NotificationActivityEntity> getNotificationActivities() {
         return notificationActivities;

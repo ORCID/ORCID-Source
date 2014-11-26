@@ -29,6 +29,7 @@ import javax.xml.bind.JAXBException;
 
 import org.orcid.api.common.OrcidApiConstants;
 import org.orcid.jaxb.model.message.OrcidMessage;
+import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
 
 import com.sun.jersey.api.json.JSONConfiguration;
 import com.sun.jersey.api.json.JSONConfiguration.MappedBuilder;
@@ -45,7 +46,7 @@ import com.sun.jersey.api.json.JSONJAXBContext;
 public class OrcidJAXBContextResolver implements ContextResolver<JAXBContext> {
 
     private JAXBContext context;
-    private Class<?>[] types = { OrcidMessage.class };
+    private Class<?>[] types = { OrcidMessage.class, NotificationAddActivities.class };
 
     public OrcidJAXBContextResolver() throws JAXBException {
         MappedBuilder builder = JSONConfiguration.mapped();

@@ -34,6 +34,8 @@ public class OrcidApiConstants {
     public static final String WEBHOOKS_PATH = "/{orcid}/webhook/{webhook_uri}";
     public static final String AUTHENTICATE_PATH = "/{orcid}/authenticate";
     public static final String CLIENT_PATH = "/client/{client_id:[^/]+}";
+    public static final String NOTIFICATIONS_PATH ="/{orcid}/notifications";
+    public static final String ADD_ACTIVITIES_PATH = "/add-activities";
 
     public static final String ORCID_XML = "application/orcid+xml; qs=3";
     public static final String ORCID_JSON = "application/orcid+json; qs=2";

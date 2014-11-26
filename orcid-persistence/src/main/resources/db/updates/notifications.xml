@@ -132,6 +132,11 @@
         <dropNotNullConstraint tableName="notification" columnName="body_html"/>
     </changeSet>
     
+    <changeSet id="REMOVE-NOT-NULL-FROM-NOTIFICATION-ID-IN-NOTIFICATION-ACTIVITIES" author="Will Simpson">
+        <!-- Need to do without the not null constraint because causes problem for Hibernate -->
+        <dropNotNullConstraint tableName="notification_activity" columnName="notification_id"/>
+    </changeSet>
+    
     <changeSet id="ADD-SEQUENCE-FOR-NOTIFICATION-ACTIVITIES"
         author="Will Simpson" dbms="postgresql">
         <preConditions onFail="MARK_RAN">
