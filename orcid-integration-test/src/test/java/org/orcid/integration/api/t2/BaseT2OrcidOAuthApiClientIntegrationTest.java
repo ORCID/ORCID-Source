@@ -59,8 +59,11 @@ public abstract class BaseT2OrcidOAuthApiClientIntegrationTest {
     @Resource
     protected OrcidClientDataHelper orcidClientDataHelper;
 
-    @Resource(name="t2OAuthClient1_2_rc6")
+    @Resource(name="t2OAuthClient")
     protected T2OAuthAPIService<ClientResponse> oauthT2Client;
+    
+    @Resource(name="t2OAuthClient1_2_rc6")
+    protected T2OAuthAPIService<ClientResponse> oauthT2Client1_2_rc6;
 
     @Resource
     protected Client jerseyClient;
@@ -122,7 +125,7 @@ public abstract class BaseT2OrcidOAuthApiClientIntegrationTest {
 
     protected ClientResponse createNewOrcidUsingAccessToken() throws Exception {
         OrcidMessage profile = orcidClientDataHelper.createFromXML(OrcidClientDataHelper.ORCID_INTERNAL_NO_SPONSOR_XML);
-        ClientResponse clientResponse = oauthT2Client.createProfileXML(profile, accessToken);
+        ClientResponse clientResponse = oauthT2Client1_2_rc6.createProfileXML(profile, accessToken);
         // assign orcid any time it's created for use in tear-down
         this.orcid = orcidClientDataHelper.extractOrcidFromResponseCreated(clientResponse);
         return clientResponse;
