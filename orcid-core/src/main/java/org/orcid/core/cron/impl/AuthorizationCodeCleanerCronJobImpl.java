@@ -31,6 +31,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * 
+ * @author Angel Montenegro
+ * 
+ */
 public class AuthorizationCodeCleanerCronJobImpl implements AuthorizationCodeCleanerCronJob {
 
     private static final Logger LOG = LoggerFactory.getLogger(OrcidProfileManagerImpl.class);
