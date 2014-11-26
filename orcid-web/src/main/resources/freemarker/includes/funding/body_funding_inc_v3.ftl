@@ -38,13 +38,6 @@
                                 <#if !(isPublicProfile??)>
                                     <div class="workspace-toolbar">
                                         <ul class="workspace-private-toolbar">
-                                            <!--  old edit funding
-                                            <li>
-                                                <a ng-click="openEditFunding(group.getActive())" class="toolbar-button edit-item-button">
-                                                    <span class="glyphicon glyphicon-pencil edit-option-toolbar" title=""></span>
-                                                </a>
-                                            </li>
-                                             -->
                                              <li class="works-details" ng-show="editSources[group.groupId] == true">                                        
                                                 <a ng-click="showDetailsMouseClick(group,$event);" ng-mouseenter="showTooltip(group.groupId+'-showHideDetails')" ng-mouseleave="hideTooltip(group.groupId+'-showHideDetails')">
                                                     <span ng-class="(moreInfo[group.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
@@ -71,45 +64,6 @@
                                     </div>
                                 </#if>
                              </div>
-
-                        <!-- OLD BELOW  -->
-                            <!--
-                            <div class="col-md-9">
-                               <span>
-                                    <a ng-click="editSources[group.groupId] = false">
-                                        <span class="glyphicon glyphicon-remove" ng-show="!bulkEditShow"></span> Hide additional sources
-                                    </a>
-                               </span>
-                                <#if !(isPublicProfile??)>
-                                    <span ng-show="editSources[group.groupId] == true">
-                                        <a ng-click="deleteFundingConfirm(group.getActive().putCode.value, true)">
-                                            <span class="glyphicon glyphicon-trash" ng-show="!bulkEditShow"></span> Delete all
-                                        </a>
-                                    </span>
-                                </#if>
-                            </div>
-                            <#if !(isPublicProfile??)>
-                                <div class="workspace-toolbar">
-                                    <ul class="workspace-private-toolbar">
-                                        <li class="">Validate with ng-show for works is userIsSource(work) || (group.hasKeys() && !group.hasUserVersion())
-                                            <a ng-click="openEditFunding(group.getActive())" class="toolbar-button edit-item-button">
-                                                <span class="glyphicon glyphicon-pencil edit-option-toolbar" title=""></span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <@orcid.privacyToggle2  angularModel="group.getActive().visibility.visibility"
-                                                questionClick="toggleClickPrivacyHelp(group.getActive().putCode.value)"
-                                                clickedClassCheck="{'popover-help-container-show':privacyHelp[group.getActive().putCode.value]==true}"
-                                                publicClick="fundingSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PUBLIC', $event)"
-                                                limitedClick="fundingSrvc.setGroupPrivacy(group.getActive().putCode.value, 'LIMITED', $event)"
-                                                privateClick="fundingSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PRIVATE', $event)" />
-                                        </li>
-                                    </ul>
-                                </div>
-                            </#if>
-
-                             -->
-
                         </div>
                     </div>
                 </li><!--  End of header -->
@@ -147,20 +101,13 @@
                             <div class="col-md-3 workspace-toolbar">
                                 <ul class="workspace-private-toolbar" ng-hide="editSources[group.groupId] == true">
                                     <#if !(isPublicProfile??)>
-                                        <!-- Bulk edit tool / for future implementation
+                                        <!-- Bulk edit tool / for further implementation
                                         <li ng-show="bulkEditShow == true" class="hidden-xs bulk-checkbox-item">                                
                                                 <input type="checkbox" ng-model="bulkEditMap[funding.putCode.value]" class="bulk-edit-input ng-pristine ng-valid pull-right">                                                            
                                         </li>
                                         -->
-                                    </#if>    
-                                    <!--
-                                    <li> Validate with ng-show for works is: !group.hasUserVersion() || userIsSource(work)
-                                         <a href="" class="toolbar-button edit-item-button">
-                                             <span class="glyphicon glyphicon-pencil edit-option-toolbar" title="" ng-click="openEditFunding(group.getActive())"></span>
-                                         </a>
-                                     </li>
-                                      -->
-                                      <!-- Show/Hide Details -->
+                                    </#if>
+                                    <!-- Show/Hide Details -->
                                     <li class="works-details" ng-hide="editSources[group.groupId] == true">                                        
                                         <a ng-click="showDetailsMouseClick(group,$event);" ng-mouseenter="showTooltip(group.groupId+'-showHideDetails')" ng-mouseleave="hideTooltip(group.groupId+'-showHideDetails')">
                                             <span ng-class="(moreInfo[group.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
@@ -235,8 +182,8 @@
                                         <div class="popover popover-tooltip top edit-activeSource-popover" ng-show="showElement[group.groupId+'-editActiveSource'] == true">
                                             <div class="arrow"></div>
                                             <div class="popover-content">
-                                                <span ng-hide="!userIsSource(work)">Edit my version</span>
-                                                <span ng-show="!userIsSource(work)">Make a copy and edit</span>
+                                                <span ng-hide="!userIsSource(funding)">Edit my version</span>
+                                                <span ng-show="!userIsSource(funding)">Make a copy and edit</span>
                                             </div>
                                         </div>
                                     </li>
@@ -282,16 +229,16 @@
                         <div class="col-md-2 col-sm-2 col-xs-12 trash-source">
                             <#if !(isPublicProfile??)>
                                 <ul class="sources-actions">
-                                    <li> <!-- Validate with ng-show for works is: !group.hasUserVersion() || userIsSource(work) -->
-                                        <a ng-click="openEditFunding(group.getActive())" ng-click="openEditWork(work.putCode.value)" ng-mouseenter="showTooltip(work.putCode.value+'-editInactiveSource')" ng-mouseleave="hideTooltip(work.putCode.value+'-editInactiveSource')">
+                                    <li> <!-- ng-show="!group.hasUserVersion() || userIsSource(funding)" -->
+                                        <a ng-click="openEditFunding(group.getActive())" ng-click="openEditWork(funding.putCode.value)" ng-mouseenter="showTooltip(funding.putCode.value+'-editInactiveSource')" ng-mouseleave="hideTooltip(funding.putCode.value+'-editInactiveSource')">
                                             <span class="glyphicon glyphicon-pencil"></span>
                                         </a>
 
-                                        <div class="popover popover-tooltip top edit-inactiveSource-popover" ng-show="showElement[work.putCode.value+'-editInactiveSource'] == true">
+                                        <div class="popover popover-tooltip top edit-inactiveSource-popover" ng-show="showElement[funding.putCode.value+'-editInactiveSource'] == true">
                                             <div class="arrow"></div>
                                             <div class="popover-content">
-                                                <span ng-hide="!userIsSource(work)">Edit my version</span>
-                                                <span ng-show="!userIsSource(work)">Make a copy and edit</span>
+                                                <span ng-hide="!userIsSource(funding)">Edit my version</span>
+                                                <span ng-show="!userIsSource(funding)">Make a copy and edit</span>
                                             </div>
                                         </div>
                                     </li>
@@ -334,58 +281,42 @@
                         </div>
                         <div class="col-md-2">
                             <ul class="sources-options" ng-cloak>
-                                 <#if !(isPublicProfile??)>
-                                <!--       
-                                <li ng-show="userIsSource(funding) || (group.hasKeys() && !group.hasUserVersion())">
-                                    <a ng-click="openEditFunding(group.getActive())" class="toolbar-button edit-item-button" ng-mouseenter="showTooltip(group.groupId+'-editSource')" ng-mouseleave="hideTooltip(group.groupId+'-editSource')">
-                                        <span class="glyphicon glyphicon-pencil" ng-class="{'glyphicons git_create' : !userIsSource(funding)}" title=""></span>
-                                    </a>
-                                    <div class="popover popover-tooltip top edit-source-popover" ng-show="showElement[group.groupId+'-editSource'] == true">
-                                    <div class="arrow"></div>
-                                        <div class="popover-content">
-                                            <span ng-hide="!userIsSource(funding)">Edit my version</span>
-                                            <span ng-show="!userIsSource(funding)">Make a copy and edit</span>
-                                        </div>
-                                    </div>
-                                </li>
-                                -->
-                                <li> <!-- Validate with ng-show for works is: !group.hasUserVersion() || userIsSource(work) -->
-                                        <a ng-click="openEditFunding(group.getActive())" ng-mouseenter="showTooltip(group.groupId+'-editSource')" ng-mouseleave="hideTooltip(group.groupId+'-editSource')">
-                                            <span class="glyphicon glyphicon-pencil"></span>
-                                        </a>
-                                        <div class="popover popover-tooltip top edit-source-popover" ng-show="showElement[group.groupId+'-editSource'] == true">
-                                            <div class="arrow"></div>
-                                            <div class="popover-content">
-                                                <span ng-hide="!userIsSource(work)">Edit my version</span>
-                                                <span ng-show="!userIsSource(work)">Make a copy and edit</span>
-                                            </div>
-                                        </div>
-                                </li>
-                                <li ng-hide="group.activitiesCount == 1 || editSources[group.groupId] == true">
-
-                                    <a ng-click="editSources[group.groupId] = !editSources[group.groupId]" ng-mouseenter="showTooltip(group.groupId+'-deleteGroup')" ng-mouseleave="hideTooltip(group.groupId+'-deleteGroup')">
-                                         <span class="glyphicon glyphicon-trash"></span>
-                                    </a>
-                                    <div class="popover popover-tooltip top delete-source-popover" ng-show="showElement[group.groupId+'-deleteGroup'] == true">
-                                         <div class="arrow"></div>
-                                        <div class="popover-content">
-                                            Delete this source                                
-                                        </div>
-                                    </div>
-
-                                </li>
-                                   <li ng-show="group.activitiesCount == 1">
-                                      <a ng-click="deleteFundingConfirm(group.getActive().putCode.value, false)" ng-mouseenter="showTooltip(group.groupId+'-deleteSource')" ng-mouseleave="hideTooltip(group.groupId+'-deleteSource')">
-                                         <span class="glyphicon glyphicon-trash"></span>
-                                     </a>
-
-                                     <div class="popover popover-tooltip top delete-source-popover" ng-show="showElement[group.groupId+'-deleteSource'] == true">
-                                             <div class="arrow"></div>
-                                            <div class="popover-content">
-                                                Delete this source                                
-                                            </div>
-                                    </div>
-                                   </li>
+                                <#if !(isPublicProfile??)>
+	                                <li><!-- ng-show="!group.hasUserVersion() || userIsSource(funding)" -->
+	                                        <a ng-click="openEditFunding(group.getActive())" ng-mouseenter="showTooltip(group.groupId+'-editSource')" ng-mouseleave="hideTooltip(group.groupId+'-editSource')">
+	                                            <span class="glyphicon glyphicon-pencil"></span>
+	                                        </a>
+	                                        <div class="popover popover-tooltip top edit-source-popover" ng-show="showElement[group.groupId+'-editSource'] == true">
+	                                            <div class="arrow"></div>
+	                                            <div class="popover-content">
+	                                                <span ng-show="userIsSource(funding)">Edit my version</span>
+	                                                <span ng-show="!userIsSource(funding)">Make a copy and edit</span>
+	                                            </div>
+	                                        </div>
+	                                </li>
+	                                <li ng-hide="group.activitiesCount == 1 || editSources[group.groupId] == true">
+	
+	                                    <a ng-click="editSources[group.groupId] = !editSources[group.groupId]" ng-mouseenter="showTooltip(group.groupId+'-deleteGroup')" ng-mouseleave="hideTooltip(group.groupId+'-deleteGroup')">
+	                                         <span class="glyphicon glyphicon-trash"></span>
+	                                    </a>
+	                                    <div class="popover popover-tooltip top delete-source-popover" ng-show="showElement[group.groupId+'-deleteGroup'] == true">
+	                                         <div class="arrow"></div>
+	                                        <div class="popover-content">
+	                                            Delete this source                                
+	                                        </div>
+	                                    </div>	
+	                                </li>
+									<li ng-show="group.activitiesCount == 1">
+									   <a ng-click="deleteFundingConfirm(group.getActive().putCode.value, false)" ng-mouseenter="showTooltip(group.groupId+'-deleteSource')" ng-mouseleave="hideTooltip(group.groupId+'-deleteSource')">
+									      <span class="glyphicon glyphicon-trash"></span>
+									   </a>									
+									  <div class="popover popover-tooltip top delete-source-popover" ng-show="showElement[group.groupId+'-deleteSource'] == true">
+									  	<div class="arrow"></div>
+									       <div class="popover-content">
+									          Delete this source                                
+									       </div>
+									    </div>
+									</li>
                                 </#if>
                             </ul>
                         </div>
@@ -403,6 +334,6 @@
     <![endif]-->
 </div>
 <div ng-show="fundingSrvc.loading == false && fundingSrvc.groups.length == 0" class="" ng-cloak>
-    <strong><#if (publicProfile)?? && publicProfile == true><@orcid.msg 'workspace_fundings_body_list.nograntaddedyet' /><#else><@orcid.msg 'workspace_fundings.havenotaddaffiliation' /><a ng-click="addFundingModal()"> <@orcid.msg 'workspace_fundings_body_list.addsomenow'/></a></#if></strong>
+    <strong><#if (publicProfile)?? && publicProfile == true><@orcid.msg 'workspace_fundings_body_list.nograntaddedyet' /><#else><@orcid.msg 'workspace_fundings.havenotaddaffiliation' /><a ng-click="showTemplateInModal('import-funding-modal')"> <@orcid.msg 'workspace_fundings_body_list.addsomenow'/></a></#if></strong>
 </div>
 

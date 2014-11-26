@@ -78,10 +78,7 @@
 					<div class="row">				
 						<div class="col-md-10 col-sm-10 col-xs-8">					
 							<h2><@orcid.msg 'manage.developer_tools.user.title' /></h2>										
-						</div>
-						<div class="col-md-2 col-sm-2 col-xs-4" ng-show="showReg" ng-cloak>
-							<a ng-click="createCredentialsLayout()" class="pull-right"><span class="label btn-primary"><@orcid.msg 'manage.developer_tools.button.register_now' /></span></a>
-						</div>	
+						</div>					
 					</div>
 				
 					<div class="row">
@@ -278,9 +275,8 @@
 								</div>						
 							</div>
 							<div class="col-md-3 col-sm-3 col-xs-3">				
-								<ul class="sso-options pull-right">							
-									<li><a href ng-click="showViewLayout()" class="back" title="<@orcid.msg 'manage.developer_tools.tooltip.back' />"><span class="glyphicon glyphicon-arrow-left"></span></a></li>
-									<li><a href ng-click="submit()" class="save" title="<@orcid.msg 'manage.developer_tools.tooltip.save' />"><span class="glyphicon glyphicon-floppy-disk"></span></a></li>							
+								<ul class="sso-options pull-right">									
+									<li><a href ng-click="submit()" class="save" title="<@orcid.msg 'manage.developer_tools.tooltip.save' />"><span class="glyphicon glyphicon-floppy-disk"></span></a></li>																								
 								</ul>					
 							</div>	
 						</div>				

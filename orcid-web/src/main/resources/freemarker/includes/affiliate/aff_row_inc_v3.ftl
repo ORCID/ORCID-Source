@@ -78,7 +78,7 @@
 					SOURCE: {{group.getActive().sourceName}}	
 				</div>
 				<div class="col-md-3">
-					CREATED: <span ng-bind=""></span>
+					CREATED: <span ng-bind="group.getActive().createdDate | ajaxFormDateToISO8601"></span>
 				</div>
 				<div class="col-md-3">
 					<!--<span class="glyphicon glyphicon-check"></span><span> Preferred source</span> <span ng-hide="group.activitiesCount == 1">(</span><a ng-click="editSources[group.groupId] = !editSources[group.groupId]" ng-hide="group.activitiesCount == 1" ng-mouseenter="showTooltip(group.groupId+'-sources')" ng-mouseleave="hideTooltip(group.groupId+'-sources')">of {{group.activitiesCount}}</a><span ng-hide="group.activitiesCount == 1">)</span>-->
@@ -93,7 +93,7 @@
 								<div class="popover popover-tooltip top edit-source-popover ng-hide" ng-show="showElement[group.getActive().putCode.value+'-edit'] == true"> 
 								    <div class="arrow"></div>
 								    <div class="popover-content">
-								        <span >Edit</span>
+								        <span >Edit my version</span>
 								    </div>                
 								</div>	
 							</li>   
@@ -102,7 +102,7 @@
 					            <div class="popover popover-tooltip top delete-source-popover ng-hide" ng-show="showElement[group.getActive().putCode.value+'-delete'] == true"> 
 								 	<div class="arrow"></div>
 								    <div class="popover-content">
-								    	Delete								        
+								    	Delete this source
 								    </div>                
 								</div>
 					        </li>
