@@ -33,7 +33,7 @@
                     <!-- Bulk Edit -->
                     <li>
                         <a class="action-option works manage-button" ng-class="{'green-bg' : bulkEditShow == true}" ng-click="toggleBulkEdit()">
-                            <span class="glyphicon glyphicon-pencil"></span>Bulk edit
+                            <span class="glyphicon glyphicon-pencil"></span><@orcid.msg 'groups.common.bulk_edit'/>
                         </a>
                     </li>
                     <!-- Add Manually -->
