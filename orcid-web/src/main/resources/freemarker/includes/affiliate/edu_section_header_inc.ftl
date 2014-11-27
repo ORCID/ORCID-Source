@@ -30,11 +30,24 @@
             <#if !(isPublicProfile??)>
                 <ul class="workspace-bar-menu">                         
                     <!-- Link Manually -->
-                    <li>                            
-                        <a href="" class="action-option manage-button two-options" ng-click="addAffiliationModal('education')">
-                            <span class="glyphicon glyphicon-plus"></span>
-                            <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
-                        </a>
+                    <li>                  
+                    	<div class="menu-container">
+	                    	<ul class="toggle-menu">
+	                    		<li ng-class="{'green-bg' : showBibtexImportWizard == true}">       
+			                    	<span class="glyphicon glyphicon-plus"></span>
+				                    Add education    
+				                    <ul class="menu-options education">	                    	
+					                    <!-- Add Manually -->
+					                    <li>          
+					                        <a href="" class="action-option manage-button two-options" ng-click="addAffiliationModal('education')">
+					                            <span class="glyphicon glyphicon-plus"></span>
+					                            <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
+					                        </a>
+					                   </li>
+					                </ul>
+					             </li>
+					      </ul>
+					    </div>         
                     </li>
                 </ul>
             </#if>

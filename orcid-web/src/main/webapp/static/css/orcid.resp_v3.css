@@ -1706,16 +1706,16 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 .workspace-accordion-header a.action-option:active{
 	display: block;
 	height: 30px;	
-	border-left: 1px solid #FFF;
+	border-left: 1px solid #FFF;	
 }
 
 .workspace-accordion-header a.action-option:hover{
 	background: #a6ce39;
-	color: #FFF;
+	color: #FFF;	
 }
 
 .workspace-accordion-header a.action-option:hover span:before{
-	color: #FFF;
+	color: #FFF;	
 }
 
 .workspace-accordion-header a.toggle-text,
@@ -3825,7 +3825,7 @@ p.orcid-id-container{
 	display: block;
 	float: right;
 	background: #C9C9CA;
-	line-height: 27px;
+	line-height: 30px;
 	padding: 0 10px;
 	font-size: 14px;
 	color: #494A4C;	
@@ -3835,11 +3835,6 @@ p.orcid-id-container{
 
 .manage-button:hover{ 
 	color: #8A8A8A;	
-}
-
-.manage-button span{	
-	padding: 4px 5px 0 0;
-	font-size: 12px;
 }
 
 ul.personal-inf-display li:first-child a{
@@ -3853,7 +3848,7 @@ ul.personal-inf-display li:first-child a{
 	
 }
 
-.sort-menu-container{
+.menu-container{
 	display: block;
 	float: right;			
 }
@@ -3868,6 +3863,10 @@ ul.workspace-bar-menu li{
 	display: inline;
 	margin: 0;
 	padding: 0;
+}
+
+ul.workspace-bar-menu > li > a > span{
+	margin-right: 5px;	
 }
 
 
@@ -4426,9 +4425,8 @@ a.toggle-menu{
 	user-select: none;	
 }
 
-ul.sort-menu-options{
-	position: absolute;
-	right: 0;
+ul.menu-options{
+	position: absolute;	
 	top: 31px;	
 	margin: 0; 
 	padding: 0;
@@ -4438,7 +4436,7 @@ ul.sort-menu-options{
 	display: none;
 }
 
-ul.sort-menu-options li{
+ul.menu-options li{
 	border-top: 1px solid #FFF;
 	height: 31px;
 	background: #C9CACB;
@@ -4446,27 +4444,38 @@ ul.sort-menu-options li{
 	min-width: 100px;	 	
 }
 
-ul.sort-menu-options li a{	
-	padding: 4px 10px;
-	color: #FFF;
+ul.menu-options li a{
+	color: #494A4C;
 	background: #C9CACB;
 	font-size: 12px;
-	font-weight: bold;
+	font-weight: normal;
 	width: 100%;
 	min-width: 60px;
 	height: 30px;
 	float: left;	 
 }
 
-ul.sort-menu-options li a span{	
+ul.-menu-options li a span{	
 	height: 12px;
 	width: 12px;
 	float: right;
 	margin-left: 6px;
 }
 
-ul.sort-menu-options li a:hover{	 
+ul.menu-options li a:hover{	 
 	background:#a6ce39; 
+}
+
+ul.menu-options.sort{
+	right: 15px;
+}
+
+ul.menu-options.works{
+	right: 165px;
+}
+
+ul.menu-options.education{
+	right: 77px;
 }
 
 .checked{
@@ -4478,14 +4487,34 @@ ul.toggle-menu{
   display: inline;    
   list-style: none;
   margin: 0;
-  padding: 0;  
+  padding: 0;
 }
-ul.toggle-menu li {  
+ul.toggle-menu > li {  
   display: inline-block;
   cursor: pointer;
-  padding: 1px 10px 2px;
+  padding: 5px 10px;
   border-left: 1px solid #FFF;
+  background: #C9C9CA;
+  color: #494A4C;
+  font-size: 14px;  
 }
+
+ul.toggle-menu > li span,
+ul.toggle-menu > li span:before{
+  font-size: 12px;  
+}
+
+ul.toggle-menu > li .menu-options > li a span{	
+	margin-top: 3px;
+} 
+
+ul.toggle-menu > li .menu-options.sort > li a span{
+	float: right;
+	margin-left: 5px;
+	padding: 7px 0 0 0;
+}
+
+
 ul.toggle-menu li:hover {
   color: #FFF;
   background: #A6CE39;
@@ -4494,8 +4523,7 @@ ul.toggle-menu li:hover {
 ul.toggle-menu li ul {
   padding: 0;
   position: absolute;
-  top: 30px;  
-  right: 15px;
+  top: 30px;
   min-width: 75px;
   width: auto;  
   display: none;
@@ -4503,17 +4531,15 @@ ul.toggle-menu li ul {
   visibility: hidden;    
 }
 
-#workspace-publications ul.toggle-menu li ul{
-	right: 14px;
-}
 
-ul.toggle-menu li ul li {
+ul.toggle-menu li ul li{
   display: block;
   padding: 0;
   width: 100%;  
 }
 
-ul.toggle-menu li:hover ul {
+
+ul.toggle-menu li:hover ul{
   display: block;
   opacity: 1;
   visibility: visible;
@@ -4522,6 +4548,7 @@ ul.toggle-menu li:hover ul {
 .work-tab{
 	margin-left: 0;
 }
+
 .more-info .col-md-6{ /* Row height fix */
 	min-height: 70px;
 }
@@ -4532,8 +4559,9 @@ ul.toggle-menu li:hover ul {
 }
 
 .public-profile .bibtex-wizard:before{
-	font-size: 14px;
+	font-size: 13px;
 	color: #494A4C;
+	top: -8px;
 }
 
 .upload-button { /* Hiding input file button to mask it */	
@@ -4882,10 +4910,9 @@ ul.sources-actions li{
 	line-height: 28px;
 }
 
-.green-bg,
-.green-bg span.file_import:before{
-	background: rgb(166, 206, 57);
-	color: #FFF;
+.green-bg{
+	background: rgb(166, 206, 57) !important;
+	color: #FFF !important;
 }
 
 ul.sources-edit-list ul.sources-actions .git_create:hover:before{
@@ -5096,6 +5123,52 @@ ul.workspace-private-toolbar .popover-help-container .popover{
 
 .clear-fix{
 	clear: both;
+}
+
+/* For using in all the nested menus*/
+
+ul.nested-menu{
+	display: inline;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	float: right;
+	background: #C9C9CA;
+	line-height: 27px;	
+	font-size: 14px;
+	color: #494A4C;
+	text-decoration: none;
+}
+
+ul.nested-menu > li{
+	display: inline-block;
+	cursor: pointer;
+	padding: 1px 10px 2px;
+	border-left: 1px solid #FFF;
+}
+
+ul.nested-menu > li > span{
+	padding: 4px 5px 0 0;
+	font-size: 12px;
+}
+
+ul.nested-menu > li > ul{
+	display: inline;
+	list-style: none;
+	margin: 0;
+	padding: 0;	
+}
+
+ul.nested-menu > li > ul li{
+	padding: 0;
+	position: absolute;
+	top: 30px;
+	right: 15px;
+	min-width: 75px;
+	width: auto;
+	display: none;
+	opacity: 0;
+	visibility: hidden;
 }
 
 /* Media Queries */
@@ -6043,13 +6116,13 @@ ul.workspace-private-toolbar .popover-help-container .popover{
 		font-size: 25px;
 	}
 	
-	ul.sort-menu-options{
+	ul.menu-options{
 		right: 0;	
 		width: 100%;
 		top: 40px;
 	}
 	
-	ul.sort-menu-options li{
+	ul.menu-options li{
 		padding-right: 5%;
 	}	
 	
@@ -6163,7 +6236,7 @@ ul.workspace-private-toolbar .popover-help-container .popover{
 		line-height: 15px;
 	}	
 	
-	ul.sort-menu-options li a,
+	ul.menu-options li a,
 	ul.toggle-menu li ul,
 	ul.toggle-menu li,
 	ul.toggle-menu li ul li{
@@ -6174,7 +6247,7 @@ ul.workspace-private-toolbar .popover-help-container .popover{
 		border-bottom: 1px solid #FFF;
 	}
 	
-	.sort-menu-container{
+	.menu-container{
 		width: 100%;
 		position: relative;		
 	}
