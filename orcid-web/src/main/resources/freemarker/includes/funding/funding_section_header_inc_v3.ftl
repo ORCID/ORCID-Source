@@ -34,12 +34,6 @@
                     <ul class="workspace-bar-menu">
                         <!-- Link Manually -->
                         <li>
-                            <#if fundingImportWizards?size != 0>
-                                <a class="action-option manage-button" ng-click="showTemplateInModal('import-funding-modal')">
-                                    <span class="glyphicon glyphicon-plus"></span>
-                                    <@orcid.msg 'workspace.link_funding'/>
-                                </a>
-                            </#if>
                             <a href="" class="action-option manage-button" ng-click="addFundingModal()">
                                 <span class="glyphicon glyphicon-plus"></span>
                                 <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
@@ -47,10 +41,12 @@
                         </li>
                         <!-- Search & Link -->
                         <li>
-                            <a class="action-option manage-button" ng-click="showWorkImportWizard()">
-                                <span class="glyphicon glyphicon-cloud-upload"></span>
-                                <@orcid.msg 'manual_orcid_record_contents.search_link'/>
-                            </a>
+                            <#if fundingImportWizards?size != 0>
+                                <a class="action-option manage-button" ng-click="showTemplateInModal('import-funding-modal')">
+                                    <span class="glyphicon glyphicon-cloud-upload"></span>
+                                    <@orcid.msg 'manual_orcid_record_contents.search_link'/>
+                                </a>
+                            </#if>
                         </li>
                     </ul>
                 </#if>
