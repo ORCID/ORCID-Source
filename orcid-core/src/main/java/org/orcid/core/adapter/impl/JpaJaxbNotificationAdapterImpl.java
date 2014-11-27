@@ -40,8 +40,7 @@ public class JpaJaxbNotificationAdapterImpl implements JpaJaxbNotificationAdapte
 
     private MapperFacade mapperFacade;
 
-    @SuppressWarnings("rawtypes")
-    private static final Map<Class, Class> JAXB2JPA_CLASS_MAP = new HashMap<>();
+    private static final Map<Class<? extends Notification>, Class<? extends NotificationEntity>> JAXB2JPA_CLASS_MAP = new HashMap<>();
     static {
         JAXB2JPA_CLASS_MAP.put(NotificationAddActivities.class, NotificationAddActivitiesEntity.class);
         JAXB2JPA_CLASS_MAP.put(NotificationCustom.class, NotificationCustomEntity.class);
@@ -51,7 +50,6 @@ public class JpaJaxbNotificationAdapterImpl implements JpaJaxbNotificationAdapte
         this.mapperFacade = mapperFacade;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public NotificationEntity toNotificationEntity(Notification notification) {
         if (notification == null) {
