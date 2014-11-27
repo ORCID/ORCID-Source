@@ -33,7 +33,7 @@
                             </div>
                             <div class="col-md-2 col-sm-3 col-xs-3">                                
                                 Preferred
-                            </div>
+                            </div>                            
                             <div class="col-md-3 col-sm-2 col-xs-2 right">
                                 <#if !(isPublicProfile??)>
                                     <div class="workspace-toolbar">
@@ -73,13 +73,16 @@
                     <!-- active row summary info -->
                     <div class="row" ng-show="group.activePutCode == funding.putCode.value">
                         <div class="col-md-9 col-sm-12 col-xs-12">
-                            <h3 class="workspace-title">
-                                <h3 class="workspace-title">
-                                <span ng-show="group.getActive().fundingTitle.title.value">{{group.getActive().fundingTitle.title.value}}:</span>
-                                <span class="funding-name" ng-bind-html="group.getActive().fundingName.value"></span>
+                            <h3 class="workspace-title">                                
+                               <span ng-show="group.getActive().fundingTitle.title.value">{{group.getActive().fundingTitle.title.value}}</span>
+                               <!--<span class="funding-name" ng-bind="group.getActive().fundingTypeForDisplay"></span> 
+                                <span class="funding-name" ng-bind-html="group.getActive().fundingName.value"></span> -->
                             </h3>
-
+							<div class="clear-fix left">
+								<span ng-show="group.getActive().fundingName.value"><span ng-bind="group.getActive().fundingName.value"></span></span> (<span ng-show="group.getActive().city.value"><span ng-bind="group.getActive().city.value"></span></span><span ng-show="group.getActive().region.value">, <span ng-bind="group.getActive().region.value"></span></span><span ng-show="group.getActive().countryForDisplay">, <span ng-bind="group.getActive().countryForDisplay"></span></span>)
+							</div>	
                             <div class="info-detail">
+                            	<!-- Funding date -->
                                 <span class="funding-date" ng-show="group.getActive().startDate && !group.getActive().endDate">
                                     <span ng-show="group.getActive().startDate.year">{{group.getActive().startDate.year}}</span><span ng-show="group.getActive().startDate.month">-{{group.getActive().startDate.month}}</span>
                                     <#-- Do not move it to two lines -->
@@ -94,7 +97,9 @@
                                 <span class="funding-date" ng-show="!group.getActive().startDate && group.getActive().endDate">
                                      <span ng-show="group.getActive().endDate.year">{{group.getActive().endDate.year}}</span><span ng-show="group.getActive().endDate.month">-{{group.getActive().endDate.month}}</span>
                                 </span>
-                            </div>
+                                <!-- Funding type -->
+                                <span ng-show="(group.getActive().startDate && group.getActive().endDate) && group.getActive().fundingType.value">|</span> <span ng-bind="group.getActive().fundingTypeForDisplay" class="uppercase"></span>
+                            </div>                            
                         </div>
 
 
@@ -145,6 +150,9 @@
                                         <span ng-bind-html='ei | externalIdentifierHtml:$first:$last:group.getActive().externalIdentifiers.length'>
                                         </span>
                                     </span>
+                                 </li>
+                                 <li ng-show="group.getActive().url.value">
+                                 	<@orcid.msg 'manual_funding_form_contents.label_url'/>: <a href="{{group.getActive().url.value}}" ng-bind="group.getActive().url.value" target="_blank"></a>
                                  </li>
                              </ul>
                          </div>
