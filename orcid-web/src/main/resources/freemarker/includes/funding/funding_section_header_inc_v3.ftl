@@ -34,7 +34,7 @@
                     <ul class="workspace-bar-menu">
                         <!-- Link Manually -->
                         <li>
-                            <a href="" class="action-option manage-button" ng-click="addFundingModal()">
+                            <a class="action-option manage-button" ng-click="addFundingModal()">
                                 <span class="glyphicon glyphicon-plus"></span>
                                 <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
                             </a>

@@ -5097,6 +5097,10 @@ ul.workspace-private-toolbar .popover-help-container .popover{
 	line-height: 30px;
 }
 
+.clear-fix{
+	clear: both;
+}
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 

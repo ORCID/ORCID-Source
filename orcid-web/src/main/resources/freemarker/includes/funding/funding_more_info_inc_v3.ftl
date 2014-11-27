@@ -17,15 +17,18 @@
 
 -->
 <div class="more-info" ng-show="moreInfo[group.groupId]  && group.activePutCode == funding.putCode.value">
-	<span class="dotted-bar" ng-show="group.getActive().fundingType.value"></span><!--  funding type is a required field -->
+	<span class="dotted-bar"></span>	
     <div class="row">
+    	<!-- Funding type 
         <div class="col-md-6" ng-show="group.getActive().fundingType.value" ng-cloak>            
             <div class="bottomBuffer">                    
                 <strong><@orcid.msg 'manual_funding_form_contents.grant_type'/></strong>
                 <div ng-bind="group.getActive().fundingTypeForDisplay"></div>
             </div>
         </div>
-
+        -->
+        
+		<!-- Funding subtype -->
         <div class="col-md-6" ng-show="group.getActive().organizationDefinedFundingSubType.subtype.value" ng-cloak>
             <div class="bottomBuffer">                    
                 <strong><@orcid.msg 'manual_funding_form_contents.organization_defined_type.label'/></strong>
@@ -33,13 +36,18 @@
             </div>        
         </div>
         
+        
+        <!-- Funding Title 
         <div class="col-md-6" ng-show="group.getActive().fundingTitle.title.value" ng-cloak>
             <div class="bottomBuffer">
                 <strong><@orcid.msg 'manual_funding_form_contents.label_title'/></strong>
                 <div ng-bind="group.getActive().fundingTitle.title.value"></div>
             </div>
         </div>
+        -->
         
+        
+        <!-- Funding translated title -->
         <div class="col-md-6" ng-show="group.getActive().fundingTitle.translatedTitle.content" ng-cloak>
             <div class="bottomBuffer">                
                 <strong><@orcid.msg
@@ -48,12 +56,15 @@
             </div>        
         </div>
         
+        <!-- Funding Amount -->
         <div class="col-md-6" ng-show="group.getActive().amount.value" ng-cloak>
             <div class="bottomBuffer">                
                 <strong><@orcid.msg 'manual_funding_form_contents.label_amount'/></strong>
                 <div>{{group.getActive().currencyCode.value}} {{group.getActive().amount.value}}</div>                
             </div>
         </div>
+        
+        <!-- Start Date 
         <div class="col-md-6" ng-show="group.getActive().startDate.year" ng-cloak>
             <div class="bottomBuffer">                
                 <strong><@orcid.msg 'manual_funding_form_contents.labelStartDate'/></strong>
@@ -62,6 +73,8 @@
                 </div>                
             </div>
         </div>
+        -->
+        <!-- End Date 
         <div class="col-md-6" ng-show="group.getActive().endDate.year" ng-cloak>
             <div class="bottomBuffer">                
                 <strong><@orcid.msg 'manual_funding_form_contents.labelEndDate'/></strong>
@@ -70,6 +83,9 @@
                 </div>                
             </div>
         </div>
+        -->
+        
+        <!-- Contribuitors -->
         <div class="col-md-6" ng-show="group.getActive().contributors.length > 0" ng-cloak>
             <div class="bottomBuffer">
                 <strong><@orcid.msg 'manual_funding_form_contents.label_contributors'/></strong>
@@ -79,42 +95,58 @@
                 </div>        
             </div>
         </div>
+        
+        <!-- Description -->
         <div class="col-md-6" ng-show="group.getActive().description.value" ng-cloak>
             <div class="bottomBuffer">                
                 <strong><@orcid.msg 'manual_funding_form_contents.label_description'/></strong>
                 <div ng-bind="group.getActive().description.value"></div>                
             </div>
         </div>
+        
+        <!-- Agency name 
         <div class="col-md-6"  ng-show="group.getActive().fundingName.value" ng-cloak>
             <div class="bottomBuffer">                                    
                 <strong><@orcid.msg 'manual_funding_form_contents.label_funding_agency_name'/></strong>
                 <div ng-bind="group.getActive().fundingName.value"></div>                
             </div>
         </div>
+        -->
+        
+        <!-- City 
         <div class="col-md-6" ng-show="group.getActive().city.value" ng-cloak>
             <div class="bottomBuffer">                
                 <strong><@orcid.msg 'manual_funding_form_contents.label_city'/></strong>
                 <div ng-bind="group.getActive().city.value"></div>
             </div>
         </div>
+        -->
+        
+        <!-- Region 
         <div class="col-md-6" ng-show="group.getActive().region.value" ng-cloak>
             <div class="bottomBuffer">                
                 <strong><@orcid.msg 'manual_funding_form_contents.label_region'/></strong>
                 <div ng-bind="group.getActive().region.value"></div>                
             </div>
-        </div>    
+        </div>
+        -->
+        
+        <!-- Country     
         <div class="col-md-6"  ng-show="group.getActive().country.value" ng-cloak>
             <div class="bottomBuffer">                
                 <strong><@orcid.msg 'manual_funding_form_contents.label_country'/></strong>
                 <div ng-bind="group.getActive().countryForDisplay"></div>                
             </div>
         </div>
+        -->
         
+        <!-- Alternate URL 
         <div class="col-md-6" ng-show="group.getActive().url.value" ng-cloak>
             <div class="bottomBuffer">                
                 <strong><@orcid.msg 'manual_funding_form_contents.label_url'/></strong>
                 <div ng-bind="group.getActive().url.value"></div>                
             </div>
         </div>
+        -->        
     </div>
 </div>
