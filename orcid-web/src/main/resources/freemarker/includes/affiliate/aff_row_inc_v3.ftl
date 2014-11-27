@@ -30,7 +30,7 @@
 	        	<span class="affiliation-date" ng-show="group.getActive().startDate && !group.getActive().endDate">
 	        	    <span ng-show="group.getActive().startDate.year">{{group.getActive().startDate.year}}</span><span ng-show="group.getActive().startDate.month">-{{group.getActive().startDate.month}}</span>
 	        	    <span><@orcid.msg 'workspace_affiliations.dateSeparator'/></span>
-	        	     <@orcid.msg 'workspace_affiliations.present'/>
+	        	    <@orcid.msg 'workspace_affiliations.present'/>
 	        	</span>
 	        	
 	        	<span class="affiliation-date" ng-show="group.getActive().startDate && group.getActive().endDate">
@@ -44,13 +44,14 @@
 	        	</span>
 	        	        	
         	</div>
-        	<span class="divisor" ng-show="group.getActive().roleTitle && (group.getActive().startDate || group.getActive().endDate)"></span>
+        	        	
+        	<span class="divisor" ng-show="(group.getActive().startDate || group.getActive().endDate) && (group.getActive().roleTitle.value || group.getActive().departmentName.value)"></span>
         	
-        	<div class="role" ng-show="group.getActive().roleTitle">
+        	<div class="role" ng-show="group.getActive().roleTitle.value">
 	            <span ng-bind-html="group.getActive().roleTitle.value"></span>
         	</div>
 			<span ng-show="group.getActive().departmentName.value">
-				&nbsp;(<span ng-bind="group.getActive().departmentName.value" ng-cloak></span>)
+				(<span ng-bind="group.getActive().departmentName.value" ng-cloak></span>)
 			</span>
         </div>
        </div>
