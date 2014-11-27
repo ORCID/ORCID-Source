@@ -178,10 +178,13 @@ public class OauthAuthorizationCodeTest extends DBUnitTest {
     public void useClientCredentialsGrantTypeScope() throws InterruptedException, JSONException {
         String authorizationCode = webDriverHelper.obtainAuthorizationCode("/orcid-works/create", CLIENT_DETAILS_ID, "michael@bentine.com", "password", new ArrayList<String>(), true);
         assertFalse(PojoUtil.isEmpty(authorizationCode));
-        ClientResponse tokenResponse = obtainAccessTokenResponse(CLIENT_DETAILS_ID, authorizationCode, redirectUri, "/webhook");
-        assertEquals(409, tokenResponse.getStatus());
-        String textEntity = tokenResponse.getEntity(String.class);
-        assertTrue(textEntity.contains("The provided scope /webhook is not valid for the grant type authorization_code"));
+        ClientResponse tokenResponse = obtainAccessTokenResponse(CLIENT_DETAILS_ID, authorizationCode, redirectUri, "/orcid-works/create /webhook");
+        assertEquals(200, tokenResponse.getStatus());
+        String body = tokenResponse.getEntity(String.class);
+        JSONObject jsonObject = new JSONObject(body);
+        String scope = (String) jsonObject.get("scope");
+        assertNotNull(scope);
+        assertEquals("/orcid-works/create", scope);
     }
     
     private ClientResponse obtainAccessTokenResponse(String clientId, String authorizationCode, String redirectUri, String scopes) throws JSONException {

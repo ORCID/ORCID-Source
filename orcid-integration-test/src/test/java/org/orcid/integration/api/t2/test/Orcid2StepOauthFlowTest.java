@@ -133,26 +133,38 @@ public class Orcid2StepOauthFlowTest extends DBUnitTest {
     }
     
     @Test
-    public void testInvalidScopeThrowAnError() throws InterruptedException, JSONException {
-        ClientResponse tokenResponse = getClientResponse("/orcid-profile/read-limited");
-        assertEquals(409, tokenResponse.getStatus());
-        String textEntity = tokenResponse.getEntity(String.class);
-        assertTrue(textEntity.contains("The provided scope /orcid-profile/read-limited is not valid for the grant type client_credentials"));
+    public void testInvalidScopesAreIgnored() throws InterruptedException, JSONException {
+        ClientResponse tokenResponse = getClientResponse("/orcid-profile/create /orcid-profile/read-limited");
+        assertEquals(200, tokenResponse.getStatus());
+        String body = tokenResponse.getEntity(String.class);
+        JSONObject jsonObject = new JSONObject(body);
+        String scope = (String) jsonObject.get("scope");
+        assertNotNull(scope);
+        assertEquals("/orcid-profile/create", scope);
         
-        tokenResponse = getClientResponse("/orcid-works/read-limited");
-        assertEquals(409, tokenResponse.getStatus());
-        textEntity = tokenResponse.getEntity(String.class);
-        assertTrue(textEntity.contains("The provided scope /orcid-works/read-limited is not valid for the grant type client_credentials"));
+        tokenResponse = getClientResponse("/orcid-profile/create /orcid-works/read-limited");
+        assertEquals(200, tokenResponse.getStatus());
+        body = tokenResponse.getEntity(String.class);
+        jsonObject = new JSONObject(body);
+        scope = (String) jsonObject.get("scope");
+        assertNotNull(scope);
+        assertEquals("/orcid-profile/create", scope);
         
-        tokenResponse = getClientResponse("/funding/create");
-        assertEquals(409, tokenResponse.getStatus());
-        textEntity = tokenResponse.getEntity(String.class);
-        assertTrue(textEntity.contains("The provided scope /funding/create is not valid for the grant type client_credentials"));
+        tokenResponse = getClientResponse("/orcid-profile/create /funding/create");
+        assertEquals(200, tokenResponse.getStatus());
+        body = tokenResponse.getEntity(String.class);
+        jsonObject = new JSONObject(body);
+        scope = (String) jsonObject.get("scope");
+        assertNotNull(scope);
+        assertEquals("/orcid-profile/create", scope);
         
-        tokenResponse = getClientResponse("/affiliations/update");
-        assertEquals(409, tokenResponse.getStatus());
-        textEntity = tokenResponse.getEntity(String.class);
-        assertTrue(textEntity.contains("The provided scope /affiliations/update is not valid for the grant type client_credentials"));
+        tokenResponse = getClientResponse("/orcid-profile/create /affiliations/update");
+        assertEquals(200, tokenResponse.getStatus());
+        body = tokenResponse.getEntity(String.class);
+        jsonObject = new JSONObject(body);
+        scope = (String) jsonObject.get("scope");
+        assertNotNull(scope);
+        assertEquals("/orcid-profile/create", scope);
     }
     
     private ClientResponse getClientResponse(String scope) {

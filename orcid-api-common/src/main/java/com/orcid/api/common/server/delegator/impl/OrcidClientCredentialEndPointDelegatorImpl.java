@@ -16,9 +16,11 @@
  */
 package com.orcid.api.common.server.delegator.impl;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -82,15 +84,20 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
             boolean isClientCredentialsGrantType = OauthTokensConstants.GRANT_TYPE_CLIENT_CREDENTIALS.equals(grantType);
             
             if (scopes != null) {
+                List<String> toRemove = new ArrayList<String>();
                 for (String scope : scopes) {
                     ScopePathType scopeType = ScopePathType.fromValue(scope);
                     if(isClientCredentialsGrantType) {
                         if(!scopeType.isClientCreditalScope())
-                            throw new OrcidInvalidScopeException("The provided scope " + scope + " is not valid for the grant type " + grantType);
+                            toRemove.add(scope);
                     } else {
                         if(scopeType.isClientCreditalScope())
-                            throw new OrcidInvalidScopeException("The provided scope " + scope + " is not valid for the grant type " + grantType);
+                            toRemove.add(scope);
                     }
+                }
+                
+                for (String remove : toRemove) {
+                    scopes.remove(remove);
                 }
             }
         } catch (IllegalArgumentException iae) {
