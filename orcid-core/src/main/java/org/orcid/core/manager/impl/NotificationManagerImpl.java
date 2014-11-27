@@ -35,6 +35,7 @@ import org.orcid.core.constants.EmailConstants;
 import org.orcid.core.manager.CustomEmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.NotificationManager;
+import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.TemplateManager;
 import org.orcid.jaxb.model.message.ApplicationSummary;
 import org.orcid.jaxb.model.message.Applications;
@@ -59,6 +60,7 @@ import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
 import org.slf4j.Logger;
@@ -129,6 +131,9 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Resource
     private NotificationDao notificationDao;
+
+    @Resource
+    private SourceManager sourceManager;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationManagerImpl.class);
 
@@ -702,6 +707,7 @@ public class NotificationManagerImpl implements NotificationManager {
     public Notification createNotification(String orcid, Notification notification) {
         NotificationEntity notificationEntity = notificationAdapter.toNotificationEntity(notification);
         notificationEntity.setProfile(profileDao.find(orcid));
+        notificationEntity.setSource(sourceManager.retrieveSourceEntity());
         notificationDao.persist(notificationEntity);
         return notificationAdapter.toNotification(notificationEntity);
     }
