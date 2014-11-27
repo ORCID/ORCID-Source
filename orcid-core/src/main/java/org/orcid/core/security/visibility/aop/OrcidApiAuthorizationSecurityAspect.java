@@ -77,12 +77,12 @@ public class OrcidApiAuthorizationSecurityAspect {
         permissionChecker.checkPermissions(getAuthentication(), accessControl.requiredScope(), orcid);
 
     }
-    
+
     @Before("@annotation(accessControl) && args(orcid, id)")
     public void checkPermissionsWithNotificationId(AccessControl accessControl, String orcid, Long id) {
         permissionChecker.checkPermissions(getAuthentication(), accessControl.requiredScope(), orcid);
     }
-    
+
     @Before("@annotation(accessControl) && args(uriInfo, orcid, notification)")
     public void checkPermissionsWithNotificationId(AccessControl accessControl, UriInfo uriInfo, String orcid, Notification notification) {
         permissionChecker.checkPermissions(getAuthentication(), accessControl.requiredScope(), orcid);
@@ -115,33 +115,38 @@ public class OrcidApiAuthorizationSecurityAspect {
                     String clientId = params.get(CLIENT_ID);
 
                     // #1: Get the user orcid
-                    String userOrcid = getUserOrcidFromOrcidMessage(orcidMessage);                    
+                    String userOrcid = getUserOrcidFromOrcidMessage(orcidMessage);
                     // #2: Evaluate the scope to know which field to filter
                     boolean allowWorks = false;
                     boolean allowFunding = false;
-                    boolean allowAffiliations = false;                    
-                    
-                    // Get the update equivalent scope, if it is reading, but, doesnt have the read permissions, check if it have the update permissions
+                    boolean allowAffiliations = false;
+
+                    // Get the update equivalent scope, if it is reading, but,
+                    // doesnt have the read permissions, check if it have the
+                    // update permissions
                     ScopePathType equivalentUpdateScope = getEquivalentUpdateScope(requiredScope);
-                    if(requiredScope.equals(ScopePathType.ORCID_PROFILE_READ_LIMITED)) {
-                        if(hasScopeEnabled(clientId, userOrcid, ScopePathType.ORCID_WORKS_READ_LIMITED.getContent(), ScopePathType.ORCID_WORKS_UPDATE.getContent()))
+                    if (requiredScope.equals(ScopePathType.ORCID_PROFILE_READ_LIMITED)) {
+                        if (hasScopeEnabled(clientId, userOrcid, ScopePathType.ORCID_WORKS_READ_LIMITED.getContent(), ScopePathType.ORCID_WORKS_UPDATE.getContent()))
                             allowWorks = true;
-                        if(hasScopeEnabled(clientId, userOrcid, ScopePathType.FUNDING_READ_LIMITED.getContent(), ScopePathType.FUNDING_UPDATE.getContent()))
+                        if (hasScopeEnabled(clientId, userOrcid, ScopePathType.FUNDING_READ_LIMITED.getContent(), ScopePathType.FUNDING_UPDATE.getContent()))
                             allowFunding = true;
-                        if(hasScopeEnabled(clientId, userOrcid, ScopePathType.AFFILIATIONS_READ_LIMITED.getContent(), ScopePathType.AFFILIATIONS_UPDATE.getContent()))
-                            allowAffiliations = true;                            
+                        if (hasScopeEnabled(clientId, userOrcid, ScopePathType.AFFILIATIONS_READ_LIMITED.getContent(), ScopePathType.AFFILIATIONS_UPDATE.getContent()))
+                            allowAffiliations = true;
                     } else if (requiredScope.equals(ScopePathType.ORCID_WORKS_UPDATE) || requiredScope.equals(ScopePathType.ORCID_WORKS_READ_LIMITED)) {
-                        // Check if the member have the update or read scope on works
+                        // Check if the member have the update or read scope on
+                        // works
                         if (hasScopeEnabled(clientId, userOrcid, requiredScope.getContent(), equivalentUpdateScope == null ? null : equivalentUpdateScope.getContent()))
                             // If so, allow him to see private works
                             allowWorks = true;
                     } else if (requiredScope.equals(ScopePathType.FUNDING_UPDATE) || requiredScope.equals(ScopePathType.FUNDING_READ_LIMITED)) {
-                        // Check if the member have the update or read scope on funding
+                        // Check if the member have the update or read scope on
+                        // funding
                         if (hasScopeEnabled(clientId, userOrcid, requiredScope.getContent(), equivalentUpdateScope == null ? null : equivalentUpdateScope.getContent()))
                             // If so, allow him to see private funding
                             allowFunding = true;
                     } else if (requiredScope.equals(ScopePathType.AFFILIATIONS_UPDATE) || requiredScope.equals(ScopePathType.AFFILIATIONS_READ_LIMITED)) {
-                        // Check if the member have the update or read scope on affiliations
+                        // Check if the member have the update or read scope on
+                        // affiliations
                         if (hasScopeEnabled(clientId, userOrcid, requiredScope.getContent(), equivalentUpdateScope == null ? null : equivalentUpdateScope.getContent()))
                             // If so, allow him to see private affiliations
                             allowAffiliations = true;
@@ -165,10 +170,10 @@ public class OrcidApiAuthorizationSecurityAspect {
     }
 
     private boolean isUpdateOrReadScope(ScopePathType requiredScope) {
-        switch(requiredScope) {
+        switch (requiredScope) {
         case AFFILIATIONS_READ_LIMITED:
         case AFFILIATIONS_UPDATE:
-        case FUNDING_READ_LIMITED: 
+        case FUNDING_READ_LIMITED:
         case FUNDING_UPDATE:
         case ORCID_BIO_READ_LIMITED:
         case ORCID_BIO_UPDATE:
@@ -181,12 +186,12 @@ public class OrcidApiAuthorizationSecurityAspect {
         default:
             return false;
         }
-    }    
+    }
 
     private boolean hasScopeEnabled(String clientId, String userName, String scope, String equivalentScope) {
-        List<String> scopes = new ArrayList<String> ();
+        List<String> scopes = new ArrayList<String>();
         scopes.add(scope);
-        if(equivalentScope != null)
+        if (equivalentScope != null)
             scopes.add(equivalentScope);
         return orcidOauthTokenDetailService.checkIfScopeIsAvailableForMember(clientId, userName, scopes);
     }
@@ -201,7 +206,7 @@ public class OrcidApiAuthorizationSecurityAspect {
     }
 
     private ScopePathType getEquivalentUpdateScope(ScopePathType readScope) {
-        if(readScope != null)
+        if (readScope != null)
             switch (readScope) {
             case AFFILIATIONS_READ_LIMITED:
                 return ScopePathType.AFFILIATIONS_UPDATE;
@@ -214,5 +219,5 @@ public class OrcidApiAuthorizationSecurityAspect {
             }
         return null;
     }
- 
+
 }
