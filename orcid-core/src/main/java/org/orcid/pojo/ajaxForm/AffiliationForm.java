@@ -71,6 +71,10 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
     private String source;
     
     private String dateSortString;
+    
+    private Date createdDate;
+
+    private Date lastModified;
 
     public List<String> getErrors() {
         return errors;
@@ -246,6 +250,10 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
             form.setSourceName(source.getSourceName().getContent());
             form.setSource(source.getSourceOrcid().getPath());
         }
+        
+        form.setCreatedDate(Date.valueOf(affiliation.getCreatedDate()));
+        form.setLastModified(Date.valueOf(affiliation.getLastModifiedDate()));
+
                 
         return form;
     }
@@ -335,5 +343,21 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
 
     public void setOrgDisambiguatedId(Text orgDisambiguatedId) {
         this.orgDisambiguatedId = orgDisambiguatedId;
+    }
+
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public Date getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(Date lastModified) {
+        this.lastModified = lastModified;
     }        
 }
