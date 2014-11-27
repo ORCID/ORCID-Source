@@ -3626,6 +3626,11 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc, comm
     $scope.hideTooltip = function (element){    	
         $scope.showElement[element] = false;
     };
+    
+    $scope.userIsSource = function(funding) {
+        if (funding.source == orcidVar.orcidId)
+            return true;
+    };
 }
 
 /**

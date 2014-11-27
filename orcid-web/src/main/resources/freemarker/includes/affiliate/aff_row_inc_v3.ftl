@@ -93,7 +93,7 @@
 								<div class="popover popover-tooltip top edit-source-popover ng-hide" ng-show="showElement[group.getActive().putCode.value+'-edit'] == true"> 
 								    <div class="arrow"></div>
 								    <div class="popover-content">
-								        <span >Edit</span>
+								        <span >Edit my version</span>
 								    </div>                
 								</div>	
 							</li>   
@@ -102,7 +102,7 @@
 					            <div class="popover popover-tooltip top delete-source-popover ng-hide" ng-show="showElement[group.getActive().putCode.value+'-delete'] == true"> 
 								 	<div class="arrow"></div>
 								    <div class="popover-content">
-								    	Delete								        
+								    	Delete this source
 								    </div>                
 								</div>
 					        </li>
