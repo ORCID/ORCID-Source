@@ -36,8 +36,15 @@
 								<div class="centered bottomBuffer">
 									<#if hasVerifiedEmail>
 										<button class="btn btn-primary" ng-click="enableDeveloperTools()" ><@orcid.msg 'developer_tools.public_member.turn_on' /></button>
-									<#else>
-										<button class="btn btn-primary" ng-click="verifyEmail()" ><@orcid.msg 'developer_tools.public_member.verify.button' /></button>
+									<#else>				
+										<div ng-cloak>		
+											<div ng-show="!verifyEmailSent">				
+												<button class="btn btn-primary" ng-click="verifyEmail()"><@orcid.msg 'developer_tools.public_member.verify.button' /></button>
+											</div>											
+											<div class="alert alert-warning alert-dismissible fade in" role="alert"  ng-show="verifyEmailSent">      											
+      											${springMacroRequestContext.getMessage("manage.email.verificationEmail")} {{verifyEmailObject.value}}${springMacroRequestContext.getMessage("manage.email.verificationEmail.verify_inbox")}
+    										</div>																						
+										</div>
 									</#if>
 								</div>																								
 								<p><@orcid.msg 'developer_tools.client_types.description' /></p>
@@ -444,11 +451,6 @@
 <@security.authorize ifAnyGranted="ROLE_GROUP,ROLE_BASIC,ROLE_PREMIUM,ROLE_BASIC_INSTITUTION,ROLE_PREMIUM_INSTITUTION,ROLE_CREATOR,ROLE_PREMIUM_CREATOR,ROLE_UPDATER,ROLE_PREMIUM_UPDATER">
 	<@orcid.msg 'developer_tools.invalid_page'/>
 </@security.authorize>
-
-<script type="text/ng-template" id="verify-email-modal">
-	<div style="padding: 20px;"><h3>${springMacroRequestContext.getMessage("manage.email.verificationEmail")} {{verifyEmailObject.value}}</h3>
-	<button class="btn" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.email.verificationEmail.close")}</button>
-</script>
 
 <script type="text/ng-template" id="reset-client-secret-modal">
 	<div class="lightbox-container">
