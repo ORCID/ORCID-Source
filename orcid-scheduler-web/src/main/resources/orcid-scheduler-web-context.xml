@@ -40,9 +40,9 @@
         <task:scheduled ref="orgDisambiguatedManager" method="processOrgsWithIncorrectPopularity" cron="${org.orcid.scheduler.web.processOrgsWithIncorrectPopularity:45 45 0-2 * * *}"/>
         <task:scheduled ref="orgDisambiguatedManager" method="processOrgsForIndexing" cron="${org.orcid.scheduler.web.processOrgsForIndexing:55 55 0-2 * * *}"/>
         <task:scheduled ref="profileFundingManager" method="indexFundingSubTypes" cron="${org.orcid.scheduler.web.processFundingSubTypesForIndexing:15 15 * * * *}" />
-        <task:scheduled ref="clientDetailsManager" method="cleanOldClientKeys" cron="${org.orcid.scheduler.web.cleanOldClientKeys:0 0 0/1 * * ?}" />
-        <task:scheduled ref="orcidSocialManager" method="tweetLatestUpdates" fixed-delay="${org.orcid.scheduler.web.processProfilesPendingIndexingDelaySeconds:600}000" />
+        <task:scheduled ref="clientDetailsManager" method="cleanOldClientKeys" cron="${org.orcid.scheduler.web.cleanOldClientKeys:0 0 0/1 * * ?}" />        
         <task:scheduled ref="emailMessageSender" method="sendEmailMessages" cron="${org.orcid.scheduler.web.sendEmailMessages:05 05 0-4 * * *}"/>     
+        <task:scheduled ref="authorizationCodeCleaner" method="cleanExpiredAuthorizationCodes" cron="${org.orcid.scheduler.oauth.clean_expired_authorization_codes:* 0/10 * * * *}" />
     </task:scheduled-tasks>
 
     <task:scheduler id="scheduler" pool-size="10"/>
