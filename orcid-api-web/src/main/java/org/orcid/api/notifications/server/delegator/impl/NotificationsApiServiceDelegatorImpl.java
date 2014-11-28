@@ -69,8 +69,9 @@ public class NotificationsApiServiceDelegatorImpl implements NotificationsApiSer
         Notification notification = notificationManager.findByOrcidAndId(orcid, id);
         if (notification != null) {
             String notificationSourceId = notification.getSource().retrieveSourcePath();
-            if (!notificationSourceId.equals(sourceManager.retrieveSourceOrcid())) {
-                throw new AccessControlException("This notification does not belong to " + notificationSourceId);
+            String currentSourceId = sourceManager.retrieveSourceOrcid();
+            if (!notificationSourceId.equals(currentSourceId)) {
+                throw new AccessControlException("This notification does not belong to " + currentSourceId);
             }
             return Response.ok(notification).build();
         } else {
