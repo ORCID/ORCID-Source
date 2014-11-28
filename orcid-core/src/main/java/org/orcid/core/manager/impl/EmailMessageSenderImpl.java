@@ -79,6 +79,9 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
 
     @Resource
     private LocaleManager localeManager;
+    
+    @Resource
+    private OrcidUrlManager orcidUrlManager;
 
     @Override
     public EmailMessage createDigest(String orcid, Collection<Notification> notifications) {
@@ -113,6 +116,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         params.put("memberMessageCount", memberMessageCount);
         params.put("activityCount", activityCount);
         params.put("memberIdsCount", memberIds.size());
+        params.put("baseUrl", orcidUrlManager.getBaseUrl());
         String emailBody = templateManager.processTemplate("digest_email.ftl", params, locale);
         EmailMessage emailMessage = new EmailMessage();
         emailMessage.setSubject("Your digest from ORCID");

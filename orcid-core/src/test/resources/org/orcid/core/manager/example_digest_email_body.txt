@@ -3,4 +3,4 @@ Lots has happened in ORCID since you last signed in. Here are some messages you 
 You had 3 messages from 2 partners about 5 activities to add to your record.
 You had 2 messages from ORCID.
 
-Visit http://orcid.org/notifications to see more.
+Visit http://testserver.orcid.org/notifications to see more.
