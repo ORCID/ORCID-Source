@@ -152,7 +152,7 @@
         <addAutoIncrement tableName="notification_activity" columnName="id" columnDataType="bigint" />
     </changeSet>
     
-    <changeSet id="INSERT-NOTIFICATION-SCOPE" author="Will Simpson">
+    <changeSet id="INSERT-NOTIFICATION-SCOPE" author="Will Simpson" dbms="postgresql">
         <createProcedure>
 <![CDATA[
 CREATE OR REPLACE FUNCTION insert_notification_scope() RETURNS VOID AS $$
