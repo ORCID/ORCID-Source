@@ -5098,6 +5098,32 @@ ul.workspace-private-toolbar .popover-help-container .popover{
 	clear: both;
 }
 
+.qrcode-container .orcid-qr{
+	padding-right: 19px;
+	padding-left: 0;
+	
+}
+
+.qrcode-container .orcid-qr:before{
+	color: #338caf;
+	top: -10px;
+	font: 16px/1em 'Glyphicons Regular'
+}
+
+.qrcode-container a{
+	color: #338caf;
+}
+
+.qrcode-container a:hover,
+.qrcode-container a:hover span:before{
+	color: #a6ce39;
+}
+
+.qrcode-container a:focus{
+	text-decoration: none;
+}
+
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 

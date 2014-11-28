@@ -52,6 +52,19 @@
             
             <#include "includes/id_banner.ftl"/>
             
+            <div class="qrcode-container">
+                <a href="http://qrcode.orcid.org" target="_blank"><span class="glyphicons qrcode orcid-qr"></span><@orcid.msg 'workspace.qrcode.link.text'/></a>
+                <div class="popover-help-container">
+                    <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                    <div id="qrcode-help" class="popover bottom">
+                        <div class="arrow"></div>
+                        <div class="popover-content">
+                            <p><@orcid.msg 'workspace.qrcode.help'/></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
 	       	<div class="other-names-box">
 		       	<div ng-controller="OtherNamesCtrl" class="other-names-controller">
 		        	<div>
