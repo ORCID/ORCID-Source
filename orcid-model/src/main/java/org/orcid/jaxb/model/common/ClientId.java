@@ -24,6 +24,7 @@
 package org.orcid.jaxb.model.common;
 
 import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -66,6 +67,13 @@ public class ClientId implements Serializable {
     protected String path;
     @XmlElement(required = true)
     protected String host;
+
+    public ClientId() {
+    }
+
+    public ClientId(String clientId) {
+        this.path = clientId;
+    }
 
     /**
      * Gets the value of the uri property.
