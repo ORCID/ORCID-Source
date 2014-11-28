@@ -26,6 +26,8 @@ import javax.annotation.Resource;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.jaxb.model.common.ClientId;
+import org.orcid.jaxb.model.common.Source;
 import org.orcid.jaxb.model.notification.Notification;
 import org.orcid.jaxb.model.notification.addactivities.Activities;
 import org.orcid.jaxb.model.notification.addactivities.Activity;
@@ -94,6 +96,11 @@ public class JpaJaxbNotificationAdapterTest {
         String authorizationUrlString = "https://orcid.org/oauth/authorize?client_id=APP-U4UKCNSSIM1OCVQY&amp;response_type=code&amp;scope=/orcid-works/create&amp;redirect_uri=http://somethirdparty.com";
         AuthorizationUrl url = new AuthorizationUrl();
         notification.setAuthorizationUrl(url);
+        Source source = new Source();
+        notification.setSource(source);
+        ClientId clientId = new ClientId();
+        source.setClientId(clientId);
+        clientId.setPath("APP-5555-5555-5555-5555");
         url.setUri(authorizationUrlString);
         Activities activities = new Activities();
         notification.setActivities(activities);
@@ -114,6 +121,8 @@ public class JpaJaxbNotificationAdapterTest {
         assertNotNull(notificationEntity);
         assertEquals(NotificationType.ADD_ACTIVITIES, notificationEntity.getNotificationType());
         assertEquals(authorizationUrlString, addActivitiesEntity.getAuthorizationUrl());
+        assertNotNull(addActivitiesEntity.getSource());
+        assertEquals("APP-5555-5555-5555-5555", addActivitiesEntity.getSource().getSourceId());
         Set<NotificationActivityEntity> activityEntities = addActivitiesEntity.getNotificationActivities();
         assertNotNull(activityEntities);
         assertEquals(1, activityEntities.size());

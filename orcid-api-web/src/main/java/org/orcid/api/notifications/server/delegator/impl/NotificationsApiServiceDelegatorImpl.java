@@ -20,6 +20,7 @@ import static org.orcid.api.common.OrcidApiConstants.STATUS_OK_MESSAGE;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.AccessControlException;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
@@ -27,6 +28,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.orcid.api.notifications.server.delegator.NotificationsApiServiceDelegator;
 import org.orcid.core.manager.NotificationManager;
+import org.orcid.core.manager.SourceManager;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.notification.Notification;
@@ -46,6 +48,9 @@ public class NotificationsApiServiceDelegatorImpl implements NotificationsApiSer
     @Resource
     private NotificationManager notificationManager;
 
+    @Resource
+    private SourceManager sourceManager;
+
     @Override
     public Response viewStatusText() {
         return Response.ok(STATUS_OK_MESSAGE).build();
@@ -63,6 +68,10 @@ public class NotificationsApiServiceDelegatorImpl implements NotificationsApiSer
     public Response findAddActivitiesNotification(String orcid, Long id) {
         Notification notification = notificationManager.findByOrcidAndId(orcid, id);
         if (notification != null) {
+            String notificationSourceId = notification.getSource().retrieveSourcePath();
+            if (!notificationSourceId.equals(sourceManager.retrieveSourceOrcid())) {
+                throw new AccessControlException("This notification does not belong to " + notificationSourceId);
+            }
             return Response.ok(notification).build();
         } else {
             return Responses.notFound().build();

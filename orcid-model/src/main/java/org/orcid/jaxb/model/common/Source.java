@@ -129,4 +129,14 @@ public class Source implements Serializable {
         this.sourceName = value;
     }
 
+    public String retrieveSourcePath() {
+        if (clientId != null) {
+            return clientId.getPath();
+        }
+        if (orcidId != null) {
+            return orcidId.getPath();
+        }
+        return null;
+    }
+
 }
