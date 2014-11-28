@@ -18,6 +18,7 @@ package org.orcid.core.manager.impl;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -39,8 +40,13 @@ public class TemplateManagerImpl implements TemplateManager, InitializingBean {
 
     @Override
     public String processTemplate(String templateName, Map<String, Object> params) {
+        return processTemplate(templateName, params, localeManager.getLocale());
+    }
+
+    @Override
+    public String processTemplate(String templateName, Map<String, Object> params, Locale locale) {
         try {
-            Template template = freeMarkerConfiguration.getTemplate(templateName, localeManager.getLocale());
+            Template template = freeMarkerConfiguration.getTemplate(templateName, locale);
             StringWriter result = new StringWriter();
             template.process(params, result);
             return result.toString();
