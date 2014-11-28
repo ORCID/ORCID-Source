@@ -38,7 +38,7 @@
 		                    	<ul class="toggle-menu">
 		                    		<li ng-class="{'green-bg' : showBibtexImportWizard == true}">       
 				                    	<span class="glyphicon glyphicon-plus"></span>
-					                    Add fundings    
+					                    Add funding    
 					                    <ul class="menu-options funding">	                    	
 						                    <!-- Add Manually -->
 						                    <li>
