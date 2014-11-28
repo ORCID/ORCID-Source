@@ -36,7 +36,7 @@
 				</span>
 				<span><a href="" ng-click="archive(notification.putCode.path)" class="glyphicon glyphicon-trash grey"></a></span>
 			</div>
-			<iframe ng-show="displayBody[notification.putCode.path]" ng-src="{{ '<@spring.url '/notifications'/>/' + notification.putCode.path + '/notification.html'}}" frameborder="0" width="100%" height="300"></iframe>
+			<iframe ng-show="displayBody[notification.putCode.path]" ng-src="{{ '<@spring.url '/notifications'/>/' + notification.notificationType + '/' + notification.putCode.path + '/notification.html'}}" frameborder="0" width="100%" height="300"></iframe>
 			<hr></hr>
 		</div>
 		<div ng-cloak>

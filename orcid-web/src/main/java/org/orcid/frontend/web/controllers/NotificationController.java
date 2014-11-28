@@ -16,7 +16,6 @@
  */
 package org.orcid.frontend.web.controllers;
 
-import java.util.HashMap;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -26,7 +25,6 @@ import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.TemplateManager;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.notification.Notification;
-import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
 import org.orcid.jaxb.model.notification.custom.NotificationCustom;
 import org.orcid.persistence.dao.NotificationDao;
 import org.springframework.http.MediaType;
@@ -46,7 +44,7 @@ public class NotificationController extends BaseController {
 
     @Resource
     private NotificationDao notificationDao;
-    
+
     @Resource
     private TemplateManager templateManager;
 
@@ -71,16 +69,23 @@ public class NotificationController extends BaseController {
         return notificationDao.getUnreadCount(currentOrcid);
     }
 
-    @RequestMapping(value = "/{id}/notification.html", produces = MediaType.TEXT_HTML_VALUE)
-    public @ResponseBody String getNotificationHtml(@PathVariable("id") String id) {
+    @RequestMapping(value = "/CUSTOM/{id}/notification.html", produces = MediaType.TEXT_HTML_VALUE)
+    public @ResponseBody String getCustomNotificationHtml(@PathVariable("id") String id) {
         Notification notification = notificationManager.findByOrcidAndId(getCurrentUserOrcid(), Long.valueOf(id));
         if (notification instanceof NotificationCustom) {
             return ((NotificationCustom) notification).getBodyHtml();
-        } else if (notification instanceof NotificationAddActivities) {
-            return templateManager.processTemplate("notification/add_activities_notification.ftl", new HashMap<String, Object>());
         } else {
-            return "Message type not implemented yet!";
+            return "Notification is of wrong type";
         }
+    }
+
+    @RequestMapping(value = "/ADD_ACTIVITIES/{id}/notification.html", produces = MediaType.TEXT_HTML_VALUE)
+    public ModelAndView getAddActivitiesNotificationHtml(@PathVariable("id") String id) {
+        ModelAndView mav = new ModelAndView();
+        Notification notification = notificationManager.findByOrcidAndId(getCurrentUserOrcid(), Long.valueOf(id));
+        mav.addObject("notification", notification);
+        mav.setViewName("notification/add_activities_notification");
+        return mav;
     }
 
     @RequestMapping(value = "{id}/read.json")
