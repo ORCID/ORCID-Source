@@ -171,6 +171,8 @@ public enum ScopePathType implements Serializable {
                 return true;
             case WEBHOOK:
                 return true;
+            case NOTIFICATION:
+                return true;
             default:
                 return false;
         }
