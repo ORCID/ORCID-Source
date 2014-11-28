@@ -37,11 +37,11 @@ public class T2OrcidOAuthApiClientReadOnlyIntegrationTest extends BaseT2OrcidOAu
         createNewOrcidUsingAccessToken();
         // doesn't matter which format we use to create - it's only to get the
         // orcid back from the header location
-        assertClientResponse401Details(oauthT2Client.viewBioDetailsXml(this.orcid, null));
+        assertClientResponse401Details(oauthT2Client1_2_rc6.viewBioDetailsXml(this.orcid, null));
         // doesn't matter which format we use to create - it's only to get the
         // orcid back from the header location
 
-        ClientResponse clientResponse = oauthT2Client.viewBioDetailsXml(this.orcid, accessToken);
+        ClientResponse clientResponse = oauthT2Client1_2_rc6.viewBioDetailsXml(this.orcid, accessToken);
         assertNotNull(clientResponse);
         assertEquals(200, clientResponse.getStatus());
         assertEquals("application/vnd.orcid+xml; charset=UTF-8; qs=5", clientResponse.getType().toString());
@@ -60,8 +60,8 @@ public class T2OrcidOAuthApiClientReadOnlyIntegrationTest extends BaseT2OrcidOAu
         // orcid back from the header location
 
         createNewOrcidUsingAccessToken();
-        assertClientResponse401Details(oauthT2Client.viewBioDetailsJson(this.orcid, null));
-        ClientResponse clientResponse = oauthT2Client.viewBioDetailsJson(this.orcid, accessToken);
+        assertClientResponse401Details(oauthT2Client1_2_rc6.viewBioDetailsJson(this.orcid, null));
+        ClientResponse clientResponse = oauthT2Client1_2_rc6.viewBioDetailsJson(this.orcid, accessToken);
         assertNotNull(clientResponse);
         assertEquals(200, clientResponse.getStatus());
         assertEquals("application/vnd.orcid+json; charset=UTF-8; qs=4", clientResponse.getType().toString());
@@ -75,8 +75,8 @@ public class T2OrcidOAuthApiClientReadOnlyIntegrationTest extends BaseT2OrcidOAu
     @Test
     public void testViewFullDetailsXml() throws Exception {
         createNewOrcidUsingAccessToken();
-        assertClientResponse401Details(oauthT2Client.viewFullDetailsXml(this.orcid, null));
-        ClientResponse clientResponse = oauthT2Client.viewFullDetailsXml(this.orcid, accessToken);
+        assertClientResponse401Details(oauthT2Client1_2_rc6.viewFullDetailsXml(this.orcid, null));
+        ClientResponse clientResponse = oauthT2Client1_2_rc6.viewFullDetailsXml(this.orcid, accessToken);
         assertNotNull(clientResponse);
         assertEquals(200, clientResponse.getStatus());
         assertEquals("application/vnd.orcid+xml; charset=UTF-8; qs=5", clientResponse.getType().toString());
@@ -91,8 +91,8 @@ public class T2OrcidOAuthApiClientReadOnlyIntegrationTest extends BaseT2OrcidOAu
     @Test
     public void testViewWorksDetailsXml() throws Exception {
         createNewOrcidUsingAccessToken();
-        assertClientResponse401Details(oauthT2Client.viewWorksDetailsXml(this.orcid, null));
-        ClientResponse clientResponse = oauthT2Client.viewWorksDetailsXml(this.orcid, accessToken);
+        assertClientResponse401Details(oauthT2Client1_2_rc6.viewWorksDetailsXml(this.orcid, null));
+        ClientResponse clientResponse = oauthT2Client1_2_rc6.viewWorksDetailsXml(this.orcid, accessToken);
         assertNotNull(clientResponse);
         assertEquals(200, clientResponse.getStatus());
         assertEquals("application/vnd.orcid+xml; charset=UTF-8; qs=5", clientResponse.getType().toString());
@@ -107,8 +107,8 @@ public class T2OrcidOAuthApiClientReadOnlyIntegrationTest extends BaseT2OrcidOAu
     @Test
     public void testViewWorksDetailsJson() throws Exception {
         createNewOrcidUsingAccessToken();
-        assertClientResponse401Details(oauthT2Client.viewWorksDetailsJson(this.orcid, null));
-        ClientResponse clientResponse = oauthT2Client.viewWorksDetailsJson(this.orcid, accessToken);
+        assertClientResponse401Details(oauthT2Client1_2_rc6.viewWorksDetailsJson(this.orcid, null));
+        ClientResponse clientResponse = oauthT2Client1_2_rc6.viewWorksDetailsJson(this.orcid, accessToken);
         assertNotNull(clientResponse);
         assertEquals(200, clientResponse.getStatus());
         assertEquals("application/vnd.orcid+json; charset=UTF-8; qs=4", clientResponse.getType().toString());
@@ -123,8 +123,8 @@ public class T2OrcidOAuthApiClientReadOnlyIntegrationTest extends BaseT2OrcidOAu
     @Test
     public void testViewFullDetailsJson() throws Exception {
         createNewOrcidUsingAccessToken();
-        assertClientResponse401Details(oauthT2Client.viewWorksDetailsJson(this.orcid, null));
-        ClientResponse clientResponse = oauthT2Client.viewFullDetailsJson(this.orcid, accessToken);
+        assertClientResponse401Details(oauthT2Client1_2_rc6.viewWorksDetailsJson(this.orcid, null));
+        ClientResponse clientResponse = oauthT2Client1_2_rc6.viewFullDetailsJson(this.orcid, accessToken);
         assertNotNull(clientResponse);
         assertEquals(200, clientResponse.getStatus());
         assertEquals("application/vnd.orcid+json; charset=UTF-8; qs=4", clientResponse.getType().toString());

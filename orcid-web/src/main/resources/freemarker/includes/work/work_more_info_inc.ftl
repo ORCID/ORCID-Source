@@ -151,7 +151,7 @@
 				<div class="row bottomBuffer" ng-show="worksSrvc.details[work.putCode.value].url.value" ng-cloak>
 					<div class="col-md-12">
 						<strong> <@orcid.msg
-							'manual_work_form_contents.labelURL'/> </strong>
+							'common.url'/> </strong>
 						<div>
 							<a href="{{worksSrvc.details[work.putCode.value].url.value | urlWithHttp}}" target="_blank">{{worksSrvc.details[work.putCode.value].url.value}}</a>
 						</div>

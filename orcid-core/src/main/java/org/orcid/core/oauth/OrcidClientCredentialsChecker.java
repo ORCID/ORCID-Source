@@ -16,6 +16,12 @@
  */
 package org.orcid.core.oauth;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
+import org.orcid.core.constants.OauthTokensConstants;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
@@ -24,9 +30,6 @@ import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.DefaultAuthorizationRequest;
-
-import java.util.Collection;
-import java.util.Set;
 
 /**
  * @author Declan Newman (declan) Date: 10/05/2012
@@ -46,7 +49,11 @@ public class OrcidClientCredentialsChecker {
         if (scopes != null) {
             validateScope(clientDetails, scopes);
         }
-        DefaultAuthorizationRequest authorizationRequest = new DefaultAuthorizationRequest(clientId, scopes);
+        
+        Map<String, String> authorizationParams = new HashMap<String, String>();
+        authorizationParams.put(OauthTokensConstants.GRANT_TYPE, grantType);
+        
+        DefaultAuthorizationRequest authorizationRequest = new DefaultAuthorizationRequest(authorizationParams, null, clientId, scopes);
         authorizationRequest.setAuthorities(clientDetails.getAuthorities());
         authorizationRequest.setResourceIds(clientDetails.getResourceIds());
         authorizationRequest.setApproved(true);

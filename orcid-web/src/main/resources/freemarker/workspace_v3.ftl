@@ -187,7 +187,7 @@
 		        	   
 		        	      <div ng-repeat="website in websitesForm.websites" class="mobile-box">
 		        	          <input type="text" ng-model="website.name.value" placeholder="${springMacroRequestContext.getMessage("manual_work_form_contents.labeldescription")}"></input>
-		        	          <input type="text" ng-model="website.url.value" placeholder="${springMacroRequestContext.getMessage("manual_work_form_contents.labelURL")}"></input>
+		        	          <input type="text" ng-model="website.url.value" placeholder="${springMacroRequestContext.getMessage("common.url")}"></input>
 		        	          <a ng-click="deleteWebsite(website)" class="glyphicon glyphicon-trash grey"></a>
 		        	          <br />
 		        	          <span class="orcid-error" ng-show="website.url.errors.length > 0">
@@ -462,7 +462,7 @@
 		<div class="row">
 			<div class="col-md-12 col-sm-12 col-xs-12">
 				<h3><@orcid.msg 'groups.bulk_delete.confirm.header'/></h3>
-				<div class="orcid-error" ng-show="bulkDeleteCount != delCountVerify">
+				<div class="orcid-error">
 					<p>
 						<@orcid.msg 'groups.bulk_delete.confirm.line_1'/>
 					</p>
@@ -472,13 +472,15 @@
 					<p>
     	            	<@orcid.msg 'groups.bulk_delete.confirm.line_3'/> <input type="text" size="3" ng-init="delCountVerify=0" ng-model="delCountVerify"/>
 					</p>
-				</div>
-				<div class="pull-right">
-					<a ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel'/></a>  <button class="btn blue" ng-click="bulkDeleteFunction()"><@orcid.msg 'freemarker.btnDelete'/></button>
-				</div>
-			<div>
-		<div>
-	<div>	
+				</div>				
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12 col-sm-12 col-xs-12">				
+				<a ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel'/></a>  <button class="btn blue" ng-click="bulkDeleteFunction()"><@orcid.msg 'freemarker.btnDelete'/></button>				
+			</div>
+		</div>		
+	</div>	
 </script>
 
 

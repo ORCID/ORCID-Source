@@ -22,6 +22,8 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -41,7 +43,9 @@ import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.persistence.dao.ClientRedirectDao;
+import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.OrcidOauth2AuthoriziationCodeDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.keys.ClientRedirectUriPk;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -96,10 +100,16 @@ public class OauthAuthorizationCodeTest extends DBUnitTest {
     @Resource
     private ProfileDao profileDao;
 
+    @Resource(name = "orcidOauth2AuthoriziationCodeDetailDao")
+    private OrcidOauth2AuthoriziationCodeDetailDao orcidOauth2AuthoriziationCodeDetailDao;
+    
     @Value("${org.orcid.web.base.url:http://localhost:8080/orcid-web}")
     private String webBaseUrl;
 
     private String redirectUri;
+        
+    @Value("${org.orcid.core.oauth.auth_code.expiration_minutes:10}")
+    private int authorizationCodeExpiration;
 
     private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml",
             "/data/WorksEntityData.xml", "/data/ProfileWorksEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml",
@@ -173,15 +183,50 @@ public class OauthAuthorizationCodeTest extends DBUnitTest {
         assertFalse(PojoUtil.isEmpty(accessToken));
     }
     
+    @Test
+    public void useClientCredentialsGrantTypeScope() throws InterruptedException, JSONException {
+        String authorizationCode = webDriverHelper.obtainAuthorizationCode("/orcid-works/create", CLIENT_DETAILS_ID, "michael@bentine.com", "password", new ArrayList<String>(), true);
+        assertFalse(PojoUtil.isEmpty(authorizationCode));
+        ClientResponse tokenResponse = obtainAccessTokenResponse(CLIENT_DETAILS_ID, authorizationCode, redirectUri, "/orcid-works/create /webhook");
+        assertEquals(200, tokenResponse.getStatus());
+        String body = tokenResponse.getEntity(String.class);
+        JSONObject jsonObject = new JSONObject(body);
+        String scope = (String) jsonObject.get("scope");
+        assertNotNull(scope);
+        assertEquals("/orcid-works/create", scope);
+    }
+    
+    @Test
+    public void authorizationCodeExpiresAfterXMinutesTest() throws InterruptedException, JSONException {
+        String authorizationCode = webDriverHelper.obtainAuthorizationCode("/orcid-works/create", CLIENT_DETAILS_ID, "michael@bentine.com", "password", new ArrayList<String>(), true);
+        assertFalse(PojoUtil.isEmpty(authorizationCode));
+        OrcidOauth2AuthoriziationCodeDetail authorizationCodeEntity = orcidOauth2AuthoriziationCodeDetailDao.find(authorizationCode);
+        Date dateCreated = authorizationCodeEntity.getDateCreated();
+        Calendar c = Calendar.getInstance();
+        c.setTime(dateCreated);
+        c.add(Calendar.MINUTE, (-authorizationCodeExpiration - 1) );
+        dateCreated = c.getTime();
+        authorizationCodeEntity.setDateCreated(dateCreated);
+        orcidOauth2AuthoriziationCodeDetailDao.merge(authorizationCodeEntity);
+        
+        ClientResponse tokenResponse = obtainAccessTokenResponse(CLIENT_DETAILS_ID, authorizationCode, redirectUri, "/orcid-works/create /webhook");
+        assertEquals(400, tokenResponse.getStatus());
+        OrcidMessage result = tokenResponse.getEntity(OrcidMessage.class);
+        assertNotNull(result);
+        assertNotNull(result.getErrorDesc());
+        assertEquals("Bad Request : Authorization code has expired", result.getErrorDesc().getContent());
+        
+    }
+    
     private ClientResponse obtainAccessTokenResponse(String clientId, String authorizationCode, String redirectUri, String scopes) throws JSONException {
         MultivaluedMap<String, String> params = new MultivaluedMapImpl();
         params.add("client_id", clientId);
-        params.add("client_secret", "client-secret");
-        params.add("grant_type", "authorization_code");
+        params.add("client_secret", "client-secret");        
+        params.add("grant_type", "authorization_code");        
         if(scopes != null)
             params.add("scope", scopes);
         params.add("redirect_uri", redirectUri);
         params.add("code", authorizationCode);
-        return oauthT2Client.obtainOauth2TokenPost("client_credentials", params);        
+        return oauthT2Client.obtainOauth2TokenPost("authorization_code", params);        
     }
 }

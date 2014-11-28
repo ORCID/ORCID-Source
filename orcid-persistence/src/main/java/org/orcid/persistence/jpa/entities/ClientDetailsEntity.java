@@ -195,7 +195,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
         this.tokenDetails = tokenDetails;
     }
 
-    @ManyToOne(cascade = { CascadeType.DETACH, CascadeType.REFRESH }, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = { CascadeType.DETACH, CascadeType.REFRESH }, fetch = FetchType.EAGER)
     @JoinColumn(name = "group_orcid")
     public ProfileEntity getGroupProfile() {
         return groupProfile;

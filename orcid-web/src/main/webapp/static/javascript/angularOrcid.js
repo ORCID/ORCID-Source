@@ -2855,6 +2855,7 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
     $scope.privacyHelpCurKey = null;
     $scope.moreInfo = {};
     $scope.moreInfoCurKey = null;
+    $scope.showElement = {};
 
     $scope.sortState = new ActSortState(GroupedActivities.AFFILIATION);
     $scope.sort = function(key) {
@@ -3143,6 +3144,14 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
     $scope.openEditAffiliation = function(affiliation) {
         $scope.addAffiliationModal(affiliation.affiliationType.value, affiliation);
     };
+    
+    $scope.showTooltip = function (element){    	
+        $scope.showElement[element] = true;
+    };
+
+    $scope.hideTooltip = function (element){    	
+        $scope.showElement[element] = false;
+    };
 }
 
 /**
@@ -3159,6 +3168,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc, comm
     $scope.privacyHelp = {};
     $scope.editTranslatedTitle = false;
     $scope.lastIndexedTerm = null;
+    $scope.showElement = {};
     $scope.emptyExtId = {
             "errors": [],
             "type": {
@@ -3607,6 +3617,19 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc, comm
             html : $compile($('#import-wizard-modal').html())($scope),
             onComplete: function() {$.colorbox.resize();}
         });
+    };
+    
+    $scope.showTooltip = function (element){    	
+        $scope.showElement[element] = true;
+    };
+
+    $scope.hideTooltip = function (element){    	
+        $scope.showElement[element] = false;
+    };
+    
+    $scope.userIsSource = function(funding) {
+        if (funding.source == orcidVar.orcidId)
+            return true;
     };
 }
 
@@ -4910,6 +4933,14 @@ function languageCtrl($scope, $cookies) {
                 "label": '한국어'
             },
             {
+                "value": 'pt',
+                "label": 'Português'
+            },
+            {
+                "value": 'ru',
+                "label": 'Русский'
+            },
+            {
                 "value": 'zh_CN',
                 "label": '简体中文'
             },
@@ -5829,7 +5860,7 @@ function removeSecQuestionCtrl($scope,$compile) {
 };
 
 function SSOPreferencesCtrl($scope, $compile, $sce, emailSrvc) {
-    $scope.showReg = false;
+    $scope.noCredentialsYet = true;
     $scope.userCredentials = null;
     $scope.editing = false;
     $scope.hideGoogleUri = false;
@@ -5851,17 +5882,15 @@ function SSOPreferencesCtrl($scope, $compile, $sce, emailSrvc) {
     $scope.emailSrvc = emailSrvc;
     $scope.nameToDisplay = '';
     $scope.descriptionToDisplay = '';
+    $scope.verifyEmailSent=false;
 
     $scope.verifyEmail = function() {
         var funct = function() {
             $scope.verifyEmailObject = emailSrvc.primaryEmail;
             emailSrvc.verifyEmail(emailSrvc.primaryEmail,function(data) {
-                    $.colorbox({
-                        html : $compile($('#verify-email-modal').html())($scope)
-                    });
-                    $scope.$apply();
-                    $.colorbox.resize();
-           });
+            	$scope.verifyEmailSent = true;    
+            	$scope.$apply();                    
+           });            
        };
        if (emailSrvc.primaryEmail == null)
               emailSrvc.getEmails(funct);
@@ -5939,7 +5968,8 @@ function SSOPreferencesCtrl($scope, $compile, $sce, emailSrvc) {
                         $scope.updateSelectedRedirectUri();
                         $scope.setHtmlTrustedNameAndDescription();
                     } else {
-                        $scope.showReg = true;
+                    	$scope.createCredentialsLayout();
+                        $scope.noCredentialsYet = true;
                     }
                 });
             }
@@ -6005,7 +6035,7 @@ function SSOPreferencesCtrl($scope, $compile, $sce, emailSrvc) {
                         $scope.updateSelectedRedirectUri();
                         $scope.setHtmlTrustedNameAndDescription();
                         $scope.creating = false;
-                        $scope.showReg = false;
+                        $scope.noCredentialsYet = false;
                     }
                 });
             }

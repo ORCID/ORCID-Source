@@ -16,9 +16,11 @@
  */
 package com.orcid.api.common.server.delegator.impl;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -64,8 +66,8 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
             LOGGER.info("Not authenticated for OAuth2: clientId={}, grantType={}, refreshToken={}, code={}, scopes={}, state={}, redirectUri={}", new Object[] {
                     clientId, grantType, refreshToken, code, scopes, state, redirectUri });
             throw new InsufficientAuthenticationException("The client is not authenticated.");
-        }
-
+        }        
+        
         /**
          * Patch, update any orcid-grants scope to funding scope
          * */
@@ -79,16 +81,30 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
         }
 
         try {
+            boolean isClientCredentialsGrantType = OauthTokensConstants.GRANT_TYPE_CLIENT_CREDENTIALS.equals(grantType);
+            
             if (scopes != null) {
+                List<String> toRemove = new ArrayList<String>();
                 for (String scope : scopes) {
-                    ScopePathType.fromValue(scope);
+                    ScopePathType scopeType = ScopePathType.fromValue(scope);
+                    if(isClientCredentialsGrantType) {
+                        if(!scopeType.isClientCreditalScope())
+                            toRemove.add(scope);
+                    } else {
+                        if(scopeType.isClientCreditalScope())
+                            toRemove.add(scope);
+                    }
+                }
+                
+                for (String remove : toRemove) {
+                    scopes.remove(remove);
                 }
             }
         } catch (IllegalArgumentException iae) {
             throw new OrcidInvalidScopeException(
                     "One of the provided scopes is not allowed. Please refere to the list of allowed scopes at: http://support.orcid.org/knowledgebase/articles/120162-orcid-scopes");
         }
-
+                
         String clientName = client.getName();
         LOGGER.info("Comparing passed clientId and client name from spring auth: clientId={}, client.name={}", clientId, clientName);
         clientId = clientName;
@@ -111,7 +127,7 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
         if (refreshToken != null) {
             parameters.put("refresh_token", refreshToken);
         }
-
+                        
         DefaultAuthorizationRequest authorizationRequest = new DefaultAuthorizationRequest(parameters, Collections.<String, String> emptyMap(), clientId, scopes);
         Set<String> resourceIds = new HashSet<>();
         resourceIds.add("orcid");

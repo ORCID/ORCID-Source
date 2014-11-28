@@ -146,7 +146,7 @@
                	<label for="websiteUrlText">${springMacroRequestContext.getMessage("manage_bio_settings.labelwebsite")}</label>
              	<div class="control-group form-inline websites">
              	 	<@spring.formInput "changePersonalInfoForm.websiteUrlText", 'class="input-xlarge"  placeholder="${springMacroRequestContext.getMessage("manual_work_form_contents.labeldescription")}"'/>
-         			<@spring.formInput "changePersonalInfoForm.websiteUrl", 'class="input-xlarge" placeholder="${springMacroRequestContext.getMessage("manual_work_form_contents.labelURL")}"'/>
+         			<@spring.formInput "changePersonalInfoForm.websiteUrl", 'class="input-xlarge" placeholder="${springMacroRequestContext.getMessage("common.url")}"'/>
              	</div>
              	             	             	             	             	 
             	<div class="control-group">

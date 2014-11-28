@@ -36,8 +36,15 @@
 								<div class="centered bottomBuffer">
 									<#if hasVerifiedEmail>
 										<button class="btn btn-primary" ng-click="enableDeveloperTools()" ><@orcid.msg 'developer_tools.public_member.turn_on' /></button>
-									<#else>
-										<button class="btn btn-primary" ng-click="verifyEmail()" ><@orcid.msg 'developer_tools.public_member.verify.button' /></button>
+									<#else>				
+										<div ng-cloak>		
+											<div ng-show="!verifyEmailSent">				
+												<button class="btn btn-primary" ng-click="verifyEmail()"><@orcid.msg 'developer_tools.public_member.verify.button' /></button>
+											</div>											
+											<div class="alert alert-warning alert-dismissible fade in" role="alert"  ng-show="verifyEmailSent">      											
+      											${springMacroRequestContext.getMessage("manage.email.verificationEmail")} {{verifyEmailObject.value}}${springMacroRequestContext.getMessage("manage.email.verificationEmail.verify_inbox")}
+    										</div>																						
+										</div>
 									</#if>
 								</div>																								
 								<p><@orcid.msg 'developer_tools.client_types.description' /></p>
@@ -78,10 +85,7 @@
 					<div class="row">				
 						<div class="col-md-10 col-sm-10 col-xs-8">					
 							<h2><@orcid.msg 'manage.developer_tools.user.title' /></h2>										
-						</div>
-						<div class="col-md-2 col-sm-2 col-xs-4" ng-show="showReg" ng-cloak>
-							<a ng-click="createCredentialsLayout()" class="pull-right"><span class="label btn-primary"><@orcid.msg 'manage.developer_tools.button.register_now' /></span></a>
-						</div>	
+						</div>					
 					</div>
 				
 					<div class="row">
@@ -278,9 +282,8 @@
 								</div>						
 							</div>
 							<div class="col-md-3 col-sm-3 col-xs-3">				
-								<ul class="sso-options pull-right">							
-									<li><a href ng-click="showViewLayout()" class="back" title="<@orcid.msg 'manage.developer_tools.tooltip.back' />"><span class="glyphicon glyphicon-arrow-left"></span></a></li>
-									<li><a href ng-click="submit()" class="save" title="<@orcid.msg 'manage.developer_tools.tooltip.save' />"><span class="glyphicon glyphicon-floppy-disk"></span></a></li>							
+								<ul class="sso-options pull-right">									
+									<li><a href ng-click="submit()" class="save" title="<@orcid.msg 'manage.developer_tools.tooltip.save' />"><span class="glyphicon glyphicon-floppy-disk"></span></a></li>																								
 								</ul>					
 							</div>	
 						</div>				
@@ -408,8 +411,8 @@
 					<div class="row slide" ng-show="userCredentials.clientSecret && userCredentials.clientSecret.value" ng-cloak>
 						<div class="col-md-12 col-sm-12 col-xs-12">
 							<div class="tab-container">
-								<a href="#" class="tab collapsed" data-tab="collapsed"><span class="glyphicon glyphicon-chevron-down"></span><@orcid.msg 'manage.developer_tools.show_details' /></a>
-								<a href="#" class="tab expanded"><span class="glyphicon glyphicon-chevron-up"></span><@orcid.msg 'manage.developer_tools.hide_details' /></a>
+								<a href="#" class="tab collapsed" data-tab="collapsed"><span class="glyphicon glyphicon-chevron-down"></span><@orcid.msg 'common.details.show_details' /></a>
+								<a href="#" class="tab expanded"><span class="glyphicon glyphicon-chevron-up"></span><@orcid.msg 'common.details.hide_details' /></a>
 							</div>
 						</div>			
 					</div>
@@ -448,11 +451,6 @@
 <@security.authorize ifAnyGranted="ROLE_GROUP,ROLE_BASIC,ROLE_PREMIUM,ROLE_BASIC_INSTITUTION,ROLE_PREMIUM_INSTITUTION,ROLE_CREATOR,ROLE_PREMIUM_CREATOR,ROLE_UPDATER,ROLE_PREMIUM_UPDATER">
 	<@orcid.msg 'developer_tools.invalid_page'/>
 </@security.authorize>
-
-<script type="text/ng-template" id="verify-email-modal">
-	<div style="padding: 20px;"><h3>${springMacroRequestContext.getMessage("manage.email.verificationEmail")} {{verifyEmailObject.value}}</h3>
-	<button class="btn" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.email.verificationEmail.close")}</button>
-</script>
 
 <script type="text/ng-template" id="reset-client-secret-modal">
 	<div class="lightbox-container">

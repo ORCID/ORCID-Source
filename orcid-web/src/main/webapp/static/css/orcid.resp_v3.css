@@ -4313,10 +4313,6 @@ ul.sources-options li{
 	display: inline-block;
 }
 
-.sources-container-header ul.sources-options li a.glyphicon-trash{
-	margin-right: 5px;
-}
-
 .sources-container table.sources-edit-table{
 	margin-top: 15px;
 	border: none;
@@ -4878,7 +4874,7 @@ ul.sources-actions li{
 }
 
 .affiliation-box{
-	padding: 5px;
+	padding: 5px 5px 0 5px;
 }
 
 .combine-work ul.list-group li.list-group-item{
@@ -5068,18 +5064,15 @@ ul.workspace-private-toolbar .popover-help-container .popover{
 
 /* Bulk Edit Pop up */
 
-.lightbox-container.bulk-delete-modal{
+.lightbox-container.bulk-delete-modal{	
+	max-width: 550px;
 	padding-right: 0;
 	padding-bottom: 0;	
 }
 
-.bulk-delete-modal{
-	max-width: 550px;
-}
-
 .bulk-delete-modal h3,
 .bulk-delete-modal p{	
-	color: #494A4C;
+	color: #929497;
 }
 
 .bulk-delete-modal button{
@@ -5101,6 +5094,9 @@ ul.workspace-private-toolbar .popover-help-container .popover{
 	line-height: 30px;
 }
 
+.clear-fix{
+	clear: both;
+}
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */

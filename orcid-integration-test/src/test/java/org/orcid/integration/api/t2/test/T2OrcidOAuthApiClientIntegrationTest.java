@@ -43,8 +43,8 @@ import org.orcid.core.security.DefaultPermissionChecker;
 import org.orcid.core.security.PermissionChecker;
 import org.orcid.integration.api.t2.BaseT2OrcidOAuthApiClientIntegrationTest;
 import org.orcid.integration.api.t2.OrcidClientDataHelper;
-import org.orcid.jaxb.model.message.ExternalIdSource;
 import org.orcid.jaxb.model.message.ExternalIdReference;
+import org.orcid.jaxb.model.message.ExternalIdSource;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.FamilyName;
@@ -63,8 +63,6 @@ import org.orcid.jaxb.model.message.Title;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.jaxb.model.message.WorkType;
-import org.orcid.persistence.dao.ClientDetailsDao;
-import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.slf4j.Logger;
@@ -138,7 +136,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
     public void testCreateProfileXml() throws Exception {
 
         OrcidMessage profileWithOutToken = orcidClientDataHelper.createFromXML(OrcidClientDataHelper.ORCID_INTERNAL_NO_SPONSOR_XML);
-        ClientResponse clientResponseWithoutToken = oauthT2Client.createProfileXML(profileWithOutToken, null);
+        ClientResponse clientResponseWithoutToken = oauthT2Client1_2_rc6.createProfileXML(profileWithOutToken, null);
         assertClientResponse401Details(clientResponseWithoutToken);
 
         // now create with token
@@ -151,7 +149,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
     public void testCreateProfileJSON() throws Exception {
 
         OrcidMessage profile = orcidClientDataHelper.createFromXML(OrcidClientDataHelper.ORCID_INTERNAL_NO_SPONSOR_XML);
-        assertClientResponse401Details(oauthT2Client.createProfileJson(profile, null));
+        assertClientResponse401Details(oauthT2Client1_2_rc6.createProfileJson(profile, null));
         // now create with token
         ClientResponse clientResponse = createNewOrcidUsingAccessToken();
         assertEquals(201, clientResponse.getStatus());
@@ -170,14 +168,14 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         message.getOrcidProfile().setOrcidIdentifier(new OrcidIdentifier(this.orcid));
         message.getOrcidProfile().setOrcidWorks(null);
         message.getOrcidProfile().getOrcidBio().getPersonalDetails().setFamilyName(new FamilyName("Bowen"));
-        assertClientResponse401Details(oauthT2Client.updateBioDetailsXml(orcid, message, null));
+        assertClientResponse401Details(oauthT2Client1_2_rc6.updateBioDetailsXml(orcid, message, null));
         // now get the access token and try again
-        ClientResponse response = oauthT2Client.updateBioDetailsXml(orcid, message, accessToken);
+        ClientResponse response = oauthT2Client1_2_rc6.updateBioDetailsXml(orcid, message, accessToken);
         assertNotNull(response);
         assertEquals(200, response.getStatus());
 
         // Should be still to use token to view
-        response = oauthT2Client.viewFullDetailsXml(this.orcid, accessToken);
+        response = oauthT2Client1_2_rc6.viewFullDetailsXml(this.orcid, accessToken);
         assertEquals(200, response.getStatus());
         OrcidMessage responseEntity = response.getEntity(OrcidMessage.class);
         assertNotNull(responseEntity);
@@ -197,13 +195,13 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         message.getOrcidProfile().setOrcid(this.orcid);
         message.getOrcidProfile().setOrcidWorks(null);
         message.getOrcidProfile().getOrcidBio().getPersonalDetails().setFamilyName(new FamilyName("Bowen"));
-        ClientResponse response = oauthT2Client.updateBioDetailsJson(orcid, message, accessToken);
+        ClientResponse response = oauthT2Client1_2_rc6.updateBioDetailsJson(orcid, message, accessToken);
         assertNotNull(response);
         assertEquals(200, response.getStatus());
 
         // create a new token to do a view
         createAccessTokenFromCredentials();
-        response = oauthT2Client.viewFullDetailsJson(this.orcid, accessToken);
+        response = oauthT2Client1_2_rc6.viewFullDetailsJson(this.orcid, accessToken);
         assertEquals(200, response.getStatus());
         OrcidMessage responseEntity = response.getEntity(OrcidMessage.class);
         assertNotNull(responseEntity);
@@ -215,7 +213,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
     public void testUpdateWorksJson() throws Exception {
         // put the message into the db
         createNewOrcidUsingAccessToken();
-        ClientResponse worksResponse = oauthT2Client.viewWorksDetailsJson(this.orcid, accessToken);
+        ClientResponse worksResponse = oauthT2Client1_2_rc6.viewWorksDetailsJson(this.orcid, accessToken);
         OrcidMessage message = worksResponse.getEntity(OrcidMessage.class);
         OrcidWorks orcidWorks = message.getOrcidProfile().retrieveOrcidWorks();
         assertTrue(orcidWorks != null && orcidWorks.getOrcidWork() != null && orcidWorks.getOrcidWork().size() == 3);
@@ -227,11 +225,11 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         secondMainTitle.setSubtitle(subTitle);
         secondMainTitle.setTitle(mainTitle);
         secondWork.setWorkTitle(secondMainTitle);
-        ClientResponse updatedWorksResponse = oauthT2Client.updateWorksJson(this.orcid, message, accessToken);
+        ClientResponse updatedWorksResponse = oauthT2Client1_2_rc6.updateWorksJson(this.orcid, message, accessToken);
         assertEquals(200, updatedWorksResponse.getStatus());
 
         createAccessTokenFromCredentials();
-        worksResponse = oauthT2Client.viewWorksDetailsJson(this.orcid, accessToken);
+        worksResponse = oauthT2Client1_2_rc6.viewWorksDetailsJson(this.orcid, accessToken);
         assertEquals(200, worksResponse.getStatus());
         message = worksResponse.getEntity(OrcidMessage.class);
         orcidWorks = message.getOrcidProfile().retrieveOrcidWorks();
@@ -261,11 +259,11 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         orcidWorks.getOrcidWork().add(orcidWork);
         message.getOrcidProfile().setOrcidWorks(orcidWorks);
 
-        assertClientResponse401Details(oauthT2Client.addWorksXml(orcid, message, null));
-        ClientResponse clientResponse = oauthT2Client.addWorksXml(this.orcid, message, accessToken);
+        assertClientResponse401Details(oauthT2Client1_2_rc6.addWorksXml(orcid, message, null));
+        ClientResponse clientResponse = oauthT2Client1_2_rc6.addWorksXml(this.orcid, message, accessToken);
         assertEquals(201, clientResponse.getStatus());
 
-        ClientResponse retrievedOrcidWorks = oauthT2Client.viewWorksDetailsXml(this.orcid, accessToken);
+        ClientResponse retrievedOrcidWorks = oauthT2Client1_2_rc6.viewWorksDetailsXml(this.orcid, accessToken);
         assertTrue(retrievedOrcidWorks.getEntity(OrcidMessage.class).getOrcidProfile().retrieveOrcidWorks().getOrcidWork().size() == 4);
     }
 
@@ -296,7 +294,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         orcidWork.setWorkType(WorkType.ARTISTIC_PERFORMANCE);
         orcidWorks.getOrcidWork().add(orcidWork);
         message.getOrcidProfile().setOrcidWorks(orcidWorks);
-        assertClientResponse403SecurityProblem(oauthT2Client.addWorksXml(orcid, message, accessToken));
+        assertClientResponse403SecurityProblem(oauthT2Client1_2_rc6.addWorksXml(orcid, message, accessToken));
 
         // make sure write scope was removed
         orcidOauth2TokenDetail = orcidOauthTokenDetailService.findNonDisabledByTokenValue(accessToken);
@@ -329,7 +327,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
 
         // test creating a record works with token
         OrcidMessage message = orcidClientDataHelper.createFromXML(OrcidClientDataHelper.ORCID_INTERNAL_NO_SPONSOR_XML);
-        ClientResponse clientResponse = oauthT2Client.createProfileXML(message, accessToken);
+        ClientResponse clientResponse = oauthT2Client1_2_rc6.createProfileXML(message, accessToken);
         assertEquals(201, clientResponse.getStatus());
         MultivaluedMap<String, String> map = clientResponse.getHeaders();
         List<String> locList = map.get("Location");
@@ -342,7 +340,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         orcidWork.setWorkType(WorkType.ARTISTIC_PERFORMANCE);
         orcidWorks.getOrcidWork().add(orcidWork);
         message.getOrcidProfile().setOrcidWorks(orcidWorks);
-        assertClientResponse403SecurityProblem(oauthT2Client.addWorksXml(orcid, message, accessToken));
+        assertClientResponse403SecurityProblem(oauthT2Client1_2_rc6.addWorksXml(orcid, message, accessToken));
 
         // test ClientCreditalScope isn't removed
         orcidOauth2TokenDetail = orcidOauthTokenDetailService.findNonDisabledByTokenValue(accessToken);
@@ -368,7 +366,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         orcidWork.setWorkType(WorkType.ARTISTIC_PERFORMANCE);
         orcidWorks.getOrcidWork().add(orcidWork);
         message.getOrcidProfile().setOrcidWorks(orcidWorks);
-        assertClientResponse403SecurityProblem(oauthT2Client.addWorksXml(orcid, message, blankScopeToken));
+        assertClientResponse403SecurityProblem(oauthT2Client1_2_rc6.addWorksXml(orcid, message, blankScopeToken));
     }
 
     @Test
@@ -378,12 +376,12 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         message.getOrcidProfile().setOrcidIdentifier(new OrcidIdentifier(this.orcid));
         message.getOrcidProfile().setOrcidWorks(null);
         message.getOrcidProfile().getOrcidBio().getPersonalDetails().setFamilyName(new FamilyName("Bowen"));
-        assertClientResponse401Details(oauthT2Client.updateBioDetailsXml(orcid, message, null));
-        ClientResponse response = oauthT2Client.updateBioDetailsXml(orcid, message, accessToken);
+        assertClientResponse401Details(oauthT2Client1_2_rc6.updateBioDetailsXml(orcid, message, null));
+        ClientResponse response = oauthT2Client1_2_rc6.updateBioDetailsXml(orcid, message, accessToken);
         assertNotNull(response);
         assertEquals(200, response.getStatus());
         createAccessTokenFromCredentials();
-        response = oauthT2Client.viewFullDetailsXml(orcid, accessToken);
+        response = oauthT2Client1_2_rc6.viewFullDetailsXml(orcid, accessToken);
         assertNotNull(response);
         assertEquals(200, response.getStatus());
         OrcidMessage responseEntity = response.getEntity(OrcidMessage.class);
@@ -405,10 +403,10 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         orcidWorks.getOrcidWork().add(orcidWork);
         message.getOrcidProfile().setOrcidWorks(orcidWorks);
 
-        ClientResponse clientResponse = oauthT2Client.addWorksJson(this.orcid, message, accessToken);
+        ClientResponse clientResponse = oauthT2Client1_2_rc6.addWorksJson(this.orcid, message, accessToken);
         assertEquals(201, clientResponse.getStatus());
 
-        ClientResponse orcidWorksFromResponse = oauthT2Client.viewWorksDetailsJson(this.orcid, accessToken);
+        ClientResponse orcidWorksFromResponse = oauthT2Client1_2_rc6.viewWorksDetailsJson(this.orcid, accessToken);
         List<OrcidWork> retrievedOrcidWorks = orcidWorksFromResponse.getEntity(OrcidMessage.class).getOrcidProfile().retrieveOrcidWorks().getOrcidWork();
         assertTrue(retrievedOrcidWorks.size() == 4);
 
@@ -445,7 +443,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         workToUpdate.getWorkTitle().getTitle().setContent("Chromosome 5a55.5 microdeletions comprising AB555 and CD5555");
         workToUpdate.getWorkTitle().getSubtitle().setContent("Chromosome subtitle");
         message.getOrcidProfile().getOrcidInternal().setSecurityDetails(null);
-        assertClientResponse401Details(oauthT2Client.updateWorksXml(this.orcid, message, null));
+        assertClientResponse401Details(oauthT2Client1_2_rc6.updateWorksXml(this.orcid, message, null));
 
         if (work1.getWorkType() == null) {
             work1.setWorkType(WorkType.UNDEFINED);
@@ -459,11 +457,11 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
             work3.setWorkType(WorkType.UNDEFINED);
         }
 
-        ClientResponse updatedWorksResponse = oauthT2Client.updateWorksXml(this.orcid, message, accessToken);
+        ClientResponse updatedWorksResponse = oauthT2Client1_2_rc6.updateWorksXml(this.orcid, message, accessToken);
 
         assertEquals(200, updatedWorksResponse.getStatus());
         createAccessTokenFromCredentials();
-        ClientResponse worksResponse = oauthT2Client.viewWorksDetailsXml(this.orcid, this.accessToken);
+        ClientResponse worksResponse = oauthT2Client1_2_rc6.viewWorksDetailsXml(this.orcid, this.accessToken);
         assertEquals(200, worksResponse.getStatus());
         message = worksResponse.getEntity(OrcidMessage.class);
 
@@ -500,7 +498,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
 
             // get the bio details of the actual
             createAccessTokenFromCredentials();
-            ClientResponse bioResponse = oauthT2Client.viewBioDetailsJson(this.orcid, accessToken);
+            ClientResponse bioResponse = oauthT2Client1_2_rc6.viewBioDetailsJson(this.orcid, accessToken);
             OrcidMessage message = bioResponse.getEntity(OrcidMessage.class);
             OrcidBio orcidBio = message.getOrcidProfile().getOrcidBio();
             ExternalIdentifiers externalIdentifiers = orcidBio.getExternalIdentifiers();
@@ -517,12 +515,12 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
             orcidBio.setExternalIdentifiers(newExternalIdentifiers);
 
             createAccessTokenFromCredentials();
-            ClientResponse updatedIdsResponse = oauthT2Client.addExternalIdentifiersJson(this.orcid, message, accessToken);
+            ClientResponse updatedIdsResponse = oauthT2Client1_2_rc6.addExternalIdentifiersJson(this.orcid, message, accessToken);
             assertEquals(200, updatedIdsResponse.getStatus());
 
             // retrieve the sponsor info
             createAccessTokenFromCredentials();
-            bioResponse = oauthT2Client.viewBioDetailsJson(this.orcid, accessToken);
+            bioResponse = oauthT2Client1_2_rc6.viewBioDetailsJson(this.orcid, accessToken);
             message = bioResponse.getEntity(OrcidMessage.class);
             orcidBio = message.getOrcidProfile().getOrcidBio();
             assertTrue(orcidBio.getExternalIdentifiers() != null);
@@ -541,7 +539,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         createNewOrcidUsingAccessToken();
         // get the bio details of the actual
         createAccessTokenFromCredentials();
-        ClientResponse bioResponse = oauthT2Client.viewBioDetailsXml(this.orcid, accessToken);
+        ClientResponse bioResponse = oauthT2Client1_2_rc6.viewBioDetailsXml(this.orcid, accessToken);
         OrcidMessage message = bioResponse.getEntity(OrcidMessage.class);
         OrcidBio orcidBio = message.getOrcidProfile().getOrcidBio();
 
@@ -569,12 +567,12 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         orcidBio.setExternalIdentifiers(newExternalIdentifiers);
 
         createAccessTokenFromCredentials();
-        ClientResponse updatedIdsResponse = oauthT2Client.addExternalIdentifiersXml(this.orcid, message, accessToken);
+        ClientResponse updatedIdsResponse = oauthT2Client1_2_rc6.addExternalIdentifiersXml(this.orcid, message, accessToken);
         assertEquals(200, updatedIdsResponse.getStatus());
 
         // retrieve the sponsor info
         createAccessTokenFromCredentials();
-        bioResponse = oauthT2Client.viewBioDetailsXml(this.orcid, accessToken);
+        bioResponse = oauthT2Client1_2_rc6.viewBioDetailsXml(this.orcid, accessToken);
         message = bioResponse.getEntity(OrcidMessage.class);
         orcidBio = message.getOrcidProfile().getOrcidBio();
         assertTrue(orcidBio.getExternalIdentifiers() != null);
@@ -589,7 +587,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         createNewOrcidUsingAccessToken();
         // get the bio details of the actual
         createAccessTokenFromCredentials();
-        ClientResponse bioResponse = oauthT2Client.viewBioDetailsXml(this.orcid, accessToken);
+        ClientResponse bioResponse = oauthT2Client1_2_rc6.viewBioDetailsXml(this.orcid, accessToken);
         OrcidMessage message = bioResponse.getEntity(OrcidMessage.class);
         OrcidBio orcidBio = message.getOrcidProfile().getOrcidBio();
         OrcidHistory orcidHistory = message.getOrcidProfile().getOrcidHistory();
@@ -624,7 +622,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
 
         // retrieve the sponsor info
         createAccessTokenFromCredentials();
-        bioResponse = oauthT2Client.viewBioDetailsXml(this.orcid, accessToken);
+        bioResponse = oauthT2Client1_2_rc6.viewBioDetailsXml(this.orcid, accessToken);
         message = bioResponse.getEntity(OrcidMessage.class);
         orcidBio = message.getOrcidProfile().getOrcidBio();
         assertTrue(orcidBio.getExternalIdentifiers() != null);
@@ -639,7 +637,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         createNewOrcidUsingAccessToken();
         // get the bio details of the actual
         createAccessTokenFromCredentials();
-        ClientResponse bioResponse = oauthT2Client.viewBioDetailsXml(this.orcid, accessToken);
+        ClientResponse bioResponse = oauthT2Client1_2_rc6.viewBioDetailsXml(this.orcid, accessToken);
         OrcidMessage message = bioResponse.getEntity(OrcidMessage.class);
         OrcidBio orcidBio = message.getOrcidProfile().getOrcidBio();
 
@@ -665,12 +663,12 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         orcidBio.setExternalIdentifiers(newExternalIdentifiers);
 
         createAccessTokenFromCredentials();
-        ClientResponse updatedIdsResponse = oauthT2Client.addExternalIdentifiersXml(this.orcid, message, accessToken);
+        ClientResponse updatedIdsResponse = oauthT2Client1_2_rc6.addExternalIdentifiersXml(this.orcid, message, accessToken);
         assertEquals(200, updatedIdsResponse.getStatus());
 
         // retrieve the sponsor info
         createAccessTokenFromCredentials();
-        bioResponse = oauthT2Client.viewBioDetailsXml(this.orcid, accessToken);
+        bioResponse = oauthT2Client1_2_rc6.viewBioDetailsXml(this.orcid, accessToken);
         message = bioResponse.getEntity(OrcidMessage.class);
         orcidBio = message.getOrcidProfile().getOrcidBio();
         assertTrue(orcidBio.getExternalIdentifiers() != null);
@@ -684,10 +682,10 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         createNewOrcidUsingAccessToken();
         String webhookToken = createAccessTokenFromCredentials(ScopePathType.WEBHOOK.value());
         String webhookUri = URLEncoder.encode("http://nowhere.com", "UTF-8");
-        ClientResponse putResponse = oauthT2Client.registerWebhook(this.orcid, webhookUri, webhookToken);
+        ClientResponse putResponse = oauthT2Client1_2_rc6.registerWebhook(this.orcid, webhookUri, webhookToken);
         assertNotNull(putResponse);
         assertEquals(201, putResponse.getStatus());
-        ClientResponse deleteResponse = oauthT2Client.unregisterWebhook(this.orcid, webhookUri, webhookToken);
+        ClientResponse deleteResponse = oauthT2Client1_2_rc6.unregisterWebhook(this.orcid, webhookUri, webhookToken);
         assertNotNull(deleteResponse);
         assertEquals(204, deleteResponse.getStatus());
     }

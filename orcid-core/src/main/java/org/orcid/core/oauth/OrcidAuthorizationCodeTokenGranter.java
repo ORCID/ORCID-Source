@@ -16,6 +16,8 @@
  */
 package org.orcid.core.oauth;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -26,6 +28,7 @@ import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
 import org.orcid.persistence.jpa.entities.OrcidOauth2AuthoriziationCodeDetail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.common.exceptions.InvalidClientException;
 import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
@@ -48,6 +51,9 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
 
     private final AuthorizationCodeServices authorizationCodeServices;
 
+    @Value("${org.orcid.core.oauth.auth_code.expiration_minutes:10}")    
+    private int authorizationCodeExpiration;
+    
     @Resource(name = "orcidOauth2AuthoriziationCodeDetailDao")
     private OrcidOauth2AuthoriziationCodeDetailDao orcidOauth2AuthoriziationCodeDetailDao;
     
@@ -72,10 +78,23 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
         }
 
         //Validate scopes
-        OrcidOauth2AuthoriziationCodeDetail codeDetails = orcidOauth2AuthoriziationCodeDetailDao.find(authorizationCode);
+        OrcidOauth2AuthoriziationCodeDetail codeDetails = orcidOauth2AuthoriziationCodeDetailDao.find(authorizationCode);        
+        
         if(codeDetails == null) {
             throw new InvalidGrantException("Invalid authorization code: " + authorizationCode);
         } else {
+            // Check auth code expiration
+            Date tokenCreationDate = codeDetails.getDateCreated();
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(tokenCreationDate);
+            calendar.add(Calendar.MINUTE, authorizationCodeExpiration);            
+            Date tokenExpirationDate = calendar.getTime();
+            
+            if(tokenExpirationDate.before(new Date())) {
+                throw new IllegalArgumentException("Authorization code has expired");
+            }
+            
+            // Check granted scopes
             Set<String> grantedScopes = codeDetails.getScopes();
             Set<String> requestScopes = authorizationRequest.getScope();
             
@@ -83,7 +102,7 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
                 if(!grantedScopes.contains(requestScope)) {
                     throw new InvalidGrantException("Invalid scopes: " + requestScope + " available scopes for this code are: " + grantedScopes);
                 }
-            }
+            }                        
             
         }        
         
