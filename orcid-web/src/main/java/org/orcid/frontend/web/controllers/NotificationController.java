@@ -16,14 +16,17 @@
  */
 package org.orcid.frontend.web.controllers;
 
+import java.util.HashMap;
 import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.NotificationManager;
+import org.orcid.core.manager.TemplateManager;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.notification.Notification;
+import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
 import org.orcid.jaxb.model.notification.custom.NotificationCustom;
 import org.orcid.persistence.dao.NotificationDao;
 import org.springframework.http.MediaType;
@@ -42,7 +45,10 @@ public class NotificationController extends BaseController {
     private NotificationManager notificationManager;
 
     @Resource
-    NotificationDao notificationDao;
+    private NotificationDao notificationDao;
+    
+    @Resource
+    private TemplateManager templateManager;
 
     @RequestMapping
     public ModelAndView getNotifications() {
@@ -70,8 +76,10 @@ public class NotificationController extends BaseController {
         Notification notification = notificationManager.findByOrcidAndId(getCurrentUserOrcid(), Long.valueOf(id));
         if (notification instanceof NotificationCustom) {
             return ((NotificationCustom) notification).getBodyHtml();
+        } else if (notification instanceof NotificationAddActivities) {
+            return templateManager.processTemplate("notification/add_activities_notification.ftl", new HashMap<String, Object>());
         } else {
-            return "XXX message type not implemented yet!";
+            return "Message type not implemented yet!";
         }
     }
 
