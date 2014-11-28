@@ -3841,16 +3841,11 @@ ul.personal-inf-display li:first-child a{
 	font-size: 18px;
 }
 
-.work-menu{
-	position: relative;
-	height: 30px;
-	width: auto;
-	
-}
 
 .menu-container{
 	display: block;
-	float: right;			
+	float: right;
+	position: relative;
 }
 
 ul.workspace-bar-menu{	
@@ -3859,7 +3854,7 @@ ul.workspace-bar-menu{
 	float: right; 
 }
 
-ul.workspace-bar-menu li{
+ul.workspace-bar-menu > li{
 	display: inline;
 	margin: 0;
 	padding: 0;
@@ -4440,8 +4435,8 @@ ul.menu-options li{
 	border-top: 1px solid #FFF;
 	height: 31px;
 	background: #C9CACB;
-	padding-right: 5%;
-	min-width: 100px;	 	
+	padding-right: 5px;	
+	width: 100%; 	
 }
 
 ul.menu-options li a{
@@ -4452,7 +4447,9 @@ ul.menu-options li a{
 	width: 100%;
 	min-width: 60px;
 	height: 30px;
-	float: left;	 
+	float: left;
+	white-space:nowrap;
+	display: block;	 
 }
 
 ul.-menu-options li a span{	
@@ -4462,20 +4459,24 @@ ul.-menu-options li a span{
 	margin-left: 6px;
 }
 
+ul.toggle-menu > li .menu-options.sort{
+	width: 100%;
+}
+
+ul.toggle-menu > li .menu-options.education{
+	min-width: 120px;
+}
+
+ul.toggle-menu > li .menu-options.employment{
+	min-width: 137px;
+}
+
+ul.toggle-menu > li .menu-options.funding{
+	min-width: 110px;
+}
+
 ul.menu-options li a:hover{	 
 	background:#a6ce39; 
-}
-
-ul.menu-options.sort{
-	right: 15px;
-}
-
-ul.menu-options.works{
-	right: 165px;
-}
-
-ul.menu-options.education{
-	right: 77px;
 }
 
 .checked{
@@ -4524,16 +4525,13 @@ ul.toggle-menu li ul {
   padding: 0;
   position: absolute;
   top: 30px;
-  min-width: 75px;
-  width: auto;  
+  right: 0;
   display: none;
   opacity: 0;
   visibility: hidden;    
 }
 
-
 ul.toggle-menu li ul li{
-  display: block;
   padding: 0;
   width: 100%;  
 }
@@ -5123,52 +5121,6 @@ ul.workspace-private-toolbar .popover-help-container .popover{
 
 .clear-fix{
 	clear: both;
-}
-
-/* For using in all the nested menus*/
-
-ul.nested-menu{
-	display: inline;
-	list-style: none;
-	margin: 0;
-	padding: 0;
-	float: right;
-	background: #C9C9CA;
-	line-height: 27px;	
-	font-size: 14px;
-	color: #494A4C;
-	text-decoration: none;
-}
-
-ul.nested-menu > li{
-	display: inline-block;
-	cursor: pointer;
-	padding: 1px 10px 2px;
-	border-left: 1px solid #FFF;
-}
-
-ul.nested-menu > li > span{
-	padding: 4px 5px 0 0;
-	font-size: 12px;
-}
-
-ul.nested-menu > li > ul{
-	display: inline;
-	list-style: none;
-	margin: 0;
-	padding: 0;	
-}
-
-ul.nested-menu > li > ul li{
-	padding: 0;
-	position: absolute;
-	top: 30px;
-	right: 15px;
-	min-width: 75px;
-	width: auto;
-	display: none;
-	opacity: 0;
-	visibility: hidden;
 }
 
 /* Media Queries */
