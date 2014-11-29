@@ -211,7 +211,7 @@ public class RegistrationController extends BaseController {
 
         reg.getSendChangeNotifications().setValue(true);
         reg.getSendOrcidNews().setValue(true);
-        reg.getSendOrcidFeatureAnnouncements().setValue(true);
+        reg.getSendMemberUpdateRequests().setValue(true);
         reg.getTermsOfUse().setValue(false);
         setError(reg.getTermsOfUse(), "AssertTrue.registrationForm.acceptTermsAndConditions");
 
@@ -260,7 +260,7 @@ public class RegistrationController extends BaseController {
         Preferences preferences = new Preferences();
         preferences.setSendChangeNotifications(new SendChangeNotifications(reg.getSendChangeNotifications().getValue()));
         preferences.setSendOrcidNews(new SendOrcidNews(reg.getSendOrcidNews().getValue()));
-        preferences.setSendOrcidFeatureAnnouncements(reg.getSendOrcidFeatureAnnouncements().getValue());
+        preferences.setSendMemberUpdateRequests(reg.getSendMemberUpdateRequests().getValue());
         preferences.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(Visibility.fromValue(reg.getActivitiesVisibilityDefault().getVisibility().value())));
 
         PersonalDetails personalDetails = new PersonalDetails();
