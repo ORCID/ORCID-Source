@@ -1537,11 +1537,26 @@ function EditTableCtrl($scope) {
         $scope.showEditEmailPreferences = !$scope.showEditEmailPreferences;
         $scope.emailPreferencesUpdateToggleText();
     };
-
-    // init privacy preferences
+    
+    // init email preferences
     $scope.showEditEmailPreferences = (window.location.hash === "#editEmailPreferences");
     $scope.emailPreferencesUpdateToggleText();
+    
+    // email frequency edit row
+    $scope.emailFrequencyUpdateToggleText = function () {
+        if ($scope.showEditEmailFrequency) $scope.emailFrequencyToggleText = om.get("manage.editTable.hide");
+        else $scope.emailFrequencyToggleText = om.get("manage.editTable.edit");
+    };
 
+    $scope.toggleEmailFrequencyEdit = function() {
+        $scope.showEditEmailFrequency = !$scope.showEditEmailFrequency;
+        $scope.emailFrequencyUpdateToggleText();
+    };
+
+    // init email frequency
+    $scope.showEditEmailFrequency = (window.location.hash === "#editEmailFrequency");
+    $scope.emailFrequencyUpdateToggleText();
+    
     // security question edit row
     $scope.securityQuestionUpdateToggleText = function () {
         if ($scope.showEditSecurityQuestion) $scope.securityQuestionToggleText = om.get("manage.editTable.hide");
@@ -1575,6 +1590,11 @@ function EditTableCtrl($scope) {
 };
 
 function NotificationPreferencesCtrl($scope, $compile, emailSrvc, prefsSrvc, emailSrvc) {
+    $scope.prefsSrvc = prefsSrvc;
+    $scope.emailSrvc = emailSrvc;
+};
+
+function EmailFrequencyCtrl($scope, $compile, emailSrvc, prefsSrvc, emailSrvc) {
     $scope.prefsSrvc = prefsSrvc;
     $scope.emailSrvc = emailSrvc;
 };

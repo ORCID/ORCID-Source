@@ -160,22 +160,6 @@
 	                <tr ng-controller="NotificationPreferencesCtrl"
 	                    ng-show="showEditEmailPreferences" ng-cloak>
 	                    <td colspan="2">
-	                        <div class="control-group">
-	                            <div>${springMacroRequestContext.getMessage("manage.send_email_to_primary_1")}{{emailSrvc.primaryEmail.value}}${springMacroRequestContext.getMessage("manage.send_email_to_primary_2")}<a href="" ng-click="openEmailEdit()">${springMacroRequestContext.getMessage("manage.send_email_to_primary_3")}</a></div>
-                                <label for="sendEmailFrequencyDays"
-                                    class="">${springMacroRequestContext.getMessage("manage.send_email_frequency")}</label>
-                                <div class="relative">
-                                    <select id="sendEmailFrequencyDays" name="sendEmailFrequencyDays"
-                                        class="input-xlarge"
-                                        ng-model="prefsSrvc.prefs.sendEmailFrequencyDays"
-                                        ng-change="prefsSrvc.savePrivacyPreferences()">
-                                        <#list sendEmailFrequencies?keys as key>
-                                        <option value="${key}"
-                                            ng-selected="prefsSrvc.prefs.sendEmailFrequencyDays === ${key}">${sendEmailFrequencies[key]}</option>
-                                        </#list>
-                                    </select>
-                                </div>
-                            </div>
 	                        <div class="editTablePadCell35">
 	                            <label class="checkbox"> <input type="checkbox"
 	                                id="sendOrcidChangeNotifcations"
@@ -206,6 +190,33 @@
 	                        </div>
 	                    </td>
 	                </tr>
+	                <!-- Email frequency -->
+	                <tr>
+                        <th><a name="editEmailFrequency"></a>${springMacroRequestContext.getMessage("manage.email_frequency")}</th>
+                        <td><a href="" ng-click="toggleEmailFrequencyEdit()"
+                            ng-bind="emailFrequencyToggleText"></a></td>
+                    </tr>
+                    <tr ng-controller="EmailFrequencyCtrl"
+                        ng-show="showEditEmailFrequency" ng-cloak>
+                        <td colspan="2">
+                            <div class="control-group">
+                                <div>${springMacroRequestContext.getMessage("manage.send_email_to_primary_1")}{{emailSrvc.primaryEmail.value}}${springMacroRequestContext.getMessage("manage.send_email_to_primary_2")}<a href="" ng-click="openEmailEdit()">${springMacroRequestContext.getMessage("manage.send_email_to_primary_3")}</a></div>
+                                <label for="sendEmailFrequencyDays"
+                                    class="">${springMacroRequestContext.getMessage("manage.send_email_frequency")}</label>
+                                <div class="relative">
+                                    <select id="sendEmailFrequencyDays" name="sendEmailFrequencyDays"
+                                        class="input-xlarge"
+                                        ng-model="prefsSrvc.prefs.sendEmailFrequencyDays"
+                                        ng-change="prefsSrvc.savePrivacyPreferences()">
+                                        <#list sendEmailFrequencies?keys as key>
+                                        <option value="${key}"
+                                            ng-selected="prefsSrvc.prefs.sendEmailFrequencyDays === ${key}">${sendEmailFrequencies[key]}</option>
+                                        </#list>
+                                    </select>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
 	            </#if>
                 <tr>
                     <th><a name="editPassword"></a>${springMacroRequestContext.getMessage("manage.password")}</th>
