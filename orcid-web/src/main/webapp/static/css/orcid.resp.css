@@ -4416,6 +4416,10 @@ ul.oauth-icons li {
 	display: inline;
 }
 
+.notifications th,td {
+	padding-left: 10px;
+}
+
 
 
 /* Media Queries */
