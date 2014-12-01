@@ -18,20 +18,50 @@
 -->
 <#escape x as x?html>
    	<div class="biography-controller" ng-controller="BiographyCtrl">
-   			<strong ng-click="toggleEdit()">${springMacroRequestContext.getMessage("manage_bio_settings.labelbiography")}</strong>
-   			<span class="glyphicon glyphicon-pencil edit-biography edit-option pull-right" ng-click="toggleEdit()" ng-hide="showEdit == true" title=""></span><br />
-   			<div style="white-space: pre-wrap" ng-hide="showEdit == true" ng-bind="biographyForm.biography.value" ng-click="toggleEdit()"></div>
+   			<div class="row">
+   				<div class="col-md-9 col-sm-8 col-xs-8">
+		   			<h3 ng-click="toggleEdit()" class="workspace-title">${springMacroRequestContext.getMessage("manage_bio_settings.labelbiography")}</h3>		
+   				</div>
+   				<div class="col-md-3 col-sm-4 col-xs-4">
+   					<ul class="inline-list bio-edit right">
+	                	 <li>
+	   						<a ng-click="toggleEdit()" ng-hide="showEdit == true"><span class="glyphicon glyphicon-pencil edit-biography edit-option"></span></a>
+	   					</li>
+	   					<li ng-cloak>
+	   						<!-- 
+	   						<@orcid.privacyToggle  angularModel="biographyForm.visiblity.visibility"
+			             questionClick="toggleClickPrivacyHelp()"
+			             clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
+			             publicClick="setPrivacy('PUBLIC', $event)" 
+	                	     limitedClick="setPrivacy('LIMITED', $event)" 
+	                	     privateClick="setPrivacy('PRIVATE', $event)" />
+	                	     -->
+	                	     <@orcid.privacyToggle2 angularModel="biographyForm.visiblity.visibility"
+								questionClick="toggleClickPrivacyHelp(group.getActive().putCode.value)"
+								clickedClassCheck="{'popover-help-container-show':privacyHelp[privacyHelp==true}" 
+								publicClick="setPrivacy('PUBLIC', $event)" 
+				                  	limitedClick="setPrivacy('LIMITED', $event)" 
+				                  	privateClick="setPrivacy('PRIVATE', $event)" />
+	                	 </li>
+                	 </ul>
+   					
+   				</div>
+   			
+   			</div>
+   			<div class="row">
+   				<div class="col-md-12">
+					<div style="white-space: pre-wrap" ng-hide="showEdit == true" ng-bind="biographyForm.biography.value" ng-click="toggleEdit()"></div>   					
+   				</div>
+   			</div>
+   			
+   			
+   			
+   			
+   			
+   			
    			<div ng-hide="showEdit == false"  class="biography-edit" ng-cloak>
    				<div class="row">
-	   			    <div class="col-md-12 col-sm-12 col-xs-12">
-	   			    	<div class="box">
-	   			    		<@orcid.privacyToggle  angularModel="biographyForm.visiblity.visibility"
-					             questionClick="toggleClickPrivacyHelp()"
-					             clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
-					             publicClick="setPrivacy('PUBLIC', $event)" 
-		                 	     limitedClick="setPrivacy('LIMITED', $event)" 
-		                 	     privateClick="setPrivacy('PRIVATE', $event)" />
-	   			    	</div>
+   					<div class="col-md-12 col-xs-12 col-sm-12">
 	   			    	<textarea id="biography" name="biography" class="input-xlarge" rows="20" ng-model="biographyForm.biography.value" ng-change="checkLength()">
 	   			    	</textarea>
 	   			    </div>
@@ -49,8 +79,9 @@
 				<div class="row">		        					
 					<div class="col-md-12 col-sm-12 col-xs-12">
 						<div class="pull-right full-width">
+							<a class="cancel" ng-click="cancel()"><@spring.message "freemarker.btncancel"/></a>
 		   			    	<button class="btn btn-primary" ng-click="setBiographyForm()"><@spring.message "freemarker.btnsavechanges"/></button>
-			        		<button class="btn" ng-click="cancel()"><@spring.message "freemarker.btncancel"/></button>
+			        		
 		        		</div>
 	   			    </div>
    			    </div>													        

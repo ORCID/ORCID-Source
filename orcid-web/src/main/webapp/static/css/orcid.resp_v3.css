@@ -3943,12 +3943,6 @@ ul#body-work-list > li{
 	background: #a6ce39;
 }
 
-.biography-controller .biography-edit {
-    background: #EFEFEF;
-	padding: 10px;
-	margin-bottom: 10px;
-
-}
 
 .biography-controller textarea {
 	height: 120px;
@@ -4179,6 +4173,7 @@ ul.id-details li{
 	float: left;
 	display: block;
 	color: #494A4C;
+	font-weight: normal;
 }
 
 .workspace-title span{
@@ -4383,7 +4378,9 @@ ul.sources-edit-list > li{
 	margin-top: 15px;
 }
 
-.workspace-profile span.glyphicon-pencil, #workspace-personal span.glyphicon-pencil, .id-banner span.glyphicon-pencil{
+.workspace-profile span.glyphicon-pencil,
+#workspace-personal span.glyphicon-pencil,
+.id-banner span.glyphicon-pencil{
 	float: right;
 	margin-right: 5px;
 	background: #949599;
@@ -4392,6 +4389,20 @@ ul.sources-edit-list > li{
 	color: #fff;
 	font-size: 10px;
 	z-index: 100;
+}
+
+#workspace-personal span.glyphicon-pencil{
+	height: 28px;
+	padding: 7px;
+	width: 28px;
+	font-size: 14px;
+	color: #494A4C;
+	background: #C9C9CA;
+}
+
+#workspace-personal span.glyphicon-pencil:hover{
+	background: #a6ce39;
+	color: #FFF;
 }
 
 .workspace-profile span > span{
@@ -5146,6 +5157,19 @@ ul.workspace-private-toolbar .popover-help-container .popover{
 
 .qrcode-container a:focus{
 	text-decoration: none;
+}
+
+.bio-edit{
+	margin-bottom: 5px;
+	height: 30px;
+}
+
+.cancel{
+	margin-right: 15px;
+}
+
+.biography-edit textarea#biography{
+	border: 1px solid #494A4C;
 }
 
 
