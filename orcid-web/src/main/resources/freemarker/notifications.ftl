@@ -41,7 +41,7 @@
                 <td><span ng-cloak>{{notification.subject}} {{notification.notificationType}}</span></td>
                 <td><span ng-cloak>{{notification.createdDate|date:'yyyy-MM-ddTHH:mm'}}</span></td>
                 <td>
-                    <span><a href="" ng-click="archive(notification.putCode.path)" class="glyphicon glyphicon-trash grey"></a></span>
+                    <span><a href="" ng-click="archive(notification.putCode.path)" class="glyphicon glyphicon-folder-open grey" title="${springMacroRequestContext.getMessage("notifications.archive")}"></a></span>
                 </td>
             </tr>
             <tr ng-repeat-end>
