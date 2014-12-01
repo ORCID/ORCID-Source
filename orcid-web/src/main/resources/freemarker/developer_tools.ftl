@@ -37,12 +37,11 @@
 									<#if hasVerifiedEmail>
 										<button class="btn btn-primary" ng-click="enableDeveloperTools()" ><@orcid.msg 'developer_tools.public_member.turn_on' /></button>
 									<#else>				
-										<div ng-cloak>		
-											<div ng-show="!verifyEmailSent">				
-												<button class="btn btn-primary" ng-click="verifyEmail()"><@orcid.msg 'developer_tools.public_member.verify.button' /></button>
-											</div>											
-											<div class="alert alert-warning alert-dismissible fade in" role="alert"  ng-show="verifyEmailSent">      											
-      											${springMacroRequestContext.getMessage("manage.email.verificationEmail")} {{verifyEmailObject.value}}${springMacroRequestContext.getMessage("manage.email.verificationEmail.verify_inbox")}
+										<div ng-cloak>
+											<button class="btn btn-primary bottomBuffer" ng-click="verifyEmail()"><@orcid.msg 'developer_tools.public_member.verify.button' /></button>		
+											<div ng-show="verifyEmailSent">      											
+      											${springMacroRequestContext.getMessage("manage.email.verificationEmail.sent.1")} {{verifyEmailObject.value}}${springMacroRequestContext.getMessage("manage.email.verificationEmail.sent.2")}<br />
+      											${springMacroRequestContext.getMessage("manage.email.verificationEmail.sent.3")}
     										</div>																						
 										</div>
 									</#if>
