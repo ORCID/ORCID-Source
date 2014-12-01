@@ -26,8 +26,6 @@
 		<#if (profile.groupType)?? && ((profile.groupType) = "BASIC" ||	(profile.groupType) = "PREMIUM" || (profile.groupType) = "BASIC_INSTITUTION" || (profile.groupType) = "PREMIUM_INSTITUTION")>
 			<li><a href="<@spring.url "/manage-clients" />">${springMacroRequestContext.getMessage("workspace.developer_tools")}</a></li>
 		</#if>
-		<#if RequestParameters['PublicClient']??>			
-			<li><a href="#manage-developer-tools">${springMacroRequestContext.getMessage("workspace.developer_tools")}</a></li>
-		</#if>
+		<li><a href="#manage-developer-tools">${springMacroRequestContext.getMessage("workspace.developer_tools")}</a></li>		
 	</ul>
 </div>
