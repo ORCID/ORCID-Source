@@ -55,6 +55,7 @@ import org.orcid.frontend.web.forms.LoginForm;
 import org.orcid.frontend.web.forms.validate.OrcidUrlValidator;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.SendEmailFrequency;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.pojo.ajaxForm.ErrorsInterface;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -218,6 +219,15 @@ public class BaseController {
             }
         }
         return maintenanceMessage;
+    }
+
+    @ModelAttribute("sendEmailFrequencies")
+    public Map<String, String> retrieveRolesAsMap() {
+        Map<String, String> map = new LinkedHashMap<>();
+        for (SendEmailFrequency freq : SendEmailFrequency.values()) {
+            map.put(String.valueOf(freq.value()), getMessage(buildInternationalizationKey(SendEmailFrequency.class, freq.name())));
+        }
+        return map;
     }
 
     /**

@@ -72,6 +72,7 @@ import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.jaxb.model.message.ReferredBy;
 import org.orcid.jaxb.model.message.SecurityQuestionId;
 import org.orcid.jaxb.model.message.SendChangeNotifications;
+import org.orcid.jaxb.model.message.SendEmailFrequency;
 import org.orcid.jaxb.model.message.SendOrcidNews;
 import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.jaxb.model.message.Visibility;
@@ -212,6 +213,7 @@ public class RegistrationController extends BaseController {
         reg.getSendChangeNotifications().setValue(true);
         reg.getSendOrcidNews().setValue(true);
         reg.getSendMemberUpdateRequests().setValue(true);
+        reg.getSendEmailFrequencyDays().setValue(SendEmailFrequency.DAILY.value());
         reg.getTermsOfUse().setValue(false);
         setError(reg.getTermsOfUse(), "AssertTrue.registrationForm.acceptTermsAndConditions");
 
@@ -261,6 +263,7 @@ public class RegistrationController extends BaseController {
         preferences.setSendChangeNotifications(new SendChangeNotifications(reg.getSendChangeNotifications().getValue()));
         preferences.setSendOrcidNews(new SendOrcidNews(reg.getSendOrcidNews().getValue()));
         preferences.setSendMemberUpdateRequests(reg.getSendMemberUpdateRequests().getValue());
+        preferences.setSendEmailFrequencyDays(reg.getSendEmailFrequencyDays().getValue());
         preferences.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(Visibility.fromValue(reg.getActivitiesVisibilityDefault().getVisibility().value())));
 
         PersonalDetails personalDetails = new PersonalDetails();

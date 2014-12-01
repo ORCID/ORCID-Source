@@ -54,6 +54,8 @@ public class Registration implements ErrorsInterface, Serializable {
 
     private Text referredBy;
 
+    private Text sendEmailFrequencyDays;
+
     public Registration() {
         errors = new ArrayList<String>();
         password = new Text();
@@ -69,6 +71,7 @@ public class Registration implements ErrorsInterface, Serializable {
         termsOfUse = new Checkbox();
         activitiesVisibilityDefault = new Visibility();
         referredBy = new Text();
+        sendEmailFrequencyDays = new Text();
     }
 
     public List<String> getErrors() {
@@ -182,4 +185,13 @@ public class Registration implements ErrorsInterface, Serializable {
     public void setReferredBy(Text referredBy) {
         this.referredBy = referredBy;
     }
+
+    public Text getSendEmailFrequencyDays() {
+        return sendEmailFrequencyDays;
+    }
+
+    public void setSendEmailFrequencyDays(Text sendEmailFrequencyDays) {
+        this.sendEmailFrequencyDays = sendEmailFrequencyDays;
+    }
+
 }
