@@ -25,7 +25,7 @@
 	</div>
 </div>
 <div class="col-md-9 right-aside">
-	<h1>Notifications</h1>
+	<h1>${springMacroRequestContext.getMessage("notifications.title")}</h1>
 	<div ng-controller="NotificationsCtrl">
 		<div ng-repeat="notification in notifications">
 			<div ng-cloak>
