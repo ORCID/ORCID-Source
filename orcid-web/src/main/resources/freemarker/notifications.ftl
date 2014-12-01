@@ -33,7 +33,7 @@
                 <th>${springMacroRequestContext.getMessage("notifications.subject")}</th>
                 <th>${springMacroRequestContext.getMessage("notifications.date")}</th>
             </tr>
-            <tr ng-repeat-start="notification in notifications" ng-click="toggleDisplayBody(notification.putCode.path)">
+            <tr ng-repeat-start="notification in notifications" ng-click="toggleDisplayBody(notification.putCode.path)" ng-class="{unread: !notification.readDate}">
                 <td>
                     <i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':!displayBody[notification.putCode.path]}"></i>
                     <span ng-show="notification.source" ng-cloak>{{notification.source.sourceName}}</span><span ng-hide="notification.source" ng-cloak>ORCID</span>
@@ -42,7 +42,6 @@
                 <td><span ng-cloak>{{notification.createdDate|date:'yyyy-MM-ddTHH:mm'}}</span></td>
                 <td>
                     <span><a href="" ng-click="archive(notification.putCode.path)" class="glyphicon glyphicon-trash grey"></a></span>
-                    <i ng-hide="notification.readDate" class="glyphicon glyphicon-bell"></i>
                 </td>
             </tr>
             <tr ng-repeat-end>

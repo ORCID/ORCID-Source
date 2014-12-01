@@ -4420,6 +4420,10 @@ ul.oauth-icons li {
 	padding-left: 10px;
 }
 
+.notifications .unread {
+	font-weight: bold;
+}
+
 
 
 /* Media Queries */
