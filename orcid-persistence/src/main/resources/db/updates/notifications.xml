@@ -176,8 +176,10 @@ $$ LANGUAGE plpgsql;
         <sql>select insert_notification_scope();</sql>
     </changeSet>
     
-    <changeSet id="RENAME-EMAIL-PREFERENCE" author="Will Simpson">
-        <renameColumn tableName="profile" oldColumnName="send_orcid_feature_announcements" newColumnName="send_member_update_requests" />
+    <changeSet id="ADD-PREFERENCE-FOR-MEMBER-UPDATE-REQUESTS" author="Will Simpson">
+        <addColumn tableName="profile">
+            <column name="send_member_update_requests" type="boolean" />
+        </addColumn>
     </changeSet>
     
 </databaseChangeLog>
