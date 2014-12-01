@@ -76,8 +76,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 public class BaseController {
-    
-    String[] urlValschemes = {"http","https", "ftp"}; // DEFAULT schemes = "http", "https", "ftp"
+
+    String[] urlValschemes = { "http", "https", "ftp" }; // DEFAULT schemes =
+                                                         // "http", "https",
+                                                         // "ftp"
     UrlValidator urlValidator = new OrcidUrlValidator(urlValschemes);
 
     private String devSandboxUrl;
@@ -107,13 +109,13 @@ public class BaseController {
     private String staticCdnPath;
 
     static Pattern fileNamePattern = Pattern.compile("https{0,1}:\\/\\/[^\\/]*(.*){0,1}");
-    
+
     @Value("${org.orcid.core.shareThis.key}")
     private String shareThisKey;
-    
+
     @Value("${org.orcid.core.oauth.usePersistentTokens:false}")
-    private boolean usePersistentTokens;  
-    
+    private boolean usePersistentTokens;
+
     @Resource
     private String cdnConfigFile;
 
@@ -137,15 +139,14 @@ public class BaseController {
 
     protected static final String EMPTY = "empty";
 
-    
     public LocaleManager getLocaleManager() {
         return localeManager;
     }
-    
+
     public void setLocaleManager(LocaleManager localeManager) {
         this.localeManager = localeManager;
     }
-    
+
     public OrcidProfileManager getOrcidProfileManager() {
         return orcidProfileManager;
     }
@@ -319,7 +320,7 @@ public class BaseController {
     public boolean isDelegatedByAdmin() {
         return sourceManager.isDelegatedByAnAdmin();
     }
-     
+
     @ModelAttribute("request")
     public HttpServletRequest getRequest(HttpServletRequest request) {
         return request;
@@ -444,7 +445,7 @@ public class BaseController {
     public String getLocaleAsString() {
         return localeManager.getLocale().toString();
     }
-    
+
     public Locale getLocale() {
         return localeManager.getLocale();
     }
@@ -458,7 +459,7 @@ public class BaseController {
     public String getBaseUri() {
         return orcidUrlManager.getBaseUrl();
     }
-    
+
     @ModelAttribute("pubBaseUri")
     public String getPubBaseUri() {
         return orcidUrlManager.getPubBaseUrl();
@@ -557,7 +558,7 @@ public class BaseController {
     protected void setError(ErrorsInterface ei, String msg) {
         ei.getErrors().add(getMessage(msg));
     }
-    
+
     protected void setError(ErrorsInterface ei, String msg, Object... messageParams) {
         ei.getErrors().add(getMessage(msg, messageParams));
     }
@@ -565,40 +566,40 @@ public class BaseController {
     protected void validateBiography(Text text) {
         text.setErrors(new ArrayList<String>());
         if (!PojoUtil.isEmpty(text.getValue())) {
-           // trim if required
-           if (!text.getValue().equals(text.getValue().trim())) 
-               text.setValue(text.getValue().trim());
-           
-           // check length
-           if (text.getValue().length() > 5000)
-              setError(text, "Length.changePersonalInfoForm.biography");
+            // trim if required
+            if (!text.getValue().equals(text.getValue().trim()))
+                text.setValue(text.getValue().trim());
+
+            // check length
+            if (text.getValue().length() > 5000)
+                setError(text, "Length.changePersonalInfoForm.biography");
         }
     }
 
     protected void validateUrl(Text url) {
         url.setErrors(new ArrayList<String>());
         if (!PojoUtil.isEmpty(url.getValue())) {
-           // trim if required
-           if (!url.getValue().equals(url.getValue().trim())) 
-               url.setValue(url.getValue().trim());
-           
-           // check length
-           if (url.getValue().length() > 350)
-              setError(url, "manualWork.length_less_350");
-           
-           // add protocall if missing
-           if (!urlValidator.isValid(url.getValue())) {
-              String tempUrl = "http://" + url.getValue();   
-              // test validity again
-              if (urlValidator.isValid(tempUrl))
-                  url.setValue("http://" + url.getValue());
-              else
-                  setError(url, "common.invalid_url");
-                  
-           }
+            // trim if required
+            if (!url.getValue().equals(url.getValue().trim()))
+                url.setValue(url.getValue().trim());
+
+            // check length
+            if (url.getValue().length() > 350)
+                setError(url, "manualWork.length_less_350");
+
+            // add protocall if missing
+            if (!urlValidator.isValid(url.getValue())) {
+                String tempUrl = "http://" + url.getValue();
+                // test validity again
+                if (urlValidator.isValid(tempUrl))
+                    url.setValue("http://" + url.getValue());
+                else
+                    setError(url, "common.invalid_url");
+
+            }
         }
     }
-    
+
     void givenNameValidate(Text givenName) {
         // validate given name isn't blank
         givenName.setErrors(new ArrayList<String>());
@@ -606,8 +607,6 @@ public class BaseController {
             setError(givenName, "NotBlank.registrationForm.givenNames");
         }
     }
-
-
 
     @ModelAttribute("searchBaseUrl")
     protected String createSearchBaseUrl() {
@@ -620,11 +619,11 @@ public class BaseController {
     public String getShareThisKey() {
         return shareThisKey;
     }
-    
+
     public void setShareThisKey(String key) {
         this.shareThisKey = key;
     }
-    
+
     public boolean isUsePersistentTokens() {
         return usePersistentTokens;
     }
