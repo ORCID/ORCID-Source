@@ -121,10 +121,19 @@ public class ValidationManagerImpl implements ValidationManager {
     public void validateMessage(OrcidMessage orcidMessage) {
         if (ValidationBehaviour.IGNORE.equals(validationBehaviour)) {
             return;
-        }              
+        }             
+        doMessageVersionValidation(orcidMessage);
         doWorkTypeValidation(orcidMessage);
         doSchemaValidation(orcidMessage);
         doCustomValidation(orcidMessage);
+    }
+    
+    private void doMessageVersionValidation(OrcidMessage orcidMessage) {
+        if(orcidMessage != null) {
+            if(PojoUtil.isEmpty(orcidMessage.getMessageVersion())) {
+                throw new OrcidValidationException("Message version is required");
+            }
+        }
     }
     
     private void doWorkTypeValidation(OrcidMessage orcidMessage) {
