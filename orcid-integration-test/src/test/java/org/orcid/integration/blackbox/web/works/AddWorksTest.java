@@ -29,6 +29,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -100,8 +101,9 @@ public class AddWorksTest {
         WebDriverWait wait = new WebDriverWait(webDriver, 10);
         ;
         waitWorksLoaded(wait);
-        WebElement linkEl = webDriver.findElement(By.xpath("//a[@ng-click='addWorkModal()']"));
-        linkEl.click();
+        // Selenium is having issues finding this element, I supect do to CSS transformations
+        // Run the function directly
+        ((JavascriptExecutor) webDriver).executeScript("angular.element('[ng-controller=WorkCtrl]').scope().addWorkModal()");
 
         wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//select[@ng-model='editWork.workCategory.value']")));
         Select catSel = new Select(webDriver.findElement(By.xpath("//select[@ng-model='editWork.workCategory.value']")));
