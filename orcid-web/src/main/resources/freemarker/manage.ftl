@@ -210,6 +210,7 @@
                                         </#list>
                                     </select>
                                 </div>
+                                <div>${springMacroRequestContext.getMessage("manage.service_announcements")}</div>
                             </div>
                         </td>
                     </tr>
