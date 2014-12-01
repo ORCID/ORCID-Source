@@ -3705,7 +3705,7 @@ p.orcid-id-container{
 	text-align: right;
 	color: #FFF; 
 	text-decoration: none;
-	margin-bottom: 5px;
+	float: left;
 }
 
 .id-banner .id-banner-container a.id-banner-switch:hover{
@@ -3805,6 +3805,8 @@ p.orcid-id-container{
 
 .delegation-mode .id-banner-container{
 	display: block !important;
+	float: left;
+	width: 100%;
 }
 
 .delegation-mode a.id-banner-switch{
@@ -6177,10 +6179,6 @@ ul.workspace-private-toolbar .popover-help-container .popover{
 	.websites-edit .glyphicon-plus,
 	.websites-edit .glyphicon-trash{			
 		font-size: 20px;		
-	}
-	
-	.public-profile p{
-		margin-bottom: 15px;		
 	}
 	
 	.full-width{
