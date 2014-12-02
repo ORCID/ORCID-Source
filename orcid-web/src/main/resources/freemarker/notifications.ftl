@@ -33,13 +33,13 @@
                 <th>${springMacroRequestContext.getMessage("notifications.subject")}</th>
                 <th>${springMacroRequestContext.getMessage("notifications.date")}</th>
             </tr>
-            <tr ng-repeat-start="notification in notifications" ng-click="toggleDisplayBody(notification.putCode.path)" ng-class="{unread: !notification.readDate}" class="header">
-                <td width="30%">
+            <tr ng-repeat-start="notification in notifications" ng-class="{unread: !notification.readDate}" class="header">
+                <td width="30%" ng-click="toggleDisplayBody(notification.putCode.path)">
                     <i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':!displayBody[notification.putCode.path]}"></i>
                     <span ng-show="notification.source" ng-cloak>{{notification.source.sourceName}}</span><span ng-hide="notification.source" ng-cloak>ORCID</span>
                 </td>
-                <td><span ng-cloak>{{notification.subject}} {{notification.notificationType}}</span></td>
-                <td><span ng-cloak>{{notification.createdDate|date:'yyyy-MM-ddTHH:mm'}}</span></td>
+                <td ng-click="toggleDisplayBody(notification.putCode.path)"><span ng-cloak>{{notification.subject}} {{notification.notificationType}}</span></td>
+                <td ng-click="toggleDisplayBody(notification.putCode.path)"><span ng-cloak>{{notification.createdDate|date:'yyyy-MM-ddTHH:mm'}}</span></td>
                 <td>
                     <span><a href="" ng-click="archive(notification.putCode.path)" class="glyphicon glyphicon-folder-open grey" title="${springMacroRequestContext.getMessage("notifications.archive")}"></a></span>
                 </td>
