@@ -5170,11 +5170,6 @@ ul.workspace-private-toolbar .popover-help-container .popover{
 	margin-right: 15px;
 }
 
-.biography-edit textarea#biography{
-	border: 1px solid #494A4C;
-}
-
-
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 
