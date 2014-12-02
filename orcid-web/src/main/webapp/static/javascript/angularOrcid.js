@@ -4983,6 +4983,10 @@ function languageCtrl($scope, $cookies) {
                 "label": 'Русский'
             },
             {
+                "value": 'xx',
+                "label": 'X'
+            },
+            {
                 "value": 'zh_CN',
                 "label": '简体中文'
             },
