@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.notification.Notification;
@@ -70,6 +71,8 @@ public class NotificationAddActivities extends Notification {
     protected AuthorizationUrl authorizationUrl;
     @XmlElement(required = true)
     protected Activities activities;
+    @XmlTransient
+    protected String subject;
 
     /**
      * Gets the value of the notificationType property.
@@ -132,6 +135,14 @@ public class NotificationAddActivities extends Notification {
      */
     public void setActivities(Activities value) {
         this.activities = value;
+    }
+
+    public String getSubject() {
+        return subject;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
     }
 
 }
