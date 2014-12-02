@@ -131,7 +131,7 @@ public class ValidationManagerImpl implements ValidationManager {
     private void doMessageVersionValidation(OrcidMessage orcidMessage) {
         if(orcidMessage != null) {
             if(PojoUtil.isEmpty(orcidMessage.getMessageVersion())) {
-                throw new OrcidValidationException("Message version is required");
+                handleError("Message version is required");
             }
         }
     }
