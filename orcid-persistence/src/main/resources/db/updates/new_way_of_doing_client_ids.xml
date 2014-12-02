@@ -164,4 +164,8 @@
         <addForeignKeyConstraint constraintName="profile_work_client_source_id_fk" baseTableName="profile_work" baseColumnNames="client_source_id" referencedTableName="client_details" referencedColumnNames="client_details_id"/>
     </changeSet>
     
+    <changeSet id="INCREASE-SIZE-OF-REFERRED-BY" author="Will Simpson">
+        <modifyDataType tableName="profile" columnName="referred_by" newDataType="VARCHAR(20)"/>
+    </changeSet>
+    
  </databaseChangeLog>
