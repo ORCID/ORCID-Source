@@ -24,9 +24,10 @@
         <#include "includes/id_banner.ftl"/>
     </div>
 </div>
-<div class="col-md-9 right-aside">
+<div class="col-md-9 right-aside" ng-controller="NotificationsCtrl" >
     <h1>${springMacroRequestContext.getMessage("notifications.title")}</h1>
-    <div ng-controller="NotificationsCtrl">
+    <div ng-hide="notifications.length > 0">${springMacroRequestContext.getMessage("notifications.none")}</div>
+    <div ng-show="notifications.length > 0">
         <table class="notifications" width="100%" >
             <tr>
                 <th>${springMacroRequestContext.getMessage("notifications.from")}</th>
