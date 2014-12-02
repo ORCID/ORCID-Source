@@ -1706,16 +1706,16 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 .workspace-accordion-header a.action-option:active{
 	display: block;
 	height: 30px;	
-	border-left: 1px solid #FFF;
+	border-left: 1px solid #FFF;	
 }
 
 .workspace-accordion-header a.action-option:hover{
 	background: #a6ce39;
-	color: #FFF;
+	color: #FFF;	
 }
 
 .workspace-accordion-header a.action-option:hover span:before{
-	color: #FFF;
+	color: #FFF;	
 }
 
 .workspace-accordion-header a.toggle-text,
@@ -3705,7 +3705,7 @@ p.orcid-id-container{
 	text-align: right;
 	color: #FFF; 
 	text-decoration: none;
-	margin-bottom: 5px;
+	float: left;
 }
 
 .id-banner .id-banner-container a.id-banner-switch:hover{
@@ -3805,6 +3805,8 @@ p.orcid-id-container{
 
 .delegation-mode .id-banner-container{
 	display: block !important;
+	float: left;
+	width: 100%;
 }
 
 .delegation-mode a.id-banner-switch{
@@ -3825,7 +3827,7 @@ p.orcid-id-container{
 	display: block;
 	float: right;
 	background: #C9C9CA;
-	line-height: 27px;
+	line-height: 30px;
 	padding: 0 10px;
 	font-size: 14px;
 	color: #494A4C;	
@@ -3837,25 +3839,15 @@ p.orcid-id-container{
 	color: #8A8A8A;	
 }
 
-.manage-button span{	
-	padding: 4px 5px 0 0;
-	font-size: 12px;
-}
-
 ul.personal-inf-display li:first-child a{
 	font-size: 18px;
 }
 
-.work-menu{
-	position: relative;
-	height: 30px;
-	width: auto;
-	
-}
 
-.sort-menu-container{
+.menu-container{
 	display: block;
-	float: right;			
+	float: right;
+	position: relative;
 }
 
 ul.workspace-bar-menu{	
@@ -3864,10 +3856,14 @@ ul.workspace-bar-menu{
 	float: right; 
 }
 
-ul.workspace-bar-menu li{
+ul.workspace-bar-menu > li{
 	display: inline;
 	margin: 0;
 	padding: 0;
+}
+
+ul.workspace-bar-menu > li > a > span{
+	margin-right: 5px;	
 }
 
 
@@ -4426,9 +4422,8 @@ a.toggle-menu{
 	user-select: none;	
 }
 
-ul.sort-menu-options{
-	position: absolute;
-	right: 0;
+ul.menu-options{
+	position: absolute;	
 	top: 31px;	
 	margin: 0; 
 	padding: 0;
@@ -4438,34 +4433,51 @@ ul.sort-menu-options{
 	display: none;
 }
 
-ul.sort-menu-options li{
+ul.menu-options li{
 	border-top: 1px solid #FFF;
 	height: 31px;
 	background: #C9CACB;
-	padding-right: 5%;
-	min-width: 100px;	 	
+	padding-right: 5px;	
+	width: 100%; 	
 }
 
-ul.sort-menu-options li a{	
-	padding: 4px 10px;
-	color: #FFF;
+ul.menu-options li a{
+	color: #494A4C;
 	background: #C9CACB;
 	font-size: 12px;
-	font-weight: bold;
+	font-weight: normal;
 	width: 100%;
 	min-width: 60px;
 	height: 30px;
-	float: left;	 
+	float: left;
+	white-space:nowrap;
+	display: block;	 
 }
 
-ul.sort-menu-options li a span{	
+ul.-menu-options li a span{	
 	height: 12px;
 	width: 12px;
 	float: right;
 	margin-left: 6px;
 }
 
-ul.sort-menu-options li a:hover{	 
+ul.toggle-menu > li .menu-options.sort{
+	width: 100%;
+}
+
+ul.toggle-menu > li .menu-options.education{
+	min-width: 120px;
+}
+
+ul.toggle-menu > li .menu-options.employment{
+	min-width: 137px;
+}
+
+ul.toggle-menu > li .menu-options.funding{
+	min-width: 110px;
+}
+
+ul.menu-options li a:hover{	 
 	background:#a6ce39; 
 }
 
@@ -4478,14 +4490,34 @@ ul.toggle-menu{
   display: inline;    
   list-style: none;
   margin: 0;
-  padding: 0;  
+  padding: 0;
 }
-ul.toggle-menu li {  
+ul.toggle-menu > li {  
   display: inline-block;
   cursor: pointer;
-  padding: 1px 10px 2px;
+  padding: 5px 10px;
   border-left: 1px solid #FFF;
+  background: #C9C9CA;
+  color: #494A4C;
+  font-size: 14px;  
 }
+
+ul.toggle-menu > li span,
+ul.toggle-menu > li span:before{
+  font-size: 12px;  
+}
+
+ul.toggle-menu > li .menu-options > li a span{	
+	margin-top: 3px;
+} 
+
+ul.toggle-menu > li .menu-options.sort > li a span{
+	float: right;
+	margin-left: 5px;
+	padding: 7px 0 0 0;
+}
+
+
 ul.toggle-menu li:hover {
   color: #FFF;
   background: #A6CE39;
@@ -4494,26 +4526,20 @@ ul.toggle-menu li:hover {
 ul.toggle-menu li ul {
   padding: 0;
   position: absolute;
-  top: 30px;  
-  right: 15px;
-  min-width: 75px;
-  width: auto;  
+  top: 30px;
+  right: 0;
   display: none;
   opacity: 0;
   visibility: hidden;    
 }
 
-#workspace-publications ul.toggle-menu li ul{
-	right: 14px;
-}
-
-ul.toggle-menu li ul li {
-  display: block;
+ul.toggle-menu li ul li{
   padding: 0;
   width: 100%;  
 }
 
-ul.toggle-menu li:hover ul {
+
+ul.toggle-menu li:hover ul{
   display: block;
   opacity: 1;
   visibility: visible;
@@ -4522,6 +4548,7 @@ ul.toggle-menu li:hover ul {
 .work-tab{
 	margin-left: 0;
 }
+
 .more-info .col-md-6{ /* Row height fix */
 	min-height: 70px;
 }
@@ -4532,8 +4559,9 @@ ul.toggle-menu li:hover ul {
 }
 
 .public-profile .bibtex-wizard:before{
-	font-size: 14px;
+	font-size: 13px;
 	color: #494A4C;
+	top: -8px;
 }
 
 .upload-button { /* Hiding input file button to mask it */	
@@ -4882,10 +4910,9 @@ ul.sources-actions li{
 	line-height: 28px;
 }
 
-.green-bg,
-.green-bg span.file_import:before{
-	background: rgb(166, 206, 57);
-	color: #FFF;
+.green-bg{
+	background: rgb(166, 206, 57) !important;
+	color: #FFF !important;
 }
 
 ul.sources-edit-list ul.sources-actions .git_create:hover:before{
@@ -5097,6 +5124,32 @@ ul.workspace-private-toolbar .popover-help-container .popover{
 .clear-fix{
 	clear: both;
 }
+
+.qrcode-container .orcid-qr{
+	padding-right: 19px;
+	padding-left: 0;
+	
+}
+
+.qrcode-container .orcid-qr:before{
+	color: #338caf;
+	top: -10px;
+	font: 16px/1em 'Glyphicons Regular'
+}
+
+.qrcode-container a{
+	color: #338caf;
+}
+
+.qrcode-container a:hover,
+.qrcode-container a:hover span:before{
+	color: #a6ce39;
+}
+
+.qrcode-container a:focus{
+	text-decoration: none;
+}
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
@@ -6043,13 +6096,13 @@ ul.workspace-private-toolbar .popover-help-container .popover{
 		font-size: 25px;
 	}
 	
-	ul.sort-menu-options{
+	ul.menu-options{
 		right: 0;	
 		width: 100%;
 		top: 40px;
 	}
 	
-	ul.sort-menu-options li{
+	ul.menu-options li{
 		padding-right: 5%;
 	}	
 	
@@ -6102,10 +6155,6 @@ ul.workspace-private-toolbar .popover-help-container .popover{
 	.websites-edit .glyphicon-plus,
 	.websites-edit .glyphicon-trash{			
 		font-size: 20px;		
-	}
-	
-	.public-profile p{
-		margin-bottom: 15px;		
 	}
 	
 	.full-width{
@@ -6163,7 +6212,7 @@ ul.workspace-private-toolbar .popover-help-container .popover{
 		line-height: 15px;
 	}	
 	
-	ul.sort-menu-options li a,
+	ul.menu-options li a,
 	ul.toggle-menu li ul,
 	ul.toggle-menu li,
 	ul.toggle-menu li ul li{
@@ -6174,7 +6223,7 @@ ul.workspace-private-toolbar .popover-help-container .popover{
 		border-bottom: 1px solid #FFF;
 	}
 	
-	.sort-menu-container{
+	.menu-container{
 		width: 100%;
 		position: relative;		
 	}

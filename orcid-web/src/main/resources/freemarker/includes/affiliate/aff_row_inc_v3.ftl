@@ -76,13 +76,13 @@
 		<div class="sources-container-header">          
 			<div class="row">
 				<div class="col-md-4">
-					SOURCE: {{group.getActive().sourceName}}	
+					<@orcid.msgUpCase 'groups.common.source'/>: {{group.getActive().sourceName}}	
 				</div>
 				<div class="col-md-3">
-					CREATED: <span ng-bind="group.getActive().createdDate | ajaxFormDateToISO8601"></span>
+					<@orcid.msgUpCase 'groups.common.created'/>: <span ng-bind="group.getActive().createdDate | ajaxFormDateToISO8601"></span>
 				</div>
 				<div class="col-md-3">
-					<!--<span class="glyphicon glyphicon-check"></span><span> Preferred source</span> <span ng-hide="group.activitiesCount == 1">(</span><a ng-click="editSources[group.groupId] = !editSources[group.groupId]" ng-hide="group.activitiesCount == 1" ng-mouseenter="showTooltip(group.groupId+'-sources')" ng-mouseleave="hideTooltip(group.groupId+'-sources')">of {{group.activitiesCount}}</a><span ng-hide="group.activitiesCount == 1">)</span>-->
+					<!--<span class="glyphicon glyphicon-check"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span> <span ng-hide="group.activitiesCount == 1">(</span><a ng-click="editSources[group.groupId] = !editSources[group.groupId]" ng-hide="group.activitiesCount == 1" ng-mouseenter="showTooltip(group.groupId+'-sources')" ng-mouseleave="hideTooltip(group.groupId+'-sources')">of {{group.activitiesCount}}</a><span ng-hide="group.activitiesCount == 1">)</span>-->
 				</div>
 				<div class="col-md-2">
 					<ul class="sources-options">
@@ -94,7 +94,7 @@
 								<div class="popover popover-tooltip top edit-source-popover ng-hide" ng-show="showElement[group.getActive().putCode.value+'-edit'] == true"> 
 								    <div class="arrow"></div>
 								    <div class="popover-content">
-								        <span >Edit my version</span>
+								        <span ><@orcid.msg 'groups.common.edit_my'/></span>
 								    </div>                
 								</div>	
 							</li>   
@@ -103,7 +103,7 @@
 					            <div class="popover popover-tooltip top delete-source-popover ng-hide" ng-show="showElement[group.getActive().putCode.value+'-delete'] == true"> 
 								 	<div class="arrow"></div>
 								    <div class="popover-content">
-								    	Delete this source
+								    	 <@orcid.msg 'groups.common.delete_this_source' />
 								    </div>                
 								</div>
 					        </li>

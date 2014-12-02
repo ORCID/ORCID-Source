@@ -34,10 +34,23 @@
                     <ul class="workspace-bar-menu">
                         <!-- Link Manually -->
                         <li>
-                            <a class="action-option manage-button" ng-click="addFundingModal()">
-                                <span class="glyphicon glyphicon-plus"></span>
-                                <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
-                            </a>
+                        	<div class="menu-container">
+		                    	<ul class="toggle-menu">
+		                    		<li ng-class="{'green-bg' : showBibtexImportWizard == true}">       
+				                    	<span class="glyphicon glyphicon-plus"></span>
+					                    Add funding    
+					                    <ul class="menu-options funding">	                    	
+						                    <!-- Add Manually -->
+						                    <li>
+					                            <a class="action-option manage-button" ng-click="addFundingModal()">
+					                                <span class="glyphicon glyphicon-plus"></span>
+					                                <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
+					                            </a>
+					                        </li>
+				                    	</ul>
+			                    	</li>
+		                    	</ul>
+		                    </div>
                         </li>
                         <!-- Search & Link -->
                         <li>
