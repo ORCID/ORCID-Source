@@ -4416,7 +4416,7 @@ ul.oauth-icons li {
 	display: inline;
 }
 
-.notifications .header td {
+.notifications td {
 	border-top-style: solid;
 	border-width: 1px;
 	border-color: #DDDDDD;

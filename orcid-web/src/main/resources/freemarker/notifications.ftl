@@ -44,15 +44,17 @@
                     <span><a href="" ng-click="archive(notification.putCode.path)" class="glyphicon glyphicon-folder-open grey" title="${springMacroRequestContext.getMessage("notifications.archive")}"></a></span>
                 </td>
             </tr>
-            <tr ng-repeat-end>
+            <tr ng-repeat-end ng-show="displayBody[notification.putCode.path]">
                 <td colspan="4">
-                    <iframe ng-show="displayBody[notification.putCode.path]" ng-src="{{ '<@spring.url '/notifications'/>/' + notification.notificationType + '/' + notification.putCode.path + '/notification.html'}}" frameborder="0" width="100%" height="300"></iframe>
+                    <iframe ng-src="{{ '<@spring.url '/notifications'/>/' + notification.notificationType + '/' + notification.putCode.path + '/notification.html'}}" frameborder="0" width="100%" height="300"></iframe>
                 </td>
             </tr>
         </table>
-        <p ng-cloak>
+        <div ng-cloak>
             <button ng-show="areMore()" ng-click="showMore()" class="btn" type="submit" id="show-more-button">Show more</button>
-        </p>
+            <br></br>
+            <br></br>
+        </div>
     </div>
 </div>
 </#escape>
