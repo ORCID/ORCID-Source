@@ -35,7 +35,7 @@
 	                    	<ul class="toggle-menu">
 	                    		<li ng-class="{'green-bg' : showBibtexImportWizard == true}">       
 			                    	<span class="glyphicon glyphicon-plus"></span>
-				                    Add education    
+				                    <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_education'/>    
 				                    <ul class="menu-options education">	                    	
 					                    <!-- Add Manually -->
 					                    <li>          

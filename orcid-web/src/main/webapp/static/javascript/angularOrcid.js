@@ -2143,6 +2143,8 @@ function BiographyCtrl($scope, $compile) {
     };
 
     $scope.setBiographyForm = function(){
+    	console.log('done ping pong');
+    	
         if ($scope.checkLength()) return; // do nothing if there is a length error
         $.ajax({
             url: getBaseUri() + '/account/biographyForm.json',
@@ -2165,6 +2167,7 @@ function BiographyCtrl($scope, $compile) {
     $scope.setPrivacy = function(priv, $event) {
         $event.preventDefault();
         $scope.biographyForm.visiblity.visibility = priv;
+        $scope.setBiographyForm();        
     };
 
 
@@ -4989,6 +4992,10 @@ function languageCtrl($scope, $cookies) {
             {
                 "value": 'ru',
                 "label": 'Русский'
+            },
+            {
+                "value": 'xx',
+                "label": 'X'
             },
             {
                 "value": 'zh_CN',
