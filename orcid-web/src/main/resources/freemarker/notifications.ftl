@@ -27,14 +27,14 @@
 <div class="col-md-9 right-aside">
     <h1>${springMacroRequestContext.getMessage("notifications.title")}</h1>
     <div ng-controller="NotificationsCtrl">
-        <table class="notifications">
+        <table class="notifications" width="100%" >
             <tr>
                 <th>${springMacroRequestContext.getMessage("notifications.from")}</th>
                 <th>${springMacroRequestContext.getMessage("notifications.subject")}</th>
                 <th>${springMacroRequestContext.getMessage("notifications.date")}</th>
             </tr>
-            <tr ng-repeat-start="notification in notifications" ng-click="toggleDisplayBody(notification.putCode.path)" ng-class="{unread: !notification.readDate}">
-                <td>
+            <tr ng-repeat-start="notification in notifications" ng-click="toggleDisplayBody(notification.putCode.path)" ng-class="{unread: !notification.readDate}" class="header">
+                <td width="30%">
                     <i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':!displayBody[notification.putCode.path]}"></i>
                     <span ng-show="notification.source" ng-cloak>{{notification.source.sourceName}}</span><span ng-hide="notification.source" ng-cloak>ORCID</span>
                 </td>
