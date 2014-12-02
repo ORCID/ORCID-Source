@@ -2030,7 +2030,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             }
             for (final String orcid : orcidsForIndexing) {
                 try {
-                    futureHM.remove(orcid).get(60, TimeUnit.SECONDS);
+                    futureHM.remove(orcid).get(120, TimeUnit.SECONDS);
                 } catch (InterruptedException e) {
                     orcidFailures.add(orcid);
                     LOG.error(orcid + " InterruptedException ", e);
