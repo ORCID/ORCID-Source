@@ -19,10 +19,10 @@
 <#escape x as x?html>
    	<div class="biography-controller" ng-controller="BiographyCtrl">
    			<div class="row">
-   				<div class="col-md-9 col-sm-8 col-xs-8">
+   				<div class="col-md-9 col-sm-8 col-xs-4">
 		   			<h3 ng-click="toggleEdit()" class="workspace-title">${springMacroRequestContext.getMessage("manage_bio_settings.labelbiography")}</h3>		
    				</div>
-   				<div class="col-md-3 col-sm-4 col-xs-4">
+   				<div class="col-md-3 col-sm-4 col-xs-8">
    					<ul class="inline-list bio-edit right">
 	                	 <li>
 	   						<a ng-click="toggleEdit()" ng-hide="showEdit == true"><span class="glyphicon glyphicon-pencil edit-biography edit-option"></span></a>
