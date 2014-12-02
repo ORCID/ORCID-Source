@@ -74,9 +74,7 @@
                     <div class="row" ng-show="group.activePutCode == funding.putCode.value">
                         <div class="col-md-9 col-sm-12 col-xs-12">
                             <h3 class="workspace-title">                                
-                               <span ng-show="group.getActive().fundingTitle.title.value">{{group.getActive().fundingTitle.title.value}}</span>
-                               <!--<span class="funding-name" ng-bind="group.getActive().fundingTypeForDisplay"></span> 
-                                <span class="funding-name" ng-bind-html="group.getActive().fundingName.value"></span> -->
+                               <span ng-show="group.getActive().fundingTitle.title.value">{{group.getActive().fundingTitle.title.value}}</span>                               
                             </h3>
 							<div class="clear-fix left">
 								<span ng-show="group.getActive().fundingName.value"><span ng-bind="group.getActive().fundingName.value"></span></span> (<span ng-show="group.getActive().city.value"><span ng-bind="group.getActive().city.value"></span></span><span ng-show="group.getActive().region.value">, <span ng-bind="group.getActive().region.value"></span></span><span ng-show="group.getActive().countryForDisplay">, <span ng-bind="group.getActive().countryForDisplay"></span></span>)
@@ -96,9 +94,9 @@
                                 </span>
                                 <span class="funding-date" ng-show="!group.getActive().startDate && group.getActive().endDate">
                                      <span ng-show="group.getActive().endDate.year">{{group.getActive().endDate.year}}</span><span ng-show="group.getActive().endDate.month">-{{group.getActive().endDate.month}}</span>
-                                </span>
+                                </span>                                
                                 <!-- Funding type -->
-                                <span ng-show="(group.getActive().startDate && group.getActive().endDate) && group.getActive().fundingType.value">|</span> <span ng-bind="group.getActive().fundingTypeForDisplay" class="uppercase"></span>
+                                <span ng-show="(group.getActive().startDate || group.getActive().endDate) && group.getActive().fundingType.value">|</span> <span ng-bind="group.getActive().fundingTypeForDisplay" class="uppercase"></span>
                             </div>                            
                         </div>
 
