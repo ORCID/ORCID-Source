@@ -109,11 +109,9 @@
 									<@security.authorize ifAnyGranted="ROLE_GROUP, ROLE_BASIC, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM, ROLE_PREMIUM_INSTITUTION">
 					 					<li><a ${(nav=="developer-tools")?string('class="active" ', '')}href="<@spring.url "/group/developer-tools" />">${springMacroRequestContext.getMessage("workspace.developer_tools")}</a></li>
 									</@security.authorize>
-									<#if RequestParameters['PublicClient']??>
-										<@security.authorize ifAnyGranted="ROLE_USER">
-											<li><a ${(nav=="developer-tools")?string('class="active" ', '')}href="<@spring.url "/developer-tools" />">${springMacroRequestContext.getMessage("workspace.developer_tools")}</a></li>
-										</@security.authorize>
-									</#if>
+									<@security.authorize ifAnyGranted="ROLE_USER">
+										<li><a ${(nav=="developer-tools")?string('class="active" ', '')}href="<@spring.url "/developer-tools" />">${springMacroRequestContext.getMessage("workspace.developer_tools")}</a></li>
+									</@security.authorize>
 								</#if>
 								<@security.authorize ifAnyGranted="ROLE_ADMIN">
 									<li><a ${(nav=="members")?string('class="active" ', '')}href="<@spring.url "/manage-members" />"><@orcid.msg 'admin.members.workspace_link' /></a></li>
