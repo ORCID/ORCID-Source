@@ -41,7 +41,7 @@
 	                    	<ul class="toggle-menu">
 	                    		<li ng-class="{'green-bg' : showBibtexImportWizard == true}">       
 			                    	<span class="glyphicon glyphicon-plus"></span>
-				                    Add works    
+				                    <@orcid.msg 'groups.common.add_works'/>    
 				                    <ul class="menu-options works">	                    	
 					                    <!-- Add Manually -->
 					                    <li>
