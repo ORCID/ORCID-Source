@@ -3222,9 +3222,9 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc, comm
         }
     };
 
-    $scope.showDetailsMouseClick = function(group, $event) {
+    $scope.showDetailsMouseClick = function(key, $event) {
         $event.stopPropagation();
-        $scope.moreInfo[group.groupId]=!$scope.moreInfo[group.groupId];
+        $scope.moreInfo[key]=!$scope.moreInfo[key];
     };
 
     $scope.closeMoreInfo = function(key) {
@@ -3640,6 +3640,8 @@ function PublicFundingCtrl($scope, $compile, $filter, workspaceSrvc, fundingSrvc
     $scope.fundingSrvc = fundingSrvc;
     $scope.workspaceSrvc = workspaceSrvc;
     $scope.moreInfo = {};
+    $scope.editSources = {};
+    $scope.showElement = {};
 
     $scope.sortState = new ActSortState(GroupedActivities.FUNDING);
     $scope.sort = function(key) {
@@ -3659,9 +3661,10 @@ function PublicFundingCtrl($scope, $compile, $filter, workspaceSrvc, fundingSrvc
             $scope.moreInfo[key]=true;
     };
 
-    $scope.showDetailsMouseClick = function(key, $event) {
+    $scope.showDetailsMouseClick = function(key, $event) {    	    	
         $event.stopPropagation();
-        $scope.moreInfo[key]=!$scope.moreInfo[key];
+        $scope.moreInfo[key] = !$scope.moreInfo[key];
+        console.log(key);
     };
 
     $scope.closeMoreInfo = function(key) {
@@ -3677,6 +3680,14 @@ function PublicFundingCtrl($scope, $compile, $filter, workspaceSrvc, fundingSrvc
             info = funding.fundingTitle.translatedTitle.content + ' - ' + funding.fundingTitle.translatedTitle.languageName;
         }
         return info;
+    };
+    
+    $scope.showTooltip = function (element){    	
+        $scope.showElement[element] = true;
+    };
+
+    $scope.hideTooltip = function (element){    	
+        $scope.showElement[element] = false;
     };
 
 }

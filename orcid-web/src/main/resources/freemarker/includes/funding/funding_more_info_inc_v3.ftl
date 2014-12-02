@@ -16,7 +16,7 @@
     =============================================================================
 
 -->
-<div class="more-info" ng-show="moreInfo[group.groupId]  && group.activePutCode == funding.putCode.value">
+<div class="more-info" ng-show="moreInfo[group.groupId] && group.activePutCode == funding.putCode.value">
 	<span class="dotted-bar"></span>	
     <div class="row">
     	<!-- Funding type 
