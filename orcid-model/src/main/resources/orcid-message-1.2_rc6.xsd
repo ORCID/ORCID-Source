@@ -1809,7 +1809,7 @@
 				<xs:element minOccurs="0" ref="orcid:security-details" />
 				<xs:element minOccurs="0" ref="orcid:preferences" />
 				<xs:element minOccurs="0" name="group-orcid-identifier" type="orcid:orcid-id" />
-				<xs:element name="referred-by" type="orcid:orcid-id"
+				<xs:element name="referred-by" type="xs:string"
 					minOccurs="0" maxOccurs="1">
 					<xs:annotation>
 						<xs:documentation>User registration is know to be driven by Member</xs:documentation>

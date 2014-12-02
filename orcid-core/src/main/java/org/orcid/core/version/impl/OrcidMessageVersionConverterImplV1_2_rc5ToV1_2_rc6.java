@@ -41,12 +41,14 @@ import org.orcid.jaxb.model.message.OrcidSearchResult;
 import org.orcid.jaxb.model.message.OrcidSearchResults;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.Preferences;
+import org.orcid.jaxb.model.message.ReferredBy;
 import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.message.SourceOrcid;
 import org.orcid.jaxb.model.message.WorkExternalIdentifier;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.message.WorkSource;
+import org.orcid.utils.OrcidStringUtils;
 
 /**
  * 
@@ -112,6 +114,10 @@ public class OrcidMessageVersionConverterImplV1_2_rc5ToV1_2_rc6 implements Orcid
                 if (prefs != null) {
                     prefs.setSendEmailFrequencyDays(null);
                     prefs.setSendOrcidFeatureAnnouncements(null);
+                }
+                ReferredBy referredBy = orcidInternal.getReferredBy();
+                if (referredBy != null && !OrcidStringUtils.isValidOrcid(referredBy.getPath())) {
+                    orcidInternal.setReferredBy(null);
                 }
             }
         }
