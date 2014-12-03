@@ -5933,7 +5933,7 @@ function SSOPreferencesCtrl($scope, $compile, $sce, emailSrvc) {
             scrolling: true
         });
 
-        $.colorbox.resize({width:"600px" , height:"330px"});
+        $.colorbox.resize({width:"590px"});
     };
     
     $scope.enableDeveloperTools = function() {

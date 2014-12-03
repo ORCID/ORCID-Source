@@ -482,7 +482,7 @@
 			<div class="row">
 				<div class="col-md-8 col-xs-8 col-sm-12">
 					<div class="row">
-						<span class="col-md-1 col-xs-1 col-sm-1"><input type="checkbox" name="accepted" ng-model="accepted" /></span>	
+						<span class="col-md-1 col-xs-1 col-sm-1 vertical-align-middle"><input type="checkbox" name="accepted" ng-model="accepted" /></span>	
 						<span class="col-md-11 col-xs-11 col-sm-11"><@orcid.msg 'developer_tools.public_member.terms.check' /></span>
 					</div>
 					<div class="row" ng-show="mustAcceptTerms">
