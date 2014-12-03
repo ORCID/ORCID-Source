@@ -482,10 +482,10 @@
 					<p>
 						<@orcid.msg 'groups.bulk_delete.confirm.line_2'/>
 					</p>
-					<p>
-    	            	<@orcid.msg 'groups.bulk_delete.confirm.line_3'/> <input type="text" size="3" ng-init="delCountVerify=0" ng-model="delCountVerify"/>
+					<p ng-class="{'red-error':bulkDeleteSubmit == true}">
+    	            	<@orcid.msg 'groups.bulk_delete.confirm.line_3'/> <input ng-class="{'red-border-error':bulkDeleteSubmit == true}" type="text" size="3" ng-init="delCountVerify=0" ng-model="delCountVerify"/>
 					</p>
-				</div>				
+				</div>
 			</div>
 		</div>
 		<div class="row">
