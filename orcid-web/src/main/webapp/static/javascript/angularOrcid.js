@@ -3617,7 +3617,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc, comm
     
     $scope.showFundingImportWizard =  function() {
         $.colorbox({
-            html : $compile($('#import-wizard-modal').html())($scope),
+            html : $compile($('#import-funding-modal').html())($scope),
             onComplete: function() {$.colorbox.resize();}
         });
     };

@@ -47,6 +47,14 @@
 					                                <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
 					                            </a>
 					                        </li>
+					                        <!-- Search & Link -->
+					                        <li>
+					                        	<a class="action-option manage-button" ng-click="showFundingImportWizard()">
+                                                	<span class="glyphicon glyphicon-cloud-upload"></span>
+                                                	<@orcid.msg 'manual_orcid_record_contents.search_link'/>
+												</a>
+					                        	
+					                        </li>
 				                    	</ul>
 			                    	</li>
 		                    	</ul>
