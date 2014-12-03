@@ -30,16 +30,6 @@
 					</div>
 				</h1>				
 			</div>					
-			<div class="col-md-3 col-sm-4 pull-left">
-				<div class="control-group privacy-control">
-		 			<label class="relative">
-						<@orcid.msg 'privacyToggle.help.who_can_see'/>
-					</label>
-		 			<@orcid.privacyToggle "editFunding.visibility.visibility" "setAddFundingPrivacy('PUBLIC', $event)" 
-		                   	  "setAddFundingPrivacy('LIMITED', $event)" "setAddFundingPrivacy('PRIVATE', $event)" />		
-		 		</div>
-			</div>			
-			
 		</div>	
 		
 		<div class="row">

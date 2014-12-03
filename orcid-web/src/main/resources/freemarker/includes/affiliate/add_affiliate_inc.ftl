@@ -33,15 +33,6 @@
 					<span ng-show="editAffiliation.putCode.value != null"><@orcid.msg 'manual_affiliation_form_contents.edit_employment'/></span>
 				</h1>
 			</div>
-			<div class="col-md-3 col-sm-3">
-				<div class="control-group privacy-control">
-		 			<label class="relative">
-						<@orcid.msg 'privacyToggle.help.who_can_see'/>
-					</label>
-		 			<@orcid.privacyToggle "editAffiliation.visibility.visibility" "setAddAffiliationPrivacy('PUBLIC', $event)" 
-		                   	  "setAddAffiliationPrivacy('LIMITED', $event)" "setAddAffiliationPrivacy('PRIVATE', $event)" />		
-		 		</div>
-			</div>
 		</div>
 
 		<div class="row">
