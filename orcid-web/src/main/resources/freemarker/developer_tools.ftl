@@ -35,7 +35,7 @@
 								<p><i><@orcid.msg 'developer_tools.note' /> <a href="./my-orcid"><@orcid.msg 'developer_tools.note.link.text' /></a><@orcid.msg 'developer_tools.note.link.point' /></i></p>																
 								<div class="centered bottomBuffer">
 									<#if hasVerifiedEmail>
-										<button class="btn btn-primary" ng-click="enableDeveloperTools()" ><@orcid.msg 'developer_tools.public_member.turn_on' /></button>
+										<button class="btn btn-primary" ng-click="acceptTerms()" ><@orcid.msg 'developer_tools.public_member.turn_on' /></button>
 									<#else>				
 										<div ng-cloak>
 											<button class="btn btn-primary bottomBuffer" ng-click="verifyEmail()"><@orcid.msg 'developer_tools.public_member.verify.button' /></button>		
@@ -94,7 +94,8 @@
 					</div>
 					<div class="row">
 						<div class="col-md-12 col-sm-12 col-xs-12">
-							<p><strong><@orcid.msg 'developer_tools.public_member.enabled' /></strong></p>
+							<p class="reset"><strong><@orcid.msg 'developer_tools.public_member.enabled' /></strong></p>
+							<p><@orcid.msg 'developer_tools.public_member.enabled.terms' /></p>							
 							<p class="developer-tools-instructions"></p>
 						</div>
 					</div>
@@ -465,6 +466,44 @@
 			</div>
 		</div>
     </div>
+</script>
+
+<script type="text/ng-template" id="terms-and-conditions-modal">
+	<div class="lightbox-container">		
+		<div class="col-md-12 col-xs-12 col-sm-12">			
+			<div class="row">
+				<div class="col-push-3 col-md-9">
+		    		<div class="logo bottomBuffer">
+		       			<h1 class="oauth_h1_margin"><a href="${aboutUri}"><img src="${staticCdn}/img/orcid-logo.png" alt="ORCID logo" /></a></h1>		        		
+				    </div>
+	    		</div>
+			</div>
+			<div class="row bottomBuffer">
+				<div class="col-md-12 col-xs-12 col-sm-12">
+					<h2 class="bottomBuffer"><@orcid.msg 'developer_tools.public_member.terms.title' /></h2>
+				</div>
+				<div class="col-md-12 col-xs-12 col-sm-12">
+					<span><@orcid.msg 'developer_tools.public_member.terms.description' /></span>				
+				</div>				
+			</div> 		
+			<div class="row">
+				<div class="col-md-8 col-xs-8 col-sm-12">
+					<div class="row">
+						<span class="col-md-1 col-xs-1 col-sm-1"><input type="checkbox" name="accepted" ng-model="accepted" /></span>	
+						<span class="col-md-11 col-xs-11 col-sm-11"><@orcid.msg 'developer_tools.public_member.terms.check' /></span>
+					</div>
+					<div class="row" ng-show="mustAcceptTerms">
+						<span class="col-md-1 col-xs-1 col-sm-1">&nbsp;</span>	
+						<span class="col-md-11 col-xs-11 col-sm-11 red"><@orcid.msg 'developer_tools.public_member.terms.must_accept' /></span>
+					</div>
+				</div>
+				<div class="col-md-4 col-xs-4 col-sm-12">					
+					<button id="" class="btn" type="reset" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></button>
+					<button class="btn btn-primary" ng-click="enableDeveloperTools()"><@orcid.msg 'freemarker.btncontinue' /></button>
+				</div>
+			</div>	
+		</div>
+	</div>
 </script>
 
 </@public>

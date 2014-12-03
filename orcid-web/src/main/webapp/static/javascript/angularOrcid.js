@@ -5901,7 +5901,8 @@ function SSOPreferencesCtrl($scope, $compile, $sce, emailSrvc) {
     $scope.nameToDisplay = '';
     $scope.descriptionToDisplay = '';
     $scope.verifyEmailSent=false;
-
+    $scope.accepted=false;
+    
     $scope.verifyEmail = function() {
         var funct = function() {
             $scope.verifyEmailObject = emailSrvc.primaryEmail;
@@ -5920,21 +5921,40 @@ function SSOPreferencesCtrl($scope, $compile, $sce, emailSrvc) {
         $.colorbox.close();
     };
 
-
-    $scope.enableDeveloperTools = function() {
-        $.ajax({
-            url: getBaseUri()+'/developer-tools/enable-developer-tools.json',
-            contentType: 'application/json;charset=UTF-8',
-            type: 'POST',
-            success: function(data){
-                if(data == true){
-                    window.location.href = getBaseUri()+'/developer-tools';
-                };
-            }
-        }).fail(function(error) {
-            // something bad is happening!
-            console.log("Error enabling developer tools");
+    $scope.acceptTerms = function() {
+    	$scope.mustAcceptTerms = false;
+    	$scope.accepted = false;
+    	$.colorbox({
+            html : $compile($('#terms-and-conditions-modal').html())($scope),
+                scrolling: true,
+                onLoad: function() {
+                $('#cboxClose').remove();
+            },
+            scrolling: true
         });
+
+        $.colorbox.resize({width:"600px" , height:"350px"});
+    };
+    
+    $scope.enableDeveloperTools = function() {
+    	if($scope.accepted == true) {
+    		$scope.mustAcceptTerms = false;
+    		$.ajax({
+                url: getBaseUri()+'/developer-tools/enable-developer-tools.json',
+                contentType: 'application/json;charset=UTF-8',
+                type: 'POST',
+                success: function(data){
+                    if(data == true){
+                        window.location.href = getBaseUri()+'/developer-tools';
+                    };
+                }
+            }).fail(function(error) {
+                // something bad is happening!
+                console.log("Error enabling developer tools");
+            });
+    	} else {
+    		$scope.mustAcceptTerms = true;
+    	}        
     };
 
     $scope.confirmDisableDeveloperTools = function() {
