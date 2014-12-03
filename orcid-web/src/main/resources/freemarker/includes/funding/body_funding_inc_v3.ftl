@@ -39,7 +39,7 @@
                                     <div class="workspace-toolbar">
                                         <ul class="workspace-private-toolbar">
                                              <li class="works-details" ng-show="editSources[group.groupId] == true">                                        
-                                                <a ng-click="showDetailsMouseClick(group,$event);" ng-mouseenter="showTooltip(group.groupId+'-showHideDetails')" ng-mouseleave="hideTooltip(group.groupId+'-showHideDetails')">
+                                                <a ng-click="showDetailsMouseClick(group.groupId,$event);" ng-mouseenter="showTooltip(group.groupId+'-showHideDetails')" ng-mouseleave="hideTooltip(group.groupId+'-showHideDetails')">
                                                     <span ng-class="(moreInfo[group.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
                                                     </span>
                                                 </a>                                        
@@ -112,7 +112,7 @@
                                     </#if>
                                     <!-- Show/Hide Details -->
                                     <li class="works-details" ng-hide="editSources[group.groupId] == true">                                        
-                                        <a ng-click="showDetailsMouseClick(group,$event);" ng-mouseenter="showTooltip(group.groupId+'-showHideDetails')" ng-mouseleave="hideTooltip(group.groupId+'-showHideDetails')">
+                                        <a ng-click="showDetailsMouseClick(group.groupId,$event);" ng-mouseenter="showTooltip(group.groupId+'-showHideDetails')" ng-mouseleave="hideTooltip(group.groupId+'-showHideDetails')">
                                             <span ng-class="(moreInfo[group.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
                                             </span>
                                         </a>                                        
