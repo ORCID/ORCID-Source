@@ -75,7 +75,7 @@
         </addColumn>
     </changeSet>
     
-    <changeSet id="POPULATE-CLIENT-SOURCE-ID" author="Will Simpson" dbms="postgresql">
+    <changeSet id="POPULATE-CLIENT-SOURCE-ID-AGAIN" author="Will Simpson" dbms="postgresql">
         <sql>
             UPDATE email e SET client_source_id = c.client_details_id
             FROM client_details c
