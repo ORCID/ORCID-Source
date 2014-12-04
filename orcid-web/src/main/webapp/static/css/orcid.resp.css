@@ -4416,7 +4416,9 @@ ul.oauth-icons li {
 	display: inline;
 }
 
-
+.vertical-align-middle {
+	line-height: 0px;
+}
 
 /* Media Queries */
 @media (max-width : 499px){ /* OAuth Screen Fix  */
