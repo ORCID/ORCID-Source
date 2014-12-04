@@ -601,6 +601,8 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Transactional
     public boolean updateDeveloperTools(String orcid, boolean enabled) {
         Query query = entityManager.createQuery("update ProfileEntity set enableDeveloperTools=:enabled, lastModified=now() where orcid=:orcid");
+        if(enabled)
+            query = entityManager.createQuery("update ProfileEntity set enableDeveloperTools=:enabled, developerToolsEnabledDate=now(), lastModified=now() where orcid=:orcid");
         query.setParameter("orcid", orcid);
         query.setParameter("enabled", enabled);
         return query.executeUpdate() > 0;

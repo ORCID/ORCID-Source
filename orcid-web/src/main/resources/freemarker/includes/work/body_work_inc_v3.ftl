@@ -27,7 +27,7 @@
                     <div class="sources-header">
                         <div class="row">
                             <div class="col-md-4 col-sm-4 col-xs-4">
-                                <@orcid.msg 'groups.common.sources.show_other_sources' /> <span class="hide-sources" ng-click="hideSources(group)"><@orcid.msg 'groups.common.close_sources' /></span>
+                                <@orcid.msg 'groups.common.sources' /> <span class="hide-sources" ng-click="hideSources(group)"><@orcid.msg 'groups.common.close_sources' /></span>
                             </div>
                             <div class="col-md-3 col-sm-3 col-xs-3">
                                 <@orcid.msg 'groups.common.created' />
@@ -209,7 +209,7 @@
                                         </div>
                                     </li>
                                     <li>
-                                        <a ng-click="`WorkConfirm(work.putCode.value, false)"  title="<@orcid.msg 'freemarker.btnDelete' /> {{work.title.value}}" ng-mouseenter="showTooltip(work.putCode.value+'-deleteActiveSource')" ng-mouseleave="hideTooltip(work.putCode.value+'-deleteActiveSource')">
+                                        <a ng-click="deleteWorkConfirm(work.putCode.value, false)"  title="<@orcid.msg 'freemarker.btnDelete' /> {{work.title.value}}" ng-mouseenter="showTooltip(work.putCode.value+'-deleteActiveSource')" ng-mouseleave="hideTooltip(work.putCode.value+'-deleteActiveSource')">
                                             <span class="glyphicon glyphicon-trash"></span>
                                         </a>
 

@@ -2163,6 +2163,8 @@ function BiographyCtrl($scope, $compile) {
     };
 
     $scope.setBiographyForm = function(){
+    	console.log('done ping pong');
+    	
         if ($scope.checkLength()) return; // do nothing if there is a length error
         $.ajax({
             url: getBaseUri() + '/account/biographyForm.json',
@@ -2185,6 +2187,7 @@ function BiographyCtrl($scope, $compile) {
     $scope.setPrivacy = function(priv, $event) {
         $event.preventDefault();
         $scope.biographyForm.visiblity.visibility = priv;
+        $scope.setBiographyForm();        
     };
 
 
@@ -3242,9 +3245,9 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc, comm
         }
     };
 
-    $scope.showDetailsMouseClick = function(group, $event) {
+    $scope.showDetailsMouseClick = function(key, $event) {
         $event.stopPropagation();
-        $scope.moreInfo[group.groupId]=!$scope.moreInfo[group.groupId];
+        $scope.moreInfo[key]=!$scope.moreInfo[key];
     };
 
     $scope.closeMoreInfo = function(key) {
@@ -3634,7 +3637,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc, comm
     
     $scope.showFundingImportWizard =  function() {
         $.colorbox({
-            html : $compile($('#import-wizard-modal').html())($scope),
+            html : $compile($('#import-funding-modal').html())($scope),
             onComplete: function() {$.colorbox.resize();}
         });
     };
@@ -3660,6 +3663,8 @@ function PublicFundingCtrl($scope, $compile, $filter, workspaceSrvc, fundingSrvc
     $scope.fundingSrvc = fundingSrvc;
     $scope.workspaceSrvc = workspaceSrvc;
     $scope.moreInfo = {};
+    $scope.editSources = {};
+    $scope.showElement = {};
 
     $scope.sortState = new ActSortState(GroupedActivities.FUNDING);
     $scope.sort = function(key) {
@@ -3679,9 +3684,10 @@ function PublicFundingCtrl($scope, $compile, $filter, workspaceSrvc, fundingSrvc
             $scope.moreInfo[key]=true;
     };
 
-    $scope.showDetailsMouseClick = function(key, $event) {
+    $scope.showDetailsMouseClick = function(key, $event) {    	    	
         $event.stopPropagation();
-        $scope.moreInfo[key]=!$scope.moreInfo[key];
+        $scope.moreInfo[key] = !$scope.moreInfo[key];
+        console.log(key);
     };
 
     $scope.closeMoreInfo = function(key) {
@@ -3697,6 +3703,14 @@ function PublicFundingCtrl($scope, $compile, $filter, workspaceSrvc, fundingSrvc
             info = funding.fundingTitle.translatedTitle.content + ' - ' + funding.fundingTitle.translatedTitle.languageName;
         }
         return info;
+    };
+    
+    $scope.showTooltip = function (element){    	
+        $scope.showElement[element] = true;
+    };
+
+    $scope.hideTooltip = function (element){    	
+        $scope.showElement[element] = false;
     };
 
 }
@@ -5000,6 +5014,10 @@ function languageCtrl($scope, $cookies) {
                 "label": 'Русский'
             },
             {
+                "value": 'xx',
+                "label": 'X'
+            },
+            {
                 "value": 'zh_CN',
                 "label": '简体中文'
             },
@@ -5903,7 +5921,8 @@ function SSOPreferencesCtrl($scope, $compile, $sce, emailSrvc) {
     $scope.nameToDisplay = '';
     $scope.descriptionToDisplay = '';
     $scope.verifyEmailSent=false;
-
+    $scope.accepted=false;
+    
     $scope.verifyEmail = function() {
         var funct = function() {
             $scope.verifyEmailObject = emailSrvc.primaryEmail;
@@ -5922,21 +5941,40 @@ function SSOPreferencesCtrl($scope, $compile, $sce, emailSrvc) {
         $.colorbox.close();
     };
 
-
-    $scope.enableDeveloperTools = function() {
-        $.ajax({
-            url: getBaseUri()+'/developer-tools/enable-developer-tools.json',
-            contentType: 'application/json;charset=UTF-8',
-            type: 'POST',
-            success: function(data){
-                if(data == true){
-                    window.location.href = getBaseUri()+'/developer-tools';
-                };
-            }
-        }).fail(function(error) {
-            // something bad is happening!
-            console.log("Error enabling developer tools");
+    $scope.acceptTerms = function() {
+    	$scope.mustAcceptTerms = false;
+    	$scope.accepted = false;
+    	$.colorbox({
+            html : $compile($('#terms-and-conditions-modal').html())($scope),
+                scrolling: true,
+                onLoad: function() {
+                $('#cboxClose').remove();
+            },
+            scrolling: true
         });
+
+        $.colorbox.resize({width:"590px"});
+    };
+    
+    $scope.enableDeveloperTools = function() {
+    	if($scope.accepted == true) {
+    		$scope.mustAcceptTerms = false;
+    		$.ajax({
+                url: getBaseUri()+'/developer-tools/enable-developer-tools.json',
+                contentType: 'application/json;charset=UTF-8',
+                type: 'POST',
+                success: function(data){
+                    if(data == true){
+                        window.location.href = getBaseUri()+'/developer-tools';
+                    };
+                }
+            }).fail(function(error) {
+                // something bad is happening!
+                console.log("Error enabling developer tools");
+            });
+    	} else {
+    		$scope.mustAcceptTerms = true;
+    	}        
     };
 
     $scope.confirmDisableDeveloperTools = function() {

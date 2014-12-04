@@ -76,7 +76,7 @@ public class OrcidMessage implements Serializable {
     public static final String DEFAULT_VERSION = "1.2_rc6";
 
     @XmlElement(name = "message-version", required = true)
-    protected String messageVersion = DEFAULT_VERSION;
+    protected String messageVersion = "";
     @XmlElement(name = "orcid-profile")
     protected OrcidProfile orcidProfile;
     @XmlElement(name = "orcid-search-results")

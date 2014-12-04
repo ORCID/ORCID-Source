@@ -1220,7 +1220,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             String sourcePath = source.retrieveSourcePath();
             if (StringUtils.isNotEmpty(sourcePath) && !sourcePath.equals(WorkSource.NULL_SOURCE_PROFILE)) {
                 ClientDetailsEntity cde = clientDetailsDao.find(sourcePath);
-                if (cde != null) {
+                if (cde != null && cde.getClientType() != null) {
                     return new SourceEntity(cde);
                 }
                 return new SourceEntity(sourcePath);

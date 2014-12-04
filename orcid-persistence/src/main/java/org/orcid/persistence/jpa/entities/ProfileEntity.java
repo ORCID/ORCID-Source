@@ -132,6 +132,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     private IndexingStatus indexingStatus = IndexingStatus.PENDING;
     private Set<ProfileEventEntity> profileEvents;
     private boolean enableDeveloperTools;
+    private Date developerToolsEnabledDate;
     private float sendEmailFrequencyDays;
     private boolean enableNotifications;
 
@@ -917,6 +918,15 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
         this.salesforeId = salesforeId;
     }
 
+    @Column(name = "developer_tools_enabled_date")
+    public Date getDeveloperToolsEnabledDate() {
+        return developerToolsEnabledDate;
+    }
+
+    public void setDeveloperToolsEnabledDate(Date developerToolsEnabledDate) {
+        this.developerToolsEnabledDate = developerToolsEnabledDate;
+    }
+    
     @Override
     public int hashCode() {
         final int prime = 31;

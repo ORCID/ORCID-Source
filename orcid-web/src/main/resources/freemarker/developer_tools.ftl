@@ -35,14 +35,13 @@
 								<p><i><@orcid.msg 'developer_tools.note' /> <a href="./my-orcid"><@orcid.msg 'developer_tools.note.link.text' /></a><@orcid.msg 'developer_tools.note.link.point' /></i></p>																
 								<div class="centered bottomBuffer">
 									<#if hasVerifiedEmail>
-										<button class="btn btn-primary" ng-click="enableDeveloperTools()" ><@orcid.msg 'developer_tools.public_member.turn_on' /></button>
+										<button class="btn btn-primary" ng-click="acceptTerms()" ><@orcid.msg 'developer_tools.public_member.turn_on' /></button>
 									<#else>				
-										<div ng-cloak>		
-											<div ng-show="!verifyEmailSent">				
-												<button class="btn btn-primary" ng-click="verifyEmail()"><@orcid.msg 'developer_tools.public_member.verify.button' /></button>
-											</div>											
-											<div class="alert alert-warning alert-dismissible fade in" role="alert"  ng-show="verifyEmailSent">      											
-      											${springMacroRequestContext.getMessage("manage.email.verificationEmail")} {{verifyEmailObject.value}}${springMacroRequestContext.getMessage("manage.email.verificationEmail.verify_inbox")}
+										<div ng-cloak>
+											<button class="btn btn-primary bottomBuffer" ng-click="verifyEmail()"><@orcid.msg 'developer_tools.public_member.verify.button' /></button>		
+											<div class="red" ng-show="verifyEmailSent">      											
+      											${springMacroRequestContext.getMessage("manage.email.verificationEmail.sent.1")} {{verifyEmailObject.value}}${springMacroRequestContext.getMessage("manage.email.verificationEmail.sent.2")}<br />
+      											${springMacroRequestContext.getMessage("manage.email.verificationEmail.sent.3")}
     										</div>																						
 										</div>
 									</#if>
@@ -95,7 +94,8 @@
 					</div>
 					<div class="row">
 						<div class="col-md-12 col-sm-12 col-xs-12">
-							<p><strong><@orcid.msg 'developer_tools.public_member.enabled' /></strong></p>
+							<p class="reset"><strong><@orcid.msg 'developer_tools.public_member.enabled' /></strong></p>
+							<p><@orcid.msg 'developer_tools.public_member.enabled.terms' /></p>							
 							<p class="developer-tools-instructions"></p>
 						</div>
 					</div>
@@ -117,7 +117,7 @@
 						<div class="row">
 							<!-- Website -->
 							<div class="col-md-12 col-sm-12 col-xs-12 dt-website">
-								<p><a href="{{userCredentials.clientWebsite.value}}">{{userCredentials.clientWebsite.value}}</a></p>														
+								<p><a href="{{userCredentials.clientWebsite.value}}" target="_blank">{{userCredentials.clientWebsite.value}}</a></p>														
 							</div>							
 						</div>
 						<div class="row">
@@ -466,6 +466,37 @@
 			</div>
 		</div>
     </div>
+</script>
+
+<script type="text/ng-template" id="terms-and-conditions-modal">
+	<div class="lightbox-container">		
+		<div class="col-md-12 col-xs-12 col-sm-12">			
+			<div class="row bottomBuffer">
+				<div class="col-md-12 col-xs-12 col-sm-12">
+					<h1 class="bottomBuffer"><@orcid.msg 'developer_tools.public_member.terms.title' /></h1>
+				</div>
+				<div class="col-md-12 col-xs-12 col-sm-12">
+					<span><@orcid.msg 'developer_tools.public_member.terms.description' /></span>				
+				</div>				
+			</div> 		
+			<div class="row">
+				<div class="col-md-8 col-xs-8 col-sm-12">
+					<div class="row">
+						<span class="col-md-1 col-xs-1 col-sm-1 vertical-align-middle"><input type="checkbox" name="accepted" ng-model="accepted" /></span>	
+						<span class="col-md-11 col-xs-11 col-sm-11"><@orcid.msg 'developer_tools.public_member.terms.check' /></span>
+					</div>
+					<div class="row" ng-show="mustAcceptTerms">
+						<span class="col-md-1 col-xs-1 col-sm-1">&nbsp;</span>	
+						<span class="col-md-11 col-xs-11 col-sm-11 red"><@orcid.msg 'developer_tools.public_member.terms.must_accept' /></span>
+					</div>
+				</div>
+				<div class="col-md-4 col-xs-4 col-sm-12">					
+					<a href ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
+					<button class="btn btn-primary" ng-click="enableDeveloperTools()"><@orcid.msg 'freemarker.btncontinue' /></button>
+				</div>
+			</div>	
+		</div>
+	</div>
 </script>
 
 </@public>

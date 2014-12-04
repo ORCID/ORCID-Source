@@ -489,8 +489,12 @@
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-md-12 col-sm-12 col-xs-12">				
-				<a ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel'/></a>  <button class="btn blue" ng-click="bulkDeleteFunction()"><@orcid.msg 'freemarker.btnDelete'/></button>				
+			<div class="col-md-12 col-sm-12 col-xs-12">	
+				<div class="right">			
+					<a ng-click="closeModal()">
+						<@orcid.msg 'freemarker.btncancel'/>
+					</a>  <button class="btn blue" ng-click="bulkDeleteFunction()"><@orcid.msg 'freemarker.btnDelete'/></button>
+				</div>				
 			</div>
 		</div>		
 	</div>	

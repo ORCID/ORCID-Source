@@ -119,4 +119,6 @@
     <include file="/db/updates/new_way_of_doing_client_ids.xml" />
     
     <include file="/db/updates/change_column_name_on_orcid_props_table.xml" />
+    
+    <include file="/db/updates/modify_enable_developer_tools_data_type.xml" />
 </databaseChangeLog>
