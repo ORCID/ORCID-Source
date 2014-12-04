@@ -41,7 +41,7 @@ public class AuthorizationCodeCleanerCronJobImpl implements AuthorizationCodeCle
     private static final Logger LOG = LoggerFactory.getLogger(OrcidProfileManagerImpl.class);
     @Resource(name = "orcidOauth2AuthoriziationCodeDetailDao")
     private OrcidOauth2AuthoriziationCodeDetailDao orcidOauth2AuthoriziationCodeDetailDao;
-    @Value("${org.orcid.core.oauth.auth_code.expiration_minutes:10}")
+    @Value("${org.orcid.core.oauth.auth_code.expiration_minutes:1440}")
     private int authorizationCodeExpiration;
 
     @Transactional
