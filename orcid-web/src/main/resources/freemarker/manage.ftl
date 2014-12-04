@@ -537,7 +537,7 @@
             <div>
                 <form ng-submit="search()">
                     <input type="text" placeholder="${springMacroRequestContext.getMessage("manage_delegation.searchplaceholder")}" class="input-xlarge inline-input" ng-model="input.text"></input>
-                    <input type="submit" class="btn btn-primary" value="Search"></input>
+                    <input type="submit" class="btn btn-primary" value="<@orcid.msg 'search_for_delegates.btnSearch'/>"></input>
                 </form>
             </div>
             <div>
