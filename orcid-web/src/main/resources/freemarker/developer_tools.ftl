@@ -420,13 +420,13 @@
 						<div class="col-md-12 col-sm-12 col-xs-12">
 							<h3><@orcid.msg 'developer_tools.public_member.what_can_you_do' /></h3>
 							<p><@orcid.msg 'developer_tools.public_member.what_can_you_do.description' /></p>
-								<ul class="dotted">
-									<li><@orcid.msg 'developer_tools.public_member.what_can_you_do.bullet.1' /></li>
-									<li><@orcid.msg 'developer_tools.public_member.what_can_you_do.bullet.2' /></li>
-									<li><@orcid.msg 'developer_tools.public_member.what_can_you_do.bullet.3' /></li>
-									<li><@orcid.msg 'developer_tools.public_member.what_can_you_do.bullet.4' /></li>
-								</ul>
-								<p><@orcid.msg 'developer_tools.client_types.description.oauth2' /></p>
+							<ul class="dotted">
+								<li><@orcid.msg 'developer_tools.client_types.description.bullet.1' /></li>
+								<li><@orcid.msg 'developer_tools.client_types.description.bullet.2' /></li>
+								<li><@orcid.msg 'developer_tools.client_types.description.bullet.3' /></li>
+								<li><@orcid.msg 'developer_tools.client_types.description.bullet.4' /></li>
+							</ul>
+							<p><@orcid.msg 'developer_tools.client_types.description.oauth2' /></p>
 						</div>
 					</div>
 					<div class="row">
@@ -471,9 +471,9 @@
 <script type="text/ng-template" id="terms-and-conditions-modal">
 	<div class="lightbox-container">		
 		<div class="col-md-12 col-xs-12 col-sm-12">			
-			<div class="row bottomBuffer">
+			<div class="row bottomBuffer topBuffer">
 				<div class="col-md-12 col-xs-12 col-sm-12">
-					<h1 class="bottomBuffer"><@orcid.msg 'developer_tools.public_member.terms.title' /></h1>
+					<h2 class="bottomBuffer"><@orcid.msg 'developer_tools.public_member.terms.title' /></h2>
 				</div>
 				<div class="col-md-12 col-xs-12 col-sm-12">
 					<span><@orcid.msg 'developer_tools.public_member.terms.description' /></span>				
