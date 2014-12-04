@@ -24,7 +24,9 @@ import org.orcid.core.manager.SourceManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -56,6 +58,27 @@ public class SourceManagerImpl implements SourceManager {
         }
         // Normal web user
         return retrieveEffectiveOrcid(authentication);
+    }
+
+    @Override
+    public SourceEntity retrieveSourceEntity() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            return null;
+        }
+        // API
+        if (OAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
+            AuthorizationRequest authorizationRequest = ((OAuth2Authentication) authentication).getAuthorizationRequest();
+            String clientId = authorizationRequest.getClientId();
+            SourceEntity sourceEntity = new SourceEntity();
+            sourceEntity.setSourceClient(new ClientDetailsEntity(clientId));
+            return sourceEntity;
+        }
+        // Normal web user
+        String userOrcid = retrieveEffectiveOrcid(authentication);
+        SourceEntity sourceEntity = new SourceEntity();
+        sourceEntity.setSourceProfile(new ProfileEntity(userOrcid));
+        return sourceEntity;
     }
 
     private String retrieveEffectiveOrcid(Authentication authentication) {

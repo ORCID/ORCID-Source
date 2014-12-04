@@ -111,23 +111,38 @@
 			limitedClick="updateActivitiesVisibilityDefault('LIMITED', $event)"
 			privateClick="updateActivitiesVisibilityDefault('PRIVATE', $event)" />
     </div>                    
-    <div style="margin-bottom: 15px;">
+    <div>
         <div class="relative">
-            <label>${springMacroRequestContext.getMessage("claim.notificationemail")}</label>
-            <label class="checkbox">
-                <input type="checkbox" tabindex="7" name="sendOrcidChangeNotifications" ng-model="register.sendChangeNotifications.value"/>
-                ${springMacroRequestContext.getMessage("register.labelsendmenotifications")}
-            </label>
-            <label class="checkbox">
-                <input type="checkbox" tabindex="8" name="sendOrcidNews" ng-model="register.sendOrcidNews.value"/>
-                ${springMacroRequestContext.getMessage("register.labelsendinformation")}
-            </label>
-            <#-- Comment in when notifications stuff done
-            <label class="checkbox">
-                <input type="checkbox" tabindex="8" name="sendOrcidNews" ng-model="register.sendOrcidFeatureAnnouncements.value"/>
-                ${springMacroRequestContext.getMessage("register.labelsendfeatureannouncements")}
-            </label>
-            -->
+            <#if RequestParameters['notifications']??>
+                <label>${springMacroRequestContext.getMessage("claim.notifications")}</label>
+                <#--
+                <label class="checkbox">
+                    <input type="checkbox" tabindex="8" name="sendOrcidNews" ng-model="register.sendMemberUpdateRequests.value"/>
+                    ${springMacroRequestContext.getMessage("register.labelsendmemberupdaterequests")}
+                </label>
+                -->
+                <label>
+                    ${springMacroRequestContext.getMessage("claim.notificationsemailfrequency")}
+                    <select id="sendEmailFrequencyDays" name="sendEmailFrequencyDays"
+                        class="input-xlarge"
+                        ng-model="register.sendEmailFrequencyDays.value"
+                        <#list sendEmailFrequencies?keys as key>
+                            <option value="${key}"
+                                ng-selected="register.sendEmailFrequencyDays.value === ${key}">${sendEmailFrequencies[key]}</option>
+                        </#list>
+                    </select>
+                </label>
+            <#else>
+                <label>${springMacroRequestContext.getMessage("claim.notificationemail")}</label>
+                <label class="checkbox">
+                    <input type="checkbox" tabindex="7" name="sendOrcidChangeNotifications" ng-model="register.sendChangeNotifications.value"/>
+                    ${springMacroRequestContext.getMessage("register.labelsendmenotifications")}
+                </label>
+                <label class="checkbox">
+                    <input type="checkbox" tabindex="8" name="sendOrcidNews" ng-model="register.sendOrcidNews.value"/>
+                    ${springMacroRequestContext.getMessage("register.labelsendinformation")}
+                </label>
+            </#if>
          </div>
 	</div>
     <div>

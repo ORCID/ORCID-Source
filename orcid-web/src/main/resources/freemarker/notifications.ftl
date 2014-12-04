@@ -20,29 +20,43 @@
 <@protected nav="notifications">
 <#escape x as x?html>
 <div class="col-md-3 lhs left-aside">
-	<div class="workspace-profile">
-		<#include "includes/id_banner.ftl"/>
-	</div>
+    <div class="workspace-profile">
+        <#include "includes/id_banner.ftl"/>
+    </div>
 </div>
-<div class="col-md-9 right-aside">
-	<h1>Notifications</h1>
-	<div ng-controller="NotificationsCtrl">
-		<div ng-repeat="notification in notifications">
-			<div ng-cloak>
-				<span ng-click="toggleDisplayBody(notification.putCode.path)">
-					<i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':!displayBody[notification.putCode.path]}"></i>
-					<strong>{{notification.subject}}</strong> from <strong ng-show="notification.source">{{notification.source.sourceName}}</strong><strong ng-hide="notification.source">ORCID</strong> at <strong>{{notification.createdDate|date:'yyyy-MM-ddTHH:mm'}}</strong>
-					<i ng-hide="notification.readDate" class="glyphicon glyphicon-bell"></i>
-				</span>
-				<span><a href="" ng-click="archive(notification.putCode.path)" class="glyphicon glyphicon-trash grey"></a></span>
-			</div>
-			<iframe ng-show="displayBody[notification.putCode.path]" ng-src="{{ '<@spring.url '/notifications'/>/' + notification.putCode.path + '/notification.html'}}" frameborder="0" width="100%" height="300"></iframe>
-			<hr></hr>
-		</div>
-		<div ng-cloak>
-			<button ng-show="areMore()" ng-click="showMore()" class="btn" type="submit" id="show-more-button">Show more</button>
-		</div>
-	</div>
+<div class="col-md-9 right-aside" ng-controller="NotificationsCtrl" >
+    <h1>${springMacroRequestContext.getMessage("notifications.title")}</h1>
+    <div ng-hide="notifications.length > 0">${springMacroRequestContext.getMessage("notifications.none")}</div>
+    <div ng-show="notifications.length > 0">
+        <table class="notifications" width="100%" >
+            <tr>
+                <th>${springMacroRequestContext.getMessage("notifications.from")}</th>
+                <th>${springMacroRequestContext.getMessage("notifications.subject")}</th>
+                <th>${springMacroRequestContext.getMessage("notifications.date")}</th>
+            </tr>
+            <tr ng-repeat-start="notification in notifications" ng-class="{unread: !notification.readDate}" class="header">
+                <td ng-click="toggleDisplayBody(notification.putCode.path)">
+                    <i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':!displayBody[notification.putCode.path]}"></i>
+                    <span ng-show="notification.source" ng-cloak>{{notification.source.sourceName}}</span><span ng-hide="notification.source" ng-cloak>ORCID</span>
+                </td>
+                <td ng-click="toggleDisplayBody(notification.putCode.path)"><span ng-cloak>{{notification.subject}}</span></td>
+                <td ng-click="toggleDisplayBody(notification.putCode.path)"><span ng-cloak>{{notification.createdDate|date:'yyyy-MM-ddTHH:mm'}}</span></td>
+                <td>
+                    <span><a href="" ng-click="archive(notification.putCode.path)" class="glyphicon glyphicon-folder-open grey" title="${springMacroRequestContext.getMessage("notifications.archive")}"></a></span>
+                </td>
+            </tr>
+            <tr ng-repeat-end ng-show="displayBody[notification.putCode.path]">
+                <td colspan="4">
+                    <iframe ng-src="{{ '<@spring.url '/notifications'/>/' + notification.notificationType + '/' + notification.putCode.path + '/notification.html'}}" frameborder="0" width="100%" height="300"></iframe>
+                </td>
+            </tr>
+        </table>
+        <div ng-cloak>
+            <button ng-show="areMore()" ng-click="showMore()" class="btn" type="submit" id="show-more-button">Show more</button>
+            <br></br>
+            <br></br>
+        </div>
+    </div>
 </div>
 </#escape>
 </@protected>

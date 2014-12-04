@@ -16,6 +16,7 @@
  */
 package org.orcid.core.manager;
 
+import java.util.Locale;
 import java.util.Map;
 
 public interface TemplateManager {
@@ -32,5 +33,7 @@ public interface TemplateManager {
      * @return A string with the template text filled in with the param values.
      */
     String processTemplate(String templateName, Map<String, Object> params);
+    
+    String processTemplate(String templateName, Map<String, Object> params, Locale locale);
 
 }

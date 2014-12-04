@@ -24,13 +24,17 @@
 package org.orcid.jaxb.model.notification;
 
 import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.datatype.XMLGregorianCalendar;
+
+import org.orcid.jaxb.model.common.PutCode;
+import org.orcid.jaxb.model.common.Source;
+import org.orcid.jaxb.model.notification.NotificationType;
 
 /**
  * <p>
@@ -47,9 +51,6 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *       &lt;sequence>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}putCode" minOccurs="0"/>
  *         &lt;element ref="{http://www.orcid.org/ns/orcid}notificationType"/>
- *         &lt;element name="subject" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="bodyText" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="bodyHtml" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="createdDate" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/>
  *         &lt;element name="sentDate" type="{http://www.w3.org/2001/XMLSchema}dateTime"/>
  *         &lt;element name="readDate" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/>
@@ -64,20 +65,13 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "putCode", "notificationType", "subject", "bodyText", "bodyHtml", "createdDate", "sentDate", "readDate", "archivedDate", "source" })
-@XmlRootElement(name = "notification")
-public class Notification implements Serializable {
+@XmlTransient
+abstract public class Notification implements Serializable {
 
     private final static long serialVersionUID = 1L;
     protected PutCode putCode;
     @XmlElement(required = true)
     protected NotificationType notificationType;
-    @XmlElement(required = true)
-    protected String subject;
-    @XmlElement(required = true)
-    protected String bodyText;
-    @XmlElement(required = true)
-    protected String bodyHtml;
     @XmlSchemaType(name = "dateTime")
     protected XMLGregorianCalendar createdDate;
     @XmlElement(required = true)
@@ -129,69 +123,6 @@ public class Notification implements Serializable {
      */
     public void setNotificationType(NotificationType value) {
         this.notificationType = value;
-    }
-
-    /**
-     * Gets the value of the subject property.
-     * 
-     * @return possible object is {@link String }
-     * 
-     */
-    public String getSubject() {
-        return subject;
-    }
-
-    /**
-     * Sets the value of the subject property.
-     * 
-     * @param value
-     *            allowed object is {@link String }
-     * 
-     */
-    public void setSubject(String value) {
-        this.subject = value;
-    }
-
-    /**
-     * Gets the value of the bodyText property.
-     * 
-     * @return possible object is {@link String }
-     * 
-     */
-    public String getBodyText() {
-        return bodyText;
-    }
-
-    /**
-     * Sets the value of the bodyText property.
-     * 
-     * @param value
-     *            allowed object is {@link String }
-     * 
-     */
-    public void setBodyText(String value) {
-        this.bodyText = value;
-    }
-
-    /**
-     * Gets the value of the bodyHtml property.
-     * 
-     * @return possible object is {@link String }
-     * 
-     */
-    public String getBodyHtml() {
-        return bodyHtml;
-    }
-
-    /**
-     * Sets the value of the bodyHtml property.
-     * 
-     * @param value
-     *            allowed object is {@link String }
-     * 
-     */
-    public void setBodyHtml(String value) {
-        this.bodyHtml = value;
     }
 
     /**
