@@ -1,0 +1,46 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+        
+        <changeSet id="INSERT-NOTIFICATION-SCOPE" author="Will Simpson" dbms="postgresql">
+        <createProcedure>
+<![CDATA[
+CREATE OR REPLACE FUNCTION insert_notification_scope() RETURNS VOID AS $$
+DECLARE
+    client_id VARCHAR;
+BEGIN
+    RAISE NOTICE 'Inserting notification scopes...';
+
+    FOR client_id IN SELECT * FROM client_details cd LEFT JOIN client_scope cs ON cs.client_details_id = cd.client_details_id AND cs.scope_type = '/notification' WHERE cd.client_type IS NOT NULL AND cs.client_details_id IS NULL
+    LOOP
+        RAISE NOTICE 'Found member % without notification scope', client_id;
+        EXECUTE 'INSERT INTO client_scope (client_details_id, scope_type, date_created, last_modified) VALUES ($1, ''/notification'', now(), now())' USING client_id;
+    END LOOP;
+
+    RAISE NOTICE 'Finished inserting notification scopes';
+    RETURN;
+END;
+$$ LANGUAGE plpgsql;
+]]>
+        </createProcedure>
+        <sql>select insert_notification_scope();</sql>
+    </changeSet>
+    
+</databaseChangeLog>

@@ -152,30 +152,6 @@
         <addAutoIncrement tableName="notification_activity" columnName="id" columnDataType="bigint" />
     </changeSet>
     
-    <changeSet id="INSERT-NOTIFICATION-SCOPE" author="Will Simpson" dbms="postgresql">
-        <createProcedure>
-<![CDATA[
-CREATE OR REPLACE FUNCTION insert_notification_scope() RETURNS VOID AS $$
-DECLARE
-    client_id VARCHAR;
-BEGIN
-    RAISE NOTICE 'Inserting notification scopes...';
-
-    FOR client_id IN SELECT * FROM client_details cd LEFT JOIN client_scope cs ON cs.client_details_id = cd.client_details_id AND cs.scope_type = '/notification' WHERE cd.client_type IS NOT NULL AND cs.client_details_id IS NULL
-    LOOP
-        RAISE NOTICE 'Found member % without notification scope', client_id;
-        EXECUTE 'INSERT INTO client_scope (client_details_id, scope_type, date_created, last_modified) VALUES ($1, ''/notification'', now(), now())' USING client_id;
-    END LOOP;
-
-    RAISE NOTICE 'Finished inserting notification scopes';
-    RETURN;
-END;
-$$ LANGUAGE plpgsql;
-]]>
-        </createProcedure>
-        <sql>select insert_notification_scope();</sql>
-    </changeSet>
-    
     <changeSet id="ADD-PREFERENCE-FOR-MEMBER-UPDATE-REQUESTS" author="Will Simpson">
         <addColumn tableName="profile">
             <column name="send_member_update_requests" type="boolean" />
