@@ -103,7 +103,7 @@ v
                 <send-email-frequency-days>7.0</send-email-frequency-days>
                 <send-change-notifications>false</send-change-notifications> 
                 <send-orcid-news>false</send-orcid-news>
-                <send-orcid-feature-announcements>false</send-orcid-feature-announcements>
+                <send-member-update-requests>false</send-member-update-requests>
                 <activities-visibility-default>public</activities-visibility-default>              
             </preferences>
         </orcid-internal>

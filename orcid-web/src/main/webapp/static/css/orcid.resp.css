@@ -4416,6 +4416,25 @@ ul.oauth-icons li {
 	display: inline;
 }
 
+.notifications td {
+	border-top-style: solid;
+	border-width: 1px;
+	border-color: #DDDDDD;
+}
+
+.notifications th,td {
+	padding-left: 8px;
+	vertical-align: top;
+}
+
+.notifications th,td :hover {
+    cursor: pointer;
+}
+
+.notifications .unread {
+	font-weight: bold;
+}
+
 .vertical-align-middle {
 	line-height: 0px;
 }

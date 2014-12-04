@@ -12,10 +12,10 @@
 				<xs:element type="xs:string" name="subject"/>
 				<xs:element type="xs:string" name="bodyText"/>
 				<xs:element type="xs:string" name="bodyHtml"/>
-				<xs:element type="xs:dateTime" name="createdDate" minOccurs="0"/>
-				<xs:element type="xs:dateTime" name="sentDate"/>
-				<xs:element type="xs:dateTime" name="readDate" minOccurs="0"/>
-				<xs:element type="xs:dateTime" name="archivedDate" minOccurs="0"/>
+				<xs:element ref="orcid:createdDate" minOccurs="0"/>
+				<xs:element ref="orcid:sentDate"/>
+				<xs:element ref="orcid:readDate" minOccurs="0"/>
+				<xs:element ref="orcid:archivedDate" minOccurs="0"/>
 				<xs:element ref="orcid:source" minOccurs="0"/>
 			</xs:sequence>
 		</xs:complexType>
@@ -23,7 +23,6 @@
 	<xs:element name="notificationType">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:enumeration value="RECORD_UPDATED_BY_MEMBER"/>
 				<xs:enumeration value="CUSTOM"/>
 			</xs:restriction>
 		</xs:simpleType>

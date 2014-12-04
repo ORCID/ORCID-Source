@@ -23,7 +23,9 @@ import java.util.ResourceBundle;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.LocaleUtils;
 import org.orcid.core.manager.CountryManager;
+import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.utils.FunctionsOverCollections;
 import org.orcid.utils.OrcidStringUtils;
@@ -36,10 +38,9 @@ import org.springframework.context.i18n.LocaleContextHolder;
 public class LocaleManagerImpl implements LocaleManager {
 
     private MessageSource messageSource;
-    
+
     @Resource
     protected CountryManager countryManager;
-
 
     @Autowired
     public void setMessageSource(MessageSource messageSource) {
@@ -49,6 +50,18 @@ public class LocaleManagerImpl implements LocaleManager {
     @Override
     public Locale getLocale() {
         return LocaleContextHolder.getLocale();
+    }
+
+    @Override
+    public Locale getLocalFromOrcidProfile(OrcidProfile orcidProfile) {
+        Locale locale = null;
+        if (orcidProfile.getOrcidPreferences() != null && orcidProfile.getOrcidPreferences().getLocale() != null) {
+            orcidProfile.getOrcidPreferences().getLocale().value();
+            locale = LocaleUtils.toLocale(orcidProfile.getOrcidPreferences().getLocale().value());
+        } else {
+            locale = LocaleUtils.toLocale("en");
+        }
+        return locale;
     }
 
     @Override
@@ -74,17 +87,16 @@ public class LocaleManagerImpl implements LocaleManager {
     public Map<String, String> getCountries(Locale locale) {
         ResourceBundle resource = ResourceBundle.getBundle("i18n/messages", locale, new UTF8Control());
         Map<String, String> dbCountries = countryManager.retrieveCountriesAndIsoCodes();
-        Map<String, String> countries = new LinkedHashMap<String, String>();                
-        for(String key : dbCountries.keySet()){  
+        Map<String, String> countries = new LinkedHashMap<String, String>();
+        for (String key : dbCountries.keySet()) {
             countries.put(key, resource.getString(buildInternationalizationKey(CountryIsoEntity.class, key)));
         }
-        FunctionsOverCollections.sortMapsByValues(countries);        
+        FunctionsOverCollections.sortMapsByValues(countries);
         return countries;
     }
-    
+
     public static String buildInternationalizationKey(Class theClass, String key) {
         return theClass.getName() + '.' + key;
     }
-
 
 }

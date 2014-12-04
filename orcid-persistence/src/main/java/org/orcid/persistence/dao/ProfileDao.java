@@ -107,7 +107,7 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     void updateSecurityQuestion(String orcid, Integer securityQuestionId, String encryptedSecurityAnswer);
 
-    void updatePreferences(String orcid, boolean sendChangeNotifications, boolean sendOrcidNews, boolean sendOrcidFeatureAnnouncements,
+    void updatePreferences(String orcid, boolean sendChangeNotifications, boolean sendOrcidNews, boolean sendMemberUpdateRequests,
             Visibility activitiesVisibilityDefault, boolean enableDeveloperTools, float sendEmailFrequencyDays);
 
     List<ProfileEntity> findProfilesByOrcidType(OrcidType type);

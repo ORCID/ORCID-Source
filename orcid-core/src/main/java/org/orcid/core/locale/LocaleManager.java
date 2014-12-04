@@ -19,6 +19,7 @@ package org.orcid.core.locale;
 import java.util.Locale;
 import java.util.Map;
 
+import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.pojo.Local;
 
 public interface LocaleManager {
@@ -28,6 +29,8 @@ public interface LocaleManager {
      */
     Locale getLocale();
 
+    Locale getLocalFromOrcidProfile(OrcidProfile orcidProfile);
+
     /**
      * @param messageCode
      *            The code of the message in the messages properties file
@@ -36,9 +39,9 @@ public interface LocaleManager {
      * @return The localized message (using the locale for the current thread)
      */
     String resolveMessage(String messageCode, Object... messageParams);
-    
+
     public Local getJavascriptMessages(Locale locale);
-    
+
     public Map<String, String> getCountries(Locale locale);
 
 }

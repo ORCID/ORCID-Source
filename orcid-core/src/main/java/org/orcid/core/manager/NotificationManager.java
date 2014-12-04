@@ -61,4 +61,6 @@ public interface NotificationManager {
 
     public Notification findByOrcidAndId(String orcid, Long id);
 
+    public Notification createNotification(String orcid, Notification notification);
+
 }
