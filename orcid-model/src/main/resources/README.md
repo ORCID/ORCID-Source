@@ -12,6 +12,14 @@
 
 #### XSD Release Candidate(s)
 
+* **[ORCID Message 1.2_rc7](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/orcid-message-1.2_rc7.xsd)** <br>_Contains: Adds Web of Science IDs_
+    * API Base URLs - PRODUCTION
+        * Public API:   http://pub.orcid.org/v1.2_rc7/
+        * Member API:   https://api.orcid.org/v1.2_rc7/
+    * API Base URLs - SANDBOX
+        * Public API:   http://pub.sandbox.orcid.org/v1.2_rc7/
+        * Member API:   http://api.sandbox.orcid.org/v1.2_rc7/
+
 * **[ORCID Message 1.2_rc6](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/orcid-message-1.2_rc6.xsd)** <br>_Contains: Migrates external-id-orcid to external-id-source_
     * API Base URLs - PRODUCTION
         * Public API:   http://pub.orcid.org/v1.2_rc6/
