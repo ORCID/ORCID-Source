@@ -3836,6 +3836,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actBulkSr
     $scope.showElement = {};
     $scope.delCountVerify = 0;
     $scope.bulkDeleteCount = 0;
+    $scope.bulkDeleteSubmit = false;
 
     $scope.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
     $scope.sort = function(key) {
@@ -3879,7 +3880,10 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actBulkSr
     };
 
     $scope.deleteBulk = function () {
-        if ($scope.delCountVerify != parseInt($scope.bulkDeleteCount)) return;
+        if ($scope.delCountVerify != parseInt($scope.bulkDeleteCount)) {
+            $scope.bulkDeleteSubmit = true;
+            return;
+        }
         var delPuts = new Array();
         for (var idx in worksSrvc.groups)
             if ($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value])
@@ -3894,6 +3898,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actBulkSr
     $scope.deleteBulkConfirm = function(idx) {
         $scope.delCountVerify = 0;
         $scope.bulkDeleteCount = 0;
+        $scope.bulkDeleteSubmit = false;
         for (var idx in worksSrvc.groups)
             console.log($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value]);
         for (var idx in worksSrvc.groups)
