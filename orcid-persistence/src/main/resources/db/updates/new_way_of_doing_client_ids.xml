@@ -75,7 +75,7 @@
         </addColumn>
     </changeSet>
     
-    <changeSet id="POPULATE-CLIENT-SOURCE-ID-AGAIN" author="Will Simpson" dbms="postgresql">
+    <changeSet id="POPULATE-CLIENT-SOURCE-ID" author="Will Simpson" dbms="postgresql">
         <sql>
             UPDATE email e SET client_source_id = c.client_details_id
             FROM client_details c
@@ -118,7 +118,7 @@
         </sql>
     </changeSet>
     
-    <changeSet id="CORRECT-SOURCE-ID-FOR-PUBLIC-CLIENT-OWNERS" author="Will Simpson" dbms="postgresql">
+    <changeSet id="CORRECT-SOURCE-ID-FOR-PUBLIC-CLIENT-OWNERS-AGAIN" author="Will Simpson" dbms="postgresql">
         <sql>
             UPDATE email e SET source_id = client_source_id, client_source_id = NULL
             WHERE e.client_source_id IN (SELECT client_details_id FROM client_details WHERE client_type IS NULL);
