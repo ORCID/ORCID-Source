@@ -419,15 +419,6 @@ public class ManageProfileController extends BaseWorkspaceController {
         return securityQuestionsWithMessages;
     }
 
-    @ModelAttribute("sendEmailFrequencies")
-    public Map<String, String> retrieveRolesAsMap() {
-        Map<String, String> map = new LinkedHashMap<>();
-        for (SendEmailFrequency freq : SendEmailFrequency.values()) {
-            map.put(String.valueOf(freq.value()), getMessage(buildInternationalizationKey(SendEmailFrequency.class, freq.name())));
-        }
-        return map;
-    }
-
     @RequestMapping(value = "/view-account-settings", method = RequestMethod.GET)
     public String viewAccountSettings() {
         // Defunct page, redirect to main account page in case of bookmarks.

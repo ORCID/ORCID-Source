@@ -24,7 +24,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 
@@ -144,7 +143,7 @@ public class NotificationManagerTest extends BaseTest {
             NotificationEntity latestNotification = notificationDao.findLatestByOrcid(testOrcid);
             assertNotNull(latestNotification);
             assertTrue(latestNotification.getId() > minNotificationId);
-            assertEquals(NotificationType.RECORD_UPDATED_BY_MEMBER, latestNotification.getNotificationType());
+            assertEquals(NotificationType.CUSTOM, latestNotification.getNotificationType());
         }
     }
 

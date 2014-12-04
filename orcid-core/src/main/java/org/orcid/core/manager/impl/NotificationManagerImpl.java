@@ -17,7 +17,6 @@
 package org.orcid.core.manager.impl;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URI;
 import java.text.MessageFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -36,6 +35,7 @@ import org.orcid.core.constants.EmailConstants;
 import org.orcid.core.manager.CustomEmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.NotificationManager;
+import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.TemplateManager;
 import org.orcid.jaxb.model.message.ApplicationSummary;
 import org.orcid.jaxb.model.message.Applications;
@@ -49,6 +49,7 @@ import org.orcid.jaxb.model.message.SendChangeNotifications;
 import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.notification.Notification;
 import org.orcid.jaxb.model.notification.NotificationType;
+import org.orcid.jaxb.model.notification.custom.NotificationCustom;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.ProfileDao;
@@ -64,7 +65,6 @@ import org.orcid.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -96,8 +96,6 @@ public class NotificationManagerImpl implements NotificationManager {
     private static final String WILDCARD_WEBSITE = "${website}";
 
     private static final String WILDCARD_DESCRIPTION = "${description}";
-    
-    
 
     @Resource
     private MessageSource messages;
@@ -111,7 +109,7 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Resource
     private OrcidUrlManager orcidUrlManager;
-    
+
     private boolean apiRecordCreationEmailEnabled;
 
     private TemplateManager templateManager;
@@ -132,6 +130,9 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Resource
     private NotificationDao notificationDao;
+
+    @Resource
+    private SourceManager sourceManager;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationManagerImpl.class);
 
@@ -262,8 +263,8 @@ public class NotificationManagerImpl implements NotificationManager {
         }
         return messages.getMessage(code, null, locale);
     }
-    
-    private String getSubject(String code, OrcidProfile orcidProfile, String ... args) {
+
+    private String getSubject(String code, OrcidProfile orcidProfile, String... args) {
         Locale locale = null;
         if (orcidProfile.getOrcidPreferences() != null && orcidProfile.getOrcidPreferences().getLocale() != null) {
             orcidProfile.getOrcidPreferences().getLocale().value();
@@ -373,8 +374,8 @@ public class NotificationManagerImpl implements NotificationManager {
         // Generate html from template
         String html = templateManager.processTemplate("amend_email_html.ftl", templateParams);
 
-        Notification notification = new Notification();
-        notification.setNotificationType(NotificationType.RECORD_UPDATED_BY_MEMBER);
+        NotificationCustom notification = new NotificationCustom();
+        notification.setNotificationType(NotificationType.CUSTOM);
         notification.setSubject(subject);
         notification.setBodyText(body);
         notification.setBodyHtml(html);
@@ -470,7 +471,8 @@ public class NotificationManagerImpl implements NotificationManager {
 
         String emailName = deriveEmailFriendlyName(createdProfile);
         String orcid = createdProfile.getOrcidIdentifier().getPath();
-        String verificationUrl = createClaimVerificationUrl(createdProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), orcidUrlManager.getBaseUrl());
+        String verificationUrl = createClaimVerificationUrl(createdProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(),
+                orcidUrlManager.getBaseUrl());
         String email = createdProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
 
         String creatorName = "";
@@ -692,17 +694,21 @@ public class NotificationManagerImpl implements NotificationManager {
 
         // Send message
         if (apiRecordCreationEmailEnabled) {
-            mailGunManager.sendEmail(DELEGATE_NOTIFY_ORCID_ORG, primaryEmail.getValue(), getSubject("email.subject.admin_as_delegate", managed, trustedOrcidName), null, htmlBody);
+            mailGunManager.sendEmail(DELEGATE_NOTIFY_ORCID_ORG, primaryEmail.getValue(), getSubject("email.subject.admin_as_delegate", managed, trustedOrcidName), null,
+                    htmlBody);
             profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.ADMIN_PROFILE_DELEGATION_REQUEST));
         } else {
             LOGGER.debug("Not sending admin delegate email, because API record creation email option is disabled. Message would have been: {}", htmlBody);
         }
     }
 
-    private void createNotification(String orcid, Notification notification) {
+    @Override
+    public Notification createNotification(String orcid, Notification notification) {
         NotificationEntity notificationEntity = notificationAdapter.toNotificationEntity(notification);
         notificationEntity.setProfile(profileDao.find(orcid));
+        notificationEntity.setSource(sourceManager.retrieveSourceEntity());
         notificationDao.persist(notificationEntity);
+        return notificationAdapter.toNotification(notificationEntity);
     }
 
     @Override
@@ -724,5 +730,5 @@ public class NotificationManagerImpl implements NotificationManager {
     public Notification findByOrcidAndId(String orcid, Long id) {
         return notificationAdapter.toNotification(notificationDao.findByOricdAndId(orcid, id));
     }
-    
+
 }

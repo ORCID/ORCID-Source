@@ -19,13 +19,13 @@
 -->
 <notification xmlns="http://www.orcid.org/ns/orcid"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-notification-1.0.xsd">
+    xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-notification-custom-1.0.xsd">
 	<putCode>
 		<uri>http://orcid.org/1234-5678-1234-5678/notifications/1</uri>
 		<path>1234-5678-1234-5678/notifications/1</path>
 		<host>http://orcid.org</host>
 	</putCode>
-    <notificationType>RECORD_UPDATED_BY_MEMBER</notificationType>
+    <notificationType>CUSTOM</notificationType>
     <subject>Important Notification from ORCID</subject>
     <bodyText>This is an email with important info.
     </bodyText>

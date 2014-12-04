@@ -1537,11 +1537,26 @@ function EditTableCtrl($scope) {
         $scope.showEditEmailPreferences = !$scope.showEditEmailPreferences;
         $scope.emailPreferencesUpdateToggleText();
     };
-
-    // init privacy preferences
+    
+    // init email preferences
     $scope.showEditEmailPreferences = (window.location.hash === "#editEmailPreferences");
     $scope.emailPreferencesUpdateToggleText();
+    
+    // email frequency edit row
+    $scope.emailFrequencyUpdateToggleText = function () {
+        if ($scope.showEditEmailFrequency) $scope.emailFrequencyToggleText = om.get("manage.editTable.hide");
+        else $scope.emailFrequencyToggleText = om.get("manage.editTable.edit");
+    };
 
+    $scope.toggleEmailFrequencyEdit = function() {
+        $scope.showEditEmailFrequency = !$scope.showEditEmailFrequency;
+        $scope.emailFrequencyUpdateToggleText();
+    };
+
+    // init email frequency
+    $scope.showEditEmailFrequency = (window.location.hash === "#editEmailFrequency");
+    $scope.emailFrequencyUpdateToggleText();
+    
     // security question edit row
     $scope.securityQuestionUpdateToggleText = function () {
         if ($scope.showEditSecurityQuestion) $scope.securityQuestionToggleText = om.get("manage.editTable.hide");
@@ -1575,6 +1590,11 @@ function EditTableCtrl($scope) {
 };
 
 function NotificationPreferencesCtrl($scope, $compile, emailSrvc, prefsSrvc, emailSrvc) {
+    $scope.prefsSrvc = prefsSrvc;
+    $scope.emailSrvc = emailSrvc;
+};
+
+function EmailFrequencyCtrl($scope, $compile, emailSrvc, prefsSrvc, emailSrvc) {
     $scope.prefsSrvc = prefsSrvc;
     $scope.emailSrvc = emailSrvc;
 };
@@ -3816,6 +3836,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actBulkSr
     $scope.showElement = {};
     $scope.delCountVerify = 0;
     $scope.bulkDeleteCount = 0;
+    $scope.bulkDeleteSubmit = false;
 
     $scope.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
     $scope.sort = function(key) {
@@ -3859,7 +3880,10 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actBulkSr
     };
 
     $scope.deleteBulk = function () {
-        if ($scope.delCountVerify != parseInt($scope.bulkDeleteCount)) return;
+        if ($scope.delCountVerify != parseInt($scope.bulkDeleteCount)) {
+            $scope.bulkDeleteSubmit = true;
+            return;
+        }
         var delPuts = new Array();
         for (var idx in worksSrvc.groups)
             if ($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value])
@@ -3874,6 +3898,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actBulkSr
     $scope.deleteBulkConfirm = function(idx) {
         $scope.delCountVerify = 0;
         $scope.bulkDeleteCount = 0;
+        $scope.bulkDeleteSubmit = false;
         for (var idx in worksSrvc.groups)
             console.log($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value]);
         for (var idx in worksSrvc.groups)
@@ -5933,7 +5958,7 @@ function SSOPreferencesCtrl($scope, $compile, $sce, emailSrvc) {
             scrolling: true
         });
 
-        $.colorbox.resize({width:"600px" , height:"350px"});
+        $.colorbox.resize({width:"590px"});
     };
     
     $scope.enableDeveloperTools = function() {

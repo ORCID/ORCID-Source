@@ -39,7 +39,7 @@
 									<#else>				
 										<div ng-cloak>
 											<button class="btn btn-primary bottomBuffer" ng-click="verifyEmail()"><@orcid.msg 'developer_tools.public_member.verify.button' /></button>		
-											<div ng-show="verifyEmailSent">      											
+											<div class="red" ng-show="verifyEmailSent">      											
       											${springMacroRequestContext.getMessage("manage.email.verificationEmail.sent.1")} {{verifyEmailObject.value}}${springMacroRequestContext.getMessage("manage.email.verificationEmail.sent.2")}<br />
       											${springMacroRequestContext.getMessage("manage.email.verificationEmail.sent.3")}
     										</div>																						
@@ -420,13 +420,13 @@
 						<div class="col-md-12 col-sm-12 col-xs-12">
 							<h3><@orcid.msg 'developer_tools.public_member.what_can_you_do' /></h3>
 							<p><@orcid.msg 'developer_tools.public_member.what_can_you_do.description' /></p>
-								<ul class="dotted">
-									<li><@orcid.msg 'developer_tools.public_member.what_can_you_do.bullet.1' /></li>
-									<li><@orcid.msg 'developer_tools.public_member.what_can_you_do.bullet.2' /></li>
-									<li><@orcid.msg 'developer_tools.public_member.what_can_you_do.bullet.3' /></li>
-									<li><@orcid.msg 'developer_tools.public_member.what_can_you_do.bullet.4' /></li>
-								</ul>
-								<p><@orcid.msg 'developer_tools.client_types.description.oauth2' /></p>
+							<ul class="dotted">
+								<li><@orcid.msg 'developer_tools.client_types.description.bullet.1' /></li>
+								<li><@orcid.msg 'developer_tools.client_types.description.bullet.2' /></li>
+								<li><@orcid.msg 'developer_tools.client_types.description.bullet.3' /></li>
+								<li><@orcid.msg 'developer_tools.client_types.description.bullet.4' /></li>
+							</ul>
+							<p><@orcid.msg 'developer_tools.client_types.description.oauth2' /></p>
 						</div>
 					</div>
 					<div class="row">
@@ -471,14 +471,7 @@
 <script type="text/ng-template" id="terms-and-conditions-modal">
 	<div class="lightbox-container">		
 		<div class="col-md-12 col-xs-12 col-sm-12">			
-			<div class="row">
-				<div class="col-push-3 col-md-9">
-		    		<div class="logo bottomBuffer">
-		       			<h1 class="oauth_h1_margin"><a href="${aboutUri}"><img src="${staticCdn}/img/orcid-logo.png" alt="ORCID logo" /></a></h1>		        		
-				    </div>
-	    		</div>
-			</div>
-			<div class="row bottomBuffer">
+			<div class="row bottomBuffer topBuffer">
 				<div class="col-md-12 col-xs-12 col-sm-12">
 					<h2 class="bottomBuffer"><@orcid.msg 'developer_tools.public_member.terms.title' /></h2>
 				</div>
@@ -489,7 +482,7 @@
 			<div class="row">
 				<div class="col-md-8 col-xs-8 col-sm-12">
 					<div class="row">
-						<span class="col-md-1 col-xs-1 col-sm-1"><input type="checkbox" name="accepted" ng-model="accepted" /></span>	
+						<span class="col-md-1 col-xs-1 col-sm-1 vertical-align-middle"><input type="checkbox" name="accepted" ng-model="accepted" /></span>	
 						<span class="col-md-11 col-xs-11 col-sm-11"><@orcid.msg 'developer_tools.public_member.terms.check' /></span>
 					</div>
 					<div class="row" ng-show="mustAcceptTerms">
@@ -498,7 +491,7 @@
 					</div>
 				</div>
 				<div class="col-md-4 col-xs-4 col-sm-12">					
-					<button id="" class="btn" type="reset" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></button>
+					<a href ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
 					<button class="btn btn-primary" ng-click="enableDeveloperTools()"><@orcid.msg 'freemarker.btncontinue' /></button>
 				</div>
 			</div>	

@@ -1953,6 +1953,13 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 	color: #ee0000;
 }
 
+.red-error {
+    color: #ee0000 !important;
+}
+.red-border-error {
+    border:1px solid #ee0000 !important;
+}
+
 .privacy-menu{
 	min-width: 91px;
 }

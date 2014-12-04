@@ -108,7 +108,7 @@ public class OauthAuthorizationCodeTest extends DBUnitTest {
 
     private String redirectUri;
         
-    @Value("${org.orcid.core.oauth.auth_code.expiration_minutes:10}")
+    @Value("${org.orcid.core.oauth.auth_code.expiration_minutes:1440}")
     private int authorizationCodeExpiration;
 
     private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml",

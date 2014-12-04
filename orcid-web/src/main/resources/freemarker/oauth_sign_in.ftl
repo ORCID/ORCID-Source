@@ -29,13 +29,13 @@
             <div>
                 <label for="userId"><@orcid.msg 'oauth_sign_in.labelemailorID'/></label>
                 <div class="relative">
-                   <input type="text" id="userId" name="userId" value="${userId}" placeholder="Email or iD" class="input-xlarge">
+                   <input type="text" id="userId" name="userId" value="${userId}" placeholder="<@orcid.msg 'login.username'/>" class="input-xlarge">
                 </div>
             </div>
             <div id="passwordField">
                 <label for="password"><@orcid.msg 'oauth_sign_in.labelpassword'/></label>
                 <div class="relative">
-                   <input type="password" id="password" name="password" value="" placeholder="Password" class="input-xlarge">
+                   <input type="password" id="password" name="password" value="" placeholder="<@orcid.msg 'login.password'/>" class="input-xlarge">
                 </div>
             </div>
             <div id="buttons">

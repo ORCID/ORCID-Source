@@ -21,12 +21,18 @@
 // Generated on: 2014.07.22 at 06:46:00 PM BST 
 //
 
-package org.orcid.jaxb.model.notification;
+package org.orcid.jaxb.model.notification.custom;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementDecl;
 import javax.xml.bind.annotation.XmlRegistry;
 import javax.xml.namespace.QName;
+
+import org.orcid.jaxb.model.common.OrcidId;
+import org.orcid.jaxb.model.common.PutCode;
+import org.orcid.jaxb.model.common.Source;
+import org.orcid.jaxb.model.notification.NotificationType;
+import org.orcid.jaxb.model.notification.custom.NotificationCustom;
 
 /**
  * This object contains factory methods for each Java content interface and Java
@@ -48,7 +54,7 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of
-     * schema derived classes for package: org.orcid.jaxb.model.notification
+     * schema derived classes for package: org.orcid.jaxb.model.notification.custom
      * 
      */
     public ObjectFactory() {
@@ -79,11 +85,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Notification }
+     * Create an instance of {@link NotificationAddActivities }
      * 
      */
-    public Notification createNotification() {
-        return new Notification();
+    public NotificationCustom createNotificationCustom() {
+        return new NotificationCustom();
     }
 
     /**

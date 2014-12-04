@@ -89,6 +89,7 @@ public class DBUnitTest {
         dataSet.addTable("webhook");
         dataSet.addTable("oauth2_token_detail");
         dataSet.addTable("notification");
+        dataSet.addTable("notification_activity");
         dataSet.addTable("given_permission_to");
         dataSet.addTable("subject");
         DatabaseOperation.DELETE.execute(connection, dataSet);

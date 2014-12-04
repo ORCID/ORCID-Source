@@ -113,7 +113,7 @@ public class OrcidMessageVersionConverterImplV1_2_rc5ToV1_2_rc6 implements Orcid
                 Preferences prefs = orcidInternal.getPreferences();
                 if (prefs != null) {
                     prefs.setSendEmailFrequencyDays(null);
-                    prefs.setSendOrcidFeatureAnnouncements(null);
+                    prefs.setSendMemberUpdateRequests(null);
                 }
                 ReferredBy referredBy = orcidInternal.getReferredBy();
                 if (referredBy != null && !OrcidStringUtils.isValidOrcid(referredBy.getPath())) {
