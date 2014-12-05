@@ -424,7 +424,16 @@ public class NotificationManagerImpl implements NotificationManager {
             // Generate html from template
             String html = templateManager.processTemplate("added_as_delegate_email_html.ftl", templateParams);
 
-            mailGunManager.sendEmail(DELEGATE_NOTIFY_ORCID_ORG, email, subject, body, html);
+            boolean notificationsEnabled = delegateProfileEntity.getEnableNotifications();
+            if (notificationsEnabled) {
+                NotificationCustom notification = new NotificationCustom();
+                notification.setNotificationType(NotificationType.CUSTOM);
+                notification.setSubject(subject);
+                notification.setBodyHtml(html);
+                createNotification(newDelegation.getDelegateSummary().getOrcidIdentifier().getPath(), notification);
+            } else {
+                mailGunManager.sendEmail(DELEGATE_NOTIFY_ORCID_ORG, email, subject, body, html);
+            }
         }
     }
 
@@ -694,8 +703,17 @@ public class NotificationManagerImpl implements NotificationManager {
 
         // Send message
         if (apiRecordCreationEmailEnabled) {
-            mailGunManager.sendEmail(DELEGATE_NOTIFY_ORCID_ORG, primaryEmail.getValue(), getSubject("email.subject.admin_as_delegate", managed, trustedOrcidName), null,
-                    htmlBody);
+            String subject = getSubject("email.subject.admin_as_delegate", managed, trustedOrcidName);
+            boolean notificationsEnabled = profileDao.find(trusted.getOrcidIdentifier().getPath()).getEnableNotifications();
+            if (notificationsEnabled) {
+                NotificationCustom notification = new NotificationCustom();
+                notification.setNotificationType(NotificationType.CUSTOM);
+                notification.setSubject(subject);
+                notification.setBodyHtml(htmlBody);
+                createNotification(managed.getOrcidIdentifier().getPath(), notification);
+            } else {
+                mailGunManager.sendEmail(DELEGATE_NOTIFY_ORCID_ORG, primaryEmail.getValue(), subject, null, htmlBody);
+            }
             profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.ADMIN_PROFILE_DELEGATION_REQUEST));
         } else {
             LOGGER.debug("Not sending admin delegate email, because API record creation email option is disabled. Message would have been: {}", htmlBody);
