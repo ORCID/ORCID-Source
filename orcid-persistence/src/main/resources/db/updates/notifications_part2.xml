@@ -43,4 +43,8 @@ $$ LANGUAGE plpgsql;
         <sql>select insert_notification_scope();</sql>
     </changeSet>
     
+    <changeSet id="UPDATE-NOTIFICATION-TYPE" author="Will Simpson" dbms="postgresql">
+        <sql>UPDATE notification set notification_type = 'CUSTOM' WHERE notification_type = 'RECORD_UPDATED_BY_MEMBER'</sql>
+    </changeSet>
+    
 </databaseChangeLog>
