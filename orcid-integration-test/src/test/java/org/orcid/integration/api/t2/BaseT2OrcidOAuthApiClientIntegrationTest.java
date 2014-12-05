@@ -29,6 +29,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
+import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
@@ -65,6 +66,9 @@ public abstract class BaseT2OrcidOAuthApiClientIntegrationTest {
     @Resource(name="t2OAuthClient1_2_rc6")
     protected T2OAuthAPIService<ClientResponse> oauthT2Client1_2_rc6;
 
+    @Resource
+    private ClientDetailsManager clientDetailsManager;
+    
     @Resource
     protected Client jerseyClient;
 
@@ -107,6 +111,7 @@ public abstract class BaseT2OrcidOAuthApiClientIntegrationTest {
         this.clientSecret = complexityClient.getClientSecret();
         createAccessTokenFromCredentials();
         createBlankTokenFromCredentials();
+        clientDetailsManager.updateLastModified(this.clientId);
     }
 
     @After

@@ -37,7 +37,6 @@ import org.orcid.persistence.jpa.entities.OrcidOauth2AuthoriziationCodeDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -188,7 +187,7 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
         //Set token version to persistent token
         //TODO: As of Jan 2015 all tokens will be new tokens, so, we will have to remove the token version code and 
         //treat all tokens as new tokens
-        detail.setVersion(Long.valueOf(approvalParameters.get(OauthTokensConstants.TOKEN_VERSION)));
+        detail.setVersion(Long.valueOf(OauthTokensConstants.PERSISTENT_TOKEN));
         if(approvalParameters.containsKey(OauthTokensConstants.GRANT_PERSISTENT_TOKEN)) {
             String grantPersitentToken = approvalParameters.get(OauthTokensConstants.GRANT_PERSISTENT_TOKEN);
             if(Boolean.parseBoolean(grantPersitentToken)) {
