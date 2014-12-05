@@ -704,7 +704,8 @@ public class NotificationManagerImpl implements NotificationManager {
         // Send message
         if (apiRecordCreationEmailEnabled) {
             String subject = getSubject("email.subject.admin_as_delegate", managed, trustedOrcidName);
-            boolean notificationsEnabled = profileDao.find(trusted.getOrcidIdentifier().getPath()).getEnableNotifications();
+            ProfileEntity trustedProfileEntity = profileDao.find(trusted.getOrcidIdentifier().getPath());
+            boolean notificationsEnabled = trustedProfileEntity != null ? trustedProfileEntity.getEnableNotifications() : false;
             if (notificationsEnabled) {
                 NotificationCustom notification = new NotificationCustom();
                 notification.setNotificationType(NotificationType.CUSTOM);
