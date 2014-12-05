@@ -39,21 +39,20 @@
 		                    		<li ng-class="{'green-bg' : showBibtexImportWizard == true}">       
 				                    	<span class="glyphicon glyphicon-plus"></span>
 					                    <@orcid.msgCapFirst 'manual_funding_form_contents.add_grant' />    
-					                    <ul class="menu-options funding">	                    	
+					                    <ul class="menu-options funding">
+					                    	<!-- Search & Link -->
+					                        <li>
+					                        	<a class="action-option manage-button" ng-click="showFundingImportWizard()">
+                                                	<span class="glyphicon glyphicon-cloud-upload"></span>
+                                                	<@orcid.msg 'manual_orcid_record_contents.search_link'/>
+												</a>
+					                        </li>	                    	
 						                    <!-- Add Manually -->
 						                    <li>
 					                            <a class="action-option manage-button" ng-click="addFundingModal()">
 					                                <span class="glyphicon glyphicon-plus"></span>
 					                                <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
 					                            </a>
-					                        </li>
-					                        <!-- Search & Link -->
-					                        <li>
-					                        	<a class="action-option manage-button" ng-click="showFundingImportWizard()">
-                                                	<span class="glyphicon glyphicon-cloud-upload"></span>
-                                                	<@orcid.msg 'manual_orcid_record_contents.search_link'/>
-												</a>
-					                        	
 					                        </li>
 				                    	</ul>
 			                    	</li>
