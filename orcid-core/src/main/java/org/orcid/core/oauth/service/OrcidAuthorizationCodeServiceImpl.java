@@ -77,9 +77,6 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
     @Resource
     private ProfileDao profileDao;
     
-    @Value("${org.orcid.core.oauth.usePersistentTokens:false}")
-    private boolean usePersistentTokens;
-    
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidAuthorizationCodeServiceImpl.class);
 
     @Override
@@ -188,20 +185,16 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
         
         Map<String, String> approvalParameters = authenticationRequest.getApprovalParameters();
         boolean isPersistentTokenEnabledByUser = false;
-        //Check if persistent token is enabled on server
-        if(usePersistentTokens) {
-            //Set token version to persistent token
-            detail.setVersion(Long.valueOf(approvalParameters.get(OauthTokensConstants.TOKEN_VERSION)));
-            if(approvalParameters.containsKey(OauthTokensConstants.GRANT_PERSISTENT_TOKEN)) {
-                String grantPersitentToken = approvalParameters.get(OauthTokensConstants.GRANT_PERSISTENT_TOKEN);
-                if(Boolean.parseBoolean(grantPersitentToken)) {
-                    isPersistentTokenEnabledByUser = true;                
-                }
+        //Set token version to persistent token
+        //TODO: As of Jan 2015 all tokens will be new tokens, so, we will have to remove the token version code and 
+        //treat all tokens as new tokens
+        detail.setVersion(Long.valueOf(approvalParameters.get(OauthTokensConstants.TOKEN_VERSION)));
+        if(approvalParameters.containsKey(OauthTokensConstants.GRANT_PERSISTENT_TOKEN)) {
+            String grantPersitentToken = approvalParameters.get(OauthTokensConstants.GRANT_PERSISTENT_TOKEN);
+            if(Boolean.parseBoolean(grantPersitentToken)) {
+                isPersistentTokenEnabledByUser = true;                
             }
-        } else {
-            //Set token version to non persistent token
-            detail.setVersion(Long.valueOf(OauthTokensConstants.NON_PERSISTENT_TOKEN));
-        }
+        }        
                 
         detail.setPersistent(isPersistentTokenEnabledByUser);        
         

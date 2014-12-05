@@ -75,14 +75,8 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
     private EncryptionManager encryptionManager;
 
     @Resource
-    private ProfileDao profileDao;
+    private ProfileDao profileDao;        
     
-    @Value("${org.orcid.core.oauth.usePersistentTokens:false}")
-    private boolean usePersistentTokens;  
-    
-    @Value("${org.orcid.core.oauth.enablePersistentTokensByDefault:false}")
-    private boolean enablePersistentTokensByDefault;  
-
     @Resource
     private AppIdGenerationManager appIdGenerationManager;
 
@@ -297,11 +291,7 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
         clientDetailsEntity.setClientResourceIds(getClientResourceIds(clientResourceIds, clientDetailsEntity));
         clientDetailsEntity.setClientAuthorizedGrantTypes(getClientAuthorizedGrantTypes(clientAuthorizedGrantTypes, clientDetailsEntity));
         clientDetailsEntity.setClientRegisteredRedirectUris(getClientRegisteredRedirectUris(clientRegisteredRedirectUris, clientDetailsEntity));
-        if(usePersistentTokens) {
-            if(enablePersistentTokensByDefault) {
-                clientDetailsEntity.setPersistentTokensEnabled(true);
-            }
-        }        
+        clientDetailsEntity.setPersistentTokensEnabled(true);
         clientDetailsEntity.setClientGrantedAuthorities(getClientGrantedAuthorities(clientGrantedAuthorities, clientDetailsEntity));
         clientDetailsEntity.setGroupProfile(profileEntity);
         return createClientDetails(clientDetailsEntity);
