@@ -248,7 +248,7 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
         Source source = affiliation.getSource();
         if (source != null) {
             form.setSourceName(source.getSourceName().getContent());
-            form.setSource(source.getSourceOrcid().getPath());
+            form.setSource(source.retrieveSourcePath());
         }
         
         form.setCreatedDate(Date.valueOf(affiliation.getCreatedDate()));
