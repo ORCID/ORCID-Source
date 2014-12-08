@@ -17,13 +17,21 @@
 
 -->
 <@public nav="custom-mail">
+
+<#if invalid_request??>
+<div class="row">
+	<div class="alert alert-success">
+        <strong>${invalid_request}</strong>
+    </div>
+</div>
+<#else>
 <div class="row">
 	<div class="col-md-3 lhs col-sm-12 col-xs-12 padding-fix">
 		<#include "includes/id_banner.ftl"/>
 	</div>
 	<div class="col-md-9 col-sm-12 col-xs-12 custom-email">
 		<!-- Custom emails -->
-		<div ng-controller="CustomEmailCtrl">	
+		<div ng-controller="CustomEmailCtrl" ng-init="init('${client_id}')">	
 			<!-- Top content, instructions -->
 			<div class="row">				
 				<div class="col-md-10 col-sm-10 col-xs-8">
@@ -207,4 +215,5 @@
 		</div>
     </div>
 </script>
+</#if>
 </@public>
