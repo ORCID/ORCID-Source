@@ -22,7 +22,6 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
-import javax.servlet.http.HttpServletRequest;
 
 import org.orcid.core.constants.EmailConstants;
 import org.orcid.core.manager.ClientDetailsManager;
@@ -92,17 +91,16 @@ public class CustomEmailController extends BaseController {
     
     @RequestMapping(value = "/get-empty.json", method = RequestMethod.GET)
     public @ResponseBody
-    CustomEmailForm getEmptyCustomEmailForm(HttpServletRequest request) {
+    CustomEmailForm getEmptyCustomEmailForm(@RequestParam("clientId") String clientId) {
         CustomEmailForm result = new CustomEmailForm();
         result.setSubject(Text.valueOf(""));
         result.setContent(Text.valueOf(""));
         result.setSender(Text.valueOf(""));
         result.setHtml(true);
         result.setEmailType(Text.valueOf(EmailType.CLAIM.name()));
+        result.setClientId(clientId);
         return result;
-    }
-    
-    
+    }        
     
     @RequestMapping(value = "/get.json", method = RequestMethod.GET)
     public @ResponseBody
@@ -128,18 +126,14 @@ public class CustomEmailController extends BaseController {
         }                
         return result;
     }
-    
-    
-    
-    
-    
-    
-    
+                            
     @RequestMapping(value = "/create.json", method = RequestMethod.POST)
     public @ResponseBody
-    CustomEmailForm createCustomEmailForm(HttpServletRequest request, @RequestBody CustomEmailForm customEmailForm) {
-        String currentOrcid = getEffectiveUserOrcid();        
-        if(clientDetailsManager.exists(currentOrcid)) {
+    CustomEmailForm createCustomEmailForm(@RequestBody CustomEmailForm customEmailForm) {
+        String groupId = getEffectiveUserOrcid();
+        String clientId = customEmailForm.getClientId();
+        
+        if(clientDetailsManager.belongsTo(clientId, groupId)) {
             customEmailForm.setErrors(new ArrayList<String>());
             //Validate
             validateEmailType(customEmailForm);
@@ -172,7 +166,7 @@ public class CustomEmailController extends BaseController {
                 
                 String content = customEmailForm.getContent().getValue();
                 
-                customEmailManager.createCustomEmail(currentOrcid, emailType, sender, subject, content, isHtml);
+                customEmailManager.createCustomEmail(clientId, emailType, sender, subject, content, isHtml);
             }                        
             
         }                 
@@ -227,17 +221,17 @@ public class CustomEmailController extends BaseController {
     @RequestMapping(value = "/delete.json", method = RequestMethod.POST)
     public @ResponseBody
     boolean deleteCustomEmailForm(@RequestBody CustomEmailForm customEmailForm) {
-        String currentOrcid = getEffectiveUserOrcid();
+        String groupId = getEffectiveUserOrcid();
+        String clientId = customEmailForm.getClientId();
+        
         EmailType type = null;
         if(!PojoUtil.isEmpty(customEmailForm.getEmailType())) {
             type = EmailType.valueOf(customEmailForm.getEmailType().getValue());
         }
-        if(currentOrcid != null && type != null)
-            return customEmailManager.deleteCustomEmail(currentOrcid, type);
+        if(type != null && clientDetailsManager.belongsTo(clientId, groupId))
+            return customEmailManager.deleteCustomEmail(clientId, type);
         return false;
-    }
-    
-    
+    }        
     
     /******
      * Validators 

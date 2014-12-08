@@ -6804,7 +6804,7 @@ function CustomEmailCtrl($scope, $compile) {
 
     $scope.displayCreateForm = function() {
         $.ajax({
-            url: getBaseUri() + '/group/custom-emails/get-empty.json',
+            url: getBaseUri() + '/group/custom-emails/get-empty.json?clientId=' + $scope.clientId,
             type: 'GET',
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
