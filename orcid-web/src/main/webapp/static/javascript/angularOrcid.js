@@ -6772,23 +6772,10 @@ function CustomEmailCtrl($scope, $compile) {
     
     $scope.init = function(client_id) {
     	$scope.clientId = client_id;
-    	console.log("INIT-----------------------------------------------------");
-    	console.log("-----------------------------------------------------");
-    	console.log($scope.clientId);
-    	console.log("-----------------------------------------------------");
-    	console.log("/INIT-----------------------------------------------------");
-    	
     	$scope.getCustomEmails();
     };
     
     $scope.getCustomEmails = function() {
-    	
-    	console.log("-----------------------------------------------------");
-    	console.log("-----------------------------------------------------");
-    	console.log($scope.clientId);
-    	console.log("-----------------------------------------------------");
-    	console.log("-----------------------------------------------------");
-    	
         $.ajax({
             url: getBaseUri() + '/group/custom-emails/get.json?clientId=' + $scope.clientId,
             type: 'GET',

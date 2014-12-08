@@ -68,15 +68,15 @@ public class CustomEmailController extends BaseController {
     public ModelAndView manageDeveloperTools(@RequestParam("clientId") String clientId) {
         ModelAndView mav = new ModelAndView("custom_emails");
         boolean haveErrors = false;        
-        String groupOrcid = getEffectiveUserOrcid();        
-        GroupType groupType = profileEntityManager.getGroupType(groupOrcid);        
+        String groupId = getEffectiveUserOrcid();        
+        GroupType groupType = profileEntityManager.getGroupType(groupId);        
         if(!GroupType.PREMIUM_INSTITUTION.equals(groupType)) {
             haveErrors = true;
             mav.addObject("invalid_request", getMessage("manage.developer_tools.group.custom_emails.invalid_group_type"));
         } else if(!clientDetailsManager.exists(clientId)) {
             haveErrors = true;
             mav.addObject("invalid_request", getMessage("manage.developer_tools.group.custom_emails.invalid_client_id"));
-        } else if(!clientDetailsManager.belongsTo(clientId, groupOrcid)) {
+        } else if(!clientDetailsManager.belongsTo(clientId, groupId)) {
             haveErrors = true;
             mav.addObject("invalid_request", getMessage("manage.developer_tools.group.custom_emails.not_your_client"));
         }
@@ -182,8 +182,10 @@ public class CustomEmailController extends BaseController {
     @RequestMapping(value = "/update.json", method = RequestMethod.POST)
     public @ResponseBody
     CustomEmailForm updateCustomEmailForm(@RequestBody CustomEmailForm customEmailForm) {
-        String currentOrcid = getEffectiveUserOrcid();
-        if(clientDetailsManager.exists(currentOrcid)) {
+        String groupId = getEffectiveUserOrcid();
+        String clientId = customEmailForm.getClientId();                
+        
+        if(clientDetailsManager.belongsTo(clientId, groupId)) {
             customEmailForm.setErrors(new ArrayList<String>());
             //Validate
             validateEmailType(customEmailForm);
@@ -216,7 +218,7 @@ public class CustomEmailController extends BaseController {
                 
                 String content = customEmailForm.getContent().getValue();
                 
-                customEmailManager.updateCustomEmail(currentOrcid, emailType, sender, subject, content, isHtml);
+                customEmailManager.updateCustomEmail(clientId, emailType, sender, subject, content, isHtml);
             }
         }
         return customEmailForm;
