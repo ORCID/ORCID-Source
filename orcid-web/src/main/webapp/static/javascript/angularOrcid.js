@@ -3653,6 +3653,7 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc, comm
     $scope.userIsSource = function(funding) {
         if (funding.source == orcidVar.orcidId)
             return true;
+        return false;
     };
 }
 
@@ -4002,6 +4003,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actBulkSr
     $scope.userIsSource = function(work) {
         if (work.source == orcidVar.orcidId)
             return true;
+        return false;
     };
 
     $scope.hasCombineableEIs = function(work) {

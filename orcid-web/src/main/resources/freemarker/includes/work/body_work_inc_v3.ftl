@@ -195,11 +195,10 @@
 
                                         </li>
                                     </#if>
-                                    <li>
-                                        <a ng-show="!group.hasUserVersion() || userIsSource(work)" ng-click="openEditWork(group.getActive().putCode.value)" ng-mouseenter="showTooltip(group.groupId+'-editActiveSource')" ng-mouseleave="hideTooltip(group.groupId+'-editActiveSource')">
-                                            <span class="glyphicon glyphicon-pencil" ng-class="{'glyphicons git_create' : !userIsSource(work)}"></span>
+                                    <li> 
+                                        <a ng-show="userIsSource(work) || (group.hasKeys() && !group.hasUserVersion())" ng-click="openEditWork(group.getActive().putCode.value)" ng-mouseenter="showTooltip(group.groupId+'-editActiveSource')" ng-mouseleave="hideTooltip(group.groupId+'-editActiveSource')">
+                                            <span class="{{((group.hasKeys() && !group.hasUserVersion()) && 'glyphicons git_create' || 'glyphicon glyphicon-pencil')}}"></span>
                                         </a>
-
                                         <div class="popover popover-tooltip top edit-activeSource-popover" ng-show="showElement[group.groupId+'-editActiveSource'] == true">
                                             <div class="arrow"></div>
                                             <div class="popover-content">
@@ -259,9 +258,9 @@
 
                                         </li>
                                     </#if>
-                                    <li>
-                                        <a ng-show="!group.hasUserVersion() || userIsSource(work)" ng-click="openEditWork(work.putCode.value)" ng-mouseenter="showTooltip(work.putCode.value+'-editInactiveSource')" ng-mouseleave="hideTooltip(work.putCode.value+'-editInactiveSource')">
-                                            <span class="glyphicon glyphicon-pencil" ng-class="{'glyphicons git_create' : !userIsSource(work)}"></span>
+                                    <li> 
+                                        <a ng-show="userIsSource(work) || (group.hasKeys() && !group.hasUserVersion())" ng-click="openEditWork(group.getActive().putCode.value)" ng-mouseenter="showTooltip(group.groupId+'-editActiveSource')" ng-mouseleave="hideTooltip(group.groupId+'-editActiveSource')">
+                                            <span class="{{((group.hasKeys() && !group.hasUserVersion()) && 'glyphicons git_create' || 'glyphicon glyphicon-pencil')}}"></span>
                                         </a>
                                         <div class="popover popover-tooltip top edit-inactiveSource-popover" ng-show="showElement[work.putCode.value+'-editInactiveSource'] == true">
                                             <div class="arrow"></div>
@@ -326,8 +325,8 @@
                                     </#if>
 
                                     <li ng-show="userIsSource(work) || (group.hasKeys() && !group.hasUserVersion())">
-                                        <a ng-click="openEditWork(group.getActive().putCode.value)" ng-mouseenter="showTooltip(group.groupId+'-editSource')" ng-mouseleave="hideTooltip(group.groupId+'-editSource')">
-                                            <span class="glyphicon glyphicon-pencil" ng-class="{'glyphicons git_create' : !userIsSource(work)}" title=""></span>
+                                        <a ng-show="userIsSource(work) || (group.hasKeys() && !group.hasUserVersion())" ng-click="openEditWork(group.getActive().putCode.value)" ng-mouseenter="showTooltip(group.groupId+'-editActiveSource')" ng-mouseleave="hideTooltip(group.groupId+'-editActiveSource')">
+                                            <span class="{{((group.hasKeys() && !group.hasUserVersion()) && 'glyphicons git_create' || 'glyphicon glyphicon-pencil')}}"></span>
                                         </a>
                                         <div class="popover popover-tooltip top edit-source-popover" ng-show="showElement[group.groupId+'-editSource'] == true">
                                             <div class="arrow"></div>
