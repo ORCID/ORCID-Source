@@ -23,6 +23,6 @@
     <profile_work orcid="4444-4444-4444-4443" work_id="4" visibility="PRIVATE" date_created="2013-10-22 11:09:28.636" last_modified="2013-10-22 11:09:28.636"/>    
     <profile_work orcid="4444-4444-4444-4445" work_id="3" visibility="LIMITED" date_created="2013-10-22 11:09:28.636" last_modified="2013-10-22 11:09:28.636"/>
     <profile_work orcid="4444-4444-4444-4446" work_id="5" visibility="PUBLIC" client_source_id="APP-5555555555555555" date_created="2013-10-22 11:09:28.636" last_modified="2013-10-22 11:09:28.636"/>
-    <profile_work orcid="4444-4444-4444-4446" work_id="6" visibility="LIMITED" source_id="4444-4444-4444-4443" date_created="2013-10-22 11:09:28.636" last_modified="2013-10-22 11:09:28.636"/>
+    <profile_work orcid="4444-4444-4444-4446" work_id="6" visibility="LIMITED" source_id="4444-4444-4444-4446" date_created="2013-10-22 11:09:28.636" last_modified="2013-10-22 11:09:28.636"/>
     <profile_work orcid="4444-4444-4444-4446" work_id="7" visibility="PRIVATE" client_source_id="APP-5555555555555555" date_created="2013-10-22 11:09:28.636" last_modified="2013-10-22 11:09:28.636"/>            
 </dataset>
