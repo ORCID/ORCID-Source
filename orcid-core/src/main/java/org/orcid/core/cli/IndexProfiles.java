@@ -29,6 +29,8 @@ import org.kohsuke.args4j.Option;
 import org.orcid.core.manager.OrcidIndexManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.utils.NullUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +48,7 @@ public class IndexProfiles {
 
     private OrcidProfileManager orcidProfileManager;
     private OrcidIndexManager orcidIndexManager;
+    private ProfileDao profileDao;
     @Option(name = "-f", usage = "Path to file containing ORCIDs to index")
     private File fileToLoad;
     @Option(name = "-o", usage = "ORCID to index")
@@ -109,6 +112,7 @@ public class IndexProfiles {
         try {
             OrcidProfile orcidProfile = orcidProfileManager.retrieveClaimedOrcidProfile(orcid);
             orcidIndexManager.persistProfileInformationForIndexing(orcidProfile);
+            profileDao.updateIndexingStatus(orcid, IndexingStatus.DONE);
         } catch (RuntimeException e) {
             errorCount++;
             if (continueOnError) {
@@ -125,6 +129,7 @@ public class IndexProfiles {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         orcidProfileManager = (OrcidProfileManager) context.getBean("orcidProfileManager");
         orcidIndexManager = (OrcidIndexManager) context.getBean("orcidIndexManager");
+        profileDao = (ProfileDao) context.getBean("profileDao");
     }
 
 }
