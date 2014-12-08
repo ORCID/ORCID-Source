@@ -197,7 +197,7 @@ public class AffiliationsController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/affiliation.json", method = RequestMethod.POST)
     public @ResponseBody
-    AffiliationForm postAffiliation(HttpServletRequest request, @RequestBody AffiliationForm affiliationForm) {
+    AffiliationForm postAffiliation(HttpServletRequest request, @RequestBody AffiliationForm affiliationForm) throws Exception {
         // Validate
         affiliationNameValidate(affiliationForm);
         cityValidate(affiliationForm);
@@ -217,11 +217,10 @@ public class AffiliationsController extends BaseWorkspaceController {
             copyErrors(affiliationForm.getEndDate(), affiliationForm);
 
         if (affiliationForm.getErrors().isEmpty()) {
-            if(PojoUtil.isEmpty(affiliationForm.getPutCode())) {
+            if(PojoUtil.isEmpty(affiliationForm.getPutCode()))
                 addAffiliation(affiliationForm);
-            } else {
+            else
                 editAffiliation(affiliationForm);
-            }            
         }
 
         return affiliationForm;
@@ -243,11 +242,17 @@ public class AffiliationsController extends BaseWorkspaceController {
     /**
      * Updates an existing affiliation
      * @param affiliationForm
+     * @throws Exception 
      * */
-    private void editAffiliation(AffiliationForm affiliationForm) {
+    private void editAffiliation(AffiliationForm affiliationForm) throws Exception {
         if(PojoUtil.isEmpty(affiliationForm.getPutCode())) {
             throw new IllegalArgumentException("Affiliation must contain a put code");
         }
+        
+        OrcidProfile currentProfile = getEffectiveProfile();
+        if (!currentProfile.getOrcidIdentifier().getPath().equals(affiliationForm.getSource()))
+            throw new Exception("Error source isn't correct");
+
         ProfileEntity userProfile = profileDao.find(getEffectiveUserOrcid());
         OrgAffiliationRelationEntity orgAffiliationRelationEntity = jaxb2JpaAdapter.getUpdatedAffiliationRelationEntity(affiliationForm.toAffiliation());
         orgAffiliationRelationEntity.setSource(new SourceEntity(userProfile));

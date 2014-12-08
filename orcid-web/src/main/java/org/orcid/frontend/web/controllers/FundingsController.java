@@ -462,6 +462,10 @@ public class FundingsController extends BaseWorkspaceController {
         Funding updatedFunding = jpa2JaxbAdapter.getFunding(updatedProfileGrantEntity);
         // Update the fundings on the cached object
         OrcidProfile currentProfile = getEffectiveProfile();
+        
+        if (!currentProfile.getOrcidIdentifier().getPath().equals(funding.getSource()))
+            throw new Exception("Error source isn't correct");
+        
         // Initialize activities if needed
         if (currentProfile.getOrcidActivities() == null) {
             currentProfile.setOrcidActivities(new OrcidActivities());
