@@ -73,7 +73,7 @@ public class CustomEmailControllerTest extends BaseControllerTest {
     
     @Override
     protected Authentication getAuthentication() {
-        orcidProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4448");
+        orcidProfile = orcidProfileManager.retrieveOrcidProfile("5555-5555-5555-5558");
 
         OrcidProfileUserDetails details = null;
         if(orcidProfile.getType() != null){             
@@ -83,7 +83,7 @@ public class CustomEmailControllerTest extends BaseControllerTest {
                 details = new OrcidProfileUserDetails(orcidProfile.getOrcidIdentifier().getPath(), orcidProfile.getOrcidBio().getContactDetails().getEmail()
                     .get(0).getValue(), orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedPassword().getContent());
         }
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(details, "4444-4444-4444-4448", getRole());
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(details, "5555-5555-5555-5558", getRole());
         return auth;
     }
     

@@ -65,6 +65,8 @@ import org.springframework.web.bind.support.SimpleSessionStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
+import com.gargoylesoftware.htmlunit.javascript.host.Console;
+
 @Controller("oauthConfirmAccessController")
 @RequestMapping(value = "/oauth", method = RequestMethod.GET)
 public class OauthConfirmAccessController extends BaseController {
@@ -168,7 +170,7 @@ public class OauthConfirmAccessController extends BaseController {
 
                     // Get client name
                     ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
-                    
+                                        
                     //If persistence tokens are enabled on server
                     if(isUsePersistentTokens()) {
                         //Check if the client has persistent tokens enabled
