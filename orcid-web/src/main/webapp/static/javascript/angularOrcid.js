@@ -3257,6 +3257,15 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc, comm
         }
     };
 
+    $scope.hideSources = function(group) {
+        $scope.editSources[group.groupId] = false;
+        group.activePutCode = group.defaultPutCode;
+    };
+
+    $scope.showSources = function(group) {
+        $scope.editSources[group.groupId] = true;
+    };
+
     // remove once grouping is live
     $scope.moreInfoMouseEnter = function(key, $event) {
         $event.stopPropagation();
@@ -3815,6 +3824,9 @@ function PublicWorkCtrl($scope, $compile, $filter, workspaceSrvc, worksSrvc) {
         group.activePutCode = group.defaultPutCode;
     };
 
+    $scope.showSources = function(group) {
+        $scope.editSources[group.groupId] = true;
+    };
 
     $scope.loadWorkInfo = function(putCode, event) {
         //Close any open popover
@@ -4294,6 +4306,10 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actBulkSr
     $scope.hideSources = function(group) {
         $scope.editSources[group.groupId] = false;
         group.activePutCode = group.defaultPutCode;
+    };
+
+    $scope.showSources = function(group) {
+        $scope.editSources[group.groupId] = true;
     };
 
     $scope.loadDetails = function(putCode, event) {
