@@ -5185,6 +5185,40 @@ ul.workspace-private-toolbar .popover-help-container .popover{
 	margin-right: 15px;
 }
 
+.workspace-toolbar .vis-issue{
+	float: right;
+	line-height: 0px;
+	height: 16px;
+	width: 16px;
+	display: block;
+	cursor: auto;
+}
+
+.workspace-toolbar .vis-issue .glyphicons{
+	padding-left: 0;
+	margin-right: 15px;
+}
+
+.workspace-toolbar .vis-issue .glyphicons.circle_exclamation_mark:before{
+	font-size: 16px;
+	color:  #F3C01F;
+}
+
+.workspace-toolbar .vis-popover .popover-content{
+	width: 100%;
+	word-wrap: break-word;
+	min-height: 50px;
+	height: auto;
+	display: block;
+	white-space: normal;
+	line-height: 15px;
+}
+
+.workspace-toolbar .popover.vis-popover{
+	top: 26px;
+}
+
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 
