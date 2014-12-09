@@ -599,18 +599,6 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
                 cloneW.putCode = null;
                 return cloneW;
             },
-            makeDefault: function(group, putCode) {
-                group.makeDefault(putCode);
-                $.ajax({
-                    url: getBaseUri() + '/fundings/updateToMaxDisplay.json?putCode=' + putCode,
-                    dataType: 'json',
-                    success: function(data) {
-                    }
-                }).fail(function(){
-                    // something bad is happening!
-                    console.log("some bad is hppending");
-                });
-            },
             getEditable: function(putCode, callback) {
                 // first check if they are the current source
                 var funding = fundingSrvc.getFunding(putCode);
@@ -656,12 +644,39 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
                     }
                 }
             },
-            setGroupPrivacy: function(putCode, priv) {
-                var group = fundingSrvc.getGroup(putCode);
-                for (var idx in group.activities) {
-                    var curPutCode = group.activities[idx].putCode.value;
-                    fundingSrvc.setPrivacy(curPutCode, priv);
+            fundingCount: function() {
+                var count = 0;
+                for (var idx in fundingSrvc.groups) {
+                    count += fundingSrvc.groups[idx].activitiesCount;
                 }
+                return count;
+            },
+            getFunding: function(putCode) {
+                for (var idx in fundingSrvc.groups) {
+                        if (fundingSrvc.groups[idx].hasPut(putCode))
+                            return fundingSrvc.groups[idx].getByPut(putCode);
+                }
+                return null;
+            },
+            getFundings: function(path) {
+                //clear out current fundings
+                fundingSrvc.loading = true;
+                fundingSrvc.fundingToAddIds = null;
+                //new way
+                fundingSrvc.groups.length = 0;
+                //get funding ids
+                $.ajax({
+                    url: getBaseUri() + '/'  + path,
+                    dataType: 'json',
+                    success: function(data) {
+                        fundingSrvc.fundingToAddIds = data;
+                        fundingSrvc.addFundingToScope('fundings/fundings.json');
+                        $rootScope.$apply();
+                    }
+                }).fail(function(){
+                    // something bad is happening!
+                    console.log("error fetching fundings");
+                });
             },
             getGroup: function(putCode) {
                 for (var idx in fundingSrvc.groups) {
@@ -670,11 +685,17 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
                 }
                 return null;
             },
-            setPrivacy: function(putCode, priv) {
-                var idx;
-                var funding = fundingSrvc.getFunding(putCode);
-                funding.visibility.visibility = priv;
-                fundingSrvc.updateProfileFunding(funding);
+            makeDefault: function(group, putCode) {
+                group.makeDefault(putCode);
+                $.ajax({
+                    url: getBaseUri() + '/fundings/updateToMaxDisplay.json?putCode=' + putCode,
+                    dataType: 'json',
+                    success: function(data) {
+                    }
+                }).fail(function(){
+                    // something bad is happening!
+                    console.log("some bad is hppending");
+                });
             },
             removeFunding: function(funding) {
                 $.ajax({
@@ -696,51 +717,28 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
                                     break;
                                 }
                             }
-
                         }
-                           $rootScope.$apply();
+                        $rootScope.$apply();
                     }
                 }).fail(function() {
                     console.log("Error deleting funding.");
                 });
             },
-            fundingCount: function() {
-                var count = 0;
-                for (var idx in fundingSrvc.groups) {
-                    count += fundingSrvc.groups[idx].activitiesCount;
-                }
-                return count;
-            },
-            getFunding: function(putCode) {
-                for (var idx in fundingSrvc.groups) {
-                        if (fundingSrvc.groups[idx].hasPut(putCode))
-                            return fundingSrvc.groups[idx].getByPut(putCode);
-                }
-                return null;
-            },
-            getFundings: function(path) {
-                //clear out current fundings
-                fundingSrvc.loading = true;
-                fundingSrvc.fundingToAddIds = null;
-
-                //new way
-                fundingSrvc.groups.length = 0;
-                //get funding ids
-                $.ajax({
-                    url: getBaseUri() + '/'  + path,
-                    dataType: 'json',
-                    success: function(data) {
-                        fundingSrvc.fundingToAddIds = data;
-                        fundingSrvc.addFundingToScope('fundings/fundings.json');
-                        $rootScope.$apply();
-                    }
-                }).fail(function(){
-                    // something bad is happening!
-                    console.log("error fetching fundings");
-                });
-            },
             setIdsToAdd: function(ids) {
                 fundingSrvc.fundingToAddIds = ids;
+            },
+            setGroupPrivacy: function(putCode, priv) {
+                var group = fundingSrvc.getGroup(putCode);
+                for (var idx in group.activities) {
+                    var curPutCode = group.activities[idx].putCode.value;
+                    fundingSrvc.setPrivacy(curPutCode, priv);
+                }
+            },
+            setPrivacy: function(putCode, priv) {
+                var idx;
+                var funding = fundingSrvc.getFunding(putCode);
+                funding.visibility.visibility = priv;
+                fundingSrvc.updateProfileFunding(funding);
             },
             updateProfileFunding: function(funding) {
                 $.ajax({
