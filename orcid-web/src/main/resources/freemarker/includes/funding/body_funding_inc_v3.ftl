@@ -26,7 +26,7 @@
                     <div class="sources-header">
                         <div class="row">
                             <div class="col-md-4 col-sm-4 col-xs-4">
-                                <@orcid.msg 'groups.common.sources' /> <span class="hide-sources" ng-click="editSources[group.groupId] = !editSources[group.groupId]"><@orcid.msg 'groups.common.close_sources' /></span>
+                                <@orcid.msg 'groups.common.sources' /> <span class="hide-sources" ng-click="hideSources(group)"><@orcid.msg 'groups.common.close_sources' /></span>
                             </div>
                             <div class="col-md-3 col-sm-3 col-xs-3">
                                 <@orcid.msg 'groups.common.created' />
@@ -276,7 +276,7 @@
                               <@orcid.msgUpCase 'groups.common.created'/>: <span ng-bind="funding.createdDate | ajaxFormDateToISO8601"></span>                              
                           </div>
                         <div class="col-md-3" ng-show="group.activePutCode == funding.putCode.value">
-                            <span class="glyphicon glyphicon-check"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span> <span ng-hide="group.activitiesCount == 1">(</span><a ng-click="editSources[group.groupId] = !editSources[group.groupId]" ng-hide="group.activitiesCount == 1" ng-mouseenter="showTooltip(group.groupId+'-sources')" ng-mouseleave="hideTooltip(group.groupId+'-sources')">of {{group.activitiesCount}}</a><span ng-hide="group.activitiesCount == 1">)</span>
+                            <span class="glyphicon glyphicon-check"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span> <span ng-hide="group.activitiesCount == 1">(</span><a ng-click="showSources(group)" ng-hide="group.activitiesCount == 1" ng-mouseenter="showTooltip(group.groupId+'-sources')" ng-mouseleave="hideTooltip(group.groupId+'-sources')">of {{group.activitiesCount}}</a><span ng-hide="group.activitiesCount == 1">)</span>
                             
                             <div class="popover popover-tooltip top sources-popover" ng-show="showElement[group.groupId+'-sources'] == true">
                                 <div class="arrow"></div>
@@ -302,7 +302,7 @@
 	                                </li>
 	                                <li ng-hide="group.activitiesCount == 1 || editSources[group.groupId] == true">
 	
-	                                    <a ng-click="editSources[group.groupId] = !editSources[group.groupId]" ng-mouseenter="showTooltip(group.groupId+'-deleteGroup')" ng-mouseleave="hideTooltip(group.groupId+'-deleteGroup')">
+	                                    <a ng-click="showSources(group)" ng-mouseenter="showTooltip(group.groupId+'-deleteGroup')" ng-mouseleave="hideTooltip(group.groupId+'-deleteGroup')">
 	                                         <span class="glyphicon glyphicon-trash"></span>
 	                                    </a>
 	                                    <div class="popover popover-tooltip top delete-source-popover" ng-show="showElement[group.groupId+'-deleteGroup'] == true">
