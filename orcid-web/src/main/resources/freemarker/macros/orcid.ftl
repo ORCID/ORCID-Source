@@ -225,10 +225,10 @@ kind of variable. This temp value is only used in this macro lib -->
 </#macro>
 
 <#macro editActivityIcon activity click toolTipSuffix toolTipClass>
-    <a ng-show="userIsSource(${activity}) || (group.hasKeys() && !group.hasUserVersion())" ng-click="${click}" ng-mouseenter="showTooltip(work.putCode.value+'-${toolTipSuffix}')" ng-mouseleave="hideTooltip(work.putCode.value+'-${toolTipSuffix}')">
+    <a ng-show="userIsSource(${activity}) || (group.hasKeys() && !group.hasUserVersion())" ng-click="${click}" ng-mouseenter="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" ng-mouseleave="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">
         <span class="{{((group.hasKeys() && !group.hasUserVersion()) && 'glyphicons git_create' || 'glyphicon glyphicon-pencil')}}"></span>
     </a>
-    <a ng-show="(userIsSource(${activity}) || (group.hasKeys() && !group.hasUserVersion())) == false" ng-mouseenter="showTooltip(work.putCode.value+'-${toolTipSuffix}')" ng-mouseleave="hideTooltip(work.putCode.value+'-${toolTipSuffix}')">
+    <a ng-show="(userIsSource(${activity}) || (group.hasKeys() && !group.hasUserVersion())) == false" ng-mouseenter="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" ng-mouseleave="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">
         <!-- FRAN this should be grey --><span class="glyphicons git_create"></span>
     </a>    
     <div class="${toolTipClass}" ng-show="showElement[${activity}.putCode.value+'-${toolTipSuffix}'] == true">

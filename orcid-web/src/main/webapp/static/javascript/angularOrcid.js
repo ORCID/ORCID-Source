@@ -3656,8 +3656,8 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc, comm
         }
     };
 
-    $scope.openEditFunding = function(curFunding) {
-        fundingSrvc.getEditable(curFunding.putCode.value, function(bestMatch) {
+    $scope.openEditFunding = function(putCode) {
+        fundingSrvc.getEditable(putCode, function(bestMatch) {
             $scope.addFundingModal(bestMatch);
         });
     };
@@ -3671,12 +3671,12 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc, comm
         });
     };
     
-    $scope.showTooltip = function (element){    	
-        $scope.showElement[element] = true;
+    $scope.showTooltip = function (key){
+        $scope.showElement[key] = true;
     };
 
-    $scope.hideTooltip = function (element){    	
-        $scope.showElement[element] = false;
+    $scope.hideTooltip = function (key){
+        $scope.showElement[key] = false;
     };
     
     $scope.userIsSource = function(funding) {
