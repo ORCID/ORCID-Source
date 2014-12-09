@@ -593,6 +593,12 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
                     fundingSrvc.loading = false;
                 };
             },
+            createNew: function(work) {
+                var cloneW = JSON.parse(JSON.stringify(work));
+                cloneW.source = null;
+                cloneW.putCode = null;
+                return cloneW;
+            },
             makeDefault: function(group, putCode) {
                 group.makeDefault(putCode);
                 $.ajax({
@@ -604,6 +610,25 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
                     // something bad is happening!
                     console.log("some bad is hppending");
                 });
+            },
+            getEditable: function(putCode, callback) {
+                // first check if they are the current source
+                var funding = fundingSrvc.getFunding(putCode);
+                if (funding.source == orcidVar.orcidId)
+                    callback(funding);
+                else {
+                    var bestMatch = null;
+                    var group = fundingSrvc.getGroup(putCode);
+                    for (var idx in group.activitiess) {
+                        if (group[idx].source == orcidVar.orcidId) {
+                            bestMatch = callback(group[idx]);
+                            break;
+                        }
+                    }
+                    if (bestMatch == null) 
+                        bestMatch = fundingSrvc.createNew(funding);
+                    callback(bestMatch);
+                };
             },
             deleteFunding: function(putCode) {
                 var rmFunding;
@@ -3631,9 +3656,13 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc, comm
         }
     };
 
-    $scope.openEditFunding = function(funding) {
-        $scope.addFundingModal(funding);
+    $scope.openEditFunding = function(curFunding) {
+        fundingSrvc.getEditable(curFunding.putCode.value, function(bestMatch) {
+            $scope.addFundingModal(bestMatch);
+        });
     };
+
+    
     
     $scope.showFundingImportWizard =  function() {
         $.colorbox({

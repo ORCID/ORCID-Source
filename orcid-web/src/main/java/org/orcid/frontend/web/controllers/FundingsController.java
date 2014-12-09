@@ -383,9 +383,12 @@ public class FundingsController extends BaseWorkspaceController {
             copyErrors(funding.getOrganizationDefinedFundingSubType().getSubtype(), funding);
 
         for (FundingExternalIdentifierForm extId : funding.getExternalIdentifiers()) {
-            copyErrors(extId.getType(), funding);
-            copyErrors(extId.getUrl(), funding);
-            copyErrors(extId.getValue(), funding);
+            if (extId.getType() != null)
+                copyErrors(extId.getType(), funding);
+            if (extId.getUrl() != null)
+                copyErrors(extId.getUrl(), funding);
+            if (extId.getValue() != null)
+                copyErrors(extId.getValue(), funding);
         }
 
         // If there are no errors, persist to DB
