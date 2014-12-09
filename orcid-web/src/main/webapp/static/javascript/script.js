@@ -1158,7 +1158,7 @@ $(function() {
                 var k = this.key();
                 if (k.match("^[0-9]+$"))
                     return k;
-                else if (this.months.indexOf(k))
+                else if (this.months.indexOf(k) >= 0)
                     return k;
                 else
                     throw "Value expected:" + this.input.substring(start)
