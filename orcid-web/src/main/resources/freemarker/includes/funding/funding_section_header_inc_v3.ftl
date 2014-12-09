@@ -41,7 +41,7 @@
 					                    <@orcid.msgCapFirst 'manual_funding_form_contents.add_grant' />    
 					                    <ul class="menu-options funding">
 					                    	<!-- Search & Link -->
-					                        <li>
+					                        <li>					                        	
 					                        	<a class="action-option manage-button" ng-click="showFundingImportWizard()">
                                                 	<span class="glyphicon glyphicon-cloud-upload"></span>
                                                 	<@orcid.msg 'manual_orcid_record_contents.search_link'/>
@@ -59,7 +59,7 @@
 		                    	</ul>
 		                    </div>
                         </li>
-                        <!-- Search & Link -->
+                        <!--                        
                         <li>
                             <#if fundingImportWizards?size != 0>
                                 <a class="action-option manage-button" ng-click="showTemplateInModal('import-funding-modal')">
@@ -68,6 +68,7 @@
                                 </a>
                             </#if>
                         </li>
+                        -->
                     </ul>
                 </#if>
         </div>
