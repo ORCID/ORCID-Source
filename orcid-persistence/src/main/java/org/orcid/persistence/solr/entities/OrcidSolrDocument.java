@@ -86,7 +86,7 @@ public class OrcidSolrDocument {
 
     @Field(SolrConstants.BIBCODE)
     private List<String> bibcode;
-    
+
     @Field(SolrConstants.EID)
     private List<String> eid;
 
@@ -146,7 +146,7 @@ public class OrcidSolrDocument {
 
     @Field(SolrConstants.FUNDING_TITLES)
     private List<String> fundingTitles;
-    
+
     @Field(SolrConstants.PATENT_NUMBERS)
     private List<String> patentNumbers;
 
@@ -279,7 +279,7 @@ public class OrcidSolrDocument {
     public void setGrantNumbers(List<String> grantNumbers) {
         this.grantNumbers = grantNumbers;
     }
-    
+
     public List<String> getFundingTitles() {
         return fundingTitles;
     }
