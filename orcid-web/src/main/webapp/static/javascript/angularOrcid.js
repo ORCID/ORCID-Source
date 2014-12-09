@@ -3735,12 +3735,12 @@ function PublicFundingCtrl($scope, $compile, $filter, workspaceSrvc, fundingSrvc
         return info;
     };
     
-    $scope.showTooltip = function (element){    	
-        $scope.showElement[element] = true;
+    $scope.showTooltip = function (key){
+        $scope.showElement[key] = true;
     };
 
-    $scope.hideTooltip = function (element){    	
-        $scope.showElement[element] = false;
+    $scope.hideTooltip = function (key){    	
+        $scope.showElement[key] = false;
     };
 
 }
@@ -4400,13 +4400,13 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actBulkSr
         $scope.editWork.workType.errors = [];
     };
     
-    $scope.showTooltip = function (element){    	
-    	$scope.showElement[element] = true;
+    $scope.showTooltip = function (key){    	
+        $scope.showElement[key] = true;
     	
     }
     
-    $scope.hideTooltip = function (element){    	
-    	$scope.showElement[element] = false;
+    $scope.hideTooltip = function (key){    	
+    	$scope.showElement[key] = false;
     }
     
     $scope.openFileDialog = function(){    	
