@@ -33,6 +33,8 @@ import org.orcid.jaxb.model.message.OrcidProfile;
  */
 public interface OrcidIndexManager {
 
+    void persistProfileInformationForIndexingIfNecessary(OrcidProfile orcidProfile);
+    
     void persistProfileInformationForIndexing(OrcidProfile orcidProfile);
 
     void deleteOrcidProfile(OrcidProfile orcidProfile);

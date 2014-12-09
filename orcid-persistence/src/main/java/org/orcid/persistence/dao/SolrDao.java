@@ -16,6 +16,7 @@
  */
 package org.orcid.persistence.dao;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -79,4 +80,6 @@ public interface SolrDao {
      *      query string
      */
     OrcidSolrResults findByDocumentCriteria(Map<String, List<String>> solrMap);
+
+    Date retrieveLastModified(String orcid);
 }

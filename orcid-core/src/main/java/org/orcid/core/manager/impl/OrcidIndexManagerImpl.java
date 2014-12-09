@@ -18,6 +18,7 @@ package org.orcid.core.manager.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -25,7 +26,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.annotation.Resource;
-import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.OrcidIndexManager;
@@ -58,6 +58,8 @@ import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.persistence.dao.SolrDao;
 import org.orcid.persistence.solr.entities.OrcidSolrDocument;
 import org.orcid.utils.NullUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -69,12 +71,27 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
     @Resource(name = "visibilityFilter")
     private VisibilityFilter visibilityFilter;
 
+    private static final Logger LOG = LoggerFactory.getLogger(OrcidIndexManagerImpl.class);
+
     public void setSolrDao(SolrDao solrDao) {
         this.solrDao = solrDao;
     }
 
     @Override
+    public void persistProfileInformationForIndexingIfNecessary(OrcidProfile orcidProfile) {
+        String orcid = orcidProfile.getOrcidIdentifier().getPath();
+        Date lastModifiedFromSolr = solrDao.retrieveLastModified(orcid);
+        Date lastModifiedFromDb = orcidProfile.getOrcidHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime();
+        if (lastModifiedFromDb.equals(lastModifiedFromSolr)) {
+            LOG.info("Index is already up to date for orcid: {}", orcid);
+            return;
+        }
+        persistProfileInformationForIndexing(orcidProfile);
+    }
+
+    @Override
     public void persistProfileInformationForIndexing(OrcidProfile orcidProfile) {
+
         OrcidMessage messageToFilter = new OrcidMessage();
         messageToFilter.setOrcidProfile(orcidProfile);
         OrcidMessage filteredMessage = visibilityFilter.filter(messageToFilter, Visibility.PUBLIC);
