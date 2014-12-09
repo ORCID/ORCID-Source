@@ -3300,6 +3300,7 @@ p.orcid-id-container{
 	border-bottom: 1px solid #c9c9c9;
 	margin-bottom: 10px;
 	float: left;
+	width: 100%;
 }
 
 .public-profile p{
@@ -5141,6 +5142,13 @@ ul.workspace-private-toolbar .popover-help-container .popover{
 
 .clear-fix{
 	clear: both;
+}
+
+.qrcode-container{
+	display: block;
+	width: 100%;
+	float: left; 
+	margin-bottom: 10px; 
 }
 
 .qrcode-container .orcid-qr{
