@@ -772,20 +772,21 @@ function populateWorkAjaxForm(bibJson, work) {
             work.title.value = lowerKeyTags['title'];
 
         if (lowerKeyTags.hasOwnProperty('year'))
-            work.publicationDate.year = lowerKeyTags['year'];
+            if (!isNaN(lowerKeyTags['year']))
+                work.publicationDate.year = lowerKeyTags['year'];
 
         if (lowerKeyTags.hasOwnProperty('month')) {
             var month = lowerKeyTags['month'];
-            if (bibMonths.indexOf(month) >= 0) 
-                month = bibMonths.indexOf(month)+1;
-            work.publicationDate.month = Number(month).pad(2);
+            if (bibMonths.indexOf(month.trim().substring(0,3)) >= 0) 
+                month = bibMonths.indexOf(month.trim().substring(0,3)) + 1;
+            if (!isNaN(month) && month > 0 && month <= 12)
+                work.publicationDate.month = Number(month).pad(2);
         }
 
         if (lowerKeyTags.hasOwnProperty('url'))
             work.url.value = lowerKeyTags['url'];
 
     }
-    ;
 };
 
 /* END: Bibjson to work AjaxForm */
