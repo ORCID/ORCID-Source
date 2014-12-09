@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.annotation.Resource;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.OrcidIndexManager;
@@ -37,9 +38,11 @@ import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingTitle;
 import org.orcid.jaxb.model.message.Keyword;
+import org.orcid.jaxb.model.message.LastModifiedDate;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidDeprecated;
+import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
@@ -272,7 +275,13 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
         OrcidMessage orcidMessage = new OrcidMessage();
         orcidMessage.setMessageVersion(OrcidMessage.DEFAULT_VERSION);
         orcidMessage.setOrcidProfile(filteredProfile);
-        profileIndexDocument.setProfileLastModified(filteredProfile.getOrcidHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime());
+        OrcidHistory orcidHistory = filteredProfile.getOrcidHistory();
+        if (orcidHistory != null) {
+            LastModifiedDate lastModifiedDate = orcidHistory.getLastModifiedDate();
+            if (lastModifiedDate != null) {
+                profileIndexDocument.setProfileLastModified(lastModifiedDate.getValue().toGregorianCalendar().getTime());
+            }
+        }
         profileIndexDocument.setPublicProfileMessage(orcidMessage.toString());
         solrDao.persist(profileIndexDocument);
     }
