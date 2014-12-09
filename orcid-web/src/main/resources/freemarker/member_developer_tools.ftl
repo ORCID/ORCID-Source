@@ -231,13 +231,6 @@
 					</div>							
 				</div>	
 				
-				
-				
-				
-				
-				
-				
-				
 				<@security.authorize ifAnyGranted="ROLE_PREMIUM_INSTITUTION">																					
 					<div class="row bottomBuffer">
 						<!-- Custom Emails -->
@@ -249,14 +242,6 @@
 						</div>
 					</div>	
 				</@security.authorize>
-				
-				
-				
-				
-				
-				
-				
-				
 				
 				<!-- Slidebox -->
 				<div class="slidebox grey-box">

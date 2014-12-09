@@ -106,12 +106,11 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     }
     
     @Override
-    @SuppressWarnings("rawtypes")
     public boolean belongsTo(String clientId, String groupId) {
         Query query = entityManager.createNativeQuery("select count(*) from client_details where client_details_id=:clientId and group_orcid=:groupId");
         query.setParameter("clientId", clientId);
         query.setParameter("groupId", groupId);        
-        List results = query.getResultList();
-        return (results != null && results.size() > 0) ? true : false; 
+        int result = query.getFirstResult();
+        return result > 0; 
     }
 }

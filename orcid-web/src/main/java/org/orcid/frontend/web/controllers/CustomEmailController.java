@@ -92,6 +92,13 @@ public class CustomEmailController extends BaseController {
     @RequestMapping(value = "/get-empty.json", method = RequestMethod.GET)
     public @ResponseBody
     CustomEmailForm getEmptyCustomEmailForm(@RequestParam("clientId") String clientId) {
+        String groupId = getEffectiveUserOrcid();        
+        if(PojoUtil.isEmpty(clientId) || !clientDetailsManager.exists(clientId)) {
+            throw new IllegalArgumentException(getMessage("manage.developer_tools.group.custom_emails.invalid_client_id"));
+        } else if(!clientDetailsManager.belongsTo(clientId, groupId)) {
+            throw new IllegalArgumentException(getMessage("manage.developer_tools.group.custom_emails.not_your_client"));
+        }
+        
         CustomEmailForm result = new CustomEmailForm();
         result.setSubject(Text.valueOf(""));
         result.setContent(Text.valueOf(""));
@@ -104,16 +111,16 @@ public class CustomEmailController extends BaseController {
     
     @RequestMapping(value = "/get.json", method = RequestMethod.GET)
     public @ResponseBody
-    List<CustomEmailForm> getCustomEmails(@RequestParam("clientId") String clientId){
+    List<CustomEmailForm> getCustomEmails(@RequestParam("clientId") String clientId) throws IllegalArgumentException {        
         List<CustomEmailForm> result = new ArrayList<CustomEmailForm>();
         boolean haveErrors = false;
-        String groupOrcid = getEffectiveUserOrcid();        
-        GroupType groupType = profileEntityManager.getGroupType(groupOrcid);        
+        String groupId = getEffectiveUserOrcid();        
+        GroupType groupType = profileEntityManager.getGroupType(groupId);        
         if(!GroupType.PREMIUM_INSTITUTION.equals(groupType)) {
             haveErrors = true;           
         } else if(!clientDetailsManager.exists(clientId)) {
             haveErrors = true;
-        } else if(!clientDetailsManager.belongsTo(clientId, groupOrcid)) {
+        } else if(!clientDetailsManager.belongsTo(clientId, groupId)) {
             haveErrors = true;
         }                        
         
