@@ -4898,6 +4898,7 @@ ul.toggle-menu li:hover ul{
 	float: left;
 	margin: 5px 0 0 3px;
 	text-align: center;
+	position: relative;
 	
 }
 
@@ -5184,6 +5185,16 @@ ul.workspace-private-toolbar .popover-help-container .popover{
 .cancel{
 	margin-right: 15px;
 }
+
+.bulk-edit-delete .bulk-edit-popover{
+	top: -40px;
+	left: -59px;
+	position: absolute;
+}
+
+.bulk-edit-delete .bulk-edit-popover .arrow{
+	left: 72px;
+} 
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */

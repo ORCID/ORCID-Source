@@ -307,9 +307,15 @@
 								 			</div>
 								 			<div class="bulk-edit-delete pull-right">
 											    <div class="centered">
-													<a ng-click="deleteBulkConfirm()" class="ignore toolbar-button edit-item-button" title="Ignore">
+													<a ng-click="deleteBulkConfirm()" class="ignore toolbar-button edit-item-button" ng-mouseenter="showTooltip('Bulk-Edit')" ng-mouseleave="hideTooltip('Bulk-Edit')">
 														<span class="edit-option-toolbar glyphicon glyphicon-trash"></span>
 													</a>
+													<div class="popover popover-tooltip top bulk-edit-popover" ng-show="showElement['Bulk-Edit'] == true">
+		                                             <div class="arrow"></div>
+			                                            <div class="popover-content">
+			                                                <span>Delete selected works</span>
+			                                            </div>
+			                                        </div>
 												</div>
 											</div>
 										</li>
