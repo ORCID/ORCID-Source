@@ -272,6 +272,7 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
         OrcidMessage orcidMessage = new OrcidMessage();
         orcidMessage.setMessageVersion(OrcidMessage.DEFAULT_VERSION);
         orcidMessage.setOrcidProfile(filteredProfile);
+        profileIndexDocument.setProfileLastModified(filteredProfile.getOrcidHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime());
         profileIndexDocument.setPublicProfileMessage(orcidMessage.toString());
         solrDao.persist(profileIndexDocument);
     }
