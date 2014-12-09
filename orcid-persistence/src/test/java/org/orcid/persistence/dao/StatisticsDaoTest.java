@@ -79,7 +79,7 @@ public class StatisticsDaoTest extends DBUnitTest {
         long s6 = 0;
         long s7 = 0;
 
-        assertEquals(9, s1);
+        assertEquals(10, s1);
         assertEquals(3, s2);
         assertEquals(11, s3);
         assertEquals(7, s4);
