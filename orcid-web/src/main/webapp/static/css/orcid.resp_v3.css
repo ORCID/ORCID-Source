@@ -5060,7 +5060,8 @@ ul.sources-actions > li .popover-tooltip > .arrow{
 .workspace-top .popover-help-container .popover.privacy-myorcid3,
 .workspace-top .popover-help-container .popover.privacy-myorcid3:hover{
 	top: -143px;
-	left: -138px;	
+	left: -138px;
+	min-width: 242px;
 }
 
 .popover-help-container > .privacy-myorcid3 >.arrow{
