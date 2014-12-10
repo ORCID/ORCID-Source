@@ -61,19 +61,6 @@
                                                     privateClick="fundingSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PRIVATE', $event)" />
                                             </li>
                                         </ul>
-                                        <#if !(isPublicProfile??)>
-                                           <div ng-show="!group.consistentVis()" class="vis-issue">
-                                                <div class="popover-help-container">
-                                                   <span class="glyphicons circle_exclamation_mark" ng-mouseleave="hideTooltip('vis-issue')" ng-mouseenter="showTooltip('vis-issue')"></span>
-                                                    <div class="popover vis-popover bottom" ng-show="showElement['vis-issue'] == true">
-                                                     <div class="arrow"></div>
-                                                        <div class="popover-content">
-                                                       <@orcid.msg 'groups.common.data_inconsistency' />                                            
-                                                    </div>
-                                                 </div>
-                                                </div>                                    
-                                              </div>
-                                        </#if>
                                     </div>
                                 </#if>
                              </div>
@@ -148,8 +135,20 @@
                                         </li>
                                     </#if>
                                 </ul>
+                                <#if !(isPublicProfile??)>
+                                    <div ng-show="!group.consistentVis()" class="vis-issue">
+                                         <div class="popover-help-container">
+                                             <span class="glyphicons circle_exclamation_mark" ng-mouseleave="hideTooltip('vis-issue')" ng-mouseenter="showTooltip('vis-issue')"></span>
+                                             <div class="popover vis-popover bottom" ng-show="showElement['vis-issue'] == true">
+                                             <div class="arrow"></div>
+                                                 <div class="popover-content">
+                                               <@orcid.msg 'groups.common.data_inconsistency' />
+                                             </div>
+                                         </div>
+                                        </div>
+                                     </div>
+                                </#if>
                             </div>
-
                     </div>
 
                     <!-- Active Row Identifiers / URL / Validations / Versions -->
