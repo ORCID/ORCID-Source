@@ -212,7 +212,7 @@
                     <div ng-show="group.activePutCode != funding.putCode.value" class="row source-line">
                         <div class="col-md-4 col-sm-4 col-xs-4">
                                 <a ng-click="group.activePutCode = funding.putCode.value;">
-                                {{group.getActive().sourceName}}
+                                {{funding.sourceName}}
                             </a>
                         </div>
                         <div class="col-md-3 col-sm-3 col-xs-3">
