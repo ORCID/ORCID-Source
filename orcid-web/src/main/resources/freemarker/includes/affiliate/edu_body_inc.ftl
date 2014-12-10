@@ -18,11 +18,7 @@
 -->
 <ul ng-hide="!affiliationsSrvc.educations.length" class="workspace-affiliations workspace-body-list bottom-margin-medium" ng-cloak>
 	<li class="bottom-margin-small workspace-border-box affiliation-box card ng-scope" ng-repeat="group in affiliationsSrvc.educations | orderBy:sortState.predicate:sortState.reverse"> 
-		<#if request.requestURI?ends_with("my-orcid3") || RequestParameters['v']??>
 		    <#include "aff_row_inc_v3.ftl" />
-		<#else>
-		    <#include "aff_row_inc.ftl" />
-		</#if>
 	</li>
 </ul>
 <div ng-show="affiliationsSrvc.loading == true;" class="text-center">
@@ -31,12 +27,6 @@
     	<img src="${staticCdn}/img/spin-big.gif" width="85" height ="85"/>
     <![endif]-->
 </div>
-<#if request.requestURI?ends_with("my-orcid3")>
-	<div ng-show="affiliationsSrvc.loading == false && affiliationsSrvc.educations.length == 0" class="" ng-cloak>
-	    <strong><#if (publicProfile)?? && publicProfile == true>${springMacroRequestContext.getMessage("workspace_affiliations_body_list.Noeducationaddedyet")}<#else>${springMacroRequestContext.getMessage("workspace_affiliations_body_list.havenotaddedanyeducation")} <a ng-click="addAffiliationModal('education')">${springMacroRequestContext.getMessage("workspace_affiliations_body_list.addsomenow")}</a></#if></strong>
-	</div>		
-<#else>
-	<div ng-show="affiliationsSrvc.loading == false && affiliationsSrvc.educations.length == 0" class="alert alert-info" ng-cloak>
-	    <strong><#if (publicProfile)?? && publicProfile == true>${springMacroRequestContext.getMessage("workspace_affiliations_body_list.Noeducationaddedyet")}<#else>${springMacroRequestContext.getMessage("workspace_affiliations_body_list.havenotaddedanyeducation")} <a ng-click="addAffiliationModal('education')">${springMacroRequestContext.getMessage("workspace_affiliations_body_list.addsomenow")}</a></#if></strong>
-	</div>
-</#if>
+<div ng-show="affiliationsSrvc.loading == false && affiliationsSrvc.educations.length == 0" class="" ng-cloak>
+    <strong><#if (publicProfile)?? && publicProfile == true>${springMacroRequestContext.getMessage("workspace_affiliations_body_list.Noeducationaddedyet")}<#else>${springMacroRequestContext.getMessage("workspace_affiliations_body_list.havenotaddedanyeducation")} <a ng-click="addAffiliationModal('education')">${springMacroRequestContext.getMessage("workspace_affiliations_body_list.addsomenow")}</a></#if></strong>
+</div>		
