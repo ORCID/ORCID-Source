@@ -241,9 +241,9 @@ kind of variable. This temp value is only used in this macro lib -->
         <div class="arrow"></div>
         <div class="popover-content">
               <span ng-show="userIsSource(${activity})"><@orcid.msg 'groups.common.edit_my' /></span>
-              <span ng-show="!userIsSource(${activity}) && group.hasUserVersion()">Sorry you cannot edit this</span>
+              <span ng-show="!userIsSource(${activity}) && group.hasUserVersion()"><@orcid.msg 'groups.common.make_a_copy_only_when' /></span>
               <span ng-show="!userIsSource(${activity}) && !group.hasUserVersion() && group.hasKeys()"><@orcid.msg 'groups.common.make_a_copy' /></span>
-              <span ng-show="!userIsSource(${activity}) && !group.hasUserVersion() && !group.hasKeys()">Sorry you cannot edit this</span>
+              <span ng-show="!userIsSource(${activity}) && !group.hasUserVersion() && !group.hasKeys()"><@orcid.msg 'groups.common.make_a_copy_only_when' /></span>
         </div>
     </div>
 </#macro>  
