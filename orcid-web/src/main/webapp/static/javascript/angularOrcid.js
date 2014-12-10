@@ -96,10 +96,19 @@ GroupedActivities.prototype.getByPut = function(putCode) {
 };
 
 GroupedActivities.prototype.consistentVis = function() {
-    var vis = this.getDefault().visibility;
+    if (this.type == GroupedActivities.FUNDING)
+        var vis = this.getDefault().visibility.visibility;
+    else
+        var vis = this.getDefault().visibility;
+
     for (var idx in this.activities)
-        if (this.activities[idx].visibility != vis)
-            return false;
+        if (this.type == GroupedActivities.FUNDING) {
+            if (this.activities[idx].visibility.visibility != vis)
+                return false;
+        } else {
+            if (this.activities[idx].visibility != vis)
+                return false;
+        }
     return true;
 };
 
