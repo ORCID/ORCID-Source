@@ -19,7 +19,7 @@
 <div class="workspace-accordion-header">
     <div class="row">
         
-        <div class="col-md-3 col-sm-2 col-xs-12">
+        <div class="col-md-4 col-sm-2 col-xs-12">
             <a href="" ng-click="workspaceSrvc.toggleFunding($event)" class="toggle-text">
                   <i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayFunding==false}"></i>
                   <@orcid.msg 'workspace.Funding'/> (<span ng-bind="fundingSrvc.groups.length"></span>)
@@ -27,7 +27,7 @@
         </div>
         
         
-        <div class="col-md-9 col-sm-10 col-xs-12 action-button-bar" ng-show="workspaceSrvc.displayFunding">
+        <div class="col-md-8 col-sm-10 col-xs-12 action-button-bar" ng-show="workspaceSrvc.displayFunding">
         		<!-- Sort -->
             	<#include "../workspace/workspace_act_sort_menu.ftl"/>
                 <#if !(isPublicProfile??)>
