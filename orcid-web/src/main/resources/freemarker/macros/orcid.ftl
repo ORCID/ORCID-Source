@@ -224,7 +224,7 @@ kind of variable. This temp value is only used in this macro lib -->
 	</div>
 </#macro>
 
-<#macro editActivityIcon activity click toolTipSuffix toolTipClass>
+<#macro editActivityIcon activity click toolTipSuffix toolTipClass>	  
     <a ng-show="userIsSource(${activity})" ng-click="${click}" ng-mouseenter="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" ng-mouseleave="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">
         <span class="glyphicon glyphicon-pencil"></span>
     </a>
@@ -237,10 +237,10 @@ kind of variable. This temp value is only used in this macro lib -->
     <a ng-show="!userIsSource(${activity}) && !group.hasUserVersion() && !group.hasKeys()" ng-mouseenter="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" ng-mouseleave="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">
         <span class="glyphicons git_create grey"></span>
     </a>
-    <div class="${toolTipClass}" ng-show="showElement[${activity}.putCode.value+'-${toolTipSuffix}'] == true">
+    <div class="${toolTipClass}" ng-show="showElement[${activity}.putCode.value+'-${toolTipSuffix}'] == true" ng-class="{(!userIsSource(${activity}) && group.hasUserVersion()) || (!userIsSource(${activity}) && !group.hasUserVersion() && !group.hasKeys()) : 'two-lines'}">
         <div class="arrow"></div>
-        <div class="popover-content">
-              <span ng-show="userIsSource(${activity})"><@orcid.msg 'groups.common.edit_my' /></span>
+        <div class="popover-content">        	   
+              <span ng-show="userIsSource(${activity})"><@orcid.msg 'groups.common.edit_my' /></span>                            
               <span ng-show="!userIsSource(${activity}) && group.hasUserVersion()"><@orcid.msg 'groups.common.open_source_to' /></span>
               <span ng-show="!userIsSource(${activity}) && !group.hasUserVersion() && group.hasKeys()"><@orcid.msg 'groups.common.make_a_copy' /></span>
               <span ng-show="!userIsSource(${activity}) && !group.hasUserVersion() && !group.hasKeys()"><@orcid.msg 'groups.common.items_must_have' /></span>
