@@ -838,6 +838,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                 var cloneW = JSON.parse(JSON.stringify(work));
                 cloneW.source = null;
                 cloneW.putCode = null;
+                cloneW.contributors = [];
                 return cloneW;
             },
             copyEIs: function(from, to) {
@@ -4156,7 +4157,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actBulkSr
         });
     };
 
-    $scope.addWorkModal = function(data, type){
+    $scope.addWorkModal = function(data){
         if (data == undefined) {
             worksSrvc.getBlankWork(function(data) {
                 $scope.editWork = data;
@@ -4166,22 +4167,16 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actBulkSr
                 });
             });
         } else {
-            $scope.editWork = data;
-            if(type == 'COPY')
-            	$scope.editWork.contributors = [];
+            $scope.editWork = data;            
             $scope.loadWorkTypes();
             $scope.showAddWorkModal();
         }
 
     };
 
-    $scope.openEditWork = function(work){
-    	var putCode = work.putCode.value;
-    	if($scope.userIsSource(work))
-    		worksSrvc.getEditable(putCode, function(data) {$scope.addWorkModal(data, 'EDIT');});
-    	else 
-    		worksSrvc.getEditable(putCode, function(data) {$scope.addWorkModal(data, 'COPY');});
-    };        
+    $scope.openEditWork = function(putCode){
+    	worksSrvc.getEditable(putCode, function(data) {$scope.addWorkModal(data);});
+    };       
 
     $scope.putWork = function(){
         if ($scope.addingWork) return; // don't process if adding work
