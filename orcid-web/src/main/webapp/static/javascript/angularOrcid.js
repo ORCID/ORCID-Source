@@ -4156,7 +4156,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actBulkSr
         });
     };
 
-    $scope.addWorkModal = function(data){
+    $scope.addWorkModal = function(data, type){
         if (data == undefined) {
             worksSrvc.getBlankWork(function(data) {
                 $scope.editWork = data;
@@ -4167,16 +4167,21 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actBulkSr
             });
         } else {
             $scope.editWork = data;
+            if(type == 'COPY')
+            	$scope.editWork.contributors = [];
             $scope.loadWorkTypes();
             $scope.showAddWorkModal();
         }
 
     };
 
-    $scope.openEditWork = function(putCode){
-        worksSrvc.getEditable(putCode, function(data) {$scope.addWorkModal(data);});
-    };
-
+    $scope.openEditWork = function(work){
+    	var putCode = work.putCode.value;
+    	if($scope.userIsSource(work))
+    		worksSrvc.getEditable(putCode, function(data) {$scope.addWorkModal(data, 'EDIT');});
+    	else 
+    		worksSrvc.getEditable(putCode, function(data) {$scope.addWorkModal(data, 'COPY');});
+    };        
 
     $scope.putWork = function(){
         if ($scope.addingWork) return; // don't process if adding work

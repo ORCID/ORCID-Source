@@ -206,7 +206,7 @@
                                     <li> 
                                         <@orcid.editActivityIcon
                                             activity="work"
-                                            click="openEditWork(work.putCode.value)"
+                                            click="openEditWork(work)"
                                             toolTipSuffix="editToolTipSource"
                                             toolTipClass="popover popover-tooltip top edit-activeSource-popover"
                                          />
@@ -265,7 +265,7 @@
                                     <li> 
                                         <@orcid.editActivityIcon
                                             activity="work"
-                                            click="openEditWork(work.putCode.value)"
+                                            click="openEditWork(work)"
                                             toolTipSuffix="editToolTipSourceActions"
                                             toolTipClass="popover popover-tooltip top edit-inactiveSource-popover"
                                          />
@@ -327,7 +327,7 @@
                                     <li>
                                         <@orcid.editActivityIcon
                                             activity="work"
-                                            click="openEditWork(work.putCode.value)"
+                                            click="openEditWork(work)"
                                             toolTipSuffix="editToolTip"
                                             toolTipClass="popover popover-tooltip top edit-source-popover"
                                          />
