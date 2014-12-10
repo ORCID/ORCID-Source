@@ -87,7 +87,7 @@ public class OrcidMultiThreadedIndexingTest extends OrcidProfileManagerBaseTest 
         profile1 = orcidProfileManager.createOrcidProfile(profile1);
         assertEquals(3, profileDao.findOrcidsByIndexingStatus(IndexingStatus.PENDING, Integer.MAX_VALUE).size());
         orcidProfileManager.processProfilesPendingIndexing();
-        verify(orcidIndexManager, times(1)).persistProfileInformationForIndexing(argThat(OrcidIndexManagerTypeMatcherTestFactory.orcidBasicProfileCreate()));
+        verify(orcidIndexManager, times(1)).persistProfileInformationForIndexingIfNecessary(argThat(OrcidIndexManagerTypeMatcherTestFactory.orcidBasicProfileCreate()));
         assertEquals(0, profileDao.findOrcidsByIndexingStatus(IndexingStatus.PENDING, Integer.MAX_VALUE).size());
     }
 

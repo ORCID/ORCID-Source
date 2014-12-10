@@ -594,22 +594,12 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
                 };
             },
             createNew: function(work) {
-                var cloneW = JSON.parse(JSON.stringify(work));
-                cloneW.source = null;
-                cloneW.putCode = null;
-                return cloneW;
-            },
-            makeDefault: function(group, putCode) {
-                group.makeDefault(putCode);
-                $.ajax({
-                    url: getBaseUri() + '/fundings/updateToMaxDisplay.json?putCode=' + putCode,
-                    dataType: 'json',
-                    success: function(data) {
-                    }
-                }).fail(function(){
-                    // something bad is happening!
-                    console.log("some bad is hppending");
-                });
+                var cloneF = JSON.parse(JSON.stringify(work));
+                cloneF.source = null;
+                cloneF.putCode = null;
+                for (var idx in cloneF.externalIdentifiers)
+                    cloneF.externalIdentifiers[idx].putCode = null;
+                return cloneF;
             },
             getEditable: function(putCode, callback) {
                 // first check if they are the current source
@@ -656,12 +646,39 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
                     }
                 }
             },
-            setGroupPrivacy: function(putCode, priv) {
-                var group = fundingSrvc.getGroup(putCode);
-                for (var idx in group.activities) {
-                    var curPutCode = group.activities[idx].putCode.value;
-                    fundingSrvc.setPrivacy(curPutCode, priv);
+            fundingCount: function() {
+                var count = 0;
+                for (var idx in fundingSrvc.groups) {
+                    count += fundingSrvc.groups[idx].activitiesCount;
                 }
+                return count;
+            },
+            getFunding: function(putCode) {
+                for (var idx in fundingSrvc.groups) {
+                        if (fundingSrvc.groups[idx].hasPut(putCode))
+                            return fundingSrvc.groups[idx].getByPut(putCode);
+                }
+                return null;
+            },
+            getFundings: function(path) {
+                //clear out current fundings
+                fundingSrvc.loading = true;
+                fundingSrvc.fundingToAddIds = null;
+                //new way
+                fundingSrvc.groups.length = 0;
+                //get funding ids
+                $.ajax({
+                    url: getBaseUri() + '/'  + path,
+                    dataType: 'json',
+                    success: function(data) {
+                        fundingSrvc.fundingToAddIds = data;
+                        fundingSrvc.addFundingToScope('fundings/fundings.json');
+                        $rootScope.$apply();
+                    }
+                }).fail(function(){
+                    // something bad is happening!
+                    console.log("error fetching fundings");
+                });
             },
             getGroup: function(putCode) {
                 for (var idx in fundingSrvc.groups) {
@@ -670,11 +687,17 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
                 }
                 return null;
             },
-            setPrivacy: function(putCode, priv) {
-                var idx;
-                var funding = fundingSrvc.getFunding(putCode);
-                funding.visibility.visibility = priv;
-                fundingSrvc.updateProfileFunding(funding);
+            makeDefault: function(group, putCode) {
+                group.makeDefault(putCode);
+                $.ajax({
+                    url: getBaseUri() + '/fundings/updateToMaxDisplay.json?putCode=' + putCode,
+                    dataType: 'json',
+                    success: function(data) {
+                    }
+                }).fail(function(){
+                    // something bad is happening!
+                    console.log("some bad is hppending");
+                });
             },
             removeFunding: function(funding) {
                 $.ajax({
@@ -696,51 +719,28 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
                                     break;
                                 }
                             }
-
                         }
-                           $rootScope.$apply();
+                        $rootScope.$apply();
                     }
                 }).fail(function() {
                     console.log("Error deleting funding.");
                 });
             },
-            fundingCount: function() {
-                var count = 0;
-                for (var idx in fundingSrvc.groups) {
-                    count += fundingSrvc.groups[idx].activitiesCount;
-                }
-                return count;
-            },
-            getFunding: function(putCode) {
-                for (var idx in fundingSrvc.groups) {
-                        if (fundingSrvc.groups[idx].hasPut(putCode))
-                            return fundingSrvc.groups[idx].getByPut(putCode);
-                }
-                return null;
-            },
-            getFundings: function(path) {
-                //clear out current fundings
-                fundingSrvc.loading = true;
-                fundingSrvc.fundingToAddIds = null;
-
-                //new way
-                fundingSrvc.groups.length = 0;
-                //get funding ids
-                $.ajax({
-                    url: getBaseUri() + '/'  + path,
-                    dataType: 'json',
-                    success: function(data) {
-                        fundingSrvc.fundingToAddIds = data;
-                        fundingSrvc.addFundingToScope('fundings/fundings.json');
-                        $rootScope.$apply();
-                    }
-                }).fail(function(){
-                    // something bad is happening!
-                    console.log("error fetching fundings");
-                });
-            },
             setIdsToAdd: function(ids) {
                 fundingSrvc.fundingToAddIds = ids;
+            },
+            setGroupPrivacy: function(putCode, priv) {
+                var group = fundingSrvc.getGroup(putCode);
+                for (var idx in group.activities) {
+                    var curPutCode = group.activities[idx].putCode.value;
+                    fundingSrvc.setPrivacy(curPutCode, priv);
+                }
+            },
+            setPrivacy: function(putCode, priv) {
+                var idx;
+                var funding = fundingSrvc.getFunding(putCode);
+                funding.visibility.visibility = priv;
+                fundingSrvc.updateProfileFunding(funding);
             },
             updateProfileFunding: function(funding) {
                 $.ajax({
@@ -3257,6 +3257,15 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc, comm
         }
     };
 
+    $scope.hideSources = function(group) {
+        $scope.editSources[group.groupId] = false;
+        group.activePutCode = group.defaultPutCode;
+    };
+
+    $scope.showSources = function(group) {
+        $scope.editSources[group.groupId] = true;
+    };
+
     // remove once grouping is live
     $scope.moreInfoMouseEnter = function(key, $event) {
         $event.stopPropagation();
@@ -3656,8 +3665,8 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc, comm
         }
     };
 
-    $scope.openEditFunding = function(curFunding) {
-        fundingSrvc.getEditable(curFunding.putCode.value, function(bestMatch) {
+    $scope.openEditFunding = function(putCode) {
+        fundingSrvc.getEditable(putCode, function(bestMatch) {
             $scope.addFundingModal(bestMatch);
         });
     };
@@ -3671,12 +3680,12 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc, comm
         });
     };
     
-    $scope.showTooltip = function (element){    	
-        $scope.showElement[element] = true;
+    $scope.showTooltip = function (key){
+        $scope.showElement[key] = true;
     };
 
-    $scope.hideTooltip = function (element){    	
-        $scope.showElement[element] = false;
+    $scope.hideTooltip = function (key){
+        $scope.showElement[key] = false;
     };
     
     $scope.userIsSource = function(funding) {
@@ -3735,12 +3744,12 @@ function PublicFundingCtrl($scope, $compile, $filter, workspaceSrvc, fundingSrvc
         return info;
     };
     
-    $scope.showTooltip = function (element){    	
-        $scope.showElement[element] = true;
+    $scope.showTooltip = function (key){
+        $scope.showElement[key] = true;
     };
 
-    $scope.hideTooltip = function (element){    	
-        $scope.showElement[element] = false;
+    $scope.hideTooltip = function (key){    	
+        $scope.showElement[key] = false;
     };
 
 }
@@ -3815,6 +3824,9 @@ function PublicWorkCtrl($scope, $compile, $filter, workspaceSrvc, worksSrvc) {
         group.activePutCode = group.defaultPutCode;
     };
 
+    $scope.showSources = function(group) {
+        $scope.editSources[group.groupId] = true;
+    };
 
     $scope.loadWorkInfo = function(putCode, event) {
         //Close any open popover
@@ -4296,6 +4308,10 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actBulkSr
         group.activePutCode = group.defaultPutCode;
     };
 
+    $scope.showSources = function(group) {
+        $scope.editSources[group.groupId] = true;
+    };
+
     $scope.loadDetails = function(putCode, event) {
         //Close any open popover
         $scope.closePopover(event);
@@ -4400,13 +4416,13 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actBulkSr
         $scope.editWork.workType.errors = [];
     };
     
-    $scope.showTooltip = function (element){    	
-    	$scope.showElement[element] = true;
+    $scope.showTooltip = function (key){    	
+        $scope.showElement[key] = true;
     	
     }
     
-    $scope.hideTooltip = function (element){    	
-    	$scope.showElement[element] = false;
+    $scope.hideTooltip = function (key){    	
+    	$scope.showElement[key] = false;
     }
     
     $scope.openFileDialog = function(){    	

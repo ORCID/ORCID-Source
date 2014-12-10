@@ -26,7 +26,7 @@
                     <div class="sources-header">
                         <div class="row">
                             <div class="col-md-4 col-sm-4 col-xs-4">
-                                <@orcid.msg 'groups.common.sources' /> <span class="hide-sources" ng-click="editSources[group.groupId] = !editSources[group.groupId]"><@orcid.msg 'groups.common.close_sources' /></span>
+                                <@orcid.msg 'groups.common.sources' /> <span class="hide-sources" ng-click="hideSources(group)"><@orcid.msg 'groups.common.close_sources' /></span>
                             </div>
                             <div class="col-md-3 col-sm-3 col-xs-3">
                                 <@orcid.msg 'groups.common.created' />
@@ -182,16 +182,12 @@
                             <#if !(isPublicProfile??)>
                                 <ul class="sources-actions">
                                     <li>
-                                        <a ng-click="openEditFunding(group.getActive())"  ng-click="openEditWork(group.getActive().putCode.value)" ng-mouseenter="showTooltip(group.groupId+'-editActiveSource')" ng-mouseleave="hideTooltip(group.groupId+'-editActiveSource')">
-                                            <span class="glyphicon glyphicon-pencil"></span>
-                                        </a>
-                                        <div class="popover popover-tooltip top edit-activeSource-popover" ng-show="showElement[group.groupId+'-editActiveSource'] == true">
-                                            <div class="arrow"></div>
-                                            <div class="popover-content">
-                                                <span ng-hide="!userIsSource(funding)"><@orcid.msg 'groups.common.edit_my'/></span>
-                                                <span ng-show="!userIsSource(funding)"><@orcid.msg 'groups.common.make_a_copy'/></span>
-                                            </div>
-                                        </div>
+                                         <@orcid.editActivityIcon
+                                            activity="funding"
+                                            click="openEditFunding(funding.putCode.value)"
+                                            toolTipSuffix="editFundingToolSourceActions"
+                                            toolTipClass="popover popover-tooltip top edit-activeSource-popover"
+                                         />
                                     </li>
                                     <li>
                                         <a ng-click="deleteFundingConfirm(group.getActive().putCode.value, false)"  ng-mouseenter="showTooltip(group.groupId+'-deleteActiveSource')" ng-mouseleave="hideTooltip(group.groupId+'-deleteActiveSource')">
@@ -235,18 +231,13 @@
                         <div class="col-md-2 col-sm-2 col-xs-12 trash-source">
                             <#if !(isPublicProfile??)>
                                 <ul class="sources-actions">
-                                    <li> <!-- ng-show="!group.hasUserVersion() || userIsSource(funding)" -->
-                                        <a ng-click="openEditFunding(group.getActive())" ng-click="openEditWork(funding.putCode.value)" ng-mouseenter="showTooltip(funding.putCode.value+'-editInactiveSource')" ng-mouseleave="hideTooltip(funding.putCode.value+'-editInactiveSource')">
-                                            <span class="glyphicon glyphicon-pencil"></span>
-                                        </a>
-
-                                        <div class="popover popover-tooltip top edit-inactiveSource-popover" ng-show="showElement[funding.putCode.value+'-editInactiveSource'] == true">
-                                            <div class="arrow"></div>
-                                            <div class="popover-content">
-                                                <span ng-hide="!userIsSource(funding)"><@orcid.msg 'groups.common.edit_my'/></span>
-                                                <span ng-show="!userIsSource(funding)"><@orcid.msg 'groups.common.make_a_copy'/></span>
-                                            </div>
-                                        </div>
+                                    <li> 
+                                        <@orcid.editActivityIcon
+                                            activity="funding"
+                                            click="openEditFunding(funding.putCode.value)"
+                                            toolTipSuffix="editFundingToolSourceActions"
+                                            toolTipClass="popover popover-tooltip top edit-inactiveSource-popover"
+                                        />
                                     </li>
                                     <li>
                                         <a ng-click="deleteFundingConfirm(group.getActive().putCode.value, false)" ng-mouseenter="showTooltip(funding.putCode.value+'-deleteInactiveSource')" ng-mouseleave="hideTooltip(funding.putCode.value+'-deleteInactiveSource')">
@@ -276,7 +267,7 @@
                               <@orcid.msgUpCase 'groups.common.created'/>: <span ng-bind="funding.createdDate | ajaxFormDateToISO8601"></span>                              
                           </div>
                         <div class="col-md-3" ng-show="group.activePutCode == funding.putCode.value">
-                            <span class="glyphicon glyphicon-check"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span> <span ng-hide="group.activitiesCount == 1">(</span><a ng-click="editSources[group.groupId] = !editSources[group.groupId]" ng-hide="group.activitiesCount == 1" ng-mouseenter="showTooltip(group.groupId+'-sources')" ng-mouseleave="hideTooltip(group.groupId+'-sources')">of {{group.activitiesCount}}</a><span ng-hide="group.activitiesCount == 1">)</span>
+                            <span class="glyphicon glyphicon-check"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span> <span ng-hide="group.activitiesCount == 1">(</span><a ng-click="showSources(group)" ng-hide="group.activitiesCount == 1" ng-mouseenter="showTooltip(group.groupId+'-sources')" ng-mouseleave="hideTooltip(group.groupId+'-sources')">of {{group.activitiesCount}}</a><span ng-hide="group.activitiesCount == 1">)</span>
                             
                             <div class="popover popover-tooltip top sources-popover" ng-show="showElement[group.groupId+'-sources'] == true">
                                 <div class="arrow"></div>
@@ -288,21 +279,17 @@
                         <div class="col-md-2">
                             <ul class="sources-options" ng-cloak>
                                 <#if !(isPublicProfile??)>
-	                                <li><!-- ng-show="!group.hasUserVersion() || userIsSource(funding)" -->
-	                                        <a ng-click="openEditFunding(group.getActive())" ng-mouseenter="showTooltip(group.groupId+'-editSource')" ng-mouseleave="hideTooltip(group.groupId+'-editSource')">
-	                                            <span class="glyphicon glyphicon-pencil"></span>
-	                                        </a>
-	                                        <div class="popover popover-tooltip top edit-source-popover" ng-show="showElement[group.groupId+'-editSource'] == true">
-	                                            <div class="arrow"></div>
-	                                            <div class="popover-content">
-	                                                <span ng-show="userIsSource(funding)"><@orcid.msg 'groups.common.edit_my'/></span>
-	                                                <span ng-show="!userIsSource(funding)"><@orcid.msg 'groups.common.make_a_copy'/></span>
-	                                            </div>
-	                                        </div>
+	                                <li>
+                                         <@orcid.editActivityIcon
+                                            activity="funding"
+                                            click="openEditFunding(funding.putCode.value)"
+                                            toolTipSuffix="editFundingToolTipSources"
+                                            toolTipClass="popover popover-tooltip top edit-source-popover"
+                                         />
 	                                </li>
 	                                <li ng-hide="group.activitiesCount == 1 || editSources[group.groupId] == true">
 	
-	                                    <a ng-click="editSources[group.groupId] = !editSources[group.groupId]" ng-mouseenter="showTooltip(group.groupId+'-deleteGroup')" ng-mouseleave="hideTooltip(group.groupId+'-deleteGroup')">
+	                                    <a ng-click="showSources(group)" ng-mouseenter="showTooltip(group.groupId+'-deleteGroup')" ng-mouseleave="hideTooltip(group.groupId+'-deleteGroup')">
 	                                         <span class="glyphicon glyphicon-trash"></span>
 	                                    </a>
 	                                    <div class="popover popover-tooltip top delete-source-popover" ng-show="showElement[group.groupId+'-deleteGroup'] == true">

@@ -772,20 +772,21 @@ function populateWorkAjaxForm(bibJson, work) {
             work.title.value = lowerKeyTags['title'];
 
         if (lowerKeyTags.hasOwnProperty('year'))
-            work.publicationDate.year = lowerKeyTags['year'];
+            if (!isNaN(lowerKeyTags['year']))
+                work.publicationDate.year = lowerKeyTags['year'];
 
         if (lowerKeyTags.hasOwnProperty('month')) {
             var month = lowerKeyTags['month'];
-            if (bibMonths.indexOf(month) >= 0) 
-                month = bibMonths.indexOf(month)+1;
-            work.publicationDate.month = Number(month).pad(2);
+            if (bibMonths.indexOf(month.trim().substring(0,3)) >= 0) 
+                month = bibMonths.indexOf(month.trim().substring(0,3)) + 1;
+            if (!isNaN(month) && month > 0 && month <= 12)
+                work.publicationDate.month = Number(month).pad(2);
         }
 
         if (lowerKeyTags.hasOwnProperty('url'))
             work.url.value = lowerKeyTags['url'];
 
     }
-    ;
 };
 
 /* END: Bibjson to work AjaxForm */
@@ -967,655 +968,624 @@ $(function() {
             });
 });
 
-/* start bibtexParse 0.0.16 */
+/* start bibtexParse 0.0.18 */
 
-// Original work by Henrik Muehe (c) 2010
+//Original work by Henrik Muehe (c) 2010
 //
-// CommonJS port by Mikola Lysenko 2013
+//CommonJS port by Mikola Lysenko 2013
 //
-// Port to Browser lib by ORCID / RCPETERS
+//Port to Browser lib by ORCID / RCPETERS
 //
-// Issues:
-// no comment handling within strings
-// no string concatenation
-// no variable values yet
-// Grammar implemented here:
-// bibtex -> (string | preamble | comment | entry)*;
-// string -> '@STRING' '{' key_equals_value '}';
-// preamble -> '@PREAMBLE' '{' value '}';
-// comment -> '@COMMENT' '{' value '}';
-// entry -> '@' key '{' key ',' key_value_list '}';
-// key_value_list -> key_equals_value (',' key_equals_value)*;
-// key_equals_value -> key '=' value;
-// value -> value_quotes | value_braces | key;
-// value_quotes -> '"' .*? '"'; // not quite
-// value_braces -> '{' .*? '"'; // not quite
+//Issues:
+//no comment handling within strings
+//no string concatenation
+//no variable values yet
+//Grammar implemented here:
+//bibtex -> (string | preamble | comment | entry)*;
+//string -> '@STRING' '{' key_equals_value '}';
+//preamble -> '@PREAMBLE' '{' value '}';
+//comment -> '@COMMENT' '{' value '}';
+//entry -> '@' key '{' key ',' key_value_list '}';
+//key_value_list -> key_equals_value (',' key_equals_value)*;
+//key_equals_value -> key '=' value;
+//value -> value_quotes | value_braces | key;
+//value_quotes -> '"' .*? '"'; // not quite
+//value_braces -> '{' .*? '"'; // not quite
 (function(exports) {
 
-    function BibtexParser() {
+  function BibtexParser() {
+      
+      this.months = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+      this.pos = 0;
+      this.input = "";
+      this.entries = new Array();
 
-        this.months = [ "jan", "feb", "mar", "apr", "may", "jun", "jul", "aug",
-                "sep", "oct", "nov", "dec" ];
-        this.pos = 0;
-        this.input = "";
-        this.entries = new Array();
+      this.currentEntry = "";
 
-        this.currentEntry = "";
+      this.setInput = function(t) {
+          this.input = t;
+      };
 
-        this.setInput = function(t) {
-            this.input = t;
-        };
+      this.getEntries = function() {
+          return this.entries;
+      };
 
-        this.getEntries = function() {
-            return this.entries;
-        };
+      this.isWhitespace = function(s) {
+          return (s == ' ' || s == '\r' || s == '\t' || s == '\n');
+      };
 
-        this.isWhitespace = function(s) {
-            return (s == ' ' || s == '\r' || s == '\t' || s == '\n');
-        };
+      this.match = function(s, canCommentOut) {
+          if (canCommentOut == undefined || canCommentOut == null)
+              canCommentOut = true;
+          this.skipWhitespace(canCommentOut);
+          if (this.input.substring(this.pos, this.pos + s.length) == s) {
+              this.pos += s.length;
+          } else {
+              throw "Token mismatch, expected " + s + ", found "
+                      + this.input.substring(this.pos);
+          };
+          this.skipWhitespace(canCommentOut);
+      };
 
-        this.match = function(s, canCommentOut) {
-            if (canCommentOut == undefined || canCommentOut == null)
-                canCommentOut = true;
-            this.skipWhitespace(canCommentOut);
-            if (this.input.substring(this.pos, this.pos + s.length) == s) {
-                this.pos += s.length;
-            } else {
-                throw "Token mismatch, expected " + s + ", found "
-                        + this.input.substring(this.pos);
-            }
-            ;
-            this.skipWhitespace(canCommentOut);
-        };
+      this.tryMatch = function(s, canCommentOut) {
+          if (canCommentOut == undefined || canCommentOut == null)
+              canComment = true;
+          this.skipWhitespace(canCommentOut);
+          if (this.input.substring(this.pos, this.pos + s.length) == s) {
+              return true;
+          } else {
+              return false;
+          };
+          this.skipWhitespace(canCommentOut);
+      };
 
-        this.tryMatch = function(s, canCommentOut) {
-            if (canCommentOut == undefined || canCommentOut == null)
-                canComment = true;
-            this.skipWhitespace(canCommentOut);
-            if (this.input.substring(this.pos, this.pos + s.length) == s) {
-                return true;
-            } else {
-                return false;
-            }
-            ;
-            this.skipWhitespace(canCommentOut);
-        };
+      /* when search for a match all text can be ignored, not just white space */
+      this.matchAt = function() {
+          while (this.input.length > this.pos && this.input[this.pos] != '@') {
+              this.pos++;
+          };
 
-        /* when search for a match all text can be ignored, not just white space */
-        this.matchAt = function() {
-            while (this.input.length > this.pos && this.input[this.pos] != '@') {
-                this.pos++;
-            }
-            ;
+          if (this.input[this.pos] == '@') {
+              return true;
+          };
+          return false;
+      };
 
-            if (this.input[this.pos] == '@') {
-                return true;
-            }
-            ;
-            return false;
-        };
+      this.skipWhitespace = function(canCommentOut) {
+          while (this.isWhitespace(this.input[this.pos])) {
+              this.pos++;
+          };
+          if (this.input[this.pos] == "%" && canCommentOut == true) {
+              while (this.input[this.pos] != "\n") {
+                  this.pos++;
+              };
+              this.skipWhitespace(canCommentOut);
+          };
+      };
 
-        this.skipWhitespace = function(canCommentOut) {
-            while (this.isWhitespace(this.input[this.pos])) {
-                this.pos++;
-            }
-            ;
-            if (this.input[this.pos] == "%" && canCommentOut == true) {
-                while (this.input[this.pos] != "\n") {
-                    this.pos++;
-                }
-                ;
-                this.skipWhitespace(canCommentOut);
-            }
-            ;
-        };
+      this.value_braces = function() {
+          var bracecount = 0;
+          this.match("{", false);
+          var start = this.pos;
+          var escaped = false;
+          while (true) {
+              if (!escaped) {
+                  if (this.input[this.pos] == '}') {
+                      if (bracecount > 0) {
+                          bracecount--;
+                      } else {
+                          var end = this.pos;
+                          this.match("}", false);
+                          return this.input.substring(start, end);
+                      };
+                  } else if (this.input[this.pos] == '{') {
+                      bracecount++;
+                  } else if (this.pos >= this.input.length - 1) {
+                      throw "Unterminated value";
+                  };
+              };
+              if (this.input[this.pos] == '\\' && escaped == false)
+                  escaped == true;
+              else
+                  escaped == false;
+              this.pos++;
+          };
+      };
 
-        this.value_braces = function() {
-            var bracecount = 0;
-            this.match("{", false);
-            var start = this.pos;
-            var escaped = false;
-            while (true) {
-                if (!escaped) {
-                    if (this.input[this.pos] == '}') {
-                        if (bracecount > 0) {
-                            bracecount--;
-                        } else {
-                            var end = this.pos;
-                            this.match("}", false);
-                            return this.input.substring(start, end);
-                        }
-                        ;
-                    } else if (this.input[this.pos] == '{') {
-                        bracecount++;
-                    } else if (this.pos >= this.input.length - 1) {
-                        throw "Unterminated value";
-                    }
-                    ;
-                }
-                ;
-                if (this.input[this.pos] == '\\' && escaped == false)
-                    escaped == true;
-                else
-                    escaped == false;
-                this.pos++;
-            }
-            ;
-        };
+      this.value_comment = function() {
+          var str = '';
+          var brcktCnt = 0;
+          while (!(this.tryMatch("}", false) && brcktCnt == 0)) {
+              str = str + this.input[this.pos];
+              if (this.input[this.pos] == '{')
+                  brcktCnt++;
+              if (this.input[this.pos] == '}')
+                  brcktCnt--;
+              if (this.pos >= this.input.length - 1) {
+                  throw "Unterminated value:" + this.input.substring(start);
+              };
+              this.pos++;
+          };
+          return str;
+      };
 
-        this.value_comment = function() {
-            var str = '';
-            var brcktCnt = 0;
-            while (!(this.tryMatch("}", false) && brcktCnt == 0)) {
-                str = str + this.input[this.pos];
-                if (this.input[this.pos] == '{')
-                    brcktCnt++;
-                if (this.input[this.pos] == '}')
-                    brcktCnt--;
-                if (this.pos >= this.input.length - 1) {
-                    throw "Unterminated value:" + this.input.substring(start);
-                }
-                ;
-                this.pos++;
-            }
-            ;
-            return str;
-        };
+      this.value_quotes = function() {
+          this.match('"', false);
+          var start = this.pos;
+          var escaped = false;
+          while (true) {
+              if (!escaped) {
+                  if (this.input[this.pos] == '"') {
+                      var end = this.pos;
+                      this.match('"', false);
+                      return this.input.substring(start, end);
+                  } else if (this.pos >= this.input.length - 1) {
+                      throw "Unterminated value:" + this.input.substring(start);
+                  };
+              }
+              if (this.input[this.pos] == '\\' && escaped == false)
+                  escaped == true;
+              else
+                  escaped == false;
+              this.pos++;
+          };
+      };
 
-        this.value_quotes = function() {
-            this.match('"', false);
-            var start = this.pos;
-            var escaped = false;
-            while (true) {
-                if (!escaped) {
-                    if (this.input[this.pos] == '"') {
-                        var end = this.pos;
-                        this.match('"', false);
-                        return this.input.substring(start, end);
-                    } else if (this.pos >= this.input.length - 1) {
-                        throw "Unterminated value:"
-                                + this.input.substring(start);
-                    }
-                    ;
-                }
-                if (this.input[this.pos] == '\\' && escaped == false)
-                    escaped == true;
-                else
-                    escaped == false;
-                this.pos++;
-            }
-            ;
-        };
+      this.single_value = function() {
+          var start = this.pos;
+          if (this.tryMatch("{")) {
+              return this.value_braces();
+          } else if (this.tryMatch('"')) {
+              return this.value_quotes();
+          } else {
+              var k = this.key();
+              if (k.match("^[0-9]+$"))
+                  return k;
+              else if (this.months.indexOf(k) >= 0)
+                  return k;
+              else
+                  throw "Value expected:" + this.input.substring(start) + ' for key: ' + k;
+          
+          };
+      };
 
-        this.single_value = function() {
-            var start = this.pos;
-            if (this.tryMatch("{")) {
-                return this.value_braces();
-            } else if (this.tryMatch('"')) {
-                return this.value_quotes();
-            } else {
-                var k = this.key();
-                if (k.match("^[0-9]+$"))
-                    return k;
-                else if (this.months.indexOf(k))
-                    return k;
-                else
-                    throw "Value expected:" + this.input.substring(start)
-                            + ' for key: ' + k;
+      this.value = function() {
+          var values = [];
+          values.push(this.single_value());
+          while (this.tryMatch("#")) {
+              this.match("#");
+              values.push(this.single_value());
+          };
+          return latexToUTF8.decodeLatex(values.join(""));
+      };
 
-            }
-            ;
-        };
+      this.key = function() {
+          var start = this.pos;
+          while (true) {
+              if (this.pos >= this.input.length) {
+                  throw "Runaway key";
+              };
+                              // а-яА-Я is Cyrillic
+              if (this.input[this.pos].match("[\\wа-яА-Я0-9+_:\\./-]")) {
+                  this.pos++;
+              } else {
+                  return this.input.substring(start, this.pos);
+              };
+          };
+      };
 
-        this.value = function() {
-            var values = [];
-            values.push(this.single_value());
-            while (this.tryMatch("#")) {
-                this.match("#");
-                values.push(this.single_value());
-            }
-            ;
-            return latexToUTF8.decodeLatex(values.join(""));
-        };
+      this.key_equals_value = function() {
+          var key = this.key();
+          if (this.tryMatch("=")) {
+              this.match("=");
+              var val = this.value();
+              return [ key, val ];
+          } else {
+              throw "... = value expected, equals sign missing:"
+                      + this.input.substring(this.pos);
+          };
+      };
 
-        this.key = function() {
-            var start = this.pos;
-            while (true) {
-                if (this.pos >= this.input.length) {
-                    throw "Runaway key";
-                }
-                ;
+      this.key_value_list = function() {
+          var kv = this.key_equals_value();
+          this.currentEntry['entryTags'] = {};
+          this.currentEntry['entryTags'][kv[0]] = kv[1];
+          while (this.tryMatch(",")) {
+              this.match(",");
+              // fixes problems with commas at the end of a list
+              if (this.tryMatch("}")) {
+                  break;
+              }
+              ;
+              kv = this.key_equals_value();
+              this.currentEntry['entryTags'][kv[0]] = kv[1];
+          };
+      };
 
-                if (this.input[this.pos].match("[a-zA-Z0-9+_:\\./-]")) {
-                    this.pos++;
-                } else {
-                    return this.input.substring(start, this.pos);
-                }
-                ;
-            }
-            ;
-        };
+      this.entry_body = function(d) {
+          this.currentEntry = {};
+          this.currentEntry['citationKey'] = this.key();
+          this.currentEntry['entryType'] = d.substring(1);
+          this.match(",");
+          this.key_value_list();
+          this.entries.push(this.currentEntry);
+      };
 
-        this.key_equals_value = function() {
-            var key = this.key();
-            if (this.tryMatch("=")) {
-                this.match("=");
-                var val = this.value();
-                return [ key, val ];
-            } else {
-                throw "... = value expected, equals sign missing:"
-                        + this.input.substring(this.pos);
-            }
-            ;
-        };
+      this.directive = function() {
+          this.match("@");
+          return "@" + this.key();
+      };
 
-        this.key_value_list = function() {
-            var kv = this.key_equals_value();
-            this.currentEntry['entryTags'] = {};
-            this.currentEntry['entryTags'][kv[0]] = kv[1];
-            while (this.tryMatch(",")) {
-                this.match(",");
-                // fixes problems with commas at the end of a list
-                if (this.tryMatch("}")) {
-                    break;
-                }
-                ;
-                kv = this.key_equals_value();
-                this.currentEntry['entryTags'][kv[0]] = kv[1];
-            }
-            ;
-        };
+      this.preamble = function() {
+          this.currentEntry = {};
+          this.currentEntry['entryType'] = 'PREAMBLE';
+          this.currentEntry['entry'] = this.value_comment();
+          this.entries.push(this.currentEntry);
+      };
 
-        this.entry_body = function(d) {
-            this.currentEntry = {};
-            this.currentEntry['citationKey'] = this.key();
-            this.currentEntry['entryType'] = d.substring(1);
-            this.match(",");
-            this.key_value_list();
-            this.entries.push(this.currentEntry);
-        };
+      this.comment = function() {
+          this.currentEntry = {};
+          this.currentEntry['entryType'] = 'COMMENT';
+          this.currentEntry['entry'] = this.value_comment();
+          this.entries.push(this.currentEntry);
+      };
 
-        this.directive = function() {
-            this.match("@");
-            return "@" + this.key();
-        };
+      this.entry = function(d) {
+          this.entry_body(d);
+      };
 
-        this.preamble = function() {
-            this.currentEntry = {};
-            this.currentEntry['entryType'] = 'PREAMBLE';
-            this.currentEntry['entry'] = this.value_comment();
-            this.entries.push(this.currentEntry);
-        };
+      this.bibtex = function() {
+          while (this.matchAt()) {
+              var d = this.directive();
+              this.match("{");
+              if (d == "@STRING") {
+                  this.string();
+              } else if (d == "@PREAMBLE") {
+                  this.preamble();
+              } else if (d == "@COMMENT") {
+                  this.comment();
+              } else {
+                  this.entry(d);
+              }
+              this.match("}");
+          };
+      };
+  };
+  
+  function LatexToUTF8 () {
+      this.uniToLatex = {
+      };
+      
+      
+      this.latexToUni = {
+      "`A": "À", // begin grave
+      "`E": "È",
+      "`I": "Ì",
+      "`O": "Ò",
+      "`U": "Ù",
+      "`a": "à",
+      "`e": "è",
+      "`i": "ì",
+      "`o": "ò",
+      "`u": "ù",
+      "\'A": "Á", // begin acute
+      "\'E": "É",
+      "\'I": "Í",
+      "\'O": "Ó",
+      "\'U": "Ú",
+      "\'Y": "Ý",
+      "\'a": "á",
+      "\'e": "é",
+      "\'i": "í",
+      "\'o": "ó",
+      "\'u": "ú",
+      "\'y": "ý",
+      "\"A": "Ä", // begin diaeresis
+      "r A": "Å",
+      "\"E": "Ë",
+      "\"I": "Ï",
+      "\"O": "Ö",
+      "\"U": "Ü",
+      "\"a": "ä",
+      "r a": "å",
+      "\"e": "ë",
+      "\"i": "ï",
+      "\"o": "ö",
+      "\"u": "ü",
+      "~A": "Ã", // begin tilde
+      "~N": "Ñ",
+      "~O": "Õ",
+      "~a": "ã",
+      "~n": "ñ",
+      "~o": "õ",
+      "rU": "Ů", // begin ring above
+      "ru": "ů",
+      "vC": "Č",  // begin caron
+      "vD": "Ď",
+      "vE": "Ě",
+      "vN": "Ň",
+      "vR": "Ř",
+      "vS": "Š",
+      "vT": "Ť",
+      "vZ": "Ž",
+      "vc": "č",
+      "vd": "ď",
+      "ve": "ě",
+      "vn": "ň",
+      "vr": "ř",
+      "vs": "š",
+      "vt": "ť",
+      "vz": "ž",
+      "#": "#",  // begin special symbols
+      "$": "$",
+      "%": "%",
+      "&": "&",
+      "\\": "\\",
+      "^": "^",
+      "_": "_",
+      "{": "{",
+      "}": "}",
+      "~": "~",
+      "\"": "\"",
+      "\'": "’", // closing single quote
+      "`": "‘", // opening single quote
+      "AA": "Å", // begin non-ASCII letters
+      "AE": "Æ",
+      "c{C}": "Ç",
+      "O": "Ø",
+      "aa": "å",
+      "c{c}": "ç",
+      "ae": "æ",
+      "o": "ø",
+      "ss": "ß",
+      "textcopyright": "©",
+      "textellipsis": "…" ,
+      "textemdash": "—",
+      "textendash": "–",
+      "textregistered": "®",
+      "texttrademark": "™",
+      "alpha": "α", // begin greek alphabet
+      "beta": "β",
+      "gamma": "γ",
+      "delta": "δ",
+      "epsilon": "ε",
+      "zeta": "ζ",
+      "eta": "η",
+      "theta": "θ",
+      "iota": "ι",
+      "kappa": "κ",
+      "lambda": "λ",
+      "mu": "μ",
+      "nu": "ν",
+      "xi": "ξ",
+      "omicron": "ο",
+      "pi": "π",
+      "rho": "ρ",
+      "sigma": "ς",
+      "tau": "σ",
+      "upsilon": "τ",
+      "phi": "υ",
+      "chi": "φ",
+      "psi": "χ",
+      "omega": "ψ",
+      "=A": "Ā",
+      "=a": "ā",
+      "u{A}": "Ă",
+      "u{a}": "ă",
+      "k A": "Ą",
+      "k a": "ą",
+      "'C": "Ć",
+      "'c": "ć",
+      "^C": "Ĉ",
+      "^c": "ĉ",
+      ".C": "Ċ",
+      ".c": "ċ",
+      "v{C}": "Č",
+      "v{c}": "č",
+      "v{D}": "Ď",
+      "=E": "Ē",
+      "=e": "ē",
+      "u{E}": "Ĕ",
+      "u{e}": "ĕ",
+      ".E": "Ė",
+      ".e": "ė",
+      "k E": "Ę",
+      "k e": "ę",
+      "v{E}": "Ě",
+      "v{e}": "ě",
+      "^G": "Ĝ",
+      "^g": "ĝ",
+      "u{G}": "Ğ",
+      "u{g}": "ğ",
+      ".G": "Ġ",
+      ".g": "ġ",
+      "c{G}": "Ģ",
+      "c{g}": "ģ",
+      "^H": "Ĥ",
+      "^h": "ĥ",
+      "dH": "Ħ",
+      "dh": "ħ",
+      "~I": "Ĩ",
+      "~i": "ĩ",
+      "=I": "Ī",
+      "=i": "ī",
+      "u{I}": "Ĭ",
+      "u{i}": "ĭ",
+      "k I": "Į",
+      "k i": "į",
+      ".I": "İ",
+      "^J": "Ĵ",
+      "^j": "ĵ",
+      "c{J}": "Ķ",
+      "c{j}": "ķ",
+      "'L": "Ĺ",
+      "'l": "ĺ",
+      "c{L}": "Ļ",
+      "c{l}": "ļ",
+      "v{L}": "Ľ",
+      "v{l}": "ľ",
+      "dL": "Ł",
+      "dl": "ł",
+      "'N": "Ń",
+      "'n": "ń",
+      "c{N}": "Ņ",
+      "c{n}": "ņ",
+      "v{N}": "Ň",
+      "v{n}": "ň",
+      "=O": "Ō",
+      "=o": "ō",
+      "u{O}": "Ŏ",
+      "u{o}": "ŏ",
+      "H{O}": "Ő",
+      "H{o}": "ő",
+      "OE": "Œ",
+      "oe": "œ",
+      "'R": "Ŕ",
+      "'r": "ŕ",
+      "c{R}": "Ŗ",
+      "c{r}": "ŗ",
+      "v{R}": "Ř",
+      "v{r}": "ř",
+      "'R": "Ś",
+      "'r": "ś",
+      "^S": "Ŝ",
+      "^s": "ŝ",
+      "c{S}": "Ş",
+      "c{s}": "ş",
+      "v{S}": "Š",
+      "v{s}": "š",
+      "c{T}": "Ţ",
+      "c{t}": "ţ",
+      "v{T}": "Ť",
+      "v{t}": "ť",
+      "dT": "Ŧ",
+      "dt": "ŧ",
+      "~U": "Ũ",
+      "~u": "ũ",
+      "=U": "Ū",
+      "=u": "ū",
+      "u{U}": "Ŭ",
+      "u{u}": "ŭ",
+      "r U": "Ů",
+      "r u": "ů",
+      "H{U}": "Ű",
+      "H{u}": "ű",
+      "k U": "Ų",
+      "k u": "ų",
+      "^W": "Ŵ",
+      "^w": "ŵ",
+      "^Y": "Ŷ",
+      "^y": "ŷ",
+      "\"Y": "Ÿ",
+      "'Z": "Ź",
+      "'z": "ź",
+      ".Z": "Ż",
+      ".z": "ż",
+      "v{Z}": "Ž",
+      "v{z}": "ž"
+  };
 
-        this.comment = function() {
-            this.currentEntry = {};
-            this.currentEntry['entryType'] = 'COMMENT';
-            this.currentEntry['entry'] = this.value_comment();
-            this.entries.push(this.currentEntry);
-        };
+      String.prototype.addSlashes = function() {
+           //no need to do (str+'') anymore because 'this' can only be a string
+           return this.replace(/[\\"']/g, '\\$&').replace(/\u0000/g, '\\0');
+      }
 
-        this.entry = function(d) {
-            this.entry_body(d);
-        };
+      for (var idx in this.latexToUni) {
+          if (this.latexToUni[idx].length > this.maxLatexLength)
+            this.maxLatexLength =  this.latexToUni[idx].length;
+          this.uniToLatex[this.latexToUni[idx]] = idx;
+          //console.log('"'+ idx.addSlashes() + '": "' + this.latexToUni[idx].addSlashes() + '"');
+          //console.log(idx.addSlashes() + ' ' + this.latexToUni[idx].addSlashes());
+      }
 
-        this.bibtex = function() {
-            while (this.matchAt()) {
-                var d = this.directive();
-                this.match("{");
-                if (d == "@STRING") {
-                    this.string();
-                } else if (d == "@PREAMBLE") {
-                    this.preamble();
-                } else if (d == "@COMMENT") {
-                    this.comment();
-                } else {
-                    this.entry(d);
-                }
-                this.match("}");
-            }
-            ;
-        };
-    }
-    ;
+      this.longestEscapeMatch = function(value, pos) {
+          var subStringEnd =  pos + 1 + this.maxLatexLength <= value.length ?
+                      pos + 1 + this.maxLatexLength : value.length;
+          var subStr =  value.substring(pos + 1,subStringEnd);                    
+          while (subStr.length > 0) {
+           if (subStr in this.latexToUni) {
+              break;
+           }
+           subStr = subStr.substring(0,subStr.length -1);
+          }
+          return subStr;
+      }
+      
+      this.decodeLatex = function(value) {
+          var newVal = '';
+          var pos = 0;
+          while (pos < value.length) {
+              if (value[pos] == '\\') {
+                  var match = this.longestEscapeMatch(value, pos);
+                  if (match.length > 0) {
+                      newVal += this.latexToUni[match];
+                      pos = pos + 1 + match.length;
+                  } else {
+                      newVal += value[pos];
+                      pos++;
+                  }
+              } else if (value[pos] == '{' || value[pos] == '}') {
+                pos++;
+              } else {
+                  newVal += value[pos];
+                  pos++;
+              }
+          }
+          return newVal;
+      }
 
-    function LatexToUTF8() {
-        this.uniToLatex = {};
+      this.encodeLatex = function(value) {
+          var trans = '';
+          for (var idx = 0; idx < value.length; ++idx) {
+              var c = value.charAt(idx);
+              if (c in this.uniToLatex)
+                  trans += '\\' + this.uniToLatex[c];
+              else
+                  trans += c;
+          }
+          return trans;
+      }
+      
+  };
+  
+  var latexToUTF8 = new LatexToUTF8();
+  
+  exports.toJSON = function(bibtex) {
+      var b = new BibtexParser();
+      b.setInput(bibtex);
+      b.bibtex();
+      return b.entries;
+  };
 
-        this.latexToUni = {
-            "`A" : "Ã", // begin grave
-            "`E" : "Ã",
-            "`I" : "Ã",
-            "`O" : "Ã",
-            "`U" : "Ã",
-            "`a" : "Ã ",
-            "`e" : "Ã¨",
-            "`i" : "Ã¬",
-            "`o" : "Ã²",
-            "`u" : "Ã¹",
-            "\'A" : "Ã", // begin acute
-            "\'E" : "Ã",
-            "\'I" : "Ã",
-            "\'O" : "Ã",
-            "\'U" : "Ã",
-            "\'Y" : "Ã",
-            "\'a" : "Ã¡",
-            "\'e" : "Ã©",
-            "\'i" : "Ã­",
-            "\'o" : "Ã³",
-            "\'u" : "Ãº",
-            "\'y" : "Ã½",
-            "\"A" : "Ã", // begin diaeresis
-            "r A" : "Ã",
-            "\"E" : "Ã",
-            "\"I" : "Ã",
-            "\"O" : "Ã",
-            "\"U" : "Ã",
-            "\"a" : "Ã¤",
-            "r a" : "Ã¥",
-            "\"e" : "Ã«",
-            "\"i" : "Ã¯",
-            "\"o" : "Ã¶",
-            "\"u" : "Ã¼",
-            "~A" : "Ã", // begin tilde
-            "~N" : "Ã",
-            "~O" : "Ã",
-            "~a" : "Ã£",
-            "~n" : "Ã±",
-            "~o" : "Ãµ",
-            "rU" : "Å®", // begin ring above
-            "ru" : "Å¯",
-            "vC" : "Ä", // begin caron
-            "vD" : "Ä",
-            "vE" : "Ä",
-            "vN" : "Å",
-            "vR" : "Å",
-            "vS" : "Å ",
-            "vT" : "Å¤",
-            "vZ" : "Å½",
-            "vc" : "Ä",
-            "vd" : "Ä",
-            "ve" : "Ä",
-            "vn" : "Å",
-            "vr" : "Å",
-            "vs" : "Å¡",
-            "vt" : "Å¥",
-            "vz" : "Å¾",
-            "#" : "#", // begin special symbols
-            "$" : "$",
-            "%" : "%",
-            "&" : "&",
-            "\\" : "\\",
-            "^" : "^",
-            "_" : "_",
-            "{" : "{",
-            "}" : "}",
-            "~" : "~",
-            "\"" : "\"",
-            "\'" : "â", // closing single quote
-            "`" : "â", // opening single quote
-            "AA" : "Ã", // begin non-ASCII letters
-            "AE" : "Ã",
-            "c{C}" : "Ã",
-            "O" : "Ã",
-            "aa" : "Ã¥",
-            "c{c}" : "Ã§",
-            "ae" : "Ã¦",
-            "o" : "Ã¸",
-            "ss" : "Ã",
-            "textcopyright" : "Â©",
-            "textellipsis" : "â¦",
-            "textemdash" : "â",
-            "textendash" : "â",
-            "textregistered" : "Â®",
-            "texttrademark" : "â¢",
-            "alpha" : "Î±", // begin greek alphabet
-            "beta" : "Î²",
-            "gamma" : "Î³",
-            "delta" : "Î´",
-            "epsilon" : "Îµ",
-            "zeta" : "Î¶",
-            "eta" : "Î·",
-            "theta" : "Î¸",
-            "iota" : "Î¹",
-            "kappa" : "Îº",
-            "lambda" : "Î»",
-            "mu" : "Î¼",
-            "nu" : "Î½",
-            "xi" : "Î¾",
-            "omicron" : "Î¿",
-            "pi" : "Ï",
-            "rho" : "Ï",
-            "sigma" : "Ï",
-            "tau" : "Ï",
-            "upsilon" : "Ï",
-            "phi" : "Ï",
-            "chi" : "Ï",
-            "psi" : "Ï",
-            "omega" : "Ï",
-            "=A" : "Ä",
-            "=a" : "Ä",
-            "u{A}" : "Ä",
-            "u{a}" : "Ä",
-            "k A" : "Ä",
-            "k a" : "Ä",
-            "'C" : "Ä",
-            "'c" : "Ä",
-            "^C" : "Ä",
-            "^c" : "Ä",
-            ".C" : "Ä",
-            ".c" : "Ä",
-            "v{C}" : "Ä",
-            "v{c}" : "Ä",
-            "v{D}" : "Ä",
-            "=E" : "Ä",
-            "=e" : "Ä",
-            "u{E}" : "Ä",
-            "u{e}" : "Ä",
-            ".E" : "Ä",
-            ".e" : "Ä",
-            "k E" : "Ä",
-            "k e" : "Ä",
-            "v{E}" : "Ä",
-            "v{e}" : "Ä",
-            "^G" : "Ä",
-            "^g" : "Ä",
-            "u{G}" : "Ä",
-            "u{g}" : "Ä",
-            ".G" : "Ä ",
-            ".g" : "Ä¡",
-            "c{G}" : "Ä¢",
-            "c{g}" : "Ä£",
-            "^H" : "Ä¤",
-            "^h" : "Ä¥",
-            "dH" : "Ä¦",
-            "dh" : "Ä§",
-            "~I" : "Ä¨",
-            "~i" : "Ä©",
-            "=I" : "Äª",
-            "=i" : "Ä«",
-            "u{I}" : "Ä¬",
-            "u{i}" : "Ä­",
-            "k I" : "Ä®",
-            "k i" : "Ä¯",
-            ".I" : "Ä°",
-            "^J" : "Ä´",
-            "^j" : "Äµ",
-            "c{J}" : "Ä¶",
-            "c{j}" : "Ä·",
-            "'L" : "Ä¹",
-            "'l" : "Äº",
-            "c{L}" : "Ä»",
-            "c{l}" : "Ä¼",
-            "v{L}" : "Ä½",
-            "v{l}" : "Ä¾",
-            "dL" : "Å",
-            "dl" : "Å",
-            "'N" : "Å",
-            "'n" : "Å",
-            "c{N}" : "Å",
-            "c{n}" : "Å",
-            "v{N}" : "Å",
-            "v{n}" : "Å",
-            "=O" : "Å",
-            "=o" : "Å",
-            "u{O}" : "Å",
-            "u{o}" : "Å",
-            "H{O}" : "Å",
-            "H{o}" : "Å",
-            "OE" : "Å",
-            "oe" : "Å",
-            "'R" : "Å",
-            "'r" : "Å",
-            "c{R}" : "Å",
-            "c{r}" : "Å",
-            "v{R}" : "Å",
-            "v{r}" : "Å",
-            "'R" : "Å",
-            "'r" : "Å",
-            "^S" : "Å",
-            "^s" : "Å",
-            "c{S}" : "Å",
-            "c{s}" : "Å",
-            "v{S}" : "Å ",
-            "v{s}" : "Å¡",
-            "c{T}" : "Å¢",
-            "c{t}" : "Å£",
-            "v{T}" : "Å¤",
-            "v{t}" : "Å¥",
-            "dT" : "Å¦",
-            "dt" : "Å§",
-            "~U" : "Å¨",
-            "~u" : "Å©",
-            "=U" : "Åª",
-            "=u" : "Å«",
-            "u{U}" : "Å¬",
-            "u{u}" : "Å­",
-            "r U" : "Å®",
-            "r u" : "Å¯",
-            "H{U}" : "Å°",
-            "H{u}" : "Å±",
-            "k U" : "Å²",
-            "k u" : "Å³",
-            "^W" : "Å´",
-            "^w" : "Åµ",
-            "^Y" : "Å¶",
-            "^y" : "Å·",
-            "\"Y" : "Å¸",
-            "'Z" : "Å¹",
-            "'z" : "Åº",
-            ".Z" : "Å»",
-            ".z" : "Å¼",
-            "v{Z}" : "Å½",
-            "v{z}" : "Å¾"
-        };
-
-        String.prototype.addSlashes = function() {
-            // no need to do (str+'') anymore because 'this' can only be a
-            // string
-            return this.replace(/[\\"']/g, '\\$&').replace(/\u0000/g, '\\0');
-        }
-
-        for ( var idx in this.latexToUni) {
-            if (this.latexToUni[idx].length > this.maxLatexLength)
-                this.maxLatexLength = this.latexToUni[idx].length;
-            this.uniToLatex[this.latexToUni[idx]] = idx;
-            // console.log('"'+ idx.addSlashes() + '": "' +
-            // this.latexToUni[idx].addSlashes() + '"');
-            // console.log(idx.addSlashes() + ' ' +
-            // this.latexToUni[idx].addSlashes());
-        }
-
-        this.longestEscapeMatch = function(value, pos) {
-            var subStringEnd = pos + 1 + this.maxLatexLength <= value.length ? pos
-                    + 1 + this.maxLatexLength
-                    : value.length;
-            var subStr = value.substring(pos + 1, subStringEnd);
-            while (subStr.length > 0) {
-                if (subStr in this.latexToUni) {
-                    break;
-                }
-                subStr = subStr.substring(0, subStr.length - 1);
-            }
-            return subStr;
-        }
-
-        this.decodeLatex = function(value) {
-            var newVal = '';
-            var pos = 0;
-            while (pos < value.length) {
-                if (value[pos] == '\\') {
-                    var match = this.longestEscapeMatch(value, pos);
-                    if (match.length > 0) {
-                        newVal += this.latexToUni[match];
-                        pos = pos + 1 + match.length;
-                    } else {
-                        newVal += value[pos];
-                        pos++;
-                    }
-                } else if (value[pos] == '{' || value[pos] == '}') {
-                    pos++;
-                } else {
-                    newVal += value[pos];
-                    pos++;
-                }
-            }
-            return newVal;
-        }
-
-        this.encodeLatex = function(value) {
-            var trans = '';
-            for ( var idx = 0; idx < value.length; ++idx) {
-                var c = value.charAt(idx);
-                if (c in this.uniToLatex)
-                    trans += '\\' + this.uniToLatex[c];
-                else
-                    trans += c;
-            }
-            return trans;
-        }
-
-    }
-    ;
-
-    var latexToUTF8 = new LatexToUTF8();
-
-    exports.toJSON = function(bibtex) {
-        var b = new BibtexParser();
-        b.setInput(bibtex);
-        b.bibtex();
-        return b.entries;
-    };
-
-    /* added during hackathon don't hate on me */
-    exports.toBibtex = function(json) {
-        out = '';
-        for ( var i in json) {
-            out += "@" + json[i].entryType;
-            out += '{';
-            if (json[i].citationKey)
-                out += json[i].citationKey + ', ';
-            if (json[i].entry)
-                out += json[i].entry;
-            if (json[i].entryTags) {
-                var tags = '';
-                for (jdx in json[i].entryTags) {
-                    if (tags.length != 0)
-                        tags += ', ';
-                    tags += jdx + '= {'
-                            + latexToUTF8.encodeLatex(json[i].entryTags[jdx])
-                            + '}';
-                }
-                out += tags;
-            }
-            out += '}\n\n';
-        }
-        return out;
-
-    };
+  /* added during hackathon don't hate on me */
+  exports.toBibtex = function(json) {
+      out = '';
+      for ( var i in json) {
+          out += "@" + json[i].entryType;
+          out += '{';
+          if (json[i].citationKey)
+              out += json[i].citationKey + ', ';
+          if (json[i].entry)
+              out += json[i].entry ;
+          if (json[i].entryTags) {
+              var tags = '';
+              for (jdx in json[i].entryTags) {
+                  if (tags.length != 0)
+                      tags += ', ';
+                  tags += jdx + '= {' + latexToUTF8.encodeLatex(json[i].entryTags[jdx]) + '}';
+              }
+              out += tags;
+          }
+          out += '}\n\n';
+      }
+      return out;
+      
+  };
 
 })(typeof exports === 'undefined' ? this['bibtexParse'] = {} : exports);
 
 /* end bibtexParse */
+
 
 /* START: orcidSearchUrlJs v0.0.1 */
 /* https://github.com/ORCID/orcidSearchUrlJs */

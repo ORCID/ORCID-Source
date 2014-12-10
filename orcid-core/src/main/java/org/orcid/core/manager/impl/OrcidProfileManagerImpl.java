@@ -1070,13 +1070,15 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         boolean sendChangeNotifications = preferences.getSendChangeNotifications() == null ? DefaultPreferences.SEND_CHANGE_NOTIFICATIONS_DEFAULT : preferences
                 .getSendChangeNotifications().isValue();
         boolean sendOrcidNews = preferences.getSendOrcidNews() == null ? DefaultPreferences.SEND_ORCID_NEWS_DEFAULT : preferences.getSendOrcidNews().isValue();
-        boolean sendMemberUpdateRequests = preferences.getSendMemberUpdateRequests() == null ? DefaultPreferences.SEND_MEMBER_UPDATE_REQUESTS : preferences.getSendMemberUpdateRequests();
+        boolean sendMemberUpdateRequests = preferences.getSendMemberUpdateRequests() == null ? DefaultPreferences.SEND_MEMBER_UPDATE_REQUESTS : preferences
+                .getSendMemberUpdateRequests();
         Visibility activitiesVisibilityDefault = preferences.getActivitiesVisibilityDefault().getValue();
         boolean developerToolsEnabled = preferences.getDeveloperToolsEnabled() == null ? DefaultPreferences.DEVELOPER_TOOLS_ENABLED_DEFAULT : preferences
                 .getDeveloperToolsEnabled().isValue();
         float sendEmailFrequencyDays = Float.valueOf(preferences.getSendEmailFrequencyDays() == null ? DefaultPreferences.SEND_EMAIL_FREQUENCY_DAYS : preferences
                 .getSendEmailFrequencyDays());
-        profileDao.updatePreferences(orcid, sendChangeNotifications, sendOrcidNews, sendMemberUpdateRequests, activitiesVisibilityDefault, developerToolsEnabled, sendEmailFrequencyDays);
+        profileDao.updatePreferences(orcid, sendChangeNotifications, sendOrcidNews, sendMemberUpdateRequests, activitiesVisibilityDefault, developerToolsEnabled,
+                sendEmailFrequencyDays);
         OrcidProfile cachedProfile = getOrcidProfileFromCache(orcid);
         if (cachedProfile != null) {
             profileDao.flush();
@@ -2088,7 +2090,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                     LOG.debug("Null profile found during indexing: {}", orcid);
                 } else {
                     LOG.debug("Got profile to index: {}", orcid);
-                    orcidIndexManager.persistProfileInformationForIndexing(orcidProfile);
+                    orcidIndexManager.persistProfileInformationForIndexingIfNecessary(orcidProfile);
                     profileDao.updateIndexingStatus(orcid, IndexingStatus.DONE);
                 }
             }
