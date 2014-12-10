@@ -5006,10 +5006,7 @@ ul.sources-edit-list ul.sources-actions .git_create:hover:before{
 .sources-actions .git_create.grey:before,
 .sources-options .git_create.grey:before{	
 	color: #939598;
-}
-
-
-color: #939598;	
+}	
 
 .sources-actions .git_pull_request:hover:before{
 	color: #9FC836;
