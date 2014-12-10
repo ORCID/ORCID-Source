@@ -225,18 +225,25 @@ kind of variable. This temp value is only used in this macro lib -->
 </#macro>
 
 <#macro editActivityIcon activity click toolTipSuffix toolTipClass>
-    <a ng-show="userIsSource(${activity}) || (group.hasKeys() && !group.hasUserVersion())" ng-click="${click}" ng-mouseenter="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" ng-mouseleave="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">
-        <span class="{{((group.hasKeys() && !group.hasUserVersion()) && 'glyphicons git_create' || 'glyphicon glyphicon-pencil')}}"></span>
+    <a ng-show="userIsSource(${activity})" ng-click="${click}" ng-mouseenter="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" ng-mouseleave="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">
+        <span class="glyphicon glyphicon-pencil"></span>
     </a>
-    <a ng-show="(userIsSource(${activity}) || (group.hasKeys() && !group.hasUserVersion())) == false" ng-mouseenter="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" ng-mouseleave="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">
+    <a ng-show="!userIsSource(${activity}) && group.hasUserVersion()" ng-click="showSources(group)" ng-mouseenter="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" ng-mouseleave="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">
         <!-- FRAN this should be grey --><span class="glyphicons git_create"></span>
-    </a>    
+    </a>
+    <a ng-show="!userIsSource(${activity}) && !group.hasUserVersion() && group.hasKeys()" ng-click="${click}" ng-mouseenter="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" ng-mouseleave="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">
+        <span class="glyphicons git_create"></span>
+    </a>
+    <a ng-show="!userIsSource(${activity}) && !group.hasUserVersion() && !group.hasKeys()" ng-mouseenter="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" ng-mouseleave="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">
+        <!-- FRAN this should be grey --><span class="glyphicons git_create"></span>
+    </a>
     <div class="${toolTipClass}" ng-show="showElement[${activity}.putCode.value+'-${toolTipSuffix}'] == true">
         <div class="arrow"></div>
         <div class="popover-content">
-              <span ng-hide="!userIsSource(${activity})"><@orcid.msg 'groups.common.edit_my' /></span>
-              <span ng-show="!userIsSource(${activity}) && group.hasKeys()"><@orcid.msg 'groups.common.make_a_copy' /></span>
-              <span ng-show="!userIsSource(${activity}) && !group.hasKeys()">Sorry you cannot edit this</span>
+              <span ng-show="userIsSource(${activity})"><@orcid.msg 'groups.common.edit_my' /></span>
+              <span ng-show="!userIsSource(${activity}) && group.hasUserVersion()">Sorry you cannot edit this</span>
+              <span ng-show="!userIsSource(${activity}) && !group.hasUserVersion() && group.hasKeys()"><@orcid.msg 'groups.common.make_a_copy' /></span>
+              <span ng-show="!userIsSource(${activity}) && !group.hasUserVersion() && !group.hasKeys()">Sorry you cannot edit this</span>
         </div>
     </div>
 </#macro>  

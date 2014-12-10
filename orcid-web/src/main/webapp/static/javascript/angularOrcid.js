@@ -594,10 +594,12 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
                 };
             },
             createNew: function(work) {
-                var cloneW = JSON.parse(JSON.stringify(work));
-                cloneW.source = null;
-                cloneW.putCode = null;
-                return cloneW;
+                var cloneF = JSON.parse(JSON.stringify(work));
+                cloneF.source = null;
+                cloneF.putCode = null;
+                for (var idx in cloneF.externalIdentifiers)
+                    cloneF.externalIdentifiers[idx].putCode = null;
+                return cloneF;
             },
             getEditable: function(putCode, callback) {
                 // first check if they are the current source
