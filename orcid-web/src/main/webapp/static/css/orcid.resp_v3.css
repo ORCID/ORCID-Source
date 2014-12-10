@@ -5088,6 +5088,10 @@ ul.sources-actions .edit-inactiveSource-popover{
 	left: -60px;
 }
 
+.two-lines{
+	top: -57px !important;	
+}
+
 ul.sources-options .combine-duplicates-popover,
 ul.sources-actions .combine-inactiveDuplicates-popover,
 ul.sources-actions .combine-activeDuplicates-popover{
