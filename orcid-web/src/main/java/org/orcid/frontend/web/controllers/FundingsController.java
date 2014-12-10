@@ -441,6 +441,9 @@ public class FundingsController extends BaseWorkspaceController {
             currentProfile.getOrcidActivities().setFundings(new FundingList());
         }
 
+        // make the newly added funding the default
+        profileFundingManager.updateToMaxDisplay(currentProfile.getOrcidIdentifier().getPath(), newProfileFunding.getId().toString());
+
         // Set the new funding into the cached object
         currentProfile.getOrcidActivities().getFundings().getFundings().add(newFunding);
 

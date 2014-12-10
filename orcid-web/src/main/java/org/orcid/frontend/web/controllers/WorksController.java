@@ -477,6 +477,9 @@ public class WorksController extends BaseWorkspaceController {
         //Set the id in the work to be returned
         work.setPutCode(Text.valueOf(putCode));
         
+        // make the new work the default display
+        profileWorkManager.updateToMaxDisplay(currentProfile.getOrcidIdentifier().getPath(), putCode);
+        
         // Check if the user have orcid activities, if not, initialize them
         if (currentProfile.getOrcidActivities() == null)
             currentProfile.setOrcidActivities(new OrcidActivities());
