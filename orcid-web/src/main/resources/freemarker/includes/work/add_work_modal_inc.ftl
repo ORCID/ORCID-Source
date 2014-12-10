@@ -185,8 +185,38 @@
 				
 			</div>
 
-
 			<!-- Right column -->
+			<div class="col-md-6 col-sm-6 col-xs-12">				
+			    <!-only allow work contributor editing if there is one or more contributors in the record -->
+				<div class="control-group" ng-repeat="contributor in editWork.contributors" ng-show="editWork.contributors.length > 0">
+				    <label class="relative"><@orcid.msg 'manual_work_form_contents.labelRole'/></label>
+				    <div class="relative">    
+						<select id="role" name="role" ng-model="contributor.contributorRole.value">
+							<option value=""><@orcid.msg 'org.orcid.jaxb.model.message.ContributorRole.empty' /></option>
+							<#list roles?keys as key>
+							    <option value="${key}">${roles[key]}</option>
+							</#list>
+			    		</select>
+			    		<a href ng-click="deleteContributor(contributor)" class="glyphicon glyphicon-trash grey"></a>
+						<span class="orcid-error" ng-show="contributor.contributorRole.errors.length > 0">
+								<div ng-repeat='error in contributor.contributorRole.errors' ng-bind-html="error"></div>
+						</span>
+				    </div>
+				    <label class="relative"><@orcid.msg 'manual_work_form_contents.labelcredited'/></label>
+				    <div class="relative">    
+						<select id="sequence" name="sequence" ng-model="contributor.contributorSequence.value">
+							<option value=""><@orcid.msg 'org.orcid.jaxb.model.message.SequenceType.empty'/></option>
+							<#list sequences?keys as key>
+								<option value="${key}">${sequences[key]}</option>
+							</#list>
+			    		</select>
+						<span class="orcid-error" ng-show="contributor.contributorSequence.errors.length > 0">
+								<div ng-repeat='error in contributor.contributorSequence.errors' ng-bind-html="error"></div>
+						</span>
+				    </div>
+				</div>		    									
+			</div>
+			
 			<div class="col-md-6 col-sm-6 col-xs-12">							    
 				<div class="control-group">
 					<span><strong><@orcid.msg 'manual_work_form_contents.titlecitationexternalidentifier'/></strong></span>

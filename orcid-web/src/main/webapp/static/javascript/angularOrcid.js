@@ -838,6 +838,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                 var cloneW = JSON.parse(JSON.stringify(work));
                 cloneW.source = null;
                 cloneW.putCode = null;
+                cloneW.contributors = [];
                 return cloneW;
             },
             copyEIs: function(from, to) {
@@ -4166,7 +4167,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actBulkSr
                 });
             });
         } else {
-            $scope.editWork = data;
+            $scope.editWork = data;            
             $scope.loadWorkTypes();
             $scope.showAddWorkModal();
         }
@@ -4174,9 +4175,8 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actBulkSr
     };
 
     $scope.openEditWork = function(putCode){
-        worksSrvc.getEditable(putCode, function(data) {$scope.addWorkModal(data);});
-    };
-
+    	worksSrvc.getEditable(putCode, function(data) {$scope.addWorkModal(data);});
+    };       
 
     $scope.putWork = function(){
         if ($scope.addingWork) return; // don't process if adding work
