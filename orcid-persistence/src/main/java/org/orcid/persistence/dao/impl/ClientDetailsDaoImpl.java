@@ -107,10 +107,14 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     
     @Override
     public boolean belongsTo(String clientId, String groupId) {
-        Query query = entityManager.createNativeQuery("select count(*) from client_details where client_details_id=:clientId and group_orcid=:groupId");
+        TypedQuery<ClientDetailsEntity> query = entityManager.createQuery("from ClientDetailsEntity where id = :clientId and groupProfile.id = :groupId", ClientDetailsEntity.class);
         query.setParameter("clientId", clientId);
-        query.setParameter("groupId", groupId);        
-        int result = query.getFirstResult();
-        return result > 0; 
+        query.setParameter("groupId", groupId);
+        try {
+            query.getSingleResult();            
+        } catch (NoResultException e) {            
+            return false;
+        }        
+        return true; 
     }
 }

@@ -46,18 +46,14 @@
     <client_authorised_grant_type client_details_id="4444-4444-4444-4445" grant_type="refresh_token" />
     <client_authorised_grant_type client_details_id="4444-4444-4444-4445" grant_type="client_credentials" />
     
-	<client_authorised_grant_type client_details_id="4444-4444-4444-4498" grant_type="authorization_code" />
-	
-	<client_authorised_grant_type client_details_id="APP-5555555555555555" grant_type="authorization_code" />
-	<client_authorised_grant_type client_details_id="APP-5555555555555555" grant_type="client_credentials" />
+	<client_authorised_grant_type client_details_id="4444-4444-4444-4498" grant_type="authorization_code" />		
     
     <client_granted_authority client_details_id="4444-4444-4444-4441" granted_authority="ROLE_CLIENT"/>
     <client_granted_authority client_details_id="4444-4444-4444-4442" granted_authority="ROLE_CLIENT"/>
     <client_granted_authority client_details_id="4444-4444-4444-4443" granted_authority="ROLE_CLIENT"/>
     <client_granted_authority client_details_id="4444-4444-4444-4444" granted_authority="ROLE_CLIENT"/>
     <client_granted_authority client_details_id="4444-4444-4444-4445" granted_authority="ROLE_CLIENT"/>
-    <client_granted_authority client_details_id="4444-4444-4444-4498" granted_authority="ROLE_PUBLIC"/>
-    <client_granted_authority client_details_id="APP-5555555555555555" granted_authority="ROLE_CLIENT"/>
+    <client_granted_authority client_details_id="4444-4444-4444-4498" granted_authority="ROLE_PUBLIC"/>    
 
     <client_redirect_uri client_details_id="4444-4444-4444-4441" redirect_uri="http://www.4444-4444-4444-4441.com/redirect/oauth" 
     predefined_client_redirect_scope ="/orcid-profile/create" redirect_uri_type="default"/>
@@ -72,8 +68,7 @@
     <client_resource_id client_details_id="4444-4444-4444-4442" resource_id="orcid"/>
     <client_resource_id client_details_id="4444-4444-4444-4443" resource_id="orcid"/>
     <client_resource_id client_details_id="4444-4444-4444-4444" resource_id="orcid"/>
-    <client_resource_id client_details_id="4444-4444-4444-4445" resource_id="orcid"/>
-    <client_resource_id client_details_id="APP-5555555555555555" resource_id="orcid"/>
+    <client_resource_id client_details_id="4444-4444-4444-4445" resource_id="orcid"/>    
     
     <client_scope client_details_id="4444-4444-4444-4441" scope_type="/orcid-bio/read-limited"/>
     <client_scope client_details_id="4444-4444-4444-4442" scope_type="/orcid-bio/read-limited"/>
@@ -86,22 +81,14 @@
     <client_scope client_details_id="4444-4444-4444-4445" scope_type="/authenticate"/>
     <client_scope client_details_id="4444-4444-4444-4445" scope_type="/funding/read-limited"/>
     <client_scope client_details_id="4444-4444-4444-4498" scope_type="/authenticate"/>
-    <client_scope client_details_id="APP-5555555555555555" scope_type="/orcid-bio/read-limited"/>
-    <client_scope client_details_id="APP-5555555555555555" scope_type="/orcid-works/create"/>
-    <client_scope client_details_id="APP-5555555555555555" scope_type="/funding/create"/>    
-    <client_scope client_details_id="APP-5555555555555555" scope_type="/affiliations/create"/>
-    <client_scope client_details_id="APP-5555555555555555" scope_type="/authenticate"/>
-    <client_scope client_details_id="APP-5555555555555555" scope_type="/webhook"/>
-    <client_scope client_details_id="APP-5555555555555555" scope_type="/read-public"/>
-    <client_scope client_details_id="APP-5555555555555555" scope_type="/orcid-profile/create"/>
+    
     
     <client_secret client_details_id="4444-4444-4444-4441" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25"/>
     <client_secret client_details_id="4444-4444-4444-4442" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25"/>
     <client_secret client_details_id="4444-4444-4444-4443" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25"/>
     <client_secret client_details_id="4444-4444-4444-4444" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25"/>
     <client_secret client_details_id="4444-4444-4444-4445" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25"/>
-    <client_secret client_details_id="4444-4444-4444-4498" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25"/>
-    <client_secret client_details_id="APP-5555555555555555" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25"/>
+    <client_secret client_details_id="4444-4444-4444-4498" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25"/>    
     
 
 	<custom_email client_details_id="4444-4444-4444-4441" email_type="CLAIM" content="This is the content" sender="angel.montenegro.jimenez@gmail.com" subject="This is the subject" is_html="true" />
