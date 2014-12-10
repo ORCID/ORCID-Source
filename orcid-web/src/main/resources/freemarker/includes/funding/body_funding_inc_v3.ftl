@@ -61,6 +61,19 @@
                                                     privateClick="fundingSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PRIVATE', $event)" />
                                             </li>
                                         </ul>
+                                        <#if !(isPublicProfile??)>
+                                           <div ng-show="!group.consistentVis()" class="vis-issue">
+                                                <div class="popover-help-container">
+                                                   <span class="glyphicons circle_exclamation_mark" ng-mouseleave="hideTooltip('vis-issue')" ng-mouseenter="showTooltip('vis-issue')"></span>
+                                                    <div class="popover vis-popover bottom" ng-show="showElement['vis-issue'] == true">
+                                                     <div class="arrow"></div>
+                                                        <div class="popover-content">
+                                                       <@orcid.msg 'groups.common.data_inconsistency' />                                            
+                                                    </div>
+                                                 </div>
+                                                </div>                                    
+                                              </div>
+                                        </#if>
                                     </div>
                                 </#if>
                              </div>
@@ -212,7 +225,7 @@
                     <div ng-show="group.activePutCode != funding.putCode.value" class="row source-line">
                         <div class="col-md-4 col-sm-4 col-xs-4">
                                 <a ng-click="group.activePutCode = funding.putCode.value;">
-                                {{group.getActive().sourceName}}
+                                {{funding.sourceName}}
                             </a>
                         </div>
                         <div class="col-md-3 col-sm-3 col-xs-3">
