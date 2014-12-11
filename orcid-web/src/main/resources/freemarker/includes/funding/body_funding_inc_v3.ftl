@@ -31,10 +31,10 @@
                             <div class="col-md-3 col-sm-3 col-xs-3">
                                 <@orcid.msg 'groups.common.created' />
                             </div>
-                            <div class="col-md-2 col-sm-3 col-xs-3">                                
+                            <div class="col-md-2 col-sm-2 col-xs-2">                                
                                 <@orcid.msgCapFirst 'groups.common.preferred' />
                             </div>                            
-                            <div class="col-md-3 col-sm-2 col-xs-2 right">
+                            <div class="col-md-3 col-sm-3 col-xs-3 right">
                                 <#if !(isPublicProfile??)>
                                     <div class="workspace-toolbar">
                                         <ul class="workspace-private-toolbar">
@@ -72,7 +72,7 @@
                 <li ng-repeat="funding in group.activities" ng-show="group.activePutCode == funding.putCode.value || editSources[group.groupId] == true">
                     <!-- active row summary info -->
                     <div class="row" ng-show="group.activePutCode == funding.putCode.value">
-                        <div class="col-md-9 col-sm-12 col-xs-12">
+                        <div class="col-md-9 col-sm-9 col-xs-8">
                             <h3 class="workspace-title">                                
                                <span ng-show="group.getActive().fundingTitle.title.value">{{group.getActive().fundingTitle.title.value}}</span>                               
                             </h3>
@@ -101,7 +101,7 @@
                         </div>
 
 
-                            <div class="col-md-3 workspace-toolbar">
+                            <div class="col-md-3 col-sm-3 col-xs-4 workspace-toolbar">
                                 <ul class="workspace-private-toolbar" ng-hide="editSources[group.groupId] == true">
                                     <#if !(isPublicProfile??)>
                                         <!-- Bulk edit tool / for further implementation
@@ -173,13 +173,13 @@
 
                      <!-- active row source display -->
                       <div class="row source-line" ng-show="group.activePutCode == funding.putCode.value">
-                          <div class="col-md-4" ng-show="editSources[group.groupId] == true">
+                          <div class="col-md-4 col-sm-4 col-xs-4" ng-show="editSources[group.groupId] == true">
                               {{group.getActive().sourceName}}
                           </div>
-                          <div class="col-md-3" ng-show="editSources[group.groupId] == true">
+                          <div class="col-md-3 col-sm-3 col-xs-3" ng-show="editSources[group.groupId] == true">
                               <div ng-show="editSources[group.groupId] == true"  ng-bind="funding.createdDate | ajaxFormDateToISO8601"></div>
                           </div>
-                          <div class="col-md-3" ng-show="editSources[group.groupId] == true">
+                          <div class="col-md-3 col-sm-3 col-xs-3" ng-show="editSources[group.groupId] == true">
                           <span class="glyphicon glyphicon-check ng-hide" ng-show="funding.putCode.value == group.defaultPutCode"></span><span ng-show="funding.putCode.value == group.defaultPutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
                              <#if !(isPublicProfile??)>
                                 <div ng-show="editSources[group.groupId] == true">
@@ -189,7 +189,7 @@
                                 </div>
                             </#if>
                           </div>
-                          <div class="col-md-2 trash-source" ng-show="editSources[group.groupId] == true">
+                          <div class="col-md-2 col-sm-2  col-xs-2 trash-source" ng-show="editSources[group.groupId] == true">
 
                             <#if !(isPublicProfile??)>
                                 <ul class="sources-actions">
@@ -209,7 +209,7 @@
                                         <div class="popover popover-tooltip top delete-activeSource-popover" ng-show="showElement[group.groupId+'-deleteActiveSource'] == true">
                                              <div class="arrow"></div>
                                             <div class="popover-content">
-                                                <@orcid.msg 'groups.common.delete_this_source' /><@orcid.msg 'groups.common.delete_this_source' />
+                                                <@orcid.msg 'groups.common.delete_this_source' />
                                             </div>
                                         </div>
 
@@ -240,7 +240,7 @@
                         </div>
 
 
-                        <div class="col-md-2 col-sm-2 col-xs-12 trash-source">
+                        <div class="col-md-2 col-sm-2 col-xs-2 trash-source">
                             <#if !(isPublicProfile??)>
                                 <ul class="sources-actions">
                                     <li> 
@@ -272,13 +272,13 @@
                     <!-- Bottom row -->
 
                     <div class="row source-line" ng-hide="editSources[group.groupId] == true">
-                        <div class="col-md-4">
+                        <div class="col-md-4 col-sm-4 col-xs-4">
                               <@orcid.msgUpCase 'groups.common.source'/>: {{funding.sourceName}}
                           </div>
-                          <div class="col-md-3">                              
+                          <div class="col-md-3 col-sm-3 col-xs-3">                              
                               <@orcid.msgUpCase 'groups.common.created'/>: <span ng-bind="funding.createdDate | ajaxFormDateToISO8601"></span>                              
                           </div>
-                        <div class="col-md-3" ng-show="group.activePutCode == funding.putCode.value">
+                        <div class="col-md-3 col-sm-3 col-xs-3" ng-show="group.activePutCode == funding.putCode.value">
                             <span class="glyphicon glyphicon-check"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span> <span ng-hide="group.activitiesCount == 1">(</span><a ng-click="showSources(group)" ng-hide="group.activitiesCount == 1" ng-mouseenter="showTooltip(group.groupId+'-sources')" ng-mouseleave="hideTooltip(group.groupId+'-sources')"><@orcid.msg 'groups.common.of'/> {{group.activitiesCount}}</a><span ng-hide="group.activitiesCount == 1">)</span>
                             
                             <div class="popover popover-tooltip top sources-popover" ng-show="showElement[group.groupId+'-sources'] == true">
@@ -288,7 +288,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-2 col-sm-2 col-xs-2">
                             <ul class="sources-options" ng-cloak>
                                 <#if !(isPublicProfile??)>
 	                                <li>
