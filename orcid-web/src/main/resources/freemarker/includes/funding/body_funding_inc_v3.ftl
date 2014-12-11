@@ -136,7 +136,7 @@
                                     </#if>
                                 </ul>
                                 <#if !(isPublicProfile??)>
-                                    <div ng-show="!group.consistentVis()" class="vis-issue">
+                                    <div ng-show="!group.consistentVis() && !editSources[group.groupId]" class="vis-issue">
                                          <div class="popover-help-container">
                                              <span class="glyphicons circle_exclamation_mark" ng-mouseleave="hideTooltip('vis-issue')" ng-mouseenter="showTooltip('vis-issue')"></span>
                                              <div class="popover vis-popover bottom" ng-show="showElement['vis-issue'] == true">
