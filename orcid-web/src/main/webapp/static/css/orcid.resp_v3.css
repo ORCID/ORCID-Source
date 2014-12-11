@@ -5703,11 +5703,7 @@ ul.workspace-private-toolbar .popover-help-container .popover{
 	}
 
     .workspace-toolbar{		
-	    height: 50px;
-	    margin: 15px 0 0 5px;
-	    width: 100%;
-	    padding-left: 10px;
-	    float: left;	    
+	    height: 50px;	    
 	}
 	
 	.workspace-header{
