@@ -307,9 +307,15 @@
 								 			</div>
 								 			<div class="bulk-edit-delete pull-right">
 											    <div class="centered">
-													<a ng-click="deleteBulkConfirm()" class="ignore toolbar-button edit-item-button" title="Ignore">
+													<a ng-click="deleteBulkConfirm()" class="ignore toolbar-button edit-item-button" ng-mouseenter="showTooltip('Bulk-Edit')" ng-mouseleave="hideTooltip('Bulk-Edit')">
 														<span class="edit-option-toolbar glyphicon glyphicon-trash"></span>
 													</a>
+													<div class="popover popover-tooltip top bulk-edit-popover" ng-show="showElement['Bulk-Edit'] == true">
+		                                             <div class="arrow"></div>
+			                                            <div class="popover-content">
+			                                                <span>Delete selected works</span>
+			                                            </div>
+			                                        </div>
 												</div>
 											</div>
 										</li>
@@ -482,15 +488,19 @@
 					<p>
 						<@orcid.msg 'groups.bulk_delete.confirm.line_2'/>
 					</p>
-					<p>
-    	            	<@orcid.msg 'groups.bulk_delete.confirm.line_3'/> <input type="text" size="3" ng-init="delCountVerify=0" ng-model="delCountVerify"/>
+					<p ng-class="{'red-error':bulkDeleteSubmit == true}">
+    	            	<@orcid.msg 'groups.bulk_delete.confirm.line_3'/> <input ng-class="{'red-border-error':bulkDeleteSubmit == true}" type="text" size="3" ng-init="delCountVerify=0" ng-model="delCountVerify"/>
 					</p>
-				</div>				
+				</div>
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-md-12 col-sm-12 col-xs-12">				
-				<a ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel'/></a>  <button class="btn blue" ng-click="bulkDeleteFunction()"><@orcid.msg 'freemarker.btnDelete'/></button>				
+			<div class="col-md-12 col-sm-12 col-xs-12">	
+				<div class="right">			
+					<a ng-click="closeModal()">
+						<@orcid.msg 'freemarker.btncancel'/>
+					</a>  <button class="btn blue" ng-click="bulkDeleteFunction()"><@orcid.msg 'freemarker.btnDelete'/></button>
+				</div>				
 			</div>
 		</div>		
 	</div>	

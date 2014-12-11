@@ -77,7 +77,14 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
 
     private Set<CustomEmailEntity> customEmails = Collections.emptySet();
     private int accessTokenValiditySeconds = DEFAULT_TOKEN_VALIDITY;
-    private boolean persistentTokensEnabled = false; 
+    private boolean persistentTokensEnabled = false;
+
+    public ClientDetailsEntity() {
+    }
+
+    public ClientDetailsEntity(String clientId) {
+        this.clientId = clientId;
+    }
 
     /**
      * This should be implemented by all entity classes to return the id of the

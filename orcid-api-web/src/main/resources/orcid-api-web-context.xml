@@ -195,4 +195,19 @@
         <property name="serviceDelegator" ref="t2OrcidApiServiceDelegatorV1_2_rc6"/>
     </bean>
     
+    <bean id="t2OrcidApiServiceDelegatorV1_2_rc7" class="org.orcid.api.t2.server.delegator.impl.T2OrcidApiServiceVersionedDelegatorImpl">
+        <property name="externalVersion" value="1.2_rc7"/>
+        <property name="incomingValidationManager" ref="incomingValidationManagerV1_2_rc7"/>
+        <property name="outgoingValidationManager" ref="outgoingValidationManagerV1_2_rc7"/>
+    </bean>
+    <bean id="t2OrcidApiServiceImplV1_2_rc7" class="org.orcid.api.t2.server.T2OrcidApiServiceImplV1_2_rc7">
+        <property name="serviceDelegator" ref="t2OrcidApiServiceDelegatorV1_2_rc7"/>
+    </bean>
+
+    <!--  Notifications API -->
+    <bean id="notificationsApiServiceDelegator" class="org.orcid.api.notifications.server.delegator.impl.NotificationsApiServiceDelegatorImpl" />
+    <bean id="notificationsApiServiceImplV1_0" class="org.orcid.api.notifications.server.NotificationsApiServiceImplV1_0">
+        <property name="serviceDelegator" ref="notificationsApiServiceDelegator"/>
+    </bean>
+    
 </beans>

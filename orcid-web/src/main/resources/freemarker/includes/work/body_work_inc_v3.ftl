@@ -130,11 +130,21 @@
                                         </li>
                                     </#if>
                                 </ul>
+                                 
                                 <#if !(isPublicProfile??)>
-                                    <div ng-show="!group.consistentVis()">
-                                        <i class="vis-issue glyphicons circle_exclamation_mark"></i>
+                                    <div ng-show="!group.consistentVis() && !editSources[group.groupId]" class="vis-issue">
+                                    	<div class="popover-help-container">
+						                    <span class="glyphicons circle_exclamation_mark" ng-mouseleave="hideTooltip('vis-issue')" ng-mouseenter="showTooltip('vis-issue')"></span>
+						                    <div class="popover vis-popover bottom" ng-show="showElement['vis-issue'] == true">
+                                             	<div class="arrow"></div>
+	                                            <div class="popover-content">
+													<@orcid.msg 'groups.common.data_inconsistency' />                                            
+												</div>
+	                                        </div>
+							            </div>                                    
                                     </div>
                                 </#if>
+                                
                             </div>
                        </div>
 
@@ -195,18 +205,13 @@
 
                                         </li>
                                     </#if>
-                                    <li>
-                                        <a ng-show="!group.hasUserVersion() || userIsSource(work)" ng-click="openEditWork(group.getActive().putCode.value)" ng-mouseenter="showTooltip(group.groupId+'-editActiveSource')" ng-mouseleave="hideTooltip(group.groupId+'-editActiveSource')">
-                                            <span class="glyphicon glyphicon-pencil" ng-class="{'glyphicons git_create' : !userIsSource(work)}"></span>
-                                        </a>
-
-                                        <div class="popover popover-tooltip top edit-activeSource-popover" ng-show="showElement[group.groupId+'-editActiveSource'] == true">
-                                            <div class="arrow"></div>
-                                            <div class="popover-content">
-                                                <span ng-hide="!userIsSource(work)"><@orcid.msg 'groups.common.edit_my'/></span>
-                                                <span ng-show="!userIsSource(work)"><@orcid.msg 'groups.common.make_a_copy'/></span>
-                                            </div>
-                                        </div>
+                                    <li> 
+                                        <@orcid.editActivityIcon
+                                            activity="work"
+                                            click="openEditWork(work.putCode.value)"
+                                            toolTipSuffix="editToolTipSource"
+                                            toolTipClass="popover popover-tooltip top edit-activeSource-popover"
+                                         />
                                     </li>
                                     <li>
                                         <a ng-click="deleteWorkConfirm(work.putCode.value, false)"  title="<@orcid.msg 'freemarker.btnDelete' /> {{work.title.value}}" ng-mouseenter="showTooltip(work.putCode.value+'-deleteActiveSource')" ng-mouseleave="hideTooltip(work.putCode.value+'-deleteActiveSource')">
@@ -259,17 +264,13 @@
 
                                         </li>
                                     </#if>
-                                    <li>
-                                        <a ng-show="!group.hasUserVersion() || userIsSource(work)" ng-click="openEditWork(work.putCode.value)" ng-mouseenter="showTooltip(work.putCode.value+'-editInactiveSource')" ng-mouseleave="hideTooltip(work.putCode.value+'-editInactiveSource')">
-                                            <span class="glyphicon glyphicon-pencil" ng-class="{'glyphicons git_create' : !userIsSource(work)}"></span>
-                                        </a>
-                                        <div class="popover popover-tooltip top edit-inactiveSource-popover" ng-show="showElement[work.putCode.value+'-editInactiveSource'] == true">
-                                            <div class="arrow"></div>
-                                            <div class="popover-content">
-                                                <span ng-hide="!userIsSource(work)"><@orcid.msg 'groups.common.edit_my'/></span>
-                                                <span ng-show="!userIsSource(work)"><@orcid.msg 'groups.common.make_a_copy'/></span>
-                                            </div>
-                                        </div>
+                                    <li> 
+                                        <@orcid.editActivityIcon
+                                            activity="work"
+                                            click="openEditWork(work.putCode.value)"
+                                            toolTipSuffix="editToolTipSourceActions"
+                                            toolTipClass="popover popover-tooltip top edit-inactiveSource-popover"
+                                         />
                                     </li>
                                     <li>
                                         <a ng-click="deleteWorkConfirm(work.putCode.value, false)" ng-mouseenter="showTooltip(work.putCode.value+'-deleteInactiveSource')" ng-mouseleave="hideTooltip(work.putCode.value+'-deleteInactiveSource')">
@@ -297,7 +298,7 @@
                               <@orcid.msgUpCase 'groups.common.created'/>: <span ng-bind="work.createdDate | ajaxFormDateToISO8601"></span>
                           </div>
                           <div class="col-md-3">
-                                <span class="glyphicon glyphicon-check"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span> <span ng-hide="group.activitiesCount == 1">(</span><a ng-click="editSources[group.groupId] = !editSources[group.groupId]" ng-hide="group.activitiesCount == 1" ng-mouseenter="showTooltip(group.groupId+'-sources')" ng-mouseleave="hideTooltip(group.groupId+'-sources')">of {{group.activitiesCount}}</a><span ng-hide="group.activitiesCount == 1">)</span>
+                                <span class="glyphicon glyphicon-check"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span> <span ng-hide="group.activitiesCount == 1">(</span><a ng-click="showSources(group)" ng-hide="group.activitiesCount == 1" ng-mouseenter="showTooltip(group.groupId+'-sources')" ng-mouseleave="hideTooltip(group.groupId+'-sources')"><@orcid.msg 'groups.common.of'/> {{group.activitiesCount}}</a><span ng-hide="group.activitiesCount == 1">)</span>
 
                                 <div class="popover popover-tooltip top sources-popover" ng-show="showElement[group.groupId+'-sources'] == true">
                                     <div class="arrow"></div>
@@ -325,21 +326,17 @@
                                         </li>
                                     </#if>
 
-                                    <li ng-show="userIsSource(work) || (group.hasKeys() && !group.hasUserVersion())">
-                                        <a ng-click="openEditWork(group.getActive().putCode.value)" ng-mouseenter="showTooltip(group.groupId+'-editSource')" ng-mouseleave="hideTooltip(group.groupId+'-editSource')">
-                                            <span class="glyphicon glyphicon-pencil" ng-class="{'glyphicons git_create' : !userIsSource(work)}" title=""></span>
-                                        </a>
-                                        <div class="popover popover-tooltip top edit-source-popover" ng-show="showElement[group.groupId+'-editSource'] == true">
-                                            <div class="arrow"></div>
-                                            <div class="popover-content">
-                                                <span ng-hide="!userIsSource(work)"><@orcid.msg 'groups.common.edit_my' /></span>
-                                                <span ng-show="!userIsSource(work)"><@orcid.msg 'groups.common.make_a_copy' /></span>
-                                            </div>
-                                        </div>
+                                    <li>
+                                        <@orcid.editActivityIcon
+                                            activity="work"
+                                            click="openEditWork(work.putCode.value)"
+                                            toolTipSuffix="editToolTip"
+                                            toolTipClass="popover popover-tooltip top edit-source-popover"
+                                         />
                                     </li>
 
                                      <li ng-hide="editSources[group.groupId] == true || group.activitiesCount == 1">
-                                        <a ng-click="editSources[group.groupId] = !editSources[group.groupId]" ng-mouseenter="showTooltip(group.groupId+'-deleteGroup')" ng-mouseleave="hideTooltip(group.groupId+'-deleteGroup')">
+                                        <a ng-click="showSources(group)" ng-mouseenter="showTooltip(group.groupId+'-deleteGroup')" ng-mouseleave="hideTooltip(group.groupId+'-deleteGroup')">
                                             <span class="glyphicon glyphicon-trash"></span>
                                         </a>
                                         <div class="popover popover-tooltip top delete-group-popover" ng-show="showElement[group.groupId+'-deleteGroup'] == true">

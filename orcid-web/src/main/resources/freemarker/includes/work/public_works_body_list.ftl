@@ -56,10 +56,6 @@
 		</#if>
 	</noscript>
 	<div>
-		  <#if RequestParameters['v']??>	
-	      	<#include "body_work_inc_v3.ftl"/>
-	      <#else>
-	      	 <#include "body_work_inc.ftl"/>
-	      </#if>
+    <#include "body_work_inc_v3.ftl"/>
 	</div>
 </#escape>

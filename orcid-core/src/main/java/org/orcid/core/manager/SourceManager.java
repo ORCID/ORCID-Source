@@ -17,6 +17,7 @@
 package org.orcid.core.manager;
 
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 
 /**
  * 
@@ -26,6 +27,8 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 public interface SourceManager {
 
     String retrieveSourceOrcid();
+    
+    SourceEntity retrieveSourceEntity();
 
     boolean isInDelegationMode();
     

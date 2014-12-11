@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.jaxb.model.notification;
+package org.orcid.jaxb.model.notification.custom;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -26,6 +26,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.junit.Test;
+import org.orcid.jaxb.model.notification.NotificationType;
 
 /**
  * 
@@ -37,20 +38,20 @@ public class MarshallingTest {
 
     @Test
     public void testUnMarshalling() throws JAXBException {
-        Notification notification = getNotification();
+        NotificationCustom notification = getNotification();
         assertNotNull(notification);
-        assertEquals(NotificationType.RECORD_UPDATED_BY_MEMBER, notification.getNotificationType());
+        assertEquals(NotificationType.CUSTOM, notification.getNotificationType());
         assertEquals("Important Notification from ORCID", notification.getSubject());
         assertEquals("This is an email with important info.\n    ", notification.getBodyText());
         assertEquals("\n        <p>\n            This is an email with <em>important</em> info.\n        </p>\n    ", notification.getBodyHtml());
         assertEquals("2014-01-01T14:45:32", notification.getSentDate().toXMLFormat());
     }
 
-    private Notification getNotification() throws JAXBException {
-        JAXBContext context = JAXBContext.newInstance("org.orcid.jaxb.model.notification");
+    private NotificationCustom getNotification() throws JAXBException {
+        JAXBContext context = JAXBContext.newInstance("org.orcid.jaxb.model.notification.custom");
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        InputStream inputStream = MarshallingTest.class.getResourceAsStream("/notification.xml");
-        return (Notification) unmarshaller.unmarshal(inputStream);
+        InputStream inputStream = MarshallingTest.class.getResourceAsStream("/notification-custom.xml");
+        return (NotificationCustom) unmarshaller.unmarshal(inputStream);
     }
 
 }

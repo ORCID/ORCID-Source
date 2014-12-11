@@ -185,10 +185,9 @@
 				
 			</div>
 
-
 			<!-- Right column -->
 			<div class="col-md-6 col-sm-6 col-xs-12">				
-			    <!-- only allow work contributor editing if there is one or more contributors in the record -->
+			    <!-only allow work contributor editing if there is one or more contributors in the record -->
 				<div class="control-group" ng-repeat="contributor in editWork.contributors" ng-show="editWork.contributors.length > 0">
 				    <label class="relative"><@orcid.msg 'manual_work_form_contents.labelRole'/></label>
 				    <div class="relative">    
@@ -203,9 +202,6 @@
 								<div ng-repeat='error in contributor.contributorRole.errors' ng-bind-html="error"></div>
 						</span>
 				    </div>
-				</div>		    	
-				
-				<div class="control-group" ng-repeat="contributor in editWork.contributors">
 				    <label class="relative"><@orcid.msg 'manual_work_form_contents.labelcredited'/></label>
 				    <div class="relative">    
 						<select id="sequence" name="sequence" ng-model="contributor.contributorSequence.value">
@@ -218,8 +214,10 @@
 								<div ng-repeat='error in contributor.contributorSequence.errors' ng-bind-html="error"></div>
 						</span>
 				    </div>
-				</div>
-
+				</div>		    									
+			</div>
+			
+			<div class="col-md-6 col-sm-6 col-xs-12">							    
 				<div class="control-group">
 					<span><strong><@orcid.msg 'manual_work_form_contents.titlecitationexternalidentifier'/></strong></span>
 				</div>

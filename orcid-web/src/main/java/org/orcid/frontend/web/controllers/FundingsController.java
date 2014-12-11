@@ -383,9 +383,12 @@ public class FundingsController extends BaseWorkspaceController {
             copyErrors(funding.getOrganizationDefinedFundingSubType().getSubtype(), funding);
 
         for (FundingExternalIdentifierForm extId : funding.getExternalIdentifiers()) {
-            copyErrors(extId.getType(), funding);
-            copyErrors(extId.getUrl(), funding);
-            copyErrors(extId.getValue(), funding);
+            if (extId.getType() != null)
+                copyErrors(extId.getType(), funding);
+            if (extId.getUrl() != null)
+                copyErrors(extId.getUrl(), funding);
+            if (extId.getValue() != null)
+                copyErrors(extId.getValue(), funding);
         }
 
         // If there are no errors, persist to DB
@@ -438,6 +441,9 @@ public class FundingsController extends BaseWorkspaceController {
             currentProfile.getOrcidActivities().setFundings(new FundingList());
         }
 
+        // make the newly added funding the default
+        profileFundingManager.updateToMaxDisplay(currentProfile.getOrcidIdentifier().getPath(), newProfileFunding.getId().toString());
+
         // Set the new funding into the cached object
         currentProfile.getOrcidActivities().getFundings().getFundings().add(newFunding);
 
@@ -462,6 +468,10 @@ public class FundingsController extends BaseWorkspaceController {
         Funding updatedFunding = jpa2JaxbAdapter.getFunding(updatedProfileGrantEntity);
         // Update the fundings on the cached object
         OrcidProfile currentProfile = getEffectiveProfile();
+        
+        if (!currentProfile.getOrcidIdentifier().getPath().equals(funding.getSource()))
+            throw new Exception("Error source isn't correct");
+        
         // Initialize activities if needed
         if (currentProfile.getOrcidActivities() == null) {
             currentProfile.setOrcidActivities(new OrcidActivities());

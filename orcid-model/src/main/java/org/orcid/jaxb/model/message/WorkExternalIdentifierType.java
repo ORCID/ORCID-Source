@@ -82,7 +82,9 @@ public enum WorkExternalIdentifierType implements Serializable {
     @XmlEnumValue("pat") PAT("pat"), // Patent number prefixed with country code
     @XmlEnumValue("source-work-id") SOURCE_WORK_ID("source-work-id"),
     @XmlEnumValue("uri") URI("uri"),
-    @XmlEnumValue("urn") URN("urn");
+    @XmlEnumValue("urn") URN("urn"),
+    // New in 1.2_rc7
+    @XmlEnumValue("wos") WOS("wos"); // Web of Science identifier
     // @formatter:on
 
     private final String value;

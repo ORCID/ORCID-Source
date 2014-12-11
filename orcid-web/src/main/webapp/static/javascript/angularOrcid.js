@@ -96,10 +96,19 @@ GroupedActivities.prototype.getByPut = function(putCode) {
 };
 
 GroupedActivities.prototype.consistentVis = function() {
-    var vis = this.getDefault().visibility;
+    if (this.type == GroupedActivities.FUNDING)
+        var vis = this.getDefault().visibility.visibility;
+    else
+        var vis = this.getDefault().visibility;
+
     for (var idx in this.activities)
-        if (this.activities[idx].visibility != vis)
-            return false;
+        if (this.type == GroupedActivities.FUNDING) {
+            if (this.activities[idx].visibility.visibility != vis)
+                return false;
+        } else {
+            if (this.activities[idx].visibility != vis)
+                return false;
+        }
     return true;
 };
 
@@ -593,17 +602,32 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
                     fundingSrvc.loading = false;
                 };
             },
-            makeDefault: function(group, putCode) {
-                group.makeDefault(putCode);
-                $.ajax({
-                    url: getBaseUri() + '/fundings/updateToMaxDisplay.json?putCode=' + putCode,
-                    dataType: 'json',
-                    success: function(data) {
+            createNew: function(work) {
+                var cloneF = JSON.parse(JSON.stringify(work));
+                cloneF.source = null;
+                cloneF.putCode = null;
+                for (var idx in cloneF.externalIdentifiers)
+                    cloneF.externalIdentifiers[idx].putCode = null;
+                return cloneF;
+            },
+            getEditable: function(putCode, callback) {
+                // first check if they are the current source
+                var funding = fundingSrvc.getFunding(putCode);
+                if (funding.source == orcidVar.orcidId)
+                    callback(funding);
+                else {
+                    var bestMatch = null;
+                    var group = fundingSrvc.getGroup(putCode);
+                    for (var idx in group.activitiess) {
+                        if (group[idx].source == orcidVar.orcidId) {
+                            bestMatch = callback(group[idx]);
+                            break;
+                        }
                     }
-                }).fail(function(){
-                    // something bad is happening!
-                    console.log("some bad is hppending");
-                });
+                    if (bestMatch == null) 
+                        bestMatch = fundingSrvc.createNew(funding);
+                    callback(bestMatch);
+                };
             },
             deleteFunding: function(putCode) {
                 var rmFunding;
@@ -631,12 +655,39 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
                     }
                 }
             },
-            setGroupPrivacy: function(putCode, priv) {
-                var group = fundingSrvc.getGroup(putCode);
-                for (var idx in group.activities) {
-                    var curPutCode = group.activities[idx].putCode.value;
-                    fundingSrvc.setPrivacy(curPutCode, priv);
+            fundingCount: function() {
+                var count = 0;
+                for (var idx in fundingSrvc.groups) {
+                    count += fundingSrvc.groups[idx].activitiesCount;
                 }
+                return count;
+            },
+            getFunding: function(putCode) {
+                for (var idx in fundingSrvc.groups) {
+                        if (fundingSrvc.groups[idx].hasPut(putCode))
+                            return fundingSrvc.groups[idx].getByPut(putCode);
+                }
+                return null;
+            },
+            getFundings: function(path) {
+                //clear out current fundings
+                fundingSrvc.loading = true;
+                fundingSrvc.fundingToAddIds = null;
+                //new way
+                fundingSrvc.groups.length = 0;
+                //get funding ids
+                $.ajax({
+                    url: getBaseUri() + '/'  + path,
+                    dataType: 'json',
+                    success: function(data) {
+                        fundingSrvc.fundingToAddIds = data;
+                        fundingSrvc.addFundingToScope('fundings/fundings.json');
+                        $rootScope.$apply();
+                    }
+                }).fail(function(){
+                    // something bad is happening!
+                    console.log("error fetching fundings");
+                });
             },
             getGroup: function(putCode) {
                 for (var idx in fundingSrvc.groups) {
@@ -645,11 +696,17 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
                 }
                 return null;
             },
-            setPrivacy: function(putCode, priv) {
-                var idx;
-                var funding = fundingSrvc.getFunding(putCode);
-                funding.visibility.visibility = priv;
-                fundingSrvc.updateProfileFunding(funding);
+            makeDefault: function(group, putCode) {
+                group.makeDefault(putCode);
+                $.ajax({
+                    url: getBaseUri() + '/fundings/updateToMaxDisplay.json?putCode=' + putCode,
+                    dataType: 'json',
+                    success: function(data) {
+                    }
+                }).fail(function(){
+                    // something bad is happening!
+                    console.log("some bad is hppending");
+                });
             },
             removeFunding: function(funding) {
                 $.ajax({
@@ -671,51 +728,28 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
                                     break;
                                 }
                             }
-
                         }
-                           $rootScope.$apply();
+                        $rootScope.$apply();
                     }
                 }).fail(function() {
                     console.log("Error deleting funding.");
                 });
             },
-            fundingCount: function() {
-                var count = 0;
-                for (var idx in fundingSrvc.groups) {
-                    count += fundingSrvc.groups[idx].activitiesCount;
-                }
-                return count;
-            },
-            getFunding: function(putCode) {
-                for (var idx in fundingSrvc.groups) {
-                        if (fundingSrvc.groups[idx].hasPut(putCode))
-                            return fundingSrvc.groups[idx].getByPut(putCode);
-                }
-                return null;
-            },
-            getFundings: function(path) {
-                //clear out current fundings
-                fundingSrvc.loading = true;
-                fundingSrvc.fundingToAddIds = null;
-
-                //new way
-                fundingSrvc.groups.length = 0;
-                //get funding ids
-                $.ajax({
-                    url: getBaseUri() + '/'  + path,
-                    dataType: 'json',
-                    success: function(data) {
-                        fundingSrvc.fundingToAddIds = data;
-                        fundingSrvc.addFundingToScope('fundings/fundings.json');
-                        $rootScope.$apply();
-                    }
-                }).fail(function(){
-                    // something bad is happening!
-                    console.log("error fetching fundings");
-                });
-            },
             setIdsToAdd: function(ids) {
                 fundingSrvc.fundingToAddIds = ids;
+            },
+            setGroupPrivacy: function(putCode, priv) {
+                var group = fundingSrvc.getGroup(putCode);
+                for (var idx in group.activities) {
+                    var curPutCode = group.activities[idx].putCode.value;
+                    fundingSrvc.setPrivacy(curPutCode, priv);
+                }
+            },
+            setPrivacy: function(putCode, priv) {
+                var idx;
+                var funding = fundingSrvc.getFunding(putCode);
+                funding.visibility.visibility = priv;
+                fundingSrvc.updateProfileFunding(funding);
             },
             updateProfileFunding: function(funding) {
                 $.ajax({
@@ -804,6 +838,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                 var cloneW = JSON.parse(JSON.stringify(work));
                 cloneW.source = null;
                 cloneW.putCode = null;
+                cloneW.contributors = [];
                 return cloneW;
             },
             copyEIs: function(from, to) {
@@ -1537,11 +1572,26 @@ function EditTableCtrl($scope) {
         $scope.showEditEmailPreferences = !$scope.showEditEmailPreferences;
         $scope.emailPreferencesUpdateToggleText();
     };
-
-    // init privacy preferences
+    
+    // init email preferences
     $scope.showEditEmailPreferences = (window.location.hash === "#editEmailPreferences");
     $scope.emailPreferencesUpdateToggleText();
+    
+    // email frequency edit row
+    $scope.emailFrequencyUpdateToggleText = function () {
+        if ($scope.showEditEmailFrequency) $scope.emailFrequencyToggleText = om.get("manage.editTable.hide");
+        else $scope.emailFrequencyToggleText = om.get("manage.editTable.edit");
+    };
 
+    $scope.toggleEmailFrequencyEdit = function() {
+        $scope.showEditEmailFrequency = !$scope.showEditEmailFrequency;
+        $scope.emailFrequencyUpdateToggleText();
+    };
+
+    // init email frequency
+    $scope.showEditEmailFrequency = (window.location.hash === "#editEmailFrequency");
+    $scope.emailFrequencyUpdateToggleText();
+    
     // security question edit row
     $scope.securityQuestionUpdateToggleText = function () {
         if ($scope.showEditSecurityQuestion) $scope.securityQuestionToggleText = om.get("manage.editTable.hide");
@@ -1575,6 +1625,11 @@ function EditTableCtrl($scope) {
 };
 
 function NotificationPreferencesCtrl($scope, $compile, emailSrvc, prefsSrvc, emailSrvc) {
+    $scope.prefsSrvc = prefsSrvc;
+    $scope.emailSrvc = emailSrvc;
+};
+
+function EmailFrequencyCtrl($scope, $compile, emailSrvc, prefsSrvc, emailSrvc) {
     $scope.prefsSrvc = prefsSrvc;
     $scope.emailSrvc = emailSrvc;
 };
@@ -3212,6 +3267,15 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc, comm
         }
     };
 
+    $scope.hideSources = function(group) {
+        $scope.editSources[group.groupId] = false;
+        group.activePutCode = group.defaultPutCode;
+    };
+
+    $scope.showSources = function(group) {
+        $scope.editSources[group.groupId] = true;
+    };
+
     // remove once grouping is live
     $scope.moreInfoMouseEnter = function(key, $event) {
         $event.stopPropagation();
@@ -3611,28 +3675,33 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc, comm
         }
     };
 
-    $scope.openEditFunding = function(funding) {
-        $scope.addFundingModal(funding);
+    $scope.openEditFunding = function(putCode) {
+        fundingSrvc.getEditable(putCode, function(bestMatch) {
+            $scope.addFundingModal(bestMatch);
+        });
     };
+
+    
     
     $scope.showFundingImportWizard =  function() {
         $.colorbox({
-            html : $compile($('#import-wizard-modal').html())($scope),
+            html : $compile($('#import-funding-modal').html())($scope),
             onComplete: function() {$.colorbox.resize();}
         });
     };
     
-    $scope.showTooltip = function (element){    	
-        $scope.showElement[element] = true;
+    $scope.showTooltip = function (key){
+        $scope.showElement[key] = true;
     };
 
-    $scope.hideTooltip = function (element){    	
-        $scope.showElement[element] = false;
+    $scope.hideTooltip = function (key){
+        $scope.showElement[key] = false;
     };
     
     $scope.userIsSource = function(funding) {
         if (funding.source == orcidVar.orcidId)
             return true;
+        return false;
     };
 }
 
@@ -3685,12 +3754,12 @@ function PublicFundingCtrl($scope, $compile, $filter, workspaceSrvc, fundingSrvc
         return info;
     };
     
-    $scope.showTooltip = function (element){    	
-        $scope.showElement[element] = true;
+    $scope.showTooltip = function (key){
+        $scope.showElement[key] = true;
     };
 
-    $scope.hideTooltip = function (element){    	
-        $scope.showElement[element] = false;
+    $scope.hideTooltip = function (key){    	
+        $scope.showElement[key] = false;
     };
 
 }
@@ -3765,6 +3834,9 @@ function PublicWorkCtrl($scope, $compile, $filter, workspaceSrvc, worksSrvc) {
         group.activePutCode = group.defaultPutCode;
     };
 
+    $scope.showSources = function(group) {
+        $scope.editSources[group.groupId] = true;
+    };
 
     $scope.loadWorkInfo = function(putCode, event) {
         //Close any open popover
@@ -3816,6 +3888,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actBulkSr
     $scope.showElement = {};
     $scope.delCountVerify = 0;
     $scope.bulkDeleteCount = 0;
+    $scope.bulkDeleteSubmit = false;
 
     $scope.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
     $scope.sort = function(key) {
@@ -3859,7 +3932,10 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actBulkSr
     };
 
     $scope.deleteBulk = function () {
-        if ($scope.delCountVerify != parseInt($scope.bulkDeleteCount)) return;
+        if ($scope.delCountVerify != parseInt($scope.bulkDeleteCount)) {
+            $scope.bulkDeleteSubmit = true;
+            return;
+        }
         var delPuts = new Array();
         for (var idx in worksSrvc.groups)
             if ($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value])
@@ -3874,6 +3950,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actBulkSr
     $scope.deleteBulkConfirm = function(idx) {
         $scope.delCountVerify = 0;
         $scope.bulkDeleteCount = 0;
+        $scope.bulkDeleteSubmit = false;
         for (var idx in worksSrvc.groups)
             console.log($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value]);
         for (var idx in worksSrvc.groups)
@@ -3977,6 +4054,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actBulkSr
     $scope.userIsSource = function(work) {
         if (work.source == orcidVar.orcidId)
             return true;
+        return false;
     };
 
     $scope.hasCombineableEIs = function(work) {
@@ -4089,7 +4167,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actBulkSr
                 });
             });
         } else {
-            $scope.editWork = data;
+            $scope.editWork = data;            
             $scope.loadWorkTypes();
             $scope.showAddWorkModal();
         }
@@ -4097,9 +4175,8 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actBulkSr
     };
 
     $scope.openEditWork = function(putCode){
-        worksSrvc.getEditable(putCode, function(data) {$scope.addWorkModal(data);});
-    };
-
+    	worksSrvc.getEditable(putCode, function(data) {$scope.addWorkModal(data);});
+    };       
 
     $scope.putWork = function(){
         if ($scope.addingWork) return; // don't process if adding work
@@ -4240,6 +4317,10 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actBulkSr
         group.activePutCode = group.defaultPutCode;
     };
 
+    $scope.showSources = function(group) {
+        $scope.editSources[group.groupId] = true;
+    };
+
     $scope.loadDetails = function(putCode, event) {
         //Close any open popover
         $scope.closePopover(event);
@@ -4344,13 +4425,13 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actBulkSr
         $scope.editWork.workType.errors = [];
     };
     
-    $scope.showTooltip = function (element){    	
-    	$scope.showElement[element] = true;
+    $scope.showTooltip = function (key){    	
+        $scope.showElement[key] = true;
     	
     }
     
-    $scope.hideTooltip = function (element){    	
-    	$scope.showElement[element] = false;
+    $scope.hideTooltip = function (key){    	
+    	$scope.showElement[key] = false;
     }
     
     $scope.openFileDialog = function(){    	
@@ -5933,7 +6014,7 @@ function SSOPreferencesCtrl($scope, $compile, $sce, emailSrvc) {
             scrolling: true
         });
 
-        $.colorbox.resize({width:"600px" , height:"350px"});
+        $.colorbox.resize({width:"590px"});
     };
     
     $scope.enableDeveloperTools = function() {

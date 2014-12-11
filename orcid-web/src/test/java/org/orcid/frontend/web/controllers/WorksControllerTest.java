@@ -233,6 +233,22 @@ public class WorksControllerTest extends BaseControllerTest {
     }
 
     @Test
+    public void testEditOtherSourceThrowsError() throws Exception {
+        HttpServletRequest servletRequest = mock(HttpServletRequest.class);
+        HttpSession session = mock(HttpSession.class);
+        when(servletRequest.getSession()).thenReturn(session);
+
+        Work work = worksController.getWorkInfo("7");
+        boolean throwsError = false;
+        try {
+            worksController.postWork(null, work);
+        } catch (Exception e) {
+            throwsError  = true;
+        }
+        assertEquals(throwsError, true);
+    }
+
+    @Test
     public void testUpdateWork() throws Exception {
         HttpServletRequest servletRequest = mock(HttpServletRequest.class);
         HttpSession session = mock(HttpSession.class);

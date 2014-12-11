@@ -488,6 +488,24 @@ public class FundingsControllerTest extends BaseControllerTest {
 
     @Test
     @Rollback(true)
+    public void testEditOtherSourceThrowsError() {
+        HttpSession session = mock(HttpSession.class);
+        when(servletRequest.getSession()).thenReturn(session);
+        when(localeManager.getLocale()).thenReturn(new Locale("us", "EN"));
+
+        FundingForm funding = fundingController.getFundingJson("3");
+        boolean throwsError = false;
+        try {
+            fundingController.postFunding(funding);
+        } catch (Exception e) {
+            throwsError  = true;
+        }
+        assertEquals(throwsError, true);
+    }
+
+    
+    @Test
+    @Rollback(true)
     public void testEditFunding() {
         HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);

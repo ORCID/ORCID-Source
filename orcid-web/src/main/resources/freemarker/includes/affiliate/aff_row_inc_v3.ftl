@@ -51,7 +51,7 @@
 	            <span ng-bind-html="group.getActive().roleTitle.value"></span>
         	</div>
 			<span ng-show="group.getActive().departmentName.value">
-				(<span ng-bind="group.getActive().departmentName.value" ng-cloak></span>)
+				<span ng-show="group.getActive().roleTitle.value">&nbsp;</span>(<span ng-bind="group.getActive().departmentName.value" ng-cloak></span>)
 			</span>
         </div>
        </div>
@@ -82,7 +82,7 @@
 					<@orcid.msgUpCase 'groups.common.created'/>: <span ng-bind="group.getActive().createdDate | ajaxFormDateToISO8601"></span>
 				</div>
 				<div class="col-md-3">
-					<!--<span class="glyphicon glyphicon-check"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span> <span ng-hide="group.activitiesCount == 1">(</span><a ng-click="editSources[group.groupId] = !editSources[group.groupId]" ng-hide="group.activitiesCount == 1" ng-mouseenter="showTooltip(group.groupId+'-sources')" ng-mouseleave="hideTooltip(group.groupId+'-sources')">of {{group.activitiesCount}}</a><span ng-hide="group.activitiesCount == 1">)</span>-->
+					<!--<span class="glyphicon glyphicon-check"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span> <span ng-hide="group.activitiesCount == 1">(</span><a ng-click="editSources[group.groupId] = !editSources[group.groupId]" ng-hide="group.activitiesCount == 1" ng-mouseenter="showTooltip(group.groupId+'-sources')" ng-mouseleave="hideTooltip(group.groupId+'-sources')"><@orcid.msg 'groups.common.of'/> {{group.activitiesCount}}</a><span ng-hide="group.activitiesCount == 1">)</span>-->
 				</div>
 				<div class="col-md-2">
 					<ul class="sources-options">

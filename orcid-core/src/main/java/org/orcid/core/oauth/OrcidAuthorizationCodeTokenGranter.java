@@ -51,7 +51,7 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
 
     private final AuthorizationCodeServices authorizationCodeServices;
 
-    @Value("${org.orcid.core.oauth.auth_code.expiration_minutes:10}")    
+    @Value("${org.orcid.core.oauth.auth_code.expiration_minutes:1440}")    
     private int authorizationCodeExpiration;
     
     @Resource(name = "orcidOauth2AuthoriziationCodeDetailDao")

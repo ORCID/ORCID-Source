@@ -22,8 +22,12 @@ import javax.annotation.Resource;
 
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.NotificationManager;
+import org.orcid.core.manager.TemplateManager;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.notification.Notification;
+import org.orcid.jaxb.model.notification.NotificationType;
+import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
+import org.orcid.jaxb.model.notification.custom.NotificationCustom;
 import org.orcid.persistence.dao.NotificationDao;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -41,7 +45,10 @@ public class NotificationController extends BaseController {
     private NotificationManager notificationManager;
 
     @Resource
-    NotificationDao notificationDao;
+    private NotificationDao notificationDao;
+
+    @Resource
+    private TemplateManager templateManager;
 
     @RequestMapping
     public ModelAndView getNotifications() {
@@ -52,38 +59,53 @@ public class NotificationController extends BaseController {
     }
 
     @RequestMapping("/notifications.json")
-    public @ResponseBody
-    List<Notification> getNotificationsJson(@RequestParam(value = "firstResult", defaultValue = "0") int firstResult,
+    public @ResponseBody List<Notification> getNotificationsJson(@RequestParam(value = "firstResult", defaultValue = "0") int firstResult,
             @RequestParam(value = "maxResults", defaultValue = "10") int maxResults) {
         String currentOrcid = getCurrentUserOrcid();
-        return notificationManager.findByOrcid(currentOrcid, firstResult, maxResults);
+        List<Notification> notifications = notificationManager.findByOrcid(currentOrcid, firstResult, maxResults);
+        for (Notification notification : notifications) {
+            if (notification instanceof NotificationAddActivities) {
+                NotificationAddActivities naa = (NotificationAddActivities) notification;
+                naa.setSubject(getMessage(buildInternationalizationKey(NotificationType.class, naa.getNotificationType().value())));
+            }
+        }
+        return notifications;
     }
-    
+
     @RequestMapping("/unreadCount.json")
-    public @ResponseBody
-    int getUnreadCountJson() {
+    public @ResponseBody int getUnreadCountJson() {
         String currentOrcid = getCurrentUserOrcid();
         return notificationDao.getUnreadCount(currentOrcid);
     }
 
-    @RequestMapping(value = "/{id}/notification.html", produces = MediaType.TEXT_HTML_VALUE)
-    public @ResponseBody
-    String getNotificationHtml(@PathVariable("id") String id) {
+    @RequestMapping(value = "/CUSTOM/{id}/notification.html", produces = MediaType.TEXT_HTML_VALUE)
+    public @ResponseBody String getCustomNotificationHtml(@PathVariable("id") String id) {
         Notification notification = notificationManager.findByOrcidAndId(getCurrentUserOrcid(), Long.valueOf(id));
-        return notification.getBodyHtml();
+        if (notification instanceof NotificationCustom) {
+            return ((NotificationCustom) notification).getBodyHtml();
+        } else {
+            return "Notification is of wrong type";
+        }
+    }
+
+    @RequestMapping(value = "/ADD_ACTIVITIES/{id}/notification.html", produces = MediaType.TEXT_HTML_VALUE)
+    public ModelAndView getAddActivitiesNotificationHtml(@PathVariable("id") String id) {
+        ModelAndView mav = new ModelAndView();
+        Notification notification = notificationManager.findByOrcidAndId(getCurrentUserOrcid(), Long.valueOf(id));
+        mav.addObject("notification", notification);
+        mav.setViewName("notification/add_activities_notification");
+        return mav;
     }
 
     @RequestMapping(value = "{id}/read.json")
-    public @ResponseBody
-    Notification flagAsRead(@PathVariable("id") String id) {
+    public @ResponseBody Notification flagAsRead(@PathVariable("id") String id) {
         String currentUserOrcid = getCurrentUserOrcid();
         notificationDao.flagAsRead(currentUserOrcid, Long.valueOf(id));
         return notificationManager.findByOrcidAndId(currentUserOrcid, Long.valueOf(id));
     }
-    
+
     @RequestMapping(value = "{id}/archive.json")
-    public @ResponseBody
-    Notification flagAsArchived(@PathVariable("id") String id) {
+    public @ResponseBody Notification flagAsArchived(@PathVariable("id") String id) {
         String currentUserOrcid = getCurrentUserOrcid();
         notificationDao.flagAsArchived(currentUserOrcid, Long.valueOf(id));
         return notificationManager.findByOrcidAndId(currentUserOrcid, Long.valueOf(id));

@@ -126,7 +126,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     private Locale locale = Locale.EN;
     private Boolean sendChangeNotifications;
     private Boolean sendOrcidNews;
-    private Boolean sendOrcidFeatureAnnouncements;
+    private Boolean sendMemberUpdateRequests;
     private SortedSet<ClientDetailsEntity> clients;
     private SortedSet<OrcidOauth2TokenDetail> tokenDetails;
     private IndexingStatus indexingStatus = IndexingStatus.PENDING;
@@ -701,13 +701,13 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
         this.sendOrcidNews = sendOrcidNews;
     }
 
-    @Column(name = "send_orcid_feature_announcements")
-    public Boolean getSendOrcidFeatureAnnouncements() {
-        return sendOrcidFeatureAnnouncements;
+    @Column(name = "send_member_update_requests")
+    public Boolean getSendMemberUpdateRequests() {
+        return sendMemberUpdateRequests;
     }
 
-    public void setSendOrcidFeatureAnnouncements(Boolean sendOrcidFeatureAnnouncements) {
-        this.sendOrcidFeatureAnnouncements = sendOrcidFeatureAnnouncements;
+    public void setSendMemberUpdateRequests(Boolean sendMemberUpdateRequests) {
+        this.sendMemberUpdateRequests = sendMemberUpdateRequests;
     }
 
     @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)

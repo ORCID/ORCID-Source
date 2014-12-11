@@ -61,7 +61,7 @@
 				  <div class="form-group has-feedback">
 				    <label for="userId" class="col-sm-3 control-label"><@orcid.msg 'oauth_sign_in.labelemailorID'/></label>
 				    <div class="col-sm-9">
-				      <input type="text" name="userId" id="userId" ng-model="authorizationForm.userName.value" placeholder="Email or iD" class="form-control" >
+				      <input type="text" name="userId" id="userId" ng-model="authorizationForm.userName.value" placeholder="<@orcid.msg 'login.username'/>" class="form-control" >
 				      <span class="glyphicon glyphicon-asterisk form-control-feedback-oauth"></span>
 				    </div>
 				  </div>
@@ -70,7 +70,7 @@
 			  <div class="form-group has-feedback">
 			    <label for="password" class="col-sm-3 control-label"><@orcid.msg 'oauth_sign_in.labelpassword'/></label>
 			    <div class="col-sm-9">
-			      <input type="password" id="password" ng-model="authorizationForm.password.value" name="password" placeholder="Password" class="form-control">
+			      <input type="password" id="password" ng-model="authorizationForm.password.value" name="password" placeholder="<@orcid.msg 'login.password'/>" class="form-control">
 			      <span class="glyphicon glyphicon-asterisk form-control-feedback-oauth"></span>
 			    </div>
 			  </div>

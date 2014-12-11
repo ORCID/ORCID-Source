@@ -67,6 +67,10 @@ sub {
 	margin-bottom: 1em;
 }
 
+.topBuffer {
+	margin-top: 1em;
+}
+
 img {
 	/* Responsive images (ensure images don't scale beyond their parents) */
 	max-width: 100%;
@@ -4416,7 +4420,28 @@ ul.oauth-icons li {
 	display: inline;
 }
 
+.notifications td {
+	border-top-style: solid;
+	border-width: 1px;
+	border-color: #DDDDDD;
+}
 
+.notifications th,td {
+	padding-left: 8px;
+	vertical-align: top;
+}
+
+.notifications th,td :hover {
+    cursor: pointer;
+}
+
+.notifications .unread {
+	font-weight: bold;
+}
+
+.vertical-align-middle {
+	line-height: 0px;
+}
 
 /* Media Queries */
 @media (max-width : 499px){ /* OAuth Screen Fix  */

@@ -382,10 +382,11 @@ public class WorksController extends BaseWorkspaceController {
 
     /**
      * Creates a new work
+     * @throws Exception 
      * */
     @RequestMapping(value = "/work.json", method = RequestMethod.POST)
     public @ResponseBody
-    Work postWork(HttpServletRequest request, @RequestBody Work work) {
+    Work postWork(HttpServletRequest request, @RequestBody Work work) throws Exception {
         work.setErrors(new ArrayList<String>());
 
         if (work.getCitation() != null) {
@@ -443,7 +444,7 @@ public class WorksController extends BaseWorkspaceController {
         }
         
         if (work.getErrors().size() == 0) {
-            if (work.getPutCode() != null) 
+            if (work.getPutCode() != null)
                 updateWork(work);
             else
                 addWork(work);
@@ -476,6 +477,9 @@ public class WorksController extends BaseWorkspaceController {
         //Set the id in the work to be returned
         work.setPutCode(Text.valueOf(putCode));
         
+        // make the new work the default display
+        profileWorkManager.updateToMaxDisplay(currentProfile.getOrcidIdentifier().getPath(), putCode);
+        
         // Check if the user have orcid activities, if not, initialize them
         if (currentProfile.getOrcidActivities() == null)
             currentProfile.setOrcidActivities(new OrcidActivities());
@@ -487,9 +491,11 @@ public class WorksController extends BaseWorkspaceController {
         currentProfile.getOrcidActivities().getOrcidWorks().getOrcidWork().add(newOw);
     }
 
-    public void updateWork(Work work) {
+    public void updateWork(Work work) throws Exception {
         // Get current profile
         OrcidProfile currentProfile = getEffectiveProfile();
+        if (!currentProfile.getOrcidIdentifier().getPath().equals(work.getSource()))
+            throw new Exception("Error source isn't correct");
 
         OrcidWork updatedOw = work.toOrcidWork();
 
@@ -837,7 +843,7 @@ public class WorksController extends BaseWorkspaceController {
      * */
     @RequestMapping(value = "/{workId}/visibility.json", method = RequestMethod.PUT)
     public @ResponseBody
-    Visibility updateProfileWorkJson(@PathVariable(value = "workId") String workId, @RequestBody Visibility visibility) {
+    Visibility updateVisibility(@PathVariable(value = "workId") String workId, @RequestBody Visibility visibility) {
         // make sure this is a users work
         OrcidProfile currentProfile = getEffectiveProfile();
         profileWorkManager.updateVisibility(currentProfile.getOrcidIdentifier().getPath(), workId, visibility);
