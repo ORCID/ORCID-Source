@@ -33,10 +33,10 @@
                                 <@orcid.msg 'groups.common.created' />
                             </div>
 
-                            <div class="col-md-2 col-sm-2 col-xs-3">
+                            <div class="col-md-2 col-sm-2 col-xs-2">
                                 <@orcid.msgCapFirst 'groups.common.preferred' />
                             </div>
-                            <div class="col-md-3 col-sm-3 col-xs-2 right">
+                            <div class="col-md-3 col-sm-3 col-xs-3 right">
                                     <div class="workspace-toolbar">
                                         <ul class="workspace-private-toolbar">
                                             <#if !(isPublicProfile??)>
@@ -291,13 +291,13 @@
 
                     <!--  Bottom row -->                     
                     <div class="row source-line" ng-hide="editSources[group.groupId] == true">
-                        <div class="col-md-4 col-sm-4">
+                        <div class="col-md-4 col-sm-4 col-xs-4">
                               <@orcid.msgUpCase 'groups.common.source'/>: {{work.sourceName}}
                           </div>
-                          <div class="col-md-3 col-sm-3">
+                          <div class="col-md-3 col-sm-3 col-xs-3">
                               <@orcid.msgUpCase 'groups.common.created'/>: <span ng-bind="work.createdDate | ajaxFormDateToISO8601"></span>
                           </div>
-                          <div class="col-md-3 col-sm-3">
+                          <div class="col-md-3 col-sm-3 col-xs-4">
                                 <span class="glyphicon glyphicon-check"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span> <span ng-hide="group.activitiesCount == 1">(</span><a ng-click="showSources(group)" ng-hide="group.activitiesCount == 1" ng-mouseenter="showTooltip(group.groupId+'-sources')" ng-mouseleave="hideTooltip(group.groupId+'-sources')"><@orcid.msg 'groups.common.of'/> {{group.activitiesCount}}</a><span ng-hide="group.activitiesCount == 1">)</span>
 
                                 <div class="popover popover-tooltip top sources-popover" ng-show="showElement[group.groupId+'-sources'] == true">

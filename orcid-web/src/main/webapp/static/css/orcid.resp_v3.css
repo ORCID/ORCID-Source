@@ -3870,6 +3870,11 @@ ul.workspace-bar-menu > li{
 	padding: 0;
 }
 
+ul.workspace-bar-menu > li.hidden-md,
+ul.workspace-bar-menu > li.hidden-sm{
+	display: none;	
+}
+
 ul.workspace-bar-menu > li > a > span{
 	margin-right: 5px;	
 }
@@ -6149,7 +6154,7 @@ ul.workspace-private-toolbar .popover-help-container .popover{
 	}
 	
 	.workspace-accordion-header ul>li>a.action-option{		
-		width: 50%;
+		width: 25%;
 		color: transparent;
 		overflow: hidden;		
 		padding: 15px 0;
@@ -6353,6 +6358,16 @@ ul.workspace-private-toolbar .popover-help-container .popover{
 	
 	.workspace-body-list{
 		margin-top: 92px;
+	}
+	
+	#workspace-publications .action-button-bar{
+		padding-right: 15px;
+		padding-left: 15px;
+	}
+	
+	ul.workspace-bar-menu > li.hidden-md,
+	ul.workspace-bar-menu > li.hidden-sm{
+		display: inline;	
 	}
 }
 
