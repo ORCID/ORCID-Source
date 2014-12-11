@@ -33,7 +33,7 @@
                 <#if !(isPublicProfile??)>
                     <ul class="workspace-bar-menu">
                         <!-- Link Manually -->
-                        <li>
+                        <li class="hidden-xs">
                         	<div class="menu-container">
 		                    	<ul class="toggle-menu">
 		                    		<li ng-class="{'green-bg' : showBibtexImportWizard == true}">       
@@ -55,10 +55,25 @@
 					                            </a>
 					                        </li>
 				                    	</ul>
-			                    	</li>
+			                    	</li>			                    	
 		                    	</ul>
 		                    </div>
                         </li>
+                        <!-- Mobile Version Workaround -->
+	                   	<!-- Search & Link -->
+	                       <li class="hidden-md hidden-sm visible-xs-inline">					                        	
+	                       	<a class="action-option manage-button action-funding-mobile" ng-click="showFundingImportWizard()">
+	                                          	<span class="glyphicon glyphicon-cloud-upload"></span>
+	                                          	<@orcid.msg 'manual_orcid_record_contents.search_link'/>
+							</a>
+	                       </li>	                    	
+	                    <!-- Add Manually -->
+	                    <li class="hidden-md hidden-sm visible-xs-inline">
+	                           <a class="action-option manage-button action-funding-mobile" ng-click="addFundingModal()">
+	                               <span class="glyphicon glyphicon-plus"></span>
+	                               <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
+	                           </a>
+	                       </li>
                     </ul>
                 </#if>
         </div>

@@ -1705,7 +1705,7 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 .workspace-accordion-header a.action-option,
 .workspace-accordion-header a.action-option:active{
 	display: block;
-	height: 30px;	
+	min-height: 30px;	
 	border-left: 1px solid #FFF;	
 }
 
@@ -6151,9 +6151,11 @@ ul.workspace-private-toolbar .popover-help-container .popover{
 	
 	.workspace-accordion-header ul.workspace-bar-menu{
 		width: 100%;
+		margin-top: 1px;
+		margin-bottom: 2px;
 	}
 	
-	.workspace-accordion-header ul>li>a.action-option{		
+	.workspace-accordion-header ul.workspace-bar-menu>li>a.action-option{		
 		width: 25%;
 		color: transparent;
 		overflow: hidden;		
@@ -6169,8 +6171,10 @@ ul.workspace-private-toolbar .popover-help-container .popover{
 		font-size: 0;
 	}
 	
-	.public-profile .bibtex-wizard:before{
+	.public-profile .bibtex-wizard:before,
+	.workspace-accordion-header ul>li>a.action-option>span{
 		font-size: 25px;
+		color: #494A4C;
 	}
 	
 	.workspace-accordion-header ul>li>a.action-option.two-options{
@@ -6181,12 +6185,7 @@ ul.workspace-private-toolbar .popover-help-container .popover{
 	
 	.workspace-accordion-header a.toggle-menu{
 		border-bottom: 1px solid #FFF;		
-	}
-	
-	.workspace-accordion-header ul>li>a.action-option>span{		
-		color: #FFF;
-		font-size: 25px;
-	}
+	}	
 	
 	ul.menu-options{
 		right: 0;	
@@ -6198,12 +6197,14 @@ ul.workspace-private-toolbar .popover-help-container .popover{
 		padding-right: 5%;
 	}	
 	
-	.workspace-accordion-header a.action-option{
+	.workspace-accordion-header ul.menu-options.sort li a.action-option{
 		height: 60px;
 		font-size: 16px;
-		padding-top: 5px;		
+		/*padding-top: 5px;*/		
 		display: block;
 		border-bottom: 1px solid #FFF;
+		vertical-align: middle;
+		line-height: 60px;
 	}
 	
 	.workspace-accordion-header a.toggle-menu{
@@ -6368,6 +6369,19 @@ ul.workspace-private-toolbar .popover-help-container .popover{
 	ul.workspace-bar-menu > li.hidden-md,
 	ul.workspace-bar-menu > li.hidden-sm{
 		display: inline;	
+	}
+	
+	.sources-header .col-xs-3{
+		padding-left: 0;
+	}
+	
+	#workspace-fundings .action-button-bar{
+		padding-right: 15px;
+		padding-left: 15px;
+	}
+	
+	.workspace-accordion-header ul.workspace-bar-menu>li>a.action-option.action-funding-mobile{
+		width: 50%;
 	}
 }
 

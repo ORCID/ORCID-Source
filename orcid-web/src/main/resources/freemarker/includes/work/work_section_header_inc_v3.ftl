@@ -69,6 +69,7 @@
                             </ul>
                         </div>
                     </li>
+                    <!-- Mobile Workaround -->
                     <li class="hidden-md hidden-sm visible-xs-inline">
                         <a class="action-option manage-button" ng-click="addWorkModal()">
                             <span class="glyphicon glyphicon-plus"></span>

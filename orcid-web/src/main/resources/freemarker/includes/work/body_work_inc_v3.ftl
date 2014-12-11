@@ -85,10 +85,7 @@
                             <h3 class="workspace-title">
                                 <span ng-bind="work.title.value"></span>
                                 <span class="journaltitle" ng-show="work.journalTitle.value" ng-bind="':&nbsp;'.concat(work.journalTitle.value)"></span>
-                            </h3>
-                            <div ng-show="bulkEditShow == true" class="bulk-edit-input hidden-lg hidden-md hidden-sm pull-right">
-                                <input type="checkbox" ng-model="bulkEditMap[work.putCode.value]" class="ng-pristine ng-valid">
-                            </div>
+                            </h3>                            
                             <div class="info-detail">
                                 <span ng-show="work.publicationDate.year">{{work.publicationDate.year}}</span><span ng-show="work.publicationDate.month">-{{work.publicationDate.month}}</span><span ng-show="work.publicationDate.year"> | </span> <span class="uppercase">{{work.workType.value}}</span>
                             </div>
@@ -99,7 +96,7 @@
                               <ul class="workspace-private-toolbar" ng-hide="editSources[group.groupId] == true">
                                   <#if !(isPublicProfile??)>
                                       <!-- Bulk edit tool -->
-                                      <li ng-show="bulkEditShow == true" class="hidden-xs bulk-checkbox-item">
+                                      <li ng-show="bulkEditShow == true" class="bulk-checkbox-item">
                                               <input type="checkbox" ng-model="bulkEditMap[work.putCode.value]" class="bulk-edit-input ng-pristine ng-valid pull-right">       
                                       </li>
                                   </#if>
@@ -240,7 +237,7 @@
                             </a>
                         </div>
                         <div class="col-md-3 col-sm-3 col-xs-3" ng-bind="work.createdDate | ajaxFormDateToISO8601"></div>
-                        <div class="col-md-3 col-sm-3 col-xs-5">
+                        <div class="col-md-3 col-sm-3 col-xs-3">
                              <#if !(isPublicProfile??)>
                                 <span class="glyphicon glyphicon-check" ng-show="work.putCode.value == group.defaultPutCode"></span><span ng-show="work.putCode.value == group.defaultPutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
                                 <a ng-click="worksSrvc.makeDefault(group, work.putCode.value); " ng-show="work.putCode.value != group.defaultPutCode">
@@ -248,7 +245,7 @@
                                 </a>
                             </#if>
                         </div>
-                        <div class="col-md-2 col-sm-2 col-xs-12 trash-source">
+                        <div class="col-md-2 col-sm-2 col-xs-2 trash-source">
                             <#if !(isPublicProfile??)>
                                 <ul class="sources-actions">
                                     <#if RequestParameters['combine']??>
@@ -297,7 +294,7 @@
                           <div class="col-md-3 col-sm-3 col-xs-3">
                               <@orcid.msgUpCase 'groups.common.created'/>: <span ng-bind="work.createdDate | ajaxFormDateToISO8601"></span>
                           </div>
-                          <div class="col-md-3 col-sm-3 col-xs-4">
+                          <div class="col-md-3 col-sm-3 col-xs-3">
                                 <span class="glyphicon glyphicon-check"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span> <span ng-hide="group.activitiesCount == 1">(</span><a ng-click="showSources(group)" ng-hide="group.activitiesCount == 1" ng-mouseenter="showTooltip(group.groupId+'-sources')" ng-mouseleave="hideTooltip(group.groupId+'-sources')"><@orcid.msg 'groups.common.of'/> {{group.activitiesCount}}</a><span ng-hide="group.activitiesCount == 1">)</span>
 
                                 <div class="popover popover-tooltip top sources-popover" ng-show="showElement[group.groupId+'-sources'] == true">
@@ -308,7 +305,7 @@
                                 </div>
                           </div>
 
-                        <div class="col-md-2 col-sm-2" ng-show="group.activePutCode == work.putCode.value">
+                        <div class="col-md-2 col-sm-2 col-xs-2" ng-show="group.activePutCode == work.putCode.value">
                             <ul class="sources-options" ng-cloak>
                                 <#if !(isPublicProfile??)>
                                     <#if RequestParameters['combine']??>
