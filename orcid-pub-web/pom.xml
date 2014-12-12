@@ -58,12 +58,6 @@
             <artifactId>servlet-api</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>com.yammer.metrics</groupId>
-            <artifactId>metrics-core</artifactId>
-            <version>${metrics.version}</version>
-        </dependency>
-
 
         <!-- Test dependencies -->
         <dependency>

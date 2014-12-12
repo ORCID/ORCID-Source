@@ -30,16 +30,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.yammer.metrics.Metrics;
-import com.yammer.metrics.core.Counter;
-
 @Controller("searchOrcidController")
 @RequestMapping(value = "/orcid-search")
 public class SearchOrcidController extends BaseController {
-
-    final static Counter FRONTEND_WEB_SEARCH_REQUESTS = Metrics.newCounter(SearchOrcidController.class, "FRONTEND-WEB-SEARCH-REQUESTS");
-    final static Counter FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND = Metrics.newCounter(SearchOrcidController.class, "FRONTEND-WEB-SEARCH-RESULTS-NONE-FOUND");
-    final static Counter FRONTEND_WEB_SEARCH_RESULTS_FOUND = Metrics.newCounter(SearchOrcidController.class, "FRONTEND-WEB-SEARCH-RESULTS-FOUND");
 
     @Resource
     private OrcidSearchManager orcidSearchManager;
@@ -65,17 +58,13 @@ public class SearchOrcidController extends BaseController {
             mav.addObject("noResultsFound", true);
             return mav;
         }
-        FRONTEND_WEB_SEARCH_REQUESTS.inc();
         return mav;
     }
 
     private void incrementSearchMetrics(List<OrcidSearchResult> searchResults) {
         if (searchResults == null || searchResults.isEmpty()) {
-            FRONTEND_WEB_SEARCH_RESULTS_NONE_FOUND.inc();
             return;
         }
-
-        FRONTEND_WEB_SEARCH_RESULTS_FOUND.inc(searchResults.size());
     }
 
 }
