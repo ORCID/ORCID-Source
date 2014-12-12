@@ -1009,12 +1009,14 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
             },
             removeWorks: function(putCodes,callback) {
                 $.ajax({
-                    url: getBaseUri() + '/works/' + putCodes.join(),
+                    url: getBaseUri() + '/works/' + putCodes.splice(0,150).join(),
                     type: 'DELETE',
                     contentType: 'application/json;charset=UTF-8',
                     dataType: 'json',
                     success: function(data) {
-                        if (callback)
+                        if (putCodes.length > 0) 
+                            worksSrvc.removeWorks(putCodes,callback);
+                        else if (callback)
                             callback(data);
                     }
                 }).fail(function() {
