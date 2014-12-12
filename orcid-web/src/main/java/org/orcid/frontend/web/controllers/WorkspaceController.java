@@ -55,6 +55,7 @@ import org.orcid.jaxb.model.message.FundingContributorRole;
 import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.SequenceType;
+import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.message.SourceOrcid;
 import org.orcid.jaxb.model.message.WorkCategory;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
@@ -403,8 +404,12 @@ public class WorkspaceController extends BaseWorkspaceController {
         OrcidProfile currentProfile = getEffectiveProfile();
         if (currentProfile.getOrcidHistory().getSource() == null)
             return tpr;
-        SourceOrcid sourceOrcid = currentProfile.getOrcidHistory().getSource().getSourceOrcid();
-        String sourcStr = sourceOrcid.getPath();
+        Source source = currentProfile.getOrcidHistory().getSource();
+        String sourcStr = null;
+        if (source.getSourceOrcid() != null)
+            sourcStr = source.getSourceOrcid().getPath();
+        else if (source.getSourceClientId() != null)
+            sourcStr = source.getSourceClientId().getPath();
         // Check that the cache is up to date
         evictThirdPartyLinkManagerCacheIfNeeded();
         // Get list of clients
