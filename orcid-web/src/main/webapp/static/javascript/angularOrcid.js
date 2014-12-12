@@ -939,32 +939,23 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                 }
                 return null;
             },
-            deleteGroupWorks: function(putCode) {
+            deleteGroupWorks: function(putCodes) {
                 var rmWorks = new Array();
-                for (var idx in worksSrvc.groups) {
-                    if (worksSrvc.groups[idx].hasPut(putCode)) {
-                       for (var idj in worksSrvc.groups[idx].activities) {
-                           rmWorks.push(worksSrvc.groups[idx].activities[idj]);
-                       }
-                       worksSrvc.groups.splice(idx,1);
-                       for (var idx in rmWorks)
-                           worksSrvc.removeWork(rmWorks[idx]);
-                       break;
+                var rmGroups = new Array();
+                for (var idj in putCodes)
+                    for (var idx in worksSrvc.groups) {
+                        if (worksSrvc.groups[idx].hasPut(putCodes[idj])) {
+                            rmGroups.push(idx);
+                            for (var idj in worksSrvc.groups[idx].activities)
+                                rmWorks.push(worksSrvc.groups[idx].activities[idj].putCode.value);
+                        };
                     }
-                }
+                while (rmGroups.length > 0) 
+                    worksSrvc.groups.splice(rmGroups.pop(),1);
+                worksSrvc.removeWorks(rmWorks);
             },
             deleteWork: function(putCode) {
-                var rmWork;
-                for (var idx in worksSrvc.groups) {
-                    if (worksSrvc.groups[idx].hasPut(putCode)) {
-                        rmWork = worksSrvc.groups[idx].rmByPut(putCode);
-                        if (worksSrvc.groups[idx].activitiesCount == 0)
-                            worksSrvc.groups.splice(idx,1);
-                        break;
-                    };
-                };
-                // remove work on server
-                worksSrvc.removeWork(rmWork, function() {worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);});
+                worksSrvc.removeWorks([putCode], function() {worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);});
             },
             makeDefault: function(group, putCode) {
                 group.makeDefault(putCode);
@@ -1016,22 +1007,18 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                     failFunc();
                 });
             },
-            removeWork: function(work,callback) {
+            removeWorks: function(putCodes,callback) {
                 $.ajax({
-                    url: getBaseUri() + '/works/works.json',
+                    url: getBaseUri() + '/works/' + putCodes.join(),
                     type: 'DELETE',
-                    data: angular.toJson(work),
                     contentType: 'application/json;charset=UTF-8',
                     dataType: 'json',
                     success: function(data) {
-                        if(data.errors.length != 0){
-                            console.log("Unable to delete work.");
-                        };
                         if (callback)
                             callback(data);
                     }
                 }).fail(function() {
-                    console.log("Error deleting work.");
+                    console.log("Error deleting works.");
                 });
             },
             setGroupPrivacy: function(putCode, priv) {
@@ -3940,8 +3927,7 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actBulkSr
         for (var idx in worksSrvc.groups)
             if ($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value])
                 delPuts.push(worksSrvc.groups[idx].getActive().putCode.value);
-        for (var idx in delPuts)
-                worksSrvc.deleteGroupWorks(delPuts[idx]);
+        worksSrvc.deleteGroupWorks(delPuts);
         $.colorbox.close();
         $scope.bulkEditShow = false;
     };
