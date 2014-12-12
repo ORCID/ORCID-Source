@@ -120,11 +120,12 @@ public class WorksController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/{workIdsStr}", method = RequestMethod.DELETE)
     public @ResponseBody
-    void removeWork(@PathVariable("workIdsStr") String workIdsStr) {
+    ArrayList<Long> removeWork(@PathVariable("workIdsStr") String workIdsStr) {
         List<String> workIds = Arrays.asList(workIdsStr.split(","));
         // Get cached profile
         OrcidProfile currentProfile = getEffectiveProfile();
         OrcidWorks works = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getOrcidWorks();
+        ArrayList<Long> workIdLs = new ArrayList<Long>();
         if (works != null) {
             List<OrcidWork> workList = works.getOrcidWork();
                 Iterator<OrcidWork> workIterator = workList.iterator();
@@ -133,7 +134,6 @@ public class WorksController extends BaseWorkspaceController {
                     if (workIds.contains(orcidWork.getPutCode()))
                         workIterator.remove();
                 }
-            ArrayList<Long> workIdLs = new ArrayList<Long>();
             for (String workId: workIds)
                 workIdLs.add(new Long(workId));
                 
@@ -141,6 +141,7 @@ public class WorksController extends BaseWorkspaceController {
             works.setOrcidWork(workList);
             currentProfile.getOrcidActivities().setOrcidWorks(works);
         }
+        return workIdLs;
     }
 
     
@@ -841,13 +842,14 @@ public class WorksController extends BaseWorkspaceController {
      * */
     @RequestMapping(value = "/{workIdsStr}/visibility/{visibilityStr}", method = RequestMethod.GET)
     public @ResponseBody
-    void updateVisibilitys(@PathVariable("workIdsStr") String workIdsStr,@PathVariable("visibilityStr") String visibilityStr) {
+    ArrayList<Long>  updateVisibilitys(@PathVariable("workIdsStr") String workIdsStr,@PathVariable("visibilityStr") String visibilityStr) {
         // make sure this is a users work
         OrcidProfile currentProfile = getEffectiveProfile();
         ArrayList<Long> workIds = new ArrayList<Long>();
         for (String workId: workIdsStr.split(","))
             workIds.add(new Long(workId));
         profileWorkManager.updateVisibilities(currentProfile.getOrcidIdentifier().getPath(), workIds, Visibility.fromValue(visibilityStr));
+        return workIds;
     }
 
     /**
