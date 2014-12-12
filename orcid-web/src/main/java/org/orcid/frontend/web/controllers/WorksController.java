@@ -864,6 +864,18 @@ public class WorksController extends BaseWorkspaceController {
     }
 
     /**
+     * updates visibility of works
+     * */
+    @RequestMapping(value = "/{workIdsStr}/visibility/{visibilityStr}", method = RequestMethod.GET)
+    public @ResponseBody
+    void updateVisibilitys(@PathVariable("workIdsStr") String workIdsStr,@PathVariable("visibilityStr") String visibilityStr) {
+        // make sure this is a users work
+        OrcidProfile currentProfile = getEffectiveProfile();
+        for (String workId: workIdsStr.split(","))
+            profileWorkManager.updateVisibility(currentProfile.getOrcidIdentifier().getPath(), workId, Visibility.fromValue(visibilityStr));
+    }
+    
+    /**
      * Saves A work
      * */
     @RequestMapping(value = "/{workId}/visibility.json", method = RequestMethod.PUT)
@@ -874,6 +886,7 @@ public class WorksController extends BaseWorkspaceController {
         profileWorkManager.updateVisibility(currentProfile.getOrcidIdentifier().getPath(), workId, visibility);
         return visibility;
     }
+
 
     /**
      * Return a list of work types based on the work category provided as a
