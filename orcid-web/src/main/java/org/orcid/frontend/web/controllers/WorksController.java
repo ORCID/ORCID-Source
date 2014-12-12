@@ -118,36 +118,6 @@ public class WorksController extends BaseWorkspaceController {
     @Resource(name = "languagesMap")
     private LanguagesMap lm;
 
-    /**
-     * Removes a work from a profile
-     * */
-    @RequestMapping(value = "/works.json", method = RequestMethod.DELETE)
-    public @ResponseBody
-    Work removeWorkJson(HttpServletRequest request, @RequestBody Work work) {
-        OrcidWork delWork = work.toOrcidWork();
-
-        // Get cached profile
-        OrcidProfile currentProfile = getEffectiveProfile();
-        OrcidWorks works = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getOrcidWorks();
-        Work deletedWork = new Work();
-        if (works != null) {
-            List<OrcidWork> workList = works.getOrcidWork();
-            Iterator<OrcidWork> workIterator = workList.iterator();
-            while (workIterator.hasNext()) {
-                OrcidWork orcidWork = workIterator.next();
-                if (delWork.equals(orcidWork)) {
-                    workIterator.remove();
-                    deletedWork = work;
-                }
-            }
-            works.setOrcidWork(workList);
-            currentProfile.getOrcidActivities().setOrcidWorks(works);
-            profileWorkManager.removeWork(currentProfile.getOrcidIdentifier().getPath(), work.getPutCode().getValue());
-        }
-
-        return deletedWork;
-    }
-
     @RequestMapping(value = "/{workIdsStr}", method = RequestMethod.DELETE)
     public @ResponseBody
     void removeWork(@PathVariable("workIdsStr") String workIdsStr) {
@@ -160,11 +130,14 @@ public class WorksController extends BaseWorkspaceController {
                 Iterator<OrcidWork> workIterator = workList.iterator();
                 while (workIterator.hasNext()) {
                     OrcidWork orcidWork = workIterator.next();
-                    if (workIds.contains(orcidWork.getPutCode())) {
-                        profileWorkManager.removeWork(currentProfile.getOrcidIdentifier().getPath(), orcidWork.getPutCode());
+                    if (workIds.contains(orcidWork.getPutCode()))
                         workIterator.remove();
-                    }
                 }
+            ArrayList<Long> workIdLs = new ArrayList<Long>();
+            for (String workId: workIds)
+                workIdLs.add(new Long(workId));
+                
+            profileWorkManager.removeWorks(currentProfile.getOrcidIdentifier().getPath(), workIdLs);
             works.setOrcidWork(workList);
             currentProfile.getOrcidActivities().setOrcidWorks(works);
         }
@@ -871,22 +844,11 @@ public class WorksController extends BaseWorkspaceController {
     void updateVisibilitys(@PathVariable("workIdsStr") String workIdsStr,@PathVariable("visibilityStr") String visibilityStr) {
         // make sure this is a users work
         OrcidProfile currentProfile = getEffectiveProfile();
+        ArrayList<Long> workIds = new ArrayList<Long>();
         for (String workId: workIdsStr.split(","))
-            profileWorkManager.updateVisibility(currentProfile.getOrcidIdentifier().getPath(), workId, Visibility.fromValue(visibilityStr));
+            workIds.add(new Long(workId));
+        profileWorkManager.updateVisibilities(currentProfile.getOrcidIdentifier().getPath(), workIds, Visibility.fromValue(visibilityStr));
     }
-    
-    /**
-     * Saves A work
-     * */
-    @RequestMapping(value = "/{workId}/visibility.json", method = RequestMethod.PUT)
-    public @ResponseBody
-    Visibility updateVisibility(@PathVariable(value = "workId") String workId, @RequestBody Visibility visibility) {
-        // make sure this is a users work
-        OrcidProfile currentProfile = getEffectiveProfile();
-        profileWorkManager.updateVisibility(currentProfile.getOrcidIdentifier().getPath(), workId, visibility);
-        return visibility;
-    }
-
 
     /**
      * Return a list of work types based on the work category provided as a
