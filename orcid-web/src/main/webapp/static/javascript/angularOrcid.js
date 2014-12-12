@@ -1025,25 +1025,25 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
             },
             setGroupPrivacy: function(putCode, priv) {
                 var group = worksSrvc.getGroup(putCode);
+                var putCodes = new Array();
                 for (var idx in group.activities) {
-                    var curPutCode = group.activities[idx].putCode.value;
-                    worksSrvc.setPrivacy(curPutCode, priv);
+                    putCodes.push(group.activities[idx].putCode.value);
+                    group.activities[idx].visibility = priv;
                 }
+                worksSrvc.updateVisibility(putCodes, priv);
             },
             setPrivacy: function(putCode, priv) {
-                var idx;
-                var work = worksSrvc.getWork(putCode);
-                work.visibility = priv;
-                worksSrvc.updateVisibility(work);
+                worksSrvc.updateVisibility([putCode], priv);
             },
-            updateVisibility: function(work) {
+            updateVisibility: function(putCodes, priv) {
                 $.ajax({
-                    url: getBaseUri() + '/works/' + work.putCode.value + '/visibility.json',
-                    type: 'PUT',
-                    data: angular.toJson(work.visibility),
+                    url: getBaseUri() + '/works/' + putCodes.splice(0,150).join() + '/visibility/'+priv,
+                    type: 'GET',
                     contentType: 'application/json;charset=UTF-8',
                     dataType: 'json',
                     success: function(data) {
+                        if (putCodes.length > 0)
+                            worksSrvc.updateVisibility(putCodes, priv);
                     }
                 }).fail(function() {
                     console.log("Error updating profile work.");
@@ -3914,10 +3914,15 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actBulkSr
             $scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value] = bool;
     };
 
-    $scope.setBulkGroupPrivacy = function (privacy) {
+    $scope.setBulkGroupPrivacy = function(priv) {
+        var putCodes = new Array();
         for (var idx in worksSrvc.groups)
             if ($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value])
-                worksSrvc.setGroupPrivacy(worksSrvc.groups[idx].getActive().putCode.value, privacy);
+                for (var idj in worksSrvc.groups[idx].activities) {
+                    putCodes.push(worksSrvc.groups[idx].activities[idj].putCode.value);
+                    worksSrvc.groups[idx].activities[idj].visibility = priv;
+                }
+        worksSrvc.updateVisibility(putCodes, priv);
     };
 
     $scope.deleteBulk = function () {
@@ -4372,12 +4377,6 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actBulkSr
     $scope.setAddWorkPrivacy = function(priv, $event) {
         $event.preventDefault();
         $scope.editWork.visibility = priv;
-    };
-
-    $scope.setPrivacy = function(putCode, priv, $event) {
-        $event.preventDefault();
-        $scope.curPrivToggle = null;
-        worksSrvc.setPrivacy(putCode, priv);
     };
 
     $scope.serverValidate = function (relativePath) {
