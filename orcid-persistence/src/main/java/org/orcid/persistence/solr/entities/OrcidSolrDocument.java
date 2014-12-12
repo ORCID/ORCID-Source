@@ -151,6 +151,9 @@ public class OrcidSolrDocument {
     @Field(SolrConstants.PATENT_NUMBERS)
     private List<String> patentNumbers;
 
+    @Field(SolrConstants.PROFILE_SUBMISSION_DATE)
+    private Date profileSubmissionDate;
+    
     @Field(SolrConstants.PROFILE_LAST_MODIFIED)
     private Date profileLastModified;
 
@@ -298,6 +301,14 @@ public class OrcidSolrDocument {
 
     public void setPatentNumbers(List<String> patentNumbers) {
         this.patentNumbers = patentNumbers;
+    }
+
+    public Date getProfileSubmissionDate() {
+        return profileSubmissionDate;
+    }
+
+    public void setProfileSubmissionDate(Date profileSubmissionDate) {
+        this.profileSubmissionDate = profileSubmissionDate;
     }
 
     public Date getProfileLastModified() {
