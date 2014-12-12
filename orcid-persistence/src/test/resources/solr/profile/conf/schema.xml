@@ -597,7 +597,7 @@
 			multiValued="true" />
 		<field name="profile-submission-date" type="date" indexed="true"
 			stored="true" multiValued="false" />
-		<field name="profile-last-modified" type="date" indexed="true"
+		<field name="profile-last-modified-date" type="date" indexed="true"
 			stored="true" multiValued="false" />
 		<field name="public-profile-message" type="string" indexed="false"
 			stored="true" multiValued="false" />

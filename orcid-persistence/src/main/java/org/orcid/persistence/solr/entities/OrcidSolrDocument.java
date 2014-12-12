@@ -154,8 +154,8 @@ public class OrcidSolrDocument {
     @Field(SolrConstants.PROFILE_SUBMISSION_DATE)
     private Date profileSubmissionDate;
     
-    @Field(SolrConstants.PROFILE_LAST_MODIFIED)
-    private Date profileLastModified;
+    @Field(SolrConstants.PROFILE_LAST_MODIFIED_DATE)
+    private Date profileLastModifiedDate;
 
     @Field(SolrConstants.PUBLIC_PROFILE)
     private String publicProfileMessage;
@@ -311,12 +311,12 @@ public class OrcidSolrDocument {
         this.profileSubmissionDate = profileSubmissionDate;
     }
 
-    public Date getProfileLastModified() {
-        return profileLastModified;
+    public Date getProfileLastModifiedDate() {
+        return profileLastModifiedDate;
     }
 
-    public void setProfileLastModified(Date profileLastModified) {
-        this.profileLastModified = profileLastModified;
+    public void setProfileLastModifiedDate(Date profileLastModifiedDate) {
+        this.profileLastModifiedDate = profileLastModifiedDate;
     }
 
     public String getPublicProfileMessage() {

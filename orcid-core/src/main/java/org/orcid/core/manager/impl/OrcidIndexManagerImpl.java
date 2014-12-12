@@ -297,7 +297,7 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
         if (orcidHistory != null) {
             LastModifiedDate lastModifiedDate = orcidHistory.getLastModifiedDate();
             if (lastModifiedDate != null) {
-                profileIndexDocument.setProfileLastModified(lastModifiedDate.getValue().toGregorianCalendar().getTime());
+                profileIndexDocument.setProfileLastModifiedDate(lastModifiedDate.getValue().toGregorianCalendar().getTime());
             }
             SubmissionDate submissionDate = orcidHistory.getSubmissionDate();
             if (submissionDate != null) {
