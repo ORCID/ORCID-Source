@@ -17,6 +17,7 @@
 package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -147,6 +148,30 @@ public class WorksController extends BaseWorkspaceController {
         return deletedWork;
     }
 
+    @RequestMapping(value = "/{workIdsStr}", method = RequestMethod.DELETE)
+    public @ResponseBody
+    void removeWork(@PathVariable("workIdsStr") String workIdsStr) {
+        List<String> workIds = Arrays.asList(workIdsStr.split(","));
+        // Get cached profile
+        OrcidProfile currentProfile = getEffectiveProfile();
+        OrcidWorks works = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getOrcidWorks();
+        if (works != null) {
+            List<OrcidWork> workList = works.getOrcidWork();
+                Iterator<OrcidWork> workIterator = workList.iterator();
+                while (workIterator.hasNext()) {
+                    OrcidWork orcidWork = workIterator.next();
+                    if (workIds.contains(orcidWork.getPutCode())) {
+                        profileWorkManager.removeWork(currentProfile.getOrcidIdentifier().getPath(), orcidWork.getPutCode());
+                        workIterator.remove();
+                    }
+                }
+            works.setOrcidWork(workList);
+            currentProfile.getOrcidActivities().setOrcidWorks(works);
+        }
+    }
+
+    
+    
     /**
      * List works associated with a profile
      * */
