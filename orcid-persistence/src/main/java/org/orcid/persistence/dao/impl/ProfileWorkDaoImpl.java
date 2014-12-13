@@ -16,6 +16,7 @@
  */
 package org.orcid.persistence.dao.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Query;
@@ -52,6 +53,26 @@ public class ProfileWorkDaoImpl extends GenericDaoImpl<ProfileWorkEntity, Profil
     }
 
     /**
+     * Removes the relationship that exists between a work and a profile.
+     * 
+     * @param workId
+     *            The id of the work that will be removed from the client
+     *            profile
+     * @param clientOrcid
+     *            The client orcid
+     * @return true if the relationship was deleted
+     * */
+    @Override
+    @Transactional
+    public boolean removeWorks(String clientOrcid, ArrayList<Long> workIds) {
+        Query query = entityManager.createQuery("delete from ProfileWorkEntity where profile.id=:clientOrcid and work.id in (:workIds)");
+        query.setParameter("clientOrcid", clientOrcid);
+        query.setParameter("workIds", workIds);
+        return query.executeUpdate() > 0 ? true : false;
+    }
+
+    
+    /**
      * Updates the visibility of an existing profile work relationship
      * @param workId
      *            The id of the work that will be updated
@@ -70,6 +91,17 @@ public class ProfileWorkDaoImpl extends GenericDaoImpl<ProfileWorkEntity, Profil
         return query.executeUpdate() > 0 ? true : false;
     }
 
+    @Override
+    @Transactional
+    public boolean updateVisibilities(String orcid, ArrayList<Long> workIds, Visibility visibility) {
+        Query query = entityManager
+                .createQuery("update ProfileWorkEntity set visibility=:visibility, lastModified=now() where work.id in (:workIds) and  profile.id=:orcid");
+        query.setParameter("workIds", workIds);
+        query.setParameter("visibility", visibility);
+        query.setParameter("orcid", orcid);
+        return query.executeUpdate() > 0 ? true : false;
+    }
+    
     /**
      * Get the profile work associated with the client orcid and the workId
      * 

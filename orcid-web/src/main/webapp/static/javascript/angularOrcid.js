@@ -777,6 +777,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
             bibtexJson: {},
             constants: { 'access_type': { 'USER': 'user', 'ANONYMOUS': 'anonymous'}},
             groups: new Array(),
+            quickRef: {},
             loading: false,
             loadingDetails: false,
             details: new Object(), // we should think about putting details in the
