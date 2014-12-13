@@ -30,7 +30,7 @@ the software.
         <security.version>3.2.5.RELEASE</security.version>
         <jersey.version>1.18.3</jersey.version>
         <solr.version>4.3.0</solr.version>
-        <aspectj.version>1.6.12</aspectj.version>
+        <aspectj.version>1.8.4</aspectj.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <servlet.port>9437</servlet.port>
