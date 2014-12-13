@@ -74,6 +74,8 @@
 
     <bean id="jsonpCallbackFilter" class="org.orcid.core.web.filters.JsonpCallbackFilter" />
     
+    <bean id="apiVersionFilter" class="org.orcid.core.web.filters.ApiVersionFilter" />
+    
      <bean id="oauthAccessDeniedHandler" class="org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler">
         <property name ="exceptionRenderer" ref="oauthExceptionRenderer"/>
      </bean>

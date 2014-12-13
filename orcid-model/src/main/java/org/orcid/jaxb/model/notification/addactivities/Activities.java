@@ -25,12 +25,17 @@ package org.orcid.jaxb.model.notification.addactivities;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.codehaus.jackson.annotate.JsonCreator;
+import org.codehaus.jackson.annotate.JsonValue;
 
 /**
  * <p>
@@ -63,6 +68,14 @@ public class Activities implements Serializable {
     @XmlElement(name = "activity", required = true)
     protected List<Activity> activities;
 
+    public Activities() {
+    }
+
+    @JsonCreator
+    private Activities(Collection<Activity> activities) {
+        this.activities = new ArrayList<>(activities);
+    }
+
     /**
      * Gets the value of the activities property.
      * 
@@ -85,6 +98,7 @@ public class Activities implements Serializable {
      * 
      * 
      */
+    @JsonValue
     public List<Activity> getActivities() {
         if (activities == null) {
             activities = new ArrayList<Activity>();
