@@ -18,13 +18,11 @@ package org.orcid.core.oauth.service;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang3.time.DateUtils;
 import org.orcid.core.constants.OauthTokensConstants;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.LoadOptions;
@@ -36,7 +34,6 @@ import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
@@ -57,9 +54,6 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
     @Resource(name = "orcidTokenStore")
     private TokenStore tokenStore;
 
-    @Value("${org.orcid.core.oauth.usePersistentTokens:false}")
-    private boolean usePersistentTokens;
-
     @Resource
     private OrcidOauth2AuthoriziationCodeDetailDao orcidOauth2AuthoriziationCodeDetailDao;
 
@@ -68,7 +62,7 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
 
     @Resource
     private ClientDetailsManager clientDetailsManager;
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidRandomValueTokenServices.class);
 
     public OrcidRandomValueTokenServices(ClientDetailsService clientDetailsService, int writeValiditySeconds, int readValiditySeconds) {
@@ -76,19 +70,11 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
         this.readValiditySeconds = readValiditySeconds;
     }
 
-    public boolean isUsePersistentTokens() {
-        return usePersistentTokens;
-    }
-
-    public void setUsePersistentTokens(boolean usePersistentTokens) {
-        this.usePersistentTokens = usePersistentTokens;
-    }
-
     @Override
     public OAuth2AccessToken createAccessToken(OAuth2Authentication authentication) throws AuthenticationException {
         OrcidOauth2AuthInfo authInfo = new OrcidOauth2AuthInfo(authentication);
         OAuth2AccessToken existingAccessToken = tokenStore.getAccessToken(authentication);
-        
+
         Map<String, Object> additionalInfo = new HashMap<>();
         String userOrcid = authInfo.getUserOrcid();
         additionalInfo.put("orcid", userOrcid);
@@ -97,13 +83,14 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
             String name = orcidProfile.getOrcidBio().getPersonalDetails().retrievePublicDisplayName();
             additionalInfo.put("name", name);
         }
-        if (usePersistentTokens) {
-            additionalInfo.put(OauthTokensConstants.TOKEN_VERSION, OauthTokensConstants.PERSISTENT_TOKEN);
-            if (isPersistentTokenEnabled(authentication.getAuthorizationRequest()))
-                additionalInfo.put("persistent", true);
-        } else {
-            additionalInfo.put(OauthTokensConstants.TOKEN_VERSION, OauthTokensConstants.NON_PERSISTENT_TOKEN);
-        }
+        // TODO: As of Jan 2015 all new tokens are persistent tokens (Not
+        // persistent per se, but, they are the able-to-be-persistent tokens),
+        // so, in a near future we will be able to remove the
+        // OauthTokensConstants.TOKEN_VERSION param from the additionalInfo
+        // object
+        additionalInfo.put(OauthTokensConstants.TOKEN_VERSION, OauthTokensConstants.PERSISTENT_TOKEN);
+        if (isPersistentTokenEnabled(authentication.getAuthorizationRequest()))
+            additionalInfo.put("persistent", true);
 
         if (existingAccessToken != null) {
             if (existingAccessToken.isExpired()) {
@@ -145,36 +132,24 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
             return readValiditySeconds;
         }
 
-        if (usePersistentTokens) {            
-            if(isClientCredentialsGrantType(authorizationRequest)) {
-                boolean isClientCredentialsScope = false;
-                
-                for(ScopePathType scope : requestedScopes) {
-                    if(scope.isClientCreditalScope()) {
-                        isClientCredentialsScope = true;
-                        break;
-                    }
-                }
-                            
-                if(isClientCredentialsScope) {
-                    String clientId = authorizationRequest.getClientId();
-                    ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
-                    if(clientDetails != null && clientDetails.isPersistentTokensEnabled())
-                        return readValiditySeconds;
-                }
-            } else if (isPersistentTokenEnabled(authorizationRequest))
-                return readValiditySeconds;
-        } else {
-            /*
-             * Tokens should last for the longest life span,
-             * DefaultPermissionChecker will strip scopes that are past their
-             * lifetimes
-             */
+        if (isClientCredentialsGrantType(authorizationRequest)) {
+            boolean isClientCredentialsScope = false;
+
             for (ScopePathType scope : requestedScopes) {
-                if (!scope.isUserGrantWriteScope()) {
-                    return readValiditySeconds;
+                if (scope.isClientCreditalScope()) {
+                    isClientCredentialsScope = true;
+                    break;
                 }
             }
+
+            if (isClientCredentialsScope) {
+                String clientId = authorizationRequest.getClientId();
+                ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
+                if (clientDetails != null && clientDetails.isPersistentTokensEnabled())
+                    return readValiditySeconds;
+            }
+        } else if (isPersistentTokenEnabled(authorizationRequest)) {
+            return readValiditySeconds;
         }
 
         return writeValiditySeconds;
@@ -193,25 +168,19 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
      * token or not
      * */
     private boolean isPersistentTokenEnabled(AuthorizationRequest authorizationRequest) {
-        /**
-         * If persistent tokens are enabled on server, check the authorization
-         * request, otherwise, return false
-         * */
-        if (usePersistentTokens) {
-            if (authorizationRequest != null) {
-                Map<String, String> params = authorizationRequest.getAuthorizationParameters();
-                if (params != null) {
-                    if (params.containsKey(OauthTokensConstants.IS_PERSISTENT)) {
-                        String isPersistent = params.get(OauthTokensConstants.IS_PERSISTENT);
-                        if (Boolean.valueOf(isPersistent)) {
+        if (authorizationRequest != null) {
+            Map<String, String> params = authorizationRequest.getAuthorizationParameters();
+            if (params != null) {
+                if (params.containsKey(OauthTokensConstants.IS_PERSISTENT)) {
+                    String isPersistent = params.get(OauthTokensConstants.IS_PERSISTENT);
+                    if (Boolean.valueOf(isPersistent)) {
+                        return true;
+                    }
+                } else if (params.containsKey("code")) {
+                    String code = params.get("code");
+                    if (orcidOauth2AuthoriziationCodeDetailDao.find(code) != null) {
+                        if (orcidOauth2AuthoriziationCodeDetailDao.isPersistentToken(code)) {
                             return true;
-                        }
-                    } else if (params.containsKey("code")) {
-                        String code = params.get("code");
-                        if (orcidOauth2AuthoriziationCodeDetailDao.find(code) != null) {
-                            if (orcidOauth2AuthoriziationCodeDetailDao.isPersistentToken(code)) {
-                                return true;
-                            }
                         }
                     }
                 }
@@ -220,7 +189,7 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
 
         return false;
     }
-    
+
     /**
      * Checks if the authorization request grant type is client_credentials
      * */
@@ -229,7 +198,7 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
         if (params != null) {
             if (params.containsKey(OauthTokensConstants.GRANT_TYPE)) {
                 String grantType = params.get(OauthTokensConstants.GRANT_TYPE);
-                if(OauthTokensConstants.GRANT_TYPE_CLIENT_CREDENTIALS.equals(grantType))
+                if (OauthTokensConstants.GRANT_TYPE_CLIENT_CREDENTIALS.equals(grantType))
                     return true;
             }
         }
@@ -242,61 +211,14 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
         if (accessToken == null) {
             throw new InvalidTokenException("Invalid access token: " + accessTokenValue);
         } else {
-            // Check if the persistent token is enabled
-            if (usePersistentTokens) {
-                // If it is, respect the token expiration
-                if (accessToken.isExpired()) {
-                    tokenStore.removeAccessToken(accessToken);
-                    throw new InvalidTokenException("Access token expired: " + accessTokenValue);
-                }
-            } else {
-                // If not, check the scopes and recalculate the token expiration
-                // if needed
-                Date newExpirationDate = getExpirationDateWhenPersistentTokenIsDisabled(accessToken);
-                if (newExpirationDate != null && newExpirationDate.before(new Date())) {
-                    tokenStore.removeAccessToken(accessToken);
-                    throw new InvalidTokenException("Access token expired: " + accessTokenValue);
-                }
+            // If it is, respect the token expiration
+            if (accessToken.isExpired()) {
+                tokenStore.removeAccessToken(accessToken);
+                throw new InvalidTokenException("Access token expired: " + accessTokenValue);
             }
         }
 
         OAuth2Authentication result = tokenStore.readAuthentication(accessToken);
         return result;
-    }
-
-    public Date getExpirationDateWhenPersistentTokenIsDisabled(OAuth2AccessToken accessToken) {
-        Set<String> scopes = accessToken.getScope();
-        Date currentExpirationDate = accessToken.getExpiration();
-        // If it is creating a profile, just return the same value
-        if (scopes.size() == 1 && ScopePathType.ORCID_PROFILE_CREATE.value().equals(scopes.iterator().next())) {
-            return currentExpirationDate;
-        }
-
-        // If it is not a write scope, just return the same value
-        Iterator<String> scopesIt = scopes.iterator();
-        while (scopesIt.hasNext()) {
-            String scope = scopesIt.next();
-            ScopePathType scopeType = ScopePathType.fromValue(scope);
-            if (!scopeType.isUserGrantWriteScope()) {
-                return currentExpirationDate;
-            }
-        }
-
-        // If we get here it means is a write scope, so, we have to get the
-        // creation date and modify the expiration date to creation date + 1hour
-        Map<String, Object> additionalInfo = accessToken.getAdditionalInformation();
-        if (additionalInfo != null && additionalInfo.containsKey(OrcidTokenStoreServiceImpl.PERSISTENT)) {
-            boolean isPersistentToken = (Boolean) additionalInfo.get(OrcidTokenStoreServiceImpl.PERSISTENT);
-            if (isPersistentToken) {
-                Date createdDate = (Date) additionalInfo.get(OrcidTokenStoreServiceImpl.DATE_CREATED);
-                return addOneHour(createdDate);
-            }
-        }
-
-        return currentExpirationDate;
-    }
-
-    private Date addOneHour(Date currentDate) {
-        return DateUtils.addHours(currentDate, 1);
     }
 }
