@@ -116,10 +116,7 @@
 								<@security.authorize ifAnyGranted="ROLE_ADMIN">
 									<li><a ${(nav=="members")?string('class="active" ', '')}href="<@spring.url "/manage-members" />"><@orcid.msg 'admin.members.workspace_link' /></a></li>
 									<li><a ${(nav=="admin")?string('class="active" ', '')}href="<@spring.url "/admin-actions" />"><@orcid.msg 'admin.workspace_link' /></a></li>
-								</@security.authorize>
-								<@security.authorize ifAnyGranted="ROLE_PREMIUM_CREATOR, ROLE_CREATOR">
-									<li><a ${(nav=="custom-mail")?string('class="active" ', '')}href="<@spring.url "/custom-emails" />"><@orcid.msg 'custom_email.menu_link' /></a></li>
-								</@security.authorize>
+								</@security.authorize>								
 							</@security.authorize>
 							<li class="leaf last"><a href="<@spring.url "/content/initiative" />"><@orcid.msg 'manage_delegators.learn_more.link.text' /></a></li>
 						</ul>

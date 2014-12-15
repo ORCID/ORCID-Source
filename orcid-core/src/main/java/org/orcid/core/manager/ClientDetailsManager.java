@@ -142,4 +142,12 @@ public interface ClientDetailsManager extends ClientDetailsService {
     void cleanOldClientKeys();
 
     boolean exists(String cliendId);
+    
+    /**
+     * Verifies if a client belongs to the given group id
+     * @param clientId
+     * @param groupId
+     * @return true if clientId belongs to groupId
+     * */
+    boolean belongsTo(String clientId, String groupId);
 }

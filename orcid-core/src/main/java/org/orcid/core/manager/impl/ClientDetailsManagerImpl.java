@@ -405,4 +405,15 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
     public boolean exists(String clientId) {
         return clientDetailsDao.exists(clientId);
     }
+    
+    /**
+     * Verifies if a client belongs to the given group id
+     * @param clientId
+     * @param groupId
+     * @return true if clientId belongs to groupId
+     * */
+    @Override
+    public boolean belongsTo(String clientId, String groupId) {
+        return clientDetailsDao.belongsTo(clientId, groupId);
+    }
 }

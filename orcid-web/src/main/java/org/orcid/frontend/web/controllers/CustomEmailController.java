@@ -22,12 +22,13 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
-import javax.servlet.http.HttpServletRequest;
 
 import org.orcid.core.constants.EmailConstants;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.CustomEmailManager;
 import org.orcid.core.manager.LoadOptions;
+import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.jaxb.model.clientgroup.GroupType;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.jpa.entities.CustomEmailEntity;
 import org.orcid.persistence.jpa.entities.EmailType;
@@ -39,6 +40,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -47,7 +49,7 @@ import org.springframework.web.servlet.ModelAndView;
  */
 
 @Controller
-@RequestMapping(value = { "/custom-emails" })
+@RequestMapping(value = { "/group/custom-emails" })
 public class CustomEmailController extends BaseController {
 
     private static final String DEFAULT_CLAIM_SENDER = "claim@notify.orcid.org";
@@ -58,32 +60,87 @@ public class CustomEmailController extends BaseController {
     CustomEmailManager customEmailManager;
     @Resource
     ClientDetailsManager clientDetailsManager;
+    @Resource
+    ProfileEntityManager profileEntityManager;
     
-    @RequestMapping
-    public ModelAndView manageDeveloperTools() {
+    @RequestMapping        
+    public ModelAndView manageDeveloperTools(@RequestParam("clientId") String clientId) {
         ModelAndView mav = new ModelAndView("custom_emails");
-        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid(), LoadOptions.BIO_AND_INTERNAL_ONLY);
-        mav.addObject("profile", profile);        
+        boolean haveErrors = false;        
+        String groupId = getEffectiveUserOrcid();        
+        GroupType groupType = profileEntityManager.getGroupType(groupId);        
+        if(!GroupType.PREMIUM_INSTITUTION.equals(groupType)) {
+            haveErrors = true;
+            mav.addObject("invalid_request", getMessage("manage.developer_tools.group.custom_emails.invalid_group_type"));
+        } else if(!clientDetailsManager.exists(clientId)) {
+            haveErrors = true;
+            mav.addObject("invalid_request", getMessage("manage.developer_tools.group.custom_emails.invalid_client_id"));
+        } else if(!clientDetailsManager.belongsTo(clientId, groupId)) {
+            haveErrors = true;
+            mav.addObject("invalid_request", getMessage("manage.developer_tools.group.custom_emails.not_your_client"));
+        }
+        
+        if(!haveErrors) {
+            OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid(), LoadOptions.BIO_AND_INTERNAL_ONLY);
+            mav.addObject("profile", profile);
+            mav.addObject("client_id", clientId);
+        }
+                
         return mav;
     }
     
     @RequestMapping(value = "/get-empty.json", method = RequestMethod.GET)
     public @ResponseBody
-    CustomEmailForm getEmptyCustomEmailForm(HttpServletRequest request) {
+    CustomEmailForm getEmptyCustomEmailForm(@RequestParam("clientId") String clientId) {
+        String groupId = getEffectiveUserOrcid();        
+        if(PojoUtil.isEmpty(clientId) || !clientDetailsManager.exists(clientId)) {
+            throw new IllegalArgumentException(getMessage("manage.developer_tools.group.custom_emails.invalid_client_id"));
+        } else if(!clientDetailsManager.belongsTo(clientId, groupId)) {
+            throw new IllegalArgumentException(getMessage("manage.developer_tools.group.custom_emails.not_your_client"));
+        }
+        
         CustomEmailForm result = new CustomEmailForm();
         result.setSubject(Text.valueOf(""));
         result.setContent(Text.valueOf(""));
         result.setSender(Text.valueOf(""));
         result.setHtml(true);
         result.setEmailType(Text.valueOf(EmailType.CLAIM.name()));
+        result.setClientId(clientId);
+        return result;
+    }        
+    
+    @RequestMapping(value = "/get.json", method = RequestMethod.GET)
+    public @ResponseBody
+    List<CustomEmailForm> getCustomEmails(@RequestParam("clientId") String clientId) throws IllegalArgumentException {        
+        List<CustomEmailForm> result = new ArrayList<CustomEmailForm>();
+        boolean haveErrors = false;
+        String groupId = getEffectiveUserOrcid();        
+        GroupType groupType = profileEntityManager.getGroupType(groupId);        
+        if(!GroupType.PREMIUM_INSTITUTION.equals(groupType)) {
+            haveErrors = true;           
+        } else if(!clientDetailsManager.exists(clientId)) {
+            haveErrors = true;
+        } else if(!clientDetailsManager.belongsTo(clientId, groupId)) {
+            haveErrors = true;
+        }                        
+        
+        if(!haveErrors) {
+            List<CustomEmailEntity> customEmails = customEmailManager.getCustomEmails(clientId);
+            for(CustomEmailEntity entity : customEmails) {
+                CustomEmailForm form = CustomEmailForm.valueOf(entity);
+                result.add(form);
+            }
+        }                
         return result;
     }
-    
+                            
     @RequestMapping(value = "/create.json", method = RequestMethod.POST)
     public @ResponseBody
-    CustomEmailForm createCustomEmailForm(HttpServletRequest request, @RequestBody CustomEmailForm customEmailForm) {
-        String currentOrcid = getEffectiveUserOrcid();        
-        if(clientDetailsManager.exists(currentOrcid)) {
+    CustomEmailForm createCustomEmailForm(@RequestBody CustomEmailForm customEmailForm) {
+        String groupId = getEffectiveUserOrcid();
+        String clientId = customEmailForm.getClientId();
+        
+        if(clientDetailsManager.belongsTo(clientId, groupId)) {
             customEmailForm.setErrors(new ArrayList<String>());
             //Validate
             validateEmailType(customEmailForm);
@@ -116,7 +173,7 @@ public class CustomEmailController extends BaseController {
                 
                 String content = customEmailForm.getContent().getValue();
                 
-                customEmailManager.createCustomEmail(currentOrcid, emailType, sender, subject, content, isHtml);
+                customEmailManager.createCustomEmail(clientId, emailType, sender, subject, content, isHtml);
             }                        
             
         }                 
@@ -125,9 +182,11 @@ public class CustomEmailController extends BaseController {
     
     @RequestMapping(value = "/update.json", method = RequestMethod.POST)
     public @ResponseBody
-    CustomEmailForm updateCustomEmailForm(HttpServletRequest request, @RequestBody CustomEmailForm customEmailForm) {
-        String currentOrcid = getEffectiveUserOrcid();
-        if(clientDetailsManager.exists(currentOrcid)) {
+    CustomEmailForm updateCustomEmailForm(@RequestBody CustomEmailForm customEmailForm) {
+        String groupId = getEffectiveUserOrcid();
+        String clientId = customEmailForm.getClientId();                
+        
+        if(clientDetailsManager.belongsTo(clientId, groupId)) {
             customEmailForm.setErrors(new ArrayList<String>());
             //Validate
             validateEmailType(customEmailForm);
@@ -160,7 +219,7 @@ public class CustomEmailController extends BaseController {
                 
                 String content = customEmailForm.getContent().getValue();
                 
-                customEmailManager.updateCustomEmail(currentOrcid, emailType, sender, subject, content, isHtml);
+                customEmailManager.updateCustomEmail(clientId, emailType, sender, subject, content, isHtml);
             }
         }
         return customEmailForm;
@@ -168,31 +227,18 @@ public class CustomEmailController extends BaseController {
     
     @RequestMapping(value = "/delete.json", method = RequestMethod.POST)
     public @ResponseBody
-    boolean deleteCustomEmailForm(HttpServletRequest request, @RequestBody CustomEmailForm customEmailForm) {
-        String currentOrcid = getEffectiveUserOrcid();
+    boolean deleteCustomEmailForm(@RequestBody CustomEmailForm customEmailForm) {
+        String groupId = getEffectiveUserOrcid();
+        String clientId = customEmailForm.getClientId();
+        
         EmailType type = null;
         if(!PojoUtil.isEmpty(customEmailForm.getEmailType())) {
             type = EmailType.valueOf(customEmailForm.getEmailType().getValue());
         }
-        if(currentOrcid != null && type != null)
-            return customEmailManager.deleteCustomEmail(currentOrcid, type);
+        if(type != null && clientDetailsManager.belongsTo(clientId, groupId))
+            return customEmailManager.deleteCustomEmail(clientId, type);
         return false;
-    }
-    
-    @RequestMapping(value = "/get.json", method = RequestMethod.GET)
-    public @ResponseBody
-    List<CustomEmailForm> getCustomEmails(HttpServletRequest request){
-        String currentOrcid = getEffectiveUserOrcid();
-        List<CustomEmailForm> result = new ArrayList<CustomEmailForm>();
-        if(clientDetailsManager.exists(currentOrcid)) {
-            List<CustomEmailEntity> customEmails = customEmailManager.getCustomEmails(currentOrcid);
-            for(CustomEmailEntity entity : customEmails) {
-                CustomEmailForm form = CustomEmailForm.valueOf(entity);
-                result.add(form);
-            }
-        }
-        return result;
-    }
+    }        
     
     /******
      * Validators 

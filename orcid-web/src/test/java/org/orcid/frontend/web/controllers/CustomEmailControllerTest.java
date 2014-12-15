@@ -18,33 +18,83 @@ package org.orcid.frontend.web.controllers;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
+import java.util.Arrays;
+import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.core.oauth.OrcidProfileUserDetails;
+import org.orcid.core.security.OrcidWebRole;
+import org.orcid.frontend.web.util.BaseControllerTest;
 import org.orcid.pojo.ajaxForm.CustomEmailForm;
 import org.orcid.pojo.ajaxForm.Text;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml", "classpath:orcid-frontend-web-servlet.xml" })
-public class CustomEmailControllerTest {
+@Transactional(propagation = Propagation.REQUIRES_NEW)
+public class CustomEmailControllerTest extends BaseControllerTest {
     
     @Resource    
     CustomEmailController customEmailController;
 
+    @Resource
+    protected OrcidProfileManager orcidProfileManager;
+    
     @Before
     public void init() {
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication());
         assertNotNull(customEmailController);
     }
 
+    @BeforeClass
+    public static void beforeClass() throws Exception {
+        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml"));
+    }
+
+    @AfterClass
+    public static void afterClass() throws Exception {
+        removeDBUnitData(Arrays.asList("/data/ClientDetailsEntityData.xml", "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/SecurityQuestionEntityData.xml"));
+    }
+    
+    @Override
+    protected Authentication getAuthentication() {
+        orcidProfile = orcidProfileManager.retrieveOrcidProfile("5555-5555-5555-5558");
+
+        OrcidProfileUserDetails details = null;
+        if(orcidProfile.getType() != null){             
+                details = new OrcidProfileUserDetails(orcidProfile.getOrcidIdentifier().getPath(), orcidProfile.getOrcidBio().getContactDetails().getEmail()
+                    .get(0).getValue(), orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedPassword().getContent(), orcidProfile.getType(), orcidProfile.getGroupType());
+        } else {
+                details = new OrcidProfileUserDetails(orcidProfile.getOrcidIdentifier().getPath(), orcidProfile.getOrcidBio().getContactDetails().getEmail()
+                    .get(0).getValue(), orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedPassword().getContent());
+        }
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(details, "5555-5555-5555-5558", getRole());
+        return auth;
+    }
+    
+    protected List<OrcidWebRole> getRole() {
+        return Arrays.asList(OrcidWebRole.ROLE_ADMIN);
+    }
+    
     
     @Test   
-    public void testValidateContent() {
-        CustomEmailForm  customEmail = customEmailController.getEmptyCustomEmailForm(null);  
+    public void validateContentTest() {
+        CustomEmailForm  customEmail = customEmailController.getEmptyCustomEmailForm("APP-5555555555555555");  
         customEmail = customEmailController.validateContent(customEmail);
         assertNotNull(customEmail);
         assertEquals(1, customEmail.getContent().getErrors().size());
@@ -69,8 +119,8 @@ public class CustomEmailControllerTest {
     }
     
     @Test 
-    public void testValidateSubject() {
-        CustomEmailForm  customEmail = customEmailController.getEmptyCustomEmailForm(null);
+    public void validateSubjectTest() {
+        CustomEmailForm  customEmail = customEmailController.getEmptyCustomEmailForm("APP-5555555555555555");
         customEmail.setSubject(Text.valueOf("This is a subject <a>"));
         customEmail = customEmailController.validateSubject(customEmail);
         assertEquals(1, customEmail.getSubject().getErrors().size());
@@ -79,5 +129,32 @@ public class CustomEmailControllerTest {
         customEmail.setSubject(Text.valueOf("This is a subject"));
         customEmail = customEmailController.validateSubject(customEmail);
         assertEquals(0, customEmail.getSubject().getErrors().size());
+    }
+    
+    @Test
+    public void validateOnlyOwnerCanAskForCustomEmailTest() {
+        try {
+            customEmailController.getEmptyCustomEmailForm("4444-4444-4444-4441");
+            fail();
+        } catch(IllegalArgumentException ie) {
+            
+        }
+    }        
+    
+    @Test
+    public void validateOnlyValidClientIdsCanAskForCustomEmailTest() {
+        try {
+            customEmailController.getEmptyCustomEmailForm(null);
+            fail();
+        } catch(IllegalArgumentException ie) {
+            
+        }
+        
+        try {
+            customEmailController.getEmptyCustomEmailForm("4444-4444-4444-XXXX");
+            fail();
+        } catch(IllegalArgumentException ie) {
+            
+        }
     }
 }

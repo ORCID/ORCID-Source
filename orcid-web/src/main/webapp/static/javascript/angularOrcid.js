@@ -6812,10 +6812,16 @@ function CustomEmailCtrl($scope, $compile) {
     $scope.showEmailList = false;
     $scope.showCreateForm = false;
     $scope.showEditForm = false;
-
+    $scope.clientId = null;
+    
+    $scope.init = function(client_id) {
+    	$scope.clientId = client_id;
+    	$scope.getCustomEmails();
+    };
+    
     $scope.getCustomEmails = function() {
         $.ajax({
-            url: getBaseUri() + '/custom-emails/get.json',
+            url: getBaseUri() + '/group/custom-emails/get.json?clientId=' + $scope.clientId,
             type: 'GET',
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
@@ -6842,7 +6848,7 @@ function CustomEmailCtrl($scope, $compile) {
 
     $scope.displayCreateForm = function() {
         $.ajax({
-            url: getBaseUri() + '/custom-emails/get-empty.json',
+            url: getBaseUri() + '/group/custom-emails/get-empty.json?clientId=' + $scope.clientId,
             type: 'GET',
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
@@ -6864,7 +6870,7 @@ function CustomEmailCtrl($scope, $compile) {
 
     $scope.saveCustomEmail = function() {
         $.ajax({
-            url: getBaseUri() + '/custom-emails/create.json',
+            url: getBaseUri() + '/group/custom-emails/create.json',
             type: 'POST',
             data: angular.toJson($scope.customEmail),
             contentType: 'application/json;charset=UTF-8',
@@ -6894,7 +6900,7 @@ function CustomEmailCtrl($scope, $compile) {
 
     $scope.editCustomEmail = function() {
         $.ajax({
-            url: getBaseUri() + '/custom-emails/update.json',
+            url: getBaseUri() + '/group/custom-emails/update.json',
             type: 'POST',
             data: angular.toJson($scope.editedCustomEmail),
             contentType: 'application/json;charset=UTF-8',
@@ -6935,7 +6941,7 @@ function CustomEmailCtrl($scope, $compile) {
 
     $scope.deleteCustomEmail = function(index) {
         $.ajax({
-            url: getBaseUri() + '/custom-emails/delete.json',
+            url: getBaseUri() + '/group/custom-emails/delete.json',
             type: 'POST',
             data: angular.toJson($scope.toDelete),
             contentType: 'application/json;charset=UTF-8',
@@ -6958,8 +6964,6 @@ function CustomEmailCtrl($scope, $compile) {
     $scope.closeModal = function(){
         $.colorbox.close();
     };
-
-    $scope.getCustomEmails();
 };
 
 function switchUserCtrl($scope,$compile){
