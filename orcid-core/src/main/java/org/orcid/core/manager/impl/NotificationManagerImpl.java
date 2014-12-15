@@ -462,11 +462,16 @@ public class NotificationManagerImpl implements NotificationManager {
 
         Source source = null;
         CustomEmailEntity customEmail = null;
-        if (createdProfile.getOrcidHistory() != null && createdProfile.getOrcidHistory().getSource() != null
-                && createdProfile.getOrcidHistory().getSource().getSourceOrcid() != null
-                && !PojoUtil.isEmpty(createdProfile.getOrcidHistory().getSource().getSourceOrcid().getPath())) {
-            source = createdProfile.getOrcidHistory().getSource();
-            customEmail = getCustomizedEmail(source.getSourceOrcid().getPath(), EmailType.CLAIM);
+        if (createdProfile.getOrcidHistory() != null && createdProfile.getOrcidHistory().getSource() != null) {
+            if(createdProfile.getOrcidHistory().getSource().getSourceOrcid() != null
+                    && !PojoUtil.isEmpty(createdProfile.getOrcidHistory().getSource().getSourceOrcid().getPath())) {
+                source = createdProfile.getOrcidHistory().getSource();
+                customEmail = getCustomizedEmail(source.getSourceOrcid().getPath(), EmailType.CLAIM);
+            } else if(createdProfile.getOrcidHistory().getSource().getSourceClientId() != null && !PojoUtil.isEmpty(createdProfile.getOrcidHistory().getSource().getSourceClientId().getPath()) ) {
+                source = createdProfile.getOrcidHistory().getSource();
+                customEmail = getCustomizedEmail(source.getSourceClientId().getPath(), EmailType.CLAIM);
+            }
+            
         }
 
         String emailName = deriveEmailFriendlyName(createdProfile);
@@ -479,9 +484,11 @@ public class NotificationManagerImpl implements NotificationManager {
         if (source != null) {
             if (source.getSourceName() != null && source.getSourceName().getContent() != null) {
                 creatorName = source.getSourceName().getContent();
+            } else if (source.getSourceClientId() != null && source.getSourceClientId().getPath() != null) {
+                creatorName = source.getSourceClientId().getPath();
             } else if (source.getSourceOrcid() != null && source.getSourceOrcid().getPath() != null) {
                 creatorName = source.getSourceOrcid().getPath();
-            }
+            } 
         }
 
         String subject = null;
