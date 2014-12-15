@@ -528,12 +528,18 @@
 			stored="true" multiValued="false" />
 		<field name="other-names" type="text_general" indexed="true"
 			stored="true" multiValued="true" />
+		<field name="external-id-source" type="string" indexed="true"
+			stored="false" multiValued="true" />
 		<field name="external-id-orcid" type="string" indexed="true"
 			stored="false" multiValued="true" />
+		<copyField source="external-id-source" dest="external-id-orcid"/>
 		<field name="external-id-reference" type="string" indexed="true"
 			stored="false" multiValued="true" />
+		<field name="external-id-source-and-reference" type="string"
+			indexed="true" stored="false" multiValued="true" />
 		<field name="external-id-orcid-and-reference" type="string"
 			indexed="true" stored="false" multiValued="true" />
+		<copyField source="external-id-source-and-reference" dest="external-id-orcid-and-reference"/>
 		<field name="digital-object-ids" type="text_general" indexed="true"
 			stored="false" multiValued="true" />
 
@@ -582,13 +588,17 @@
 		<field name="work-titles" type="text_general" indexed="true"
 			stored="false" multiValued="true" />
 		<field name="funding-titles" type="text_general" indexed="true"
-			stored="false" multiValued="true" />			
+			stored="false" multiValued="true" />
 		<field name="grant-numbers" type="text_general" indexed="true"
 			stored="false" multiValued="true" />
 		<field name="patent-numbers" type="text_general" indexed="true"
 			stored="false" multiValued="true" />
 		<field name="keyword" type="text_general" indexed="true" stored="false"
 			multiValued="true" />
+		<field name="profile-submission-date" type="date" indexed="true"
+			stored="true" multiValued="false" />
+		<field name="profile-last-modified-date" type="date" indexed="true"
+			stored="true" multiValued="false" />
 		<field name="public-profile-message" type="string" indexed="false"
 			stored="true" multiValued="false" />
 		<field name="primary-record" type="string" indexed="true"

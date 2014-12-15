@@ -1705,7 +1705,7 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 .workspace-accordion-header a.action-option,
 .workspace-accordion-header a.action-option:active{
 	display: block;
-	height: 30px;	
+	min-height: 30px;	
 	border-left: 1px solid #FFF;	
 }
 
@@ -3300,6 +3300,7 @@ p.orcid-id-container{
 	border-bottom: 1px solid #c9c9c9;
 	margin-bottom: 10px;
 	float: left;
+	width: 100%;
 }
 
 .public-profile p{
@@ -3869,6 +3870,11 @@ ul.workspace-bar-menu > li{
 	padding: 0;
 }
 
+ul.workspace-bar-menu > li.hidden-md,
+ul.workspace-bar-menu > li.hidden-sm{
+	display: none;	
+}
+
 ul.workspace-bar-menu > li > a > span{
 	margin-right: 5px;	
 }
@@ -4050,9 +4056,12 @@ ul#body-work-list > li{
 		width: 100%;
 }
 
-#workspace-publications .action-button-bar{
+#workspace-publications .action-button-bar,
+#workspace-fundings .action-button-bar{
 	padding: 0 14px 0 0;	
 }
+
+
 
 #workspace-publications{
 	padding: 0 0 0 10px;
@@ -4897,6 +4906,7 @@ ul.toggle-menu li:hover ul{
 	float: left;
 	margin: 5px 0 0 3px;
 	text-align: center;
+	position: relative;
 	
 }
 
@@ -5001,6 +5011,11 @@ ul.sources-edit-list ul.sources-actions .git_create:hover:before{
 	color: #338caf;
 }
 
+.sources-actions .git_create.grey:before,
+.sources-options .git_create.grey:before{	
+	color: #939598;
+}	
+
 .sources-actions .git_pull_request:hover:before{
 	color: #9FC836;
 }
@@ -5053,7 +5068,8 @@ ul.sources-actions > li .popover-tooltip > .arrow{
 .workspace-top .popover-help-container .popover.privacy-myorcid3,
 .workspace-top .popover-help-container .popover.privacy-myorcid3:hover{
 	top: -143px;
-	left: -138px;	
+	left: -138px;
+	min-width: 242px;
 }
 
 .popover-help-container > .privacy-myorcid3 >.arrow{
@@ -5078,6 +5094,10 @@ ul.sources-options .edit-source-popover,
 ul.sources-actions .edit-inactiveSource-popover{
 	top: -41px;
 	left: -60px;
+}
+
+.two-lines{
+	top: -57px !important;	
 }
 
 ul.sources-options .combine-duplicates-popover,
@@ -5143,6 +5163,13 @@ ul.workspace-private-toolbar .popover-help-container .popover{
 	clear: both;
 }
 
+.qrcode-container{
+	display: block;
+	width: 100%;
+	float: left; 
+	margin-bottom: 10px; 
+}
+
 .qrcode-container .orcid-qr{
 	padding-right: 19px;
 	padding-left: 0;
@@ -5175,6 +5202,49 @@ ul.workspace-private-toolbar .popover-help-container .popover{
 
 .cancel{
 	margin-right: 15px;
+}
+
+.workspace-toolbar .vis-issue{
+	float: right;
+	line-height: 0px;
+	height: 16px;
+	width: 16px;
+	display: block;
+	cursor: auto;
+}
+
+.workspace-toolbar .vis-issue .glyphicons{
+	padding-left: 0;
+	margin-right: 15px;
+}
+
+.workspace-toolbar .vis-issue .glyphicons.circle_exclamation_mark:before{
+	font-size: 16px;
+	color:  #F3C01F;
+}
+
+.workspace-toolbar .vis-popover .popover-content{
+	width: 100%;
+	word-wrap: break-word;
+	min-height: 50px;
+	height: auto;
+	display: block;
+	white-space: normal;
+	line-height: 15px;
+}
+
+.workspace-toolbar .popover.vis-popover{
+	top: 26px;
+}
+
+.bulk-edit-delete .bulk-edit-popover{
+	top: -40px;
+	left: -59px;
+	position: absolute;
+}
+
+.bulk-edit-delete .bulk-edit-popover .arrow{
+	left: 72px;
 }
 
 /* Media Queries */
@@ -5638,11 +5708,7 @@ ul.workspace-private-toolbar .popover-help-container .popover{
 	}
 
     .workspace-toolbar{		
-	    height: 50px;
-	    margin: 15px 0 0 5px;
-	    width: 100%;
-	    padding-left: 10px;
-	    float: left;	    
+	    height: 50px;	    
 	}
 	
 	.workspace-header{
@@ -6085,10 +6151,12 @@ ul.workspace-private-toolbar .popover-help-container .popover{
 	
 	.workspace-accordion-header ul.workspace-bar-menu{
 		width: 100%;
+		margin-top: 1px;
+		margin-bottom: 2px;
 	}
 	
-	.workspace-accordion-header ul>li>a.action-option{		
-		width: 50%;
+	.workspace-accordion-header ul.workspace-bar-menu>li>a.action-option{		
+		width: 25%;
 		color: transparent;
 		overflow: hidden;		
 		padding: 15px 0;
@@ -6103,8 +6171,10 @@ ul.workspace-private-toolbar .popover-help-container .popover{
 		font-size: 0;
 	}
 	
-	.public-profile .bibtex-wizard:before{
+	.public-profile .bibtex-wizard:before,
+	.workspace-accordion-header ul>li>a.action-option>span{
 		font-size: 25px;
+		color: #494A4C;
 	}
 	
 	.workspace-accordion-header ul>li>a.action-option.two-options{
@@ -6115,12 +6185,7 @@ ul.workspace-private-toolbar .popover-help-container .popover{
 	
 	.workspace-accordion-header a.toggle-menu{
 		border-bottom: 1px solid #FFF;		
-	}
-	
-	.workspace-accordion-header ul>li>a.action-option>span{		
-		color: #FFF;
-		font-size: 25px;
-	}
+	}	
 	
 	ul.menu-options{
 		right: 0;	
@@ -6132,12 +6197,14 @@ ul.workspace-private-toolbar .popover-help-container .popover{
 		padding-right: 5%;
 	}	
 	
-	.workspace-accordion-header a.action-option{
+	.workspace-accordion-header ul.menu-options.sort li a.action-option{
 		height: 60px;
 		font-size: 16px;
-		padding-top: 5px;		
+		/*padding-top: 5px;*/		
 		display: block;
 		border-bottom: 1px solid #FFF;
+		vertical-align: middle;
+		line-height: 60px;
 	}
 	
 	.workspace-accordion-header a.toggle-menu{
@@ -6292,6 +6359,29 @@ ul.workspace-private-toolbar .popover-help-container .popover{
 	
 	.workspace-body-list{
 		margin-top: 92px;
+	}
+	
+	#workspace-publications .action-button-bar{
+		padding-right: 15px;
+		padding-left: 15px;
+	}
+	
+	ul.workspace-bar-menu > li.hidden-md,
+	ul.workspace-bar-menu > li.hidden-sm{
+		display: inline;	
+	}
+	
+	.sources-header .col-xs-3{
+		padding-left: 0;
+	}
+	
+	#workspace-fundings .action-button-bar{
+		padding-right: 15px;
+		padding-left: 15px;
+	}
+	
+	.workspace-accordion-header ul.workspace-bar-menu>li>a.action-option.action-funding-mobile{
+		width: 50%;
 	}
 }
 

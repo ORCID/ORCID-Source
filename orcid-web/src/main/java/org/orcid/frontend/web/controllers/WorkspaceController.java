@@ -55,6 +55,7 @@ import org.orcid.jaxb.model.message.FundingContributorRole;
 import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.SequenceType;
+import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.message.SourceOrcid;
 import org.orcid.jaxb.model.message.WorkCategory;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
@@ -279,39 +280,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         return lm.getLanguagesMap(localeManager.getLocale());
     }
 
-    @RequestMapping(value = { "/my-orcid", "/workspace" })
-    public ModelAndView viewWorkspace(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int pageNo,
-            @RequestParam(value = "maxResults", defaultValue = "200") int maxResults) {        
-        ModelAndView mav = new ModelAndView("workspace");
-        mav.addObject("showPrivacy", true);
-
-        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid(), LoadOptions.BIO_AND_INTERNAL_ONLY);
-        mav.addObject("profile", profile);
-        String countryName = getCountryName(profile);
-        if(!StringUtil.isBlank(countryName))
-            mav.addObject("countryName", countryName);
-        mav.addObject("currentLocaleKey", localeManager.getLocale().toString());
-        mav.addObject("currentLocaleValue", lm.buildLanguageValue(localeManager.getLocale(), localeManager.getLocale()));
-        return mav;
-    }
-    
-    @RequestMapping(value = "/my-orcid2", method = RequestMethod.GET)
-    public ModelAndView viewWorkspace2(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int pageNo,
-            @RequestParam(value = "maxResults", defaultValue = "200") int maxResults) {
-        ModelAndView mav = new ModelAndView("workspace_v2");
-        mav.addObject("showPrivacy", true);
-
-        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid(), LoadOptions.BIO_AND_INTERNAL_ONLY);
-        mav.addObject("profile", profile);
-        String countryName = getCountryName(profile);
-        if(!StringUtil.isBlank(countryName))
-            mav.addObject("countryName", countryName);
-        mav.addObject("currentLocaleKey", localeManager.getLocale().toString());
-        mav.addObject("currentLocaleValue", lm.buildLanguageValue(localeManager.getLocale(), localeManager.getLocale()));
-        return mav;
-    }
-
-    @RequestMapping(value = "/my-orcid3", method = RequestMethod.GET)
+    @RequestMapping(value = {"/my-orcid3","/my-orcid", "/workspace"}, method = RequestMethod.GET)
     public ModelAndView viewWorkspace3(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int pageNo,
             @RequestParam(value = "maxResults", defaultValue = "200") int maxResults) {
         ModelAndView mav = new ModelAndView("workspace_v3");
@@ -435,8 +404,12 @@ public class WorkspaceController extends BaseWorkspaceController {
         OrcidProfile currentProfile = getEffectiveProfile();
         if (currentProfile.getOrcidHistory().getSource() == null)
             return tpr;
-        SourceOrcid sourceOrcid = currentProfile.getOrcidHistory().getSource().getSourceOrcid();
-        String sourcStr = sourceOrcid.getPath();
+        Source source = currentProfile.getOrcidHistory().getSource();
+        String sourcStr = null;
+        if (source.getSourceOrcid() != null)
+            sourcStr = source.getSourceOrcid().getPath();
+        else if (source.getSourceClientId() != null)
+            sourcStr = source.getSourceClientId().getPath();
         // Check that the cache is up to date
         evictThirdPartyLinkManagerCacheIfNeeded();
         // Get list of clients

@@ -36,18 +36,18 @@
                             <span class="glyphicon glyphicon-pencil"></span><@orcid.msg 'groups.common.bulk_edit'/>
                         </a>
                     </li>
-                    <li>
+                    <li class="hidden-xs"><!-- Workaround for mobile view -->
                         <div class="menu-container">
                             <ul class="toggle-menu">
                                 <li ng-class="{'green-bg' : showBibtexImportWizard == true}"> 
                                     <span class="glyphicon glyphicon-plus"></span>
                                     <@orcid.msg 'groups.common.add_works'/>
-                                    <ul class="menu-options works">                            
-                                        <!-- Add Manually -->
+                                    <ul class="menu-options works">
+                                    	<!-- Search & Link -->
                                         <li>
-                                            <a class="action-option manage-button" ng-click="addWorkModal()">
-                                                <span class="glyphicon glyphicon-plus"></span>
-                                                <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
+                                            <a class="action-option manage-button" ng-click="showWorkImportWizard()">
+                                                <span class="glyphicon glyphicon-cloud-upload"></span>
+                                                <@orcid.msg 'manual_orcid_record_contents.search_link'/>
                                             </a>
                                         </li>
                                         <!-- Bibtex -->
@@ -56,19 +56,40 @@
                                                 <span class="glyphicons file_import bibtex-wizard"></span>
                                                 <@orcid.msg 'workspace.bibtexImporter.link_bibtex'/>
                                             </a>
-                                        </li>
-                                        <!-- Search & Link -->
+                                        </li>                            
+                                        <!-- Add Manually -->
                                         <li>
-                                            <a class="action-option manage-button" ng-click="showWorkImportWizard()">
-                                                <span class="glyphicon glyphicon-cloud-upload"></span>
-                                                <@orcid.msg 'manual_orcid_record_contents.search_link'/>
+                                            <a class="action-option manage-button" ng-click="addWorkModal()">
+                                                <span class="glyphicon glyphicon-plus"></span>
+                                                <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
                                             </a>
-                                        </li>
+                                        </li>                                                                                
                                     </ul>
                                 </li>
                             </ul>
                         </div>
                     </li>
+                    <!-- Search & Link -->
+                    <li class="hidden-md hidden-sm visible-xs-inline">
+                        <a class="action-option manage-button" ng-click="showWorkImportWizard()">
+                            <span class="glyphicon glyphicon-cloud-upload"></span>
+                            <@orcid.msg 'manual_orcid_record_contents.search_link'/>
+                        </a>
+                    </li>
+                    <!-- Bibtex -->
+                    <li class="hidden-md hidden-sm visible-xs-inline">
+                        <a class="action-option manage-button" ng-click="openBibTextWizard()">
+                            <span class="glyphicons file_import bibtex-wizard"></span>
+                            <@orcid.msg 'workspace.bibtexImporter.link_bibtex'/>
+                        </a>
+                    </li>
+                    <!-- Mobile Workaround -->
+                    <li class="hidden-md hidden-sm visible-xs-inline">
+                        <a class="action-option manage-button" ng-click="addWorkModal()">
+                            <span class="glyphicon glyphicon-plus"></span>
+                            <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
+                        </a>
+                    </li>                                        
                 </ul>
             </#if>
         </div>

@@ -19,7 +19,7 @@
 <div class="workspace-accordion-header">
     <div class="row">
         
-        <div class="col-md-3 col-sm-2 col-xs-12">
+        <div class="col-md-4 col-sm-4 col-xs-12">
             <a href="" ng-click="workspaceSrvc.toggleFunding($event)" class="toggle-text">
                   <i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayFunding==false}"></i>
                   <@orcid.msg 'workspace.Funding'/> (<span ng-bind="fundingSrvc.groups.length"></span>)
@@ -27,19 +27,26 @@
         </div>
         
         
-        <div class="col-md-9 col-sm-10 col-xs-12 action-button-bar" ng-show="workspaceSrvc.displayFunding">
+        <div class="col-md-8 col-sm-8 col-xs-12 action-button-bar" ng-show="workspaceSrvc.displayFunding">
         		<!-- Sort -->
             	<#include "../workspace/workspace_act_sort_menu.ftl"/>
                 <#if !(isPublicProfile??)>
                     <ul class="workspace-bar-menu">
                         <!-- Link Manually -->
-                        <li>
+                        <li class="hidden-xs">
                         	<div class="menu-container">
 		                    	<ul class="toggle-menu">
 		                    		<li ng-class="{'green-bg' : showBibtexImportWizard == true}">       
 				                    	<span class="glyphicon glyphicon-plus"></span>
 					                    <@orcid.msgCapFirst 'manual_funding_form_contents.add_grant' />    
-					                    <ul class="menu-options funding">	                    	
+					                    <ul class="menu-options funding">
+					                    	<!-- Search & Link -->
+					                        <li>					                        	
+					                        	<a class="action-option manage-button" ng-click="showFundingImportWizard()">
+                                                	<span class="glyphicon glyphicon-cloud-upload"></span>
+                                                	<@orcid.msg 'manual_orcid_record_contents.search_link'/>
+												</a>
+					                        </li>	                    	
 						                    <!-- Add Manually -->
 						                    <li>
 					                            <a class="action-option manage-button" ng-click="addFundingModal()">
@@ -47,28 +54,26 @@
 					                                <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
 					                            </a>
 					                        </li>
-					                        <!-- Search & Link -->
-					                        <li>
-					                        	<a class="action-option manage-button" ng-click="showFundingImportWizard()">
-                                                	<span class="glyphicon glyphicon-cloud-upload"></span>
-                                                	<@orcid.msg 'manual_orcid_record_contents.search_link'/>
-												</a>
-					                        	
-					                        </li>
 				                    	</ul>
-			                    	</li>
+			                    	</li>			                    	
 		                    	</ul>
 		                    </div>
                         </li>
-                        <!-- Search & Link -->
-                        <li>
-                            <#if fundingImportWizards?size != 0>
-                                <a class="action-option manage-button" ng-click="showTemplateInModal('import-funding-modal')">
-                                    <span class="glyphicon glyphicon-cloud-upload"></span>
-                                    <@orcid.msg 'manual_orcid_record_contents.search_link'/>
-                                </a>
-                            </#if>
-                        </li>
+                        <!-- Mobile Version Workaround -->
+	                   	<!-- Search & Link -->
+	                       <li class="hidden-md hidden-sm visible-xs-inline">					                        	
+	                       	<a class="action-option manage-button action-funding-mobile" ng-click="showFundingImportWizard()">
+	                                          	<span class="glyphicon glyphicon-cloud-upload"></span>
+	                                          	<@orcid.msg 'manual_orcid_record_contents.search_link'/>
+							</a>
+	                       </li>	                    	
+	                    <!-- Add Manually -->
+	                    <li class="hidden-md hidden-sm visible-xs-inline">
+	                           <a class="action-option manage-button action-funding-mobile" ng-click="addFundingModal()">
+	                               <span class="glyphicon glyphicon-plus"></span>
+	                               <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
+	                           </a>
+	                       </li>
                     </ul>
                 </#if>
         </div>

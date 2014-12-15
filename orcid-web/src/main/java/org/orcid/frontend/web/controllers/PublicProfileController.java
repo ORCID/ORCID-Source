@@ -108,10 +108,7 @@ public class PublicProfileController extends BaseWorkspaceController {
             @RequestParam(value = "v", defaultValue = "0") int v,
             @RequestParam(value = "maxResults", defaultValue = "15") int maxResults, @PathVariable("orcid") String orcid) {
         ModelAndView mav = null;
-        if (v == 3 )
-            mav = new ModelAndView("public_profile_v3");
-        else
-            mav = new ModelAndView("public_profile");
+        mav = new ModelAndView("public_profile_v3");
         mav.addObject("isPublicProfile", true);
 
         boolean isProfileEmtpy = true;

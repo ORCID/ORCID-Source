@@ -16,13 +16,15 @@
  */
 package org.orcid.persistence.dao.impl;
 
-import static schema.constants.SolrConstants.SCORE;
 import static schema.constants.SolrConstants.ORCID;
+import static schema.constants.SolrConstants.PROFILE_LAST_MODIFIED_DATE;
 import static schema.constants.SolrConstants.PUBLIC_PROFILE;
+import static schema.constants.SolrConstants.SCORE;
 
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -118,6 +120,25 @@ public class SolrDaoImpl implements SolrDao {
         }
         solrQuery.setFields(SCORE, ORCID, PUBLIC_PROFILE);
         return querySolr(solrQuery);
+    }
+
+    @Override
+    public Date retrieveLastModified(String orcid) {
+        SolrQuery query = new SolrQuery();
+        query.setQuery(ORCID + ":\"" + orcid + "\"");
+        query.setFields(PROFILE_LAST_MODIFIED_DATE);
+        try {
+            QueryResponse response = solrServer.query(query);
+            List<SolrDocument> results = response.getResults();
+            if (results.isEmpty()) {
+                return null;
+            } else {
+                return (Date) results.get(0).getFieldValue(PROFILE_LAST_MODIFIED_DATE);
+            }
+
+        } catch (SolrServerException e) {
+            throw new NonTransientDataAccessResourceException("Error retrieving last modified date from SOLR Server", e);
+        }
     }
 
     private OrcidSolrResults querySolr(SolrQuery query) {

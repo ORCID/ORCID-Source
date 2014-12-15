@@ -30,7 +30,7 @@
             <#if !(isPublicProfile??)>
                 <ul class="workspace-bar-menu">                         
                     <!-- Link Manually -->
-                    <li>                  
+                    <li class="hidden-xs">                  
                     	<div class="menu-container">
 	                    	<ul class="toggle-menu">
 	                    		<li ng-class="{'green-bg' : showBibtexImportWizard == true}">       
@@ -49,6 +49,13 @@
 					      </ul>
 					    </div>         
                     </li>
+                    <!-- Mobile Workaround -->                    
+                    <li class="hidden-md hidden-sm visible-xs-inline">          
+                       <a href="" class="action-option manage-button two-options" ng-click="addAffiliationModal('education')">
+                           <span class="glyphicon glyphicon-plus"></span>
+                           <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
+                       </a>
+                   </li>		                                    
                 </ul>
             </#if>
         </div>

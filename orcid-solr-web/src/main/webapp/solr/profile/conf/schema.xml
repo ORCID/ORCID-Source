@@ -595,6 +595,10 @@
 			stored="false" multiValued="true" />
 		<field name="keyword" type="text_general" indexed="true" stored="false"
 			multiValued="true" />
+		<field name="profile-submission-date" type="date" indexed="true"
+			stored="true" multiValued="false" />
+		<field name="profile-last-modified-date" type="date" indexed="true"
+			stored="true" multiValued="false" />
 		<field name="public-profile-message" type="string" indexed="false"
 			stored="true" multiValued="false" />
 		<field name="primary-record" type="string" indexed="true"

@@ -624,7 +624,8 @@
             
 	<profile_funding 
 			id="1" 
-			orcid="4444-4444-4444-4443" 
+			orcid="4444-4444-4444-4443"
+			source_id="4444-4444-4444-4443" 
 			org_id="1" 
 			title="Grant # 1" 
 			type="SALARY_AWARD" 
@@ -638,7 +639,8 @@
 			
     <profile_funding 
     		id="2" 
-    		orcid="4444-4444-4444-4443" 
+    		orcid="4444-4444-4444-4443"
+    		source_id="4444-4444-4444-4443"
     		org_id="2" 
     		title="Grant # 2" 
     		type="GRANT" 
@@ -653,6 +655,7 @@
     <profile_funding 
     		id="3" 
     		orcid="4444-4444-4444-4443" 
+    		source_id="4444-4444-4444-4441"
     		org_id="3" 
     		title="Grant # 3" 
     		type="GRANT" 

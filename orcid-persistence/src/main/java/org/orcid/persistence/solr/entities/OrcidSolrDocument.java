@@ -17,6 +17,7 @@
 package org.orcid.persistence.solr.entities;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -86,7 +87,7 @@ public class OrcidSolrDocument {
 
     @Field(SolrConstants.BIBCODE)
     private List<String> bibcode;
-    
+
     @Field(SolrConstants.EID)
     private List<String> eid;
 
@@ -146,9 +147,15 @@ public class OrcidSolrDocument {
 
     @Field(SolrConstants.FUNDING_TITLES)
     private List<String> fundingTitles;
-    
+
     @Field(SolrConstants.PATENT_NUMBERS)
     private List<String> patentNumbers;
+
+    @Field(SolrConstants.PROFILE_SUBMISSION_DATE)
+    private Date profileSubmissionDate;
+    
+    @Field(SolrConstants.PROFILE_LAST_MODIFIED_DATE)
+    private Date profileLastModifiedDate;
 
     @Field(SolrConstants.PUBLIC_PROFILE)
     private String publicProfileMessage;
@@ -279,7 +286,7 @@ public class OrcidSolrDocument {
     public void setGrantNumbers(List<String> grantNumbers) {
         this.grantNumbers = grantNumbers;
     }
-    
+
     public List<String> getFundingTitles() {
         return fundingTitles;
     }
@@ -294,6 +301,22 @@ public class OrcidSolrDocument {
 
     public void setPatentNumbers(List<String> patentNumbers) {
         this.patentNumbers = patentNumbers;
+    }
+
+    public Date getProfileSubmissionDate() {
+        return profileSubmissionDate;
+    }
+
+    public void setProfileSubmissionDate(Date profileSubmissionDate) {
+        this.profileSubmissionDate = profileSubmissionDate;
+    }
+
+    public Date getProfileLastModifiedDate() {
+        return profileLastModifiedDate;
+    }
+
+    public void setProfileLastModifiedDate(Date profileLastModifiedDate) {
+        this.profileLastModifiedDate = profileLastModifiedDate;
     }
 
     public String getPublicProfileMessage() {

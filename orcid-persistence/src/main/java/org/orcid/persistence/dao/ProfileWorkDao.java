@@ -16,6 +16,7 @@
  */
 package org.orcid.persistence.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.orcid.jaxb.model.message.Visibility;
@@ -37,9 +38,22 @@ public interface ProfileWorkDao extends GenericDao<ProfileWorkEntity, ProfileWor
     boolean removeWork(String clientOrcid, String workId);
 
     /**
+     * Removes the relationship that exists between a work and a profile.
+     * 
+     * @param workId
+     *            The id of the work that will be removed from the client
+     *            profile
+     * @param clientOrcid
+     *            The client orcid
+     * @return true if the relationship was deleted
+     * */
+    boolean removeWorks(String clientOrcid, ArrayList<Long> workIds);
+
+    
+    /**
      * Updates the visibility of an existing profile work relationship
      * @param orcid users orcid
-     * @param workId
+     * @param workIds
      *            The id of the work that will be updated
      * @param visibility
      *            The new visibility value for the profile work relationship
@@ -47,6 +61,18 @@ public interface ProfileWorkDao extends GenericDao<ProfileWorkEntity, ProfileWor
      * */
     boolean updateVisibility(String orcid, String workId, Visibility visibility);
 
+    /**
+     * Updates the visibility of an existing profile work relationship
+     * @param orcid users orcid
+     * @param workIds
+     *            The id of the work that will be updated
+     * @param visibility
+     *            The new visibility value for the profile work relationship
+     * @return true if the relationship was updated
+     * */
+    boolean updateVisibilities(String orcid, ArrayList<Long> workIds, Visibility visibility);
+
+    
     /**
      * Get the profile work associated with the client orcid and the workId
      * 

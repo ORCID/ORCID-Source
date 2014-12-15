@@ -266,14 +266,14 @@
 					<div ng-show="bulkEditShow && workspaceSrvc.displayWorks" ng-cloak>						
 						<div class="bulk-edit">
 							<div class="row">
-								<div class="col-md-7 col-sm-7">
+								<div class="col-md-7 col-sm-7 col-xs-6">
 									<h4>Bulk edit</h4><span class="hide-bulk" ng-click="toggleBulkEdit()">Hide bulk edit</span>
 									<ol>
 										<li>Select works: Click the checkbox beside each work. Use the checkbox to the right to select or deselect all.</li>
 										<li>Select editing action: Click the trash can to delete all selected works or click a privacy setting to apply that setting to all selected works.</li>
 									</ol>
 								</div>
-								<div class="col-md-5 col-sm-5">
+								<div class="col-md-5 col-sm-5 col-xs-6">
 									<ul class="bulk-edit-toolbar">
 																			
 										<li class="bulk-edit-toolbar-item work-multiple-selector"><!-- Select all -->
@@ -307,9 +307,15 @@
 								 			</div>
 								 			<div class="bulk-edit-delete pull-right">
 											    <div class="centered">
-													<a ng-click="deleteBulkConfirm()" class="ignore toolbar-button edit-item-button" title="Ignore">
+													<a ng-click="deleteBulkConfirm()" class="ignore toolbar-button edit-item-button" ng-mouseenter="showTooltip('Bulk-Edit')" ng-mouseleave="hideTooltip('Bulk-Edit')">
 														<span class="edit-option-toolbar glyphicon glyphicon-trash"></span>
 													</a>
+													<div class="popover popover-tooltip top bulk-edit-popover" ng-show="showElement['Bulk-Edit'] == true">
+		                                             <div class="arrow"></div>
+			                                            <div class="popover-content">
+			                                                <span>Delete selected works</span>
+			                                            </div>
+			                                        </div>
 												</div>
 											</div>
 										</li>
@@ -324,12 +330,12 @@
 						<div class=box-border" ng-show="canReadFiles" ng-cloak>
 						   <h4>Link BibTeX</h4><span ng-click="openBibTextWizard()" class="hide-importer">Hide link BibTeX</span>
 						   <div class="row full-height-row">
-						   	   <div class="col-md-9">
+						   	   <div class="col-md-9 col-sm-9 col-xs-8">
 								   <p>
 								   		<@orcid.msg 'workspace.bibtexImporter.instructions'/>  <a href="http://support.orcid.org/knowledgebase/articles/390530" target="_blank"><@orcid.msg 'workspace.bibtexImporter.learnMore'/></a>.
 								   </p> 
 							   </div>
-							   <div class="col-md-3">
+							   <div class="col-md-3 col-sm-3 col-xs-4">
 							   		<span class="bibtext-options">							   									   		
 									    <a class="bibtex-cancel" ng-click="openBibTextWizard()"><@orcid.msg 'workspace.bibtexImporter.cancel'/></a>			       
 									    <span class="import-label" ng-click="openFileDialog()"><@orcid.msg 'workspace.bibtexImporter.fileUpload'/></span>							           

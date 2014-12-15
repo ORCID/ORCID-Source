@@ -18,6 +18,7 @@ package org.orcid.core.manager.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -31,22 +32,24 @@ import org.orcid.core.manager.OrcidIndexManager;
 import org.orcid.core.security.visibility.filter.VisibilityFilter;
 import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.Email;
-import org.orcid.jaxb.model.message.ExternalIdSource;
 import org.orcid.jaxb.model.message.ExternalIdReference;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
+import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingTitle;
 import org.orcid.jaxb.model.message.Keyword;
+import org.orcid.jaxb.model.message.LastModifiedDate;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidDeprecated;
-import org.orcid.jaxb.model.message.Funding;
+import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OtherName;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.Source;
+import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.jaxb.model.message.Subtitle;
 import org.orcid.jaxb.model.message.Title;
 import org.orcid.jaxb.model.message.TranslatedTitle;
@@ -56,434 +59,413 @@ import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.persistence.dao.SolrDao;
 import org.orcid.persistence.solr.entities.OrcidSolrDocument;
 import org.orcid.utils.NullUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
 public class OrcidIndexManagerImpl implements OrcidIndexManager {
 
-	@Resource
-	private SolrDao solrDao;
+    @Resource
+    private SolrDao solrDao;
 
-	@Resource(name = "visibilityFilter")
-	private VisibilityFilter visibilityFilter;
+    @Resource(name = "visibilityFilter")
+    private VisibilityFilter visibilityFilter;
 
-	public void setSolrDao(SolrDao solrDao) {
-		this.solrDao = solrDao;
-	}
+    private static final Logger LOG = LoggerFactory.getLogger(OrcidIndexManagerImpl.class);
 
-	@Override
-	public void persistProfileInformationForIndexing(OrcidProfile orcidProfile) {
-		OrcidMessage messageToFilter = new OrcidMessage();
-		messageToFilter.setOrcidProfile(orcidProfile);
-		OrcidMessage filteredMessage = visibilityFilter.filter(messageToFilter,
-				Visibility.PUBLIC);
-		OrcidProfile filteredProfile = filteredMessage.getOrcidProfile();
+    public void setSolrDao(SolrDao solrDao) {
+        this.solrDao = solrDao;
+    }
 
-		OrcidSolrDocument profileIndexDocument = new OrcidSolrDocument();
-		profileIndexDocument.setOrcid(filteredProfile.getOrcidIdentifier().getPath());
+    @Override
+    public void persistProfileInformationForIndexingIfNecessary(OrcidProfile orcidProfile) {
+        String orcid = orcidProfile.getOrcidIdentifier().getPath();
+        Date lastModifiedFromSolr = solrDao.retrieveLastModified(orcid);
+        Date lastModifiedFromDb = orcidProfile.getOrcidHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime();
+        if (lastModifiedFromDb.equals(lastModifiedFromSolr)) {
+            LOG.info("Index is already up to date for orcid: {}", orcid);
+            return;
+        }
+        persistProfileInformationForIndexing(orcidProfile);
+    }
 
-		OrcidDeprecated orcidDeprecated = filteredProfile.getOrcidDeprecated();
-		if (orcidDeprecated != null) {
-			profileIndexDocument.setPrimaryRecord(orcidDeprecated
-					.getPrimaryRecord() != null ? orcidDeprecated
-					.getPrimaryRecord().getOrcidIdentifier().getPath() : null);
-		}
+    @Override
+    public void persistProfileInformationForIndexing(OrcidProfile orcidProfile) {
 
-		OrcidBio orcidBio = filteredProfile.getOrcidBio();
-		if (orcidBio != null) {
-			PersonalDetails personalDetails = orcidBio.getPersonalDetails();
-			boolean persistPersonalDetails = personalDetails != null;
-			if (persistPersonalDetails) {
-				profileIndexDocument.setFamilyName(personalDetails
-						.getFamilyName() != null ? personalDetails
-						.getFamilyName().getContent() : null);
-				profileIndexDocument.setGivenNames(personalDetails
-						.getGivenNames() != null ? personalDetails
-						.getGivenNames().getContent() : null);
-				profileIndexDocument.setCreditName(personalDetails
-						.getCreditName() != null ? personalDetails
-						.getCreditName().getContent() : null);
-				List<OtherName> otherNames = personalDetails.getOtherNames() != null ? personalDetails
-						.getOtherNames().getOtherName() : null;
-				if (otherNames != null && !otherNames.isEmpty()) {
-					List<String> names = new ArrayList<String>();
-					for (OtherName otherName : otherNames) {
-						names.add(otherName.getContent());
-					}
-					profileIndexDocument.setOtherNames(names);
-				}
-			}
+        OrcidMessage messageToFilter = new OrcidMessage();
+        messageToFilter.setOrcidProfile(orcidProfile);
+        OrcidMessage filteredMessage = visibilityFilter.filter(messageToFilter, Visibility.PUBLIC);
+        OrcidProfile filteredProfile = filteredMessage.getOrcidProfile();
 
-			ContactDetails contactDetails = orcidBio.getContactDetails();
-			if (contactDetails != null) {
-				for (Email email : contactDetails.getEmail()) {
-					profileIndexDocument.addEmailAddress(email.getValue());
-				}
-			}
+        OrcidSolrDocument profileIndexDocument = new OrcidSolrDocument();
+        profileIndexDocument.setOrcid(filteredProfile.getOrcidIdentifier().getPath());
 
-			ExternalIdentifiers externalIdentifiers = orcidBio
-					.getExternalIdentifiers();
-			if (externalIdentifiers != null) {
-				List<String> extIdOrcids = new ArrayList<String>();
-				List<String> extIdRefs = new ArrayList<String>();
-				List<String> extIdOrcidsAndRefs = new ArrayList<String>();
-				for (ExternalIdentifier externalIdentifier : externalIdentifiers
-						.getExternalIdentifier()) {
-					Source source = externalIdentifier
-							.getSource();
-					String sourcePath = null;
-					if (source != null){
-					   sourcePath = source.retrieveSourcePath();
-					   if(sourcePath != null){
-					       extIdOrcids.add(sourcePath);
-					   }
-					}
-					ExternalIdReference externalIdReference = externalIdentifier
-							.getExternalIdReference();
-					if (externalIdReference != null) {
-						extIdRefs.add(externalIdReference.getContent());
-					}
-					if (NullUtils
-							.noneNull(sourcePath, externalIdReference)) {
-						extIdOrcidsAndRefs.add(sourcePath + "="
-								+ externalIdReference.getContent());
-					}
-				}
-				if (!extIdOrcids.isEmpty()) {
-					profileIndexDocument.setExternalIdSources(extIdOrcids);
-				}
-				if (!extIdRefs.isEmpty()) {
-					profileIndexDocument.setExternalIdReferences(extIdRefs);
-				}
-				if (!extIdOrcidsAndRefs.isEmpty()) {
-					profileIndexDocument
-							.setExternalIdSourcesAndReferences(extIdOrcidsAndRefs);
-				}
-			}
+        OrcidDeprecated orcidDeprecated = filteredProfile.getOrcidDeprecated();
+        if (orcidDeprecated != null) {
+            profileIndexDocument.setPrimaryRecord(orcidDeprecated.getPrimaryRecord() != null ? orcidDeprecated.getPrimaryRecord().getOrcidIdentifier().getPath() : null);
+        }
 
-			OrcidActivities orcidActivities = filteredProfile
-					.getOrcidActivities();
-			if (orcidActivities != null) {
-//				Affiliations affiliations = orcidActivities.getAffiliations();
-//				if (affiliations != null) {
-//					List<Affiliation> pastInsts = affiliations
-//							.getAffiliationsByType(AffiliationType.PAST_INSTITUTION);
-//					if (pastInsts != null && !pastInsts.isEmpty()) {
-//						List<String> pastInstNames = new ArrayList<String>();
-//						for (Affiliation pastAffiliation : pastInsts) {
-//							pastInstNames.add(pastAffiliation
-//									.getAffiliationName());
-//						}
-//
-//						profileIndexDocument
-//								.setAffiliatePastInstitutionNames(pastInstNames);
-//					}
-//
-//					List<Affiliation> primaryInsts = affiliations
-//							.getAffiliationsByType(AffiliationType.CURRENT_PRIMARY_INSTITUTION);
-//					if (primaryInsts != null && !primaryInsts.isEmpty()) {
-//						List<String> primaryInstNames = new ArrayList<String>();
-//						for (Affiliation primaryAffiliation : primaryInsts) {
-//							primaryInstNames.add(primaryAffiliation
-//									.getAffiliationName());
-//						}
-//
-//						profileIndexDocument
-//								.setAffiliatePrimaryInstitutionNames(primaryInstNames);
-//					}
-//
-//					List<Affiliation> currentNonPrimaryInsts = affiliations
-//							.getAffiliationsByType(AffiliationType.CURRENT_INSTITUTION);
-//					if (currentNonPrimaryInsts != null
-//							&& !currentNonPrimaryInsts.isEmpty()) {
-//						List<String> affiliateInstNames = new ArrayList<String>();
-//						for (Affiliation currentAffiliation : currentNonPrimaryInsts) {
-//							affiliateInstNames.add(currentAffiliation
-//									.getAffiliationName());
-//						}
-//
-//						profileIndexDocument
-//								.setAffiliateInstitutionNames(affiliateInstNames);
-//					}
-//				}
+        OrcidBio orcidBio = filteredProfile.getOrcidBio();
+        if (orcidBio != null) {
+            PersonalDetails personalDetails = orcidBio.getPersonalDetails();
+            boolean persistPersonalDetails = personalDetails != null;
+            if (persistPersonalDetails) {
+                profileIndexDocument.setFamilyName(personalDetails.getFamilyName() != null ? personalDetails.getFamilyName().getContent() : null);
+                profileIndexDocument.setGivenNames(personalDetails.getGivenNames() != null ? personalDetails.getGivenNames().getContent() : null);
+                profileIndexDocument.setCreditName(personalDetails.getCreditName() != null ? personalDetails.getCreditName().getContent() : null);
+                List<OtherName> otherNames = personalDetails.getOtherNames() != null ? personalDetails.getOtherNames().getOtherName() : null;
+                if (otherNames != null && !otherNames.isEmpty()) {
+                    List<String> names = new ArrayList<String>();
+                    for (OtherName otherName : otherNames) {
+                        names.add(otherName.getContent());
+                    }
+                    profileIndexDocument.setOtherNames(names);
+                }
+            }
 
-				List<String> keywords = extractKeywordsAsStringFromBio(orcidBio);
-				if (keywords != null) {
-					profileIndexDocument.setKeywords(keywords);
-				}
-			}
-			List<OrcidWork> orcidWorks = filteredProfile.retrieveOrcidWorks() != null ? filteredProfile
-					.retrieveOrcidWorks().getOrcidWork() : null;
-			if (orcidWorks != null) {
-				List<String> workTitles = new ArrayList<String>();
-				Map<WorkExternalIdentifierType, List<String>> allExternalIdentifiers = new HashMap<WorkExternalIdentifierType, List<String>>();
-				for (OrcidWork orcidWork : orcidWorks) {
+            ContactDetails contactDetails = orcidBio.getContactDetails();
+            if (contactDetails != null) {
+                for (Email email : contactDetails.getEmail()) {
+                    profileIndexDocument.addEmailAddress(email.getValue());
+                }
+            }
 
-					if (orcidWork.getWorkExternalIdentifiers() != null) {
+            ExternalIdentifiers externalIdentifiers = orcidBio.getExternalIdentifiers();
+            if (externalIdentifiers != null) {
+                List<String> extIdOrcids = new ArrayList<String>();
+                List<String> extIdRefs = new ArrayList<String>();
+                List<String> extIdOrcidsAndRefs = new ArrayList<String>();
+                for (ExternalIdentifier externalIdentifier : externalIdentifiers.getExternalIdentifier()) {
+                    Source source = externalIdentifier.getSource();
+                    String sourcePath = null;
+                    if (source != null) {
+                        sourcePath = source.retrieveSourcePath();
+                        if (sourcePath != null) {
+                            extIdOrcids.add(sourcePath);
+                        }
+                    }
+                    ExternalIdReference externalIdReference = externalIdentifier.getExternalIdReference();
+                    if (externalIdReference != null) {
+                        extIdRefs.add(externalIdReference.getContent());
+                    }
+                    if (NullUtils.noneNull(sourcePath, externalIdReference)) {
+                        extIdOrcidsAndRefs.add(sourcePath + "=" + externalIdReference.getContent());
+                    }
+                }
+                if (!extIdOrcids.isEmpty()) {
+                    profileIndexDocument.setExternalIdSources(extIdOrcids);
+                }
+                if (!extIdRefs.isEmpty()) {
+                    profileIndexDocument.setExternalIdReferences(extIdRefs);
+                }
+                if (!extIdOrcidsAndRefs.isEmpty()) {
+                    profileIndexDocument.setExternalIdSourcesAndReferences(extIdOrcidsAndRefs);
+                }
+            }
 
-						for (WorkExternalIdentifier workExternalIdentifier : orcidWork
-								.getWorkExternalIdentifiers()
-								.getWorkExternalIdentifier()) {
+            OrcidActivities orcidActivities = filteredProfile.getOrcidActivities();
+            if (orcidActivities != null) {
+                // Affiliations affiliations =
+                // orcidActivities.getAffiliations();
+                // if (affiliations != null) {
+                // List<Affiliation> pastInsts = affiliations
+                // .getAffiliationsByType(AffiliationType.PAST_INSTITUTION);
+                // if (pastInsts != null && !pastInsts.isEmpty()) {
+                // List<String> pastInstNames = new ArrayList<String>();
+                // for (Affiliation pastAffiliation : pastInsts) {
+                // pastInstNames.add(pastAffiliation
+                // .getAffiliationName());
+                // }
+                //
+                // profileIndexDocument
+                // .setAffiliatePastInstitutionNames(pastInstNames);
+                // }
+                //
+                // List<Affiliation> primaryInsts = affiliations
+                // .getAffiliationsByType(AffiliationType.CURRENT_PRIMARY_INSTITUTION);
+                // if (primaryInsts != null && !primaryInsts.isEmpty()) {
+                // List<String> primaryInstNames = new ArrayList<String>();
+                // for (Affiliation primaryAffiliation : primaryInsts) {
+                // primaryInstNames.add(primaryAffiliation
+                // .getAffiliationName());
+                // }
+                //
+                // profileIndexDocument
+                // .setAffiliatePrimaryInstitutionNames(primaryInstNames);
+                // }
+                //
+                // List<Affiliation> currentNonPrimaryInsts = affiliations
+                // .getAffiliationsByType(AffiliationType.CURRENT_INSTITUTION);
+                // if (currentNonPrimaryInsts != null
+                // && !currentNonPrimaryInsts.isEmpty()) {
+                // List<String> affiliateInstNames = new ArrayList<String>();
+                // for (Affiliation currentAffiliation : currentNonPrimaryInsts)
+                // {
+                // affiliateInstNames.add(currentAffiliation
+                // .getAffiliationName());
+                // }
+                //
+                // profileIndexDocument
+                // .setAffiliateInstitutionNames(affiliateInstNames);
+                // }
+                // }
 
-							/**
-							 * Creates a map that contains all different
-							 * external identifiers for the current work
-							 * */
-							if (nullSafeCheckForWorkExternalIdentifier(workExternalIdentifier)) {
-								WorkExternalIdentifierType type = workExternalIdentifier
-										.getWorkExternalIdentifierType();
-								if (!allExternalIdentifiers.containsKey(type)) {
-									List<String> content = new ArrayList<String>();
-									content.add(workExternalIdentifier
-											.getWorkExternalIdentifierId()
-											.getContent());
-									allExternalIdentifiers.put(type, content);
-								} else {
-									allExternalIdentifiers
-											.get(type)
-											.add(workExternalIdentifier
-													.getWorkExternalIdentifierId()
-													.getContent());
-								}
-							}
+                List<String> keywords = extractKeywordsAsStringFromBio(orcidBio);
+                if (keywords != null) {
+                    profileIndexDocument.setKeywords(keywords);
+                }
+            }
+            List<OrcidWork> orcidWorks = filteredProfile.retrieveOrcidWorks() != null ? filteredProfile.retrieveOrcidWorks().getOrcidWork() : null;
+            if (orcidWorks != null) {
+                List<String> workTitles = new ArrayList<String>();
+                Map<WorkExternalIdentifierType, List<String>> allExternalIdentifiers = new HashMap<WorkExternalIdentifierType, List<String>>();
+                for (OrcidWork orcidWork : orcidWorks) {
 
-						}
-					}
+                    if (orcidWork.getWorkExternalIdentifiers() != null) {
 
-					if (orcidWork.getWorkTitle() != null) {
-						Title workMainTitle = orcidWork.getWorkTitle()
-								.getTitle();
-						Subtitle worksubTitle = orcidWork.getWorkTitle()
-								.getSubtitle();
-						TranslatedTitle translatedTitle = orcidWork
-								.getWorkTitle().getTranslatedTitle();
-						if (workMainTitle != null
-								&& !StringUtils.isBlank(workMainTitle
-										.getContent())) {
-							workTitles.add(workMainTitle.getContent());
-						}
+                        for (WorkExternalIdentifier workExternalIdentifier : orcidWork.getWorkExternalIdentifiers().getWorkExternalIdentifier()) {
 
-						if (worksubTitle != null
-								&& !StringUtils.isBlank(worksubTitle
-										.getContent())) {
-							workTitles.add(worksubTitle.getContent());
-						}
+                            /**
+                             * Creates a map that contains all different
+                             * external identifiers for the current work
+                             * */
+                            if (nullSafeCheckForWorkExternalIdentifier(workExternalIdentifier)) {
+                                WorkExternalIdentifierType type = workExternalIdentifier.getWorkExternalIdentifierType();
+                                if (!allExternalIdentifiers.containsKey(type)) {
+                                    List<String> content = new ArrayList<String>();
+                                    content.add(workExternalIdentifier.getWorkExternalIdentifierId().getContent());
+                                    allExternalIdentifiers.put(type, content);
+                                } else {
+                                    allExternalIdentifiers.get(type).add(workExternalIdentifier.getWorkExternalIdentifierId().getContent());
+                                }
+                            }
 
-						if (translatedTitle != null
-								&& !StringUtils.isBlank(translatedTitle
-										.getContent())) {
-							workTitles.add(translatedTitle.getContent());
-						}
-					}
-				}
+                        }
+                    }
 
-				profileIndexDocument.setWorkTitles(workTitles);
+                    if (orcidWork.getWorkTitle() != null) {
+                        Title workMainTitle = orcidWork.getWorkTitle().getTitle();
+                        Subtitle worksubTitle = orcidWork.getWorkTitle().getSubtitle();
+                        TranslatedTitle translatedTitle = orcidWork.getWorkTitle().getTranslatedTitle();
+                        if (workMainTitle != null && !StringUtils.isBlank(workMainTitle.getContent())) {
+                            workTitles.add(workMainTitle.getContent());
+                        }
 
-				// Set the list of external identifiers to the document list
-				addExternalIdentifiersToIndexDocument(profileIndexDocument,
-						allExternalIdentifiers);
-			}
+                        if (worksubTitle != null && !StringUtils.isBlank(worksubTitle.getContent())) {
+                            workTitles.add(worksubTitle.getContent());
+                        }
 
-			List<Funding> orcidFundings = filteredProfile
-					.retrieveFundings() != null ? filteredProfile
-					.retrieveFundings().getFundings() : null;
-			if (orcidFundings != null) {
-				List<String> fundingTitle = new ArrayList<String>();				
-				for (Funding orcidFunding : orcidFundings) {
-					FundingTitle title = orcidFunding.getTitle();					
-					if (title != null) {
-						if (title.getTitle() != null && !StringUtils.isBlank(title.getTitle().getContent())) {					
-							fundingTitle.add(title.getTitle().getContent());
-						}
-						
-						if(title.getTranslatedTitle() != null && StringUtils.isBlank(title.getTranslatedTitle().getContent())) {
-							fundingTitle.add(title.getTranslatedTitle().getContent());
-						}
-					}
-					
-				}
+                        if (translatedTitle != null && !StringUtils.isBlank(translatedTitle.getContent())) {
+                            workTitles.add(translatedTitle.getContent());
+                        }
+                    }
+                }
 
-				profileIndexDocument.setFundingTitles(fundingTitle);
-			}
+                profileIndexDocument.setWorkTitles(workTitles);
 
-		}
+                // Set the list of external identifiers to the document list
+                addExternalIdentifiersToIndexDocument(profileIndexDocument, allExternalIdentifiers);
+            }
 
-		OrcidMessage orcidMessage = new OrcidMessage();
-		orcidMessage.setMessageVersion(OrcidMessage.DEFAULT_VERSION);
-		orcidMessage.setOrcidProfile(filteredProfile);
-		profileIndexDocument.setPublicProfileMessage(orcidMessage.toString());
-		solrDao.persist(profileIndexDocument);
-	}
+            List<Funding> orcidFundings = filteredProfile.retrieveFundings() != null ? filteredProfile.retrieveFundings().getFundings() : null;
+            if (orcidFundings != null) {
+                List<String> fundingTitle = new ArrayList<String>();
+                for (Funding orcidFunding : orcidFundings) {
+                    FundingTitle title = orcidFunding.getTitle();
+                    if (title != null) {
+                        if (title.getTitle() != null && !StringUtils.isBlank(title.getTitle().getContent())) {
+                            fundingTitle.add(title.getTitle().getContent());
+                        }
 
-	private List<String> extractKeywordsAsStringFromBio(OrcidBio orcidBio) {
+                        if (title.getTranslatedTitle() != null && StringUtils.isBlank(title.getTranslatedTitle().getContent())) {
+                            fundingTitle.add(title.getTranslatedTitle().getContent());
+                        }
+                    }
 
-		if (orcidBio != null && orcidBio.getKeywords() != null) {
-			List<Keyword> keyWords = orcidBio.getKeywords().getKeyword();
-			if (keyWords != null && keyWords.size() > 0) {
-				List<String> keywordValues = new ArrayList<String>();
-				for (Keyword keyword : keyWords) {
-					keywordValues.add(keyword.getContent());
-				}
+                }
 
-				return keywordValues;
-			}
-		}
-		return null;
-	}
+                profileIndexDocument.setFundingTitles(fundingTitle);
+            }
 
-	@Override
-	public void deleteOrcidProfile(OrcidProfile orcidProfile) {
-		deleteOrcidProfile(orcidProfile.getOrcidIdentifier().getPath());
+        }
 
-	}
+        OrcidMessage orcidMessage = new OrcidMessage();
+        orcidMessage.setMessageVersion(OrcidMessage.DEFAULT_VERSION);
+        orcidMessage.setOrcidProfile(filteredProfile);
+        OrcidHistory orcidHistory = filteredProfile.getOrcidHistory();
+        if (orcidHistory != null) {
+            LastModifiedDate lastModifiedDate = orcidHistory.getLastModifiedDate();
+            if (lastModifiedDate != null) {
+                profileIndexDocument.setProfileLastModifiedDate(lastModifiedDate.getValue().toGregorianCalendar().getTime());
+            }
+            SubmissionDate submissionDate = orcidHistory.getSubmissionDate();
+            if (submissionDate != null) {
+                profileIndexDocument.setProfileSubmissionDate(submissionDate.getValue().toGregorianCalendar().getTime());
+            }
+        }
+        profileIndexDocument.setPublicProfileMessage(orcidMessage.toString());
+        solrDao.persist(profileIndexDocument);
+    }
 
-	@Override
-	public void deleteOrcidProfile(String orcid) {
-		solrDao.removeOrcids(Arrays.asList(orcid));
-	}
+    private List<String> extractKeywordsAsStringFromBio(OrcidBio orcidBio) {
 
-	private boolean nullSafeCheckForWorkExternalIdentifier(
-			WorkExternalIdentifier workExternalIdentifier) {
-		return workExternalIdentifier.getWorkExternalIdentifierId() != null
-				&& !StringUtils.isBlank(workExternalIdentifier
-						.getWorkExternalIdentifierId().getContent());
-	}
+        if (orcidBio != null && orcidBio.getKeywords() != null) {
+            List<Keyword> keyWords = orcidBio.getKeywords().getKeyword();
+            if (keyWords != null && keyWords.size() > 0) {
+                List<String> keywordValues = new ArrayList<String>();
+                for (Keyword keyword : keyWords) {
+                    keywordValues.add(keyword.getContent());
+                }
 
-	/**
-	 * Fill all the different external identifiers in the profile index
-	 * document.
-	 * 
-	 * @param profileIndexDocument
-	 *            The document that will be indexed by solr
-	 * @param externalIdentifiers
-	 *            The list of external identifiers
-	 * */
-	private void addExternalIdentifiersToIndexDocument(
-			OrcidSolrDocument profileIndexDocument,
-			Map<WorkExternalIdentifierType, List<String>> externalIdentifiers) {
-		initializeExternalIdentifiersOnIdexDocument(profileIndexDocument);
-		Iterator<Entry<WorkExternalIdentifierType, List<String>>> it = externalIdentifiers
-				.entrySet().iterator();
-		while (it.hasNext()) {
-			Map.Entry<WorkExternalIdentifierType, List<String>> entry = (Map.Entry<WorkExternalIdentifierType, List<String>>) it
-					.next();
-			if (entry.getKey() != null && entry.getValue() != null
-					&& !entry.getValue().isEmpty()) {
-				switch (entry.getKey()) {
-				case ARXIV:
-					profileIndexDocument.setArxiv(entry.getValue());
-					break;
-				case ASIN:
-					profileIndexDocument.setAsin(entry.getValue());
-					break;
-				case ASIN_TLD:
-					profileIndexDocument.setAsintld(entry.getValue());
-					break;
-				case BIBCODE:
-					profileIndexDocument.setBibcode(entry.getValue());
-					break;
-				case DOI:
-					profileIndexDocument.setDigitalObjectIds(entry.getValue());
-					break;
-				case EID:
-					profileIndexDocument.setEid(entry.getValue());
-					break;
-				case ISBN:
-					profileIndexDocument.setIsbn(entry.getValue());
-					break;
-				case ISSN:
-					profileIndexDocument.setIssn(entry.getValue());
-					break;
-				case JFM:
-					profileIndexDocument.setJfm(entry.getValue());
-					break;
-				case JSTOR:
-					profileIndexDocument.setJstor(entry.getValue());
-					break;
-				case LCCN:
-					profileIndexDocument.setLccn(entry.getValue());
-					break;
-				case MR:
-					profileIndexDocument.setMr(entry.getValue());
-					break;
-				case OCLC:
-					profileIndexDocument.setOclc(entry.getValue());
-					break;
-				case OL:
-					profileIndexDocument.setOl(entry.getValue());
-					break;
-				case OSTI:
-					profileIndexDocument.setOsti(entry.getValue());
-					break;
-				case OTHER_ID:
-					profileIndexDocument.setOtherIdentifierType(entry
-							.getValue());
-					break;
-				case PMC:
-					profileIndexDocument.setPmc(entry.getValue());
-					break;
-				case PMID:
-					profileIndexDocument.setPmid(entry.getValue());
-					break;
-				case RFC:
-					profileIndexDocument.setRfc(entry.getValue());
-					break;
-				case SSRN:
-					profileIndexDocument.setSsrn(entry.getValue());
-					break;
-				case XBL:
-					profileIndexDocument.setZbl(entry.getValue());
-					break;
-				}
-			}
-		}
-	}
+                return keywordValues;
+            }
+        }
+        return null;
+    }
 
-	private void initializeExternalIdentifiersOnIdexDocument(
-			OrcidSolrDocument profileIndexDocument) {
-		if (profileIndexDocument.getArxiv() == null)
-			profileIndexDocument.setArxiv(new ArrayList<String>());
-		if (profileIndexDocument.getAsin() == null)
-			profileIndexDocument.setAsin(new ArrayList<String>());
-		if (profileIndexDocument.getAsintld() == null)
-			profileIndexDocument.setAsintld(new ArrayList<String>());
-		if (profileIndexDocument.getBibcode() == null)
-			profileIndexDocument.setBibcode(new ArrayList<String>());
-		if (profileIndexDocument.getDigitalObjectIds() == null)
-			profileIndexDocument.setDigitalObjectIds(new ArrayList<String>());
-		if (profileIndexDocument.getEid() == null)
-			profileIndexDocument.setEid(new ArrayList<String>());
-		if (profileIndexDocument.getIsbn() == null)
-			profileIndexDocument.setIsbn(new ArrayList<String>());
-		if (profileIndexDocument.getIssn() == null)
-			profileIndexDocument.setIssn(new ArrayList<String>());
-		if (profileIndexDocument.getJfm() == null)
-			profileIndexDocument.setJfm(new ArrayList<String>());
-		if (profileIndexDocument.getJstor() == null)
-			profileIndexDocument.setJstor(new ArrayList<String>());
-		if (profileIndexDocument.getLccn() == null)
-			profileIndexDocument.setLccn(new ArrayList<String>());
-		if (profileIndexDocument.getMr() == null)
-			profileIndexDocument.setMr(new ArrayList<String>());
-		if (profileIndexDocument.getOclc() == null)
-			profileIndexDocument.setOclc(new ArrayList<String>());
-		if (profileIndexDocument.getOl() == null)
-			profileIndexDocument.setOl(new ArrayList<String>());
-		if (profileIndexDocument.getOsti() == null)
-			profileIndexDocument.setOsti(new ArrayList<String>());
-		if (profileIndexDocument.getOtherIdentifierType() == null)
-			profileIndexDocument
-					.setOtherIdentifierType(new ArrayList<String>());
-		if (profileIndexDocument.getPmc() == null)
-			profileIndexDocument.setPmc(new ArrayList<String>());
-		if (profileIndexDocument.getPmid() == null)
-			profileIndexDocument.setPmid(new ArrayList<String>());
-		if (profileIndexDocument.getRfc() == null)
-			profileIndexDocument.setRfc(new ArrayList<String>());
-		if (profileIndexDocument.getSsrn() == null)
-			profileIndexDocument.setSsrn(new ArrayList<String>());
-		if (profileIndexDocument.getZbl() == null)
-			profileIndexDocument.setZbl(new ArrayList<String>());
+    @Override
+    public void deleteOrcidProfile(OrcidProfile orcidProfile) {
+        deleteOrcidProfile(orcidProfile.getOrcidIdentifier().getPath());
 
-	}
+    }
+
+    @Override
+    public void deleteOrcidProfile(String orcid) {
+        solrDao.removeOrcids(Arrays.asList(orcid));
+    }
+
+    private boolean nullSafeCheckForWorkExternalIdentifier(WorkExternalIdentifier workExternalIdentifier) {
+        return workExternalIdentifier.getWorkExternalIdentifierId() != null && !StringUtils.isBlank(workExternalIdentifier.getWorkExternalIdentifierId().getContent());
+    }
+
+    /**
+     * Fill all the different external identifiers in the profile index
+     * document.
+     * 
+     * @param profileIndexDocument
+     *            The document that will be indexed by solr
+     * @param externalIdentifiers
+     *            The list of external identifiers
+     * */
+    private void addExternalIdentifiersToIndexDocument(OrcidSolrDocument profileIndexDocument, Map<WorkExternalIdentifierType, List<String>> externalIdentifiers) {
+        initializeExternalIdentifiersOnIdexDocument(profileIndexDocument);
+        Iterator<Entry<WorkExternalIdentifierType, List<String>>> it = externalIdentifiers.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<WorkExternalIdentifierType, List<String>> entry = (Map.Entry<WorkExternalIdentifierType, List<String>>) it.next();
+            if (entry.getKey() != null && entry.getValue() != null && !entry.getValue().isEmpty()) {
+                switch (entry.getKey()) {
+                case ARXIV:
+                    profileIndexDocument.setArxiv(entry.getValue());
+                    break;
+                case ASIN:
+                    profileIndexDocument.setAsin(entry.getValue());
+                    break;
+                case ASIN_TLD:
+                    profileIndexDocument.setAsintld(entry.getValue());
+                    break;
+                case BIBCODE:
+                    profileIndexDocument.setBibcode(entry.getValue());
+                    break;
+                case DOI:
+                    profileIndexDocument.setDigitalObjectIds(entry.getValue());
+                    break;
+                case EID:
+                    profileIndexDocument.setEid(entry.getValue());
+                    break;
+                case ISBN:
+                    profileIndexDocument.setIsbn(entry.getValue());
+                    break;
+                case ISSN:
+                    profileIndexDocument.setIssn(entry.getValue());
+                    break;
+                case JFM:
+                    profileIndexDocument.setJfm(entry.getValue());
+                    break;
+                case JSTOR:
+                    profileIndexDocument.setJstor(entry.getValue());
+                    break;
+                case LCCN:
+                    profileIndexDocument.setLccn(entry.getValue());
+                    break;
+                case MR:
+                    profileIndexDocument.setMr(entry.getValue());
+                    break;
+                case OCLC:
+                    profileIndexDocument.setOclc(entry.getValue());
+                    break;
+                case OL:
+                    profileIndexDocument.setOl(entry.getValue());
+                    break;
+                case OSTI:
+                    profileIndexDocument.setOsti(entry.getValue());
+                    break;
+                case OTHER_ID:
+                    profileIndexDocument.setOtherIdentifierType(entry.getValue());
+                    break;
+                case PMC:
+                    profileIndexDocument.setPmc(entry.getValue());
+                    break;
+                case PMID:
+                    profileIndexDocument.setPmid(entry.getValue());
+                    break;
+                case RFC:
+                    profileIndexDocument.setRfc(entry.getValue());
+                    break;
+                case SSRN:
+                    profileIndexDocument.setSsrn(entry.getValue());
+                    break;
+                case XBL:
+                    profileIndexDocument.setZbl(entry.getValue());
+                    break;
+                }
+            }
+        }
+    }
+
+    private void initializeExternalIdentifiersOnIdexDocument(OrcidSolrDocument profileIndexDocument) {
+        if (profileIndexDocument.getArxiv() == null)
+            profileIndexDocument.setArxiv(new ArrayList<String>());
+        if (profileIndexDocument.getAsin() == null)
+            profileIndexDocument.setAsin(new ArrayList<String>());
+        if (profileIndexDocument.getAsintld() == null)
+            profileIndexDocument.setAsintld(new ArrayList<String>());
+        if (profileIndexDocument.getBibcode() == null)
+            profileIndexDocument.setBibcode(new ArrayList<String>());
+        if (profileIndexDocument.getDigitalObjectIds() == null)
+            profileIndexDocument.setDigitalObjectIds(new ArrayList<String>());
+        if (profileIndexDocument.getEid() == null)
+            profileIndexDocument.setEid(new ArrayList<String>());
+        if (profileIndexDocument.getIsbn() == null)
+            profileIndexDocument.setIsbn(new ArrayList<String>());
+        if (profileIndexDocument.getIssn() == null)
+            profileIndexDocument.setIssn(new ArrayList<String>());
+        if (profileIndexDocument.getJfm() == null)
+            profileIndexDocument.setJfm(new ArrayList<String>());
+        if (profileIndexDocument.getJstor() == null)
+            profileIndexDocument.setJstor(new ArrayList<String>());
+        if (profileIndexDocument.getLccn() == null)
+            profileIndexDocument.setLccn(new ArrayList<String>());
+        if (profileIndexDocument.getMr() == null)
+            profileIndexDocument.setMr(new ArrayList<String>());
+        if (profileIndexDocument.getOclc() == null)
+            profileIndexDocument.setOclc(new ArrayList<String>());
+        if (profileIndexDocument.getOl() == null)
+            profileIndexDocument.setOl(new ArrayList<String>());
+        if (profileIndexDocument.getOsti() == null)
+            profileIndexDocument.setOsti(new ArrayList<String>());
+        if (profileIndexDocument.getOtherIdentifierType() == null)
+            profileIndexDocument.setOtherIdentifierType(new ArrayList<String>());
+        if (profileIndexDocument.getPmc() == null)
+            profileIndexDocument.setPmc(new ArrayList<String>());
+        if (profileIndexDocument.getPmid() == null)
+            profileIndexDocument.setPmid(new ArrayList<String>());
+        if (profileIndexDocument.getRfc() == null)
+            profileIndexDocument.setRfc(new ArrayList<String>());
+        if (profileIndexDocument.getSsrn() == null)
+            profileIndexDocument.setSsrn(new ArrayList<String>());
+        if (profileIndexDocument.getZbl() == null)
+            profileIndexDocument.setZbl(new ArrayList<String>());
+
+    }
 }

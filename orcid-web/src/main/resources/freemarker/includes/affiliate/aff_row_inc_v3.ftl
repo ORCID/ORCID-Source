@@ -18,7 +18,7 @@
 -->
 <div class="row">        
   	<!-- Information -->
-	<div class="col-md-9 col-sm-9 bottomBuffer">
+	<div class="col-md-10 col-sm-10 col-xs-8 bottomBuffer">
 	    <h3 class="workspace-title">
         	<span ng-bind-html="group.getActive().affiliationName.value"></span>:
         	<span ng-bind="group.getActive().city.value"></span><span ng-show="group.getActive().region.value">, </span><span ng-bind="group.getActive().region.value"></span>, <span ng-bind="group.getActive().country.value"></span>        	        	        	        	
@@ -51,12 +51,12 @@
 	            <span ng-bind-html="group.getActive().roleTitle.value"></span>
         	</div>
 			<span ng-show="group.getActive().departmentName.value">
-				(<span ng-bind="group.getActive().departmentName.value" ng-cloak></span>)
+				<span ng-show="group.getActive().roleTitle.value">&nbsp;</span>(<span ng-bind="group.getActive().departmentName.value" ng-cloak></span>)
 			</span>
         </div>
        </div>
        <!-- Privacy Settings -->
-       <div class="col-md-3 col-sm-3 workspace-toolbar">       	
+       <div class="col-md-2 col-sm-2 col-xs-4 workspace-toolbar">       	
        	<#if !(isPublicProfile??)>       		
        		<ul class="workspace-private-toolbar">	
 			 	<li>
@@ -75,16 +75,13 @@
 	<div class="col-md-12 col-sm-12 col-xs-12">
 		<div class="sources-container-header">          
 			<div class="row">
-				<div class="col-md-4">
+				<div class="col-md-4 col-sm-4 col-xs-4">
 					<@orcid.msgUpCase 'groups.common.source'/>: {{group.getActive().sourceName}}	
 				</div>
-				<div class="col-md-3">
+				<div class="col-md-6 col-sm-6 col-xs-6">
 					<@orcid.msgUpCase 'groups.common.created'/>: <span ng-bind="group.getActive().createdDate | ajaxFormDateToISO8601"></span>
-				</div>
-				<div class="col-md-3">
-					<!--<span class="glyphicon glyphicon-check"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span> <span ng-hide="group.activitiesCount == 1">(</span><a ng-click="editSources[group.groupId] = !editSources[group.groupId]" ng-hide="group.activitiesCount == 1" ng-mouseenter="showTooltip(group.groupId+'-sources')" ng-mouseleave="hideTooltip(group.groupId+'-sources')">of {{group.activitiesCount}}</a><span ng-hide="group.activitiesCount == 1">)</span>-->
-				</div>
-				<div class="col-md-2">
+				</div>				
+				<div class="col-md-2 col-sm-2 col-xs-2">
 					<ul class="sources-options">
 						<#if !(isPublicProfile??)>
 							<li ng-show="group.getActive().source == '${effectiveUserOrcid}'">

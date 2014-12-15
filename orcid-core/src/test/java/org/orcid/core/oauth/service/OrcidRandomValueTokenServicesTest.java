@@ -19,7 +19,6 @@ package org.orcid.core.oauth.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.Arrays;
@@ -27,9 +26,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -45,9 +42,7 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.test.DBUnitTest;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
-import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.security.oauth2.provider.DefaultAuthorizationRequest;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
@@ -89,48 +84,8 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
     @Before
     public void setPersistentTokensOn() {
         OrcidRandomValueTokenServices orcidTokenServices = (OrcidRandomValueTokenServices) tokenServices;
-        orcidTokenServices.setUsePersistentTokens(true);
         orcidTokenServices.setSupportRefreshToken(true);
-    }
-    
-    @Test
-    @Transactional
-    @Rollback
-    public void testCreateReadLimitedAccessTokenWithPersistentTokenDisabled() {
-        //Turn off the persistent tokens
-        OrcidRandomValueTokenServices orcidTokenServices = (OrcidRandomValueTokenServices) tokenServices;
-        orcidTokenServices.setUsePersistentTokens(false);
-        
-        Date earliestExpiry = twentyYearsTime();
-        Date earliestRefreshExpiry = earliestExpiry;
-
-        Map<String, String> authorizationParameters = new HashMap<>();
-        String clientId = "4444-4444-4444-4441";
-        authorizationParameters.put(AuthorizationRequest.CLIENT_ID, clientId);
-        authorizationParameters.put(AuthorizationRequest.SCOPE, "/orcid-profile/read-limited");
-        AuthorizationRequest request = new DefaultAuthorizationRequest(authorizationParameters);
-        ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
-        Authentication userAuthentication = new OrcidOauth2ClientAuthentication(clientDetails);
-        OAuth2Authentication authentication = new OAuth2Authentication(request, userAuthentication);
-        OAuth2AccessToken oauth2AccessToken = orcidTokenServices.createAccessToken(authentication);
-
-        Date latestExpiry = twentyYearsTime();
-        Date latestRefreshExpiry = latestExpiry;
-
-        assertNotNull(oauth2AccessToken);
-        assertFalse(oauth2AccessToken.getExpiration().before(earliestExpiry));
-        assertFalse(oauth2AccessToken.getExpiration().after(latestExpiry));
-        assertNotNull(oauth2AccessToken.getRefreshToken());
-        
-        OrcidOauth2TokenDetail tokenDetail = orcidOauthTokenDetailService.findByRefreshTokenValue(oauth2AccessToken.getRefreshToken().getValue());
-        assertNotNull(tokenDetail);
-        Date refreshTokenExpiration = tokenDetail.getRefreshTokenExpiration();
-        assertFalse(refreshTokenExpiration.before(earliestRefreshExpiry));
-        assertFalse(refreshTokenExpiration.after(latestRefreshExpiry));
-        
-        //Turn on persistent tokens again
-        orcidTokenServices.setUsePersistentTokens(true);
-    }
+    }        
     
     @Test
     @Transactional
@@ -340,59 +295,7 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
         
         //Confirm the token expires in 20 years
         assertFalse(tokenExpiration.after(in20years));
-    }
-    
-    /**
-     * Check the expiration date when persistent tokens are disabled 
-     * */
-    @Test
-    @Transactional
-    @Rollback
-    public void tokenExpirationWithPersistentTokenDisabledTest() throws InterruptedException {
-        OAuth2AccessToken token = getAccessTokenWith20YearsExpiration();
-        OrcidRandomValueTokenServices orcidTokenServices = (OrcidRandomValueTokenServices) tokenServices;
-        orcidTokenServices.setUsePersistentTokens(false);
-        Date expirationTime = orcidTokenServices.getExpirationDateWhenPersistentTokenIsDisabled(token);
-        Thread.sleep(2000);
-        assertTrue(expirationTime.before(oneHoursTime()));
-        orcidTokenServices.setUsePersistentTokens(true);
-    }
-    
-    /**
-     * Check the expiration date when persistent tokens are enabled 
-     * */
-    @Test
-    @Transactional
-    @Rollback
-    public void tokenExpirationWithPersistentTokenTest() throws InterruptedException {
-        OAuth2AccessToken token = getAccessTokenWith20YearsExpiration();               
-        Date expirationTime = tokenServices.getExpirationDateWhenPersistentTokenIsDisabled(token);
-        Thread.sleep(2000);
-        assertTrue(expirationTime.before(oneHoursTime()));
-    }
-            
-    /**
-     * Try to load authentication using a token that is persistent, but, persistent tokens are disabled
-     * */
-    @Test
-    @Transactional
-    @Rollback
-    public void loadAuthenticationWithPersistentTokenDisabledTest() {
-        OrcidRandomValueTokenServices orcidTokenServices = (OrcidRandomValueTokenServices) tokenServices;
-        orcidTokenServices.setUsePersistentTokens(false);
-        try {
-            orcidTokenServices.loadAuthentication("persistent-token-1");
-            fail();
-        } catch(Exception e) {
-            if(e instanceof InvalidTokenException) {
-                
-            } else {
-                fail();
-            }
-        } finally {
-            orcidTokenServices.setUsePersistentTokens(true);
-        }                
-    }
+    }                            
     
     /**
      * Load authentication using a persistent token
@@ -407,21 +310,5 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
         } catch(Exception e) {
             fail();
         }               
-    }    
-    
-    private OAuth2AccessToken getAccessTokenWith20YearsExpiration() {
-        Date now = new Date();
-        Date expireIn20Years = twentyYearsTime();
-        DefaultOAuth2AccessToken token = new DefaultOAuth2AccessToken("tokenValue");
-        token.setExpiration(expireIn20Years);
-        Set<String> set = new HashSet<String>();
-        set.add("/orcid-works/create");
-        token.setScope(set);
-        token.setTokenType("bearer");
-        Map<String, Object> additionalInfo = new HashMap<String, Object>();
-        additionalInfo.put(OrcidTokenStoreServiceImpl.PERSISTENT, true);
-        additionalInfo.put(OrcidTokenStoreServiceImpl.DATE_CREATED, now);
-        token.setAdditionalInformation(additionalInfo);
-        return token;
-    }
+    }            
 }
