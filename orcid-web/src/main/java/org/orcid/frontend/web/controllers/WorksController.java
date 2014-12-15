@@ -394,6 +394,7 @@ public class WorksController extends BaseWorkspaceController {
                                 String creditNameString = cacheManager.getCreditName(profile);
                                 Text creditName = Text.valueOf(creditNameString);
                                 contributor.setCreditName(creditName);
+                                contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(profile.getCreditNameVisibility()));
                             }
                         }
                     }
