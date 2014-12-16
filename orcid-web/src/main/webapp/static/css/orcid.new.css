@@ -1663,7 +1663,7 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 	font-family: 'Gill Sans W02', 'Helvetica', sans-serif;
 	font-weight: bold;
 	font-style: normal;
-	vertical-align:3px;
+	vertical-align: 3px;
 	margin-left: 5px;	
 }
 
@@ -3881,27 +3881,7 @@ ul.sso-options li span {
 	text-overflow: ellipsis;
 	overflow: hidden;	
 }
-/*
-.delegation-mode, 
-.delegation-mode p.orcid-id-container{
-	background: #F5C120;
-	color: #000;	
-}
 
-.delegation-mode h2{
-	padding: 0 5px;
-}
-
-.delegation-mode h2,
-.delegation-mode .orcid-id{
-	color: #000;	
-}
-
-.delegation-mode-warning{
-	font-size: 11px;
-	padding-left: 5px;
-}
-*/
 .delegation-mode-warning {
 	display: block;
 	width: 100%;
@@ -5650,8 +5630,6 @@ ul.oauth-scopes li{
 	margin: 0 0 10px 0;
 }
 
-
-
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 
@@ -5711,12 +5689,21 @@ ul.oauth-scopes li{
 		width: 100%;
 		display: block !important;
 	}
-	.container .language-selector {
-		display: none;
+	.container .language-selector .account-settings-mobile-menu span.account-settings-mobile a {
+		display: block;
+		background: #A6CE39;
+		height: 30px;
+		width: 60%;
+		float: left;
+		margin-left: 10px;
+		margin-top: 10px;
+		color: #FFF;
+		text-align: center;
 	}
 	.container .header #form-search {
 		height: 180px;
 		display: none;
+		width: 100%;
 	}
 	.container .header #search {
 		display: none;
@@ -5726,23 +5713,18 @@ ul.oauth-scopes li{
 		min-height: 30px;
 		height: auto;
 		width: 100%;
+		padding: 5px;
+		z-index: 1000;
 	}
 	.container .header .search form .bar {
 		background: #939598;
 		width: 100% !important;
 	}
-	.container .header .search form {
-		margin-left: 10px;
-		margin-top: 10px;
-	}
-	.container .header .search #form-search {
-		width: 90%;
-	}
+	
 	.header .search form #search-box {
 		width: 100%;
 	}
-	.header .search form#form-search input[type="search"] {
-		width: 100% !important;
+	.header .search form#form-search input[type="search"] {		
 		height: 40px;
 		font-size: 16px;
 	}
@@ -5936,11 +5918,12 @@ ul.oauth-scopes li{
 	}
 	.container .header .language-selector select#language-codes {
 		float: left;
-		width: 98%;
+		width: 30%;
 		height: 30px;
 		margin-top: 10px;
 		padding: 5px;
 		font-size: 14px;
+		margin-left: 10px;
 	}
 
 	/* Forms */
@@ -6019,13 +6002,6 @@ ul.oauth-scopes li{
 	#loginForm #ajax-loader {
 		width: 100%;
 		text-align: center;
-	}	
-
-	/* Forms */
-	input[type="text"],input[type="password"], select {
-		height: 50px;
-		font-size: 16px;
-		width: 96%; 
 	}
 	
 	.input-xlarge{
@@ -6790,6 +6766,20 @@ ul.oauth-scopes li{
 	.workspace-accordion-header ul.workspace-bar-menu>li>a.action-option.action-funding-mobile{
 		width: 50%;
 	}
+	
+	.input-xlarge-full,
+	.full-width-input{
+		width: 100% !important;
+	}
+	
+	#DelegatesCtrl input[type="text"],
+	#DelegatesCtrl input[type="submit"]{
+		width: 100%;
+		margin-bottom: 15px !important;
+		
+	}
+	
+	
 }
 
 @media (min-width : 768px) and (max-width : 991px) { /* Tablet */
