@@ -22,10 +22,7 @@ import java.util.List;
 import java.util.SortedSet;
 
 import org.apache.commons.lang3.time.DurationFormatUtils;
-import org.orcid.core.adapter.Jpa2JaxbAdapter;
-import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.utils.JsonUtils;
-import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingExternalIdentifier;
 import org.orcid.jaxb.model.message.FundingExternalIdentifierType;
 import org.orcid.jaxb.model.message.FundingExternalIdentifiers;
@@ -35,22 +32,20 @@ import org.orcid.persistence.dao.ProfileFundingDao;
 import org.orcid.persistence.jpa.entities.FundingExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
-import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-public class MigrateFundingExternalIdentifiers {
-    private OrcidProfileManager orcidProfileManager;
+public class MigrateFundingExternalIdentifiers {    
     private TransactionTemplate transactionTemplate;
     private ProfileFundingDao profileFundingDao;
     private ProfileDao profileDao;
-    private Jpa2JaxbAdapter jpa2JaxbAdapter;
     private static Logger LOG = LoggerFactory.getLogger(MigrateFundingExternalIdentifiers.class);
-    private static final int CHUNK_SIZE = 1000;    
+    private static final int CHUNK_SIZE = 1000;
 
     public static void main(String... args) {
         new MigrateFundingExternalIdentifiers().migrate();
@@ -71,39 +66,39 @@ public class MigrateFundingExternalIdentifiers {
             fundingIds = profileFundingDao.findFundingNeedingExternalIdentifiersMigration(CHUNK_SIZE);
             for (final BigInteger fundingId : fundingIds) {
                 LOG.info("Migrating external identifiers for funding: {}", fundingId);
-                
-                        ProfileFundingEntity profileFunding = profileFundingDao.find(fundingId.longValue());                          
+                transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+                    @Override
+                    protected void doInTransactionWithoutResult(TransactionStatus status) {
+                        ProfileFundingEntity profileFunding = profileFundingDao.find(fundingId.longValue());
                         FundingExternalIdentifiers extIds = getFundingExternalIdentifiers(profileFunding);
-                        if(extIds != null && !extIds.getFundingExternalIdentifier().isEmpty()) {
+                        if (extIds != null && !extIds.getFundingExternalIdentifier().isEmpty()) {
                             String extIdsJson = JsonUtils.convertToJsonString(extIds);
-                            BigInteger numericFundingId = BigInteger.valueOf(profileFunding.getId());                            
-                            //Update funding
+                            BigInteger numericFundingId = BigInteger.valueOf(profileFunding.getId());
+                            // Update funding
                             profileFundingDao.setFundingExternalIdentifiersInJson(numericFundingId, extIdsJson);
-                            //Reindex profile
+                            // Reindex profile
                             profileDao.updateIndexingStatus(profileFunding.getProfile().getId(), IndexingStatus.REINDEX);
-                        }                                
-                        
-                        
-                   
+                        }
+                    }
+                });
+
                 doneCount++;
             }
         } while (!fundingIds.isEmpty());
         long endTime = System.currentTimeMillis();
         String timeTaken = DurationFormatUtils.formatDurationHMS(endTime - startTime);
         LOG.info("Finished migrating funding external ids: doneCount={}, timeTaken={} (H:m:s.S)", doneCount, timeTaken);
-    }    
+    }
 
     private void init() {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
-        orcidProfileManager = (OrcidProfileManager) context.getBean("orcidProfileManager");
         profileFundingDao = (ProfileFundingDao) context.getBean("profileFundingDao");
         transactionTemplate = (TransactionTemplate) context.getBean("transactionTemplate");
         profileDao = (ProfileDao) context.getBean("profileDao");
-        jpa2JaxbAdapter = (Jpa2JaxbAdapter) context.getBean("jpa2JaxbAdapter");
     }
-    
-    private FundingExternalIdentifiers getFundingExternalIdentifiers(ProfileFundingEntity profileFundingEntity) {                
-        //Old way of doing funding external ids
+
+    private FundingExternalIdentifiers getFundingExternalIdentifiers(ProfileFundingEntity profileFundingEntity) {
+        // Old way of doing funding external ids
         if (profileFundingEntity == null || profileFundingEntity.getExternalIdentifiers() == null || profileFundingEntity.getExternalIdentifiers().isEmpty()) {
             return null;
         }
@@ -119,7 +114,7 @@ public class MigrateFundingExternalIdentifiers {
 
         return fundingExternalIdentifiers;
     }
-    
+
     private FundingExternalIdentifier getFundingExternalIdentifier(FundingExternalIdentifierEntity fundingExternalIdentifierEntity) {
         if (fundingExternalIdentifierEntity == null) {
             return null;
