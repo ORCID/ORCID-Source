@@ -226,7 +226,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
     @Resource(name = "profileCache")
     private Cache profileCache;
-
+    
     @Resource
     private GenericDao<EmailEventEntity, Long> emailEventDao;
 
@@ -665,6 +665,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         readLocks.remove(orcid);
     }
 
+    
     private OrcidProfile clearCacheAndRetrieve(String orcid, LoadOptions loadOptions) {
         profileCache.remove(createCacheKey(orcid));
         return lockAndRetrieveFromCache(orcid, loadOptions);
@@ -775,13 +776,6 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         orcidProfile.setVerificationCode(decrypt(verificationCode));
         orcidProfile.setSecurityQuestionAnswer(decrypt(securityAnswer));
         return orcidProfile;
-    }
-
-    @Override
-    @VisibilityControl(removeAttributes = false, visibilities = Visibility.PUBLIC)
-    @Cacheable(value = "public-profile", key = "T(org.orcid.jaxb.model.message.OrcidProfile).createCacheKey(#orcid, #lastModified)")
-    public OrcidProfile retrievePublicOrcidProfileFromCache(String orcid, long lastModified) {
-        return retrieveClaimedOrcidProfile(orcid);
     }
 
     @Override
@@ -2259,6 +2253,10 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
     private OrcidProfile getOrcidProfileFromCache(String orcid) {
         Element element = profileCache.get(createCacheKey(orcid));
+        return toOrcidProfile(element);
+    }
+
+    static public OrcidProfile toOrcidProfile(Element element) {
         return (OrcidProfile) (element != null ? element.getObjectValue() : null);
     }
 
