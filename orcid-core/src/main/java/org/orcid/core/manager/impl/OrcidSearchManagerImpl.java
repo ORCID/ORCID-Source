@@ -154,7 +154,7 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
     public OrcidMessage findPublicProfileById(String orcid) {
         OrcidMessage om = null; 
         try {
-            if (!cachingSource.equals(DB)) {
+            if (cachingSource.equals(DB)) {
                 OrcidProfile orcidProfile =  orcidProfileCacheManager.retrievePublicOrcidProfile(orcid);
                 om = new OrcidMessage();
                 om.setOrcidProfile(orcidProfile);
