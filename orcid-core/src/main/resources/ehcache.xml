@@ -117,8 +117,8 @@
 	</cache>
 
 	<cache name="public-profile" maxElementsInMemory="500"
-		timeToLiveSeconds="86400" maxElementsOnDisk="50000" copyOnRead="true"
-		copyOnWrite="false" eternal="false">
+		timeToLiveSeconds="86400" maxElementsOnDisk="500000" copyOnRead="true"
+		copyOnWrite="true" eternal="false">
 		<persistence strategy="localTempSwap" />
 	</cache>
 
