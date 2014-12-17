@@ -5930,7 +5930,7 @@ ul.oauth-scopes li{
 	input[type="text"],input[type="password"],select,input[type="email"]{
 		height: 50px;
 		font-size: 16px;
-		width: 85%;
+		width: 100%;
 	}
 
 	/* Footer */
@@ -6252,6 +6252,10 @@ ul.oauth-scopes li{
 	.add-work .popover.bottom .arrow{
 		left:125px;
 	}
+	
+	.add-work #workCategory{
+	    width: 95%;
+	}
 		
 	.add-work .input-xlarge{
 		width: 96%;
@@ -6272,8 +6276,15 @@ ul.oauth-scopes li{
 	
 	.add-work .alert{
 		display: block;
-	}	
+	}
 	
+	.add-work select{
+		width: 95%;
+	}
+	
+	.control-group{
+		width: 100%;
+	}
 	
 	/* Work List*/
 	.more-info-container{		
@@ -6393,14 +6404,15 @@ ul.oauth-scopes li{
 		 left: 44%;
 		 top: -11px;
 	}
-	
-	#edit-affiliation input#affiliationName{
+		
+	#edit-affiliation input[type="text"],
+	#edit-affiliation select{
 		width: 95%;
-	}	
+	}
 	
-	#edit-affiliation .twitter-typeahead{
-		width: 95%;
-	}	
+	#edit-affiliation input[type="text"]#affiliationName{
+		width: 99%;
+	}
 	
 	#loginForm #login-error-mess {
 		width: 100%;
@@ -6456,10 +6468,6 @@ ul.oauth-scopes li{
 		width: 30%;		
 	}
 	
-	#fundingAmount {
-		width: 64%;
-	}
-	
 	.twitter-typeahead{
 		width: 96%;
 	}
@@ -6488,6 +6496,24 @@ ul.oauth-scopes li{
 	    float: left;
 	    margin-top: 15px;
 	    width: 100%;
+	}
+	
+	#add-funding input[type="text"],
+	#add-funding select{
+		width: 95%;
+	}
+	
+	#add-funding .twitter-typeahead{
+		width: 100%;
+	}
+	
+	#add-funding textarea#fundingDescription{
+		width: 95%; 
+		height: 150px;
+	}
+	
+	#add-funding select#currencyCode{
+		margin-bottom: 15px;
 	}
 	
 	/* Administration */
@@ -6769,7 +6795,7 @@ ul.oauth-scopes li{
 	
 	.input-xlarge-full,
 	.full-width-input{
-		width: 100% !important;
+		width: 100%;
 	}
 	
 	#DelegatesCtrl input[type="text"],
