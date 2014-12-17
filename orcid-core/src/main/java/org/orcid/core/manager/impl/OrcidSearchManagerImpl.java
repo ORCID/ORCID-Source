@@ -24,6 +24,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.orcid.core.exception.OrcidSearchException;
+import org.orcid.core.manager.OrcidProfileCacheManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.jaxb.model.message.Funding;
@@ -38,13 +39,24 @@ import org.orcid.jaxb.model.message.RelevancyScore;
 import org.orcid.persistence.dao.SolrDao;
 import org.orcid.persistence.solr.entities.OrcidSolrResult;
 import org.orcid.persistence.solr.entities.OrcidSolrResults;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.NonTransientDataAccessResourceException;
 
 public class OrcidSearchManagerImpl implements OrcidSearchManager {
 
+    @Value("${org.orcid.public_caching_source:solr}")
+    private String cachingSource;
+    
     @Resource
     private SolrDao solrDao;
-
+    
+    private static String SOLR = "SOLR";
+    
+    private static String DB = "db";
+    
+    @Resource
+    private OrcidProfileCacheManager orcidProfileCacheManager;
+    
     @Resource
     private OrcidProfileManager orcidProfileManager;
 
@@ -139,19 +151,29 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
 
     @Override
     public OrcidMessage findPublicProfileById(String orcid) {
+        OrcidMessage om = null; 
         try {
-            OrcidSolrResult indexedOrcid = solrDao.findByOrcid(orcid);
-            if (indexedOrcid == null) {
-                return null;
+            if (cachingSource.equals(DB)) {
+                OrcidProfile orcidProfile =  orcidProfileCacheManager.retrievePublicOrcidProfile(orcid);
+                om = new OrcidMessage();
+                om.setOrcidProfile(orcidProfile);
+            } else {
+                    OrcidSolrResult indexedOrcid = solrDao.findByOrcid(orcid);
+                    if (indexedOrcid == null) {
+                        return null;
+                    }
+                    String publicProfileMessage = indexedOrcid.getPublicProfileMessage();
+                    if (publicProfileMessage == null) {
+                        throw new OrcidSearchException("Found document in index, but no public profile in document for orcid=" + orcid);
+                    }
+                    om = OrcidMessage.unmarshall(publicProfileMessage);
             }
-            String publicProfileMessage = indexedOrcid.getPublicProfileMessage();
-            if (publicProfileMessage == null) {
-                throw new OrcidSearchException("Found document in index, but no public profile in document for orcid=" + orcid);
-            }
-            return OrcidMessage.unmarshall(publicProfileMessage);
         } catch (NonTransientDataAccessResourceException e) {
             throw new OrcidSearchException("Error searching by id", e);
         }
+        if (om == null)
+            throw new OrcidSearchException("Result is null");
+        return om;
     }
 
     @Override
