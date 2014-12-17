@@ -44,15 +44,16 @@ import org.springframework.dao.NonTransientDataAccessResourceException;
 
 public class OrcidSearchManagerImpl implements OrcidSearchManager {
 
-    @Value("${org.orcid.public_caching_source:solr}")
+    @Value("${org.orcid.core.public_caching_source:SOLR}")
     private String cachingSource;
     
     @Resource
     private SolrDao solrDao;
     
+    @SuppressWarnings("unused")
     private static String SOLR = "SOLR";
     
-    private static String DB = "db";
+    private static String DB = "DB";
     
     @Resource
     private OrcidProfileCacheManager orcidProfileCacheManager;
@@ -153,7 +154,7 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
     public OrcidMessage findPublicProfileById(String orcid) {
         OrcidMessage om = null; 
         try {
-            if (cachingSource.equals(DB)) {
+            if (!cachingSource.equals(DB)) {
                 OrcidProfile orcidProfile =  orcidProfileCacheManager.retrievePublicOrcidProfile(orcid);
                 om = new OrcidMessage();
                 om.setOrcidProfile(orcidProfile);
