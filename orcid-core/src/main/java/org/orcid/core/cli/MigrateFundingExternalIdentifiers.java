@@ -98,7 +98,6 @@ public class MigrateFundingExternalIdentifiers {
     }
 
     private FundingExternalIdentifiers getFundingExternalIdentifiers(ProfileFundingEntity profileFundingEntity) {
-        // Old way of doing funding external ids
         if (profileFundingEntity == null || profileFundingEntity.getExternalIdentifiers() == null || profileFundingEntity.getExternalIdentifiers().isEmpty()) {
             return null;
         }
