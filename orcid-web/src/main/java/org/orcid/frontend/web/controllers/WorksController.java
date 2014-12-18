@@ -37,6 +37,7 @@ import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.ThirdPartyLinkManager;
 import org.orcid.core.manager.WorkExternalIdentifierManager;
 import org.orcid.core.manager.WorkManager;
+import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.message.CitationType;
@@ -580,7 +581,26 @@ public class WorksController extends BaseWorkspaceController {
         WorkContributors workContributors = orcidWork.getWorkContributors();
         if (workContributors != null) {
             for (org.orcid.jaxb.model.message.Contributor workContributor : workContributors.getContributor()) {
-                workContributor.setCreditName(new CreditName(getEffectiveProfile().getOrcidBio().getPersonalDetails().retrievePublicDisplayName()));
+                CreditName creditName = new CreditName();
+                
+                if(workContributor.getCreditName() != null) {
+                    if(!PojoUtil.isEmpty(workContributor.getCreditName().getContent())) {
+                        creditName.setContent(workContributor.getCreditName().getContent());
+                    } else {
+                        creditName.setContent(getEffectiveProfile().getOrcidBio().getPersonalDetails().retrievePublicDisplayName());
+                    }
+                    
+                    if(workContributor.getCreditName().getVisibility() != null) {
+                        creditName.setVisibility(workContributor.getCreditName().getVisibility());
+                    } else {
+                        creditName.setVisibility(OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT.getVisibility());
+                    }
+                } else {
+                    creditName.setContent(getEffectiveProfile().getOrcidBio().getPersonalDetails().retrievePublicDisplayName());
+                    creditName.setVisibility(OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT.getVisibility());
+                }
+                creditName.setVisibility(workContributor.getCreditName().getVisibility());
+                workContributor.setCreditName(creditName);
             }
             workEntity.setContributorsJson(JsonUtils.convertToJsonString(workContributors));
         }
