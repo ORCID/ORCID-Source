@@ -18,7 +18,9 @@ package org.orcid.core.cli;
 
 import java.math.BigInteger;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.SortedSet;
 
 import org.apache.commons.lang3.time.DurationFormatUtils;
@@ -36,17 +38,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
 
 public class MigrateFundingExternalIdentifiers {    
-    private TransactionTemplate transactionTemplate;
     private ProfileFundingDao profileFundingDao;
     private ProfileDao profileDao;
     private static Logger LOG = LoggerFactory.getLogger(MigrateFundingExternalIdentifiers.class);
     private static final int CHUNK_SIZE = 1000;
-    private static final int REST_TIME = 10000;
 
     public static void main(String... args) {
         new MigrateFundingExternalIdentifiers().migrate();
@@ -62,37 +59,32 @@ public class MigrateFundingExternalIdentifiers {
         long startTime = System.currentTimeMillis();
         @SuppressWarnings("unchecked")
         List<BigInteger> fundingIds = Collections.EMPTY_LIST;
+        Set<String> profilesToReindex = new HashSet<String>();
         int doneCount = 0;
         do {
             fundingIds = profileFundingDao.findFundingNeedingExternalIdentifiersMigration(CHUNK_SIZE);
             for (final BigInteger fundingId : fundingIds) {
                 LOG.info("Migrating external identifiers for funding: {}", fundingId);
-                transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-                    @Override
-                    protected void doInTransactionWithoutResult(TransactionStatus status) {
-                        ProfileFundingEntity profileFunding = profileFundingDao.find(fundingId.longValue());
-                        FundingExternalIdentifiers extIds = getFundingExternalIdentifiers(profileFunding);
-                        if (extIds != null && !extIds.getFundingExternalIdentifier().isEmpty()) {
-                            String extIdsJson = JsonUtils.convertToJsonString(extIds);
-                            BigInteger numericFundingId = BigInteger.valueOf(profileFunding.getId());
-                            // Update funding
-                            profileFundingDao.setFundingExternalIdentifiersInJson(numericFundingId, extIdsJson);
-                            // Reindex profile
-                            profileDao.updateIndexingStatus(profileFunding.getProfile().getId(), IndexingStatus.REINDEX);
-                        }
-                    }
-                });
-
-                doneCount++;                               
-            }
-            //Rest some minutes to reindex profiles
-            try {
-                LOG.info("Resting");
-                Thread.sleep(REST_TIME);
-            } catch(InterruptedException ie) {
                 
-            }
+                ProfileFundingEntity profileFunding = profileFundingDao.find(fundingId.longValue());
+                FundingExternalIdentifiers extIds = getFundingExternalIdentifiers(profileFunding);
+                if (extIds != null && !extIds.getFundingExternalIdentifier().isEmpty()) {
+                    String extIdsJson = JsonUtils.convertToJsonString(extIds);
+                    BigInteger numericFundingId = BigInteger.valueOf(profileFunding.getId());
+                    // Update funding
+                    profileFundingDao.setFundingExternalIdentifiersInJson(numericFundingId, extIdsJson);
+                    profilesToReindex.add(profileFunding.getProfile().getId());                    
+                }
+                
+                doneCount++;                               
+            }            
         } while (!fundingIds.isEmpty());
+        
+        for(String profileToReindex : profilesToReindex) {
+            profileDao.updateIndexingStatus(profileToReindex, IndexingStatus.REINDEX);
+        }
+        
+        
         long endTime = System.currentTimeMillis();
         String timeTaken = DurationFormatUtils.formatDurationHMS(endTime - startTime);
         LOG.info("Finished migrating funding external ids: doneCount={}, timeTaken={} (H:m:s.S)", doneCount, timeTaken);
@@ -101,7 +93,6 @@ public class MigrateFundingExternalIdentifiers {
     private void init() {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         profileFundingDao = (ProfileFundingDao) context.getBean("profileFundingDao");
-        transactionTemplate = (TransactionTemplate) context.getBean("transactionTemplate");
         profileDao = (ProfileDao) context.getBean("profileDao");
     }
 
