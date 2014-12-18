@@ -753,7 +753,10 @@ function populateWorkAjaxForm(bibJson, work) {
             lowerKeyTags[key.toLowerCase()] = tags[key];
 
         if (lowerKeyTags.hasOwnProperty('booktitle'))
-            work.title.value = lowerKeyTags['booktitle'];
+            if (!lowerKeyTags.hasOwnProperty('title'))
+                work.title.value = lowerKeyTags['booktitle'];
+            else if (!lowerKeyTags.hasOwnProperty('journal'))
+                work.journalTitle.value = lowerKeyTags['booktitle'];
 
         if (lowerKeyTags.hasOwnProperty('doi'))
             workExternalIdentifierId(work, 'doi', lowerKeyTags['doi']);
