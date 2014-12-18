@@ -19,6 +19,7 @@ package org.orcid.core.manager.impl;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
@@ -129,7 +130,7 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
             boolean isInappropriate = false;
             //All filter words are in lower case, so, lowercase the subtype before comparing
             for(String wordToFilter : wordsToFilter) {
-                if(wordToFilter.matches(".*\\b" + subtype + "\\b.*")) {
+                if(wordToFilter.matches(".*\\b" + Pattern.quote(subtype) + "\\b.*")) {
                     isInappropriate = true;
                     break;
                 }
