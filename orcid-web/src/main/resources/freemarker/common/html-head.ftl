@@ -66,8 +66,10 @@
     <!--[if lt IE 8]>
         <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.1.0/css/bootstrap-ie7.css?v=${ver}"/>	                
     <![endif]-->
-    <#if request.requestURI?ends_with("my-orcid") || request.requestURI?ends_with("workspace") || isPublicProfile??>
-        <link rel="stylesheet" href="${staticCdn}/css/orcid.resp_v3.css?v=${ver}"/>     
+    <#if (request.requestURI?ends_with("my-orcid") || request.requestURI?ends_with("workspace") || isPublicProfile??) && !RequestParameters['css']??>
+        <link rel="stylesheet" href="${staticCdn}/css/orcid.resp_v3.css?v=${ver}"/>
+    <#elseif RequestParameters['css']??><!-- CSS Merge -->
+         <link rel="stylesheet" href="${staticCdn}/css/orcid.new.css?v=${ver}"/>
     <#else>
        <link rel="stylesheet" href="${staticCdn}/css/orcid.resp.css?v=${ver}"/>    
     </#if>     

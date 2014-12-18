@@ -78,7 +78,7 @@
                     <label ng-hide="disambiguatedAffiliation"><@orcid.msg 'manual_affiliation_form_contents.labelcity'/></label>
                     <label ng-show="disambiguatedAffiliation"><@orcid.msg 'manual_affiliation_form_contents.labeldisplaycity'/></label>
                     <div class="relative">
-                        <input name="city" type="text" class="input-xlarge"  ng-model="editAffiliation.city.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_city'/>" ng-change="serverValidate('affiliations/affiliation/cityValidate.json')" ng-model-onblur/>
+                        <input name="city" class="smaller" type="text" class="input-xlarge"  ng-model="editAffiliation.city.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_city'/>" ng-change="serverValidate('affiliations/affiliation/cityValidate.json')" ng-model-onblur/>
                         <span class="required" ng-class="isValidClass(editAffiliation.city)">*</span>
                         <span class="orcid-error" ng-show="editAffiliation.city.errors.length > 0">
                             <div ng-repeat='error in editAffiliation.city.errors' ng-bind-html="error"></div>
