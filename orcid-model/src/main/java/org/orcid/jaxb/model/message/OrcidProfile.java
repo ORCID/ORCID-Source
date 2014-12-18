@@ -478,19 +478,8 @@ public class OrcidProfile implements Serializable {
         OrcidIdentifier orcidIdentifier = profile.getOrcidIdentifier();
         String xmlFormatLastModifiedDate = (orcidHistory != null && orcidHistory.getLastModifiedDate() != null) ? orcidHistory.getLastModifiedDate().getValue()
                 .toXMLFormat() : "no-last-modified";
-        return createCacheKey(orcidIdentifier != null ? orcidIdentifier.getPath() : "no-orcid-identifier", xmlFormatLastModifiedDate, profile.getReleaseName());
-    }
-
-    public static String createCacheKey(String path, Date lastModifiedDate) {
-        return createCacheKey(path, DateUtils.convertToXMLGregorianCalendar(lastModifiedDate).toXMLFormat(), ReleaseNameUtils.getReleaseName());
-    }
-
-    public static String createCacheKey(String path, long time) {
-        return createCacheKey(path, DateUtils.convertToXMLGregorianCalendar(time).toXMLFormat(), ReleaseNameUtils.getReleaseName());
-    }
-
-    public static String createCacheKey(String path, String xmlFormatLastModifiedDate, String releaseName) {
-        return StringUtils.join(new String[] { path, xmlFormatLastModifiedDate, releaseName }, "_");
+        String path = orcidIdentifier != null ? orcidIdentifier.getPath() : "no-orcid-identifier";
+        return StringUtils.join(new String[] {path, xmlFormatLastModifiedDate, profile.getReleaseName() }, "_");
     }
     
     public Date extractLastModifiedDate() {
