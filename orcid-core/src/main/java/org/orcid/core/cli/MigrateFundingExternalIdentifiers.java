@@ -46,6 +46,7 @@ public class MigrateFundingExternalIdentifiers {
     private ProfileDao profileDao;
     private static Logger LOG = LoggerFactory.getLogger(MigrateFundingExternalIdentifiers.class);
     private static final int CHUNK_SIZE = 1000;
+    private static final int REST_TIME = 10000;
 
     public static void main(String... args) {
         new MigrateFundingExternalIdentifiers().migrate();
@@ -82,7 +83,14 @@ public class MigrateFundingExternalIdentifiers {
                     }
                 });
 
-                doneCount++;
+                doneCount++;                               
+            }
+            //Rest some minutes to reindex profiles
+            try {
+                LOG.info("Resting");
+                Thread.sleep(REST_TIME);
+            } catch(InterruptedException ie) {
+                
             }
         } while (!fundingIds.isEmpty());
         long endTime = System.currentTimeMillis();
