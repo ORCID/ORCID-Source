@@ -492,6 +492,17 @@ public class OrcidProfile implements Serializable {
     public static String createCacheKey(String path, String xmlFormatLastModifiedDate, String releaseName) {
         return StringUtils.join(new String[] { path, xmlFormatLastModifiedDate, releaseName }, "_");
     }
+    
+    public Date extractLastModifiedDate() {
+        OrcidHistory orcidHistory = this.getOrcidHistory();
+        if (orcidHistory == null)
+            return null;
+        LastModifiedDate lastModifiedDate = orcidHistory.getLastModifiedDate();
+        if (lastModifiedDate == null)
+            return null;
+        return lastModifiedDate.getValue().toGregorianCalendar().getTime();
+    }
+
 
     public void downgradeToBioOnly() {
         setOrcidActivities(null);

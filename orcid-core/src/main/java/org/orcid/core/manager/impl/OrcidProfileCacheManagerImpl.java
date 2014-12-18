@@ -27,8 +27,6 @@ import net.sf.ehcache.Element;
 
 import org.orcid.core.manager.OrcidProfileCacheManager;
 import org.orcid.core.manager.OrcidProfileManager;
-import org.orcid.jaxb.model.message.LastModifiedDate;
-import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.utils.ReleaseNameUtils;
 import org.slf4j.Logger;
@@ -89,19 +87,7 @@ public class OrcidProfileCacheManagerImpl implements OrcidProfileCacheManager {
     }
 
     static public boolean needsFresh(Date dbDate, OrcidProfile orcidProfile) {
-        return orcidProfile == null || !extractLastModifiedDateFromObject(orcidProfile).equals(dbDate);
-    }
-
-    static public Date extractLastModifiedDateFromObject(OrcidProfile orcidProfile) {
-        if (orcidProfile == null)
-            return null;
-        OrcidHistory orcidHistory = orcidProfile.getOrcidHistory();
-        if (orcidHistory == null)
-            return null;
-        LastModifiedDate lastModifiedDate = orcidHistory.getLastModifiedDate();
-        if (lastModifiedDate == null)
-            return null;
-        return lastModifiedDate.getValue().toGregorianCalendar().getTime();
+        return orcidProfile == null || !orcidProfile.extractLastModifiedDate().equals(dbDate);
     }
 
 }
