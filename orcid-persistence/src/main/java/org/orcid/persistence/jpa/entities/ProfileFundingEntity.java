@@ -278,8 +278,6 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
         this.displayIndex = displayIndex;
     }
     
-    
-    
     @Column(name = "external_identifiers_json")
     public String getExternalIdentifiersJson() {
         return externalIdentifiersJson;
@@ -288,13 +286,6 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
     public void setExternalIdentifiersJson(String externalIdentifiersJson) {
         this.externalIdentifiersJson = externalIdentifiersJson;
     }
-    
-    
-    
-    
-    
-    
-    
 
     @Override
     public int compareTo(ProfileFundingEntity other) {
@@ -362,6 +353,10 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
             return compareDisplayIndex;
         }
 
+        int compareExternalIds = compareStrings(externalIdentifiersJson, other.getExternalIdentifiersJson());
+        if (compareExternalIds != 0)
+            return compareExternalIds;
+        
         return compareStrings(url, other.getUrl());
     }
 
@@ -419,6 +414,7 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
         contributorsJson = null;
         url = null;
         displayIndex = null;
+        externalIdentifiersJson = null;
     }
     
 
