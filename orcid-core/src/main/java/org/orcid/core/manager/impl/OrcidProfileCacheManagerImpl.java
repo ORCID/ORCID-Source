@@ -30,27 +30,26 @@ import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.jaxb.model.message.LastModifiedDate;
 import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.utils.ReleaseNameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class OrcidProfileCacheManagerImpl implements OrcidProfileCacheManager {
 
-    private static final Logger LOG = LoggerFactory.getLogger(OrcidProfileCacheManagerImpl.class);
-
     @Resource
     private OrcidProfileManager orcidProfileManager;
 
-    @Resource
-    private ProfileDao profileDao;
+    @Resource(name = "publicProfileCache")
+    private Cache publicProfileCache;
+    
+    @Resource(name = "profileCache")
+    private Cache profileCache;
 
     private String releaseName = ReleaseNameUtils.getReleaseName();
 
-    private ConcurrentMap<String, Object> readLocks = new ConcurrentHashMap<>();
+    private ConcurrentMap<String, Object> pubReadLocks = new ConcurrentHashMap<>();
 
-    @Resource(name = "publicProfileCache")
-    private Cache publicProfileCache;
+    private static final Logger LOG = LoggerFactory.getLogger(OrcidProfileCacheManagerImpl.class);
 
     @Override
     public OrcidProfile retrievePublicOrcidProfile(String orcid) {
@@ -76,7 +75,7 @@ public class OrcidProfileCacheManagerImpl implements OrcidProfileCacheManager {
     private Object obtainPublicReadLock(String orcid) {
         LOG.debug("About to obtain read lock: " + orcid);
         Object newLock = new Object();
-        Object existingLock = readLocks.putIfAbsent(orcid, newLock);
+        Object existingLock = pubReadLocks.putIfAbsent(orcid, newLock);
         return existingLock == null ? newLock : existingLock;
     }
 
@@ -86,7 +85,7 @@ public class OrcidProfileCacheManagerImpl implements OrcidProfileCacheManager {
 
     private void releasePublicReadLock(String orcid) {
         LOG.debug("About to release read lock: " + orcid);
-        readLocks.remove(orcid);
+        pubReadLocks.remove(orcid);
     }
 
     static public boolean needsFresh(Date dbDate, OrcidProfile orcidProfile) {
