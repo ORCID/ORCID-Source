@@ -17,14 +17,13 @@
 package org.orcid.core.manager.impl;
 
 import java.util.Date;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 import javax.annotation.Resource;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 
+import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.OrcidProfileCacheManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.jaxb.model.message.OrcidProfile;
@@ -39,25 +38,25 @@ public class OrcidProfileCacheManagerImpl implements OrcidProfileCacheManager {
 
     @Resource(name = "publicProfileCache")
     private Cache publicProfileCache;
-    
+
+    LockerObjectsManager pubLocks = new LockerObjectsManager();
+
     @Resource(name = "profileCache")
     private Cache profileCache;
+    LockerObjectsManager lockers = new LockerObjectsManager();
 
     private String releaseName = ReleaseNameUtils.getReleaseName();
-
-    private ConcurrentMap<String, Object> pubReadLocks = new ConcurrentHashMap<>();
 
     private static final Logger LOG = LoggerFactory.getLogger(OrcidProfileCacheManagerImpl.class);
 
     @Override
-    public OrcidProfile retrievePublicOrcidProfile(String orcid) {
-
+    public OrcidProfile retrievePublic(String orcid) {
         Object key = new OrcidCacheKey(orcid, releaseName);
-        Date dbDate = orcidProfileManager.retrieveLastModifiedDate(orcid);
+        Date dbDate = retrieveLastModifiedDate(orcid);
         OrcidProfile op = toOrcidProfile(publicProfileCache.get(key));
         if (needsFresh(dbDate, op))
             try {
-                synchronized (obtainPublicReadLock(orcid)) {
+                synchronized (pubLocks.obtainLock(orcid)) {
                     op = toOrcidProfile(publicProfileCache.get(orcid));
                     if (needsFresh(dbDate, op)) {
                         op = orcidProfileManager.retrieveClaimedOrcidProfile(orcid);
@@ -65,29 +64,75 @@ public class OrcidProfileCacheManagerImpl implements OrcidProfileCacheManager {
                     }
                 }
             } finally {
-                releasePublicReadLock(orcid);
+                pubLocks.releaseLock(orcid);
             }
         return op;
     }
 
-    private Object obtainPublicReadLock(String orcid) {
-        LOG.debug("About to obtain read lock: " + orcid);
-        Object newLock = new Object();
-        Object existingLock = pubReadLocks.putIfAbsent(orcid, newLock);
-        return existingLock == null ? newLock : existingLock;
+    @Override
+    public OrcidProfile retrieve(String orcid) {
+        Object key = new OrcidCacheKey(orcid, releaseName);
+        Date dbDate = retrieveLastModifiedDate(orcid);
+        OrcidProfile op = toOrcidProfile(profileCache.get(key));
+        if (needsFresh(dbDate, op))
+            try {
+                synchronized (lockers.obtainLock(orcid)) {
+                    op = toOrcidProfile(profileCache.get(orcid));
+                    if (needsFresh(dbDate, op)) {
+                        op = orcidProfileManager.retrieveFreshOrcidProfile(orcid, LoadOptions.ALL);
+                        profileCache.put(new Element(key, op));
+                    }
+                }
+            } finally {
+                lockers.releaseLock(orcid);
+            }
+        return op;
+    }
+    
+    private Date retrieveLastModifiedDate(String orcid) {
+        Date date = null;
+        try {
+            date = orcidProfileManager.retrieveLastModifiedDate(orcid);
+        } catch (javax.persistence.NoResultException e) {
+             LOG.debug("Missing retrieveLastModifiedDate orcid:" + orcid);   
+        }
+        return date;
+    }
+
+    public void put(OrcidProfile orcidProfile) {
+        put(orcidProfile.getOrcidIdentifier().getPath(), orcidProfile);
+    }
+
+    public void put(String orcid, OrcidProfile orcidProfile) {
+        try {
+            synchronized (lockers.obtainLock(orcid)) {
+                profileCache.put(new Element(new OrcidCacheKey(orcid, releaseName), orcidProfile));
+            }
+        } finally {
+            lockers.releaseLock(orcid);
+        }
+    }
+
+    public void removeAll() {
+        profileCache.removeAll();
+    }
+
+    public void remove(String orcid) {
+        profileCache.remove(new OrcidCacheKey(orcid, releaseName));
     }
 
     static public OrcidProfile toOrcidProfile(Element element) {
         return (OrcidProfile) (element != null ? element.getObjectValue() : null);
     }
 
-    private void releasePublicReadLock(String orcid) {
-        LOG.debug("About to release read lock: " + orcid);
-        pubReadLocks.remove(orcid);
-    }
-
     static public boolean needsFresh(Date dbDate, OrcidProfile orcidProfile) {
-        return orcidProfile == null || !orcidProfile.extractLastModifiedDate().equals(dbDate);
+        if (orcidProfile == null)
+            return true;
+        if (!orcidProfile.extractLastModifiedDate().equals(dbDate))
+            return true;
+        if (dbDate == null) // not sure when this happens?
+            return true;
+        return false;
     }
 
 }

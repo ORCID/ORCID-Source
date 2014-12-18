@@ -360,6 +360,8 @@ public interface OrcidProfileManager {
 
     OrcidProfile retrieveClaimedOrcidProfile(String orcid);
 
+    public OrcidProfile retrieveFreshOrcidProfile(String orcid, LoadOptions loadOptions);
+    
     public void updateNames(OrcidProfile orcidProfile);
 
     Date retrieveLastModifiedDate(String orcid);

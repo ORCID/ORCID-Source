@@ -57,7 +57,7 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
     
     @Resource
     private OrcidProfileCacheManager orcidProfileCacheManager;
-    
+
     @Resource
     private OrcidProfileManager orcidProfileManager;
 
@@ -155,7 +155,7 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
         OrcidMessage om = null; 
         try {
             if (cachingSource.equals(DB)) {
-                OrcidProfile orcidProfile =  orcidProfileCacheManager.retrievePublicOrcidProfile(orcid);
+                OrcidProfile orcidProfile =  orcidProfileCacheManager.retrievePublic(orcid);
                 orcidProfile.setOrcidInternal(null);
                 om = new OrcidMessage();
                 om.setOrcidProfile(orcidProfile);
@@ -193,7 +193,6 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
         if (indexedOrcids != null && !indexedOrcids.isEmpty()) {
             List<OrcidSearchResult> orcidSearchResults = buildSearchResultsFromPublicProfileInSolr(indexedOrcids);
             searchResults.getOrcidSearchResult().addAll(orcidSearchResults);
-
         }
         orcidMessage.setOrcidSearchResults(searchResults);
         return orcidMessage;
