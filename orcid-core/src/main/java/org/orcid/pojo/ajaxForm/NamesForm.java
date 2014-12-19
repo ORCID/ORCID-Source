@@ -23,12 +23,6 @@ import java.util.List;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.FamilyName;
 import org.orcid.jaxb.model.message.GivenNames;
-import org.orcid.jaxb.model.message.Keyword;
-import org.orcid.jaxb.model.message.Keywords;
-import org.orcid.jaxb.model.message.OrcidBio;
-import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.OtherName;
-import org.orcid.jaxb.model.message.OtherNames;
 import org.orcid.jaxb.model.message.PersonalDetails;
 
 public class NamesForm implements ErrorsInterface, Serializable {

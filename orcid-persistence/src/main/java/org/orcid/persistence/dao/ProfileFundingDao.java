@@ -16,11 +16,11 @@
  */
 package org.orcid.persistence.dao;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
-import org.orcid.persistence.jpa.entities.WorkEntity;
 
 public interface ProfileFundingDao extends GenericDao<ProfileFundingEntity, Long> {
 
@@ -101,5 +101,9 @@ public interface ProfileFundingDao extends GenericDao<ProfileFundingEntity, Long
      * */
     ProfileFundingEntity updateProfileFunding(ProfileFundingEntity profileFunding);
 
-    public boolean updateToMaxDisplay(String orcid, String id);
+    boolean updateToMaxDisplay(String orcid, String id);
+    
+    List<BigInteger> findFundingNeedingExternalIdentifiersMigration(int chunkSize);
+    
+    void setFundingExternalIdentifiersInJson(BigInteger id, String extIdsJson);        
 }
