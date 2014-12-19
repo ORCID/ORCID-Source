@@ -104,4 +104,17 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
         Long result = query.getSingleResult();
         return (result != null && result > 0);
     }
+    
+    @Override
+    public boolean belongsTo(String clientId, String groupId) {
+        TypedQuery<ClientDetailsEntity> query = entityManager.createQuery("from ClientDetailsEntity where id = :clientId and groupProfile.id = :groupId", ClientDetailsEntity.class);
+        query.setParameter("clientId", clientId);
+        query.setParameter("groupId", groupId);
+        try {
+            query.getSingleResult();            
+        } catch (NoResultException e) {            
+            return false;
+        }        
+        return true; 
+    }
 }

@@ -217,7 +217,9 @@
 		<sec:intercept-url pattern="/eula/accept(\?.*)?"
 			method="POST" access="DENY_OAUTH,ROLE_USER" />
 		<sec:intercept-url pattern="/manage-clients" 
-			access="ROLE_GROUP"/>
+			access="ROLE_GROUP"/>			
+		<sec:intercept-url pattern="/group/.*" 
+			access="ROLE_GROUP"/>			
 		<sec:intercept-url pattern="/admin-actions" 
 			access="ROLE_ADMIN"/>
 		<sec:intercept-url pattern="/admin-actions/.*" 

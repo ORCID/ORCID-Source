@@ -114,7 +114,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         boolean isProfileEmtpy = true;
         
         request.getSession().removeAttribute(PUBLIC_WORKS_RESULTS_ATTRIBUTE);
-        OrcidProfile profile = orcidProfileCacheManager.retrievePublicOrcidProfile(orcid);
+        OrcidProfile profile = orcidProfileCacheManager.retrievePublic(orcid);
 
         mav.addObject("profile", profile);
 
@@ -349,21 +349,21 @@ public class PublicProfileController extends BaseWorkspaceController {
     }
 
     public LinkedHashMap<String, Funding> fundingMap(String orcid) {
-        OrcidProfile profile = orcidProfileCacheManager.retrievePublicOrcidProfile(orcid);
+        OrcidProfile profile = orcidProfileCacheManager.retrievePublic(orcid);
         if (profile == null)
             return null;
         return activityCacheManager.fundingMap(profile);
     }
 
     public LinkedHashMap<String, Affiliation> affiliationMap(String orcid) {
-        OrcidProfile profile = orcidProfileCacheManager.retrievePublicOrcidProfile(orcid);
+        OrcidProfile profile = orcidProfileCacheManager.retrievePublic(orcid);
         if (profile == null)
             return null;
         return activityCacheManager.affiliationMap(profile);
     }
 
     public LinkedHashMap<String, Work> minimizedWorksMap(String orcid) {
-        OrcidProfile profile = orcidProfileCacheManager.retrievePublicOrcidProfile(orcid);
+        OrcidProfile profile = orcidProfileCacheManager.retrievePublic(orcid);
         if (profile == null)
             return null;
         return activityCacheManager.pubMinWorksMap(profile);

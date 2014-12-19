@@ -19,7 +19,7 @@
 -->
 <dataset>
      <profile
-            orcid="4444-4444-4444-4448"
+            orcid="5555-5555-5555-5558"
             creation_method="API"
             completed_date="2011-07-02 15:31:00.00"
             date_created="2011-06-29 15:31:00.00"
@@ -47,8 +47,37 @@
             biography="This is just a group of clients."
             indexing_status="DONE"
             iso2_country="GB"
-            orcid_type="CLIENT"
-            client_type="PREMIUM_CREATOR"
+            orcid_type="GROUP"
+            group_type="PREMIUM_INSTITUTION"
             />
-    <client_details client_details_id="APP-5555555555555555" date_created="2012-04-25" last_modified="2012-04-25" client_name="Source Client 1" client_description="A test source client" client_website="www.5555555555555555.com" group_orcid="4444-4444-4444-4448" persistent_tokens_enabled="true"/>
+            
+	<email
+        orcid="5555-5555-5555-5558"
+        email="5555-5555-5555-5558@user.com"
+        is_primary="true"
+        is_current="true"
+        is_verified="true"
+        visibility="PRIVATE"
+        source_id="5555-5555-5555-5558"
+    />
+                                                
+    <client_details client_details_id="APP-5555555555555555" date_created="2012-04-25" last_modified="2012-04-25" client_name="Source Client 1" client_description="A test source client" client_website="www.5555555555555555.com" group_orcid="5555-5555-5555-5558" persistent_tokens_enabled="true"/>
+    
+    <client_authorised_grant_type client_details_id="APP-5555555555555555" grant_type="authorization_code" />
+	<client_authorised_grant_type client_details_id="APP-5555555555555555" grant_type="client_credentials" />
+	
+	<client_granted_authority client_details_id="APP-5555555555555555" granted_authority="ROLE_CLIENT"/>
+	
+	<client_resource_id client_details_id="APP-5555555555555555" resource_id="orcid"/>
+	
+	<client_scope client_details_id="APP-5555555555555555" scope_type="/orcid-bio/read-limited"/>
+    <client_scope client_details_id="APP-5555555555555555" scope_type="/orcid-works/create"/>
+    <client_scope client_details_id="APP-5555555555555555" scope_type="/funding/create"/>    
+    <client_scope client_details_id="APP-5555555555555555" scope_type="/affiliations/create"/>
+    <client_scope client_details_id="APP-5555555555555555" scope_type="/authenticate"/>
+    <client_scope client_details_id="APP-5555555555555555" scope_type="/webhook"/>
+    <client_scope client_details_id="APP-5555555555555555" scope_type="/read-public"/>
+    <client_scope client_details_id="APP-5555555555555555" scope_type="/orcid-profile/create"/>
+    
+    <client_secret client_details_id="APP-5555555555555555" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25"/>
 </dataset>

@@ -23,13 +23,13 @@
 
 package org.orcid.jaxb.model.message;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import java.io.Serializable;
 
 /**
  * <p>
@@ -57,12 +57,10 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "putCode", "type", "value", "url" })
+@XmlType(propOrder = { "type", "value", "url" })
 @XmlRootElement(name = "funding-external-identifier")
 public class FundingExternalIdentifier implements Serializable {
-	private static final long serialVersionUID = 1L;
-	@XmlAttribute(name = "put-code")
-	protected String putCode;
+	private static final long serialVersionUID = 1L;	
 	@XmlElement(name="funding-external-identifier-type")
 	protected FundingExternalIdentifierType type;
 	@XmlElement(name="funding-external-identifier-value")
@@ -88,12 +86,6 @@ public class FundingExternalIdentifier implements Serializable {
 	public void setUrl(Url url) {
 		this.url = url;
 	}	
-	public String getPutCode() {
-		return putCode;
-	}
-	public void setPutCode(String putCode) {
-		this.putCode = putCode;
-	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;

@@ -130,8 +130,6 @@ public interface OrcidProfileManager {
 
     OrcidProfile retrievePublicOrcidProfile(String orcid);
 
-    OrcidProfile retrievePublicOrcidProfileFromCache(String orcid, long lastModifiedDate);
-
     /**
      * Retrieves the orcid profile given an identifier, without any personal
      * internal data.
@@ -362,6 +360,8 @@ public interface OrcidProfileManager {
 
     OrcidProfile retrieveClaimedOrcidProfile(String orcid);
 
+    public OrcidProfile retrieveFreshOrcidProfile(String orcid, LoadOptions loadOptions);
+    
     public void updateNames(OrcidProfile orcidProfile);
 
     Date retrieveLastModifiedDate(String orcid);

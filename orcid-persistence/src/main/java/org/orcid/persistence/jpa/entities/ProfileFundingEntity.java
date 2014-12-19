@@ -72,6 +72,7 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
     private String amount;
     private String url;
     private String contributorsJson;
+    private String externalIdentifiersJson;
     private StartDateEntity startDate;
     private EndDateEntity endDate;
     private Visibility visibility;
@@ -233,7 +234,7 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
         this.visibility = visibility;
     }
 
-    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = PROFILE_FUNDING, orphanRemoval = true)
+    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = PROFILE_FUNDING, orphanRemoval = true)
     @Fetch(FetchMode.SUBSELECT)
     @Sort(type = SortType.NATURAL)
     public SortedSet<FundingExternalIdentifierEntity> getExternalIdentifiers() {
@@ -267,8 +268,7 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
      *
      * Currently only only updatable via ProfileWorkDaoImpl.updateToMaxDisplay
      *
-     */
-
+     */    
     @Column(name = "display_index", updatable=false, insertable=false)
     public Long getDisplayIndex() {
         return displayIndex;
@@ -276,6 +276,15 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
 
     public void setDisplayIndex(Long displayIndex) {
         this.displayIndex = displayIndex;
+    }
+    
+    @Column(name = "external_identifiers_json")
+    public String getExternalIdentifiersJson() {
+        return externalIdentifiersJson;
+    }
+
+    public void setExternalIdentifiersJson(String externalIdentifiersJson) {
+        this.externalIdentifiersJson = externalIdentifiersJson;
     }
 
     @Override
@@ -344,6 +353,10 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
             return compareDisplayIndex;
         }
 
+        int compareExternalIds = compareStrings(externalIdentifiersJson, other.getExternalIdentifiersJson());
+        if (compareExternalIds != 0)
+            return compareExternalIds;
+        
         return compareStrings(url, other.getUrl());
     }
 
@@ -401,6 +414,7 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
         contributorsJson = null;
         url = null;
         displayIndex = null;
+        externalIdentifiersJson = null;
     }
     
 

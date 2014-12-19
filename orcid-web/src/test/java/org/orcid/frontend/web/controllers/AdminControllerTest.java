@@ -102,17 +102,13 @@ public class AdminControllerTest extends BaseControllerTest {
     @Before
     public void beforeInstance() {
         SecurityContextHolder.getContext().setAuthentication(getAuthentication());
+        assertNotNull(adminController);
+        assertNotNull(profileDao);
     }
 
     @AfterClass
     public static void afterClass() throws Exception {
         removeDBUnitData(Arrays.asList("/data/ClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/SecurityQuestionEntityData.xml"));
-    }
-    
-    @Before
-    public void init() {
-        assertNotNull(adminController);
-        assertNotNull(profileDao);
     }
     
     @Override
