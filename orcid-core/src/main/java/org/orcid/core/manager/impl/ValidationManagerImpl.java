@@ -309,17 +309,26 @@ public class ValidationManagerImpl implements ValidationManager {
             break;
         case LOG_INFO:
             LOG.info(message, t);
+            break;
+        case LOG_WARNING:
+            LOG.warn(message, t);
+            break;
+        case LOG_ERROR:
+            LOG.error(message, t);
+            break;
+        case LOG_INFO_WITH_XML:
+            LOG.info(message, t);
             if (orcidMessage != null) {
                 LOG.info("ORCID message is: {}", orcidMessage);
             }
             break;
-        case LOG_WARNING:
+        case LOG_WARNING_WITH_XML:
             LOG.warn(message, t);
             if (orcidMessage != null) {
                 LOG.warn("ORCID message is: {}", orcidMessage);
             }
             break;
-        case LOG_ERROR:
+        case LOG_ERROR_WITH_XML:
             LOG.error(message, t);
             if (orcidMessage != null) {
                 LOG.error("ORCID message is: {}", orcidMessage);
