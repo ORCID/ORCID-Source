@@ -494,7 +494,20 @@
 		<property name="maxElementsInMemory" value="${org.orcid.core.profileCache.maxElementsInMemory:10000}" />
 		<property name="timeToLiveSeconds" value="${org.orcid.core.profileCache.timeToLiveSeconds:600}" />
 		<property name="timeToIdleSeconds" value="${org.orcid.core.profileCache.timeToIdleSeconds:600}" />
+		<property name="maxElementsOnDisk" value="0" />
+		<property name="strategy" value="NONE" />
 	</bean>
+		
+    <bean id="publicProfileCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="public-profile" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="maxElementsInMemory" value="500" />
+        <property name="timeToLiveSeconds" value="0" />
+        <property name="timeToIdleSeconds" value="86400" />
+        <property name="maxElementsOnDisk" value="500000" />
+        <property name="strategy" value="LOCALTEMPSWAP" />
+    </bean>
+
 
 	<!-- Reporting -->
 	<!-- Graphite reporter can be created here, but we need a way of only creating 

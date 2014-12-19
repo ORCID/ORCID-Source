@@ -20,6 +20,8 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.config.CacheConfiguration;
+import net.sf.ehcache.config.PersistenceConfiguration;
+import net.sf.ehcache.config.PersistenceConfiguration.Strategy;
 
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -40,10 +42,14 @@ public class OrcidEhCacheFactoryBean implements FactoryBean<Ehcache>, Initializi
     private int timeToLiveSeconds = 120;
 
     private int timeToIdleSeconds = 120;
+    
+    private int maxElementsOnDisk = 0;
 
     private boolean copyOnRead = true;
 
     private boolean copyOnWrite = true;
+    
+    private String strategy = "NONE";
 
     private Ehcache cache;
 
@@ -122,7 +128,24 @@ public class OrcidEhCacheFactoryBean implements FactoryBean<Ehcache>, Initializi
         config.setTimeToIdleSeconds(this.timeToIdleSeconds);
         config.setCopyOnRead(this.copyOnRead);
         config.setCopyOnWrite(this.copyOnWrite);
+        config.persistence(new PersistenceConfiguration().strategy(this.strategy));
         return config;
+    }
+
+    public String getStrategy() {
+        return strategy;
+    }
+
+    public void setStrategy(String strategy) {
+        this.strategy = strategy;
+    }
+
+    public int getMaxElementsOnDisk() {
+        return maxElementsOnDisk;
+    }
+
+    public void setMaxElementsOnDisk(int maxElementsOnDisk) {
+        this.maxElementsOnDisk = maxElementsOnDisk;
     }
 
 }

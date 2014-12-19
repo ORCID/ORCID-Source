@@ -19,6 +19,7 @@ package org.orcid.core.manager.impl;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
@@ -125,23 +126,29 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
         } catch (IOException e) {
             throw new RuntimeException("Problem reading words_to_filter.txt from classpath", e);
         }
-        for(String subtype : subtypes) {       
-            boolean isInappropriate = false;
-            //All filter words are in lower case, so, lowercase the subtype before comparing
-            for(String wordToFilter : wordsToFilter) {
-                if(wordToFilter.matches(".*\\b" + subtype + "\\b.*")) {
-                    isInappropriate = true;
-                    break;
+        for(String subtype : subtypes) {                   
+            try {
+                boolean isInappropriate = false;
+                //All filter words are in lower case, so, lowercase the subtype before comparing
+                for(String wordToFilter : wordsToFilter) {
+                    if(wordToFilter.matches(".*\\b" + Pattern.quote(subtype) + "\\b.*")) {
+                        isInappropriate = true;
+                        break;
+                    }
                 }
-            }
-            if(!isInappropriate){
-                OrgDefinedFundingTypeSolrDocument document = new OrgDefinedFundingTypeSolrDocument();
-                document.setOrgDefinedFundingType(subtype);
-                fundingSubTypeSolrDao.persist(document);              
-            } else {
-                LOGGER.warn("A word have been flaged as inappropiate: " + subtype);
-            }
-            fundingSubTypeToIndexDao.removeSubTypes(subtype);
+                
+                if(!isInappropriate){
+                    OrgDefinedFundingTypeSolrDocument document = new OrgDefinedFundingTypeSolrDocument();
+                    document.setOrgDefinedFundingType(subtype);
+                    fundingSubTypeSolrDao.persist(document);              
+                } else {
+                    LOGGER.warn("A word have been flaged as inappropiate: " + subtype);
+                }
+                fundingSubTypeToIndexDao.removeSubTypes(subtype);
+            } catch (Exception e) {
+                //If any exception happens, log the error and continue with the next one
+                LOGGER.warn("Unable to process subtype " + subtype, e);                
+            }                        
         }
         LOGGER.info("Funding subtypes have been correcly indexed");
     }
