@@ -1656,19 +1656,13 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 }
 
 .orcid-id{
-	font-size: 10px;
-	line-height: 1;
-	word-break: break-all;
-	color: #FFF;
-	font-family: 'Gill Sans W02', 'Helvetica', sans-serif;
-	font-weight: bold;
+	font-size: 15px;
+	line-height: 1.5;	
+	color: #494A4C;
+	font-family: 'Gill Sans W02', 'Helvetica', sans-serif;	
 	font-style: normal;
 	vertical-align: 3px;
 	margin-left: 5px;	
-}
-
-.orcid-id:hover{
-	color: #C9CACB;
 }
 
 .workspace-overview {
@@ -3323,7 +3317,7 @@ p.orcid-id-container{
 
 .public-profile .oid{	
 	border-bottom: 1px solid #c9c9c9;
-	margin-bottom: 10px;
+	margin-bottom: 5px;
 	float: left;
 	width: 100%;
 }
@@ -3816,6 +3810,10 @@ ul.sso-options li span {
 
 /* ID Banner Style */
 
+.id-banner .oid .orcid-id-container{
+	padding: 5px;
+}
+
 .id-banner .id-banner-container a.id-banner-switch{
 	display: block;	
 	background: #338caf;
@@ -3825,6 +3823,7 @@ ul.sso-options li span {
 	color: #FFF; 
 	text-decoration: none;
 	float: left;
+	margin-bottom: 5px;
 }
 
 .id-banner .id-banner-container a.id-banner-switch:hover{
@@ -3882,14 +3881,50 @@ ul.sso-options li span {
 	overflow: hidden;	
 }
 
+.id-banner .oid .id-banner-header > span{
+	text-transform: uppercase;
+	background: #a6ce39;
+	height: 21px;
+	font-size: 16px;
+	font-weight: 800;
+	padding: 0 5px;
+	color: #FFF;
+	display: block; 
+	width: 100%;
+}
+
+.id-banner .oid{
+	border: 1px solid #a6ce39;
+}
+
+.id-banner .oid .orcid-id-container .orcid-id-options a{
+	display: block;
+	float: left;
+	font-size: 15px;
+	padding: 1px 5px;
+	text-align: center;	
+}
+
+.id-banner .oid .orcid-id-container .orcid-id-options a:first-child{
+	width: 95px;
+	margin-left: -5px;	
+}
+
+.id-banner .oid .orcid-id-container .orcid-id-options a:last-child{
+	width: 143px;
+	margin-right: -5px;
+	border-left: 1px solid #FFF;
+}
+
+
+
+/**************/
+
 .delegation-mode-warning {
 	display: block;
-	width: 100%;
-	/*background: #d9534f;*/
+	width: 100%;	
 	background: #F5C120;
-	padding: 5px;
-	/* color: #FFF;
-	*/
+	padding: 5px;	
 	color: #000;
 	text-align: center;
 	text-transform: uppercase;
@@ -3990,98 +4025,38 @@ ul#body-work-list > li{
 	clear: both;
 }
 
-.websites-edit, .keywords-edit, .other-names-edit {
-	background: #EFEFEF;
-	padding: 10px;
-	margin-bottom: 10px;
+/* Left column refactoring */
+.workspace-profile .workspace-section{
 	float: left;
-}
-
-.websites-edit, .keywords-edit, .other-names-edit, .names-edit {
-	background: #EFEFEF;
-	padding: 10px;
-	margin-bottom: 10px;
-}
-
-
-.websites-edit input {
-	width: 95px;
-}
-
-.keywords-edit input, .other-names-edit input {
-	width: 190px;
-}
-
-.keywords-edit #privacy-bar, .other-names-edit #privacy-bar, .names-edit #privacy-bar {
-	padding-bottom: 10px;
-}
-
-.country-edit {
-	background: #EFEFEF;
-	padding: 10px;
-	margin-bottom: 10px;
-	float:left;
-}
-
-.country-controller #country{
+	width: 100%;
+	height: auto;	
 	margin: 10px 0;
+} 
+
+.workspace-profile .workspace-section input{	
+	width: 100%;		
 }
 
-.edit-option{
-	width:20px;
-	height:20px;
-	background: #C9CACB;
-	border-radius: 50%;
-	padding: 4px;
-	color: #939598;
-	margin-right: 5px;
-}
-
-.biography-controller .edit-option:hover,
-.country-controller .edit-option:hover,
-.keywords-controller .edit-option:hover,
-.other-names-controller .edit-option:hover,
-.name-controller .edit-option:hover,
-.websites-controller .edit-option:hover {
-	cursor: pointer;
-	color: #FFF;
-	background: #a6ce39;
-}
-
-
-.biography-controller textarea {
-	height: 120px;
+.workspace-profile .workspace-section .workspace-section-header{
 	width: 100%;
 }
 
-.country-controller span.edit-country,
-.keywords-controller span.edit-keywords,
-.other-names-controller span.edit-other-names,
-.websites-controller span.edit-websites,
-.name-controller span.edit-name,
-.biography-controller span.edit-biography{
-	font-size: 12px;
-  	margin-bottom: 10px;
-  	float: right;
+.workspace-profile .workspace-section .workspace-section-header .workspace-section-title{
+	color: #494A4C;
+	font-weight: normal;
 }
 
-/* Website edit */
-  
- .websites-box,
- .websites-box input{
- 	margin: 10px 0 0 0;
- }
 
- .keywords-box, .keywords-box input,
- .other-names-box, .other-names-box input {
- 	margin: 10px 0 0 0; 	
- }
+	
 
- .websites-box a.glyphicon-trash,
- .keywords-box a.glyphicon-trash,
- .other-names-box a.glyphicon-trash {
- 	vertical-align: -7px;
- }
+
+
+
+
+
+
+
+
 
 #social-networks #social-network-options input[type=checkbox]{
 	margin-top:11px;
@@ -4092,25 +4067,7 @@ ul#body-work-list > li{
 	margin: 15px 30px 0 0;
 }
 
-.country-controller #privacy-bar {
-	float: left;
-}
 
-.country-controller .popover-help-container .popover, 
-.websites-controller .popover-help-container .popover,
-.name-controller .popover-help-container .popover,
-.keywords-controller .popover-help-container .popover,
-.other-names-controller .popover-help-container .popover {
-	left: -120px !important;
-}
-
-.country-controller .popover.bottom .arrow,
-.websites-controller .popover.bottom .arrow,
-.name-controller .popover.bottom .arrow,
-.keywords-controller .popover.bottom .arrow,
-.other-names-controller .popover.bottom .arrow{
-	left: 127px !important;
-}
 
 /* OAuth Confirm Access Page */
 .confirm-oauth-access .top-header .logo h1{
@@ -5266,7 +5223,7 @@ ul.workspace-private-toolbar .popover-help-container .popover{
 	display: block;
 	width: 100%;
 	float: left; 
-	margin-bottom: 10px; 
+	margin: 10px 0; 
 }
 
 .qrcode-container .orcid-qr{
@@ -5629,6 +5586,24 @@ ul.oauth-scopes li{
 	border: 1px dotted #a6ce39;
 	margin: 0 0 10px 0;
 }
+
+/* All workspace buttons will be refactored to these two main classes */
+.gray-button{
+	background: #C9C9CA;
+	color: #494A4C;
+	text-decoration: none;
+}
+
+.gray-button:hover{
+	background: #A6CE39;
+	color: #FFF;
+}
+
+
+
+
+
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */

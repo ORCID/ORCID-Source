@@ -65,55 +65,57 @@
                 </div>
             </div>
             
-	       	<div class="other-names-box">
-		       	<div ng-controller="OtherNamesCtrl" class="other-names-controller">
-		        	<div>
-		        	   <strong><@orcid.msg 'workspace.Alsoknownas'/></strong>
-		        	   <span ng-hide="showEdit == true" ng-click="openEdit()">		        	   	  
-		        	      	<span class="glyphicon glyphicon-pencil edit-other-names edit-option pull-right" title=""></span>
-		        	      <br />
-		        	      <span ng-repeat="otherNames in otherNamesForm.otherNames" ng-cloak>
-		        	         {{ $last?otherNames.value:otherNames.value+ ", "}}
-		        	      </span>
-		        	   </span>
-		        	   <div ng-show="showEdit == true" ng-cloak class="other-names-edit">
-		        	      <@orcid.privacyToggle  angularModel="otherNamesForm.visibility.visibility"
-				             questionClick="toggleClickPrivacyHelp()"
-				             clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
-				             publicClick="setPrivacy('PUBLIC', $event)" 
-	                 	     limitedClick="setPrivacy('LIMITED', $event)" 
-	                 	     privateClick="setPrivacy('PRIVATE', $event)" />
-		        	   
-		        	      <div ng-repeat="otherNames in otherNamesForm.otherNames">
-		        	          <input type="text" ng-model="otherNames.value"></input
-		        	          <a ng-click="deleteKeyword(otherNames)" class="glyphicon glyphicon-trash grey"></a>
-		        	          <br />
-		        	          <span class="orcid-error" ng-show="otherNames.url.errors.length > 0">
-							     <div ng-repeat='error in otherNames.url.errors' ng-bind-html="error"></div>
-						      </span>
-		        	          <span class="orcid-error" ng-show="otherNames.name.errors.length > 0">
-							     <div ng-repeat='error in otherNames.name.errors' ng-bind-html="error"></div>
-						      </span>
-		        	      </div>
-		        	      <a class="glyphicon glyphicon-plus" ng-click="addNew()"></a><br />
-		        	      <button class="btn btn-primary" ng-click="setOtherNamesForm()"><@spring.message "freemarker.btnsavechanges"/></button>
-		        	      <button class="btn" ng-click="close()"><@spring.message "freemarker.btncancel"/></button>
-		        	   </div> 
-		           </div>
-		       	</div>
+	       	
+	       	
+	       	
+	       	<div ng-controller="OtherNamesCtrl" class="workspace-section">
+        	   
+        	   <div class="workspace-section-header">
+        	   	   <span class="workspace-section-title"><@orcid.msg 'workspace.Alsoknownas'/></span>
+	        	   <span ng-hide="showEdit == true" ng-click="openEdit()">		        	   	  
+	        	      <span class="glyphicon glyphicon-pencil edit-other-names edit-option pull-right" title=""></span>
+	        	      <span ng-repeat="otherNames in otherNamesForm.otherNames" ng-cloak>
+	        	         {{ $last?otherNames.value:otherNames.value+ ", "}}
+	        	      </span>
+	        	   </span>
+        	   </div>
+        	   
+        	   <!-- Edit -->
+        	   <div ng-show="showEdit == true" ng-cloak class="other-names-edit">
+        	      <@orcid.privacyToggle  angularModel="otherNamesForm.visibility.visibility"
+		             questionClick="toggleClickPrivacyHelp()"
+		             clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
+		             publicClick="setPrivacy('PUBLIC', $event)" 
+                	     limitedClick="setPrivacy('LIMITED', $event)" 
+                	     privateClick="setPrivacy('PRIVATE', $event)" />
+        	   
+        	      <div ng-repeat="otherNames in otherNamesForm.otherNames">
+        	          <input type="text" ng-model="otherNames.value"></input
+        	          <a ng-click="deleteKeyword(otherNames)" class="glyphicon glyphicon-trash grey"></a>
+        	          <br />
+        	          <span class="orcid-error" ng-show="otherNames.url.errors.length > 0">
+					     <div ng-repeat='error in otherNames.url.errors' ng-bind-html="error"></div>
+				      </span>
+        	          <span class="orcid-error" ng-show="otherNames.name.errors.length > 0">
+					     <div ng-repeat='error in otherNames.name.errors' ng-bind-html="error"></div>
+				      </span>
+        	      </div>
+        	      <a class="glyphicon glyphicon-plus" ng-click="addNew()"></a><br />
+        	      <button class="btn btn-primary" ng-click="setOtherNamesForm()"><@spring.message "freemarker.btnsavechanges"/></button>
+        	      <button class="btn" ng-click="close()"><@spring.message "freemarker.btncancel"/></button>
+        	   </div>
 	       	</div>
             
             
             
             
-            <div ng-controller="CountryCtrl" class="country-controller">
-            	<div class="profile-header">
-		        	<strong><@orcid.msg 'public_profile.labelCountry'/></strong>
-		            <span class="glyphicon glyphicon-pencil edit-country edit-option pull-right" ng-click="openEdit()" title="" ng-hide="showEdit == true"></span>
-		            <span ng-hide="showEdit == true" ng-click="toggleEdit()">	                
-	                <span ng-show="countryForm != null && countryForm.countryName != null" ng-bind="countryForm.countryName" ng-hide="showEdit == true"></span>
-	            </span>		            
-	            </div>
+            <div ng-controller="CountryCtrl" class="workspace-section">
+            	
+	        	<strong><@orcid.msg 'public_profile.labelCountry'/></strong>
+	            <span class="glyphicon glyphicon-pencil edit-country edit-option pull-right" ng-click="openEdit()" title="" ng-hide="showEdit == true"></span>
+	            <span ng-hide="showEdit == true" ng-click="toggleEdit()">	                
+	               <span ng-show="countryForm != null && countryForm.countryName != null" ng-bind="countryForm.countryName" ng-hide="showEdit == true"></span>
+	            
                 
                <div ng-show="showEdit == true" ng-cloak class="country-edit">
                	  <@orcid.privacyToggle  angularModel="countryForm.profileAddressVisibility.visibility"
