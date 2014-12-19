@@ -16,6 +16,8 @@
  */
 package org.orcid.core.manager;
 
+import java.util.ArrayList;
+
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 
@@ -35,6 +37,20 @@ public interface ProfileWorkManager {
     boolean removeWork(String clientOrcid, String workId);
 
     /**
+     * Removes the relationship that exists between a work and a profile.
+     *      
+     * @param clientOrcid
+     *          The client orcid
+     *          
+     * @param workId
+     *          The id of the work that will be removed from the client profile
+     *                     
+     * @return true if the relationship was deleted
+     * */
+    boolean removeWorks(String clientOrcid, ArrayList<Long> workIds);
+
+    
+    /**
      * Updates the visibility of an existing profile work relationship
      * @param user orcid
      * @param workId
@@ -48,6 +64,21 @@ public interface ProfileWorkManager {
      * */
     boolean updateVisibility(String orcid, String workId, Visibility visibility);
 
+    /**
+     * Updates the visibility of an existing profile work relationship
+     * @param user orcid
+     * @param workId
+     *          The id of the work that will be updated
+     * @param visibility
+     *          The new visibility value for the profile work relationship         
+     * @param clientOrcid
+     *          The client orcid
+     * 
+     * @return true if the relationship was updated
+     * */
+    boolean updateVisibilities(String orcid, ArrayList<Long> workIds, Visibility visibility);
+ 
+    
     /**
      * Get the profile work associated with the client orcid and the workId 
      * 

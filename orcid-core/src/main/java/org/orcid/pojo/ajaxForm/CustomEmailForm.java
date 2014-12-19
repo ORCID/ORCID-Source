@@ -32,6 +32,7 @@ public class CustomEmailForm implements ErrorsInterface, Serializable {
     private Text subject;
     private Text content;
     private Text emailType;
+    private String clientId;
     private boolean isHtml;
 
     public CustomEmailEntity toCustomEmailEntity() {
@@ -56,6 +57,7 @@ public class CustomEmailForm implements ErrorsInterface, Serializable {
         result.setContent(Text.valueOf(entity.getContent()));
         result.setEmailType(Text.valueOf(entity.getEmailType().name()));
         result.setHtml(entity.isHtml());
+        result.setClientId(entity.getClientDetailsEntity().getClientId());
         return result;
     }
 
@@ -106,4 +108,12 @@ public class CustomEmailForm implements ErrorsInterface, Serializable {
     public void setHtml(boolean isHtml) {
         this.isHtml = isHtml;
     }
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }        
 }

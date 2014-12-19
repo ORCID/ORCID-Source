@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.message.ContributorEmail;
 import org.orcid.jaxb.model.message.ContributorOrcid;
 import org.orcid.jaxb.model.message.ContributorRole;
@@ -127,7 +128,11 @@ public class Contributor implements ErrorsInterface, Serializable {
         }
         if (this.getCreditName() != null) {
             CreditName cn = new CreditName(this.getCreditName().getValue());
-            cn.setVisibility(org.orcid.jaxb.model.message.Visibility.fromValue(this.getCreditNameVisibility().getVisibility().value()));
+            if(this.getCreditNameVisibility() != null && this.getCreditNameVisibility().getVisibility() != null)
+                cn.setVisibility(org.orcid.jaxb.model.message.Visibility.fromValue(this.getCreditNameVisibility().getVisibility().value()));
+            else {
+                cn.setVisibility(org.orcid.jaxb.model.message.Visibility.fromValue(OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT.getVisibility().value()));
+            }
             c.setCreditName(cn);
         }
         return c;

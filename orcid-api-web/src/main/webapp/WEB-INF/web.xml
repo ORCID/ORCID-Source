@@ -49,25 +49,35 @@
         <param-value>false</param-value>
     </context-param>
 
-	<filter>
-		<filter-name>jsonpCallbackFilter</filter-name>
-		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-	</filter>
+    <filter>
+        <filter-name>jsonpCallbackFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
 
-	<filter-mapping>
-		<filter-name>jsonpCallbackFilter</filter-name>
-		<url-pattern>*</url-pattern>
-	</filter-mapping>
+    <filter-mapping>
+        <filter-name>jsonpCallbackFilter</filter-name>
+        <url-pattern>*</url-pattern>
+    </filter-mapping>
+    
+    <filter>
+        <filter-name>apiVersionFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
 
-	<filter>
-		<filter-name>corsFilter</filter-name>
-		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-	</filter>
+    <filter-mapping>
+        <filter-name>apiVersionFilter</filter-name>
+        <url-pattern>*</url-pattern>
+    </filter-mapping>
 
-	<filter-mapping>
-		<filter-name>corsFilter</filter-name>
-		<url-pattern>*</url-pattern>
-	</filter-mapping>
+    <filter>
+        <filter-name>corsFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>corsFilter</filter-name>
+        <url-pattern>*</url-pattern>
+    </filter-mapping>
 
     <filter>
         <filter-name>encodingFilter</filter-name>

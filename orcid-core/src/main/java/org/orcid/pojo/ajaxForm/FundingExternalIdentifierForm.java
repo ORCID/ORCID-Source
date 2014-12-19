@@ -75,8 +75,6 @@ public class FundingExternalIdentifierForm implements ErrorsInterface, Serializa
 			result.setUrl(Text.valueOf(fundingExternalIdentifier.getUrl().getValue()));
 		if(!PojoUtil.isEmpty(fundingExternalIdentifier.getValue()))
 			result.setValue(Text.valueOf(fundingExternalIdentifier.getValue()));
-		if(!PojoUtil.isEmpty(fundingExternalIdentifier.getPutCode()))
-			result.setPutCode(Text.valueOf(fundingExternalIdentifier.getPutCode()));
 		return result;
 	}
 	
@@ -90,8 +88,6 @@ public class FundingExternalIdentifierForm implements ErrorsInterface, Serializa
 			result.setUrl(new Url());
 		if(!PojoUtil.isEmpty(value))
 			result.setValue(value.getValue());
-		if(!PojoUtil.isEmpty(putCode))
-			result.setPutCode(putCode.getValue());
 		return result;
 	}
 }

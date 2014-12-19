@@ -979,6 +979,9 @@
 	<queryResponseWriter name="xslt" class="solr.XSLTResponseWriter">
 		<int name="xsltCacheLifetimeSeconds">5</int>
 	</queryResponseWriter>
+	
+	<queryResponseWriter name="orcidProfile" class="org.orcid.solr.writer.OrcidProfileResponseWriter">
+	</queryResponseWriter>
 
 	<!-- Query Parsers http://wiki.apache.org/solr/SolrQuerySyntax Multiple 
 		QParserPlugins can be registered by name, and then used in either the "defType" 

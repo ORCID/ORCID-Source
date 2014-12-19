@@ -42,4 +42,6 @@ public interface ClientDetailsDao extends GenericDao<ClientDetailsEntity, String
     List<ClientSecretEntity> getClientSecretsByClientId(String clientId);
     
     boolean exists(String clientId);
+    
+    boolean belongsTo(String clientId, String groupId);
 }

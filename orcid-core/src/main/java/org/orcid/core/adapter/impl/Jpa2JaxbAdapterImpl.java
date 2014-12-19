@@ -45,7 +45,6 @@ import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.clientgroup.RedirectUris;
 import org.orcid.jaxb.model.message.*;
-import org.orcid.persistence.jpa.entities.BaseContributorEntity;
 import org.orcid.persistence.jpa.entities.BaseEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
@@ -70,6 +69,7 @@ import org.orcid.persistence.jpa.entities.SourceAware;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkExternalIdentifierEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.NullUtils;
 import org.orcid.utils.OrcidStringUtils;
@@ -300,16 +300,6 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return null;
     }
 
-    private ContributorAttributes getContributorAttributes(BaseContributorEntity contributorEntity) {
-        if (contributorEntity == null) {
-            return null;
-        }
-        ContributorAttributes contributorAttributes = new ContributorAttributes();
-        contributorAttributes.setContributorRole(contributorEntity.getContributorRole());
-        contributorAttributes.setContributorSequence(contributorEntity.getSequence());
-        return contributorAttributes;
-    }
-
     private OrcidWorks getOrcidWorks(ProfileEntity profileEntity) {
         LOGGER.debug("About to convert works from entity: " + profileEntity.getId());
         Set<ProfileWorkEntity> profileWorks = profileEntity.getProfileWorks();
@@ -446,6 +436,12 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
      *         FundingExternalIdentifiers object
      * */
     private FundingExternalIdentifiers getFundingExternalIdentifiers(ProfileFundingEntity profileFundingEntity) {
+        String externalIdsJson = profileFundingEntity.getExternalIdentifiersJson();
+        if(!PojoUtil.isEmpty(externalIdsJson)) {
+            return JsonUtils.readObjectFromJsonString(externalIdsJson, FundingExternalIdentifiers.class);                            
+        }
+        
+        //Old way of doing funding external ids
         if (profileFundingEntity == null || profileFundingEntity.getExternalIdentifiers() == null || profileFundingEntity.getExternalIdentifiers().isEmpty()) {
             return null;
         }
@@ -478,7 +474,6 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         fundingExternalIdentifier.setType(FundingExternalIdentifierType.fromValue(fundingExternalIdentifierEntity.getType()));
         fundingExternalIdentifier.setUrl(new Url(fundingExternalIdentifierEntity.getUrl()));
         fundingExternalIdentifier.setValue(fundingExternalIdentifierEntity.getValue());
-        fundingExternalIdentifier.setPutCode(String.valueOf(fundingExternalIdentifierEntity.getId()));
 
         return fundingExternalIdentifier;
     }
@@ -738,23 +733,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         }
         return null;
     }
-
-    private OrganizationAddress getAddress(OrgDisambiguatedEntity orgDisambiguatedEntity) {
-        if (orgDisambiguatedEntity != null) {
-            String city = orgDisambiguatedEntity.getCity();
-            String region = orgDisambiguatedEntity.getRegion();
-            Iso3166Country country = orgDisambiguatedEntity.getCountry();
-            if (!NullUtils.allNull(city, region, country)) {
-                OrganizationAddress address = new OrganizationAddress();
-                address.setCity(city);
-                address.setRegion(region);
-                address.setCountry(country);
-                return address;
-            }
-        }
-        return null;
-    }
-
+    
     private Source getSponsor(ProfileEntity profileEntity) {
         SourceEntity sourceEntity = profileEntity.getSource();
         if (sourceEntity != null) {
@@ -916,22 +895,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         if (work.getTranslatedTitle() != null)
             workTitle.setTranslatedTitle(new TranslatedTitle(work.getTranslatedTitle(), work.getTranslatedTitleLanguageCode()));
         return workTitle;
-    }
-
-    private WorkSource getWorkSource(ProfileWorkEntity profileWorkEntity) {
-        if (profileWorkEntity == null || profileWorkEntity.getSource() == null) {
-            return null;
-        }
-        SourceEntity sourceEntity = profileWorkEntity.getSource();
-        String sourceId = sourceEntity.getSourceId();
-        if (!OrcidStringUtils.isValidOrcid(sourceId)) {
-            return null;
-        }
-        WorkSource workSource = new WorkSource(getOrcidIdBase(sourceId));
-        String sourceName = sourceEntity.getSourceName();
-        workSource.setSourceName(sourceName);
-        return workSource;
-    }
+    }    
 
     private WorkExternalIdentifiers getWorkExternalIdentifiers(WorkEntity work) {
         String externalIdentifiersJson = work.getExternalIdentifiersJson();

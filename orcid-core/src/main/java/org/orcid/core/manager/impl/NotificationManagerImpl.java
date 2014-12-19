@@ -424,7 +424,16 @@ public class NotificationManagerImpl implements NotificationManager {
             // Generate html from template
             String html = templateManager.processTemplate("added_as_delegate_email_html.ftl", templateParams);
 
-            mailGunManager.sendEmail(DELEGATE_NOTIFY_ORCID_ORG, email, subject, body, html);
+            boolean notificationsEnabled = delegateProfileEntity.getEnableNotifications();
+            if (notificationsEnabled) {
+                NotificationCustom notification = new NotificationCustom();
+                notification.setNotificationType(NotificationType.CUSTOM);
+                notification.setSubject(subject);
+                notification.setBodyHtml(html);
+                createNotification(newDelegation.getDelegateSummary().getOrcidIdentifier().getPath(), notification);
+            } else {
+                mailGunManager.sendEmail(DELEGATE_NOTIFY_ORCID_ORG, email, subject, body, html);
+            }
         }
     }
 
@@ -462,11 +471,16 @@ public class NotificationManagerImpl implements NotificationManager {
 
         Source source = null;
         CustomEmailEntity customEmail = null;
-        if (createdProfile.getOrcidHistory() != null && createdProfile.getOrcidHistory().getSource() != null
-                && createdProfile.getOrcidHistory().getSource().getSourceOrcid() != null
-                && !PojoUtil.isEmpty(createdProfile.getOrcidHistory().getSource().getSourceOrcid().getPath())) {
-            source = createdProfile.getOrcidHistory().getSource();
-            customEmail = getCustomizedEmail(source.getSourceOrcid().getPath(), EmailType.CLAIM);
+        if (createdProfile.getOrcidHistory() != null && createdProfile.getOrcidHistory().getSource() != null) {
+            if(createdProfile.getOrcidHistory().getSource().getSourceOrcid() != null
+                    && !PojoUtil.isEmpty(createdProfile.getOrcidHistory().getSource().getSourceOrcid().getPath())) {
+                source = createdProfile.getOrcidHistory().getSource();
+                customEmail = getCustomizedEmail(source.getSourceOrcid().getPath(), EmailType.CLAIM);
+            } else if(createdProfile.getOrcidHistory().getSource().getSourceClientId() != null && !PojoUtil.isEmpty(createdProfile.getOrcidHistory().getSource().getSourceClientId().getPath()) ) {
+                source = createdProfile.getOrcidHistory().getSource();
+                customEmail = getCustomizedEmail(source.getSourceClientId().getPath(), EmailType.CLAIM);
+            }
+            
         }
 
         String emailName = deriveEmailFriendlyName(createdProfile);
@@ -479,9 +493,11 @@ public class NotificationManagerImpl implements NotificationManager {
         if (source != null) {
             if (source.getSourceName() != null && source.getSourceName().getContent() != null) {
                 creatorName = source.getSourceName().getContent();
+            } else if (source.getSourceClientId() != null && source.getSourceClientId().getPath() != null) {
+                creatorName = source.getSourceClientId().getPath();
             } else if (source.getSourceOrcid() != null && source.getSourceOrcid().getPath() != null) {
                 creatorName = source.getSourceOrcid().getPath();
-            }
+            } 
         }
 
         String subject = null;
@@ -694,8 +710,18 @@ public class NotificationManagerImpl implements NotificationManager {
 
         // Send message
         if (apiRecordCreationEmailEnabled) {
-            mailGunManager.sendEmail(DELEGATE_NOTIFY_ORCID_ORG, primaryEmail.getValue(), getSubject("email.subject.admin_as_delegate", managed, trustedOrcidName), null,
-                    htmlBody);
+            String subject = getSubject("email.subject.admin_as_delegate", managed, trustedOrcidName);
+            ProfileEntity trustedProfileEntity = profileDao.find(trusted.getOrcidIdentifier().getPath());
+            boolean notificationsEnabled = trustedProfileEntity != null ? trustedProfileEntity.getEnableNotifications() : false;
+            if (notificationsEnabled) {
+                NotificationCustom notification = new NotificationCustom();
+                notification.setNotificationType(NotificationType.CUSTOM);
+                notification.setSubject(subject);
+                notification.setBodyHtml(htmlBody);
+                createNotification(managed.getOrcidIdentifier().getPath(), notification);
+            } else {
+                mailGunManager.sendEmail(DELEGATE_NOTIFY_ORCID_ORG, primaryEmail.getValue(), subject, null, htmlBody);
+            }
             profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.ADMIN_PROFILE_DELEGATION_REQUEST));
         } else {
             LOGGER.debug("Not sending admin delegate email, because API record creation email option is disabled. Message would have been: {}", htmlBody);

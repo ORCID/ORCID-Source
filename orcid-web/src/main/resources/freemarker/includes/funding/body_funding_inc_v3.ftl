@@ -96,7 +96,7 @@
                                      <span ng-show="group.getActive().endDate.year">{{group.getActive().endDate.year}}</span><span ng-show="group.getActive().endDate.month">-{{group.getActive().endDate.month}}</span>
                                 </span>                                
                                 <!-- Funding type -->
-                                <span ng-show="(group.getActive().startDate || group.getActive().endDate) && group.getActive().fundingType.value">|</span> <span ng-bind="group.getActive().fundingTypeForDisplay" class="uppercase"></span>
+                                <span ng-show="(group.getActive().startDate || group.getActive().endDate) && group.getActive().fundingType.value">|</span> <span ng-bind="group.getActive().fundingTypeForDisplay" class="capitalize"></span>
                             </div>                            
                         </div>
 

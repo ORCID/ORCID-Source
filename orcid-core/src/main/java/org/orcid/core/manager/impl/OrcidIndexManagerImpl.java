@@ -49,6 +49,7 @@ import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OtherName;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.Source;
+import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.jaxb.model.message.Subtitle;
 import org.orcid.jaxb.model.message.Title;
 import org.orcid.jaxb.model.message.TranslatedTitle;
@@ -296,7 +297,11 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
         if (orcidHistory != null) {
             LastModifiedDate lastModifiedDate = orcidHistory.getLastModifiedDate();
             if (lastModifiedDate != null) {
-                profileIndexDocument.setProfileLastModified(lastModifiedDate.getValue().toGregorianCalendar().getTime());
+                profileIndexDocument.setProfileLastModifiedDate(lastModifiedDate.getValue().toGregorianCalendar().getTime());
+            }
+            SubmissionDate submissionDate = orcidHistory.getSubmissionDate();
+            if (submissionDate != null) {
+                profileIndexDocument.setProfileSubmissionDate(submissionDate.getValue().toGregorianCalendar().getTime());
             }
         }
         profileIndexDocument.setPublicProfileMessage(orcidMessage.toString());
