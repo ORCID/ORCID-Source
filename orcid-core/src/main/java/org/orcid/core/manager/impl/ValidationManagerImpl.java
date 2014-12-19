@@ -55,23 +55,23 @@ public class ValidationManagerImpl implements ValidationManager {
     private ValidationBehaviour validationBehaviour = ValidationBehaviour.LOG_WARNING;
 
     private String version = OrcidMessage.DEFAULT_VERSION;
-    
+
     private boolean requireOrcidProfile;
 
     private boolean validateBibtex = true;
-    
-    private boolean validateTitle = false;        
-    
+
+    private boolean validateTitle = false;
+
     private boolean validateOnlyOnePrimaryEmail = false;
-    
+
     private boolean validateWorksHaveExternalIds = false;
-    
+
     private boolean validateFundingHaveExternalIds = false;
-    
+
     private Schema schema;
 
     private static final Logger LOG = LoggerFactory.getLogger(ValidationManagerImpl.class);
-    
+
     @Override
     public void setValidationBehaviour(ValidationBehaviour validationBehaviour) {
         this.validationBehaviour = validationBehaviour;
@@ -88,7 +88,7 @@ public class ValidationManagerImpl implements ValidationManager {
     public void setValidateBibtex(boolean validateBibtex) {
         this.validateBibtex = validateBibtex;
     }
-    
+
     public void setValidateTitle(boolean validateTitle) {
         this.validateTitle = validateTitle;
     }
@@ -99,8 +99,8 @@ public class ValidationManagerImpl implements ValidationManager {
 
     public void setValidateOnlyOnePrimaryEmail(boolean validateOnlyOnePrimaryEmail) {
         this.validateOnlyOnePrimaryEmail = validateOnlyOnePrimaryEmail;
-    }        
-    
+    }
+
     public boolean isValidateWorksHaveExternalIds() {
         return validateWorksHaveExternalIds;
     }
@@ -121,21 +121,21 @@ public class ValidationManagerImpl implements ValidationManager {
     public void validateMessage(OrcidMessage orcidMessage) {
         if (ValidationBehaviour.IGNORE.equals(validationBehaviour)) {
             return;
-        }             
+        }
         doMessageVersionValidation(orcidMessage);
         doWorkTypeValidation(orcidMessage);
         doSchemaValidation(orcidMessage);
         doCustomValidation(orcidMessage);
     }
-    
+
     private void doMessageVersionValidation(OrcidMessage orcidMessage) {
-        if(orcidMessage != null) {
-            if(PojoUtil.isEmpty(orcidMessage.getMessageVersion())) {
+        if (orcidMessage != null) {
+            if (PojoUtil.isEmpty(orcidMessage.getMessageVersion())) {
                 handleError("Message version is required");
             }
         }
     }
-    
+
     private void doWorkTypeValidation(OrcidMessage orcidMessage) {
         if (orcidMessage == null || orcidMessage.getOrcidProfile() == null || orcidMessage.getOrcidProfile().getOrcidActivities() == null
                 || orcidMessage.getOrcidProfile().getOrcidActivities().getOrcidWorks() == null
@@ -143,15 +143,15 @@ public class ValidationManagerImpl implements ValidationManager {
                 || orcidMessage.getOrcidProfile().getOrcidActivities().getOrcidWorks().getOrcidWork().isEmpty())
             return;
         List<OrcidWork> works = orcidMessage.getOrcidProfile().getOrcidActivities().getOrcidWorks().getOrcidWork();
-        for(OrcidWork work : works) {
-            if(work.getWorkType() == null)
-                if(work.getWorkTitle() != null && work.getWorkTitle().getTitle() != null && !PojoUtil.isEmpty(work.getWorkTitle().getTitle().getContent()))
+        for (OrcidWork work : works) {
+            if (work.getWorkType() == null)
+                if (work.getWorkTitle() != null && work.getWorkTitle().getTitle() != null && !PojoUtil.isEmpty(work.getWorkTitle().getTitle().getContent()))
                     handleError("work-type is missing or invalid for work: '" + work.getWorkTitle().getTitle().getContent() + "'");
-                else 
+                else
                     handleError("work-type is missing or invalid");
         }
     }
-    
+
     protected void doSchemaValidation(OrcidMessage orcidMessage) {
         Validator validator = createValidator();
         if (validator != null) {
@@ -179,7 +179,7 @@ public class ValidationManagerImpl implements ValidationManager {
             if (requireOrcidProfile) {
                 throw new OrcidValidationException("There must be an orcid-profile element");
             }
-        } else {            
+        } else {
             checkBio(orcidProfile.getOrcidBio());
             checkActivities(orcidProfile.getOrcidActivities());
         }
@@ -203,10 +203,10 @@ public class ValidationManagerImpl implements ValidationManager {
             if (primaryCount > 1) {
                 throw new OrcidValidationException("There must not be more than one primary email");
             }
-            
-            if(validateOnlyOnePrimaryEmail) {
-            	if(primaryCount == 0)
-            		throw new OrcidValidationException("There must be just one primary email");
+
+            if (validateOnlyOnePrimaryEmail) {
+                if (primaryCount == 0)
+                    throw new OrcidValidationException("There must be just one primary email");
             }
         }
     }
@@ -217,7 +217,7 @@ public class ValidationManagerImpl implements ValidationManager {
             if (works != null && works.getOrcidWork() != null && !works.getOrcidWork().isEmpty()) {
                 checkWorks(works.getOrcidWork());
             }
-            
+
             FundingList funding = orcidActivities.getFundings();
             if (funding != null && funding.getFundings() != null && !funding.getFundings().isEmpty()) {
                 checkFunding(funding.getFundings());
@@ -232,52 +232,55 @@ public class ValidationManagerImpl implements ValidationManager {
     }
 
     public void checkWork(OrcidWork orcidWork) {
-        
-        if(validateTitle){
+
+        if (validateTitle) {
             WorkTitle title = orcidWork.getWorkTitle();
-            if(title == null || title.getTitle() == null || StringUtils.isEmpty(title.getTitle().getContent())){
+            if (title == null || title.getTitle() == null || StringUtils.isEmpty(title.getTitle().getContent())) {
                 throw new OrcidValidationException("Invalid Title: title cannot be null nor emtpy");
             }
-        }  
-        
-        if(validateWorksHaveExternalIds) {
-            if(orcidWork.getWorkExternalIdentifiers() == null || orcidWork.getWorkExternalIdentifiers().getWorkExternalIdentifier() == null || orcidWork.getWorkExternalIdentifiers().getWorkExternalIdentifier().isEmpty()) {
+        }
+
+        if (validateWorksHaveExternalIds) {
+            if (orcidWork.getWorkExternalIdentifiers() == null || orcidWork.getWorkExternalIdentifiers().getWorkExternalIdentifier() == null
+                    || orcidWork.getWorkExternalIdentifiers().getWorkExternalIdentifier().isEmpty()) {
                 throw new OrcidValidationException("Invalid work: Works added using message version 1.2_rc5 or greater must contain at least one external identifier");
             }
-        }                
+        }
     }
 
-    private void checkFunding(List<Funding> fundings) {        
-        for(Funding funding : fundings) {
+    private void checkFunding(List<Funding> fundings) {
+        for (Funding funding : fundings) {
             checkFunding(funding);
         }
     }
-    
+
     private void checkFunding(Funding funding) {
-        if(validateFundingHaveExternalIds) {
-            if(funding.getFundingExternalIdentifiers() == null || funding.getFundingExternalIdentifiers().getFundingExternalIdentifier() == null || funding.getFundingExternalIdentifiers().getFundingExternalIdentifier().isEmpty()) {
-                throw new OrcidValidationException("Invalid funding: Funding added using message version 1.2_rc5 or greater must contain at least one external identifier");
+        if (validateFundingHaveExternalIds) {
+            if (funding.getFundingExternalIdentifiers() == null || funding.getFundingExternalIdentifiers().getFundingExternalIdentifier() == null
+                    || funding.getFundingExternalIdentifiers().getFundingExternalIdentifier().isEmpty()) {
+                throw new OrcidValidationException(
+                        "Invalid funding: Funding added using message version 1.2_rc5 or greater must contain at least one external identifier");
             }
         }
-        
-        if(funding.getStartDate() != null){                       
-            if(!PojoUtil.isEmpty(funding.getStartDate().getMonth()) && PojoUtil.isEmpty(funding.getStartDate().getYear())){
+
+        if (funding.getStartDate() != null) {
+            if (!PojoUtil.isEmpty(funding.getStartDate().getMonth()) && PojoUtil.isEmpty(funding.getStartDate().getYear())) {
                 throw new OrcidValidationException("Invalid funding: Invalid start date");
-            }                
+            }
         }
-            
-        if(funding.getEndDate() != null) {
-            if(!PojoUtil.isEmpty(funding.getEndDate().getMonth()) && PojoUtil.isEmpty(funding.getEndDate().getYear())) {
+
+        if (funding.getEndDate() != null) {
+            if (!PojoUtil.isEmpty(funding.getEndDate().getMonth()) && PojoUtil.isEmpty(funding.getEndDate().getYear())) {
                 throw new OrcidValidationException("Invalid funding: Invalid end date");
-            }                
-        }        
+            }
+        }
     }
-    
+
     private void initSchema() {
         if (schema == null) {
             SchemaFactory factory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
-            try {                
-            	schema = factory.newSchema(ValidateOrcidMessage.class.getResource("/orcid-message-" + version + ".xsd"));
+            try {
+                schema = factory.newSchema(ValidateOrcidMessage.class.getResource("/orcid-message-" + version + ".xsd"));
             } catch (SAXException e) {
                 handleError("Error initializing schema", e);
             }
@@ -306,17 +309,26 @@ public class ValidationManagerImpl implements ValidationManager {
             break;
         case LOG_INFO:
             LOG.info(message, t);
+            break;
+        case LOG_WARNING:
+            LOG.warn(message, t);
+            break;
+        case LOG_ERROR:
+            LOG.error(message, t);
+            break;
+        case LOG_INFO_WITH_XML:
+            LOG.info(message, t);
             if (orcidMessage != null) {
                 LOG.info("ORCID message is: {}", orcidMessage);
             }
             break;
-        case LOG_WARNING:
+        case LOG_WARNING_WITH_XML:
             LOG.warn(message, t);
             if (orcidMessage != null) {
                 LOG.warn("ORCID message is: {}", orcidMessage);
             }
             break;
-        case LOG_ERROR:
+        case LOG_ERROR_WITH_XML:
             LOG.error(message, t);
             if (orcidMessage != null) {
                 LOG.error("ORCID message is: {}", orcidMessage);
