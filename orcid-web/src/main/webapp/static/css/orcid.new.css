@@ -218,6 +218,7 @@ body {
 	font-size: 16px;
 	min-height: 100%;
 	height: 100%;
+	
 }
 
 .uppercase {
@@ -3326,12 +3327,16 @@ p.orcid-id-container{
 	padding-right: 15px;
 }
 
-.public-profile .left-aside{
-	padding: 0;	
+.public-profile .left-aside,
+.public-profile .right-aside{
+	padding: 0;
 }
 
-.public-profile .right-aside{
-	padding:0;
+.workspace-right,
+.workspace-profile{
+	float: left;
+	padding: 0;
+	width: 100%;
 }
 
 .mini-orcid-icon{
@@ -4033,12 +4038,15 @@ ul#body-work-list > li{
 	margin: 10px 0;
 } 
 
-.workspace-profile .workspace-section input{	
-	width: 100%;		
+.workspace-profile .workspace-section input,
+.workspace-profile .workspace-section select{	
+	width: 100%;
+	margin-bottom: 5px;		
 }
 
 .workspace-profile .workspace-section .workspace-section-header{
 	width: 100%;
+	height: auto;
 }
 
 .workspace-profile .workspace-section .workspace-section-header .workspace-section-title{
@@ -4047,7 +4055,35 @@ ul#body-work-list > li{
 }
 
 
-	
+.workspace-profile .workspace-section ul.workspace-section-toolbar{
+	width: 100%;
+	margin: 0;
+	padding: 0;
+}
+
+.workspace-profile .workspace-section ul.workspace-section-toolbar li{
+	display: inline-block;
+}
+
+.workspace-profile .workspace-section ul.workspace-section-toolbar li a:hover span{
+	background: #A6CE39;
+}
+
+.workspace-profile .workspace-section ul.workspace-section-toolbar li a span{
+	color: #FFF;
+	background: #338caf;
+	border-radius: 50%;
+	padding: 5px 5px 5px 7px;
+}
+
+.workspace-profile .workspace-section ul.workspace-section-toolbar li .cancel-option{
+	margin-right: 15px;
+	vertical-align: middle;
+	line-height: 34px;
+}
+
+
+
 
 
 
@@ -5599,10 +5635,32 @@ ul.oauth-scopes li{
 	color: #FFF;
 }
 
+/* GLobal classes */
 
+.icon-inside-input{
+	position: relative;
+	float: left;
+	width: 100%;
+	height: auto;
+}
 
+.icon-inside-input .icon-inside{
+	position: absolute;
+	top: 8px;
+	right: 5px;
+}
 
+.icon-inside-input input{
+	padding-right: 23px;
+}
 
+.divider{
+	width: 100%;
+	border-top: 1px dotted;
+	margin-top: 5px;
+	display: block;
+	height: 10px;
+}
 
 
 /* Media Queries */
@@ -5632,18 +5690,6 @@ ul.oauth-scopes li{
 	
 	.see-more {
 		margin: 15px 25px 0;
-	}
-	
-	button {
-		font-size: 18px !important;
-		height: 50px;
-		margin: 32px 0 0;
-		width: 100%;
-		margin-top:10px !important;		
-	}
-	
-	button:hover {
-		border-color: #A6CE39 !important;
 	}
 
 	/* Header */
@@ -5903,8 +5949,6 @@ ul.oauth-scopes li{
 
 	/* Forms */
 	input[type="text"],input[type="password"],select,input[type="email"]{
-		height: 50px;
-		font-size: 16px;
 		width: 100%;
 	}
 
@@ -5996,9 +6040,7 @@ ul.oauth-scopes li{
 		left: -223px !important;
 		width: 250px;
 	}
-	.popover-help-container a i {
-		font-size: 25px;
-	}
+
 	#RegistrationCtr .popover-help-container .popover {
 		left: -109px;
 	}
