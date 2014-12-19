@@ -22,6 +22,10 @@ import static schema.constants.SolrConstants.PUBLIC_PROFILE;
 import static schema.constants.SolrConstants.SCORE;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -48,6 +52,9 @@ public class SolrDaoImpl implements SolrDao {
 
     @Resource(name = "solrServerReadOnly")
     private SolrServer solrServerReadOnly;
+
+    @Resource(name = "solrServerForStreaming")
+    private SolrServer solrServerForStreaming;
 
     @Override
     public void persist(OrcidSolrDocument orcidSolrDocument) {
@@ -79,7 +86,6 @@ public class SolrDaoImpl implements SolrDao {
         OrcidSolrResult orcidSolrResult = null;
         SolrQuery query = new SolrQuery();
         query.setQuery(ORCID + ":\"" + orcid + "\"").setFields(SCORE, ORCID, PUBLIC_PROFILE);
-        ;
         try {
             QueryResponse queryResponse = solrServerReadOnly.query(query);
             if (!queryResponse.getResults().isEmpty()) {
@@ -95,6 +101,23 @@ public class SolrDaoImpl implements SolrDao {
         }
 
         return orcidSolrResult;
+    }
+
+    @Override
+    public Reader findByOrcidAsReader(String orcid) {
+        SolrQuery query = new SolrQuery();
+        query.setQuery(ORCID + ":\"" + orcid + "\"").setFields(SCORE, ORCID, PUBLIC_PROFILE);
+        query.add("wt", "orcidProfile");
+        try {
+            QueryResponse queryResponse = solrServerForStreaming.query(query);
+            InputStream inputStream = (InputStream) queryResponse.getResponse().get("stream");
+            return new InputStreamReader(inputStream, "UTF-8");
+        } catch (SolrServerException e) {
+            String errorMessage = MessageFormat.format("Error when attempting to retrieve stream for orcid {0}", new Object[] { orcid });
+            throw new NonTransientDataAccessResourceException(errorMessage, e);
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

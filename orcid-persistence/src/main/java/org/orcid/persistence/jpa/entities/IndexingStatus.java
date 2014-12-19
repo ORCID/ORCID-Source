@@ -27,7 +27,7 @@ import java.util.List;
  */
 public enum IndexingStatus {
 
-    PENDING, DONE, REINDEX, IGNORE;
+    PENDING, DONE, REINDEX, IGNORE, FAILED;
 
     public static Object getNames(Collection<IndexingStatus> indexingStatuses) {
         List<String> names = new ArrayList<>();
