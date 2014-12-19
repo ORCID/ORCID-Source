@@ -61,12 +61,6 @@
             <version>1.1.5-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.orcid</groupId>
-            <artifactId>orcid-solr-web</artifactId>
-            <version>1.1.5-SNAPSHOT</version>
-            <scope>test</scope>
-        </dependency>
 
         <!-- ##External dependencies## -->
 
