@@ -141,7 +141,7 @@ public class SolrDaoImpl implements SolrDao {
             List<String> queryVals = entry.getValue();
             solrQuery.add(queryKey, queryVals.get(0));
         }
-        solrQuery.setFields(SCORE, ORCID, PUBLIC_PROFILE);
+        solrQuery.setFields(SCORE, ORCID);
         return querySolr(solrQuery);
     }
 

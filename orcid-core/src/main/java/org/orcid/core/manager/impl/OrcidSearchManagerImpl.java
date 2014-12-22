@@ -101,13 +101,21 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
 
         List<OrcidSearchResult> orcidSearchResults = new ArrayList<OrcidSearchResult>();
         for (OrcidSolrResult solrResult : solrResults) {
+            OrcidMessage orcidMessage = null;
+            String orcid = solrResult.getOrcid();
+            try (Reader reader = solrDao.findByOrcidAsReader(orcid)) {
+                if (reader != null) {
+                    BufferedReader br = new BufferedReader(reader);
+                    orcidMessage = OrcidMessage.unmarshall(br);
+                }
+            } catch (IOException e) {
+                throw new OrcidSearchException("Error closing record stream from solr search results for orcid: " + orcid, e);
+            }
             OrcidProfile orcidProfile = null;
-            String orcidMessageString = solrResult.getPublicProfileMessage();
-            if (orcidMessageString == null) {
+            if (orcidMessage == null) {
                 // Fall back to DB
-                orcidProfile = orcidProfileManager.retrieveClaimedOrcidProfile(solrResult.getOrcid());
+                orcidProfile = orcidProfileManager.retrieveClaimedOrcidProfile(orcid);
             } else {
-                OrcidMessage orcidMessage = OrcidMessage.unmarshall(orcidMessageString);
                 orcidProfile = orcidMessage.getOrcidProfile();
             }
             if (orcidProfile != null) {
@@ -163,8 +171,11 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
                 om = new OrcidMessage();
                 om.setOrcidProfile(orcidProfile);
             } else {
-                try (Reader reader = new BufferedReader(solrDao.findByOrcidAsReader(orcid))) {
-                    om = OrcidMessage.unmarshall(reader);
+                try (Reader reader = solrDao.findByOrcidAsReader(orcid)) {
+                    if (reader != null) {
+                        BufferedReader br = new BufferedReader(reader);
+                        om = OrcidMessage.unmarshall(br);
+                    }
                 }
             }
         } catch (NonTransientDataAccessResourceException e) {
