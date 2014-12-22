@@ -3902,25 +3902,18 @@ ul.sso-options li span {
 	border: 1px solid #a6ce39;
 }
 
+.id-banner .oid .orcid-id-container .orcid-id-options{
+	margin: 0 -5px;
+}
+
 .id-banner .oid .orcid-id-container .orcid-id-options a{
 	display: block;
 	float: left;
 	font-size: 15px;
 	padding: 1px 5px;
 	text-align: center;	
+	width: 100%;
 }
-
-.id-banner .oid .orcid-id-container .orcid-id-options a:first-child{
-	width: 95px;
-	margin-left: -5px;	
-}
-
-.id-banner .oid .orcid-id-container .orcid-id-options a:last-child{
-	width: 143px;
-	margin-right: -5px;
-	border-left: 1px solid #FFF;
-}
-
 
 
 /**************/
@@ -4489,16 +4482,15 @@ ul.sources-edit-list > li{
 }
 
 .workspace-profile span.glyphicon-pencil,
-#workspace-personal span.glyphicon-pencil,
-.id-banner span.glyphicon-pencil{
+#workspace-personal span.glyphicon-pencil{
 	float: right;
-	margin-right: 5px;
 	background: #949599;
 	padding: 5px;
 	border-radius: 50%;
 	color: #fff;
 	font-size: 10px;
 	z-index: 100;
+	cursor: pointer;
 }
 
 #workspace-personal span.glyphicon-pencil{
@@ -4508,6 +4500,7 @@ ul.sources-edit-list > li{
 	font-size: 14px;
 	color: #494A4C;
 	background: #C9C9CA;
+	margin-right: 5px;
 }
 
 #workspace-personal span.glyphicon-pencil:hover{
@@ -5369,11 +5362,8 @@ multiselect .dropdown-menu .dropdown-menu-list {
 	overflow-y: scroll;
 }
 
-.workspace-accordion-item {
-	border-bottom: 1px solid #c9c9c9;
-}
 
-	/* New Style not related to myorcid3 */
+/* New Style not related to myorcid3 */
 
 #register-buttons{
 	margin-bottom: 15px;
@@ -6096,10 +6086,6 @@ ul.oauth-scopes li{
 	.workspace-accordion-header, 
 	.workspace-accordion-content{
 		padding:0;		
-	}
-	
-	.workspace-accordion-item{
-		border-top: 1px solid #C9C9C9;
 	}
 	
 	ul.personal-inf-display li{
