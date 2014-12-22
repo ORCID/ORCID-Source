@@ -7710,48 +7710,4 @@ angular.module('ui.multiselect', [])
           }
         }
       };
-    }])
-
-  .directive('multiselectPopup', ['$compile','$document','$templateCache', function ($compile, $document, $templateCache) {
-    return {
-      restrict: 'E',
-      scope: false,
-      replace: true,
-      template: $templateCache.get('multiselect'),
-      link: function (scope, element, attrs) {
-
-        scope.isVisible = false;
-
-        scope.toggleSelect = function () {
-          if (element.hasClass('open')) {
-            element.removeClass('open');
-            $document.unbind('click', clickHandler);
-          } else {
-            element.addClass('open');
-            $document.bind('click', clickHandler);
-            scope.focus();
-          }
-        };
-
-        function clickHandler(event) {
-          if (elementMatchesAnyInArray(event.target, element.find(event.target.tagName)))
-            return;
-          element.removeClass('open');
-          $document.unbind('click', clickHandler);
-          scope.$apply();
-        }
-
-        scope.focus = function focus(){
-          var searchBox = element.find('input')[0];
-          searchBox.focus();
-        }
-
-        var elementMatchesAnyInArray = function (element, elementArray) {
-          for (var i = 0; i < elementArray.length; i++)
-            if (element == elementArray[i])
-              return true;
-          return false;
-        }
-      }
-    }
-  }]);
+    }]);
