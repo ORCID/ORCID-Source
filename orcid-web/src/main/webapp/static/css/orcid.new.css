@@ -4508,6 +4508,17 @@ ul.sources-edit-list > li{
 	color: #FFF;
 }
 
+#workspace-personal{
+	margin-bottom: 15px;
+}
+
+#workspace-personal .biography-edit textarea#biography{
+	width: 100%;
+	height: 120px;
+}
+
+
+
 .workspace-profile span > span{
 	display: block;
 }
