@@ -36,7 +36,6 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -48,7 +47,6 @@ import java.util.concurrent.TimeoutException;
 
 import javax.annotation.Resource;
 
-import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 
 import org.apache.commons.lang3.StringUtils;
@@ -228,7 +226,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
     @Resource
     private SourceManager sourceManager;
-    
+
     @Resource
     private OrcidProfileCacheManager orcidProfileCacheManager;
 
@@ -614,7 +612,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     public OrcidProfile retrieveOrcidProfile(String orcid, LoadOptions loadOptions) {
         if (LoadOptions.ALL.equals(loadOptions))
             return orcidProfileCacheManager.retrieve(orcid);
-        return retrieveFreshOrcidProfile(orcid,loadOptions);
+        return retrieveFreshOrcidProfile(orcid, loadOptions);
     }
 
     public OrcidProfile retrieveFreshOrcidProfile(String orcid, LoadOptions loadOptions) {
@@ -1958,12 +1956,15 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                 } catch (InterruptedException e) {
                     orcidFailures.add(orcid);
                     LOG.error(orcid + " InterruptedException ", e);
+                    profileDao.updateIndexingStatus(orcid, IndexingStatus.FAILED);
                 } catch (ExecutionException e) {
                     orcidFailures.add(orcid);
                     LOG.error(orcid + " ExecutionException ", e);
+                    profileDao.updateIndexingStatus(orcid, IndexingStatus.FAILED);
                 } catch (TimeoutException e) {
                     orcidFailures.add(orcid);
                     LOG.error(orcid + " TimeoutException ", e);
+                    profileDao.updateIndexingStatus(orcid, IndexingStatus.FAILED);
                 }
             }
         } while (!orcidsForIndexing.isEmpty());
@@ -2182,7 +2183,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     public void clearOrcidProfileCache() {
         orcidProfileCacheManager.removeAll();
     }
-    
+
     public void addLocale(OrcidProfile orcidProfile, Locale locale) {
         if (orcidProfile.getOrcidPreferences() == null)
             orcidProfile.setOrcidPreferences(new OrcidPreferences());

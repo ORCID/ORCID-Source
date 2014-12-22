@@ -16,6 +16,7 @@
  */
 package org.orcid.persistence.dao;
 
+import java.io.Reader;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +52,17 @@ public interface SolrDao {
      *         OrcidSolrResult otherwise
      */
     OrcidSolrResult findByOrcid(String orcid);
+
+    /**
+     * Method to retrieve a single record based on the unique Orcid Field.
+     * 
+     * Please close the reader when you have finished with it. Thanks!
+     * 
+     * @param orcid
+     * @return null if a record does't exist for that Orcid or a reader for the
+     *         record XML
+     */
+    Reader findByOrcidAsReader(String orcid);
 
     /**
      * Method to retrieve a List of OrcidSolrResult wrapped in an

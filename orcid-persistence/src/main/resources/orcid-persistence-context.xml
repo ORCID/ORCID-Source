@@ -272,6 +272,17 @@
         <property name="maxTotalConnections" value="\${org.orcid.persistence.solr.defaultMaxConnectionsPerHost}" />
         <property name="parser" ref="responseParser" />
     </bean>
+    <bean id="solrServerForStreaming" class="org.apache.solr.client.solrj.impl.HttpSolrServer">
+        <constructor-arg value="\${org.orcid.persistence.solr.read.only.url}" />
+        <constructor-arg><null/></constructor-arg>
+        <constructor-arg><null/></constructor-arg>
+        <property name="soTimeout" value="\${org.orcid.persistence.solr.socketTimeout}" />
+        <property name="connectionTimeout" value="\${org.orcid.persistence.solr.connectionTimeout}" />
+        <property name="allowCompression" value="\${org.orcid.persistence.solr.allowCompression}" />
+        <property name="maxRetries" value="\${org.orcid.persistence.solr.maxRetries}" />
+        <property name="defaultMaxConnectionsPerHost" value="\${org.orcid.persistence.solr.maxTotalConnections}" />
+        <property name="maxTotalConnections" value="\${org.orcid.persistence.solr.defaultMaxConnectionsPerHost}" />
+    </bean>
     <bean id="orgDisambiguatedSolrServer" class="org.apache.solr.client.solrj.impl.HttpSolrServer">
         <constructor-arg value="\${org.orcid.persistence.solr.url}/org" />
         <property name="soTimeout" value="\${org.orcid.persistence.solr.socketTimeout}" />

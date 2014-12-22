@@ -121,4 +121,7 @@
     <include file="/db/updates/change_column_name_on_orcid_props_table.xml" />
     
     <include file="/db/updates/modify_enable_developer_tools_data_type.xml" />
+    
+    <include file="/db/updates/funding-external-identifiers-as-json.xml" />
+    
 </databaseChangeLog>
