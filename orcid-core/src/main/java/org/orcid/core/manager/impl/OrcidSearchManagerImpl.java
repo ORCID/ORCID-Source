@@ -103,8 +103,11 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
         for (OrcidSolrResult solrResult : solrResults) {
             OrcidMessage orcidMessage = null;
             String orcid = solrResult.getOrcid();
-            try (Reader reader = new BufferedReader(solrDao.findByOrcidAsReader(orcid))) {
-                orcidMessage = OrcidMessage.unmarshall(reader);
+            try (Reader reader = solrDao.findByOrcidAsReader(orcid)) {
+                if (reader != null) {
+                    BufferedReader br = new BufferedReader(reader);
+                    orcidMessage = OrcidMessage.unmarshall(br);
+                }
             } catch (IOException e) {
                 throw new OrcidSearchException("Error closing record stream from solr search results for orcid: " + orcid, e);
             }
@@ -168,8 +171,11 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
                 om = new OrcidMessage();
                 om.setOrcidProfile(orcidProfile);
             } else {
-                try (Reader reader = new BufferedReader(solrDao.findByOrcidAsReader(orcid))) {
-                    om = OrcidMessage.unmarshall(reader);
+                try (Reader reader = solrDao.findByOrcidAsReader(orcid)) {
+                    if (reader != null) {
+                        BufferedReader br = new BufferedReader(reader);
+                        om = OrcidMessage.unmarshall(br);
+                    }
                 }
             }
         } catch (NonTransientDataAccessResourceException e) {
