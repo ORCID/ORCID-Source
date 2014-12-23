@@ -143,8 +143,16 @@
         		<#else>	            
 	                <#if (profile.orcidBio.biography.content)?? && (profile.orcidBio.biography.content)?has_content>		                	        			
 	        			<div class="workspace-accordion-content" ng-show="displayInfo">
-	        				<strong>${springMacroRequestContext.getMessage("public_profile.labelBiography")}</strong>	        					
-	        				<div>${(profile.orcidBio.biography.content)!}</div>	        				
+	        				<div class="row bottomBuffer">
+	        					<div class="col-md-12 col-sm-12 col-xs-12">
+	        						<h3 class="workspace-title">${springMacroRequestContext.getMessage("public_profile.labelBiography")}</h3>
+	        					</div>
+	        				</div>	        
+	        				<div class="row">					
+		        				<div class="col-md-12 col-sm-12 col-xs-12">
+		        					${(profile.orcidBio.biography.content)!}
+		        				</div>
+		        			</div>	        				
 	        			</div>
 	                </#if>
 	                <#assign publicProfile = true />
