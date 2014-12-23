@@ -4007,7 +4007,7 @@ ul.workspace-bar-menu > li > a > span{
 	display: block !important; 
 }
 
-ul#body-work-list{
+.workspace-publications{
 	margin: 0;
 	padding: 0;
 }
@@ -6780,8 +6780,9 @@ ul.oauth-scopes li{
 		left: 247px;
 	}
 	
-	.workspace-body-list{
-		margin-top: 92px;
+	.workspace-body-list,
+	.workspace-publications{
+		margin-top: 35px;
 	}
 	
 	#workspace-publications .action-button-bar{

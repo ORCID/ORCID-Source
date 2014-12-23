@@ -148,7 +148,7 @@
 	        						<h3 class="workspace-title">${springMacroRequestContext.getMessage("public_profile.labelBiography")}</h3>
 	        					</div>
 	        				</div>	        
-	        				<div class="row">					
+	        				<div class="row bottomBuffer">					
 		        				<div class="col-md-12 col-sm-12 col-xs-12">
 		        					${(profile.orcidBio.biography.content)!}
 		        				</div>
