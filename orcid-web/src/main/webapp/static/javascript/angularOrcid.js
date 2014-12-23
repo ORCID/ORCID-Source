@@ -1645,7 +1645,7 @@ orcidNgModule.controller('EmailPreferencesCtrl',['$scope', 'prefsSrvc', function
 }]);
 
 
-orcidNgModule.controller('DeactivateAccountCtrl', ['$scope', '$complie', function ($scope, $compile) {
+orcidNgModule.controller('DeactivateAccountCtrl', ['$scope', '$compile', function ($scope, $compile) {
     $scope.sendDeactivateEmail = function() {
         orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Deactivate_Initiate', 'Website']);
         $.ajax({
