@@ -26,6 +26,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.cache.annotation.Cacheable;
 
 public class LanguagesMap {
+    private static final String X = "X";
+    
     /**
      * This map contains all the available languages in all available locales.
      * The structure looks like this:
@@ -111,7 +113,10 @@ public class LanguagesMap {
      * @return The language translated to the given locale.
      * */
     @Cacheable(value = "languages-map", key = "#locale.toString() + '-' + #userLocale.toString()")
-    public String buildLanguageValue(Locale locale, Locale userLocale) {
+    public String buildLanguageValue(Locale locale, Locale userLocale) {     
+        if(userLocale != null && userLocale.getLanguage().equals("xx")) {
+            return X;
+        }
     	String variant = locale.getVariant();
         String displayVariant = locale.getDisplayVariant(userLocale);
         String language = WordUtils.capitalize(locale.getDisplayLanguage(userLocale));

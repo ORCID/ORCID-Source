@@ -36,7 +36,6 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -48,7 +47,6 @@ import java.util.concurrent.TimeoutException;
 
 import javax.annotation.Resource;
 
-import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 
 import org.apache.commons.lang3.StringUtils;
@@ -62,6 +60,7 @@ import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidGenerationManager;
 import org.orcid.core.manager.OrcidIndexManager;
 import org.orcid.core.manager.OrcidJaxbCopyManager;
+import org.orcid.core.manager.OrcidProfileCacheManager;
 import org.orcid.core.manager.OrcidProfileCleaner;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.SourceManager;
@@ -116,7 +115,6 @@ import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.VisibilityType;
 import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkExternalIdentifier;
-import org.orcid.jaxb.model.message.WorkSource;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.FundingExternalIdentifierDao;
 import org.orcid.persistence.dao.GenericDao;
@@ -147,7 +145,6 @@ import org.orcid.utils.ReleaseNameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -224,14 +221,14 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     @Resource
     private LocaleManager localeManager;
 
-    @Resource(name = "profileCache")
-    private Cache profileCache;
-
     @Resource
     private GenericDao<EmailEventEntity, Long> emailEventDao;
 
     @Resource
     private SourceManager sourceManager;
+
+    @Resource
+    private OrcidProfileCacheManager orcidProfileCacheManager;
 
     @Resource
     private OrcidJaxbCopyManager orcidJaxbCopyManager;
@@ -249,8 +246,6 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     private int verifyReminderAfterDays = 7;
 
     private String releaseName = ReleaseNameUtils.getReleaseName();
-
-    private ConcurrentMap<String, Object> readLocks = new ConcurrentHashMap<>();
 
     public NotificationManager getNotificationManager() {
         return notificationManager;
@@ -349,7 +344,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         profileDao.flush();
         profileDao.refresh(updatedProfileEntity);
         OrcidProfile updatedOrcidProfile = convertToOrcidProfile(updatedProfileEntity, LoadOptions.ALL);
-        putInCache(updatedOrcidProfile);
+        orcidProfileCacheManager.put(updatedOrcidProfile);
         notificationManager.sendAmendEmail(updatedOrcidProfile, amenderOrcid);
         return updatedOrcidProfile;
     }
@@ -615,88 +610,20 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     @Override
     @Transactional
     public OrcidProfile retrieveOrcidProfile(String orcid, LoadOptions loadOptions) {
-        OrcidProfile cachedProfile = lockAndRetrieveFromCache(orcid, loadOptions);
-        Date cachedProfileLastModified = extractLastModifiedDateFromObject(cachedProfile);
-        if (cachedProfileLastModified == null) {
-            return clearCacheAndRetrieve(orcid, loadOptions);
-        }
-        Date actualLastModified = retrieveLastModifiedDate(orcid);
-        if (actualLastModified == null) {
-            return clearCacheAndRetrieve(orcid, loadOptions);
-        }
-        Date actualLastModifiedDate = new Date(actualLastModified.getTime());
-        if (actualLastModifiedDate.after(cachedProfileLastModified)) {
-            return clearCacheAndRetrieve(orcid, loadOptions);
-        }
-        return cachedProfile;
+        if (LoadOptions.ALL.equals(loadOptions))
+            return orcidProfileCacheManager.retrieve(orcid);
+        return retrieveFreshOrcidProfile(orcid, loadOptions);
     }
 
-    private OrcidProfile lockAndRetrieveFromCache(String orcid, LoadOptions loadOptions) {
-        Element element = getFromCache(orcid);
-        if (element == null) {
-            try {
-                LOG.debug("Profile not found in cache: " + orcid);
-                Object lock = obtainReadLock(orcid);
-                synchronized (lock) {
-                    // Might be in the cache by now!
-                    element = getFromCache(orcid);
-                    if (element == null) {
-                        OrcidProfile freshOrcidProfile = retrieveFreshOrcidProfile(orcid, loadOptions);
-                        return freshOrcidProfile;
-                    }
-                }
-            } finally {
-                releaseReadLock(orcid);
-            }
-        }
-        OrcidProfile cachedProfile = (OrcidProfile) element.getObjectValue();
-        return cachedProfile;
-    }
-
-    private Object obtainReadLock(String orcid) {
-        LOG.debug("About to obtain read lock: " + orcid);
-        Object newLock = new Object();
-        Object existingLock = readLocks.putIfAbsent(orcid, newLock);
-        return existingLock == null ? newLock : existingLock;
-    }
-
-    private void releaseReadLock(String orcid) {
-        LOG.debug("About to release read lock: " + orcid);
-        readLocks.remove(orcid);
-    }
-
-    private OrcidProfile clearCacheAndRetrieve(String orcid, LoadOptions loadOptions) {
-        profileCache.remove(createCacheKey(orcid));
-        return lockAndRetrieveFromCache(orcid, loadOptions);
-    }
-
-    private OrcidProfile retrieveFreshOrcidProfile(String orcid, LoadOptions loadOptions) {
+    public OrcidProfile retrieveFreshOrcidProfile(String orcid, LoadOptions loadOptions) {
         LOG.debug("About to obtain fresh profile: " + orcid);
         profileDao.flush();
         ProfileEntity profileEntity = profileDao.find(orcid);
         if (profileEntity != null) {
             OrcidProfile freshOrcidProfile = convertToOrcidProfile(profileEntity, loadOptions);
-            if (LoadOptions.ALL.equals(loadOptions)) {
-                putInCache(orcid, freshOrcidProfile);
-            }
             return freshOrcidProfile;
         }
         return null;
-    }
-
-    private Date extractLastModifiedDateFromObject(OrcidProfile orcidProfile) {
-        if (orcidProfile == null) {
-            return null;
-        }
-        OrcidHistory orcidHistory = orcidProfile.getOrcidHistory();
-        if (orcidHistory == null) {
-            return null;
-        }
-        LastModifiedDate lastModifiedDate = orcidHistory.getLastModifiedDate();
-        if (lastModifiedDate == null) {
-            return null;
-        }
-        return lastModifiedDate.getValue().toGregorianCalendar().getTime();
     }
 
     @Override
@@ -775,13 +702,6 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         orcidProfile.setVerificationCode(decrypt(verificationCode));
         orcidProfile.setSecurityQuestionAnswer(decrypt(securityAnswer));
         return orcidProfile;
-    }
-
-    @Override
-    @VisibilityControl(removeAttributes = false, visibilities = Visibility.PUBLIC)
-    @Cacheable(value = "public-profile", key = "T(org.orcid.jaxb.model.message.OrcidProfile).createCacheKey(#orcid, #lastModified)")
-    public OrcidProfile retrievePublicOrcidProfileFromCache(String orcid, long lastModified) {
-        return retrieveClaimedOrcidProfile(orcid);
     }
 
     @Override
@@ -990,13 +910,13 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         String orcid = updatedOrcidProfile.getOrcidIdentifier().getPath();
         String hashedPassword = hash(updatedOrcidProfile.getPassword());
         profileDao.updateEncryptedPassword(orcid, hashedPassword);
-        OrcidProfile cachedProfile = getOrcidProfileFromCache(orcid);
+        OrcidProfile cachedProfile = orcidProfileCacheManager.retrieve(orcid);
         if (cachedProfile != null) {
             profileDao.flush();
             SecurityDetails securityDetails = initSecurityDetails(cachedProfile);
             securityDetails.setEncryptedPassword(new EncryptedPassword(hashedPassword));
             cachedProfile.setPassword(hashedPassword);
-            putInCache(cachedProfile);
+            orcidProfileCacheManager.put(cachedProfile);
         }
         updateSecurityQuestionInformation(updatedOrcidProfile);
     }
@@ -1026,14 +946,14 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         String unencryptedAnswer = updatedOrcidProfile.getSecurityQuestionAnswer();
         String encryptedAnswer = encrypt(unencryptedAnswer);
         profileDao.updateSecurityQuestion(orcid, questionId, questionId != null ? encryptedAnswer : null);
-        OrcidProfile cachedProfile = getOrcidProfileFromCache(orcid);
+        OrcidProfile cachedProfile = orcidProfileCacheManager.retrieve(orcid);
         if (cachedProfile != null) {
             profileDao.flush();
             SecurityDetails securityDetails = initSecurityDetails(cachedProfile);
             securityDetails.setSecurityQuestionId(questionId != null ? new SecurityQuestionId(questionId) : null);
             securityDetails.setEncryptedSecurityAnswer(encryptedAnswer != null ? new EncryptedSecurityAnswer(encryptedAnswer) : null);
             cachedProfile.setSecurityQuestionAnswer(encryptedAnswer != null ? unencryptedAnswer : null);
-            putInCache(cachedProfile);
+            orcidProfileCacheManager.put(cachedProfile);
         }
     }
 
@@ -1079,7 +999,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                 .getSendEmailFrequencyDays());
         profileDao.updatePreferences(orcid, sendChangeNotifications, sendOrcidNews, sendMemberUpdateRequests, activitiesVisibilityDefault, developerToolsEnabled,
                 sendEmailFrequencyDays);
-        OrcidProfile cachedProfile = getOrcidProfileFromCache(orcid);
+        OrcidProfile cachedProfile = orcidProfileCacheManager.retrieve(orcid);
         if (cachedProfile != null) {
             profileDao.flush();
             Preferences cachedPreferences = cachedProfile.getOrcidInternal().getPreferences();
@@ -1088,7 +1008,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             cachedPreferences.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(activitiesVisibilityDefault));
             cachedPreferences.setDeveloperToolsEnabled(new DeveloperToolsEnabled(developerToolsEnabled));
             cachedPreferences.setSendEmailFrequencyDays(preferences.getSendEmailFrequencyDays());
-            putInCache(cachedProfile);
+            orcidProfileCacheManager.put(cachedProfile);
         }
     }
 
@@ -1420,7 +1340,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             ProfileWorkEntity profileWorkEntity = jaxb2JpaAdapter.getNewProfileWorkEntity(updatedOrcidWork, profileEntity);
             profileWorkDao.persist(profileWorkEntity);
         }
-        removeFromCache(orcid);
+        orcidProfileCacheManager.remove(orcid);
     }
 
     /**
@@ -1612,7 +1532,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         }
         orcidOauth2TokenDetailDao.flush();
         OrcidProfile updatedOrcidProfile = convertToOrcidProfile(existingProfile, LoadOptions.ALL);
-        putInCache(userOrcid, updatedOrcidProfile);
+        orcidProfileCacheManager.put(userOrcid, updatedOrcidProfile);
         return updatedOrcidProfile;
     }
 
@@ -1852,7 +1772,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             OrgAffiliationRelationEntity orgAffiliationRelationEntity = jaxb2JpaAdapter.getNewOrgAffiliationRelationEntity(updatedAffiliation, profileEntity);
             orgAffilationRelationDao.persist(orgAffiliationRelationEntity);
         }
-        removeFromCache(orcid);
+        orcidProfileCacheManager.remove(orcid);
     }
 
     private void dedupeFundings(OrcidProfile orcidProfile) {
@@ -1910,7 +1830,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                 }
             }
         }
-        removeFromCache(orcid);
+        orcidProfileCacheManager.remove(orcid);
     }
 
     @Override
@@ -1986,7 +1906,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         profileDao.remove(profileEntity);
         profileDao.flush();
         orcidIndexManager.deleteOrcidProfile(orcid);
-        removeFromCache(orcid);
+        orcidProfileCacheManager.remove(orcid);
         // There seems to be a Hibernate problem relating
         // OrcidOauth2TokenDetail, when getting and deleting in same
         // transaction. So not possible to return deleted profile, and probably
@@ -2036,12 +1956,15 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                 } catch (InterruptedException e) {
                     orcidFailures.add(orcid);
                     LOG.error(orcid + " InterruptedException ", e);
+                    profileDao.updateIndexingStatus(orcid, IndexingStatus.FAILED);
                 } catch (ExecutionException e) {
                     orcidFailures.add(orcid);
                     LOG.error(orcid + " ExecutionException ", e);
+                    profileDao.updateIndexingStatus(orcid, IndexingStatus.FAILED);
                 } catch (TimeoutException e) {
                     orcidFailures.add(orcid);
                     LOG.error(orcid + " TimeoutException ", e);
+                    profileDao.updateIndexingStatus(orcid, IndexingStatus.FAILED);
                 }
             }
         } while (!orcidsForIndexing.isEmpty());
@@ -2252,35 +2175,13 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         return profileDao.updateLastModifiedDate(orcid);
     }
 
-    private Element getFromCache(String orcid) {
-        Element element = profileCache.get(createCacheKey(orcid));
-        return element;
-    }
-
-    private OrcidProfile getOrcidProfileFromCache(String orcid) {
-        Element element = profileCache.get(createCacheKey(orcid));
+    static public OrcidProfile toOrcidProfile(Element element) {
         return (OrcidProfile) (element != null ? element.getObjectValue() : null);
-    }
-
-    private void putInCache(OrcidProfile orcidProfile) {
-        putInCache(orcidProfile.getOrcidIdentifier().getPath(), orcidProfile);
-    }
-
-    private void putInCache(String orcid, OrcidProfile orcidProfile) {
-        profileCache.put(new Element(createCacheKey(orcid), orcidProfile));
-    }
-
-    private void removeFromCache(String orcid) {
-        profileCache.remove(createCacheKey(orcid));
-    }
-
-    private Object createCacheKey(String orcid) {
-        return new OrcidCacheKey(orcid, releaseName);
     }
 
     @Override
     public void clearOrcidProfileCache() {
-        profileCache.removeAll();
+        orcidProfileCacheManager.removeAll();
     }
 
     public void addLocale(OrcidProfile orcidProfile, Locale locale) {

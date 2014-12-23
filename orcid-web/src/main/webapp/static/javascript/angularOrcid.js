@@ -1478,7 +1478,7 @@ function isEmail(email) {
     return re.test(email);
 }
 
-function EditTableCtrl($scope) {
+orcidNgModule.controller('EditTableCtrl', ['$scope', function ($scope) {
 
     // email edit row
     $scope.emailUpdateToggleText = function () {
@@ -1612,19 +1612,19 @@ function EditTableCtrl($scope) {
     //init social networks row
     $scope.showEditSocialSettings = (window.location.hash === "#editSocialNetworks");
     $scope.socialNetworksUpdateToggleText();
-};
+}]);
 
-function NotificationPreferencesCtrl($scope, $compile, emailSrvc, prefsSrvc, emailSrvc) {
+orcidNgModule.controller('NotificationPreferencesCtrl',['$scope', '$compile', 'emailSrvc', 'prefsSrvc', 'emailSrvc',function ($scope, $compile, emailSrvc, prefsSrvc, emailSrvc) {
     $scope.prefsSrvc = prefsSrvc;
     $scope.emailSrvc = emailSrvc;
-};
+}]);
 
-function EmailFrequencyCtrl($scope, $compile, emailSrvc, prefsSrvc, emailSrvc) {
+orcidNgModule.controller('EmailFrequencyCtrl',['$scope', '$compile', 'emailSrvc', 'prefsSrvc', 'emailSrvc', function ($scope, $compile, emailSrvc, prefsSrvc, emailSrvc) {
     $scope.prefsSrvc = prefsSrvc;
     $scope.emailSrvc = emailSrvc;
-};
+}]);
 
-function WorksPrivacyPreferencesCtrl($scope, prefsSrvc) {
+orcidNgModule.controller('WorksPrivacyPreferencesCtrl',['$scope', 'prefsSrvc', function ($scope, prefsSrvc) {
     $scope.prefsSrvc = prefsSrvc;
     $scope.privacyHelp = {};
 
@@ -1637,15 +1637,15 @@ function WorksPrivacyPreferencesCtrl($scope, prefsSrvc) {
         $scope.prefsSrvc.prefs.activitiesVisibilityDefault.value = priv;
         $scope.prefsSrvc.savePrivacyPreferences();
     };
-};
+}]);
 
 
-function EmailPreferencesCtrl($scope, prefsSrvc) {
+orcidNgModule.controller('EmailPreferencesCtrl',['$scope', 'prefsSrvc', function ($scope, prefsSrvc) {
     $scope.prefsSrvc = prefsSrvc;
-};
+}]);
 
 
-function DeactivateAccountCtrl($scope, $compile) {
+orcidNgModule.controller('DeactivateAccountCtrl', ['$scope', '$compile', function ($scope, $compile) {
     $scope.sendDeactivateEmail = function() {
         orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Deactivate_Initiate', 'Website']);
         $.ajax({
@@ -1668,10 +1668,10 @@ function DeactivateAccountCtrl($scope, $compile) {
     $scope.closeModal = function() {
         $.colorbox.close();
     };
-};
+}]);
 
 
-function SecurityQuestionEditCtrl($scope, $compile) {
+orcidNgModule.controller('SecurityQuestionEditCtrl', ['$scope', '$compile', function ($scope, $compile) {
     $scope.errors=null;
     $scope.password=null;
 
@@ -1729,10 +1729,10 @@ function SecurityQuestionEditCtrl($scope, $compile) {
     $scope.closeModal = function() {
         $.colorbox.close();
     };
-};
+}]);
 
 
-function PasswordEditCtrl($scope, $http) {
+orcidNgModule.controller('PasswordEditCtrl', ['$scope', '$http', function ($scope, $http) {
     $scope.getChangePassword = function() {
         $.ajax({
             url: getBaseUri() + '/account/change-password.json',
@@ -1771,9 +1771,9 @@ function PasswordEditCtrl($scope, $http) {
             console.log("error with edit password");
         });
     };
-};
+}]);
 
-function EmailEditCtrl($scope, $compile, emailSrvc) {
+orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' ,function EmailEditCtrl($scope, $compile, emailSrvc) {
     $scope.emailSrvc = emailSrvc;
     $scope.privacyHelp = {};
     $scope.verifyEmailObject;
@@ -1856,11 +1856,11 @@ function EmailEditCtrl($scope, $compile, emailSrvc) {
         $.colorbox.resize();
     };
 
-};
+}]);
 
 
 
-function WebsitesCtrl($scope, $compile) {
+orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function WebsitesCtrl($scope, $compile) {
     $scope.showEdit = false;
     $scope.websitesForm = null;
     $scope.privacyHelp = false;
@@ -1940,9 +1940,9 @@ function WebsitesCtrl($scope, $compile) {
     };
 
     $scope.getWebsitesForm();
-};
+}]);
 
-function KeywordsCtrl($scope, $compile) {
+orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope, $compile) {
     $scope.showEdit = false;
     $scope.keywordsForm = null;
     $scope.privacyHelp = false;
@@ -2012,9 +2012,9 @@ function KeywordsCtrl($scope, $compile) {
     };
 
     $scope.getKeywordsForm();
-};
+}]);
 
-function NameCtrl($scope, $compile) {
+orcidNgModule.controller('NameCtrl', ['$scope', '$compile',function NameCtrl($scope, $compile) {
     $scope.showEdit = false;
     $scope.nameForm = null;
     $scope.privacyHelp = false;
@@ -2068,10 +2068,10 @@ function NameCtrl($scope, $compile) {
     };
 
     $scope.getNameForm();
-};
+}]);
 
 
-function OtherNamesCtrl($scope, $compile) {
+orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope, $compile) {
     $scope.showEdit = false;
     $scope.otherNamesForm = null;
     $scope.privacyHelp = false;
@@ -2140,9 +2140,9 @@ function OtherNamesCtrl($scope, $compile) {
     };
 
     $scope.getOtherNamesForm();
-};
+}]);
 
-function BiographyCtrl($scope, $compile) {
+orcidNgModule.controller('BiographyCtrl',['$scope', '$compile',function ($scope, $compile) {
     $scope.showEdit = false;
     $scope.biographyForm = null;
     $scope.lengthError = false;
@@ -2218,9 +2218,9 @@ function BiographyCtrl($scope, $compile) {
 
     $scope.getBiographyForm();
 
-};
+}]);
 
-function CountryCtrl($scope, $compile) {
+orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, $compile) {
     $scope.showEdit = false;
     $scope.countryForm = null;
     $scope.privacyHelp = false;
@@ -2282,10 +2282,10 @@ function CountryCtrl($scope, $compile) {
 
     $scope.getCountryForm();
 
-};
+}]);
 
 
-function ExternalIdentifierCtrl($scope, $compile){
+orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', function ($scope, $compile){
     $scope.getExternalIdentifiers = function(){
         $.ajax({
             url: getBaseUri() + '/my-orcid/externalIdentifiers.json',
@@ -2342,9 +2342,9 @@ function ExternalIdentifierCtrl($scope, $compile){
         $.colorbox.close();
     };
 
-};
+}]);
 
-function ResetPasswordCtrl($scope, $compile, commonSrvc) {
+orcidNgModule.controller('ResetPasswordCtrl', ['$scope', '$compile', 'commonSrvc',function ($scope, $compile, commonSrvc) {
     $scope.getResetPasswordForm = function(){
         $.ajax({
             url: getBaseUri() + '/password-reset.json',
@@ -2379,9 +2379,9 @@ function ResetPasswordCtrl($scope, $compile, commonSrvc) {
 
     //init
     $scope.getResetPasswordForm();
-}
+}]);
 
-function RegistrationCtrl($scope, $compile, commonSrvc) {
+orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc', function ($scope, $compile, commonSrvc) {
     $scope.privacyHelp = {};
 
     $scope.toggleClickPrivacyHelp = function(key) {
@@ -2569,10 +2569,10 @@ function RegistrationCtrl($scope, $compile, commonSrvc) {
     $scope.getRegister();
     //$scope.getDuplicates();
 
-};
+}]);
 
 
-function ClaimCtrl($scope, $compile, commonSrvc) {
+orcidNgModule.controller('ClaimCtrl', ['$scope', '$compile', 'commonSrvc', function ($scope, $compile, commonSrvc) {
     $scope.postingClaim = false;
     $scope.getClaim = function(){
         $.ajax({
@@ -2656,10 +2656,10 @@ function ClaimCtrl($scope, $compile, commonSrvc) {
     $scope.getClaim();
     //$scope.getDuplicates();
 
-};
+}]);
 
 
-function VerifyEmailCtrl($scope, $compile, emailSrvc) {
+orcidNgModule.controller('VerifyEmailCtrl', ['$scope', '$compile', 'emailSrvc', function ($scope, $compile, emailSrvc) {
     $scope.loading = true;
     $scope.getEmails = function() {
         $.ajax({
@@ -2746,10 +2746,10 @@ function VerifyEmailCtrl($scope, $compile, emailSrvc) {
 
     $scope.emailSent = false;
     $scope.getEmails();
-};
+}]);
 
 
-function ClaimThanks($scope, $compile) {
+orcidNgModule.controller('ClaimThanks', ['$scope', '$compile', function ($scope, $compile) {
     $scope.showThanks = function () {
         var colorboxHtml;
             if ($scope.sourceGrantReadWizard.url == null)
@@ -2798,16 +2798,16 @@ function ClaimThanks($scope, $compile) {
 
     $scope.getSourceGrantReadWizard();
 
-};
+}]);
 
-function PersonalInfoCtrl($scope, $compile, workspaceSrvc){
+orcidNgModule.controller('PersonalInfoCtrl', ['$scope', '$compile', 'workspaceSrvc',function ($scope, $compile, workspaceSrvc){
     $scope.displayInfo = workspaceSrvc.displayPersonalInfo;
     $scope.toggleDisplayInfo = function () {
         $scope.displayInfo = !$scope.displayInfo;
     };
-};
+}]);
 
-function WorkspaceSummaryCtrl($scope, $compile, affiliationsSrvc, fundingSrvc, worksSrvc, workspaceSrvc){
+orcidNgModule.controller('WorkspaceSummaryCtrl', ['$scope', '$compile', 'affiliationsSrvc', 'fundingSrvc', 'worksSrvc', 'workspaceSrvc',function ($scope, $compile, affiliationsSrvc, fundingSrvc, worksSrvc, workspaceSrvc){
     $scope.workspaceSrvc = workspaceSrvc;
     $scope.worksSrvc = worksSrvc;
     $scope.affiliationsSrvc = affiliationsSrvc;
@@ -2821,9 +2821,9 @@ function WorkspaceSummaryCtrl($scope, $compile, affiliationsSrvc, fundingSrvc, w
             return true;
         return false;
     };
-}
+}]);
 
-function PublicEduAffiliation($scope, $compile, $filter, workspaceSrvc , affiliationsSrvc){
+orcidNgModule.controller('PublicEduAffiliation', ['$scope', '$compile', '$filter', 'workspaceSrvc', 'affiliationsSrvc', function ($scope, $compile, $filter, workspaceSrvc , affiliationsSrvc){
     $scope.workspaceSrvc = workspaceSrvc;
     $scope.affiliationsSrvc = affiliationsSrvc;
     $scope.moreInfo = {};
@@ -2856,9 +2856,9 @@ function PublicEduAffiliation($scope, $compile, $filter, workspaceSrvc , affilia
         $scope.moreInfo[key]=false;
     };
 
-}
+}]);
 
-function PublicEmpAffiliation($scope, $compile, $filter, workspaceSrvc, affiliationsSrvc){
+orcidNgModule.controller('PublicEmpAffiliation', ['$scope', '$compile', '$filter', 'workspaceSrvc', 'affiliationsSrvc', function ($scope, $compile, $filter, workspaceSrvc, affiliationsSrvc){
     $scope.workspaceSrvc = workspaceSrvc;
     $scope.affiliationsSrvc = affiliationsSrvc;
     $scope.moreInfo = {};
@@ -2892,10 +2892,10 @@ function PublicEmpAffiliation($scope, $compile, $filter, workspaceSrvc, affiliat
 
     affiliationsSrvc.setIdsToAdd(orcidVar.affiliationIdsJson);
     affiliationsSrvc.addAffiliationToScope(orcidVar.orcidId +'/affiliations.json');
-}
+}]);
 
 
-function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceSrvc, commonSrvc){
+orcidNgModule.controller('AffiliationCtrl', ['$scope', '$compile', '$filter', 'affiliationsSrvc', 'workspaceSrvc', 'commonSrvc', function ($scope, $compile, $filter, affiliationsSrvc, workspaceSrvc, commonSrvc){
     $scope.affiliationsSrvc = affiliationsSrvc;
     $scope.workspaceSrvc = workspaceSrvc;
     $scope.editAffiliation;
@@ -3200,12 +3200,12 @@ function AffiliationCtrl($scope, $compile, $filter, affiliationsSrvc, workspaceS
     $scope.hideTooltip = function (element){    	
         $scope.showElement[element] = false;
     };
-}
+}]);
 
 /**
  * Fundings Controller
  * */
-function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc, commonSrvc) {
+orcidNgModule.controller('FundingCtrl',['$scope', '$compile', '$filter', 'fundingSrvc', 'workspaceSrvc', 'commonSrvc', function ($scope, $compile, $filter, fundingSrvc, workspaceSrvc, commonSrvc) {
     $scope.workspaceSrvc = workspaceSrvc;
     $scope.fundingSrvc = fundingSrvc;
     $scope.addingFunding = false;
@@ -3693,12 +3693,12 @@ function FundingCtrl($scope, $compile, $filter, fundingSrvc, workspaceSrvc, comm
             return true;
         return false;
     };
-}
+}]);
 
 /**
  * Public Funding Controller
  * */
-function PublicFundingCtrl($scope, $compile, $filter, workspaceSrvc, fundingSrvc){
+orcidNgModule.controller('PublicFundingCtrl',['$scope', '$compile', '$filter', 'workspaceSrvc', 'fundingSrvc', function ($scope, $compile, $filter, workspaceSrvc, fundingSrvc){
     $scope.fundingSrvc = fundingSrvc;
     $scope.workspaceSrvc = workspaceSrvc;
     $scope.moreInfo = {};
@@ -3752,9 +3752,9 @@ function PublicFundingCtrl($scope, $compile, $filter, workspaceSrvc, fundingSrvc
         $scope.showElement[key] = false;
     };
 
-}
+}]);
 
-function PublicWorkCtrl($scope, $compile, $filter, workspaceSrvc, worksSrvc) {
+orcidNgModule.controller('PublicWorkCtrl',['$scope', '$compile', '$filter', 'workspaceSrvc', 'worksSrvc',function ($scope, $compile, $filter, workspaceSrvc, worksSrvc) {
     $scope.worksSrvc = worksSrvc;
     $scope.workspaceSrvc = workspaceSrvc;
     $scope.showBibtex = {};
@@ -3854,9 +3854,10 @@ function PublicWorkCtrl($scope, $compile, $filter, workspaceSrvc, worksSrvc) {
         $scope.showElement[element] = false;
     };
 
-}
+}]);
 
-function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actBulkSrvc, commonSrvc, $timeout) {
+orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrvc', 'workspaceSrvc', 'actBulkSrvc', 'commonSrvc', '$timeout', 
+                                      function ($scope, $compile, $filter, worksSrvc, workspaceSrvc, actBulkSrvc, commonSrvc, $timeout) {
     actBulkSrvc.initScope($scope);
     $scope.canReadFiles = false;
     $scope.showBibtexImportWizard = false;
@@ -4427,9 +4428,9 @@ function WorkCtrl($scope, $compile, $filter, worksSrvc, workspaceSrvc, actBulkSr
     	    angular.element('#inputBibtex').trigger('click');
     	}, 0);
     }
-}
+}]);
 
-function SearchCtrl($scope, $compile){
+orcidNgModule.controller('SearchCtrl',['$scope', '$compile', function ($scope, $compile){
     $scope.hasErrors = false;
     $scope.results = new Array();
     $scope.numFound = 0;
@@ -4531,10 +4532,10 @@ function SearchCtrl($scope, $compile){
         $('#ajax-loader').show();
         $scope.getResults();
     }
-};
+}]);
 
 // Controller for delegate permissions that have been granted BY the current user
-function DelegatesCtrl($scope, $compile){
+orcidNgModule.controller('DelegatesCtrl',['$scope', '$compile', function DelegatesCtrl($scope, $compile){
     $scope.results = new Array();
     $scope.numFound = 0;
     $scope.input = {};
@@ -4809,10 +4810,10 @@ function DelegatesCtrl($scope, $compile){
     // init
     $scope.getDelegates();
 
-};
+}]);
 
 // Controller for delegate permissions that have been granted TO the current user
-function DelegatorsCtrl($scope, $compile){
+orcidNgModule.controller('DelegatorsCtrl',['$scope', '$compile', function ($scope, $compile){
 
     $scope.sort = {
             column: 'delegateSummary.creditName.content',
@@ -4875,10 +4876,10 @@ function DelegatorsCtrl($scope, $compile){
     // init
     $scope.getDelegators();
 
-};
+}]);
 
 // Controller for notifications
-function NotificationsCtrl($scope, $compile, notificationsSrvc){
+orcidNgModule.controller('NotificationsCtrl',['$scope', '$compile', 'notificationsSrvc', function ($scope, $compile, notificationsSrvc){
     $scope.displayBody = {};
 
     $scope.toggleDisplayBody = function (notificationId) {
@@ -4890,15 +4891,15 @@ function NotificationsCtrl($scope, $compile, notificationsSrvc){
     $scope.showMore = notificationsSrvc.showMore;
     $scope.areMore = notificationsSrvc.areMore;
     $scope.archive = notificationsSrvc.archive;
-};
+}]);
 
 // Controller to show alert for unread notifications
-function NotificationsAlertCtrl($scope, $compile, notificationsSrvc){
+orcidNgModule.controller('NotificationsAlertCtrl',['$scope', '$compile', 'notificationsSrvc', function ($scope, $compile, notificationsSrvc){
     $scope.getUnreadCount = notificationsSrvc.getUnreadCount;
     notificationsSrvc.retrieveUnreadCount();
-};
+}]);
 
-function SwitchUserCtrl($scope, $compile, $document){
+orcidNgModule.controller('SwitchUserCtrl',['$scope', '$compile', '$document', function ($scope, $compile, $document){
     $scope.isDroppedDown = false;
     $scope.searchResultsCache = new Object();
 
@@ -4970,9 +4971,9 @@ function SwitchUserCtrl($scope, $compile, $document){
 
     // init
     $scope.getDelegates();
-};
+}]);
 
-function statisticCtrl($scope){
+orcidNgModule.controller('statisticCtrl',['$scope', function ($scope){
     $scope.liveIds = 0;
     $scope.getLiveIds = function(){
         $.ajax({
@@ -4990,9 +4991,9 @@ function statisticCtrl($scope){
     };
 
     $scope.getLiveIds();
-};
+}]);
 
-function languageCtrl($scope, $cookies) {
+orcidNgModule.controller('languageCtrl',['$scope', '$cookies', function ($scope, $cookies) {
     var productionLangList =
         [
             {
@@ -5111,9 +5112,9 @@ function languageCtrl($scope, $cookies) {
             console.log("Error setting up language cookie");
         });
     };
-};
+}]);
 
-function adminVerifyEmailCtrl($scope,$compile){
+orcidNgModule.controller('adminVerifyEmailCtrl',['$scope','$compile', function ($scope,$compile){
     $scope.showSection = false;
 
     $scope.toggleSection = function(){
@@ -5136,9 +5137,9 @@ function adminVerifyEmailCtrl($scope,$compile){
             console.log("Error verifying the email address");
         });
     };
-};
+}]);
 
-function profileDeactivationAndReactivationCtrl($scope,$compile){
+orcidNgModule.controller('profileDeactivationAndReactivationCtrl',['$scope', '$compile', function ($scope,$compile){
     $scope.orcidToDeactivate = null;
     $scope.orcidToReactivate = null;
     $scope.deactivatedAccount = null;
@@ -5270,9 +5271,9 @@ function profileDeactivationAndReactivationCtrl($scope,$compile){
     $scope.closeModal = function() {
         $.colorbox.close();
     };
-};
+}]);
 
-function profileDeprecationCtrl($scope,$compile){
+orcidNgModule.controller('profileDeprecationCtrl',['$scope','$compile', function profileDeprecationCtrl($scope,$compile){
     $scope.deprecated_verified = false;
     $scope.primary_verified = false;
     $scope.deprecatedAccount = null;
@@ -5461,9 +5462,9 @@ function profileDeprecationCtrl($scope,$compile){
     $scope.closeModal = function() {
         $.colorbox.close();
     };
-};
+}]);
 
-function revokeApplicationFormCtrl($scope,$compile){
+orcidNgModule.controller('revokeApplicationFormCtrl',['$scope', '$compile', function ($scope,$compile){
     $scope.confirmRevoke = function(appName, appGroupName, appIndex){
         $scope.appName = appName;
         $scope.appIndex = appIndex;
@@ -5488,12 +5489,12 @@ function revokeApplicationFormCtrl($scope,$compile){
     $scope.closeModal = function() {
         $.colorbox.close();
     };
-};
+}]);
 
 /**
  * Manage members controller
  * */
-function manageMembersCtrl($scope, $compile) {
+orcidNgModule.controller('manageMembersCtrl',['$scope', '$compile', function manageMembersCtrl($scope, $compile) {
     $scope.showEditClientModal = false;
     $scope.showEditMemberModal = false;
     $scope.success_message = null;
@@ -5768,9 +5769,9 @@ function manageMembersCtrl($scope, $compile) {
     $scope.closeModal = function() {
         $.colorbox.close();
     };
-};
+}]);
 
-function findIdsCtrl($scope,$compile){
+orcidNgModule.controller('findIdsCtrl',['$scope','$compile', function findIdsCtrl($scope,$compile){
     $scope.emails = "";
     $scope.emailIdsMap = {};
     $scope.showSection = false;
@@ -5818,9 +5819,9 @@ function findIdsCtrl($scope,$compile){
     $scope.closeModal = function() {
         $.colorbox.close();
     };
-};
+}]);
 
-function resetPasswordCtrl($scope,$compile) {
+orcidNgModule.controller('resetPasswordCtrl',['$scope', '$compile', function ($scope,$compile) {
     $scope.showSection = false;
     $scope.params = {orcidOrEmail:'',password:''};
     $scope.result = '';
@@ -5892,9 +5893,9 @@ function resetPasswordCtrl($scope,$compile) {
         $scope.result= '';
         $.colorbox.close();
     };
-};
+}]);
 
-function removeSecQuestionCtrl($scope,$compile) {
+orcidNgModule.controller('removeSecQuestionCtrl',['$scope','$compile', function ($scope,$compile) {
     $scope.showSection = false;
     $scope.orcidOrEmail = '';
     $scope.result= '';
@@ -5944,9 +5945,9 @@ function removeSecQuestionCtrl($scope,$compile) {
         $scope.result= '';
         $.colorbox.close();
     };
-};
+}]);
 
-function SSOPreferencesCtrl($scope, $compile, $sce, emailSrvc) {
+orcidNgModule.controller('SSOPreferencesCtrl',['$scope', '$compile', '$sce', 'emailSrvc', function ($scope, $compile, $sce, emailSrvc) {
     $scope.noCredentialsYet = true;
     $scope.userCredentials = null;
     $scope.editing = false;
@@ -6353,9 +6354,9 @@ function SSOPreferencesCtrl($scope, $compile, $sce, emailSrvc) {
         $scope.nameToDisplay = $sce.trustAsHtml($scope.userCredentials.clientName.value);
         $scope.descriptionToDisplay = $sce.trustAsHtml($scope.userCredentials.clientDescription.value);
     };
-};
+}]);
 
-function ClientEditCtrl($scope, $compile){
+orcidNgModule.controller('ClientEditCtrl',['$scope', '$compile', function ($scope, $compile){
     $scope.clients = [];
     $scope.newClient = null;
     $scope.scopeSelectorOpen = false;
@@ -6802,9 +6803,9 @@ function ClientEditCtrl($scope, $compile){
     $scope.closeModal = function(){
         $.colorbox.close();
     };
-};
+}]);
 
-function CustomEmailCtrl($scope, $compile) {
+orcidNgModule.controller('CustomEmailCtrl',['$scope', '$compile',function ($scope, $compile) {
     $scope.customEmail = null;
     $scope.editedCustomEmail = null;
     $scope.customEmailList = [];
@@ -6964,9 +6965,9 @@ function CustomEmailCtrl($scope, $compile) {
     $scope.closeModal = function(){
         $.colorbox.close();
     };
-};
+}]);
 
-function switchUserCtrl($scope,$compile){
+orcidNgModule.controller('switchUserCtrl',['$scope','$compile',function ($scope,$compile){
     $scope.emails = "";
     $scope.orcidOrEmail = "";
     $scope.showSection = false;
@@ -6976,9 +6977,9 @@ function switchUserCtrl($scope,$compile){
         $('#switch_user_section').toggle();
     };
 
-};
+}]);
 
-function SocialNetworksCtrl($scope){
+orcidNgModule.controller('SocialNetworksCtrl',['$scope',function ($scope){
     $scope.twitter=false;
 
     $scope.checkTwitterStatus = function(){
@@ -7036,9 +7037,9 @@ function SocialNetworksCtrl($scope){
 
     //init
     $scope.checkTwitterStatus();
-};
+}]);
 
-function adminDelegatesCtrl($scope){
+orcidNgModule.controller('adminDelegatesCtrl',['$scope',function ($scope){
     $scope.showSection = false;
     $scope.managed_verified = false;
     $scope.trusted_verified = false;
@@ -7102,9 +7103,9 @@ function adminDelegatesCtrl($scope){
                 console.log("Error getting delegates request");
             });
     };
-};
+}]);
 
-function OauthAuthorizationController($scope, $compile, $sce, commonSrvc){
+orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '$sce', 'commonSrvc',function ($scope, $compile, $sce, commonSrvc){
     $scope.showClientDescription = false;
     $scope.showRegisterForm = true;
     $scope.isOrcidPresent = false;
@@ -7477,7 +7478,7 @@ function OauthAuthorizationController($scope, $compile, $sce, commonSrvc){
     $scope.toggleLongDescription = function(orcid_scope) {
         $scope.showLongDescription[orcid_scope] = !$scope.showLongDescription[orcid_scope];
     }
-};
+}]);
 
 
 /*Angular Multi-selectbox*/
@@ -7709,48 +7710,4 @@ angular.module('ui.multiselect', [])
           }
         }
       };
-    }])
-
-  .directive('multiselectPopup', ['$compile','$document','$templateCache', function ($compile, $document, $templateCache) {
-    return {
-      restrict: 'E',
-      scope: false,
-      replace: true,
-      template: $templateCache.get('multiselect'),
-      link: function (scope, element, attrs) {
-
-        scope.isVisible = false;
-
-        scope.toggleSelect = function () {
-          if (element.hasClass('open')) {
-            element.removeClass('open');
-            $document.unbind('click', clickHandler);
-          } else {
-            element.addClass('open');
-            $document.bind('click', clickHandler);
-            scope.focus();
-          }
-        };
-
-        function clickHandler(event) {
-          if (elementMatchesAnyInArray(event.target, element.find(event.target.tagName)))
-            return;
-          element.removeClass('open');
-          $document.unbind('click', clickHandler);
-          scope.$apply();
-        }
-
-        scope.focus = function focus(){
-          var searchBox = element.find('input')[0];
-          searchBox.focus();
-        }
-
-        var elementMatchesAnyInArray = function (element, elementArray) {
-          for (var i = 0; i < elementArray.length; i++)
-            if (element == elementArray[i])
-              return true;
-          return false;
-        }
-      }
-    }
-  }]);
+    }]);

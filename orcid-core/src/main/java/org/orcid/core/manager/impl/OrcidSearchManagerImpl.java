@@ -16,6 +16,9 @@
  */
 package org.orcid.core.manager.impl;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -24,6 +27,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.orcid.core.exception.OrcidSearchException;
+import org.orcid.core.manager.OrcidProfileCacheManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.jaxb.model.message.Funding;
@@ -38,12 +42,24 @@ import org.orcid.jaxb.model.message.RelevancyScore;
 import org.orcid.persistence.dao.SolrDao;
 import org.orcid.persistence.solr.entities.OrcidSolrResult;
 import org.orcid.persistence.solr.entities.OrcidSolrResults;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.NonTransientDataAccessResourceException;
 
 public class OrcidSearchManagerImpl implements OrcidSearchManager {
 
+    @Value("${org.orcid.core.public_caching_source:SOLR}")
+    private String cachingSource;
+
     @Resource
     private SolrDao solrDao;
+
+    @SuppressWarnings("unused")
+    private static String SOLR = "SOLR";
+
+    private static String DB = "DB";
+
+    @Resource
+    private OrcidProfileCacheManager orcidProfileCacheManager;
 
     @Resource
     private OrcidProfileManager orcidProfileManager;
@@ -85,13 +101,21 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
 
         List<OrcidSearchResult> orcidSearchResults = new ArrayList<OrcidSearchResult>();
         for (OrcidSolrResult solrResult : solrResults) {
+            OrcidMessage orcidMessage = null;
+            String orcid = solrResult.getOrcid();
+            try (Reader reader = solrDao.findByOrcidAsReader(orcid)) {
+                if (reader != null) {
+                    BufferedReader br = new BufferedReader(reader);
+                    orcidMessage = OrcidMessage.unmarshall(br);
+                }
+            } catch (IOException e) {
+                throw new OrcidSearchException("Error closing record stream from solr search results for orcid: " + orcid, e);
+            }
             OrcidProfile orcidProfile = null;
-            String orcidMessageString = solrResult.getPublicProfileMessage();
-            if (orcidMessageString == null) {
+            if (orcidMessage == null) {
                 // Fall back to DB
-                orcidProfile = orcidProfileManager.retrieveClaimedOrcidProfile(solrResult.getOrcid());
+                orcidProfile = orcidProfileManager.retrieveClaimedOrcidProfile(orcid);
             } else {
-                OrcidMessage orcidMessage = OrcidMessage.unmarshall(orcidMessageString);
                 orcidProfile = orcidMessage.getOrcidProfile();
             }
             if (orcidProfile != null) {
@@ -139,19 +163,29 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
 
     @Override
     public OrcidMessage findPublicProfileById(String orcid) {
+        OrcidMessage om = null;
         try {
-            OrcidSolrResult indexedOrcid = solrDao.findByOrcid(orcid);
-            if (indexedOrcid == null) {
-                return null;
+            if (cachingSource.equals(DB)) {
+                OrcidProfile orcidProfile = orcidProfileCacheManager.retrievePublic(orcid);
+                orcidProfile.setOrcidInternal(null);
+                om = new OrcidMessage();
+                om.setOrcidProfile(orcidProfile);
+            } else {
+                try (Reader reader = solrDao.findByOrcidAsReader(orcid)) {
+                    if (reader != null) {
+                        BufferedReader br = new BufferedReader(reader);
+                        om = OrcidMessage.unmarshall(br);
+                    }
+                }
             }
-            String publicProfileMessage = indexedOrcid.getPublicProfileMessage();
-            if (publicProfileMessage == null) {
-                throw new OrcidSearchException("Found document in index, but no public profile in document for orcid=" + orcid);
-            }
-            return OrcidMessage.unmarshall(publicProfileMessage);
         } catch (NonTransientDataAccessResourceException e) {
-            throw new OrcidSearchException("Error searching by id", e);
+            throw new OrcidSearchException("Error searching by id: " + orcid, e);
+        } catch (IOException e) {
+            throw new OrcidSearchException("Error closing stream for id: " + orcid, e);
         }
+        if (om == null)
+            throw new OrcidSearchException("Result is null");
+        return om;
     }
 
     @Override
@@ -169,7 +203,6 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
         if (indexedOrcids != null && !indexedOrcids.isEmpty()) {
             List<OrcidSearchResult> orcidSearchResults = buildSearchResultsFromPublicProfileInSolr(indexedOrcids);
             searchResults.getOrcidSearchResult().addAll(orcidSearchResults);
-
         }
         orcidMessage.setOrcidSearchResults(searchResults);
         return orcidMessage;

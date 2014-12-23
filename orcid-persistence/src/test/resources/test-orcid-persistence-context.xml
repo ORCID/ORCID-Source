@@ -41,6 +41,7 @@
 	</bean>
 	
 	<alias name="solrServer" alias="solrServerReadOnly"/>
+	<alias name="solrServer" alias="solrServerForStreaming"/>
 	<alias name="orgDisambiguatedSolrServer" alias="orgDisambiguatedSolrServerReadOnly"/>
 
 </beans>

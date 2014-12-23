@@ -16,6 +16,7 @@
  */
 package org.orcid.persistence.dao.impl;
 
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
@@ -180,4 +181,21 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
         return query.executeUpdate() > 0 ? true : false;
     }
 
+    @Override
+    @SuppressWarnings("unchecked")    
+    public List<BigInteger> findFundingNeedingExternalIdentifiersMigration(int chunkSize) {
+        Query query = entityManager.createNativeQuery("SELECT id FROM profile_funding WHERE id IN (SELECT profile_funding_id FROM funding_external_identifier) AND external_identifiers_json IS NULL LIMIT :chunkSize");
+        query.setParameter("chunkSize", chunkSize);                
+        List<BigInteger> results = query.getResultList();        
+        return results;
+    }
+    
+    @Override
+    @Transactional
+    public void setFundingExternalIdentifiersInJson(BigInteger id, String extIdsJson) {
+        Query query = entityManager.createNativeQuery("UPDATE profile_funding SET external_identifiers_json=:extIdsJson WHERE id=:id");
+        query.setParameter("id", id);
+        query.setParameter("extIdsJson", extIdsJson);
+        query.executeUpdate();
+    }
 }

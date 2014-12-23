@@ -38,7 +38,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.constants.DefaultPreferences;
 import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
@@ -61,14 +60,12 @@ import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.ExternalIdCommonName;
 import org.orcid.jaxb.model.message.ExternalIdReference;
-import org.orcid.jaxb.model.message.ExternalIdSource;
 import org.orcid.jaxb.model.message.ExternalIdUrl;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.FamilyName;
 import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingContributors;
-import org.orcid.jaxb.model.message.FundingExternalIdentifier;
 import org.orcid.jaxb.model.message.FundingExternalIdentifiers;
 import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.FundingTitle;
@@ -98,12 +95,10 @@ import org.orcid.jaxb.model.message.ResearcherUrl;
 import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.jaxb.model.message.SecurityDetails;
 import org.orcid.jaxb.model.message.Source;
-import org.orcid.jaxb.model.message.SourceReference;
 import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.jaxb.model.message.TranslatedTitle;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkContributors;
-import org.orcid.jaxb.model.message.WorkExternalIdentifier;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.message.WorkSource;
 import org.orcid.jaxb.model.message.WorkTitle;
@@ -115,7 +110,6 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
-import org.orcid.persistence.jpa.entities.FundingExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
@@ -131,8 +125,6 @@ import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
-import org.orcid.persistence.jpa.entities.WorkExternalIdentifierEntity;
-import org.orcid.persistence.jpa.entities.keys.WorkExternalIdentifierEntityPk;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.OrcidStringUtils;
@@ -321,64 +313,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         }
         return null;
     }
-
-    /**
-     * Old, non-json way of doing work external identifiers
-     */
-    private SortedSet<WorkExternalIdentifierEntity> getWorkExternalIdentifiers(WorkEntity workEntity, WorkExternalIdentifiers workExternalIdentifiers) {
-        SortedSet<WorkExternalIdentifierEntity> existingWorkExternalIdentifierEntities = workEntity.getExternalIdentifiers();
-        Map<WorkExternalIdentifierEntityPk, WorkExternalIdentifierEntity> existingWorkExternalIdentifierEntitiesMap = createWorkExternalIdentifierEntitiesMap(existingWorkExternalIdentifierEntities);
-        SortedSet<WorkExternalIdentifierEntity> workExternalIdentifierEntities = null;
-        if (existingWorkExternalIdentifierEntities == null) {
-            workExternalIdentifierEntities = new TreeSet<WorkExternalIdentifierEntity>();
-        } else {
-            // To allow for orphan deletion
-            existingWorkExternalIdentifierEntities.clear();
-            workExternalIdentifierEntities = existingWorkExternalIdentifierEntities;
-        }
-        if (workExternalIdentifiers != null && workExternalIdentifiers.getWorkExternalIdentifier() != null
-                && !workExternalIdentifiers.getWorkExternalIdentifier().isEmpty()) {
-            List<WorkExternalIdentifier> workExternalIdentifierList = workExternalIdentifiers.getWorkExternalIdentifier();
-            for (WorkExternalIdentifier workExternalIdentifier : workExternalIdentifierList) {
-                WorkExternalIdentifierEntity existingWorkExternalIdentifierEntity = null;
-                if (workEntity.getId() != null) {
-                    existingWorkExternalIdentifierEntity = existingWorkExternalIdentifierEntitiesMap.get(new WorkExternalIdentifierEntityPk(workExternalIdentifier
-                            .getWorkExternalIdentifierId().getContent(), workExternalIdentifier.getWorkExternalIdentifierType(), workEntity.getId()));
-                }
-                WorkExternalIdentifierEntity workExternalIdentifierEntity = getWorkExternalIdentifier(workEntity, workExternalIdentifier,
-                        existingWorkExternalIdentifierEntity);
-                workExternalIdentifierEntities.add(workExternalIdentifierEntity);
-            }
-        }
-        return workExternalIdentifierEntities;
-    }
-
-    private WorkExternalIdentifierEntity getWorkExternalIdentifier(WorkEntity workEntity, WorkExternalIdentifier workExternalIdentifier,
-            WorkExternalIdentifierEntity existingWorkExternalIdentifierEntity) {
-        WorkExternalIdentifierEntity workExternalIdentifierEntity = null;
-        if (existingWorkExternalIdentifierEntity == null) {
-            workExternalIdentifierEntity = new WorkExternalIdentifierEntity();
-        } else {
-            workExternalIdentifierEntity = existingWorkExternalIdentifierEntity;
-        }
-        workExternalIdentifierEntity.setIdentifier(workExternalIdentifier.getWorkExternalIdentifierId() != null ? workExternalIdentifier.getWorkExternalIdentifierId()
-                .getContent() : null);
-        workExternalIdentifierEntity.setIdentifierType(workExternalIdentifier.getWorkExternalIdentifierType());
-        workExternalIdentifierEntity.setWork(workEntity);
-        return workExternalIdentifierEntity;
-    }
-
-    private Map<WorkExternalIdentifierEntityPk, WorkExternalIdentifierEntity> createWorkExternalIdentifierEntitiesMap(
-            SortedSet<WorkExternalIdentifierEntity> workExternalIdentifierEntities) {
-        Map<WorkExternalIdentifierEntityPk, WorkExternalIdentifierEntity> map = new HashMap<>();
-        if (workExternalIdentifierEntities != null) {
-            for (WorkExternalIdentifierEntity workExternalIdentifierEntity : workExternalIdentifierEntities) {
-                map.put(workExternalIdentifierEntity.getId(), workExternalIdentifierEntity);
-            }
-        }
-        return map;
-    }
-
+    
     private PublicationDateEntity getWorkPublicationDate(OrcidWork orcidWork) {
         if (orcidWork != null && orcidWork.getPublicationDate() != null) {
             PublicationDate publicationDate = orcidWork.getPublicationDate();
@@ -1035,7 +970,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             profileFundingEntity.setContributorsJson(getFundingContributorsJson(funding.getFundingContributors()));
             profileFundingEntity.setDescription(StringUtils.isNotBlank(funding.getDescription()) ? funding.getDescription() : null);
             profileFundingEntity.setEndDate(endDate != null ? new EndDateEntity(endDate) : null);
-            profileFundingEntity.setExternalIdentifiers(getGrantExternalIdentifiers(profileFundingEntity, funding.getFundingExternalIdentifiers()));
+            profileFundingEntity.setExternalIdentifiersJson(getFundingExternalIdentifiersJson(funding.getFundingExternalIdentifiers()));
             profileFundingEntity.setStartDate(startDate != null ? new StartDateEntity(startDate) : null);
 
             FundingTitle fundingTitle = funding.getTitle();
@@ -1071,6 +1006,19 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         }
         return null;
     }
+    
+    /**
+     * Transforms the list of external identifiers into a json object
+     * @param fundingExternalIdentifiers
+     * @return a json string containig the external identifiers
+     * */
+    private String getFundingExternalIdentifiersJson(FundingExternalIdentifiers fundingExternalIdentifiers) {
+        if (fundingExternalIdentifiers == null) {
+            return null;
+        }
+        return JsonUtils.convertToJsonString(fundingExternalIdentifiers);
+    }
+    
 
     /**
      * Transforms a string into a BigDecimal, it assumes the amount comes
@@ -1096,83 +1044,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         NumberFormat numberFormatExample = NumberFormat.getNumberInstance(locale);
         return numberFormatExample.format(example);
     }
-
-    /**
-     * Get a list of GrantExternalIdentifierEntity from the external identifiers
-     * 
-     * @param profileGrantEntity
-     * @param externalIdentifiers
-     * @return a list of GrantExternalIdentifierEntity based on the provided
-     *         OrcidGrantExternalIdentifiers
-     * */
-    private SortedSet<FundingExternalIdentifierEntity> getGrantExternalIdentifiers(ProfileFundingEntity profileFundingEntity,
-            FundingExternalIdentifiers externalIdentifiers) {
-
-        SortedSet<FundingExternalIdentifierEntity> existingExtIdEntities = profileFundingEntity.getExternalIdentifiers();
-        if (existingExtIdEntities == null) {
-            existingExtIdEntities = new TreeSet<>();
-        }
-        // Create a map containing the existing ext ids entities
-        Map<String, FundingExternalIdentifierEntity> existingExtIdsMap = createFundingExternalIdentiferEntitiesMap(existingExtIdEntities);
-        SortedSet<FundingExternalIdentifierEntity> updatedExtIdEntities = new TreeSet<>();
-        if (externalIdentifiers != null && !externalIdentifiers.getFundingExternalIdentifier().isEmpty()) {
-            for (FundingExternalIdentifier externalIdentifier : externalIdentifiers.getFundingExternalIdentifier()) {
-                FundingExternalIdentifierEntity extIdEntity = getFundingExternalIdentifierEntity(externalIdentifier,
-                        existingExtIdsMap.get(externalIdentifier.getPutCode()));
-                extIdEntity.setProfileFunding(profileFundingEntity);
-                updatedExtIdEntities.add(extIdEntity);
-            }
-        }
-        Map<String, FundingExternalIdentifierEntity> updatedExtIdEntitiesMap = createFundingExternalIdentiferEntitiesMap(updatedExtIdEntities);
-        // Remove orphans
-        for (Iterator<FundingExternalIdentifierEntity> iterator = existingExtIdEntities.iterator(); iterator.hasNext();) {
-            FundingExternalIdentifierEntity existingEntity = iterator.next();
-            if (!updatedExtIdEntitiesMap.containsKey(String.valueOf(existingEntity.getId()))) {
-                iterator.remove();
-            }
-        }
-        // Add new
-        for (FundingExternalIdentifierEntity updatedEntity : updatedExtIdEntities) {
-            if (updatedEntity.getId() == null) {
-                existingExtIdEntities.add(updatedEntity);
-            }
-        }
-        return existingExtIdEntities;
-    }
-
-    private FundingExternalIdentifierEntity getFundingExternalIdentifierEntity(FundingExternalIdentifier externalIdentifier,
-            FundingExternalIdentifierEntity existingFundingExternalIdentifierEntity) {
-        if (externalIdentifier != null) {
-            FundingExternalIdentifierEntity extIdEntity = null;
-            if (existingFundingExternalIdentifierEntity == null) {
-                String putCode = externalIdentifier.getPutCode();
-                if (StringUtils.isNotBlank(putCode) && !"-1".equals(putCode)) {
-                    throw new IllegalArgumentException("Invalid put-code was supplied for an funding external identifier: " + putCode);
-                }
-                extIdEntity = new FundingExternalIdentifierEntity();
-            } else {
-                extIdEntity = existingFundingExternalIdentifierEntity;
-                extIdEntity.clean();
-            }
-            extIdEntity.setType(externalIdentifier.getType() != null ? externalIdentifier.getType().value() : null);
-            extIdEntity.setValue(StringUtils.isNotEmpty(externalIdentifier.getValue()) ? externalIdentifier.getValue() : null);
-            if (externalIdentifier.getUrl() != null)
-                extIdEntity.setUrl(StringUtils.isNotEmpty(externalIdentifier.getUrl().getValue()) ? externalIdentifier.getUrl().getValue() : null);
-            return extIdEntity;
-        }
-        return null;
-    }
-
-    private Map<String, FundingExternalIdentifierEntity> createFundingExternalIdentiferEntitiesMap(SortedSet<FundingExternalIdentifierEntity> existingExtIdEntities) {
-        Map<String, FundingExternalIdentifierEntity> map = new HashMap<>();
-        if (existingExtIdEntities != null) {
-            for (FundingExternalIdentifierEntity extId : existingExtIdEntities) {
-                map.put(String.valueOf(extId.getId()), extId);
-            }
-        }
-        return map;
-    }
-
+        
     private OrgEntity getOrgEntity(Affiliation affiliation) {
         if (affiliation != null) {
             OrgEntity orgEntity = new OrgEntity();

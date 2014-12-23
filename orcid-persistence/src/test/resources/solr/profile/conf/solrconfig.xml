@@ -979,7 +979,7 @@
 	<queryResponseWriter name="xslt" class="solr.XSLTResponseWriter">
 		<int name="xsltCacheLifetimeSeconds">5</int>
 	</queryResponseWriter>
-
+	
 	<!-- Query Parsers http://wiki.apache.org/solr/SolrQuerySyntax Multiple 
 		QParserPlugins can be registered by name, and then used in either the "defType" 
 		param for the QueryComponent (used by SearchHandler) or in LocalParams -->
