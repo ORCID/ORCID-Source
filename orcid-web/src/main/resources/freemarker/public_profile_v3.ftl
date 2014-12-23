@@ -22,53 +22,111 @@
 <div class="row workspace-top public-profile">
     <div class="col-md-3 left-aside">
         <div class="workspace-left workspace-profile">
-            <h2 class="full-name">
-                <#if (profile.orcidBio.personalDetails.creditName.content)??>
-                    ${(profile.orcidBio.personalDetails.creditName.content)!}
-                <#else>
-                    ${(profile.orcidBio.personalDetails.givenNames.content)!} ${(profile.orcidBio.personalDetails.familyName.content)!}
-                </#if>
-            </h2>
-            <div class="oid">
-            	<p class="orcid-id-container">		
-	            	<span class="mini-orcid-icon"></span>
-	            	<a href="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" id="orcid-id" class="orcid-id" title="Click for public view of ORCID iD">${baseUriHttp}/${(profile.orcidIdentifier.path)!}</a>
-            	<p>
-            </div>            
-            <#if (profile.orcidBio.personalDetails.otherNames)?? && (profile.orcidBio.personalDetails.otherNames.otherName?size != 0)>
-                <p><strong>${springMacroRequestContext.getMessage("public_profile.labelAlsoknownas")}</strong><br />
-                  <#list profile.orcidBio.personalDetails.otherNames.otherName as otherName>
-                    ${otherName.content}<#if otherName_has_next><br /></#if>
-                  </#list>
-            </#if>
-            <#if (countryName)??>
-                <p><strong><@orcid.msg 'public_profile.labelCountry'/></strong>
-                ${(countryName)!}
-                </p>
-            </#if>
-            <#if (profile.orcidBio.keywords)?? && (profile.orcidBio.keywords.keyword?size != 0)>
-                <p><strong>${springMacroRequestContext.getMessage("public_profile.labelKeywords")}</strong> 
-                    <#list profile.orcidBio.keywords.keyword as keyword>
-                        ${keyword.content}<#if keyword_has_next>,</#if>
-                    </#list></p>
-            </#if>
-            <#if (profile.orcidBio.researcherUrls)?? && (profile.orcidBio.researcherUrls.researcherUrl?size != 0)>
-                <p><strong>${springMacroRequestContext.getMessage("public_profile.labelWebsites")}</strong><br/>
-                    <#list profile.orcidBio.researcherUrls.researcherUrl as url>
-                        <a href="<@orcid.absUrl url.url/>" target="_blank" rel="nofollow"><#if (url.urlName.content)! != "">${url.urlName.content}<#else>${url.url.value}</#if></a><#if url_has_next><br/></#if>
-                    </#list></p>
-            </#if>
-            <#if (profile.orcidBio.externalIdentifiers)?? && (profile.orcidBio.externalIdentifiers.externalIdentifier?size != 0)>
-                <p><strong>${springMacroRequestContext.getMessage("public_profile.labelOtherIDs")}</strong> <br/>
-                    <#list profile.orcidBio.externalIdentifiers.externalIdentifier as external>
-                        <#if (external.externalIdUrl.value)??>
-                            <a href="${external.externalIdUrl.value}" target="_blank">${(external.externalIdCommonName.content)!}: ${(external.externalIdReference.content)!}</a><#if external_has_next><br/></#if>
-                        <#else>
-                            ${(external.externalIdCommonName.content)!}: ${(external.externalIdReference.content)!}<#if external_has_next><br/></#if>
-                        </#if>    
-                    </#list>
-                </p>
-            </#if>
+        	<div class="id-banner">
+            
+	            <h2 class="full-name">
+	                <#if (profile.orcidBio.personalDetails.creditName.content)??>
+	                    ${(profile.orcidBio.personalDetails.creditName.content)!}
+	                <#else>
+	                    ${(profile.orcidBio.personalDetails.givenNames.content)!} ${(profile.orcidBio.personalDetails.familyName.content)!}
+	                </#if>
+	            </h2>
+	            
+	            
+	            
+	            <div class="oid">
+					<div class="id-banner-header">
+						<span>ORCID iD</span>
+					</div>
+					<div class="orcid-id-container">
+						<div class="orcid-id-info">
+					    	<span class="mini-orcid-icon"></span>
+					    	<!-- Reference: orcid.js:removeProtocolString() -->
+				       		<span data-uri="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" id="orcid-id" class="orcid-id shortURI"></span>
+						</div>
+						<@security.authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">
+							<div class="orcid-id-options">
+								<a href="<@spring.url '/my-orcid'/>" class="gray-button">Return to my view</a>
+							</div>
+						</@security.authorize>
+					</div>
+				</div>
+				
+				
+	                        
+	            <#if (profile.orcidBio.personalDetails.otherNames)?? && (profile.orcidBio.personalDetails.otherNames.otherName?size != 0)>
+	            	<div class="workspace-section">
+	            		<div class="workspace-section-header">
+	                		<span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelAlsoknownas")}</span>
+	                	</div>
+	                	<div>
+			                <#list profile.orcidBio.personalDetails.otherNames.otherName as otherName>
+			                	${otherName.content}<#if otherName_has_next></#if>
+			                </#list>
+		                </div>
+	                </div>
+	            </#if>
+	            
+	            
+	            
+	            <#if (countryName)??>
+	            	<div class="workspace-section">
+	            		<div class="workspace-section-header">
+	                		<span class="workspace-section-title"><@orcid.msg 'public_profile.labelCountry'/></span>
+	                		<div>
+	                			${(countryName)!}
+	                		</div>
+	                	</div>
+	                </div>
+	            </#if>
+	            
+	            
+	            
+	            <#if (profile.orcidBio.keywords)?? && (profile.orcidBio.keywords.keyword?size != 0)>
+		            <div class="workspace-section">
+	            		<div class="workspace-section-header">
+	                		<span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelKeywords")}</span>
+	                		<div> 
+	                    		<#list profile.orcidBio.keywords.keyword as keyword>
+	                        		${keyword.content}<#if keyword_has_next>,</#if>	                    
+                    			</#list>
+                        	</div>
+                        </div>
+                    </div>	                   
+	            </#if>
+	            
+	            
+	            <#if (profile.orcidBio.researcherUrls)?? && (profile.orcidBio.researcherUrls.researcherUrl?size != 0)>
+	           		<div class="workspace-section">
+	            		<div class="workspace-section-header">            
+			                <span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelWebsites")}</span>
+			                <div>
+			                    <#list profile.orcidBio.researcherUrls.researcherUrl as url>
+			                        <a href="<@orcid.absUrl url.url/>" target="_blank" rel="nofollow"><#if (url.urlName.content)! != "">${url.urlName.content}<#else>${url.url.value}</#if></a><#if url_has_next><br/></#if>
+			                    </#list>
+		                    </div>
+		                </div>
+                    </div>
+	            </#if>
+	            
+	            
+	            <#if (profile.orcidBio.externalIdentifiers)?? && (profile.orcidBio.externalIdentifiers.externalIdentifier?size != 0)>
+					<div class="workspace-section">
+	            		<div class="workspace-section-header">            
+			                <span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelOtherIDs")}</span>
+			                <div>
+			                    <#list profile.orcidBio.externalIdentifiers.externalIdentifier as external>
+			                        <#if (external.externalIdUrl.value)??>
+			                            <a href="${external.externalIdUrl.value}" target="_blank">${(external.externalIdCommonName.content)!}: ${(external.externalIdReference.content)!}</a><#if external_has_next><br/></#if>
+			                        <#else>
+			                            ${(external.externalIdCommonName.content)!}: ${(external.externalIdReference.content)!}<#if external_has_next><br/></#if>
+			                        </#if>    
+			                    </#list>
+		                    </div>
+		                 </div>
+		             </div>	                
+	            </#if>
+	        </div>
         </div>
     </div>
     
