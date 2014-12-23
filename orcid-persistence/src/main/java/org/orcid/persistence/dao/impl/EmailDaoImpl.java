@@ -81,22 +81,27 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
 
     @Override
     @Transactional
-    public void addEmail(String orcid, String email, Visibility visibility, String sourceOrcid) {
-        addEmail(orcid, email, visibility, sourceOrcid, false, false);
+    public void addEmail(String orcid, String email, Visibility visibility, String sourceId, String clientSourceId) {
+        addEmail(orcid, email, visibility, sourceId, clientSourceId, false, false);
     }
 
     @Override
     @Transactional
-    public void addEmail(String orcid, String email, Visibility visibility, String sourceOrcid, boolean isVerified, boolean isCurrent) {
-        Query query = entityManager
-                .createNativeQuery("INSERT INTO email (date_created, last_modified, orcid, email, is_primary, is_verified, is_current, visibility, source_id) VALUES (now(), now(), :orcid, :email, false, :isVerified, :isCurrent, :visibility, :sourceOrcid)");
-        query.setParameter("orcid", orcid);
-        query.setParameter("email", email);
-        query.setParameter("visibility", visibility.name());
-        query.setParameter("sourceOrcid", sourceOrcid);
-        query.setParameter("isVerified", isVerified);
-        query.setParameter("isCurrent", isCurrent);
-        query.executeUpdate();
+    public void addEmail(String orcid, String email, Visibility visibility, String sourceId, String clientSourceId, boolean isVerified, boolean isCurrent) {
+        try {
+            Query query = entityManager
+                    .createNativeQuery("INSERT INTO email (date_created, last_modified, orcid, email, is_primary, is_verified, is_current, visibility, source_id, client_source_id) VALUES (now(), now(), :orcid, :email, false, :isVerified, :isCurrent, :visibility, :sourceId, :clientSourceId)");
+            query.setParameter("orcid", orcid);
+            query.setParameter("email", email);
+            query.setParameter("visibility", visibility.name());
+            query.setParameter("sourceId", sourceId);
+            query.setParameter("clientSourceId", clientSourceId);
+            query.setParameter("isVerified", isVerified);
+            query.setParameter("isCurrent", isCurrent);
+            query.executeUpdate();
+        } catch(Exception psqle) {
+            throw psqle;
+        }
     }
 
     @Override

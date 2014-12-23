@@ -5425,6 +5425,7 @@ orcidNgModule.controller('profileDeprecationCtrl',['$scope','$compile', function
             dataType: 'json',
             success: function(data){
                 $scope.$apply(function(){
+                	console.log(angular.toJson(data));
                     if(data.errors.length != 0){
                         $scope.errors = data.errors;
                     } else {
@@ -5460,6 +5461,11 @@ orcidNgModule.controller('profileDeprecationCtrl',['$scope','$compile', function
     };
 
     $scope.closeModal = function() {
+    	$scope.deprecated_verified = false;
+        $scope.primary_verified = false;
+        $scope.deprecatedAccount = null;
+        $scope.primaryAccount = null;
+        $scope.showModal = false;    	
         $.colorbox.close();
     };
 }]);

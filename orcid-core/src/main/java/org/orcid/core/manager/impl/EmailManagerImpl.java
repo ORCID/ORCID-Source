@@ -50,13 +50,24 @@ public class EmailManagerImpl implements EmailManager {
     @Override
     @Transactional
     public void addEmail(String orcid, Email email) {
-        emailDao.addEmail(orcid, email.getValue(), email.getVisibility(), email.getSource());
+        emailDao.addEmail(orcid, email.getValue(), email.getVisibility(), email.getSource(), email.getSourceClientId());
     }
 
     @Override
     @Transactional
     public void addEmail(String orcid, EmailEntity email){
-    	emailDao.addEmail(orcid, email.getId(), email.getVisibility(), email.getSource() == null ? null : email.getSource().getSourceId(), email.getVerified(), email.getCurrent());
+        String sourceId = null;
+        String clientSourceId = null;
+        if(email.getSource() != null) {
+            if(email.getSource().getSourceProfile() != null) {
+                sourceId = email.getSource().getSourceProfile().getId();
+            }
+            if(email.getSource().getSourceClient() != null) {
+                clientSourceId = email.getSource().getSourceClient().getId();
+            }
+        }
+              
+    	emailDao.addEmail(orcid, email.getId(), email.getVisibility(), sourceId, clientSourceId, email.getVerified(), email.getCurrent());
     }
     
     @Override
@@ -88,6 +99,7 @@ public class EmailManagerImpl implements EmailManager {
     }
     
     @Override
+    @SuppressWarnings("rawtypes")
     public Map<String, String> findIdByEmail(String csvEmail) {
         Map<String, String> emailIds = new TreeMap<String, String>();
         List<String> emailList = new ArrayList<String>();

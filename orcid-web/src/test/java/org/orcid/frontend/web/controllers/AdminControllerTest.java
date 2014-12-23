@@ -132,7 +132,6 @@ public class AdminControllerTest extends BaseControllerTest {
     }
     
     @Test
-    @Transactional("transactionManager")
     public void testCheckOrcid() throws Exception {
         ProfileDetails profileDetails = adminController.checkOrcidToDeprecate("4444-4444-4444-4441");
         assertNotNull(profileDetails);
@@ -148,9 +147,8 @@ public class AdminControllerTest extends BaseControllerTest {
         assertEquals(adminController.getMessage("admin.profile_deprecation.errors.inexisting_orcid", "4444-4444-4444-4411"), profileDetails.getErrors().get(0));
     }
 
-    @Test
-    @Transactional("transactionManager")
-    @Rollback(true)
+    @Test    
+    @Transactional
     public void testDeprecateProfile() throws Exception {
         ProfileEntity toDeprecate = profileDao.find("4444-4444-4444-4441");
         ProfileEntity primary = profileDao.find("4444-4444-4444-4442");
@@ -198,9 +196,9 @@ public class AdminControllerTest extends BaseControllerTest {
 
         assertEquals(0, result.getErrors().size());
 
-        profileDao.refresh(toDeprecate);
-        profileDao.refresh(primary);
-
+        profileDao.refresh(profileDao.find("4444-4444-4444-4441"));
+        profileDao.refresh(profileDao.find("4444-4444-4444-4442"));
+        
         assertNotNull(toDeprecate.getPrimaryRecord());
 
         emails1 = toDeprecate.getEmails();
@@ -248,15 +246,10 @@ public class AdminControllerTest extends BaseControllerTest {
         assertTrue(containsEmail);
     }
 
-    @Test
-    @Transactional("transactionManager")
-    @Rollback(true)
+    @Test    
     public void tryToDeprecateDeprecatedProfile() throws Exception {
         ProfileDeprecationRequest result = adminController.deprecateProfile("4444-4444-4444-4441", "4444-4444-4444-4442");
-        assertEquals(0, result.getErrors().size());
-
-        profileDao.refresh(profileDao.find("4444-4444-4444-4441"));
-        profileDao.refresh(profileDao.find("4444-4444-4444-4442"));
+        assertEquals(0, result.getErrors().size());        
 
         // Test deprecating a deprecated account
         result = adminController.deprecateProfile("4444-4444-4444-4441", "4444-4444-4444-4443");
@@ -296,8 +289,6 @@ public class AdminControllerTest extends BaseControllerTest {
     }
 
     @Test
-    @Transactional("transactionManager")
-    @Rollback(true)
     public void deactivateAndReactivateProfileTest() throws Exception {
         // Test deactivate
         ProfileDetails result = adminController.confirmDeactivateOrcidAccount("4444-4444-4444-4441");
@@ -343,8 +334,6 @@ public class AdminControllerTest extends BaseControllerTest {
     }
     
     @Test
-    @Transactional("transactionManager")
-    @Rollback(true)
     public void removeSecurityQuestionTest() {
         OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4441"); 
         assertNotNull(orcidProfile.getSecurityQuestionAnswer());
@@ -354,8 +343,6 @@ public class AdminControllerTest extends BaseControllerTest {
     }
     
     @Test
-    @Transactional("transactionManager")
-    @Rollback(true)
     public void removeSecurityQuestionUsingEmailTest() {
         OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4442"); 
         assertNotNull(orcidProfile.getSecurityQuestionAnswer());
@@ -365,8 +352,6 @@ public class AdminControllerTest extends BaseControllerTest {
     }
     
     @Test
-    @Transactional("transactionManager")
-    @Rollback(true)
     public void resetPasswordTest() {
         OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4441");
         assertEquals("e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA=",orcidProfile.getPassword());
@@ -379,8 +364,6 @@ public class AdminControllerTest extends BaseControllerTest {
     }
     
     @Test
-    @Transactional("transactionManager")
-    @Rollback(true)
     public void resetPasswordUsingEmailTest() {
         OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4442");
         assertEquals("e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA=",orcidProfile.getPassword());
@@ -393,8 +376,6 @@ public class AdminControllerTest extends BaseControllerTest {
     }
     
     @Test
-    @Transactional("transactionManager")
-    @Rollback(true)
     public void verifyEmailTest() {
         //Add not verified email
         Email email = new Email("not-verified@email.com");
