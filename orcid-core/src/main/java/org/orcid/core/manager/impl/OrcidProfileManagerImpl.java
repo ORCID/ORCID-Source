@@ -141,7 +141,6 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.NullUtils;
 import org.orcid.utils.OrcidStringUtils;
-import org.orcid.utils.ReleaseNameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -244,8 +243,6 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     private int claimReminderAfterDays = 8;
 
     private int verifyReminderAfterDays = 7;
-
-    private String releaseName = ReleaseNameUtils.getReleaseName();
 
     public NotificationManager getNotificationManager() {
         return notificationManager;
@@ -1504,6 +1501,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     @Transactional
     public OrcidProfile revokeApplication(String userOrcid, String applicationOrcid, Collection<ScopePathType> scopes) {

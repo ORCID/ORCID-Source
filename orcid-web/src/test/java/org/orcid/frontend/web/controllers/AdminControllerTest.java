@@ -30,7 +30,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -59,7 +58,6 @@ import org.orcid.pojo.ProfileDetails;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Propagation;
@@ -148,36 +146,35 @@ public class AdminControllerTest extends BaseControllerTest {
     }
 
     @Test    
-    @Transactional
-    public void testDeprecateProfile() throws Exception {
-        ProfileEntity toDeprecate = profileDao.find("4444-4444-4444-4441");
-        ProfileEntity primary = profileDao.find("4444-4444-4444-4442");
+    public void testDeprecateProfile() throws Exception {        
+        OrcidProfile toDeprecate = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4441");               
+        OrcidProfile primary = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4442");
 
         boolean containsEmail = false;
 
-        assertNull(toDeprecate.getPrimaryRecord());
+        assertNull(toDeprecate.getOrcidDeprecated());
 
-        Set<EmailEntity> emails1 = toDeprecate.getEmails();
+        List<Email> emails1 = toDeprecate.getOrcidBio().getContactDetails().getEmail();
         assertNotNull(emails1);
         assertEquals(3, emails1.size());
 
-        for (EmailEntity email : emails1) {
-            if (email.getId().equals("1@deprecate.com")) {
-                if (email.getCurrent() == false && email.getVerified() == true) {
+        for (Email email : emails1) {
+            if (email.getValue().equals("1@deprecate.com")) {
+                if (email.isCurrent() == false && email.isVerified() == true) {
                     containsEmail = true;
                 } else {
                     containsEmail = false;
                     break;
                 }
-            } else if (email.getId().equals("2@deprecate.com")) {
-                if (email.getCurrent() == false && email.getVerified() == false) {
+            } else if (email.getValue().equals("2@deprecate.com")) {
+                if (email.isCurrent() == false && email.isVerified() == false) {
                     containsEmail = true;
                 } else {
                     containsEmail = false;
                     break;
                 }
-            } else if (email.getId().equals("spike@milligan.com")) {
-                if (email.getCurrent() == true && email.getVerified() == true && email.getPrimary() == true) {
+            } else if (email.getValue().equals("spike@milligan.com")) {
+                if (email.isCurrent() == true && email.isVerified() == true && email.isPrimary() == true) {
                     containsEmail = true;
                 } else {
                     containsEmail = false;
@@ -188,53 +185,57 @@ public class AdminControllerTest extends BaseControllerTest {
 
         assertTrue(containsEmail);
 
-        Set<EmailEntity> emails2 = primary.getEmails();
+        List<Email> emails2 = primary.getOrcidBio().getContactDetails().getEmail();
         assertNotNull(emails2);
         assertEquals(1, emails2.size());
 
         ProfileDeprecationRequest result = adminController.deprecateProfile("4444-4444-4444-4441", "4444-4444-4444-4442");
-
-        assertEquals(0, result.getErrors().size());
-
-        profileDao.refresh(profileDao.find("4444-4444-4444-4441"));
-        profileDao.refresh(profileDao.find("4444-4444-4444-4442"));
         
-        assertNotNull(toDeprecate.getPrimaryRecord());
-
-        emails1 = toDeprecate.getEmails();
+        assertEquals(0, result.getErrors().size());      
+        
+        toDeprecate = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4441");
+        primary = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4442");
+        
+        assertNotNull(toDeprecate.getOrcidDeprecated());
+        assertNotNull(toDeprecate.getOrcidDeprecated().getPrimaryRecord());
+        assertNotNull(toDeprecate.getOrcidDeprecated().getPrimaryRecord().getOrcidIdentifier());
+        assertNotNull(toDeprecate.getOrcidDeprecated().getPrimaryRecord().getOrcidIdentifier().getPath());
+        assertEquals("4444-4444-4444-4442", toDeprecate.getOrcidDeprecated().getPrimaryRecord().getOrcidIdentifier().getPath());
+        
+        emails1 = toDeprecate.getOrcidBio().getContactDetails().getEmail();
         assertNotNull(emails1);
         assertEquals(0, emails1.size());
 
-        emails2 = primary.getEmails();
+        emails2 = primary.getOrcidBio().getContactDetails().getEmail();
         assertNotNull(emails2);
         assertEquals(4, emails2.size());
 
         containsEmail = false;
 
-        for (EmailEntity email : emails2) {
-            if (email.getId().equals("1@deprecate.com")) {
-                if (email.getCurrent() == false && email.getVerified() == true) {
+        for (Email email : emails2) {
+            if (email.getValue().equals("1@deprecate.com")) {
+                if (email.isCurrent() == false && email.isVerified() == true) {
                     containsEmail = true;
                 } else {
                     containsEmail = false;
                     break;
                 }
-            } else if (email.getId().equals("2@deprecate.com")) {
-                if (email.getCurrent() == false && email.getVerified() == false) {
+            } else if (email.getValue().equals("2@deprecate.com")) {
+                if (email.isCurrent() == false && email.isVerified() == false) {
                     containsEmail = true;
                 } else {
                     containsEmail = false;
                     break;
                 }
-            } else if (email.getId().equals("spike@milligan.com")) {
-                if (email.getCurrent() == true && email.getVerified() == true && email.getPrimary() == false) {
+            } else if (email.getValue().equals("spike@milligan.com")) {
+                if (email.isCurrent() == true && email.isVerified() == true && email.isPrimary() == false) {
                     containsEmail = true;
                 } else {
                     containsEmail = false;
                     break;
                 }
-            } else if (email.getId().equals("michael@bentine.com")) {
-                if (email.getCurrent() == true && email.getVerified() == true && email.getPrimary() == true) {
+            } else if (email.getValue().equals("michael@bentine.com")) {
+                if (email.isCurrent() == true && email.isVerified() == true && email.isPrimary() == true) {
                     containsEmail = true;
                 } else {
                     containsEmail = false;

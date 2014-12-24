@@ -515,7 +515,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     /**
      * @return the researcherUrls
      */
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     @Sort(type = SortType.NATURAL)
     public SortedSet<ResearcherUrlEntity> getResearcherUrls() {
         return researcherUrls;

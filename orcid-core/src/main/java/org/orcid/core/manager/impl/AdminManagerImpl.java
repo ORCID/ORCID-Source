@@ -21,7 +21,9 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.ResearcherUrlManager;
+import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
@@ -31,7 +33,6 @@ import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
-import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.pojo.AdminDelegatesRequest;
 import org.orcid.pojo.ProfileDeprecationRequest;
 import org.orcid.pojo.ProfileDetails;
@@ -83,7 +84,7 @@ public class AdminManagerImpl implements AdminManager {
     @Resource
     private GivenPermissionToDao givenPermissionToDao;
     
-    @Override
+    @Override    
     @Transactional
     public boolean deprecateProfile(ProfileDeprecationRequest result, String deprecatedOrcid, String primaryOrcid) throws Exception {        
         // Get deprecated profile
@@ -139,10 +140,10 @@ public class AdminManagerImpl implements AdminManager {
                         }
 
                         // Remove researcher urls
-                        if(deprecated.getResearcherUrls() != null) {
-                            for(ResearcherUrlEntity rUrl : deprecated.getResearcherUrls()) {
-                                researcherUrlManager.deleteResearcherUrl(rUrl.getId());
-                            }
+                        if(deprecated.getResearcherUrls() != null) {                                   
+                            ResearcherUrls rUrls = new ResearcherUrls();
+                            rUrls.setVisibility(OrcidVisibilityDefaults.RESEARCHER_URLS_DEFAULT.getVisibility());
+                            researcherUrlManager.updateResearcherUrls(deprecatedOrcid, rUrls);                            
                         }
                         
                         // Update deprecated profile
