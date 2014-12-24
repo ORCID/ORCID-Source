@@ -138,7 +138,7 @@ public class NotificationManagerTest extends BaseTest {
             // New notification entity should have been created
             NotificationEntity latestNotification = notificationDao.findLatestByOrcid(testOrcid);
             assertNotNull(latestNotification);
-            assertTrue("Fail-> " + locale.toString() + " -> " + latestNotification.getId() + " -> " + minNotificationId, latestNotification.getId() > minNotificationId);
+            assertTrue(latestNotification.getId() > minNotificationId);
             assertEquals(NotificationType.CUSTOM, latestNotification.getNotificationType());
         }
     }
