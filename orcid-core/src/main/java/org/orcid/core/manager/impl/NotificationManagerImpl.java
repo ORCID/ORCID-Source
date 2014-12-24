@@ -385,7 +385,7 @@ public class NotificationManagerImpl implements NotificationManager {
             createNotification(amendedProfile.getOrcidIdentifier().getPath(), notification);
         } else {
             String email = amendedProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
-            mailGunManager.sendEmail(AMEND_NOTIFY_ORCID_ORG, email, subject, body, html);
+            mailGunManager.sendEmail(AMEND_NOTIFY_ORCID_ORG, email, subject, body, html);            
         }
     }
 

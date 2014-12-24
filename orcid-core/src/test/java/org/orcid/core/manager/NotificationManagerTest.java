@@ -55,7 +55,6 @@ import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -99,7 +98,6 @@ public class NotificationManagerTest extends BaseTest {
     }
 
     @Test
-    @Rollback
     public void testSendVerificationEmail() throws JAXBException, IOException, URISyntaxException {
         OrcidMessage orcidMessage = (OrcidMessage) unmarshaller.unmarshal(getClass().getResourceAsStream(ORCID_INTERNAL_FULL_XML));
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
@@ -107,7 +105,6 @@ public class NotificationManagerTest extends BaseTest {
     }
 
     @Test
-    @Rollback
     public void testResetEmail() throws Exception {
         for (Locale locale : Locale.values()) {
             OrcidProfile orcidProfile = getProfile(locale);
@@ -128,7 +125,6 @@ public class NotificationManagerTest extends BaseTest {
     }
 
     @Test
-    @Rollback
     public void testAmendEmail() throws JAXBException, IOException, URISyntaxException {
         String testOrcid = "4444-4444-4444-4446";
         ProfileEntity testProfile = new ProfileEntity(testOrcid);
@@ -142,13 +138,12 @@ public class NotificationManagerTest extends BaseTest {
             // New notification entity should have been created
             NotificationEntity latestNotification = notificationDao.findLatestByOrcid(testOrcid);
             assertNotNull(latestNotification);
-            assertTrue(latestNotification.getId() > minNotificationId);
+            assertTrue("Fail-> " + locale.toString() + " -> " + latestNotification.getId() + " -> " + minNotificationId, latestNotification.getId() > minNotificationId);
             assertEquals(NotificationType.CUSTOM, latestNotification.getNotificationType());
         }
     }
 
     @Test
-    @Rollback
     public void testAddedDelegatesSentCorrectEmail() throws JAXBException, IOException, URISyntaxException {
         String delegateOrcid = "1234-5678-1234-5678";
         ProfileEntity delegateProfileEntity = new ProfileEntity(delegateOrcid);
@@ -178,7 +173,6 @@ public class NotificationManagerTest extends BaseTest {
     }
 
     @Test
-    @Rollback
     public void testSendDeactivateEmail() throws JAXBException, IOException, URISyntaxException {
         for (Locale locale : Locale.values()) {
             OrcidProfile orcidProfile = getProfile(locale);
@@ -188,7 +182,6 @@ public class NotificationManagerTest extends BaseTest {
     }
 
     @Test
-    @Rollback
     public void testApiCreatedRecordEmail() throws JAXBException, IOException, URISyntaxException {
         for (Locale locale : Locale.values()) {
             OrcidProfile orcidProfile = getProfile(locale);
@@ -205,7 +198,6 @@ public class NotificationManagerTest extends BaseTest {
     }
 
     @Test
-    @Rollback
     public void testClaimReminderEmail() throws JAXBException, IOException, URISyntaxException {
         for (Locale locale : Locale.values()) {
             OrcidProfile orcidProfile = getProfile(locale);
