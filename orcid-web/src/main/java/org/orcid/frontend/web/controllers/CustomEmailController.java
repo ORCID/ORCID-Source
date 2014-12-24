@@ -301,8 +301,10 @@ public class CustomEmailController extends BaseController {
             String content = customEmailForm.getContent().getValue();
             if(!content.contains(EmailConstants.WILDCARD_VERIFICATION_URL)) {
                 customEmailForm.getContent().getErrors().add(getMessage("custom_email.content.verification_url_required"));
-            } else if(OrcidStringUtils.hasHtml(content)) {
-                customEmailForm.getContent().getErrors().add(getMessage("custom_email.content.html"));
+            } else if(!customEmailForm.isHtml()){
+                if(OrcidStringUtils.hasHtml(content)) {            
+                    customEmailForm.getContent().getErrors().add(getMessage("custom_email.content.html"));
+                }
             }           
         }
         return customEmailForm;

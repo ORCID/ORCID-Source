@@ -112,10 +112,16 @@ public class CustomEmailControllerTest extends BaseControllerTest {
         assertEquals(0, customEmail.getContent().getErrors().size());
         
         customEmail.setContent(Text.valueOf("This is a test ${verification_url} <a>"));
+        customEmail.setHtml(false);
         customEmail = customEmailController.validateContent(customEmail);
         assertNotNull(customEmail);
         assertEquals(1, customEmail.getContent().getErrors().size());
-        assertEquals(customEmailController.getMessage("custom_email.content.html"), customEmail.getContent().getErrors().get(0));                
+        assertEquals(customEmailController.getMessage("custom_email.content.html"), customEmail.getContent().getErrors().get(0)); 
+        
+        customEmail.setHtml(true);
+        customEmail = customEmailController.validateContent(customEmail);
+        assertNotNull(customEmail);
+        assertEquals(0, customEmail.getContent().getErrors().size());
     }
     
     @Test 
