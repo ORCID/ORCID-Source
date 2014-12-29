@@ -35,7 +35,6 @@ the software.
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <servlet.port>9437</servlet.port>
         <ajp.port>9438</ajp.port>
-        <metrics.version>2.1.2</metrics.version>
         <main.basedir>${project.basedir}</main.basedir>
     </properties>
 
@@ -45,14 +44,12 @@ the software.
         <module>orcid-persistence</module>
         <module>orcid-model</module>
         <module>orcid-api-common</module>
-        <module>orcid-metrics-web</module>
         <module>orcid-pub-web</module>
         <module>orcid-api-web</module>
         <module>orcid-scheduler-web</module>
         <module>orcid-utils</module>
         <module>orcid-test</module>
         <module>orcid-solr-web</module>
-        <module>orcid-audit</module>
         <module>orcid-integration-test</module>
     </modules>
 
@@ -420,10 +417,6 @@ the software.
         <dependency>
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.yammer.metrics</groupId>
-            <artifactId>metrics-core</artifactId>
         </dependency>
 
         <!-- Test -->
@@ -893,11 +886,6 @@ the software.
                 <groupId>org.jasypt</groupId>
                 <artifactId>jasypt-hibernate3</artifactId>
                 <version>1.9.0</version>
-            </dependency>
-            <dependency>
-                <groupId>com.yammer.metrics</groupId>
-                <artifactId>metrics-core</artifactId>
-                <version>${metrics.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jbibtex</groupId>

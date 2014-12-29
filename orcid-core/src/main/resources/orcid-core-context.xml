@@ -509,22 +509,6 @@
     </bean>
 
 
-	<!-- Reporting -->
-	<!-- Graphite reporter can be created here, but we need a way of only creating 
-		this when running 'live' -->
-	<bean id="graphiteReporter" class="org.orcid.core.reporting.ReporterInitializer"
-		destroy-method="shutdown">
-		<constructor-arg value="${org.orcid.core.reporting.graphite.periodInMins:1}"
-			type="long" />
-		<constructor-arg value="MINUTES" type="java.util.concurrent.TimeUnit" />
-		<constructor-arg value="${org.orcid.core.reporting.graphite.host:localhost}" />
-		<constructor-arg value="${org.orcid.core.reporting.graphite.port:2003}"
-			type="int" />
-		<constructor-arg
-			value="${org.orcid.core.reporting.graphite.prefix:orcid-reporter}" />
-		<constructor-arg value="${org.orcid.core.reporting.useGraphite:false}" />
-	</bean>
-
 	<!-- HTTP client connection beans -->
 	<bean id="plainSocketFactory" class="org.apache.http.conn.scheme.PlainSocketFactory"
 		factory-method="getSocketFactory" />

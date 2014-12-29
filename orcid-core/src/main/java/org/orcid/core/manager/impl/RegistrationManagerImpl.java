@@ -37,8 +37,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 
-import com.yammer.metrics.Metrics;
-import com.yammer.metrics.core.Counter;
 
 /**
  * 
@@ -48,8 +46,6 @@ import com.yammer.metrics.core.Counter;
 public class RegistrationManagerImpl implements RegistrationManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RegistrationManagerImpl.class);
-
-    public static final Counter REGISTRATIONS_VERIFIED_COUNTER = Metrics.newCounter(RegistrationManagerImpl.class, "orcid-registrations-completed");
 
     @Resource(name = "hearAboutDao")
     private GenericDao<HearAboutEntity, Integer> hearAboutDao;

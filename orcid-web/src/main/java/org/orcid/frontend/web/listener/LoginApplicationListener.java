@@ -25,15 +25,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.web.context.request.RequestContextHolder;
 
-import com.yammer.metrics.Metrics;
-import com.yammer.metrics.core.Counter;
-
 /**
  * @author Declan Newman (declan) Date: 18/07/2012
  */
 public class LoginApplicationListener implements ApplicationListener<ApplicationEvent> {
-
-    public static final Counter LOGIN_COUNTER = Metrics.newCounter(LoginApplicationListener.class, "orcid-frontend-logins");
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LoginApplicationListener.class);
 
@@ -58,7 +53,6 @@ public class LoginApplicationListener implements ApplicationListener<Application
                     LOGGER.info("User logged in with orcid={}, email={}, sessionid={}", new Object[] { orcid, email, sessionId });
                 }
             }
-            LOGIN_COUNTER.inc();
         }
     }
 }
