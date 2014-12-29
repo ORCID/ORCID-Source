@@ -16,9 +16,12 @@
  */
 package org.orcid.core.manager;
 
+import java.util.Set;
+
 import org.orcid.core.exception.OrcidClientGroupManagementException;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
+import org.orcid.jaxb.model.message.ScopePathType;
 
 /**
  * 
@@ -134,4 +137,12 @@ public interface OrcidClientGroupManager {
      * */
     void updateGroup(OrcidClientGroup orcidClientGroup);
 
+    Set<String> premiumCreatorScopes();
+
+    Set<String> creatorScopes();
+
+    Set<String> premiumUpdaterScopes();
+
+    Set<String> updaterScopes();
+    
 }

@@ -127,4 +127,12 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
         updateQuery.setParameter("clientId", clientId);
         updateQuery.executeUpdate();
     }
+        
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<ClientDetailsEntity> findByGroupId(String groupId) {
+        Query query = entityManager.createQuery("from ClientDetailsEntity where groupProfile.id = :groupId");
+        query.setParameter("groupId", groupId);
+        return query.getResultList();
+    }
 }

@@ -27,6 +27,8 @@ import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -41,7 +43,9 @@ import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.jaxb.model.clientgroup.GroupType;
 import org.orcid.jaxb.model.message.OrcidType;
+import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.Client;
 import org.orcid.pojo.ajaxForm.Group;
@@ -74,6 +78,9 @@ public class ManageMembersControllerTest extends DBUnitTest {
     @Resource
     GroupAdministratorController groupAdministratorController;
 
+    @Resource
+    ClientDetailsDao clientDetailsDao;
+    
     @Before
     public void beforeInstance() {
         SecurityContextHolder.getContext().setAuthentication(getAuthentication());
@@ -313,16 +320,16 @@ public class ManageMembersControllerTest extends DBUnitTest {
     @Test       
     public void findClientTest() throws Exception {
         //Client with all redirect uris default
-        Client client_0002 = manageMembers.findClient("6666-6666-6666-0002");
+        Client client_0002 = manageMembers.findClient("APP-0000000000000002");
         assertNotNull(client_0002);
         assertNotNull(client_0002.getDisplayName());
         assertEquals("Client # 2", client_0002.getDisplayName().getValue());
         assertNotNull(client_0002.getRedirectUris());
         assertEquals(1, client_0002.getRedirectUris().size());
-        assertEquals("http://www.6666-6666-6666-0002.com/redirect/oauth", client_0002.getRedirectUris().get(0).getValue().getValue());
+        assertEquals("http://www.APP-0000000000000002.com/redirect/oauth", client_0002.getRedirectUris().get(0).getValue().getValue());
         
         //Client with redirect uri not default
-        Client client_0003 = manageMembers.findClient("6666-6666-6666-0003");
+        Client client_0003 = manageMembers.findClient("APP-0000000000000003");
         assertNotNull(client_0003);
         assertNotNull(client_0003.getDisplayName());
         assertEquals("Client # 3", client_0003.getDisplayName().getValue());
@@ -330,12 +337,12 @@ public class ManageMembersControllerTest extends DBUnitTest {
         assertEquals(2, client_0003.getRedirectUris().size());
         
         RedirectUri rUri1 = client_0003.getRedirectUris().get(0);
-        if("http://www.6666-6666-6666-0003.com/redirect/oauth".equals(rUri1.getValue().getValue())) {
+        if("http://www.APP-0000000000000003.com/redirect/oauth".equals(rUri1.getValue().getValue())) {
             assertNotNull(rUri1.getType());
             assertEquals("default", rUri1.getType().getValue());
             assertNotNull(rUri1.getScopes());
             assertEquals(0, rUri1.getScopes().size());
-        } else if ("http://www.6666-6666-6666-0003.com/redirect/oauth/grant_read_wizard".equals(rUri1.getValue().getValue())) {
+        } else if ("http://www.APP-0000000000000003.com/redirect/oauth/grant_read_wizard".equals(rUri1.getValue().getValue())) {
             assertNotNull(rUri1.getType());
             assertEquals("grant-read-wizard", rUri1.getType().getValue());
             assertNotNull(rUri1.getScopes());
@@ -346,13 +353,13 @@ public class ManageMembersControllerTest extends DBUnitTest {
         }
         
         RedirectUri rUri2 = client_0003.getRedirectUris().get(1);
-        if("http://www.6666-6666-6666-0003.com/redirect/oauth".equals(rUri2.getValue().getValue())) {
+        if("http://www.APP-0000000000000003.com/redirect/oauth".equals(rUri2.getValue().getValue())) {
             assertNotNull(rUri2.getType());
             assertEquals("default", rUri2.getType().getValue());
             assertNotNull(rUri2.getScopes());
             assertEquals(1, rUri2.getScopes().size());
             assertEquals("", rUri2.getScopes().get(0));
-        } else if ("http://www.6666-6666-6666-0003.com/redirect/oauth/grant_read_wizard".equals(rUri2.getValue().getValue())) {
+        } else if ("http://www.APP-0000000000000003.com/redirect/oauth/grant_read_wizard".equals(rUri2.getValue().getValue())) {
             assertNotNull(rUri2.getType());
             assertEquals("grant-read-wizard", rUri2.getType().getValue());
             assertNotNull(rUri2.getScopes());
@@ -366,7 +373,7 @@ public class ManageMembersControllerTest extends DBUnitTest {
     @Test    
     public void editClientWithInvalidRedirectUriTest() throws Exception {
         //Client with all redirect uris default
-        Client client_0002 = manageMembers.findClient("6666-6666-6666-0002");
+        Client client_0002 = manageMembers.findClient("APP-0000000000000002");
         assertNotNull(client_0002);
         RedirectUri rUri = new RedirectUri();
         rUri.setType(Text.valueOf("default"));
@@ -383,7 +390,7 @@ public class ManageMembersControllerTest extends DBUnitTest {
     
     @Test
     public void editMemberDoesntChangePersistentTokenEnabledValueTest() throws Exception {
-        Client clientWithPersistentTokensEnabled = manageMembers.findClient("6666-6666-6666-0001");
+        Client clientWithPersistentTokensEnabled = manageMembers.findClient("APP-0000000000000001");
         assertNotNull(clientWithPersistentTokensEnabled);
         assertNotNull(clientWithPersistentTokensEnabled.getDisplayName());
         assertEquals("Client # 1", clientWithPersistentTokensEnabled.getDisplayName().getValue());
@@ -393,7 +400,7 @@ public class ManageMembersControllerTest extends DBUnitTest {
         clientWithPersistentTokensEnabled.getDisplayName().setValue("Updated Name");
         manageMembers.updateClient(clientWithPersistentTokensEnabled);
         
-        Client updatedClient =  manageMembers.findClient("6666-6666-6666-0001");
+        Client updatedClient =  manageMembers.findClient("APP-0000000000000001");
         assertNotNull(updatedClient);
         assertNotNull(updatedClient.getDisplayName());
         assertEquals("Updated Name", updatedClient.getDisplayName().getValue());
@@ -402,7 +409,20 @@ public class ManageMembersControllerTest extends DBUnitTest {
     }
     
     @Test
-    public void editScopesOnClientsTest() throws Exception {
-        manageMembers.findMember("6666-6666-6666-0001");
+    public void editGroupTypeTest() throws Exception {
+        Group group_0000 = manageMembers.findMember("5555-5555-5555-0000");
+        assertNotNull(group_0000);
+        assertNotNull(group_0000.getType());
+        assertEquals(GroupType.PREMIUM_INSTITUTION.value(), group_0000.getType().getValue());
+        
+        // Update group type to basic
+        group_0000.setType(Text.valueOf(GroupType.BASIC.value()));
+        manageMembers.updateMember(group_0000);                                
+        
+        group_0000 = manageMembers.findMember("5555-5555-5555-0000");
+        assertNotNull(group_0000);
+        assertNotNull(group_0000.getType());
+        assertEquals(GroupType.BASIC.value(), group_0000.getType().getValue());
+        
     }
 }

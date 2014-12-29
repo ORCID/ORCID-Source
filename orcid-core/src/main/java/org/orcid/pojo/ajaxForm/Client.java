@@ -19,6 +19,7 @@ package org.orcid.pojo.ajaxForm;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
@@ -39,6 +40,7 @@ public class Client implements ErrorsInterface, Serializable {
     private Text type; 
     private Checkbox persistentTokenEnabled;
     private List<RedirectUri> redirectUris;
+    private Set<String> scopes;
 
     public static Client valueOf(ClientDetailsEntity clientDetails) {
         Client client = new Client();
@@ -53,11 +55,14 @@ public class Client implements ErrorsInterface, Serializable {
                 for (ClientRedirectUriEntity rUri : clientDetails.getClientRegisteredRedirectUris()) {
                     client.redirectUris.add(RedirectUri.valueOf(rUri));
                 }
-            }
-
+            }            
+            
             client.persistentTokenEnabled = new Checkbox();
             client.persistentTokenEnabled.setValue(clientDetails.isPersistentTokensEnabled());                                    
             client.setType(Text.valueOf(clientDetails.getClientType().value()));
+            
+            if(clientDetails.isScoped())
+                client.setScopes(clientDetails.getScope());
         }
         return client;
     }
@@ -184,5 +189,13 @@ public class Client implements ErrorsInterface, Serializable {
 
     public void setPersistentTokenEnabled(Checkbox persistentTokenEnabled) {
         this.persistentTokenEnabled = persistentTokenEnabled;
-    }          
+    }
+
+    public void setScopes(Set<String> scopes) {
+        this.scopes = scopes;
+    }
+    
+    public Set<String> getScopes() {
+        return scopes;
+    }        
 }

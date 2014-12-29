@@ -238,7 +238,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
             }     
             // Merge changes
             profileDao.merge(groupProfileEntity);
-            
+            profileDao.updateLastModifiedDate(groupOrcid);
             // Update client types and scopes
             if(updateClientScopes)
                 updateClientTypeDueGroupTypeUpdate(groupProfileEntity);
@@ -634,23 +634,27 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         }
     }
 
-    private Set<String> premiumCreatorScopes() {
+    @Override
+    public Set<String> premiumCreatorScopes() {
         Set<String> creatorScopes = creatorScopes();
         creatorScopes.add(ScopePathType.WEBHOOK.value());
         return creatorScopes;
     }
 
-    private Set<String> creatorScopes() {
+    @Override
+    public Set<String> creatorScopes() {
         return ScopePathType.ORCID_PROFILE_CREATE.getCombinedAsStrings();
     }
 
-    private Set<String> premiumUpdaterScopes() {
+    @Override
+    public Set<String> premiumUpdaterScopes() {
         Set<String> updaterScopes = updaterScopes();
         updaterScopes.add(ScopePathType.WEBHOOK.value());
         return updaterScopes;
     }
 
-    private Set<String> updaterScopes() {
+    @Override
+    public Set<String> updaterScopes() {
         return new HashSet<>(ScopePathType.getScopesAsStrings(ScopePathType.AFFILIATIONS_CREATE, ScopePathType.AFFILIATIONS_READ_LIMITED,
                 ScopePathType.AFFILIATIONS_UPDATE, ScopePathType.AUTHENTICATE, ScopePathType.FUNDING_CREATE, ScopePathType.FUNDING_READ_LIMITED,
                 ScopePathType.FUNDING_UPDATE, ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE, ScopePathType.ORCID_BIO_READ_LIMITED, ScopePathType.ORCID_BIO_UPDATE,
