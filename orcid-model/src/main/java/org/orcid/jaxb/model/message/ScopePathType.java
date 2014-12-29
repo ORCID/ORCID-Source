@@ -272,5 +272,9 @@ public enum ScopePathType implements Serializable {
     public static Set<String> getScopesAsStrings(ScopePathType... scopes) {
         return getScopesAsStrings(Arrays.asList(scopes));
     }
+    
+    public static void main(String []a) {
+        System.out.println(ScopePathType.ORCID_PROFILE_CREATE.getCombinedAsStrings());
+    }
 
 }

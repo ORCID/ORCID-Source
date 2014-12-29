@@ -1,0 +1,149 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<dataset>
+	<profile
+            orcid="5555-5555-5555-0000"
+            creation_method="WEB"
+            completed_date="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            submission_date="2011-06-29 15:31:00.00"
+            last_indexed_date="2011-07-02 15:31:00.00"            
+            last_modified="2011-07-02 15:31:00.00"           
+            claimed="true"
+            given_names="Spike"
+            family_name="Milligan"
+            vocative_name="Spike Milligan"
+            credit_name="S. Milligan"
+            credit_name_visibility="PUBLIC"
+            profile_address_visibility="PRIVATE"
+            external_identifiers_visibility="LIMITED"
+            biography_visibility="PUBLIC"
+            keywords_visibility="REGISTERED_ONLY"
+            other_names_visibility="PRIVATE"
+            researcher_urls_visibility="PUBLIC"
+            is_selectable_sponsor="false"
+            send_change_notifications="false"
+            send_orcid_news="false"
+            activities_visibility_default='PRIVATE'
+            credentials_expiry="2013-02-01"
+            indexing_status="DONE"
+            iso2_country="GB"
+            orcid_type="GROUP"
+            group_type="PREMIUM_INSTITUTION"
+            />
+	<granted_authority
+            authority="ROLE_GROUP"
+            orcid="5555-5555-5555-0000"
+            />           
+            
+	<email
+        orcid="5555-5555-5555-0000"
+        email="premium_institution@group.com"
+        is_primary="true"
+        is_current="true"
+        is_verified="true"
+        visibility="PRIVATE"
+        source_id="5555-5555-5555-0000"
+    />
+            
+	<client_details client_type="PREMIUM_CREATOR" client_details_id="6666-6666-6666-0001" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25" client_name="Client # 1" client_description="Client # 1 description." client_website="www.6666-6666-6666-0001.com" group_orcid="5555-5555-5555-0000" persistent_tokens_enabled="true"/>
+	<client_details client_type="PREMIUM_CREATOR" client_details_id="6666-6666-6666-0002" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25" client_name="Client # 2" client_description="Client # 2 description." client_website="www.6666-6666-6666-0002.com" group_orcid="5555-5555-5555-0000" persistent_tokens_enabled="true"/>
+	<client_details client_type="PREMIUM_CREATOR" client_details_id="6666-6666-6666-0003" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25" client_name="Client # 3" client_description="Client # 3 description." client_website="www.6666-6666-6666-0003.com" group_orcid="5555-5555-5555-0000" persistent_tokens_enabled="true"/>
+	
+	<client_authorised_grant_type client_details_id="6666-6666-6666-0001" grant_type="authorization_code" />
+    <client_authorised_grant_type client_details_id="6666-6666-6666-0001" grant_type="refresh_token" />
+    <client_authorised_grant_type client_details_id="6666-6666-6666-0001" grant_type="client_credentials" />
+	
+	<client_authorised_grant_type client_details_id="6666-6666-6666-0002" grant_type="authorization_code" />
+    <client_authorised_grant_type client_details_id="6666-6666-6666-0002" grant_type="refresh_token" />
+    <client_authorised_grant_type client_details_id="6666-6666-6666-0002" grant_type="client_credentials" />
+    
+    <client_authorised_grant_type client_details_id="6666-6666-6666-0003" grant_type="authorization_code" />
+    <client_authorised_grant_type client_details_id="6666-6666-6666-0003" grant_type="refresh_token" />
+    <client_authorised_grant_type client_details_id="6666-6666-6666-0003" grant_type="client_credentials" />
+    
+    <client_granted_authority client_details_id="6666-6666-6666-0001" granted_authority="ROLE_CLIENT"/>
+    <client_granted_authority client_details_id="6666-6666-6666-0002" granted_authority="ROLE_CLIENT"/>
+    <client_granted_authority client_details_id="6666-6666-6666-0003" granted_authority="ROLE_CLIENT"/>
+	
+	<client_redirect_uri client_details_id="6666-6666-6666-0001" redirect_uri="http://www.6666-6666-6666-0001.com/redirect/oauth" redirect_uri_type="default"/>
+    <client_redirect_uri client_details_id="6666-6666-6666-0002" redirect_uri="http://www.6666-6666-6666-0002.com/redirect/oauth" redirect_uri_type="default"/>
+	<client_redirect_uri client_details_id="6666-6666-6666-0003" redirect_uri="http://www.6666-6666-6666-0003.com/redirect/oauth" redirect_uri_type="default"/>
+	<client_redirect_uri client_details_id="6666-6666-6666-0003" redirect_uri="http://www.6666-6666-6666-0003.com/redirect/oauth/grant_read_wizard" redirect_uri_type="grant-read-wizard" predefined_client_redirect_scope="/funding/read-limited"/>
+	
+	<client_resource_id client_details_id="6666-6666-6666-0001" resource_id="orcid"/>
+    <client_resource_id client_details_id="6666-6666-6666-0002" resource_id="orcid"/>
+    <client_resource_id client_details_id="6666-6666-6666-0003" resource_id="orcid"/>
+        
+    <client_scope client_details_id="6666-6666-6666-0001" scope_type="/affiliations/create"/>
+	<client_scope client_details_id="6666-6666-6666-0001" scope_type="/affiliations/update"/>
+	<client_scope client_details_id="6666-6666-6666-0001" scope_type="/authenticate"/>
+	<client_scope client_details_id="6666-6666-6666-0001" scope_type="/funding/create"/>
+	<client_scope client_details_id="6666-6666-6666-0001" scope_type="/funding/update"/>
+	<client_scope client_details_id="6666-6666-6666-0001" scope_type="/orcid-bio/external-identifiers/create"/>
+	<client_scope client_details_id="6666-6666-6666-0001" scope_type="/orcid-bio/read-limited"/>
+	<client_scope client_details_id="6666-6666-6666-0001" scope_type="/orcid-bio/update"/>
+	<client_scope client_details_id="6666-6666-6666-0001" scope_type="/orcid-patents/create"/>
+	<client_scope client_details_id="6666-6666-6666-0001" scope_type="/orcid-patents/update"/>
+	<client_scope client_details_id="6666-6666-6666-0001" scope_type="/orcid-profile/create"/>
+	<client_scope client_details_id="6666-6666-6666-0001" scope_type="/orcid-profile/read-limited"/>
+	<client_scope client_details_id="6666-6666-6666-0001" scope_type="/orcid-works/create"/>
+	<client_scope client_details_id="6666-6666-6666-0001" scope_type="/orcid-works/read-limited"/>
+	<client_scope client_details_id="6666-6666-6666-0001" scope_type="/orcid-works/update"/>
+	<client_scope client_details_id="6666-6666-6666-0001" scope_type="/read-public"/>
+
+	<client_scope client_details_id="6666-6666-6666-0002" scope_type="/affiliations/create"/>
+	<client_scope client_details_id="6666-6666-6666-0002" scope_type="/affiliations/update"/>
+	<client_scope client_details_id="6666-6666-6666-0002" scope_type="/authenticate"/>
+	<client_scope client_details_id="6666-6666-6666-0002" scope_type="/funding/create"/>
+	<client_scope client_details_id="6666-6666-6666-0002" scope_type="/funding/update"/>
+	<client_scope client_details_id="6666-6666-6666-0002" scope_type="/orcid-bio/external-identifiers/create"/>
+	<client_scope client_details_id="6666-6666-6666-0002" scope_type="/orcid-bio/read-limited"/>
+	<client_scope client_details_id="6666-6666-6666-0002" scope_type="/orcid-bio/update"/>
+	<client_scope client_details_id="6666-6666-6666-0002" scope_type="/orcid-patents/create"/>
+	<client_scope client_details_id="6666-6666-6666-0002" scope_type="/orcid-patents/update"/>
+	<client_scope client_details_id="6666-6666-6666-0002" scope_type="/orcid-profile/create"/>
+	<client_scope client_details_id="6666-6666-6666-0002" scope_type="/orcid-profile/read-limited"/>
+	<client_scope client_details_id="6666-6666-6666-0002" scope_type="/orcid-works/create"/>
+	<client_scope client_details_id="6666-6666-6666-0002" scope_type="/orcid-works/read-limited"/>
+	<client_scope client_details_id="6666-6666-6666-0002" scope_type="/orcid-works/update"/>
+	<client_scope client_details_id="6666-6666-6666-0002" scope_type="/read-public"/>   
+	
+	<client_scope client_details_id="6666-6666-6666-0003" scope_type="/affiliations/create"/>
+	<client_scope client_details_id="6666-6666-6666-0003" scope_type="/affiliations/update"/>
+	<client_scope client_details_id="6666-6666-6666-0003" scope_type="/authenticate"/>
+	<client_scope client_details_id="6666-6666-6666-0003" scope_type="/funding/create"/>
+	<client_scope client_details_id="6666-6666-6666-0003" scope_type="/funding/update"/>
+	<client_scope client_details_id="6666-6666-6666-0003" scope_type="/orcid-bio/external-identifiers/create"/>
+	<client_scope client_details_id="6666-6666-6666-0003" scope_type="/orcid-bio/read-limited"/>
+	<client_scope client_details_id="6666-6666-6666-0003" scope_type="/orcid-bio/update"/>
+	<client_scope client_details_id="6666-6666-6666-0003" scope_type="/orcid-patents/create"/>
+	<client_scope client_details_id="6666-6666-6666-0003" scope_type="/orcid-patents/update"/>
+	<client_scope client_details_id="6666-6666-6666-0003" scope_type="/orcid-profile/create"/>
+	<client_scope client_details_id="6666-6666-6666-0003" scope_type="/orcid-profile/read-limited"/>
+	<client_scope client_details_id="6666-6666-6666-0003" scope_type="/orcid-works/create"/>
+	<client_scope client_details_id="6666-6666-6666-0003" scope_type="/orcid-works/read-limited"/>
+	<client_scope client_details_id="6666-6666-6666-0003" scope_type="/orcid-works/update"/>
+	<client_scope client_details_id="6666-6666-6666-0003" scope_type="/read-public"/> 
+	
+	<client_secret client_details_id="6666-6666-6666-0001" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25"/>
+	<client_secret client_details_id="6666-6666-6666-0002" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25"/>         
+	<client_secret client_details_id="6666-6666-6666-0003" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25"/>
+</dataset>
