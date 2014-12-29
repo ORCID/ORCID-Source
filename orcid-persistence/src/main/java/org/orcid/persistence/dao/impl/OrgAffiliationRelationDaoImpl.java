@@ -37,15 +37,15 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
      * @param orgAffiliationRelationId
      *            The id of the orgAffiliationRelation that will be removed from the client
      *            profile
-     * @param clientOrcid
+     * @param userOrcid
      *            The client orcid
      * @return true if the relationship was deleted
      * */
     @Override
     @Transactional
-    public boolean removeOrgAffiliationRelation(String clientOrcid, String orgAffiliationRelationId) {
-        Query query = entityManager.createQuery("delete from OrgAffiliationRelationEntity where profile.id=:clientOrcid and id=:orgAffiliationRelationId");
-        query.setParameter("clientOrcid", clientOrcid);
+    public boolean removeOrgAffiliationRelation(String userOrcid, String orgAffiliationRelationId) {
+        Query query = entityManager.createQuery("delete from OrgAffiliationRelationEntity where profile.id=:userOrcid and id=:orgAffiliationRelationId");
+        query.setParameter("userOrcid", userOrcid);
         query.setParameter("orgAffiliationRelationId", Long.valueOf(orgAffiliationRelationId));
         return query.executeUpdate() > 0 ? true : false;
     }

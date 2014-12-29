@@ -27,11 +27,11 @@ public interface OrgAffiliationRelationDao extends GenericDao<OrgAffiliationRela
      * @param orgAffiliationRelationId
      *            The id of the orgAffilationRelation that will be removed from the client
      *            profile
-     * @param clientOrcid
-     *            The client orcid
+     * @param userOrcid
+     *            The user orcid
      * @return true if the relationship was deleted
      * */
-    boolean removeOrgAffiliationRelation(String clientOrcid, String orgAffiliationRelationId);
+    boolean removeOrgAffiliationRelation(String userOrcid, String orgAffiliationRelationId);
 
     /**
      * Updates the visibility of an existing profile affiliation relationship

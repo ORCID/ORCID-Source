@@ -30,11 +30,11 @@ public interface ProfileFundingDao extends GenericDao<ProfileFundingEntity, Long
      * @param profileFundingId
      *            The id of the profileFunding that will be removed from the
      *            client profile
-     * @param clientOrcid
-     *            The client orcid
+     * @param userOrcid
+     *            The user orcid
      * @return true if the relationship was deleted
      * */
-    boolean removeProfileFunding(String clientOrcid, String profileFundingId);
+    boolean removeProfileFunding(String userOrcid, String profileFundingId);
 
     /**
      * Updates the visibility of an existing profile funding relationship

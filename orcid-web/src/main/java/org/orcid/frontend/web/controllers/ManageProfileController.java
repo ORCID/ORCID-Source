@@ -34,6 +34,7 @@ import javax.validation.Valid;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jetty.util.ajax.JSON;
+import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.NotificationManager;
@@ -64,7 +65,6 @@ import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.SecurityDetails;
 import org.orcid.jaxb.model.message.SecurityQuestionId;
-import org.orcid.jaxb.model.message.SendEmailFrequency;
 import org.orcid.jaxb.model.message.Url;
 import org.orcid.jaxb.model.message.UrlName;
 import org.orcid.jaxb.model.message.Visibility;
@@ -1005,9 +1005,9 @@ public class ManageProfileController extends BaseWorkspaceController {
 
         try {
             Map<String, String> params = decryptDelegationKey(key);
-            if (params.containsKey(AdminController.MANAGED_USER_PARAM) && params.containsKey(AdminController.TRUSTED_USER_PARAM)) {
-                String managedOrcid = params.get(AdminController.MANAGED_USER_PARAM);
-                String trustedOrcid = params.get(AdminController.TRUSTED_USER_PARAM);
+            if (params.containsKey(AdminManager.MANAGED_USER_PARAM) && params.containsKey(AdminManager.TRUSTED_USER_PARAM)) {
+                String managedOrcid = params.get(AdminManager.MANAGED_USER_PARAM);
+                String trustedOrcid = params.get(AdminManager.TRUSTED_USER_PARAM);
                 // Check if managed user is the same than the logged user
                 if (managedOrcid.equals(getEffectiveUserOrcid())) {
                     // Check if the managed user email is verified, if not,

@@ -427,6 +427,8 @@
 	<bean id="customEmailManager" class="org.orcid.core.manager.impl.CustomEmailManagerImpl" />
 	
 	<bean id="orcidSocialManager" class="org.orcid.core.manager.impl.OrcidSocialManagerImpl" />
+	
+	<bean id="adminManager" class="org.orcid.core.manager.impl.AdminManagerImpl" />
 
 	<bean id="messageSource"
 		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">

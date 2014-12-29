@@ -40,15 +40,15 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
      * @param profileFundingId
      *            The id of the profileFunding that will be removed from the
      *            client profile
-     * @param clientOrcid
-     *            The client orcid
+     * @param userOrcid
+     *            The user orcid
      * @return true if the relationship was deleted
      * */
     @Override
     @Transactional
-    public boolean removeProfileFunding(String clientOrcid, String profileFundingId) {
-        Query query = entityManager.createQuery("delete from ProfileFundingEntity where profile.id=:clientOrcid and id=:profileFundingId");
-        query.setParameter("clientOrcid", clientOrcid);
+    public boolean removeProfileFunding(String userOrcid, String profileFundingId) {
+        Query query = entityManager.createQuery("delete from ProfileFundingEntity where profile.id=:userOrcid and id=:profileFundingId");
+        query.setParameter("userOrcid", userOrcid);
         query.setParameter("profileFundingId", Long.valueOf(profileFundingId));
         return query.executeUpdate() > 0 ? true : false;
     }
