@@ -17,9 +17,12 @@
 
 -->
 <#escape x as x?html>
-<div class="id-banner <#if inDelegationMode>delegation-mode</#if>">
+<div class="id-banner <#if inDelegationMode>delegation-mode</#if>">	
+	
     <#if inDelegationMode><span class="delegation-mode-warning">${springMacroRequestContext.getMessage("delegate.managing_record")}</span></#if>
-	<div ng-controller="NameCtrl" class="name-controller">
+    
+    <!-- Name -->    
+	<div ng-controller="NameCtrl" class="workspace-section">
 		<div ng-show="showEdit == false" ng-click="toggleEdit()">
 			<div class="row">
 				<div class="col-md-9 col-sm-9 col-xs-10">
@@ -38,15 +41,16 @@
 				</div>
 			</div>
 		</div>
+		<!-- Edit Mode -->
 		<div class="names-edit" ng-show="showEdit == true" ng-cloak>
-		   <label for="firstName">${springMacroRequestContext.getMessage("manage_bio_settings.labelfirstname")}</label><br />
-		   <input type="text" ng-model="nameForm.givenNames.value" class="full-width-input"></input><br />
+		   <label for="firstName">${springMacroRequestContext.getMessage("manage_bio_settings.labelfirstname")}</label>
+		   <input type="text" ng-model="nameForm.givenNames.value" class="full-width-input"></input>
 		   <span class="orcid-error" ng-show="nameForm.givenNames.errors.length > 0">
 			   <div ng-repeat='error in nameForm.givenNames.errors' ng-bind-html="error"></div>
 		   </span>
-		   <label for="lastName">${springMacroRequestContext.getMessage("manage_bio_settings.labellastname")}</label><br />
-		   <input type="text" ng-model="nameForm.familyName.value"  class="full-width-input"></input><br />
-		   <label for="creditName">${springMacroRequestContext.getMessage("manage_bio_settings.labelpublishedname")}</label><br/ >
+		   <label for="lastName">${springMacroRequestContext.getMessage("manage_bio_settings.labellastname")}</label>
+		   <input type="text" ng-model="nameForm.familyName.value"  class="full-width-input"></input>
+		   <label for="creditName">${springMacroRequestContext.getMessage("manage_bio_settings.labelpublishedname")}</label>
 		   <@orcid.privacyToggle  angularModel="nameForm.creditNameVisibility.visibility"
 				             questionClick="toggleClickPrivacyHelp()"
 				             clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
@@ -55,19 +59,36 @@
 	                 	     privateClick="setCreditNameVisibility('PRIVATE', $event)" />
 		        	   
 		   <input type="text" ng-model="nameForm.creditName.value" class="full-width-input"></input>
-		   <button class="btn btn-primary" ng-click="setNameForm()"><@spring.message "freemarker.btnsavechanges"/></button>
-		   <button class="btn" ng-click="close()"><@spring.message "freemarker.btncancel"/></button>
-		   
+		   <ul class="workspace-section-toolbar">
+ 				<li class="pull-right">
+		   			<button class="btn btn-primary" ng-click="setNameForm()"><@spring.message "freemarker.btnsavechanges"/></button>
+		   		</li>
+		   		<li class="pull-right">
+		   			<a class="cancel-option" ng-click="close()"><@spring.message "freemarker.btncancel"/></a>
+		   		</li>
+		   	</ul>
 		</div>
-		
 	</div>
 	
+	
+	<!--  -->
+	
 	<div class="oid">
-		<p class="orcid-id-container">
-	    	<span class="mini-orcid-icon"></span>
-       			<a href="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" id="orcid-id" class="orcid-id" title="Click for public view of ORCID iD">${baseUriHttp}/${(profile.orcidIdentifier.path)!}</a>
-		</p>
-	    <div ng-controller="SwitchUserCtrl" class="dropdown id-banner-container" ng-show="unfilteredLength" ng-cloak>
+		<div class="id-banner-header">
+			<span>ORCID iD</span>
+		</div>
+		<div class="orcid-id-container">
+			<div class="orcid-id-info">
+		    	<span class="mini-orcid-icon"></span>
+		    	<!-- Reference: orcid.js:removeProtocolString() -->
+	       		<span data-uri="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" id="orcid-id" class="orcid-id shortURI" title="Click for public view of ORCID iD"></span>
+			</div>
+			<div class="orcid-id-options">
+				<a href="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" class="gray-button">View Public Profile</a>
+			</div>
+		</div>
+	</div>
+	 <div ng-controller="SwitchUserCtrl" class="dropdown id-banner-container" ng-show="unfilteredLength" ng-cloak>
 	       <a ng-click="openMenu($event)" class="id-banner-switch"><@orcid.msg 'public-layout.manage_proxy_account'/><span class="glyphicon glyphicon-chevron-right"></span></a>
 	       <ul class="dropdown-menu id-banner-dropdown" ng-show="isDroppedDown" ng-cloak>
 	       	   <li>
@@ -92,6 +113,8 @@
 	           <li><a href="<@spring.url '/delegators?delegates'/>"><@orcid.msg 'id_banner.more'/></a></li>
 	       </ul>
 	    </div>
-	</div>	
+	
+	
+	
 </div>
 </#escape>

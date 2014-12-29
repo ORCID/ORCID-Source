@@ -68,12 +68,8 @@
     var toolTips = function(){
         $(".settings-button").tooltip({
             placement: "bottom"
-        });
-        
-        $(".orcid-id").tooltip({
-            placement: "top"
-        });
-        
+        });       
+                
         $(".back").tooltip({
             placement: "bottom"
         });
@@ -406,6 +402,10 @@
     	});
     };
     
+    var removeProtocolString = function(){
+    	$('.shortURI').text($('.shortURI').attr('data-uri').replace(/^https?:\/\//,''));
+    };
+    
     /*============================================================
         Page initialisation
     ============================================================*/
@@ -417,7 +417,8 @@
         menuHack();        
         menuHandler();
         developerToolsTabs();
-        selectableInputs();    
+        selectableInputs(); 
+        removeProtocolString();
     };
 
     
