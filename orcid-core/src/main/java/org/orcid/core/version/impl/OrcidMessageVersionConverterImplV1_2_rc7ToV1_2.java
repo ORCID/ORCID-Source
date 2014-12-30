@@ -16,18 +16,8 @@
  */
 package org.orcid.core.version.impl;
 
-import static org.orcid.jaxb.model.message.WorkExternalIdentifierType.OTHER_ID;
-import static org.orcid.jaxb.model.message.WorkExternalIdentifierType.WOS;
-
 import org.orcid.core.version.OrcidMessageVersionConverter;
 import org.orcid.jaxb.model.message.OrcidMessage;
-import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.OrcidSearchResult;
-import org.orcid.jaxb.model.message.OrcidSearchResults;
-import org.orcid.jaxb.model.message.OrcidWork;
-import org.orcid.jaxb.model.message.WorkExternalIdentifier;
-import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 
 /**
  * 
@@ -55,27 +45,7 @@ public class OrcidMessageVersionConverterImplV1_2_rc7ToV1_2 implements OrcidMess
             return null;
         }
         orcidMessage.setMessageVersion(FROM_VERSION);
-        OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
-        downgradeProfile(orcidProfile);
-        downgradeSearchResults(orcidMessage);
         return orcidMessage;
-    }
-
-    private void downgradeProfile(OrcidProfile orcidProfile) {
-        if (orcidProfile != null) {
-            if (orcidProfile.getOrcidActivities() != null) {
-                //nothing between these versions
-            }
-        }
-    }
-
-    private void downgradeSearchResults(OrcidMessage orcidMessage) {
-        OrcidSearchResults searchResults = orcidMessage.getOrcidSearchResults();
-        if (searchResults != null) {
-            for (OrcidSearchResult searchResult : searchResults.getOrcidSearchResult()) {
-                downgradeProfile(searchResult.getOrcidProfile());
-            }
-        }
     }
 
     @Override
