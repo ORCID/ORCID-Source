@@ -218,6 +218,7 @@ body {
 	font-size: 16px;
 	min-height: 100%;
 	height: 100%;
+	
 }
 
 .uppercase {
@@ -1656,19 +1657,13 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 }
 
 .orcid-id{
-	font-size: 10px;
-	line-height: 1;
-	word-break: break-all;
-	color: #FFF;
-	font-family: 'Gill Sans W02', 'Helvetica', sans-serif;
-	font-weight: bold;
+	font-size: 15px;
+	line-height: 1.5;	
+	color: #494A4C;
+	font-family: 'Gill Sans W02', 'Helvetica', sans-serif;	
 	font-style: normal;
 	vertical-align: 3px;
 	margin-left: 5px;	
-}
-
-.orcid-id:hover{
-	color: #C9CACB;
 }
 
 .workspace-overview {
@@ -3323,7 +3318,7 @@ p.orcid-id-container{
 
 .public-profile .oid{	
 	border-bottom: 1px solid #c9c9c9;
-	margin-bottom: 10px;
+	margin-bottom: 5px;
 	float: left;
 	width: 100%;
 }
@@ -3332,12 +3327,16 @@ p.orcid-id-container{
 	padding-right: 15px;
 }
 
-.public-profile .left-aside{
-	padding: 0;	
+.public-profile .left-aside,
+.public-profile .right-aside{
+	padding: 0;
 }
 
-.public-profile .right-aside{
-	padding:0;
+.workspace-right,
+.workspace-profile{
+	float: left;
+	padding: 0;
+	width: 100%;
 }
 
 .mini-orcid-icon{
@@ -3816,6 +3815,10 @@ ul.sso-options li span {
 
 /* ID Banner Style */
 
+.id-banner .oid .orcid-id-container{
+	padding: 5px;
+}
+
 .id-banner .id-banner-container a.id-banner-switch{
 	display: block;	
 	background: #338caf;
@@ -3825,6 +3828,7 @@ ul.sso-options li span {
 	color: #FFF; 
 	text-decoration: none;
 	float: left;
+	margin-bottom: 5px;
 }
 
 .id-banner .id-banner-container a.id-banner-switch:hover{
@@ -3882,14 +3886,43 @@ ul.sso-options li span {
 	overflow: hidden;	
 }
 
+.id-banner .oid .id-banner-header > span{
+	text-transform: uppercase;
+	background: #a6ce39;
+	height: 21px;
+	font-size: 16px;
+	font-weight: 800;
+	padding: 0 5px;
+	color: #FFF;
+	display: block; 
+	width: 100%;
+}
+
+.id-banner .oid{
+	border: 1px solid #a6ce39;
+}
+
+.id-banner .oid .orcid-id-container .orcid-id-options{
+	margin: 0 -5px;
+}
+
+.id-banner .oid .orcid-id-container .orcid-id-options a{
+	display: block;
+	float: left;
+	font-size: 15px;
+	padding: 1px 5px;
+	text-align: center;	
+	width: 100%;
+}
+
+
+/**************/
+
 .delegation-mode-warning {
 	display: block;
-	width: 100%;
-	/*background: #d9534f;*/
+	width: 100%;	
 	background: #F5C120;
-	padding: 5px;
-	/* color: #FFF;
-	*/
+	padding: 5px;	
 	color: #000;
 	text-align: center;
 	text-transform: uppercase;
@@ -3974,7 +4007,7 @@ ul.workspace-bar-menu > li > a > span{
 	display: block !important; 
 }
 
-ul#body-work-list{
+.workspace-publications{
 	margin: 0;
 	padding: 0;
 }
@@ -3990,98 +4023,69 @@ ul#body-work-list > li{
 	clear: both;
 }
 
-.websites-edit, .keywords-edit, .other-names-edit {
-	background: #EFEFEF;
-	padding: 10px;
-	margin-bottom: 10px;
+/* Left column refactoring */
+.workspace-profile .workspace-section{
 	float: left;
-}
-
-.websites-edit, .keywords-edit, .other-names-edit, .names-edit {
-	background: #EFEFEF;
-	padding: 10px;
-	margin-bottom: 10px;
-}
-
-
-.websites-edit input {
-	width: 95px;
-}
-
-.keywords-edit input, .other-names-edit input {
-	width: 190px;
-}
-
-.keywords-edit #privacy-bar, .other-names-edit #privacy-bar, .names-edit #privacy-bar {
-	padding-bottom: 10px;
-}
-
-.country-edit {
-	background: #EFEFEF;
-	padding: 10px;
-	margin-bottom: 10px;
-	float:left;
-}
-
-.country-controller #country{
-	margin: 10px 0;
-}
-
-.edit-option{
-	width:20px;
-	height:20px;
-	background: #C9CACB;
-	border-radius: 50%;
-	padding: 4px;
-	color: #939598;
-	margin-right: 5px;
-}
-
-.biography-controller .edit-option:hover,
-.country-controller .edit-option:hover,
-.keywords-controller .edit-option:hover,
-.other-names-controller .edit-option:hover,
-.name-controller .edit-option:hover,
-.websites-controller .edit-option:hover {
-	cursor: pointer;
-	color: #FFF;
-	background: #a6ce39;
-}
-
-
-.biography-controller textarea {
-	height: 120px;
 	width: 100%;
+	height: auto;	
+	margin: 10px 0;
+} 
+
+.workspace-profile .workspace-section input,
+.workspace-profile .workspace-section select{	
+	width: 100%;
+	margin-bottom: 5px;		
 }
 
-.country-controller span.edit-country,
-.keywords-controller span.edit-keywords,
-.other-names-controller span.edit-other-names,
-.websites-controller span.edit-websites,
-.name-controller span.edit-name,
-.biography-controller span.edit-biography{
-	font-size: 12px;
-  	margin-bottom: 10px;
-  	float: right;
+.workspace-profile .workspace-section .workspace-section-header{
+	width: 100%;
+	height: auto;
 }
 
-/* Website edit */
-  
- .websites-box,
- .websites-box input{
- 	margin: 10px 0 0 0;
- }
+.workspace-profile .workspace-section .workspace-section-header .workspace-section-title{
+	color: #494A4C;
+	font-weight: normal;
+}
 
- .keywords-box, .keywords-box input,
- .other-names-box, .other-names-box input {
- 	margin: 10px 0 0 0; 	
- }
 
- .websites-box a.glyphicon-trash,
- .keywords-box a.glyphicon-trash,
- .other-names-box a.glyphicon-trash {
- 	vertical-align: -7px;
- }
+.workspace-profile .workspace-section ul.workspace-section-toolbar{
+	width: 100%;
+	margin: 0;
+	padding: 0;
+}
+
+.workspace-profile .workspace-section ul.workspace-section-toolbar li{
+	display: inline-block;
+}
+
+.workspace-profile .workspace-section ul.workspace-section-toolbar li a:hover span{
+	background: #A6CE39;
+}
+
+.workspace-profile .workspace-section ul.workspace-section-toolbar li a span{
+	color: #FFF;
+	background: #338caf;
+	border-radius: 50%;
+	padding: 5px 5px 5px 7px;
+}
+
+.workspace-profile .workspace-section ul.workspace-section-toolbar li .cancel-option{
+	margin-right: 15px;
+	vertical-align: middle;
+	line-height: 34px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 #social-networks #social-network-options input[type=checkbox]{
 	margin-top:11px;
@@ -4092,25 +4096,7 @@ ul#body-work-list > li{
 	margin: 15px 30px 0 0;
 }
 
-.country-controller #privacy-bar {
-	float: left;
-}
 
-.country-controller .popover-help-container .popover, 
-.websites-controller .popover-help-container .popover,
-.name-controller .popover-help-container .popover,
-.keywords-controller .popover-help-container .popover,
-.other-names-controller .popover-help-container .popover {
-	left: -120px !important;
-}
-
-.country-controller .popover.bottom .arrow,
-.websites-controller .popover.bottom .arrow,
-.name-controller .popover.bottom .arrow,
-.keywords-controller .popover.bottom .arrow,
-.other-names-controller .popover.bottom .arrow{
-	left: 127px !important;
-}
 
 /* OAuth Confirm Access Page */
 .confirm-oauth-access .top-header .logo h1{
@@ -4496,16 +4482,15 @@ ul.sources-edit-list > li{
 }
 
 .workspace-profile span.glyphicon-pencil,
-#workspace-personal span.glyphicon-pencil,
-.id-banner span.glyphicon-pencil{
+#workspace-personal span.glyphicon-pencil{
 	float: right;
-	margin-right: 5px;
 	background: #949599;
 	padding: 5px;
 	border-radius: 50%;
 	color: #fff;
 	font-size: 10px;
 	z-index: 100;
+	cursor: pointer;
 }
 
 #workspace-personal span.glyphicon-pencil{
@@ -4515,12 +4500,24 @@ ul.sources-edit-list > li{
 	font-size: 14px;
 	color: #494A4C;
 	background: #C9C9CA;
+	margin-right: 5px;
 }
 
 #workspace-personal span.glyphicon-pencil:hover{
 	background: #a6ce39;
 	color: #FFF;
 }
+
+#workspace-personal{
+	margin-bottom: 15px;
+}
+
+#workspace-personal .biography-edit textarea#biography{
+	width: 100%;
+	height: 120px;
+}
+
+
 
 .workspace-profile span > span{
 	display: block;
@@ -5266,7 +5263,7 @@ ul.workspace-private-toolbar .popover-help-container .popover{
 	display: block;
 	width: 100%;
 	float: left; 
-	margin-bottom: 10px; 
+	margin: 10px 0; 
 }
 
 .qrcode-container .orcid-qr{
@@ -5376,11 +5373,8 @@ multiselect .dropdown-menu .dropdown-menu-list {
 	overflow-y: scroll;
 }
 
-.workspace-accordion-item {
-	border-bottom: 1px solid #c9c9c9;
-}
 
-	/* New Style not related to myorcid3 */
+/* New Style not related to myorcid3 */
 
 #register-buttons{
 	margin-bottom: 15px;
@@ -5630,6 +5624,46 @@ ul.oauth-scopes li{
 	margin: 0 0 10px 0;
 }
 
+/* All workspace buttons will be refactored to these two main classes */
+.gray-button{
+	background: #C9C9CA;
+	color: #494A4C;
+	text-decoration: none;
+}
+
+.gray-button:hover{
+	background: #A6CE39;
+	color: #FFF;
+}
+
+/* GLobal classes */
+
+.icon-inside-input{
+	position: relative;
+	float: left;
+	width: 100%;
+	height: auto;
+}
+
+.icon-inside-input .icon-inside{
+	position: absolute;
+	top: 8px;
+	right: 5px;
+}
+
+.icon-inside-input input{
+	padding-right: 23px;
+}
+
+.divider{
+	width: 100%;
+	border-top: 1px dotted;
+	margin-top: 5px;
+	display: block;
+	height: 10px;
+}
+
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 
@@ -5657,18 +5691,6 @@ ul.oauth-scopes li{
 	
 	.see-more {
 		margin: 15px 25px 0;
-	}
-	
-	button {
-		font-size: 18px !important;
-		height: 50px;
-		margin: 32px 0 0;
-		width: 100%;
-		margin-top:10px !important;		
-	}
-	
-	button:hover {
-		border-color: #A6CE39 !important;
 	}
 
 	/* Header */
@@ -5928,8 +5950,6 @@ ul.oauth-scopes li{
 
 	/* Forms */
 	input[type="text"],input[type="password"],select,input[type="email"]{
-		height: 50px;
-		font-size: 16px;
 		width: 100%;
 	}
 
@@ -6021,9 +6041,7 @@ ul.oauth-scopes li{
 		left: -223px !important;
 		width: 250px;
 	}
-	.popover-help-container a i {
-		font-size: 25px;
-	}
+
 	#RegistrationCtr .popover-help-container .popover {
 		left: -109px;
 	}
@@ -6079,10 +6097,6 @@ ul.oauth-scopes li{
 	.workspace-accordion-header, 
 	.workspace-accordion-content{
 		padding:0;		
-	}
-	
-	.workspace-accordion-item{
-		border-top: 1px solid #C9C9C9;
 	}
 	
 	ul.personal-inf-display li{
@@ -6766,8 +6780,9 @@ ul.oauth-scopes li{
 		left: 247px;
 	}
 	
-	.workspace-body-list{
-		margin-top: 92px;
+	.workspace-body-list,
+	.workspace-publications{
+		margin-top: 35px;
 	}
 	
 	#workspace-publications .action-button-bar{

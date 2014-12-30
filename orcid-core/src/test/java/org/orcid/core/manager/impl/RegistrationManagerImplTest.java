@@ -40,7 +40,6 @@ public class RegistrationManagerImplTest {
 
     @Before
     public void mockDependencies() {
-        RegistrationManagerImpl.REGISTRATIONS_VERIFIED_COUNTER.clear();
         orcidProfileManager = mock(OrcidProfileManager.class);
         registrationManagerImpl.setNotificationManager(mock(NotificationManager.class));
         registrationManagerImpl.setOrcidProfileManager(orcidProfileManager);

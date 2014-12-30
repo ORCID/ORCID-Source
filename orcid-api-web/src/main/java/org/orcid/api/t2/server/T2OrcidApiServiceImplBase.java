@@ -68,8 +68,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
 
 import com.orcid.api.common.server.delegator.OrcidClientCredentialEndPointDelegator;
-import com.yammer.metrics.Metrics;
-import com.yammer.metrics.core.Counter;
 
 /**
  * @author Declan Newman (declan) Date: 07/03/2012
@@ -78,14 +76,6 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
 
     @Context
     private UriInfo uriInfo;
-
-    final static Counter T2_GET_REQUESTS = Metrics.newCounter(T2OrcidApiServiceImplBase.class, "T2-GET-REQUESTS");
-    final static Counter T2_SEARCH_REQUESTS = Metrics.newCounter(T2OrcidApiServiceImplBase.class, "T2-SEARCH-REQUESTS");
-    final static Counter T2_PUT_REQUESTS = Metrics.newCounter(T2OrcidApiServiceImplBase.class, "T2-PUT-REQUESTS");
-    final static Counter T2_POST_REQUESTS = Metrics.newCounter(T2OrcidApiServiceImplBase.class, "T2-POST-REQUESTS");
-
-    final static Counter T2_SEARCH_RESULTS_NONE_FOUND = Metrics.newCounter(T2OrcidApiServiceImplBase.class, "T2-SEARCH-RESULTS-NONE-FOUND");
-    final static Counter T2_SEARCH_RESULTS_FOUND = Metrics.newCounter(T2OrcidApiServiceImplBase.class, "T2-SEARCH-RESULTS-FOUND");
 
     private T2OrcidApiServiceDelegator serviceDelegator;
 
@@ -156,7 +146,6 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @Produces(value = { MediaType.TEXT_HTML })
     @Path(BIO_PATH)
     public Response viewBioDetailsHtml(@PathParam("orcid") String orcid) {
-        T2_GET_REQUESTS.inc();
         Response response = serviceDelegator.findBioDetails(orcid);
         return Response.fromResponse(response).header("Content-Disposition", "attachment; filename=\"" + orcid + "-bio.xml\"").build();
     }
@@ -174,7 +163,6 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Path(BIO_PATH)
     public Response viewBioDetailsXml(@PathParam("orcid") String orcid) {
-        T2_GET_REQUESTS.inc();
         return serviceDelegator.findBioDetails(orcid);
     }
 
@@ -191,7 +179,6 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(BIO_PATH)
     public Response viewBioDetailsJson(@PathParam("orcid") String orcid) {
-        T2_GET_REQUESTS.inc();
         return serviceDelegator.findBioDetails(orcid);
     }
 
@@ -208,7 +195,6 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @Produces(value = { TEXT_N3, TEXT_TURTLE })
     @Path(BIO_PATH)
     public Response viewBioDetailsTurtle(@PathParam("orcid") String orcid) {
-        T2_GET_REQUESTS.inc();
         return serviceDelegator.findBioDetails(orcid);
     }
 
@@ -225,7 +211,6 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @Produces(value = { APPLICATION_RDFXML })
     @Path(BIO_PATH)
     public Response viewBioDetailsRdf(@PathParam("orcid") String orcid) {
-        T2_GET_REQUESTS.inc();
         return serviceDelegator.findBioDetails(orcid);
     }
 
@@ -241,7 +226,6 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @Produces(value = { MediaType.TEXT_HTML })
     @Path(EXTERNAL_IDENTIFIER_PATH)
     public Response viewExternalIdentifiersHtml(@PathParam("orcid") String orcid) {
-        T2_GET_REQUESTS.inc();
         Response response = serviceDelegator.findExternalIdentifiers(orcid);
         return Response.fromResponse(response).header("Content-Disposition", "attachment; filename=\"" + orcid + "-external-ids.xml\"").build();
     }
@@ -259,7 +243,6 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Path(EXTERNAL_IDENTIFIER_PATH)
     public Response viewExternalIdentifiersXml(@PathParam("orcid") String orcid) {
-        T2_GET_REQUESTS.inc();
         return serviceDelegator.findExternalIdentifiers(orcid);
     }
 
@@ -276,7 +259,6 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(EXTERNAL_IDENTIFIER_PATH)
     public Response viewExternalIdentifiersJson(@PathParam("orcid") String orcid) {
-        T2_GET_REQUESTS.inc();
         return serviceDelegator.findExternalIdentifiers(orcid);
     }
 
@@ -292,7 +274,6 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @Produces(value = { MediaType.TEXT_HTML })
     @Path(PROFILE_GET_PATH)
     public Response viewFullDetailsHtml(@PathParam("orcid") String orcid) {
-        T2_GET_REQUESTS.inc();
         Response response = serviceDelegator.findFullDetails(orcid);
         return Response.fromResponse(response).header("Content-Disposition", "attachment; filename=\"" + orcid + "-profile.xml\"").build();
     }
@@ -309,7 +290,6 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Path(PROFILE_GET_PATH)
     public Response viewFullDetailsXml(@PathParam("orcid") String orcid) {
-        T2_GET_REQUESTS.inc();
         return serviceDelegator.findFullDetails(orcid);
     }
 
@@ -325,7 +305,6 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(PROFILE_GET_PATH)
     public Response viewFullDetailsJson(@PathParam("orcid") String orcid) {
-        T2_GET_REQUESTS.inc();
         return serviceDelegator.findFullDetails(orcid);
     }
 
@@ -342,7 +321,6 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @Produces(value = { MediaType.TEXT_HTML })
     @Path(AFFILIATIONS_PATH)
     public Response viewAffiliationsDetailsHtml(@PathParam("orcid") String orcid) {
-        T2_GET_REQUESTS.inc();
         Response response = serviceDelegator.findAffiliationsDetails(orcid);
         return Response.fromResponse(response).header("Content-Disposition", "attachment; filename=\"" + orcid + "-affiliations.xml\"").build();
     }
@@ -359,7 +337,6 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Path(AFFILIATIONS_PATH)
     public Response viewAffiliationsDetailsXml(@PathParam("orcid") String orcid) {
-        T2_GET_REQUESTS.inc();
         return serviceDelegator.findAffiliationsDetails(orcid);
     }
 
@@ -376,7 +353,6 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(AFFILIATIONS_PATH)
     public Response viewAffiliationsDetailsJson(@PathParam("orcid") String orcid) {
-        T2_GET_REQUESTS.inc();
         return serviceDelegator.findAffiliationsDetails(orcid);
     }
 
@@ -393,7 +369,6 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @Produces(value = { MediaType.TEXT_HTML })
     @Path(FUNDING_PATH)
     public Response viewFundingDetailsHtml(@PathParam("orcid") String orcid) {
-        T2_GET_REQUESTS.inc();
         Response response = serviceDelegator.findFundingDetails(orcid);
         return Response.fromResponse(response).header("Content-Disposition", "attachment; filename=\"" + orcid + "-grants.xml\"").build();
     }
@@ -410,7 +385,6 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Path(FUNDING_PATH)
     public Response viewFundingDetailsXml(@PathParam("orcid") String orcid) {
-        T2_GET_REQUESTS.inc();
         return serviceDelegator.findFundingDetails(orcid);
     }
 
@@ -427,7 +401,6 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(FUNDING_PATH)
     public Response viewFundingDetailsJson(@PathParam("orcid") String orcid) {
-        T2_GET_REQUESTS.inc();
         return serviceDelegator.findFundingDetails(orcid);
     }
 
@@ -444,7 +417,6 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @Produces(value = { MediaType.TEXT_HTML })
     @Path(WORKS_PATH)
     public Response viewWorksDetailsHtml(@PathParam("orcid") String orcid) {
-        T2_GET_REQUESTS.inc();
         Response response = serviceDelegator.findWorksDetails(orcid);
         return Response.fromResponse(response).header("Content-Disposition", "attachment; filename=\"" + orcid + "-works.xml\"").build();
     }
@@ -461,7 +433,6 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Path(WORKS_PATH)
     public Response viewWorksDetailsXml(@PathParam("orcid") String orcid) {
-        T2_GET_REQUESTS.inc();
         return serviceDelegator.findWorksDetails(orcid);
     }
 
@@ -478,7 +449,6 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(WORKS_PATH)
     public Response viewWorksDetailsJson(@PathParam("orcid") String orcid) {
-        T2_GET_REQUESTS.inc();
         return serviceDelegator.findWorksDetails(orcid);
     }
 
@@ -493,7 +463,6 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @GET
     @Path(CLIENT_PATH)
     public Response viewClient(@PathParam("client_id") String clientId) {
-        T2_GET_REQUESTS.inc();
         return serviceDelegator.redirectClientToGroup(clientId);
     }
 
@@ -509,7 +478,6 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
     @Path(PROFILE_POST_PATH)
     public Response createProfileXML(OrcidMessage orcidMessage) {
-        T2_POST_REQUESTS.inc();
         return serviceDelegator.createProfile(uriInfo, orcidMessage);
     }
 
@@ -525,7 +493,6 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(PROFILE_POST_PATH)
     public Response createProfileJson(OrcidMessage orcidMessage) {
-        T2_POST_REQUESTS.inc();
         return serviceDelegator.createProfile(uriInfo, orcidMessage);
     }
 
@@ -543,7 +510,6 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
     @Path(BIO_PATH)
     public Response updateBioDetailsXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
-        T2_PUT_REQUESTS.inc();
         return serviceDelegator.updateBioDetails(uriInfo, orcid, orcidMessage);
     }
 
@@ -560,7 +526,6 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(BIO_PATH)
     public Response updateBioDetailsJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
-        T2_PUT_REQUESTS.inc();
         return serviceDelegator.updateBioDetails(uriInfo, orcid, orcidMessage);
     }
 
@@ -578,7 +543,6 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
     @Path(WORKS_PATH)
     public Response addWorksXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
-        T2_POST_REQUESTS.inc();
         return serviceDelegator.addWorks(uriInfo, orcid, orcidMessage);
     }
 
@@ -596,7 +560,6 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(WORKS_PATH)
     public Response addWorksJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
-        T2_POST_REQUESTS.inc();
         return serviceDelegator.addWorks(uriInfo, orcid, orcidMessage);
     }
 
@@ -614,7 +577,6 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
     @Path(WORKS_PATH)
     public Response updateWorksXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
-        T2_PUT_REQUESTS.inc();
         return serviceDelegator.updateWorks(uriInfo, orcid, orcidMessage);
     }
 
@@ -632,7 +594,6 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(WORKS_PATH)
     public Response updateWorksJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
-        T2_PUT_REQUESTS.inc();
         return serviceDelegator.updateWorks(uriInfo, orcid, orcidMessage);
     }
 
@@ -650,7 +611,6 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
     @Path(AFFILIATIONS_PATH)
     public Response addAffiliationsXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
-        T2_POST_REQUESTS.inc();
         return serviceDelegator.addAffiliations(uriInfo, orcid, orcidMessage);
     }
 
@@ -668,7 +628,6 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(AFFILIATIONS_PATH)
     public Response addAffiliationsJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
-        T2_POST_REQUESTS.inc();
         return serviceDelegator.addAffiliations(uriInfo, orcid, orcidMessage);
     }
 
@@ -686,7 +645,6 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
     @Path(AFFILIATIONS_PATH)
     public Response updateAffiliationsXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
-        T2_PUT_REQUESTS.inc();
         return serviceDelegator.updateAffiliations(uriInfo, orcid, orcidMessage);
     }
 
@@ -704,7 +662,6 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(AFFILIATIONS_PATH)
     public Response updateAffiliationsJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
-        T2_PUT_REQUESTS.inc();
         return serviceDelegator.updateAffiliations(uriInfo, orcid, orcidMessage);
     }
 
@@ -722,7 +679,6 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
     @Path(FUNDING_PATH)
     public Response addFundingXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
-        T2_POST_REQUESTS.inc();
         return serviceDelegator.addFunding(uriInfo, orcid, orcidMessage);
     }
 
@@ -740,7 +696,6 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(FUNDING_PATH)
     public Response addFundingJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
-        T2_POST_REQUESTS.inc();
         return serviceDelegator.addFunding(uriInfo, orcid, orcidMessage);
     }
 
@@ -758,7 +713,6 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
     @Path(FUNDING_PATH)
     public Response updateFundingXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
-        T2_PUT_REQUESTS.inc();
         return serviceDelegator.updateFunding(uriInfo, orcid, orcidMessage);
     }
 
@@ -776,7 +730,6 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(FUNDING_PATH)
     public Response updateFundingJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
-        T2_PUT_REQUESTS.inc();
         return serviceDelegator.updateFunding(uriInfo, orcid, orcidMessage);
     }
 
@@ -794,7 +747,6 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
     @Path(EXTERNAL_IDENTIFIER_PATH)
     public Response addExternalIdentifiersXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
-        T2_POST_REQUESTS.inc();
         return serviceDelegator.addExternalIdentifiers(uriInfo, orcid, orcidMessage);
     }
 
@@ -812,7 +764,6 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(EXTERNAL_IDENTIFIER_PATH)
     public Response addExternalIdentifiersJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage) {
-        T2_POST_REQUESTS.inc();
         return serviceDelegator.addExternalIdentifiers(uriInfo, orcid, orcidMessage);
     }
 
@@ -885,7 +836,6 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(BIO_SEARCH_PATH)
     public Response searchByQueryJSON(@QueryParam("bogus") @DefaultValue("") String query) {
-        T2_SEARCH_REQUESTS.inc();
         Map<String, List<String>> solrParams = uriInfo.getQueryParameters();
         Response jsonQueryResults = serviceDelegator.searchByQuery(solrParams);
         registerSearchMetrics(jsonQueryResults);
@@ -904,7 +854,6 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Path(BIO_SEARCH_PATH)
     public Response searchByQueryXML(@QueryParam("bogus") @DefaultValue("") String query) {
-        T2_SEARCH_REQUESTS.inc();
         Map<String, List<String>> solrParams = uriInfo.getQueryParameters();
         Response xmlQueryResults = serviceDelegator.searchByQuery(solrParams);
         registerSearchMetrics(xmlQueryResults);
@@ -914,11 +863,10 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     private void registerSearchMetrics(Response results) {
         OrcidMessage orcidMessage = (OrcidMessage) results.getEntity();
         if (orcidMessage != null && orcidMessage.getOrcidSearchResults() != null && !orcidMessage.getOrcidSearchResults().getOrcidSearchResult().isEmpty()) {
-            T2_SEARCH_RESULTS_FOUND.inc(orcidMessage.getOrcidSearchResults().getOrcidSearchResult().size());
             return;
         }
 
-        T2_SEARCH_RESULTS_NONE_FOUND.inc();
+        
     }
 
     /**
