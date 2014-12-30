@@ -588,8 +588,8 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("orcid", orcid);
         templateParams.put("subject", getSubject("email.subject.claim_reminder", orcidProfile));
         Source source = orcidProfile.getOrcidHistory().getSource();
-        templateParams.put("creatorName", (source == null || source.getSourceName() == null || source.getSourceName().getContent() == null) ? source.getSourceOrcid()
-                .getPath() : source.getSourceName().getContent());
+        templateParams.put("creatorName", (source == null || source.getSourceName() == null || source.getSourceName().getContent() == null) ? source.retrieveSourcePath()
+                : source.getSourceName().getContent());
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
         templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
         templateParams.put("daysUntilActivation", daysUntilActivation);
