@@ -481,7 +481,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
 
     @Test
     public void testAddAffiliation() throws InterruptedException, JSONException {
-        String scopes = "/affiliations/create";
+        String scopes = "/affiliations/create /affiliations/read-limited";
         String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, "michael@bentine.com", "password");
         String accessToken = obtainAccessToken(authorizationCode, scopes);
 
@@ -506,11 +506,18 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
 
         ClientResponse clientResponse = oauthT2Client1_2_rc2.addAffiliationsXml("4444-4444-4444-4442", orcidMessage, accessToken);
         assertEquals(201, clientResponse.getStatus());
+
+        ClientResponse resultResponse = oauthT2Client1_2_rc2.viewAffiliationDetailsXml("4444-4444-4444-4442", accessToken);
+        assertEquals(200, resultResponse.getStatus());
+        OrcidMessage resultMessage = resultResponse.getEntity(OrcidMessage.class);
+        assertNotNull(resultMessage);
+        Affiliation resultAffiliation = resultMessage.getOrcidProfile().getOrcidActivities().getAffiliations().getAffiliation().get(0);
+        assertEquals(CLIENT_DETAILS_ID, resultAffiliation.retrieveSourcePath());
     }
 
     @Test
     public void testAddFunding() throws InterruptedException, JSONException {
-        String scopes = "/funding/create";
+        String scopes = "/funding/create /funding/read-limited";
         String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, "michael@bentine.com", "password");
         String accessToken = obtainAccessToken(authorizationCode, scopes);
 
@@ -564,6 +571,13 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
 
         ClientResponse clientResponse = oauthT2Client1_2_rc2.addFundingXml("4444-4444-4444-4442", orcidMessage, accessToken);
         assertEquals(201, clientResponse.getStatus());
+        
+        ClientResponse resultResponse = oauthT2Client1_2_rc2.viewFundingDetailsXml("4444-4444-4444-4442", accessToken);
+        assertEquals(200, resultResponse.getStatus());
+        OrcidMessage resultMessage = resultResponse.getEntity(OrcidMessage.class);
+        assertNotNull(resultMessage);
+        Funding resultFunding = resultMessage.getOrcidProfile().getOrcidActivities().getFundings().getFundings().get(0);
+        assertEquals(CLIENT_DETAILS_ID, resultFunding.retrieveSourcePath());
     }
 
     @Test
