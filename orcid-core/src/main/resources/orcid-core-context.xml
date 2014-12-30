@@ -473,6 +473,7 @@
                 <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_2_rc4ToV1_2_rc5"/>
                 <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_2_rc5ToV1_2_rc6"/>
                 <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_2_rc6ToV1_2_rc7"/>
+                <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_2_rc7ToV1_2"/>
 	        </list>
 	    </property>
 	</bean>
