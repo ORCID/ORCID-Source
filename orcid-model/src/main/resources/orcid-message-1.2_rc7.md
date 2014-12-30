@@ -1,3 +1,3 @@
-# Summary of API Changes from 1.2_rc6 to 1.2_rc7
+# Summary of API Changes from 1.2_rc7 to 1.2
 
-* Added Web of Science identifier as a work external identifier
+* Only the version number was incremented 

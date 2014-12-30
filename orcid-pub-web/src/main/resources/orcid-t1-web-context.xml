@@ -156,5 +156,9 @@
     <bean id="t1OrcidApiServiceImplV1_2_rc7" class="org.orcid.api.t1.server.T1OrcidApiServiceImplV1_2_rc7">
         <property name="externalVersion" value="1.2_rc7"/>
     </bean>
+
+    <bean id="t1OrcidApiServiceImplV1_2" class="org.orcid.api.t1.server.T1OrcidApiServiceImplV1_2">
+        <property name="externalVersion" value="1.2"/>
+    </bean>
     
 </beans>
