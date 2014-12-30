@@ -145,7 +145,4 @@ public interface OrcidClientGroupManager {
     Set<String> premiumUpdaterScopes();
 
     Set<String> updaterScopes();
-    
-    List<ClientDetailsEntity> findByGroupId(String groupId);
-    
 }
