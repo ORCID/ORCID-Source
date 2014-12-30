@@ -2,6 +2,15 @@
 
 #### XSD Release Version
 
+* **[ORCID Message 1.2](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/orcid-message-1.2.xsd)** <br>_Read the [change log from the previous version TDA
+    * API Base URLs - PRODUCTION
+        * Public API:   http://pub.orcid.org/v1.2/
+        * Member API:   https://api.orcid.org/v1.2/
+    * API Base URLs - SANDBOX
+        * Public API:   http://pub.sandbox.orcid.org/v1.2/
+        * Member API:   http://api.sandbox.orcid.org/v1.2/
+
+
 * **[ORCID Message 1.1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/orcid-message-1.1.xsd)** <br>_Read the [change log from the previous version (ORCID Message 1.0.23)](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/orcid-message-1.1.md)_
     * API Base URLs - PRODUCTION
         * Public API:   http://pub.orcid.org/v1.1/
