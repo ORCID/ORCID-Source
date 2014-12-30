@@ -732,4 +732,8 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
 
         return true;
     }
+    
+    public List<ClientDetailsEntity> findByGroupId(String groupId) {
+        return clientDetailsDao.findByGroupId(groupId);
+    }
 }

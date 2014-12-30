@@ -16,12 +16,13 @@
  */
 package org.orcid.core.manager;
 
+import java.util.List;
 import java.util.Set;
 
 import org.orcid.core.exception.OrcidClientGroupManagementException;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
-import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 
 /**
  * 
@@ -144,5 +145,7 @@ public interface OrcidClientGroupManager {
     Set<String> premiumUpdaterScopes();
 
     Set<String> updaterScopes();
+    
+    List<ClientDetailsEntity> findByGroupId(String groupId);
     
 }

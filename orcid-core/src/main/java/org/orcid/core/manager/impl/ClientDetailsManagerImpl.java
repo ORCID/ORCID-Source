@@ -416,4 +416,15 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
     public boolean belongsTo(String clientId, String groupId) {
         return clientDetailsDao.belongsTo(clientId, groupId);
     }
+    
+    /**
+     * Fetch all clients that belongs to a group
+     * @param groupId
+     *  Group id
+     * @return A list containing all clients that belongs to the given group
+     * */
+    @Override
+    public List<ClientDetailsEntity> findByGroupId(String groupId) {
+        return clientDetailsDao.findByGroupId(groupId);
+    }
 }
