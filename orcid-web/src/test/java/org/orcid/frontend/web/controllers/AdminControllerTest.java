@@ -153,7 +153,17 @@ public class AdminControllerTest extends BaseControllerTest {
         boolean containsEmail = false;
 
         assertNull(toDeprecate.getOrcidDeprecated());
-
+        assertNotNull(toDeprecate.getOrcidBio());
+        assertNotNull(toDeprecate.getOrcidBio().getPersonalDetails());
+        assertEquals("Spike", toDeprecate.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
+        assertEquals("Milligan", toDeprecate.getOrcidBio().getPersonalDetails().getFamilyName().getContent());
+        assertEquals("S. Milligan", toDeprecate.getOrcidBio().getPersonalDetails().getCreditName().getContent());
+        assertNotNull(toDeprecate.getOrcidBio().getKeywords());
+        assertNotNull(toDeprecate.getOrcidBio().getKeywords().getKeyword());
+        assertEquals(2, toDeprecate.getOrcidBio().getKeywords().getKeyword().size());
+        assertNotNull(toDeprecate.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName());
+        assertEquals(1, toDeprecate.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().size());
+        
         List<Email> emails1 = toDeprecate.getOrcidBio().getContactDetails().getEmail();
         assertNotNull(emails1);
         assertEquals(3, emails1.size());
@@ -201,6 +211,15 @@ public class AdminControllerTest extends BaseControllerTest {
         assertNotNull(toDeprecate.getOrcidDeprecated().getPrimaryRecord().getOrcidIdentifier());
         assertNotNull(toDeprecate.getOrcidDeprecated().getPrimaryRecord().getOrcidIdentifier().getPath());
         assertEquals("4444-4444-4444-4442", toDeprecate.getOrcidDeprecated().getPrimaryRecord().getOrcidIdentifier().getPath());
+        assertNotNull(toDeprecate.getOrcidBio());
+        assertNotNull(toDeprecate.getOrcidBio().getPersonalDetails());
+        assertEquals("Given Names Deactivated", toDeprecate.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
+        assertEquals("Family Name Deactivated", toDeprecate.getOrcidBio().getPersonalDetails().getFamilyName().getContent());
+        assertNull(toDeprecate.getOrcidBio().getPersonalDetails().getCreditName());
+        assertNull(toDeprecate.getOrcidBio().getKeywords());
+        assertNotNull(toDeprecate.getOrcidBio().getPersonalDetails().getOtherNames());
+        assertTrue(toDeprecate.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().isEmpty());
+        
         
         emails1 = toDeprecate.getOrcidBio().getContactDetails().getEmail();
         assertNotNull(emails1);
