@@ -32,10 +32,15 @@ import org.orcid.jaxb.model.message.OrcidMessage;
 public class OrcidMessageVersionConverterChainImpl implements OrcidMessageVersionConverterChain {
 
     public List<OrcidMessageVersionConverter> converters;
+    public ArrayList<String> toIndex;
     public List<OrcidMessageVersionConverter> descendingConverters;
 
     public void setConverters(List<OrcidMessageVersionConverter> converters) {
         this.converters = converters;
+        toIndex = new ArrayList<String>();
+        for (OrcidMessageVersionConverter converter: converters) {
+            toIndex.add(converter.getToVersion());
+        }
         List<OrcidMessageVersionConverter> descendingConverters = new ArrayList<>(converters);
         Collections.reverse(descendingConverters);
         this.descendingConverters = descendingConverters;
@@ -71,7 +76,7 @@ public class OrcidMessageVersionConverterChainImpl implements OrcidMessageVersio
                 break;
             }
             String toVersion = converter.getToVersion();
-            if (toVersion.compareTo(oldVersion) > 0 && toVersion.compareTo(requiredVersion) <= 0) {
+            if (toIndex.indexOf(toVersion) > toIndex.indexOf(oldVersion) &&  toIndex.indexOf(toVersion) <= toIndex.indexOf(requiredVersion)) {
                 orcidMessage = converter.upgradeMessage(orcidMessage);
             }
         }
