@@ -40,7 +40,7 @@
                     <span ng-show="notification.source" ng-cloak>{{notification.source.sourceName}}</span><span ng-hide="notification.source" ng-cloak>ORCID</span>
                 </td>
                 <td ng-click="toggleDisplayBody(notification.putCode.path)"><span ng-cloak>{{notification.subject}}</span></td>
-                <td ng-click="toggleDisplayBody(notification.putCode.path)"><span ng-cloak>{{notification.createdDate|date:'yyyy-MM-ddTHH:mm'}}</span></td>
+                <td ng-click="toggleDisplayBody(notification.putCode.path)"><span ng-cloak>{{notification.createdDate|humanDate}}</span></td>
                 <td>
                     <span><a href="" ng-click="archive(notification.putCode.path)" class="glyphicon glyphicon-folder-open grey" title="${springMacroRequestContext.getMessage("notifications.archive")}"></a></span>
                 </td>

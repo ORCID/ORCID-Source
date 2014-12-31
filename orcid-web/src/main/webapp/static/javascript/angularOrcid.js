@@ -1350,6 +1350,16 @@ orcidNgModule.filter('ajaxFormDateToISO8601', function(){
     };
 });
 
+orcidNgModule.filter('humanDate', function($filter){
+    var standardDateFilter = $filter('date');
+    return function(input){
+        var inputDate = new Date(input);
+        var dateNow = new Date();
+        var dateFormat = (inputDate.getYear() === dateNow.getYear() && inputDate.getMonth() === dateNow.getMonth() && inputDate.getDate() === dateNow.getDate())  ? 'HH:mm' : 'yyyy-MM-dd';
+        return standardDateFilter(input, dateFormat);
+    };
+});
+
 
 function formColorBoxWidth() {
     return isMobile()? '100%': '800px';
