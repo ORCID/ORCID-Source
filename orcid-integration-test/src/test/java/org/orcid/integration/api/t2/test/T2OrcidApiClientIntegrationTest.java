@@ -70,8 +70,11 @@ import com.sun.jersey.api.client.ClientResponse.Status;
 public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegrationTest {
 
     @Resource(name = "t2OrcidApiClient1_2_rc6")
-    private T2OrcidApiService<ClientResponse> t2Client;
+    private T2OrcidApiService<ClientResponse> t2Client1_2_rc6;
 
+    @Resource(name = "t2OrcidApiClient1_2")
+    private T2OrcidApiService<ClientResponse> t2Client1_2;
+    
     private String orcid;
 
     @Before
@@ -83,14 +86,14 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
     @After
     public void clearOrcid() {
         if (orcid != null) {
-            t2Client.deleteProfileXML(orcid);
+            t2Client1_2_rc6.deleteProfileXML(orcid);
             orcid = null;
         }
     }
 
     @Test
     public void testStatus() {
-        ClientResponse clientResponse = t2Client.viewStatusText();
+        ClientResponse clientResponse = t2Client1_2_rc6.viewStatusText();
         assertEquals(200, clientResponse.getStatus());
         assertEquals(MediaType.TEXT_PLAIN + "; charset=UTF-8", clientResponse.getType().toString());
         assertEquals(STATUS_OK_MESSAGE, clientResponse.getEntity(String.class));
@@ -102,7 +105,7 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
         // doesn't matter which format we use to create - it's only to get the
         // orcid back from the header location
 
-        ClientResponse clientResponse = t2Client.viewBioDetailsHtml(this.orcid);
+        ClientResponse clientResponse = t2Client1_2_rc6.viewBioDetailsHtml(this.orcid);
         assertNotNull(clientResponse);
         assertEquals(200, clientResponse.getStatus());
         assertEquals(MediaType.TEXT_HTML + "; charset=UTF-8", clientResponse.getType().toString());
@@ -117,7 +120,7 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
         // doesn't matter which format we use to create - it's only to get the
         // orcid back from the header location
 
-        ClientResponse clientResponse = t2Client.viewBioDetailsXml(this.orcid);
+        ClientResponse clientResponse = t2Client1_2_rc6.viewBioDetailsXml(this.orcid);
         assertNotNull(clientResponse);
         assertEquals(200, clientResponse.getStatus());
         assertEquals("application/vnd.orcid+xml; charset=UTF-8; qs=5", clientResponse.getType().toString());
@@ -136,7 +139,7 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
     @Test
     public void testViewBioDetailsJson() throws Exception {
 
-        ClientResponse clientResponse = t2Client.viewBioDetailsJson(this.orcid);
+        ClientResponse clientResponse = t2Client1_2_rc6.viewBioDetailsJson(this.orcid);
         assertNotNull(clientResponse);
         assertEquals(200, clientResponse.getStatus());
         assertEquals("application/vnd.orcid+json; charset=UTF-8; qs=4", clientResponse.getType().toString());
@@ -154,7 +157,7 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
     @Test
     public void testViewFullDetailsHtml() throws Exception {
 
-        ClientResponse clientResponse = t2Client.viewFullDetailsHtml(this.orcid);
+        ClientResponse clientResponse = t2Client1_2_rc6.viewFullDetailsHtml(this.orcid);
         assertNotNull(clientResponse);
         assertEquals(200, clientResponse.getStatus());
         assertEquals(MediaType.TEXT_HTML + "; charset=UTF-8", clientResponse.getType().toString());
@@ -174,7 +177,7 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
     @Test
     public void testViewFullDetailsXml() throws Exception {
 
-        ClientResponse clientResponse = t2Client.viewFullDetailsXml(this.orcid);
+        ClientResponse clientResponse = t2Client1_2_rc6.viewFullDetailsXml(this.orcid);
         assertNotNull(clientResponse);
         assertEquals(200, clientResponse.getStatus());
         assertEquals("application/vnd.orcid+xml; charset=UTF-8; qs=5", clientResponse.getType().toString());
@@ -194,7 +197,7 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
     @Test
     public void testViewFullDetailsJson() throws Exception {
 
-        ClientResponse clientResponse = t2Client.viewFullDetailsJson(this.orcid);
+        ClientResponse clientResponse = t2Client1_2_rc6.viewFullDetailsJson(this.orcid);
         assertNotNull(clientResponse);
         assertEquals(200, clientResponse.getStatus());
         assertEquals("application/vnd.orcid+json; charset=UTF-8; qs=4", clientResponse.getType().toString());
@@ -215,7 +218,7 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
     @Test
     public void testViewWorksDetailsHtml() throws Exception {
 
-        ClientResponse clientResponse = t2Client.viewWorksDetailsHtml(this.orcid);
+        ClientResponse clientResponse = t2Client1_2_rc6.viewWorksDetailsHtml(this.orcid);
         assertNotNull(clientResponse);
         assertEquals(200, clientResponse.getStatus());
         assertEquals(MediaType.TEXT_HTML + "; charset=UTF-8", clientResponse.getType().toString());
@@ -234,7 +237,7 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
     @Test
     public void testViewWorksDetailsXml() throws Exception {
 
-        ClientResponse clientResponse = t2Client.viewWorksDetailsXml(this.orcid);
+        ClientResponse clientResponse = t2Client1_2_rc6.viewWorksDetailsXml(this.orcid);
         assertNotNull(clientResponse);
         assertEquals(200, clientResponse.getStatus());
         assertEquals("application/vnd.orcid+xml; charset=UTF-8; qs=5", clientResponse.getType().toString());
@@ -249,7 +252,7 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
     @Test
     public void testViewWorksDetailsJson() throws Exception {
 
-        ClientResponse clientResponse = t2Client.viewWorksDetailsJson(this.orcid);
+        ClientResponse clientResponse = t2Client1_2_rc6.viewWorksDetailsJson(this.orcid);
         assertNotNull(clientResponse);
         assertEquals(200, clientResponse.getStatus());
         assertEquals("application/vnd.orcid+json; charset=UTF-8; qs=4", clientResponse.getType().toString());
@@ -294,10 +297,10 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
         orcidWorks.getOrcidWork().add(orcidWork);
         message.getOrcidProfile().setOrcidWorks(orcidWorks);
 
-        ClientResponse clientResponse = t2Client.addWorksXml(this.orcid, message);
+        ClientResponse clientResponse = t2Client1_2_rc6.addWorksXml(this.orcid, message);
         assertEquals(201, clientResponse.getStatus());
 
-        clientResponse = t2Client.viewWorksDetailsXml(this.orcid);
+        clientResponse = t2Client1_2_rc6.viewWorksDetailsXml(this.orcid);
         message = clientResponse.getEntity(OrcidMessage.class);
         orcidWorks = message.getOrcidProfile().retrieveOrcidWorks();
         assertTrue(orcidWorks != null && orcidWorks.getOrcidWork() != null && orcidWorks.getOrcidWork().size() == 4);
@@ -326,10 +329,10 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
         orcidWorks.getOrcidWork().add(orcidWork);
         message.getOrcidProfile().setOrcidWorks(orcidWorks);
 
-        ClientResponse clientResponse = t2Client.addWorksJson(this.orcid, message);
+        ClientResponse clientResponse = t2Client1_2_rc6.addWorksJson(this.orcid, message);
         assertEquals(201, clientResponse.getStatus());
 
-        clientResponse = t2Client.viewWorksDetailsXml(this.orcid);
+        clientResponse = t2Client1_2_rc6.viewWorksDetailsXml(this.orcid);
         message = clientResponse.getEntity(OrcidMessage.class);
         orcidWorks = message.getOrcidProfile().retrieveOrcidWorks();
         assertTrue(orcidWorks != null && orcidWorks.getOrcidWork() != null && orcidWorks.getOrcidWork().size() == 4);
@@ -338,7 +341,7 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
     @Test
     public void testUpdateWorksXml() throws Exception {
 
-        ClientResponse worksResponse = t2Client.viewWorksDetailsXml(this.orcid);
+        ClientResponse worksResponse = t2Client1_2.viewWorksDetailsXml(this.orcid);
         OrcidMessage message = worksResponse.getEntity(OrcidMessage.class);
         OrcidWorks orcidWorks = message.getOrcidProfile().retrieveOrcidWorks();
         assertTrue(orcidWorks != null && orcidWorks.getOrcidWork() != null && orcidWorks.getOrcidWork().size() == 3);
@@ -349,10 +352,10 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
         // secondTitle);
         // secondWork.getTitles().getTitle().setContent("Chromosome 5a55.5 microdeletions comprising AB555 and CD5555");
         message.getOrcidProfile().getOrcidInternal().setSecurityDetails(null);
-        ClientResponse updatedWorksResponse = t2Client.updateWorksXml(this.orcid, message);
+        ClientResponse updatedWorksResponse = t2Client1_2.updateWorksXml(this.orcid, message);
         assertEquals(200, updatedWorksResponse.getStatus());
 
-        worksResponse = t2Client.viewWorksDetailsXml(this.orcid);
+        worksResponse = t2Client1_2.viewWorksDetailsXml(this.orcid);
         message = worksResponse.getEntity(OrcidMessage.class);
         orcidWorks = message.getOrcidProfile().retrieveOrcidWorks();
         assertTrue(orcidWorks != null && orcidWorks.getOrcidWork() != null && orcidWorks.getOrcidWork().size() == 3);
@@ -369,7 +372,7 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
         String[] queries = getQueries();
 
         for (int i = 0; i < queries.length; i++) {
-            ClientResponse clientResponse = t2Client.searchByQueryJSON(queries[i]);
+            ClientResponse clientResponse = t2Client1_2_rc6.searchByQueryJSON(queries[i]);
             assertClientResponseFromSearch(clientResponse);
         }
 
@@ -382,7 +385,7 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
         String[] queries = getQueries();
 
         for (int i = 0; i < queries.length; i++) {
-            ClientResponse clientResponse = t2Client.searchByQueryXML(queries[i]);
+            ClientResponse clientResponse = t2Client1_2_rc6.searchByQueryXML(queries[i]);
             assertClientResponseFromSearch(clientResponse);
         }
     }
@@ -410,7 +413,7 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
 
     @Test
     public void testUpdateWorksJson() throws Exception {
-        ClientResponse worksResponse = t2Client.viewWorksDetailsJson(this.orcid);
+        ClientResponse worksResponse = t2Client1_2_rc6.viewWorksDetailsJson(this.orcid);
         OrcidMessage message = worksResponse.getEntity(OrcidMessage.class);
         OrcidWorks orcidWorks = message.getOrcidProfile().retrieveOrcidWorks();
         assertTrue(orcidWorks != null && orcidWorks.getOrcidWork() != null && orcidWorks.getOrcidWork().size() == 3);
@@ -421,10 +424,10 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
         // secondTitle);
         // secondWork.getTitles().getTitle().setContent("Chromosome 5a55.5 microdeletions comprising AB555 and CD5555");
         message.getOrcidProfile().getOrcidInternal().setSecurityDetails(null);
-        ClientResponse updatedWorksResponse = t2Client.updateWorksJson(this.orcid, message);
+        ClientResponse updatedWorksResponse = t2Client1_2_rc6.updateWorksJson(this.orcid, message);
         assertEquals(200, updatedWorksResponse.getStatus());
 
-        worksResponse = t2Client.viewWorksDetailsJson(this.orcid);
+        worksResponse = t2Client1_2_rc6.viewWorksDetailsJson(this.orcid);
         message = worksResponse.getEntity(OrcidMessage.class);
         orcidWorks = message.getOrcidProfile().retrieveOrcidWorks();
         assertTrue(orcidWorks != null && orcidWorks.getOrcidWork() != null && orcidWorks.getOrcidWork().size() == 3);
@@ -442,7 +445,7 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
 
             // get the bio details of the actual
 
-            ClientResponse bioResponse = t2Client.viewBioDetailsXml(this.orcid);
+            ClientResponse bioResponse = t2Client1_2.viewBioDetailsXml(this.orcid);
             OrcidMessage message = bioResponse.getEntity(OrcidMessage.class);
             OrcidBio orcidBio = message.getOrcidProfile().getOrcidBio();
             assertTrue(orcidBio.getExternalIdentifiers() != null);
@@ -461,11 +464,11 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
             orcidBio.setExternalIdentifiers(newExternalIdentifiers);
 
             message.getOrcidProfile().getOrcidInternal().setSecurityDetails(null);
-            ClientResponse updatedIdsResponse = t2Client.addExternalIdentifiersXml(this.orcid, message);
+            ClientResponse updatedIdsResponse = t2Client1_2.addExternalIdentifiersXml(this.orcid, message);
             assertEquals(200, updatedIdsResponse.getStatus());
 
             // retrieve the sponsor info
-            bioResponse = t2Client.viewBioDetailsXml(this.orcid);
+            bioResponse = t2Client1_2.viewBioDetailsXml(this.orcid);
             message = bioResponse.getEntity(OrcidMessage.class);
             orcidBio = message.getOrcidProfile().getOrcidBio();
             assertTrue(orcidBio.getExternalIdentifiers() != null);
@@ -474,7 +477,7 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
 
         } finally {
             // whatever happens get rid of the sponsor orcid we created
-            t2Client.deleteProfileXML(sponsorOrcid);
+            t2Client1_2_rc6.deleteProfileXML(sponsorOrcid);
         }
     }
 
@@ -488,7 +491,7 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
 
             // get the bio details of the actual
 
-            ClientResponse bioResponse = t2Client.viewBioDetailsJson(this.orcid);
+            ClientResponse bioResponse = t2Client1_2_rc6.viewBioDetailsJson(this.orcid);
             OrcidMessage message = bioResponse.getEntity(OrcidMessage.class);
             OrcidBio orcidBio = message.getOrcidProfile().getOrcidBio();
             assertTrue(orcidBio.getExternalIdentifiers() != null);
@@ -505,11 +508,11 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
             orcidBio.setExternalIdentifiers(newExternalIdentifiers);
 
             message.getOrcidProfile().getOrcidInternal().setSecurityDetails(null);
-            ClientResponse updatedIdsResponse = t2Client.addExternalIdentifiersJson(this.orcid, message);
+            ClientResponse updatedIdsResponse = t2Client1_2_rc6.addExternalIdentifiersJson(this.orcid, message);
             assertEquals(200, updatedIdsResponse.getStatus());
 
             // retrieve the sponsor info
-            bioResponse = t2Client.viewBioDetailsJson(this.orcid);
+            bioResponse = t2Client1_2_rc6.viewBioDetailsJson(this.orcid);
             message = bioResponse.getEntity(OrcidMessage.class);
             orcidBio = message.getOrcidProfile().getOrcidBio();
             assertTrue(orcidBio.getExternalIdentifiers() != null);
@@ -519,7 +522,7 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
         } finally {
             // whatever happens get rid of the sponsor orcid we created
             if (sponsorOrcid != null) {
-                t2Client.deleteProfileXML(sponsorOrcid);
+                t2Client1_2_rc6.deleteProfileXML(sponsorOrcid);
             }
         }
     }
@@ -535,10 +538,10 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
         Email email6 = new Email("test-new-email+" + System.currentTimeMillis() + "@email.com");
         email6.setPrimary(false);
         emails.add(email6);
-        ClientResponse response = t2Client.updateBioDetailsJson(this.orcid, message);
+        ClientResponse response = t2Client1_2_rc6.updateBioDetailsJson(this.orcid, message);
         assertNotNull(response);
         assertEquals(200, response.getStatus());
-        response = t2Client.viewFullDetailsJson(this.orcid);
+        response = t2Client1_2_rc6.viewFullDetailsJson(this.orcid);
         assertNotNull(response);
         assertEquals(200, response.getStatus());
         OrcidMessage responseEntity = response.getEntity(OrcidMessage.class);
@@ -560,10 +563,10 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
         Email email6 = new Email("test-new-email+" + System.currentTimeMillis() + "@email.com");
         email6.setPrimary(false);
         emails.add(email6);
-        ClientResponse response = t2Client.updateBioDetailsXml(this.orcid, message);
+        ClientResponse response = t2Client1_2_rc6.updateBioDetailsXml(this.orcid, message);
         assertNotNull(response);
         assertEquals(200, response.getStatus());
-        response = t2Client.viewFullDetailsXml(this.orcid);
+        response = t2Client1_2_rc6.viewFullDetailsXml(this.orcid);
         assertNotNull(response);
         assertEquals(200, response.getStatus());
         OrcidMessage responseEntity = response.getEntity(OrcidMessage.class);
@@ -587,13 +590,13 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
 
     private ClientResponse createFullOrcidJSON() throws JAXBException {
         OrcidMessage message = getInternalFullOrcidMessage(OrcidClientDataHelper.ORCID_INTERNAL_NO_SPONSOR_XML);
-        ClientResponse response = t2Client.createProfileJson(message);
+        ClientResponse response = t2Client1_2_rc6.createProfileJson(message);
         return response;
     }
 
     private ClientResponse createSponsor() throws JAXBException {
         OrcidMessage message = getInternalSponsor();
-        ClientResponse response = t2Client.createProfileJson(message);
+        ClientResponse response = t2Client1_2_rc6.createProfileJson(message);
         return response;
     }
 

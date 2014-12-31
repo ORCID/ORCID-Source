@@ -25,8 +25,13 @@
 
     <context:property-placeholder file-encoding="UTF-8" location="classpath:integration-test.properties" ignore-unresolvable="true"/>
 
-    <bean id="t2OrcidApiClient" class="org.orcid.integration.api.t2.T2OrcidApiClientImpl">
+	<bean id="t2OrcidApiClient" class="org.orcid.integration.api.t2.T2OrcidApiClientImpl">
          <constructor-arg value="${org.orcid.t2.client.base_url}"/>
+         <constructor-arg ref="jerseyClient"/>
+    </bean>
+
+    <bean id="t2OrcidApiClient1_2" class="org.orcid.integration.api.t2.T2OrcidApiClientImpl">
+         <constructor-arg value="${org.orcid.t2.client.base_url}/v1.2"/>
          <constructor-arg ref="jerseyClient"/>
     </bean>
     

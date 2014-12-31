@@ -65,6 +65,9 @@ public abstract class BaseT2OrcidOAuthApiClientIntegrationTest {
     
     @Resource(name="t2OAuthClient1_2_rc6")
     protected T2OAuthAPIService<ClientResponse> oauthT2Client1_2_rc6;
+    
+    @Resource(name="t2OAuthClient1_2")
+    protected T2OAuthAPIService<ClientResponse> oauthT2Client1_2;    
 
     @Resource
     private ClientDetailsManager clientDetailsManager;
