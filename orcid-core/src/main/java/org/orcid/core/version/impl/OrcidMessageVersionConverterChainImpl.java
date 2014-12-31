@@ -32,10 +32,17 @@ import org.orcid.jaxb.model.message.OrcidMessage;
 public class OrcidMessageVersionConverterChainImpl implements OrcidMessageVersionConverterChain {
 
     public List<OrcidMessageVersionConverter> converters;
+    public ArrayList<String> versionIndex;
     public List<OrcidMessageVersionConverter> descendingConverters;
 
     public void setConverters(List<OrcidMessageVersionConverter> converters) {
         this.converters = converters;
+        versionIndex = new ArrayList<String>();
+        for (int i = 0; i < converters.size(); i ++) {
+            if (i == 0)
+                versionIndex.add(converters.get(i).getFromVersion());
+            versionIndex.add(converters.get(i).getToVersion());
+        }
         List<OrcidMessageVersionConverter> descendingConverters = new ArrayList<>(converters);
         Collections.reverse(descendingConverters);
         this.descendingConverters = descendingConverters;
@@ -52,7 +59,7 @@ public class OrcidMessageVersionConverterChainImpl implements OrcidMessageVersio
                 break;
             }
             String fromVersion = converter.getFromVersion();
-            if (fromVersion.compareTo(oldVersion) < 0 && fromVersion.compareTo(requiredVersion) >= 0) {
+            if (versionIndex.indexOf(fromVersion) < versionIndex.indexOf(oldVersion) && versionIndex.indexOf(fromVersion) >= versionIndex.indexOf(requiredVersion)) {
                 orcidMessage = converter.downgradeMessage(orcidMessage);
             }
         }        
@@ -71,7 +78,7 @@ public class OrcidMessageVersionConverterChainImpl implements OrcidMessageVersio
                 break;
             }
             String toVersion = converter.getToVersion();
-            if (toVersion.compareTo(oldVersion) > 0 && toVersion.compareTo(requiredVersion) <= 0) {
+            if (versionIndex.indexOf(toVersion) > versionIndex.indexOf(oldVersion) &&  versionIndex.indexOf(toVersion) <= versionIndex.indexOf(requiredVersion)) {
                 orcidMessage = converter.upgradeMessage(orcidMessage);
             }
         }
