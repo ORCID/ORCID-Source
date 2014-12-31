@@ -342,6 +342,13 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         Long result = query.getSingleResult();
         return (result != null && result > 0);
     }
+    
+    @Override
+    public IndexingStatus retrieveIndexingStatus(String orcid) {
+        TypedQuery<IndexingStatus> query = entityManager.createQuery("select indexingStatus from ProfileEntity where orcid = :orcid", IndexingStatus.class);
+        query.setParameter("orcid", orcid);
+        return query.getSingleResult();
+    }
 
     @Override
     @Transactional

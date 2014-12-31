@@ -66,6 +66,8 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     boolean existsAndNotClaimedAndBelongsTo(String messageOrcid, String clientId);
 
     void updateIndexingStatus(String orcid, IndexingStatus indexingStatus);
+    
+    IndexingStatus retrieveIndexingStatus(String orcid);
 
     Long getConfirmedProfileCount();
 
@@ -123,4 +125,5 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     ClientType getClientType(String orcid);
 
     GroupType getGroupType(String orcid);
+
 }

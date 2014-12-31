@@ -56,7 +56,9 @@ import org.orcid.jaxb.model.message.TranslatedTitle;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkExternalIdentifier;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
+import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.SolrDao;
+import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.solr.entities.OrcidSolrDocument;
 import org.orcid.utils.NullUtils;
 import org.slf4j.Logger;
@@ -68,6 +70,9 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
 
     @Resource
     private SolrDao solrDao;
+    
+    @Resource
+    private ProfileDao profileDao;
 
     @Resource(name = "visibilityFilter")
     private VisibilityFilter visibilityFilter;
@@ -84,8 +89,13 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
         Date lastModifiedFromSolr = solrDao.retrieveLastModified(orcid);
         Date lastModifiedFromDb = orcidProfile.getOrcidHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime();
         if (lastModifiedFromDb.equals(lastModifiedFromSolr)) {
-            LOG.info("Index is already up to date for orcid: {}", orcid);
-            return;
+            // Check if re-indexing
+            IndexingStatus indexingStatus = profileDao.retrieveIndexingStatus(orcid);
+            if(!IndexingStatus.REINDEX.equals(indexingStatus)){
+                // If not re-indexing then skip
+                LOG.info("Index is already up to date for orcid: {}", orcid);
+                return;
+            }
         }
         persistProfileInformationForIndexing(orcidProfile);
     }
