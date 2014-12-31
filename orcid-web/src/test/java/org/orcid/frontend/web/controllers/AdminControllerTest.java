@@ -292,7 +292,7 @@ public class AdminControllerTest extends BaseControllerTest {
     @Test
     public void deactivateAndReactivateProfileTest() throws Exception {
         // Test deactivate
-        ProfileDetails result = adminController.confirmDeactivateOrcidAccount("4444-4444-4444-4441");
+        ProfileDetails result = adminController.deactivateOrcidAccount("4444-4444-4444-4441");
         assertEquals(0, result.getErrors().size());
 
         profileDao.refresh(profileDao.find("4444-4444-4444-4441"));
@@ -302,12 +302,12 @@ public class AdminControllerTest extends BaseControllerTest {
         assertEquals(deactivated.getGivenNames(), "Given Names Deactivated");
 
         // Test try to deactivate an already deactive account
-        result = adminController.confirmDeactivateOrcidAccount("4444-4444-4444-4441");
+        result = adminController.deactivateOrcidAccount("4444-4444-4444-4441");
         assertEquals(1, result.getErrors().size());
         assertEquals(adminController.getMessage("admin.profile_deactivation.errors.already_deactivated", new ArrayList<String>()), result.getErrors().get(0));
 
         // Test reactivate
-        result = adminController.confirmReactivateOrcidAccount("4444-4444-4444-4441");
+        result = adminController.reactivateOrcidAccount("4444-4444-4444-4441");
         assertEquals(0, result.getErrors().size());
 
         profileDao.refresh(profileDao.find("4444-4444-4444-4441"));
@@ -315,7 +315,7 @@ public class AdminControllerTest extends BaseControllerTest {
         assertNull(deactivated.getDeactivationDate());
 
         // Try to reactivate an already active account
-        result = adminController.confirmReactivateOrcidAccount("4444-4444-4444-4441");
+        result = adminController.reactivateOrcidAccount("4444-4444-4444-4441");
         assertEquals(1, result.getErrors().size());
         assertEquals(adminController.getMessage("admin.profile_reactivation.errors.already_active", new ArrayList<String>()), result.getErrors().get(0));
     }    
