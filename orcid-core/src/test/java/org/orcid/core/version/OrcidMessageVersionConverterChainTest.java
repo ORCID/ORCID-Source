@@ -61,9 +61,17 @@ public class OrcidMessageVersionConverterChainTest extends BaseTest {
         assertNotNull(newMessage);
         assertEquals("1.2", newMessage.getMessageVersion());
         oldMessage = newMessage;
-        newMessage = orcidMessageVersionConverterChain.upgradeMessage(oldMessage, "1.2_rc7");
+        newMessage = orcidMessageVersionConverterChain.downgradeMessage(oldMessage, "1.2_rc7");
         assertNotNull(newMessage);
         assertEquals("1.2_rc7", newMessage.getMessageVersion());
+        oldMessage = newMessage;
+        newMessage = orcidMessageVersionConverterChain.downgradeMessage(oldMessage, "1.2_rc6");
+        assertNotNull(newMessage);
+        assertEquals("1.2_rc6", newMessage.getMessageVersion());
+        oldMessage = newMessage;
+        newMessage = orcidMessageVersionConverterChain.downgradeMessage(oldMessage, "1.1");
+        assertNotNull(newMessage);
+        assertEquals("1.1", newMessage.getMessageVersion());
         assertEquals("4444-4444-4444-4446", newMessage.getOrcidProfile().getOrcid().getValue());
         assertEquals("http://orcid.org/4444-4444-4444-4446", newMessage.getOrcidProfile().getOrcidId());
     }
