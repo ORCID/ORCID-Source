@@ -399,7 +399,8 @@
 		<xs:complexType>
 			<xs:annotation>
 				<xs:appinfo>
-					<sch:pattern name="Test of number of primary emails">
+					<sch:pattern>
+						<sch:title>Test of number of primary emails</sch:title>
 						<sch:rule context="orcid:contact-details">
 							<sch:assert
 								test="if(count(orcid:email) &lt;= 1) then true() else count(orcid:email[@primary=true()]) + count(orcid:email[not(exists(@primary))]) = 1">Wrong number of primary emails</sch:assert>
