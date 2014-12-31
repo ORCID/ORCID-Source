@@ -160,10 +160,11 @@ public class OrcidApiServiceVersionedDelegatorImpl implements OrcidApiServiceDel
         OrcidMessage orcidMessage = (OrcidMessage) response.getEntity();
         if (orcidMessage != null) {
             String messageVersion = orcidMessage.getMessageVersion();
-            if (externalVersion.equals(messageVersion)) {
+            int comparision = orcidMessageVersionConverterChain.compareVersion(externalVersion,messageVersion);
+            if (comparision == 0) {
                 return response;
             }
-            if (externalVersion.compareTo(messageVersion) > 0) {
+            if (comparision > 0) {
                 orcidMessageVersionConverterChain.upgradeMessage(orcidMessage, externalVersion);
             } else {
                 orcidMessageVersionConverterChain.downgradeMessage(orcidMessage, externalVersion);
