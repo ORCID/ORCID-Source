@@ -453,8 +453,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
         if (affiliations != null && !affiliations.getAffiliation().isEmpty()) {
             for (Affiliation affiliation : affiliations.getAffiliation()) {
-                if (affiliation.getSource() == null || affiliation.getSource().getSourceOrcid() == null
-                        || StringUtils.isEmpty(affiliation.getSource().getSourceOrcid().getPath()))
+                if (affiliation.getSource() == null || StringUtils.isEmpty(affiliation.retrieveSourcePath()))
                     affiliation.setSource(new Source(amenderOrcid));
             }
         }
@@ -479,7 +478,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
         if (fundings != null && !fundings.getFundings().isEmpty()) {
             for (Funding funding : fundings.getFundings()) {
-                if (funding.getSource() == null || funding.getSource().getSourceOrcid() == null || StringUtils.isEmpty(funding.getSource().getSourceOrcid().getPath()))
+                if (funding.getSource() == null || StringUtils.isEmpty(funding.retrieveSourcePath()))
                     funding.setSource(new Source(amenderOrcid));
             }
         }

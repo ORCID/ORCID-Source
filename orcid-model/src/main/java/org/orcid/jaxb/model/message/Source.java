@@ -83,11 +83,14 @@ public class Source implements Serializable {
     }
 
     /**
-     * Gets the value of the sourceOrcid property.
-     * 
+     * Only use this method if you really need to tell the difference between a
+     * source ORCID and a source client ID. Use {@link #retrieveSourcePath()}
+     * instead.
+     *
      * @return possible object is {@link SourceOrcid }
      * 
      */
+    @Deprecated
     public SourceOrcid getSourceOrcid() {
         return sourceOrcid;
     }
@@ -103,6 +106,12 @@ public class Source implements Serializable {
         this.sourceOrcid = value;
     }
 
+    /**
+     * Only use this method if you really need to tell the difference between a
+     * source ORCID and a source client ID. Use {@link #retrieveSourcePath()}
+     * instead.
+     **/
+    @Deprecated
     public SourceClientId getSourceClientId() {
         return sourceClientId;
     }
