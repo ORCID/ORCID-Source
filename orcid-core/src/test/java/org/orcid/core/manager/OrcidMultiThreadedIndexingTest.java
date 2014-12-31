@@ -22,6 +22,8 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
+import java.util.Collections;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,7 +42,9 @@ public class OrcidMultiThreadedIndexingTest extends OrcidProfileManagerBaseTest 
     @Before
     @Transactional
     @Rollback
-    public void before() {
+    public void before() throws Exception {
+        removeDBUnitData(Collections.<String> emptyList());
+        
         if (profileDao.find(TEST_ORCID) != null) {
             profileDao.remove(TEST_ORCID);
         }

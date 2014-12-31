@@ -94,9 +94,7 @@
         <constructor-arg value="org.orcid.persistence.jpa.entities.ClientResourceIdEntity" />
     </bean>
 
-    <bean id="clientScopeDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
-        <constructor-arg value="org.orcid.persistence.jpa.entities.ClientScopeEntity" />
-    </bean>
+    <bean id="clientScopeDao" class="org.orcid.persistence.dao.impl.ClientScopeDaoImpl" />            
 
     <bean id="givenPermissionToDao" class="org.orcid.persistence.dao.impl.GivenPermissionToDaoImpl" />
 

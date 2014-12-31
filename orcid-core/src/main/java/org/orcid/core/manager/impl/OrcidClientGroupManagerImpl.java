@@ -19,6 +19,7 @@ package org.orcid.core.manager.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -53,15 +54,16 @@ import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.dao.ClientDetailsDao;
+import org.orcid.persistence.dao.ClientScopeDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
+import org.orcid.persistence.jpa.entities.ClientScopeEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.OrcidEntityIdComparator;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -88,6 +90,9 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
 
     @Resource
     private EncryptionManager encryptionManager;
+    
+    @Resource
+    private ClientScopeDao clientScopeDao;
        
     @Override
     @Transactional
@@ -199,6 +204,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
      * @param orcidClientGroup
      *            The group to be updated
      * */
+    @Transactional
     public void updateGroup(OrcidClientGroup orcidClientGroup) {
         String groupOrcid = orcidClientGroup.getGroupOrcid();
         // If the incoming client group ORCID is not null, then lookup the
@@ -209,6 +215,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
             // then raise an error.
             throw new OrcidClientGroupManagementException("Group ORCID was specified but does not yet exist: " + groupOrcid);
         } else {
+            boolean updateClientScopes = false;
             // If the existing client group is found, then update the type, name
             // and contact email from the incoming client group, using the
             // profile DAO
@@ -216,17 +223,67 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
                 EmailEntity primaryEmailEntity = new EmailEntity();
                 primaryEmailEntity.setId(orcidClientGroup.getEmail().toLowerCase().trim());
                 primaryEmailEntity.setCurrent(true);
-                primaryEmailEntity.setVerified(true);
-                groupProfileEntity.setGroupType(orcidClientGroup.getType());
+                primaryEmailEntity.setVerified(true);                
                 primaryEmailEntity.setVisibility(Visibility.PRIVATE);
-                groupProfileEntity.setPrimaryEmail(primaryEmailEntity);
+                groupProfileEntity.setPrimaryEmail(primaryEmailEntity);                          
             }
             groupProfileEntity.setCreditName(orcidClientGroup.getGroupName());
             groupProfileEntity.setSalesforeId(orcidClientGroup.getSalesforceId());
+            // If group type changed
+            if(!groupProfileEntity.getGroupType().equals(orcidClientGroup.getType())) {
+                // Update the group type
+                groupProfileEntity.setGroupType(orcidClientGroup.getType());
+                // Set the flag to update the client scopes
+                updateClientScopes = true;
+            }     
+            // Merge changes
             profileDao.merge(groupProfileEntity);
+            profileDao.updateLastModifiedDate(groupOrcid);
+            // Update client types and scopes
+            if(updateClientScopes)
+                updateClientTypeDueGroupTypeUpdate(groupProfileEntity);
         }
     }
 
+    /**
+     * Updates the client type and client scopes of all clients that belongs to the given group
+     * @param groupProfileEntity
+     *  the group profile
+     * */
+    @Transactional
+    private void updateClientTypeDueGroupTypeUpdate(ProfileEntity groupProfileEntity) {
+        Set<ClientDetailsEntity> clients = groupProfileEntity.getClients();
+        ClientType clientType = this.getClientType(groupProfileEntity.getGroupType());        
+        for(ClientDetailsEntity client : clients) {
+            Set<String> newSetOfScopes = this.createScopes(clientType);
+            Set<ClientScopeEntity> existingScopes = client.getClientScopes();            
+            Iterator<ClientScopeEntity> scopesIterator = existingScopes.iterator();
+            while(scopesIterator.hasNext()) {
+                ClientScopeEntity clientScopeEntity = scopesIterator.next();
+                if(newSetOfScopes.contains(clientScopeEntity.getScopeType())) {
+                    newSetOfScopes.remove(clientScopeEntity.getScopeType());
+                } else {
+                    clientScopeDao.deleteScope(client.getClientId(), clientScopeEntity.getScopeType());
+                }
+            }
+            
+            // Insert the new scopes
+            for(String newScope : newSetOfScopes) {
+                ClientScopeEntity clientScopeEntity = new ClientScopeEntity();
+                clientScopeEntity.setClientDetailsEntity(client);
+                clientScopeEntity.setScopeType(newScope);
+                clientScopeEntity.setDateCreated(new Date());
+                clientScopeEntity.setLastModified(new Date());
+                clientScopeDao.persist(clientScopeEntity);
+            }
+            
+            // Update client type
+            clientDetailsDao.updateClientType(clientType, client.getClientId());
+            // Update last modified
+            clientDetailsDao.updateLastModified(client.getClientId());
+        }
+    }
+    
     /**
      * If the client type is set, check if the client type matches the types
      * that the group is allowed to add. If the client type is null, assig it
@@ -577,23 +634,27 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         }
     }
 
-    private Set<String> premiumCreatorScopes() {
+    @Override
+    public Set<String> premiumCreatorScopes() {
         Set<String> creatorScopes = creatorScopes();
         creatorScopes.add(ScopePathType.WEBHOOK.value());
         return creatorScopes;
     }
 
-    private Set<String> creatorScopes() {
+    @Override
+    public Set<String> creatorScopes() {
         return ScopePathType.ORCID_PROFILE_CREATE.getCombinedAsStrings();
     }
 
-    private Set<String> premiumUpdaterScopes() {
+    @Override
+    public Set<String> premiumUpdaterScopes() {
         Set<String> updaterScopes = updaterScopes();
         updaterScopes.add(ScopePathType.WEBHOOK.value());
         return updaterScopes;
     }
 
-    private Set<String> updaterScopes() {
+    @Override
+    public Set<String> updaterScopes() {
         return new HashSet<>(ScopePathType.getScopesAsStrings(ScopePathType.AFFILIATIONS_CREATE, ScopePathType.AFFILIATIONS_READ_LIMITED,
                 ScopePathType.AFFILIATIONS_UPDATE, ScopePathType.AUTHENTICATE, ScopePathType.FUNDING_CREATE, ScopePathType.FUNDING_READ_LIMITED,
                 ScopePathType.FUNDING_UPDATE, ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE, ScopePathType.ORCID_BIO_READ_LIMITED, ScopePathType.ORCID_BIO_UPDATE,
@@ -670,5 +731,5 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
             return false;
 
         return true;
-    }
+    }    
 }

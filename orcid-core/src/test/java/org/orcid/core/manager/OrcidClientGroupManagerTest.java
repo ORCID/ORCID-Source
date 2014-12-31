@@ -38,16 +38,18 @@ import org.orcid.core.BaseTest;
 import org.orcid.core.exception.OrcidClientGroupManagementException;
 import org.orcid.core.manager.impl.OrcidProfileManagerImpl;
 import org.orcid.jaxb.model.clientgroup.ClientType;
+import org.orcid.jaxb.model.clientgroup.GroupType;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.jaxb.model.clientgroup.RedirectUris;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
@@ -80,14 +82,12 @@ public class OrcidClientGroupManagerTest extends BaseTest {
 
     @Before
     public void initMocks() throws Exception {
-
+        removeDBUnitData(Collections.<String> emptyList());
         OrcidProfileManagerImpl orcidProfileManagerImpl = getTargetObject(orcidProfileManager, OrcidProfileManagerImpl.class);
         orcidProfileManagerImpl.setOrcidIndexManager(orcidIndexManager);
     }
 
-    @Test
-    @Rollback(true)
-    @Transactional
+    @Test    
     public void testCreateOrcidClientGroup() {
         OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(CLIENT_GROUP));
 
@@ -133,8 +133,6 @@ public class OrcidClientGroupManagerTest extends BaseTest {
     }
 
     @Test
-    @Rollback(true)
-    @Transactional
     public void testCreateOrcidCreatorClientGroup() {
         OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(CLIENT_GROUP));
 
@@ -171,8 +169,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
     }
 
     @Test
-    @Rollback(true)
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void testUpdateOrcidClientGroup() {
         final OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(CLIENT_GROUP));
         OrcidClientGroup createdGroup = transactionTemplate.execute(new TransactionCallback<OrcidClientGroup>() {
@@ -222,8 +219,6 @@ public class OrcidClientGroupManagerTest extends BaseTest {
     }
 
     @Test
-    @Rollback(true)
-    @Transactional
     public void testGetOrcidClientList() {
         OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(CLIENT_GROUP));
 
@@ -237,8 +232,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
     }
 
     @Test
-    @Rollback(true)
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void testAddMoreThanOneClientToBasicGroup() {
         final OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(BASIC_CLIENT_GROUP_NO_CLIENT));
         OrcidClientGroup createdGroup = transactionTemplate.execute(new TransactionCallback<OrcidClientGroup>() {
@@ -281,8 +275,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
     }
 
     @Test
-    @Rollback(true)
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void testAddCreatorToBasicGroup() {
         final OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(BASIC_CLIENT_GROUP_NO_CLIENT));
         OrcidClientGroup createdGroup = transactionTemplate.execute(new TransactionCallback<OrcidClientGroup>() {
@@ -312,8 +305,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
     }
 
     @Test
-    @Rollback(true)
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void testAddMoreThanOneClientToBasicInstitutionGroup() {
         final OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(BASIC_INSTITUTION_CLIENT_GROUP_NO_CLIENT));
         OrcidClientGroup createdGroup = transactionTemplate.execute(new TransactionCallback<OrcidClientGroup>() {
@@ -356,8 +348,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
     }
 
     @Test
-    @Rollback(true)
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void testAddUpdaterToBasicInstitutionGroup() {
         final OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(BASIC_INSTITUTION_CLIENT_GROUP_NO_CLIENT));
         OrcidClientGroup createdGroup = transactionTemplate.execute(new TransactionCallback<OrcidClientGroup>() {
@@ -387,8 +378,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
     }
 
     @Test
-    @Rollback(true)
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void testAddCreatorToPremiumGroup() {
         final OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(PREMIUM_CLIENT_GROUP_NO_CLIENT));
         OrcidClientGroup createdGroup = transactionTemplate.execute(new TransactionCallback<OrcidClientGroup>() {
@@ -418,8 +408,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
     }
 
     @Test
-    @Rollback(true)
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void testAddUpdaterToPremiumInstitutionGroup() {
         final OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(PREMIUM_INSTITUTION_CLIENT_GROUP_NO_CLIENT));
         OrcidClientGroup createdGroup = transactionTemplate.execute(new TransactionCallback<OrcidClientGroup>() {
@@ -446,6 +435,48 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         } catch (OrcidClientGroupManagementException e) {
 
         }
+    }
+    
+    @Test
+    public void testUpdateGroup() {
+        final OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(CLIENT_GROUP));
+        final OrcidClientGroup createdGroup = transactionTemplate.execute(new TransactionCallback<OrcidClientGroup>() {
+            public OrcidClientGroup doInTransaction(TransactionStatus status) {
+                return orcidClientGroupManager.createOrUpdateOrcidClientGroup(group);
+            }
+        });
+        
+        assertNotNull(createdGroup);
+        assertEquals(GroupType.PREMIUM, createdGroup.getType());
+        
+        Set<String> premiumScopes = orcidClientGroupManager.premiumUpdaterScopes();
+        
+        //Get existing clients
+        List<ClientDetailsEntity> clients = clientDetailsManager.findByGroupId(createdGroup.getGroupOrcid());
+        for(ClientDetailsEntity clientDetails : clients) {
+            assertEquals(ClientType.PREMIUM_UPDATER, clientDetails.getClientType());
+            assertTrue(clientDetails.isScoped());
+            assertEquals(premiumScopes.size(), clientDetails.getScope().size());
+        }
+
+        //Update the group type
+        createdGroup.setType(GroupType.PREMIUM_INSTITUTION);
+        
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                orcidClientGroupManager.updateGroup(createdGroup);
+            }
+        });        
+        
+        Set<String> premiumInstitutionScopes = orcidClientGroupManager.premiumCreatorScopes();
+        
+        clients = clientDetailsManager.findByGroupId(createdGroup.getGroupOrcid());
+        for(ClientDetailsEntity clientDetails : clients) {
+            assertEquals(ClientType.PREMIUM_CREATOR, clientDetails.getClientType());
+            assertTrue(clientDetails.isScoped());
+            assertEquals(premiumInstitutionScopes.size(), clientDetails.getScope().size());
+        }                
     }
 
 }
