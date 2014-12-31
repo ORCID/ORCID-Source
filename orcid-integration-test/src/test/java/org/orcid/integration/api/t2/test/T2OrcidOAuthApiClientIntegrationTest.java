@@ -539,7 +539,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         createNewOrcidUsingAccessToken();
         // get the bio details of the actual
         createAccessTokenFromCredentials();
-        ClientResponse bioResponse = oauthT2Client1_2_rc6.viewBioDetailsXml(this.orcid, accessToken);
+        ClientResponse bioResponse = oauthT2Client1_2.viewBioDetailsXml(this.orcid, accessToken);
         OrcidMessage message = bioResponse.getEntity(OrcidMessage.class);
         OrcidBio orcidBio = message.getOrcidProfile().getOrcidBio();
 
@@ -567,12 +567,12 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         orcidBio.setExternalIdentifiers(newExternalIdentifiers);
 
         createAccessTokenFromCredentials();
-        ClientResponse updatedIdsResponse = oauthT2Client1_2_rc6.addExternalIdentifiersXml(this.orcid, message, accessToken);
+        ClientResponse updatedIdsResponse = oauthT2Client1_2.addExternalIdentifiersXml(this.orcid, message, accessToken);
         assertEquals(200, updatedIdsResponse.getStatus());
 
         // retrieve the sponsor info
         createAccessTokenFromCredentials();
-        bioResponse = oauthT2Client1_2_rc6.viewBioDetailsXml(this.orcid, accessToken);
+        bioResponse = oauthT2Client1_2.viewBioDetailsXml(this.orcid, accessToken);
         message = bioResponse.getEntity(OrcidMessage.class);
         orcidBio = message.getOrcidProfile().getOrcidBio();
         assertTrue(orcidBio.getExternalIdentifiers() != null);
@@ -637,7 +637,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         createNewOrcidUsingAccessToken();
         // get the bio details of the actual
         createAccessTokenFromCredentials();
-        ClientResponse bioResponse = oauthT2Client1_2_rc6.viewBioDetailsXml(this.orcid, accessToken);
+        ClientResponse bioResponse = oauthT2Client1_2.viewBioDetailsXml(this.orcid, accessToken);
         OrcidMessage message = bioResponse.getEntity(OrcidMessage.class);
         OrcidBio orcidBio = message.getOrcidProfile().getOrcidBio();
 
@@ -663,12 +663,12 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         orcidBio.setExternalIdentifiers(newExternalIdentifiers);
 
         createAccessTokenFromCredentials();
-        ClientResponse updatedIdsResponse = oauthT2Client1_2_rc6.addExternalIdentifiersXml(this.orcid, message, accessToken);
+        ClientResponse updatedIdsResponse = oauthT2Client1_2.addExternalIdentifiersXml(this.orcid, message, accessToken);
         assertEquals(200, updatedIdsResponse.getStatus());
 
         // retrieve the sponsor info
         createAccessTokenFromCredentials();
-        bioResponse = oauthT2Client1_2_rc6.viewBioDetailsXml(this.orcid, accessToken);
+        bioResponse = oauthT2Client1_2.viewBioDetailsXml(this.orcid, accessToken);
         message = bioResponse.getEntity(OrcidMessage.class);
         orcidBio = message.getOrcidProfile().getOrcidBio();
         assertTrue(orcidBio.getExternalIdentifiers() != null);
