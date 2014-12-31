@@ -480,17 +480,3 @@ public class OrcidClientGroupManagerTest extends BaseTest {
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
