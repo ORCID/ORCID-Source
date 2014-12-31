@@ -1,0 +1,36 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet id="CHANGE-EXTERNAL-IDENTIFIER-PRIMARY-KEY" author="Angel Montenegro">
+        <preConditions>
+  			<primaryKeyExists tableName="external_identifier" primaryKeyName="external_identifier_pkey"/>
+		</preConditions>
+		<dropPrimaryKey tableName="external_identifier"
+            constraintName="external_identifier_pkey" />
+		<addColumn tableName="external_identifier">
+	        <column name="id" type="bigint" autoIncrement="true" >
+	        	<constraints nullable="false" primaryKey="true" primaryKeyName="external_identifier_numeric_pkey"/>
+	        </column>
+        </addColumn>  
+        <addUniqueConstraint tableName="external_identifier" columnNames="orcid, external_id_reference, external_id_type"/>                             
+    </changeSet>
+</databaseChangeLog>	

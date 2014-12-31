@@ -124,4 +124,6 @@
     
     <include file="/db/updates/funding-external-identifiers-as-json.xml" />
     
+    <include file="/db/updates/change_external_identifier_primary_key.xml" />
+    
 </databaseChangeLog>
