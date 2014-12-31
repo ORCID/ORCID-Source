@@ -42,9 +42,13 @@ public class OrcidMessageVersionConverterChainTest extends BaseTest {
     public void testUpdgrade() {
         Reader reader = new InputStreamReader(getClass().getResourceAsStream("orcid-public-full-message-v1.0.16.xml"));
         OrcidMessage oldMessage = OrcidMessage.unmarshall(reader);
-        OrcidMessage newMessage = orcidMessageVersionConverterChain.upgradeMessage(oldMessage, "1.0.17");
+        OrcidMessage newMessage = orcidMessageVersionConverterChain.upgradeMessage(oldMessage, "1.2_rc7");
         assertNotNull(newMessage);
-        assertEquals("1.0.17", newMessage.getMessageVersion());
+        assertEquals("1.2_rc7", newMessage.getMessageVersion());
+        oldMessage = newMessage;
+        newMessage = orcidMessageVersionConverterChain.upgradeMessage(oldMessage, "1.2");
+        assertNotNull(newMessage);
+        assertEquals("1.2", newMessage.getMessageVersion());
         assertEquals("4444-4444-4444-4446", newMessage.getOrcidProfile().getOrcid().getValue());
         assertEquals("http://orcid.org/4444-4444-4444-4446", newMessage.getOrcidProfile().getOrcidId());
     }
