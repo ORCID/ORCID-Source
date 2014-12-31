@@ -29,4 +29,5 @@ public interface OrcidMessageVersionConverterChain {
 
     OrcidMessage upgradeMessage(OrcidMessage orcidMessage, String requiredVersion);
 
+    public int compareVersion(String v1, String v2);
 }
