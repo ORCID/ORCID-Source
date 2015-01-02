@@ -156,6 +156,22 @@ public class ExternalIdentifierEntity extends BaseEntity<Long> implements Compar
             }
         }
 
+        // If they are still equal, compare against the 
+        if (result == 0) {
+            if(other.getExternalIdCommonName() == null) {
+                if(externalIdCommonName == null) {
+                    result = 0;
+                } else {
+                    result = 1;
+                }
+            } else {
+                if(externalIdCommonName == null) {
+                    result = -1;                   
+                } else {
+                    result = externalIdCommonName.compareToIgnoreCase(other.getExternalIdCommonName());
+                }                   
+            }
+        }
         return result;
     }
 
@@ -165,6 +181,7 @@ public class ExternalIdentifierEntity extends BaseEntity<Long> implements Compar
     public void clean() {
         externalIdCommonName = null;
         externalIdUrl = null;
+        externalIdReference = null;
     }
 
 }
