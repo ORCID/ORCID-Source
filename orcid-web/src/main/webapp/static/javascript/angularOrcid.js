@@ -1224,15 +1224,21 @@ orcidNgModule.factory("prefsSrvc", function ($rootScope) {
 });
 
 orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) {
+    var defaultMaxResults = 10;
     var serv = {
         firstResult: 0,
-        maxResults: 10,
+        maxResults: defaultMaxResults,
         areMoreFlag: false,
         notifications: [],
         unreadCount: 0,
+        showArchived: false,
         getNotifications: function() {
+            var url = getBaseUri() + '/notifications/notifications.json?firstResult=' + serv.firstResult + '&maxResults=' + serv.maxResults;
+            if(serv.showArchived){
+                url += "&includeArchived=true";
+            }
             $.ajax({
-                url: getBaseUri() + '/notifications/notifications.json?firstResult=' + serv.firstResult + '&maxResults=' + serv.maxResults,
+                url: url,
                 dataType: 'json',
                 success: function(data) {
                     if(data.length === 0 || data.length < serv.maxResults){
@@ -1250,6 +1256,12 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) 
                 // something bad is happening!
                 console.log("error with getting notifications");
             });
+        },
+        reloadNotifications: function() {
+            serv.notifications.length = 0;
+            serv.firstResult = 0;
+            serv.maxResults = defaultMaxResults;
+            serv.getNotifications();
         },
         retrieveUnreadCount: function() {
             $.ajax({
@@ -4901,6 +4913,9 @@ orcidNgModule.controller('NotificationsCtrl',['$scope', '$compile', 'notificatio
     $scope.showMore = notificationsSrvc.showMore;
     $scope.areMore = notificationsSrvc.areMore;
     $scope.archive = notificationsSrvc.archive;
+    $scope.getNotifications = notificationsSrvc.getNotifications;
+    $scope.reloadNotifications = notificationsSrvc.reloadNotifications;
+    $scope.notificationsSrvc = notificationsSrvc;
 }]);
 
 // Controller to show alert for unread notifications

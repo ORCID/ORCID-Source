@@ -5532,7 +5532,7 @@ ul.oauth-icons li {
 }
 
 .notifications th,td {
-	padding-left: 8px;
+	padding: 8px;
 	vertical-align: top;
 }
 
@@ -5542,6 +5542,10 @@ ul.oauth-icons li {
 
 .notifications .unread {
 	font-weight: bold;
+}
+
+.notifications .archived {
+	background-color: #c9c9ca;
 }
 
 .vertical-align-middle {

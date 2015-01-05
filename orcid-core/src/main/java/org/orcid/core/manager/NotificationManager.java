@@ -55,7 +55,7 @@ public interface NotificationManager {
 
     public List<Notification> findUnsentByOrcid(String orcid);
 
-    public List<Notification> findByOrcid(String orcid, int firstResult, int maxResults);
+    public List<Notification> findByOrcid(String orcid, boolean includeArchived, int firstResult, int maxResults);
 
     public Notification findById(Long id);
 
