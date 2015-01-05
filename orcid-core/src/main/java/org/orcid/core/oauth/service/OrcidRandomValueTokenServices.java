@@ -38,9 +38,9 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
-import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 
@@ -89,7 +89,7 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
         // OauthTokensConstants.TOKEN_VERSION param from the additionalInfo
         // object
         additionalInfo.put(OauthTokensConstants.TOKEN_VERSION, OauthTokensConstants.PERSISTENT_TOKEN);
-        if (isPersistentTokenEnabled(authentication.getAuthorizationRequest()))
+        if (isPersistentTokenEnabled(authentication.getOAuth2Request()))
             additionalInfo.put("persistent", true);
 
         if (existingAccessToken != null) {
@@ -99,7 +99,7 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
                         userOrcid });
             } else {
                 DefaultOAuth2AccessToken updatedAccessToken = new DefaultOAuth2AccessToken(existingAccessToken);
-                int validitySeconds = getAccessTokenValiditySeconds(authentication.getAuthorizationRequest());
+                int validitySeconds = getAccessTokenValiditySeconds(authentication.getOAuth2Request());
                 if (validitySeconds > 0) {
                     updatedAccessToken.setExpiration(new Date(System.currentTimeMillis() + (validitySeconds * 1000L)));
                 }
@@ -126,7 +126,7 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
      * @return the access token validity period in seconds
      */
     @Override
-    protected int getAccessTokenValiditySeconds(AuthorizationRequest authorizationRequest) {
+    protected int getAccessTokenValiditySeconds(OAuth2Request authorizationRequest) {
         Set<ScopePathType> requestedScopes = ScopePathType.getScopesFromStrings(authorizationRequest.getScope());
         if (requestedScopes.size() == 1 && ScopePathType.ORCID_PROFILE_CREATE.equals(requestedScopes.iterator().next())) {
             return readValiditySeconds;
@@ -167,9 +167,9 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
      * Checks the authorization code to verify if the user enable the persistent
      * token or not
      * */
-    private boolean isPersistentTokenEnabled(AuthorizationRequest authorizationRequest) {
+    private boolean isPersistentTokenEnabled(OAuth2Request authorizationRequest) {
         if (authorizationRequest != null) {
-            Map<String, String> params = authorizationRequest.getAuthorizationParameters();
+            Map<String, String> params = authorizationRequest.getRequestParameters();
             if (params != null) {
                 if (params.containsKey(OauthTokensConstants.IS_PERSISTENT)) {
                     String isPersistent = params.get(OauthTokensConstants.IS_PERSISTENT);
@@ -193,8 +193,8 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
     /**
      * Checks if the authorization request grant type is client_credentials
      * */
-    private boolean isClientCredentialsGrantType(AuthorizationRequest authorizationRequest) {
-        Map<String, String> params = authorizationRequest.getAuthorizationParameters();
+    private boolean isClientCredentialsGrantType(OAuth2Request authorizationRequest) {
+        Map<String, String> params = authorizationRequest.getRequestParameters();
         if (params != null) {
             if (params.containsKey(OauthTokensConstants.GRANT_TYPE)) {
                 String grantType = params.get(OauthTokensConstants.GRANT_TYPE);
