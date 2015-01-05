@@ -17,9 +17,10 @@
 package org.orcid.core.oauth;
 
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
-import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.oauth2.provider.TokenGranter;
+import org.springframework.security.oauth2.provider.TokenRequest;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 
 /**
@@ -32,20 +33,21 @@ public class OrcidClientCredentialsTokenGranter implements TokenGranter {
     private final OrcidClientCredentialsChecker clientCredentialsChecker;
 
     private final AuthorizationServerTokenServices tokenServices;
-
-    public OrcidClientCredentialsTokenGranter(OrcidClientCredentialsChecker clientCredentialsChecker, AuthorizationServerTokenServices tokenServices) {
+    
+   public OrcidClientCredentialsTokenGranter(OrcidClientCredentialsChecker clientCredentialsChecker, AuthorizationServerTokenServices tokenServices) {
         this.clientCredentialsChecker = clientCredentialsChecker;
         this.tokenServices = tokenServices;
     }
 
     @Override
-    public OAuth2AccessToken grant(String grantType, AuthorizationRequest authorizationRequest) {
+    public OAuth2AccessToken grant(String grantType, TokenRequest tokenRequest) {
         if (!CLIENT_CREDENTIALS.equals(grantType)) {
             return null;
         }
 
-        AuthorizationRequest clientToken = clientCredentialsChecker.validateCredentials(grantType, authorizationRequest.getClientId(), authorizationRequest.getScope());
-        return tokenServices.createAccessToken(new OAuth2Authentication(clientToken, null));
+        OAuth2Request authorizationRequest = clientCredentialsChecker.validateCredentials(grantType, tokenRequest.getClientId(), tokenRequest.getScope());
+        
+        return tokenServices.createAccessToken(new OAuth2Authentication(authorizationRequest, null));
     }
 
 }

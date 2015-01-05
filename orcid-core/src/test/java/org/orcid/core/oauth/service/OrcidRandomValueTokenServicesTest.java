@@ -43,6 +43,7 @@ import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.test.DBUnitTest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.security.oauth2.provider.DefaultAuthorizationRequest;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
@@ -96,8 +97,8 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
 
         Map<String, String> authorizationParameters = new HashMap<>();
         String clientId = "4444-4444-4444-4441";
-        authorizationParameters.put(AuthorizationRequest.CLIENT_ID, clientId);
-        authorizationParameters.put(AuthorizationRequest.SCOPE, "/orcid-profile/read-limited");
+        authorizationParameters.put(OAuth2Utils.CLIENT_ID, clientId);
+        authorizationParameters.put(OAuth2Utils.SCOPE, "/orcid-profile/read-limited");
         AuthorizationRequest request = new DefaultAuthorizationRequest(authorizationParameters);
         ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
         Authentication userAuthentication = new OrcidOauth2ClientAuthentication(clientDetails);
@@ -128,8 +129,8 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
 
         Map<String, String> authorizationParameters = new HashMap<>();
         String clientId = "4444-4444-4444-4441";
-        authorizationParameters.put(AuthorizationRequest.CLIENT_ID, clientId);
-        authorizationParameters.put(AuthorizationRequest.SCOPE, "/orcid-works/create");
+        authorizationParameters.put(OAuth2Utils.CLIENT_ID, clientId);
+        authorizationParameters.put(OAuth2Utils.SCOPE, "/orcid-works/create");
         AuthorizationRequest request = new DefaultAuthorizationRequest(authorizationParameters);
         ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
         Authentication userAuthentication = new OrcidOauth2ClientAuthentication(clientDetails);
@@ -160,8 +161,8 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
 
         Map<String, String> authorizationParameters = new HashMap<>();
         String clientId = "4444-4444-4444-4441";
-        authorizationParameters.put(AuthorizationRequest.CLIENT_ID, clientId);
-        authorizationParameters.put(AuthorizationRequest.SCOPE, "/orcid-works/create");
+        authorizationParameters.put(OAuth2Utils.CLIENT_ID, clientId);
+        authorizationParameters.put(OAuth2Utils.SCOPE, "/orcid-works/create");
         AuthorizationRequest request = new DefaultAuthorizationRequest(authorizationParameters);
         ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
         Authentication userAuthentication = new OrcidOauth2ClientAuthentication(clientDetails);
@@ -226,7 +227,7 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
     public void testRefreshAccessToken() {
         String refreshTokenValue = "some-long-oauth2-refresh-value-1";
         Map<String, String> authorizationParameters = new HashMap<>();
-        authorizationParameters.put(AuthorizationRequest.CLIENT_ID, "4444-4444-4444-4441");
+        authorizationParameters.put(OAuth2Utils.CLIENT_ID, "4444-4444-4444-4441");
         AuthorizationRequest request = new DefaultAuthorizationRequest(authorizationParameters);
 
         OAuth2AccessToken oauth2AccessToken = tokenServices.refreshAccessToken(refreshTokenValue, request);
@@ -244,8 +245,8 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
     public void tokenExpireInAnHourTest() throws InterruptedException {
         Map<String, String> authorizationParameters = new HashMap<>();
         String clientId = "4444-4444-4444-4441";
-        authorizationParameters.put(AuthorizationRequest.CLIENT_ID, clientId);
-        authorizationParameters.put(AuthorizationRequest.SCOPE, "/orcid-works/create");
+        authorizationParameters.put(OAuth2Utils.CLIENT_ID, clientId);
+        authorizationParameters.put(OAuth2Utils.SCOPE, "/orcid-works/create");
         authorizationParameters.put("code", "code2");
         
         AuthorizationRequest request = new DefaultAuthorizationRequest(authorizationParameters);
@@ -275,8 +276,8 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
         
         Map<String, String> authorizationParameters = new HashMap<>();
         String clientId = "4444-4444-4444-4441";
-        authorizationParameters.put(AuthorizationRequest.CLIENT_ID, clientId);
-        authorizationParameters.put(AuthorizationRequest.SCOPE, "/orcid-works/create");
+        authorizationParameters.put(OAuth2Utils.CLIENT_ID, clientId);
+        authorizationParameters.put(OAuth2Utils.SCOPE, "/orcid-works/create");
         authorizationParameters.put("code", "code1");
         
         AuthorizationRequest request = new DefaultAuthorizationRequest(authorizationParameters);

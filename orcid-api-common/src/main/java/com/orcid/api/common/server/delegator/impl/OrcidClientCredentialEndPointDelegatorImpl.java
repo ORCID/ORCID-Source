@@ -17,9 +17,7 @@
 package com.orcid.api.common.server.delegator.impl;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,6 +25,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.StringUtils;
 import org.orcid.api.common.exception.OrcidInvalidScopeException;
 import org.orcid.core.constants.OauthTokensConstants;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -38,7 +37,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.exceptions.UnsupportedGrantTypeException;
-import org.springframework.security.oauth2.provider.DefaultAuthorizationRequest;
+import org.springframework.security.oauth2.common.util.OAuth2Utils;
+import org.springframework.security.oauth2.provider.AuthorizationRequest;
+import org.springframework.security.oauth2.provider.TokenRequest;
 import org.springframework.security.oauth2.provider.endpoint.AbstractEndpoint;
 import org.springframework.stereotype.Component;
 
@@ -108,31 +109,34 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
         String clientName = client.getName();
         LOGGER.info("Comparing passed clientId and client name from spring auth: clientId={}, client.name={}", clientId, clientName);
         clientId = clientName;
-        Map<String, String> parameters = new HashMap<String, String>();
+        Map<String, String> authorizationParameters = new HashMap<String, String>();
+        authorizationParameters.put(OAuth2Utils.CLIENT_ID, clientId);
         if (code != null) {
-            parameters.put("code", code);
+            authorizationParameters.put("code", code);
             if(orcidOauth2AuthoriziationCodeDetailDao.find(code) != null) {
                 if(orcidOauth2AuthoriziationCodeDetailDao.isPersistentToken(code)) {
-                    parameters.put(OauthTokensConstants.IS_PERSISTENT, "true");
+                    authorizationParameters.put(OauthTokensConstants.IS_PERSISTENT, "true");
                 } else {
-                    parameters.put(OauthTokensConstants.IS_PERSISTENT, "false");
+                    authorizationParameters.put(OauthTokensConstants.IS_PERSISTENT, "false");
                 }
             } else {
-                parameters.put(OauthTokensConstants.IS_PERSISTENT, "false");
+                authorizationParameters.put(OauthTokensConstants.IS_PERSISTENT, "false");
             }                        
         }
         if (redirectUri != null) {
-            parameters.put("redirect_uri", redirectUri);
+            authorizationParameters.put(OAuth2Utils.REDIRECT_URI, redirectUri);
+        }        
+        if(scopes != null) {
+            String scopesString = StringUtils.join(scopes, ' ');
+            authorizationParameters.put(OAuth2Utils.SCOPE, scopesString);
         }
-        if (refreshToken != null) {
-            parameters.put("refresh_token", refreshToken);
-        }
-                        
-        DefaultAuthorizationRequest authorizationRequest = new DefaultAuthorizationRequest(parameters, Collections.<String, String> emptyMap(), clientId, scopes);
-        Set<String> resourceIds = new HashSet<>();
-        resourceIds.add("orcid");
-        authorizationRequest.setResourceIds(resourceIds);
-        OAuth2AccessToken token = getTokenGranter().grant(grantType, authorizationRequest);
+        
+        AuthorizationRequest authorizationRequest = getOAuth2RequestFactory().createAuthorizationRequest(authorizationParameters);        
+        
+        TokenRequest tokenRequest = getOAuth2RequestFactory().createTokenRequest(authorizationRequest, grantType);
+        
+        
+        OAuth2AccessToken token = getTokenGranter().grant(grantType, tokenRequest);
         if (token == null) {
             LOGGER.info("Unsupported grant type for OAuth2: clientId={}, grantType={}, refreshToken={}, code={}, scopes={}, state={}, redirectUri={}", new Object[] {
                     clientId, grantType, refreshToken, code, scopes, state, redirectUri });

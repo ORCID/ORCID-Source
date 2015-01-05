@@ -34,6 +34,7 @@ import org.springframework.security.oauth2.common.exceptions.InvalidClientExcept
 import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.security.oauth2.common.exceptions.RedirectMismatchException;
+import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.DefaultAuthorizationRequest;
@@ -68,7 +69,7 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
 
         Map<String, String> parameters = authorizationRequest.getAuthorizationParameters();
         String authorizationCode = parameters.get("code");
-        String redirectUri = parameters.get(AuthorizationRequest.REDIRECT_URI);
+        String redirectUri = parameters.get(OAuth2Utils.REDIRECT_URI);
 
         LOGGER.info("Getting OAuth2 authentication: code={}, redirectUri={}, clientId={}, scope={}, state={}", new Object[] { authorizationCode, redirectUri,
                 authorizationRequest.getClientId(), authorizationRequest.getScope(), authorizationRequest.getState() });
@@ -118,7 +119,7 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
         // https://jira.springsource.org/browse/SECOAUTH-333
         // This might be null, if the authorization was done without the
         // redirect_uri parameter
-        String redirectUriApprovalParameter = pendingAuthorizationRequest.getAuthorizationParameters().get(AuthorizationRequest.REDIRECT_URI);
+        String redirectUriApprovalParameter = pendingAuthorizationRequest.getAuthorizationParameters().get(OAuth2Utils.REDIRECT_URI);
 
         if ((redirectUri != null || redirectUriApprovalParameter != null) && !pendingAuthorizationRequest.getRedirectUri().equals(redirectUri)) {
             throw new RedirectMismatchException("Redirect URI mismatch.");

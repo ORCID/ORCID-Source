@@ -29,7 +29,8 @@ import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
-import org.springframework.security.oauth2.provider.DefaultAuthorizationRequest;
+import org.springframework.security.oauth2.provider.OAuth2Request;
+import org.springframework.security.oauth2.provider.OAuth2RequestFactory;
 
 /**
  * @author Declan Newman (declan) Date: 10/05/2012
@@ -37,12 +38,14 @@ import org.springframework.security.oauth2.provider.DefaultAuthorizationRequest;
 public class OrcidClientCredentialsChecker {
 
     private final ClientDetailsService clientDetailsService;
+    private final OAuth2RequestFactory oAuth2RequestFactory;
 
-    public OrcidClientCredentialsChecker(ClientDetailsService clientDetailsService) {
+    public OrcidClientCredentialsChecker(ClientDetailsService clientDetailsService, OAuth2RequestFactory oAuth2RequestFactory) {
         this.clientDetailsService = clientDetailsService;
+        this.oAuth2RequestFactory = oAuth2RequestFactory;
     }
 
-    public AuthorizationRequest validateCredentials(String grantType, String clientId, Set<String> scopes) {
+    public OAuth2Request validateCredentials(String grantType, String clientId, Set<String> scopes) {
 
         ClientDetails clientDetails = clientDetailsService.loadClientByClientId(clientId);
         validateGrantType(grantType, clientDetails);
@@ -53,11 +56,12 @@ public class OrcidClientCredentialsChecker {
         Map<String, String> authorizationParams = new HashMap<String, String>();
         authorizationParams.put(OauthTokensConstants.GRANT_TYPE, grantType);
         
-        DefaultAuthorizationRequest authorizationRequest = new DefaultAuthorizationRequest(authorizationParams, null, clientId, scopes);
+        AuthorizationRequest authorizationRequest = oAuth2RequestFactory.createAuthorizationRequest(authorizationParams);
         authorizationRequest.setAuthorities(clientDetails.getAuthorities());
         authorizationRequest.setResourceIds(clientDetails.getResourceIds());
         authorizationRequest.setApproved(true);
-        return authorizationRequest;
+                        
+        return oAuth2RequestFactory.createOAuth2Request(authorizationRequest);
     }
 
     private void validateScope(ClientDetails clientDetails, Set<String> scopes) {

@@ -71,9 +71,9 @@ public class OrcidAuthorizationEndpoint extends AuthorizationEndpoint {
     public ModelAndView authorize(Map<String, Object> model,
                     @RequestParam(value = "response_type", required = false, defaultValue = "none") String responseType,
                     @RequestParam Map<String, String> requestParameters, SessionStatus sessionStatus, Principal principal) {
-        String scopes = requestParameters.get(AuthorizationRequest.SCOPE);
+        String scopes = requestParameters.get(OAuth2Utils.SCOPE);
         scopes = trimClientCredentialScopes(scopes);
-        requestParameters.put(AuthorizationRequest.SCOPE, scopes);
+        requestParameters.put(OAuth2Utils.SCOPE, scopes);
         return super.authorize(model, responseType, requestParameters, sessionStatus, principal);
     }
     
