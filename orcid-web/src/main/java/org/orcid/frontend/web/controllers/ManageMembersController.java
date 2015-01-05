@@ -196,6 +196,7 @@ public class ManageMembersController extends BaseController {
         if (group.getErrors().isEmpty()) {
             OrcidClientGroup orcidClientGroup = group.toOrcidClientGroup();
             orcidClientGroupManager.updateGroup(orcidClientGroup);
+            groupAdministratorController.clearCache();
         }
 
         return group;

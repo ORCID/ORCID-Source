@@ -14,20 +14,12 @@
  *
  * =============================================================================
  */
-package org.orcid.core.version;
+package org.orcid.persistence.dao;
 
-import org.orcid.jaxb.model.message.OrcidMessage;
+import org.orcid.persistence.jpa.entities.ClientScopeEntity;
+import org.orcid.persistence.jpa.entities.keys.ClientScopePk;
 
-/**
- * 
- * @author Will Simpson
- * 
- */
-public interface OrcidMessageVersionConverterChain {
+public interface ClientScopeDao extends GenericDao<ClientScopeEntity, ClientScopePk> {
 
-    OrcidMessage downgradeMessage(OrcidMessage orcidMessage, String requiredVersion);
-
-    OrcidMessage upgradeMessage(OrcidMessage orcidMessage, String requiredVersion);
-
-    public int compareVersion(String v1, String v2);
+    boolean deleteScope(String clientId, String scopeType);
 }

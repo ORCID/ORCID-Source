@@ -33,12 +33,16 @@ import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.core.manager.OtherNameManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
+import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
+import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.OtherNames;
 import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.dao.GivenPermissionToDao;
@@ -99,6 +103,12 @@ public class AdminManagerImpl implements AdminManager {
     
     @Resource
     private GivenPermissionToDao givenPermissionToDao;
+    
+    @Resource
+    private OtherNameManager otherNamesManager;
+    
+    @Resource
+    private ProfileKeywordManager profileKeywordManager;
     
     @Override    
     @Transactional
@@ -162,8 +172,23 @@ public class AdminManagerImpl implements AdminManager {
                             researcherUrlManager.updateResearcherUrls(deprecatedOrcid, rUrls);                            
                         }
                         
+                        // Remove other names
+                        if(deprecated.getOtherNames() != null) {
+                            OtherNames otherNames = new OtherNames();
+                            otherNames.setVisibility(Visibility.PRIVATE);
+                            otherNamesManager.updateOtherNames(deprecatedOrcid, otherNames);
+                        }
+                        
+                        // Remove keywords
+                        if(deprecated.getKeywords() != null) {
+                            Keywords keywords = new Keywords();
+                            keywords.setVisibility(Visibility.PRIVATE);
+                            profileKeywordManager.updateProfileKeyword(deprecatedOrcid, keywords);
+                        }
+                        
                         // Update deprecated profile
                         deprecated.setDeactivationDate(new Date());
+                        deprecated.setCreditName(null);
                         deprecated.setGivenNames("Given Names Deactivated");
                         deprecated.setFamilyName("Family Name Deactivated");
                         deprecated.setOtherNamesVisibility(Visibility.PRIVATE);

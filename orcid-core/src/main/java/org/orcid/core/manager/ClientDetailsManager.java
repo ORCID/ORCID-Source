@@ -150,4 +150,12 @@ public interface ClientDetailsManager extends ClientDetailsService {
      * @return true if clientId belongs to groupId
      * */
     boolean belongsTo(String clientId, String groupId);
+    
+    /**
+     * Fetch all clients that belongs to a group
+     * @param groupId
+     *  Group id
+     * @return A list containing all clients that belongs to the given group
+     * */
+    List<ClientDetailsEntity> findByGroupId(String groupId);
 }

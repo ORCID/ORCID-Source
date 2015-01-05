@@ -90,7 +90,6 @@ import org.orcid.jaxb.model.message.WorkExternalIdentifier;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierId;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
-import org.orcid.jaxb.model.message.WorkSource;
 import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
@@ -1134,19 +1133,33 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
     @Rollback(true)
     public void testDeactivateProfile() {
         OrcidProfile profile1 = createBasicProfile();
+        profile1.getOrcidBio().getPersonalDetails().setCreditName(new CreditName("My Credit Name"));
         ExternalIdentifiers extIds = new ExternalIdentifiers();
         ExternalIdentifier extId = new ExternalIdentifier();
         extId.setExternalIdCommonName(new ExternalIdCommonName("External body"));
         extId.setExternalIdReference(new ExternalIdReference("abc123"));
         extIds.getExternalIdentifier().add(extId);
         profile1.getOrcidBio().setExternalIdentifiers(extIds);
+        
+        OtherNames otherNames = new OtherNames();
+        otherNames.addOtherName("OtherName 1");
+        otherNames.addOtherName("OtherName 2");
+        
+        profile1.getOrcidBio().getPersonalDetails().setOtherNames(otherNames);
+        
         profile1 = orcidProfileManager.createOrcidProfile(profile1);
         assertEquals(1, profile1.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().size());
-
+        assertEquals(2, profile1.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().size());
+        assertEquals("My Credit Name", profile1.getOrcidBio().getPersonalDetails().getCreditName().getContent());
+        
         orcidProfileManager.deactivateOrcidProfile(profile1);
 
         OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfile(profile1.getOrcidIdentifier().getPath());
         assertTrue(retrievedProfile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().isEmpty());
+        assertNull(retrievedProfile.getOrcidBio().getPersonalDetails().getCreditName());
+        assertEquals(0, retrievedProfile.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().size());       
+        assertEquals("Given Names Deactivated", retrievedProfile.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
+        assertEquals("Family Name Deactivated", retrievedProfile.getOrcidBio().getPersonalDetails().getFamilyName().getContent());
         assertNull(retrievedProfile.getOrcidBio().getBiography());
     }
 

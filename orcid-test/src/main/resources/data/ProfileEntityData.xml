@@ -493,6 +493,12 @@
             display_name="Flobberdy Flip"
             orcid="4444-4444-4444-4446"
             />
+	
+	<other_name
+            other_name_id="4"
+            display_name="Other Name"
+            orcid="4444-4444-4444-4441"
+            />
 
     <address
             id="1"
@@ -870,6 +876,15 @@
      <profile_keyword 
         profile_orcid="4444-4444-4444-4443"
         keywords_name="coffee making"
+    />
+    
+    <profile_keyword 
+        profile_orcid="4444-4444-4444-4441"
+        keywords_name="key 1"
+    />
+    <profile_keyword 
+        profile_orcid="4444-4444-4444-4441"
+        keywords_name="key 2"
     />
     
 </dataset>

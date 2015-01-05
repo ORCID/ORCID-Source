@@ -224,7 +224,7 @@ public class AdminController extends BaseController {
 
     @RequestMapping(value = "/deactivate-profile", method = RequestMethod.GET)
     public @ResponseBody
-    ProfileDetails confirmDeactivateOrcidAccount(@RequestParam("orcid") String orcid) {
+    ProfileDetails deactivateOrcidAccount(@RequestParam("orcid") String orcid) {
         OrcidProfile toDeactivate = orcidProfileManager.retrieveOrcidProfile(orcid);
         ProfileDetails result = new ProfileDetails();
         if (toDeactivate == null)
@@ -241,7 +241,7 @@ public class AdminController extends BaseController {
 
     @RequestMapping(value = "/reactivate-profile", method = RequestMethod.GET)
     public @ResponseBody
-    ProfileDetails confirmReactivateOrcidAccount(@RequestParam("orcid") String orcid) {
+    ProfileDetails reactivateOrcidAccount(@RequestParam("orcid") String orcid) {
         OrcidProfile toReactivate = orcidProfileManager.retrieveOrcidProfile(orcid);
         ProfileDetails result = new ProfileDetails();
         if (toReactivate == null)

@@ -24,6 +24,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientSecretEntity;
@@ -45,30 +46,30 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     }
 
     @Override
-    @Cacheable(value = "client-details", key = "#orcid.concat('-').concat(#lastModified)")
-    public ClientDetailsEntity findByClientId(String orcid, long lastModified) {
-        TypedQuery<ClientDetailsEntity> query = entityManager.createQuery("from ClientDetailsEntity where id = :orcid", ClientDetailsEntity.class);
-        query.setParameter("orcid", orcid);
+    @Cacheable(value = "client-details", key = "#clientId.concat('-').concat(#lastModified)")
+    public ClientDetailsEntity findByClientId(String clientId, long lastModified) {
+        TypedQuery<ClientDetailsEntity> query = entityManager.createQuery("from ClientDetailsEntity where id = :clientId", ClientDetailsEntity.class);
+        query.setParameter("clientId", clientId);
         try {
             return query.getSingleResult();
         } catch (NoResultException e) {
-            LOGGER.debug("No client found for {}", orcid, e);
+            LOGGER.debug("No client found for {}", clientId, e);
             return null;
         }
     }
 
     @Override
-    public Date getLastModified(String orcid) {
-        TypedQuery<Date> query = entityManager.createQuery("select lastModified from ClientDetailsEntity where id = :orcid", Date.class);
-        query.setParameter("orcid", orcid);
+    public Date getLastModified(String clientId) {
+        TypedQuery<Date> query = entityManager.createQuery("select lastModified from ClientDetailsEntity where id = :clientId", Date.class);
+        query.setParameter("clientId", clientId);
         return query.getSingleResult();
     }
 
     @Override
     @Transactional
-    public void updateLastModified(String orcid) {
-        Query updateQuery = entityManager.createQuery("update ClientDetailsEntity set lastModified = now() where id = :orcid");
-        updateQuery.setParameter("orcid", orcid);
+    public void updateLastModified(String clientId) {
+        Query updateQuery = entityManager.createQuery("update ClientDetailsEntity set lastModified = now() where id = :clientId");
+        updateQuery.setParameter("clientId", clientId);
         updateQuery.executeUpdate();
     }
     
@@ -116,5 +117,22 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
             return false;
         }        
         return true; 
+    }
+    
+    @Override
+    @Transactional
+    public void updateClientType(ClientType clientType, String clientId) {
+        Query updateQuery = entityManager.createQuery("update ClientDetailsEntity set clientType = :clientType where id = :clientId");
+        updateQuery.setParameter("clientType", clientType);
+        updateQuery.setParameter("clientId", clientId);
+        updateQuery.executeUpdate();
+    }
+        
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<ClientDetailsEntity> findByGroupId(String groupId) {
+        Query query = entityManager.createQuery("from ClientDetailsEntity where groupProfile.id = :groupId");
+        query.setParameter("groupId", groupId);
+        return query.getResultList();
     }
 }

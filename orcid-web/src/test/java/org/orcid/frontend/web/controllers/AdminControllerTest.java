@@ -153,7 +153,17 @@ public class AdminControllerTest extends BaseControllerTest {
         boolean containsEmail = false;
 
         assertNull(toDeprecate.getOrcidDeprecated());
-
+        assertNotNull(toDeprecate.getOrcidBio());
+        assertNotNull(toDeprecate.getOrcidBio().getPersonalDetails());
+        assertEquals("Spike", toDeprecate.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
+        assertEquals("Milligan", toDeprecate.getOrcidBio().getPersonalDetails().getFamilyName().getContent());
+        assertEquals("S. Milligan", toDeprecate.getOrcidBio().getPersonalDetails().getCreditName().getContent());
+        assertNotNull(toDeprecate.getOrcidBio().getKeywords());
+        assertNotNull(toDeprecate.getOrcidBio().getKeywords().getKeyword());
+        assertEquals(2, toDeprecate.getOrcidBio().getKeywords().getKeyword().size());
+        assertNotNull(toDeprecate.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName());
+        assertEquals(1, toDeprecate.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().size());
+        
         List<Email> emails1 = toDeprecate.getOrcidBio().getContactDetails().getEmail();
         assertNotNull(emails1);
         assertEquals(3, emails1.size());
@@ -201,6 +211,15 @@ public class AdminControllerTest extends BaseControllerTest {
         assertNotNull(toDeprecate.getOrcidDeprecated().getPrimaryRecord().getOrcidIdentifier());
         assertNotNull(toDeprecate.getOrcidDeprecated().getPrimaryRecord().getOrcidIdentifier().getPath());
         assertEquals("4444-4444-4444-4442", toDeprecate.getOrcidDeprecated().getPrimaryRecord().getOrcidIdentifier().getPath());
+        assertNotNull(toDeprecate.getOrcidBio());
+        assertNotNull(toDeprecate.getOrcidBio().getPersonalDetails());
+        assertEquals("Given Names Deactivated", toDeprecate.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
+        assertEquals("Family Name Deactivated", toDeprecate.getOrcidBio().getPersonalDetails().getFamilyName().getContent());
+        assertNull(toDeprecate.getOrcidBio().getPersonalDetails().getCreditName());
+        assertNull(toDeprecate.getOrcidBio().getKeywords());
+        assertNotNull(toDeprecate.getOrcidBio().getPersonalDetails().getOtherNames());
+        assertTrue(toDeprecate.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().isEmpty());
+        
         
         emails1 = toDeprecate.getOrcidBio().getContactDetails().getEmail();
         assertNotNull(emails1);
@@ -292,7 +311,7 @@ public class AdminControllerTest extends BaseControllerTest {
     @Test
     public void deactivateAndReactivateProfileTest() throws Exception {
         // Test deactivate
-        ProfileDetails result = adminController.confirmDeactivateOrcidAccount("4444-4444-4444-4441");
+        ProfileDetails result = adminController.deactivateOrcidAccount("4444-4444-4444-4441");
         assertEquals(0, result.getErrors().size());
 
         profileDao.refresh(profileDao.find("4444-4444-4444-4441"));
@@ -302,12 +321,12 @@ public class AdminControllerTest extends BaseControllerTest {
         assertEquals(deactivated.getGivenNames(), "Given Names Deactivated");
 
         // Test try to deactivate an already deactive account
-        result = adminController.confirmDeactivateOrcidAccount("4444-4444-4444-4441");
+        result = adminController.deactivateOrcidAccount("4444-4444-4444-4441");
         assertEquals(1, result.getErrors().size());
         assertEquals(adminController.getMessage("admin.profile_deactivation.errors.already_deactivated", new ArrayList<String>()), result.getErrors().get(0));
 
         // Test reactivate
-        result = adminController.confirmReactivateOrcidAccount("4444-4444-4444-4441");
+        result = adminController.reactivateOrcidAccount("4444-4444-4444-4441");
         assertEquals(0, result.getErrors().size());
 
         profileDao.refresh(profileDao.find("4444-4444-4444-4441"));
@@ -315,7 +334,7 @@ public class AdminControllerTest extends BaseControllerTest {
         assertNull(deactivated.getDeactivationDate());
 
         // Try to reactivate an already active account
-        result = adminController.confirmReactivateOrcidAccount("4444-4444-4444-4441");
+        result = adminController.reactivateOrcidAccount("4444-4444-4444-4441");
         assertEquals(1, result.getErrors().size());
         assertEquals(adminController.getMessage("admin.profile_reactivation.errors.already_active", new ArrayList<String>()), result.getErrors().get(0));
     }    

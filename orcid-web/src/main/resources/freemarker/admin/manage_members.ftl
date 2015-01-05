@@ -210,6 +210,20 @@
 								</span>	
 							</div>
 						</div>
+						<!-- Member type -->
+						<div class="control-group">
+    						<label class="relative"><@orcid.msg 'manage_groups.group_type'/></label>
+    						<div class="relative">					
+      							<select id="groupType" name="groupType" class="input-xlarge" ng-model="member.type.value">			    		
+									<#list groupTypes?keys as key>
+										<option value="${key}">${groupTypes[key]}</option>
+									</#list>
+								</select> 
+    						</div>
+							<span class="orcid-error" ng-show="member.type.errors.length > 0">
+								<div ng-repeat='error in member.type.errors' ng-bind-html="error"></div>
+							</span>
+  						</div>
 						<!-- Buttons -->
 						<div class="row">
 							<div class="controls save-btns col-md-12 col-sm-12 col-xs-12">

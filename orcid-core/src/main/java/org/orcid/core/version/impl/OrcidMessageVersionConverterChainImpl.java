@@ -59,7 +59,7 @@ public class OrcidMessageVersionConverterChainImpl implements OrcidMessageVersio
                 break;
             }
             String fromVersion = converter.getFromVersion();
-            if (versionIndex.indexOf(fromVersion) < versionIndex.indexOf(oldVersion) && versionIndex.indexOf(fromVersion) >= versionIndex.indexOf(requiredVersion)) {
+            if (compareVersion(fromVersion,oldVersion) < 0 && compareVersion(fromVersion, requiredVersion) >= 0) {
                 orcidMessage = converter.downgradeMessage(orcidMessage);
             }
         }        
@@ -78,11 +78,19 @@ public class OrcidMessageVersionConverterChainImpl implements OrcidMessageVersio
                 break;
             }
             String toVersion = converter.getToVersion();
-            if (versionIndex.indexOf(toVersion) > versionIndex.indexOf(oldVersion) &&  versionIndex.indexOf(toVersion) <= versionIndex.indexOf(requiredVersion)) {
+            if (compareVersion(toVersion, oldVersion) > 0 &&  compareVersion(toVersion,requiredVersion) <= 0) {
                 orcidMessage = converter.upgradeMessage(orcidMessage);
             }
         }
 
         return orcidMessage;
-    }   
+    }
+    
+    public int compareVersion(String v1, String v2) {
+        if (versionIndex.indexOf(v1) < versionIndex.indexOf(v2)) 
+            return -1;
+        else if (versionIndex.indexOf(v1) > versionIndex.indexOf(v2))
+            return 1;
+        return 0;
+    }
 }

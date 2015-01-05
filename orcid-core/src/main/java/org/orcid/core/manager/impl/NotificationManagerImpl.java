@@ -385,7 +385,7 @@ public class NotificationManagerImpl implements NotificationManager {
             createNotification(amendedProfile.getOrcidIdentifier().getPath(), notification);
         } else {
             String email = amendedProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
-            mailGunManager.sendEmail(AMEND_NOTIFY_ORCID_ORG, email, subject, body, html);            
+            mailGunManager.sendEmail(AMEND_NOTIFY_ORCID_ORG, email, subject, body, html);
         }
     }
 
@@ -472,15 +472,16 @@ public class NotificationManagerImpl implements NotificationManager {
         Source source = null;
         CustomEmailEntity customEmail = null;
         if (createdProfile.getOrcidHistory() != null && createdProfile.getOrcidHistory().getSource() != null) {
-            if(createdProfile.getOrcidHistory().getSource().getSourceOrcid() != null
+            if (createdProfile.getOrcidHistory().getSource().getSourceOrcid() != null
                     && !PojoUtil.isEmpty(createdProfile.getOrcidHistory().getSource().getSourceOrcid().getPath())) {
                 source = createdProfile.getOrcidHistory().getSource();
                 customEmail = getCustomizedEmail(source.getSourceOrcid().getPath(), EmailType.CLAIM);
-            } else if(createdProfile.getOrcidHistory().getSource().getSourceClientId() != null && !PojoUtil.isEmpty(createdProfile.getOrcidHistory().getSource().getSourceClientId().getPath()) ) {
+            } else if (createdProfile.getOrcidHistory().getSource().getSourceClientId() != null
+                    && !PojoUtil.isEmpty(createdProfile.getOrcidHistory().getSource().getSourceClientId().getPath())) {
                 source = createdProfile.getOrcidHistory().getSource();
                 customEmail = getCustomizedEmail(source.getSourceClientId().getPath(), EmailType.CLAIM);
             }
-            
+
         }
 
         String emailName = deriveEmailFriendlyName(createdProfile);
@@ -497,7 +498,7 @@ public class NotificationManagerImpl implements NotificationManager {
                 creatorName = source.getSourceClientId().getPath();
             } else if (source.getSourceOrcid() != null && source.getSourceOrcid().getPath() != null) {
                 creatorName = source.getSourceOrcid().getPath();
-            } 
+            }
         }
 
         String subject = null;
@@ -587,8 +588,8 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("orcid", orcid);
         templateParams.put("subject", getSubject("email.subject.claim_reminder", orcidProfile));
         Source source = orcidProfile.getOrcidHistory().getSource();
-        templateParams.put("creatorName", (source == null || source.getSourceName() == null || source.getSourceName().getContent() == null) ? source.getSourceOrcid()
-                .getPath() : source.getSourceName().getContent());
+        templateParams.put("creatorName", (source == null || source.getSourceName() == null || source.getSourceName().getContent() == null) ? source.retrieveSourcePath()
+                : source.getSourceName().getContent());
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
         templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
         templateParams.put("daysUntilActivation", daysUntilActivation);
