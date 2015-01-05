@@ -326,9 +326,9 @@ public class OauthConfirmAccessController extends BaseController {
                         params.put(SCOPE_PARAM, form.getScope().getValue());
                     if (!PojoUtil.isEmpty(form.getResponseType()))
                         params.put(RESPONSE_TYPE_PARAM, form.getResponseType().getValue());
-                    params.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "true");
+                    params.put(OAuth2Utils.USER_OAUTH_APPROVAL, "true");
                     Map<String, String> approvalParams = new HashMap<String, String>();
-                    approvalParams.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "true");
+                    approvalParams.put(OAuth2Utils.USER_OAUTH_APPROVAL, "true");
                     approvalParams.put(OauthTokensConstants.TOKEN_VERSION, OauthTokensConstants.PERSISTENT_TOKEN);
                     // Check if the client have persistent tokens enabled
                     approvalParams.put(OauthTokensConstants.GRANT_PERSISTENT_TOKEN, "false");
@@ -445,14 +445,14 @@ public class OauthConfirmAccessController extends BaseController {
                 if (!PojoUtil.isEmpty(form.getResponseType()))
                     params.put(RESPONSE_TYPE_PARAM, form.getResponseType().getValue());
                 if (form.getApproved())
-                    params.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "true");
+                    params.put(OAuth2Utils.USER_OAUTH_APPROVAL, "true");
                 else
-                    params.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "false");
+                    params.put(OAuth2Utils.USER_OAUTH_APPROVAL, "false");
                 Map<String, String> approvalParams = new HashMap<String, String>();
                 if (form.getApproved())
-                    approvalParams.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "true");
+                    approvalParams.put(OAuth2Utils.USER_OAUTH_APPROVAL, "true");
                 else
-                    approvalParams.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "false");
+                    approvalParams.put(OAuth2Utils.USER_OAUTH_APPROVAL, "false");
 
                 approvalParams.put(OauthTokensConstants.TOKEN_VERSION, OauthTokensConstants.PERSISTENT_TOKEN);
                 // Check if the client have persistent tokens enabled
@@ -506,9 +506,9 @@ public class OauthConfirmAccessController extends BaseController {
         // Approval params
         Map<String, String> approvalParams = new HashMap<String, String>();
         if (form.getApproved())
-            approvalParams.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "true");
+            approvalParams.put(OAuth2Utils.USER_OAUTH_APPROVAL, "true");
         else
-            approvalParams.put(AuthorizationRequest.USER_OAUTH_APPROVAL, "false");
+            approvalParams.put(OAuth2Utils.USER_OAUTH_APPROVAL, "false");
 
         approvalParams.put(OauthTokensConstants.TOKEN_VERSION, OauthTokensConstants.PERSISTENT_TOKEN);
         // Check if the client have persistent tokens enabled
