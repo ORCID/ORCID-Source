@@ -1447,8 +1447,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         OrcidProfile blankedOrcidProfile = new OrcidProfile();
 
         OrcidBio existingBio = existingOrcidProfile.getOrcidBio();
-        PersonalDetails existingPersonalDetails = existingBio.getPersonalDetails();
-
+        
         OrcidBio minimalBio = new OrcidBio();
 
         ContactDetails minimalContactDetails = new ContactDetails();
@@ -1464,8 +1463,8 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
         // only names names from bio with a visibility setting
         PersonalDetails minimalPersonalDetails = new PersonalDetails();
-        minimalPersonalDetails.setCreditName(existingPersonalDetails != null ? existingPersonalDetails.getCreditName() : null);
-        minimalPersonalDetails.setOtherNames(existingPersonalDetails != null ? existingPersonalDetails.getOtherNames() : null);
+        minimalPersonalDetails.setOtherNames(null);
+        minimalPersonalDetails.setCreditName(new CreditName());        
         minimalPersonalDetails.setGivenNames(new GivenNames("Given Names Deactivated"));
         minimalPersonalDetails.setFamilyName(new FamilyName("Family Name Deactivated"));
 
