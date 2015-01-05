@@ -5544,6 +5544,10 @@ ul.oauth-icons li {
 	font-weight: bold;
 }
 
+.notifications .archived {
+	background-color: #c9c9ca;
+}
+
 .vertical-align-middle {
 	line-height: 0px;
 }
