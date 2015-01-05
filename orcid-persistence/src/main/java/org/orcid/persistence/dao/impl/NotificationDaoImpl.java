@@ -39,9 +39,13 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     }
 
     @Override
-    public List<NotificationEntity> findByOrcid(String orcid, int firstResult, int maxResults) {
-        TypedQuery<NotificationEntity> query = entityManager.createQuery(
-                "from NotificationEntity where orcid = :orcid and archivedDate is null order by dateCreated desc", NotificationEntity.class);
+    public List<NotificationEntity> findByOrcid(String orcid, boolean includeArchived, int firstResult, int maxResults) {
+        StringBuilder builder = new StringBuilder("from NotificationEntity where orcid = :orcid");
+        if (!includeArchived) {
+            builder.append(" and archivedDate is null");
+        }
+        builder.append(" order by dateCreated desc");
+        TypedQuery<NotificationEntity> query = entityManager.createQuery(builder.toString(), NotificationEntity.class);
         query.setParameter("orcid", orcid);
         query.setFirstResult(firstResult);
         query.setMaxResults(maxResults);
@@ -50,7 +54,7 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
 
     @Override
     public NotificationEntity findLatestByOrcid(String orcid) {
-        List<NotificationEntity> results = findByOrcid(orcid, 0, 1);
+        List<NotificationEntity> results = findByOrcid(orcid, false, 0, 1);
         return results.isEmpty() ? null : results.get(0);
     }
 
@@ -63,7 +67,8 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
 
     @Override
     public int getUnreadCount(String orcid) {
-        TypedQuery<Long> query = entityManager.createQuery("select count(*) from NotificationEntity where readDate is null and archivedDate is null and orcid = :orcid", Long.class);
+        TypedQuery<Long> query = entityManager.createQuery("select count(*) from NotificationEntity where readDate is null and archivedDate is null and orcid = :orcid",
+                Long.class);
         query.setParameter("orcid", orcid);
         return query.getSingleResult().intValue();
     }
