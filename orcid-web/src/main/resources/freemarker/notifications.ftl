@@ -26,7 +26,7 @@
     <div class="col-md-9 col-sm-12 col-xs-12" ng-controller="NotificationsCtrl" >
         <h1>${springMacroRequestContext.getMessage("notifications.title")}</h1>
         <div>
-            <label>
+            <label class="checkbox">
                 <input type="checkbox" ng-model="notificationsSrvc.showArchived" ng-change="reloadNotifications()"></input>
                 ${springMacroRequestContext.getMessage("notifications.showArchived")}
             </label>

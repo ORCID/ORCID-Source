@@ -5532,7 +5532,7 @@ ul.oauth-icons li {
 }
 
 .notifications th,td {
-	padding-left: 8px;
+	padding: 8px;
 	vertical-align: top;
 }
 
