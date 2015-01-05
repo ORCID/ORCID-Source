@@ -16,15 +16,15 @@
  */
 package org.orcid.persistence.jpa.entities;
 
-import org.orcid.persistence.jpa.entities.keys.ExternalIdentifierEntityPk;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -35,8 +35,7 @@ import javax.persistence.Transient;
  */
 @Entity
 @Table(name = "external_identifier")
-@IdClass(ExternalIdentifierEntityPk.class)
-public class ExternalIdentifierEntity extends BaseEntity<ExternalIdentifierEntityPk> implements Comparable<ExternalIdentifierEntity>, ProfileAware {
+public class ExternalIdentifierEntity extends BaseEntity<Long> implements Comparable<ExternalIdentifierEntity>, ProfileAware {
 
     private static final long serialVersionUID = 1L;
 
@@ -45,14 +44,20 @@ public class ExternalIdentifierEntity extends BaseEntity<ExternalIdentifierEntit
     private String externalIdUrl;
     private ProfileEntity owner;
     private SourceEntity source;
-
-    @Override
-    @Transient
-    public ExternalIdentifierEntityPk getId() {
-        return new ExternalIdentifierEntityPk(externalIdReference, owner);
-    }
+    private Long id;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "external_identifier_id_seq")
+    @SequenceGenerator(name = "external_identifier_id_seq", sequenceName = "external_identifier_id_seq")
+    @Override
+    public Long getId() {
+        return id;
+    }
+    
+    public void setId(Long id) {
+        this.id = id;
+    }
+    
     @Column(name = "external_id_reference", length = 255)
     public String getExternalIdReference() {
         return externalIdReference;
@@ -81,8 +86,7 @@ public class ExternalIdentifierEntity extends BaseEntity<ExternalIdentifierEntit
 
     /**
      * @return the owner
-     */
-    @Id
+     */    
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "orcid", nullable = false)
     public ProfileEntity getOwner() {
@@ -152,6 +156,22 @@ public class ExternalIdentifierEntity extends BaseEntity<ExternalIdentifierEntit
             }
         }
 
+        // If they are still equal, compare against the 
+        if (result == 0) {
+            if(other.getExternalIdCommonName() == null) {
+                if(externalIdCommonName == null) {
+                    result = 0;
+                } else {
+                    result = 1;
+                }
+            } else {
+                if(externalIdCommonName == null) {
+                    result = -1;                   
+                } else {
+                    result = externalIdCommonName.compareToIgnoreCase(other.getExternalIdCommonName());
+                }                   
+            }
+        }
         return result;
     }
 
@@ -161,6 +181,7 @@ public class ExternalIdentifierEntity extends BaseEntity<ExternalIdentifierEntit
     public void clean() {
         externalIdCommonName = null;
         externalIdUrl = null;
+        externalIdReference = null;
     }
 
 }
