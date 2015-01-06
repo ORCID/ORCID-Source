@@ -982,9 +982,9 @@
 				<xs:enumeration value="ssrn"/>
 				<xs:enumeration value="uri"/>
 				<xs:enumeration value="urn"/>
-				<xs:enumeration value="wos">
+				<xs:enumeration value="woswosuid">
 					<xs:annotation>
-						<xs:documentation>Web of Science identifier</xs:documentation>
+						<xs:documentation>Web of Science™ identifier</xs:documentation>
 					</xs:annotation>
 				</xs:enumeration>
 				<xs:enumeration value="zbl"/>
