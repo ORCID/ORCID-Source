@@ -84,7 +84,7 @@ public enum WorkExternalIdentifierType implements Serializable {
     @XmlEnumValue("uri") URI("uri"),
     @XmlEnumValue("urn") URN("urn"),
     // New in 1.2_rc7
-    @XmlEnumValue("wos") WOS("wos"); // Web of Science identifier
+    @XmlEnumValue("wosuid") WOSUID("wosuid"); // Web of Science™ identifier
     // @formatter:on
 
     private final String value;
