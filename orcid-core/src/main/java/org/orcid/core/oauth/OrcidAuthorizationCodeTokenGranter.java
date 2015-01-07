@@ -35,12 +35,13 @@ import org.springframework.security.oauth2.common.exceptions.InvalidGrantExcepti
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.security.oauth2.common.exceptions.RedirectMismatchException;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
-import org.springframework.security.oauth2.provider.AuthorizationRequest;
+import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
-import org.springframework.security.oauth2.provider.DefaultAuthorizationRequest;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.security.oauth2.provider.OAuth2Request;
+import org.springframework.security.oauth2.provider.OAuth2RequestFactory;
+import org.springframework.security.oauth2.provider.TokenRequest;
 import org.springframework.security.oauth2.provider.code.AuthorizationCodeServices;
-import org.springframework.security.oauth2.provider.code.AuthorizationRequestHolder;
 import org.springframework.security.oauth2.provider.token.AbstractTokenGranter;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 
@@ -58,21 +59,24 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
     @Resource(name = "orcidOauth2AuthoriziationCodeDetailDao")
     private OrcidOauth2AuthoriziationCodeDetailDao orcidOauth2AuthoriziationCodeDetailDao;
     
+    private final OAuth2RequestFactory oAuth2RequestFactory;
+    
     public OrcidAuthorizationCodeTokenGranter(AuthorizationServerTokenServices tokenServices, AuthorizationCodeServices authorizationCodeServices,
-            ClientDetailsService clientDetailsService) {
-        super(tokenServices, clientDetailsService, GRANT_TYPE);
+            ClientDetailsService clientDetailsService, OAuth2RequestFactory oAuth2RequestFactory) {
+        super(tokenServices, clientDetailsService, oAuth2RequestFactory, GRANT_TYPE);
         this.authorizationCodeServices = authorizationCodeServices;
+        this.oAuth2RequestFactory = oAuth2RequestFactory;
     }
 
     @Override
-    protected OAuth2Authentication getOAuth2Authentication(AuthorizationRequest authorizationRequest) {
+    protected OAuth2Authentication getOAuth2Authentication(ClientDetails client, TokenRequest tokenRequest) {
 
-        Map<String, String> parameters = authorizationRequest.getAuthorizationParameters();
+        Map<String, String> parameters = tokenRequest.getRequestParameters();
         String authorizationCode = parameters.get("code");
         String redirectUri = parameters.get(OAuth2Utils.REDIRECT_URI);
 
-        LOGGER.info("Getting OAuth2 authentication: code={}, redirectUri={}, clientId={}, scope={}, state={}", new Object[] { authorizationCode, redirectUri,
-                authorizationRequest.getClientId(), authorizationRequest.getScope(), authorizationRequest.getState() });
+        LOGGER.info("Getting OAuth2 authentication: code={}, redirectUri={}, clientId={}, scope={}", new Object[] { authorizationCode, redirectUri,
+                tokenRequest.getClientId(), tokenRequest.getScope() });
 
         if (authorizationCode == null) {
             throw new OAuth2Exception("An authorization code must be supplied.");
@@ -97,7 +101,7 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
             
             // Check granted scopes
             Set<String> grantedScopes = codeDetails.getScopes();
-            Set<String> requestScopes = authorizationRequest.getScope();
+            Set<String> requestScopes = tokenRequest.getScope();
             
             for(String requestScope : requestScopes) {
                 if(!grantedScopes.contains(requestScope)) {
@@ -108,25 +112,25 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
         }        
         
         //Consume code        
-        AuthorizationRequestHolder storedAuth = authorizationCodeServices.consumeAuthorizationCode(authorizationCode);
+        OAuth2Authentication storedAuth = authorizationCodeServices.consumeAuthorizationCode(authorizationCode);
         if (storedAuth == null) {
             throw new InvalidGrantException("Invalid authorization code: " + authorizationCode);
         }
 
-        AuthorizationRequest pendingAuthorizationRequest = storedAuth.getAuthenticationRequest();
-        LOGGER.info("Found pending authorization request: redirectUri={}, clientId={}, scope={}, state={}", new Object[] { pendingAuthorizationRequest.getRedirectUri(),
-                pendingAuthorizationRequest.getClientId(), pendingAuthorizationRequest.getScope(), pendingAuthorizationRequest.getState() });
+        OAuth2Request pendingAuthorizationRequest = storedAuth.getOAuth2Request();
+        LOGGER.info("Found pending authorization request: redirectUri={}, clientId={}, scope={}, is_approved={}", new Object[] { pendingAuthorizationRequest.getRedirectUri(),
+                pendingAuthorizationRequest.getClientId(), pendingAuthorizationRequest.getScope(), pendingAuthorizationRequest.isApproved() });
         // https://jira.springsource.org/browse/SECOAUTH-333
         // This might be null, if the authorization was done without the
         // redirect_uri parameter
-        String redirectUriApprovalParameter = pendingAuthorizationRequest.getAuthorizationParameters().get(OAuth2Utils.REDIRECT_URI);
+        String redirectUriApprovalParameter = pendingAuthorizationRequest.getRequestParameters().get(OAuth2Utils.REDIRECT_URI);
 
         if ((redirectUri != null || redirectUriApprovalParameter != null) && !pendingAuthorizationRequest.getRedirectUri().equals(redirectUri)) {
             throw new RedirectMismatchException("Redirect URI mismatch.");
         }
 
         String pendingClientId = pendingAuthorizationRequest.getClientId();
-        String clientId = authorizationRequest.getClientId();
+        String clientId = client.getClientId();
         LOGGER.info("Comparing client ids: pendingClientId={}, authorizationRequest.clientId={}", pendingClientId, clientId);
         if (clientId != null && !clientId.equals(pendingClientId)) {
             // just a sanity check.
@@ -139,18 +143,17 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
         // is provided
         // in the token request, but that happens elsewhere.
 
-        Map<String, String> combinedParameters = new HashMap<String, String>(storedAuth.getAuthenticationRequest().getAuthorizationParameters());
+        Map<String, String> combinedParameters = new HashMap<String, String>(storedAuth.getOAuth2Request().getRequestParameters());
         // Combine the parameters adding the new ones last so they override if
         // there are any clashes
         combinedParameters.putAll(parameters);
         // Similarly scopes are not required in the token request, so we don't
         // make a comparison here, just
         // enforce validity through the AuthorizationRequestFactory.
-        DefaultAuthorizationRequest outgoingRequest = new DefaultAuthorizationRequest(pendingAuthorizationRequest);
-        outgoingRequest.setAuthorizationParameters(combinedParameters);
-
+        
+        
         Authentication userAuth = storedAuth.getUserAuthentication();
-        return new OAuth2Authentication(outgoingRequest, userAuth);
+        return new OAuth2Authentication(pendingAuthorizationRequest, userAuth);
 
     }
 

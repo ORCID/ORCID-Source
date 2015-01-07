@@ -20,9 +20,8 @@ import java.util.Set;
 
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
-import org.springframework.security.oauth2.provider.code.AuthorizationRequestHolder;
+import org.springframework.security.oauth2.provider.OAuth2Request;
 
 public class OrcidOauth2AuthInfo {
 
@@ -30,21 +29,15 @@ public class OrcidOauth2AuthInfo {
 
     private Set<String> scopes;
 
-    private String userOrcid;
-
-    public OrcidOauth2AuthInfo(AuthorizationRequestHolder authorizationRequestHolder) {
-        if (authorizationRequestHolder != null) {
-            init(authorizationRequestHolder.getAuthenticationRequest(), authorizationRequestHolder.getUserAuthentication());
-        }
-    }
+    private String userOrcid;    
 
     public OrcidOauth2AuthInfo(OAuth2Authentication oauth2Authentication) {
         if (oauth2Authentication != null) {
-            init(oauth2Authentication.getAuthorizationRequest(), oauth2Authentication.getUserAuthentication());
+            init(oauth2Authentication.getOAuth2Request(), oauth2Authentication.getUserAuthentication());
         }
     }
 
-    private void init(AuthorizationRequest authRequest, Authentication userAuthentication) {
+    private void init(OAuth2Request authRequest, Authentication userAuthentication) {
         if (authRequest != null) {
             clientId = authRequest.getClientId();
             scopes = authRequest.getScope();
@@ -59,10 +52,6 @@ public class OrcidOauth2AuthInfo {
                 }
             }
         }
-    }
-
-    public OrcidOauth2AuthInfo(AuthorizationRequest authRequest) {
-
     }
 
     public String getClientId() {
