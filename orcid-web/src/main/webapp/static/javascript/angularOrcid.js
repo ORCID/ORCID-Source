@@ -1438,10 +1438,11 @@ orcidNgModule.filter('workExternalIdentifierHtml', function(){
         var link = workIdLinkJs.getLink(id,type);
 
         if (link != null)
-            output = output + "<a href='" + link + "' target='_blank'>" + id + "</a>";
+            output = output + "<a href='" + link.replace(/'/g, "&#39;") + "' target='_blank'>" + id.escapeHtml() + "</a>";
         else
             output = output + id;
-
+        console.log(id);
+        console.log(output);
         if (length > 1 && !last) output = output + ',';
         return output;
     };
