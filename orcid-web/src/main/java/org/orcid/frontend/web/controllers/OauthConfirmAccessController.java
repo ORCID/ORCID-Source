@@ -51,7 +51,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
 import org.springframework.security.oauth2.common.exceptions.RedirectMismatchException;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
-import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
@@ -77,7 +76,6 @@ public class OauthConfirmAccessController extends BaseController {
     private Pattern redirectUriPattern = Pattern.compile("redirect_uri=([^&]*)");
     private Pattern responseTypePattern = Pattern.compile("response_type=([^&]*)");
 
-    private static final String RESPONSE_TYPE = "code";
     private static final String CLIENT_ID_PARAM = "client_id";
     private static final String SCOPE_PARAM = "scope";
     private static final String RESPONSE_TYPE_PARAM = "response_type";
@@ -228,8 +226,6 @@ public class OauthConfirmAccessController extends BaseController {
     public ModelAndView loginGetHandler(HttpServletRequest request, ModelAndView mav, @RequestParam("client_id") String clientId, @RequestParam("scope") String scope) {
         OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid(), LoadOptions.BIO_ONLY);
 
-        // XXX Use T2 API
-
         Boolean justRegistered = (Boolean) request.getSession().getAttribute(JUST_REGISTERED);
         if (justRegistered != null) {
             request.getSession().removeAttribute(JUST_REGISTERED);
@@ -339,7 +335,7 @@ public class OauthConfirmAccessController extends BaseController {
 
                     // Authorize
                     try {
-                        authorizationEndpoint.authorize(model, RESPONSE_TYPE, params, status, auth);
+                        authorizationEndpoint.authorize(model, params, status, auth);
                     } catch (RedirectMismatchException rUriError) {
                         String redirectUri = this.getBaseUri() + REDIRECT_URI_ERROR;
                         // Set the client id
@@ -464,7 +460,7 @@ public class OauthConfirmAccessController extends BaseController {
 
                 // Authorize
                 try {
-                    authorizationEndpoint.authorize(model, RESPONSE_TYPE, params, status, auth);
+                    authorizationEndpoint.authorize(model, params, status, auth);
                 } catch (RedirectMismatchException rUriError) {
                     String redirectUri = this.getBaseUri() + REDIRECT_URI_ERROR;
                     // Set the client id

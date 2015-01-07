@@ -28,7 +28,6 @@ import org.springframework.security.oauth2.common.exceptions.InvalidScopeExcepti
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.security.oauth2.common.exceptions.RedirectMismatchException;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
-import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.endpoint.AuthorizationEndpoint;
 import org.springframework.web.HttpSessionRequiredException;
@@ -41,10 +40,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 public class OrcidAuthorizationEndpoint extends AuthorizationEndpoint {
 
-    private static String SCOPE = "scope";
-    
     private String redirectUriError = "forward:/oauth/error/redirect-uri-mismatch";
     private String oauthError = "forward:/oauth/error";
+    
+    private OrcidOAuth2RequestValidator orcidOAuth2RequestValidator;
     
     
     @Override
@@ -69,12 +68,11 @@ public class OrcidAuthorizationEndpoint extends AuthorizationEndpoint {
     @Override
     @RequestMapping
     public ModelAndView authorize(Map<String, Object> model,
-                    @RequestParam(value = "response_type", required = false, defaultValue = "none") String responseType,
                     @RequestParam Map<String, String> requestParameters, SessionStatus sessionStatus, Principal principal) {
         String scopes = requestParameters.get(OAuth2Utils.SCOPE);
         scopes = trimClientCredentialScopes(scopes);
         requestParameters.put(OAuth2Utils.SCOPE, scopes);
-        return super.authorize(model, responseType, requestParameters, sessionStatus, principal);
+        return super.authorize(model, requestParameters, sessionStatus, principal);
     }
     
     /**
@@ -85,10 +83,10 @@ public class OrcidAuthorizationEndpoint extends AuthorizationEndpoint {
      * */
     public void validateScope(String scopes, ClientDetails clientDetails) throws InvalidScopeException {
         Map<String, String> parameters = new HashMap<String, String>();
-        parameters.put(SCOPE, scopes);
+        parameters.put(OAuth2Utils.SCOPE, scopes);
         
         //Check the user have permissions to the other scopes
-        getAuthorizationRequestManager().validateParameters(parameters, clientDetails);
+        orcidOAuth2RequestValidator.validateParameters(parameters, clientDetails);
     }
     
    
@@ -122,4 +120,12 @@ public class OrcidAuthorizationEndpoint extends AuthorizationEndpoint {
         
         return result;
     }
+
+    public OrcidOAuth2RequestValidator getOrcidOAuth2RequestValidator() {
+        return orcidOAuth2RequestValidator;
+    }
+
+    public void setOrcidOAuth2RequestValidator(OrcidOAuth2RequestValidator orcidOAuth2RequestValidator) {
+        this.orcidOAuth2RequestValidator = orcidOAuth2RequestValidator;
+    }        
 }

@@ -31,12 +31,18 @@ public class OrcidOauth2AuthInfo {
 
     private String userOrcid;    
 
+    public OrcidOauth2AuthInfo(String clientId, Set<String> scopes, String userOrcid) {
+        this.clientId = clientId;
+        this.scopes = scopes;
+        this.userOrcid = userOrcid;
+    }
+    
     public OrcidOauth2AuthInfo(OAuth2Authentication oauth2Authentication) {
         if (oauth2Authentication != null) {
             init(oauth2Authentication.getOAuth2Request(), oauth2Authentication.getUserAuthentication());
         }
-    }
-
+    }    
+    
     private void init(OAuth2Request authRequest, Authentication userAuthentication) {
         if (authRequest != null) {
             clientId = authRequest.getClientId();
