@@ -2740,6 +2740,9 @@ header overrides
 	margin-top: -1px;
 	padding-top: 1px;
 	padding-left: 0;
+	float: left;
+	margin-bottom: 10px;
+	width: 100%;
 }
 
 .public-profile .workspace-inner>* {
@@ -4049,9 +4052,10 @@ ul#body-work-list > li{
 
 
 .workspace-profile .workspace-section ul.workspace-section-toolbar{
-	width: 100%;
+	width: 100%;	
 	margin: 0;
 	padding: 0;
+	float: left;
 }
 
 .workspace-profile .workspace-section ul.workspace-section-toolbar li{
@@ -4684,7 +4688,7 @@ ul.toggle-menu li:hover ul{
 .public-profile .bibtex-wizard:before{
 	font-size: 13px;
 	color: #494A4C;
-	top: -8px;
+	top: -8px;	
 }
 
 .upload-button { /* Hiding input file button to mask it */	
@@ -6599,9 +6603,10 @@ ul.oauth-scopes li{
 	}
 	
 	.public-profile .bibtex-wizard:before,
-	.workspace-accordion-header ul>li>a.action-option>span{
+	.workspace-accordion-header ul>li>a.action-option>span:not(.bibtex-wizard){
 		font-size: 25px;
 		color: #494A4C;
+		display: block;
 	}
 	
 	.workspace-accordion-header ul>li>a.action-option.two-options{
