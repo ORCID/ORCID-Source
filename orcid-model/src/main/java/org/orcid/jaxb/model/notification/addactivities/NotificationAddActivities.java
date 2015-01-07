@@ -31,7 +31,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.notification.Notification;
-import org.orcid.jaxb.model.notification.NotificationType;
 
 /**
  * <p>
@@ -73,27 +72,6 @@ public class NotificationAddActivities extends Notification {
     protected Activities activities;
     @XmlTransient
     protected String subject;
-
-    /**
-     * Gets the value of the notificationType property.
-     * 
-     * @return possible object is {@link NotificationType }
-     * 
-     */
-    public NotificationType getNotificationType() {
-        return notificationType;
-    }
-
-    /**
-     * Sets the value of the notificationType property.
-     * 
-     * @param value
-     *            allowed object is {@link NotificationType }
-     * 
-     */
-    public void setNotificationType(NotificationType value) {
-        this.notificationType = value;
-    }
 
     /**
      * Gets the value of the authorizationUrl property.
