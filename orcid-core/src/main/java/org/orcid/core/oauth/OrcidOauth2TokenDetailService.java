@@ -50,7 +50,9 @@ public interface OrcidOauth2TokenDetailService {
     List<OrcidOauth2TokenDetail> findByUserName(String userName);
 
     List<OrcidOauth2TokenDetail> findByClientId(String clientId);
-
+    
+    List<OrcidOauth2TokenDetail> findByClientIdAndUserName(String clientId, String userName);
+    
     /**
      * This should NOT delete the row, but merely remove the value from it
      * 

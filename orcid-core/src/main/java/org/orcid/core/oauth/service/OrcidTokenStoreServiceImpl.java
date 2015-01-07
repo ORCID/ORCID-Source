@@ -376,10 +376,14 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
 
     @Override
     public Collection<OAuth2AccessToken> findTokensByClientIdAndUserName(String clientId, String userName) {
-        /**
-         * TODO: Nobody uses this yet, but it will be usefull 
-         * */
-        return null;
+        List<OrcidOauth2TokenDetail> details = orcidOauthTokenDetailService.findByClientIdAndUserName(clientId, userName);
+        List<OAuth2AccessToken> accessTokens = new ArrayList<OAuth2AccessToken>();
+        if (details != null && !details.isEmpty()) {
+            for (OrcidOauth2TokenDetail detail : details) {
+                accessTokens.add(getOauth2AccessTokenFromDetails(detail));
+            }
+        }
+        return accessTokens;
     }
 
 }
