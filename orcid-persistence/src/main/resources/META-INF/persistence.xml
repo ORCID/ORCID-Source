@@ -36,6 +36,7 @@
         <class>org.orcid.persistence.jpa.entities.HearAboutEntity</class>
         <class>org.orcid.persistence.jpa.entities.NotificationActivityEntity</class>
         <class>org.orcid.persistence.jpa.entities.NotificationAddActivitiesEntity</class>
+        <class>org.orcid.persistence.jpa.entities.NotificationAmendedEntity</class>
         <class>org.orcid.persistence.jpa.entities.NotificationEntity</class>
         <class>org.orcid.persistence.jpa.entities.NotificationCustomEntity</class>
         <class>org.orcid.persistence.jpa.entities.OtherNameEntity</class>

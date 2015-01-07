@@ -49,6 +49,7 @@ import org.orcid.jaxb.model.message.SendChangeNotifications;
 import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.notification.Notification;
 import org.orcid.jaxb.model.notification.NotificationType;
+import org.orcid.jaxb.model.notification.amended.NotificationAmended;
 import org.orcid.jaxb.model.notification.custom.NotificationCustom;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
@@ -375,14 +376,10 @@ public class NotificationManagerImpl implements NotificationManager {
         // Generate html from template
         String html = templateManager.processTemplate("amend_email_html.ftl", templateParams);
 
-        NotificationCustom notification = new NotificationCustom();
-        notification.setNotificationType(NotificationType.CUSTOM);
-        notification.setSubject(subject);
-        notification.setBodyText(body);
-        notification.setBodyHtml(html);
-
         boolean notificationsEnabled = profileDao.find(amendedProfile.getOrcidIdentifier().getPath()).getEnableNotifications();
         if (notificationsEnabled) {
+            NotificationAmended notification = new NotificationAmended();
+            notification.setNotificationType(NotificationType.AMENDED);
             createNotification(amendedProfile.getOrcidIdentifier().getPath(), notification);
         } else {
             String email = amendedProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
