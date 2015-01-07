@@ -1,6 +1,14 @@
-Lots has happened in ORCID since you last signed in. Here are some messages you missed.
+Hi Spike Milligan,
 
-You had 3 messages from 2 partners about 5 activities to add to your record.
-You had 2 messages from ORCID.
+Here’s what has happened since the last time you visited your ORCID record.
 
-Visit http://testserver.orcid.org/notifications to see more.
+Visit http://testserver.orcid.org/notifications to view all notifications.
+
+[3] Requests to add or update your ORCID record
+[2] notifications from ORCID
+
+You have received this email in the genuine belief that its contents would be of
+interest to you. To opt-out of messages from ORCID please go to your Account
+Settings page at http://testserver.orcid.org/home?lang=en/account.
+
+email preferences (http://testserver.orcid.org/account) | privacy policy  (http://testserver.orcid.org/privacy-policy) | ORCID, Inc. | 10411 Motor City Drive, Suite 750, Bethesda, MD 20817, USA | http://testserver.orcid.org

@@ -19,6 +19,7 @@ package org.orcid.core.adapter.impl;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
+import ma.glasnost.orika.metadata.ClassMapBuilder;
 
 import org.orcid.jaxb.model.common.Source;
 import org.orcid.jaxb.model.notification.addactivities.Activity;
@@ -40,14 +41,17 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     @Override
     public MapperFacade getObject() throws Exception {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
-        mapperFactory.classMap(NotificationCustomEntity.class, NotificationCustom.class).field("dateCreated", "createdDate").field("id", "putCode.path").byDefault()
-                .register();
-        mapperFactory.classMap(NotificationAddActivitiesEntity.class, NotificationAddActivities.class).field("dateCreated", "createdDate").field("id", "putCode.path")
-                .field("authorizationUrl", "authorizationUrl.uri").field("notificationActivities", "activities.activities").byDefault().register();
+        mapCommonFields(mapperFactory.classMap(NotificationCustomEntity.class, NotificationCustom.class)).register();
+        mapCommonFields(mapperFactory.classMap(NotificationAddActivitiesEntity.class, NotificationAddActivities.class)).field("authorizationUrl", "authorizationUrl.uri")
+                .field("notificationActivities", "activities.activities").register();
         mapperFactory.classMap(NotificationActivityEntity.class, Activity.class).field("externalIdType", "externalId.externalIdType")
                 .field("externalIdValue", "externalId.externalIdValue").byDefault().register();
         mapperFactory.classMap(SourceEntity.class, Source.class).field("sourceClient.id", "clientId.path").byDefault().register();
         return mapperFactory.getMapperFacade();
+    }
+
+    private ClassMapBuilder<?, ?> mapCommonFields(ClassMapBuilder<?, ?> builder) {
+        return builder.field("dateCreated", "createdDate").field("id", "putCode.path").byDefault();
     }
 
     @Override

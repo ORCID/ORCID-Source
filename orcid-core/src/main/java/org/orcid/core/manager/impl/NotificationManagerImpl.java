@@ -298,6 +298,7 @@ public class NotificationManagerImpl implements NotificationManager {
         mailGunManager.sendEmail(SUPPORT_VERIFY_ORCID_ORG, email, getSubject("email.subject.verify_reminder", orcidProfile), body, htmlBody);
     }
 
+    @Override
     public String deriveEmailFriendlyName(OrcidProfile orcidProfile) {
         if (orcidProfile.getOrcidBio() != null && orcidProfile.getOrcidBio().getPersonalDetails() != null) {
             PersonalDetails personalDetails = orcidProfile.getOrcidBio().getPersonalDetails();

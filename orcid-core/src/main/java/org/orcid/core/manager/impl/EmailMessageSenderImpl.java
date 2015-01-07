@@ -42,6 +42,7 @@ import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -79,7 +80,10 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
 
     @Resource
     private LocaleManager localeManager;
-    
+
+    @Resource
+    private MessageSource messages;
+
     @Resource
     private OrcidUrlManager orcidUrlManager;
 
@@ -87,13 +91,13 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     public EmailMessage createDigest(String orcid, Collection<Notification> notifications) {
         OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile(orcid, LoadOptions.BIO_AND_INTERNAL_ONLY);
         Locale locale = localeManager.getLocalFromOrcidProfile(orcidProfile);
-        return createDigest(notifications, locale);
+        return createDigest(orcidProfile, notifications, locale);
     }
 
     @Override
-    public EmailMessage createDigest(Collection<Notification> notifications, Locale locale) {
+    public EmailMessage createDigest(OrcidProfile orcidProfile, Collection<Notification> notifications, Locale locale) {
         int orcidMessageCount = 0;
-        int memberMessageCount = 0;
+        int addActivitiesMessageCount = 0;
         int activityCount = 0;
         Set<String> memberIds = new HashSet<>();
         for (Notification notification : notifications) {
@@ -102,21 +106,25 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
             } else {
                 ClientId clientId = notification.getSource().getClientId();
                 if (clientId != null) {
-                    memberMessageCount++;
                     memberIds.add(clientId.getPath());
                 }
             }
             if (notification instanceof NotificationAddActivities) {
+                addActivitiesMessageCount++;
                 NotificationAddActivities addActsNotification = (NotificationAddActivities) notification;
                 activityCount += addActsNotification.getActivities().getActivities().size();
             }
         }
         Map<String, Object> params = new HashMap<>();
+        params.put("locale", locale);
+        params.put("messages", messages);
+        params.put("messageArgs", new Object[0]);
+        params.put("emailName", notificationManager.deriveEmailFriendlyName(orcidProfile));
         params.put("orcidMessageCount", orcidMessageCount);
-        params.put("memberMessageCount", memberMessageCount);
+        params.put("addActivitiesMessageCount", addActivitiesMessageCount);
         params.put("activityCount", activityCount);
         params.put("memberIdsCount", memberIds.size());
-        params.put("baseUrl", orcidUrlManager.getBaseUrl());
+        params.put("baseUri", orcidUrlManager.getBaseUrl());
         String emailBody = templateManager.processTemplate("digest_email.ftl", params, locale);
         EmailMessage emailMessage = new EmailMessage();
         emailMessage.setSubject("Your digest from ORCID");
