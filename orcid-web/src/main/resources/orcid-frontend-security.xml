@@ -24,7 +24,7 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
-       http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2.xsd">
+       http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2-1.0.xsd">
 
 	<context:annotation-config />
 	
@@ -276,6 +276,7 @@
 		<constructor-arg ref="orcidAuthorizationCodeService" />
 		<constructor-arg ref="tokenServices" />
 		<constructor-arg ref="clientDetailsManager" />
+		<constructor-arg ref="oAuth2RequestFactory" />
 	</bean>
 
 	<bean id="orcidAuthorizationCodeService"
@@ -306,5 +307,9 @@
 		class="org.orcid.frontend.web.listener.LoginApplicationListener" />
 		
 	<bean id="languagesMap"
-		class="org.orcid.frontend.web.util.LanguagesMap" />		
+		class="org.orcid.frontend.web.util.LanguagesMap" />
+
+	<bean id="oAuth2RequestFactory" class="org.springframework.security.oauth2.provider.request.DefaultOAuth2RequestFactory">
+        <constructor-arg ref="clientDetailsManager"/>
+    </bean>	
 </beans>

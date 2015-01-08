@@ -59,13 +59,10 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
     @Resource(name = "orcidOauth2AuthoriziationCodeDetailDao")
     private OrcidOauth2AuthoriziationCodeDetailDao orcidOauth2AuthoriziationCodeDetailDao;
     
-    private final OAuth2RequestFactory oAuth2RequestFactory;
-    
     public OrcidAuthorizationCodeTokenGranter(AuthorizationServerTokenServices tokenServices, AuthorizationCodeServices authorizationCodeServices,
             ClientDetailsService clientDetailsService, OAuth2RequestFactory oAuth2RequestFactory) {
         super(tokenServices, clientDetailsService, oAuth2RequestFactory, GRANT_TYPE);
         this.authorizationCodeServices = authorizationCodeServices;
-        this.oAuth2RequestFactory = oAuth2RequestFactory;
     }
 
     @Override

@@ -119,7 +119,6 @@
             <list>
                 <ref bean="clientCredentialsTokenGranter"/>
                 <ref bean="authorizationCodeTokenGranter"/>
-                <ref bean="refreshTokenGranter"/>
             </list>
         </constructor-arg>
     </bean>
@@ -132,6 +131,7 @@
     
     <bean id="orcidClientCredentialsChecker" class="org.orcid.core.oauth.OrcidClientCredentialsChecker">
         <constructor-arg ref="clientDetailsManager"/>
+        <constructor-arg ref="oAuth2RequestFactory" />
     </bean>
     
     <!-- The 'granter responsible for returning and removing the auth codes -->
@@ -139,13 +139,13 @@
         <constructor-arg ref="orcidAuthorizationCodeService"/>
         <constructor-arg ref="tokenServices"/>
         <constructor-arg ref="clientDetailsManager"/>
+        <constructor-arg ref="oAuth2RequestFactory" />
     </bean>
     
     <!-- An extension of RandomValueAuthorizationCodeServices to create and remove authorisation codes -->
     <bean id="orcidAuthorizationCodeService" class="org.orcid.core.oauth.service.OrcidAuthorizationCodeServiceImpl"/>
-    
-    <bean id="refreshTokenGranter" class="org.springframework.security.oauth2.provider.refresh.RefreshTokenGranter">
-        <constructor-arg ref="tokenServices"/>
+        
+    <bean id="oAuth2RequestFactory" class="org.springframework.security.oauth2.provider.request.DefaultOAuth2RequestFactory">
         <constructor-arg ref="clientDetailsManager"/>
     </bean>
 </beans>      
