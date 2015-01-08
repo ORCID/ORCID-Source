@@ -31,19 +31,18 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
-import org.orcid.core.oauth.service.OrcidRandomValueTokenServices;
 import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Request;
-import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.stereotype.Component;
 
 /**
@@ -52,9 +51,9 @@ import org.springframework.stereotype.Component;
 @Component("defaultPermissionChecker")
 public class DefaultPermissionChecker implements PermissionChecker {
 
-    @Resource(name = "tokenServices")
-    private DefaultTokenServices defaultTokenServices;
-
+    @Value("${org.orcid.core.token.write_validity_seconds:3600}")
+    private int writeValiditySeconds;
+    
     @Resource(name = "profileEntityManager")
     private ProfileEntityManager profileEntityManager;
 
@@ -249,9 +248,8 @@ public class DefaultPermissionChecker implements PermissionChecker {
                     if (scope != null && !scope.isEmpty()) {
                         ScopePathType scopePathType = ScopePathType.fromValue(scope);
                         if (scopePathType.isUserGrantWriteScope()) {
-                            Date now = new Date();
-                            OrcidRandomValueTokenServices orcidRandomValueTokenServices = (OrcidRandomValueTokenServices) defaultTokenServices;
-                            if (now.getTime() > tokenDetail.getDateCreated().getTime() + (orcidRandomValueTokenServices.getWriteValiditySeconds() * 1000)) {
+                            Date now = new Date();                            
+                            if (now.getTime() > tokenDetail.getDateCreated().getTime() + (writeValiditySeconds * 1000)) {
                                 removeScopes.add(scope);
                                 scopeRemoved = true;
                             }

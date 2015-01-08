@@ -34,11 +34,11 @@ import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
-import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
@@ -48,8 +48,10 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
  * @author Declan Newman (declan) Date: 11/05/2012
  */
 public class OrcidRandomValueTokenServices extends DefaultTokenServices {
-    private final int writeValiditySeconds;
-    private final int readValiditySeconds;
+    @Value("${org.orcid.core.token.write_validity_seconds:3600}")
+    private int writeValiditySeconds;
+    @Value("${org.orcid.core.token.read_validity_seconds:631138519}")
+    private int readValiditySeconds;
 
     @Resource(name = "orcidTokenStore")
     private TokenStore tokenStore;
@@ -65,9 +67,7 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidRandomValueTokenServices.class);
 
-    public OrcidRandomValueTokenServices(ClientDetailsService clientDetailsService, int writeValiditySeconds, int readValiditySeconds) {
-        this.writeValiditySeconds = writeValiditySeconds;
-        this.readValiditySeconds = readValiditySeconds;
+    public OrcidRandomValueTokenServices() {        
     }
 
     @Override

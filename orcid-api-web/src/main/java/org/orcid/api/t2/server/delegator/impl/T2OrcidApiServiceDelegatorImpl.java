@@ -54,7 +54,6 @@ import org.orcid.jaxb.model.message.SourceClientId;
 import org.orcid.jaxb.model.message.SourceName;
 import org.orcid.jaxb.model.message.SourceOrcid;
 import org.orcid.jaxb.model.message.SubmissionDate;
-import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.WebhookDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -93,10 +92,7 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
     private ProfileEntityManager profileEntityManager;
 
     @Resource
-    private WebhookDao webhookDao;
-
-    @Resource
-    private ProfileDao profileDao;
+    private WebhookDao webhookDao;    
 
     @Override
     public Response viewStatusText() {
@@ -452,7 +448,7 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
             throw new OrcidBadRequestException(String.format("Webhook uri:%s is syntactically incorrect", webhookUri));
         }
 
-        ProfileEntity profile = profileDao.find(orcid);
+        ProfileEntity profile = profileEntityManager.findByOrcid(orcid);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         ClientDetailsEntity clientDetails = null;
         String clientId = null;
@@ -497,7 +493,7 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.WEBHOOK)
     public Response unregisterWebhook(UriInfo uriInfo, String orcid, String webhookUri) {
-        ProfileEntity profile = profileDao.find(orcid);
+        ProfileEntity profile = profileEntityManager.findByOrcid(orcid);
         if (profile != null) {
             WebhookEntityPk webhookPk = new WebhookEntityPk(profile, webhookUri);
             WebhookEntity webhook = webhookDao.find(webhookPk);
