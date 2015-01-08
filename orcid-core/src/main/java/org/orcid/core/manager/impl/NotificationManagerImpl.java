@@ -32,6 +32,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.LocaleUtils;
 import org.orcid.core.adapter.JpaJaxbNotificationAdapter;
 import org.orcid.core.constants.EmailConstants;
+import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.CustomEmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.NotificationManager;
@@ -134,6 +135,9 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Resource
     private SourceManager sourceManager;
+
+    @Resource
+    private LocaleManager localeManager;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationManagerImpl.class);
 
@@ -242,37 +246,19 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     private void addMessageParams(Map<String, Object> templateParams, OrcidProfile orcidProfile) {
-        Locale locale = null;
-        if (orcidProfile.getOrcidPreferences() != null && orcidProfile.getOrcidPreferences().getLocale() != null) {
-            orcidProfile.getOrcidPreferences().getLocale().value();
-            locale = LocaleUtils.toLocale(orcidProfile.getOrcidPreferences().getLocale().value());
-        } else {
-            locale = LocaleUtils.toLocale("en");
-        }
+        Locale locale = localeManager.getLocalFromOrcidProfile(orcidProfile);
         templateParams.put("messages", this.messages);
         templateParams.put("messageArgs", new Object[0]);
         templateParams.put("locale", locale);
     }
 
     private String getSubject(String code, OrcidProfile orcidProfile) {
-        Locale locale = null;
-        if (orcidProfile.getOrcidPreferences() != null && orcidProfile.getOrcidPreferences().getLocale() != null) {
-            orcidProfile.getOrcidPreferences().getLocale().value();
-            locale = LocaleUtils.toLocale(orcidProfile.getOrcidPreferences().getLocale().value());
-        } else {
-            locale = LocaleUtils.toLocale("en");
-        }
+        Locale locale = localeManager.getLocalFromOrcidProfile(orcidProfile);
         return messages.getMessage(code, null, locale);
     }
 
     private String getSubject(String code, OrcidProfile orcidProfile, String... args) {
-        Locale locale = null;
-        if (orcidProfile.getOrcidPreferences() != null && orcidProfile.getOrcidPreferences().getLocale() != null) {
-            orcidProfile.getOrcidPreferences().getLocale().value();
-            locale = LocaleUtils.toLocale(orcidProfile.getOrcidPreferences().getLocale().value());
-        } else {
-            locale = LocaleUtils.toLocale("en");
-        }
+        Locale locale = localeManager.getLocalFromOrcidProfile(orcidProfile);
         return messages.getMessage(code, args, locale);
     }
 
