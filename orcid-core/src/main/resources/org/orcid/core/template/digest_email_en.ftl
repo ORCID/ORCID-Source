@@ -21,7 +21,7 @@ Hi ${emailName},
 
 Here’s what has happened since the last time you visited your ORCID record.
 
-Visit ${baseUri}/notifications to view all notifications.
+Visit ${baseUri}/notifications?lang=${locale} to view all notifications.
 
 <#compress>
 <#if amendedMessageCount gt 0>[${amendedMessageCount}] <#if amendedMessageCount == 1>notification<#else>notifications</#if> from ORCID member organizations that added or updated information on your record</#if>
@@ -30,5 +30,6 @@ Visit ${baseUri}/notifications to view all notifications.
 </#compress>
 
 
-<@emailMacros.msg "email.common.you_have_received_this_email_opt_out.1" />${baseUri}/home?lang=${locale}<@emailMacros.msg "email.common.you_have_received_this_email_opt_out.2" />
+<@emailMacros.msg "email.common.you_have_received_this_email_opt_out.1" />${baseUri}/account?lang=${locale}.
+
 <#include "email_footer.ftl"/>

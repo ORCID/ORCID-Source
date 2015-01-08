@@ -31,19 +31,19 @@
             </span>
             <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
                 Here’s what has happened since the last time you visited your ORCID record.
+                <a href="${baseUri}/notifications?lang=${locale}">View all notifications</a>.
             </p>            
             <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-                Visit ${baseUri}/notifications to view all notifications.
-            </p>    
-            <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-                <#compress>
-                <#if amendedMessageCount gt 0><div>[${amendedMessageCount}] <#if amendedMessageCount == 1>notification<#else>notifications</#if> from ORCID member organizations that added or updated information on your record</div></#if>
-                <#if addActivitiesMessageCount gt 0><div>[${addActivitiesMessageCount}] <#if addActivitiesMessageCount == 1>Request<#else>Requests</#if> to add or update your ORCID record</div></#if>
-                <#if orcidMessageCount gt 0><div>[${orcidMessageCount}] <#if orcidMessageCount == 1>notification<#else>notifications</#if> from ORCID</div></#if>
-                </#compress>
+                <ul style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666; margin-left: 0;">
+                    <#compress>
+                    <#if amendedMessageCount gt 0><li>[${amendedMessageCount}] <#if amendedMessageCount == 1>notification<#else>notifications</#if> from ORCID member organizations that added or updated information on your record</li></#if>
+                    <#if addActivitiesMessageCount gt 0><li>[{$addActivitiesMessageCount}] <#if addActivitiesMessageCount == 1>Request<#else>Requests</#if> to add or update your ORCID record</li></#if>
+                    <#if orcidMessageCount gt 0><li>[${orcidMessageCount}] <#if orcidMessageCount == 1>notification<#else>notifications</#if> from ORCID</li></#if>
+                    </#compress>
+                </ul>
            </p>
            <p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">
-                <@emailMacros.msg "email.common.you_have_received_this_email_opt_out.1" />${baseUri}/home?lang=${locale}<@emailMacros.msg "email.common.you_have_received_this_email_opt_out.2" />
+                <@emailMacros.msg "email.common.you_have_received_this_email_opt_out.1" />${baseUri}/account?lang=${locale}.
             </p>                       
             <p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">
                <#include "email_footer_html.ftl"/>
