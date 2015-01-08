@@ -111,7 +111,7 @@ public class EmailMessageSenderTest extends BaseTest {
         notification5.setSubject("Message from ORCID");
         notification5.setCreatedDate(DateUtils.convertToXMLGregorianCalendar("2014-07-11T06:42:18"));
         notifications.add(notification5);
-        
+
         NotificationAmended notification6 = new NotificationAmended();
         notification6.setSubject("Amended by member");
         notification6.setCreatedDate(DateUtils.convertToXMLGregorianCalendar("2014-07-12T18:44:36"));
@@ -123,6 +123,7 @@ public class EmailMessageSenderTest extends BaseTest {
         assertNotNull(emailMessage);
         String expectedBodyText = IOUtils.toString(getClass().getResourceAsStream("example_digest_email_body.txt"));
         assertEquals(expectedBodyText, emailMessage.getBodyText());
+        assertEquals("Spike Milligan you have [6] new notifications", emailMessage.getSubject());
     }
 
     private Activity createActivity(String actType, String actName) {

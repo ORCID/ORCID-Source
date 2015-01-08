@@ -97,12 +97,14 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
 
     @Override
     public EmailMessage createDigest(OrcidProfile orcidProfile, Collection<Notification> notifications, Locale locale) {
+        int totalMessageCount = 0;
         int orcidMessageCount = 0;
         int addActivitiesMessageCount = 0;
         int amendedMessageCount = 0;
         int activityCount = 0;
         Set<String> memberIds = new HashSet<>();
         for (Notification notification : notifications) {
+            totalMessageCount++;
             if (notification.getSource() == null) {
                 orcidMessageCount++;
             } else {
@@ -120,12 +122,13 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 amendedMessageCount++;
             }
         }
-        String subject = "Your digest from ORCID";
+        String emailName = notificationManager.deriveEmailFriendlyName(orcidProfile);
+        String subject = messages.getMessage("email.subject.digest", new String[] { emailName, String.valueOf(totalMessageCount) }, locale);
         Map<String, Object> params = new HashMap<>();
         params.put("locale", locale);
         params.put("messages", messages);
         params.put("messageArgs", new Object[0]);
-        params.put("emailName", notificationManager.deriveEmailFriendlyName(orcidProfile));
+        params.put("emailName", emailName);
         params.put("orcidMessageCount", orcidMessageCount);
         params.put("addActivitiesMessageCount", addActivitiesMessageCount);
         params.put("activityCount", activityCount);
