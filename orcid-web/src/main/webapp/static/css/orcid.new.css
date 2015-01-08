@@ -6034,10 +6034,6 @@ ul.oauth-scopes li{
 		text-align: center;
 	}
 	
-	.input-xlarge{
-		width:96%;
-		height: 50px;
-	}
 	
 	/* Registration */
 	#RegistrationCtr input[type="text"],#RegistrationCtr input[type="password"]
