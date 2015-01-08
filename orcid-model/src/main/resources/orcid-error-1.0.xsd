@@ -48,7 +48,7 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:element>
-                <xs:element name="errorCode" type="xs:integer">
+                <xs:element name="errorCode" type="xs:integer" minOccurs="0">
                     <xs:annotation>
                         <xs:documentation>
                             The ORCID error code that defines the specific type of error. A full list of codes can be found at
