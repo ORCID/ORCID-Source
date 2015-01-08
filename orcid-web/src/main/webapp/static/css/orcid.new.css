@@ -1704,7 +1704,7 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 }
 
 .workspace-accordion-content {
-	padding: 10px 0;
+	padding: 10px 0;	
 }
 
 .workspace-accordion-header{
@@ -1841,7 +1841,9 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 
 .workspace-body-list > li {	
 	min-height: 30px;
-	box-shadow: 3px 4px 5px #C9CACB;	
+	box-shadow: 3px 4px 5px #C9CACB;
+	display: inline-block;
+	width: 100%;	
 }
 
 .work-list-container h3 {
@@ -2826,7 +2828,7 @@ header overrides
 }
 
 .bottom-margin-small {
-	margin-bottom: 15px;
+	margin-bottom: 10px;
 }
 
 .bottom-margin-medium {
@@ -6600,7 +6602,18 @@ ul.oauth-scopes li{
 	.workspace-accordion-header ul>li>a.works{
 		width: 25%;
 		font-size: 0;
+	}	
+
+	.public-profile .bibtex-wizard{
+		width: 100%;	
+		margin-top: 0;
 	}
+	
+	.public-profile .bibtex-wizard:before{
+		left: 40%;
+		top: -13px;
+	}	
+	
 	
 	.public-profile .bibtex-wizard:before,
 	.workspace-accordion-header ul>li>a.action-option>span:not(.bibtex-wizard){
