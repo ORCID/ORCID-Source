@@ -158,7 +158,6 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                     EmailMessage digestMessage = createDigest(orcid, notifications);
                     digestMessage.setFrom(DIGEST_FROM_ADDRESS);
                     digestMessage.setTo(profileDao.find(orcid).getPrimaryEmail().getId());
-                    // XXX Need to add html
                     boolean successfullySent = mailGunManager.sendEmail(digestMessage.getFrom(), digestMessage.getTo(), digestMessage.getSubject(),
                             digestMessage.getBodyText(), digestMessage.getBodyHtml());
                     if (successfullySent) {
