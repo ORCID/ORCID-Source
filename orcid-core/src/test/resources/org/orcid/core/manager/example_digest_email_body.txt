@@ -2,7 +2,7 @@ Hi Spike Milligan,
 
 Here’s what has happened since the last time you visited your ORCID record.
 
-Visit http://testserver.orcid.org/notifications to view all notifications.
+Visit http://testserver.orcid.org/notifications?lang=en to view all notifications.
 
 [1] notification from ORCID member organizations that added or updated information on your record
 [3] Requests to add or update your ORCID record
@@ -10,6 +10,6 @@ Visit http://testserver.orcid.org/notifications to view all notifications.
 
 You have received this email in the genuine belief that its contents would be of
 interest to you. To opt-out of messages from ORCID please go to your Account
-Settings page at http://testserver.orcid.org/home?lang=en/account.
+Settings page at http://testserver.orcid.org/account?lang=en.
 
 email preferences (http://testserver.orcid.org/account) | privacy policy  (http://testserver.orcid.org/privacy-policy) | ORCID, Inc. | 10411 Motor City Drive, Suite 750, Bethesda, MD 20817, USA | http://testserver.orcid.org
