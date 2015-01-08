@@ -41,8 +41,8 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
-import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.stereotype.Component;
 
@@ -169,7 +169,7 @@ public class DefaultPermissionChecker implements PermissionChecker {
             ProfileEntity principal = (ProfileEntity) oAuth2Authentication.getPrincipal();
             visibilities.add(Visibility.REGISTERED_ONLY);
             if (principal != null && principal.getId().equals(orcid)) {
-                Set<String> requestedScopes = oAuth2Authentication.getAuthorizationRequest().getScope();
+                Set<String> requestedScopes = oAuth2Authentication.getOAuth2Request().getScope();
                 for (String scope : requestedScopes) {
                     if (ScopePathType.hasStringScope(scope, requiredScope)) {
                         visibilities.add(Visibility.LIMITED);
@@ -181,7 +181,7 @@ public class DefaultPermissionChecker implements PermissionChecker {
             // was created using this client and it
             // hasn't been claimed, it's theirs to read
         } else if (oAuth2Authentication.isClientOnly()) {
-            AuthorizationRequest authorizationRequest = oAuth2Authentication.getAuthorizationRequest();
+            OAuth2Request authorizationRequest = oAuth2Authentication.getOAuth2Request();
             String clientId = authorizationRequest.getClientId();
             String sponsorOrcid = getSponsorOrcid(orcidMessage);
             if (StringUtils.isNotBlank(sponsorOrcid) && clientId.equals(sponsorOrcid) && !orcidMessage.getOrcidProfile().getOrcidHistory().isClaimed()) {
@@ -217,7 +217,7 @@ public class DefaultPermissionChecker implements PermissionChecker {
     }
 
     private void checkScopes(OAuth2Authentication oAuth2Authentication, ScopePathType requiredScope) {
-        AuthorizationRequest authorizationRequest = oAuth2Authentication.getAuthorizationRequest();
+        OAuth2Request authorizationRequest = oAuth2Authentication.getOAuth2Request();
         Set<String> requestedScopes = authorizationRequest.getScope();
         if (requiredScope.isUserGrantWriteScope()) {
             OrcidOAuth2Authentication orcidOauth2Authentication = (OrcidOAuth2Authentication) oAuth2Authentication;
@@ -308,7 +308,7 @@ public class DefaultPermissionChecker implements PermissionChecker {
     }
 
     private void performClientChecks(OAuth2Authentication oAuth2Authentication, ScopePathType requiredScope, OrcidMessage orcidMessage, String orcid) {
-        AuthorizationRequest authorizationRequest = oAuth2Authentication.getAuthorizationRequest();
+        OAuth2Request authorizationRequest = oAuth2Authentication.getOAuth2Request();
         // If we have an ORCID in the request, we assume that this is intended
         // as an update
         if (orcidMessage != null && orcidMessage.getOrcidProfile() != null && StringUtils.isNotBlank(orcid)) {

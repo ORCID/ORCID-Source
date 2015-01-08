@@ -76,7 +76,7 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
-import org.springframework.security.oauth2.provider.AuthorizationRequest;
+import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -525,14 +525,14 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         securityContext.setAuthentication(mockedAuthentication);
         SecurityContextHolder.setContext(securityContext);
         when(mockedAuthentication.getPrincipal()).thenReturn(new ProfileEntity(userOrcid));
-        AuthorizationRequest authorizationRequest = mock(AuthorizationRequest.class);
+        OAuth2Request authorizationRequest = mock(OAuth2Request.class);
         Set<String> scopes = new HashSet<String>();
         for (ScopePathType scopePathType : scopePathTypes) {
             scopes.add(scopePathType.value());
         }
         when(authorizationRequest.getClientId()).thenReturn("APP-5555555555555555");
         when(authorizationRequest.getScope()).thenReturn(scopes);
-        when(mockedAuthentication.getAuthorizationRequest()).thenReturn(authorizationRequest);
+        when(mockedAuthentication.getOAuth2Request()).thenReturn(authorizationRequest);
     }
 
     private void setUpSecurityContextForClientOnly() {
@@ -552,10 +552,10 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         SecurityContextHolder.setContext(securityContext);
         when(mockedAuthentication.getPrincipal()).thenReturn(new ProfileEntity(clientId));
         when(mockedAuthentication.isClientOnly()).thenReturn(true);
-        AuthorizationRequest authorizationRequest = mock(AuthorizationRequest.class);
+        OAuth2Request authorizationRequest = mock(OAuth2Request.class);
         when(authorizationRequest.getClientId()).thenReturn(clientId);
         when(authorizationRequest.getScope()).thenReturn(scopes);
-        when(mockedAuthentication.getAuthorizationRequest()).thenReturn(authorizationRequest);
+        when(mockedAuthentication.getOAuth2Request()).thenReturn(authorizationRequest);
     }
 
     @Test

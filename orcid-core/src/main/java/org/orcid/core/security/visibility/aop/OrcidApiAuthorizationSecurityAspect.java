@@ -40,7 +40,7 @@ import org.orcid.jaxb.model.notification.Notification;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.provider.AuthorizationRequest;
+import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.stereotype.Component;
 
 /**
@@ -110,8 +110,8 @@ public class OrcidApiAuthorizationSecurityAspect {
                 if (authentication.getClass().isAssignableFrom(OrcidOAuth2Authentication.class)) {
                     OrcidOAuth2Authentication orcidAuth = (OrcidOAuth2Authentication) getAuthentication();
 
-                    AuthorizationRequest authorization = orcidAuth.getAuthorizationRequest();
-                    Map<String, String> params = authorization.getAuthorizationParameters();
+                    OAuth2Request authorization = orcidAuth.getOAuth2Request();
+                    Map<String, String> params = authorization.getRequestParameters();
                     String clientId = params.get(CLIENT_ID);
 
                     // #1: Get the user orcid
