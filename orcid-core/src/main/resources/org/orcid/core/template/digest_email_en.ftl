@@ -24,9 +24,9 @@ Here’s what has happened since the last time you visited your ORCID record.
 Visit ${baseUri}/notifications to view all notifications.
 
 <#compress>
-<#if amendedMessageCount gt 0>[${amendedMessageCount}] notifications from ORCID member organizations that added or updated information on your record</#if>
-<#if addActivitiesMessageCount gt 0>[${addActivitiesMessageCount}] Requests to add or update your ORCID record</#if>
-<#if orcidMessageCount gt 0>[${orcidMessageCount}] notifications from ORCID</#if>
+<#if amendedMessageCount gt 0>[${amendedMessageCount}] <#if amendedMessageCount == 1>notification<#else>notifications</#if> from ORCID member organizations that added or updated information on your record</#if>
+<#if addActivitiesMessageCount gt 0>[${addActivitiesMessageCount}] <#if addActivitiesMessageCount == 1>Request<#else>Requests</#if> to add or update your ORCID record</#if>
+<#if orcidMessageCount gt 0>[${orcidMessageCount}] <#if orcidMessageCount == 1>notification<#else>notifications</#if> from ORCID</#if>
 </#compress>
 
 
