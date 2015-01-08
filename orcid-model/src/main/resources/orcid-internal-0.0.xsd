@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:sch="http://purl.oclc.org/dsdl/schematron" elementFormDefault="qualified"
-	targetNamespace="http://www.orcid.org/ns/orcid-internal" xmlns:orcid-internal="http://www.orcid.org/ns/orcid-internal"  xmlns:orcid-common="http://www.orcid.org/ns/orcid-common">
+	targetNamespace="http://www.orcid.org/ns/orcid-internal" xmlns="http://www.orcid.org/ns/orcid-internal"  xmlns:orcid-common="http://www.orcid.org/ns/orcid-common">
 	<xs:annotation>
 		<xs:documentation>
 			=============================================================================
@@ -38,8 +38,8 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element minOccurs="0" ref="orcid-internal:security-details"/>
-				<xs:element minOccurs="0" ref="orcid-internal:preferences"/>
+				<xs:element minOccurs="0" ref="security-details"/>
+				<xs:element minOccurs="0" ref="preferences"/>
 				<xs:element minOccurs="0" name="group-orcid-identifier" type="orcid-common:orcid-id">
 					<xs:annotation>
 						<xs:documentation>(FOR INTERNAL USE ONLY) Group ID for API clients.</xs:documentation>
@@ -50,13 +50,13 @@
 						<xs:documentation>(FOR INTERNAL USE ONLY) User registration is know to be driven by Member</xs:documentation>
 					</xs:annotation>
 				</xs:element>
-				<xs:element minOccurs="0" ref="orcid-internal:salesforce-id"/>
+				<xs:element minOccurs="0" ref="salesforce-id"/>
 			</xs:sequence>
 			<xs:attributeGroup ref="orcid-common:scope"/>
 			<xs:attributeGroup ref="orcid-common:visibility"/>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="salesforce-id" type="orcid-internal:salesforce-id">
+	<xs:element name="salesforce-id" type="salesforce-id">
 		<xs:annotation>
 			<xs:documentation>(FOR INTERNAL USE ONLY) An ID that identifies a profile in Salesforce.</xs:documentation>
 		</xs:annotation>
@@ -75,10 +75,10 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="orcid-internal:encrypted-password"/>
-				<xs:element ref="orcid-internal:security-question-id" minOccurs="0" maxOccurs="1"/>
-				<xs:element ref="orcid-internal:encrypted-security-answer" minOccurs="0" maxOccurs="1"/>
-				<xs:element ref="orcid-internal:encrypted-verification-code" minOccurs="1" maxOccurs="1"/>
+				<xs:element ref="encrypted-password"/>
+				<xs:element ref="security-question-id" minOccurs="0" maxOccurs="1"/>
+				<xs:element ref="encrypted-security-answer" minOccurs="0" maxOccurs="1"/>
+				<xs:element ref="encrypted-verification-code" minOccurs="1" maxOccurs="1"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -99,12 +99,12 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="orcid-internal:send-email-frequency-days"/>
-				<xs:element ref="orcid-internal:send-change-notifications"/>
-				<xs:element ref="orcid-internal:send-orcid-news"/>
-				<xs:element ref="orcid-internal:send-member-update-requests"/>
-				<xs:element ref="orcid-internal:activities-visibility-default"/>
-				<xs:element ref="orcid-internal:developer-tools-enabled" minOccurs="0"/>
+				<xs:element ref="send-email-frequency-days"/>
+				<xs:element ref="send-change-notifications"/>
+				<xs:element ref="send-orcid-news"/>
+				<xs:element ref="send-member-update-requests"/>
+				<xs:element ref="activities-visibility-default"/>
+				<xs:element ref="developer-tools-enabled" minOccurs="0"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>

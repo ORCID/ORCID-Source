@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:sch="http://purl.oclc.org/dsdl/schematron" elementFormDefault="qualified"
-	targetNamespace="http://www.orcid.org/ns/orcid-common" xmlns:orcid-common="http://www.orcid.org/ns/orcid-common">
+	targetNamespace="http://www.orcid.org/ns/orcid-common" xmlns="http://www.orcid.org/ns/orcid-common">
 	<xs:annotation>
 		<xs:documentation>
 			=============================================================================
@@ -58,11 +58,11 @@
 		<xs:complexType>
 			<xs:sequence>
 				<xs:choice minOccurs="0">
-					<xs:element ref="orcid-common:source-orcid"/>
-					<xs:element ref="orcid-common:source-client-id"/>
+					<xs:element ref="source-orcid"/>
+					<xs:element ref="source-client-id"/>
 				</xs:choice>
-				<xs:element ref="orcid-common:source-name" minOccurs="0"/>
-				<xs:element ref="orcid-common:source-date" minOccurs="0"/>
+				<xs:element ref="source-name" minOccurs="0"/>
+				<xs:element ref="source-date" minOccurs="0"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -73,13 +73,13 @@
 		</xs:annotation>
 		<xs:complexType mixed="true"/>
 	</xs:element>
-	<xs:element name="source-orcid" type="orcid-common:orcid-id">
+	<xs:element name="source-orcid" type="orcid-id">
 		<xs:annotation>
 			<xs:documentation>The ORCID identifier for the individual user (or legacy client application) that created the item. For identifiers of individual users, it may be used to look up ORCID record details via the API. 
 			</xs:documentation>
 		</xs:annotation>
 	</xs:element>
-	<xs:element name="source-client-id" type="orcid-common:client-id">
+	<xs:element name="source-client-id" type="client-id">
 		<xs:annotation>
 			<xs:documentation>The client ID for the client application (Member organization system) that created the item.
 			</xs:documentation>
@@ -104,10 +104,10 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="name" type="orcid-common:non-empty-string"/>
-				<xs:element name="address" type="orcid-common:organization-address"/>
+				<xs:element name="name" type="non-empty-string"/>
+				<xs:element name="address" type="organization-address"/>
 				<xs:element name="disambiguated-organization"
-					type="orcid-common:disambiguated-organization" minOccurs="0" maxOccurs="1"/>
+					type="disambiguated-organization" minOccurs="0" maxOccurs="1"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -117,17 +117,17 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element minOccurs="1" name="city" type="orcid-common:non-empty-string">
+			<xs:element minOccurs="1" name="city" type="non-empty-string">
 				<xs:annotation>
 					<xs:documentation>City</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element minOccurs="0" name="region" type="orcid-common:non-empty-string">
+			<xs:element minOccurs="0" name="region" type="non-empty-string">
 				<xs:annotation>
 					<xs:documentation>Region within a country</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element minOccurs="1" name="country" type="orcid-common:iso-3166-country"/>
+			<xs:element minOccurs="1" name="country" type="iso-3166-country"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="disambiguated-organization">
@@ -136,16 +136,16 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element ref="orcid-common:disambiguated-organization-identifier"/>
-			<xs:element ref="orcid-common:disambiguation-source"/>
+			<xs:element ref="disambiguated-organization-identifier"/>
+			<xs:element ref="disambiguation-source"/>
 		</xs:sequence>
 	</xs:complexType>
-	<xs:element name="disambiguated-organization-identifier" type="orcid-common:short-text">
+	<xs:element name="disambiguated-organization-identifier" type="short-text">
 		<xs:annotation>
 			<xs:documentation>The disambiguated organization identifier.</xs:documentation>
 		</xs:annotation>
 	</xs:element>
-	<xs:element name="disambiguation-source" type="orcid-common:short-text">
+	<xs:element name="disambiguation-source" type="short-text">
 		<xs:annotation>
 			<xs:documentation>The source for providing the disambiguated organization ID.</xs:documentation>
 		</xs:annotation>
@@ -184,7 +184,7 @@
 		<xs:complexType>
 			<xs:simpleContent>
 				<xs:extension base="xs:string">
-					<xs:attribute name="currency-code" type="orcid-common:currency-code" use="required"/>
+					<xs:attribute name="currency-code" type="currency-code" use="required"/>
 				</xs:extension>
 			</xs:simpleContent>
 		</xs:complexType>
@@ -415,7 +415,7 @@
 			<xs:enumeration value="ZWR"/>
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:element name="organization-defined-type" type="orcid-common:string255">
+	<xs:element name="organization-defined-type" type="string255">
 		<xs:annotation>
 			<xs:documentation>Container for a organization defined type for an external identifier.</xs:documentation>
 		</xs:annotation>
@@ -426,7 +426,7 @@
 		</xs:annotation>
 		<xs:complexType mixed="true">
 			<xs:simpleContent>
-				<xs:extension base="orcid-common:year"/>
+				<xs:extension base="year"/>
 			</xs:simpleContent>
 		</xs:complexType>
 	</xs:element>
@@ -436,7 +436,7 @@
 		</xs:annotation>
 		<xs:complexType mixed="true">
 			<xs:simpleContent>
-				<xs:extension base="orcid-common:month"/>
+				<xs:extension base="month"/>
 			</xs:simpleContent>
 		</xs:complexType>
 	</xs:element>
@@ -446,7 +446,7 @@
 		</xs:annotation>
 		<xs:complexType mixed="true">
 			<xs:simpleContent>
-				<xs:extension base="orcid-common:day"/>
+				<xs:extension base="day"/>
 			</xs:simpleContent>
 		</xs:complexType>
 	</xs:element>
@@ -645,13 +645,13 @@
 			<xs:enumeration value="zu"/>
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:element name="orcid-identifier" type="orcid-common:orcid-id">
+	<xs:element name="orcid-identifier" type="orcid-id">
 		<xs:annotation>
 			<xs:documentation>Represents an ORCID identifier (ORCID iD)
 			</xs:documentation>
 		</xs:annotation>
 	</xs:element>
-	<xs:element name="path" type="orcid-common:orcid-path">
+	<xs:element name="path" type="orcid-path">
 		<xs:annotation>
 			<xs:documentation>(UNUSED) Replaced by either client-path or orcid-path
 			</xs:documentation>
@@ -681,7 +681,7 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element minOccurs="0" ref="orcid-common:country"/>
+				<xs:element minOccurs="0" ref="country"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -692,8 +692,8 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:simpleContent>
-				<xs:extension base="orcid-common:iso-3166-country-or-empty">
-					<xs:attributeGroup ref="orcid-common:visibility"/>
+				<xs:extension base="iso-3166-country-or-empty">
+					<xs:attributeGroup ref="visibility"/>
 				</xs:extension>
 			</xs:simpleContent>
 		</xs:complexType>
@@ -726,27 +726,27 @@
 		<xs:sequence>
 			<xs:choice>
 				<xs:sequence>
-					<xs:element name="uri" type="orcid-common:orcid-uri">
+					<xs:element name="uri" type="orcid-uri">
 						<xs:annotation>
 							<xs:documentation>ORCID iD in URI form (preferred).
 							</xs:documentation>
 						</xs:annotation>
 					</xs:element>
-					<xs:element name="path" type="orcid-common:orcid-path" minOccurs="0">
+					<xs:element name="path" type="orcid-path" minOccurs="0">
 						<xs:annotation>
 							<xs:documentation>ORCID path (16-character identifier) of the ORCID iD.
 							</xs:documentation>
 						</xs:annotation>
 					</xs:element>
 				</xs:sequence>
-				<xs:element name="path" type="orcid-common:orcid-path">
+				<xs:element name="path" type="orcid-path">
 						<xs:annotation>
 							<xs:documentation>ORCID path (16-character identifier) of the ORCID iD.
 							</xs:documentation>
 						</xs:annotation>
 					</xs:element>
 			</xs:choice>
-			<xs:element ref="orcid-common:host" minOccurs="0"/>
+			<xs:element ref="host" minOccurs="0"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:simpleType name="client-path">
@@ -776,12 +776,12 @@
 		<xs:sequence>
 			<xs:choice>
 				<xs:sequence>
-					<xs:element name="uri" type="orcid-common:client-uri"/>
-					<xs:element name="path" type="orcid-common:client-path" minOccurs="0"/>
+					<xs:element name="uri" type="client-uri"/>
+					<xs:element name="path" type="client-path" minOccurs="0"/>
 				</xs:sequence>
-				<xs:element name="path" type="orcid-common:client-path"/>
+				<xs:element name="path" type="client-path"/>
 			</xs:choice>
-			<xs:element ref="orcid-common:host" minOccurs="0"/>
+			<xs:element ref="host" minOccurs="0"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:simpleType name="orcid-type">
@@ -821,7 +821,7 @@
 		<xs:annotation>
 			<xs:documentation>The authorization scope that the API client has on this section of data.</xs:documentation>
 		</xs:annotation>
-		<xs:attribute name="scope" use="optional" type="orcid-common:scope">
+		<xs:attribute name="scope" use="optional" type="scope">
 		</xs:attribute>
 	</xs:attributeGroup>
 	<xs:simpleType name="scope">
@@ -837,7 +837,7 @@
 		<xs:annotation>
 			<xs:documentation>The visiblity that the researcher or contributor has assigned to this section of data. Visiblity can also be set during record creation by the institution. The visibility attribute (private, limited or public) indicates who can see a section of information. See ORCID's privacy policy for more details: http://orcid.org/privacy-policy.</xs:documentation>
 		</xs:annotation>
-		<xs:attribute name="visibility" use="optional" type="orcid-common:visibility" />
+		<xs:attribute name="visibility" use="optional" type="visibility" />
 	</xs:attributeGroup>
 	<xs:attributeGroup name="put-code">
 		<xs:annotation>
@@ -927,10 +927,10 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element ref="orcid-common:year"/>
+			<xs:element ref="year"/>
 			<xs:sequence minOccurs="0">
-				<xs:element ref="orcid-common:month"/>
-				<xs:element ref="orcid-common:day" minOccurs="0"/>
+				<xs:element ref="month"/>
+				<xs:element ref="day" minOccurs="0"/>
 			</xs:sequence>
 		</xs:sequence>
 	</xs:complexType>
@@ -1218,7 +1218,7 @@
 		<xs:annotation>
 			<xs:documentation>Contains either a country code or an empty value</xs:documentation>
 		</xs:annotation>
-		<xs:union memberTypes="orcid-common:iso-3166-country orcid-common:empty"/>
+		<xs:union memberTypes="iso-3166-country empty"/>
 	</xs:simpleType>
 	<xs:simpleType name="empty">
 		<xs:annotation>
@@ -1248,7 +1248,7 @@
 		<xs:annotation>
 			<xs:documentation>A non-empty string that has a maximum size of 1000 characters</xs:documentation>
 		</xs:annotation>
-		<xs:restriction base="orcid-common:non-empty-string">
+		<xs:restriction base="non-empty-string">
 			<xs:maxLength value="1000"/>
 		</xs:restriction>
 	</xs:simpleType>
@@ -1256,7 +1256,7 @@
 		<xs:annotation>
 			<xs:documentation>A non-empty string that has a maximum size of 2084 characters</xs:documentation>
 		</xs:annotation>
-		<xs:restriction base="orcid-common:non-empty-string">
+		<xs:restriction base="non-empty-string">
 			<xs:maxLength value="2084"/>
 		</xs:restriction>
 	</xs:simpleType>
@@ -1265,9 +1265,47 @@
 			<xs:documentation>A non-empty string that includes a language code to indicate the language used for the string's value.</xs:documentation>
 		</xs:annotation>
 		<xs:simpleContent>
-			<xs:extension base="orcid-common:non-empty-string">
-				<xs:attribute name="language-code" type="orcid-common:language-code" use="required"/>
+			<xs:extension base="non-empty-string">
+				<xs:attribute name="language-code" type="language-code" use="required"/>
 			</xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>
+    <xs:element name="short-description">
+        <xs:annotation>
+            <xs:documentation>A short narrative (few sentences) describing the item.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:maxLength value="5000"></xs:maxLength>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="credit-name">
+        <xs:annotation>
+            <xs:documentation>The name to use for the researcher or contributor when credited or cited, for example, in an article or index, or as a funding contributor. The value of this field also is used as the display name for the researcher or contributor in the ORCID Registry in their ORCID Record, or when listed as a contributor on other ORCID Records. If this element is NULL, given-name family-name will be used for display purposes, with a visibility of "public". The visibility attribute (private, limited or public) can be set at record creation, and indicates who can see this section of information.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="non-empty-string">
+                    <xs:attributeGroup ref="visibility"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="translated-title">
+        <xs:annotation>
+            <xs:documentation>The main title of the work or funding translated into another language. The translated language will be included in the &lt;language-code&gt; attribute.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:restriction base="stringWithLangCode">
+                    <xs:maxLength value="1000"/>
+                </xs:restriction>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+
 </xs:schema>
