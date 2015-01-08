@@ -4,6 +4,7 @@ Here’s what has happened since the last time you visited your ORCID record.
 
 Visit http://testserver.orcid.org/notifications to view all notifications.
 
+[1] notifications from ORCID member organizations that added or updated information on your record
 [3] Requests to add or update your ORCID record
 [2] notifications from ORCID
 

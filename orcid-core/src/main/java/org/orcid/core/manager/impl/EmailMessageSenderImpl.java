@@ -38,6 +38,7 @@ import org.orcid.jaxb.model.common.ClientId;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.notification.Notification;
 import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
+import org.orcid.jaxb.model.notification.amended.NotificationAmended;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.slf4j.Logger;
@@ -98,6 +99,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     public EmailMessage createDigest(OrcidProfile orcidProfile, Collection<Notification> notifications, Locale locale) {
         int orcidMessageCount = 0;
         int addActivitiesMessageCount = 0;
+        int amendedMessageCount = 0;
         int activityCount = 0;
         Set<String> memberIds = new HashSet<>();
         for (Notification notification : notifications) {
@@ -114,6 +116,9 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 NotificationAddActivities addActsNotification = (NotificationAddActivities) notification;
                 activityCount += addActsNotification.getActivities().getActivities().size();
             }
+            if (notification instanceof NotificationAmended) {
+                amendedMessageCount++;
+            }
         }
         Map<String, Object> params = new HashMap<>();
         params.put("locale", locale);
@@ -123,6 +128,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         params.put("orcidMessageCount", orcidMessageCount);
         params.put("addActivitiesMessageCount", addActivitiesMessageCount);
         params.put("activityCount", activityCount);
+        params.put("amendedMessageCount", amendedMessageCount);
         params.put("memberIdsCount", memberIds.size());
         params.put("baseUri", orcidUrlManager.getBaseUrl());
         String emailBody = templateManager.processTemplate("digest_email.ftl", params, locale);
