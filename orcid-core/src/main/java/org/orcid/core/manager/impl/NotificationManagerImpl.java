@@ -246,19 +246,19 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     private void addMessageParams(Map<String, Object> templateParams, OrcidProfile orcidProfile) {
-        Locale locale = localeManager.getLocalFromOrcidProfile(orcidProfile);
+        Locale locale = localeManager.getLocaleFromOrcidProfile(orcidProfile);
         templateParams.put("messages", this.messages);
         templateParams.put("messageArgs", new Object[0]);
         templateParams.put("locale", locale);
     }
 
     private String getSubject(String code, OrcidProfile orcidProfile) {
-        Locale locale = localeManager.getLocalFromOrcidProfile(orcidProfile);
+        Locale locale = localeManager.getLocaleFromOrcidProfile(orcidProfile);
         return messages.getMessage(code, null, locale);
     }
 
     private String getSubject(String code, OrcidProfile orcidProfile, String... args) {
-        Locale locale = localeManager.getLocalFromOrcidProfile(orcidProfile);
+        Locale locale = localeManager.getLocaleFromOrcidProfile(orcidProfile);
         return messages.getMessage(code, args, locale);
     }
 

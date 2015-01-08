@@ -91,7 +91,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     @Override
     public EmailMessage createDigest(String orcid, Collection<Notification> notifications) {
         OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile(orcid, LoadOptions.BIO_AND_INTERNAL_ONLY);
-        Locale locale = localeManager.getLocalFromOrcidProfile(orcidProfile);
+        Locale locale = localeManager.getLocaleFromOrcidProfile(orcidProfile);
         return createDigest(orcidProfile, notifications, locale);
     }
 
