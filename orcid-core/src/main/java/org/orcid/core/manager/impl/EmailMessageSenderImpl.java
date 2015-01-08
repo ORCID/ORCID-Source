@@ -120,6 +120,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 amendedMessageCount++;
             }
         }
+        String subject = "Your digest from ORCID";
         Map<String, Object> params = new HashMap<>();
         params.put("locale", locale);
         params.put("messages", messages);
@@ -131,10 +132,14 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         params.put("amendedMessageCount", amendedMessageCount);
         params.put("memberIdsCount", memberIds.size());
         params.put("baseUri", orcidUrlManager.getBaseUrl());
-        String emailBody = templateManager.processTemplate("digest_email.ftl", params, locale);
+        params.put("subject", subject);
+        String bodyText = templateManager.processTemplate("digest_email.ftl", params, locale);
+        String bodyHtml = templateManager.processTemplate("digest_email_html.ftl", params, locale);
         EmailMessage emailMessage = new EmailMessage();
-        emailMessage.setSubject("Your digest from ORCID");
-        emailMessage.setBodyText(emailBody);
+
+        emailMessage.setSubject(subject);
+        emailMessage.setBodyText(bodyText);
+        emailMessage.setBodyHtml(bodyHtml);
         return emailMessage;
 
     }
@@ -155,7 +160,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                     digestMessage.setTo(profileDao.find(orcid).getPrimaryEmail().getId());
                     // XXX Need to add html
                     boolean successfullySent = mailGunManager.sendEmail(digestMessage.getFrom(), digestMessage.getTo(), digestMessage.getSubject(),
-                            digestMessage.getBodyText(), "<html><body><pre>" + digestMessage.getBodyText() + "</pre></body></html>");
+                            digestMessage.getBodyText(), digestMessage.getBodyHtml());
                     if (successfullySent) {
                         flagAsSent(notifications);
                     }
