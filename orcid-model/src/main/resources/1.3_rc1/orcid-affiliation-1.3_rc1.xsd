@@ -28,7 +28,7 @@
 			<sch:ns prefix="orcid" uri="http://www.orcid.org/ns/orcid"/>
 		</xs:appinfo>
 	</xs:annotation>
-	<xs:import namespace="http://www.orcid.org/ns/orcid-common" schemaLocation="orcid-common-1.1.xsd"/>
+	<xs:import namespace="http://www.orcid.org/ns/orcid-common" schemaLocation="orcid-common-1.3_rc1.xsd"/>
     <xs:element name="affiliations">
         <xs:annotation>
             <xs:documentation>Container for the list of affiliations (eg. employment or education) associated with the researcher or contributor
