@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:sch="http://purl.oclc.org/dsdl/schematron" elementFormDefault="qualified"
+	targetNamespace="http://www.orcid.org/ns/orcid-affiliation" xmlns="http://www.orcid.org/ns/orcid-affiliation" xmlns:orcid-internal="http://www.orcid.org/ns/orcid-internal" xmlns:orcid-common="http://www.orcid.org/ns/orcid-common">
+	<xs:annotation>
+		<xs:documentation>
+			=============================================================================
+
+			ORCID (R) Open Source
+			http://orcid.org
+
+			Copyright (c) 2012-2014 ORCID, Inc.
+			Licensed under an MIT-Style License (MIT)
+			http://orcid.org/open-source-license
+
+			This copyright and license information (including a link to the full
+			license)
+			shall be included in its entirety in all copies or substantial portion of
+			the software.
+
+			=============================================================================
+			The schema describes the message format used for ORCID API requests
+			and responses.
+			The top level element is orcid-message.
+		</xs:documentation>
+		<xs:appinfo>
+			<sch:title>Schematron validation</sch:title>
+			<sch:ns prefix="orcid" uri="http://www.orcid.org/ns/orcid"/>
+		</xs:appinfo>
+	</xs:annotation>
+	<xs:import namespace="http://www.orcid.org/ns/orcid-common" schemaLocation="orcid-common-1.1.xsd"/>
+    <xs:element name="affiliations">
+        <xs:annotation>
+            <xs:documentation>Container for the list of affiliations (eg. employment or education) associated with the researcher or contributor
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" ref="affiliation"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="affiliation">
+        <xs:annotation>
+            <xs:documentation>An affiliation associated with the researcher or contributor. 
+                * The visibility attribute (private, limited or public) can be set at record creation, and indicates who can see this section of information.
+                * The put-code attribute is used only when reading this element. When updating the item, the put-code attribute must be included to indicate the specific record to be updated.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="type" type="affiliation-type"/>
+                <xs:element name="department-name" type="orcid-common:non-empty-string" minOccurs="0"
+                    maxOccurs="1"/>
+                <xs:element name="role-title" type="orcid-common:non-empty-string" minOccurs="0"
+                    maxOccurs="1"/>
+                <xs:element name="start-date" type="orcid-common:fuzzy-date" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="end-date" type="orcid-common:fuzzy-date" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="orcid-common:organization" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="orcid-common:source" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="orcid-common:created-date" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="orcid-common:last-modified-date" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            <xs:attributeGroup ref="orcid-common:put-code"/>
+            <xs:attributeGroup ref="orcid-common:visibility"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:simpleType name="affiliation-type">
+        <xs:annotation>
+            <xs:documentation>The type of the affiliation. Presently only "education" and "employment" are used. 
+                "distinction", "funding", and "contribution" are all for FUTURE use and will not be show to the researcher in the web interface.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="education"/>
+            <xs:enumeration value="employment"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+</xs:schema>

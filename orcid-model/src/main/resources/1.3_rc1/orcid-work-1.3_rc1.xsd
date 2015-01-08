@@ -28,10 +28,9 @@
 			<sch:ns prefix="orcid" uri="http://www.orcid.org/ns/orcid"/>
 		</xs:appinfo>
 	</xs:annotation>
-	<xs:import namespace="http://www.orcid.org/ns/orcid-common" schemaLocation="orcid-common-1.1.xsd"/>
-	<xs:import namespace="http://www.orcid.org/ns/orcid-internal" schemaLocation="orcid-internal-0.0.xsd"/>
+	<xs:import namespace="http://www.orcid.org/ns/orcid-common" schemaLocation="orcid-common-1.3_rc1.xsd"/>
 
-	<xs:element name="orcid-works">
+	<xs:element name="works">
 		<xs:annotation>
 			<xs:documentation>Container for the Works published by the researcher or contributor.
 			</xs:documentation>

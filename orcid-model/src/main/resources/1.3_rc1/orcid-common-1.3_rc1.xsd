@@ -1307,5 +1307,62 @@
             </xs:simpleContent>
         </xs:complexType>
     </xs:element>
+    <xs:element name="contributor-orcid" type="orcid-id">
+        <xs:annotation>
+            <xs:documentation>ORCID iD for the contributor</xs:documentation>
+        </xs:annotation>
+    </xs:element>       
+    <xs:element name="contributor-email">
+        <xs:annotation>
+            <xs:documentation>Email of the collaborator or other contributor. When provided during creation or update, the email address is used to look up and add the contributor's ORCID iD.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="email"/>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="contributor-attributes">
+        <xs:annotation>
+            <xs:documentation>Provides detail of the nature of the contribution by the collaborator or other contirbutor.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="contributor-sequence" minOccurs="0"/>
+                <xs:element ref="contributor-role" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="contributor-sequence">
+        <xs:annotation>
+            <xs:documentation>Indication of where in the contributor list the collaborator or other contributor's name would appear</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="first"/>
+                <xs:enumeration value="additional"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="contributor-role">
+        <xs:annotation>
+            <xs:documentation>The role performed by the collaborator or other contributor.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="author"/>
+                <xs:enumeration value="assignee"/>
+                <xs:enumeration value="editor"/>
+                <xs:enumeration value="chair-or-translator"/>
+                <xs:enumeration value="co-investigator"/>
+                <xs:enumeration value="co-inventor"/>
+                <xs:enumeration value="graduate-student"/>
+                <xs:enumeration value="other-inventor"/>
+                <xs:enumeration value="principal-investigator"/>
+                <xs:enumeration value="postdoctoral-researcher"/>
+                <xs:enumeration value="support-staff"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
 
 </xs:schema>

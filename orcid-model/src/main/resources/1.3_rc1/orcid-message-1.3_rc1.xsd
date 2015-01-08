@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:sch="http://purl.oclc.org/dsdl/schematron" elementFormDefault="qualified"
-	targetNamespace="http://www.orcid.org/ns/orcid" xmlns="http://www.orcid.org/ns/orcid" xmlns:orcid-internal="http://www.orcid.org/ns/orcid-internal" xmlns:orcid-common="http://www.orcid.org/ns/orcid-common" xmlns:orcid-work="http://www.orcid.org/ns/orcid-work">
+	targetNamespace="http://www.orcid.org/ns/orcid" xmlns="http://www.orcid.org/ns/orcid" xmlns:orcid-internal="http://www.orcid.org/ns/orcid-internal" xmlns:orcid-common="http://www.orcid.org/ns/orcid-common" xmlns:orcid-work="http://www.orcid.org/ns/orcid-work" xmlns:orcid-funding="http://www.orcid.org/ns/orcid-funding" xmlns:orcid-affiliation="http://www.orcid.org/ns/orcid-affiliation">
 	<xs:annotation>
 		<xs:documentation>
 			=============================================================================
@@ -28,9 +28,11 @@
 			<sch:ns prefix="orcid" uri="http://www.orcid.org/ns/orcid"/>
 		</xs:appinfo>
 	</xs:annotation>
-	<xs:import namespace="http://www.orcid.org/ns/orcid-common" schemaLocation="orcid-common-1.1.xsd"/>
-	<xs:import namespace="http://www.orcid.org/ns/orcid-internal" schemaLocation="orcid-internal-0.0.xsd"/>
-	<xs:import namespace="http://www.orcid.org/ns/orcid-work" schemaLocation="orcid-work-0.0.xsd"/>
+    <xs:import namespace="http://www.orcid.org/ns/orcid-affiliation" schemaLocation="orcid-affiliation-1.3_rc1.xsd"/>
+	<xs:import namespace="http://www.orcid.org/ns/orcid-common" schemaLocation="orcid-common-1.3_rc1.xsd"/>
+    <xs:import namespace="http://www.orcid.org/ns/orcid-funding" schemaLocation="orcid-funding-1.3_rc1.xsd"/>
+	<xs:import namespace="http://www.orcid.org/ns/orcid-internal" schemaLocation="orcid-internal-1.3_rc1.xsd"/>
+	<xs:import namespace="http://www.orcid.org/ns/orcid-work" schemaLocation="orcid-work-1.3_rc1.xsd"/>
 	<xs:element name="orcid-message">
 		<xs:annotation>
 			<xs:documentation>The overall container for all ORCID requests and responses.
@@ -54,9 +56,7 @@
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:enumeration value="1.2_rc6"/>
-				<xs:enumeration value="1.2_rc7"/>
-				<xs:enumeration value="1.2"/>
+				<xs:enumeration value="1.3_rc1"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -604,285 +604,13 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element minOccurs="0" maxOccurs="1" ref="affiliations"/>
-				<xs:element minOccurs="0" maxOccurs="1" ref="orcid-work:orcid-works"/>
-				<xs:element minOccurs="0" maxOccurs="1" ref="funding-list"/>
+				<xs:element minOccurs="0" maxOccurs="1" ref="orcid-affiliation:affiliations"/>
+                <xs:element minOccurs="0" maxOccurs="1" ref="orcid-work:works"/>
+				<xs:element minOccurs="0" maxOccurs="1" ref="orcid-funding:funding-list"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="affiliations">
-		<xs:annotation>
-			<xs:documentation>Container for the list of affiliations (eg. employment or education) associated with the researcher or contributor
-			</xs:documentation>
-		</xs:annotation>
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element maxOccurs="unbounded" minOccurs="0" ref="affiliation"/>
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="affiliation">
-		<xs:annotation>
-			<xs:documentation>An affiliation associated with the researcher or contributor. 
-				* The visibility attribute (private, limited or public) can be set at record creation, and indicates who can see this section of information.
-				* The put-code attribute is used only when reading this element. When updating the item, the put-code attribute must be included to indicate the specific record to be updated.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element name="type" type="affiliation-type"/>
-				<xs:element name="department-name" type="orcid-common:non-empty-string" minOccurs="0"
-					maxOccurs="1"/>
-				<xs:element name="role-title" type="orcid-common:non-empty-string" minOccurs="0"
-					maxOccurs="1"/>
-				<xs:element name="start-date" type="orcid-common:fuzzy-date" minOccurs="0" maxOccurs="1"/>
-				<xs:element name="end-date" type="orcid-common:fuzzy-date" minOccurs="0" maxOccurs="1"/>
-				<xs:element ref="orcid-common:organization" minOccurs="1" maxOccurs="1"/>
-				<xs:element ref="orcid-common:source" minOccurs="0" maxOccurs="1"/>
-				<xs:element ref="orcid-common:created-date" minOccurs="0" maxOccurs="1"/>
-				<xs:element ref="orcid-common:last-modified-date" minOccurs="0" maxOccurs="1"/>
-			</xs:sequence>
-			<xs:attributeGroup ref="orcid-common:put-code"/>
-			<xs:attributeGroup ref="orcid-common:visibility"/>
-		</xs:complexType>
-	</xs:element>
-	<xs:simpleType name="affiliation-type">
-		<xs:annotation>
-			<xs:documentation>The type of the affiliation. Presently only "education" and "employment" are used. 
-				"distinction", "funding", and "contribution" are all for FUTURE use and will not be show to the researcher in the web interface.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="education"/>
-			<xs:enumeration value="employment"/>
-		</xs:restriction>
-	</xs:simpleType>
 	
-	<xs:element name="funding-list">
-		<xs:annotation>
-			<xs:documentation>Container for the funding received by the researcher or contributor</xs:documentation>
-		</xs:annotation>
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element maxOccurs="unbounded" minOccurs="0" ref="funding"/>
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="funding">
-		<xs:annotation>
-			<xs:documentation>Funding received by the researcher or contributor. 
-				* REQUIRED FIELDS: Funding-type, Funding-title, Funding Agency (organization)
-				* The visibility attribute (private, limited or public) can be set at record creation, and indicates who can see this section of information.
-				* The put-code attribute is used only when reading this element. When updating the item, the put-code attribute must be included to indicate the specific record to be updated.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="funding-type" minOccurs="1" maxOccurs="1"/>
-				<xs:element ref="orcid-common:organization-defined-type" minOccurs="0" maxOccurs="1"/>
-				<xs:element ref="funding-title" minOccurs="1"/>
-				<xs:element ref="orcid-common:short-description" minOccurs="0"/>
-				<xs:element ref="orcid-common:amount" minOccurs="0" maxOccurs="1"/>
-				<xs:element ref="orcid-common:url" minOccurs="0" maxOccurs="1"/>
-				<xs:element name="start-date" type="orcid-common:fuzzy-date" minOccurs="0" maxOccurs="1">
-					<xs:annotation>
-						<xs:documentation>Start date for the funding.</xs:documentation>
-					</xs:annotation>
-				</xs:element>
-				<xs:element name="end-date" type="orcid-common:fuzzy-date" minOccurs="0" maxOccurs="1">
-					<xs:annotation>
-						<xs:documentation>End date for the funding.</xs:documentation>
-					</xs:annotation>
-				</xs:element>
-				<xs:element ref="funding-external-identifiers" minOccurs="0"/>
-				<xs:element ref="funding-contributors" minOccurs="0"/>
-				<xs:element ref="orcid-common:organization" minOccurs="1" maxOccurs="1"/>
-				<xs:element ref="orcid-common:source" minOccurs="0" maxOccurs="1"/>
-				<xs:element ref="orcid-common:created-date" minOccurs="0" maxOccurs="1"/>
-				<xs:element ref="orcid-common:last-modified-date" minOccurs="0" maxOccurs="1"/>
-			</xs:sequence>
-			<xs:attributeGroup ref="orcid-common:put-code"/>
-			<xs:attributeGroup ref="orcid-common:visibility"/>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="funding-title">
-		<xs:annotation>
-			<xs:documentation>Container for titles of the funding.</xs:documentation>
-		</xs:annotation>
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element name="title" type="orcid-common:string1000">
-					<xs:annotation>
-						<xs:documentation>The main name or title of the funding.</xs:documentation>
-					</xs:annotation>
-				</xs:element>
-				<xs:element ref="orcid-common:translated-title" minOccurs="0"/>
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-
-	<xs:element name="funding-type">
-		<xs:annotation>
-			<xs:documentation>The type of funding, it could be grant, contract, award or salary-award.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:simpleType>
-			<xs:restriction base="xs:string">
-				<xs:enumeration value="grant"/>
-				<xs:enumeration value="contract"/>
-				<xs:enumeration value="award"/>
-				<xs:enumeration value="salary-award"/>
-			</xs:restriction>
-		</xs:simpleType>
-	</xs:element>
-	<xs:element name="funding-external-identifiers">
-		<xs:annotation>
-			<xs:documentation>Container for storing the external references to the funding.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element maxOccurs="unbounded" minOccurs="0"
-					ref="funding-external-identifier"/>
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="funding-external-identifier">
-		<xs:annotation>
-			<xs:documentation>An external identifier that uniquely represents the funding. Includes an identifier type and value as well as a URL for a link to more information about the funding.</xs:documentation>
-		</xs:annotation>
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="funding-external-identifier-type" minOccurs="1" maxOccurs="1"/>
-				<xs:element name="funding-external-identifier-value" type="orcid-common:string2084"
-					minOccurs="0" maxOccurs="1">
-					<xs:annotation>
-						<xs:documentation>Value of the external identifier.</xs:documentation>
-					</xs:annotation>
-				</xs:element>
-				<xs:element name="funding-external-identifier-url" type="xs:anyURI" minOccurs="0"
-					maxOccurs="1">
-					<xs:annotation>
-						<xs:documentation>URL link to additional information about the funding.</xs:documentation>
-					</xs:annotation>
-				</xs:element>
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="funding-external-identifier-type">
-		<xs:annotation>
-			<xs:documentation>The type of the funding external identifier. Currently only grant number is supported.</xs:documentation>
-		</xs:annotation>
-		<xs:simpleType>
-			<xs:restriction base="xs:string">
-				<xs:enumeration value="grant_number"/>
-			</xs:restriction>
-		</xs:simpleType>
-	</xs:element>
-	<xs:element name="funding-contributors">
-		<xs:annotation>
-			<xs:documentation>Container for the contributors of a funding.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element maxOccurs="unbounded" minOccurs="0" ref="funding-contributor"/>
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="funding-contributor">
-		<xs:annotation>
-			<xs:documentation>A collaborator or other contributor to a work or other orcid-activity</xs:documentation>
-		</xs:annotation>
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="contributor-orcid" minOccurs="0" maxOccurs="1"/>
-				<xs:element ref="orcid-common:credit-name" minOccurs="0" maxOccurs="1"/>
-				<xs:element ref="contributor-email" minOccurs="0" maxOccurs="1"/>
-				<xs:element ref="funding-contributor-attributes" minOccurs="0" maxOccurs="1"/>
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="contributor-orcid" type="orcid-common:orcid-id">
-		<xs:annotation>
-			<xs:documentation>ORCID iD for the contributor</xs:documentation>
-		</xs:annotation>
-	</xs:element>		
-	<xs:element name="contributor-email">
-		<xs:annotation>
-			<xs:documentation>Email of the collaborator or other contributor. When provided during creation or update, the email address is used to look up and add the contributor's ORCID iD.</xs:documentation>
-		</xs:annotation>
-		<xs:complexType>
-			<xs:simpleContent>
-				<xs:extension base="orcid-common:email"/>
-			</xs:simpleContent>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="contributor-attributes">
-		<xs:annotation>
-			<xs:documentation>Provides detail of the nature of the contribution by the collaborator or other contirbutor.</xs:documentation>
-		</xs:annotation>
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="contributor-sequence" minOccurs="0"/>
-				<xs:element ref="contributor-role" minOccurs="0"/>
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="funding-contributor-attributes">
-		<xs:annotation>
-			<xs:documentation>Provides detail of the nature of the contribution by the collaborator or other contirbutor.</xs:documentation>
-		</xs:annotation>
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="funding-contributor-role" minOccurs="0"/>
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="funding-contributor-role">
-		<xs:annotation>
-			<xs:documentation>The role performed by the collaborator or other contributor.</xs:documentation>
-		</xs:annotation>
-		<xs:simpleType>
-			<xs:restriction base="xs:string">
-				<xs:enumeration value="lead"/>
-				<xs:enumeration value="co-lead"/>
-				<xs:enumeration value="supported-by"/>
-				<xs:enumeration value="other-contribution"/>
-			</xs:restriction>
-		</xs:simpleType>
-	</xs:element>
-	<xs:element name="contributor-sequence">
-		<xs:annotation>
-			<xs:documentation>Indication of where in the contributor list the collaborator or other contributor's name would appear</xs:documentation>
-		</xs:annotation>
-		<xs:simpleType>
-			<xs:restriction base="xs:string">
-				<xs:enumeration value="first"/>
-				<xs:enumeration value="additional"/>
-			</xs:restriction>
-		</xs:simpleType>
-	</xs:element>
-	<xs:element name="contributor-role">
-		<xs:annotation>
-			<xs:documentation>The role performed by the collaborator or other contributor.</xs:documentation>
-		</xs:annotation>
-		<xs:simpleType>
-			<xs:restriction base="xs:string">
-				<xs:enumeration value="author"/>
-				<xs:enumeration value="assignee"/>
-				<xs:enumeration value="editor"/>
-				<xs:enumeration value="chair-or-translator"/>
-				<xs:enumeration value="co-investigator"/>
-				<xs:enumeration value="co-inventor"/>
-				<xs:enumeration value="graduate-student"/>
-				<xs:enumeration value="other-inventor"/>
-				<xs:enumeration value="principal-investigator"/>
-				<xs:enumeration value="postdoctoral-researcher"/>
-				<xs:enumeration value="support-staff"/>
-			</xs:restriction>
-		</xs:simpleType>
-	</xs:element>
 	<xs:element name="orcid">
 		<xs:annotation>
 			<xs:documentation>(UNUSED) Replaced by orcid-identifier element.
