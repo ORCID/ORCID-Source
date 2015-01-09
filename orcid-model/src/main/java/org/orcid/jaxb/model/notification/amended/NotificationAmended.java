@@ -21,11 +21,10 @@
 // Generated on: 2014.11.24 at 04:27:39 PM GMT 
 //
 
-package org.orcid.jaxb.model.notification.addactivities;
+package org.orcid.jaxb.model.notification.amended;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
@@ -61,59 +60,13 @@ import org.orcid.jaxb.model.notification.Notification;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "putCode", "notificationType", "authorizationUrl", "activities", "createdDate", "sentDate", "readDate", "archivedDate", "source" })
+@XmlType(name = "", propOrder = { "putCode", "notificationType", "createdDate", "sentDate", "readDate", "archivedDate", "source" })
 @XmlRootElement(name = "notification")
-public class NotificationAddActivities extends Notification {
+public class NotificationAmended extends Notification {
 
     private final static long serialVersionUID = 1L;
-    @XmlElement(required = true)
-    protected AuthorizationUrl authorizationUrl;
-    @XmlElement(required = true)
-    protected Activities activities;
     @XmlTransient
     protected String subject;
-
-    /**
-     * Gets the value of the authorizationUrl property.
-     * 
-     * @return possible object is {@link AuthorizationUrl }
-     * 
-     */
-    public AuthorizationUrl getAuthorizationUrl() {
-        return authorizationUrl;
-    }
-
-    /**
-     * Sets the value of the authorizationUrl property.
-     * 
-     * @param value
-     *            allowed object is {@link AuthorizationUrl }
-     * 
-     */
-    public void setAuthorizationUrl(AuthorizationUrl value) {
-        this.authorizationUrl = value;
-    }
-
-    /**
-     * Gets the value of the activities property.
-     * 
-     * @return possible object is {@link Activities }
-     * 
-     */
-    public Activities getActivities() {
-        return activities;
-    }
-
-    /**
-     * Sets the value of the activities property.
-     * 
-     * @param value
-     *            allowed object is {@link Activities }
-     * 
-     */
-    public void setActivities(Activities value) {
-        this.activities = value;
-    }
 
     public String getSubject() {
         return subject;

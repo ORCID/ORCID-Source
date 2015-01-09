@@ -14,25 +14,20 @@
  *
  * =============================================================================
  */
-package org.orcid.core.manager;
+package org.orcid.persistence.jpa.entities;
 
-import java.util.Collection;
-import java.util.Locale;
-
-import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.notification.Notification;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 
 /**
  * 
  * @author Will Simpson
- * 
+ *
  */
-public interface EmailMessageSender {
+@Entity
+@DiscriminatorValue("AMENDED")
+public class NotificationAmendedEntity extends NotificationEntity {
 
-    EmailMessage createDigest(String orcid, Collection<Notification> notifications);
-    
-    EmailMessage createDigest(OrcidProfile orcidProfile, Collection<Notification> notifications, Locale locale);
-
-    void sendEmailMessages();
+    private static final long serialVersionUID = 1L;
 
 }
