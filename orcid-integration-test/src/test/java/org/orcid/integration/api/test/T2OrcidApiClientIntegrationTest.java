@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.integration.api.t2.test;
+package org.orcid.integration.api.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -37,6 +37,7 @@ import org.orcid.api.common.T2OrcidApiService;
 import org.orcid.integration.api.t2.AbstractT2ClientIntegrationTest;
 import org.orcid.integration.api.t2.OrcidClientDataHelper;
 import org.orcid.jaxb.model.message.Email;
+import org.orcid.jaxb.model.message.ExternalIdCommonName;
 import org.orcid.jaxb.model.message.ExternalIdReference;
 import org.orcid.jaxb.model.message.ExternalIdSource;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
@@ -457,10 +458,11 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
             SourceOrcid sourceOrcid = new SourceOrcid();
             source.setSourceOrcid(sourceOrcid);
             sourceOrcid.setPath(sponsorOrcid);
-            ExternalIdentifier additionalIdentifer = new ExternalIdentifier();
-            additionalIdentifer.setExternalIdReference(new ExternalIdReference("abc"));
-            additionalIdentifer.setSource(source);
-            newExternalIdentifiers.getExternalIdentifier().add(additionalIdentifer);
+            ExternalIdentifier additionalIdentifier = new ExternalIdentifier();
+            additionalIdentifier.setExternalIdReference(new ExternalIdReference("abc"));
+            additionalIdentifier.setSource(source);
+            additionalIdentifier.setExternalIdCommonName(new ExternalIdCommonName("Name_" + System.currentTimeMillis()));
+            newExternalIdentifiers.getExternalIdentifier().add(additionalIdentifier);
             orcidBio.setExternalIdentifiers(newExternalIdentifiers);
 
             message.getOrcidProfile().getOrcidInternal().setSecurityDetails(null);
@@ -501,10 +503,11 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
             ExternalIdentifiers newExternalIdentifiers = new ExternalIdentifiers();
             ExternalIdSource externalIdOrcid = new ExternalIdSource();
             externalIdOrcid.setPath(sponsorOrcid);
-            ExternalIdentifier additionalIdentifer = new ExternalIdentifier();
-            additionalIdentifer.setExternalIdReference(new ExternalIdReference("abc"));
-            additionalIdentifer.setExternalIdOrcid(externalIdOrcid);
-            newExternalIdentifiers.getExternalIdentifier().add(additionalIdentifer);
+            ExternalIdentifier additionalIdentifier = new ExternalIdentifier();
+            additionalIdentifier.setExternalIdReference(new ExternalIdReference("abc"));
+            additionalIdentifier.setExternalIdOrcid(externalIdOrcid);
+            additionalIdentifier.setExternalIdCommonName(new ExternalIdCommonName("Name_" + System.currentTimeMillis()));
+            newExternalIdentifiers.getExternalIdentifier().add(additionalIdentifier);
             orcidBio.setExternalIdentifiers(newExternalIdentifiers);
 
             message.getOrcidProfile().getOrcidInternal().setSecurityDetails(null);
