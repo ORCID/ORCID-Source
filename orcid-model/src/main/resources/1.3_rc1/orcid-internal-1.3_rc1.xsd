@@ -52,8 +52,8 @@
 				</xs:element>
 				<xs:element minOccurs="0" ref="salesforce-id"/>
 			</xs:sequence>
-			<xs:attributeGroup ref="orcid-common:scope"/>
-			<xs:attributeGroup ref="orcid-common:visibility"/>
+			<xs:attribute name="scope" type="orcid-common:scope" use="optional"/>
+			<xs:attribute name="visibility" type="orcid-common:visibility"/>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="salesforce-id" type="salesforce-id">
@@ -88,7 +88,7 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="orcid-common:locale"/>
+				<xs:element name="locale" type="orcid-common:locale"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>

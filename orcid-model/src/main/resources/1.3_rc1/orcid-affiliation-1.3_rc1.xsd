@@ -56,13 +56,13 @@
                     maxOccurs="1"/>
                 <xs:element name="start-date" type="orcid-common:fuzzy-date" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="end-date" type="orcid-common:fuzzy-date" minOccurs="0" maxOccurs="1"/>
-                <xs:element ref="orcid-common:organization" minOccurs="1" maxOccurs="1"/>
-                <xs:element ref="orcid-common:source" minOccurs="0" maxOccurs="1"/>
-                <xs:element ref="orcid-common:created-date" minOccurs="0" maxOccurs="1"/>
-                <xs:element ref="orcid-common:last-modified-date" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="organization" type="orcid-common:organization" minOccurs="1" maxOccurs="1"/>
+                <xs:element name="source" type="orcid-common:source" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="created-date" type="orcid-common:created-date" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="last-modified-date" type="orcid-common:last-modified-date" minOccurs="0" maxOccurs="1"/>
             </xs:sequence>
-            <xs:attributeGroup ref="orcid-common:put-code"/>
-            <xs:attributeGroup ref="orcid-common:visibility"/>
+            <xs:attribute name="put-code" type="orcid-common:put-code" use="optional"/>
+            <xs:attribute name="visibility" type="orcid-common:visibility"/>
         </xs:complexType>
     </xs:element>
     <xs:simpleType name="affiliation-type">

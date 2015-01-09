@@ -76,7 +76,7 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="orcid-common:orcid-identifier" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="orcid-identifier" type="orcid-common:orcid-id" minOccurs="0" maxOccurs="1"/>
 				<xs:element ref="orcid-deprecated" minOccurs="0" maxOccurs="1"/>
 				<xs:element ref="orcid-preferences" minOccurs="0" maxOccurs="1"/>
 				<xs:element ref="orcid-history" minOccurs="0" maxOccurs="1"/>
@@ -143,9 +143,9 @@
 				</xs:element>
 				<xs:element ref="completion-date" minOccurs="0" maxOccurs="1"/>
 				<xs:element ref="submission-date" minOccurs="0" maxOccurs="1"/>
-				<xs:element ref="orcid-common:last-modified-date" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="last-modified-date" type="orcid-common:last-modified-date" minOccurs="0" maxOccurs="1"/>
 				<xs:element ref="claimed" minOccurs="0" maxOccurs="1"/>
-				<xs:element ref="orcid-common:source" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="source" type="orcid-common:source" minOccurs="0" maxOccurs="1"/>
 				<xs:element ref="deactivation-date" minOccurs="0" maxOccurs="1"/>
 				<xs:element name="verified-email" type="xs:boolean" minOccurs="1" maxOccurs="1">
 					<xs:annotation>
@@ -159,7 +159,7 @@
 					</xs:annotation>
 				</xs:element>
 			</xs:sequence>
-			<xs:attributeGroup ref="orcid-common:visibility"/>
+			<xs:attribute name="visibility" type="orcid-common:visibility"/>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="completion-date">
@@ -242,7 +242,7 @@
 				<xs:element ref="delegation" minOccurs="0" maxOccurs="1"/>
 				<xs:element ref="applications" minOccurs="0" maxOccurs="1"/>
 			</xs:sequence>
-			<xs:attributeGroup ref="orcid-common:scope"/>
+			<xs:attribute name="scope" type="orcid-common:scope" use="optional"/>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="personal-details">
@@ -264,7 +264,7 @@
 						</xs:documentation>
 					</xs:annotation>
 				</xs:element>
-				<xs:element ref="orcid-common:credit-name" minOccurs="0">
+				<xs:element name="credit-name" type="orcid-common:credit-name" minOccurs="0">
 					<xs:annotation>
 						<xs:documentation>The full name of the researcher or contributor as it generally appears on their published works. (see element for more details.) The visibility attribute (private, limited or public) can be set at record creation, and indicates who can see this section of information. 
 						</xs:documentation>
@@ -287,7 +287,7 @@
 		<xs:complexType>
 			<xs:simpleContent>
 				<xs:extension base="bio-text">
-					<xs:attributeGroup ref="orcid-common:visibility"/>
+					<xs:attribute name="visibility" type="orcid-common:visibility"/>
 				</xs:extension>
 			</xs:simpleContent>
 		</xs:complexType>
@@ -310,7 +310,7 @@
 			<xs:sequence>
 				<xs:element minOccurs="0" maxOccurs="unbounded" ref="researcher-url"/>
 			</xs:sequence>
-			<xs:attributeGroup ref="orcid-common:visibility"/>
+			<xs:attribute name="visibility" type="orcid-common:visibility"/>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="researcher-url">
@@ -327,7 +327,7 @@
 						</xs:documentation>
 					</xs:annotation>
 				</xs:element>
-				<xs:element minOccurs="0" maxOccurs="1" ref="orcid-common:url">
+				<xs:element name="url" type="orcid-common:url" minOccurs="0" maxOccurs="1" >
 					<xs:annotation>
 						<xs:documentation>The URL (including http:// or https://).
 					</xs:documentation>
@@ -354,7 +354,7 @@
 			</xs:annotation>
 			<xs:sequence>
 				<xs:element ref="email" minOccurs="0" maxOccurs="unbounded"/>
-				<xs:element ref="orcid-common:address" minOccurs="0"/>
+				<xs:element name="address" type="orcid-common:address" minOccurs="0"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -366,7 +366,7 @@
 		<xs:complexType>
 			<xs:simpleContent>
 				<xs:extension base="orcid-common:email">
-					<xs:attributeGroup ref="orcid-common:visibility"/>
+					<xs:attribute name="visibility" type="orcid-common:visibility"/>
 					<xs:attribute name="primary" type="xs:boolean" default="true">
 						<xs:annotation>
 							<xs:documentation>Indicates (by a TRUE value) the address that the ORCID Registry will used to contact the researcher or contributor (based on user contact preferences). The primary attribute is assigned as TRUE to exactly one email address.
@@ -410,7 +410,7 @@
 			<xs:sequence>
 				<xs:element ref="keyword" minOccurs="0" maxOccurs="unbounded"/>
 			</xs:sequence>
-			<xs:attributeGroup ref="orcid-common:visibility"/>
+			<xs:attribute name="visibility" type="orcid-common:visibility"/>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="keyword">
@@ -430,7 +430,7 @@
 			<xs:sequence>
 				<xs:element maxOccurs="unbounded" minOccurs="0" ref="external-identifier"/>
 			</xs:sequence>
-			<xs:attributeGroup ref="orcid-common:visibility"/>
+			<xs:attribute name="visibility" type="orcid-common:visibility"/>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="external-identifier">
@@ -443,7 +443,7 @@
 				<xs:element ref="external-id-common-name" minOccurs="0" maxOccurs="1"/>
 				<xs:element ref="external-id-reference" minOccurs="0" maxOccurs="1"/>
 				<xs:element ref="external-id-url" minOccurs="0" maxOccurs="1"/>
-				<xs:element ref="orcid-common:source" minOccurs="0"/>
+				<xs:element name="source" type="orcid-common:source" minOccurs="0"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -482,7 +482,7 @@
 				<xs:element minOccurs="0" ref="given-permission-to"/>
 				<xs:element minOccurs="0" ref="given-permission-by"/>
 			</xs:sequence>
-			<xs:attributeGroup ref="orcid-common:visibility"/>
+			<xs:attribute name="visibility" type="orcid-common:visibility"/>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="given-permission-to">
@@ -532,9 +532,9 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="orcid-common:orcid-identifier"/>
-				<xs:element ref="orcid-common:last-modified-date" minOccurs="1" maxOccurs="1"/>
-				<xs:element minOccurs="0" ref="orcid-common:credit-name"/>
+				<xs:element name="orcid-identifier" type="orcid-common:orcid-id" />
+				<xs:element name="last-modified-date" type="orcid-common:last-modified-date" minOccurs="1" maxOccurs="1"/>
+				<xs:element name="credit-name" type="orcid-common:credit-name" minOccurs="0" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -547,7 +547,7 @@
 			<xs:sequence>
 				<xs:element maxOccurs="unbounded" ref="application-summary"/>
 			</xs:sequence>
-			<xs:attributeGroup ref="orcid-common:visibility"/>
+			<xs:attribute name="visibility" type="orcid-common:visibility"/>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="application-summary">
@@ -637,7 +637,7 @@
 					</xs:annotation>
 				</xs:element>
 			</xs:sequence>
-			<xs:attributeGroup ref="orcid-common:visibility"/>
+			<xs:attribute name="visibility" type="orcid-common:visibility"/>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="orcid-deprecated">
@@ -669,7 +669,7 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="orcid-common:orcid-identifier"/>
+				<xs:element name="orcid-identifier" type="orcid-common:orcid-id" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -679,7 +679,7 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="orcid-common:locale"/>
+				<xs:element name="locale" type="orcid-common:locale"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
