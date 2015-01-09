@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:sch="http://purl.oclc.org/dsdl/schematron" elementFormDefault="qualified"
-	targetNamespace="http://www.orcid.org/ns/orcid-work" xmlns="http://www.orcid.org/ns/orcid-work" xmlns:orcid-internal="http://www.orcid.org/ns/orcid-internal" xmlns:orcid-common="http://www.orcid.org/ns/orcid-common">
+	targetNamespace="http://www.orcid.org/ns/orcid-work" xmlns="http://www.orcid.org/ns/orcid-work"
+	xmlns:orcid-internal="http://www.orcid.org/ns/orcid-internal"
+	xmlns:orcid-common="http://www.orcid.org/ns/orcid-common">
 	<xs:annotation>
 		<xs:documentation>
 			=============================================================================
@@ -9,13 +11,16 @@
 			ORCID (R) Open Source
 			http://orcid.org
 
-			Copyright (c) 2012-2014 ORCID, Inc.
+			Copyright (c) 2012-2014 ORCID,
+			Inc.
 			Licensed under an MIT-Style License (MIT)
 			http://orcid.org/open-source-license
 
-			This copyright and license information (including a link to the full
+			This copyright and license
+			information (including a link to the full
 			license)
-			shall be included in its entirety in all copies or substantial portion of
+			shall be included in
+			its entirety in all copies or substantial portion of
 			the software.
 
 			=============================================================================
@@ -25,116 +30,142 @@
 		</xs:documentation>
 		<xs:appinfo>
 			<sch:title>Schematron validation</sch:title>
-			<sch:ns prefix="orcid" uri="http://www.orcid.org/ns/orcid"/>
+			<sch:ns prefix="orcid" uri="http://www.orcid.org/ns/orcid" />
 		</xs:appinfo>
 	</xs:annotation>
-	<xs:import namespace="http://www.orcid.org/ns/orcid-common" schemaLocation="orcid-common-1.3_rc1.xsd"/>
+	<xs:import namespace="http://www.orcid.org/ns/orcid-common"
+		schemaLocation="orcid-common-1.3_rc1.xsd" />
 
 	<xs:element name="works">
 		<xs:annotation>
-			<xs:documentation>Container for the Works published by the researcher or contributor.
+			<xs:documentation>Container for the Works published by the researcher
+				or contributor.
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element maxOccurs="unbounded" minOccurs="0" ref="orcid-work"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" ref="orcid-work" />
 			</xs:sequence>
-			<xs:attribute name="scope" type="orcid-common:scope" use="optional"/>
+			<xs:attribute name="scope" type="orcid-common:scope"
+				use="optional" />
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="orcid-work">
 		<xs:annotation>
-			<xs:documentation>A work published by the researcher or contributor. 
-				* The visibility attribute (private, limited or public) can be set at record creation, and indicates who can see this section of information.
-				* The put-code attribute is used only when reading this element. When updating the item, the put-code attribute must be included to indicate the specific record to be updated.
+			<xs:documentation>A work published by the researcher or contributor.
+				* The visibility attribute (private, limited or public) can be set
+				at record creation, and indicates who can see this section of
+				information.
+				* The put-code attribute is used only when reading this
+				element. When updating the item, the put-code attribute must be
+				included to indicate the specific record to be updated.
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="work-title" minOccurs="0"/>
-				<xs:element ref="journal-title" minOccurs="0" maxOccurs="1"/>
-				<xs:element name="short-description" type="orcid-common:short-description" minOccurs="0"/>
-				<xs:element ref="work-citation" minOccurs="0"/>
-				<xs:element ref="work-type"/>
-				<xs:element ref="publication-date" minOccurs="0"/>
-				<xs:element name="work-external-identifiers" type="citation" minOccurs="0">
-				        <xs:annotation>
-            <xs:documentation>Element containing the type and content of the citation for this work
-            </xs:documentation>
-        </xs:annotation>
+				<xs:element ref="work-title" minOccurs="0" />
+				<xs:element ref="journal-title" minOccurs="0" maxOccurs="1" />
+				<xs:element name="short-description" type="orcid-common:shortDescription"
+					minOccurs="0" />
+				<xs:element name="work-citation" minOccurs="0" type="citation">
+					<xs:annotation>
+						<xs:documentation>Element containing the type and content of the
+							citation for this work
+						</xs:documentation>
+					</xs:annotation>
 				</xs:element>
-				<xs:element name="url" type="orcid-common:url" minOccurs="0"/>
-				<xs:element ref="work-contributors" minOccurs="0"/>
-				<xs:element name="source" type="orcid-common:source" minOccurs="0"/>
-				<xs:element name="created-date" type="orcid-common:created-date" minOccurs="0" maxOccurs="1"/>
-				<xs:element name="last-modified-date" type="orcid-common:last-modified-date" minOccurs="0" maxOccurs="1"/>
-				<xs:element name="language-code" type="orcid-common:language-code" minOccurs="0"
-					maxOccurs="1"/>
-				<xs:element name="country"  type="orcid-common:country" minOccurs="0"/>
+				<xs:element ref="work-type" />
+				<xs:element ref="publication-date" minOccurs="0" />
+				<xs:element name="work-external-identifiers" type="citation"
+					minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Element containing the type and content of the
+							citation for this work
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="url" type="orcid-common:url" minOccurs="0" />
+				<xs:element ref="work-contributors" minOccurs="0" />
+				<xs:element name="source" type="orcid-common:source"
+					minOccurs="0" />
+				<xs:element name="created-date" type="orcid-common:createdDate"
+					minOccurs="0" maxOccurs="1" />
+				<xs:element name="last-modified-date" type="orcid-common:lastModifiedDate"
+					minOccurs="0" maxOccurs="1" />
+				<xs:element name="language-code" type="orcid-common:languageCode"
+					minOccurs="0" maxOccurs="1" />
+				<xs:element name="country" type="orcid-common:country"
+					minOccurs="0" />
 			</xs:sequence>
-			<xs:attribute name="visibility" type="orcid-common:visibility"/>
-			<xs:attribute name="put-code" type="orcid-common:put-code" use="optional"/>
+			<xs:attribute name="visibility" type="orcid-common:visibility" />
+			<xs:attribute name="put-code" type="orcid-common:putCode"
+				use="optional" />
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="work-type">
 		<xs:annotation>
-			<xs:documentation>The types of works accepted accepted by the ORCID Registry. Please refer to the CASRAI dictionary for definitions of each work type. http://dictionary.casrai.org/research-personnel-profile/contributions/outputs
+			<xs:documentation>The types of works accepted accepted by the ORCID
+				Registry. Please refer to the CASRAI dictionary for definitions of
+				each work type.
+				http://dictionary.casrai.org/research-personnel-profile/contributions/outputs
 			</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:enumeration value="artistic-performance"/>
-				<xs:enumeration value="book-chapter"/>
-				<xs:enumeration value="book-review"/>
-				<xs:enumeration value="book"/>
-				<xs:enumeration value="conference-abstract"/>
-				<xs:enumeration value="conference-paper"/>
-				<xs:enumeration value="conference-poster"/>
-				<xs:enumeration value="data-set"/>
-				<xs:enumeration value="dictionary-entry"/>
-				<xs:enumeration value="disclosure"/>
-				<xs:enumeration value="dissertation"/>
-				<xs:enumeration value="edited-book"/>
-				<xs:enumeration value="encyclopedia-entry"/>
-				<xs:enumeration value="invention"/>
-				<xs:enumeration value="journal-article"/>
-				<xs:enumeration value="journal-issue"/>
-				<xs:enumeration value="lecture-speech"/>
-				<xs:enumeration value="license"/>
-				<xs:enumeration value="magazine-article"/>
-				<xs:enumeration value="manual"/>
-				<xs:enumeration value="newsletter-article"/>
-				<xs:enumeration value="newspaper-article"/>
-				<xs:enumeration value="online-resource"/>
-				<xs:enumeration value="other"/>
-				<xs:enumeration value="patent"/>
-				<xs:enumeration value="registered-copyright"/>
-				<xs:enumeration value="report"/>
-				<xs:enumeration value="research-technique"/>
-				<xs:enumeration value="research-tool"/>
-				<xs:enumeration value="spin-off-company"/>
-				<xs:enumeration value="standards-and-policy"/>
-				<xs:enumeration value="supervised-student-publication"/>
-				<xs:enumeration value="technical-standard"/>
-				<xs:enumeration value="test"/>
-				<xs:enumeration value="translation"/>
-				<xs:enumeration value="trademark"/>
-				<xs:enumeration value="website"/>
-				<xs:enumeration value="working-paper"/>
+				<xs:enumeration value="artistic-performance" />
+				<xs:enumeration value="book-chapter" />
+				<xs:enumeration value="book-review" />
+				<xs:enumeration value="book" />
+				<xs:enumeration value="conference-abstract" />
+				<xs:enumeration value="conference-paper" />
+				<xs:enumeration value="conference-poster" />
+				<xs:enumeration value="data-set" />
+				<xs:enumeration value="dictionary-entry" />
+				<xs:enumeration value="disclosure" />
+				<xs:enumeration value="dissertation" />
+				<xs:enumeration value="edited-book" />
+				<xs:enumeration value="encyclopedia-entry" />
+				<xs:enumeration value="invention" />
+				<xs:enumeration value="journal-article" />
+				<xs:enumeration value="journal-issue" />
+				<xs:enumeration value="lecture-speech" />
+				<xs:enumeration value="license" />
+				<xs:enumeration value="magazine-article" />
+				<xs:enumeration value="manual" />
+				<xs:enumeration value="newsletter-article" />
+				<xs:enumeration value="newspaper-article" />
+				<xs:enumeration value="online-resource" />
+				<xs:enumeration value="other" />
+				<xs:enumeration value="patent" />
+				<xs:enumeration value="registered-copyright" />
+				<xs:enumeration value="report" />
+				<xs:enumeration value="research-technique" />
+				<xs:enumeration value="research-tool" />
+				<xs:enumeration value="spin-off-company" />
+				<xs:enumeration value="standards-and-policy" />
+				<xs:enumeration value="supervised-student-publication" />
+				<xs:enumeration value="technical-standard" />
+				<xs:enumeration value="test" />
+				<xs:enumeration value="translation" />
+				<xs:enumeration value="trademark" />
+				<xs:enumeration value="website" />
+				<xs:enumeration value="working-paper" />
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="work-external-identifiers">
 		<xs:annotation>
-			<xs:documentation>Container for storing the external references to the work.
+			<xs:documentation>Container for storing the external references to
+				the work.
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element maxOccurs="unbounded" minOccurs="0" ref="work-external-identifier"
-				/>
+				<xs:element maxOccurs="unbounded" minOccurs="0"
+					ref="work-external-identifier" />
 			</xs:sequence>
-			<xs:attribute name="scope" type="orcid-common:scope" use="optional"/>
+			<xs:attribute name="scope" type="orcid-common:scope"
+				use="optional" />
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="work-external-identifier">
@@ -144,14 +175,16 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="work-external-identifier-type" maxOccurs="1"/>
-				<xs:element ref="work-external-identifier-id" maxOccurs="1"/>
+				<xs:element ref="work-external-identifier-type"
+					maxOccurs="1" />
+				<xs:element ref="work-external-identifier-id" maxOccurs="1" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="work-external-identifier-type">
 		<xs:annotation>
-			<xs:documentation>The type of work external identifier, e.g DOI, PMID etc.
+			<xs:documentation>The type of work external identifier, e.g DOI, PMID
+				etc.
 			</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
@@ -161,10 +194,10 @@
 						<xs:documentation>Agricola</xs:documentation>
 					</xs:annotation>
 				</xs:enumeration>
-				<xs:enumeration value="arxiv"/>
-				<xs:enumeration value="asin"/>
-				<xs:enumeration value="asin-tld"/>
-				<xs:enumeration value="bibcode"/>
+				<xs:enumeration value="arxiv" />
+				<xs:enumeration value="asin" />
+				<xs:enumeration value="asin-tld" />
+				<xs:enumeration value="bibcode" />
 				<xs:enumeration value="cba">
 					<xs:annotation>
 						<xs:documentation>Chinese Biological Abstracts</xs:documentation>
@@ -180,60 +213,62 @@
 						<xs:documentation>CiteXplore submission</xs:documentation>
 					</xs:annotation>
 				</xs:enumeration>
-				<xs:enumeration value="doi"/>
-				<xs:enumeration value="eid"/>
+				<xs:enumeration value="doi" />
+				<xs:enumeration value="eid" />
 				<xs:enumeration value="ethos">
 					<xs:annotation>
 						<xs:documentation>EThOS Peristent ID</xs:documentation>
 					</xs:annotation>
 				</xs:enumeration>
-				<xs:enumeration value="handle"/>
+				<xs:enumeration value="handle" />
 				<xs:enumeration value="hir">
 					<xs:annotation>
 						<xs:documentation>NHS Evidence</xs:documentation>
 					</xs:annotation>
 				</xs:enumeration>
-				<xs:enumeration value="isbn"/>
-				<xs:enumeration value="issn"/>
-				<xs:enumeration value="jfm"/>
-				<xs:enumeration value="jstor"/>
-				<xs:enumeration value="lccn"/>
-				<xs:enumeration value="mr"/>
-				<xs:enumeration value="oclc"/>
-				<xs:enumeration value="ol"/>
-				<xs:enumeration value="osti"/>
-				<xs:enumeration value="other-id"/>
+				<xs:enumeration value="isbn" />
+				<xs:enumeration value="issn" />
+				<xs:enumeration value="jfm" />
+				<xs:enumeration value="jstor" />
+				<xs:enumeration value="lccn" />
+				<xs:enumeration value="mr" />
+				<xs:enumeration value="oclc" />
+				<xs:enumeration value="ol" />
+				<xs:enumeration value="osti" />
+				<xs:enumeration value="other-id" />
 				<xs:enumeration value="pat">
 					<xs:annotation>
-						<xs:documentation>Patent number prefixed with ISO 3611 two letter country code</xs:documentation>
+						<xs:documentation>Patent number prefixed with ISO 3611 two letter
+							country code</xs:documentation>
 					</xs:annotation>
 				</xs:enumeration>
-				<xs:enumeration value="pmc"/>
-				<xs:enumeration value="pmid"/>
-				<xs:enumeration value="rfc"/>
+				<xs:enumeration value="pmc" />
+				<xs:enumeration value="pmid" />
+				<xs:enumeration value="rfc" />
 				<xs:enumeration value="source-work-id">
 					<xs:annotation>
-						<xs:documentation>Non-standard ID with meaning only in the system from which the work data were sourced</xs:documentation>
+						<xs:documentation>Non-standard ID with meaning only in the system
+							from which the work data were sourced</xs:documentation>
 					</xs:annotation>
 				</xs:enumeration>
-				<xs:enumeration value="ssrn"/>
-				<xs:enumeration value="uri"/>
-				<xs:enumeration value="urn"/>
+				<xs:enumeration value="ssrn" />
+				<xs:enumeration value="uri" />
+				<xs:enumeration value="urn" />
 				<xs:enumeration value="wosuid">
 					<xs:annotation>
 						<xs:documentation>Web of Science™ identifier</xs:documentation>
 					</xs:annotation>
 				</xs:enumeration>
-				<xs:enumeration value="zbl"/>
+				<xs:enumeration value="zbl" />
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
-	<xs:element name="work-external-identifier-id" type="orcid-common:non-empty-string">
+	<xs:element name="work-external-identifier-id" type="orcid-common:nonEmptyString">
 		<xs:annotation>
 			<xs:documentation>Value for the identifier</xs:documentation>
 		</xs:annotation>
 	</xs:element>
-	<xs:element name="work-source" type="orcid-common:orcid-id">
+	<xs:element name="work-source" type="orcid-common:orcidId">
 		<xs:annotation>
 			<xs:documentation>Container for the source of a work.
 			</xs:documentation>
@@ -246,77 +281,88 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element maxOccurs="unbounded" minOccurs="0" ref="contributor"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" ref="contributor" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="contributor">
 		<xs:annotation>
-			<xs:documentation>A collaborator or other contributor to a work or other orcid-activity</xs:documentation>
+			<xs:documentation>A collaborator or other contributor to a work or
+				other orcid-activity</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="contributor-orcid" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="credit-name" type="orcid-common:credit-name" minOccurs="0" maxOccurs="1"/>
-				<xs:element ref="contributor-email" minOccurs="0" maxOccurs="1"/>
-				<xs:element ref="contributor-attributes" minOccurs="0" maxOccurs="1"/>
+				<xs:element ref="contributor-orcid" minOccurs="0"
+					maxOccurs="1" />
+				<xs:element name="credit-name" type="orcid-common:creditName"
+					minOccurs="0" maxOccurs="1" />
+				<xs:element ref="contributor-email" minOccurs="0"
+					maxOccurs="1" />
+				<xs:element ref="contributor-attributes" minOccurs="0"
+					maxOccurs="1" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="contributor-orcid" type="orcid-common:orcid-id">
+	<xs:element name="contributor-orcid" type="orcid-common:orcidId">
 		<xs:annotation>
 			<xs:documentation>ORCID iD for the contributor</xs:documentation>
 		</xs:annotation>
-	</xs:element>		
+	</xs:element>
 	<xs:element name="contributor-email">
 		<xs:annotation>
-			<xs:documentation>Email of the collaborator or other contributor. When provided during creation or update, the email address is used to look up and add the contributor's ORCID iD.</xs:documentation>
+			<xs:documentation>Email of the collaborator or other contributor.
+				When provided during creation or update, the email address is used
+				to look up and add the contributor's ORCID iD.</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
 			<xs:simpleContent>
-				<xs:extension base="orcid-common:email"/>
+				<xs:extension base="orcid-common:email" />
 			</xs:simpleContent>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="contributor-attributes">
 		<xs:annotation>
-			<xs:documentation>Provides detail of the nature of the contribution by the collaborator or other contirbutor.</xs:documentation>
+			<xs:documentation>Provides detail of the nature of the contribution
+				by the collaborator or other contirbutor.</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="contributor-sequence" minOccurs="0"/>
-				<xs:element ref="contributor-role" minOccurs="0"/>
+				<xs:element ref="contributor-sequence" minOccurs="0" />
+				<xs:element ref="contributor-role" minOccurs="0" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="contributor-sequence">
 		<xs:annotation>
-			<xs:documentation>Indication of where in the contributor list the collaborator or other contributor's name would appear</xs:documentation>
+			<xs:documentation>Indication of where in the contributor list the
+				collaborator or other contributor's name would appear
+			</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:enumeration value="first"/>
-				<xs:enumeration value="additional"/>
+				<xs:enumeration value="first" />
+				<xs:enumeration value="additional" />
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="contributor-role">
 		<xs:annotation>
-			<xs:documentation>The role performed by the collaborator or other contributor.</xs:documentation>
+			<xs:documentation>The role performed by the collaborator or other
+				contributor.</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:enumeration value="author"/>
-				<xs:enumeration value="assignee"/>
-				<xs:enumeration value="editor"/>
-				<xs:enumeration value="chair-or-translator"/>
-				<xs:enumeration value="co-investigator"/>
-				<xs:enumeration value="co-inventor"/>
-				<xs:enumeration value="graduate-student"/>
-				<xs:enumeration value="other-inventor"/>
-				<xs:enumeration value="principal-investigator"/>
-				<xs:enumeration value="postdoctoral-researcher"/>
-				<xs:enumeration value="support-staff"/>
+				<xs:enumeration value="author" />
+				<xs:enumeration value="assignee" />
+				<xs:enumeration value="editor" />
+				<xs:enumeration value="chair-or-translator" />
+				<xs:enumeration value="co-investigator" />
+				<xs:enumeration value="co-inventor" />
+				<xs:enumeration value="graduate-student" />
+				<xs:enumeration value="other-inventor" />
+				<xs:enumeration value="principal-investigator" />
+				<xs:enumeration value="postdoctoral-researcher" />
+				<xs:enumeration value="support-staff" />
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -327,8 +373,8 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:complexContent>
-				<xs:extension base="orcid-common:fuzzy-date">
-					<xs:attribute name="media-type" type="orcid-common:media-type"/>
+				<xs:extension base="orcid-common:fuzzyDate">
+					<xs:attribute name="media-type" type="orcid-common:mediaType" />
 				</xs:extension>
 			</xs:complexContent>
 		</xs:complexType>
@@ -340,66 +386,75 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="title" type="orcid-common:non-empty-string">
+				<xs:element name="title" type="orcid-common:nonEmptyString">
 					<xs:annotation>
-						<xs:documentation>The main name or title of the work. For a spin-off company, include use the company name</xs:documentation>
+						<xs:documentation>The main name or title of the work. For a
+							spin-off company, include use the company name</xs:documentation>
 					</xs:annotation>
 				</xs:element>
-				<xs:element ref="subtitle" minOccurs="0"/>
-				<xs:element name="translated-title" type="orcid-common:translated-title" minOccurs="0"/>
+				<xs:element ref="subtitle" minOccurs="0" />
+				<xs:element name="translated-title" type="orcid-common:translatedTitle"
+					minOccurs="0" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="journal-title">
 		<xs:annotation>
-			<xs:documentation>The title of the publication or group under which the work was published. 
-				* If a jounal, include the journal title of the work. 
+			<xs:documentation>The title of the publication or group under which
+				the work was published.
+				* If a jounal, include the journal title of the work.
 				* If a book chapter, use the book title.
-				* If a translation or a manual, use the series title.
-				* If a dictionary entry, use the dictionary title.
-				* If a conference poster, abstract or paper, use the conference name.
+				* If a translation or a
+				manual, use the series title.
+				* If a dictionary entry, use the
+				dictionary title.
+				* If a conference poster, abstract or paper, use
+				the conference name.
 			</xs:documentation>
 		</xs:annotation>
-		<xs:complexType mixed="true"/>
+		<xs:complexType mixed="true" />
 	</xs:element>
 	<xs:element name="subtitle">
 		<xs:annotation>
 			<xs:documentation>If the work has a subtitle, include it here.
 			</xs:documentation>
 		</xs:annotation>
-		<xs:complexType mixed="true"/>
+		<xs:complexType mixed="true" />
 	</xs:element>
-	<xs:element name="work-citation" type="citation">
-        <xs:annotation>
-            <xs:documentation>Element containing the type and content of the citation for this work
-            </xs:documentation>
-        </xs:annotation>
-    </xs:element>
 	<xs:complexType name="citation">
 		<xs:annotation>
-			<xs:documentation>Container for a work citation. Citations may be fielded (e.g., RIS, BibTeX - preferred citation type), or may be textual (APA, MLA, Chicago, etc.) The required work-citation-type element indicates the format of the citation.
+			<xs:documentation>Container for a work citation. Citations may be
+				fielded (e.g., RIS, BibTeX - preferred citation type), or may be
+				textual (APA, MLA, Chicago, etc.) The required work-citation-type
+				element indicates the format of the citation.
 			</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
 			<xs:element name="work-citation-type" default="formatted-unspecified"
-				type="citation-type" maxOccurs="1" minOccurs="1"/>
-			<xs:element name="citation" type="xs:string" maxOccurs="1" minOccurs="1"/>
+				type="citationType" maxOccurs="1" minOccurs="1" />
+			<xs:element name="citation" type="xs:string" maxOccurs="1"
+				minOccurs="1" />
 		</xs:sequence>
 	</xs:complexType>
-	<xs:simpleType name="citation-type">
+	<xs:simpleType name="citationType">
 		<xs:annotation>
-			<xs:documentation>(REQUIRED) The type (format) of the citation. BibTeX format is recommended. NOTE: the values displayed to the website user are localized (translated) in the ORCID Registry web interface. For reference: https://github.com/ORCID/ORCID-Source/tree/master/orcid-core/src/main/resources/i18n</xs:documentation>
+			<xs:documentation>(REQUIRED) The type (format) of the citation.
+				BibTeX format is recommended. NOTE: the values displayed to the
+				website user are localized (translated) in the ORCID Registry web
+				interface. For reference:
+				https://github.com/ORCID/ORCID-Source/tree/master/orcid-core/src/main/resources/i18n
+			</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="xs:string">
-			<xs:enumeration value="formatted-unspecified"/>
-			<xs:enumeration value="bibtex"/>
-			<xs:enumeration value="ris"/>
-			<xs:enumeration value="formatted-apa"/>
-			<xs:enumeration value="formatted-harvard"/>
-			<xs:enumeration value="formatted-ieee"/>
-			<xs:enumeration value="formatted-mla"/>
-			<xs:enumeration value="formatted-vancouver"/>
-			<xs:enumeration value="formatted-chicago"/>
+			<xs:enumeration value="formatted-unspecified" />
+			<xs:enumeration value="bibtex" />
+			<xs:enumeration value="ris" />
+			<xs:enumeration value="formatted-apa" />
+			<xs:enumeration value="formatted-harvard" />
+			<xs:enumeration value="formatted-ieee" />
+			<xs:enumeration value="formatted-mla" />
+			<xs:enumeration value="formatted-vancouver" />
+			<xs:enumeration value="formatted-chicago" />
 		</xs:restriction>
 	</xs:simpleType>
 </xs:schema>

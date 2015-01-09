@@ -49,23 +49,23 @@
         </xs:annotation>
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="type" type="affiliation-type"/>
-                <xs:element name="department-name" type="orcid-common:non-empty-string" minOccurs="0"
+                <xs:element name="type" type="affiliationType"/>
+                <xs:element name="departmentName" type="orcid-common:nonEmptyString" minOccurs="0"
                     maxOccurs="1"/>
-                <xs:element name="role-title" type="orcid-common:non-empty-string" minOccurs="0"
+                <xs:element name="roleTitle" type="orcid-common:nonEmptyString" minOccurs="0"
                     maxOccurs="1"/>
-                <xs:element name="start-date" type="orcid-common:fuzzy-date" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="end-date" type="orcid-common:fuzzy-date" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="startDate" type="orcid-common:fuzzyDate" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="endDate" type="orcid-common:fuzzyDate" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="organization" type="orcid-common:organization" minOccurs="1" maxOccurs="1"/>
                 <xs:element name="source" type="orcid-common:source" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="created-date" type="orcid-common:created-date" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="last-modified-date" type="orcid-common:last-modified-date" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="createdDate" type="orcid-common:createdDate" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="lastModifiedDate" type="orcid-common:lastModifiedDate" minOccurs="0" maxOccurs="1"/>
             </xs:sequence>
-            <xs:attribute name="put-code" type="orcid-common:put-code" use="optional"/>
+            <xs:attribute name="putCode" type="orcid-common:putCode" use="optional"/>
             <xs:attribute name="visibility" type="orcid-common:visibility"/>
         </xs:complexType>
     </xs:element>
-    <xs:simpleType name="affiliation-type">
+    <xs:simpleType name="affiliationType">
         <xs:annotation>
             <xs:documentation>The type of the affiliation. Presently only "education" and "employment" are used. 
                 "distinction", "funding", and "contribution" are all for FUTURE use and will not be show to the researcher in the web interface.

@@ -31,7 +31,7 @@
 			<sch:ns prefix="orcid" uri="http://www.orcid.org/ns/orcid" />
 		</xs:appinfo>
 	</xs:annotation>
-	<xs:complexType name="last-modified-date">
+	<xs:complexType name="lastModifiedDate">
 		<xs:annotation>
 			<xs:documentation>The date time when the element was last modified.
 			</xs:documentation>
@@ -40,7 +40,7 @@
 			<xs:extension base="xs:dateTime" />
 		</xs:simpleContent>
 	</xs:complexType>
-	<xs:complexType name="created-date">
+	<xs:complexType name="createdDate">
 		<xs:annotation>
 			<xs:documentation>The date time when element was created.
 			</xs:documentation>
@@ -60,7 +60,7 @@
 		</xs:annotation>
 		<xs:sequence>
 			<xs:choice minOccurs="0">
-				<xs:element name="source-orcid" type="orcid-id">
+				<xs:element name="sourceOrcid" type="orcidId">
 					<xs:annotation>
 						<xs:documentation>The ORCID identifier for the individual user (or
 							legacy client application) that created the item. For identifiers
@@ -71,7 +71,7 @@
 						</xs:documentation>
 					</xs:annotation>
 				</xs:element>
-				<xs:element name="source-client-id" type="client-id">
+				<xs:element name="sourceClientId" type="clientId">
 					<xs:annotation>
 						<xs:documentation>The client ID for the client application (Member
 							organization system) that created the item.
@@ -79,9 +79,9 @@
 					</xs:annotation>
 				</xs:element>
 			</xs:choice>
-			<xs:element name="source-name" type="source-name"
+			<xs:element name="sourceName" type="sourceName"
 				minOccurs="0" />
-			<xs:element name="source-date">
+			<xs:element name="sourceDate">
 				<xs:annotation>
 					<xs:documentation>The date time that the source client application
 						(Member organization system) or individual user created/attempted
@@ -97,7 +97,7 @@
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
-	<xs:complexType name="source-name" mixed="true">
+	<xs:complexType name="sourceName" mixed="true">
 		<xs:annotation>
 			<xs:documentation>The human-readable name of the client application
 				(Member organization system) or individual user that created the
@@ -117,32 +117,32 @@
 		</xs:annotation>
 
 		<xs:sequence>
-			<xs:element name="name" type="non-empty-string" />
-			<xs:element name="address" type="organization-address" />
-			<xs:element name="disambiguated-organization" type="disambiguated-organization"
+			<xs:element name="name" type="nonEmptyString" />
+			<xs:element name="address" type="organizationAddress" />
+			<xs:element name="disambiguatedOrganization" type="disambiguatedOrganization"
 				minOccurs="0" maxOccurs="1" />
 		</xs:sequence>
 	</xs:complexType>
-	<xs:complexType name="organization-address">
+	<xs:complexType name="organizationAddress">
 		<xs:annotation>
 			<xs:documentation>Container for organization location information
 			</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element minOccurs="1" name="city" type="non-empty-string">
+			<xs:element minOccurs="1" name="city" type="nonEmptyString">
 				<xs:annotation>
 					<xs:documentation>City</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element minOccurs="0" name="region" type="non-empty-string">
+			<xs:element minOccurs="0" name="region" type="nonEmptyString">
 				<xs:annotation>
 					<xs:documentation>Region within a country</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element minOccurs="1" name="country" type="iso-3166-country" />
+			<xs:element minOccurs="1" name="country" type="iso3166Country" />
 		</xs:sequence>
 	</xs:complexType>
-	<xs:complexType name="disambiguated-organization">
+	<xs:complexType name="disambiguatedOrganization">
 		<xs:annotation>
 			<xs:documentation>A reference to a disambiguated version the
 				organization to which the researcher or contributor is affiliated.
@@ -151,14 +151,14 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element name="disambiguated-organization-identifier"
-				type="short-text">
+			<xs:element name="disambiguatedOrganizationIdentifier"
+				type="shortText">
 				<xs:annotation>
 					<xs:documentation>The disambiguated organization identifier.
 					</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="disambiguation-source" type="short-text">
+			<xs:element name="disambiguationSource" type="shortText">
 				<xs:annotation>
 					<xs:documentation>The source for providing the disambiguated
 						organization ID.
@@ -185,7 +185,7 @@
 			<xs:enumeration value="zh_TW" />
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name="non-empty-string">
+	<xs:simpleType name="nonEmptyString">
 		<xs:annotation>
 			<xs:documentation>Must contain one or more charaters that are not a
 				space, carriage return or linefeed
@@ -203,12 +203,12 @@
 
 		<xs:simpleContent>
 			<xs:extension base="xs:string">
-				<xs:attribute name="currency-code" type="currency-code"
+				<xs:attribute name="currencyCode" type="currencyCode"
 					use="required" />
 			</xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>
-	<xs:simpleType name="currency-code">
+	<xs:simpleType name="currencyCode">
 		<xs:annotation>
 			<xs:documentation>The currency code used for funding amounts. From
 				the ISO 4217 list
@@ -436,7 +436,7 @@
 			<xs:enumeration value="ZWR" />
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name="organization-defined-type">
+	<xs:simpleType name="organizationDefinedType">
 		<xs:annotation>
 			<xs:documentation>Container for a organization defined type for an
 				external identifier.
@@ -445,7 +445,7 @@
 		<xs:restriction base="string255">
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name="language-code">
+	<xs:simpleType name="languageCode">
 		<xs:annotation>
 			<xs:documentation>Two letter language code to identify the language
 				used in work fields. Chinese is expressed in more than two letters,
@@ -671,12 +671,12 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:simpleContent>
-			<xs:extension base="iso-3166-country-or-empty">
+			<xs:extension base="iso3166CountryOrEmpty">
 				<xs:attribute name="visibility" type="visibility"/>
 			</xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>
-	<xs:simpleType name="orcid-path">
+	<xs:simpleType name="orcidPath">
 		<xs:annotation>
 			<xs:documentation>Path for the ORCID iD.
 			</xs:documentation>
@@ -685,7 +685,7 @@
 			<xs:pattern value="(\d{4}-){3,}\d{3}[\dX]" />
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name="orcid-uri">
+	<xs:simpleType name="orcidUri">
 		<xs:annotation>
 			<xs:documentation>ORCID URI for the ORCID iD.
 			</xs:documentation>
@@ -695,7 +695,7 @@
 				value="http://([^/]*orcid\.org|localhost.*/orcid-web)/(\d{4}-){3,}\d{3}[\dX]" />
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:complexType name="orcid-id">
+	<xs:complexType name="orcidId">
 		<xs:annotation>
 			<xs:documentation>The identifier of the researcher or contributor in
 				ORCID (the ORCID iD). At least one of uri or path must be given.
@@ -705,13 +705,13 @@
 		<xs:sequence>
 			<xs:choice>
 				<xs:sequence>
-					<xs:element name="uri" type="orcid-uri">
+					<xs:element name="uri" type="orcidUri">
 						<xs:annotation>
 							<xs:documentation>ORCID iD in URI form (preferred).
 							</xs:documentation>
 						</xs:annotation>
 					</xs:element>
-					<xs:element name="path" type="orcid-path" minOccurs="0">
+					<xs:element name="path" type="orcidPath" minOccurs="0">
 						<xs:annotation>
 							<xs:documentation>ORCID path (16-character identifier) of the
 								ORCID iD.
@@ -719,7 +719,7 @@
 						</xs:annotation>
 					</xs:element>
 				</xs:sequence>
-				<xs:element name="path" type="orcid-path">
+				<xs:element name="path" type="orcidPath">
 					<xs:annotation>
 						<xs:documentation>ORCID path (16-character identifier) of the
 							ORCID iD.
@@ -735,7 +735,7 @@
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
-	<xs:simpleType name="client-path">
+	<xs:simpleType name="clientPath">
 		<xs:annotation>
 			<xs:documentation>Path for the API client ID.
 			</xs:documentation>
@@ -744,7 +744,7 @@
 			<xs:pattern value="APP-[\da-zA-Z]{16}" />
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name="client-uri">
+	<xs:simpleType name="clientUri">
 		<xs:annotation>
 			<xs:documentation>ORCID URI for the API client ID.
 			</xs:documentation>
@@ -754,7 +754,7 @@
 				value="http://([^/]*orcid\.org|localhost.*/orcid-web)/client/APP-[\da-zA-Z]{16}" />
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:complexType name="client-id">
+	<xs:complexType name="clientId">
 		<xs:annotation>
 			<xs:documentation>The identifier of an ORCID API client app. At least
 				one of uri or path must be given. NOTE: legacy API clients still may
@@ -764,10 +764,10 @@
 		<xs:sequence>
 			<xs:choice>
 				<xs:sequence>
-					<xs:element name="uri" type="client-uri" />
-					<xs:element name="path" type="client-path" minOccurs="0" />
+					<xs:element name="uri" type="clientUri" />
+					<xs:element name="path" type="clientPath" minOccurs="0" />
 				</xs:sequence>
-				<xs:element name="path" type="client-path" />
+				<xs:element name="path" type="clientPath" />
 			</xs:choice>
 			<xs:element name="host" type="xs:string" minOccurs="0">
 				<xs:annotation>
@@ -777,7 +777,7 @@
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
-	<xs:simpleType name="orcid-type">
+	<xs:simpleType name="orcidType">
 		<xs:annotation>
 			<xs:documentation>Indicates the ORCID record type for the ORCID iD
 				referenced. NOTE: orcid-types of API client are only used for legacy
@@ -791,7 +791,7 @@
 			<xs:enumeration value="client" />
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name="client-type">
+	<xs:simpleType name="clientType">
 		<xs:annotation>
 			<xs:documentation>Indicates the client type for the API client based
 				on the ORCID membership type.
@@ -804,7 +804,7 @@
 			<xs:enumeration value="premium-updater" />
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name="group-type">
+	<xs:simpleType name="groupType">
 		<xs:annotation>
 			<xs:documentation>Indicates the group type for the API client based
 				on the ORCID membership type.
@@ -829,7 +829,7 @@
 			<xs:enumeration value="update" />
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name="put-code">
+	<xs:simpleType name="putCode">
 		<xs:annotation>
 			<xs:documentation>The put-code attribute is present only when reading
 				elements. The code must be used when PUTing (updating) items that
@@ -891,7 +891,7 @@
 			<xs:pattern value="[^@]+@[^\.]+\..+" />
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name="media-type">
+	<xs:simpleType name="mediaType">
 		<xs:annotation>
 			<xs:documentation>Used with the publication date to indicate which
 				version of the publication the date refers to.
@@ -930,7 +930,7 @@
 			<xs:pattern value="\d{2}" />
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:complexType name="fuzzy-date">
+	<xs:complexType name="fuzzyDate">
 		<xs:annotation>
 			<xs:documentation>In some places the full date is not required.
 			</xs:documentation>
@@ -979,7 +979,7 @@
 			</xs:sequence>
 		</xs:sequence>
 	</xs:complexType>
-	<xs:simpleType name="scope-path-type">
+	<xs:simpleType name="scopePathType">
 		<xs:annotation>
 			<xs:documentation>See the ORCID Knowledgebase for a complete
 				description of ORCID Scopes and related documentation:
@@ -1004,7 +1004,7 @@
 			<xs:enumeration value="/orcid-profile/create" />
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name="iso-3166-country">
+	<xs:simpleType name="iso3166Country">
 		<xs:annotation>
 			<xs:documentation>ISO 3166 country codes. NOTE: the values displayed
 				to the website user are localized (translated) in the ORCID Registry
@@ -1265,12 +1265,12 @@
 			<xs:enumeration value="XK" />
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name="iso-3166-country-or-empty">
+	<xs:simpleType name="iso3166CountryOrEmpty">
 		<xs:annotation>
 			<xs:documentation>Contains either a country code or an empty value
 			</xs:documentation>
 		</xs:annotation>
-		<xs:union memberTypes="iso-3166-country empty" />
+		<xs:union memberTypes="iso3166Country" />
 	</xs:simpleType>
 	<xs:simpleType name="empty">
 		<xs:annotation>
@@ -1280,7 +1280,7 @@
 			<xs:enumeration value="" />
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name="short-text">
+	<xs:simpleType name="shortText">
 		<xs:annotation>
 			<xs:documentation>A non-empty string that has a maximum size of 2084
 				characters
@@ -1306,7 +1306,7 @@
 				characters
 			</xs:documentation>
 		</xs:annotation>
-		<xs:restriction base="non-empty-string">
+		<xs:restriction base="nonEmptyString">
 			<xs:maxLength value="1000" />
 		</xs:restriction>
 	</xs:simpleType>
@@ -1316,7 +1316,7 @@
 				characters
 			</xs:documentation>
 		</xs:annotation>
-		<xs:restriction base="non-empty-string">
+		<xs:restriction base="nonEmptyString">
 			<xs:maxLength value="2084" />
 		</xs:restriction>
 	</xs:simpleType>
@@ -1327,13 +1327,13 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:simpleContent>
-			<xs:extension base="non-empty-string">
-				<xs:attribute name="language-code" type="language-code"
+			<xs:extension base="nonEmptyString">
+				<xs:attribute name="languageCode" type="languageCode"
 					use="required" />
 			</xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>
-	<xs:simpleType name="short-description">
+	<xs:simpleType name="shortDescription">
 		<xs:annotation>
 			<xs:documentation>A short narrative (few sentences) describing the
 				item.
@@ -1344,7 +1344,7 @@
 			<xs:maxLength value="5000"></xs:maxLength>
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:complexType name="credit-name">
+	<xs:complexType name="creditName">
 		<xs:annotation>
 			<xs:documentation>The name to use for the researcher or contributor
 				when credited or cited, for example, in an article or index, or as a
@@ -1359,12 +1359,12 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:simpleContent>
-			<xs:extension base="non-empty-string">
+			<xs:extension base="nonEmptyString">
 				<xs:attribute name="visibility" type="visibility"/>
 			</xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>
-	<xs:complexType name="translated-title">
+	<xs:complexType name="translatedTitle">
 		<xs:annotation>
 			<xs:documentation>The main title of the work or funding translated
 				into another language. The translated language will be included in
@@ -1378,16 +1378,16 @@
 		</xs:simpleContent>
 	</xs:complexType>
 
-	<xs:complexType name="contributor-orcid">
+	<xs:complexType name="contributorOrcid">
 		<xs:annotation>
 			<xs:documentation>ORCID iD for the contributor</xs:documentation>
 		</xs:annotation>
 		<xs:complexContent>
-			<xs:extension base="orcid-id">
+			<xs:extension base="orcidId">
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
-	<xs:complexType name="contributor-email">
+	<xs:complexType name="contributorEmail">
 		<xs:annotation>
 			<xs:documentation>Email of the collaborator or other contributor.
 				When provided during creation or update, the email address is used
@@ -1398,20 +1398,20 @@
 			<xs:extension base="email" />
 		</xs:simpleContent>
 	</xs:complexType>
-	<xs:complexType name="contributor-attributes">
+	<xs:complexType name="contributorAttributes">
 		<xs:annotation>
 			<xs:documentation>Provides detail of the nature of the contribution
 				by the collaborator or other contirbutor.
 			</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element name="contributor-sequence" type="contributor-sequence"
+			<xs:element name="contributorSequence" type="contributorSequence"
 				minOccurs="0" />
-			<xs:element name="contributor-role" type="contributor-role"
+			<xs:element name="contributorRole" type="contributorRole"
 				minOccurs="0" />
 		</xs:sequence>
 	</xs:complexType>
-	<xs:simpleType name="contributor-sequence">
+	<xs:simpleType name="contributorSequence">
 		<xs:annotation>
 			<xs:documentation>Indication of where in the contributor list the
 				collaborator or other contributor's name would appear
@@ -1423,7 +1423,7 @@
 			<xs:enumeration value="additional" />
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name="contributor-role">
+	<xs:simpleType name="contributorRole">
 		<xs:annotation>
 			<xs:documentation>The role performed by the collaborator or other
 				contributor.
