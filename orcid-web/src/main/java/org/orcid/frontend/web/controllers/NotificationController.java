@@ -60,9 +60,10 @@ public class NotificationController extends BaseController {
 
     @RequestMapping("/notifications.json")
     public @ResponseBody List<Notification> getNotificationsJson(@RequestParam(value = "firstResult", defaultValue = "0") int firstResult,
-            @RequestParam(value = "maxResults", defaultValue = "10") int maxResults) {
+            @RequestParam(value = "maxResults", defaultValue = "10") int maxResults,
+            @RequestParam(value = "includeArchived", defaultValue = "false") boolean includeArchived) {
         String currentOrcid = getCurrentUserOrcid();
-        List<Notification> notifications = notificationManager.findByOrcid(currentOrcid, firstResult, maxResults);
+        List<Notification> notifications = notificationManager.findByOrcid(currentOrcid, includeArchived, firstResult, maxResults);
         for (Notification notification : notifications) {
             if (notification instanceof NotificationAddActivities) {
                 NotificationAddActivities naa = (NotificationAddActivities) notification;

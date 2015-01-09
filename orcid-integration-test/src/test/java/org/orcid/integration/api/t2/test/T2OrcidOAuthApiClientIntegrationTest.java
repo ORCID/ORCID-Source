@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.orcid.api.common.OrcidApiConstants.EXTERNAL_IDENTIFIER_PATH;
 
 import java.net.URI;
@@ -43,6 +44,7 @@ import org.orcid.core.security.DefaultPermissionChecker;
 import org.orcid.core.security.PermissionChecker;
 import org.orcid.integration.api.t2.BaseT2OrcidOAuthApiClientIntegrationTest;
 import org.orcid.integration.api.t2.OrcidClientDataHelper;
+import org.orcid.jaxb.model.message.ExternalIdCommonName;
 import org.orcid.jaxb.model.message.ExternalIdReference;
 import org.orcid.jaxb.model.message.ExternalIdSource;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
@@ -677,6 +679,157 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
 
     }
 
+    @Test
+    public void testAddDuplicatedExternalIdentifier_1() throws Exception {
+        createNewOrcidUsingAccessToken();
+        // get the bio details of the actual
+        createAccessTokenFromCredentials();
+        ClientResponse bioResponse = oauthT2Client1_2.viewBioDetailsXml(this.orcid, accessToken);
+        OrcidMessage message = bioResponse.getEntity(OrcidMessage.class);
+        OrcidBio orcidBio = message.getOrcidProfile().getOrcidBio();
+
+        OrcidHistory orcidHistory = message.getOrcidProfile().getOrcidHistory();
+        assertTrue(orcidHistory != null);
+        
+        //Add one external identifier
+        ExternalIdentifiers externalIdentifiers = orcidBio.getExternalIdentifiers();
+        assertNull(externalIdentifiers);
+        
+        ExternalIdentifiers newExternalIdentifiers = new ExternalIdentifiers();
+        newExternalIdentifiers.setVisibility(Visibility.PUBLIC);
+        Source source = new Source();
+        source.setSourceClientId(new SourceClientId(clientId));
+        ExternalIdentifier externalIdentifier = new ExternalIdentifier();
+        externalIdentifier.setExternalIdReference(new ExternalIdReference("abc123"));
+        externalIdentifier.setExternalIdCommonName(new ExternalIdCommonName("456efg"));
+        externalIdentifier.setSource(source);
+        newExternalIdentifiers.getExternalIdentifier().add(externalIdentifier);
+        orcidBio.setExternalIdentifiers(newExternalIdentifiers);
+
+        createAccessTokenFromCredentials();
+        ClientResponse updatedIdsResponse = oauthT2Client1_2.addExternalIdentifiersXml(this.orcid, message, accessToken);
+        assertEquals(200, updatedIdsResponse.getStatus());
+        
+        //Get it again and check the ext id was created
+        bioResponse = oauthT2Client1_2.viewBioDetailsXml(this.orcid, accessToken);
+        message = bioResponse.getEntity(OrcidMessage.class);
+        orcidBio = message.getOrcidProfile().getOrcidBio();
+
+        orcidHistory = message.getOrcidProfile().getOrcidHistory();
+        assertTrue(orcidHistory != null);
+                
+        externalIdentifiers = orcidBio.getExternalIdentifiers();
+        assertNotNull(externalIdentifiers);
+        assertNotNull(externalIdentifiers.getExternalIdentifier());
+        assertEquals(1, externalIdentifiers.getExternalIdentifier().size());
+        
+        ExternalIdentifier otherExternalIdentifier = new ExternalIdentifier();
+        otherExternalIdentifier.setExternalIdReference(new ExternalIdReference("abc123"));
+        otherExternalIdentifier.setExternalIdCommonName(new ExternalIdCommonName("456efg"));        
+        externalIdentifiers.getExternalIdentifier().add(otherExternalIdentifier);
+        orcidBio.setExternalIdentifiers(externalIdentifiers);
+        
+        updatedIdsResponse = oauthT2Client1_2.addExternalIdentifiersXml(this.orcid, message, accessToken);
+        assertEquals(200, updatedIdsResponse.getStatus());
+        
+        // Get it again and check that only one ext id was created
+        bioResponse = oauthT2Client1_2.viewBioDetailsXml(this.orcid, accessToken);
+        message = bioResponse.getEntity(OrcidMessage.class);
+        orcidBio = message.getOrcidProfile().getOrcidBio();
+
+        orcidHistory = message.getOrcidProfile().getOrcidHistory();
+        assertTrue(orcidHistory != null);
+                
+        externalIdentifiers = orcidBio.getExternalIdentifiers();
+        assertNotNull(externalIdentifiers);
+        assertNotNull(externalIdentifiers.getExternalIdentifier());
+        assertEquals(1, externalIdentifiers.getExternalIdentifier().size());
+    }
+    
+    @Test
+    public void testAddDuplicatedExternalIdentifier_2() throws Exception {
+        createNewOrcidUsingAccessToken();
+        // get the bio details of the actual
+        createAccessTokenFromCredentials();
+        ClientResponse bioResponse = oauthT2Client1_2.viewBioDetailsXml(this.orcid, accessToken);
+        OrcidMessage message = bioResponse.getEntity(OrcidMessage.class);
+        OrcidBio orcidBio = message.getOrcidProfile().getOrcidBio();
+
+        OrcidHistory orcidHistory = message.getOrcidProfile().getOrcidHistory();
+        assertTrue(orcidHistory != null);
+        
+        //Add one external identifier
+        ExternalIdentifiers externalIdentifiers = orcidBio.getExternalIdentifiers();
+        assertNull(externalIdentifiers);
+        
+        ExternalIdentifiers newExternalIdentifiers = new ExternalIdentifiers();
+        newExternalIdentifiers.setVisibility(Visibility.PUBLIC);
+        Source source = new Source();
+        source.setSourceClientId(new SourceClientId(clientId));
+        ExternalIdentifier externalIdentifier = new ExternalIdentifier();
+        externalIdentifier.setExternalIdReference(new ExternalIdReference("abc123"));
+        externalIdentifier.setExternalIdCommonName(new ExternalIdCommonName("456efg"));
+        externalIdentifier.setSource(source);
+        newExternalIdentifiers.getExternalIdentifier().add(externalIdentifier);
+        orcidBio.setExternalIdentifiers(newExternalIdentifiers);
+
+        createAccessTokenFromCredentials();
+        ClientResponse updatedIdsResponse = oauthT2Client1_2.addExternalIdentifiersXml(this.orcid, message, accessToken);
+        assertEquals(200, updatedIdsResponse.getStatus());
+        
+        //Get it again and check the ext id was created
+        bioResponse = oauthT2Client1_2.viewBioDetailsXml(this.orcid, accessToken);
+        message = bioResponse.getEntity(OrcidMessage.class);
+        orcidBio = message.getOrcidProfile().getOrcidBio();
+
+        orcidHistory = message.getOrcidProfile().getOrcidHistory();
+        assertTrue(orcidHistory != null);
+                
+        externalIdentifiers = orcidBio.getExternalIdentifiers();
+        assertNotNull(externalIdentifiers);
+        assertNotNull(externalIdentifiers.getExternalIdentifier());
+        assertEquals(1, externalIdentifiers.getExternalIdentifier().size());
+        
+        //Add two ext ids, one duplicated and other one new
+        ExternalIdentifier otherExternalIdentifier1 = new ExternalIdentifier();
+        otherExternalIdentifier1.setExternalIdReference(new ExternalIdReference("abc123"));
+        otherExternalIdentifier1.setExternalIdCommonName(new ExternalIdCommonName("456efg"));        
+        externalIdentifiers.getExternalIdentifier().add(otherExternalIdentifier1);
+        
+        ExternalIdentifier otherExternalIdentifier2 = new ExternalIdentifier();
+        otherExternalIdentifier2.setExternalIdReference(new ExternalIdReference("other#2"));
+        otherExternalIdentifier2.setExternalIdCommonName(new ExternalIdCommonName("other#2"));        
+        externalIdentifiers.getExternalIdentifier().add(otherExternalIdentifier2);
+        
+        orcidBio.setExternalIdentifiers(externalIdentifiers);
+        
+        updatedIdsResponse = oauthT2Client1_2.addExternalIdentifiersXml(this.orcid, message, accessToken);
+        assertEquals(200, updatedIdsResponse.getStatus());
+        
+        // Get it again and check that only one ext id was created
+        bioResponse = oauthT2Client1_2.viewBioDetailsXml(this.orcid, accessToken);
+        message = bioResponse.getEntity(OrcidMessage.class);
+        orcidBio = message.getOrcidProfile().getOrcidBio();        
+                
+        externalIdentifiers = orcidBio.getExternalIdentifiers();
+        assertNotNull(externalIdentifiers);
+        assertNotNull(externalIdentifiers.getExternalIdentifier());
+        assertEquals(2, externalIdentifiers.getExternalIdentifier().size());
+        
+        for(ExternalIdentifier extId : externalIdentifiers.getExternalIdentifier()) {
+            String commonName = extId.getExternalIdCommonName().getContent();
+            String idReference = extId.getExternalIdReference().getContent(); 
+            if(commonName.equals("456efg") || commonName.equals("other#2")) {
+                if(commonName.equals("456efg"))
+                    assertEquals("For common name " + commonName + " id reference " + idReference + " is invalid", "abc123", idReference);
+                else if(commonName.equals("other#2"))
+                    assertEquals("For common name " + commonName + " id reference " + idReference + " is invalid", "other#2", idReference);                
+            } else {
+                fail("Invalid common name found: " + commonName);
+            }                        
+        }
+    }
+    
     @Test
     public void testRegisterAndUnRegisterWebhook() throws Exception {
         createNewOrcidUsingAccessToken();

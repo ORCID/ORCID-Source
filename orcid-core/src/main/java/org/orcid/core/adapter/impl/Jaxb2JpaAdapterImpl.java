@@ -43,6 +43,7 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.utils.JsonUtils;
+import org.orcid.core.utils.Triplet;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.ApprovalDate;
@@ -522,7 +523,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             profileEntity.setExternalIdentifiersVisibility(externalIdentifiers.getVisibility());
 
             Set<ExternalIdentifierEntity> existingExternalIdentifiers = profileEntity.getExternalIdentifiers();
-            Map<Pair<String, String>, ExternalIdentifierEntity> existingExternalIdentifiersMap = createExternalIdentifiersMap(existingExternalIdentifiers);
+            Map<Triplet<String, String, String>, ExternalIdentifierEntity> existingExternalIdentifiersMap = createExternalIdentifiersMap(existingExternalIdentifiers);
             Set<ExternalIdentifierEntity> externalIdentifierEntities = null;
 
             if (existingExternalIdentifiers == null) {
@@ -537,10 +538,13 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
             if (externalIdentifierList != null && !externalIdentifierList.isEmpty()) {
                 for (ExternalIdentifier externalIdentifier : externalIdentifierList) {
-                    ExternalIdentifierEntity externalIdentifierEntity = getExternalIdentifierEntity(externalIdentifier, existingExternalIdentifiersMap);
-                    if (externalIdentifierEntity != null) {
-                        externalIdentifierEntity.setOwner(profileEntity);
-                        externalIdentifierEntities.add(externalIdentifierEntity);
+                    //Discard the ext ids that comes without external id reference, which is a required field
+                    if(externalIdentifier.getExternalIdReference() != null) {
+                        ExternalIdentifierEntity externalIdentifierEntity = getExternalIdentifierEntity(profileEntity.getId(), externalIdentifier, existingExternalIdentifiersMap);
+                        if (externalIdentifierEntity != null) {
+                            externalIdentifierEntity.setOwner(profileEntity);
+                            externalIdentifierEntities.add(externalIdentifierEntity);
+                        }
                     }
                 }
             }
@@ -549,29 +553,27 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         }
     }
 
-    private Map<Pair<String, String>, ExternalIdentifierEntity> createExternalIdentifiersMap(Set<ExternalIdentifierEntity> existingExternalIdentifiers) {
-        Map<Pair<String, String>, ExternalIdentifierEntity> map = new HashMap<>();
+    private Map<Triplet<String, String, String>, ExternalIdentifierEntity> createExternalIdentifiersMap(Set<ExternalIdentifierEntity> existingExternalIdentifiers) {
+        Map<Triplet<String, String, String>, ExternalIdentifierEntity> map = new HashMap<>();
         if (existingExternalIdentifiers != null) {
             for (ExternalIdentifierEntity entity : existingExternalIdentifiers) {
-                Pair<String, String> pair = createPairForKey(entity);
-                map.put(pair, entity);
+                Triplet<String, String, String> triplet = createTripletForKey(entity);
+                map.put(triplet, entity);
             }
         }
         return map;
     }
 
-    private Pair<String, String> createPairForKey(ExternalIdentifierEntity entity) {
-        SourceEntity sourceEntity = entity.getSource();
-        String id = null;
-        if (sourceEntity != null) {
-            id = sourceEntity.getSourceId();
-        }
-        Pair<String, String> pair = new ImmutablePair<>(entity.getExternalIdReference(), id);
-        return pair;
+    private Triplet<String, String, String> createTripletForKey(ExternalIdentifierEntity entity) {
+        String first = entity.getOwner().getId();
+        String second = entity.getExternalIdReference();
+        String third = entity.getExternalIdCommonName();
+        Triplet<String, String, String> triplet = new Triplet<String, String, String>(first, second, third);        
+        return triplet;
     }
 
-    private ExternalIdentifierEntity getExternalIdentifierEntity(ExternalIdentifier externalIdentifier,
-            Map<Pair<String, String>, ExternalIdentifierEntity> existingExternalIdentifiersMap) {
+    private ExternalIdentifierEntity getExternalIdentifierEntity(String userOrcid, ExternalIdentifier externalIdentifier,
+            Map<Triplet<String, String, String>, ExternalIdentifierEntity> existingExternalIdentifiersMap) {
         if (externalIdentifier != null && externalIdentifier.getExternalIdReference() != null) {
             ExternalIdCommonName externalIdCommonName = externalIdentifier.getExternalIdCommonName();
             Source source = externalIdentifier.getSource();
@@ -579,10 +581,21 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             ExternalIdReference externalIdReference = externalIdentifier.getExternalIdReference();
             String referenceValue = externalIdReference != null ? externalIdReference.getContent() : null;
             ExternalIdUrl externalIdUrl = externalIdentifier.getExternalIdUrl();
+            
+            String first = userOrcid;            
+            
+            String second = null;
+            if(externalIdentifier.getExternalIdReference() != null)
+                second = externalIdentifier.getExternalIdReference().getContent();
+            
+            String third = null;
+            if(externalIdentifier.getExternalIdCommonName() != null)
+                third = externalIdentifier.getExternalIdCommonName().getContent(); 
+                    
 
-            Pair<String, String> key = new ImmutablePair<>(referenceValue, externalIdOrcidValue);
+            Triplet<String, String, String> key = new Triplet<>(first, second, third);
             ExternalIdentifierEntity existingExternalIdentifierEntity = existingExternalIdentifiersMap.get(key);
-
+            
             ExternalIdentifierEntity externalIdentifierEntity = null;
             if (existingExternalIdentifierEntity == null) {
                 externalIdentifierEntity = new ExternalIdentifierEntity();
@@ -596,6 +609,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
             externalIdentifierEntity.setExternalIdCommonName(externalIdCommonName != null ? externalIdCommonName.getContent() : null);
             externalIdentifierEntity.setExternalIdUrl(externalIdUrl != null ? externalIdUrl.getValue() : null);
+            externalIdentifierEntity.setExternalIdReference(externalIdReference != null ? externalIdReference.getContent() : null);
             return externalIdentifierEntity;
         }
         return null;

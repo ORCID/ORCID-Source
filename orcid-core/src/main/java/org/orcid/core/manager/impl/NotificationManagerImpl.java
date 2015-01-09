@@ -744,8 +744,8 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     @Override
-    public List<Notification> findByOrcid(String orcid, int firstResult, int maxResults) {
-        return notificationAdapter.toNotification(notificationDao.findByOrcid(orcid, firstResult, maxResults));
+    public List<Notification> findByOrcid(String orcid, boolean includeArchived, int firstResult, int maxResults) {
+        return notificationAdapter.toNotification(notificationDao.findByOrcid(orcid, includeArchived, firstResult, maxResults));
     }
 
     @Override
