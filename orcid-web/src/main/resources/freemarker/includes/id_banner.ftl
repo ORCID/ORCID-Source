@@ -81,7 +81,7 @@
 			<div class="orcid-id-info">
 		    	<span class="mini-orcid-icon"></span>
 		    	<!-- Reference: orcid.js:removeProtocolString() -->
-	       		<span data-uri="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" id="orcid-id" class="orcid-id shortURI" title="Click for public view of ORCID iD"></span>
+	       		<span data-uri="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" id="orcid-id" class="orcid-id shortURI"></span>
 			</div>
 			<div class="orcid-id-options">
 				<a href="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" class="gray-button">View Public Profile</a>
