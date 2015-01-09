@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.orcid.org/ns/orcid" xmlns:orcid="http://www.orcid.org/ns/orcid"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" vc:minVersion="1.1">
+    <xs:annotation>
+        <xs:documentation>
+            =============================================================================
+
+            ORCID (R) Open Source
+            http://orcid.org
+
+            Copyright (c) 2012-2014 ORCID, Inc.
+            Licensed under an MIT-Style License (MIT)
+            http://orcid.org/open-source-license
+
+            This copyright and license information (including a link to the full
+            license)
+            shall be included in its entirety in all copies or substantial portion of
+            the software.
+
+            =============================================================================
+            The schema describes the message format used for ORCID API requests
+            and responses.
+            The top level element is orcid-message.
+        </xs:documentation>
+    </xs:annotation>
+    <xs:element name="error">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="responseCode" type="xs:int">
+                    <xs:annotation>
+                        <xs:documentation>
+                            The HTTP response code that was also used in the response header.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="developerMessage" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation>
+                            Debugging information for the API client developer, e.g. schema validation error message.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="userMessage" type="xs:string" minOccurs="0">
+                    <xs:annotation>
+                        <xs:documentation>
+                            An error message that would be suitable to display to the user in the application using the ORCID API.
+                            If possible, this will be in the language of the locale specified by the user in ORCID.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="errorCode" type="xs:integer" minOccurs="0">
+                    <xs:annotation>
+                        <xs:documentation>
+                            The ORCID error code that defines the specific type of error. A full list of codes can be found at
+                            http://support.orcid.org/knowledgebase/articles/....
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="moreInfo" type="xs:anyURI" minOccurs="0">
+                    <xs:annotation>
+                        <xs:documentation>
+                            A URL of a page giving more info about the error.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
