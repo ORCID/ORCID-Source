@@ -82,8 +82,8 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
             "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ProfileWorksEntityData.xml",
             "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml");
 
-    @Resource(name = "t2OrcidApiServiceDelegatorV1_0_21")
-    private T2OrcidApiServiceDelegator t2OrcidApiServiceDelegatorV21;
+    @Resource(name = "t2OrcidApiServiceDelegatorV1_2")
+    private T2OrcidApiServiceDelegator t2OrcidApiServiceDelegatorV2_1;
 
     @Resource
     private OrcidProfileManager orcidProfileManager;
@@ -208,7 +208,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
         Email email = new Email("madeupemail3@semantico.com");
         orcidMessage.getOrcidProfile().getOrcidBio().getContactDetails().getEmail().add(email);
 
-        t2OrcidApiServiceDelegatorV21.createProfile(mockedUriInfo, orcidMessage);
+        t2OrcidApiServiceDelegatorV2_1.createProfile(mockedUriInfo, orcidMessage);
     }
 
     @Test(expected = OrcidBadRequestException.class)
@@ -219,7 +219,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
         Email email = new Email("madeupemail4@semantico.com");
         orcidMessage.getOrcidProfile().getOrcidBio().getContactDetails().getEmail().add(email);
 
-        t2OrcidApiServiceDelegatorV21.createProfile(mockedUriInfo, orcidMessage);
+        t2OrcidApiServiceDelegatorV2_1.createProfile(mockedUriInfo, orcidMessage);
     }
 
     @Test

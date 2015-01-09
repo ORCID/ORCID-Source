@@ -20,10 +20,9 @@ import javax.persistence.Query;
 
 import org.orcid.persistence.dao.ExternalIdentifierDao;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
-import org.orcid.persistence.jpa.entities.keys.ExternalIdentifierEntityPk;
 import org.springframework.transaction.annotation.Transactional;
 
-public class ExternalIdentifierDaoImpl extends GenericDaoImpl<ExternalIdentifierEntity, ExternalIdentifierEntityPk> implements ExternalIdentifierDao {
+public class ExternalIdentifierDaoImpl extends GenericDaoImpl<ExternalIdentifierEntity, Long> implements ExternalIdentifierDao {
 
     public ExternalIdentifierDaoImpl() {
         super(ExternalIdentifierEntity.class);

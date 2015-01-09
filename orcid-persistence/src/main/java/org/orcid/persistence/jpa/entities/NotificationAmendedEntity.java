@@ -14,16 +14,20 @@
  *
  * =============================================================================
  */
-package org.orcid.api.t2.server;
+package org.orcid.persistence.jpa.entities;
 
-import javax.ws.rs.Path;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 
 /**
  * 
- * @author Angel Montenegro
- * 
+ * @author Will Simpson
+ *
  */
-@Path("/v1.0.20")
-public class T2OrcidApiServiceImplV1_0_20 extends T2OrcidApiServiceImplBase {
+@Entity
+@DiscriminatorValue("AMENDED")
+public class NotificationAmendedEntity extends NotificationEntity {
+
+    private static final long serialVersionUID = 1L;
 
 }

@@ -17,7 +17,7 @@
 package org.orcid.core.version.impl;
 
 import static org.orcid.jaxb.model.message.WorkExternalIdentifierType.OTHER_ID;
-import static org.orcid.jaxb.model.message.WorkExternalIdentifierType.WOS;
+import static org.orcid.jaxb.model.message.WorkExternalIdentifierType.WOSUID;
 
 import org.orcid.core.version.OrcidMessageVersionConverter;
 import org.orcid.jaxb.model.message.OrcidMessage;
@@ -77,7 +77,7 @@ public class OrcidMessageVersionConverterImplV1_2_rc6ToV1_2_rc7 implements Orcid
         if (externalIdentifiers != null) {
             for (WorkExternalIdentifier wei : externalIdentifiers.getWorkExternalIdentifier()) {
                 WorkExternalIdentifierType type = wei.getWorkExternalIdentifierType();
-                if (WOS.equals(type)) {
+                if (WOSUID.equals(type)) {
                     wei.setWorkExternalIdentifierType(OTHER_ID);
                 }
             }

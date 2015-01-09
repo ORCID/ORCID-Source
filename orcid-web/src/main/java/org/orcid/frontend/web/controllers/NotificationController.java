@@ -60,9 +60,10 @@ public class NotificationController extends BaseController {
 
     @RequestMapping("/notifications.json")
     public @ResponseBody List<Notification> getNotificationsJson(@RequestParam(value = "firstResult", defaultValue = "0") int firstResult,
-            @RequestParam(value = "maxResults", defaultValue = "10") int maxResults) {
+            @RequestParam(value = "maxResults", defaultValue = "10") int maxResults,
+            @RequestParam(value = "includeArchived", defaultValue = "false") boolean includeArchived) {
         String currentOrcid = getCurrentUserOrcid();
-        List<Notification> notifications = notificationManager.findByOrcid(currentOrcid, firstResult, maxResults);
+        List<Notification> notifications = notificationManager.findByOrcid(currentOrcid, includeArchived, firstResult, maxResults);
         for (Notification notification : notifications) {
             if (notification instanceof NotificationAddActivities) {
                 NotificationAddActivities naa = (NotificationAddActivities) notification;
@@ -94,6 +95,16 @@ public class NotificationController extends BaseController {
         Notification notification = notificationManager.findByOrcidAndId(getCurrentUserOrcid(), Long.valueOf(id));
         mav.addObject("notification", notification);
         mav.setViewName("notification/add_activities_notification");
+        return mav;
+    }
+
+    @RequestMapping(value = "/AMENDED/{id}/notification.html", produces = MediaType.TEXT_HTML_VALUE)
+    public ModelAndView getAmendedNotificationHtml(@PathVariable("id") String id) {
+        ModelAndView mav = new ModelAndView();
+        Notification notification = notificationManager.findByOrcidAndId(getCurrentUserOrcid(), Long.valueOf(id));
+        mav.addObject("notification", notification);
+        mav.addObject("emailName", notificationManager.deriveEmailFriendlyName(getEffectiveProfile()));
+        mav.setViewName("notification/amended_notification");
         return mav;
     }
 

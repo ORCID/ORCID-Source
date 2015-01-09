@@ -38,10 +38,12 @@ import org.orcid.jaxb.model.common.ClientId;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.notification.Notification;
 import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
+import org.orcid.jaxb.model.notification.amended.NotificationAmended;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -79,48 +81,68 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
 
     @Resource
     private LocaleManager localeManager;
-    
+
+    @Resource
+    private MessageSource messages;
+
     @Resource
     private OrcidUrlManager orcidUrlManager;
 
     @Override
     public EmailMessage createDigest(String orcid, Collection<Notification> notifications) {
         OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile(orcid, LoadOptions.BIO_AND_INTERNAL_ONLY);
-        Locale locale = localeManager.getLocalFromOrcidProfile(orcidProfile);
-        return createDigest(notifications, locale);
+        Locale locale = localeManager.getLocaleFromOrcidProfile(orcidProfile);
+        return createDigest(orcidProfile, notifications, locale);
     }
 
     @Override
-    public EmailMessage createDigest(Collection<Notification> notifications, Locale locale) {
+    public EmailMessage createDigest(OrcidProfile orcidProfile, Collection<Notification> notifications, Locale locale) {
+        int totalMessageCount = 0;
         int orcidMessageCount = 0;
-        int memberMessageCount = 0;
+        int addActivitiesMessageCount = 0;
+        int amendedMessageCount = 0;
         int activityCount = 0;
         Set<String> memberIds = new HashSet<>();
         for (Notification notification : notifications) {
+            totalMessageCount++;
             if (notification.getSource() == null) {
                 orcidMessageCount++;
             } else {
                 ClientId clientId = notification.getSource().getClientId();
                 if (clientId != null) {
-                    memberMessageCount++;
                     memberIds.add(clientId.getPath());
                 }
             }
             if (notification instanceof NotificationAddActivities) {
+                addActivitiesMessageCount++;
                 NotificationAddActivities addActsNotification = (NotificationAddActivities) notification;
                 activityCount += addActsNotification.getActivities().getActivities().size();
             }
+            if (notification instanceof NotificationAmended) {
+                amendedMessageCount++;
+            }
         }
+        String emailName = notificationManager.deriveEmailFriendlyName(orcidProfile);
+        String subject = messages.getMessage("email.subject.digest", new String[] { emailName, String.valueOf(totalMessageCount) }, locale);
         Map<String, Object> params = new HashMap<>();
+        params.put("locale", locale);
+        params.put("messages", messages);
+        params.put("messageArgs", new Object[0]);
+        params.put("emailName", emailName);
         params.put("orcidMessageCount", orcidMessageCount);
-        params.put("memberMessageCount", memberMessageCount);
+        params.put("addActivitiesMessageCount", addActivitiesMessageCount);
         params.put("activityCount", activityCount);
+        params.put("amendedMessageCount", amendedMessageCount);
         params.put("memberIdsCount", memberIds.size());
-        params.put("baseUrl", orcidUrlManager.getBaseUrl());
-        String emailBody = templateManager.processTemplate("digest_email.ftl", params, locale);
+        params.put("baseUri", orcidUrlManager.getBaseUrl());
+        params.put("subject", subject);
+        String bodyText = templateManager.processTemplate("digest_email.ftl", params, locale);
+        String bodyHtml = templateManager.processTemplate("digest_email_html.ftl", params, locale);
         EmailMessage emailMessage = new EmailMessage();
-        emailMessage.setSubject("Your digest from ORCID");
-        emailMessage.setBodyText(emailBody);
+
+        emailMessage.setSubject(subject);
+        emailMessage.setBodyText(bodyText);
+        emailMessage.setBodyHtml(bodyHtml);
         return emailMessage;
 
     }
@@ -139,9 +161,8 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                     EmailMessage digestMessage = createDigest(orcid, notifications);
                     digestMessage.setFrom(DIGEST_FROM_ADDRESS);
                     digestMessage.setTo(profileDao.find(orcid).getPrimaryEmail().getId());
-                    // XXX Need to add html
                     boolean successfullySent = mailGunManager.sendEmail(digestMessage.getFrom(), digestMessage.getTo(), digestMessage.getSubject(),
-                            digestMessage.getBodyText(), "<html><body><pre>" + digestMessage.getBodyText() + "</pre></body></html>");
+                            digestMessage.getBodyText(), digestMessage.getBodyHtml());
                     if (successfullySent) {
                         flagAsSent(notifications);
                     }
