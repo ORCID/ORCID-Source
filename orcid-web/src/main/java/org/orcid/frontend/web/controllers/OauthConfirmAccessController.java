@@ -50,7 +50,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
 import org.springframework.security.oauth2.common.exceptions.RedirectMismatchException;
-import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
@@ -98,7 +97,7 @@ public class OauthConfirmAccessController extends BaseController {
     private RegistrationController registrationController;
 
     private static String REDIRECT_URI_ERROR = "/oauth/error/redirect-uri-mismatch?client_id={0}";
-
+        
     @RequestMapping(value = { "/signin", "/login" }, method = RequestMethod.GET)
     public ModelAndView loginGetHandler2(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
         // find client name if available
@@ -171,11 +170,7 @@ public class OauthConfirmAccessController extends BaseController {
 
                     // Check if the client has persistent tokens enabled
                     if (clientDetails.isPersistentTokensEnabled())
-                        usePersistentTokens = true;
-
-                    // Remove client_credentials scopes
-                    if (!PojoUtil.isEmpty(scope))
-                        scope = trimClientCredentialScopes(scope);
+                        usePersistentTokens = true;                    
 
                     // validate client scopes
                     try {
@@ -225,7 +220,7 @@ public class OauthConfirmAccessController extends BaseController {
     }
 
     @RequestMapping(value = "/confirm_access", method = RequestMethod.GET)
-    public ModelAndView loginGetHandler(HttpServletRequest request, ModelAndView mav, @RequestParam("client_id") String clientId, @RequestParam("scope") String scope) {
+    public ModelAndView loginGetHandler(HttpServletRequest request, ModelAndView mav, @RequestParam("client_id") String clientId, @RequestParam("scope") String scope, @RequestParam("redirect_uri") String redirectUri) {
         OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid(), LoadOptions.BIO_ONLY);
 
         // XXX Use T2 API
@@ -240,16 +235,25 @@ public class OauthConfirmAccessController extends BaseController {
         String clientGroupName = "";
         String clientWebsite = "";
 
-        // Remove client_credentials scopes
-        if (!PojoUtil.isEmpty(scope))
-            scope = trimClientCredentialScopes(scope);
-
         boolean usePersistentTokens = false;
 
         ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
         clientName = clientDetails.getClientName() == null ? "" : clientDetails.getClientName();
         clientDescription = clientDetails.getClientDescription() == null ? "" : clientDetails.getClientDescription();
         clientWebsite = clientDetails.getClientWebsite() == null ? "" : clientDetails.getClientWebsite();
+        
+        // validate client scopes
+        try {
+            authorizationEndpoint.validateScope(scope, clientDetails);
+        } catch (InvalidScopeException ise) {
+            String redirectUriWithParams = redirectUri;
+            redirectUriWithParams += "?error=invalid_scope&error_description=" + ise.getMessage();
+            RedirectView rView = new RedirectView(redirectUriWithParams);
+
+            ModelAndView error = new ModelAndView();
+            error.setView(rView);
+            return error;
+        }        
 
         // Check if the client has persistent tokens enabled
         if (clientDetails.isPersistentTokensEnabled())
@@ -652,22 +656,4 @@ public class OauthConfirmAccessController extends BaseController {
             throw new IllegalArgumentException("Invalid client details id");
         return clientDetails.isPersistentTokensEnabled();
     }
-
-    private String trimClientCredentialScopes(String scopes) {
-        String result = scopes;
-        for (String scope : OAuth2Utils.parseParameterList(scopes)) {
-            ScopePathType scopeType = ScopePathType.fromValue(scope);
-            if (scopeType.isClientCreditalScope()) {
-                if (scopes.contains(ScopePathType.ORCID_PROFILE_CREATE.getContent()))
-                    result = scopes.replaceAll(ScopePathType.ORCID_PROFILE_CREATE.getContent(), "");
-                else if (scopes.contains(ScopePathType.READ_PUBLIC.getContent()))
-                    result = scopes.replaceAll(ScopePathType.READ_PUBLIC.getContent(), "");
-                else if (scopes.contains(ScopePathType.WEBHOOK.getContent()))
-                    result = scopes.replaceAll(ScopePathType.WEBHOOK.getContent(), "");
-            }
-        }
-
-        return result;
-    }
-
 }
