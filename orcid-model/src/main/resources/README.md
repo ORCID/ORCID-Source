@@ -12,7 +12,7 @@
     * [Staying Informed](#staying-informed)
 * [About XSD Updates and Versioning](#about-xsd-updates-and-versioning)
     * [Using XSD Versions](#using-xsd-versions)
-* [ORCID-Message XSD Versions Table](#orcid-message-xsd=versions)
+* [ORCID-Message XSD Versions Table](#orcid-message-xsd-versions)
 * [Getting Help](#getting-help)
 
 ---
