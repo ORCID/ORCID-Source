@@ -38,6 +38,7 @@ import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.servlet.ModelAndView;
 
+@RequestMapping(value = "/oauth/authorize")
 public class OrcidAuthorizationEndpoint extends AuthorizationEndpoint {
 
     private String redirectUriError = "forward:/oauth/error/redirect-uri-mismatch";
