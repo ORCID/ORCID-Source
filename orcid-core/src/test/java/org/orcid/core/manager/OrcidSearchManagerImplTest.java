@@ -98,7 +98,7 @@ public class OrcidSearchManagerImplTest extends BaseTest {
     @Rollback
     public void orcidRetrievalAllDataPresentInDb() throws Exception {
         when(solrDao.findByOrcid("1434")).thenReturn(getSolrRes5678());
-        when(orcidProfileManager.retrieveClaimedOrcidProfile("5678")).thenReturn(getOrcidProfileAllIndexFieldsPopulated());
+        when(orcidProfileManager.retrievePublic("5678")).thenReturn(getOrcidProfileAllIndexFieldsPopulated());
 
         String orcid = "1434";
 
@@ -160,7 +160,7 @@ public class OrcidSearchManagerImplTest extends BaseTest {
     public void orcidRetrievalMandatoryFieldsOnly() {
 
         when(solrDao.findByOrcid("1434")).thenReturn(getSolrRes5678());
-        when(orcidProfileManager.retrieveClaimedOrcidProfile("5678")).thenReturn(getOrcidProfile5678MandatoryOnly());
+        when(orcidProfileManager.retrievePublic("5678")).thenReturn(getOrcidProfile5678MandatoryOnly());
         OrcidMessage retrievedOrcidMessage = orcidSearchManager.findOrcidSearchResultsById("1434");
         assertNotNull(retrievedOrcidMessage);
         assertTrue(retrievedOrcidMessage.getOrcidSearchResults().getOrcidSearchResult().size() == 1);
@@ -190,8 +190,8 @@ public class OrcidSearchManagerImplTest extends BaseTest {
     public void oneOrcidInDbOtherMissing() {
 
         when(solrDao.findByDocumentCriteria("rndQuery", null, null)).thenReturn(multipleResultsForQuery());
-        when(orcidProfileManager.retrieveClaimedOrcidProfile("5678")).thenReturn(getOrcidProfile5678MandatoryOnly());
-        when(orcidProfileManager.retrieveClaimedOrcidProfile("6789")).thenReturn(null);
+        when(orcidProfileManager.retrievePublic("5678")).thenReturn(getOrcidProfile5678MandatoryOnly());
+        when(orcidProfileManager.retrievePublic("6789")).thenReturn(null);
         OrcidMessage retrievedOrcidMessage = orcidSearchManager.findOrcidsByQuery("rndQuery");
         assertNotNull(retrievedOrcidMessage);
         assertTrue(retrievedOrcidMessage.getOrcidSearchResults() != null && retrievedOrcidMessage.getOrcidSearchResults().getOrcidSearchResult().size() == 1);
@@ -242,8 +242,8 @@ public class OrcidSearchManagerImplTest extends BaseTest {
     public void orcidMultipleOrcidsIndexed() {
 
         when(solrDao.findByDocumentCriteria("rndQuery", null, null)).thenReturn(multipleResultsForQuery());
-        when(orcidProfileManager.retrieveClaimedOrcidProfile("5678")).thenReturn(getOrcidProfile5678MandatoryOnly());
-        when(orcidProfileManager.retrieveClaimedOrcidProfile("6789")).thenReturn(getOrcidProfile6789MandatoryOnly());
+        when(orcidProfileManager.retrievePublic("5678")).thenReturn(getOrcidProfile5678MandatoryOnly());
+        when(orcidProfileManager.retrievePublic("6789")).thenReturn(getOrcidProfile6789MandatoryOnly());
         OrcidMessage retrievedOrcidMessage = orcidSearchManager.findOrcidsByQuery("rndQuery");
         assertNotNull(retrievedOrcidMessage);
         assertTrue(retrievedOrcidMessage.getOrcidSearchResults().getOrcidSearchResult().size() == 2);
