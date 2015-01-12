@@ -187,6 +187,9 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
 
     @Test
     public void testGetBioReadLimited() throws JSONException, InterruptedException {
+    	System.out.println("-----------------------------------");
+    	System.out.println("Running test: testGetBioReadLimited");
+    	System.out.println("-----------------------------------");
         String scopes = "/orcid-bio/read-limited";
         String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, "michael@bentine.com", "password");
         String accessToken = obtainAccessToken(authorizationCode, scopes);
@@ -208,6 +211,9 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
 
     @Test
     public void testGetBioReadLimitedWhenAlreadySignedIn() throws JSONException, InterruptedException {
+    	System.out.println("-----------------------------------");
+    	System.out.println("Running test: testGetBioReadLimitedWhenAlreadySignedIn");
+    	System.out.println("-----------------------------------");
         String scopes = "/orcid-bio/read-limited";
         webDriverHelper.signIn("michael@bentine.com", "password");
         String authorizationCode = webDriverHelper.obtainAuthorizationCodeWhenAlreadySignedIn(scopes, CLIENT_DETAILS_ID);
@@ -230,6 +236,9 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
 
     @Test
     public void testGetAuthenticate() throws JSONException, InterruptedException {
+    	System.out.println("-----------------------------------");
+    	System.out.println("Running test: testGetAuthenticate");
+    	System.out.println("-----------------------------------");
         String scopes = "/authenticate";
         String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, "michael@bentine.com", "password");
         String accessToken = obtainAccessToken(authorizationCode, scopes);
@@ -239,6 +248,9 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
 
     @Test
     public void testInvalidCodesFail() throws JSONException, InterruptedException {
+    	System.out.println("-----------------------------------");
+    	System.out.println("Running test: testInvalidCodesFail");
+    	System.out.println("-----------------------------------");
         String scopes = "/orcid-bio/read-limited";
         String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, "michael@bentine.com", "password");
         String wrongScope = "/myscope";
@@ -261,6 +273,9 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
 
     @Test
     public void dontFailWithGrantScopes() throws JSONException, InterruptedException {
+    	System.out.println("-----------------------------------");
+    	System.out.println("Running test: dontFailWithGrantScopes");
+    	System.out.println("-----------------------------------");
         String scopes = "/funding/read-limited";
         String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, "michael@bentine.com", "password");
         String wrongScope = "/orcid-grants/read-limited";
@@ -277,6 +292,9 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
 
     @Test
     public void testAddWork() throws InterruptedException, JSONException {
+    	System.out.println("-----------------------------------");
+    	System.out.println("Running test: testAddWork");
+    	System.out.println("-----------------------------------");
         String scopes = "/orcid-works/create";
         String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, "michael@bentine.com", "password");
         String accessToken = obtainAccessToken(authorizationCode, scopes);
@@ -302,6 +320,9 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
 
     @Test
     public void testAddWorkWithTranslatedTitleJournalTitleAndLanguageCode() throws InterruptedException, JSONException {
+    	System.out.println("-----------------------------------");
+    	System.out.println("Running test: testAddWorkWithTranslatedTitleJournalTitleAndLanguageCode");
+    	System.out.println("-----------------------------------");
         String scopes = "/orcid-works/create";
         String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, "michael@bentine.com", "password");
         String accessToken = obtainAccessToken(authorizationCode, scopes);
@@ -338,6 +359,9 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
 
     @Test
     public void testAddWorkWithNewWorkTypesForV1_1() throws InterruptedException, JSONException {
+    	System.out.println("-----------------------------------");
+    	System.out.println("Running test: testAddWorkWithNewWorkTypesForV1_1");
+    	System.out.println("-----------------------------------");
         String scopes = "/orcid-works/create";
         String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, "michael@bentine.com", "password");
         String accessToken = obtainAccessToken(authorizationCode, scopes);
@@ -363,6 +387,9 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
 
     @Test
     public void testAddWorkWithEmptyTitle() throws InterruptedException, JSONException {
+    	System.out.println("-----------------------------------");
+    	System.out.println("Running test: testAddWorkWithEmptyTitle");
+    	System.out.println("-----------------------------------");
         String scopes = "/orcid-works/create";
         String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, "michael@bentine.com", "password");
         String accessToken = obtainAccessToken(authorizationCode, scopes);
@@ -394,7 +421,10 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
 
     @Test
     public void testAddWorkWithoutExtIdsFor1_2rc5() throws InterruptedException, JSONException {
-        String scopes = "/orcid-works/create";
+    	System.out.println("-----------------------------------");
+    	System.out.println("Running test: testAddWorkWithoutExtIdsFor1_2rc5");
+    	System.out.println("-----------------------------------");
+    	String scopes = "/orcid-works/create";
         String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, "michael@bentine.com", "password");
         String accessToken = obtainAccessToken(authorizationCode, scopes);
 
@@ -425,6 +455,9 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
 
     @Test
     public void testAddWorkWithoutExtIdsForLowerThan1_2rc5() throws InterruptedException, JSONException {
+    	System.out.println("-----------------------------------");
+    	System.out.println("Running test: testAddWorkWithoutExtIdsForLowerThan1_2rc5");
+    	System.out.println("-----------------------------------");
         String scopes = "/orcid-works/create";
         String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, "michael@bentine.com", "password");
         String accessToken = obtainAccessToken(authorizationCode, scopes);
@@ -450,6 +483,9 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
 
     @Test
     public void testAddWorkWithExtIdsFor1_2rc5() throws InterruptedException, JSONException {
+    	System.out.println("-----------------------------------");
+    	System.out.println("Running test: testAddWorkWithExtIdsFor1_2rc5");
+    	System.out.println("-----------------------------------");
         String scopes = "/orcid-works/create";
         String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, "michael@bentine.com", "password");
         String accessToken = obtainAccessToken(authorizationCode, scopes);
@@ -481,6 +517,9 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
 
     @Test
     public void testAddAffiliation() throws InterruptedException, JSONException {
+    	System.out.println("-----------------------------------");
+    	System.out.println("Running test: testAddAffiliation");
+    	System.out.println("-----------------------------------");
         String scopes = "/affiliations/create /affiliations/read-limited";
         String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, "michael@bentine.com", "password");
         String accessToken = obtainAccessToken(authorizationCode, scopes);
@@ -517,6 +556,9 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
 
     @Test
     public void testAddFunding() throws InterruptedException, JSONException {
+    	System.out.println("-----------------------------------");
+    	System.out.println("Running test: testAddFunding");
+    	System.out.println("-----------------------------------");
         String scopes = "/funding/create /funding/read-limited";
         String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, "michael@bentine.com", "password");
         String accessToken = obtainAccessToken(authorizationCode, scopes);
@@ -582,6 +624,9 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
 
     @Test
     public void testAddFundingWithOrganizationDefinedFundingType() throws InterruptedException, JSONException {
+    	System.out.println("-----------------------------------");
+    	System.out.println("Running test: testAddFundingWithOrganizationDefinedFundingType");
+    	System.out.println("-----------------------------------");
         String scopes = "/funding/create";
         String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, "michael@bentine.com", "password");
         String accessToken = obtainAccessToken(authorizationCode, scopes);
@@ -641,6 +686,9 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
 
     @Test
     public void testAddFundingWithIncorrectFormat() throws InterruptedException, JSONException {
+    	System.out.println("-----------------------------------");
+    	System.out.println("Running test: testAddFundingWithIncorrectFormat");
+    	System.out.println("-----------------------------------");
         String scopes = "/funding/create";
         String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, "michael@bentine.com", "password");
         String accessToken = obtainAccessToken(authorizationCode, scopes);
@@ -704,6 +752,9 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
 
     @Test
     public void testAddFundingWithExtIdsFor1_2rc5() throws InterruptedException, JSONException {
+    	System.out.println("-----------------------------------");
+    	System.out.println("Running test: testAddFundingWithExtIdsFor1_2rc5");
+    	System.out.println("-----------------------------------");
         String scopes = "/funding/create";
         String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, "michael@bentine.com", "password");
         String accessToken = obtainAccessToken(authorizationCode, scopes);
@@ -762,6 +813,9 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
 
     @Test
     public void testAddFundingWithoutExtIdsFor1_2rc5() throws InterruptedException, JSONException {
+    	System.out.println("-----------------------------------");
+    	System.out.println("Running test: testAddFundingWithoutExtIdsFor1_2rc5");
+    	System.out.println("-----------------------------------");
         String scopes = "/funding/create";
         String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, "michael@bentine.com", "password");
         String accessToken = obtainAccessToken(authorizationCode, scopes);
@@ -819,7 +873,10 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
 
     @Test
     public void testAddFundingWithoutExtIdsForLowerThan1_2rc5() throws InterruptedException, JSONException {
-        String scopes = "/funding/create";
+    	System.out.println("-----------------------------------");
+    	System.out.println("Running test: testAddFundingWithoutExtIdsForLowerThan1_2rc5");
+    	System.out.println("-----------------------------------");
+    	String scopes = "/funding/create";
         String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, "michael@bentine.com", "password");
         String accessToken = obtainAccessToken(authorizationCode, scopes);
 
@@ -870,6 +927,9 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
 
     @Test
     public void testAddWorkToWrongProfile() throws InterruptedException, JSONException {
+    	System.out.println("-----------------------------------");
+    	System.out.println("Running test: testAddWorkToWrongProfile");
+    	System.out.println("-----------------------------------");
         String scopes = "/orcid-works/create";
         String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, "michael@bentine.com", "password");
         String accessToken = obtainAccessToken(authorizationCode, scopes);
