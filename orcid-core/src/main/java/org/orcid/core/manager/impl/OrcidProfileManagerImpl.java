@@ -2186,4 +2186,10 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         orcidProfile.getOrcidPreferences().setLocale(org.orcid.jaxb.model.message.Locale.fromValue(locale.toString()));
     }
 
+    @VisibilityControl(removeAttributes = false, visibilities = Visibility.PUBLIC)
+    @Override
+    public OrcidProfile retrievePublic(String orcid) {
+        return retrieveClaimedOrcidProfile(orcid);
+    }
+
 }

@@ -359,6 +359,8 @@ public interface OrcidProfileManager {
     OrcidWorks dedupeWorks(OrcidWorks orcidWorks);
 
     OrcidProfile retrieveClaimedOrcidProfile(String orcid);
+    
+    OrcidProfile retrievePublic(String orcid);
 
     public OrcidProfile retrieveFreshOrcidProfile(String orcid, LoadOptions loadOptions);
     
