@@ -2004,7 +2004,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 LOG.info("About to index profile: {}", orcid);
-                OrcidProfile orcidProfile = retrieveClaimedOrcidProfile(orcid);
+                OrcidProfile orcidProfile = retrievePublic(orcid);
                 if (orcidProfile == null) {
                     LOG.debug("Null profile found during indexing: {}", orcid);
                 } else {
