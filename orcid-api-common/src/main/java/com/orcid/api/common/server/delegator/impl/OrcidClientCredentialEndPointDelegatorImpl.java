@@ -30,6 +30,8 @@ import org.orcid.api.common.exception.OrcidInvalidScopeException;
 import org.orcid.core.constants.OauthTokensConstants;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
+import org.orcid.persistence.jpa.entities.OrcidOauth2AuthoriziationCodeDetail;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
@@ -105,19 +107,32 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
             throw new OrcidInvalidScopeException(
                     "One of the provided scopes is not allowed. Please refere to the list of allowed scopes at: http://support.orcid.org/knowledgebase/articles/120162-orcid-scopes");
         }
-                
+                           
         String clientName = client.getName();
         LOGGER.info("Comparing passed clientId and client name from spring auth: clientId={}, client.name={}", clientId, clientName);
         clientId = clientName;
         Map<String, String> authorizationParameters = new HashMap<String, String>();
+        
+        if(scopes != null) {
+            String scopesString = StringUtils.join(scopes, ' ');
+            authorizationParameters.put(OAuth2Utils.SCOPE, scopesString);
+        }
+                
         authorizationParameters.put(OAuth2Utils.CLIENT_ID, clientId);
         if (code != null) {
             authorizationParameters.put("code", code);
-            if(orcidOauth2AuthoriziationCodeDetailDao.find(code) != null) {
+            OrcidOauth2AuthoriziationCodeDetail authorizationCodeEntity = orcidOauth2AuthoriziationCodeDetailDao.find(code);            
+            
+            if(authorizationCodeEntity != null) {
                 if(orcidOauth2AuthoriziationCodeDetailDao.isPersistentToken(code)) {
                     authorizationParameters.put(OauthTokensConstants.IS_PERSISTENT, "true");
                 } else {
                     authorizationParameters.put(OauthTokensConstants.IS_PERSISTENT, "false");
+                }
+                
+                if(!authorizationParameters.containsKey(OAuth2Utils.SCOPE) || PojoUtil.isEmpty(authorizationParameters.get(OAuth2Utils.SCOPE))) {
+                    String scopesString = StringUtils.join(authorizationCodeEntity.getScopes(), ' ');
+                    authorizationParameters.put(OAuth2Utils.SCOPE, scopesString);
                 }
             } else {
                 authorizationParameters.put(OauthTokensConstants.IS_PERSISTENT, "false");
@@ -126,15 +141,9 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
         if (redirectUri != null) {
             authorizationParameters.put(OAuth2Utils.REDIRECT_URI, redirectUri);
         }        
-        if(scopes != null) {
-            String scopesString = StringUtils.join(scopes, ' ');
-            authorizationParameters.put(OAuth2Utils.SCOPE, scopesString);
-        }
+        AuthorizationRequest authorizationRequest = getOAuth2RequestFactory().createAuthorizationRequest(authorizationParameters);                        
         
-        AuthorizationRequest authorizationRequest = getOAuth2RequestFactory().createAuthorizationRequest(authorizationParameters);        
-        
-        TokenRequest tokenRequest = getOAuth2RequestFactory().createTokenRequest(authorizationRequest, grantType);
-        
+        TokenRequest tokenRequest = getOAuth2RequestFactory().createTokenRequest(authorizationRequest, grantType);        
         
         OAuth2AccessToken token = getTokenGranter().grant(grantType, tokenRequest);
         if (token == null) {

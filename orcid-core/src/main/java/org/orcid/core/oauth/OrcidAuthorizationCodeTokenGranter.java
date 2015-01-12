@@ -81,7 +81,6 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
 
         //Validate scopes
         OrcidOauth2AuthoriziationCodeDetail codeDetails = orcidOauth2AuthoriziationCodeDetailDao.find(authorizationCode);        
-        
         if(codeDetails == null) {
             throw new InvalidGrantException("Invalid authorization code: " + authorizationCode);
         } else {
@@ -121,7 +120,7 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
         // This might be null, if the authorization was done without the
         // redirect_uri parameter
         String redirectUriApprovalParameter = pendingAuthorizationRequest.getRequestParameters().get(OAuth2Utils.REDIRECT_URI);
-
+        
         if ((redirectUri != null || redirectUriApprovalParameter != null) && !pendingAuthorizationRequest.getRedirectUri().equals(redirectUri)) {
             throw new RedirectMismatchException("Redirect URI mismatch.");
         }
