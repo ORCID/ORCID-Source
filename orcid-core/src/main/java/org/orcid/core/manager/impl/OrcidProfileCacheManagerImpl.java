@@ -59,7 +59,7 @@ public class OrcidProfileCacheManagerImpl implements OrcidProfileCacheManager {
                 synchronized (pubLocks.obtainLock(orcid)) {
                     op = toOrcidProfile(publicProfileCache.get(orcid));
                     if (needsFresh(dbDate, op)) {
-                        op = orcidProfileManager.retrieveClaimedOrcidProfile(orcid);
+                        op = orcidProfileManager.retrievePublic(orcid);
                         publicProfileCache.put(new Element(key, op));
                     }
                 }
