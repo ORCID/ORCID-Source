@@ -111,19 +111,19 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
     private OrcidOauth2AuthoriziationCodeDetail getDetailFromAuthorization(String code, OAuth2Authentication authentication) {
         OAuth2Request oAuth2Request = authentication.getOAuth2Request();
         OrcidOauth2AuthoriziationCodeDetail detail = new OrcidOauth2AuthoriziationCodeDetail();
-        Map<String, Serializable> parameters = oAuth2Request.getExtensions();
-        if (parameters != null && !parameters.isEmpty()) {
-            String clientId = (String) parameters.get(CLIENT_ID);
+        Map<String, String> requestParameters = oAuth2Request.getRequestParameters();
+        if (requestParameters != null && !requestParameters.isEmpty()) {
+            String clientId = (String) requestParameters.get(CLIENT_ID);
             ClientDetailsEntity clientDetails = getClientDetails(clientId);
 
             if (clientDetails == null) {
                 return null;
             }
 
-            detail.setScopes(OAuth2Utils.parseParameterList((String)parameters.get(SCOPE)));
-            detail.setState((String)parameters.get(STATE));
-            detail.setRedirectUri((String)parameters.get(REDIRECT_URI));
-            detail.setResponseType((String)parameters.get(RESPONSE_TYPE));
+            detail.setScopes(OAuth2Utils.parseParameterList((String)requestParameters.get(SCOPE)));
+            detail.setState((String)requestParameters.get(STATE));
+            detail.setRedirectUri((String)requestParameters.get(REDIRECT_URI));
+            detail.setResponseType((String)requestParameters.get(RESPONSE_TYPE));
             detail.setClientDetailsEntity(clientDetails);
         }
 
@@ -154,15 +154,14 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
         if (authenticationDetails instanceof WebAuthenticationDetails) {
             detail.setSessionId(((WebAuthenticationDetails) authenticationDetails).getSessionId());
         }
-        
-        Map<String, Serializable> approvalParameters = oAuth2Request.getExtensions();
+                
         boolean isPersistentTokenEnabledByUser = false;
         //Set token version to persistent token
         //TODO: As of Jan 2015 all tokens will be new tokens, so, we will have to remove the token version code and 
         //treat all tokens as new tokens
         detail.setVersion(Long.valueOf(OauthTokensConstants.PERSISTENT_TOKEN));
-        if(approvalParameters.containsKey(OauthTokensConstants.GRANT_PERSISTENT_TOKEN)) {
-            String grantPersitentToken = (String)approvalParameters.get(OauthTokensConstants.GRANT_PERSISTENT_TOKEN);
+        if(requestParameters.containsKey(OauthTokensConstants.GRANT_PERSISTENT_TOKEN)) {
+            String grantPersitentToken = (String)requestParameters.get(OauthTokensConstants.GRANT_PERSISTENT_TOKEN);
             if(Boolean.parseBoolean(grantPersitentToken)) {
                 isPersistentTokenEnabledByUser = true;                
             }

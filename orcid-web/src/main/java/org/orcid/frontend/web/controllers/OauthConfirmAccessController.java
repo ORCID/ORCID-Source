@@ -51,6 +51,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
 import org.springframework.security.oauth2.common.exceptions.RedirectMismatchException;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
+import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
@@ -322,17 +323,18 @@ public class OauthConfirmAccessController extends BaseController {
                         params.put(SCOPE_PARAM, form.getScope().getValue());
                     if (!PojoUtil.isEmpty(form.getResponseType()))
                         params.put(RESPONSE_TYPE_PARAM, form.getResponseType().getValue());
-                    params.put(OAuth2Utils.USER_OAUTH_APPROVAL, "true");
-                    Map<String, String> approvalParams = new HashMap<String, String>();
-                    approvalParams.put(OAuth2Utils.USER_OAUTH_APPROVAL, "true");
-                    approvalParams.put(OauthTokensConstants.TOKEN_VERSION, OauthTokensConstants.PERSISTENT_TOKEN);
+                    params.put(OAuth2Utils.USER_OAUTH_APPROVAL, "true");                                        
+                    params.put(OauthTokensConstants.TOKEN_VERSION, OauthTokensConstants.PERSISTENT_TOKEN);
                     // Check if the client have persistent tokens enabled
-                    approvalParams.put(OauthTokensConstants.GRANT_PERSISTENT_TOKEN, "false");
+                    params.put(OauthTokensConstants.GRANT_PERSISTENT_TOKEN, "false");
                     if (hasPersistenTokensEnabled(form.getClientId().getValue()))
                         // Then check if the client granted the persistent token
                         if (form.getPersistentTokenEnabled())
-                            approvalParams.put(OauthTokensConstants.GRANT_PERSISTENT_TOKEN, "true");
+                            params.put(OauthTokensConstants.GRANT_PERSISTENT_TOKEN, "true");
 
+                    Map<String, String> approvalParams = new HashMap<String, String>();
+                    approvalParams.put(OAuth2Utils.USER_OAUTH_APPROVAL, "true");
+                    
                     // Authorize
                     try {
                         authorizationEndpoint.authorize(model, params, status, auth);
@@ -427,6 +429,7 @@ public class OauthConfirmAccessController extends BaseController {
                 SimpleSessionStatus status = new SimpleSessionStatus();
                 Map<String, Object> model = new HashMap<String, Object>();
                 Map<String, String> params = new HashMap<String, String>();
+                Map<String, String> approvalParams = new HashMap<String, String>();
                 // Put all request params into the params
                 SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
                 copyRequestParameters(savedRequest, params);
@@ -440,24 +443,23 @@ public class OauthConfirmAccessController extends BaseController {
                     params.put(SCOPE_PARAM, form.getScope().getValue());
                 if (!PojoUtil.isEmpty(form.getResponseType()))
                     params.put(RESPONSE_TYPE_PARAM, form.getResponseType().getValue());
-                if (form.getApproved())
+                
+                if (form.getApproved()) {
                     params.put(OAuth2Utils.USER_OAUTH_APPROVAL, "true");
-                else
-                    params.put(OAuth2Utils.USER_OAUTH_APPROVAL, "false");
-                Map<String, String> approvalParams = new HashMap<String, String>();
-                if (form.getApproved())
                     approvalParams.put(OAuth2Utils.USER_OAUTH_APPROVAL, "true");
-                else
+                } else {
+                    params.put(OAuth2Utils.USER_OAUTH_APPROVAL, "false");
                     approvalParams.put(OAuth2Utils.USER_OAUTH_APPROVAL, "false");
-
-                approvalParams.put(OauthTokensConstants.TOKEN_VERSION, OauthTokensConstants.PERSISTENT_TOKEN);
+                }
+                
+                params.put(OauthTokensConstants.TOKEN_VERSION, OauthTokensConstants.PERSISTENT_TOKEN);
                 // Check if the client have persistent tokens enabled
-                approvalParams.put(OauthTokensConstants.GRANT_PERSISTENT_TOKEN, "false");
+                params.put(OauthTokensConstants.GRANT_PERSISTENT_TOKEN, "false");
                 if (hasPersistenTokensEnabled(form.getClientId().getValue()))
                     // Then check if the client granted the persistent token
                     if (form.getPersistentTokenEnabled())
-                        approvalParams.put(OauthTokensConstants.GRANT_PERSISTENT_TOKEN, "true");
-
+                        params.put(OauthTokensConstants.GRANT_PERSISTENT_TOKEN, "true");                              
+                
                 // Authorize
                 try {
                     authorizationEndpoint.authorize(model, params, status, auth);
@@ -495,28 +497,36 @@ public class OauthConfirmAccessController extends BaseController {
     public @ResponseBody
     OauthAuthorizeForm authorize(HttpServletRequest request, @RequestBody OauthAuthorizeForm form) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Object authorizationRequest = request.getSession().getAttribute("authorizationRequest");
-        // Authorization request model
-        Map<String, Object> model = new HashMap<String, Object>();
-        model.put("authorizationRequest", authorizationRequest);
-        // Approval params
+        AuthorizationRequest authorizationRequest = (AuthorizationRequest) request.getSession().getAttribute("authorizationRequest");
+        Map<String, String> requestParams = new HashMap<String, String>(authorizationRequest.getRequestParameters());
         Map<String, String> approvalParams = new HashMap<String, String>();
-        if (form.getApproved())
+        
+        
+        
+        // Add the persistent token information        
+        if (form.getApproved()) {
+            requestParams.put(OAuth2Utils.USER_OAUTH_APPROVAL, "true");
             approvalParams.put(OAuth2Utils.USER_OAUTH_APPROVAL, "true");
-        else
+        } else {
+            requestParams.put(OAuth2Utils.USER_OAUTH_APPROVAL, "false");
             approvalParams.put(OAuth2Utils.USER_OAUTH_APPROVAL, "false");
-
-        approvalParams.put(OauthTokensConstants.TOKEN_VERSION, OauthTokensConstants.PERSISTENT_TOKEN);
+        }
+        requestParams.put(OauthTokensConstants.TOKEN_VERSION, OauthTokensConstants.PERSISTENT_TOKEN);
         // Check if the client have persistent tokens enabled
-        approvalParams.put(OauthTokensConstants.GRANT_PERSISTENT_TOKEN, "false");
+        requestParams.put(OauthTokensConstants.GRANT_PERSISTENT_TOKEN, "false");
         if (hasPersistenTokensEnabled(form.getClientId().getValue()))
             // Then check if the client granted the persistent token
             if (form.getPersistentTokenEnabled())
-                approvalParams.put(OauthTokensConstants.GRANT_PERSISTENT_TOKEN, "true");
+                requestParams.put(OauthTokensConstants.GRANT_PERSISTENT_TOKEN, "true");
 
         // Session status
         SimpleSessionStatus status = new SimpleSessionStatus();
 
+        authorizationRequest.setRequestParameters(requestParams);
+        // Authorization request model
+        Map<String, Object> model = new HashMap<String, Object>();
+        model.put("authorizationRequest", authorizationRequest);
+        
         // Approve
         RedirectView view = (RedirectView) authorizationEndpoint.approveOrDeny(approvalParams, model, status, auth);
         form.setRedirectUri(Text.valueOf(view.getUrl()));
