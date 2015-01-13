@@ -14,9 +14,10 @@
  *
  * =============================================================================
  */
-package org.orcid.integration.api.t2.test;
+package org.orcid.integration.api.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.Arrays;
 import java.util.List;
@@ -35,7 +36,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.orcid.api.common.WebDriverHelper;
 import org.orcid.core.manager.ClientDetailsManager;
-import org.orcid.integration.api.t2.T2OAuthAPIService;
+import org.orcid.integration.api.t1.T1OAuthAPIService;
 import org.orcid.persistence.dao.ClientRedirectDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -55,8 +56,8 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
  * 
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-oauth-orcid-api-client-context.xml" })
-public class PublicOauthClientTest extends DBUnitTest {
+@ContextConfiguration(locations = { "classpath:orcid-t1-client-context.xml" })
+public class T1PublicOauthClientTest extends DBUnitTest {
 
     private static final String CLIENT_DETAILS_ID = "4444-4444-4444-4498";
 
@@ -75,8 +76,8 @@ public class PublicOauthClientTest extends DBUnitTest {
     @Resource
     private ClientDetailsManager clientDetailsManager;
 
-    @Resource(name = "t2OAuthClient")
-    private T2OAuthAPIService<ClientResponse> oauthT2Client;
+    @Resource(name = "t1OAuthClient")
+    private T1OAuthAPIService<ClientResponse> oauthT1Client;
 
     @Value("${org.orcid.web.base.url:http://localhost:8080/orcid-web}")
     private String webBaseUrl;
@@ -99,14 +100,11 @@ public class PublicOauthClientTest extends DBUnitTest {
         redirectUri = webBaseUrl + "/oauth/playground";
         webDriverHelper = new WebDriverHelper(webDriver, webBaseUrl, redirectUri);
 
-        // Set redirect uris if needed
         ClientRedirectUriPk clientRedirectUriPk = new ClientRedirectUriPk(CLIENT_DETAILS_ID, redirectUri, DEFAULT);
         if (clientRedirectDao.find(clientRedirectUriPk) == null) {
             clientDetailsManager.addClientRedirectUri(CLIENT_DETAILS_ID, redirectUri);
         }
-
         webDriver.get(webBaseUrl + "/signout");
-
         // Update last modified to force cache eviction (because DB unit deletes
         // a load of stuff from the DB, but reinserts profiles with older last
         // modified date)
@@ -132,15 +130,16 @@ public class PublicOauthClientTest extends DBUnitTest {
         params.add("scope", scopes);
         params.add("redirect_uri", redirectUri);
         params.add("code", authorizationCode);
-        ClientResponse clientResponse = oauthT2Client.obtainOauth2TokenPost("client_credentials", params);
-        // Should get a 400 since public client should not use the members API
-        assertEquals(400, clientResponse.getStatus());
+        ClientResponse clientResponse = oauthT1Client.obtainOauth2TokenPost("client_credentials", params);
+        assertEquals(200, clientResponse.getStatus());
         String body = clientResponse.getEntity(String.class);
         JSONObject jsonObject = new JSONObject(body);
-        String error = (String) jsonObject.get("error");
-        String errorDescription = (String) jsonObject.get("error_description");
-        assertEquals("invalid_request", error);
-        assertEquals("Public members are not allowed to use the Members API", errorDescription);
+        String scope = (String) jsonObject.get("scope");
+        String orcid = (String) jsonObject.get("orcid");
+        String token = (String) jsonObject.get("access_token");
+        assertEquals("/authenticate", scope);
+        assertEquals("4444-4444-4444-4442", orcid);
+        assertNotNull(token);
 
     }
 

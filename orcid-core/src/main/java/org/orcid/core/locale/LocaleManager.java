@@ -29,7 +29,7 @@ public interface LocaleManager {
      */
     Locale getLocale();
 
-    Locale getLocalFromOrcidProfile(OrcidProfile orcidProfile);
+    Locale getLocaleFromOrcidProfile(OrcidProfile orcidProfile);
 
     /**
      * @param messageCode

@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.integration.api.t2.test;
+package org.orcid.integration.api.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

@@ -2004,7 +2004,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 LOG.info("About to index profile: {}", orcid);
-                OrcidProfile orcidProfile = retrieveClaimedOrcidProfile(orcid);
+                OrcidProfile orcidProfile = retrievePublic(orcid);
                 if (orcidProfile == null) {
                     LOG.debug("Null profile found during indexing: {}", orcid);
                 } else {
@@ -2184,6 +2184,12 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         if (orcidProfile.getOrcidPreferences() == null)
             orcidProfile.setOrcidPreferences(new OrcidPreferences());
         orcidProfile.getOrcidPreferences().setLocale(org.orcid.jaxb.model.message.Locale.fromValue(locale.toString()));
+    }
+
+    @VisibilityControl(removeAttributes = false, visibilities = Visibility.PUBLIC)
+    @Override
+    public OrcidProfile retrievePublic(String orcid) {
+        return retrieveClaimedOrcidProfile(orcid);
     }
 
 }

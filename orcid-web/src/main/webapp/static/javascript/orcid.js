@@ -15,7 +15,7 @@
  * =============================================================================
  */
 (function($) {
-
+ 
     var searchFilterChanged = false;
     var showingTemplateMenu = false;    
     
@@ -401,11 +401,7 @@
     		$(this).select();
     	});
     };
-    
-    var removeProtocolString = function(){
-    	$('.shortURI').text($('.shortURI').attr('data-uri').replace(/^https?:\/\//,''));
-    };
-    
+        
     /*============================================================
         Page initialisation
     ============================================================*/
@@ -418,7 +414,6 @@
         menuHandler();
         developerToolsTabs();
         selectableInputs(); 
-        removeProtocolString();
     };
 
     

@@ -139,7 +139,7 @@ public class NotificationManagerTest extends BaseTest {
             NotificationEntity latestNotification = notificationDao.findLatestByOrcid(testOrcid);
             assertNotNull(latestNotification);
             assertTrue(latestNotification.getId() > minNotificationId);
-            assertEquals(NotificationType.CUSTOM, latestNotification.getNotificationType());
+            assertEquals(NotificationType.AMENDED, latestNotification.getNotificationType());
         }
     }
 

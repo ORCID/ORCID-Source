@@ -20,6 +20,9 @@ import org.springframework.beans.factory.annotation.Value;
 
 public class OrcidUrlManager {
 
+    static String PROTOCALL_PATTREN = "http[s]{0,1}:\\/\\/";
+
+
     @Value("${org.orcid.core.baseUri}")
     private String baseUrl;
 
@@ -35,6 +38,10 @@ public class OrcidUrlManager {
 
     public void setBaseUrl(String baseUrl) {
         this.baseUrl = baseUrl;
+    }
+    
+    public String getBaseDomainRmProtocall() {
+        return getBaseUrl().replaceAll(PROTOCALL_PATTREN, "");
     }
     
     public String getBaseUriHttp() {

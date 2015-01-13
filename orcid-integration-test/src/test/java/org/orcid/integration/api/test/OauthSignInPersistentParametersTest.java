@@ -14,12 +14,17 @@
  *
  * =============================================================================
  */
-package org.orcid.integration.api.t2.test;
+package org.orcid.integration.api.test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
@@ -53,11 +58,15 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-oauth-orcid-api-client-context.xml" })
-public class OauthInvalidRedirectUriTest extends DBUnitTest {
+public class OauthSignInPersistentParametersTest extends DBUnitTest {
     private static final int DEFAULT_TIMEOUT_SECONDS = 30;
     private static final String CLIENT_ID = "9999-9999-9999-9994";
+    private static final Pattern AUTHORIZATION_CODE_PATTERN = Pattern.compile("code=(.+)");
+    private static final Pattern STATE_PATTERN = Pattern.compile("state=(.+)");
+    private static final Pattern OTHER_PATTERN = Pattern.compile("other=(.+)");
+    private static final Pattern MADE_UP_PATTERN = Pattern.compile("made_up_param_not_passed=(.+)");
     private static final String DEFAULT = "default";
-    private static final String BAD_REDIRECT_URI = "http://page/error";
+
     private WebDriver webDriver;
 
     @Resource
@@ -110,13 +119,13 @@ public class OauthInvalidRedirectUriTest extends DBUnitTest {
     public void after() {
         webDriver.quit();
     }
-    
+
     @Test
-    public void invalidRedirectUriAllowsLoginThenShowErrorTest() throws InterruptedException {
+    public void stateParamIsPersistentAndReturnedTest() throws InterruptedException {
         webDriver
-        .get(String
-                .format("%s/oauth/authorize?client_id=9999-9999-9999-9994&response_type=code&scope=/orcid-profile/read-limited&redirect_uri=%s&state=MyState&made_up_param_not_passed=true&other=present",
-                        webBaseUrl, BAD_REDIRECT_URI));
+                .get(String
+                        .format("%s/oauth/authorize?client_id=9999-9999-9999-9994&response_type=code&scope=/orcid-profile/read-limited&redirect_uri=%s&state=MyState&made_up_param_not_passed=true&other=present",
+                                webBaseUrl, redirectUri));
         // Switch to the login form
         By switchFromLinkLocator = By.id("in-register-switch-form");
         (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(switchFromLinkLocator));
@@ -132,17 +141,28 @@ public class OauthInvalidRedirectUriTest extends DBUnitTest {
         passwordElement.sendKeys("password");
         WebElement submitButton = webDriver.findElement(By.id("authorize-button"));
         submitButton.click();
-        Thread.sleep(1500);
+
         (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
             public Boolean apply(WebDriver d) {
-                return d.getTitle().equals("ORCID");
+                return d.getTitle().equals("ORCID Playground");
             }
         });
         String currentUrl = webDriver.getCurrentUrl();
-        assertTrue(currentUrl.contains("/oauth/error/redirect-uri-mismatch"));
-        assertTrue(currentUrl.contains("client_id=9999-9999-9999-9994"));
-        assertTrue(currentUrl.contains("response_type=code"));
-        assertTrue(currentUrl.contains("redirect_uri=" + BAD_REDIRECT_URI));
-        assertTrue(currentUrl.contains("scope=/orcid-profile/read-limited"));
+        Matcher matcher = AUTHORIZATION_CODE_PATTERN.matcher(currentUrl);
+        // Check the auth code is present
+        assertTrue(matcher.find());
+        String authorizationCode = matcher.group(1);
+        assertNotNull(authorizationCode);
+        // Check the state param is present
+        matcher = STATE_PATTERN.matcher(currentUrl);
+        assertTrue(matcher.find());
+        String stateParam = matcher.group(1);
+        assertNotNull(stateParam);
+        assertEquals("MyState", stateParam);
+
+        matcher = OTHER_PATTERN.matcher(currentUrl);
+        assertFalse(matcher.find());
+        matcher = MADE_UP_PATTERN.matcher(currentUrl);
+        assertFalse(matcher.find());
     }
 }
