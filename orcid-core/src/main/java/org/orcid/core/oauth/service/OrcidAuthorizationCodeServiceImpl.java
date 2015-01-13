@@ -31,6 +31,7 @@ import org.orcid.core.constants.OauthTokensConstants;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidOauth2AuthInfo;
+import org.orcid.core.oauth.OrcidOauth2UserAuthentication;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
 import org.orcid.persistence.dao.ProfileDao;
@@ -104,10 +105,15 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
         
         
         OAuth2Request oAuth2Request = new OAuth2Request(Collections.<String, String> emptyMap(), authInfo.getClientId(), Collections.<GrantedAuthority> emptyList(), true, authInfo.getScopes(), detail.getResourceIds(), detail.getRedirectUri(), new HashSet<String>(Arrays.asList(detail.getResponseType())), Collections.<String, Serializable> emptyMap());
-        OAuth2Authentication result = new OAuth2Authentication(oAuth2Request, null);
+        Authentication userAuth = getUserAuthentication(detail);
+        OAuth2Authentication result = new OAuth2Authentication(oAuth2Request, userAuth);
         return result;        
     }        
 
+    private OrcidOauth2UserAuthentication getUserAuthentication(OrcidOauth2AuthoriziationCodeDetail detail) {
+        return new OrcidOauth2UserAuthentication(detail.getProfileEntity(), detail.getAuthenticated());
+    }
+    
     private OrcidOauth2AuthoriziationCodeDetail getDetailFromAuthorization(String code, OAuth2Authentication authentication) {
         OAuth2Request oAuth2Request = authentication.getOAuth2Request();
         OrcidOauth2AuthoriziationCodeDetail detail = new OrcidOauth2AuthoriziationCodeDetail();

@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.orcid.core.constants.OauthTokensConstants;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
@@ -31,6 +32,7 @@ import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.oauth2.provider.OAuth2RequestFactory;
+import org.springframework.security.oauth2.provider.TokenRequest;
 
 /**
  * @author Declan Newman (declan) Date: 10/05/2012
@@ -45,8 +47,9 @@ public class OrcidClientCredentialsChecker {
         this.oAuth2RequestFactory = oAuth2RequestFactory;
     }
 
-    public OAuth2Request validateCredentials(String grantType, String clientId, Set<String> scopes) {
-
+    public OAuth2Request validateCredentials(String grantType, TokenRequest tokenRequest) {
+        String clientId = tokenRequest.getClientId();
+        Set<String> scopes = tokenRequest.getScope();
         ClientDetails clientDetails = clientDetailsService.loadClientByClientId(clientId);
         validateGrantType(grantType, clientDetails);
         if (scopes != null) {
@@ -54,7 +57,10 @@ public class OrcidClientCredentialsChecker {
         }
         
         Map<String, String> authorizationParams = new HashMap<String, String>();
+        authorizationParams.putAll(tokenRequest.getRequestParameters());
         authorizationParams.put(OauthTokensConstants.GRANT_TYPE, grantType);
+        authorizationParams.put(OAuth2Utils.SCOPE, StringUtils.join(scopes, ' '));
+        authorizationParams.put(OAuth2Utils.CLIENT_ID, clientId);
         
         AuthorizationRequest authorizationRequest = oAuth2RequestFactory.createAuthorizationRequest(authorizationParams);
         authorizationRequest.setAuthorities(clientDetails.getAuthorities());

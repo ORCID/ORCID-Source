@@ -45,7 +45,7 @@ public class OrcidClientCredentialsTokenGranter implements TokenGranter {
             return null;
         }
 
-        OAuth2Request authorizationRequest = clientCredentialsChecker.validateCredentials(grantType, tokenRequest.getClientId(), tokenRequest.getScope());
+        OAuth2Request authorizationRequest = clientCredentialsChecker.validateCredentials(grantType, tokenRequest);
         
         return tokenServices.createAccessToken(new OAuth2Authentication(authorizationRequest, null));
     }

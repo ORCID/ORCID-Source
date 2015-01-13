@@ -19,6 +19,7 @@ package org.orcid.core.oauth;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -34,6 +35,7 @@ import org.orcid.persistence.jpa.entities.ClientScopeEntity;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.OAuth2RequestFactory;
+import org.springframework.security.oauth2.provider.TokenRequest;
 
 /**
  * @author Declan Newman (declan) Date: 11/05/2012
@@ -62,7 +64,7 @@ public class OrcidClientCredentialsCheckerTest {
         when(clientDetailsService.loadClientByClientId(orcid)).thenReturn(clientDetailsEntity);
         OrcidClientCredentialsChecker checker = new OrcidClientCredentialsChecker(clientDetailsService, oAuth2RequestFactory);
         Set<String> requestedScopes = new HashSet<String>(Arrays.asList(ScopePathType.ORCID_WORKS_UPDATE.value()));
-        checker.validateCredentials("client_credentials", orcid, requestedScopes);
+        checker.validateCredentials("client_credentials", new TokenRequest(Collections.<String, String> emptyMap(), orcid, requestedScopes, "client_credentials"));        
     }
 
     @Test
@@ -75,8 +77,8 @@ public class OrcidClientCredentialsCheckerTest {
         String orcid = "2875-8158-1475-6194";
         when(clientDetailsService.loadClientByClientId(orcid)).thenReturn(clientDetailsEntity);
         OrcidClientCredentialsChecker checker = new OrcidClientCredentialsChecker(clientDetailsService, oAuth2RequestFactory);
-        Set<String> requestedScopes = new HashSet<String>(Arrays.asList(ScopePathType.READ_PUBLIC.value()));
-        checker.validateCredentials("client_credentials", orcid, requestedScopes);
+        Set<String> requestedScopes = new HashSet<String>(Arrays.asList(ScopePathType.READ_PUBLIC.value()));        
+        checker.validateCredentials("client_credentials", new TokenRequest(Collections.<String, String> emptyMap(), orcid, requestedScopes, "client_credentials"));
     }
 
     @Test
@@ -88,7 +90,7 @@ public class OrcidClientCredentialsCheckerTest {
         String orcid = "2875-8158-1475-6194";
         when(clientDetailsService.loadClientByClientId(orcid)).thenReturn(clientDetailsEntity);
         OrcidClientCredentialsChecker checker = new OrcidClientCredentialsChecker(clientDetailsService, oAuth2RequestFactory);
-        Set<String> requestedScopes = new HashSet<String>(Arrays.asList(ScopePathType.READ_PUBLIC.value()));
-        checker.validateCredentials("client_credentials", orcid, requestedScopes);
+        Set<String> requestedScopes = new HashSet<String>(Arrays.asList(ScopePathType.READ_PUBLIC.value()));        
+        checker.validateCredentials("client_credentials", new TokenRequest(Collections.<String, String> emptyMap(), orcid, requestedScopes, "client_credentials"));
     }
 }

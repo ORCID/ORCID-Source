@@ -141,9 +141,8 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
         if (redirectUri != null) {
             authorizationParameters.put(OAuth2Utils.REDIRECT_URI, redirectUri);
         }        
-        AuthorizationRequest authorizationRequest = getOAuth2RequestFactory().createAuthorizationRequest(authorizationParameters);                        
-        
-        TokenRequest tokenRequest = getOAuth2RequestFactory().createTokenRequest(authorizationRequest, grantType);        
+        AuthorizationRequest authorizationRequest = getOAuth2RequestFactory().createAuthorizationRequest(authorizationParameters);                                
+        TokenRequest tokenRequest = getOAuth2RequestFactory().createTokenRequest(authorizationRequest, grantType);                
         
         OAuth2AccessToken token = getTokenGranter().grant(grantType, tokenRequest);
         if (token == null) {
