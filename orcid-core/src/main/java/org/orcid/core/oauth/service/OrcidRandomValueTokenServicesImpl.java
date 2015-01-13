@@ -24,8 +24,8 @@ import javax.annotation.Resource;
 
 import org.orcid.core.constants.OauthTokensConstants;
 import org.orcid.core.manager.ClientDetailsManager;
-import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.oauth.OrcidOauth2AuthInfo;
+import org.orcid.core.oauth.OrcidRandomValueTokenServices;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -45,7 +45,7 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 /**
  * @author Declan Newman (declan) Date: 11/05/2012
  */
-public class OrcidRandomValueTokenServices extends DefaultTokenServices {
+public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices implements OrcidRandomValueTokenServices {
     @Value("${org.orcid.core.token.write_validity_seconds:3600}")
     private int writeValiditySeconds;
     @Value("${org.orcid.core.token.read_validity_seconds:631138519}")
@@ -53,21 +53,17 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
     
     private TokenStore orcidtokenStore;
 
+    private TokenEnhancer customTokenEnhancer;
+    
     @Resource
     private OrcidOauth2AuthoriziationCodeDetailDao orcidOauth2AuthoriziationCodeDetailDao;
 
     @Resource
-    private OrcidProfileManager orcidProfileManager;
+    private ClientDetailsManager clientDetailsManager;        
 
-    @Resource
-    private ClientDetailsManager clientDetailsManager;
-    
-    @Resource
-    private TokenEnhancer customTokenEnhancer;
+    private static final Logger LOGGER = LoggerFactory.getLogger(OrcidRandomValueTokenServicesImpl.class);
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OrcidRandomValueTokenServices.class);
-
-    public OrcidRandomValueTokenServices() {        
+    public OrcidRandomValueTokenServicesImpl() {        
     }
 
     @Override

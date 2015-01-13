@@ -34,15 +34,15 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.core.constants.OauthTokensConstants;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.oauth.OrcidOauth2ClientAuthentication;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
+import org.orcid.core.oauth.OrcidRandomValueTokenServices;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.test.DBUnitTest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -50,8 +50,6 @@ import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Request;
-import org.springframework.security.oauth2.provider.TokenRequest;
-import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -66,8 +64,8 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
 
-    @Resource(name = "tokenServices")
-    private DefaultTokenServices tokenServices;
+    @Resource
+    private OrcidRandomValueTokenServices tokenServices;
 
     @Resource
     private OrcidOauth2TokenDetailService orcidOauthTokenDetailService;
@@ -85,21 +83,13 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
     public static void removeDBUnitData() throws Exception {
         removeDBUnitData(Arrays.asList("/data/OrcidOauth2AuthorisationDetailsData.xml", "/data/ClientDetailsEntityData.xml", "/data/ProfileEntityData.xml",
                 "/data/SubjectEntityData.xml", "/data/SecurityQuestionEntityData.xml"));
-    }
-
-    @Before
-    public void setPersistentTokensOn() {
-        OrcidRandomValueTokenServices orcidTokenServices = (OrcidRandomValueTokenServices) tokenServices;
-        orcidTokenServices.setSupportRefreshToken(true);
-    }        
+    }          
     
     @Test
     @Transactional
     @Rollback
     public void testCreateReadLimitedAccessToken() {
-        Date earliestExpiry = oneHoursTime();
-        Date earliestRefreshExpiry = earliestExpiry;
-
+        Date earliestExpiry = oneHoursTime();        
         Map<String, String> authorizationParameters = new HashMap<>();
         String clientId = "4444-4444-4444-4441";
         authorizationParameters.put(OAuth2Utils.CLIENT_ID, clientId);
@@ -112,18 +102,10 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
         OAuth2AccessToken oauth2AccessToken = tokenServices.createAccessToken(authentication);
 
         Date latestExpiry = oneHoursTime();
-        Date latestRefreshExpiry = latestExpiry;
 
         assertNotNull(oauth2AccessToken);
         assertFalse(oauth2AccessToken.getExpiration().before(earliestExpiry));
-        assertFalse(oauth2AccessToken.getExpiration().after(latestExpiry));
-        assertNotNull(oauth2AccessToken.getRefreshToken());
-        
-        OrcidOauth2TokenDetail tokenDetail = orcidOauthTokenDetailService.findByRefreshTokenValue(oauth2AccessToken.getRefreshToken().getValue());
-        assertNotNull(tokenDetail);
-        Date refreshTokenExpiration = tokenDetail.getRefreshTokenExpiration();
-        assertFalse(refreshTokenExpiration.before(earliestRefreshExpiry));
-        assertFalse(refreshTokenExpiration.after(latestRefreshExpiry));                
+        assertFalse(oauth2AccessToken.getExpiration().after(latestExpiry));                       
     }
 
     @Test
@@ -131,7 +113,6 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
     @Rollback
     public void testCreateAddWorkAccessToken() {
         Date earliestExpiry = oneHoursTime();
-        Date earliestRefreshExpiry = earliestExpiry;
 
         Map<String, String> authorizationParameters = new HashMap<>();
         String clientId = "4444-4444-4444-4441";
@@ -144,18 +125,10 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
         OAuth2AccessToken oauth2AccessToken = tokenServices.createAccessToken(authentication);
 
         Date latestExpiry = oneHoursTime();
-        Date latestRefreshExpiry = latestExpiry;
 
         assertNotNull(oauth2AccessToken);
         assertFalse(oauth2AccessToken.getExpiration().before(earliestExpiry));
         assertFalse(oauth2AccessToken.getExpiration().after(latestExpiry));
-        assertNotNull(oauth2AccessToken.getRefreshToken());
-
-        OrcidOauth2TokenDetail tokenDetail = orcidOauthTokenDetailService.findByRefreshTokenValue(oauth2AccessToken.getRefreshToken().getValue());
-        assertNotNull(tokenDetail);
-        Date refreshTokenExpiration = tokenDetail.getRefreshTokenExpiration();
-        assertFalse(refreshTokenExpiration.before(earliestRefreshExpiry));
-        assertFalse(refreshTokenExpiration.after(latestRefreshExpiry));
     }
 
     @Test
@@ -163,8 +136,7 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
     @Rollback
     public void testReissuedAccessTokenHasUpdatedExpiration() throws InterruptedException {
         Date earliestExpiry = oneHoursTime();
-        Date earliestRefreshExpiry = earliestExpiry;
-
+        
         Map<String, String> authorizationParameters = new HashMap<>();
         String clientId = "4444-4444-4444-4441";
         authorizationParameters.put(OAuth2Utils.CLIENT_ID, clientId);
@@ -176,27 +148,17 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
         OAuth2AccessToken oauth2AccessToken = tokenServices.createAccessToken(authentication);
 
         Date latestExpiry = oneHoursTime();
-        Date latestRefreshExpiry = latestExpiry;
 
         assertNotNull(oauth2AccessToken);
         assertFalse(oauth2AccessToken.getExpiration().before(earliestExpiry));
         assertFalse(oauth2AccessToken.getExpiration().after(latestExpiry));
-        assertNotNull(oauth2AccessToken.getRefreshToken());
-
-        OrcidOauth2TokenDetail tokenDetail = orcidOauthTokenDetailService.findByRefreshTokenValue(oauth2AccessToken.getRefreshToken().getValue());
-        assertNotNull(tokenDetail);
-        Date refreshTokenExpiration = tokenDetail.getRefreshTokenExpiration();
-        assertFalse(refreshTokenExpiration.before(earliestRefreshExpiry));
-        assertFalse(refreshTokenExpiration.after(latestRefreshExpiry));
 
         Thread.sleep(1000);
         earliestExpiry = oneHoursTime();
-        earliestRefreshExpiry = earliestExpiry;
-
+        
         OAuth2AccessToken reissuedOauth2AccessToken = tokenServices.createAccessToken(authentication);
 
         latestExpiry = oneHoursTime();
-        latestRefreshExpiry = latestExpiry;
 
         assertNotNull(reissuedOauth2AccessToken);
         // Check is the same token - should be as token has not be used, and has
@@ -204,13 +166,6 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
         assertEquals(oauth2AccessToken.getValue(), reissuedOauth2AccessToken.getValue());
         assertFalse(reissuedOauth2AccessToken.getExpiration().before(earliestExpiry));
         assertFalse(reissuedOauth2AccessToken.getExpiration().after(latestExpiry));
-
-        OrcidOauth2TokenDetail reissuedTokenDetail = orcidOauthTokenDetailService.findByRefreshTokenValue(reissuedOauth2AccessToken.getRefreshToken().getValue());
-        assertNotNull(reissuedTokenDetail);
-        Date reissuedRefreshTokenExpiration = reissuedTokenDetail.getRefreshTokenExpiration();
-        assertFalse(reissuedRefreshTokenExpiration.before(earliestRefreshExpiry));
-        assertFalse(reissuedRefreshTokenExpiration.after(latestRefreshExpiry));
-
     }
 
     private Date twentyYearsTime() {
@@ -225,23 +180,7 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
         Calendar earliestExpiry = new GregorianCalendar();
         earliestExpiry.add(Calendar.HOUR, 1);
         return earliestExpiry.getTime();
-    }
-
-    @Test
-    @Transactional
-    @Rollback
-    public void testRefreshAccessToken() {
-        String refreshTokenValue = "some-long-oauth2-refresh-value-1";
-        String clientId = "4444-4444-4444-4441";
-        Map<String, String> authorizationParameters = new HashMap<>();
-        authorizationParameters.put(OAuth2Utils.CLIENT_ID, clientId);
-        TokenRequest request = new TokenRequest(Collections.<String, String> emptyMap(), clientId, Arrays.asList("/orcid-profile/read-limited"), null);
-
-        OAuth2AccessToken oauth2AccessToken = tokenServices.refreshAccessToken(refreshTokenValue, request);
-        assertNotNull(oauth2AccessToken);
-        String tokenValue = oauth2AccessToken.getValue();
-        assertFalse("Token value should be different", tokenValue.equals("some-long-oauth2-token-value-1"));
-    }
+    }    
     
     /**
      * Check that the token created with a non persistent code will expire within an hour 
@@ -281,13 +220,14 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
         
         Thread.sleep(2000);
         
-        Map<String, String> authorizationParameters = new HashMap<>();
+        Map<String, String> requestParameters = new HashMap<>();
         String clientId = "4444-4444-4444-4441";
-        authorizationParameters.put(OAuth2Utils.CLIENT_ID, clientId);
-        authorizationParameters.put(OAuth2Utils.SCOPE, "/orcid-works/create");
-        authorizationParameters.put("code", "code1");
+        requestParameters.put(OAuth2Utils.CLIENT_ID, clientId);
+        requestParameters.put(OAuth2Utils.SCOPE, "/orcid-works/create");
+        requestParameters.put("code", "code1");
+        requestParameters.put(OauthTokensConstants.IS_PERSISTENT, "true");
         
-        OAuth2Request request = new OAuth2Request(Collections.<String, String> emptyMap(), clientId, Collections.<GrantedAuthority> emptyList(), true, new HashSet<String>(Arrays.asList("/orcid-profile/read-limited")), Collections.<String> emptySet(), null, Collections.<String> emptySet(), Collections.<String, Serializable> emptyMap());
+        OAuth2Request request = new OAuth2Request(requestParameters, clientId, Collections.<GrantedAuthority> emptyList(), true, new HashSet<String>(Arrays.asList("/orcid-profile/read-limited")), Collections.<String> emptySet(), null, Collections.<String> emptySet(), Collections.<String, Serializable> emptyMap());
         ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
         Authentication userAuthentication = new OrcidOauth2ClientAuthentication(clientDetails);
         OAuth2Authentication authentication = new OAuth2Authentication(request, userAuthentication);
