@@ -42,7 +42,7 @@
 						<div class="orcid-id-info">
 					    	<span class="mini-orcid-icon"></span>
 					    	<!-- Reference: orcid.js:removeProtocolString() -->
-				       		<span data-uri="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" id="orcid-id" class="orcid-id shortURI"></span>
+				       		<span id="orcid-id" class="orcid-id shortURI">${baseDomainRmProtocall}/${(profile.orcidIdentifier.path)!}</span>
 						</div>
 						<@security.authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">
 							<div class="orcid-id-options">
