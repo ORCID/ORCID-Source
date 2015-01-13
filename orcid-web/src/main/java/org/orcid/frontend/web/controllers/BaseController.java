@@ -528,6 +528,11 @@ public class BaseController {
         return staticCdnPath;
     }
 
+    @ModelAttribute("baseDomainRmProtocall")
+    public String getBaseDomainRmProtocall() {
+        return orcidUrlManager.getBaseDomainRmProtocall();
+    }
+
     @ModelAttribute("baseUriHttp")
     public String getBaseUriHttp() {
         return orcidUrlManager.getBaseUriHttp();
