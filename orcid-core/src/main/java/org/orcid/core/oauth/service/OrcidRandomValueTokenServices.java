@@ -17,7 +17,6 @@
 package org.orcid.core.oauth.service;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -25,10 +24,8 @@ import javax.annotation.Resource;
 
 import org.orcid.core.constants.OauthTokensConstants;
 import org.orcid.core.manager.ClientDetailsManager;
-import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.oauth.OrcidOauth2AuthInfo;
-import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -42,6 +39,7 @@ import org.springframework.security.oauth2.common.exceptions.InvalidTokenExcepti
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
+import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 
 /**
@@ -64,6 +62,9 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
 
     @Resource
     private ClientDetailsManager clientDetailsManager;
+    
+    @Resource
+    private TokenEnhancer customTokenEnhancer;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidRandomValueTokenServices.class);
 
@@ -74,24 +75,8 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
     public OAuth2AccessToken createAccessToken(OAuth2Authentication authentication) throws AuthenticationException {
         OrcidOauth2AuthInfo authInfo = new OrcidOauth2AuthInfo(authentication);
         OAuth2AccessToken existingAccessToken = tokenStore.getAccessToken(authentication);
-
-        Map<String, Object> additionalInfo = new HashMap<>();
         String userOrcid = authInfo.getUserOrcid();
-        additionalInfo.put("orcid", userOrcid);
-        if (userOrcid != null) {
-            OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile(userOrcid, LoadOptions.BIO_ONLY);
-            String name = orcidProfile.getOrcidBio().getPersonalDetails().retrievePublicDisplayName();
-            additionalInfo.put("name", name);
-        }
-        // TODO: As of Jan 2015 all new tokens are persistent tokens (Not
-        // persistent per se, but, they are the able-to-be-persistent tokens),
-        // so, in a near future we will be able to remove the
-        // OauthTokensConstants.TOKEN_VERSION param from the additionalInfo
-        // object
-        additionalInfo.put(OauthTokensConstants.TOKEN_VERSION, OauthTokensConstants.PERSISTENT_TOKEN);
-        if (isPersistentTokenEnabled(authentication.getOAuth2Request()))
-            additionalInfo.put("persistent", true);
-
+        
         if (existingAccessToken != null) {
             if (existingAccessToken.isExpired()) {
                 tokenStore.removeAccessToken(existingAccessToken);
@@ -103,16 +88,15 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
                 if (validitySeconds > 0) {
                     updatedAccessToken.setExpiration(new Date(System.currentTimeMillis() + (validitySeconds * 1000L)));
                 }
-                updatedAccessToken.setAdditionalInformation(additionalInfo);
+                customTokenEnhancer.enhance(updatedAccessToken, authentication);
                 tokenStore.storeAccessToken(updatedAccessToken, authentication);
                 LOGGER.info("Existing reusable access token found: clientId={}, scopes={}, userOrcid={}", new Object[] { authInfo.getClientId(), authInfo.getScopes(),
                         userOrcid });
                 return updatedAccessToken;
             }
         }
-        DefaultOAuth2AccessToken accessToken = new DefaultOAuth2AccessToken(super.createAccessToken(authentication));
-
-        accessToken.setAdditionalInformation(additionalInfo);
+        
+        DefaultOAuth2AccessToken accessToken = new DefaultOAuth2AccessToken(super.createAccessToken(authentication));        
         tokenStore.storeAccessToken(accessToken, authentication);
         LOGGER.info("Creating new access token: clientId={}, scopes={}, userOrcid={}", new Object[] { authInfo.getClientId(), authInfo.getScopes(), userOrcid });
         return accessToken;
@@ -221,4 +205,9 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
         OAuth2Authentication result = tokenStore.readAuthentication(accessToken);
         return result;
     }
+
+    public void setCustomTokenEnhancer(TokenEnhancer customTokenEnhancer) {
+        super.setTokenEnhancer(customTokenEnhancer);
+        this.customTokenEnhancer = customTokenEnhancer;
+    }        
 }

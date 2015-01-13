@@ -18,6 +18,7 @@ package com.orcid.api.common.server.delegator.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -141,7 +142,8 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
         if (redirectUri != null) {
             authorizationParameters.put(OAuth2Utils.REDIRECT_URI, redirectUri);
         }        
-        AuthorizationRequest authorizationRequest = getOAuth2RequestFactory().createAuthorizationRequest(authorizationParameters);                                
+        AuthorizationRequest authorizationRequest = getOAuth2RequestFactory().createAuthorizationRequest(authorizationParameters);   
+                
         TokenRequest tokenRequest = getOAuth2RequestFactory().createTokenRequest(authorizationRequest, grantType);                
         
         OAuth2AccessToken token = getTokenGranter().grant(grantType, tokenRequest);
@@ -161,6 +163,8 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
                 accessToken.getAdditionalInformation().remove(OauthTokensConstants.TOKEN_VERSION);
             if(accessToken.getAdditionalInformation().containsKey(OauthTokensConstants.PERSISTENT))
                 accessToken.getAdditionalInformation().remove(OauthTokensConstants.PERSISTENT);
+            if(accessToken.getAdditionalInformation().containsKey(OauthTokensConstants.DATE_CREATED))
+                accessToken.getAdditionalInformation().remove(OauthTokensConstants.DATE_CREATED);
         }
         
         return Response.ok(accessToken).header("Cache-Control", "no-store").header("Pragma", "no-cache").build();

@@ -345,15 +345,20 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
         detail.setApproved(authorizationRequest.isApproved());
         detail.setRedirectUri(authorizationRequest.getRedirectUri());
 
-        detail.setResourceId(OAuth2Utils.formatParameterList(authorizationRequest.getResourceIds()));
+        Set<String> resourceIds = authorizationRequest.getResourceIds();
+        if(resourceIds == null || resourceIds.isEmpty()) {
+            resourceIds = clientDetails.getResourceIds();
+        }
+        
+        detail.setResourceId(OAuth2Utils.formatParameterList(resourceIds));
         detail.setResponseType(OAuth2Utils.formatParameterList(authorizationRequest.getResponseTypes()));
         detail.setScope(OAuth2Utils.formatParameterList(authorizationRequest.getScope()));        
 
         Map<String, Object> additionalInfo = token.getAdditionalInformation();
         if (additionalInfo != null) {
             if (additionalInfo.containsKey(OauthTokensConstants.TOKEN_VERSION)) {
-                String sVersion = (String) additionalInfo.get(OauthTokensConstants.TOKEN_VERSION);
-                detail.setVersion(Long.parseLong(sVersion));
+                String sVersion = String.valueOf(additionalInfo.get(OauthTokensConstants.TOKEN_VERSION));
+                detail.setVersion(Long.valueOf(sVersion));
             } else {
                 // TODO: As of Jan 2015 all tokens will be new tokens, so, we
                 // will have to remove the token version code and
@@ -361,8 +366,8 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
                 detail.setVersion(Long.valueOf(OauthTokensConstants.PERSISTENT_TOKEN));
             }
 
-            if (additionalInfo.containsKey(PERSISTENT)) {
-                boolean isPersistentKey = (Boolean) additionalInfo.get(PERSISTENT);
+            if (additionalInfo.containsKey(OauthTokensConstants.PERSISTENT)) {
+                boolean isPersistentKey = (Boolean) additionalInfo.get(OauthTokensConstants.PERSISTENT);
                 detail.setPersistent(isPersistentKey);
             } else {
                 detail.setPersistent(false);

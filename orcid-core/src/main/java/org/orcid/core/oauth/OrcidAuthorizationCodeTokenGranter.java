@@ -18,7 +18,6 @@ package org.orcid.core.oauth;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -111,9 +110,12 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
         OAuth2Authentication storedAuth = authorizationCodeServices.consumeAuthorizationCode(authorizationCode);
         if (storedAuth == null) {
             throw new InvalidGrantException("Invalid authorization code: " + authorizationCode);
-        }
+        }                
 
         OAuth2Request pendingAuthorizationRequest = storedAuth.getOAuth2Request();
+        //Regenerate the authorization request but now with the request parameters
+        pendingAuthorizationRequest = pendingAuthorizationRequest.createOAuth2Request(parameters);
+        
         LOGGER.info("Found pending authorization request: redirectUri={}, clientId={}, scope={}, is_approved={}", new Object[] { pendingAuthorizationRequest.getRedirectUri(),
                 pendingAuthorizationRequest.getClientId(), pendingAuthorizationRequest.getScope(), pendingAuthorizationRequest.isApproved() });
         // https://jira.springsource.org/browse/SECOAUTH-333
@@ -131,23 +133,8 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
         if (clientId != null && !clientId.equals(pendingClientId)) {
             // just a sanity check.
             throw new InvalidClientException("Client ID mismatch");
-        }
-
-        // Secret is not required in the authorization request, so it won't be
-        // available
-        // in the pendingAuthorizationRequest. We do want to check that a secret
-        // is provided
-        // in the token request, but that happens elsewhere.
-
-        Map<String, String> combinedParameters = new HashMap<String, String>(storedAuth.getOAuth2Request().getRequestParameters());
-        // Combine the parameters adding the new ones last so they override if
-        // there are any clashes
-        combinedParameters.putAll(parameters);
-        // Similarly scopes are not required in the token request, so we don't
-        // make a comparison here, just
-        // enforce validity through the AuthorizationRequestFactory.
-        
-        
+        }        
+                
         Authentication userAuth = storedAuth.getUserAuthentication();
         return new OAuth2Authentication(pendingAuthorizationRequest, userAuth);
 
