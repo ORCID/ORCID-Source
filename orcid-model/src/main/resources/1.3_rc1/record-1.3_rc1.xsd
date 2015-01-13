@@ -12,6 +12,7 @@
     xmlns:history="http://www.orcid.org/ns/history"
     xmlns:record="http://www.orcid.org/ns/record"
     xmlns:preferences="http://www.orcid.org/ns/preferences">
+
 	<xs:annotation>
 		<xs:documentation>
 			=============================================================================
@@ -41,6 +42,7 @@
 			<sch:ns prefix="orcid" uri="http://www.orcid.org/ns/orcid" />
 		</xs:appinfo>
 	</xs:annotation>
+
 	<xs:import namespace="http://www.orcid.org/ns/affiliation"
 		schemaLocation="affiliation-1.3_rc1.xsd" />
 	<xs:import namespace="http://www.orcid.org/ns/bio"
@@ -59,6 +61,7 @@
 		schemaLocation="preferences-1.3_rc1.xsd" />
 	<xs:import namespace="http://www.orcid.org/ns/work"
 		schemaLocation="work-1.3_rc1.xsd" />
+
 	<xs:element name="record">
 		<xs:complexType>
 			<xs:annotation>
@@ -86,18 +89,19 @@
 				<xs:element ref="history:history" minOccurs="0"
 					maxOccurs="1" />
 				<xs:element ref="bio:bio" minOccurs="0" maxOccurs="1" />
-				<xs:element name="activities" type="record:orcidActivities"
+				<xs:element name="activities" type="record:activities"
 					minOccurs="0" maxOccurs="1" />
 				<xs:element ref="internal:internal" minOccurs="0"
 					maxOccurs="1" />
 			</xs:sequence>
 			<xs:attribute name="type" type="common:orcidType"
 				default="user" />
-			<xs:attribute name="clientType" type="record:clientType" use="optional" />
-			<xs:attribute name="groupType" type="record:groupType" use="optional" />
+			<xs:attribute name="clientType" type="common:clientType" use="optional" />
+			<xs:attribute name="groupType" type="common:groupType" use="optional" />
 		</xs:complexType>
 	</xs:element>
-	<xs:complexType name="orcidActivities">
+
+	<xs:complexType name="activities">
 		<xs:annotation>
 			<xs:documentation>Container for research activities of the researcher
 				or contributor, such as Works.
@@ -151,31 +155,4 @@
 		</xs:sequence>
 	</xs:complexType>
 
-
-	<xs:simpleType name="clientType">
-		<xs:annotation>
-			<xs:documentation>Indicates the client type for the API client based
-				on the ORCID membership type.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="creator" />
-			<xs:enumeration value="premium-creator" />
-			<xs:enumeration value="updater" />
-			<xs:enumeration value="premium-updater" />
-		</xs:restriction>
-	</xs:simpleType>
-	<xs:simpleType name="groupType">
-		<xs:annotation>
-			<xs:documentation>Indicates the group type for the API client based
-				on the ORCID membership type.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="basic" />
-			<xs:enumeration value="premium" />
-			<xs:enumeration value="basic-institution" />
-			<xs:enumeration value="premium-institution" />
-		</xs:restriction>
-	</xs:simpleType>
 </xs:schema>

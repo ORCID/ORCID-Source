@@ -2,10 +2,8 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:sch="http://purl.oclc.org/dsdl/schematron" elementFormDefault="qualified"
 	targetNamespace="http://www.orcid.org/ns/message" xmlns="http://www.orcid.org/ns/message"
-	xmlns:common="http://www.orcid.org/ns/common"
-	xmlns:error="http://www.orcid.org/ns/error"
-	xmlns:record="http://www.orcid.org/ns/record"
-    xmlns:search="http://www.orcid.org/ns/search">
+	xmlns:common="http://www.orcid.org/ns/common" xmlns:error="http://www.orcid.org/ns/error"
+	xmlns:record="http://www.orcid.org/ns/record" xmlns:search="http://www.orcid.org/ns/search">
 	<xs:annotation>
 		<xs:documentation>
 			=============================================================================
@@ -35,14 +33,16 @@
 			<sch:ns prefix="orcid" uri="http://www.orcid.org/ns/orcid" />
 		</xs:appinfo>
 	</xs:annotation>
+
 	<xs:import namespace="http://www.orcid.org/ns/common"
 		schemaLocation="common-1.3_rc1.xsd" />
-    <xs:import namespace="http://www.orcid.org/ns/error"
-        schemaLocation="error-1.3_rc1.xsd" />
-    <xs:import namespace="http://www.orcid.org/ns/record"
-        schemaLocation="record-1.3_rc1.xsd" />
+	<xs:import namespace="http://www.orcid.org/ns/error"
+		schemaLocation="error-1.3_rc1.xsd" />
+	<xs:import namespace="http://www.orcid.org/ns/record"
+		schemaLocation="record-1.3_rc1.xsd" />
 	<xs:import namespace="http://www.orcid.org/ns/search"
-        schemaLocation="search-1.3_rc1.xsd" />
+		schemaLocation="search-1.3_rc1.xsd" />
+
 	<xs:element name="message">
 		<xs:annotation>
 			<xs:documentation>The overall container for all ORCID requests and
@@ -60,6 +60,7 @@
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
+
 	<xs:simpleType name="messageVersion">
 		<xs:annotation>
 			<xs:documentation>The version of ORCID message schema that the
@@ -72,4 +73,5 @@
 			<xs:enumeration value="1.3_rc1" />
 		</xs:restriction>
 	</xs:simpleType>
+
 </xs:schema>

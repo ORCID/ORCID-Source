@@ -804,32 +804,6 @@
 			<xs:enumeration value="client" />
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name="clientType">
-		<xs:annotation>
-			<xs:documentation>Indicates the client type for the API client based
-				on the ORCID membership type.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="creator" />
-			<xs:enumeration value="premium-creator" />
-			<xs:enumeration value="updater" />
-			<xs:enumeration value="premium-updater" />
-		</xs:restriction>
-	</xs:simpleType>
-	<xs:simpleType name="groupType">
-		<xs:annotation>
-			<xs:documentation>Indicates the group type for the API client based
-				on the ORCID membership type.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="basic" />
-			<xs:enumeration value="premium" />
-			<xs:enumeration value="basic-institution" />
-			<xs:enumeration value="premium-institution" />
-		</xs:restriction>
-	</xs:simpleType>
 	<xs:simpleType name="scope">
 		<xs:annotation>
 			<xs:documentation>Indicates the special privledges that the API
@@ -1453,5 +1427,33 @@
 			<xs:enumeration value="support-staff" />
 		</xs:restriction>
 	</xs:simpleType>
+
+    <xs:simpleType name="groupType">
+        <xs:annotation>
+            <xs:documentation>Indicates the group type for the API client based
+                on the ORCID membership type.
+            </xs:documentation> 
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="basic" />
+            <xs:enumeration value="premium" />
+            <xs:enumeration value="basic-institution" />
+            <xs:enumeration value="premium-institution" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="clientType">
+        <xs:annotation>
+            <xs:documentation>Indicates the client type for the API client based
+                on the ORCID membership type.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="creator" />
+            <xs:enumeration value="premium-creator" />
+            <xs:enumeration value="updater" />
+            <xs:enumeration value="premium-updater" />
+        </xs:restriction>
+    </xs:simpleType>
 
 </xs:schema>
