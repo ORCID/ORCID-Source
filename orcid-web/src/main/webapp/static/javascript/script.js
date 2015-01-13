@@ -319,6 +319,7 @@ $(function() {
     if (window.location.href.endsWith("signin#deactivated")) {
         orcidGA.gaPush([ '_trackEvent', 'Disengagement', 'Deactivate_Complete',
                 'Website' ]);
+        showLoginError(om.get('orcid.frontend.security.orcid_deactivated'));
     }
 
     // if on signin or register do cookie check
@@ -433,62 +434,44 @@ $(function() {
                                                             .windowLocationHrefDelay(data.url
                                                                     + window.location.hash);
                                                 } else {
-                                                    if ($('form#loginForm #login-error-mess').length == 0) {
-                                                        var message;
-                                                        if (data.deprecated) {
-                                                            if (data.primary)
-                                                                message = om
-                                                                        .get(
-                                                                                'orcid.frontend.security.deprecated_with_primary')
-                                                                        .replace(
-                                                                                "{{primary}}",
-                                                                                data.primary);
-                                                            else
-                                                                message = om
-                                                                        .get('orcid.frontend.security.deprecated');
-                                                        } else if (data.unclaimed) {
-                                                            var resendClaimUrl = window.location
-                                                                    + "/../resend-claim";
-                                                            var userId = $(
-                                                                    '#userId')
-                                                                    .val();
-                                                            if (userId
-                                                                    .indexOf('@') != -1) {
-                                                                resendClaimUrl += '?email='
-                                                                        + encodeURIComponent(userId);
-                                                            }
+                                                    var message;
+                                                    if (data.deprecated) {
+                                                        if (data.primary)
                                                             message = om
                                                                     .get(
-                                                                            'orcid.frontend.security.unclaimed_exists')
+                                                                            'orcid.frontend.security.deprecated_with_primary')
                                                                     .replace(
-                                                                            "{{resendClaimUrl}}",
-                                                                            resendClaimUrl);
-                                                        } else {
+                                                                            "{{primary}}",
+                                                                            data.primary);
+                                                        else
                                                             message = om
-                                                                    .get('orcid.frontend.security.bad_credentials');
+                                                                    .get('orcid.frontend.security.deprecated');
+                                                    } else if (data.disabled) {
+                                                            message = om
+                                                                   .get('orcid.frontend.security.orcid_deactivated');
+                                                    } else if (data.unclaimed) {
+                                                        var resendClaimUrl = window.location
+                                                                + "/../resend-claim";
+                                                        var userId = $(
+                                                                '#userId')
+                                                                .val();
+                                                        if (userId
+                                                                .indexOf('@') != -1) {
+                                                            resendClaimUrl += '?email='
+                                                                   + encodeURIComponent(userId);
                                                         }
-                                                        $(
-                                                                "<div class='alert' id='login-error-mess'>"
-                                                                        + message
-                                                                        + "</div>")
-                                                                .hide()
-                                                                .appendTo(
-                                                                        'form#loginForm')
-                                                                .fadeIn('fast');
+                                                        message = om
+                                                                .get(
+                                                                        'orcid.frontend.security.unclaimed_exists')
+                                                                .replace(
+                                                                        "{{resendClaimUrl}}",
+                                                                       resendClaimUrl);
                                                     } else {
-                                                        $(
-                                                                'form#loginForm #login-error-mess')
-                                                                .fadeOut(
-                                                                        'fast',
-                                                                        function() {
-                                                                            $(
-                                                                                    $('form#loginForm #login-error-mess'))
-                                                                                    .fadeIn(
-                                                                                            'fast');
-                                                                        });
+                                                        message = om
+                                                               .get('orcid.frontend.security.bad_credentials');
                                                     }
-                                                }
-                                                ;
+                                                    showLoginError(message);
+                                                };
                                             }
                                         }).fail(function() {
                                     // something bad is happening!
@@ -513,6 +496,32 @@ $(function() {
             p.removeClass(className);
         }
     };
+    
+    function showLoginError(message) {
+        if ($('form#loginForm #login-error-mess').length == 0) {
+             $(
+                "<div class='alert' id='login-error-mess'>"
+                        + message
+                        + "</div>")
+                .hide()
+                .appendTo(
+                        'form#loginForm')
+                .fadeIn('fast');
+        } else {
+             $(
+             'form#loginForm #login-error-mess')
+             .fadeOut(
+                    'fast',
+                     function() {
+                        $('form#loginForm #login-error-mess').html(message);
+                         $(
+                                 $('form#loginForm #login-error-mess'))
+                                 .fadeIn(
+                                         'fast');
+                     });
+        }
+        
+    }
 
     // Privacy toggle
 

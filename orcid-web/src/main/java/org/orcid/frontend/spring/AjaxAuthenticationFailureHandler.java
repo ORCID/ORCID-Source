@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.orcid.core.security.DeprecatedException;
 import org.orcid.core.security.UnclaimedProfileExistsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 
@@ -52,6 +53,9 @@ public class AjaxAuthenticationFailureHandler extends SimpleUrlAuthenticationFai
                 writer.println(",");
                 writer.println("\"primary\":\"" + exc.getPrimary() + "\"");
             }
+        } else if(exception.getCause() instanceof DisabledException){
+            writer.println(",");
+            writer.println("\"disabled\": true");
         }
         writer.println("}");
     }
