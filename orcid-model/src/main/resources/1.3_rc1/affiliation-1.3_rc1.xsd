@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:sch="http://purl.oclc.org/dsdl/schematron" elementFormDefault="qualified"
-	targetNamespace="http://www.orcid.org/ns/affiliation" xmlns="http://www.orcid.org/ns/affiliation" xmlns:common="http://www.orcid.org/ns/common">
+	targetNamespace="http://www.orcid.org/ns/affiliation" xmlns:affiliation="http://www.orcid.org/ns/affiliation" xmlns:common="http://www.orcid.org/ns/common">
 	<xs:annotation>
 		<xs:documentation>
 			=============================================================================
@@ -38,7 +38,7 @@
         </xs:annotation>
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="type" type="affiliationType"/>
+                <xs:element name="type" type="affiliation:affiliation"/>
                 <xs:element name="departmentName" type="common:nonEmptyString" minOccurs="0"
                     maxOccurs="1"/>
                 <xs:element name="roleTitle" type="common:nonEmptyString" minOccurs="0"
@@ -54,7 +54,7 @@
             <xs:attribute name="visibility" type="common:visibility"/>
         </xs:complexType>
     </xs:element>
-    <xs:simpleType name="affiliationType">
+    <xs:simpleType name="affiliation">
         <xs:annotation>
             <xs:documentation>The type of the affiliation. Presently only "education" and "employment" are used. 
                 "distinction", "funding", and "contribution" are all for FUTURE use and will not be show to the researcher in the web interface.

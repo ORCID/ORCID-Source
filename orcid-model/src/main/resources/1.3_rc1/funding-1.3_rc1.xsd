@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:sch="http://purl.oclc.org/dsdl/schematron" elementFormDefault="qualified"
-	targetNamespace="http://www.orcid.org/ns/funding" xmlns="http://www.orcid.org/ns/funding"
+	targetNamespace="http://www.orcid.org/ns/funding" xmlns:funding="http://www.orcid.org/ns/funding"
 	xmlns:common="http://www.orcid.org/ns/common">
 	<xs:annotation>
 		<xs:documentation>
@@ -54,11 +54,11 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="type" type="fundingType"
+				<xs:element name="type" type="funding:fundingType"
 					minOccurs="1" maxOccurs="1" />
 				<xs:element name="organizationDefinedType" type="common:organizationDefinedType"
 					minOccurs="0" maxOccurs="1" />
-				<xs:element name="title" type="fundingTitle"
+				<xs:element name="title" type="funding:fundingTitle"
 					minOccurs="1" />
 				<xs:element name="shortDescription" type="common:shortDescription"
 					minOccurs="0" />
@@ -78,9 +78,9 @@
 						<xs:documentation>End date for the funding.</xs:documentation>
 					</xs:annotation>
 				</xs:element>
-				<xs:element name="externalIdentifiers" type="fundingExternalIdentifiers"
+				<xs:element name="externalIdentifiers" type="funding:fundingExternalIdentifiers"
 					minOccurs="0" />
-				<xs:element name="contributors" type="fundingContributors"
+				<xs:element name="contributors" type="funding:fundingContributors"
 					minOccurs="0" />
 				<xs:element name="organization" type="common:organization"
 					minOccurs="1" maxOccurs="1" />
@@ -134,7 +134,7 @@
 		</xs:annotation>
 		<xs:sequence>
 			<xs:element maxOccurs="unbounded" minOccurs="0"
-				name="externalIdentifier" type="fundingExternalIdentifier" />
+				name="externalIdentifier" type="funding:fundingExternalIdentifier" />
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="fundingExternalIdentifier">
@@ -145,7 +145,7 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element name="externalIdentifierType" type="fundingExternalIdentifierType"
+			<xs:element name="externalIdentifierType" type="funding:fundingExternalIdentifierType"
 				minOccurs="1" maxOccurs="1" />
 			<xs:element name="externalIdentifierValue" type="common:string2084"
 				minOccurs="0" maxOccurs="1">
@@ -181,7 +181,7 @@
 		</xs:annotation>
 		<xs:sequence>
 			<xs:element maxOccurs="unbounded" minOccurs="0"
-				name="contributor" type="fundingContributor" />
+				name="contributor" type="funding:fundingContributor" />
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="fundingContributor">
@@ -197,7 +197,7 @@
 				minOccurs="0" maxOccurs="1" />
 			<xs:element name="contributorEmail" type="common:contributorEmail"
 				minOccurs="0" maxOccurs="1" />
-			<xs:element name="fundingContributorAttributes" type="fundingContributorAttributes"
+			<xs:element name="fundingContributorAttributes" type="funding:fundingContributorAttributes"
 				minOccurs="0" maxOccurs="1" />
 		</xs:sequence>
 	</xs:complexType>
@@ -208,7 +208,7 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element name="contributorRole" type="fundingContributorRole"
+			<xs:element name="contributorRole" type="funding:fundingContributorRole"
 				minOccurs="0" />
 		</xs:sequence>
 	</xs:complexType>

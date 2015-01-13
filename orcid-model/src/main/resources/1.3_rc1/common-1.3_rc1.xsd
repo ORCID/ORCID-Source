@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:sch="http://purl.oclc.org/dsdl/schematron" elementFormDefault="qualified"
-	targetNamespace="http://www.orcid.org/ns/common" xmlns="http://www.orcid.org/ns/common">
+	targetNamespace="http://www.orcid.org/ns/common" xmlns:common="http://www.orcid.org/ns/common">
 	<xs:annotation>
 		<xs:documentation>
 			=============================================================================
@@ -52,7 +52,7 @@
 		</xs:simpleContent>
 	</xs:complexType>
 	
-	<xs:element name="source" type="sourceType" />
+	<xs:element name="source" type="common:sourceType" />
 	
 	<xs:complexType name="sourceType">
 		<xs:annotation>
@@ -65,7 +65,7 @@
 		</xs:annotation>
 		<xs:sequence>
 			<xs:choice minOccurs="0">
-				<xs:element ref="sourceOrcid">
+				<xs:element ref="common:sourceOrcid">
 					<xs:annotation>
 						<xs:documentation>The ORCID identifier for the individual user (or
 							legacy client application) that created the item. For identifiers
@@ -76,7 +76,7 @@
 						</xs:documentation>
 					</xs:annotation>
 				</xs:element>
-				<xs:element name="sourceClientId" type="clientId">
+				<xs:element name="sourceClientId" type="common:clientId">
 					<xs:annotation>
 						<xs:documentation>The client ID for the client application (Member
 							organization system) that created the item.
@@ -84,7 +84,7 @@
 					</xs:annotation>
 				</xs:element>
 			</xs:choice>
-			<xs:element name="sourceName" type="sourceName" minOccurs="0" />
+			<xs:element name="sourceName" type="common:sourceName" minOccurs="0" />
 			<xs:element name="sourceDate">
 				<xs:annotation>
 					<xs:documentation>The date time that the source client application
@@ -122,9 +122,9 @@
 		</xs:annotation>
 
 		<xs:sequence>
-			<xs:element name="name" type="nonEmptyString" />
-			<xs:element name="address" type="organizationAddress" />
-			<xs:element name="disambiguatedOrganization" type="disambiguatedOrganization"
+			<xs:element name="name" type="common:nonEmptyString" />
+			<xs:element name="address" type="common:organizationAddress" />
+			<xs:element name="disambiguatedOrganization" type="common:disambiguatedOrganization"
 				minOccurs="0" maxOccurs="1" />
 		</xs:sequence>
 	</xs:complexType>
@@ -134,17 +134,17 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element minOccurs="1" name="city" type="nonEmptyString">
+			<xs:element minOccurs="1" name="city" type="common:nonEmptyString">
 				<xs:annotation>
 					<xs:documentation>City</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element minOccurs="0" name="region" type="nonEmptyString">
+			<xs:element minOccurs="0" name="region" type="common:nonEmptyString">
 				<xs:annotation>
 					<xs:documentation>Region within a country</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element minOccurs="1" name="country" type="iso3166Country" />
+			<xs:element minOccurs="1" name="country" type="common:iso3166Country" />
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="disambiguatedOrganization">
@@ -157,13 +157,13 @@
 		</xs:annotation>
 		<xs:sequence>
 			<xs:element name="disambiguatedOrganizationIdentifier"
-				type="shortText">
+				type="common:shortText">
 				<xs:annotation>
 					<xs:documentation>The disambiguated organization identifier.
 					</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="disambiguationSource" type="shortText">
+			<xs:element name="disambiguationSource" type="common:shortText">
 				<xs:annotation>
 					<xs:documentation>The source for providing the disambiguated
 						organization ID.
@@ -208,7 +208,7 @@
 
 		<xs:simpleContent>
 			<xs:extension base="xs:string">
-				<xs:attribute name="currencyCode" type="currencyCode"
+				<xs:attribute name="currencyCode" type="common:currencyCode"
 					use="required" />
 			</xs:extension>
 		</xs:simpleContent>
@@ -447,7 +447,7 @@
 				external identifier.
 			</xs:documentation>
 		</xs:annotation>
-		<xs:restriction base="string255">
+		<xs:restriction base="common:string255">
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:simpleType name="languageCode">
@@ -664,7 +664,7 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element minOccurs="0" name="country" type="country" />
+			<xs:element minOccurs="0" name="country" type="common:country" />
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="country">
@@ -676,8 +676,8 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:simpleContent>
-			<xs:extension base="iso3166CountryOrEmpty">
-				<xs:attribute name="visibility" type="visibility" />
+			<xs:extension base="common:iso3166CountryOrEmpty">
+				<xs:attribute name="visibility" type="common:visibility" />
 			</xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>
@@ -701,13 +701,13 @@
 		</xs:restriction>
 	</xs:simpleType>
 
-	<xs:element name="applicationGroupOrcid" type="orcidId" />
-	<xs:element name="applicationOrcid" type="orcidId" />
-	<xs:element name="orcidIdentifier" type="orcidId" />
-	<xs:element name="contributorOrcid" type="orcidId" />
-	<xs:element name="groupOrcidIdentifier" type="orcidId" />
-	<xs:element name="sourceOrcid" type="orcidId" />
-	<xs:element name="orcidId" type="orcidId" />
+	<xs:element name="applicationGroupOrcid" type="common:orcidId" />
+	<xs:element name="applicationOrcid" type="common:orcidId" />
+	<xs:element name="orcidIdentifier" type="common:orcidId" />
+	<xs:element name="contributorOrcid" type="common:orcidId" />
+	<xs:element name="groupOrcidIdentifier" type="common:orcidId" />
+	<xs:element name="sourceOrcid" type="common:orcidId" />
+	<xs:element name="orcidId" type="common:orcidId" />
 	<xs:complexType name="orcidId">
 		<xs:annotation>
 			<xs:documentation>The identifier of the researcher or contributor in
@@ -718,13 +718,13 @@
 		<xs:sequence>
 			<xs:choice>
 				<xs:sequence>
-					<xs:element name="uri" type="orcidUri">
+					<xs:element name="uri" type="common:orcidUri">
 						<xs:annotation>
 							<xs:documentation>ORCID iD in URI form (preferred).
 							</xs:documentation>
 						</xs:annotation>
 					</xs:element>
-					<xs:element name="path" type="orcidPath" minOccurs="0">
+					<xs:element name="path" type="common:orcidPath" minOccurs="0">
 						<xs:annotation>
 							<xs:documentation>ORCID path (16-character identifier) of the
 								ORCID iD.
@@ -732,7 +732,7 @@
 						</xs:annotation>
 					</xs:element>
 				</xs:sequence>
-				<xs:element name="path" type="orcidPath">
+				<xs:element name="path" type="common:orcidPath">
 					<xs:annotation>
 						<xs:documentation>ORCID path (16-character identifier) of the
 							ORCID iD.
@@ -777,10 +777,10 @@
 		<xs:sequence>
 			<xs:choice>
 				<xs:sequence>
-					<xs:element name="uri" type="clientUri" />
-					<xs:element name="path" type="clientPath" minOccurs="0" />
+					<xs:element name="uri" type="common:clientUri" />
+					<xs:element name="path" type="common:clientPath" minOccurs="0" />
 				</xs:sequence>
-				<xs:element name="path" type="clientPath" />
+				<xs:element name="path" type="common:clientPath" />
 			</xs:choice>
 			<xs:element name="host" type="xs:string" minOccurs="0">
 				<xs:annotation>
@@ -917,10 +917,10 @@
 			<xs:pattern value="\d{2}" />
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:element name="fuzzyDate" type="fuzzyDate" />
-	<xs:element name="startDate" type="fuzzyDate" />
-	<xs:element name="endDate" type="fuzzyDate" />
-	<xs:element name="publicationDate" type="fuzzyDate" />
+	<xs:element name="fuzzyDate" type="common:fuzzyDate" />
+	<xs:element name="startDate" type="common:fuzzyDate" />
+	<xs:element name="endDate" type="common:fuzzyDate" />
+	<xs:element name="publicationDate" type="common:fuzzyDate" />
 	<xs:complexType name="fuzzyDate">
 		<xs:annotation>
 			<xs:documentation>In some places the full date is not required.
@@ -936,7 +936,7 @@
 				</xs:annotation>
 				<xs:complexType mixed="true">
 					<xs:simpleContent>
-						<xs:extension base="year" />
+						<xs:extension base="common:year" />
 					</xs:simpleContent>
 				</xs:complexType>
 			</xs:element>
@@ -950,7 +950,7 @@
 					</xs:annotation>
 					<xs:complexType mixed="true">
 						<xs:simpleContent>
-							<xs:extension base="month" />
+							<xs:extension base="common:month" />
 						</xs:simpleContent>
 					</xs:complexType>
 				</xs:element>
@@ -963,7 +963,7 @@
 					</xs:annotation>
 					<xs:complexType mixed="true">
 						<xs:simpleContent>
-							<xs:extension base="day" />
+							<xs:extension base="common:day" />
 						</xs:simpleContent>
 					</xs:complexType>
 				</xs:element>
@@ -1262,7 +1262,7 @@
 			<xs:documentation>Contains either a country code or an empty value
 			</xs:documentation>
 		</xs:annotation>
-		<xs:union memberTypes="iso3166Country" />
+		<xs:union memberTypes="common:iso3166Country" />
 	</xs:simpleType>
 	<xs:simpleType name="empty">
 		<xs:annotation>
@@ -1298,7 +1298,7 @@
 				characters
 			</xs:documentation>
 		</xs:annotation>
-		<xs:restriction base="nonEmptyString">
+		<xs:restriction base="common:nonEmptyString">
 			<xs:maxLength value="1000" />
 		</xs:restriction>
 	</xs:simpleType>
@@ -1308,7 +1308,7 @@
 				characters
 			</xs:documentation>
 		</xs:annotation>
-		<xs:restriction base="nonEmptyString">
+		<xs:restriction base="common:nonEmptyString">
 			<xs:maxLength value="2084" />
 		</xs:restriction>
 	</xs:simpleType>
@@ -1320,8 +1320,8 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:simpleContent>
-			<xs:extension base="nonEmptyString">
-				<xs:attribute name="languageCode" type="languageCode"
+			<xs:extension base="common:nonEmptyString">
+				<xs:attribute name="languageCode" type="common:languageCode"
 					use="required" />
 			</xs:extension>
 		</xs:simpleContent>
@@ -1351,8 +1351,8 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:simpleContent>
-			<xs:extension base="nonEmptyString">
-				<xs:attribute name="visibility" type="visibility" />
+			<xs:extension base="common:nonEmptyString">
+				<xs:attribute name="visibility" type="common:visibility" />
 			</xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>
@@ -1364,7 +1364,7 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:simpleContent>
-			<xs:restriction base="stringWithLangCode">
+			<xs:restriction base="common:stringWithLangCode">
 				<xs:maxLength value="1000" />
 			</xs:restriction>
 		</xs:simpleContent>
@@ -1378,7 +1378,7 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:simpleContent>
-			<xs:extension base="email" />
+			<xs:extension base="common:email" />
 		</xs:simpleContent>
 	</xs:complexType>
 	<xs:complexType name="contributorAttributes">
@@ -1388,9 +1388,9 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element name="contributorSequence" type="contributorSequence"
+			<xs:element name="contributorSequence" type="common:contributorSequence"
 				minOccurs="0" />
-			<xs:element name="contributorRole" type="contributorRole"
+			<xs:element name="contributorRole" type="common:contributorRole"
 				minOccurs="0" />
 		</xs:sequence>
 	</xs:complexType>

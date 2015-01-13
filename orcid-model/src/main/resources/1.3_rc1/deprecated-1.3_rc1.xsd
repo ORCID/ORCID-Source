@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:sch="http://purl.oclc.org/dsdl/schematron" elementFormDefault="qualified"
-	targetNamespace="http://www.orcid.org/ns/deprecated" xmlns="http://www.orcid.org/ns/deprecated"
+	targetNamespace="http://www.orcid.org/ns/deprecated" xmlns:deprecated="http://www.orcid.org/ns/deprecated"
 	xmlns:common="http://www.orcid.org/ns/common">
 	<xs:annotation>
 		<xs:documentation>
@@ -44,9 +44,9 @@
 				</xs:documentation>
 			</xs:annotation>
 			<xs:sequence>
-				<xs:element name="deprecatedDate" type="deprecatedDate"
+				<xs:element name="deprecatedDate" type="deprecated:deprecatedDate"
 					minOccurs="1" maxOccurs="1" />
-				<xs:element name="primaryRecord" type="primaryRecord"
+				<xs:element name="primaryRecord" type="deprecated:primaryRecord"
 					maxOccurs="1" minOccurs="1" />
 			</xs:sequence>
 		</xs:complexType>

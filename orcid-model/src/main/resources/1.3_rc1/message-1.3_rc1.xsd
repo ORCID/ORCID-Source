@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:sch="http://purl.oclc.org/dsdl/schematron" elementFormDefault="qualified"
-	targetNamespace="http://www.orcid.org/ns/message" xmlns="http://www.orcid.org/ns/message"
+	targetNamespace="http://www.orcid.org/ns/message" xmlns:message="http://www.orcid.org/ns/message"
 	xmlns:common="http://www.orcid.org/ns/common" xmlns:error="http://www.orcid.org/ns/error"
 	xmlns:record="http://www.orcid.org/ns/record" xmlns:search="http://www.orcid.org/ns/search">
 	<xs:annotation>
@@ -51,7 +51,7 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="messageVersion" type="messageVersion" />
+				<xs:element name="messageVersion" type="message:messageVersion" />
 				<xs:choice>
 					<xs:element ref="record:record" />
 					<xs:element ref="search:search" />

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:sch="http://purl.oclc.org/dsdl/schematron" elementFormDefault="qualified"
-	targetNamespace="http://www.orcid.org/ns/work" xmlns="http://www.orcid.org/ns/work"
+	targetNamespace="http://www.orcid.org/ns/work" xmlns:work="http://www.orcid.org/ns/work"
 	xmlns:common="http://www.orcid.org/ns/common">
 	<xs:annotation>
 		<xs:documentation>
@@ -49,22 +49,22 @@
 			</xs:annotation>
 
 			<xs:sequence>
-				<xs:element name="title" type="workTitle"
+				<xs:element name="title" type="work:workTitle"
 					minOccurs="0" />
-				<xs:element name="journalTitle" type="journalTitle"
+				<xs:element name="journalTitle" type="work:journalTitle"
 					minOccurs="0" maxOccurs="1" />
 				<xs:element name="shortDescription" type="common:shortDescription"
 					minOccurs="0" />
-				<xs:element name="citation" minOccurs="0" type="citation">
+				<xs:element name="citation" minOccurs="0" type="work:citation">
 					<xs:annotation>
 						<xs:documentation>Element containing the type and content of the
 							citation for this work
 						</xs:documentation>
 					</xs:annotation>
 				</xs:element>
-				<xs:element name="type" type="workType" />
+				<xs:element name="type" type="work:workType" />
 				<xs:element ref="common:publicationDate" minOccurs="0" />
-				<xs:element name="externalIdentifiers" type="citation"
+				<xs:element name="externalIdentifiers" type="work:citation"
 					minOccurs="0">
 					<xs:annotation>
 						<xs:documentation>Element containing the type and content of the
@@ -73,7 +73,7 @@
 					</xs:annotation>
 				</xs:element>
 				<xs:element name="url" type="common:url" minOccurs="0" />
-				<xs:element name="contributors" type="workContributors"
+				<xs:element name="contributors" type="work:workContributors"
 					minOccurs="0" />
 				<xs:element ref="common:source"
 					minOccurs="0" />
@@ -148,7 +148,7 @@
 		</xs:annotation>
 		<xs:sequence>
 			<xs:element maxOccurs="unbounded" minOccurs="0"
-				name="workExternalIdentifier" type="externalIdentifier" />
+				name="workExternalIdentifier" type="work:externalIdentifier" />
 		</xs:sequence>
 		<xs:attribute name="scope" type="common:scope" use="optional" />
 	</xs:complexType>
@@ -158,7 +158,7 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element name="externalIdentifierType" type="externalIdentifierType"
+			<xs:element name="externalIdentifierType" type="work:externalIdentifierType"
 				maxOccurs="1" />
 			<xs:element name="externalIdentifierId" maxOccurs="1"
 				type="common:nonEmptyString">
@@ -258,7 +258,7 @@
 		</xs:annotation>
 		<xs:sequence>
 			<xs:element maxOccurs="unbounded" minOccurs="0" name="contributor"
-				type="contributor" />
+				type="work:contributor" />
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="contributor">
@@ -276,9 +276,9 @@
 			</xs:element>
 			<xs:element name="creditName" type="common:creditName"
 				minOccurs="0" maxOccurs="1" />
-			<xs:element name="contributorEmail" type="contributorEmail"
+			<xs:element name="contributorEmail" type="work:contributorEmail"
 				minOccurs="0" maxOccurs="1" />
-			<xs:element name="contributorAttributes" type="contributorAttributes"
+			<xs:element name="contributorAttributes" type="work:contributorAttributes"
 				minOccurs="0" maxOccurs="1" />
 		</xs:sequence>
 	</xs:complexType>
@@ -301,9 +301,9 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element name="contributorSequence" type="contributorSequence"
+			<xs:element name="contributorSequence" type="work:contributorSequence"
 				minOccurs="0" />
-			<xs:element name="contributorRole" type="contributorRole"
+			<xs:element name="contributorRole" type="work:contributorRole"
 				minOccurs="0" />
 		</xs:sequence>
 	</xs:complexType>
@@ -354,7 +354,7 @@
 					</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="subtitle" type="subtitle" minOccurs="0" />
+			<xs:element name="subtitle" type="work:subtitle" minOccurs="0" />
 			<xs:element name="translatedTitle" type="common:translatedTitle"
 				minOccurs="0" />
 		</xs:sequence>
@@ -394,7 +394,7 @@
 		</xs:annotation>
 		<xs:sequence>
 			<xs:element name="citationType" default="formatted-unspecified"
-				type="citationType" maxOccurs="1" minOccurs="1" />
+				type="work:citationType" maxOccurs="1" minOccurs="1" />
 			<xs:element name="citation" type="xs:string" maxOccurs="1"
 				minOccurs="1" />
 		</xs:sequence>

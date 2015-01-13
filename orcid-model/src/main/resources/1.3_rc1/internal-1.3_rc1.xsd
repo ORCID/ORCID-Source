@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:sch="http://purl.oclc.org/dsdl/schematron" elementFormDefault="qualified"
-	targetNamespace="http://www.orcid.org/ns/internal" xmlns="http://www.orcid.org/ns/internal"
+	targetNamespace="http://www.orcid.org/ns/internal" xmlns:internal="http://www.orcid.org/ns/internal"
 	xmlns:common="http://www.orcid.org/ns/common">
 	<xs:annotation>
 		<xs:documentation>
@@ -45,8 +45,8 @@
 				</xs:documentation>
 			</xs:annotation>
 			<xs:sequence>
-				<xs:element minOccurs="0" name="securityDetails" type="securityDetails" />
-				<xs:element minOccurs="0" name="preferences" type="preferences" />
+				<xs:element minOccurs="0" name="securityDetails" type="internal:securityDetails" />
+				<xs:element minOccurs="0" name="preferences" type="internal:preferences" />
 				<xs:element minOccurs="0" ref="common:groupOrcidIdentifier">
 					<xs:annotation>
 						<xs:documentation>(FOR INTERNAL USE ONLY) Group ID for API
@@ -62,7 +62,7 @@
 						</xs:documentation>
 					</xs:annotation>
 				</xs:element>
-				<xs:element minOccurs="0" name="salesforceId" type="salesforceId" />
+				<xs:element minOccurs="0" name="salesforceId" type="internal:salesforceId" />
 			</xs:sequence>
 			<xs:attribute name="scope" type="common:scope" use="optional" />
 			<xs:attribute name="visibility" type="common:visibility" />
@@ -85,12 +85,12 @@
 		</xs:annotation>
 
 		<xs:sequence>
-			<xs:element name="encryptedPassword" type="encryptedPassword" />
-			<xs:element name="securityQuestionId" type="securityQuestionId"
+			<xs:element name="encryptedPassword" type="internal:encryptedPassword" />
+			<xs:element name="securityQuestionId" type="internal:securityQuestionId"
 				minOccurs="0" maxOccurs="1" />
-			<xs:element name="encryptedSecurityAnswer" type="encryptedSecurityAnswer"
+			<xs:element name="encryptedSecurityAnswer" type="internal:encryptedSecurityAnswer"
 				minOccurs="0" maxOccurs="1" />
-			<xs:element name="encryptedVerificationCode" type="encryptedVerificationCode"
+			<xs:element name="encryptedVerificationCode" type="internal:encryptedVerificationCode"
 				minOccurs="1" maxOccurs="1" />
 		</xs:sequence>
 	</xs:complexType>
@@ -135,8 +135,8 @@
 					</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="activitiesVisibilityDefault" type="activitiesVisibilityDefault" />
-			<xs:element name="developerToolsEnabled" type="developerToolsEnabled"
+			<xs:element name="activitiesVisibilityDefault" type="internal:activitiesVisibilityDefault" />
+			<xs:element name="developerToolsEnabled" type="internal:developerToolsEnabled"
 				minOccurs="0" />
 		</xs:sequence>
 	</xs:complexType>

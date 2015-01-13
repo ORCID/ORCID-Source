@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:sch="http://purl.oclc.org/dsdl/schematron" elementFormDefault="qualified"
-	targetNamespace="http://www.orcid.org/ns/bio" xmlns="http://www.orcid.org/ns/bio"
+	targetNamespace="http://www.orcid.org/ns/bio" xmlns:bio="http://www.orcid.org/ns/bio"
 	xmlns:common="http://www.orcid.org/ns/common">
 	<xs:annotation>
 		<xs:documentation>
@@ -42,21 +42,21 @@
 				</xs:documentation>
 			</xs:annotation>
 			<xs:sequence>
-				<xs:element name="personalDetails" type="personalDetails"
+				<xs:element name="personalDetails" type="bio:personalDetails"
 					minOccurs="0" maxOccurs="1" />
-				<xs:element name="biography" type="biography" minOccurs="0"
+				<xs:element name="biography" type="bio:biography" minOccurs="0"
 					maxOccurs="1" />
-				<xs:element name="researcherUrls" type="researcherUrls"
+				<xs:element name="researcherUrls" type="bio:researcherUrls"
 					minOccurs="0" maxOccurs="1" />
-				<xs:element name="contactDetails" type="contactDetails"
+				<xs:element name="contactDetails" type="bio:contactDetails"
 					minOccurs="0" maxOccurs="1" />
-				<xs:element name="keywords" type="keywords" minOccurs="0"
+				<xs:element name="keywords" type="bio:keywords" minOccurs="0"
 					maxOccurs="1" />
-				<xs:element name="externalIdentifiers" type="externalIdentifiers"
+				<xs:element name="externalIdentifiers" type="bio:externalIdentifiers"
 					minOccurs="0" maxOccurs="1" />
-				<xs:element name="delegation" type="delegation" minOccurs="0"
+				<xs:element name="delegation" type="bio:delegation" minOccurs="0"
 					maxOccurs="1" />
-				<xs:element name="applications" type="applications"
+				<xs:element name="applications" type="bio:applications"
 					minOccurs="0" maxOccurs="1" />
 			</xs:sequence>
 			<xs:attribute name="scope" type="common:scope" use="optional" />
@@ -97,7 +97,7 @@
 					</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="otherNames" type="otherNames"
+			<xs:element name="otherNames" type="bio:otherNames"
 				minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>(Optional) Container that includes other name(s)
@@ -119,7 +119,7 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:simpleContent>
-			<xs:extension base="bioText">
+			<xs:extension base="bio:bioText">
 				<xs:attribute name="visibility" type="common:visibility" />
 			</xs:extension>
 		</xs:simpleContent>
@@ -144,7 +144,7 @@
 		</xs:annotation>
 		<xs:sequence>
 			<xs:element minOccurs="0" maxOccurs="unbounded" name="researcherUrl"
-				type="researcherUrl" />
+				type="bio:researcherUrl" />
 		</xs:sequence>
 		<xs:attribute name="visibility" type="common:visibility" />
 	</xs:complexType>
@@ -189,7 +189,7 @@
 			</xs:appinfo>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element name="email" type="email" minOccurs="0"
+			<xs:element name="email" type="bio:email" minOccurs="0"
 				maxOccurs="unbounded" />
 			<xs:element name="address" type="common:address"
 				minOccurs="0" />
@@ -265,7 +265,7 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element name="keyword" type="keyword" minOccurs="0"
+			<xs:element name="keyword" type="bio:keyword" minOccurs="0"
 				maxOccurs="unbounded" />
 		</xs:sequence>
 		<xs:attribute name="visibility" type="common:visibility" />
@@ -290,7 +290,7 @@
 		</xs:annotation>
 		<xs:sequence>
 			<xs:element maxOccurs="unbounded" minOccurs="0"
-				name="external-identifier" type="externalIdentifier" />
+				name="external-identifier" type="bio:externalIdentifier" />
 		</xs:sequence>
 		<xs:attribute name="visibility" type="common:visibility" />
 	</xs:complexType>
@@ -304,11 +304,11 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element name="externalIdCommonName" type="externalIdCommonName"
+			<xs:element name="externalIdCommonName" type="bio:externalIdCommonName"
 				minOccurs="0" maxOccurs="1" />
-			<xs:element name="externalIdReference" type="externalIdReference"
+			<xs:element name="externalIdReference" type="bio:externalIdReference"
 				minOccurs="0" maxOccurs="1" />
-			<xs:element name="externalIdUrl" type="externalIdUrl"
+			<xs:element name="externalIdUrl" type="bio:externalIdUrl"
 				minOccurs="0" maxOccurs="1" />
 			<xs:element ref="common:source"
 				minOccurs="0" />
@@ -340,8 +340,8 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element minOccurs="0" name="given-permission-to" type="givenPermissionTo" />
-            <xs:element minOccurs="0" name="given-permission-by" type="givenPermissionBy" />
+            <xs:element minOccurs="0" name="given-permission-to" type="bio:givenPermissionTo" />
+            <xs:element minOccurs="0" name="given-permission-by" type="bio:givenPermissionBy" />
         </xs:sequence>
         <xs:attribute name="visibility" type="common:visibility" />
     </xs:complexType>
@@ -351,7 +351,7 @@
         </xs:annotation>
         <xs:sequence>
             <xs:element maxOccurs="unbounded" name="delegationDetails"
-                type="delegationDetails" />
+                type="bio:delegationDetails" />
         </xs:sequence>
     </xs:complexType>
     <xs:complexType name="givenPermissionBy">
@@ -360,7 +360,7 @@
         </xs:annotation>
         <xs:sequence>
             <xs:element maxOccurs="unbounded" name="delegationDetails"
-                type="delegationDetails" />
+                type="bio:delegationDetails" />
         </xs:sequence>
     </xs:complexType>
     <xs:complexType name="delegationDetails">
@@ -368,8 +368,8 @@
             <xs:documentation>(FUTURE)</xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="approvalDate" type="approvalDate" />
-            <xs:element name="delegateSummary" type="delegateSummary" />
+            <xs:element name="approvalDate" type="bio:approvalDate" />
+            <xs:element name="delegateSummary" type="bio:delegateSummary" />
         </xs:sequence>
     </xs:complexType>
     <xs:complexType name="approvalDate">
@@ -400,7 +400,7 @@
         </xs:annotation>
         <xs:sequence>
             <xs:element maxOccurs="unbounded" name="application-summary"
-                type="applicationSummary" />
+                type="bio:applicationSummary" />
         </xs:sequence>
         <xs:attribute name="visibility" type="common:visibility" />
     </xs:complexType>
@@ -410,10 +410,10 @@
         </xs:annotation>
         <xs:sequence>
             <xs:element ref="common:applicationOrcid" />
-            <xs:element name="applicationName" type="applicationName" />
-            <xs:element name="applicationWebsite" type="applicationWebsite" />
-            <xs:element name="approvalDate" type="approvalDate" />
-            <xs:element name="scopePaths" type="scopePaths" />
+            <xs:element name="applicationName" type="bio:applicationName" />
+            <xs:element name="applicationWebsite" type="bio:applicationWebsite" />
+            <xs:element name="approvalDate" type="bio:approvalDate" />
+            <xs:element name="scopePaths" type="bio:scopePaths" />
             <xs:element ref="common:applicationGroupOrcid" />
             <xs:element name="applicationGroupName" type="xs:string" />
         </xs:sequence>
@@ -458,12 +458,12 @@
     </xs:complexType>
     <xs:complexType name="scopePaths">
         <xs:sequence>
-            <xs:element maxOccurs="unbounded" name="scopePath" type="scopePath" />
+            <xs:element maxOccurs="unbounded" name="scopePath" type="bio:scopePath" />
         </xs:sequence>
     </xs:complexType>
     <xs:complexType mixed="true" name="scopePath">
         <xs:simpleContent>
-            <xs:extension base="scopePathType" />
+            <xs:extension base="bio:scopePathType" />
         </xs:simpleContent>
     </xs:complexType>
     <xs:simpleType name="scopePathType">
