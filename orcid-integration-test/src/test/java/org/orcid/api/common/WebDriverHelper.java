@@ -56,13 +56,20 @@ public class WebDriverHelper {
     }
 
     public String obtainAuthorizationCode(String scopes, String orcid, String userId, String password) throws InterruptedException {
-        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, orcid, scopes, redirectUri));
+        String url = String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, orcid, scopes, redirectUri);        
+        webDriver.get(url);
 
         // Switch to the login form
-        By switchFromLinkLocator = By.id("in-register-switch-form");
-        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(switchFromLinkLocator));
-        WebElement switchFromLink = webDriver.findElement(switchFromLinkLocator);
-        switchFromLink.click();
+        try {
+            By switchFromLinkLocator = By.id("in-register-switch-form");
+            (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(switchFromLinkLocator));
+            WebElement switchFromLink = webDriver.findElement(switchFromLinkLocator);
+            switchFromLink.click();
+        } catch (Exception e) {
+            System.out.println("Unable to load URL: " + url);
+            e.printStackTrace();
+            throw e;
+        }
 
         // Fill the form
         By userIdElementLocator = By.id("userId");

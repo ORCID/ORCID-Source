@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.integration.api.t2.test;
+package org.orcid.integration.api.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -510,10 +510,11 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
             newExternalIdentifiers.setVisibility(Visibility.PUBLIC);
             ExternalIdSource externalIdOrcid = new ExternalIdSource();
             externalIdOrcid.setPath(groupOrcid);
-            ExternalIdentifier additionalIdentifer = new ExternalIdentifier();
-            additionalIdentifer.setExternalIdReference(new ExternalIdReference("abc"));
-            additionalIdentifer.setExternalIdOrcid(externalIdOrcid);
-            newExternalIdentifiers.getExternalIdentifier().add(additionalIdentifer);
+            ExternalIdentifier additionalIdentifier = new ExternalIdentifier();
+            additionalIdentifier.setExternalIdReference(new ExternalIdReference("abc"));
+            additionalIdentifier.setExternalIdOrcid(externalIdOrcid);
+            additionalIdentifier.setExternalIdCommonName(new ExternalIdCommonName("Name_" + System.currentTimeMillis()));
+            newExternalIdentifiers.getExternalIdentifier().add(additionalIdentifier);
             orcidBio.setExternalIdentifiers(newExternalIdentifiers);
 
             createAccessTokenFromCredentials();
@@ -557,15 +558,16 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
 
         ExternalIdentifiers newExternalIdentifiers = new ExternalIdentifiers();
         newExternalIdentifiers.setVisibility(Visibility.PUBLIC);
-        ExternalIdentifier additionalIdentifer = new ExternalIdentifier();
-        additionalIdentifer.setExternalIdReference(new ExternalIdReference("abc123"));
+        ExternalIdentifier additionalIdentifier = new ExternalIdentifier();
+        additionalIdentifier.setExternalIdReference(new ExternalIdReference("abc123"));
         Source source = new Source();
-        additionalIdentifer.setSource(source);
+        additionalIdentifier.setSource(source);
+        additionalIdentifier.setExternalIdCommonName(new ExternalIdCommonName("Name_" + System.currentTimeMillis()));
         SourceOrcid sourceOrcid = new SourceOrcid();
         source.setSourceOrcid(sourceOrcid);
         sourceOrcid.setPath(groupOrcid);
 
-        newExternalIdentifiers.getExternalIdentifier().add(additionalIdentifer);
+        newExternalIdentifiers.getExternalIdentifier().add(additionalIdentifier);
         orcidBio.setExternalIdentifiers(newExternalIdentifiers);
 
         createAccessTokenFromCredentials();
@@ -607,10 +609,11 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         SourceOrcid sourceOrcid = new SourceOrcid();
         source.setSourceOrcid(sourceOrcid);
         sourceOrcid.setPath(groupOrcid);
-        ExternalIdentifier additionalIdentifer = new ExternalIdentifier();
-        additionalIdentifer.setExternalIdReference(new ExternalIdReference("abc"));
-        additionalIdentifer.setSource(source);
-        newExternalIdentifiers.getExternalIdentifier().add(additionalIdentifer);
+        ExternalIdentifier additionalIdentifier = new ExternalIdentifier();
+        additionalIdentifier.setExternalIdReference(new ExternalIdReference("abc"));
+        additionalIdentifier.setExternalIdCommonName(new ExternalIdCommonName("Name_" + System.currentTimeMillis()));
+        additionalIdentifier.setSource(source);
+        newExternalIdentifiers.getExternalIdentifier().add(additionalIdentifier);
         orcidBio.setExternalIdentifiers(newExternalIdentifiers);
 
         createAccessTokenFromCredentials();
@@ -657,11 +660,11 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         newExternalIdentifiers.setVisibility(Visibility.PUBLIC);
         Source source = new Source();
         source.setSourceClientId(new SourceClientId(clientId));
-        ExternalIdentifier additionalIdentifer = new ExternalIdentifier();
-        additionalIdentifer.setExternalIdReference(new ExternalIdReference("abc123"));
-        additionalIdentifer.setSource(source);
-
-        newExternalIdentifiers.getExternalIdentifier().add(additionalIdentifer);
+        ExternalIdentifier additionalIdentifier = new ExternalIdentifier();
+        additionalIdentifier.setExternalIdReference(new ExternalIdReference("abc123"));
+        additionalIdentifier.setSource(source);
+        additionalIdentifier.setExternalIdCommonName(new ExternalIdCommonName("Name_" + System.currentTimeMillis()));
+        newExternalIdentifiers.getExternalIdentifier().add(additionalIdentifier);
         orcidBio.setExternalIdentifiers(newExternalIdentifiers);
 
         createAccessTokenFromCredentials();

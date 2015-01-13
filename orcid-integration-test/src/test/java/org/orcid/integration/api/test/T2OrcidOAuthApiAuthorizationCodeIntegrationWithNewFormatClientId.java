@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.integration.api.t2.test;
+package org.orcid.integration.api.test;
 
 public class T2OrcidOAuthApiAuthorizationCodeIntegrationWithNewFormatClientId extends T2OrcidOAuthApiAuthorizationCodeIntegrationTest {
 

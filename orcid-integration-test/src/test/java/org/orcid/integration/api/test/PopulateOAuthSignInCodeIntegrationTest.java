@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.integration.api.t2.test;
+package org.orcid.integration.api.test;
 
 import static org.junit.Assert.assertTrue;
 
@@ -101,6 +101,9 @@ public class PopulateOAuthSignInCodeIntegrationTest extends DBUnitTest {
 
     @Test
     public void checkNoPrePop() throws JSONException, InterruptedException {
+        System.out.println("-----------------------------------");
+        System.out.println("Running test: checkNoPrePop");
+        System.out.println("-----------------------------------");
         webDriver.get(getBaseUrl());
         // make sure we are on the page
         assertTrue(webDriver.findElement(By.xpath("//input[@name='email']")).getAttribute("value").equals(""));
@@ -112,6 +115,9 @@ public class PopulateOAuthSignInCodeIntegrationTest extends DBUnitTest {
 
     @Test
     public void emailPrePopulate() throws JSONException, InterruptedException {
+        System.out.println("-----------------------------------");
+        System.out.println("Running test: emailPrePopulate");
+        System.out.println("-----------------------------------");
         // test populating form with email that doesn't exist
         String url = getBaseUrl() + "&email=non_existent@test.com&family_names=test_family_names&given_names=test_given_name";
         webDriver.get(url);
@@ -136,6 +142,9 @@ public class PopulateOAuthSignInCodeIntegrationTest extends DBUnitTest {
         
     @Test
     public void emailPrePopulateWithHtmlEncodedEmail() throws JSONException, InterruptedException {
+        System.out.println("-----------------------------------");
+        System.out.println("Running test: emailPrePopulateWithHtmlEncodedEmail");
+        System.out.println("-----------------------------------");
         // test populating form with email that doesn't exist
         String url = getBaseUrl() + "&email=non_existent%40test.com&family_names=test_family_names&given_names=test_given_name";
         webDriver.get(url);        
@@ -160,6 +169,9 @@ public class PopulateOAuthSignInCodeIntegrationTest extends DBUnitTest {
 
     @Test
     public void orcidIdPrePopulate() throws JSONException, InterruptedException {
+        System.out.println("-----------------------------------");
+        System.out.println("Running test: orcidIdPrePopulate");
+        System.out.println("-----------------------------------");
         // populating check populating orcid
         String url = getBaseUrl() + "&orcid=4444-4444-4444-4441";
         webDriver.get(url);
@@ -172,6 +184,9 @@ public class PopulateOAuthSignInCodeIntegrationTest extends DBUnitTest {
 
     @Test
     public void orcidIdPreopulateWithHtmlEncodedOrcid() throws JSONException, InterruptedException {
+        System.out.println("-----------------------------------");
+        System.out.println("Running test: orcidIdPreopulateWithHtmlEncodedOrcid");
+        System.out.println("-----------------------------------");
         // populating check populating orcid
         String url = getBaseUrl() + "&orcid=4444%2D4444%2D4444%2D4441";        
         webDriver.get(url);
@@ -184,6 +199,9 @@ public class PopulateOAuthSignInCodeIntegrationTest extends DBUnitTest {
     
     @Test
     public void givenAndFamilyNamesPrepopulate() throws JSONException, InterruptedException {
+        System.out.println("-----------------------------------");
+        System.out.println("Running test: givenAndFamilyNamesPrepopulate");
+        System.out.println("-----------------------------------");
         // test populating form family and given names
         String url = getBaseUrl() + "&family_names=test_family_names&given_names=test_given_name";
         webDriver.get(url);
