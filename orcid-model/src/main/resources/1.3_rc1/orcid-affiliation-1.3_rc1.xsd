@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:sch="http://purl.oclc.org/dsdl/schematron" elementFormDefault="qualified"
-	targetNamespace="http://www.orcid.org/ns/orcid-affiliation" xmlns="http://www.orcid.org/ns/orcid-affiliation" xmlns:orcid-internal="http://www.orcid.org/ns/orcid-internal" xmlns:orcid-common="http://www.orcid.org/ns/orcid-common">
+	targetNamespace="http://www.orcid.org/ns/orcid-affiliation" xmlns="http://www.orcid.org/ns/orcid-affiliation" xmlns:orcid-common="http://www.orcid.org/ns/orcid-common">
 	<xs:annotation>
 		<xs:documentation>
 			=============================================================================

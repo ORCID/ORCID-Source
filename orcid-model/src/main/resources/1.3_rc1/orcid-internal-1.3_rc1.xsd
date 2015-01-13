@@ -35,14 +35,15 @@
 	<xs:import namespace="http://www.orcid.org/ns/orcid-common"
 		schemaLocation="orcid-common-1.3_rc1.xsd" />
 
-	<xs:element name="orcidInternal">
-		<xs:annotation>
-			<xs:documentation>(FOR INTERNAL USE ONLY) Container for data that are
-				strictly for internal
-				use only.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:complexType>
+	<xs:element name="orcidInternal" type="orcidInternal" />
+	
+	<xs:complexType  name="orcidInternal">
+        <xs:annotation>
+            <xs:documentation>(FOR INTERNAL USE ONLY) Container for data that are
+                strictly for internal
+                use only.
+            </xs:documentation>
+        </xs:annotation>
 			<xs:sequence>
 				<xs:element minOccurs="0" name="securityDetails" type="securityDetails" />
 				<xs:element minOccurs="0" name="preferences" type="preferences" />
@@ -68,7 +69,6 @@
 				use="optional" />
 			<xs:attribute name="visibility" type="orcid-common:visibility" />
 		</xs:complexType>
-	</xs:element>
 	<xs:simpleType name="salesforceId">
 		<xs:annotation>
 			<xs:documentation>(FOR INTERNAL USE ONLY) An ID that identifies a
