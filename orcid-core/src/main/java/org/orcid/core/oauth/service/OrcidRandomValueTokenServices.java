@@ -50,9 +50,8 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
     private int writeValiditySeconds;
     @Value("${org.orcid.core.token.read_validity_seconds:631138519}")
     private int readValiditySeconds;
-
-    @Resource(name = "orcidTokenStore")
-    private TokenStore tokenStore;
+    
+    private TokenStore orcidtokenStore;
 
     @Resource
     private OrcidOauth2AuthoriziationCodeDetailDao orcidOauth2AuthoriziationCodeDetailDao;
@@ -74,12 +73,12 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
     @Override
     public OAuth2AccessToken createAccessToken(OAuth2Authentication authentication) throws AuthenticationException {
         OrcidOauth2AuthInfo authInfo = new OrcidOauth2AuthInfo(authentication);
-        OAuth2AccessToken existingAccessToken = tokenStore.getAccessToken(authentication);
+        OAuth2AccessToken existingAccessToken = orcidtokenStore.getAccessToken(authentication);
         String userOrcid = authInfo.getUserOrcid();
         
         if (existingAccessToken != null) {
             if (existingAccessToken.isExpired()) {
-                tokenStore.removeAccessToken(existingAccessToken);
+                orcidtokenStore.removeAccessToken(existingAccessToken);
                 LOGGER.info("Existing but expired access token found: clientId={}, scopes={}, userOrcid={}", new Object[] { authInfo.getClientId(), authInfo.getScopes(),
                         userOrcid });
             } else {
@@ -89,7 +88,7 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
                     updatedAccessToken.setExpiration(new Date(System.currentTimeMillis() + (validitySeconds * 1000L)));
                 }
                 customTokenEnhancer.enhance(updatedAccessToken, authentication);
-                tokenStore.storeAccessToken(updatedAccessToken, authentication);
+                orcidtokenStore.storeAccessToken(updatedAccessToken, authentication);
                 LOGGER.info("Existing reusable access token found: clientId={}, scopes={}, userOrcid={}", new Object[] { authInfo.getClientId(), authInfo.getScopes(),
                         userOrcid });
                 return updatedAccessToken;
@@ -97,7 +96,7 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
         }
         
         DefaultOAuth2AccessToken accessToken = new DefaultOAuth2AccessToken(super.createAccessToken(authentication));        
-        tokenStore.storeAccessToken(accessToken, authentication);
+        orcidtokenStore.storeAccessToken(accessToken, authentication);
         LOGGER.info("Creating new access token: clientId={}, scopes={}, userOrcid={}", new Object[] { authInfo.getClientId(), authInfo.getScopes(), userOrcid });
         return accessToken;
     }
@@ -191,19 +190,24 @@ public class OrcidRandomValueTokenServices extends DefaultTokenServices {
 
     @Override
     public OAuth2Authentication loadAuthentication(String accessTokenValue) throws AuthenticationException {
-        OAuth2AccessToken accessToken = tokenStore.readAccessToken(accessTokenValue);
+        OAuth2AccessToken accessToken = orcidtokenStore.readAccessToken(accessTokenValue);
         if (accessToken == null) {
             throw new InvalidTokenException("Invalid access token: " + accessTokenValue);
         } else {
             // If it is, respect the token expiration
             if (accessToken.isExpired()) {
-                tokenStore.removeAccessToken(accessToken);
+                orcidtokenStore.removeAccessToken(accessToken);
                 throw new InvalidTokenException("Access token expired: " + accessTokenValue);
             }
         }
 
-        OAuth2Authentication result = tokenStore.readAuthentication(accessToken);
+        OAuth2Authentication result = orcidtokenStore.readAuthentication(accessToken);
         return result;
+    }    
+    
+    public void setOrcidtokenStore(TokenStore orcidtokenStore) {
+        super.setTokenStore(orcidtokenStore);
+        this.orcidtokenStore = orcidtokenStore;
     }
 
     public void setCustomTokenEnhancer(TokenEnhancer customTokenEnhancer) {

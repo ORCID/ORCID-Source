@@ -51,6 +51,7 @@ import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.oauth2.provider.TokenRequest;
+import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -66,7 +67,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
 
     @Resource(name = "tokenServices")
-    private OrcidRandomValueTokenServices tokenServices;
+    private DefaultTokenServices tokenServices;
 
     @Resource
     private OrcidOauth2TokenDetailService orcidOauthTokenDetailService;

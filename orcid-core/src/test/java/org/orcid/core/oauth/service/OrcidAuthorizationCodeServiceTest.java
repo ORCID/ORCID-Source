@@ -27,6 +27,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,12 +40,15 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.common.exceptions.InvalidClientException;
 import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
+import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.OAuth2RequestFactory;
 import org.springframework.security.oauth2.provider.code.AuthorizationCodeServices;
+import org.springframework.security.oauth2.provider.request.DefaultOAuth2RequestFactory;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -62,8 +66,10 @@ public class OrcidAuthorizationCodeServiceTest extends DBUnitTest {
 
     @Resource(name = "profileEntityManager")
     private ProfileEntityManager profileEntityManager;
-
+    
     @Resource
+    private ClientDetailsService clientDetailsService;
+    
     private OAuth2RequestFactory oAuth2RequestFactory;
     
     @BeforeClass
@@ -75,6 +81,11 @@ public class OrcidAuthorizationCodeServiceTest extends DBUnitTest {
     @AfterClass
     public static void removeDBUnitData() throws Exception {
         removeDBUnitData(Arrays.asList("/data/ClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/SecurityQuestionEntityData.xml"));
+    }
+    
+    @Before
+    public void before() {
+        oAuth2RequestFactory = new DefaultOAuth2RequestFactory(clientDetailsService);
     }
 
     @Test
@@ -96,7 +107,7 @@ public class OrcidAuthorizationCodeServiceTest extends DBUnitTest {
         authorizationCodeServices.consumeAuthorizationCode("bodus-code!");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = InvalidClientException.class)
     @Rollback
     @Transactional
     public void testCreateAuthorizationCodeWithInvalidClient() {

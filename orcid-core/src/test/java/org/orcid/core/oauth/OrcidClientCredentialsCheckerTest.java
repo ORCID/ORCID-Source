@@ -23,8 +23,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.annotation.Resource;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -36,6 +34,7 @@ import org.springframework.security.oauth2.common.exceptions.InvalidScopeExcepti
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.OAuth2RequestFactory;
 import org.springframework.security.oauth2.provider.TokenRequest;
+import org.springframework.security.oauth2.provider.request.DefaultOAuth2RequestFactory;
 
 /**
  * @author Declan Newman (declan) Date: 11/05/2012
@@ -45,12 +44,12 @@ public class OrcidClientCredentialsCheckerTest {
     @Mock
     private ClientDetailsService clientDetailsService;
 
-    @Resource 
     private OAuth2RequestFactory oAuth2RequestFactory;
     
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
+        oAuth2RequestFactory = new DefaultOAuth2RequestFactory(clientDetailsService);
     }
 
     @Test(expected = InvalidScopeException.class)
