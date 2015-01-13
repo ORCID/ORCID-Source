@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:sch="http://purl.oclc.org/dsdl/schematron" elementFormDefault="qualified"
+	targetNamespace="http://www.orcid.org/ns/record"
+    xmlns:internal="http://www.orcid.org/ns/internal" 
+    xmlns:bio="http://www.orcid.org/ns/bio"
+    xmlns:common="http://www.orcid.org/ns/common"
+    xmlns:work="http://www.orcid.org/ns/work" 
+    xmlns:funding="http://www.orcid.org/ns/funding"
+    xmlns:affiliation="http://www.orcid.org/ns/affiliation"
+    xmlns:deprecated="http://www.orcid.org/ns/deprecated"
+    xmlns:history="http://www.orcid.org/ns/history"
+    xmlns:record="http://www.orcid.org/ns/record"
+    xmlns:preferences="http://www.orcid.org/ns/preferences">
+	<xs:annotation>
+		<xs:documentation>
+			=============================================================================
+
+			ORCID (R) Open Source
+			http://orcid.org
+
+			Copyright (c) 2012-2014 ORCID,
+			Inc.
+			Licensed under an MIT-Style License (MIT)
+			http://orcid.org/open-source-license
+
+			This copyright and license
+			information (including a link to the full
+			license)
+			shall be included in
+			its entirety in all copies or substantial portion of
+			the software.
+
+			=============================================================================
+			The schema describes the message format used for ORCID API requests
+			and responses.
+			The top level element is orcid-message.
+		</xs:documentation>
+		<xs:appinfo>
+			<sch:title>Schematron validation</sch:title>
+			<sch:ns prefix="orcid" uri="http://www.orcid.org/ns/orcid" />
+		</xs:appinfo>
+	</xs:annotation>
+	<xs:import namespace="http://www.orcid.org/ns/affiliation"
+		schemaLocation="affiliation-1.3_rc1.xsd" />
+	<xs:import namespace="http://www.orcid.org/ns/bio"
+		schemaLocation="bio-1.3_rc1.xsd" />
+	<xs:import namespace="http://www.orcid.org/ns/common"
+		schemaLocation="common-1.3_rc1.xsd" />
+	<xs:import namespace="http://www.orcid.org/ns/deprecated"
+		schemaLocation="deprecated-1.3_rc1.xsd" />
+	<xs:import namespace="http://www.orcid.org/ns/funding"
+		schemaLocation="funding-1.3_rc1.xsd" />
+	<xs:import namespace="http://www.orcid.org/ns/history"
+		schemaLocation="history-1.3_rc1.xsd" />
+	<xs:import namespace="http://www.orcid.org/ns/internal"
+		schemaLocation="internal-1.3_rc1.xsd" />
+	<xs:import namespace="http://www.orcid.org/ns/preferences"
+		schemaLocation="preferences-1.3_rc1.xsd" />
+	<xs:import namespace="http://www.orcid.org/ns/work"
+		schemaLocation="work-1.3_rc1.xsd" />
+	<xs:element name="record">
+		<xs:complexType>
+			<xs:annotation>
+				<xs:documentation>The container element for a researcher or
+					contributor ORCID Record.
+					* The type attribute can only be set by
+					ORCID, and indicates the type of ORCID Record the information refers
+					to. In most cases the value will be "user" to indicate an ORCID iD
+					holder.
+					* The client type attribute is set by ORCID, and is present
+					when the type attribute is "group" or "client". This attribute
+					indicates the API privledges held by the group as indicated by
+					their
+					ORCID Membership Agreement.
+				</xs:documentation>
+			</xs:annotation>
+
+			<xs:sequence>
+				<xs:element ref="common:orcidIdentifier" minOccurs="0"
+					maxOccurs="1" />
+				<xs:element ref="deprecated:deprecated" minOccurs="0"
+					maxOccurs="1" />
+				<xs:element ref="preferences:preferences" minOccurs="0"
+					maxOccurs="1" />
+				<xs:element ref="history:history" minOccurs="0"
+					maxOccurs="1" />
+				<xs:element ref="bio:bio" minOccurs="0" maxOccurs="1" />
+				<xs:element name="activities" type="record:orcidActivities"
+					minOccurs="0" maxOccurs="1" />
+				<xs:element ref="internal:internal" minOccurs="0"
+					maxOccurs="1" />
+			</xs:sequence>
+			<xs:attribute name="type" type="common:orcidType"
+				default="user" />
+			<xs:attribute name="clientType" type="record:clientType" use="optional" />
+			<xs:attribute name="groupType" type="record:groupType" use="optional" />
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="orcidActivities">
+		<xs:annotation>
+			<xs:documentation>Container for research activities of the researcher
+				or contributor, such as Works.
+				Please note that the orcid-patents
+				element is deprecated and will be
+				removed soon
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="affiliations" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Container for the list of affiliations (eg.
+						employment or education) associated with the researcher or
+						contributor
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element maxOccurs="unbounded" minOccurs="0"
+							ref="affiliation:affiliation" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="works" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Container for the Works published by the
+						researcher
+						or contributor.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element maxOccurs="unbounded" minOccurs="0" ref="work:work" />
+					</xs:sequence>
+					<xs:attribute name="scope" type="common:scope" use="optional" />
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="fundingList" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Container for the funding received by the
+						researcher or contributor
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element maxOccurs="unbounded" minOccurs="0"
+							ref="funding:funding" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+
+	<xs:simpleType name="clientType">
+		<xs:annotation>
+			<xs:documentation>Indicates the client type for the API client based
+				on the ORCID membership type.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="creator" />
+			<xs:enumeration value="premium-creator" />
+			<xs:enumeration value="updater" />
+			<xs:enumeration value="premium-updater" />
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="groupType">
+		<xs:annotation>
+			<xs:documentation>Indicates the group type for the API client based
+				on the ORCID membership type.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="basic" />
+			<xs:enumeration value="premium" />
+			<xs:enumeration value="basic-institution" />
+			<xs:enumeration value="premium-institution" />
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

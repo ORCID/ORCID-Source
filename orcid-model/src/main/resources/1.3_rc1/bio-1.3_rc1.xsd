@@ -1,0 +1,495 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:sch="http://purl.oclc.org/dsdl/schematron" elementFormDefault="qualified"
+	targetNamespace="http://www.orcid.org/ns/bio" xmlns="http://www.orcid.org/ns/bio"
+	xmlns:common="http://www.orcid.org/ns/common">
+	<xs:annotation>
+		<xs:documentation>
+			=============================================================================
+
+			ORCID (R) Open Source
+			http://orcid.org
+
+			Copyright (c) 2012-2014 ORCID,
+			Inc.
+			Licensed under an MIT-Style License (MIT)
+			http://orcid.org/open-source-license
+
+			This copyright and license
+			information (including a link to the full
+			license)
+			shall be included in
+			its entirety in all copies or substantial portion of
+			the software.
+
+			=============================================================================
+			The schema describes the message format used for ORCID API requests
+			and responses.
+			The top level element is orcid-message.
+		</xs:documentation>
+		<xs:appinfo>
+			<sch:title>Schematron validation</sch:title>
+			<sch:ns prefix="orcid" uri="http://www.orcid.org/ns/orcid" />
+		</xs:appinfo>
+	</xs:annotation>
+	<xs:import namespace="http://www.orcid.org/ns/common"
+		schemaLocation="common-1.3_rc1.xsd" />
+	<xs:element name="bio">
+		<xs:complexType>
+			<xs:annotation>
+				<xs:documentation>The biographical details of the researcher or
+					contributor.
+				</xs:documentation>
+			</xs:annotation>
+			<xs:sequence>
+				<xs:element name="personalDetails" type="personalDetails"
+					minOccurs="0" maxOccurs="1" />
+				<xs:element name="biography" type="biography" minOccurs="0"
+					maxOccurs="1" />
+				<xs:element name="researcherUrls" type="researcherUrls"
+					minOccurs="0" maxOccurs="1" />
+				<xs:element name="contactDetails" type="contactDetails"
+					minOccurs="0" maxOccurs="1" />
+				<xs:element name="keywords" type="keywords" minOccurs="0"
+					maxOccurs="1" />
+				<xs:element name="externalIdentifiers" type="externalIdentifiers"
+					minOccurs="0" maxOccurs="1" />
+				<xs:element name="delegation" type="delegation" minOccurs="0"
+					maxOccurs="1" />
+				<xs:element name="applications" type="applications"
+					minOccurs="0" maxOccurs="1" />
+			</xs:sequence>
+			<xs:attribute name="scope" type="common:scope" use="optional" />
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="personalDetails">
+		<xs:annotation>
+			<xs:documentation>Container for the personal details (names) of the
+				researcher or contributor.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="givenNames" minOccurs="1"
+				type="common:nonEmptyString">
+				<xs:annotation>
+					<xs:documentation>The given (first and middle) name(s) of the
+						researcher or contributor.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="familyName" minOccurs="0"
+				type="common:nonEmptyString">
+				<xs:annotation>
+					<xs:documentation>The family (last) name of the researcher or
+						contributor. This element is optional, because some cultures only
+						use given names.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="creditName" type="common:creditName"
+				minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The full name of the researcher or contributor as
+						it generally appears on their published works. (see element for
+						more details.) The visibility attribute (private, limited or
+						public) can be set at record creation, and indicates who can see
+						this section of information.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="otherNames" type="otherNames"
+				minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>(Optional) Container that includes other name(s)
+						that the researcher or contributor may be known by. (see element
+						for more details.) The visibility attribute (private, limited or
+						public) can be set at record creation, and indicates who can see
+						this section of information.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="biography">
+		<xs:annotation>
+			<xs:documentation>Description of the researcher's professional
+				career. The visibility attribute (private, limited or public) can be
+				set at record creation, and indicates who can see this section of
+				information.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="bioText">
+				<xs:attribute name="visibility" type="common:visibility" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:simpleType name="bioText">
+		<xs:annotation>
+			<xs:documentation>Bio text is a string of max length: 5000
+				characters.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="5000" />
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="researcherUrls">
+		<xs:annotation>
+			<xs:documentation>Container for URLs of the researcher or
+				contributor's sites. The visibility attribute (private, limited or
+				public) can be set at record creation, and indicates who can see
+				this section of information.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="researcherUrl"
+				type="researcherUrl" />
+		</xs:sequence>
+		<xs:attribute name="visibility" type="common:visibility" />
+	</xs:complexType>
+	<xs:complexType name="researcherUrl">
+		<xs:annotation>
+			<xs:documentation>The display name and URL for one of the researcher
+				or contributor's sites.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element minOccurs="0" maxOccurs="1" name="url-name"
+				type="common:nonEmptyString">
+				<xs:annotation>
+					<xs:documentation>A short display name describing the URL.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="url" type="common:url" minOccurs="0"
+				maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The URL (including http:// or https://).
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="contactDetails">
+		<xs:annotation>
+			<xs:documentation>Container for the researcher or contributor's
+				contact information. Includes email address(es) and country
+				(address). While there can be an unlimited number of email
+				addresses, only one may be designated as a primary email address.
+			</xs:documentation>
+			<xs:appinfo>
+				<sch:pattern>
+					<sch:title>Test of number of primary emails</sch:title>
+					<sch:rule context="contact-details">
+						<sch:assert
+							test="if(count(email) &lt;= 1) then true() else count(email[@primary=true()]) + count(email[not(exists(@primary))]) = 1">Wrong number of primary emails</sch:assert>
+					</sch:rule>
+				</sch:pattern>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="email" type="email" minOccurs="0"
+				maxOccurs="unbounded" />
+			<xs:element name="address" type="common:address"
+				minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="email">
+		<xs:annotation>
+			<xs:documentation>An email address for the researcher or contributor.
+				The visibility attribute (private, limited or public) can be set at
+				record creation, and indicates who can see this section of
+				information.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="common:email">
+				<xs:attribute name="visibility" type="common:visibility" />
+				<xs:attribute name="primary" type="xs:boolean" default="true">
+					<xs:annotation>
+						<xs:documentation>Indicates (by a TRUE value) the address that the
+							ORCID Registry will used to contact the researcher or contributor
+							(based on user contact preferences). The primary attribute is
+							assigned as TRUE to exactly one email address.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="current" type="xs:boolean" default="true">
+					<xs:annotation>
+						<xs:documentation>Indicates if the address is a current one for
+							the user. The current attribute is assigned as TRUE to any email
+							address currently used. Former addresses also may be associated
+							with ORCID records, and should include a current attribute of
+							FALSE.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="verified" type="xs:boolean"
+					default="false">
+					<xs:annotation>
+						<xs:documentation>Indicates (with a TRUE value) if the researcher
+							or contributor verified the email address by clicking on a link
+							sent to the address. This field can not be set when adding an
+							email address to an ORCID record.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="source" type="common:orcidPath">
+					<xs:annotation>
+						<xs:documentation>The ORCID identifier for the individual user (or
+							legacy client application) that created the item. Either a source
+							or source-client-id will be present. NOTE: value will be replaced
+							by source element in future XSD versions.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="sourceClientId" type="common:clientPath">
+					<xs:annotation>
+						<xs:documentation>The client ID for the client application (Member
+							organization system) that created the item. Either a source or
+							source-client-id will be present. NOTE: value will be replaced by
+							source element in future XSD versions.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="keywords">
+		<xs:annotation>
+			<xs:documentation>Container for words or phrases describing areas of
+				research for the researcher. The visibility attribute (private,
+				limited or public) can be set at record creation, and indicates who
+				can see this section of information.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="keyword" type="keyword" minOccurs="0"
+				maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="visibility" type="common:visibility" />
+	</xs:complexType>
+	<xs:complexType mixed="true" name="keyword">
+		<xs:annotation>
+			<xs:documentation>One instance of a keyword, a word or phrase
+				describing areas of research for the researcher.
+			</xs:documentation>
+		</xs:annotation>
+	</xs:complexType>
+
+	<xs:complexType name="externalIdCommonName" mixed="true" />
+
+	<xs:complexType name="externalIdentifiers">
+		<xs:annotation>
+			<xs:documentation>Container for references to the reasearcher or
+				contributor in other systems. The visibility attribute (private,
+				limited or public) can be set at record creation, and indicates who
+				can see this section of information.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element maxOccurs="unbounded" minOccurs="0"
+				name="external-identifier" type="externalIdentifier" />
+		</xs:sequence>
+		<xs:attribute name="visibility" type="common:visibility" />
+	</xs:complexType>
+	<xs:complexType name="externalIdentifier">
+		<xs:annotation>
+			<xs:documentation>A reference to the reasearcher or contributor in
+				other systems. Contains display text
+				(&lt;exernal-id-common-name&gt;), the reference number
+				(&lt;external-id-reference&gt;), and a URL to the source
+				(&lt;external-id-url&gt;).
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="externalIdCommonName" type="externalIdCommonName"
+				minOccurs="0" maxOccurs="1" />
+			<xs:element name="externalIdReference" type="externalIdReference"
+				minOccurs="0" maxOccurs="1" />
+			<xs:element name="externalIdUrl" type="externalIdUrl"
+				minOccurs="0" maxOccurs="1" />
+			<xs:element ref="common:source"
+				minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType mixed="true" name="externalIdReference">
+		<xs:annotation>
+			<xs:documentation>The value for the external ID - an identifier for
+				the researcher in another system.
+			</xs:documentation>
+		</xs:annotation>
+	</xs:complexType>
+	<xs:complexType name="externalIdUrl">
+		<xs:annotation>
+			<xs:documentation>The URL for the external ID - an identifier for the
+				researcher in another system.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="xs:anyURI" />
+		</xs:simpleContent>
+	</xs:complexType>
+    <xs:complexType name="delegation">
+        <xs:annotation>
+            <xs:documentation>(FUTURE) Container for functionality that has not
+                yet been built. The visibility attribute (private, limited or
+                public) can be set at record creation, and indicates who can see
+                this section of information.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element minOccurs="0" name="given-permission-to" type="givenPermissionTo" />
+            <xs:element minOccurs="0" name="given-permission-by" type="givenPermissionBy" />
+        </xs:sequence>
+        <xs:attribute name="visibility" type="common:visibility" />
+    </xs:complexType>
+    <xs:complexType name="givenPermissionTo">
+        <xs:annotation>
+            <xs:documentation>(FUTURE)</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" name="delegationDetails"
+                type="delegationDetails" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="givenPermissionBy">
+        <xs:annotation>
+            <xs:documentation>(FUTURE)</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" name="delegationDetails"
+                type="delegationDetails" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="delegationDetails">
+        <xs:annotation>
+            <xs:documentation>(FUTURE)</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="approvalDate" type="approvalDate" />
+            <xs:element name="delegateSummary" type="delegateSummary" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="approvalDate">
+        <xs:annotation>
+            <xs:documentation>(FUTURE)</xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="xs:dateTime" />
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="delegateSummary">
+        <xs:annotation>
+            <xs:documentation>(FUTURE)</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element ref="common:orcidIdentifier"  />
+            <xs:element name="lastModifiedDate" type="common:lastModifiedDate"
+                minOccurs="1" maxOccurs="1" />
+            <xs:element name="creditName" type="common:creditName"
+                minOccurs="0" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="applications">
+        <xs:annotation>
+            <xs:documentation>(FOR INTERNAL USE ONLY) Container for
+                Authorizations. Not used by the API.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" name="application-summary"
+                type="applicationSummary" />
+        </xs:sequence>
+        <xs:attribute name="visibility" type="common:visibility" />
+    </xs:complexType>
+    <xs:complexType name="applicationSummary">
+        <xs:annotation>
+            <xs:documentation>(FOR INTERNAL USE ONLY)</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element ref="common:applicationOrcid" />
+            <xs:element name="applicationName" type="applicationName" />
+            <xs:element name="applicationWebsite" type="applicationWebsite" />
+            <xs:element name="approvalDate" type="approvalDate" />
+            <xs:element name="scopePaths" type="scopePaths" />
+            <xs:element ref="common:applicationGroupOrcid" />
+            <xs:element name="applicationGroupName" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType mixed="true" name="applicationName">
+        <xs:annotation>
+            <xs:documentation>(FOR INTERNAL USE ONLY)</xs:documentation>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="applicationWebsite">
+        <xs:annotation>
+            <xs:documentation>(FOR INTERNAL USE ONLY)</xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="xs:anyURI" />
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="otherNames">
+        <xs:annotation>
+            <xs:documentation>Container for past names, or variations of the
+                researcher or contributor's name, that may have appeared on their
+                published works. This could include variations because of
+                transliterations of their names into different alphabets. The
+                visibility attribute (private, limited or public) can be set at
+                record creation, and indicates who can see this section of
+                information.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="otherName"
+                type="common:nonEmptyString">
+                <xs:annotation>
+                    <xs:documentation>One alternate name for the individual
+                        represented
+                        by the ORCID record.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="visibility" type="common:visibility" />
+    </xs:complexType>
+    <xs:complexType name="scopePaths">
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" name="scopePath" type="scopePath" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType mixed="true" name="scopePath">
+        <xs:simpleContent>
+            <xs:extension base="scopePathType" />
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:simpleType name="scopePathType">
+        <xs:annotation>
+            <xs:documentation>See the ORCID Knowledgebase for a complete
+                description of ORCID Scopes and related documentation:
+                http://support.orcid.org/knowledgebase/articles/120162-orcid-scopes.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="/authenticate" />
+            <xs:enumeration value="/orcid-bio/read-limited" />
+            <xs:enumeration value="/orcid-profile/read-limited" />
+            <xs:enumeration value="/orcid-works/read-limited" />
+            <xs:enumeration value="/funding/read-limited" />
+            <xs:enumeration value="/orcid-patents/read-limited" />
+            <xs:enumeration value="/orcid-works/update" />
+            <xs:enumeration value="/funding/update" />
+            <xs:enumeration value="/orcid-patents/update" />
+            <xs:enumeration value="/orcid-bio/external-identifiers/create" />
+            <xs:enumeration value="/orcid-bio/update" />
+            <xs:enumeration value="/orcid-works/create" />
+            <xs:enumeration value="/funding/create" />
+            <xs:enumeration value="/orcid-patents/create" />
+            <xs:enumeration value="/orcid-profile/create" />
+        </xs:restriction>
+    </xs:simpleType>
+
+</xs:schema>
