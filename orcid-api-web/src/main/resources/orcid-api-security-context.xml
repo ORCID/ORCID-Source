@@ -94,7 +94,7 @@
      <bean id="legacyOauthExceptionRenderer" class="org.springframework.security.oauth2.provider.error.DefaultOAuth2ExceptionRenderer">
         <property name="messageConverters">
             <list>            
-                <ref bean="orcidJsonMessageConverter"/>
+                <ref bean="legacyOrcidJsonMessageConverter"/>
                 <ref bean="legacyXmlMessageConverter"/>
             </list>
         </property>
@@ -108,6 +108,25 @@
             </list>
         </property>
      </bean>
+    
+    <bean id="legacyOrcidJsonMessageConverter" class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+        <property name="supportedMediaTypes">
+            <list value-type="org.springframework.http.MediaType">                
+                <bean class="org.springframework.http.MediaType">
+                    <constructor-arg type="java.lang.String" value="application"/>
+                    <constructor-arg type="java.lang.String" value="json"/>
+                </bean>
+                <bean class="org.springframework.http.MediaType"> 
+                    <constructor-arg type="java.lang.String" value="application"/>
+                    <constructor-arg type="java.lang.String" value="orcid+json"/>
+                </bean>
+                <bean class="org.springframework.http.MediaType"> 
+                    <constructor-arg type="java.lang.String" value="application"/>
+                    <constructor-arg type="java.lang.String" value="vnd.orcid+json"/>
+                </bean>
+            </list>
+        </property>    
+    </bean>
     
     <bean id="orcidJsonMessageConverter" class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
         <property name="supportedMediaTypes">
@@ -125,7 +144,8 @@
                     <constructor-arg type="java.lang.String" value="vnd.orcid+json"/>
                 </bean>
             </list>
-        </property>    
+        </property>
+        <property name="prettyPrint" value="true"/>  
     </bean>
     
     <!--  This is supposed to be an XML converter, but seems to be JSON! Leaving this the same for existing APIs. In future APIs it will be XML! -->
@@ -145,10 +165,10 @@
                     <constructor-arg type="java.lang.String" value="vnd.orcid+xml"/>
                 </bean>
             </list>
-        </property>    
+        </property>
     </bean>
     
-    <bean id="orcidXmlMessageConverter" class="org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter">
+    <bean id="orcidXmlMessageConverter" class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
         <property name="supportedMediaTypes">
             <list value-type="org.springframework.http.MediaType">
                 <bean class="org.springframework.http.MediaType">
@@ -164,7 +184,27 @@
                     <constructor-arg type="java.lang.String" value="vnd.orcid+xml"/>
                 </bean>
             </list>
-        </property>    
+        </property>   
+        <property name="marshaller" ref="xmlMarshaller"/>
+        <property name="unmarshaller" ref="xmlMarshaller"/>
+    </bean>
+    
+    <bean name="xmlMarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+        <property name="classesToBeBound">
+            <list>
+                <value>org.orcid.jaxb.model.error.OrcidError</value>
+            </list>
+        </property>
+        <property name="marshallerProperties">
+            <map>
+                <entry>
+                    <key>
+                        <value>jaxb.formatted.output</value>
+                    </key>
+                    <value type="boolean">true</value>
+                </entry>
+            </map>
+        </property>
     </bean>
     
     <!-- Add in order for it to be referenced in the filter order -->
