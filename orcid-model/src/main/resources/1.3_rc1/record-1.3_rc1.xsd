@@ -1,17 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:sch="http://purl.oclc.org/dsdl/schematron" elementFormDefault="qualified"
-	targetNamespace="http://www.orcid.org/ns/record"
-    xmlns:internal="http://www.orcid.org/ns/internal" 
-    xmlns:bio="http://www.orcid.org/ns/bio"
-    xmlns:common="http://www.orcid.org/ns/common"
-    xmlns:work="http://www.orcid.org/ns/work" 
-    xmlns:funding="http://www.orcid.org/ns/funding"
-    xmlns:affiliation="http://www.orcid.org/ns/affiliation"
-    xmlns:deprecated="http://www.orcid.org/ns/deprecated"
-    xmlns:history="http://www.orcid.org/ns/history"
-    xmlns:record="http://www.orcid.org/ns/record"
-    xmlns:preferences="http://www.orcid.org/ns/preferences">
+	targetNamespace="http://www.orcid.org/ns/record" xmlns:internal="http://www.orcid.org/ns/internal"
+	xmlns:bio="http://www.orcid.org/ns/bio" xmlns:common="http://www.orcid.org/ns/common"
+	xmlns:work="http://www.orcid.org/ns/work" xmlns:funding="http://www.orcid.org/ns/funding"
+	xmlns:education="http://www.orcid.org/ns/education" xmlns:employment="http://www.orcid.org/ns/employment"
+	xmlns:deprecated="http://www.orcid.org/ns/deprecated" xmlns:history="http://www.orcid.org/ns/history"
+	xmlns:record="http://www.orcid.org/ns/record" xmlns:preferences="http://www.orcid.org/ns/preferences">
 
 	<xs:annotation>
 		<xs:documentation>
@@ -51,6 +46,10 @@
 		schemaLocation="common-1.3_rc1.xsd" />
 	<xs:import namespace="http://www.orcid.org/ns/deprecated"
 		schemaLocation="deprecated-1.3_rc1.xsd" />
+    <xs:import namespace="http://www.orcid.org/ns/employment"
+        schemaLocation="employment-1.3_rc1.xsd" />
+    <xs:import namespace="http://www.orcid.org/ns/education"
+        schemaLocation="education-1.3_rc1.xsd" />
 	<xs:import namespace="http://www.orcid.org/ns/funding"
 		schemaLocation="funding-1.3_rc1.xsd" />
 	<xs:import namespace="http://www.orcid.org/ns/history"
@@ -68,12 +67,17 @@
 				<xs:documentation>The container element for a researcher or
 					contributor ORCID Record.
 					* The type attribute can only be set by
-					ORCID, and indicates the type of ORCID Record the information refers
-					to. In most cases the value will be "user" to indicate an ORCID iD
+					ORCID, and indicates the type of ORCID Record the information
+					refers
+					to. In most cases the value will be "user" to indicate an
+					ORCID iD
 					holder.
-					* The client type attribute is set by ORCID, and is present
-					when the type attribute is "group" or "client". This attribute
-					indicates the API privledges held by the group as indicated by
+					* The client type attribute is set by ORCID, and is
+					present
+					when the type attribute is "group" or "client". This
+					attribute
+					indicates the API privledges held by the group as
+					indicated by
 					their
 					ORCID Membership Agreement.
 				</xs:documentation>
@@ -96,8 +100,10 @@
 			</xs:sequence>
 			<xs:attribute name="type" type="common:orcidType"
 				default="user" />
-			<xs:attribute name="clientType" type="common:clientType" use="optional" />
-			<xs:attribute name="groupType" type="common:groupType" use="optional" />
+			<xs:attribute name="clientType" type="common:clientType"
+				use="optional" />
+			<xs:attribute name="groupType" type="common:groupType"
+				use="optional" />
 		</xs:complexType>
 	</xs:element>
 
@@ -111,17 +117,31 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element name="affiliations" minOccurs="0" maxOccurs="1">
+			<xs:element name="education" minOccurs="0" maxOccurs="1">
 				<xs:annotation>
-					<xs:documentation>Container for the list of affiliations (eg.
-						employment or education) associated with the researcher or
+					<xs:documentation>Container for the list of educations associated
+						with the researcher or
 						contributor
 					</xs:documentation>
 				</xs:annotation>
 				<xs:complexType>
 					<xs:sequence>
 						<xs:element maxOccurs="unbounded" minOccurs="0"
-							ref="affiliation:affiliation" />
+							ref="education:education" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="employment" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Container for the list of employments associated
+						with the researcher or
+						contributor
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element maxOccurs="unbounded" minOccurs="0"
+							ref="employment:employment" />
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:sch="http://purl.oclc.org/dsdl/schematron" elementFormDefault="qualified"
-	targetNamespace="http://www.orcid.org/ns/affiliation" xmlns:affiliation="http://www.orcid.org/ns/affiliation" xmlns:common="http://www.orcid.org/ns/common">
+	targetNamespace="http://www.orcid.org/ns/education" xmlns:education="http://www.orcid.org/ns/affiliation" xmlns:common="http://www.orcid.org/ns/common">
 	<xs:annotation>
 		<xs:documentation>
 			=============================================================================
@@ -29,16 +29,15 @@
 		</xs:appinfo>
 	</xs:annotation>
 	<xs:import namespace="http://www.orcid.org/ns/common" schemaLocation="common-1.3_rc1.xsd"/>
-    <xs:element name="affiliation">
+    <xs:element name="education">
         <xs:annotation>
-            <xs:documentation>An affiliation associated with the researcher or contributor. 
+            <xs:documentation>An education associated with the researcher or contributor. 
                 * The visibility attribute (private, limited or public) can be set at record creation, and indicates who can see this section of information.
                 * The put-code attribute is used only when reading this element. When updating the item, the put-code attribute must be included to indicate the specific record to be updated.
             </xs:documentation>
         </xs:annotation>
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="type" type="affiliation:affiliation"/>
                 <xs:element name="departmentName" type="common:nonEmptyString" minOccurs="0"
                     maxOccurs="1"/>
                 <xs:element name="roleTitle" type="common:nonEmptyString" minOccurs="0"
@@ -54,16 +53,5 @@
             <xs:attribute name="visibility" type="common:visibility"/>
         </xs:complexType>
     </xs:element>
-    <xs:simpleType name="affiliation">
-        <xs:annotation>
-            <xs:documentation>The type of the affiliation. Presently only "education" and "employment" are used. 
-                "distinction", "funding", and "contribution" are all for FUTURE use and will not be show to the researcher in the web interface.
-            </xs:documentation>
-        </xs:annotation>
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="education"/>
-            <xs:enumeration value="employment"/>
-        </xs:restriction>
-    </xs:simpleType>
 
 </xs:schema>
