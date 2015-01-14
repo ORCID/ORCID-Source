@@ -32,6 +32,7 @@
 			<sch:ns prefix="orcid" uri="http://www.orcid.org/ns/orcid" />
 		</xs:appinfo>
 	</xs:annotation>
+	
 	<xs:import namespace="http://www.orcid.org/ns/common"
 		schemaLocation="common-1.3_rc1.xsd" />
 
@@ -68,6 +69,7 @@
 			<xs:attribute name="visibility" type="common:visibility" />
 		</xs:complexType>
 	</xs:element>
+	
 	<xs:simpleType name="salesforceId">
 		<xs:annotation>
 			<xs:documentation>(FOR INTERNAL USE ONLY) An ID that identifies a
@@ -78,6 +80,7 @@
 			<xs:pattern value="([a-zA-Z0-9]){15}" />
 		</xs:restriction>
 	</xs:simpleType>
+	
 	<xs:complexType name="securityDetails">
 		<xs:annotation>
 			<xs:documentation>(FOR INTERNAL USE ONLY) Security access details
@@ -94,6 +97,7 @@
 				minOccurs="1" maxOccurs="1" />
 		</xs:sequence>
 	</xs:complexType>
+	
 	<xs:complexType name="preferences">
 		<xs:annotation>
 			<xs:documentation>(FOR INTERNAL USE ONLY) Preferences set by the
@@ -147,6 +151,7 @@
 			</xs:documentation>
 		</xs:annotation>
 	</xs:complexType>
+	
 	<xs:complexType name="securityQuestionId">
 		<xs:annotation>
 			<xs:documentation>(FOR INTERNAL USE ONLY)
@@ -157,12 +162,14 @@
 			<xs:extension base="xs:integer" />
 		</xs:simpleContent>
 	</xs:complexType>
+	
 	<xs:complexType mixed="true" name="encryptedSecurityAnswer">
 		<xs:annotation>
 			<xs:documentation>(FOR INTERNAL USE ONLY)
 			</xs:documentation>
 		</xs:annotation>
 	</xs:complexType>
+	
 	<xs:complexType mixed="true" name="activitiesVisibilityDefault">
 		<xs:annotation>
 			<xs:documentation>(FOR INTERNAL USE ONLY)
@@ -172,6 +179,7 @@
 			<xs:extension base="common:visibility" />
 		</xs:simpleContent>
 	</xs:complexType>
+	
 	<xs:complexType name="developerToolsEnabled">
 		<xs:annotation>
 			<xs:documentation>(FOR INTERNAL USE ONLY)
@@ -181,10 +189,12 @@
 			<xs:extension base="xs:boolean" />
 		</xs:simpleContent>
 	</xs:complexType>
+	
 	<xs:complexType mixed="true" name="encryptedVerificationCode">
 		<xs:annotation>
 			<xs:documentation>(FOR INTERNAL USE ONLY)
 			</xs:documentation>
 		</xs:annotation>
 	</xs:complexType>
+
 </xs:schema>

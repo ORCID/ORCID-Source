@@ -32,6 +32,7 @@
 			<sch:ns prefix="orcid" uri="http://www.orcid.org/ns/orcid" />
 		</xs:appinfo>
 	</xs:annotation>
+	
 	<xs:import namespace="http://www.orcid.org/ns/common"
 		schemaLocation="common-1.3_rc1.xsd" />
 
@@ -139,6 +140,7 @@
 				minOccurs="0" />
 		</xs:sequence>
 	</xs:complexType>
+	
 	<xs:simpleType name="fundingType">
 		<xs:annotation>
 			<xs:documentation>The type of funding, it could be grant, contract,
@@ -153,6 +155,7 @@
 			<xs:enumeration value="salary-award" />
 		</xs:restriction>
 	</xs:simpleType>
+	
 	<xs:complexType name="fundingExternalIdentifiers">
 		<xs:annotation>
 			<xs:documentation>Container for storing the external references to
@@ -164,6 +167,7 @@
 				name="externalIdentifier" type="funding:fundingExternalIdentifier" />
 		</xs:sequence>
 	</xs:complexType>
+	
 	<xs:complexType name="fundingExternalIdentifier">
 		<xs:annotation>
 			<xs:documentation>An external identifier that uniquely represents the
@@ -191,6 +195,7 @@
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
+	
 	<xs:simpleType name="fundingExternalIdentifierType">
 		<xs:annotation>
 			<xs:documentation>The type of the funding external identifier.
@@ -201,6 +206,7 @@
 			<xs:enumeration value="grant_number" />
 		</xs:restriction>
 	</xs:simpleType>
+	
 	<xs:complexType name="fundingContributors">
 		<xs:annotation>
 			<xs:documentation>Container for the contributors of a funding.
@@ -211,6 +217,7 @@
 				type="funding:fundingContributor" />
 		</xs:sequence>
 	</xs:complexType>
+	
 	<xs:complexType name="fundingContributor">
 		<xs:annotation>
 			<xs:documentation>A collaborator or other contributor to a work or
@@ -228,6 +235,7 @@
 				minOccurs="0" maxOccurs="1" />
 		</xs:sequence>
 	</xs:complexType>
+	
 	<xs:complexType name="fundingContributorAttributes">
 		<xs:annotation>
 			<xs:documentation>Provides detail of the nature of the contribution
@@ -239,6 +247,7 @@
 				minOccurs="0" />
 		</xs:sequence>
 	</xs:complexType>
+	
 	<xs:simpleType name="fundingContributorRole">
 		<xs:annotation>
 			<xs:documentation>The role performed by the collaborator or other
@@ -252,4 +261,5 @@
 			<xs:enumeration value="other-contribution" />
 		</xs:restriction>
 	</xs:simpleType>
+
 </xs:schema>

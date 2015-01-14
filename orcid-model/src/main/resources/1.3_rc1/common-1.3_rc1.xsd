@@ -129,6 +129,7 @@
 				minOccurs="0" maxOccurs="1" />
 		</xs:sequence>
 	</xs:complexType>
+	
 	<xs:complexType name="organizationAddress">
 		<xs:annotation>
 			<xs:documentation>Container for organization location information
@@ -148,6 +149,7 @@
 			<xs:element minOccurs="1" name="country" type="common:iso3166Country" />
 		</xs:sequence>
 	</xs:complexType>
+	
 	<xs:complexType name="disambiguatedOrganization">
 		<xs:annotation>
 			<xs:documentation>A reference to a disambiguated version the
@@ -191,6 +193,7 @@
 			<xs:enumeration value="zh_TW" />
 		</xs:restriction>
 	</xs:simpleType>
+
 	<xs:simpleType name="nonEmptyString">
 		<xs:annotation>
 			<xs:documentation>Must contain one or more charaters that are not a
@@ -201,6 +204,7 @@
 			<xs:pattern value="[\s\S]*[^\s\n\r]+[\s\S]*" />
 		</xs:restriction>
 	</xs:simpleType>
+
 	<xs:complexType name="amount">
 		<xs:annotation>
 			<xs:documentation>The funding amount.
@@ -214,6 +218,7 @@
 			</xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>
+
 	<xs:simpleType name="currencyCode">
 		<xs:annotation>
 			<xs:documentation>The currency code used for funding amounts. From
@@ -442,6 +447,7 @@
 			<xs:enumeration value="ZWR" />
 		</xs:restriction>
 	</xs:simpleType>
+
 	<xs:simpleType name="organizationDefinedType">
 		<xs:annotation>
 			<xs:documentation>Container for a organization defined type for an
@@ -451,6 +457,7 @@
 		<xs:restriction base="common:string255">
 		</xs:restriction>
 	</xs:simpleType>
+
 	<xs:simpleType name="languageCode">
 		<xs:annotation>
 			<xs:documentation>Two letter language code to identify the language
@@ -649,6 +656,7 @@
 			<xs:enumeration value="zu" />
 		</xs:restriction>
 	</xs:simpleType>
+
 	<xs:complexType name="url">
 		<xs:annotation>
 			<xs:documentation>Represents a URL in the XML anyURI format
@@ -658,6 +666,7 @@
 			<xs:extension base="xs:anyURI" />
 		</xs:simpleContent>
 	</xs:complexType>
+
 	<xs:complexType name="address">
 		<xs:annotation>
 			<xs:documentation>Container for address information. Only country
@@ -668,6 +677,7 @@
 			<xs:element minOccurs="0" name="country" type="common:country" />
 		</xs:sequence>
 	</xs:complexType>
+
 	<xs:complexType name="country">
 		<xs:annotation>
 			<xs:documentation>Country represented by its ISO 3611 code. The
@@ -682,6 +692,7 @@
 			</xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>
+
 	<xs:simpleType name="orcidPath">
 		<xs:annotation>
 			<xs:documentation>Path for the ORCID iD.
@@ -691,6 +702,7 @@
 			<xs:pattern value="(\d{4}-){3,}\d{3}[\dX]" />
 		</xs:restriction>
 	</xs:simpleType>
+
 	<xs:simpleType name="orcidUri">
 		<xs:annotation>
 			<xs:documentation>ORCID URI for the ORCID iD.
@@ -750,6 +762,7 @@
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
+
 	<xs:simpleType name="clientPath">
 		<xs:annotation>
 			<xs:documentation>Path for the API client ID.
@@ -759,6 +772,7 @@
 			<xs:pattern value="APP-[\da-zA-Z]{16}" />
 		</xs:restriction>
 	</xs:simpleType>
+
 	<xs:simpleType name="clientUri">
 		<xs:annotation>
 			<xs:documentation>ORCID URI for the API client ID.
@@ -769,6 +783,7 @@
 				value="http://([^/]*orcid\.org|localhost.*/orcid-web)/client/APP-[\da-zA-Z]{16}" />
 		</xs:restriction>
 	</xs:simpleType>
+
 	<xs:complexType name="clientId">
 		<xs:annotation>
 			<xs:documentation>The identifier of an ORCID API client app. At least
@@ -793,6 +808,7 @@
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
+
 	<xs:simpleType name="orcidType">
 		<xs:annotation>
 			<xs:documentation>Indicates the ORCID record type for the ORCID iD
@@ -807,6 +823,7 @@
 			<xs:enumeration value="client" />
 		</xs:restriction>
 	</xs:simpleType>
+
 	<xs:simpleType name="scope">
 		<xs:annotation>
 			<xs:documentation>Indicates the special privledges that the API
@@ -819,6 +836,7 @@
 			<xs:enumeration value="update" />
 		</xs:restriction>
 	</xs:simpleType>
+
 	<xs:simpleType name="putCode">
 		<xs:annotation>
 			<xs:documentation>The put-code attribute is present only when reading
@@ -830,6 +848,7 @@
 		<xs:restriction base="xs:integer">
 		</xs:restriction>
 	</xs:simpleType>
+
 	<xs:simpleType name="visibility">
 		<xs:annotation>
 			<xs:documentation>Indicates who can see the value of the element when
@@ -872,6 +891,7 @@
 			</xs:enumeration>
 		</xs:restriction>
 	</xs:simpleType>
+
 	<xs:simpleType name="email">
 		<xs:annotation>
 			<xs:documentation>Type to represent an email address.
@@ -881,6 +901,7 @@
 			<xs:pattern value="[^@]+@[^\.]+\..+" />
 		</xs:restriction>
 	</xs:simpleType>
+
 	<xs:simpleType name="mediaType">
 		<xs:annotation>
 			<xs:documentation>Used with the publication date to indicate which
@@ -893,6 +914,7 @@
 			<xs:enumeration value="other" />
 		</xs:restriction>
 	</xs:simpleType>
+
 	<xs:simpleType name="year">
 		<xs:annotation>
 			<xs:documentation>4-character string representing a year of a date.
@@ -902,6 +924,7 @@
 			<xs:pattern value="\d{4}" />
 		</xs:restriction>
 	</xs:simpleType>
+
 	<xs:simpleType name="month">
 		<xs:annotation>
 			<xs:documentation>2-character string representing a month of a date.
@@ -911,6 +934,7 @@
 			<xs:pattern value="\d{2}" />
 		</xs:restriction>
 	</xs:simpleType>
+
 	<xs:simpleType name="day">
 		<xs:annotation>
 			<xs:documentation>2-character string representing a day of a date.
@@ -920,6 +944,7 @@
 			<xs:pattern value="\d{2}" />
 		</xs:restriction>
 	</xs:simpleType>
+
 	<xs:element name="fuzzyDate" type="common:fuzzyDate" />
 	<xs:element name="startDate" type="common:fuzzyDate" />
 	<xs:element name="endDate" type="common:fuzzyDate" />
@@ -999,6 +1024,7 @@
 			<xs:enumeration value="/orcid-profile/create" />
 		</xs:restriction>
 	</xs:simpleType>
+	
 	<xs:simpleType name="iso3166Country">
 		<xs:annotation>
 			<xs:documentation>ISO 3166 country codes. NOTE: the values displayed
@@ -1260,6 +1286,7 @@
 			<xs:enumeration value="XK" />
 		</xs:restriction>
 	</xs:simpleType>
+
 	<xs:simpleType name="iso3166CountryOrEmpty">
 		<xs:annotation>
 			<xs:documentation>Contains either a country code or an empty value
@@ -1267,6 +1294,7 @@
 		</xs:annotation>
 		<xs:union memberTypes="common:iso3166Country" />
 	</xs:simpleType>
+
 	<xs:simpleType name="empty">
 		<xs:annotation>
 			<xs:documentation>An empty string</xs:documentation>
@@ -1275,6 +1303,7 @@
 			<xs:enumeration value="" />
 		</xs:restriction>
 	</xs:simpleType>
+
 	<xs:simpleType name="shortText">
 		<xs:annotation>
 			<xs:documentation>A non-empty string that has a maximum size of 2084
@@ -1285,6 +1314,7 @@
 			<xs:maxLength value="500" />
 		</xs:restriction>
 	</xs:simpleType>
+
 	<xs:simpleType name="string255">
 		<xs:annotation>
 			<xs:documentation>A non-empty string that has a maximum size of 255
@@ -1295,6 +1325,7 @@
 			<xs:maxLength value="255" />
 		</xs:restriction>
 	</xs:simpleType>
+
 	<xs:simpleType name="string1000">
 		<xs:annotation>
 			<xs:documentation>A non-empty string that has a maximum size of 1000
@@ -1305,6 +1336,7 @@
 			<xs:maxLength value="1000" />
 		</xs:restriction>
 	</xs:simpleType>
+
 	<xs:simpleType name="string2084">
 		<xs:annotation>
 			<xs:documentation>A non-empty string that has a maximum size of 2084
@@ -1329,6 +1361,7 @@
 			</xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>
+
 	<xs:simpleType name="shortDescription">
 		<xs:annotation>
 			<xs:documentation>A short narrative (few sentences) describing the
@@ -1339,6 +1372,7 @@
 			<xs:maxLength value="5000"></xs:maxLength>
 		</xs:restriction>
 	</xs:simpleType>
+
 	<xs:complexType name="creditName">
 		<xs:annotation>
 			<xs:documentation>The name to use for the researcher or contributor
@@ -1359,6 +1393,7 @@
 			</xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>
+
 	<xs:complexType name="translatedTitle">
 		<xs:annotation>
 			<xs:documentation>The main title of the work or funding translated
@@ -1397,18 +1432,19 @@
 				minOccurs="0" />
 		</xs:sequence>
 	</xs:complexType>
+
 	<xs:simpleType name="contributorSequence">
 		<xs:annotation>
 			<xs:documentation>Indication of where in the contributor list the
 				collaborator or other contributor's name would appear
 			</xs:documentation>
 		</xs:annotation>
-
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="first" />
 			<xs:enumeration value="additional" />
 		</xs:restriction>
 	</xs:simpleType>
+
 	<xs:simpleType name="contributorRole">
 		<xs:annotation>
 			<xs:documentation>The role performed by the collaborator or other
@@ -1470,6 +1506,5 @@
 		<xs:attribute name="putCode" type="common:putCode" use="optional" />
 		<xs:attribute name="visibility" type="common:visibility" />
 	</xs:complexType>
-
 
 </xs:schema>

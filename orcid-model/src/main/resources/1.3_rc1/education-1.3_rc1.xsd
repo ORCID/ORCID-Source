@@ -32,8 +32,10 @@
 			<sch:ns prefix="orcid" uri="http://www.orcid.org/ns/orcid" />
 		</xs:appinfo>
 	</xs:annotation>
+	
 	<xs:import namespace="http://www.orcid.org/ns/common"
 		schemaLocation="common-1.3_rc1.xsd" />
+	
 	<xs:element name="education">
 		<xs:annotation>
 			<xs:documentation>An education associated with the researcher or

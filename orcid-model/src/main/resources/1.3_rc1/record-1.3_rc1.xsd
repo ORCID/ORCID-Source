@@ -2,7 +2,7 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:sch="http://purl.oclc.org/dsdl/schematron" elementFormDefault="qualified"
 	targetNamespace="http://www.orcid.org/ns/record" xmlns:internal="http://www.orcid.org/ns/internal"
-	xmlns:bio="http://www.orcid.org/ns/bio" xmlns:common="http://www.orcid.org/ns/common"
+	xmlns:person="http://www.orcid.org/ns/person" xmlns:common="http://www.orcid.org/ns/common"
 	xmlns:work="http://www.orcid.org/ns/work" xmlns:funding="http://www.orcid.org/ns/funding"
 	xmlns:education="http://www.orcid.org/ns/education" xmlns:employment="http://www.orcid.org/ns/employment"
 	xmlns:deprecated="http://www.orcid.org/ns/deprecated" xmlns:history="http://www.orcid.org/ns/history"
@@ -40,8 +40,8 @@
 
 	<xs:import namespace="http://www.orcid.org/ns/affiliation"
 		schemaLocation="affiliation-1.3_rc1.xsd" />
-	<xs:import namespace="http://www.orcid.org/ns/bio"
-		schemaLocation="bio-1.3_rc1.xsd" />
+	<xs:import namespace="http://www.orcid.org/ns/person"
+		schemaLocation="person-1.3_rc1.xsd" />
 	<xs:import namespace="http://www.orcid.org/ns/common"
 		schemaLocation="common-1.3_rc1.xsd" />
 	<xs:import namespace="http://www.orcid.org/ns/deprecated"
@@ -91,7 +91,7 @@
 					maxOccurs="1" />
 				<xs:element ref="history:history" minOccurs="0"
 					maxOccurs="1" />
-				<xs:element ref="bio:bio" minOccurs="0" maxOccurs="1" />
+				<xs:element ref="person:person" minOccurs="0" maxOccurs="1" />
 				<xs:element name="activities" type="record:activities"
 					minOccurs="0" maxOccurs="1" />
 				<xs:element ref="internal:internal" minOccurs="0"
@@ -158,8 +158,7 @@
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
-			<xs:element name="fundings" minOccurs="0"
-				maxOccurs="1">
+			<xs:element name="fundings" minOccurs="0" maxOccurs="1">
 				<xs:annotation>
 					<xs:documentation>Container for the funding received by the
 						researcher or contributor
@@ -174,5 +173,5 @@
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
-	
+
 </xs:schema>

@@ -32,8 +32,10 @@
 			<sch:ns prefix="orcid" uri="http://www.orcid.org/ns/orcid" />
 		</xs:appinfo>
 	</xs:annotation>
+
 	<xs:import namespace="http://www.orcid.org/ns/common"
 		schemaLocation="common-1.3_rc1.xsd" />
+
 	<xs:element name="deprecated">
 		<xs:complexType>
 			<xs:annotation>
@@ -51,6 +53,7 @@
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
+
 	<xs:complexType name="deprecatedDate">
 		<xs:annotation>
 			<xs:documentation>The date and time when the ORCID Record was
@@ -61,6 +64,7 @@
 			<xs:extension base="xs:dateTime" />
 		</xs:simpleContent>
 	</xs:complexType>
+
 	<xs:complexType name="primaryRecord">
 		<xs:annotation>
 			<xs:documentation>The new primary record for the ORCID iD. One

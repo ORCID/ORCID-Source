@@ -32,8 +32,10 @@
 			<sch:ns prefix="orcid" uri="http://www.orcid.org/ns/orcid" />
 		</xs:appinfo>
 	</xs:annotation>
+	
 	<xs:import namespace="http://www.orcid.org/ns/common"
 		schemaLocation="common-1.3_rc1.xsd" />
+	
 	<xs:element name="history">
 		<xs:complexType>
 			<xs:annotation>
@@ -92,6 +94,7 @@
 			<xs:attribute name="visibility" type="common:visibility" />
 		</xs:complexType>
 	</xs:element>
+	
 	<xs:complexType name="completionDate">
 		<xs:annotation>
 			<xs:documentation>The date and time when the ORCID Record set up was
@@ -102,6 +105,7 @@
 			<xs:extension base="xs:dateTime" />
 		</xs:simpleContent>
 	</xs:complexType>
+	
 	<xs:complexType name="submissionDate">
 		<xs:annotation>
 			<xs:documentation>The date time when the ORCID Record and iD was
@@ -112,6 +116,7 @@
 			<xs:extension base="xs:dateTime" />
 		</xs:simpleContent>
 	</xs:complexType>
+	
 	<xs:complexType name="claimed">
 		<xs:annotation>
 			<xs:documentation>True if the researcher or contributor has added a
@@ -125,6 +130,7 @@
 			<xs:extension base="xs:boolean" />
 		</xs:simpleContent>
 	</xs:complexType>
+	
 	<xs:complexType name="deactivationDate">
 		<xs:annotation>
 			<xs:documentation>The date and time when the ORCID Record was
@@ -135,6 +141,7 @@
 			<xs:extension base="xs:dateTime" />
 		</xs:simpleContent>
 	</xs:complexType>
+	
 	<xs:complexType mixed="true" name="sourceReference">
 		<xs:annotation>
 			<xs:documentation>(UNUSED) The identifier or other reference
@@ -143,6 +150,7 @@
 			</xs:documentation>
 		</xs:annotation>
 	</xs:complexType>
+	
 	<xs:complexType name="sourceDate">
 		<xs:annotation>
 			<xs:documentation>The date time that the source client application
@@ -154,6 +162,7 @@
 			<xs:extension base="xs:dateTime" />
 		</xs:simpleContent>
 	</xs:complexType>
+	
 	<xs:simpleType name="creationMethod">
 		<xs:annotation>
 			<xs:documentation>Indicates how the ORCID record and iD were created.

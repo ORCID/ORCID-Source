@@ -32,8 +32,10 @@
 			<sch:ns prefix="orcid" uri="http://www.orcid.org/ns/orcid" />
 		</xs:appinfo>
 	</xs:annotation>
+
 	<xs:import namespace="http://www.orcid.org/ns/common"
 		schemaLocation="common-1.3_rc1.xsd" />
+
 	<xs:element name="employment">
 		<xs:annotation>
 			<xs:documentation>An affiliation associated with the researcher or
@@ -85,7 +87,6 @@
 							maxOccurs="1" />
 						<xs:element ref="common:endDate" minOccurs="0"
 							maxOccurs="1" />
-
 					</xs:sequence>
 				</xs:extension>
 			</xs:complexContent>
