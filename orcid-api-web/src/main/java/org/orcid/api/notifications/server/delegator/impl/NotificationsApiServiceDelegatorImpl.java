@@ -26,6 +26,8 @@ import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.orcid.api.common.exception.HandleException;
+import org.orcid.api.common.exception.OrcidNotFoundException;
 import org.orcid.api.notifications.server.delegator.NotificationsApiServiceDelegator;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.SourceManager;
@@ -35,14 +37,13 @@ import org.orcid.jaxb.model.notification.Notification;
 import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
 import org.springframework.stereotype.Component;
 
-import com.sun.jersey.api.Responses;
-
 /**
  * 
  * @author Will Simpson
  *
  */
 @Component
+@HandleException
 public class NotificationsApiServiceDelegatorImpl implements NotificationsApiServiceDelegator {
 
     @Resource
@@ -75,7 +76,7 @@ public class NotificationsApiServiceDelegatorImpl implements NotificationsApiSer
             }
             return Response.ok(notification).build();
         } else {
-            return Responses.notFound().build();
+            throw new OrcidNotFoundException("Unable to find notification");
         }
     }
 
