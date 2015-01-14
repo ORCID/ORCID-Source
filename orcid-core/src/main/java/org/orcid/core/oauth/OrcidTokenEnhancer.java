@@ -36,37 +36,55 @@ public class OrcidTokenEnhancer implements TokenEnhancer {
 
     @Resource
     private OrcidProfileManager orcidProfileManager;
-    
+
     @Resource
     private OrcidOauth2AuthoriziationCodeDetailDao orcidOauth2AuthoriziationCodeDetailDao;
-    
+
     @Override
     public OAuth2AccessToken enhance(OAuth2AccessToken accessToken, OAuth2Authentication authentication) {
-        if(!(accessToken instanceof DefaultOAuth2AccessToken))
+        if (!(accessToken instanceof DefaultOAuth2AccessToken))
             throw new UnsupportedOperationException("At this time we can handle only tokens of type DefaultOauth2AccessToken");
         DefaultOAuth2AccessToken result = (DefaultOAuth2AccessToken) accessToken;
         OrcidOauth2AuthInfo authInfo = new OrcidOauth2AuthInfo(authentication);
         String userOrcid = authInfo.getUserOrcid();
-        Map<String, Object> additionalInfo = new HashMap<>();                
-        additionalInfo.put("orcid", userOrcid);
-        if (userOrcid != null) {
-            OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile(userOrcid, LoadOptions.BIO_ONLY);
-            String name = orcidProfile.getOrcidBio().getPersonalDetails().retrievePublicDisplayName();
-            additionalInfo.put("name", name);
-        }
-        
-        additionalInfo.put(OauthTokensConstants.TOKEN_VERSION, OauthTokensConstants.PERSISTENT_TOKEN);
-        if (isPersistentTokenEnabled(authentication.getOAuth2Request()))
-            additionalInfo.put(OauthTokensConstants.PERSISTENT, true);
-        
-        if(result.getAdditionalInformation() != null && !result.getAdditionalInformation().isEmpty())
+
+        Map<String, Object> additionalInfo = new HashMap<String, Object>();
+        if (result.getAdditionalInformation() != null && !result.getAdditionalInformation().isEmpty()) {
             additionalInfo.putAll(result.getAdditionalInformation());
-        
+        }
+
+        // If the additional info object already contains the orcid info, leave
+        // it
+        if (!additionalInfo.containsKey("orcid")) {
+            additionalInfo.put("orcid", userOrcid);
+        }
+
+        // If the additional info object already contains the name info, leave
+        // it
+        if (!additionalInfo.containsKey("name")) {
+            if (userOrcid != null) {
+                OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile(userOrcid, LoadOptions.BIO_ONLY);
+                String name = orcidProfile.getOrcidBio().getPersonalDetails().retrievePublicDisplayName();
+                additionalInfo.put("name", name);
+            }
+        }
+
+        // Overwrite token version
+        additionalInfo.put(OauthTokensConstants.TOKEN_VERSION, OauthTokensConstants.PERSISTENT_TOKEN);
+
+        // Overwrite persistent flag
+        if (isPersistentTokenEnabled(authentication.getOAuth2Request())) {
+            additionalInfo.put(OauthTokensConstants.PERSISTENT, true);
+        } else {
+            additionalInfo.put(OauthTokensConstants.PERSISTENT, false);
+        }
+
+        // Put the updated additional info object in the result
         result.setAdditionalInformation(additionalInfo);
-        
+
         return result;
     }
-    
+
     /**
      * Checks the authorization code to verify if the user enable the persistent
      * token or not

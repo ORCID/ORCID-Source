@@ -192,9 +192,9 @@ public class PersistentTokensIntegrationTest extends DBUnitTest {
         Date beforeCreatingToken = oneHoursTime();
         List<String> items = new ArrayList<String>();
         items.add("enablePersistentToken");       
-        String authorizationCode = webDriverHelper.obtainAuthorizationCode("/orcid-works/create", CLIENT_DETAILS_ID, "michael@bentine.com", "password", items, false);
+        String authorizationCode = webDriverHelper.obtainAuthorizationCode("/funding/create", CLIENT_DETAILS_ID, "michael@bentine.com", "password", items, false);
         assertFalse(PojoUtil.isEmpty(authorizationCode));
-        String accessToken = obtainAccessToken(CLIENT_DETAILS_ID, authorizationCode, redirectUri, "/orcid-works/create");
+        String accessToken = obtainAccessToken(CLIENT_DETAILS_ID, authorizationCode, redirectUri, "/funding/create");
         assertFalse(PojoUtil.isEmpty(accessToken));
         OrcidOauth2TokenDetail tokenEntity = oauth2TokenDetailDao.findByTokenValue(accessToken);
         assertNotNull(tokenEntity);
