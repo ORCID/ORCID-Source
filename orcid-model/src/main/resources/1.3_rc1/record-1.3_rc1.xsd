@@ -46,12 +46,6 @@
 		schemaLocation="common-1.3_rc1.xsd" />
 	<xs:import namespace="http://www.orcid.org/ns/deprecated"
 		schemaLocation="deprecated-1.3_rc1.xsd" />
-	<xs:import namespace="http://www.orcid.org/ns/employment"
-		schemaLocation="employment-1.3_rc1.xsd" />
-	<xs:import namespace="http://www.orcid.org/ns/education"
-		schemaLocation="education-1.3_rc1.xsd" />
-	<xs:import namespace="http://www.orcid.org/ns/funding"
-		schemaLocation="funding-1.3_rc1.xsd" />
 	<xs:import namespace="http://www.orcid.org/ns/history"
 		schemaLocation="history-1.3_rc1.xsd" />
 	<xs:import namespace="http://www.orcid.org/ns/internal"
@@ -92,7 +86,7 @@
 				<xs:element ref="history:history" minOccurs="0"
 					maxOccurs="1" />
 				<xs:element ref="person:person" minOccurs="0" maxOccurs="1" />
-				<xs:element name="activities" type="record:activities"
+				<xs:element name="activities" type="activities:summary"
 					minOccurs="0" maxOccurs="1" />
 				<xs:element ref="internal:internal" minOccurs="0"
 					maxOccurs="1" />
@@ -105,73 +99,5 @@
 				use="optional" />
 		</xs:complexType>
 	</xs:element>
-
-	<xs:complexType name="activities">
-		<xs:annotation>
-			<xs:documentation>Container for research activities of the researcher
-				or contributor, such as Works.
-				Please note that the orcid-patents
-				element is deprecated and will be
-				removed soon
-			</xs:documentation>
-		</xs:annotation>
-		<xs:sequence>
-			<xs:element name="educations" minOccurs="0" maxOccurs="1">
-				<xs:annotation>
-					<xs:documentation>Container for the list of educations associated
-						with the researcher or
-						contributor
-					</xs:documentation>
-				</xs:annotation>
-				<xs:complexType>
-					<xs:sequence>
-						<xs:element maxOccurs="unbounded" minOccurs="0"
-							ref="education:educationSummary" />
-					</xs:sequence>
-				</xs:complexType>
-			</xs:element>
-			<xs:element name="employments" minOccurs="0" maxOccurs="1">
-				<xs:annotation>
-					<xs:documentation>Container for the list of employments associated
-						with the researcher or
-						contributor
-					</xs:documentation>
-				</xs:annotation>
-				<xs:complexType>
-					<xs:sequence>
-						<xs:element maxOccurs="unbounded" minOccurs="0"
-							ref="employment:employmentSummary" />
-					</xs:sequence>
-				</xs:complexType>
-			</xs:element>
-			<xs:element name="works" minOccurs="0" maxOccurs="1">
-				<xs:annotation>
-					<xs:documentation>Container for the Works published by the
-						researcher
-						or contributor.
-					</xs:documentation>
-				</xs:annotation>
-				<xs:complexType>
-					<xs:sequence>
-						<xs:element maxOccurs="unbounded" minOccurs="0"
-							ref="work:workSummary" />
-					</xs:sequence>
-				</xs:complexType>
-			</xs:element>
-			<xs:element name="fundings" minOccurs="0" maxOccurs="1">
-				<xs:annotation>
-					<xs:documentation>Container for the funding received by the
-						researcher or contributor
-					</xs:documentation>
-				</xs:annotation>
-				<xs:complexType>
-					<xs:sequence>
-						<xs:element maxOccurs="unbounded" minOccurs="0"
-							ref="funding:fundingSummary" />
-					</xs:sequence>
-				</xs:complexType>
-			</xs:element>
-		</xs:sequence>
-	</xs:complexType>
 
 </xs:schema>

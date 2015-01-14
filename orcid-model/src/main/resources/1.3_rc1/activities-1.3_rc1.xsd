@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:sch="http://purl.oclc.org/dsdl/schematron" elementFormDefault="qualified"
+	targetNamespace="http://www.orcid.org/ns/activities" xmlns:error="http://www.orcid.org/ns/activities"
+	xmlns:common="http://www.orcid.org/ns/common" xmlns:work="http://www.orcid.org/ns/work"
+	xmlns:funding="http://www.orcid.org/ns/funding" xmlns:education="http://www.orcid.org/ns/education"
+	xmlns:employment="http://www.orcid.org/ns/employment">
+	<xs:annotation>
+		<xs:documentation>
+			=============================================================================
+
+			ORCID (R) Open Source
+			http://orcid.org
+
+			Copyright (c) 2012-2014 ORCID,
+			Inc.
+			Licensed under an MIT-Style License (MIT)
+			http://orcid.org/open-source-license
+
+			This copyright and license
+			information (including a link to the full
+			license)
+			shall be included in
+			its entirety in all copies or substantial portion of
+			the software.
+
+			=============================================================================
+			The schema describes the message format used for ORCID API requests
+			and responses.
+			The top level element is orcid-message.
+		</xs:documentation>
+		<xs:appinfo>
+			<sch:title>Schematron validation</sch:title>
+			<sch:ns prefix="orcid" uri="http://www.orcid.org/ns/orcid" />
+		</xs:appinfo>
+	</xs:annotation>
+
+	<xs:import namespace="http://www.orcid.org/ns/common"
+		schemaLocation="common-1.3_rc1.xsd" />
+	<xs:import namespace="http://www.orcid.org/ns/employment"
+		schemaLocation="employment-1.3_rc1.xsd" />
+	<xs:import namespace="http://www.orcid.org/ns/education"
+		schemaLocation="education-1.3_rc1.xsd" />
+	<xs:import namespace="http://www.orcid.org/ns/funding"
+		schemaLocation="funding-1.3_rc1.xsd" />
+	<xs:import namespace="http://www.orcid.org/ns/work"
+		schemaLocation="work-1.3_rc1.xsd" />
+
+
+	<xs:complexType name="summary">
+		<xs:annotation>
+			<xs:documentation>Container for research activities of the researcher
+				or contributor, such as Works.
+				Please note that the orcid-patents
+				element is deprecated and will be
+				removed soon
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="educations" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Container for the list of educations associated
+						with the researcher or
+						contributor
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element maxOccurs="unbounded" minOccurs="0"
+							ref="education:educationSummary" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="employments" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Container for the list of employments associated
+						with the researcher or
+						contributor
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element maxOccurs="unbounded" minOccurs="0"
+							ref="employment:employmentSummary" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="works" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Container for the Works published by the
+						researcher
+						or contributor.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element maxOccurs="unbounded" minOccurs="0"
+							ref="work:workSummary" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="fundings" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Container for the funding received by the
+						researcher or contributor
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element maxOccurs="unbounded" minOccurs="0"
+							ref="funding:fundingSummary" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+</xs:schema>
