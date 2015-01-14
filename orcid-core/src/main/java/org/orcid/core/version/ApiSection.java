@@ -14,25 +14,13 @@
  *
  * =============================================================================
  */
-package org.orcid.api.common.exception;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+package org.orcid.core.version;
 
 /**
  * 
- * Use this annotation to enable new error message format for APIs.
- * 
- * @see OrcidExceptionHandlerAspect
- * 
  * @author Will Simpson
+ *
  */
-@Target( { java.lang.annotation.ElementType.TYPE })
-@Retention(java.lang.annotation.RetentionPolicy.RUNTIME)
-@Inherited
-@Documented
-public @interface HandleException {
-
+public enum ApiSection {
+    NOTIFICATIONS, DEFAULT;
 }

@@ -26,7 +26,6 @@ import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.orcid.api.common.exception.HandleException;
 import org.orcid.api.common.exception.OrcidNotFoundException;
 import org.orcid.api.notifications.server.delegator.NotificationsApiServiceDelegator;
 import org.orcid.core.manager.NotificationManager;
@@ -43,7 +42,6 @@ import org.springframework.stereotype.Component;
  *
  */
 @Component
-@HandleException
 public class NotificationsApiServiceDelegatorImpl implements NotificationsApiServiceDelegator {
 
     @Resource
