@@ -14,25 +14,12 @@
  *
  * =============================================================================
  */
-package org.orcid.core.manager;
+package org.orcid.integration.api.test;
 
-import java.util.Collection;
-import java.util.Locale;
+public class T2OrcidOAuthApiAuthorizationCodeIntegrationWithNewFormatClientId extends T2OrcidOAuthApiAuthorizationCodeIntegrationTest {
 
-import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.notification.Notification;
-
-/**
- * 
- * @author Will Simpson
- * 
- */
-public interface EmailMessageSender {
-
-    EmailMessage createDigest(String orcid, Collection<Notification> notifications);
-    
-    EmailMessage createDigest(OrcidProfile orcidProfile, Collection<Notification> notifications, Locale locale);
-
-    void sendEmailMessages();
+    static {
+        CLIENT_DETAILS_ID = "APP-5555555555555555";
+    }
 
 }

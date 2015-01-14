@@ -16,9 +16,20 @@
     =============================================================================
 
 -->
-Lots has happened in ORCID since you last signed in. Here are some messages you missed.
+<#import "email_macros.ftl" as emailMacros />
+Hi ${emailName},
 
-You had ${memberMessageCount} messages from ${memberIdsCount} partners about ${activityCount} activities to add to your record.
-You had ${orcidMessageCount} messages from ORCID.
+Here’s what has happened since the last time you visited your ORCID record.
 
-Visit ${baseUrl}/notifications to see more.
+Visit ${baseUri}/notifications?lang=${locale} to view all notifications.
+
+<#compress>
+<#if amendedMessageCount gt 0>[${amendedMessageCount}] <#if amendedMessageCount == 1>notification<#else>notifications</#if> from ORCID member organizations that added or updated information on your record</#if>
+<#if addActivitiesMessageCount gt 0>[${addActivitiesMessageCount}] <#if addActivitiesMessageCount == 1>Request<#else>Requests</#if> to add or update your ORCID record</#if>
+<#if orcidMessageCount gt 0>[${orcidMessageCount}] <#if orcidMessageCount == 1>notification<#else>notifications</#if> from ORCID</#if>
+</#compress>
+
+
+<@emailMacros.msg "email.common.you_have_received_this_email_opt_out.1" />${baseUri}/account?lang=${locale}.
+
+<#include "email_footer.ftl"/>

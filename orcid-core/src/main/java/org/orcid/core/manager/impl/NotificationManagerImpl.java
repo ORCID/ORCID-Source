@@ -32,6 +32,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.LocaleUtils;
 import org.orcid.core.adapter.JpaJaxbNotificationAdapter;
 import org.orcid.core.constants.EmailConstants;
+import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.CustomEmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.NotificationManager;
@@ -49,6 +50,7 @@ import org.orcid.jaxb.model.message.SendChangeNotifications;
 import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.notification.Notification;
 import org.orcid.jaxb.model.notification.NotificationType;
+import org.orcid.jaxb.model.notification.amended.NotificationAmended;
 import org.orcid.jaxb.model.notification.custom.NotificationCustom;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
@@ -133,6 +135,9 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Resource
     private SourceManager sourceManager;
+
+    @Resource
+    private LocaleManager localeManager;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationManagerImpl.class);
 
@@ -241,37 +246,19 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     private void addMessageParams(Map<String, Object> templateParams, OrcidProfile orcidProfile) {
-        Locale locale = null;
-        if (orcidProfile.getOrcidPreferences() != null && orcidProfile.getOrcidPreferences().getLocale() != null) {
-            orcidProfile.getOrcidPreferences().getLocale().value();
-            locale = LocaleUtils.toLocale(orcidProfile.getOrcidPreferences().getLocale().value());
-        } else {
-            locale = LocaleUtils.toLocale("en");
-        }
+        Locale locale = localeManager.getLocaleFromOrcidProfile(orcidProfile);
         templateParams.put("messages", this.messages);
         templateParams.put("messageArgs", new Object[0]);
         templateParams.put("locale", locale);
     }
 
     private String getSubject(String code, OrcidProfile orcidProfile) {
-        Locale locale = null;
-        if (orcidProfile.getOrcidPreferences() != null && orcidProfile.getOrcidPreferences().getLocale() != null) {
-            orcidProfile.getOrcidPreferences().getLocale().value();
-            locale = LocaleUtils.toLocale(orcidProfile.getOrcidPreferences().getLocale().value());
-        } else {
-            locale = LocaleUtils.toLocale("en");
-        }
+        Locale locale = localeManager.getLocaleFromOrcidProfile(orcidProfile);
         return messages.getMessage(code, null, locale);
     }
 
     private String getSubject(String code, OrcidProfile orcidProfile, String... args) {
-        Locale locale = null;
-        if (orcidProfile.getOrcidPreferences() != null && orcidProfile.getOrcidPreferences().getLocale() != null) {
-            orcidProfile.getOrcidPreferences().getLocale().value();
-            locale = LocaleUtils.toLocale(orcidProfile.getOrcidPreferences().getLocale().value());
-        } else {
-            locale = LocaleUtils.toLocale("en");
-        }
+        Locale locale = localeManager.getLocaleFromOrcidProfile(orcidProfile);
         return messages.getMessage(code, args, locale);
     }
 
@@ -298,6 +285,7 @@ public class NotificationManagerImpl implements NotificationManager {
         mailGunManager.sendEmail(SUPPORT_VERIFY_ORCID_ORG, email, getSubject("email.subject.verify_reminder", orcidProfile), body, htmlBody);
     }
 
+    @Override
     public String deriveEmailFriendlyName(OrcidProfile orcidProfile) {
         if (orcidProfile.getOrcidBio() != null && orcidProfile.getOrcidBio().getPersonalDetails() != null) {
             PersonalDetails personalDetails = orcidProfile.getOrcidBio().getPersonalDetails();
@@ -374,14 +362,10 @@ public class NotificationManagerImpl implements NotificationManager {
         // Generate html from template
         String html = templateManager.processTemplate("amend_email_html.ftl", templateParams);
 
-        NotificationCustom notification = new NotificationCustom();
-        notification.setNotificationType(NotificationType.CUSTOM);
-        notification.setSubject(subject);
-        notification.setBodyText(body);
-        notification.setBodyHtml(html);
-
         boolean notificationsEnabled = profileDao.find(amendedProfile.getOrcidIdentifier().getPath()).getEnableNotifications();
         if (notificationsEnabled) {
+            NotificationAmended notification = new NotificationAmended();
+            notification.setNotificationType(NotificationType.AMENDED);
             createNotification(amendedProfile.getOrcidIdentifier().getPath(), notification);
         } else {
             String email = amendedProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();

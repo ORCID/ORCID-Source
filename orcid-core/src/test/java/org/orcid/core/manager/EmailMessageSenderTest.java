@@ -31,10 +31,16 @@ import org.junit.Test;
 import org.orcid.core.BaseTest;
 import org.orcid.jaxb.model.common.ClientId;
 import org.orcid.jaxb.model.common.Source;
+import org.orcid.jaxb.model.message.FamilyName;
+import org.orcid.jaxb.model.message.GivenNames;
+import org.orcid.jaxb.model.message.OrcidBio;
+import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.notification.Notification;
 import org.orcid.jaxb.model.notification.addactivities.Activities;
 import org.orcid.jaxb.model.notification.addactivities.Activity;
 import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
+import org.orcid.jaxb.model.notification.amended.NotificationAmended;
 import org.orcid.jaxb.model.notification.custom.NotificationCustom;
 import org.orcid.utils.DateUtils;
 
@@ -50,6 +56,14 @@ public class EmailMessageSenderTest extends BaseTest {
 
     @Test
     public void testCreateDigest() throws IOException {
+
+        OrcidProfile orcidProfile = new OrcidProfile();
+        OrcidBio orcidBio = new OrcidBio();
+        orcidProfile.setOrcidBio(orcidBio);
+        PersonalDetails personalDetails = new PersonalDetails();
+        orcidBio.setPersonalDetails(personalDetails);
+        personalDetails.setGivenNames(new GivenNames("Spike"));
+        personalDetails.setFamilyName(new FamilyName("Milligan"));
 
         List<Notification> notifications = new ArrayList<>();
 
@@ -98,11 +112,18 @@ public class EmailMessageSenderTest extends BaseTest {
         notification5.setCreatedDate(DateUtils.convertToXMLGregorianCalendar("2014-07-11T06:42:18"));
         notifications.add(notification5);
 
-        EmailMessage emailMessage = emailMessageSender.createDigest(notifications, Locale.ENGLISH);
+        NotificationAmended notification6 = new NotificationAmended();
+        notification6.setSubject("Amended by member");
+        notification6.setCreatedDate(DateUtils.convertToXMLGregorianCalendar("2014-07-12T18:44:36"));
+        notification6.setSource(source3);
+        notifications.add(notification6);
+
+        EmailMessage emailMessage = emailMessageSender.createDigest(orcidProfile, notifications, Locale.ENGLISH);
 
         assertNotNull(emailMessage);
         String expectedBodyText = IOUtils.toString(getClass().getResourceAsStream("example_digest_email_body.txt"));
         assertEquals(expectedBodyText, emailMessage.getBodyText());
+        assertEquals("Spike Milligan you have [6] new notifications", emailMessage.getSubject());
     }
 
     private Activity createActivity(String actType, String actName) {

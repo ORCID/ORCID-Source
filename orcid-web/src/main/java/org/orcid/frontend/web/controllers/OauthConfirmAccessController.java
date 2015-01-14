@@ -97,7 +97,7 @@ public class OauthConfirmAccessController extends BaseController {
     private RegistrationController registrationController;
 
     private static String REDIRECT_URI_ERROR = "/oauth/error/redirect-uri-mismatch?client_id={0}";
-
+        
     @RequestMapping(value = { "/signin", "/login" }, method = RequestMethod.GET)
     public ModelAndView loginGetHandler2(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
         // find client name if available
@@ -252,7 +252,6 @@ public class OauthConfirmAccessController extends BaseController {
             error.setView(rView);
             return error;
         }
-
        
         // Check if the client has persistent tokens enabled
         if (clientDetails.isPersistentTokensEnabled())
@@ -664,5 +663,4 @@ public class OauthConfirmAccessController extends BaseController {
             throw new IllegalArgumentException("Invalid client details id");
         return clientDetails.isPersistentTokensEnabled();
     }
-
 }

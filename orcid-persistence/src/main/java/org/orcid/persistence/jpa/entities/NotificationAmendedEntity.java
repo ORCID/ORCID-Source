@@ -14,12 +14,20 @@
  *
  * =============================================================================
  */
-package org.orcid.integration.api.t2.test;
+package org.orcid.persistence.jpa.entities;
 
-public class T2OrcidOAuthApiAuthorizationCodeIntegrationWithNewFormatClientId extends T2OrcidOAuthApiAuthorizationCodeIntegrationTest {
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 
-    static {
-        CLIENT_DETAILS_ID = "APP-5555555555555555";
-    }
+/**
+ * 
+ * @author Will Simpson
+ *
+ */
+@Entity
+@DiscriminatorValue("AMENDED")
+public class NotificationAmendedEntity extends NotificationEntity {
+
+    private static final long serialVersionUID = 1L;
 
 }

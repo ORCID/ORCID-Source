@@ -53,7 +53,7 @@ public class LocaleManagerImpl implements LocaleManager {
     }
 
     @Override
-    public Locale getLocalFromOrcidProfile(OrcidProfile orcidProfile) {
+    public Locale getLocaleFromOrcidProfile(OrcidProfile orcidProfile) {
         Locale locale = null;
         if (orcidProfile.getOrcidPreferences() != null && orcidProfile.getOrcidPreferences().getLocale() != null) {
             orcidProfile.getOrcidPreferences().getLocale().value();

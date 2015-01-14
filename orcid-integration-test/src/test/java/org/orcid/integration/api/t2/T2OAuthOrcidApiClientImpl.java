@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.integration.api.t2.test;
+package org.orcid.integration.api.t2;
 
 import static org.orcid.api.common.OrcidApiConstants.*;
 
@@ -34,7 +34,6 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriBuilder;
 
 import org.orcid.api.common.T2OrcidApiService;
-import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.jaxb.model.message.OrcidMessage;
 
 import com.sun.jersey.api.client.Client;

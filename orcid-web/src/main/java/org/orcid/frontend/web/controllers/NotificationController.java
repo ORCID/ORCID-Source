@@ -98,6 +98,16 @@ public class NotificationController extends BaseController {
         return mav;
     }
 
+    @RequestMapping(value = "/AMENDED/{id}/notification.html", produces = MediaType.TEXT_HTML_VALUE)
+    public ModelAndView getAmendedNotificationHtml(@PathVariable("id") String id) {
+        ModelAndView mav = new ModelAndView();
+        Notification notification = notificationManager.findByOrcidAndId(getCurrentUserOrcid(), Long.valueOf(id));
+        mav.addObject("notification", notification);
+        mav.addObject("emailName", notificationManager.deriveEmailFriendlyName(getEffectiveProfile()));
+        mav.setViewName("notification/amended_notification");
+        return mav;
+    }
+
     @RequestMapping(value = "{id}/read.json")
     public @ResponseBody Notification flagAsRead(@PathVariable("id") String id) {
         String currentUserOrcid = getCurrentUserOrcid();
