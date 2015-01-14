@@ -116,7 +116,7 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element name="education" minOccurs="0" maxOccurs="1">
+			<xs:element name="educations" minOccurs="0" maxOccurs="1">
 				<xs:annotation>
 					<xs:documentation>Container for the list of educations associated
 						with the researcher or
@@ -130,7 +130,7 @@
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
-			<xs:element name="employment" minOccurs="0" maxOccurs="1">
+			<xs:element name="employments" minOccurs="0" maxOccurs="1">
 				<xs:annotation>
 					<xs:documentation>Container for the list of employments associated
 						with the researcher or
@@ -144,7 +144,7 @@
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
-			<xs:element name="workSummaries" minOccurs="0" maxOccurs="1">
+			<xs:element name="works" minOccurs="0" maxOccurs="1">
 				<xs:annotation>
 					<xs:documentation>Container for the Works published by the
 						researcher
@@ -158,7 +158,7 @@
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
-			<xs:element name="fundingsSummaries" minOccurs="0"
+			<xs:element name="fundings" minOccurs="0"
 				maxOccurs="1">
 				<xs:annotation>
 					<xs:documentation>Container for the funding received by the
