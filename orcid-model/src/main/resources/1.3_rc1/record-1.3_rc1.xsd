@@ -46,10 +46,10 @@
 		schemaLocation="common-1.3_rc1.xsd" />
 	<xs:import namespace="http://www.orcid.org/ns/deprecated"
 		schemaLocation="deprecated-1.3_rc1.xsd" />
-    <xs:import namespace="http://www.orcid.org/ns/employment"
-        schemaLocation="employment-1.3_rc1.xsd" />
-    <xs:import namespace="http://www.orcid.org/ns/education"
-        schemaLocation="education-1.3_rc1.xsd" />
+	<xs:import namespace="http://www.orcid.org/ns/employment"
+		schemaLocation="employment-1.3_rc1.xsd" />
+	<xs:import namespace="http://www.orcid.org/ns/education"
+		schemaLocation="education-1.3_rc1.xsd" />
 	<xs:import namespace="http://www.orcid.org/ns/funding"
 		schemaLocation="funding-1.3_rc1.xsd" />
 	<xs:import namespace="http://www.orcid.org/ns/history"
@@ -82,7 +82,6 @@
 					ORCID Membership Agreement.
 				</xs:documentation>
 			</xs:annotation>
-
 			<xs:sequence>
 				<xs:element ref="common:orcidIdentifier" minOccurs="0"
 					maxOccurs="1" />
@@ -127,7 +126,7 @@
 				<xs:complexType>
 					<xs:sequence>
 						<xs:element maxOccurs="unbounded" minOccurs="0"
-							ref="education:education" />
+							ref="education:educationSummary" />
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
@@ -141,11 +140,11 @@
 				<xs:complexType>
 					<xs:sequence>
 						<xs:element maxOccurs="unbounded" minOccurs="0"
-							ref="employment:employment" />
+							ref="employment:employmentSummary" />
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
-			<xs:element name="works" minOccurs="0" maxOccurs="1">
+			<xs:element name="workSummaries" minOccurs="0" maxOccurs="1">
 				<xs:annotation>
 					<xs:documentation>Container for the Works published by the
 						researcher
@@ -154,12 +153,13 @@
 				</xs:annotation>
 				<xs:complexType>
 					<xs:sequence>
-						<xs:element maxOccurs="unbounded" minOccurs="0" ref="work:work" />
+						<xs:element maxOccurs="unbounded" minOccurs="0"
+							ref="work:workSummary" />
 					</xs:sequence>
-					<xs:attribute name="scope" type="common:scope" use="optional" />
 				</xs:complexType>
 			</xs:element>
-			<xs:element name="fundingList" minOccurs="0" maxOccurs="1">
+			<xs:element name="fundingsSummaries" minOccurs="0"
+				maxOccurs="1">
 				<xs:annotation>
 					<xs:documentation>Container for the funding received by the
 						researcher or contributor
@@ -168,11 +168,11 @@
 				<xs:complexType>
 					<xs:sequence>
 						<xs:element maxOccurs="unbounded" minOccurs="0"
-							ref="funding:funding" />
+							ref="funding:fundingSummary" />
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
-
+	
 </xs:schema>

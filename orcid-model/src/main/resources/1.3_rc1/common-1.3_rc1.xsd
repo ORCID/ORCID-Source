@@ -31,7 +31,7 @@
 			<sch:ns prefix="orcid" uri="http://www.orcid.org/ns/orcid" />
 		</xs:appinfo>
 	</xs:annotation>
-	
+
 	<xs:complexType name="lastModifiedDate">
 		<xs:annotation>
 			<xs:documentation>The date time when the element was last modified.
@@ -41,7 +41,7 @@
 			<xs:extension base="xs:dateTime" />
 		</xs:simpleContent>
 	</xs:complexType>
-	
+
 	<xs:complexType name="createdDate">
 		<xs:annotation>
 			<xs:documentation>The date time when element was created.
@@ -51,9 +51,9 @@
 			<xs:extension base="xs:dateTime" />
 		</xs:simpleContent>
 	</xs:complexType>
-	
+
 	<xs:element name="source" type="common:sourceType" />
-	
+
 	<xs:complexType name="sourceType">
 		<xs:annotation>
 			<xs:documentation>The client application (Member organization's
@@ -84,7 +84,8 @@
 					</xs:annotation>
 				</xs:element>
 			</xs:choice>
-			<xs:element name="sourceName" type="common:sourceName" minOccurs="0" />
+			<xs:element name="sourceName" type="common:sourceName"
+				minOccurs="0" />
 			<xs:element name="sourceDate">
 				<xs:annotation>
 					<xs:documentation>The date time that the source client application
@@ -724,7 +725,8 @@
 							</xs:documentation>
 						</xs:annotation>
 					</xs:element>
-					<xs:element name="path" type="common:orcidPath" minOccurs="0">
+					<xs:element name="path" type="common:orcidPath"
+						minOccurs="0">
 						<xs:annotation>
 							<xs:documentation>ORCID path (16-character identifier) of the
 								ORCID iD.
@@ -778,7 +780,8 @@
 			<xs:choice>
 				<xs:sequence>
 					<xs:element name="uri" type="common:clientUri" />
-					<xs:element name="path" type="common:clientPath" minOccurs="0" />
+					<xs:element name="path" type="common:clientPath"
+						minOccurs="0" />
 				</xs:sequence>
 				<xs:element name="path" type="common:clientPath" />
 			</xs:choice>
@@ -970,7 +973,7 @@
 			</xs:sequence>
 		</xs:sequence>
 	</xs:complexType>
-	
+
 	<xs:simpleType name="scopePathType">
 		<xs:annotation>
 			<xs:documentation>See the ORCID Knowledgebase for a complete
@@ -1428,32 +1431,45 @@
 		</xs:restriction>
 	</xs:simpleType>
 
-    <xs:simpleType name="groupType">
-        <xs:annotation>
-            <xs:documentation>Indicates the group type for the API client based
-                on the ORCID membership type.
-            </xs:documentation> 
-        </xs:annotation>
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="basic" />
-            <xs:enumeration value="premium" />
-            <xs:enumeration value="basic-institution" />
-            <xs:enumeration value="premium-institution" />
-        </xs:restriction>
-    </xs:simpleType>
+	<xs:simpleType name="groupType">
+		<xs:annotation>
+			<xs:documentation>Indicates the group type for the API client based
+				on the ORCID membership type.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="basic" />
+			<xs:enumeration value="premium" />
+			<xs:enumeration value="basic-institution" />
+			<xs:enumeration value="premium-institution" />
+		</xs:restriction>
+	</xs:simpleType>
 
-    <xs:simpleType name="clientType">
-        <xs:annotation>
-            <xs:documentation>Indicates the client type for the API client based
-                on the ORCID membership type.
-            </xs:documentation>
-        </xs:annotation>
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="creator" />
-            <xs:enumeration value="premium-creator" />
-            <xs:enumeration value="updater" />
-            <xs:enumeration value="premium-updater" />
-        </xs:restriction>
-    </xs:simpleType>
+	<xs:simpleType name="clientType">
+		<xs:annotation>
+			<xs:documentation>Indicates the client type for the API client based
+				on the ORCID membership type.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="creator" />
+			<xs:enumeration value="premium-creator" />
+			<xs:enumeration value="updater" />
+			<xs:enumeration value="premium-updater" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="activitySummary">
+		<xs:sequence>
+			<xs:element name="createdDate" type="common:createdDate"
+				minOccurs="0" maxOccurs="1" />
+			<xs:element name="lastModifiedDate" type="common:lastModifiedDate"
+				minOccurs="0" maxOccurs="1" />
+			<xs:element ref="common:source" minOccurs="0" maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="putCode" type="common:putCode" use="optional" />
+		<xs:attribute name="visibility" type="common:visibility" />
+	</xs:complexType>
+
 
 </xs:schema>

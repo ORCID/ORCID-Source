@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:sch="http://purl.oclc.org/dsdl/schematron" elementFormDefault="qualified"
-	targetNamespace="http://www.orcid.org/ns/employment" xmlns:affiliation="http://www.orcid.org/ns/employment" xmlns:common="http://www.orcid.org/ns/common">
+	targetNamespace="http://www.orcid.org/ns/employment" xmlns:affiliation="http://www.orcid.org/ns/employment"
+	xmlns:common="http://www.orcid.org/ns/common">
 	<xs:annotation>
 		<xs:documentation>
 			=============================================================================
@@ -9,13 +10,16 @@
 			ORCID (R) Open Source
 			http://orcid.org
 
-			Copyright (c) 2012-2014 ORCID, Inc.
+			Copyright (c) 2012-2014 ORCID,
+			Inc.
 			Licensed under an MIT-Style License (MIT)
 			http://orcid.org/open-source-license
 
-			This copyright and license information (including a link to the full
+			This copyright and license
+			information (including a link to the full
 			license)
-			shall be included in its entirety in all copies or substantial portion of
+			shall be included in
+			its entirety in all copies or substantial portion of
 			the software.
 
 			=============================================================================
@@ -25,32 +29,67 @@
 		</xs:documentation>
 		<xs:appinfo>
 			<sch:title>Schematron validation</sch:title>
-			<sch:ns prefix="orcid" uri="http://www.orcid.org/ns/orcid"/>
+			<sch:ns prefix="orcid" uri="http://www.orcid.org/ns/orcid" />
 		</xs:appinfo>
 	</xs:annotation>
-	<xs:import namespace="http://www.orcid.org/ns/common" schemaLocation="common-1.3_rc1.xsd"/>
-    <xs:element name="employment">
-        <xs:annotation>
-            <xs:documentation>An affiliation associated with the researcher or contributor. 
-                * The visibility attribute (private, limited or public) can be set at record creation, and indicates who can see this section of information.
-                * The put-code attribute is used only when reading this element. When updating the item, the put-code attribute must be included to indicate the specific record to be updated.
-            </xs:documentation>
-        </xs:annotation>
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element name="departmentName" type="common:nonEmptyString" minOccurs="0"
-                    maxOccurs="1"/>
-                <xs:element name="roleTitle" type="common:nonEmptyString" minOccurs="0"
-                    maxOccurs="1"/>
-                <xs:element ref="common:startDate" minOccurs="0" maxOccurs="1"/>
-                <xs:element ref="common:endDate" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="organization" type="common:organization" minOccurs="1" maxOccurs="1"/>
-                <xs:element ref="common:source" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="createdDate" type="common:createdDate" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="lastModifiedDate" type="common:lastModifiedDate" minOccurs="0" maxOccurs="1"/>
-            </xs:sequence>
-            <xs:attribute name="putCode" type="common:putCode" use="optional"/>
-            <xs:attribute name="visibility" type="common:visibility"/>
-        </xs:complexType>
-    </xs:element>
+	<xs:import namespace="http://www.orcid.org/ns/common"
+		schemaLocation="common-1.3_rc1.xsd" />
+	<xs:element name="employment">
+		<xs:annotation>
+			<xs:documentation>An affiliation associated with the researcher or
+				contributor.
+				* The visibility attribute (private, limited or public)
+				can be set at
+				record creation, and indicates who can see this section
+				of
+				information.
+				* The put-code attribute is used only when reading
+				this element. When
+				updating the item, the put-code attribute must be
+				included to
+				indicate the specific record to be updated.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="departmentName" type="common:nonEmptyString"
+					minOccurs="0" maxOccurs="1" />
+				<xs:element name="roleTitle" type="common:nonEmptyString"
+					minOccurs="0" maxOccurs="1" />
+				<xs:element ref="common:startDate" minOccurs="0"
+					maxOccurs="1" />
+				<xs:element ref="common:endDate" minOccurs="0" maxOccurs="1" />
+				<xs:element name="organization" type="common:organization"
+					minOccurs="1" maxOccurs="1" />
+				<xs:element ref="common:source" minOccurs="0" maxOccurs="1" />
+				<xs:element name="createdDate" type="common:createdDate"
+					minOccurs="0" maxOccurs="1" />
+				<xs:element name="lastModifiedDate" type="common:lastModifiedDate"
+					minOccurs="0" maxOccurs="1" />
+			</xs:sequence>
+			<xs:attribute name="putCode" type="common:putCode" use="optional" />
+			<xs:attribute name="visibility" type="common:visibility" />
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="employmentSummary">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="common:activitySummary">
+					<xs:sequence>
+						<xs:element name="departmentName" type="common:nonEmptyString"
+							minOccurs="0" maxOccurs="1" />
+						<xs:element name="roleTitle" type="common:nonEmptyString"
+							minOccurs="0" maxOccurs="1" />
+						<xs:element ref="common:startDate" minOccurs="0"
+							maxOccurs="1" />
+						<xs:element ref="common:endDate" minOccurs="0"
+							maxOccurs="1" />
+
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+
 </xs:schema>
