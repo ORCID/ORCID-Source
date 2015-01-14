@@ -25,7 +25,4 @@
             <serializable uid="1" />
             <xjc:simple />
         </globalBindings>
-        <bindings scd="/orcid:notificationType/type::0">
-            <typesafeEnumClass name="NotificationType"/>
-        </bindings>
 </bindings>
