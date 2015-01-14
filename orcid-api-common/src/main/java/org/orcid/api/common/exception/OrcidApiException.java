@@ -25,7 +25,7 @@ import javax.ws.rs.core.Response;
 /**
  * @author Declan Newman (declan) Date: 01/03/2012
  */
-public abstract class OrcidApiException extends WebApplicationException {
+public abstract class OrcidApiException extends RuntimeException {
 
     private static final long serialVersionUID = 498312805134452270L;
 
@@ -57,7 +57,6 @@ public abstract class OrcidApiException extends WebApplicationException {
         response = Response.status(status).entity(orcidMessage).build();
     }
 
-    @Override
     public Response getResponse() {
         return response;
     }
