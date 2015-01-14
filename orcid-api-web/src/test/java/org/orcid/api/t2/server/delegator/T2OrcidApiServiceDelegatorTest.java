@@ -22,9 +22,11 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -74,6 +76,7 @@ import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.security.oauth2.provider.OAuth2Request;
@@ -525,13 +528,13 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         securityContext.setAuthentication(mockedAuthentication);
         SecurityContextHolder.setContext(securityContext);
         when(mockedAuthentication.getPrincipal()).thenReturn(new ProfileEntity(userOrcid));
-        OAuth2Request authorizationRequest = mock(OAuth2Request.class);
         Set<String> scopes = new HashSet<String>();
         for (ScopePathType scopePathType : scopePathTypes) {
             scopes.add(scopePathType.value());
         }
-        when(authorizationRequest.getClientId()).thenReturn("APP-5555555555555555");
-        when(authorizationRequest.getScope()).thenReturn(scopes);
+        OAuth2Request authorizationRequest = new OAuth2Request(Collections.<String, String> emptyMap(), "APP-5555555555555555",
+                Collections.<GrantedAuthority> emptyList(), true, scopes, Collections.<String> emptySet(), null, Collections.<String> emptySet(),
+                Collections.<String, Serializable> emptyMap());
         when(mockedAuthentication.getOAuth2Request()).thenReturn(authorizationRequest);
     }
 
@@ -552,9 +555,8 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         SecurityContextHolder.setContext(securityContext);
         when(mockedAuthentication.getPrincipal()).thenReturn(new ProfileEntity(clientId));
         when(mockedAuthentication.isClientOnly()).thenReturn(true);
-        OAuth2Request authorizationRequest = mock(OAuth2Request.class);
-        when(authorizationRequest.getClientId()).thenReturn(clientId);
-        when(authorizationRequest.getScope()).thenReturn(scopes);
+        OAuth2Request authorizationRequest = new OAuth2Request(Collections.<String, String> emptyMap(), clientId, Collections.<GrantedAuthority> emptyList(), true,
+                scopes, Collections.<String> emptySet(), null, Collections.<String> emptySet(), Collections.<String, Serializable> emptyMap());
         when(mockedAuthentication.getOAuth2Request()).thenReturn(authorizationRequest);
     }
 
