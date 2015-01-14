@@ -18,7 +18,6 @@ package org.orcid.core.security.visibility.aop;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -111,8 +110,7 @@ public class OrcidApiAuthorizationSecurityAspect {
                     OrcidOAuth2Authentication orcidAuth = (OrcidOAuth2Authentication) getAuthentication();
 
                     OAuth2Request authorization = orcidAuth.getOAuth2Request();
-                    Map<String, String> params = authorization.getRequestParameters();
-                    String clientId = params.get(CLIENT_ID);
+                    String clientId = authorization.getClientId();
 
                     // #1: Get the user orcid
                     String userOrcid = getUserOrcidFromOrcidMessage(orcidMessage);

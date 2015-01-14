@@ -343,7 +343,7 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
                     Source source = ei.getSource();
                     String sourceOrcid = source.retrieveSourcePath();
                     if (sourceOrcid != null) {
-                        if (StringUtils.isBlank(sourceOrcid) || !profileEntityManager.orcidExists(sourceOrcid)) {
+                        if (StringUtils.isBlank(sourceOrcid) || (!profileEntityManager.orcidExists(sourceOrcid) && !clientDetailsManager.exists(sourceOrcid))) {
                             throw new OrcidNotFoundException("Cannot find source ORCID");
                         }
                     }                    
