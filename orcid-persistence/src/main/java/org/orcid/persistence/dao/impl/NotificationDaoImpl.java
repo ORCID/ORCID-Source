@@ -90,7 +90,8 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
         TypedQuery<NotificationEntity> query = entityManager.createQuery("from NotificationEntity where orcid = :orcid and id = :id", NotificationEntity.class);
         query.setParameter("orcid", orcid);
         query.setParameter("id", id);
-        return query.getSingleResult();
+        List<NotificationEntity> results = query.getResultList();
+        return results.isEmpty() ? null : results.get(0);
     }
 
     @Override
