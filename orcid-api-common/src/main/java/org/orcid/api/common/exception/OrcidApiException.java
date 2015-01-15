@@ -16,11 +16,10 @@
  */
 package org.orcid.api.common.exception;
 
+import javax.ws.rs.core.Response;
+
 import org.orcid.jaxb.model.message.ErrorDesc;
 import org.orcid.jaxb.model.message.OrcidMessage;
-
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
 
 /**
  * @author Declan Newman (declan) Date: 01/03/2012

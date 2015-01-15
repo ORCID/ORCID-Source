@@ -25,7 +25,7 @@
 package org.orcid.jaxb.model.error;
 
 import java.io.Serializable;
-import java.math.BigInteger;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -75,7 +75,7 @@ public class OrcidError
     @XmlElement(required = true)
     protected String developerMessage;
     protected String userMessage;
-    protected BigInteger errorCode;
+    protected Integer errorCode;
     @XmlSchemaType(name = "anyURI")
     protected String moreInfo;
 
@@ -148,10 +148,10 @@ public class OrcidError
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getErrorCode() {
+    public Integer getErrorCode() {
         return errorCode;
     }
 
@@ -160,10 +160,10 @@ public class OrcidError
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setErrorCode(BigInteger value) {
+    public void setErrorCode(Integer value) {
         this.errorCode = value;
     }
 
