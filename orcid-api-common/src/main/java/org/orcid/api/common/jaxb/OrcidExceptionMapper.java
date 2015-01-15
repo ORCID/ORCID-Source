@@ -16,6 +16,9 @@
  */
 package org.orcid.api.common.jaxb;
 
+import java.util.Locale;
+
+import javax.annotation.Resource;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
@@ -28,6 +31,7 @@ import javax.ws.rs.ext.Provider;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.api.common.OrcidApiConstants;
 import org.orcid.api.common.exception.OrcidApiException;
+import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.security.DeprecatedException;
 import org.orcid.core.version.ApiSection;
 import org.orcid.core.web.filters.ApiVersionFilter;
@@ -36,8 +40,10 @@ import org.orcid.jaxb.model.message.ErrorDesc;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
+import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 
@@ -51,9 +57,16 @@ import org.springframework.web.context.request.RequestContextHolder;
         MediaType.APPLICATION_XML, MediaType.WILDCARD, MediaType.APPLICATION_JSON })
 @Produces(value = { OrcidApiConstants.VND_ORCID_JSON, OrcidApiConstants.VND_ORCID_XML, OrcidApiConstants.ORCID_JSON, OrcidApiConstants.ORCID_XML,
         MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+@Component
 public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidExceptionMapper.class);
+
+    @Resource
+    private MessageSource messageSource;
+
+    @Resource
+    private LocaleManager localeManager;
 
     @Override
     public Response toResponse(Throwable t) {
@@ -117,53 +130,66 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         if (OrcidApiException.class.isAssignableFrom(t.getClass())) {
             return getOrcidErrorResponse((OrcidApiException) t);
         } else if (WebApplicationException.class.isAssignableFrom(t.getClass())) {
-            OrcidError orcidError = getOrcidError("Web application error", Response.Status.INTERNAL_SERVER_ERROR, t);
-            WebApplicationException webException = (WebApplicationException) t;
-            return Response.status(webException.getResponse().getStatus()).entity(orcidError).build();
+            return getOrcidErrorResponse((WebApplicationException) t);
         } else {
             if (AuthenticationException.class.isAssignableFrom(t.getClass())) {
                 Status status = Response.Status.UNAUTHORIZED;
-                OrcidError orcidError = getOrcidError("Authentication problem", status, t);
+                OrcidError orcidError = getOrcidError(9003, status, t);
                 return Response.status(status).entity(orcidError).build();
             } else if (OAuth2Exception.class.isAssignableFrom(t.getClass())) {
                 Status status = Response.Status.UNAUTHORIZED;
-                OrcidError orcidError = getOrcidError("OAuth2 problem", status, t);
+                OrcidError orcidError = getOrcidError(9004, status, t);
                 return Response.status(status).entity(orcidError).build();
             } else if (SecurityException.class.isAssignableFrom(t.getClass())) {
                 Status status = Response.Status.FORBIDDEN;
-                OrcidError orcidError = getOrcidError("Security problem", status, t);
+                OrcidError orcidError = getOrcidError(9005, status, t);
                 return Response.status(status).entity(orcidError).build();
             } else if (IllegalStateException.class.isAssignableFrom(t.getClass())) {
                 Status status = Response.Status.FORBIDDEN;
-                OrcidError orcidError = getOrcidError("Illegal state", status, t);
+                OrcidError orcidError = getOrcidError(9006, status, t);
                 return Response.status(status).entity(orcidError).build();
             } else if (IllegalArgumentException.class.isAssignableFrom(t.getClass())) {
                 Status status = Response.Status.BAD_REQUEST;
-                OrcidError orcidError = getOrcidError("Bad Request", status, t);
+                OrcidError orcidError = getOrcidError(9007, status, t);
                 return Response.status(status).entity(orcidError).build();
             } else if (DeprecatedException.class.isAssignableFrom(t.getClass())) {
                 Status status = Response.Status.MOVED_PERMANENTLY;
-                OrcidError orcidError = getOrcidError("Account Deprecated", status, t);
+                OrcidError orcidError = getOrcidError(9008, status, t);
                 return Response.status(status).entity(orcidError).build();
             } else {
-                OrcidError orcidError = getOrcidError("Unknown error", Response.Status.INTERNAL_SERVER_ERROR, t);
+                OrcidError orcidError = getOrcidError(9009, Response.Status.INTERNAL_SERVER_ERROR, t);
                 return Response.serverError().entity(orcidError).build();
             }
         }
     }
 
     private Response getOrcidErrorResponse(OrcidApiException e) {
-        OrcidError orcidError = new OrcidError();
         int status = e.getResponse().getStatus();
-        orcidError.setResponseCode(status);
-        orcidError.setDeveloperMessage(e.getLocalizedMessage());
+        return getOrcidErrorResponse(9000, status, e);
+    }
+
+    private Response getOrcidErrorResponse(WebApplicationException e) {
+        int status = e.getResponse().getStatus();
+        return getOrcidErrorResponse(9001, status, e);
+    }
+
+    private Response getOrcidErrorResponse(int errorCode, int status, Throwable t) {
+        OrcidError orcidError = getOrcidError(errorCode, status, t);
         return Response.status(status).entity(orcidError).build();
     }
 
-    private OrcidError getOrcidError(String string, Status status, Throwable t) {
+    private OrcidError getOrcidError(int errorCode, Status status, Throwable t) {
+        return getOrcidError(errorCode, status.getStatusCode(), t);
+    }
+
+    private OrcidError getOrcidError(int errorCode, int status, Throwable t) {
         OrcidError orcidError = new OrcidError();
-        orcidError.setResponseCode(status.getStatusCode());
+        orcidError.setResponseCode(status);
+        orcidError.setErrorCode(errorCode);
         orcidError.setDeveloperMessage(t.getLocalizedMessage());
+        Locale locale = localeManager.getLocale();
+        orcidError.setUserMessage(messageSource.getMessage("apiError." + errorCode + ".userMessage", null, locale));
+        orcidError.setMoreInfo(messageSource.getMessage("apiError." + errorCode + ".moreInfo", null, locale));
         return orcidError;
     }
 
