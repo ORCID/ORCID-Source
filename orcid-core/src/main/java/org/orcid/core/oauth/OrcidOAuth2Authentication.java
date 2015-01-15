@@ -46,8 +46,8 @@ public class OrcidOAuth2Authentication extends OAuth2Authentication {
      *            The token that has been used to authenticate the client
      */
 
-    public OrcidOAuth2Authentication(AuthorizationRequest authorizationRequest, Authentication userAuthentication, String activeToken) {
-        super(authorizationRequest, userAuthentication);
+    public OrcidOAuth2Authentication(AuthorizationRequest authorizationRequest, Authentication userAuthentication, String activeToken) {        
+        super(authorizationRequest.createOAuth2Request(), userAuthentication);
         Assert.hasText(activeToken, "The active token must have a value.");
         this.activeToken = activeToken;
     }

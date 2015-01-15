@@ -18,7 +18,6 @@ package org.orcid.core.security.visibility.aop;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -40,7 +39,7 @@ import org.orcid.jaxb.model.notification.Notification;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.provider.AuthorizationRequest;
+import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.stereotype.Component;
 
 /**
@@ -110,9 +109,8 @@ public class OrcidApiAuthorizationSecurityAspect {
                 if (authentication.getClass().isAssignableFrom(OrcidOAuth2Authentication.class)) {
                     OrcidOAuth2Authentication orcidAuth = (OrcidOAuth2Authentication) getAuthentication();
 
-                    AuthorizationRequest authorization = orcidAuth.getAuthorizationRequest();
-                    Map<String, String> params = authorization.getAuthorizationParameters();
-                    String clientId = params.get(CLIENT_ID);
+                    OAuth2Request authorization = orcidAuth.getOAuth2Request();
+                    String clientId = authorization.getClientId();
 
                     // #1: Get the user orcid
                     String userOrcid = getUserOrcidFromOrcidMessage(orcidMessage);
