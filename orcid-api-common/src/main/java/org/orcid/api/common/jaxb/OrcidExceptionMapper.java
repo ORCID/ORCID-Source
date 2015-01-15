@@ -134,30 +134,30 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         } else {
             if (AuthenticationException.class.isAssignableFrom(t.getClass())) {
                 Status status = Response.Status.UNAUTHORIZED;
-                OrcidError orcidError = getOrcidError(9003, status, t);
+                OrcidError orcidError = getOrcidError(9002, status, t);
                 return Response.status(status).entity(orcidError).build();
             } else if (OAuth2Exception.class.isAssignableFrom(t.getClass())) {
                 Status status = Response.Status.UNAUTHORIZED;
-                OrcidError orcidError = getOrcidError(9004, status, t);
+                OrcidError orcidError = getOrcidError(9003, status, t);
                 return Response.status(status).entity(orcidError).build();
             } else if (SecurityException.class.isAssignableFrom(t.getClass())) {
                 Status status = Response.Status.FORBIDDEN;
-                OrcidError orcidError = getOrcidError(9005, status, t);
+                OrcidError orcidError = getOrcidError(9004, status, t);
                 return Response.status(status).entity(orcidError).build();
             } else if (IllegalStateException.class.isAssignableFrom(t.getClass())) {
                 Status status = Response.Status.FORBIDDEN;
-                OrcidError orcidError = getOrcidError(9006, status, t);
+                OrcidError orcidError = getOrcidError(9005, status, t);
                 return Response.status(status).entity(orcidError).build();
             } else if (IllegalArgumentException.class.isAssignableFrom(t.getClass())) {
                 Status status = Response.Status.BAD_REQUEST;
-                OrcidError orcidError = getOrcidError(9007, status, t);
+                OrcidError orcidError = getOrcidError(9006, status, t);
                 return Response.status(status).entity(orcidError).build();
             } else if (DeprecatedException.class.isAssignableFrom(t.getClass())) {
                 Status status = Response.Status.MOVED_PERMANENTLY;
-                OrcidError orcidError = getOrcidError(9008, status, t);
+                OrcidError orcidError = getOrcidError(9007, status, t);
                 return Response.status(status).entity(orcidError).build();
             } else {
-                OrcidError orcidError = getOrcidError(9009, Response.Status.INTERNAL_SERVER_ERROR, t);
+                OrcidError orcidError = getOrcidError(9008, Response.Status.INTERNAL_SERVER_ERROR, t);
                 return Response.serverError().entity(orcidError).build();
             }
         }
