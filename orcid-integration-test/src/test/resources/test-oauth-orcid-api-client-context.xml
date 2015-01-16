@@ -73,4 +73,7 @@
 		<property name="OrcidProfileManager" ref="orcidProfileManager" />		
 	</bean>
 	
+	<bean id="oauthHelper" class="org.orcid.integration.api.helper.OauthHelper">
+		<property name="oauthT2Client" ref="t2OAuthClient" />
+	</bean>
 </beans>
