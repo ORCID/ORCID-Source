@@ -18,6 +18,7 @@ package org.orcid.core.manager;
 
 import java.util.List;
 
+import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
 import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
@@ -62,5 +63,7 @@ public interface NotificationManager {
     public Notification findByOrcidAndId(String orcid, Long id);
 
     public Notification createNotification(String orcid, Notification notification);
+
+    public Notification flagAsArchived(String orcid, Long id) throws OrcidNotificationAlreadyReadException;
 
 }

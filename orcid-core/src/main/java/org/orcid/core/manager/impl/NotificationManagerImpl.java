@@ -29,9 +29,10 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.LocaleUtils;
 import org.orcid.core.adapter.JpaJaxbNotificationAdapter;
 import org.orcid.core.constants.EmailConstants;
+import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
+import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.CustomEmailManager;
 import org.orcid.core.manager.EncryptionManager;
@@ -740,6 +741,24 @@ public class NotificationManagerImpl implements NotificationManager {
     @Override
     public Notification findByOrcidAndId(String orcid, Long id) {
         return notificationAdapter.toNotification(notificationDao.findByOricdAndId(orcid, id));
+    }
+
+    @Override
+    public Notification flagAsArchived(String orcid, Long id) throws OrcidNotificationAlreadyReadException {
+        NotificationEntity notificationEntity = notificationDao.findByOricdAndId(orcid, id);
+        if (notificationEntity == null) {
+            return null;
+        }
+        String sourceId = sourceManager.retrieveSourceOrcid();
+        if (sourceId != null && !sourceId.equals(notificationEntity.getSource().getSourceId())) {
+            throw new WrongSourceException("You are not the source of notification with id=" + id + " for ORCID iD=" + orcid);
+        }
+        if (notificationEntity.getReadDate() != null) {
+            throw new OrcidNotificationAlreadyReadException("The notification has already been read");
+        }
+        notificationEntity.setArchivedDate(new Date());
+        notificationDao.merge(notificationEntity);
+        return notificationAdapter.toNotification(notificationEntity);
     }
 
 }
