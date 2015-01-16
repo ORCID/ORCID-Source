@@ -756,8 +756,10 @@ public class NotificationManagerImpl implements NotificationManager {
         if (notificationEntity.getReadDate() != null) {
             throw new OrcidNotificationAlreadyReadException("The notification has already been read");
         }
-        notificationEntity.setArchivedDate(new Date());
-        notificationDao.merge(notificationEntity);
+        if (notificationEntity.getArchivedDate() == null) {
+            notificationEntity.setArchivedDate(new Date());
+            notificationDao.merge(notificationEntity);
+        }
         return notificationAdapter.toNotification(notificationEntity);
     }
 
