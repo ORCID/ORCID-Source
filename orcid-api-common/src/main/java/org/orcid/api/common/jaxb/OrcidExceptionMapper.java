@@ -31,6 +31,8 @@ import javax.ws.rs.ext.Provider;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.api.common.OrcidApiConstants;
 import org.orcid.api.common.exception.OrcidApiException;
+import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
+import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.security.DeprecatedException;
 import org.orcid.core.version.ApiSection;
@@ -148,6 +150,10 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
                 Status status = Response.Status.FORBIDDEN;
                 OrcidError orcidError = getOrcidError(9005, status, t);
                 return Response.status(status).entity(orcidError).build();
+            } else if (WrongSourceException.class.isAssignableFrom(t.getClass())) {
+                Status status = Response.Status.FORBIDDEN;
+                OrcidError orcidError = getOrcidError(9010, status, t);
+                return Response.status(status).entity(orcidError).build();
             } else if (IllegalArgumentException.class.isAssignableFrom(t.getClass())) {
                 Status status = Response.Status.BAD_REQUEST;
                 OrcidError orcidError = getOrcidError(9006, status, t);
@@ -155,6 +161,10 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
             } else if (DeprecatedException.class.isAssignableFrom(t.getClass())) {
                 Status status = Response.Status.MOVED_PERMANENTLY;
                 OrcidError orcidError = getOrcidError(9007, status, t);
+                return Response.status(status).entity(orcidError).build();
+            } else if (OrcidNotificationAlreadyReadException.class.isAssignableFrom(t.getClass())) {
+                Status status = Response.Status.FORBIDDEN;
+                OrcidError orcidError = getOrcidError(9009, status, t);
                 return Response.status(status).entity(orcidError).build();
             } else {
                 OrcidError orcidError = getOrcidError(9008, Response.Status.INTERNAL_SERVER_ERROR, t);
