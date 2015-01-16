@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:sch="http://purl.oclc.org/dsdl/schematron" elementFormDefault="qualified"
+	targetNamespace="http://www.orcid.org/ns/message" xmlns:message="http://www.orcid.org/ns/message"
+	xmlns:common="http://www.orcid.org/ns/common" xmlns:error="http://www.orcid.org/ns/error"
+	xmlns:record="http://www.orcid.org/ns/record" xmlns:search="http://www.orcid.org/ns/search">
+	<xs:annotation>
+		<xs:documentation>
+			=============================================================================
+
+			ORCID (R) Open Source
+			http://orcid.org
+
+			Copyright (c) 2012-2014 ORCID,
+			Inc.
+			Licensed under an MIT-Style License (MIT)
+			http://orcid.org/open-source-license
+
+			This copyright and license
+			information (including a link to the full
+			license)
+			shall be included in
+			its entirety in all copies or substantial portion of
+			the software.
+
+			=============================================================================
+			The schema describes the message format used for ORCID API requests
+			and responses.
+			The top level element is orcid-message.
+		</xs:documentation>
+		<xs:appinfo>
+			<sch:title>Schematron validation</sch:title>
+			<sch:ns prefix="orcid" uri="http://www.orcid.org/ns/orcid" />
+		</xs:appinfo>
+	</xs:annotation>
+
+	<xs:import namespace="http://www.orcid.org/ns/common"
+		schemaLocation="common-2.0_rc1.xsd" />
+	<xs:import namespace="http://www.orcid.org/ns/error"
+		schemaLocation="error-2.0_rc1.xsd" />
+	<xs:import namespace="http://www.orcid.org/ns/record"
+		schemaLocation="record-2.0_rc1.xsd" />
+	<xs:import namespace="http://www.orcid.org/ns/search"
+		schemaLocation="search-2.0_rc1.xsd" />
+
+	<xs:element name="message">
+		<xs:annotation>
+			<xs:documentation>The overall container for all ORCID requests and
+				responses.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="messageVersion" type="message:messageVersion" />
+				<xs:choice>
+					<xs:element ref="record:record" />
+					<xs:element ref="search:search" />
+					<xs:element ref="error:error" />
+				</xs:choice>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:simpleType name="messageVersion">
+		<xs:annotation>
+			<xs:documentation>The version of ORCID message schema that the
+				orcid-message uses. Please refer to the ORCID XSD Information Readme
+				documentation for more details.
+				https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/README.md
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="2.0_rc1" />
+		</xs:restriction>
+	</xs:simpleType>
+
+</xs:schema>
