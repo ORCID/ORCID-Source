@@ -246,7 +246,7 @@ public class InitializeDataHelper {
 
         OrcidHistory orcidHistory = new OrcidHistory();
         orcidHistory.setClaimed(new Claimed(true));
-        orcidHistory.setCreationMethod(CreationMethod.INTEGRATION);
+        orcidHistory.setCreationMethod(CreationMethod.INTEGRATION_TEST);
 
         profile.setOrcidHistory(orcidHistory);
         orcidHistory.setSubmissionDate(new SubmissionDate(DateUtils.convertToXMLGregorianCalendar(new Date())));

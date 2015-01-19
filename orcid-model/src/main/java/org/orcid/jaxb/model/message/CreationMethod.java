@@ -81,8 +81,8 @@ public enum CreationMethod implements Serializable {
      * The profile was created manually using the ORCID web user interface.
      * 
      */
-    @XmlEnumValue("integration")
-    INTEGRATION("integration");
+    @XmlEnumValue("integration-test")
+    INTEGRATION_TEST("integration-test");
     
     private final String value;
 
