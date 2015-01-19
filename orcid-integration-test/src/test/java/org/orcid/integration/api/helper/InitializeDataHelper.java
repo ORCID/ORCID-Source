@@ -21,16 +21,24 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
 import org.junit.runner.RunWith;
+import org.orcid.core.adapter.JpaJaxbEntityAdapter;
+import org.orcid.core.manager.ClientDetailsManager;
+import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.OrcidClientGroupManager;
 import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.GroupType;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
+import org.orcid.jaxb.model.clientgroup.RedirectUri;
+import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.ActivitiesVisibilityDefault;
 import org.orcid.jaxb.model.message.Claimed;
 import org.orcid.jaxb.model.message.ContactDetails;
@@ -50,14 +58,12 @@ import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.ProfileDao;
-import org.orcid.pojo.ajaxForm.Client;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.pojo.ajaxForm.Group;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.pojo.ajaxForm.RedirectUri;
 import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.utils.DateUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -81,9 +87,15 @@ public class InitializeDataHelper {
 
     @Resource
     private ClientDetailsDao clientDetailsDao;
-
-    @Value("${org.orcid.web.base.url:http://localhost:8080/orcid-web}")
-    protected String webBaseUrl;
+    
+    @Resource
+    private ClientDetailsManager clientDetailsManager;
+    
+    @Resource
+    private JpaJaxbEntityAdapter adapter;
+    
+    @Resource
+    private EncryptionManager encryptionManager;    
 
     public void deleteProfile(String orcid) throws Exception {
         orcidProfileManager.deactivateOrcidProfile(orcidProfileManager.retrieveOrcidProfile(orcid));
@@ -93,7 +105,7 @@ public class InitializeDataHelper {
     public void deleteClient(String clientId) throws Exception {
         clientDetailsDao.removeClient(clientId);
     }
-
+    
     public Group createMember(GroupType type) throws Exception {
         String name = type.value() + System.currentTimeMillis() + "@orcid-integration-test.com";
         Group group = new Group();
@@ -109,25 +121,52 @@ public class InitializeDataHelper {
         return group;
     }
 
-    public OrcidClient createClient(String groupOrcid) throws Exception {
-        Client client = new Client();
-        client.setDisplayName(Text.valueOf("client_for_" + groupOrcid));
-        client.setShortDescription(Text.valueOf("Description test"));
-        client.setWebsite(Text.valueOf("www." + groupOrcid + ".com"));
-        RedirectUri rUri = new RedirectUri();
-        rUri.setValue(Text.valueOf(getRedirectUri()));
-        List<RedirectUri> rUris = new ArrayList<RedirectUri>();
-        rUris.add(rUri);
-        client.setRedirectUris(rUris);
+    public OrcidClient createClient(String groupOrcid, String redirectUri) throws Exception {
+        GroupType groupType = profileDao.getGroupType(groupOrcid);
+        ClientType clientType = null;
+        if(groupType == null)
+            return null;
+        switch (groupType){
+        case BASIC:
+            clientType = ClientType.UPDATER;
+        case BASIC_INSTITUTION:
+            clientType = ClientType.PREMIUM_UPDATER;            
+        case PREMIUM: 
+            clientType = ClientType.CREATOR;
+        case PREMIUM_INSTITUTION:
+            clientType = ClientType.PREMIUM_CREATOR;
+        }
+        
+        Set<String> clientResourceIds = new HashSet<String>();
+        clientResourceIds.add("orcid");
+        Set<String> clientAuthorizedGrantTypes = new HashSet<String>();
+        clientAuthorizedGrantTypes.add("client_credentials");
+        clientAuthorizedGrantTypes.add("authorization_code");
+        clientAuthorizedGrantTypes.add("refresh_token");
+        
+        RedirectUri rUri = new RedirectUri();        
+        rUri.setValue(redirectUri);
+        rUri.setType(RedirectUriType.DEFAULT);
+        Set<RedirectUri> redirectUrisToAdd = new HashSet<RedirectUri>();
+        redirectUrisToAdd.add(rUri);        
+        
+        List<String> clientGrantedAuthorities = new ArrayList<String>();
+        clientGrantedAuthorities.add("ROLE_CLIENT");
 
-        OrcidClient orcidClient = client.toOrcidClient();
-        orcidClient = orcidClientGroupManager.createAndPersistClientProfile(groupOrcid, orcidClient);
-
-        assertNotNull(orcidClient);
-        assertFalse(PojoUtil.isEmpty(orcidClient.getClientId()));
-        return orcidClient;
+        String value = groupOrcid + "_client_" + System.currentTimeMillis();
+        String name = value;
+        String description = value;
+        String website = value + "_website";
+            
+        ClientDetailsEntity clientDetails = clientDetailsManager.createClientDetails(groupOrcid, name, description, website, clientType, createScopes(clientType),
+                clientResourceIds, clientAuthorizedGrantTypes, redirectUrisToAdd, clientGrantedAuthorities);
+        
+        OrcidClient client =  adapter.toOrcidClient(clientDetails);
+        //Decrypt the client secret
+        client.setClientSecret(encryptionManager.decryptForInternalUse(client.getClientSecret()));
+        return client;
     }
-
+    
     public OrcidProfile createProfile(String email, String password) throws Exception {
         Text emailText = Text.valueOf(email);
         Text passwordText = Text.valueOf(password);
@@ -142,9 +181,6 @@ public class InitializeDataHelper {
         return orcidProfile;
     }
 
-    protected String getRedirectUri() {
-        return webBaseUrl + "/oauth/playground";
-    }
 
     private OrcidProfile toProfile(Registration reg) {
         OrcidProfile profile = new OrcidProfile();
@@ -184,5 +220,20 @@ public class InitializeDataHelper {
 
         return profile;
 
+    }
+    
+    private Set<String> createScopes(ClientType clientType) {
+        switch (clientType) {
+        case PREMIUM_CREATOR:
+            return orcidClientGroupManager.premiumCreatorScopes();
+        case CREATOR:
+            return orcidClientGroupManager.creatorScopes();
+        case PREMIUM_UPDATER:
+            return orcidClientGroupManager.premiumUpdaterScopes();
+        case UPDATER:
+            return orcidClientGroupManager.updaterScopes();
+        default:
+            throw new IllegalArgumentException("Unsupported client type: " + clientType);
+        }
     }
 }

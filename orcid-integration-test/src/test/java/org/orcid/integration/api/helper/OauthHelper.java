@@ -40,22 +40,23 @@ public class OauthHelper {
         this.oauthT2Client = oauthT2Client;
     }
 
-    public String obtainAccessToken(String clientId, String scopes, String email, String password, String redirectUri) throws JSONException, InterruptedException {
-        return obtainAccessToken(clientId, scopes, email, password, redirectUri, false);
+    public String obtainAccessToken(String clientId, String clientSecret, String scopes, String email, String password, String redirectUri) throws JSONException, InterruptedException {
+        return obtainAccessToken(clientId, clientSecret, scopes, email, password, redirectUri, false);
     }
     
-    public String obtainAccessToken(String clientId, String scopes, String email, String password, String redirectUri, boolean persistent) throws JSONException, InterruptedException {
+    public String obtainAccessToken(String clientId, String clientSecret, String scopes, String email, String password, String redirectUri, boolean persistent) throws JSONException, InterruptedException {
         String authorizationCode = null;
         if(persistent) {
             authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, clientId, email, password, items, true);
         } else {
-            authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, clientId, email, password);
+            authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, clientId, email, password, items, false);
         }
+        
         assertNotNull(authorizationCode);
         assertFalse(PojoUtil.isEmpty(authorizationCode));      
         MultivaluedMap<String, String> params = new MultivaluedMapImpl();
         params.add("client_id", clientId);
-        params.add("client_secret", "client-secret");
+        params.add("client_secret", clientSecret);
         params.add("grant_type", "authorization_code");
         params.add("scope", scopes);
         params.add("redirect_uri", redirectUri);
@@ -67,5 +68,9 @@ public class OauthHelper {
         String accessToken = (String) jsonObject.get("access_token");
         assertNotNull(accessToken);
         return accessToken;
+    }
+    
+    public void closeWebDriver() {
+        webDriverHelper.close();
     }
 }

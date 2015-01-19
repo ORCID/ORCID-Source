@@ -184,5 +184,9 @@ public class WebDriverHelper {
     public String obtainAuthorizationCode(String scopes, String orcid) throws InterruptedException {
         return obtainAuthorizationCode(scopes, orcid, "user_to_test@user.com", "password");
     }
+    
+    public void close() {
+        webDriver.close();
+    }
 
 }
