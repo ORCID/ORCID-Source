@@ -44,6 +44,7 @@ import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.Amount;
 import org.orcid.jaxb.model.message.ContributorEmail;
 import org.orcid.jaxb.model.message.CreditName;
+import org.orcid.jaxb.model.message.FamilyName;
 import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingContributor;
 import org.orcid.jaxb.model.message.FundingContributorAttributes;
@@ -56,14 +57,17 @@ import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.FundingTitle;
 import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.FuzzyDate;
+import org.orcid.jaxb.model.message.GivenNames;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.OrcidActivities;
+import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.Organization;
 import org.orcid.jaxb.model.message.OrganizationAddress;
+import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.Title;
 import org.orcid.jaxb.model.message.Url;
 import org.orcid.jaxb.model.message.Visibility;
@@ -91,7 +95,7 @@ import com.sun.jersey.api.client.ClientResponse;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-oauth-orcid-api-client-context.xml" })
-public class PerActivityAPIScope_Activities_Update_Test {
+public class PerActivityAPINewScopesTest {
 
     private static ApplicationContext context = new ClassPathXmlApplicationContext("classpath:test-oauth-orcid-api-client-context.xml");
     
@@ -272,7 +276,7 @@ public class PerActivityAPIScope_Activities_Update_Test {
     }
         
     @Test
-    public void testAddAffiliation() throws InterruptedException, JSONException {
+    public void addAffiliationTest() throws InterruptedException, JSONException {
         String accessToken = oauthHelper.obtainAccessToken(client.getClientId(), client.getClientSecret(), "/affiliations/read-limited /activities/update", email, password, getRedirectUri(), true);
         OrcidMessage orcidMessage = new OrcidMessage();
         orcidMessage.setMessageVersion(OrcidMessage.DEFAULT_VERSION);
@@ -308,6 +312,41 @@ public class PerActivityAPIScope_Activities_Update_Test {
         assertEquals(1, orcidMessageWithNewWork.getOrcidProfile().getOrcidActivities().getAffiliations().getAffiliation().size());
         assertNotNull(orcidMessageWithNewWork.getOrcidProfile().getOrcidActivities().getAffiliations().getAffiliation().get(0).getOrganization());
         assertEquals("Affiliation added by integration test", orcidMessageWithNewWork.getOrcidProfile().getOrcidActivities().getAffiliations().getAffiliation().get(0).getOrganization().getName());
+    }
+    
+    @Test
+    public void personUpdateTest() throws InterruptedException, JSONException {
+        String accessToken = oauthHelper.obtainAccessToken(client.getClientId(), client.getClientSecret(), "/person/update /orcid-bio/read-limited", email, password, getRedirectUri(), true);
+        OrcidMessage orcidMessage = new OrcidMessage();
+        orcidMessage.setMessageVersion(OrcidMessage.DEFAULT_VERSION);
+        OrcidProfile orcidProfile = new OrcidProfile();
+        orcidMessage.setOrcidProfile(orcidProfile);
+        OrcidBio orcidBio = new OrcidBio();
+        PersonalDetails personalDetails = new PersonalDetails();
+        personalDetails.setGivenNames(new GivenNames("My given name"));
+        personalDetails.setFamilyName(new FamilyName("My family name"));
+        CreditName creditName = new CreditName("My credit name");
+        creditName.setVisibility(Visibility.LIMITED);
+        personalDetails.setCreditName(creditName);
+        orcidBio.setPersonalDetails(personalDetails);
+        orcidProfile.setOrcidBio(orcidBio);
+        
+        ClientResponse clientResponse = oauthT2Client.updateBioDetailsXml(user.getOrcidIdentifier().getPath(), orcidMessage, accessToken);
+        assertEquals(200, clientResponse.getStatus());
+        ClientResponse response = oauthT2Client.viewBioDetailsXml(user.getOrcidIdentifier().getPath(), accessToken);
+        assertNotNull(response);
+        assertEquals(200, response.getStatus());
+        OrcidMessage orcidMessageWithBio = response.getEntity(OrcidMessage.class);
+        assertNotNull(orcidMessageWithBio);
+        assertNotNull(orcidMessageWithBio.getOrcidProfile());
+        assertNotNull(orcidMessageWithBio.getOrcidProfile().getOrcidBio());
+        assertNotNull(orcidMessageWithBio.getOrcidProfile().getOrcidBio().getPersonalDetails());
+        assertNotNull(orcidMessageWithBio.getOrcidProfile().getOrcidBio().getPersonalDetails().getGivenNames());
+        assertEquals("My given name", orcidMessageWithBio.getOrcidProfile().getOrcidBio().getPersonalDetails().getGivenNames().getContent());
+        assertNotNull(orcidMessageWithBio.getOrcidProfile().getOrcidBio().getPersonalDetails().getFamilyName());
+        assertEquals("My family name", orcidMessageWithBio.getOrcidProfile().getOrcidBio().getPersonalDetails().getFamilyName().getContent());
+        assertNotNull(orcidMessageWithBio.getOrcidProfile().getOrcidBio().getPersonalDetails().getCreditName());
+        assertEquals("My credit name", orcidMessageWithBio.getOrcidProfile().getOrcidBio().getPersonalDetails().getCreditName().getContent());        
     }
     
     private static String getRedirectUri() {
