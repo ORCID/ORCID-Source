@@ -64,15 +64,15 @@ public class PerActivityAPIScope_Activities_Update_Test extends InitializeDataHe
     OrcidOauth2TokenDetailDao oauth2TokenDetailDao;
 
     @Before
-    public void init() throws Exception {
-        WebDriver webDriver = new FirefoxDriver();
-        WebDriverHelper webDriverHelper = new WebDriverHelper(webDriver, webBaseUrl, getRedirectUri());
-        oauthHelper.setWebDriverHelper(webDriverHelper);
+    public void init() throws Exception {        
         email = System.currentTimeMillis() + "@orcid-integration-test.com";
         password = String.valueOf(System.currentTimeMillis());
         user = createProfile(email, password);
         member = createMember(GroupType.BASIC);
         client = createClient(member.getGroupOrcid().getValue());
+        WebDriver webDriver = new FirefoxDriver();
+        WebDriverHelper webDriverHelper = new WebDriverHelper(webDriver, webBaseUrl, getRedirectUri());
+        oauthHelper.setWebDriverHelper(webDriverHelper);
     }
 
     @After

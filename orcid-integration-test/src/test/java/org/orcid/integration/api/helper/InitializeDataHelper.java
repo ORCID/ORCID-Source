@@ -67,7 +67,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * 
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml", "classpath:orcid-frontend-web-servlet.xml" })
+@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class InitializeDataHelper {
 
     @Resource
@@ -175,7 +175,7 @@ public class InitializeDataHelper {
 
         OrcidHistory orcidHistory = new OrcidHistory();
         orcidHistory.setClaimed(new Claimed(true));
-        orcidHistory.setCreationMethod(CreationMethod.fromValue(reg.getCreationType().getValue()));
+        orcidHistory.setCreationMethod(CreationMethod.INTEGRATION);
 
         profile.setOrcidHistory(orcidHistory);
         orcidHistory.setSubmissionDate(new SubmissionDate(DateUtils.convertToXMLGregorianCalendar(new Date())));
