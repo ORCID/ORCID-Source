@@ -57,8 +57,13 @@ import org.orcid.jaxb.model.message.SendOrcidNews;
 import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.dao.ClientDetailsDao;
+import org.orcid.persistence.dao.OrgAffiliationRelationDao;
+import org.orcid.persistence.dao.OrgDao;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.dao.ProfileFundingDao;
+import org.orcid.persistence.dao.ProfileWorkDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.ClientSecretEntity;
 import org.orcid.pojo.ajaxForm.Group;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Registration;
@@ -95,6 +100,18 @@ public class InitializeDataHelper {
     private JpaJaxbEntityAdapter adapter;
     
     @Resource
+    private OrgDao orgDao;
+    
+    @Resource
+    private ProfileWorkDao profileWorkDao;
+    
+    @Resource
+    private ProfileFundingDao profileFundingDao;
+    
+    @Resource
+    private OrgAffiliationRelationDao orgAffiliationRelationDao;
+    
+    @Resource
     private EncryptionManager encryptionManager;    
 
     public void deleteProfile(String orcid) throws Exception {
@@ -103,6 +120,20 @@ public class InitializeDataHelper {
     }
 
     public void deleteClient(String clientId) throws Exception {
+        List<ClientSecretEntity> clientSecrets = clientDetailsDao.getClientSecretsByClientId(clientId);
+        //Remove the client secret
+        for(ClientSecretEntity entity : clientSecrets) {
+            clientDetailsDao.removeClientSecret(clientId, entity.getClientSecret());
+        }
+        //Remove works where he is the source
+        profileWorkDao.removeWorksByClientSourceId(clientId);
+        //Remove fundings where he is the source
+        profileFundingDao.removeFundingByClientSourceId(clientId);
+        //Remove affiliations where he is the source
+        orgAffiliationRelationDao.removeOrgAffiliationByClientSourceId(clientId);
+        //Remove orgs where he is the source
+        orgDao.removeOrgsByClientSourceId(clientId);
+        //remove the client
         clientDetailsDao.removeClient(clientId);
     }
     
@@ -129,12 +160,16 @@ public class InitializeDataHelper {
         switch (groupType){
         case BASIC:
             clientType = ClientType.UPDATER;
+            break;
         case BASIC_INSTITUTION:
-            clientType = ClientType.PREMIUM_UPDATER;            
+            clientType = ClientType.PREMIUM_UPDATER;
+            break;
         case PREMIUM: 
             clientType = ClientType.CREATOR;
+            break;
         case PREMIUM_INSTITUTION:
             clientType = ClientType.PREMIUM_CREATOR;
+            break;
         }
         
         Set<String> clientResourceIds = new HashSet<String>();
