@@ -4,6 +4,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.codehaus.jettison.json.JSONException;
@@ -20,7 +23,11 @@ public class OauthHelper {
     private WebDriverHelper webDriverHelper;
 
     private T2OAuthAPIService<ClientResponse> oauthT2Client;
-
+    
+    private List<String> items = new ArrayList<String>();
+    
+    {items.add("enablePersistentToken");}
+    
     public void setWebDriverHelper(WebDriverHelper webDriverHelper) {
         this.webDriverHelper = webDriverHelper;
     }
@@ -34,7 +41,16 @@ public class OauthHelper {
     }
 
     public String obtainAccessToken(String clientId, String scopes, String email, String password, String redirectUri) throws JSONException, InterruptedException {
-        String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, clientId, email, password);
+        return obtainAccessToken(clientId, scopes, email, password, redirectUri, false);
+    }
+    
+    public String obtainAccessToken(String clientId, String scopes, String email, String password, String redirectUri, boolean persistent) throws JSONException, InterruptedException {
+        String authorizationCode = null;
+        if(persistent) {
+            authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, clientId, email, password, items, true);
+        } else {
+            authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, clientId, email, password);
+        }
         assertNotNull(authorizationCode);
         assertFalse(PojoUtil.isEmpty(authorizationCode));      
         MultivaluedMap<String, String> params = new MultivaluedMapImpl();

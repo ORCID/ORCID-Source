@@ -69,13 +69,7 @@
             <artifactId>orcid-test</artifactId>
             <scope>test</scope>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.orcid</groupId>
-            <artifactId>orcid-web</artifactId>
-            <scope>test</scope>
-            <version>${project.version}</version>
-        </dependency>
+        </dependency>        
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
