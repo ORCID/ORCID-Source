@@ -30,7 +30,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.LoadOptions;
-import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrcidSSOManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
@@ -71,9 +70,6 @@ public class DeveloperToolsController extends BaseWorkspaceController {
     @Resource
     private ClientDetailsManager clientDetailsManager;
     
-    @Resource
-    private OrcidProfileManager orcidProfileManager;
-
     @RequestMapping
     public ModelAndView manageDeveloperTools() {
         ModelAndView mav = new ModelAndView("developer_tools");
