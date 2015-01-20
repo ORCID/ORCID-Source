@@ -28,7 +28,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.routines.UrlValidator;
+import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.LoadOptions;
+import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrcidSSOManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
@@ -65,6 +67,12 @@ public class DeveloperToolsController extends BaseWorkspaceController {
 
     @Resource
     private ResearcherUrlDao researcherUrlDao;
+    
+    @Resource
+    private ClientDetailsManager clientDetailsManager;
+    
+    @Resource
+    private OrcidProfileManager orcidProfileManager;
 
     @RequestMapping
     public ModelAndView manageDeveloperTools() {
@@ -112,7 +120,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/generate-sso-credentials.json", method = RequestMethod.POST)
     public @ResponseBody
-    SSOCredentials generateSSOCredentialsJson(HttpServletRequest request, @RequestBody SSOCredentials ssoCredentials) {
+    SSOCredentials generateSSOCredentialsJson(@RequestBody SSOCredentials ssoCredentials) {
         boolean hasErrors = validateSSOCredentials(ssoCredentials);
 
         if (!hasErrors) {            
@@ -155,7 +163,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/update-user-credentials.json", method = RequestMethod.POST)
     public @ResponseBody
-    SSOCredentials updateUserCredentials(HttpServletRequest request, @RequestBody SSOCredentials ssoCredentials) {
+    SSOCredentials updateUserCredentials(@RequestBody SSOCredentials ssoCredentials) {
         boolean hasErrors = validateSSOCredentials(ssoCredentials);
 
         if (!hasErrors) {            
@@ -196,13 +204,19 @@ public class DeveloperToolsController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/reset-client-secret", method = RequestMethod.POST)
     public @ResponseBody
-    boolean addClientSecret() {
-        return orcidSSOManager.resetClientSecret(getEffectiveUserOrcid());
+    boolean resetClientSecret(@RequestBody String clientId) {
+        //Verify this client belongs to the user
+        ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
+        if(clientDetails == null || clientDetails.getGroupProfile() == null)
+            return false;
+        if(!clientDetails.getGroupProfile().getId().equals(getCurrentUserOrcid()))
+            return false;               
+        return orcidSSOManager.resetClientSecret(clientId);
     }
 
     @RequestMapping(value = "/get-sso-credentials.json", method = RequestMethod.POST)
     public @ResponseBody
-    SSOCredentials getSSOCredentialsJson(HttpServletRequest request) {
+    SSOCredentials getSSOCredentialsJson() {
         SSOCredentials credentials = new SSOCredentials();
         String userOrcid = getEffectiveUserOrcid();
         ClientDetailsEntity existingClientDetails = orcidSSOManager.getUserCredentials(userOrcid);
