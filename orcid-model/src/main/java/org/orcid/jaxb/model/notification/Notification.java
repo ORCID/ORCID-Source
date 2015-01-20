@@ -27,12 +27,12 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import org.orcid.jaxb.model.common.PutCode;
 import org.orcid.jaxb.model.common.Source;
 import org.orcid.jaxb.model.notification.NotificationType;
 
@@ -69,7 +69,8 @@ import org.orcid.jaxb.model.notification.NotificationType;
 abstract public class Notification implements Serializable {
 
     private final static long serialVersionUID = 1L;
-    protected PutCode putCode;
+    @XmlAttribute
+    protected Long putCode;
     @XmlElement(required = true)
     protected NotificationType notificationType;
     @XmlSchemaType(name = "dateTime")
@@ -86,10 +87,10 @@ abstract public class Notification implements Serializable {
     /**
      * Gets the value of the putCode property.
      * 
-     * @return possible object is {@link PutCode }
+     * @return possible object is {@link Long }
      * 
      */
-    public PutCode getPutCode() {
+    public Long getPutCode() {
         return putCode;
     }
 
@@ -100,7 +101,7 @@ abstract public class Notification implements Serializable {
      *            allowed object is {@link PutCode }
      * 
      */
-    public void setPutCode(PutCode value) {
+    public void setPutCode(Long value) {
         this.putCode = value;
     }
 

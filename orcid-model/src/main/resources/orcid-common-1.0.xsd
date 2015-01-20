@@ -54,24 +54,13 @@
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:element name="host" type="xs:string"/>
-	<xs:element name="putCode">
-		<xs:annotation>
-			<xs:documentation>The identifier of the researcher or contributor in ORCID (the ORCID
-				iD). At least one of uri or path must be given. </xs:documentation>
-		</xs:annotation>
-		<xs:complexType>
-			<xs:sequence>
-				<xs:choice>
-					<xs:sequence>
-						<xs:element name="uri" type="orcid:putCodeUri"/>
-						<xs:element name="path" type="orcid:putCodePath" minOccurs="0"/>
-					</xs:sequence>
-					<xs:element name="path" type="orcid:putCodePath"/>
-				</xs:choice>
-				<xs:element ref="orcid:host" minOccurs="0"/>
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
+    <xs:attributeGroup name="putCode">
+        <xs:attribute name="putCode" type="xs:integer">
+            <xs:annotation>
+                <xs:documentation>The local identifier used to retrieve or update the resource</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:attributeGroup>
 	<xs:element name="clientId">
 		<xs:annotation>
 			<xs:documentation>The identifier of a client app. At least one of uri or path must be given.
@@ -94,18 +83,6 @@
 		<xs:restriction base="xs:string">
 			<xs:pattern
 				value="http://([^/]*orcid\.org|localhost.*/orcid-web)/client/APP-[\da-zA-Z]{16}" />
-		</xs:restriction>
-	</xs:simpleType>
-	<xs:simpleType name="putCodePath">
-		<xs:restriction base="xs:string">
-			<xs:pattern value="(\d{4}-){3,}\d{3}[\dX](/[^/]+)*"/>
-		</xs:restriction>
-	</xs:simpleType>
-	<xs:simpleType name="putCodeUri">
-		<xs:restriction base="xs:string">
-			<xs:pattern
-				value="http://([^/]*orcid\.org|localhost.*/orcid-web)/(\d{4}-){3,}\d{3}[\dX](/[^/]+)*"
-			/>
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:element type="xs:dateTime" name="createdDate" />

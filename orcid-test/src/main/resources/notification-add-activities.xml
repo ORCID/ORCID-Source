@@ -17,13 +17,7 @@
     =============================================================================
 
 -->
-<notification xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-notification-add-activities-1.0.xsd" xmlns="http://www.orcid.org/ns/orcid" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <putCode>
-        <!--  Read only section for API user, but they can PUT to this URL to update the notification, as long as they are the source and the notification has not been read yet by the user -->
-        <uri>http://orcid.org/1234-5678-1234-5678/notifications/add-activities/1</uri>
-        <path>1234-5678-1234-5678/notifications/add-activities/1</path>
-        <host>http://orcid.org</host>
-    </putCode>
+<notification putCode="1" xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-notification-add-activities-1.0.xsd" xmlns="http://www.orcid.org/ns/orcid" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <notificationType>ADD_ACTIVITIES</notificationType>
     <authorizationUrl>
         <!-- API user can specify just the path if they want. -->
