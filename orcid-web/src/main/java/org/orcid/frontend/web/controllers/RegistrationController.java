@@ -968,7 +968,6 @@ public class RegistrationController extends BaseController {
 
     public OrcidProfile createMinimalRegistration(HttpServletRequest request, OrcidProfile profileToSave) {
         orcidProfileManager.addLocale(profileToSave, RequestContextUtils.getLocale(request));
-        URI uri = OrcidWebUtils.getServerUriWithContextPath(request);
         String sessionId = request.getSession() == null ? null : request.getSession().getId();
         String email = profileToSave.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
 

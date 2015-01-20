@@ -93,10 +93,14 @@ public enum ScopePathType implements Serializable {
     @XmlEnumValue("/affiliations/create") AFFILIATIONS_CREATE("/affiliations/create", AFFILIATIONS_READ_LIMITED, READ_PUBLIC),
     @XmlEnumValue("/orcid-works/create") ORCID_WORKS_CREATE("/orcid-works/create", ORCID_WORKS_READ_LIMITED, READ_PUBLIC),
     @XmlEnumValue("/funding/create") FUNDING_CREATE("/funding/create", FUNDING_READ_LIMITED, READ_PUBLIC),
-    @XmlEnumValue("/orcid-patents/create") ORCID_PATENTS_CREATE("/orcid-patents/create", ORCID_PATENTS_UPDATE, READ_PUBLIC),
+    @XmlEnumValue("/orcid-patents/create") ORCID_PATENTS_CREATE("/orcid-patents/create", ORCID_PATENTS_UPDATE, READ_PUBLIC),    
+    @XmlEnumValue("/notification") NOTIFICATION("/notification"),
+    
+    //XXX: Per activity API
+    @XmlEnumValue("/activities/update") ACTIVITIES_UPDATE ("/activities/update", ORCID_WORKS_CREATE, ORCID_WORKS_UPDATE, AFFILIATIONS_CREATE, AFFILIATIONS_UPDATE, FUNDING_CREATE, FUNDING_UPDATE),
+    @XmlEnumValue("/person/update") PERSON_UPDATE("/person/update", ORCID_BIO_UPDATE),
     @XmlEnumValue("/orcid-profile/create") ORCID_PROFILE_CREATE("/orcid-profile/create", ORCID_BIO_READ_LIMITED, ORCID_WORKS_READ_LIMITED, ORCID_PROFILE_READ_LIMITED, ORCID_WORKS_UPDATE, ORCID_BIO_UPDATE,
-            FUNDING_UPDATE, AFFILIATIONS_UPDATE, ORCID_PATENTS_UPDATE, ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE, ORCID_WORKS_CREATE, FUNDING_CREATE, AFFILIATIONS_CREATE, ORCID_PATENTS_CREATE, AUTHENTICATE, READ_PUBLIC),
-    @XmlEnumValue("/notification") NOTIFICATION("/notification");
+            FUNDING_UPDATE, AFFILIATIONS_UPDATE, ORCID_PATENTS_UPDATE, ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE, ORCID_WORKS_CREATE, FUNDING_CREATE, AFFILIATIONS_CREATE, ORCID_PATENTS_CREATE, AUTHENTICATE, READ_PUBLIC, ACTIVITIES_UPDATE);
     //@formatter:on
 
     private final String value;
@@ -209,11 +213,15 @@ public enum ScopePathType implements Serializable {
             return true;
         case ORCID_PATENTS_UPDATE:
             return true;
+        case ACTIVITIES_UPDATE:
+            return true;
+        case PERSON_UPDATE:
+            return true;
         default:
             return false;
         }
     }
-
+    
     /**
      * @return A set containing the external identifiers for this scope and all
      *         its inherited scopes

@@ -123,6 +123,8 @@ public interface ProfileWorkDao extends GenericDao<ProfileWorkEntity, ProfileWor
      * @param workId
      * @return
      */
-    public boolean updateToMaxDisplay(String orcid, String workId);
+    boolean updateToMaxDisplay(String orcid, String workId);
+    
+    void removeWorksByClientSourceId(String clientSourceId);
 
 }

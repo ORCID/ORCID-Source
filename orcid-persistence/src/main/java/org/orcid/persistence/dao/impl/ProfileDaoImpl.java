@@ -664,4 +664,21 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         List<GroupType> results = query.getResultList();
         return results.isEmpty() ? null : results.get(0);
     }
+    
+    /**
+     * Removes a deactivated profile
+     * @param orcid
+     *  The id of the profile to remove
+     * @return true if the profile was deleted     
+     * */
+    @Override
+    @Transactional
+    public boolean removeProfile(String orcid) {          
+        ProfileEntity toDelete = this.find(orcid);
+        if(toDelete.getDeactivationDate() != null) {
+            this.remove(toDelete);
+            return true;
+        }        
+        return false;
+    }
 }
