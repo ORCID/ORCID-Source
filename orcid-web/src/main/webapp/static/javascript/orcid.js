@@ -401,6 +401,27 @@
     		$(this).select();
     	});
     };
+    
+    var resizeIframe = function(){
+    	$('#notifications-iframe').iFrameResize({
+    		autoResize                : true,
+    		bodyBackground            : null,
+    		bodyMargin                : null,
+    		bodyMarginV1              : 8,
+    		bodyPadding               : null,
+    		checkOrigin               : true,
+    		enablePublicMethods       : false,
+    		heightCalculationMethod   : 'offset',
+    		interval                  : 32,
+    		log                       : false,
+    		messageCallback           : function(){},
+    		resizedCallback           : function(){},
+    		scrolling                 : false,
+    		sizeHeight                : true,
+    		sizeWidth                 : false
+    		});
+    };
+    
         
     /*============================================================
         Page initialisation
@@ -414,6 +435,7 @@
         menuHandler();
         developerToolsTabs();
         selectableInputs(); 
+        resizeIframe();
     };
 
     

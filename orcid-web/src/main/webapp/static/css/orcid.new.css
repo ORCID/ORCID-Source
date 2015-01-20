@@ -5531,27 +5531,15 @@ ul.oauth-icons li {
 	display: inline;
 }
 
-.notifications td {
-	border-top-style: solid;
-	border-width: 1px;
-	border-color: #DDDDDD;
+.notifications iframe{
+	padding: 15px 15px 0;
 }
 
-.notifications th,td {
-	padding: 8px;
-	vertical-align: top;
+.notifications .archived{
+	background: #F3F3F3;
 }
-
-.notifications th,td :hover {
-    cursor: pointer;
-}
-
-.notifications .unread {
-	font-weight: bold;
-}
-
-.notifications .archived {
-	background-color: #c9c9ca;
+.notifications tbody>tr{
+	cursor: pointer;
 }
 
 .vertical-align-middle {
