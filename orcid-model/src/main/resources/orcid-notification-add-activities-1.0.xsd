@@ -51,7 +51,16 @@
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="activityType" type="xs:NCName"/>
+	<xs:element name="activityType">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="EDUCATION"></xs:enumeration>
+                <xs:enumeration value="EMPLOYMENT"></xs:enumeration>
+                <xs:enumeration value="FUNDING"></xs:enumeration>
+                <xs:enumeration value="WORK"></xs:enumeration>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
 	<xs:element name="activityName" type="xs:string"/>
 	<xs:element name="externalId">
 		<xs:complexType>

@@ -18,11 +18,15 @@ package org.orcid.persistence.jpa.entities;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import org.orcid.jaxb.model.notification.addactivities.ActivityType;
 
 /**
  * 
@@ -36,7 +40,7 @@ public class NotificationActivityEntity extends BaseEntity<Long> {
     private static final long serialVersionUID = 1L;
 
     private Long id;
-    private String activityType;
+    private ActivityType activityType;
     private String activityName;
     private String externalIdType;
     private String externalIdValue;
@@ -53,12 +57,13 @@ public class NotificationActivityEntity extends BaseEntity<Long> {
         this.id = id;
     }
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "activity_type")
-    public String getActivityType() {
+    public ActivityType getActivityType() {
         return activityType;
     }
 
-    public void setActivityType(String activityType) {
+    public void setActivityType(ActivityType activityType) {
         this.activityType = activityType;
     }
 
