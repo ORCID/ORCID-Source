@@ -69,7 +69,7 @@ public class Works implements Serializable, ActivitiesContainer {
 
     private static final long serialVersionUID = 1L;
     @XmlElement(name = "work")
-    protected List<Work> orcidWork;
+    protected List<Work> works;
 
     /**
      * Gets the value of the orcidWork property.
@@ -95,16 +95,16 @@ public class Works implements Serializable, ActivitiesContainer {
      * 
      */
     public List<Work> getOrcidWork() {
-        if (orcidWork == null) {
-            orcidWork = new ArrayList<Work>();
+        if (works == null) {
+            works = new ArrayList<Work>();
         }
-        return this.orcidWork;
+        return this.works;
     }
 
     public Map<String, Work> retrieveActivitiesAsMap() {
         Map<String, Work> workMap = new HashMap<String, Work>();
-        if (orcidWork != null) {
-            for (Work work : orcidWork) {
+        if (works != null) {
+            for (Work work : works) {
                 if (StringUtils.isNotBlank(work.putCode)) {
                     workMap.put(work.putCode, work);
                 }
@@ -120,7 +120,7 @@ public class Works implements Serializable, ActivitiesContainer {
 
 
     public void setOrcidWork(List<Work> orcidWork) {
-        this.orcidWork = orcidWork;
+        this.works = orcidWork;
     }
 
     
@@ -133,7 +133,7 @@ public class Works implements Serializable, ActivitiesContainer {
 
         Works that = (Works) o;
 
-        if (orcidWork != null ? !orcidWork.equals(that.orcidWork) : that.orcidWork != null)
+        if (works != null ? !works.equals(that.works) : that.works != null)
             return false;
 
         return true;
@@ -141,7 +141,7 @@ public class Works implements Serializable, ActivitiesContainer {
 
     @Override
     public int hashCode() {
-        int result = orcidWork != null ? orcidWork.hashCode() : 0;
+        int result = works != null ? works.hashCode() : 0;
         result = 31 * result;
         return result;
     }
