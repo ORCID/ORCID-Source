@@ -64,9 +64,7 @@ public class Activity implements Serializable {
 
     private final static long serialVersionUID = 1L;
     @XmlElement(required = true)
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    @XmlSchemaType(name = "NCName")
-    protected String activityType;
+    protected ActivityType activityType;
     @XmlElement(required = true)
     protected String activityName;
     protected ExternalId externalId;
@@ -74,10 +72,10 @@ public class Activity implements Serializable {
     /**
      * Gets the value of the activityType property.
      * 
-     * @return possible object is {@link String }
+     * @return possible object is {@link ActivityType }
      * 
      */
-    public String getActivityType() {
+    public ActivityType getActivityType() {
         return activityType;
     }
 
@@ -85,10 +83,10 @@ public class Activity implements Serializable {
      * Sets the value of the activityType property.
      * 
      * @param value
-     *            allowed object is {@link String }
+     *            allowed object is {@link ActivityType }
      * 
      */
-    public void setActivityType(String value) {
+    public void setActivityType(ActivityType value) {
         this.activityType = value;
     }
 

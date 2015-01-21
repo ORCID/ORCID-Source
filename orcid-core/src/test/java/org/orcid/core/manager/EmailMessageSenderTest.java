@@ -39,6 +39,7 @@ import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.notification.Notification;
 import org.orcid.jaxb.model.notification.addactivities.Activities;
 import org.orcid.jaxb.model.notification.addactivities.Activity;
+import org.orcid.jaxb.model.notification.addactivities.ActivityType;
 import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
 import org.orcid.jaxb.model.notification.amended.NotificationAmended;
 import org.orcid.jaxb.model.notification.custom.NotificationCustom;
@@ -70,8 +71,8 @@ public class EmailMessageSenderTest extends BaseTest {
         NotificationAddActivities notification1 = new NotificationAddActivities();
         Activities activities1 = new Activities();
         notification1.setActivities(activities1);
-        activities1.getActivities().add(createActivity("WORK", "Work 1"));
-        activities1.getActivities().add(createActivity("WORK", "Work 2"));
+        activities1.getActivities().add(createActivity(ActivityType.WORK, "Work 1"));
+        activities1.getActivities().add(createActivity(ActivityType.WORK, "Work 2"));
         notification1.setCreatedDate(DateUtils.convertToXMLGregorianCalendar("2014-07-10T13:39:31"));
         Source source1 = new Source();
         source1.setSourceName("Super Institution 1");
@@ -82,7 +83,7 @@ public class EmailMessageSenderTest extends BaseTest {
         NotificationAddActivities notification2 = new NotificationAddActivities();
         Activities activities2 = new Activities();
         notification2.setActivities(activities2);
-        activities2.getActivities().add(createActivity("EMPLOYMENT", "Employment 1"));
+        activities2.getActivities().add(createActivity(ActivityType.EMPLOYMENT, "Employment 1"));
         notification2.setCreatedDate(DateUtils.convertToXMLGregorianCalendar("2014-08-17T10:22:15"));
         Source source2 = new Source();
         source2.setSourceName("Super Institution 1");
@@ -93,8 +94,8 @@ public class EmailMessageSenderTest extends BaseTest {
         NotificationAddActivities notification3 = new NotificationAddActivities();
         Activities activities3 = new Activities();
         notification3.setActivities(activities3);
-        activities3.getActivities().add(createActivity("WORK", "Work 3"));
-        activities3.getActivities().add(createActivity("WORK", "Work 4"));
+        activities3.getActivities().add(createActivity(ActivityType.WORK, "Work 3"));
+        activities3.getActivities().add(createActivity(ActivityType.WORK, "Work 4"));
         notification3.setCreatedDate(DateUtils.convertToXMLGregorianCalendar("2014-07-10T08:53:56"));
         Source source3 = new Source();
         source3.setSourceName("Lovely Publisher 1");
@@ -126,7 +127,7 @@ public class EmailMessageSenderTest extends BaseTest {
         assertEquals("Spike Milligan you have [6] new notifications", emailMessage.getSubject());
     }
 
-    private Activity createActivity(String actType, String actName) {
+    private Activity createActivity(ActivityType actType, String actName) {
         Activity act = new Activity();
         act.setActivityType(actType);
         act.setActivityName(actName);
