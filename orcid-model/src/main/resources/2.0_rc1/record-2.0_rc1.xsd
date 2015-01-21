@@ -89,7 +89,7 @@
 				<xs:element ref="history:history" minOccurs="0"
 					maxOccurs="1" />
 				<xs:element ref="person:person" minOccurs="0" maxOccurs="1" />
-				<xs:element name="activities" type="activities:summary"
+				<xs:element ref="activities:summary"
 					minOccurs="0" maxOccurs="1" />
 				<xs:element ref="internal:internal" minOccurs="0"
 					maxOccurs="1" />

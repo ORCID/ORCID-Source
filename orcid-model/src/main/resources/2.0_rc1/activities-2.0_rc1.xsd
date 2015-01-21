@@ -48,15 +48,6 @@
 
 	<xs:element name="summary">
 		<xs:complexType>
-			<xs:annotation>
-				<xs:documentation>Container for research activities of the
-					researcher
-					or contributor, such as Works.
-					Please note that the orcid-patents
-					element is deprecated and will be
-					removed soon
-				</xs:documentation>
-			</xs:annotation>
 			<xs:sequence>
 				<xs:element name="educations" minOccurs="0" maxOccurs="1">
 					<xs:annotation>
