@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.api.member_2.server.delegator.impl;
+package org.orcid.api.memberV2.server.delegator.impl;
 
 import static org.orcid.api.common.OrcidApiConstants.*;
 
@@ -57,7 +57,7 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.WebhookEntity;
 import org.orcid.persistence.jpa.entities.keys.WebhookEntityPk;
-import org.orcid.api.member_2.server.delegator.MemberApiServiceDelegator;
+import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.NullUtils;
 import org.orcid.utils.OrcidStringUtils;
@@ -79,7 +79,7 @@ import org.springframework.stereotype.Component;
  * @author Declan Newman (declan) Date: 07/03/2012
  */
 @Component("orcidT2ServiceDelegator")
-public class MemberApiServiceDelegatorImpl implements MemberApiServiceDelegator {
+public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelegator {
 
 //    @Resource(name = "orcidProfileManager")
 //    private OrcidProfileManager orcidProfileManager;

@@ -119,10 +119,10 @@
     </bean>
 
 
-    <!--  Record API -->
-    <bean id="recordApiServiceDelegator" class="org.orcid.api.record.server.delegator.impl.RecordApiServiceDelegatorImpl" />
-    <bean id="notificationsApiServiceImplV1_0" class="org.orcid.api.notifications.server.NotificationsApiServiceImplV1_0">
-        <property name="serviceDelegator" ref="notificationsApiServiceDelegator"/>
+    <!--  Member_2 API -->
+    <bean id="memberV2ApiServiceDelegator" class="org.orcid.api.memberV2.server.delegator.impl.MemberV2ApiServiceDelegatorImpl" />
+    <bean id="memberV2ApiServiceImplV2_0_rc1" class="org.orcid.api.memberV2.server.MemberV2ApiServiceImplV2_0_rc1">
+        <property name="serviceDelegator" ref="memberV2ApiServiceDelegator"/>
     </bean>
 
 

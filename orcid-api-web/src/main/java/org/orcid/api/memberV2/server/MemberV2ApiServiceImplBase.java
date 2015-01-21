@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.api.member_2.server;
+package org.orcid.api.memberV2.server;
 
 import static org.orcid.api.common.OrcidApiConstants.*;
 
@@ -29,19 +29,19 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.orcid.api.member_2.server.delegator.MemberApiServiceDelegator;
+import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
 
 /**
  * @author rcpeters
  */
-abstract public class MemberApiServiceImplBase {
+abstract public class MemberV2ApiServiceImplBase {
 
     @Context
     private UriInfo uriInfo;
 
-    private MemberApiServiceDelegator serviceDelegator;
+    private MemberV2ApiServiceDelegator serviceDelegator;
 
-    public void setServiceDelegator(MemberApiServiceDelegator serviceDelegator) {
+    public void setServiceDelegator(MemberV2ApiServiceDelegator serviceDelegator) {
         this.serviceDelegator = serviceDelegator;
     }
 
