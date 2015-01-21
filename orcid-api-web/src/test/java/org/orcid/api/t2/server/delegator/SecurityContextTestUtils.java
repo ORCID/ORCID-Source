@@ -19,15 +19,18 @@ package org.orcid.api.t2.server.delegator;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
-import org.springframework.security.oauth2.provider.AuthorizationRequest;
+import org.springframework.security.oauth2.provider.OAuth2Request;
 
 public class SecurityContextTestUtils {
 
@@ -45,14 +48,14 @@ public class SecurityContextTestUtils {
         securityContext.setAuthentication(mockedAuthentication);
         SecurityContextHolder.setContext(securityContext);
         when(mockedAuthentication.getPrincipal()).thenReturn(new ProfileEntity(userOrcid));
-        AuthorizationRequest authorizationRequest = mock(AuthorizationRequest.class);
         Set<String> scopes = new HashSet<String>();
         for (ScopePathType scopePathType : scopePathTypes) {
             scopes.add(scopePathType.value());
         }
-        when(authorizationRequest.getClientId()).thenReturn("APP-5555555555555555");
-        when(authorizationRequest.getScope()).thenReturn(scopes);
-        when(mockedAuthentication.getAuthorizationRequest()).thenReturn(authorizationRequest);
+        OAuth2Request authorizationRequest = new OAuth2Request(Collections.<String, String> emptyMap(), "APP-5555555555555555",
+                Collections.<GrantedAuthority> emptyList(), true, scopes, Collections.<String> emptySet(), null, Collections.<String> emptySet(),
+                Collections.<String, Serializable> emptyMap());
+        when(mockedAuthentication.getOAuth2Request()).thenReturn(authorizationRequest);
     }
 
     static public void setUpSecurityContextForClientOnly() {
@@ -80,10 +83,9 @@ public class SecurityContextTestUtils {
         SecurityContextHolder.setContext(securityContext);
         when(mockedAuthentication.getPrincipal()).thenReturn(new ProfileEntity(clientId));
         when(mockedAuthentication.isClientOnly()).thenReturn(true);
-        AuthorizationRequest authorizationRequest = mock(AuthorizationRequest.class);
-        when(authorizationRequest.getClientId()).thenReturn(clientId);
-        when(authorizationRequest.getScope()).thenReturn(scopes);
-        when(mockedAuthentication.getAuthorizationRequest()).thenReturn(authorizationRequest);
+        OAuth2Request authorizationRequest = new OAuth2Request(Collections.<String, String> emptyMap(), clientId, Collections.<GrantedAuthority> emptyList(), true,
+                scopes, Collections.<String> emptySet(), null, Collections.<String> emptySet(), Collections.<String, Serializable> emptyMap());
+        when(mockedAuthentication.getOAuth2Request()).thenReturn(authorizationRequest);
     }
 
 }

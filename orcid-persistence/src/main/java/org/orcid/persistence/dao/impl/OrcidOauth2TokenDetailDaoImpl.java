@@ -16,21 +16,21 @@
  */
 package org.orcid.persistence.dao.impl;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+
 import org.apache.commons.lang.StringUtils;
 import org.orcid.persistence.aop.ExcludeFromProfileLastModifiedUpdate;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
-
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author Declan Newman
@@ -124,6 +124,15 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
         TypedQuery<OrcidOauth2TokenDetail> query = entityManager.createQuery("from " + "OrcidOauth2TokenDetail where clientDetailsEntity.id = :clientId",
                 OrcidOauth2TokenDetail.class);
         query.setParameter("clientId", clientId);
+        return query.getResultList();
+    }
+    
+    @Override
+    public List<OrcidOauth2TokenDetail> findByClientIdAndUserName(String clientId, String userName) {
+        TypedQuery<OrcidOauth2TokenDetail> query = entityManager.createQuery("from " + "OrcidOauth2TokenDetail where clientDetailsEntity.id = :clientId and profile.id = :userName",
+                OrcidOauth2TokenDetail.class);
+        query.setParameter("clientId", clientId);
+        query.setParameter("userName", userName);
         return query.getResultList();
     }
 

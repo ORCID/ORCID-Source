@@ -60,7 +60,6 @@
     <util:set id="providers">
         <value>org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider</value>
         <value>org.orcid.api.common.jaxb.OrcidJacksonJaxbJsonProvider</value>
-        <value>org.orcid.api.common.jaxb.OrcidJsonJaxbContexResolver</value>
     </util:set>
 
     <bean id="multiThreadedConnectionManager" class="org.apache.http.impl.conn.PoolingClientConnectionManager"/>

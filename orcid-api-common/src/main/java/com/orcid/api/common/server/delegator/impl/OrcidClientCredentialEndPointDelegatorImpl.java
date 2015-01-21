@@ -17,7 +17,6 @@
 package com.orcid.api.common.server.delegator.impl;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -27,10 +26,13 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.StringUtils;
 import org.orcid.api.common.exception.OrcidInvalidScopeException;
 import org.orcid.core.constants.OauthTokensConstants;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
+import org.orcid.persistence.jpa.entities.OrcidOauth2AuthoriziationCodeDetail;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
@@ -38,7 +40,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.exceptions.UnsupportedGrantTypeException;
-import org.springframework.security.oauth2.provider.DefaultAuthorizationRequest;
+import org.springframework.security.oauth2.common.util.OAuth2Utils;
+import org.springframework.security.oauth2.provider.AuthorizationRequest;
+import org.springframework.security.oauth2.provider.TokenRequest;
 import org.springframework.security.oauth2.provider.endpoint.AbstractEndpoint;
 import org.springframework.stereotype.Component;
 
@@ -104,35 +108,45 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
             throw new OrcidInvalidScopeException(
                     "One of the provided scopes is not allowed. Please refere to the list of allowed scopes at: http://support.orcid.org/knowledgebase/articles/120162-orcid-scopes");
         }
-                
+                           
         String clientName = client.getName();
         LOGGER.info("Comparing passed clientId and client name from spring auth: clientId={}, client.name={}", clientId, clientName);
         clientId = clientName;
-        Map<String, String> parameters = new HashMap<String, String>();
+        Map<String, String> authorizationParameters = new HashMap<String, String>();
+        
+        if(scopes != null) {
+            String scopesString = StringUtils.join(scopes, ' ');
+            authorizationParameters.put(OAuth2Utils.SCOPE, scopesString);
+        }
+                
+        authorizationParameters.put(OAuth2Utils.CLIENT_ID, clientId);
         if (code != null) {
-            parameters.put("code", code);
-            if(orcidOauth2AuthoriziationCodeDetailDao.find(code) != null) {
+            authorizationParameters.put("code", code);
+            OrcidOauth2AuthoriziationCodeDetail authorizationCodeEntity = orcidOauth2AuthoriziationCodeDetailDao.find(code);            
+            
+            if(authorizationCodeEntity != null) {
                 if(orcidOauth2AuthoriziationCodeDetailDao.isPersistentToken(code)) {
-                    parameters.put(OauthTokensConstants.IS_PERSISTENT, "true");
+                    authorizationParameters.put(OauthTokensConstants.IS_PERSISTENT, "true");
                 } else {
-                    parameters.put(OauthTokensConstants.IS_PERSISTENT, "false");
+                    authorizationParameters.put(OauthTokensConstants.IS_PERSISTENT, "false");
+                }
+                
+                if(!authorizationParameters.containsKey(OAuth2Utils.SCOPE) || PojoUtil.isEmpty(authorizationParameters.get(OAuth2Utils.SCOPE))) {
+                    String scopesString = StringUtils.join(authorizationCodeEntity.getScopes(), ' ');
+                    authorizationParameters.put(OAuth2Utils.SCOPE, scopesString);
                 }
             } else {
-                parameters.put(OauthTokensConstants.IS_PERSISTENT, "false");
+                authorizationParameters.put(OauthTokensConstants.IS_PERSISTENT, "false");
             }                        
         }
         if (redirectUri != null) {
-            parameters.put("redirect_uri", redirectUri);
-        }
-        if (refreshToken != null) {
-            parameters.put("refresh_token", refreshToken);
-        }
-                        
-        DefaultAuthorizationRequest authorizationRequest = new DefaultAuthorizationRequest(parameters, Collections.<String, String> emptyMap(), clientId, scopes);
-        Set<String> resourceIds = new HashSet<>();
-        resourceIds.add("orcid");
-        authorizationRequest.setResourceIds(resourceIds);
-        OAuth2AccessToken token = getTokenGranter().grant(grantType, authorizationRequest);
+            authorizationParameters.put(OAuth2Utils.REDIRECT_URI, redirectUri);
+        }        
+        AuthorizationRequest authorizationRequest = getOAuth2RequestFactory().createAuthorizationRequest(authorizationParameters);   
+                
+        TokenRequest tokenRequest = getOAuth2RequestFactory().createTokenRequest(authorizationRequest, grantType);                
+        
+        OAuth2AccessToken token = getTokenGranter().grant(grantType, tokenRequest);
         if (token == null) {
             LOGGER.info("Unsupported grant type for OAuth2: clientId={}, grantType={}, refreshToken={}, code={}, scopes={}, state={}, redirectUri={}", new Object[] {
                     clientId, grantType, refreshToken, code, scopes, state, redirectUri });
@@ -149,6 +163,8 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
                 accessToken.getAdditionalInformation().remove(OauthTokensConstants.TOKEN_VERSION);
             if(accessToken.getAdditionalInformation().containsKey(OauthTokensConstants.PERSISTENT))
                 accessToken.getAdditionalInformation().remove(OauthTokensConstants.PERSISTENT);
+            if(accessToken.getAdditionalInformation().containsKey(OauthTokensConstants.DATE_CREATED))
+                accessToken.getAdditionalInformation().remove(OauthTokensConstants.DATE_CREATED);
         }
         
         return Response.ok(accessToken).header("Cache-Control", "no-store").header("Pragma", "no-cache").build();

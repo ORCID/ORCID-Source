@@ -49,4 +49,6 @@ public interface ClientDetailsDao extends GenericDao<ClientDetailsEntity, String
     boolean belongsTo(String clientId, String groupId);
     
     List<ClientDetailsEntity> findByGroupId(String groupId);
+    
+    public void removeClient(String clientId);
 }
