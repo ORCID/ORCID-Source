@@ -14,22 +14,16 @@
  *
  * =============================================================================
  */
-package org.orcid.record_2_0.server.delegator;
+package org.orcid.api.record_2_0.server;
 
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
-
-import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
+import javax.ws.rs.Path;
 
 /**
  * 
  * @author Will Simpson
- *
+ * 
  */
-public interface MemberApiServiceDelegator {
-
-    Response viewStatusText();
-
-    Response viewActivities(String orcid);
+@Path("/v2.0_rc1")
+public class MemberApiServiceImplV2_0_rc1 extends MemberApiServiceImplBase {
 
 }

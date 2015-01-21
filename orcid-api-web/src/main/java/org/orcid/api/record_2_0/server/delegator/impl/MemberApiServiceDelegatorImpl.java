@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.record_2_0.server.delegator.impl;
+package org.orcid.api.record_2_0.server.delegator.impl;
 
 import static org.orcid.api.common.OrcidApiConstants.*;
 
@@ -50,13 +50,14 @@ import org.orcid.jaxb.model.message.SourceClientId;
 import org.orcid.jaxb.model.message.SourceName;
 import org.orcid.jaxb.model.message.SourceOrcid;
 import org.orcid.jaxb.model.message.SubmissionDate;
+import org.orcid.jaxb.model.record.ActivitiesSummary;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.WebhookDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.WebhookEntity;
 import org.orcid.persistence.jpa.entities.keys.WebhookEntityPk;
-import org.orcid.record_2_0.server.delegator.MemberApiServiceDelegator;
+import org.orcid.api.record_2_0.server.delegator.MemberApiServiceDelegator;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.NullUtils;
 import org.orcid.utils.OrcidStringUtils;
@@ -115,9 +116,9 @@ public class MemberApiServiceDelegatorImpl implements MemberApiServiceDelegator 
     public Response viewActivities(String orcid) {
         profileEntityManager.findByOrcid(orcid);
         
-       // OrcidProfile profile = orcidProfileManager.retrieveClaimedOrcidBio(orcid);
-        
-        return null;
+        // hard coding for now for testing
+        ActivitiesSummary as = new ActivitiesSummary();
+        return Response.ok(as).build();
     }
 
 }

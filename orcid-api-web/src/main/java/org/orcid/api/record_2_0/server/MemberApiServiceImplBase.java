@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.record_2_0.server;
+package org.orcid.api.record_2_0.server;
 
 import static org.orcid.api.common.OrcidApiConstants.*;
 
@@ -28,10 +28,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-
-import org.orcid.api.notifications.server.delegator.NotificationsApiServiceDelegator;
-import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
-import org.orcid.record_2_0.server.delegator.MemberApiServiceDelegator;
+import org.orcid.api.record_2_0.server.delegator.MemberApiServiceDelegator;
 
 /**
  * @author rcpeters
@@ -59,14 +56,14 @@ abstract public class MemberApiServiceImplBase {
 
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
-    @Path(ADD_ACTIVITIES_PATH)
+    @Path(ACTIVITIES)
     public Response viewAddActivitiesNotificationsXml(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewActivities(orcid);
     }
     
     @GET
     @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Path(ADD_ACTIVITIES_PATH)
+    @Path(ACTIVITIES)
     public Response viewAddActivitiesNotificationsJson(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewActivities(orcid);
     }
