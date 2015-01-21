@@ -62,14 +62,4 @@
         </xs:simpleType>
     </xs:element>
 	<xs:element name="activityName" type="xs:string"/>
-	<xs:element name="externalId">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="orcid:externalIdType"/>
-				<xs:element ref="orcid:externalIdValue"/>
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="externalIdType" type="xs:NCName"/>
-	<xs:element name="externalIdValue" type="xs:anyURI"/>
 </xs:schema>

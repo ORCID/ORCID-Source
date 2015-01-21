@@ -26,6 +26,7 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.orcid.jaxb.model.common.ExternalIdType;
 import org.orcid.jaxb.model.notification.addactivities.ActivityType;
 
 /**
@@ -42,7 +43,7 @@ public class NotificationActivityEntity extends BaseEntity<Long> {
     private Long id;
     private ActivityType activityType;
     private String activityName;
-    private String externalIdType;
+    private ExternalIdType externalIdType;
     private String externalIdValue;
 
     @Override
@@ -76,12 +77,13 @@ public class NotificationActivityEntity extends BaseEntity<Long> {
         this.activityName = activityName;
     }
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "external_id_type")
-    public String getExternalIdType() {
+    public ExternalIdType getExternalIdType() {
         return externalIdType;
     }
 
-    public void setExternalIdType(String externalIdType) {
+    public void setExternalIdType(ExternalIdType externalIdType) {
         this.externalIdType = externalIdType;
     }
 
