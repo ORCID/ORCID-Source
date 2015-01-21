@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.api.record_2_0.server;
+package org.orcid.api.record.server;
 
 import static org.orcid.api.common.OrcidApiConstants.*;
 
