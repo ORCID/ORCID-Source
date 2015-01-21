@@ -60,7 +60,9 @@ public enum ClientType {
     @XmlEnumValue("updater")
     UPDATER("updater"), 
     @XmlEnumValue("premium-updater")
-    PREMIUM_UPDATER("premium-updater");
+    PREMIUM_UPDATER("premium-updater"),
+    @XmlEnumValue("public-client")
+    PUBLIC_CLIENT("public-client");
     //@formatter:on
 
     private final String value;
