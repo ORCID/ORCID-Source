@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.api.record.server;
+package org.orcid.api.member_2.server;
 
 import javax.ws.rs.Path;
 

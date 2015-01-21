@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.api.record_2_0.server.delegator.impl;
+package org.orcid.api.member_2.server.delegator.impl;
 
 import static org.orcid.api.common.OrcidApiConstants.*;
 
@@ -57,7 +57,7 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.WebhookEntity;
 import org.orcid.persistence.jpa.entities.keys.WebhookEntityPk;
-import org.orcid.api.record_2_0.server.delegator.MemberApiServiceDelegator;
+import org.orcid.api.member_2.server.delegator.MemberApiServiceDelegator;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.NullUtils;
 import org.orcid.utils.OrcidStringUtils;

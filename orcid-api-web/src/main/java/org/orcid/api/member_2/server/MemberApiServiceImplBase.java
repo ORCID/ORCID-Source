@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.api.record.server;
+package org.orcid.api.member_2.server;
 
 import static org.orcid.api.common.OrcidApiConstants.*;
 
@@ -28,7 +28,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import org.orcid.api.record_2_0.server.delegator.MemberApiServiceDelegator;
+
+import org.orcid.api.member_2.server.delegator.MemberApiServiceDelegator;
 
 /**
  * @author rcpeters

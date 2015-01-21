@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.api.record_2_0.server.delegator;
+package org.orcid.api.member_2.server.delegator;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
