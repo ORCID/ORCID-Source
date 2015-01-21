@@ -33,7 +33,6 @@ import javax.xml.namespace.QName;
 
 import org.orcid.jaxb.model.common.ClientId;
 import org.orcid.jaxb.model.common.OrcidId;
-import org.orcid.jaxb.model.common.PutCode;
 import org.orcid.jaxb.model.common.Source;
 import org.orcid.jaxb.model.notification.NotificationType;
 
@@ -71,14 +70,6 @@ public class ObjectFactory {
      * 
      */
     public ObjectFactory() {
-    }
-
-    /**
-     * Create an instance of {@link PutCode }
-     * 
-     */
-    public PutCode createPutCode() {
-        return new PutCode();
     }
 
     /**

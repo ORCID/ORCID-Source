@@ -27,10 +27,12 @@ import javax.annotation.Resource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.jaxb.model.common.ClientId;
+import org.orcid.jaxb.model.common.ExternalIdType;
 import org.orcid.jaxb.model.common.Source;
 import org.orcid.jaxb.model.notification.Notification;
 import org.orcid.jaxb.model.notification.addactivities.Activities;
 import org.orcid.jaxb.model.notification.addactivities.Activity;
+import org.orcid.jaxb.model.notification.addactivities.ActivityType;
 import org.orcid.jaxb.model.notification.addactivities.AuthorizationUrl;
 import org.orcid.jaxb.model.notification.addactivities.ExternalId;
 import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
@@ -106,11 +108,11 @@ public class JpaJaxbNotificationAdapterTest {
         notification.setActivities(activities);
         Activity activity = new Activity();
         activities.getActivities().add(activity);
-        activity.setActivityType("WORK");
+        activity.setActivityType(ActivityType.WORK);
         activity.setActivityName("Latest Research Article");
         ExternalId extId = new ExternalId();
         activity.setExternalId(extId);
-        extId.setExternalIdType("DOI");
+        extId.setExternalIdType(ExternalIdType.DOI);
         extId.setExternalIdValue("1234/abc123");
 
         NotificationEntity notificationEntity = jpaJaxbNotificationAdapter.toNotificationEntity(notification);
@@ -127,9 +129,9 @@ public class JpaJaxbNotificationAdapterTest {
         assertNotNull(activityEntities);
         assertEquals(1, activityEntities.size());
         NotificationActivityEntity activityEntity = activityEntities.iterator().next();
-        assertEquals("WORK", activityEntity.getActivityType());
+        assertEquals(ActivityType.WORK, activityEntity.getActivityType());
         assertEquals("Latest Research Article", activityEntity.getActivityName());
-        assertEquals("DOI", activityEntity.getExternalIdType());
+        assertEquals(ExternalIdType.DOI, activityEntity.getExternalIdType());
         assertEquals("1234/abc123", activityEntity.getExternalIdValue());
     }
 

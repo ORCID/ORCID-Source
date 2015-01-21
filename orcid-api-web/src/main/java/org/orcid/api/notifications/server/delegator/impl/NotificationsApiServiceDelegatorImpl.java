@@ -83,7 +83,7 @@ public class NotificationsApiServiceDelegatorImpl implements NotificationsApiSer
     public Response addAddActivitiesNotification(UriInfo uriInfo, String orcid, NotificationAddActivities notification) {
         Notification createdNotification = notificationManager.createNotification(orcid, notification);
         try {
-            return Response.created(new URI(uriInfo.getAbsolutePath() + "/" + createdNotification.getPutCode().getPath())).build();
+            return Response.created(new URI(uriInfo.getAbsolutePath() + "/" + createdNotification.getPutCode())).build();
         } catch (URISyntaxException e) {
             throw new RuntimeException("Error constructing URI for add activities notification", e);
         }
