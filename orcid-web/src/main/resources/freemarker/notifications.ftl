@@ -18,7 +18,7 @@
 -->
 <#-- @ftlvariable name="profile" type="org.orcid.jaxb.model.message.OrcidProfile" -->
 <@protected nav="notifications">
-<#escape x as x?html>
+<#escape x as x?html> 
 <div class="row">
     <div class="col-md-3 col-sm-12 col-xs-12 padding-fix">
         <#include "admin_menu.ftl"/>
@@ -33,7 +33,7 @@
         </div>
         <div ng-hide="notifications.length > 0">${springMacroRequestContext.getMessage("notifications.none")}</div>
         <div ng-show="notifications.length > 0">            
-            <table class="table table-responsive notifications">
+            <table class="table table-responsive table-condensed notifications">
            		<thead>					
 	                <tr>
 	                    <th>${springMacroRequestContext.getMessage("notifications.from")}</th>
@@ -56,7 +56,7 @@
 	                </tr>
 	                <tr ng-repeat-end ng-show="displayBody[notification.putCode.path]">
 	                    <td colspan="4">
-	                        <iframe ng-src="{{ '<@spring.url '/notifications'/>/' + notification.notificationType + '/' + notification.putCode.path + '/notification.html'}}" frameborder="0" scrolling="no" width="100%"></iframe>
+	                        <iframe class="nIframe" ng-src="{{ '<@spring.url '/notifications'/>/' + notification.notificationType + '/' + notification.putCode.path + '/notification.html'}}" frameborder="0" scrolling="no" width="100%"></iframe>	                        
 	                    </td>
 	                </tr>
                 </tbody>
@@ -71,5 +71,6 @@
         </div>
     </div>
 </div>
+
 </#escape>
 </@protected>

@@ -41,5 +41,6 @@
 <#if notification.authorizationUrl??>
     <div>Click <a href="${notification.authorizationUrl.uri}">here</a> to continue.</div>
 </#if>
+<script type="text/javascript" src="${staticCdn}/javascript/iframeResizer.contentWindow.min.js?v=${ver}"></script><!-- required for iframe resizing -->
 </body>
 </html>
