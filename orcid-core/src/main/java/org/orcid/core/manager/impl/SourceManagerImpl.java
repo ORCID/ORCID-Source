@@ -31,8 +31,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.web.authentication.switchuser.SwitchUserGrantedAuthority;
 
 /**
@@ -53,7 +53,7 @@ public class SourceManagerImpl implements SourceManager {
         }
         // API
         if (OAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
-            AuthorizationRequest authorizationRequest = ((OAuth2Authentication) authentication).getAuthorizationRequest();
+            OAuth2Request authorizationRequest = ((OAuth2Authentication) authentication).getOAuth2Request();
             return authorizationRequest.getClientId();
         }
         // Normal web user
@@ -68,7 +68,7 @@ public class SourceManagerImpl implements SourceManager {
         }
         // API
         if (OAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
-            AuthorizationRequest authorizationRequest = ((OAuth2Authentication) authentication).getAuthorizationRequest();
+            OAuth2Request authorizationRequest = ((OAuth2Authentication) authentication).getOAuth2Request();
             String clientId = authorizationRequest.getClientId();
             SourceEntity sourceEntity = new SourceEntity();
             sourceEntity.setSourceClient(new ClientDetailsEntity(clientId));
@@ -110,7 +110,7 @@ public class SourceManagerImpl implements SourceManager {
         }
         // API
         if (OAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
-            AuthorizationRequest authorizationRequest = ((OAuth2Authentication) authentication).getAuthorizationRequest();
+            OAuth2Request authorizationRequest = ((OAuth2Authentication) authentication).getOAuth2Request();
             return authorizationRequest.getClientId();
         }
         // Delegation mode

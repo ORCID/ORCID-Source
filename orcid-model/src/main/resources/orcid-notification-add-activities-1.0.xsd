@@ -7,7 +7,6 @@
 	<xs:element name="notification">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="orcid:putCode" minOccurs="0"/>
 				<xs:element ref="orcid:notificationType"/>
 				<xs:element ref="orcid:authorizationUrl"/>
 				<xs:element ref="orcid:activities"/>
@@ -17,6 +16,7 @@
 				<xs:element ref="orcid:archivedDate" minOccurs="0"/>
 				<xs:element ref="orcid:source" minOccurs="0"/>
 			</xs:sequence>
+            <xs:attributeGroup ref="orcid:putCode"/>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="notificationType">
@@ -51,16 +51,15 @@
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="activityType" type="xs:NCName"/>
+	<xs:element name="activityType">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="EDUCATION"></xs:enumeration>
+                <xs:enumeration value="EMPLOYMENT"></xs:enumeration>
+                <xs:enumeration value="FUNDING"></xs:enumeration>
+                <xs:enumeration value="WORK"></xs:enumeration>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
 	<xs:element name="activityName" type="xs:string"/>
-	<xs:element name="externalId">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="orcid:externalIdType"/>
-				<xs:element ref="orcid:externalIdValue"/>
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="externalIdType" type="xs:NCName"/>
-	<xs:element name="externalIdValue" type="xs:anyURI"/>
 </xs:schema>

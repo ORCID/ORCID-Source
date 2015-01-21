@@ -6356,10 +6356,13 @@ orcidNgModule.controller('SSOPreferencesCtrl',['$scope', '$compile', '$sce', 'em
         $.colorbox.resize({width:"415px" , height:"250px"});
     };
 
-    $scope.resetClientSecret = function() {
+    $scope.resetClientSecret = function() {    	
         $.ajax({
             url: getBaseUri() + '/developer-tools/reset-client-secret.json',
             type: 'POST',
+            data: $scope.userCredentials.clientOrcid.value,
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'text',
             success: function(data) {
                 if(data) {
                     $scope.editing = false;

@@ -54,7 +54,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     }
 
     private ClassMapBuilder<?, ?> mapCommonFields(ClassMapBuilder<?, ?> builder) {
-        return builder.field("dateCreated", "createdDate").field("id", "putCode.path").byDefault();
+        return builder.field("dateCreated", "createdDate").field("id", "putCode").byDefault();
     }
 
     @Override

@@ -31,19 +31,18 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
-import org.orcid.core.oauth.service.OrcidRandomValueTokenServices;
 import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
-import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
-import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
+import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.stereotype.Component;
 
 /**
@@ -52,9 +51,9 @@ import org.springframework.stereotype.Component;
 @Component("defaultPermissionChecker")
 public class DefaultPermissionChecker implements PermissionChecker {
 
-    @Resource(name = "tokenServices")
-    private DefaultTokenServices defaultTokenServices;
-
+    @Value("${org.orcid.core.token.write_validity_seconds:3600}")
+    private int writeValiditySeconds;
+    
     @Resource(name = "profileEntityManager")
     private ProfileEntityManager profileEntityManager;
 
@@ -169,7 +168,7 @@ public class DefaultPermissionChecker implements PermissionChecker {
             ProfileEntity principal = (ProfileEntity) oAuth2Authentication.getPrincipal();
             visibilities.add(Visibility.REGISTERED_ONLY);
             if (principal != null && principal.getId().equals(orcid)) {
-                Set<String> requestedScopes = oAuth2Authentication.getAuthorizationRequest().getScope();
+                Set<String> requestedScopes = oAuth2Authentication.getOAuth2Request().getScope();
                 for (String scope : requestedScopes) {
                     if (ScopePathType.hasStringScope(scope, requiredScope)) {
                         visibilities.add(Visibility.LIMITED);
@@ -181,7 +180,7 @@ public class DefaultPermissionChecker implements PermissionChecker {
             // was created using this client and it
             // hasn't been claimed, it's theirs to read
         } else if (oAuth2Authentication.isClientOnly()) {
-            AuthorizationRequest authorizationRequest = oAuth2Authentication.getAuthorizationRequest();
+            OAuth2Request authorizationRequest = oAuth2Authentication.getOAuth2Request();
             String clientId = authorizationRequest.getClientId();
             String sponsorOrcid = getSponsorOrcid(orcidMessage);
             if (StringUtils.isNotBlank(sponsorOrcid) && clientId.equals(sponsorOrcid) && !orcidMessage.getOrcidProfile().getOrcidHistory().isClaimed()) {
@@ -217,7 +216,7 @@ public class DefaultPermissionChecker implements PermissionChecker {
     }
 
     private void checkScopes(OAuth2Authentication oAuth2Authentication, ScopePathType requiredScope) {
-        AuthorizationRequest authorizationRequest = oAuth2Authentication.getAuthorizationRequest();
+        OAuth2Request authorizationRequest = oAuth2Authentication.getOAuth2Request();
         Set<String> requestedScopes = authorizationRequest.getScope();
         if (requiredScope.isUserGrantWriteScope()) {
             OrcidOAuth2Authentication orcidOauth2Authentication = (OrcidOAuth2Authentication) oAuth2Authentication;
@@ -249,9 +248,8 @@ public class DefaultPermissionChecker implements PermissionChecker {
                     if (scope != null && !scope.isEmpty()) {
                         ScopePathType scopePathType = ScopePathType.fromValue(scope);
                         if (scopePathType.isUserGrantWriteScope()) {
-                            Date now = new Date();
-                            OrcidRandomValueTokenServices orcidRandomValueTokenServices = (OrcidRandomValueTokenServices) defaultTokenServices;
-                            if (now.getTime() > tokenDetail.getDateCreated().getTime() + (orcidRandomValueTokenServices.getWriteValiditySeconds() * 1000)) {
+                            Date now = new Date();                            
+                            if (now.getTime() > tokenDetail.getDateCreated().getTime() + (writeValiditySeconds * 1000)) {
                                 removeScopes.add(scope);
                                 scopeRemoved = true;
                             }
@@ -308,7 +306,7 @@ public class DefaultPermissionChecker implements PermissionChecker {
     }
 
     private void performClientChecks(OAuth2Authentication oAuth2Authentication, ScopePathType requiredScope, OrcidMessage orcidMessage, String orcid) {
-        AuthorizationRequest authorizationRequest = oAuth2Authentication.getAuthorizationRequest();
+        OAuth2Request authorizationRequest = oAuth2Authentication.getOAuth2Request();
         // If we have an ORCID in the request, we assume that this is intended
         // as an update
         if (orcidMessage != null && orcidMessage.getOrcidProfile() != null && StringUtils.isNotBlank(orcid)) {

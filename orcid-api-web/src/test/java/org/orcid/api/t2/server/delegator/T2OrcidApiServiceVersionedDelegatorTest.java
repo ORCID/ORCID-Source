@@ -21,9 +21,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -62,13 +64,13 @@ import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.Source;
-import org.orcid.jaxb.model.message.SourceOrcid;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
-import org.springframework.security.oauth2.provider.AuthorizationRequest;
+import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -278,9 +280,9 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
 
         Source source = affiliation.getSource();
         assertNotNull(source);
-        SourceOrcid sourceOrcid = source.getSourceOrcid();
+        String sourceOrcid = source.retrieveSourcePath();
         assertNotNull(sourceOrcid);
-        assertEquals("4444-4444-4444-4445", sourceOrcid.getPath());
+        assertEquals("4444-4444-4444-4445", sourceOrcid);
     }
 
     private OrcidMessage getOrcidMessage(String orcidMessagePath) throws JAXBException {
@@ -312,11 +314,12 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
         securityContext.setAuthentication(mockedAuthentication);
         SecurityContextHolder.setContext(securityContext);
         when(mockedAuthentication.getPrincipal()).thenReturn(new ProfileEntity("4444-4444-4444-4441"));
-        AuthorizationRequest authorizationRequest = mock(AuthorizationRequest.class);
         Set<String> scopes = new HashSet<String>();
         scopes.add(ScopePathType.ORCID_WORKS_CREATE.value());
-        when(authorizationRequest.getScope()).thenReturn(scopes);
-        when(mockedAuthentication.getAuthorizationRequest()).thenReturn(authorizationRequest);
+        OAuth2Request authorizationRequest = new OAuth2Request(Collections.<String, String> emptyMap(), "4444-4444-4444-4441",
+                Collections.<GrantedAuthority> emptyList(), true, scopes, Collections.<String> emptySet(), null, Collections.<String> emptySet(),
+                Collections.<String, Serializable> emptyMap());                
+        when(mockedAuthentication.getOAuth2Request()).thenReturn(authorizationRequest);
     }
 
     private void setUpSecurityContextForClientOnly() {
@@ -336,10 +339,10 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
         SecurityContextHolder.setContext(securityContext);
         when(mockedAuthentication.getPrincipal()).thenReturn(new ProfileEntity(clientId));
         when(mockedAuthentication.isClientOnly()).thenReturn(true);
-        AuthorizationRequest authorizationRequest = mock(AuthorizationRequest.class);
-        when(authorizationRequest.getClientId()).thenReturn(clientId);
-        when(authorizationRequest.getScope()).thenReturn(scopes);
-        when(mockedAuthentication.getAuthorizationRequest()).thenReturn(authorizationRequest);
+        OAuth2Request authorizationRequest = new OAuth2Request(Collections.<String, String> emptyMap(), clientId,
+                Collections.<GrantedAuthority> emptyList(), true, scopes, Collections.<String> emptySet(), null, Collections.<String> emptySet(),
+                Collections.<String, Serializable> emptyMap());
+        when(mockedAuthentication.getOAuth2Request()).thenReturn(authorizationRequest);
     }
 
     @Test

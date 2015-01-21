@@ -18,6 +18,7 @@ package org.orcid.api.notifications.server;
 
 import static org.orcid.api.common.OrcidApiConstants.ADD_ACTIVITIES_PATH;
 import static org.orcid.api.common.OrcidApiConstants.ADD_ACTIVITIES_VIEW_PATH;
+import static org.orcid.api.common.OrcidApiConstants.ADD_ACTIVITIES_FLAG_AS_ARCHIVED_PATH;
 import static org.orcid.api.common.OrcidApiConstants.ORCID_JSON;
 import static org.orcid.api.common.OrcidApiConstants.ORCID_XML;
 import static org.orcid.api.common.OrcidApiConstants.STATUS_PATH;
@@ -36,6 +37,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.orcid.api.notifications.server.delegator.NotificationsApiServiceDelegator;
+import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
 import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
 
 /**
@@ -97,7 +99,21 @@ abstract public class NotificationsApiServiceImplBase {
     public Response viewAddActivitiesNotificationJson(@PathParam("orcid") String orcid, @PathParam("id") Long id) {
         return serviceDelegator.findAddActivitiesNotification(orcid, id);
     }
-    
+
+    @POST
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Path(ADD_ACTIVITIES_FLAG_AS_ARCHIVED_PATH)
+    public Response flagAsArchivedAddActivitiesNotificationXml(@PathParam("orcid") String orcid, @PathParam("id") Long id) throws OrcidNotificationAlreadyReadException {
+        return serviceDelegator.flagNotificationAsArchived(orcid, id);
+    }
+
+    @POST
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(ADD_ACTIVITIES_FLAG_AS_ARCHIVED_PATH)
+    public Response flagAsArchivedAddActivitiesNotificationJson(@PathParam("orcid") String orcid, @PathParam("id") Long id) throws OrcidNotificationAlreadyReadException {
+        return serviceDelegator.flagNotificationAsArchived(orcid, id);
+    }
+
     @POST
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })

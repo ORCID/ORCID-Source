@@ -44,6 +44,10 @@ import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.Amount;
 import org.orcid.jaxb.model.message.ContributorEmail;
 import org.orcid.jaxb.model.message.CreditName;
+import org.orcid.jaxb.model.message.ExternalIdCommonName;
+import org.orcid.jaxb.model.message.ExternalIdReference;
+import org.orcid.jaxb.model.message.ExternalIdentifier;
+import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.FamilyName;
 import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingContributor;
@@ -347,6 +351,40 @@ public class PerActivityAPINewScopesTest {
         assertEquals("My family name", orcidMessageWithBio.getOrcidProfile().getOrcidBio().getPersonalDetails().getFamilyName().getContent());
         assertNotNull(orcidMessageWithBio.getOrcidProfile().getOrcidBio().getPersonalDetails().getCreditName());
         assertEquals("My credit name", orcidMessageWithBio.getOrcidProfile().getOrcidBio().getPersonalDetails().getCreditName().getContent());        
+    }
+    
+    @Test
+    public void externalIdentifiersUpdateTest() throws InterruptedException, JSONException {
+        String accessToken = oauthHelper.obtainAccessToken(client.getClientId(), client.getClientSecret(), "/person/update /orcid-bio/read-limited", email, password, getRedirectUri(), true);
+        OrcidMessage orcidMessage = new OrcidMessage();
+        orcidMessage.setMessageVersion(OrcidMessage.DEFAULT_VERSION);
+        OrcidProfile orcidProfile = new OrcidProfile();        
+        OrcidBio orcidBio = new OrcidBio();
+        ExternalIdentifier extId = new ExternalIdentifier();
+        extId.setExternalIdCommonName(new ExternalIdCommonName("ext-id-common-name"));
+        extId.setExternalIdReference(new ExternalIdReference("ext-id-reference"));
+        ExternalIdentifiers extIds = new ExternalIdentifiers();
+        extIds.getExternalIdentifier().add(extId);
+        orcidBio.setExternalIdentifiers(extIds);
+        orcidProfile.setOrcidBio(orcidBio);
+        orcidMessage.setOrcidProfile(orcidProfile);
+        ClientResponse clientResponse = oauthT2Client.addExternalIdentifiersXml(user.getOrcidIdentifier().getPath(), orcidMessage, accessToken);
+        assertEquals(200, clientResponse.getStatus());
+        ClientResponse response = oauthT2Client.viewBioDetailsXml(user.getOrcidIdentifier().getPath(), accessToken);
+        assertNotNull(response);
+        assertEquals(200, response.getStatus());
+        OrcidMessage orcidMessageWithExtIds = response.getEntity(OrcidMessage.class);
+        assertNotNull(orcidMessageWithExtIds);
+        assertNotNull(orcidMessageWithExtIds.getOrcidProfile());
+        assertNotNull(orcidMessageWithExtIds.getOrcidProfile().getOrcidBio());
+        assertNotNull(orcidMessageWithExtIds.getOrcidProfile().getOrcidBio().getExternalIdentifiers());
+        assertEquals(1, orcidMessageWithExtIds.getOrcidProfile().getOrcidBio().getExternalIdentifiers().getExternalIdentifier().size());
+        ExternalIdentifier extIdFromProfile = orcidMessageWithExtIds.getOrcidProfile().getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0);
+        assertNotNull(extIdFromProfile);
+        assertNotNull(extIdFromProfile.getExternalIdCommonName());
+        assertEquals("ext-id-common-name", extIdFromProfile.getExternalIdCommonName().getContent());
+        assertNotNull(extIdFromProfile.getExternalIdReference());
+        assertEquals("ext-id-reference", extIdFromProfile.getExternalIdReference().getContent());
     }
     
     private static String getRedirectUri() {

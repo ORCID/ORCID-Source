@@ -29,9 +29,10 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.LocaleUtils;
 import org.orcid.core.adapter.JpaJaxbNotificationAdapter;
 import org.orcid.core.constants.EmailConstants;
+import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
+import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.CustomEmailManager;
 import org.orcid.core.manager.EncryptionManager;
@@ -456,33 +457,26 @@ public class NotificationManagerImpl implements NotificationManager {
         Source source = null;
         CustomEmailEntity customEmail = null;
         if (createdProfile.getOrcidHistory() != null && createdProfile.getOrcidHistory().getSource() != null) {
-            if (createdProfile.getOrcidHistory().getSource().getSourceOrcid() != null
-                    && !PojoUtil.isEmpty(createdProfile.getOrcidHistory().getSource().getSourceOrcid().getPath())) {
+            if (!PojoUtil.isEmpty(createdProfile.getOrcidHistory().getSource().retrieveSourcePath())) {
                 source = createdProfile.getOrcidHistory().getSource();
-                customEmail = getCustomizedEmail(source.getSourceOrcid().getPath(), EmailType.CLAIM);
-            } else if (createdProfile.getOrcidHistory().getSource().getSourceClientId() != null
-                    && !PojoUtil.isEmpty(createdProfile.getOrcidHistory().getSource().getSourceClientId().getPath())) {
-                source = createdProfile.getOrcidHistory().getSource();
-                customEmail = getCustomizedEmail(source.getSourceClientId().getPath(), EmailType.CLAIM);
-            }
-
+                customEmail = getCustomizedEmail(createdProfile.getOrcidHistory().getSource().retrieveSourcePath(), EmailType.CLAIM);
+            } 
         }
 
+        String email = createdProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue().trim();
         String emailName = deriveEmailFriendlyName(createdProfile);
         String orcid = createdProfile.getOrcidIdentifier().getPath();
-        String verificationUrl = createClaimVerificationUrl(createdProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(),
+        String verificationUrl = createClaimVerificationUrl(email,
                 orcidUrlManager.getBaseUrl());
-        String email = createdProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+        
 
         String creatorName = "";
         if (source != null) {
             if (source.getSourceName() != null && source.getSourceName().getContent() != null) {
                 creatorName = source.getSourceName().getContent();
-            } else if (source.getSourceClientId() != null && source.getSourceClientId().getPath() != null) {
-                creatorName = source.getSourceClientId().getPath();
-            } else if (source.getSourceOrcid() != null && source.getSourceOrcid().getPath() != null) {
-                creatorName = source.getSourceOrcid().getPath();
-            }
+            } else if (!PojoUtil.isEmpty(source.retrieveSourcePath())) {
+                creatorName = source.retrieveSourcePath();
+            } 
         }
 
         String subject = null;
@@ -740,6 +734,26 @@ public class NotificationManagerImpl implements NotificationManager {
     @Override
     public Notification findByOrcidAndId(String orcid, Long id) {
         return notificationAdapter.toNotification(notificationDao.findByOricdAndId(orcid, id));
+    }
+
+    @Override
+    public Notification flagAsArchived(String orcid, Long id) throws OrcidNotificationAlreadyReadException {
+        NotificationEntity notificationEntity = notificationDao.findByOricdAndId(orcid, id);
+        if (notificationEntity == null) {
+            return null;
+        }
+        String sourceId = sourceManager.retrieveSourceOrcid();
+        if (sourceId != null && !sourceId.equals(notificationEntity.getSource().getSourceId())) {
+            throw new WrongSourceException("You are not the source of notification with id=" + id + " for ORCID iD=" + orcid);
+        }
+        if (notificationEntity.getReadDate() != null) {
+            throw new OrcidNotificationAlreadyReadException("The notification has already been read");
+        }
+        if (notificationEntity.getArchivedDate() == null) {
+            notificationEntity.setArchivedDate(new Date());
+            notificationDao.merge(notificationEntity);
+        }
+        return notificationAdapter.toNotification(notificationEntity);
     }
 
 }
