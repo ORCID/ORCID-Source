@@ -20,7 +20,7 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
             
     <changeSet id="ADD-TYPE-TO-PUBLIC-CLIENT" author="Angel Montenegro">
-        <sql>update client_details set client_type = 'PUBLIC_CLIENT' where client_type is null;</sql>
+        <sql>update client_details set client_type = 'PUBLIC_CLIENT', last_modified=now() where client_type is null;</sql>
     </changeSet>
     
 </databaseChangeLog>
