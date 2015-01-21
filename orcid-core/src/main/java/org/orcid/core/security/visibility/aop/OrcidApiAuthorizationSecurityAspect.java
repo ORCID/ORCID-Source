@@ -36,6 +36,7 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.notification.Notification;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -47,6 +48,7 @@ import org.springframework.stereotype.Component;
  */
 @Aspect
 @Component
+@Order(100)
 public class OrcidApiAuthorizationSecurityAspect {
 
     public static final String CLIENT_ID = "client_id";

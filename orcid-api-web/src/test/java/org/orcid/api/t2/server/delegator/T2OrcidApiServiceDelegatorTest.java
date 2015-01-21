@@ -19,14 +19,11 @@ package org.orcid.api.t2.server.delegator;
 import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -46,7 +43,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.manager.OrcidProfileManager;
-import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.Affiliations;
@@ -74,12 +70,8 @@ import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.jaxb.model.message.WorkType;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.context.SecurityContextImpl;
-import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -129,14 +121,14 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
 
     @Test
     public void testFindWorksDetails() {
-        setUpSecurityContext();
+        SecurityContextTestUtils.setUpSecurityContext();
         Response response = t2OrcidApiServiceDelegator.findWorksDetails("4444-4444-4444-4441");
         assertNotNull(response);
     }
 
     @Test
     public void testAddWorks() {
-        setUpSecurityContext();
+        SecurityContextTestUtils.setUpSecurityContext();
         OrcidMessage orcidMessage = new OrcidMessage();
         orcidMessage.setMessageVersion("1.2_rc6");
         OrcidProfile orcidProfile = new OrcidProfile();
@@ -153,7 +145,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
     @Test
     @Transactional
     public void testUpdateWithNewWork() {
-        setUpSecurityContext("4444-4444-4444-4446", ScopePathType.ORCID_WORKS_UPDATE);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.ORCID_WORKS_UPDATE);
         OrcidMessage orcidMessage = new OrcidMessage();
         orcidMessage.setMessageVersion("1.2_rc6");
         OrcidProfile orcidProfile = new OrcidProfile();
@@ -210,7 +202,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
     @Test
     @Transactional
     public void testUpdateExistingNonPrivateWork() {
-        setUpSecurityContext("4444-4444-4444-4446", ScopePathType.ORCID_WORKS_UPDATE);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.ORCID_WORKS_UPDATE);
         OrcidMessage orcidMessage = new OrcidMessage();
         orcidMessage.setMessageVersion("1.2_rc6");
         OrcidProfile orcidProfile = new OrcidProfile();
@@ -267,7 +259,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
     @Test(expected = WrongSourceException.class)
     @Transactional
     public void testUpdateWorkWhenNotSource() {
-        setUpSecurityContext("4444-4444-4444-4446", ScopePathType.ORCID_WORKS_UPDATE);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.ORCID_WORKS_UPDATE);
         OrcidMessage orcidMessage = new OrcidMessage();
         orcidMessage.setMessageVersion("1.2_rc6");
         OrcidProfile orcidProfile = new OrcidProfile();
@@ -295,7 +287,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
 
     @Test
     public void testReadClaimedAsClientOnly() {
-        setUpSecurityContextForClientOnly();
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly();
         String orcid = "4444-4444-4444-4441";
 
         Response readResponse = t2OrcidApiServiceDelegator.findFullDetails(orcid);
@@ -309,7 +301,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
 
     @Test
     public void testCreateAndReadOwnCreation() {
-        setUpSecurityContextForClientOnly();
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly();
         OrcidMessage orcidMessage = createStubOrcidMessage();
         Email email = new Email("madeupemail@semantico.com");
         orcidMessage.getOrcidProfile().getOrcidBio().getContactDetails().getEmail().add(email);
@@ -332,7 +324,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
 
     @Test
     public void testReadUnclaimedWhenNotOwnCreation() {
-        setUpSecurityContextForClientOnly();
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly();
         OrcidMessage orcidMessage = createStubOrcidMessage();
         Email email = new Email("madeupemail2@semantico.com");
         orcidMessage.getOrcidProfile().getOrcidBio().getContactDetails().getEmail().add(email);
@@ -345,7 +337,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(location);
         String orcid = location.substring(1, 20);
 
-        setUpSecurityContextForClientOnly("4444-4444-4444-4448");
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("4444-4444-4444-4448");
 
         Response readResponse = t2OrcidApiServiceDelegator.findFullDetails(orcid);
         assertNotNull(readResponse);
@@ -359,7 +351,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
 
     @Test
     public void testAddAffilliations() {
-        setUpSecurityContext(ScopePathType.AFFILIATIONS_CREATE);
+        SecurityContextTestUtils.setUpSecurityContext(ScopePathType.AFFILIATIONS_CREATE);
         OrcidMessage orcidMessage = new OrcidMessage();
         orcidMessage.setMessageVersion("1.2_rc6");
         OrcidProfile orcidProfile = new OrcidProfile();
@@ -396,7 +388,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
     @Test
     @Transactional
     public void testUpdateWithNewAffiliation() {
-        setUpSecurityContext("4444-4444-4444-4443", ScopePathType.AFFILIATIONS_UPDATE);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.AFFILIATIONS_UPDATE);
         OrcidMessage orcidMessage = new OrcidMessage();
         orcidMessage.setMessageVersion("1.2_rc6");
         OrcidProfile orcidProfile = new OrcidProfile();
@@ -433,7 +425,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
     @Test
     @Transactional
     public void testUpdateExistingNonPrivateAffiliation() {
-        setUpSecurityContext("4444-4444-4444-4443", ScopePathType.AFFILIATIONS_UPDATE);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.AFFILIATIONS_UPDATE);
         OrcidMessage orcidMessage = new OrcidMessage();
         orcidMessage.setMessageVersion("1.2_rc6");
         OrcidProfile orcidProfile = new OrcidProfile();
@@ -471,7 +463,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
     @Test(expected = WrongSourceException.class)
     @Transactional
     public void testUpdateAffiliationWhenNotSource() {
-        setUpSecurityContext("4444-4444-4444-4443", ScopePathType.AFFILIATIONS_UPDATE);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.AFFILIATIONS_UPDATE);
         OrcidMessage orcidMessage = new OrcidMessage();
         orcidMessage.setMessageVersion("1.2_rc6");
         OrcidProfile orcidProfile = new OrcidProfile();
@@ -514,57 +506,11 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         return orcidMessage;
     }
 
-    private void setUpSecurityContext() {
-        setUpSecurityContext(ScopePathType.ORCID_WORKS_CREATE);
-    }
-
-    private void setUpSecurityContext(ScopePathType... scopePathTypes) {
-        setUpSecurityContext("4444-4444-4444-4441", scopePathTypes);
-    }
-
-    private void setUpSecurityContext(String userOrcid, ScopePathType... scopePathTypes) {
-        SecurityContextImpl securityContext = new SecurityContextImpl();
-        OrcidOAuth2Authentication mockedAuthentication = mock(OrcidOAuth2Authentication.class);
-        securityContext.setAuthentication(mockedAuthentication);
-        SecurityContextHolder.setContext(securityContext);
-        when(mockedAuthentication.getPrincipal()).thenReturn(new ProfileEntity(userOrcid));
-        Set<String> scopes = new HashSet<String>();
-        for (ScopePathType scopePathType : scopePathTypes) {
-            scopes.add(scopePathType.value());
-        }
-        OAuth2Request authorizationRequest = new OAuth2Request(Collections.<String, String> emptyMap(), "APP-5555555555555555",
-                Collections.<GrantedAuthority> emptyList(), true, scopes, Collections.<String> emptySet(), null, Collections.<String> emptySet(),
-                Collections.<String, Serializable> emptyMap());
-        when(mockedAuthentication.getOAuth2Request()).thenReturn(authorizationRequest);
-    }
-
-    private void setUpSecurityContextForClientOnly() {
-        setUpSecurityContextForClientOnly("APP-5555555555555555");
-    }
-
-    private void setUpSecurityContextForClientOnly(String clientId) {
-        Set<String> scopes = new HashSet<String>();
-        scopes.add(ScopePathType.ORCID_PROFILE_CREATE.value());
-        setUpSecurityContextForClientOnly(clientId, scopes);
-    }
-
-    private void setUpSecurityContextForClientOnly(String clientId, Set<String> scopes) {
-        SecurityContextImpl securityContext = new SecurityContextImpl();
-        OrcidOAuth2Authentication mockedAuthentication = mock(OrcidOAuth2Authentication.class);
-        securityContext.setAuthentication(mockedAuthentication);
-        SecurityContextHolder.setContext(securityContext);
-        when(mockedAuthentication.getPrincipal()).thenReturn(new ProfileEntity(clientId));
-        when(mockedAuthentication.isClientOnly()).thenReturn(true);
-        OAuth2Request authorizationRequest = new OAuth2Request(Collections.<String, String> emptyMap(), clientId, Collections.<GrantedAuthority> emptyList(), true,
-                scopes, Collections.<String> emptySet(), null, Collections.<String> emptySet(), Collections.<String, Serializable> emptyMap());
-        when(mockedAuthentication.getOAuth2Request()).thenReturn(authorizationRequest);
-    }
-
     @Test
     public void testRegisterAndUnregisterWebhook() {
         Set<String> scopes = new HashSet<String>();
         scopes.add(ScopePathType.WEBHOOK.value());
-        setUpSecurityContextForClientOnly("APP-5555555555555555", scopes);
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", scopes);
         Response response = t2OrcidApiServiceDelegator.registerWebhook(mockedUriInfo, "4444-4444-4444-4447", "www.webhook.com");
         assertNotNull(response);
         assertEquals(HttpStatus.SC_CREATED, response.getStatus());
