@@ -16,7 +16,10 @@
  */
 package org.orcid.core.oauth.service;
 
+import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -39,11 +42,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
-import org.springframework.security.oauth2.provider.AuthorizationRequest;
-import org.springframework.security.oauth2.provider.DefaultAuthorizationRequest;
-import org.springframework.security.oauth2.provider.code.AuthorizationRequestHolder;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.oauth2.provider.code.RandomValueAuthorizationCodeServices;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Service;
@@ -79,8 +80,8 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidAuthorizationCodeServiceImpl.class);
 
     @Override
-    protected void store(String code, AuthorizationRequestHolder authentication) {
-        OrcidOauth2AuthoriziationCodeDetail detail = getDetailFromAuthorizationRequestHolder(code, authentication);
+    protected void store(String code, OAuth2Authentication authentication) {
+        OrcidOauth2AuthoriziationCodeDetail detail = getDetailFromAuthorization(code, authentication);
         if (detail == null) {
             throw new IllegalArgumentException("Cannot persist the authorisation code as the user and/or client " + "cannot be found");
         }
@@ -91,71 +92,49 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
     }
 
     @Override
-    protected AuthorizationRequestHolder remove(String code) {
+    protected OAuth2Authentication remove(String code) {
         OrcidOauth2AuthoriziationCodeDetail detail = orcidOauth2AuthoriziationCodeDetailDao.removeAndReturn(code);
-        AuthorizationRequestHolder authorizationRequestHolder = getAuthorizationRequestHolderFromDetail(detail);
-        OrcidOauth2AuthInfo authInfo = new OrcidOauth2AuthInfo(authorizationRequestHolder);
         if (detail == null) {
-            LOGGER.info("No such authorization code to remove: code={}, clientId={}, scopes={}, userOrcid={}",
-                    new Object[] { code, authInfo.getClientId(), authInfo.getScopes(), authInfo.getUserOrcid() });
-        } else {
-            LOGGER.info("Removed authorization code: code={}, clientId={}, scopes={}, userOrcid={}", new Object[] { code, authInfo.getClientId(), authInfo.getScopes(),
-                    authInfo.getUserOrcid() });
-        }
-        return authorizationRequestHolder;
-    }
-
-    private AuthorizationRequestHolder getAuthorizationRequestHolderFromDetail(OrcidOauth2AuthoriziationCodeDetail detail) {
-        if (detail == null) {
+            LOGGER.info("No such authorization code to remove: code={}",
+                    new Object[] { code });
             return null;
-        }
-        ClientDetailsEntity clientDetailsEntity = detail.getClientDetailsEntity();
-        Set<GrantedAuthority> grantedAuthorities = getGrantedAuthoritiesFromStrings(detail.getAuthorities());
-        Set<String> scopes = detail.getScopes();
-        DefaultAuthorizationRequest authorizationRequest = new DefaultAuthorizationRequest(clientDetailsEntity.getClientId(), scopes);
-        authorizationRequest.setAuthorities(grantedAuthorities);
-        Set<String> resourceIds = new HashSet<>();
-        resourceIds.add("orcid");
-        authorizationRequest.setResourceIds(resourceIds);
-        authorizationRequest.setRedirectUri(detail.getRedirectUri());
-        authorizationRequest.setApproved(detail.getApproved());
+        } 
+        OrcidOauth2AuthInfo authInfo = new OrcidOauth2AuthInfo(detail.getClientDetailsEntity().getId(), detail.getScopes(), detail.getProfileEntity().getId());         
+        LOGGER.info("Removed authorization code: code={}, clientId={}, scopes={}, userOrcid={}", new Object[] { code, authInfo.getClientId(), authInfo.getScopes(),
+                    authInfo.getUserOrcid() });
+        
+        
+        OAuth2Request oAuth2Request = new OAuth2Request(Collections.<String, String> emptyMap(), authInfo.getClientId(), Collections.<GrantedAuthority> emptyList(), true, authInfo.getScopes(), detail.getResourceIds(), detail.getRedirectUri(), new HashSet<String>(Arrays.asList(detail.getResponseType())), Collections.<String, Serializable> emptyMap());
+        Authentication userAuth = getUserAuthentication(detail);
+        OAuth2Authentication result = new OAuth2Authentication(oAuth2Request, userAuth);
+        return result;        
+    }        
 
-        Authentication userAuthentication = new OrcidOauth2UserAuthentication(detail.getProfileEntity(), detail.getAuthenticated());
-        return new AuthorizationRequestHolder(authorizationRequest, userAuthentication);
+    private OrcidOauth2UserAuthentication getUserAuthentication(OrcidOauth2AuthoriziationCodeDetail detail) {
+        return new OrcidOauth2UserAuthentication(detail.getProfileEntity(), detail.getAuthenticated());
     }
-
-    private Set<GrantedAuthority> getGrantedAuthoritiesFromStrings(Set<String> authorities) {
-        Set<GrantedAuthority> grantedAuthorities = null;
-        if (authorities != null && !authorities.isEmpty()) {
-            grantedAuthorities = new HashSet<GrantedAuthority>(authorities.size());
-            for (String authority : authorities) {
-                grantedAuthorities.add(new SimpleGrantedAuthority(authority));
-            }
-        }
-        return grantedAuthorities;
-    }
-
-    private OrcidOauth2AuthoriziationCodeDetail getDetailFromAuthorizationRequestHolder(String code, AuthorizationRequestHolder authentication) {
-        AuthorizationRequest authenticationRequest = authentication.getAuthenticationRequest();
+    
+    private OrcidOauth2AuthoriziationCodeDetail getDetailFromAuthorization(String code, OAuth2Authentication authentication) {
+        OAuth2Request oAuth2Request = authentication.getOAuth2Request();
         OrcidOauth2AuthoriziationCodeDetail detail = new OrcidOauth2AuthoriziationCodeDetail();
-        Map<String, String> parameters = authenticationRequest.getAuthorizationParameters();
-        if (parameters != null && !parameters.isEmpty()) {
-            String clientId = parameters.get(CLIENT_ID);
+        Map<String, String> requestParameters = oAuth2Request.getRequestParameters();
+        if (requestParameters != null && !requestParameters.isEmpty()) {
+            String clientId = (String) requestParameters.get(CLIENT_ID);
             ClientDetailsEntity clientDetails = getClientDetails(clientId);
 
             if (clientDetails == null) {
                 return null;
             }
 
-            detail.setScopes(OAuth2Utils.parseParameterList(parameters.get(SCOPE)));
-            detail.setState(parameters.get(STATE));
-            detail.setRedirectUri(parameters.get(REDIRECT_URI));
-            detail.setResponseType(parameters.get(RESPONSE_TYPE));
+            detail.setScopes(OAuth2Utils.parseParameterList((String)requestParameters.get(SCOPE)));
+            detail.setState((String)requestParameters.get(STATE));
+            detail.setRedirectUri((String)requestParameters.get(REDIRECT_URI));
+            detail.setResponseType((String)requestParameters.get(RESPONSE_TYPE));
             detail.setClientDetailsEntity(clientDetails);
         }
 
         detail.setId(code);
-        detail.setApproved(authenticationRequest.isApproved());
+        detail.setApproved(authentication.getOAuth2Request().isApproved());
         Authentication userAuthentication = authentication.getUserAuthentication();
         Object principal = userAuthentication.getPrincipal();
 
@@ -175,21 +154,20 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
 
         detail.setProfileEntity(entity);
         detail.setAuthenticated(userAuthentication.isAuthenticated());
-        Set<String> authorities = getStringSetFromGrantedAuthorities(authenticationRequest.getAuthorities());
+        Set<String> authorities = getStringSetFromGrantedAuthorities(authentication.getAuthorities());
         detail.setAuthorities(authorities);
         Object authenticationDetails = userAuthentication.getDetails();
         if (authenticationDetails instanceof WebAuthenticationDetails) {
             detail.setSessionId(((WebAuthenticationDetails) authenticationDetails).getSessionId());
         }
-        
-        Map<String, String> approvalParameters = authenticationRequest.getApprovalParameters();
+                
         boolean isPersistentTokenEnabledByUser = false;
         //Set token version to persistent token
         //TODO: As of Jan 2015 all tokens will be new tokens, so, we will have to remove the token version code and 
         //treat all tokens as new tokens
         detail.setVersion(Long.valueOf(OauthTokensConstants.PERSISTENT_TOKEN));
-        if(approvalParameters.containsKey(OauthTokensConstants.GRANT_PERSISTENT_TOKEN)) {
-            String grantPersitentToken = approvalParameters.get(OauthTokensConstants.GRANT_PERSISTENT_TOKEN);
+        if(requestParameters.containsKey(OauthTokensConstants.GRANT_PERSISTENT_TOKEN)) {
+            String grantPersitentToken = (String)requestParameters.get(OauthTokensConstants.GRANT_PERSISTENT_TOKEN);
             if(Boolean.parseBoolean(grantPersitentToken)) {
                 isPersistentTokenEnabledByUser = true;                
             }

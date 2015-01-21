@@ -16,13 +16,11 @@
  */
 package org.orcid.core.manager;
 
-import java.util.List;
 import java.util.Set;
 
 import org.orcid.core.exception.OrcidClientGroupManagementException;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 
 /**
  * 
@@ -112,7 +110,7 @@ public interface OrcidClientGroupManager {
      * @return the new OrcidClient
      * */
     OrcidClient createAndPersistClientProfile(String groupOrcid, OrcidClient client) throws OrcidClientGroupManagementException;
-
+       
     /**
      * Deletes a group
      * 

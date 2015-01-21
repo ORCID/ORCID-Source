@@ -190,4 +190,14 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
         }
         return false;
     }
+
+    @Override
+    public List<OrcidOauth2TokenDetail> findByClientIdAndUserName(String clientId, String userName) {
+        try {
+            return orcidOauth2TokenDetailDao.findByClientIdAndUserName(clientId, userName);
+        } catch (NoResultException e) {
+            LOGGER.debug("No token found for client id {}", e, clientId);
+            return null;
+        }
+    }
 }

@@ -23,16 +23,10 @@ import org.orcid.jaxb.model.message.ScopePathType;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.ClientDetails;
-import org.springframework.security.oauth2.provider.ClientDetailsService;
-import org.springframework.security.oauth2.provider.DefaultAuthorizationRequestManager;
+import org.springframework.security.oauth2.provider.request.DefaultOAuth2RequestValidator;
 
-public class OrcidAuthorizationRequestManager extends DefaultAuthorizationRequestManager {
-
-    public OrcidAuthorizationRequestManager(ClientDetailsService clientDetailsService) {
-        super(clientDetailsService);
-    }
-
-    @Override
+public class OrcidOAuth2RequestValidator extends DefaultOAuth2RequestValidator {
+        
     public void validateParameters(Map<String, String> parameters, ClientDetails clientDetails) {
         if (parameters.containsKey("scope")) {
             if (clientDetails.isScoped()) {

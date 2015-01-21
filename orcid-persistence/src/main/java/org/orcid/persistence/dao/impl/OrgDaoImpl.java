@@ -18,12 +18,14 @@ package org.orcid.persistence.dao.impl;
 
 import java.util.List;
 
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.persistence.dao.OrgDao;
 import org.orcid.persistence.jpa.entities.AmbiguousOrgEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 
@@ -72,6 +74,18 @@ public class OrgDaoImpl extends GenericDaoImpl<OrgEntity, Long> implements OrgDa
         query.setParameter("country", country);
         List<OrgEntity> results = query.getResultList();
         return results.isEmpty() ? null : results.get(0);
+    }
+    
+    /**
+     * Deletes all orgs where the source matches the give app id
+     * @param clientSourceId the app id
+     * */
+    @Override
+    @Transactional
+    public void removeOrgsByClientSourceId(String clientSourceId) {
+        Query query = entityManager.createNativeQuery("delete from org where client_source_id=:clientSourceId");
+        query.setParameter("clientSourceId", clientSourceId);
+        query.executeUpdate();
     }
 
 }

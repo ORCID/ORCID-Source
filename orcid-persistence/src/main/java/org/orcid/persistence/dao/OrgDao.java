@@ -36,5 +36,7 @@ public interface OrgDao extends GenericDao<OrgEntity, Long> {
     List<OrgEntity> getOrgsByName(String searchTerm);
 
     OrgEntity findByNameCityRegionAndCountry(String name, String city, String region, Iso3166Country country);
+    
+    void removeOrgsByClientSourceId(String clientSourceId);
 
 }

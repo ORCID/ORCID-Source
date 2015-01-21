@@ -135,4 +135,13 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
         query.setParameter("groupId", groupId);
         return query.getResultList();
     }
+
+    @Override
+    @Transactional
+    public void removeClient(String clientId) {
+        ClientDetailsEntity clientDetailsEntity = this.find(clientId);
+        this.remove(clientDetailsEntity);
+    }
+    
+    
 }

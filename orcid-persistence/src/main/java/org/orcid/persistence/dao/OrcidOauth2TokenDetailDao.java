@@ -44,6 +44,8 @@ public interface OrcidOauth2TokenDetailDao extends GenericDao<OrcidOauth2TokenDe
     List<OrcidOauth2TokenDetail> findByUserName(String userName);
 
     List<OrcidOauth2TokenDetail> findByClientId(String clientId);
+    
+    List<OrcidOauth2TokenDetail> findByClientIdAndUserName(String clientId, String userName);
 
     void disableAccessToken(String accessToken);
 

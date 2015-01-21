@@ -87,4 +87,6 @@ public interface OrgAffiliationRelationDao extends GenericDao<OrgAffiliationRela
      * @return the updated OrgAffiliationRelationEntity
      * */
     OrgAffiliationRelationEntity updateOrgAffiliationRelationEntity(OrgAffiliationRelationEntity orgAffiliationRelationEntity);
+    
+    void removeOrgAffiliationByClientSourceId(String clientSourceId);
 }

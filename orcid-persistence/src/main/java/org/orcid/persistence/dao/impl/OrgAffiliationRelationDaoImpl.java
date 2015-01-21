@@ -147,4 +147,15 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
         existing.setLastModified(new Date());
     }
 
+    /**
+     * Deletes all org affiliations where the source matches the give app id
+     * @param clientSourceId the app id
+     * */
+    @Override
+    @Transactional
+    public void removeOrgAffiliationByClientSourceId(String clientSourceId) {
+        Query query = entityManager.createNativeQuery("DELETE FROM org_affiliation_relation WHERE client_source_id=:clientSourceId");
+        query.setParameter("clientSourceId", clientSourceId);
+        query.executeUpdate();
+    }
 }
