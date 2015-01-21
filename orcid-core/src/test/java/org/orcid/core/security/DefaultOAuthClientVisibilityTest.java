@@ -21,9 +21,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -48,7 +46,6 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
-import org.springframework.security.oauth2.provider.DefaultAuthorizationRequest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -76,7 +73,7 @@ public class DefaultOAuthClientVisibilityTest extends BaseTest {
     public void testCheckClientPermissionsAllowOnlyPublicAndLimitedVisibility() throws Exception {
         Set<String> resourceIds = new HashSet<String>(Arrays.asList("orcid"));
         HashSet<GrantedAuthority> grantedAuthorities = new HashSet<GrantedAuthority>(Arrays.asList(new SimpleGrantedAuthority("ROLE_CLIENT")));
-        DefaultAuthorizationRequest request = new DefaultAuthorizationRequest("4444-4444-4444-4446", Arrays.asList("/orcid-bio/external-identifiers/create"));
+        AuthorizationRequest request = new AuthorizationRequest("4444-4444-4444-4446", Arrays.asList("/orcid-bio/external-identifiers/create"));
         request.setAuthorities(grantedAuthorities);
         request.setResourceIds(resourceIds);
         ProfileEntity entity = new ProfileEntity("4444-4444-4444-4446");

@@ -19,12 +19,15 @@ package org.orcid.core.oauth.service;
 import static org.junit.Assert.assertNotNull;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
 
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,10 +40,15 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.common.exceptions.InvalidClientException;
 import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
-import org.springframework.security.oauth2.provider.DefaultAuthorizationRequest;
+import org.springframework.security.oauth2.common.util.OAuth2Utils;
+import org.springframework.security.oauth2.provider.AuthorizationRequest;
+import org.springframework.security.oauth2.provider.ClientDetailsService;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.security.oauth2.provider.OAuth2RequestFactory;
 import org.springframework.security.oauth2.provider.code.AuthorizationCodeServices;
-import org.springframework.security.oauth2.provider.code.AuthorizationRequestHolder;
+import org.springframework.security.oauth2.provider.request.DefaultOAuth2RequestFactory;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -58,7 +66,12 @@ public class OrcidAuthorizationCodeServiceTest extends DBUnitTest {
 
     @Resource(name = "profileEntityManager")
     private ProfileEntityManager profileEntityManager;
-
+    
+    @Resource
+    private ClientDetailsService clientDetailsService;
+    
+    private OAuth2RequestFactory oAuth2RequestFactory;
+    
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml",
@@ -69,16 +82,22 @@ public class OrcidAuthorizationCodeServiceTest extends DBUnitTest {
     public static void removeDBUnitData() throws Exception {
         removeDBUnitData(Arrays.asList("/data/ClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/SecurityQuestionEntityData.xml"));
     }
+    
+    @Before
+    public void before() {
+        oAuth2RequestFactory = new DefaultOAuth2RequestFactory(clientDetailsService);
+    }
 
     @Test
     @Rollback
     @Transactional
     public void testCreateAuthorizationCodeWithValidClient() {
-        AuthorizationRequestHolder request = getAuthorizationRequestHolder("4444-4444-4444-4441");
-        String authorizationCode = authorizationCodeServices.createAuthorizationCode(request);
+        AuthorizationRequest request = getAuthorizationRequest("4444-4444-4444-4441");
+        OAuth2Authentication oauth2Authentication = new OAuth2Authentication(oAuth2RequestFactory.createOAuth2Request(request), getUserAuthentication());
+        String authorizationCode = authorizationCodeServices.createAuthorizationCode(oauth2Authentication);
         assertNotNull(authorizationCode);
-        AuthorizationRequestHolder authorizationRequestHolder = authorizationCodeServices.consumeAuthorizationCode(authorizationCode);
-        assertNotNull(authorizationRequestHolder);
+        oauth2Authentication  = authorizationCodeServices.consumeAuthorizationCode(authorizationCode);
+        assertNotNull(oauth2Authentication);
     }
 
     @Test(expected = InvalidGrantException.class)
@@ -88,26 +107,35 @@ public class OrcidAuthorizationCodeServiceTest extends DBUnitTest {
         authorizationCodeServices.consumeAuthorizationCode("bodus-code!");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = InvalidClientException.class)
     @Rollback
     @Transactional
     public void testCreateAuthorizationCodeWithInvalidClient() {
-        AuthorizationRequestHolder request = getAuthorizationRequestHolder("6444-4444-4444-4441");
-        authorizationCodeServices.createAuthorizationCode(request);
+        AuthorizationRequest request = getAuthorizationRequest("6444-4444-4444-4441");        
+        OAuth2Authentication auth = new OAuth2Authentication(oAuth2RequestFactory.createOAuth2Request(request), getUserAuthentication());
+        authorizationCodeServices.createAuthorizationCode(auth);
     }
 
-    public AuthorizationRequestHolder getAuthorizationRequestHolder(String clientId) {
+    public AuthorizationRequest getAuthorizationRequest(String clientId) {
         Set<GrantedAuthority> grantedAuthorities = new HashSet<GrantedAuthority>(Arrays.asList(new SimpleGrantedAuthority("ROLE_USER")));
         Set<String> resourceIds = new HashSet<>();
         resourceIds.add("orcid");
-        DefaultAuthorizationRequest authorizationRequest = new DefaultAuthorizationRequest(clientId, Arrays.asList("a-scope"));
+        
+        Map<String, String> params = new HashMap<String, String>();
+        params.put(OAuth2Utils.CLIENT_ID, clientId);
+        params.put(OAuth2Utils.SCOPE, "a-scope");
+        
+        AuthorizationRequest authorizationRequest = oAuth2RequestFactory.createAuthorizationRequest(params);
         authorizationRequest.setAuthorities(grantedAuthorities);
         authorizationRequest.setResourceIds(resourceIds);
+        
+        return authorizationRequest;
+    }
+    
+    private Authentication getUserAuthentication() {
         OrcidProfile profile = new OrcidProfile();
         profile.setOrcidIdentifier("4444-4444-4444-4445");
         OrcidProfileUserDetails details = new OrcidProfileUserDetails("4444-4444-4444-4445", "test123@semantico.com", "encrypted_password", OrcidType.USER);
-        Authentication userAuthentication = new UsernamePasswordAuthenticationToken(details, "password");
-
-        return new AuthorizationRequestHolder(authorizationRequest, userAuthentication);
+        return new UsernamePasswordAuthenticationToken(details, "password");
     }
 }

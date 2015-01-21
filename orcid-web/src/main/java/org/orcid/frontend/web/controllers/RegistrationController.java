@@ -845,7 +845,7 @@ public class RegistrationController extends BaseController {
     public @ResponseBody Claim submitClaimJson(HttpServletRequest request, @PathVariable("encryptedEmail") String encryptedEmail, @RequestBody Claim claim)
             throws NoSuchRequestHandlingMethodException, UnsupportedEncodingException {
         claim.setErrors(new ArrayList<String>());
-        String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
+        String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8")).trim();
         if (!isEmailOkForCurrentUser(decryptedEmail)) {
             claim.setUrl(getBaseUri() + "/claim/wrong_user");
             return claim;
@@ -968,7 +968,6 @@ public class RegistrationController extends BaseController {
 
     public OrcidProfile createMinimalRegistration(HttpServletRequest request, OrcidProfile profileToSave) {
         orcidProfileManager.addLocale(profileToSave, RequestContextUtils.getLocale(request));
-        URI uri = OrcidWebUtils.getServerUriWithContextPath(request);
         String sessionId = request.getSession() == null ? null : request.getSession().getId();
         String email = profileToSave.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
 

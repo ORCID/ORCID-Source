@@ -457,33 +457,26 @@ public class NotificationManagerImpl implements NotificationManager {
         Source source = null;
         CustomEmailEntity customEmail = null;
         if (createdProfile.getOrcidHistory() != null && createdProfile.getOrcidHistory().getSource() != null) {
-            if (createdProfile.getOrcidHistory().getSource().getSourceOrcid() != null
-                    && !PojoUtil.isEmpty(createdProfile.getOrcidHistory().getSource().getSourceOrcid().getPath())) {
+            if (!PojoUtil.isEmpty(createdProfile.getOrcidHistory().getSource().retrieveSourcePath())) {
                 source = createdProfile.getOrcidHistory().getSource();
-                customEmail = getCustomizedEmail(source.getSourceOrcid().getPath(), EmailType.CLAIM);
-            } else if (createdProfile.getOrcidHistory().getSource().getSourceClientId() != null
-                    && !PojoUtil.isEmpty(createdProfile.getOrcidHistory().getSource().getSourceClientId().getPath())) {
-                source = createdProfile.getOrcidHistory().getSource();
-                customEmail = getCustomizedEmail(source.getSourceClientId().getPath(), EmailType.CLAIM);
-            }
-
+                customEmail = getCustomizedEmail(createdProfile.getOrcidHistory().getSource().retrieveSourcePath(), EmailType.CLAIM);
+            } 
         }
 
+        String email = createdProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue().trim();
         String emailName = deriveEmailFriendlyName(createdProfile);
         String orcid = createdProfile.getOrcidIdentifier().getPath();
-        String verificationUrl = createClaimVerificationUrl(createdProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(),
+        String verificationUrl = createClaimVerificationUrl(email,
                 orcidUrlManager.getBaseUrl());
-        String email = createdProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+        
 
         String creatorName = "";
         if (source != null) {
             if (source.getSourceName() != null && source.getSourceName().getContent() != null) {
                 creatorName = source.getSourceName().getContent();
-            } else if (source.getSourceClientId() != null && source.getSourceClientId().getPath() != null) {
-                creatorName = source.getSourceClientId().getPath();
-            } else if (source.getSourceOrcid() != null && source.getSourceOrcid().getPath() != null) {
-                creatorName = source.getSourceOrcid().getPath();
-            }
+            } else if (!PojoUtil.isEmpty(source.retrieveSourcePath())) {
+                creatorName = source.retrieveSourcePath();
+            } 
         }
 
         String subject = null;

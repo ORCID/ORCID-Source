@@ -105,5 +105,7 @@ public interface ProfileFundingDao extends GenericDao<ProfileFundingEntity, Long
     
     List<BigInteger> findFundingNeedingExternalIdentifiersMigration(int chunkSize);
     
-    void setFundingExternalIdentifiersInJson(BigInteger id, String extIdsJson);        
+    void setFundingExternalIdentifiersInJson(BigInteger id, String extIdsJson);    
+    
+    void removeFundingByClientSourceId(String clientSourceId);
 }
