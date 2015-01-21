@@ -63,4 +63,14 @@ abstract public class MemberApiServiceImplBase {
     public Response viewAddActivitiesNotificationsXml(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewActivities(orcid);
     }
+    
+    @GET
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(ADD_ACTIVITIES_PATH)
+    public Response viewAddActivitiesNotificationsJson(@PathParam("orcid") String orcid) {
+        return serviceDelegator.viewActivities(orcid);
+    }
+    
+    
+
 }

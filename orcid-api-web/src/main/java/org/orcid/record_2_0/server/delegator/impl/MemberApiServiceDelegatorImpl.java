@@ -80,8 +80,8 @@ import org.springframework.stereotype.Component;
 @Component("orcidT2ServiceDelegator")
 public class MemberApiServiceDelegatorImpl implements MemberApiServiceDelegator {
 
-    @Resource(name = "orcidProfileManager")
-    private OrcidProfileManager orcidProfileManager;
+//    @Resource(name = "orcidProfileManager")
+//    private OrcidProfileManager orcidProfileManager;
 
     @Resource
     private ClientDetailsManager clientDetailsManager;
@@ -111,10 +111,13 @@ public class MemberApiServiceDelegatorImpl implements MemberApiServiceDelegator 
      *         {@link org.orcid.jaxb.model.message.OrcidMessage} within it
      */
     @Override
-    @AccessControl(requiredScope = ScopePathType.ORCID_BIO_READ_LIMITED)
-    public Response findBioDetails(String orcid) {
-        OrcidProfile profile = orcidProfileManager.retrieveClaimedOrcidBio(orcid);
-        return getOrcidMessageResponse(profile, orcid);
+    @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
+    public Response viewActivities(String orcid) {
+        profileEntityManager.findByOrcid(orcid);
+        
+       // OrcidProfile profile = orcidProfileManager.retrieveClaimedOrcidBio(orcid);
+        
+        return null;
     }
 
 }
