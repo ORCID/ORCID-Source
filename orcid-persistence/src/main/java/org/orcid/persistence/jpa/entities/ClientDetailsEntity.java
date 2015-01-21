@@ -454,4 +454,10 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
         return null;
     }
 
+    @Override
+    @Transient
+    public boolean isAutoApprove(String scope) {        
+        return false;
+    }
+
 }

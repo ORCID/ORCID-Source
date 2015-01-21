@@ -24,21 +24,19 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
-       http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2-1.0.xsd">
+       http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2-2.0.xsd">
 
 	<context:annotation-config />
 	
 	<sec:global-method-security pre-post-annotations="enabled" />
 
-	<bean id="authorizationRequestManager" class="org.orcid.core.oauth.service.OrcidAuthorizationRequestManager">
-		<constructor-arg ref="clientDetailsManager" />
-	</bean>
+	<bean id="orcidOAuth2RequestValidator" class="org.orcid.core.oauth.service.OrcidOAuth2RequestValidator" />		
 
 	<bean id="authorizationEndpoint" class="org.orcid.core.oauth.service.OrcidAuthorizationEndpoint">
 		<property name="authorizationCodeServices" ref="orcidAuthorizationCodeService" />
 		<property name="clientDetailsService" ref="clientDetailsManager" />
 		<property name="tokenGranter" ref="authorizationCodeTokenGranter" />
-		<property name="authorizationRequestManager" ref="authorizationRequestManager" />
+		<property name="orcidOAuth2RequestValidator" ref="orcidOAuth2RequestValidator" />
 	</bean>
 
 	<bean id="userDetailsService" class="org.orcid.core.security.OrcidUserDetailsService" />
@@ -250,8 +248,6 @@
 
 	<oauth2:web-expression-handler id="oauthWebExpressionHandler" />
 
-	<bean id="clientDetailsManager" class="org.orcid.core.manager.impl.ClientDetailsManagerImpl" />
-
 	<bean id="oauthAuthenticationEntryPoint"
 		class="org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint">
 		<property name="realmName" value="orcid" />
@@ -278,6 +274,7 @@
 		<constructor-arg ref="orcidAuthorizationCodeService" />
 		<constructor-arg ref="tokenServices" />
 		<constructor-arg ref="clientDetailsManager" />
+		<constructor-arg ref="oAuth2RequestFactory" />
 	</bean>
 
 	<bean id="orcidAuthorizationCodeService"
@@ -308,5 +305,9 @@
 		class="org.orcid.frontend.web.listener.LoginApplicationListener" />
 		
 	<bean id="languagesMap"
-		class="org.orcid.frontend.web.util.LanguagesMap" />		
+		class="org.orcid.frontend.web.util.LanguagesMap" />
+
+	<bean id="oAuth2RequestFactory" class="org.springframework.security.oauth2.provider.request.DefaultOAuth2RequestFactory">
+        <constructor-arg ref="clientDetailsManager"/>
+    </bean>	
 </beans>

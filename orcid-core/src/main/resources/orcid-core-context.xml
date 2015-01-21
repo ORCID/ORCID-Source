@@ -55,15 +55,14 @@
     <bean id="orcidTokenStore" class="org.orcid.core.oauth.service.OrcidTokenStoreServiceImpl" />
 
     <!-- Use the provided token random token services to actually create the values, and plugin our tokenStore etc -->
-    <bean id="tokenServices" class="org.orcid.core.oauth.service.OrcidRandomValueTokenServices">
-        <constructor-arg ref="clientDetailsManager"/>
-        <constructor-arg value="3600"/>
-        <constructor-arg value="631138519"/>
-        <property name="tokenStore" ref="orcidTokenStore" />
+    <bean id="tokenServices" class="org.orcid.core.oauth.service.OrcidRandomValueTokenServicesImpl">               
+        <property name="orcidtokenStore" ref="orcidTokenStore" />        
+        <property name="customTokenEnhancer" ref="orcidTokenEnhancer" />
         <property name="supportRefreshToken" value="${org.orcid.core.oauth.supportRefreshToken:false}" />
     </bean>
 	
-
+	<bean id="orcidTokenEnhancer" class="org.orcid.core.oauth.OrcidTokenEnhancer" />	
+	
 	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
 		<property name="host" value="localhost" />
 	</bean>

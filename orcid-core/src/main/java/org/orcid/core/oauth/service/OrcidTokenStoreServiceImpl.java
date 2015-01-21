@@ -47,8 +47,8 @@ import org.springframework.security.oauth2.common.OAuth2RefreshToken;
 import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
-import org.springframework.security.oauth2.provider.DefaultAuthorizationRequest;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.oauth2.provider.token.AuthenticationKeyGenerator;
 import org.springframework.security.oauth2.provider.token.DefaultAuthenticationKeyGenerator;
 import org.springframework.security.oauth2.provider.token.TokenStore;
@@ -226,8 +226,7 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
      * @param userName
      *            the user name to search
      * @return a collection of access tokens
-     */
-    @Override
+     */    
     public Collection<OAuth2AccessToken> findTokensByUserName(String userName) {
         List<OrcidOauth2TokenDetail> details = orcidOauthTokenDetailService.findByUserName(userName);
         List<OAuth2AccessToken> accessTokens = new ArrayList<OAuth2AccessToken>();
@@ -291,10 +290,10 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
         if (details != null) {
             ClientDetailsEntity clientDetailsEntity = details.getClientDetailsEntity();
             Authentication authentication = null;
-            DefaultAuthorizationRequest request = null;
+            AuthorizationRequest request = null;
             if (clientDetailsEntity != null) {
                 Set<String> scopes = OAuth2Utils.parseParameterList(details.getScope());
-                request = new DefaultAuthorizationRequest(clientDetailsEntity.getClientId(), scopes);
+                request = new AuthorizationRequest(clientDetailsEntity.getClientId(), scopes);
                 request.setAuthorities(clientDetailsEntity.getAuthorities());
                 Set<String> resourceIds = new HashSet<>();
                 resourceIds.add(details.getResourceId());
@@ -312,7 +311,7 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
 
     private OrcidOauth2TokenDetail populatePropertiesFromTokenAndAuthentication(OAuth2AccessToken token, OAuth2Authentication authentication,
             OrcidOauth2TokenDetail detail) {
-        AuthorizationRequest authorizationRequest = authentication.getAuthorizationRequest();
+        OAuth2Request authorizationRequest = authentication.getOAuth2Request();
         if (detail == null) {
             detail = new OrcidOauth2TokenDetail();
         }
@@ -346,16 +345,20 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
         detail.setApproved(authorizationRequest.isApproved());
         detail.setRedirectUri(authorizationRequest.getRedirectUri());
 
-        detail.setResourceId(OAuth2Utils.formatParameterList(authorizationRequest.getResourceIds()));
+        Set<String> resourceIds = authorizationRequest.getResourceIds();
+        if(resourceIds == null || resourceIds.isEmpty()) {
+            resourceIds = clientDetails.getResourceIds();
+        }
+        
+        detail.setResourceId(OAuth2Utils.formatParameterList(resourceIds));
         detail.setResponseType(OAuth2Utils.formatParameterList(authorizationRequest.getResponseTypes()));
-        detail.setScope(OAuth2Utils.formatParameterList(authorizationRequest.getScope()));
-        detail.setState(authorizationRequest.getState());
+        detail.setScope(OAuth2Utils.formatParameterList(authorizationRequest.getScope()));        
 
         Map<String, Object> additionalInfo = token.getAdditionalInformation();
         if (additionalInfo != null) {
             if (additionalInfo.containsKey(OauthTokensConstants.TOKEN_VERSION)) {
-                String sVersion = (String) additionalInfo.get(OauthTokensConstants.TOKEN_VERSION);
-                detail.setVersion(Long.parseLong(sVersion));
+                String sVersion = String.valueOf(additionalInfo.get(OauthTokensConstants.TOKEN_VERSION));
+                detail.setVersion(Long.valueOf(sVersion));
             } else {
                 // TODO: As of Jan 2015 all tokens will be new tokens, so, we
                 // will have to remove the token version code and
@@ -363,8 +366,8 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
                 detail.setVersion(Long.valueOf(OauthTokensConstants.PERSISTENT_TOKEN));
             }
 
-            if (additionalInfo.containsKey(PERSISTENT)) {
-                boolean isPersistentKey = (Boolean) additionalInfo.get(PERSISTENT);
+            if (additionalInfo.containsKey(OauthTokensConstants.PERSISTENT)) {
+                boolean isPersistentKey = (Boolean) additionalInfo.get(OauthTokensConstants.PERSISTENT);
                 detail.setPersistent(isPersistentKey);
             } else {
                 detail.setPersistent(false);
@@ -374,6 +377,18 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
         }
 
         return detail;
+    }
+
+    @Override
+    public Collection<OAuth2AccessToken> findTokensByClientIdAndUserName(String clientId, String userName) {
+        List<OrcidOauth2TokenDetail> details = orcidOauthTokenDetailService.findByClientIdAndUserName(clientId, userName);
+        List<OAuth2AccessToken> accessTokens = new ArrayList<OAuth2AccessToken>();
+        if (details != null && !details.isEmpty()) {
+            for (OrcidOauth2TokenDetail detail : details) {
+                accessTokens.add(getOauth2AccessTokenFromDetails(detail));
+            }
+        }
+        return accessTokens;
     }
 
 }
