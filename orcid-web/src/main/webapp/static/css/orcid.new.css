@@ -5536,6 +5536,11 @@ ul.oauth-icons li {
 .notifications .archived{
 	background: #F3F3F3;
 }
+
+.notifications .unread{	
+	color: #494A4C;
+	 background: #FFF;
+}
 .notifications tbody>tr{
 	cursor: pointer;
 }
