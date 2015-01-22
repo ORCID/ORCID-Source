@@ -26,7 +26,9 @@ import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.orcid.api.common.exception.OrcidNotFoundException;
 import org.orcid.api.notifications.server.delegator.NotificationsApiServiceDelegator;
+import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.security.visibility.aop.AccessControl;
@@ -34,8 +36,6 @@ import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.notification.Notification;
 import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
 import org.springframework.stereotype.Component;
-
-import com.sun.jersey.api.Responses;
 
 /**
  * 
@@ -68,15 +68,29 @@ public class NotificationsApiServiceDelegatorImpl implements NotificationsApiSer
     public Response findAddActivitiesNotification(String orcid, Long id) {
         Notification notification = notificationManager.findByOrcidAndId(orcid, id);
         if (notification != null) {
-            String notificationSourceId = notification.getSource().retrieveSourcePath();
-            String currentSourceId = sourceManager.retrieveSourceOrcid();
-            if (!notificationSourceId.equals(currentSourceId)) {
-                throw new AccessControlException("This notification does not belong to " + currentSourceId);
-            }
+            checkSource(notification);
             return Response.ok(notification).build();
         } else {
-            return Responses.notFound().build();
+            throw new OrcidNotFoundException("Unable to find notification");
         }
+    }
+
+    private void checkSource(Notification notification) {
+        String notificationSourceId = notification.getSource().retrieveSourcePath();
+        String currentSourceId = sourceManager.retrieveSourceOrcid();
+        if (!notificationSourceId.equals(currentSourceId)) {
+            throw new AccessControlException("This notification does not belong to " + currentSourceId);
+        }
+    }
+
+    @Override
+    @AccessControl(requiredScope = ScopePathType.NOTIFICATION)
+    public Response flagNotificationAsArchived(String orcid, Long id) throws OrcidNotificationAlreadyReadException {
+        Notification notification = notificationManager.flagAsArchived(orcid, id);
+        if (notification == null) {
+            throw new OrcidNotFoundException("Could not find notification with id: " + id + " for ORCID: " + orcid);
+        }
+        return Response.ok(notification).build();
     }
 
     @Override
@@ -84,7 +98,7 @@ public class NotificationsApiServiceDelegatorImpl implements NotificationsApiSer
     public Response addAddActivitiesNotification(UriInfo uriInfo, String orcid, NotificationAddActivities notification) {
         Notification createdNotification = notificationManager.createNotification(orcid, notification);
         try {
-            return Response.created(new URI(uriInfo.getAbsolutePath() + "/" + createdNotification.getPutCode().getPath())).build();
+            return Response.created(new URI(uriInfo.getAbsolutePath() + "/" + createdNotification.getPutCode())).build();
         } catch (URISyntaxException e) {
             throw new RuntimeException("Error constructing URI for add activities notification", e);
         }

@@ -43,7 +43,6 @@ import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.jaxb.model.message.CreationMethod;
-import org.orcid.jaxb.model.message.ExternalIdSource;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.OrcidHistory;
@@ -55,7 +54,6 @@ import org.orcid.jaxb.model.message.SourceClientId;
 import org.orcid.jaxb.model.message.SourceName;
 import org.orcid.jaxb.model.message.SourceOrcid;
 import org.orcid.jaxb.model.message.SubmissionDate;
-import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.WebhookDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -68,8 +66,8 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.stereotype.Component;
 
 /**
@@ -94,10 +92,7 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
     private ProfileEntityManager profileEntityManager;
 
     @Resource
-    private WebhookDao webhookDao;
-
-    @Resource
-    private ProfileDao profileDao;
+    private WebhookDao webhookDao;    
 
     @Override
     public Response viewStatusText() {
@@ -333,7 +328,7 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String clientId = null;
             if (OAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
-                AuthorizationRequest authorizationRequest = ((OAuth2Authentication) authentication).getAuthorizationRequest();
+                OAuth2Request authorizationRequest = ((OAuth2Authentication) authentication).getOAuth2Request();
                 clientId = authorizationRequest.getClientId();
             }
 
@@ -346,18 +341,12 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
                 } else {
                     // Check if the provided external orcid exists
                     Source source = ei.getSource();
-                    SourceOrcid sourceOrcid = source.getSourceOrcid();
+                    String sourceOrcid = source.retrieveSourcePath();
                     if (sourceOrcid != null) {
-                        if (StringUtils.isBlank(sourceOrcid.getPath()) || !profileEntityManager.orcidExists(sourceOrcid.getPath())) {
-                            throw new OrcidNotFoundException("Cannot find external ORCID");
+                        if (StringUtils.isBlank(sourceOrcid) || (!profileEntityManager.orcidExists(sourceOrcid) && !clientDetailsManager.exists(sourceOrcid))) {
+                            throw new OrcidNotFoundException("Cannot find source ORCID");
                         }
-                    }
-                    SourceClientId sourceClientId = source.getSourceClientId();
-                    if (sourceClientId != null) {
-                        if (StringUtils.isBlank(sourceClientId.getPath()) || !clientDetailsManager.exists(sourceClientId.getPath())) {
-                            throw new OrcidNotFoundException("Cannot find client for external ID");
-                        }
-                    }
+                    }                    
                 }
             }
 
@@ -422,7 +411,7 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
         }
         profile.getOrcidHistory().setSubmissionDate(new SubmissionDate(DateUtils.convertToXMLGregorianCalendar(new Date())));
         if (OAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
-            AuthorizationRequest authorizationRequest = ((OAuth2Authentication) authentication).getAuthorizationRequest();
+            OAuth2Request authorizationRequest = ((OAuth2Authentication) authentication).getOAuth2Request();
             Source sponsor = new Source();
             String sponsorId = authorizationRequest.getClientId();
             ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(sponsorId);
@@ -459,12 +448,12 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
             throw new OrcidBadRequestException(String.format("Webhook uri:%s is syntactically incorrect", webhookUri));
         }
 
-        ProfileEntity profile = profileDao.find(orcid);
+        ProfileEntity profile = profileEntityManager.findByOrcid(orcid);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         ClientDetailsEntity clientDetails = null;
         String clientId = null;
         if (OAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
-            AuthorizationRequest authorizationRequest = ((OAuth2Authentication) authentication).getAuthorizationRequest();
+            OAuth2Request authorizationRequest = ((OAuth2Authentication) authentication).getOAuth2Request();
             clientId = authorizationRequest.getClientId();
             clientDetails = clientDetailsManager.findByClientId(clientId);
         }
@@ -504,7 +493,7 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.WEBHOOK)
     public Response unregisterWebhook(UriInfo uriInfo, String orcid, String webhookUri) {
-        ProfileEntity profile = profileDao.find(orcid);
+        ProfileEntity profile = profileEntityManager.findByOrcid(orcid);
         if (profile != null) {
             WebhookEntityPk webhookPk = new WebhookEntityPk(profile, webhookUri);
             WebhookEntity webhook = webhookDao.find(webhookPk);
@@ -514,7 +503,7 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
                 String clientId = null;
                 if (OAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
-                    AuthorizationRequest authorizationRequest = ((OAuth2Authentication) authentication).getAuthorizationRequest();
+                    OAuth2Request authorizationRequest = ((OAuth2Authentication) authentication).getOAuth2Request();
                     clientId = authorizationRequest.getClientId();
                 }
                 // Check if user can unregister this webhook

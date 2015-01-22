@@ -29,7 +29,6 @@ import javax.xml.bind.annotation.XmlRegistry;
 import javax.xml.namespace.QName;
 
 import org.orcid.jaxb.model.common.OrcidId;
-import org.orcid.jaxb.model.common.PutCode;
 import org.orcid.jaxb.model.common.Source;
 import org.orcid.jaxb.model.notification.NotificationType;
 import org.orcid.jaxb.model.notification.custom.NotificationCustom;
@@ -74,14 +73,6 @@ public class ObjectFactory {
      */
     public OrcidId createOrcidId() {
         return new OrcidId();
-    }
-
-    /**
-     * Create an instance of {@link PutCode }
-     * 
-     */
-    public PutCode createPutCode() {
-        return new PutCode();
     }
 
     /**

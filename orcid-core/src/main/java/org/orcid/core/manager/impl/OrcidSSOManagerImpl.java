@@ -39,9 +39,7 @@ import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.ClientRedirectDao;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.ProfileDao;
-import org.orcid.persistence.jpa.entities.ClientAuthorisedGrantTypeEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.ClientGrantedAuthorityEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
 import org.orcid.persistence.jpa.entities.ClientScopeEntity;
 import org.orcid.persistence.jpa.entities.ClientSecretEntity;
@@ -118,7 +116,7 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
             for (String uri : redirectUris) {
                 redirectUrisSet.add(uri);
             }
-            ClientDetailsEntity clientDetailsEntity = clientDetailsManager.createClientDetails(orcid, name, description, website, (ClientType) null, clientScopes,
+            ClientDetailsEntity clientDetailsEntity = clientDetailsManager.createClientDetails(orcid, name, description, website, ClientType.PUBLIC_CLIENT, clientScopes,
                     clientResourceIds, getClientAuthorizedGrantTypes(), getClientRegisteredRedirectUris(redirectUrisSet), getClientGrantedAuthorities());
             clientId = clientDetailsEntity.getId();
         }

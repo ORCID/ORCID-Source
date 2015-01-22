@@ -175,7 +175,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     private void flagAsSent(List<Notification> notifications) {
         List<Long> notificationIds = new ArrayList<>();
         for (Notification notification : notifications) {
-            notificationIds.add(Long.valueOf(notification.getPutCode().getPath()));
+            notificationIds.add(notification.getPutCode());
         }
         notificationDao.flagAsSent(notificationIds);
     }

@@ -180,5 +180,16 @@ public class ProfileWorkDaoImpl extends GenericDaoImpl<ProfileWorkEntity, Profil
         return query.executeUpdate() > 0 ? true : false;
     }
 
+    /**
+     * Deletes all works where the source matches the give app id
+     * @param clientSourceId the app id
+     * */
+    @Override
+    @Transactional
+    public void removeWorksByClientSourceId(String clientSourceId) {
+        Query query = entityManager.createNativeQuery("DELETE FROM profile_work WHERE client_source_id=:clientSourceId");
+        query.setParameter("clientSourceId", clientSourceId);
+        query.executeUpdate();        
+    }
 
 }

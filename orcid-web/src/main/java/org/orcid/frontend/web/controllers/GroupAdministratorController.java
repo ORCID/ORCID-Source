@@ -30,6 +30,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.orcid.core.exception.OrcidClientGroupManagementException;
+import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.OrcidClientGroupManager;
 import org.orcid.core.manager.OrcidSSOManager;
 import org.orcid.core.manager.ThirdPartyLinkManager;
@@ -40,6 +41,7 @@ import org.orcid.jaxb.model.message.ErrorDesc;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.pojo.ajaxForm.Client;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RedirectUri;
@@ -74,6 +76,9 @@ public class GroupAdministratorController extends BaseWorkspaceController {
 
     @Resource
     private ThirdPartyLinkManager thirdPartyLinkManager;
+    
+    @Resource
+    private ClientDetailsManager clientDetailsManager;
 
     @RequestMapping
     public ModelAndView manageClients() {
@@ -382,7 +387,13 @@ public class GroupAdministratorController extends BaseWorkspaceController {
      * */
     @RequestMapping(value = "/reset-client-secret.json", method = RequestMethod.POST)
     public @ResponseBody
-    boolean resetClientSecret(HttpServletRequest request, @RequestBody String clientId) {
+    boolean resetClientSecret(@RequestBody String clientId) {
+        //Verify this client belongs to the member
+        ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
+        if(clientDetails == null || clientDetails.getGroupProfile() == null)
+            return false;
+        if(!clientDetails.getGroupProfile().getId().equals(getCurrentUserOrcid()))
+            return false;
         return orcidSSOManager.resetClientSecret(clientId);
     }
 }

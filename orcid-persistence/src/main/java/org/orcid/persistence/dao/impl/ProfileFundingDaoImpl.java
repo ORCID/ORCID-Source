@@ -198,4 +198,16 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
         query.setParameter("extIdsJson", extIdsJson);
         query.executeUpdate();
     }
+    
+    /**
+     * Deletes all funding where the source matches the give app id
+     * @param clientSourceId the app id
+     * */
+    @Override
+    @Transactional
+    public void removeFundingByClientSourceId(String clientSourceId) {
+        Query query = entityManager.createNativeQuery("DELETE FROM profile_funding WHERE client_source_id=:clientSourceId");
+        query.setParameter("clientSourceId", clientSourceId);
+        query.executeUpdate();
+    }
 }

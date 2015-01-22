@@ -158,4 +158,9 @@
         </addColumn>
     </changeSet>
     
+    <changeSet id="UPDATE-NOTIFICATION-ACTIVITY-TYPE" author="Will Simpson" dbms="postgresql">
+        <!-- Not live yet, so set all test data to employment if not a valid type -->
+        <sql>UPDATE notification_activity SET activity_type = 'EMPLOYMENT' WHERE activity_type NOT IN ('EDUCATION', 'EMPLOYMENT', 'FUNDING', 'WORK');</sql>
+    </changeSet>
+    
 </databaseChangeLog>

@@ -24,6 +24,7 @@
 package org.orcid.jaxb.model.notification.addactivities;
 
 import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -32,6 +33,8 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import org.orcid.jaxb.model.common.ExternalIdType;
 
 /**
  * <p>
@@ -63,9 +66,7 @@ public class ExternalId implements Serializable {
 
     private final static long serialVersionUID = 1L;
     @XmlElement(required = true)
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    @XmlSchemaType(name = "NCName")
-    protected String externalIdType;
+    protected ExternalIdType externalIdType;
     @XmlElement(required = true)
     @XmlSchemaType(name = "anyURI")
     protected String externalIdValue;
@@ -73,10 +74,10 @@ public class ExternalId implements Serializable {
     /**
      * Gets the value of the externalIdType property.
      * 
-     * @return possible object is {@link String }
+     * @return possible object is {@link ExternalIdType }
      * 
      */
-    public String getExternalIdType() {
+    public ExternalIdType getExternalIdType() {
         return externalIdType;
     }
 
@@ -84,10 +85,10 @@ public class ExternalId implements Serializable {
      * Sets the value of the externalIdType property.
      * 
      * @param value
-     *            allowed object is {@link String }
+     *            allowed object is {@link ExternalIdType }
      * 
      */
-    public void setExternalIdType(String value) {
+    public void setExternalIdType(ExternalIdType value) {
         this.externalIdType = value;
     }
 
