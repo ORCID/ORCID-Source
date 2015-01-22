@@ -1754,12 +1754,3 @@ function tabletDesktopActionButtons($event) {
         $('.action-button-bar').removeClass('tablet-desktop-display');
     }
 };
-
-$(document).ready(function(){
-	$('iframe.contentDocument').ready(function(){
-		$('.nIframe').iFrameResize({
-		    autoResize: true,
-		    log: true
-		});	
-	});
-});
