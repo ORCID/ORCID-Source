@@ -63,7 +63,7 @@ import java.util.Map;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "works" })
+@XmlType(propOrder = { "work" })
 @XmlRootElement(name = "summary")
 public class ActivitiesSummary implements Serializable, ActivitiesContainer {
 
