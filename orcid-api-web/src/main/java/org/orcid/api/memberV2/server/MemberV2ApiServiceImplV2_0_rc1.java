@@ -20,7 +20,7 @@ import javax.ws.rs.Path;
 
 /**
  * 
- * @author Will Simpson
+ * @author rcpeters
  * 
  */
 @Path("/v2.0_rc1")

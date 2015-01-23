@@ -43,7 +43,7 @@ public class OrcidApiConstants {
     public static final String FUNDINGS = "/{orcid}/fundings";
     public static final String EDUCATIONS = "/{orcid}/educations";
     public static final String EMPLOYMENT = "/{orcid}/employments";
-    public static final String putCode = "/{putCode}"; // concated on the end of other paths like FUNDINGS
+    public static final String PUTCODE = "/{putCode}"; // concated on the end of other paths like FUNDINGS
     public static final String ADD_ACTIVITIES_FLAG_AS_ARCHIVED_PATH = "/add-activities/{id}/archive";
 
     public static final String ORCID_XML = "application/orcid+xml; qs=3";

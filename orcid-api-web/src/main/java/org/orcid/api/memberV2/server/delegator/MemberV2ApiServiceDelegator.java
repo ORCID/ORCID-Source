@@ -20,6 +20,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
+import org.orcid.jaxb.model.record.Work;
 
 /**
  * 
@@ -31,5 +32,13 @@ public interface MemberV2ApiServiceDelegator {
     Response viewStatusText();
 
     Response viewActivities(String orcid);
+    
+    Response viewWork(String orcid, String putCode);
+    
+    Response createWork(String orcid, Work work);
+    
+    Response updateWork(String orcid, Work work);
+    
+    Response deleteWork(String orcid, String putCode);
 
 }

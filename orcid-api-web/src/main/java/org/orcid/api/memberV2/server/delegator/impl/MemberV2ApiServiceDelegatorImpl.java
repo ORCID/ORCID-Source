@@ -20,7 +20,9 @@ import static org.orcid.api.common.OrcidApiConstants.*;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.persistence.PersistenceException;
@@ -51,6 +53,9 @@ import org.orcid.jaxb.model.message.SourceName;
 import org.orcid.jaxb.model.message.SourceOrcid;
 import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.jaxb.model.record.ActivitiesSummary;
+import org.orcid.jaxb.model.record.Title;
+import org.orcid.jaxb.model.record.Work;
+import org.orcid.jaxb.model.record.WorkTitle;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.WebhookDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -118,7 +123,46 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         
         // hard coding for now for testing
         ActivitiesSummary as = new ActivitiesSummary();
+        Work w = new Work();
+        WorkTitle wt = new WorkTitle();
+        wt.setTitle(new Title("Test"));
+        w.setWorkTitle(wt);
+        List<Work> works = new ArrayList<Work>();
+        works.add(w);
+        as.setOrcidWork(works);
         return Response.ok(as).build();
     }
+
+    @Override
+    public Response viewWork(String orcid, String putCode) {
+        // TODO Auto-generated method stub
+        Work w = new Work();
+        return Response.ok(w).build();
+    }
+
+    @Override
+    public Response createWork(String orcid, Work work) {
+        // TODO Auto-generated method stub
+        Work w = new Work();
+        // TODO Wrong Response
+        return Response.ok(w).build();
+    }
+
+    @Override
+    public Response updateWork(String orcid, Work work) {
+        // TODO Auto-generated method stub
+        Work w = new Work();
+        // TODO Wrong Response
+        return Response.ok(w).build();
+    }
+
+    @Override
+    public Response deleteWork(String orcid, String putCode) {
+        // TODO Auto-generated method stub
+        Work w = new Work();
+        // TODO Wrong Response?
+        return Response.ok().build();
+    }
+    
 
 }
