@@ -304,6 +304,7 @@ public class OauthConfirmAccessController extends BaseController {
     OauthAuthorizeForm authenticateAndAuthorize(HttpServletRequest request, HttpServletResponse response, @RequestBody OauthAuthorizeForm form) {
         // Clean form errors
         form.setErrors(new ArrayList<String>());
+        SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
         if (form.getApproved()) {
             // Validate name and password
             validateUserNameAndPassword(form);
@@ -315,8 +316,7 @@ public class OauthConfirmAccessController extends BaseController {
                     SimpleSessionStatus status = new SimpleSessionStatus();
                     Map<String, Object> model = new HashMap<String, Object>();
                     Map<String, String> params = new HashMap<String, String>();
-                    // Put all request params into the params
-                    SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
+                    // Put all request params into the params                    
                     copyRequestParameters(savedRequest, params);
                     // Then, put the custom authorization params
                     params.put(CLIENT_ID_PARAM, form.getClientId().getValue());
@@ -369,8 +369,14 @@ public class OauthConfirmAccessController extends BaseController {
                     form.getErrors().add(getMessage("orcid.frontend.security.bad_credentials"));
                 }
             }
-        } else {
-            form.setRedirectUri(Text.valueOf(buildDenyRedirectUri(form.getRedirectUri().getValue())));
+        } else {            
+            String stateParam = null;
+            
+            if(savedRequest.getParameterMap() != null && savedRequest.getParameterValues("state") != null) {
+                if(savedRequest.getParameterValues("state").length > 0)
+                    stateParam = savedRequest.getParameterValues("state")[0];
+            }
+            form.setRedirectUri(Text.valueOf(buildDenyRedirectUri(form.getRedirectUri().getValue(), stateParam)));
         }
 
         return form;
@@ -393,7 +399,7 @@ public class OauthConfirmAccessController extends BaseController {
 
     @RequestMapping(value = "/custom/register.json", method = RequestMethod.POST)
     public @ResponseBody
-    OauthRegistration checkRegisterForm(HttpServletRequest request, @RequestBody OauthRegistration form) {
+    OauthRegistration checkRegisterForm(HttpServletRequest request, HttpServletResponse response, @RequestBody OauthRegistration form) {
         form.setErrors(new ArrayList<String>());
 
         if (form.getApproved()) {
@@ -410,7 +416,14 @@ public class OauthConfirmAccessController extends BaseController {
             copyErrors(form.getPasswordConfirm(), form);
             copyErrors(form.getTermsOfUse(), form);
         } else {
-            form.setRedirectUri(Text.valueOf(buildDenyRedirectUri(form.getRedirectUri().getValue())));
+            SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
+            String stateParam = null;
+            
+            if(savedRequest.getParameterMap() != null && savedRequest.getParameterValues("state") != null) {
+                if(savedRequest.getParameterValues("state").length > 0)
+                    stateParam = savedRequest.getParameterValues("state")[0];
+            }
+            form.setRedirectUri(Text.valueOf(buildDenyRedirectUri(form.getRedirectUri().getValue(), stateParam)));
         }
         return form;
     }
@@ -422,7 +435,7 @@ public class OauthConfirmAccessController extends BaseController {
 
         if (form.getApproved()) {
             // Check there are no errors
-            checkRegisterForm(request, form);
+            checkRegisterForm(request, response, form);
             if (form.getErrors() != null && form.getErrors().isEmpty()) {
                 // Register user
                 registrationController.createMinimalRegistration(request, RegistrationController.toProfile(form));
@@ -492,7 +505,7 @@ public class OauthConfirmAccessController extends BaseController {
                 form.setRedirectUri(Text.valueOf(view.getUrl()));
             }
         } else {
-            form.setRedirectUri(Text.valueOf(buildDenyRedirectUri(form.getRedirectUri().getValue())));
+            form.setRedirectUri(Text.valueOf(buildDenyRedirectUri(form.getRedirectUri().getValue(), request.getParameter("state"))));
         }
 
         return form;
@@ -545,7 +558,7 @@ public class OauthConfirmAccessController extends BaseController {
      *            Redirect uri
      * @return the redirect uri string with the deny params
      * */
-    private String buildDenyRedirectUri(String redirectUri) {
+    private String buildDenyRedirectUri(String redirectUri, String stateParam) {        
         if (!PojoUtil.isEmpty(redirectUri)) {
             if (redirectUri.contains("?")) {
                 redirectUri = redirectUri.concat("&error=access_denied&error_description=User denied access");
@@ -553,6 +566,8 @@ public class OauthConfirmAccessController extends BaseController {
                 redirectUri = redirectUri.concat("?error=access_denied&error_description=User denied access");
             }
         }
+        if(!PojoUtil.isEmpty(stateParam))
+            redirectUri += "&state=" + stateParam;
         return redirectUri;
     }
 
