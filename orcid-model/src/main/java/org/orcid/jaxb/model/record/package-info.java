@@ -21,6 +21,18 @@
 // Generated on: 2014.07.22 at 06:46:00 PM BST 
 //
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.orcid.org/ns/record", xmlns = { @javax.xml.bind.annotation.XmlNs(prefix = "record", namespaceURI = "http://www.orcid.org/ns/record"), @javax.xml.bind.annotation.XmlNs(prefix = "activities", namespaceURI = "http://www.orcid.org/ns/activities"), @javax.xml.bind.annotation.XmlNs(prefix = "work", namespaceURI = "http://www.orcid.org/ns/work")}, elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.orcid.org/ns/record", xmlns = {
+        @javax.xml.bind.annotation.XmlNs(prefix = "internal", namespaceURI = "http://www.orcid.org/ns/internal"),
+        @javax.xml.bind.annotation.XmlNs(prefix = "person", namespaceURI = "http://www.orcid.org/ns/person"),
+        @javax.xml.bind.annotation.XmlNs(prefix = "common", namespaceURI = "http://www.orcid.org/ns/common"),
+        @javax.xml.bind.annotation.XmlNs(prefix = "work", namespaceURI = "http://www.orcid.org/ns/work"),
+        @javax.xml.bind.annotation.XmlNs(prefix = "funding", namespaceURI = "http://www.orcid.org/ns/funding"),
+        @javax.xml.bind.annotation.XmlNs(prefix = "education", namespaceURI = "http://www.orcid.org/ns/education"),
+        @javax.xml.bind.annotation.XmlNs(prefix = "employment", namespaceURI = "http://www.orcid.org/ns/employment"),
+        @javax.xml.bind.annotation.XmlNs(prefix = "deprecated", namespaceURI = "http://www.orcid.org/ns/deprecated"),
+        @javax.xml.bind.annotation.XmlNs(prefix = "activities", namespaceURI = "http://www.orcid.org/ns/activities"),
+        @javax.xml.bind.annotation.XmlNs(prefix = "history", namespaceURI = "http://www.orcid.org/ns/history"),
+        @javax.xml.bind.annotation.XmlNs(prefix = "record", namespaceURI = "http://www.orcid.org/ns/record"),
+        @javax.xml.bind.annotation.XmlNs(prefix = "preferences", namespaceURI = "http://www.orcid.org/ns/preferences") }, elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.orcid.jaxb.model.record;
 
