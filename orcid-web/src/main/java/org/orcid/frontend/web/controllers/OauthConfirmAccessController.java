@@ -372,7 +372,7 @@ public class OauthConfirmAccessController extends BaseController {
         } else {            
             String stateParam = null;
             
-            if(savedRequest.getParameterMap() != null && savedRequest.getParameterValues("state") != null) {
+            if(savedRequest != null && savedRequest.getParameterMap() != null && savedRequest.getParameterValues("state") != null) {
                 if(savedRequest.getParameterValues("state").length > 0)
                     stateParam = savedRequest.getParameterValues("state")[0];
             }
@@ -419,7 +419,7 @@ public class OauthConfirmAccessController extends BaseController {
             SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
             String stateParam = null;
             
-            if(savedRequest.getParameterMap() != null && savedRequest.getParameterValues("state") != null) {
+            if(savedRequest != null && savedRequest.getParameterMap() != null && savedRequest.getParameterValues("state") != null) {
                 if(savedRequest.getParameterValues("state").length > 0)
                     stateParam = savedRequest.getParameterValues("state")[0];
             }
