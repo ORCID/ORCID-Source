@@ -33,7 +33,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.orcid.jaxb.model.message.OrcidMessage;
 
 /**
  * <p>
@@ -47,45 +46,46 @@ import org.orcid.jaxb.model.message.OrcidMessage;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "putCode", "workTitle", "journalTitle", "shortDescription", "citation", "workType", "publicationDate", "externalIdentifiers", "url",
+@XmlType(propOrder = { "putCode", "title", "journalTitle", "shortDescription", "citation", "type", "publicationDate", "externalIdentifiers", "url",
         "contributors", "source", "createdDate", "lastModifiedDate", "languageCode", "country" })
 @XmlRootElement(name = "work", namespace = "http://www.orcid.org/ns/work")
 public class Work implements VisibilityType, Activity, Serializable {
 
     private static final long serialVersionUID = 1L;
-    @XmlElement(name = "title", namespace = "http://www.orcid.org/ns/work")
-    protected WorkTitle workTitle;
-    @XmlElement(name = "journalTitle", namespace = "http://www.orcid.org/ns/work")
+    @XmlElement(namespace = "http://www.orcid.org/ns/work")
+    protected WorkTitle title;
+    @XmlElement(namespace = "http://www.orcid.org/ns/work")
     protected Title journalTitle;
-    @XmlElement(name = "shortDescription", namespace = "http://www.orcid.org/ns/work")
+    @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected String shortDescription;
-    @XmlElement(name = "citation", namespace = "http://www.orcid.org/ns/work")
+    @XmlElement(namespace = "http://www.orcid.org/ns/work")
     protected Citation citation;
-    @XmlElement(name = "type", namespace = "http://www.orcid.org/ns/work")
-    protected WorkType workType;
-    @XmlElement(name = "publicationDate")
+    @XmlElement(namespace = "http://www.orcid.org/ns/work")
+    protected WorkType type;
+    @XmlElement(namespace = "http://www.orcid.org/ns/work")
     protected PublicationDate publicationDate;
-    @XmlElement(name = "externalIdentifiers")
+    @XmlElement(namespace = "http://www.orcid.org/ns/work")
     protected WorkExternalIdentifiers externalIdentifiers;
+    @XmlElement(namespace = "http://www.orcid.org/ns/work")
     protected Url url;
-    @XmlElement(name = "contributors")
+    @XmlElement(namespace = "http://www.orcid.org/ns/work")
     protected WorkContributors contributors;
-    @XmlElement(name = "languageCode")
+    @XmlElement(name = "languageCode", namespace = "http://www.orcid.org/ns/common")
     protected String languageCode;
-    @XmlElement(name = "country")
+    @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Country country;
     /*
      * @deprecated replaced with source in 1.2_rc6 and greater
      */
-    @XmlElement(name = "source")
+    @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Source source;
-    @XmlAttribute(name = "putCode")
+    @XmlAttribute(namespace = "http://www.orcid.org/ns/common")
     protected String putCode;
-    @XmlAttribute
+    @XmlAttribute (namespace = "http://www.orcid.org/ns/common")
     protected Visibility visibility;
-    @XmlElement(name = "lastModifiedDate")
+    @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected LastModifiedDate lastModifiedDate;
-    @XmlElement(name = "createdDate")
+    @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected CreatedDate createdDate;
 
     /**
@@ -116,7 +116,7 @@ public class Work implements VisibilityType, Activity, Serializable {
      * 
      */
     public WorkTitle getWorkTitle() {
-        return workTitle;
+        return title;
     }
 
     /**
@@ -127,7 +127,7 @@ public class Work implements VisibilityType, Activity, Serializable {
      * 
      */
     public void setWorkTitle(WorkTitle value) {
-        this.workTitle = value;
+        this.title = value;
     }
 
     /**
@@ -179,7 +179,7 @@ public class Work implements VisibilityType, Activity, Serializable {
      * 
      */
     public WorkType getWorkType() {
-        return workType;
+        return type;
     }
 
     /**
@@ -190,7 +190,7 @@ public class Work implements VisibilityType, Activity, Serializable {
      * 
      */
     public void setWorkType(WorkType value) {
-        this.workType = value;
+        this.type = value;
     }
 
     /**
@@ -509,8 +509,8 @@ public class Work implements VisibilityType, Activity, Serializable {
         result = prime * result + ((contributors == null) ? 0 : contributors.hashCode());
         result = prime * result + ((externalIdentifiers == null) ? 0 : externalIdentifiers.hashCode());
         result = prime * result + ((source == null) ? 0 : source.hashCode());
-        result = prime * result + ((workTitle == null) ? 0 : workTitle.hashCode());
-        result = prime * result + ((workType == null) ? 0 : workType.hashCode());
+        result = prime * result + ((title == null) ? 0 : title.hashCode());
+        result = prime * result + ((type == null) ? 0 : type.hashCode());
         result = prime * result + ((journalTitle == null) ? 0 : journalTitle.hashCode());
         result = prime * result + ((languageCode == null) ? 0 : languageCode.hashCode());
         result = prime * result + ((country == null) ? 0 : country.hashCode());
@@ -587,12 +587,12 @@ public class Work implements VisibilityType, Activity, Serializable {
                 return false;
         } else if (!source.equals(other.source))
             return false;
-        if (workTitle == null) {
-            if (other.workTitle != null)
+        if (title == null) {
+            if (other.title != null)
                 return false;
-        } else if (!workTitle.equals(other.workTitle))
+        } else if (!title.equals(other.title))
             return false;
-        if (workType != other.workType)
+        if (type != other.type)
             return false;
 
         if (journalTitle == null) {

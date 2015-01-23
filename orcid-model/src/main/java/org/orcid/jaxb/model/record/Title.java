@@ -48,7 +48,7 @@ import java.io.Serializable;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "content" })
-@XmlRootElement(name = "title")
+@XmlRootElement(name = "title", namespace = "http://www.orcid.org/ns/common")
 public class Title implements Serializable {
 
     /**

@@ -40,7 +40,7 @@ import java.io.Serializable;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "content" })
-@XmlRootElement(name = "subtitle")
+@XmlRootElement(name = "subtitle", namespace = "http://www.orcid.org/ns/common")
 public class Subtitle implements Serializable {
 
     /**
