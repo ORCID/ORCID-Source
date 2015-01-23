@@ -1295,7 +1295,7 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) 
                     var updated = data;
                     for(var i = 0;  i < serv.notifications.length; i++){
                         var existing = serv.notifications[i];
-                        if(existing.putCode.path === updated.putCode.path){
+                        if(existing.putCode === updated.putCode){
                             existing.readDate = updated.readDate;
                         }
                     }
@@ -1316,7 +1316,7 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) 
                     var updated = data;
                     for(var i = 0;  i < serv.notifications.length; i++){
                         var existing = serv.notifications[i];
-                        if(existing.putCode.path === updated.putCode.path){
+                        if(existing.putCode === updated.putCode){
                             serv.notifications.splice(i, 1);
                             if(serv.firstResult > 0){
                                 serv.firstResult--;
