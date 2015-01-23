@@ -174,30 +174,11 @@ public class PerActivityAPINewScopesTest {
 
     @Test
     public void addWorkTest() throws Exception {
+        String userOrcid = user.getOrcidIdentifier().getPath();
         String accessToken = oauthHelper.obtainAccessToken(client.getClientId(), client.getClientSecret(), "/orcid-works/read-limited /activities/update", email, password, getRedirectUri(), true);
-        OrcidMessage orcidMessage = new OrcidMessage();
-        orcidMessage.setMessageVersion(OrcidMessage.DEFAULT_VERSION);
-        OrcidProfile orcidProfile = new OrcidProfile();
-        orcidMessage.setOrcidProfile(orcidProfile);
-        OrcidActivities orcidActivities = new OrcidActivities();
-        orcidProfile.setOrcidActivities(orcidActivities);
-        OrcidWorks orcidWorks = new OrcidWorks();
-        orcidActivities.setOrcidWorks(orcidWorks);
-        OrcidWork orcidWork = new OrcidWork();
-        orcidWorks.getOrcidWork().add(orcidWork);
-        orcidWork.setWorkType(WorkType.JOURNAL_ARTICLE);
-        WorkTitle workTitle = new WorkTitle();
-        orcidWork.setWorkTitle(workTitle);
-        WorkExternalIdentifier wei = new WorkExternalIdentifier();
-        wei.setWorkExternalIdentifierId(new WorkExternalIdentifierId("1"));
-        wei.setWorkExternalIdentifierType(WorkExternalIdentifierType.DOI);
-        WorkExternalIdentifiers extIds = new WorkExternalIdentifiers();
-        extIds.getWorkExternalIdentifier().add(wei);
-        orcidWork.setWorkExternalIdentifiers(extIds);
-        workTitle.setTitle(new Title("Work added by integration test"));
-        ClientResponse clientResponse = oauthT2Client.addWorksXml(user.getOrcidIdentifier().getPath(), orcidMessage, accessToken);
-        assertEquals(201, clientResponse.getStatus());
-        ClientResponse response = oauthT2Client.viewWorksDetailsXml(user.getOrcidIdentifier().getPath(), accessToken);
+        String workTitle = addWork(userOrcid, accessToken);
+        
+        ClientResponse response = oauthT2Client.viewWorksDetailsXml(userOrcid, accessToken);
         assertNotNull(response);
         assertEquals(200, response.getStatus());
         assertEquals("application/vnd.orcid+xml; charset=UTF-8; qs=5", response.getType().toString());
@@ -208,64 +189,19 @@ public class PerActivityAPINewScopesTest {
         assertNotNull(orcidMessageWithNewWork.getOrcidProfile().getOrcidActivities().getOrcidWorks());
         assertNotNull(orcidMessageWithNewWork.getOrcidProfile().getOrcidActivities().getOrcidWorks().getOrcidWork());
         assertEquals(1, orcidMessageWithNewWork.getOrcidProfile().getOrcidActivities().getOrcidWorks().getOrcidWork().size());
-        assertEquals(workTitle, orcidMessageWithNewWork.getOrcidProfile().getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getWorkTitle());
+        assertNotNull(orcidMessageWithNewWork.getOrcidProfile().getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getWorkTitle());
+        assertNotNull(orcidMessageWithNewWork.getOrcidProfile().getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getWorkTitle().getTitle());
+        assertEquals(workTitle, orcidMessageWithNewWork.getOrcidProfile().getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getWorkTitle().getTitle().getContent());
         
     }
     
     @Test
     public void addFundingTest() throws InterruptedException, JSONException {
+        String userOrcid = user.getOrcidIdentifier().getPath(); 
         String accessToken = oauthHelper.obtainAccessToken(client.getClientId(), client.getClientSecret(), "/funding/read-limited /activities/update", email, password, getRedirectUri(), true);
-        OrcidMessage orcidMessage = new OrcidMessage();
-        orcidMessage.setMessageVersion(OrcidMessage.DEFAULT_VERSION);
-        OrcidProfile orcidProfile = new OrcidProfile();
-        orcidMessage.setOrcidProfile(orcidProfile);
-        OrcidActivities orcidActivities = new OrcidActivities();
-        orcidProfile.setOrcidActivities(orcidActivities);
-
-        FundingList fundings = new FundingList();
-        Funding funding = new Funding();
-        FundingTitle fundingTitle = new FundingTitle();
-        fundingTitle.setTitle(new Title("My Funding title"));
-        funding.setTitle(fundingTitle);
-        funding.setType(FundingType.SALARY_AWARD);
-        funding.setVisibility(Visibility.PUBLIC);
-        Amount amount = new Amount();
-        amount.setCurrencyCode("CRC");
-        amount.setContent("1,250,000");
-        funding.setAmount(amount);
-        funding.setStartDate(new FuzzyDate(2010, 1, 1));
-        funding.setEndDate(new FuzzyDate(2013, 1, 1));
-        funding.setDescription("My Grant description");
-        funding.setUrl(new Url("http://url.com"));
-        Organization org = new Organization();
-        org.setName("Orcid Integration Test Org");
-        OrganizationAddress add = new OrganizationAddress();
-        add.setCity("My City");
-        add.setCountry(Iso3166Country.CR);
-        org.setAddress(add);
-        funding.setOrganization(org);
-        FundingExternalIdentifier extIdentifier = new FundingExternalIdentifier();
-        extIdentifier.setType(FundingExternalIdentifierType.fromValue("grant_number"));
-        extIdentifier.setUrl(new Url("http://url.com"));
-        extIdentifier.setValue("My value");
-        FundingExternalIdentifiers extIdentifiers = new FundingExternalIdentifiers();
-        extIdentifiers.getFundingExternalIdentifier().add(extIdentifier);
-        funding.setFundingExternalIdentifiers(extIdentifiers);
-        FundingContributors contributors = new FundingContributors();
-        FundingContributor contributor = new FundingContributor();
-        contributor.setCreditName(new CreditName("My Credit Name"));
-        contributor.setContributorEmail(new ContributorEmail("my.email@orcid-integration-test.com"));
-        FundingContributorAttributes attributes = new FundingContributorAttributes();
-        attributes.setContributorRole(FundingContributorRole.LEAD);
-        contributor.setContributorAttributes(attributes);
-        contributors.getContributor().add(contributor);
-        funding.setFundingContributors(contributors);
-        fundings.getFundings().add(funding);
-        orcidMessage.getOrcidProfile().getOrcidActivities().setFundings(fundings);
+        String fundingTitle = addFunding(userOrcid, accessToken);
         
-        ClientResponse clientResponse = oauthT2Client.addFundingXml(user.getOrcidIdentifier().getPath(), orcidMessage, accessToken);
-        assertEquals(201, clientResponse.getStatus());
-        ClientResponse response = oauthT2Client.viewFundingDetailsXml(user.getOrcidIdentifier().getPath(), accessToken);
+        ClientResponse response = oauthT2Client.viewFundingDetailsXml(userOrcid, accessToken);
         assertNotNull(response);
         assertEquals(200, response.getStatus());
         assertEquals("application/vnd.orcid+xml; charset=UTF-8; qs=5", response.getType().toString());
@@ -276,34 +212,18 @@ public class PerActivityAPINewScopesTest {
         assertNotNull(orcidMessageWithNewWork.getOrcidProfile().getOrcidActivities().getFundings());
         assertNotNull(orcidMessageWithNewWork.getOrcidProfile().getOrcidActivities().getFundings().getFundings());
         assertEquals(1, orcidMessageWithNewWork.getOrcidProfile().getOrcidActivities().getFundings().getFundings().size());
-        assertEquals(fundingTitle, orcidMessageWithNewWork.getOrcidProfile().getOrcidActivities().getFundings().getFundings().get(0).getTitle());
+        assertNotNull(orcidMessageWithNewWork.getOrcidProfile().getOrcidActivities().getFundings().getFundings().get(0).getTitle());
+        assertNotNull(orcidMessageWithNewWork.getOrcidProfile().getOrcidActivities().getFundings().getFundings().get(0).getTitle().getTitle());
+        assertEquals(fundingTitle, orcidMessageWithNewWork.getOrcidProfile().getOrcidActivities().getFundings().getFundings().get(0).getTitle().getTitle().getContent());
     }
         
     @Test
     public void addAffiliationTest() throws InterruptedException, JSONException {
+        String userOrcid = user.getOrcidIdentifier().getPath();
         String accessToken = oauthHelper.obtainAccessToken(client.getClientId(), client.getClientSecret(), "/affiliations/read-limited /activities/update", email, password, getRedirectUri(), true);
-        OrcidMessage orcidMessage = new OrcidMessage();
-        orcidMessage.setMessageVersion(OrcidMessage.DEFAULT_VERSION);
-        OrcidProfile orcidProfile = new OrcidProfile();
-        orcidMessage.setOrcidProfile(orcidProfile);
-        OrcidActivities orcidActivities = new OrcidActivities();
-        orcidProfile.setOrcidActivities(orcidActivities);
-        Affiliations affiliations = new Affiliations();
-        orcidActivities.setAffiliations(affiliations);
-        Affiliation affiliation = new Affiliation();
-        affiliations.getAffiliation().add(affiliation);
-        affiliation.setType(AffiliationType.EDUCATION);
-        Organization organization = new Organization();
-        affiliation.setOrganization(organization);
-        organization.setName("Affiliation added by integration test");
-        OrganizationAddress organizationAddress = new OrganizationAddress();
-        organization.setAddress(organizationAddress);
-        organizationAddress.setCity("Edinburgh");
-        organizationAddress.setCountry(Iso3166Country.GB);
+        String orgName = addAffiliation(userOrcid, accessToken);
         
-        ClientResponse clientResponse = oauthT2Client.addAffiliationsXml(user.getOrcidIdentifier().getPath(), orcidMessage, accessToken);
-        assertEquals(201, clientResponse.getStatus());
-        ClientResponse response = oauthT2Client.viewAffiliationDetailsXml(user.getOrcidIdentifier().getPath(), accessToken);
+        ClientResponse response = oauthT2Client.viewAffiliationDetailsXml(userOrcid, accessToken);
         assertNotNull(response);
         assertEquals(200, response.getStatus());
         assertEquals("application/vnd.orcid+xml; charset=UTF-8; qs=5", response.getType().toString());
@@ -315,7 +235,7 @@ public class PerActivityAPINewScopesTest {
         assertNotNull(orcidMessageWithNewWork.getOrcidProfile().getOrcidActivities().getAffiliations().getAffiliation());
         assertEquals(1, orcidMessageWithNewWork.getOrcidProfile().getOrcidActivities().getAffiliations().getAffiliation().size());
         assertNotNull(orcidMessageWithNewWork.getOrcidProfile().getOrcidActivities().getAffiliations().getAffiliation().get(0).getOrganization());
-        assertEquals("Affiliation added by integration test", orcidMessageWithNewWork.getOrcidProfile().getOrcidActivities().getAffiliations().getAffiliation().get(0).getOrganization().getName());
+        assertEquals(orgName, orcidMessageWithNewWork.getOrcidProfile().getOrcidActivities().getAffiliations().getAffiliation().get(0).getOrganization().getName());
     }
     
     @Test
@@ -385,6 +305,198 @@ public class PerActivityAPINewScopesTest {
         assertEquals("ext-id-common-name", extIdFromProfile.getExternalIdCommonName().getContent());
         assertNotNull(extIdFromProfile.getExternalIdReference());
         assertEquals("ext-id-reference", extIdFromProfile.getExternalIdReference().getContent());
+    }
+    
+    @Test
+    public void activitiesReadLimitedTest() throws InterruptedException, JSONException {
+        String userOrcid = user.getOrcidIdentifier().getPath();
+        String accessToken = oauthHelper.obtainAccessToken(client.getClientId(), client.getClientSecret(), "/activities/read-limited /activities/update", email, password, getRedirectUri(), true);
+        String workTitle = addWork(userOrcid, accessToken);
+        String fundingTitle = addFunding(userOrcid, accessToken);
+        String orgName = addAffiliation(userOrcid, accessToken);
+        
+        ClientResponse worksResponse = oauthT2Client.viewWorksDetailsXml(user.getOrcidIdentifier().getPath(), accessToken);
+        assertNotNull(worksResponse);
+        assertEquals(200, worksResponse.getStatus());
+        assertEquals("application/vnd.orcid+xml; charset=UTF-8; qs=5", worksResponse.getType().toString());
+        OrcidMessage orcidMessageWithNewWork = worksResponse.getEntity(OrcidMessage.class);
+        assertNotNull(orcidMessageWithNewWork);
+        assertNotNull(orcidMessageWithNewWork.getOrcidProfile());
+        assertNotNull(orcidMessageWithNewWork.getOrcidProfile().getOrcidActivities());
+        assertNotNull(orcidMessageWithNewWork.getOrcidProfile().getOrcidActivities().getOrcidWorks());
+        assertNotNull(orcidMessageWithNewWork.getOrcidProfile().getOrcidActivities().getOrcidWorks().getOrcidWork());
+        assertTrue(orcidMessageWithNewWork.getOrcidProfile().getOrcidActivities().getOrcidWorks().getOrcidWork().size() > 0);
+        
+        boolean workFound = false;
+        
+        for(OrcidWork work : orcidMessageWithNewWork.getOrcidProfile().getOrcidActivities().getOrcidWorks().getOrcidWork()) {
+            assertNotNull(work.getWorkTitle());
+            assertNotNull(work.getWorkTitle().getTitle());
+            if(workTitle.equals(work.getWorkTitle().getTitle().getContent())) {
+                assertEquals(Visibility.LIMITED, work.getVisibility());
+                workFound = true;
+            }
+        }
+         
+        assertTrue(workFound);
+        
+        ClientResponse fundingResponse = oauthT2Client.viewFundingDetailsXml(userOrcid, accessToken);
+        assertNotNull(fundingResponse);
+        assertEquals(200, fundingResponse.getStatus());
+        assertEquals("application/vnd.orcid+xml; charset=UTF-8; qs=5", fundingResponse.getType().toString());
+        OrcidMessage orcidMessageWithNewFunding = fundingResponse.getEntity(OrcidMessage.class);
+        assertNotNull(orcidMessageWithNewFunding);
+        assertNotNull(orcidMessageWithNewFunding.getOrcidProfile());
+        assertNotNull(orcidMessageWithNewFunding.getOrcidProfile().getOrcidActivities());
+        assertNotNull(orcidMessageWithNewFunding.getOrcidProfile().getOrcidActivities().getFundings());
+        assertNotNull(orcidMessageWithNewFunding.getOrcidProfile().getOrcidActivities().getFundings().getFundings());
+        assertTrue(orcidMessageWithNewFunding.getOrcidProfile().getOrcidActivities().getFundings().getFundings().size() > 0);
+        
+        boolean fundingFound = false;
+        
+        for(Funding funding : orcidMessageWithNewFunding.getOrcidProfile().getOrcidActivities().getFundings().getFundings()) {
+            assertNotNull(funding.getTitle());
+            assertNotNull(funding.getTitle().getTitle());
+            if(fundingTitle.equals(funding.getTitle().getTitle().getContent())) {
+                assertEquals(Visibility.LIMITED, funding.getVisibility());
+                fundingFound = true;
+            }
+        }
+        
+        assertTrue(fundingFound);
+        
+        ClientResponse affiliationResponse = oauthT2Client.viewAffiliationDetailsXml(userOrcid, accessToken);
+        assertNotNull(affiliationResponse);
+        assertEquals(200, affiliationResponse.getStatus());
+        assertEquals("application/vnd.orcid+xml; charset=UTF-8; qs=5", affiliationResponse.getType().toString());
+        OrcidMessage orcidMessageWithNewAffiliation = affiliationResponse.getEntity(OrcidMessage.class);
+        assertNotNull(orcidMessageWithNewAffiliation);
+        assertNotNull(orcidMessageWithNewAffiliation.getOrcidProfile());
+        assertNotNull(orcidMessageWithNewAffiliation.getOrcidProfile().getOrcidActivities());
+        assertNotNull(orcidMessageWithNewAffiliation.getOrcidProfile().getOrcidActivities().getAffiliations());
+        assertNotNull(orcidMessageWithNewAffiliation.getOrcidProfile().getOrcidActivities().getAffiliations().getAffiliation());
+        assertTrue(orcidMessageWithNewAffiliation.getOrcidProfile().getOrcidActivities().getAffiliations().getAffiliation().size() > 0);
+        
+        boolean affiliationFound = false;
+        
+        for(Affiliation affiliation : orcidMessageWithNewAffiliation.getOrcidProfile().getOrcidActivities().getAffiliations().getAffiliation()) {
+            if(orgName.equals(affiliation.getOrganization().getName())) {
+                assertEquals(Visibility.LIMITED, affiliation.getVisibility());
+                affiliationFound = true;
+            }
+        }
+        
+        assertTrue(affiliationFound);
+    }
+    
+    private String addWork(String userOrcid, String token) {
+        String id = String.valueOf(System.currentTimeMillis());
+        OrcidMessage orcidMessage = new OrcidMessage();
+        orcidMessage.setMessageVersion(OrcidMessage.DEFAULT_VERSION);
+        OrcidProfile orcidProfile = new OrcidProfile();
+        orcidMessage.setOrcidProfile(orcidProfile);
+        OrcidActivities orcidActivities = new OrcidActivities();
+        orcidProfile.setOrcidActivities(orcidActivities);
+        OrcidWorks orcidWorks = new OrcidWorks();
+        orcidActivities.setOrcidWorks(orcidWorks);
+        OrcidWork orcidWork = new OrcidWork();
+        orcidWorks.getOrcidWork().add(orcidWork);
+        orcidWork.setWorkType(WorkType.JOURNAL_ARTICLE);
+        orcidWork.setVisibility(Visibility.LIMITED);
+        WorkTitle workTitle = new WorkTitle();
+        orcidWork.setWorkTitle(workTitle);
+        WorkExternalIdentifier wei = new WorkExternalIdentifier();
+        wei.setWorkExternalIdentifierId(new WorkExternalIdentifierId(id));
+        wei.setWorkExternalIdentifierType(WorkExternalIdentifierType.DOI);
+        WorkExternalIdentifiers extIds = new WorkExternalIdentifiers();
+        extIds.getWorkExternalIdentifier().add(wei);
+        orcidWork.setWorkExternalIdentifiers(extIds);
+        workTitle.setTitle(new Title("Work added by integration test: " + id));
+        ClientResponse clientResponse = oauthT2Client.addWorksXml(userOrcid, orcidMessage, token);
+        assertEquals(201, clientResponse.getStatus());
+        return workTitle.getTitle().getContent();
+    }
+    
+    private String addFunding(String userOrcid, String token) {
+        String id = String.valueOf(System.currentTimeMillis());
+        OrcidMessage orcidMessage = new OrcidMessage();
+        orcidMessage.setMessageVersion(OrcidMessage.DEFAULT_VERSION);
+        OrcidProfile orcidProfile = new OrcidProfile();
+        orcidMessage.setOrcidProfile(orcidProfile);
+        OrcidActivities orcidActivities = new OrcidActivities();
+        orcidProfile.setOrcidActivities(orcidActivities);
+
+        FundingList fundings = new FundingList();
+        Funding funding = new Funding();
+        funding.setVisibility(Visibility.LIMITED);
+        FundingTitle fundingTitle = new FundingTitle();
+        fundingTitle.setTitle(new Title("Funding added by integration test: " + id));
+        funding.setTitle(fundingTitle);
+        funding.setType(FundingType.SALARY_AWARD);        
+        Amount amount = new Amount();
+        amount.setCurrencyCode("CRC");
+        amount.setContent("1,250,000");
+        funding.setAmount(amount);
+        funding.setStartDate(new FuzzyDate(2010, 1, 1));
+        funding.setEndDate(new FuzzyDate(2013, 1, 1));
+        funding.setDescription("My Grant description");
+        funding.setUrl(new Url("http://url.com"));
+        Organization org = new Organization();
+        org.setName("Orcid Integration Test Org");
+        OrganizationAddress add = new OrganizationAddress();
+        add.setCity("My City");
+        add.setCountry(Iso3166Country.CR);
+        org.setAddress(add);
+        funding.setOrganization(org);
+        FundingExternalIdentifier extIdentifier = new FundingExternalIdentifier();
+        extIdentifier.setType(FundingExternalIdentifierType.fromValue("grant_number"));
+        extIdentifier.setUrl(new Url("http://url.com"));
+        extIdentifier.setValue("My value");
+        FundingExternalIdentifiers extIdentifiers = new FundingExternalIdentifiers();
+        extIdentifiers.getFundingExternalIdentifier().add(extIdentifier);
+        funding.setFundingExternalIdentifiers(extIdentifiers);
+        FundingContributors contributors = new FundingContributors();
+        FundingContributor contributor = new FundingContributor();
+        contributor.setCreditName(new CreditName("My Credit Name"));
+        contributor.setContributorEmail(new ContributorEmail("my.email@orcid-integration-test.com"));
+        FundingContributorAttributes attributes = new FundingContributorAttributes();
+        attributes.setContributorRole(FundingContributorRole.LEAD);
+        contributor.setContributorAttributes(attributes);
+        contributors.getContributor().add(contributor);
+        funding.setFundingContributors(contributors);
+        fundings.getFundings().add(funding);
+        orcidMessage.getOrcidProfile().getOrcidActivities().setFundings(fundings);
+        
+        ClientResponse clientResponse = oauthT2Client.addFundingXml(userOrcid, orcidMessage, token);
+        assertEquals(201, clientResponse.getStatus());
+        return fundingTitle.getTitle().getContent();
+    }
+    
+    private String addAffiliation(String userOrcid, String token) {
+        String id = String.valueOf(System.currentTimeMillis());
+        OrcidMessage orcidMessage = new OrcidMessage();
+        orcidMessage.setMessageVersion(OrcidMessage.DEFAULT_VERSION);
+        OrcidProfile orcidProfile = new OrcidProfile();
+        orcidMessage.setOrcidProfile(orcidProfile);
+        OrcidActivities orcidActivities = new OrcidActivities();
+        orcidProfile.setOrcidActivities(orcidActivities);
+        Affiliations affiliations = new Affiliations();
+        orcidActivities.setAffiliations(affiliations);
+        Affiliation affiliation = new Affiliation();
+        affiliation.setVisibility(Visibility.LIMITED);
+        affiliations.getAffiliation().add(affiliation);
+        affiliation.setType(AffiliationType.EDUCATION);
+        Organization organization = new Organization();
+        affiliation.setOrganization(organization);
+        organization.setName("Affiliation added by integration test: " + id);
+        OrganizationAddress organizationAddress = new OrganizationAddress();
+        organization.setAddress(organizationAddress);
+        organizationAddress.setCity("Edinburgh");
+        organizationAddress.setCountry(Iso3166Country.GB);
+        
+        ClientResponse clientResponse = oauthT2Client.addAffiliationsXml(userOrcid, orcidMessage, token);
+        assertEquals(201, clientResponse.getStatus());
+        return organization.getName();
     }
     
     private static String getRedirectUri() {

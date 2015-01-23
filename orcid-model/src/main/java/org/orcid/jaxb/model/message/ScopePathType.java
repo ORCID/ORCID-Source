@@ -96,11 +96,13 @@ public enum ScopePathType implements Serializable {
     @XmlEnumValue("/orcid-patents/create") ORCID_PATENTS_CREATE("/orcid-patents/create", ORCID_PATENTS_UPDATE, READ_PUBLIC),    
     @XmlEnumValue("/notification") NOTIFICATION("/notification"),
     
-    //XXX: Per activity API
-    @XmlEnumValue("/activities/update") ACTIVITIES_UPDATE ("/activities/update", ORCID_WORKS_CREATE, ORCID_WORKS_UPDATE, AFFILIATIONS_CREATE, AFFILIATIONS_UPDATE, FUNDING_CREATE, FUNDING_UPDATE),
-    @XmlEnumValue("/person/update") PERSON_UPDATE("/person/update", ORCID_BIO_UPDATE, ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE),
+    //XXX: Per activity API    
+    @XmlEnumValue("/activities/read-limited") ACTIVITIES_READ_LIMITED("/activities/read-limited", ORCID_WORKS_READ_LIMITED, AFFILIATIONS_READ_LIMITED, FUNDING_READ_LIMITED),
+    @XmlEnumValue("/activities/update") ACTIVITIES_UPDATE ("/activities/update", ACTIVITIES_READ_LIMITED, ORCID_WORKS_CREATE, ORCID_WORKS_UPDATE, AFFILIATIONS_CREATE, AFFILIATIONS_UPDATE, FUNDING_CREATE, FUNDING_UPDATE),    
+    @XmlEnumValue("/person/read-limited") PERSON_READ_LIMITED("/person/read-limited", ORCID_BIO_READ_LIMITED),
+    @XmlEnumValue("/person/update") PERSON_UPDATE("/person/update", PERSON_READ_LIMITED, ORCID_BIO_UPDATE, ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE),
     @XmlEnumValue("/orcid-profile/create") ORCID_PROFILE_CREATE("/orcid-profile/create", ORCID_BIO_READ_LIMITED, ORCID_WORKS_READ_LIMITED, ORCID_PROFILE_READ_LIMITED, ORCID_WORKS_UPDATE, ORCID_BIO_UPDATE,
-            FUNDING_UPDATE, AFFILIATIONS_UPDATE, ORCID_PATENTS_UPDATE, ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE, ORCID_WORKS_CREATE, FUNDING_CREATE, AFFILIATIONS_CREATE, ORCID_PATENTS_CREATE, AUTHENTICATE, READ_PUBLIC, ACTIVITIES_UPDATE);
+            FUNDING_UPDATE, AFFILIATIONS_UPDATE, ORCID_PATENTS_UPDATE, ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE, ORCID_WORKS_CREATE, FUNDING_CREATE, AFFILIATIONS_CREATE, ORCID_PATENTS_CREATE, AUTHENTICATE, READ_PUBLIC, ACTIVITIES_UPDATE, PERSON_UPDATE);
     //@formatter:on
 
     private final String value;
@@ -156,6 +158,10 @@ public enum ScopePathType implements Serializable {
         case FUNDING_READ_LIMITED:
             return true;
         case ORCID_PATENTS_READ_LIMITED:
+            return true;
+        case ACTIVITIES_READ_LIMITED:
+            return true;
+        case PERSON_READ_LIMITED:
             return true;
         default:
             return false;
