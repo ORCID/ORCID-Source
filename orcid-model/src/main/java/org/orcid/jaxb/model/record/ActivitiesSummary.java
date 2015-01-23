@@ -107,7 +107,7 @@ public class ActivitiesSummary implements Serializable, ActivitiesContainer {
     }
 
 
-    public void setOrcidWork(List<Work> orcidWork) {
+    public void setWorks(List<Work> orcidWork) {
         this.works = orcidWork;
     }
 

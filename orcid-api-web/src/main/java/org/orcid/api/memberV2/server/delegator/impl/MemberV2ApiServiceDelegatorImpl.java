@@ -129,7 +129,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         w.setWorkTitle(wt);
         List<Work> works = new ArrayList<Work>();
         works.add(w);
-        as.setOrcidWork(works);
+        as.setWorks(works);
         return Response.ok(as).build();
     }
 
