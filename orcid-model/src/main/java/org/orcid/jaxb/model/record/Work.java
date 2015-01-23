@@ -49,19 +49,19 @@ import org.orcid.jaxb.model.message.OrcidMessage;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "putCode", "workTitle", "journalTitle", "shortDescription", "citation", "workType", "publicationDate", "externalIdentifiers", "url",
         "contributors", "source", "createdDate", "lastModifiedDate", "languageCode", "country" })
-@XmlRootElement(name = "work")
+@XmlRootElement(name = "work", namespace = "http://www.orcid.org/ns/work")
 public class Work implements VisibilityType, Activity, Serializable {
 
     private static final long serialVersionUID = 1L;
-    @XmlElement(name = "title")
+    @XmlElement(name = "title", namespace = "http://www.orcid.org/ns/work")
     protected WorkTitle workTitle;
-    @XmlElement(name = "journalTitle")
+    @XmlElement(name = "journalTitle", namespace = "http://www.orcid.org/ns/work")
     protected Title journalTitle;
-    @XmlElement(name = "shortDescription")
+    @XmlElement(name = "shortDescription", namespace = "http://www.orcid.org/ns/work")
     protected String shortDescription;
-    @XmlElement(name = "citation")
+    @XmlElement(name = "citation", namespace = "http://www.orcid.org/ns/work")
     protected Citation citation;
-    @XmlElement(name = "type")
+    @XmlElement(name = "type", namespace = "http://www.orcid.org/ns/work")
     protected WorkType workType;
     @XmlElement(name = "publicationDate")
     protected PublicationDate publicationDate;

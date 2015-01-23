@@ -52,11 +52,11 @@ import java.util.Map;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "works" })
-@XmlRootElement(name = "summary")
+@XmlRootElement(name = "activitiesSummary", namespace = "http://www.orcid.org/ns/activities")
 public class ActivitiesSummary implements Serializable, ActivitiesContainer {
 
     private static final long serialVersionUID = 1L;
-    @XmlElement(name = "works")
+    @XmlElement(name = "works", namespace = "http://www.orcid.org/ns/activities")
     protected List<Work> works;
 
     /**

@@ -134,6 +134,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     }
 
     @Override
+    @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
     public Response viewWork(String orcid, String putCode) {
         // TODO Auto-generated method stub
         Work w = new Work();
@@ -141,6 +142,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     }
 
     @Override
+    @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
     public Response createWork(String orcid, Work work) {
         // TODO Auto-generated method stub
         Work w = new Work();
@@ -149,6 +151,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     }
 
     @Override
+    @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
     public Response updateWork(String orcid, Work work) {
         // TODO Auto-generated method stub
         Work w = new Work();
@@ -157,6 +160,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     }
 
     @Override
+    @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
     public Response deleteWork(String orcid, String putCode) {
         // TODO Auto-generated method stub
         Work w = new Work();

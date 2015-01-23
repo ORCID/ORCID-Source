@@ -46,7 +46,7 @@
 	<xs:import namespace="http://www.orcid.org/ns/work"
 		schemaLocation="work-2.0_rc1.xsd" />
 
-	<xs:element name="summary">
+	<xs:element name="activitiesSummary">
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element name="educations" minOccurs="0" maxOccurs="1">
