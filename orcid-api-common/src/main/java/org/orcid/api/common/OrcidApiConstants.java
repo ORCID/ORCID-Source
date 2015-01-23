@@ -39,10 +39,10 @@ public class OrcidApiConstants {
     public static final String ADD_ACTIVITIES_VIEW_PATH = "/add-activities/{id}";
     public static final String RECORD = "/{orcid}/record";
     public static final String ACTIVITIES = "/{orcid}/activities";
-    public static final String WORKS = "/{orcid}/works";
-    public static final String FUNDINGS = "/{orcid}/fundings";
-    public static final String EDUCATIONS = "/{orcid}/educations";
-    public static final String EMPLOYMENT = "/{orcid}/employments";
+    public static final String WORK = "/{orcid}/work";
+    public static final String FUNDING = "/{orcid}/funding";
+    public static final String EDUCATION = "/{orcid}/education";
+    public static final String EMPLOYMENT = "/{orcid}/employment";
     public static final String PUTCODE = "/{putCode}"; // concated on the end of other paths like FUNDINGS
     public static final String ADD_ACTIVITIES_FLAG_AS_ARCHIVED_PATH = "/add-activities/{id}/archive";
 

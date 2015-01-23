@@ -67,15 +67,15 @@ abstract public class MemberV2ApiServiceImplBase {
     
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Path(WORKS + PUTCODE)
-    public Response viewWorks(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+    @Path(WORK + PUTCODE)
+    public Response viewWork(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewWork(orcid, putCode);
     }
     
     @POST
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Path(WORKS)
+    @Path(WORK)
     public Response createWork(@PathParam("orcid") String orcid, Work work) {
         return serviceDelegator.createWork(orcid, work);
     }
@@ -83,7 +83,7 @@ abstract public class MemberV2ApiServiceImplBase {
     @PUT
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Path(WORKS + PUTCODE)
+    @Path(WORK + PUTCODE)
     public Response updateWork(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, Work work) {
         return serviceDelegator.updateWork(orcid, work);
     }
@@ -91,7 +91,7 @@ abstract public class MemberV2ApiServiceImplBase {
     @DELETE
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Path(WORKS + PUTCODE)
+    @Path(WORK + PUTCODE)
     public Response deleteWork(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, Work work) {
         return serviceDelegator.deleteWork(orcid, putCode);
     }
