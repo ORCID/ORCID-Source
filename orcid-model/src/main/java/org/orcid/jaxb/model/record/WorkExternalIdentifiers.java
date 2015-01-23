@@ -41,18 +41,6 @@ import javax.xml.bind.annotation.XmlType;
  * The following schema fragment specifies the expected content contained within
  * this class.
  * 
- * <pre>
- * &lt;complexType>
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}work-external-identifier" maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;attGroup ref="{http://www.orcid.org/ns/orcid}scope"/>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
- * </pre>
  * 
  * 
  */
@@ -74,8 +62,8 @@ public class WorkExternalIdentifiers implements Serializable {
 
     }
 
-    public WorkExternalIdentifiers(List<WorkExternalIdentifier> workExternalIdentifier) {
-        this.externalIdentifier = workExternalIdentifier;
+    public WorkExternalIdentifiers(List<WorkExternalIdentifier> externalIdentifier) {
+        this.externalIdentifier = externalIdentifier;
     }
 
     /**
