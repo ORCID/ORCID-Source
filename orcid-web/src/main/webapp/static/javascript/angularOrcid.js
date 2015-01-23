@@ -7511,7 +7511,7 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
 
     $scope.toggleLongDescription = function(orcid_scope) {
         $scope.showLongDescription[orcid_scope] = !$scope.showLongDescription[orcid_scope];
-    }
+    };
 }]);
 
 
