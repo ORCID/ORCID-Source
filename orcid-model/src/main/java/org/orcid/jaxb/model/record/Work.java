@@ -47,9 +47,9 @@ import org.orcid.jaxb.model.message.OrcidMessage;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "putCode", "workTitle", "journalTitle", "shortDescription", "workCitation", "workType", "publicationDate", "workExternalIdentifiers", "url",
-        "workContributors", "workSource", "source", "createdDate", "lastModifiedDate", "languageCode", "country" })
-@XmlRootElement(name = "orcid-work")
+@XmlType(propOrder = { "putCode", "workTitle", "journalTitle", "shortDescription", "citation", "workType", "publicationDate", "externalIdentifiers", "url",
+        "contributors", "source", "createdDate", "lastModifiedDate", "languageCode", "country" })
+@XmlRootElement(name = "work")
 public class Work implements VisibilityType, Activity, Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -60,16 +60,16 @@ public class Work implements VisibilityType, Activity, Serializable {
     @XmlElement(name = "shortDescription")
     protected String shortDescription;
     @XmlElement(name = "citation")
-    protected Citation workCitation;
+    protected Citation citation;
     @XmlElement(name = "type")
     protected WorkType workType;
     @XmlElement(name = "publicationDate")
     protected PublicationDate publicationDate;
     @XmlElement(name = "externalIdentifiers")
-    protected WorkExternalIdentifiers workExternalIdentifiers;
+    protected WorkExternalIdentifiers externalIdentifiers;
     protected Url url;
     @XmlElement(name = "contributors")
-    protected WorkContributors workContributors;
+    protected WorkContributors contributors;
     @XmlElement(name = "languageCode")
     protected String languageCode;
     @XmlElement(name = "country")
@@ -158,7 +158,7 @@ public class Work implements VisibilityType, Activity, Serializable {
      * 
      */
     public Citation getWorkCitation() {
-        return workCitation;
+        return citation;
     }
 
     /**
@@ -169,7 +169,7 @@ public class Work implements VisibilityType, Activity, Serializable {
      * 
      */
     public void setWorkCitation(Citation value) {
-        this.workCitation = value;
+        this.citation = value;
     }
 
     /**
@@ -221,7 +221,7 @@ public class Work implements VisibilityType, Activity, Serializable {
      * 
      */
     public WorkExternalIdentifiers getWorkExternalIdentifiers() {
-        return workExternalIdentifiers;
+        return externalIdentifiers;
     }
 
     /**
@@ -232,7 +232,7 @@ public class Work implements VisibilityType, Activity, Serializable {
      * 
      */
     public void setWorkExternalIdentifiers(WorkExternalIdentifiers value) {
-        this.workExternalIdentifiers = value;
+        this.externalIdentifiers = value;
     }
 
     /**
@@ -263,7 +263,7 @@ public class Work implements VisibilityType, Activity, Serializable {
      * 
      */
     public WorkContributors getWorkContributors() {
-        return workContributors;
+        return contributors;
     }
 
     /**
@@ -274,7 +274,7 @@ public class Work implements VisibilityType, Activity, Serializable {
      * 
      */
     public void setWorkContributors(WorkContributors value) {
-        this.workContributors = value;
+        this.contributors = value;
     }
 
     /**
@@ -505,9 +505,9 @@ public class Work implements VisibilityType, Activity, Serializable {
         result = prime * result + ((shortDescription == null) ? 0 : shortDescription.hashCode());
         result = prime * result + ((url == null) ? 0 : url.hashCode());
         result = prime * result + ((visibility == null) ? 0 : visibility.hashCode());
-        result = prime * result + ((workCitation == null) ? 0 : workCitation.hashCode());
-        result = prime * result + ((workContributors == null) ? 0 : workContributors.hashCode());
-        result = prime * result + ((workExternalIdentifiers == null) ? 0 : workExternalIdentifiers.hashCode());
+        result = prime * result + ((citation == null) ? 0 : citation.hashCode());
+        result = prime * result + ((contributors == null) ? 0 : contributors.hashCode());
+        result = prime * result + ((externalIdentifiers == null) ? 0 : externalIdentifiers.hashCode());
         result = prime * result + ((source == null) ? 0 : source.hashCode());
         result = prime * result + ((workTitle == null) ? 0 : workTitle.hashCode());
         result = prime * result + ((workType == null) ? 0 : workType.hashCode());
@@ -567,20 +567,20 @@ public class Work implements VisibilityType, Activity, Serializable {
             return false;
         if (visibility != other.visibility)
             return false;
-        if (workCitation == null) {
-            if (other.workCitation != null)
+        if (citation == null) {
+            if (other.citation != null)
                 return false;
-        } else if (!workCitation.equals(other.workCitation))
+        } else if (!citation.equals(other.citation))
             return false;
-        if (workContributors == null) {
-            if (other.workContributors != null)
+        if (contributors == null) {
+            if (other.contributors != null)
                 return false;
-        } else if (!workContributors.equals(other.workContributors))
+        } else if (!contributors.equals(other.contributors))
             return false;
-        if (workExternalIdentifiers == null) {
-            if (other.workExternalIdentifiers != null)
+        if (externalIdentifiers == null) {
+            if (other.externalIdentifiers != null)
                 return false;
-        } else if (!workExternalIdentifiers.equals(other.workExternalIdentifiers))
+        } else if (!externalIdentifiers.equals(other.externalIdentifiers))
             return false;
         if (source == null) {
             if (other.source != null)

@@ -39,7 +39,7 @@ import javax.xml.bind.annotation.XmlType;
  * <p/>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "citation", propOrder = { "workCitationType", "citation" })
+@XmlType(name = "citation", propOrder = { "citationType", "citation" })
 public class Citation implements Serializable {
 
     /**

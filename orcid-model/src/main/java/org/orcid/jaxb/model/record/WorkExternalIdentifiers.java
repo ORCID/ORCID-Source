@@ -65,8 +65,8 @@ public class WorkExternalIdentifiers implements Serializable {
      * 
      */
     private static final long serialVersionUID = 1L;
-    @XmlElement(name = "work-external-identifier")
-    protected List<WorkExternalIdentifier> workExternalIdentifier;
+    @XmlElement(name = "externalIdentifier")
+    protected List<WorkExternalIdentifier> externalIdentifier;
     @XmlAttribute
     protected Scope scope;
 
@@ -75,7 +75,7 @@ public class WorkExternalIdentifiers implements Serializable {
     }
 
     public WorkExternalIdentifiers(List<WorkExternalIdentifier> workExternalIdentifier) {
-        this.workExternalIdentifier = workExternalIdentifier;
+        this.externalIdentifier = workExternalIdentifier;
     }
 
     /**
@@ -102,10 +102,10 @@ public class WorkExternalIdentifiers implements Serializable {
      * 
      */
     public List<WorkExternalIdentifier> getWorkExternalIdentifier() {
-        if (workExternalIdentifier == null) {
-            workExternalIdentifier = new ArrayList<WorkExternalIdentifier>();
+        if (externalIdentifier == null) {
+            externalIdentifier = new ArrayList<WorkExternalIdentifier>();
         }
-        return this.workExternalIdentifier;
+        return this.externalIdentifier;
     }
 
     /**
@@ -143,14 +143,14 @@ public class WorkExternalIdentifiers implements Serializable {
         if (scope != that.scope) {
             return false;
         }
-        if (workExternalIdentifier == null) {
-            if (that.workExternalIdentifier != null)
+        if (externalIdentifier == null) {
+            if (that.externalIdentifier != null)
                 return false;
         } else {
-            if (that.workExternalIdentifier == null)
+            if (that.externalIdentifier == null)
                 return false;
-            else if (!(workExternalIdentifier.containsAll(that.workExternalIdentifier) && that.workExternalIdentifier.containsAll(workExternalIdentifier) && 
-                    that.workExternalIdentifier.size() == workExternalIdentifier.size())) {
+            else if (!(externalIdentifier.containsAll(that.externalIdentifier) && that.externalIdentifier.containsAll(externalIdentifier) && 
+                    that.externalIdentifier.size() == externalIdentifier.size())) {
                 return false;
             }
         }
@@ -160,7 +160,7 @@ public class WorkExternalIdentifiers implements Serializable {
 
     @Override
     public int hashCode() {
-        int result = workExternalIdentifier != null ? workExternalIdentifier.hashCode() : 0;
+        int result = externalIdentifier != null ? externalIdentifier.hashCode() : 0;
         result = 31 * result + (scope != null ? scope.hashCode() : 0);
         return result;
     }

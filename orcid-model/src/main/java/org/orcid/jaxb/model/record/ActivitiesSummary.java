@@ -47,28 +47,16 @@ import java.util.Map;
  * The following schema fragment specifies the expected content contained within
  * this class.
  * 
- * <pre>
- * &lt;complexType>
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}orcid-work" maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;attGroup ref="{http://www.orcid.org/ns/orcid}scope"/>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
- * </pre>
  * 
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "work" })
+@XmlType(propOrder = { "works" })
 @XmlRootElement(name = "summary")
 public class ActivitiesSummary implements Serializable, ActivitiesContainer {
 
     private static final long serialVersionUID = 1L;
-    @XmlElement(name = "work")
+    @XmlElement(name = "works")
     protected List<Work> works;
 
     /**

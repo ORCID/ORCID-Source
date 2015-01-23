@@ -54,18 +54,11 @@ abstract public class MemberV2ApiServiceImplBase {
     public Response viewStatusText() {
         return serviceDelegator.viewStatusText();
     }
-
-    @GET
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
-    @Path(ACTIVITIES)
-    public Response viewAddActivitiesNotificationsXml(@PathParam("orcid") String orcid) {
-        return serviceDelegator.viewActivities(orcid);
-    }
     
     @GET
-    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(ACTIVITIES)
-    public Response viewAddActivitiesNotificationsJson(@PathParam("orcid") String orcid) {
+    public Response viewAddActivitiesNotifications(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewActivities(orcid);
     }
     
