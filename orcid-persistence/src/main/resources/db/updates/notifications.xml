@@ -163,4 +163,10 @@
         <sql>UPDATE notification_activity SET activity_type = 'EMPLOYMENT' WHERE activity_type NOT IN ('EDUCATION', 'EMPLOYMENT', 'FUNDING', 'WORK');</sql>
     </changeSet>
     
+    <changeSet id="ADD-LANG-TO-NOTIFICATION" author="Will Simpson">
+        <addColumn tableName="notification">
+            <column name="lang" type="varchar(1000)"/>
+        </addColumn>
+    </changeSet>
+    
 </databaseChangeLog>

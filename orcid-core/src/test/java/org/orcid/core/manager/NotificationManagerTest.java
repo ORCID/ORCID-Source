@@ -46,7 +46,9 @@ import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.notification.Notification;
 import org.orcid.jaxb.model.notification.NotificationType;
+import org.orcid.jaxb.model.notification.custom.NotificationCustom;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.ProfileDao;
@@ -91,7 +93,7 @@ public class NotificationManagerTest extends BaseTest {
     }
 
     @Before
-    public void initMocks() throws Exception {           
+    public void initMocks() throws Exception {
         NotificationManagerImpl notificationManagerImpl = getTargetObject(notificationManager, NotificationManagerImpl.class);
         notificationManagerImpl.setEncryptionManager(encryptionManager);
         notificationManagerImpl.setProfileEventDao(profileEventDao);
@@ -221,5 +223,21 @@ public class NotificationManagerTest extends BaseTest {
             notificationManager.sendDelegationRequestEmail(orcidProfile, orcidProfile, "http://test.orcid.org");
         }
     }
-    
+
+    @Test
+    public void testCreateCustomNotification() {
+        String testOrcid = "4444-4444-4444-4446";
+        ProfileEntity testProfile = new ProfileEntity(testOrcid);
+        profileDao.merge(testProfile);
+        NotificationCustom notification = new NotificationCustom();
+        notification.setSubject("Test subject");
+        notification.setLang("en-gb");
+        Notification result = notificationManager.createNotification(testOrcid, notification);
+        assertNotNull(result);
+        assertTrue(result instanceof NotificationCustom);
+        NotificationCustom customResult = (NotificationCustom) result;
+        assertEquals("Test subject", customResult.getSubject());
+        assertEquals("en-gb", customResult.getLang());
+    }
+
 }

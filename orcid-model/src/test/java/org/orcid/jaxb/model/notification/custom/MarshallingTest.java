@@ -45,6 +45,7 @@ public class MarshallingTest {
         assertEquals("This is an email with important info.\n    ", notification.getBodyText());
         assertEquals("\n        <p>\n            This is an email with <em>important</em> info.\n        </p>\n    ", notification.getBodyHtml());
         assertEquals("2014-01-01T14:45:32", notification.getSentDate().toXMLFormat());
+        assertEquals("en-gb", notification.getLang());
     }
 
     private NotificationCustom getNotification() throws JAXBException {

@@ -27,6 +27,7 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -76,6 +77,8 @@ public class NotificationCustom extends Notification implements Serializable {
     protected String bodyText;
     @XmlElement(required = true)
     protected String bodyHtml;
+    @XmlAttribute(name = "lang", namespace = "http://www.w3.org/XML/1998/namespace")
+    protected String lang;
 
     /**
      * Gets the value of the subject property.
@@ -138,6 +141,14 @@ public class NotificationCustom extends Notification implements Serializable {
      */
     public void setBodyHtml(String value) {
         this.bodyHtml = value;
+    }
+
+    public String getLang() {
+        return lang;
+    }
+
+    public void setLang(String lang) {
+        this.lang = lang;
     }
 
 }

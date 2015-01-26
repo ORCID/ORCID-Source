@@ -19,7 +19,8 @@
 -->
 <notification putCode="1" xmlns="http://www.orcid.org/ns/orcid"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-notification-custom-1.0.xsd">
+    xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-notification-custom-1.0.xsd"
+    xml:lang="en-gb">
     <notificationType>CUSTOM</notificationType>
     <subject>Important Notification from ORCID</subject>
     <bodyText>This is an email with important info.
