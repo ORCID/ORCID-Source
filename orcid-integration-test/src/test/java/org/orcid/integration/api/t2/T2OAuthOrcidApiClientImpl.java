@@ -56,7 +56,7 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
     @Path(PROFILE_POST_PATH)
     public ClientResponse createProfileXML(OrcidMessage orcidMessage, String token) {
         URI createProfilePath = UriBuilder.fromPath(PROFILE_POST_PATH).build();
-        return postClientResponseWithToken(createProfilePath, VND_ORCID_XML, orcidMessage, token);
+        return orcidClientHelper.postClientResponseWithToken(createProfilePath, VND_ORCID_XML, orcidMessage, token);
     }
 
     /**
@@ -85,7 +85,7 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
     @Path(PROFILE_POST_PATH)
     public ClientResponse createProfileJson(OrcidMessage orcidMessage, String token) {
         URI createProfilePath = UriBuilder.fromPath(PROFILE_POST_PATH).build();
-        return postClientResponseWithToken(createProfilePath, VND_ORCID_JSON, orcidMessage, token);
+        return orcidClientHelper.postClientResponseWithToken(createProfilePath, VND_ORCID_JSON, orcidMessage, token);
     }
 
     @Override
@@ -103,7 +103,7 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
     @Path(BIO_PATH)
     public ClientResponse updateBioDetailsXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage, String token) {
         URI bioPath = UriBuilder.fromPath(BIO_PATH_NO_REGEX).build(orcid);
-        ClientResponse clientResponse = putClientResponseWithToken(bioPath, VND_ORCID_XML, orcidMessage, token);
+        ClientResponse clientResponse = orcidClientHelper.putClientResponseWithToken(bioPath, VND_ORCID_XML, orcidMessage, token);
         return clientResponse;
     }
 
@@ -114,7 +114,7 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
     @Path(BIO_PATH)
     public ClientResponse updateBioDetailsJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage, String token) {
         URI bioPathWithOrcidUrl = UriBuilder.fromPath(BIO_PATH_NO_REGEX).build(orcid);
-        return putClientResponseWithToken(bioPathWithOrcidUrl, VND_ORCID_JSON, orcidMessage, token);
+        return orcidClientHelper.putClientResponseWithToken(bioPathWithOrcidUrl, VND_ORCID_JSON, orcidMessage, token);
     }
 
     @Override
@@ -124,7 +124,7 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
     @Path(WORKS_PATH)
     public ClientResponse addWorksXml(String orcid, OrcidMessage orcidMessage, String token) {
         URI worksPathWithOrcidUrl = orcidClientHelper.deriveUriFromRestPath(WORKS_PATH, orcid);
-        return postClientResponseWithToken(worksPathWithOrcidUrl, VND_ORCID_XML, orcidMessage, token);
+        return orcidClientHelper.postClientResponseWithToken(worksPathWithOrcidUrl, VND_ORCID_XML, orcidMessage, token);
     }
 
     @Override
@@ -134,7 +134,7 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
     @Path(WORKS_PATH)
     public ClientResponse addWorksJson(String orcid, OrcidMessage orcidMessage, String token) {
         URI worksPathWithOrcidUrl = orcidClientHelper.deriveUriFromRestPath(WORKS_PATH, orcid);
-        return postClientResponseWithToken(worksPathWithOrcidUrl, VND_ORCID_JSON, orcidMessage, token);
+        return orcidClientHelper.postClientResponseWithToken(worksPathWithOrcidUrl, VND_ORCID_JSON, orcidMessage, token);
     }
 
     @Override
@@ -144,7 +144,7 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
     @Path(WORKS_PATH)
     public ClientResponse updateWorksXml(String orcid, OrcidMessage orcidMessage, String token) {
         URI worksPathWithOrcidUrl = orcidClientHelper.deriveUriFromRestPath(WORKS_PATH, orcid);
-        return putClientResponseWithToken(worksPathWithOrcidUrl, VND_ORCID_XML, orcidMessage, token);
+        return orcidClientHelper.putClientResponseWithToken(worksPathWithOrcidUrl, VND_ORCID_XML, orcidMessage, token);
     }
 
     @Override
@@ -154,7 +154,7 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
     @Path(WORKS_PATH)
     public ClientResponse updateWorksJson(String orcid, OrcidMessage orcidMessage, String token) {
         URI worksPathWithOrcidUrl = orcidClientHelper.deriveUriFromRestPath(WORKS_PATH, orcid);
-        return putClientResponseWithToken(worksPathWithOrcidUrl, VND_ORCID_JSON, orcidMessage, token);
+        return orcidClientHelper.putClientResponseWithToken(worksPathWithOrcidUrl, VND_ORCID_JSON, orcidMessage, token);
     }
 
     @Override
@@ -164,7 +164,7 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
     @Path(AFFILIATIONS_PATH)
     public ClientResponse addAffiliationsXml(String orcid, OrcidMessage orcidMessage, String token) {
         URI affiliationsPathWithOrcidUrl = orcidClientHelper.deriveUriFromRestPath(AFFILIATIONS_PATH, orcid);
-        return postClientResponseWithToken(affiliationsPathWithOrcidUrl, VND_ORCID_XML, orcidMessage, token);
+        return orcidClientHelper.postClientResponseWithToken(affiliationsPathWithOrcidUrl, VND_ORCID_XML, orcidMessage, token);
     }
 
     @Override
@@ -174,7 +174,7 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
     @Path(AFFILIATIONS_PATH)
     public ClientResponse addAffiliationsJson(String orcid, OrcidMessage orcidMessage, String token) {
         URI affiliationsPathWithOrcidUrl = orcidClientHelper.deriveUriFromRestPath(AFFILIATIONS_PATH, orcid);
-        return postClientResponseWithToken(affiliationsPathWithOrcidUrl, VND_ORCID_JSON, orcidMessage, token);
+        return orcidClientHelper.postClientResponseWithToken(affiliationsPathWithOrcidUrl, VND_ORCID_JSON, orcidMessage, token);
     }
 
     @Override
@@ -184,7 +184,7 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
     @Path(AFFILIATIONS_PATH)
     public ClientResponse updateAffiliationsXml(String orcid, OrcidMessage orcidMessage, String token) {
         URI affiliationsPathWithOrcidUrl = orcidClientHelper.deriveUriFromRestPath(AFFILIATIONS_PATH, orcid);
-        return putClientResponseWithToken(affiliationsPathWithOrcidUrl, VND_ORCID_XML, orcidMessage, token);
+        return orcidClientHelper.putClientResponseWithToken(affiliationsPathWithOrcidUrl, VND_ORCID_XML, orcidMessage, token);
     }
 
     @Override
@@ -194,7 +194,7 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
     @Path(AFFILIATIONS_PATH)
     public ClientResponse updateAffiliationsJson(String orcid, OrcidMessage orcidMessage, String token) {
         URI affiliationsPathWithOrcidUrl = orcidClientHelper.deriveUriFromRestPath(AFFILIATIONS_PATH, orcid);
-        return putClientResponseWithToken(affiliationsPathWithOrcidUrl, VND_ORCID_JSON, orcidMessage, token);
+        return orcidClientHelper.putClientResponseWithToken(affiliationsPathWithOrcidUrl, VND_ORCID_JSON, orcidMessage, token);
     }
     
     @Override
@@ -204,7 +204,7 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
     @Path(FUNDING_PATH)
     public ClientResponse addFundingXml(String orcid, OrcidMessage orcidMessage, String token) {
         URI grantsPathWithOrcidUrl = orcidClientHelper.deriveUriFromRestPath(FUNDING_PATH, orcid);
-        return postClientResponseWithToken(grantsPathWithOrcidUrl, VND_ORCID_XML, orcidMessage, token);
+        return orcidClientHelper.postClientResponseWithToken(grantsPathWithOrcidUrl, VND_ORCID_XML, orcidMessage, token);
     }
 
     @Override
@@ -214,7 +214,7 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
     @Path(FUNDING_PATH)
     public ClientResponse addFundingJson(String orcid, OrcidMessage orcidMessage, String token) {
         URI grantsPathWithOrcidUrl = orcidClientHelper.deriveUriFromRestPath(FUNDING_PATH, orcid);
-        return postClientResponseWithToken(grantsPathWithOrcidUrl, VND_ORCID_JSON, orcidMessage, token);
+        return orcidClientHelper.postClientResponseWithToken(grantsPathWithOrcidUrl, VND_ORCID_JSON, orcidMessage, token);
     }
 
     @Override
@@ -224,7 +224,7 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
     @Path(FUNDING_PATH)
     public ClientResponse updateFundingXml(String orcid, OrcidMessage orcidMessage, String token) {
         URI grantsPathWithOrcidUrl = orcidClientHelper.deriveUriFromRestPath(FUNDING_PATH, orcid);
-        return putClientResponseWithToken(grantsPathWithOrcidUrl, VND_ORCID_XML, orcidMessage, token);
+        return orcidClientHelper.putClientResponseWithToken(grantsPathWithOrcidUrl, VND_ORCID_XML, orcidMessage, token);
     }
 
     @Override
@@ -234,7 +234,7 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
     @Path(FUNDING_PATH)
     public ClientResponse updateFundingJson(String orcid, OrcidMessage orcidMessage, String token) {
         URI grantsPathWithOrcidUrl = orcidClientHelper.deriveUriFromRestPath(FUNDING_PATH, orcid);
-        return putClientResponseWithToken(grantsPathWithOrcidUrl, VND_ORCID_JSON, orcidMessage, token);
+        return orcidClientHelper.putClientResponseWithToken(grantsPathWithOrcidUrl, VND_ORCID_JSON, orcidMessage, token);
     }
     
     @Override
@@ -244,7 +244,7 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
     @Path(EXTERNAL_IDENTIFIER_PATH)
     public ClientResponse addExternalIdentifiersXml(String orcid, OrcidMessage orcidMessage, String token) {
         URI worksPathWithOrcidUrl = orcidClientHelper.deriveUriFromRestPath(EXTERNAL_IDENTIFIER_PATH, orcid);
-        return postClientResponseWithToken(worksPathWithOrcidUrl, VND_ORCID_XML, orcidMessage, token);
+        return orcidClientHelper.postClientResponseWithToken(worksPathWithOrcidUrl, VND_ORCID_XML, orcidMessage, token);
     }
 
     @Override
@@ -254,7 +254,7 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
     @Path(EXTERNAL_IDENTIFIER_PATH)
     public ClientResponse addExternalIdentifiersJson(String orcid, OrcidMessage orcidMessage, String token) {
         URI worksPathWithOrcidUrl = orcidClientHelper.deriveUriFromRestPath(EXTERNAL_IDENTIFIER_PATH, orcid);
-        return postClientResponseWithToken(worksPathWithOrcidUrl, VND_ORCID_JSON, orcidMessage, token);
+        return orcidClientHelper.postClientResponseWithToken(worksPathWithOrcidUrl, VND_ORCID_JSON, orcidMessage, token);
     }
 
     @Override
@@ -263,7 +263,7 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
     @Path(WEBHOOKS_PATH)
     public ClientResponse registerWebhook(String orcid, String webhookUri, String token) {
         URI worksPathWithOrcidUrl = UriBuilder.fromPath(WEBHOOKS_PATH).buildFromEncoded(orcid, webhookUri);
-        return putClientResponseWithToken(worksPathWithOrcidUrl, VND_ORCID_JSON, null, token);
+        return orcidClientHelper.putClientResponseWithToken(worksPathWithOrcidUrl, VND_ORCID_JSON, null, token);
     }
 
     @Override
@@ -272,7 +272,7 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
     @Path(WEBHOOKS_PATH)
     public ClientResponse unregisterWebhook(String orcid, String webhookUri, String token) {
         URI worksPathWithOrcidUrl = UriBuilder.fromPath(WEBHOOKS_PATH).buildFromEncoded(orcid, webhookUri);
-        return deleteClientResponseWithToken(worksPathWithOrcidUrl, VND_ORCID_JSON, token);
+        return orcidClientHelper.deleteClientResponseWithToken(worksPathWithOrcidUrl, VND_ORCID_JSON, token);
     }
 
     /**
@@ -288,14 +288,14 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
     @Override
     public ClientResponse viewFullDetailsXml(String orcid, String accessToken) {
         URI profilePathWithOrcidUrl = UriBuilder.fromPath(PROFILE_GET_PATH).build(orcid);
-        return getClientResponseWithToken(profilePathWithOrcidUrl, VND_ORCID_XML, accessToken);
+        return orcidClientHelper.getClientResponseWithToken(profilePathWithOrcidUrl, VND_ORCID_XML, accessToken);
     }
 
     
     public ClientResponse viewFullDetailsXml(String orcid, String accessToken, String messageVersion) {
         String path = '/' + messageVersion + PROFILE_GET_PATH;
         URI profilePathWithOrcidUrl = UriBuilder.fromPath(path).build(orcid);
-        return getClientResponseWithToken(profilePathWithOrcidUrl, VND_ORCID_XML, accessToken);
+        return orcidClientHelper.getClientResponseWithToken(profilePathWithOrcidUrl, VND_ORCID_XML, accessToken);
     }
     
     /**
@@ -311,30 +311,7 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
     @Override
     public ClientResponse viewFullDetailsJson(@PathParam("orcid") String orcid, String accessToken) {
         URI profilePathWithOrcidUrl = UriBuilder.fromPath(PROFILE_GET_PATH).build(orcid);
-        return getClientResponseWithToken(profilePathWithOrcidUrl, VND_ORCID_JSON, accessToken);
-    }
-
-    private ClientResponse postClientResponseWithToken(URI restPath, String accept, OrcidMessage orcidMessage, String oauthToken) {
-        return setupRequestCommonParams(restPath, accept, oauthToken).post(ClientResponse.class, orcidMessage);
-    }
-
-    private ClientResponse putClientResponseWithToken(URI restPath, String accept, OrcidMessage orcidMessage, String oauthToken) {
-        return setupRequestCommonParams(restPath, accept, oauthToken).put(ClientResponse.class, orcidMessage);
-    }
-
-    private ClientResponse deleteClientResponseWithToken(URI restPath, String accept, String oauthToken) {
-        return setupRequestCommonParams(restPath, accept, oauthToken).delete(ClientResponse.class);
-    }
-
-    private ClientResponse getClientResponseWithToken(URI restPath, String accept, String oauthToken) {
-        return setupRequestCommonParams(restPath, accept, oauthToken).get(ClientResponse.class);
-    }
-
-    private WebResource.Builder setupRequestCommonParams(URI restpath, String accept, String oauthToken) {
-
-        WebResource rootResource = orcidClientHelper.createRootResource(restpath);
-        WebResource.Builder built = addOauthHeader(rootResource, oauthToken).accept(accept).type(accept);
-        return built;
+        return orcidClientHelper.getClientResponseWithToken(profilePathWithOrcidUrl, VND_ORCID_JSON, accessToken);
     }
 
     @Override
@@ -348,7 +325,7 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
     @Path(BIO_PATH)
     public ClientResponse viewBioDetailsHtml(@PathParam("orcid") String orcid, String accessToken) {
         URI bioPathWithOrcid = UriBuilder.fromPath(BIO_PATH_NO_REGEX).build(orcid);
-        return getClientResponseWithToken(bioPathWithOrcid, MediaType.TEXT_HTML, accessToken);
+        return orcidClientHelper.getClientResponseWithToken(bioPathWithOrcid, MediaType.TEXT_HTML, accessToken);
     }
 
     @Override
@@ -357,7 +334,7 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
     @Path(BIO_PATH)
     public ClientResponse viewBioDetailsXml(@PathParam("orcid") String orcid, String accessToken) {
         URI bioPathWithOrcid = UriBuilder.fromPath(BIO_PATH_NO_REGEX).build(orcid);
-        return getClientResponseWithToken(bioPathWithOrcid, VND_ORCID_XML, accessToken);
+        return orcidClientHelper.getClientResponseWithToken(bioPathWithOrcid, VND_ORCID_XML, accessToken);
     }
 
     @Override
@@ -366,7 +343,7 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
     @Path(BIO_PATH)
     public ClientResponse viewBioDetailsJson(@PathParam("orcid") String orcid, String accessToken) {
         URI bioPathWithOrcid = UriBuilder.fromPath(BIO_PATH_NO_REGEX).build(orcid);
-        return getClientResponseWithToken(bioPathWithOrcid, VND_ORCID_JSON, accessToken);
+        return orcidClientHelper.getClientResponseWithToken(bioPathWithOrcid, VND_ORCID_JSON, accessToken);
     }
     
     @Override
@@ -375,7 +352,7 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
     @Path(AUTHENTICATE_PATH)
     public ClientResponse authenticate(@PathParam("orcid") String orcid, String accessToken) {
         URI bioPathWithOrcid = UriBuilder.fromPath(AUTHENTICATE_PATH).build(orcid);
-        return getClientResponseWithToken(bioPathWithOrcid, VND_ORCID_JSON, accessToken);
+        return orcidClientHelper.getClientResponseWithToken(bioPathWithOrcid, VND_ORCID_JSON, accessToken);
     }
 
     @Override
@@ -402,7 +379,7 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
     @Path(PROFILE_GET_PATH)
     public ClientResponse viewFullDetailsHtml(@PathParam("orcid") String orcid, String accessToken) {
         URI bioPathWithOrcid = UriBuilder.fromPath(PROFILE_GET_PATH).build(orcid);
-        return getClientResponseWithToken(bioPathWithOrcid, MediaType.TEXT_HTML, accessToken);
+        return orcidClientHelper.getClientResponseWithToken(bioPathWithOrcid, MediaType.TEXT_HTML, accessToken);
     }
 
     @Override
@@ -411,7 +388,7 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
     @Path(WORKS_PATH)
     public ClientResponse viewWorksDetailsHtml(@PathParam("orcid") String orcid, String accessToken) {
         URI worksPathWithOrcid = UriBuilder.fromPath(WORKS_PATH).build(orcid);
-        return getClientResponseWithToken(worksPathWithOrcid, MediaType.TEXT_HTML, accessToken);
+        return orcidClientHelper.getClientResponseWithToken(worksPathWithOrcid, MediaType.TEXT_HTML, accessToken);
     }
 
     @Override
@@ -420,7 +397,7 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
     @Path(WORKS_PATH)
     public ClientResponse viewWorksDetailsXml(@PathParam("orcid") String orcid, String accessToken) {
         URI worksPathWithOrcid = UriBuilder.fromPath(WORKS_PATH).build(orcid);
-        return getClientResponseWithToken(worksPathWithOrcid, VND_ORCID_XML, accessToken);
+        return orcidClientHelper.getClientResponseWithToken(worksPathWithOrcid, VND_ORCID_XML, accessToken);
     }
 
     @Override
@@ -429,7 +406,7 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
     @Path(WORKS_PATH)
     public ClientResponse viewWorksDetailsJson(@PathParam("orcid") String orcid, String accessToken) {
         URI worksPathWithOrcid = UriBuilder.fromPath(WORKS_PATH).build(orcid);
-        return getClientResponseWithToken(worksPathWithOrcid, VND_ORCID_JSON, accessToken);
+        return orcidClientHelper.getClientResponseWithToken(worksPathWithOrcid, VND_ORCID_JSON, accessToken);
     }
 
     @Override
@@ -444,7 +421,7 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
     @Path(BIO_SEARCH_PATH)
     public ClientResponse searchByQueryJSON(String query, String accessToken) {
         URI bioSearchpath = UriBuilder.fromPath(BIO_SEARCH_PATH).replaceQuery(query).build();
-        return getClientResponseWithToken(bioSearchpath, VND_ORCID_JSON, accessToken);
+        return orcidClientHelper.getClientResponseWithToken(bioSearchpath, VND_ORCID_JSON, accessToken);
     }
 
     @Override
@@ -462,17 +439,13 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
         return null;
     }
 
-    private WebResource.Builder addOauthHeader(WebResource webResource, String oAuthToken) {
-        return webResource.header("Authorization", "Bearer " + oAuthToken);
-    }
-
     @Override
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML })
     @Path(FUNDING_PATH)
     public ClientResponse viewFundingDetailsXml(String orcid, String accessToken) {
         URI fundingPathWithOrcid = UriBuilder.fromPath(FUNDING_PATH).build(orcid);
-        return getClientResponseWithToken(fundingPathWithOrcid, VND_ORCID_XML, accessToken);
+        return orcidClientHelper.getClientResponseWithToken(fundingPathWithOrcid, VND_ORCID_XML, accessToken);
     }
 
     @Override
@@ -481,6 +454,7 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
     @Path(AFFILIATIONS_PATH)
     public ClientResponse viewAffiliationDetailsXml(String orcid, String accessToken) {
         URI affiliationPathWithOrcid = UriBuilder.fromPath(AFFILIATIONS_PATH).build(orcid);
-        return getClientResponseWithToken(affiliationPathWithOrcid, VND_ORCID_XML, accessToken);
+        return orcidClientHelper.getClientResponseWithToken(affiliationPathWithOrcid, VND_ORCID_XML, accessToken);
     }
+    
 }

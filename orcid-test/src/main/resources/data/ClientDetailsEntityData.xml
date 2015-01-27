@@ -81,6 +81,7 @@
     <client_scope client_details_id="4444-4444-4444-4445" scope_type="/authenticate"/>
     <client_scope client_details_id="4444-4444-4444-4445" scope_type="/funding/read-limited"/>
     <client_scope client_details_id="4444-4444-4444-4445" scope_type="/affiliations/read-limited"/>
+    <client_scope client_details_id="4444-4444-4444-4445" scope_type="/notification"/>
     <client_scope client_details_id="4444-4444-4444-4498" scope_type="/authenticate"/>
     
     
