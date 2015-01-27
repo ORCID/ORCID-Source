@@ -5530,7 +5530,7 @@ ul.oauth-icons li {
 }
 
 .notifications iframe{
-	padding: 15px 15px 0;
+	padding: 0 15px;
 }
 
 .notifications .archived{
@@ -5663,7 +5663,6 @@ ul.oauth-scopes li{
 	display: block;
 	height: 10px;
 }
-
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */

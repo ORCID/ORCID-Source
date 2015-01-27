@@ -43,23 +43,24 @@
 	                </tr>
                 </thead>
                 <tbody>
-	                <tr ng-repeat-start="notification in notifications" ng-class="{unread: !notification.readDate, archived: notification.archivedDate}">
-	                    <td ng-click="toggleDisplayBody(notification.putCode.path)">
-	                        <i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':!displayBody[notification.putCode.path]}"></i>
+	                <tr ng-repeat-start="notification in notifications" ng-class="{unread: !notification.readDate, archived: notification.archivedDate}" class="header">
+	                    <td ng-click="toggleDisplayBody(notification.putCode)">
+	                        <i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':!displayBody[notification.putCode]}"></i>
 	                        <span ng-show="notification.source" ng-cloak>{{notification.source.sourceName}}</span><span ng-hide="notification.source" ng-cloak>ORCID</span>
 	                    </td>
-	                    <td ng-click="toggleDisplayBody(notification.putCode.path)"><span ng-cloak>{{notification.subject}}</span></td>
-	                    <td ng-click="toggleDisplayBody(notification.putCode.path)"><span ng-cloak>{{notification.createdDate|humanDate}}</span></td>
+	                    <td ng-click="toggleDisplayBody(notification.putCode)"><span ng-cloak>{{notification.subject}}</span></td>
+	                    <td ng-click="toggleDisplayBody(notification.putCode)"><span ng-cloak>{{notification.createdDate|humanDate}}</span></td>
 	                    <td>
-	                        <span ng-hide="notification.archivedDate"><a href="" ng-click="archive(notification.putCode.path)" class="glyphicon glyphicon-download-alt grey" title="${springMacroRequestContext.getMessage("notifications.archive")}"></a></span>
+	                        <span ng-hide="notification.archivedDate"><a href="" ng-click="archive(notification.putCode)" class="glyphicon glyphicon-download-alt grey" title="${springMacroRequestContext.getMessage("notifications.archive")}"></a></span>
 	                    </td>
 	                </tr>
-	                <tr ng-repeat-end ng-show="displayBody[notification.putCode.path]">
+	                <tr ng-repeat-end ng-show="displayBody[notification.putCode]">
 	                    <td colspan="4">
-	                        <iframe class="nIframe" ng-src="{{ '<@spring.url '/notifications'/>/' + notification.notificationType + '/' + notification.putCode.path + '/notification.html'}}" frameborder="0" scrolling="no" width="100%"></iframe>	                        
+	                        <iframe id="{{notification.putCode}}" ng-src="{{ '<@spring.url '/notifications'/>/' + notification.notificationType + '/' + notification.putCode + '/notification.html'}}" frameborder="0" width="100%" scrolling="no"></iframe>
 	                    </td>
 	                </tr>
                 </tbody>
+
             </table>
             
             

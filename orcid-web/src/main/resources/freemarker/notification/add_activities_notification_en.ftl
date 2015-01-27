@@ -16,10 +16,16 @@
     =============================================================================
 
 -->
+<!DOCTYPE html>
 <html>
 <#assign verDateTime = startupDate?datetime>
 <#assign ver="${verDateTime?iso_utc}">
 <#include "/common/html-head.ftl" />
+<style>
+	body, html{
+		height: auto;
+	}
+</style>
 <body data-baseurl="<@spring.url '/'/>">
 <div>
     ${notification.source.sourceName} has ${notification.activities.activities?size}
