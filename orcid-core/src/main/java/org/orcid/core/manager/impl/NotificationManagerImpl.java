@@ -460,15 +460,13 @@ public class NotificationManagerImpl implements NotificationManager {
             if (!PojoUtil.isEmpty(createdProfile.getOrcidHistory().getSource().retrieveSourcePath())) {
                 source = createdProfile.getOrcidHistory().getSource();
                 customEmail = getCustomizedEmail(createdProfile.getOrcidHistory().getSource().retrieveSourcePath(), EmailType.CLAIM);
-            } 
+            }
         }
 
         String email = createdProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue().trim();
         String emailName = deriveEmailFriendlyName(createdProfile);
         String orcid = createdProfile.getOrcidIdentifier().getPath();
-        String verificationUrl = createClaimVerificationUrl(email,
-                orcidUrlManager.getBaseUrl());
-        
+        String verificationUrl = createClaimVerificationUrl(email, orcidUrlManager.getBaseUrl());
 
         String creatorName = "";
         if (source != null) {
@@ -476,7 +474,7 @@ public class NotificationManagerImpl implements NotificationManager {
                 creatorName = source.getSourceName().getContent();
             } else if (!PojoUtil.isEmpty(source.retrieveSourcePath())) {
                 creatorName = source.retrieveSourcePath();
-            } 
+            }
         }
 
         String subject = null;
@@ -709,6 +707,9 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Override
     public Notification createNotification(String orcid, Notification notification) {
+        if (notification.getPutCode() != null) {
+            throw new IllegalArgumentException("Put code must be null when creating a new notification");
+        }
         NotificationEntity notificationEntity = notificationAdapter.toNotificationEntity(notification);
         notificationEntity.setProfile(profileDao.find(orcid));
         notificationEntity.setSource(sourceManager.retrieveSourceEntity());
