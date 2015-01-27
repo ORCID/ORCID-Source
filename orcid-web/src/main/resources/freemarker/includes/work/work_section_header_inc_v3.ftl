@@ -77,12 +77,14 @@
                         </a>
                     </li>
                     <!-- Bibtex -->
-                    <li class="hidden-md hidden-sm visible-xs-inline">
-                        <a class="action-option manage-button" ng-click="openBibTextWizard()">
-                            <span class="glyphicons file_import bibtex-wizard"></span>
-                            <@orcid.msg 'workspace.bibtexImporter.link_bibtex'/>
-                        </a>
-                    </li>
+                    <!--[if lte IE 9]>                    
+	                    <li class="hidden-md hidden-sm visible-xs-inline">
+	                        <a class="action-option manage-button" ng-click="openBibTextWizard()">
+	                            <span class="glyphicons file_import bibtex-wizard"></span>
+	                            <@orcid.msg 'workspace.bibtexImporter.link_bibtex'/>
+	                        </a>
+	                    </li>
+	                <![endif]-->
                     <!-- Mobile Workaround -->
                     <li class="hidden-md hidden-sm visible-xs-inline">
                         <a class="action-option manage-button" ng-click="addWorkModal()">
