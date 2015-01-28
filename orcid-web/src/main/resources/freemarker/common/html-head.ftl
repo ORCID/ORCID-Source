@@ -99,5 +99,6 @@
     <link rel="apple-touch-icon" href="${staticCdn}/img/apple-touch-icon.png" />	
 
     <#include "/layout/google_analytics.ftl">
+
     
 </head>

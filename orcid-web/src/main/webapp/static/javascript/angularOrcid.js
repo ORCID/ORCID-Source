@@ -1230,12 +1230,13 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) 
         maxResults: defaultMaxResults,
         areMoreFlag: false,
         notifications: [],
+        displayBody: {},
         unreadCount: 0,
         showArchived: false,
         getNotifications: function() {
             var url = getBaseUri() + '/notifications/notifications.json?firstResult=' + serv.firstResult + '&maxResults=' + serv.maxResults;
             if(serv.showArchived){
-                url += "&includeArchived=true";
+                url += "&includeArchived=true";                
             }
             $.ajax({
                 url: url,
@@ -1251,6 +1252,7 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) 
                         serv.notifications.push(data[i]);
                     }
                     $rootScope.$apply();
+                    serv.resizeIframes();
                 }
             }).fail(function() {
                 // something bad is happening!
@@ -1261,7 +1263,7 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) 
             serv.notifications.length = 0;
             serv.firstResult = 0;
             serv.maxResults = defaultMaxResults;
-            serv.getNotifications();
+            serv.getNotifications();            
         },
         retrieveUnreadCount: function() {
             $.ajax({
@@ -1275,6 +1277,12 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) 
                 // something bad is happening!
                 console.log("error with getting count of unread notifications");
             });
+        },
+        resizeIframes: function(){
+        	var activeViews = serv.displayBody;
+			for (key in activeViews){
+				iframeResize(key);				
+			}
         },
         getUnreadCount: function() {
             return serv.unreadCount;
@@ -4903,10 +4911,13 @@ orcidNgModule.controller('DelegatorsCtrl',['$scope', '$compile', function ($scop
 // Controller for notifications
 orcidNgModule.controller('NotificationsCtrl',['$scope', '$compile', 'notificationsSrvc', function ($scope, $compile, notificationsSrvc){
     $scope.displayBody = {};
+    notificationsSrvc.displayBody = {};
 
     $scope.toggleDisplayBody = function (notificationId) {
-        $scope.displayBody[notificationId] = !$scope.displayBody[notificationId];
+        $scope.displayBody[notificationId] = !$scope.displayBody[notificationId];        
+        notificationsSrvc.displayBody[notificationId] = $scope.displayBody[notificationId]; 
         notificationsSrvc.flagAsRead(notificationId);
+        iframeResize(notificationId);
     };
 
     $scope.notifications = notificationsSrvc.notifications;
@@ -4915,7 +4926,7 @@ orcidNgModule.controller('NotificationsCtrl',['$scope', '$compile', 'notificatio
     $scope.archive = notificationsSrvc.archive;
     $scope.getNotifications = notificationsSrvc.getNotifications;
     $scope.reloadNotifications = notificationsSrvc.reloadNotifications;
-    $scope.notificationsSrvc = notificationsSrvc;
+    $scope.notificationsSrvc = notificationsSrvc;    
 }]);
 
 // Controller to show alert for unread notifications

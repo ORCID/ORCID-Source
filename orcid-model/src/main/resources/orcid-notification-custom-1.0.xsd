@@ -17,7 +17,8 @@
 				<xs:element ref="orcid:archivedDate" minOccurs="0"/>
 				<xs:element ref="orcid:source" minOccurs="0"/>
 			</xs:sequence>
-             <xs:attributeGroup ref="orcid:putCode"/>
+            <xs:attributeGroup ref="orcid:putCode"/>
+            <xs:attributeGroup ref="orcid:lang"/>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="notificationType">
