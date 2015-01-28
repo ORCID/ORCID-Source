@@ -5509,8 +5509,6 @@ multiselect .dropdown-menu .dropdown-menu-list {
 	margin-bottom: 0;
 }
 
-
-
 .admin-edit-client {
 	border: solid 1px #D3D3D3;
 	padding: 10px;
@@ -5531,27 +5529,20 @@ ul.oauth-icons li {
 	display: inline;
 }
 
-.notifications td {
-	border-top-style: solid;
-	border-width: 1px;
-	border-color: #DDDDDD;
+.notifications iframe{
+	padding: 0 15px;
 }
 
-.notifications th,td {
-	padding: 8px;
-	vertical-align: top;
+.notifications .archived{
+	background: #F3F3F3;
 }
 
-.notifications th,td :hover {
-    cursor: pointer;
+.notifications .unread{	
+	color: #494A4C;
+	 background: #FFF;
 }
-
-.notifications .unread {
-	font-weight: bold;
-}
-
-.notifications .archived {
-	background-color: #c9c9ca;
+.notifications tbody>tr{
+	cursor: pointer;
 }
 
 .vertical-align-middle {
@@ -5672,7 +5663,6 @@ ul.oauth-scopes li{
 	display: block;
 	height: 10px;
 }
-
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */

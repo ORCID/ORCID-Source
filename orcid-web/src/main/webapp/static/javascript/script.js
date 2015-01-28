@@ -1753,4 +1753,11 @@ function tabletDesktopActionButtons($event) {
     } else { // Mobile
         $('.action-button-bar').removeClass('tablet-desktop-display');
     }
+};
+
+function iframeResize(putCode){						
+	$('#'+putCode).iFrameResize({
+		log: false,
+		autoResize: true			
+	});
 }
