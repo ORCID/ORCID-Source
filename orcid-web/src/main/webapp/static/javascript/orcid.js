@@ -401,6 +401,7 @@
     		$(this).select();
     	});
     };
+    
         
     /*============================================================
         Page initialisation
@@ -413,7 +414,7 @@
         menuHack();        
         menuHandler();
         developerToolsTabs();
-        selectableInputs(); 
+        selectableInputs();
     };
 
     

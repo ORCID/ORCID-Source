@@ -29,6 +29,7 @@ public class NotificationCustomEntity extends NotificationEntity {
     private String subject;
     private String bodyText;
     private String bodyHtml;
+    private String lang;
 
     public String getSubject() {
         return subject;
@@ -54,6 +55,14 @@ public class NotificationCustomEntity extends NotificationEntity {
 
     public void setBodyHtml(String bodyHtml) {
         this.bodyHtml = bodyHtml;
+    }
+
+    public String getLang() {
+        return lang;
+    }
+
+    public void setLang(String lang) {
+        this.lang = lang;
     }
 
 }
