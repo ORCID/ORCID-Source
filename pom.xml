@@ -574,10 +574,11 @@ the software.
                     </exclusion>
                 </exclusions>
             </dependency>
+            <!-- temporary patch repo until 2.0.6 is out -->
             <dependency>
                 <groupId>org.springframework.security.oauth</groupId>
                 <artifactId>spring-security-oauth2</artifactId>
-                <version>2.0.5.RELEASE</version>
+                <version>2.0.5.RELEASE_DOUBLE_ENCODE_PATCH_SNAPSHOT</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
@@ -977,8 +978,20 @@ the software.
                 <enabled>false</enabled>
             </snapshots>
         </repository>
+        <!-- temporary repo until 2.0.6 is out -->
+        <repository>
+            <id>orcid-spring-oauth-copy</id>
+            <name>copy of spring security oauth</name>
+            <url>https://raw.github.com/ORCID/spring-security-oauth/mvn-repo/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
     </repositories>
-
+    
     <pluginRepositories>
         <pluginRepository>
             <id>m2.java.net</id>
