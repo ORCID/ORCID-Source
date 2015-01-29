@@ -27,6 +27,7 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.notification.Notification;
 import org.orcid.jaxb.model.notification.NotificationType;
 import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
+import org.orcid.jaxb.model.notification.amended.NotificationAmended;
 import org.orcid.jaxb.model.notification.custom.NotificationCustom;
 import org.orcid.persistence.dao.NotificationDao;
 import org.springframework.http.MediaType;
@@ -69,6 +70,10 @@ public class NotificationController extends BaseController {
                 NotificationAddActivities naa = (NotificationAddActivities) notification;
                 naa.setSubject(getMessage(buildInternationalizationKey(NotificationType.class, naa.getNotificationType().value())));
             }
+            else if (notification instanceof NotificationAmended) {
+                NotificationAmended na = (NotificationAmended) notification;
+                na.setSubject(getMessage(buildInternationalizationKey(NotificationType.class, na.getNotificationType().value())));
+            };
         }
         return notifications;
     }
