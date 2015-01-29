@@ -967,22 +967,22 @@ the software.
     </dependencyManagement>
 
     <repositories>
-        <repository>
-            <id>spring-s3</id>
-            <name>Spring S3</name>
-            <url>http://maven.springframework.org/milestone</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
         <!-- temporary repo until 2.0.6 is out -->
         <repository>
             <id>orcid-spring-oauth-copy</id>
             <name>copy of spring security oauth</name>
             <url>https://raw.github.com/ORCID/spring-security-oauth/mvn-repo/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>spring-s3</id>
+            <name>Spring S3</name>
+            <url>http://maven.springframework.org/milestone</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
