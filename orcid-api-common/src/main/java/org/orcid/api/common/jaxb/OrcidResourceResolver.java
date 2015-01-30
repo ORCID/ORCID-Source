@@ -44,7 +44,7 @@ public class OrcidResourceResolver implements LSResourceResolver {
 
     private boolean shouldLoadFromClasspath(String systemId) {
         if (systemId != null) {
-            if (systemId.startsWith("orcid-common-")) {
+            if (systemId.startsWith("orcid-common-") || systemId.equals("xml.xsd")) {
                 return true;
             }
         }
