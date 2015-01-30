@@ -121,6 +121,8 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         switch (getApiSection()) {
         case NOTIFICATIONS:
             return newStyleErrorREsponse(t);
+        case V2:
+            return newStyleErrorREsponse(t);
         default:
             return legacyErrorResponse(t);
         }
