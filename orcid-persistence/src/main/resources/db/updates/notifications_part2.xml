@@ -18,29 +18,37 @@
 -->
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+                   
+        <changeSet id="REMOVE-OLD-NOTIFICATION-SCOPE" author="Will Simpson">
+            <sql>DELETE FROM client_scope WHERE scope_type = '/notification';</sql>        
+        </changeSet>
         
-        <changeSet id="INSERT-NOTIFICATION-SCOPE" author="Will Simpson" dbms="postgresql">
+        <changeSet id="UPDATE-TOKENS-WITH-OLD-NOTIFICATION-SCOPE" author="Will Simpson" dbms="postgresql">
+            <sql>update oauth2_token_detail set scope_type = replace(scope_type, '/notification', '/premium-notification') where scope_type like '%/notification%'</sql>
+        </changeSet>
+        
+        <changeSet id="INSERT-NOTIFICATION-SCOPE-2" author="Will Simpson" dbms="postgresql">
         <createProcedure>
 <![CDATA[
-CREATE OR REPLACE FUNCTION insert_notification_scope() RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION insert_scope_for_premium_members(scope_to_add varchar(150)) RETURNS VOID AS $$
 DECLARE
     client_id VARCHAR;
 BEGIN
-    RAISE NOTICE 'Inserting notification scopes...';
+    RAISE NOTICE 'Inserting scope...';
 
-    FOR client_id IN SELECT * FROM client_details cd LEFT JOIN client_scope cs ON cs.client_details_id = cd.client_details_id AND cs.scope_type = '/notification' WHERE cd.client_type IS NOT NULL AND cs.client_details_id IS NULL
+    FOR client_id IN SELECT * FROM client_details cd LEFT JOIN client_scope cs ON cs.client_details_id = cd.client_details_id AND cs.scope_type = scope_to_add WHERE cd.client_type IN ('PREMIUM_CREATOR', 'PREMIUM_UPDATER') AND cs.client_details_id IS NULL
     LOOP
-        RAISE NOTICE 'Found member % without notification scope', client_id;
-        EXECUTE 'INSERT INTO client_scope (client_details_id, scope_type, date_created, last_modified) VALUES ($1, ''/notification'', now(), now())' USING client_id;
+        RAISE NOTICE 'Found member % without % scope', client_id, scope_to_add;
+        EXECUTE 'INSERT INTO client_scope (client_details_id, scope_type, date_created, last_modified) VALUES ($1, $2, now(), now())' USING client_id, scope_to_add;
     END LOOP;
 
-    RAISE NOTICE 'Finished inserting notification scopes';
+    RAISE NOTICE 'Finished inserting scope';
     RETURN;
 END;
 $$ LANGUAGE plpgsql;
 ]]>
         </createProcedure>
-        <sql>select insert_notification_scope();</sql>
+        <sql>select insert_scope_for_premium_members('/premium-notification');</sql>
     </changeSet>
     
     <changeSet id="UPDATE-NOTIFICATION-TYPE" author="Will Simpson" dbms="postgresql">

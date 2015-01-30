@@ -92,7 +92,7 @@ public class NotificationsTest {
         params.add("client_id", client1ClientId);
         params.add("client_secret", client1ClientSecret);
         params.add("grant_type", "client_credentials");
-        params.add("scope", ScopePathType.NOTIFICATION.value());
+        params.add("scope", ScopePathType.PREMIUM_NOTIFICATION.value());
         ClientResponse clientResponse = t2OAuthClient.obtainOauth2TokenPost("client_credentials", params);
         assertEquals(200, clientResponse.getStatus());
         String body = clientResponse.getEntity(String.class);
