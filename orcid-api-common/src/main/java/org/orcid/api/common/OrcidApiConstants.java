@@ -16,6 +16,13 @@
  */
 package org.orcid.api.common;
 
+import static org.orcid.api.common.OrcidApiConstants.ORCID_JSON;
+import static org.orcid.api.common.OrcidApiConstants.ORCID_XML;
+import static org.orcid.api.common.OrcidApiConstants.VND_ORCID_JSON;
+import static org.orcid.api.common.OrcidApiConstants.VND_ORCID_XML;
+
+import javax.ws.rs.core.MediaType;
+
 public class OrcidApiConstants {
 
     public static final String EXPERIMENTAL_RDF_V1 = "/experimental_rdf_v1";
@@ -45,7 +52,8 @@ public class OrcidApiConstants {
     public static final String EMPLOYMENT = "/{orcid}/employment";
     public static final String PUTCODE = "/{putCode}"; // concated on the end of other paths like FUNDINGS
     public static final String ADD_ACTIVITIES_FLAG_AS_ARCHIVED_PATH = "/add-activities/{id}/archive";
-
+    public static final String ERROR = "/error";
+    
     public static final String ORCID_XML = "application/orcid+xml; qs=3";
     public static final String ORCID_JSON = "application/orcid+json; qs=2";
     public static final String TEXT_TURTLE = "text/turtle; qs=3";

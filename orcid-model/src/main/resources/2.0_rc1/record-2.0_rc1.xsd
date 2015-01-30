@@ -39,8 +39,6 @@
 		</xs:appinfo>
 	</xs:annotation>
 
-	<xs:import namespace="http://www.orcid.org/ns/affiliation"
-		schemaLocation="affiliation-2.0_rc1.xsd" />
 	<xs:import namespace="http://www.orcid.org/ns/activities"
 		schemaLocation="activities-2.0_rc1.xsd" />
 	<xs:import namespace="http://www.orcid.org/ns/person"
@@ -89,7 +87,7 @@
 				<xs:element ref="history:history" minOccurs="0"
 					maxOccurs="1" />
 				<xs:element ref="person:person" minOccurs="0" maxOccurs="1" />
-				<xs:element ref="activities:summary"
+				<xs:element ref="activities:activitiesSummary"
 					minOccurs="0" maxOccurs="1" />
 				<xs:element ref="internal:internal" minOccurs="0"
 					maxOccurs="1" />
