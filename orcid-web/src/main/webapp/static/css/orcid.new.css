@@ -5662,6 +5662,14 @@ ul.oauth-scopes li{
 	height: 10px;
 }
 
+.journaltitle{
+	font-size: 16px;
+	font-weight: normal;	
+	color: #939598;
+	display: block;	
+	clear: both;
+}
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 
