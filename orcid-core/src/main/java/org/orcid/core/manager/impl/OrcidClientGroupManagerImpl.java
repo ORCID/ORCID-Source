@@ -639,7 +639,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
     @Override
     public Set<String> premiumCreatorScopes() {
         Set<String> creatorScopes = creatorScopes();
-        creatorScopes.add(ScopePathType.WEBHOOK.value());
+        addPremiumOnlyScopes(creatorScopes);
         return creatorScopes;
     }
 
@@ -651,7 +651,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
     @Override
     public Set<String> premiumUpdaterScopes() {
         Set<String> updaterScopes = updaterScopes();
-        updaterScopes.add(ScopePathType.WEBHOOK.value());
+        addPremiumOnlyScopes(updaterScopes);
         return updaterScopes;
     }
 
@@ -663,6 +663,11 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
                 ScopePathType.ORCID_PROFILE_READ_LIMITED, ScopePathType.ORCID_WORKS_CREATE, ScopePathType.ORCID_WORKS_READ_LIMITED, ScopePathType.ORCID_WORKS_UPDATE,
                 ScopePathType.READ_PUBLIC, ScopePathType.ACTIVITIES_UPDATE, ScopePathType.PERSON_UPDATE, ScopePathType.ACTIVITIES_READ_LIMITED,
                 ScopePathType.PERSON_READ_LIMITED));
+    }
+
+    private void addPremiumOnlyScopes(Set<String> scopes) {
+        scopes.add(ScopePathType.WEBHOOK.value());
+        scopes.add(ScopePathType.NOTIFICATION.value());
     }
 
     /**
