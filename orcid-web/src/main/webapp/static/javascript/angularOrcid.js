@@ -7800,3 +7800,37 @@ angular.module('ui.multiselect', [])
       }
     }
   }]);
+
+
+/*Miscellaneous controllers */
+orcidNgModule.controller('searchBoxCtrl',['$scope', function ($scope){
+	$scope.showSearchFilter = false;
+	$scope.showLegalInfo = false;
+	$scope.filterModified = false;
+	
+	$scope.showSearchFilter = function() {
+		$scope.showSearchBox =  true;
+	}
+	
+	$scope.hideSearchFilter = function() {		
+		$scope.showSearchBox =  false;
+	}
+	
+	$scope.showLegalBox = function(){
+		$scope.showLegalInfo =  true;
+	}
+	
+	$scope.hideLegalBox = function() {
+		$scope.showLegalInfo =  false;
+	}
+	
+	$scope.filterStatus = function(){
+		$scope.filterModified = true;	
+	}
+	
+	
+	
+	
+	
+	
+}]);

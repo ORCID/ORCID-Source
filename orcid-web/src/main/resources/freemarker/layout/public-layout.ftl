@@ -40,22 +40,26 @@
 <div class="container">
 	<div class="header center">
 		<div class="row">
-			<div class="search col-md-11 col-md-offset-1 col-sm-12 col-xs-12" id="search">
-				<form id="form-search" action="${aboutUri}/search/node" method="POST">
+			<div class="search col-md-11 col-md-offset-1 col-sm-12 col-xs-12" id="search" ng-controller="searchBoxCtrl">
+				<form id="form-search" action="${aboutUri}/search/node" method="POST" ng-blur="hideSearchFilter()">
 					<div id="search-box">
-						<input type="search" name="keys" placeholder="<@orcid.msg 'public-layout.search'/>"/>
+						<input type="search" name="keys" ng-focus="showSearchFilter(); showLegalBox();" placeholder="<@orcid.msg 'public-layout.search'/>"/>
 					</div>
+					
 					<div class="bar">
-						<fieldset class="search_options">
+						<fieldset class="search_options" ng-show="showSearchBox == true">
 							<input type="radio" name="huh_radio" id="filter_registry" value="registry" checked />
 							<label for="filter_registry"><@orcid.msg 'public-layout.search.choice.registry'/></label>
 							<input type="radio" name="huh_radio" id="filter_website" value="website" />
 							<label for="filter_website"><@orcid.msg 'public-layout.search.choice.website'/></label>
 						</fieldset>
 					</div>
-					<div class="conditions">
+					
+					
+					<div class="conditions" ng-show="showLegalInfo">
 						<p><@orcid.msg 'public-layout.search.terms1'/><a href="${aboutUri}/legal"><@orcid.msg 'public-layout.search.terms2'/></a><@orcid.msg 'public-layout.search.terms3'/></p>
 					</div>
+					
 					<div class="top-buttons">
 						<button type="submit" class="search-button">
 							<i class="icon-orcid-search"></i>
@@ -63,6 +67,9 @@
 						<a href="<@spring.url "/orcid-search/search" />" class="settings-button" title="<@orcid.msg 'public-layout.search.advanced'/>"><i class="glyphicon glyphicon-cog"></i></a>
 					</div>
 				</form>
+				
+				
+				
 				<div class="language-selector" ng-controller="languageCtrl" id="languageCtrl">
 					<form id="language-form" action="#">
 						<select name="language-codes" id="language-codes" ng-model="language" ng-options="language.label for language in languages" ng-change="selectedLanguage()"></select>

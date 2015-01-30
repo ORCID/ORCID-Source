@@ -610,12 +610,11 @@ select {
 	z-index: 100;
 	font-size: 12px;
 	background: #939598;
-	height: 0px;
-	overflow: hidden;
+	height: auto;	
 	width: 100%;
 	text-align: left;
 	line-height: 23px;
-	display: block;
+	display: block;	
 }
 
 .header .search form .conditions a {
@@ -627,8 +626,7 @@ select {
 	color: #fff !important;
 }
 
-.header .search form .search_options {
-	display: none;
+.header .search form .search_options {	
 	float: right;
 	background: #C9CACB;
 	height: 22px;

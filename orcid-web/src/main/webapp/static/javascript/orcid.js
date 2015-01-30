@@ -17,43 +17,33 @@
 (function($) {
  
     var searchFilterChanged = false;
-    var showingTemplateMenu = false;    
-    
-    var handleNews = function() {
-        $(".news-section").hide();
-        if (window.location.hash) {
-            $(".news-filter-header a[href='" + window.location.hash + "']").addClass("active");
-            $(window.location.hash).show();
-        } else {
-            $(".news-filter-header a:first").addClass("active");
-            $(".news-section:first").show();
-        }
-        $(".news-filter-header a").live("click", function(e) {
-            if (window.location.href.indexOf("?l") === -1) {
-                e.preventDefault();
-            }
-            $(this).parent().siblings().children("a").removeClass("active");
-            $(this).addClass("active");
-            var target = $(this).attr("href");
-            $(".news-section").hide();
-            $(target).show();
-        });
-    };
+    var showingTemplateMenu = false;
 
+    
+    
+    
     var searchFilters = function() {
         $("input[type=search]").live("focus", function(e) {
-            $(".search_options").show();
+            
+        	$(".search_options").show();
             $(".conditions").animate({"height":"22px"}, 200);
+            
         });
+        
         $("input[name=huh_radio]").live("click", function(e) {
             searchFilterChanged = true;
         });
+        
+        
         $("input[type=search]").live("blur", function(e) {
             hideSearchFilter();
             setTimeout(function () {
                 $(".conditions").animate({"height":"0px"}, 200);
             }, 50);
         });
+        
+        
+        
         var hideSearchFilter = function() {
             if ($("input[type=search]").val() === "") {
                 setTimeout(function() {
@@ -408,7 +398,7 @@
     ============================================================*/
 
     var init = function() {
-        searchFilters();
+        //searchFilters();
         toolTips();
         popupHandler();
         menuHack();        
