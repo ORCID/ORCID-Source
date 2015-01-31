@@ -94,7 +94,8 @@ public enum ScopePathType implements Serializable {
     @XmlEnumValue("/orcid-works/create") ORCID_WORKS_CREATE("/orcid-works/create", ORCID_WORKS_READ_LIMITED, READ_PUBLIC),
     @XmlEnumValue("/funding/create") FUNDING_CREATE("/funding/create", FUNDING_READ_LIMITED, READ_PUBLIC),
     @XmlEnumValue("/orcid-patents/create") ORCID_PATENTS_CREATE("/orcid-patents/create", ORCID_PATENTS_UPDATE, READ_PUBLIC),    
-    @XmlEnumValue("/notification") NOTIFICATION("/notification"),
+    @XmlEnumValue("/basic-notification") BASIC_NOTIFICATION("/basic-notification"),
+    @XmlEnumValue("/premium-notification") PREMIUM_NOTIFICATION("/premium-notification", BASIC_NOTIFICATION),
     
     //XXX: Per activity API    
     @XmlEnumValue("/activities/read-limited") ACTIVITIES_READ_LIMITED("/activities/read-limited", ORCID_WORKS_READ_LIMITED, AFFILIATIONS_READ_LIMITED, FUNDING_READ_LIMITED),
@@ -125,7 +126,7 @@ public enum ScopePathType implements Serializable {
     public String value() {
         return value;
     }
-    
+
     public String getContent() {
         return value;
     }
@@ -167,30 +168,28 @@ public enum ScopePathType implements Serializable {
             return false;
         }
     }
-    
-    /* 
-     * http://support.orcid.org/knowledgebase/articles/119656
-     * These types are issues by ORCID and don't expire for
-     * at long time.
+
+    /*
+     * http://support.orcid.org/knowledgebase/articles/119656 These types are
+     * issues by ORCID and don't expire for at long time.
      */
     public boolean isClientCreditalScope() {
         switch (this) {
-            case ORCID_PROFILE_CREATE:
-                return true;
-            case READ_PUBLIC:
-                return true;
-            case WEBHOOK:
-                return true;
-            case NOTIFICATION:
-                return true;
-            default:
-                return false;
+        case ORCID_PROFILE_CREATE:
+            return true;
+        case READ_PUBLIC:
+            return true;
+        case WEBHOOK:
+            return true;
+        case PREMIUM_NOTIFICATION:
+            return true;
+        default:
+            return false;
         }
     }
 
     /*
-     * These scopes are granted by the user and 
-     * currently only last an hour.
+     * These scopes are granted by the user and currently only last an hour.
      */
     public boolean isUserGrantWriteScope() {
         switch (this) {
@@ -207,10 +206,10 @@ public enum ScopePathType implements Serializable {
         case ORCID_BIO_UPDATE:
             return true;
         case ORCID_PROFILE_CREATE:
-            // this is tricky, this scope doesn't follow all the rules of 
+            // this is tricky, this scope doesn't follow all the rules of
             // of the other scopes, it is allow to have a longer expiration date
             // and only works on unclaimed records
-            return false; 
+            return false;
         case FUNDING_CREATE:
             return true;
         case FUNDING_UPDATE:
@@ -227,7 +226,7 @@ public enum ScopePathType implements Serializable {
             return false;
         }
     }
-    
+
     /**
      * @return A set containing the external identifiers for this scope and all
      *         its inherited scopes
@@ -286,8 +285,8 @@ public enum ScopePathType implements Serializable {
     public static Set<String> getScopesAsStrings(ScopePathType... scopes) {
         return getScopesAsStrings(Arrays.asList(scopes));
     }
-    
-    public static void main(String []a) {
+
+    public static void main(String[] a) {
         System.out.println(ScopePathType.ORCID_PROFILE_CREATE.getCombinedAsStrings());
     }
 

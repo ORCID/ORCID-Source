@@ -166,20 +166,20 @@ public class Orcid3StepOauthFlowTest extends DBUnitTest {
         url = webDriver.getCurrentUrl();
         evaluateUrl(url, "/webhook");                
         
-        scopes="/notification";
+        scopes="/premium-notification";
         webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, CLIENT_DETAILS_ID, scopes, redirectUri));
         url = webDriver.getCurrentUrl();
-        evaluateUrl(url, "/notification");
+        evaluateUrl(url, "/premium-notification");
         
-        scopes="/orcid-works/create /notification";
+        scopes="/orcid-works/create /premium-notification";
         webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, CLIENT_DETAILS_ID, scopes, redirectUri));
         url = webDriver.getCurrentUrl();
-        evaluateUrl(url, "/notification");
+        evaluateUrl(url, "/premium-notification");
         
-        scopes="/notification /orcid-works/create";
+        scopes="/premium-notification /orcid-works/create";
         webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, CLIENT_DETAILS_ID, scopes, redirectUri));
         url = webDriver.getCurrentUrl();
-        evaluateUrl(url, "/notification");
+        evaluateUrl(url, "/premium-notification");
     }
     
     private void evaluateUrl(String currentUrl, String invalidScope) {
