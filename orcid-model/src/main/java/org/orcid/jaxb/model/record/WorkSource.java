@@ -29,7 +29,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 @Deprecated
-@XmlRootElement(name = "workSource")
+@XmlRootElement(name = "source")
 public class WorkSource extends OrcidIdBase implements Serializable {
 
     // This field indicates that the source is null on database

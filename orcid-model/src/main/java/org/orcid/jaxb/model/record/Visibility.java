@@ -38,16 +38,6 @@ import java.io.Serializable;
  * <p/>
  * <p/>
  * 
- * <pre>
- * &lt;simpleType name="visibility">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *     &lt;enumeration value="private"/>
- *     &lt;enumeration value="limited"/>
- *     &lt;enumeration value="public"/>
- *     &lt;enumeration value="registered-only"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
- * </pre>
  */
 @XmlType(name = "visibility")
 @XmlEnum

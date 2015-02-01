@@ -34,25 +34,12 @@ import java.io.Serializable;
  * <p>Java class for anonymous complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
- * <pre>
- * &lt;complexType>
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}work-external-identifier-type"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}work-external-identifier-id"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
- * </pre>
- * 
+ *  
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "workExternalIdentifierType", "workExternalIdentifierId" })
-@XmlRootElement(name = "work-external-identifier")
+@XmlRootElement(name = "workExternalIdentifier")
 public class WorkExternalIdentifier implements Serializable {
 
     /**

@@ -41,7 +41,7 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "contributorOrcid", "creditName", "contributorEmail", "contributorAttributes" })
 @XmlRootElement(name = "contributor")
-public class Contributor implements Serializable {
+public class FundingContributor implements Serializable {
 
     /**
      * 
@@ -54,7 +54,7 @@ public class Contributor implements Serializable {
     @XmlElement
     protected ContributorEmail contributorEmail;
     @XmlElement
-    protected ContributorAttributes contributorAttributes;
+    protected FundingContributorAttributes contributorAttributes;
 
     /**
      * Gets the value of the contributorOrcid property.
@@ -129,26 +129,26 @@ public class Contributor implements Serializable {
     }
 
     /**
-     * Gets the value of the contributorAttributes property.
+     * Gets the value of the fundingContributorAttributes property.
      * 
      * @return
      *     possible object is
      *     {@link ContributorAttributes }
      *     
      */
-    public ContributorAttributes getContributorAttributes() {
+    public FundingContributorAttributes getContributorAttributes() {
         return contributorAttributes;
     }
 
     /**
-     * Sets the value of the contributorAttributes property.
+     * Sets the value of the fundingContributorAttributes property.
      * 
      * @param value
      *     allowed object is
      *     {@link ContributorAttributes }
      *     
      */
-    public void setContributorAttributes(ContributorAttributes value) {
+    public void setContributorAttributes(FundingContributorAttributes value) {
         this.contributorAttributes = value;
     }
 
@@ -157,11 +157,11 @@ public class Contributor implements Serializable {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof Contributor)) {
+        if (!(o instanceof FundingContributor)) {
             return false;
         }
 
-        Contributor that = (Contributor) o;
+        FundingContributor that = (FundingContributor) o;
 
         if (contributorAttributes != null ? !contributorAttributes.equals(that.contributorAttributes) : that.contributorAttributes != null) {
             return false;

@@ -26,8 +26,10 @@ package org.orcid.jaxb.model.record;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -36,26 +38,32 @@ import javax.xml.bind.annotation.XmlType;
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
+ * <pre>
+ * &lt;complexType>
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}contributor" maxOccurs="unbounded" minOccurs="0"/>
+ *       &lt;/sequence>
+ *       &lt;attGroup ref="{http://www.orcid.org/ns/orcid}scope"/>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ * 
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "contributor" })
-@XmlRootElement(name = "contributors")
-public class WorkContributors implements Serializable {
+@XmlRootElement(name = "funding-contributors")
+public class FundingContributors implements Serializable {
 
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
-    protected List<Contributor> contributor;
-    
-    public WorkContributors() {
-        
-    }
-    
-    public WorkContributors(List<Contributor> contributor) {
-        this.contributor=contributor;
-    }
+    @XmlElement(name = "funding-contributor", required = true)
+    protected List<FundingContributor> contributor;
 
     /**
      * Gets the value of the contributor property.
@@ -79,23 +87,23 @@ public class WorkContributors implements Serializable {
      * 
      * 
      */
-    public List<Contributor> getContributor() {
+    public List<FundingContributor> getContributor() {
         if (contributor == null) {
-            contributor = new ArrayList<Contributor>();
+            contributor = new ArrayList<FundingContributor>();
         }
         return this.contributor;
-    }
+    }    
 
     @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof WorkContributors)) {
+        if (!(o instanceof FundingContributors)) {
             return false;
         }
 
-        WorkContributors that = (WorkContributors) o;
+        FundingContributors that = (FundingContributors) o;
 
         if (contributor != null ? !contributor.equals(that.contributor) : that.contributor != null) {
             return false;
@@ -106,6 +114,7 @@ public class WorkContributors implements Serializable {
 
     @Override
     public int hashCode() {
-        return contributor != null ? contributor.hashCode() : 0;
+        int result = 31 * (contributor != null ? contributor.hashCode() : 0);
+        return result;
     }
 }

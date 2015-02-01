@@ -33,15 +33,6 @@ import java.io.Serializable;
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
- * <pre>
- * &lt;simpleType name="media-type">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *     &lt;enumeration value="print"/>
- *     &lt;enumeration value="online"/>
- *     &lt;enumeration value="other"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
- * </pre>
  * 
  */
 @XmlType(name = "mediaType")

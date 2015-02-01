@@ -38,15 +38,6 @@ import javax.xml.bind.annotation.XmlType;
  * The following schema fragment specifies the expected content contained within
  * this class.
  * 
- * <pre>
- * &lt;complexType>
- *   &lt;complexContent>
- *     &lt;extension base="{http://www.orcid.org/ns/orcid}fuzzy-date">
- *       &lt;attribute name="media-type" type="{http://www.orcid.org/ns/orcid}media-type" />
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
- * </pre>
  * 
  * 
  */

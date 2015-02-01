@@ -39,20 +39,6 @@ import javax.xml.bind.annotation.XmlType;
  * The following schema fragment specifies the expected content contained within
  * this class.
  * 
- * <pre>
- * &lt;complexType>
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}source-orcid" minOccurs="0"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}source-name" minOccurs="0"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}source-date" minOccurs="0"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
- * </pre>
- * 
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -64,13 +50,13 @@ public class Source implements Serializable {
      * 
      */
     private static final long serialVersionUID = 1L;
-    @XmlElement(name = "source-orcid")
+    @XmlElement
     protected SourceOrcid sourceOrcid;
-    @XmlElement(name = "source-client-id")
+    @XmlElement
     protected SourceClientId sourceClientId;
-    @XmlElement(name = "source-name")
+    @XmlElement
     protected SourceName sourceName;
-    @XmlElement(name = "source-date")
+    @XmlElement
     protected SourceDate sourceDate;
 
     public Source() {

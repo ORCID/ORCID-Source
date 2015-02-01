@@ -46,9 +46,9 @@ public class Citation implements Serializable {
      * 
      */
     private static final long serialVersionUID = 1L;
-    @XmlElement(name = "citationType", required = true, defaultValue = "formatted-unspecified")
+    @XmlElement(required = true, defaultValue = "formatted-unspecified")
     protected CitationType citationType = CitationType.FORMATTED_UNSPECIFIED;
-    @XmlElement(name = "citation", required = true)
+    @XmlElement(required = true)
     protected String citation;
 
     public Citation() {

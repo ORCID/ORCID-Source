@@ -27,15 +27,7 @@ import java.io.Serializable;
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
- * <pre>
- * &lt;simpleType name="scope">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *     &lt;enumeration value="read-protected"/>
- *     &lt;enumeration value="update"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
- * </pre>
- * 
+* 
  */
 @XmlType(name = "scope")
 @XmlEnum

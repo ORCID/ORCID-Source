@@ -17,6 +17,7 @@
 package org.orcid.jaxb.model.record;
 
 import java.io.Serializable;
+import java.util.Currency;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -35,12 +36,13 @@ import org.apache.commons.lang.StringUtils;
  * The following schema fragment specifies the expected content contained within
  * this class.
  * 
+* 
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType( propOrder = { "content" })
-@XmlRootElement(name = "translatedTitle")
-public class TranslatedTitle implements Serializable {
+@XmlType(name = "", propOrder = { "content" })
+@XmlRootElement(name = "amount")
+public class Amount implements Serializable {
     /**
      * 
      */
@@ -48,19 +50,19 @@ public class TranslatedTitle implements Serializable {
     @XmlValue
     protected String content;
     @XmlAttribute(required = true)
-    protected String languageCode;
+    protected String currencyCode;
 
-    public TranslatedTitle() {
-
+    public Amount() {
+    	
     }
 
-    public TranslatedTitle(String content) {
+    public Amount(String content) {
         this.content = content;
     }
 
-    public TranslatedTitle(String content, String languageCode) {
+    public Amount(String content, String currencyCode) {
         this.content = content;
-        this.languageCode = languageCode;
+        this.currencyCode = currencyCode;
     }
 
     public String getContent() {
@@ -71,12 +73,12 @@ public class TranslatedTitle implements Serializable {
         this.content = content;
     }
 
-    public String getLanguageCode() {
-        return languageCode;
+    public String getCurrencyCode() {
+        return currencyCode;
     }
 
-    public void setLanguageCode(String languageCode) {
-        this.languageCode = languageCode;
+    public void setCurrencyCode(String currencyCode) {
+        this.currencyCode = currencyCode;
     }
 
     @Override
@@ -84,7 +86,7 @@ public class TranslatedTitle implements Serializable {
         final int prime = 37;
         int result = 1;
         result = prime * result + (StringUtils.isEmpty(this.content) ? 0 : this.content.hashCode());
-        result = prime * result + (StringUtils.isEmpty(this.languageCode) ? 0 : this.languageCode.hashCode());
+        result = prime * result + (this.currencyCode == null ? 0 : this.currencyCode.hashCode());
         return result;
     }
 
@@ -96,17 +98,17 @@ public class TranslatedTitle implements Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        TranslatedTitle other = (TranslatedTitle) obj;
+        Amount other = (Amount) obj;
         if (this.content == null) {
             if (other.content != null)
                 return false;
         } else if (!this.content.equals(other.content))
             return false;
 
-        if (this.languageCode == null) {
-            if (other.languageCode != null)
+        if (this.currencyCode == null) {
+            if (other.currencyCode != null)
                 return false;
-        } else if (!this.languageCode.equals(other.languageCode))
+        } else if (!this.currencyCode.equals(other.currencyCode))
             return false;
 
         return true;

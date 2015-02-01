@@ -34,23 +34,20 @@ import java.io.Serializable;
  * <p>Java class for anonymous complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *  
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType( propOrder = { "title", "subtitle", "translatedTitle" })
-@XmlRootElement(name = "title", namespace = "http://www.orcid.org/ns/work")
-public class WorkTitle implements Serializable {
+@XmlType( propOrder = { "title", "translatedTitle" })
+@XmlRootElement(name = "title")
+public class FundingTitle implements Serializable {
 
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
-    @XmlElement(namespace = "http://www.orcid.org/ns/common")
-    protected Title title;
-    @XmlElement(namespace = "http://www.orcid.org/ns/common")
-    protected Subtitle subtitle;
-    @XmlElement(namespace = "http://www.orcid.org/ns/common")
+    protected Title title;    
+    @XmlElement
     protected TranslatedTitle translatedTitle;
 
     /**
@@ -75,32 +72,7 @@ public class WorkTitle implements Serializable {
      */
     public void setTitle(Title value) {
         this.title = value;
-    }
-
-    /**
-     * Gets the value of the subtitle property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Subtitle }
-     *     
-     */
-    public Subtitle getSubtitle() {
-        return subtitle;
-    }
-
-    /**
-     * Sets the value of the subtitle property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Subtitle }
-     *     
-     */
-    public void setSubtitle(Subtitle value) {
-        this.subtitle = value;
-    }
-
+    }    
     
     /**
      * Gets the value of the translatedTitle property.
@@ -130,7 +102,6 @@ public class WorkTitle implements Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((subtitle == null) ? 0 : subtitle.hashCode());
         result = prime * result + ((title == null) ? 0 : title.hashCode());
         result = prime * result + ((translatedTitle == null) ? 0 : translatedTitle.hashCode());
         return result;
@@ -144,12 +115,7 @@ public class WorkTitle implements Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        WorkTitle other = (WorkTitle) obj;
-        if (subtitle == null) {
-            if (other.subtitle != null)
-                return false;
-        } else if (!subtitle.equals(other.subtitle))
-            return false;
+        FundingTitle other = (FundingTitle) obj;
         if (title == null) {
             if (other.title != null)
                 return false;

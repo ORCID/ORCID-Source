@@ -47,9 +47,9 @@ public class ContributorAttributes implements Serializable {
      * 
      */
     private static final long serialVersionUID = 1L;
-    @XmlElement(name = "contributorSequence", required = true)
+    @XmlElement(required = true)
     protected SequenceType contributorSequence;
-    @XmlElement(name = "contributorRole", required = true)
+    @XmlElement(required = true)
     protected ContributorRole contributorRole;
 
     /**

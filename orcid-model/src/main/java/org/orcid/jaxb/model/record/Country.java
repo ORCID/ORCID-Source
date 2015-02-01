@@ -52,7 +52,7 @@ public class Country implements Serializable, VisibilityType {
     private final static long serialVersionUID = 1L;
     @XmlValue
     protected Iso3166Country value;
-    @XmlAttribute(name = "visibility")
+    @XmlAttribute
     protected Visibility visibility;
 
     public Country() {

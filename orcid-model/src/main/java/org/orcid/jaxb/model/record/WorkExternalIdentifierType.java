@@ -37,16 +37,8 @@ import java.io.Serializable;
  * this class.
  * <p/>
  * 
- * <pre>
- * &lt;complexType>
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
- * </pre>
  */
-@XmlType(name = "work-external-identifier-type")
+@XmlType(name = "externalIdentifierType")
 @XmlEnum
 public enum WorkExternalIdentifierType implements Serializable {
 

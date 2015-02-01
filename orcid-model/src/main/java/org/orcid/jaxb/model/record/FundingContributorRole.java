@@ -22,37 +22,31 @@ import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 /**
- * @author Declan Newman (declan) Date: 07/08/2012
+ * @author Angel Montenegro 
+ *         Date: 20/02/2014
  */
 @XmlType(name = "contributorRole")
 @XmlEnum
-public enum ContributorRole implements Serializable {
+public enum FundingContributorRole implements Serializable {
 
-    @XmlEnumValue("author")
-    AUTHOR("author"), @XmlEnumValue("assignee")
-    ASSIGNEE("assignee"), @XmlEnumValue("editor")
-    EDITOR("editor"), @XmlEnumValue("chair-or-translator")
-    CHAIR_OR_TRANSLATOR("chair_or_translator"), @XmlEnumValue("co-investigator")
-    CO_INVESTIGATOR("co_investigator"), @XmlEnumValue("co-inventor")
-    CO_INVENTOR("co_inventor"), @XmlEnumValue("graduate-student")
-    GRADUATE_STUDENT("graduate_student"), @XmlEnumValue("other-inventor")
-    OTHER_INVENTOR("other_inventor"), @XmlEnumValue("principal-investigator")
-    PRINCIPAL_INVESTIGATOR("principal_investigator"), @XmlEnumValue("postdoctoral-researcher")
-    POSTDOCTORAL_RESEARCHER("postdoctoral_researcher"), @XmlEnumValue("support-staff")
-    SUPPORT_STAFF("support_staff");
+    @XmlEnumValue("lead")
+    LEAD("lead"), @XmlEnumValue("co-lead")
+    CO_LEAD("co_lead"), @XmlEnumValue("supported-by")
+    SUPPORTED_BY("supported_by"), @XmlEnumValue("other-contribution")
+    OTHER_CONTRIBUTION("other_contribution");
 
     private final String value;
 
-    ContributorRole(String v) {
+    FundingContributorRole(String v) {
         value = v;
     }
-
+    
     public String value() {
         return value;
     }
-
-    public static ContributorRole fromValue(String v) {
-        for (ContributorRole c : ContributorRole.values()) {
+    
+    public static FundingContributorRole fromValue(String v) {
+        for (FundingContributorRole c : FundingContributorRole.values()) {
             if (c.value.equals(v)) {
                 return c;
             }

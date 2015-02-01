@@ -34,17 +34,7 @@ import java.io.Serializable;
  * <p>Java class for anonymous complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
- * <pre>
- * &lt;complexType>
- *   &lt;simpleContent>
- *     &lt;extension base="&lt;http://www.orcid.org/ns/orcid>year">
- *     &lt;/extension>
- *   &lt;/simpleContent>
- * &lt;/complexType>
- * </pre>
- * 
- * 
+ *  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "value" })
