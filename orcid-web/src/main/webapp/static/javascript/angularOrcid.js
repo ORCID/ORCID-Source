@@ -6044,10 +6044,7 @@ orcidNgModule.controller('profileLockingCtrl', ['$scope', '$compile', function($
     };
     
     $scope.showConfirmModal = function(isLockAction) {
-    	$scope.showLockPopover = isLockAction; 
-    	console.log($scope.profileDetails);
-    	console.log($scope.profileDetails.orcid);
-    	console.log($scope.profileDetails.email);
+    	$scope.showLockPopover = isLockAction;     	
         $.colorbox({
             html : $compile($('#confirm-modal').html())($scope),
                 scrolling: true,
@@ -6064,7 +6061,7 @@ orcidNgModule.controller('profileLockingCtrl', ['$scope', '$compile', function($
     	$.ajax({
             url: getBaseUri()+'/admin-actions/lock-account.json',
             type: 'POST',
-            data: $scope.orcidToLock,
+            data: $scope.profileDetails.orcid,
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
             success: function(data){            	

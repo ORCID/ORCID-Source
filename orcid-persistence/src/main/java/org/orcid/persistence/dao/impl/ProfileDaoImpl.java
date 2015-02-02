@@ -691,7 +691,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Transactional
     public boolean lockProfile(String orcid) {
         Query query = entityManager
-                .createNativeQuery("update profile set last_modified=now(), account_non_locked=true where orcid=:orcid");
+                .createNativeQuery("update profile set last_modified=now(), account_non_locked=false where orcid=:orcid");
         query.setParameter("orcid", orcid);
         return query.executeUpdate() > 0;
     }

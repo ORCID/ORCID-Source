@@ -521,9 +521,9 @@ public class AdminController extends BaseController {
      * @param orcid The orcid of the account we want to lock
      * @return true if the account was locked, false otherwise
      * */
-    @RequestMapping(value = "/lock-account.json", method = RequestMethod.GET)
+    @RequestMapping(value = "/lock-account.json", method = RequestMethod.POST)
     public @ResponseBody
-    boolean lockAccount(@RequestParam("orcid") String orcid) {
+    boolean lockAccount(@RequestBody String orcid) {
         return profileEntityManager.lockProfile(orcid);        
     }
 }
