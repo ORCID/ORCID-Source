@@ -681,4 +681,18 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         }        
         return false;
     }
+    
+    /**
+     * Set the locked status of an account to true
+     * @param orcid the id of the profile that should be locked
+     * @return true if the account was locked
+     * */
+    @Override
+    @Transactional
+    public boolean lockProfile(String orcid) {
+        Query query = entityManager
+                .createNativeQuery("update profile set last_modified=now(), account_non_locked=true where orcid=:orcid");
+        query.setParameter("orcid", orcid);
+        return query.executeUpdate() > 0;
+    }
 }

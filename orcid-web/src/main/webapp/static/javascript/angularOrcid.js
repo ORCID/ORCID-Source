@@ -6057,7 +6057,24 @@ orcidNgModule.controller('profileLockingCtrl', ['$scope', '$compile', function($
             scrolling: true
         });
         $scope.$apply();
-        $.colorbox.resize({width:"525px" , height:"275px"});
+        $.colorbox.resize({width:"425px" , height:"285px"});
+    };
+    
+    $scope.lockAccount = function() {
+    	$.ajax({
+            url: getBaseUri()+'/admin-actions/lock-account.json',
+            type: 'POST',
+            data: $scope.orcidToLock,
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function(data){            	
+            	$scope.profileDetails=data;
+            	$scope.$apply();
+            }
+        }).fail(function(error) {
+            // something bad is happening!
+            console.log("Error while locking account");
+        });
     };
     
     $scope.closeModal = function() {        

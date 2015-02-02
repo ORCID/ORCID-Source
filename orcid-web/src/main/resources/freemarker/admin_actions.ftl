@@ -490,20 +490,20 @@
 				
 				<!-- Profile details-->
 				<div class="row">
-					<p class="col-md-3 col-sm-6 col-xs-12"><strong><@orcid.msg 'admin.profile_details.given_names'/></strong></p>
-					<p class="col-md-9 col-sm-6 col-xs-12">{{profileDetails.givenNames}}</p>
+					<p class="col-md-4 col-sm-6 col-xs-12"><strong><@orcid.msg 'admin.profile_details.given_names'/></strong></p>
+					<p class="col-md-8 col-sm-6 col-xs-12">{{profileDetails.givenNames}}</p>
 				</div>
 				<div class="row">
-					<p class="col-md-3 col-sm-6 col-xs-12"><strong><@orcid.msg 'admin.profile_details.family_name'/></strong></p>
-					<p class="col-md-9 col-sm-6 col-xs-12">{{profileDetails.familyName}}</p>
+					<p class="col-md-4 col-sm-6 col-xs-12"><strong><@orcid.msg 'admin.profile_details.family_name'/></strong></p>
+					<p class="col-md-8 col-sm-6 col-xs-12">{{profileDetails.familyName}}</p>
 				</div>				
 				<div class="row">
-					<p class="col-md-3 col-sm-6 col-xs-12"><strong><@orcid.msg 'admin.profile_details.email'/></strong></p>
-					<p class="col-md-9 col-sm-6 col-xs-12">{{profileDetails.email}}</p>
+					<p class="col-md-4 col-sm-6 col-xs-12"><strong><@orcid.msg 'admin.profile_details.email'/></strong></p>
+					<p class="col-md-8 col-sm-6 col-xs-12">{{profileDetails.email}}</p>
 				</div>
 				<div class="row">
-					<p class="col-md-3 col-sm-6 col-xs-12"><strong><@orcid.msg 'admin.profile_details.orcid'/></strong></p>
-					<p class="col-md-9 col-sm-6 col-xs-12">{{profileDetails.orcid}}</p>
+					<p class="col-md-4 col-sm-6 col-xs-12"><strong><@orcid.msg 'admin.profile_details.orcid'/></strong></p>
+					<p class="col-md-8 col-sm-6 col-xs-12">{{profileDetails.orcid}}</p>
 				</div>
 				
 				<!-- Buttons -->

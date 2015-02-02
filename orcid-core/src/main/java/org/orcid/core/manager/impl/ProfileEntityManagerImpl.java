@@ -203,4 +203,14 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     public GroupType getGroupType(String orcid) {
         return profileDao.getGroupType(orcid);
     }
+    
+    /**
+     * Set the locked status of an account to true
+     * @param orcid the id of the profile that should be locked
+     * @return true if the account was locked
+     * */
+    @Override
+    public boolean lockProfile(String orcid) {
+        return profileDao.lockProfile(orcid);
+    }
 }

@@ -127,4 +127,6 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     GroupType getGroupType(String orcid);
 
     public boolean removeProfile(String orcid);
+    
+    public boolean lockProfile(String orcid);
 }
