@@ -5989,6 +5989,102 @@ orcidNgModule.controller('removeSecQuestionCtrl',['$scope','$compile', function 
     };
 }]);
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+orcidNgModule.controller('profileLockingCtrl', ['$scope', '$compile', function($scope, $compile){
+	$scope.orcidToLock = '';
+	$scope.showLockModal = false;
+	$scope.showLockPopover = false;
+	$scope.profileDetails = null;
+	
+	$scope.toggleLockModal = function(){
+        $scope.showLockModal = !$scope.showLockModal;
+        $('#lock_modal').toggle();
+    };
+    
+    $scope.checkProfileToLock = function(){
+    	$.ajax({
+            url: getBaseUri()+'/admin-actions/check-account-to-lock.json',
+            type: 'POST',
+            data: $scope.orcidToLock,
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function(data){            	
+            	$scope.profileDetails=data;             	
+            	$scope.showConfirmModal(true);            	
+            }
+        }).fail(function(error) {
+            // something bad is happening!
+            console.log("Error while loading info for the account to lock");
+        });
+    };
+    
+    $scope.showConfirmModal = function(isLockAction) {
+    	$scope.showLockPopover = isLockAction; 
+    	console.log($scope.profileDetails);
+    	console.log($scope.profileDetails.orcid);
+    	console.log($scope.profileDetails.email);
+        $.colorbox({
+            html : $compile($('#confirm-modal').html())($scope),
+                scrolling: true,
+                onLoad: function() {
+                $('#cboxClose').remove();
+            },
+            scrolling: true
+        });
+        $scope.$apply();
+        $.colorbox.resize({width:"525px" , height:"275px"});
+    };
+    
+    $scope.closeModal = function() {        
+        $.colorbox.close();
+    };
+}]);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 orcidNgModule.controller('SSOPreferencesCtrl',['$scope', '$compile', '$sce', 'emailSrvc', function ($scope, $compile, $sce, emailSrvc) {
     $scope.noCredentialsYet = true;
     $scope.userCredentials = null;

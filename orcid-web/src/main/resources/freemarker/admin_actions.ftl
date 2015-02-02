@@ -426,7 +426,53 @@
 				</div>
 			</div>
 		</div>
-						
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+	<!-- Lock Profile -->			
+	<a name="lock-profile"></a>
+	<div ng-controller="profileLockingCtrl" class="workspace-accordion-item" ng-cloak>
+		<p>				
+			<a ng-show="showLockModal" ng-click="toggleLockModal()"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.lock_profile' /></a>
+			<a ng-hide="showLockModal" ng-click="toggleLockModal()"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.lock_profile' /></a>
+		</p>
+		<div class="collapsible bottom-margin-small admin-modal" id="lock_modal" style="display:none;">					    		
+	    	<div class="form-group">
+				<label for="orcid_to_lock"><@orcid.msg 'admin.lock_profile.to_lock' /></label>
+				<input type="text" id="orcid_to_lock" ng-model="orcidToLock" placeholder="<@orcid.msg 'admin.lock_profile.placeholder.to_lock' />" class="input-xlarge" />
+				<div ng-show="profileDetails.errors.length">
+					<span class="orcid-error" ng-repeat="error in profileDetails.errors" ng-bind-html="error"></span><br />
+				</div>
+			</div>
+			<div class="controls save-btns pull-left">
+				<span id="bottom-confirm-lock-profile" ng-click="checkProfileToLock()" class="btn btn-primary"><@orcid.msg 'admin.lock_profile.btn.lock'/></span>		
+			</div>
+		</div>
+	</div>
+			
+			
+	<!-- Unlock Profile -->			
+	<a name="unlock-profile"></a>
+	<div ng-controller="profileLockingCtrl" class="workspace-accordion-item" ng-cloak>
+	</div>		
+			
 	</div>
 </div>
 
@@ -434,13 +480,36 @@
 	<div class="lightbox-container">
 		<div class="row">
 			<div class="col-md-12 col-xs-12 col-sm-12">
-				<h3><@orcid.msg 'admin.edit_client.confirm_update.title' /></h3>	
-				<p><@orcid.msg 'admin.edit_client.confirm_update.text' /></p>			
-				<p><strong>{{client.displayName.value}}</strong></p>						
-    			<div class="btn btn-danger" ng-click="updateClient()">
-    				<@orcid.msg 'admin.edit_client.btn.update' />
-    			</div>
+				<!-- Lock profile -->
+				<h3 ng-show="showLockPopover"><@orcid.msg 'admin.lock_profile.confirm_lock.title' /></h3>	
+				<p ng-show="showLockPopover"><@orcid.msg 'admin.lock_profile.confirm_lock.text' /></p>	
+						
+				<!-- Unlock profile -->						
+				<h3 ng-show="!showLockPopover"><@orcid.msg 'admin.lock_profile.confirm_unlock.title' /></h3>	
+				<p ng-show="!showLockPopover"><@orcid.msg 'admin.lock_profile.confirm_unlock.text' /></p>						
+				
+				<!-- Profile details-->
+				<div class="row">
+					<p class="col-md-3 col-sm-6 col-xs-12"><strong><@orcid.msg 'admin.profile_details.given_names'/></strong></p>
+					<p class="col-md-9 col-sm-6 col-xs-12">{{profileDetails.givenNames}}</p>
+				</div>
+				<div class="row">
+					<p class="col-md-3 col-sm-6 col-xs-12"><strong><@orcid.msg 'admin.profile_details.family_name'/></strong></p>
+					<p class="col-md-9 col-sm-6 col-xs-12">{{profileDetails.familyName}}</p>
+				</div>				
+				<div class="row">
+					<p class="col-md-3 col-sm-6 col-xs-12"><strong><@orcid.msg 'admin.profile_details.email'/></strong></p>
+					<p class="col-md-9 col-sm-6 col-xs-12">{{profileDetails.email}}</p>
+				</div>
+				<div class="row">
+					<p class="col-md-3 col-sm-6 col-xs-12"><strong><@orcid.msg 'admin.profile_details.orcid'/></strong></p>
+					<p class="col-md-9 col-sm-6 col-xs-12">{{profileDetails.orcid}}</p>
+				</div>
+				
+				<!-- Buttons -->
     			<a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
+    			<button class="btn btn-primary" id="btn-lock" ng-click="lockAccount()" ng-show="showLockPopover"><@orcid.msg 'admin.lock_profile.btn.lock'/></button>
+    			<button class="btn btn-primary" id="btn-unlock" ng-click="unlockAccount()" ng-show="!showLockPopover"><@orcid.msg 'admin.lock_profile.btn.unlock'/></button>
 			</div>
 		</div>
     </div>

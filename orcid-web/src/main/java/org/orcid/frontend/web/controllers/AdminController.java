@@ -472,4 +472,59 @@ public class AdminController extends BaseController {
     private boolean matchesOrcidPattern(String orcid) {
         return OrcidStringUtils.isValidOrcid(orcid);
     }
+    
+    
+    
+    
+    /**
+     * Function to get the info of an account we want to lock
+     * @param orcidOrEmail orcid or email of the account we want to lock
+     * @return a ProfileDetails object containing either an error message or the info of the account we want to lock
+     * */
+    @RequestMapping(value = "/check-account-to-lock.json", method = RequestMethod.POST)
+    public @ResponseBody
+    ProfileDetails checkAccountToLock(@RequestBody String orcidOrEmail) {
+        boolean isOrcid = matchesOrcidPattern(orcidOrEmail);
+        String orcid = null;
+        ProfileDetails result = new ProfileDetails();
+        result.setErrors(new ArrayList<String>());
+        // If it is not an orcid, check the value from the emails table
+        if (!isOrcid) {
+            if (emailManager.emailExists(orcidOrEmail)) {
+                Map<String, String> email = findIdByEmail(orcidOrEmail);
+                orcid = email.get(orcidOrEmail);
+            }
+        } else {
+            orcid = orcidOrEmail;
+        }
+        
+        if (PojoUtil.isEmpty(orcid)) {
+            result.getErrors().add(getMessage("admin.lock_profile.error.not_found", orcid));
+        }          
+        
+        ProfileEntity profile = profileEntityManager.findByOrcid(orcid);
+        
+        // If the account is already locked
+        if(profile.isAccountNonLocked() == false) {            
+            result.getErrors().add(getMessage("admin.lock_profile.error.already_locked", orcid));
+        }
+        
+        result.setFamilyName(profile.getFamilyName());
+        result.setGivenNames(profile.getGivenNames());
+        result.setOrcid(orcid);
+        result.setEmail(profile.getPrimaryEmail().getId());
+        return result;
+    }
+    
+    /**
+     * Function to lock an account
+     * @param orcid The orcid of the account we want to lock
+     * @return true if the account was locked, false otherwise
+     * */
+    @RequestMapping(value = "/lock-account.json", method = RequestMethod.GET)
+    public @ResponseBody
+    boolean lockAccount(@RequestParam("orcid") String orcid) {
+        
+        return true;
+    }
 }
