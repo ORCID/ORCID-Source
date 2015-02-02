@@ -68,7 +68,7 @@
 					minOccurs="0" maxOccurs="1" />
 				<xs:element name="submissionDate" type="history:submissionDate"
 					minOccurs="0" maxOccurs="1" />
-				<xs:element name="lastModifiedDate" type="common:lastModifiedDate"
+				<xs:element ref="common:lastModifiedDate"
 					minOccurs="0" maxOccurs="1" />
 				<xs:element name="claimed" type="history:claimed" minOccurs="0"
 					maxOccurs="1" />

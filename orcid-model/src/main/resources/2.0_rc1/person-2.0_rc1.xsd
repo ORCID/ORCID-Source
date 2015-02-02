@@ -386,7 +386,7 @@
         </xs:annotation>
         <xs:sequence>
             <xs:element ref="common:orcidIdentifier"  />
-            <xs:element name="lastModifiedDate" type="common:lastModifiedDate"
+            <xs:element ref="common:lastModifiedDate"
                 minOccurs="1" maxOccurs="1" />
             <xs:element name="creditName" type="common:creditName"
                 minOccurs="0" />

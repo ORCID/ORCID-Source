@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<affiliation:employment xmlns:affiliation="http://www.orcid.org/ns/employment"
+	xmlns:common="http://www.orcid.org/ns/common" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.orcid.org/ns/employment employment-2.0_rc1.xsd ">
+	<affiliation:departmentName>affiliation:departmentName</affiliation:departmentName>
+	<affiliation:roleTitle>affiliation:roleTitle</affiliation:roleTitle>
+	<common:startDate>
+		<common:year>1920</common:year>
+		<common:month>01</common:month>
+		<common:day>25</common:day>
+	</common:startDate>
+	<common:endDate>
+		<common:year>1950</common:year>
+		<common:month>01</common:month>
+		<common:day>25</common:day>
+	</common:endDate>
+	<affiliation:organization>
+		<common:name>common:name</common:name>
+		<common:address>
+			<common:city>common:city</common:city>
+			<common:region>common:region</common:region>
+			<common:country>AF</common:country>
+		</common:address>
+		<common:disambiguatedOrganization>
+			<common:disambiguatedOrganizationIdentifier>common:disambiguatedOrganizationIdentifier</common:disambiguatedOrganizationIdentifier>
+			<common:disambiguationSource>common:disambiguationSource</common:disambiguationSource>
+		</common:disambiguatedOrganization>
+	</affiliation:organization>
+	<common:source>
+		<common:sourceOrcid>
+			<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+			<common:path>8888-8888-8888-8880</common:path>
+			<common:host>orcid.org</common:host>
+		</common:sourceOrcid>
+		<common:sourceName />
+		<common:sourceDate>2001-12-31T12:00:00</common:sourceDate>
+	</common:source>
+	<common:createdDate>2001-12-31T12:00:00</common:createdDate>
+	<common:lastModifiedDate>2001-12-31T12:00:00</common:lastModifiedDate>
+</affiliation:employment>

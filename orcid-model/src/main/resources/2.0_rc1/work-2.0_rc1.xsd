@@ -75,13 +75,13 @@
 				<xs:element name="contributors" type="work:workContributors"
 					minOccurs="0" />
 				<xs:element ref="common:source" minOccurs="0" />
-				<xs:element name="createdDate" type="common:createdDate"
+				<xs:element ref="common:createdDate"
 					minOccurs="0" maxOccurs="1" />
-				<xs:element name="lastModifiedDate" type="common:lastModifiedDate"
+				<xs:element ref="common:lastModifiedDate"
 					minOccurs="0" maxOccurs="1" />
-				<xs:element name="languageCode" type="common:languageCode"
+				<xs:element ref="common:languageCode"
 					minOccurs="0" maxOccurs="1" />
-				<xs:element name="country" type="common:country"
+				<xs:element ref="common:country"
 					minOccurs="0" />
 			</xs:sequence>
 			<xs:attribute name="visibility" type="common:visibility" />

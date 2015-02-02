@@ -32,25 +32,29 @@
 		</xs:appinfo>
 	</xs:annotation>
 
-	<xs:complexType name="lastModifiedDate">
-		<xs:annotation>
-			<xs:documentation>The date time when the element was last modified.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:simpleContent>
-			<xs:extension base="xs:dateTime" />
-		</xs:simpleContent>
-	</xs:complexType>
+	<xs:element name="lastModifiedDate">
+		<xs:complexType>
+			<xs:annotation>
+				<xs:documentation>The date time when the element was last modified.
+				</xs:documentation>
+			</xs:annotation>
+			<xs:simpleContent>
+				<xs:extension base="xs:dateTime" />
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
 
-	<xs:complexType name="createdDate">
-		<xs:annotation>
-			<xs:documentation>The date time when element was created.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:simpleContent>
-			<xs:extension base="xs:dateTime" />
-		</xs:simpleContent>
-	</xs:complexType>
+	<xs:element name="createdDate">
+		<xs:complexType>
+			<xs:annotation>
+				<xs:documentation>The date time when element was created.
+				</xs:documentation>
+			</xs:annotation>
+			<xs:simpleContent>
+				<xs:extension base="xs:dateTime" />
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
 
 	<xs:element name="source" type="common:sourceType" />
 
@@ -129,7 +133,7 @@
 				minOccurs="0" maxOccurs="1" />
 		</xs:sequence>
 	</xs:complexType>
-	
+
 	<xs:complexType name="organizationAddress">
 		<xs:annotation>
 			<xs:documentation>Container for organization location information
@@ -149,7 +153,7 @@
 			<xs:element minOccurs="1" name="country" type="common:iso3166Country" />
 		</xs:sequence>
 	</xs:complexType>
-	
+
 	<xs:complexType name="disambiguatedOrganization">
 		<xs:annotation>
 			<xs:documentation>A reference to a disambiguated version the
@@ -458,6 +462,8 @@
 		</xs:restriction>
 	</xs:simpleType>
 
+	<xs:element name="languageCode" type="common:languageCode"></xs:element>
+
 	<xs:simpleType name="languageCode">
 		<xs:annotation>
 			<xs:documentation>Two letter language code to identify the language
@@ -674,24 +680,26 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element minOccurs="0" name="country" type="common:country" />
+			<xs:element minOccurs="0" ref="common:country" />
 		</xs:sequence>
 	</xs:complexType>
 
-	<xs:complexType name="country">
-		<xs:annotation>
-			<xs:documentation>Country represented by its ISO 3611 code. The
-				visibility attribute (private, limited or public) can be set at
-				record creation, and indicates who can see this section of
-				information.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:simpleContent>
-			<xs:extension base="common:iso3166CountryOrEmpty">
-				<xs:attribute name="visibility" type="common:visibility" />
-			</xs:extension>
-		</xs:simpleContent>
-	</xs:complexType>
+	<xs:element name="country">
+		<xs:complexType>
+			<xs:annotation>
+				<xs:documentation>Country represented by its ISO 3611 code. The
+					visibility attribute (private, limited or public) can be set at
+					record creation, and indicates who can see this section of
+					information.
+				</xs:documentation>
+			</xs:annotation>
+			<xs:simpleContent>
+				<xs:extension base="common:iso3166CountryOrEmpty">
+					<xs:attribute name="visibility" type="common:visibility" />
+				</xs:extension>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
 
 	<xs:simpleType name="orcidPath">
 		<xs:annotation>
@@ -1024,7 +1032,7 @@
 			<xs:enumeration value="/orcid-profile/create" />
 		</xs:restriction>
 	</xs:simpleType>
-	
+
 	<xs:simpleType name="iso3166Country">
 		<xs:annotation>
 			<xs:documentation>ISO 3166 country codes. NOTE: the values displayed
@@ -1497,10 +1505,10 @@
 
 	<xs:complexType name="activitySummary">
 		<xs:sequence>
-			<xs:element name="createdDate" type="common:createdDate"
-				minOccurs="0" maxOccurs="1" />
-			<xs:element name="lastModifiedDate" type="common:lastModifiedDate"
-				minOccurs="0" maxOccurs="1" />
+			<xs:element ref="common:createdDate" minOccurs="0"
+				maxOccurs="1" />
+			<xs:element ref="common:lastModifiedDate" minOccurs="0"
+				maxOccurs="1" />
 			<xs:element ref="common:source" minOccurs="0" maxOccurs="1" />
 		</xs:sequence>
 		<xs:attribute name="putCode" type="common:putCode" use="optional" />
