@@ -213,4 +213,14 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     public boolean lockProfile(String orcid) {
         return profileDao.lockProfile(orcid);
     }
+    
+    /**
+     * Check if a profile is locked
+     * @param orcid the id of the profile to check
+     * @return true if the account is locked
+     * */
+    @Override
+    public boolean isLocked(String orcid) {
+        return profileDao.isLocked(orcid);
+    }
 }

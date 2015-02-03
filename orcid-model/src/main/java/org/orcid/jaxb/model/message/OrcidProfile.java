@@ -31,8 +31,6 @@ import javax.xml.bind.annotation.XmlType;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.GroupType;
-import org.orcid.utils.DateUtils;
-import org.orcid.utils.NullUtils;
 import org.orcid.utils.ReleaseNameUtils;
 
 /**

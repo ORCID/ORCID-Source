@@ -62,4 +62,6 @@ public interface ProfileEntityManager {
     GroupType getGroupType(String orcid);
     
     public boolean lockProfile(String orcid);
+    
+    public boolean isLocked(String orcid);
 }

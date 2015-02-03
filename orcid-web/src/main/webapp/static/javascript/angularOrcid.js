@@ -6070,7 +6070,10 @@ orcidNgModule.controller('profileLockingCtrl', ['$scope', '$compile', function($
             data: $scope.profileDetails.orcid,
             contentType: 'application/json;charset=UTF-8',
             dataType: 'text',
-            success: function(data){            	
+            success: function(data){   
+            	$scope.message = data;            	
+            	$scope.orcidToLock = '';
+            	$scope.$apply();
             	$scope.closeModal();
             }
         }).fail(function(error) {

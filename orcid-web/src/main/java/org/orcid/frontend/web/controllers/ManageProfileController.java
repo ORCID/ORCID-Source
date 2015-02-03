@@ -17,7 +17,6 @@
 package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -88,7 +87,6 @@ import org.orcid.pojo.ajaxForm.Errors;
 import org.orcid.pojo.ajaxForm.NamesForm;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.utils.DateUtils;
-import org.orcid.utils.OrcidWebUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.MapBindingResult;
@@ -613,7 +611,6 @@ public class ManageProfileController extends BaseWorkspaceController {
         if (primaryEmail.equals(email))
             request.getSession().setAttribute(ManageProfileController.CHECK_EMAIL_VALIDATED, false);
 
-        URI baseUri = OrcidWebUtils.getServerUriWithContextPath(request);
         notificationManager.sendVerificationEmail(currentProfile, email);
         return new Errors();
     }
@@ -625,8 +622,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/send-deactivate-account.json", method = RequestMethod.GET)
-    public @ResponseBody Email startDeactivateOrcidAccountJson(HttpServletRequest request) {
-        URI uri = OrcidWebUtils.getServerUriWithContextPath(request);
+    public @ResponseBody Email startDeactivateOrcidAccountJson(HttpServletRequest request) {        
         OrcidProfile currentProfile = getEffectiveProfile();
         Email email = currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail();
         notificationManager.sendOrcidDeactivateEmail(currentProfile);
@@ -690,7 +686,6 @@ public class ManageProfileController extends BaseWorkspaceController {
                 emailManager.addEmail(currentProfile.getOrcidIdentifier().getPath(), email);
 
                 // send verifcation email for new address
-                URI baseUri = OrcidWebUtils.getServerUriWithContextPath(request);
                 notificationManager.sendVerificationEmail(currentProfile, email.getValue());
 
                 // if primary also send change notification.
@@ -776,7 +771,6 @@ public class ManageProfileController extends BaseWorkspaceController {
             currentProfile.getOrcidBio().getContactDetails().setEmail((List<Email>) (Object) emails.getEmails());
             emailManager.updateEmails(currentProfile.getOrcidIdentifier().getPath(), currentProfile.getOrcidBio().getContactDetails().getEmail());
             if (newPrime != null && !newPrime.getValue().equalsIgnoreCase(oldPrime.getValue())) {
-                URI baseUri = OrcidWebUtils.getServerUriWithContextPath(request);
                 notificationManager.sendEmailAddressChangedNotification(currentProfile, new Email(oldPrime.getValue()));
                 if (!newPrime.isVerified()) {
                     notificationManager.sendVerificationEmail(currentProfile, newPrime.getValue());
