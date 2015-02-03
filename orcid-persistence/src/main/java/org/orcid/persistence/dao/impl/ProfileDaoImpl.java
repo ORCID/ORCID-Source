@@ -699,9 +699,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Override
     public boolean isLocked(String orcid) {
         Query query = entityManager.createNativeQuery("select record_locked from profile where orcid=:orcid");
-        query.setParameter("orcid", orcid);
-        boolean accountNonLocked = (Boolean) query.getSingleResult(); 
-        //If account_non_locked is true, it means the account is not locked, so, we might return false
-        return !accountNonLocked;
+        query.setParameter("orcid", orcid);        
+        return (Boolean) query.getSingleResult();
     }
 }
