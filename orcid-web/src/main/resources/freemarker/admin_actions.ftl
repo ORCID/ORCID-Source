@@ -455,6 +455,7 @@
 		</p>
 		<div class="collapsible bottom-margin-small admin-modal" id="lock_modal" style="display:none;">					    		
 	    	<div class="form-group">
+	    		<p ng-show="message != ''">{{message}}</p>
 				<label for="orcid_to_lock"><@orcid.msg 'admin.lock_profile.to_lock' /></label>
 				<input type="text" id="orcid_to_lock" ng-model="orcidToLock" placeholder="<@orcid.msg 'admin.lock_profile.placeholder.to_lock' />" class="input-xlarge" />
 				<div ng-show="profileDetails.errors.length">

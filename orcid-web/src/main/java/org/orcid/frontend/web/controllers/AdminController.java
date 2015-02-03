@@ -523,7 +523,10 @@ public class AdminController extends BaseController {
      * */
     @RequestMapping(value = "/lock-account.json", method = RequestMethod.POST)
     public @ResponseBody
-    boolean lockAccount(@RequestBody String orcid) {
-        return profileEntityManager.lockProfile(orcid);        
+    String lockAccount(@RequestBody String orcid) {
+        if(profileEntityManager.lockProfile(orcid)) {
+            getMessage("admin.lock_profile.success", orcid);
+        }
+        return getMessage("admin.lock_profile.error.couldnt_lock_account", orcid);        
     }
 }

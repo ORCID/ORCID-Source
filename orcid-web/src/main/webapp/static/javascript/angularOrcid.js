@@ -6020,6 +6020,7 @@ orcidNgModule.controller('profileLockingCtrl', ['$scope', '$compile', function($
 	$scope.showLockModal = false;
 	$scope.showLockPopover = false;
 	$scope.profileDetails = null;
+	$scope.message = '';
 	
 	$scope.toggleLockModal = function(){
         $scope.showLockModal = !$scope.showLockModal;
@@ -6065,8 +6066,7 @@ orcidNgModule.controller('profileLockingCtrl', ['$scope', '$compile', function($
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
             success: function(data){            	
-            	$scope.profileDetails=data;
-            	$scope.$apply();
+            	$scope.closeModal();
             }
         }).fail(function(error) {
             // something bad is happening!
