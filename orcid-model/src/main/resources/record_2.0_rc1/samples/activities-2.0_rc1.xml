@@ -9,8 +9,7 @@
 		<education:educationSummary putCode="0"
 			visibility="private">
 			<common:createdDate>2001-12-31T12:00:00</common:createdDate>
-			<common:lastModifiedDate>2001-12-31T12:00:00
-			</common:lastModifiedDate>
+			<common:lastModifiedDate>2001-12-31T12:00:00</common:lastModifiedDate>
 			<common:source>
 				<common:sourceOrcid>
 					<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
@@ -39,8 +38,7 @@
 		<affiliation:employmentSummary putCode="0"
 			visibility="private">
 			<common:createdDate>2001-12-31T12:00:00</common:createdDate>
-			<common:lastModifiedDate>2001-12-31T12:00:00
-			</common:lastModifiedDate>
+			<common:lastModifiedDate>2001-12-31T12:00:00</common:lastModifiedDate>
 			<common:source>
 				<common:sourceOrcid>
 					<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
@@ -68,8 +66,7 @@
 	<activities:works>
 		<work:workSummary putCode="0" visibility="private">
 			<common:createdDate>2001-12-31T12:00:00</common:createdDate>
-			<common:lastModifiedDate>2001-12-31T12:00:00
-			</common:lastModifiedDate>
+			<common:lastModifiedDate>2001-12-31T12:00:00</common:lastModifiedDate>
 			<common:source>
 				<common:sourceOrcid>
 					<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
@@ -103,8 +100,7 @@
 	<activities:fundings>
 		<funding:fundingSummary putCode="0" visibility="private">
 			<common:createdDate>2001-12-31T12:00:00</common:createdDate>
-			<common:lastModifiedDate>2001-12-31T12:00:00
-			</common:lastModifiedDate>
+			<common:lastModifiedDate>2001-12-31T12:00:00</common:lastModifiedDate>
 			<common:source>
 				<common:sourceOrcid>
 					<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
@@ -122,7 +118,7 @@
 			<funding:externalIdentifiers>
 				<funding:externalIdentifier>
 					<funding:externalIdentifierType>grant_number</funding:externalIdentifierType>
-					<funding:externalIdentifierValue>funding:externalIdentifierValue</funding:externalIdentifierValue>
+					<funding:externalIdentifierValue>12345</funding:externalIdentifierValue>
 					<funding:externalIdentifierUrl>http://tempuri.org</funding:externalIdentifierUrl>
 				</funding:externalIdentifier>
 			</funding:externalIdentifiers>

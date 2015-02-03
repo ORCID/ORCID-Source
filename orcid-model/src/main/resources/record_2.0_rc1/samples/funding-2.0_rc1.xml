@@ -24,7 +24,7 @@
 	<funding:externalIdentifiers>
 		<funding:externalIdentifier>
 			<funding:externalIdentifierType>grant_number</funding:externalIdentifierType>
-			<funding:externalIdentifierValue>funding:externalIdentifierValue</funding:externalIdentifierValue>
+			<funding:externalIdentifierValue>12345</funding:externalIdentifierValue>
 			<funding:externalIdentifierUrl>http://tempuri.org</funding:externalIdentifierUrl>
 		</funding:externalIdentifier>
 	</funding:externalIdentifiers>
