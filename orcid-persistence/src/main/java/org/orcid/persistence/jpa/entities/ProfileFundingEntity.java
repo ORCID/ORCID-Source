@@ -19,7 +19,6 @@ package org.orcid.persistence.jpa.entities;
 import static org.orcid.utils.NullUtils.compareObjectsNullSafe;
 
 import java.math.BigDecimal;
-import java.util.SortedSet;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -33,14 +32,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.Sort;
-import org.hibernate.annotations.SortType;
 import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.utils.NullUtils;
@@ -56,8 +50,6 @@ import org.orcid.utils.NullUtils;
 public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable<ProfileFundingEntity>, ProfileAware, SourceAware, DisplayIndexInterface {
 
     private static final long serialVersionUID = -3187757614938904392L;
-
-    private static final String PROFILE_FUNDING = "profileFunding";
 
     private Long id;
     private OrgEntity org;
@@ -75,8 +67,7 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
     private String externalIdentifiersJson;
     private StartDateEntity startDate;
     private EndDateEntity endDate;
-    private Visibility visibility;
-    private SortedSet<FundingExternalIdentifierEntity> externalIdentifiers;
+    private Visibility visibility;    
     private SourceEntity source;
     private BigDecimal numericAmount;
     private Long displayIndex; 
@@ -232,17 +223,6 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
 
     public void setVisibility(Visibility visibility) {
         this.visibility = visibility;
-    }
-
-    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = PROFILE_FUNDING, orphanRemoval = true)
-    @Fetch(FetchMode.SUBSELECT)
-    @Sort(type = SortType.NATURAL)
-    public SortedSet<FundingExternalIdentifierEntity> getExternalIdentifiers() {
-        return externalIdentifiers;
-    }
-
-    public void setExternalIdentifiers(SortedSet<FundingExternalIdentifierEntity> externalIdentifiers) {
-        this.externalIdentifiers = externalIdentifiers;
     }
 
     public SourceEntity getSource() {

@@ -36,7 +36,7 @@ public class NotificationsApiServiceDelegatorTest extends DBUnitTest {
 
     @Test(expected = OrcidNotFoundException.class)
     public void testNotFoundError() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555-5555-5555-5555", ScopePathType.NOTIFICATION);
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555-5555-5555-5555", ScopePathType.PREMIUM_NOTIFICATION);
         notificationsApiServiceDelegator.findAddActivitiesNotification("1234-5678-1234-5678", 1L);
     }
 

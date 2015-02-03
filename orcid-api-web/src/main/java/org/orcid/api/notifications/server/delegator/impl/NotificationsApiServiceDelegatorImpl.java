@@ -57,14 +57,14 @@ public class NotificationsApiServiceDelegatorImpl implements NotificationsApiSer
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.NOTIFICATION)
+    @AccessControl(requiredScope = ScopePathType.PREMIUM_NOTIFICATION)
     public Response findAddActivitiesNotifications(String orcid) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.NOTIFICATION)
+    @AccessControl(requiredScope = ScopePathType.PREMIUM_NOTIFICATION)
     public Response findAddActivitiesNotification(String orcid, Long id) {
         Notification notification = notificationManager.findByOrcidAndId(orcid, id);
         if (notification != null) {
@@ -84,7 +84,7 @@ public class NotificationsApiServiceDelegatorImpl implements NotificationsApiSer
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.NOTIFICATION)
+    @AccessControl(requiredScope = ScopePathType.PREMIUM_NOTIFICATION)
     public Response flagNotificationAsArchived(String orcid, Long id) throws OrcidNotificationAlreadyReadException {
         Notification notification = notificationManager.flagAsArchived(orcid, id);
         if (notification == null) {
@@ -94,7 +94,7 @@ public class NotificationsApiServiceDelegatorImpl implements NotificationsApiSer
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.NOTIFICATION)
+    @AccessControl(requiredScope = ScopePathType.PREMIUM_NOTIFICATION)
     public Response addAddActivitiesNotification(UriInfo uriInfo, String orcid, NotificationAddActivities notification) {
         Notification createdNotification = notificationManager.createNotification(orcid, notification);
         try {

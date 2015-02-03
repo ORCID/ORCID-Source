@@ -28,7 +28,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.SortedSet;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
@@ -46,12 +45,10 @@ import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.persistence.dao.FundingExternalIdentifierDao;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.dao.OrgDisambiguatedSolrDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
-import org.orcid.persistence.jpa.entities.FundingExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
@@ -94,9 +91,6 @@ public class FundingsController extends BaseWorkspaceController {
 
     @Resource
     ProfileFundingManager profileFundingManager;
-
-    @Resource
-    FundingExternalIdentifierDao fundingExternalIdentifierDao;
 
     @Resource
     private Jaxb2JpaAdapter jaxb2JpaAdapter;
@@ -412,20 +406,10 @@ public class FundingsController extends BaseWorkspaceController {
         setTypeToExternalIdentifiers(funding);
         // Update on database
         ProfileEntity userProfile = profileDao.find(getEffectiveUserOrcid());
-        ProfileFundingEntity profileGrantEntity = jaxb2JpaAdapter.getNewProfileFundingEntity(funding.toOrcidFunding(), userProfile);
-        profileGrantEntity.setSource(new SourceEntity(userProfile));
+        ProfileFundingEntity profileFundingEntity = jaxb2JpaAdapter.getNewProfileFundingEntity(funding.toOrcidFunding(), userProfile);
+        profileFundingEntity.setSource(new SourceEntity(userProfile));
         // Persists the profile funding object
-        ProfileFundingEntity newProfileFunding = profileFundingManager.addProfileFunding(profileGrantEntity);
-
-        // Persist the external identifiers
-        SortedSet<FundingExternalIdentifierEntity> externalIdentifiers = profileGrantEntity.getExternalIdentifiers();
-
-        if (externalIdentifiers != null && !externalIdentifiers.isEmpty()) {
-            for (FundingExternalIdentifierEntity externalIdentifier : externalIdentifiers) {
-                externalIdentifier.setProfileFunding(newProfileFunding);
-                fundingExternalIdentifierDao.createFundingExternalIdentifier(externalIdentifier);
-            }
-        }
+        ProfileFundingEntity newProfileFunding = profileFundingManager.addProfileFunding(profileFundingEntity);        
 
         // Transform it back into a OrcidGrant to add it into the cached
         // object
