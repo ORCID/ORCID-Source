@@ -499,7 +499,8 @@ public class AdminController extends BaseController {
         }
         
         if (PojoUtil.isEmpty(orcid)) {
-            result.getErrors().add(getMessage("admin.lock_profile.error.not_found", orcid));
+            result.getErrors().add(getMessage("admin.lock_profile.error.not_found", orcidOrEmail));
+            return result;
         }          
         
         ProfileEntity profile = profileEntityManager.findByOrcid(orcid);
@@ -507,6 +508,7 @@ public class AdminController extends BaseController {
         // If the account is already locked
         if(profile.isAccountNonLocked() == false) {            
             result.getErrors().add(getMessage("admin.lock_profile.error.already_locked", orcid));
+            return result;
         }
         
         result.setFamilyName(profile.getFamilyName());
@@ -525,7 +527,7 @@ public class AdminController extends BaseController {
     public @ResponseBody
     String lockAccount(@RequestBody String orcid) {
         if(profileEntityManager.lockProfile(orcid)) {
-            getMessage("admin.lock_profile.success", orcid);
+            return getMessage("admin.lock_profile.success", orcid);
         }
         return getMessage("admin.lock_profile.error.couldnt_lock_account", orcid);        
     }

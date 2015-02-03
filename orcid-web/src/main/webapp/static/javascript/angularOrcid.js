@@ -6035,8 +6035,13 @@ orcidNgModule.controller('profileLockingCtrl', ['$scope', '$compile', function($
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
             success: function(data){            	
-            	$scope.profileDetails=data;             	
-            	$scope.showConfirmModal(true);            	
+            	$scope.profileDetails=data;  
+            	if($scope.profileDetails.errors.length) {
+            		$scope.$apply();
+            	}
+            	else {
+            		$scope.showConfirmModal(true);
+            	}            		            
             }
         }).fail(function(error) {
             // something bad is happening!
@@ -6064,7 +6069,7 @@ orcidNgModule.controller('profileLockingCtrl', ['$scope', '$compile', function($
             type: 'POST',
             data: $scope.profileDetails.orcid,
             contentType: 'application/json;charset=UTF-8',
-            dataType: 'json',
+            dataType: 'text',
             success: function(data){            	
             	$scope.closeModal();
             }
