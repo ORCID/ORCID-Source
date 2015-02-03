@@ -63,7 +63,7 @@
 				</xs:element>
 				<xs:element name="type" type="work:workType" />
 				<xs:element ref="common:publicationDate" minOccurs="0" />
-				<xs:element name="externalIdentifiers" type="work:citation"
+				<xs:element name="externalIdentifiers" type="work:workExternalIdentifiers"
 					minOccurs="0">
 					<xs:annotation>
 						<xs:documentation>Element containing the type and content of the

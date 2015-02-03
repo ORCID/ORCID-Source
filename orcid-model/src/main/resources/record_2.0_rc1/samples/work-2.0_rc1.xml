@@ -2,7 +2,7 @@
 <work:work putCode="0" visibility="private"
 	xmlns:common="http://www.orcid.org/ns/common" xmlns:work="http://www.orcid.org/ns/work"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.orcid.org/ns/work work-2.0_rc1.xsd ">
+	xsi:schemaLocation="http://www.orcid.org/ns/work ../work-2.0_rc1.xsd">
 	<work:title>
 		<work:title>work:title</work:title>
 		<work:subtitle />
@@ -21,8 +21,10 @@
 		<common:day>25</common:day>
 	</common:publicationDate>
 	<work:externalIdentifiers>
-		<work:citationType>formatted-unspecified</work:citationType>
-		<work:citation>work:citation</work:citation>
+		<work:workExternalIdentifier>
+			<work:externalIdentifierType>doi</work:externalIdentifierType>
+			<work:externalIdentifierId>1234/abc</work:externalIdentifierId>
+		</work:workExternalIdentifier>
 	</work:externalIdentifiers>
 	<work:url>http://tempuri.org</work:url>
 	<work:contributors>
