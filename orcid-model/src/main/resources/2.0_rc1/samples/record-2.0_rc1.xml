@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record:record clientType="creator" groupType="basic"
+	type="user" xmlns:activities="http://www.orcid.org/ns/activities"
+	xmlns:affiliation="http://www.orcid.org/ns/employment" xmlns:person="http://www.orcid.org/ns/person"
+	xmlns:common="http://www.orcid.org/ns/common" xmlns:deprecated="http://www.orcid.org/ns/deprecated"
+	xmlns:education="http://www.orcid.org/ns/education" xmlns:funding="http://www.orcid.org/ns/funding"
+	xmlns:history="http://www.orcid.org/ns/history" xmlns:internal="http://www.orcid.org/ns/internal"
+	xmlns:preferences="http://www.orcid.org/ns/preferences" xmlns:record="http://www.orcid.org/ns/record"
+	xmlns:work="http://www.orcid.org/ns/work" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.orcid.org/ns/record ../record-2.0_rc1.xsd ">
+	<common:orcidIdentifier>
+		<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+		<common:path>8888-8888-8888-8880</common:path>
+		<common:host>orcid.org</common:host>
+	</common:orcidIdentifier>
+	<deprecated:deprecated>
+		<deprecated:deprecatedDate>2001-12-31T12:00:00</deprecated:deprecatedDate>
+		<deprecated:primaryRecord>
+			<common:orcidIdentifier>
+				<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+				<common:path>8888-8888-8888-8880</common:path>
+				<common:host>orcid.org</common:host>
+			</common:orcidIdentifier>
+		</deprecated:primaryRecord>
+	</deprecated:deprecated>
+	<preferences:preferences>
+		<preferences:locale>en</preferences:locale>
+	</preferences:preferences>
+	<history:history visibility="private">
+		<history:creationMethod>API</history:creationMethod>
+		<history:completionDate>2001-12-31T12:00:00</history:completionDate>
+		<history:submissionDate>2001-12-31T12:00:00</history:submissionDate>
+		<common:lastModifiedDate>2001-12-31T12:00:00</common:lastModifiedDate>
+		<history:claimed>true</history:claimed>
+		<common:source>
+			<common:sourceOrcid>
+				<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+				<common:path>8888-8888-8888-8880</common:path>
+				<common:host>orcid.org</common:host>
+			</common:sourceOrcid>
+			<common:sourceName />
+			<common:sourceDate>2001-12-31T12:00:00</common:sourceDate>
+		</common:source>
+		<history:deactivationDate>2001-12-31T12:00:00</history:deactivationDate>
+		<history:verifiedEmail>true</history:verifiedEmail>
+		<history:verifiedPrimaryEmail>true</history:verifiedPrimaryEmail>
+	</history:history>
+	<person:person scope="read-limited">
+		<person:personalDetails>
+			<person:givenNames>person:givenNames</person:givenNames>
+			<person:familyName>person:familyName</person:familyName>
+			<person:creditName visibility="private">person:creditName</person:creditName>
+			<person:otherNames visibility="private">
+				<person:otherName>person:otherName</person:otherName>
+			</person:otherNames>
+		</person:personalDetails>
+		<person:biography visibility="private">person:biography</person:biography>
+		<person:researcherUrls visibility="private">
+			<person:researcherUrl>
+				<person:url-name>person:url-name</person:url-name>
+				<person:url>http://tempuri.org</person:url>
+			</person:researcherUrl>
+		</person:researcherUrls>
+		<person:contactDetails>
+			<person:email current="true" primary="true" source="8888-8888-8888-8888"
+				sourceClientId="APP-8888888888888888" verified="false" visibility="private">email@email.com</person:email>
+			<person:address>
+				<common:country visibility="private">AF</common:country>
+			</person:address>
+		</person:contactDetails>
+		<person:keywords visibility="private">
+			<person:keyword />
+		</person:keywords>
+		<person:externalIdentifiers visibility="private">
+			<person:external-identifier>
+				<person:externalIdCommonName />
+				<person:externalIdReference />
+				<person:externalIdUrl>http://tempuri.org</person:externalIdUrl>
+				<common:source>
+					<common:sourceOrcid>
+						<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+						<common:path>8888-8888-8888-8880</common:path>
+						<common:host>orcid.org</common:host>
+					</common:sourceOrcid>
+					<common:sourceName />
+					<common:sourceDate>2001-12-31T12:00:00</common:sourceDate>
+				</common:source>
+			</person:external-identifier>
+		</person:externalIdentifiers>
+		<person:delegation visibility="private">
+			<person:given-permission-to>
+				<person:delegationDetails>
+					<person:approvalDate>2001-12-31T12:00:00</person:approvalDate>
+					<person:delegateSummary>
+						<common:orcidIdentifier>
+							<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+							<common:path>8888-8888-8888-8880</common:path>
+							<common:host>orcid.org</common:host>
+						</common:orcidIdentifier>
+						<common:lastModifiedDate>2001-12-31T12:00:00</common:lastModifiedDate>
+						<person:creditName visibility="private">person:creditName</person:creditName>
+					</person:delegateSummary>
+				</person:delegationDetails>
+			</person:given-permission-to>
+			<person:given-permission-by>
+				<person:delegationDetails>
+					<person:approvalDate>2001-12-31T12:00:00</person:approvalDate>
+					<person:delegateSummary>
+						<common:orcidIdentifier>
+							<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+							<common:path>8888-8888-8888-8880</common:path>
+							<common:host>orcid.org</common:host>
+						</common:orcidIdentifier>
+						<common:lastModifiedDate>2001-12-31T12:00:00</common:lastModifiedDate>
+						<person:creditName visibility="private">person:creditName</person:creditName>
+					</person:delegateSummary>
+				</person:delegationDetails>
+			</person:given-permission-by>
+		</person:delegation>
+		<person:applications visibility="private">
+			<person:application-summary>
+				<common:applicationOrcid>
+					<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+					<common:path>8888-8888-8888-8880</common:path>
+					<common:host>orcid.org</common:host>
+				</common:applicationOrcid>
+				<person:applicationName />
+				<person:applicationWebsite>http://tempuri.org</person:applicationWebsite>
+				<person:approvalDate>2001-12-31T12:00:00</person:approvalDate>
+				<person:scopePaths>
+					<person:scopePath>/authenticate</person:scopePath>
+				</person:scopePaths>
+				<common:applicationGroupOrcid>
+					<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+					<common:path>8888-8888-8888-8880</common:path>
+					<common:host>orcid.org</common:host>
+				</common:applicationGroupOrcid>
+				<person:applicationGroupName>person:applicationGroupName</person:applicationGroupName>
+			</person:application-summary>
+		</person:applications>
+	</person:person>
+	<activities:activitiesSummary>
+		<activities:educations>
+			<education:educationSummary putCode="0"
+				visibility="private">
+				<common:createdDate>2001-12-31T12:00:00</common:createdDate>
+				<common:lastModifiedDate>2001-12-31T12:00:00</common:lastModifiedDate>
+				<common:source>
+					<common:sourceOrcid>
+						<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+						<common:path>8888-8888-8888-8880</common:path>
+						<common:host>orcid.org</common:host>
+					</common:sourceOrcid>
+					<common:sourceName />
+					<common:sourceDate>2001-12-31T12:00:00</common:sourceDate>
+				</common:source>
+				<education:departmentName>education:departmentName</education:departmentName>
+				<education:roleTitle>education:roleTitle</education:roleTitle>
+				<common:startDate>
+					<common:year>1920</common:year>
+					<common:month>01</common:month>
+					<common:day>25</common:day>
+				</common:startDate>
+				<common:endDate>
+					<common:year>1950</common:year>
+					<common:month>01</common:month>
+					<common:day>25</common:day>
+				</common:endDate>
+			</education:educationSummary>
+		</activities:educations>
+		<activities:employments>
+			<affiliation:employmentSummary putCode="0"
+				visibility="private">
+				<common:createdDate>2001-12-31T12:00:00</common:createdDate>
+				<common:lastModifiedDate>2001-12-31T12:00:00</common:lastModifiedDate>
+				<common:source>
+					<common:sourceOrcid>
+						<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+						<common:path>8888-8888-8888-8880</common:path>
+						<common:host>orcid.org</common:host>
+					</common:sourceOrcid>
+					<common:sourceName />
+					<common:sourceDate>2001-12-31T12:00:00</common:sourceDate>
+				</common:source>
+				<affiliation:departmentName>affiliation:departmentName</affiliation:departmentName>
+				<affiliation:roleTitle>affiliation:roleTitle</affiliation:roleTitle>
+				<common:startDate>
+					<common:year>1920</common:year>
+					<common:month>01</common:month>
+					<common:day>25</common:day>
+				</common:startDate>
+				<common:endDate>
+					<common:year>1950</common:year>
+					<common:month>01</common:month>
+					<common:day>25</common:day>
+				</common:endDate>
+			</affiliation:employmentSummary>
+		</activities:employments>
+		<activities:works>
+			<work:workSummary putCode="0" visibility="private">
+				<common:createdDate>2001-12-31T12:00:00</common:createdDate>
+				<common:lastModifiedDate>2001-12-31T12:00:00</common:lastModifiedDate>
+				<common:source>
+					<common:sourceOrcid>
+						<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+						<common:path>8888-8888-8888-8880</common:path>
+						<common:host>orcid.org</common:host>
+					</common:sourceOrcid>
+					<common:sourceName />
+					<common:sourceDate>2001-12-31T12:00:00</common:sourceDate>
+				</common:source>
+				<work:title>
+					<work:title>work:title</work:title>
+					<work:subtitle />
+					<work:translatedTitle languageCode="en">work:translatedTitle</work:translatedTitle>
+				</work:title>
+				<work:externalIdentifiers scope="read-limited">
+					<work:workExternalIdentifier>
+						<work:externalIdentifierType>agr</work:externalIdentifierType>
+						<work:externalIdentifierId>work:externalIdentifierId</work:externalIdentifierId>
+					</work:workExternalIdentifier>
+				</work:externalIdentifiers>
+				<work:type>artistic-performance</work:type>
+				<common:publicationDate>
+					<common:year>1920</common:year>
+					<common:month>01</common:month>
+					<common:day>25</common:day>
+				</common:publicationDate>
+			</work:workSummary>
+		</activities:works>
+		<activities:fundings>
+			<funding:fundingSummary putCode="0"
+				visibility="private">
+				<common:createdDate>2001-12-31T12:00:00</common:createdDate>
+				<common:lastModifiedDate>2001-12-31T12:00:00</common:lastModifiedDate>
+				<common:source>
+					<common:sourceOrcid>
+						<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+						<common:path>8888-8888-8888-8880</common:path>
+						<common:host>orcid.org</common:host>
+					</common:sourceOrcid>
+					<common:sourceName />
+					<common:sourceDate>2001-12-31T12:00:00</common:sourceDate>
+				</common:source>
+				<funding:title>
+					<funding:title>funding:title</funding:title>
+					<funding:translatedTitle languageCode="en">funding:translatedTitle</funding:translatedTitle>
+				</funding:title>
+				<funding:externalIdentifiers>
+					<funding:externalIdentifier>
+						<funding:externalIdentifierType>grant_number</funding:externalIdentifierType>
+						<funding:externalIdentifierValue>funding:externalIdentifierValue</funding:externalIdentifierValue>
+						<funding:externalIdentifierUrl>http://tempuri.org</funding:externalIdentifierUrl>
+					</funding:externalIdentifier>
+				</funding:externalIdentifiers>
+				<funding:type>grant</funding:type>
+				<common:startDate>
+					<common:year>1920</common:year>
+					<common:month>12</common:month>
+					<common:day>25</common:day>
+				</common:startDate>
+				<common:endDate>
+					<common:year>1950</common:year>
+					<common:month>12</common:month>
+					<common:day>25</common:day>
+				</common:endDate>
+			</funding:fundingSummary>
+		</activities:fundings>
+	</activities:activitiesSummary>
+	<internal:internal scope="read-limited" visibility="private">
+		<internal:securityDetails>
+			<internal:encryptedPassword />
+			<internal:securityQuestionId>0</internal:securityQuestionId>
+			<internal:encryptedSecurityAnswer />
+			<internal:encryptedVerificationCode />
+		</internal:securityDetails>
+		<internal:preferences>
+			<internal:sendEmailFrequencyDays>internal:sendEmailFrequencyDays</internal:sendEmailFrequencyDays>
+			<internal:sendChangeNotifications>true</internal:sendChangeNotifications>
+			<internal:sendOrcidNews>true</internal:sendOrcidNews>
+			<internal:sendMemberUpdateRequests>true</internal:sendMemberUpdateRequests>
+			<internal:activitiesVisibilityDefault>private</internal:activitiesVisibilityDefault>
+			<internal:developerToolsEnabled>true</internal:developerToolsEnabled>
+		</internal:preferences>
+		<common:groupOrcidIdentifier>
+			<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+			<common:path>8888-8888-8888-8880</common:path>
+			<common:host>orcid.org</common:host>
+		</common:groupOrcidIdentifier>
+		<internal:referredBy>internal:referredBy</internal:referredBy>
+		<internal:salesforceId>123456789012345</internal:salesforceId>
+	</internal:internal>
+</record:record>

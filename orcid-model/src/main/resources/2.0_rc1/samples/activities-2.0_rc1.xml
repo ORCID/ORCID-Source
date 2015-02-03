@@ -9,7 +9,8 @@
 		<education:educationSummary putCode="0"
 			visibility="private">
 			<common:createdDate>2001-12-31T12:00:00</common:createdDate>
-			<common:lastModifiedDate>2001-12-31T12:00:00</common:lastModifiedDate>
+			<common:lastModifiedDate>2001-12-31T12:00:00
+			</common:lastModifiedDate>
 			<common:source>
 				<common:sourceOrcid>
 					<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
@@ -19,7 +20,8 @@
 				<common:sourceName />
 				<common:sourceDate>2001-12-31T12:00:00</common:sourceDate>
 			</common:source>
-			<education:departmentName>education:departmentName</education:departmentName>
+			<education:departmentName>education:departmentName
+			</education:departmentName>
 			<education:roleTitle>education:roleTitle</education:roleTitle>
 			<common:startDate>
 				<common:year>1920</common:year>
@@ -37,7 +39,8 @@
 		<affiliation:employmentSummary putCode="0"
 			visibility="private">
 			<common:createdDate>2001-12-31T12:00:00</common:createdDate>
-			<common:lastModifiedDate>2001-12-31T12:00:00</common:lastModifiedDate>
+			<common:lastModifiedDate>2001-12-31T12:00:00
+			</common:lastModifiedDate>
 			<common:source>
 				<common:sourceOrcid>
 					<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
@@ -47,7 +50,8 @@
 				<common:sourceName />
 				<common:sourceDate>2001-12-31T12:00:00</common:sourceDate>
 			</common:source>
-			<affiliation:departmentName>affiliation:departmentName</affiliation:departmentName>
+			<affiliation:departmentName>affiliation:departmentName
+			</affiliation:departmentName>
 			<affiliation:roleTitle>affiliation:roleTitle</affiliation:roleTitle>
 			<common:startDate>
 				<common:year>1920</common:year>
@@ -64,7 +68,8 @@
 	<activities:works>
 		<work:workSummary putCode="0" visibility="private">
 			<common:createdDate>2001-12-31T12:00:00</common:createdDate>
-			<common:lastModifiedDate>2001-12-31T12:00:00</common:lastModifiedDate>
+			<common:lastModifiedDate>2001-12-31T12:00:00
+			</common:lastModifiedDate>
 			<common:source>
 				<common:sourceOrcid>
 					<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
@@ -77,12 +82,14 @@
 			<work:title>
 				<work:title>work:title</work:title>
 				<work:subtitle />
-				<work:translatedTitle languageCode="en">work:translatedTitle</work:translatedTitle>
+				<work:translatedTitle languageCode="en">work:translatedTitle
+				</work:translatedTitle>
 			</work:title>
 			<work:externalIdentifiers scope="read-limited">
 				<work:workExternalIdentifier>
 					<work:externalIdentifierType>agr</work:externalIdentifierType>
-					<work:externalIdentifierId>work:externalIdentifierId</work:externalIdentifierId>
+					<work:externalIdentifierId>work:externalIdentifierId
+					</work:externalIdentifierId>
 				</work:workExternalIdentifier>
 			</work:externalIdentifiers>
 			<work:type>artistic-performance</work:type>
@@ -96,7 +103,8 @@
 	<activities:fundings>
 		<funding:fundingSummary putCode="0" visibility="private">
 			<common:createdDate>2001-12-31T12:00:00</common:createdDate>
-			<common:lastModifiedDate>2001-12-31T12:00:00</common:lastModifiedDate>
+			<common:lastModifiedDate>2001-12-31T12:00:00
+			</common:lastModifiedDate>
 			<common:source>
 				<common:sourceOrcid>
 					<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
@@ -108,13 +116,17 @@
 			</common:source>
 			<funding:title>
 				<funding:title>funding:title</funding:title>
-				<funding:translatedTitle languageCode="en">funding:translatedTitle</funding:translatedTitle>
+				<funding:translatedTitle languageCode="en">funding:translatedTitle
+				</funding:translatedTitle>
 			</funding:title>
 			<funding:externalIdentifiers>
 				<funding:externalIdentifier>
-					<funding:externalIdentifierType>grant_number</funding:externalIdentifierType>
-					<funding:externalIdentifierValue>funding:externalIdentifierValue</funding:externalIdentifierValue>
-					<funding:externalIdentifierUrl>http://tempuri.org</funding:externalIdentifierUrl>
+					<funding:externalIdentifierType>grant_number
+					</funding:externalIdentifierType>
+					<funding:externalIdentifierValue>funding:externalIdentifierValue
+					</funding:externalIdentifierValue>
+					<funding:externalIdentifierUrl>http://tempuri.org
+					</funding:externalIdentifierUrl>
 				</funding:externalIdentifier>
 			</funding:externalIdentifiers>
 			<funding:type>grant</funding:type>
