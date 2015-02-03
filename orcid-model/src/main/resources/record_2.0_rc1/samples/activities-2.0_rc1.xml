@@ -4,7 +4,7 @@
 	xmlns:affiliation="http://www.orcid.org/ns/employment" xmlns:common="http://www.orcid.org/ns/common"
 	xmlns:education="http://www.orcid.org/ns/education" xmlns:funding="http://www.orcid.org/ns/funding"
 	xmlns:work="http://www.orcid.org/ns/work" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.orcid.org/ns/activities activities-2.0_rc1.xsd ">
+	xsi:schemaLocation="http://www.orcid.org/ns/activities ../activities-2.0_rc1.xsd ">
 	<activities:educations>
 		<education:educationSummary putCode="0"
 			visibility="private">
@@ -121,12 +121,9 @@
 			</funding:title>
 			<funding:externalIdentifiers>
 				<funding:externalIdentifier>
-					<funding:externalIdentifierType>grant_number
-					</funding:externalIdentifierType>
-					<funding:externalIdentifierValue>funding:externalIdentifierValue
-					</funding:externalIdentifierValue>
-					<funding:externalIdentifierUrl>http://tempuri.org
-					</funding:externalIdentifierUrl>
+					<funding:externalIdentifierType>grant_number</funding:externalIdentifierType>
+					<funding:externalIdentifierValue>funding:externalIdentifierValue</funding:externalIdentifierValue>
+					<funding:externalIdentifierUrl>http://tempuri.org</funding:externalIdentifierUrl>
 				</funding:externalIdentifier>
 			</funding:externalIdentifiers>
 			<funding:type>grant</funding:type>
