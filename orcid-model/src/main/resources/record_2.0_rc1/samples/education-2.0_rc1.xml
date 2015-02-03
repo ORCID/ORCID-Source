@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <education:education xmlns:common="http://www.orcid.org/ns/common"
 	xmlns:education="http://www.orcid.org/ns/education" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.orcid.org/ns/education education-2.0_rc1.xsd ">
+	xsi:schemaLocation="http://www.orcid.org/ns/education ../education-2.0_rc1.xsd ">
 	<education:departmentName>education:departmentName</education:departmentName>
 	<education:roleTitle>education:roleTitle</education:roleTitle>
 	<common:startDate>

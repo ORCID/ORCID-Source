@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <affiliation:employment xmlns:affiliation="http://www.orcid.org/ns/employment"
 	xmlns:common="http://www.orcid.org/ns/common" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.orcid.org/ns/employment employment-2.0_rc1.xsd ">
+	xsi:schemaLocation="http://www.orcid.org/ns/employment ../employment-2.0_rc1.xsd ">
 	<affiliation:departmentName>affiliation:departmentName</affiliation:departmentName>
 	<affiliation:roleTitle>affiliation:roleTitle</affiliation:roleTitle>
 	<common:startDate>
