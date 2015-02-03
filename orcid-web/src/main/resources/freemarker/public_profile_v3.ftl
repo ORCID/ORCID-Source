@@ -25,10 +25,14 @@
         	<div class="id-banner">
             
 	            <h2 class="full-name">
-	                <#if (profile.orcidBio.personalDetails.creditName.content)??>
-	                    ${(profile.orcidBio.personalDetails.creditName.content)!}
-	                <#else>
-	                    ${(profile.orcidBio.personalDetails.givenNames.content)!} ${(profile.orcidBio.personalDetails.familyName.content)!}
+	            	<#if (locked)??>
+	            		<@orcid.msg 'public_profile.deactivated.given_names' /> <@orcid.msg 'public_profile.deactivated.family_name' />
+	            	<#else>
+		                <#if (profile.orcidBio.personalDetails.creditName.content)??>
+		                    ${(profile.orcidBio.personalDetails.creditName.content)!}
+		                <#else>
+		                    ${(profile.orcidBio.personalDetails.givenNames.content)!} ${(profile.orcidBio.personalDetails.familyName.content)!}
+		                </#if>
 	                </#if>
 	            </h2>
 	            
