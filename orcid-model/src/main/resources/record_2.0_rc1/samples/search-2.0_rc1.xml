@@ -17,7 +17,6 @@
 				<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
 				<common:path>8888-8888-8888-8880</common:path>
 				<common:host>orcid.org</common:host>
-
 			</common:orcidIdentifier>
 			<deprecated:deprecated>
 				<deprecated:deprecatedDate>2001-12-31T12:00:00</deprecated:deprecatedDate>
@@ -26,7 +25,6 @@
 						<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
 						<common:path>8888-8888-8888-8880</common:path>
 						<common:host>orcid.org</common:host>
-
 					</common:orcidIdentifier>
 				</deprecated:primaryRecord>
 			</deprecated:deprecated>
@@ -44,7 +42,6 @@
 						<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
 						<common:path>8888-8888-8888-8880</common:path>
 						<common:host>orcid.org</common:host>
-
 					</common:sourceOrcid>
 					<common:sourceName />
 					<common:sourceDate>2001-12-31T12:00:00</common:sourceDate>
@@ -106,7 +103,6 @@
 									<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
 									<common:path>8888-8888-8888-8880</common:path>
 									<common:host>orcid.org</common:host>
-
 								</common:orcidIdentifier>
 								<common:lastModifiedDate>2001-12-31T12:00:00</common:lastModifiedDate>
 								<person:creditName visibility="private">person:creditName</person:creditName>
@@ -121,7 +117,6 @@
 									<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
 									<common:path>8888-8888-8888-8880</common:path>
 									<common:host>orcid.org</common:host>
-
 								</common:orcidIdentifier>
 								<common:lastModifiedDate>2001-12-31T12:00:00</common:lastModifiedDate>
 								<person:creditName visibility="private">person:creditName</person:creditName>
@@ -135,7 +130,6 @@
 							<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
 							<common:path>8888-8888-8888-8880</common:path>
 							<common:host>orcid.org</common:host>
-
 						</common:applicationOrcid>
 						<person:applicationName />
 						<person:applicationWebsite>http://tempuri.org</person:applicationWebsite>
@@ -147,7 +141,6 @@
 							<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
 							<common:path>8888-8888-8888-8880</common:path>
 							<common:host>orcid.org</common:host>
-
 						</common:applicationGroupOrcid>
 						<person:applicationGroupName>person:applicationGroupName</person:applicationGroupName>
 					</person:application-summary>
@@ -164,7 +157,6 @@
 								<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
 								<common:path>8888-8888-8888-8880</common:path>
 								<common:host>orcid.org</common:host>
-
 							</common:sourceOrcid>
 							<common:sourceName />
 							<common:sourceDate>2001-12-31T12:00:00</common:sourceDate>
@@ -193,7 +185,6 @@
 								<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
 								<common:path>8888-8888-8888-8880</common:path>
 								<common:host>orcid.org</common:host>
-
 							</common:sourceOrcid>
 							<common:sourceName />
 							<common:sourceDate>2001-12-31T12:00:00</common:sourceDate>
@@ -221,7 +212,6 @@
 								<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
 								<common:path>8888-8888-8888-8880</common:path>
 								<common:host>orcid.org</common:host>
-
 							</common:sourceOrcid>
 							<common:sourceName />
 							<common:sourceDate>2001-12-31T12:00:00</common:sourceDate>
@@ -255,7 +245,6 @@
 								<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
 								<common:path>8888-8888-8888-8880</common:path>
 								<common:host>orcid.org</common:host>
-
 							</common:sourceOrcid>
 							<common:sourceName />
 							<common:sourceDate>2001-12-31T12:00:00</common:sourceDate>
