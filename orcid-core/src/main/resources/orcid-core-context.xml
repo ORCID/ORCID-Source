@@ -463,6 +463,10 @@
 	<bean id="jpaJaxbNotificationAdapter" class="org.orcid.core.adapter.impl.JpaJaxbNotificationAdapterImpl">
 	    <property name="mapperFacade" ref="mapperFacade" />
 	</bean>
+	<bean id="workMapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getWorkMapperFacade"/>
+    <bean id="jpaJaxbWorkAdapter" class="org.orcid.core.adapter.impl.JpaJaxbWorkAdapterImpl">
+        <property name="mapperFacade" ref="workMapperFacade" />
+    </bean>
 	
 	<!-- Geonames username -->
 	<bean id="geonamesUser" class="java.lang.String">
