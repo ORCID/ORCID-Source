@@ -210,9 +210,9 @@
 					<common:sourceDate>2001-12-31T12:00:00</common:sourceDate>
 				</common:source>
 				<work:title>
-					<work:title>work:title</work:title>
-					<work:subtitle />
-					<work:translatedTitle languageCode="en">work:translatedTitle</work:translatedTitle>
+					<common:title>work:title</common:title>
+					<common:subtitle />
+					<common:translatedTitle languageCode="en">work:translatedTitle</common:translatedTitle>
 				</work:title>
 				<work:externalIdentifiers scope="read-limited">
 					<work:workExternalIdentifier>
@@ -243,8 +243,8 @@
 					<common:sourceDate>2001-12-31T12:00:00</common:sourceDate>
 				</common:source>
 				<funding:title>
-					<funding:title>funding:title</funding:title>
-					<funding:translatedTitle languageCode="en">funding:translatedTitle</funding:translatedTitle>
+					<common:title>funding:title</common:title>
+					<common:translatedTitle languageCode="en">funding:translatedTitle</common:translatedTitle>
 				</funding:title>
 				<funding:externalIdentifiers>
 					<funding:externalIdentifier>

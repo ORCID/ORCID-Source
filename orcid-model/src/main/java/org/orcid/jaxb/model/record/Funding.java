@@ -49,7 +49,7 @@ public class Funding implements VisibilityType, Activity, Serializable {
 
     private final static long serialVersionUID = 1L;
 
-    @XmlElement(name = "funding-type", required = true)
+    @XmlElement(name = "fundingType", required = true)
     protected FundingType type;
     @XmlElement(name = "organizationDefinedType")
     protected OrganizationDefinedFundingSubType organizationDefinedFundingType;

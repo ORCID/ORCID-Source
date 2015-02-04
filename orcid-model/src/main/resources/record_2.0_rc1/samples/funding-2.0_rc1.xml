@@ -5,8 +5,8 @@
 	<funding:type>grant</funding:type>
 	<funding:organizationDefinedType>funding:organizationDefinedType</funding:organizationDefinedType>
 	<funding:title>
-		<funding:title>funding:title</funding:title>
-		<funding:translatedTitle languageCode="en">funding:translatedTitle</funding:translatedTitle>
+		<common:title>funding:title</common:title>
+		<common:translatedTitle languageCode="en">funding:translatedTitle</common:translatedTitle>
 	</funding:title>
 	<funding:shortDescription>funding:shortDescription</funding:shortDescription>
 	<funding:amount currencyCode="ADP">funding:amount</funding:amount>

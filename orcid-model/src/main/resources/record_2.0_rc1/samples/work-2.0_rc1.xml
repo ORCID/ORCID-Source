@@ -4,9 +4,9 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.orcid.org/ns/work ../work-2.0_rc1.xsd">
 	<work:title>
-		<work:title>work:title</work:title>
-		<work:subtitle />
-		<work:translatedTitle languageCode="en">work:translatedTitle</work:translatedTitle>
+		<common:title>work:title</common:title>
+		<common:subtitle />
+		<common:translatedTitle languageCode="en">work:translatedTitle</common:translatedTitle>
 	</work:title>
 	<work:journalTitle />
 	<work:shortDescription>work:shortDescription</work:shortDescription>

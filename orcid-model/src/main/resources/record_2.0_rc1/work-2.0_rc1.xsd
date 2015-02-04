@@ -362,16 +362,16 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element name="title" type="common:nonEmptyString">
+			<xs:element ref="common:title">
 				<xs:annotation>
 					<xs:documentation>The main name or title of the work. For a
 						spin-off company, include use the company name
 					</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="subtitle" type="work:subtitle"
+			<xs:element ref="common:subtitle"
 				minOccurs="0" />
-			<xs:element name="translatedTitle" type="common:translatedTitle"
+			<xs:element ref="common:translatedTitle"
 				minOccurs="0" />
 		</xs:sequence>
 	</xs:complexType>
