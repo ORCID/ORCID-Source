@@ -163,6 +163,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
      */
     @Override
     @VisibilityControl
+    @NonLocked
     public Response findFullDetails(String orcid) {
         OrcidProfile profile = orcidProfileManager.retrieveClaimedOrcidProfile(orcid);
         return getOrcidMessageResponse(profile, orcid);
@@ -193,6 +194,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
      */
     @Override
     @VisibilityControl
+    @NonLocked
     public Response findAffiliationsDetails(String orcid) {
         OrcidProfile profile = orcidProfileManager.retrieveClaimedAffiliations(orcid);
         return getOrcidMessageResponse(profile, orcid);
@@ -200,6 +202,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
 
     @Override
     @VisibilityControl
+    @NonLocked
     public Response findAffiliationsDetailsFromPublicCache(String orcid) {
         try {
             OrcidMessage orcidMessage = orcidSearchManager.findPublicProfileById(orcid);
