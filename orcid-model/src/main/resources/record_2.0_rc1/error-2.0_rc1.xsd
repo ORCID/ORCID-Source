@@ -32,18 +32,53 @@
 			<sch:ns prefix="orcid" uri="http://www.orcid.org/ns/orcid" />
 		</xs:appinfo>
 	</xs:annotation>
-	
-	<xs:import namespace="http://www.orcid.org/ns/common"
-		schemaLocation="common-2.0_rc1.xsd" />
-		
+
 	<xs:element name="error">
-		<xs:complexType mixed="true">
-			<xs:annotation>
-				<xs:documentation>A human readable error message included when the
-					request was unsuccessful.
-				</xs:documentation>
-			</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="responseCode" type="xs:int">
+					<xs:annotation>
+						<xs:documentation>
+							The HTTP response code that was also used in the response header.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="developerMessage" type="xs:string">
+					<xs:annotation>
+						<xs:documentation>
+							Debugging information for the API client developer, e.g. schema validation
+							error message.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="userMessage" type="xs:string"
+					minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>
+							An error message that would be suitable to display to the user in
+							the application using the ORCID API.
+							If possible, this will be in the language of the locale specified
+							by the user in ORCID.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="errorCode" type="xs:integer" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>
+							The ORCID error code that defines the specific type of error. A full
+							list of codes can be found at
+							http://support.orcid.org/knowledgebase/articles/....
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="moreInfo" type="xs:anyURI" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>
+							A URL of a page giving more info about the error.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
-
 </xs:schema>
