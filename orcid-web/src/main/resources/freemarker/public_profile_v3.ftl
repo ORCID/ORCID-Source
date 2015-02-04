@@ -23,9 +23,8 @@
     <div class="col-md-3 left-aside">
         <div class="workspace-left workspace-profile">
         	<div class="id-banner">
-            
 	            <h2 class="full-name">
-	            	<#if (locked)??>
+	            	<#if (locked)?? && locked>
 	            		<@orcid.msg 'public_profile.deactivated.given_names' /> <@orcid.msg 'public_profile.deactivated.family_name' />
 	            	<#else>
 		                <#if (profile.orcidBio.personalDetails.creditName.content)??>
@@ -34,9 +33,7 @@
 		                    ${(profile.orcidBio.personalDetails.givenNames.content)!} ${(profile.orcidBio.personalDetails.familyName.content)!}
 		                </#if>
 	                </#if>
-	            </h2>
-	            
-	            
+	            </h2>	            	            
 	            
 	            <div class="oid">
 					<div class="id-banner-header">
@@ -56,9 +53,7 @@
 					</div>
 				</div>
 				
-				<#if (locked)??>
-						                        
-				<#else>	                       
+				<#if (locked)?? && !locked>
 		            <#if (profile.orcidBio.personalDetails.otherNames)?? && (profile.orcidBio.personalDetails.otherNames.otherName?size != 0)>
 		            	<div class="workspace-section">
 		            		<div class="workspace-section-header">
@@ -128,7 +123,7 @@
     
     <div class="col-md-9 right-aside">
         <div class="workspace-right" ng-controller="PersonalInfoCtrl">
-        	<#if (locked)??>
+        	<#if (locked)?? && locked>
         		<div class="alert alert-error readme">
 		        	<p><b><@orcid.msg 'public-layout.locked'/></b></p>
 		        </div>        		

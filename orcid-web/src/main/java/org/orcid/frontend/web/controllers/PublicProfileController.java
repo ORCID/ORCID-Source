@@ -134,9 +134,7 @@ public class PublicProfileController extends BaseWorkspaceController {
             isProfileEmtpy = false;
         }
         
-        if(profileEntityManager.isLocked(orcid)) {
-            mav.addObject("locked", true);
-        } else if (profile.getOrcidDeprecated() != null) {
+        if (profile.getOrcidDeprecated() != null) {
             String primaryRecord = profile.getOrcidDeprecated().getPrimaryRecord().getOrcidIdentifier().getPath();
             mav.addObject("deprecated", true);
             mav.addObject("primaryRecord", primaryRecord);

@@ -48,6 +48,8 @@ import org.springframework.transaction.annotation.Transactional;
 @PersistenceContext(unitName = "orcid")
 public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implements ProfileDao {
 
+    private static int counter = 0;
+    
     public ProfileDaoImpl() {
         super(ProfileEntity.class);
     }
@@ -697,7 +699,13 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     }
     
     @Override
-    public boolean isLocked(String orcid) {
+    public boolean isLocked(String orcid) {        
+        counter += 1;
+        
+        System.out.println("-----------------------------------------------------------------------------------");
+        System.out.println("-> " + counter);
+        System.out.println("-----------------------------------------------------------------------------------");
+        
         Query query = entityManager.createNativeQuery("select record_locked from profile where orcid=:orcid");
         query.setParameter("orcid", orcid);        
         return (Boolean) query.getSingleResult();

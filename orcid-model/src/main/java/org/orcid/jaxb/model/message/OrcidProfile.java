@@ -120,6 +120,9 @@ public class OrcidProfile implements Serializable {
 
     @XmlTransient
     String releaseName = ReleaseNameUtils.getReleaseName();
+    
+    @XmlTransient
+    private boolean locked;
 
     /**
      * Gets the value of the orcid property.
@@ -469,8 +472,8 @@ public class OrcidProfile implements Serializable {
 
     public String getCacheKey() {
         return createCacheKey(this);
-    }
-
+    }    
+    
     public static String createCacheKey(OrcidProfile profile) {
         OrcidHistory orcidHistory = profile.getOrcidHistory();
         OrcidIdentifier orcidIdentifier = profile.getOrcidIdentifier();
@@ -521,8 +524,8 @@ public class OrcidProfile implements Serializable {
         if (orcidActivities != null) {
             orcidActivities.downgradeToFundingsOnly();
         }
-    }
-
+    }    
+    
     @Override
     public String toString() {
         return OrcidMessage.convertToString(this);
@@ -619,4 +622,11 @@ public class OrcidProfile implements Serializable {
         this.orcidPreferences = orcidPreferences;
     }
 
+    public boolean isLocked() {
+        return locked;
+    }
+
+    public void setLocked(boolean locked) {
+        this.locked = locked;
+    }
 }

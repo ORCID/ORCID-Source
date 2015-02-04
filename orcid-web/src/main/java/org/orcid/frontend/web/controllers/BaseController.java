@@ -47,6 +47,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.StatisticsManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
@@ -134,6 +135,9 @@ public class BaseController {
 
     @Resource
     protected SourceManager sourceManager;
+    
+    @Resource
+    private ProfileEntityManager profileEntityManager;
 
     protected static final String EMPTY = "empty";
 
@@ -634,5 +638,13 @@ public class BaseController {
 
     public void setShareThisKey(String key) {
         this.shareThisKey = key;
+    }
+    
+    @ModelAttribute("locked")
+    public boolean isLocked() {        
+        OrcidProfile profile = getEffectiveProfile();
+        if(profile == null)
+            return false;
+        return profile.isLocked();
     }
 }

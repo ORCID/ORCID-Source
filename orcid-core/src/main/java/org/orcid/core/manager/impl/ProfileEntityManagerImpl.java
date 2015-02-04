@@ -29,6 +29,7 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.stereotype.Service;
 
 /**
@@ -221,6 +222,8 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
      * */
     @Override
     public boolean isLocked(String orcid) {
+        if(PojoUtil.isEmpty(orcid))
+            return false;
         return profileDao.isLocked(orcid);
     }
 }
