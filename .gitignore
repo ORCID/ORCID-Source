@@ -5,6 +5,7 @@ target
 atlassian-ide-plugin.xml
 *.iml
 *.idea
+*py.class
 orcid-solr/data/*
 orcid-solr/src/main/webapp/solr/data/*
 .externalToolBuilders
