@@ -25,12 +25,9 @@
                 <li ng-show="editSources[group.groupId] == true" class="source-header" ng-class="{'source-active' : editSources[group.groupId] == true}" ng-model="group.activities">
                     <div class="sources-header">
                         <div class="row">
-                            <div class="col-md-4 col-sm-4 col-xs-4">
+                            <div class="col-md-7 col-sm-7 col-xs-7">
                                 <@orcid.msg 'groups.common.sources' /> <span class="hide-sources" ng-click="hideSources(group)"><@orcid.msg 'groups.common.close_sources' /></span>
-                            </div>
-                            <div class="col-md-3 col-sm-3 col-xs-3">
-                                <@orcid.msg 'groups.common.created' />
-                            </div>
+                            </div>                            
                             <div class="col-md-2 col-sm-2 col-xs-2">                                
                                 <@orcid.msgCapFirst 'groups.common.preferred' />
                             </div>                            
@@ -173,12 +170,9 @@
 
                      <!-- active row source display -->
                       <div class="row source-line" ng-show="group.activePutCode == funding.putCode.value">
-                          <div class="col-md-4 col-sm-4 col-xs-4" ng-show="editSources[group.groupId] == true">
+                          <div class="col-md-7 col-sm-7 col-xs-7" ng-show="editSources[group.groupId] == true">
                               {{group.getActive().sourceName}}
-                          </div>
-                          <div class="col-md-3 col-sm-3 col-xs-3" ng-show="editSources[group.groupId] == true">
-                              <div ng-show="editSources[group.groupId] == true"  ng-bind="funding.createdDate | ajaxFormDateToISO8601"></div>
-                          </div>
+                          </div>                          
                           <div class="col-md-3 col-sm-3 col-xs-3" ng-show="editSources[group.groupId] == true">
                           <span class="glyphicon glyphicon-check ng-hide" ng-show="funding.putCode.value == group.defaultPutCode"></span><span ng-show="funding.putCode.value == group.defaultPutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
                              <#if !(isPublicProfile??)>
@@ -222,14 +216,11 @@
 
                     <!-- not active row && edit sources -->
                     <div ng-show="group.activePutCode != funding.putCode.value" class="row source-line">
-                        <div class="col-md-4 col-sm-4 col-xs-4">
+                        <div class="col-md-7 col-sm-7 col-xs-7">
                                 <a ng-click="group.activePutCode = funding.putCode.value;">
                                 {{funding.sourceName}}
                             </a>
-                        </div>
-                        <div class="col-md-3 col-sm-3 col-xs-3">
-                            {{group.getActive().lastModified | ajaxFormDateToISO8601}}
-                        </div>
+                        </div>                        
                         <div class="col-md-3 col-sm-3 col-xs-5">
                              <#if !(isPublicProfile??)>
                                 <span class="glyphicon glyphicon-check" ng-show="funding.putCode.value == group.defaultPutCode"></span><span ng-show="funding.putCode.value == group.defaultPutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
@@ -272,12 +263,9 @@
                     <!-- Bottom row -->
 
                     <div class="row source-line" ng-hide="editSources[group.groupId] == true">
-                        <div class="col-md-4 col-sm-4 col-xs-4">
-                              <@orcid.msg 'groups.common.source'/>: {{funding.sourceName}}
-                          </div>
-                          <div class="col-md-3 col-sm-3 col-xs-3">                              
-                              <@orcid.msg 'groups.common.created'/>: <span ng-bind="funding.createdDate | ajaxFormDateToISO8601"></span>                              
-                          </div>
+                        <div class="col-md-7 col-sm-7 col-xs-7">
+                              <@orcid.msgUpCase 'groups.common.source'/>: {{funding.sourceName}}
+                        </div>                          
                         <div class="col-md-3 col-sm-3 col-xs-3" ng-show="group.activePutCode == funding.putCode.value">
                             <span class="glyphicon glyphicon-check"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span> <span ng-hide="group.activitiesCount == 1">(</span><a ng-click="showSources(group)" ng-hide="group.activitiesCount == 1" ng-mouseenter="showTooltip(group.groupId+'-sources')" ng-mouseleave="hideTooltip(group.groupId+'-sources')"><@orcid.msg 'groups.common.of'/> {{group.activitiesCount}}</a><span ng-hide="group.activitiesCount == 1">)</span>
                             
