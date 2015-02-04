@@ -76,10 +76,10 @@
 		<div class="sources-container-header">          
 			<div class="row">
 				<div class="col-md-4 col-sm-4 col-xs-4">
-					<@orcid.msgUpCase 'groups.common.source'/>: {{group.getActive().sourceName}}	
+					<@orcid.msg 'groups.common.source'/>: {{group.getActive().sourceName}}	
 				</div>
 				<div class="col-md-6 col-sm-6 col-xs-6">
-					<@orcid.msgUpCase 'groups.common.created'/>: <span ng-bind="group.getActive().createdDate | ajaxFormDateToISO8601"></span>
+					<@orcid.msg 'groups.common.created'/>: <span ng-bind="group.getActive().createdDate | ajaxFormDateToISO8601"></span>
 				</div>				
 				<div class="col-md-2 col-sm-2 col-xs-2">
 					<ul class="sources-options">
