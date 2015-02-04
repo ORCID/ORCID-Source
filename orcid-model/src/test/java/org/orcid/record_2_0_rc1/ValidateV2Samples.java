@@ -35,7 +35,7 @@ public class ValidateV2Samples {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ValidateV2Samples.class);
 
-    String[] sampleNames = { "activities", "deprecated", "education", "employment", "funding", "history", "person", "preferences", "record", "search", "work" };
+    String[] sampleNames = { "activities", "deprecated", "education", "employment", "error", "funding", "history", "person", "preferences", "record", "search", "work" };
 
     @Test
     public void Test() throws SAXException, IOException {
