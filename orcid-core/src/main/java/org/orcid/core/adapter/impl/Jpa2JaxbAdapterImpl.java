@@ -23,7 +23,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Set;
-import java.util.SortedSet;
 
 import javax.annotation.Resource;
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -50,7 +49,6 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
-import org.orcid.persistence.jpa.entities.FundingExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.FuzzyDateEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
@@ -440,43 +438,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         if(!PojoUtil.isEmpty(externalIdsJson)) {
             return JsonUtils.readObjectFromJsonString(externalIdsJson, FundingExternalIdentifiers.class);                            
         }
-        
-        //Old way of doing funding external ids
-        if (profileFundingEntity == null || profileFundingEntity.getExternalIdentifiers() == null || profileFundingEntity.getExternalIdentifiers().isEmpty()) {
-            return null;
-        }
-        SortedSet<FundingExternalIdentifierEntity> fundingExternalIdentifierEntitys = profileFundingEntity.getExternalIdentifiers();
-        FundingExternalIdentifiers fundingExternalIdentifiers = new FundingExternalIdentifiers();
-
-        for (FundingExternalIdentifierEntity fundingExternalIdentifierEntity : fundingExternalIdentifierEntitys) {
-            FundingExternalIdentifier fundingExternalIdentifier = getFundingExternalIdentifier(fundingExternalIdentifierEntity);
-            if (fundingExternalIdentifier != null) {
-                fundingExternalIdentifiers.getFundingExternalIdentifier().add(fundingExternalIdentifier);
-            }
-        }
-
-        return fundingExternalIdentifiers;
-    }
-
-    /**
-     * Transforms a FundingExternalIdentifierEntity into a
-     * FundingExternalIdentifier object
-     * 
-     * @param fundingExternalIdentifierEntity
-     * @return FundingExternalIdentifier
-     * */
-    private FundingExternalIdentifier getFundingExternalIdentifier(FundingExternalIdentifierEntity fundingExternalIdentifierEntity) {
-        if (fundingExternalIdentifierEntity == null) {
-            return null;
-        }
-        FundingExternalIdentifier fundingExternalIdentifier = new FundingExternalIdentifier();
-
-        fundingExternalIdentifier.setType(FundingExternalIdentifierType.fromValue(fundingExternalIdentifierEntity.getType()));
-        fundingExternalIdentifier.setUrl(new Url(fundingExternalIdentifierEntity.getUrl()));
-        fundingExternalIdentifier.setValue(fundingExternalIdentifierEntity.getValue());
-
-        return fundingExternalIdentifier;
-    }
+        return new FundingExternalIdentifiers();
+    }    
 
     /**
      * Get the funding contributors from a profileFundingEntity

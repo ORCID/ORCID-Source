@@ -138,8 +138,6 @@
             
      <bean id="profileFundingDao" class="org.orcid.persistence.dao.impl.ProfileFundingDaoImpl" />
     
-     <bean id="fundingExternalIdentifierDao" class="org.orcid.persistence.dao.impl.FundingExternalIdentifierDaoImpl" />
-                
 	<bean id="orgDisambiguatedExternalIdentifierEntityDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
         <constructor-arg value="org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity" />
     </bean>                

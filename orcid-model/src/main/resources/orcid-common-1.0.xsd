@@ -3,7 +3,7 @@
 	targetNamespace="http://www.orcid.org/ns/orcid" xmlns:orcid="http://www.orcid.org/ns/orcid"
 	xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" vc:minVersion="1.1">
-    <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2009/01/xml.xsd"/>
+    <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="xml.xsd"/>
 	<xs:element name="source">
 		<xs:annotation>
 			<xs:documentation>The client application (Member organization's system) that created the

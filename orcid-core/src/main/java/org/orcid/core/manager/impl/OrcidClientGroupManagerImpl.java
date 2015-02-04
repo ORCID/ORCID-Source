@@ -90,10 +90,10 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
 
     @Resource
     private EncryptionManager encryptionManager;
-    
+
     @Resource
     private ClientScopeDao clientScopeDao;
-       
+
     @Override
     @Transactional
     public OrcidClient createOrUpdateOrcidClientGroup(String groupOrcid, OrcidClient orcidClient) {
@@ -223,52 +223,54 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
                 EmailEntity primaryEmailEntity = new EmailEntity();
                 primaryEmailEntity.setId(orcidClientGroup.getEmail().toLowerCase().trim());
                 primaryEmailEntity.setCurrent(true);
-                primaryEmailEntity.setVerified(true);                
+                primaryEmailEntity.setVerified(true);
                 primaryEmailEntity.setVisibility(Visibility.PRIVATE);
-                groupProfileEntity.setPrimaryEmail(primaryEmailEntity);                          
+                groupProfileEntity.setPrimaryEmail(primaryEmailEntity);
             }
             groupProfileEntity.setCreditName(orcidClientGroup.getGroupName());
             groupProfileEntity.setSalesforeId(orcidClientGroup.getSalesforceId());
             // If group type changed
-            if(!groupProfileEntity.getGroupType().equals(orcidClientGroup.getType())) {
+            if (!groupProfileEntity.getGroupType().equals(orcidClientGroup.getType())) {
                 // Update the group type
                 groupProfileEntity.setGroupType(orcidClientGroup.getType());
                 // Set the flag to update the client scopes
                 updateClientScopes = true;
-            }     
+            }
             // Merge changes
             profileDao.merge(groupProfileEntity);
             profileDao.updateLastModifiedDate(groupOrcid);
             // Update client types and scopes
-            if(updateClientScopes)
+            if (updateClientScopes)
                 updateClientTypeDueGroupTypeUpdate(groupProfileEntity);
         }
     }
 
     /**
-     * Updates the client type and client scopes of all clients that belongs to the given group
+     * Updates the client type and client scopes of all clients that belongs to
+     * the given group
+     * 
      * @param groupProfileEntity
-     *  the group profile
+     *            the group profile
      * */
     @Transactional
     private void updateClientTypeDueGroupTypeUpdate(ProfileEntity groupProfileEntity) {
         Set<ClientDetailsEntity> clients = groupProfileEntity.getClients();
-        ClientType clientType = this.getClientType(groupProfileEntity.getGroupType());        
-        for(ClientDetailsEntity client : clients) {
+        ClientType clientType = this.getClientType(groupProfileEntity.getGroupType());
+        for (ClientDetailsEntity client : clients) {
             Set<String> newSetOfScopes = this.createScopes(clientType);
-            Set<ClientScopeEntity> existingScopes = client.getClientScopes();            
+            Set<ClientScopeEntity> existingScopes = client.getClientScopes();
             Iterator<ClientScopeEntity> scopesIterator = existingScopes.iterator();
-            while(scopesIterator.hasNext()) {
+            while (scopesIterator.hasNext()) {
                 ClientScopeEntity clientScopeEntity = scopesIterator.next();
-                if(newSetOfScopes.contains(clientScopeEntity.getScopeType())) {
+                if (newSetOfScopes.contains(clientScopeEntity.getScopeType())) {
                     newSetOfScopes.remove(clientScopeEntity.getScopeType());
                 } else {
                     clientScopeDao.deleteScope(client.getClientId(), clientScopeEntity.getScopeType());
                 }
             }
-            
+
             // Insert the new scopes
-            for(String newScope : newSetOfScopes) {
+            for (String newScope : newSetOfScopes) {
                 ClientScopeEntity clientScopeEntity = new ClientScopeEntity();
                 clientScopeEntity.setClientDetailsEntity(client);
                 clientScopeEntity.setScopeType(newScope);
@@ -276,14 +278,14 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
                 clientScopeEntity.setLastModified(new Date());
                 clientScopeDao.persist(clientScopeEntity);
             }
-            
+
             // Update client type
             clientDetailsDao.updateClientType(clientType, client.getClientId());
             // Update last modified
             clientDetailsDao.updateLastModified(client.getClientId());
         }
     }
-    
+
     /**
      * If the client type is set, check if the client type matches the types
      * that the group is allowed to add. If the client type is null, assig it
@@ -637,7 +639,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
     @Override
     public Set<String> premiumCreatorScopes() {
         Set<String> creatorScopes = creatorScopes();
-        creatorScopes.add(ScopePathType.WEBHOOK.value());
+        addPremiumOnlyScopes(creatorScopes);
         return creatorScopes;
     }
 
@@ -649,7 +651,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
     @Override
     public Set<String> premiumUpdaterScopes() {
         Set<String> updaterScopes = updaterScopes();
-        updaterScopes.add(ScopePathType.WEBHOOK.value());
+        addPremiumOnlyScopes(updaterScopes);
         return updaterScopes;
     }
 
@@ -659,7 +661,13 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
                 ScopePathType.AFFILIATIONS_UPDATE, ScopePathType.AUTHENTICATE, ScopePathType.FUNDING_CREATE, ScopePathType.FUNDING_READ_LIMITED,
                 ScopePathType.FUNDING_UPDATE, ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE, ScopePathType.ORCID_BIO_READ_LIMITED, ScopePathType.ORCID_BIO_UPDATE,
                 ScopePathType.ORCID_PROFILE_READ_LIMITED, ScopePathType.ORCID_WORKS_CREATE, ScopePathType.ORCID_WORKS_READ_LIMITED, ScopePathType.ORCID_WORKS_UPDATE,
-                ScopePathType.READ_PUBLIC, ScopePathType.ACTIVITIES_UPDATE, ScopePathType.PERSON_UPDATE, ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.PERSON_READ_LIMITED));
+                ScopePathType.READ_PUBLIC, ScopePathType.ACTIVITIES_UPDATE, ScopePathType.PERSON_UPDATE, ScopePathType.ACTIVITIES_READ_LIMITED,
+                ScopePathType.PERSON_READ_LIMITED));
+    }
+
+    private void addPremiumOnlyScopes(Set<String> scopes) {
+        scopes.add(ScopePathType.WEBHOOK.value());
+        scopes.add(ScopePathType.PREMIUM_NOTIFICATION.value());
     }
 
     /**
@@ -731,5 +739,5 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
             return false;
 
         return true;
-    }    
+    }
 }

@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
@@ -116,7 +115,6 @@ import org.orcid.jaxb.model.message.VisibilityType;
 import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkExternalIdentifier;
 import org.orcid.persistence.dao.EmailDao;
-import org.orcid.persistence.dao.FundingExternalIdentifierDao;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
@@ -127,7 +125,6 @@ import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.EmailEventEntity;
 import org.orcid.persistence.jpa.entities.EmailEventType;
-import org.orcid.persistence.jpa.entities.FundingExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
@@ -186,9 +183,6 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
     @Resource
     ProfileFundingDao profileFundingDao;
-
-    @Resource
-    FundingExternalIdentifierDao fundingExternalIdentifierDao;
 
     @Resource
     private EmailDao emailDao;
@@ -1816,15 +1810,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         for (Funding updatedFunding : updatedFundingList) {
             ProfileFundingEntity profileFundingEntity = jaxb2JpaAdapter.getNewProfileFundingEntity(updatedFunding, profileEntity);
             // Save the profile grant
-            ProfileFundingEntity newProfileFunding = profileFundingDao.addProfileFunding(profileFundingEntity);
-            // Save the external identifiers
-            SortedSet<FundingExternalIdentifierEntity> externalIdentifiers = profileFundingEntity.getExternalIdentifiers();
-            if (externalIdentifiers != null && !externalIdentifiers.isEmpty()) {
-                for (FundingExternalIdentifierEntity externalIdentifier : externalIdentifiers) {
-                    externalIdentifier.setProfileFunding(newProfileFunding);
-                    fundingExternalIdentifierDao.createFundingExternalIdentifier(externalIdentifier);
-                }
-            }
+            profileFundingDao.addProfileFunding(profileFundingEntity);            
         }
         orcidProfileCacheManager.remove(orcid);
     }
