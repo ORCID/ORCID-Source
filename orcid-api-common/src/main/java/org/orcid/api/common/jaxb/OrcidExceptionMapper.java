@@ -46,6 +46,7 @@ import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.security.DeprecatedException;
+import org.orcid.core.security.aop.LockedException;
 import org.orcid.core.version.ApiSection;
 import org.orcid.core.web.filters.ApiVersionFilter;
 import org.orcid.jaxb.model.error.OrcidError;
@@ -83,7 +84,9 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
 
     private static Map<Class<? extends Throwable>, Pair<Response.Status, Integer>> HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE = new HashMap<>();
     {
-
+        //200
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(LockedException.class, new ImmutablePair<>(Response.Status.OK, 9018));
+        
         // 301
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(DeprecatedException.class, new ImmutablePair<>(Response.Status.MOVED_PERMANENTLY, 9007));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidDeprecatedException.class, new ImmutablePair<>(Response.Status.MOVED_PERMANENTLY, 9013));
@@ -120,7 +123,7 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         LOGGER.error("An exception has occured", t);
         switch (getApiSection()) {
         case NOTIFICATIONS:
-            return newStyleErrorREsponse(t);
+            return newStyleErrorResponse(t);
         default:
             return legacyErrorResponse(t);
         }
@@ -151,6 +154,9 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         } else if (DeprecatedException.class.isAssignableFrom(t.getClass())) {
             OrcidMessage entity = getLegacyOrcidEntity("Account Deprecated", t);
             return Response.status(Response.Status.MOVED_PERMANENTLY).entity(entity).build();
+        } else if(LockedException.class.isAssignableFrom(t.getClass())){
+            LockedException le = (LockedException) t;            
+            return Response.status(Response.Status.OK).entity(le.getLockedRecord()).build();
         } else {
             OrcidMessage entity = getLegacy500OrcidEntity(t);
             return Response.serverError().entity(entity).build();
@@ -172,7 +178,7 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         return entity;
     }
 
-    private Response newStyleErrorREsponse(Throwable t) {
+    private Response newStyleErrorResponse(Throwable t) {
         if (WebApplicationException.class.isAssignableFrom(t.getClass())) {
             return getOrcidErrorResponse((WebApplicationException) t);
         } else {

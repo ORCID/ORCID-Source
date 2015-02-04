@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.orcid.org/ns/orcid" xmlns:orcid="http://www.orcid.org/ns/orcid"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" vc:minVersion="1.1">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:sch="http://purl.oclc.org/dsdl/schematron" elementFormDefault="qualified"
+	targetNamespace="http://www.orcid.org/ns/orcid" xmlns:orcid="http://www.orcid.org/ns/orcid">
     <xs:annotation>
         <xs:documentation>
             =============================================================================
@@ -22,6 +23,10 @@
             and responses.
             The top level element is orcid-message.
         </xs:documentation>
+        <xs:appinfo>
+			<sch:title>Schematron validation</sch:title>
+			<sch:ns prefix="orcid" uri="http://www.orcid.org/ns/orcid"/>
+		</xs:appinfo>
     </xs:annotation>
     <xs:element name="lockedRecord">
     	<xs:annotation>
@@ -40,18 +45,18 @@
 					ORCID iD). At least one of uri or path must be given. </xs:documentation>
 			</xs:annotation>
 			<xs:sequence>				
-				<xs:element name="uri" type="orcid:orcidUri" minOccurs="1"/>
-				<xs:element name="path" type="orcid:orcidPath" minOccurs="1"/>
+				<xs:element name="uri" type="orcid:uri" minOccurs="1"/>
+				<xs:element name="path" type="orcid:path" minOccurs="1"/>
 				<xs:element name="host" type="orcid:host" minOccurs="1"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
-	<xs:simpleType name="orcidPath">
+	<xs:simpleType name="path">
 		<xs:restriction base="xs:string">
 			<xs:pattern value="(\d{4}-){3,}\d{3}[\dX]"/>
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name="orcidUri">
+	<xs:simpleType name="uri">
 		<xs:restriction base="xs:string">
 			<xs:pattern
 				value="http://([^/]*orcid\.org|localhost.*/orcid-web)/(\d{4}-){3,}\d{3}[\dX]"/>

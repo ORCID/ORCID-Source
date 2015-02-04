@@ -29,7 +29,14 @@ import org.orcid.jaxb.model.message.OrcidIdentifier;
 @XmlRootElement(name = "lockedRecord")
 public class LockedRecord {
 
-    @XmlElement(name = "orcidIdentifier")
+    @XmlElement
     protected OrcidIdentifier orcidIdentifier;
 
+    public OrcidIdentifier getOrcidIdentifier() {
+        return orcidIdentifier;
+    }
+
+    public void setOrcidIdentifier(OrcidIdentifier orcidIdentifier) {
+        this.orcidIdentifier = orcidIdentifier;
+    }    
 }
