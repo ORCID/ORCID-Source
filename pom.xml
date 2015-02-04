@@ -238,6 +238,7 @@ the software.
                             <exclude>**/src/main/webapp/static/css/glyphicons.css</exclude>
                             <exclude>**/src/test/javascript/node_modules/**</exclude>
                             <exclude>**/src/main/webapp/static/javascript/iframeResizer**</exclude>
+                            <exclude>**/*.xsd</exclude>
                             <exclude>**.md</exclude>
                             <exclude>docs/**</exclude>
                         	<exclude>**/src/main/resources/**/*countries.txt</exclude>
