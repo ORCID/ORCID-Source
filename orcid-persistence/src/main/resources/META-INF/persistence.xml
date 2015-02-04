@@ -29,7 +29,6 @@
         <class>org.orcid.persistence.jpa.entities.CountryIsoEntity</class>
         <class>org.orcid.persistence.jpa.entities.ExternalIdentifierEntity</class>
         <class>org.orcid.persistence.jpa.entities.EmailEntity</class>
-        <class>org.orcid.persistence.jpa.entities.FundingExternalIdentifierEntity</class>
         <class>org.orcid.persistence.jpa.entities.FuzzyDateEntity</class>
         <class>org.orcid.persistence.jpa.entities.GivenPermissionByEntity</class>
         <class>org.orcid.persistence.jpa.entities.GivenPermissionToEntity</class>

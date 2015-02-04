@@ -62,5 +62,11 @@
                 <div ng-bind="group.getActive().description.value"></div>                
             </div>
         </div>
+        
+        <!-- Created Date -->
+        <div class="col-md-6">
+        	<strong><@orcid.msg 'groups.common.created'/></strong>
+        	<div>{{group.getActive().createdDate.year}}-{{group.getActive().createdDate.month}}-{{group.getActive().createdDate.day}}</div>
+        </div>
     </div>
 </div>

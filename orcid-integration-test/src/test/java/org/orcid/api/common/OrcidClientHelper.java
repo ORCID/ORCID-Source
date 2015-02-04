@@ -46,18 +46,44 @@ public class OrcidClientHelper {
     public ClientResponse getClientResponse(URI uri, String accept) {
         return createRootResource(uri).accept(accept).get(ClientResponse.class);
     }
-
-    public ClientResponse postClientResponse(URI uri, String accept, OrcidMessage orcidMessage) {
-        return createRootResource(uri).accept(accept).type(accept).post(ClientResponse.class, orcidMessage);
+    
+    public ClientResponse getClientResponseWithToken(URI restPath, String accept, String oauthToken) {
+        return setupRequestCommonParams(restPath, accept, oauthToken).get(ClientResponse.class);
+    }
+    
+    public ClientResponse postClientResponse(URI uri, String accept, Object jaxbRootElement) {
+        return createRootResource(uri).accept(accept).type(accept).post(ClientResponse.class, jaxbRootElement);
+    }
+    
+    public ClientResponse postClientResponseWithToken(URI restPath, String accept, Object jaxbRootElement, String oauthToken) {
+        return setupRequestCommonParams(restPath, accept, oauthToken).post(ClientResponse.class, jaxbRootElement);
     }
 
-    public ClientResponse putClientResponse(URI uri, String accept, OrcidMessage orcidMessage) {
-        ClientResponse response = createRootResource(uri).accept(accept).type(accept).put(ClientResponse.class, orcidMessage);
+    public ClientResponse putClientResponse(URI uri, String accept, Object jaxbRootElement) {
+        ClientResponse response = createRootResource(uri).accept(accept).type(accept).put(ClientResponse.class, jaxbRootElement);
         return response;
     }
-
+    
+    public ClientResponse putClientResponseWithToken(URI restPath, String accept, Object jaxbRootElement, String oauthToken) {
+        return setupRequestCommonParams(restPath, accept, oauthToken).put(ClientResponse.class, jaxbRootElement);
+    }
+    
     public ClientResponse deleteClientResponse(URI uri, String accept) {
         return createRootResource(uri).accept(accept).type(accept).delete(ClientResponse.class);
+    }
+    
+    public ClientResponse deleteClientResponseWithToken(URI restPath, String accept, String oauthToken) {
+        return setupRequestCommonParams(restPath, accept, oauthToken).delete(ClientResponse.class);
+    }
+
+    public WebResource.Builder setupRequestCommonParams(URI restpath, String accept, String oauthToken) {
+        WebResource rootResource = createRootResource(restpath);
+        WebResource.Builder built = addOauthHeader(rootResource, oauthToken).accept(accept).type(accept);
+        return built;
+    }
+    
+    private WebResource.Builder addOauthHeader(WebResource webResource, String oAuthToken) {
+        return webResource.header("Authorization", "Bearer " + oAuthToken);
     }
 
     public URI deriveUriFromRestPath(String restPath) {

@@ -158,7 +158,7 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
         existing.setCurrencyCode(updated.getCurrencyCode());
         existing.setDescription(updated.getDescription());
         existing.setEndDate(updated.getEndDate());
-        existing.setExternalIdentifiers(updated.getExternalIdentifiers());
+        existing.setExternalIdentifiersJson(updated.getExternalIdentifiersJson());        
         existing.setNumericAmount(updated.getNumericAmount());
         existing.setOrg(updated.getOrg());
         existing.setOrganizationDefinedType(updated.getOrganizationDefinedType());
