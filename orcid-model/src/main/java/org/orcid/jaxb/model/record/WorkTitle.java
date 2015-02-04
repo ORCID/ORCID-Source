@@ -46,11 +46,11 @@ public class WorkTitle implements Serializable {
      * 
      */
     private static final long serialVersionUID = 1L;
-    @XmlElement(namespace = "http://www.orcid.org/ns/work")
+    @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Title title;
-    @XmlElement(namespace = "http://www.orcid.org/ns/work")
+    @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Subtitle subtitle;
-    @XmlElement(namespace = "http://www.orcid.org/ns/work")
+    @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected TranslatedTitle translatedTitle;
 
     /**
