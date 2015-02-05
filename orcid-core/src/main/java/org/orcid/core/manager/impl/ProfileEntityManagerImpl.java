@@ -216,6 +216,16 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     }
     
     /**
+     * Set the locked status of an account to false
+     * @param orcid the id of the profile that should be unlocked
+     * @return true if the account was unlocked
+     * */
+    @Override
+    public boolean unlockProfile(String orcid) {
+        return profileDao.unlockProfile(orcid);
+    }
+    
+    /**
      * Check if a profile is locked
      * @param orcid the id of the profile to check
      * @return true if the account is locked

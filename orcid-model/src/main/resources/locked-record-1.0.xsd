@@ -44,7 +44,7 @@
 				<xs:documentation>The identifier of the researcher or contributor in ORCID (the
 					ORCID iD). At least one of uri or path must be given. </xs:documentation>
 			</xs:annotation>
-			<xs:sequence>				
+			<xs:sequence>			
 				<xs:element name="uri" type="orcid:uri" minOccurs="1"/>
 				<xs:element name="path" type="orcid:path" minOccurs="1"/>
 				<xs:element name="host" type="orcid:host" minOccurs="1"/>
@@ -66,5 +66,5 @@
 		<xs:restriction base="xs:string">
 			<xs:pattern value="([^/]*orcid\.org|localhost.*/orcid-web)" />
 		</xs:restriction>
-	</xs:simpleType>
+	</xs:simpleType>			
 </xs:schema>

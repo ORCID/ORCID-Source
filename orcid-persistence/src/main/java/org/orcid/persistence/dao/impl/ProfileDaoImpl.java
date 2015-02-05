@@ -48,8 +48,6 @@ import org.springframework.transaction.annotation.Transactional;
 @PersistenceContext(unitName = "orcid")
 public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implements ProfileDao {
 
-    private static int counter = 0;
-    
     public ProfileDaoImpl() {
         super(ProfileEntity.class);
     }
@@ -692,20 +690,31 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Override
     @Transactional
     public boolean lockProfile(String orcid) {
+        return changeLockedStatus(orcid, true);
+    }
+    
+    /**
+     * Set the locked status of an account to false
+     * @param orcid the id of the profile that should be unlocked
+     * @return true if the account was locked
+     * */
+    @Override
+    @Transactional
+    public boolean unlockProfile(String orcid) {
+        return changeLockedStatus(orcid, false);
+    }
+    
+    @Transactional
+    private boolean changeLockedStatus(String orcid, boolean locked) {
         Query query = entityManager
-                .createNativeQuery("update profile set last_modified=now(), record_locked=true where orcid=:orcid");
+                .createNativeQuery("update profile set last_modified=now(), record_locked=:locked where orcid=:orcid");
         query.setParameter("orcid", orcid);
+        query.setParameter("locked", locked);
         return query.executeUpdate() > 0;
     }
     
     @Override
-    public boolean isLocked(String orcid) {        
-        counter += 1;
-        
-        System.out.println("-----------------------------------------------------------------------------------");
-        System.out.println("-> " + counter);
-        System.out.println("-----------------------------------------------------------------------------------");
-        
+    public boolean isLocked(String orcid) {                
         Query query = entityManager.createNativeQuery("select record_locked from profile where orcid=:orcid");
         query.setParameter("orcid", orcid);        
         return (Boolean) query.getSingleResult();

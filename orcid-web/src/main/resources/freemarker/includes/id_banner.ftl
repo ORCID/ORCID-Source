@@ -75,7 +75,7 @@
 	
 	<div class="oid">
 		<div class="id-banner-header">
-			<span>ORCID iD</span>
+			<span><@orcid.msg 'common.orcid_id' /></span>
 		</div>
 		<div class="orcid-id-container">
 			<div class="orcid-id-info">
@@ -113,7 +113,7 @@
 	           </li>
 	           <li><a href="<@spring.url '/delegators?delegates'/>"><@orcid.msg 'id_banner.more'/></a></li>
 	       </ul>
-	    </div>
+	    </div>	
 	</#if>
 	    
 	

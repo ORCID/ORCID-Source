@@ -5989,35 +5989,11 @@ orcidNgModule.controller('removeSecQuestionCtrl',['$scope','$compile', function 
     };
 }]);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 orcidNgModule.controller('profileLockingCtrl', ['$scope', '$compile', function($scope, $compile){
 	$scope.orcidToLock = '';
+	$scope.orcidToUnlock = '';
 	$scope.showLockModal = false;
+	$scope.showUnlockModal = false;
 	$scope.showLockPopover = false;
 	$scope.profileDetails = null;
 	$scope.message = '';
@@ -6025,6 +6001,11 @@ orcidNgModule.controller('profileLockingCtrl', ['$scope', '$compile', function($
 	$scope.toggleLockModal = function(){
         $scope.showLockModal = !$scope.showLockModal;
         $('#lock_modal').toggle();
+    };
+    
+    $scope.toggleUnlockModal = function(){
+        $scope.showUnlockModal = !$scope.showUnlockModal;
+        $('#unlock_modal').toggle();
     };
     
     $scope.checkProfileToLock = function(){
@@ -6041,6 +6022,28 @@ orcidNgModule.controller('profileLockingCtrl', ['$scope', '$compile', function($
             	}
             	else {
             		$scope.showConfirmModal(true);
+            	}            		            
+            }
+        }).fail(function(error) {
+            // something bad is happening!
+            console.log("Error while loading info for the account to lock");
+        });
+    };
+    
+    $scope.checkProfileToUnlock = function(){
+    	$.ajax({
+            url: getBaseUri()+'/admin-actions/check-account-to-unlock.json',
+            type: 'POST',
+            data: $scope.orcidToUnlock,
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function(data){            	
+            	$scope.profileDetails=data;  
+            	if($scope.profileDetails.errors.length) {
+            		$scope.$apply();
+            	}
+            	else {
+            		$scope.showConfirmModal(false);
             	}            		            
             }
         }).fail(function(error) {
@@ -6082,30 +6085,29 @@ orcidNgModule.controller('profileLockingCtrl', ['$scope', '$compile', function($
         });
     };
     
+    $scope.unlockAccount = function() {
+    	$.ajax({
+            url: getBaseUri()+'/admin-actions/unlock-account.json',
+            type: 'POST',
+            data: $scope.profileDetails.orcid,
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'text',
+            success: function(data){   
+            	$scope.message = data;            	
+            	$scope.orcidToUnlock = '';
+            	$scope.$apply();
+            	$scope.closeModal();
+            }
+        }).fail(function(error) {
+            // something bad is happening!
+            console.log("Error while unlocking account");
+        });
+    };
+    
     $scope.closeModal = function() {        
         $.colorbox.close();
     };
 }]);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 orcidNgModule.controller('SSOPreferencesCtrl',['$scope', '$compile', '$sce', 'emailSrvc', function ($scope, $compile, $sce, emailSrvc) {
     $scope.noCredentialsYet = true;

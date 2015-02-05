@@ -63,5 +63,7 @@ public interface ProfileEntityManager {
     
     public boolean lockProfile(String orcid);
     
+    public boolean unlockProfile(String orcid);
+    
     public boolean isLocked(String orcid);
 }

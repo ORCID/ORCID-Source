@@ -456,8 +456,8 @@
 		<div class="collapsible bottom-margin-small admin-modal" id="lock_modal" style="display:none;">					    		
 	    	<div class="form-group">
 	    		<p ng-show="message != ''">{{message}}</p>
-				<label for="orcid_to_lock"><@orcid.msg 'admin.lock_profile.to_lock' /></label>
-				<input type="text" id="orcid_to_lock" ng-model="orcidToLock" placeholder="<@orcid.msg 'admin.lock_profile.placeholder.to_lock' />" class="input-xlarge" />
+				<label for="orcid_to_lock"><@orcid.msg 'common.orcidOrEmail' /></label>
+				<input type="text" id="orcid_to_lock" ng-model="orcidToLock" placeholder="<@orcid.msg 'common.orcidOrEmail' />" class="input-xlarge" />
 				<div ng-show="profileDetails.errors.length">
 					<span class="orcid-error" ng-repeat="error in profileDetails.errors" ng-bind-html="error"></span><br />
 				</div>
@@ -472,9 +472,25 @@
 	<!-- Unlock Profile -->			
 	<a name="unlock-profile"></a>
 	<div ng-controller="profileLockingCtrl" class="workspace-accordion-item" ng-cloak>
+		<p>				
+			<a ng-show="showUnlockModal" ng-click="toggleUnlockModal()"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.unlock_profile' /></a>
+			<a ng-hide="showUnlockModal" ng-click="toggleUnlockModal()"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.unlock_profile' /></a>
+		</p>
+		<div class="collapsible bottom-margin-small admin-modal" id="unlock_modal" style="display:none;">					    		
+	    	<div class="form-group">
+	    		<p ng-show="message != ''">{{message}}</p>
+				<label for="orcid_to_unlock"><@orcid.msg 'common.orcidOrEmail' /></label>
+				<input type="text" id="orcid_to_unlock" ng-model="orcidToUnlock" placeholder="<@orcid.msg 'common.orcidOrEmail' />" class="input-xlarge" />
+				<div ng-show="profileDetails.errors.length">
+					<span class="orcid-error" ng-repeat="error in profileDetails.errors" ng-bind-html="error"></span><br />
+				</div>
+			</div>
+			<div class="controls save-btns pull-left">
+				<span id="bottom-confirm-lock-profile" ng-click="checkProfileToUnlock()" class="btn btn-primary"><@orcid.msg 'admin.unlock_profile.btn.unlock'/></span>		
+			</div>
+		</div>
 	</div>		
 			
-	</div>
 </div>
 
 <script type="text/ng-template" id="confirm-modal">
@@ -510,7 +526,7 @@
 				<!-- Buttons -->
     			<a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
     			<button class="btn btn-primary" id="btn-lock" ng-click="lockAccount()" ng-show="showLockPopover"><@orcid.msg 'admin.lock_profile.btn.lock'/></button>
-    			<button class="btn btn-primary" id="btn-unlock" ng-click="unlockAccount()" ng-show="!showLockPopover"><@orcid.msg 'admin.lock_profile.btn.unlock'/></button>
+    			<button class="btn btn-primary" id="btn-unlock" ng-click="unlockAccount()" ng-show="!showLockPopover"><@orcid.msg 'admin.unlock_profile.btn.unlock'/></button>
 			</div>
 		</div>
     </div>
