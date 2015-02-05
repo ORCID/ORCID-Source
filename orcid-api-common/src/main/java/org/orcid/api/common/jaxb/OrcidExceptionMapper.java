@@ -83,10 +83,7 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
     private LocaleManager localeManager;
 
     private static Map<Class<? extends Throwable>, Pair<Response.Status, Integer>> HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE = new HashMap<>();
-    {
-        //200
-        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(LockedException.class, new ImmutablePair<>(Response.Status.OK, 9018));
-        
+    {                        
         // 301
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(DeprecatedException.class, new ImmutablePair<>(Response.Status.MOVED_PERMANENTLY, 9007));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidDeprecatedException.class, new ImmutablePair<>(Response.Status.MOVED_PERMANENTLY, 9013));
@@ -114,7 +111,8 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidNotAcceptableException.class, new ImmutablePair<>(Response.Status.NOT_ACCEPTABLE, 9016));
         
         // 409
-        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidInvalidScopeException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9015));
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidInvalidScopeException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9015));        
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(LockedException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9018));
     }
 
     @Override
@@ -155,8 +153,8 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
             OrcidMessage entity = getLegacyOrcidEntity("Account Deprecated", t);
             return Response.status(Response.Status.MOVED_PERMANENTLY).entity(entity).build();
         } else if(LockedException.class.isAssignableFrom(t.getClass())){
-            LockedException le = (LockedException) t;            
-            return Response.status(Response.Status.OK).entity(le.getLockedRecord()).build();
+            OrcidMessage entity = getLegacyOrcidEntity("Account locked", t);
+            return Response.status(Response.Status.CONFLICT).entity(entity).build();
         } else {
             OrcidMessage entity = getLegacy500OrcidEntity(t);
             return Response.serverError().entity(entity).build();

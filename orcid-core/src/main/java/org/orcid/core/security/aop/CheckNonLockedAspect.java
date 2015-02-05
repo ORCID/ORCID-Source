@@ -22,10 +22,13 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.ProfileEntityManager;
-import org.orcid.jaxb.model.message.OrcidProfile;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+
+/**
+ * @author Angel Montenegro
+ * */
 @Aspect
 @Component
 @Order(100)
@@ -39,9 +42,8 @@ public class CheckNonLockedAspect {
     
     @Before("@annotation(nonLocked) && (args(orcid))")
     public void checkPermissionsWithAll(NonLocked nonLocked, String orcid) {        
-        if(profileEntityManager.isLocked(orcid)) {
-            OrcidProfile orcidProfile = orcidProfileManager.retrieveClaimedOrcidBio(orcid);
-            throw new LockedException("The given account is locked", orcidProfile.getOrcidIdentifier());
+        if(profileEntityManager.isLocked(orcid)) {            
+            throw new LockedException("The given account " + orcid + " is locked", orcid);
         }
     }
 

@@ -121,7 +121,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         OrcidProfile profile = orcidProfileCacheManager.retrievePublic(orcid);
 
         mav.addObject("profile", profile);
-
+        
         String countryName = getCountryName(profile, true);
         if(!StringUtil.isBlank(countryName))
             mav.addObject("countryName", countryName);
@@ -134,7 +134,9 @@ public class PublicProfileController extends BaseWorkspaceController {
             isProfileEmtpy = false;
         }
         
-        if (profile.getOrcidDeprecated() != null) {
+        if(profile.isLocked()) {
+            mav.addObject("locked", true);
+        } else if (profile.getOrcidDeprecated() != null) {
             String primaryRecord = profile.getOrcidDeprecated().getPrimaryRecord().getOrcidIdentifier().getPath();
             mav.addObject("deprecated", true);
             mav.addObject("primaryRecord", primaryRecord);

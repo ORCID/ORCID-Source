@@ -17,12 +17,13 @@
 package org.orcid.core.security.aop;
 
 import org.orcid.core.exception.ApplicationException;
-import org.orcid.jaxb.model.message.OrcidIdentifier;
-import org.orcid.jaxb.model.message.locked.LockedRecord;
 
+/**
+ * @author Angel Montenegro
+ * */
 public class LockedException extends ApplicationException {
     private static final long serialVersionUID = -6900432299998784418L;
-    private LockedRecord lockedRecord;
+    private String orcid;
 
     public LockedException(String msg) {
         super(msg);
@@ -30,23 +31,14 @@ public class LockedException extends ApplicationException {
 
     public LockedException(String msg, String orcid) {
         super(msg);
-        lockedRecord = new LockedRecord();        
-        OrcidIdentifier orcidIdentifier = new OrcidIdentifier();
-        orcidIdentifier.setPath(orcid);   
-        lockedRecord.setOrcidIdentifier(orcidIdentifier);
+        this.orcid=orcid;
     }
 
-    public LockedException(String msg, OrcidIdentifier orcidIdentifier) {
-        super(msg);
-        lockedRecord = new LockedRecord();
-        lockedRecord.setOrcidIdentifier(orcidIdentifier);        
+    public String getOrcid() {
+        return orcid;
     }
 
-    public LockedRecord getLockedRecord() {
-        return lockedRecord;
-    }
-
-    public void setLockedRecord(LockedRecord lockedRecord) {
-        this.lockedRecord = lockedRecord;
+    public void setOrcid(String orcid) {
+        this.orcid = orcid;
     }
 }
