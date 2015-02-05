@@ -526,6 +526,11 @@ public class OrcidProfile implements Serializable {
         }
     }    
     
+    public void downgradeToOrcidIdentifierOnly() {
+        setOrcidBio(null);
+        setOrcidActivities(null);
+    }
+    
     @Override
     public String toString() {
         return OrcidMessage.convertToString(this);
