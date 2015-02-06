@@ -109,7 +109,7 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
 
         // 406
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidNotAcceptableException.class, new ImmutablePair<>(Response.Status.NOT_ACCEPTABLE, 9016));
-        
+
         // 409
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidInvalidScopeException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9015));
     }
@@ -218,7 +218,7 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
     private ApiSection getApiSection() {
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
         ApiSection apiSection = (ApiSection) requestAttributes.getAttribute(ApiVersionFilter.API_SECTION_REQUEST_ATTRIBUTE_NAME, RequestAttributes.SCOPE_REQUEST);
-        return apiSection;
+        return apiSection != null ? apiSection : ApiSection.DEFAULT;
     }
 
     private Pair<Status, Integer> getHttpStatusAndErrorCode(Throwable t) {
