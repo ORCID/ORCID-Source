@@ -265,7 +265,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Override
     public List<ProfileEntity> findProfilesThatMissedIndexing(int maxResults) {
         TypedQuery<ProfileEntity> query = entityManager.createQuery(
-                "from ProfileEntity where lastModified > lastIndexedDate and indexingStatus not in ('PENDING', 'IGNORE') order by lastModified", ProfileEntity.class);
+                "from ProfileEntity where (lastModified > lastIndexedDate or lastIndexedDate is null) and indexingStatus not in ('PENDING', 'IGNORE') order by lastModified", ProfileEntity.class);
         query.setMaxResults(maxResults);
         return query.getResultList();
     }
