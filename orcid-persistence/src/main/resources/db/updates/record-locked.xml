@@ -24,13 +24,11 @@
                 <columnExists tableName="profile" columnName="record_locked"/>
             </not>
 		</preConditions>
-		<renameColumn tableName="profile" oldColumnName="account_non_locked" newColumnName="record_locked"/>		
+		<addColumn tableName="profile">
+        	<column name="record_locked" type="BOOLEAN" defaultValue="false" defaultValueBoolean="false">
+        		<constraints nullable="false"/>
+        	</column>
+    	</addColumn>		
 	</changeSet>
-	<changeSet id="RECORD-LOCKED-DEFAULT-VALUE" author="Angel Montenegro">
-		<addDefaultValue 
-            tableName="profile"
-            columnName="record_locked"
-            defaultValue="false" />
-		<sql>UPDATE profile SET record_locked=false</sql>           
-	</changeSet>		
+	    
 </databaseChangeLog>                   

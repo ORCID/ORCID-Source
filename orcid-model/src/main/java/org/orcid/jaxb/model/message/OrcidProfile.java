@@ -122,7 +122,7 @@ public class OrcidProfile implements Serializable {
     String releaseName = ReleaseNameUtils.getReleaseName();
     
     @XmlTransient
-    private boolean locked;
+    private boolean locked = false;
 
     /**
      * Gets the value of the orcid property.
