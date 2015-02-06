@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Ant-Version: Apache Ant 1.8.2
+Created-By: 1.6.0_45-b06-451-11M4406 (Apple Inc.)
+Extension-Name: org.apache.solr
+Specification-Title: Apache Solr Search Server
+Specification-Version: 4.3.0
+Specification-Vendor: The Apache Software Foundation
+Implementation-Title: org.apache.solr
+Implementation-Version: 4.3.0 1477023 - simonw - 2013-04-29 15:10:07
+Implementation-Vendor: The Apache Software Foundation
+X-Compile-Source-JDK: 1.6
+X-Compile-Target-JDK: 1.6
+

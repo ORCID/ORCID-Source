@@ -53,15 +53,48 @@
     <build>
         <finalName>orcid-solr-web</finalName>
         <plugins>
-             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>tomcat-maven-plugin</artifactId>
-                <configuration>
+            <plugin>
+               <groupId>org.codehaus.mojo</groupId>
+               <artifactId>tomcat-maven-plugin</artifactId>
+               <configuration>
                    <url>${tomcat.manager.url}</url>
                    <server>${tomcat.server.id}</server>
                    <path>${artifactID}</path>
-		   <update>true</update>
+                   <update>true</update>
+               </configuration>
+            </plugin>
+            <plugin>
+                <inherited>true</inherited>
+                <groupId>com.mycila.maven-license-plugin</groupId>
+                <artifactId>maven-license-plugin</artifactId>
+                <version>1.9.0</version>
+                <configuration>
+                    <header>${main.basedir}/SHORT_LICENSE.txt</header>
+                    <failIfMissing>true</failIfMissing>
+                    <aggregate>false</aggregate>
+                    <strictCheck>true</strictCheck>
+                    <mapping>
+                        <xjb>XML_STYLE</xjb>
+                    </mapping>
+                    <excludes>
+                        <exclude>**/src/main/webapp/**</exclude>
+                    </excludes>
                 </configuration>
+                <executions>
+                    <execution>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>check-headers</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
