@@ -427,25 +427,6 @@
 			</div>
 		</div>
 			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
 	<!-- Lock Profile -->			
 	<a name="lock-profile"></a>
 	<div ng-controller="profileLockingCtrl" class="workspace-accordion-item" ng-cloak>
@@ -467,8 +448,7 @@
 			</div>
 		</div>
 	</div>
-			
-			
+						
 	<!-- Unlock Profile -->			
 	<a name="unlock-profile"></a>
 	<div ng-controller="profileLockingCtrl" class="workspace-accordion-item" ng-cloak>
