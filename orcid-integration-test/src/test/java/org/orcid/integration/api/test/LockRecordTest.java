@@ -108,6 +108,10 @@ public class LockRecordTest extends IntegrationTestBase {
         addWork(userOrcid, accessToken);
         addFunding(userOrcid, accessToken);
         
+        //Unlock profile
+        InitializeDataHelper idh = (InitializeDataHelper) context.getBean("initializeDataHelper");
+        idh.unlockProfile(userOrcid);
+        
         //Check the full details contains the info
         ClientResponse response = oauthT2Client.viewFullDetailsXml(userOrcid, accessToken);
         assertNotNull(response);
@@ -116,8 +120,7 @@ public class LockRecordTest extends IntegrationTestBase {
         //Check the public page doesnt show the locked error
         assertFalse(oauthHelper.elementExists(webBaseUrl + '/' + userOrcid, "error_locked"));
         
-        
-        InitializeDataHelper idh = (InitializeDataHelper) context.getBean("initializeDataHelper");
+        //Lock profile        
         idh.lockProfile(userOrcid);
         
         //Check the full details returns error
@@ -137,6 +140,7 @@ public class LockRecordTest extends IntegrationTestBase {
         String workTitle = addWork(userOrcid, accessToken);
         String fundingTitle = addFunding(userOrcid, accessToken);                
         
+        //Lock profile
         InitializeDataHelper idh = (InitializeDataHelper) context.getBean("initializeDataHelper");
         idh.lockProfile(userOrcid);
         
@@ -148,6 +152,7 @@ public class LockRecordTest extends IntegrationTestBase {
         //Check the public page show the locked error
         assertTrue(oauthHelper.elementExists(webBaseUrl + '/' + userOrcid, "error_locked"));
         
+        //Unlock profile
         idh.unlockProfile(userOrcid);
         
         //Check the unlocked error returns the full details
@@ -192,6 +197,35 @@ public class LockRecordTest extends IntegrationTestBase {
         
         //Check the public page doesnt display the locked error message
         assertFalse(oauthHelper.elementExists(webBaseUrl + '/' + userOrcid, "error_locked"));
+    }
+    
+    @Test
+    public void lockedProfileReturnErrorOnRead() throws Exception {        
+        String userOrcid = user.getOrcidIdentifier().getPath();
+        String accessToken = oauthHelper.obtainAccessToken(client.getClientId(), client.getClientSecret(), "/person/read-limited /activities/read-limited", email, password, getRedirectUri(), true);
+        
+        InitializeDataHelper idh = (InitializeDataHelper) context.getBean("initializeDataHelper");
+        idh.lockProfile(userOrcid);
+        
+        //Check bio details returns error
+        ClientResponse response = oauthT2Client.viewBioDetailsXml(userOrcid, accessToken);
+        assertNotNull(response);
+        assertEquals(409, response.getStatus());
+        
+        //Check work details returns error
+        response = oauthT2Client.viewWorksDetailsXml(userOrcid, accessToken);
+        assertNotNull(response);
+        assertEquals(409, response.getStatus());
+        
+        //Check affiliation details returns error
+        response = oauthT2Client.viewAffiliationDetailsXml(userOrcid, accessToken);
+        assertNotNull(response);
+        assertEquals(409, response.getStatus());
+        
+        //Check funding details returns error
+        response = oauthT2Client.viewFundingDetailsXml(userOrcid, accessToken);
+        assertNotNull(response);
+        assertEquals(409, response.getStatus());
     }
     
 }
