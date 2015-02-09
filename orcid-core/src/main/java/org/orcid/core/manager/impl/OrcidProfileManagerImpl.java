@@ -598,13 +598,14 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public OrcidProfile retrieveOrcidProfile(String orcid, LoadOptions loadOptions) {
         if (LoadOptions.ALL.equals(loadOptions))
             return orcidProfileCacheManager.retrieve(orcid);
         return retrieveFreshOrcidProfile(orcid, loadOptions);
     }
 
+    @Transactional
     public OrcidProfile retrieveFreshOrcidProfile(String orcid, LoadOptions loadOptions) {
         LOG.debug("About to obtain fresh profile: " + orcid);
         profileDao.flush();
