@@ -49,36 +49,36 @@ public class Funding implements VisibilityType, Activity, Serializable {
 
     private final static long serialVersionUID = 1L;
 
-    @XmlElement(name = "fundingType", required = true)
+    @XmlElement(namespace = "http://www.orcid.org/ns/funding", required = true)
     protected FundingType type;
-    @XmlElement(name = "organizationDefinedType")
-    protected OrganizationDefinedFundingSubType organizationDefinedFundingType;
-    @XmlElement(required = true)
+    @XmlElement(namespace = "http://www.orcid.org/ns/funding")
+    protected OrganizationDefinedFundingSubType organizationDefinedType;
+    @XmlElement(required = true, namespace = "http://www.orcid.org/ns/funding")
     protected FundingTitle title;
-    @XmlElement(required = true)
+    @XmlElement(required = true, namespace = "http://www.orcid.org/ns/funding")
     protected Organization organization;
-    @XmlElement(name = "shortDescription")
+    @XmlElement(name = "shortDescription", namespace = "http://www.orcid.org/ns/common")
     protected String description;
-    @XmlElement(name = "amount")
+    @XmlElement(name = "amount", namespace = "http://www.orcid.org/ns/common")
     protected Amount amount;
-    @XmlElement
+    @XmlElement (namespace = "http://www.orcid.org/ns/common")
     protected Url url;
-    @XmlElement
+    @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected FuzzyDate startDate;
-    @XmlElement
+    @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected FuzzyDate endDate;
-    @XmlElement
-    protected FundingExternalIdentifiers fundingExternalIdentifiers;
-    @XmlElement
-    protected FundingContributors fundingContributors;
+    @XmlElement(namespace = "http://www.orcid.org/ns/funding")
+    protected FundingExternalIdentifiers externalIdentifiers;
+    @XmlElement(namespace = "http://www.orcid.org/ns/funding")
+    protected FundingContributors contributors;
     protected Source source;
-    @XmlAttribute
+    @XmlAttribute(namespace = "http://www.orcid.org/ns/funding")
     protected String putCode;
-    @XmlAttribute(required = true)
+    @XmlAttribute(required = true,namespace = "http://www.orcid.org/ns/funding")
     protected Visibility visibility;
-    @XmlElement
+    @XmlElement(namespace = "http://www.orcid.org/ns/funding")
     protected LastModifiedDate lastModifiedDate;
-    @XmlElement
+    @XmlElement(namespace = "http://www.orcid.org/ns/funding")
     protected CreatedDate createdDate;
 
     public FundingTitle getTitle() {
@@ -105,12 +105,12 @@ public class Funding implements VisibilityType, Activity, Serializable {
         this.type = type;
     }
 
-    public OrganizationDefinedFundingSubType getOrganizationDefinedFundingType() {
-        return organizationDefinedFundingType;
+    public OrganizationDefinedFundingSubType getOrganizationDefinedType() {
+        return organizationDefinedType;
     }
 
-    public void setOrganizationDefinedFundingType(OrganizationDefinedFundingSubType organizationDefinedFundingType) {
-        this.organizationDefinedFundingType = organizationDefinedFundingType;
+    public void setOrganizationDefinedType(OrganizationDefinedFundingSubType organizationDefinedFundingType) {
+        this.organizationDefinedType = organizationDefinedFundingType;
     }
 
     public Amount getAmount() {
@@ -170,20 +170,20 @@ public class Funding implements VisibilityType, Activity, Serializable {
         this.putCode = putCode;
     }
 
-    public FundingExternalIdentifiers getFundingExternalIdentifiers() {
-        return fundingExternalIdentifiers;
+    public FundingExternalIdentifiers getExternalIdentifiers() {
+        return externalIdentifiers;
     }
 
-    public void setFundingExternalIdentifiers(FundingExternalIdentifiers fundingExternalIdentifiers) {
-        this.fundingExternalIdentifiers = fundingExternalIdentifiers;
+    public void setExternalIdentifiers(FundingExternalIdentifiers fundingExternalIdentifiers) {
+        this.externalIdentifiers = fundingExternalIdentifiers;
     }
 
-    public FundingContributors getFundingContributors() {
-        return fundingContributors;
+    public FundingContributors getContributors() {
+        return contributors;
     }
 
-    public void setFundingContributors(FundingContributors fundingContributors) {
-        this.fundingContributors = fundingContributors;
+    public void setContributors(FundingContributors fundingContributors) {
+        this.contributors = fundingContributors;
     }
 
     /**
@@ -241,14 +241,14 @@ public class Funding implements VisibilityType, Activity, Serializable {
         result = prime * result + ((title == null) ? 0 : title.hashCode());
         result = prime * result + ((description == null) ? 0 : description.hashCode());
         result = prime * result + ((type == null) ? 0 : type.hashCode());
-        result = prime * result + ((organizationDefinedFundingType == null) ? 0 : organizationDefinedFundingType.hashCode());
+        result = prime * result + ((organizationDefinedType == null) ? 0 : organizationDefinedType.hashCode());
         result = prime * result + ((amount == null) ? 0 : amount.hashCode());
         result = prime * result + ((url == null) ? 0 : url.hashCode());
         result = prime * result + ((organization == null) ? 0 : organization.hashCode());
         result = prime * result + ((visibility == null) ? 0 : visibility.hashCode());
         result = prime * result + ((source == null) ? 0 : source.hashCode());
-        result = prime * result + ((fundingExternalIdentifiers == null) ? 0 : fundingExternalIdentifiers.hashCode());
-        result = prime * result + ((fundingContributors == null) ? 0 : fundingContributors.hashCode());
+        result = prime * result + ((externalIdentifiers == null) ? 0 : externalIdentifiers.hashCode());
+        result = prime * result + ((contributors == null) ? 0 : contributors.hashCode());
         result = prime * result + ((startDate == null) ? 0 : startDate.hashCode());
         result = prime * result + ((endDate == null) ? 0 : endDate.hashCode());
         return result;
@@ -310,18 +310,18 @@ public class Funding implements VisibilityType, Activity, Serializable {
             if (!organization.equals(other.organization))
                 return false;
         }
-        if (fundingExternalIdentifiers == null) {
-            if (other.fundingExternalIdentifiers != null)
+        if (externalIdentifiers == null) {
+            if (other.externalIdentifiers != null)
                 return false;
         } else {
-            if (!fundingExternalIdentifiers.equals(other.fundingExternalIdentifiers))
+            if (!externalIdentifiers.equals(other.externalIdentifiers))
                 return false;
         }
-        if (fundingContributors == null) {
-            if (other.fundingContributors != null)
+        if (contributors == null) {
+            if (other.contributors != null)
                 return false;
         } else {
-            if (!fundingContributors.equals(other.fundingContributors))
+            if (!contributors.equals(other.contributors))
                 return false;
         }
         if (type == null) {
@@ -332,11 +332,11 @@ public class Funding implements VisibilityType, Activity, Serializable {
                 return false;
         }
 
-        if (organizationDefinedFundingType == null) {
-            if (other.organizationDefinedFundingType != null)
+        if (organizationDefinedType == null) {
+            if (other.organizationDefinedType != null)
                 return false;
         } else {
-            if (!organizationDefinedFundingType.equals(other.organizationDefinedFundingType))
+            if (!organizationDefinedType.equals(other.organizationDefinedType))
                 return false;
         }
         if (amount == null) {
@@ -397,11 +397,11 @@ public class Funding implements VisibilityType, Activity, Serializable {
                 return false;
         }
 
-        if (organizationDefinedFundingType == null) {
-            if (other.organizationDefinedFundingType != null)
+        if (organizationDefinedType == null) {
+            if (other.organizationDefinedType != null)
                 return false;
         } else {
-            if (!organizationDefinedFundingType.equals(other.organizationDefinedFundingType))
+            if (!organizationDefinedType.equals(other.organizationDefinedType))
                 return false;
         }
 

@@ -43,7 +43,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "sourceOrcid", "sourceClientId", "sourceName", "sourceDate" })
-@XmlRootElement(name = "source")
+@XmlRootElement(name = "source", namespace = "http://www.orcid.org/ns/common")
 public class Source implements Serializable {
 
     /**
