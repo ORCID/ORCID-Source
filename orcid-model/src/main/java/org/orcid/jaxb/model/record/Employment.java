@@ -47,26 +47,26 @@ import javax.xml.bind.annotation.XmlType;
 public class Employment implements Serializable, VisibilityType, Activity {
 
     private final static long serialVersionUID = 1L;
-    @XmlElement(name = "type", required = true)
+    @XmlElement(namespace = "http://www.orcid.org/ns/employment", required = true)
     protected AffiliationType type;
-    @XmlElement
+    @XmlElement(namespace = "http://www.orcid.org/ns/employment")
     protected String departmentName;
-    @XmlElement
+    @XmlElement(namespace = "http://www.orcid.org/ns/employment")
     protected String roleTitle;
-    @XmlElement
+    @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected FuzzyDate startDate;
-    @XmlElement
+    @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected FuzzyDate endDate;
-    @XmlElement(required = true)
+    @XmlElement(namespace = "http://www.orcid.org/ns/employment", required = true)
     protected Organization organization;
     protected Source source;
-    @XmlAttribute(name = "visibility")
+    @XmlAttribute(namespace = "http://www.orcid.org/ns/common",name = "visibility")
     protected Visibility visibility;
-    @XmlAttribute
+    @XmlAttribute(namespace = "http://www.orcid.org/ns/common")
     protected String putCode;
-    @XmlElement
+    @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected LastModifiedDate lastModifiedDate;
-    @XmlElement
+    @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected CreatedDate createdDate;
     
     
