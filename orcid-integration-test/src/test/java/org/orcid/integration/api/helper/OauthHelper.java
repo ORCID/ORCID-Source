@@ -86,6 +86,10 @@ public class OauthHelper {
         return accessToken;
     }
     
+    public boolean elementExists(String page, String elementId) {
+        return webDriverHelper.elementExists(page, elementId);
+    } 
+    
     public void closeWebDriver() {
         webDriverHelper.close();
     }

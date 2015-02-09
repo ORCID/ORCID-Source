@@ -125,7 +125,7 @@
         <div class="workspace-right" ng-controller="PersonalInfoCtrl">
         	<#if (locked)?? && locked>
         		<div class="alert alert-error readme">
-		        	<p><b><@orcid.msg 'public-layout.locked'/></b></p>
+		        	<p><b id="error_locked"><@orcid.msg 'public-layout.locked'/></b></p>
 		        </div>        		
         	<#else>
 	        	<#if (deprecated)??>

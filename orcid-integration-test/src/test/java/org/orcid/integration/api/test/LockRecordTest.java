@@ -23,6 +23,7 @@ import static org.junit.Assert.assertTrue;
 
 import javax.annotation.Resource;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -94,27 +95,43 @@ public class LockRecordTest extends IntegrationTestBase {
         oauthHelper.setWebDriverHelper(webDriverHelper);
     }
     
+    @After
+    public void after() {
+        oauthHelper.closeWebDriver();
+    }
+    
     @Test
     public void unlockedToLockedTest() throws Exception {
+        String webBaseUrl = (String) context.getBean("webBaseUrl");
         String userOrcid = user.getOrcidIdentifier().getPath();
         String accessToken = oauthHelper.obtainAccessToken(client.getClientId(), client.getClientSecret(), "/orcid-profile/read-limited /activities/read-limited /activities/update", email, password, getRedirectUri(), true);
         addWork(userOrcid, accessToken);
         addFunding(userOrcid, accessToken);
         
+        //Check the full details contains the info
         ClientResponse response = oauthT2Client.viewFullDetailsXml(userOrcid, accessToken);
         assertNotNull(response);
         assertEquals(200, response.getStatus());
         
+        //Check the public page doesnt show the locked error
+        assertFalse(oauthHelper.elementExists(webBaseUrl + '/' + userOrcid, "error_locked"));
+        
+        
         InitializeDataHelper idh = (InitializeDataHelper) context.getBean("initializeDataHelper");
         idh.lockProfile(userOrcid);
         
+        //Check the full details returns error
         response = oauthT2Client.viewFullDetailsXml(userOrcid, accessToken);
         assertNotNull(response);
         assertEquals(409, response.getStatus());
+        
+        //Check the public page doesnt show the locked error
+        assertTrue(oauthHelper.elementExists(webBaseUrl + '/' + userOrcid, "error_locked"));
     }
     
     @Test
     public void lockedToUnlockedTest() throws Exception {
+        String webBaseUrl = (String) context.getBean("webBaseUrl");
         String userOrcid = user.getOrcidIdentifier().getPath();
         String accessToken = oauthHelper.obtainAccessToken(client.getClientId(), client.getClientSecret(), "/orcid-profile/read-limited /activities/read-limited /activities/update", email, password, getRedirectUri(), true);
         String workTitle = addWork(userOrcid, accessToken);
@@ -123,12 +140,17 @@ public class LockRecordTest extends IntegrationTestBase {
         InitializeDataHelper idh = (InitializeDataHelper) context.getBean("initializeDataHelper");
         idh.lockProfile(userOrcid);
         
+        //Check the locked record return error
         ClientResponse response = oauthT2Client.viewFullDetailsXml(userOrcid, accessToken);
         assertNotNull(response);
         assertEquals(409, response.getStatus());
         
+        //Check the public page show the locked error
+        assertTrue(oauthHelper.elementExists(webBaseUrl + '/' + userOrcid, "error_locked"));
+        
         idh.unlockProfile(userOrcid);
         
+        //Check the unlocked error returns the full details
         response = oauthT2Client.viewFullDetailsXml(userOrcid, accessToken);
         assertNotNull(response);
         assertEquals(200, response.getStatus());        
@@ -167,6 +189,9 @@ public class LockRecordTest extends IntegrationTestBase {
         }
         
         assertTrue(fundingFound);
+        
+        //Check the public page doesnt display the locked error message
+        assertFalse(oauthHelper.elementExists(webBaseUrl + '/' + userOrcid, "error_locked"));
     }
     
 }
