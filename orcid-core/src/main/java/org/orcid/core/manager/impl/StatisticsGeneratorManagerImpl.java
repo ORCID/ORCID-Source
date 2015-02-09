@@ -42,6 +42,7 @@ public class StatisticsGeneratorManagerImpl implements StatisticsGeneratorManage
         statistics.put(StatisticsEnum.KEY_IDS_WITH_WORKS.value(), statisticsGeneratorDao.getAccountsWithWorks());
         statistics.put(StatisticsEnum.KEY_NUMBER_OF_WORKS.value(), statisticsGeneratorDao.getNumberOfWorks());
         statistics.put(StatisticsEnum.KEY_WORKS_WITH_DOIS.value(), statisticsGeneratorDao.getNumberOfWorksWithDOIs());
+        statistics.put(StatisticsEnum.KEY_LOCKED_RECORDS.value(), statisticsGeneratorDao.getNumberOfLockedRecords());
         
         return statistics;        
     }

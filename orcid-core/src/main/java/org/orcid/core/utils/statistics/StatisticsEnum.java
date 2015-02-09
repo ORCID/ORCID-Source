@@ -21,8 +21,8 @@ public enum StatisticsEnum {
     KEY_IDS_WITH_VERIFIED_EMAIL("idsWithVerifiedEmail"),
     KEY_IDS_WITH_WORKS("idsWithWorks"),
     KEY_NUMBER_OF_WORKS("works"),
-    KEY_WORKS_WITH_DOIS("worksWithDois");
-    
+    KEY_WORKS_WITH_DOIS("worksWithDois"),
+    KEY_LOCKED_RECORDS("lockedRecords");
     private final String value;
 
     StatisticsEnum(String v) {
