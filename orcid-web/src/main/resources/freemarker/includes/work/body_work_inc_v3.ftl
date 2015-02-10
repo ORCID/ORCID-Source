@@ -226,7 +226,7 @@
                     <!-- not active row && edit sources -->
                     <div ng-show="group.activePutCode != work.putCode.value" class="row source-line">
                         <div class="col-md-7 col-sm-7 col-xs-7">
-                                <a ng-click="group.activePutCode = work.putCode.value;">
+                            <a ng-click="group.activePutCode = work.putCode.value;">
                                 {{work.sourceName}}
                             </a>
                         </div>
@@ -281,20 +281,22 @@
                     </div>
 
                     <!--  Bottom row -->                     
-                    <div class="row source-line" ng-hide="editSources[group.groupId] == true">
+                    <div class="row source-line" ng-hide="editSources[group.groupId] == true">                        
+                        
                         <div class="col-md-7 col-sm-7 col-xs-7">
-                              <@orcid.msgUpCase 'groups.common.source'/>: {{work.sourceName}}
-                          </div>
-                          <div class="col-md-3 col-sm-3 col-xs-3">
-                                <span class="glyphicon glyphicon-check"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span> <span ng-hide="group.activitiesCount == 1">(</span><a ng-click="showSources(group)" ng-hide="group.activitiesCount == 1" ng-mouseenter="showTooltip(group.groupId+'-sources')" ng-mouseleave="hideTooltip(group.groupId+'-sources')"><@orcid.msg 'groups.common.of'/> {{group.activitiesCount}}</a><span ng-hide="group.activitiesCount == 1">)</span>
+                             <@orcid.msgUpCase 'groups.common.source'/>: {{work.sourceName}}
+                        </div>
+                        
+                        <div class="col-md-3 col-sm-3 col-xs-3">
+                              <span class="glyphicon glyphicon-check"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span> <span ng-hide="group.activitiesCount == 1">(</span><a ng-click="showSources(group)" ng-hide="group.activitiesCount == 1" ng-mouseenter="showTooltip(group.groupId+'-sources')" ng-mouseleave="hideTooltip(group.groupId+'-sources')"><@orcid.msg 'groups.common.of'/> {{group.activitiesCount}}</a><span ng-hide="group.activitiesCount == 1">)</span>
 
-                                <div class="popover popover-tooltip top sources-popover" ng-show="showElement[group.groupId+'-sources'] == true">
-                                    <div class="arrow"></div>
-                                    <div class="popover-content">
-                                        <@orcid.msg 'groups.common.sources.show_other_sources' />
-                                    </div>
-                                </div>
-                          </div>
+                              <div class="popover popover-tooltip top sources-popover" ng-show="showElement[group.groupId+'-sources'] == true">
+                                   <div class="arrow"></div>
+                                   <div class="popover-content">
+                                       <@orcid.msg 'groups.common.sources.show_other_sources' />
+                                   </div>
+                              </div>
+                        </div>
 
                         <div class="col-md-2 col-sm-2 col-xs-2" ng-show="group.activePutCode == work.putCode.value">
                             <ul class="sources-options" ng-cloak>

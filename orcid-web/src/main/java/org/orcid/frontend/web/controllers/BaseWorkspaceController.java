@@ -27,6 +27,7 @@ import javax.annotation.Resource;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.CountryManager;
 import org.orcid.core.manager.CrossRefManager;
+import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SecurityQuestionManager;
 import org.orcid.core.manager.SponsorManager;
 import org.orcid.core.security.visibility.filter.VisibilityFilter;
@@ -59,6 +60,9 @@ public class BaseWorkspaceController extends BaseController {
     @Resource
     protected SecurityQuestionManager securityQuestionManager;
 
+    @Resource
+    private ProfileEntityManager profileEntityManager;
+    
     @Resource(name = "visibilityFilter")
     protected VisibilityFilter visibilityFilter;
 
@@ -103,7 +107,7 @@ public class BaseWorkspaceController extends BaseController {
         }
         return map;
     }
-
+    
     public String getCountryName(OrcidProfile profile) {
         return getCountryName(profile, false);
     }

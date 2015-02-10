@@ -35,6 +35,7 @@ import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.core.security.DeprecatedException;
+import org.orcid.core.security.aop.NonLocked;
 import org.orcid.core.security.visibility.aop.VisibilityControl;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
@@ -92,6 +93,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
      */
     @Override
     @VisibilityControl
+    @NonLocked
     public Response findBioDetails(String orcid) {
         OrcidProfile profile = orcidProfileManager.retrieveClaimedOrcidBio(orcid);
         return getOrcidMessageResponse(profile, orcid);
@@ -99,6 +101,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
 
     @Override
     @VisibilityControl
+    @NonLocked
     public Response findBioDetailsFromPublicCache(String orcid) {
         try {
             OrcidMessage orcidMessage = orcidSearchManager.findPublicProfileById(orcid);
@@ -127,6 +130,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
      */
     @Override
     @VisibilityControl
+    @NonLocked
     public Response findExternalIdentifiers(String orcid) {
         OrcidProfile profile = orcidProfileManager.retrieveClaimedExternalIdentifiers(orcid);
         return getOrcidMessageResponse(profile, orcid);
@@ -134,6 +138,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
 
     @Override
     @VisibilityControl
+    @NonLocked
     public Response findExternalIdentifiersFromPublicCache(String orcid) {
         try {
             OrcidMessage orcidMessage = orcidSearchManager.findPublicProfileById(orcid);
@@ -162,6 +167,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
      */
     @Override
     @VisibilityControl
+    @NonLocked
     public Response findFullDetails(String orcid) {
         OrcidProfile profile = orcidProfileManager.retrieveClaimedOrcidProfile(orcid);
         return getOrcidMessageResponse(profile, orcid);
@@ -169,6 +175,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
 
     @Override
     @VisibilityControl
+    @NonLocked
     public Response findFullDetailsFromPublicCache(String orcid) {
         try {
             OrcidMessage orcidMessage = orcidSearchManager.findPublicProfileById(orcid);
@@ -191,6 +198,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
      */
     @Override
     @VisibilityControl
+    @NonLocked
     public Response findAffiliationsDetails(String orcid) {
         OrcidProfile profile = orcidProfileManager.retrieveClaimedAffiliations(orcid);
         return getOrcidMessageResponse(profile, orcid);
@@ -198,6 +206,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
 
     @Override
     @VisibilityControl
+    @NonLocked
     public Response findAffiliationsDetailsFromPublicCache(String orcid) {
         try {
             OrcidMessage orcidMessage = orcidSearchManager.findPublicProfileById(orcid);
@@ -225,6 +234,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
      */
     @Override
     @VisibilityControl
+    @NonLocked
     public Response findFundingDetails(String orcid) {
         OrcidProfile profile = orcidProfileManager.retrieveClaimedFundings(orcid);
         return getOrcidMessageResponse(profile, orcid);
@@ -232,6 +242,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
 
     @Override
     @VisibilityControl
+    @NonLocked
     public Response findFundingDetailsFromPublicCache(String orcid) {
         try {
             OrcidMessage orcidMessage = orcidSearchManager.findPublicProfileById(orcid);
@@ -259,6 +270,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
      */
     @Override
     @VisibilityControl
+    @NonLocked
     public Response findWorksDetails(String orcid) {
         OrcidProfile profile = orcidProfileManager.retrieveClaimedOrcidWorks(orcid);
         return getOrcidMessageResponse(profile, orcid);
@@ -266,6 +278,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
 
     @Override
     @VisibilityControl
+    @NonLocked
     public Response findWorksDetailsFromPublicCache(String orcid) {
         try {
             OrcidMessage orcidMessage = orcidSearchManager.findPublicProfileById(orcid);

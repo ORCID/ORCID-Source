@@ -256,8 +256,8 @@
 		<!-- Document Cache Caches Lucene Document objects (the stored fields for 
 			each document). Since Lucene internal document ids are transient, this cache 
 			will not be autowarmed. -->
-		<documentCache class="solr.LRUCache" size="512"
-			initialSize="512" autowarmCount="0" />
+		<documentCache class="solr.LRUCache" size="${solr.cache.documentCacheSize:512}"
+			initialSize="${solr.cache.documentCacheSize:512}" autowarmCount="0" />
 
 		<!-- Field Value Cache Cache used to hold field values that are quickly 
 			accessible by document id. The fieldValueCache is created by default even 

@@ -21,6 +21,7 @@ import java.io.Writer;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexableField;
+import org.apache.solr.common.SolrException;
 import org.apache.solr.common.util.NamedList;
 import org.apache.solr.request.SolrQueryRequest;
 import org.apache.solr.response.QueryResponseWriter;
@@ -40,10 +41,13 @@ public class OrcidProfileResponseWriter implements QueryResponseWriter {
     public void write(Writer writer, SolrQueryRequest request, SolrQueryResponse response) throws IOException {
         ResultContext resultContext = (ResultContext) response.getValues().get("response");
         DocIterator iterator = resultContext.docs.iterator();
-        int docId = iterator.nextDoc();
-        Document doc = request.getSearcher().doc(docId);
-        IndexableField field = doc.getField("public-profile-message");
-        writer.append(field.stringValue());
+        if (iterator.hasNext()) {
+            int docId = iterator.nextDoc();
+            Document doc = request.getSearcher().doc(docId);
+            IndexableField field = doc.getField("public-profile-message");
+            writer.append(field.stringValue());
+        } else
+            throw new SolrException(SolrException.ErrorCode.NOT_FOUND, "No record found for reponse writer");
     }
 
     @Override

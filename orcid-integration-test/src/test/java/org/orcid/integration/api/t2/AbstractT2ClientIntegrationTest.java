@@ -25,7 +25,6 @@ import javax.xml.bind.Unmarshaller;
 
 import org.junit.Before;
 import org.orcid.api.common.T2OrcidApiService;
-import org.orcid.integration.api.test.T2OrcidApiClientIntegrationTest;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidWork;
@@ -54,7 +53,7 @@ public abstract class AbstractT2ClientIntegrationTest {
     }
 
     protected OrcidMessage getInternalFullOrcidMessage(String xmlLoc) throws JAXBException {
-        OrcidMessage emptyOrcid = (OrcidMessage) unmarshaller.unmarshal(T2OrcidApiClientIntegrationTest.class.getResourceAsStream(xmlLoc));
+        OrcidMessage emptyOrcid = (OrcidMessage) unmarshaller.unmarshal(AbstractT2ClientIntegrationTest.class.getResourceAsStream(xmlLoc));
         emptyOrcid.getOrcidProfile().getOrcidBio().getContactDetails()
                 .addOrReplacePrimaryEmail(new Email("orcid.integration.test+" + System.currentTimeMillis() + "@semantico.com"));
 
@@ -79,7 +78,7 @@ public abstract class AbstractT2ClientIntegrationTest {
     }
 
     protected OrcidMessage getInternalSponsor() throws JAXBException {
-        OrcidMessage emptyOrcid = (OrcidMessage) unmarshaller.unmarshal(T2OrcidApiClientIntegrationTest.class
+        OrcidMessage emptyOrcid = (OrcidMessage) unmarshaller.unmarshal(AbstractT2ClientIntegrationTest.class
                 .getResourceAsStream(OrcidClientDataHelper.ORCID_INTERNAL_SPONSOR_XML));
         emptyOrcid.getOrcidProfile().getOrcidBio().getContactDetails()
                 .addOrReplacePrimaryEmail(new Email("orcid.integration.test.sponsor+" + System.currentTimeMillis() + "@semantico.com"));

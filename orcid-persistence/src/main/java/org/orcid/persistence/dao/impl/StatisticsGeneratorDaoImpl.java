@@ -30,14 +30,14 @@ public class StatisticsGeneratorDaoImpl implements StatisticsGeneratorDao {
     protected EntityManager entityManager;
 
     public long getLiveIds() {
-        Query query = entityManager.createNativeQuery("select count(*) from profile where profile_deactivation_date is null");
+        Query query = entityManager.createNativeQuery("select count(*) from profile where profile_deactivation_date is null and record_locked = false");
         BigInteger numberOfLiveIds = (BigInteger) query.getSingleResult();
         return numberOfLiveIds.longValue();
     }
 
     public long getAccountsWithVerifiedEmails() {
         Query query = entityManager
-                .createNativeQuery("select count(distinct profile.orcid) from email join profile on profile.profile_deactivation_date is null and email.is_verified=true and email.orcid=profile.orcid");
+                .createNativeQuery("select count(distinct profile.orcid) from email join profile on profile.profile_deactivation_date is null and email.is_verified=true and email.orcid=profile.orcid and profile.record_locked = false");
         BigInteger numberOfLiveIdsWithVerifiedEmail = (BigInteger) query.getSingleResult();
         return numberOfLiveIdsWithVerifiedEmail.longValue();
     }
@@ -58,5 +58,11 @@ public class StatisticsGeneratorDaoImpl implements StatisticsGeneratorDao {
         Query query = entityManager.createNativeQuery("select count(distinct identifier) from work_external_identifier where identifier_type='DOI'");
         BigInteger numberOfWorksWithDOIs = (BigInteger) query.getSingleResult();
         return numberOfWorksWithDOIs.longValue();
+    }
+    
+    public long getNumberOfLockedRecords() {
+        Query query = entityManager.createNativeQuery("select count(*) from profile where record_locked = true");
+        BigInteger numberOfLockedRecords = (BigInteger) query.getSingleResult();
+        return numberOfLockedRecords.longValue();
     }
 }

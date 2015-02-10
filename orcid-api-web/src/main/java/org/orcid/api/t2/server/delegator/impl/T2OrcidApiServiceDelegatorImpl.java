@@ -41,6 +41,7 @@ import org.orcid.api.t2.server.delegator.T2OrcidApiServiceDelegator;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.security.aop.NonLocked;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
@@ -111,6 +112,7 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
      */
     @Override
     @AccessControl(requiredScope = ScopePathType.ORCID_BIO_READ_LIMITED)
+    @NonLocked
     public Response findBioDetails(String orcid) {
         OrcidProfile profile = orcidProfileManager.retrieveClaimedOrcidBio(orcid);
         return getOrcidMessageResponse(profile, orcid);
@@ -128,6 +130,7 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
      */
     @Override
     @AccessControl(requiredScope = ScopePathType.ORCID_BIO_READ_LIMITED)
+    @NonLocked
     public Response findExternalIdentifiers(String orcid) {
         OrcidProfile profile = orcidProfileManager.retrieveClaimedExternalIdentifiers(orcid);
         return getOrcidMessageResponse(profile, orcid);
@@ -145,6 +148,7 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
      */
     @Override
     @AccessControl(requiredScope = ScopePathType.ORCID_PROFILE_READ_LIMITED)
+    @NonLocked
     public Response findFullDetails(String orcid) {
         OrcidProfile profile = orcidProfileManager.retrieveClaimedOrcidProfile(orcid);
         return getOrcidMessageResponse(profile, orcid);
@@ -189,6 +193,7 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
      */
     @Override
     @AccessControl(requiredScope = ScopePathType.ORCID_WORKS_READ_LIMITED)
+    @NonLocked
     public Response findWorksDetails(String orcid) {
         OrcidProfile profile = orcidProfileManager.retrieveClaimedOrcidWorks(orcid);
         return getOrcidMessageResponse(profile, orcid);
@@ -206,6 +211,7 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
      */
     @Override
     @AccessControl(requiredScope = ScopePathType.AFFILIATIONS_READ_LIMITED)
+    @NonLocked
     public Response findAffiliationsDetails(String orcid) {
         OrcidProfile profile = orcidProfileManager.retrieveClaimedAffiliations(orcid);
         return getOrcidMessageResponse(profile, orcid);
@@ -222,6 +228,7 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
      */
     @Override
     @AccessControl(requiredScope = ScopePathType.FUNDING_READ_LIMITED)
+    @NonLocked
     public Response findFundingDetails(String orcid) {
         OrcidProfile profile = orcidProfileManager.retrieveClaimedFundings(orcid);
         return getOrcidMessageResponse(profile, orcid);

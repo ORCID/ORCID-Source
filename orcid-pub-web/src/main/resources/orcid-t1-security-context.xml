@@ -148,4 +148,6 @@
     <bean id="oAuth2RequestFactory" class="org.springframework.security.oauth2.provider.request.DefaultOAuth2RequestFactory">
         <constructor-arg ref="clientDetailsManager"/>
     </bean>
+    
+    <bean id="apiVersionFilter" class="org.orcid.core.web.filters.ApiVersionFilter" />
 </beans>      

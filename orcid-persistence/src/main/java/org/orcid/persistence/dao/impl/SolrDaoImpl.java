@@ -39,6 +39,7 @@ import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
+import org.apache.solr.common.SolrException;
 import org.orcid.persistence.dao.SolrDao;
 import org.orcid.persistence.solr.entities.OrcidSolrDocument;
 import org.orcid.persistence.solr.entities.OrcidSolrResult;
@@ -112,7 +113,7 @@ public class SolrDaoImpl implements SolrDao {
             QueryResponse queryResponse = solrServerForStreaming.query(query);
             InputStream inputStream = (InputStream) queryResponse.getResponse().get("stream");
             return new InputStreamReader(inputStream, "UTF-8");
-        } catch (SolrServerException e) {
+        } catch (SolrServerException | SolrException e) {
             String errorMessage = MessageFormat.format("Error when attempting to retrieve stream for orcid {0}", new Object[] { orcid });
             throw new NonTransientDataAccessResourceException(errorMessage, e);
         } catch (UnsupportedEncodingException e) {
