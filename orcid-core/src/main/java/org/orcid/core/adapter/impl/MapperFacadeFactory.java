@@ -23,6 +23,9 @@ import ma.glasnost.orika.impl.DefaultMapperFactory;
 import ma.glasnost.orika.metadata.ClassMapBuilder;
 
 import org.orcid.jaxb.model.common.Source;
+import org.orcid.jaxb.model.message.Funding;
+import org.orcid.jaxb.model.message.FundingContributors;
+import org.orcid.jaxb.model.message.FundingExternalIdentifiers;
 import org.orcid.jaxb.model.notification.addactivities.Activity;
 import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
 import org.orcid.jaxb.model.notification.amended.NotificationAmended;
@@ -36,6 +39,7 @@ import org.orcid.persistence.jpa.entities.NotificationActivityEntity;
 import org.orcid.persistence.jpa.entities.NotificationAddActivitiesEntity;
 import org.orcid.persistence.jpa.entities.NotificationAmendedEntity;
 import org.orcid.persistence.jpa.entities.NotificationCustomEntity;
+import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
@@ -90,6 +94,31 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                 .register();
         mapperFactory.classMap(WorkExternalIdentifier.class, WorkExternalIdentifierEntity.class).field("workExternalIdentifierType", "identifierType").register();
         mapperFactory.classMap(org.orcid.jaxb.model.record.Source.class, SourceEntity.class).field("sourceOrcid.path", "sourceClient.id").byDefault().register();
+        return mapperFactory.getMapperFacade();
+    }
+    
+    public MapperFacade getFundingMapperFacade() {
+        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        ConverterFactory converterFactory = mapperFactory.getConverterFactory();
+        converterFactory.registerConverter("fundingExternalIdentifiersConverterId", new JsonOrikaConverter<FundingExternalIdentifiers>());
+        converterFactory.registerConverter("fundingContributorsConverterId", new JsonOrikaConverter<FundingContributors>());
+        
+        ClassMapBuilder<Funding, ProfileFundingEntity> classMap = mapperFactory.classMap(Funding.class, ProfileFundingEntity.class);
+        classMap.field("type", "type");
+        classMap.field("organizationDefinedFundingType", "organizationDefinedType");
+        classMap.field("title.title.content", "title");
+        classMap.field("title.translatedTitle.content", "translatedTitle");
+        classMap.field("title.translatedTitle.languageCode", "translatedTitleLanguageCode");
+        classMap.field("description", "description");
+        classMap.field("amount.content", "amount");
+        classMap.field("amount.currencyCode", "currencyCode");
+        classMap.field("startDate.year.value", "startDate.year");
+        classMap.field("startDate.month.value", "startDate.month");
+        classMap.field("startDate.day.value", "startDate.day");
+        classMap.field("", "");
+        
+        //How to handle the org?
+        
         return mapperFactory.getMapperFacade();
     }
 
