@@ -110,7 +110,7 @@ public class OrcidIdBase implements Serializable {
         values.add(value);
     }
 
-    @XmlElement
+    @XmlElement(namespace="http://www.orcid.org/ns/common")
     public String getUri() {
         return uri;
     }
@@ -119,7 +119,7 @@ public class OrcidIdBase implements Serializable {
         this.uri = uri;
     }
 
-    @XmlElement
+    @XmlElement(namespace="http://www.orcid.org/ns/common")
     public String getPath() {
         if (path != null) {
             return path;
@@ -134,7 +134,7 @@ public class OrcidIdBase implements Serializable {
         this.path = path;
     }
 
-    @XmlElement
+    @XmlElement(namespace="http://www.orcid.org/ns/common")
     public String getHost() {
         return host;
     }

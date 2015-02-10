@@ -83,6 +83,11 @@ public class OrcidApiAuthorizationSecurityAspect {
     public void checkPermissionsWithNotificationId(AccessControl accessControl, String orcid, Long id) {
         permissionChecker.checkPermissions(getAuthentication(), accessControl.requiredScope(), orcid);
     }
+    
+    @Before("@annotation(accessControl) && args(orcid, id)")
+    public void checkPermissionsWithId(AccessControl accessControl, String orcid, String id) {
+        permissionChecker.checkPermissions(getAuthentication(), accessControl.requiredScope(), orcid);
+    }
 
     @Before("@annotation(accessControl) && args(uriInfo, orcid, notification)")
     public void checkPermissionsWithNotificationId(AccessControl accessControl, UriInfo uriInfo, String orcid, Notification notification) {

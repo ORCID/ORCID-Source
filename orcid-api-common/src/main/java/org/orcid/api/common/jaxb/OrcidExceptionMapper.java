@@ -21,6 +21,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
@@ -106,6 +107,7 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
 
         // 404
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidNotFoundException.class, new ImmutablePair<>(Response.Status.NOT_FOUND, 9011));
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(NoResultException.class, new ImmutablePair<>(Response.Status.NOT_FOUND, 9011));
 
         // 406
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidNotAcceptableException.class, new ImmutablePair<>(Response.Status.NOT_ACCEPTABLE, 9016));
