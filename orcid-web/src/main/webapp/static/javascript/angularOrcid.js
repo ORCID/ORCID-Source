@@ -179,16 +179,19 @@ GroupedActivities.prototype.key = function(activityIdentifiers) {
         idTypePath = 'workExternalIdentifierType';
     } else if (this.type == GroupedActivities.FUNDING) {
         idPath = 'value';
-        idTypePath = 'url';
+        idTypePath = 'type';
     } else if (this.type == GroupedActivities.AFFILIATION) {
         // we don't have external identifiers for affiliations yet
         idPath = null;
         idTypePath = null;
     }
     var key = '';
-    if (activityIdentifiers[idTypePath]) {
+    if (activityIdentifiers[idTypePath]) {    	
         // ISSN is misused too often to identify a work
-        if (activityIdentifiers[idTypePath].value != 'issn') {
+        if (activityIdentifiers[idTypePath].value != 'issn'
+        		&& activityIdentifiers[idPath] != null
+        		&& activityIdentifiers[idPath].value != null
+        		&& activityIdentifiers[idPath].value != '') {
             key = activityIdentifiers[idTypePath].value;
             // currently I've been told all know identifiers are case insensitive so we are
             // lowercase the value for consistency
@@ -200,8 +203,8 @@ GroupedActivities.prototype.key = function(activityIdentifiers) {
 
 GroupedActivities.prototype.keyMatch = function(activity) {
     var identifiersPath = null;
-    identifiersPath = this.getIdentifiersPath();  
-    for (var idx in activity[identifiersPath]) {
+    identifiersPath = this.getIdentifiersPath();    
+    for (var idx in activity[identifiersPath]) {    	    	
         if (this.key(activity[identifiersPath][idx]) == '') continue;
         if (this.key(activity[identifiersPath][idx]) in this._keySet)
             return true;
