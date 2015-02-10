@@ -28,7 +28,7 @@ import javax.ws.rs.core.MediaType;
 import org.orcid.api.common.OrcidApiService;
 import org.orcid.jaxb.model.message.OrcidMessage;
 
-import static org.orcid.api.common.OrcidApiConstants.*;
+import static org.orcid.core.api.OrcidApiConstants.*;
 
 /**
  * @author Declan Newman (declan) Date: 07/03/2012

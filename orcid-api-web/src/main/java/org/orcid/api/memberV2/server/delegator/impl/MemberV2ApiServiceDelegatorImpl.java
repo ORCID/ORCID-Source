@@ -16,7 +16,7 @@
  */
 package org.orcid.api.memberV2.server.delegator.impl;
 
-import static org.orcid.api.common.OrcidApiConstants.*;
+import static org.orcid.core.api.OrcidApiConstants.*;
 
 import java.net.URI;
 import java.net.URISyntaxException;

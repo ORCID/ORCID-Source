@@ -14,14 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.api.common;
-
-import static org.orcid.api.common.OrcidApiConstants.ORCID_JSON;
-import static org.orcid.api.common.OrcidApiConstants.ORCID_XML;
-import static org.orcid.api.common.OrcidApiConstants.VND_ORCID_JSON;
-import static org.orcid.api.common.OrcidApiConstants.VND_ORCID_XML;
-
-import javax.ws.rs.core.MediaType;
+package org.orcid.core.api;
 
 public class OrcidApiConstants {
 

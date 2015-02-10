@@ -16,7 +16,7 @@
  */
 package org.orcid.api.memberV2.server;
 
-import static org.orcid.api.common.OrcidApiConstants.*;
+import static org.orcid.core.api.OrcidApiConstants.*;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
