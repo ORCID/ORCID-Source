@@ -45,6 +45,7 @@ import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.security.oauth2.provider.TokenRequest;
 import org.springframework.security.oauth2.provider.endpoint.AbstractEndpoint;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.orcid.api.common.server.delegator.OrcidClientCredentialEndPointDelegator;
 
@@ -59,6 +60,7 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
     @Resource
     private OrcidOauth2AuthoriziationCodeDetailDao orcidOauth2AuthoriziationCodeDetailDao;
     
+    @Transactional
     public Response obtainOauth2Token(String clientId, String clientSecret, String grantType, String refreshToken, String code, Set<String> scopes, String state,
             String redirectUri, String resourceId) {
 
