@@ -118,7 +118,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
      *         {@link org.orcid.jaxb.model.message.OrcidMessage} within it
      */
     @Override
-    @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
+    @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
     public Response viewActivities(String orcid) {
         profileEntityManager.findByOrcid(orcid);
 
@@ -135,7 +135,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
+    @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
     public Response viewWork(String orcid, String putCode) {
         Work w = profileWorkManager.getWork(orcid, putCode);
         return Response.ok(w).build();
