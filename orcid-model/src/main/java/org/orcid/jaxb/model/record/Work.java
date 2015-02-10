@@ -56,13 +56,13 @@ public class Work implements VisibilityType, Activity, Serializable {
     protected WorkTitle title;
     @XmlElement(namespace = "http://www.orcid.org/ns/work")
     protected Title journalTitle;
-    @XmlElement(namespace = "http://www.orcid.org/ns/common")
+    @XmlElement(namespace = "http://www.orcid.org/ns/work")
     protected String shortDescription;
     @XmlElement(namespace = "http://www.orcid.org/ns/work")
     protected Citation citation;
     @XmlElement(namespace = "http://www.orcid.org/ns/work")
     protected WorkType type;
-    @XmlElement(namespace = "http://www.orcid.org/ns/work")
+    @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected PublicationDate publicationDate;
     @XmlElement(namespace = "http://www.orcid.org/ns/work")
     protected WorkExternalIdentifiers externalIdentifiers;
@@ -81,7 +81,7 @@ public class Work implements VisibilityType, Activity, Serializable {
     protected Source source;
     @XmlAttribute(namespace = "http://www.orcid.org/ns/common")
     protected String putCode;
-    @XmlAttribute (namespace = "http://www.orcid.org/ns/common")
+    @XmlAttribute
     protected Visibility visibility;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected LastModifiedDate lastModifiedDate;

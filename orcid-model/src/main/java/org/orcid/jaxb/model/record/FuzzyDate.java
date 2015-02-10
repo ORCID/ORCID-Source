@@ -42,7 +42,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "fuzzyDate", propOrder = { "year", "month", "day" })
+@XmlType(name = "fuzzyDate", propOrder = { "year", "month", "day" }, namespace="http://www.orcid.org/ns/common")
 @XmlSeeAlso({ PublicationDate.class })
 public class FuzzyDate implements Serializable {
 

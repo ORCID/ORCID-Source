@@ -47,13 +47,13 @@ public class Contributor implements Serializable {
      * 
      */
     private static final long serialVersionUID = 1L;
-    @XmlElement
+    @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected ContributorOrcid contributorOrcid;
-    @XmlElement
+    @XmlElement(namespace = "http://www.orcid.org/ns/work")
     protected CreditName creditName;
-    @XmlElement
+    @XmlElement(namespace = "http://www.orcid.org/ns/work")
     protected ContributorEmail contributorEmail;
-    @XmlElement
+    @XmlElement(namespace = "http://www.orcid.org/ns/work")
     protected ContributorAttributes contributorAttributes;
 
     /**

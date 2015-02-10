@@ -20,8 +20,10 @@ import java.util.ArrayList;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.adapter.JpaJaxbWorkAdapter;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.record.Work;
 import org.orcid.persistence.dao.ProfileWorkDao;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 
@@ -29,6 +31,9 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
 
     @Resource
     private ProfileWorkDao profileWorkDao;
+
+    @Resource
+    private JpaJaxbWorkAdapter jpaJaxbWorkAdapter;
 
     /**
      * Removes the relationship that exists between a work and a profile.
@@ -62,6 +67,7 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
 
     /**
      * Updates the visibility of an existing profile work relationship
+     * 
      * @param workId
      *            The id of the work that will be updated
      * @param visibility
@@ -71,9 +77,10 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
     public boolean updateVisibility(String orcid, String workId, Visibility visibility) {
         return profileWorkDao.updateVisibility(orcid, workId, visibility);
     }
-    
+
     /**
      * Updates the visibility of an existing profile work relationship
+     * 
      * @param workId
      *            The id of the work that will be updated
      * @param visibility
@@ -83,8 +90,7 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
     public boolean updateVisibilities(String orcid, ArrayList<Long> workIds, Visibility visibility) {
         return profileWorkDao.updateVisibilities(orcid, workIds, visibility);
     }
-    
-    
+
     /**
      * Get the profile work associated with the client orcid and the workId
      * 
@@ -98,6 +104,11 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
      * */
     public ProfileWorkEntity getProfileWork(String clientOrcid, String workId) {
         return profileWorkDao.getProfileWork(clientOrcid, workId);
+    }
+
+    @Override
+    public Work getWork(String orcid, String workId) {
+        return jpaJaxbWorkAdapter.toWork(profileWorkDao.getProfileWork(orcid, workId));
     }
 
     /**
@@ -118,7 +129,7 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
     public boolean addProfileWork(String orcid, long workId, Visibility visibility, String sourceOrcid) {
         return profileWorkDao.addProfileWork(orcid, workId, visibility, sourceOrcid);
     }
-    
+
     public boolean updateToMaxDisplay(String orcid, String workId) {
         return profileWorkDao.updateToMaxDisplay(orcid, workId);
     }
