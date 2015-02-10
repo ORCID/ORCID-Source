@@ -39,6 +39,7 @@ import org.orcid.api.t2.server.delegator.T2OrcidApiServiceDelegator;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
@@ -86,8 +87,8 @@ import org.springframework.stereotype.Component;
 @Component("orcidT2ServiceDelegator")
 public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelegator {
 
-    // @Resource(name = "orcidProfileManager")
-    // private OrcidProfileManager orcidProfileManager;
+    @Resource
+    private ProfileWorkManager profileWorkManager;
 
     @Resource
     private ClientDetailsManager clientDetailsManager;
@@ -136,8 +137,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
     public Response viewWork(String orcid, String putCode) {
-        // TODO Auto-generated method stub
-        Work w = new Work();
+        Work w = profileWorkManager.getWork(orcid, putCode);
         return Response.ok(w).build();
     }
 

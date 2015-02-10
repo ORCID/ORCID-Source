@@ -20,8 +20,10 @@ import java.util.ArrayList;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.adapter.JpaJaxbWorkAdapter;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.record.Work;
 import org.orcid.persistence.dao.ProfileWorkDao;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 
@@ -29,6 +31,9 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
 
     @Resource
     private ProfileWorkDao profileWorkDao;
+
+    @Resource
+    private JpaJaxbWorkAdapter jpaJaxbWorkAdapter;
 
     /**
      * Removes the relationship that exists between a work and a profile.
@@ -99,6 +104,11 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
      * */
     public ProfileWorkEntity getProfileWork(String clientOrcid, String workId) {
         return profileWorkDao.getProfileWork(clientOrcid, workId);
+    }
+
+    @Override
+    public Work getWork(String orcid, String workId) {
+        return jpaJaxbWorkAdapter.toWork(profileWorkDao.getProfileWork(orcid, workId));
     }
 
     /**

@@ -33,10 +33,9 @@ public final class JsonOrikaConverter<T> extends BidirectionalConverter<T, Strin
         return JsonUtils.convertToJsonString(source);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public T convertFrom(String source, Type<T> destinationType) {
-        return (T) JsonUtils.readObjectFromJsonString(source, destinationType.getClass());
+        return (T) JsonUtils.readObjectFromJsonString(source, destinationType.getRawType());
     }
 
 }
