@@ -86,8 +86,8 @@ import org.springframework.stereotype.Component;
 @Component("orcidT2ServiceDelegator")
 public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelegator {
 
-//    @Resource(name = "orcidProfileManager")
-//    private OrcidProfileManager orcidProfileManager;
+    // @Resource(name = "orcidProfileManager")
+    // private OrcidProfileManager orcidProfileManager;
 
     @Resource
     private ClientDetailsManager clientDetailsManager;
@@ -120,7 +120,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
     public Response viewActivities(String orcid) {
         profileEntityManager.findByOrcid(orcid);
-        
+
         // hard coding for now for testing
         ActivitiesSummary as = new ActivitiesSummary();
         Work w = new Work();
@@ -167,6 +167,5 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         // TODO Wrong Response?
         return Response.ok().build();
     }
-    
 
 }
