@@ -21,8 +21,10 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -33,6 +35,7 @@ import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.OrcidClientGroupManager;
 import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.GroupType;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
@@ -113,7 +116,16 @@ public class InitializeDataHelper {
     
     @Resource
     private EncryptionManager encryptionManager;    
-
+    
+    @Resource
+    private ProfileEntityManager profileEntityManager;    
+    
+    //Map containing a list of members, the key is the group type, there will be one member for each group type
+    private Map<String, Group> members = new HashMap<String, Group>();
+    
+    //Map containing a list of clients, the key is the member orcid
+    private Map<String, OrcidClient> clients = new HashMap<String, OrcidClient>();
+    
     public void deleteProfile(String orcid) throws Exception {
         orcidProfileManager.deactivateOrcidProfile(orcidProfileManager.retrieveOrcidProfile(orcid));
         profileDao.removeProfile(orcid);
@@ -138,6 +150,10 @@ public class InitializeDataHelper {
     }
     
     public Group createMember(GroupType type) throws Exception {
+        if(members.containsKey(type.value())) {
+            return members.get(type.value());
+        }
+        
         String name = type.value() + System.currentTimeMillis() + "@orcid-integration-test.com";
         Group group = new Group();
         group.setEmail(Text.valueOf(name));
@@ -149,10 +165,15 @@ public class InitializeDataHelper {
         assertNotNull(clientGroup);
         assertFalse(PojoUtil.isEmpty(clientGroup.getGroupOrcid()));
         group.setGroupOrcid(Text.valueOf(clientGroup.getGroupOrcid()));
+        members.put(type.value(), group);
         return group;
     }
 
     public OrcidClient createClient(String groupOrcid, String redirectUri) throws Exception {
+        if(clients.containsKey(groupOrcid)) {
+            return clients.get(groupOrcid);
+        }
+        
         GroupType groupType = profileDao.getGroupType(groupOrcid);
         ClientType clientType = null;
         if(groupType == null)
@@ -199,6 +220,9 @@ public class InitializeDataHelper {
         OrcidClient client =  adapter.toOrcidClient(clientDetails);
         //Decrypt the client secret
         client.setClientSecret(encryptionManager.decryptForInternalUse(client.getClientSecret()));
+        
+        clients.put(groupOrcid, client);
+        
         return client;
     }
     
@@ -216,7 +240,14 @@ public class InitializeDataHelper {
         return orcidProfile;
     }
 
-
+    public boolean lockProfile(String orcid) throws Exception {
+        return profileEntityManager.lockProfile(orcid);
+    }
+    
+    public boolean unlockProfile(String orcid) throws Exception {
+        return profileEntityManager.unlockProfile(orcid);
+    }
+    
     private OrcidProfile toProfile(Registration reg) {
         OrcidProfile profile = new OrcidProfile();
         OrcidBio bio = new OrcidBio();

@@ -75,7 +75,7 @@
 	
 	<div class="oid">
 		<div class="id-banner-header">
-			<span>ORCID iD</span>
+			<span><@orcid.msg 'common.orcid_id' /></span>
 		</div>
 		<div class="orcid-id-container">
 			<div class="orcid-id-info">
@@ -88,7 +88,8 @@
 			</div>
 		</div>
 	</div>
-	 <div ng-controller="SwitchUserCtrl" class="dropdown id-banner-container" ng-show="unfilteredLength" ng-cloak>
+	<#if (locked)?? && !locked>
+		<div ng-controller="SwitchUserCtrl" class="dropdown id-banner-container" ng-show="unfilteredLength" ng-cloak>
 	       <a ng-click="openMenu($event)" class="id-banner-switch"><@orcid.msg 'public-layout.manage_proxy_account'/><span class="glyphicon glyphicon-chevron-right"></span></a>
 	       <ul class="dropdown-menu id-banner-dropdown" ng-show="isDroppedDown" ng-cloak>
 	       	   <li>
@@ -112,7 +113,9 @@
 	           </li>
 	           <li><a href="<@spring.url '/delegators?delegates'/>"><@orcid.msg 'id_banner.more'/></a></li>
 	       </ul>
-	    </div>
+	    </div>	
+	</#if>
+	    
 	
 	
 	

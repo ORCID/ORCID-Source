@@ -60,4 +60,10 @@ public interface ProfileEntityManager {
     ClientType getClientType(String orcid);
     
     GroupType getGroupType(String orcid);
+    
+    public boolean lockProfile(String orcid);
+    
+    public boolean unlockProfile(String orcid);
+    
+    public boolean isLocked(String orcid);
 }

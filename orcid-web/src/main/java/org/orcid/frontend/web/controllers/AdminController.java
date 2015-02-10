@@ -472,4 +472,124 @@ public class AdminController extends BaseController {
     private boolean matchesOrcidPattern(String orcid) {
         return OrcidStringUtils.isValidOrcid(orcid);
     }
+    
+    
+    
+    
+    /**
+     * Function to get the info of an account we want to lock
+     * @param orcidOrEmail orcid or email of the account we want to lock
+     * @return a ProfileDetails object containing either an error message or the info of the account we want to lock
+     * */
+    @RequestMapping(value = "/check-account-to-lock.json", method = RequestMethod.POST)
+    public @ResponseBody
+    ProfileDetails checkAccountToLock(@RequestBody String orcidOrEmail) {        
+        String orcid = getOrcidFromParam(orcidOrEmail);
+        
+        if (PojoUtil.isEmpty(orcid)) {
+            ProfileDetails result = new ProfileDetails();
+            result.setErrors(new ArrayList<String>());
+            result.getErrors().add(getMessage("admin.lock_profile.error.not_found", orcidOrEmail));
+            return result;
+        }          
+        
+        ProfileEntity profile = profileEntityManager.findByOrcid(orcid);
+        
+        // If the account is already locked
+        if(profile.isAccountNonLocked() == false) { 
+            ProfileDetails result = new ProfileDetails();
+            result.setErrors(new ArrayList<String>());
+            result.getErrors().add(getMessage("admin.lock_profile.error.already_locked", orcid));
+            return result;
+        }
+                
+        return generateProfileDetails(profile);
+    }
+    
+    /**
+     * Function to get the info of an account we want to unlock
+     * @param orcidOrEmail orcid or email of the account we want to unlock
+     * @return a ProfileDetails object containing either an error message or the info of the account we want to unlock
+     * */
+    @RequestMapping(value = "/check-account-to-unlock.json", method = RequestMethod.POST)
+    public @ResponseBody
+    ProfileDetails checkAccountToUnlock(@RequestBody String orcidOrEmail) {
+        String orcid = getOrcidFromParam(orcidOrEmail);
+        
+        if (PojoUtil.isEmpty(orcid)) {
+            ProfileDetails result = new ProfileDetails();
+            result.setErrors(new ArrayList<String>());
+            result.getErrors().add(getMessage("admin.lock_profile.error.not_found", orcidOrEmail));
+            return result;
+        }          
+        
+        ProfileEntity profile = profileEntityManager.findByOrcid(orcid);
+        
+        // If the account is not locked
+        if(profile.isAccountNonLocked()) { 
+            ProfileDetails result = new ProfileDetails();
+            result.setErrors(new ArrayList<String>());
+            result.getErrors().add(getMessage("admin.unlock_profile.error.non_locked", orcid));
+            return result;
+        }
+                
+        return generateProfileDetails(profile);
+    }
+    
+    private String getOrcidFromParam(String orcidOrEmail) {
+        boolean isOrcid = matchesOrcidPattern(orcidOrEmail);
+        String orcid = null;
+        ProfileDetails result = new ProfileDetails();
+        result.setErrors(new ArrayList<String>());
+        // If it is not an orcid, check the value from the emails table
+        if (!isOrcid) {
+            if (emailManager.emailExists(orcidOrEmail)) {
+                Map<String, String> email = findIdByEmail(orcidOrEmail);
+                orcid = email.get(orcidOrEmail);
+            }
+        } else {
+            orcid = orcidOrEmail;
+        }
+                
+        return orcid;
+    }
+    
+    private ProfileDetails generateProfileDetails(ProfileEntity profileEntity) {
+        ProfileDetails result = new ProfileDetails();
+        result.setErrors(new ArrayList<String>());
+        result.setFamilyName(profileEntity.getFamilyName());
+        result.setGivenNames(profileEntity.getGivenNames());
+        result.setOrcid(profileEntity.getId());
+        result.setEmail(profileEntity.getPrimaryEmail().getId());
+        return result;
+    }
+    
+    
+    /**
+     * Function to lock an account
+     * @param orcid The orcid of the account we want to lock
+     * @return true if the account was locked, false otherwise
+     * */
+    @RequestMapping(value = "/lock-account.json", method = RequestMethod.POST)
+    public @ResponseBody
+    String lockAccount(@RequestBody String orcid) {
+        if(profileEntityManager.lockProfile(orcid)) {
+            return getMessage("admin.lock_profile.success", orcid);
+        }
+        return getMessage("admin.lock_profile.error.couldnt_lock_account", orcid);        
+    }
+    
+    /**
+     * Function to unlock an account
+     * @param orcid The orcid of the account we want to unlock
+     * @return true if the account was unlocked, false otherwise
+     * */
+    @RequestMapping(value = "/unlock-account.json", method = RequestMethod.POST)
+    public @ResponseBody
+    String unlockAccount(@RequestBody String orcid) {
+        if(profileEntityManager.unlockProfile(orcid)) {
+            return getMessage("admin.unlock_profile.success", orcid);
+        }
+        return getMessage("admin.unlock_profile.error.couldnt_unlock_account", orcid);        
+    }
 }

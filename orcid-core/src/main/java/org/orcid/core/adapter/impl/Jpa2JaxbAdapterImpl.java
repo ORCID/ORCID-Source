@@ -145,6 +145,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         profile.setType(type == null ? OrcidType.USER : type);
         profile.setGroupType(profileEntity.getGroupType());
         profile.setVerificationCode(profileEntity.getEncryptedVerificationCode());
+        profile.setLocked(profileEntity.getRecordLocked());
         return profile;
     }
 

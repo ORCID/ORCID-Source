@@ -681,4 +681,43 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         }        
         return false;
     }
+    
+    /**
+     * Set the locked status of an account to true
+     * @param orcid the id of the profile that should be locked
+     * @return true if the account was locked
+     * */
+    @Override
+    @Transactional
+    public boolean lockProfile(String orcid) {
+        return changeLockedStatus(orcid, true);
+    }
+    
+    /**
+     * Set the locked status of an account to false
+     * @param orcid the id of the profile that should be unlocked
+     * @return true if the account was locked
+     * */
+    @Override
+    @Transactional
+    public boolean unlockProfile(String orcid) {
+        return changeLockedStatus(orcid, false);
+    }
+    
+    @Transactional
+    private boolean changeLockedStatus(String orcid, boolean locked) {
+        Query query = entityManager
+                .createNativeQuery("update profile set last_modified=now(), indexing_status='REINDEX', record_locked=:locked where orcid=:orcid");
+        query.setParameter("orcid", orcid);
+        query.setParameter("locked", locked);
+        return query.executeUpdate() > 0;
+    }
+    
+    @Override
+    public boolean isLocked(String orcid) {       
+        TypedQuery<Boolean> query = entityManager.createQuery("select recordLocked from ProfileEntity where orcid = :orcid", Boolean.class);
+        query.setParameter("orcid", orcid);                   
+        Boolean result = query.getSingleResult();
+        return result;
+    }
 }

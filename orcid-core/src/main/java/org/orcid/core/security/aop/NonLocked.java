@@ -14,19 +14,16 @@
  *
  * =============================================================================
  */
-package org.orcid.persistence.dao;
+package org.orcid.core.security.aop;
 
-public interface StatisticsGeneratorDao {
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-    public long getLiveIds();
+/**
+ * @author Angel Montenegro
+ */
+@Target( { java.lang.annotation.ElementType.METHOD })
+@Retention(java.lang.annotation.RetentionPolicy.RUNTIME)
+public @interface NonLocked {
 
-    public long getAccountsWithVerifiedEmails();
-
-    public long getAccountsWithWorks();
-
-    public long getNumberOfWorks();
-
-    public long getNumberOfWorksWithDOIs();
-    
-    public long getNumberOfLockedRecords();
 }

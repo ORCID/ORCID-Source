@@ -62,22 +62,10 @@ public class OauthHelper {
     
     public String obtainAccessToken(String clientId, String clientSecret, String scopes, String email, String password, String redirectUri, boolean persistent) throws JSONException, InterruptedException {
         String authorizationCode = null;
-        if(persistent) {
-            authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, clientId, email, password, items, true);
-        } else {
-            authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, clientId, email, password, items, false);
-        }
-        
+        authorizationCode = getAuthorizationCode(clientId, scopes, email, password, persistent);        
         assertNotNull(authorizationCode);
-        assertFalse(PojoUtil.isEmpty(authorizationCode));      
-        MultivaluedMap<String, String> params = new MultivaluedMapImpl();
-        params.add("client_id", clientId);
-        params.add("client_secret", clientSecret);
-        params.add("grant_type", "authorization_code");
-        params.add("scope", scopes);
-        params.add("redirect_uri", redirectUri);
-        params.add("code", authorizationCode);
-        ClientResponse tokenResponse = oauthT2Client.obtainOauth2TokenPost("client_credentials", params);
+        assertFalse(PojoUtil.isEmpty(authorizationCode));              
+        ClientResponse tokenResponse = getClientResponse(clientId, clientSecret, scopes, redirectUri, authorizationCode);
         assertEquals(200, tokenResponse.getStatus());
         String body = tokenResponse.getEntity(String.class);
         JSONObject jsonObject = new JSONObject(body);
@@ -85,6 +73,27 @@ public class OauthHelper {
         assertNotNull(accessToken);
         return accessToken;
     }
+    
+    public String getAuthorizationCode(String clientId, String scopes, String email, String password, boolean persistent) throws InterruptedException {
+        return webDriverHelper.obtainAuthorizationCode(scopes, clientId, email, password, items, persistent);
+    }
+    
+    public ClientResponse getClientResponse(String clientId, String clientSecret, String scopes, String redirectUri, String authorizationCode) {
+        MultivaluedMap<String, String> params = new MultivaluedMapImpl();
+        params.add("client_id", clientId);
+        params.add("client_secret", clientSecret);
+        params.add("grant_type", "authorization_code");
+        if(scopes != null)
+            params.add("scope", scopes);
+        params.add("redirect_uri", redirectUri);
+        params.add("code", authorizationCode);
+        return oauthT2Client.obtainOauth2TokenPost("client_credentials", params);
+    }
+    
+    
+    public boolean elementExists(String page, String elementId) {
+        return webDriverHelper.elementExists(page, elementId);
+    } 
     
     public void closeWebDriver() {
         webDriverHelper.close();

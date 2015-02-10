@@ -38,6 +38,7 @@ import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ActivityCacheManager;
 import org.orcid.core.manager.OrcidProfileCacheManager;
+import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.frontend.web.util.LanguagesMap;
@@ -94,6 +95,9 @@ public class PublicProfileController extends BaseWorkspaceController {
     @Resource
     private ActivityCacheManager cacheManager;
     
+    @Resource
+    ProfileEntityManager profileEntityManager;
+    
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[x]}")
     public ModelAndView publicPreviewRedir(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int pageNo,
             @RequestParam(value = "maxResults", defaultValue = "15") int maxResults, @PathVariable("orcid") String orcid) {
@@ -117,7 +121,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         OrcidProfile profile = orcidProfileCacheManager.retrievePublic(orcid);
 
         mav.addObject("profile", profile);
-
+        
         String countryName = getCountryName(profile, true);
         if(!StringUtil.isBlank(countryName))
             mav.addObject("countryName", countryName);
@@ -130,7 +134,9 @@ public class PublicProfileController extends BaseWorkspaceController {
             isProfileEmtpy = false;
         }
         
-        if (profile.getOrcidDeprecated() != null) {
+        if(profile.isLocked()) {
+            mav.addObject("locked", true);
+        } else if (profile.getOrcidDeprecated() != null) {
             String primaryRecord = profile.getOrcidDeprecated().getPrimaryRecord().getOrcidIdentifier().getPath();
             mav.addObject("deprecated", true);
             mav.addObject("primaryRecord", primaryRecord);
