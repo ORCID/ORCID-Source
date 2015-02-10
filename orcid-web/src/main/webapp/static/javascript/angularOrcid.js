@@ -179,7 +179,7 @@ GroupedActivities.prototype.key = function(activityIdentifiers) {
         idTypePath = 'workExternalIdentifierType';
     } else if (this.type == GroupedActivities.FUNDING) {
         idPath = 'value';
-        idTypePath = 'type';
+        idTypePath = 'url';
     } else if (this.type == GroupedActivities.AFFILIATION) {
         // we don't have external identifiers for affiliations yet
         idPath = null;
@@ -200,7 +200,7 @@ GroupedActivities.prototype.key = function(activityIdentifiers) {
 
 GroupedActivities.prototype.keyMatch = function(activity) {
     var identifiersPath = null;
-    identifiersPath = this.getIdentifiersPath();
+    identifiersPath = this.getIdentifiersPath();  
     for (var idx in activity[identifiersPath]) {
         if (this.key(activity[identifiersPath][idx]) == '') continue;
         if (this.key(activity[identifiersPath][idx]) in this._keySet)
