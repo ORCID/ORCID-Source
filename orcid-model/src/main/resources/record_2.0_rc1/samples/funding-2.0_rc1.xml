@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<funding:funding putCode="0" visibility="private"
+<funding:funding putCode="123" visibility="private"
 	xmlns:common="http://www.orcid.org/ns/common" xmlns:funding="http://www.orcid.org/ns/funding"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.orcid.org/ns/funding ../funding-2.0_rc1.xsd ">
@@ -36,11 +36,11 @@
 				<common:path>8888-8888-8888-8880</common:path>
 				<common:host>orcid.org</common:host>
 			</common:contributorOrcid>
-			<funding:creditName>funding:creditName</funding:creditName>
+			<funding:creditName visibility="private">funding:creditName</funding:creditName>
 			<funding:contributorEmail>funding@contributorEmail.com</funding:contributorEmail>
-			<funding:fundingContributorAttributes>
+			<funding:contributorAttributes>
 				<funding:contributorRole>lead</funding:contributorRole>
-			</funding:fundingContributorAttributes>
+			</funding:contributorAttributes>
 		</funding:contributor>
 	</funding:contributors>
 	<funding:organization>

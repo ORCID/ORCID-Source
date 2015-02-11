@@ -23,18 +23,20 @@ import ma.glasnost.orika.impl.DefaultMapperFactory;
 import ma.glasnost.orika.metadata.ClassMapBuilder;
 
 import org.orcid.jaxb.model.common.Source;
-import org.orcid.jaxb.model.record.Funding;
-import org.orcid.jaxb.model.record.FundingContributors;
-import org.orcid.jaxb.model.record.FundingExternalIdentifiers;
+import org.orcid.jaxb.model.record.FuzzyDate;
 import org.orcid.jaxb.model.notification.addactivities.Activity;
 import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
 import org.orcid.jaxb.model.notification.amended.NotificationAmended;
 import org.orcid.jaxb.model.notification.custom.NotificationCustom;
+import org.orcid.jaxb.model.record.Funding;
+import org.orcid.jaxb.model.record.FundingContributors;
+import org.orcid.jaxb.model.record.FundingExternalIdentifiers;
 import org.orcid.jaxb.model.record.PublicationDate;
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.WorkContributors;
 import org.orcid.jaxb.model.record.WorkExternalIdentifier;
 import org.orcid.jaxb.model.record.WorkExternalIdentifiers;
+import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.NotificationActivityEntity;
 import org.orcid.persistence.jpa.entities.NotificationAddActivitiesEntity;
 import org.orcid.persistence.jpa.entities.NotificationAmendedEntity;
@@ -43,6 +45,7 @@ import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.orcid.persistence.jpa.entities.StartDateEntity;
 import org.orcid.persistence.jpa.entities.WorkExternalIdentifierEntity;
 import org.springframework.beans.factory.FactoryBean;
 
@@ -105,30 +108,26 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         
         ClassMapBuilder<Funding, ProfileFundingEntity> classMap = mapperFactory.classMap(Funding.class, ProfileFundingEntity.class);
         classMap.field("type", "type");
-        classMap.field("organizationDefinedFundingType", "organizationDefinedType");
+        classMap.field("organizationDefinedType", "organizationDefinedType");
         classMap.field("title.title.content", "title");
         classMap.field("title.translatedTitle.content", "translatedTitle");
         classMap.field("title.translatedTitle.languageCode", "translatedTitleLanguageCode");
         classMap.field("description", "description");
         classMap.field("amount.content", "amount");
         classMap.field("amount.currencyCode", "currencyCode");
-        classMap.field("url.value", "url");
-        classMap.field("startDate.year.value", "startDate.year");
-        classMap.field("startDate.month.value", "startDate.month");
-        classMap.field("startDate.day.value", "startDate.day");
-        classMap.field("endDate.year.value", "endDate.year");
-        classMap.field("endDate.month.value", "endDate.month");
-        classMap.field("endDate.day.value", "endDate.day");
+        classMap.field("url.value", "url");        
         classMap.field("organization.name", "org.name");
         classMap.field("organization.address.city", "org.city");
         classMap.field("organization.address.region", "org.region");
-        classMap.field("organization.address.country.value", "org.country");
-        classMap.fieldMap("fundingExternalIdentifiers", "externalIdentifiersJson").converter("fundingExternalIdentifiersConverterId").add();
-        classMap.fieldMap("fundingContributors", "contributorsJson").converter("fundingContributorsConverterId").add();        
+        classMap.field("organization.address.country", "org.country");
+        classMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("fundingExternalIdentifiersConverterId").add();
+        classMap.fieldMap("contributors", "contributorsJson").converter("fundingContributorsConverterId").add();   
         classMap.byDefault();
         classMap.register();
                 
-        mapperFactory.classMap(org.orcid.jaxb.model.record.Source.class, SourceEntity.class).field("sourceOrcid.path", "sourceClient.id").byDefault().register();
+        mapperFactory.classMap(FuzzyDate.class, StartDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day").register();
+        mapperFactory.classMap(FuzzyDate.class, EndDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day").register();        
+        mapperFactory.classMap(org.orcid.jaxb.model.record.Source.class, SourceEntity.class).field("sourceOrcid.path", "sourceClient.id").byDefault().register();        
         
         return mapperFactory.getMapperFacade();
     }

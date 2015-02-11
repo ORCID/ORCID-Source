@@ -42,7 +42,7 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "putCode", "type", "organizationDefinedType", "title", "description", "amount", "url", "startDate", "endDate", "externalIdentifiers",
+@XmlType(propOrder = { "type", "organizationDefinedType", "title", "description", "amount", "url", "startDate", "endDate", "externalIdentifiers",
         "contributors", "organization", "source", "createdDate", "lastModifiedDate" })
 @XmlRootElement(name = "funding", namespace = "http://www.orcid.org/ns/funding")
 public class Funding implements VisibilityType, Activity, Serializable {
@@ -67,36 +67,22 @@ public class Funding implements VisibilityType, Activity, Serializable {
     protected FuzzyDate startDate;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected FuzzyDate endDate;
-    
-    
-    
-    
-    
-    
-    
-    
-    
     @XmlElement(namespace = "http://www.orcid.org/ns/funding")
     protected FundingExternalIdentifiers externalIdentifiers;
-    
-    
-    
-    
     @XmlElement(namespace = "http://www.orcid.org/ns/funding")
     protected FundingContributors contributors;
-    
-    
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
-    protected Source source;
-    @XmlAttribute(namespace = "http://www.orcid.org/ns/funding")
-    protected String putCode;
-    @XmlAttribute(required = true, namespace = "http://www.orcid.org/ns/funding")
-    protected Visibility visibility;
-    @XmlElement(namespace = "http://www.orcid.org/ns/funding")
+    protected Source source;    
+    @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected LastModifiedDate lastModifiedDate;
-    @XmlElement(namespace = "http://www.orcid.org/ns/funding")
+    @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected CreatedDate createdDate;
 
+    @XmlAttribute(namespace = "http://www.orcid.org/ns/common")
+    protected String putCode;
+    @XmlAttribute
+    protected Visibility visibility;
+    
     public FundingTitle getTitle() {
         return title;
     }

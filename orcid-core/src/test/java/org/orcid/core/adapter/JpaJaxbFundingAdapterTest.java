@@ -31,7 +31,9 @@ import org.junit.runner.RunWith;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.FundingType;
 import org.orcid.jaxb.model.record.Iso3166Country;
+import org.orcid.jaxb.model.record.Visibility;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
+import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -47,8 +49,9 @@ public class JpaJaxbFundingAdapterTest {
     @Resource
     private JpaJaxbFundingAdapter jpaJaxbFundingAdapter;
 
+    @SuppressWarnings("deprecation")
     @Test
-    public void testUnmarshallWork() throws JAXBException {
+    public void testUnmarshallFunding() throws JAXBException {
         Funding funding = getFunding();
         assertEquals(FundingType.GRANT, funding.getType());
         assertEquals("funding:organizationDefinedType", funding.getOrganizationDefinedType().getContent());
@@ -81,11 +84,25 @@ public class JpaJaxbFundingAdapterTest {
         assertEquals("orcid.org", funding.getContributors().getContributor().get(0).getContributorOrcid().getHost());
         assertEquals("http://orcid.org/8888-8888-8888-8880", funding.getContributors().getContributor().get(0).getContributorOrcid().getUri());
         assertEquals("8888-8888-8888-8880", funding.getContributors().getContributor().get(0).getContributorOrcid().getPath());
+        assertEquals("funding:creditName", funding.getContributors().getContributor().get(0).getCreditName().getContent());
+        assertEquals(Visibility.PRIVATE, funding.getContributors().getContributor().get(0).getCreditName().getVisibility());
+        assertEquals("http://orcid.org/8888-8888-8888-8880", funding.getSource().getSourceOrcid().getUri());
+        assertEquals("orcid.org", funding.getSource().getSourceOrcid().getHost());
+        assertEquals("8888-8888-8888-8880", funding.getSource().getSourceOrcid().getPath());        
+        assertEquals(Visibility.PRIVATE, funding.getVisibility());
+        assertNotNull(funding.getCreatedDate());
+        assertNotNull(funding.getCreatedDate().getValue());
+        assertNotNull(funding.getLastModifiedDate());
+        assertNotNull(funding.getLastModifiedDate().getValue());
     }
     
     @Test
     public void testToFundingEntity() throws JAXBException {
-        
+        Funding funding = getFunding();
+        assertNotNull(funding);
+        ProfileFundingEntity profileFundingEntity = jpaJaxbFundingAdapter.toProfileFundingEntity(funding);
+        assertNotNull(profileFundingEntity);
+        assertEquals(Visibility.PRIVATE.value(), profileFundingEntity.getVisibility().value());
     }
 
     private Funding getFunding() throws JAXBException {
