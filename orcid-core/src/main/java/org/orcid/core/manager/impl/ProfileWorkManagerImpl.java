@@ -27,6 +27,7 @@ import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.ProfileWorkDao;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,13 +35,13 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
 
     @Resource
     private ProfileWorkDao profileWorkDao;
-    
+
     @Resource
     private ProfileDao profileDao;
 
     @Resource
     private JpaJaxbWorkAdapter jpaJaxbWorkAdapter;
-    
+
     @Resource
     private SourceManager sourceManager;
 
@@ -148,9 +149,23 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
     public Work createWork(String orcid, Work work) {
         ProfileWorkEntity profileWorkEntity = jpaJaxbWorkAdapter.toProfileWorkEntity(work);
         profileWorkEntity.setSource(sourceManager.retrieveSourceEntity());
-        profileWorkEntity.setProfile(profileDao.find(orcid));
+        ProfileEntity profile = profileDao.find(orcid);
+        profileWorkEntity.setProfile(profile);
+        setIncomingWorkPrivacy(profileWorkEntity, profile);
         profileWorkDao.persist(profileWorkEntity);
         return jpaJaxbWorkAdapter.toWork(profileWorkEntity);
     }
-    
+
+    private void setIncomingWorkPrivacy(ProfileWorkEntity profileWorkEntity, ProfileEntity profile) {
+        Visibility incomingWorkVisibility = profileWorkEntity.getVisibility();
+        Visibility defaultWorkVisibility = profile.getActivitiesVisibilityDefault();
+        if (profile.getClaimed()) {
+            if (defaultWorkVisibility.isMoreRestrictiveThan(incomingWorkVisibility)) {
+                profileWorkEntity.setVisibility(defaultWorkVisibility);
+            }
+        } else if (incomingWorkVisibility == null) {
+            profileWorkEntity.setVisibility(Visibility.PRIVATE);
+        }
+    }
+
 }
