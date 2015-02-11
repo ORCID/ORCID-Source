@@ -40,24 +40,25 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "externalIdentifier" })
 @XmlRootElement(name = "externalIdentifiers")
-public class FundingExternalIdentifiers implements Serializable {	
+public class FundingExternalIdentifiers implements Serializable {
     private static final long serialVersionUID = 1L;
     @XmlElement(name = "externalIdentifier")
-    protected List<FundingExternalIdentifier> fundingExternalIdentifier;
-	
+    protected List<FundingExternalIdentifier> externalIdentifier;
+
     /**
      * Gets the value of the fundingExternalIdentifier property.
      * 
      * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the contributor property.
+     * This accessor method returns a reference to the live list, not a
+     * snapshot. Therefore any modification you make to the returned list will
+     * be present inside the JAXB object. This is why there is not a
+     * <CODE>set</CODE> method for the contributor property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
+     * 
      * <pre>
-     *    getContributor().add(newItem);
+     * getContributor().add(newItem);
      * </pre>
      * 
      * 
@@ -67,45 +68,41 @@ public class FundingExternalIdentifiers implements Serializable {
      * 
      * 
      */
-    public List<FundingExternalIdentifier> getFundingExternalIdentifier() {
-    	if(fundingExternalIdentifier == null)
-    		fundingExternalIdentifier = new ArrayList<FundingExternalIdentifier>();
-		return fundingExternalIdentifier;
-	}	
-	
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime
-				* result
-				+ ((fundingExternalIdentifier == null) ? 0
-						: fundingExternalIdentifier.hashCode());
-		return result;
-	}
-	
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		FundingExternalIdentifiers other = (FundingExternalIdentifiers) obj;
-		if (fundingExternalIdentifier == null) {
-			if (other.fundingExternalIdentifier != null)
-				return false;
-		} else {
-			if (other.fundingExternalIdentifier == null)
+    public List<FundingExternalIdentifier> getExternalIdentifier() {
+        if (externalIdentifier == null)
+            externalIdentifier = new ArrayList<FundingExternalIdentifier>();
+        return externalIdentifier;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((externalIdentifier == null) ? 0 : externalIdentifier.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        FundingExternalIdentifiers other = (FundingExternalIdentifiers) obj;
+        if (externalIdentifier == null) {
+            if (other.externalIdentifier != null)
                 return false;
-            else if (!(fundingExternalIdentifier.containsAll(other.fundingExternalIdentifier) && other.fundingExternalIdentifier.containsAll(fundingExternalIdentifier) && 
-                    other.fundingExternalIdentifier.size() == fundingExternalIdentifier.size())) {
+        } else {
+            if (other.externalIdentifier == null)
+                return false;
+            else if (!(externalIdentifier.containsAll(other.externalIdentifier) && other.externalIdentifier.containsAll(externalIdentifier) && other.externalIdentifier
+                    .size() == externalIdentifier.size())) {
                 return false;
             }
-		}
-		return true;
-	}
-    
-	
+        }
+        return true;
+    }
+
 }

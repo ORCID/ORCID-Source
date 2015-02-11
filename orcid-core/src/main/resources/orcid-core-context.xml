@@ -468,6 +468,10 @@
         <property name="mapperFacade" ref="workMapperFacade" />
     </bean>
 	
+	<bean id="jpaJaxbFundingAdapter" class="org.orcid.core.adapter.impl.JpaJaxbFundingAdapterImpl">
+        <property name="mapperFacade" ref="workMapperFacade" />
+    </bean>
+	
 	<!-- Geonames username -->
 	<bean id="geonamesUser" class="java.lang.String">
 		<constructor-arg value="orcid"/>

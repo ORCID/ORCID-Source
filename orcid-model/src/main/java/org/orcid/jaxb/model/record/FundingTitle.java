@@ -39,15 +39,16 @@ import java.io.Serializable;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "title", "translatedTitle" })
-@XmlRootElement(name = "title")
+@XmlRootElement(name = "title", namespace = "http://www.orcid.org/ns/funding")
 public class FundingTitle implements Serializable {
 
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
+    @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Title title;    
-    @XmlElement
+    @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected TranslatedTitle translatedTitle;
 
     /**
