@@ -44,10 +44,12 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jackson.annotate.JsonPropertyOrder;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType(propOrder = { "value", "uri", "path", "host" })
+@JsonPropertyOrder({"value", "valueAsString", "uri", "path", "host"})
 public class OrcidIdBase implements Serializable {
     private static final long serialVersionUID = 1L;
 
