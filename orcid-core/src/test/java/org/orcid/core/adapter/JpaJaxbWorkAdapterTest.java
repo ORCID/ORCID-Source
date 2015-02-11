@@ -80,7 +80,7 @@ public class JpaJaxbWorkAdapterTest {
                 workEntity.getExternalIdentifiersJson());
         assertEquals("http://tempuri.org", workEntity.getWorkUrl());
         assertEquals(
-                "{\"contributor\":[{\"contributorOrcid\":{\"uri\":\"http://orcid.org/8888-8888-8888-8880\",\"path\":\"8888-8888-8888-8880\",\"host\":\"orcid.org\",\"value\":null,\"valueAsString\":null},\"creditName\":{\"content\":\"work:creditName\",\"visibility\":\"PRIVATE\"},\"contributorEmail\":{\"value\":\"contributorEmail@mailinator.com\"},\"contributorAttributes\":{\"contributorSequence\":null,\"contributorRole\":null}}]}",
+                "{\"contributor\":[{\"contributorOrcid\":{\"value\":null,\"valueAsString\":null,\"uri\":\"http://orcid.org/8888-8888-8888-8880\",\"path\":\"8888-8888-8888-8880\",\"host\":\"orcid.org\"},\"creditName\":{\"content\":\"work:creditName\",\"visibility\":\"PRIVATE\"},\"contributorEmail\":{\"value\":\"contributorEmail@mailinator.com\"},\"contributorAttributes\":{\"contributorSequence\":null,\"contributorRole\":null}}]}",
                 workEntity.getContributorsJson());
         assertEquals("en", workEntity.getLanguageCode());
         assertEquals(Iso3166Country.AF, workEntity.getIso2Country());
