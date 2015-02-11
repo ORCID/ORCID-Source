@@ -122,5 +122,7 @@ public interface ProfileWorkManager {
      * @return
      */
     public boolean updateToMaxDisplay(String orcid, String workId);
+    
+    public Work createWork(String orcid, Work work);
 
 }

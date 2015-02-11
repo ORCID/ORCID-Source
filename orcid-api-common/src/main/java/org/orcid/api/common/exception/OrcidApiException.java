@@ -47,7 +47,7 @@ public abstract class OrcidApiException extends RuntimeException {
     }
 
     public OrcidApiException(String message, Response.Status status, Throwable t) {
-        super(t);
+        super(message, t);
         OrcidMessage orcidMessage = new OrcidMessage();
         orcidMessage.setMessageVersion(OrcidMessage.DEFAULT_VERSION);
         ErrorDesc errorDesc = new ErrorDesc();

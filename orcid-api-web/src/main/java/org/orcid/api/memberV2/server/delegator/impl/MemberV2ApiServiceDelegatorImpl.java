@@ -144,10 +144,12 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
     public Response createWork(String orcid, Work work) {
-        // TODO Auto-generated method stub
-        Work w = new Work();
-        // TODO Wrong Response
-        return Response.ok(w).build();
+        Work w = profileWorkManager.createWork(orcid, work);
+        try {
+            return Response.created(new URI(w.getPutCode())).build();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Error creating URI for new work", e);
+        }
     }
 
     @Override

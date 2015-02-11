@@ -22,18 +22,27 @@ import javax.annotation.Resource;
 
 import org.orcid.core.adapter.JpaJaxbWorkAdapter;
 import org.orcid.core.manager.ProfileWorkManager;
+import org.orcid.core.manager.SourceManager;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.Work;
+import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.ProfileWorkDao;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
+import org.springframework.transaction.annotation.Transactional;
 
 public class ProfileWorkManagerImpl implements ProfileWorkManager {
 
     @Resource
     private ProfileWorkDao profileWorkDao;
+    
+    @Resource
+    private ProfileDao profileDao;
 
     @Resource
     private JpaJaxbWorkAdapter jpaJaxbWorkAdapter;
+    
+    @Resource
+    private SourceManager sourceManager;
 
     /**
      * Removes the relationship that exists between a work and a profile.
@@ -133,4 +142,15 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
     public boolean updateToMaxDisplay(String orcid, String workId) {
         return profileWorkDao.updateToMaxDisplay(orcid, workId);
     }
+
+    @Override
+    @Transactional
+    public Work createWork(String orcid, Work work) {
+        ProfileWorkEntity profileWorkEntity = jpaJaxbWorkAdapter.toProfileWorkEntity(work);
+        profileWorkEntity.setSource(sourceManager.retrieveSourceEntity());
+        profileWorkEntity.setProfile(profileDao.find(orcid));
+        profileWorkDao.persist(profileWorkEntity);
+        return jpaJaxbWorkAdapter.toWork(profileWorkEntity);
+    }
+    
 }

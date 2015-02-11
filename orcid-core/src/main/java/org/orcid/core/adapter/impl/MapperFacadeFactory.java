@@ -75,11 +75,13 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         
         
         ClassMapBuilder<Work, ProfileWorkEntity> classMap = mapperFactory.classMap(Work.class, ProfileWorkEntity.class);
+        classMap.field("putCode", "work.id");
         classMap.field("workTitle.title.content", "work.title");
         classMap.field("workTitle.translatedTitle.content", "work.translatedTitle");
         classMap.field("workTitle.translatedTitle.languageCode", "work.translatedTitleLanguageCode");
         classMap.field("shortDescription", "work.description");
         classMap.field("workCitation.workCitationType", "work.citationType");
+        classMap.field("workCitation.citation", "work.citation");
         classMap.field("workType", "work.workType");
         classMap.field("publicationDate", "work.publicationDate");
         classMap.fieldMap("workExternalIdentifiers", "work.externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();

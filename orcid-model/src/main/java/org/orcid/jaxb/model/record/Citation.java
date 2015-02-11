@@ -46,9 +46,9 @@ public class Citation implements Serializable {
      * 
      */
     private static final long serialVersionUID = 1L;
-    @XmlElement(required = true, defaultValue = "formatted-unspecified")
+    @XmlElement(required = true, defaultValue = "formatted-unspecified", namespace = "http://www.orcid.org/ns/work")
     protected CitationType citationType = CitationType.FORMATTED_UNSPECIFIED;
-    @XmlElement(required = true)
+    @XmlElement(required = true, namespace = "http://www.orcid.org/ns/work")
     protected String citation;
 
     public Citation() {
