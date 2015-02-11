@@ -39,10 +39,10 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "externalIdentifier" })
-@XmlRootElement(name = "externalIdentifiers")
+@XmlRootElement(name = "externalIdentifiers", namespace = "http://www.orcid.org/ns/funding")
 public class FundingExternalIdentifiers implements Serializable {
     private static final long serialVersionUID = 1L;
-    @XmlElement(name = "externalIdentifier")
+    @XmlElement(name = "externalIdentifier", namespace = "http://www.orcid.org/ns/funding")
     protected List<FundingExternalIdentifier> externalIdentifier;
 
     /**

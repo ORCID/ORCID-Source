@@ -65,7 +65,22 @@ public class JpaJaxbFundingAdapterTest {
         assertEquals("funding:amount", funding.getAmount().getContent());
         assertEquals("ADP", funding.getAmount().getCurrencyCode());
         assertEquals("http://tempuri.org", funding.getUrl().getValue());
-        //assertEquals("", );        
+        assertEquals("25", funding.getStartDate().getDay().getValue());        
+        assertEquals("01", funding.getStartDate().getMonth().getValue());
+        assertEquals("1920", funding.getStartDate().getYear().getValue());
+        assertEquals("31", funding.getEndDate().getDay().getValue());        
+        assertEquals("12", funding.getEndDate().getMonth().getValue());
+        assertEquals("2020", funding.getEndDate().getYear().getValue());        
+        assertEquals(1, funding.getExternalIdentifiers().getExternalIdentifier().size());
+        assertEquals("grant_number", funding.getExternalIdentifiers().getExternalIdentifier().get(0).getType().value());
+        assertEquals("http://tempuri.org", funding.getExternalIdentifiers().getExternalIdentifier().get(0).getUrl().getValue());
+        assertEquals("12345", funding.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertEquals(1, funding.getContributors().getContributor().size()); 
+        assertEquals("lead", funding.getContributors().getContributor().get(0).getContributorAttributes().getContributorRole().value());
+        assertEquals("funding@contributorEmail.com", funding.getContributors().getContributor().get(0).getContributorEmail().getValue());
+        assertEquals("orcid.org", funding.getContributors().getContributor().get(0).getContributorOrcid().getHost());
+        assertEquals("http://orcid.org/8888-8888-8888-8880", funding.getContributors().getContributor().get(0).getContributorOrcid().getUri());
+        assertEquals("8888-8888-8888-8880", funding.getContributors().getContributor().get(0).getContributorOrcid().getPath());
     }
     
     @Test

@@ -44,14 +44,14 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "type", "value", "url" })
-@XmlRootElement(name = "externalIdentifier")
+@XmlRootElement(name = "externalIdentifier", namespace = "http://www.orcid.org/ns/funding")
 public class FundingExternalIdentifier implements Serializable {
 	private static final long serialVersionUID = 1L;	
-	@XmlElement
+	@XmlElement(name="externalIdentifierType", namespace = "http://www.orcid.org/ns/funding")
 	protected FundingExternalIdentifierType type;
-	@XmlElement(name="externalIdentifierValue")
+	@XmlElement(name="externalIdentifierValue", namespace = "http://www.orcid.org/ns/funding")
 	protected String value;
-	@XmlElement(name="externalIdentifierUrl")
+	@XmlElement(name="externalIdentifierUrl", namespace = "http://www.orcid.org/ns/funding")
 	protected Url url;	
 	
 	public FundingExternalIdentifierType getType() {

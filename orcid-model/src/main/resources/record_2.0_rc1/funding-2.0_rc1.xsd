@@ -78,7 +78,7 @@
 						<xs:documentation>End date for the funding.</xs:documentation>
 					</xs:annotation>
 				</xs:element>
-				<xs:element name="externalIdentifiers" type="funding:fundingExternalIdentifiers"
+				<xs:element name="externalIdentifiers" type="funding:externalIdentifiers"
 					minOccurs="0" />
 				<xs:element name="contributors" type="funding:fundingContributors"
 					minOccurs="0" />
@@ -102,7 +102,7 @@
 					<xs:sequence>
 						<xs:element name="title" type="funding:fundingTitle"
 							minOccurs="1" />
-						<xs:element name="externalIdentifiers" type="funding:fundingExternalIdentifiers"
+						<xs:element name="externalIdentifiers" type="funding:externalIdentifiers"
 							minOccurs="0" />
 						<xs:element name="type" type="funding:fundingType"
 							minOccurs="1" maxOccurs="1" />
@@ -156,7 +156,7 @@
 		</xs:restriction>
 	</xs:simpleType>
 	
-	<xs:complexType name="fundingExternalIdentifiers">
+	<xs:complexType name="externalIdentifiers">
 		<xs:annotation>
 			<xs:documentation>Container for storing the external references to
 				the funding.
@@ -164,11 +164,11 @@
 		</xs:annotation>
 		<xs:sequence>
 			<xs:element maxOccurs="unbounded" minOccurs="0"
-				name="externalIdentifier" type="funding:fundingExternalIdentifier" />
+				name="externalIdentifier" type="funding:externalIdentifier" />
 		</xs:sequence>
 	</xs:complexType>
 	
-	<xs:complexType name="fundingExternalIdentifier">
+	<xs:complexType name="externalIdentifier">
 		<xs:annotation>
 			<xs:documentation>An external identifier that uniquely represents the
 				funding. Includes an identifier type and value as well as a URL for
@@ -176,7 +176,7 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element name="externalIdentifierType" type="funding:fundingExternalIdentifierType"
+			<xs:element name="externalIdentifierType" type="funding:externalIdentifierType"
 				minOccurs="1" maxOccurs="1" />
 			<xs:element name="externalIdentifierValue" type="common:string2084"
 				minOccurs="0" maxOccurs="1">
@@ -196,7 +196,7 @@
 		</xs:sequence>
 	</xs:complexType>
 	
-	<xs:simpleType name="fundingExternalIdentifierType">
+	<xs:simpleType name="externalIdentifierType">
 		<xs:annotation>
 			<xs:documentation>The type of the funding external identifier.
 				Currently only grant number is supported.

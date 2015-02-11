@@ -18,9 +18,9 @@
 		<common:day>25</common:day>
 	</common:startDate>
 	<common:endDate>
-		<common:year>1920</common:year>
-		<common:month>01</common:month>
-		<common:day>25</common:day>
+		<common:year>2020</common:year>
+		<common:month>12</common:month>
+		<common:day>31</common:day>
 	</common:endDate>
 	<funding:externalIdentifiers>
 		<funding:externalIdentifier>
