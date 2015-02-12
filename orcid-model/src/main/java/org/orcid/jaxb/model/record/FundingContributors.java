@@ -43,14 +43,14 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "contributor" })
-@XmlRootElement(name = "funding-contributors")
+@XmlRootElement(name = "contributors", namespace = "http://www.orcid.org/ns/funding")
 public class FundingContributors implements Serializable {
 
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
-    @XmlElement(name = "funding-contributor", required = true)
+    @XmlElement(name = "contributor", namespace = "http://www.orcid.org/ns/funding")
     protected List<FundingContributor> contributor;
 
     /**
