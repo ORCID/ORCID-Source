@@ -172,8 +172,7 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
             throw new WrongSourceException("You are not the source of the work, so you are not allowed to update it");
         }
         jpaJaxbWorkAdapter.toProfileWorkEntity(work, profileWorkEntity);
-        ProfileEntity profile = profileDao.find(orcid);
-        profileWorkEntity.setProfile(profile);
+        profileWorkEntity.setSource(existingSource);
         profileWorkDao.merge(profileWorkEntity);
         return jpaJaxbWorkAdapter.toWork(profileWorkEntity);
     }
