@@ -16,8 +16,8 @@
  */
 package org.orcid.api.common.jaxb;
 
-import static org.orcid.api.common.OrcidApiConstants.ORCID_JSON;
-import static org.orcid.api.common.OrcidApiConstants.VND_ORCID_JSON;
+import static org.orcid.core.api.OrcidApiConstants.ORCID_JSON;
+import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;

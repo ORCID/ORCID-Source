@@ -16,7 +16,7 @@
  */
 package org.orcid.api.notifications.server.delegator.impl;
 
-import static org.orcid.api.common.OrcidApiConstants.STATUS_OK_MESSAGE;
+import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
 
 import java.net.URI;
 import java.net.URISyntaxException;

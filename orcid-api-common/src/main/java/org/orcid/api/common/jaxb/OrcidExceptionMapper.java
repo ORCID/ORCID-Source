@@ -21,6 +21,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
@@ -33,7 +34,6 @@ import javax.ws.rs.ext.Provider;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.orcid.api.common.OrcidApiConstants;
 import org.orcid.api.common.exception.OrcidApiException;
 import org.orcid.api.common.exception.OrcidBadRequestException;
 import org.orcid.api.common.exception.OrcidDeprecatedException;
@@ -42,6 +42,7 @@ import org.orcid.api.common.exception.OrcidInvalidScopeException;
 import org.orcid.api.common.exception.OrcidNotAcceptableException;
 import org.orcid.api.common.exception.OrcidNotFoundException;
 import org.orcid.api.common.exception.OrcidUnauthorizedException;
+import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.locale.LocaleManager;
@@ -106,6 +107,7 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
 
         // 404
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidNotFoundException.class, new ImmutablePair<>(Response.Status.NOT_FOUND, 9011));
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(NoResultException.class, new ImmutablePair<>(Response.Status.NOT_FOUND, 9011));
 
         // 406
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidNotAcceptableException.class, new ImmutablePair<>(Response.Status.NOT_ACCEPTABLE, 9016));
@@ -121,6 +123,8 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         LOGGER.error("An exception has occured", t);
         switch (getApiSection()) {
         case NOTIFICATIONS:
+            return newStyleErrorResponse(t);
+        case V2:
             return newStyleErrorResponse(t);
         default:
             return legacyErrorResponse(t);
@@ -222,7 +226,7 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
     private ApiSection getApiSection() {
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
         ApiSection apiSection = (ApiSection) requestAttributes.getAttribute(ApiVersionFilter.API_SECTION_REQUEST_ATTRIBUTE_NAME, RequestAttributes.SCOPE_REQUEST);
-        return apiSection != null ? apiSection : ApiSection.DEFAULT;
+        return apiSection != null ? apiSection : ApiSection.V1;
     }
 
     private Pair<Status, Integer> getHttpStatusAndErrorCode(Throwable t) {

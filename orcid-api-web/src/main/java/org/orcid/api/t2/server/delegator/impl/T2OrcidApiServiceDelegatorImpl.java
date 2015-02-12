@@ -16,11 +16,11 @@
  */
 package org.orcid.api.t2.server.delegator.impl;
 
-import static org.orcid.api.common.OrcidApiConstants.AFFILIATIONS_PATH;
-import static org.orcid.api.common.OrcidApiConstants.FUNDING_PATH;
-import static org.orcid.api.common.OrcidApiConstants.PROFILE_GET_PATH;
-import static org.orcid.api.common.OrcidApiConstants.STATUS_OK_MESSAGE;
-import static org.orcid.api.common.OrcidApiConstants.WORKS_PATH;
+import static org.orcid.core.api.OrcidApiConstants.AFFILIATIONS_PATH;
+import static org.orcid.core.api.OrcidApiConstants.FUNDING_PATH;
+import static org.orcid.core.api.OrcidApiConstants.PROFILE_GET_PATH;
+import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
+import static org.orcid.core.api.OrcidApiConstants.WORKS_PATH;
 
 import java.net.URI;
 import java.net.URISyntaxException;

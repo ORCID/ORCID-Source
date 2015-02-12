@@ -16,7 +16,6 @@
  */
 package org.orcid.core.manager.impl;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -59,7 +58,7 @@ public class WorkManagerImpl implements WorkManager {
      * @return The updated entity
      * */
     public WorkEntity editWork(WorkEntity work) {
-        return workDao.editWork(work);                
+        return workDao.editWork(work);
     }
 
     /**

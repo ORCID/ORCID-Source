@@ -23,7 +23,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import static org.orcid.api.common.OrcidApiConstants.*;
+import static org.orcid.core.api.OrcidApiConstants.*;
 
 /**
  * @author Declan Newman (declan) Date: 01/03/2012

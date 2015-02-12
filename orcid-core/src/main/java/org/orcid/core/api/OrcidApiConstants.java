@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.api.common;
+package org.orcid.core.api;
 
 public class OrcidApiConstants {
 
@@ -37,8 +37,16 @@ public class OrcidApiConstants {
     public static final String NOTIFICATIONS_PATH ="/{orcid}/notifications";
     public static final String ADD_ACTIVITIES_PATH = "/add-activities";
     public static final String ADD_ACTIVITIES_VIEW_PATH = "/add-activities/{id}";
+    public static final String RECORD = "/{orcid}/record";
+    public static final String ACTIVITIES = "/{orcid}/activities";
+    public static final String WORK = "/{orcid}/work";
+    public static final String FUNDING = "/{orcid}/funding";
+    public static final String EDUCATION = "/{orcid}/education";
+    public static final String EMPLOYMENT = "/{orcid}/employment";
+    public static final String PUTCODE = "/{putCode}"; // concated on the end of other paths like FUNDINGS
     public static final String ADD_ACTIVITIES_FLAG_AS_ARCHIVED_PATH = "/add-activities/{id}/archive";
-
+    public static final String ERROR = "/error";
+    
     public static final String ORCID_XML = "application/orcid+xml; qs=3";
     public static final String ORCID_JSON = "application/orcid+json; qs=2";
     public static final String TEXT_TURTLE = "text/turtle; qs=3";

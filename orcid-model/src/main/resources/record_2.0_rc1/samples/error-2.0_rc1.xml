@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<error:error xmlns:error="http://www.orcid.org/ns/error" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.orcid.org/ns/error ../error-2.0_rc1.xsd ">
+  <error:responseCode>0</error:responseCode>
+  <error:developerMessage>error:developerMessage</error:developerMessage>
+  <error:userMessage>error:userMessage</error:userMessage>
+  <error:errorCode>0</error:errorCode>
+  <error:moreInfo>http://tempuri.org</error:moreInfo>
+</error:error>

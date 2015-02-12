@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<work:work putCode="0" visibility="private"
+	xmlns:common="http://www.orcid.org/ns/common" xmlns:work="http://www.orcid.org/ns/work"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.orcid.org/ns/work ../work-2.0_rc1.xsd">
+	<work:title>
+		<common:title>work:title</common:title>
+		<common:subtitle />
+		<common:translatedTitle languageCode="en">work:translatedTitle</common:translatedTitle>
+	</work:title>
+	<work:journalTitle />
+	<work:shortDescription>work:shortDescription</work:shortDescription>
+	<work:citation>
+		<work:citationType>formatted-unspecified</work:citationType>
+		<work:citation>work:citation</work:citation>
+	</work:citation>
+	<work:type>artistic-performance</work:type>
+	<common:publicationDate>
+		<common:year>1920</common:year>
+		<common:month>01</common:month>
+		<common:day>25</common:day>
+	</common:publicationDate>
+	<work:externalIdentifiers>
+		<work:workExternalIdentifier>
+			<work:externalIdentifierType>doi</work:externalIdentifierType>
+			<work:externalIdentifierId>1234/abc</work:externalIdentifierId>
+		</work:workExternalIdentifier>
+	</work:externalIdentifiers>
+	<work:url>http://tempuri.org</work:url>
+	<work:contributors>
+		<work:contributor>
+			<common:contributorOrcid>
+				<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+				<common:path>8888-8888-8888-8880</common:path>
+				<common:host>orcid.org</common:host>
+			</common:contributorOrcid>
+			<work:creditName visibility="private">work:creditName</work:creditName>
+			<work:contributorEmail>contributorEmail@mailinator.com</work:contributorEmail>
+			<work:contributorAttributes>
+				<work:contributorSequence>first</work:contributorSequence>
+				<work:contributorRole>author</work:contributorRole>
+			</work:contributorAttributes>
+		</work:contributor>
+	</work:contributors>
+	<common:source>
+		<common:sourceOrcid>
+			<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+			<common:path>8888-8888-8888-8880</common:path>
+			<common:host>orcid.org</common:host>
+		</common:sourceOrcid>
+		<common:sourceName />
+		<common:sourceDate>2001-12-31T12:00:00</common:sourceDate>
+	</common:source>
+	<common:createdDate>2001-12-31T12:00:00</common:createdDate>
+	<common:lastModifiedDate>2001-12-31T12:00:00</common:lastModifiedDate>
+	<common:languageCode>en</common:languageCode>
+	<common:country visibility="private">AF</common:country>
+</work:work>
