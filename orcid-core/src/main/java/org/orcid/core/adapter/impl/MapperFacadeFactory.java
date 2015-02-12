@@ -108,7 +108,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         
         ClassMapBuilder<Funding, ProfileFundingEntity> classMap = mapperFactory.classMap(Funding.class, ProfileFundingEntity.class);
         classMap.field("type", "type");
-        classMap.field("organizationDefinedType", "organizationDefinedType");
+        classMap.field("organizationDefinedType.content", "organizationDefinedType");
         classMap.field("title.title.content", "title");
         classMap.field("title.translatedTitle.content", "translatedTitle");
         classMap.field("title.translatedTitle.languageCode", "translatedTitleLanguageCode");
@@ -120,6 +120,8 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         classMap.field("organization.address.city", "org.city");
         classMap.field("organization.address.region", "org.region");
         classMap.field("organization.address.country", "org.country");
+        classMap.field("organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier", "org.orgDisambiguated.sourceId");
+        classMap.field("organization.disambiguatedOrganization.disambiguationSource", "org.orgDisambiguated.sourceType");
         classMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("fundingExternalIdentifiersConverterId").add();
         classMap.fieldMap("contributors", "contributorsJson").converter("fundingContributorsConverterId").add();   
         classMap.byDefault();

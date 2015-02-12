@@ -33,7 +33,6 @@ import org.orcid.jaxb.model.record.FundingType;
 import org.orcid.jaxb.model.record.Iso3166Country;
 import org.orcid.jaxb.model.record.Visibility;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
-import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -49,60 +48,52 @@ public class JpaJaxbFundingAdapterTest {
     @Resource
     private JpaJaxbFundingAdapter jpaJaxbFundingAdapter;
 
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testUnmarshallFunding() throws JAXBException {
-        Funding funding = getFunding();
-        assertEquals(FundingType.GRANT, funding.getType());
-        assertEquals("funding:organizationDefinedType", funding.getOrganizationDefinedType().getContent());
-        assertEquals("funding:title", funding.getTitle().getTitle().getContent());
-        assertEquals("funding:translatedTitle", funding.getTitle().getTranslatedTitle().getContent());
-        assertEquals("en", funding.getTitle().getTranslatedTitle().getLanguageCode());
-        assertEquals("common:name", funding.getOrganization().getName());
-        assertEquals("common:city", funding.getOrganization().getAddress().getCity());
-        assertEquals("common:region", funding.getOrganization().getAddress().getRegion());
-        assertEquals(Iso3166Country.AF, funding.getOrganization().getAddress().getCountry());
-        assertEquals("common:disambiguatedOrganizationIdentifier", funding.getOrganization().getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
-        assertEquals("common:disambiguationSource", funding.getOrganization().getDisambiguatedOrganization().getDisambiguationSource());
-        assertEquals("funding:shortDescription", funding.getDescription());
-        assertEquals("funding:amount", funding.getAmount().getContent());
-        assertEquals("ADP", funding.getAmount().getCurrencyCode());
-        assertEquals("http://tempuri.org", funding.getUrl().getValue());
-        assertEquals("25", funding.getStartDate().getDay().getValue());        
-        assertEquals("01", funding.getStartDate().getMonth().getValue());
-        assertEquals("1920", funding.getStartDate().getYear().getValue());
-        assertEquals("31", funding.getEndDate().getDay().getValue());        
-        assertEquals("12", funding.getEndDate().getMonth().getValue());
-        assertEquals("2020", funding.getEndDate().getYear().getValue());        
-        assertEquals(1, funding.getExternalIdentifiers().getExternalIdentifier().size());
-        assertEquals("grant_number", funding.getExternalIdentifiers().getExternalIdentifier().get(0).getType().value());
-        assertEquals("http://tempuri.org", funding.getExternalIdentifiers().getExternalIdentifier().get(0).getUrl().getValue());
-        assertEquals("12345", funding.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
-        assertEquals(1, funding.getContributors().getContributor().size()); 
-        assertEquals("lead", funding.getContributors().getContributor().get(0).getContributorAttributes().getContributorRole().value());
-        assertEquals("funding@contributorEmail.com", funding.getContributors().getContributor().get(0).getContributorEmail().getValue());
-        assertEquals("orcid.org", funding.getContributors().getContributor().get(0).getContributorOrcid().getHost());
-        assertEquals("http://orcid.org/8888-8888-8888-8880", funding.getContributors().getContributor().get(0).getContributorOrcid().getUri());
-        assertEquals("8888-8888-8888-8880", funding.getContributors().getContributor().get(0).getContributorOrcid().getPath());
-        assertEquals("funding:creditName", funding.getContributors().getContributor().get(0).getCreditName().getContent());
-        assertEquals(Visibility.PRIVATE, funding.getContributors().getContributor().get(0).getCreditName().getVisibility());
-        assertEquals("http://orcid.org/8888-8888-8888-8880", funding.getSource().getSourceOrcid().getUri());
-        assertEquals("orcid.org", funding.getSource().getSourceOrcid().getHost());
-        assertEquals("8888-8888-8888-8880", funding.getSource().getSourceOrcid().getPath());        
-        assertEquals(Visibility.PRIVATE, funding.getVisibility());
-        assertNotNull(funding.getCreatedDate());
-        assertNotNull(funding.getCreatedDate().getValue());
-        assertNotNull(funding.getLastModifiedDate());
-        assertNotNull(funding.getLastModifiedDate().getValue());
-    }
-    
     @Test
     public void testToFundingEntity() throws JAXBException {
-        Funding funding = getFunding();
-        assertNotNull(funding);
-        ProfileFundingEntity profileFundingEntity = jpaJaxbFundingAdapter.toProfileFundingEntity(funding);
-        assertNotNull(profileFundingEntity);
-        assertEquals(Visibility.PRIVATE.value(), profileFundingEntity.getVisibility().value());
+        Funding f = getFunding();
+        assertNotNull(f);
+        ProfileFundingEntity pfe = jpaJaxbFundingAdapter.toProfileFundingEntity(f);
+        assertNotNull(pfe);
+        //Enums
+        assertEquals(Visibility.PRIVATE.value(), pfe.getVisibility().value());
+        assertEquals(FundingType.GRANT.value(), pfe.getType().value());
+        assertEquals(Visibility.PRIVATE.value(), pfe.getVisibility().value());
+
+        //General info
+        assertEquals("funding:title", pfe.getTitle());
+        assertEquals("funding:translatedTitle", pfe.getTranslatedTitle());
+        assertEquals("en", pfe.getTranslatedTitleLanguageCode());
+        assertEquals("funding:organizationDefinedType", pfe.getOrganizationDefinedType());
+        assertEquals("funding:shortDescription", pfe.getDescription());
+        assertEquals("funding:amount", pfe.getAmount());
+        assertEquals("ADP", pfe.getCurrencyCode());
+        assertEquals("http://tempuri.org", pfe.getUrl());
+        
+        //Dates
+        assertEquals(Integer.valueOf(25), pfe.getStartDate().getDay());        
+        assertEquals(Integer.valueOf(1), pfe.getStartDate().getMonth());
+        assertEquals(Integer.valueOf(1920), pfe.getStartDate().getYear());
+        assertEquals(Integer.valueOf(31), pfe.getEndDate().getDay());
+        assertEquals(Integer.valueOf(12), pfe.getEndDate().getMonth());
+        assertEquals(Integer.valueOf(2020), pfe.getEndDate().getYear());
+        
+        //Contributors        
+        assertEquals("{\"contributor\":[{\"contributorOrcid\":{\"value\":null,\"valueAsString\":null,\"uri\":\"http://orcid.org/8888-8888-8888-8880\",\"path\":\"8888-8888-8888-8880\",\"host\":\"orcid.org\"},\"creditName\":{\"content\":\"funding:creditName\",\"visibility\":\"PRIVATE\"},\"contributorEmail\":{\"value\":\"funding@contributorEmail.com\"},\"contributorAttributes\":{\"contributorRole\":\"LEAD\"}}]}", pfe.getContributorsJson());
+
+        //External identifiers
+        assertEquals("{\"externalIdentifier\":[{\"type\":\"GRANT_NUMBER\",\"value\":\"12345\",\"url\":{\"value\":\"http://tempuri.org\"}}]}", pfe.getExternalIdentifiersJson());
+        
+        //Source
+        assertEquals("8888-8888-8888-8880", pfe.getSource().getSourceId());
+        
+        //Check org values
+        assertEquals("common:name", pfe.getOrg().getName());
+        assertEquals("common:city", pfe.getOrg().getCity());
+        assertEquals("common:region", pfe.getOrg().getRegion());        
+        assertEquals(Iso3166Country.AF.value(), pfe.getOrg().getCountry().value());
+        assertEquals("common:disambiguatedOrganizationIdentifier", pfe.getOrg().getOrgDisambiguated().getSourceId());
+        assertEquals("common:disambiguationSource", pfe.getOrg().getOrgDisambiguated().getSourceType());
+        
     }
 
     private Funding getFunding() throws JAXBException {
