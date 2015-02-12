@@ -155,9 +155,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
     public Response updateWork(String orcid, Work work) {
-        // TODO Auto-generated method stub
-        Work w = new Work();
-        // TODO Wrong Response
+        Work w = profileWorkManager.updateWork(orcid, work);
         return Response.ok(w).build();
     }
 

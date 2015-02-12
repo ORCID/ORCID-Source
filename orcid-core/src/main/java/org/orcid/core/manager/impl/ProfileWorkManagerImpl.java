@@ -21,14 +21,17 @@ import java.util.ArrayList;
 import javax.annotation.Resource;
 
 import org.orcid.core.adapter.JpaJaxbWorkAdapter;
+import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.ProfileWorkDao;
+import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.springframework.transaction.annotation.Transactional;
 
 public class ProfileWorkManagerImpl implements ProfileWorkManager {
@@ -38,6 +41,9 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
 
     @Resource
     private ProfileDao profileDao;
+
+    @Resource
+    private WorkDao workDao;
 
     @Resource
     private JpaJaxbWorkAdapter jpaJaxbWorkAdapter;
@@ -153,6 +159,22 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
         profileWorkEntity.setProfile(profile);
         setIncomingWorkPrivacy(profileWorkEntity, profile);
         profileWorkDao.persist(profileWorkEntity);
+        return jpaJaxbWorkAdapter.toWork(profileWorkEntity);
+    }
+
+    @Override
+    @Transactional
+    public Work updateWork(String orcid, Work work) {
+        ProfileWorkEntity profileWorkEntity = profileWorkDao.getProfileWork(orcid, work.getPutCode());
+        String sourceIdOfUpdater = sourceManager.retrieveSourceOrcid();
+        SourceEntity existingSource = profileWorkEntity.getSource();
+        if (sourceIdOfUpdater != null && (existingSource == null || !sourceIdOfUpdater.equals(existingSource.getSourceId()))) {
+            throw new WrongSourceException("You are not the source of the work, so you are not allowed to update it");
+        }
+        jpaJaxbWorkAdapter.toProfileWorkEntity(work, profileWorkEntity);
+        ProfileEntity profile = profileDao.find(orcid);
+        profileWorkEntity.setProfile(profile);
+        profileWorkDao.merge(profileWorkEntity);
         return jpaJaxbWorkAdapter.toWork(profileWorkEntity);
     }
 
