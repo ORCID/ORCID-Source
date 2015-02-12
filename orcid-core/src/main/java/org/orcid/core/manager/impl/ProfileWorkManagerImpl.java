@@ -134,7 +134,7 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
     public Work getWork(String orcid, String workId) {
         return jpaJaxbWorkAdapter.toWork(profileWorkDao.getProfileWork(orcid, workId));
     }
-
+    
     /**
      * Creates a new profile entity relationship between the provided work and
      * the given profile.
@@ -190,7 +190,7 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
             throw new WrongSourceException("You are not the source of the work, so you are not allowed to update it");
         }
     }
-
+    
     private void setIncomingWorkPrivacy(ProfileWorkEntity profileWorkEntity, ProfileEntity profile) {
         Visibility incomingWorkVisibility = profileWorkEntity.getVisibility();
         Visibility defaultWorkVisibility = profile.getActivitiesVisibilityDefault();
