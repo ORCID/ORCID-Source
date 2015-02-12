@@ -150,8 +150,10 @@ public class InitializeDataHelper {
     }
     
     public Group createMember(GroupType type) throws Exception {
-        if(members.containsKey(type.value())) {
-            return members.get(type.value());
+        if(members.containsKey(type.value())) {            
+            Group group = members.get(type.value());
+            if(this.profileEntityManager.orcidExists(group.getGroupOrcid().getValue()))
+                return group;
         }
         
         String name = type.value() + System.currentTimeMillis() + "@orcid-integration-test.com";
