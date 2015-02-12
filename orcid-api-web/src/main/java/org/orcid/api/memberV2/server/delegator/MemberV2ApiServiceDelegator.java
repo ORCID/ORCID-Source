@@ -17,9 +17,7 @@
 package org.orcid.api.memberV2.server.delegator;
 
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 
-import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
 import org.orcid.jaxb.model.record.Work;
 
 /**
@@ -41,4 +39,5 @@ public interface MemberV2ApiServiceDelegator {
     
     Response deleteWork(String orcid, String putCode);
 
+    Response viewFunding(String orcid, String putCode);
 }
