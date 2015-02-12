@@ -194,8 +194,10 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
      *          The funding id
      * @return the Funding          
      * */
+    @Override
     public Funding getFunding(String orcid, String fundingId) {
-        return jpaJaxbFundingAdapter.toFunding(profileFundingDao.getProfileFunding(orcid, fundingId));
+        ProfileFundingEntity profileFundingEntity = profileFundingDao.getProfileFunding(orcid, fundingId); 
+        return jpaJaxbFundingAdapter.toFunding(profileFundingEntity);
     }
 
 }
