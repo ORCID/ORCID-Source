@@ -78,6 +78,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         
         
         ClassMapBuilder<Work, ProfileWorkEntity> classMap = mapperFactory.classMap(Work.class, ProfileWorkEntity.class);
+        classMap.field("putCode", "work.id");
         classMap.field("workTitle.title.content", "work.title");
         classMap.field("workTitle.translatedTitle.content", "work.translatedTitle");
         classMap.field("workTitle.translatedTitle.languageCode", "work.translatedTitleLanguageCode");
@@ -107,6 +108,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         converterFactory.registerConverter("fundingContributorsConverterId", new JsonOrikaConverter<FundingContributors>());
         
         ClassMapBuilder<Funding, ProfileFundingEntity> classMap = mapperFactory.classMap(Funding.class, ProfileFundingEntity.class);
+        classMap.field("putCode", "id");
         classMap.field("type", "type");
         classMap.field("organizationDefinedType.content", "organizationDefinedType");
         classMap.field("title.title.content", "title");

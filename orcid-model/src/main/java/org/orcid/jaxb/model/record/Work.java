@@ -79,7 +79,7 @@ public class Work implements VisibilityType, Activity, Serializable {
      */
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Source source;
-    @XmlAttribute(namespace = "http://www.orcid.org/ns/common")
+    @XmlAttribute
     protected String putCode;
     @XmlAttribute
     protected Visibility visibility;

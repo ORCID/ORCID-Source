@@ -58,6 +58,7 @@ public class JpaJaxbWorkAdapterTest {
         Work work = getWork();
         assertNotNull(work);
         ProfileWorkEntity profileWorkEntity = jpaJaxbWorkAdapter.toProfileWorkEntity(work);
+        assertEquals(Long.valueOf(123), profileWorkEntity.getWork().getId());
         assertNotNull(profileWorkEntity);
         assertEquals(Visibility.PRIVATE, profileWorkEntity.getVisibility());
         SourceEntity sourceEntity = profileWorkEntity.getSource();
