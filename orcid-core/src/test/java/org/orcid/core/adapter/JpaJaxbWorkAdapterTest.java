@@ -65,6 +65,7 @@ public class JpaJaxbWorkAdapterTest {
         assertEquals("8888-8888-8888-8880", sourceEntity.getSourceId());
         WorkEntity workEntity = profileWorkEntity.getWork();
         assertNotNull(workEntity);
+        assertEquals(1, workEntity.getId().longValue());
         assertEquals("work:title", workEntity.getTitle());
         assertNull(workEntity.getSubtitle());
         assertEquals("work:translatedTitle", workEntity.getTranslatedTitle());

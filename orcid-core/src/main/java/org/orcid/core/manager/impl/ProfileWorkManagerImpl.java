@@ -21,11 +21,18 @@ import java.util.ArrayList;
 import javax.annotation.Resource;
 
 import org.orcid.core.adapter.JpaJaxbWorkAdapter;
+import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.manager.ProfileWorkManager;
+import org.orcid.core.manager.SourceManager;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.Work;
+import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.ProfileWorkDao;
+import org.orcid.persistence.dao.WorkDao;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.springframework.transaction.annotation.Transactional;
 
 public class ProfileWorkManagerImpl implements ProfileWorkManager {
 
@@ -33,7 +40,16 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
     private ProfileWorkDao profileWorkDao;
 
     @Resource
+    private ProfileDao profileDao;
+
+    @Resource
+    private WorkDao workDao;
+
+    @Resource
     private JpaJaxbWorkAdapter jpaJaxbWorkAdapter;
+
+    @Resource
+    private SourceManager sourceManager;
 
     /**
      * Removes the relationship that exists between a work and a profile.
@@ -48,6 +64,14 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
     @Override
     public boolean removeWork(String clientOrcid, String workId) {
         return profileWorkDao.removeWork(clientOrcid, workId);
+    }
+
+    @Override
+    public boolean checkSourceAndRemoveWork(String orcid, String workId) {
+        ProfileWorkEntity profileWorkEntity = profileWorkDao.getProfileWork(orcid, workId);
+        SourceEntity existingSource = profileWorkEntity.getSource();
+        checkSource(existingSource);
+        return profileWorkDao.removeWork(orcid, workId);
     }
 
     /**
@@ -133,4 +157,48 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
     public boolean updateToMaxDisplay(String orcid, String workId) {
         return profileWorkDao.updateToMaxDisplay(orcid, workId);
     }
+
+    @Override
+    @Transactional
+    public Work createWork(String orcid, Work work) {
+        ProfileWorkEntity profileWorkEntity = jpaJaxbWorkAdapter.toProfileWorkEntity(work);
+        profileWorkEntity.setSource(sourceManager.retrieveSourceEntity());
+        ProfileEntity profile = profileDao.find(orcid);
+        profileWorkEntity.setProfile(profile);
+        setIncomingWorkPrivacy(profileWorkEntity, profile);
+        profileWorkDao.persist(profileWorkEntity);
+        return jpaJaxbWorkAdapter.toWork(profileWorkEntity);
+    }
+
+    @Override
+    @Transactional
+    public Work updateWork(String orcid, Work work) {
+        ProfileWorkEntity profileWorkEntity = profileWorkDao.getProfileWork(orcid, work.getPutCode());
+        SourceEntity existingSource = profileWorkEntity.getSource();
+        checkSource(existingSource);
+        jpaJaxbWorkAdapter.toProfileWorkEntity(work, profileWorkEntity);
+        profileWorkEntity.setSource(existingSource);
+        profileWorkDao.merge(profileWorkEntity);
+        return jpaJaxbWorkAdapter.toWork(profileWorkEntity);
+    }
+
+    private void checkSource(SourceEntity existingSource) {
+        String sourceIdOfUpdater = sourceManager.retrieveSourceOrcid();
+        if (sourceIdOfUpdater != null && (existingSource == null || !sourceIdOfUpdater.equals(existingSource.getSourceId()))) {
+            throw new WrongSourceException("You are not the source of the work, so you are not allowed to update it");
+        }
+    }
+
+    private void setIncomingWorkPrivacy(ProfileWorkEntity profileWorkEntity, ProfileEntity profile) {
+        Visibility incomingWorkVisibility = profileWorkEntity.getVisibility();
+        Visibility defaultWorkVisibility = profile.getActivitiesVisibilityDefault();
+        if (profile.getClaimed()) {
+            if (defaultWorkVisibility.isMoreRestrictiveThan(incomingWorkVisibility)) {
+                profileWorkEntity.setVisibility(defaultWorkVisibility);
+            }
+        } else if (incomingWorkVisibility == null) {
+            profileWorkEntity.setVisibility(Visibility.PRIVATE);
+        }
+    }
+
 }

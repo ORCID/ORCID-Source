@@ -14,27 +14,30 @@
  *
  * =============================================================================
  */
-package org.orcid.core.adapter;
-
-import java.util.Collection;
-import java.util.List;
-
-import org.orcid.jaxb.model.record.Work;
-import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
+package org.orcid.core.exception;
 
 /**
  * 
  * @author Will Simpson
  *
  */
-public interface JpaJaxbWorkAdapter {
+public class MismatchedPutCodeException extends IllegalArgumentException {
 
-    ProfileWorkEntity toProfileWorkEntity(Work work);
+    private static final long serialVersionUID = 1L;
 
-    Work toWork(ProfileWorkEntity ProfileWorkEntity);
+    public MismatchedPutCodeException() {
+    }
 
-    List<Work> toWork(Collection<ProfileWorkEntity> workEntities);
+    public MismatchedPutCodeException(String s) {
+        super(s);
+    }
 
-    ProfileWorkEntity toProfileWorkEntity(Work work, ProfileWorkEntity existing);
+    public MismatchedPutCodeException(Throwable cause) {
+        super(cause);
+    }
+
+    public MismatchedPutCodeException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
 }

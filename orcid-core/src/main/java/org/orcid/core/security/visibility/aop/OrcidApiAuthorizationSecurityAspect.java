@@ -36,6 +36,7 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.notification.Notification;
+import org.orcid.jaxb.model.record.Work;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -90,7 +91,12 @@ public class OrcidApiAuthorizationSecurityAspect {
     }
 
     @Before("@annotation(accessControl) && args(uriInfo, orcid, notification)")
-    public void checkPermissionsWithNotificationId(AccessControl accessControl, UriInfo uriInfo, String orcid, Notification notification) {
+    public void checkPermissionsWithNotification(AccessControl accessControl, UriInfo uriInfo, String orcid, Notification notification) {
+        permissionChecker.checkPermissions(getAuthentication(), accessControl.requiredScope(), orcid);
+    }
+    
+    @Before("@annotation(accessControl) && args(orcid, work)")
+    public void checkPermissionsWithWork(AccessControl accessControl, String orcid, Work work) {
         permissionChecker.checkPermissions(getAuthentication(), accessControl.requiredScope(), orcid);
     }
 

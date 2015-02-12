@@ -37,7 +37,7 @@ public interface MemberV2ApiServiceDelegator {
     
     Response createWork(String orcid, Work work);
     
-    Response updateWork(String orcid, Work work);
+    Response updateWork(String orcid, String putCode, Work work);
     
     Response deleteWork(String orcid, String putCode);
 

@@ -36,6 +36,7 @@ import org.orcid.api.common.exception.OrcidBadRequestException;
 import org.orcid.api.common.exception.OrcidForbiddenException;
 import org.orcid.api.common.exception.OrcidNotFoundException;
 import org.orcid.api.t2.server.delegator.T2OrcidApiServiceDelegator;
+import org.orcid.core.exception.MismatchedPutCodeException;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.ProfileEntityManager;
@@ -144,28 +145,29 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
     public Response createWork(String orcid, Work work) {
-        // TODO Auto-generated method stub
-        Work w = new Work();
-        // TODO Wrong Response
-        return Response.ok(w).build();
+        Work w = profileWorkManager.createWork(orcid, work);
+        try {
+            return Response.created(new URI(w.getPutCode())).build();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Error creating URI for new work", e);
+        }
     }
 
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
-    public Response updateWork(String orcid, Work work) {
-        // TODO Auto-generated method stub
-        Work w = new Work();
-        // TODO Wrong Response
+    public Response updateWork(String orcid, String putCode, Work work) {
+        if (!putCode.equals(work.getPutCode())) {
+            throw new MismatchedPutCodeException("The put code in the URL was " + putCode + " whereas the one in the body was " + work.getPutCode());
+        }
+        Work w = profileWorkManager.updateWork(orcid, work);
         return Response.ok(w).build();
     }
 
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
     public Response deleteWork(String orcid, String putCode) {
-        // TODO Auto-generated method stub
-        Work w = new Work();
-        // TODO Wrong Response?
-        return Response.ok().build();
+        profileWorkManager.checkSourceAndRemoveWork(orcid, putCode);
+        return Response.noContent().build();
     }
 
 }

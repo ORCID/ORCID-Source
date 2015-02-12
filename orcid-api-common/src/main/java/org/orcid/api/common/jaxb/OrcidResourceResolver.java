@@ -36,15 +36,24 @@ public class OrcidResourceResolver implements LSResourceResolver {
     public LSInput resolveResource(String type, String namespaceURI, String publicId, String systemId, String baseURI) {
         if (shouldLoadFromClasspath(systemId)) {
             OrcidLsInput lsInput = new OrcidLsInput(publicId, systemId, baseURI);
-            lsInput.setByteStream(getClass().getResourceAsStream("/" + systemId));
+            lsInput.setByteStream(getClass().getResourceAsStream(buildResourcePath(systemId)));
             return lsInput;
         }
         return defaultResourceResolver.resolveResource(type, namespaceURI, publicId, systemId, baseURI);
     }
 
+    private String buildResourcePath(String systemId) {
+        StringBuilder resourcePath = new StringBuilder("/");
+        if(systemId.startsWith("common-")){
+            resourcePath.append( "record_2.0_rc1/");
+        }
+        resourcePath.append(systemId);
+        return resourcePath.toString();
+    }
+
     private boolean shouldLoadFromClasspath(String systemId) {
         if (systemId != null) {
-            if (systemId.startsWith("orcid-common-") || systemId.equals("xml.xsd")) {
+            if (systemId.contains("common-") || systemId.equals("xml.xsd")) {
                 return true;
             }
         }

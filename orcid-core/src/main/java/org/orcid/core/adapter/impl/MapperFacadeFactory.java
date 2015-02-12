@@ -71,12 +71,11 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
 
     public MapperFacade getWorkMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
-        
+
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
         converterFactory.registerConverter("workExternalIdentifiersConverterId", new JsonOrikaConverter<WorkExternalIdentifiers>());
         converterFactory.registerConverter("workContributorsConverterId", new JsonOrikaConverter<WorkContributors>());
-        
-        
+
         ClassMapBuilder<Work, ProfileWorkEntity> classMap = mapperFactory.classMap(Work.class, ProfileWorkEntity.class);
         classMap.field("putCode", "work.id");
         classMap.field("workTitle.title.content", "work.title");
@@ -84,6 +83,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         classMap.field("workTitle.translatedTitle.languageCode", "work.translatedTitleLanguageCode");
         classMap.field("shortDescription", "work.description");
         classMap.field("workCitation.workCitationType", "work.citationType");
+        classMap.field("workCitation.citation", "work.citation");
         classMap.field("workType", "work.workType");
         classMap.field("publicationDate", "work.publicationDate");
         classMap.fieldMap("workExternalIdentifiers", "work.externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
@@ -97,16 +97,17 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         mapperFactory.classMap(PublicationDate.class, PublicationDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day")
                 .register();
         mapperFactory.classMap(WorkExternalIdentifier.class, WorkExternalIdentifierEntity.class).field("workExternalIdentifierType", "identifierType").register();
-        mapperFactory.classMap(org.orcid.jaxb.model.record.Source.class, SourceEntity.class).field("sourceOrcid.path", "sourceClient.id").byDefault().register();
+        mapperFactory.classMap(org.orcid.jaxb.model.record.Source.class, SourceEntity.class).field("sourceOrcid.path", "sourceProfile.id")
+                .field("sourceClientId.path", "sourceClient.id").byDefault().register();
         return mapperFactory.getMapperFacade();
     }
-    
+
     public MapperFacade getFundingMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
         converterFactory.registerConverter("fundingExternalIdentifiersConverterId", new JsonOrikaConverter<FundingExternalIdentifiers>());
         converterFactory.registerConverter("fundingContributorsConverterId", new JsonOrikaConverter<FundingContributors>());
-        
+
         ClassMapBuilder<Funding, ProfileFundingEntity> classMap = mapperFactory.classMap(Funding.class, ProfileFundingEntity.class);
         classMap.field("putCode", "id");
         classMap.field("type", "type");
