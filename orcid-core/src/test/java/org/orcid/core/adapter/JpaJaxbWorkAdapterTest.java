@@ -58,14 +58,13 @@ public class JpaJaxbWorkAdapterTest {
         Work work = getWork();
         assertNotNull(work);
         ProfileWorkEntity profileWorkEntity = jpaJaxbWorkAdapter.toProfileWorkEntity(work);
-        assertEquals(Long.valueOf(123), profileWorkEntity.getWork().getId());
         assertNotNull(profileWorkEntity);
         assertEquals(Visibility.PRIVATE, profileWorkEntity.getVisibility());
         SourceEntity sourceEntity = profileWorkEntity.getSource();
         assertEquals("8888-8888-8888-8880", sourceEntity.getSourceId());
         WorkEntity workEntity = profileWorkEntity.getWork();
         assertNotNull(workEntity);
-        assertEquals(1, workEntity.getId().longValue());
+        assertEquals(123, workEntity.getId().longValue());
         assertEquals("work:title", workEntity.getTitle());
         assertNull(workEntity.getSubtitle());
         assertEquals("work:translatedTitle", workEntity.getTranslatedTitle());
