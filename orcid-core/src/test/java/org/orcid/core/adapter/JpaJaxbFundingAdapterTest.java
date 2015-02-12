@@ -60,6 +60,7 @@ public class JpaJaxbFundingAdapterTest {
         assertEquals(Visibility.PRIVATE.value(), pfe.getVisibility().value());
 
         //General info
+        assertEquals(Long.valueOf(123), pfe.getId());
         assertEquals("funding:title", pfe.getTitle());
         assertEquals("funding:translatedTitle", pfe.getTranslatedTitle());
         assertEquals("en", pfe.getTranslatedTitleLanguageCode());

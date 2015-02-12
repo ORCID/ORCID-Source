@@ -78,7 +78,7 @@ public class Funding implements VisibilityType, Activity, Serializable {
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected CreatedDate createdDate;
 
-    @XmlAttribute(namespace = "http://www.orcid.org/ns/common")
+    @XmlAttribute
     protected String putCode;
     @XmlAttribute
     protected Visibility visibility;

@@ -109,6 +109,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         converterFactory.registerConverter("fundingContributorsConverterId", new JsonOrikaConverter<FundingContributors>());
 
         ClassMapBuilder<Funding, ProfileFundingEntity> classMap = mapperFactory.classMap(Funding.class, ProfileFundingEntity.class);
+        classMap.field("putCode", "id");
         classMap.field("type", "type");
         classMap.field("organizationDefinedType.content", "organizationDefinedType");
         classMap.field("title.title.content", "title");
