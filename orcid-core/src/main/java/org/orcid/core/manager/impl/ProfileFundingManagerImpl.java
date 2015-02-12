@@ -24,8 +24,10 @@ import java.util.regex.Pattern;
 import javax.annotation.Resource;
 
 import org.apache.commons.io.IOUtils;
+import org.orcid.core.adapter.JpaJaxbFundingAdapter;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.record.Funding;
 import org.orcid.persistence.dao.FundingSubTypeSolrDao;
 import org.orcid.persistence.dao.FundingSubTypeToIndexDao;
 import org.orcid.persistence.dao.ProfileFundingDao;
@@ -46,6 +48,9 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
     
     @Resource
     private FundingSubTypeSolrDao fundingSubTypeSolrDao;
+    
+    @Resource
+    private JpaJaxbFundingAdapter jpaJaxbFundingAdapter;
     
     /**
      * Removes the relationship that exists between a funding and a profile.
@@ -179,6 +184,20 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
     
     public boolean updateToMaxDisplay(String orcid, String workId) {
         return profileFundingDao.updateToMaxDisplay(orcid, workId);
+    }
+    
+    /**
+     * Get a funding based on the orcid and funding id
+     * @param orcid
+     *          The funding owner
+     * @param fundingId
+     *          The funding id
+     * @return the Funding          
+     * */
+    @Override
+    public Funding getFunding(String orcid, String fundingId) {
+        ProfileFundingEntity profileFundingEntity = profileFundingDao.getProfileFunding(orcid, fundingId); 
+        return jpaJaxbFundingAdapter.toFunding(profileFundingEntity);
     }
 
 }

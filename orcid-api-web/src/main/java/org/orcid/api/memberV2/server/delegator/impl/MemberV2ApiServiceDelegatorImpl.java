@@ -26,16 +26,19 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
+import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
 import org.orcid.api.common.exception.OrcidNotFoundException;
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
 import org.orcid.core.exception.MismatchedPutCodeException;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.ActivitiesSummary;
+import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.Source;
 import org.orcid.jaxb.model.record.Title;
 import org.orcid.jaxb.model.record.Visibility;
@@ -59,6 +62,9 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 
     @Resource
     private ProfileWorkManager profileWorkManager;
+    
+    @Resource
+    private ProfileFundingManager profileFundingManager;
 
     @Resource
     private ClientDetailsManager clientDetailsManager;
@@ -152,4 +158,11 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         }
     }
 
+    @Override
+    @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
+    public Response viewFunding(String orcid, String putCode) {
+        Funding f = profileFundingManager.getFunding(orcid, putCode);
+        return Response.ok(f).build();
+    }
+    
 }

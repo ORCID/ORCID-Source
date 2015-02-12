@@ -19,6 +19,7 @@ package org.orcid.core.manager;
 import java.util.List;
 
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.record.Funding;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 
 public interface ProfileFundingManager {
@@ -101,5 +102,15 @@ public interface ProfileFundingManager {
     ProfileFundingEntity getProfileFundingEntity(String profileFundingId);
     
     public boolean updateToMaxDisplay(String orcid, String workId);
+    
+    /**
+     * Get a funding based on the orcid and funding id
+     * @param orcid
+     *          The funding owner
+     * @param fundingId
+     *          The funding id
+     * @return the Funding          
+     * */
+    public Funding getFunding(String orcid, String fundingId);
     
 }
