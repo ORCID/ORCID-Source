@@ -16,64 +16,29 @@
  */
 package org.orcid.api.memberV2.server.delegator.impl;
 
-import static org.orcid.core.api.OrcidApiConstants.*;
+import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
-import javax.persistence.PersistenceException;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 
-import org.apache.commons.lang.StringUtils;
-import org.hibernate.exception.ConstraintViolationException;
-import org.orcid.api.common.delegator.impl.OrcidApiServiceDelegatorImpl;
-import org.orcid.api.common.exception.OrcidBadRequestException;
-import org.orcid.api.common.exception.OrcidForbiddenException;
-import org.orcid.api.common.exception.OrcidNotFoundException;
-import org.orcid.api.t2.server.delegator.T2OrcidApiServiceDelegator;
+import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
 import org.orcid.core.exception.MismatchedPutCodeException;
 import org.orcid.core.manager.ClientDetailsManager;
-import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.security.visibility.aop.AccessControl;
-import org.orcid.jaxb.model.message.CreationMethod;
-import org.orcid.jaxb.model.message.ExternalIdentifier;
-import org.orcid.jaxb.model.message.ExternalIdentifiers;
-import org.orcid.jaxb.model.message.OrcidHistory;
-import org.orcid.jaxb.model.message.OrcidMessage;
-import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.message.Source;
-import org.orcid.jaxb.model.message.SourceClientId;
-import org.orcid.jaxb.model.message.SourceName;
-import org.orcid.jaxb.model.message.SourceOrcid;
-import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.jaxb.model.record.ActivitiesSummary;
 import org.orcid.jaxb.model.record.Title;
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.WorkTitle;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.WebhookDao;
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.WebhookEntity;
-import org.orcid.persistence.jpa.entities.keys.WebhookEntityPk;
-import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
-import org.orcid.utils.DateUtils;
-import org.orcid.utils.NullUtils;
-import org.orcid.utils.OrcidStringUtils;
-import org.springframework.dao.DataAccessException;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.provider.AuthorizationRequest;
-import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.stereotype.Component;
 
 /**
