@@ -36,6 +36,8 @@ public interface ProfileWorkManager {
      * @return true if the relationship was deleted
      * */
     boolean removeWork(String clientOrcid, String workId);
+    
+    boolean checkSourceAndRemoveWork(String orcid, String workId);
 
     /**
      * Removes the relationship that exists between a work and a profile.
@@ -121,6 +123,10 @@ public interface ProfileWorkManager {
      * @param workId
      * @return
      */
-    public boolean updateToMaxDisplay(String orcid, String workId);
+    boolean updateToMaxDisplay(String orcid, String workId);
+    
+    Work createWork(String orcid, Work work);
+
+    Work updateWork(String orcid, Work work);
 
 }

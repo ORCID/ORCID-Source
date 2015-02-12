@@ -32,7 +32,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  * 
  */
-@XmlType(name = "citationType")
+@XmlType(name = "citationType", namespace = "http://www.orcid.org/ns/work")
 @XmlEnum
 public enum CitationType {
 

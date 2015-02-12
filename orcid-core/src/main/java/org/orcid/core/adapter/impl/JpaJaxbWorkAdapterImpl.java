@@ -45,6 +45,15 @@ public class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
         }
         return mapperFacade.map(work, ProfileWorkEntity.class);
     }
+    
+    @Override
+    public ProfileWorkEntity toProfileWorkEntity(Work work, ProfileWorkEntity existing) {
+        if (work == null) {
+            return null;
+        }
+        mapperFacade.map(work, existing);
+        return existing;
+    }
 
     @Override
     public Work toWork(ProfileWorkEntity ProfileWorkEntity) {

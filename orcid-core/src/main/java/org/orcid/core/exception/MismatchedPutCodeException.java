@@ -14,30 +14,30 @@
  *
  * =============================================================================
  */
-package org.orcid.api.memberV2.server.delegator;
-
-import javax.ws.rs.core.Response;
-
-import org.orcid.jaxb.model.record.Work;
+package org.orcid.core.exception;
 
 /**
  * 
  * @author Will Simpson
  *
  */
-public interface MemberV2ApiServiceDelegator {
+public class MismatchedPutCodeException extends IllegalArgumentException {
 
-    Response viewStatusText();
+    private static final long serialVersionUID = 1L;
 
-    Response viewActivities(String orcid);
-    
-    Response viewWork(String orcid, String putCode);
-    
-    Response createWork(String orcid, Work work);
-    
-    Response updateWork(String orcid, String putCode, Work work);
-    
-    Response deleteWork(String orcid, String putCode);
+    public MismatchedPutCodeException() {
+    }
 
-    Response viewFunding(String orcid, String putCode);
+    public MismatchedPutCodeException(String s) {
+        super(s);
+    }
+
+    public MismatchedPutCodeException(Throwable cause) {
+        super(cause);
+    }
+
+    public MismatchedPutCodeException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
 }

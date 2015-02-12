@@ -45,6 +45,7 @@ import org.orcid.core.web.filters.ApiVersionFilter;
 import org.orcid.jaxb.model.message.ErrorDesc;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
+import org.orcid.jaxb.model.record.Work;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.xml.sax.SAXException;
@@ -60,12 +61,12 @@ import org.xml.sax.SAXException;
 public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmarshaller> {
 
     private static final Logger logger = Logger.getLogger(OrcidValidationJaxbContextResolver.class);
-    private static final Class<?>[] CLASSES_TO_BE_BOUND = new Class<?>[] { OrcidMessage.class, NotificationAddActivities.class };
     private static final Map<Class<?>, String> SCHEMA_FILENAME_PREFIX_BY_CLASS = new HashMap<>();
     static {
         SCHEMA_FILENAME_PREFIX_BY_CLASS.put(NotificationAddActivities.class, "orcid-notification-add-activities-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS.put(Work.class, "record_2.0_rc1/work-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS.put(OrcidMessage.class, "orcid-message-");
     }
-
     private JAXBContext jaxbContext;
     private Map<String, Schema> schemaByPath = new ConcurrentHashMap<>();
 
@@ -90,7 +91,7 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
     private JAXBContext getJAXBContext() {
         if (jaxbContext == null) {
             try {
-                jaxbContext = JAXBContext.newInstance(CLASSES_TO_BE_BOUND);
+                jaxbContext = JAXBContext.newInstance(SCHEMA_FILENAME_PREFIX_BY_CLASS.keySet().toArray(new Class[SCHEMA_FILENAME_PREFIX_BY_CLASS.size()]));
             } catch (JAXBException e) {
                 throw new RuntimeException("Error creating JAXB context", e);
             }

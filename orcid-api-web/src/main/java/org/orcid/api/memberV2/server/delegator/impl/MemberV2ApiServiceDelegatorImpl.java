@@ -18,6 +18,8 @@ package org.orcid.api.memberV2.server.delegator.impl;
 
 import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,15 +27,21 @@ import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
+import org.orcid.api.common.exception.OrcidNotFoundException;
+import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
+import org.orcid.core.exception.MismatchedPutCodeException;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.ProfileWorkManager;
+import org.orcid.core.manager.SourceManager;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.ActivitiesSummary;
 import org.orcid.jaxb.model.record.Funding;
+import org.orcid.jaxb.model.record.Source;
 import org.orcid.jaxb.model.record.Title;
+import org.orcid.jaxb.model.record.Visibility;
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.WorkTitle;
 import org.orcid.persistence.dao.ProfileDao;
@@ -69,6 +77,9 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 
     @Resource
     private ProfileDao profileDao;
+
+    @Resource
+    private SourceManager sourceManager;
 
     @Override
     public Response viewStatusText() {
@@ -106,34 +117,45 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
     public Response viewWork(String orcid, String putCode) {
         Work w = profileWorkManager.getWork(orcid, putCode);
+        checkVisbility(w);
         return Response.ok(w).build();
     }
 
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
     public Response createWork(String orcid, Work work) {
-        // TODO Auto-generated method stub
-        Work w = new Work();
-        // TODO Wrong Response
-        return Response.ok(w).build();
+        Work w = profileWorkManager.createWork(orcid, work);
+        try {
+            return Response.created(new URI(w.getPutCode())).build();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Error creating URI for new work", e);
+        }
     }
 
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
-    public Response updateWork(String orcid, Work work) {
-        // TODO Auto-generated method stub
-        Work w = new Work();
-        // TODO Wrong Response
+    public Response updateWork(String orcid, String putCode, Work work) {
+        if (!putCode.equals(work.getPutCode())) {
+            throw new MismatchedPutCodeException("The put code in the URL was " + putCode + " whereas the one in the body was " + work.getPutCode());
+        }
+        Work w = profileWorkManager.updateWork(orcid, work);
         return Response.ok(w).build();
     }
 
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
     public Response deleteWork(String orcid, String putCode) {
-        // TODO Auto-generated method stub
-        Work w = new Work();
-        // TODO Wrong Response?
-        return Response.ok().build();
+        profileWorkManager.checkSourceAndRemoveWork(orcid, putCode);
+        return Response.noContent().build();
+    }
+
+    private void checkVisbility(Work work) {
+        Source existingSource = work.getSource();
+        String sourceIdOfUpdater = sourceManager.retrieveSourceOrcid();
+        if (sourceIdOfUpdater != null && (existingSource == null || !sourceIdOfUpdater.equals(existingSource.retrieveSourcePath()))
+                && Visibility.PRIVATE.equals(work.getVisibility())) {
+            throw new OrcidNotFoundException("The work does not exist, or it is private and you are not the source");
+        }
     }
 
     @Override
