@@ -174,9 +174,11 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
     @Transactional
     public Work updateWork(String orcid, Work work) {
         ProfileWorkEntity profileWorkEntity = profileWorkDao.getProfileWork(orcid, work.getPutCode());
+        Visibility originalVisibility = profileWorkEntity.getVisibility();
         SourceEntity existingSource = profileWorkEntity.getSource();
         checkSource(existingSource);
         jpaJaxbWorkAdapter.toProfileWorkEntity(work, profileWorkEntity);
+        profileWorkEntity.setVisibility(originalVisibility);
         profileWorkEntity.setSource(existingSource);
         profileWorkDao.merge(profileWorkEntity);
         return jpaJaxbWorkAdapter.toWork(profileWorkEntity);
