@@ -36,6 +36,8 @@ public interface ProfileWorkManager {
      * @return true if the relationship was deleted
      * */
     boolean removeWork(String clientOrcid, String workId);
+    
+    boolean checkSourceAndRemoveWork(String orcid, String workId);
 
     /**
      * Removes the relationship that exists between a work and a profile.

@@ -66,6 +66,14 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
         return profileWorkDao.removeWork(clientOrcid, workId);
     }
 
+    @Override
+    public boolean checkSourceAndRemoveWork(String orcid, String workId) {
+        ProfileWorkEntity profileWorkEntity = profileWorkDao.getProfileWork(orcid, workId);
+        SourceEntity existingSource = profileWorkEntity.getSource();
+        checkSource(existingSource);
+        return profileWorkDao.removeWork(orcid, workId);
+    }
+
     /**
      * Removes the relationship that exists between a work and a profile.
      * 
@@ -166,15 +174,19 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
     @Transactional
     public Work updateWork(String orcid, Work work) {
         ProfileWorkEntity profileWorkEntity = profileWorkDao.getProfileWork(orcid, work.getPutCode());
-        String sourceIdOfUpdater = sourceManager.retrieveSourceOrcid();
         SourceEntity existingSource = profileWorkEntity.getSource();
-        if (sourceIdOfUpdater != null && (existingSource == null || !sourceIdOfUpdater.equals(existingSource.getSourceId()))) {
-            throw new WrongSourceException("You are not the source of the work, so you are not allowed to update it");
-        }
+        checkSource(existingSource);
         jpaJaxbWorkAdapter.toProfileWorkEntity(work, profileWorkEntity);
         profileWorkEntity.setSource(existingSource);
         profileWorkDao.merge(profileWorkEntity);
         return jpaJaxbWorkAdapter.toWork(profileWorkEntity);
+    }
+
+    private void checkSource(SourceEntity existingSource) {
+        String sourceIdOfUpdater = sourceManager.retrieveSourceOrcid();
+        if (sourceIdOfUpdater != null && (existingSource == null || !sourceIdOfUpdater.equals(existingSource.getSourceId()))) {
+            throw new WrongSourceException("You are not the source of the work, so you are not allowed to update it");
+        }
     }
 
     private void setIncomingWorkPrivacy(ProfileWorkEntity profileWorkEntity, ProfileEntity profile) {
