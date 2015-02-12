@@ -42,14 +42,15 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "name", "address", "disambiguatedOrganization" })
-@XmlRootElement(name = "organization")
+@XmlRootElement(name = "organization", namespace = "http://www.orcid.org/ns/common")
 public class Organization implements Serializable {
 
     private final static long serialVersionUID = 1L;
-    @XmlElement(required = true)
+    @XmlElement(required = true, namespace = "http://www.orcid.org/ns/common")
     protected String name;
-    @XmlElement(required = true)
+    @XmlElement(required = true, namespace = "http://www.orcid.org/ns/common")
     protected OrganizationAddress address;
+    @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected DisambiguatedOrganization disambiguatedOrganization;
 
     /**

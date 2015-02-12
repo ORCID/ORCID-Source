@@ -40,20 +40,20 @@ import java.io.Serializable;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "contributorOrcid", "creditName", "contributorEmail", "contributorAttributes" })
-@XmlRootElement(name = "contributor")
+@XmlRootElement(name = "contributor", namespace = "http://www.orcid.org/ns/funding")
 public class FundingContributor implements Serializable {
 
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
-    @XmlElement
+    @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected ContributorOrcid contributorOrcid;
-    @XmlElement
+    @XmlElement(namespace = "http://www.orcid.org/ns/funding")
     protected CreditName creditName;
-    @XmlElement
+    @XmlElement(namespace = "http://www.orcid.org/ns/funding")
     protected ContributorEmail contributorEmail;
-    @XmlElement
+    @XmlElement(namespace = "http://www.orcid.org/ns/funding")
     protected FundingContributorAttributes contributorAttributes;
 
     /**

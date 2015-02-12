@@ -17,7 +17,6 @@
 package org.orcid.jaxb.model.record;
 
 import java.io.Serializable;
-import java.util.Currency;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -41,7 +40,7 @@ import org.apache.commons.lang.StringUtils;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "content" })
-@XmlRootElement(name = "amount")
+@XmlRootElement(name = "amount", namespace = "http://www.orcid.org/ns/common")
 public class Amount implements Serializable {
     /**
      * 

@@ -24,9 +24,11 @@
 package org.orcid.jaxb.model.record;
 
 import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 /**
@@ -44,13 +46,15 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "organization-address", propOrder = { "city", "region", "country" })
+@XmlRootElement(name = "organizationAddress", namespace = "http://www.orcid.org/ns/common")
 public class OrganizationAddress implements Serializable {
 
     private final static long serialVersionUID = 1L;
-    @XmlElement(required = true)
+    @XmlElement(required = true, namespace = "http://www.orcid.org/ns/common")
     protected String city;
+    @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected String region;
-    @XmlElement(required = true)
+    @XmlElement(required = true, namespace = "http://www.orcid.org/ns/common")
     protected Iso3166Country country;
 
     /**

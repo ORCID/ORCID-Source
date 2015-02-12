@@ -42,9 +42,9 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "putCode", "type", "organizationDefinedFundingType", "title", "description", "amount", "url", "startDate", "endDate",
-        "fundingExternalIdentifiers", "fundingContributors", "organization", "source", "createdDate", "lastModifiedDate" })
-@XmlRootElement(name = "funding")
+@XmlType(propOrder = { "type", "organizationDefinedType", "title", "description", "amount", "url", "startDate", "endDate", "externalIdentifiers",
+        "contributors", "organization", "source", "createdDate", "lastModifiedDate" })
+@XmlRootElement(name = "funding", namespace = "http://www.orcid.org/ns/funding")
 public class Funding implements VisibilityType, Activity, Serializable {
 
     private final static long serialVersionUID = 1L;
@@ -57,11 +57,11 @@ public class Funding implements VisibilityType, Activity, Serializable {
     protected FundingTitle title;
     @XmlElement(required = true, namespace = "http://www.orcid.org/ns/funding")
     protected Organization organization;
-    @XmlElement(name = "shortDescription", namespace = "http://www.orcid.org/ns/common")
+    @XmlElement(namespace = "http://www.orcid.org/ns/funding", name = "shortDescription")
     protected String description;
-    @XmlElement(name = "amount", namespace = "http://www.orcid.org/ns/common")
+    @XmlElement(name = "amount", namespace = "http://www.orcid.org/ns/funding")
     protected Amount amount;
-    @XmlElement (namespace = "http://www.orcid.org/ns/common")
+    @XmlElement(namespace = "http://www.orcid.org/ns/funding")
     protected Url url;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected FuzzyDate startDate;
@@ -71,16 +71,18 @@ public class Funding implements VisibilityType, Activity, Serializable {
     protected FundingExternalIdentifiers externalIdentifiers;
     @XmlElement(namespace = "http://www.orcid.org/ns/funding")
     protected FundingContributors contributors;
-    protected Source source;
-    @XmlAttribute(namespace = "http://www.orcid.org/ns/funding")
-    protected String putCode;
-    @XmlAttribute(required = true,namespace = "http://www.orcid.org/ns/funding")
-    protected Visibility visibility;
-    @XmlElement(namespace = "http://www.orcid.org/ns/funding")
+    @XmlElement(namespace = "http://www.orcid.org/ns/common")
+    protected Source source;    
+    @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected LastModifiedDate lastModifiedDate;
-    @XmlElement(namespace = "http://www.orcid.org/ns/funding")
+    @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected CreatedDate createdDate;
 
+    @XmlAttribute(namespace = "http://www.orcid.org/ns/common")
+    protected String putCode;
+    @XmlAttribute
+    protected Visibility visibility;
+    
     public FundingTitle getTitle() {
         return title;
     }
