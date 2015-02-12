@@ -85,7 +85,7 @@ abstract public class MemberV2ApiServiceImplBase {
     @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(WORK + PUTCODE)
     public Response updateWork(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, Work work) {
-        return serviceDelegator.updateWork(orcid, work);
+        return serviceDelegator.updateWork(orcid, putCode, work);
     }
 
     @DELETE

@@ -36,6 +36,7 @@ import org.orcid.api.common.exception.OrcidBadRequestException;
 import org.orcid.api.common.exception.OrcidForbiddenException;
 import org.orcid.api.common.exception.OrcidNotFoundException;
 import org.orcid.api.t2.server.delegator.T2OrcidApiServiceDelegator;
+import org.orcid.core.exception.MismatchedPutCodeException;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.ProfileEntityManager;
@@ -154,7 +155,10 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
-    public Response updateWork(String orcid, Work work) {
+    public Response updateWork(String orcid, String putCode, Work work) {
+        if (!putCode.equals(work.getPutCode())) {
+            throw new MismatchedPutCodeException("The put code in the URL was " + putCode + " whereas the one in the body was " + work.getPutCode());
+        }
         Work w = profileWorkManager.updateWork(orcid, work);
         return Response.ok(w).build();
     }

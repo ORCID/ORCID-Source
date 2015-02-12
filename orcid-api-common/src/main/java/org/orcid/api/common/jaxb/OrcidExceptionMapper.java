@@ -43,6 +43,7 @@ import org.orcid.api.common.exception.OrcidNotAcceptableException;
 import org.orcid.api.common.exception.OrcidNotFoundException;
 import org.orcid.api.common.exception.OrcidUnauthorizedException;
 import org.orcid.core.api.OrcidApiConstants;
+import org.orcid.core.exception.MismatchedPutCodeException;
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.locale.LocaleManager;
@@ -92,6 +93,7 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         // 400
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(IllegalArgumentException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9006));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidBadRequestException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9012));
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(MismatchedPutCodeException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9019));
 
         // 401
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(AuthenticationException.class, new ImmutablePair<>(Response.Status.UNAUTHORIZED, 9002));
