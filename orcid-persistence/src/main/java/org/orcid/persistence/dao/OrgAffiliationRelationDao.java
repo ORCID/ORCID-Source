@@ -16,7 +16,10 @@
  */
 package org.orcid.persistence.dao;
 
+import java.util.List;
+
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.record.AffiliationType;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 
 public interface OrgAffiliationRelationDao extends GenericDao<OrgAffiliationRelationEntity, Long> {
@@ -52,15 +55,15 @@ public interface OrgAffiliationRelationDao extends GenericDao<OrgAffiliationRela
     /**
      * Get the affiliation associated with the client orcid and the orgAffiliationRelationId
      * 
-     * @param clientOrcid
-     *            The client orcid
+     * @param userOrcid
+     *            The user orcid
      * 
      * @param orgAffiliationRelationId
      *            The id of the orgAffilationRelation that will be updated
      * 
      * @return the orgAffiliationRelation object
      * */
-    OrgAffiliationRelationEntity getOrgAffiliationRelation(String clientOrcid, String orgAffiliationRelationId);
+    OrgAffiliationRelationEntity getOrgAffiliationRelation(String userOrcid, String orgAffiliationRelationId);
 
     /**
      * Creates a new profile entity relationship between the provided orgAffilationRelation and
@@ -89,4 +92,22 @@ public interface OrgAffiliationRelationDao extends GenericDao<OrgAffiliationRela
     OrgAffiliationRelationEntity updateOrgAffiliationRelationEntity(OrgAffiliationRelationEntity orgAffiliationRelationEntity);
     
     void removeOrgAffiliationByClientSourceId(String clientSourceId);
+    
+    /**
+     * Get all affiliations that belongs to a user and matches given type
+     * @param userOrcid
+     *          The owner of the affiliation
+     * @param type
+     *          The affiliation type
+     * @return a list of all affiliations that belongs to the given user and matches the given type                 
+     * */
+    List<OrgAffiliationRelationEntity> getByUserAndType(String userOrcid, AffiliationType type);
+    
+    /**
+     * Get all affiliations that matches the given type
+     * @param type
+     *          The affiliation type
+     * @return a list of all affiliations that matches the given type                 
+     * */
+    List<OrgAffiliationRelationEntity> getByType(AffiliationType type);
 }

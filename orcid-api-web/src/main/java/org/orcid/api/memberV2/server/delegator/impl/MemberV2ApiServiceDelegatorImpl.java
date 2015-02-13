@@ -26,10 +26,10 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
-import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
 import org.orcid.api.common.exception.OrcidNotFoundException;
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
 import org.orcid.core.exception.MismatchedPutCodeException;
+import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
@@ -38,6 +38,7 @@ import org.orcid.core.manager.SourceManager;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.ActivitiesSummary;
+import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.Source;
 import org.orcid.jaxb.model.record.Title;
@@ -71,6 +72,9 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 
     @Resource
     private ProfileEntityManager profileEntityManager;
+    
+    @Resource
+    private AffiliationsManager affiliationsManager;
 
     @Resource
     private WebhookDao webhookDao;
@@ -165,4 +169,10 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         return Response.ok(f).build();
     }
     
+    @Override
+    @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
+    public Response viewEducation(String orcid, String putCode) {
+        Education f = affiliationsManager.getEducationAffiliation(orcid, putCode);
+        return Response.ok(f).build();
+    }
 }
