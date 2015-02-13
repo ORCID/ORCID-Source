@@ -22,11 +22,8 @@ import java.util.List;
 import ma.glasnost.orika.MapperFacade;
 
 import org.orcid.core.adapter.JpaJaxbEducationAdapter;
-import org.orcid.core.adapter.JpaJaxbFundingAdapter;
 import org.orcid.jaxb.model.record.Education;
-import org.orcid.jaxb.model.record.Funding;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
-import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 
 /**
  * 
@@ -43,20 +40,23 @@ public class JpaJaxbEducationAdapterImpl implements JpaJaxbEducationAdapter {
 
     @Override
     public OrgAffiliationRelationEntity toOrgAffiliationRelationEntity(Education education) {
-        // TODO Auto-generated method stub
-        return null;
+        if(education == null)
+            return null;
+        return mapperFacade.map(education, OrgAffiliationRelationEntity.class);
     }
 
     @Override
     public Education toEducation(OrgAffiliationRelationEntity entity) {
-        // TODO Auto-generated method stub
-        return null;
+        if(entity == null)
+            return null;
+        return mapperFacade.map(entity, Education.class);
     }
 
     @Override
     public List<Education> toEducation(Collection<OrgAffiliationRelationEntity> entities) {
-        // TODO Auto-generated method stub
-        return null;
+        if(entities == null)
+            return null;
+        return mapperFacade.mapAsList(entities, Education.class);
     }
 
     
