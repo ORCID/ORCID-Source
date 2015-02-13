@@ -55,7 +55,7 @@ public class Employments implements Serializable, ActivitiesContainer {
      * 
      */
     private static final long serialVersionUID = 1L;
-    protected List<Education> employment;
+    protected List<Employment> employment;
 
     /**
      * Gets the value of the affiliation property.
@@ -76,21 +76,21 @@ public class Employments implements Serializable, ActivitiesContainer {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Education }
+     * {@link Employment }
      * 
      * 
      */
-    public List<Education> getAffiliation() {
+    public List<Employment> getAffiliation() {
         if (employment == null) {
-            employment = new ArrayList<Education>();
+            employment = new ArrayList<Employment>();
         }
         return this.employment;
     }
 
-    public List<Education> getAffiliationsByType(AffiliationType affiliationType) {
-        List<Education> filteredAffilations = new ArrayList<Education>();
+    public List<Employment> getAffiliationsByType(AffiliationType affiliationType) {
+        List<Employment> filteredAffilations = new ArrayList<Employment>();
         if (employment != null && affiliationType != null) {
-            for (Education aff : employment) {
+            for (Employment aff : employment) {
                 if (affiliationType.equals(aff.getType())) {
                     filteredAffilations.add(aff);
                 }
@@ -100,10 +100,10 @@ public class Employments implements Serializable, ActivitiesContainer {
     }
 
     @Override
-    public Map<String, Education> retrieveActivitiesAsMap() {
-        Map<String, Education> affMap = new HashMap<>();
+    public Map<String, Employment> retrieveActivitiesAsMap() {
+        Map<String, Employment> affMap = new HashMap<>();
         if (employment != null) {
-            for (Education aff : employment) {
+            for (Employment aff : employment) {
                 if (StringUtils.isNotBlank(aff.putCode)) {
                     affMap.put(aff.putCode, aff);
                 }

@@ -55,9 +55,8 @@ public class JpaJaxbFundingAdapterTest {
         ProfileFundingEntity pfe = jpaJaxbFundingAdapter.toProfileFundingEntity(f);
         assertNotNull(pfe);
         //Enums
-        assertEquals(Visibility.PRIVATE.value(), pfe.getVisibility().value());
-        assertEquals(FundingType.GRANT.value(), pfe.getType().value());
-        assertEquals(Visibility.PRIVATE.value(), pfe.getVisibility().value());
+        assertEquals(Visibility.PRIVATE.value(), pfe.getVisibility().value());        
+        assertEquals(FundingType.GRANT.value(), pfe.getType().value());        
 
         //General info
         assertEquals(Long.valueOf(123), pfe.getId());

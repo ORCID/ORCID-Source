@@ -80,23 +80,11 @@ public class Educations implements Serializable, ActivitiesContainer {
      * 
      * 
      */
-    public List<Education> getAffiliation() {
+    public List<Education> getEducation() {
         if (education == null) {
             education = new ArrayList<Education>();
         }
         return this.education;
-    }
-
-    public List<Education> getAffiliationsByType(AffiliationType affiliationType) {
-        List<Education> filteredAffilations = new ArrayList<Education>();
-        if (education != null && affiliationType != null) {
-            for (Education aff : education) {
-                if (affiliationType.equals(aff.getType())) {
-                    filteredAffilations.add(aff);
-                }
-            }
-        }
-        return filteredAffilations;
     }
 
     @Override
@@ -114,7 +102,7 @@ public class Educations implements Serializable, ActivitiesContainer {
 
     @Override
     public List<? extends Activity> retrieveActivities() {
-        return getAffiliation();
+        return getEducation();
     }
 
     @Override

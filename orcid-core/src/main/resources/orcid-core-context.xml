@@ -473,6 +473,11 @@
         <property name="mapperFacade" ref="fundingMapperFacade" />
     </bean>
 	
+	<bean id="educationMapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getEducationMapperFacade"/>
+	<bean id="jpaJaxbEducationAdapter" class="org.orcid.core.adapter.impl.JpaJaxbEducationAdapterImpl">
+        <property name="mapperFacade" ref="educationMapperFacade" />
+    </bean>
+	
 	<!-- Geonames username -->
 	<bean id="geonamesUser" class="java.lang.String">
 		<constructor-arg value="orcid"/>

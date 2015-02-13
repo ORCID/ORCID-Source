@@ -42,13 +42,11 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "type", "departmentName", "roleTitle", "startDate", "endDate", "organization", "source", "createdDate", "lastModifiedDate" })
-@XmlRootElement(name = "education")
+@XmlType(propOrder = { "departmentName", "roleTitle", "startDate", "endDate", "organization", "source", "createdDate", "lastModifiedDate" })
+@XmlRootElement(name = "education", namespace = "http://www.orcid.org/ns/education")
 public class Education implements Serializable, VisibilityType, Activity {
 
-    private final static long serialVersionUID = 1L;
-    @XmlElement(namespace = "http://www.orcid.org/ns/education", required = true)
-    protected AffiliationType type;
+    private final static long serialVersionUID = 1L;    
     @XmlElement(namespace = "http://www.orcid.org/ns/education")
     protected String departmentName;
     @XmlElement(namespace = "http://www.orcid.org/ns/education")
@@ -59,38 +57,18 @@ public class Education implements Serializable, VisibilityType, Activity {
     protected FuzzyDate endDate;
     @XmlElement(namespace = "http://www.orcid.org/ns/education", required = true)
     protected Organization organization;
-    protected Source source;
-    @XmlAttribute(namespace = "http://www.orcid.org/ns/common",name = "visibility")
-    protected Visibility visibility;
-    @XmlAttribute(namespace = "http://www.orcid.org/ns/common")
-    protected String putCode;
+    @XmlElement(namespace = "http://www.orcid.org/ns/common")
+    protected Source source;    
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected LastModifiedDate lastModifiedDate;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
-    protected CreatedDate createdDate;
+    protected CreatedDate createdDate;       
+
+    @XmlAttribute
+    protected String putCode;
+    @XmlAttribute
+    protected Visibility visibility;
     
-
-    /**
-     * Gets the value of the type property.
-     * 
-     * @return possible object is {@link AffiliationType }
-     * 
-     */
-    public AffiliationType getType() {
-        return type;
-    }
-
-    /**
-     * Sets the value of the type property.
-     * 
-     * @param value
-     *            allowed object is {@link AffiliationType }
-     * 
-     */
-    public void setType(AffiliationType value) {
-        this.type = value;
-    }
-
     /**
      * Gets the value of the departmentName property.
      * 
@@ -304,8 +282,7 @@ public class Education implements Serializable, VisibilityType, Activity {
         result = prime * result + ((organization == null) ? 0 : organization.hashCode());
         result = prime * result + ((roleTitle == null) ? 0 : roleTitle.hashCode());
         result = prime * result + ((source == null) ? 0 : source.hashCode());
-        result = prime * result + ((startDate == null) ? 0 : startDate.hashCode());
-        result = prime * result + ((type == null) ? 0 : type.hashCode());
+        result = prime * result + ((startDate == null) ? 0 : startDate.hashCode());        
         result = prime * result + ((visibility == null) ? 0 : visibility.hashCode());
         return result;
     }
@@ -354,8 +331,6 @@ public class Education implements Serializable, VisibilityType, Activity {
             if (other.startDate != null)
                 return false;
         } else if (!startDate.equals(other.startDate))
-            return false;
-        if (type != other.type)
             return false;
         if (visibility != other.visibility)
             return false;
