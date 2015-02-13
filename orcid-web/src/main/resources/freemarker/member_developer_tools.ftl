@@ -265,7 +265,7 @@
 						<div class="row">
 							<span class="col-md-3 col-sm-3 col-xs-12"></span>
 							<span class="col-md-9 col-sm-9 col-xs-12">
-								<textarea class="input-xlarge selectable authorizeURL" ng-model="authorizeURL" readonly="readonly"></textarea>
+								<textarea class="input-xlarge authorizeURL" ng-model="authorizeURL" readonly="readonly" ng-focus="inputTextAreaSelectAll($event)"></textarea>
 							</span>
 						</div>
 						<div class="row">
@@ -278,7 +278,7 @@
 						<div class="row">
 							<span class="col-md-3 col-sm-3 col-xs-12"></span>
 							<span class="col-md-9 col-sm-9 col-xs-12">
-								<textarea class="input-xlarge selectable authorizeURL" ng-model="sampleAuthCurl" readonly="readonly"></textarea>
+								<textarea class="input-xlarge authorizeURL" ng-model="sampleAuthCurl" readonly="readonly" ng-focus="inputTextAreaSelectAll($event)"></textarea>
 							</span>
 						</div>
 					</div>

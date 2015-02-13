@@ -39,7 +39,6 @@ if (typeof jQuery.ui == 'undefined') {
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.28/angular.min.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.28/angular-cookies.min.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.28/angular-sanitize.min.js"></script>
-<script src="${staticCdn}/javascript/ui-bootstrap-tpls-0.12.0.min.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 if (typeof angular == 'undefined') {

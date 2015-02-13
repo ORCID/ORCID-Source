@@ -6399,6 +6399,11 @@ orcidNgModule.controller('SSOPreferencesCtrl',['$scope', '$compile', '$sce', 'em
         $scope.nameToDisplay = $sce.trustAsHtml($scope.userCredentials.clientName.value);
         $scope.descriptionToDisplay = $sce.trustAsHtml($scope.userCredentials.clientDescription.value);
     };
+    
+    $scope.inputTextAreaSelectAll = function($event){
+    	$event.target.select();
+    }
+    
 }]);
 
 orcidNgModule.controller('ClientEditCtrl',['$scope', '$compile', function ($scope, $compile){
@@ -6848,6 +6853,11 @@ orcidNgModule.controller('ClientEditCtrl',['$scope', '$compile', function ($scop
     $scope.closeModal = function(){
         $.colorbox.close();
     };
+    
+    $scope.inputTextAreaSelectAll = function($event){
+    	$event.target.select();
+    }
+    
 }]);
 
 orcidNgModule.controller('CustomEmailCtrl',['$scope', '$compile',function ($scope, $compile) {
@@ -7802,35 +7812,37 @@ angular.module('ui.multiselect', [])
   }]);
 
 
-/*Miscellaneous controllers */
-orcidNgModule.controller('searchBoxCtrl',['$scope', function ($scope){
-	$scope.showSearchFilter = false;
-	$scope.showLegalInfo = false;
-	$scope.filterModified = false;
+orcidNgModule.controller('searchBoxCtrl',['$scope', function ($scope){	
 	
-	$scope.showSearchFilter = function() {
-		$scope.showSearchBox =  true;
+	$scope.searchFilterChanged = false;
+	$scope.filterActive = false;
+	$scope.conditionsActive = false;
+	
+	$scope.searchFocus = function(){
+		$scope.filterActive = true;
+		$scope.conditionsActive = true;
 	}
 	
-	$scope.hideSearchFilter = function() {		
-		$scope.showSearchBox =  false;
+	$scope.searchBlur = function(){
+		$scope.hideSearchFilter();
+		setTimeout(function () {
+			$scope.conditionsActive = false;
+        }, 50);
 	}
 	
-	$scope.showLegalBox = function(){
-		$scope.showLegalInfo =  true;
+	$scope.filterChange = function(){
+		$scope.searchFilterChanged = true;
 	}
 	
-	$scope.hideLegalBox = function() {
-		$scope.showLegalInfo =  false;
+	$scope.hideSearchFilter = function(){
+		var searchInputValue = document.getElementById("search-input").value;
+		if (searchInputValue === ""){
+			setTimeout(function() {
+                if ($scope.searchFilterChanged === false) {
+                	$scope.filterActive = false;
+                }
+            }, 3000);
+		}
 	}
-	
-	$scope.filterStatus = function(){
-		$scope.filterModified = true;	
-	}
-	
-	
-	
-	
-	
 	
 }]);

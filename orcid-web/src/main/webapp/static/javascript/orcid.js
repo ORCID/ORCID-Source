@@ -16,44 +16,8 @@
  */
 (function($) {
  
-    var searchFilterChanged = false;
-    var showingTemplateMenu = false;
 
-    
-    
-    
-    var searchFilters = function() {
-        $("input[type=search]").live("focus", function(e) {
-            
-        	$(".search_options").show();
-            $(".conditions").animate({"height":"22px"}, 200);
-            
-        });
-        
-        $("input[name=huh_radio]").live("click", function(e) {
-            searchFilterChanged = true;
-        });
-        
-        
-        $("input[type=search]").live("blur", function(e) {
-            hideSearchFilter();
-            setTimeout(function () {
-                $(".conditions").animate({"height":"0px"}, 200);
-            }, 50);
-        });
-        
-        
-        
-        var hideSearchFilter = function() {
-            if ($("input[type=search]").val() === "") {
-                setTimeout(function() {
-                    if (searchFilterChanged === false) {
-                        $(".search_options").fadeOut(500);
-                    }
-                }, 3000);
-            }
-        };
-    };
+    var showingTemplateMenu = false;
 
     var toolTips = function(){
         $(".settings-button").tooltip({
@@ -350,25 +314,7 @@
         };
     };    
 	
-	function setLoginStatusIcon(){
-		$.ajax({
-			url: orcidVar.baseUri + '/userStatus.json?callback=?',
-	        type: 'GET',
-	        dataType: 'json',
-	        success: function(data) {        	
-	        	if (data.loggedIn == true){	        		
-	        		$('.header .navigation>.mobile-sign-in span').removeClass('glyphicon-user');
-	        		$('.header .navigation>.mobile-sign-in span').addClass('glyphicon-log-out');        		        		
-	        		$('.mobile-sign-in').prop('href', 'signout');	        		
-	        	}
-	        }
-	    }).fail(function() { 
-	    	// something bad is happening!
-	    	console.log("error with loggin check on :" + window.location.href);
-	    });	
-	};	
-	
-	
+    
 	var developerToolsTabs =  function(){
 		$('.developer-tools .tab').click(function(e){			
 			e.preventDefault();
@@ -384,27 +330,18 @@
 				$('.developer-tools .tab-container').css('background', '#EBEBEB');
 			}
 		});		
-	};
-	
-	var selectableInputs = function(){
-    	$(".selectable").click(function () {
-    		$(this).select();
-    	});
-    };
-    
+	};    
         
     /*============================================================
         Page initialisation
     ============================================================*/
 
     var init = function() {
-        //searchFilters();
         toolTips();
         popupHandler();
         menuHack();        
         menuHandler();
-        developerToolsTabs();
-        selectableInputs();
+        //developerToolsTabs();      
     };
 
     
