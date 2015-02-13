@@ -358,7 +358,7 @@
 								</ul>					
 							</div>	
 						</div>
-						<div class="slidebox" ng-show="">
+						<div class="slidebox" ng-show="expanded == true">
 							<div class="row">
 								<div class="col-md-12 col-sm-12 col-xs-12">
 									<div class="add-options">								

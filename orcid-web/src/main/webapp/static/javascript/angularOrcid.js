@@ -6235,12 +6235,9 @@ orcidNgModule.controller('SSOPreferencesCtrl',['$scope', '$compile', '$sce', 'em
             }
         }
         $scope.editing = true;
-        $scope.expanded = true;
-        /*
         $('.developer-tools .slidebox').slideDown();
         $('.tab-container .collapsed').css('display', 'none');
         $('.tab-container .expanded').css('display', 'inline').parent().css('background','#EBEBEB');
-        */
     };
 
     $scope.showViewLayout = function() {
@@ -6248,7 +6245,7 @@ orcidNgModule.controller('SSOPreferencesCtrl',['$scope', '$compile', '$sce', 'em
         $scope.getSSOCredentials();
         $scope.editing = false;
         $scope.creating = false;
-        /*$('.edit-details .slidebox').slideDown();*/
+        $('.edit-details .slidebox').slideDown();
     };
 
     $scope.editClientCredentials = function() {
