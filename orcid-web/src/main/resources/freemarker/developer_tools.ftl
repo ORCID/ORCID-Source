@@ -126,7 +126,7 @@
 								<p ng-bind-html="descriptionToDisplay"></p>														
 							</div>							
 						</div>
-						<div class="slidebox">
+						<div class="slidebox" ng-show="expanded == true">
 							<div class="row">
 								<!-- SLIDE BOX  -->
 								<!-- Redirect URIS -->
@@ -358,7 +358,7 @@
 								</ul>					
 							</div>	
 						</div>
-						<div class="slidebox">
+						<div class="slidebox" ng-show="">
 							<div class="row">
 								<div class="col-md-12 col-sm-12 col-xs-12">
 									<div class="add-options">								
@@ -410,9 +410,9 @@
 					</div>										
 					<div class="row slide" ng-show="userCredentials.clientSecret && userCredentials.clientSecret.value" ng-cloak>
 						<div class="col-md-12 col-sm-12 col-xs-12">
-							<div class="tab-container">
-								<a href="#" class="tab collapsed" data-tab="collapsed"><span class="glyphicon glyphicon-chevron-down"></span><@orcid.msg 'common.details.show_details' /></a>
-								<a href="#" class="tab expanded"><span class="glyphicon glyphicon-chevron-up"></span><@orcid.msg 'common.details.hide_details' /></a>
+							<div class="tab-container" ng-class="{'expanded' : expanded == true}">
+								<a href="#" class="tab" ng-click="expand()" ng-show="expanded == false"><span class="glyphicon glyphicon-chevron-down"></span><@orcid.msg 'common.details.show_details' /></a>
+								<a href="#" class="tab" ng-click="collapse()" ng-show="expanded == true"><span class="glyphicon glyphicon-chevron-up"></span><@orcid.msg 'common.details.hide_details' /></a>
 							</div>
 						</div>			
 					</div>

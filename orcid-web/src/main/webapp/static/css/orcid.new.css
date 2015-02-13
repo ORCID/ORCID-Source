@@ -3655,6 +3655,10 @@ ul.sso-options li span {
 	border-bottom: 1px solid #CCC;
 }
 
+.developer-tools .tab-container.expanded{
+	background: #EBEBEB;
+}
+
 .developer-tools .tab-container .tab {
 	padding: 2px 10px;
 	text-align: center;
@@ -3666,10 +3670,13 @@ ul.sso-options li span {
 	display: none;
 }
 
+/*
 .developer-tools .slidebox {
 	display: none;
 	overflow: visible !important;
 }
+
+*/
 
 .developer-tools .tab-container a span {
 	margin-right: 5px;

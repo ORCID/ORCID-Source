@@ -341,7 +341,6 @@
         popupHandler();
         menuHack();        
         menuHandler();
-        //developerToolsTabs();      
     };
 
     
