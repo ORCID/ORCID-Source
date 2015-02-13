@@ -40,4 +40,6 @@ public interface MemberV2ApiServiceDelegator {
     Response deleteWork(String orcid, String putCode);
 
     Response viewFunding(String orcid, String putCode);
+    
+    Response viewEducation(String orcid, String putCode);
 }

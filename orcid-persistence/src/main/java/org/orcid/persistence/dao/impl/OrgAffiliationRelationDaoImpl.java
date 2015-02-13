@@ -17,10 +17,13 @@
 package org.orcid.persistence.dao.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.record.AffiliationType;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -78,8 +81,8 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
     /**
      * Get the affiliation associated with the client orcid and the orgAffiliationRelationId
      * 
-     * @param clientOrcid
-     *            The client orcid
+     * @param userOrcid
+     *            The user orcid
      * 
      * @param orgAffiliationRelationId
      *            The id of the orgAffiliationRelation that will be updated
@@ -88,9 +91,9 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
      * */
     @Override
     @Transactional
-    public OrgAffiliationRelationEntity getOrgAffiliationRelation(String clientOrcid, String orgAffiliationRelationId) {
-        Query query = entityManager.createQuery("from OrgAffiliationRelationEntity where profile.id=:clientOrcid and id=:orgAffiliationRelationId");
-        query.setParameter("clientOrcid", clientOrcid);
+    public OrgAffiliationRelationEntity getOrgAffiliationRelation(String userOrcid, String orgAffiliationRelationId) {
+        Query query = entityManager.createQuery("from OrgAffiliationRelationEntity where profile.id=:userOrcid and id=:orgAffiliationRelationId");
+        query.setParameter("userOrcid", userOrcid);
         query.setParameter("orgAffiliationRelationId", Long.valueOf(orgAffiliationRelationId));
         return (OrgAffiliationRelationEntity) query.getSingleResult();
     }
@@ -158,4 +161,33 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
         query.setParameter("clientSourceId", clientSourceId);
         query.executeUpdate();
     }
+    
+    /**
+     * Get all affiliations that belongs to a user and matches given type
+     * @param userOrcid
+     *          The owner of the affiliation
+     * @param type
+     *          The affiliation type
+     * @return a list of all affiliations that belongs to the given user and matches the given type                 
+     * */
+    @Override
+    public List<OrgAffiliationRelationEntity> getByUserAndType(String userOrcid, AffiliationType type) {
+        TypedQuery<OrgAffiliationRelationEntity> query = entityManager.createQuery("from OrgAffiliationRelationEntity where profile.id=:userOrcid and affiliationType.value=:affiliationType", OrgAffiliationRelationEntity.class);
+        query.setParameter("userOrcid", userOrcid);
+        query.setParameter("affiliationType", type.value());
+        return query.getResultList();
+    }
+    
+    /**
+     * Get all affiliations that matches the given type
+     * @param type
+     *          The affiliation type
+     * @return a list of all affiliations that matches the given type                 
+     * */
+    @Override
+    public List<OrgAffiliationRelationEntity> getByType(AffiliationType type){
+        TypedQuery<OrgAffiliationRelationEntity> query = entityManager.createQuery("from OrgAffiliationRelationEntity where affiliationType.value=:affiliationType", OrgAffiliationRelationEntity.class);
+        query.setParameter("affiliationType", type.value());
+        return query.getResultList();
+    } 
 }
