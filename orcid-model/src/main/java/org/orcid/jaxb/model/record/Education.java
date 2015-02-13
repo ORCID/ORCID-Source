@@ -44,7 +44,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "departmentName", "roleTitle", "startDate", "endDate", "organization", "source", "createdDate", "lastModifiedDate" })
 @XmlRootElement(name = "education", namespace = "http://www.orcid.org/ns/education")
-public class Education implements Serializable, VisibilityType, Activity {
+public class Education implements Serializable, VisibilityType, Activity, OrganizationHolder {
 
     private final static long serialVersionUID = 1L;    
     @XmlElement(namespace = "http://www.orcid.org/ns/education")

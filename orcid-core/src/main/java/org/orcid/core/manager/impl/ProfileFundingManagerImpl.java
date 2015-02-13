@@ -25,16 +25,24 @@ import javax.annotation.Resource;
 
 import org.apache.commons.io.IOUtils;
 import org.orcid.core.adapter.JpaJaxbFundingAdapter;
+import org.orcid.core.exception.OrcidValidationException;
+import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.ProfileFundingManager;
+import org.orcid.core.manager.SourceManager;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.persistence.dao.FundingSubTypeSolrDao;
 import org.orcid.persistence.dao.FundingSubTypeToIndexDao;
+import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.ProfileFundingDao;
+import org.orcid.persistence.jpa.entities.OrgEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.solr.entities.OrgDefinedFundingTypeSolrDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 public class ProfileFundingManagerImpl implements ProfileFundingManager {
     
@@ -51,6 +59,18 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
     
     @Resource
     private JpaJaxbFundingAdapter jpaJaxbFundingAdapter;
+    
+    @Resource
+    private OrgManager orgManager;
+    
+    @Resource
+    private SourceManager sourceManager;
+    
+    @Resource
+    private ProfileDao profileDao;
+    
+    @Resource
+    private LocaleManager localeManager;
     
     /**
      * Removes the relationship that exists between a funding and a profile.
@@ -199,5 +219,54 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
         ProfileFundingEntity profileFundingEntity = profileFundingDao.getProfileFunding(orcid, fundingId); 
         return jpaJaxbFundingAdapter.toFunding(profileFundingEntity);
     }
+    
+    /**
+     * Add a new funding to the given user
+     * @param orcid
+     *          The user to add the funding
+     * @param funding
+     *          The funding to add
+     * @return the added funding                  
+     * */
+    @Override
+    @Transactional
+    public Funding createFunding(String orcid, Funding funding) {
+        //Check for duplicates
+        List<ProfileFundingEntity> existingFundings = profileFundingDao.getByUser(orcid);
+        List<Funding> fundings = jpaJaxbFundingAdapter.toFunding(existingFundings);
+        if(fundings != null) {
+            for(Funding exstingFunding : fundings) {
+                if(funding.isDuplicated(exstingFunding)) {
+                    LOGGER.error("Trying to create a funding that is duplicated with " + funding.getPutCode());
+                    throw new OrcidValidationException(localeManager.resolveMessage("api.error.duplicated"));
+                }                    
+            }
+        }
+                
+        ProfileFundingEntity profileFundingEntity = jpaJaxbFundingAdapter.toProfileFundingEntity(funding);
+        
+        //Updates the give organization with the latest organization from database
+        OrgEntity updatedOrganization = orgManager.getOrgEntity(funding);
+        profileFundingEntity.setOrg(updatedOrganization);
+        
+        profileFundingEntity.setSource(sourceManager.retrieveSourceEntity());
+        ProfileEntity profile = profileDao.find(orcid);
+        profileFundingEntity.setProfile(profile);
+        setIncomingWorkPrivacy(profileFundingEntity, profile);
+        profileFundingDao.persist(profileFundingEntity);
+        return jpaJaxbFundingAdapter.toFunding(profileFundingEntity);
+    }
 
+    private void setIncomingWorkPrivacy(ProfileFundingEntity profileFundingEntity, ProfileEntity profile) {
+        Visibility incomingWorkVisibility = profileFundingEntity.getVisibility();
+        Visibility defaultWorkVisibility = profile.getActivitiesVisibilityDefault();
+        if (profile.getClaimed()) {
+            if (defaultWorkVisibility.isMoreRestrictiveThan(incomingWorkVisibility)) {
+                profileFundingEntity.setVisibility(defaultWorkVisibility);
+            }
+        } else if (incomingWorkVisibility == null) {
+            profileFundingEntity.setVisibility(Visibility.PRIVATE);
+        }
+    }
+    
 }

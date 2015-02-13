@@ -119,4 +119,6 @@ public interface ProfileFundingDao extends GenericDao<ProfileFundingEntity, Long
     void setFundingExternalIdentifiersInJson(BigInteger id, String extIdsJson);    
     
     void removeFundingByClientSourceId(String clientSourceId);
+    
+    List<ProfileFundingEntity> getByUser(String userOrcid);
 }

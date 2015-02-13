@@ -1081,10 +1081,10 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
      * @param orcidGrant
      * @return a OrgEntity based on the provided OrcidGrant
      * */
-    private OrgEntity getOrgEntity(Funding orcidGrant) {
-        if (orcidGrant != null) {
+    private OrgEntity getOrgEntity(Funding orcidFunding) {
+        if (orcidFunding != null) {
             OrgEntity orgEntity = new OrgEntity();
-            Organization organization = orcidGrant.getOrganization();
+            Organization organization = orcidFunding.getOrganization();
             orgEntity.setName(organization.getName());
             OrganizationAddress address = organization.getAddress();
             orgEntity.setCity(address.getCity());
