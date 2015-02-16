@@ -133,4 +133,14 @@ public interface ProfileFundingManager {
      * */
     Funding updateFunding(String orcid, Funding funding);
     
+    /**
+     * Deletes a given funding, if and only if, the client that requested the delete is the source of the funding
+     * @param orcid
+     *          the funding owner
+     * @param fundingId
+     *          The funding id                 
+     * @return true if the funding was deleted, false otherwise
+     * */
+    boolean checkSourceAndDelete(String orcid, String fundingId);
+    
 }
