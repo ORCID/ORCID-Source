@@ -85,19 +85,7 @@ public class Employments implements Serializable, ActivitiesContainer {
             employment = new ArrayList<Employment>();
         }
         return this.employment;
-    }
-
-    public List<Employment> getAffiliationsByType(AffiliationType affiliationType) {
-        List<Employment> filteredAffilations = new ArrayList<Employment>();
-        if (employment != null && affiliationType != null) {
-            for (Employment aff : employment) {
-                if (affiliationType.equals(aff.getType())) {
-                    filteredAffilations.add(aff);
-                }
-            }
-        }
-        return filteredAffilations;
-    }
+    }    
 
     @Override
     public Map<String, Employment> retrieveActivitiesAsMap() {

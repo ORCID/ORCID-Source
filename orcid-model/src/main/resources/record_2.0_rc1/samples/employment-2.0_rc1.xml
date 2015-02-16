@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<affiliation:employment xmlns:affiliation="http://www.orcid.org/ns/employment"
+<employment:employment putCode="248" visibility="private" xmlns:employment="http://www.orcid.org/ns/employment"
 	xmlns:common="http://www.orcid.org/ns/common" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.orcid.org/ns/employment ../employment-2.0_rc1.xsd ">
-	<affiliation:departmentName>affiliation:departmentName</affiliation:departmentName>
-	<affiliation:roleTitle>affiliation:roleTitle</affiliation:roleTitle>
+	<employment:departmentName>employment:departmentName</employment:departmentName>
+	<employment:roleTitle>employment:roleTitle</employment:roleTitle>
 	<common:startDate>
 		<common:year>1920</common:year>
 		<common:month>01</common:month>
@@ -14,7 +14,7 @@
 		<common:month>01</common:month>
 		<common:day>25</common:day>
 	</common:endDate>
-	<affiliation:organization>
+	<employment:organization>
 		<common:name>common:name</common:name>
 		<common:address>
 			<common:city>common:city</common:city>
@@ -25,7 +25,7 @@
 			<common:disambiguatedOrganizationIdentifier>common:disambiguatedOrganizationIdentifier</common:disambiguatedOrganizationIdentifier>
 			<common:disambiguationSource>common:disambiguationSource</common:disambiguationSource>
 		</common:disambiguatedOrganization>
-	</affiliation:organization>
+	</employment:organization>
 	<common:source>
 		<common:sourceOrcid>
 			<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
@@ -37,4 +37,4 @@
 	</common:source>
 	<common:createdDate>2001-12-31T12:00:00</common:createdDate>
 	<common:lastModifiedDate>2001-12-31T12:00:00</common:lastModifiedDate>
-</affiliation:employment>
+</employment:employment>

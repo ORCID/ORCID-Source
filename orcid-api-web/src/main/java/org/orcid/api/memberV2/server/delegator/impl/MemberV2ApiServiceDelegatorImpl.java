@@ -39,6 +39,7 @@ import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.ActivitiesSummary;
 import org.orcid.jaxb.model.record.Education;
+import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.Source;
 import org.orcid.jaxb.model.record.Title;
@@ -217,10 +218,33 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         return Response.ok(e).build();
     }
     
+    
+    
+    
+    
+    
+    @Override
+    @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
+    public Response viewEmployment(String orcid, String putCode) {
+        return null;
+    }
+    
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
-    public Response deleteEducation(String orcid, String putCode) {
+    public Response createEmployment(String orcid, Employment employment) {
+        return null;
+    }
+    
+    @Override
+    @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
+    public Response updateEmployment(String orcid, String putCode, Employment employment) {
+        return null;
+    }
+    
+    @Override
+    @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
+    public Response deleteAffiliation(String orcid, String putCode) {
         affiliationsManager.checkSourceAndDelete(orcid, putCode);
         return Response.noContent().build();
-    } 
+    }
 }

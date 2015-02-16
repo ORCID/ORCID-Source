@@ -28,6 +28,7 @@ import org.orcid.core.manager.SourceManager;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.AffiliationType;
 import org.orcid.jaxb.model.record.Education;
+import org.orcid.jaxb.model.record.Employment;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
@@ -140,6 +141,98 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
         affiliationsDao.merge(educationEntity);
         return jpaJaxbEducationAdapter.toEducation(educationEntity);
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    /**
+     * Get an employment based on the orcid and education id
+     * @param orcid
+     *          The employment owner
+     * @param employmentId
+     *          The employment id
+     * @return the employment
+     * */
+    @Override
+    public Employment getEmploymentAffiliation(String userOrcid, String employmentId) {
+        return null;
+    }
+    
+    /**
+     * Add a new employment to the given user
+     * @param orcid
+     *          The user to add the employment
+     * @param employment
+     *          The employment to add
+     * @return the added employment
+     * */
+    @Override
+    public Employment createEmploymentAffiliation(String orcid, Employment employment) {
+        return null;
+    }
+    
+    /**
+     * Updates a employment that belongs to the given user
+     * @param orcid
+     *          The user
+     * @param employment
+     *          The employment to update
+     * @return the updated employment
+     * */
+    @Override
+    public Employment updateEmploymentAffiliation(String orcid, Employment employment) {
+        return null;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     /**
      * Deletes a given education, if and only if, the client that requested the delete is the source of the education

@@ -19,6 +19,7 @@ package org.orcid.api.memberV2.server.delegator;
 import javax.ws.rs.core.Response;
 
 import org.orcid.jaxb.model.record.Education;
+import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.Work;
 
@@ -55,5 +56,11 @@ public interface MemberV2ApiServiceDelegator {
     
     Response updateEducation(String orcid, String putCode, Education education);
     
-    Response deleteEducation(String orcid, String putCode);
+    Response viewEmployment(String orcid, String putCode);
+    
+    Response createEmployment(String orcid, Employment employment);
+    
+    Response updateEmployment(String orcid, String putCode, Employment employment);
+    
+    Response deleteAffiliation(String orcid, String putCode);
 }

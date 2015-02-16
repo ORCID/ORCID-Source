@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.orcid.jaxb.model.record.AffiliationType;
 import org.orcid.jaxb.model.record.Education;
+import org.orcid.jaxb.model.record.Employment;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 
 public interface AffiliationsManager {
@@ -68,6 +69,36 @@ public interface AffiliationsManager {
      * @return the updated education
      * */
     Education updateEducationAffiliation(String orcid, Education education);
+    
+    /**
+     * Get an employment based on the orcid and education id
+     * @param orcid
+     *          The employment owner
+     * @param employmentId
+     *          The employment id
+     * @return the employment
+     * */
+    Employment getEmploymentAffiliation(String userOrcid, String employmentId);
+    
+    /**
+     * Add a new employment to the given user
+     * @param orcid
+     *          The user to add the employment
+     * @param employment
+     *          The employment to add
+     * @return the added employment
+     * */
+    Employment createEmploymentAffiliation(String orcid, Employment employment);
+    
+    /**
+     * Updates a employment that belongs to the given user
+     * @param orcid
+     *          The user
+     * @param employment
+     *          The employment to update
+     * @return the updated employment
+     * */
+    Employment updateEmploymentAffiliation(String orcid, Employment employment);
     
     /**
      * Deletes a given affiliation, if and only if, the client that requested the delete is the source of the affiliation
