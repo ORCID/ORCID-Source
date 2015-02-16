@@ -188,13 +188,6 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
-    public Response deleteFunding(String orcid, String putCode) {
-        profileFundingManager.checkSourceAndDelete(orcid, putCode);
-        return Response.noContent().build();
-    }
-    
-    @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
     public Response viewEducation(String orcid, String putCode) {
         Education e = affiliationsManager.getEducationAffiliation(orcid, putCode);
@@ -218,33 +211,38 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         return Response.ok(e).build();
     }
     
-    
-    
-    
-    
-    
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
     public Response viewEmployment(String orcid, String putCode) {
-        return null;
+        Employment e = affiliationsManager.getEmploymentAffiliation(orcid, putCode);
+        return Response.ok(e).build();
     }
     
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
     public Response createEmployment(String orcid, Employment employment) {
-        return null;
+        Employment e = affiliationsManager.createEmploymentAffiliation(orcid, employment);
+        return Response.ok(e).build();
     }
     
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
     public Response updateEmployment(String orcid, String putCode, Employment employment) {
-        return null;
+        Employment e = affiliationsManager.updateEmploymentAffiliation(orcid, employment);
+        return Response.ok(e).build();
     }
     
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
     public Response deleteAffiliation(String orcid, String putCode) {
         affiliationsManager.checkSourceAndDelete(orcid, putCode);
+        return Response.noContent().build();
+    }
+    
+    @Override
+    @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
+    public Response deleteFunding(String orcid, String putCode) {
+        profileFundingManager.checkSourceAndDelete(orcid, putCode);
         return Response.noContent().build();
     }
 }

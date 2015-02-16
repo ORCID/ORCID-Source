@@ -21,6 +21,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.orcid.core.adapter.JpaJaxbEducationAdapter;
+import org.orcid.core.adapter.JpaJaxbEmploymentAdapter;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.OrgManager;
@@ -44,6 +45,9 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
     
     @Resource 
     JpaJaxbEducationAdapter jpaJaxbEducationAdapter;
+    
+    @Resource 
+    JpaJaxbEmploymentAdapter jpaJaxbEmploymentAdapter;
     
     @Resource
     private OrgManager orgManager;
@@ -142,19 +146,6 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
         return jpaJaxbEducationAdapter.toEducation(educationEntity);
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     /**
      * Get an employment based on the orcid and education id
      * @param orcid
@@ -165,7 +156,8 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
      * */
     @Override
     public Employment getEmploymentAffiliation(String userOrcid, String employmentId) {
-        return null;
+        OrgAffiliationRelationEntity entity = findAffiliationByUserAndId(userOrcid, employmentId);
+        return jpaJaxbEmploymentAdapter.toEmployment(entity);
     }
     
     /**
@@ -178,7 +170,19 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
      * */
     @Override
     public Employment createEmploymentAffiliation(String orcid, Employment employment) {
-        return null;
+        OrgAffiliationRelationEntity employmentEntity = jpaJaxbEmploymentAdapter.toOrgAffiliationRelationEntity(employment);
+        
+        //Updates the give organization with the latest organization from database
+        OrgEntity updatedOrganization = orgManager.getOrgEntity(employment);
+        employmentEntity.setOrg(updatedOrganization);
+        
+        employmentEntity.setSource(sourceManager.retrieveSourceEntity());
+        ProfileEntity profile = profileDao.find(orcid);
+        employmentEntity.setProfile(profile);
+        setIncomingWorkPrivacy(employmentEntity, profile);
+        employmentEntity.setAffiliationType(org.orcid.jaxb.model.message.AffiliationType.fromValue(AffiliationType.EMPLOYMENT.value()));
+        affiliationsDao.merge(employmentEntity);
+        return jpaJaxbEmploymentAdapter.toEmployment(employmentEntity);
     }
     
     /**
@@ -191,56 +195,31 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
      * */
     @Override
     public Employment updateEmploymentAffiliation(String orcid, Employment employment) {
-        return null;
+        OrgAffiliationRelationEntity employmentEntity = affiliationsDao.getOrgAffiliationRelation(orcid, employment.getPutCode());
+        Visibility originalVisibility = employmentEntity.getVisibility();
+        SourceEntity existingSource = employmentEntity.getSource();
+        checkSource(existingSource);
+        
+        jpaJaxbEmploymentAdapter.toOrgAffiliationRelationEntity(employment, employmentEntity);
+        employmentEntity.setVisibility(originalVisibility);
+        employmentEntity.setSource(existingSource);
+        
+        //Updates the give organization with the latest organization from database, or, create a new one
+        OrgEntity updatedOrganization = orgManager.getOrgEntity(employment);
+        employmentEntity.setOrg(updatedOrganization);        
+        
+        employmentEntity.setAffiliationType(org.orcid.jaxb.model.message.AffiliationType.fromValue(AffiliationType.EMPLOYMENT.value()));
+        affiliationsDao.merge(employmentEntity);
+        return jpaJaxbEmploymentAdapter.toEmployment(employmentEntity);
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     /**
-     * Deletes a given education, if and only if, the client that requested the delete is the source of the education
+     * Deletes a given affiliation, if and only if, the client that requested the delete is the source of the affiliation
      * @param orcid
-     *          the education owner
+     *          the affiliation owner
      * @param affiliationId
-     *          The education id                 
-     * @return true if the education was deleted, false otherwise
+     *          The affiliation id                 
+     * @return true if the affiliation was deleted, false otherwise
      * */
     @Override
     public boolean checkSourceAndDelete(String orcid, String affiliationId) {
