@@ -42,6 +42,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
+import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.Work;
 
@@ -151,5 +152,26 @@ abstract public class MemberV2ApiServiceImplBase {
     @Path(EDUCATION + PUTCODE)
     public Response viewEducation(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewEducation(orcid, putCode);
+    }
+    
+    @POST
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(EDUCATION)
+    public Response createEducation(@PathParam("orcid") String orcid, Education education) {
+        return serviceDelegator.createEducation(orcid, education);
+    }
+    
+    @PUT
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(EDUCATION + PUTCODE)
+    public Response updateEducation(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, Education education) {
+        return serviceDelegator.updateEducation(orcid, putCode, education);
+    }
+    
+    @DELETE
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(EDUCATION + PUTCODE)
+    public Response deleteEducation(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+        return serviceDelegator.deleteEducation(orcid, putCode);
     }
 }

@@ -40,7 +40,42 @@ public interface AffiliationsManager {
     List<OrgAffiliationRelationEntity> findAffiliationsByUserAndType(String userOrcid, AffiliationType type);
     
     /**
-     * 
+     * Get an education based on the orcid and education id
+     * @param orcid
+     *          The education owner
+     * @param affiliationId
+     *          The affiliation id
+     * @return the education
      * */
     Education getEducationAffiliation(String userOrcid, String affiliationId);
+    
+    /**
+     * Add a new education to the given user
+     * @param orcid
+     *          The user to add the education
+     * @param education
+     *          The education to add
+     * @return the added education
+     * */
+    Education createEducationAffiliation(String orcid, Education education);
+    
+    /**
+     * Updates a education that belongs to the given user
+     * @param orcid
+     *          The user
+     * @param education
+     *          The education to update
+     * @return the updated education
+     * */
+    Education updateEducationAffiliation(String orcid, Education education);
+    
+    /**
+     * Deletes a given affiliation, if and only if, the client that requested the delete is the source of the affiliation
+     * @param orcid
+     *          the affiliation owner
+     * @param affiliationId
+     *          The affiliation id                 
+     * @return true if the affiliation was deleted, false otherwise
+     * */
+    boolean checkSourceAndDelete(String orcid, String affiliationId);
 }

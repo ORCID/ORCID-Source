@@ -18,6 +18,7 @@ package org.orcid.api.memberV2.server.delegator;
 
 import javax.ws.rs.core.Response;
 
+import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.Work;
 
@@ -49,4 +50,10 @@ public interface MemberV2ApiServiceDelegator {
     Response deleteFunding(String orcid, String putCode);
     
     Response viewEducation(String orcid, String putCode);
+    
+    Response createEducation(String orcid, Education education);
+    
+    Response updateEducation(String orcid, String putCode, Education education);
+    
+    Response deleteEducation(String orcid, String putCode);
 }
