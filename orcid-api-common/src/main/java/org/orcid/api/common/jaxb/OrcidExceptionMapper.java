@@ -45,6 +45,7 @@ import org.orcid.api.common.exception.OrcidUnauthorizedException;
 import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.exception.MismatchedPutCodeException;
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
+import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.security.DeprecatedException;
@@ -117,6 +118,7 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         // 409
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidInvalidScopeException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9015));        
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(LockedException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9018));
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidValidationException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9020));
     }
 
     @Override

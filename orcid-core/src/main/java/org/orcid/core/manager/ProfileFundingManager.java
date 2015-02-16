@@ -101,7 +101,7 @@ public interface ProfileFundingManager {
      * */
     ProfileFundingEntity getProfileFundingEntity(String profileFundingId);
     
-    public boolean updateToMaxDisplay(String orcid, String workId);
+    boolean updateToMaxDisplay(String orcid, String workId);
     
     /**
      * Get a funding based on the orcid and funding id
@@ -111,6 +111,16 @@ public interface ProfileFundingManager {
      *          The funding id
      * @return the Funding          
      * */
-    public Funding getFunding(String orcid, String fundingId);
+    Funding getFunding(String orcid, String fundingId);
+    
+    /**
+     * Add a new funding to the given user
+     * @param orcid
+     *          The user to add the funding
+     * @param funding
+     *          The funding to add
+     * @return the added funding                  
+     * */
+    Funding createFunding(String orcid, Funding funding);
     
 }

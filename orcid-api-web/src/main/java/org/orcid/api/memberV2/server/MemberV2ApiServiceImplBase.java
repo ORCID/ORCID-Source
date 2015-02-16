@@ -16,7 +16,17 @@
  */
 package org.orcid.api.memberV2.server;
 
-import static org.orcid.core.api.OrcidApiConstants.*;
+import static org.orcid.core.api.OrcidApiConstants.ACTIVITIES;
+import static org.orcid.core.api.OrcidApiConstants.EDUCATION;
+import static org.orcid.core.api.OrcidApiConstants.ERROR;
+import static org.orcid.core.api.OrcidApiConstants.FUNDING;
+import static org.orcid.core.api.OrcidApiConstants.ORCID_JSON;
+import static org.orcid.core.api.OrcidApiConstants.ORCID_XML;
+import static org.orcid.core.api.OrcidApiConstants.PUTCODE;
+import static org.orcid.core.api.OrcidApiConstants.STATUS_PATH;
+import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
+import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
+import static org.orcid.core.api.OrcidApiConstants.WORK;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -32,6 +42,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
+import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.Work;
 
 /**
@@ -111,6 +122,22 @@ abstract public class MemberV2ApiServiceImplBase {
         return serviceDelegator.viewFunding(orcid, putCode);
     }
 
+    @POST
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(FUNDING)
+    public Response createFunding(@PathParam("orcid") String orcid, Funding funding) {
+        return serviceDelegator.createFunding(orcid, funding);
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(EDUCATION + PUTCODE)

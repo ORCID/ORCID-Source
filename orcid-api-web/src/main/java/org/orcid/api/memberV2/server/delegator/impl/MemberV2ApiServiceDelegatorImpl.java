@@ -171,6 +171,19 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
+    public Response createFunding(String orcid, Funding funding) {
+        Funding f = profileFundingManager.createFunding(orcid, funding);
+        return Response.ok(f).build();
+    }
+    
+    
+    
+    
+    
+    
+    
+    @Override
+    @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
     public Response viewEducation(String orcid, String putCode) {
         Education f = affiliationsManager.getEducationAffiliation(orcid, putCode);
         return Response.ok(f).build();
