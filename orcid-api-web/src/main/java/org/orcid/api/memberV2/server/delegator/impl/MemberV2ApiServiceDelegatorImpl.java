@@ -187,9 +187,16 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     }
 
     @Override
+    @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
+    public Response deleteFunding(String orcid, String putCode) {
+        profileFundingManager.checkSourceAndDelete(orcid, putCode);
+        return Response.noContent().build();
+    }
+    
+    @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
     public Response viewEducation(String orcid, String putCode) {
         Education f = affiliationsManager.getEducationAffiliation(orcid, putCode);
         return Response.ok(f).build();
-    }
+    }    
 }

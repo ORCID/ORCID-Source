@@ -298,6 +298,22 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
         return jpaJaxbFundingAdapter.toFunding(pfe);
     }
     
+    /**
+     * Deletes a given funding, if and only if, the client that requested the delete is the source of the funding
+     * @param orcid
+     *          the funding owner
+     * @param fundingId
+     *          The funding id                 
+     * @return true if the funding was deleted, false otherwise
+     * */
+    @Override
+    @Transactional    
+    public boolean checkSourceAndDelete(String orcid, String fundingId) {
+        ProfileFundingEntity pfe = profileFundingDao.getProfileFunding(orcid, fundingId);
+        checkSource(pfe.getSource());
+        return profileFundingDao.removeProfileFunding(orcid, fundingId);
+    }
+    
     private void checkSource(SourceEntity existingSource) {
         String sourceIdOfUpdater = sourceManager.retrieveSourceOrcid();
         if (sourceIdOfUpdater != null && (existingSource == null || !sourceIdOfUpdater.equals(existingSource.getSourceId()))) {
