@@ -38,7 +38,7 @@ import java.io.Serializable;
  * <p/>
  * 
  */
-@XmlType(name = "externalIdentifierType")
+@XmlType(name = "externalIdentifierType", namespace = "http://www.orcid.org/ns/work")
 @XmlEnum
 public enum WorkExternalIdentifierType implements Serializable {
 

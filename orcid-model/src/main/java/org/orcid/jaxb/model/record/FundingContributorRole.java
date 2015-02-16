@@ -25,7 +25,7 @@ import java.io.Serializable;
  * @author Angel Montenegro 
  *         Date: 20/02/2014
  */
-@XmlType(name = "contributorRole")
+@XmlType(name = "contributorRole", namespace = "http://www.orcid.org/ns/funding")
 @XmlEnum
 public enum FundingContributorRole implements Serializable {
 
