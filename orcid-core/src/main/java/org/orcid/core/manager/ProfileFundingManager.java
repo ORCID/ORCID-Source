@@ -123,4 +123,14 @@ public interface ProfileFundingManager {
      * */
     Funding createFunding(String orcid, Funding funding);
     
+    /**
+     * Updates a funding that belongs to the given user
+     * @param orcid
+     *          The user
+     * @param funding
+     *          The funding to update
+     * @return the updated funding                  
+     * */
+    Funding updateFunding(String orcid, Funding funding);
+    
 }

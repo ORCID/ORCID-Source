@@ -170,13 +170,18 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     }
     
     @Override
-    @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
+    @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
     public Response createFunding(String orcid, Funding funding) {
         Funding f = profileFundingManager.createFunding(orcid, funding);
         return Response.ok(f).build();
     }
     
-    
+    @Override
+    @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
+    public Response updateFunding(String orcid, String putCode, Funding funding) {
+        Funding f = profileFundingManager.updateFunding(orcid, funding);
+        return Response.ok(f).build();
+    }
     
     
     

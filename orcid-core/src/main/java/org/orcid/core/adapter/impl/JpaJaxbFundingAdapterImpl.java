@@ -61,5 +61,14 @@ public class JpaJaxbFundingAdapterImpl implements JpaJaxbFundingAdapter {
         }
         return mapperFacade.mapAsList(fundingEntities, Funding.class);
     }
+    
+    @Override
+    public ProfileFundingEntity toProfileFundingEntity(Funding funding, ProfileFundingEntity existing) {
+        if (funding == null) {
+            return null;
+        }
+        mapperFacade.map(funding, existing);
+        return existing;
+    }
 
 }

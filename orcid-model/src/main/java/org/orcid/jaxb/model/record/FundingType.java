@@ -36,8 +36,6 @@ import java.io.Serializable;
  * The following schema fragment specifies the expected content contained within
  * this class.
  * <p>
- * 
- * 
  */
 @XmlType(name = "grantType")
 @XmlEnum
