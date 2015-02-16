@@ -196,7 +196,31 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
     public Response viewEducation(String orcid, String putCode) {
-        Education f = affiliationsManager.getEducationAffiliation(orcid, putCode);
-        return Response.ok(f).build();
-    }    
+        Education e = affiliationsManager.getEducationAffiliation(orcid, putCode);
+        return Response.ok(e).build();
+    }
+    
+    @Override
+    @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)    
+    public Response createEducation(String orcid, Education education) {
+        Education e = affiliationsManager.createEducationAffiliation(orcid, education);
+        return Response.ok(e).build();
+    }
+    
+    @Override
+    @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
+    public Response updateEducation(String orcid, String putCode, Education education) {
+        if(!putCode.equals(education.getPutCode())) {
+            throw new MismatchedPutCodeException("The put code in the URL was " + putCode + " whereas the one in the body was " + education.getPutCode());
+        }
+        Education e = affiliationsManager.updateEducationAffiliation(orcid, education);
+        return Response.ok(e).build();
+    }
+    
+    @Override
+    @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
+    public Response deleteEducation(String orcid, String putCode) {
+        affiliationsManager.checkSourceAndDelete(orcid, putCode);
+        return Response.noContent().build();
+    } 
 }

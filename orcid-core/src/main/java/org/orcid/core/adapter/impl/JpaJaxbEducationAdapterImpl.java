@@ -60,5 +60,12 @@ public class JpaJaxbEducationAdapterImpl implements JpaJaxbEducationAdapter {
     }
 
     
-
+    @Override
+    public OrgAffiliationRelationEntity toOrgAffiliationRelationEntity(Education education, OrgAffiliationRelationEntity existing) {
+        if (education == null) {
+            return null;
+        }
+        mapperFacade.map(education, existing);
+        return existing;
+    }
 }
