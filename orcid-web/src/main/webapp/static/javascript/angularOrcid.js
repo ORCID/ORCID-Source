@@ -6440,6 +6440,7 @@ orcidNgModule.controller('ClientEditCtrl',['$scope', '$compile', function ($scop
     $scope.authorizeURLTemplate = $scope.authorizeUrlBase + '?client_id=[CLIENT_ID]&response_type=code&redirect_uri=[REDIRECT_URI]&scope=[SCOPES]';
     // Token url
     $scope.tokenURL = orcidVar.pubBaseUri + '/oauth/token';
+    $scope.expanded = false;
 
 
     // Get the list of clients associated with this user
@@ -6865,6 +6866,14 @@ orcidNgModule.controller('ClientEditCtrl',['$scope', '$compile', function ($scop
     
     $scope.inputTextAreaSelectAll = function($event){
     	$event.target.select();
+    }
+    
+    $scope.expand =  function(){
+    	$scope.expanded = true;
+    }
+    
+    $scope.collapse = function(){
+    	$scope.expanded = false;
     }
     
 }]);

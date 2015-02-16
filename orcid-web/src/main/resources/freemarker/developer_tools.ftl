@@ -99,7 +99,6 @@
 							<p class="developer-tools-instructions"></p>
 						</div>
 					</div>
-					
 					<!-- App details -->
 					<div class="details" ng-show="userCredentials.clientSecret && userCredentials.clientSecret.value && !editing" ng-cloak>
 					
@@ -411,8 +410,8 @@
 					<div class="row slide" ng-show="userCredentials.clientSecret && userCredentials.clientSecret.value" ng-cloak>
 						<div class="col-md-12 col-sm-12 col-xs-12">
 							<div class="tab-container" ng-class="{'expanded' : expanded == true}">
-								<a href="#" class="tab" ng-click="expand()" ng-show="expanded == false"><span class="glyphicon glyphicon-chevron-down"></span><@orcid.msg 'common.details.show_details' /></a>
-								<a href="#" class="tab" ng-click="collapse()" ng-show="expanded == true"><span class="glyphicon glyphicon-chevron-up"></span><@orcid.msg 'common.details.hide_details' /></a>
+								<a class="tab" ng-click="expand()" ng-show="expanded == false"><span class="glyphicon glyphicon-chevron-down"></span><@orcid.msg 'common.details.show_details' /></a>
+								<a class="tab" ng-click="collapse()" ng-show="expanded == true"><span class="glyphicon glyphicon-chevron-up"></span><@orcid.msg 'common.details.hide_details' /></a>
 							</div>
 						</div>			
 					</div>
