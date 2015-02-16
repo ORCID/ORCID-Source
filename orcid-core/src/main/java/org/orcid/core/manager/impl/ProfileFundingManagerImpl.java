@@ -26,6 +26,7 @@ import javax.annotation.Resource;
 import org.apache.commons.io.IOUtils;
 import org.orcid.core.adapter.JpaJaxbFundingAdapter;
 import org.orcid.core.exception.OrcidValidationException;
+import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.ProfileFundingManager;
@@ -39,6 +40,7 @@ import org.orcid.persistence.dao.ProfileFundingDao;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.solr.entities.OrgDefinedFundingTypeSolrDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -269,4 +271,37 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
         }
     }
     
+    
+    /**
+     * Updates a funding that belongs to the given user
+     * @param orcid
+     *          The user
+     * @param funding
+     *          The funding to update
+     * @return the updated funding                  
+     * */
+    @Override    
+    public Funding updateFunding(String orcid, Funding funding) {
+        ProfileFundingEntity pfe = profileFundingDao.getProfileFunding(orcid, funding.getPutCode());
+        Visibility originalVisibility = pfe.getVisibility();
+        SourceEntity existingSource = pfe.getSource();
+        checkSource(existingSource);
+        jpaJaxbFundingAdapter.toProfileFundingEntity(funding, pfe);
+        pfe.setVisibility(originalVisibility);
+        pfe.setSource(existingSource);
+        
+        //Updates the give organization with the latest organization from database, or, create a new one
+        OrgEntity updatedOrganization = orgManager.getOrgEntity(funding);
+        pfe.setOrg(updatedOrganization);
+        
+        profileFundingDao.merge(pfe);
+        return jpaJaxbFundingAdapter.toFunding(pfe);
+    }
+    
+    private void checkSource(SourceEntity existingSource) {
+        String sourceIdOfUpdater = sourceManager.retrieveSourceOrcid();
+        if (sourceIdOfUpdater != null && (existingSource == null || !sourceIdOfUpdater.equals(existingSource.getSourceId()))) {
+            throw new WrongSourceException("You are not the source of the funding, so you are not allowed to update it");
+        }
+    }
 }
