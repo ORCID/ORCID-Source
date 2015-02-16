@@ -103,6 +103,11 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
     @Override
     public void persistProfileInformationForIndexing(OrcidProfile orcidProfile) {
 
+        //Check if the profile is locked
+        if(orcidProfile.isLocked()) {
+            orcidProfile.downgradeToOrcidIdentifierOnly();
+        }
+        
         OrcidMessage messageToFilter = new OrcidMessage();
         messageToFilter.setOrcidProfile(orcidProfile);
         OrcidMessage filteredMessage = visibilityFilter.filter(messageToFilter, Visibility.PUBLIC);

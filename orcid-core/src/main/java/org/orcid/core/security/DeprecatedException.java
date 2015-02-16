@@ -24,10 +24,10 @@ import org.orcid.core.exception.ApplicationException;
  *
  */
 public class DeprecatedException extends ApplicationException {
-	private static final long serialVersionUID = 1L;
-	private String primary; 
-	private String deprecated;
-	
+    private static final long serialVersionUID = 1L;
+    private String primary;
+    private String deprecated;
+
     public DeprecatedException(String msg) {
         super(msg);
     }
@@ -35,19 +35,19 @@ public class DeprecatedException extends ApplicationException {
     public DeprecatedException(String msg, Throwable t) {
         super(msg, t);
     }
-    
-    public DeprecatedException(String msg, String primary, String deprecated) {       
+
+    public DeprecatedException(String msg, String primary, String deprecated) {
         super(msg);
         this.primary = primary;
         this.deprecated = deprecated;
     }
 
-    public DeprecatedException(String msg, Throwable t, String primary, String deprecated) {       
+    public DeprecatedException(String msg, Throwable t, String primary, String deprecated) {
         super(msg, t);
         this.primary = primary;
         this.deprecated = deprecated;
     }
-    
+
     public String getPrimary() {
         return primary;
     }
@@ -62,5 +62,5 @@ public class DeprecatedException extends ApplicationException {
 
     public void setDeprecated(String deprecated) {
         this.deprecated = deprecated;
-    }        
+    }
 }

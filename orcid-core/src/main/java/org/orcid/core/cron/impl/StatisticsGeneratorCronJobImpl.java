@@ -40,13 +40,13 @@ public class StatisticsGeneratorCronJobImpl implements StatisticsGeneratorCronJo
     private StatisticsManager statisticsManager;
 
     private long halfHourInMillis = 30 * 60 * 1000;
-    
+
     private long hourInMillis = halfHourInMillis * 2;
-    
+
     private long dayInMillis = 24 * hourInMillis;
-    
-    private long weekInMillis = dayInMillis * 7;        
-    
+
+    private long weekInMillis = dayInMillis * 7;
+
     /**
      * Cron job that will generate statistics and store them on database
      * */
@@ -55,51 +55,52 @@ public class StatisticsGeneratorCronJobImpl implements StatisticsGeneratorCronJo
         LOG.debug("About to run statistics generator thread");
         boolean run = false;
         StatisticKeyEntity lastStatisticsKey = statisticsManager.getLatestKey();
-        
-        if(lastStatisticsKey != null && lastStatisticsKey.getGenerationDate() != null){
-        	Date lastTimeJobRuns = lastStatisticsKey.getGenerationDate();        	
-        	boolean isTimeToRun = isFridayNearMidnight();
-        	long offset = System.currentTimeMillis() - lastTimeJobRuns.getTime();
-        	LOG.info("Last time the statistics were generated: {}", lastTimeJobRuns);            
+
+        if (lastStatisticsKey != null && lastStatisticsKey.getGenerationDate() != null) {
+            Date lastTimeJobRuns = lastStatisticsKey.getGenerationDate();
+            boolean isTimeToRun = isFridayNearMidnight();
+            long offset = System.currentTimeMillis() - lastTimeJobRuns.getTime();
+            LOG.info("Last time the statistics were generated: {}", lastTimeJobRuns);
             LOG.info("Is time to run the scheduler? {}", isTimeToRun);
-            
-            if(offset > weekInMillis || (isTimeToRun && offset > halfHourInMillis) ){
-            	run = true;
+
+            if (offset > weekInMillis || (isTimeToRun && offset > halfHourInMillis)) {
+                run = true;
             }
-            
+
         } else {
-        	LOG.warn("There are no statistics generated yet.");
-        }                                
-        
-        if(run){
+            run = true;
+            LOG.warn("There are no statistics generated yet.");
+        }
+
+        if (run) {
             LOG.info("Last time the statistics cron job ran: {}", new Date());
             Map<String, Long> statistics = statisticsGeneratorManager.generateStatistics();
             StatisticKeyEntity statisticKey = statisticsManager.createKey();
-    
+
             // Store statistics on database
             for (String key : statistics.keySet()) {
                 statisticsManager.saveStatistic(statisticKey, key, statistics.get(key));
             }
         }
     }
-    
+
     /**
-     * @return true if it is Friday 11:30 PM or later, false otherwise. 
+     * @return true if it is Friday 11:30 PM or later, false otherwise.
      * */
-    public boolean isFridayNearMidnight(){
-    	Calendar c = Calendar.getInstance();
-    	int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
-    	// If it is friday
-    	if(dayOfWeek == Calendar.FRIDAY){
-    		// And it is 11 PM
-    		if(c.get(Calendar.HOUR_OF_DAY) == 23){
-    			// And it is later than 11:30 pm
-    			if(c.get(Calendar.MINUTE) >= 30){
-    				return true;
-    			}
-    		}
-    	}
-    	
-    	return false;
+    public boolean isFridayNearMidnight() {
+        Calendar c = Calendar.getInstance();
+        int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+        // If it is friday
+        if (dayOfWeek == Calendar.FRIDAY) {
+            // And it is 11 PM
+            if (c.get(Calendar.HOUR_OF_DAY) == 23) {
+                // And it is later than 11:30 pm
+                if (c.get(Calendar.MINUTE) >= 30) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

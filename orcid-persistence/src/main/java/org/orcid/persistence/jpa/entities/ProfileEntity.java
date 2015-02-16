@@ -101,7 +101,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     private String encryptedSecurityAnswer;
     private String encryptedVerificationCode;
     private Date accountExpiry;
-    private Boolean accountNonLocked = Boolean.TRUE;
+    private Boolean recordLocked = Boolean.FALSE;
     private Date credentialsExpiry;
     private Boolean enabled = Boolean.TRUE;
     private String referredBy;
@@ -220,19 +220,19 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     }
 
     /**
-     * @return the accountNonLocked
+     * @return the recordLocked
      */
-    @Column(name = "account_non_locked", columnDefinition = "boolean default true")
-    public Boolean getAccountNonLocked() {
-        return accountNonLocked;
+    @Column(name = "record_locked", columnDefinition = "boolean default false")
+    public Boolean getRecordLocked() {
+        return recordLocked;
     }
 
     /**
-     * @param accountNonLocked
-     *            the accountNonLocked to set
+     * @param recordLocked
+     *            the recordLocked to set
      */
-    public void setAccountNonLocked(Boolean accountNonLocked) {
-        this.accountNonLocked = accountNonLocked;
+    public void setRecordLocked(Boolean recordLocked) {
+        this.recordLocked = recordLocked;
     }
 
     /**
@@ -641,7 +641,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
 
     @Transient
     public boolean isAccountNonLocked() {
-        return accountNonLocked != null ? accountNonLocked : Boolean.FALSE;
+        return recordLocked != null ? !recordLocked : Boolean.FALSE;
     }
 
     /**

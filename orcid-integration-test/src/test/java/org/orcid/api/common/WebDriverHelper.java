@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.By.ByName;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
@@ -183,6 +184,23 @@ public class WebDriverHelper {
 
     public String obtainAuthorizationCode(String scopes, String orcid) throws InterruptedException {
         return obtainAuthorizationCode(scopes, orcid, "user_to_test@user.com", "password");
+    }
+    
+    public boolean elementExists(String page, String elementId) {
+        //Open the page
+        webDriver.get(page);        
+
+        //Find this element
+        By switchFromLinkLocator = By.id(elementId);
+        
+        try {
+            if(webDriver.findElement(switchFromLinkLocator) != null)
+                return true;            
+        } catch(NoSuchElementException e) {
+            return false;
+        }                                           
+        
+        return false;
     }
     
     public void close() {

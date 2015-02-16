@@ -51,14 +51,14 @@
                                             </a>
                                         </li>
                                         <!-- Bibtex -->
-                                        <!--[if gte IE 10]>
+                                        <![if gt IE 9]>
 	                                        <li>
 	                                            <a class="action-option manage-button" ng-click="openBibTextWizard()">
 	                                                <span class="glyphicons file_import bibtex-wizard"></span>
 	                                                <@orcid.msg 'workspace.bibtexImporter.link_bibtex'/>
 	                                            </a>
 	                                        </li>              
-                                        <![endif]-->              
+                                        <![endif]>            
                                         <!-- Add Manually -->
                                         <li>
                                             <a class="action-option manage-button" ng-click="addWorkModal()">
