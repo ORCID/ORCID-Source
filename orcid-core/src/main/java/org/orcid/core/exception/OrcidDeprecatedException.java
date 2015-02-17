@@ -14,25 +14,23 @@
  *
  * =============================================================================
  */
-package org.orcid.api.common.exception;
+package org.orcid.core.exception;
 
-import javax.ws.rs.core.Response;
+import com.sun.jersey.api.client.ClientResponse.Status;
 
 /**
- * This exception will be thrown when the scope provided by the user doesn't match any of the scopes
- * available in org.orcid.jaxb.model.message.ScopePathType enum
  * 
- *  @author Angel Montenegro(amontenegro)
+ * @author Angel Montenegro
+ * 
  */
-public class OrcidInvalidScopeException extends OrcidApiException {
-	
+public class OrcidDeprecatedException extends OrcidApiException {
     private static final long serialVersionUID = 1L;
 
-    public OrcidInvalidScopeException(String message) {
-        super(message, Response.Status.CONFLICT);
+    public OrcidDeprecatedException(String msg) {
+        super(msg, Status.MOVED_PERMANENTLY.getStatusCode());
     }
 
-    public OrcidInvalidScopeException(String message, Throwable t) {
-        super(message, Response.Status.CONFLICT, t);
+    public OrcidDeprecatedException(String msg, Throwable t) {
+        super(msg, Status.MOVED_PERMANENTLY.getStatusCode(), t);
     }
 }

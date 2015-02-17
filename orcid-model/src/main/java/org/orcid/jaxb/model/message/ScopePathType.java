@@ -257,6 +257,17 @@ public enum ScopePathType implements Serializable {
         }
         return newScopes;
     }
+    
+    public static Set<String> getCombinedScopesFromStringsAsStrings(Collection<String> scopes) {
+        Set<String> newScopes = new HashSet<>();
+        for (String scopeString : scopes) {
+            ScopePathType scope = mapByValue.get(scopeString);
+            if (scope != null) {
+                newScopes.addAll(getScopesAsStrings(scope.combined()));
+            }
+        }
+        return newScopes;
+    }
 
     public static Set<ScopePathType> getScopesFromSpaceSeparatedString(String scopesString) {
         if (scopesString == null) {

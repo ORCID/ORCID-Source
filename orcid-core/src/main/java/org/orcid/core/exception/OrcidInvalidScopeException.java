@@ -14,21 +14,25 @@
  *
  * =============================================================================
  */
-package org.orcid.api.common.exception;
+package org.orcid.core.exception;
 
 import javax.ws.rs.core.Response;
 
-public class OrcidForbiddenException extends OrcidApiException {
-    /**
-     * 
-     */
+/**
+ * This exception will be thrown when the scope provided by the user doesn't match any of the scopes
+ * available in org.orcid.jaxb.model.message.ScopePathType enum
+ * 
+ *  @author Angel Montenegro(amontenegro)
+ */
+public class OrcidInvalidScopeException extends OrcidApiException {
+	
     private static final long serialVersionUID = 1L;
 
-    public OrcidForbiddenException(String message) {
-        super(message, Response.Status.FORBIDDEN);
+    public OrcidInvalidScopeException(String message) {
+        super(message, Response.Status.CONFLICT);
     }
 
-    public OrcidForbiddenException(String message, Throwable t) {
-        super(message, Response.Status.FORBIDDEN, t);
+    public OrcidInvalidScopeException(String message, Throwable t) {
+        super(message, Response.Status.CONFLICT, t);
     }
 }

@@ -14,23 +14,25 @@
  *
  * =============================================================================
  */
-package org.orcid.api.common.exception;
+package org.orcid.core.exception;
 
-import com.sun.jersey.api.client.ClientResponse.Status;
+import javax.ws.rs.core.Response;
 
 /**
- * 
- * @author Angel Montenegro
- * 
+ * @author Declan Newman (declan) Date: 01/03/2012
  */
-public class OrcidDeprecatedException extends OrcidApiException {
+public class OrcidNotFoundException extends OrcidApiException {
+
+    /**
+     * 
+     */
     private static final long serialVersionUID = 1L;
 
-    public OrcidDeprecatedException(String msg) {
-        super(msg, Status.MOVED_PERMANENTLY.getStatusCode());
+    public OrcidNotFoundException(String message) {
+        super(message, Response.Status.NOT_FOUND);
     }
 
-    public OrcidDeprecatedException(String msg, Throwable t) {
-        super(msg, Status.MOVED_PERMANENTLY.getStatusCode(), t);
+    public OrcidNotFoundException(String message, Throwable t) {
+        super(message, Response.Status.NOT_FOUND, t);
     }
 }

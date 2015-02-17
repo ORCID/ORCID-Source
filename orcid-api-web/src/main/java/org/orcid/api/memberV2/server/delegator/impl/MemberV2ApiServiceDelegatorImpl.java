@@ -26,11 +26,12 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
-import org.orcid.api.common.exception.OrcidNotFoundException;
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
 import org.orcid.core.exception.MismatchedPutCodeException;
+import org.orcid.core.exception.OrcidNotFoundException;
 import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.ClientDetailsManager;
+import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.ProfileWorkManager;
@@ -84,6 +85,9 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 
     @Resource
     private SourceManager sourceManager;
+    
+    @Resource
+    private OrcidSecurityManager orcidSecurityManager;
 
     @Override
     public Response viewStatusText() {
@@ -121,7 +125,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
     public Response viewWork(String orcid, String putCode) {
         Work w = profileWorkManager.getWork(orcid, putCode);
-        checkVisbility(w);
+        orcidSecurityManager.checkVisibility(w);
         return Response.ok(w).build();
     }
 

@@ -316,6 +316,8 @@
 	<bean id="adminManager" class="org.orcid.core.manager.impl.AdminManagerImpl" />
 
 	<bean id="affiliationsManager" class="org.orcid.core.manager.impl.AffiliationsManagerImpl" />
+	
+	<bean id="orcidSecurityManager" class="org.orcid.core.manager.impl.OrcidSecurityManagerImpl" />
 
 	<bean id="messageSource"
 		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">

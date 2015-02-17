@@ -14,25 +14,21 @@
  *
  * =============================================================================
  */
-package org.orcid.api.common.exception;
+package org.orcid.core.exception;
 
 import javax.ws.rs.core.Response;
 
-/**
- * @author Declan Newman (declan) Date: 01/03/2012
- */
-public class OrcidUnauthorizedException extends OrcidApiException {
-
+public class OrcidForbiddenException extends OrcidApiException {
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
 
-    public OrcidUnauthorizedException(String message) {
-        super(message, Response.Status.UNAUTHORIZED);
+    public OrcidForbiddenException(String message) {
+        super(message, Response.Status.FORBIDDEN);
     }
 
-    public OrcidUnauthorizedException(String message, Throwable t) {
-        super(message, Response.Status.UNAUTHORIZED, t);
+    public OrcidForbiddenException(String message, Throwable t) {
+        super(message, Response.Status.FORBIDDEN, t);
     }
 }
