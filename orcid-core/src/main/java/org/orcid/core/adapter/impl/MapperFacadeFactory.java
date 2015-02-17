@@ -150,7 +150,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         classMap.field("organization.address.country", "org.country");
         classMap.field("organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier", "org.orgDisambiguated.sourceId");
         classMap.field("organization.disambiguatedOrganization.disambiguationSource", "org.orgDisambiguated.sourceType");
-        classMap.field("departmentName", "department");
+        classMap.field("departmentName", "department");        
         classMap.field("roleTitle", "title");
         classMap.byDefault();
         classMap.register();

@@ -114,7 +114,7 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
         educationEntity.setProfile(profile);
         setIncomingWorkPrivacy(educationEntity, profile);
         educationEntity.setAffiliationType(org.orcid.jaxb.model.message.AffiliationType.fromValue(AffiliationType.EDUCATION.value()));
-        affiliationsDao.merge(educationEntity);
+        affiliationsDao.persist(educationEntity);
         return jpaJaxbEducationAdapter.toEducation(educationEntity);
     }
     
@@ -142,7 +142,7 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
         educationEntity.setOrg(updatedOrganization);        
         
         educationEntity.setAffiliationType(org.orcid.jaxb.model.message.AffiliationType.fromValue(AffiliationType.EDUCATION.value()));
-        affiliationsDao.merge(educationEntity);
+        educationEntity = affiliationsDao.merge(educationEntity);
         return jpaJaxbEducationAdapter.toEducation(educationEntity);
     }
     
@@ -181,7 +181,7 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
         employmentEntity.setProfile(profile);
         setIncomingWorkPrivacy(employmentEntity, profile);
         employmentEntity.setAffiliationType(org.orcid.jaxb.model.message.AffiliationType.fromValue(AffiliationType.EMPLOYMENT.value()));
-        affiliationsDao.merge(employmentEntity);
+        affiliationsDao.persist(employmentEntity);
         return jpaJaxbEmploymentAdapter.toEmployment(employmentEntity);
     }
     
@@ -209,7 +209,7 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
         employmentEntity.setOrg(updatedOrganization);        
         
         employmentEntity.setAffiliationType(org.orcid.jaxb.model.message.AffiliationType.fromValue(AffiliationType.EMPLOYMENT.value()));
-        affiliationsDao.merge(employmentEntity);
+        employmentEntity = affiliationsDao.merge(employmentEntity);
         return jpaJaxbEmploymentAdapter.toEmployment(employmentEntity);
     }
     
