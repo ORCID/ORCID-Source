@@ -67,6 +67,8 @@ import org.orcid.persistence.jpa.entities.SourceAware;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkExternalIdentifierEntity;
+import org.orcid.pojo.FundingExternalIdentifier;
+import org.orcid.pojo.FundingExternalIdentifiers;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.NullUtils;
@@ -434,12 +436,16 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
      * @return The external identifiers in the form of a
      *         FundingExternalIdentifiers object
      * */
-    private FundingExternalIdentifiers getFundingExternalIdentifiers(ProfileFundingEntity profileFundingEntity) {
+    private org.orcid.jaxb.model.message.FundingExternalIdentifiers getFundingExternalIdentifiers(ProfileFundingEntity profileFundingEntity) {
         String externalIdsJson = profileFundingEntity.getExternalIdentifiersJson();
-        if(!PojoUtil.isEmpty(externalIdsJson)) {
-            return JsonUtils.readObjectFromJsonString(externalIdsJson, FundingExternalIdentifiers.class);                            
+        if(!PojoUtil.isEmpty(externalIdsJson)) {            
+            FundingExternalIdentifiers fundingExternalIdentifiers = JsonUtils.readObjectFromJsonString(externalIdsJson, FundingExternalIdentifiers.class);
+            org.orcid.jaxb.model.message.FundingExternalIdentifiers result = new org.orcid.jaxb.model.message.FundingExternalIdentifiers();
+            for(FundingExternalIdentifier extId : fundingExternalIdentifiers.getFundingExternalIdentifier()) {
+                result.getFundingExternalIdentifier().add(extId.toMessagePojo());
+            }
         }
-        return new FundingExternalIdentifiers();
+        return new org.orcid.jaxb.model.message.FundingExternalIdentifiers();
     }    
 
     /**
@@ -468,7 +474,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 if (contributorOrcid != null) {
                     String uri = contributorOrcid.getUri();
                     if (uri == null) {
-                        String orcid = contributorOrcid.getValueAsString();
+                        String orcid = contributorOrcid.getPath();
                         if (orcid == null) {
                             orcid = contributorOrcid.getPath();
                         }
@@ -920,7 +926,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 if (contributorOrcid != null) {
                     String uri = contributorOrcid.getUri();
                     if (uri == null) {
-                        String orcid = contributorOrcid.getValueAsString();
+                        String orcid = contributorOrcid.getPath();
                         if (orcid == null) {
                             orcid = contributorOrcid.getPath();
                         }

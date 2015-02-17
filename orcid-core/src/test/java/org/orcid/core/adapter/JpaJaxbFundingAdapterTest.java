@@ -92,8 +92,7 @@ public class JpaJaxbFundingAdapterTest {
         assertEquals("common:region", pfe.getOrg().getRegion());        
         assertEquals(Iso3166Country.AF.value(), pfe.getOrg().getCountry().value());
         assertEquals("common:disambiguatedOrganizationIdentifier", pfe.getOrg().getOrgDisambiguated().getSourceId());
-        assertEquals("common:disambiguationSource", pfe.getOrg().getOrgDisambiguated().getSourceType());
-        
+        assertEquals("common:disambiguationSource", pfe.getOrg().getOrgDisambiguated().getSourceType());        
     }
 
     private Funding getFunding() throws JAXBException {
