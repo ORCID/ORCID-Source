@@ -18,6 +18,7 @@ package org.orcid.api.memberV2.server;
 
 import static org.orcid.core.api.OrcidApiConstants.ACTIVITIES;
 import static org.orcid.core.api.OrcidApiConstants.EDUCATION;
+import static org.orcid.core.api.OrcidApiConstants.EMPLOYMENT;
 import static org.orcid.core.api.OrcidApiConstants.ERROR;
 import static org.orcid.core.api.OrcidApiConstants.FUNDING;
 import static org.orcid.core.api.OrcidApiConstants.ORCID_JSON;
@@ -43,6 +44,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
 import org.orcid.jaxb.model.record.Education;
+import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.Work;
 
@@ -172,6 +174,34 @@ abstract public class MemberV2ApiServiceImplBase {
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(EDUCATION + PUTCODE)
     public Response deleteEducation(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
-        return serviceDelegator.deleteEducation(orcid, putCode);
+        return serviceDelegator.deleteAffiliation(orcid, putCode);
+    }
+    
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(EMPLOYMENT + PUTCODE)
+    public Response viewEmployment(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+        return serviceDelegator.viewEmployment(orcid, putCode);
+    }
+    
+    @POST
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(EMPLOYMENT)
+    public Response createEmployment(@PathParam("orcid") String orcid, Employment employment) {
+        return serviceDelegator.createEmployment(orcid, employment);
+    }
+    
+    @PUT
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(EMPLOYMENT + PUTCODE)
+    public Response updateEmployment(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, Employment employment) {
+        return serviceDelegator.updateEmployment(orcid, putCode, employment);
+    }
+    
+    @DELETE
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(EMPLOYMENT + PUTCODE)
+    public Response deleteEmployment(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+        return serviceDelegator.deleteAffiliation(orcid, putCode);
     }
 }

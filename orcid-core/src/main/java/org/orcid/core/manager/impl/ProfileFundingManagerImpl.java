@@ -294,7 +294,7 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
         OrgEntity updatedOrganization = orgManager.getOrgEntity(funding);
         pfe.setOrg(updatedOrganization);
         
-        profileFundingDao.merge(pfe);
+        pfe = profileFundingDao.merge(pfe);
         return jpaJaxbFundingAdapter.toFunding(pfe);
     }
     
