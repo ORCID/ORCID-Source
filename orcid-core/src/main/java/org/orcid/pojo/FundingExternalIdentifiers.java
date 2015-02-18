@@ -63,48 +63,48 @@ public class FundingExternalIdentifiers implements Serializable {
 
     public org.orcid.jaxb.model.message.FundingExternalIdentifiers toMessagePojo() {
         org.orcid.jaxb.model.message.FundingExternalIdentifiers result = new org.orcid.jaxb.model.message.FundingExternalIdentifiers();
-        if(!this.getFundingExternalIdentifier().isEmpty()) {
-            for(FundingExternalIdentifier fei : this.getFundingExternalIdentifier()) {
+        if (!this.getFundingExternalIdentifier().isEmpty()) {
+            for (FundingExternalIdentifier fei : this.getFundingExternalIdentifier()) {
                 result.getFundingExternalIdentifier().add(fei.toMessagePojo());
             }
-        }        
+        }
         return result;
     }
-    
+
     public org.orcid.jaxb.model.record.FundingExternalIdentifiers toRecordPojo() {
         org.orcid.jaxb.model.record.FundingExternalIdentifiers result = new org.orcid.jaxb.model.record.FundingExternalIdentifiers();
-        if(!this.getFundingExternalIdentifier().isEmpty()) {
-            for(FundingExternalIdentifier fei : this.getFundingExternalIdentifier()) {
+        if (!this.getFundingExternalIdentifier().isEmpty()) {
+            for (FundingExternalIdentifier fei : this.getFundingExternalIdentifier()) {
                 result.getExternalIdentifier().add(fei.toRecordPojo());
             }
-        }        
+        }
         return result;
     }
-    
+
     public static FundingExternalIdentifiers fromMessagePojo(org.orcid.jaxb.model.message.FundingExternalIdentifiers messagePojo) {
-        if(messagePojo == null)
+        if (messagePojo == null)
             return null;
         FundingExternalIdentifiers result = new FundingExternalIdentifiers();
-        if(!messagePojo.getFundingExternalIdentifier().isEmpty()) {
-            for(org.orcid.jaxb.model.message.FundingExternalIdentifier messageFei : messagePojo.getFundingExternalIdentifier()){
+        if (!messagePojo.getFundingExternalIdentifier().isEmpty()) {
+            for (org.orcid.jaxb.model.message.FundingExternalIdentifier messageFei : messagePojo.getFundingExternalIdentifier()) {
                 result.getFundingExternalIdentifier().add(FundingExternalIdentifier.fromMessagePojo(messageFei));
             }
         }
-            
-        return result;        
+
+        return result;
     }
-    
+
     public static FundingExternalIdentifiers fromRecordPojo(org.orcid.jaxb.model.record.FundingExternalIdentifiers recordPojo) {
-        if(recordPojo == null)
+        if (recordPojo == null)
             return null;
         FundingExternalIdentifiers result = new FundingExternalIdentifiers();
-        if(!recordPojo.getExternalIdentifier().isEmpty()) {
-            for(org.orcid.jaxb.model.record.FundingExternalIdentifier recordEi : recordPojo.getExternalIdentifier()){
+        if (!recordPojo.getExternalIdentifier().isEmpty()) {
+            for (org.orcid.jaxb.model.record.FundingExternalIdentifier recordEi : recordPojo.getExternalIdentifier()) {
                 result.getFundingExternalIdentifier().add(FundingExternalIdentifier.fromRecordPojo(recordEi));
             }
         }
-            
-        return result;    
+
+        return result;
     }
-    
+
 }
