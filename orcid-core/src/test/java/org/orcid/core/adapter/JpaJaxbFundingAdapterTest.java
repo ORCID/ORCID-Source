@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.InputStream;
+import java.math.BigDecimal;
 
 import javax.annotation.Resource;
 import javax.xml.bind.JAXBContext;
@@ -32,7 +33,9 @@ import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.FundingType;
 import org.orcid.jaxb.model.record.Iso3166Country;
 import org.orcid.jaxb.model.record.Visibility;
+import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
+import org.orcid.persistence.jpa.entities.StartDateEntity;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -49,7 +52,7 @@ public class JpaJaxbFundingAdapterTest {
     private JpaJaxbFundingAdapter jpaJaxbFundingAdapter;
 
     @Test
-    public void testToFundingEntity() throws JAXBException {
+    public void toFundingEntityTest() throws JAXBException {
         Funding f = getFunding();
         assertNotNull(f);
         ProfileFundingEntity pfe = jpaJaxbFundingAdapter.toProfileFundingEntity(f);
@@ -65,7 +68,7 @@ public class JpaJaxbFundingAdapterTest {
         assertEquals("en", pfe.getTranslatedTitleLanguageCode());
         assertEquals("funding:organizationDefinedType", pfe.getOrganizationDefinedType());
         assertEquals("funding:shortDescription", pfe.getDescription());
-        assertEquals("funding:amount", pfe.getAmount());
+        assertEquals("1234", pfe.getNumericAmount().toString());
         assertEquals("ADP", pfe.getCurrencyCode());
         assertEquals("http://tempuri.org", pfe.getUrl());
         
@@ -81,7 +84,7 @@ public class JpaJaxbFundingAdapterTest {
         assertEquals("{\"contributor\":[{\"contributorOrcid\":{\"value\":null,\"valueAsString\":null,\"uri\":\"http://orcid.org/8888-8888-8888-8880\",\"path\":\"8888-8888-8888-8880\",\"host\":\"orcid.org\"},\"creditName\":{\"content\":\"funding:creditName\",\"visibility\":\"PRIVATE\"},\"contributorEmail\":{\"value\":\"funding@contributorEmail.com\"},\"contributorAttributes\":{\"contributorRole\":\"LEAD\"}}]}", pfe.getContributorsJson());
 
         //External identifiers
-        assertEquals("{\"externalIdentifier\":[{\"type\":\"GRANT_NUMBER\",\"value\":\"12345\",\"url\":{\"value\":\"http://tempuri.org\"}}]}", pfe.getExternalIdentifiersJson());
+        assertEquals("{\"fundingExternalIdentifier\":[{\"type\":\"GRANT_NUMBER\",\"value\":\"12345\",\"url\":{\"value\":\"http://tempuri.org\"}},{\"type\":\"GRANT_NUMBER\",\"value\":\"67890\",\"url\":{\"value\":\"http://tempuri.org/2\"}}]}", pfe.getExternalIdentifiersJson());
         
         //Source
         assertEquals("8888-8888-8888-8880", pfe.getSource().getSourceId());
@@ -94,6 +97,42 @@ public class JpaJaxbFundingAdapterTest {
         assertEquals("common:disambiguatedOrganizationIdentifier", pfe.getOrg().getOrgDisambiguated().getSourceId());
         assertEquals("common:disambiguationSource", pfe.getOrg().getOrgDisambiguated().getSourceType());        
     }
+    
+    @Test
+    public void fromFundingEntityTest() throws JAXBException  {
+        ProfileFundingEntity entity = getProfileFundingEntity();
+        assertNotNull(entity);
+        assertEquals("123456", entity.getNumericAmount().toString());
+        
+        Funding funding = jpaJaxbFundingAdapter.toFunding(entity);        
+        assertNotNull(funding);
+        assertEquals("12345", funding.getPutCode());
+        assertNotNull(funding.getFundingAmount());
+        assertEquals("123456", funding.getFundingAmount().getContent());
+        assertEquals("CRC", funding.getFundingAmount().getCurrencyCode());
+        assertNotNull(funding.getContributors());
+        assertNotNull(funding.getContributors().getContributor());
+        assertEquals(1, funding.getContributors().getContributor().size());
+        assertEquals("8888-8888-8888-8880", funding.getContributors().getContributor().get(0).getContributorOrcid().getPath());
+        assertEquals("orcid.org", funding.getContributors().getContributor().get(0).getContributorOrcid().getHost());
+        assertEquals("http://orcid.org/8888-8888-8888-8880", funding.getContributors().getContributor().get(0).getContributorOrcid().getUri());
+        assertEquals("funding:creditName", funding.getContributors().getContributor().get(0).getCreditName().getContent());
+        assertEquals(org.orcid.jaxb.model.record.Visibility.PRIVATE, funding.getContributors().getContributor().get(0).getCreditName().getVisibility());
+        assertEquals("funding:description", funding.getDescription());
+        assertNotNull(funding.getStartDate());
+        assertEquals("1", funding.getStartDate().getDay().getValue());
+        assertEquals("1", funding.getStartDate().getMonth().getValue());
+        assertEquals("2000", funding.getStartDate().getYear().getValue());
+        assertNotNull(funding.getEndDate());
+        assertEquals("1", funding.getEndDate().getDay().getValue());
+        assertEquals("1", funding.getEndDate().getMonth().getValue());
+        assertEquals("2020", funding.getEndDate().getYear().getValue());
+        assertEquals("funding:title", funding.getTitle().getTitle().getContent());
+        assertEquals("funding:translatedTitle", funding.getTitle().getTranslatedTitle().getContent());
+        assertEquals("ES", funding.getTitle().getTranslatedTitle().getLanguageCode());
+        assertEquals(FundingType.SALARY_AWARD, funding.getType());
+        assertEquals(Visibility.PRIVATE, funding.getVisibility());
+    }
 
     private Funding getFunding() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Funding.class });
@@ -101,4 +140,23 @@ public class JpaJaxbFundingAdapterTest {
         InputStream inputStream = getClass().getResourceAsStream("/record_2.0_rc1/samples/funding-2.0_rc1.xml");
         return (Funding) unmarshaller.unmarshal(inputStream);
     }
+    
+    private ProfileFundingEntity getProfileFundingEntity() {
+        ProfileFundingEntity result = new ProfileFundingEntity();        
+        result.setContributorsJson("{\"contributor\":[{\"contributorOrcid\":{\"value\":null,\"valueAsString\":null,\"uri\":\"http://orcid.org/8888-8888-8888-8880\",\"path\":\"8888-8888-8888-8880\",\"host\":\"orcid.org\"},\"creditName\":{\"content\":\"funding:creditName\",\"visibility\":\"PRIVATE\"},\"contributorEmail\":{\"value\":\"funding@contributorEmail.com\"},\"contributorAttributes\":{\"contributorRole\":\"LEAD\"}}]}");        
+        result.setDescription("funding:description");
+        result.setEndDate(new EndDateEntity(2020, 1, 1));
+        result.setStartDate(new StartDateEntity(2000, 1, 1));
+        result.setExternalIdentifiersJson("{\"fundingExternalIdentifier\":[{\"type\":\"GRANT_NUMBER\",\"value\":\"12345\",\"url\":{\"value\":\"http://tempuri.org\"}},{\"type\":\"GRANT_NUMBER\",\"value\":\"67890\",\"url\":{\"value\":\"http://tempuri.org/2\"}}]}");
+        result.setId(12345L);
+        result.setNumericAmount(new BigDecimal(123456));
+        result.setCurrencyCode("CRC");
+        result.setTitle("funding:title");
+        result.setTranslatedTitle("funding:translatedTitle");
+        result.setTranslatedTitleLanguageCode("ES");
+        result.setType(org.orcid.jaxb.model.message.FundingType.SALARY_AWARD);
+        result.setVisibility(org.orcid.jaxb.model.message.Visibility.PRIVATE);
+        return result;
+    }
+    
 }
