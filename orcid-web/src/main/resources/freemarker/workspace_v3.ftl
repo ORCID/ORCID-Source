@@ -285,7 +285,16 @@
     </div>
     
     <div class="col-md-9 right-aside">
-        <div class="workspace-right">
+        <div class="workspace-right">        
+        	<!-- Locked error message -->
+        	<#if (locked)?? && locked>
+	        	<div class="workspace-inner workspace-header">
+	                <div class="alert alert-error readme" ng-cloak>
+	                	<strong><@orcid.msg 'workspace.locked.header'/></strong>
+	                	<p><@orcid.msg 'workspace.locked.message'/></p>
+	              	</div>                
+	        	</div>                
+        	</#if>
         	<div class="workspace-inner workspace-header" ng-controller="WorkspaceSummaryCtrl">
                 <div class="grey-box" ng-show="showAddAlert()" ng-cloak>
                 	<strong><@orcid.msg 'workspace.addinformationaboutyou'/></strong>
