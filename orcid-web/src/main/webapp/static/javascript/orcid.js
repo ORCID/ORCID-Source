@@ -182,17 +182,19 @@
             
 
             var links = $('.header .navigation > .menu > li > .menu > li').has('ul').children('a');
-            var toInject = $('.header .navigation > .menu > li > .menu > li > ul.menu');                           
+            //var toInject = $('.header .navigation > .menu > li > .menu > li > ul.menu');                           
            
             //Inject links to the Second Level
+            /*
             for( var i = 0; i < topItems.length; ++i){                                
                 $(topItemsLi[i]).children().not("a").prepend('<li class="first"><a href="'+topItems[i].href+'">'+topItems[i].text+'</li>');                    
             }
 
+            
             for (var i = 0; i < links.length; ++i){
                 $(toInject[i]).prepend('<li class="leaf"><a href="'+links[i].href+'">'+links[i].text+'</li>');                   
             }
-
+             */
             $('.header > .row > .navigation > .menu > li > a:not(:last-child)').not("ul li ul li a").removeAttr('href');
 
             //Removing links for elements with three level menus.
