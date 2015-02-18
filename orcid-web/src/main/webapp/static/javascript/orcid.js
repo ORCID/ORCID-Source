@@ -134,6 +134,7 @@
         originalMenu = new menu($('.header .navigation').html()); //Desktop menu data
          
         /* Managing window resizing for restore visibility of some elements due to Javascript actions over the styles for Mobile or Tablet views */
+        /*
         $(window).bind('resize', function() {               
             if(navigator.appVersion.indexOf("MSIE 7.") == -1){ //Not IE7                                        
                 ww = getWindowWidth();        
@@ -151,27 +152,29 @@
                     }
                     $('.header .navigation ul li ul > li.expanded > a').addClass('slideDown'); //For handling menu animation for third level menus, only on mobile                    
                 }
-                //setUserLoginStatus();                
+                        
             }
         });
-
+		    
+        */
+        
         var restoreDesktopMenu = function(){
-                /* Restoring different elements of the Desktop layout, this is due the menu modification performed to adapt it to mobile devices */                
+                // Restoring different elements of the Desktop layout, this is due the menu modification performed to adapt it to mobile devices                
                 if($('#mobile-menu-icon').css('display') == 'none'){
                     $('.container .header .search').css('display', 'block');
                     $('.container .header .search #form-search').css('display', 'block');
                     $('.container .header .search #languageCtrl').css('display', 'block');
                     $('.header .navigation > .menu').css('display', 'block');
 
-                    /*Menu Visibility */
+                    
                     $('.header .navigation > .menu > li > .menu').css('display', 'block');
 
-                    /* Restoring Tablet/Desktop Menu content */
+          
                     $('.header .navigation').html(''); //Deleting DOM content
                     $('.header .navigation').prepend(originalMenu.data());                    
                 }
         };
-
+    
         var prepareMobileMenu = function(){
             var topItems = $('.header .navigation > .menu > li > a');
             var topItemsLi = $('.header .navigation > .menu > li');
@@ -208,11 +211,12 @@
         
         prepareMobileMenu();
         
+        
         var restoreMobileMenu = function(){
             $('.header .navigation').html(''); //Deleting DOM menu content
             $('.header .navigation').prepend(mobileMenu.data()); //Restoring mobile menu structure
 
-            /* First Level Tap */
+            
             $('.header .navigation > .menu > li > a').live('click', function(event){
                 $('.header .navigation > .menu > li').removeClass('active-trail');
             });
@@ -238,8 +242,8 @@
                  window.location = this.href;                
             }
         });        
-
-        /* Menu icon */
+        
+        
         $('#mobile-menu-icon').live('click', function(event){           
             event.preventDefault();
             tap('.container .header .navigation > .menu', this);            
@@ -260,7 +264,7 @@
         var tap = function(menuObject, menuButton){            
             var display = $(menuObject).css('display');            
             if(display == 'none'){
-                hideMenuItems(menuObject);
+                //ideMenuItems(menuObject);
                 if($(menuButton).attr('id') == 'mobile-search' || $(menuButton).attr('id') == 'mobile-settings'){
                     $('.container .header #search').css('display', 'block');
                 }
@@ -274,16 +278,18 @@
                 $(menuButton).css('background','#338CAF');                 
             }
         };
+        
+        /*
 
         var hideMenuItems = function(menuObject){
-            if($(menuObject).hasClass('menu')){ /* Menu button */
+            if($(menuObject).hasClass('menu')){ 
                 $('.container .header #search').css('display', 'none');                                                
                 $('.container .header #form-search').css('display', 'none');
                 $('.header .navigation > #mobile-search').css('background', '#338CAF');
                 $('.header .navigation > #mobile-settings').css('background','#338CAF');                
             }            
             
-            if($(menuObject).attr('id') == 'form-search'){ /* Search Button */            
+            if($(menuObject).attr('id') == 'form-search'){             
                 $('.header .navigation > .menu').css('display', 'none');            
                 $('#mobile-menu-icon').css('background', '#338CAF');
                 $('.header .navigation > #mobile-settings').css('background', '#338CAF');
@@ -291,7 +297,7 @@
             
             }
 
-            if($(menuObject).attr('id') == 'languageCtrl'){ /* Language Button */            
+            if($(menuObject).attr('id') == 'languageCtrl'){            
                 $('.header .navigation > .menu').css('display', 'none');
                 $('.container .header #search').css('display', 'none'); 
                 $('.container .header #form-search').css('display', 'none');
@@ -312,26 +318,10 @@
             } 
             
         };
+        */
     };    
 	
-    
-	var developerToolsTabs =  function(){
-		$('.developer-tools .tab').click(function(e){			
-			e.preventDefault();
-			if($(this).hasClass('expanded')){
-				$(this).css('display', 'none');
-				$('.slidebox').slideUp();
-				$('.developer-tools .tab-container .collapsed').css('display','inline');
-				$('.developer-tools .tab-container').css('background', '#FFF');
-			}else{
-				$(this).css('display', 'none'); //show collapsed								
-				$('.slidebox').slideDown();
-				$('.developer-tools .tab-container .expanded').css('display','inline');
-				$('.developer-tools .tab-container').css('background', '#EBEBEB');
-			}
-		});		
-	};    
-        
+   
     /*============================================================
         Page initialisation
     ============================================================*/
@@ -339,7 +329,7 @@
     var init = function() {
         toolTips();
         popupHandler();
-        menuHack();        
+        //menuHack();        
         menuHandler();
     };
 

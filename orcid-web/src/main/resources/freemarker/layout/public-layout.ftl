@@ -93,6 +93,9 @@
 				<a href="<@spring.url "/signin" />" id="mobile-sign-in" class="mobile-button mobile-sign-in"><span class="glyphicon glyphicon-user"></span></a>
 				<!--  Desktop / Tablet menu -->
 					<ul class="menu">
+					
+					
+					<!-- FOR RESEARCHERS -->
 					<li class="first expanded active-trail">
 						<a href="<@spring.url "/" />" title=""><@orcid.msg 'public-layout.for_researchers'/></a>
 						<ul class="menu lang-fixes">
@@ -128,6 +131,9 @@
 							<li class="leaf last"><a href="<@spring.url "/content/initiative" />"><@orcid.msg 'manage_delegators.learn_more.link.text' /></a></li>
 						</ul>
 					</li>
+					
+					
+					<!-- FOR ORGANIZATIONS -->
 					<li class="expanded">
 						<a href="${aboutUri}/organizations"><@orcid.msg 'public-layout.for_organizations'/></a>
 						<ul class="menu lang-fixes">
@@ -138,13 +144,16 @@
 							<li class="last leaf"><a href="${aboutUri}/organizations/integrators"><@orcid.msg 'public-layout.integrators'/></a></li>
 						</ul>
 					</li>
+					
+					<!-- ABOUT -->
 					<li class="expanded"><a href="${aboutUri}/about"><@orcid.msg 'public-layout.about'/></a>
+						<!--  -->
 						<ul class="menu lang-fixes">
 							<li class="first expanded"><a href="${aboutUri}/about/what-is-orcid" title=""><@orcid.msg 'public-layout.what_is_orcid'/></a>
 								<ul class="menu">
-								<li class="first leaf"><a href="${aboutUri}/about/what-is-orcid/mission" title=""><@orcid.msg 'public-layout.our_mission'/></a></li>
-								<li class="last leaf"><a href="${aboutUri}/about/what-is-orcid/our-principles" title=""><@orcid.msg 'public-layout.our_principles'/></a></li>
-							</ul>
+									<li class="first leaf"><a href="${aboutUri}/about/what-is-orcid/mission" title=""><@orcid.msg 'public-layout.our_mission'/></a></li>
+									<li class="last leaf"><a href="${aboutUri}/about/what-is-orcid/our-principles" title=""><@orcid.msg 'public-layout.our_principles'/></a></li>
+								</ul>
 							</li>
 							<li class="leaf"><a href="${aboutUri}/about/team" title=""><@orcid.msg 'public-layout.the_orcid_team'/></a></li>
 							<li class="expanded"><a href="${aboutUri}/about/community" title=""><@orcid.msg 'public-layout.the_orcid_community'/></a>
@@ -172,6 +181,8 @@
 							</li>
 						</ul>
 					</li>
+					
+					<!-- HELP -->
 					<li class="expanded">
 						<a href="${aboutUri}/help"><@orcid.msg 'public-layout.help'/></a>
 						<ul class="menu lang-fixes">
@@ -181,14 +192,20 @@
 							<li class="last leaf"><a href="http://orcid.uservoice.com/knowledgebase" title=""><@orcid.msg 'public-layout.knowledge_base'/></a></li>
 						</ul>
 					</li>
+					
+					
+					<!-- SIGN IN/OUT -->
 					<li class="last leaf">
 						<@security.authorize ifNotGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">
 							<a href="<@spring.url "/signin" />" title=""><@orcid.msg 'public-layout.sign_in'/></a>
 						</@security.authorize>
+						 
 						<@security.authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">
-							<li><a href="<@spring.url '/signout'/>"><@orcid.msg 'public-layout.sign_out'/></a></li>
+							<a href="<@spring.url '/signout'/>"><@orcid.msg 'public-layout.sign_out'/></a>
 						</@security.authorize>
+						
 					</li>
+					
 				</ul>
 			<#--<#if isProxy><#include "/common/change_proxy.ftl" /></#if>-->
 			</div>
