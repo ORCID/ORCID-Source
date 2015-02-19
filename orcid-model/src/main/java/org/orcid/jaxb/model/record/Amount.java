@@ -39,7 +39,7 @@ import org.apache.commons.lang.StringUtils;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "content" })
+@XmlType(propOrder = { "content" })
 @XmlRootElement(name = "amount", namespace = "http://www.orcid.org/ns/common")
 public class Amount implements Serializable {
     /**
@@ -50,20 +50,7 @@ public class Amount implements Serializable {
     protected String content;
     @XmlAttribute(required = true)
     protected String currencyCode;
-
-    public Amount() {
-    	
-    }
-
-    public Amount(String content) {
-        this.content = content;
-    }
-
-    public Amount(String content, String currencyCode) {
-        this.content = content;
-        this.currencyCode = currencyCode;
-    }
-
+    
     public String getContent() {
         return content;
     }
