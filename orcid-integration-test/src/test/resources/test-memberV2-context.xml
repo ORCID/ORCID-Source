@@ -18,9 +18,9 @@
 
 -->
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:context="http://www.springframework.org/schema/context" xmlns:util="http://www.springframework.org/schema/util"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
-	                    http://www.springframework.org/schema/beans/spring-beans-3.1.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
+    xmlns:context="http://www.springframework.org/schema/context" xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans-3.1.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
 
     <context:property-placeholder file-encoding="UTF-8" location="classpath:test-client.properties" ignore-unresolvable="true"/>
     <context:property-placeholder file-encoding="UTF-8" location="classpath:test-web.properties" ignore-unresolvable="true"/>
@@ -33,8 +33,8 @@
         <constructor-arg ref="jerseyClient"/>
     </bean>
     
-	<bean id="notificationsClient" class="org.orcid.integration.api.notifications.NotificationsApiClientImpl">
-        <constructor-arg value="${org.orcid.api.baseUri}/v1.0"/>
+    <bean id="memberV2ApiClient" class="org.orcid.integration.api.memberV2.MemberV2ApiClientImpl">
+        <constructor-arg value="${org.orcid.api.baseUri}/v2.0_rc1"/>
         <constructor-arg ref="jerseyClient"/>
     </bean>
     
@@ -42,6 +42,10 @@
     <bean id="clientConfig" class="org.orcid.integration.api.t2.OrcidJerseyT2ClientOAuthConfig">
         <constructor-arg ref="providers" />
         <property name="properties" ref="jerseyProperties" />
+    </bean>
+    
+    <bean id="oauthHelper" class="org.orcid.integration.api.helper.OauthHelper">
+        <property name="oauthT2Client" ref="t2OAuthClient" />
     </bean>
 
 </beans>

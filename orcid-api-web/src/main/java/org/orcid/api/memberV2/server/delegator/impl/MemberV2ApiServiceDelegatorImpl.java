@@ -26,11 +26,12 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
-import org.orcid.api.common.exception.OrcidNotFoundException;
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
 import org.orcid.core.exception.MismatchedPutCodeException;
+import org.orcid.core.exception.OrcidNotFoundException;
 import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.ClientDetailsManager;
+import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.ProfileWorkManager;
@@ -85,6 +86,9 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 
     @Resource
     private SourceManager sourceManager;
+    
+    @Resource
+    private OrcidSecurityManager orcidSecurityManager;
 
     @Override
     public Response viewStatusText() {
@@ -122,7 +126,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
     public Response viewWork(String orcid, String putCode) {
         Work w = profileWorkManager.getWork(orcid, putCode);
-        checkVisbility(w);
+        orcidSecurityManager.checkVisibility(w);
         return Response.ok(w).build();
     }
 
@@ -154,19 +158,11 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         return Response.noContent().build();
     }
 
-    private void checkVisbility(Work work) {
-        Source existingSource = work.getSource();
-        String sourceIdOfUpdater = sourceManager.retrieveSourceOrcid();
-        if (sourceIdOfUpdater != null && (existingSource == null || !sourceIdOfUpdater.equals(existingSource.retrieveSourcePath()))
-                && Visibility.PRIVATE.equals(work.getVisibility())) {
-            throw new OrcidNotFoundException("The work does not exist, or it is private and you are not the source");
-        }
-    }
-
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
     public Response viewFunding(String orcid, String putCode) {
         Funding f = profileFundingManager.getFunding(orcid, putCode);
+        orcidSecurityManager.checkVisibility(f);
         return Response.ok(f).build();
     }
     
@@ -191,6 +187,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
     public Response viewEducation(String orcid, String putCode) {
         Education e = affiliationsManager.getEducationAffiliation(orcid, putCode);
+        orcidSecurityManager.checkVisibility(e);
         return Response.ok(e).build();
     }
     

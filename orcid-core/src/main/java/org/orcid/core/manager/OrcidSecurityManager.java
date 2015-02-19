@@ -14,23 +14,17 @@
  *
  * =============================================================================
  */
-package org.orcid.api.common.exception;
+package org.orcid.core.manager;
 
-import com.sun.jersey.api.client.ClientResponse.Status;
+import org.orcid.jaxb.model.record.Activity;
 
 /**
  * 
- * @author Angel Montenegro
- * 
+ * @author Will Simpson
+ *
  */
-public class OrcidDeprecatedException extends OrcidApiException {
-    private static final long serialVersionUID = 1L;
+public interface OrcidSecurityManager {
 
-    public OrcidDeprecatedException(String msg) {
-        super(msg, Status.MOVED_PERMANENTLY.getStatusCode());
-    }
-
-    public OrcidDeprecatedException(String msg, Throwable t) {
-        super(msg, Status.MOVED_PERMANENTLY.getStatusCode(), t);
-    }
+    void checkVisibility(Activity activity);
+    
 }

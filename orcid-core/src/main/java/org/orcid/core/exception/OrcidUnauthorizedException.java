@@ -14,26 +14,25 @@
  *
  * =============================================================================
  */
-package org.orcid.api.common.exception;
+package org.orcid.core.exception;
 
 import javax.ws.rs.core.Response;
 
 /**
  * @author Declan Newman (declan) Date: 01/03/2012
  */
-public class OrcidBadRequestException extends OrcidApiException {
+public class OrcidUnauthorizedException extends OrcidApiException {
 
     /**
      * 
      */
-    private static final long serialVersionUID = 7814378059339926519L;
+    private static final long serialVersionUID = 1L;
 
-    public OrcidBadRequestException(String message) {
-        super(message, Response.Status.BAD_REQUEST);
+    public OrcidUnauthorizedException(String message) {
+        super(message, Response.Status.UNAUTHORIZED);
     }
 
-    public OrcidBadRequestException(String message, Throwable t) {
-        super(message, Response.Status.BAD_REQUEST, t);
+    public OrcidUnauthorizedException(String message, Throwable t) {
+        super(message, Response.Status.UNAUTHORIZED, t);
     }
-
 }

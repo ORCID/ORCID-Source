@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.api.common.exception;
+package org.orcid.core.exception;
 
 import javax.ws.rs.core.Response;
 

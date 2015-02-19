@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.api.t2.server.delegator;
+package org.orcid.core.utils;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

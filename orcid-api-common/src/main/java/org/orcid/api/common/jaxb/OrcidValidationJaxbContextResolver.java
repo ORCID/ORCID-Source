@@ -39,8 +39,8 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
 import org.apache.log4j.Logger;
-import org.orcid.api.common.exception.OrcidBadRequestException;
 import org.orcid.core.api.OrcidApiConstants;
+import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.web.filters.ApiVersionFilter;
 import org.orcid.jaxb.model.message.ErrorDesc;
 import org.orcid.jaxb.model.message.OrcidMessage;

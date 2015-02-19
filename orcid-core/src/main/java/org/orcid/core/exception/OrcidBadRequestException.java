@@ -14,25 +14,26 @@
  *
  * =============================================================================
  */
-package org.orcid.api.common.exception;
+package org.orcid.core.exception;
 
 import javax.ws.rs.core.Response;
 
 /**
  * @author Declan Newman (declan) Date: 01/03/2012
  */
-public class OrcidNotAcceptableException extends OrcidApiException {
+public class OrcidBadRequestException extends OrcidApiException {
 
     /**
      * 
      */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 7814378059339926519L;
 
-    public OrcidNotAcceptableException(String message) {
-        super(message, Response.Status.NOT_ACCEPTABLE);
+    public OrcidBadRequestException(String message) {
+        super(message, Response.Status.BAD_REQUEST);
     }
 
-    public OrcidNotAcceptableException(String message, Throwable t) {
-        super(message, Response.Status.NOT_ACCEPTABLE, t);
+    public OrcidBadRequestException(String message, Throwable t) {
+        super(message, Response.Status.BAD_REQUEST, t);
     }
+
 }
