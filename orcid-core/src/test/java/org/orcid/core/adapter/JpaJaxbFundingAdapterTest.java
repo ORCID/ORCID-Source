@@ -111,9 +111,9 @@ public class JpaJaxbFundingAdapterTest {
         Funding funding = jpaJaxbFundingAdapter.toFunding(entity);
         assertNotNull(funding);
         assertEquals("12345", funding.getPutCode());
-        assertNotNull(funding.getFundingAmount());
-        assertEquals("123456", funding.getFundingAmount().getContent());
-        assertEquals("CRC", funding.getFundingAmount().getCurrencyCode());
+        assertNotNull(funding.getAmount());
+        assertEquals("123456", funding.getAmount().getContent());
+        assertEquals("CRC", funding.getAmount().getCurrencyCode());
         assertNotNull(funding.getContributors());
         assertNotNull(funding.getContributors().getContributor());
         assertEquals(1, funding.getContributors().getContributor().size());

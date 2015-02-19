@@ -42,7 +42,7 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "type", "organizationDefinedType", "title", "description", "fundingAmount", "url", "startDate", "endDate", "externalIdentifiers",
+@XmlType(propOrder = { "type", "organizationDefinedType", "title", "description", "amount", "url", "startDate", "endDate", "externalIdentifiers",
         "contributors", "organization", "source", "createdDate", "lastModifiedDate" })
 @XmlRootElement(name = "funding", namespace = "http://www.orcid.org/ns/funding")
 public class Funding implements VisibilityType, Activity, Serializable, OrganizationHolder {
@@ -59,9 +59,8 @@ public class Funding implements VisibilityType, Activity, Serializable, Organiza
     protected Organization organization;
     @XmlElement(namespace = "http://www.orcid.org/ns/funding", name = "shortDescription")
     protected String description;
-    //TODO: why amount doesnt work with orika converter??? 
     @XmlElement(name = "amount", namespace = "http://www.orcid.org/ns/funding")
-    protected Amount fundingAmount;
+    protected Amount amount;
     @XmlElement(namespace = "http://www.orcid.org/ns/funding")
     protected Url url;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
@@ -116,12 +115,12 @@ public class Funding implements VisibilityType, Activity, Serializable, Organiza
         this.organizationDefinedType = organizationDefinedFundingType;
     }
 
-    public Amount getFundingAmount() {
-        return fundingAmount;
+    public Amount getAmount() {
+        return amount;
     }
 
-    public void setFundingAmount(Amount amount) {
-        this.fundingAmount = amount;
+    public void setAmount(Amount amount) {
+        this.amount = amount;
     }
 
     public Url getUrl() {
@@ -245,7 +244,7 @@ public class Funding implements VisibilityType, Activity, Serializable, Organiza
         result = prime * result + ((description == null) ? 0 : description.hashCode());
         result = prime * result + ((type == null) ? 0 : type.hashCode());
         result = prime * result + ((organizationDefinedType == null) ? 0 : organizationDefinedType.hashCode());
-        result = prime * result + ((fundingAmount == null) ? 0 : fundingAmount.hashCode());
+        result = prime * result + ((amount == null) ? 0 : amount.hashCode());
         result = prime * result + ((url == null) ? 0 : url.hashCode());
         result = prime * result + ((organization == null) ? 0 : organization.hashCode());
         result = prime * result + ((visibility == null) ? 0 : visibility.hashCode());
@@ -342,11 +341,11 @@ public class Funding implements VisibilityType, Activity, Serializable, Organiza
             if (!organizationDefinedType.equals(other.organizationDefinedType))
                 return false;
         }
-        if (fundingAmount == null) {
-            if (other.fundingAmount != null)
+        if (amount == null) {
+            if (other.amount != null)
                 return false;
         } else {
-            if (!fundingAmount.equals(other.fundingAmount))
+            if (!amount.equals(other.amount))
                 return false;
         }
         if (url == null) {
@@ -423,11 +422,11 @@ public class Funding implements VisibilityType, Activity, Serializable, Organiza
             if (!organization.equals(other.organization))
                 return false;
         }
-        if (fundingAmount == null) {
-            if (other.fundingAmount != null)
+        if (amount == null) {
+            if (other.amount != null)
                 return false;
         } else {
-            if (!fundingAmount.equals(other.fundingAmount))
+            if (!amount.equals(other.amount))
                 return false;
         }
         if (description == null) {
