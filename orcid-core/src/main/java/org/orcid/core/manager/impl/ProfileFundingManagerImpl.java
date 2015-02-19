@@ -223,15 +223,6 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
         return jpaJaxbFundingAdapter.toFunding(profileFundingEntity);
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
     /**
      * Get a funding summary based on the orcid and funding id
      * @param orcid
@@ -245,23 +236,6 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
         ProfileFundingEntity profileFundingEntity = profileFundingDao.getProfileFunding(orcid, fundingId);
         return jpaJaxbFundingAdapter.toFundingSummary(profileFundingEntity);
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     /**
      * Add a new funding to the given user

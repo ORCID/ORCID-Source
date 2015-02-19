@@ -164,11 +164,6 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         return Response.ok(f).build();
     }
     
-    
-    
-    
-    
-    
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
     public Response viewFundingSummary(String orcid, String putCode) {
@@ -176,18 +171,6 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         orcidSecurityManager.checkVisibility(fs);
         return Response.ok(fs).build();
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
