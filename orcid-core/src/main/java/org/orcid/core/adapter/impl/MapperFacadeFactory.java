@@ -31,7 +31,6 @@ import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.FundingContributors;
-import org.orcid.jaxb.model.record.FundingExternalIdentifiers;
 import org.orcid.jaxb.model.record.FundingSummary;
 import org.orcid.jaxb.model.record.FuzzyDate;
 import org.orcid.jaxb.model.record.PublicationDate;
@@ -109,7 +108,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     public MapperFacade getFundingMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
-        converterFactory.registerConverter("fundingExternalIdentifiersConverterId", new JsonOrikaConverter<FundingExternalIdentifiers>());
+        converterFactory.registerConverter("fundingExternalIdentifiersConverterId", new FundingExternalIdentifiersConverter());
         converterFactory.registerConverter("fundingContributorsConverterId", new JsonOrikaConverter<FundingContributors>());
 
         ClassMapBuilder<Funding, ProfileFundingEntity> fundingClassMap = mapperFactory.classMap(Funding.class, ProfileFundingEntity.class);
@@ -121,7 +120,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         fundingClassMap.field("title.translatedTitle.content", "translatedTitle");
         fundingClassMap.field("title.translatedTitle.languageCode", "translatedTitleLanguageCode");
         fundingClassMap.field("description", "description");
-        fundingClassMap.field("amount.content", "amount");
+        fundingClassMap.field("amount.content", "numericAmount");
         fundingClassMap.field("amount.currencyCode", "currencyCode");
         fundingClassMap.field("url.value", "url");        
         fundingClassMap.field("organization.name", "org.name");

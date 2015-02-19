@@ -77,7 +77,7 @@ public class Funding implements VisibilityType, Activity, Serializable, Organiza
     protected LastModifiedDate lastModifiedDate;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected CreatedDate createdDate;
-
+    
     @XmlAttribute
     protected String putCode;
     @XmlAttribute
@@ -438,5 +438,4 @@ public class Funding implements VisibilityType, Activity, Serializable, Organiza
         }
         return true;
     }
-
 }

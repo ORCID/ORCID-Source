@@ -41,6 +41,7 @@ import org.orcid.jaxb.model.record.ActivitiesSummary;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
+import org.orcid.jaxb.model.record.FundingSummary;
 import org.orcid.jaxb.model.record.Title;
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.WorkTitle;
@@ -171,7 +172,9 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
     public Response viewFundingSummary(String orcid, String putCode) {
-        return null;
+        FundingSummary fs = profileFundingManager.getSummary(orcid, putCode);
+        orcidSecurityManager.checkVisibility(fs);
+        return Response.ok(fs).build();
     }
     
     

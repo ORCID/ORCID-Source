@@ -1,4 +1,22 @@
+/**
+ * =============================================================================
+ *
+ * ORCID (R) Open Source
+ * http://orcid.org
+ *
+ * Copyright (c) 2012-2014 ORCID, Inc.
+ * Licensed under an MIT-Style License (MIT)
+ * http://orcid.org/open-source-license
+ *
+ * This copyright and license information (including a link to the full license)
+ * shall be included in its entirety in all copies or substantial portion of
+ * the software.
+ *
+ * =============================================================================
+ */
 package org.orcid.jaxb.model.record;
+
+import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -8,10 +26,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "type", "title", "externalIdentifiers", "startDate", "endDate", "lastModifiedDate", "createdDate" })
+@XmlType(propOrder = { "type", "title", "externalIdentifiers", "startDate", "endDate", "source", "lastModifiedDate", "createdDate" })
 @XmlRootElement(name = "fundingSummary", namespace = "http://www.orcid.org/ns/funding")
-public class FundingSummary {
-
+public class FundingSummary implements VisibilityType, Activity, Serializable {
+    
+    private static final long serialVersionUID = 7489792970949538708L;
     @XmlElement(namespace = "http://www.orcid.org/ns/funding", required = true)
     protected FundingType type;
     @XmlElement(required = true, namespace = "http://www.orcid.org/ns/funding")
@@ -185,5 +204,13 @@ public class FundingSummary {
         if (visibility != other.visibility)
             return false;
         return true;
+    }
+
+    @Override
+    public String retrieveSourcePath() {
+        if (source == null) {
+            return null;
+        }
+        return source.retrieveSourcePath();
     }        
 }

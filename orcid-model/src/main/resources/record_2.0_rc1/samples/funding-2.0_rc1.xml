@@ -10,7 +10,7 @@
 		<common:translatedTitle languageCode="en">funding:translatedTitle</common:translatedTitle>
 	</funding:title>
 	<funding:shortDescription>funding:shortDescription</funding:shortDescription>
-	<funding:amount currencyCode="ADP">funding:amount</funding:amount>
+	<funding:amount currencyCode="ADP">1234</funding:amount>
 	<funding:url>http://tempuri.org</funding:url>
 	<common:startDate>
 		<common:year>1920</common:year>
@@ -27,6 +27,11 @@
 			<funding:externalIdentifierType>grant_number</funding:externalIdentifierType>
 			<funding:externalIdentifierValue>12345</funding:externalIdentifierValue>
 			<funding:externalIdentifierUrl>http://tempuri.org</funding:externalIdentifierUrl>
+		</funding:externalIdentifier>
+		<funding:externalIdentifier>
+			<funding:externalIdentifierType>grant_number</funding:externalIdentifierType>
+			<funding:externalIdentifierValue>67890</funding:externalIdentifierValue>
+			<funding:externalIdentifierUrl>http://tempuri.org/2</funding:externalIdentifierUrl>
 		</funding:externalIdentifier>
 	</funding:externalIdentifiers>
 	<funding:contributors>
