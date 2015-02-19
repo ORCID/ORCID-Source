@@ -41,6 +41,7 @@ public class OrcidApiConstants {
     public static final String ACTIVITIES = "/{orcid}/activities";
     public static final String WORK = "/{orcid}/work";
     public static final String FUNDING = "/{orcid}/funding";
+    public static final String FUNDING_SUMMARY = "/{orcid}/funding/summary";
     public static final String EDUCATION = "/{orcid}/education";
     public static final String EMPLOYMENT = "/{orcid}/employment";
     public static final String PUTCODE = "/{putCode}"; // concated on the end of other paths like FUNDINGS

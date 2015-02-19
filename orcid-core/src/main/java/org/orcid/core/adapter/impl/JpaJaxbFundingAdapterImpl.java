@@ -23,6 +23,7 @@ import ma.glasnost.orika.MapperFacade;
 
 import org.orcid.core.adapter.JpaJaxbFundingAdapter;
 import org.orcid.jaxb.model.record.Funding;
+import org.orcid.jaxb.model.record.FundingSummary;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 
 /**
@@ -54,6 +55,15 @@ public class JpaJaxbFundingAdapterImpl implements JpaJaxbFundingAdapter {
         return mapperFacade.map(profileFundingEntity, Funding.class);
     }
 
+    @Override
+    public FundingSummary toFundingSummary(ProfileFundingEntity profileFundingEntity) {
+        if (profileFundingEntity == null) {
+            return null;
+        }
+        
+        return mapperFacade.map(profileFundingEntity, FundingSummary.class);
+    }
+    
     @Override
     public List<Funding> toFunding(Collection<ProfileFundingEntity> fundingEntities) {
         if (fundingEntities == null) {

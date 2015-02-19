@@ -30,6 +30,7 @@ import javax.xml.bind.Unmarshaller;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.jaxb.model.record.Funding;
+import org.orcid.jaxb.model.record.FundingSummary;
 import org.orcid.jaxb.model.record.FundingType;
 import org.orcid.jaxb.model.record.Iso3166Country;
 import org.orcid.jaxb.model.record.Visibility;
@@ -138,6 +139,27 @@ public class JpaJaxbFundingAdapterTest {
         assertEquals(Visibility.PRIVATE, funding.getVisibility());
     }
 
+    @Test
+    public void fromFundingEntityToSummaryTest() throws JAXBException {
+        ProfileFundingEntity entity = getProfileFundingEntity();
+        assertNotNull(entity);
+        assertEquals("123456", entity.getNumericAmount().toString());
+        FundingSummary summary = jpaJaxbFundingAdapter.toFundingSummary(entity);
+        assertNotNull(summary);
+        assertEquals("12345", summary.getPutCode());
+        assertNotNull(summary.getStartDate());
+        assertEquals("1", summary.getStartDate().getDay().getValue());
+        assertEquals("1", summary.getStartDate().getMonth().getValue());
+        assertEquals("2000", summary.getStartDate().getYear().getValue());
+        assertNotNull(summary.getEndDate());
+        assertEquals("1", summary.getEndDate().getDay().getValue());
+        assertEquals("1", summary.getEndDate().getMonth().getValue());
+        assertEquals("2020", summary.getEndDate().getYear().getValue());
+        assertEquals("funding:title", summary.getTitle().getTitle().getContent());
+        assertEquals(FundingType.SALARY_AWARD, summary.getType());
+        assertEquals(Visibility.PRIVATE, summary.getVisibility());
+    }
+    
     private Funding getFunding() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Funding.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();

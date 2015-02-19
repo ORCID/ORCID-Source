@@ -28,7 +28,6 @@ import javax.ws.rs.core.Response;
 
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
 import org.orcid.core.exception.MismatchedPutCodeException;
-import org.orcid.core.exception.OrcidNotFoundException;
 import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.OrcidSecurityManager;
@@ -42,9 +41,8 @@ import org.orcid.jaxb.model.record.ActivitiesSummary;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
-import org.orcid.jaxb.model.record.Source;
+import org.orcid.jaxb.model.record.FundingSummary;
 import org.orcid.jaxb.model.record.Title;
-import org.orcid.jaxb.model.record.Visibility;
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.WorkTitle;
 import org.orcid.persistence.dao.ProfileDao;
@@ -167,6 +165,14 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     }
     
     @Override
+    @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
+    public Response viewFundingSummary(String orcid, String putCode) {
+        FundingSummary fs = profileFundingManager.getSummary(orcid, putCode);
+        orcidSecurityManager.checkVisibility(fs);
+        return Response.ok(fs).build();
+    }
+    
+    @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
     public Response createFunding(String orcid, Funding funding) {
         Funding f = profileFundingManager.createFunding(orcid, funding);
@@ -241,5 +247,5 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     public Response deleteFunding(String orcid, String putCode) {
         profileFundingManager.checkSourceAndDelete(orcid, putCode);
         return Response.noContent().build();
-    }
+    }        
 }

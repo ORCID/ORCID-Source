@@ -21,6 +21,7 @@ import static org.orcid.core.api.OrcidApiConstants.EDUCATION;
 import static org.orcid.core.api.OrcidApiConstants.EMPLOYMENT;
 import static org.orcid.core.api.OrcidApiConstants.ERROR;
 import static org.orcid.core.api.OrcidApiConstants.FUNDING;
+import static org.orcid.core.api.OrcidApiConstants.FUNDING_SUMMARY;
 import static org.orcid.core.api.OrcidApiConstants.ORCID_JSON;
 import static org.orcid.core.api.OrcidApiConstants.ORCID_XML;
 import static org.orcid.core.api.OrcidApiConstants.PUTCODE;
@@ -124,7 +125,14 @@ abstract public class MemberV2ApiServiceImplBase {
     public Response viewFunding(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewFunding(orcid, putCode);
     }
-
+    
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(FUNDING_SUMMARY + PUTCODE)
+    public Response viewFundingSummary(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+        return serviceDelegator.viewFundingSummary(orcid, putCode);
+    }
+    
     @POST
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })

@@ -31,6 +31,7 @@ import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.FundingContributors;
+import org.orcid.jaxb.model.record.FundingSummary;
 import org.orcid.jaxb.model.record.FuzzyDate;
 import org.orcid.jaxb.model.record.PublicationDate;
 import org.orcid.jaxb.model.record.Work;
@@ -110,31 +111,41 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         converterFactory.registerConverter("fundingExternalIdentifiersConverterId", new FundingExternalIdentifiersConverter());
         converterFactory.registerConverter("fundingContributorsConverterId", new JsonOrikaConverter<FundingContributors>());
 
-        ClassMapBuilder<Funding, ProfileFundingEntity> classMap = mapperFactory.classMap(Funding.class, ProfileFundingEntity.class);
-        classMap.byDefault();
-        classMap.field("putCode", "id");
-        classMap.field("type", "type");
-        classMap.field("organizationDefinedType.content", "organizationDefinedType");
-        classMap.field("title.title.content", "title");
-        classMap.field("title.translatedTitle.content", "translatedTitle");
-        classMap.field("title.translatedTitle.languageCode", "translatedTitleLanguageCode");
-        classMap.field("description", "description");
-        classMap.field("amount.content", "numericAmount");
-        classMap.field("amount.currencyCode", "currencyCode");
-        classMap.field("url.value", "url");        
-        classMap.field("organization.name", "org.name");
-        classMap.field("organization.address.city", "org.city");
-        classMap.field("organization.address.region", "org.region");
-        classMap.field("organization.address.country", "org.country");
-        classMap.field("organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier", "org.orgDisambiguated.sourceId");
-        classMap.field("organization.disambiguatedOrganization.disambiguationSource", "org.orgDisambiguated.sourceType");
-        classMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("fundingExternalIdentifiersConverterId").add();
-        classMap.fieldMap("contributors", "contributorsJson").converter("fundingContributorsConverterId").add();           
-        classMap.register();
-                
+        ClassMapBuilder<Funding, ProfileFundingEntity> fundingClassMap = mapperFactory.classMap(Funding.class, ProfileFundingEntity.class);
+        fundingClassMap.byDefault();
+        fundingClassMap.field("putCode", "id");
+        fundingClassMap.field("type", "type");
+        fundingClassMap.field("organizationDefinedType.content", "organizationDefinedType");
+        fundingClassMap.field("title.title.content", "title");
+        fundingClassMap.field("title.translatedTitle.content", "translatedTitle");
+        fundingClassMap.field("title.translatedTitle.languageCode", "translatedTitleLanguageCode");
+        fundingClassMap.field("description", "description");
+        fundingClassMap.field("amount.content", "numericAmount");
+        fundingClassMap.field("amount.currencyCode", "currencyCode");
+        fundingClassMap.field("url.value", "url");        
+        fundingClassMap.field("organization.name", "org.name");
+        fundingClassMap.field("organization.address.city", "org.city");
+        fundingClassMap.field("organization.address.region", "org.region");
+        fundingClassMap.field("organization.address.country", "org.country");
+        fundingClassMap.field("organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier", "org.orgDisambiguated.sourceId");
+        fundingClassMap.field("organization.disambiguatedOrganization.disambiguationSource", "org.orgDisambiguated.sourceType");
+        fundingClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("fundingExternalIdentifiersConverterId").add();
+        fundingClassMap.fieldMap("contributors", "contributorsJson").converter("fundingContributorsConverterId").add();           
+        fundingClassMap.register();
+
         mapperFactory.classMap(FuzzyDate.class, StartDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day").register();
         mapperFactory.classMap(FuzzyDate.class, EndDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day").register();        
-        mapperFactory.classMap(org.orcid.jaxb.model.record.Source.class, SourceEntity.class).field("sourceOrcid.path", "sourceClient.id").byDefault().register();        
+        mapperFactory.classMap(org.orcid.jaxb.model.record.Source.class, SourceEntity.class).field("sourceOrcid.path", "sourceClient.id").byDefault().register();
+        
+        ClassMapBuilder<FundingSummary, ProfileFundingEntity> fundingSummaryClassMap = mapperFactory.classMap(FundingSummary.class, ProfileFundingEntity.class);
+        fundingSummaryClassMap.field("putCode", "id");
+        fundingSummaryClassMap.field("type", "type");
+        fundingSummaryClassMap.field("title.title.content", "title");
+        fundingSummaryClassMap.field("title.translatedTitle.content", "translatedTitle");
+        fundingSummaryClassMap.field("title.translatedTitle.languageCode", "translatedTitleLanguageCode");
+        fundingSummaryClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("fundingExternalIdentifiersConverterId").add();
+        fundingSummaryClassMap.byDefault();
+        fundingSummaryClassMap.register();
         
         return mapperFactory.getMapperFacade();
     }

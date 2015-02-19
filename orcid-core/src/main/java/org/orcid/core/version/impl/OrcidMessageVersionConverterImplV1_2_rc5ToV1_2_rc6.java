@@ -178,11 +178,11 @@ public class OrcidMessageVersionConverterImplV1_2_rc5ToV1_2_rc6 implements Orcid
                         }
                     }
             }
-        }
-        if (orcidProfile.getOrcidActivities() != null) {
-            if (orcidProfile.getOrcidActivities().getOrcidWorks() != null) {
-                for (OrcidWork act : orcidProfile.getOrcidActivities().getOrcidWorks().getOrcidWork())
-                    upgradeActivity(act);
+            if (orcidProfile.getOrcidActivities() != null) {
+                if (orcidProfile.getOrcidActivities().getOrcidWorks() != null) {
+                    for (OrcidWork act : orcidProfile.getOrcidActivities().getOrcidWorks().getOrcidWork())
+                        upgradeActivity(act);
+                }
             }
         }
     }
