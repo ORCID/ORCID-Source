@@ -19,6 +19,7 @@ package org.orcid.integration.blackbox;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
+import org.orcid.integration.blackbox.api.MemberV2Test;
 import org.orcid.integration.blackbox.api.NotificationsTest;
 import org.orcid.integration.blackbox.web.SigninTest;
 import org.orcid.integration.blackbox.web.works.AddWorksTest;
@@ -30,7 +31,7 @@ import org.orcid.integration.blackbox.web.works.PrivacyWorksTest;
  *
  */
 @RunWith(Suite.class)
-@SuiteClasses({ SigninTest.class, AddWorksTest.class, PrivacyWorksTest.class, NotificationsTest.class })
+@SuiteClasses({ SigninTest.class, AddWorksTest.class, PrivacyWorksTest.class, NotificationsTest.class, MemberV2Test.class })
 public class BlackBoxTestSuite {
 
 }

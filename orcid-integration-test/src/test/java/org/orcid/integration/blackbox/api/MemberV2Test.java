@@ -25,26 +25,29 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 
 import javax.annotation.Resource;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.integration.api.notifications.NotificationsApiClientImpl;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.orcid.api.common.WebDriverHelper;
+import org.orcid.integration.api.helper.OauthHelper;
+import org.orcid.integration.api.memberV2.MemberV2ApiClientImpl;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
+import org.orcid.jaxb.model.record.Work;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 /**
  * 
@@ -52,69 +55,86 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-notifications-context.xml" })
-public class NotificationsTest {
+@ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
+public class MemberV2Test {
 
+    @Value("${org.orcid.web.base.url:http://localhost:8080/orcid-web}")
+    private String webBaseUrl;
+    @Value("${org.orcid.web.testClient1.redirectUri}")
+    private String redirectUri;
     @Value("${org.orcid.web.testClient1.clientId}")
     public String client1ClientId;
     @Value("${org.orcid.web.testClient1.clientSecret}")
     public String client1ClientSecret;
     @Value("${org.orcid.web.testUser1.orcidId}")
     public String testUser1OrcidId;
+    @Value("${org.orcid.web.testUser1.username}")
+    public String user1UserName;
+    @Value("${org.orcid.web.testUser1.password}")
+    public String user1Password;
 
     @Resource(name = "t2OAuthClient")
     private T2OAuthAPIService<ClientResponse> t2OAuthClient;
 
     @Resource
-    private NotificationsApiClientImpl notificationsClient;
+    private MemberV2ApiClientImpl memberV2ApiClient;
+
+    private WebDriver webDriver;
+
+    private WebDriverHelper webDriverHelper;
+
+    @Resource
+    private OauthHelper oauthHelper;
+
+    @Before
+    public void before() {
+        webDriver = new FirefoxDriver();
+        webDriverHelper = new WebDriverHelper(webDriver, webBaseUrl, redirectUri);
+        oauthHelper.setWebDriverHelper(webDriverHelper);
+    }
+
+    @After
+    public void after() {
+        webDriver.quit();
+    }
 
     @Test
-    public void testGetNotificationToken() throws JSONException {
+    public void testGetNotificationToken() throws JSONException, InterruptedException {
         String accessToken = getAccessToken();
         assertNotNull(accessToken);
     }
 
     @Test
-    public void createAddActivitiesNotification() throws JSONException {
-        NotificationAddActivities notification = unmarshallFromPath("/notification-add-activities.xml");
+    public void createWork() throws JSONException, InterruptedException {
+        Work notification = unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml");
         notification.setPutCode(null);
         String accessToken = getAccessToken();
-        ClientResponse response = notificationsClient.addAddActivitiesNotificationXml(testUser1OrcidId, notification, accessToken);
+        ClientResponse response = memberV2ApiClient.createWorkXml(testUser1OrcidId, notification, accessToken);
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
         String locationPath = response.getLocation().getPath();
         assertTrue("Location header path should match pattern, but was " + locationPath,
-                locationPath.matches(".*/v1.0/4444-4444-4444-4441/notifications/add-activities/\\d+"));
+                locationPath.matches(".*/v2.0_rc1/4444-4444-4444-4441/work/\\d+"));
     }
 
-    private String getAccessToken() throws JSONException {
-        MultivaluedMap<String, String> params = new MultivaluedMapImpl();
-        params.add("client_id", client1ClientId);
-        params.add("client_secret", client1ClientSecret);
-        params.add("grant_type", "client_credentials");
-        params.add("scope", ScopePathType.PREMIUM_NOTIFICATION.value());
-        ClientResponse clientResponse = t2OAuthClient.obtainOauth2TokenPost("client_credentials", params);
-        assertEquals(200, clientResponse.getStatus());
-        String body = clientResponse.getEntity(String.class);
-        JSONObject jsonObject = new JSONObject(body);
-        String accessToken = (String) jsonObject.get("access_token");
-        return accessToken;
+    private String getAccessToken() throws InterruptedException, JSONException {
+        return oauthHelper.obtainAccessToken(client1ClientId, client1ClientSecret, ScopePathType.ACTIVITIES_UPDATE.value(), user1UserName, user1Password, redirectUri);
     }
 
-    public NotificationAddActivities unmarshallFromPath(String path) {
+    public Work unmarshallFromPath(String path) {
         try (Reader reader = new InputStreamReader(getClass().getResourceAsStream(path))) {
-            NotificationAddActivities notification = unmarshall(reader);
-            return notification;
+            Work work = unmarshall(reader);
+            return work;
         } catch (IOException e) {
             throw new RuntimeException("Error reading notification from classpath", e);
         }
     }
 
-    public NotificationAddActivities unmarshall(Reader reader) {
+    public Work unmarshall(Reader reader) {
         try {
-            JAXBContext context = JAXBContext.newInstance(NotificationAddActivities.class.getPackage().getName());
+            JAXBContext context = JAXBContext.newInstance(Work.class);
             Unmarshaller unmarshaller = context.createUnmarshaller();
-            return (NotificationAddActivities) unmarshaller.unmarshal(reader);
+            return (Work) unmarshaller.unmarshal(reader);
         } catch (JAXBException e) {
             throw new RuntimeException("Unable to unmarshall orcid message" + e);
         }
