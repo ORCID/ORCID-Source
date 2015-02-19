@@ -471,7 +471,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 if (contributorOrcid != null) {
                     String uri = contributorOrcid.getUri();
                     if (uri == null) {
-                        String orcid = contributorOrcid.getPath();
+                        String orcid = contributorOrcid.getValueAsString();
                         if (orcid == null) {
                             orcid = contributorOrcid.getPath();
                         }
@@ -923,7 +923,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 if (contributorOrcid != null) {
                     String uri = contributorOrcid.getUri();
                     if (uri == null) {
-                        String orcid = contributorOrcid.getPath();
+                        String orcid = contributorOrcid.getValueAsString();
                         if (orcid == null) {
                             orcid = contributorOrcid.getPath();
                         }
