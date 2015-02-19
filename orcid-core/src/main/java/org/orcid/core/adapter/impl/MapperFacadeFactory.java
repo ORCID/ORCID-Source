@@ -23,15 +23,16 @@ import ma.glasnost.orika.impl.DefaultMapperFactory;
 import ma.glasnost.orika.metadata.ClassMapBuilder;
 
 import org.orcid.jaxb.model.common.Source;
-import org.orcid.jaxb.model.record.FuzzyDate;
 import org.orcid.jaxb.model.notification.addactivities.Activity;
 import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
 import org.orcid.jaxb.model.notification.amended.NotificationAmended;
 import org.orcid.jaxb.model.notification.custom.NotificationCustom;
 import org.orcid.jaxb.model.record.Education;
+import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.FundingContributors;
 import org.orcid.jaxb.model.record.FundingExternalIdentifiers;
+import org.orcid.jaxb.model.record.FuzzyDate;
 import org.orcid.jaxb.model.record.PublicationDate;
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.WorkContributors;
@@ -149,6 +150,28 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         classMap.field("organization.address.country", "org.country");
         classMap.field("organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier", "org.orgDisambiguated.sourceId");
         classMap.field("organization.disambiguatedOrganization.disambiguationSource", "org.orgDisambiguated.sourceType");
+        classMap.field("departmentName", "department");        
+        classMap.field("roleTitle", "title");
+        classMap.byDefault();
+        classMap.register();
+        
+        mapperFactory.classMap(FuzzyDate.class, StartDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day").register();
+        mapperFactory.classMap(FuzzyDate.class, EndDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day").register();        
+        mapperFactory.classMap(org.orcid.jaxb.model.record.Source.class, SourceEntity.class).field("sourceOrcid.path", "sourceClient.id").byDefault().register();
+        
+        return mapperFactory.getMapperFacade();
+    }
+    
+    public MapperFacade getEmploymentMapperFacade() {
+        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        ClassMapBuilder<Employment, OrgAffiliationRelationEntity> classMap = mapperFactory.classMap(Employment.class, OrgAffiliationRelationEntity.class);
+        classMap.field("putCode", "id");
+        classMap.field("organization.name", "org.name");
+        classMap.field("organization.address.city", "org.city");
+        classMap.field("organization.address.region", "org.region");
+        classMap.field("organization.address.country", "org.country");
+        classMap.field("organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier", "org.orgDisambiguated.sourceId");
+        classMap.field("organization.disambiguatedOrganization.disambiguationSource", "org.orgDisambiguated.sourceType");
         classMap.field("departmentName", "department");
         classMap.field("roleTitle", "title");
         classMap.byDefault();
@@ -160,7 +183,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         
         return mapperFactory.getMapperFacade();
     }
-
+    
     private ClassMapBuilder<?, ?> mapCommonFields(ClassMapBuilder<?, ?> builder) {
         return builder.field("dateCreated", "createdDate").field("id", "putCode").byDefault();
     }

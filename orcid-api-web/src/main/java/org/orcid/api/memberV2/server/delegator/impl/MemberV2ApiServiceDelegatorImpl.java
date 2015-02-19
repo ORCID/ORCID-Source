@@ -40,6 +40,7 @@ import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.ActivitiesSummary;
 import org.orcid.jaxb.model.record.Education;
+import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.Source;
 import org.orcid.jaxb.model.record.Title;
@@ -183,13 +184,6 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
-    public Response deleteFunding(String orcid, String putCode) {
-        profileFundingManager.checkSourceAndDelete(orcid, putCode);
-        return Response.noContent().build();
-    }
-    
-    @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
     public Response viewEducation(String orcid, String putCode) {
         Education e = affiliationsManager.getEducationAffiliation(orcid, putCode);
@@ -215,9 +209,37 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     }
     
     @Override
+    @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
+    public Response viewEmployment(String orcid, String putCode) {
+        Employment e = affiliationsManager.getEmploymentAffiliation(orcid, putCode);
+        return Response.ok(e).build();
+    }
+    
+    @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
-    public Response deleteEducation(String orcid, String putCode) {
+    public Response createEmployment(String orcid, Employment employment) {
+        Employment e = affiliationsManager.createEmploymentAffiliation(orcid, employment);
+        return Response.ok(e).build();
+    }
+    
+    @Override
+    @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
+    public Response updateEmployment(String orcid, String putCode, Employment employment) {
+        Employment e = affiliationsManager.updateEmploymentAffiliation(orcid, employment);
+        return Response.ok(e).build();
+    }
+    
+    @Override
+    @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
+    public Response deleteAffiliation(String orcid, String putCode) {
         affiliationsManager.checkSourceAndDelete(orcid, putCode);
         return Response.noContent().build();
-    } 
+    }
+    
+    @Override
+    @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
+    public Response deleteFunding(String orcid, String putCode) {
+        profileFundingManager.checkSourceAndDelete(orcid, putCode);
+        return Response.noContent().build();
+    }
 }

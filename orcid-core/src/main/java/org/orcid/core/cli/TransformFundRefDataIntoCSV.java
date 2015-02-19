@@ -5,18 +5,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 import javax.ws.rs.core.MultivaluedMap;
 import javax.xml.parsers.DocumentBuilder;
@@ -33,11 +25,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
-import org.orcid.core.manager.OrgManager;
-import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.persistence.dao.GenericDao;
-import org.orcid.persistence.dao.OrgDisambiguatedDao;
-import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +37,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
 
 import com.sun.jersey.api.client.Client;
