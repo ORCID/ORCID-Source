@@ -5826,8 +5826,7 @@ ul.oauth-scopes li{
 		color: #FFFFFF;
 		font-size: 30px;
 	}
-	.header .navigation>.menu {
-		display: none;
+	.header .navigation>.menu {				
 		position: absolute;
 		width: 50%;
 		height: auto;

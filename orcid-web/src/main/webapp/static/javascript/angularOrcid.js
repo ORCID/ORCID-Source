@@ -7987,3 +7987,21 @@ orcidNgModule.controller('searchBoxCtrl',['$scope', function ($scope){
 	}
 	
 }]);
+
+
+orcidNgModule.controller('menuCtrl',['$scope', function ($scope){	
+	
+	$scope.active = false;
+	
+	$scope.toggleMenu = function(){
+		$scope.active = !$scope.active;
+		console.log($scope.active);
+	}
+	
+	$scope.showMenu = function(){
+		
+	}
+	
+	
+	
+}]);

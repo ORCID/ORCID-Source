@@ -114,10 +114,12 @@
         });
     };
     
+    
+    
+    
+    
     /* Menu Handler Mobile / Desktop - Prototype implementation */
     var menuHandler = function(){
-    	
-    	var language = $('#language-codes option:selected').text();
         
         var menu = function(menu){
             this.menu = menu;
@@ -134,7 +136,7 @@
         originalMenu = new menu($('.header .navigation').html()); //Desktop menu data
          
         /* Managing window resizing for restore visibility of some elements due to Javascript actions over the styles for Mobile or Tablet views */
-        /*
+        
         $(window).bind('resize', function() {               
             if(navigator.appVersion.indexOf("MSIE 7.") == -1){ //Not IE7                                        
                 ww = getWindowWidth();        
@@ -156,7 +158,7 @@
             }
         });
 		    
-        */
+        
         
         var restoreDesktopMenu = function(){
                 // Restoring different elements of the Desktop layout, this is due the menu modification performed to adapt it to mobile devices                
@@ -182,19 +184,8 @@
             
 
             var links = $('.header .navigation > .menu > li > .menu > li').has('ul').children('a');
-            //var toInject = $('.header .navigation > .menu > li > .menu > li > ul.menu');                           
+            var toInject = $('.header .navigation > .menu > li > .menu > li > ul.menu');                           
            
-            //Inject links to the Second Level
-            /*
-            for( var i = 0; i < topItems.length; ++i){                                
-                $(topItemsLi[i]).children().not("a").prepend('<li class="first"><a href="'+topItems[i].href+'">'+topItems[i].text+'</li>');                    
-            }
-
-            
-            for (var i = 0; i < links.length; ++i){
-                $(toInject[i]).prepend('<li class="leaf"><a href="'+links[i].href+'">'+links[i].text+'</li>');                   
-            }
-             */
             $('.header > .row > .navigation > .menu > li > a:not(:last-child)').not("ul li ul li a").removeAttr('href');
 
             //Removing links for elements with three level menus.
@@ -246,10 +237,7 @@
         });        
         
         
-        $('#mobile-menu-icon').live('click', function(event){           
-            event.preventDefault();
-            tap('.container .header .navigation > .menu', this);            
-        });        
+                
 
         /* Search */ 
         $('#mobile-search').live('click', function(event){          
@@ -280,8 +268,7 @@
                 $(menuButton).css('background','#338CAF');                 
             }
         };
-        
-        /*
+       
 
         var hideMenuItems = function(menuObject){
             if($(menuObject).hasClass('menu')){ 
@@ -320,7 +307,7 @@
             } 
             
         };
-        */
+       
     };    
 	
    
