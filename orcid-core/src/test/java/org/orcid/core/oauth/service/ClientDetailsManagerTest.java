@@ -180,9 +180,9 @@ public class ClientDetailsManagerTest extends DBUnitTest {
         assertNotNull(clientId);
         Set<String> registeredRedirectUris = clientDetails.getRegisteredRedirectUri();
         assertNotNull(registeredRedirectUris);
-        if(clientDetails.getClientId().equals("4444-4444-4444-4498"))
+        if (clientDetails.getClientId().equals("4444-4444-4444-4445") || clientDetails.getClientId().equals("4444-4444-4444-4498"))
             assertEquals(2, registeredRedirectUris.size());
-        else 
+        else
             assertEquals(1, registeredRedirectUris.size());
         Collection<GrantedAuthority> authorities = clientDetails.getAuthorities();
         assertNotNull(authorities);
@@ -201,7 +201,7 @@ public class ClientDetailsManagerTest extends DBUnitTest {
             assertEquals(1, resourceIds.size());
         Set<String> scope = clientDetails.getScope();
         assertNotNull(scope);
-        int expectedNumberOfScopes = "4444-4444-4444-4445".equals(clientDetails.getClientId()) ? 8 : 1;
+        int expectedNumberOfScopes = "4444-4444-4444-4445".equals(clientDetails.getClientId()) ? 9 : 1;
         assertEquals(expectedNumberOfScopes, scope.size());
     }
 }
