@@ -44,6 +44,8 @@ public interface MemberV2ApiServiceDelegator {
 
     Response viewFunding(String orcid, String putCode);
     
+    Response viewFundingSummary(String orcid, String putCode);
+    
     Response createFunding(String orcid, Funding funding);
     
     Response updateFunding(String orcid, String putCode, Funding funding);

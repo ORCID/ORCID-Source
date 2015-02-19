@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.Funding;
+import org.orcid.jaxb.model.record.FundingSummary;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 
 public interface ProfileFundingManager {
@@ -112,6 +113,16 @@ public interface ProfileFundingManager {
      * @return the Funding          
      * */
     Funding getFunding(String orcid, String fundingId);
+    
+    /**
+     * Get a funding summary based on the orcid and funding id
+     * @param orcid
+     *          The funding owner
+     * @param fundingId
+     *          The funding id
+     * @return the FundingSummary          
+     * */
+    FundingSummary getSummary(String orcid, String fundingId);
     
     /**
      * Add a new funding to the given user

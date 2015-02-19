@@ -33,6 +33,7 @@ import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.Funding;
+import org.orcid.jaxb.model.record.FundingSummary;
 import org.orcid.persistence.dao.FundingSubTypeSolrDao;
 import org.orcid.persistence.dao.FundingSubTypeToIndexDao;
 import org.orcid.persistence.dao.ProfileDao;
@@ -221,6 +222,46 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
         ProfileFundingEntity profileFundingEntity = profileFundingDao.getProfileFunding(orcid, fundingId); 
         return jpaJaxbFundingAdapter.toFunding(profileFundingEntity);
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    /**
+     * Get a funding summary based on the orcid and funding id
+     * @param orcid
+     *          The funding owner
+     * @param fundingId
+     *          The funding id
+     * @return the FundingSummary          
+     * */
+    @Override
+    public FundingSummary getSummary(String orcid, String fundingId) {
+        ProfileFundingEntity profileFundingEntity = profileFundingDao.getProfileFunding(orcid, fundingId);
+        return jpaJaxbFundingAdapter.toFundingSummary(profileFundingEntity);
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     /**
      * Add a new funding to the given user
