@@ -157,19 +157,11 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         return Response.noContent().build();
     }
 
-    private void checkVisbility(Work work) {
-        Source existingSource = work.getSource();
-        String sourceIdOfUpdater = sourceManager.retrieveSourceOrcid();
-        if (sourceIdOfUpdater != null && (existingSource == null || !sourceIdOfUpdater.equals(existingSource.retrieveSourcePath()))
-                && Visibility.PRIVATE.equals(work.getVisibility())) {
-            throw new OrcidNotFoundException("The work does not exist, or it is private and you are not the source");
-        }
-    }
-
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
     public Response viewFunding(String orcid, String putCode) {
         Funding f = profileFundingManager.getFunding(orcid, putCode);
+        orcidSecurityManager.checkVisibility(f);
         return Response.ok(f).build();
     }
     
@@ -201,6 +193,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
     public Response viewEducation(String orcid, String putCode) {
         Education e = affiliationsManager.getEducationAffiliation(orcid, putCode);
+        orcidSecurityManager.checkVisibility(e);
         return Response.ok(e).build();
     }
     
