@@ -31,6 +31,7 @@ import org.orcid.jaxb.model.record.AffiliationType;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.EducationSummary;
 import org.orcid.jaxb.model.record.Employment;
+import org.orcid.jaxb.model.record.EmploymentSummary;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
@@ -174,6 +175,19 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
         OrgAffiliationRelationEntity entity = findAffiliationByUserAndId(userOrcid, employmentId);
         return jpaJaxbEmploymentAdapter.toEmployment(entity);
     }
+    
+    /**
+     * Get a summary of an employment affiliation based on the orcid and education id
+     * @param orcid
+     *          The employment owner
+     * @param employmentId
+     *          The employment id
+     * @return the employment summary
+     * */
+    public EmploymentSummary getEmploymentSummary(String userOrcid, String employmentId) {
+        OrgAffiliationRelationEntity entity = findAffiliationByUserAndId(userOrcid, employmentId);
+        return jpaJaxbEmploymentAdapter.toEmploymentSummary(entity);
+    }        
     
     /**
      * Add a new employment to the given user

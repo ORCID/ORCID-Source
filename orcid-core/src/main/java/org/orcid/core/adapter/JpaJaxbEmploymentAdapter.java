@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.orcid.jaxb.model.record.Employment;
+import org.orcid.jaxb.model.record.EmploymentSummary;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 
 /**
@@ -32,6 +33,8 @@ public interface JpaJaxbEmploymentAdapter {
     OrgAffiliationRelationEntity toOrgAffiliationRelationEntity(Employment employment);
 
     Employment toEmployment(OrgAffiliationRelationEntity entity);
+    
+    EmploymentSummary toEmploymentSummary(OrgAffiliationRelationEntity entity);
 
     List<Employment> toEmployment(Collection<OrgAffiliationRelationEntity> entities);
     
