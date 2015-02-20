@@ -22,6 +22,7 @@ import org.orcid.jaxb.model.record.AffiliationType;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.EducationSummary;
 import org.orcid.jaxb.model.record.Employment;
+import org.orcid.jaxb.model.record.EmploymentSummary;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 
 public interface AffiliationsManager {
@@ -90,6 +91,16 @@ public interface AffiliationsManager {
      * @return the employment
      * */
     Employment getEmploymentAffiliation(String userOrcid, String employmentId);
+    
+    /**
+     * Get a summary of an employment affiliation based on the orcid and education id
+     * @param orcid
+     *          The employment owner
+     * @param employmentId
+     *          The employment id
+     * @return the employment summary
+     * */
+    EmploymentSummary getEmploymentSummary(String userOrcid, String employmentId);
     
     /**
      * Add a new employment to the given user

@@ -30,6 +30,7 @@ import org.orcid.jaxb.model.notification.custom.NotificationCustom;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.EducationSummary;
 import org.orcid.jaxb.model.record.Employment;
+import org.orcid.jaxb.model.record.EmploymentSummary;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.FundingContributors;
 import org.orcid.jaxb.model.record.FundingSummary;
@@ -193,7 +194,14 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         classMap.field("organization.disambiguatedOrganization.disambiguationSource", "org.orgDisambiguated.sourceType");
         classMap.field("departmentName", "department");
         classMap.field("roleTitle", "title");        
-        classMap.register();
+        classMap.register();        
+        
+        ClassMapBuilder<EmploymentSummary, OrgAffiliationRelationEntity> employmentSummaryClassMap = mapperFactory.classMap(EmploymentSummary.class, OrgAffiliationRelationEntity.class);
+        employmentSummaryClassMap.field("departmentName", "department");        
+        employmentSummaryClassMap.field("roleTitle", "title");  
+        employmentSummaryClassMap.field("putCode", "id");
+        employmentSummaryClassMap.byDefault();
+        employmentSummaryClassMap.register();        
         
         mapperFactory.classMap(FuzzyDate.class, StartDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day").register();
         mapperFactory.classMap(FuzzyDate.class, EndDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day").register();        

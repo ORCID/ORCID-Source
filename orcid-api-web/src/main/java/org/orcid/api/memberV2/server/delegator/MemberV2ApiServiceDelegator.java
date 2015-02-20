@@ -62,6 +62,8 @@ public interface MemberV2ApiServiceDelegator {
     
     Response viewEmployment(String orcid, String putCode);
     
+    Response viewEmploymentSummary(String orcid, String putCode);
+    
     Response createEmployment(String orcid, Employment employment);
     
     Response updateEmployment(String orcid, String putCode, Employment employment);
