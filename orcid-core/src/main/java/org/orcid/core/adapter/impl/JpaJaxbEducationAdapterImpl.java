@@ -23,6 +23,7 @@ import ma.glasnost.orika.MapperFacade;
 
 import org.orcid.core.adapter.JpaJaxbEducationAdapter;
 import org.orcid.jaxb.model.record.Education;
+import org.orcid.jaxb.model.record.EducationSummary;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 
 /**
@@ -52,6 +53,12 @@ public class JpaJaxbEducationAdapterImpl implements JpaJaxbEducationAdapter {
         return mapperFacade.map(entity, Education.class);
     }
 
+    public EducationSummary toEducationSummary(OrgAffiliationRelationEntity entity) {
+        if(entity == null)
+            return null;
+        return mapperFacade.map(entity, EducationSummary.class);
+    }
+    
     @Override
     public List<Education> toEducation(Collection<OrgAffiliationRelationEntity> entities) {
         if(entities == null)

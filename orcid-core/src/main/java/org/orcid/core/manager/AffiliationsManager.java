@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.orcid.jaxb.model.record.AffiliationType;
 import org.orcid.jaxb.model.record.Education;
+import org.orcid.jaxb.model.record.EducationSummary;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 
@@ -49,6 +50,16 @@ public interface AffiliationsManager {
      * @return the education
      * */
     Education getEducationAffiliation(String userOrcid, String affiliationId);
+    
+    /**
+     * Get a summary of an education affiliation based on the orcid and education id
+     * @param orcid
+     *          The education owner
+     * @param affiliationId
+     *          The affiliation id
+     * @return the education summary
+     * */
+    EducationSummary getEducationSummary(String userOrcid, String affiliationId);
     
     /**
      * Add a new education to the given user

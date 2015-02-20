@@ -39,6 +39,7 @@ import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.ActivitiesSummary;
 import org.orcid.jaxb.model.record.Education;
+import org.orcid.jaxb.model.record.EducationSummary;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.FundingSummary;
@@ -195,6 +196,14 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         Education e = affiliationsManager.getEducationAffiliation(orcid, putCode);
         orcidSecurityManager.checkVisibility(e);
         return Response.ok(e).build();
+    }
+    
+    @Override
+    @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
+    public Response viewEducationSummary(String orcid, String putCode) {
+        EducationSummary es = affiliationsManager.getEducationSummary(orcid, putCode);
+        orcidSecurityManager.checkVisibility(es);
+        return Response.ok(es).build();
     }
     
     @Override

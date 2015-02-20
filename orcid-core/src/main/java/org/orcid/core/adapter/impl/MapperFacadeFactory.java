@@ -28,6 +28,7 @@ import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities
 import org.orcid.jaxb.model.notification.amended.NotificationAmended;
 import org.orcid.jaxb.model.notification.custom.NotificationCustom;
 import org.orcid.jaxb.model.record.Education;
+import org.orcid.jaxb.model.record.EducationSummary;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.FundingContributors;
@@ -131,11 +132,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         fundingClassMap.field("organization.disambiguatedOrganization.disambiguationSource", "org.orgDisambiguated.sourceType");
         fundingClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("fundingExternalIdentifiersConverterId").add();
         fundingClassMap.fieldMap("contributors", "contributorsJson").converter("fundingContributorsConverterId").add();           
-        fundingClassMap.register();
-
-        mapperFactory.classMap(FuzzyDate.class, StartDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day").register();
-        mapperFactory.classMap(FuzzyDate.class, EndDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day").register();        
-        mapperFactory.classMap(org.orcid.jaxb.model.record.Source.class, SourceEntity.class).field("sourceOrcid.path", "sourceClient.id").byDefault().register();
+        fundingClassMap.register();        
         
         ClassMapBuilder<FundingSummary, ProfileFundingEntity> fundingSummaryClassMap = mapperFactory.classMap(FundingSummary.class, ProfileFundingEntity.class);
         fundingSummaryClassMap.field("putCode", "id");
@@ -147,23 +144,34 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         fundingSummaryClassMap.byDefault();
         fundingSummaryClassMap.register();
         
+        mapperFactory.classMap(FuzzyDate.class, StartDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day").register();
+        mapperFactory.classMap(FuzzyDate.class, EndDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day").register();        
+        mapperFactory.classMap(org.orcid.jaxb.model.record.Source.class, SourceEntity.class).field("sourceOrcid.path", "sourceClient.id").byDefault().register();
+        
         return mapperFactory.getMapperFacade();
     }
     
     public MapperFacade getEducationMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
-        ClassMapBuilder<Education, OrgAffiliationRelationEntity> classMap = mapperFactory.classMap(Education.class, OrgAffiliationRelationEntity.class);
-        classMap.byDefault();
-        classMap.field("putCode", "id");
-        classMap.field("organization.name", "org.name");
-        classMap.field("organization.address.city", "org.city");
-        classMap.field("organization.address.region", "org.region");
-        classMap.field("organization.address.country", "org.country");
-        classMap.field("organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier", "org.orgDisambiguated.sourceId");
-        classMap.field("organization.disambiguatedOrganization.disambiguationSource", "org.orgDisambiguated.sourceType");
-        classMap.field("departmentName", "department");        
-        classMap.field("roleTitle", "title");        
-        classMap.register();
+        ClassMapBuilder<Education, OrgAffiliationRelationEntity> educationClassMap = mapperFactory.classMap(Education.class, OrgAffiliationRelationEntity.class);
+        educationClassMap.byDefault();
+        educationClassMap.field("putCode", "id");
+        educationClassMap.field("organization.name", "org.name");
+        educationClassMap.field("organization.address.city", "org.city");
+        educationClassMap.field("organization.address.region", "org.region");
+        educationClassMap.field("organization.address.country", "org.country");
+        educationClassMap.field("organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier", "org.orgDisambiguated.sourceId");
+        educationClassMap.field("organization.disambiguatedOrganization.disambiguationSource", "org.orgDisambiguated.sourceType");
+        educationClassMap.field("departmentName", "department");        
+        educationClassMap.field("roleTitle", "title");        
+        educationClassMap.register();
+                        
+        ClassMapBuilder<EducationSummary, OrgAffiliationRelationEntity> educationSummaryClassMap = mapperFactory.classMap(EducationSummary.class, OrgAffiliationRelationEntity.class);
+        educationSummaryClassMap.field("departmentName", "department");        
+        educationSummaryClassMap.field("roleTitle", "title");  
+        educationSummaryClassMap.field("putCode", "id");
+        educationSummaryClassMap.byDefault();
+        educationSummaryClassMap.register();
         
         mapperFactory.classMap(FuzzyDate.class, StartDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day").register();
         mapperFactory.classMap(FuzzyDate.class, EndDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day").register();        
