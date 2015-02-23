@@ -61,9 +61,9 @@ import javax.xml.bind.annotation.XmlType;
 public class DisambiguatedOrganization implements Serializable {
 
     private final static long serialVersionUID = 1L;
-    @XmlElement(required = true, namespace = "http://www.orcid.org/ns/common")
+    @XmlElement(required = true, namespace = "http://www.orcid.org/ns/common", name = "disambiguated-organization-identifier")
     protected String disambiguatedOrganizationIdentifier;
-    @XmlElement(required = true, namespace = "http://www.orcid.org/ns/common")
+    @XmlElement(required = true, namespace = "http://www.orcid.org/ns/common", name = "disambiguation-source")
     protected String disambiguationSource;
     @XmlTransient
     protected Long id;

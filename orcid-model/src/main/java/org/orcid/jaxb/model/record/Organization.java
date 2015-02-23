@@ -50,7 +50,7 @@ public class Organization implements Serializable {
     protected String name;
     @XmlElement(required = true, namespace = "http://www.orcid.org/ns/common")
     protected OrganizationAddress address;
-    @XmlElement(namespace = "http://www.orcid.org/ns/common")
+    @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "disambiguated-organization")
     protected DisambiguatedOrganization disambiguatedOrganization;
 
     /**
