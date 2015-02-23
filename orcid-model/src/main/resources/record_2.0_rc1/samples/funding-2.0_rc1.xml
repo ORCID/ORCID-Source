@@ -10,7 +10,7 @@
 		<common:translated-title language-code="en">common:translated-title</common:translated-title>
 	</funding:title>
 	<funding:short-description>funding:short-description</funding:short-description>
-	<funding:amount currency-code="ADP">funding:amount</funding:amount>
+	<funding:amount currency-code="ADP">1234</funding:amount>
 	<funding:url>http://tempuri.org</funding:url>
 	<common:start-date>
 		<common:year>1848</common:year>
@@ -27,6 +27,11 @@
 			<funding:external-identifier-type>grant_number</funding:external-identifier-type>
 			<funding:external-identifier-value>funding:external-identifier-value</funding:external-identifier-value>
 			<funding:external-identifier-url>http://tempuri.org</funding:external-identifier-url>
+		</funding:externalIdentifier>
+		<funding:externalIdentifier>
+			<funding:external-identifier-type>grant_number</funding:external-identifier-type>
+			<funding:external-identifier-value>funding:external-identifier-value2</funding:external-identifier-value>
+			<funding:external-identifier-url>http://tempuri.org/2</funding:external-identifier-url>
 		</funding:externalIdentifier>
 	</funding:external-identifiers>
 	<funding:contributors>

@@ -48,7 +48,7 @@ public class Amount implements Serializable {
     private static final long serialVersionUID = 1L;
     @XmlValue
     protected String content;
-    @XmlAttribute(required = true)
+    @XmlAttribute(required = true, name = "currency-code")
     protected String currencyCode;
     
     public String getContent() {

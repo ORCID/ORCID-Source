@@ -47,11 +47,11 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "externalIdentifier", namespace = "http://www.orcid.org/ns/funding")
 public class FundingExternalIdentifier implements Serializable {
 	private static final long serialVersionUID = 1L;	
-	@XmlElement(name="externalIdentifierType", namespace = "http://www.orcid.org/ns/funding")
+	@XmlElement(name="external-identifier-type", namespace = "http://www.orcid.org/ns/funding")
 	protected FundingExternalIdentifierType type;
-	@XmlElement(name="externalIdentifierValue", namespace = "http://www.orcid.org/ns/funding")
+	@XmlElement(name="external-identifier-value", namespace = "http://www.orcid.org/ns/funding")
 	protected String value;
-	@XmlElement(name="externalIdentifierUrl", namespace = "http://www.orcid.org/ns/funding")
+	@XmlElement(name="external-identifier-url", namespace = "http://www.orcid.org/ns/funding")
 	protected Url url;	
 	
 	public FundingExternalIdentifierType getType() {

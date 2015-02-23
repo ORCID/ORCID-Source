@@ -63,32 +63,32 @@ public class JpaJaxbFundingAdapterTest {
         assertEquals(FundingType.GRANT.value(), pfe.getType().value());
 
         // General info
-        assertEquals(Long.valueOf(123), pfe.getId());
-        assertEquals("funding:title", pfe.getTitle());
-        assertEquals("funding:translatedTitle", pfe.getTranslatedTitle());
+        assertEquals(Long.valueOf(0), pfe.getId());
+        assertEquals("common:title", pfe.getTitle());
+        assertEquals("common:translated-title", pfe.getTranslatedTitle());
         assertEquals("en", pfe.getTranslatedTitleLanguageCode());
-        assertEquals("funding:organizationDefinedType", pfe.getOrganizationDefinedType());
-        assertEquals("funding:shortDescription", pfe.getDescription());
+        assertEquals("funding:organization-defined-type", pfe.getOrganizationDefinedType());
+        assertEquals("funding:short-description", pfe.getDescription());
         assertEquals("1234", pfe.getNumericAmount().toString());
         assertEquals("ADP", pfe.getCurrencyCode());
         assertEquals("http://tempuri.org", pfe.getUrl());
 
         // Dates
-        assertEquals(Integer.valueOf(25), pfe.getStartDate().getDay());
-        assertEquals(Integer.valueOf(1), pfe.getStartDate().getMonth());
-        assertEquals(Integer.valueOf(1920), pfe.getStartDate().getYear());
-        assertEquals(Integer.valueOf(31), pfe.getEndDate().getDay());
-        assertEquals(Integer.valueOf(12), pfe.getEndDate().getMonth());
-        assertEquals(Integer.valueOf(2020), pfe.getEndDate().getYear());
+        assertEquals(Integer.valueOf(2), pfe.getStartDate().getDay());
+        assertEquals(Integer.valueOf(2), pfe.getStartDate().getMonth());
+        assertEquals(Integer.valueOf(1848), pfe.getStartDate().getYear());
+        assertEquals(Integer.valueOf(2), pfe.getEndDate().getDay());
+        assertEquals(Integer.valueOf(2), pfe.getEndDate().getMonth());
+        assertEquals(Integer.valueOf(1848), pfe.getEndDate().getYear());
 
         // Contributors
         assertEquals(
-                "{\"contributor\":[{\"contributorOrcid\":{\"value\":null,\"valueAsString\":null,\"uri\":\"http://orcid.org/8888-8888-8888-8880\",\"path\":\"8888-8888-8888-8880\",\"host\":\"orcid.org\"},\"creditName\":{\"content\":\"funding:creditName\",\"visibility\":\"PRIVATE\"},\"contributorEmail\":{\"value\":\"funding@contributorEmail.com\"},\"contributorAttributes\":{\"contributorRole\":\"LEAD\"}}]}",
+                "{\"contributor\":[{\"contributorOrcid\":{\"value\":null,\"valueAsString\":null,\"uri\":\"http://orcid.org/8888-8888-8888-8880\",\"path\":\"8888-8888-8888-8880\",\"host\":\"orcid.org\"},\"creditName\":{\"content\":\"funding:credit-name\",\"visibility\":\"PRIVATE\"},\"contributorEmail\":{\"value\":\"funding@contributor.email\"},\"contributorAttributes\":{\"contributorRole\":\"LEAD\"}}]}",
                 pfe.getContributorsJson());
 
         // External identifiers
         assertEquals(
-                "{\"fundingExternalIdentifier\":[{\"type\":\"GRANT_NUMBER\",\"value\":\"12345\",\"url\":{\"value\":\"http://tempuri.org\"}},{\"type\":\"GRANT_NUMBER\",\"value\":\"67890\",\"url\":{\"value\":\"http://tempuri.org/2\"}}]}",
+                "{\"fundingExternalIdentifier\":[{\"type\":\"GRANT_NUMBER\",\"value\":\"funding:external-identifier-value\",\"url\":{\"value\":\"http://tempuri.org\"}},{\"type\":\"GRANT_NUMBER\",\"value\":\"funding:external-identifier-value2\",\"url\":{\"value\":\"http://tempuri.org/2\"}}]}",
                 pfe.getExternalIdentifiersJson());
 
         // Source
@@ -99,8 +99,8 @@ public class JpaJaxbFundingAdapterTest {
         assertEquals("common:city", pfe.getOrg().getCity());
         assertEquals("common:region", pfe.getOrg().getRegion());
         assertEquals(Iso3166Country.AF.value(), pfe.getOrg().getCountry().value());
-        assertEquals("common:disambiguatedOrganizationIdentifier", pfe.getOrg().getOrgDisambiguated().getSourceId());
-        assertEquals("common:disambiguationSource", pfe.getOrg().getOrgDisambiguated().getSourceType());
+        assertEquals("common:disambiguated-organization-identifier", pfe.getOrg().getOrgDisambiguated().getSourceId());
+        assertEquals("common:disambiguation-source", pfe.getOrg().getOrgDisambiguated().getSourceType());
     }
 
     @Test

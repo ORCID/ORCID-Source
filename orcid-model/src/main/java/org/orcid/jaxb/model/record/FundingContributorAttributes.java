@@ -47,7 +47,7 @@ public class FundingContributorAttributes implements Serializable {
      * 
      */
     private static final long serialVersionUID = 1L;
-    @XmlElement(required = true, namespace = "http://www.orcid.org/ns/funding")
+    @XmlElement(required = true, namespace = "http://www.orcid.org/ns/funding", name = "contributor-role")
     protected FundingContributorRole contributorRole;    
 
     /**
