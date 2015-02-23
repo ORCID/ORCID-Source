@@ -65,23 +65,24 @@ public class JpaJaxbWorkAdapterTest {
         WorkEntity workEntity = profileWorkEntity.getWork();
         assertNotNull(workEntity);
         assertEquals(123, workEntity.getId().longValue());
-        assertEquals("work:title", workEntity.getTitle());
+        assertEquals("common:title", workEntity.getTitle());
         assertNull(workEntity.getSubtitle());
-        assertEquals("work:translatedTitle", workEntity.getTranslatedTitle());
+        assertEquals("common:translated-title", workEntity.getTranslatedTitle());
         assertEquals("en", workEntity.getTranslatedTitleLanguageCode());
-        assertEquals("work:shortDescription", workEntity.getDescription());
+        assertEquals("work:short-description", workEntity.getDescription());
         assertEquals(CitationType.FORMATTED_UNSPECIFIED, workEntity.getCitationType());
         assertEquals(WorkType.ARTISTIC_PERFORMANCE, workEntity.getWorkType());
         PublicationDateEntity publicationDateEntity = workEntity.getPublicationDate();
         assertNotNull(publicationDateEntity);
-        assertEquals(1920, publicationDateEntity.getYear().intValue());
-        assertEquals(01, publicationDateEntity.getMonth().intValue());
-        assertEquals(25, publicationDateEntity.getDay().intValue());
-        assertEquals("{\"scope\":null,\"workExternalIdentifier\":[{\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"1234/abc\"}}]}",
+        assertEquals(1848, publicationDateEntity.getYear().intValue());
+        assertEquals(02, publicationDateEntity.getMonth().intValue());
+        assertEquals(02, publicationDateEntity.getDay().intValue());
+        assertEquals(
+                "{\"scope\":null,\"workExternalIdentifier\":[{\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"work:external-identifier-id\"}}]}",
                 workEntity.getExternalIdentifiersJson());
         assertEquals("http://tempuri.org", workEntity.getWorkUrl());
         assertEquals(
-                "{\"contributor\":[{\"contributorOrcid\":{\"value\":null,\"valueAsString\":null,\"uri\":\"http://orcid.org/8888-8888-8888-8880\",\"path\":\"8888-8888-8888-8880\",\"host\":\"orcid.org\"},\"creditName\":{\"content\":\"work:creditName\",\"visibility\":\"PRIVATE\"},\"contributorEmail\":{\"value\":\"contributorEmail@mailinator.com\"},\"contributorAttributes\":{\"contributorSequence\":null,\"contributorRole\":null}}]}",
+                "{\"contributor\":[{\"contributorOrcid\":{\"value\":null,\"valueAsString\":null,\"uri\":\"http://orcid.org/8888-8888-8888-8880\",\"path\":\"8888-8888-8888-8880\",\"host\":\"orcid.org\"},\"creditName\":{\"content\":\"work:credit-name\",\"visibility\":\"PRIVATE\"},\"contributorEmail\":{\"value\":\"work@contributor.email\"},\"contributorAttributes\":{\"contributorSequence\":\"FIRST\",\"contributorRole\":\"AUTHOR\"}}]}",
                 workEntity.getContributorsJson());
         assertEquals("en", workEntity.getLanguageCode());
         assertEquals(Iso3166Country.AF, workEntity.getIso2Country());

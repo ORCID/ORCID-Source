@@ -40,16 +40,16 @@ import java.io.Serializable;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "contributorSequence", "contributorRole" })
-@XmlRootElement(name = "contributorAttributes")
+@XmlRootElement(name = "contributor-attributes")
 public class ContributorAttributes implements Serializable {
 
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
-    @XmlElement(required = true)
+    @XmlElement(name="contributor-sequence", namespace = "http://www.orcid.org/ns/work", required = true)
     protected SequenceType contributorSequence;
-    @XmlElement(required = true)
+    @XmlElement(name="contributor-role", namespace = "http://www.orcid.org/ns/work", required = true)
     protected ContributorRole contributorRole;
 
     /**

@@ -39,7 +39,7 @@ import java.io.Serializable;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "value" })
-@XmlRootElement(name = "contributorEmail")
+@XmlRootElement(name = "contributor-email")
 public class ContributorEmail implements Serializable {
 
     /**

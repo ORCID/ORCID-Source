@@ -46,8 +46,8 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "putCode", "title", "journal-title", "short-description", "citation", "type", "publication-date", "external-identifiers", "url",
-        "contributors", "source", "created-date", "last-modified-date", "language-code", "country" })
+@XmlType(propOrder = { "putCode", "title", "journalTitle", "shortDescription", "citation", "type", "publicationDate", "externalIdentifiers", "url",
+        "contributors", "source", "createdDate", "lastModifiedDate", "languageCode", "country" })
 @XmlRootElement(name = "work", namespace = "http://www.orcid.org/ns/work")
 public class Work implements VisibilityType, Activity, Serializable {
 
@@ -79,7 +79,7 @@ public class Work implements VisibilityType, Activity, Serializable {
      */
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Source source;
-    @XmlAttribute
+    @XmlAttribute(name="put-code")
     protected String putCode;
     @XmlAttribute
     protected Visibility visibility;

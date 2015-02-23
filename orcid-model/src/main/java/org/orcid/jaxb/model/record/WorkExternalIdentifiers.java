@@ -46,14 +46,14 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "externalIdentifier" })
-@XmlRootElement(name = "externalIdentifiers")
+@XmlRootElement(name = "external-identifiers")
 public class WorkExternalIdentifiers implements Serializable {
 
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
-    @XmlElement(name = "workExternalIdentifier", namespace = "http://www.orcid.org/ns/work")
+    @XmlElement(name = "work-external-identifier", namespace = "http://www.orcid.org/ns/work")
     protected List<WorkExternalIdentifier> externalIdentifier;
     @XmlAttribute
     protected Scope scope;
