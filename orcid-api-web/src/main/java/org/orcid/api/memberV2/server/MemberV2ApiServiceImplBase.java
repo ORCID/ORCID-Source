@@ -89,17 +89,13 @@ abstract public class MemberV2ApiServiceImplBase {
     public Response viewWork(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewWork(orcid, putCode);
     }
-    
-    
+        
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(WORK_SUMMARY + PUTCODE)
     public Response viewWorkSummary(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewWorkSummary(orcid, putCode);
     }
-    
-    
-    
     
     @POST
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })

@@ -131,9 +131,6 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         return Response.ok(w).build();
     }
 
-    
-    
-    
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
     public Response viewWorkSummary(String orcid, String putCode) {
@@ -141,11 +138,6 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         orcidSecurityManager.checkVisibility(ws);
         return Response.ok(ws).build();
     }
-    
-    
-    
-    
-    
     
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)

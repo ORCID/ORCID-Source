@@ -136,17 +136,10 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
         return jpaJaxbWorkAdapter.toWork(profileWorkDao.getProfileWork(orcid, workId));
     }
     
-    
-    
-    
     @Override
     public WorkSummary getWorkSummary(String orcid, String workId) {
         return jpaJaxbWorkAdapter.toWorkSummary(profileWorkDao.getProfileWork(orcid,  workId));
     }
-    
-    
-    
-    
     
     /**
      * Creates a new profile entity relationship between the provided work and
