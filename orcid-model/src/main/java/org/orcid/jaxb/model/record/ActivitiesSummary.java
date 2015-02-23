@@ -26,6 +26,7 @@ package org.orcid.jaxb.model.record;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -149,8 +150,8 @@ public class ActivitiesSummary implements Serializable, ActivitiesContainer {
     }
     
     @Override
-    public Collection<? extends Activity> retrieveActivities() {
-        List<Activities> activities = new ArrayList<Activities>();
+    public List<? extends Activity> retrieveActivities() {
+        List<Activity> activities = new ArrayList<Activity>();
         
         return activities;
     }
