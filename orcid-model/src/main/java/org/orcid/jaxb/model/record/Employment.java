@@ -48,24 +48,24 @@ import javax.xml.bind.annotation.XmlType;
 public class Employment implements Serializable, VisibilityType, Activity, OrganizationHolder {
 
     private final static long serialVersionUID = 1L;    
-    @XmlElement(namespace = "http://www.orcid.org/ns/employment")
+    @XmlElement(namespace = "http://www.orcid.org/ns/employment", name = "department-name")
     protected String departmentName;
-    @XmlElement(namespace = "http://www.orcid.org/ns/employment")
+    @XmlElement(namespace = "http://www.orcid.org/ns/employment", name = "role-title")
     protected String roleTitle;
-    @XmlElement(namespace = "http://www.orcid.org/ns/common")
+    @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "start-date")
     protected FuzzyDate startDate;
-    @XmlElement(namespace = "http://www.orcid.org/ns/common")
+    @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "end-date")
     protected FuzzyDate endDate;
     @XmlElement(namespace = "http://www.orcid.org/ns/employment", required = true)
     protected Organization organization;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Source source;    
-    @XmlElement(namespace = "http://www.orcid.org/ns/common")
+    @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
     protected LastModifiedDate lastModifiedDate;
-    @XmlElement(namespace = "http://www.orcid.org/ns/common")
+    @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "created-date")
     protected CreatedDate createdDate;
     
-    @XmlAttribute
+    @XmlAttribute(name = "put-code")
     protected String putCode;
     @XmlAttribute
     protected Visibility visibility;

@@ -61,18 +61,18 @@ public class JpaJaxbEmploymentAdapterTest {
         OrgAffiliationRelationEntity oar = jpaJaxbEmploymentAdapter.toOrgAffiliationRelationEntity(e);
         assertNotNull(oar);
         //General info
-        assertEquals(Long.valueOf(248), oar.getId());
+        assertEquals(Long.valueOf(0), oar.getId());
         assertEquals(Visibility.PRIVATE.value(), oar.getVisibility().value());        
-        assertEquals("employment:departmentName", oar.getDepartment());
-        assertEquals("employment:roleTitle", oar.getTitle());
+        assertEquals("affiliation:department-name", oar.getDepartment());
+        assertEquals("affiliation:role-title", oar.getTitle());
         
         //Dates
-        assertEquals(Integer.valueOf(25), oar.getStartDate().getDay());        
-        assertEquals(Integer.valueOf(1), oar.getStartDate().getMonth());
-        assertEquals(Integer.valueOf(1920), oar.getStartDate().getYear());
-        assertEquals(Integer.valueOf(25), oar.getEndDate().getDay());
-        assertEquals(Integer.valueOf(1), oar.getEndDate().getMonth());
-        assertEquals(Integer.valueOf(1950), oar.getEndDate().getYear());
+        assertEquals(Integer.valueOf(2), oar.getStartDate().getDay());        
+        assertEquals(Integer.valueOf(2), oar.getStartDate().getMonth());
+        assertEquals(Integer.valueOf(1848), oar.getStartDate().getYear());
+        assertEquals(Integer.valueOf(2), oar.getEndDate().getDay());
+        assertEquals(Integer.valueOf(2), oar.getEndDate().getMonth());
+        assertEquals(Integer.valueOf(1848), oar.getEndDate().getYear());
         
         //Source
         assertEquals("8888-8888-8888-8880", oar.getSource().getSourceId());
@@ -82,8 +82,8 @@ public class JpaJaxbEmploymentAdapterTest {
         assertEquals("common:city", oar.getOrg().getCity());
         assertEquals("common:region", oar.getOrg().getRegion());        
         assertEquals(Iso3166Country.AF.value(), oar.getOrg().getCountry().value());
-        assertEquals("common:disambiguatedOrganizationIdentifier", oar.getOrg().getOrgDisambiguated().getSourceId());
-        assertEquals("common:disambiguationSource", oar.getOrg().getOrgDisambiguated().getSourceType());
+        assertEquals("common:disambiguated-organization-identifier", oar.getOrg().getOrgDisambiguated().getSourceId());
+        assertEquals("common:disambiguation-source", oar.getOrg().getOrgDisambiguated().getSourceType());
         
     }
 
