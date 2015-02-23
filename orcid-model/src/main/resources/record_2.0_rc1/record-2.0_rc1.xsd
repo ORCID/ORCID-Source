@@ -84,7 +84,7 @@
 				</xs:documentation>
 			</xs:annotation>
 			<xs:sequence>
-				<xs:element ref="common:orcidIdentifier" minOccurs="0"
+				<xs:element ref="common:orcid-identifier" minOccurs="0"
 					maxOccurs="1" />
 				<xs:element ref="deprecated:deprecated" minOccurs="0"
 					maxOccurs="1" />
@@ -93,16 +93,16 @@
 				<xs:element ref="history:history" minOccurs="0"
 					maxOccurs="1" />
 				<xs:element ref="person:person" minOccurs="0" maxOccurs="1" />
-				<xs:element ref="activities:activitiesSummary"
+				<xs:element ref="activities:activities-summary"
 					minOccurs="0" maxOccurs="1" />
 				<xs:element ref="internal:internal" minOccurs="0"
 					maxOccurs="1" />
 			</xs:sequence>
-			<xs:attribute name="type" type="common:orcidType"
+			<xs:attribute name="type" type="common:orcid-type"
 				default="user" />
-			<xs:attribute name="clientType" type="common:clientType"
+			<xs:attribute name="clientType" type="common:client-type"
 				use="optional" />
-			<xs:attribute name="groupType" type="common:groupType"
+			<xs:attribute name="groupType" type="common:group-type"
 				use="optional" />
 		</xs:complexType>
 	</xs:element>

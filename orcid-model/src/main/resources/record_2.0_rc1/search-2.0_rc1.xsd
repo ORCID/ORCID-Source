@@ -50,7 +50,7 @@
 				<xs:element name="result" type="search:result" minOccurs="0"
 					maxOccurs="unbounded" />
 			</xs:sequence>
-			<xs:attribute name="numFound" type="xs:integer" default="0" />
+			<xs:attribute name="num-found" type="xs:integer" default="0" />
 		</xs:complexType>
 	</xs:element>
 
@@ -62,13 +62,13 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element name="relevancyScore" type="search:relevancyScore"
+			<xs:element name="relevancy-score" type="search:relevancy-score"
 				maxOccurs="1" />
 			<xs:element ref="record:record" maxOccurs="1" />
 		</xs:sequence>
 	</xs:complexType>
 
-	<xs:complexType mixed="true" name="relevancyScore">
+	<xs:complexType mixed="true" name="relevancy-score">
 		<xs:annotation>
 			<xs:documentation>Search relevancy score based on ORCID's search
 				scoring model.
