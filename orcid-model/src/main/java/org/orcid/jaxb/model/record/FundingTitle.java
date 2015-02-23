@@ -48,7 +48,7 @@ public class FundingTitle implements Serializable {
     private static final long serialVersionUID = 1L;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Title title;    
-    @XmlElement(namespace = "http://www.orcid.org/ns/common")
+    @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "translated-title")
     protected TranslatedTitle translatedTitle;
 
     /**

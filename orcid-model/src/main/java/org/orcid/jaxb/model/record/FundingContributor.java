@@ -47,13 +47,13 @@ public class FundingContributor implements Serializable {
      * 
      */
     private static final long serialVersionUID = 1L;
-    @XmlElement(namespace = "http://www.orcid.org/ns/common")
+    @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "contributor-orcid")
     protected ContributorOrcid contributorOrcid;
-    @XmlElement(namespace = "http://www.orcid.org/ns/funding")
+    @XmlElement(namespace = "http://www.orcid.org/ns/funding", name = "credit-name")
     protected CreditName creditName;
-    @XmlElement(namespace = "http://www.orcid.org/ns/funding")
+    @XmlElement(namespace = "http://www.orcid.org/ns/funding", name = "contributor-email")
     protected ContributorEmail contributorEmail;
-    @XmlElement(namespace = "http://www.orcid.org/ns/funding")
+    @XmlElement(namespace = "http://www.orcid.org/ns/funding", name = "contributor-attributes")
     protected FundingContributorAttributes contributorAttributes;
 
     /**

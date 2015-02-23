@@ -51,34 +51,34 @@ public class Funding implements VisibilityType, Activity, Serializable, Organiza
 
     @XmlElement(namespace = "http://www.orcid.org/ns/funding", required = true)
     protected FundingType type;
-    @XmlElement(namespace = "http://www.orcid.org/ns/funding")
+    @XmlElement(namespace = "http://www.orcid.org/ns/funding", name = "organization-defined-type")
     protected OrganizationDefinedFundingSubType organizationDefinedType;
     @XmlElement(required = true, namespace = "http://www.orcid.org/ns/funding")
     protected FundingTitle title;
     @XmlElement(required = true, namespace = "http://www.orcid.org/ns/funding")
     protected Organization organization;
-    @XmlElement(namespace = "http://www.orcid.org/ns/funding", name = "shortDescription")
+    @XmlElement(namespace = "http://www.orcid.org/ns/funding", name = "short-description")
     protected String description;
     @XmlElement(name = "amount", namespace = "http://www.orcid.org/ns/funding")
     protected Amount amount;
     @XmlElement(namespace = "http://www.orcid.org/ns/funding")
     protected Url url;
-    @XmlElement(namespace = "http://www.orcid.org/ns/common")
+    @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "start-date")
     protected FuzzyDate startDate;
-    @XmlElement(namespace = "http://www.orcid.org/ns/common")
+    @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "end-date")
     protected FuzzyDate endDate;
-    @XmlElement(namespace = "http://www.orcid.org/ns/funding")
+    @XmlElement(namespace = "http://www.orcid.org/ns/funding", name = "external-identifiers")
     protected FundingExternalIdentifiers externalIdentifiers;
     @XmlElement(namespace = "http://www.orcid.org/ns/funding")
     protected FundingContributors contributors;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Source source;    
-    @XmlElement(namespace = "http://www.orcid.org/ns/common")
+    @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
     protected LastModifiedDate lastModifiedDate;
-    @XmlElement(namespace = "http://www.orcid.org/ns/common")
+    @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "created-date")
     protected CreatedDate createdDate;
     
-    @XmlAttribute
+    @XmlAttribute(name = "put-code")
     protected String putCode;
     @XmlAttribute
     protected Visibility visibility;
