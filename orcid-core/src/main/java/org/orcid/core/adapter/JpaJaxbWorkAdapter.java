@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.orcid.jaxb.model.record.Work;
+import org.orcid.jaxb.model.record.WorkSummary;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 
 /**
@@ -32,6 +33,8 @@ public interface JpaJaxbWorkAdapter {
     ProfileWorkEntity toProfileWorkEntity(Work work);
 
     Work toWork(ProfileWorkEntity ProfileWorkEntity);
+    
+    WorkSummary toWorkSummary(ProfileWorkEntity ProfileWorkEntity);
 
     List<Work> toWork(Collection<ProfileWorkEntity> workEntities);
 

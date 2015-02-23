@@ -40,6 +40,7 @@ import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.WorkContributors;
 import org.orcid.jaxb.model.record.WorkExternalIdentifier;
 import org.orcid.jaxb.model.record.WorkExternalIdentifiers;
+import org.orcid.jaxb.model.record.WorkSummary;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.NotificationActivityEntity;
 import org.orcid.persistence.jpa.entities.NotificationAddActivitiesEntity;
@@ -81,29 +82,43 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         converterFactory.registerConverter("workExternalIdentifiersConverterId", new JsonOrikaConverter<WorkExternalIdentifiers>());
         converterFactory.registerConverter("workContributorsConverterId", new JsonOrikaConverter<WorkContributors>());
 
-        ClassMapBuilder<Work, ProfileWorkEntity> classMap = mapperFactory.classMap(Work.class, ProfileWorkEntity.class);
-        classMap.byDefault();
-        classMap.field("putCode", "work.id");
-        classMap.field("workTitle.title.content", "work.title");
-        classMap.field("workTitle.translatedTitle.content", "work.translatedTitle");
-        classMap.field("workTitle.translatedTitle.languageCode", "work.translatedTitleLanguageCode");
-        classMap.field("shortDescription", "work.description");
-        classMap.field("workCitation.workCitationType", "work.citationType");
-        classMap.field("workCitation.citation", "work.citation");
-        classMap.field("workType", "work.workType");
-        classMap.field("publicationDate", "work.publicationDate");
-        classMap.fieldMap("workExternalIdentifiers", "work.externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
-        classMap.field("url.value", "work.workUrl");
-        classMap.fieldMap("workContributors", "work.contributorsJson").converter("workContributorsConverterId").add();
-        classMap.field("languageCode", "work.languageCode");
-        classMap.field("country.value", "work.iso2Country");        
-        classMap.register();
+        ClassMapBuilder<Work, ProfileWorkEntity> workClassMap = mapperFactory.classMap(Work.class, ProfileWorkEntity.class);
+        workClassMap.byDefault();
+        workClassMap.field("putCode", "work.id");
+        workClassMap.field("journalTitle.content", "work.journalTitle");
+        workClassMap.field("workTitle.title.content", "work.title");
+        workClassMap.field("workTitle.translatedTitle.content", "work.translatedTitle");
+        workClassMap.field("workTitle.translatedTitle.languageCode", "work.translatedTitleLanguageCode");
+        workClassMap.field("workTitle.subtitle.content", "work.subtitle");
+        workClassMap.field("shortDescription", "work.description");
+        workClassMap.field("workCitation.workCitationType", "work.citationType");
+        workClassMap.field("workCitation.citation", "work.citation");
+        workClassMap.field("workType", "work.workType");
+        workClassMap.field("publicationDate", "work.publicationDate");
+        workClassMap.fieldMap("workExternalIdentifiers", "work.externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
+        workClassMap.field("url.value", "work.workUrl");
+        workClassMap.fieldMap("workContributors", "work.contributorsJson").converter("workContributorsConverterId").add();
+        workClassMap.field("languageCode", "work.languageCode");
+        workClassMap.field("country.value", "work.iso2Country");        
+        workClassMap.register();
 
         mapperFactory.classMap(PublicationDate.class, PublicationDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day")
                 .register();
         mapperFactory.classMap(WorkExternalIdentifier.class, WorkExternalIdentifierEntity.class).field("workExternalIdentifierType", "identifierType").register();
         mapperFactory.classMap(org.orcid.jaxb.model.record.Source.class, SourceEntity.class).field("sourceOrcid.path", "sourceProfile.id")
                 .field("sourceClientId.path", "sourceClient.id").byDefault().register();
+        
+        ClassMapBuilder<WorkSummary, ProfileWorkEntity> workSummaryClassMap = mapperFactory.classMap(WorkSummary.class, ProfileWorkEntity.class);
+        workSummaryClassMap.field("putCode", "work.id");
+        workSummaryClassMap.field("title.title.content", "work.title");
+        workSummaryClassMap.field("title.translatedTitle.content", "work.translatedTitle");
+        workSummaryClassMap.field("title.translatedTitle.languageCode", "work.translatedTitleLanguageCode");
+        workSummaryClassMap.field("type", "work.workType");
+        workSummaryClassMap.field("publicationDate", "work.publicationDate");
+        workSummaryClassMap.fieldMap("externalIdentifiers", "work.externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
+        workSummaryClassMap.byDefault();
+        workSummaryClassMap.register();
+        
         return mapperFactory.getMapperFacade();
     }
 

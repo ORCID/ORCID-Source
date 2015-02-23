@@ -46,6 +46,7 @@ import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.FundingSummary;
 import org.orcid.jaxb.model.record.Title;
 import org.orcid.jaxb.model.record.Work;
+import org.orcid.jaxb.model.record.WorkSummary;
 import org.orcid.jaxb.model.record.WorkTitle;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.WebhookDao;
@@ -130,6 +131,22 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         return Response.ok(w).build();
     }
 
+    
+    
+    
+    @Override
+    @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
+    public Response viewWorkSummary(String orcid, String putCode) {
+        WorkSummary ws = profileWorkManager.getWorkSummary(orcid, putCode);
+        orcidSecurityManager.checkVisibility(ws);
+        return Response.ok(ws).build();
+    }
+    
+    
+    
+    
+    
+    
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
     public Response createWork(String orcid, Work work) {
