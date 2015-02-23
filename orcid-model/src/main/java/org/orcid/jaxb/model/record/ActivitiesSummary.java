@@ -36,6 +36,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.orcid.jaxb.model.notification.addactivities.Activities;
+
 /**
  * <p>
  * Java class for anonymous complex type.
@@ -148,7 +150,8 @@ public class ActivitiesSummary implements Serializable, ActivitiesContainer {
     
     @Override
     public Collection<? extends Activity> retrieveActivities() {
-        // TODO Auto-generated method stub
-        return null;
+        List<Activities> activities = new ArrayList<Activities>();
+        
+        return activities;
     }
 }
