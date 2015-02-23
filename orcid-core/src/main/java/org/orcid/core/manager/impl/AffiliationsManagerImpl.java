@@ -29,7 +29,9 @@ import org.orcid.core.manager.SourceManager;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.AffiliationType;
 import org.orcid.jaxb.model.record.Education;
+import org.orcid.jaxb.model.record.EducationSummary;
 import org.orcid.jaxb.model.record.Employment;
+import org.orcid.jaxb.model.record.EmploymentSummary;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
@@ -91,6 +93,20 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
     public Education getEducationAffiliation(String userOrcid, String affiliationId) {
         OrgAffiliationRelationEntity entity = findAffiliationByUserAndId(userOrcid, affiliationId);
         return jpaJaxbEducationAdapter.toEducation(entity);
+    }
+    
+    /**
+     * Get a summary of an education affiliation based on the orcid and education id
+     * @param orcid
+     *          The education owner
+     * @param affiliationId
+     *          The affiliation id
+     * @return the education summary
+     * */
+    @Override
+    public EducationSummary getEducationSummary(String userOrcid, String affiliationId) {
+        OrgAffiliationRelationEntity entity = findAffiliationByUserAndId(userOrcid, affiliationId);
+        return jpaJaxbEducationAdapter.toEducationSummary(entity);
     }
     
     /**
@@ -159,6 +175,19 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
         OrgAffiliationRelationEntity entity = findAffiliationByUserAndId(userOrcid, employmentId);
         return jpaJaxbEmploymentAdapter.toEmployment(entity);
     }
+    
+    /**
+     * Get a summary of an employment affiliation based on the orcid and education id
+     * @param orcid
+     *          The employment owner
+     * @param employmentId
+     *          The employment id
+     * @return the employment summary
+     * */
+    public EmploymentSummary getEmploymentSummary(String userOrcid, String employmentId) {
+        OrgAffiliationRelationEntity entity = findAffiliationByUserAndId(userOrcid, employmentId);
+        return jpaJaxbEmploymentAdapter.toEmploymentSummary(entity);
+    }        
     
     /**
      * Add a new employment to the given user

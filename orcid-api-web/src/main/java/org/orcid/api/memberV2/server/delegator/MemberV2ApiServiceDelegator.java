@@ -54,11 +54,15 @@ public interface MemberV2ApiServiceDelegator {
     
     Response viewEducation(String orcid, String putCode);
     
+    Response viewEducationSummary(String orcid, String putCode);
+    
     Response createEducation(String orcid, Education education);
     
     Response updateEducation(String orcid, String putCode, Education education);
     
     Response viewEmployment(String orcid, String putCode);
+    
+    Response viewEmploymentSummary(String orcid, String putCode);
     
     Response createEmployment(String orcid, Employment employment);
     

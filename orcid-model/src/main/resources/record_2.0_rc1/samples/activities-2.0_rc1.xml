@@ -1,137 +1,134 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<activities:activitiesSummary
+<activities:activities-summary
 	xmlns:activities="http://www.orcid.org/ns/activities"
 	xmlns:affiliation="http://www.orcid.org/ns/employment" xmlns:common="http://www.orcid.org/ns/common"
 	xmlns:education="http://www.orcid.org/ns/education" xmlns:funding="http://www.orcid.org/ns/funding"
 	xmlns:work="http://www.orcid.org/ns/work" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.orcid.org/ns/activities ../activities-2.0_rc1.xsd ">
 	<activities:educations>
-		<education:educationSummary putCode="0"
+		<education:education-summary put-code="0"
 			visibility="private">
-			<common:createdDate>2001-12-31T12:00:00</common:createdDate>
-			<common:lastModifiedDate>2001-12-31T12:00:00</common:lastModifiedDate>
+			<common:created-date>2001-12-31T12:00:00</common:created-date>
+			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 			<common:source>
-				<common:sourceOrcid>
+				<common:source-orcid>
 					<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
 					<common:path>8888-8888-8888-8880</common:path>
 					<common:host>orcid.org</common:host>
-				</common:sourceOrcid>
-				<common:sourceName />
-				<common:sourceDate>2001-12-31T12:00:00</common:sourceDate>
+				</common:source-orcid>
+				<common:source-name />
+				<common:source-date>2001-12-31T12:00:00</common:source-date>
 			</common:source>
-			<education:departmentName>education:departmentName
-			</education:departmentName>
-			<education:roleTitle>education:roleTitle</education:roleTitle>
-			<common:startDate>
-				<common:year>1920</common:year>
-				<common:month>01</common:month>
-				<common:day>25</common:day>
-			</common:startDate>
-			<common:endDate>
-				<common:year>1950</common:year>
-				<common:month>01</common:month>
-				<common:day>25</common:day>
-			</common:endDate>
-		</education:educationSummary>
+			<education:department-name>education:department-name</education:department-name>
+			<education:role-title>education:role-title</education:role-title>
+			<common:start-date>
+				<common:year>1848</common:year>
+				<common:month>02</common:month>
+				<common:day>02</common:day>
+			</common:start-date>
+			<common:end-date>
+				<common:year>1848</common:year>
+				<common:month>02</common:month>
+				<common:day>02</common:day>
+			</common:end-date>
+		</education:education-summary>
 	</activities:educations>
 	<activities:employments>
-		<affiliation:employmentSummary putCode="0"
-			visibility="private">
-			<common:createdDate>2001-12-31T12:00:00</common:createdDate>
-			<common:lastModifiedDate>2001-12-31T12:00:00</common:lastModifiedDate>
+		<affiliation:employment-summary
+			put-code="0" visibility="private">
+			<common:created-date>2001-12-31T12:00:00</common:created-date>
+			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 			<common:source>
-				<common:sourceOrcid>
+				<common:source-orcid>
 					<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
 					<common:path>8888-8888-8888-8880</common:path>
 					<common:host>orcid.org</common:host>
-				</common:sourceOrcid>
-				<common:sourceName />
-				<common:sourceDate>2001-12-31T12:00:00</common:sourceDate>
+				</common:source-orcid>
+				<common:source-name />
+				<common:source-date>2001-12-31T12:00:00</common:source-date>
 			</common:source>
-			<affiliation:departmentName>affiliation:departmentName
-			</affiliation:departmentName>
-			<affiliation:roleTitle>affiliation:roleTitle</affiliation:roleTitle>
-			<common:startDate>
-				<common:year>1920</common:year>
-				<common:month>01</common:month>
-				<common:day>25</common:day>
-			</common:startDate>
-			<common:endDate>
-				<common:year>1950</common:year>
-				<common:month>01</common:month>
-				<common:day>25</common:day>
-			</common:endDate>
-		</affiliation:employmentSummary>
+			<affiliation:department-name>affiliation:department-name</affiliation:department-name>
+			<affiliation:role-title>affiliation:role-title</affiliation:role-title>
+			<common:start-date>
+				<common:year>1848</common:year>
+				<common:month>02</common:month>
+				<common:day>02</common:day>
+			</common:start-date>
+			<common:end-date>
+				<common:year>1848</common:year>
+				<common:month>02</common:month>
+				<common:day>02</common:day>
+			</common:end-date>
+		</affiliation:employment-summary>
 	</activities:employments>
 	<activities:works>
-		<work:workSummary putCode="0" visibility="private">
-			<common:createdDate>2001-12-31T12:00:00</common:createdDate>
-			<common:lastModifiedDate>2001-12-31T12:00:00</common:lastModifiedDate>
+		<work:work-summary put-code="0" visibility="private">
+			<common:created-date>2001-12-31T12:00:00</common:created-date>
+			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 			<common:source>
-				<common:sourceOrcid>
+				<common:source-orcid>
 					<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
 					<common:path>8888-8888-8888-8880</common:path>
 					<common:host>orcid.org</common:host>
-				</common:sourceOrcid>
-				<common:sourceName />
-				<common:sourceDate>2001-12-31T12:00:00</common:sourceDate>
+				</common:source-orcid>
+				<common:source-name />
+				<common:source-date>2001-12-31T12:00:00</common:source-date>
 			</common:source>
 			<work:title>
-				<common:title>work:title</common:title>
+				<common:title>common:title</common:title>
 				<common:subtitle />
-				<common:translatedTitle languageCode="en">work:translatedTitle
-				</common:translatedTitle>
+				<common:translated-title language-code="en">common:translated-title</common:translated-title>
 			</work:title>
-			<work:externalIdentifiers scope="read-limited">
-				<work:workExternalIdentifier>
-					<work:externalIdentifierType>agr</work:externalIdentifierType>
-					<work:externalIdentifierId>work:externalIdentifierId
-					</work:externalIdentifierId>
-				</work:workExternalIdentifier>
-			</work:externalIdentifiers>
+			<work:external-identifiers scope="read-limited">
+				<work:work-external-identifier>
+					<work:external-identifier-type>agr</work:external-identifier-type>
+					<work:external-identifier-id>work:external-identifier-id</work:external-identifier-id>
+				</work:work-external-identifier>
+			</work:external-identifiers>
 			<work:type>artistic-performance</work:type>
-			<common:publicationDate>
-				<common:year>1920</common:year>
-				<common:month>01</common:month>
-				<common:day>25</common:day>
-			</common:publicationDate>
-		</work:workSummary>
+			<common:publication-date>
+				<common:year>1848</common:year>
+				<common:month>02</common:month>
+				<common:day>02</common:day>
+			</common:publication-date>
+		</work:work-summary>
 	</activities:works>
 	<activities:fundings>
-		<funding:fundingSummary putCode="0" visibility="private">
-			<common:createdDate>2001-12-31T12:00:00</common:createdDate>
-			<common:lastModifiedDate>2001-12-31T12:00:00</common:lastModifiedDate>
+		<funding:funding-summary put-code="0"
+			visibility="private">
+			<common:created-date>2001-12-31T12:00:00</common:created-date>
+			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 			<common:source>
-				<common:sourceOrcid>
+				<common:source-orcid>
 					<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
 					<common:path>8888-8888-8888-8880</common:path>
 					<common:host>orcid.org</common:host>
-				</common:sourceOrcid>
-				<common:sourceName />
-				<common:sourceDate>2001-12-31T12:00:00</common:sourceDate>
+				</common:source-orcid>
+				<common:source-name />
+				<common:source-date>2001-12-31T12:00:00</common:source-date>
 			</common:source>
 			<funding:title>
-				<common:title>funding:title</common:title>
-				<common:translatedTitle languageCode="en">funding:translatedTitle</common:translatedTitle>
+				<common:title>common:title</common:title>
+				<common:translated-title language-code="en">common:translated-title</common:translated-title>
 			</funding:title>
-			<funding:externalIdentifiers>
+			<funding:external-identifiers>
 				<funding:externalIdentifier>
-					<funding:externalIdentifierType>grant_number</funding:externalIdentifierType>
-					<funding:externalIdentifierValue>12345</funding:externalIdentifierValue>
-					<funding:externalIdentifierUrl>http://tempuri.org</funding:externalIdentifierUrl>
+					<funding:external-identifier-type>grant_number</funding:external-identifier-type>
+					<funding:external-identifier-value>funding:external-identifier-value</funding:external-identifier-value>
+					<funding:external-identifier-url>http://tempuri.org</funding:external-identifier-url>
 				</funding:externalIdentifier>
-			</funding:externalIdentifiers>
+			</funding:external-identifiers>
 			<funding:type>grant</funding:type>
-			<common:startDate>
-				<common:year>1920</common:year>
-				<common:month>01</common:month>
-				<common:day>25</common:day>
-			</common:startDate>
-			<common:endDate>
-				<common:year>1950</common:year>
-				<common:month>01</common:month>
-				<common:day>25</common:day>
-			</common:endDate>
-		</funding:fundingSummary>
+			<common:start-date>
+				<common:year>1848</common:year>
+				<common:month>02</common:month>
+				<common:day>02</common:day>
+			</common:start-date>
+			<common:end-date>
+				<common:year>1848</common:year>
+				<common:month>02</common:month>
+				<common:day>02</common:day>
+			</common:end-date>
+		</funding:funding-summary>
 	</activities:fundings>
-</activities:activitiesSummary>
+</activities:activities-summary>

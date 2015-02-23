@@ -46,31 +46,31 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "putCode", "title", "journalTitle", "shortDescription", "citation", "type", "publicationDate", "externalIdentifiers", "url",
-        "contributors", "source", "createdDate", "lastModifiedDate", "languageCode", "country" })
+@XmlType(propOrder = { "putCode", "title", "journal-title", "short-description", "citation", "type", "publication-date", "external-identifiers", "url",
+        "contributors", "source", "created-date", "last-modified-date", "language-code", "country" })
 @XmlRootElement(name = "work", namespace = "http://www.orcid.org/ns/work")
 public class Work implements VisibilityType, Activity, Serializable {
 
     private static final long serialVersionUID = 1L;
     @XmlElement(namespace = "http://www.orcid.org/ns/work")
     protected WorkTitle title;
-    @XmlElement(namespace = "http://www.orcid.org/ns/work")
+    @XmlElement(name="journal-title", namespace = "http://www.orcid.org/ns/work")
     protected Title journalTitle;
-    @XmlElement(namespace = "http://www.orcid.org/ns/work")
+    @XmlElement(name="short-description", namespace = "http://www.orcid.org/ns/work")
     protected String shortDescription;
     @XmlElement(namespace = "http://www.orcid.org/ns/work")
     protected Citation citation;
     @XmlElement(namespace = "http://www.orcid.org/ns/work")
     protected WorkType type;
-    @XmlElement(namespace = "http://www.orcid.org/ns/common")
+    @XmlElement(name="publication-date", namespace = "http://www.orcid.org/ns/common")
     protected PublicationDate publicationDate;
-    @XmlElement(namespace = "http://www.orcid.org/ns/work")
+    @XmlElement(name="external-identifiers", namespace = "http://www.orcid.org/ns/work")
     protected WorkExternalIdentifiers externalIdentifiers;
     @XmlElement(namespace = "http://www.orcid.org/ns/work")
     protected Url url;
     @XmlElement(namespace = "http://www.orcid.org/ns/work")
     protected WorkContributors contributors;
-    @XmlElement(name = "languageCode", namespace = "http://www.orcid.org/ns/common")
+    @XmlElement(name = "language-code", namespace = "http://www.orcid.org/ns/common")
     protected String languageCode;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Country country;

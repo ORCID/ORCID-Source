@@ -39,7 +39,9 @@ import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.ActivitiesSummary;
 import org.orcid.jaxb.model.record.Education;
+import org.orcid.jaxb.model.record.EducationSummary;
 import org.orcid.jaxb.model.record.Employment;
+import org.orcid.jaxb.model.record.EmploymentSummary;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.FundingSummary;
 import org.orcid.jaxb.model.record.Title;
@@ -198,6 +200,14 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     }
     
     @Override
+    @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
+    public Response viewEducationSummary(String orcid, String putCode) {
+        EducationSummary es = affiliationsManager.getEducationSummary(orcid, putCode);
+        orcidSecurityManager.checkVisibility(es);
+        return Response.ok(es).build();
+    }
+    
+    @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)    
     public Response createEducation(String orcid, Education education) {
         Education e = affiliationsManager.createEducationAffiliation(orcid, education);
@@ -219,6 +229,12 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     public Response viewEmployment(String orcid, String putCode) {
         Employment e = affiliationsManager.getEmploymentAffiliation(orcid, putCode);
         return Response.ok(e).build();
+    }
+    
+    @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
+    public Response viewEmploymentSummary(String orcid, String putCode) {
+        EmploymentSummary es = affiliationsManager.getEmploymentSummary(orcid, putCode);
+        return Response.ok(es).build();
     }
     
     @Override

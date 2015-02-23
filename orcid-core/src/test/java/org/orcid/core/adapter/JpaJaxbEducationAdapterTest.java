@@ -29,9 +29,15 @@ import javax.xml.bind.Unmarshaller;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.jaxb.model.record.Education;
+import org.orcid.jaxb.model.record.EducationSummary;
 import org.orcid.jaxb.model.record.Iso3166Country;
 import org.orcid.jaxb.model.record.Visibility;
+import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
+import org.orcid.persistence.jpa.entities.OrgEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.orcid.persistence.jpa.entities.StartDateEntity;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -76,8 +82,57 @@ public class JpaJaxbEducationAdapterTest {
         assertEquals("common:region", oar.getOrg().getRegion());        
         assertEquals(Iso3166Country.AF.value(), oar.getOrg().getCountry().value());
         assertEquals("common:disambiguatedOrganizationIdentifier", oar.getOrg().getOrgDisambiguated().getSourceId());
-        assertEquals("common:disambiguationSource", oar.getOrg().getOrgDisambiguated().getSourceType());
-        
+        assertEquals("common:disambiguationSource", oar.getOrg().getOrgDisambiguated().getSourceType());        
+    }
+    
+    @Test
+    public void fromOrgAffiliationRelationEntityToEducation() {
+        OrgAffiliationRelationEntity entity = getEducationEntity();
+        assertNotNull(entity);
+        Education education = jpaJaxbEducationAdapter.toEducation(entity);
+        assertNotNull(education);
+        assertEquals("education:department", education.getDepartmentName());
+        assertEquals("123456", education.getPutCode());
+        assertEquals("education:title", education.getRoleTitle());
+        assertEquals("private", education.getVisibility().value());
+        assertNotNull(education.getStartDate());
+        assertEquals("2000", education.getStartDate().getYear().getValue());
+        assertEquals("1", education.getStartDate().getMonth().getValue());
+        assertEquals("1", education.getStartDate().getDay().getValue());
+        assertEquals("2020", education.getEndDate().getYear().getValue());
+        assertEquals("2", education.getEndDate().getMonth().getValue());
+        assertEquals("2", education.getEndDate().getDay().getValue());
+        assertNotNull(education.getOrganization());
+        assertEquals("org:name", education.getOrganization().getName());
+        assertNotNull(education.getOrganization().getAddress());
+        assertEquals("org:city", education.getOrganization().getAddress().getCity());
+        assertEquals("org:region", education.getOrganization().getAddress().getRegion());
+        assertEquals(org.orcid.jaxb.model.record.Iso3166Country.US, education.getOrganization().getAddress().getCountry());
+        assertNotNull(education.getSource());        
+        assertNotNull(education.getSource().getSourceOrcid());
+        assertEquals("APP-000000001", education.getSource().getSourceOrcid().getPath());
+    }
+    
+    @Test
+    public void fromOrgAffiliationRelationEntityToEducationSummary() {
+        OrgAffiliationRelationEntity entity = getEducationEntity();
+        assertNotNull(entity);
+        EducationSummary educationSummary = jpaJaxbEducationAdapter.toEducationSummary(entity);
+        assertNotNull(educationSummary);
+        assertEquals("education:department", educationSummary.getDepartmentName());
+        assertEquals("123456", educationSummary.getPutCode());
+        assertEquals("education:title", educationSummary.getRoleTitle());
+        assertEquals("private", educationSummary.getVisibility().value());
+        assertNotNull(educationSummary.getStartDate());
+        assertEquals("2000", educationSummary.getStartDate().getYear().getValue());
+        assertEquals("1", educationSummary.getStartDate().getMonth().getValue());
+        assertEquals("1", educationSummary.getStartDate().getDay().getValue());
+        assertEquals("2020", educationSummary.getEndDate().getYear().getValue());
+        assertEquals("2", educationSummary.getEndDate().getMonth().getValue());
+        assertEquals("2", educationSummary.getEndDate().getDay().getValue());        
+        assertNotNull(educationSummary.getSource());
+        assertNotNull(educationSummary.getSource().getSourceOrcid());
+        assertEquals("APP-000000001", educationSummary.getSource().getSourceOrcid().getPath());
     }
 
     private Education getEducation() throws JAXBException {
@@ -85,5 +140,29 @@ public class JpaJaxbEducationAdapterTest {
         Unmarshaller unmarshaller = context.createUnmarshaller();
         InputStream inputStream = getClass().getResourceAsStream("/record_2.0_rc1/samples/education-2.0_rc1.xml");
         return (Education) unmarshaller.unmarshal(inputStream);
+    }
+    
+    private OrgAffiliationRelationEntity getEducationEntity() {
+        OrgEntity orgEntity = new OrgEntity();
+        orgEntity.setCity("org:city");
+        orgEntity.setCountry(org.orcid.jaxb.model.message.Iso3166Country.US);
+        orgEntity.setName("org:name");
+        orgEntity.setRegion("org:region");
+        orgEntity.setUrl("org:url");
+        orgEntity.setSource(new SourceEntity("APP-000000001"));
+        
+        OrgAffiliationRelationEntity result = new OrgAffiliationRelationEntity();
+        result.setAffiliationType(org.orcid.jaxb.model.message.AffiliationType.EDUCATION);
+        result.setDepartment("education:department");
+        result.setEndDate(new EndDateEntity(2020, 2, 2));
+        result.setId(123456L);
+        result.setOrg(orgEntity);
+        result.setProfile(new ProfileEntity("0000-0001-0002-0003"));
+        result.setStartDate(new StartDateEntity(2000, 1, 1));
+        result.setTitle("education:title");
+        result.setVisibility(org.orcid.jaxb.model.message.Visibility.PRIVATE);   
+        result.setSource(new SourceEntity("APP-000000001"));
+        
+        return result;
     }
 }

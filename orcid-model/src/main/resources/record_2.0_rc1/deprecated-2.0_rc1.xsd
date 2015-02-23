@@ -46,15 +46,15 @@
 				</xs:documentation>
 			</xs:annotation>
 			<xs:sequence>
-				<xs:element name="deprecatedDate" type="deprecated:deprecatedDate"
+				<xs:element name="deprecated-date" type="deprecated:deprecated-date"
 					minOccurs="1" maxOccurs="1" />
-				<xs:element name="primaryRecord" type="deprecated:primaryRecord"
+				<xs:element name="primary-record" type="deprecated:primary-record"
 					maxOccurs="1" minOccurs="1" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
 
-	<xs:complexType name="deprecatedDate">
+	<xs:complexType name="deprecated-date">
 		<xs:annotation>
 			<xs:documentation>The date and time when the ORCID Record was
 				deprecated, and now points to a different, primary ORCID Record.
@@ -65,7 +65,7 @@
 		</xs:simpleContent>
 	</xs:complexType>
 
-	<xs:complexType name="primaryRecord">
+	<xs:complexType name="primary-record">
 		<xs:annotation>
 			<xs:documentation>The new primary record for the ORCID iD. One
 				should
@@ -73,7 +73,7 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element ref="common:orcidIdentifier" />
+			<xs:element ref="common:orcid-identifier" />
 		</xs:sequence>
 	</xs:complexType>
 

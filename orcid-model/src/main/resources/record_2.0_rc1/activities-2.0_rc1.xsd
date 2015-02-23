@@ -46,7 +46,7 @@
 	<xs:import namespace="http://www.orcid.org/ns/work"
 		schemaLocation="work-2.0_rc1.xsd" />
 
-	<xs:element name="activitiesSummary">
+	<xs:element name="activities-summary">
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element name="educations" minOccurs="0" maxOccurs="1">
@@ -59,7 +59,7 @@
 					<xs:complexType>
 						<xs:sequence>
 							<xs:element maxOccurs="unbounded" minOccurs="0"
-								ref="education:educationSummary" />
+								ref="education:education-summary" />
 						</xs:sequence>
 					</xs:complexType>
 				</xs:element>
@@ -73,7 +73,7 @@
 					<xs:complexType>
 						<xs:sequence>
 							<xs:element maxOccurs="unbounded" minOccurs="0"
-								ref="employment:employmentSummary" />
+								ref="employment:employment-summary" />
 						</xs:sequence>
 					</xs:complexType>
 				</xs:element>
@@ -87,7 +87,7 @@
 					<xs:complexType>
 						<xs:sequence>
 							<xs:element maxOccurs="unbounded" minOccurs="0"
-								ref="work:workSummary" />
+								ref="work:work-summary" />
 						</xs:sequence>
 					</xs:complexType>
 				</xs:element>
@@ -100,7 +100,7 @@
 					<xs:complexType>
 						<xs:sequence>
 							<xs:element maxOccurs="unbounded" minOccurs="0"
-								ref="funding:fundingSummary" />
+								ref="funding:funding-summary" />
 						</xs:sequence>
 					</xs:complexType>
 				</xs:element>

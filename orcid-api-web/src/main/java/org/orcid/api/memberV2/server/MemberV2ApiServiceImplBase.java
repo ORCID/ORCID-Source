@@ -18,7 +18,9 @@ package org.orcid.api.memberV2.server;
 
 import static org.orcid.core.api.OrcidApiConstants.ACTIVITIES;
 import static org.orcid.core.api.OrcidApiConstants.EDUCATION;
+import static org.orcid.core.api.OrcidApiConstants.EDUCATION_SUMMARY;
 import static org.orcid.core.api.OrcidApiConstants.EMPLOYMENT;
+import static org.orcid.core.api.OrcidApiConstants.EMPLOYMENT_SUMMARY;
 import static org.orcid.core.api.OrcidApiConstants.ERROR;
 import static org.orcid.core.api.OrcidApiConstants.FUNDING;
 import static org.orcid.core.api.OrcidApiConstants.FUNDING_SUMMARY;
@@ -164,6 +166,13 @@ abstract public class MemberV2ApiServiceImplBase {
         return serviceDelegator.viewEducation(orcid, putCode);
     }
     
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(EDUCATION_SUMMARY + PUTCODE)
+    public Response viewEducationSummary(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+        return serviceDelegator.viewEducationSummary(orcid, putCode);
+    }
+    
     @POST
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(EDUCATION)
@@ -190,6 +199,13 @@ abstract public class MemberV2ApiServiceImplBase {
     @Path(EMPLOYMENT + PUTCODE)
     public Response viewEmployment(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewEmployment(orcid, putCode);
+    }
+    
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(EMPLOYMENT_SUMMARY + PUTCODE)
+    public Response viewEmploymentSummary(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+        return serviceDelegator.viewEmploymentSummary(orcid, putCode);
     }
     
     @POST

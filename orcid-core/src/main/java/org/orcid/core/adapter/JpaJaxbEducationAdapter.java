@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.orcid.jaxb.model.record.Education;
+import org.orcid.jaxb.model.record.EducationSummary;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 
 /**
@@ -32,6 +33,8 @@ public interface JpaJaxbEducationAdapter {
     OrgAffiliationRelationEntity toOrgAffiliationRelationEntity(Education education);
 
     Education toEducation(OrgAffiliationRelationEntity entity);
+    
+    EducationSummary toEducationSummary(OrgAffiliationRelationEntity entity);
 
     List<Education> toEducation(Collection<OrgAffiliationRelationEntity> entities);
     

@@ -29,9 +29,16 @@ import javax.xml.bind.Unmarshaller;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.jaxb.model.record.Employment;
+import org.orcid.jaxb.model.record.EmploymentSummary;
+import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Iso3166Country;
 import org.orcid.jaxb.model.record.Visibility;
+import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
+import org.orcid.persistence.jpa.entities.OrgEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.orcid.persistence.jpa.entities.StartDateEntity;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -80,10 +87,84 @@ public class JpaJaxbEmploymentAdapterTest {
         
     }
 
+    @Test
+    public void fromOrgAffiliationRelationEntityToEmployment() {
+        OrgAffiliationRelationEntity entity = getEmploymentEntity();
+        assertNotNull(entity);
+        Employment employment = jpaJaxbEmploymentAdapter.toEmployment(entity);
+        assertNotNull(employment);
+        assertEquals("employment:department", employment.getDepartmentName());
+        assertEquals("123456", employment.getPutCode());
+        assertEquals("employment:title", employment.getRoleTitle());
+        assertEquals("private", employment.getVisibility().value());
+        assertNotNull(employment.getStartDate());
+        assertEquals("2000", employment.getStartDate().getYear().getValue());
+        assertEquals("1", employment.getStartDate().getMonth().getValue());
+        assertEquals("1", employment.getStartDate().getDay().getValue());
+        assertEquals("2020", employment.getEndDate().getYear().getValue());
+        assertEquals("2", employment.getEndDate().getMonth().getValue());
+        assertEquals("2", employment.getEndDate().getDay().getValue());
+        assertNotNull(employment.getOrganization());
+        assertEquals("org:name", employment.getOrganization().getName());
+        assertNotNull(employment.getOrganization().getAddress());
+        assertEquals("org:city", employment.getOrganization().getAddress().getCity());
+        assertEquals("org:region", employment.getOrganization().getAddress().getRegion());
+        assertEquals(org.orcid.jaxb.model.record.Iso3166Country.US, employment.getOrganization().getAddress().getCountry());
+        assertNotNull(employment.getSource());        
+        assertNotNull(employment.getSource().getSourceOrcid());
+        assertEquals("APP-000000001", employment.getSource().getSourceOrcid().getPath());
+    }
+    
+    @Test
+    public void fromOrgAffiliationRelationEntityToEmploymentSummary() {
+        OrgAffiliationRelationEntity entity = getEmploymentEntity();
+        assertNotNull(entity);
+        EmploymentSummary employmentSummary = jpaJaxbEmploymentAdapter.toEmploymentSummary(entity);
+        assertNotNull(employmentSummary);
+        assertEquals("employment:department", employmentSummary.getDepartmentName());
+        assertEquals("123456", employmentSummary.getPutCode());
+        assertEquals("employment:title", employmentSummary.getRoleTitle());
+        assertEquals("private", employmentSummary.getVisibility().value());
+        assertNotNull(employmentSummary.getStartDate());
+        assertEquals("2000", employmentSummary.getStartDate().getYear().getValue());
+        assertEquals("1", employmentSummary.getStartDate().getMonth().getValue());
+        assertEquals("1", employmentSummary.getStartDate().getDay().getValue());
+        assertEquals("2020", employmentSummary.getEndDate().getYear().getValue());
+        assertEquals("2", employmentSummary.getEndDate().getMonth().getValue());
+        assertEquals("2", employmentSummary.getEndDate().getDay().getValue());        
+        assertNotNull(employmentSummary.getSource());
+        assertNotNull(employmentSummary.getSource().getSourceOrcid());
+        assertEquals("APP-000000001", employmentSummary.getSource().getSourceOrcid().getPath());
+    }
+    
     private Employment getEmployment() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Employment.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
         InputStream inputStream = getClass().getResourceAsStream("/record_2.0_rc1/samples/employment-2.0_rc1.xml");
         return (Employment) unmarshaller.unmarshal(inputStream);
+    }
+    
+    private OrgAffiliationRelationEntity getEmploymentEntity() {
+        OrgEntity orgEntity = new OrgEntity();
+        orgEntity.setCity("org:city");
+        orgEntity.setCountry(org.orcid.jaxb.model.message.Iso3166Country.US);
+        orgEntity.setName("org:name");
+        orgEntity.setRegion("org:region");
+        orgEntity.setUrl("org:url");
+        orgEntity.setSource(new SourceEntity("APP-000000001"));
+        
+        OrgAffiliationRelationEntity result = new OrgAffiliationRelationEntity();
+        result.setAffiliationType(org.orcid.jaxb.model.message.AffiliationType.EMPLOYMENT);
+        result.setDepartment("employment:department");
+        result.setEndDate(new EndDateEntity(2020, 2, 2));
+        result.setId(123456L);
+        result.setOrg(orgEntity);
+        result.setProfile(new ProfileEntity("0000-0001-0002-0003"));
+        result.setStartDate(new StartDateEntity(2000, 1, 1));
+        result.setTitle("employment:title");
+        result.setVisibility(org.orcid.jaxb.model.message.Visibility.PRIVATE);   
+        result.setSource(new SourceEntity("APP-000000001"));
+        
+        return result;
     }
 }
