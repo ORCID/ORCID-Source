@@ -26,6 +26,7 @@ package org.orcid.jaxb.model.record;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -125,8 +126,24 @@ public class ActivitiesSummary implements Serializable, ActivitiesContainer {
     
     @Override
     public Map<String, ? extends Activity> retrieveActivitiesAsMap() {
-        // TODO Auto-generated method stub
-        return null;
+        Map<String, Activity> activities = new HashMap<String, Activity>();
+        //Set works
+        for(Work work : works) {
+            activities.put(work.getPutCode(), work);
+        }
+        //Set funding
+        for(Funding funding : fundings) {
+            activities.put(funding.getPutCode(), funding);
+        }
+        //Set education
+        for(Education education : educations) {
+            activities.put(education.getPutCode(), education);
+        }
+        //Set employment
+        for(Employment employment : employments) {
+            activities.put(employment.getPutCode(), employment);
+        }
+        return activities;
     }
     
     @Override
