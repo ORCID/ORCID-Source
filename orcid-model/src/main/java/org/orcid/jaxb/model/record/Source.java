@@ -50,13 +50,13 @@ public class Source implements Serializable {
      * 
      */
     private static final long serialVersionUID = 1L;
-    @XmlElement(namespace = "http://www.orcid.org/ns/common")
+    @XmlElement(name="source-orcid", namespace = "http://www.orcid.org/ns/common")
     protected SourceOrcid sourceOrcid;
-    @XmlElement(namespace="http://www.orcid.org/ns/common")
+    @XmlElement(name="source-client-id", namespace="http://www.orcid.org/ns/common")
     protected SourceClientId sourceClientId;
-    @XmlElement(namespace="http://www.orcid.org/ns/common")
+    @XmlElement(name="source-name", namespace="http://www.orcid.org/ns/common")
     protected SourceName sourceName;
-    @XmlElement(namespace="http://www.orcid.org/ns/common")
+    @XmlElement(name="source-date",namespace="http://www.orcid.org/ns/common")
     protected SourceDate sourceDate;
 
     public Source() {

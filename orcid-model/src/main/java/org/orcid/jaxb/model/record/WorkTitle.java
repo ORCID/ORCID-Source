@@ -50,7 +50,7 @@ public class WorkTitle implements Serializable {
     protected Title title;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Subtitle subtitle;
-    @XmlElement(namespace = "http://www.orcid.org/ns/common")
+    @XmlElement(name="translated-title", namespace = "http://www.orcid.org/ns/common")
     protected TranslatedTitle translatedTitle;
 
     /**

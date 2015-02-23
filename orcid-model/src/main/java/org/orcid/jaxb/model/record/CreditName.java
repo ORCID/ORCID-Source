@@ -52,7 +52,7 @@ import java.io.Serializable;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "content" })
-@XmlRootElement(name = "creditName")
+@XmlRootElement(name = "credit-name")
 public class CreditName implements Serializable, VisibilityType {
 
     private static final long serialVersionUID = 1L;

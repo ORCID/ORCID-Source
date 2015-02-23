@@ -46,9 +46,9 @@ public class WorkExternalIdentifier implements Serializable {
      * 
      */
     private static final long serialVersionUID = 1L;
-    @XmlElement(name = "externalIdentifierType", namespace = "http://www.orcid.org/ns/work", required = true)
+    @XmlElement(name = "external-identifier-type", namespace = "http://www.orcid.org/ns/work", required = true)
     protected WorkExternalIdentifierType workExternalIdentifierType;
-    @XmlElement(name = "externalIdentifierId", namespace = "http://www.orcid.org/ns/work", required = true)
+    @XmlElement(name = "external-identifier-id", namespace = "http://www.orcid.org/ns/work", required = true)
     protected WorkExternalIdentifierId workExternalIdentifierId;
 
     /**

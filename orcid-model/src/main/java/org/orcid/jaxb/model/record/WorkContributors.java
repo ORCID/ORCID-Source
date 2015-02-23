@@ -42,7 +42,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "contributor" })
-@XmlRootElement(name = "contributors")
+@XmlRootElement(name = "work-contributors")
 public class WorkContributors implements Serializable {
 
     /**
