@@ -25,7 +25,7 @@ package org.orcid.jaxb.model.record;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -34,8 +34,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * <p>
@@ -54,82 +52,86 @@ import org.apache.commons.lang3.StringUtils;
 public class ActivitiesSummary implements Serializable, ActivitiesContainer {
 
     private static final long serialVersionUID = 1L;
+    @XmlElement(name = "educations", namespace = "http://www.orcid.org/ns/activities")
+    protected List<Education> educations;    
+    @XmlElement(name = "employments", namespace = "http://www.orcid.org/ns/activities")
+    protected List<Employment> employments;    
     @XmlElement(name = "works", namespace = "http://www.orcid.org/ns/activities")
-    protected List<Work> works;
-
-    /**
-     * Gets the value of the orcidWork property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list, not a
-     * snapshot. Therefore any modification you make to the returned list will
-     * be present inside the JAXB object. This is why there is not a
-     * <CODE>set</CODE> method for the orcidWork property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * 
-     * <pre>
-     * getOrcidWork().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Work }
-     * 
-     * 
-     */
-    public List<Work> getOrcidWork() {
-        if (works == null) {
+    protected List<Work> works;    
+    @XmlElement(name = "fundings", namespace = "http://www.orcid.org/ns/activities")
+    protected List<Funding> fundings;
+    
+    public List<Education> getEducations() {
+        if(educations == null)
+            educations = new ArrayList<Education>();
+        return educations;
+    }
+    public List<Employment> getEmployments() {
+        if(employments == null)
+            employments = new ArrayList<Employment>();
+        return employments;
+    }
+    public List<Work> getWorks() {
+        if(works == null)
             works = new ArrayList<Work>();
-        }
-        return this.works;
+        return works;
     }
-
-    public Map<String, Work> retrieveActivitiesAsMap() {
-        Map<String, Work> workMap = new HashMap<String, Work>();
-        if (works != null) {
-            for (Work work : works) {
-                if (StringUtils.isNotBlank(work.putCode)) {
-                    workMap.put(work.putCode, work);
-                }
-            }
-        }
-        return workMap;
+    public List<Funding> getFundings() {
+        if(fundings == null)
+            fundings = new ArrayList<Funding>();
+        return fundings;
     }
-    
-    @Override
-    public List<Work> retrieveActivities() {
-        return getOrcidWork();
-    }
-
-
-    public void setWorks(List<Work> orcidWork) {
-        this.works = orcidWork;
-    }
-
-    
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-
-        Works that = (Works) o;
-
-        if (works != null ? !works.equals(that.works) : that.works != null)
-            return false;
-
-        return true;
-    }
-
     @Override
     public int hashCode() {
-        int result = works != null ? works.hashCode() : 0;
-        result = 31 * result;
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((educations == null) ? 0 : educations.hashCode());
+        result = prime * result + ((employments == null) ? 0 : employments.hashCode());
+        result = prime * result + ((fundings == null) ? 0 : fundings.hashCode());
+        result = prime * result + ((works == null) ? 0 : works.hashCode());
         return result;
     }
-
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ActivitiesSummary other = (ActivitiesSummary) obj;
+        if (educations == null) {
+            if (other.educations != null)
+                return false;
+        } else if (!educations.equals(other.educations))
+            return false;
+        if (employments == null) {
+            if (other.employments != null)
+                return false;
+        } else if (!employments.equals(other.employments))
+            return false;
+        if (fundings == null) {
+            if (other.fundings != null)
+                return false;
+        } else if (!fundings.equals(other.fundings))
+            return false;
+        if (works == null) {
+            if (other.works != null)
+                return false;
+        } else if (!works.equals(other.works))
+            return false;
+        return true;
+    }
+    
+    @Override
+    public Map<String, ? extends Activity> retrieveActivitiesAsMap() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
+    @Override
+    public Collection<? extends Activity> retrieveActivities() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }
