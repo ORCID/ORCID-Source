@@ -5074,7 +5074,11 @@ orcidNgModule.controller('languageCtrl',['$scope', '$cookies', function ($scope,
         ];
     var testingLangList =
         [
-            {
+         {
+             "value": "cs",
+             "label": "čeština"
+         },
+         {
                 "value": "en",
                 "label": "English"
             },

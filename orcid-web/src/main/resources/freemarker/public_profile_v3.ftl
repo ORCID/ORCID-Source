@@ -146,7 +146,7 @@
 		        				</div>	        
 		        				<div class="row bottomBuffer">					
 			        				<div class="col-md-12 col-sm-12 col-xs-12">
-			        					${(profile.orcidBio.biography.content)!}
+										<div class="bio-content">${(profile.orcidBio.biography.content)!}</div>		        					
 			        				</div>
 			        			</div>	        				
 		        			</div>

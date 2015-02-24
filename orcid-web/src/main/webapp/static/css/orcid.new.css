@@ -5677,6 +5677,10 @@ ul.oauth-scopes li{
 	clear: both;
 }
 
+.public-profile .bio-content{
+    white-space: pre-wrap;
+}
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 
