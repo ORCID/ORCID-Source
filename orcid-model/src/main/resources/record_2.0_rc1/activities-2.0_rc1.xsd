@@ -110,7 +110,7 @@
 
 	<xs:complexType name="work-group">
 		<xs:sequence>
-			<xs:element name="keys" type="activities:group-keys"></xs:element>
+			<xs:element name="identifiers" type="activities:identifiers"></xs:element>
 			<xs:choice>
 				<xs:element maxOccurs="unbounded" minOccurs="0"
 					ref="work:work-summary" />
@@ -120,7 +120,7 @@
 
 	<xs:complexType name="funding-group">
 		<xs:sequence>
-			<xs:element name="keys" type="activities:group-keys"></xs:element>
+			<xs:element name="identifiers" type="activities:identifiers"></xs:element>
 			<xs:choice>
 				<xs:element maxOccurs="unbounded" minOccurs="0"
 					ref="funding:funding-summary" />
@@ -128,9 +128,9 @@
 		</xs:sequence>
 	</xs:complexType>
 
-	<xs:complexType name="group-keys">
+	<xs:complexType name="identifiers">
 		<xs:sequence>
-			<xs:element name="key" minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="identifier" minOccurs="0" maxOccurs="unbounded">
 				<xs:complexType>
 					<xs:sequence>
 						<xs:element name="external-identifier-type" type="activities:identifer-types"
