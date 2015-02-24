@@ -20,6 +20,7 @@ import java.util.ArrayList;
 
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.Work;
+import org.orcid.jaxb.model.record.WorkSummary;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 
 public interface ProfileWorkManager {
@@ -96,6 +97,8 @@ public interface ProfileWorkManager {
     ProfileWorkEntity getProfileWork(String clientOrcid, String workId);
     
     Work getWork(String orcid, String workId);
+    
+    WorkSummary getWorkSummary(String orcid, String workId);
     
     /**
      * Creates a new profile entity relationship between the provided work and
