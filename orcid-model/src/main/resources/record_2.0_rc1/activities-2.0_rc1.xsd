@@ -128,7 +128,6 @@
 		</xs:sequence>
 	</xs:complexType>
 
-
 	<xs:complexType name="group-keys">
 		<xs:sequence>
 			<xs:element name="key" minOccurs="0" maxOccurs="unbounded">
@@ -152,6 +151,5 @@
 		<xs:union
 			memberTypes="work:external-identifier-type funding:external-identifier-type" />
 	</xs:simpleType>
-
 
 </xs:schema>
