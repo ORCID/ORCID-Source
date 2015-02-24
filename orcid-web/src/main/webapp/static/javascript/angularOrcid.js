@@ -7957,22 +7957,23 @@ angular.module('ui.multiselect', [])
   }]);
 
 
-orcidNgModule.controller('searchBoxCtrl',['$scope', function ($scope){	
+orcidNgModule.controller('headerCtrl',['$scope', '$window', function ($scope, $window){	
 	
 	$scope.searchFilterChanged = false;
 	$scope.filterActive = false;
 	$scope.conditionsActive = false;
+	$scope.menuVisible = false;
+	$scope.searchVisible = false;
+	$scope.settingsVisible = false;
 	
 	$scope.searchFocus = function(){
 		$scope.filterActive = true;
 		$scope.conditionsActive = true;
 	}
 	
-	$scope.searchBlur = function(){
+	$scope.searchBlur = function(){		
 		$scope.hideSearchFilter();
-		setTimeout(function () {
-			$scope.conditionsActive = false;
-        }, 50);
+		$scope.conditionsActive = false;		
 	}
 	
 	$scope.filterChange = function(){
@@ -7990,18 +7991,31 @@ orcidNgModule.controller('searchBoxCtrl',['$scope', function ($scope){
 		}
 	}
 	
-}]);
-
-
-orcidNgModule.controller('menuCtrl',['$scope', '$window', function ($scope, $window){	
-	
-	$scope.menuVisible = false;
-	
 	$scope.toggleMenu = function(){
-		$scope.menuVisible = !$scope.menuVisible;		
+		$scope.menuVisible = !$scope.menuVisible;
+		$scope.searchVisible = false;
+		$scope.settingsVisible = false;		
 	}
+	
+	$scope.toggleSearch = function(){
+		$scope.searchVisible = !$scope.searchVisible;
+		$scope.menuVisible = false;		
+		$scope.settingsVisible = false;
+	}
+	
+	$scope.toggleSettings = function(){
+		$scope.settingsVisible = !$scope.settingsVisible;
+		$scope.menuVisible = false;
+		$scope.searchVisible = false;
+	}
+	
+	
+	
+	
+	
+	
+	
 }]);
-
 
 orcidNgModule.directive('resize', function ($window) {
 	return function ($scope, element) {
@@ -8017,8 +8031,12 @@ orcidNgModule.directive('resize', function ($window) {
             
             if($scope.windowWidth > 767){ /* Desktop view */
             	$scope.menuVisible = true;
+            	$scope.searchVisible = true;
+            	$scope.settingsVisible = true;
             }else{
             	$scope.menuVisible = false;
+            	$scope.searchVisible = false;
+            	$scope.settingsVisible = false;
             }
             
 		}, true);
@@ -8027,4 +8045,4 @@ orcidNgModule.directive('resize', function ($window) {
 			$scope.$apply();
 		});
 	}
-})
+});

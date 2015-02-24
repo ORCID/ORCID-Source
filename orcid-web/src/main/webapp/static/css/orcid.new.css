@@ -697,6 +697,7 @@ select {
 	width: 180px;
 	height: 29px;
 	overflow: hidden;
+	display: block;
 }
 
 .header form#language-form {
@@ -5741,11 +5742,11 @@ ul.oauth-scopes li{
 	}
 	.container .header #form-search {
 		height: 180px;
-		display: none;
+		/* display: none;*/
 		width: 100%;
 	}
 	.container .header #search {
-		display: none;
+		/*display: none;*/
 		position: absolute;
 		top: 50px;
 		z-index: 10;
@@ -5945,11 +5946,11 @@ ul.oauth-scopes li{
 
 	/* Language Selector */
 	.container .header .language-selector {
+		display: block;
 		position: absolute;
 		top: 0;
 		left: 0;
-		width: 100%;
-		display: none;
+		width: 100%;		
 		z-index: 101;
 		height: 50px;
 		background-color: #98999C;

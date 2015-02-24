@@ -38,15 +38,15 @@
 	<div class="dev-watermark"></div>
 </#if>
 <div class="container">
-	<div class="header center">
+	<div class="header center" ng-controller="headerCtrl">
 		<div class="row">
 
 			<div class="search col-md-11 col-md-offset-1 col-sm-12 col-xs-12"
-				id="search" ng-controller="searchBoxCtrl">
+				id="search" ng-show="searchVisible == true || settingsVisible == true" ng-cloak>
 
 				<!-- Search Form  -->
 				<form id="form-search" action="${aboutUri}/search/node"
-					method="POST">
+					method="POST" ng-show="searchVisible == true" ng-cloak>
 					<div id="search-box">
 						<input type="search" id="search-input" name="keys"
 							ng-focus="searchFocus()" ng-blur="searchBlur()"
@@ -68,7 +68,7 @@
 
 
 					<div class="conditions" ng-show="conditionsActive == true" ng-cloak>
-						<p>
+						<p>							
 							<@orcid.msg 'public-layout.search.terms1'/><a
 								href="${aboutUri}/legal"><@orcid.msg
 								'public-layout.search.terms2'/></a><@orcid.msg
@@ -85,17 +85,17 @@
 						'public-layout.search.advanced'/>"><i class="glyphicon glyphicon-cog"></i></a>
 					</div>
 				</form>
-
-
+				
 				<!-- Language -->
-				<div class="language-selector" ng-controller="languageCtrl"
-					id="languageCtrl">
-					<form id="language-form" action="#">
+				<div class="language-selector" ng-show = "settingsVisible == true">
+										
+					<form id="language-form" action="#" ng-controller="languageCtrl">
 						<select name="language-codes" id="language-codes"
 							ng-model="language"
 							ng-options="language.label for language in languages"
 							ng-change="selectedLanguage()"></select>
 					</form>
+					
 					<div class="account-settings-mobile-menu">
 						<span class="account-settings-mobile"> <a ${(nav==
 							"settings")?string('class="active"
@@ -111,20 +111,20 @@
 		</div>
 		<!-- .row -->
 		<div class="row">
-			<div class="col-md-9 col-sm-9 col-sm-push-3 col-md-push-3 navigation" ng-controller="menuCtrl">
+			<div class="col-md-9 col-sm-9 col-sm-push-3 col-md-push-3 navigation">
 				<!--  Mobile menu -->				
-				<a href="#" id="mobile-menu-icon" class="mobile-button mobile-menu-icon hidden-md hidden-lg hidden-sm visible-xs"
-				   ng-click="toggleMenu()" ng-class="{'mobile-menu-active': active == true}">
+				<a id="mobile-menu-icon" class="mobile-button mobile-menu-icon hidden-md hidden-lg hidden-sm visible-xs"
+				   ng-click="toggleMenu()" ng-class="{'mobile-menu-active': menuVisible == true}">
 					<span class="glyphicon glyphicon-align-justify"></span>
 				</a>								
 				<a href="${aboutUri}" id="logo-mini" class="pull-left"></a>
-				<a href="#" id="mobile-settings" class="mobile-button mobile-settings">
+				<a id="mobile-settings" class="mobile-button mobile-settings" ng-click="toggleSettings()" ng-class="{'mobile-menu-active': settingsVisible == true}">
 					<span class="glyphicon glyphicon-cog"></span>
 				</a>
-				<a href="#" id="mobile-search" class="mobile-button mobile-search">
+				<a id="mobile-search" class="mobile-button mobile-search" ng-click="toggleSearch()" ng-class="{'mobile-menu-active': searchVisible == true}">
 					<span class="glyphicon glyphicon-search"></span>
 				</a>
-				<a href="<@spring.url " /signin" />" id="mobile-sign-in" class="mobile-button mobile-sign-in">
+				<a href="<@spring.url "/signin" />" id="mobile-sign-in" class="mobile-button mobile-sign-in">
 					<span class="glyphicon glyphicon-user"></span>
 				</a>				
 				
