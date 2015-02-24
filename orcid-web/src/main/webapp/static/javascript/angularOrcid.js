@@ -7993,19 +7993,38 @@ orcidNgModule.controller('searchBoxCtrl',['$scope', function ($scope){
 }]);
 
 
-orcidNgModule.controller('menuCtrl',['$scope', function ($scope){	
+orcidNgModule.controller('menuCtrl',['$scope', '$window', function ($scope, $window){	
 	
-	$scope.active = false;
+	$scope.menuVisible = false;
 	
 	$scope.toggleMenu = function(){
-		$scope.active = !$scope.active;
-		console.log($scope.active);
+		$scope.menuVisible = !$scope.menuVisible;		
 	}
-	
-	$scope.showMenu = function(){
-		
-	}
-	
-	
-	
 }]);
+
+
+orcidNgModule.directive('resize', function ($window) {
+	return function ($scope, element) {
+		var w = angular.element($window);
+		/* Only used for detecting window resizing, the value returned by w.width() is not accurate, please refer to getWindowWidth() */
+		$scope.getWindowWidth = function () {
+			return { 'w': getWindowWidth() };
+		};
+		$scope.$watch($scope.getWindowWidth, function (newValue, oldValue) {			
+            
+			$scope.windowWidth = newValue.w;
+			
+            
+            if($scope.windowWidth > 767){ /* Desktop view */
+            	$scope.menuVisible = true;
+            }else{
+            	$scope.menuVisible = false;
+            }
+            
+		}, true);
+	
+		w.bind('resize', function () {
+			$scope.$apply();
+		});
+	}
+})

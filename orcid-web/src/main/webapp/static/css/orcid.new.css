@@ -6844,6 +6844,10 @@ ul.oauth-scopes li{
 		
 	}
 	
+	.mobile-menu-active{
+		background: #939598;
+	}
+	
 	
 }
 

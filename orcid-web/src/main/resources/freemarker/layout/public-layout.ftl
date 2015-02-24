@@ -114,7 +114,7 @@
 			<div class="col-md-9 col-sm-9 col-sm-push-3 col-md-push-3 navigation" ng-controller="menuCtrl">
 				<!--  Mobile menu -->				
 				<a href="#" id="mobile-menu-icon" class="mobile-button mobile-menu-icon hidden-md hidden-lg hidden-sm visible-xs"
-				   ng-click="toggleMenu()">
+				   ng-click="toggleMenu()" ng-class="{'mobile-menu-active': active == true}">
 					<span class="glyphicon glyphicon-align-justify"></span>
 				</a>								
 				<a href="${aboutUri}" id="logo-mini" class="pull-left"></a>
@@ -129,7 +129,7 @@
 				</a>				
 				
 				<!--  Desktop / Tablet menu -->				
-				<ul class="menu" ng-show="active == true" ng-cloak>
+				<ul class="menu" ng-show="menuVisible == true" ng-cloak resize>
 					<!-- FOR RESEARCHERS -->
 					<li class="first expanded active-trail"><a
 						href="<@spring.url " /" />" title=""><@orcid.msg

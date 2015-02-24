@@ -319,7 +319,7 @@
         toolTips();
         popupHandler();
         //menuHack();        
-        menuHandler();
+        //menuHandler();
     };
 
     
