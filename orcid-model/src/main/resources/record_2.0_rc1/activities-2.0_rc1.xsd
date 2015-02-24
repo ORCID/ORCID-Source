@@ -118,15 +118,15 @@
 		</xs:sequence>
 	</xs:complexType>
 
-    <xs:complexType name="funding-group">
-        <xs:sequence>
-            <xs:element name="keys" type="activities:group-keys"></xs:element>
-            <xs:choice>
-                <xs:element maxOccurs="unbounded" minOccurs="0"
-                    ref="funding:funding-summary" />
-            </xs:choice>
-        </xs:sequence>
-    </xs:complexType>
+	<xs:complexType name="funding-group">
+		<xs:sequence>
+			<xs:element name="keys" type="activities:group-keys"></xs:element>
+			<xs:choice>
+				<xs:element maxOccurs="unbounded" minOccurs="0"
+					ref="funding:funding-summary" />
+			</xs:choice>
+		</xs:sequence>
+	</xs:complexType>
 
 
 	<xs:complexType name="group-keys">
