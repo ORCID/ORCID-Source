@@ -23,6 +23,7 @@ import ma.glasnost.orika.MapperFacade;
 
 import org.orcid.core.adapter.JpaJaxbWorkAdapter;
 import org.orcid.jaxb.model.record.Work;
+import org.orcid.jaxb.model.record.WorkSummary;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 
 /**
@@ -63,6 +64,14 @@ public class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
         return mapperFacade.map(ProfileWorkEntity,Work.class);
     }
 
+    @Override
+    public WorkSummary toWorkSummary(ProfileWorkEntity ProfileWorkEntity) {
+        if (ProfileWorkEntity == null) {
+            return null;
+        }
+        return mapperFacade.map(ProfileWorkEntity, WorkSummary.class);
+    }
+    
     @Override
     public List<Work> toWork(Collection<ProfileWorkEntity> workEntities) {
         if (workEntities == null) {

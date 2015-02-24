@@ -26,6 +26,7 @@ import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.Work;
+import org.orcid.jaxb.model.record.WorkSummary;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.ProfileWorkDao;
 import org.orcid.persistence.dao.WorkDao;
@@ -133,6 +134,11 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
     @Override
     public Work getWork(String orcid, String workId) {
         return jpaJaxbWorkAdapter.toWork(profileWorkDao.getProfileWork(orcid, workId));
+    }
+    
+    @Override
+    public WorkSummary getWorkSummary(String orcid, String workId) {
+        return jpaJaxbWorkAdapter.toWorkSummary(profileWorkDao.getProfileWork(orcid,  workId));
     }
     
     /**
