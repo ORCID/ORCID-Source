@@ -38,6 +38,8 @@ public interface JpaJaxbEducationAdapter {
 
     List<Education> toEducation(Collection<OrgAffiliationRelationEntity> entities);
     
+    List<EducationSummary> toEducationSummary(Collection<OrgAffiliationRelationEntity> entities);
+    
     OrgAffiliationRelationEntity toOrgAffiliationRelationEntity(Education education, OrgAffiliationRelationEntity existing);
 
 }

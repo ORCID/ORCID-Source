@@ -47,14 +47,14 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "externalIdentifier" })
 @XmlRootElement(name = "external-identifiers")
-public class WorkExternalIdentifiers implements Serializable {
+public class WorkExternalIdentifiers implements Serializable, ExternalIdentifiersContainer {
 
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
     @XmlElement(name = "work-external-identifier", namespace = "http://www.orcid.org/ns/work")
-    protected List<WorkExternalIdentifier> externalIdentifier;
+    protected List<ExternalIdentifier> externalIdentifier;
     @XmlAttribute
     protected Scope scope;
 
@@ -62,7 +62,7 @@ public class WorkExternalIdentifiers implements Serializable {
 
     }
 
-    public WorkExternalIdentifiers(List<WorkExternalIdentifier> externalIdentifier) {
+    public WorkExternalIdentifiers(List<ExternalIdentifier> externalIdentifier) {
         this.externalIdentifier = externalIdentifier;
     }
 
@@ -89,12 +89,12 @@ public class WorkExternalIdentifiers implements Serializable {
      * 
      * 
      */
-    public List<WorkExternalIdentifier> getWorkExternalIdentifier() {
+    public List<ExternalIdentifier> getExternalIdentifier() {
         if (externalIdentifier == null) {
-            externalIdentifier = new ArrayList<WorkExternalIdentifier>();
+            externalIdentifier = new ArrayList<ExternalIdentifier>();
         }
         return this.externalIdentifier;
-    }
+    }      
 
     /**
      * Gets the value of the scope property.

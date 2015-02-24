@@ -18,16 +18,28 @@ package org.orcid.core.manager.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.adapter.JpaJaxbEducationAdapter;
+import org.orcid.core.adapter.JpaJaxbEmploymentAdapter;
+import org.orcid.core.adapter.JpaJaxbFundingAdapter;
+import org.orcid.core.adapter.JpaJaxbWorkAdapter;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.GroupType;
+import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
+import org.orcid.jaxb.model.record.ActivitiesSummary;
+import org.orcid.jaxb.model.record.EducationSummary;
+import org.orcid.jaxb.model.record.EmploymentSummary;
+import org.orcid.jaxb.model.record.FundingSummary;
+import org.orcid.jaxb.model.record.WorkSummary;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.stereotype.Service;
@@ -40,6 +52,18 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     
     @Resource
     private ProfileDao profileDao;
+    
+    @Resource
+    private JpaJaxbEducationAdapter jpaJaxbEducationAdapter;
+    
+    @Resource
+    private JpaJaxbEmploymentAdapter jpaJaxbEmploymentAdapter;
+    
+    @Resource
+    private JpaJaxbFundingAdapter jpaJaxbFundingAdapter;
+    
+    @Resource
+    private JpaJaxbWorkAdapter jpaJaxbWorkAdapter;
     
     @Override
     public ProfileEntity findByOrcid(String orcid) {
@@ -235,5 +259,36 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         if(PojoUtil.isEmpty(orcid))
             return false;
         return profileDao.isLocked(orcid);
+    }
+    
+    @Override
+    public ActivitiesSummary getActivitiesSummary(String orcid) {
+        ProfileEntity profileEntity = this.findByOrcid(orcid);
+        List<WorkSummary> works = jpaJaxbWorkAdapter.toWorkSummary(profileEntity.getProfileWorks());
+        List<FundingSummary> fundings = jpaJaxbFundingAdapter.toFundingSummary(profileEntity.getProfileFunding());
+        
+        Set<OrgAffiliationRelationEntity> affiliations = profileEntity.getOrgAffiliationRelations();
+        List<OrgAffiliationRelationEntity> educationEntities = new ArrayList<OrgAffiliationRelationEntity>();
+        List<OrgAffiliationRelationEntity> employmentEntities = new ArrayList<OrgAffiliationRelationEntity>();
+        
+        for(OrgAffiliationRelationEntity affiliation : affiliations) {
+            if(AffiliationType.EDUCATION.equals(affiliation.getAffiliationType())) {
+                educationEntities.add(affiliation);
+            } else {
+                employmentEntities.add(affiliation);
+            }
+        }
+        
+        List<EducationSummary> educations = jpaJaxbEducationAdapter.toEducationSummary(educationEntities);
+        List<EmploymentSummary> employments = jpaJaxbEmploymentAdapter.toEmploymentSummary(employmentEntities);
+        
+        ActivitiesSummary activities = new ActivitiesSummary();
+        activities.getEducations().addAll(educations);
+        activities.getEmployments().addAll(employments);
+        return activities;
+    }
+    
+    private void groupWorks(List<WorkSummary> works) {
+        
     }
 }

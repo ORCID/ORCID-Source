@@ -38,6 +38,8 @@ public interface JpaJaxbWorkAdapter {
 
     List<Work> toWork(Collection<ProfileWorkEntity> workEntities);
 
+    List<WorkSummary> toWorkSummary(Collection<ProfileWorkEntity> workEntities);   
+    
     ProfileWorkEntity toProfileWorkEntity(Work work, ProfileWorkEntity existing);
 
 }

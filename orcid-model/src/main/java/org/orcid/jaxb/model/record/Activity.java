@@ -34,5 +34,5 @@ public interface Activity extends VisibilityType {
     LastModifiedDate getLastModifiedDate();
     
     void setLastModifiedDate(LastModifiedDate value);
-
+        
 }

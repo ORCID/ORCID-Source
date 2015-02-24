@@ -66,6 +66,12 @@ public class JpaJaxbEducationAdapterImpl implements JpaJaxbEducationAdapter {
         return mapperFacade.mapAsList(entities, Education.class);
     }
 
+    @Override
+    public List<EducationSummary> toEducationSummary(Collection<OrgAffiliationRelationEntity> entities) {
+        if(entities == null)
+            return null;
+        return mapperFacade.mapAsList(entities, EducationSummary.class);
+    }
     
     @Override
     public OrgAffiliationRelationEntity toOrgAffiliationRelationEntity(Education education, OrgAffiliationRelationEntity existing) {

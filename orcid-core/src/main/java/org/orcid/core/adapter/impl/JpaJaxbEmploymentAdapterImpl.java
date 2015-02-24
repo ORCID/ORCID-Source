@@ -67,6 +67,12 @@ public class JpaJaxbEmploymentAdapterImpl implements JpaJaxbEmploymentAdapter {
         return mapperFacade.mapAsList(entities, Employment.class);
     }
 
+    @Override
+    public List<EmploymentSummary> toEmploymentSummary(Collection<OrgAffiliationRelationEntity> entities) {
+        if(entities == null)
+            return null;
+        return mapperFacade.mapAsList(entities, EmploymentSummary.class);
+    }
     
     @Override
     public OrgAffiliationRelationEntity toOrgAffiliationRelationEntity(Employment employment, OrgAffiliationRelationEntity existing) {

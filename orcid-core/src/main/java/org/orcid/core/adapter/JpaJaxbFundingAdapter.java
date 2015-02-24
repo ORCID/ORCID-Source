@@ -36,6 +36,8 @@ public interface JpaJaxbFundingAdapter {
 
     List<Funding> toFunding(Collection<ProfileFundingEntity> fundingEntities);
     
+    List<FundingSummary> toFundingSummary(Collection<ProfileFundingEntity> fundingEntities);
+    
     FundingSummary toFundingSummary(ProfileFundingEntity profileFundingEntity);
 
     ProfileFundingEntity toProfileFundingEntity(Funding funding, ProfileFundingEntity existing);

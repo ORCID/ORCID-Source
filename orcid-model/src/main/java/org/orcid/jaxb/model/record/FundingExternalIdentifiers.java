@@ -40,10 +40,10 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "externalIdentifier" })
 @XmlRootElement(name = "externalIdentifiers", namespace = "http://www.orcid.org/ns/funding")
-public class FundingExternalIdentifiers implements Serializable {
+public class FundingExternalIdentifiers implements ExternalIdentifiersContainer, Serializable {
     private static final long serialVersionUID = 1L;
     @XmlElement(name = "externalIdentifier", namespace = "http://www.orcid.org/ns/funding")
-    protected List<FundingExternalIdentifier> externalIdentifier;
+    protected List<ExternalIdentifier> externalIdentifier;
 
     /**
      * Gets the value of the fundingExternalIdentifier property.
@@ -68,11 +68,11 @@ public class FundingExternalIdentifiers implements Serializable {
      * 
      * 
      */
-    public List<FundingExternalIdentifier> getExternalIdentifier() {
+    public List<ExternalIdentifier> getExternalIdentifier() {
         if (externalIdentifier == null)
-            externalIdentifier = new ArrayList<FundingExternalIdentifier>();
+            externalIdentifier = new ArrayList<ExternalIdentifier>();
         return externalIdentifier;
-    }
+    } 
 
     @Override
     public int hashCode() {

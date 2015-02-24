@@ -25,8 +25,6 @@ package org.orcid.jaxb.model.record;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,8 +34,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-
-import org.orcid.jaxb.model.notification.addactivities.Activities;
 
 /**
  * <p>
@@ -57,22 +53,22 @@ public class ActivitiesSummary implements Serializable, ActivitiesContainer {
 
     private static final long serialVersionUID = 1L;
     @XmlElement(name = "educations", namespace = "http://www.orcid.org/ns/activities")
-    protected List<Education> educations;    
+    protected List<EducationSummary> educations;    
     @XmlElement(name = "employments", namespace = "http://www.orcid.org/ns/activities")
-    protected List<Employment> employments;    
+    protected List<EmploymentSummary> employments;    
     @XmlElement(name = "works", namespace = "http://www.orcid.org/ns/activities")
     protected List<Work> works;    
     @XmlElement(name = "fundings", namespace = "http://www.orcid.org/ns/activities")
     protected List<Funding> fundings;
     
-    public List<Education> getEducations() {
+    public List<EducationSummary> getEducations() {
         if(educations == null)
-            educations = new ArrayList<Education>();
+            educations = new ArrayList<EducationSummary>();
         return educations;
     }
-    public List<Employment> getEmployments() {
+    public List<EmploymentSummary> getEmployments() {
         if(employments == null)
-            employments = new ArrayList<Employment>();
+            employments = new ArrayList<EmploymentSummary>();
         return employments;
     }
     public List<Work> getWorks() {
@@ -139,11 +135,11 @@ public class ActivitiesSummary implements Serializable, ActivitiesContainer {
             activities.put(funding.getPutCode(), funding);
         }
         //Set education
-        for(Education education : educations) {
+        for(EducationSummary education : educations) {
             activities.put(education.getPutCode(), education);
         }
         //Set employment
-        for(Employment employment : employments) {
+        for(EmploymentSummary employment : employments) {
             activities.put(employment.getPutCode(), employment);
         }
         return activities;

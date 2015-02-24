@@ -79,5 +79,12 @@ public class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
         }
         return mapperFacade.mapAsList(workEntities, Work.class);
     }
-
+    
+    @Override
+    public List<WorkSummary> toWorkSummary(Collection<ProfileWorkEntity> workEntities) {
+        if(workEntities == null) {
+            return null;
+        }
+        return mapperFacade.mapAsList(workEntities, WorkSummary.class);
+    }
 }

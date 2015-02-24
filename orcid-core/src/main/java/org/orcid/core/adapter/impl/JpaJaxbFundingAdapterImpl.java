@@ -73,6 +73,14 @@ public class JpaJaxbFundingAdapterImpl implements JpaJaxbFundingAdapter {
     }
     
     @Override
+    public List<FundingSummary> toFundingSummary(Collection<ProfileFundingEntity> fundingEntities) {
+        if (fundingEntities == null) {
+            return null;
+        }
+        return mapperFacade.mapAsList(fundingEntities, FundingSummary.class);
+    }
+    
+    @Override
     public ProfileFundingEntity toProfileFundingEntity(Funding funding, ProfileFundingEntity existing) {
         if (funding == null) {
             return null;

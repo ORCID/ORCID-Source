@@ -49,7 +49,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(propOrder = { "putCode", "title", "journalTitle", "shortDescription", "citation", "type", "publicationDate", "externalIdentifiers", "url",
         "contributors", "source", "createdDate", "lastModifiedDate", "languageCode", "country" })
 @XmlRootElement(name = "work", namespace = "http://www.orcid.org/ns/work")
-public class Work implements VisibilityType, Activity, Serializable {
+public class Work implements VisibilityType, Activity, Serializable, ActivityWithExternalIdentifiers {
 
     private static final long serialVersionUID = 1L;
     @XmlElement(namespace = "http://www.orcid.org/ns/work")
@@ -224,6 +224,10 @@ public class Work implements VisibilityType, Activity, Serializable {
         return externalIdentifiers;
     }
 
+    public WorkExternalIdentifiers getExternalIdentifiers() {
+        return externalIdentifiers;
+    }
+    
     /**
      * Sets the value of the workExternalIdentifiers property.
      * 
@@ -460,19 +464,19 @@ public class Work implements VisibilityType, Activity, Serializable {
         // Compare external identifiers
         if (this.getWorkExternalIdentifiers() == null) {
             // If other contains ext ids
-            if (other.getWorkExternalIdentifiers() != null && other.getWorkExternalIdentifiers().getWorkExternalIdentifier() != null
-                    && !other.getWorkExternalIdentifiers().getWorkExternalIdentifier().isEmpty())
+            if (other.getWorkExternalIdentifiers() != null && other.getWorkExternalIdentifiers().getExternalIdentifier() != null
+                    && !other.getWorkExternalIdentifiers().getExternalIdentifier().isEmpty())
                 return false;
         } else if (other.getWorkExternalIdentifiers() == null) {
-            if (this.getWorkExternalIdentifiers().getWorkExternalIdentifier() != null && !this.getWorkExternalIdentifiers().getWorkExternalIdentifier().isEmpty())
+            if (this.getWorkExternalIdentifiers().getExternalIdentifier() != null && !this.getWorkExternalIdentifiers().getExternalIdentifier().isEmpty())
                 return false;
         } else {
-            List<WorkExternalIdentifier> otherExternalIdentifiers = other.getWorkExternalIdentifiers().getWorkExternalIdentifier();
-            List<WorkExternalIdentifier> thisExternalIdentifiers = this.getWorkExternalIdentifiers().getWorkExternalIdentifier();
+            List<? extends ExternalIdentifier> otherExternalIdentifiers = other.getWorkExternalIdentifiers().getExternalIdentifier();
+            List<? extends ExternalIdentifier> thisExternalIdentifiers = this.getWorkExternalIdentifiers().getExternalIdentifier();
             boolean sharedExtId = false;
 
-            start: for (WorkExternalIdentifier thisId : thisExternalIdentifiers) {
-                for (WorkExternalIdentifier otherId : otherExternalIdentifiers) {
+            start: for (ExternalIdentifier thisId : thisExternalIdentifiers) {
+                for (ExternalIdentifier otherId : otherExternalIdentifiers) {
                     if (thisId.equals(otherId)) {
                         sharedExtId = true;
                         break start;
