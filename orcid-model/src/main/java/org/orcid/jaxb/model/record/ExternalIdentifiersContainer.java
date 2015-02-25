@@ -21,5 +21,5 @@ import java.util.List;
 
 
 public interface ExternalIdentifiersContainer {
-    List<ExternalIdentifier> getExternalIdentifier();
+    List<? extends ExternalIdentifier> getExternalIdentifier();
 }

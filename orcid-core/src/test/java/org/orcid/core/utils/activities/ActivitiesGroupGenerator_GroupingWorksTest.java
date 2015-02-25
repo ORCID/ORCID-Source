@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.HashMap;
 import java.util.List;
@@ -41,7 +42,7 @@ import org.orcid.jaxb.model.record.WorkTitle;
  * @author Angel Montenegro
  * 
  */
-public class ActivitiesGroupGeneratorTest {
+public class ActivitiesGroupGenerator_GroupingWorksTest {
     @Test
     public void groupWorks_4GroupsOf1Work_Test() {
         ActivitiesGroupGenerator generator = new ActivitiesGroupGenerator();
@@ -229,6 +230,93 @@ public class ActivitiesGroupGeneratorTest {
     }
     
     /**
+     * work-1 and work-3 will be in different groups
+     * then work-2 will go to the same group as work-1
+     * then work-4 contains ARG(Y) and ARG(B) so, the two groups should be merged
+     * */
+    @Test
+    public void groupWorks_MergeTwoGroups_Test() {
+        ActivitiesGroupGenerator generator = new ActivitiesGroupGenerator();
+        Map<String, Work> works = generateWorks();
+        
+        //Group the first group
+        Work work1 = works.get("work-1");
+        Work work2 = works.get("work-2");
+        Work work3 = works.get("work-3");
+        Work work4 = works.get("work-4");
+        
+        generator.group(work1);
+        generator.group(work2);
+        generator.group(work3);
+
+        /**
+         * At this point there are two groups
+         * G1 with work1 and work2
+         * G2 with work3
+         * */
+        List<ActivitiesGroup> groups = generator.getGroups();
+        assertNotNull(groups);
+        assertEquals(2, groups.size());
+        checkWorksBelongsToTheSameGroup(groups, work1, work2);
+        checkWorksDontBelongsToTheSameGroup(groups, work1, work3);
+        checkWorksDontBelongsToTheSameGroup(groups, work2, work3);
+        
+        //group work4, which should merge the two groups
+        generator.group(work4);
+        groups = generator.getGroups();
+        assertNotNull(groups);
+        assertEquals(1, groups.size());
+        assertEquals(4, groups.get(0).getActivities().size());
+        assertEquals(9, groups.get(0).getExternalIdentifiers().size());
+        
+        checkWorkIsOnGroups(work1, groups);
+        checkWorkIsOnGroups(work2, groups);
+        checkWorkIsOnGroups(work3, groups);
+        checkWorkIsOnGroups(work4, groups);
+        checkWorksBelongsToTheSameGroup(groups, work1, work2, work3, work4);
+    }
+    
+    /**
+     * work-1, work-3, work-5 and work-8 will be in separate groups
+     * then work-4 will merge groups of work-1 and work-3
+     * 
+     * Check that after that, there are 3 groups, one with work-1, work-3 and work-4, one with work-5 and other with work-8
+     * */
+    @Test
+    public void groupWorks_MergeGroupsDontAffectNotMergedGroups_Test() {
+        ActivitiesGroupGenerator generator = new ActivitiesGroupGenerator();
+        Map<String, Work> works = generateWorks();
+        
+        //Group the first group
+        Work work1 = works.get("work-1");
+        Work work3 = works.get("work-3");
+        Work work4 = works.get("work-4");
+        Work work5 = works.get("work-5");
+        Work work8 = works.get("work-8");
+        
+        //Respect order
+        generator.group(work1);
+        generator.group(work3);
+        generator.group(work5);
+        generator.group(work8);
+        generator.group(work4);
+        
+        List<ActivitiesGroup> groups = generator.getGroups();
+        assertNotNull(groups);
+        assertEquals(3, groups.size());
+        //Check work1, work3 and work4 belongs to the same group
+        checkWorksBelongsToTheSameGroup(groups, work1, work3, work4);
+        //Check work1, work5 and work8 are all in different groups
+        checkWorksDontBelongsToTheSameGroup(groups, work1, work5, work8);
+        
+        checkWorkIsOnGroups(work1, groups);
+        checkWorkIsOnGroups(work3, groups);
+        checkWorkIsOnGroups(work4, groups);
+        checkWorkIsOnGroups(work5, groups);
+        checkWorkIsOnGroups(work8, groups);
+    }
+    
+    /**
      * Check that a work belongs to any of the given groups, and, check that all his ext ids also belongs to the group
      * */
     public void checkWorkIsOnGroups(Work work, List<ActivitiesGroup> groups) {
@@ -275,12 +363,10 @@ public class ActivitiesGroupGeneratorTest {
             Work w1 = works[i];
             ActivitiesGroup theGroup = getGroupThatContainsWork(groups, w1);
             for(int j = i+1; j < works.length; j++){
-                assertFalse(theGroup.belongsToGroup(works[j]));
+                assertFalse("work[" + i + "] and work["+ j + "] belongs to the same group", theGroup.belongsToGroup(works[j]));
             }
         }                                
-    }
-    
-    
+    }        
     
     /**
      * Returns the group that contains the given work
@@ -301,7 +387,7 @@ public class ActivitiesGroupGeneratorTest {
      * */
     private void checkWorkExternalIdentifiers(Work work, ActivitiesGroup group) {
         WorkExternalIdentifiers workExtIdsContainer = work.getExternalIdentifiers();
-        List<ExternalIdentifier> workExtIds = workExtIdsContainer.getExternalIdentifier();
+        List<WorkExternalIdentifier> workExtIds = workExtIdsContainer.getExternalIdentifier();
         Set<ExternalIdentifier> groupExtIds = group.getExternalIdentifiers();
         for(ExternalIdentifier workExtId : workExtIds) {
             assertTrue(groupExtIds.contains(workExtId));
@@ -435,20 +521,3 @@ public class ActivitiesGroupGeneratorTest {
         return result;
     }        
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

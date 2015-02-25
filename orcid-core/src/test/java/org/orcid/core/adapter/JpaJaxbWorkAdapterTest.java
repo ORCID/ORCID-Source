@@ -83,7 +83,7 @@ public class JpaJaxbWorkAdapterTest {
         assertEquals(02, publicationDateEntity.getMonth().intValue());
         assertEquals(02, publicationDateEntity.getDay().intValue());
         assertEquals(
-                "{\"scope\":null,\"workExternalIdentifier\":[{\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"work:external-identifier-id\"}}]}",
+                "{\"workExternalIdentifier\":[{\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"work:external-identifier-id\"}}],\"scope\":null}",
                 workEntity.getExternalIdentifiersJson());
         assertEquals("http://tempuri.org", workEntity.getWorkUrl());
         assertEquals(
@@ -114,8 +114,7 @@ public class JpaJaxbWorkAdapterTest {
         assertNotNull(w.getWorkExternalIdentifiers());
         assertNotNull(w.getWorkExternalIdentifiers().getExternalIdentifier());
         assertEquals(1, w.getWorkExternalIdentifiers().getExternalIdentifier().size());
-        org.orcid.jaxb.model.record.ExternalIdentifier extId = w.getWorkExternalIdentifiers().getExternalIdentifier().get(0);
-        org.orcid.jaxb.model.record.WorkExternalIdentifier workExtId = (org.orcid.jaxb.model.record.WorkExternalIdentifier) extId;
+        org.orcid.jaxb.model.record.WorkExternalIdentifier workExtId = w.getWorkExternalIdentifiers().getExternalIdentifier().get(0);
         assertNotNull(workExtId.getWorkExternalIdentifierId());
         assertEquals("123", workExtId.getWorkExternalIdentifierId().getContent());
         assertNotNull(workExtId.getWorkExternalIdentifierType());
@@ -134,8 +133,7 @@ public class JpaJaxbWorkAdapterTest {
         assertNotNull(ws.getExternalIdentifiers());
         assertNotNull(ws.getExternalIdentifiers().getExternalIdentifier());
         assertEquals(1, ws.getExternalIdentifiers().getExternalIdentifier().size());
-        org.orcid.jaxb.model.record.ExternalIdentifier extId = ws.getExternalIdentifiers().getExternalIdentifier().get(0);
-        org.orcid.jaxb.model.record.WorkExternalIdentifier workExtId = (org.orcid.jaxb.model.record.WorkExternalIdentifier) extId;
+        org.orcid.jaxb.model.record.WorkExternalIdentifier workExtId = ws.getExternalIdentifiers().getExternalIdentifier().get(0);
         assertNotNull(workExtId.getWorkExternalIdentifierId());
         assertEquals("123", workExtId.getWorkExternalIdentifierId().getContent());
         assertNotNull(workExtId.getWorkExternalIdentifierType());

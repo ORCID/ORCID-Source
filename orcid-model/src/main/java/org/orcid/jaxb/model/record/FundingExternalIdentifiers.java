@@ -43,7 +43,7 @@ import javax.xml.bind.annotation.XmlType;
 public class FundingExternalIdentifiers implements ExternalIdentifiersContainer, Serializable {
     private static final long serialVersionUID = 1L;
     @XmlElement(name = "externalIdentifier", namespace = "http://www.orcid.org/ns/funding")
-    protected List<ExternalIdentifier> externalIdentifier;
+    protected List<FundingExternalIdentifier> externalIdentifier;
 
     /**
      * Gets the value of the fundingExternalIdentifier property.
@@ -68,9 +68,9 @@ public class FundingExternalIdentifiers implements ExternalIdentifiersContainer,
      * 
      * 
      */
-    public List<ExternalIdentifier> getExternalIdentifier() {
+    public List<FundingExternalIdentifier> getExternalIdentifier() {
         if (externalIdentifier == null)
-            externalIdentifier = new ArrayList<ExternalIdentifier>();
+            externalIdentifier = new ArrayList<FundingExternalIdentifier>();
         return externalIdentifier;
     } 
 

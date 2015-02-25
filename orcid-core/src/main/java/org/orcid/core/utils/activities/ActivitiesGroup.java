@@ -36,7 +36,7 @@ public class ActivitiesGroup {
         if(activity != null) {
             ExternalIdentifiersContainer container = activity.getExternalIdentifiers();
             if(container != null) {
-                List<ExternalIdentifier> extIds = container.getExternalIdentifier();
+                List<ExternalIdentifier> extIds = (List<ExternalIdentifier>)container.getExternalIdentifier();
                 for(ExternalIdentifier extId : extIds) {
                     externalIdentifiers.add(extId);
                 }
@@ -62,7 +62,7 @@ public class ActivitiesGroup {
                 //Add new external identifiers
         ExternalIdentifiersContainer container = activity.getExternalIdentifiers();
         if(container != null) {
-            List<ExternalIdentifier> extIds = container.getExternalIdentifier();
+            List<ExternalIdentifier> extIds = (List<ExternalIdentifier>)container.getExternalIdentifier();
             for(ExternalIdentifier extId : extIds) {
                 if(!externalIdentifiers.contains(extId))
                     externalIdentifiers.add(extId);
@@ -91,7 +91,7 @@ public class ActivitiesGroup {
         //Check existing external identifiers 
         ExternalIdentifiersContainer container = activity.getExternalIdentifiers();
         if(container != null) {
-            List<ExternalIdentifier> extIds = container.getExternalIdentifier();
+            List<ExternalIdentifier> extIds = (List<ExternalIdentifier>)container.getExternalIdentifier();
             for(ExternalIdentifier extId : extIds) {
                 //If any of the ext ids already exists on this group, return true
                 if(externalIdentifiers.contains(extId))
@@ -125,35 +125,3 @@ public class ActivitiesGroup {
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

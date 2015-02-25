@@ -26,12 +26,16 @@ package org.orcid.jaxb.model.record;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  * <p>
@@ -45,7 +49,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType( propOrder = { "externalIdentifier" })
+@XmlType( propOrder = { "workExternalIdentifier" })
 @XmlRootElement(name = "external-identifiers")
 public class WorkExternalIdentifiers implements Serializable, ExternalIdentifiersContainer {
 
@@ -54,7 +58,7 @@ public class WorkExternalIdentifiers implements Serializable, ExternalIdentifier
      */
     private static final long serialVersionUID = 1L;
     @XmlElement(name = "work-external-identifier", namespace = "http://www.orcid.org/ns/work")
-    protected List<ExternalIdentifier> externalIdentifier;
+    protected List<WorkExternalIdentifier> workExternalIdentifier;
     @XmlAttribute
     protected Scope scope;
 
@@ -62,8 +66,8 @@ public class WorkExternalIdentifiers implements Serializable, ExternalIdentifier
 
     }
 
-    public WorkExternalIdentifiers(List<ExternalIdentifier> externalIdentifier) {
-        this.externalIdentifier = externalIdentifier;
+    public WorkExternalIdentifiers(List<WorkExternalIdentifier> externalIdentifier) {
+        this.workExternalIdentifier = externalIdentifier;
     }
 
     /**
@@ -89,11 +93,17 @@ public class WorkExternalIdentifiers implements Serializable, ExternalIdentifier
      * 
      * 
      */
-    public List<ExternalIdentifier> getExternalIdentifier() {
-        if (externalIdentifier == null) {
-            externalIdentifier = new ArrayList<ExternalIdentifier>();
+    public List<WorkExternalIdentifier> getWorkExternalIdentifier() {
+        if (workExternalIdentifier == null) {
+            workExternalIdentifier = new ArrayList<WorkExternalIdentifier>();
         }
-        return this.externalIdentifier;
+        return this.workExternalIdentifier;
+    }  
+       
+    @XmlTransient
+    @JsonIgnore
+    public List<WorkExternalIdentifier> getExternalIdentifier() {        
+        return getWorkExternalIdentifier();
     }      
 
     /**
@@ -131,14 +141,14 @@ public class WorkExternalIdentifiers implements Serializable, ExternalIdentifier
         if (scope != that.scope) {
             return false;
         }
-        if (externalIdentifier == null) {
-            if (that.externalIdentifier != null)
+        if (workExternalIdentifier == null) {
+            if (that.workExternalIdentifier != null)
                 return false;
         } else {
-            if (that.externalIdentifier == null)
+            if (that.workExternalIdentifier == null)
                 return false;
-            else if (!(externalIdentifier.containsAll(that.externalIdentifier) && that.externalIdentifier.containsAll(externalIdentifier) && 
-                    that.externalIdentifier.size() == externalIdentifier.size())) {
+            else if (!(workExternalIdentifier.containsAll(that.workExternalIdentifier) && that.workExternalIdentifier.containsAll(workExternalIdentifier) && 
+                    that.workExternalIdentifier.size() == workExternalIdentifier.size())) {
                 return false;
             }
         }
@@ -148,7 +158,7 @@ public class WorkExternalIdentifiers implements Serializable, ExternalIdentifier
 
     @Override
     public int hashCode() {
-        int result = externalIdentifier != null ? externalIdentifier.hashCode() : 0;
+        int result = workExternalIdentifier != null ? workExternalIdentifier.hashCode() : 0;
         result = 31 * result + (scope != null ? scope.hashCode() : 0);
         return result;
     }
