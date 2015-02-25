@@ -99,7 +99,8 @@ public class FundingExternalIdentifiers implements Serializable {
             return null;
         FundingExternalIdentifiers result = new FundingExternalIdentifiers();
         if (!recordPojo.getExternalIdentifier().isEmpty()) {
-            for (org.orcid.jaxb.model.record.FundingExternalIdentifier recordEi : recordPojo.getExternalIdentifier()) {
+            for (org.orcid.jaxb.model.record.ExternalIdentifier externalIdentifier : recordPojo.getExternalIdentifier()) {
+                org.orcid.jaxb.model.record.FundingExternalIdentifier recordEi = (org.orcid.jaxb.model.record.FundingExternalIdentifier) externalIdentifier;                
                 result.getFundingExternalIdentifier().add(FundingExternalIdentifier.fromRecordPojo(recordEi));
             }
         }

@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "type", "title", "externalIdentifiers", "startDate", "endDate", "source", "lastModifiedDate", "createdDate" })
 @XmlRootElement(name = "fundingSummary", namespace = "http://www.orcid.org/ns/funding")
-public class FundingSummary implements VisibilityType, Activity, Serializable {
+public class FundingSummary implements VisibilityType, Activity, ActivityWithExternalIdentifiers, Serializable {
     
     private static final long serialVersionUID = 7489792970949538708L;
     @XmlElement(namespace = "http://www.orcid.org/ns/funding", required = true)

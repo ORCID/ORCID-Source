@@ -112,13 +112,14 @@ public class JpaJaxbWorkAdapterTest {
         assertEquals("ES", w.getWorkTitle().getTranslatedTitle().getLanguageCode());
         assertEquals(WorkType.ARTISTIC_PERFORMANCE.value(), w.getWorkType().value());
         assertNotNull(w.getWorkExternalIdentifiers());
-        assertNotNull(w.getWorkExternalIdentifiers().getWorkExternalIdentifier());
-        assertEquals(1, w.getWorkExternalIdentifiers().getWorkExternalIdentifier().size());
-        org.orcid.jaxb.model.record.WorkExternalIdentifier extId = w.getWorkExternalIdentifiers().getWorkExternalIdentifier().get(0);
-        assertNotNull(extId.getWorkExternalIdentifierId());
-        assertEquals("123", extId.getWorkExternalIdentifierId().getContent());
-        assertNotNull(extId.getWorkExternalIdentifierType());
-        assertEquals(WorkExternalIdentifierType.AGR.value(), extId.getWorkExternalIdentifierType().value());
+        assertNotNull(w.getWorkExternalIdentifiers().getExternalIdentifier());
+        assertEquals(1, w.getWorkExternalIdentifiers().getExternalIdentifier().size());
+        org.orcid.jaxb.model.record.ExternalIdentifier extId = w.getWorkExternalIdentifiers().getExternalIdentifier().get(0);
+        org.orcid.jaxb.model.record.WorkExternalIdentifier workExtId = (org.orcid.jaxb.model.record.WorkExternalIdentifier) extId;
+        assertNotNull(workExtId.getWorkExternalIdentifierId());
+        assertEquals("123", workExtId.getWorkExternalIdentifierId().getContent());
+        assertNotNull(workExtId.getWorkExternalIdentifierType());
+        assertEquals(WorkExternalIdentifierType.AGR.value(), workExtId.getWorkExternalIdentifierType().value());
     }
     
     
@@ -131,13 +132,14 @@ public class JpaJaxbWorkAdapterTest {
         assertEquals("12345", ws.getPutCode());
         assertEquals(Visibility.LIMITED.value(), ws.getVisibility().value());
         assertNotNull(ws.getExternalIdentifiers());
-        assertNotNull(ws.getExternalIdentifiers().getWorkExternalIdentifier());
-        assertEquals(1, ws.getExternalIdentifiers().getWorkExternalIdentifier().size());
-        org.orcid.jaxb.model.record.WorkExternalIdentifier extId = ws.getExternalIdentifiers().getWorkExternalIdentifier().get(0);
-        assertNotNull(extId.getWorkExternalIdentifierId());
-        assertEquals("123", extId.getWorkExternalIdentifierId().getContent());
-        assertNotNull(extId.getWorkExternalIdentifierType());
-        assertEquals(WorkExternalIdentifierType.AGR.value(), extId.getWorkExternalIdentifierType().value());
+        assertNotNull(ws.getExternalIdentifiers().getExternalIdentifier());
+        assertEquals(1, ws.getExternalIdentifiers().getExternalIdentifier().size());
+        org.orcid.jaxb.model.record.ExternalIdentifier extId = ws.getExternalIdentifiers().getExternalIdentifier().get(0);
+        org.orcid.jaxb.model.record.WorkExternalIdentifier workExtId = (org.orcid.jaxb.model.record.WorkExternalIdentifier) extId;
+        assertNotNull(workExtId.getWorkExternalIdentifierId());
+        assertEquals("123", workExtId.getWorkExternalIdentifierId().getContent());
+        assertNotNull(workExtId.getWorkExternalIdentifierType());
+        assertEquals(WorkExternalIdentifierType.AGR.value(), workExtId.getWorkExternalIdentifierType().value());
     }
 
     private Work getWork() throws JAXBException {

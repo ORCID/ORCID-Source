@@ -51,6 +51,10 @@ public class WorkExternalIdentifier implements ExternalIdentifier, Serializable 
     @XmlElement(name = "external-identifier-id", namespace = "http://www.orcid.org/ns/work", required = true)
     protected WorkExternalIdentifierId workExternalIdentifierId;
 
+    public WorkExternalIdentifier() {
+        
+    }
+    
     /**
      * Gets the value of the workExternalIdentifierType property.
      * 
@@ -124,6 +128,18 @@ public class WorkExternalIdentifier implements ExternalIdentifier, Serializable 
     public int hashCode() {
         int result = workExternalIdentifierType != null ? workExternalIdentifierType.hashCode() : 0;
         result = 31 * result + (workExternalIdentifierId != null ? workExternalIdentifierId.hashCode() : 0);
+        return result;
+    }
+    
+    @Override
+    public String toString() {
+        String result = "";
+        if(workExternalIdentifierType != null)
+            result += workExternalIdentifierType.toString() + "(";
+        if(workExternalIdentifierId != null)
+            result += workExternalIdentifierId.getContent();
+        if(workExternalIdentifierType != null)
+            result += ")";        
         return result;
     }
 }

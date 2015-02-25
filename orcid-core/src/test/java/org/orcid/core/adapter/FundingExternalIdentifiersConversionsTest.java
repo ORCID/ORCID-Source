@@ -165,7 +165,8 @@ public class FundingExternalIdentifiersConversionsTest {
         assertEquals(3, messageObject.getExternalIdentifier().size());
 
         boolean found1 = false, found2 = false, found3 = false;
-        for (org.orcid.jaxb.model.record.FundingExternalIdentifier f : messageObject.getExternalIdentifier()) {
+        for (org.orcid.jaxb.model.record.ExternalIdentifier externalIdentifier : messageObject.getExternalIdentifier()) {
+            FundingExternalIdentifier f = (FundingExternalIdentifier) externalIdentifier;
             if (f.getValue().equals("f1")) {
                 found1 = true;
                 assertEquals("www.f1.com", f.getUrl().getValue());
