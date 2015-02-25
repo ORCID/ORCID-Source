@@ -94,17 +94,13 @@ public class FundingExternalIdentifier implements ExternalIdentifier, Serializab
 			if (other.type != null)
 				return false;
 		} else if (!type.equals(other.type))
-			return false;
-		if (url == null) {
-			if (other.url != null)
-				return false;
-		} else if (!url.equals(other.url))
-			return false;
+			return false;		
 		if (value == null) {
 			if (other.value != null)
 				return false;
 		} else if (!value.equals(other.value))
 			return false;
+		//url is ignored, since, for groupings it is not needed
 		return true;
 	}		
 }
