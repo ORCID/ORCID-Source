@@ -18,17 +18,13 @@ package org.orcid.core.utils.activities;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.junit.Test;
-import org.orcid.jaxb.model.record.ExternalIdentifier;
 import org.orcid.jaxb.model.record.Title;
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.WorkExternalIdentifier;
@@ -42,7 +38,7 @@ import org.orcid.jaxb.model.record.WorkTitle;
  * @author Angel Montenegro
  * 
  */
-public class ActivitiesGroupGenerator_GroupingWorksTest {
+public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupGeneratorBaseTest {
     @Test
     public void groupWorks_4GroupsOf1Work_Test() {
         ActivitiesGroupGenerator generator = new ActivitiesGroupGenerator();
@@ -314,85 +310,7 @@ public class ActivitiesGroupGenerator_GroupingWorksTest {
         checkWorkIsOnGroups(work4, groups);
         checkWorkIsOnGroups(work5, groups);
         checkWorkIsOnGroups(work8, groups);
-    }
-    
-    /**
-     * Check that a work belongs to any of the given groups, and, check that all his ext ids also belongs to the group
-     * */
-    public void checkWorkIsOnGroups(Work work, List<ActivitiesGroup> groups) {
-        int groupIndex = -1;
-        for(int i = 0; i < groups.size(); i++) {
-            ActivitiesGroup group = groups.get(i);
-            assertNotNull(group.getActivities());
-            if(group.getActivities().contains(work)) {
-                groupIndex = i;
-                break;
-            }
-        }
-        
-        //Check the work belongs to a group
-        assertFalse("Work doesnt belong to any group", -1 == groupIndex);
-        ActivitiesGroup group = groups.get(groupIndex);
-        //Check the external ids are contained in the group ext ids
-        checkWorkExternalIdentifiers(work, group);
-    }
-    
-    /**
-     * Check that the given works belongs to the same group in a list of given groups
-     * */
-    private void checkWorksBelongsToTheSameGroup(List<ActivitiesGroup> groups, Work ... works) {
-        Work firstWork = works[0];
-        
-        assertNotNull(firstWork);
-        
-        ActivitiesGroup theGroup = getGroupThatContainsWork(groups, firstWork);
-        
-        assertNotNull(theGroup);
-        
-        for(Work work : works) {
-            assertTrue(theGroup.belongsToGroup(work));
-        }
-    }
-    
-    
-    /**
-     * Check that the given works belongs to the same group in a list of given groups
-     * */
-    private void checkWorksDontBelongsToTheSameGroup(List<ActivitiesGroup> groups, Work ... works) {                
-        for(int i = 0; i < works.length; i++) {
-            Work w1 = works[i];
-            ActivitiesGroup theGroup = getGroupThatContainsWork(groups, w1);
-            for(int j = i+1; j < works.length; j++){
-                assertFalse("work[" + i + "] and work["+ j + "] belongs to the same group", theGroup.belongsToGroup(works[j]));
-            }
-        }                                
-    }        
-    
-    /**
-     * Returns the group that contains the given work
-     * */
-    private ActivitiesGroup getGroupThatContainsWork(List<ActivitiesGroup> groups, Work work) {
-        ActivitiesGroup theGroup = null;
-        for(ActivitiesGroup group : groups) {
-            if(group.belongsToGroup(work)) {
-                theGroup = group;
-                break;
-            }
-        }
-        return theGroup;
-    }
-    
-    /**
-     * Checks that all the external identifiers in the work are contained in the group external identifiers
-     * */
-    private void checkWorkExternalIdentifiers(Work work, ActivitiesGroup group) {
-        WorkExternalIdentifiers workExtIdsContainer = work.getExternalIdentifiers();
-        List<WorkExternalIdentifier> workExtIds = workExtIdsContainer.getExternalIdentifier();
-        Set<ExternalIdentifier> groupExtIds = group.getExternalIdentifiers();
-        for(ExternalIdentifier workExtId : workExtIds) {
-            assertTrue(groupExtIds.contains(workExtId));
-        }
-    }
+    }       
     
     /**
      * work-1 -> ARG(A), ARG(B), ARG(C) 
