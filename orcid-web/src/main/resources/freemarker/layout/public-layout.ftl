@@ -132,7 +132,7 @@
 				<ul class="menu" ng-show="menuVisible == true" ng-cloak resize>
 					<!-- FOR RESEARCHERS -->
 					<li class="first expanded active-trail"><a
-						href="<@spring.url " /" />" title=""><@orcid.msg
+						href="<@spring.url " /" />" ng-click="handleMobileMenuOption($event)" title=""><@orcid.msg
 						'public-layout.for_researchers'/></a>
 						<ul class="menu lang-fixes">
 						<!-- Mobile view Only -->
@@ -177,18 +177,18 @@
 
 					<!-- DRUPAL WEBSITE MENUS -->
 					<!-- FOR ORGANIZATIONS -->
-					<li class="expanded"><a href="${aboutUri}/organizations"><@orcid.msg
-							'public-layout.for_organizations'/></a>
+					<li class="expanded">
+						<a href="${aboutUri}/organizations" ng-click="handleMobileMenuOption($event)"><@orcid.msg 'public-layout.for_organizations'/></a>
 						<ul class="menu lang-fixes">
 							<!-- Mobile view Only -->
-							<li class="first leaf hidden-md hidden-lg hidden-sm visible-xs"><a
-								href="${aboutUri}/organizations"><@orcid.msg
-									'public-layout.for_organizations'/></a></li>
+							<li class="first leaf hidden-md hidden-lg hidden-sm visible-xs">
+								<a href="${aboutUri}/organizations"><@orcid.msg 'public-layout.for_organizations'/></a>
+							</li>
 
 							<li class="first leaf"><a
-								href="${aboutUri}/organizations/funders" class="russian-fix"><@orcid.msg
+								href="${aboutUri}/organizations/funders" class="russian-fix" ng-click="handleMobileMenuOption($event); toggleSecondaryMenu('funders')"><@orcid.msg
 									'public-layout.funders'/></a> <!-- Updated according Drupal website structure -->
-								<ul class="menu">
+								<ul class="menu" ng-show="secondaryMenuVisible['funders'] == true">
 									<li class="first leaf"><a
 										href="${aboutUri}/organizations/funders/learnmore">Learn
 											more</a></li>
@@ -200,9 +200,9 @@
 								</ul></li>
 
 							<li class="leaf"><a
-								href="${aboutUri}/organizations/institutions" title="">
+								href="${aboutUri}/organizations/institutions" ng-click="handleMobileMenuOption($event); toggleSecondaryMenu('institutions')">
 									<@orcid.msg 'public-layout.research_organizations'/></a> <!-- Updated according Drupal website structure -->
-								<ul class="menu">
+								<ul class="menu" ng-show="secondaryMenuVisible['institutions'] == true">
 									<li class="first leaf"><a
 										href="${aboutUri}/organizations/institutions/learnmore">Learn
 											more</a></li>
@@ -216,9 +216,9 @@
 											cases</a></li>
 								</ul></li>
 							<li class="leaf"><a
-								href="${aboutUri}/organizations/publishers"> <@orcid.msg
+								href="${aboutUri}/organizations/publishers" ng-click="handleMobileMenuOption($event); toggleSecondaryMenu('publishers')"> <@orcid.msg
 									'public-layout.publishers'/></a> <!-- Updated according Drupal website structure -->
-								<ul class="menu">
+								<ul class="menu" ng-show="secondaryMenuVisible['publishers'] == true">
 									<li class="first leaf"><a
 										href="${aboutUri}/organizations/publishers/learnmore">Learn
 											more</a></li>
@@ -229,9 +229,9 @@
 										href="${aboutUri}/about/membership" title="">Membership</a></li>
 								</ul></li>
 							<li class="leaf"><a
-								href="${aboutUri}/organizations/associations" title=""><@orcid.msg
+								href="${aboutUri}/organizations/associations" ng-click="handleMobileMenuOption($event); toggleSecondaryMenu('associations')"><@orcid.msg
 									'public-layout.associations'/></a> <!-- Updated according Drupal website structure -->
-								<ul class="menu">
+								<ul class="menu" ng-show="secondaryMenuVisible['associations'] == true">
 									<li class="first leaf"><a
 										href="/organizations/associations/learnmore">Learn more</a></li>
 									<li class="leaf"><a
@@ -244,9 +244,9 @@
 											cases</a></li>
 								</ul></li>
 							<li class="last leaf"><a
-								href="${aboutUri}/organizations/integrators"><@orcid.msg
+								href="${aboutUri}/organizations/integrators" ng-click="handleMobileMenuOption($event); toggleSecondaryMenu('integrators')"><@orcid.msg
 									'public-layout.integrators'/></a> <!-- Updated according Drupal website structure -->
-								<ul class="menu">
+								<ul class="menu" ng-show="secondaryMenuVisible['integrators'] == true">
 									<li class="first leaf"><a
 										href="${aboutUri}/organizations/integrators/API">The ORCID
 											API</a></li>
@@ -266,7 +266,7 @@
 						</ul></li>
 
 					<!-- ABOUT -->
-					<li class="expanded"><a href="${aboutUri}/about"><@orcid.msg
+					<li class="expanded"><a href="${aboutUri}/about" ng-click="handleMobileMenuOption($event)"><@orcid.msg
 							'public-layout.about'/></a>
 
 						<ul class="menu lang-fixes">
@@ -276,9 +276,9 @@
 									'public-layout.about'/></a></li>
 							<!-- What is ORCID? -->
 							<li class="first expanded"><a
-								href="${aboutUri}/about/what-is-orcid" title=""><@orcid.msg
+								href="${aboutUri}/about/what-is-orcid" ng-click="handleMobileMenuOption($event); toggleSecondaryMenu('whatIsOrcid')"><@orcid.msg
 									'public-layout.what_is_orcid'/></a>
-								<ul class="menu">
+								<ul class="menu" ng-show="secondaryMenuVisible['whatIsOrcid'] == true">
 									<li class="first leaf"><a
 										href="${aboutUri}/about/what-is-orcid/mission-statement"
 										title=""><@orcid.msg 'public-layout.our_mission'/></a></li>
@@ -288,9 +288,9 @@
 									<li class="leaf"><a
 										href="${aboutUri}/content/our-governance">Our Governance</a></li>
 									<li class="last expanded"><a
-										href="${aboutUri}/about/what-is-orcid/policies">Our
+										href="${aboutUri}/about/what-is-orcid/policies" ng-click="handleMobileMenuOption($event); toggleTertiaryMenu('policies')">Our
 											Policies</a>
-										<ul class="menu">
+										<ul class="menu" ng-show="tertiaryMenuVisible['policies'] == true">
 											<li class="first leaf"><a
 												href="${aboutUri}/orcid-dispute-procedures">Dispute
 													Procedures</a></li>
@@ -314,9 +314,8 @@
 							<li class="leaf"><a href="${aboutUri}/about/team" title=""><@orcid.msg
 									'public-layout.the_orcid_team'/></a></li>
 							<!-- The ORCID Comunity -->
-							<li class="expanded"><a href="${aboutUri}/about/community"
-								title=""><@orcid.msg 'public-layout.the_orcid_community'/></a>
-								<ul class="menu">
+							<li class="expanded"><a href="${aboutUri}/about/community" ng-click="handleMobileMenuOption($event); toggleSecondaryMenu('community')"><@orcid.msg 'public-layout.the_orcid_community'/></a>
+								<ul class="menu" ng-show="secondaryMenuVisible['community'] == true">
 									<li class="first leaf"><a
 										href="${aboutUri}/about/community" title=""><@orcid.msg
 											'public-layout.working_groups'/></a></li>
@@ -350,23 +349,10 @@
 									<li class="last leaf"><a
 										href="http://www.cafepress.com/orcid" title="">ORCID Gear</a></li>
 								</ul>
-
-
-
-								<ul class="menu">
-									<li class="first leaf"><a
-										href="${aboutUri}/about/community" title="" class="active">ORCID
-											Community</a></li>
-									<li class="leaf"><a
-										href="${aboutUri}/about/community/sponsors">Sponsors</a></li>
-									<li class="leaf"><a href=${aboutUri}"/about/community/members">Members</a></li>
-
-
-								</ul></li>
+							</li>
 							<!-- Membership -->
-							<li class="expanded"><a href="${aboutUri}/about/membership"
-								title=""><@orcid.msg 'public-layout.membership'/></a>
-								<ul class="menu">
+							<li class="expanded"><a href="${aboutUri}/about/membership" ng-click="handleMobileMenuOption($event); toggleSecondaryMenu('membership')"><@orcid.msg 'public-layout.membership'/></a>
+								<ul class="menu" ng-show="secondaryMenuVisible['membership'] == true">
 									<li class="first expanded"><a
 										href="${aboutUri}/about/membership" title=""><@orcid.msg
 											'public-layout.membership_and_subscription'/></a>
@@ -388,9 +374,8 @@
 								</ul></li>
 
 							<!-- News -->
-							<li class="leaf"><a href="${aboutUri}/about/news/news"
-								title=""><@orcid.msg 'public-layout.news'/>
-									<ul class="menu">
+							<li class="leaf"><a href="${aboutUri}/about/news/news" ng-click="handleMobileMenuOption($event); toggleSecondaryMenu('news')"><@orcid.msg 'public-layout.news'/>
+									<ul class="menu" ng-show="secondaryMenuVisible['news'] == true">
 										<li class="first leaf"><a
 											href="${aboutUri}/category/newsletter/blog" title="">Blog</a></li>
 										<li class="last leaf"><a
@@ -409,7 +394,7 @@
 						</ul></li>
 
 					<!-- HELP -->
-					<li class="expanded"><a href="${aboutUri}/help"><@orcid.msg
+					<li class="expanded"><a href="${aboutUri}/help" ng-click="handleMobileMenuOption($event)"><@orcid.msg
 							'public-layout.help'/></a>
 						<ul class="menu lang-fixes">
 							<!-- Mobile view Only -->

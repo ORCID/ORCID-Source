@@ -7963,6 +7963,8 @@ orcidNgModule.controller('headerCtrl',['$scope', '$window', function ($scope, $w
 	$scope.filterActive = false;
 	$scope.conditionsActive = false;
 	$scope.menuVisible = false;
+	$scope.secondaryMenuVisible = {};
+	$scope.tertiaryMenuVisible = {};
 	$scope.searchVisible = false;
 	$scope.settingsVisible = false;
 	
@@ -7991,10 +7993,19 @@ orcidNgModule.controller('headerCtrl',['$scope', '$window', function ($scope, $w
 		}
 	}
 	
+	
 	$scope.toggleMenu = function(){
 		$scope.menuVisible = !$scope.menuVisible;
 		$scope.searchVisible = false;
 		$scope.settingsVisible = false;		
+	}
+	
+	$scope.toggleSecondaryMenu = function(submenu){
+		$scope.secondaryMenuVisible[submenu] = !$scope.secondaryMenuVisible[submenu];
+	}
+	
+	$scope.toggleTertiaryMenu = function(submenu){
+		$scope.tertiaryMenuVisible[submenu] = !$scope.tertiaryMenuVisible[submenu];
 	}
 	
 	$scope.toggleSearch = function(){
@@ -8007,7 +8018,16 @@ orcidNgModule.controller('headerCtrl',['$scope', '$window', function ($scope, $w
 		$scope.settingsVisible = !$scope.settingsVisible;
 		$scope.menuVisible = false;
 		$scope.searchVisible = false;
+	}	
+	
+	$scope.handleMobileMenuOption = function($event){
+		$event.preventDefault();
+		var w = getWindowWidth();			
+		if(w > 767) {				
+			window.location = $event.target.getAttribute('href');
+		}
 	}
+	
 	
 	
 	

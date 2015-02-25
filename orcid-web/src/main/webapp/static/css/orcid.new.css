@@ -5888,10 +5888,7 @@ ul.oauth-scopes li{
 	}
 	.header .navigation>.menu>li>.menu>li>a.active:hover {
 		color: #fff !important;
-	}
-	.header .navigation>.menu>li>.menu>li>.menu {
-		display: none;
-	}
+	}	
 	.header .navigation>.menu>li>.menu>li.active-trail>.menu {
 		left: 0;
 		padding: 0;
@@ -5915,7 +5912,7 @@ ul.oauth-scopes li{
 	/* Not showing Third level*/
 	.header .navigation>.menu>li>.menu>li>.menu,.header .navigation>.menu>li>.menu>li.active-trail>.menu
 		{
-		display: none;
+		display: block;
 		padding-left: 0;
 		width: 95%;
 	}
