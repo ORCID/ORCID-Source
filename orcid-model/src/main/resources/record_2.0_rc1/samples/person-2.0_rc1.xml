@@ -39,7 +39,6 @@
 					<common:host>orcid.org</common:host>
 				</common:source-orcid>
 				<common:source-name />
-				<common:source-date>2001-12-31T12:00:00</common:source-date>
 			</common:source>
 		</person:external-identifier>
 	</person:external-identifiers>

@@ -36,7 +36,7 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.notification.Notification;
-import org.orcid.jaxb.model.record.Work;
+import org.orcid.jaxb.model.record.Activity;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -95,12 +95,17 @@ public class OrcidApiAuthorizationSecurityAspect {
         permissionChecker.checkPermissions(getAuthentication(), accessControl.requiredScope(), orcid);
     }
     
-    @Before("@annotation(accessControl) && args(orcid, work)")
-    public void checkPermissionsWithWork(AccessControl accessControl, String orcid, Work work) {
+    @Before("@annotation(accessControl) && args(orcid, activity)")
+    public void checkPermissionsWithWork(AccessControl accessControl, String orcid, Activity activity) {
+        permissionChecker.checkPermissions(getAuthentication(), accessControl.requiredScope(), orcid);
+    }
+    
+    @Before("@annotation(accessControl) && args(orcid, putCode, activity)")
+    public void checkPermissionsWithWork(AccessControl accessControl, String orcid, String putCode, Activity activity) {
         permissionChecker.checkPermissions(getAuthentication(), accessControl.requiredScope(), orcid);
     }
 
-    @Before("@annotation(accessControl) && args(uriInfo , orcid, webhookUri)")
+    @Before("@annotation(accessControl) && args(uriInfo, orcid, webhookUri)")
     public void checkPermissionsWithOrcidAndWebhookUri(AccessControl accessControl, UriInfo uriInfo, String orcid, String webhookUri) {
         permissionChecker.checkPermissions(getAuthentication(), accessControl.requiredScope(), orcid);
     }

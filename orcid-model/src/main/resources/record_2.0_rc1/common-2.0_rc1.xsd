@@ -90,20 +90,6 @@
 			</xs:choice>
 			<xs:element name="source-name" type="common:source-name"
 				minOccurs="0" />
-			<xs:element name="source-date">
-				<xs:annotation>
-					<xs:documentation>The date time that the source client application
-						(Member organization system) or individual user created/attempted
-						to
-						create the item.
-					</xs:documentation>
-				</xs:annotation>
-				<xs:complexType>
-					<xs:simpleContent>
-						<xs:extension base="xs:dateTime" />
-					</xs:simpleContent>
-				</xs:complexType>
-			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
 

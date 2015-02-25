@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import javax.annotation.Resource;
 
 import org.orcid.core.adapter.JpaJaxbWorkAdapter;
-import org.orcid.core.exception.WrongSourceException;
+import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.jaxb.model.message.Visibility;
@@ -52,6 +52,9 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
     @Resource
     private SourceManager sourceManager;
 
+    @Resource
+    private OrcidSecurityManager orcidSecurityManager;
+
     /**
      * Removes the relationship that exists between a work and a profile.
      * 
@@ -71,7 +74,7 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
     public boolean checkSourceAndRemoveWork(String orcid, String workId) {
         ProfileWorkEntity profileWorkEntity = profileWorkDao.getProfileWork(orcid, workId);
         SourceEntity existingSource = profileWorkEntity.getSource();
-        checkSource(existingSource);
+        orcidSecurityManager.checkSource(existingSource);
         return profileWorkDao.removeWork(orcid, workId);
     }
 
@@ -135,12 +138,12 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
     public Work getWork(String orcid, String workId) {
         return jpaJaxbWorkAdapter.toWork(profileWorkDao.getProfileWork(orcid, workId));
     }
-    
+
     @Override
     public WorkSummary getWorkSummary(String orcid, String workId) {
-        return jpaJaxbWorkAdapter.toWorkSummary(profileWorkDao.getProfileWork(orcid,  workId));
+        return jpaJaxbWorkAdapter.toWorkSummary(profileWorkDao.getProfileWork(orcid, workId));
     }
-    
+
     /**
      * Creates a new profile entity relationship between the provided work and
      * the given profile.
@@ -182,7 +185,7 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
         ProfileWorkEntity profileWorkEntity = profileWorkDao.getProfileWork(orcid, work.getPutCode());
         Visibility originalVisibility = profileWorkEntity.getVisibility();
         SourceEntity existingSource = profileWorkEntity.getSource();
-        checkSource(existingSource);
+        orcidSecurityManager.checkSource(existingSource);
         jpaJaxbWorkAdapter.toProfileWorkEntity(work, profileWorkEntity);
         profileWorkEntity.setVisibility(originalVisibility);
         profileWorkEntity.setSource(existingSource);
@@ -190,13 +193,6 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
         return jpaJaxbWorkAdapter.toWork(profileWorkEntity);
     }
 
-    private void checkSource(SourceEntity existingSource) {
-        String sourceIdOfUpdater = sourceManager.retrieveSourceOrcid();
-        if (sourceIdOfUpdater != null && (existingSource == null || !sourceIdOfUpdater.equals(existingSource.getSourceId()))) {
-            throw new WrongSourceException("You are not the source of the work, so you are not allowed to update it");
-        }
-    }
-    
     private void setIncomingWorkPrivacy(ProfileWorkEntity profileWorkEntity, ProfileEntity profile) {
         Visibility incomingWorkVisibility = profileWorkEntity.getVisibility();
         Visibility defaultWorkVisibility = profile.getActivitiesVisibilityDefault();

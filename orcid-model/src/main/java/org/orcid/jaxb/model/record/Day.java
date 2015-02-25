@@ -58,7 +58,7 @@ public class Day implements Serializable {
     }
 
     public Day(Integer value) {
-        this.value = StringUtils.leftPad(Integer.toString(value), 2, '0');
+        this.value = tidyValue(value);
     }
 
     /**
@@ -82,9 +82,17 @@ public class Day implements Serializable {
      *     
      */
     public void setValue(String value) {
-        this.value = value;
+        this.value = tidyValue(value);
     }
 
+    private String tidyValue(Integer value) {
+        return tidyValue(Integer.toString(value));
+    }
+    
+    private String tidyValue(String value) {
+        return StringUtils.leftPad(value, 2, '0');
+    }
+    
     @Override
     public boolean equals(Object o) {
         if (this == o) {

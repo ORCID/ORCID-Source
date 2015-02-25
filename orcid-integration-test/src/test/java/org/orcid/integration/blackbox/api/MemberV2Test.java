@@ -23,6 +23,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.URISyntaxException;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
@@ -42,6 +43,7 @@ import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.api.memberV2.MemberV2ApiClientImpl;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.record.Visibility;
 import org.orcid.jaxb.model.record.Work;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
@@ -66,6 +68,10 @@ public class MemberV2Test {
     public String client1ClientId;
     @Value("${org.orcid.web.testClient1.clientSecret}")
     public String client1ClientSecret;
+    @Value("${org.orcid.web.testClient2.clientId}")
+    public String client2ClientId;
+    @Value("${org.orcid.web.testClient2.clientSecret}")
+    public String client2ClientSecret;
     @Value("${org.orcid.web.testUser1.orcidId}")
     public String testUser1OrcidId;
     @Value("${org.orcid.web.testUser1.username}")
@@ -105,16 +111,51 @@ public class MemberV2Test {
     }
 
     @Test
-    public void createWork() throws JSONException, InterruptedException {
-        Work notification = unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml");
-        notification.setPutCode(null);
+    public void createViewAndUpdateWork() throws JSONException, InterruptedException, URISyntaxException {
+        Work workToCreate = unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml");
+        workToCreate.setPutCode(null);
         String accessToken = getAccessToken();
-        ClientResponse response = memberV2ApiClient.createWorkXml(testUser1OrcidId, notification, accessToken);
-        assertNotNull(response);
-        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-        String locationPath = response.getLocation().getPath();
-        assertTrue("Location header path should match pattern, but was " + locationPath,
-                locationPath.matches(".*/v2.0_rc1/4444-4444-4444-4441/work/\\d+"));
+        ClientResponse postResponse = memberV2ApiClient.createWorkXml(testUser1OrcidId, workToCreate, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        String locationPath = postResponse.getLocation().getPath();
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/4444-4444-4444-4441/work/\\d+"));
+        ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
+        Work gotWork = getResponse.getEntity(Work.class);
+        assertEquals("common:title", gotWork.getWorkTitle().getTitle().getContent());
+        gotWork.getWorkTitle().getTitle().setContent("updated title");
+        ClientResponse putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), accessToken, gotWork);
+        assertEquals(Response.Status.OK.getStatusCode(), putResponse.getStatus());
+        ClientResponse getAfterUpdateResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
+        Work gotAfterUpdateWork = getAfterUpdateResponse.getEntity(Work.class);
+        assertEquals("updated title", gotAfterUpdateWork.getWorkTitle().getTitle().getContent());
+    }
+    
+    @Test
+    public void testUpdateWorkWithProfileCreationTokenWhenClaimedAndNotSource() throws JSONException, InterruptedException, URISyntaxException {
+        Work workToCreate = unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml");
+        workToCreate.setPutCode(null);
+        workToCreate.setVisibility(Visibility.PUBLIC);
+        String accessToken = getAccessToken();
+        ClientResponse postResponse = memberV2ApiClient.createWorkXml(testUser1OrcidId, workToCreate, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        String locationPath = postResponse.getLocation().getPath();
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/4444-4444-4444-4441/work/\\d+"));
+        ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
+        Work gotWork = getResponse.getEntity(Work.class);
+        assertEquals("common:title", gotWork.getWorkTitle().getTitle().getContent());
+        gotWork.getWorkTitle().getTitle().setContent("updated title");
+        String profileCreateToken = oauthHelper.getClientCredentialsAccessToken(client2ClientId, client2ClientSecret, ScopePathType.ORCID_PROFILE_CREATE);
+        ClientResponse putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), profileCreateToken, gotWork);
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), putResponse.getStatus());
+        ClientResponse getAfterUpdateResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
+        Work gotAfterUpdateWork = getAfterUpdateResponse.getEntity(Work.class);
+        assertEquals("common:title", gotAfterUpdateWork.getWorkTitle().getTitle().getContent());
     }
 
     private String getAccessToken() throws InterruptedException, JSONException {

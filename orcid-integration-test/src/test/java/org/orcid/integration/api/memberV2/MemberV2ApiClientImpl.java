@@ -16,26 +16,18 @@
  */
 package org.orcid.integration.api.memberV2;
 
-import static org.orcid.core.api.OrcidApiConstants.*;
+import static org.orcid.core.api.OrcidApiConstants.PROFILE_GET_PATH;
+import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
+import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
+import static org.orcid.core.api.OrcidApiConstants.WORK;
+import static org.orcid.core.api.OrcidApiConstants.PUTCODE;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
 import org.orcid.api.common.OrcidClientHelper;
-import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
-import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
 import org.orcid.jaxb.model.record.Work;
 
 import com.sun.jersey.api.client.Client;
@@ -54,16 +46,25 @@ public class MemberV2ApiClientImpl {
         orcidClientHelper = new OrcidClientHelper(baseUri, c);
     }
 
+    public ClientResponse viewLocationXml(URI location, String accessToken) throws URISyntaxException {
+        return orcidClientHelper.getClientResponseWithToken(location, VND_ORCID_XML, accessToken);
+    }
+
     public ClientResponse viewWorkXml(String orcid, String putCode, String accessToken) {
-        return null;
+        URI workUri = UriBuilder.fromPath(WORK + PUTCODE).build(orcid, putCode);
+        return orcidClientHelper.getClientResponseWithToken(workUri, VND_ORCID_XML, accessToken);
     }
 
     public ClientResponse createWorkXml(String orcid, Work work, String accessToken) {
         return orcidClientHelper.postClientResponseWithToken(UriBuilder.fromPath(WORK).build(orcid), VND_ORCID_XML, work, accessToken);
     }
-    
+
     public ClientResponse createWorkJson(String orcid, Work work, String accessToken) {
         return orcidClientHelper.postClientResponseWithToken(UriBuilder.fromPath(WORK).build(orcid), VND_ORCID_JSON, work, accessToken);
+    }
+
+    public ClientResponse updateLocationXml(URI location, String accessToken, Object jaxbRootElement){
+        return orcidClientHelper.putClientResponseWithToken(location, VND_ORCID_XML, jaxbRootElement, accessToken);
     }
 
     public ClientResponse updateWorkXml(String orcid, String putCode, Work work, String accessToken) {
