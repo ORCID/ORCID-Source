@@ -26,8 +26,8 @@ import javax.annotation.Resource;
 import org.apache.commons.io.IOUtils;
 import org.orcid.core.adapter.JpaJaxbFundingAdapter;
 import org.orcid.core.exception.OrcidValidationException;
-import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.SourceManager;
@@ -74,6 +74,9 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
     
     @Resource
     private LocaleManager localeManager;
+    
+    @Resource
+    private OrcidSecurityManager orcidSecurityManager;
     
     /**
      * Removes the relationship that exists between a funding and a profile.
@@ -300,7 +303,7 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
         ProfileFundingEntity pfe = profileFundingDao.getProfileFunding(orcid, funding.getPutCode());
         Visibility originalVisibility = pfe.getVisibility();
         SourceEntity existingSource = pfe.getSource();
-        checkSource(existingSource);
+        orcidSecurityManager.checkSource(existingSource);
         jpaJaxbFundingAdapter.toProfileFundingEntity(funding, pfe);
         pfe.setVisibility(originalVisibility);
         pfe.setSource(existingSource);
@@ -325,14 +328,8 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
     @Transactional    
     public boolean checkSourceAndDelete(String orcid, String fundingId) {
         ProfileFundingEntity pfe = profileFundingDao.getProfileFunding(orcid, fundingId);
-        checkSource(pfe.getSource());
+        orcidSecurityManager.checkSource(pfe.getSource());
         return profileFundingDao.removeProfileFunding(orcid, fundingId);
     }
     
-    private void checkSource(SourceEntity existingSource) {
-        String sourceIdOfUpdater = sourceManager.retrieveSourceOrcid();
-        if (sourceIdOfUpdater != null && (existingSource == null || !sourceIdOfUpdater.equals(existingSource.getSourceId()))) {
-            throw new WrongSourceException("You are not the source of the funding, so you are not allowed to update it");
-        }
-    }
 }

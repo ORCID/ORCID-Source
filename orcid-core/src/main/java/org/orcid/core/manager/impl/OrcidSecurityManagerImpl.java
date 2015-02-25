@@ -20,9 +20,13 @@ import java.security.AccessControlException;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.annotation.Resource;
+
 import org.orcid.core.exception.OrcidForbiddenException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
+import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.manager.OrcidSecurityManager;
+import org.orcid.core.manager.SourceManager;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.Activity;
 import org.orcid.jaxb.model.record.Education;
@@ -30,6 +34,7 @@ import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.Visibility;
 import org.orcid.jaxb.model.record.Work;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -42,6 +47,9 @@ import org.springframework.security.oauth2.provider.OAuth2Request;
  *
  */
 public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
+
+    @Resource
+    private SourceManager sourceManager;
 
     @Override
     public void checkVisibility(Activity activity) {
@@ -63,6 +71,14 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             if ((visibility == null || Visibility.PRIVATE.equals(visibility)) && !clientId.equals(activity.retrieveSourcePath())) {
                 throw new OrcidForbiddenException("The activity is private and you are not the source");
             }
+        }
+    }
+
+    @Override
+    public void checkSource(SourceEntity existingSource) {
+        String sourceIdOfUpdater = sourceManager.retrieveSourceOrcid();
+        if (sourceIdOfUpdater != null && (existingSource == null || !sourceIdOfUpdater.equals(existingSource.getSourceId()))) {
+            throw new WrongSourceException("You are not the source of the work, so you are not allowed to update it");
         }
     }
 

@@ -17,6 +17,7 @@
 package org.orcid.core.manager;
 
 import org.orcid.jaxb.model.record.Activity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 
 /**
  * 
@@ -26,5 +27,7 @@ import org.orcid.jaxb.model.record.Activity;
 public interface OrcidSecurityManager {
 
     void checkVisibility(Activity activity);
+
+    void checkSource(SourceEntity existingSource);
     
 }

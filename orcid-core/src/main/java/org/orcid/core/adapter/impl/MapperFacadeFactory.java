@@ -16,8 +16,11 @@
  */
 package org.orcid.core.adapter.impl;
 
+import ma.glasnost.orika.CustomMapper;
+import ma.glasnost.orika.MapperBase;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
+import ma.glasnost.orika.MappingContext;
 import ma.glasnost.orika.converter.ConverterFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
 import ma.glasnost.orika.metadata.ClassMapBuilder;
@@ -36,6 +39,8 @@ import org.orcid.jaxb.model.record.FundingContributors;
 import org.orcid.jaxb.model.record.FundingSummary;
 import org.orcid.jaxb.model.record.FuzzyDate;
 import org.orcid.jaxb.model.record.PublicationDate;
+import org.orcid.jaxb.model.record.SourceClientId;
+import org.orcid.jaxb.model.record.SourceOrcid;
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.WorkContributors;
 import org.orcid.jaxb.model.record.WorkExternalIdentifier;
@@ -53,6 +58,7 @@ import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
 import org.orcid.persistence.jpa.entities.WorkExternalIdentifierEntity;
+import org.orcid.utils.OrcidStringUtils;
 import org.springframework.beans.factory.FactoryBean;
 
 /**
@@ -105,8 +111,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         mapperFactory.classMap(PublicationDate.class, PublicationDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day")
                 .register();
         mapperFactory.classMap(WorkExternalIdentifier.class, WorkExternalIdentifierEntity.class).field("workExternalIdentifierType", "identifierType").register();
-        mapperFactory.classMap(org.orcid.jaxb.model.record.Source.class, SourceEntity.class).field("sourceOrcid.path", "sourceProfile.id")
-                .field("sourceClientId.path", "sourceClient.id").byDefault().register();
+        addV2SourceMapping(mapperFactory);
         
         ClassMapBuilder<WorkSummary, ProfileWorkEntity> workSummaryClassMap = mapperFactory.classMap(WorkSummary.class, ProfileWorkEntity.class);
         workSummaryClassMap.field("putCode", "work.id");
@@ -162,8 +167,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         
         mapperFactory.classMap(FuzzyDate.class, StartDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day").register();
         mapperFactory.classMap(FuzzyDate.class, EndDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day").register();        
-        mapperFactory.classMap(org.orcid.jaxb.model.record.Source.class, SourceEntity.class).field("sourceOrcid.path", "sourceClient.id").byDefault().register();
-        
+        addV2SourceMapping(mapperFactory);        
         return mapperFactory.getMapperFacade();
     }
     
@@ -191,8 +195,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         
         mapperFactory.classMap(FuzzyDate.class, StartDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day").register();
         mapperFactory.classMap(FuzzyDate.class, EndDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day").register();        
-        mapperFactory.classMap(org.orcid.jaxb.model.record.Source.class, SourceEntity.class).field("sourceOrcid.path", "sourceClient.id").byDefault().register();
-        
+        addV2SourceMapping(mapperFactory);        
         return mapperFactory.getMapperFacade();
     }
     
@@ -220,13 +223,28 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         
         mapperFactory.classMap(FuzzyDate.class, StartDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day").register();
         mapperFactory.classMap(FuzzyDate.class, EndDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day").register();        
-        mapperFactory.classMap(org.orcid.jaxb.model.record.Source.class, SourceEntity.class).field("sourceOrcid.path", "sourceClient.id").byDefault().register();
-        
+        addV2SourceMapping(mapperFactory);        
         return mapperFactory.getMapperFacade();
     }
     
     private ClassMapBuilder<?, ?> mapCommonFields(ClassMapBuilder<?, ?> builder) {
         return builder.field("dateCreated", "createdDate").field("id", "putCode").byDefault();
+    }
+    
+    private void addV2SourceMapping(MapperFactory mapperFactory) {
+        mapperFactory.classMap(org.orcid.jaxb.model.record.Source.class, SourceEntity.class).fieldAToB("sourceOrcid.path", "sourceProfile.id")
+                .fieldAToB("sourceClientId.path", "sourceClient.id").customize(new CustomMapper<org.orcid.jaxb.model.record.Source, SourceEntity>() {
+                    @Override
+                    public void mapBtoA(SourceEntity sourceEntity, org.orcid.jaxb.model.record.Source source, MappingContext context) {
+                        String sourceId = sourceEntity.getSourceId();
+                        if(OrcidStringUtils.isClientId(sourceId)){
+                            source.setSourceClientId(new SourceClientId(sourceId));
+                        }
+                        else{
+                            source.setSourceOrcid(new SourceOrcid(sourceId));
+                        }
+                    }
+                }).byDefault().register();
     }
 
     @Override
