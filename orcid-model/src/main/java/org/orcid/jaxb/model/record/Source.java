@@ -42,7 +42,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "sourceOrcid", "sourceClientId", "sourceName", "sourceDate" })
+@XmlType(propOrder = { "sourceOrcid", "sourceClientId", "sourceName" })
 @XmlRootElement(name = "source", namespace = "http://www.orcid.org/ns/common")
 public class Source implements Serializable {
 
@@ -56,8 +56,6 @@ public class Source implements Serializable {
     protected SourceClientId sourceClientId;
     @XmlElement(name="source-name", namespace="http://www.orcid.org/ns/common")
     protected SourceName sourceName;
-    @XmlElement(name="source-date",namespace="http://www.orcid.org/ns/common")
-    protected SourceDate sourceDate;
 
     public Source() {
     }
@@ -125,27 +123,6 @@ public class Source implements Serializable {
      */
     public void setSourceName(SourceName value) {
         this.sourceName = value;
-    }
-
-    /**
-     * Gets the value of the sourceDate property.
-     * 
-     * @return possible object is {@link SourceDate }
-     * 
-     */
-    public SourceDate getSourceDate() {
-        return sourceDate;
-    }
-
-    /**
-     * Sets the value of the sourceDate property.
-     * 
-     * @param value
-     *            allowed object is {@link SourceDate }
-     * 
-     */
-    public void setSourceDate(SourceDate value) {
-        this.sourceDate = value;
     }
 
     public String retrieveSourcePath() {

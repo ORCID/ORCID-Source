@@ -45,7 +45,6 @@
 
 					</common:source-orcid>
 					<common:source-name />
-					<common:source-date>2001-12-31T12:00:00</common:source-date>
 				</common:source>
 				<history:deactivation-date>2001-12-31T12:00:00</history:deactivation-date>
 				<history:verified-email>true</history:verified-email>
@@ -91,7 +90,6 @@
 
 							</common:source-orcid>
 							<common:source-name />
-							<common:source-date>2001-12-31T12:00:00</common:source-date>
 						</common:source>
 					</person:external-identifier>
 				</person:external-identifiers>
@@ -165,7 +163,6 @@
 
 							</common:source-orcid>
 							<common:source-name />
-							<common:source-date>2001-12-31T12:00:00</common:source-date>
 						</common:source>
 						<education:department-name>education:department-name</education:department-name>
 						<education:role-title>education:role-title</education:role-title>
@@ -194,7 +191,6 @@
 
 							</common:source-orcid>
 							<common:source-name />
-							<common:source-date>2001-12-31T12:00:00</common:source-date>
 						</common:source>
 						<affiliation:department-name>affiliation:department-name</affiliation:department-name>
 						<affiliation:role-title>affiliation:role-title</affiliation:role-title>
@@ -222,7 +218,6 @@
 
 							</common:source-orcid>
 							<common:source-name />
-							<common:source-date>2001-12-31T12:00:00</common:source-date>
 						</common:source>
 						<work:title>
 							<common:title>common:title</common:title>
@@ -256,7 +251,6 @@
 
 							</common:source-orcid>
 							<common:source-name />
-							<common:source-date>2001-12-31T12:00:00</common:source-date>
 						</common:source>
 						<funding:title>
 							<common:title>common:title</common:title>

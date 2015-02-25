@@ -29,6 +29,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.orcid.api.common.WebDriverHelper;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
+import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 import com.sun.jersey.api.client.ClientResponse;
@@ -94,6 +95,20 @@ public class OauthHelper {
     public boolean elementExists(String page, String elementId) {
         return webDriverHelper.elementExists(page, elementId);
     } 
+    
+    public String getClientCredentialsAccessToken(String clientId, String clientSecret, ScopePathType scope) throws JSONException {
+        MultivaluedMap<String, String> params = new MultivaluedMapImpl();
+        params.add("client_id", clientId);
+        params.add("client_secret", clientSecret);
+        params.add("grant_type", "client_credentials");
+        params.add("scope", scope.value());
+        ClientResponse clientResponse = oauthT2Client.obtainOauth2TokenPost("client_credentials", params);
+        assertEquals(200, clientResponse.getStatus());
+        String body = clientResponse.getEntity(String.class);
+        JSONObject jsonObject = new JSONObject(body);
+        String accessToken = (String) jsonObject.get("access_token");
+        return accessToken;
+    }
     
     public void closeWebDriver() {
         webDriverHelper.close();

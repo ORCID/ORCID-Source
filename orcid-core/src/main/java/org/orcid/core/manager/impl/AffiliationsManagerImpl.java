@@ -22,8 +22,8 @@ import javax.annotation.Resource;
 
 import org.orcid.core.adapter.JpaJaxbEducationAdapter;
 import org.orcid.core.adapter.JpaJaxbEmploymentAdapter;
-import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.manager.AffiliationsManager;
+import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.jaxb.model.message.Visibility;
@@ -59,6 +59,9 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
     
     @Resource
     private ProfileDao profileDao;
+    
+    @Resource
+    private OrcidSecurityManager orcidSecurityManager;
     
     @Override
     public OrgAffiliationRelationEntity findAffiliationByUserAndId(String userOrcid, String affiliationId) {
@@ -147,7 +150,7 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
         OrgAffiliationRelationEntity educationEntity = affiliationsDao.getOrgAffiliationRelation(orcid, education.getPutCode());
         Visibility originalVisibility = educationEntity.getVisibility();
         SourceEntity existingSource = educationEntity.getSource();
-        checkSource(existingSource);
+        orcidSecurityManager.checkSource(existingSource);
         
         jpaJaxbEducationAdapter.toOrgAffiliationRelationEntity(education, educationEntity);
         educationEntity.setVisibility(originalVisibility);
@@ -227,7 +230,7 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
         OrgAffiliationRelationEntity employmentEntity = affiliationsDao.getOrgAffiliationRelation(orcid, employment.getPutCode());
         Visibility originalVisibility = employmentEntity.getVisibility();
         SourceEntity existingSource = employmentEntity.getSource();
-        checkSource(existingSource);
+        orcidSecurityManager.checkSource(existingSource);
         
         jpaJaxbEmploymentAdapter.toOrgAffiliationRelationEntity(employment, employmentEntity);
         employmentEntity.setVisibility(originalVisibility);
@@ -253,7 +256,7 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
     @Override
     public boolean checkSourceAndDelete(String orcid, String affiliationId) {
         OrgAffiliationRelationEntity affiliationEntity = affiliationsDao.getOrgAffiliationRelation(orcid, affiliationId);
-        checkSource(affiliationEntity.getSource());
+        orcidSecurityManager.checkSource(affiliationEntity.getSource());
         return affiliationsDao.removeOrgAffiliationRelation(orcid, affiliationId);
     } 
     
@@ -269,10 +272,4 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
         }
     }
     
-    private void checkSource(SourceEntity existingSource) {
-        String sourceIdOfUpdater = sourceManager.retrieveSourceOrcid();
-        if (sourceIdOfUpdater != null && (existingSource == null || !sourceIdOfUpdater.equals(existingSource.getSourceId()))) {
-            throw new WrongSourceException("You are not the source of the affiliation, so you are not allowed to update it");
-        }
-    }
 }
