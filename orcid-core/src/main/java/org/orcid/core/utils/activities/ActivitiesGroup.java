@@ -1,3 +1,19 @@
+/**
+ * =============================================================================
+ *
+ * ORCID (R) Open Source
+ * http://orcid.org
+ *
+ * Copyright (c) 2012-2014 ORCID, Inc.
+ * Licensed under an MIT-Style License (MIT)
+ * http://orcid.org/open-source-license
+ *
+ * This copyright and license information (including a link to the full license)
+ * shall be included in its entirety in all copies or substantial portion of
+ * the software.
+ *
+ * =============================================================================
+ */
 package org.orcid.core.utils.activities;
 
 import java.util.HashSet;
@@ -58,8 +74,19 @@ public class ActivitiesGroup {
     }
     
     public boolean belongsToGroup(ActivityWithExternalIdentifiers activity) {
-        if(externalIdentifiers == null || externalIdentifiers.isEmpty())
-            return false;
+        //If there are no external ids
+        if(externalIdentifiers == null || externalIdentifiers.isEmpty()) {
+            //Check if the activity dont have ext ids
+            if(activity.getExternalIdentifiers() == null || activity.getExternalIdentifiers().getExternalIdentifier() == null || activity.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
+                //If the activity doesn't have any external identifier, check if the activity is in the group
+                if(activities.contains(activity))
+                    return true;
+                else 
+                    return false;                            
+            } else {
+                return false;
+            }
+        }                        
         
         //Check existing external identifiers 
         ExternalIdentifiersContainer container = activity.getExternalIdentifiers();

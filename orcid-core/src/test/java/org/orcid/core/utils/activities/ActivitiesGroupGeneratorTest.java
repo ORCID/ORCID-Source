@@ -1,3 +1,19 @@
+/**
+ * =============================================================================
+ *
+ * ORCID (R) Open Source
+ * http://orcid.org
+ *
+ * Copyright (c) 2012-2014 ORCID, Inc.
+ * Licensed under an MIT-Style License (MIT)
+ * http://orcid.org/open-source-license
+ *
+ * This copyright and license information (including a link to the full license)
+ * shall be included in its entirety in all copies or substantial portion of
+ * the software.
+ *
+ * =============================================================================
+ */
 package org.orcid.core.utils.activities;
 
 import static org.junit.Assert.assertEquals;
@@ -84,9 +100,9 @@ public class ActivitiesGroupGeneratorTest {
         checkWorkIsOnGroups(work6, groups);
         
         //Add another work to the groups
-        //work-7 -> No external identifiers  
-        Work work7 = works.get("work-7");
-        generator.group(work7);        
+        //work-8 -> No external identifiers  
+        Work work8 = works.get("work-8");
+        generator.group(work8);        
         groups = generator.getGroups();
         assertNotNull(groups);
         assertEquals(4, groups.size());
@@ -96,33 +112,30 @@ public class ActivitiesGroupGeneratorTest {
         assertEquals(1, groups.get(2).getActivities().size());
         assertEquals(1, groups.get(3).getActivities().size());
         //There should be 3 ext ids in each group, except for one group that doesnt have any ext id
-        boolean work7found = false;
+        boolean work8found = false;
         for(int i = 0; i < 4; i++) {
             if(groups.get(i).getExternalIdentifiers().size() == 0) {                                
-                work7found = true;
+                work8found = true;
             } else {
                 assertEquals(3, groups.get(i).getExternalIdentifiers().size());
             }                                                        
         }
-        assertTrue("Work without ext ids was not found", work7found);
+        assertTrue("Work without ext ids was not found", work8found);
         //Check work in groups
-        checkWorkIsOnGroups(work7, groups);        
+        checkWorkIsOnGroups(work8, groups);        
     }
         
-    
-    
-    
-    
+    /**
+     * Test grouping work-1 and work-2 
+     * */
     @Test
     public void groupWorks_1GroupsOf2Works_Test() {
         ActivitiesGroupGenerator generator = new ActivitiesGroupGenerator();
         Map<String, Work> works = generateWorks();
         
-        //Group the first group
-        //work-1 -> ARG(A), ARG(B), ARG(C)
         Work work1 = works.get("work-1");        
-        //work-2 -> ARG(C), ARG(D), ARG(E)
         Work work2 = works.get("work-2");
+        
         generator.group(work1);
         generator.group(work2);
         List<ActivitiesGroup> groups = generator.getGroups();
@@ -140,10 +153,80 @@ public class ActivitiesGroupGeneratorTest {
         checkWorkExternalIdentifiers(work2, g1);
     }
     
+    /**
+     * Test grouping (work-1 and work-2) and (work-6 and work-7) 
+     * */
+    @Test
+    public void groupWorks_2GroupsOf2Works_Test() {
+        ActivitiesGroupGenerator generator = new ActivitiesGroupGenerator();
+        Map<String, Work> works = generateWorks();
+        
+        Work work1 = works.get("work-1");        
+        Work work2 = works.get("work-2");
+        Work work6 = works.get("work-6");
+        Work work7 = works.get("work-7");
+        
+        generator.group(work1);
+        generator.group(work2);
+        generator.group(work6);
+        generator.group(work7);
+        
+        List<ActivitiesGroup> groups = generator.getGroups();
+        assertNotNull(groups);
+        assertEquals(2, groups.size());
+        //Check there are two activities in each group
+        assertEquals(2, groups.get(0).getActivities().size());
+        assertEquals(2, groups.get(1).getActivities().size());
+        //Check there are five external ids in each group
+        assertEquals(5, groups.get(0).getExternalIdentifiers().size());
+        assertEquals(5, groups.get(1).getExternalIdentifiers().size());
+        //Check each work
+        checkWorkIsOnGroups(work1, groups);
+        checkWorkIsOnGroups(work2, groups);
+        checkWorkIsOnGroups(work6, groups);
+        checkWorkIsOnGroups(work7, groups);
+        
+        //Check work1 and work2 are in the same group
+        checkWorksBelongsToTheSameGroup(groups, work1, work2);
+        //Check work6 and work7 are in the same group
+        checkWorksBelongsToTheSameGroup(groups, work6, work7);
+        //Check works are not mixed
+        checkWorksDontBelongsToTheSameGroup(groups, work1, work6);
+        checkWorksDontBelongsToTheSameGroup(groups, work1, work7);
+        checkWorksDontBelongsToTheSameGroup(groups, work2, work6);
+        checkWorksDontBelongsToTheSameGroup(groups, work2, work7);
+    }
     
-    
-    
-    
+    /**
+     * Test that two groups without ext ids dont get grouped
+     * */
+    @Test
+    public void groupWorks_DontGroupWorksWithoutExtIds_Test() {
+        ActivitiesGroupGenerator generator = new ActivitiesGroupGenerator();
+        Map<String, Work> works = generateWorks();
+        
+        //Group the first group
+        Work work8 = works.get("work-8");
+        Work work9 = works.get("work-9");
+        
+        generator.group(work8);
+        generator.group(work9);
+        
+        List<ActivitiesGroup> groups = generator.getGroups();
+        assertNotNull(groups);
+        assertEquals(2, groups.size());
+        //Check there are two activities in each group
+        assertEquals(1, groups.get(0).getActivities().size());
+        assertEquals(1, groups.get(1).getActivities().size());
+        //Check there are five external ids in each group
+        assertEquals(0, groups.get(0).getExternalIdentifiers().size());
+        assertEquals(0, groups.get(1).getExternalIdentifiers().size());
+        
+        checkWorkIsOnGroups(work8, groups);
+        checkWorkIsOnGroups(work9, groups);
+        
+        checkWorksDontBelongsToTheSameGroup(groups, work8, work9);
+    }
     
     /**
      * Check that a work belongs to any of the given groups, and, check that all his ext ids also belongs to the group
@@ -167,6 +250,53 @@ public class ActivitiesGroupGeneratorTest {
     }
     
     /**
+     * Check that the given works belongs to the same group in a list of given groups
+     * */
+    private void checkWorksBelongsToTheSameGroup(List<ActivitiesGroup> groups, Work ... works) {
+        Work firstWork = works[0];
+        
+        assertNotNull(firstWork);
+        
+        ActivitiesGroup theGroup = getGroupThatContainsWork(groups, firstWork);
+        
+        assertNotNull(theGroup);
+        
+        for(Work work : works) {
+            assertTrue(theGroup.belongsToGroup(work));
+        }
+    }
+    
+    
+    /**
+     * Check that the given works belongs to the same group in a list of given groups
+     * */
+    private void checkWorksDontBelongsToTheSameGroup(List<ActivitiesGroup> groups, Work ... works) {                
+        for(int i = 0; i < works.length; i++) {
+            Work w1 = works[i];
+            ActivitiesGroup theGroup = getGroupThatContainsWork(groups, w1);
+            for(int j = i+1; j < works.length; j++){
+                assertFalse(theGroup.belongsToGroup(works[j]));
+            }
+        }                                
+    }
+    
+    
+    
+    /**
+     * Returns the group that contains the given work
+     * */
+    private ActivitiesGroup getGroupThatContainsWork(List<ActivitiesGroup> groups, Work work) {
+        ActivitiesGroup theGroup = null;
+        for(ActivitiesGroup group : groups) {
+            if(group.belongsToGroup(work)) {
+                theGroup = group;
+                break;
+            }
+        }
+        return theGroup;
+    }
+    
+    /**
      * Checks that all the external identifiers in the work are contained in the group external identifiers
      * */
     private void checkWorkExternalIdentifiers(Work work, ActivitiesGroup group) {
@@ -184,12 +314,14 @@ public class ActivitiesGroupGeneratorTest {
      * work-3 -> ARG(X), ARG(Y), ARG(Z)
      * work-4 -> ARG(Y), ARG(B), ARG(1)
      * work-5 -> ARG(M), ARG(N), ARG(O) 
-     * work-6 -> ARXIV(A), ARXIV(B), ARXIV(C)  
-     * work-7 -> No external identifiers  
+     * work-6 -> ARXIV(A), ARXIV(B), ARXIV(C)
+     * work-7 -> DOI(1), DOI(2), ARIXV(B)  
+     * work-8 -> No external identifiers
+     * work-9 -> No external identifiers  
      * */
     private Map<String, Work> generateWorks() {
         Map<String, Work> result = new HashMap<String, Work>();
-        for(int i = 1; i < 8; i++) {
+        for(int i = 1; i < 10; i++) {
             String title = "work-" + i;
             Work work = new Work();
             //Set title
@@ -213,74 +345,88 @@ public class ActivitiesGroupGeneratorTest {
                 wei.getExternalIdentifier().add(e3);
                 break;
             case 2:
-                WorkExternalIdentifier e11 = new WorkExternalIdentifier();
-                e11.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
-                e11.setWorkExternalIdentifierId(new WorkExternalIdentifierId("C"));
-                WorkExternalIdentifier e21 = new WorkExternalIdentifier();
-                e21.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
-                e21.setWorkExternalIdentifierId(new WorkExternalIdentifierId("D"));
-                WorkExternalIdentifier e31 = new WorkExternalIdentifier();
-                e31.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
-                e31.setWorkExternalIdentifierId(new WorkExternalIdentifierId("E"));
-                wei.getExternalIdentifier().add(e11);
-                wei.getExternalIdentifier().add(e21);
-                wei.getExternalIdentifier().add(e31);
+                WorkExternalIdentifier e2_1 = new WorkExternalIdentifier();
+                e2_1.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+                e2_1.setWorkExternalIdentifierId(new WorkExternalIdentifierId("C"));
+                WorkExternalIdentifier e2_2 = new WorkExternalIdentifier();
+                e2_2.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+                e2_2.setWorkExternalIdentifierId(new WorkExternalIdentifierId("D"));
+                WorkExternalIdentifier e2_3 = new WorkExternalIdentifier();
+                e2_3.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+                e2_3.setWorkExternalIdentifierId(new WorkExternalIdentifierId("E"));
+                wei.getExternalIdentifier().add(e2_1);
+                wei.getExternalIdentifier().add(e2_2);
+                wei.getExternalIdentifier().add(e2_3);
                 break;
             case 3: 
-                WorkExternalIdentifier e111 = new WorkExternalIdentifier();
-                e111.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
-                e111.setWorkExternalIdentifierId(new WorkExternalIdentifierId("X"));
-                WorkExternalIdentifier e211 = new WorkExternalIdentifier();
-                e211.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
-                e211.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Y"));
-                WorkExternalIdentifier e311 = new WorkExternalIdentifier();
-                e311.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
-                e311.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Z"));
-                wei.getExternalIdentifier().add(e111);
-                wei.getExternalIdentifier().add(e211);
-                wei.getExternalIdentifier().add(e311);
+                WorkExternalIdentifier e3_1 = new WorkExternalIdentifier();
+                e3_1.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+                e3_1.setWorkExternalIdentifierId(new WorkExternalIdentifierId("X"));
+                WorkExternalIdentifier e3_2 = new WorkExternalIdentifier();
+                e3_2.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+                e3_2.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Y"));
+                WorkExternalIdentifier e3_3 = new WorkExternalIdentifier();
+                e3_3.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+                e3_3.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Z"));
+                wei.getExternalIdentifier().add(e3_1);
+                wei.getExternalIdentifier().add(e3_2);
+                wei.getExternalIdentifier().add(e3_3);
                 break;
             case 4: 
-                WorkExternalIdentifier e1111 = new WorkExternalIdentifier();
-                e1111.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
-                e1111.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Y"));
-                WorkExternalIdentifier e2111 = new WorkExternalIdentifier();
-                e2111.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
-                e2111.setWorkExternalIdentifierId(new WorkExternalIdentifierId("B"));
-                WorkExternalIdentifier e3111 = new WorkExternalIdentifier();
-                e3111.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
-                e3111.setWorkExternalIdentifierId(new WorkExternalIdentifierId("1"));
-                wei.getExternalIdentifier().add(e1111);
-                wei.getExternalIdentifier().add(e2111);
-                wei.getExternalIdentifier().add(e3111);
+                WorkExternalIdentifier e4_1 = new WorkExternalIdentifier();
+                e4_1.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+                e4_1.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Y"));
+                WorkExternalIdentifier e4_2 = new WorkExternalIdentifier();
+                e4_2.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+                e4_2.setWorkExternalIdentifierId(new WorkExternalIdentifierId("B"));
+                WorkExternalIdentifier e4_3 = new WorkExternalIdentifier();
+                e4_3.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+                e4_3.setWorkExternalIdentifierId(new WorkExternalIdentifierId("1"));
+                wei.getExternalIdentifier().add(e4_1);
+                wei.getExternalIdentifier().add(e4_2);
+                wei.getExternalIdentifier().add(e4_3);
                 break;
             case 5:
-                WorkExternalIdentifier e11111 = new WorkExternalIdentifier();
-                e11111.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
-                e11111.setWorkExternalIdentifierId(new WorkExternalIdentifierId("M"));
-                WorkExternalIdentifier e21111 = new WorkExternalIdentifier();
-                e21111.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
-                e21111.setWorkExternalIdentifierId(new WorkExternalIdentifierId("N"));
-                WorkExternalIdentifier e31111 = new WorkExternalIdentifier();
-                e31111.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
-                e31111.setWorkExternalIdentifierId(new WorkExternalIdentifierId("O"));
-                wei.getExternalIdentifier().add(e11111);
-                wei.getExternalIdentifier().add(e21111);
-                wei.getExternalIdentifier().add(e31111);
+                WorkExternalIdentifier e5_1 = new WorkExternalIdentifier();
+                e5_1.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+                e5_1.setWorkExternalIdentifierId(new WorkExternalIdentifierId("M"));
+                WorkExternalIdentifier e5_2 = new WorkExternalIdentifier();
+                e5_2.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+                e5_2.setWorkExternalIdentifierId(new WorkExternalIdentifierId("N"));
+                WorkExternalIdentifier e5_3 = new WorkExternalIdentifier();
+                e5_3.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+                e5_3.setWorkExternalIdentifierId(new WorkExternalIdentifierId("O"));
+                wei.getExternalIdentifier().add(e5_1);
+                wei.getExternalIdentifier().add(e5_2);
+                wei.getExternalIdentifier().add(e5_3);
                 break;
             case 6: 
-                WorkExternalIdentifier e111111 = new WorkExternalIdentifier();
-                e111111.setWorkExternalIdentifierType(WorkExternalIdentifierType.ARXIV);
-                e111111.setWorkExternalIdentifierId(new WorkExternalIdentifierId("A"));
-                WorkExternalIdentifier e211111 = new WorkExternalIdentifier();
-                e211111.setWorkExternalIdentifierType(WorkExternalIdentifierType.ARXIV);
-                e211111.setWorkExternalIdentifierId(new WorkExternalIdentifierId("B"));
-                WorkExternalIdentifier e311111 = new WorkExternalIdentifier();
-                e311111.setWorkExternalIdentifierType(WorkExternalIdentifierType.ARXIV);
-                e311111.setWorkExternalIdentifierId(new WorkExternalIdentifierId("C"));
-                wei.getExternalIdentifier().add(e111111);
-                wei.getExternalIdentifier().add(e211111);
-                wei.getExternalIdentifier().add(e311111);
+                WorkExternalIdentifier e6_1 = new WorkExternalIdentifier();
+                e6_1.setWorkExternalIdentifierType(WorkExternalIdentifierType.ARXIV);
+                e6_1.setWorkExternalIdentifierId(new WorkExternalIdentifierId("A"));
+                WorkExternalIdentifier e6_2 = new WorkExternalIdentifier();
+                e6_2.setWorkExternalIdentifierType(WorkExternalIdentifierType.ARXIV);
+                e6_2.setWorkExternalIdentifierId(new WorkExternalIdentifierId("B"));
+                WorkExternalIdentifier e6_3 = new WorkExternalIdentifier();
+                e6_3.setWorkExternalIdentifierType(WorkExternalIdentifierType.ARXIV);
+                e6_3.setWorkExternalIdentifierId(new WorkExternalIdentifierId("C"));
+                wei.getExternalIdentifier().add(e6_1);
+                wei.getExternalIdentifier().add(e6_2);
+                wei.getExternalIdentifier().add(e6_3);
+                break;
+            case 7:
+                WorkExternalIdentifier e7_1 = new WorkExternalIdentifier();
+                e7_1.setWorkExternalIdentifierType(WorkExternalIdentifierType.DOI);
+                e7_1.setWorkExternalIdentifierId(new WorkExternalIdentifierId("1"));
+                WorkExternalIdentifier e7_2 = new WorkExternalIdentifier();
+                e7_2.setWorkExternalIdentifierType(WorkExternalIdentifierType.DOI);
+                e7_2.setWorkExternalIdentifierId(new WorkExternalIdentifierId("2"));
+                WorkExternalIdentifier e7_3 = new WorkExternalIdentifier();
+                e7_3.setWorkExternalIdentifierType(WorkExternalIdentifierType.ARXIV);
+                e7_3.setWorkExternalIdentifierId(new WorkExternalIdentifierId("B"));
+                wei.getExternalIdentifier().add(e7_1);
+                wei.getExternalIdentifier().add(e7_2);
+                wei.getExternalIdentifier().add(e7_3);
                 break;
             }
             work.setWorkExternalIdentifiers(wei);
