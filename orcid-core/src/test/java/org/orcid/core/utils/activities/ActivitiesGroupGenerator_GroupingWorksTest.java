@@ -317,7 +317,7 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
      * Test that two groups are not gruped by ISNI 
      * */
     @Test
-    public void groupWorks_DontGroupByISNI_Test() {
+    public void groupWorks_DontGroupByISSN_Test() {
         fail();
     }
     
