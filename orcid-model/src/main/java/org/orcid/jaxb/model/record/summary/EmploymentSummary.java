@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.jaxb.model.record;
+package org.orcid.jaxb.model.record.summary;
 
 import java.io.Serializable;
 
@@ -25,10 +25,18 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.orcid.jaxb.model.record.Activity;
+import org.orcid.jaxb.model.record.CreatedDate;
+import org.orcid.jaxb.model.record.FuzzyDate;
+import org.orcid.jaxb.model.record.LastModifiedDate;
+import org.orcid.jaxb.model.record.Source;
+import org.orcid.jaxb.model.record.Visibility;
+import org.orcid.jaxb.model.record.VisibilityType;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "departmentName", "roleTitle", "startDate", "endDate", "source", "createdDate", "lastModifiedDate" })
-@XmlRootElement(name = "educationSummary", namespace = "http://www.orcid.org/ns/education")
-public class EducationSummary implements VisibilityType, Activity, Serializable {
+@XmlRootElement(name = "employmentSummary", namespace = "http://www.orcid.org/ns/education")
+public class EmploymentSummary implements VisibilityType, Activity, Serializable {
             
     private static final long serialVersionUID = 6988028860521476955L;
     @XmlElement(namespace = "http://www.orcid.org/ns/education")
@@ -156,7 +164,7 @@ public class EducationSummary implements VisibilityType, Activity, Serializable 
             return false;
         if (getClass() != obj.getClass())
             return false;
-        EducationSummary other = (EducationSummary) obj;
+        EmploymentSummary other = (EmploymentSummary) obj;
         if (createdDate == null) {
             if (other.createdDate != null)
                 return false;

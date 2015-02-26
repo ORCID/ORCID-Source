@@ -21,7 +21,7 @@
 // Generated on: 2012.08.09 at 01:52:56 PM BST 
 //
 
-package org.orcid.jaxb.model.record;
+package org.orcid.jaxb.model.record.summary;
 
 import java.io.Serializable;
 
@@ -32,6 +32,18 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.orcid.jaxb.model.record.Activity;
+import org.orcid.jaxb.model.record.ActivityWithExternalIdentifiers;
+import org.orcid.jaxb.model.record.CreatedDate;
+import org.orcid.jaxb.model.record.LastModifiedDate;
+import org.orcid.jaxb.model.record.PublicationDate;
+import org.orcid.jaxb.model.record.Source;
+import org.orcid.jaxb.model.record.Visibility;
+import org.orcid.jaxb.model.record.VisibilityType;
+import org.orcid.jaxb.model.record.WorkExternalIdentifiers;
+import org.orcid.jaxb.model.record.WorkSource;
+import org.orcid.jaxb.model.record.WorkTitle;
+import org.orcid.jaxb.model.record.WorkType;
 
 /**
  * <p>
@@ -54,13 +66,13 @@ public class WorkSummary implements VisibilityType, Activity, ActivityWithExtern
     protected WorkTitle title;
     @XmlElement(namespace = "http://www.orcid.org/ns/work")
     protected WorkType type;
-    @XmlElement(name="publication-date", namespace = "http://www.orcid.org/ns/common")
+    @XmlElement(name = "publication-date", namespace = "http://www.orcid.org/ns/common")
     protected PublicationDate publicationDate;
-    @XmlElement(name="external-identifiers", namespace = "http://www.orcid.org/ns/work")
+    @XmlElement(name = "external-identifiers", namespace = "http://www.orcid.org/ns/work")
     protected WorkExternalIdentifiers externalIdentifiers;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Source source;
-    @XmlAttribute(name="put-code")
+    @XmlAttribute(name = "put-code")
     protected String putCode;
     @XmlAttribute
     protected Visibility visibility;
@@ -68,64 +80,83 @@ public class WorkSummary implements VisibilityType, Activity, ActivityWithExtern
     protected LastModifiedDate lastModifiedDate;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected CreatedDate createdDate;
-    
+
     public WorkTitle getTitle() {
         return title;
     }
+
     public void setTitle(WorkTitle title) {
         this.title = title;
     }
+
     public WorkType getType() {
         return type;
     }
+
     public void setType(WorkType type) {
         this.type = type;
     }
+
     public PublicationDate getPublicationDate() {
         return publicationDate;
     }
+
     public void setPublicationDate(PublicationDate publicationDate) {
         this.publicationDate = publicationDate;
     }
+
     public WorkExternalIdentifiers getExternalIdentifiers() {
         return externalIdentifiers;
     }
+
     public void setExternalIdentifiers(WorkExternalIdentifiers externalIdentifiers) {
         this.externalIdentifiers = externalIdentifiers;
     }
+
     public Source getSource() {
         return source;
     }
+
     public void setSource(Source source) {
         this.source = source;
     }
+
     public String getPutCode() {
         return putCode;
     }
+
     public void setPutCode(String putCode) {
         this.putCode = putCode;
     }
+
     public Visibility getVisibility() {
         return visibility;
     }
+
     public void setVisibility(Visibility visibility) {
         this.visibility = visibility;
     }
+
     public LastModifiedDate getLastModifiedDate() {
         return lastModifiedDate;
     }
+
     public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
         this.lastModifiedDate = lastModifiedDate;
     }
+
     public CreatedDate getCreatedDate() {
         return createdDate;
     }
+
     public void setCreatedDate(CreatedDate createdDate) {
         this.createdDate = createdDate;
     }
+
     public static long getSerialversionuid() {
         return serialVersionUID;
     }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -141,6 +172,7 @@ public class WorkSummary implements VisibilityType, Activity, ActivityWithExtern
         result = prime * result + ((visibility == null) ? 0 : visibility.hashCode());
         return result;
     }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -191,7 +223,7 @@ public class WorkSummary implements VisibilityType, Activity, ActivityWithExtern
             return false;
         return true;
     }
-    
+
     /**
      * Gets the value of the workSources property.
      * 

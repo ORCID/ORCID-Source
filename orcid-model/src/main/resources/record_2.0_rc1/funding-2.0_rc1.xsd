@@ -95,7 +95,7 @@
 		</xs:complexType>
 	</xs:element>
 
-	<xs:element name="funding-summary">
+	<xs:element name="summary">
 		<xs:complexType>
 			<xs:complexContent>
 				<xs:extension base="common:activity-summary">

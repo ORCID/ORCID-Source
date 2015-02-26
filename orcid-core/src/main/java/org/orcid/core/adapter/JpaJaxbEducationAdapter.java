@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.orcid.jaxb.model.record.Education;
-import org.orcid.jaxb.model.record.EducationSummary;
+import org.orcid.jaxb.model.record.summary.EducationSummary;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 
 /**

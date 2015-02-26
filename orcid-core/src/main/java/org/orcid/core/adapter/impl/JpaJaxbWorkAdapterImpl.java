@@ -23,7 +23,7 @@ import ma.glasnost.orika.MapperFacade;
 
 import org.orcid.core.adapter.JpaJaxbWorkAdapter;
 import org.orcid.jaxb.model.record.Work;
-import org.orcid.jaxb.model.record.WorkSummary;
+import org.orcid.jaxb.model.record.summary.WorkSummary;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 
 /**

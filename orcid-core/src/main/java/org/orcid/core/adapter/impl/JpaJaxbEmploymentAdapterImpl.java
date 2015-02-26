@@ -23,7 +23,7 @@ import ma.glasnost.orika.MapperFacade;
 
 import org.orcid.core.adapter.JpaJaxbEmploymentAdapter;
 import org.orcid.jaxb.model.record.Employment;
-import org.orcid.jaxb.model.record.EmploymentSummary;
+import org.orcid.jaxb.model.record.summary.EmploymentSummary;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 
 /**

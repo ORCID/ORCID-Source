@@ -33,7 +33,7 @@ import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.Funding;
-import org.orcid.jaxb.model.record.FundingSummary;
+import org.orcid.jaxb.model.record.summary.FundingSummary;
 import org.orcid.persistence.dao.FundingSubTypeSolrDao;
 import org.orcid.persistence.dao.FundingSubTypeToIndexDao;
 import org.orcid.persistence.dao.ProfileDao;

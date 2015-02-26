@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.jaxb.model.record;
+package org.orcid.jaxb.model.record.summary;
 
 import java.io.Serializable;
 
@@ -24,6 +24,18 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.orcid.jaxb.model.record.Activity;
+import org.orcid.jaxb.model.record.ActivityWithExternalIdentifiers;
+import org.orcid.jaxb.model.record.CreatedDate;
+import org.orcid.jaxb.model.record.FundingExternalIdentifiers;
+import org.orcid.jaxb.model.record.FundingTitle;
+import org.orcid.jaxb.model.record.FundingType;
+import org.orcid.jaxb.model.record.FuzzyDate;
+import org.orcid.jaxb.model.record.LastModifiedDate;
+import org.orcid.jaxb.model.record.Source;
+import org.orcid.jaxb.model.record.Visibility;
+import org.orcid.jaxb.model.record.VisibilityType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "type", "title", "externalIdentifiers", "startDate", "endDate", "source", "lastModifiedDate", "createdDate" })

@@ -21,7 +21,7 @@
 // Generated on: 2012.01.18 at 10:32:14 AM GMT 
 //
 
-package org.orcid.jaxb.model.record;
+package org.orcid.jaxb.model.record.summary;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -34,6 +34,11 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.orcid.jaxb.model.record.ActivitiesContainer;
+import org.orcid.jaxb.model.record.Activity;
+import org.orcid.jaxb.model.record.Funding;
+import org.orcid.jaxb.model.record.Work;
 
 /**
  * <p>

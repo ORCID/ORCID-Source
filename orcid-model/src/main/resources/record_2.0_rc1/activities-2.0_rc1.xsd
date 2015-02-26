@@ -111,20 +111,19 @@
 	<xs:complexType name="work-group">
 		<xs:sequence>
 			<xs:element name="identifiers" type="activities:identifiers"></xs:element>
-			<xs:choice>
+			<xs:sequence>
 				<xs:element maxOccurs="unbounded" minOccurs="0"
 					ref="work:work-summary" />
-			</xs:choice>
-		</xs:sequence>
+			</xs:sequence>
+		</xs:sequence>		
 	</xs:complexType>
 
 	<xs:complexType name="funding-group">
 		<xs:sequence>
 			<xs:element name="identifiers" type="activities:identifiers"></xs:element>
-			<xs:choice>
-				<xs:element maxOccurs="unbounded" minOccurs="0"
-					ref="funding:funding-summary" />
-			</xs:choice>
+			<xs:sequence>
+				<xs:element maxOccurs="unbounded" minOccurs="0" ref="funding:summary" />
+			</xs:sequence>
 		</xs:sequence>
 	</xs:complexType>
 
