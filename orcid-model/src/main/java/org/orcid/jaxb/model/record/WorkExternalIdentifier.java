@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
 import java.io.Serializable;
 
 /**
@@ -141,5 +142,12 @@ public class WorkExternalIdentifier implements ExternalIdentifier, Serializable 
         if(workExternalIdentifierType != null)
             result += ")";        
         return result;
+    }
+    
+    @Override
+    public boolean passGroupingValidation() {
+        if(WorkExternalIdentifierType.ISSN.equals(workExternalIdentifierType))
+            return false;
+        return true;
     }
 }

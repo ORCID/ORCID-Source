@@ -41,7 +41,7 @@ public class ActivitiesGroupGeneratorBaseTest {
         
         assertNotNull(first);
         
-        ActivitiesGroup theGroup = getGroupThatContainsWork(groups, first);
+        ActivitiesGroup theGroup = getGroupThatContainsActivity(groups, first);
         
         assertNotNull(theGroup);
         
@@ -57,7 +57,7 @@ public class ActivitiesGroupGeneratorBaseTest {
     public void checkActivitiesDontBelongsToTheSameGroup(List<ActivitiesGroup> groups, ActivityWithExternalIdentifiers ... activities) {                
         for(int i = 0; i < activities.length; i++) {
             ActivityWithExternalIdentifiers a1 = activities[i];
-            ActivitiesGroup theGroup = getGroupThatContainsWork(groups, a1);
+            ActivitiesGroup theGroup = getGroupThatContainsActivity(groups, a1);
             for(int j = i+1; j < activities.length; j++){
                 assertFalse("activity[" + i + "] and activity["+ j + "] belongs to the same group", theGroup.belongsToGroup(activities[j]));
             }
@@ -67,7 +67,7 @@ public class ActivitiesGroupGeneratorBaseTest {
     /**
      * Returns the group that contains the given activity
      * */
-    public ActivitiesGroup getGroupThatContainsWork(List<ActivitiesGroup> groups, ActivityWithExternalIdentifiers activity) {
+    public ActivitiesGroup getGroupThatContainsActivity(List<ActivitiesGroup> groups, ActivityWithExternalIdentifiers activity) {
         ActivitiesGroup theGroup = null;
         for(ActivitiesGroup group : groups) {
             if(group.belongsToGroup(activity)) {
@@ -87,7 +87,9 @@ public class ActivitiesGroupGeneratorBaseTest {
         Set<ExternalIdentifier> groupExtIds = group.getExternalIdentifiers();
         for(Object o : extIds) {
             ExternalIdentifier extId = (ExternalIdentifier) o;
-            assertTrue(groupExtIds.contains(extId));
+            //If the ext id pass the grouping validation, it must be in the ext ids list
+            if(extId.passGroupingValidation())
+                assertTrue(groupExtIds.contains(extId));
         }
     }
 }

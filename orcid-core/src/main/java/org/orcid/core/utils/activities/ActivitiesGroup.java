@@ -36,9 +36,11 @@ public class ActivitiesGroup {
         if(activity != null) {
             ExternalIdentifiersContainer container = activity.getExternalIdentifiers();
             if(container != null) {
-                List<ExternalIdentifier> extIds = (List<ExternalIdentifier>)container.getExternalIdentifier();
+                List<? extends ExternalIdentifier> extIds = (List<? extends ExternalIdentifier>)container.getExternalIdentifier();
                 for(ExternalIdentifier extId : extIds) {
-                    externalIdentifiers.add(extId);
+                    //Dont add ext ids that dont pass the validation
+                    if(extId.passGroupingValidation())
+                        externalIdentifiers.add(extId);
                 }
             }
         }
@@ -62,10 +64,12 @@ public class ActivitiesGroup {
                 //Add new external identifiers
         ExternalIdentifiersContainer container = activity.getExternalIdentifiers();
         if(container != null) {
-            List<ExternalIdentifier> extIds = (List<ExternalIdentifier>)container.getExternalIdentifier();
+            List<? extends ExternalIdentifier> extIds = (List<? extends ExternalIdentifier>)container.getExternalIdentifier();
             for(ExternalIdentifier extId : extIds) {
-                if(!externalIdentifiers.contains(extId))
-                    externalIdentifiers.add(extId);
+                //Dont add ext ids that dont pass the grouping validation
+                if(extId.passGroupingValidation())
+                    if(!externalIdentifiers.contains(extId))
+                        externalIdentifiers.add(extId);
             }
         }
         
@@ -84,18 +88,31 @@ public class ActivitiesGroup {
                 else 
                     return false;                            
             } else {
-                return false;
+                //If any of the activities pass the grouping validation, the activity must belong to other group
+                for(ExternalIdentifier extId : activity.getExternalIdentifiers().getExternalIdentifier()) {
+                    if(extId.passGroupingValidation())
+                        return false;
+                }
+                
+                //If none of the activities pass the groupings validation, so, lets check if the group actually contains the activity
+                if(activities.contains(activity))
+                    return true;
+                else 
+                    return false;                
             }
         }                        
         
         //Check existing external identifiers 
         ExternalIdentifiersContainer container = activity.getExternalIdentifiers();
         if(container != null) {
-            List<ExternalIdentifier> extIds = (List<ExternalIdentifier>)container.getExternalIdentifier();
+            List<? extends ExternalIdentifier> extIds = (List<? extends ExternalIdentifier>)container.getExternalIdentifier();
             for(ExternalIdentifier extId : extIds) {
-                //If any of the ext ids already exists on this group, return true
-                if(externalIdentifiers.contains(extId))
-                    return true;
+                //First check external identifiers restrictions
+                if(extId.passGroupingValidation()) {
+                    //If any of the ext ids already exists on this group, return true
+                    if(externalIdentifiers.contains(extId))
+                        return true;
+                }
             }
         }
         

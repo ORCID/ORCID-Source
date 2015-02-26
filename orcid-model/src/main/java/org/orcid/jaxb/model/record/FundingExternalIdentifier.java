@@ -102,5 +102,10 @@ public class FundingExternalIdentifier implements ExternalIdentifier, Serializab
 			return false;
 		//url is ignored, since, for groupings it is not needed
 		return true;
-	}		
+	}
+	
+	@Override
+	public boolean passGroupingValidation() {
+	    return true;
+	}
 }
