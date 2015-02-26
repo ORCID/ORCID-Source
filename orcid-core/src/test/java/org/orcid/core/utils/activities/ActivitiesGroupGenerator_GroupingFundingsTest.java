@@ -1,8 +1,14 @@
 package org.orcid.core.utils.activities;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.junit.Test;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.FundingExternalIdentifier;
 import org.orcid.jaxb.model.record.FundingExternalIdentifierType;
@@ -10,22 +16,295 @@ import org.orcid.jaxb.model.record.FundingExternalIdentifiers;
 import org.orcid.jaxb.model.record.FundingTitle;
 import org.orcid.jaxb.model.record.Title;
 
-public class ActivitiesGroupGenerator_GroupingFundingsTest {
+public class ActivitiesGroupGenerator_GroupingFundingsTest extends ActivitiesGroupGeneratorBaseTest {
 
+    @Test
+    public void groupFundings_4GroupsOf1Funding_Test() {
+        ActivitiesGroupGenerator generator = new ActivitiesGroupGenerator();
+        Map<String, Funding> fundings = generateFundings();
+        
+        //Group the first group
+        //funding-2 -> C, D, E
+        Funding funding2 = fundings.get("funding-2");
+        generator.group(funding2);
+        //There should be one group, and the ext ids should be A, B and C
+        List<ActivitiesGroup> groups = generator.getGroups();
+        assertNotNull(groups);
+        assertEquals(1, groups.size());
+        ActivitiesGroup g1 = groups.get(0);
+        assertNotNull(g1);
+        assertNotNull(g1.getActivities());
+        assertEquals(1, g1.getActivities().size());
+        assertTrue(g1.getActivities().contains(funding2));
+        assertNotNull(g1.getExternalIdentifiers());
+        assertEquals(3, g1.getExternalIdentifiers().size());
+        checkExternalIdentifiers(funding2, g1);
+        
+        //Add another funding to the groups
+        //funding-5 -> M, N, O
+        Funding funding5 = fundings.get("funding-5");
+        generator.group(funding5);
+        //There should be two groups, one for each funding
+        groups = generator.getGroups();
+        assertNotNull(groups);
+        assertEquals(2, groups.size());
+        //There should be one activity in each group         
+        assertEquals(1, groups.get(0).getActivities().size());
+        assertEquals(1, groups.get(1).getActivities().size());
+        //There should be 3 ext ids in each group
+        assertEquals(3, groups.get(0).getExternalIdentifiers().size());
+        assertEquals(3, groups.get(1).getExternalIdentifiers().size());                
+        //Check funding in groups
+        checkActivityIsOnGroups(funding5, groups);
+        
+        //Add another funding to the groups
+        //funding-7 -> 1, 2, B
+        Funding funding7 = fundings.get("funding-7");
+        generator.group(funding7);
+        groups = generator.getGroups();
+        assertNotNull(groups);
+        assertEquals(3, groups.size());
+        //There should be one activity in each group         
+        assertEquals(1, groups.get(0).getActivities().size());
+        assertEquals(1, groups.get(1).getActivities().size());
+        assertEquals(1, groups.get(2).getActivities().size());
+        //There should be 3 ext ids in each group
+        assertEquals(3, groups.get(0).getExternalIdentifiers().size());
+        assertEquals(3, groups.get(1).getExternalIdentifiers().size());                
+        assertEquals(3, groups.get(2).getExternalIdentifiers().size());
+        //Check funding in groups
+        checkActivityIsOnGroups(funding7, groups);
+        
+        //Add another funding to the groups
+        //funding-8 -> No external identifiers  
+        Funding funding8 = fundings.get("funding-8");
+        generator.group(funding8);        
+        groups = generator.getGroups();
+        assertNotNull(groups);
+        assertEquals(4, groups.size());
+        //There should be one activity in each group         
+        assertEquals(1, groups.get(0).getActivities().size());
+        assertEquals(1, groups.get(1).getActivities().size());
+        assertEquals(1, groups.get(2).getActivities().size());
+        assertEquals(1, groups.get(3).getActivities().size());
+        //There should be 3 ext ids in each group, except for one group that doesnt have any ext id
+        boolean funding8found = false;
+        for(int i = 0; i < 4; i++) {
+            if(groups.get(i).getExternalIdentifiers().size() == 0) {                                
+                funding8found = true;
+            } else {
+                assertEquals(3, groups.get(i).getExternalIdentifiers().size());
+            }                                                        
+        }
+        assertTrue("Funding without ext ids was not found", funding8found);
+        //Check funding in groups
+        checkActivityIsOnGroups(funding8, groups);        
+    }
+    
+    /**
+     * Test grouping funding-1 and funding-2 
+     * */
+    @Test
+    public void groupFundings_1GroupsOf2Fundings_Test() {
+        ActivitiesGroupGenerator generator = new ActivitiesGroupGenerator();
+        Map<String, Funding> fundings = generateFundings();
+        
+        Funding funding1 = fundings.get("funding-1");        
+        Funding funding2 = fundings.get("funding-2");
+        
+        generator.group(funding1);
+        generator.group(funding2);
+        List<ActivitiesGroup> groups = generator.getGroups();
+        assertNotNull(groups);
+        assertEquals(1, groups.size());
+        ActivitiesGroup g1 = groups.get(0);
+        assertNotNull(g1);
+        assertNotNull(g1.getActivities());
+        assertEquals(2, g1.getActivities().size());
+        assertTrue(g1.getActivities().contains(funding1));
+        assertTrue(g1.getActivities().contains(funding2));
+        assertNotNull(g1.getExternalIdentifiers());
+        assertEquals(5, g1.getExternalIdentifiers().size());
+        checkExternalIdentifiers(funding1, g1);
+        checkExternalIdentifiers(funding2, g1);
+    }
+    
+    /**
+     * Test grouping (funding-1 and funding-2) and (funding-5 and funding-6) 
+     * */
+    @Test
+    public void groupFundings_2GroupsOf2Fundings_Test() {
+        ActivitiesGroupGenerator generator = new ActivitiesGroupGenerator();
+        Map<String, Funding> fundings = generateFundings();
+        
+        Funding funding1 = fundings.get("funding-1");        
+        Funding funding2 = fundings.get("funding-2");
+        Funding funding5 = fundings.get("funding-5");
+        Funding funding6 = fundings.get("funding-6");
+        
+        generator.group(funding1);
+        generator.group(funding2);
+        generator.group(funding5);
+        generator.group(funding6);
+        
+        List<ActivitiesGroup> groups = generator.getGroups();
+        assertNotNull(groups);
+        assertEquals(2, groups.size());
+        //Check there are two activities in each group
+        assertEquals(2, groups.get(0).getActivities().size());
+        assertEquals(2, groups.get(1).getActivities().size());
+        //Check there are five external ids in each group
+        assertEquals(5, groups.get(0).getExternalIdentifiers().size());
+        assertEquals(5, groups.get(1).getExternalIdentifiers().size());
+        //Check each funding
+        checkActivityIsOnGroups(funding1, groups);
+        checkActivityIsOnGroups(funding2, groups);
+        checkActivityIsOnGroups(funding5, groups);
+        checkActivityIsOnGroups(funding6, groups);
+        
+        //Check funding1 and funding2 are in the same group
+        checkActivitiesBelongsToTheSameGroup(groups, funding1, funding2);
+        //Check funding6 and funding7 are in the same group
+        checkActivitiesBelongsToTheSameGroup(groups, funding5, funding6);
+        //Check fundings are not mixed
+        checkActivitiesDontBelongsToTheSameGroup(groups, funding1, funding5);
+        checkActivitiesDontBelongsToTheSameGroup(groups, funding1, funding6);
+        checkActivitiesDontBelongsToTheSameGroup(groups, funding2, funding5);
+        checkActivitiesDontBelongsToTheSameGroup(groups, funding2, funding6);
+    }
+    
+    /**
+     * Test that two groups without ext ids dont get grouped
+     * */
+    @Test
+    public void groupFundings_DontGroupFundingsWithoutExtIds_Test() {
+        ActivitiesGroupGenerator generator = new ActivitiesGroupGenerator();
+        Map<String, Funding> fundings = generateFundings();
+        
+        //Group the first group
+        Funding funding8 = fundings.get("funding-8");
+        Funding funding9 = fundings.get("funding-9");
+        
+        generator.group(funding8);
+        generator.group(funding9);
+        
+        List<ActivitiesGroup> groups = generator.getGroups();
+        assertNotNull(groups);
+        assertEquals(2, groups.size());
+        //Check there are two activities in each group
+        assertEquals(1, groups.get(0).getActivities().size());
+        assertEquals(1, groups.get(1).getActivities().size());
+        //Check there are five external ids in each group
+        assertEquals(0, groups.get(0).getExternalIdentifiers().size());
+        assertEquals(0, groups.get(1).getExternalIdentifiers().size());
+        
+        checkActivityIsOnGroups(funding8, groups);
+        checkActivityIsOnGroups(funding9, groups);
+        
+        checkActivitiesDontBelongsToTheSameGroup(groups, funding8, funding9);
+    }
+    
+    /**
+     * funding-1 and funding-3 will be in different groups
+     * then funding-2 will go to the same group as funding-1
+     * then funding-4 contains Y and B so, the two groups should be merged
+     * */
+    @Test
+    public void groupFundings_MergeTwoGroups_Test() {
+        ActivitiesGroupGenerator generator = new ActivitiesGroupGenerator();
+        Map<String, Funding> fundings = generateFundings();
+        
+        //Group the first group
+        Funding funding1 = fundings.get("funding-1");
+        Funding funding2 = fundings.get("funding-2");
+        Funding funding3 = fundings.get("funding-3");
+        Funding funding4 = fundings.get("funding-4");
+        
+        generator.group(funding1);
+        generator.group(funding2);
+        generator.group(funding3);
+
+        /**
+         * At this point there are two groups
+         * G1 with funding1 and funding2
+         * G2 with funding3
+         * */
+        List<ActivitiesGroup> groups = generator.getGroups();
+        assertNotNull(groups);
+        assertEquals(2, groups.size());
+        checkActivitiesBelongsToTheSameGroup(groups, funding1, funding2);
+        checkActivitiesDontBelongsToTheSameGroup(groups, funding1, funding3);
+        checkActivitiesDontBelongsToTheSameGroup(groups, funding2, funding3);
+        
+        //group funding4, which should merge the two groups
+        generator.group(funding4);
+        groups = generator.getGroups();
+        assertNotNull(groups);
+        assertEquals(1, groups.size());
+        assertEquals(4, groups.get(0).getActivities().size());
+        assertEquals(9, groups.get(0).getExternalIdentifiers().size());
+        
+        checkActivityIsOnGroups(funding1, groups);
+        checkActivityIsOnGroups(funding2, groups);
+        checkActivityIsOnGroups(funding3, groups);
+        checkActivityIsOnGroups(funding4, groups);
+        checkActivitiesBelongsToTheSameGroup(groups, funding1, funding2, funding3, funding4);
+    }
+    
+    /**
+     * funding-1, funding-3, funding-5 and funding-8 will be in separate groups
+     * then funding-4 will merge groups of funding-1 and funding-3
+     * 
+     * Check that after that, there are 3 groups, one with funding-1, funding-3 and funding-4, one with funding-5 and other with funding-8
+     * */
+    @Test
+    public void groupFundings_MergeGroupsDontAffectNotMergedGroups_Test() {
+        ActivitiesGroupGenerator generator = new ActivitiesGroupGenerator();
+        Map<String, Funding> fundings = generateFundings();
+        
+        //Group the first group
+        Funding funding1 = fundings.get("funding-1");
+        Funding funding3 = fundings.get("funding-3");
+        Funding funding4 = fundings.get("funding-4");
+        Funding funding5 = fundings.get("funding-5");
+        Funding funding8 = fundings.get("funding-8");
+        
+        //Respect order
+        generator.group(funding1);
+        generator.group(funding3);
+        generator.group(funding5);
+        generator.group(funding8);
+        generator.group(funding4);
+        
+        List<ActivitiesGroup> groups = generator.getGroups();
+        assertNotNull(groups);
+        assertEquals(3, groups.size());
+        //Check funding1, funding3 and funding4 belongs to the same group
+        checkActivitiesBelongsToTheSameGroup(groups, funding1, funding3, funding4);
+        //Check funding1, funding5 and funding8 are all in different groups
+        checkActivitiesDontBelongsToTheSameGroup(groups, funding1, funding5, funding8);
+        
+        checkActivityIsOnGroups(funding1, groups);
+        checkActivityIsOnGroups(funding3, groups);
+        checkActivityIsOnGroups(funding4, groups);
+        checkActivityIsOnGroups(funding5, groups);
+        checkActivityIsOnGroups(funding8, groups);
+    }       
+    
     /**
      * funding-1 -> A, B, C 
      * funding-2 -> C, D, E
      * funding-3 -> X, Y, Z
      * funding-4 -> Y, B, 1
      * funding-5 -> M, N, O 
-     * funding-6 -> A, B, C
+     * funding-6 -> O, P, Q
      * funding-7 -> 1, 2, B  
      * funding-8 -> No external identifiers
      * funding-9 -> No external identifiers  
      * */
     private Map<String, Funding> generateFundings() {
         Map<String, Funding> result = new HashMap<String, Funding>();
-        for(int i = 0; i < 10; i++) {
+        for(int i = 1; i < 10; i++) {
             String name = "funding-" + i;
             Funding funding = new Funding();
             FundingTitle title = new FundingTitle();
@@ -106,13 +385,13 @@ public class ActivitiesGroupGenerator_GroupingFundingsTest {
             case 6:
                 FundingExternalIdentifier f16 = new FundingExternalIdentifier();
                 f16.setType(FundingExternalIdentifierType.GRANT_NUMBER);
-                f16.setValue("A");
+                f16.setValue("O");
                 FundingExternalIdentifier f17 = new FundingExternalIdentifier();
                 f17.setType(FundingExternalIdentifierType.GRANT_NUMBER);
-                f17.setValue("B");
+                f17.setValue("P");
                 FundingExternalIdentifier f18 = new FundingExternalIdentifier();
                 f18.setType(FundingExternalIdentifierType.GRANT_NUMBER);
-                f18.setValue("C");
+                f18.setValue("Q");
                 fei.getExternalIdentifier().add(f16);
                 fei.getExternalIdentifier().add(f17);
                 fei.getExternalIdentifier().add(f18);
@@ -133,7 +412,8 @@ public class ActivitiesGroupGenerator_GroupingFundingsTest {
                 break;
             }
             funding.setExternalIdentifiers(fei);
+            result.put(name, funding);
         }
         return result;
-    }
+    }        
 }

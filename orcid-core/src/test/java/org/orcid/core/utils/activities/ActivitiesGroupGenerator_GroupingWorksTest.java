@@ -19,6 +19,7 @@ package org.orcid.core.utils.activities;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.HashMap;
 import java.util.List;
@@ -59,7 +60,7 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
         assertTrue(g1.getActivities().contains(work1));
         assertNotNull(g1.getExternalIdentifiers());
         assertEquals(3, g1.getExternalIdentifiers().size());
-        checkWorkExternalIdentifiers(work1, g1);
+        checkExternalIdentifiers(work1, g1);
         
         //Add another work to the groups
         //work-5 -> ARG(M), ARG(N), ARG(O)
@@ -76,7 +77,7 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
         assertEquals(3, groups.get(0).getExternalIdentifiers().size());
         assertEquals(3, groups.get(1).getExternalIdentifiers().size());                
         //Check work in groups
-        checkWorkIsOnGroups(work5, groups);
+        checkActivityIsOnGroups(work5, groups);
         
         //Add another work to the groups
         //work-6 -> ARXIV(A), ARXIV(B), ARXIV(C)
@@ -94,7 +95,7 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
         assertEquals(3, groups.get(1).getExternalIdentifiers().size());                
         assertEquals(3, groups.get(2).getExternalIdentifiers().size());
         //Check work in groups
-        checkWorkIsOnGroups(work6, groups);
+        checkActivityIsOnGroups(work6, groups);
         
         //Add another work to the groups
         //work-8 -> No external identifiers  
@@ -119,7 +120,7 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
         }
         assertTrue("Work without ext ids was not found", work8found);
         //Check work in groups
-        checkWorkIsOnGroups(work8, groups);        
+        checkActivityIsOnGroups(work8, groups);        
     }
         
     /**
@@ -146,8 +147,8 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
         assertTrue(g1.getActivities().contains(work2));
         assertNotNull(g1.getExternalIdentifiers());
         assertEquals(5, g1.getExternalIdentifiers().size());
-        checkWorkExternalIdentifiers(work1, g1);
-        checkWorkExternalIdentifiers(work2, g1);
+        checkExternalIdentifiers(work1, g1);
+        checkExternalIdentifiers(work2, g1);
     }
     
     /**
@@ -178,20 +179,20 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
         assertEquals(5, groups.get(0).getExternalIdentifiers().size());
         assertEquals(5, groups.get(1).getExternalIdentifiers().size());
         //Check each work
-        checkWorkIsOnGroups(work1, groups);
-        checkWorkIsOnGroups(work2, groups);
-        checkWorkIsOnGroups(work6, groups);
-        checkWorkIsOnGroups(work7, groups);
+        checkActivityIsOnGroups(work1, groups);
+        checkActivityIsOnGroups(work2, groups);
+        checkActivityIsOnGroups(work6, groups);
+        checkActivityIsOnGroups(work7, groups);
         
         //Check work1 and work2 are in the same group
-        checkWorksBelongsToTheSameGroup(groups, work1, work2);
+        checkActivitiesBelongsToTheSameGroup(groups, work1, work2);
         //Check work6 and work7 are in the same group
-        checkWorksBelongsToTheSameGroup(groups, work6, work7);
+        checkActivitiesBelongsToTheSameGroup(groups, work6, work7);
         //Check works are not mixed
-        checkWorksDontBelongsToTheSameGroup(groups, work1, work6);
-        checkWorksDontBelongsToTheSameGroup(groups, work1, work7);
-        checkWorksDontBelongsToTheSameGroup(groups, work2, work6);
-        checkWorksDontBelongsToTheSameGroup(groups, work2, work7);
+        checkActivitiesDontBelongsToTheSameGroup(groups, work1, work6);
+        checkActivitiesDontBelongsToTheSameGroup(groups, work1, work7);
+        checkActivitiesDontBelongsToTheSameGroup(groups, work2, work6);
+        checkActivitiesDontBelongsToTheSameGroup(groups, work2, work7);
     }
     
     /**
@@ -219,10 +220,10 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
         assertEquals(0, groups.get(0).getExternalIdentifiers().size());
         assertEquals(0, groups.get(1).getExternalIdentifiers().size());
         
-        checkWorkIsOnGroups(work8, groups);
-        checkWorkIsOnGroups(work9, groups);
+        checkActivityIsOnGroups(work8, groups);
+        checkActivityIsOnGroups(work9, groups);
         
-        checkWorksDontBelongsToTheSameGroup(groups, work8, work9);
+        checkActivitiesDontBelongsToTheSameGroup(groups, work8, work9);
     }
     
     /**
@@ -253,9 +254,9 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
         List<ActivitiesGroup> groups = generator.getGroups();
         assertNotNull(groups);
         assertEquals(2, groups.size());
-        checkWorksBelongsToTheSameGroup(groups, work1, work2);
-        checkWorksDontBelongsToTheSameGroup(groups, work1, work3);
-        checkWorksDontBelongsToTheSameGroup(groups, work2, work3);
+        checkActivitiesBelongsToTheSameGroup(groups, work1, work2);
+        checkActivitiesDontBelongsToTheSameGroup(groups, work1, work3);
+        checkActivitiesDontBelongsToTheSameGroup(groups, work2, work3);
         
         //group work4, which should merge the two groups
         generator.group(work4);
@@ -265,11 +266,11 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
         assertEquals(4, groups.get(0).getActivities().size());
         assertEquals(9, groups.get(0).getExternalIdentifiers().size());
         
-        checkWorkIsOnGroups(work1, groups);
-        checkWorkIsOnGroups(work2, groups);
-        checkWorkIsOnGroups(work3, groups);
-        checkWorkIsOnGroups(work4, groups);
-        checkWorksBelongsToTheSameGroup(groups, work1, work2, work3, work4);
+        checkActivityIsOnGroups(work1, groups);
+        checkActivityIsOnGroups(work2, groups);
+        checkActivityIsOnGroups(work3, groups);
+        checkActivityIsOnGroups(work4, groups);
+        checkActivitiesBelongsToTheSameGroup(groups, work1, work2, work3, work4);
     }
     
     /**
@@ -301,16 +302,25 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
         assertNotNull(groups);
         assertEquals(3, groups.size());
         //Check work1, work3 and work4 belongs to the same group
-        checkWorksBelongsToTheSameGroup(groups, work1, work3, work4);
+        checkActivitiesBelongsToTheSameGroup(groups, work1, work3, work4);
         //Check work1, work5 and work8 are all in different groups
-        checkWorksDontBelongsToTheSameGroup(groups, work1, work5, work8);
+        checkActivitiesDontBelongsToTheSameGroup(groups, work1, work5, work8);
         
-        checkWorkIsOnGroups(work1, groups);
-        checkWorkIsOnGroups(work3, groups);
-        checkWorkIsOnGroups(work4, groups);
-        checkWorkIsOnGroups(work5, groups);
-        checkWorkIsOnGroups(work8, groups);
+        checkActivityIsOnGroups(work1, groups);
+        checkActivityIsOnGroups(work3, groups);
+        checkActivityIsOnGroups(work4, groups);
+        checkActivityIsOnGroups(work5, groups);
+        checkActivityIsOnGroups(work8, groups);
     }       
+        
+    /**
+     * Test that two groups are not gruped by ISNI 
+     * */
+    @Test
+    public void groupWorks_DontGroupByISNI_Test() {
+        fail();
+    }
+    
     
     /**
      * work-1 -> ARG(A), ARG(B), ARG(C) 

@@ -15,7 +15,7 @@ public class ActivitiesGroupGeneratorBaseTest {
     /**
      * Check that a activity belongs to any of the given groups, and, check that all his ext ids also belongs to the group
      * */
-    public void checkWorkIsOnGroups(ActivityWithExternalIdentifiers activity, List<ActivitiesGroup> groups) {
+    public void checkActivityIsOnGroups(ActivityWithExternalIdentifiers activity, List<ActivitiesGroup> groups) {
         int groupIndex = -1;
         for(int i = 0; i < groups.size(); i++) {
             ActivitiesGroup group = groups.get(i);
@@ -30,13 +30,13 @@ public class ActivitiesGroupGeneratorBaseTest {
         assertFalse("Work doesnt belong to any group", -1 == groupIndex);
         ActivitiesGroup group = groups.get(groupIndex);
         //Check the external ids are contained in the group ext ids
-        checkWorkExternalIdentifiers(activity, group);
+        checkExternalIdentifiers(activity, group);
     }
     
     /**
      * Check that the given activitys belongs to the same group in a list of given groups
      * */
-    public void checkWorksBelongsToTheSameGroup(List<ActivitiesGroup> groups, ActivityWithExternalIdentifiers ... activities) {
+    public void checkActivitiesBelongsToTheSameGroup(List<ActivitiesGroup> groups, ActivityWithExternalIdentifiers ... activities) {
         ActivityWithExternalIdentifiers first = activities[0];
         
         assertNotNull(first);
@@ -52,9 +52,9 @@ public class ActivitiesGroupGeneratorBaseTest {
     
     
     /**
-     * Check that the given works belongs to the same group in a list of given groups
+     * Check that the given activities belongs to the same group in a list of given groups
      * */
-    public void checkWorksDontBelongsToTheSameGroup(List<ActivitiesGroup> groups, ActivityWithExternalIdentifiers ... activities) {                
+    public void checkActivitiesDontBelongsToTheSameGroup(List<ActivitiesGroup> groups, ActivityWithExternalIdentifiers ... activities) {                
         for(int i = 0; i < activities.length; i++) {
             ActivityWithExternalIdentifiers a1 = activities[i];
             ActivitiesGroup theGroup = getGroupThatContainsWork(groups, a1);
@@ -65,7 +65,7 @@ public class ActivitiesGroupGeneratorBaseTest {
     }        
     
     /**
-     * Returns the group that contains the given work
+     * Returns the group that contains the given activity
      * */
     public ActivitiesGroup getGroupThatContainsWork(List<ActivitiesGroup> groups, ActivityWithExternalIdentifiers activity) {
         ActivitiesGroup theGroup = null;
@@ -79,15 +79,15 @@ public class ActivitiesGroupGeneratorBaseTest {
     }
     
     /**
-     * Checks that all the external identifiers in the work are contained in the group external identifiers
+     * Checks that all the external identifiers in the activity are contained in the group external identifiers
      * */
-    public void checkWorkExternalIdentifiers(ActivityWithExternalIdentifiers activity, ActivitiesGroup group) {
-        ExternalIdentifiersContainer workExtIdsContainer = activity.getExternalIdentifiers();
-        List workExtIds = workExtIdsContainer.getExternalIdentifier();
+    public void checkExternalIdentifiers(ActivityWithExternalIdentifiers activity, ActivitiesGroup group) {
+        ExternalIdentifiersContainer extIdsContainer = activity.getExternalIdentifiers();
+        List<? extends ExternalIdentifier> extIds = extIdsContainer.getExternalIdentifier();
         Set<ExternalIdentifier> groupExtIds = group.getExternalIdentifiers();
-        for(Object o : workExtIds) {
-            ExternalIdentifier workExtId = (ExternalIdentifier) o;
-            assertTrue(groupExtIds.contains(workExtId));
+        for(Object o : extIds) {
+            ExternalIdentifier extId = (ExternalIdentifier) o;
+            assertTrue(groupExtIds.contains(extId));
         }
     }
 }
