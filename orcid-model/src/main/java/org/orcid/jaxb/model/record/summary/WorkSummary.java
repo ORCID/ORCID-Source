@@ -58,7 +58,7 @@ import org.orcid.jaxb.model.record.WorkType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "putCode", "title", "type", "publicationDate", "externalIdentifiers", "source", "createdDate", "lastModifiedDate" })
-@XmlRootElement(name = "workSummary", namespace = "http://www.orcid.org/ns/work")
+@XmlRootElement(name = "work-summary", namespace = "http://www.orcid.org/ns/work")
 public class WorkSummary implements VisibilityType, Activity, ActivityWithExternalIdentifiers, Serializable {
 
     private static final long serialVersionUID = 1L;

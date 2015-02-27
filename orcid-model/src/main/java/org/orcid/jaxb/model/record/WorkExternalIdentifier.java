@@ -146,8 +146,14 @@ public class WorkExternalIdentifier implements ExternalIdentifier, Serializable 
     
     @Override
     public boolean passGroupingValidation() {
+        //Dont groups works where the external id is empty
+        if(workExternalIdentifierType == null && (workExternalIdentifierId == null || workExternalIdentifierId.getContent() == null || workExternalIdentifierId.getContent().isEmpty()))
+            return false;
+        
+        //Dont work works by ISSN identifier
         if(WorkExternalIdentifierType.ISSN.equals(workExternalIdentifierType))
             return false;
+        
         return true;
-    }
+    }    
 }

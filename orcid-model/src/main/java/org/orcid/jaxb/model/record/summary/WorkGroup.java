@@ -27,21 +27,21 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * <p>
- * Java class for anonymous complex type.
- * 
- * <p>
- * The following schema fragment specifies the expected content contained within
- * this class.
- * 
- * 
- * 
- */
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(propOrder = { "identifiers", "workSummary" })
+@XmlRootElement(name = "work-group", namespace = "http://www.orcid.org/ns/activities")
 public class WorkGroup implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    @XmlElement(name = "identifiers", namespace = "http://www.orcid.org/ns/activities")
     private Identifiers identifiers;
+    @XmlElement(name = "work-summary", namespace = "http://www.orcid.org/ns/work")
     private List<WorkSummary> workSummary;
 
     public Identifiers getIdentifiers() {

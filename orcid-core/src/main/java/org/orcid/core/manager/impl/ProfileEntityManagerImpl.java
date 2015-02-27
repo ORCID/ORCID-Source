@@ -27,22 +27,26 @@ import org.orcid.core.adapter.JpaJaxbEmploymentAdapter;
 import org.orcid.core.adapter.JpaJaxbFundingAdapter;
 import org.orcid.core.adapter.JpaJaxbWorkAdapter;
 import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.utils.activities.ActivitiesGroup;
+import org.orcid.core.utils.activities.ActivitiesGroupGenerator;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.GroupType;
-import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
+import org.orcid.jaxb.model.record.ActivityWithExternalIdentifiers;
+import org.orcid.jaxb.model.record.ExternalIdentifier;
+import org.orcid.jaxb.model.record.WorkExternalIdentifier;
 import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
-import org.orcid.jaxb.model.record.summary.EducationSummary;
-import org.orcid.jaxb.model.record.summary.EmploymentSummary;
-import org.orcid.jaxb.model.record.summary.FundingSummary;
+import org.orcid.jaxb.model.record.summary.Identifier;
+import org.orcid.jaxb.model.record.summary.WorkGroup;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
+import org.orcid.jaxb.model.record.summary.Works;
 import org.orcid.persistence.dao.ProfileDao;
-import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Declan Newman (declan) Date: 10/02/2012
@@ -262,33 +266,63 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     }
     
     @Override
+    @Transactional
     public ActivitiesSummary getActivitiesSummary(String orcid) {
-        ProfileEntity profileEntity = this.findByOrcid(orcid);
-        List<WorkSummary> works = jpaJaxbWorkAdapter.toWorkSummary(profileEntity.getProfileWorks());
-        List<FundingSummary> fundings = jpaJaxbFundingAdapter.toFundingSummary(profileEntity.getProfileFunding());
-        
-        Set<OrgAffiliationRelationEntity> affiliations = profileEntity.getOrgAffiliationRelations();
-        List<OrgAffiliationRelationEntity> educationEntities = new ArrayList<OrgAffiliationRelationEntity>();
-        List<OrgAffiliationRelationEntity> employmentEntities = new ArrayList<OrgAffiliationRelationEntity>();
-        
-        for(OrgAffiliationRelationEntity affiliation : affiliations) {
-            if(AffiliationType.EDUCATION.equals(affiliation.getAffiliationType())) {
-                educationEntities.add(affiliation);
-            } else {
-                employmentEntities.add(affiliation);
-            }
-        }
-        
-        List<EducationSummary> educations = jpaJaxbEducationAdapter.toEducationSummary(educationEntities);
-        List<EmploymentSummary> employments = jpaJaxbEmploymentAdapter.toEmploymentSummary(employmentEntities);
-        
         ActivitiesSummary activities = new ActivitiesSummary();
-        activities.getEducations().addAll(educations);
-        activities.getEmployments().addAll(employments);
+        ProfileEntity profileEntity = this.findByOrcid(orcid);
+        List<WorkSummary> workSummaries = jpaJaxbWorkAdapter.toWorkSummary(profileEntity.getProfileWorks());
+        Works works = groupWorks(workSummaries);
+        activities.setWorks(works);
         return activities;
     }
     
-    private void groupWorks(List<WorkSummary> works) {
+    private Works groupWorks(List<WorkSummary> works) {
+        ActivitiesGroupGenerator groupGenerator = new ActivitiesGroupGenerator();
+        Works result = new Works();
+        //Group all works
+        for(WorkSummary work : works) {
+            groupGenerator.group(work);
+        }
         
+        List<ActivitiesGroup> groups = groupGenerator.getGroups();
+        
+        for(ActivitiesGroup group : groups) {
+            Set<ExternalIdentifier> externalIdentifiers = group.getExternalIdentifiers();
+            Set<ActivityWithExternalIdentifiers> activities = group.getActivities();            
+            WorkGroup workGroup = new WorkGroup();
+            //Fill the work groups with the external identifiers
+            for(ExternalIdentifier extId : externalIdentifiers) {
+                WorkExternalIdentifier workExtId = (WorkExternalIdentifier) extId;
+                workGroup.getIdentifiers().getIdentifier().add(Identifier.fromWorkExternalIdentifier(workExtId));
+            }
+            
+            //Fill the work group with the list of groups
+            for(ActivityWithExternalIdentifiers activity : activities) {
+                WorkSummary workSummary = (WorkSummary) activity;
+                workGroup.getWorkSummary().add(workSummary);
+            }
+            
+            result.getWorkGroup().add(workGroup);
+        }
+        
+        return result;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

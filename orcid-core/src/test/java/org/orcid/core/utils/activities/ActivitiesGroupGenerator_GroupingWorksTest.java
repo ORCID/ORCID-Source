@@ -39,7 +39,7 @@ import org.orcid.jaxb.model.record.WorkTitle;
  * 
  */
 public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupGeneratorBaseTest {
-    @Test
+    @Test 
     public void groupWorks_4GroupsOf1Work_Test() {
         ActivitiesGroupGenerator generator = new ActivitiesGroupGenerator();
         Map<String, Work> works = generateWorks();

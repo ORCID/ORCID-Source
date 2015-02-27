@@ -22,8 +22,11 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.orcid.jaxb.model.record.FundingExternalIdentifier;
+import org.orcid.jaxb.model.record.WorkExternalIdentifier;
+
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "external-identifier-type", "external-identifier-id"})
+@XmlType(propOrder = { "externalIdentifierType", "externalIdentifierId" })
 @XmlRootElement(name = "identifier", namespace = "http://www.orcid.org/ns/activities")
 public class Identifier {
 
@@ -31,19 +34,23 @@ public class Identifier {
     private String externalIdentifierType;
     @XmlElement(name = "external-identifier-id", namespace = "http://www.orcid.org/ns/activities")
     private String externalIdentifierId;
-    
+
     public String getExternalIdentifierType() {
         return externalIdentifierType;
     }
+
     public void setExternalIdentifierType(String externalIdentifierType) {
         this.externalIdentifierType = externalIdentifierType;
     }
+
     public String getExternalIdentifierId() {
         return externalIdentifierId;
     }
+
     public void setExternalIdentifierId(String externalIdentifierId) {
         this.externalIdentifierId = externalIdentifierId;
     }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -52,6 +59,7 @@ public class Identifier {
         result = prime * result + ((externalIdentifierType == null) ? 0 : externalIdentifierType.hashCode());
         return result;
     }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -72,5 +80,24 @@ public class Identifier {
         } else if (!externalIdentifierType.equals(other.externalIdentifierType))
             return false;
         return true;
-    }        
+    }
+
+    public static Identifier fromWorkExternalIdentifier(WorkExternalIdentifier workExtId) {
+        if ((workExtId.getWorkExternalIdentifierId() == null || workExtId.getWorkExternalIdentifierId().getContent() == null || workExtId.getWorkExternalIdentifierId()
+                .getContent().isEmpty())
+                && workExtId.getWorkExternalIdentifierType() == null) {
+            return null;
+        }
+        Identifier result = new Identifier();
+        result.setExternalIdentifierId(workExtId.getWorkExternalIdentifierId().getContent());
+        result.setExternalIdentifierType(workExtId.getWorkExternalIdentifierType().name());
+        return result;
+    }
+
+    public static Identifier fromFundingExternalIdentifier(FundingExternalIdentifier fundingExtId) {
+        Identifier result = new Identifier();
+        result.setExternalIdentifierId(fundingExtId.getValue());
+        result.setExternalIdentifierType(fundingExtId.getType().name());
+        return result;
+    }
 }

@@ -38,7 +38,6 @@ import javax.xml.bind.annotation.XmlType;
 import org.orcid.jaxb.model.record.ActivitiesContainer;
 import org.orcid.jaxb.model.record.Activity;
 import org.orcid.jaxb.model.record.Funding;
-import org.orcid.jaxb.model.record.Work;
 
 /**
  * <p>
@@ -52,40 +51,48 @@ import org.orcid.jaxb.model.record.Work;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "works" })
+@XmlType(propOrder = { "educations", "employments", "works", "fundings" })
 @XmlRootElement(name = "activitiesSummary", namespace = "http://www.orcid.org/ns/activities")
 public class ActivitiesSummary implements Serializable, ActivitiesContainer {
 
     private static final long serialVersionUID = 1L;
     @XmlElement(name = "educations", namespace = "http://www.orcid.org/ns/activities")
-    protected List<EducationSummary> educations;    
+    protected List<EducationSummary> educations;
     @XmlElement(name = "employments", namespace = "http://www.orcid.org/ns/activities")
-    protected List<EmploymentSummary> employments;    
+    protected List<EmploymentSummary> employments;
     @XmlElement(name = "works", namespace = "http://www.orcid.org/ns/activities")
-    protected List<Work> works;    
+    protected Works works;
     @XmlElement(name = "fundings", namespace = "http://www.orcid.org/ns/activities")
     protected List<Funding> fundings;
-    
+
     public List<EducationSummary> getEducations() {
-        if(educations == null)
+        if (educations == null)
             educations = new ArrayList<EducationSummary>();
         return educations;
     }
+
     public List<EmploymentSummary> getEmployments() {
-        if(employments == null)
+        if (employments == null)
             employments = new ArrayList<EmploymentSummary>();
         return employments;
     }
-    public List<Work> getWorks() {
-        if(works == null)
-            works = new ArrayList<Work>();
+
+    public Works getWorks() {
+        if (works == null)
+            works = new Works();
         return works;
     }
+    
+    public void setWorks(Works works) {
+        this.works = works;
+    }
+
     public List<Funding> getFundings() {
-        if(fundings == null)
+        if (fundings == null)
             fundings = new ArrayList<Funding>();
         return fundings;
     }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -96,6 +103,7 @@ public class ActivitiesSummary implements Serializable, ActivitiesContainer {
         result = prime * result + ((works == null) ? 0 : works.hashCode());
         return result;
     }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -127,33 +135,41 @@ public class ActivitiesSummary implements Serializable, ActivitiesContainer {
             return false;
         return true;
     }
-    
+
     @Override
     public Map<String, ? extends Activity> retrieveActivitiesAsMap() {
         Map<String, Activity> activities = new HashMap<String, Activity>();
-        //Set works
-        for(Work work : works) {
-            activities.put(work.getPutCode(), work);
+        // Set works
+        if (works != null) {
+            List<WorkGroup> groups = works.getWorkGroup();
+            for (WorkGroup work : groups) {
+                if (work != null) {
+                    List<WorkSummary> summaries = work.getWorkSummary();
+                    for (WorkSummary summary : summaries) {
+                        activities.put(summary.getPutCode(), summary);
+                    }
+                }
+            }
         }
-        //Set funding
-        for(Funding funding : fundings) {
+        // Set funding
+        for (Funding funding : fundings) {
             activities.put(funding.getPutCode(), funding);
         }
-        //Set education
-        for(EducationSummary education : educations) {
+        // Set education
+        for (EducationSummary education : educations) {
             activities.put(education.getPutCode(), education);
         }
-        //Set employment
-        for(EmploymentSummary employment : employments) {
+        // Set employment
+        for (EmploymentSummary employment : employments) {
             activities.put(employment.getPutCode(), employment);
         }
         return activities;
     }
-    
+
     @Override
     public List<? extends Activity> retrieveActivities() {
         List<Activity> activities = new ArrayList<Activity>();
-        
+
         return activities;
     }
 }

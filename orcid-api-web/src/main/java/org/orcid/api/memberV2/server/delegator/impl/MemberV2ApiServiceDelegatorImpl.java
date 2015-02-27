@@ -109,17 +109,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
     public Response viewActivities(String orcid) {
-        profileEntityManager.findByOrcid(orcid);
-
-        // hard coding for now for testing
-        ActivitiesSummary as = new ActivitiesSummary();
-        Work w = new Work();
-        WorkTitle wt = new WorkTitle();
-        wt.setTitle(new Title("Test"));
-        w.setWorkTitle(wt);
-        List<Work> works = new ArrayList<Work>();
-        works.add(w);
-        as.getWorks().addAll(works);
+        ActivitiesSummary as = profileEntityManager.getActivitiesSummary(orcid);        
         return Response.ok(as).build();
     }
 
