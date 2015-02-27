@@ -37,7 +37,6 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.record.ActivitiesContainer;
 import org.orcid.jaxb.model.record.Activity;
-import org.orcid.jaxb.model.record.Funding;
 
 /**
  * <p>
@@ -63,7 +62,7 @@ public class ActivitiesSummary implements Serializable, ActivitiesContainer {
     @XmlElement(name = "works", namespace = "http://www.orcid.org/ns/activities")
     protected Works works;
     @XmlElement(name = "fundings", namespace = "http://www.orcid.org/ns/activities")
-    protected List<Funding> fundings;
+    protected Fundings fundings;
 
     public List<EducationSummary> getEducations() {
         if (educations == null)
@@ -87,12 +86,16 @@ public class ActivitiesSummary implements Serializable, ActivitiesContainer {
         this.works = works;
     }
 
-    public List<Funding> getFundings() {
+    public Fundings getFundings() {
         if (fundings == null)
-            fundings = new ArrayList<Funding>();
+            fundings = new Fundings();
         return fundings;
     }
 
+    public void setFundings(Fundings fundings) {
+        this.fundings = fundings;
+    }
+    
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -152,8 +155,16 @@ public class ActivitiesSummary implements Serializable, ActivitiesContainer {
             }
         }
         // Set funding
-        for (Funding funding : fundings) {
-            activities.put(funding.getPutCode(), funding);
+        if(fundings != null) {
+            List<FundingGroup> groups = fundings.getFundingGroups();
+            for (FundingGroup funding : groups) {
+                if(funding != null) {
+                    List<FundingSummary> fundings = funding.getFundingSummary();
+                    for(FundingSummary summary : fundings) {
+                        activities.put(summary.getPutCode(), summary);
+                    }
+                }                
+            }
         }
         // Set education
         for (EducationSummary education : educations) {

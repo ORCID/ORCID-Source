@@ -36,13 +36,20 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.record.ActivityWithExternalIdentifiers;
 import org.orcid.jaxb.model.record.ExternalIdentifier;
+import org.orcid.jaxb.model.record.FundingExternalIdentifier;
 import org.orcid.jaxb.model.record.WorkExternalIdentifier;
 import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary.EducationSummary;
+import org.orcid.jaxb.model.record.summary.EmploymentSummary;
+import org.orcid.jaxb.model.record.summary.FundingGroup;
+import org.orcid.jaxb.model.record.summary.FundingSummary;
+import org.orcid.jaxb.model.record.summary.Fundings;
 import org.orcid.jaxb.model.record.summary.Identifier;
 import org.orcid.jaxb.model.record.summary.WorkGroup;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
 import org.orcid.jaxb.model.record.summary.Works;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.stereotype.Service;
@@ -270,9 +277,26 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     public ActivitiesSummary getActivitiesSummary(String orcid) {
         ActivitiesSummary activities = new ActivitiesSummary();
         ProfileEntity profileEntity = this.findByOrcid(orcid);
+        //Set Affiliations
+        Set<OrgAffiliationRelationEntity> affiliations = profileEntity.getOrgAffiliationRelations();
+        for(OrgAffiliationRelationEntity affiliation : affiliations) {
+            if(org.orcid.jaxb.model.message.AffiliationType.EDUCATION == affiliation.getAffiliationType()) {
+                EducationSummary education = jpaJaxbEducationAdapter.toEducationSummary(affiliation);
+                activities.getEducations().add(education);
+            } else {
+                EmploymentSummary employment = jpaJaxbEmploymentAdapter.toEmploymentSummary(affiliation);
+                activities.getEmployments().add(employment);
+            }
+        }
+        //Set works
         List<WorkSummary> workSummaries = jpaJaxbWorkAdapter.toWorkSummary(profileEntity.getProfileWorks());
         Works works = groupWorks(workSummaries);
         activities.setWorks(works);
+        //Set fundings
+        List<FundingSummary> fundingSummaries = jpaJaxbFundingAdapter.toFundingSummary(profileEntity.getProfileFunding());
+        Fundings fundings = groupFundings(fundingSummaries);
+        activities.setFundings(fundings);
+        
         return activities;
     }
     
@@ -296,7 +320,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
                 workGroup.getIdentifiers().getIdentifier().add(Identifier.fromWorkExternalIdentifier(workExtId));
             }
             
-            //Fill the work group with the list of groups
+            //Fill the work group with the list of activities
             for(ActivityWithExternalIdentifiers activity : activities) {
                 WorkSummary workSummary = (WorkSummary) activity;
                 workGroup.getWorkSummary().add(workSummary);
@@ -307,6 +331,38 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         
         return result;
     }
+    
+   private Fundings groupFundings(List<FundingSummary> fundings) {
+       ActivitiesGroupGenerator groupGenerator = new ActivitiesGroupGenerator();
+       Fundings result = new Fundings();
+       for(FundingSummary funding : fundings) {
+           groupGenerator.group(funding);
+       }
+       
+       List<ActivitiesGroup> groups = groupGenerator.getGroups();
+       
+       for(ActivitiesGroup group : groups) {
+           Set<ExternalIdentifier> externalIdentifiers = group.getExternalIdentifiers();
+           Set<ActivityWithExternalIdentifiers> activities = group.getActivities();   
+           FundingGroup fundingGroup = new FundingGroup();
+           
+           //Fill the funding groups with the external identifiers
+           for(ExternalIdentifier extId : externalIdentifiers) {
+               FundingExternalIdentifier fundingExtId = (FundingExternalIdentifier) extId;
+               fundingGroup.getIdentifiers().getIdentifier().add(Identifier.fromFundingExternalIdentifier(fundingExtId));
+           }
+
+           //Fill the funding group with the list of activities
+           for(ActivityWithExternalIdentifiers activity : activities) {
+               FundingSummary fundingSummary = (FundingSummary) activity;
+               fundingGroup.getFundingSummary().add(fundingSummary);
+           }
+           
+           result.getFundingGroups().add(fundingGroup);
+       }
+       
+       return result;
+   }
 }
 
 
