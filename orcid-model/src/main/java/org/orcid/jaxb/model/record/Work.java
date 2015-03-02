@@ -49,7 +49,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(propOrder = { "putCode", "title", "journalTitle", "shortDescription", "citation", "type", "publicationDate", "externalIdentifiers", "url",
         "contributors", "source", "createdDate", "lastModifiedDate", "languageCode", "country" })
 @XmlRootElement(name = "work", namespace = "http://www.orcid.org/ns/work")
-public class Work implements VisibilityType, Activity, Serializable, ActivityWithExternalIdentifiers {
+public class Work implements VisibilityType, Activity, Serializable {
 
     private static final long serialVersionUID = 1L;
     @XmlElement(namespace = "http://www.orcid.org/ns/work")

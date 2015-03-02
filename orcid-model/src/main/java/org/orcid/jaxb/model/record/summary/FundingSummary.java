@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.record.Activity;
-import org.orcid.jaxb.model.record.ActivityWithExternalIdentifiers;
+import org.orcid.jaxb.model.record.GroupableActivity;
 import org.orcid.jaxb.model.record.CreatedDate;
 import org.orcid.jaxb.model.record.FundingExternalIdentifiers;
 import org.orcid.jaxb.model.record.FundingTitle;
@@ -40,7 +40,7 @@ import org.orcid.jaxb.model.record.VisibilityType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "type", "title", "externalIdentifiers", "startDate", "endDate", "source", "lastModifiedDate", "createdDate" })
 @XmlRootElement(name = "fundingSummary", namespace = "http://www.orcid.org/ns/funding")
-public class FundingSummary implements VisibilityType, Activity, ActivityWithExternalIdentifiers, Serializable, Comparable<FundingSummary> {
+public class FundingSummary implements VisibilityType, Activity, GroupableActivity, Serializable {
 
     private static final long serialVersionUID = 7489792970949538708L;
     @XmlElement(namespace = "http://www.orcid.org/ns/funding", required = true)
@@ -236,14 +236,10 @@ public class FundingSummary implements VisibilityType, Activity, ActivityWithExt
         return source.retrieveSourcePath();
     }
     
-    /**
-     * ORCID way of comparing two works:
-     * Compare the display index
-     * */
     @Override
-    public int compareTo(FundingSummary o) {
+    public int compareTo(GroupableActivity activity) {
         Long index = Long.valueOf(this.getDisplayIndex() == null ? "0" : this.getDisplayIndex());
-        Long otherIndex = Long.valueOf(o.getDisplayIndex() == null ? "0" : o.getDisplayIndex());
+        Long otherIndex = Long.valueOf(activity.getDisplayIndex() == null ? "0" : activity.getDisplayIndex());
         if (index == null) {
             if (otherIndex == null) {
                 return 0;
@@ -254,10 +250,11 @@ public class FundingSummary implements VisibilityType, Activity, ActivityWithExt
             if (otherIndex == null) {
                 return 1;
             } else if (index instanceof Comparable) {
+                //Return opossite, since higger index goes first
                 return  index.compareTo(otherIndex) * -1;
             } else {
                 return 0;
             }
         }
-    }
+    }    
 }

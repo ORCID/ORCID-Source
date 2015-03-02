@@ -18,6 +18,7 @@ package org.orcid.core.manager.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -35,7 +36,7 @@ import org.orcid.jaxb.model.clientgroup.GroupType;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
-import org.orcid.jaxb.model.record.ActivityWithExternalIdentifiers;
+import org.orcid.jaxb.model.record.GroupableActivity;
 import org.orcid.jaxb.model.record.ExternalIdentifier;
 import org.orcid.jaxb.model.record.FundingExternalIdentifier;
 import org.orcid.jaxb.model.record.WorkExternalIdentifier;
@@ -313,7 +314,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         
         for(ActivitiesGroup group : groups) {
             Set<ExternalIdentifier> externalIdentifiers = group.getExternalIdentifiers();
-            Set<ActivityWithExternalIdentifiers> activities = group.getActivities();            
+            Set<GroupableActivity> activities = group.getActivities();            
             WorkGroup workGroup = new WorkGroup();
             //Fill the work groups with the external identifiers
             for(ExternalIdentifier extId : externalIdentifiers) {
@@ -322,13 +323,13 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
             }
             
             //Fill the work group with the list of activities
-            for(ActivityWithExternalIdentifiers activity : activities) {
+            for(GroupableActivity activity : activities) {
                 WorkSummary workSummary = (WorkSummary) activity;
                 workGroup.getWorkSummary().add(workSummary);
             }
             
-            //Sort the activities
-            
+            //Sort the works
+            Collections.sort(workGroup.getWorkSummary(), new GroupableActivityComparator());
             
             result.getWorkGroup().add(workGroup);
         }
@@ -347,7 +348,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
        
        for(ActivitiesGroup group : groups) {
            Set<ExternalIdentifier> externalIdentifiers = group.getExternalIdentifiers();
-           Set<ActivityWithExternalIdentifiers> activities = group.getActivities();   
+           Set<GroupableActivity> activities = group.getActivities();   
            FundingGroup fundingGroup = new FundingGroup();
            
            //Fill the funding groups with the external identifiers
@@ -357,14 +358,26 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
            }
 
            //Fill the funding group with the list of activities
-           for(ActivityWithExternalIdentifiers activity : activities) {
+           for(GroupableActivity activity : activities) {
                FundingSummary fundingSummary = (FundingSummary) activity;
                fundingGroup.getFundingSummary().add(fundingSummary);
            }
+           
+           //Sort the fundings
+           Collections.sort(fundingGroup.getFundingSummary(), new GroupableActivityComparator());
            
            result.getFundingGroups().add(fundingGroup);
        }
        
        return result;
    }
+}
+
+class GroupableActivityComparator implements Comparator<GroupableActivity>{
+
+    @Override
+    public int compare(GroupableActivity o1, GroupableActivity o2) {
+        return o1.compareTo(o2);
+    }
+    
 }

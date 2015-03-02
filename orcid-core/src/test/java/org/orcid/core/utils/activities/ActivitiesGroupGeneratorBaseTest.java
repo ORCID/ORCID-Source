@@ -23,7 +23,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 import java.util.Set;
 
-import org.orcid.jaxb.model.record.ActivityWithExternalIdentifiers;
+import org.orcid.jaxb.model.record.GroupableActivity;
 import org.orcid.jaxb.model.record.ExternalIdentifier;
 import org.orcid.jaxb.model.record.ExternalIdentifiersContainer;
 
@@ -31,7 +31,7 @@ public class ActivitiesGroupGeneratorBaseTest {
     /**
      * Check that a activity belongs to any of the given groups, and, check that all his ext ids also belongs to the group
      * */
-    public void checkActivityIsOnGroups(ActivityWithExternalIdentifiers activity, List<ActivitiesGroup> groups) {
+    public void checkActivityIsOnGroups(GroupableActivity activity, List<ActivitiesGroup> groups) {
         int groupIndex = -1;
         for(int i = 0; i < groups.size(); i++) {
             ActivitiesGroup group = groups.get(i);
@@ -52,8 +52,8 @@ public class ActivitiesGroupGeneratorBaseTest {
     /**
      * Check that the given activitys belongs to the same group in a list of given groups
      * */
-    public void checkActivitiesBelongsToTheSameGroup(List<ActivitiesGroup> groups, ActivityWithExternalIdentifiers ... activities) {
-        ActivityWithExternalIdentifiers first = activities[0];
+    public void checkActivitiesBelongsToTheSameGroup(List<ActivitiesGroup> groups, GroupableActivity ... activities) {
+        GroupableActivity first = activities[0];
         
         assertNotNull(first);
         
@@ -61,7 +61,7 @@ public class ActivitiesGroupGeneratorBaseTest {
         
         assertNotNull(theGroup);
         
-        for(ActivityWithExternalIdentifiers activity : activities) {
+        for(GroupableActivity activity : activities) {
             assertTrue(theGroup.belongsToGroup(activity));
         }
     }
@@ -70,9 +70,9 @@ public class ActivitiesGroupGeneratorBaseTest {
     /**
      * Check that the given activities belongs to the same group in a list of given groups
      * */
-    public void checkActivitiesDontBelongsToTheSameGroup(List<ActivitiesGroup> groups, ActivityWithExternalIdentifiers ... activities) {                
+    public void checkActivitiesDontBelongsToTheSameGroup(List<ActivitiesGroup> groups, GroupableActivity ... activities) {                
         for(int i = 0; i < activities.length; i++) {
-            ActivityWithExternalIdentifiers a1 = activities[i];
+            GroupableActivity a1 = activities[i];
             ActivitiesGroup theGroup = getGroupThatContainsActivity(groups, a1);
             for(int j = i+1; j < activities.length; j++){
                 assertFalse("activity[" + i + "] and activity["+ j + "] belongs to the same group", theGroup.belongsToGroup(activities[j]));
@@ -83,7 +83,7 @@ public class ActivitiesGroupGeneratorBaseTest {
     /**
      * Returns the group that contains the given activity
      * */
-    public ActivitiesGroup getGroupThatContainsActivity(List<ActivitiesGroup> groups, ActivityWithExternalIdentifiers activity) {
+    public ActivitiesGroup getGroupThatContainsActivity(List<ActivitiesGroup> groups, GroupableActivity activity) {
         ActivitiesGroup theGroup = null;
         for(ActivitiesGroup group : groups) {
             if(group.belongsToGroup(activity)) {
@@ -97,7 +97,7 @@ public class ActivitiesGroupGeneratorBaseTest {
     /**
      * Checks that all the external identifiers in the activity are contained in the group external identifiers
      * */
-    public void checkExternalIdentifiers(ActivityWithExternalIdentifiers activity, ActivitiesGroup group) {
+    public void checkExternalIdentifiers(GroupableActivity activity, ActivitiesGroup group) {
         ExternalIdentifiersContainer extIdsContainer = activity.getExternalIdentifiers();
         List<? extends ExternalIdentifier> extIds = extIdsContainer.getExternalIdentifier();
         Set<ExternalIdentifier> groupExtIds = group.getExternalIdentifiers();

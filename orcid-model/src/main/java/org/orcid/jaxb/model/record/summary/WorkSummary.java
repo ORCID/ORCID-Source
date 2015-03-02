@@ -33,8 +33,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.record.Activity;
-import org.orcid.jaxb.model.record.ActivityWithExternalIdentifiers;
 import org.orcid.jaxb.model.record.CreatedDate;
+import org.orcid.jaxb.model.record.GroupableActivity;
 import org.orcid.jaxb.model.record.LastModifiedDate;
 import org.orcid.jaxb.model.record.PublicationDate;
 import org.orcid.jaxb.model.record.Source;
@@ -59,7 +59,7 @@ import org.orcid.jaxb.model.record.WorkType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "putCode", "title", "type", "publicationDate", "externalIdentifiers", "source", "createdDate", "lastModifiedDate" })
 @XmlRootElement(name = "work-summary", namespace = "http://www.orcid.org/ns/work")
-public class WorkSummary implements VisibilityType, Activity, ActivityWithExternalIdentifiers, Serializable, Comparable<WorkSummary> {
+public class WorkSummary implements VisibilityType, Activity, GroupableActivity, Serializable {
 
     private static final long serialVersionUID = 1L;
     @XmlElement(namespace = "http://www.orcid.org/ns/work")
@@ -249,15 +249,11 @@ public class WorkSummary implements VisibilityType, Activity, ActivityWithExtern
         }
         return null;
     }
-
-    /**
-     * ORCID way of comparing two works:
-     * Compare the display index
-     * */
+    
     @Override
-    public int compareTo(WorkSummary o) {
+    public int compareTo(GroupableActivity activity) {
         Long index = Long.valueOf(this.getDisplayIndex() == null ? "0" : this.getDisplayIndex());
-        Long otherIndex = Long.valueOf(o.getDisplayIndex() == null ? "0" : o.getDisplayIndex());
+        Long otherIndex = Long.valueOf(activity.getDisplayIndex() == null ? "0" : activity.getDisplayIndex());
         if (index == null) {
             if (otherIndex == null) {
                 return 0;
@@ -268,11 +264,11 @@ public class WorkSummary implements VisibilityType, Activity, ActivityWithExtern
             if (otherIndex == null) {
                 return 1;
             } else if (index instanceof Comparable) {
+                //Return opossite, since higger index goes first
                 return  index.compareTo(otherIndex) * -1;
             } else {
                 return 0;
             }
         }
     }
-
 }

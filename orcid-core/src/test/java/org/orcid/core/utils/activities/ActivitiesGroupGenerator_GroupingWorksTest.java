@@ -26,12 +26,12 @@ import java.util.Map;
 
 import org.junit.Test;
 import org.orcid.jaxb.model.record.Title;
-import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.WorkExternalIdentifier;
 import org.orcid.jaxb.model.record.WorkExternalIdentifierId;
 import org.orcid.jaxb.model.record.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.record.WorkTitle;
+import org.orcid.jaxb.model.record.summary.WorkSummary;
 
 /**
  * 
@@ -42,11 +42,11 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
     @Test 
     public void groupWorks_4GroupsOf1Work_Test() {
         ActivitiesGroupGenerator generator = new ActivitiesGroupGenerator();
-        Map<String, Work> works = generateWorks();
+        Map<String, WorkSummary> works = generateWorks();
         
         //Group the first group
         //work-1 -> ARG(A), ARG(B), ARG(C)
-        Work work1 = works.get("work-1");
+        WorkSummary work1 = works.get("work-1");
         generator.group(work1);
         //There should be one group, and the ext ids should be A, B and C
         List<ActivitiesGroup> groups = generator.getGroups();
@@ -63,7 +63,7 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
         
         //Add another work to the groups
         //work-5 -> ARG(M), ARG(N), ARG(O)
-        Work work5 = works.get("work-5");
+        WorkSummary work5 = works.get("work-5");
         generator.group(work5);
         //There should be two groups, one for each work
         groups = generator.getGroups();
@@ -80,7 +80,7 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
         
         //Add another work to the groups
         //work-6 -> ARXIV(A), ARXIV(B), ARXIV(C)
-        Work work6 = works.get("work-6");
+        WorkSummary work6 = works.get("work-6");
         generator.group(work6);
         groups = generator.getGroups();
         assertNotNull(groups);
@@ -98,7 +98,7 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
         
         //Add another work to the groups
         //work-8 -> No external identifiers  
-        Work work8 = works.get("work-8");
+        WorkSummary work8 = works.get("work-8");
         generator.group(work8);        
         groups = generator.getGroups();
         assertNotNull(groups);
@@ -128,10 +128,10 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
     @Test
     public void groupWorks_1GroupsOf2Works_Test() {
         ActivitiesGroupGenerator generator = new ActivitiesGroupGenerator();
-        Map<String, Work> works = generateWorks();
+        Map<String, WorkSummary> works = generateWorks();
         
-        Work work1 = works.get("work-1");        
-        Work work2 = works.get("work-2");
+        WorkSummary work1 = works.get("work-1");        
+        WorkSummary work2 = works.get("work-2");
         
         generator.group(work1);
         generator.group(work2);
@@ -156,12 +156,12 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
     @Test
     public void groupWorks_2GroupsOf2Works_Test() {
         ActivitiesGroupGenerator generator = new ActivitiesGroupGenerator();
-        Map<String, Work> works = generateWorks();
+        Map<String, WorkSummary> works = generateWorks();
         
-        Work work1 = works.get("work-1");        
-        Work work2 = works.get("work-2");
-        Work work6 = works.get("work-6");
-        Work work7 = works.get("work-7");
+        WorkSummary work1 = works.get("work-1");        
+        WorkSummary work2 = works.get("work-2");
+        WorkSummary work6 = works.get("work-6");
+        WorkSummary work7 = works.get("work-7");
         
         generator.group(work1);
         generator.group(work2);
@@ -200,11 +200,11 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
     @Test
     public void groupWorks_DontGroupWorksWithoutExtIds_Test() {
         ActivitiesGroupGenerator generator = new ActivitiesGroupGenerator();
-        Map<String, Work> works = generateWorks();
+        Map<String, WorkSummary> works = generateWorks();
         
         //Group the first group
-        Work work8 = works.get("work-8");
-        Work work9 = works.get("work-9");
+        WorkSummary work8 = works.get("work-8");
+        WorkSummary work9 = works.get("work-9");
         
         generator.group(work8);
         generator.group(work9);
@@ -233,13 +233,13 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
     @Test
     public void groupWorks_MergeTwoGroups_Test() {
         ActivitiesGroupGenerator generator = new ActivitiesGroupGenerator();
-        Map<String, Work> works = generateWorks();
+        Map<String, WorkSummary> works = generateWorks();
         
         //Group the first group
-        Work work1 = works.get("work-1");
-        Work work2 = works.get("work-2");
-        Work work3 = works.get("work-3");
-        Work work4 = works.get("work-4");
+        WorkSummary work1 = works.get("work-1");
+        WorkSummary work2 = works.get("work-2");
+        WorkSummary work3 = works.get("work-3");
+        WorkSummary work4 = works.get("work-4");
         
         generator.group(work1);
         generator.group(work2);
@@ -281,14 +281,14 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
     @Test
     public void groupWorks_MergeGroupsDontAffectNotMergedGroups_Test() {
         ActivitiesGroupGenerator generator = new ActivitiesGroupGenerator();
-        Map<String, Work> works = generateWorks();
+        Map<String, WorkSummary> works = generateWorks();
         
         //Group the first group
-        Work work1 = works.get("work-1");
-        Work work3 = works.get("work-3");
-        Work work4 = works.get("work-4");
-        Work work5 = works.get("work-5");
-        Work work8 = works.get("work-8");
+        WorkSummary work1 = works.get("work-1");
+        WorkSummary work3 = works.get("work-3");
+        WorkSummary work4 = works.get("work-4");
+        WorkSummary work5 = works.get("work-5");
+        WorkSummary work8 = works.get("work-8");
         
         //Respect order
         generator.group(work1);
@@ -318,11 +318,11 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
     @Test
     public void groupWorks_DontGroupByISSN_Test() {
         ActivitiesGroupGenerator generator = new ActivitiesGroupGenerator();
-        Map<String, Work> works = generateWorks();
+        Map<String, WorkSummary> works = generateWorks();
         
         //Group the first group
-        Work work10 = works.get("work-10");
-        Work work11 = works.get("work-11");
+        WorkSummary work10 = works.get("work-10");
+        WorkSummary work11 = works.get("work-11");
         
         generator.group(work10);
         generator.group(work11);
@@ -349,13 +349,13 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
     @Test
     public void groupWorks_DontGroupByISSN_2_Test() {
         ActivitiesGroupGenerator generator = new ActivitiesGroupGenerator();
-        Map<String, Work> works = generateWorks();
+        Map<String, WorkSummary> works = generateWorks();
         
         //Group the first group
-        Work work10 = works.get("work-10");
-        Work work11 = works.get("work-11");
-        Work work12 = works.get("work-12");
-        Work work13 = works.get("work-13");
+        WorkSummary work10 = works.get("work-10");
+        WorkSummary work11 = works.get("work-11");
+        WorkSummary work12 = works.get("work-12");
+        WorkSummary work13 = works.get("work-13");
         
         generator.group(work10);
         generator.group(work11);
@@ -395,15 +395,15 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
      * work-12 -> DOI(1), ISSN(1)
      * work-13 -> DOI(1), ISSN(4)
      * */
-    private Map<String, Work> generateWorks() {
-        Map<String, Work> result = new HashMap<String, Work>();
+    private Map<String, WorkSummary> generateWorks() {
+        Map<String, WorkSummary> result = new HashMap<String, WorkSummary>();
         for(int i = 1; i < 14; i++) {
             String title = "work-" + i;
-            Work work = new Work();
+            WorkSummary work = new WorkSummary();
             //Set title
             WorkTitle workTitle = new WorkTitle();
             workTitle.setTitle(new Title(title));
-            work.setWorkTitle(workTitle);            
+            work.setTitle(workTitle);            
             WorkExternalIdentifiers wei = new WorkExternalIdentifiers();
             switch (i) {
             case 1:
@@ -553,7 +553,7 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
                 wei.getExternalIdentifier().add(e31);
                 break;
             }
-            work.setWorkExternalIdentifiers(wei);
+            work.setExternalIdentifiers(wei);
             result.put(title, work);
         }
         return result;

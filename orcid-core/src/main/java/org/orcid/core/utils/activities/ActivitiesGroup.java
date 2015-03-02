@@ -19,21 +19,18 @@ package org.orcid.core.utils.activities;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
-import org.orcid.jaxb.model.record.ActivityWithExternalIdentifiers;
 import org.orcid.jaxb.model.record.ExternalIdentifier;
 import org.orcid.jaxb.model.record.ExternalIdentifiersContainer;
-
+import org.orcid.jaxb.model.record.GroupableActivity;
 
 public class ActivitiesGroup {
     private Set<ExternalIdentifier> externalIdentifiers;
-    private SortedSet<ActivityWithExternalIdentifiers> activities;         
+    private Set<GroupableActivity> activities;         
     
-    public ActivitiesGroup(ActivityWithExternalIdentifiers activity) {        
+    public ActivitiesGroup(GroupableActivity activity) {        
         externalIdentifiers = new HashSet<ExternalIdentifier>();        
-        activities = new TreeSet<ActivityWithExternalIdentifiers>();
+        activities = new HashSet<GroupableActivity>();
         
         if(activity != null) {
             ExternalIdentifiersContainer container = activity.getExternalIdentifiers();
@@ -56,13 +53,13 @@ public class ActivitiesGroup {
         return externalIdentifiers;
     }
 
-    public Set<ActivityWithExternalIdentifiers> getActivities() {
+    public Set<GroupableActivity> getActivities() {
         if(activities == null)
-            activities = new TreeSet<ActivityWithExternalIdentifiers>();
+            activities = new HashSet<GroupableActivity>();
         return activities;
     }
 
-    public void add(ActivityWithExternalIdentifiers activity) {                
+    public void add(GroupableActivity activity) {                
                 //Add new external identifiers
         ExternalIdentifiersContainer container = activity.getExternalIdentifiers();
         if(container != null) {
@@ -79,7 +76,7 @@ public class ActivitiesGroup {
         activities.add(activity);
     }
     
-    public boolean belongsToGroup(ActivityWithExternalIdentifiers activity) {
+    public boolean belongsToGroup(GroupableActivity activity) {
         //If there are no external ids
         if(externalIdentifiers == null || externalIdentifiers.isEmpty()) {
             //Check if the activity dont have ext ids
@@ -122,7 +119,7 @@ public class ActivitiesGroup {
     }
     
     public void merge(ActivitiesGroup group) {
-        Set<ActivityWithExternalIdentifiers> otherActivities = group.getActivities();
+        Set<GroupableActivity> otherActivities = group.getActivities();
         Set<ExternalIdentifier> otherExtIds = group.getExternalIdentifiers();
         
         //The incoming groups should always contain at least one ext id, we should not merge activities without ext ids
@@ -138,7 +135,7 @@ public class ActivitiesGroup {
         }
         
         //Merge activities
-        for(ActivityWithExternalIdentifiers activity : otherActivities) {
+        for(GroupableActivity activity : otherActivities) {
             //We assume the activity is not already there, anyway it is a set
             activities.add(activity);
         }

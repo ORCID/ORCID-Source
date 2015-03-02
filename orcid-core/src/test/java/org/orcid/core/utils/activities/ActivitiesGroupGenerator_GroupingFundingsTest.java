@@ -25,23 +25,23 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
-import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.FundingExternalIdentifier;
 import org.orcid.jaxb.model.record.FundingExternalIdentifierType;
 import org.orcid.jaxb.model.record.FundingExternalIdentifiers;
 import org.orcid.jaxb.model.record.FundingTitle;
 import org.orcid.jaxb.model.record.Title;
+import org.orcid.jaxb.model.record.summary.FundingSummary;
 
 public class ActivitiesGroupGenerator_GroupingFundingsTest extends ActivitiesGroupGeneratorBaseTest {
 
     @Test
     public void groupFundings_4GroupsOf1Funding_Test() {
         ActivitiesGroupGenerator generator = new ActivitiesGroupGenerator();
-        Map<String, Funding> fundings = generateFundings();
+        Map<String, FundingSummary> fundings = generateFundings();
         
         //Group the first group
         //funding-2 -> C, D, E
-        Funding funding2 = fundings.get("funding-2");
+        FundingSummary funding2 = fundings.get("funding-2");
         generator.group(funding2);
         //There should be one group, and the ext ids should be A, B and C
         List<ActivitiesGroup> groups = generator.getGroups();
@@ -58,7 +58,7 @@ public class ActivitiesGroupGenerator_GroupingFundingsTest extends ActivitiesGro
         
         //Add another funding to the groups
         //funding-5 -> M, N, O
-        Funding funding5 = fundings.get("funding-5");
+        FundingSummary funding5 = fundings.get("funding-5");
         generator.group(funding5);
         //There should be two groups, one for each funding
         groups = generator.getGroups();
@@ -75,7 +75,7 @@ public class ActivitiesGroupGenerator_GroupingFundingsTest extends ActivitiesGro
         
         //Add another funding to the groups
         //funding-7 -> 1, 2, B
-        Funding funding7 = fundings.get("funding-7");
+        FundingSummary funding7 = fundings.get("funding-7");
         generator.group(funding7);
         groups = generator.getGroups();
         assertNotNull(groups);
@@ -93,7 +93,7 @@ public class ActivitiesGroupGenerator_GroupingFundingsTest extends ActivitiesGro
         
         //Add another funding to the groups
         //funding-8 -> No external identifiers  
-        Funding funding8 = fundings.get("funding-8");
+        FundingSummary funding8 = fundings.get("funding-8");
         generator.group(funding8);        
         groups = generator.getGroups();
         assertNotNull(groups);
@@ -112,7 +112,7 @@ public class ActivitiesGroupGenerator_GroupingFundingsTest extends ActivitiesGro
                 assertEquals(3, groups.get(i).getExternalIdentifiers().size());
             }                                                        
         }
-        assertTrue("Funding without ext ids was not found", funding8found);
+        assertTrue("FundingSummary without ext ids was not found", funding8found);
         //Check funding in groups
         checkActivityIsOnGroups(funding8, groups);        
     }
@@ -123,10 +123,10 @@ public class ActivitiesGroupGenerator_GroupingFundingsTest extends ActivitiesGro
     @Test
     public void groupFundings_1GroupsOf2Fundings_Test() {
         ActivitiesGroupGenerator generator = new ActivitiesGroupGenerator();
-        Map<String, Funding> fundings = generateFundings();
+        Map<String, FundingSummary> fundings = generateFundings();
         
-        Funding funding1 = fundings.get("funding-1");        
-        Funding funding2 = fundings.get("funding-2");
+        FundingSummary funding1 = fundings.get("funding-1");        
+        FundingSummary funding2 = fundings.get("funding-2");
         
         generator.group(funding1);
         generator.group(funding2);
@@ -151,12 +151,12 @@ public class ActivitiesGroupGenerator_GroupingFundingsTest extends ActivitiesGro
     @Test
     public void groupFundings_2GroupsOf2Fundings_Test() {
         ActivitiesGroupGenerator generator = new ActivitiesGroupGenerator();
-        Map<String, Funding> fundings = generateFundings();
+        Map<String, FundingSummary> fundings = generateFundings();
         
-        Funding funding1 = fundings.get("funding-1");        
-        Funding funding2 = fundings.get("funding-2");
-        Funding funding5 = fundings.get("funding-5");
-        Funding funding6 = fundings.get("funding-6");
+        FundingSummary funding1 = fundings.get("funding-1");        
+        FundingSummary funding2 = fundings.get("funding-2");
+        FundingSummary funding5 = fundings.get("funding-5");
+        FundingSummary funding6 = fundings.get("funding-6");
         
         generator.group(funding1);
         generator.group(funding2);
@@ -195,11 +195,11 @@ public class ActivitiesGroupGenerator_GroupingFundingsTest extends ActivitiesGro
     @Test
     public void groupFundings_DontGroupFundingsWithoutExtIds_Test() {
         ActivitiesGroupGenerator generator = new ActivitiesGroupGenerator();
-        Map<String, Funding> fundings = generateFundings();
+        Map<String, FundingSummary> fundings = generateFundings();
         
         //Group the first group
-        Funding funding8 = fundings.get("funding-8");
-        Funding funding9 = fundings.get("funding-9");
+        FundingSummary funding8 = fundings.get("funding-8");
+        FundingSummary funding9 = fundings.get("funding-9");
         
         generator.group(funding8);
         generator.group(funding9);
@@ -228,13 +228,13 @@ public class ActivitiesGroupGenerator_GroupingFundingsTest extends ActivitiesGro
     @Test
     public void groupFundings_MergeTwoGroups_Test() {
         ActivitiesGroupGenerator generator = new ActivitiesGroupGenerator();
-        Map<String, Funding> fundings = generateFundings();
+        Map<String, FundingSummary> fundings = generateFundings();
         
         //Group the first group
-        Funding funding1 = fundings.get("funding-1");
-        Funding funding2 = fundings.get("funding-2");
-        Funding funding3 = fundings.get("funding-3");
-        Funding funding4 = fundings.get("funding-4");
+        FundingSummary funding1 = fundings.get("funding-1");
+        FundingSummary funding2 = fundings.get("funding-2");
+        FundingSummary funding3 = fundings.get("funding-3");
+        FundingSummary funding4 = fundings.get("funding-4");
         
         generator.group(funding1);
         generator.group(funding2);
@@ -276,14 +276,14 @@ public class ActivitiesGroupGenerator_GroupingFundingsTest extends ActivitiesGro
     @Test
     public void groupFundings_MergeGroupsDontAffectNotMergedGroups_Test() {
         ActivitiesGroupGenerator generator = new ActivitiesGroupGenerator();
-        Map<String, Funding> fundings = generateFundings();
+        Map<String, FundingSummary> fundings = generateFundings();
         
         //Group the first group
-        Funding funding1 = fundings.get("funding-1");
-        Funding funding3 = fundings.get("funding-3");
-        Funding funding4 = fundings.get("funding-4");
-        Funding funding5 = fundings.get("funding-5");
-        Funding funding8 = fundings.get("funding-8");
+        FundingSummary funding1 = fundings.get("funding-1");
+        FundingSummary funding3 = fundings.get("funding-3");
+        FundingSummary funding4 = fundings.get("funding-4");
+        FundingSummary funding5 = fundings.get("funding-5");
+        FundingSummary funding8 = fundings.get("funding-8");
         
         //Respect order
         generator.group(funding1);
@@ -318,11 +318,11 @@ public class ActivitiesGroupGenerator_GroupingFundingsTest extends ActivitiesGro
      * funding-8 -> No external identifiers
      * funding-9 -> No external identifiers  
      * */
-    private Map<String, Funding> generateFundings() {
-        Map<String, Funding> result = new HashMap<String, Funding>();
+    private Map<String, FundingSummary> generateFundings() {
+        Map<String, FundingSummary> result = new HashMap<String, FundingSummary>();
         for(int i = 1; i < 10; i++) {
             String name = "funding-" + i;
-            Funding funding = new Funding();
+            FundingSummary funding = new FundingSummary();
             FundingTitle title = new FundingTitle();
             title.setTitle(new Title(name));
             funding.setTitle(title);

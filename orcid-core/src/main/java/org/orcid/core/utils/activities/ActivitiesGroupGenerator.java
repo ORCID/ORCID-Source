@@ -19,14 +19,14 @@ package org.orcid.core.utils.activities;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.record.ActivityWithExternalIdentifiers;
+import org.orcid.jaxb.model.record.GroupableActivity;
 
 public class ActivitiesGroupGenerator {    
 
     private List<ActivitiesGroup> groups = new ArrayList<ActivitiesGroup>();
     
     
-    public void group(ActivityWithExternalIdentifiers activity) {
+    public void group(GroupableActivity activity) {
         if(groups.isEmpty()) {
             //If it is the first activity, create a new group for it
             ActivitiesGroup newGroup = new ActivitiesGroup(activity);
