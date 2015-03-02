@@ -21,6 +21,7 @@
             
     <changeSet id="SET-DISPLAY-INDEX-TO-0" author="Angel Montenegro">
         <sql>update profile_work set display_index = 0 where display_index is NULL;</sql>
+        <sql>update profile_funding set display_index = 0 where display_index is NULL;</sql>
     </changeSet>
     
 </databaseChangeLog>
