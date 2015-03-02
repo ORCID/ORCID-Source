@@ -20,7 +20,7 @@ import java.util.ArrayList;
 
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.Work;
-import org.orcid.jaxb.model.record.WorkSummary;
+import org.orcid.jaxb.model.record.summary.WorkSummary;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 
 public interface ProfileWorkManager {

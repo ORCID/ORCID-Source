@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.orcid.jaxb.model.record.Funding;
-import org.orcid.jaxb.model.record.FundingSummary;
+import org.orcid.jaxb.model.record.summary.FundingSummary;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 
 /**
@@ -35,6 +35,8 @@ public interface JpaJaxbFundingAdapter {
     Funding toFunding(ProfileFundingEntity profileFundingEntity);
 
     List<Funding> toFunding(Collection<ProfileFundingEntity> fundingEntities);
+    
+    List<FundingSummary> toFundingSummary(Collection<ProfileFundingEntity> fundingEntities);
     
     FundingSummary toFundingSummary(ProfileFundingEntity profileFundingEntity);
 

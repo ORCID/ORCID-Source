@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.jaxb.model.record;
+package org.orcid.jaxb.model.record.summary;
 
 import java.io.Serializable;
 
@@ -25,21 +25,34 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.orcid.jaxb.model.record.Activity;
+import org.orcid.jaxb.model.record.GroupableActivity;
+import org.orcid.jaxb.model.record.CreatedDate;
+import org.orcid.jaxb.model.record.FundingExternalIdentifiers;
+import org.orcid.jaxb.model.record.FundingTitle;
+import org.orcid.jaxb.model.record.FundingType;
+import org.orcid.jaxb.model.record.FuzzyDate;
+import org.orcid.jaxb.model.record.LastModifiedDate;
+import org.orcid.jaxb.model.record.Source;
+import org.orcid.jaxb.model.record.Visibility;
+import org.orcid.jaxb.model.record.VisibilityType;
+
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "departmentName", "roleTitle", "startDate", "endDate", "source", "createdDate", "lastModifiedDate" })
-@XmlRootElement(name = "employmentSummary", namespace = "http://www.orcid.org/ns/education")
-public class EmploymentSummary implements VisibilityType, Activity, Serializable {
-            
-    private static final long serialVersionUID = 6988028860521476955L;
-    @XmlElement(namespace = "http://www.orcid.org/ns/education")
-    protected String departmentName;
-    @XmlElement(namespace = "http://www.orcid.org/ns/education")
-    protected String roleTitle;
+@XmlType(propOrder = { "type", "title", "externalIdentifiers", "startDate", "endDate", "source", "lastModifiedDate", "createdDate" })
+@XmlRootElement(name = "fundingSummary", namespace = "http://www.orcid.org/ns/funding")
+public class FundingSummary implements VisibilityType, Activity, GroupableActivity, Serializable {
+
+    private static final long serialVersionUID = 7489792970949538708L;
+    @XmlElement(namespace = "http://www.orcid.org/ns/funding", required = true)
+    protected FundingType type;
+    @XmlElement(required = true, namespace = "http://www.orcid.org/ns/funding")
+    protected FundingTitle title;
+    @XmlElement(namespace = "http://www.orcid.org/ns/funding")
+    protected FundingExternalIdentifiers externalIdentifiers;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected FuzzyDate startDate;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected FuzzyDate endDate;
-    
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Source source;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
@@ -51,21 +64,31 @@ public class EmploymentSummary implements VisibilityType, Activity, Serializable
     protected String putCode;
     @XmlAttribute
     protected Visibility visibility;
-          
-    public String getDepartmentName() {
-        return departmentName;
+    @XmlAttribute(name = "display-index")
+    protected String displayIndex;
+
+    public FundingType getType() {
+        return type;
     }
 
-    public void setDepartmentName(String departmentName) {
-        this.departmentName = departmentName;
+    public void setType(FundingType type) {
+        this.type = type;
     }
 
-    public String getRoleTitle() {
-        return roleTitle;
+    public FundingTitle getTitle() {
+        return title;
     }
 
-    public void setRoleTitle(String roleTitle) {
-        this.roleTitle = roleTitle;
+    public void setTitle(FundingTitle title) {
+        this.title = title;
+    }
+
+    public FundingExternalIdentifiers getExternalIdentifiers() {
+        return externalIdentifiers;
+    }
+
+    public void setExternalIdentifiers(FundingExternalIdentifiers externalIdentifiers) {
+        this.externalIdentifiers = externalIdentifiers;
     }
 
     public FuzzyDate getStartDate() {
@@ -123,13 +146,13 @@ public class EmploymentSummary implements VisibilityType, Activity, Serializable
     public void setVisibility(Visibility visibility) {
         this.visibility = visibility;
     }
-    
-    @Override
-    public String retrieveSourcePath() {
-        if (source == null) {
-            return null;
-        }
-        return source.retrieveSourcePath();
+
+    public String getDisplayIndex() {
+        return displayIndex;
+    }
+
+    public void setDisplayIndex(String displayIndex) {
+        this.displayIndex = displayIndex;
     }
 
     @Override
@@ -137,13 +160,14 @@ public class EmploymentSummary implements VisibilityType, Activity, Serializable
         final int prime = 31;
         int result = 1;
         result = prime * result + ((createdDate == null) ? 0 : createdDate.hashCode());
-        result = prime * result + ((departmentName == null) ? 0 : departmentName.hashCode());
         result = prime * result + ((endDate == null) ? 0 : endDate.hashCode());
+        result = prime * result + ((externalIdentifiers == null) ? 0 : externalIdentifiers.hashCode());
         result = prime * result + ((lastModifiedDate == null) ? 0 : lastModifiedDate.hashCode());
         result = prime * result + ((putCode == null) ? 0 : putCode.hashCode());
-        result = prime * result + ((roleTitle == null) ? 0 : roleTitle.hashCode());
         result = prime * result + ((source == null) ? 0 : source.hashCode());
         result = prime * result + ((startDate == null) ? 0 : startDate.hashCode());
+        result = prime * result + ((title == null) ? 0 : title.hashCode());
+        result = prime * result + ((type == null) ? 0 : type.hashCode());
         result = prime * result + ((visibility == null) ? 0 : visibility.hashCode());
         return result;
     }
@@ -156,21 +180,21 @@ public class EmploymentSummary implements VisibilityType, Activity, Serializable
             return false;
         if (getClass() != obj.getClass())
             return false;
-        EmploymentSummary other = (EmploymentSummary) obj;
+        FundingSummary other = (FundingSummary) obj;
         if (createdDate == null) {
             if (other.createdDate != null)
                 return false;
         } else if (!createdDate.equals(other.createdDate))
             return false;
-        if (departmentName == null) {
-            if (other.departmentName != null)
-                return false;
-        } else if (!departmentName.equals(other.departmentName))
-            return false;
         if (endDate == null) {
             if (other.endDate != null)
                 return false;
         } else if (!endDate.equals(other.endDate))
+            return false;
+        if (externalIdentifiers == null) {
+            if (other.externalIdentifiers != null)
+                return false;
+        } else if (!externalIdentifiers.equals(other.externalIdentifiers))
             return false;
         if (lastModifiedDate == null) {
             if (other.lastModifiedDate != null)
@@ -182,11 +206,6 @@ public class EmploymentSummary implements VisibilityType, Activity, Serializable
                 return false;
         } else if (!putCode.equals(other.putCode))
             return false;
-        if (roleTitle == null) {
-            if (other.roleTitle != null)
-                return false;
-        } else if (!roleTitle.equals(other.roleTitle))
-            return false;
         if (source == null) {
             if (other.source != null)
                 return false;
@@ -197,8 +216,45 @@ public class EmploymentSummary implements VisibilityType, Activity, Serializable
                 return false;
         } else if (!startDate.equals(other.startDate))
             return false;
+        if (title == null) {
+            if (other.title != null)
+                return false;
+        } else if (!title.equals(other.title))
+            return false;
+        if (type != other.type)
+            return false;
         if (visibility != other.visibility)
             return false;
         return true;
     }
+
+    @Override
+    public String retrieveSourcePath() {
+        if (source == null) {
+            return null;
+        }
+        return source.retrieveSourcePath();
+    }
+    
+    @Override
+    public int compareTo(GroupableActivity activity) {
+        Long index = Long.valueOf(this.getDisplayIndex() == null ? "0" : this.getDisplayIndex());
+        Long otherIndex = Long.valueOf(activity.getDisplayIndex() == null ? "0" : activity.getDisplayIndex());
+        if (index == null) {
+            if (otherIndex == null) {
+                return 0;
+            } else {
+                return -1;
+            }
+        } else {
+            if (otherIndex == null) {
+                return 1;
+            } else if (index instanceof Comparable) {
+                //Return opossite, since higger index goes first
+                return  index.compareTo(otherIndex) * -1;
+            } else {
+                return 0;
+            }
+        }
+    }    
 }

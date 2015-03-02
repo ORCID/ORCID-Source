@@ -37,17 +37,17 @@ import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record.ActivitiesSummary;
 import org.orcid.jaxb.model.record.Education;
-import org.orcid.jaxb.model.record.EducationSummary;
 import org.orcid.jaxb.model.record.Employment;
-import org.orcid.jaxb.model.record.EmploymentSummary;
 import org.orcid.jaxb.model.record.Funding;
-import org.orcid.jaxb.model.record.FundingSummary;
 import org.orcid.jaxb.model.record.Title;
 import org.orcid.jaxb.model.record.Work;
-import org.orcid.jaxb.model.record.WorkSummary;
 import org.orcid.jaxb.model.record.WorkTitle;
+import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary.EducationSummary;
+import org.orcid.jaxb.model.record.summary.EmploymentSummary;
+import org.orcid.jaxb.model.record.summary.FundingSummary;
+import org.orcid.jaxb.model.record.summary.WorkSummary;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.WebhookDao;
 import org.springframework.stereotype.Component;
@@ -109,17 +109,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
     public Response viewActivities(String orcid) {
-        profileEntityManager.findByOrcid(orcid);
-
-        // hard coding for now for testing
-        ActivitiesSummary as = new ActivitiesSummary();
-        Work w = new Work();
-        WorkTitle wt = new WorkTitle();
-        wt.setTitle(new Title("Test"));
-        w.setWorkTitle(wt);
-        List<Work> works = new ArrayList<Work>();
-        works.add(w);
-        as.setWorks(works);
+        ActivitiesSummary as = profileEntityManager.getActivitiesSummary(orcid);        
         return Response.ok(as).build();
     }
 

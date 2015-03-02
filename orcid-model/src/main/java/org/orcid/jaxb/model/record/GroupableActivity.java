@@ -16,23 +16,8 @@
  */
 package org.orcid.jaxb.model.record;
 
-/**
- * 
- * @author Will Simpson
- * 
- */
-public interface Activity extends VisibilityType {
-
-    String retrieveSourcePath();
-
-    String getPutCode();
-    
-    CreatedDate getCreatedDate();
-    
-    void setCreatedDate(CreatedDate value);
-    
-    LastModifiedDate getLastModifiedDate();
-    
-    void setLastModifiedDate(LastModifiedDate value);
-        
+public interface GroupableActivity {
+    ExternalIdentifiersContainer getExternalIdentifiers();
+    String getDisplayIndex();
+    int compareTo(GroupableActivity activity);
 }

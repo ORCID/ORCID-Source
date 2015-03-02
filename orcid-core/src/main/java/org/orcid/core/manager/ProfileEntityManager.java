@@ -23,6 +23,7 @@ import org.orcid.jaxb.model.clientgroup.GroupType;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
+import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 
 /**
@@ -66,4 +67,6 @@ public interface ProfileEntityManager {
     public boolean unlockProfile(String orcid);
     
     public boolean isLocked(String orcid);
+    
+    ActivitiesSummary getActivitiesSummary(String orcid);
 }

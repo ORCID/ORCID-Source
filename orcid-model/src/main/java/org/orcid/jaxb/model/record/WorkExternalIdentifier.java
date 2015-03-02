@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
 import java.io.Serializable;
 
 /**
@@ -40,7 +41,7 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "workExternalIdentifierType", "workExternalIdentifierId" })
 @XmlRootElement(name = "workExternalIdentifier")
-public class WorkExternalIdentifier implements Serializable {
+public class WorkExternalIdentifier implements ExternalIdentifier, Serializable {
 
     /**
      * 
@@ -51,6 +52,10 @@ public class WorkExternalIdentifier implements Serializable {
     @XmlElement(name = "external-identifier-id", namespace = "http://www.orcid.org/ns/work", required = true)
     protected WorkExternalIdentifierId workExternalIdentifierId;
 
+    public WorkExternalIdentifier() {
+        
+    }
+    
     /**
      * Gets the value of the workExternalIdentifierType property.
      * 
@@ -126,4 +131,29 @@ public class WorkExternalIdentifier implements Serializable {
         result = 31 * result + (workExternalIdentifierId != null ? workExternalIdentifierId.hashCode() : 0);
         return result;
     }
+    
+    @Override
+    public String toString() {
+        String result = "";
+        if(workExternalIdentifierType != null)
+            result += workExternalIdentifierType.toString() + "(";
+        if(workExternalIdentifierId != null)
+            result += workExternalIdentifierId.getContent();
+        if(workExternalIdentifierType != null)
+            result += ")";        
+        return result;
+    }
+    
+    @Override
+    public boolean passGroupingValidation() {
+        //Dont groups works where the external id is empty
+        if(workExternalIdentifierType == null && (workExternalIdentifierId == null || workExternalIdentifierId.getContent() == null || workExternalIdentifierId.getContent().isEmpty()))
+            return false;
+        
+        //Dont work works by ISSN identifier
+        if(WorkExternalIdentifierType.ISSN.equals(workExternalIdentifierType))
+            return false;
+        
+        return true;
+    }    
 }

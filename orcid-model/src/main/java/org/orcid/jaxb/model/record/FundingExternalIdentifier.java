@@ -45,7 +45,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "type", "value", "url" })
 @XmlRootElement(name = "externalIdentifier", namespace = "http://www.orcid.org/ns/funding")
-public class FundingExternalIdentifier implements Serializable {
+public class FundingExternalIdentifier implements ExternalIdentifier, Serializable {
 	private static final long serialVersionUID = 1L;	
 	@XmlElement(name="external-identifier-type", namespace = "http://www.orcid.org/ns/funding")
 	protected FundingExternalIdentifierType type;
@@ -94,17 +94,18 @@ public class FundingExternalIdentifier implements Serializable {
 			if (other.type != null)
 				return false;
 		} else if (!type.equals(other.type))
-			return false;
-		if (url == null) {
-			if (other.url != null)
-				return false;
-		} else if (!url.equals(other.url))
-			return false;
+			return false;		
 		if (value == null) {
 			if (other.value != null)
 				return false;
 		} else if (!value.equals(other.value))
 			return false;
+		//url is ignored, since, for groupings it is not needed
 		return true;
-	}		
+	}
+	
+	@Override
+	public boolean passGroupingValidation() {
+	    return true;
+	}
 }

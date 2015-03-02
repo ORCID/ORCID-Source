@@ -23,7 +23,7 @@ import ma.glasnost.orika.MapperFacade;
 
 import org.orcid.core.adapter.JpaJaxbEmploymentAdapter;
 import org.orcid.jaxb.model.record.Employment;
-import org.orcid.jaxb.model.record.EmploymentSummary;
+import org.orcid.jaxb.model.record.summary.EmploymentSummary;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 
 /**
@@ -67,6 +67,12 @@ public class JpaJaxbEmploymentAdapterImpl implements JpaJaxbEmploymentAdapter {
         return mapperFacade.mapAsList(entities, Employment.class);
     }
 
+    @Override
+    public List<EmploymentSummary> toEmploymentSummary(Collection<OrgAffiliationRelationEntity> entities) {
+        if(entities == null)
+            return null;
+        return mapperFacade.mapAsList(entities, EmploymentSummary.class);
+    }
     
     @Override
     public OrgAffiliationRelationEntity toOrgAffiliationRelationEntity(Employment employment, OrgAffiliationRelationEntity existing) {

@@ -112,7 +112,7 @@ public class FundingExternalIdentifier implements Serializable {
             recordPojo.setType(type);
         }
 
-        if (this.getUrl() != null) {
+        if (this.getUrl() != null && !PojoUtil.isEmpty(this.getUrl().getValue())) {
             org.orcid.jaxb.model.record.Url url = new org.orcid.jaxb.model.record.Url(this.getUrl().getValue());
             recordPojo.setUrl(url);
         }
