@@ -5682,6 +5682,7 @@ ul.oauth-scopes li{
     white-space: pre-wrap;
 }
 
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 
@@ -5858,7 +5859,7 @@ ul.oauth-scopes li{
 		margin: 0;
 		padding: 0;
 		float: left;
-		line-height: 11px;
+		line-height: 21px;
 		background: #fff;
 		height: auto;
 		width: 100%;
@@ -6844,6 +6845,18 @@ ul.oauth-scopes li{
 	
 	.mobile-menu-active{
 		background: #939598;
+	}
+	
+	.more:after{
+		content: ' (+)';
+	}
+	
+	.less:after{
+		content: ' (-)';
+	}
+	
+	.header .navigation>.menu>li>.menu>li>.menu{
+		padding-top: 10px;
 	}
 	
 	

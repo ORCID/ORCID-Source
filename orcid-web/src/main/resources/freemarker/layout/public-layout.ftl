@@ -187,7 +187,7 @@
 
 							<li class="first leaf"><a
 								href="${aboutUri}/organizations/funders" class="russian-fix" ng-click="handleMobileMenuOption($event); toggleSecondaryMenu('funders')"><@orcid.msg
-									'public-layout.funders'/></a> <!-- Updated according Drupal website structure -->
+									'public-layout.funders'/><span class="more" ng-class="{'less':secondaryMenuVisible['funders'] == true}"></span></a> <!-- Updated according Drupal website structure -->
 								<ul class="menu" ng-show="secondaryMenuVisible['funders'] == true">
 									<li class="first leaf"><a
 										href="${aboutUri}/organizations/funders/learnmore">Learn
@@ -201,7 +201,7 @@
 
 							<li class="leaf"><a
 								href="${aboutUri}/organizations/institutions" ng-click="handleMobileMenuOption($event); toggleSecondaryMenu('institutions')">
-									<@orcid.msg 'public-layout.research_organizations'/></a> <!-- Updated according Drupal website structure -->
+									<@orcid.msg 'public-layout.research_organizations'/><span class="more" ng-class="{'less':secondaryMenuVisible['institutions'] == true}"></span></a> <!-- Updated according Drupal website structure -->
 								<ul class="menu" ng-show="secondaryMenuVisible['institutions'] == true">
 									<li class="first leaf"><a
 										href="${aboutUri}/organizations/institutions/learnmore">Learn
@@ -217,7 +217,7 @@
 								</ul></li>
 							<li class="leaf"><a
 								href="${aboutUri}/organizations/publishers" ng-click="handleMobileMenuOption($event); toggleSecondaryMenu('publishers')"> <@orcid.msg
-									'public-layout.publishers'/></a> <!-- Updated according Drupal website structure -->
+									'public-layout.publishers'/><span class="more" ng-class="{'less':secondaryMenuVisible['publishers'] == true}"></span></a> <!-- Updated according Drupal website structure -->
 								<ul class="menu" ng-show="secondaryMenuVisible['publishers'] == true">
 									<li class="first leaf"><a
 										href="${aboutUri}/organizations/publishers/learnmore">Learn
@@ -230,7 +230,7 @@
 								</ul></li>
 							<li class="leaf"><a
 								href="${aboutUri}/organizations/associations" ng-click="handleMobileMenuOption($event); toggleSecondaryMenu('associations')"><@orcid.msg
-									'public-layout.associations'/></a> <!-- Updated according Drupal website structure -->
+									'public-layout.associations'/><span class="more" ng-class="{'less':secondaryMenuVisible['associations'] == true}"></span></a> <!-- Updated according Drupal website structure -->
 								<ul class="menu" ng-show="secondaryMenuVisible['associations'] == true">
 									<li class="first leaf"><a
 										href="/organizations/associations/learnmore">Learn more</a></li>
@@ -245,7 +245,7 @@
 								</ul></li>
 							<li class="last leaf"><a
 								href="${aboutUri}/organizations/integrators" ng-click="handleMobileMenuOption($event); toggleSecondaryMenu('integrators')"><@orcid.msg
-									'public-layout.integrators'/></a> <!-- Updated according Drupal website structure -->
+									'public-layout.integrators'/><span class="more" ng-class="{'less':secondaryMenuVisible['integrators‰'] == true}"></span></a> <!-- Updated according Drupal website structure -->
 								<ul class="menu" ng-show="secondaryMenuVisible['integrators'] == true">
 									<li class="first leaf"><a
 										href="${aboutUri}/organizations/integrators/API">The ORCID
@@ -277,7 +277,7 @@
 							<!-- What is ORCID? -->
 							<li class="first expanded"><a
 								href="${aboutUri}/about/what-is-orcid" ng-click="handleMobileMenuOption($event); toggleSecondaryMenu('whatIsOrcid')"><@orcid.msg
-									'public-layout.what_is_orcid'/></a>
+									'public-layout.what_is_orcid'/><span class="more" ng-class="{'less':secondaryMenuVisible['whatIsOrcid'] == true}"></span></a>
 								<ul class="menu" ng-show="secondaryMenuVisible['whatIsOrcid'] == true">
 									<li class="first leaf"><a
 										href="${aboutUri}/about/what-is-orcid/mission-statement"
@@ -319,7 +319,6 @@
 									<li class="first leaf"><a
 										href="${aboutUri}/about/community" title=""><@orcid.msg
 											'public-layout.working_groups'/></a></li>
-									<!--  <li class="leaf"><a href="${aboutUri}/about/community/participants" title=""><@orcid.msg 'public-layout.participants'/></a></li>  -->
 									<li class="leaf"><a
 										href="${aboutUri}/about/community/sponsors" title=""><@orcid.msg
 											'public-layout.sponsors'/></a></li>
