@@ -141,7 +141,7 @@ public class ProfileWorkDaoImpl extends GenericDaoImpl<ProfileWorkEntity, Profil
     @Transactional
     public boolean addProfileWork(String orcid, long workId, Visibility visibility, String sourceOrcid) {
         Query query = entityManager
-                .createNativeQuery("INSERT INTO profile_work(orcid, work_id, date_created, last_modified, added_to_profile_date, visibility, source_id) values(:orcid, :workId, now(), now(), now(), :visibility, :sourceId)");
+                .createNativeQuery("INSERT INTO profile_work(orcid, work_id, date_created, last_modified, added_to_profile_date, visibility, source_id, display_index) values(:orcid, :workId, now(), now(), now(), :visibility, :sourceId, 0)");
         query.setParameter("orcid", orcid);
         query.setParameter("workId", workId);
         query.setParameter("visibility", visibility.name());
