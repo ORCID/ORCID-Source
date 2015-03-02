@@ -34,7 +34,7 @@ public class FundingGroup implements Serializable {
     private static final long serialVersionUID = 1L;
     @XmlElement(name = "identifiers", namespace = "http://www.orcid.org/ns/activities")
     private Identifiers identifiers;
-    @XmlElement(name = "summary", namespace = "http://www.orcid.org/ns/work")
+    @XmlElement(name = "summary", namespace = "http://www.orcid.org/ns/funding")
     private List<FundingSummary> fundingSummary;
 
     public Identifiers getIdentifiers() {

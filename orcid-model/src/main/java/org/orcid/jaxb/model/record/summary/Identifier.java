@@ -96,7 +96,10 @@ public class Identifier {
 
     public static Identifier fromFundingExternalIdentifier(FundingExternalIdentifier fundingExtId) {
         Identifier result = new Identifier();
-        result.setExternalIdentifierId(fundingExtId.getValue());
+        if(fundingExtId.getValue() != null && !fundingExtId.getValue().isEmpty())
+            result.setExternalIdentifierId(fundingExtId.getValue());
+        else if(fundingExtId.getUrl() != null)
+            result.setExternalIdentifierId(fundingExtId.getUrl().getValue());
         result.setExternalIdentifierType(fundingExtId.getType().name());
         return result;
     }
