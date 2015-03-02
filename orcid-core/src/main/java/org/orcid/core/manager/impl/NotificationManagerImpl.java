@@ -169,6 +169,32 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     @Override
+    public void sendWelcomeEmail(OrcidProfile orcidProfile, String email) {
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+        String subject = getSubject("email.subject.register.thanks", orcidProfile);
+        String emailName = deriveEmailFriendlyName(orcidProfile);
+        String verificationUrl = createVerificationUrl(email, orcidUrlManager.getBaseUrl());
+        String orcidId = orcidProfile.getOrcidIdentifier().getPath();
+        String baseUri = orcidUrlManager.getBaseUrl();
+        
+        templateParams.put("subject", subject);
+        templateParams.put("emailName", emailName);
+        templateParams.put("verificationUrl", verificationUrl);
+        templateParams.put("orcidId", orcidId);
+        templateParams.put("baseUri", baseUri);
+
+        addMessageParams(templateParams, orcidProfile);
+        
+        // Generate body from template
+        String body = templateManager.processTemplate("welcome_email.ftl", templateParams);
+        // Generate html from template
+        String html = templateManager.processTemplate("welcome_email_html.ftl", templateParams);
+        
+        mailGunManager.sendEmail(SUPPORT_VERIFY_ORCID_ORG, email, subject, body, html);
+    }
+    
+    
+    @Override
     public void sendOrcidDeactivateEmail(OrcidProfile orcidToDeactivate) {
         // Create verification url
 
