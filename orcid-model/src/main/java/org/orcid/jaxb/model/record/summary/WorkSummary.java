@@ -59,7 +59,7 @@ import org.orcid.jaxb.model.record.WorkType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "putCode", "title", "type", "publicationDate", "externalIdentifiers", "source", "createdDate", "lastModifiedDate" })
 @XmlRootElement(name = "work-summary", namespace = "http://www.orcid.org/ns/work")
-public class WorkSummary implements VisibilityType, Activity, ActivityWithExternalIdentifiers, Serializable {
+public class WorkSummary implements VisibilityType, Activity, ActivityWithExternalIdentifiers, Serializable, Comparable<WorkSummary> {
 
     private static final long serialVersionUID = 1L;
     @XmlElement(namespace = "http://www.orcid.org/ns/work")
@@ -71,16 +71,19 @@ public class WorkSummary implements VisibilityType, Activity, ActivityWithExtern
     @XmlElement(name = "external-identifiers", namespace = "http://www.orcid.org/ns/work")
     protected WorkExternalIdentifiers externalIdentifiers;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
-    protected Source source;
-    @XmlAttribute(name = "put-code")
-    protected String putCode;
-    @XmlAttribute
-    protected Visibility visibility;
+    protected Source source;    
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected LastModifiedDate lastModifiedDate;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected CreatedDate createdDate;
 
+    @XmlAttribute(name = "put-code")
+    protected String putCode;
+    @XmlAttribute
+    protected Visibility visibility;
+    @XmlAttribute(name = "display-index")
+    protected String displayIndex;
+    
     public WorkTitle getTitle() {
         return title;
     }
@@ -155,6 +158,14 @@ public class WorkSummary implements VisibilityType, Activity, ActivityWithExtern
 
     public static long getSerialversionuid() {
         return serialVersionUID;
+    }
+    
+    public String getDisplayIndex() {
+        return displayIndex;
+    }
+
+    public void setDisplayIndex(String displayIndex) {
+        this.displayIndex = displayIndex;
     }
 
     @Override
@@ -237,6 +248,31 @@ public class WorkSummary implements VisibilityType, Activity, ActivityWithExtern
             return source.retrieveSourcePath();
         }
         return null;
+    }
+
+    /**
+     * ORCID way of comparing two works:
+     * Compare the display index
+     * */
+    @Override
+    public int compareTo(WorkSummary o) {
+        Long index = Long.valueOf(this.getDisplayIndex() == null ? "0" : this.getDisplayIndex());
+        Long otherIndex = Long.valueOf(o.getDisplayIndex() == null ? "0" : o.getDisplayIndex());
+        if (index == null) {
+            if (otherIndex == null) {
+                return 0;
+            } else {
+                return -1;
+            }
+        } else {
+            if (otherIndex == null) {
+                return 1;
+            } else if (index instanceof Comparable) {
+                return  index.compareTo(otherIndex) * -1;
+            } else {
+                return 0;
+            }
+        }
     }
 
 }

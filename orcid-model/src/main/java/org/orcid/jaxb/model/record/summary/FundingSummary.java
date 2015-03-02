@@ -40,8 +40,8 @@ import org.orcid.jaxb.model.record.VisibilityType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "type", "title", "externalIdentifiers", "startDate", "endDate", "source", "lastModifiedDate", "createdDate" })
 @XmlRootElement(name = "fundingSummary", namespace = "http://www.orcid.org/ns/funding")
-public class FundingSummary implements VisibilityType, Activity, ActivityWithExternalIdentifiers, Serializable {
-    
+public class FundingSummary implements VisibilityType, Activity, ActivityWithExternalIdentifiers, Serializable, Comparable<FundingSummary> {
+
     private static final long serialVersionUID = 7489792970949538708L;
     @XmlElement(namespace = "http://www.orcid.org/ns/funding", required = true)
     protected FundingType type;
@@ -64,6 +64,8 @@ public class FundingSummary implements VisibilityType, Activity, ActivityWithExt
     protected String putCode;
     @XmlAttribute
     protected Visibility visibility;
+    @XmlAttribute(name = "display-index")
+    protected String displayIndex;
 
     public FundingType getType() {
         return type;
@@ -145,6 +147,14 @@ public class FundingSummary implements VisibilityType, Activity, ActivityWithExt
         this.visibility = visibility;
     }
 
+    public String getDisplayIndex() {
+        return displayIndex;
+    }
+
+    public void setDisplayIndex(String displayIndex) {
+        this.displayIndex = displayIndex;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -224,5 +234,30 @@ public class FundingSummary implements VisibilityType, Activity, ActivityWithExt
             return null;
         }
         return source.retrieveSourcePath();
-    }        
+    }
+    
+    /**
+     * ORCID way of comparing two works:
+     * Compare the display index
+     * */
+    @Override
+    public int compareTo(FundingSummary o) {
+        Long index = Long.valueOf(this.getDisplayIndex() == null ? "0" : this.getDisplayIndex());
+        Long otherIndex = Long.valueOf(o.getDisplayIndex() == null ? "0" : o.getDisplayIndex());
+        if (index == null) {
+            if (otherIndex == null) {
+                return 0;
+            } else {
+                return -1;
+            }
+        } else {
+            if (otherIndex == null) {
+                return 1;
+            } else if (index instanceof Comparable) {
+                return  index.compareTo(otherIndex) * -1;
+            } else {
+                return 0;
+            }
+        }
+    }
 }

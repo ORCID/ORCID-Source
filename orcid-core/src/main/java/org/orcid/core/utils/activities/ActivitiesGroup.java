@@ -19,6 +19,8 @@ package org.orcid.core.utils.activities;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.orcid.jaxb.model.record.ActivityWithExternalIdentifiers;
 import org.orcid.jaxb.model.record.ExternalIdentifier;
@@ -27,11 +29,11 @@ import org.orcid.jaxb.model.record.ExternalIdentifiersContainer;
 
 public class ActivitiesGroup {
     private Set<ExternalIdentifier> externalIdentifiers;
-    private Set<ActivityWithExternalIdentifiers> activities;         
+    private SortedSet<ActivityWithExternalIdentifiers> activities;         
     
     public ActivitiesGroup(ActivityWithExternalIdentifiers activity) {        
         externalIdentifiers = new HashSet<ExternalIdentifier>();        
-        activities = new HashSet<ActivityWithExternalIdentifiers>();
+        activities = new TreeSet<ActivityWithExternalIdentifiers>();
         
         if(activity != null) {
             ExternalIdentifiersContainer container = activity.getExternalIdentifiers();
@@ -56,7 +58,7 @@ public class ActivitiesGroup {
 
     public Set<ActivityWithExternalIdentifiers> getActivities() {
         if(activities == null)
-            activities = new HashSet<ActivityWithExternalIdentifiers>();
+            activities = new TreeSet<ActivityWithExternalIdentifiers>();
         return activities;
     }
 

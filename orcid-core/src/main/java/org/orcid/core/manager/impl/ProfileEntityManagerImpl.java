@@ -17,6 +17,7 @@
 package org.orcid.core.manager.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -325,6 +326,9 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
                 WorkSummary workSummary = (WorkSummary) activity;
                 workGroup.getWorkSummary().add(workSummary);
             }
+            
+            //Sort the activities
+            
             
             result.getWorkGroup().add(workGroup);
         }

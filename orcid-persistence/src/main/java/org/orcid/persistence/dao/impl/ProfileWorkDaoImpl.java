@@ -141,7 +141,7 @@ public class ProfileWorkDaoImpl extends GenericDaoImpl<ProfileWorkEntity, Profil
     @Transactional
     public boolean addProfileWork(String orcid, long workId, Visibility visibility, String sourceOrcid) {
         Query query = entityManager
-                .createNativeQuery("INSERT INTO profile_work(orcid, work_id, date_created, last_modified, added_to_profile_date, visibility, source_id, display_index) values(:orcid, :workId, now(), now(), now(), :visibility, :sourceId, 0)");
+                .createNativeQuery("INSERT INTO profile_work(orcid, work_id, date_created, last_modified, added_to_profile_date, visibility, source_id) values(:orcid, :workId, now(), now(), now(), :visibility, :sourceId)");
         query.setParameter("orcid", orcid);
         query.setParameter("workId", workId);
         query.setParameter("visibility", visibility.name());
@@ -174,7 +174,7 @@ public class ProfileWorkDaoImpl extends GenericDaoImpl<ProfileWorkEntity, Profil
     @Override
     @Transactional
     public boolean updateToMaxDisplay(String orcid, String workId) {
-        Query query = entityManager.createNativeQuery("UPDATE profile_work SET display_index = (select max(display_index) + 1 from profile_work where orcid=:orcid and work_id != :workId ) WHERE work_id = :workId");
+        Query query = entityManager.createNativeQuery("UPDATE profile_work SET display_index = (select coalesce(MAX(display_index) + 1, 0) from profile_work where orcid=:orcid and work_id != :workId ) WHERE work_id = :workId");
         query.setParameter("orcid", orcid);
         query.setParameter("workId", Long.valueOf(workId));
         return query.executeUpdate() > 0 ? true : false;
