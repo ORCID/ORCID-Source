@@ -19,33 +19,30 @@
 <#import "email_macros.ftl" as emailMacros />
 <@emailMacros.msg "email.common.dear" /> ${emailName}<@emailMacros.msg "email.common.dear.comma" />
 
-Thank you for registering for an ORCID identifier. Please click the link below to confirm your registration and verify your email address.
-
+<@emailMacros.msg "email.welcome.thank_you" />
 
 ${verificationUrl}?lang=${locale}
 
+<@emailMacros.msg "email.welcome.click_link" />
 
-If you can't click the link, copy and paste it into your browser's address bar.
+<@emailMacros.msg "email.welcome.your_id.1" /> ${orcidId}<@emailMacros.msg "email.welcome.your_id.2" /> ${baseUri}/${orcidId}
 
-Your ORCID iD is ${orcidId}, and the link to your public record is ${baseUri}/${orcidId}
+<@emailMacros.msg "email.welcome.next_steps" />
 
-Next steps:
+<@emailMacros.msg "email.welcome.next_steps.1" />
 
-1. Add more information to your ORCID Record
+<@emailMacros.msg "email.welcome.next_steps.1.description.1.1" /> ${baseUri}/my-orcid <@emailMacros.msg "email.welcome.next_steps.1.description.1.2" />
+<@emailMacros.msg "email.welcome.next_steps.1.description.2" />
 
-Access your ORCID record at ${baseUri}/my-orcid and add additional information to your record.
-Funders, publishers, universities and others use the information contained in an ORCID Record to help decrease the record keeping they ask from you. Increase the amount of information you can share in this way by adding other names you are known by, professional information, funding items you have received and works you have created to your Record.
+<@emailMacros.msg "email.welcome.next_steps.1.description.tips" />
 
-For tips on adding information to your ORCID record see: 
-http://support.orcid.org/knowledgebase/articles/460004
+<@emailMacros.msg "email.welcome.next_steps.2" />
 
-2. Continue to use your ORCID iD
+<@emailMacros.msg "email.welcome.next_steps.2.description" />
 
-May systems ask for your ORCID iD to create a link between you and your research outputs. Continue to use your ORCID iD whenever it is asked for to get credit for your work and decrease future record keeping.
+<@emailMacros.msg "email.welcome.need_help" />
 
-Need Help?
-
-If you have any questions or need help, contact the ORCID support team visit http://support.orcid.org.
+<@emailMacros.msg "email.welcome.need_help.description" />
 
 <@emailMacros.msg "email.common.kind_regards" />
 ${baseUri}

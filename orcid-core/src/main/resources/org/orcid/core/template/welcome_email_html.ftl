@@ -26,42 +26,42 @@
 		<div style="padding: 20px; padding-top: 0px;">
 			<img src="https://orcid.org/sites/all/themes/orcid/img/orcid-logo.png" alt="ORCID.org"/>
 		    <hr />
-		    <span style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666; font-weight: bold;">
+		    <span style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
 				<@emailMacros.msg "email.common.dear" /> ${emailName}<@emailMacros.msg "email.common.dear.comma" />
 			</span>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-				Thank you for registering for an ORCID identifier. Please click the link below to confirm your registration and verify your email address.<br /><br />
+				<@emailMacros.msg "email.welcome.thank_you" />
+				<br /><br />
 				<a href="${verificationUrl}?lang=${locale}" target="_blank">${verificationUrl}?lang=${locale}</a>
 			</p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-				If you can't click the link, copy and paste it into your browser's address bar.<br /><br />
-				<strong>Your ORCID iD is ${orcidId}, and the link to your public record is <a href="${baseUri}/${orcidId}" target="_blank">${baseUri}/${orcidId}</a></strong>
-			</p>
-		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-				<strong>Next steps:</strong>
-			</p>
-		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-				<strong>1. Add more information to your ORCID Record</strong>
-			</p>
-		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-				Access your ORCID record at ${baseUri}/my-orcid and add additional information to your record.
-				Funders, publishers, universities and others use the information contained in an ORCID Record to help decrease the record keeping they ask from you. Increase the amount of information you can share in this way by adding other names you are known by, professional information, funding items you have received and works you have created to your Record.
+				<@emailMacros.msg "email.welcome.click_link" />
 				<br /><br />
-				For tips on adding information to your ORCID record see:
-				<br /> 
-				<a href="http://support.orcid.org/knowledgebase/articles/460004" target="_blank">http://support.orcid.org/knowledgebase/articles/460004</a>
+				<@emailMacros.msg "email.welcome.your_id.1" /> ${orcidId}<@emailMacros.msg "email.welcome.your_id.2" /> <a href="${baseUri}/${orcidId}" target="_blank">${baseUri}/${orcidId}</a>
 			</p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-				<strong>2. Continue to use your ORCID iD</strong>
+				<@emailMacros.msg "email.welcome.next_steps" />
 			</p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-				Many systems ask for your ORCID iD to create a link between you and your research outputs. Continue to use your ORCID iD whenever it is asked for to get credit for your work and decrease future record keeping.
+				<strong><@emailMacros.msg "email.welcome.next_steps.1" /></strong>
 			</p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-				<strong>Need Help?</strong>
+				<@emailMacros.msg "email.welcome.next_steps.1.description.1.1" /> ${baseUri}/my-orcid <@emailMacros.msg "email.welcome.next_steps.1.description.1.2" />
+				<@emailMacros.msg "email.welcome.next_steps.1.description.2" />
+				<br /><br />
+				<@emailMacros.msg "email.welcome.next_steps.1.description.tips" />				
 			</p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-				If you have any questions or need help, contact the ORCID support team visit <a href="http://support.orcid.org" target="_blank">http://support.orcid.org</a>.
+				<strong><@emailMacros.msg "email.welcome.next_steps.2" /></strong>
+			</p>
+		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
+				<@emailMacros.msg "email.welcome.next_steps.2.description" />
+			</p>
+		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
+				<strong><@emailMacros.msg "email.welcome.need_help" /></strong>
+			</p>
+		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
+				<@emailMacros.msg "email.welcome.need_help.description" />
 			</p>
 			<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666; white-space: pre;">
 <@emailMacros.msg "email.common.kind_regards" />
