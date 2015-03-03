@@ -63,6 +63,7 @@ import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
 import org.slf4j.Logger;
@@ -139,7 +140,7 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Resource
     private LocaleManager localeManager;
-
+    
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationManagerImpl.class);
 
     public boolean isApiRecordCreationEmailEnabled() {
@@ -182,7 +183,26 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("verificationUrl", verificationUrl);
         templateParams.put("orcidId", orcidId);
         templateParams.put("baseUri", baseUri);
-
+        
+        SourceEntity source = sourceManager.retrieveSourceEntity();
+        if(source != null) {
+            String sourceId = source.getSourceId();
+            String sourceName = source.getSourceName();
+            //If the source is not the user itself
+            if(sourceId != null && ! sourceId.equals(orcidId)) {
+                if(!PojoUtil.isEmpty(sourceName)) {
+                    String paramValue = " " + localeManager.resolveMessage("common.through") + " " + sourceName + ".";
+                    templateParams.put("source_name_if_exists", paramValue);
+                } else {
+                    templateParams.put("source_name_if_exists", ".");
+                }            
+            } else {
+                templateParams.put("source_name_if_exists", ".");
+            }
+        } else {
+            templateParams.put("source_name_if_exists", ".");
+        }
+        
         addMessageParams(templateParams, orcidProfile);
         
         // Generate body from template

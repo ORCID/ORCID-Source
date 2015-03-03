@@ -19,13 +19,12 @@
 <#import "email_macros.ftl" as emailMacros />
 <@emailMacros.msg "email.common.dear" /> ${emailName}<@emailMacros.msg "email.common.dear.comma" />
 
-<@emailMacros.msg "email.welcome.thank_you" />
+<@emailMacros.msg "email.welcome.thank_you.1" /> ${source_name_if_exists} <@emailMacros.msg "email.welcome.thank_you.2" />
 
 ${verificationUrl}?lang=${locale}
 
-<@emailMacros.msg "email.welcome.click_link" />
-
-<@emailMacros.msg "email.welcome.your_id.1" /> ${orcidId}<@emailMacros.msg "email.welcome.your_id.2" /> ${baseUri}/${orcidId}
+* <@emailMacros.msg "email.welcome.your_id.id" /> ${orcidId}
+* <@emailMacros.msg "email.welcome.your_id.link" /> ${baseUri}/${orcidId}
 
 <@emailMacros.msg "email.welcome.next_steps" />
 
