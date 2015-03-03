@@ -52,12 +52,12 @@ import org.orcid.jaxb.model.notification.NotificationType;
 @SqlResultSetMappings({ @SqlResultSetMapping(name = "distinctOrcidMapping", columns = { @ColumnResult(name = "orcid") }) })
 // @formatter:off
 @NamedNativeQueries({ @NamedNativeQuery(name = NotificationEntity.FIND_ORCIDS_WITH_NOTIFICATIONS_TO_SEND, query = "SELECT DISTINCT n.orcid orcid FROM notification n"
-        + " JOIN profile p ON p.orcid = n.orcid"
+        + " JOIN profile p ON p.orcid = n.orcid AND p.claimed = true"
         + " LEFT JOIN (SELECT orcid, MAX(sent_date) AS max_sent_date FROM notification GROUP BY orcid) l ON l.orcid = n.orcid"
         + " WHERE n.sent_date IS NULL"
         + " AND"
         + " (unix_timestamp(:effectiveNow) > (unix_timestamp(l.max_sent_date) + (p.send_email_frequency_days * 24 * 60 * 60))"
-        + " OR (l.max_sent_date IS NULL AND unix_timestamp(:effectiveNow) > (unix_timestamp(p.completed_date) + (p.send_email_frequency_days * 24 * 60 * 60))))", resultSetMapping = "distinctOrcidMapping") })
+        + " OR (l.max_sent_date IS NULL AND unix_timestamp(:effectiveNow) > (unix_timestamp(coalesce(p.completed_date, p.date_created)) + (p.send_email_frequency_days * 24 * 60 * 60))))", resultSetMapping = "distinctOrcidMapping") })
 // @formatter:on
 abstract public class NotificationEntity extends BaseEntity<Long> implements ProfileAware {
 
