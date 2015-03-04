@@ -18,6 +18,7 @@ package org.orcid.core.manager.impl;
 
 import java.security.AccessControlException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -34,6 +35,15 @@ import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.Visibility;
 import org.orcid.jaxb.model.record.Work;
+import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary.EducationSummary;
+import org.orcid.jaxb.model.record.summary.EmploymentSummary;
+import org.orcid.jaxb.model.record.summary.FundingGroup;
+import org.orcid.jaxb.model.record.summary.FundingSummary;
+import org.orcid.jaxb.model.record.summary.Fundings;
+import org.orcid.jaxb.model.record.summary.WorkGroup;
+import org.orcid.jaxb.model.record.summary.WorkSummary;
+import org.orcid.jaxb.model.record.summary.Works;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -51,6 +61,41 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     @Resource
     private SourceManager sourceManager;
 
+    @Override
+    public void checkVisibility(ActivitiesSummary activities) {
+        List<EducationSummary> educations = activities.getEducations();        
+        for(EducationSummary education : educations) {
+            checkVisibility(education);
+        }
+                
+        List<EmploymentSummary> employments = activities.getEmployments();
+            for(EmploymentSummary employment : employments) {
+                checkVisibility(employment);
+            }
+        
+        Fundings fundings = activities.getFundings();
+        if(fundings != null) {
+            List<FundingGroup> fundingGroups = fundings.getFundingGroups();
+            for(FundingGroup group : fundingGroups) {
+                List<FundingSummary> summaries = group.getFundingSummary();
+                for(FundingSummary summary : summaries) {
+                    checkVisibility(summary);
+                }
+            }
+        }
+        
+        Works works = activities.getWorks();
+        if(works != null) {
+            List<WorkGroup> workGroups = works.getWorkGroup();
+            for(WorkGroup group : workGroups) {
+                List<WorkSummary> summaries = group.getWorkSummary();
+                for(WorkSummary summary : summaries) {
+                    checkVisibility(summary);
+                }
+            }
+        }
+    }
+    
     @Override
     public void checkVisibility(Activity activity) {
         OAuth2Authentication oAuth2Authentication = getOAuth2Authentication();

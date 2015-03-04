@@ -20,8 +20,6 @@ import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
@@ -40,9 +38,7 @@ import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
-import org.orcid.jaxb.model.record.Title;
 import org.orcid.jaxb.model.record.Work;
-import org.orcid.jaxb.model.record.WorkTitle;
 import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary.EducationSummary;
 import org.orcid.jaxb.model.record.summary.EmploymentSummary;
@@ -109,7 +105,8 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
     public Response viewActivities(String orcid) {
-        ActivitiesSummary as = profileEntityManager.getActivitiesSummary(orcid);        
+        ActivitiesSummary as = profileEntityManager.getActivitiesSummary(orcid);    
+        orcidSecurityManager.checkVisibility(as);
         return Response.ok(as).build();
     }
 
@@ -227,12 +224,14 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
     public Response viewEmployment(String orcid, String putCode) {
         Employment e = affiliationsManager.getEmploymentAffiliation(orcid, putCode);
+        orcidSecurityManager.checkVisibility(e);
         return Response.ok(e).build();
     }
     
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
     public Response viewEmploymentSummary(String orcid, String putCode) {
         EmploymentSummary es = affiliationsManager.getEmploymentSummary(orcid, putCode);
+        orcidSecurityManager.checkVisibility(es);
         return Response.ok(es).build();
     }
     
