@@ -35,7 +35,7 @@ import org.orcid.jaxb.model.record.VisibilityType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "departmentName", "roleTitle", "startDate", "endDate", "source", "createdDate", "lastModifiedDate" })
-@XmlRootElement(name = "educationSummary", namespace = "http://www.orcid.org/ns/education")
+@XmlRootElement(name = "education-summary", namespace = "http://www.orcid.org/ns/education")
 public class EducationSummary implements VisibilityType, Activity, Serializable {
             
     private static final long serialVersionUID = 6988028860521476955L;

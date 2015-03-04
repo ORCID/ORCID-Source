@@ -32,11 +32,13 @@ import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.record.ActivitiesContainer;
 import org.orcid.jaxb.model.record.Activity;
+import org.orcid.jaxb.model.record.RecordUtil;
 
 /**
  * <p>
@@ -51,13 +53,15 @@ import org.orcid.jaxb.model.record.Activity;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "educations", "employments", "works", "fundings" })
-@XmlRootElement(name = "activitiesSummary", namespace = "http://www.orcid.org/ns/activities")
+@XmlRootElement(name = "activities-summary", namespace = "http://www.orcid.org/ns/activities")
 public class ActivitiesSummary implements Serializable, ActivitiesContainer {
 
     private static final long serialVersionUID = 1L;
-    @XmlElement(name = "educations", namespace = "http://www.orcid.org/ns/activities")
+    @XmlElementWrapper(name = "educations", namespace = "http://www.orcid.org/ns/activities")
+    @XmlElement(name = "education-summary", namespace = "http://www.orcid.org/ns/education")
     protected List<EducationSummary> educations;
-    @XmlElement(name = "employments", namespace = "http://www.orcid.org/ns/activities")
+    @XmlElementWrapper(name = "employments", namespace = "http://www.orcid.org/ns/activities")
+    @XmlElement(name = "employment-summary", namespace = "http://www.orcid.org/ns/employment")
     protected List<EmploymentSummary> employments;
     @XmlElement(name = "works", namespace = "http://www.orcid.org/ns/activities")
     protected Works works;
@@ -81,7 +85,7 @@ public class ActivitiesSummary implements Serializable, ActivitiesContainer {
             works = new Works();
         return works;
     }
-    
+
     public void setWorks(Works works) {
         this.works = works;
     }
@@ -95,7 +99,7 @@ public class ActivitiesSummary implements Serializable, ActivitiesContainer {
     public void setFundings(Fundings fundings) {
         this.fundings = fundings;
     }
-    
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -140,6 +144,11 @@ public class ActivitiesSummary implements Serializable, ActivitiesContainer {
     }
 
     @Override
+    public String toString() {
+        return RecordUtil.convertToString(this);
+    }
+
+    @Override
     public Map<String, ? extends Activity> retrieveActivitiesAsMap() {
         Map<String, Activity> activities = new HashMap<String, Activity>();
         // Set works
@@ -155,15 +164,15 @@ public class ActivitiesSummary implements Serializable, ActivitiesContainer {
             }
         }
         // Set funding
-        if(fundings != null) {
+        if (fundings != null) {
             List<FundingGroup> groups = fundings.getFundingGroups();
             for (FundingGroup funding : groups) {
-                if(funding != null) {
+                if (funding != null) {
                     List<FundingSummary> fundings = funding.getFundingSummary();
-                    for(FundingSummary summary : fundings) {
+                    for (FundingSummary summary : fundings) {
                         activities.put(summary.getPutCode(), summary);
                     }
-                }                
+                }
             }
         }
         // Set education
