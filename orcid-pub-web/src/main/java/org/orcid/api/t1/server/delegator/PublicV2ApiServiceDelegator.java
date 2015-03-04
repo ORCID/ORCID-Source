@@ -19,6 +19,9 @@ package org.orcid.api.t1.server.delegator;
 import javax.ws.rs.core.Response;
 
 public interface PublicV2ApiServiceDelegator {
+    
+    Response viewStatusText();
+    
     Response viewActivities(String orcid);
     
     Response viewWork(String orcid, String putCode);

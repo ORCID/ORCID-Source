@@ -39,12 +39,21 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-public class PublicV2ApiServicesImplBase {
+import org.orcid.api.t1.server.delegator.PublicV2ApiServiceDelegator;
+
+public class PublicV2ApiServiceImplBase {
+    
+    private PublicV2ApiServiceDelegator serviceDelegator;
+    
+    public void setServiceDelegator(PublicV2ApiServiceDelegator serviceDelegator) {
+        this.serviceDelegator = serviceDelegator;
+    }
+    
     @GET
     @Produces(value = { MediaType.TEXT_PLAIN })
     @Path(STATUS_PATH)
     public Response viewStatusText() {
-        return null;
+        return serviceDelegator.viewStatusText();
     }
     
     @GET

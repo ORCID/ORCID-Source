@@ -16,6 +16,8 @@
  */
 package org.orcid.api.t1.server.delegator.impl;
 
+import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
+
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
@@ -67,6 +69,11 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
     
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
+    
+    @Override
+    public Response viewStatusText() {
+        return Response.ok(STATUS_OK_MESSAGE).build();
+    }
     
     @Override
     public Response viewActivities(String orcid) {
