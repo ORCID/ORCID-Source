@@ -437,6 +437,11 @@ the software.
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>io.takari.junit</groupId>
+            <artifactId>takari-cpsuite</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
             <scope>test</scope>
@@ -909,6 +914,11 @@ the software.
                 <artifactId>orika-core</artifactId>
                 <version>1.4.5</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.jena</groupId>
+                <artifactId>jena-core</artifactId>
+                <version>2.10.1</version>
+            </dependency>
 
             <!-- Test -->
             <dependency>
@@ -960,9 +970,10 @@ the software.
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>org.apache.jena</groupId>
-                <artifactId>jena-core</artifactId>
-                <version>2.10.1</version>
+                <groupId>io.takari.junit</groupId>
+                <artifactId>takari-cpsuite</artifactId>
+                <version>1.2.7</version>
+                <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
