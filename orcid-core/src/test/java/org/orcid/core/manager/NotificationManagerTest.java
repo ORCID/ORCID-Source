@@ -100,6 +100,13 @@ public class NotificationManagerTest extends BaseTest {
     }
 
     @Test
+    public void testSendWelcomeEmail() throws JAXBException, IOException, URISyntaxException {
+        OrcidMessage orcidMessage = (OrcidMessage) unmarshaller.unmarshal(getClass().getResourceAsStream(ORCID_INTERNAL_FULL_XML));
+        OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
+        notificationManager.sendWelcomeEmail(orcidProfile, orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
+    }
+    
+    @Test
     public void testSendVerificationEmail() throws JAXBException, IOException, URISyntaxException {
         OrcidMessage orcidMessage = (OrcidMessage) unmarshaller.unmarshal(getClass().getResourceAsStream(ORCID_INTERNAL_FULL_XML));
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();

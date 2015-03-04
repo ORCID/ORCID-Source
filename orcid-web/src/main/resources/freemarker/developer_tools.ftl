@@ -99,7 +99,6 @@
 							<p class="developer-tools-instructions"></p>
 						</div>
 					</div>
-					
 					<!-- App details -->
 					<div class="details" ng-show="userCredentials.clientSecret && userCredentials.clientSecret.value && !editing" ng-cloak>
 					
@@ -126,7 +125,7 @@
 								<p ng-bind-html="descriptionToDisplay"></p>														
 							</div>							
 						</div>
-						<div class="slidebox">
+						<div class="slidebox" ng-show="expanded == true">
 							<div class="row">
 								<!-- SLIDE BOX  -->
 								<!-- Redirect URIS -->
@@ -178,7 +177,7 @@
 									    		</div>
 									    		<div class="row">
 									    			<div class="col-md-12 col-sm-12 col-xs-12">
-									    				<textarea class="input-xlarge-full selectable authorizeURL" ng-model="authorizeURL" readonly="readonly"></textarea>
+									    				<textarea class="input-xlarge-full authorizeURL" ng-model="authorizeURL" readonly="readonly" ng-focus="inputTextAreaSelectAll($event)"></textarea>
 									    			</div>
 									    		</div>								
 											</div>
@@ -191,7 +190,7 @@
 											<div class="col-md-9 col-sm-9 col-xs-12">
 													{{tokenURL}}<br />
 											    	<@orcid.msg 'manage.developer_tools.view.example.curl' /><a href="<@orcid.msg 'manage.developer_tools.view.example.curl.url' />" target="curlWiki"><@orcid.msg 'manage.developer_tools.view.example.curl.text' /></a> 
-											    	<textarea class="input-xlarge-full selectable authorizeURL" ng-model="sampleAuthCurl" readonly="readonly"></textarea>							
+											    	<textarea class="input-xlarge-full authorizeURL" ng-model="sampleAuthCurl" readonly="readonly" ng-focus="inputTextAreaSelectAll($event)"></textarea>							
 											</div>
 										</div>
 										
@@ -358,7 +357,7 @@
 								</ul>					
 							</div>	
 						</div>
-						<div class="slidebox">
+						<div class="slidebox" ng-show="expanded == true">
 							<div class="row">
 								<div class="col-md-12 col-sm-12 col-xs-12">
 									<div class="add-options">								
@@ -410,9 +409,9 @@
 					</div>										
 					<div class="row slide" ng-show="userCredentials.clientSecret && userCredentials.clientSecret.value" ng-cloak>
 						<div class="col-md-12 col-sm-12 col-xs-12">
-							<div class="tab-container">
-								<a href="#" class="tab collapsed" data-tab="collapsed"><span class="glyphicon glyphicon-chevron-down"></span><@orcid.msg 'common.details.show_details' /></a>
-								<a href="#" class="tab expanded"><span class="glyphicon glyphicon-chevron-up"></span><@orcid.msg 'common.details.hide_details' /></a>
+							<div class="tab-container" ng-class="{'expanded' : expanded == true}">
+								<a class="tab" ng-click="expand()" ng-show="expanded == false"><span class="glyphicon glyphicon-chevron-down"></span><@orcid.msg 'common.details.show_details' /></a>
+								<a class="tab" ng-click="collapse()" ng-show="expanded == true"><span class="glyphicon glyphicon-chevron-up"></span><@orcid.msg 'common.details.hide_details' /></a>
 							</div>
 						</div>			
 					</div>

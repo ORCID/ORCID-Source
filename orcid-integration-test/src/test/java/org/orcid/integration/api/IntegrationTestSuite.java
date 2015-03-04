@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.integration.blackbox;
+package org.orcid.integration.api;
 
 import org.junit.extensions.cpsuite.ClasspathSuite;
 import org.junit.extensions.cpsuite.ClasspathSuite.ClassnameFilters;
@@ -26,7 +26,7 @@ import org.junit.runner.RunWith;
  *
  */
 @RunWith(ClasspathSuite.class)
-@ClassnameFilters({".*\\.blackbox\\..*"})
-public class BlackBoxTestSuite {
+@ClassnameFilters({".*\\.integration\\..*", "!.*\\.blackbox\\..*"})
+public class IntegrationTestSuite {
 
 }

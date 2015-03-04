@@ -28,6 +28,8 @@ public interface NotificationManager {
 
     // void sendRegistrationEmail(RegistrationEntity registration, URI baseUri);
 
+    void sendWelcomeEmail(OrcidProfile orcidProfile, String email);
+    
     void sendVerificationEmail(OrcidProfile orcidProfile, String email);
 
     public void sendVerificationReminderEmail(OrcidProfile orcidProfile, String email);
