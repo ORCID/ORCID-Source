@@ -284,7 +284,7 @@
                     <div class="row source-line" ng-hide="editSources[group.groupId] == true">                        
                         
                         <div class="col-md-7 col-sm-7 col-xs-7">
-                             <@orcid.msgUpCase 'groups.common.source'/>: {{work.sourceName}}
+                             <@orcid.msg 'groups.common.source'/>: {{work.sourceName}}
                         </div>
                         
                         <div class="col-md-3 col-sm-3 col-xs-3">

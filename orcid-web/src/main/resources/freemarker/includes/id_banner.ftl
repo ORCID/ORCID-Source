@@ -84,7 +84,7 @@
 	       		<span id="orcid-id" class="orcid-id shortURI">${baseDomainRmProtocall}/${(profile.orcidIdentifier.path)!}</span>
 			</div>
 			<div class="orcid-id-options">
-				<a href="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" class="gray-button">View Public Profile</a>
+				<a href="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" class="gray-button"><@orcid.msg 'id_banner.viewpublicprofile'/>>
 			</div>
 		</div>
 	</div>
