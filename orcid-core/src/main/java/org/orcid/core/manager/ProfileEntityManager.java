@@ -69,4 +69,6 @@ public interface ProfileEntityManager {
     public boolean isLocked(String orcid);
     
     ActivitiesSummary getActivitiesSummary(String orcid);
+    
+    ActivitiesSummary getPublicActivitiesSummary(String orcid);
 }

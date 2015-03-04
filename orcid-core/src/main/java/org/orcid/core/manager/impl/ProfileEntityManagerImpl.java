@@ -36,9 +36,9 @@ import org.orcid.jaxb.model.clientgroup.GroupType;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
-import org.orcid.jaxb.model.record.GroupableActivity;
 import org.orcid.jaxb.model.record.ExternalIdentifier;
 import org.orcid.jaxb.model.record.FundingExternalIdentifier;
+import org.orcid.jaxb.model.record.GroupableActivity;
 import org.orcid.jaxb.model.record.WorkExternalIdentifier;
 import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary.EducationSummary;
@@ -277,37 +277,57 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     @Override
     @Transactional
     public ActivitiesSummary getActivitiesSummary(String orcid) {
+        return getActivitiesSummary(orcid, false);
+    }
+    
+    
+    @Override
+    @Transactional
+    public ActivitiesSummary getPublicActivitiesSummary(String orcid) {
+        return getActivitiesSummary(orcid, true);
+    }
+    
+    public ActivitiesSummary getActivitiesSummary(String orcid, boolean justPublic) {
         ActivitiesSummary activities = new ActivitiesSummary();
         ProfileEntity profileEntity = this.findByOrcid(orcid);
         //Set Affiliations
         Set<OrgAffiliationRelationEntity> affiliations = profileEntity.getOrgAffiliationRelations();
         for(OrgAffiliationRelationEntity affiliation : affiliations) {
-            if(org.orcid.jaxb.model.message.AffiliationType.EDUCATION == affiliation.getAffiliationType()) {
-                EducationSummary education = jpaJaxbEducationAdapter.toEducationSummary(affiliation);
-                activities.getEducations().add(education);
+            if(justPublic && !affiliation.getVisibility().equals(org.orcid.jaxb.model.message.Visibility.PUBLIC)) {
+                //If it is just public and the affiliation is not public, ignore it
             } else {
-                EmploymentSummary employment = jpaJaxbEmploymentAdapter.toEmploymentSummary(affiliation);
-                activities.getEmployments().add(employment);
+                if(org.orcid.jaxb.model.message.AffiliationType.EDUCATION == affiliation.getAffiliationType()) {
+                    EducationSummary education = jpaJaxbEducationAdapter.toEducationSummary(affiliation);
+                    activities.getEducations().add(education);
+                } else {
+                    EmploymentSummary employment = jpaJaxbEmploymentAdapter.toEmploymentSummary(affiliation);
+                    activities.getEmployments().add(employment);
+                }
             }
         }
         //Set works
         List<WorkSummary> workSummaries = jpaJaxbWorkAdapter.toWorkSummary(profileEntity.getProfileWorks());
-        Works works = groupWorks(workSummaries);
+        Works works = groupWorks(workSummaries, justPublic);
         activities.setWorks(works);
         //Set fundings
         List<FundingSummary> fundingSummaries = jpaJaxbFundingAdapter.toFundingSummary(profileEntity.getProfileFunding());
-        Fundings fundings = groupFundings(fundingSummaries);
+        Fundings fundings = groupFundings(fundingSummaries, justPublic);
         activities.setFundings(fundings);
         
         return activities;
     }
     
-    private Works groupWorks(List<WorkSummary> works) {
+    
+    private Works groupWorks(List<WorkSummary> works, boolean justPublic) {
         ActivitiesGroupGenerator groupGenerator = new ActivitiesGroupGenerator();
         Works result = new Works();
         //Group all works
         for(WorkSummary work : works) {
-            groupGenerator.group(work);
+            if(justPublic && !work.getVisibility().equals(org.orcid.jaxb.model.record.Visibility.PUBLIC)) {
+                //If it is just public and the work is not public, just ignore it
+            } else {
+                groupGenerator.group(work);
+            }            
         }
         
         List<ActivitiesGroup> groups = groupGenerator.getGroups();
@@ -337,11 +357,15 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         return result;
     }
     
-   private Fundings groupFundings(List<FundingSummary> fundings) {
+   private Fundings groupFundings(List<FundingSummary> fundings, boolean justPublic) {
        ActivitiesGroupGenerator groupGenerator = new ActivitiesGroupGenerator();
        Fundings result = new Fundings();
        for(FundingSummary funding : fundings) {
-           groupGenerator.group(funding);
+           if(justPublic && !funding.getVisibility().equals(org.orcid.jaxb.model.record.Visibility.PUBLIC)) {
+             //If it is just public and the funding is not public, just ignore it
+           } else {
+               groupGenerator.group(funding);
+           }           
        }
        
        List<ActivitiesGroup> groups = groupGenerator.getGroups();

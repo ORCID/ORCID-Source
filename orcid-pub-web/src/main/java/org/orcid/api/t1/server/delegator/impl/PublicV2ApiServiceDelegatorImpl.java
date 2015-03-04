@@ -70,7 +70,7 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
     
     @Override
     public Response viewActivities(String orcid) {
-        ActivitiesSummary as = profileEntityManager.getActivitiesSummary(orcid);    
+        ActivitiesSummary as = profileEntityManager.getPublicActivitiesSummary(orcid);    
         orcidSecurityManager.checkVisibility(as);
         return Response.ok(as).build();
     }
