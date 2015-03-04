@@ -44,7 +44,7 @@ import java.io.Serializable;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "value" })
-@XmlRootElement(name = "lastModifiedDate")
+@XmlRootElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")
 public class LastModifiedDate implements Serializable {
 
     /**

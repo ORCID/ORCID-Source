@@ -41,7 +41,6 @@ import org.orcid.jaxb.model.record.Source;
 import org.orcid.jaxb.model.record.Visibility;
 import org.orcid.jaxb.model.record.VisibilityType;
 import org.orcid.jaxb.model.record.WorkExternalIdentifiers;
-import org.orcid.jaxb.model.record.WorkSource;
 import org.orcid.jaxb.model.record.WorkTitle;
 import org.orcid.jaxb.model.record.WorkType;
 
@@ -57,7 +56,7 @@ import org.orcid.jaxb.model.record.WorkType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "putCode", "title", "type", "publicationDate", "externalIdentifiers", "source", "createdDate", "lastModifiedDate" })
+@XmlType(propOrder = { "putCode", "createdDate", "lastModifiedDate", "source", "title", "externalIdentifiers", "type", "publicationDate" })
 @XmlRootElement(name = "work-summary", namespace = "http://www.orcid.org/ns/work")
 public class WorkSummary implements VisibilityType, Activity, GroupableActivity, Serializable {
 
@@ -72,9 +71,9 @@ public class WorkSummary implements VisibilityType, Activity, GroupableActivity,
     protected WorkExternalIdentifiers externalIdentifiers;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Source source;    
-    @XmlElement(namespace = "http://www.orcid.org/ns/common")
+    @XmlElement(name="last-modified-date", namespace = "http://www.orcid.org/ns/common")
     protected LastModifiedDate lastModifiedDate;
-    @XmlElement(namespace = "http://www.orcid.org/ns/common")
+    @XmlElement(name="created-date", namespace = "http://www.orcid.org/ns/common")
     protected CreatedDate createdDate;
 
     @XmlAttribute(name = "put-code")

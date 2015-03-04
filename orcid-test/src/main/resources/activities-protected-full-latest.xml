@@ -100,7 +100,7 @@
                     <common:subtitle></common:subtitle>
                     <common:translated-title language-code="en">common:translated-title</common:translated-title>
                 </work:title>
-                <work:external-identifiers scope="read-limited">
+                <work:external-identifiers>
                     <work:work-external-identifier>
                         <work:external-identifier-type>agr</work:external-identifier-type>
                         <work:external-identifier-id>work:external-identifier-id</work:external-identifier-id>
