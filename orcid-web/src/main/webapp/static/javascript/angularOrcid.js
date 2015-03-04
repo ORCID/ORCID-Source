@@ -1458,29 +1458,36 @@ orcidNgModule.filter('workExternalIdentifierHtml', function(){
     };
 });
 
-//We should merge this one with workExternalIdentifierHtml
+//Currently being used in Fundings only
 orcidNgModule.filter('externalIdentifierHtml', function(){
     return function(externalIdentifier, first, last, length){
+    	
         var output = '';
 
         if (externalIdentifier == null) return output;
-        var type = externalIdentifier.type.value;;
-        if (type != null) output = output + type.toUpperCase() + ": ";
-        var value = null;
+        var type = externalIdentifier.type.value;
+        
+        if (type != null) output += type.toUpperCase() + ": ";        
+        
+        var value = null;        
         if(externalIdentifier.value != null)
             value = externalIdentifier.value.value;
-        var link = null;
+        
+        var link = null;        
         if(externalIdentifier.url != null)
             link = externalIdentifier.url.value;
 
-        if (link != null && value != null)
-            output = output + "<a href='" + link + "' target='_blank'>" + value + "</a>";
-        else if(value != null)
-            output = output + " " + value;
-        else if(link != null)
-            output = output + "<a href='" + link + "' target='_blank'>" + link + "</a>";
+        if (link != null && value != null){        	
+            output += "<a href='" + link + "' target='_blank'>" + value + "</a>";
+        	
+        }else if(value != null){
+            output = output + " " + value;        
+        }else if(link != null){
+            output = om.get('funding.add.external_id.url.label.grant').toUpperCase() + ": <a href='" + link + "' target='_blank'>" + link + "</a>";
+        }
+      
         if (length > 1 && !last) output = output + ',';
-        return output;
+        	return output;
     };
 });
 
