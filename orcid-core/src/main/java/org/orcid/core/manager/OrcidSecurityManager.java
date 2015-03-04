@@ -31,6 +31,10 @@ public interface OrcidSecurityManager {
     
     void checkVisibility(ActivitiesSummary activities);
 
+    void checkHavePublicVisibility(Activity activity);
+    
+    void checkHavePublicVisibility(ActivitiesSummary activities);
+    
     void checkSource(SourceEntity existingSource);
     
 }

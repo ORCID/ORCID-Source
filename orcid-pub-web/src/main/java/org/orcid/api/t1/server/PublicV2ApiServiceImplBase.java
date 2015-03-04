@@ -60,62 +60,62 @@ public class PublicV2ApiServiceImplBase {
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(ACTIVITIES)
     public Response viewActivities(@PathParam("orcid") String orcid) {
-        return null;
+        return serviceDelegator.viewActivities(orcid);
     }
     
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(WORK + PUTCODE)
     public Response viewWork(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
-        return null;
+        return serviceDelegator.viewWork(orcid, putCode);
     }
         
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(WORK_SUMMARY + PUTCODE)
     public Response viewWorkSummary(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
-        return null;
+        return serviceDelegator.viewWorkSummary(orcid, putCode);
     }
     
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(FUNDING + PUTCODE)
     public Response viewFunding(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
-        return null;
+        return serviceDelegator.viewFunding(orcid, putCode);
     }
     
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(FUNDING_SUMMARY + PUTCODE)
     public Response viewFundingSummary(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
-        return null;
+        return serviceDelegator.viewFundingSummary(orcid, putCode);
     }
     
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(EDUCATION + PUTCODE)
     public Response viewEducation(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
-        return null;
+        return serviceDelegator.viewEducation(orcid, putCode);
     }
     
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(EDUCATION_SUMMARY + PUTCODE)
     public Response viewEducationSummary(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
-        return null;
+        return serviceDelegator.viewEducationSummary(orcid, putCode);
     }
     
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(EMPLOYMENT + PUTCODE)
     public Response viewEmployment(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
-        return null;
+        return serviceDelegator.viewEmployment(orcid, putCode);
     }
     
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(EMPLOYMENT_SUMMARY + PUTCODE)
     public Response viewEmploymentSummary(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
-        return null;
+        return serviceDelegator.viewEmploymentSummary(orcid, putCode);
     }
 }

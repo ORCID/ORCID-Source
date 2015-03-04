@@ -118,6 +118,49 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             }
         }
     }
+    
+    @Override
+    public void checkHavePublicVisibility(Activity activity) {
+        Visibility visibility = activity.getVisibility();
+        if(!Visibility.PUBLIC.equals(visibility)) {
+            throw new OrcidUnauthorizedException("The activity is not public");
+        }
+    }
+    
+    @Override
+    public void checkHavePublicVisibility(ActivitiesSummary activities) {
+        List<EducationSummary> educations = activities.getEducations();        
+        for(EducationSummary education : educations) {
+            checkHavePublicVisibility(education);
+        }
+                
+        List<EmploymentSummary> employments = activities.getEmployments();
+            for(EmploymentSummary employment : employments) {
+                checkHavePublicVisibility(employment);
+            }
+        
+        Fundings fundings = activities.getFundings();
+        if(fundings != null) {
+            List<FundingGroup> fundingGroups = fundings.getFundingGroups();
+            for(FundingGroup group : fundingGroups) {
+                List<FundingSummary> summaries = group.getFundingSummary();
+                for(FundingSummary summary : summaries) {
+                    checkHavePublicVisibility(summary);
+                }
+            }
+        }
+        
+        Works works = activities.getWorks();
+        if(works != null) {
+            List<WorkGroup> workGroups = works.getWorkGroup();
+            for(WorkGroup group : workGroups) {
+                List<WorkSummary> summaries = group.getWorkSummary();
+                for(WorkSummary summary : summaries) {
+                    checkHavePublicVisibility(summary);
+                }
+            }
+        }
+    }
 
     @Override
     public void checkSource(SourceEntity existingSource) {

@@ -78,63 +78,63 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
     @Override
     public Response viewActivities(String orcid) {
         ActivitiesSummary as = profileEntityManager.getPublicActivitiesSummary(orcid);    
-        orcidSecurityManager.checkVisibility(as);
+        orcidSecurityManager.checkHavePublicVisibility(as);
         return Response.ok(as).build();
     }
 
     @Override
     public Response viewWork(String orcid, String putCode) {
         Work w = profileWorkManager.getWork(orcid, putCode);
-        orcidSecurityManager.checkVisibility(w);
+        orcidSecurityManager.checkHavePublicVisibility(w);
         return Response.ok(w).build();
     }
 
     @Override
     public Response viewWorkSummary(String orcid, String putCode) {
         WorkSummary ws = profileWorkManager.getWorkSummary(orcid, putCode);
-        orcidSecurityManager.checkVisibility(ws);
+        orcidSecurityManager.checkHavePublicVisibility(ws);
         return Response.ok(ws).build();
     }
 
     @Override
     public Response viewFunding(String orcid, String putCode) {
         Funding f = profileFundingManager.getFunding(orcid, putCode);
-        orcidSecurityManager.checkVisibility(f);
+        orcidSecurityManager.checkHavePublicVisibility(f);
         return Response.ok(f).build();
     }
 
     @Override
     public Response viewFundingSummary(String orcid, String putCode) {
         FundingSummary fs = profileFundingManager.getSummary(orcid, putCode);
-        orcidSecurityManager.checkVisibility(fs);
+        orcidSecurityManager.checkHavePublicVisibility(fs);
         return Response.ok(fs).build();
     }
 
     @Override
     public Response viewEducation(String orcid, String putCode) {
         Education e = affiliationsManager.getEducationAffiliation(orcid, putCode);
-        orcidSecurityManager.checkVisibility(e);
+        orcidSecurityManager.checkHavePublicVisibility(e);
         return Response.ok(e).build();
     }
 
     @Override
     public Response viewEducationSummary(String orcid, String putCode) {
         EducationSummary es = affiliationsManager.getEducationSummary(orcid, putCode);
-        orcidSecurityManager.checkVisibility(es);
+        orcidSecurityManager.checkHavePublicVisibility(es);
         return Response.ok(es).build();
     }
 
     @Override
     public Response viewEmployment(String orcid, String putCode) {
         Employment e = affiliationsManager.getEmploymentAffiliation(orcid, putCode);
-        orcidSecurityManager.checkVisibility(e);
+        orcidSecurityManager.checkHavePublicVisibility(e);
         return Response.ok(e).build();
     }
 
     @Override
     public Response viewEmploymentSummary(String orcid, String putCode) {
         EmploymentSummary es = affiliationsManager.getEmploymentSummary(orcid, putCode);
-        orcidSecurityManager.checkVisibility(es);
+        orcidSecurityManager.checkHavePublicVisibility(es);
         return Response.ok(es).build();
     }
 
