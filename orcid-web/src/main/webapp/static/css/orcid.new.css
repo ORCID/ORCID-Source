@@ -38,6 +38,10 @@ html {
 	height: 100%;
 }
 
+a{
+	word-break: break-all;
+}
+
 a:focus {
 	outline: thin dotted #333;
 	outline: 5px auto -webkit-focus-ring-color;
