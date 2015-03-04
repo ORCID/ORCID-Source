@@ -19,29 +19,11 @@
 <#import "email_macros.ftl" as emailMacros />
 <!DOCTYPE html>
 <html>
-	<head>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
-	<style>
-		.content {
-			padding: 20px; 
-			padding-top: 10px; 
-			width: 700px;
-			margin: auto;
-		}
-		.btn-primary {
-			background: #31789B;			
-		}
-
-		.btn-primary:hover {
-			background: #a6ce39;
-			text-shadow: none;
-			border-color: #A6CE39; 
-		}
-	</style>
-	<title>${subject}</title>
+	<head>	
+		<title>${subject}</title>
 	</head>
 	<body>
-		<div class="content">
+		<div style="padding: 20px; padding-top: 10px; width: 700px; margin: auto;">
 			<img src="https://orcid.org/sites/all/themes/orcid/img/orcid-logo.png" alt="ORCID.org"/>
 		    <hr />
 		    <span style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
@@ -51,7 +33,8 @@
 				<@emailMacros.msg "email.welcome.thank_you.1" />${source_name_if_exists} <@emailMacros.msg "email.welcome.thank_you.2" />
 				<br />
 				<div align="center">
-					<a href="${verificationUrl}?lang=${locale}" target="_blank" class="btn btn-primary"><@emailMacros.msg "email.button" /></a>
+					<a href="${verificationUrl}?lang=${locale}" target="_blank" 
+					style="text-decoration: none; background: #31789B; border-color: #357ebd; color: #fff; margin-bottom: 0; font-weight: 400; text-align: center; vertical-align: middle; cursor: pointer; border: 1px solid transparent; white-space: nowrap; padding: 6px 12px; font-size: 14px; line-height: 1.428571429; border-radius: 4px;"><@emailMacros.msg "email.button" /></a>
 				</div>
 				<br />
 			</p>
@@ -61,8 +44,8 @@
 				<a href="${verificationUrl}?lang=${locale}" target="_blank">${verificationUrl}?lang=${locale}</a>
 				<br />
 				<ul>
-					<li><@emailMacros.msg "email.welcome.your_id.id" /> ${orcidId}</li>
-					<li><@emailMacros.msg "email.welcome.your_id.link" /> <a href="${baseUri}/${orcidId}" target="_blank">${baseUri}/${orcidId}</a></li>
+					<li style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;"><@emailMacros.msg "email.welcome.your_id.id" /> <a href="${baseUri}/${orcidId}" target="_blank">${orcidId}</a></li>
+					<li style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;"><@emailMacros.msg "email.welcome.your_id.link" /> <a href="${baseUri}/${orcidId}" target="_blank">${baseUri}/${orcidId}</a></li>
 				</ul>				
 			</p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 18px; color: #666666; font-weight: bold;">
