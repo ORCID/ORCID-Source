@@ -610,12 +610,11 @@ select {
 	z-index: 100;
 	font-size: 12px;
 	background: #939598;
-	height: 0px;
-	overflow: hidden;
+	height: auto;	
 	width: 100%;
 	text-align: left;
 	line-height: 23px;
-	display: block;
+	display: block;	
 }
 
 .header .search form .conditions a {
@@ -627,8 +626,7 @@ select {
 	color: #fff !important;
 }
 
-.header .search form .search_options {
-	display: none;
+.header .search form .search_options {	
 	float: right;
 	background: #C9CACB;
 	height: 22px;
@@ -699,6 +697,7 @@ select {
 	width: 180px;
 	height: 29px;
 	overflow: hidden;
+	display: block;
 }
 
 .header form#language-form {
@@ -3657,6 +3656,10 @@ ul.sso-options li span {
 	border-bottom: 1px solid #CCC;
 }
 
+.developer-tools .tab-container.expanded{
+	background: #EBEBEB;
+}
+
 .developer-tools .tab-container .tab {
 	padding: 2px 10px;
 	text-align: center;
@@ -3668,10 +3671,13 @@ ul.sso-options li span {
 	display: none;
 }
 
+/*
 .developer-tools .slidebox {
 	display: none;
 	overflow: visible !important;
 }
+
+*/
 
 .developer-tools .tab-container a span {
 	margin-right: 5px;
@@ -5676,6 +5682,7 @@ ul.oauth-scopes li{
     white-space: pre-wrap;
 }
 
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 
@@ -5736,11 +5743,11 @@ ul.oauth-scopes li{
 	}
 	.container .header #form-search {
 		height: 180px;
-		display: none;
+		/* display: none;*/
 		width: 100%;
 	}
 	.container .header #search {
-		display: none;
+		/*display: none;*/
 		position: absolute;
 		top: 50px;
 		z-index: 10;
@@ -5825,8 +5832,7 @@ ul.oauth-scopes li{
 		color: #FFFFFF;
 		font-size: 30px;
 	}
-	.header .navigation>.menu {
-		display: none;
+	.header .navigation>.menu {				
 		position: absolute;
 		width: 50%;
 		height: auto;
@@ -5853,7 +5859,7 @@ ul.oauth-scopes li{
 		margin: 0;
 		padding: 0;
 		float: left;
-		line-height: 11px;
+		line-height: 21px;
 		background: #fff;
 		height: auto;
 		width: 100%;
@@ -5883,10 +5889,7 @@ ul.oauth-scopes li{
 	}
 	.header .navigation>.menu>li>.menu>li>a.active:hover {
 		color: #fff !important;
-	}
-	.header .navigation>.menu>li>.menu>li>.menu {
-		display: none;
-	}
+	}	
 	.header .navigation>.menu>li>.menu>li.active-trail>.menu {
 		left: 0;
 		padding: 0;
@@ -5910,7 +5913,7 @@ ul.oauth-scopes li{
 	/* Not showing Third level*/
 	.header .navigation>.menu>li>.menu>li>.menu,.header .navigation>.menu>li>.menu>li.active-trail>.menu
 		{
-		display: none;
+		display: block;
 		padding-left: 0;
 		width: 95%;
 	}
@@ -5941,11 +5944,11 @@ ul.oauth-scopes li{
 
 	/* Language Selector */
 	.container .header .language-selector {
+		display: block;
 		position: absolute;
 		top: 0;
 		left: 0;
-		width: 100%;
-		display: none;
+		width: 100%;		
 		z-index: 101;
 		height: 50px;
 		background-color: #98999C;
@@ -6838,6 +6841,22 @@ ul.oauth-scopes li{
 		width: 100%;
 		margin-bottom: 15px !important;
 		
+	}
+	
+	.mobile-menu-active{
+		background: #939598;
+	}
+	
+	.more:after{
+		content: ' (+)';
+	}
+	
+	.less:after{
+		content: ' (-)';
+	}
+	
+	.header .navigation>.menu>li>.menu>li>.menu{
+		padding-top: 10px;
 	}
 	
 	

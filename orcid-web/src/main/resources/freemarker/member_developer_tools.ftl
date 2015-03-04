@@ -244,7 +244,7 @@
 				</@security.authorize>
 				
 				<!-- Slidebox -->
-				<div class="slidebox grey-box">
+				<div class="slidebox grey-box" ng-show="expanded == true">
 					<div class="row">
 						<!-- Redirect URIS -->						
 						<div  class="col-md-6 col-sm-6 col-xs-12">
@@ -265,7 +265,7 @@
 						<div class="row">
 							<span class="col-md-3 col-sm-3 col-xs-12"></span>
 							<span class="col-md-9 col-sm-9 col-xs-12">
-								<textarea class="input-xlarge selectable authorizeURL" ng-model="authorizeURL" readonly="readonly"></textarea>
+								<textarea class="input-xlarge authorizeURL" ng-model="authorizeURL" readonly="readonly" ng-focus="inputTextAreaSelectAll($event)"></textarea>
 							</span>
 						</div>
 						<div class="row">
@@ -278,7 +278,7 @@
 						<div class="row">
 							<span class="col-md-3 col-sm-3 col-xs-12"></span>
 							<span class="col-md-9 col-sm-9 col-xs-12">
-								<textarea class="input-xlarge selectable authorizeURL" ng-model="sampleAuthCurl" readonly="readonly"></textarea>
+								<textarea class="input-xlarge authorizeURL" ng-model="sampleAuthCurl" readonly="readonly" ng-focus="inputTextAreaSelectAll($event)"></textarea>
 							</span>
 						</div>
 					</div>
@@ -294,9 +294,9 @@
 			<!-- Slide button -->
 			<div class="row slide" ng-show="viewing" ng-cloak>
 				<div class="col-md-12 col-sm-12 col-xs-12">
-					<div class="tab-container">
-						<a href="#" class="tab collapsed" data-tab="collapsed"><span class="glyphicon glyphicon-chevron-down"></span><@orcid.msg 'common.details.show_details' /></a>
-						<a href="#" class="tab expanded"><span class="glyphicon glyphicon-chevron-up"></span><@orcid.msg 'common.details.hide_details' /></a>
+					<div class="tab-container" ng-class="{'expanded' : expanded == true}">
+						<a class="tab" ng-click="expand()" ng-show="expanded == false"><span class="glyphicon glyphicon-chevron-down"></span><@orcid.msg 'common.details.show_details' /></a>
+						<a class="tab" ng-click="collapse()" ng-show="expanded == true"><span class="glyphicon glyphicon-chevron-up"></span><@orcid.msg 'common.details.hide_details' /></a>
 					</div>
 				</div>			
 			</div>

@@ -6141,6 +6141,7 @@ orcidNgModule.controller('SSOPreferencesCtrl',['$scope', '$compile', '$sce', 'em
     $scope.descriptionToDisplay = '';
     $scope.verifyEmailSent=false;
     $scope.accepted=false;
+    $scope.expanded = false;
     
     $scope.verifyEmail = function() {
         var funct = function() {
@@ -6526,6 +6527,19 @@ orcidNgModule.controller('SSOPreferencesCtrl',['$scope', '$compile', '$sce', 'em
         $scope.nameToDisplay = $sce.trustAsHtml($scope.userCredentials.clientName.value);
         $scope.descriptionToDisplay = $sce.trustAsHtml($scope.userCredentials.clientDescription.value);
     };
+    
+    $scope.inputTextAreaSelectAll = function($event){
+    	$event.target.select();
+    }
+    
+    $scope.expand =  function(){
+    	$scope.expanded = true;
+    }
+    
+    $scope.collapse = function(){
+    	$scope.expanded = false;
+    }
+    
 }]);
 
 orcidNgModule.controller('ClientEditCtrl',['$scope', '$compile', function ($scope, $compile){
@@ -6553,6 +6567,7 @@ orcidNgModule.controller('ClientEditCtrl',['$scope', '$compile', function ($scop
     $scope.authorizeURLTemplate = $scope.authorizeUrlBase + '?client_id=[CLIENT_ID]&response_type=code&redirect_uri=[REDIRECT_URI]&scope=[SCOPES]';
     // Token url
     $scope.tokenURL = orcidVar.pubBaseUri + '/oauth/token';
+    $scope.expanded = false;
 
 
     // Get the list of clients associated with this user
@@ -6975,6 +6990,19 @@ orcidNgModule.controller('ClientEditCtrl',['$scope', '$compile', function ($scop
     $scope.closeModal = function(){
         $.colorbox.close();
     };
+    
+    $scope.inputTextAreaSelectAll = function($event){
+    	$event.target.select();
+    }
+    
+    $scope.expand =  function(){
+    	$scope.expanded = true;
+    }
+    
+    $scope.collapse = function(){
+    	$scope.expanded = false;
+    }
+    
 }]);
 
 orcidNgModule.controller('CustomEmailCtrl',['$scope', '$compile',function ($scope, $compile) {
@@ -7927,3 +7955,114 @@ angular.module('ui.multiselect', [])
       }
     }
   }]);
+
+
+orcidNgModule.controller('headerCtrl',['$scope', '$window', function ($scope, $window){	
+	
+	$scope.searchFilterChanged = false;
+	$scope.filterActive = false;
+	$scope.conditionsActive = false;
+	$scope.menuVisible = false;
+	$scope.secondaryMenuVisible = {};
+	$scope.tertiaryMenuVisible = {};
+	$scope.searchVisible = false;
+	$scope.settingsVisible = false;
+	
+	$scope.searchFocus = function(){
+		$scope.filterActive = true;
+		$scope.conditionsActive = true;
+	}
+	
+	$scope.searchBlur = function(){		
+		$scope.hideSearchFilter();
+		$scope.conditionsActive = false;		
+	}
+	
+	$scope.filterChange = function(){
+		$scope.searchFilterChanged = true;
+	}
+	
+	$scope.hideSearchFilter = function(){
+		var searchInputValue = document.getElementById("search-input").value;
+		if (searchInputValue === ""){
+			setTimeout(function() {
+                if ($scope.searchFilterChanged === false) {
+                	$scope.filterActive = false;
+                }
+            }, 3000);
+		}
+	}
+	
+	
+	$scope.toggleMenu = function(){
+		$scope.menuVisible = !$scope.menuVisible;
+		$scope.searchVisible = false;
+		$scope.settingsVisible = false;		
+	}
+	
+	$scope.toggleSecondaryMenu = function(submenu){
+		$scope.secondaryMenuVisible[submenu] = !$scope.secondaryMenuVisible[submenu];
+	}
+	
+	$scope.toggleTertiaryMenu = function(submenu){
+		$scope.tertiaryMenuVisible[submenu] = !$scope.tertiaryMenuVisible[submenu];
+	}
+	
+	$scope.toggleSearch = function(){
+		$scope.searchVisible = !$scope.searchVisible;
+		$scope.menuVisible = false;		
+		$scope.settingsVisible = false;
+	}
+	
+	$scope.toggleSettings = function(){
+		$scope.settingsVisible = !$scope.settingsVisible;
+		$scope.menuVisible = false;
+		$scope.searchVisible = false;
+	}	
+	
+	$scope.handleMobileMenuOption = function($event){
+		$event.preventDefault();
+		var w = getWindowWidth();			
+		if(w > 767) {				
+			window.location = $event.target.getAttribute('href');
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+}]);
+
+orcidNgModule.directive('resize', function ($window) {
+	return function ($scope, element) {
+		var w = angular.element($window);
+		/* Only used for detecting window resizing, the value returned by w.width() is not accurate, please refer to getWindowWidth() */
+		$scope.getWindowWidth = function () {
+			return { 'w': getWindowWidth() };
+		};
+		$scope.$watch($scope.getWindowWidth, function (newValue, oldValue) {			
+            
+			$scope.windowWidth = newValue.w;
+			
+            
+            if($scope.windowWidth > 767){ /* Desktop view */
+            	$scope.menuVisible = true;
+            	$scope.searchVisible = true;
+            	$scope.settingsVisible = true;
+            }else{
+            	$scope.menuVisible = false;
+            	$scope.searchVisible = false;
+            	$scope.settingsVisible = false;
+            }
+            
+		}, true);
+	
+		w.bind('resize', function () {
+			$scope.$apply();
+		});
+	}
+});
