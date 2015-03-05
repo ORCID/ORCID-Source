@@ -60,41 +60,6 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 
     @Resource
     private SourceManager sourceManager;
-
-    @Override
-    public void checkVisibility(ActivitiesSummary activities) {
-        List<EducationSummary> educations = activities.getEducations();        
-        for(EducationSummary education : educations) {
-            checkVisibility(education);
-        }
-                
-        List<EmploymentSummary> employments = activities.getEmployments();
-            for(EmploymentSummary employment : employments) {
-                checkVisibility(employment);
-            }
-        
-        Fundings fundings = activities.getFundings();
-        if(fundings != null) {
-            List<FundingGroup> fundingGroups = fundings.getFundingGroups();
-            for(FundingGroup group : fundingGroups) {
-                List<FundingSummary> summaries = group.getFundingSummary();
-                for(FundingSummary summary : summaries) {
-                    checkVisibility(summary);
-                }
-            }
-        }
-        
-        Works works = activities.getWorks();
-        if(works != null) {
-            List<WorkGroup> workGroups = works.getWorkGroup();
-            for(WorkGroup group : workGroups) {
-                List<WorkSummary> summaries = group.getWorkSummary();
-                for(WorkSummary summary : summaries) {
-                    checkVisibility(summary);
-                }
-            }
-        }
-    }
     
     @Override
     public void checkVisibility(Filterable filterable) {
