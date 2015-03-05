@@ -7040,6 +7040,24 @@ ul.oauth-scopes li{
 	}
 }
 
+@media (min-width : 499px) and (max-width: 767px){ 
+    .confirm-oauth-access .col-xs-12,
+    .oauth-signin-register .col-xs-12{
+        width: 500px !important; 
+    }    
+    
+    /* Fix to overwrite bootstrap styling */
+    .col-xs-9-fix{     
+        width: 75% !important;
+        float: left !important; 
+    }
+    
+    .col-xs-3-fix{
+        width: 25% !important;
+        float: left !important;
+    }
+}
+
 @media(min-width:1200px){
 	.container{
 		max-width:960px;
