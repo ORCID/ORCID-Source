@@ -46,7 +46,7 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
 
     @Resource
     private ProfileWorkManager profileWorkManager;
-    
+
     @Resource
     private ProfileFundingManager profileFundingManager;
 
@@ -55,7 +55,7 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
 
     @Resource
     private ProfileEntityManager profileEntityManager;
-    
+
     @Resource
     private AffiliationsManager affiliationsManager;
 
@@ -67,21 +67,21 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
 
     @Resource
     private SourceManager sourceManager;
-    
+
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
-    
+
     @Resource(name = "visibilityFilterV2")
     private VisibilityFilterV2 visibilityFilter;
-    
+
     @Override
     public Response viewStatusText() {
         return Response.ok(STATUS_OK_MESSAGE).build();
     }
-    
+
     @Override
     public Response viewActivities(String orcid) {
-        ActivitiesSummary as = profileEntityManager.getPublicActivitiesSummary(orcid);    
+        ActivitiesSummary as = profileEntityManager.getPublicActivitiesSummary(orcid);
         visibilityFilter.filter(as);
         return Response.ok(as).build();
     }

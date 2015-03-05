@@ -71,7 +71,7 @@ public class VisibilityFilterV2ImplTest {
         visibilityFilter.filter(activitiesSummary);
         assertEquals(expectedActivitiesSummary.toString(), activitiesSummary.toString());
     }
-    
+
     @Test
     public void testFilterActivitiesOnPublicAPI() throws JAXBException {
         ActivitiesSummary activitiesSummary = getActivitiesSummary("/activities-protected-full-latest.xml");
