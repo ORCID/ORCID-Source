@@ -34,6 +34,7 @@ import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.security.visibility.aop.AccessControl;
+import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
@@ -86,6 +87,9 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
+    
+    @Resource(name="visibilityFilterV2")
+    private VisibilityFilterV2 visibilityFilter;
 
     @Override
     public Response viewStatusText() {
@@ -105,7 +109,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
     public Response viewActivities(String orcid) {
-        ActivitiesSummary as = profileEntityManager.getActivitiesSummary(orcid);
+        ActivitiesSummary as = visibilityFilter.filter(profileEntityManager.getActivitiesSummary(orcid));
         return Response.ok(as).build();
     }
 
