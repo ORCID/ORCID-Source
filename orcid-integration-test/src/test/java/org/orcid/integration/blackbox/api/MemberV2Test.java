@@ -47,6 +47,8 @@ import org.orcid.jaxb.model.record.Activity;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
+import org.orcid.jaxb.model.record.FundingExternalIdentifier;
+import org.orcid.jaxb.model.record.FundingExternalIdentifierType;
 import org.orcid.jaxb.model.record.Visibility;
 import org.orcid.jaxb.model.record.Work;
 import org.springframework.beans.factory.annotation.Value;
@@ -349,6 +351,67 @@ public class MemberV2Test {
         assertEquals("en", gotAfterUpdateFunding.getTitle().getTranslatedTitle().getLanguageCode());
         ClientResponse deleteResponse = memberV2ApiClient.deleteFundingXml(testUser1OrcidId, gotFunding.getPutCode(), accessToken);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
+    }
+    
+    @Test
+    public void testViewActivitiesSummaries() throws JSONException, InterruptedException, URISyntaxException {
+        Education education = (Education) unmarshallFromPath("/record_2.0_rc1/samples/education-2.0_rc1.xml", Education.class);
+        education.setPutCode(null);
+        education.setVisibility(Visibility.PUBLIC);
+        
+        Employment employment = (Employment) unmarshallFromPath("/record_2.0_rc1/samples/employment-2.0_rc1.xml", Employment.class);
+        employment.setPutCode(null);
+        employment.setVisibility(Visibility.PUBLIC);
+        
+        Funding funding = (Funding) unmarshallFromPath("/record_2.0_rc1/samples/funding-2.0_rc1.xml", Funding.class);
+        funding.setPutCode(null);
+        funding.setVisibility(Visibility.PUBLIC);
+        
+        Work work = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
+        work.setPutCode(null);
+        work.setVisibility(Visibility.PUBLIC);
+                
+        String accessToken = getAccessToken();
+        
+        memberV2ApiClient.createEducationXml(testUser1OrcidId, education, accessToken);
+        memberV2ApiClient.createEmploymentXml(testUser1OrcidId, employment, accessToken);
+        /**
+         * Add 4 fundings
+         * 1 and 2 get grouped together
+         * 3 in another group because it have different ext ids
+         * 4 in another group because it doesnt have any ext ids 
+         * **/
+        
+        //Add 1, the default one
+        memberV2ApiClient.createFundingXml(testUser1OrcidId, funding, accessToken);
+        
+        funding.getTitle().getTitle().setContent("Funding # 2");
+        FundingExternalIdentifier fExtId3 = new FundingExternalIdentifier();
+        fExtId3.setType(FundingExternalIdentifierType.GRANT_NUMBER);
+        fExtId3.setValue("extId3Value");        
+        funding.getExternalIdentifiers().getExternalIdentifier().add(fExtId3);
+        //Add 2, with the same ext ids +1
+        memberV2ApiClient.createFundingXml(testUser1OrcidId, funding, accessToken);
+        
+        funding.getTitle().getTitle().setContent("Funding # 3");
+        FundingExternalIdentifier fExtId4 = new FundingExternalIdentifier();
+        fExtId4.setType(FundingExternalIdentifierType.GRANT_NUMBER);
+        fExtId4.setValue("extId4Value");        
+        funding.getExternalIdentifiers().getExternalIdentifier().clear();
+        funding.getExternalIdentifiers().getExternalIdentifier().add(fExtId4);
+        //Add 3, with different ext ids
+        memberV2ApiClient.createFundingXml(testUser1OrcidId, funding, accessToken);
+        
+        funding.getTitle().getTitle().setContent("Funding # 4");
+        funding.getExternalIdentifiers().getExternalIdentifier().clear();
+        //Add 4 without ext ids
+        memberV2ApiClient.createFundingXml(testUser1OrcidId, funding, accessToken);
+        
+        
+        //Add 4 works
+        // 1 and 2 get grouped together
+        // 3 in another group because it have different ext ids
+        // 4 in another group because it doesnt have any ext ids
     }
     
     private String getAccessToken() throws InterruptedException, JSONException {
