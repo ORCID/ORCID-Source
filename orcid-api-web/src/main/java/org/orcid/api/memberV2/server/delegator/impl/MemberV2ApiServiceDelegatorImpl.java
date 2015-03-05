@@ -87,8 +87,8 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
-    
-    @Resource(name="visibilityFilterV2")
+
+    @Resource(name = "visibilityFilterV2")
     private VisibilityFilterV2 visibilityFilter;
 
     @Override
@@ -227,12 +227,14 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
     public Response viewEmployment(String orcid, String putCode) {
         Employment e = affiliationsManager.getEmploymentAffiliation(orcid, putCode);
+        orcidSecurityManager.checkVisibility(e);
         return Response.ok(e).build();
     }
 
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
     public Response viewEmploymentSummary(String orcid, String putCode) {
         EmploymentSummary es = affiliationsManager.getEmploymentSummary(orcid, putCode);
+        orcidSecurityManager.checkVisibility(es);
         return Response.ok(es).build();
     }
 

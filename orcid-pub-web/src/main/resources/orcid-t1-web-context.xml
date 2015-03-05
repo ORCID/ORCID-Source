@@ -81,4 +81,16 @@
         <property name="externalVersion" value="1.2"/>
     </bean>
     
+    
+    
+    
+    <!--  Public_2 API -->
+    <bean id="publicV2ApiServiceDelegator" class="org.orcid.api.t1.server.delegator.impl.PublicV2ApiServiceDelegatorImpl" />
+    <bean id="publicV2ApiServiceImplV2_0_rc1" class="org.orcid.api.t1.server.PublicV2ApiServiceImplV2_0_rc1">
+        <property name="serviceDelegator" ref="publicV2ApiServiceDelegator"/>
+    </bean>
+    
+    
+    
+    
 </beans>

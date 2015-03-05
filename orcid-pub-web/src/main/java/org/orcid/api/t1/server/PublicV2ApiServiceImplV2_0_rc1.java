@@ -14,20 +14,16 @@
  *
  * =============================================================================
  */
-package org.orcid.core.manager;
+package org.orcid.api.t1.server;
 
-import org.orcid.jaxb.model.record.Filterable;
-import org.orcid.persistence.jpa.entities.SourceEntity;
+import javax.ws.rs.Path;
 
 /**
  * 
- * @author Will Simpson
- *
+ * @author Angel Montenegro
+ * 
  */
-public interface OrcidSecurityManager {
+@Path("/v2.0_rc1")
+public class PublicV2ApiServiceImplV2_0_rc1 extends PublicV2ApiServiceImplBase {
 
-    void checkVisibility(Filterable filterable);        
-    
-    void checkSource(SourceEntity existingSource);
-    
 }

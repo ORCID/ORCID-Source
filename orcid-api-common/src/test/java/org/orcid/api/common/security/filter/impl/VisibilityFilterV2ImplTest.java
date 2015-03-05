@@ -72,6 +72,14 @@ public class VisibilityFilterV2ImplTest {
         assertEquals(expectedActivitiesSummary.toString(), activitiesSummary.toString());
     }
 
+    @Test
+    public void testFilterActivitiesOnPublicAPI() throws JAXBException {
+        ActivitiesSummary activitiesSummary = getActivitiesSummary("/activities-protected-full-latest.xml");
+        ActivitiesSummary expectedActivitiesSummary = getActivitiesSummary("/activities-stripped-latest.xml");
+        visibilityFilter.filter(activitiesSummary);
+        assertEquals(expectedActivitiesSummary.toString(), activitiesSummary.toString());
+    }
+
     private ActivitiesSummary getActivitiesSummary(String path) throws JAXBException {
         return (ActivitiesSummary) unmarshaller.unmarshal(getClass().getResourceAsStream(path));
     }

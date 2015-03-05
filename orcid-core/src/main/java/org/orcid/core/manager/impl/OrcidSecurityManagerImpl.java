@@ -18,6 +18,7 @@ package org.orcid.core.manager.impl;
 
 import java.security.AccessControlException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -34,6 +35,15 @@ import org.orcid.jaxb.model.record.Filterable;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.Visibility;
 import org.orcid.jaxb.model.record.Work;
+import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary.EducationSummary;
+import org.orcid.jaxb.model.record.summary.EmploymentSummary;
+import org.orcid.jaxb.model.record.summary.FundingGroup;
+import org.orcid.jaxb.model.record.summary.FundingSummary;
+import org.orcid.jaxb.model.record.summary.Fundings;
+import org.orcid.jaxb.model.record.summary.WorkGroup;
+import org.orcid.jaxb.model.record.summary.WorkSummary;
+import org.orcid.jaxb.model.record.summary.Works;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -50,17 +60,24 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 
     @Resource
     private SourceManager sourceManager;
-
+    
     @Override
     public void checkVisibility(Filterable filterable) {
         OAuth2Authentication oAuth2Authentication = getOAuth2Authentication();
-        OAuth2Request authorizationRequest = oAuth2Authentication.getOAuth2Request();
-        String clientId = authorizationRequest.getClientId();
+        //If it is null, it might be a call from the public API
+        Set<String> readLimitedScopes = new HashSet<String>();
         Visibility visibility = filterable.getVisibility();
-        Set<String> readLimitedScopes = getReadLimitedScopesThatTheClientHas(authorizationRequest, filterable);
+        String clientId = null;
+        
+        if(oAuth2Authentication != null) {
+            OAuth2Request authorizationRequest = oAuth2Authentication.getOAuth2Request();
+            clientId = authorizationRequest.getClientId();            
+             readLimitedScopes = getReadLimitedScopesThatTheClientHas(authorizationRequest, filterable);
+        }
+        
         if (readLimitedScopes.isEmpty()) {
             // This client only has permission for read public
-            if ((visibility == null || Visibility.PRIVATE.equals(visibility)) && !clientId.equals(filterable.retrieveSourcePath())) {
+            if ((visibility == null || Visibility.PRIVATE.equals(visibility)) && clientId != null && !clientId.equals(filterable.retrieveSourcePath())) {
                 throw new OrcidForbiddenException("The activity is private and you are not the source");
             }
             if (visibility.isMoreRestrictiveThan(Visibility.PUBLIC)) {
@@ -68,11 +85,11 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             }
         } else {
             // The client has permission for read limited
-            if ((visibility == null || Visibility.PRIVATE.equals(visibility)) && !clientId.equals(filterable.retrieveSourcePath())) {
+            if ((visibility == null || Visibility.PRIVATE.equals(visibility)) && clientId != null && !clientId.equals(filterable.retrieveSourcePath())) {
                 throw new OrcidForbiddenException("The activity is private and you are not the source");
             }
         }
-    }
+    }        
 
     @Override
     public void checkSource(SourceEntity existingSource) {
@@ -101,6 +118,9 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     private OAuth2Authentication getOAuth2Authentication() {
         SecurityContext context = SecurityContextHolder.getContext();
         Authentication authentication = context.getAuthentication();
+        //if authentication is null, it might be a call from the public api, so, return null
+        if(authentication == null)
+            return null;
         if (OAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
             OAuth2Authentication oAuth2Authentication = (OAuth2Authentication) authentication;
             return oAuth2Authentication;
