@@ -14,23 +14,23 @@
  *
  * =============================================================================
  */
-package org.orcid.jaxb.model.record;
+package org.orcid.core.security.visibility.filter;
+
+import java.util.Collection;
+
+import org.orcid.jaxb.model.record.Filterable;
+import org.orcid.jaxb.model.record.Group;
+import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
 
 /**
- * 
  * @author Will Simpson
- * 
  */
-public interface Activity extends Filterable {
+public interface VisibilityFilterV2 {
 
-    String getPutCode();
+    ActivitiesSummary filter(ActivitiesSummary activitiesSummary);
     
-    CreatedDate getCreatedDate();
-    
-    void setCreatedDate(CreatedDate value);
-    
-    LastModifiedDate getLastModifiedDate();
-    
-    void setLastModifiedDate(LastModifiedDate value);
-        
+    Collection<? extends Filterable> filter(Collection<? extends Filterable> filterables);
+
+    Collection<? extends Group> filterGroups(Collection<? extends Group> groups);
+
 }

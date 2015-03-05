@@ -38,7 +38,7 @@ import org.orcid.jaxb.model.record.Visibility;
 import org.orcid.jaxb.model.record.VisibilityType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "type", "title", "externalIdentifiers", "startDate", "endDate", "source", "lastModifiedDate", "createdDate" })
+@XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "title", "externalIdentifiers", "type", "startDate", "endDate" })
 @XmlRootElement(name = "fundingSummary", namespace = "http://www.orcid.org/ns/funding")
 public class FundingSummary implements VisibilityType, Activity, GroupableActivity, Serializable {
 
@@ -47,20 +47,20 @@ public class FundingSummary implements VisibilityType, Activity, GroupableActivi
     protected FundingType type;
     @XmlElement(required = true, namespace = "http://www.orcid.org/ns/funding")
     protected FundingTitle title;
-    @XmlElement(namespace = "http://www.orcid.org/ns/funding")
+    @XmlElement(name="external-identifiers", namespace = "http://www.orcid.org/ns/funding")
     protected FundingExternalIdentifiers externalIdentifiers;
-    @XmlElement(namespace = "http://www.orcid.org/ns/common")
+    @XmlElement(name="start-date", namespace = "http://www.orcid.org/ns/common")
     protected FuzzyDate startDate;
-    @XmlElement(namespace = "http://www.orcid.org/ns/common")
+    @XmlElement(name="end-date", namespace = "http://www.orcid.org/ns/common")
     protected FuzzyDate endDate;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Source source;
-    @XmlElement(namespace = "http://www.orcid.org/ns/common")
+    @XmlElement(name="last-modified-date", namespace = "http://www.orcid.org/ns/common")
     protected LastModifiedDate lastModifiedDate;
-    @XmlElement(namespace = "http://www.orcid.org/ns/common")
+    @XmlElement(name="created-date", namespace = "http://www.orcid.org/ns/common")
     protected CreatedDate createdDate;
 
-    @XmlAttribute
+    @XmlAttribute(name="put-code")
     protected String putCode;
     @XmlAttribute
     protected Visibility visibility;

@@ -16,11 +16,15 @@
  */
 package org.orcid.jaxb.model.record;
 
-public interface GroupableActivity extends Filterable {
+import java.util.Collection;
 
-    ExternalIdentifiersContainer getExternalIdentifiers();
+/**
+ * 
+ * @author Will Simpson
+ *
+ */
+public interface Group {
 
-    String getDisplayIndex();
-
-    int compareTo(GroupableActivity activity);
+    Collection<? extends GroupableActivity> getActivities();
+    
 }

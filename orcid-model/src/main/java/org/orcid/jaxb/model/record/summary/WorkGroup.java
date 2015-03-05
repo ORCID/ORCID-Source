@@ -25,6 +25,7 @@ package org.orcid.jaxb.model.record.summary;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -33,10 +34,13 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.orcid.jaxb.model.record.Group;
+import org.orcid.jaxb.model.record.GroupableActivity;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "identifiers", "workSummary" })
 @XmlRootElement(name = "work-group", namespace = "http://www.orcid.org/ns/activities")
-public class WorkGroup implements Serializable {
+public class WorkGroup implements Group, Serializable {
 
     private static final long serialVersionUID = 1L;
     @XmlElement(name = "identifiers", namespace = "http://www.orcid.org/ns/activities")
@@ -54,6 +58,11 @@ public class WorkGroup implements Serializable {
         if (workSummary == null)
             workSummary = new ArrayList<WorkSummary>();
         return workSummary;
+    }
+    
+    @Override
+    public Collection<? extends GroupableActivity> getActivities() {
+        return getWorkSummary();
     }
 
     @Override

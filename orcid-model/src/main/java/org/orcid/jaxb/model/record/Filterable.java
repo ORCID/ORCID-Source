@@ -16,11 +16,13 @@
  */
 package org.orcid.jaxb.model.record;
 
-public interface GroupableActivity extends Filterable {
+/**
+ * 
+ * @author Will Simpson
+ *
+ */
+public interface Filterable extends VisibilityType {
 
-    ExternalIdentifiersContainer getExternalIdentifiers();
+    String retrieveSourcePath();
 
-    String getDisplayIndex();
-
-    int compareTo(GroupableActivity activity);
 }
