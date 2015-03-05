@@ -78,6 +78,8 @@ public class MemberV2Test {
     public String user1UserName;
     @Value("${org.orcid.web.testUser1.password}")
     public String user1Password;
+    @Value("${org.orcid.web.testUser1.orcidId}")
+    public String user1OrcidId;
 
     @Resource(name = "t2OAuthClient")
     private T2OAuthAPIService<ClientResponse> t2OAuthClient;
@@ -119,7 +121,7 @@ public class MemberV2Test {
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String locationPath = postResponse.getLocation().getPath();
-        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/4444-4444-4444-4441/work/\\d+"));
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/" + user1OrcidId + "/work/\\d+"));
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         Work gotWork = getResponse.getEntity(Work.class);
@@ -132,7 +134,7 @@ public class MemberV2Test {
         Work gotAfterUpdateWork = getAfterUpdateResponse.getEntity(Work.class);
         assertEquals("updated title", gotAfterUpdateWork.getWorkTitle().getTitle().getContent());
     }
-    
+
     @Test
     public void testUpdateWorkWithProfileCreationTokenWhenClaimedAndNotSource() throws JSONException, InterruptedException, URISyntaxException {
         Work workToCreate = unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml");
@@ -143,7 +145,7 @@ public class MemberV2Test {
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String locationPath = postResponse.getLocation().getPath();
-        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/4444-4444-4444-4441/work/\\d+"));
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/" + user1OrcidId + "/work/\\d+"));
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         Work gotWork = getResponse.getEntity(Work.class);
