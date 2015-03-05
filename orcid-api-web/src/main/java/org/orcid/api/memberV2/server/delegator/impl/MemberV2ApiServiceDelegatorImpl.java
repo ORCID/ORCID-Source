@@ -20,8 +20,6 @@ import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
@@ -36,13 +34,12 @@ import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.security.visibility.aop.AccessControl;
+import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
-import org.orcid.jaxb.model.record.Title;
 import org.orcid.jaxb.model.record.Work;
-import org.orcid.jaxb.model.record.WorkTitle;
 import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary.EducationSummary;
 import org.orcid.jaxb.model.record.summary.EmploymentSummary;
@@ -66,7 +63,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 
     @Resource
     private ProfileWorkManager profileWorkManager;
-    
+
     @Resource
     private ProfileFundingManager profileFundingManager;
 
@@ -75,7 +72,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 
     @Resource
     private ProfileEntityManager profileEntityManager;
-    
+
     @Resource
     private AffiliationsManager affiliationsManager;
 
@@ -87,9 +84,12 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 
     @Resource
     private SourceManager sourceManager;
-    
+
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
+    
+    @Resource(name="visibilityFilterV2")
+    private VisibilityFilterV2 visibilityFilter;
 
     @Override
     public Response viewStatusText() {
@@ -109,7 +109,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
     public Response viewActivities(String orcid) {
-        ActivitiesSummary as = profileEntityManager.getActivitiesSummary(orcid);        
+        ActivitiesSummary as = visibilityFilter.filter(profileEntityManager.getActivitiesSummary(orcid));
         return Response.ok(as).build();
     }
 
@@ -128,7 +128,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         orcidSecurityManager.checkVisibility(ws);
         return Response.ok(ws).build();
     }
-    
+
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
     public Response createWork(String orcid, Work work) {
@@ -164,7 +164,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         orcidSecurityManager.checkVisibility(f);
         return Response.ok(f).build();
     }
-    
+
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
     public Response viewFundingSummary(String orcid, String putCode) {
@@ -172,14 +172,14 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         orcidSecurityManager.checkVisibility(fs);
         return Response.ok(fs).build();
     }
-    
+
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
     public Response createFunding(String orcid, Funding funding) {
         Funding f = profileFundingManager.createFunding(orcid, funding);
         return Response.ok(f).build();
     }
-    
+
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
     public Response updateFunding(String orcid, String putCode, Funding funding) {
@@ -197,7 +197,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         orcidSecurityManager.checkVisibility(e);
         return Response.ok(e).build();
     }
-    
+
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
     public Response viewEducationSummary(String orcid, String putCode) {
@@ -205,62 +205,62 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         orcidSecurityManager.checkVisibility(es);
         return Response.ok(es).build();
     }
-    
+
     @Override
-    @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)    
+    @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
     public Response createEducation(String orcid, Education education) {
         Education e = affiliationsManager.createEducationAffiliation(orcid, education);
         return Response.ok(e).build();
     }
-    
+
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
     public Response updateEducation(String orcid, String putCode, Education education) {
-        if(!putCode.equals(education.getPutCode())) {
+        if (!putCode.equals(education.getPutCode())) {
             throw new MismatchedPutCodeException("The put code in the URL was " + putCode + " whereas the one in the body was " + education.getPutCode());
         }
         Education e = affiliationsManager.updateEducationAffiliation(orcid, education);
         return Response.ok(e).build();
     }
-    
+
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
     public Response viewEmployment(String orcid, String putCode) {
         Employment e = affiliationsManager.getEmploymentAffiliation(orcid, putCode);
         return Response.ok(e).build();
     }
-    
+
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
     public Response viewEmploymentSummary(String orcid, String putCode) {
         EmploymentSummary es = affiliationsManager.getEmploymentSummary(orcid, putCode);
         return Response.ok(es).build();
     }
-    
+
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
     public Response createEmployment(String orcid, Employment employment) {
         Employment e = affiliationsManager.createEmploymentAffiliation(orcid, employment);
         return Response.ok(e).build();
     }
-    
+
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
     public Response updateEmployment(String orcid, String putCode, Employment employment) {
         Employment e = affiliationsManager.updateEmploymentAffiliation(orcid, employment);
         return Response.ok(e).build();
     }
-    
+
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
     public Response deleteAffiliation(String orcid, String putCode) {
         affiliationsManager.checkSourceAndDelete(orcid, putCode);
         return Response.noContent().build();
     }
-    
+
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
     public Response deleteFunding(String orcid, String putCode) {
         profileFundingManager.checkSourceAndDelete(orcid, putCode);
         return Response.noContent().build();
-    }        
+    }
 }
