@@ -43,6 +43,10 @@ import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.api.memberV2.MemberV2ApiClientImpl;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.record.Activity;
+import org.orcid.jaxb.model.record.Education;
+import org.orcid.jaxb.model.record.Employment;
+import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.Visibility;
 import org.orcid.jaxb.model.record.Work;
 import org.springframework.beans.factory.annotation.Value;
@@ -114,7 +118,7 @@ public class MemberV2Test {
 
     @Test
     public void createViewAndUpdateWork() throws JSONException, InterruptedException, URISyntaxException {
-        Work workToCreate = unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml");
+        Work workToCreate = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
         workToCreate.setPutCode(null);
         String accessToken = getAccessToken();
         ClientResponse postResponse = memberV2ApiClient.createWorkXml(testUser1OrcidId, workToCreate, accessToken);
@@ -137,7 +141,7 @@ public class MemberV2Test {
 
     @Test
     public void testUpdateWorkWithProfileCreationTokenWhenClaimedAndNotSource() throws JSONException, InterruptedException, URISyntaxException {
-        Work workToCreate = unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml");
+        Work workToCreate = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
         workToCreate.setPutCode(null);
         workToCreate.setVisibility(Visibility.PUBLIC);
         String accessToken = getAccessToken();
@@ -159,25 +163,206 @@ public class MemberV2Test {
         Work gotAfterUpdateWork = getAfterUpdateResponse.getEntity(Work.class);
         assertEquals("common:title", gotAfterUpdateWork.getWorkTitle().getTitle().getContent());
     }
-
+    
+    @Test
+    public void createViewAndUpdateEducation() throws JSONException, InterruptedException, URISyntaxException {
+        Education education = (Education) unmarshallFromPath("/record_2.0_rc1/samples/education-2.0_rc1.xml", Education.class);
+        education.setPutCode(null);
+        education.setVisibility(Visibility.PUBLIC);
+        String accessToken = getAccessToken();
+        ClientResponse postResponse = memberV2ApiClient.createEducationXml(testUser1OrcidId, education, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        String locationPath = postResponse.getLocation().getPath();
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/" + user1OrcidId + "/education/\\d+"));
+        ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
+        Education gotEducation = getResponse.getEntity(Education.class);
+        assertEquals("education:department-name", gotEducation.getDepartmentName());
+        assertEquals("education:role-title", gotEducation.getRoleTitle());
+        gotEducation.setDepartmentName("updated dept. name");
+        gotEducation.setRoleTitle("updated role title");
+        ClientResponse putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), accessToken, gotEducation);
+        assertEquals(Response.Status.OK.getStatusCode(), putResponse.getStatus());
+        ClientResponse getAfterUpdateResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
+        Education gotAfterUpdateEducation = getAfterUpdateResponse.getEntity(Education.class);
+        assertEquals("updated dept. name", gotAfterUpdateEducation.getDepartmentName());
+        assertEquals("updated role title", gotAfterUpdateEducation.getRoleTitle());
+    }
+    
+    @Test
+    public void testUpdateEducationWithProfileCreationTokenWhenClaimedAndNotSource() throws JSONException, InterruptedException, URISyntaxException {
+        Education education = (Education) unmarshallFromPath("/record_2.0_rc1/samples/education-2.0_rc1.xml", Education.class);
+        education.setPutCode(null);
+        education.setVisibility(Visibility.PUBLIC);
+        String accessToken = getAccessToken();
+        ClientResponse postResponse = memberV2ApiClient.createEducationXml(testUser1OrcidId, education, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        String locationPath = postResponse.getLocation().getPath();
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/" + user1OrcidId + "/education/\\d+"));                                
+        ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
+        Education gotEducation = getResponse.getEntity(Education.class);
+        assertEquals("education:department-name", gotEducation.getDepartmentName());
+        assertEquals("education:role-title", gotEducation.getRoleTitle());
+        gotEducation.setDepartmentName("updated dept. name");
+        gotEducation.setRoleTitle("updated role title");                
+        String profileCreateToken = oauthHelper.getClientCredentialsAccessToken(client2ClientId, client2ClientSecret, ScopePathType.ORCID_PROFILE_CREATE);
+        ClientResponse putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), profileCreateToken, gotEducation);
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), putResponse.getStatus());
+        ClientResponse getAfterUpdateResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
+        Education gotAfterUpdateEducation = getAfterUpdateResponse.getEntity(Education.class);
+        assertEquals("education:department-name", gotAfterUpdateEducation.getDepartmentName());
+        assertEquals("education:role-title", gotAfterUpdateEducation.getRoleTitle());                                
+    }
+    
+    @Test
+    public void createViewAndUpdateEmployment() throws JSONException, InterruptedException, URISyntaxException {
+        Employment employment = (Employment) unmarshallFromPath("/record_2.0_rc1/samples/employment-2.0_rc1.xml", Employment.class);
+        employment.setPutCode(null);
+        employment.setVisibility(Visibility.PUBLIC);
+        String accessToken = getAccessToken();
+        ClientResponse postResponse = memberV2ApiClient.createEmploymentXml(testUser1OrcidId, employment, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        String locationPath = postResponse.getLocation().getPath();
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/" + user1OrcidId + "/employment/\\d+"));
+        ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
+        Employment gotEmployment = getResponse.getEntity(Employment.class);
+        assertEquals("affiliation:department-name", gotEmployment.getDepartmentName());
+        assertEquals("affiliation:role-title", gotEmployment.getRoleTitle());
+        gotEmployment.setDepartmentName("updated dept. name");
+        gotEmployment.setRoleTitle("updated role title");
+        ClientResponse putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), accessToken, gotEmployment);
+        assertEquals(Response.Status.OK.getStatusCode(), putResponse.getStatus());
+        ClientResponse getAfterUpdateResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
+        Employment gotAfterUpdateEmployment = getAfterUpdateResponse.getEntity(Employment.class);
+        assertEquals("updated dept. name", gotAfterUpdateEmployment.getDepartmentName());
+        assertEquals("updated role title", gotAfterUpdateEmployment.getRoleTitle());
+    }
+    
+    @Test
+    public void testUpdateEmploymentWithProfileCreationTokenWhenClaimedAndNotSource() throws JSONException, InterruptedException, URISyntaxException {
+        Employment employment = (Employment) unmarshallFromPath("/record_2.0_rc1/samples/employment-2.0_rc1.xml", Employment.class);
+        employment.setPutCode(null);
+        employment.setVisibility(Visibility.PUBLIC);
+        String accessToken = getAccessToken();
+        ClientResponse postResponse = memberV2ApiClient.createEmploymentXml(testUser1OrcidId, employment, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        String locationPath = postResponse.getLocation().getPath();
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/" + user1OrcidId + "/employment/\\d+"));                                
+        ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
+        Employment gotEmployment = getResponse.getEntity(Employment.class);
+        assertEquals("affiliation:department-name", gotEmployment.getDepartmentName());
+        assertEquals("affiliation:role-title", gotEmployment.getRoleTitle());
+        gotEmployment.setDepartmentName("updated dept. name");
+        gotEmployment.setRoleTitle("updated role title");                
+        String profileCreateToken = oauthHelper.getClientCredentialsAccessToken(client2ClientId, client2ClientSecret, ScopePathType.ORCID_PROFILE_CREATE);
+        ClientResponse putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), profileCreateToken, gotEmployment);
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), putResponse.getStatus());
+        ClientResponse getAfterUpdateResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
+        Employment gotAfterUpdateEmployment = getAfterUpdateResponse.getEntity(Employment.class);
+        assertEquals("affiliation:department-name", gotAfterUpdateEmployment.getDepartmentName());
+        assertEquals("affiliation:role-title", gotAfterUpdateEmployment.getRoleTitle());                                
+    }
+    
+    @Test
+    public void createViewAndUpdateFunding() throws JSONException, InterruptedException, URISyntaxException {
+        Funding funding = (Funding) unmarshallFromPath("/record_2.0_rc1/samples/funding-2.0_rc1.xml", Funding.class);
+        funding.setPutCode(null);
+        funding.setVisibility(Visibility.PUBLIC);
+        String accessToken = getAccessToken();
+        ClientResponse postResponse = memberV2ApiClient.createFundingXml(testUser1OrcidId, funding, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        String locationPath = postResponse.getLocation().getPath();
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/" + user1OrcidId + "/funding/\\d+"));  
+        ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
+        Funding gotFunding = getResponse.getEntity(Funding.class);
+        assertEquals("common:title", gotFunding.getTitle().getTitle().getContent());
+        assertEquals("common:translated-title", gotFunding.getTitle().getTranslatedTitle().getContent());
+        assertEquals("en", gotFunding.getTitle().getTranslatedTitle().getLanguageCode());
+        gotFunding.getTitle().getTitle().setContent("Updated title");
+        gotFunding.getTitle().getTranslatedTitle().setContent("Updated translated title");
+        gotFunding.getTitle().getTranslatedTitle().setLanguageCode("es");                        
+        ClientResponse putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), accessToken, gotFunding);
+        assertEquals(Response.Status.OK.getStatusCode(), putResponse.getStatus());
+        ClientResponse getAfterUpdateResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
+        Funding gotAfterUpdateFunding = getAfterUpdateResponse.getEntity(Funding.class);
+        assertEquals("Updated title", gotAfterUpdateFunding.getTitle().getTitle().getContent());
+        assertEquals("Updated translated title", gotAfterUpdateFunding.getTitle().getTranslatedTitle().getContent());
+        assertEquals("es", gotAfterUpdateFunding.getTitle().getTranslatedTitle().getLanguageCode());        
+    }
+    
+    @Test
+    public void testUpdateFundingWithProfileCreationTokenWhenClaimedAndNotSource() throws JSONException, InterruptedException, URISyntaxException {
+        Funding funding = (Funding) unmarshallFromPath("/record_2.0_rc1/samples/funding-2.0_rc1.xml", Funding.class);
+        funding.setPutCode(null);
+        funding.setVisibility(Visibility.PUBLIC);
+        String accessToken = getAccessToken();
+        ClientResponse postResponse = memberV2ApiClient.createFundingXml(testUser1OrcidId, funding, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        String locationPath = postResponse.getLocation().getPath();
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/" + user1OrcidId + "/funding/\\d+"));  
+        ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
+        Funding gotFunding = getResponse.getEntity(Funding.class);
+        assertEquals("common:title", gotFunding.getTitle().getTitle().getContent());
+        assertEquals("common:translated-title", gotFunding.getTitle().getTranslatedTitle().getContent());
+        assertEquals("en", gotFunding.getTitle().getTranslatedTitle().getLanguageCode());
+        gotFunding.getTitle().getTitle().setContent("Updated title");
+        gotFunding.getTitle().getTranslatedTitle().setContent("Updated translated title");
+        gotFunding.getTitle().getTranslatedTitle().setLanguageCode("es");
+        String profileCreateToken = oauthHelper.getClientCredentialsAccessToken(client2ClientId, client2ClientSecret, ScopePathType.ORCID_PROFILE_CREATE);
+        ClientResponse putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), profileCreateToken, gotFunding);
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), putResponse.getStatus());
+        ClientResponse getAfterUpdateResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
+        Funding gotAfterUpdateFunding = getAfterUpdateResponse.getEntity(Funding.class);
+        assertEquals("common:title", gotAfterUpdateFunding.getTitle().getTitle().getContent());
+        assertEquals("common:translated-title", gotAfterUpdateFunding.getTitle().getTranslatedTitle().getContent());
+        assertEquals("en", gotAfterUpdateFunding.getTitle().getTranslatedTitle().getLanguageCode());
+    }
+    
     private String getAccessToken() throws InterruptedException, JSONException {
         return oauthHelper.obtainAccessToken(client1ClientId, client1ClientSecret, ScopePathType.ACTIVITIES_UPDATE.value(), user1UserName, user1Password, redirectUri);
     }
 
-    public Work unmarshallFromPath(String path) {
+    public Activity unmarshallFromPath(String path, Class<? extends Activity> type) {
         try (Reader reader = new InputStreamReader(getClass().getResourceAsStream(path))) {
-            Work work = unmarshall(reader);
-            return work;
+            Object obj = unmarshall(reader, type);
+            Activity result = null;
+            if(Education.class.equals(type)) {
+                result = (Education) obj;                
+            } else if(Employment.class.equals(type)) {
+                result = (Employment) obj;
+            } else if(Funding.class.equals(type)) {
+                result = (Funding) obj;
+            } else if(Work.class.equals(type)) {
+                result = (Work) obj;
+            } 
+            return result;
         } catch (IOException e) {
             throw new RuntimeException("Error reading notification from classpath", e);
         }
     }
 
-    public Work unmarshall(Reader reader) {
+    public Object unmarshall(Reader reader, Class<? extends Activity> type) {
         try {
-            JAXBContext context = JAXBContext.newInstance(Work.class);
+            JAXBContext context = JAXBContext.newInstance(type);
             Unmarshaller unmarshaller = context.createUnmarshaller();
-            return (Work) unmarshaller.unmarshal(reader);
+            return unmarshaller.unmarshal(reader);
         } catch (JAXBException e) {
             throw new RuntimeException("Unable to unmarshall orcid message" + e);
         }

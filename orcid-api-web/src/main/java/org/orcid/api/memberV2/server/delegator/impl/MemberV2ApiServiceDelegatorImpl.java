@@ -177,7 +177,11 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
     public Response createFunding(String orcid, Funding funding) {
         Funding f = profileFundingManager.createFunding(orcid, funding);
-        return Response.ok(f).build();
+        try {
+            return Response.created(new URI(f.getPutCode())).build();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Error creating URI for new funding", e);
+        }        
     }
 
     @Override
@@ -210,7 +214,11 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
     public Response createEducation(String orcid, Education education) {
         Education e = affiliationsManager.createEducationAffiliation(orcid, education);
-        return Response.ok(e).build();
+        try {
+            return Response.created(new URI(e.getPutCode())).build();
+        } catch (URISyntaxException ex) {
+            throw new RuntimeException("Error creating URI for new education", ex);
+        }
     }
 
     @Override
@@ -242,7 +250,11 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
     public Response createEmployment(String orcid, Employment employment) {
         Employment e = affiliationsManager.createEmploymentAffiliation(orcid, employment);
-        return Response.ok(e).build();
+        try {
+            return Response.created(new URI(e.getPutCode())).build();
+        } catch (URISyntaxException ex) {
+            throw new RuntimeException("Error creating URI for new work", ex);
+        }
     }
 
     @Override
