@@ -117,7 +117,7 @@ public class MemberV2Test {
     }
 
     @Test
-    public void createViewAndUpdateWork() throws JSONException, InterruptedException, URISyntaxException {
+    public void createViewUpdateAndDeleteWork() throws JSONException, InterruptedException, URISyntaxException {
         Work workToCreate = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
         workToCreate.setPutCode(null);
         String accessToken = getAccessToken();
@@ -136,7 +136,9 @@ public class MemberV2Test {
         ClientResponse getAfterUpdateResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
         Work gotAfterUpdateWork = getAfterUpdateResponse.getEntity(Work.class);
-        assertEquals("updated title", gotAfterUpdateWork.getWorkTitle().getTitle().getContent());
+        assertEquals("updated title", gotAfterUpdateWork.getWorkTitle().getTitle().getContent());                
+        ClientResponse deleteResponse = memberV2ApiClient.deleteWorkXml(testUser1OrcidId, gotWork.getPutCode(), accessToken);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
     }
 
     @Test
@@ -162,10 +164,12 @@ public class MemberV2Test {
         assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
         Work gotAfterUpdateWork = getAfterUpdateResponse.getEntity(Work.class);
         assertEquals("common:title", gotAfterUpdateWork.getWorkTitle().getTitle().getContent());
+        ClientResponse deleteResponse = memberV2ApiClient.deleteWorkXml(testUser1OrcidId, gotWork.getPutCode(), accessToken);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
     }
     
     @Test
-    public void createViewAndUpdateEducation() throws JSONException, InterruptedException, URISyntaxException {
+    public void createViewUpdateAndDeleteEducation() throws JSONException, InterruptedException, URISyntaxException {
         Education education = (Education) unmarshallFromPath("/record_2.0_rc1/samples/education-2.0_rc1.xml", Education.class);
         education.setPutCode(null);
         education.setVisibility(Visibility.PUBLIC);
@@ -189,6 +193,8 @@ public class MemberV2Test {
         Education gotAfterUpdateEducation = getAfterUpdateResponse.getEntity(Education.class);
         assertEquals("updated dept. name", gotAfterUpdateEducation.getDepartmentName());
         assertEquals("updated role title", gotAfterUpdateEducation.getRoleTitle());
+        ClientResponse deleteResponse = memberV2ApiClient.deleteEducationXml(testUser1OrcidId, gotEducation.getPutCode(), accessToken);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
     }
     
     @Test
@@ -216,11 +222,13 @@ public class MemberV2Test {
         assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
         Education gotAfterUpdateEducation = getAfterUpdateResponse.getEntity(Education.class);
         assertEquals("education:department-name", gotAfterUpdateEducation.getDepartmentName());
-        assertEquals("education:role-title", gotAfterUpdateEducation.getRoleTitle());                                
+        assertEquals("education:role-title", gotAfterUpdateEducation.getRoleTitle());   
+        ClientResponse deleteResponse = memberV2ApiClient.deleteEducationXml(testUser1OrcidId, gotEducation.getPutCode(), accessToken);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
     }
     
     @Test
-    public void createViewAndUpdateEmployment() throws JSONException, InterruptedException, URISyntaxException {
+    public void createViewUpdateAndDeleteEmployment() throws JSONException, InterruptedException, URISyntaxException {
         Employment employment = (Employment) unmarshallFromPath("/record_2.0_rc1/samples/employment-2.0_rc1.xml", Employment.class);
         employment.setPutCode(null);
         employment.setVisibility(Visibility.PUBLIC);
@@ -244,6 +252,8 @@ public class MemberV2Test {
         Employment gotAfterUpdateEmployment = getAfterUpdateResponse.getEntity(Employment.class);
         assertEquals("updated dept. name", gotAfterUpdateEmployment.getDepartmentName());
         assertEquals("updated role title", gotAfterUpdateEmployment.getRoleTitle());
+        ClientResponse deleteResponse = memberV2ApiClient.deleteEmploymentXml(testUser1OrcidId, gotEmployment.getPutCode(), accessToken);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
     }
     
     @Test
@@ -271,11 +281,13 @@ public class MemberV2Test {
         assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
         Employment gotAfterUpdateEmployment = getAfterUpdateResponse.getEntity(Employment.class);
         assertEquals("affiliation:department-name", gotAfterUpdateEmployment.getDepartmentName());
-        assertEquals("affiliation:role-title", gotAfterUpdateEmployment.getRoleTitle());                                
+        assertEquals("affiliation:role-title", gotAfterUpdateEmployment.getRoleTitle()); 
+        ClientResponse deleteResponse = memberV2ApiClient.deleteEmploymentXml(testUser1OrcidId, gotEmployment.getPutCode(), accessToken);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
     }
     
     @Test
-    public void createViewAndUpdateFunding() throws JSONException, InterruptedException, URISyntaxException {
+    public void createViewUpdateAndDeleteFunding() throws JSONException, InterruptedException, URISyntaxException {
         Funding funding = (Funding) unmarshallFromPath("/record_2.0_rc1/samples/funding-2.0_rc1.xml", Funding.class);
         funding.setPutCode(null);
         funding.setVisibility(Visibility.PUBLIC);
@@ -301,7 +313,9 @@ public class MemberV2Test {
         Funding gotAfterUpdateFunding = getAfterUpdateResponse.getEntity(Funding.class);
         assertEquals("Updated title", gotAfterUpdateFunding.getTitle().getTitle().getContent());
         assertEquals("Updated translated title", gotAfterUpdateFunding.getTitle().getTranslatedTitle().getContent());
-        assertEquals("es", gotAfterUpdateFunding.getTitle().getTranslatedTitle().getLanguageCode());        
+        assertEquals("es", gotAfterUpdateFunding.getTitle().getTranslatedTitle().getLanguageCode());    
+        ClientResponse deleteResponse = memberV2ApiClient.deleteFundingXml(testUser1OrcidId, gotFunding.getPutCode(), accessToken);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
     }
     
     @Test
@@ -333,6 +347,8 @@ public class MemberV2Test {
         assertEquals("common:title", gotAfterUpdateFunding.getTitle().getTitle().getContent());
         assertEquals("common:translated-title", gotAfterUpdateFunding.getTitle().getTranslatedTitle().getContent());
         assertEquals("en", gotAfterUpdateFunding.getTitle().getTranslatedTitle().getLanguageCode());
+        ClientResponse deleteResponse = memberV2ApiClient.deleteFundingXml(testUser1OrcidId, gotFunding.getPutCode(), accessToken);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
     }
     
     private String getAccessToken() throws InterruptedException, JSONException {

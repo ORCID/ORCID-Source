@@ -68,6 +68,11 @@ public class MemberV2ApiClientImpl {
         return orcidClientHelper.postClientResponseWithToken(UriBuilder.fromPath(WORK).build(orcid), VND_ORCID_JSON, work, accessToken);
     }
 
+    public ClientResponse deleteWorkXml(String orcid, String putCode, String accessToken) {
+        URI deleteWorkUri = UriBuilder.fromPath(WORK + PUTCODE).build(orcid, putCode);
+        return orcidClientHelper.deleteClientResponseWithToken(deleteWorkUri, VND_ORCID_XML, accessToken);
+    }
+    
     public ClientResponse viewEducationXml(String orcid, String putCode, String accessToken) {
         URI educationUri = UriBuilder.fromPath(EDUCATION + PUTCODE).build(orcid, putCode);
         return orcidClientHelper.getClientResponseWithToken(educationUri, VND_ORCID_XML, accessToken);
@@ -80,6 +85,11 @@ public class MemberV2ApiClientImpl {
     public ClientResponse createEducationJson(String orcid, Education education, String accessToken) {
         return orcidClientHelper.postClientResponseWithToken(UriBuilder.fromPath(EDUCATION).build(orcid), VND_ORCID_JSON, education, accessToken);
     }
+        
+    public ClientResponse deleteEducationXml(String orcid, String putCode, String accessToken) {
+        URI deleteEducationUri = UriBuilder.fromPath(EDUCATION + PUTCODE).build(orcid, putCode);
+        return orcidClientHelper.deleteClientResponseWithToken(deleteEducationUri, VND_ORCID_XML, accessToken);
+    }           
     
     public ClientResponse viewEmploymentXml(String orcid, String putCode, String accessToken) {
         URI employmentUri = UriBuilder.fromPath(EMPLOYMENT + PUTCODE).build(orcid, putCode);
@@ -94,6 +104,11 @@ public class MemberV2ApiClientImpl {
         return orcidClientHelper.postClientResponseWithToken(UriBuilder.fromPath(EMPLOYMENT).build(orcid), VND_ORCID_JSON, employment, accessToken);
     }
     
+    public ClientResponse deleteEmploymentXml(String orcid, String putCode, String accessToken) {
+        URI deleteEmploymentUri = UriBuilder.fromPath(EMPLOYMENT + PUTCODE).build(orcid, putCode);
+        return orcidClientHelper.deleteClientResponseWithToken(deleteEmploymentUri, VND_ORCID_XML, accessToken);
+    }
+        
     public ClientResponse viewFundingXml(String orcid, String putCode, String accessToken) {
         URI fundingUri = UriBuilder.fromPath(FUNDING + PUTCODE).build(orcid, putCode);
         return orcidClientHelper.getClientResponseWithToken(fundingUri, VND_ORCID_XML, accessToken);
@@ -106,17 +121,13 @@ public class MemberV2ApiClientImpl {
     public ClientResponse createFundingJson(String orcid, Funding funding, String accessToken) {
         return orcidClientHelper.postClientResponseWithToken(UriBuilder.fromPath(FUNDING).build(orcid), VND_ORCID_JSON, funding, accessToken);
     }
-    
+            
+    public ClientResponse deleteFundingXml(String orcid, String putCode, String accessToken) {
+        URI deleteFundingUri = UriBuilder.fromPath(FUNDING + PUTCODE).build(orcid, putCode);
+        return orcidClientHelper.deleteClientResponseWithToken(deleteFundingUri, VND_ORCID_XML, accessToken);
+    }
+                
     public ClientResponse updateLocationXml(URI location, String accessToken, Object jaxbRootElement){
         return orcidClientHelper.putClientResponseWithToken(location, VND_ORCID_XML, jaxbRootElement, accessToken);
-    }
-
-    public ClientResponse updateWorkXml(String orcid, String putCode, Work work, String accessToken) {
-        return null;
-    }
-
-    public ClientResponse deleteWorkXml(String orcid, String putCode, String accessToken) {
-        return null;
-    }
-
+    }   
 }

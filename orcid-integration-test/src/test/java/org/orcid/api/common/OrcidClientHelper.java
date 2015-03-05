@@ -21,8 +21,6 @@ import java.net.URISyntaxException;
 
 import javax.ws.rs.core.UriBuilder;
 
-import org.orcid.jaxb.model.message.OrcidMessage;
-
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
