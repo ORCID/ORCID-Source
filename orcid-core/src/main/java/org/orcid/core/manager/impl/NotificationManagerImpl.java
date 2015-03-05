@@ -63,6 +63,7 @@ import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
 import org.slf4j.Logger;
@@ -139,7 +140,7 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Resource
     private LocaleManager localeManager;
-
+    
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationManagerImpl.class);
 
     public boolean isApiRecordCreationEmailEnabled() {
@@ -168,6 +169,51 @@ public class NotificationManagerImpl implements NotificationManager {
         this.profileDao = profileDao;
     }
 
+    @Override
+    public void sendWelcomeEmail(OrcidProfile orcidProfile, String email) {
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+        String subject = getSubject("email.subject.register.thanks", orcidProfile);
+        String emailName = deriveEmailFriendlyName(orcidProfile);
+        String verificationUrl = createVerificationUrl(email, orcidUrlManager.getBaseUrl());
+        String orcidId = orcidProfile.getOrcidIdentifier().getPath();
+        String baseUri = orcidUrlManager.getBaseUrl();
+        
+        templateParams.put("subject", subject);
+        templateParams.put("emailName", emailName);
+        templateParams.put("verificationUrl", verificationUrl);
+        templateParams.put("orcidId", orcidId);
+        templateParams.put("baseUri", baseUri);
+        
+        SourceEntity source = sourceManager.retrieveSourceEntity();
+        if(source != null) {
+            String sourceId = source.getSourceId();
+            String sourceName = source.getSourceName();
+            //If the source is not the user itself
+            if(sourceId != null && ! sourceId.equals(orcidId)) {
+                if(!PojoUtil.isEmpty(sourceName)) {
+                    String paramValue = " " + localeManager.resolveMessage("common.through") + " " + sourceName + ".";
+                    templateParams.put("source_name_if_exists", paramValue);
+                } else {
+                    templateParams.put("source_name_if_exists", ".");
+                }            
+            } else {
+                templateParams.put("source_name_if_exists", ".");
+            }
+        } else {
+            templateParams.put("source_name_if_exists", ".");
+        }
+        
+        addMessageParams(templateParams, orcidProfile);
+        
+        // Generate body from template
+        String body = templateManager.processTemplate("welcome_email.ftl", templateParams);
+        // Generate html from template
+        String html = templateManager.processTemplate("welcome_email_html.ftl", templateParams);
+        
+        mailGunManager.sendEmail(SUPPORT_VERIFY_ORCID_ORG, email, subject, body, html);
+    }
+    
+    
     @Override
     public void sendOrcidDeactivateEmail(OrcidProfile orcidToDeactivate) {
         // Create verification url
