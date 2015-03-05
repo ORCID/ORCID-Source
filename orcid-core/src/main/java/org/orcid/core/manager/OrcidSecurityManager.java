@@ -16,7 +16,7 @@
  */
 package org.orcid.core.manager;
 
-import org.orcid.jaxb.model.record.Activity;
+import org.orcid.jaxb.model.record.Filterable;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 
 /**
@@ -26,7 +26,7 @@ import org.orcid.persistence.jpa.entities.SourceEntity;
  */
 public interface OrcidSecurityManager {
 
-    void checkVisibility(Activity activity);
+    void checkVisibility(Filterable filterable);
 
     void checkSource(SourceEntity existingSource);
     

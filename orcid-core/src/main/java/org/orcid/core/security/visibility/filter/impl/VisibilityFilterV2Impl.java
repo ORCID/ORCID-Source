@@ -16,15 +16,93 @@
  */
 package org.orcid.core.security.visibility.filter.impl;
 
-import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
-import org.orcid.jaxb.model.record.Visibility;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
+import javax.annotation.Resource;
+
+import org.orcid.core.exception.OrcidForbiddenException;
+import org.orcid.core.exception.OrcidUnauthorizedException;
+import org.orcid.core.manager.OrcidSecurityManager;
+import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
+import org.orcid.jaxb.model.record.Filterable;
+import org.orcid.jaxb.model.record.Group;
+import org.orcid.jaxb.model.record.GroupableActivity;
+import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary.FundingGroup;
+import org.orcid.jaxb.model.record.summary.Fundings;
+import org.orcid.jaxb.model.record.summary.WorkGroup;
+import org.orcid.jaxb.model.record.summary.Works;
+import org.springframework.stereotype.Component;
+
+/**
+ * 
+ * @author Will Simpson
+ *
+ */
+@Component("visibilityFilterV2")
 public class VisibilityFilterV2Impl implements VisibilityFilterV2 {
 
+    @Resource
+    private OrcidSecurityManager orcidSecurityManager;
+    
     @Override
-    public Object filter(Object objectToBeFiltered, Visibility... visibilities) {
-        // TODO Auto-generated method stub
-        return objectToBeFiltered;
+    public ActivitiesSummary filter(ActivitiesSummary activitiesSummary) {
+        if(activitiesSummary == null){
+            return null;
+        }
+        filter(activitiesSummary.getEducations());
+        filter(activitiesSummary.getEmployments());
+        Fundings fundings = activitiesSummary.getFundings();
+        if(fundings != null){
+            List<FundingGroup> fundingGroups = fundings.getFundingGroups();
+            filterGroups(fundingGroups);
+            if(fundingGroups.isEmpty()){
+                activitiesSummary.setFundings(null);
+            }
+        }
+        Works works = activitiesSummary.getWorks();
+        if(works != null){
+            List<WorkGroup> workGroups = works.getWorkGroup();
+            filterGroups(workGroups);
+            if(workGroups.isEmpty()){
+                activitiesSummary.setWorks(null);
+            }
+        }
+        return activitiesSummary;
+    }
+
+    @Override
+    public Collection<? extends Filterable> filter(Collection<? extends Filterable> filterables) {
+        if(filterables == null){
+            return null;
+        }
+        for(Iterator<? extends Filterable> iterator = filterables.iterator(); iterator.hasNext();){
+            try{
+                orcidSecurityManager.checkVisibility(iterator.next());
+            }
+            catch(OrcidForbiddenException | OrcidUnauthorizedException e){
+                iterator.remove();
+            }
+        }
+        return filterables;
+    }
+    
+    @Override
+    public Collection<? extends Group> filterGroups(Collection<? extends Group> groups){
+        if(groups == null){
+            return null;
+        }
+        for(Iterator<? extends Group> iterator = groups.iterator(); iterator.hasNext();){
+            Group group = iterator.next();
+            Collection<? extends GroupableActivity> activities = group.getActivities();
+            filter(activities);
+            if(activities.isEmpty()){
+                iterator.remove();
+            }
+        }
+        return groups;
     }
 
 }

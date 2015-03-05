@@ -16,14 +16,21 @@
  */
 package org.orcid.core.security.visibility.filter;
 
-import org.orcid.jaxb.model.record.Visibility;
+import java.util.Collection;
 
+import org.orcid.jaxb.model.record.Filterable;
+import org.orcid.jaxb.model.record.Group;
+import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
 
 /**
  * @author Will Simpson
  */
 public interface VisibilityFilterV2 {
 
-    Object filter(Object objectToBeFiltered, Visibility... visibilities);
+    ActivitiesSummary filter(ActivitiesSummary activitiesSummary);
+    
+    Collection<? extends Filterable> filter(Collection<? extends Filterable> filterables);
+
+    Collection<? extends Group> filterGroups(Collection<? extends Group> groups);
 
 }

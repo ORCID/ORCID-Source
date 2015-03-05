@@ -16,52 +16,59 @@
  */
 package org.orcid.api.common.security.filter.impl;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 
+import javax.annotation.Resource;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.orcid.core.security.visibility.filter.impl.VisibilityFilterV2Impl;
-import org.orcid.jaxb.model.record.Visibility;
+import org.junit.runner.RunWith;
+import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
+import org.orcid.core.utils.SecurityContextTestUtils;
+import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  * 
  * @author Will Simpson
  *
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class VisibilityFilterV2ImplTest {
 
     private Unmarshaller unmarshaller;
 
-    private VisibilityFilterV2Impl visibilityFilter = new VisibilityFilterV2Impl();
+    @Resource(name = "visibilityFilterV2")
+    private VisibilityFilterV2 visibilityFilter;
 
     @Before
     public void before() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(ActivitiesSummary.class);
         unmarshaller = context.createUnmarshaller();
     }
-    
+
     @Test
-    public void testUnmarshall() throws JAXBException, IOException{
+    public void testUnmarshall() throws JAXBException, IOException {
         ActivitiesSummary activitiesSummary = getActivitiesSummary("/activities-protected-full-latest.xml");
         String expected = IOUtils.toString(getClass().getResourceAsStream("/activities-protected-full-latest.xml"), "UTF-8").replaceAll("(?s)<!--.*?-->\n*", "");
         assertEquals(expected, activitiesSummary.toString());
     }
 
-    @Ignore("Not yet implemented")
     @Test
     public void testFilterActivities() throws JAXBException {
         ActivitiesSummary activitiesSummary = getActivitiesSummary("/activities-protected-full-latest.xml");
         ActivitiesSummary expectedActivitiesSummary = getActivitiesSummary("/activities-stripped-latest.xml");
-        visibilityFilter.filter(activitiesSummary, Visibility.PUBLIC);
+        SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_PUBLIC);
+        visibilityFilter.filter(activitiesSummary);
         assertEquals(expectedActivitiesSummary.toString(), activitiesSummary.toString());
     }
 

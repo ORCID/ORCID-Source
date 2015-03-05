@@ -27,16 +27,16 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.record.Activity;
 import org.orcid.jaxb.model.record.CreatedDate;
+import org.orcid.jaxb.model.record.Filterable;
 import org.orcid.jaxb.model.record.FuzzyDate;
 import org.orcid.jaxb.model.record.LastModifiedDate;
 import org.orcid.jaxb.model.record.Source;
 import org.orcid.jaxb.model.record.Visibility;
-import org.orcid.jaxb.model.record.VisibilityType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "departmentName", "roleTitle", "startDate", "endDate" })
 @XmlRootElement(name = "education-summary", namespace = "http://www.orcid.org/ns/education")
-public class EducationSummary implements VisibilityType, Activity, Serializable {
+public class EducationSummary implements Filterable, Activity, Serializable {
             
     private static final long serialVersionUID = 6988028860521476955L;
     @XmlElement(name="department-name", namespace = "http://www.orcid.org/ns/education")
