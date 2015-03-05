@@ -38,12 +38,11 @@
                 <div id="name-help" class="popover bottom">
 			        <div class="arrow"></div>
 			        <div class="popover-content">
-			            <p>First name is your given name or the name you most commonly go by.</p>			             
-						<p>Last name is your family name.</p>
-						<p>You will have a chance to add additional names after you have
-			            created your account by updating Personal Information.</p>			            
-						<a href="http://support.orcid.org/knowledgebase/articles/142948-names-in-the-orcid-registry" target="_blank">More information on names</a>
-			        </div>                
+			            <p><@orcid.msg ''/></p>
+						<p><@orcid.msg 'orcid.frontend.register.help.last_name'/></p>
+						<p><@orcid.msg 'orcid.frontend.register.help.update_names'/></p>
+						<a href="http://support.orcid.org/knowledgebase/articles/142948-names-in-the-orcid-registry" target="_blank"><@orcid.msg 'orcid.frontend.register.help.more_info.link.text'/></a>
+			        </div>
 			    </div>
             </div>
 			<span class="orcid-error" ng-show="register.givenNames.errors.length > 0">

@@ -329,17 +329,17 @@
 						<div class="bulk-edit">
 							<div class="row">
 								<div class="col-md-7 col-sm-7 col-xs-6">
-									<h4>Bulk edit</h4><span class="hide-bulk" ng-click="toggleBulkEdit()">Hide bulk edit</span>
+									<h4><@orcid.msg 'workspace.bulkedit.'/></h4><span class="hide-bulk" ng-click="toggleBulkEdit()"><@orcid.msg 'workspace.bulkedit.hide'/></span>
 									<ol>
-										<li>Select works: Click the checkbox beside each work. Use the checkbox to the right to select or deselect all.</li>
-										<li>Select editing action: Click the trash can to delete all selected works or click a privacy setting to apply that setting to all selected works.</li>
+										<li><@orcid.msg 'workspace.bulkedit.selectWorks'/></li>
+										<li><@orcid.msg 'workspace.bulkedit.selectAction'/></li>
 									</ol>
 								</div>
 								<div class="col-md-5 col-sm-5 col-xs-6">
 									<ul class="bulk-edit-toolbar">
 																			
 										<li class="bulk-edit-toolbar-item work-multiple-selector"><!-- Select all -->
-											<label>SELECT</label>											
+											<label><@orcid.msg 'workspace.bulkedit.select'/></label>
 											<div id="custom-control-x">
 												<div class="custom-control-x" >	
 													<div class="dropdown-custom-menu" id="dropdown-custom-menu" ng-click="toggleSelectMenu()">										
@@ -350,15 +350,15 @@
 													</div>
 													<div>
 														<ul class="dropdown-menu" role="menu" id="special-menu" ng-class="{'block': bulkDisplayToggle == true}">
-												          <li><a href="" ng-click="bulkChangeAll(true); bulkDisplayToggle = false;">All selected</a></li>
-												          <li><a href="" ng-click="bulkChangeAll(false); bulkDisplayToggle = false;">None selected</a></li>							          							          
+												          <li><a href="" ng-click="bulkChangeAll(true); bulkDisplayToggle = false;"><@orcid.msg 'workspace.bulkedit.selected.all'/></a></li>
+												          <li><a href="" ng-click="bulkChangeAll(false); bulkDisplayToggle = false;"><@orcid.msg 'workspace.bulkedit.selected.none'/></a></li>							          							          
 												        </ul>			
 													</div>
 												</div>
 											</div>
 										</li>
 										<li class="bulk-edit-toolbar-item"><!-- Privacy control -->
-											<label>EDIT</label>											
+											<label><@orcid.msg 'workspace.bulkedit.edit'/></label>
 											<div class="bulk-edit-privacy-control">
 												<@orcid.privacyToggle2 angularModel="groupPrivacy()" 
 													    questionClick=""
@@ -375,7 +375,7 @@
 													<div class="popover popover-tooltip top bulk-edit-popover" ng-show="showElement['Bulk-Edit'] == true">
 		                                             <div class="arrow"></div>
 			                                            <div class="popover-content">
-			                                                <span>Delete selected works</span>
+			                                                <span><@orcid.msg 'workspace.bulkedit.delete'/></span>
 			                                            </div>
 			                                        </div>
 												</div>
