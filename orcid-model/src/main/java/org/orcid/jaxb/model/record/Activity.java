@@ -21,9 +21,7 @@ package org.orcid.jaxb.model.record;
  * @author Will Simpson
  * 
  */
-public interface Activity extends VisibilityType {
-
-    String retrieveSourcePath();
+public interface Activity extends Filterable {
 
     String getPutCode();
     

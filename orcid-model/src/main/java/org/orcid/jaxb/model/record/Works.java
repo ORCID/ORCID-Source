@@ -74,8 +74,7 @@ public class Works implements Serializable, ActivitiesContainer {
      * 
      * 
      * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Work }
+     * Objects of the following type(s) are allowed in the list {@link Work }
      * 
      * 
      */
@@ -97,7 +96,7 @@ public class Works implements Serializable, ActivitiesContainer {
         }
         return workMap;
     }
-    
+
     @Override
     public List<Work> retrieveActivities() {
         return getOrcidWork();
@@ -108,7 +107,6 @@ public class Works implements Serializable, ActivitiesContainer {
         this.works = orcidWork;
     }
 
-    
     @Override
     public boolean equals(Object o) {
         if (this == o)

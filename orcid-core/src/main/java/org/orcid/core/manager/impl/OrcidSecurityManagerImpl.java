@@ -29,9 +29,9 @@ import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record.Activity;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
+import org.orcid.jaxb.model.record.Filterable;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.Visibility;
 import org.orcid.jaxb.model.record.Work;
@@ -97,15 +97,22 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     }
     
     @Override
-    public void checkVisibility(Activity activity) {
+    public void checkVisibility(Filterable filterable) {
         OAuth2Authentication oAuth2Authentication = getOAuth2Authentication();
-        OAuth2Request authorizationRequest = oAuth2Authentication.getOAuth2Request();
-        String clientId = authorizationRequest.getClientId();
-        Visibility visibility = activity.getVisibility();
-        Set<String> readLimitedScopes = getReadLimitedScopesThatTheClientHas(authorizationRequest, activity);
+        //If it is null, it might be a call from the public API
+        Set<String> readLimitedScopes = new HashSet<String>();
+        Visibility visibility = filterable.getVisibility();
+        String clientId = null;
+        
+        if(oAuth2Authentication != null) {
+            OAuth2Request authorizationRequest = oAuth2Authentication.getOAuth2Request();
+            clientId = authorizationRequest.getClientId();            
+             readLimitedScopes = getReadLimitedScopesThatTheClientHas(authorizationRequest, filterable);
+        }
+        
         if (readLimitedScopes.isEmpty()) {
             // This client only has permission for read public
-            if ((visibility == null || Visibility.PRIVATE.equals(visibility)) && !clientId.equals(activity.retrieveSourcePath())) {
+            if ((visibility == null || Visibility.PRIVATE.equals(visibility)) && clientId != null && !clientId.equals(filterable.retrieveSourcePath())) {
                 throw new OrcidForbiddenException("The activity is private and you are not the source");
             }
             if (visibility.isMoreRestrictiveThan(Visibility.PUBLIC)) {
@@ -113,54 +120,11 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             }
         } else {
             // The client has permission for read limited
-            if ((visibility == null || Visibility.PRIVATE.equals(visibility)) && !clientId.equals(activity.retrieveSourcePath())) {
+            if ((visibility == null || Visibility.PRIVATE.equals(visibility)) && clientId != null && !clientId.equals(filterable.retrieveSourcePath())) {
                 throw new OrcidForbiddenException("The activity is private and you are not the source");
             }
         }
-    }
-    
-    @Override
-    public void checkHavePublicVisibility(Activity activity) {
-        Visibility visibility = activity.getVisibility();
-        if(!Visibility.PUBLIC.equals(visibility)) {
-            throw new OrcidUnauthorizedException("The activity is not public");
-        }
-    }
-    
-    @Override
-    public void checkHavePublicVisibility(ActivitiesSummary activities) {
-        List<EducationSummary> educations = activities.getEducations();        
-        for(EducationSummary education : educations) {
-            checkHavePublicVisibility(education);
-        }
-                
-        List<EmploymentSummary> employments = activities.getEmployments();
-            for(EmploymentSummary employment : employments) {
-                checkHavePublicVisibility(employment);
-            }
-        
-        Fundings fundings = activities.getFundings();
-        if(fundings != null) {
-            List<FundingGroup> fundingGroups = fundings.getFundingGroups();
-            for(FundingGroup group : fundingGroups) {
-                List<FundingSummary> summaries = group.getFundingSummary();
-                for(FundingSummary summary : summaries) {
-                    checkHavePublicVisibility(summary);
-                }
-            }
-        }
-        
-        Works works = activities.getWorks();
-        if(works != null) {
-            List<WorkGroup> workGroups = works.getWorkGroup();
-            for(WorkGroup group : workGroups) {
-                List<WorkSummary> summaries = group.getWorkSummary();
-                for(WorkSummary summary : summaries) {
-                    checkHavePublicVisibility(summary);
-                }
-            }
-        }
-    }
+    }        
 
     @Override
     public void checkSource(SourceEntity existingSource) {
@@ -170,16 +134,16 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         }
     }
 
-    private Set<String> getReadLimitedScopesThatTheClientHas(OAuth2Request authorizationRequest, Activity activity) {
+    private Set<String> getReadLimitedScopesThatTheClientHas(OAuth2Request authorizationRequest, Filterable filterable) {
         Set<String> requestedScopes = ScopePathType.getCombinedScopesFromStringsAsStrings(authorizationRequest.getScope());
         Set<String> readLimitedScopes = new HashSet<>();
         readLimitedScopes.add(ScopePathType.ACTIVITIES_READ_LIMITED.value());
         readLimitedScopes.add(ScopePathType.ORCID_PROFILE_READ_LIMITED.value());
-        if (activity instanceof Work) {
+        if (filterable instanceof Work) {
             readLimitedScopes.add(ScopePathType.ORCID_WORKS_READ_LIMITED.value());
-        } else if (activity instanceof Funding) {
+        } else if (filterable instanceof Funding) {
             readLimitedScopes.add(ScopePathType.FUNDING_READ_LIMITED.value());
-        } else if (activity instanceof Education || activity instanceof Employment) {
+        } else if (filterable instanceof Education || filterable instanceof Employment) {
             readLimitedScopes.add(ScopePathType.AFFILIATIONS_READ_LIMITED.value());
         }
         readLimitedScopes.retainAll(requestedScopes);
@@ -189,6 +153,9 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     private OAuth2Authentication getOAuth2Authentication() {
         SecurityContext context = SecurityContextHolder.getContext();
         Authentication authentication = context.getAuthentication();
+        //if authentication is null, it might be a call from the public api, so, return null
+        if(authentication == null)
+            return null;
         if (OAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
             OAuth2Authentication oAuth2Authentication = (OAuth2Authentication) authentication;
             return oAuth2Authentication;

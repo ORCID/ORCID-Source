@@ -29,6 +29,7 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.SourceManager;
+import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
@@ -70,6 +71,9 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
     
+    @Resource(name = "visibilityFilterV2")
+    private VisibilityFilterV2 visibilityFilter;
+    
     @Override
     public Response viewStatusText() {
         return Response.ok(STATUS_OK_MESSAGE).build();
@@ -78,63 +82,63 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
     @Override
     public Response viewActivities(String orcid) {
         ActivitiesSummary as = profileEntityManager.getPublicActivitiesSummary(orcid);    
-        orcidSecurityManager.checkHavePublicVisibility(as);
+        visibilityFilter.filter(as);
         return Response.ok(as).build();
     }
 
     @Override
     public Response viewWork(String orcid, String putCode) {
         Work w = profileWorkManager.getWork(orcid, putCode);
-        orcidSecurityManager.checkHavePublicVisibility(w);
+        orcidSecurityManager.checkVisibility(w);
         return Response.ok(w).build();
     }
 
     @Override
     public Response viewWorkSummary(String orcid, String putCode) {
         WorkSummary ws = profileWorkManager.getWorkSummary(orcid, putCode);
-        orcidSecurityManager.checkHavePublicVisibility(ws);
+        orcidSecurityManager.checkVisibility(ws);
         return Response.ok(ws).build();
     }
 
     @Override
     public Response viewFunding(String orcid, String putCode) {
         Funding f = profileFundingManager.getFunding(orcid, putCode);
-        orcidSecurityManager.checkHavePublicVisibility(f);
+        orcidSecurityManager.checkVisibility(f);
         return Response.ok(f).build();
     }
 
     @Override
     public Response viewFundingSummary(String orcid, String putCode) {
         FundingSummary fs = profileFundingManager.getSummary(orcid, putCode);
-        orcidSecurityManager.checkHavePublicVisibility(fs);
+        orcidSecurityManager.checkVisibility(fs);
         return Response.ok(fs).build();
     }
 
     @Override
     public Response viewEducation(String orcid, String putCode) {
         Education e = affiliationsManager.getEducationAffiliation(orcid, putCode);
-        orcidSecurityManager.checkHavePublicVisibility(e);
+        orcidSecurityManager.checkVisibility(e);
         return Response.ok(e).build();
     }
 
     @Override
     public Response viewEducationSummary(String orcid, String putCode) {
         EducationSummary es = affiliationsManager.getEducationSummary(orcid, putCode);
-        orcidSecurityManager.checkHavePublicVisibility(es);
+        orcidSecurityManager.checkVisibility(es);
         return Response.ok(es).build();
     }
 
     @Override
     public Response viewEmployment(String orcid, String putCode) {
         Employment e = affiliationsManager.getEmploymentAffiliation(orcid, putCode);
-        orcidSecurityManager.checkHavePublicVisibility(e);
+        orcidSecurityManager.checkVisibility(e);
         return Response.ok(e).build();
     }
 
     @Override
     public Response viewEmploymentSummary(String orcid, String putCode) {
         EmploymentSummary es = affiliationsManager.getEmploymentSummary(orcid, putCode);
-        orcidSecurityManager.checkHavePublicVisibility(es);
+        orcidSecurityManager.checkVisibility(es);
         return Response.ok(es).build();
     }
 

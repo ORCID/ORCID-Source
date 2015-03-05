@@ -14,23 +14,23 @@
  *
  * =============================================================================
  */
-package org.orcid.core.manager;
+package org.orcid.core.security.visibility.filter;
 
-import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
+import java.util.Collection;
+
 import org.orcid.jaxb.model.record.Filterable;
-import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.orcid.jaxb.model.record.Group;
+import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
 
 /**
- * 
  * @author Will Simpson
- *
  */
-public interface OrcidSecurityManager {
+public interface VisibilityFilterV2 {
 
-    void checkVisibility(Filterable filterable);
+    ActivitiesSummary filter(ActivitiesSummary activitiesSummary);
     
-    void checkVisibility(ActivitiesSummary activities);
-    
-    void checkSource(SourceEntity existingSource);
-    
+    Collection<? extends Filterable> filter(Collection<? extends Filterable> filterables);
+
+    Collection<? extends Group> filterGroups(Collection<? extends Group> groups);
+
 }

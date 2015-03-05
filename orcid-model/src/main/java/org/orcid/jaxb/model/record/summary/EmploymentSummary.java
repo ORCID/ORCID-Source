@@ -34,28 +34,28 @@ import org.orcid.jaxb.model.record.Visibility;
 import org.orcid.jaxb.model.record.VisibilityType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "departmentName", "roleTitle", "startDate", "endDate", "source", "createdDate", "lastModifiedDate" })
-@XmlRootElement(name = "employmentSummary", namespace = "http://www.orcid.org/ns/education")
+@XmlType(propOrder = { "createdDate", "lastModifiedDate",  "source", "departmentName", "roleTitle", "startDate", "endDate"  })
+@XmlRootElement(name = "employment-summary", namespace = "http://www.orcid.org/ns/employment")
 public class EmploymentSummary implements VisibilityType, Activity, Serializable {
             
     private static final long serialVersionUID = 6988028860521476955L;
-    @XmlElement(namespace = "http://www.orcid.org/ns/education")
+    @XmlElement(name="department-name", namespace = "http://www.orcid.org/ns/employment")
     protected String departmentName;
-    @XmlElement(namespace = "http://www.orcid.org/ns/education")
+    @XmlElement(name="role-title", namespace = "http://www.orcid.org/ns/employment")
     protected String roleTitle;
-    @XmlElement(namespace = "http://www.orcid.org/ns/common")
+    @XmlElement(name="start-date", namespace = "http://www.orcid.org/ns/common")
     protected FuzzyDate startDate;
-    @XmlElement(namespace = "http://www.orcid.org/ns/common")
+    @XmlElement(name="end-date", namespace = "http://www.orcid.org/ns/common")
     protected FuzzyDate endDate;
     
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Source source;
-    @XmlElement(namespace = "http://www.orcid.org/ns/common")
+    @XmlElement(name="last-modified-date", namespace = "http://www.orcid.org/ns/common")
     protected LastModifiedDate lastModifiedDate;
-    @XmlElement(namespace = "http://www.orcid.org/ns/common")
+    @XmlElement(name="created-date", namespace = "http://www.orcid.org/ns/common")
     protected CreatedDate createdDate;
 
-    @XmlAttribute
+    @XmlAttribute(name="put-code")
     protected String putCode;
     @XmlAttribute
     protected Visibility visibility;

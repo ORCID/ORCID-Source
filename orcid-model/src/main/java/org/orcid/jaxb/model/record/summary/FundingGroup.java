@@ -17,8 +17,8 @@
 package org.orcid.jaxb.model.record.summary;
 
 import java.io.Serializable;
-
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -27,10 +27,13 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.orcid.jaxb.model.record.Group;
+import org.orcid.jaxb.model.record.GroupableActivity;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "identifiers", "fundingSummary" })
 @XmlRootElement(name = "funding-group", namespace = "http://www.orcid.org/ns/activities")
-public class FundingGroup implements Serializable {
+public class FundingGroup implements Group, Serializable {
     private static final long serialVersionUID = 1L;
     @XmlElement(name = "identifiers", namespace = "http://www.orcid.org/ns/activities")
     private Identifiers identifiers;
@@ -47,6 +50,11 @@ public class FundingGroup implements Serializable {
         if (fundingSummary == null)
             fundingSummary = new ArrayList<FundingSummary>();
         return fundingSummary;
+    }
+    
+    @Override
+    public Collection<? extends GroupableActivity> getActivities() {
+        return getFundingSummary();
     }
 
     @Override
@@ -79,4 +87,5 @@ public class FundingGroup implements Serializable {
             return false;
         return true;
     }
+
 }
