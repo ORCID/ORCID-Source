@@ -70,10 +70,10 @@ public class WorkSummary implements VisibilityType, Activity, GroupableActivity,
     @XmlElement(name = "external-identifiers", namespace = "http://www.orcid.org/ns/work")
     protected WorkExternalIdentifiers externalIdentifiers;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
-    protected Source source;    
-    @XmlElement(name="last-modified-date", namespace = "http://www.orcid.org/ns/common")
+    protected Source source;
+    @XmlElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")
     protected LastModifiedDate lastModifiedDate;
-    @XmlElement(name="created-date", namespace = "http://www.orcid.org/ns/common")
+    @XmlElement(name = "created-date", namespace = "http://www.orcid.org/ns/common")
     protected CreatedDate createdDate;
 
     @XmlAttribute(name = "put-code")
@@ -82,7 +82,7 @@ public class WorkSummary implements VisibilityType, Activity, GroupableActivity,
     protected Visibility visibility;
     @XmlAttribute(name = "display-index")
     protected String displayIndex;
-    
+
     public WorkTitle getTitle() {
         return title;
     }
@@ -158,7 +158,7 @@ public class WorkSummary implements VisibilityType, Activity, GroupableActivity,
     public static long getSerialversionuid() {
         return serialVersionUID;
     }
-    
+
     public String getDisplayIndex() {
         return displayIndex;
     }
@@ -248,7 +248,7 @@ public class WorkSummary implements VisibilityType, Activity, GroupableActivity,
         }
         return null;
     }
-    
+
     @Override
     public int compareTo(GroupableActivity activity) {
         Long index = Long.valueOf(this.getDisplayIndex() == null ? "0" : this.getDisplayIndex());
@@ -263,8 +263,8 @@ public class WorkSummary implements VisibilityType, Activity, GroupableActivity,
             if (otherIndex == null) {
                 return 1;
             } else if (index instanceof Comparable) {
-                //Return opossite, since higger index goes first
-                return  index.compareTo(otherIndex) * -1;
+                // Return opossite, since higger index goes first
+                return index.compareTo(otherIndex) * -1;
             } else {
                 return 0;
             }

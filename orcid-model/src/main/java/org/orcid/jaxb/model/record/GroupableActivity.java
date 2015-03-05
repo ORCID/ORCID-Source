@@ -17,7 +17,10 @@
 package org.orcid.jaxb.model.record;
 
 public interface GroupableActivity {
+
     ExternalIdentifiersContainer getExternalIdentifiers();
+
     String getDisplayIndex();
+
     int compareTo(GroupableActivity activity);
 }
