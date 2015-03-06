@@ -16,8 +16,8 @@
  */
 package org.orcid.core.manager.impl;
 
+import org.jasypt.digest.StringDigester;
 import org.jasypt.encryption.pbe.PBEStringEncryptor;
-import org.jasypt.util.password.PasswordEncryptor;
 import org.orcid.core.crypto.DesEncrypter;
 import org.orcid.core.manager.EncryptionManager;
 import org.springframework.beans.factory.InitializingBean;
@@ -36,7 +36,7 @@ public class EncryptionManagerImpl implements EncryptionManager, PasswordEncoder
 
     private DesEncrypter legacyEncrypterForInternalUse;
 
-    private PasswordEncryptor passwordEncryptor;
+    private StringDigester passwordEncryptor;
 
     @Deprecated
     public void setPassPhraseForInternalEncryption(String passPhraseForInternalEncryption) {
@@ -59,7 +59,7 @@ public class EncryptionManagerImpl implements EncryptionManager, PasswordEncoder
     }
 
     @Required
-    public void setPasswordEncryptor(PasswordEncryptor passwordEncryptor) {
+    public void setPasswordEncryptor(StringDigester passwordEncryptor) {
         this.passwordEncryptor = passwordEncryptor;
     }
 
@@ -92,12 +92,12 @@ public class EncryptionManagerImpl implements EncryptionManager, PasswordEncoder
 
     @Override
     public String hashForInternalUse(String raw) {
-        return passwordEncryptor.encryptPassword(raw);
+        return passwordEncryptor.digest(raw);
     }
 
     @Override
     public boolean hashMatches(String raw, String hash) {
-        return passwordEncryptor.checkPassword(raw, hash);
+        return passwordEncryptor.matches(raw, hash);
     }
 
     @Override
