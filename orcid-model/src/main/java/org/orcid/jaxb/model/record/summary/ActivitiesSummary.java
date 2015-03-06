@@ -165,7 +165,7 @@ public class ActivitiesSummary implements Serializable, ActivitiesContainer {
         }
         // Set funding
         if (fundings != null) {
-            List<FundingGroup> groups = fundings.getFundingGroups();
+            List<FundingGroup> groups = fundings.getFundingGroup();
             for (FundingGroup funding : groups) {
                 if (funding != null) {
                     List<FundingSummary> fundings = funding.getFundingSummary();

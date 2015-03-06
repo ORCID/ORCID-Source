@@ -399,7 +399,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
             // Sort the fundings
             Collections.sort(fundingGroup.getFundingSummary(), new GroupableActivityComparator());
 
-            result.getFundingGroups().add(fundingGroup);
+            result.getFundingGroup().add(fundingGroup);
         }
 
         return result;
