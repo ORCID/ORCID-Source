@@ -56,7 +56,7 @@ public class VisibilityFilterV2Impl implements VisibilityFilterV2 {
         filter(activitiesSummary.getEmployments());
         Fundings fundings = activitiesSummary.getFundings();
         if(fundings != null){
-            List<FundingGroup> fundingGroups = fundings.getFundingGroups();
+            List<FundingGroup> fundingGroups = fundings.getFundingGroup();
             filterGroups(fundingGroups);
             if(fundingGroups.isEmpty()){
                 activitiesSummary.setFundings(null);

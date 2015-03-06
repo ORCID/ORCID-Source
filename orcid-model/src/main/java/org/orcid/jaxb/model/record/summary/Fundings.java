@@ -35,7 +35,7 @@ public class Fundings implements Serializable {
     @XmlElement(name = "group", namespace = "http://www.orcid.org/ns/activities")
     List<FundingGroup> fundingGroup;
 
-    public List<FundingGroup> getFundingGroups() {
+    public List<FundingGroup> getFundingGroup() {
         if (fundingGroup == null)
             fundingGroup = new ArrayList<FundingGroup>();
         return fundingGroup;

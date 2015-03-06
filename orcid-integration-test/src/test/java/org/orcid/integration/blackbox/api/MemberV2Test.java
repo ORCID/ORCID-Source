@@ -17,9 +17,11 @@
 package org.orcid.integration.blackbox.api;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.matchers.JUnitMatchers.containsString;
+import static org.junit.matchers.JUnitMatchers.either;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -33,6 +35,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.codehaus.jettison.json.JSONException;
+import org.hamcrest.Matchers;
+import org.hamcrest.core.AnyOf;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,12 +54,14 @@ import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.FundingExternalIdentifier;
 import org.orcid.jaxb.model.record.FundingExternalIdentifierType;
+import org.orcid.jaxb.model.record.FuzzyDate;
 import org.orcid.jaxb.model.record.Visibility;
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.WorkExternalIdentifier;
 import org.orcid.jaxb.model.record.WorkExternalIdentifierId;
 import org.orcid.jaxb.model.record.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary.FundingGroup;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -462,13 +468,58 @@ public class MemberV2Test {
         assertEquals(Response.Status.OK.getStatusCode(), activitiesResponse.getStatus());
         ActivitiesSummary activities = activitiesResponse.getEntity(ActivitiesSummary.class);
         assertNotNull(activities);
-        assertFalse(activities.getEducations().isEmpty());
-        assertFalse(activities.getEmployments().isEmpty());
+        assertEquals(1, activities.getEducations().size());
+        assertEquals("education:role-title", activities.getEducations().get(0).getRoleTitle());
+        assertEquals("education:department-name", activities.getEducations().get(0).getDepartmentName());
+        assertEquals(new FuzzyDate(1848, 2, 2), activities.getEducations().get(0).getStartDate());
+        assertEquals(new FuzzyDate(1848, 2, 2), activities.getEducations().get(0).getEndDate());
         
         
+        assertEquals(1, activities.getEmployments().size());
+        assertEquals("affiliation:role-title", activities.getEmployments().get(0).getRoleTitle());
+        assertEquals("affiliation:department-name", activities.getEmployments().get(0).getDepartmentName());
+        assertEquals(new FuzzyDate(1848, 2, 2), activities.getEmployments().get(0).getStartDate());
+        assertEquals(new FuzzyDate(1848, 2, 2), activities.getEmployments().get(0).getEndDate());
         
         assertNotNull(activities.getFundings());
+        assertEquals(3, activities.getFundings().getFundingGroup().size());
+        
+        for(FundingGroup group : activities.getFundings().getFundingGroup()){
+            //Check the group that contains the funding without ext ids
+            if(group.getIdentifiers().getIdentifier().isEmpty()) {
+                assertEquals(1, group.getFundingSummary().size());
+                assertNotNull(group.getFundingSummary().get(0).getPutCode());
+                assertEquals("Funding # 4", group.getFundingSummary().get(0).getTitle().getTitle().getContent());
+                assertEquals(new FuzzyDate(1848, 2, 2), group.getFundingSummary().get(0).getStartDate());
+                assertEquals(new FuzzyDate(1848, 2, 2), group.getFundingSummary().get(0).getEndDate());
+            } else if(group.getFundingSummary().size() == 1) {
+                //Check the group that contains one funding
+                assertEquals(1, group.getFundingSummary().size());
+                assertNotNull(group.getFundingSummary().get(0).getPutCode());
+                assertEquals("Funding # 3", group.getFundingSummary().get(0).getTitle().getTitle().getContent());
+                assertEquals(new FuzzyDate(1848, 2, 2), group.getFundingSummary().get(0).getStartDate());
+                assertEquals(new FuzzyDate(1848, 2, 2), group.getFundingSummary().get(0).getEndDate());
+                assertEquals(1, group.getIdentifiers().getIdentifier().size());
+                assertEquals("extId4Value", group.getIdentifiers().getIdentifier().get(0).getExternalIdentifierId());
+                assertEquals(FundingExternalIdentifierType.GRANT_NUMBER.name(), group.getIdentifiers().getIdentifier().get(0).getExternalIdentifierType());
+            } else {
+                //Check the group that contains two fundings
+                assertEquals(2, group.getFundingSummary().size());
+                assertEquals(3, group.getIdentifiers().getIdentifier().size());
+                assertNotNull(group.getFundingSummary().get(0).getDisplayIndex());
+                assertNotNull(group.getFundingSummary().get(1).getDisplayIndex());
+                assertThat(group.getFundingSummary().get(0).getTitle().getTitle().getContent(), either(containsString("common:title")).or(containsString("Funding # 2")));
+                assertThat(group.getFundingSummary().get(1).getTitle().getTitle().getContent(), either(containsString("common:title")).or(containsString("Funding # 2")));
+            }            
+        }
+        
+        
+        
+        
+        
+        
         assertNotNull(activities.getWorks());
+        assertEquals(3, activities.getWorks().getWorkGroup().size());
     }
     
     private String getAccessToken() throws InterruptedException, JSONException {
