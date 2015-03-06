@@ -59,8 +59,8 @@
 	    	 </div> 			                        	
 			 <div class="row">
 				  <div class="form-group has-feedback">
-				    <label for="userId" class="col-sm-3 control-label"><@orcid.msg 'oauth_sign_in.labelemailorID'/></label>
-				    <div class="col-sm-9">
+				    <label for="userId" class="col-sm-3 col-xs-3-fix control-label"><@orcid.msg 'oauth_sign_in.labelemailorID'/></label>
+				    <div class="col-sm-9 col-xs-9-fix">
 				      <input type="text" name="userId" id="userId" ng-model="authorizationForm.userName.value" placeholder="<@orcid.msg 'login.username'/>" class="form-control" >
 				      <span class="glyphicon glyphicon-asterisk form-control-feedback-oauth"></span>
 				    </div>
@@ -68,8 +68,8 @@
 			 </div>
 			 <div class="row">  
 			  <div class="form-group has-feedback">
-			    <label for="password" class="col-sm-3 control-label"><@orcid.msg 'oauth_sign_in.labelpassword'/></label>
-			    <div class="col-sm-9">
+			    <label for="password" class="col-sm-3 col-xs-3-fix control-label"><@orcid.msg 'oauth_sign_in.labelpassword'/></label>
+			    <div class="col-sm-9 col-xs-9-fix">
 			      <input type="password" id="password" ng-model="authorizationForm.password.value" name="password" placeholder="<@orcid.msg 'login.password'/>" class="form-control">
 			      <span class="glyphicon glyphicon-asterisk form-control-feedback-oauth"></span>
 			    </div>
@@ -114,8 +114,8 @@
 	    	</div>
 	    	<!-- First name -->
        		<div class="form-group">
-		        <label for="givelNames" class="col-sm-3 control-label"><@orcid.msg 'oauth_sign_up.labelfirstname'/></label>
-		        <div class="col-sm-9 bottomBuffer">			        	
+		        <label for="givelNames" class="col-sm-3 col-xs-3-fix control-label"><@orcid.msg 'oauth_sign_up.labelfirstname'/></label>
+		        <div class="col-sm-9  col-xs-9-fix bottomBuffer">			        	
 		            <input name="givenNames" type="text" tabindex="1" class="" ng-model="registrationForm.givenNames.value" ng-model-onblur ng-change="serverValidate('GivenNames')"/>									        
 		        	<span class="required" ng-class="isValidClass(registrationForm.givenNames)">*</span>						
 					<div class="popover-help-container">
@@ -138,8 +138,8 @@
 		    <!-- Last name -->
 		    <div class="form-group">
 				<div>
-			        <label class="col-sm-3 control-label"><@orcid.msg 'oauth_sign_up.labellastname'/></label>
-			        <div class="col-sm-9 bottomBuffer">
+			        <label class="col-sm-3 col-xs-3-fix control-label"><@orcid.msg 'oauth_sign_up.labellastname'/></label>
+			        <div class="col-sm-9 col-xs-9-fix bottomBuffer">
 			            <input name="familyNames" type="text" tabindex="2" class=""  ng-model="registrationForm.familyNames.value" ng-model-onblur/>
 			            <span class="orcid-error" ng-show="registrationForm.familyNames.errors.length > 0">
 							<div ng-repeat='error in registrationForm.familyNames.errors' ng-bind-html="error"></div>
@@ -149,8 +149,8 @@
 		    </div>
 			<!-- Email -->		    			    
 		    <div class="form-group">
-		        <label class="col-sm-3 control-label"><@orcid.msg 'oauth_sign_up.labelemail'/></label>
-		        <div class="col-sm-9 bottomBuffer">
+		        <label class="col-sm-3 col-xs-3-fix control-label"><@orcid.msg 'oauth_sign_up.labelemail'/></label>
+		        <div class="col-sm-9 col-xs-9-fix bottomBuffer">
 		            <input name="email" type="email" tabindex="3" class="" ng-model="registrationForm.email.value" ng-model-onblur ng-change="serverValidate('Email')" />
 		            <span class="required" ng-class="isValidClass(registrationForm.email)">*</span>			            
 		            <span class="orcid-error" ng-show="emailTrustAsHtmlErrors.length > 0">
@@ -160,8 +160,8 @@
 		    </div>				
 		    
 		    <div class="form-group oAuthFix">
-		        <label class="col-sm-3 control-label"><@orcid.msg 'oauth_sign_up.labelreenteremail'/></label>
-		        <div class="col-sm-9 bottomBuffer">
+		        <label class="col-sm-3 col-xs-3-fix control-label"><@orcid.msg 'oauth_sign_up.labelreenteremail'/></label>
+		        <div class="col-sm-9 col-xs-9-fix bottomBuffer">
 		            <input name="confirmedEmail" type="email" tabindex="4" class="" ng-model="registrationForm.emailConfirm.value" ng-model-onblur ng-change="serverValidate('EmailConfirm')" />
 		            <span class="required" ng-class="isValidClass(registrationForm.emailConfirm)">*</span>			            
 		            <span class="orcid-error" ng-show="registrationForm.emailConfirm.errors.length > 0">
@@ -171,8 +171,8 @@
 		    </div>				
 		    
 		    <div class="form-group">
-		        <label class="col-sm-3 control-label"><@orcid.msg 'oauth_sign_up.labelpassword'/></label>
-		        <div class="col-sm-9 bottomBuffer">
+		        <label class="col-sm-3 col-xs-3-fix control-label"><@orcid.msg 'oauth_sign_up.labelpassword'/></label>
+		        <div class="col-sm-9 col-xs-9-fix bottomBuffer">
 		            <input type="password" name="password" tabindex="5" class="" ng-model="registrationForm.password.value" ng-change="serverValidate('Password')"/>
 		            <span class="required" ng-class="isValidClass(registrationForm.password)">*</span>
 		        	<@orcid.passwordHelpPopup />
@@ -183,8 +183,8 @@
 		    </div>
 		    
 		    <div class="form-group">
-		        <label class="col-sm-3 control-label"><@orcid.msg 'password_one_time_reset.labelconfirmpassword'/></label>
-		        <div class="col-sm-9 bottomBuffer">
+		        <label class="col-sm-3 col-xs-3-fix control-label"><@orcid.msg 'password_one_time_reset.labelconfirmpassword'/></label>
+		        <div class="col-sm-9 col-xs-9-fix bottomBuffer">
 		            <input type="password" name="confirmPassword" tabindex="6" class="" ng-model="registrationForm.passwordConfirm.value" ng-change="serverValidate('PasswordConfirm')"/>
 		            <span class="required" ng-class="isValidClass(registrationForm.passwordConfirm)">*</span>			            
 		            <span class="orcid-error" ng-show="registrationForm.passwordConfirm.errors.length > 0">
