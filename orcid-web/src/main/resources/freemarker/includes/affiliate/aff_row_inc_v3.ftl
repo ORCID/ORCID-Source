@@ -20,10 +20,10 @@
   	<!-- Information -->
 	<div class="col-md-10 col-sm-10 col-xs-8 bottomBuffer">
 	    <h3 class="workspace-title">
+	    	
         	<span ng-bind-html="group.getActive().affiliationName.value"></span>:
-        	<span ng-bind="group.getActive().city.value"></span><span ng-show="group.getActive().region.value">, </span><span ng-bind="group.getActive().region.value"></span>, <span ng-bind="group.getActive().country.value"></span>        	        	        	        	
+        	<span ng-bind="group.getActive().city.value"></span><span ng-show="group.getActive().region.value">, </span><span ng-bind="group.getActive().region.value"></span>, <span ng-bind="group.getActive().countryForDisplay"></span>        	        	        	        	
         </h3>
-     
         <div class="info-detail">
         	<div class="info-date">
         	        	
