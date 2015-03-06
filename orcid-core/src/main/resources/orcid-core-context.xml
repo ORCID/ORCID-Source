@@ -75,7 +75,7 @@
 		<property name="internalEncryptor" ref="internalEncryptor" />
 		<property name="externalEncryptor" ref="externalEncryptor" />
 		<property name="passwordEncryptor">
-			<bean class=" org.jasypt.util.password.ConfigurablePasswordEncryptor">
+			<bean class="org.jasypt.digest.PooledStringDigester">
 				<property name="config">
 					<bean class="org.jasypt.digest.config.SimpleDigesterConfig">
 						<property name="algorithm"
@@ -84,6 +84,8 @@
 							value="${org.orcid.core.passwordEncryptionIterations:250000}" />
 						<property name="saltSizeBytes"
 							value="${org.orcid.core.passwordEncryptionSaltSize:16}" />
+						<property name="poolSize" 
+							value="${org.orcid.core.passwordEncryptionPoolSize:16}" />
 					</bean>
 				</property>
 			</bean>
