@@ -177,12 +177,14 @@ public class NotificationManagerImpl implements NotificationManager {
         String verificationUrl = createVerificationUrl(email, orcidUrlManager.getBaseUrl());
         String orcidId = orcidProfile.getOrcidIdentifier().getPath();
         String baseUri = orcidUrlManager.getBaseUrl();
+        String baseUriHttp = orcidUrlManager.getBaseUriHttp();
         
         templateParams.put("subject", subject);
         templateParams.put("emailName", emailName);
         templateParams.put("verificationUrl", verificationUrl);
         templateParams.put("orcidId", orcidId);
         templateParams.put("baseUri", baseUri);
+        templateParams.put("baseUriHttp", baseUriHttp);
         
         SourceEntity source = sourceManager.retrieveSourceEntity();
         if(source != null) {

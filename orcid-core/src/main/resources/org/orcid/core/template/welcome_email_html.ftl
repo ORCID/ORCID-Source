@@ -44,8 +44,8 @@
 				<a href="${verificationUrl}?lang=${locale}" target="_blank">${verificationUrl}?lang=${locale}</a>
 				<br />
 				<ul>
-					<li style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;"><@emailMacros.msg "email.welcome.your_id.id" /> <a href="${baseUri}/${orcidId}" target="_blank">${orcidId}</a></li>
-					<li style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;"><@emailMacros.msg "email.welcome.your_id.link" /> <a href="${baseUri}/${orcidId}" target="_blank">${baseUri}/${orcidId}</a></li>
+					<li style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;"><@emailMacros.msg "email.welcome.your_id.id" /> <a href="${baseUriHttp}/${orcidId}" target="_blank">${orcidId}</a></li>
+					<li style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;"><@emailMacros.msg "email.welcome.your_id.link" /> <a href="${baseUriHttp}/${orcidId}" target="_blank">${baseUriHttp}/${orcidId}</a></li>
 				</ul>				
 			</p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 18px; color: #666666; font-weight: bold;">
