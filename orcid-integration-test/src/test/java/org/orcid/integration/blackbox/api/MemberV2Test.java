@@ -17,6 +17,7 @@
 package org.orcid.integration.blackbox.api;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -51,6 +52,10 @@ import org.orcid.jaxb.model.record.FundingExternalIdentifier;
 import org.orcid.jaxb.model.record.FundingExternalIdentifierType;
 import org.orcid.jaxb.model.record.Visibility;
 import org.orcid.jaxb.model.record.Work;
+import org.orcid.jaxb.model.record.WorkExternalIdentifier;
+import org.orcid.jaxb.model.record.WorkExternalIdentifierId;
+import org.orcid.jaxb.model.record.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -382,7 +387,7 @@ public class MemberV2Test {
          * 4 in another group because it doesnt have any ext ids 
          * **/
         
-        //Add 1, the default one
+        //Add 1, the default funding        
         memberV2ApiClient.createFundingXml(testUser1OrcidId, funding, accessToken);
         
         funding.getTitle().getTitle().setContent("Funding # 2");
@@ -406,12 +411,64 @@ public class MemberV2Test {
         funding.getExternalIdentifiers().getExternalIdentifier().clear();
         //Add 4 without ext ids
         memberV2ApiClient.createFundingXml(testUser1OrcidId, funding, accessToken);
+                
+        /**
+         * Add 4 works         
+        * 1 and 2 get grouped together
+        * 3 in another group because it have different ext ids
+        * 4 in another group because it doesnt have any ext ids
+        **/
+        //Add 1, the default work
+        memberV2ApiClient.createWorkXml(testUser1OrcidId, work, accessToken);
+        
+        work.getWorkTitle().getTitle().setContent("Work # 2");
+        WorkExternalIdentifier wExtId2 = new WorkExternalIdentifier();
+        wExtId2.setWorkExternalIdentifierType(WorkExternalIdentifierType.DOI);
+        wExtId2.setWorkExternalIdentifierId(new WorkExternalIdentifierId("doi-ext-id"));        
+        work.getExternalIdentifiers().getExternalIdentifier().add(wExtId2);
+        //Add 2, with the same ext ids +1
+        memberV2ApiClient.createWorkXml(testUser1OrcidId, work, accessToken);
+        
+        work.getWorkTitle().getTitle().setContent("Work # 3");
+        WorkExternalIdentifier wExtId3 = new WorkExternalIdentifier();
+        wExtId3.setWorkExternalIdentifierType(WorkExternalIdentifierType.EID);
+        wExtId3.setWorkExternalIdentifierId(new WorkExternalIdentifierId("eid-ext-id"));
+        work.getWorkExternalIdentifiers().getExternalIdentifier().clear();
+        work.getWorkExternalIdentifiers().getExternalIdentifier().add(wExtId3);
+        //Add 3, with different ext ids
+        memberV2ApiClient.createWorkXml(testUser1OrcidId, work, accessToken);
+        
+        work.getWorkTitle().getTitle().setContent("Work # 4");
+        work.getWorkExternalIdentifiers().getExternalIdentifier().clear();
+        //Add 4, without ext ids
+        memberV2ApiClient.createWorkXml(testUser1OrcidId, work, accessToken);
+        
+        /**
+         * Now, get the summaries and verify the following: 
+         *- Education summary is complete
+        *- Employment summary is complete
+        *- There are 3 groups of fundings
+        *-- One group with 2 fundings
+        *-- One group with one funding with ext ids
+        *-- One group with one funding without ext ids
+        *
+        *- There are 3 groups of works
+        *-- One group with 2 works
+        *-- One group with one work with ext ids
+        *-- One group with one work without ext ids
+        **/
+        
+        ClientResponse activitiesResponse = memberV2ApiClient.viewActivities(testUser1OrcidId, accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), activitiesResponse.getStatus());
+        ActivitiesSummary activities = activitiesResponse.getEntity(ActivitiesSummary.class);
+        assertNotNull(activities);
+        assertFalse(activities.getEducations().isEmpty());
+        assertFalse(activities.getEmployments().isEmpty());
         
         
-        //Add 4 works
-        // 1 and 2 get grouped together
-        // 3 in another group because it have different ext ids
-        // 4 in another group because it doesnt have any ext ids
+        
+        assertNotNull(activities.getFundings());
+        assertNotNull(activities.getWorks());
     }
     
     private String getAccessToken() throws InterruptedException, JSONException {

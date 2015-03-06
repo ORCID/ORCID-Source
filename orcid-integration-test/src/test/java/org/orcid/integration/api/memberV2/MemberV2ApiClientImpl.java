@@ -16,6 +16,7 @@
  */
 package org.orcid.integration.api.memberV2;
 
+import static org.orcid.core.api.OrcidApiConstants.ACTIVITIES;
 import static org.orcid.core.api.OrcidApiConstants.PUTCODE;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
@@ -49,12 +50,17 @@ public class MemberV2ApiClientImpl {
 
     public MemberV2ApiClientImpl(URI baseUri, Client c) throws URISyntaxException {
         orcidClientHelper = new OrcidClientHelper(baseUri, c);
-    }
-
+    }    
+    
     public ClientResponse viewLocationXml(URI location, String accessToken) throws URISyntaxException {
         return orcidClientHelper.getClientResponseWithToken(location, VND_ORCID_XML, accessToken);
     }
 
+    public ClientResponse viewActivities(String orcid, String accessToken) {
+        URI activitiesUri = UriBuilder.fromPath(ACTIVITIES).build(orcid);
+        return orcidClientHelper.getClientResponseWithToken(activitiesUri, VND_ORCID_XML, accessToken);
+    }
+    
     public ClientResponse viewWorkXml(String orcid, String putCode, String accessToken) {
         URI workUri = UriBuilder.fromPath(WORK + PUTCODE).build(orcid, putCode);
         return orcidClientHelper.getClientResponseWithToken(workUri, VND_ORCID_XML, accessToken);
