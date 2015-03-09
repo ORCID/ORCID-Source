@@ -313,7 +313,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
                     educations.getSummaries().add(education);
                 } else {
                     EmploymentSummary employment = jpaJaxbEmploymentAdapter.toEmploymentSummary(affiliation);
-                    activities.getEmployments().getSummaries().add(employment);
+                    employments.getSummaries().add(employment);
                 }
             }
         }
