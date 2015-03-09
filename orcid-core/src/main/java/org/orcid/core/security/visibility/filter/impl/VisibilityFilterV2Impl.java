@@ -46,27 +46,27 @@ public class VisibilityFilterV2Impl implements VisibilityFilterV2 {
 
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
-    
+
     @Override
     public ActivitiesSummary filter(ActivitiesSummary activitiesSummary) {
-        if(activitiesSummary == null){
+        if (activitiesSummary == null) {
             return null;
         }
         filter(activitiesSummary.getEducations());
         filter(activitiesSummary.getEmployments());
         Fundings fundings = activitiesSummary.getFundings();
-        if(fundings != null){
+        if (fundings != null) {
             List<FundingGroup> fundingGroups = fundings.getFundingGroup();
             filterGroups(fundingGroups);
-            if(fundingGroups.isEmpty()){
+            if (fundingGroups.isEmpty()) {
                 activitiesSummary.setFundings(null);
             }
         }
         Works works = activitiesSummary.getWorks();
-        if(works != null){
+        if (works != null) {
             List<WorkGroup> workGroups = works.getWorkGroup();
             filterGroups(workGroups);
-            if(workGroups.isEmpty()){
+            if (workGroups.isEmpty()) {
                 activitiesSummary.setWorks(null);
             }
         }
@@ -75,30 +75,29 @@ public class VisibilityFilterV2Impl implements VisibilityFilterV2 {
 
     @Override
     public Collection<? extends Filterable> filter(Collection<? extends Filterable> filterables) {
-        if(filterables == null){
+        if (filterables == null) {
             return null;
         }
-        for(Iterator<? extends Filterable> iterator = filterables.iterator(); iterator.hasNext();){
-            try{
+        for (Iterator<? extends Filterable> iterator = filterables.iterator(); iterator.hasNext();) {
+            try {
                 orcidSecurityManager.checkVisibility(iterator.next());
-            }
-            catch(OrcidForbiddenException | OrcidUnauthorizedException e){
+            } catch (OrcidForbiddenException | OrcidUnauthorizedException e) {
                 iterator.remove();
             }
         }
         return filterables;
     }
-    
+
     @Override
-    public Collection<? extends Group> filterGroups(Collection<? extends Group> groups){
-        if(groups == null){
+    public Collection<? extends Group> filterGroups(Collection<? extends Group> groups) {
+        if (groups == null) {
             return null;
         }
-        for(Iterator<? extends Group> iterator = groups.iterator(); iterator.hasNext();){
+        for (Iterator<? extends Group> iterator = groups.iterator(); iterator.hasNext();) {
             Group group = iterator.next();
             Collection<? extends GroupableActivity> activities = group.getActivities();
             filter(activities);
-            if(activities.isEmpty()){
+            if (activities.isEmpty()) {
                 iterator.remove();
             }
         }
