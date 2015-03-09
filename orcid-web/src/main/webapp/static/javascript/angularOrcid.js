@@ -1487,7 +1487,6 @@ orcidNgModule.filter('externalIdentifierHtml', function(){
             output = output + " " + value;        
         }else if(link != null){   
             output = om.get('funding.add.external_id.url.label.grant') + ": <a href='" + link + "' target='_blank'>" + link + "</a>";
-            console.log(output);
         }
       
         if (length > 1 && !last) output = output + ',';
