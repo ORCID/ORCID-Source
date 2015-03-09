@@ -1467,7 +1467,7 @@ orcidNgModule.filter('externalIdentifierHtml', function(){
         if (externalIdentifier == null) return output;
         var type = externalIdentifier.type.value;
         
-        if (type != null) output += type.toUpperCase() + ": ";        
+        if (type != null) output += type + ": ";        
         
         var value = null;        
         if(externalIdentifier.value != null)
@@ -1476,14 +1476,17 @@ orcidNgModule.filter('externalIdentifierHtml', function(){
         var link = null;        
         if(externalIdentifier.url != null)
             link = externalIdentifier.url.value;
+       
+        if (link.search(/^http[s]?\:\/\//) == -1)
+        	link = 'http://' + link;
 
         if (link != null && value != null){        	
             output += "<a href='" + link + "' target='_blank'>" + value + "</a>";
         	
         }else if(value != null){
             output = output + " " + value;        
-        }else if(link != null){
-            output = om.get('funding.add.external_id.url.label.grant').toUpperCase() + ": <a href='" + link + "' target='_blank'>" + link + "</a>";
+        }else if(link != null){   
+            output = om.get('funding.add.external_id.url.label.grant') + ": <a href='" + link + "' target='_blank'>" + link + "</a>";
         }
       
         if (length > 1 && !last) output = output + ',';
