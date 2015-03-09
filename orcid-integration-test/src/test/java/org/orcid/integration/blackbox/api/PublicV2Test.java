@@ -36,7 +36,6 @@ import javax.xml.bind.Unmarshaller;
 
 import org.codehaus.jettison.json.JSONException;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
@@ -115,14 +114,7 @@ public class PublicV2Test {
     @Resource
     private OauthHelper oauthHelper;
     
-    String accessToken = null;
-
-    @Before
-    public void before() {
-        webDriver = new FirefoxDriver();
-        webDriverHelper = new WebDriverHelper(webDriver, webBaseUrl, redirectUri);
-        oauthHelper.setWebDriverHelper(webDriverHelper);
-    }
+    static String accessToken = null;   
 
     @After
     public void after() throws JSONException, InterruptedException, URISyntaxException {
@@ -158,10 +150,7 @@ public class PublicV2Test {
                     memberV2ApiClient.deleteWorkXml(user1OrcidId, work.getPutCode(), token);
                 }
             }
-        }
-        
-        //Quit webdriver
-        webDriver.quit();
+        }                
     }
     
     /**
@@ -428,8 +417,13 @@ public class PublicV2Test {
     }
         
     private String getAccessToken() throws InterruptedException, JSONException {
-        if(accessToken == null)
+        if(accessToken == null) {
+            webDriver = new FirefoxDriver();
+            webDriverHelper = new WebDriverHelper(webDriver, webBaseUrl, redirectUri);
+            oauthHelper.setWebDriverHelper(webDriverHelper);
             accessToken = oauthHelper.obtainAccessToken(client1ClientId, client1ClientSecret, ScopePathType.ACTIVITIES_UPDATE.value(), user1UserName, user1Password, redirectUri);
+            webDriver.quit();
+        }
         return accessToken;
     }
 
