@@ -32,7 +32,7 @@ import javax.xml.bind.annotation.XmlType;
 public class Employments implements Serializable {
 
     private static final long serialVersionUID = 3293976926416154039L;
-    @XmlElement(name = "employment-summary", namespace = "http://www.orcid.org/ns/education")
+    @XmlElement(name = "employment-summary", namespace = "http://www.orcid.org/ns/employment")
     private List<EmploymentSummary> summaries;
 
     public List<EmploymentSummary> getSummaries() {
