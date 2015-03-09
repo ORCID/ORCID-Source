@@ -42,7 +42,9 @@ import org.orcid.jaxb.model.record.GroupableActivity;
 import org.orcid.jaxb.model.record.WorkExternalIdentifier;
 import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary.EducationSummary;
+import org.orcid.jaxb.model.record.summary.Educations;
 import org.orcid.jaxb.model.record.summary.EmploymentSummary;
+import org.orcid.jaxb.model.record.summary.Employments;
 import org.orcid.jaxb.model.record.summary.FundingGroup;
 import org.orcid.jaxb.model.record.summary.FundingSummary;
 import org.orcid.jaxb.model.record.summary.Fundings;
@@ -299,6 +301,8 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         ProfileEntity profileEntity = this.findByOrcid(orcid);
         // Set Affiliations
         Set<OrgAffiliationRelationEntity> affiliations = profileEntity.getOrgAffiliationRelations();
+        Educations educations = new Educations();
+        Employments employments = new Employments();
         for (OrgAffiliationRelationEntity affiliation : affiliations) {
             if (justPublic && !affiliation.getVisibility().equals(org.orcid.jaxb.model.message.Visibility.PUBLIC)) {
                 // If it is just public and the affiliation is not public,
@@ -306,12 +310,18 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
             } else {
                 if (org.orcid.jaxb.model.message.AffiliationType.EDUCATION == affiliation.getAffiliationType()) {
                     EducationSummary education = jpaJaxbEducationAdapter.toEducationSummary(affiliation);
-                    activities.getEducations().add(education);
+                    educations.getSummaries().add(education);
                 } else {
                     EmploymentSummary employment = jpaJaxbEmploymentAdapter.toEmploymentSummary(affiliation);
-                    activities.getEmployments().add(employment);
+                    activities.getEmployments().getSummaries().add(employment);
                 }
             }
+        }
+        if(!educations.getSummaries().isEmpty()){
+            activities.setEducations(educations);
+        }
+        if(!employments.getSummaries().isEmpty()){
+            activities.setEmployments(employments);
         }
         // Set works
         List<WorkSummary> workSummaries = jpaJaxbWorkAdapter.toWorkSummary(profileEntity.getProfileWorks());

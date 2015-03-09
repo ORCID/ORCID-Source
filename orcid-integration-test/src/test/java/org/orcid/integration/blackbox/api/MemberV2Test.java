@@ -462,19 +462,19 @@ public class MemberV2Test {
         assertEquals(Response.Status.OK.getStatusCode(), activitiesResponse.getStatus());
         ActivitiesSummary activities = activitiesResponse.getEntity(ActivitiesSummary.class);
         assertNotNull(activities);
-        assertEquals(1, activities.getEducations().size());
-        assertEquals("education:role-title", activities.getEducations().get(0).getRoleTitle());
-        assertEquals("education:department-name", activities.getEducations().get(0).getDepartmentName());
-        assertEquals(new FuzzyDate(1848, 2, 2), activities.getEducations().get(0).getStartDate());
-        assertEquals(new FuzzyDate(1848, 2, 2), activities.getEducations().get(0).getEndDate());
-        memberV2ApiClient.deleteEducationXml(testUser1OrcidId, activities.getEducations().get(0).getPutCode(), accessToken);
+        assertEquals(1, activities.getEducations().getSummaries().size());
+        assertEquals("education:role-title", activities.getEducations().getSummaries().get(0).getRoleTitle());
+        assertEquals("education:department-name", activities.getEducations().getSummaries().get(0).getDepartmentName());
+        assertEquals(new FuzzyDate(1848, 2, 2), activities.getEducations().getSummaries().get(0).getStartDate());
+        assertEquals(new FuzzyDate(1848, 2, 2), activities.getEducations().getSummaries().get(0).getEndDate());
+        memberV2ApiClient.deleteEducationXml(testUser1OrcidId, activities.getEducations().getSummaries().get(0).getPutCode(), accessToken);
 
-        assertEquals(1, activities.getEmployments().size());
-        assertEquals("affiliation:role-title", activities.getEmployments().get(0).getRoleTitle());
-        assertEquals("affiliation:department-name", activities.getEmployments().get(0).getDepartmentName());
-        assertEquals(new FuzzyDate(1848, 2, 2), activities.getEmployments().get(0).getStartDate());
-        assertEquals(new FuzzyDate(1848, 2, 2), activities.getEmployments().get(0).getEndDate());
-        memberV2ApiClient.deleteEmploymentXml(testUser1OrcidId, activities.getEmployments().get(0).getPutCode(), accessToken);
+        assertEquals(1, activities.getEmployments().getSummaries().size());
+        assertEquals("affiliation:role-title", activities.getEmployments().getSummaries().get(0).getRoleTitle());
+        assertEquals("affiliation:department-name", activities.getEmployments().getSummaries().get(0).getDepartmentName());
+        assertEquals(new FuzzyDate(1848, 2, 2), activities.getEmployments().getSummaries().get(0).getStartDate());
+        assertEquals(new FuzzyDate(1848, 2, 2), activities.getEmployments().getSummaries().get(0).getEndDate());
+        memberV2ApiClient.deleteEmploymentXml(testUser1OrcidId, activities.getEmployments().getSummaries().get(0).getPutCode(), accessToken);
 
         assertNotNull(activities.getFundings());
         assertEquals(3, activities.getFundings().getFundingGroup().size());
@@ -528,7 +528,8 @@ public class MemberV2Test {
                 assertNotNull(group.getWorkSummary().get(0).getPutCode());
                 assertEquals("Work # 3", group.getWorkSummary().get(0).getTitle().getTitle().getContent());
                 assertEquals(1, group.getWorkSummary().get(0).getExternalIdentifiers().getExternalIdentifier().size());
-                assertEquals("eid-ext-id", group.getWorkSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getWorkExternalIdentifierId().getContent());
+                assertEquals("eid-ext-id", group.getWorkSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getWorkExternalIdentifierId()
+                        .getContent());
                 assertEquals(WorkExternalIdentifierType.EID.name(), group.getWorkSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0)
                         .getWorkExternalIdentifierType().name());
             } else {
