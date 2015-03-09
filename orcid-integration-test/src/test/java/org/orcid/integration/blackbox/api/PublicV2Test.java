@@ -42,6 +42,7 @@ import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.api.memberV2.MemberV2ApiClientImpl;
 import org.orcid.integration.api.publicV2.PublicV2ApiClientImpl;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
+import org.orcid.jaxb.model.error.OrcidError;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.Activity;
 import org.orcid.jaxb.model.record.Education;
@@ -115,6 +116,10 @@ public class PublicV2Test {
         webDriver.quit();
     }
     
+    /**
+     * VIEW PUBLIC INFO
+     * */
+    
     @Test
     public void testViewWorkAndWorkSummary() throws JSONException, InterruptedException, URISyntaxException {
         Work workToCreate = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
@@ -137,6 +142,9 @@ public class PublicV2Test {
         WorkSummary summary = getWorkSummaryResponse.getEntity(WorkSummary.class);
         assertNotNull(summary);
         assertEquals("common:title", summary.getTitle().getTitle().getContent());
+        
+        //Remove the work
+        memberV2ApiClient.deleteWorkXml(testUser1OrcidId, putCode, accessToken);
     }
     
     @Test
@@ -163,6 +171,9 @@ public class PublicV2Test {
         FundingSummary summary = getFundingSummaryResponse.getEntity(FundingSummary.class);
         assertNotNull(summary);
         assertEquals("common:title", summary.getTitle().getTitle().getContent());
+        
+        //Remove the funding
+        memberV2ApiClient.deleteFundingXml(testUser1OrcidId, putCode, accessToken);
     }
     
     @Test
@@ -189,6 +200,9 @@ public class PublicV2Test {
         EmploymentSummary summary = getEmploymentSummaryResponse.getEntity(EmploymentSummary.class);
         assertNotNull(summary);
         assertEquals("affiliation:department-name", summary.getDepartmentName()); 
+        
+        //Remove the affiliation
+        memberV2ApiClient.deleteEmploymentXml(testUser1OrcidId, putCode, accessToken);
     }
     
     @Test
@@ -214,7 +228,148 @@ public class PublicV2Test {
         assertNotNull(getEducationSummaryResponse);
         EducationSummary summary = getEducationSummaryResponse.getEntity(EducationSummary.class);
         assertNotNull(summary);
-        assertEquals("education:department-name", summary.getDepartmentName()); 
+        assertEquals("education:department-name", summary.getDepartmentName());
+        
+        //Remove the affiliation
+        memberV2ApiClient.deleteEducationXml(testUser1OrcidId, putCode, accessToken);
+    }
+    
+    /**
+     * TRY TO VIEW LIMITED INFO
+     * */
+    @Test
+    public void testViewLimitedWorkAndWorkSummary() throws JSONException, InterruptedException, URISyntaxException {
+        Work workToCreate = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
+        workToCreate.setPutCode(null);
+        workToCreate.setVisibility(org.orcid.jaxb.model.record.Visibility.LIMITED);
+        String accessToken = getAccessToken();
+        ClientResponse postResponse = memberV2ApiClient.createWorkXml(testUser1OrcidId, workToCreate, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        
+        String path = postResponse.getLocation().getPath();
+        String putCode = path.substring(path.lastIndexOf('/') + 1, path.length());
+        
+        
+        ClientResponse response = publicV2ApiClient.viewWorkXml(testUser1OrcidId, putCode);
+        assertNotNull(response);
+        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+        
+        OrcidError result = response.getEntity(OrcidError.class);
+        assertNotNull(result);
+        assertEquals(new Integer(9017), result.getErrorCode());
+        assertEquals("org.orcid.core.exception.OrcidUnauthorizedException: The activity is not public", result.getDeveloperMessage());
+        
+        response = publicV2ApiClient.viewWorkSummaryXml(testUser1OrcidId, putCode);
+        assertNotNull(response);
+        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+        
+        result = response.getEntity(OrcidError.class);
+        assertNotNull(result);
+        assertEquals(new Integer(9017), result.getErrorCode());
+        assertEquals("org.orcid.core.exception.OrcidUnauthorizedException: The activity is not public", result.getDeveloperMessage());
+        
+      //Remove the funding
+        memberV2ApiClient.deleteWorkXml(testUser1OrcidId, putCode, accessToken);
+    }
+    
+    @Test
+    public void testViewLimitedFundingAndFundingSummary() throws JSONException, InterruptedException, URISyntaxException {
+        Funding fundingToCreate = (Funding) unmarshallFromPath("/record_2.0_rc1/samples/funding-2.0_rc1.xml", Funding.class);
+        fundingToCreate.setPutCode(null);
+        fundingToCreate.setVisibility(org.orcid.jaxb.model.record.Visibility.LIMITED);
+        
+        String accessToken = getAccessToken();
+        ClientResponse postResponse = memberV2ApiClient.createFundingXml(testUser1OrcidId, fundingToCreate, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        String path = postResponse.getLocation().getPath();
+        String putCode = path.substring(path.lastIndexOf('/') + 1, path.length());
+        
+        ClientResponse response = publicV2ApiClient.viewFundingXml(testUser1OrcidId, putCode);
+        assertNotNull(response);
+        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+        
+        OrcidError result = response.getEntity(OrcidError.class);
+        assertNotNull(result);
+        assertEquals(new Integer(9017), result.getErrorCode());
+        assertEquals("org.orcid.core.exception.OrcidUnauthorizedException: The activity is not public", result.getDeveloperMessage());
+        
+        response = publicV2ApiClient.viewFundingSummaryXml(testUser1OrcidId, putCode);
+        assertNotNull(response);
+        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+        
+        result = response.getEntity(OrcidError.class);
+        assertNotNull(result);
+        assertEquals(new Integer(9017), result.getErrorCode());
+        assertEquals("org.orcid.core.exception.OrcidUnauthorizedException: The activity is not public", result.getDeveloperMessage());
+        
+        //Remove the funding
+        memberV2ApiClient.deleteFundingXml(testUser1OrcidId, putCode, accessToken);
+    }
+    
+    @Test
+    public void testViewLimitedEmploymentAndEmploymentSummary() throws JSONException, InterruptedException, URISyntaxException {
+        Employment employmentToCreate = (Employment) unmarshallFromPath("/record_2.0_rc1/samples/employment-2.0_rc1.xml", Employment.class);
+        employmentToCreate.setPutCode(null);
+        employmentToCreate.setVisibility(org.orcid.jaxb.model.record.Visibility.LIMITED);
+        
+        String accessToken = getAccessToken();
+        ClientResponse postResponse = memberV2ApiClient.createEmploymentXml(testUser1OrcidId, employmentToCreate, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        String path = postResponse.getLocation().getPath();
+        String putCode = path.substring(path.lastIndexOf('/') + 1, path.length());
+        
+        ClientResponse response = publicV2ApiClient.viewEmploymentXml(testUser1OrcidId, putCode);
+        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+        
+        OrcidError result = response.getEntity(OrcidError.class);
+        assertNotNull(result);
+        assertEquals(new Integer(9017), result.getErrorCode());
+        assertEquals("org.orcid.core.exception.OrcidUnauthorizedException: The activity is not public", result.getDeveloperMessage());        
+        
+        response = publicV2ApiClient.viewEmploymentSummaryXml(testUser1OrcidId, putCode);
+        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+        
+        result = response.getEntity(OrcidError.class);
+        assertNotNull(result);
+        assertEquals(new Integer(9017), result.getErrorCode());
+        assertEquals("org.orcid.core.exception.OrcidUnauthorizedException: The activity is not public", result.getDeveloperMessage());
+        
+        //Remove the affiliation
+        memberV2ApiClient.deleteEmploymentXml(testUser1OrcidId, putCode, accessToken);
+    }
+    
+    @Test
+    public void testViewLimitedEducationAndEducationSummary() throws JSONException, InterruptedException, URISyntaxException {
+        Education educationToCreate = (Education) unmarshallFromPath("/record_2.0_rc1/samples/education-2.0_rc1.xml", Education.class);
+        educationToCreate.setPutCode(null);
+        educationToCreate.setVisibility(org.orcid.jaxb.model.record.Visibility.LIMITED);
+        
+        String accessToken = getAccessToken();
+        ClientResponse postResponse = memberV2ApiClient.createEducationXml(testUser1OrcidId, educationToCreate, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        String path = postResponse.getLocation().getPath();
+        String putCode = path.substring(path.lastIndexOf('/') + 1, path.length());
+        
+        ClientResponse response = publicV2ApiClient.viewEducationXml(testUser1OrcidId, putCode);
+        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+        OrcidError result = response.getEntity(OrcidError.class);
+        assertNotNull(result);
+        assertEquals(new Integer(9017), result.getErrorCode());
+        assertEquals("org.orcid.core.exception.OrcidUnauthorizedException: The activity is not public", result.getDeveloperMessage());  
+        
+        response = publicV2ApiClient.viewEducationSummaryXml(testUser1OrcidId, putCode);
+        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+        result = response.getEntity(OrcidError.class);
+        assertNotNull(result);
+        assertEquals(new Integer(9017), result.getErrorCode());
+        assertEquals("org.orcid.core.exception.OrcidUnauthorizedException: The activity is not public", result.getDeveloperMessage());  
+        
+        //Remove the affiliation
+        memberV2ApiClient.deleteEducationXml(testUser1OrcidId, putCode, accessToken);
     }
     
     private String getAccessToken() throws InterruptedException, JSONException {
