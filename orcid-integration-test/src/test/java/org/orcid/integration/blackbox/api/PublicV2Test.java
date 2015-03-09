@@ -17,7 +17,11 @@
 package org.orcid.integration.blackbox.api;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.matchers.JUnitMatchers.containsString;
+import static org.junit.matchers.JUnitMatchers.either;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -48,10 +52,18 @@ import org.orcid.jaxb.model.record.Activity;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
+import org.orcid.jaxb.model.record.FundingExternalIdentifier;
+import org.orcid.jaxb.model.record.FundingExternalIdentifierType;
 import org.orcid.jaxb.model.record.Work;
+import org.orcid.jaxb.model.record.WorkExternalIdentifier;
+import org.orcid.jaxb.model.record.WorkExternalIdentifierId;
+import org.orcid.jaxb.model.record.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary.EducationSummary;
 import org.orcid.jaxb.model.record.summary.EmploymentSummary;
+import org.orcid.jaxb.model.record.summary.FundingGroup;
 import org.orcid.jaxb.model.record.summary.FundingSummary;
+import org.orcid.jaxb.model.record.summary.WorkGroup;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
@@ -80,13 +92,12 @@ public class PublicV2Test {
     @Value("${org.orcid.web.testClient2.clientSecret}")
     public String client2ClientSecret;
     @Value("${org.orcid.web.testUser1.orcidId}")
-    public String testUser1OrcidId;
+    public String user1OrcidId;
     @Value("${org.orcid.web.testUser1.username}")
     public String user1UserName;
     @Value("${org.orcid.web.testUser1.password}")
     public String user1Password;
-    @Value("${org.orcid.web.testUser1.orcidId}")
-    public String user1OrcidId;
+    
     
     @Resource(name = "t2OAuthClient")
     private T2OAuthAPIService<ClientResponse> t2OAuthClient;
@@ -103,6 +114,8 @@ public class PublicV2Test {
 
     @Resource
     private OauthHelper oauthHelper;
+    
+    String accessToken = null;
 
     @Before
     public void before() {
@@ -112,39 +125,70 @@ public class PublicV2Test {
     }
 
     @After
-    public void after() {
+    public void after() throws JSONException, InterruptedException, URISyntaxException {
+        //Remove all activities
+        String token = getAccessToken();
+        ClientResponse activitiesResponse = memberV2ApiClient.viewActivities(user1OrcidId, token);
+        assertNotNull(activitiesResponse);
+        ActivitiesSummary summary = activitiesResponse.getEntity(ActivitiesSummary.class);
+        assertNotNull(summary);
+        if(!summary.getEducations().isEmpty()) {
+            for(EducationSummary education : summary.getEducations()) {
+                memberV2ApiClient.deleteEducationXml(user1OrcidId, education.getPutCode(), token);
+            }
+        }
+        
+        if(!summary.getEmployments().isEmpty()) {
+            for(EmploymentSummary employment : summary.getEmployments()) {
+                memberV2ApiClient.deleteEmploymentXml(user1OrcidId, employment.getPutCode(), token);
+            }
+        }
+        
+        if(!summary.getFundings().getFundingGroup().isEmpty()) {
+            for(FundingGroup group : summary.getFundings().getFundingGroup()) {
+                for(FundingSummary funding : group.getFundingSummary()) {
+                    memberV2ApiClient.deleteFundingXml(user1OrcidId, funding.getPutCode(), token);
+                }
+            }
+        }
+        
+        if(!summary.getWorks().getWorkGroup().isEmpty()) {
+            for(WorkGroup group : summary.getWorks().getWorkGroup()) {
+                for(WorkSummary work : group.getWorkSummary()) {
+                    memberV2ApiClient.deleteWorkXml(user1OrcidId, work.getPutCode(), token);
+                }
+            }
+        }
+        
+        //Quit webdriver
         webDriver.quit();
     }
     
     /**
      * VIEW PUBLIC INFO
-     * */
-    
+     * */    
     @Test
     public void testViewWorkAndWorkSummary() throws JSONException, InterruptedException, URISyntaxException {
         Work workToCreate = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
         workToCreate.setPutCode(null);
         workToCreate.setVisibility(org.orcid.jaxb.model.record.Visibility.PUBLIC);
         String accessToken = getAccessToken();
-        ClientResponse postResponse = memberV2ApiClient.createWorkXml(testUser1OrcidId, workToCreate, accessToken);
+        ClientResponse postResponse = memberV2ApiClient.createWorkXml(user1OrcidId, workToCreate, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String path = postResponse.getLocation().getPath();
         String putCode = path.substring(path.lastIndexOf('/') + 1, path.length());
-        ClientResponse getWorkResponse = publicV2ApiClient.viewWorkXml(testUser1OrcidId, putCode);
+        ClientResponse getWorkResponse = publicV2ApiClient.viewWorkXml(user1OrcidId, putCode);
         assertNotNull(getWorkResponse);
         Work work = getWorkResponse.getEntity(Work.class);
         assertNotNull(work);
         assertEquals("common:title", work.getWorkTitle().getTitle().getContent());
         
-        ClientResponse getWorkSummaryResponse = publicV2ApiClient.viewWorkSummaryXml(testUser1OrcidId, putCode);
+        ClientResponse getWorkSummaryResponse = publicV2ApiClient.viewWorkSummaryXml(user1OrcidId, putCode);
         assertNotNull(getWorkSummaryResponse);
         WorkSummary summary = getWorkSummaryResponse.getEntity(WorkSummary.class);
         assertNotNull(summary);
-        assertEquals("common:title", summary.getTitle().getTitle().getContent());
-        
-        //Remove the work
-        memberV2ApiClient.deleteWorkXml(testUser1OrcidId, putCode, accessToken);
+        assertEquals("common:title", summary.getTitle().getTitle().getContent());        
     }
     
     @Test
@@ -154,26 +198,23 @@ public class PublicV2Test {
         fundingToCreate.setVisibility(org.orcid.jaxb.model.record.Visibility.PUBLIC);
         
         String accessToken = getAccessToken();
-        ClientResponse postResponse = memberV2ApiClient.createFundingXml(testUser1OrcidId, fundingToCreate, accessToken);
+        ClientResponse postResponse = memberV2ApiClient.createFundingXml(user1OrcidId, fundingToCreate, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String path = postResponse.getLocation().getPath();
         String putCode = path.substring(path.lastIndexOf('/') + 1, path.length());
         
-        ClientResponse getFundingResponse = publicV2ApiClient.viewFundingXml(testUser1OrcidId, putCode);
+        ClientResponse getFundingResponse = publicV2ApiClient.viewFundingXml(user1OrcidId, putCode);
         assertNotNull(getFundingResponse);
         Funding funding = getFundingResponse.getEntity(Funding.class);
         assertNotNull(funding);
         assertEquals("common:title", funding.getTitle().getTitle().getContent());        
         
-        ClientResponse getFundingSummaryResponse = publicV2ApiClient.viewFundingSummaryXml(testUser1OrcidId, putCode);
+        ClientResponse getFundingSummaryResponse = publicV2ApiClient.viewFundingSummaryXml(user1OrcidId, putCode);
         assertNotNull(getFundingSummaryResponse);
         FundingSummary summary = getFundingSummaryResponse.getEntity(FundingSummary.class);
         assertNotNull(summary);
-        assertEquals("common:title", summary.getTitle().getTitle().getContent());
-        
-        //Remove the funding
-        memberV2ApiClient.deleteFundingXml(testUser1OrcidId, putCode, accessToken);
+        assertEquals("common:title", summary.getTitle().getTitle().getContent());        
     }
     
     @Test
@@ -183,26 +224,23 @@ public class PublicV2Test {
         employmentToCreate.setVisibility(org.orcid.jaxb.model.record.Visibility.PUBLIC);
         
         String accessToken = getAccessToken();
-        ClientResponse postResponse = memberV2ApiClient.createEmploymentXml(testUser1OrcidId, employmentToCreate, accessToken);
+        ClientResponse postResponse = memberV2ApiClient.createEmploymentXml(user1OrcidId, employmentToCreate, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String path = postResponse.getLocation().getPath();
         String putCode = path.substring(path.lastIndexOf('/') + 1, path.length());
         
-        ClientResponse getEmploymentResponse = publicV2ApiClient.viewEmploymentXml(testUser1OrcidId, putCode);
+        ClientResponse getEmploymentResponse = publicV2ApiClient.viewEmploymentXml(user1OrcidId, putCode);
         assertNotNull(getEmploymentResponse);
         Employment employment= getEmploymentResponse.getEntity(Employment.class);
         assertNotNull(employment);
         assertEquals("affiliation:department-name", employment.getDepartmentName());        
         
-        ClientResponse getEmploymentSummaryResponse = publicV2ApiClient.viewEmploymentSummaryXml(testUser1OrcidId, putCode);
+        ClientResponse getEmploymentSummaryResponse = publicV2ApiClient.viewEmploymentSummaryXml(user1OrcidId, putCode);
         assertNotNull(getEmploymentSummaryResponse);
         EmploymentSummary summary = getEmploymentSummaryResponse.getEntity(EmploymentSummary.class);
         assertNotNull(summary);
         assertEquals("affiliation:department-name", summary.getDepartmentName()); 
-        
-        //Remove the affiliation
-        memberV2ApiClient.deleteEmploymentXml(testUser1OrcidId, putCode, accessToken);
     }
     
     @Test
@@ -212,27 +250,56 @@ public class PublicV2Test {
         educationToCreate.setVisibility(org.orcid.jaxb.model.record.Visibility.PUBLIC);
         
         String accessToken = getAccessToken();
-        ClientResponse postResponse = memberV2ApiClient.createEducationXml(testUser1OrcidId, educationToCreate, accessToken);
+        ClientResponse postResponse = memberV2ApiClient.createEducationXml(user1OrcidId, educationToCreate, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String path = postResponse.getLocation().getPath();
         String putCode = path.substring(path.lastIndexOf('/') + 1, path.length());
         
-        ClientResponse getEducationResponse = publicV2ApiClient.viewEducationXml(testUser1OrcidId, putCode);
+        ClientResponse getEducationResponse = publicV2ApiClient.viewEducationXml(user1OrcidId, putCode);
         assertNotNull(getEducationResponse);
         Education education= getEducationResponse.getEntity(Education.class);
         assertNotNull(education);
         assertEquals("education:department-name", education.getDepartmentName());        
         
-        ClientResponse getEducationSummaryResponse = publicV2ApiClient.viewEducationSummaryXml(testUser1OrcidId, putCode);
+        ClientResponse getEducationSummaryResponse = publicV2ApiClient.viewEducationSummaryXml(user1OrcidId, putCode);
         assertNotNull(getEducationSummaryResponse);
         EducationSummary summary = getEducationSummaryResponse.getEntity(EducationSummary.class);
         assertNotNull(summary);
-        assertEquals("education:department-name", summary.getDepartmentName());
-        
-        //Remove the affiliation
-        memberV2ApiClient.deleteEducationXml(testUser1OrcidId, putCode, accessToken);
+        assertEquals("education:department-name", summary.getDepartmentName());        
     }
+    
+    @Test
+    public void testViewPublicActivities()  throws JSONException, InterruptedException, URISyntaxException {
+        createActivities();
+        ClientResponse activitiesResponse = publicV2ApiClient.viewActivities(user1OrcidId);
+        assertNotNull(activitiesResponse);
+        ActivitiesSummary summary = activitiesResponse.getEntity(ActivitiesSummary.class);
+        assertNotNull(summary);
+        assertFalse(summary.getEducations().isEmpty());
+        assertEquals(2, summary.getEducations().size());
+        assertThat(summary.getEducations().get(0).getRoleTitle(), either(containsString("Education # 0")).or(containsString("Education # 3")));
+        assertThat(summary.getEducations().get(1).getRoleTitle(), either(containsString("Education # 0")).or(containsString("Education # 3")));
+                        
+        assertFalse(summary.getEmployments().isEmpty());
+        assertEquals(2, summary.getEmployments().size());
+        assertThat(summary.getEmployments().get(0).getRoleTitle(), either(containsString("Employment # 0")).or(containsString("Employment # 3")));
+        assertThat(summary.getEmployments().get(1).getRoleTitle(), either(containsString("Employment # 0")).or(containsString("Employment # 3")));
+                
+        assertNotNull(summary.getFundings());
+        assertEquals(2, summary.getFundings().getFundingGroup().size());
+        assertEquals(1, summary.getFundings().getFundingGroup().get(0).getFundingSummary().size());
+        assertThat(summary.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getTitle().getTitle().getContent(), either(containsString("Funding # 0")).or(containsString("Funding # 3")));
+        assertEquals(1, summary.getFundings().getFundingGroup().get(1).getFundingSummary().size());
+        assertThat(summary.getFundings().getFundingGroup().get(1).getFundingSummary().get(0).getTitle().getTitle().getContent(), either(containsString("Funding # 0")).or(containsString("Funding # 3")));
+                
+        assertNotNull(summary.getWorks());
+        assertEquals(2, summary.getWorks().getWorkGroup().size());
+        assertEquals(1, summary.getWorks().getWorkGroup().get(0).getWorkSummary().size());
+        assertThat(summary.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTitle().getContent(), either(containsString("Work # 0")).or(containsString("Work # 3")));                
+        assertEquals(1, summary.getWorks().getWorkGroup().get(1).getWorkSummary().size());
+        assertThat(summary.getWorks().getWorkGroup().get(1).getWorkSummary().get(0).getTitle().getTitle().getContent(), either(containsString("Work # 0")).or(containsString("Work # 3")));                
+    }    
     
     /**
      * TRY TO VIEW LIMITED INFO
@@ -243,7 +310,7 @@ public class PublicV2Test {
         workToCreate.setPutCode(null);
         workToCreate.setVisibility(org.orcid.jaxb.model.record.Visibility.LIMITED);
         String accessToken = getAccessToken();
-        ClientResponse postResponse = memberV2ApiClient.createWorkXml(testUser1OrcidId, workToCreate, accessToken);
+        ClientResponse postResponse = memberV2ApiClient.createWorkXml(user1OrcidId, workToCreate, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         
@@ -251,7 +318,7 @@ public class PublicV2Test {
         String putCode = path.substring(path.lastIndexOf('/') + 1, path.length());
         
         
-        ClientResponse response = publicV2ApiClient.viewWorkXml(testUser1OrcidId, putCode);
+        ClientResponse response = publicV2ApiClient.viewWorkXml(user1OrcidId, putCode);
         assertNotNull(response);
         assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
         
@@ -260,7 +327,7 @@ public class PublicV2Test {
         assertEquals(new Integer(9017), result.getErrorCode());
         assertEquals("org.orcid.core.exception.OrcidUnauthorizedException: The activity is not public", result.getDeveloperMessage());
         
-        response = publicV2ApiClient.viewWorkSummaryXml(testUser1OrcidId, putCode);
+        response = publicV2ApiClient.viewWorkSummaryXml(user1OrcidId, putCode);
         assertNotNull(response);
         assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
         
@@ -268,9 +335,6 @@ public class PublicV2Test {
         assertNotNull(result);
         assertEquals(new Integer(9017), result.getErrorCode());
         assertEquals("org.orcid.core.exception.OrcidUnauthorizedException: The activity is not public", result.getDeveloperMessage());
-        
-      //Remove the funding
-        memberV2ApiClient.deleteWorkXml(testUser1OrcidId, putCode, accessToken);
     }
     
     @Test
@@ -280,13 +344,13 @@ public class PublicV2Test {
         fundingToCreate.setVisibility(org.orcid.jaxb.model.record.Visibility.LIMITED);
         
         String accessToken = getAccessToken();
-        ClientResponse postResponse = memberV2ApiClient.createFundingXml(testUser1OrcidId, fundingToCreate, accessToken);
+        ClientResponse postResponse = memberV2ApiClient.createFundingXml(user1OrcidId, fundingToCreate, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String path = postResponse.getLocation().getPath();
         String putCode = path.substring(path.lastIndexOf('/') + 1, path.length());
         
-        ClientResponse response = publicV2ApiClient.viewFundingXml(testUser1OrcidId, putCode);
+        ClientResponse response = publicV2ApiClient.viewFundingXml(user1OrcidId, putCode);
         assertNotNull(response);
         assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
         
@@ -295,7 +359,7 @@ public class PublicV2Test {
         assertEquals(new Integer(9017), result.getErrorCode());
         assertEquals("org.orcid.core.exception.OrcidUnauthorizedException: The activity is not public", result.getDeveloperMessage());
         
-        response = publicV2ApiClient.viewFundingSummaryXml(testUser1OrcidId, putCode);
+        response = publicV2ApiClient.viewFundingSummaryXml(user1OrcidId, putCode);
         assertNotNull(response);
         assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
         
@@ -303,9 +367,6 @@ public class PublicV2Test {
         assertNotNull(result);
         assertEquals(new Integer(9017), result.getErrorCode());
         assertEquals("org.orcid.core.exception.OrcidUnauthorizedException: The activity is not public", result.getDeveloperMessage());
-        
-        //Remove the funding
-        memberV2ApiClient.deleteFundingXml(testUser1OrcidId, putCode, accessToken);
     }
     
     @Test
@@ -315,13 +376,13 @@ public class PublicV2Test {
         employmentToCreate.setVisibility(org.orcid.jaxb.model.record.Visibility.LIMITED);
         
         String accessToken = getAccessToken();
-        ClientResponse postResponse = memberV2ApiClient.createEmploymentXml(testUser1OrcidId, employmentToCreate, accessToken);
+        ClientResponse postResponse = memberV2ApiClient.createEmploymentXml(user1OrcidId, employmentToCreate, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String path = postResponse.getLocation().getPath();
         String putCode = path.substring(path.lastIndexOf('/') + 1, path.length());
         
-        ClientResponse response = publicV2ApiClient.viewEmploymentXml(testUser1OrcidId, putCode);
+        ClientResponse response = publicV2ApiClient.viewEmploymentXml(user1OrcidId, putCode);
         assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
         
         OrcidError result = response.getEntity(OrcidError.class);
@@ -329,16 +390,13 @@ public class PublicV2Test {
         assertEquals(new Integer(9017), result.getErrorCode());
         assertEquals("org.orcid.core.exception.OrcidUnauthorizedException: The activity is not public", result.getDeveloperMessage());        
         
-        response = publicV2ApiClient.viewEmploymentSummaryXml(testUser1OrcidId, putCode);
+        response = publicV2ApiClient.viewEmploymentSummaryXml(user1OrcidId, putCode);
         assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
         
         result = response.getEntity(OrcidError.class);
         assertNotNull(result);
         assertEquals(new Integer(9017), result.getErrorCode());
         assertEquals("org.orcid.core.exception.OrcidUnauthorizedException: The activity is not public", result.getDeveloperMessage());
-        
-        //Remove the affiliation
-        memberV2ApiClient.deleteEmploymentXml(testUser1OrcidId, putCode, accessToken);
     }
     
     @Test
@@ -348,32 +406,31 @@ public class PublicV2Test {
         educationToCreate.setVisibility(org.orcid.jaxb.model.record.Visibility.LIMITED);
         
         String accessToken = getAccessToken();
-        ClientResponse postResponse = memberV2ApiClient.createEducationXml(testUser1OrcidId, educationToCreate, accessToken);
+        ClientResponse postResponse = memberV2ApiClient.createEducationXml(user1OrcidId, educationToCreate, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String path = postResponse.getLocation().getPath();
         String putCode = path.substring(path.lastIndexOf('/') + 1, path.length());
         
-        ClientResponse response = publicV2ApiClient.viewEducationXml(testUser1OrcidId, putCode);
+        ClientResponse response = publicV2ApiClient.viewEducationXml(user1OrcidId, putCode);
         assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
         OrcidError result = response.getEntity(OrcidError.class);
         assertNotNull(result);
         assertEquals(new Integer(9017), result.getErrorCode());
         assertEquals("org.orcid.core.exception.OrcidUnauthorizedException: The activity is not public", result.getDeveloperMessage());  
         
-        response = publicV2ApiClient.viewEducationSummaryXml(testUser1OrcidId, putCode);
+        response = publicV2ApiClient.viewEducationSummaryXml(user1OrcidId, putCode);
         assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
         result = response.getEntity(OrcidError.class);
         assertNotNull(result);
         assertEquals(new Integer(9017), result.getErrorCode());
         assertEquals("org.orcid.core.exception.OrcidUnauthorizedException: The activity is not public", result.getDeveloperMessage());  
-        
-        //Remove the affiliation
-        memberV2ApiClient.deleteEducationXml(testUser1OrcidId, putCode, accessToken);
     }
-    
+        
     private String getAccessToken() throws InterruptedException, JSONException {
-        return oauthHelper.obtainAccessToken(client1ClientId, client1ClientSecret, ScopePathType.ACTIVITIES_UPDATE.value(), user1UserName, user1Password, redirectUri);
+        if(accessToken == null)
+            accessToken = oauthHelper.obtainAccessToken(client1ClientId, client1ClientSecret, ScopePathType.ACTIVITIES_UPDATE.value(), user1UserName, user1Password, redirectUri);
+        return accessToken;
     }
 
     public Activity unmarshallFromPath(String path, Class<? extends Activity> type) {
@@ -405,4 +462,82 @@ public class PublicV2Test {
         }
     }
 
+    private void createActivities() throws JSONException, InterruptedException, URISyntaxException {
+        String accessToken = getAccessToken();
+        Work workToCreate = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
+        
+        for(int i = 0; i < 4; i++) {
+            workToCreate.setPutCode(null);
+            workToCreate.getWorkTitle().getTitle().setContent("Work # " + i);    
+            workToCreate.getExternalIdentifiers().getExternalIdentifier().clear();
+            WorkExternalIdentifier wExtId = new WorkExternalIdentifier();
+            wExtId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + i));
+            wExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);            
+            workToCreate.getExternalIdentifiers().getExternalIdentifier().add(wExtId);
+            if(i == 0 || i == 3)
+                workToCreate.setVisibility(org.orcid.jaxb.model.record.Visibility.PUBLIC);
+            else if (i == 1)
+                workToCreate.setVisibility(org.orcid.jaxb.model.record.Visibility.LIMITED);
+            else 
+                workToCreate.setVisibility(org.orcid.jaxb.model.record.Visibility.PRIVATE);
+            
+            ClientResponse postResponse = memberV2ApiClient.createWorkXml(user1OrcidId, workToCreate, accessToken);
+            assertNotNull(postResponse);
+            assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        }
+        
+        
+        Funding fundingToCreate = (Funding) unmarshallFromPath("/record_2.0_rc1/samples/funding-2.0_rc1.xml", Funding.class);
+        for(int i = 0; i < 4; i++) {
+            fundingToCreate.setPutCode(null);
+            fundingToCreate.getTitle().getTitle().setContent("Funding # " + i);
+            fundingToCreate.getExternalIdentifiers().getExternalIdentifier().clear();
+            FundingExternalIdentifier fExtId = new FundingExternalIdentifier();
+            fExtId.setType(FundingExternalIdentifierType.GRANT_NUMBER);
+            fExtId.setValue("Funding Id " + i);
+            fundingToCreate.getExternalIdentifiers().getExternalIdentifier().add(fExtId);
+            if(i == 0 || i == 3)
+                fundingToCreate.setVisibility(org.orcid.jaxb.model.record.Visibility.PUBLIC);
+            else if (i == 1)
+                fundingToCreate.setVisibility(org.orcid.jaxb.model.record.Visibility.LIMITED);
+            else 
+                fundingToCreate.setVisibility(org.orcid.jaxb.model.record.Visibility.PRIVATE);
+            
+            ClientResponse postResponse = memberV2ApiClient.createFundingXml(user1OrcidId, fundingToCreate, accessToken);
+            assertNotNull(postResponse);
+            assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        }
+                        
+        Employment employmentToCreate = (Employment) unmarshallFromPath("/record_2.0_rc1/samples/employment-2.0_rc1.xml", Employment.class);
+        for(int i = 0; i < 4; i++) {
+            employmentToCreate.setPutCode(null);
+            employmentToCreate.setRoleTitle("Employment # " + i);
+            if(i == 0 || i == 3)
+                employmentToCreate.setVisibility(org.orcid.jaxb.model.record.Visibility.PUBLIC);
+            else if (i == 1)
+                employmentToCreate.setVisibility(org.orcid.jaxb.model.record.Visibility.LIMITED);
+            else 
+                employmentToCreate.setVisibility(org.orcid.jaxb.model.record.Visibility.PRIVATE);
+            
+            ClientResponse postResponse = memberV2ApiClient.createEmploymentXml(user1OrcidId, employmentToCreate, accessToken);
+            assertNotNull(postResponse);
+            assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        }
+        
+        Education educationToCreate = (Education) unmarshallFromPath("/record_2.0_rc1/samples/education-2.0_rc1.xml", Education.class);
+        for(int i = 0; i < 4; i++) {
+            educationToCreate.setPutCode(null);
+            educationToCreate.setRoleTitle("Education # " + i);
+            if(i == 0 || i == 3)
+                educationToCreate.setVisibility(org.orcid.jaxb.model.record.Visibility.PUBLIC);
+            else if (i == 1)
+                educationToCreate.setVisibility(org.orcid.jaxb.model.record.Visibility.LIMITED);
+            else 
+                educationToCreate.setVisibility(org.orcid.jaxb.model.record.Visibility.PRIVATE);
+            
+            ClientResponse postResponse = memberV2ApiClient.createEducationXml(user1OrcidId, educationToCreate, accessToken);
+            assertNotNull(postResponse);
+            assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        }
+    }
 }
